@@ -2,482 +2,9 @@
 
 exports[`Plans should render empty with a paid plan 1`] = `
 ShallowWrapper {
-  "complexSelector": ComplexSelector {
-    "buildPredicate": [Function],
-    "childrenOfNode": [Function],
-    "findWhereUnwrapped": [Function],
-  },
   "length": 1,
-  "node": <components--data--query-plans />,
-  "nodes": Array [
-    <components--data--query-plans />,
-  ],
-  "options": Object {},
-  "renderer": ReactShallowRenderer {
-    "_instance": ShallowComponentWrapper {
-      "_calledComponentWillUnmount": false,
-      "_compositeType": 0,
-      "_context": Object {},
-      "_currentElement": <Plans
-        basePlansPath="/jetpack/connect/plans"
-        calypsoStartedConnection={false}
-        canPurchasePlans={true}
-        cart={
-          Object {
-            "allowed_payment_methods": Array [
-              "WPCOM_Billing_PayPal_Express",
-              "WPCOM_Billing_MoneyPress_Paygate",
-              "WPCOM_Billing_Stripe_Source_Ideal",
-            ],
-            "blog_id": 1234567,
-            "cart_key": "1234567",
-            "client_metadata": Object {
-              "last_server_response_date": "2017-10-19T11:45:21.862Z",
-            },
-            "coupon": "",
-            "create_new_blog": false,
-            "credits": 0,
-            "currency": "EUR",
-            "hasLoadedFromServer": true,
-            "hasPendingServerUpdates": false,
-            "has_bundle_credit": false,
-            "is_coupon_applied": false,
-            "messages": Object {
-              "errors": Array [],
-              "success": Array [],
-            },
-            "next_domain_is_free": false,
-            "products": Array [],
-            "temporary": false,
-            "total_cost": 0,
-            "total_cost_display": "€0",
-          }
-        }
-        completeFlow={[Function]}
-        context={
-          Object {
-            "canonicalPath": "/jetpack/connect/plans/an.example.site",
-            "hash": Object {},
-            "init": true,
-            "params": Object {
-              "0": "/jetpack/connect/plans/an.example.site",
-              "site": "an.example.site",
-            },
-            "path": "/jetpack/connect/plans/an.example.site",
-            "pathname": "/jetpack/connect/plans/an.example.site",
-            "prevPath": false,
-            "query": Object {},
-            "querystring": "",
-            "state": Object {
-              "path": "/jetpack/connect/plans/an.example.site",
-            },
-            "store": Object {},
-            "title": "WordPress.com",
-          }
-        }
-        flowType={false}
-        getPlanBySlug={[Function]}
-        goBackToWpAdmin={[Function]}
-        hasPlan={true}
-        isAutomatedTransfer={false}
-        isRequestingPlans={false}
-        isRtlLayout={false}
-        jetpackConnectAuthorize={Object {}}
-        recordTracksEvent={[Function]}
-        redirectingToWpAdmin={false}
-        selectPlanInAdvance={[Function]}
-        selectedSite={
-          Object {
-            "ID": 1234567,
-            "URL": "http://an.example.site",
-            "canAutoupdateFiles": true,
-            "canManage": true,
-            "canUpdateFiles": true,
-            "capabilities": Object {
-              "activate_wordads": true,
-              "delete_others_posts": true,
-              "delete_posts": true,
-              "delete_users": false,
-              "edit_others_pages": true,
-              "edit_others_posts": true,
-              "edit_pages": true,
-              "edit_posts": true,
-              "edit_theme_options": true,
-              "edit_users": true,
-              "list_users": true,
-              "manage_categories": true,
-              "manage_options": true,
-              "moderate_comments": true,
-              "promote_users": true,
-              "publish_posts": true,
-              "remove_users": true,
-              "upload_files": true,
-              "view_stats": true,
-            },
-            "domain": "an.example.site",
-            "hasConflict": false,
-            "hasMinimumJetpackVersion": true,
-            "isMainNetworkSite": true,
-            "isSecondaryNetworkSite": false,
-            "isSiteUpgradeable": true,
-            "is_customizable": true,
-            "is_multisite": false,
-            "is_previewable": false,
-            "is_private": false,
-            "is_vip": false,
-            "jetpack": true,
-            "name": "Test Site",
-            "options": Object {
-              "active_modules": Array [
-                "after-the-deadline",
-                "contact-form",
-                "custom-content-types",
-                "custom-css",
-                "enhanced-distribution",
-                "gravatar-hovercards",
-                "json-api",
-                "latex",
-                "manage",
-                "notes",
-                "post-by-email",
-                "protect",
-                "publicize",
-                "sharedaddy",
-                "shortcodes",
-                "shortlinks",
-                "sitemaps",
-                "stats",
-                "subscriptions",
-                "verification-tools",
-                "widget-visibility",
-                "widgets",
-              ],
-              "admin_url": "http://an.example.site/wp-admin/",
-              "advanced_seo_front_page_description": "",
-              "advanced_seo_title_formats": Array [],
-              "allowed_file_types": Array [
-                "jpg",
-                "jpeg",
-                "png",
-                "gif",
-                "pdf",
-                "doc",
-                "ppt",
-                "odt",
-                "pptx",
-                "docx",
-                "pps",
-                "ppsx",
-                "xls",
-                "xlsx",
-                "key",
-              ],
-              "created_at": "2017-10-19T11:20:01+00:00",
-              "default_likes_enabled": true,
-              "default_post_format": "standard",
-              "default_sharing_status": false,
-              "file_mod_disabled": false,
-              "frame_nonce": "foobarbaz",
-              "gmt_offset": 0,
-              "is_automated_transfer": false,
-              "is_domain_only": false,
-              "is_mapped_domain": true,
-              "is_multi_network": false,
-              "is_multi_site": false,
-              "is_redirect": false,
-              "jetpack_version": "5.4",
-              "main_network_site": "http://an.example.site",
-              "max_upload_size": false,
-              "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
-              "podcasting_archive": null,
-              "publicize_permanently_disabled": false,
-              "show_on_front": "posts",
-              "software_version": "4.8.2",
-              "unmapped_url": "http://an.example.site",
-              "upgraded_filetypes_enabled": true,
-              "verification_services_codes": null,
-              "videopress_enabled": false,
-              "wordads": false,
-            },
-            "plan": Object {
-              "expired": false,
-              "free_trial": false,
-              "is_free": true,
-              "product_id": 2001,
-              "product_name_short": "Professional",
-              "product_slug": "jetpack_business",
-              "user_is_owner": false,
-            },
-            "single_user_site": false,
-            "slug": "an.example.site",
-            "title": "Test Site",
-            "visible": true,
-          }
-        }
-        selectedSiteSlug="an.example.site"
-        siteSlug="*"
-        transaction={
-          Object {
-            "domainDetails": null,
-            "errors": Object {},
-            "newCardFormFields": Object {},
-            "step": Object {
-              "name": "before-submit",
-            },
-          }
-        }
-        translate={[Function]}
-        userId={98765}
-      />,
-      "_debugID": 3,
-      "_hostContainerInfo": null,
-      "_hostParent": null,
-      "_instance": Plans {
-        "_reactInternalInstance": [Circular],
-        "context": Object {},
-        "handleHelpButtonClick": [Function],
-        "handleSkipButtonClick": [Function],
-        "props": Object {
-          "basePlansPath": "/jetpack/connect/plans",
-          "calypsoStartedConnection": false,
-          "canPurchasePlans": true,
-          "cart": Object {
-            "allowed_payment_methods": Array [
-              "WPCOM_Billing_PayPal_Express",
-              "WPCOM_Billing_MoneyPress_Paygate",
-              "WPCOM_Billing_Stripe_Source_Ideal",
-            ],
-            "blog_id": 1234567,
-            "cart_key": "1234567",
-            "client_metadata": Object {
-              "last_server_response_date": "2017-10-19T11:45:21.862Z",
-            },
-            "coupon": "",
-            "create_new_blog": false,
-            "credits": 0,
-            "currency": "EUR",
-            "hasLoadedFromServer": true,
-            "hasPendingServerUpdates": false,
-            "has_bundle_credit": false,
-            "is_coupon_applied": false,
-            "messages": Object {
-              "errors": Array [],
-              "success": Array [],
-            },
-            "next_domain_is_free": false,
-            "products": Array [],
-            "temporary": false,
-            "total_cost": 0,
-            "total_cost_display": "€0",
-          },
-          "completeFlow": [Function],
-          "context": Object {
-            "canonicalPath": "/jetpack/connect/plans/an.example.site",
-            "hash": Object {},
-            "init": true,
-            "params": Object {
-              "0": "/jetpack/connect/plans/an.example.site",
-              "site": "an.example.site",
-            },
-            "path": "/jetpack/connect/plans/an.example.site",
-            "pathname": "/jetpack/connect/plans/an.example.site",
-            "prevPath": false,
-            "query": Object {},
-            "querystring": "",
-            "state": Object {
-              "path": "/jetpack/connect/plans/an.example.site",
-            },
-            "store": Object {},
-            "title": "WordPress.com",
-          },
-          "flowType": false,
-          "getPlanBySlug": [Function],
-          "goBackToWpAdmin": [Function],
-          "hasPlan": true,
-          "isAutomatedTransfer": false,
-          "isRequestingPlans": false,
-          "isRtlLayout": false,
-          "jetpackConnectAuthorize": Object {},
-          "recordTracksEvent": [Function],
-          "redirectingToWpAdmin": false,
-          "selectPlanInAdvance": [Function],
-          "selectedSite": Object {
-            "ID": 1234567,
-            "URL": "http://an.example.site",
-            "canAutoupdateFiles": true,
-            "canManage": true,
-            "canUpdateFiles": true,
-            "capabilities": Object {
-              "activate_wordads": true,
-              "delete_others_posts": true,
-              "delete_posts": true,
-              "delete_users": false,
-              "edit_others_pages": true,
-              "edit_others_posts": true,
-              "edit_pages": true,
-              "edit_posts": true,
-              "edit_theme_options": true,
-              "edit_users": true,
-              "list_users": true,
-              "manage_categories": true,
-              "manage_options": true,
-              "moderate_comments": true,
-              "promote_users": true,
-              "publish_posts": true,
-              "remove_users": true,
-              "upload_files": true,
-              "view_stats": true,
-            },
-            "domain": "an.example.site",
-            "hasConflict": false,
-            "hasMinimumJetpackVersion": true,
-            "isMainNetworkSite": true,
-            "isSecondaryNetworkSite": false,
-            "isSiteUpgradeable": true,
-            "is_customizable": true,
-            "is_multisite": false,
-            "is_previewable": false,
-            "is_private": false,
-            "is_vip": false,
-            "jetpack": true,
-            "name": "Test Site",
-            "options": Object {
-              "active_modules": Array [
-                "after-the-deadline",
-                "contact-form",
-                "custom-content-types",
-                "custom-css",
-                "enhanced-distribution",
-                "gravatar-hovercards",
-                "json-api",
-                "latex",
-                "manage",
-                "notes",
-                "post-by-email",
-                "protect",
-                "publicize",
-                "sharedaddy",
-                "shortcodes",
-                "shortlinks",
-                "sitemaps",
-                "stats",
-                "subscriptions",
-                "verification-tools",
-                "widget-visibility",
-                "widgets",
-              ],
-              "admin_url": "http://an.example.site/wp-admin/",
-              "advanced_seo_front_page_description": "",
-              "advanced_seo_title_formats": Array [],
-              "allowed_file_types": Array [
-                "jpg",
-                "jpeg",
-                "png",
-                "gif",
-                "pdf",
-                "doc",
-                "ppt",
-                "odt",
-                "pptx",
-                "docx",
-                "pps",
-                "ppsx",
-                "xls",
-                "xlsx",
-                "key",
-              ],
-              "created_at": "2017-10-19T11:20:01+00:00",
-              "default_likes_enabled": true,
-              "default_post_format": "standard",
-              "default_sharing_status": false,
-              "file_mod_disabled": false,
-              "frame_nonce": "foobarbaz",
-              "gmt_offset": 0,
-              "is_automated_transfer": false,
-              "is_domain_only": false,
-              "is_mapped_domain": true,
-              "is_multi_network": false,
-              "is_multi_site": false,
-              "is_redirect": false,
-              "jetpack_version": "5.4",
-              "main_network_site": "http://an.example.site",
-              "max_upload_size": false,
-              "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
-              "podcasting_archive": null,
-              "publicize_permanently_disabled": false,
-              "show_on_front": "posts",
-              "software_version": "4.8.2",
-              "unmapped_url": "http://an.example.site",
-              "upgraded_filetypes_enabled": true,
-              "verification_services_codes": null,
-              "videopress_enabled": false,
-              "wordads": false,
-            },
-            "plan": Object {
-              "expired": false,
-              "free_trial": false,
-              "is_free": true,
-              "product_id": 2001,
-              "product_name_short": "Professional",
-              "product_slug": "jetpack_business",
-              "user_is_owner": false,
-            },
-            "single_user_site": false,
-            "slug": "an.example.site",
-            "title": "Test Site",
-            "visible": true,
-          },
-          "selectedSiteSlug": "an.example.site",
-          "siteSlug": "*",
-          "transaction": Object {
-            "domainDetails": null,
-            "errors": Object {},
-            "newCardFormFields": Object {},
-            "step": Object {
-              "name": "before-submit",
-            },
-          },
-          "translate": [Function],
-          "userId": 98765,
-        },
-        "redirecting": false,
-        "refs": Object {},
-        "selectPlan": [Function],
-        "state": null,
-        "storeSelectedPlan": [Function],
-        "updater": Object {
-          "enqueueCallback": [Function],
-          "enqueueCallbackInternal": [Function],
-          "enqueueElementInternal": [Function],
-          "enqueueForceUpdate": [Function],
-          "enqueueReplaceState": [Function],
-          "enqueueSetState": [Function],
-          "isMounted": [Function],
-          "validateCallback": [Function],
-        },
-      },
-      "_mountOrder": 2,
-      "_pendingCallbacks": null,
-      "_pendingElement": null,
-      "_pendingForceUpdate": false,
-      "_pendingReplaceState": false,
-      "_pendingStateQueue": null,
-      "_renderedComponent": NoopInternalComponent {
-        "_currentElement": <components--data--query-plans />,
-        "_debugID": 4,
-        "_renderedOutput": <components--data--query-plans />,
-      },
-      "_renderedNodeType": 0,
-      "_rootNodeID": 0,
-      "_topLevelWrapper": null,
-      "_updateBatchNumber": null,
-      "_warnedAboutRefsInRender": false,
-    },
-    "getRenderOutput": [Function],
-    "render": [Function],
-  },
-  "root": [Circular],
-  "unrendered": <Plans
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <Plans
     basePlansPath="/jetpack/connect/plans"
     calypsoStartedConnection={false}
     canPurchasePlans={true}
@@ -688,1117 +215,48 @@ ShallowWrapper {
     translate={[Function]}
     userId={98765}
   />,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": null,
+    "nodeType": "host",
+    "props": Object {},
+    "ref": null,
+    "rendered": null,
+    "type": "components--data--query-plans",
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": null,
+      "nodeType": "host",
+      "props": Object {},
+      "ref": null,
+      "rendered": null,
+      "type": "components--data--query-plans",
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+      },
+    },
+  },
 }
 `;
 
 exports[`Plans should render with a paid plan with showFirst prop 1`] = `
 ShallowWrapper {
-  "complexSelector": ComplexSelector {
-    "buildPredicate": [Function],
-    "childrenOfNode": [Function],
-    "findWhereUnwrapped": [Function],
-  },
   "length": 1,
-  "node": <div>
-    <components--data--query-plans />
-    <components--data--query-site-plans
-      siteId={1234567}
-    />
-    <Localized(JetpackPlansGrid)
-      basePlansPath="/jetpack/connect/authorize"
-      hideFreePlan={true}
-      interval={undefined}
-      isLanding={false}
-      onSelect={[Function]}
-      selectedSite={
-        Object {
-          "ID": 1234567,
-          "URL": "http://an.example.site",
-          "canAutoupdateFiles": true,
-          "canManage": true,
-          "canUpdateFiles": true,
-          "capabilities": Object {
-            "activate_wordads": true,
-            "delete_others_posts": true,
-            "delete_posts": true,
-            "delete_users": false,
-            "edit_others_pages": true,
-            "edit_others_posts": true,
-            "edit_pages": true,
-            "edit_posts": true,
-            "edit_theme_options": true,
-            "edit_users": true,
-            "list_users": true,
-            "manage_categories": true,
-            "manage_options": true,
-            "moderate_comments": true,
-            "promote_users": true,
-            "publish_posts": true,
-            "remove_users": true,
-            "upload_files": true,
-            "view_stats": true,
-          },
-          "domain": "an.example.site",
-          "hasConflict": false,
-          "hasMinimumJetpackVersion": true,
-          "isMainNetworkSite": true,
-          "isSecondaryNetworkSite": false,
-          "isSiteUpgradeable": true,
-          "is_customizable": true,
-          "is_multisite": false,
-          "is_previewable": false,
-          "is_private": false,
-          "is_vip": false,
-          "jetpack": true,
-          "name": "Test Site",
-          "options": Object {
-            "active_modules": Array [
-              "after-the-deadline",
-              "contact-form",
-              "custom-content-types",
-              "custom-css",
-              "enhanced-distribution",
-              "gravatar-hovercards",
-              "json-api",
-              "latex",
-              "manage",
-              "notes",
-              "post-by-email",
-              "protect",
-              "publicize",
-              "sharedaddy",
-              "shortcodes",
-              "shortlinks",
-              "sitemaps",
-              "stats",
-              "subscriptions",
-              "verification-tools",
-              "widget-visibility",
-              "widgets",
-            ],
-            "admin_url": "http://an.example.site/wp-admin/",
-            "advanced_seo_front_page_description": "",
-            "advanced_seo_title_formats": Array [],
-            "allowed_file_types": Array [
-              "jpg",
-              "jpeg",
-              "png",
-              "gif",
-              "pdf",
-              "doc",
-              "ppt",
-              "odt",
-              "pptx",
-              "docx",
-              "pps",
-              "ppsx",
-              "xls",
-              "xlsx",
-              "key",
-            ],
-            "created_at": "2017-10-19T11:20:01+00:00",
-            "default_likes_enabled": true,
-            "default_post_format": "standard",
-            "default_sharing_status": false,
-            "file_mod_disabled": false,
-            "frame_nonce": "foobarbaz",
-            "gmt_offset": 0,
-            "is_automated_transfer": false,
-            "is_domain_only": false,
-            "is_mapped_domain": true,
-            "is_multi_network": false,
-            "is_multi_site": false,
-            "is_redirect": false,
-            "jetpack_version": "5.4",
-            "main_network_site": "http://an.example.site",
-            "max_upload_size": false,
-            "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
-            "podcasting_archive": null,
-            "publicize_permanently_disabled": false,
-            "show_on_front": "posts",
-            "software_version": "4.8.2",
-            "unmapped_url": "http://an.example.site",
-            "upgraded_filetypes_enabled": true,
-            "verification_services_codes": null,
-            "videopress_enabled": false,
-            "wordads": false,
-          },
-          "plan": Object {
-            "expired": false,
-            "free_trial": false,
-            "is_free": true,
-            "product_id": 2001,
-            "product_name_short": "Professional",
-            "product_slug": "jetpack_business",
-            "user_is_owner": false,
-          },
-          "single_user_site": false,
-          "slug": "an.example.site",
-          "title": "Test Site",
-          "visible": true,
-        }
-      }
-      showFirst={true}
-    >
-      <Localized(PlansSkipButton)
-        isRtl={false}
-        onClick={[Function]}
-      />
-      <LoggedOutFormLinks>
-        <jetpack-connect--happychat-button
-          eventName="calypso_jpc_plans_chat_initiated"
-          label="Need help?"
-        >
-          <Localized(JetpackConnectHelpButton)
-            label="Need help?"
-            onClick={[Function]}
-          />
-        </jetpack-connect--happychat-button>
-      </LoggedOutFormLinks>
-    </Localized(JetpackPlansGrid)>
-  </div>,
-  "nodes": Array [
-    <div>
-      <components--data--query-plans />
-      <components--data--query-site-plans
-        siteId={1234567}
-      />
-      <Localized(JetpackPlansGrid)
-        basePlansPath="/jetpack/connect/authorize"
-        hideFreePlan={true}
-        interval={undefined}
-        isLanding={false}
-        onSelect={[Function]}
-        selectedSite={
-          Object {
-            "ID": 1234567,
-            "URL": "http://an.example.site",
-            "canAutoupdateFiles": true,
-            "canManage": true,
-            "canUpdateFiles": true,
-            "capabilities": Object {
-              "activate_wordads": true,
-              "delete_others_posts": true,
-              "delete_posts": true,
-              "delete_users": false,
-              "edit_others_pages": true,
-              "edit_others_posts": true,
-              "edit_pages": true,
-              "edit_posts": true,
-              "edit_theme_options": true,
-              "edit_users": true,
-              "list_users": true,
-              "manage_categories": true,
-              "manage_options": true,
-              "moderate_comments": true,
-              "promote_users": true,
-              "publish_posts": true,
-              "remove_users": true,
-              "upload_files": true,
-              "view_stats": true,
-            },
-            "domain": "an.example.site",
-            "hasConflict": false,
-            "hasMinimumJetpackVersion": true,
-            "isMainNetworkSite": true,
-            "isSecondaryNetworkSite": false,
-            "isSiteUpgradeable": true,
-            "is_customizable": true,
-            "is_multisite": false,
-            "is_previewable": false,
-            "is_private": false,
-            "is_vip": false,
-            "jetpack": true,
-            "name": "Test Site",
-            "options": Object {
-              "active_modules": Array [
-                "after-the-deadline",
-                "contact-form",
-                "custom-content-types",
-                "custom-css",
-                "enhanced-distribution",
-                "gravatar-hovercards",
-                "json-api",
-                "latex",
-                "manage",
-                "notes",
-                "post-by-email",
-                "protect",
-                "publicize",
-                "sharedaddy",
-                "shortcodes",
-                "shortlinks",
-                "sitemaps",
-                "stats",
-                "subscriptions",
-                "verification-tools",
-                "widget-visibility",
-                "widgets",
-              ],
-              "admin_url": "http://an.example.site/wp-admin/",
-              "advanced_seo_front_page_description": "",
-              "advanced_seo_title_formats": Array [],
-              "allowed_file_types": Array [
-                "jpg",
-                "jpeg",
-                "png",
-                "gif",
-                "pdf",
-                "doc",
-                "ppt",
-                "odt",
-                "pptx",
-                "docx",
-                "pps",
-                "ppsx",
-                "xls",
-                "xlsx",
-                "key",
-              ],
-              "created_at": "2017-10-19T11:20:01+00:00",
-              "default_likes_enabled": true,
-              "default_post_format": "standard",
-              "default_sharing_status": false,
-              "file_mod_disabled": false,
-              "frame_nonce": "foobarbaz",
-              "gmt_offset": 0,
-              "is_automated_transfer": false,
-              "is_domain_only": false,
-              "is_mapped_domain": true,
-              "is_multi_network": false,
-              "is_multi_site": false,
-              "is_redirect": false,
-              "jetpack_version": "5.4",
-              "main_network_site": "http://an.example.site",
-              "max_upload_size": false,
-              "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
-              "podcasting_archive": null,
-              "publicize_permanently_disabled": false,
-              "show_on_front": "posts",
-              "software_version": "4.8.2",
-              "unmapped_url": "http://an.example.site",
-              "upgraded_filetypes_enabled": true,
-              "verification_services_codes": null,
-              "videopress_enabled": false,
-              "wordads": false,
-            },
-            "plan": Object {
-              "expired": false,
-              "free_trial": false,
-              "is_free": true,
-              "product_id": 2001,
-              "product_name_short": "Professional",
-              "product_slug": "jetpack_business",
-              "user_is_owner": false,
-            },
-            "single_user_site": false,
-            "slug": "an.example.site",
-            "title": "Test Site",
-            "visible": true,
-          }
-        }
-        showFirst={true}
-      >
-        <Localized(PlansSkipButton)
-          isRtl={false}
-          onClick={[Function]}
-        />
-        <LoggedOutFormLinks>
-          <jetpack-connect--happychat-button
-            eventName="calypso_jpc_plans_chat_initiated"
-            label="Need help?"
-          >
-            <Localized(JetpackConnectHelpButton)
-              label="Need help?"
-              onClick={[Function]}
-            />
-          </jetpack-connect--happychat-button>
-        </LoggedOutFormLinks>
-      </Localized(JetpackPlansGrid)>
-    </div>,
-  ],
-  "options": Object {},
-  "renderer": ReactShallowRenderer {
-    "_instance": ShallowComponentWrapper {
-      "_calledComponentWillUnmount": false,
-      "_compositeType": 0,
-      "_context": Object {},
-      "_currentElement": <Plans
-        basePlansPath="/jetpack/connect/plans"
-        calypsoStartedConnection={false}
-        canPurchasePlans={true}
-        cart={
-          Object {
-            "allowed_payment_methods": Array [
-              "WPCOM_Billing_PayPal_Express",
-              "WPCOM_Billing_MoneyPress_Paygate",
-              "WPCOM_Billing_Stripe_Source_Ideal",
-            ],
-            "blog_id": 1234567,
-            "cart_key": "1234567",
-            "client_metadata": Object {
-              "last_server_response_date": "2017-10-19T11:45:21.862Z",
-            },
-            "coupon": "",
-            "create_new_blog": false,
-            "credits": 0,
-            "currency": "EUR",
-            "hasLoadedFromServer": true,
-            "hasPendingServerUpdates": false,
-            "has_bundle_credit": false,
-            "is_coupon_applied": false,
-            "messages": Object {
-              "errors": Array [],
-              "success": Array [],
-            },
-            "next_domain_is_free": false,
-            "products": Array [],
-            "temporary": false,
-            "total_cost": 0,
-            "total_cost_display": "€0",
-          }
-        }
-        completeFlow={[Function]}
-        context={
-          Object {
-            "canonicalPath": "/jetpack/connect/plans/an.example.site",
-            "hash": Object {},
-            "init": true,
-            "params": Object {
-              "0": "/jetpack/connect/plans/an.example.site",
-              "site": "an.example.site",
-            },
-            "path": "/jetpack/connect/plans/an.example.site",
-            "pathname": "/jetpack/connect/plans/an.example.site",
-            "prevPath": false,
-            "query": Object {},
-            "querystring": "",
-            "state": Object {
-              "path": "/jetpack/connect/plans/an.example.site",
-            },
-            "store": Object {},
-            "title": "WordPress.com",
-          }
-        }
-        flowType={false}
-        getPlanBySlug={[Function]}
-        goBackToWpAdmin={[Function]}
-        hasPlan={true}
-        isAutomatedTransfer={false}
-        isRequestingPlans={false}
-        isRtlLayout={false}
-        jetpackConnectAuthorize={Object {}}
-        recordTracksEvent={[Function]}
-        redirectingToWpAdmin={false}
-        selectPlanInAdvance={[Function]}
-        selectedSite={
-          Object {
-            "ID": 1234567,
-            "URL": "http://an.example.site",
-            "canAutoupdateFiles": true,
-            "canManage": true,
-            "canUpdateFiles": true,
-            "capabilities": Object {
-              "activate_wordads": true,
-              "delete_others_posts": true,
-              "delete_posts": true,
-              "delete_users": false,
-              "edit_others_pages": true,
-              "edit_others_posts": true,
-              "edit_pages": true,
-              "edit_posts": true,
-              "edit_theme_options": true,
-              "edit_users": true,
-              "list_users": true,
-              "manage_categories": true,
-              "manage_options": true,
-              "moderate_comments": true,
-              "promote_users": true,
-              "publish_posts": true,
-              "remove_users": true,
-              "upload_files": true,
-              "view_stats": true,
-            },
-            "domain": "an.example.site",
-            "hasConflict": false,
-            "hasMinimumJetpackVersion": true,
-            "isMainNetworkSite": true,
-            "isSecondaryNetworkSite": false,
-            "isSiteUpgradeable": true,
-            "is_customizable": true,
-            "is_multisite": false,
-            "is_previewable": false,
-            "is_private": false,
-            "is_vip": false,
-            "jetpack": true,
-            "name": "Test Site",
-            "options": Object {
-              "active_modules": Array [
-                "after-the-deadline",
-                "contact-form",
-                "custom-content-types",
-                "custom-css",
-                "enhanced-distribution",
-                "gravatar-hovercards",
-                "json-api",
-                "latex",
-                "manage",
-                "notes",
-                "post-by-email",
-                "protect",
-                "publicize",
-                "sharedaddy",
-                "shortcodes",
-                "shortlinks",
-                "sitemaps",
-                "stats",
-                "subscriptions",
-                "verification-tools",
-                "widget-visibility",
-                "widgets",
-              ],
-              "admin_url": "http://an.example.site/wp-admin/",
-              "advanced_seo_front_page_description": "",
-              "advanced_seo_title_formats": Array [],
-              "allowed_file_types": Array [
-                "jpg",
-                "jpeg",
-                "png",
-                "gif",
-                "pdf",
-                "doc",
-                "ppt",
-                "odt",
-                "pptx",
-                "docx",
-                "pps",
-                "ppsx",
-                "xls",
-                "xlsx",
-                "key",
-              ],
-              "created_at": "2017-10-19T11:20:01+00:00",
-              "default_likes_enabled": true,
-              "default_post_format": "standard",
-              "default_sharing_status": false,
-              "file_mod_disabled": false,
-              "frame_nonce": "foobarbaz",
-              "gmt_offset": 0,
-              "is_automated_transfer": false,
-              "is_domain_only": false,
-              "is_mapped_domain": true,
-              "is_multi_network": false,
-              "is_multi_site": false,
-              "is_redirect": false,
-              "jetpack_version": "5.4",
-              "main_network_site": "http://an.example.site",
-              "max_upload_size": false,
-              "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
-              "podcasting_archive": null,
-              "publicize_permanently_disabled": false,
-              "show_on_front": "posts",
-              "software_version": "4.8.2",
-              "unmapped_url": "http://an.example.site",
-              "upgraded_filetypes_enabled": true,
-              "verification_services_codes": null,
-              "videopress_enabled": false,
-              "wordads": false,
-            },
-            "plan": Object {
-              "expired": false,
-              "free_trial": false,
-              "is_free": true,
-              "product_id": 2001,
-              "product_name_short": "Professional",
-              "product_slug": "jetpack_business",
-              "user_is_owner": false,
-            },
-            "single_user_site": false,
-            "slug": "an.example.site",
-            "title": "Test Site",
-            "visible": true,
-          }
-        }
-        selectedSiteSlug="an.example.site"
-        showFirst={true}
-        siteSlug="*"
-        transaction={
-          Object {
-            "domainDetails": null,
-            "errors": Object {},
-            "newCardFormFields": Object {},
-            "step": Object {
-              "name": "before-submit",
-            },
-          }
-        }
-        translate={[Function]}
-        userId={98765}
-      />,
-      "_debugID": 5,
-      "_hostContainerInfo": null,
-      "_hostParent": null,
-      "_instance": Plans {
-        "_reactInternalInstance": [Circular],
-        "context": Object {},
-        "handleHelpButtonClick": [Function],
-        "handleSkipButtonClick": [Function],
-        "props": Object {
-          "basePlansPath": "/jetpack/connect/plans",
-          "calypsoStartedConnection": false,
-          "canPurchasePlans": true,
-          "cart": Object {
-            "allowed_payment_methods": Array [
-              "WPCOM_Billing_PayPal_Express",
-              "WPCOM_Billing_MoneyPress_Paygate",
-              "WPCOM_Billing_Stripe_Source_Ideal",
-            ],
-            "blog_id": 1234567,
-            "cart_key": "1234567",
-            "client_metadata": Object {
-              "last_server_response_date": "2017-10-19T11:45:21.862Z",
-            },
-            "coupon": "",
-            "create_new_blog": false,
-            "credits": 0,
-            "currency": "EUR",
-            "hasLoadedFromServer": true,
-            "hasPendingServerUpdates": false,
-            "has_bundle_credit": false,
-            "is_coupon_applied": false,
-            "messages": Object {
-              "errors": Array [],
-              "success": Array [],
-            },
-            "next_domain_is_free": false,
-            "products": Array [],
-            "temporary": false,
-            "total_cost": 0,
-            "total_cost_display": "€0",
-          },
-          "completeFlow": [Function],
-          "context": Object {
-            "canonicalPath": "/jetpack/connect/plans/an.example.site",
-            "hash": Object {},
-            "init": true,
-            "params": Object {
-              "0": "/jetpack/connect/plans/an.example.site",
-              "site": "an.example.site",
-            },
-            "path": "/jetpack/connect/plans/an.example.site",
-            "pathname": "/jetpack/connect/plans/an.example.site",
-            "prevPath": false,
-            "query": Object {},
-            "querystring": "",
-            "state": Object {
-              "path": "/jetpack/connect/plans/an.example.site",
-            },
-            "store": Object {},
-            "title": "WordPress.com",
-          },
-          "flowType": false,
-          "getPlanBySlug": [Function],
-          "goBackToWpAdmin": [Function],
-          "hasPlan": true,
-          "isAutomatedTransfer": false,
-          "isRequestingPlans": false,
-          "isRtlLayout": false,
-          "jetpackConnectAuthorize": Object {},
-          "recordTracksEvent": [Function],
-          "redirectingToWpAdmin": false,
-          "selectPlanInAdvance": [Function],
-          "selectedSite": Object {
-            "ID": 1234567,
-            "URL": "http://an.example.site",
-            "canAutoupdateFiles": true,
-            "canManage": true,
-            "canUpdateFiles": true,
-            "capabilities": Object {
-              "activate_wordads": true,
-              "delete_others_posts": true,
-              "delete_posts": true,
-              "delete_users": false,
-              "edit_others_pages": true,
-              "edit_others_posts": true,
-              "edit_pages": true,
-              "edit_posts": true,
-              "edit_theme_options": true,
-              "edit_users": true,
-              "list_users": true,
-              "manage_categories": true,
-              "manage_options": true,
-              "moderate_comments": true,
-              "promote_users": true,
-              "publish_posts": true,
-              "remove_users": true,
-              "upload_files": true,
-              "view_stats": true,
-            },
-            "domain": "an.example.site",
-            "hasConflict": false,
-            "hasMinimumJetpackVersion": true,
-            "isMainNetworkSite": true,
-            "isSecondaryNetworkSite": false,
-            "isSiteUpgradeable": true,
-            "is_customizable": true,
-            "is_multisite": false,
-            "is_previewable": false,
-            "is_private": false,
-            "is_vip": false,
-            "jetpack": true,
-            "name": "Test Site",
-            "options": Object {
-              "active_modules": Array [
-                "after-the-deadline",
-                "contact-form",
-                "custom-content-types",
-                "custom-css",
-                "enhanced-distribution",
-                "gravatar-hovercards",
-                "json-api",
-                "latex",
-                "manage",
-                "notes",
-                "post-by-email",
-                "protect",
-                "publicize",
-                "sharedaddy",
-                "shortcodes",
-                "shortlinks",
-                "sitemaps",
-                "stats",
-                "subscriptions",
-                "verification-tools",
-                "widget-visibility",
-                "widgets",
-              ],
-              "admin_url": "http://an.example.site/wp-admin/",
-              "advanced_seo_front_page_description": "",
-              "advanced_seo_title_formats": Array [],
-              "allowed_file_types": Array [
-                "jpg",
-                "jpeg",
-                "png",
-                "gif",
-                "pdf",
-                "doc",
-                "ppt",
-                "odt",
-                "pptx",
-                "docx",
-                "pps",
-                "ppsx",
-                "xls",
-                "xlsx",
-                "key",
-              ],
-              "created_at": "2017-10-19T11:20:01+00:00",
-              "default_likes_enabled": true,
-              "default_post_format": "standard",
-              "default_sharing_status": false,
-              "file_mod_disabled": false,
-              "frame_nonce": "foobarbaz",
-              "gmt_offset": 0,
-              "is_automated_transfer": false,
-              "is_domain_only": false,
-              "is_mapped_domain": true,
-              "is_multi_network": false,
-              "is_multi_site": false,
-              "is_redirect": false,
-              "jetpack_version": "5.4",
-              "main_network_site": "http://an.example.site",
-              "max_upload_size": false,
-              "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
-              "podcasting_archive": null,
-              "publicize_permanently_disabled": false,
-              "show_on_front": "posts",
-              "software_version": "4.8.2",
-              "unmapped_url": "http://an.example.site",
-              "upgraded_filetypes_enabled": true,
-              "verification_services_codes": null,
-              "videopress_enabled": false,
-              "wordads": false,
-            },
-            "plan": Object {
-              "expired": false,
-              "free_trial": false,
-              "is_free": true,
-              "product_id": 2001,
-              "product_name_short": "Professional",
-              "product_slug": "jetpack_business",
-              "user_is_owner": false,
-            },
-            "single_user_site": false,
-            "slug": "an.example.site",
-            "title": "Test Site",
-            "visible": true,
-          },
-          "selectedSiteSlug": "an.example.site",
-          "showFirst": true,
-          "siteSlug": "*",
-          "transaction": Object {
-            "domainDetails": null,
-            "errors": Object {},
-            "newCardFormFields": Object {},
-            "step": Object {
-              "name": "before-submit",
-            },
-          },
-          "translate": [Function],
-          "userId": 98765,
-        },
-        "redirecting": false,
-        "refs": Object {},
-        "selectPlan": [Function],
-        "state": null,
-        "storeSelectedPlan": [Function],
-        "updater": Object {
-          "enqueueCallback": [Function],
-          "enqueueCallbackInternal": [Function],
-          "enqueueElementInternal": [Function],
-          "enqueueForceUpdate": [Function],
-          "enqueueReplaceState": [Function],
-          "enqueueSetState": [Function],
-          "isMounted": [Function],
-          "validateCallback": [Function],
-        },
-      },
-      "_mountOrder": 3,
-      "_pendingCallbacks": null,
-      "_pendingElement": null,
-      "_pendingForceUpdate": false,
-      "_pendingReplaceState": false,
-      "_pendingStateQueue": null,
-      "_renderedComponent": NoopInternalComponent {
-        "_currentElement": <div>
-          <components--data--query-plans />
-          <components--data--query-site-plans
-            siteId={1234567}
-          />
-          <Localized(JetpackPlansGrid)
-            basePlansPath="/jetpack/connect/authorize"
-            hideFreePlan={true}
-            interval={undefined}
-            isLanding={false}
-            onSelect={[Function]}
-            selectedSite={
-              Object {
-                "ID": 1234567,
-                "URL": "http://an.example.site",
-                "canAutoupdateFiles": true,
-                "canManage": true,
-                "canUpdateFiles": true,
-                "capabilities": Object {
-                  "activate_wordads": true,
-                  "delete_others_posts": true,
-                  "delete_posts": true,
-                  "delete_users": false,
-                  "edit_others_pages": true,
-                  "edit_others_posts": true,
-                  "edit_pages": true,
-                  "edit_posts": true,
-                  "edit_theme_options": true,
-                  "edit_users": true,
-                  "list_users": true,
-                  "manage_categories": true,
-                  "manage_options": true,
-                  "moderate_comments": true,
-                  "promote_users": true,
-                  "publish_posts": true,
-                  "remove_users": true,
-                  "upload_files": true,
-                  "view_stats": true,
-                },
-                "domain": "an.example.site",
-                "hasConflict": false,
-                "hasMinimumJetpackVersion": true,
-                "isMainNetworkSite": true,
-                "isSecondaryNetworkSite": false,
-                "isSiteUpgradeable": true,
-                "is_customizable": true,
-                "is_multisite": false,
-                "is_previewable": false,
-                "is_private": false,
-                "is_vip": false,
-                "jetpack": true,
-                "name": "Test Site",
-                "options": Object {
-                  "active_modules": Array [
-                    "after-the-deadline",
-                    "contact-form",
-                    "custom-content-types",
-                    "custom-css",
-                    "enhanced-distribution",
-                    "gravatar-hovercards",
-                    "json-api",
-                    "latex",
-                    "manage",
-                    "notes",
-                    "post-by-email",
-                    "protect",
-                    "publicize",
-                    "sharedaddy",
-                    "shortcodes",
-                    "shortlinks",
-                    "sitemaps",
-                    "stats",
-                    "subscriptions",
-                    "verification-tools",
-                    "widget-visibility",
-                    "widgets",
-                  ],
-                  "admin_url": "http://an.example.site/wp-admin/",
-                  "advanced_seo_front_page_description": "",
-                  "advanced_seo_title_formats": Array [],
-                  "allowed_file_types": Array [
-                    "jpg",
-                    "jpeg",
-                    "png",
-                    "gif",
-                    "pdf",
-                    "doc",
-                    "ppt",
-                    "odt",
-                    "pptx",
-                    "docx",
-                    "pps",
-                    "ppsx",
-                    "xls",
-                    "xlsx",
-                    "key",
-                  ],
-                  "created_at": "2017-10-19T11:20:01+00:00",
-                  "default_likes_enabled": true,
-                  "default_post_format": "standard",
-                  "default_sharing_status": false,
-                  "file_mod_disabled": false,
-                  "frame_nonce": "foobarbaz",
-                  "gmt_offset": 0,
-                  "is_automated_transfer": false,
-                  "is_domain_only": false,
-                  "is_mapped_domain": true,
-                  "is_multi_network": false,
-                  "is_multi_site": false,
-                  "is_redirect": false,
-                  "jetpack_version": "5.4",
-                  "main_network_site": "http://an.example.site",
-                  "max_upload_size": false,
-                  "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
-                  "podcasting_archive": null,
-                  "publicize_permanently_disabled": false,
-                  "show_on_front": "posts",
-                  "software_version": "4.8.2",
-                  "unmapped_url": "http://an.example.site",
-                  "upgraded_filetypes_enabled": true,
-                  "verification_services_codes": null,
-                  "videopress_enabled": false,
-                  "wordads": false,
-                },
-                "plan": Object {
-                  "expired": false,
-                  "free_trial": false,
-                  "is_free": true,
-                  "product_id": 2001,
-                  "product_name_short": "Professional",
-                  "product_slug": "jetpack_business",
-                  "user_is_owner": false,
-                },
-                "single_user_site": false,
-                "slug": "an.example.site",
-                "title": "Test Site",
-                "visible": true,
-              }
-            }
-            showFirst={true}
-          >
-            <Localized(PlansSkipButton)
-              isRtl={false}
-              onClick={[Function]}
-            />
-            <LoggedOutFormLinks>
-              <jetpack-connect--happychat-button
-                eventName="calypso_jpc_plans_chat_initiated"
-                label="Need help?"
-              >
-                <Localized(JetpackConnectHelpButton)
-                  label="Need help?"
-                  onClick={[Function]}
-                />
-              </jetpack-connect--happychat-button>
-            </LoggedOutFormLinks>
-          </Localized(JetpackPlansGrid)>
-        </div>,
-        "_debugID": 6,
-        "_renderedOutput": <div>
-          <components--data--query-plans />
-          <components--data--query-site-plans
-            siteId={1234567}
-          />
-          <Localized(JetpackPlansGrid)
-            basePlansPath="/jetpack/connect/authorize"
-            hideFreePlan={true}
-            interval={undefined}
-            isLanding={false}
-            onSelect={[Function]}
-            selectedSite={
-              Object {
-                "ID": 1234567,
-                "URL": "http://an.example.site",
-                "canAutoupdateFiles": true,
-                "canManage": true,
-                "canUpdateFiles": true,
-                "capabilities": Object {
-                  "activate_wordads": true,
-                  "delete_others_posts": true,
-                  "delete_posts": true,
-                  "delete_users": false,
-                  "edit_others_pages": true,
-                  "edit_others_posts": true,
-                  "edit_pages": true,
-                  "edit_posts": true,
-                  "edit_theme_options": true,
-                  "edit_users": true,
-                  "list_users": true,
-                  "manage_categories": true,
-                  "manage_options": true,
-                  "moderate_comments": true,
-                  "promote_users": true,
-                  "publish_posts": true,
-                  "remove_users": true,
-                  "upload_files": true,
-                  "view_stats": true,
-                },
-                "domain": "an.example.site",
-                "hasConflict": false,
-                "hasMinimumJetpackVersion": true,
-                "isMainNetworkSite": true,
-                "isSecondaryNetworkSite": false,
-                "isSiteUpgradeable": true,
-                "is_customizable": true,
-                "is_multisite": false,
-                "is_previewable": false,
-                "is_private": false,
-                "is_vip": false,
-                "jetpack": true,
-                "name": "Test Site",
-                "options": Object {
-                  "active_modules": Array [
-                    "after-the-deadline",
-                    "contact-form",
-                    "custom-content-types",
-                    "custom-css",
-                    "enhanced-distribution",
-                    "gravatar-hovercards",
-                    "json-api",
-                    "latex",
-                    "manage",
-                    "notes",
-                    "post-by-email",
-                    "protect",
-                    "publicize",
-                    "sharedaddy",
-                    "shortcodes",
-                    "shortlinks",
-                    "sitemaps",
-                    "stats",
-                    "subscriptions",
-                    "verification-tools",
-                    "widget-visibility",
-                    "widgets",
-                  ],
-                  "admin_url": "http://an.example.site/wp-admin/",
-                  "advanced_seo_front_page_description": "",
-                  "advanced_seo_title_formats": Array [],
-                  "allowed_file_types": Array [
-                    "jpg",
-                    "jpeg",
-                    "png",
-                    "gif",
-                    "pdf",
-                    "doc",
-                    "ppt",
-                    "odt",
-                    "pptx",
-                    "docx",
-                    "pps",
-                    "ppsx",
-                    "xls",
-                    "xlsx",
-                    "key",
-                  ],
-                  "created_at": "2017-10-19T11:20:01+00:00",
-                  "default_likes_enabled": true,
-                  "default_post_format": "standard",
-                  "default_sharing_status": false,
-                  "file_mod_disabled": false,
-                  "frame_nonce": "foobarbaz",
-                  "gmt_offset": 0,
-                  "is_automated_transfer": false,
-                  "is_domain_only": false,
-                  "is_mapped_domain": true,
-                  "is_multi_network": false,
-                  "is_multi_site": false,
-                  "is_redirect": false,
-                  "jetpack_version": "5.4",
-                  "main_network_site": "http://an.example.site",
-                  "max_upload_size": false,
-                  "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
-                  "podcasting_archive": null,
-                  "publicize_permanently_disabled": false,
-                  "show_on_front": "posts",
-                  "software_version": "4.8.2",
-                  "unmapped_url": "http://an.example.site",
-                  "upgraded_filetypes_enabled": true,
-                  "verification_services_codes": null,
-                  "videopress_enabled": false,
-                  "wordads": false,
-                },
-                "plan": Object {
-                  "expired": false,
-                  "free_trial": false,
-                  "is_free": true,
-                  "product_id": 2001,
-                  "product_name_short": "Professional",
-                  "product_slug": "jetpack_business",
-                  "user_is_owner": false,
-                },
-                "single_user_site": false,
-                "slug": "an.example.site",
-                "title": "Test Site",
-                "visible": true,
-              }
-            }
-            showFirst={true}
-          >
-            <Localized(PlansSkipButton)
-              isRtl={false}
-              onClick={[Function]}
-            />
-            <LoggedOutFormLinks>
-              <jetpack-connect--happychat-button
-                eventName="calypso_jpc_plans_chat_initiated"
-                label="Need help?"
-              >
-                <Localized(JetpackConnectHelpButton)
-                  label="Need help?"
-                  onClick={[Function]}
-                />
-              </jetpack-connect--happychat-button>
-            </LoggedOutFormLinks>
-          </Localized(JetpackPlansGrid)>
-        </div>,
-      },
-      "_renderedNodeType": 0,
-      "_rootNodeID": 0,
-      "_topLevelWrapper": null,
-      "_updateBatchNumber": null,
-      "_warnedAboutRefsInRender": false,
-    },
-    "getRenderOutput": [Function],
-    "render": [Function],
-  },
-  "root": [Circular],
-  "unrendered": <Plans
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <Plans
     basePlansPath="/jetpack/connect/plans"
     calypsoStartedConnection={false}
     canPurchasePlans={true}
@@ -2010,624 +468,226 @@ ShallowWrapper {
     translate={[Function]}
     userId={98765}
   />,
-}
-`;
-
-exports[`Plans should render with no plan (free) 1`] = `
-ShallowWrapper {
-  "complexSelector": ComplexSelector {
-    "buildPredicate": [Function],
-    "childrenOfNode": [Function],
-    "findWhereUnwrapped": [Function],
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
   },
-  "length": 1,
-  "node": <div>
-    <components--data--query-plans />
-    <components--data--query-site-plans
-      siteId={1234567}
-    />
-    <Localized(JetpackPlansGrid)
-      basePlansPath="/jetpack/connect/plans"
-      hideFreePlan={true}
-      interval={undefined}
-      isLanding={false}
-      onSelect={[Function]}
-      selectedSite={
-        Object {
-          "ID": 1234567,
-          "URL": "http://an.example.site",
-          "canAutoupdateFiles": true,
-          "canManage": true,
-          "canUpdateFiles": true,
-          "capabilities": Object {
-            "activate_wordads": true,
-            "delete_others_posts": true,
-            "delete_posts": true,
-            "delete_users": false,
-            "edit_others_pages": true,
-            "edit_others_posts": true,
-            "edit_pages": true,
-            "edit_posts": true,
-            "edit_theme_options": true,
-            "edit_users": true,
-            "list_users": true,
-            "manage_categories": true,
-            "manage_options": true,
-            "moderate_comments": true,
-            "promote_users": true,
-            "publish_posts": true,
-            "remove_users": true,
-            "upload_files": true,
-            "view_stats": true,
-          },
-          "domain": "an.example.site",
-          "hasConflict": false,
-          "hasMinimumJetpackVersion": true,
-          "isMainNetworkSite": true,
-          "isSecondaryNetworkSite": false,
-          "isSiteUpgradeable": true,
-          "is_customizable": true,
-          "is_multisite": false,
-          "is_previewable": false,
-          "is_private": false,
-          "is_vip": false,
-          "jetpack": true,
-          "name": "Test Site",
-          "options": Object {
-            "active_modules": Array [
-              "after-the-deadline",
-              "contact-form",
-              "custom-content-types",
-              "custom-css",
-              "enhanced-distribution",
-              "gravatar-hovercards",
-              "json-api",
-              "latex",
-              "manage",
-              "notes",
-              "post-by-email",
-              "protect",
-              "publicize",
-              "sharedaddy",
-              "shortcodes",
-              "shortlinks",
-              "sitemaps",
-              "stats",
-              "subscriptions",
-              "verification-tools",
-              "widget-visibility",
-              "widgets",
-            ],
-            "admin_url": "http://an.example.site/wp-admin/",
-            "advanced_seo_front_page_description": "",
-            "advanced_seo_title_formats": Array [],
-            "allowed_file_types": Array [
-              "jpg",
-              "jpeg",
-              "png",
-              "gif",
-              "pdf",
-              "doc",
-              "ppt",
-              "odt",
-              "pptx",
-              "docx",
-              "pps",
-              "ppsx",
-              "xls",
-              "xlsx",
-              "key",
-            ],
-            "created_at": "2017-10-19T11:20:01+00:00",
-            "default_likes_enabled": true,
-            "default_post_format": "standard",
-            "default_sharing_status": false,
-            "file_mod_disabled": false,
-            "frame_nonce": "foobarbaz",
-            "gmt_offset": 0,
-            "is_automated_transfer": false,
-            "is_domain_only": false,
-            "is_mapped_domain": true,
-            "is_multi_network": false,
-            "is_multi_site": false,
-            "is_redirect": false,
-            "jetpack_version": "5.4",
-            "main_network_site": "http://an.example.site",
-            "max_upload_size": false,
-            "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
-            "podcasting_archive": null,
-            "publicize_permanently_disabled": false,
-            "show_on_front": "posts",
-            "software_version": "4.8.2",
-            "unmapped_url": "http://an.example.site",
-            "upgraded_filetypes_enabled": true,
-            "verification_services_codes": null,
-            "videopress_enabled": false,
-            "wordads": false,
-          },
-          "plan": Object {
-            "expired": false,
-            "free_trial": false,
-            "is_free": true,
-            "product_id": 2002,
-            "product_name_short": "Free",
-            "product_slug": "jetpack_free",
-            "user_is_owner": false,
-          },
-          "single_user_site": false,
-          "slug": "an.example.site",
-          "title": "Test Site",
-          "visible": true,
-        }
-      }
-      showFirst={undefined}
-    >
-      <Localized(PlansSkipButton)
-        isRtl={false}
-        onClick={[Function]}
-      />
-      <LoggedOutFormLinks>
-        <jetpack-connect--happychat-button
-          eventName="calypso_jpc_plans_chat_initiated"
-          label="Need help?"
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": null,
+    "nodeType": "host",
+    "props": Object {
+      "children": Array [
+        <components--data--query-plans />,
+        <components--data--query-site-plans
+          siteId={1234567}
+        />,
+        <Localized(JetpackPlansGrid)
+          basePlansPath="/jetpack/connect/authorize"
+          hideFreePlan={true}
+          interval={undefined}
+          isLanding={false}
+          onSelect={[Function]}
+          selectedSite={
+            Object {
+              "ID": 1234567,
+              "URL": "http://an.example.site",
+              "canAutoupdateFiles": true,
+              "canManage": true,
+              "canUpdateFiles": true,
+              "capabilities": Object {
+                "activate_wordads": true,
+                "delete_others_posts": true,
+                "delete_posts": true,
+                "delete_users": false,
+                "edit_others_pages": true,
+                "edit_others_posts": true,
+                "edit_pages": true,
+                "edit_posts": true,
+                "edit_theme_options": true,
+                "edit_users": true,
+                "list_users": true,
+                "manage_categories": true,
+                "manage_options": true,
+                "moderate_comments": true,
+                "promote_users": true,
+                "publish_posts": true,
+                "remove_users": true,
+                "upload_files": true,
+                "view_stats": true,
+              },
+              "domain": "an.example.site",
+              "hasConflict": false,
+              "hasMinimumJetpackVersion": true,
+              "isMainNetworkSite": true,
+              "isSecondaryNetworkSite": false,
+              "isSiteUpgradeable": true,
+              "is_customizable": true,
+              "is_multisite": false,
+              "is_previewable": false,
+              "is_private": false,
+              "is_vip": false,
+              "jetpack": true,
+              "name": "Test Site",
+              "options": Object {
+                "active_modules": Array [
+                  "after-the-deadline",
+                  "contact-form",
+                  "custom-content-types",
+                  "custom-css",
+                  "enhanced-distribution",
+                  "gravatar-hovercards",
+                  "json-api",
+                  "latex",
+                  "manage",
+                  "notes",
+                  "post-by-email",
+                  "protect",
+                  "publicize",
+                  "sharedaddy",
+                  "shortcodes",
+                  "shortlinks",
+                  "sitemaps",
+                  "stats",
+                  "subscriptions",
+                  "verification-tools",
+                  "widget-visibility",
+                  "widgets",
+                ],
+                "admin_url": "http://an.example.site/wp-admin/",
+                "advanced_seo_front_page_description": "",
+                "advanced_seo_title_formats": Array [],
+                "allowed_file_types": Array [
+                  "jpg",
+                  "jpeg",
+                  "png",
+                  "gif",
+                  "pdf",
+                  "doc",
+                  "ppt",
+                  "odt",
+                  "pptx",
+                  "docx",
+                  "pps",
+                  "ppsx",
+                  "xls",
+                  "xlsx",
+                  "key",
+                ],
+                "created_at": "2017-10-19T11:20:01+00:00",
+                "default_likes_enabled": true,
+                "default_post_format": "standard",
+                "default_sharing_status": false,
+                "file_mod_disabled": false,
+                "frame_nonce": "foobarbaz",
+                "gmt_offset": 0,
+                "is_automated_transfer": false,
+                "is_domain_only": false,
+                "is_mapped_domain": true,
+                "is_multi_network": false,
+                "is_multi_site": false,
+                "is_redirect": false,
+                "jetpack_version": "5.4",
+                "main_network_site": "http://an.example.site",
+                "max_upload_size": false,
+                "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
+                "podcasting_archive": null,
+                "publicize_permanently_disabled": false,
+                "show_on_front": "posts",
+                "software_version": "4.8.2",
+                "unmapped_url": "http://an.example.site",
+                "upgraded_filetypes_enabled": true,
+                "verification_services_codes": null,
+                "videopress_enabled": false,
+                "wordads": false,
+              },
+              "plan": Object {
+                "expired": false,
+                "free_trial": false,
+                "is_free": true,
+                "product_id": 2001,
+                "product_name_short": "Professional",
+                "product_slug": "jetpack_business",
+                "user_is_owner": false,
+              },
+              "single_user_site": false,
+              "slug": "an.example.site",
+              "title": "Test Site",
+              "visible": true,
+            }
+          }
+          showFirst={true}
         >
-          <Localized(JetpackConnectHelpButton)
-            label="Need help?"
+          <Localized(PlansSkipButton)
+            isRtl={false}
             onClick={[Function]}
           />
-        </jetpack-connect--happychat-button>
-      </LoggedOutFormLinks>
-    </Localized(JetpackPlansGrid)>
-  </div>,
-  "nodes": Array [
-    <div>
-      <components--data--query-plans />
-      <components--data--query-site-plans
-        siteId={1234567}
-      />
-      <Localized(JetpackPlansGrid)
-        basePlansPath="/jetpack/connect/plans"
-        hideFreePlan={true}
-        interval={undefined}
-        isLanding={false}
-        onSelect={[Function]}
-        selectedSite={
-          Object {
-            "ID": 1234567,
-            "URL": "http://an.example.site",
-            "canAutoupdateFiles": true,
-            "canManage": true,
-            "canUpdateFiles": true,
-            "capabilities": Object {
-              "activate_wordads": true,
-              "delete_others_posts": true,
-              "delete_posts": true,
-              "delete_users": false,
-              "edit_others_pages": true,
-              "edit_others_posts": true,
-              "edit_pages": true,
-              "edit_posts": true,
-              "edit_theme_options": true,
-              "edit_users": true,
-              "list_users": true,
-              "manage_categories": true,
-              "manage_options": true,
-              "moderate_comments": true,
-              "promote_users": true,
-              "publish_posts": true,
-              "remove_users": true,
-              "upload_files": true,
-              "view_stats": true,
-            },
-            "domain": "an.example.site",
-            "hasConflict": false,
-            "hasMinimumJetpackVersion": true,
-            "isMainNetworkSite": true,
-            "isSecondaryNetworkSite": false,
-            "isSiteUpgradeable": true,
-            "is_customizable": true,
-            "is_multisite": false,
-            "is_previewable": false,
-            "is_private": false,
-            "is_vip": false,
-            "jetpack": true,
-            "name": "Test Site",
-            "options": Object {
-              "active_modules": Array [
-                "after-the-deadline",
-                "contact-form",
-                "custom-content-types",
-                "custom-css",
-                "enhanced-distribution",
-                "gravatar-hovercards",
-                "json-api",
-                "latex",
-                "manage",
-                "notes",
-                "post-by-email",
-                "protect",
-                "publicize",
-                "sharedaddy",
-                "shortcodes",
-                "shortlinks",
-                "sitemaps",
-                "stats",
-                "subscriptions",
-                "verification-tools",
-                "widget-visibility",
-                "widgets",
-              ],
-              "admin_url": "http://an.example.site/wp-admin/",
-              "advanced_seo_front_page_description": "",
-              "advanced_seo_title_formats": Array [],
-              "allowed_file_types": Array [
-                "jpg",
-                "jpeg",
-                "png",
-                "gif",
-                "pdf",
-                "doc",
-                "ppt",
-                "odt",
-                "pptx",
-                "docx",
-                "pps",
-                "ppsx",
-                "xls",
-                "xlsx",
-                "key",
-              ],
-              "created_at": "2017-10-19T11:20:01+00:00",
-              "default_likes_enabled": true,
-              "default_post_format": "standard",
-              "default_sharing_status": false,
-              "file_mod_disabled": false,
-              "frame_nonce": "foobarbaz",
-              "gmt_offset": 0,
-              "is_automated_transfer": false,
-              "is_domain_only": false,
-              "is_mapped_domain": true,
-              "is_multi_network": false,
-              "is_multi_site": false,
-              "is_redirect": false,
-              "jetpack_version": "5.4",
-              "main_network_site": "http://an.example.site",
-              "max_upload_size": false,
-              "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
-              "podcasting_archive": null,
-              "publicize_permanently_disabled": false,
-              "show_on_front": "posts",
-              "software_version": "4.8.2",
-              "unmapped_url": "http://an.example.site",
-              "upgraded_filetypes_enabled": true,
-              "verification_services_codes": null,
-              "videopress_enabled": false,
-              "wordads": false,
-            },
-            "plan": Object {
-              "expired": false,
-              "free_trial": false,
-              "is_free": true,
-              "product_id": 2002,
-              "product_name_short": "Free",
-              "product_slug": "jetpack_free",
-              "user_is_owner": false,
-            },
-            "single_user_site": false,
-            "slug": "an.example.site",
-            "title": "Test Site",
-            "visible": true,
-          }
-        }
-        showFirst={undefined}
-      >
-        <Localized(PlansSkipButton)
-          isRtl={false}
-          onClick={[Function]}
-        />
-        <LoggedOutFormLinks>
-          <jetpack-connect--happychat-button
-            eventName="calypso_jpc_plans_chat_initiated"
-            label="Need help?"
-          >
-            <Localized(JetpackConnectHelpButton)
+          <LoggedOutFormLinks>
+            <jetpack-connect--happychat-button
+              eventName="calypso_jpc_plans_chat_initiated"
               label="Need help?"
-              onClick={[Function]}
-            />
-          </jetpack-connect--happychat-button>
-        </LoggedOutFormLinks>
-      </Localized(JetpackPlansGrid)>
-    </div>,
-  ],
-  "options": Object {},
-  "renderer": ReactShallowRenderer {
-    "_instance": ShallowComponentWrapper {
-      "_calledComponentWillUnmount": false,
-      "_compositeType": 0,
-      "_context": Object {},
-      "_currentElement": <Plans
-        basePlansPath="/jetpack/connect/plans"
-        calypsoStartedConnection={false}
-        canPurchasePlans={true}
-        cart={
-          Object {
-            "allowed_payment_methods": Array [
-              "WPCOM_Billing_PayPal_Express",
-              "WPCOM_Billing_MoneyPress_Paygate",
-              "WPCOM_Billing_Stripe_Source_Ideal",
-            ],
-            "blog_id": 1234567,
-            "cart_key": "1234567",
-            "client_metadata": Object {
-              "last_server_response_date": "2017-10-19T11:45:21.862Z",
-            },
-            "coupon": "",
-            "create_new_blog": false,
-            "credits": 0,
-            "currency": "EUR",
-            "hasLoadedFromServer": true,
-            "hasPendingServerUpdates": false,
-            "has_bundle_credit": false,
-            "is_coupon_applied": false,
-            "messages": Object {
-              "errors": Array [],
-              "success": Array [],
-            },
-            "next_domain_is_free": false,
-            "products": Array [],
-            "temporary": false,
-            "total_cost": 0,
-            "total_cost_display": "€0",
-          }
-        }
-        completeFlow={[Function]}
-        context={
-          Object {
-            "canonicalPath": "/jetpack/connect/plans/an.example.site",
-            "hash": Object {},
-            "init": true,
-            "params": Object {
-              "0": "/jetpack/connect/plans/an.example.site",
-              "site": "an.example.site",
-            },
-            "path": "/jetpack/connect/plans/an.example.site",
-            "pathname": "/jetpack/connect/plans/an.example.site",
-            "prevPath": false,
-            "query": Object {},
-            "querystring": "",
-            "state": Object {
-              "path": "/jetpack/connect/plans/an.example.site",
-            },
-            "store": Object {},
-            "title": "WordPress.com",
-          }
-        }
-        flowType={false}
-        getPlanBySlug={[Function]}
-        goBackToWpAdmin={[Function]}
-        hasPlan={false}
-        isAutomatedTransfer={false}
-        isRequestingPlans={false}
-        isRtlLayout={false}
-        jetpackConnectAuthorize={Object {}}
-        recordTracksEvent={[Function]}
-        redirectingToWpAdmin={false}
-        selectPlanInAdvance={[Function]}
-        selectedSite={
-          Object {
-            "ID": 1234567,
-            "URL": "http://an.example.site",
-            "canAutoupdateFiles": true,
-            "canManage": true,
-            "canUpdateFiles": true,
-            "capabilities": Object {
-              "activate_wordads": true,
-              "delete_others_posts": true,
-              "delete_posts": true,
-              "delete_users": false,
-              "edit_others_pages": true,
-              "edit_others_posts": true,
-              "edit_pages": true,
-              "edit_posts": true,
-              "edit_theme_options": true,
-              "edit_users": true,
-              "list_users": true,
-              "manage_categories": true,
-              "manage_options": true,
-              "moderate_comments": true,
-              "promote_users": true,
-              "publish_posts": true,
-              "remove_users": true,
-              "upload_files": true,
-              "view_stats": true,
-            },
-            "domain": "an.example.site",
-            "hasConflict": false,
-            "hasMinimumJetpackVersion": true,
-            "isMainNetworkSite": true,
-            "isSecondaryNetworkSite": false,
-            "isSiteUpgradeable": true,
-            "is_customizable": true,
-            "is_multisite": false,
-            "is_previewable": false,
-            "is_private": false,
-            "is_vip": false,
-            "jetpack": true,
-            "name": "Test Site",
-            "options": Object {
-              "active_modules": Array [
-                "after-the-deadline",
-                "contact-form",
-                "custom-content-types",
-                "custom-css",
-                "enhanced-distribution",
-                "gravatar-hovercards",
-                "json-api",
-                "latex",
-                "manage",
-                "notes",
-                "post-by-email",
-                "protect",
-                "publicize",
-                "sharedaddy",
-                "shortcodes",
-                "shortlinks",
-                "sitemaps",
-                "stats",
-                "subscriptions",
-                "verification-tools",
-                "widget-visibility",
-                "widgets",
-              ],
-              "admin_url": "http://an.example.site/wp-admin/",
-              "advanced_seo_front_page_description": "",
-              "advanced_seo_title_formats": Array [],
-              "allowed_file_types": Array [
-                "jpg",
-                "jpeg",
-                "png",
-                "gif",
-                "pdf",
-                "doc",
-                "ppt",
-                "odt",
-                "pptx",
-                "docx",
-                "pps",
-                "ppsx",
-                "xls",
-                "xlsx",
-                "key",
-              ],
-              "created_at": "2017-10-19T11:20:01+00:00",
-              "default_likes_enabled": true,
-              "default_post_format": "standard",
-              "default_sharing_status": false,
-              "file_mod_disabled": false,
-              "frame_nonce": "foobarbaz",
-              "gmt_offset": 0,
-              "is_automated_transfer": false,
-              "is_domain_only": false,
-              "is_mapped_domain": true,
-              "is_multi_network": false,
-              "is_multi_site": false,
-              "is_redirect": false,
-              "jetpack_version": "5.4",
-              "main_network_site": "http://an.example.site",
-              "max_upload_size": false,
-              "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
-              "podcasting_archive": null,
-              "publicize_permanently_disabled": false,
-              "show_on_front": "posts",
-              "software_version": "4.8.2",
-              "unmapped_url": "http://an.example.site",
-              "upgraded_filetypes_enabled": true,
-              "verification_services_codes": null,
-              "videopress_enabled": false,
-              "wordads": false,
-            },
-            "plan": Object {
-              "expired": false,
-              "free_trial": false,
-              "is_free": true,
-              "product_id": 2002,
-              "product_name_short": "Free",
-              "product_slug": "jetpack_free",
-              "user_is_owner": false,
-            },
-            "single_user_site": false,
-            "slug": "an.example.site",
-            "title": "Test Site",
-            "visible": true,
-          }
-        }
-        selectedSiteSlug="an.example.site"
-        siteSlug="*"
-        transaction={
-          Object {
-            "domainDetails": null,
-            "errors": Object {},
-            "newCardFormFields": Object {},
-            "step": Object {
-              "name": "before-submit",
-            },
-          }
-        }
-        translate={[Function]}
-        userId={98765}
-      />,
-      "_debugID": 1,
-      "_hostContainerInfo": null,
-      "_hostParent": null,
-      "_instance": Plans {
-        "_reactInternalInstance": [Circular],
-        "context": Object {},
-        "handleHelpButtonClick": [Function],
-        "handleSkipButtonClick": [Function],
+            >
+              <Localized(JetpackConnectHelpButton)
+                label="Need help?"
+                onClick={[Function]}
+              />
+            </jetpack-connect--happychat-button>
+          </LoggedOutFormLinks>
+        </Localized(JetpackPlansGrid)>,
+      ],
+    },
+    "ref": null,
+    "rendered": Array [
+      Object {
+        "instance": null,
+        "key": null,
+        "nodeType": "host",
+        "props": Object {},
+        "ref": null,
+        "rendered": null,
+        "type": "components--data--query-plans",
+      },
+      Object {
+        "instance": null,
+        "key": null,
+        "nodeType": "host",
         "props": Object {
-          "basePlansPath": "/jetpack/connect/plans",
-          "calypsoStartedConnection": false,
-          "canPurchasePlans": true,
-          "cart": Object {
-            "allowed_payment_methods": Array [
-              "WPCOM_Billing_PayPal_Express",
-              "WPCOM_Billing_MoneyPress_Paygate",
-              "WPCOM_Billing_Stripe_Source_Ideal",
-            ],
-            "blog_id": 1234567,
-            "cart_key": "1234567",
-            "client_metadata": Object {
-              "last_server_response_date": "2017-10-19T11:45:21.862Z",
-            },
-            "coupon": "",
-            "create_new_blog": false,
-            "credits": 0,
-            "currency": "EUR",
-            "hasLoadedFromServer": true,
-            "hasPendingServerUpdates": false,
-            "has_bundle_credit": false,
-            "is_coupon_applied": false,
-            "messages": Object {
-              "errors": Array [],
-              "success": Array [],
-            },
-            "next_domain_is_free": false,
-            "products": Array [],
-            "temporary": false,
-            "total_cost": 0,
-            "total_cost_display": "€0",
-          },
-          "completeFlow": [Function],
-          "context": Object {
-            "canonicalPath": "/jetpack/connect/plans/an.example.site",
-            "hash": Object {},
-            "init": true,
-            "params": Object {
-              "0": "/jetpack/connect/plans/an.example.site",
-              "site": "an.example.site",
-            },
-            "path": "/jetpack/connect/plans/an.example.site",
-            "pathname": "/jetpack/connect/plans/an.example.site",
-            "prevPath": false,
-            "query": Object {},
-            "querystring": "",
-            "state": Object {
-              "path": "/jetpack/connect/plans/an.example.site",
-            },
-            "store": Object {},
-            "title": "WordPress.com",
-          },
-          "flowType": false,
-          "getPlanBySlug": [Function],
-          "goBackToWpAdmin": [Function],
-          "hasPlan": false,
-          "isAutomatedTransfer": false,
-          "isRequestingPlans": false,
-          "isRtlLayout": false,
-          "jetpackConnectAuthorize": Object {},
-          "recordTracksEvent": [Function],
-          "redirectingToWpAdmin": false,
-          "selectPlanInAdvance": [Function],
+          "siteId": 1234567,
+        },
+        "ref": null,
+        "rendered": null,
+        "type": "components--data--query-site-plans",
+      },
+      Object {
+        "instance": null,
+        "key": null,
+        "nodeType": "class",
+        "props": Object {
+          "basePlansPath": "/jetpack/connect/authorize",
+          "children": Array [
+            <Localized(PlansSkipButton)
+              isRtl={false}
+              onClick={[Function]}
+            />,
+            <LoggedOutFormLinks>
+              <jetpack-connect--happychat-button
+                eventName="calypso_jpc_plans_chat_initiated"
+                label="Need help?"
+              >
+                <Localized(JetpackConnectHelpButton)
+                  label="Need help?"
+                  onClick={[Function]}
+                />
+              </jetpack-connect--happychat-button>
+            </LoggedOutFormLinks>,
+          ],
+          "hideFreePlan": true,
+          "interval": undefined,
+          "isLanding": false,
+          "onSelect": [Function],
           "selectedSite": Object {
             "ID": 1234567,
             "URL": "http://an.example.site",
@@ -2744,9 +804,9 @@ ShallowWrapper {
               "expired": false,
               "free_trial": false,
               "is_free": true,
-              "product_id": 2002,
-              "product_name_short": "Free",
-              "product_slug": "jetpack_free",
+              "product_id": 2001,
+              "product_name_short": "Professional",
+              "product_slug": "jetpack_business",
               "user_is_owner": false,
             },
             "single_user_site": false,
@@ -2754,189 +814,28 @@ ShallowWrapper {
             "title": "Test Site",
             "visible": true,
           },
-          "selectedSiteSlug": "an.example.site",
-          "siteSlug": "*",
-          "transaction": Object {
-            "domainDetails": null,
-            "errors": Object {},
-            "newCardFormFields": Object {},
-            "step": Object {
-              "name": "before-submit",
+          "showFirst": true,
+        },
+        "ref": null,
+        "rendered": Array [
+          Object {
+            "instance": null,
+            "key": null,
+            "nodeType": "class",
+            "props": Object {
+              "isRtl": false,
+              "onClick": [Function],
             },
+            "ref": null,
+            "rendered": null,
+            "type": [Function],
           },
-          "translate": [Function],
-          "userId": 98765,
-        },
-        "redirecting": false,
-        "refs": Object {},
-        "selectPlan": [Function],
-        "state": null,
-        "storeSelectedPlan": [Function],
-        "updater": Object {
-          "enqueueCallback": [Function],
-          "enqueueCallbackInternal": [Function],
-          "enqueueElementInternal": [Function],
-          "enqueueForceUpdate": [Function],
-          "enqueueReplaceState": [Function],
-          "enqueueSetState": [Function],
-          "isMounted": [Function],
-          "validateCallback": [Function],
-        },
-      },
-      "_mountOrder": 1,
-      "_pendingCallbacks": null,
-      "_pendingElement": null,
-      "_pendingForceUpdate": false,
-      "_pendingReplaceState": false,
-      "_pendingStateQueue": null,
-      "_renderedComponent": NoopInternalComponent {
-        "_currentElement": <div>
-          <components--data--query-plans />
-          <components--data--query-site-plans
-            siteId={1234567}
-          />
-          <Localized(JetpackPlansGrid)
-            basePlansPath="/jetpack/connect/plans"
-            hideFreePlan={true}
-            interval={undefined}
-            isLanding={false}
-            onSelect={[Function]}
-            selectedSite={
-              Object {
-                "ID": 1234567,
-                "URL": "http://an.example.site",
-                "canAutoupdateFiles": true,
-                "canManage": true,
-                "canUpdateFiles": true,
-                "capabilities": Object {
-                  "activate_wordads": true,
-                  "delete_others_posts": true,
-                  "delete_posts": true,
-                  "delete_users": false,
-                  "edit_others_pages": true,
-                  "edit_others_posts": true,
-                  "edit_pages": true,
-                  "edit_posts": true,
-                  "edit_theme_options": true,
-                  "edit_users": true,
-                  "list_users": true,
-                  "manage_categories": true,
-                  "manage_options": true,
-                  "moderate_comments": true,
-                  "promote_users": true,
-                  "publish_posts": true,
-                  "remove_users": true,
-                  "upload_files": true,
-                  "view_stats": true,
-                },
-                "domain": "an.example.site",
-                "hasConflict": false,
-                "hasMinimumJetpackVersion": true,
-                "isMainNetworkSite": true,
-                "isSecondaryNetworkSite": false,
-                "isSiteUpgradeable": true,
-                "is_customizable": true,
-                "is_multisite": false,
-                "is_previewable": false,
-                "is_private": false,
-                "is_vip": false,
-                "jetpack": true,
-                "name": "Test Site",
-                "options": Object {
-                  "active_modules": Array [
-                    "after-the-deadline",
-                    "contact-form",
-                    "custom-content-types",
-                    "custom-css",
-                    "enhanced-distribution",
-                    "gravatar-hovercards",
-                    "json-api",
-                    "latex",
-                    "manage",
-                    "notes",
-                    "post-by-email",
-                    "protect",
-                    "publicize",
-                    "sharedaddy",
-                    "shortcodes",
-                    "shortlinks",
-                    "sitemaps",
-                    "stats",
-                    "subscriptions",
-                    "verification-tools",
-                    "widget-visibility",
-                    "widgets",
-                  ],
-                  "admin_url": "http://an.example.site/wp-admin/",
-                  "advanced_seo_front_page_description": "",
-                  "advanced_seo_title_formats": Array [],
-                  "allowed_file_types": Array [
-                    "jpg",
-                    "jpeg",
-                    "png",
-                    "gif",
-                    "pdf",
-                    "doc",
-                    "ppt",
-                    "odt",
-                    "pptx",
-                    "docx",
-                    "pps",
-                    "ppsx",
-                    "xls",
-                    "xlsx",
-                    "key",
-                  ],
-                  "created_at": "2017-10-19T11:20:01+00:00",
-                  "default_likes_enabled": true,
-                  "default_post_format": "standard",
-                  "default_sharing_status": false,
-                  "file_mod_disabled": false,
-                  "frame_nonce": "foobarbaz",
-                  "gmt_offset": 0,
-                  "is_automated_transfer": false,
-                  "is_domain_only": false,
-                  "is_mapped_domain": true,
-                  "is_multi_network": false,
-                  "is_multi_site": false,
-                  "is_redirect": false,
-                  "jetpack_version": "5.4",
-                  "main_network_site": "http://an.example.site",
-                  "max_upload_size": false,
-                  "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
-                  "podcasting_archive": null,
-                  "publicize_permanently_disabled": false,
-                  "show_on_front": "posts",
-                  "software_version": "4.8.2",
-                  "unmapped_url": "http://an.example.site",
-                  "upgraded_filetypes_enabled": true,
-                  "verification_services_codes": null,
-                  "videopress_enabled": false,
-                  "wordads": false,
-                },
-                "plan": Object {
-                  "expired": false,
-                  "free_trial": false,
-                  "is_free": true,
-                  "product_id": 2002,
-                  "product_name_short": "Free",
-                  "product_slug": "jetpack_free",
-                  "user_is_owner": false,
-                },
-                "single_user_site": false,
-                "slug": "an.example.site",
-                "title": "Test Site",
-                "visible": true,
-              }
-            }
-            showFirst={undefined}
-          >
-            <Localized(PlansSkipButton)
-              isRtl={false}
-              onClick={[Function]}
-            />
-            <LoggedOutFormLinks>
-              <jetpack-connect--happychat-button
+          Object {
+            "instance": null,
+            "key": null,
+            "nodeType": "class",
+            "props": Object {
+              "children": <jetpack-connect--happychat-button
                 eventName="calypso_jpc_plans_chat_initiated"
                 label="Need help?"
               >
@@ -2944,181 +843,467 @@ ShallowWrapper {
                   label="Need help?"
                   onClick={[Function]}
                 />
-              </jetpack-connect--happychat-button>
-            </LoggedOutFormLinks>
-          </Localized(JetpackPlansGrid)>
-        </div>,
-        "_debugID": 2,
-        "_renderedOutput": <div>
-          <components--data--query-plans />
-          <components--data--query-site-plans
-            siteId={1234567}
-          />
-          <Localized(JetpackPlansGrid)
-            basePlansPath="/jetpack/connect/plans"
-            hideFreePlan={true}
-            interval={undefined}
-            isLanding={false}
-            onSelect={[Function]}
-            selectedSite={
-              Object {
-                "ID": 1234567,
-                "URL": "http://an.example.site",
-                "canAutoupdateFiles": true,
-                "canManage": true,
-                "canUpdateFiles": true,
-                "capabilities": Object {
-                  "activate_wordads": true,
-                  "delete_others_posts": true,
-                  "delete_posts": true,
-                  "delete_users": false,
-                  "edit_others_pages": true,
-                  "edit_others_posts": true,
-                  "edit_pages": true,
-                  "edit_posts": true,
-                  "edit_theme_options": true,
-                  "edit_users": true,
-                  "list_users": true,
-                  "manage_categories": true,
-                  "manage_options": true,
-                  "moderate_comments": true,
-                  "promote_users": true,
-                  "publish_posts": true,
-                  "remove_users": true,
-                  "upload_files": true,
-                  "view_stats": true,
-                },
-                "domain": "an.example.site",
-                "hasConflict": false,
-                "hasMinimumJetpackVersion": true,
-                "isMainNetworkSite": true,
-                "isSecondaryNetworkSite": false,
-                "isSiteUpgradeable": true,
-                "is_customizable": true,
-                "is_multisite": false,
-                "is_previewable": false,
-                "is_private": false,
-                "is_vip": false,
-                "jetpack": true,
-                "name": "Test Site",
-                "options": Object {
-                  "active_modules": Array [
-                    "after-the-deadline",
-                    "contact-form",
-                    "custom-content-types",
-                    "custom-css",
-                    "enhanced-distribution",
-                    "gravatar-hovercards",
-                    "json-api",
-                    "latex",
-                    "manage",
-                    "notes",
-                    "post-by-email",
-                    "protect",
-                    "publicize",
-                    "sharedaddy",
-                    "shortcodes",
-                    "shortlinks",
-                    "sitemaps",
-                    "stats",
-                    "subscriptions",
-                    "verification-tools",
-                    "widget-visibility",
-                    "widgets",
-                  ],
-                  "admin_url": "http://an.example.site/wp-admin/",
-                  "advanced_seo_front_page_description": "",
-                  "advanced_seo_title_formats": Array [],
-                  "allowed_file_types": Array [
-                    "jpg",
-                    "jpeg",
-                    "png",
-                    "gif",
-                    "pdf",
-                    "doc",
-                    "ppt",
-                    "odt",
-                    "pptx",
-                    "docx",
-                    "pps",
-                    "ppsx",
-                    "xls",
-                    "xlsx",
-                    "key",
-                  ],
-                  "created_at": "2017-10-19T11:20:01+00:00",
-                  "default_likes_enabled": true,
-                  "default_post_format": "standard",
-                  "default_sharing_status": false,
-                  "file_mod_disabled": false,
-                  "frame_nonce": "foobarbaz",
-                  "gmt_offset": 0,
-                  "is_automated_transfer": false,
-                  "is_domain_only": false,
-                  "is_mapped_domain": true,
-                  "is_multi_network": false,
-                  "is_multi_site": false,
-                  "is_redirect": false,
-                  "jetpack_version": "5.4",
-                  "main_network_site": "http://an.example.site",
-                  "max_upload_size": false,
-                  "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
-                  "podcasting_archive": null,
-                  "publicize_permanently_disabled": false,
-                  "show_on_front": "posts",
-                  "software_version": "4.8.2",
-                  "unmapped_url": "http://an.example.site",
-                  "upgraded_filetypes_enabled": true,
-                  "verification_services_codes": null,
-                  "videopress_enabled": false,
-                  "wordads": false,
-                },
-                "plan": Object {
-                  "expired": false,
-                  "free_trial": false,
-                  "is_free": true,
-                  "product_id": 2002,
-                  "product_name_short": "Free",
-                  "product_slug": "jetpack_free",
-                  "user_is_owner": false,
-                },
-                "single_user_site": false,
-                "slug": "an.example.site",
-                "title": "Test Site",
-                "visible": true,
-              }
-            }
-            showFirst={undefined}
-          >
-            <Localized(PlansSkipButton)
-              isRtl={false}
-              onClick={[Function]}
-            />
-            <LoggedOutFormLinks>
-              <jetpack-connect--happychat-button
-                eventName="calypso_jpc_plans_chat_initiated"
-                label="Need help?"
-              >
-                <Localized(JetpackConnectHelpButton)
+              </jetpack-connect--happychat-button>,
+            },
+            "ref": null,
+            "rendered": Object {
+              "instance": null,
+              "key": null,
+              "nodeType": "host",
+              "props": Object {
+                "children": <Localized(JetpackConnectHelpButton)
                   label="Need help?"
                   onClick={[Function]}
-                />
-              </jetpack-connect--happychat-button>
-            </LoggedOutFormLinks>
-          </Localized(JetpackPlansGrid)>
-        </div>,
+                />,
+                "eventName": "calypso_jpc_plans_chat_initiated",
+                "label": "Need help?",
+              },
+              "ref": null,
+              "rendered": Object {
+                "instance": null,
+                "key": null,
+                "nodeType": "class",
+                "props": Object {
+                  "label": "Need help?",
+                  "onClick": [Function],
+                },
+                "ref": null,
+                "rendered": null,
+                "type": [Function],
+              },
+              "type": "jetpack-connect--happychat-button",
+            },
+            "type": [Function],
+          },
+        ],
+        "type": [Function],
       },
-      "_renderedNodeType": 0,
-      "_rootNodeID": 0,
-      "_topLevelWrapper": null,
-      "_updateBatchNumber": null,
-      "_warnedAboutRefsInRender": false,
-    },
-    "getRenderOutput": [Function],
-    "render": [Function],
+    ],
+    "type": "div",
   },
-  "root": [Circular],
-  "unrendered": <Plans
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": null,
+      "nodeType": "host",
+      "props": Object {
+        "children": Array [
+          <components--data--query-plans />,
+          <components--data--query-site-plans
+            siteId={1234567}
+          />,
+          <Localized(JetpackPlansGrid)
+            basePlansPath="/jetpack/connect/authorize"
+            hideFreePlan={true}
+            interval={undefined}
+            isLanding={false}
+            onSelect={[Function]}
+            selectedSite={
+              Object {
+                "ID": 1234567,
+                "URL": "http://an.example.site",
+                "canAutoupdateFiles": true,
+                "canManage": true,
+                "canUpdateFiles": true,
+                "capabilities": Object {
+                  "activate_wordads": true,
+                  "delete_others_posts": true,
+                  "delete_posts": true,
+                  "delete_users": false,
+                  "edit_others_pages": true,
+                  "edit_others_posts": true,
+                  "edit_pages": true,
+                  "edit_posts": true,
+                  "edit_theme_options": true,
+                  "edit_users": true,
+                  "list_users": true,
+                  "manage_categories": true,
+                  "manage_options": true,
+                  "moderate_comments": true,
+                  "promote_users": true,
+                  "publish_posts": true,
+                  "remove_users": true,
+                  "upload_files": true,
+                  "view_stats": true,
+                },
+                "domain": "an.example.site",
+                "hasConflict": false,
+                "hasMinimumJetpackVersion": true,
+                "isMainNetworkSite": true,
+                "isSecondaryNetworkSite": false,
+                "isSiteUpgradeable": true,
+                "is_customizable": true,
+                "is_multisite": false,
+                "is_previewable": false,
+                "is_private": false,
+                "is_vip": false,
+                "jetpack": true,
+                "name": "Test Site",
+                "options": Object {
+                  "active_modules": Array [
+                    "after-the-deadline",
+                    "contact-form",
+                    "custom-content-types",
+                    "custom-css",
+                    "enhanced-distribution",
+                    "gravatar-hovercards",
+                    "json-api",
+                    "latex",
+                    "manage",
+                    "notes",
+                    "post-by-email",
+                    "protect",
+                    "publicize",
+                    "sharedaddy",
+                    "shortcodes",
+                    "shortlinks",
+                    "sitemaps",
+                    "stats",
+                    "subscriptions",
+                    "verification-tools",
+                    "widget-visibility",
+                    "widgets",
+                  ],
+                  "admin_url": "http://an.example.site/wp-admin/",
+                  "advanced_seo_front_page_description": "",
+                  "advanced_seo_title_formats": Array [],
+                  "allowed_file_types": Array [
+                    "jpg",
+                    "jpeg",
+                    "png",
+                    "gif",
+                    "pdf",
+                    "doc",
+                    "ppt",
+                    "odt",
+                    "pptx",
+                    "docx",
+                    "pps",
+                    "ppsx",
+                    "xls",
+                    "xlsx",
+                    "key",
+                  ],
+                  "created_at": "2017-10-19T11:20:01+00:00",
+                  "default_likes_enabled": true,
+                  "default_post_format": "standard",
+                  "default_sharing_status": false,
+                  "file_mod_disabled": false,
+                  "frame_nonce": "foobarbaz",
+                  "gmt_offset": 0,
+                  "is_automated_transfer": false,
+                  "is_domain_only": false,
+                  "is_mapped_domain": true,
+                  "is_multi_network": false,
+                  "is_multi_site": false,
+                  "is_redirect": false,
+                  "jetpack_version": "5.4",
+                  "main_network_site": "http://an.example.site",
+                  "max_upload_size": false,
+                  "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
+                  "podcasting_archive": null,
+                  "publicize_permanently_disabled": false,
+                  "show_on_front": "posts",
+                  "software_version": "4.8.2",
+                  "unmapped_url": "http://an.example.site",
+                  "upgraded_filetypes_enabled": true,
+                  "verification_services_codes": null,
+                  "videopress_enabled": false,
+                  "wordads": false,
+                },
+                "plan": Object {
+                  "expired": false,
+                  "free_trial": false,
+                  "is_free": true,
+                  "product_id": 2001,
+                  "product_name_short": "Professional",
+                  "product_slug": "jetpack_business",
+                  "user_is_owner": false,
+                },
+                "single_user_site": false,
+                "slug": "an.example.site",
+                "title": "Test Site",
+                "visible": true,
+              }
+            }
+            showFirst={true}
+          >
+            <Localized(PlansSkipButton)
+              isRtl={false}
+              onClick={[Function]}
+            />
+            <LoggedOutFormLinks>
+              <jetpack-connect--happychat-button
+                eventName="calypso_jpc_plans_chat_initiated"
+                label="Need help?"
+              >
+                <Localized(JetpackConnectHelpButton)
+                  label="Need help?"
+                  onClick={[Function]}
+                />
+              </jetpack-connect--happychat-button>
+            </LoggedOutFormLinks>
+          </Localized(JetpackPlansGrid)>,
+        ],
+      },
+      "ref": null,
+      "rendered": Array [
+        Object {
+          "instance": null,
+          "key": null,
+          "nodeType": "host",
+          "props": Object {},
+          "ref": null,
+          "rendered": null,
+          "type": "components--data--query-plans",
+        },
+        Object {
+          "instance": null,
+          "key": null,
+          "nodeType": "host",
+          "props": Object {
+            "siteId": 1234567,
+          },
+          "ref": null,
+          "rendered": null,
+          "type": "components--data--query-site-plans",
+        },
+        Object {
+          "instance": null,
+          "key": null,
+          "nodeType": "class",
+          "props": Object {
+            "basePlansPath": "/jetpack/connect/authorize",
+            "children": Array [
+              <Localized(PlansSkipButton)
+                isRtl={false}
+                onClick={[Function]}
+              />,
+              <LoggedOutFormLinks>
+                <jetpack-connect--happychat-button
+                  eventName="calypso_jpc_plans_chat_initiated"
+                  label="Need help?"
+                >
+                  <Localized(JetpackConnectHelpButton)
+                    label="Need help?"
+                    onClick={[Function]}
+                  />
+                </jetpack-connect--happychat-button>
+              </LoggedOutFormLinks>,
+            ],
+            "hideFreePlan": true,
+            "interval": undefined,
+            "isLanding": false,
+            "onSelect": [Function],
+            "selectedSite": Object {
+              "ID": 1234567,
+              "URL": "http://an.example.site",
+              "canAutoupdateFiles": true,
+              "canManage": true,
+              "canUpdateFiles": true,
+              "capabilities": Object {
+                "activate_wordads": true,
+                "delete_others_posts": true,
+                "delete_posts": true,
+                "delete_users": false,
+                "edit_others_pages": true,
+                "edit_others_posts": true,
+                "edit_pages": true,
+                "edit_posts": true,
+                "edit_theme_options": true,
+                "edit_users": true,
+                "list_users": true,
+                "manage_categories": true,
+                "manage_options": true,
+                "moderate_comments": true,
+                "promote_users": true,
+                "publish_posts": true,
+                "remove_users": true,
+                "upload_files": true,
+                "view_stats": true,
+              },
+              "domain": "an.example.site",
+              "hasConflict": false,
+              "hasMinimumJetpackVersion": true,
+              "isMainNetworkSite": true,
+              "isSecondaryNetworkSite": false,
+              "isSiteUpgradeable": true,
+              "is_customizable": true,
+              "is_multisite": false,
+              "is_previewable": false,
+              "is_private": false,
+              "is_vip": false,
+              "jetpack": true,
+              "name": "Test Site",
+              "options": Object {
+                "active_modules": Array [
+                  "after-the-deadline",
+                  "contact-form",
+                  "custom-content-types",
+                  "custom-css",
+                  "enhanced-distribution",
+                  "gravatar-hovercards",
+                  "json-api",
+                  "latex",
+                  "manage",
+                  "notes",
+                  "post-by-email",
+                  "protect",
+                  "publicize",
+                  "sharedaddy",
+                  "shortcodes",
+                  "shortlinks",
+                  "sitemaps",
+                  "stats",
+                  "subscriptions",
+                  "verification-tools",
+                  "widget-visibility",
+                  "widgets",
+                ],
+                "admin_url": "http://an.example.site/wp-admin/",
+                "advanced_seo_front_page_description": "",
+                "advanced_seo_title_formats": Array [],
+                "allowed_file_types": Array [
+                  "jpg",
+                  "jpeg",
+                  "png",
+                  "gif",
+                  "pdf",
+                  "doc",
+                  "ppt",
+                  "odt",
+                  "pptx",
+                  "docx",
+                  "pps",
+                  "ppsx",
+                  "xls",
+                  "xlsx",
+                  "key",
+                ],
+                "created_at": "2017-10-19T11:20:01+00:00",
+                "default_likes_enabled": true,
+                "default_post_format": "standard",
+                "default_sharing_status": false,
+                "file_mod_disabled": false,
+                "frame_nonce": "foobarbaz",
+                "gmt_offset": 0,
+                "is_automated_transfer": false,
+                "is_domain_only": false,
+                "is_mapped_domain": true,
+                "is_multi_network": false,
+                "is_multi_site": false,
+                "is_redirect": false,
+                "jetpack_version": "5.4",
+                "main_network_site": "http://an.example.site",
+                "max_upload_size": false,
+                "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
+                "podcasting_archive": null,
+                "publicize_permanently_disabled": false,
+                "show_on_front": "posts",
+                "software_version": "4.8.2",
+                "unmapped_url": "http://an.example.site",
+                "upgraded_filetypes_enabled": true,
+                "verification_services_codes": null,
+                "videopress_enabled": false,
+                "wordads": false,
+              },
+              "plan": Object {
+                "expired": false,
+                "free_trial": false,
+                "is_free": true,
+                "product_id": 2001,
+                "product_name_short": "Professional",
+                "product_slug": "jetpack_business",
+                "user_is_owner": false,
+              },
+              "single_user_site": false,
+              "slug": "an.example.site",
+              "title": "Test Site",
+              "visible": true,
+            },
+            "showFirst": true,
+          },
+          "ref": null,
+          "rendered": Array [
+            Object {
+              "instance": null,
+              "key": null,
+              "nodeType": "class",
+              "props": Object {
+                "isRtl": false,
+                "onClick": [Function],
+              },
+              "ref": null,
+              "rendered": null,
+              "type": [Function],
+            },
+            Object {
+              "instance": null,
+              "key": null,
+              "nodeType": "class",
+              "props": Object {
+                "children": <jetpack-connect--happychat-button
+                  eventName="calypso_jpc_plans_chat_initiated"
+                  label="Need help?"
+                >
+                  <Localized(JetpackConnectHelpButton)
+                    label="Need help?"
+                    onClick={[Function]}
+                  />
+                </jetpack-connect--happychat-button>,
+              },
+              "ref": null,
+              "rendered": Object {
+                "instance": null,
+                "key": null,
+                "nodeType": "host",
+                "props": Object {
+                  "children": <Localized(JetpackConnectHelpButton)
+                    label="Need help?"
+                    onClick={[Function]}
+                  />,
+                  "eventName": "calypso_jpc_plans_chat_initiated",
+                  "label": "Need help?",
+                },
+                "ref": null,
+                "rendered": Object {
+                  "instance": null,
+                  "key": null,
+                  "nodeType": "class",
+                  "props": Object {
+                    "label": "Need help?",
+                    "onClick": [Function],
+                  },
+                  "ref": null,
+                  "rendered": null,
+                  "type": [Function],
+                },
+                "type": "jetpack-connect--happychat-button",
+              },
+              "type": [Function],
+            },
+          ],
+          "type": [Function],
+        },
+      ],
+      "type": "div",
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+      },
+    },
+  },
+}
+`;
+
+exports[`Plans should render with no plan (free) 1`] = `
+ShallowWrapper {
+  "length": 1,
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <Plans
     basePlansPath="/jetpack/connect/plans"
     calypsoStartedConnection={false}
     canPurchasePlans={true}
@@ -3329,5 +1514,833 @@ ShallowWrapper {
     translate={[Function]}
     userId={98765}
   />,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": null,
+    "nodeType": "host",
+    "props": Object {
+      "children": Array [
+        <components--data--query-plans />,
+        <components--data--query-site-plans
+          siteId={1234567}
+        />,
+        <Localized(JetpackPlansGrid)
+          basePlansPath="/jetpack/connect/plans"
+          hideFreePlan={true}
+          interval={undefined}
+          isLanding={false}
+          onSelect={[Function]}
+          selectedSite={
+            Object {
+              "ID": 1234567,
+              "URL": "http://an.example.site",
+              "canAutoupdateFiles": true,
+              "canManage": true,
+              "canUpdateFiles": true,
+              "capabilities": Object {
+                "activate_wordads": true,
+                "delete_others_posts": true,
+                "delete_posts": true,
+                "delete_users": false,
+                "edit_others_pages": true,
+                "edit_others_posts": true,
+                "edit_pages": true,
+                "edit_posts": true,
+                "edit_theme_options": true,
+                "edit_users": true,
+                "list_users": true,
+                "manage_categories": true,
+                "manage_options": true,
+                "moderate_comments": true,
+                "promote_users": true,
+                "publish_posts": true,
+                "remove_users": true,
+                "upload_files": true,
+                "view_stats": true,
+              },
+              "domain": "an.example.site",
+              "hasConflict": false,
+              "hasMinimumJetpackVersion": true,
+              "isMainNetworkSite": true,
+              "isSecondaryNetworkSite": false,
+              "isSiteUpgradeable": true,
+              "is_customizable": true,
+              "is_multisite": false,
+              "is_previewable": false,
+              "is_private": false,
+              "is_vip": false,
+              "jetpack": true,
+              "name": "Test Site",
+              "options": Object {
+                "active_modules": Array [
+                  "after-the-deadline",
+                  "contact-form",
+                  "custom-content-types",
+                  "custom-css",
+                  "enhanced-distribution",
+                  "gravatar-hovercards",
+                  "json-api",
+                  "latex",
+                  "manage",
+                  "notes",
+                  "post-by-email",
+                  "protect",
+                  "publicize",
+                  "sharedaddy",
+                  "shortcodes",
+                  "shortlinks",
+                  "sitemaps",
+                  "stats",
+                  "subscriptions",
+                  "verification-tools",
+                  "widget-visibility",
+                  "widgets",
+                ],
+                "admin_url": "http://an.example.site/wp-admin/",
+                "advanced_seo_front_page_description": "",
+                "advanced_seo_title_formats": Array [],
+                "allowed_file_types": Array [
+                  "jpg",
+                  "jpeg",
+                  "png",
+                  "gif",
+                  "pdf",
+                  "doc",
+                  "ppt",
+                  "odt",
+                  "pptx",
+                  "docx",
+                  "pps",
+                  "ppsx",
+                  "xls",
+                  "xlsx",
+                  "key",
+                ],
+                "created_at": "2017-10-19T11:20:01+00:00",
+                "default_likes_enabled": true,
+                "default_post_format": "standard",
+                "default_sharing_status": false,
+                "file_mod_disabled": false,
+                "frame_nonce": "foobarbaz",
+                "gmt_offset": 0,
+                "is_automated_transfer": false,
+                "is_domain_only": false,
+                "is_mapped_domain": true,
+                "is_multi_network": false,
+                "is_multi_site": false,
+                "is_redirect": false,
+                "jetpack_version": "5.4",
+                "main_network_site": "http://an.example.site",
+                "max_upload_size": false,
+                "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
+                "podcasting_archive": null,
+                "publicize_permanently_disabled": false,
+                "show_on_front": "posts",
+                "software_version": "4.8.2",
+                "unmapped_url": "http://an.example.site",
+                "upgraded_filetypes_enabled": true,
+                "verification_services_codes": null,
+                "videopress_enabled": false,
+                "wordads": false,
+              },
+              "plan": Object {
+                "expired": false,
+                "free_trial": false,
+                "is_free": true,
+                "product_id": 2002,
+                "product_name_short": "Free",
+                "product_slug": "jetpack_free",
+                "user_is_owner": false,
+              },
+              "single_user_site": false,
+              "slug": "an.example.site",
+              "title": "Test Site",
+              "visible": true,
+            }
+          }
+          showFirst={undefined}
+        >
+          <Localized(PlansSkipButton)
+            isRtl={false}
+            onClick={[Function]}
+          />
+          <LoggedOutFormLinks>
+            <jetpack-connect--happychat-button
+              eventName="calypso_jpc_plans_chat_initiated"
+              label="Need help?"
+            >
+              <Localized(JetpackConnectHelpButton)
+                label="Need help?"
+                onClick={[Function]}
+              />
+            </jetpack-connect--happychat-button>
+          </LoggedOutFormLinks>
+        </Localized(JetpackPlansGrid)>,
+      ],
+    },
+    "ref": null,
+    "rendered": Array [
+      Object {
+        "instance": null,
+        "key": null,
+        "nodeType": "host",
+        "props": Object {},
+        "ref": null,
+        "rendered": null,
+        "type": "components--data--query-plans",
+      },
+      Object {
+        "instance": null,
+        "key": null,
+        "nodeType": "host",
+        "props": Object {
+          "siteId": 1234567,
+        },
+        "ref": null,
+        "rendered": null,
+        "type": "components--data--query-site-plans",
+      },
+      Object {
+        "instance": null,
+        "key": null,
+        "nodeType": "class",
+        "props": Object {
+          "basePlansPath": "/jetpack/connect/plans",
+          "children": Array [
+            <Localized(PlansSkipButton)
+              isRtl={false}
+              onClick={[Function]}
+            />,
+            <LoggedOutFormLinks>
+              <jetpack-connect--happychat-button
+                eventName="calypso_jpc_plans_chat_initiated"
+                label="Need help?"
+              >
+                <Localized(JetpackConnectHelpButton)
+                  label="Need help?"
+                  onClick={[Function]}
+                />
+              </jetpack-connect--happychat-button>
+            </LoggedOutFormLinks>,
+          ],
+          "hideFreePlan": true,
+          "interval": undefined,
+          "isLanding": false,
+          "onSelect": [Function],
+          "selectedSite": Object {
+            "ID": 1234567,
+            "URL": "http://an.example.site",
+            "canAutoupdateFiles": true,
+            "canManage": true,
+            "canUpdateFiles": true,
+            "capabilities": Object {
+              "activate_wordads": true,
+              "delete_others_posts": true,
+              "delete_posts": true,
+              "delete_users": false,
+              "edit_others_pages": true,
+              "edit_others_posts": true,
+              "edit_pages": true,
+              "edit_posts": true,
+              "edit_theme_options": true,
+              "edit_users": true,
+              "list_users": true,
+              "manage_categories": true,
+              "manage_options": true,
+              "moderate_comments": true,
+              "promote_users": true,
+              "publish_posts": true,
+              "remove_users": true,
+              "upload_files": true,
+              "view_stats": true,
+            },
+            "domain": "an.example.site",
+            "hasConflict": false,
+            "hasMinimumJetpackVersion": true,
+            "isMainNetworkSite": true,
+            "isSecondaryNetworkSite": false,
+            "isSiteUpgradeable": true,
+            "is_customizable": true,
+            "is_multisite": false,
+            "is_previewable": false,
+            "is_private": false,
+            "is_vip": false,
+            "jetpack": true,
+            "name": "Test Site",
+            "options": Object {
+              "active_modules": Array [
+                "after-the-deadline",
+                "contact-form",
+                "custom-content-types",
+                "custom-css",
+                "enhanced-distribution",
+                "gravatar-hovercards",
+                "json-api",
+                "latex",
+                "manage",
+                "notes",
+                "post-by-email",
+                "protect",
+                "publicize",
+                "sharedaddy",
+                "shortcodes",
+                "shortlinks",
+                "sitemaps",
+                "stats",
+                "subscriptions",
+                "verification-tools",
+                "widget-visibility",
+                "widgets",
+              ],
+              "admin_url": "http://an.example.site/wp-admin/",
+              "advanced_seo_front_page_description": "",
+              "advanced_seo_title_formats": Array [],
+              "allowed_file_types": Array [
+                "jpg",
+                "jpeg",
+                "png",
+                "gif",
+                "pdf",
+                "doc",
+                "ppt",
+                "odt",
+                "pptx",
+                "docx",
+                "pps",
+                "ppsx",
+                "xls",
+                "xlsx",
+                "key",
+              ],
+              "created_at": "2017-10-19T11:20:01+00:00",
+              "default_likes_enabled": true,
+              "default_post_format": "standard",
+              "default_sharing_status": false,
+              "file_mod_disabled": false,
+              "frame_nonce": "foobarbaz",
+              "gmt_offset": 0,
+              "is_automated_transfer": false,
+              "is_domain_only": false,
+              "is_mapped_domain": true,
+              "is_multi_network": false,
+              "is_multi_site": false,
+              "is_redirect": false,
+              "jetpack_version": "5.4",
+              "main_network_site": "http://an.example.site",
+              "max_upload_size": false,
+              "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
+              "podcasting_archive": null,
+              "publicize_permanently_disabled": false,
+              "show_on_front": "posts",
+              "software_version": "4.8.2",
+              "unmapped_url": "http://an.example.site",
+              "upgraded_filetypes_enabled": true,
+              "verification_services_codes": null,
+              "videopress_enabled": false,
+              "wordads": false,
+            },
+            "plan": Object {
+              "expired": false,
+              "free_trial": false,
+              "is_free": true,
+              "product_id": 2002,
+              "product_name_short": "Free",
+              "product_slug": "jetpack_free",
+              "user_is_owner": false,
+            },
+            "single_user_site": false,
+            "slug": "an.example.site",
+            "title": "Test Site",
+            "visible": true,
+          },
+          "showFirst": undefined,
+        },
+        "ref": null,
+        "rendered": Array [
+          Object {
+            "instance": null,
+            "key": null,
+            "nodeType": "class",
+            "props": Object {
+              "isRtl": false,
+              "onClick": [Function],
+            },
+            "ref": null,
+            "rendered": null,
+            "type": [Function],
+          },
+          Object {
+            "instance": null,
+            "key": null,
+            "nodeType": "class",
+            "props": Object {
+              "children": <jetpack-connect--happychat-button
+                eventName="calypso_jpc_plans_chat_initiated"
+                label="Need help?"
+              >
+                <Localized(JetpackConnectHelpButton)
+                  label="Need help?"
+                  onClick={[Function]}
+                />
+              </jetpack-connect--happychat-button>,
+            },
+            "ref": null,
+            "rendered": Object {
+              "instance": null,
+              "key": null,
+              "nodeType": "host",
+              "props": Object {
+                "children": <Localized(JetpackConnectHelpButton)
+                  label="Need help?"
+                  onClick={[Function]}
+                />,
+                "eventName": "calypso_jpc_plans_chat_initiated",
+                "label": "Need help?",
+              },
+              "ref": null,
+              "rendered": Object {
+                "instance": null,
+                "key": null,
+                "nodeType": "class",
+                "props": Object {
+                  "label": "Need help?",
+                  "onClick": [Function],
+                },
+                "ref": null,
+                "rendered": null,
+                "type": [Function],
+              },
+              "type": "jetpack-connect--happychat-button",
+            },
+            "type": [Function],
+          },
+        ],
+        "type": [Function],
+      },
+    ],
+    "type": "div",
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": null,
+      "nodeType": "host",
+      "props": Object {
+        "children": Array [
+          <components--data--query-plans />,
+          <components--data--query-site-plans
+            siteId={1234567}
+          />,
+          <Localized(JetpackPlansGrid)
+            basePlansPath="/jetpack/connect/plans"
+            hideFreePlan={true}
+            interval={undefined}
+            isLanding={false}
+            onSelect={[Function]}
+            selectedSite={
+              Object {
+                "ID": 1234567,
+                "URL": "http://an.example.site",
+                "canAutoupdateFiles": true,
+                "canManage": true,
+                "canUpdateFiles": true,
+                "capabilities": Object {
+                  "activate_wordads": true,
+                  "delete_others_posts": true,
+                  "delete_posts": true,
+                  "delete_users": false,
+                  "edit_others_pages": true,
+                  "edit_others_posts": true,
+                  "edit_pages": true,
+                  "edit_posts": true,
+                  "edit_theme_options": true,
+                  "edit_users": true,
+                  "list_users": true,
+                  "manage_categories": true,
+                  "manage_options": true,
+                  "moderate_comments": true,
+                  "promote_users": true,
+                  "publish_posts": true,
+                  "remove_users": true,
+                  "upload_files": true,
+                  "view_stats": true,
+                },
+                "domain": "an.example.site",
+                "hasConflict": false,
+                "hasMinimumJetpackVersion": true,
+                "isMainNetworkSite": true,
+                "isSecondaryNetworkSite": false,
+                "isSiteUpgradeable": true,
+                "is_customizable": true,
+                "is_multisite": false,
+                "is_previewable": false,
+                "is_private": false,
+                "is_vip": false,
+                "jetpack": true,
+                "name": "Test Site",
+                "options": Object {
+                  "active_modules": Array [
+                    "after-the-deadline",
+                    "contact-form",
+                    "custom-content-types",
+                    "custom-css",
+                    "enhanced-distribution",
+                    "gravatar-hovercards",
+                    "json-api",
+                    "latex",
+                    "manage",
+                    "notes",
+                    "post-by-email",
+                    "protect",
+                    "publicize",
+                    "sharedaddy",
+                    "shortcodes",
+                    "shortlinks",
+                    "sitemaps",
+                    "stats",
+                    "subscriptions",
+                    "verification-tools",
+                    "widget-visibility",
+                    "widgets",
+                  ],
+                  "admin_url": "http://an.example.site/wp-admin/",
+                  "advanced_seo_front_page_description": "",
+                  "advanced_seo_title_formats": Array [],
+                  "allowed_file_types": Array [
+                    "jpg",
+                    "jpeg",
+                    "png",
+                    "gif",
+                    "pdf",
+                    "doc",
+                    "ppt",
+                    "odt",
+                    "pptx",
+                    "docx",
+                    "pps",
+                    "ppsx",
+                    "xls",
+                    "xlsx",
+                    "key",
+                  ],
+                  "created_at": "2017-10-19T11:20:01+00:00",
+                  "default_likes_enabled": true,
+                  "default_post_format": "standard",
+                  "default_sharing_status": false,
+                  "file_mod_disabled": false,
+                  "frame_nonce": "foobarbaz",
+                  "gmt_offset": 0,
+                  "is_automated_transfer": false,
+                  "is_domain_only": false,
+                  "is_mapped_domain": true,
+                  "is_multi_network": false,
+                  "is_multi_site": false,
+                  "is_redirect": false,
+                  "jetpack_version": "5.4",
+                  "main_network_site": "http://an.example.site",
+                  "max_upload_size": false,
+                  "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
+                  "podcasting_archive": null,
+                  "publicize_permanently_disabled": false,
+                  "show_on_front": "posts",
+                  "software_version": "4.8.2",
+                  "unmapped_url": "http://an.example.site",
+                  "upgraded_filetypes_enabled": true,
+                  "verification_services_codes": null,
+                  "videopress_enabled": false,
+                  "wordads": false,
+                },
+                "plan": Object {
+                  "expired": false,
+                  "free_trial": false,
+                  "is_free": true,
+                  "product_id": 2002,
+                  "product_name_short": "Free",
+                  "product_slug": "jetpack_free",
+                  "user_is_owner": false,
+                },
+                "single_user_site": false,
+                "slug": "an.example.site",
+                "title": "Test Site",
+                "visible": true,
+              }
+            }
+            showFirst={undefined}
+          >
+            <Localized(PlansSkipButton)
+              isRtl={false}
+              onClick={[Function]}
+            />
+            <LoggedOutFormLinks>
+              <jetpack-connect--happychat-button
+                eventName="calypso_jpc_plans_chat_initiated"
+                label="Need help?"
+              >
+                <Localized(JetpackConnectHelpButton)
+                  label="Need help?"
+                  onClick={[Function]}
+                />
+              </jetpack-connect--happychat-button>
+            </LoggedOutFormLinks>
+          </Localized(JetpackPlansGrid)>,
+        ],
+      },
+      "ref": null,
+      "rendered": Array [
+        Object {
+          "instance": null,
+          "key": null,
+          "nodeType": "host",
+          "props": Object {},
+          "ref": null,
+          "rendered": null,
+          "type": "components--data--query-plans",
+        },
+        Object {
+          "instance": null,
+          "key": null,
+          "nodeType": "host",
+          "props": Object {
+            "siteId": 1234567,
+          },
+          "ref": null,
+          "rendered": null,
+          "type": "components--data--query-site-plans",
+        },
+        Object {
+          "instance": null,
+          "key": null,
+          "nodeType": "class",
+          "props": Object {
+            "basePlansPath": "/jetpack/connect/plans",
+            "children": Array [
+              <Localized(PlansSkipButton)
+                isRtl={false}
+                onClick={[Function]}
+              />,
+              <LoggedOutFormLinks>
+                <jetpack-connect--happychat-button
+                  eventName="calypso_jpc_plans_chat_initiated"
+                  label="Need help?"
+                >
+                  <Localized(JetpackConnectHelpButton)
+                    label="Need help?"
+                    onClick={[Function]}
+                  />
+                </jetpack-connect--happychat-button>
+              </LoggedOutFormLinks>,
+            ],
+            "hideFreePlan": true,
+            "interval": undefined,
+            "isLanding": false,
+            "onSelect": [Function],
+            "selectedSite": Object {
+              "ID": 1234567,
+              "URL": "http://an.example.site",
+              "canAutoupdateFiles": true,
+              "canManage": true,
+              "canUpdateFiles": true,
+              "capabilities": Object {
+                "activate_wordads": true,
+                "delete_others_posts": true,
+                "delete_posts": true,
+                "delete_users": false,
+                "edit_others_pages": true,
+                "edit_others_posts": true,
+                "edit_pages": true,
+                "edit_posts": true,
+                "edit_theme_options": true,
+                "edit_users": true,
+                "list_users": true,
+                "manage_categories": true,
+                "manage_options": true,
+                "moderate_comments": true,
+                "promote_users": true,
+                "publish_posts": true,
+                "remove_users": true,
+                "upload_files": true,
+                "view_stats": true,
+              },
+              "domain": "an.example.site",
+              "hasConflict": false,
+              "hasMinimumJetpackVersion": true,
+              "isMainNetworkSite": true,
+              "isSecondaryNetworkSite": false,
+              "isSiteUpgradeable": true,
+              "is_customizable": true,
+              "is_multisite": false,
+              "is_previewable": false,
+              "is_private": false,
+              "is_vip": false,
+              "jetpack": true,
+              "name": "Test Site",
+              "options": Object {
+                "active_modules": Array [
+                  "after-the-deadline",
+                  "contact-form",
+                  "custom-content-types",
+                  "custom-css",
+                  "enhanced-distribution",
+                  "gravatar-hovercards",
+                  "json-api",
+                  "latex",
+                  "manage",
+                  "notes",
+                  "post-by-email",
+                  "protect",
+                  "publicize",
+                  "sharedaddy",
+                  "shortcodes",
+                  "shortlinks",
+                  "sitemaps",
+                  "stats",
+                  "subscriptions",
+                  "verification-tools",
+                  "widget-visibility",
+                  "widgets",
+                ],
+                "admin_url": "http://an.example.site/wp-admin/",
+                "advanced_seo_front_page_description": "",
+                "advanced_seo_title_formats": Array [],
+                "allowed_file_types": Array [
+                  "jpg",
+                  "jpeg",
+                  "png",
+                  "gif",
+                  "pdf",
+                  "doc",
+                  "ppt",
+                  "odt",
+                  "pptx",
+                  "docx",
+                  "pps",
+                  "ppsx",
+                  "xls",
+                  "xlsx",
+                  "key",
+                ],
+                "created_at": "2017-10-19T11:20:01+00:00",
+                "default_likes_enabled": true,
+                "default_post_format": "standard",
+                "default_sharing_status": false,
+                "file_mod_disabled": false,
+                "frame_nonce": "foobarbaz",
+                "gmt_offset": 0,
+                "is_automated_transfer": false,
+                "is_domain_only": false,
+                "is_mapped_domain": true,
+                "is_multi_network": false,
+                "is_multi_site": false,
+                "is_redirect": false,
+                "jetpack_version": "5.4",
+                "main_network_site": "http://an.example.site",
+                "max_upload_size": false,
+                "permalink_structure": "/%year%/%monthnum%/%day%/%postname%/",
+                "podcasting_archive": null,
+                "publicize_permanently_disabled": false,
+                "show_on_front": "posts",
+                "software_version": "4.8.2",
+                "unmapped_url": "http://an.example.site",
+                "upgraded_filetypes_enabled": true,
+                "verification_services_codes": null,
+                "videopress_enabled": false,
+                "wordads": false,
+              },
+              "plan": Object {
+                "expired": false,
+                "free_trial": false,
+                "is_free": true,
+                "product_id": 2002,
+                "product_name_short": "Free",
+                "product_slug": "jetpack_free",
+                "user_is_owner": false,
+              },
+              "single_user_site": false,
+              "slug": "an.example.site",
+              "title": "Test Site",
+              "visible": true,
+            },
+            "showFirst": undefined,
+          },
+          "ref": null,
+          "rendered": Array [
+            Object {
+              "instance": null,
+              "key": null,
+              "nodeType": "class",
+              "props": Object {
+                "isRtl": false,
+                "onClick": [Function],
+              },
+              "ref": null,
+              "rendered": null,
+              "type": [Function],
+            },
+            Object {
+              "instance": null,
+              "key": null,
+              "nodeType": "class",
+              "props": Object {
+                "children": <jetpack-connect--happychat-button
+                  eventName="calypso_jpc_plans_chat_initiated"
+                  label="Need help?"
+                >
+                  <Localized(JetpackConnectHelpButton)
+                    label="Need help?"
+                    onClick={[Function]}
+                  />
+                </jetpack-connect--happychat-button>,
+              },
+              "ref": null,
+              "rendered": Object {
+                "instance": null,
+                "key": null,
+                "nodeType": "host",
+                "props": Object {
+                  "children": <Localized(JetpackConnectHelpButton)
+                    label="Need help?"
+                    onClick={[Function]}
+                  />,
+                  "eventName": "calypso_jpc_plans_chat_initiated",
+                  "label": "Need help?",
+                },
+                "ref": null,
+                "rendered": Object {
+                  "instance": null,
+                  "key": null,
+                  "nodeType": "class",
+                  "props": Object {
+                    "label": "Need help?",
+                    "onClick": [Function],
+                  },
+                  "ref": null,
+                  "rendered": null,
+                  "type": [Function],
+                },
+                "type": "jetpack-connect--happychat-button",
+              },
+              "type": [Function],
+            },
+          ],
+          "type": [Function],
+        },
+      ],
+      "type": "div",
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+      },
+    },
+  },
 }
 `;
