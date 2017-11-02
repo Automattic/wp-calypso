@@ -228,8 +228,6 @@ class ReaderStream extends React.Component {
 		}
 	}
 
-	//mentioned in coments on github
-
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.postsStore !== this.props.postsStore ) {
 			this.props.postsStore.off( 'change', this.updateState );
