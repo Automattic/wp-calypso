@@ -107,11 +107,9 @@ class NextSteps extends React.Component {
 	}
 
 	outroMessage() {
-		var site, dismissLink;
-
 		if ( this.props.isWelcome ) {
-			site = this.newestSite();
-			dismissLink = '/stats/insights/' + ( site ? site.slug : '' );
+			const site = this.newestSite();
+			const dismissLink = '/stats/insights/' + ( site ? site.slug : '' );
 
 			return (
 				<div className="next-steps__outro">
@@ -137,8 +135,8 @@ class NextSteps extends React.Component {
 	}
 
 	renderSteps() {
-		var site = this.newestSite(),
-			sequence = steps.defaultSequence;
+		const site = this.newestSite();
+		let sequence = steps.defaultSequence;
 
 		if ( this.userHasPurchasedAPlan() ) {
 			sequence = steps.hasPlanSequence;
@@ -148,7 +146,8 @@ class NextSteps extends React.Component {
 			<div className="next-steps__steps">
 				{ sequence.map(
 					function( stepName, index ) {
-						var step = steps.definitions( site )[ stepName ];
+						const step = steps.definitions( site )[ stepName ];
+
 						return (
 							<NextStepsBox
 								key={ stepName }
@@ -165,7 +164,7 @@ class NextSteps extends React.Component {
 	}
 
 	render() {
-		var classes = 'main main-column next-steps';
+		let classes = 'main main-column next-steps';
 
 		if ( this.props.isWelcome ) {
 			classes += ' is-single-page';
