@@ -732,7 +732,7 @@ class HelpContact extends React.Component {
 				>
 					{ this.getView() }
 				</Card>
-				<HappychatConnection />
+				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				<QueryOlark />
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
@@ -760,6 +760,7 @@ export default connect(
 			ticketSupportEligible: isTicketSupportEligible( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
+			shouldStartHappychatConnection: ! isRequestingSites( state ) && helpSelectedSiteId,
 			isRequestingSites: isRequestingSites( state ),
 			isSelectedHelpSiteOnPaidPlan: isCurrentPlanPaid( state, helpSelectedSiteId ),
 			selectedSitePlanSlug: selectedSitePlan && selectedSitePlan.product_slug,
