@@ -63,21 +63,17 @@ export const areProductsLoading = ( state, params = {}, siteId = getSelectedSite
  * @param {Object} [params] Query used to fetch products. Can contain page, search, etc. If not provided,
  *                          defaults to first page, all products
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array|false} List of orders, or false if there was an error
+ * @return {array|false} List of products, or false if there was an error
  */
 export const getProducts = ( state, params = {}, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areProductsLoaded( state, params, siteId ) ) {
 		return [];
 	}
 	const key = getSerializedProductsQuery( params );
-	const products = get(
-		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ],
-		{}
-	);
+	const products = get( state, `extensions.woocommerce.sites[${ siteId }].products.products`, [] );
 	const productIdsOnPage = get(
 		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'queries', key, 'ids' ],
+		`extensions.woocommerce.sites[${ siteId }].products.queries[${ key }].ids`,
 		[]
 	);
 
