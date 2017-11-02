@@ -4,7 +4,7 @@
  * @format
  */
 
-import { get, reject } from 'lodash';
+import { difference, forEach, get, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -131,9 +131,17 @@ export function productsRequestSuccess( state = {}, action ) {
  */
 export function productsDeleteSuccess( state = {}, action ) {
 	const products = get( state, 'products', [] );
-	const newProducts = reject( products, { id: action.data.id } );
+	const id = action.data.id;
+	const newProducts = reject( products, { id } );
+	const newQueries = {};
+	forEach( get( state, 'queries', {} ), ( item, key ) => {
+		const ids = difference( item.ids, [ id ] );
+		newQueries[ key ] = { ...item, ids };
+	} );
+
 	return {
 		...state,
+		queries: newQueries,
 		products: newProducts,
 	};
 }

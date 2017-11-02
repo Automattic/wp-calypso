@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -224,6 +225,24 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'productsDeleteSuccess', () => {
+		const originalState = deepFreeze( {
+			queries: {
+				'{}': {
+					isLoading: false,
+					ids: [ 15, 31, 389 ],
+					totalPages: 1,
+					totalProducts: 3,
+				},
+				'{"search":"example"}': {
+					isLoading: false,
+					ids: [ 15, 389 ],
+					totalPages: 1,
+					totalProducts: 2,
+				},
+			},
+			products: [ ...products, product ],
+		} );
+
 		test( 'should remove the product from the products list', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS,
@@ -231,12 +250,30 @@ describe( 'reducer', () => {
 				data: product,
 			};
 
-			const additionalProducts = [ product ];
-			const newState = productsDeleteSuccess(
-				{ products: [ ...products, ...additionalProducts ] },
-				action
-			);
+			const newState = productsDeleteSuccess( originalState, action );
 			expect( newState.products ).to.eql( products );
+		} );
+
+		test( 'should remove the product from any query results', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS,
+				siteId: 123,
+				data: product,
+			};
+
+			const newState = productsDeleteSuccess( originalState, action );
+			expect( newState.queries[ '{}' ].ids ).to.eql( [ 15, 389 ] );
+		} );
+
+		test( 'should not remove any IDs from unaffected query results', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCTS_DELETE_SUCCESS,
+				siteId: 123,
+				data: product,
+			};
+
+			const newState = productsDeleteSuccess( originalState, action );
+			expect( newState.queries[ '{"search":"example"}' ].ids ).to.eql( [ 15, 389 ] );
 		} );
 	} );
 } );
