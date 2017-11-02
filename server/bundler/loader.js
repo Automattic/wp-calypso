@@ -29,8 +29,8 @@ function getSectionsModule( sections ) {
 
 		return [
 			dependencies,
-			'function preload( section ) {',
-			'	switch ( section ) {',
+			'function preload( sectionName ) {',
+			'	switch ( sectionName ) {',
 			'	' + loadSection,
 			'	}',
 			'}',
@@ -160,10 +160,10 @@ function requireTemplate( section ) {
 	return result.join( '\n' );
 }
 
-function singleEnsure( chunkName ) {
+function singleEnsure( sectionName ) {
 	var result = [
-		'case ' + JSON.stringify( chunkName ) + ':',
-		'	return require.ensure([], function() {}, ' + JSON.stringify( chunkName ) + ' );',
+		'case ' + JSON.stringify( sectionName ) + ':',
+		'	return require.ensure([], function() {}, ' + JSON.stringify( sectionName ) + ' );',
 		'	break;\n'
 	];
 
