@@ -22,7 +22,7 @@ export default function( element, additionalProps ) {
 			return React.cloneElement( child, props );
 		} );
 
-		return <div> { childElements } </div>;
+		return <div>{ childElements }</div>;
 	}
 
 	return React.cloneElement( element.props.children, props );
