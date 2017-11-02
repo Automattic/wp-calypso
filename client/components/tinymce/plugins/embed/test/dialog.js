@@ -35,7 +35,7 @@ describe( 'EmbedDialog', () => {
 		assert.strictEqual( wrapper.find( FormTextInput ).get( 0 ).props.defaultValue, url );
 	} );
 
-	test( "should update the input field's value when input changes", () => {
+	test( 'should update embedUrl state when Embed URL input changes', () => {
 		const originalUrl = 'https://www.youtube.com/watch?v=ghrL82cc-ss';
 		const newUrl = 'https://videopress.com/v/DNgJlco8';
 		const wrapper = shallow(
@@ -50,12 +50,13 @@ describe( 'EmbedDialog', () => {
 		const mockChangeEvent = {
 			target: { value: newUrl },
 		};
-		let inputField = wrapper.find( FormTextInput ).get( 0 );
+
+		const inputField = wrapper.find( FormTextInput ).get( 0 );
 
 		assert.strictEqual( inputField.props.defaultValue, originalUrl );
 		wrapper.find( FormTextInput ).simulate( 'change', mockChangeEvent );
-		inputField = wrapper.find( FormTextInput ).get( 0 );
-		assert.strictEqual( inputField.props.defaultValue, newUrl );
+
+		assert.strictEqual( wrapper.state().embedUrl, newUrl );
 	} );
 
 	test( 'should return the new url to onUpdate when updating', () => {
@@ -112,9 +113,4 @@ describe( 'EmbedDialog', () => {
 		assert.isTrue( noopSpy.called );
 		assert.strictEqual( currentUrl, originalUrl );
 	} );
-
-	// todo
-	// should test valid vs invalid embed urls?
-	// test updating the preview when new url given (other PR)
-	// anything else new to test?
 } );
