@@ -40,7 +40,12 @@ const setupContextMiddleware = reduxStore => {
 		const parsed = url.parse( context.canonicalPath, true );
 		context.pathname = parsed.pathname;
 		context.prevPath = parsed.path === context.path ? false : parsed.path;
-		context.path = parsed.path;
+
+		// allow external urls to pass through, by not rewriting context.path in this case
+		if ( ! startsWith( context.path, 'http' ) ) {
+			context.path = parsed.path;
+		}
+
 		context.query = parsed.query;
 
 		context.hashstring = ( parsed.hash && parsed.hash.substring( 1 ) ) || '';
