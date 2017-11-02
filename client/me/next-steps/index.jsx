@@ -7,16 +7,14 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { property, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import NextStepsBox from './next-steps-box';
-import productsValues from 'lib/products-values';
 import steps from './steps';
-import { getSites } from 'state/selectors';
+import { getNewestSite, hasUserPurchasedAPlan } from 'state/selectors';
 import {
 	recordGoogleEvent as recordGoogleEventAction,
 	recordTracksEvent as recordTracksEventAction,
@@ -103,14 +101,10 @@ class NextSteps extends React.Component {
 		}
 	}
 
-	newestSite() {
-		return sortBy( this.props.sites, property( 'ID' ) ).pop();
-	}
-
 	outroMessage() {
 		if ( this.props.isWelcome ) {
-			const site = this.newestSite();
-			const dismissLink = '/stats/insights/' + ( site ? site.slug : '' );
+			const { newestSite } = this.props;
+			const dismissLink = '/stats/insights/' + ( newestSite ? newestSite.slug : '' );
 
 			return (
 				<div className="next-steps__outro">
@@ -129,25 +123,18 @@ class NextSteps extends React.Component {
 		}
 	}
 
-	userHasPurchasedAPlan() {
-		return this.props.sites.some( site => {
-			return productsValues.isPlan( site.plan );
-		} );
-	}
-
 	renderSteps() {
-		const { isWelcome } = this.props;
-		const site = this.newestSite();
+		const { hasPlan, isWelcome, newestSite } = this.props;
 		let sequence = steps.defaultSequence;
 
-		if ( this.userHasPurchasedAPlan() ) {
+		if ( hasPlan ) {
 			sequence = steps.hasPlanSequence;
 		}
 
 		return (
 			<div className="next-steps__steps">
 				{ sequence.map( ( stepName, index ) => {
-					const step = steps.definitions( site )[ stepName ];
+					const step = steps.definitions( newestSite )[ stepName ];
 
 					return (
 						<NextStepsBox
@@ -184,7 +171,8 @@ class NextSteps extends React.Component {
 
 export default connect(
 	state => ( {
-		sites: getSites( state ),
+		newestSite: getNewestSite( state ),
+		hasPlan: hasUserPurchasedAPlan( state ),
 	} ),
 	{
 		recordGoogleEvent: recordGoogleEventAction,
