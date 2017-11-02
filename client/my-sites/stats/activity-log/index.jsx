@@ -533,6 +533,7 @@ class ActivityLog extends Component {
 												requestRestore={ this.handleRequestRestore }
 												siteId={ siteId }
 												tsEndOfSiteDay={ start.valueOf() }
+												isToday={ isToday }
 											/>
 										);
 								}
