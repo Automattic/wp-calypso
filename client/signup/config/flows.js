@@ -5,7 +5,6 @@
  */
 
 import { assign, includes, reject } from 'lodash';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -312,9 +311,13 @@ function filterDesignTypeInFlow( flow ) {
 	}
 
 	return assign( {}, flow, {
-		steps: flow.steps.map(
-			stepName => ( stepName === 'design-type' ? 'design-type-with-store' : stepName )
-		),
+		steps: flow.steps.map( stepName => {
+			if ( stepName === 'design-type' ) {
+				const isAtomicStore = config.isEnabled( 'signup/atomic-store-flow' );
+				return isAtomicStore ? 'design-type-with-store-nux' : 'design-type-with-store';
+			}
+			return stepName;
+		} ),
 	} );
 }
 
@@ -378,10 +381,8 @@ const Flows = {
 			flow = removeUserStepFromFlow( flow );
 		}
 
-		// Show design type with store option only to new users with EN locale.
-		if ( ! user.get() && 'en' === i18n.getLocaleSlug() ) {
-			flow = filterDesignTypeInFlow( flow );
-		}
+		// Maybe modify the design type step to a variant with store
+		flow = filterDesignTypeInFlow( flow );
 
 		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
 
