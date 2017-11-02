@@ -198,10 +198,6 @@ class DesignTypeWithAtomicStoreStep extends Component {
 			return translate( 'Create your WordPress Store' );
 		}
 
-		if ( abtest( 'signupSurveyStep' ) === 'showSurveyStep' ) {
-			return "We're excited to hear more about your project.";
-		}
-
 		return translate( 'Hello! Let’s create your new site.' );
 	}
 

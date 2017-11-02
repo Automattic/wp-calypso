@@ -9,14 +9,6 @@ export default {
 		},
 		defaultVariation: 'singlePurchaseFlow',
 	},
-	signupSurveyStep: {
-		datestamp: '20170329',
-		variations: {
-			showSurveyStep: 20,
-			hideSurveyStep: 80,
-		},
-		defaultVariation: 'hideSurveyStep',
-	},
 	signupPressableStoreFlow: {
 		datestamp: '20171018',
 		variations: {
