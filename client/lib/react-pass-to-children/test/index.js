@@ -59,7 +59,7 @@ describe( 'index', () => {
 
 		expect( React.Children.count( result ) ).to.equal( 1 );
 		expect( result.type ).to.eql( 'div' );
-		expect( React.Children.count( result.props.children ) ).to.equal( 2 );
+		expect( React.Children.count( result.props.children ) ).to.equal( 4 );
 	} );
 
 	test( 'should accept multiple children and pass along props to each', done => {
@@ -74,6 +74,10 @@ describe( 'index', () => {
 		result = renderer.getRenderOutput();
 
 		React.Children.forEach( result.props.children, function( child, i ) {
+			if ( child === ' ' ) {
+				return;
+			}
+
 			expect( child.type ).to.equal( 'div' );
 			expect( child.props ).to.eql( DUMMY_PROPS );
 
@@ -94,8 +98,8 @@ describe( 'index', () => {
 		);
 		result = renderer.getRenderOutput();
 
-		expect( React.Children.count( result.props.children ) ).to.equal( 1 );
-		expect( React.Children.toArray( result.props.children )[ 0 ].props ).to.eql( DUMMY_PROPS );
+		expect( React.Children.count( result.props.children ) ).to.equal( 3 );
+		expect( React.Children.toArray( result.props.children )[ 1 ].props ).to.eql( DUMMY_PROPS );
 	} );
 
 	test( 'should preserve props passed to the children', () => {

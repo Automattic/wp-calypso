@@ -29,10 +29,11 @@ describe( 'LostPassword', () => {
 			const wrapper = mount( <LostPasswordFormComponent className="test__test" /> );
 			wrapper.setState( { userLoginFormValue: '' } );
 
-			wrapper.find( '.lost-password-form__user-login-input' ).node.value = '';
-			expect( wrapper.find( '.lost-password-form__user-login-input' ).prop( 'disabled' ) ).to.not.be
+			expect(
+				wrapper.find( '.form-text-input.lost-password-form__user-login-input' ).prop( 'disabled' )
+			).to.not.be.ok;
+			expect( wrapper.find( 'button.lost-password-form__submit-button' ).prop( 'disabled' ) ).to.be
 				.ok;
-			expect( wrapper.find( '.lost-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
 		} );
 
 		test( 'should be disabled when isRequesting is true', () => {
@@ -40,8 +41,11 @@ describe( 'LostPassword', () => {
 				<LostPasswordFormComponent className="test__test" isRequesting={ true } />
 			);
 
-			expect( wrapper.find( '.lost-password-form__user-login-input' ).prop( 'disabled' ) ).to.be.ok;
-			expect( wrapper.find( '.lost-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
+			expect(
+				wrapper.find( '.form-text-input.lost-password-form__user-login-input' ).prop( 'disabled' )
+			).to.be.ok;
+			expect( wrapper.find( 'button.lost-password-form__submit-button' ).prop( 'disabled' ) ).to.be
+				.ok;
 		} );
 	} );
 } );

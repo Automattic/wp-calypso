@@ -68,7 +68,7 @@ export class LoginForm extends Component {
 	componentDidMount() {
 		this.setState( { isDisabledWhileLoading: false }, () => {
 			// eslint-disable-line react/no-did-mount-set-state
-			this.usernameOrEmail.focus();
+			this.usernameOrEmail && this.usernameOrEmail.focus();
 		} );
 	}
 
@@ -84,7 +84,7 @@ export class LoginForm extends Component {
 		}
 
 		if ( requestError.field === 'usernameOrEmail' ) {
-			defer( () => this.usernameOrEmail.focus() );
+			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		}
 	}
 
