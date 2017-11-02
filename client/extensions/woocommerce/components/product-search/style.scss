@@ -67,7 +67,23 @@
 					transform: translate( -50%, -50% );
 				}
 			}
+		}
+	}
 
+	.product-search__variations {
+		padding: 16px 24px;
+
+		.product-search__variation-fields {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: flex-start;
+			justify-content: space-between;
+		}
+
+		.product-search__variation-field {
+			flex: 0 1 calc(50% - 10px);
+			max-width: calc(50% - 10px);
+			margin-bottom: 20px;
 		}
 	}
 }

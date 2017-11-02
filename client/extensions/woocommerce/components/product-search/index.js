@@ -2,22 +2,19 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
 import { getAllProducts } from 'woocommerce/state/sites/products/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Search from 'components/search';
+import ProductSearchRow from './row';
 
 function productContainsString( product, textString ) {
 	const matchString = textString.trim().toLocaleLowerCase();
@@ -44,37 +41,7 @@ function removeProductId( value = [], productId ) {
 	return value.filter( id => id !== productId );
 }
 
-function renderImage( imageSrc ) {
-	const imageClasses = classNames( 'product-search__list-image', {
-		'is-thumb-placeholder': ! imageSrc,
-	} );
-
-	return <span className={ imageClasses }>{ imageSrc && <img src={ imageSrc } /> }</span>;
-}
-
-function renderRow( component, rowText, rowValue, imageSrc, selected, onChange ) {
-	const labelId = `applies-to-row-${ rowValue }-label`;
-
-	const rowComponent = React.createElement( component, {
-		htmlFor: labelId,
-		name: 'applies_to_select',
-		value: rowValue,
-		checked: selected,
-		onChange: onChange,
-	} );
-
-	return (
-		<div className="product-search__row" key={ rowValue }>
-			<FormLabel id={ labelId }>
-				{ rowComponent }
-				{ renderImage( imageSrc ) }
-				<span>{ rowText }</span>
-			</FormLabel>
-		</div>
-	);
-}
-
-class ProductSearch extends React.Component {
+class ProductSearch extends Component {
 	static propTypes = {
 		singular: PropTypes.bool,
 		value: PropTypes.oneOfType( [ PropTypes.array, PropTypes.number ] ),
@@ -129,31 +96,24 @@ class ProductSearch extends React.Component {
 	}
 
 	renderList( singular ) {
+		const { value } = this.props;
 		const filteredProducts = this.getFilteredProducts() || [];
-		const renderFunc = singular ? this.renderProductRadio : this.renderProductCheckbox;
+		const renderFunc = product => {
+			const isSelected = isProductSelected( value, product.id );
+			const onChange = singular ? this.onProductRadio : this.onProductCheckbox;
+			return (
+				<ProductSearchRow
+					key={ product.id }
+					isSelected={ isSelected }
+					onChange={ onChange }
+					product={ product }
+					singular={ singular }
+				/>
+			);
+		};
 
 		return <div className="product-search__list">{ filteredProducts.map( renderFunc ) }</div>;
 	}
-
-	renderProductCheckbox = product => {
-		const { value } = this.props;
-		const { name, id, images } = product;
-		const selected = isProductSelected( value, id );
-		const image = images && images[ 0 ];
-		const imageSrc = image && image.src;
-
-		return renderRow( FormCheckbox, name, id, imageSrc, selected, this.onProductCheckbox );
-	};
-
-	renderProductRadio = product => {
-		const { value } = this.props;
-		const { name, id, images } = product;
-		const selected = isProductSelected( value, product.id );
-		const image = images && images[ 0 ];
-		const imageSrc = image && image.src;
-
-		return renderRow( FormRadio, name, id, imageSrc, selected, this.onProductRadio );
-	};
 
 	onSearch = searchFilter => {
 		this.setState( { searchFilter } );
