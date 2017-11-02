@@ -3,82 +3,23 @@
 @import 'components/accordion/style';
 
 .editor-revisions-list {
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-	overflow: hidden;
-}
-
-.editor-revisions-list__button {
-	// NOTE: this is imitating the style of an accordion (with subtitle), with
-	// support for being "selected" and no right arrow
-	background-color: $accordion-background-collapsed;
-	border-top: 1px solid darken($sidebar-bg-color, 5%);
-	color: $gray-dark;
-	cursor: pointer;
-	display: block;
-	font-size: 13px;
-	margin: 0;
-	padding: ($accordion-padding - $accordion-subtitle-height / 2) $accordion-padding;
-	text-align: left;
-	width: 100%;
-
-	&:hover {
-		background: $accordion-background-hover;
-		color: $blue-medium;
-	}
-
-	.editor-revisions-list__revision.is-selected > &,
-	.editor-revisions-list__revision.is-selected > &:hover {
-		background: $blue-medium;
-
-		// NOTE: force with a heavy specificity white text, see discussion on
-		// https://github.com/Automattic/wp-calypso/pull/13367#discussion_r114108253
-		* {
-			color: $white;
-		}
-	}
-}
-
-.editor-revisions-list__date {
-	font-weight: bold;
-}
-
-.editor-revisions-list__changes {
-	padding-top: 5px;
-	font-size: 11px;
-}
-
-.editor-revisions-list__additions {
-	color: $blue-medium;
-}
-
-.editor-revisions-list__deletions {
-	color: $alert-red;
-}
-
-.editor-revisions-list__minor-changes {
-	color: $gray-text-min;
-}
-
-.editor-revisions__wrapper {
-	display: flex;
-	height: 96vh;
-	width: 75vw;
-	justify-content: space-between;
-	overflow-y: hidden;
-}
-
-.editor-revisions-list {
 	border-left: 1px solid darken($sidebar-bg-color, 5%);
-	min-width: 200px;
-	max-width: 250px;
-	overflow-y: scroll;
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 73px;
+	z-index: 1; // Put the list above the action-buttons:before overlay gradient. -shaun
+	width: 230px;
+	background: $gray-light;
 }
 
-.editor-diff-viewer {
-	min-width: 300px;
-	overflow-y: scroll;
+.editor-revisions-list__header {
+	padding: 0 16px;
+	height: 46px;
+	line-height: 46px;
+	color: $gray-text-min;
+	background: $white;
+	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
 }
 
 .editor-revisions-list__revision {
@@ -93,31 +34,73 @@
 	vertical-align: baseline;
 }
 
+// Scrollable Box for Revisions List
 .editor-revisions-list__scroller {
-	padding: 10px 0;
-	height: 100%;
+	position: absolute;
+	top: 46px;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	overflow-y: auto;
-	overflow-x: hidden;
-	-webkit-overflow-scrolling: touch;
-}
-
-.editor-revisions-list__list,
-.editor-revisions-list__header {
-	background: $white;
-	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
-	font-size: 13px;
 }
 
 .editor-revisions-list__list {
-	border-top: none;
 	list-style: none;
-	margin-left: 5px;
-}
-
-.editor-revisions-list__header {
-	padding: 1rem;
+	margin: 0;
 }
 
 .editor-revisions-list__load-revision {
 	width: 100%;
+}
+
+// Individual Revision List Item
+.editor-revisions-list__button {
+	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
+	color: $gray-dark;
+	cursor: pointer;
+	display: block;
+	text-align: left;
+	width: 100%;
+	padding: 8px 16px;
+
+	&:hover {
+		background: $accordion-background-hover;
+	}
+
+	.editor-revisions-list__revision.is-selected > &,
+	.editor-revisions-list__revision.is-selected > &:hover {
+		background: $gray-text-min;
+
+		// NOTE: force with a heavy specificity white text, see discussion on
+		// https://github.com/Automattic/wp-calypso/pull/13367#discussion_r114108253
+		* {
+			color: $white;
+		}
+	}
+}
+
+.editor-revisions-list__date {
+	font-weight: bold;
+	display: block;
+}
+
+.editor-revisions-list__author {
+	font-size: 14px;
+	color: $gray-text;
+}
+
+.editor-revisions-list__changes {
+	font-size: 13px;
+}
+
+.editor-revisions-list__additions {
+	color: $blue-medium;
+}
+
+.editor-revisions-list__deletions {
+	color: $alert-red;
+}
+
+.editor-revisions-list__minor-changes {
+	color: $gray-text-min;
 }

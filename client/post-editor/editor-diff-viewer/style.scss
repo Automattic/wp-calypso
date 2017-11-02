@@ -1,43 +1,41 @@
 /** @format */
-.editor-diff-viewer__title {
-	padding-left: 10px; /* Intentionally non-standard to align editor body margin (10px) */
-	padding-right: 10px;
-	font-family: $serif;
-	font-size: 28px;
-	color: $gray-dark;
-	font-weight: 600;
+.editor-diff-viewer {
+	margin: 0;
+	position: absolute;
+		top: 0;
+		bottom: 72px;
+		left: 0;
+	width: calc( 100% - 230px );
+	box-sizing: border-box;
+	padding: 24px 32px 32px 32px;
+	overflow-y: auto;
 
-	@include breakpoint( '>480px' ) {
+	.editor-diff-viewer__title {
+		font-family: $serif;
 		font-size: 32px;
+		color: $gray-dark;
+		font-weight: 600;
+		margin: 0 0 24px 0;
+		height: auto;
+		line-height: 1.2;
 	}
 }
 
-.editor-diff-viewer {
-	margin: 0 auto;
-	max-width: 700px;
-	width: 100%;
-}
-
 .editor-diff-viewer__content {
-	font-size: 16px;
-	padding: 11px;
+	font-family: $serif;
+	font-size: 15px;
 	white-space: pre-wrap;
-	// following css is a reset from the general <pre> rule that matches
+	padding: 0;
 	background: transparent;
-	font-family: inherit;
-	font-size: inherit;
-	line-height: inherit;
-	margin-bottom: inherit;
-	overflow: auto;
-}
 
-.editor-diff-viewer__additions {
-	background: lighten($blue-wordpress, 58%);
-	border-bottom: 2px solid $blue-wordpress;
-}
+	.editor-diff-viewer__additions {
+		background: lighten($blue-wordpress, 58%);
+		border-bottom: 2px solid $blue-wordpress;
+	}
 
-.editor-diff-viewer__deletions {
-	background: lighten($alert-red, 38%);
-	border-bottom: 2px solid $alert-red;
-	text-decoration: line-through;
+	.editor-diff-viewer__deletions {
+		background: lighten($alert-red, 38%);
+		border-bottom: 2px solid $alert-red;
+		text-decoration: line-through;
+	}
 }
