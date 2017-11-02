@@ -14,7 +14,6 @@ import { get, includes } from 'lodash';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
-import QueryPostTypes from 'components/data/query-post-types';
 import { canCurrentUser } from 'state/selectors';
 import { getPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
@@ -29,7 +28,6 @@ function PostActionsEllipsisMenuDuplicate( {
 	siteId,
 	canEdit,
 	duplicateUrl,
-	isKnownType,
 	bumpStat,
 	status,
 } ) {
@@ -41,7 +39,6 @@ function PostActionsEllipsisMenuDuplicate( {
 
 	return (
 		<PopoverMenuItem href={ duplicateUrl } onClick={ bumpStat } icon="pages">
-			{ siteId && ! isKnownType && <QueryPostTypes siteId={ siteId } /> }
 			{ translate( 'Duplicate', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);
@@ -54,7 +51,6 @@ PostActionsEllipsisMenuDuplicate.propTypes = {
 	canEdit: PropTypes.bool,
 	status: PropTypes.string,
 	duplicateUrl: PropTypes.string,
-	isKnownType: PropTypes.bool,
 	bumpStat: PropTypes.func,
 };
 
@@ -79,8 +75,6 @@ const mapStateToProps = ( state, { globalId } ) => {
 		siteId: post.site_ID,
 		canEdit: canCurrentUser( state, post.site_ID, capability ),
 		duplicateUrl: getEditorDuplicatePostPath( state, post.site_ID, post.ID ),
-		isKnownType: !! type,
-		type,
 	};
 };
 

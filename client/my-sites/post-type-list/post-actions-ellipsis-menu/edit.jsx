@@ -14,7 +14,6 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
-import QueryPostTypes from 'components/data/query-post-types';
 import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { canCurrentUser } from 'state/selectors';
@@ -38,7 +37,6 @@ function PostActionsEllipsisMenuEdit( {
 
 	return (
 		<PopoverMenuItem href={ editUrl } onClick={ bumpStat } icon="pencil">
-			{ siteId && ! isKnownType && <QueryPostTypes siteId={ siteId } /> }
 			{ translate( 'Edit', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);
@@ -51,7 +49,6 @@ PostActionsEllipsisMenuEdit.propTypes = {
 	canEdit: PropTypes.bool,
 	status: PropTypes.string,
 	editUrl: PropTypes.string,
-	isKnownType: PropTypes.bool,
 	bumpStat: PropTypes.func,
 };
 
@@ -76,8 +73,6 @@ const mapStateToProps = ( state, { globalId } ) => {
 		canEdit: canCurrentUser( state, post.site_ID, capability ),
 		status: post.status,
 		editUrl: getEditorPath( state, post.site_ID, post.ID ),
-		isKnownType: !! type,
-		type,
 	};
 };
 
