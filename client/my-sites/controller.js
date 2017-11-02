@@ -201,14 +201,13 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 		);
 	}
 
-	const otherPaths = [ `/checkout/${ slug }` ];
-	const startsWithPaths = [ '/checkout/thank-you', `/me/purchases/${ slug }` ];
+	const startsWithPaths = [ '/checkout/', `/me/purchases/${ slug }` ];
 
 	if ( some( startsWithPaths, startsWithPath => startsWith( path, startsWithPath ) ) ) {
 		return true;
 	}
 
-	return [ ...domainManagementPaths, ...otherPaths ].indexOf( path ) > -1;
+	return domainManagementPaths.indexOf( path ) > -1;
 }
 
 function onSelectedSiteAvailable( context ) {
