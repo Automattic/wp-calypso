@@ -101,7 +101,7 @@ describe( 'middleware', () => {
 	} );
 
 	describe( 'eventMessage', () => {
-		test( 'is dispatched if client is connected and chat is assigned', () => {
+		test( 'is dispatched if client is connected, chat is assigned, and there is a message for the action', () => {
 			const state = {
 				happychat: {
 					connection: {
@@ -121,7 +121,7 @@ describe( 'middleware', () => {
 			);
 		} );
 
-		test( 'is not dispatched is client is not connected', () => {
+		test( 'is not dispatched if client is not connected', () => {
 			const state = {
 				happychat: {
 					connection: {
@@ -151,6 +151,23 @@ describe( 'middleware', () => {
 			};
 			store.getState.mockReturnValue( state );
 			const action = blur();
+			actionMiddleware( action );
+			expect( store.dispatch ).not.toHaveBeenCalled();
+		} );
+
+		test( 'is not dispatched if there is no message defined', () => {
+			const state = {
+				happychat: {
+					connection: {
+						status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
+					},
+					chat: {
+						status: HAPPYCHAT_CHAT_STATUS_ASSIGNED,
+					},
+				},
+			};
+			store.getState.mockReturnValue( state );
+			const action = { type: 'HAPPYCHAT_ACTION_WITHOUT_EVENT_MESSAGE_DEFINED' };
 			actionMiddleware( action );
 			expect( store.dispatch ).not.toHaveBeenCalled();
 		} );

@@ -59,7 +59,9 @@ export const socketMiddleware = ( connection = null ) => {
 			case HAPPYCHAT_BLUR:
 			case HAPPYCHAT_FOCUS:
 				const state = store.getState();
-				isHappychatClientConnected( state ) && isHappychatChatAssigned( state )
+				isHappychatClientConnected( state ) &&
+				isHappychatChatAssigned( state ) &&
+				eventMessage[ action.type ]
 					? store.dispatch( sendEvent( eventMessage[ action.type ] ) )
 					: noop;
 				break;
