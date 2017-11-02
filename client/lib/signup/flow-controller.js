@@ -306,6 +306,12 @@ assign( SignupFlowController.prototype, {
 		SignupProgressStore.reset();
 		SignupDependencyStore.reset();
 	},
+
+	changeFlowName( flowName ) {
+		this._flowName = flowName;
+		this._flow = flows.getFlow( flowName );
+		store.set( STORAGE_KEY, flowName );
+	},
 } );
 
 export default SignupFlowController;
