@@ -120,12 +120,12 @@ export class FullPostView extends React.Component {
 	}
 
 	componentWillReceiveProps( newProps ) {
-		//newProps.shouldShowComments=true;
 		if ( newProps.shouldShowComments ) {
 			this.hasScrolledToCommentAnchor = false;
 			this.checkForCommentAnchor();
 		}
 	}
+
 	componentWillUnmount() {
 		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
 		KeyboardShortcuts.off( 'like-selection', this.handleLike );
@@ -186,7 +186,6 @@ export class FullPostView extends React.Component {
 	checkForCommentAnchor = () => {
 		const hash = window.location.hash.substr( 1 );
 		if ( hash.indexOf( 'comments' ) > -1 ) {
-			console.log( 'index is greater than -1' );
 			this.hasCommentAnchor = true;
 		}
 	};
