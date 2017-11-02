@@ -4,11 +4,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { isEmpty } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import Notice from 'components/notice';
 import TooltipComponent from 'components/tooltip';
 
@@ -38,7 +38,6 @@ class Tooltip extends React.Component {
 			>
 				{ this.props.children }
 				<TooltipComponent
-					id="tooltip__example"
 					isVisible={ this.state.show }
 					onClose={ this.close }
 					position={ 'top' }
