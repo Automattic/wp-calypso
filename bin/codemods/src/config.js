@@ -62,4 +62,5 @@ const codemodArgs = {
 module.exports = {
 	codemodArgs,
 	jscodeshiftArgs,
+	recastOptions,
 };
