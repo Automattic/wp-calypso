@@ -15,6 +15,7 @@ import { get, isUndefined } from 'lodash';
 import Card from 'components/card';
 import CommentContent from 'my-sites/comments/comment/comment-content';
 import CommentHeader from 'my-sites/comments/comment/comment-header';
+import CommentReply from 'my-sites/comments/comment/comment-reply';
 import QueryComment from 'components/data/query-comment';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
@@ -37,6 +38,7 @@ export class Comment extends Component {
 	state = {
 		isEditMode: false,
 		isExpanded: false,
+		isReplyMode: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -46,6 +48,10 @@ export class Comment extends Component {
 	}
 
 	storeCardRef = card => ( this.commentCard = card );
+
+	enterReplyMode = () => this.setState( { isReplyMode: true } );
+
+	exitReplyMode = () => this.setState( { isReplyMode: false } );
 
 	keyDownHandler = event => {
 		const { isBulkMode } = this.props;
@@ -86,7 +92,7 @@ export class Comment extends Component {
 			refreshCommentData,
 			siteId,
 		} = this.props;
-		const { isEditMode, isExpanded } = this.state;
+		const { isEditMode, isExpanded, isReplyMode } = this.state;
 
 		const classes = classNames( 'comment', {
 			'is-bulk-mode': isBulkMode,
@@ -115,7 +121,13 @@ export class Comment extends Component {
 							toggleExpanded={ this.toggleExpanded }
 						/>
 
-						<CommentContent { ...{ commentId, isBulkMode, isExpanded } } />
+						<CommentContent { ...{ commentId, isExpanded } } />
+
+						<CommentReply
+							{ ...{ commentId, isReplyMode } }
+							enterReplyMode={ this.enterReplyMode }
+							exitReplyMode={ this.exitReplyMode }
+						/>
 					</div>
 				) }
 			</Card>
