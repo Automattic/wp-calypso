@@ -36,9 +36,9 @@ export class Comment extends Component {
 	};
 
 	state = {
+		hasReplyFocus: false,
 		isEditMode: false,
 		isExpanded: false,
-		hasReplyFocus: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -92,7 +92,7 @@ export class Comment extends Component {
 			refreshCommentData,
 			siteId,
 		} = this.props;
-		const { isEditMode, isExpanded, hasReplyFocus } = this.state;
+		const { hasReplyFocus, isEditMode, isExpanded } = this.state;
 
 		const classes = classNames( 'comment', {
 			'is-bulk-mode': isBulkMode,
