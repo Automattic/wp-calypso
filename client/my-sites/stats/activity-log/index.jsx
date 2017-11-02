@@ -274,6 +274,11 @@ class ActivityLog extends Component {
 		debug( 'Restore requested for after activity %o', requestedRestoreActivity );
 		recordTracksEvent( 'calypso_activitylog_restore_confirm', { rewindId } );
 		rewindRestore( siteId, rewindId );
+		scrollTo( {
+			x: 0,
+			y: 0,
+			duration: 250,
+		} );
 	};
 
 	/**
