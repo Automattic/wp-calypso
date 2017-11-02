@@ -11,7 +11,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEbanx } from 'lib/credit-card-details/payment-processors';
+import { isEbanx } from 'lib/credit-card-details/ebanx';
 
 function ebanxFieldRules() {
 	return {
@@ -37,6 +37,11 @@ function ebanxFieldRules() {
 
 		city: {
 			description: i18n.translate( 'City' ),
+			rules: [ 'required' ],
+		},
+
+		'phone-number': {
+			description: i18n.translate( 'Phone Number' ),
 			rules: [ 'required' ],
 		},
 	};
@@ -83,10 +88,6 @@ function creditCardFieldRules( additionalFieldRules = {} ) {
 			rules: [ 'required' ],
 		},
 
-		'phone-number': {
-			description: i18n.translate( 'Phone Number' ),
-			rules: [ 'required' ],
-		},
 	}, additionalFieldRules );
 }
 

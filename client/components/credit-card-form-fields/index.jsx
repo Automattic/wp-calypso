@@ -14,11 +14,10 @@ import isEqual from 'lodash/isEqual';
  * Internal dependencies
  */
 import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
-import { CountrySelect, StateSelect, Input } from 'my-sites/domains/components/form';
+import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/domains/components/form';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { maskField, unmaskField } from 'lib/credit-card-details';
-import config from 'config';
-// import { isEbanx } from 'lib/credit-card-details/payment-processors';
+import { isEbanx } from 'lib/credit-card-details/ebanx';
 
 export class CreditCardFormFields extends React.Component {
 	static propTypes = {
@@ -110,7 +109,7 @@ export class CreditCardFormFields extends React.Component {
 
 	shouldRenderEbanx() {
 		const { countryCode } = this.state;
-		return countryCode === 'BR' && config.isEnabled( 'upgrades/ebanx' );
+		return isEbanx( countryCode );
 	}
 
 	renderEbanxFields() {
@@ -145,11 +144,11 @@ export class CreditCardFormFields extends React.Component {
 				key: 'phone-number',
 			} ),
 
-			this.createField( 'address', Input, {
+			this.createField( 'address-1', Input, {
 				maxLength: 40,
 				labelClass: 'credit-card-form-fields__label',
 				label: translate( 'Address' ),
-				key: 'address',
+				key: 'address-1',
 			} ),
 
 			this.createField( 'street-number', Input, {
@@ -158,6 +157,14 @@ export class CreditCardFormFields extends React.Component {
 					context: 'Street number associated with address on credit card form',
 				} ),
 				key: 'street-number',
+			} ),
+
+			this.createField( 'address-2', HiddenInput, {
+				maxLength: 40,
+				labelClass: 'credit-card-form-fields__label',
+				label: translate( 'Address Line 2' ),
+				text: translate( '+ Add Address Line 2' ),
+				key: 'address-2',
 			} ),
 
 			this.createField( 'city', Input, {
@@ -176,7 +183,7 @@ export class CreditCardFormFields extends React.Component {
 	}
 
 	render() {
-		const { translate, countriesList, card } = this.props;
+		const { translate, countriesList } = this.props;
 		const ebanxDetailsRequired = this.shouldRenderEbanx();
 		const creditCardFormFieldsExtrasClassNames = classNames( {
 			'credit-card-form-fields__extras': true,

@@ -15,6 +15,13 @@
 		flex-basis: calc( 100% );
 	}
 
+	.form__hidden-input a {
+		display: block;
+		font-size:  12px;
+		margin-top: -10px;
+		margin-left: 15px;
+		margin-bottom: 15px;
+	}
 
 	@include breakpoint( '>480px' ) {
 		.cvv,
@@ -32,6 +39,7 @@
 
 		&.ebanx-details-required {
 
+			.address-2,
 			.country,
 			.city {
 				flex-basis: calc( 100% - 15px );
@@ -41,7 +49,7 @@
 				flex-basis: calc( 33% - 15px);
 			}
 
-			.address {
+			.address-1 {
 				flex-basis: calc( 66% - 15px);
 			}
 

@@ -11,6 +11,12 @@ import moment from 'moment';
  */
 import { validateCardDetails } from '../validation';
 
+jest.mock( 'lib/credit-card-details/ebanx', () => {
+	return {
+		isEbanx: jest.fn( false )
+	};
+} );
+
 describe( 'validation', () => {
 	const validCard = {
 		name: 'John Doe',
@@ -47,7 +53,6 @@ describe( 'validation', () => {
 	describe( '#validateCardDetails', () => {
 		test( 'should return no errors when card is valid', () => {
 			const result = validateCardDetails( validCard );
-
 			expect( result ).to.be.eql( { errors: {} } );
 		} );
 
