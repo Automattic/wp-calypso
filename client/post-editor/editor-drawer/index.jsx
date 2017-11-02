@@ -276,7 +276,7 @@ class EditorDrawer extends Component {
 			return;
 		}
 
-		return <EditorMoreOptionsCopyPost type={ type } />;
+		return <EditorMoreOptionsCopyPost />;
 	}
 
 	renderMoreOptions() {
@@ -325,7 +325,6 @@ class EditorDrawer extends Component {
 				<EditPostStatus
 					savedPost={ this.props.savedPost }
 					postDate={ postDate }
-					type={ this.props.type }
 					onSave={ this.props.onSave }
 					onTrashingPost={ this.props.onTrashingPost }
 					onPrivatePublish={ this.props.onPrivatePublish }
@@ -377,6 +376,7 @@ const enhance = flow(
 				isJetpack: isJetpackSite( state, siteId ),
 				isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 				jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
+				type,
 				typeObject: getPostType( state, siteId, type ),
 			};
 		},
