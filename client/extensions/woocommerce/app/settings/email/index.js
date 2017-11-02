@@ -37,7 +37,7 @@ const SettingsEmail = ( { site, translate, className, params, isSaving, mailChim
 	);
 
 	return (
-		<Main className={ classNames( 'email', className ) }>
+		<Main className={ classNames( 'email', className ) } wideLayout>
 			<ActionHeader breadcrumbs={ breadcrumbs } >
 				<Button primary onClick={ onSave } busy={ isSaving } disabled={ isSaving }>
 					{ translate( 'Save' ) }

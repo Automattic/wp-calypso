@@ -102,7 +102,7 @@ class SettingsPayments extends Component {
 
 		const saveMessage = finishedInitialSetup ? translate( 'Save' ) : translate( 'Save & Finish' );
 		return (
-			<Main className={ classNames( 'settingsPayments', className ) }>
+			<Main className={ classNames( 'settingsPayments', className ) } wideLayout>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
 					<Button primary onClick={ this.onSave } busy={ isSaving } disabled={ isSaving }>
 						{ saveMessage }

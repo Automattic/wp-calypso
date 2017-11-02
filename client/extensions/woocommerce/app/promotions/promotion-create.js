@@ -181,7 +181,7 @@ class PromotionCreate extends React.Component {
 		const { saveAttempted, busy } = this.state;
 
 		return (
-			<Main className={ className }>
+			<Main className={ className } wideLayout>
 				<PromotionHeader
 					site={ site }
 					promotion={ promotion }

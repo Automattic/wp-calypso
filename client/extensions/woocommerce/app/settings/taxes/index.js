@@ -59,7 +59,7 @@ class SettingsTaxes extends Component {
 		const renderPlaceholder = ! renderTaxesByTaxJar && ! renderTaxesByWCS;
 
 		return (
-			<Main className={ classNames( 'settings-taxes', className ) }>
+			<Main className={ classNames( 'settings-taxes', className ) } wideLayout>
 				{ renderPlaceholder && <SettingsTaxesPlaceholder siteSlug={ siteSlug } /> }
 				{ renderTaxesByTaxJar && <SettingsTaxesTaxJar site={ site } /> }
 				{ renderTaxesByWCS && (
