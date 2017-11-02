@@ -27,7 +27,7 @@ import EmptySearchRecommendedPost from './empty-search-recommended-post';
 
 const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
 
-export default class PostLifecycle extends React.PureComponent {
+export default class PostLifecycle extends React.Component {
 	static propTypes = {
 		postKey: PropTypes.object.isRequired,
 		isDiscoverStream: PropTypes.bool,
