@@ -343,6 +343,7 @@ describe( 'handlers', () => {
 
 			const products = [ { id: 1, name: 'Mittens' }, { id: 2, name: 'Scarf' } ];
 			const data = {
+				status: 200,
 				body: products,
 				headers: {
 					'X-WP-TotalPages': 1,
@@ -375,6 +376,7 @@ describe( 'handlers', () => {
 			};
 			const action = productsUpdated( 123, {}, response, 1, 2 );
 			const data = {
+				status: 404,
 				body: response,
 				headers: [],
 			};
