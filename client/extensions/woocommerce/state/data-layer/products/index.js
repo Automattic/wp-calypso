@@ -116,7 +116,7 @@ export function productsRequest( { dispatch }, action ) {
 	dispatch( request( siteId, action ).getWithHeaders( `products?${ queryString }` ) );
 }
 
-function receivedProducts( { dispatch }, action, { data } ) {
+export function receivedProducts( { dispatch }, action, { data } ) {
 	const { siteId, params } = action;
 	const { body, headers } = data;
 	const totalPages = Number( headers[ 'X-WP-TotalPages' ] );
