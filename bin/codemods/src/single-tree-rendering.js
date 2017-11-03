@@ -6,6 +6,15 @@ export default function transformer( file, api ) {
 	const j = api.jscodeshift;
 	const root = j( file.source );
 
+	/**
+	 * Removes the extra newlines between two import statements
+ 	 * caused by `insertAfter()`:
+	 * @link https://github.com/benjamn/recast/issues/371
+	 */
+	function removeExtraNewlines( str ) {
+		return str.replace( /(import.*\n)\n+(import)/g, '$1$2' );
+	}
+
 	function addNextMiddleware( path ) {
 		if ( path.value.params.length !== 1 ) {
 			// More than just a context arg, possibly not a middleware
@@ -96,12 +105,11 @@ export default function transformer( file, api ) {
 		} );
 
 	if ( routeDefs.size() ) {
-		// This adds a newline above the import, meh. https://github.com/benjamn/recast/issues/371
 		root
 			.find( j.ImportDeclaration )
 			.at( -1 )
 			.insertAfter( "import { makeLayout, render as clientRender } from 'controller';" );
 	}
 
-	return root.toSource( config.recastOptions );
+	return removeExtraNewlines( root.toSource( config.recastOptions ) );
 }
