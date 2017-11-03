@@ -39,6 +39,7 @@ class ConfirmDisconnection extends PureComponent {
 		'too-difficult': 'tooHard',
 		'too-expensive': 'onlyNeedFree',
 		troubleshooting: 'troubleshooting',
+		other: 'other',
 	};
 
 	submitSurvey = () => {
@@ -61,7 +62,7 @@ class ConfirmDisconnection extends PureComponent {
 	render() {
 		const { reason, siteId, siteSlug, translate } = this.props;
 		const previousStep = find(
-			without( keys( this.constructor.reasonWhitelist ), 'troubleshooting' ), // There's no step for Troubleshooting
+			without( keys( this.constructor.reasonWhitelist ), 'troubleshooting', 'other' ), // Redirect those back to initial survey
 			r => r === reason
 		);
 

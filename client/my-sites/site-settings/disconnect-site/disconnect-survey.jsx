@@ -41,6 +41,7 @@ const DisconnectSurvey = ( { confirmHref, isPaidPlan, siteId, siteSlug, translat
 		<CompactCard href={ confirmHref + '?reason=troubleshooting' }>
 			{ translate( "Troubleshooting — I'll be reconnecting afterwards" ) }
 		</CompactCard>
+		<CompactCard href={ confirmHref + '?reason=other' }>{ translate( 'Other' ) }</CompactCard>
 	</div>
 );
 
