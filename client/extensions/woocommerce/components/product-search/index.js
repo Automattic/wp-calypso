@@ -15,31 +15,7 @@ import { getAllProducts } from 'woocommerce/state/sites/products/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Search from 'components/search';
 import ProductSearchRow from './row';
-
-function productContainsString( product, textString ) {
-	const matchString = textString.trim().toLocaleLowerCase();
-
-	if ( -1 < product.name.toLocaleLowerCase().indexOf( matchString ) ) {
-		// found in product name
-		return true;
-	}
-	return false;
-}
-
-function isProductSelected( value = [], productId ) {
-	if ( ! value.length ) {
-		return false;
-	}
-	return -1 !== value.indexOf( productId );
-}
-
-function addProductId( value = [], productId ) {
-	return [ ...value, productId ];
-}
-
-function removeProductId( value = [], productId ) {
-	return value.filter( id => id !== productId );
-}
+import { addProductId, isProductSelected, productContainsString, removeProductId } from './utils';
 
 class ProductSearch extends Component {
 	static propTypes = {
