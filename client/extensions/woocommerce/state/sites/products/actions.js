@@ -3,6 +3,7 @@
  *
  * @format
  */
+import { isObject } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -13,6 +14,7 @@ import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_PRODUCTS_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_DELETE,
 	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
@@ -157,6 +159,16 @@ export function fetchProducts( siteId, params, successAction, failureAction ) {
 }
 
 export function productsUpdated( siteId, params, products, totalPages, totalProducts ) {
+	// This passed through the API layer successfully, but failed at the remote site.
+	if ( isObject( products ) && products.code ) {
+		return {
+			type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
+			siteId,
+			params,
+			error: products,
+		};
+	}
+
 	const normalizedQuery = getNormalizedProductsQuery( params );
 	return {
 		type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
