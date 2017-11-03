@@ -14,7 +14,6 @@ import { get, includes } from 'lodash';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
-import QueryPostTypes from 'components/data/query-post-types';
 import { canCurrentUser } from 'state/selectors';
 import { getPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
@@ -26,12 +25,10 @@ import { bumpStatGenerator } from './utils';
 
 function PostActionsEllipsisMenuDuplicate( {
 	translate,
-	siteId,
 	canEdit,
-	duplicateUrl,
-	isKnownType,
-	bumpStat,
 	status,
+	duplicateUrl,
+	bumpStat,
 } ) {
 	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
 
@@ -41,7 +38,6 @@ function PostActionsEllipsisMenuDuplicate( {
 
 	return (
 		<PopoverMenuItem href={ duplicateUrl } onClick={ bumpStat } icon="pages">
-			{ siteId && ! isKnownType && <QueryPostTypes siteId={ siteId } /> }
 			{ translate( 'Duplicate', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);
@@ -50,11 +46,9 @@ function PostActionsEllipsisMenuDuplicate( {
 PostActionsEllipsisMenuDuplicate.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func.isRequired,
-	siteId: PropTypes.number,
 	canEdit: PropTypes.bool,
 	status: PropTypes.string,
 	duplicateUrl: PropTypes.string,
-	isKnownType: PropTypes.bool,
 	bumpStat: PropTypes.func,
 };
 
@@ -76,11 +70,8 @@ const mapStateToProps = ( state, { globalId } ) => {
 
 	return {
 		status: post.status,
-		siteId: post.site_ID,
 		canEdit: canCurrentUser( state, post.site_ID, capability ),
 		duplicateUrl: getEditorDuplicatePostPath( state, post.site_ID, post.ID ),
-		isKnownType: !! type,
-		type,
 	};
 };
 
@@ -88,7 +79,7 @@ const mapDispatchToProps = { bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const bumpStat = bumpStatGenerator(
-		stateProps.type.name,
+		get( stateProps, 'type.name' ),
 		'duplicate',
 		dispatchProps.bumpAnalyticsStat
 	);
