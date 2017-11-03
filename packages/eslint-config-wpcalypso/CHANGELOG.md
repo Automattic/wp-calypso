@@ -1,3 +1,7 @@
+#### v1.2.0 (2017-11-03)
+
+- Added: [`no-duplicate-imports`](https://eslint.org/docs/rules/no-duplicate-imports) as error
+
 #### v1.1.1 (2017-10-30)
 
 - Allow for eslint 3.x as a peer dependency instead of only 4.x

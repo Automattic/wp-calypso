@@ -1,6 +1,6 @@
 {
   "name": "eslint-config-wpcalypso",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "ESLint configuration following WordPress.com's Calypso JavaScript Coding Guidelines",
   "keywords": [
     "eslint"
