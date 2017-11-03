@@ -114,7 +114,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 		if (
 			designType === DESIGN_TYPE_STORE &&
-			( abtest( 'signupPressableStoreFlow' ) === 'pressable' || ! isCountryAllowed )
+			( abtest( 'signupAtomicStoreVsPressable' ) === 'pressable' || ! isCountryAllowed )
 		) {
 			this.scrollUp();
 
