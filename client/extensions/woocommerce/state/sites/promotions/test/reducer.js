@@ -23,7 +23,6 @@ import {
 	WOOCOMMERCE_COUPON_DELETED,
 	WOOCOMMERCE_COUPON_UPDATED,
 	WOOCOMMERCE_COUPONS_UPDATED,
-	WOOCOMMERCE_PRODUCT_UPDATED,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
@@ -78,12 +77,6 @@ describe( 'reducer', () => {
 		totalProducts: 4,
 	};
 
-	const productUpdateAction1 = {
-		type: WOOCOMMERCE_PRODUCT_UPDATED,
-		siteId,
-		data: { id: products1[ 1 ].id, sale_price: '222.22' },
-	};
-
 	test( 'should store coupons', () => {
 		const state1 = reducer( undefined, couponsAction1 );
 		expect( state1.coupons ).to.exist;
@@ -128,32 +121,6 @@ describe( 'reducer', () => {
 		expect( state3.coupons[ 3 ] ).to.equal( coupons1[ 4 ] );
 		expect( state3.coupons[ 4 ] ).to.equal( coupons2[ 0 ] );
 		expect( state3.coupons[ 5 ] ).to.equal( coupons2[ 1 ] );
-	} );
-
-	test( 'should store products', () => {
-		const state1 = reducer( undefined, productsAction1 );
-		expect( state1.products ).to.exist;
-		expect( state1.products.length ).to.equal( 4 );
-		expect( state1.products[ 0 ] ).to.equal( products1[ 0 ] );
-		expect( state1.products[ 1 ] ).to.equal( products1[ 1 ] );
-		expect( state1.products[ 2 ] ).to.equal( products1[ 2 ] );
-		expect( state1.products[ 3 ] ).to.be.null;
-
-		const state2 = reducer( state1, productsAction2 );
-		expect( state2.products ).to.exist;
-		expect( state2.products.length ).to.equal( 4 );
-		expect( state2.products[ 0 ] ).to.equal( products1[ 0 ] );
-		expect( state2.products[ 1 ] ).to.equal( products1[ 1 ] );
-		expect( state2.products[ 2 ] ).to.equal( products1[ 2 ] );
-		expect( state2.products[ 3 ] ).to.equal( products2[ 0 ] );
-	} );
-
-	test( 'should update a product in state', () => {
-		const state1 = reducer( undefined, productsAction1 );
-		const state2 = reducer( state1, productUpdateAction1 );
-
-		expect( state2.products ).to.exist;
-		expect( state2.products[ 1 ].sale_price ).to.equal( '222.22' );
 	} );
 
 	test( 'should not calculate promotions if coupons are not complete', () => {

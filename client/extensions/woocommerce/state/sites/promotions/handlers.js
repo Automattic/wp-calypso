@@ -16,14 +16,13 @@ import {
 	updateCoupon,
 	deleteCoupon,
 } from 'woocommerce/state/sites/coupons/actions';
-import { updateProduct } from 'woocommerce/state/sites/products/actions';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
+import { updateProduct } from 'woocommerce/state/sites/products/actions';
 import {
 	WOOCOMMERCE_PROMOTION_CREATE,
 	WOOCOMMERCE_PROMOTION_UPDATE,
 	WOOCOMMERCE_PROMOTION_DELETE,
 	WOOCOMMERCE_PROMOTIONS_REQUEST,
-	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 	WOOCOMMERCE_COUPONS_UPDATED,
 } from 'woocommerce/state/action-types';
 
@@ -38,7 +37,6 @@ export default {
 	[ WOOCOMMERCE_PROMOTION_UPDATE ]: [ promotionUpdate ],
 	[ WOOCOMMERCE_PROMOTION_DELETE ]: [ promotionDelete ],
 	[ WOOCOMMERCE_PROMOTIONS_REQUEST ]: [ promotionsRequest ],
-	[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: [ productsRequestSuccess ],
 	[ WOOCOMMERCE_COUPONS_UPDATED ]: [ couponsUpdated ],
 };
 
@@ -63,23 +61,6 @@ export function promotionsRequest( { dispatch }, action ) {
 
 	// Fetch all coupons as well.
 	dispatch( fetchCoupons( siteId, { offset: 0, per_page: perPage } ) );
-}
-
-export function productsRequestSuccess( { dispatch }, action ) {
-	const { siteId, products, params, totalProducts } = action;
-
-	if ( undefined !== params.offset ) {
-		debug(
-			`Products ${ params.offset + 1 }-${ params.offset +
-				products.length } out of ${ totalProducts } received.`
-		);
-
-		const remainder = totalProducts - params.offset - products.length;
-		if ( remainder ) {
-			const offset = params.offset + products.length;
-			dispatch( fetchProducts( siteId, { offset, per_page: params.per_page } ) );
-		}
-	}
 }
 
 export function couponsUpdated( { dispatch }, action ) {

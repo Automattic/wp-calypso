@@ -9,18 +9,16 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { coupons1, coupons2, products1, products2 } from './fixtures/promotions';
+import { coupons1, coupons2 } from './fixtures/promotions';
 import { fetchPromotions, createPromotion, updatePromotion, deletePromotion } from '../actions';
 import {
 	promotionsRequest,
-	productsRequestSuccess,
 	couponsUpdated,
 	promotionCreate,
 	promotionUpdate,
 	promotionDelete,
 } from '../handlers';
 import {
-	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 	WOOCOMMERCE_COUPONS_REQUEST,
 	WOOCOMMERCE_COUPONS_UPDATED,
 } from 'woocommerce/state/action-types';
@@ -90,45 +88,6 @@ describe( 'handlers', () => {
 				totalCoupons: 7,
 			};
 			couponsUpdated( store, action );
-
-			expect( store.dispatch ).to.not.have.been.called;
-		} );
-	} );
-
-	describe( '#productsRequestSuccess', () => {
-		test( 'should dispatch a request for the next page', () => {
-			const store = {
-				dispatch: spy(),
-			};
-
-			const action = {
-				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
-				siteId,
-				products: products1,
-				params: { offset: 0, per_page: 3 },
-				totalProducts: 4,
-			};
-
-			productsRequestSuccess( store, action );
-
-			// TODO: test as above for coupons after products gets refactored to data-layer.
-			expect( store.dispatch.firstCall.returnValue ).to.be.a.function;
-		} );
-
-		test( 'should not dispatch after the last page', () => {
-			const store = {
-				dispatch: spy(),
-			};
-
-			const action = {
-				type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
-				siteId,
-				products: products2,
-				params: { offset: 3, per_page: 3 },
-				totalProducts: 4,
-			};
-
-			productsRequestSuccess( store, action );
 
 			expect( store.dispatch ).to.not.have.been.called;
 		} );
