@@ -19,16 +19,29 @@ const user = userFactory();
 const GoogleAppsDetails = () => {
 	return (
 		<PurchaseDetail
-			icon="cog"
-			title={ i18n.translate( 'Finish setting up your G Suite account' ) }
+			icon="mail"
+			title={ i18n.translate( 'Check your email to finish setting up your G Suite account' ) }
 			description={ i18n.translate(
-				'We emailed you at %(email)s with login information for your new G Suite account. If you can’t find it, try a global search for “G Suite”.',
-				{ args: { email: user.get().email } }
+				'We emailed you at {{strong}}%(email)s{{/strong}} with login information ' +
+					'so you can start using new professional email address and other G Suite apps. ' +
+					'If you can’t find it, try searching “G Suite” in your email inbox. {{link}}Learn more about G Suite{{/link}}',
+				{
+					components: {
+						strong: <strong />,
+						link: (
+							<a
+								className="checkout-thank-you__gsuite-support-link"
+								href={ supportUrls.GOOGLE_APPS_LEARNING_CENTER }
+								rel="noopener noreferrer"
+								target="_blank"
+							/>
+						),
+					},
+					args: {
+						email: user.get().email,
+					},
+				}
 			) }
-			buttonText={ i18n.translate( 'Learn more about G Suite' ) }
-			href={ supportUrls.GOOGLE_APPS_LEARNING_CENTER }
-			target="_blank"
-			rel="noopener noreferrer"
 			requiredText={ i18n.translate( 'Almost done! One step remaining…' ) }
 			isRequired
 		/>
