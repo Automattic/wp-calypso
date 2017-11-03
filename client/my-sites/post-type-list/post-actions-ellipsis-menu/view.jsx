@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -98,7 +98,7 @@ const mapDispatchToProps = { setPreviewUrl, setLayoutFocus, bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const bumpStat = bumpStatGenerator(
-		stateProps.type.name,
+		get( stateProps, 'type.name' ),
 		'view',
 		dispatchProps.bumpAnalyticsStat
 	);
