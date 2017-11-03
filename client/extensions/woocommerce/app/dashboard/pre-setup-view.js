@@ -41,7 +41,24 @@ class PreSetupView extends Component {
 	}
 
 	static propTypes = {
-		siteId: PropTypes.number,
+		siteId: PropTypes.number.isRequired,
+		contactDetails: PropTypes.shape( {
+			address1: PropTypes.string,
+			address2: PropTypes.string,
+			city: PropTypes.string,
+			state: PropTypes.string,
+			postalCode: PropTypes.string,
+			countryCode: PropTypes.string,
+		} ).isRequired,
+		settingsGeneralLoaded: PropTypes.bool.isRequired,
+		storeLocation: PropTypes.shape( {
+			street: PropTypes.string,
+			street2: PropTypes.string,
+			city: PropTypes.string,
+			state: PropTypes.string,
+			postcode: PropTypes.string,
+			country: PropTypes.string,
+		} ).isRequired,
 	};
 
 	componentWillReceiveProps = newProps => {
