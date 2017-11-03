@@ -24,9 +24,6 @@ import {
 import { abtest } from 'lib/abtest';
 import SignupActions from 'lib/signup/actions';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
-import SignupDependencyStore from 'lib/signup/dependency-store';
-import SignupProgressStore from 'lib/signup/progress-store';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import QueryGeo from 'components/data/query-geo';
@@ -218,16 +215,6 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		return translate( 'What kind of site do you need? Choose an option below:' );
 	}
 
-	componentWillMount() {
-		if ( this.props.signupDependencyStore.themeSlugWithRepo ) {
-			SignupDependencyStore.reset();
-		}
-
-		if ( this.props.signupProgress ) {
-			SignupProgressStore.reset();
-		}
-	}
-
 	componentDidUpdate( prevProps ) {
 		// If geoip data arrived, check if there is a pending click on a "store" choice and
 		// process it -- all data are available now to proceed.
@@ -259,7 +246,6 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 export default connect(
 	state => ( {
-		signupDependencyStore: getSignupDependencyStore( state ),
 		countryCode: getCurrentUserCountryCode( state ) || getGeoCountryShort( state ),
 	} ),
 	{
