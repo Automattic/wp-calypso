@@ -7,15 +7,17 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
+import formatCurrency from 'lib/format-currency';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
+import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
 import ProductVariations from './variations';
@@ -72,39 +74,34 @@ class ProductSearchRow extends Component {
 		onChange( attributes, variations );
 	};
 
-	renderRow = ( component, rowText, rowValue, imageSrc, selected, onChange ) => {
-		const labelId = `applies-to-row-${ rowValue }-label`;
+	render() {
+		const { currency, product, isSelected } = this.props;
+		const { id, images, name, price } = product;
+		const nameWithPrice = name + ' - ' + formatCurrency( price, currency );
+		const imageSrc = get( images, '[0].src', false );
+		const labelId = `product-search-row-${ id }-label`;
+		const component = this.props.singular ? FormRadio : FormCheckbox;
 
-		const rowComponent = React.createElement( component, {
+		const inputComponent = React.createElement( component, {
 			htmlFor: labelId,
-			name: 'applies_to_select',
-			value: rowValue,
-			checked: selected,
-			onChange: onChange,
+			name: `product-search_select-${ id }`,
+			value: id,
+			checked: isSelected,
+			onChange: this.props.onChange,
 		} );
 
 		return (
-			<div className="product-search__row" key={ rowValue }>
+			<div className="product-search__row" key={ id }>
 				<FormLabel id={ labelId }>
-					{ rowComponent }
+					{ inputComponent }
 					{ renderImage( imageSrc ) }
-					<span>{ rowText }</span>
+					<span>{ nameWithPrice }</span>
 				</FormLabel>
-				{ selected && (
+				{ isSelected && (
 					<ProductVariations product={ this.props.product } onChange={ this.updateItem } />
 				) }
 			</div>
 		);
-	};
-
-	render() {
-		const { product, isSelected } = this.props;
-		const { name, id, images } = product;
-		const image = images && images[ 0 ];
-		const imageSrc = image && image.src;
-		const component = this.props.singular ? FormRadio : FormCheckbox;
-
-		return this.renderRow( component, name, id, imageSrc, isSelected, this.props.onChange );
 	}
 }
 
@@ -114,8 +111,11 @@ export default connect(
 		const siteId = site ? site.ID : null;
 		const productId = props.product.id;
 		const variations = getVariationsForProduct( state, productId );
+		const currencySettings = getPaymentCurrencySettings( state, siteId );
+		const currency = currencySettings ? currencySettings.value : null;
 
 		return {
+			currency,
 			siteId,
 			productId,
 			variations,
