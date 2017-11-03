@@ -222,7 +222,7 @@
     "poststart": "npm run -s env -- cross-env node $NODE_ARGS build/bundle.js",
     "reformat-files": "node bin/reformat-files.js",
     "pretest": "npm run -s install-if-deps-outdated",
-    "test": "run-s -s test-client test-server",
+    "test": "jest",
     "pretest-client": "npm run -s pretest",
     "test-client": "jest -c=test/client/jest.config.json",
     "test-client:ci": "cross-env TEST_REPORT_FILENAME=./test-results-client.xml jest -c=test/client/jest.config.ci.js -w=2",
@@ -288,5 +288,11 @@
   },
   "optionalDependencies": {
     "fsevents": "1.1.1"
+  },
+  "jest": {
+    "projects": [
+      "test/client/jest.config.json",
+      "test/server/jest.config.json"
+    ]
   }
 }
