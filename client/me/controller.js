@@ -17,6 +17,7 @@ import analytics from 'lib/analytics';
 import route from 'lib/route';
 import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { setSection } from 'state/ui/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
@@ -81,6 +82,7 @@ export default {
 
 		if ( isWelcome ) {
 			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+			context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 		}
 
 		analytics.tracks.recordEvent( 'calypso_me_next_view', { is_welcome: isWelcome } );
