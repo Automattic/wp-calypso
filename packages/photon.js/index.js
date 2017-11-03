@@ -65,7 +65,8 @@ function photon (imageUrl, opts) {
     if (parsedUrl.search) {
       return null;
     }
-    params.pathname = url.format( parsedUrl ).substring(1);
+    var formattedUrl = url.format( parsedUrl );
+    params.pathname = 0 === formattedUrl.indexOf( '//' ) ? formattedUrl.substring(1) : formattedUrl;
     params.hostname = serverFromPathname( params.pathname );
     if ( wasSecure ) {
       params.query.ssl = 1;

@@ -79,6 +79,14 @@ describe('photon()', function () {
     assertPathname(photonedUrl, '/example.com/image.png');
   });
 
+  it('should handle blob: URLs', function() {
+    var url = 'blob:http://example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71';
+    var photonedUrl = photon(url);
+
+    assertHostedOnPhoton( photonedUrl );
+    assertPathname(photonedUrl, '/http//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71');
+  });
+
   it('should strip existing size params from photoned URLs', function () {
       var url = 'https://i0.wp.com/www.gravatar.com/avatar/693307b4e0cb9366f34862c9dfacd7fc?resize=120';
       var photonedUrl = photon(url, { width: 150, height: 300 });
