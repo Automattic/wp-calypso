@@ -24,8 +24,6 @@ class MissingFeature extends PureComponent {
 		const { translate } = this.props;
 		return {
 			themes: translate( 'Themes' ),
-			plugins: translate( 'Plugins' ),
-			support: translate( 'Support' ),
 			seo: translate( 'SEO' ),
 			ads: translate( 'Ads' ),
 			ecommerce: translate( 'Ecommerce' ),
