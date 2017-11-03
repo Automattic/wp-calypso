@@ -95,7 +95,7 @@ export default function transformer( file, api ) {
 			p.value.arguments.push( j.identifier( 'clientRender' ) );
 		} );
 
-	if ( routeDefs.nodes().length ) {
+	if ( routeDefs.size() ) {
 		// This adds a newline above the import, meh. https://github.com/benjamn/recast/issues/371
 		root
 			.find( j.ImportDeclaration )
