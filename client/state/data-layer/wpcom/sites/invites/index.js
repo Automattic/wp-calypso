@@ -2,7 +2,7 @@ import { INVITES_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
-const fetchInvites = ( { dispatch, getState }, action ) => {
+export const fetchInvites = ( { dispatch }, action ) => {
 	const { siteId } = action;
 
 	dispatch( http(
