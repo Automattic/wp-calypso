@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import NextStepsBox from './next-steps-box';
 import steps from './steps';
-import { getNewestSite, hasUserPurchasedAPlan } from 'state/selectors';
+import { getNewestSite, userHasAnyPaidPlans } from 'state/selectors';
 import {
 	recordGoogleEvent as recordGoogleEventAction,
 	recordTracksEvent as recordTracksEventAction,
@@ -170,7 +170,7 @@ class NextSteps extends React.Component {
 export default connect(
 	state => ( {
 		newestSite: getNewestSite( state ),
-		hasPlan: hasUserPurchasedAPlan( state ),
+		hasPlan: userHasAnyPaidPlans( state ),
 	} ),
 	{
 		recordGoogleEvent: recordGoogleEventAction,

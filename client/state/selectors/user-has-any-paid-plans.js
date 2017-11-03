@@ -12,7 +12,7 @@ import createSelector from 'lib/create-selector';
 import { isPlan } from 'lib/products-values';
 
 /**
- * Get the newest site of the current user
+ * Whether the user currently has any paid plans
  *
  * @param {Object} state  Global state tree
  * @return {Object}       Site object

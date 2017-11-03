@@ -9,9 +9,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { PLAN_BUSINESS, PLAN_FREE } from 'lib/plans/constants';
-import { hasUserPurchasedAPlan } from '../';
+import { userHasAnyPaidPlans } from '../';
 
-describe( 'hasUserPurchasedAPlan()', () => {
+describe( 'userHasAnyPaidPlans()', () => {
 	test( 'should return false if no sites in state', () => {
 		const state = {
 			sites: {
@@ -19,7 +19,7 @@ describe( 'hasUserPurchasedAPlan()', () => {
 			},
 		};
 
-		const hasPlan = hasUserPurchasedAPlan( state );
+		const hasPlan = userHasAnyPaidPlans( state );
 		expect( hasPlan ).to.be.false;
 	} );
 
@@ -36,7 +36,7 @@ describe( 'hasUserPurchasedAPlan()', () => {
 			},
 		};
 
-		const hasPlan = hasUserPurchasedAPlan( state );
+		const hasPlan = userHasAnyPaidPlans( state );
 		expect( hasPlan ).to.be.false;
 	} );
 
@@ -58,7 +58,7 @@ describe( 'hasUserPurchasedAPlan()', () => {
 			},
 		};
 
-		const hasPlan = hasUserPurchasedAPlan( state );
+		const hasPlan = userHasAnyPaidPlans( state );
 		expect( hasPlan ).to.be.true;
 	} );
 } );
