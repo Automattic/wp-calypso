@@ -150,7 +150,7 @@ export const sanitizeSectionContent = content => {
 			// every other other allowed attribute must be sanitized
 			// this is a broad and clumsy stroke but it should be
 			// effective, leaning towards safety instead of
-			// compatability with the remote HTML
+			// compatibility with the remote HTML
 			node.setAttribute( attrName, encodeURIComponent( value ) );
 		}
 
@@ -167,9 +167,7 @@ export const sanitizeSectionContent = content => {
 
 	// once done walking the DOM tree
 	// remove the unwanted nodes
-	for ( let i = 0; i < removeList.length; i++ ) {
-		const node = removeList[ i ];
-
+	removeList.forEach( node => {
 		try {
 			// DOM is fun
 			node.parentNode.removeChild( node );
@@ -179,7 +177,7 @@ export const sanitizeSectionContent = content => {
 			// which would lead to a failure right now
 			// this is fine, just continue along
 		}
-	}
+	} );
 
 	const html = doc.body.innerHTML;
 

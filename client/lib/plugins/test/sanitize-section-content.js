@@ -70,6 +70,28 @@ test( 'should bump up header levels', () => {
 	expect( clean( '<h4></h4>' ) ).toBe( '<h4></h4>' );
 } );
 
+test( 'should strip out <script> tags', () => expect( clean( '<script></script>' ) ).toBe( '' ) );
+
+/**
+ * The following tests have borrowed from the OWASP XSS Cheat Sheet
+ * @see https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
+ *
+ * Instead of pulling all of the tests the ones included are a sampling
+ * subjectively chosen to represent the visible attack vectors. For
+ * example, many of the attacks center around improper parsing of HTML
+ * which leads to unexpected `<script>` tags. However, we are using
+ * the browser's parser and not our own and thus don't need to test for
+ * some of those situations. We are already verifying that we strip
+ * <script> tags as well as non-whitelisted attributes, so in order for
+ * those security-related tests to fail our earlier tests would have
+ * also failed, and again we don't need to double-test them.
+ *
+ * Other tests were skipped because unless specifically verified as a
+ * viable URL in an `href` or `src` attribute, all other attribute
+ * data is encoded so that it should be impossible to end up with any
+ * javascript code. Therefore attacks through event handlers and the
+ * like should simply not be possible.
+ */
 test( 'should prevent known XSS attacks', () => {
 	expect( clean( "<IMG SRC=JaVaScRiPt:alert('XSS')>" ) ).toBe( '<img>' );
 
