@@ -20,7 +20,7 @@
 		border: 1px solid lighten( $gray, 20% );
 		border-top: 0;
 		overflow-y: auto;
-		max-height: 250px;
+		max-height: 350px;
 
 		.product-search__row {
 			background-color: $white;
@@ -71,13 +71,24 @@
 	}
 
 	.product-search__variations {
-		padding: 16px 24px;
+		padding: 8px 24px 16px;
+
+		.form-legend {
+			font-weight: 400;
+			margin-bottom: 8px;
+		}
 
 		.product-search__variation-fields {
 			display: flex;
 			flex-wrap: wrap;
 			align-items: flex-start;
 			justify-content: space-between;
+
+			.form-label {
+				margin-bottom: 5px;
+				padding: 0;
+				font-weight: 600;
+			}
 		}
 
 		.product-search__variation-field {

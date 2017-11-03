@@ -66,14 +66,13 @@ class ProductVariations extends Component {
 
 		return (
 			<div className="product-search__variations">
-				<p>
-					{ translate(
-						'%(product)s has variations. Select a specific customization, or add the base product.',
-						{ args: { product: product.name } }
-					) }
-				</p>
 				<FormFieldset>
-					<FormLegend>{ translate( 'Select variations' ) }</FormLegend>
+					<FormLegend>
+						{ translate(
+							'%(product)s has variations. Select a specific customization, or add the base product.',
+							{ args: { product: product.name } }
+						) }
+					</FormLegend>
 					<div className="product-search__variation-fields">
 						{ attributes.map( this.renderAttribute ) }
 					</div>
