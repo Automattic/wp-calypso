@@ -138,6 +138,8 @@ function getThemeForDesignType( designType ) {
 			return 'pub/altofocus';
 		case 'page':
 			return 'pub/dara';
+		case 'store':
+			return 'pub/dara';
 		default:
 			return 'pub/twentyseventeen';
 	}
