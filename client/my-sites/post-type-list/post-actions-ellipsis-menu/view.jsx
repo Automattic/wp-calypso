@@ -28,7 +28,6 @@ class PostActionsEllipsisMenuView extends Component {
 		translate: PropTypes.func.isRequired,
 		status: PropTypes.string,
 		isPreviewable: PropTypes.bool,
-		onClick: PropTypes.func,
 		previewUrl: PropTypes.string,
 		setPreviewUrl: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
@@ -39,7 +38,6 @@ class PostActionsEllipsisMenuView extends Component {
 		globalId: '',
 		status: 'draft',
 		isPreviewable: false,
-		onClick: () => {},
 		previewUrl: '',
 	};
 
@@ -55,7 +53,6 @@ class PostActionsEllipsisMenuView extends Component {
 
 		this.props.setPreviewUrl( previewUrl );
 		this.props.setLayoutFocus( 'preview' );
-		this.props.onClick();
 		event.preventDefault();
 	};
 
