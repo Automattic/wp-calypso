@@ -135,10 +135,6 @@ class Dashboard extends Component {
 			setStoreAddressDuringInitialSetup,
 		} = this.props;
 
-		if ( loading || ! selectedSite ) {
-			return <Placeholder />;
-		}
-
 		if ( ! finishedInstallOfRequiredPlugins ) {
 			return <RequiredPluginsInstallView site={ selectedSite } />;
 		}
@@ -153,6 +149,10 @@ class Dashboard extends Component {
 
 		if ( ! finishedInitialSetup ) {
 			return <SetupTasksView onFinished={ this.onStoreSetupFinished } site={ selectedSite } />;
+		}
+
+		if ( loading || ! selectedSite ) {
+			return <Placeholder />;
 		}
 
 		let manageView = <ManageOrdersView site={ selectedSite } />;
