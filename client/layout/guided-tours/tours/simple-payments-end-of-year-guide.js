@@ -48,9 +48,8 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 		<Step name="init" placement="right">
 			<p>
 				{ translate(
-					'Now is a great time to add a {{strong}}Payment Button!{{/strong}} Do you have something to sell? ' +
-						'Would you like to accept donations? Get your site ready for Cyber Monday and end-of-year giving. ' +
-						'People will spend $3 billion online!',
+					'Prepare for holiday shopping and end-of-year donations: ' +
+						'add a {{strong}}payment button{{/strong}} to sell products and services or accept donations on your site!',
 					{
 						components: {
 							strong: <strong />,
@@ -77,9 +76,7 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 			placement="beside"
 			style={ { marginTop: '-15px' } }
 		>
-			<p>
-				{ translate( 'To start, create a new page — this is where the Payment Button will live.' ) }
-			</p>
+			<p>{ translate( 'To add a payment button, create a page.' ) }</p>
 			<Continue click step="editor-intro" target="li[data-post-type=page] a.sidebar__button">
 				{ translate( 'Click {{strong}}Add{{/strong}} to continue.', {
 					components: {
@@ -90,7 +87,7 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 		</Step>
 		<Step name="editor-intro" placement="center">
 			<p>
-				{ translate( 'You can add Payment Buttons to any post or page from the Editor.', {
+				{ translate( 'Add a payment button here, from within the Editor.', {
 					components: {
 						strong: <strong />,
 					},
@@ -160,14 +157,14 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 			</p>
 			<p>
 				{ translate(
-					"Don't forget: add your new page to your site's navigation menu so people can find it easily."
+					'Remember: add your page to your site navigation so visitors can find it easily'
 				) }
 			</p>
 			<ButtonRow>
 				<Quit primary>{ translate( 'Got it, thanks!' ) }</Quit>
 			</ButtonRow>
 			<Link href="https://en.support.wordpress.com/menus/">
-				{ translate( 'Learn more about Customizing Your Navigation.' ) }
+				{ translate( 'Learn about managing menus' ) }
 			</Link>
 		</Step>
 	</Tour>
