@@ -4,15 +4,20 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
 import ProductVariations from './variations';
 
 function renderImage( imageSrc ) {
@@ -37,8 +42,34 @@ class ProductSearchRow extends Component {
 		singular: false,
 	};
 
-	updateItem = () => {
-		// console.log( attributes );
+	componentDidMount() {
+		const { siteId, product, productId } = this.props;
+
+		if ( siteId && productId ) {
+			if ( ! product || 'variable' !== product.type ) {
+				return;
+			}
+			this.props.fetchProductVariations( siteId, productId );
+		}
+	}
+
+	componentWillReceiveProps( newProps ) {
+		// Short out if we know the new product doesn't need variations
+		if ( ! newProps.product || 'variable' !== newProps.product.type ) {
+			return;
+		}
+
+		const { oldSiteId, oldProductId } = this.props;
+		const { newSiteId, newProductId } = newProps;
+
+		if ( oldSiteId !== newSiteId || oldProductId !== newProductId ) {
+			this.props.fetchProducts( newSiteId, newProductId );
+		}
+	}
+
+	updateItem = attributes => {
+		const { onChange, variations } = this.props;
+		onChange( attributes, variations );
 	};
 
 	renderRow = ( component, rowText, rowValue, imageSrc, selected, onChange ) => {
@@ -77,4 +108,18 @@ class ProductSearchRow extends Component {
 	}
 }
 
-export default ProductSearchRow;
+export default connect(
+	( state, props ) => {
+		const site = getSelectedSiteWithFallback( state );
+		const siteId = site ? site.ID : null;
+		const productId = props.product.id;
+		const variations = getVariationsForProduct( state, productId );
+
+		return {
+			siteId,
+			productId,
+			variations,
+		};
+	},
+	dispatch => bindActionCreators( { fetchProductVariations }, dispatch )
+)( ProductSearchRow );
