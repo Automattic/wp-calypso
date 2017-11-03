@@ -76,7 +76,7 @@ class DisconnectJetpackButton extends Component {
 				<DisconnectJetpackDialog
 					isVisible={ this.state.dialogVisible }
 					onClose={ this.hideDialog }
-					isBroken={ false }
+					isBroken
 					siteId={ site.ID }
 					disconnectHref={ this.props.redirect }
 				/>
