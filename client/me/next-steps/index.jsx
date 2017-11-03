@@ -4,7 +4,6 @@
  * @format
  */
 import React from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -154,12 +153,8 @@ class NextSteps extends React.Component {
 	}
 
 	render() {
-		const classes = classNames( 'main', 'main-column', 'next-steps', {
-			'is-single-page': this.props.isWelcome,
-		} );
-
 		return (
-			<div className={ classes }>
+			<div className="main main-column next-steps">
 				{ this.renderMeSidebar() }
 
 				{ this.renderIntroMessage() }
