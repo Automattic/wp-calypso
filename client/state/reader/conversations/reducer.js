@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { assign } from 'lodash';
+import { assign, forEach } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,6 +11,7 @@ import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
+	READER_POSTS_RECEIVE,
 } from 'state/action-types';
 import {
 	CONVERSATION_FOLLOW_STATUS_FOLLOWING,
@@ -44,6 +45,23 @@ export const items = createReducer(
 		[ READER_CONVERSATION_UPDATE_FOLLOW_STATUS ]: ( state, action ) => {
 			const newState = assign( {}, state, {
 				[ key( action.payload.siteId, action.payload.postId ) ]: action.payload.followStatus,
+			} );
+
+			return newState;
+		},
+		[ READER_POSTS_RECEIVE ]: ( state, action ) => {
+			if ( ! action.posts ) {
+				return state;
+			}
+
+			let newState = state;
+
+			forEach( action.posts, post => {
+				if ( post.is_following_conversation ) {
+					newState = assign( {}, newState, {
+						[ key( post.site_ID, post.ID ) ]: CONVERSATION_FOLLOW_STATUS_FOLLOWING,
+					} );
+				}
 			} );
 
 			return newState;

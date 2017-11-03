@@ -12,6 +12,7 @@ import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
+	READER_POSTS_RECEIVE,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -51,6 +52,43 @@ describe( 'reducer', () => {
 			const state = items( original, {
 				type: READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
 				payload: { siteId: 123, postId: 456, followStatus: 'F' },
+			} );
+
+			expect( state[ '123-456' ] ).toEqual( 'F' );
+		} );
+
+		test( 'should add a new follow when new posts are received', () => {
+			const original = deepFreeze( {} );
+
+			const state = items( original, {
+				type: READER_POSTS_RECEIVE,
+				posts: [
+					{ site_ID: 123, ID: 456, is_following_conversation: true },
+					{ site_ID: 123, ID: 789, is_following_conversation: true },
+				],
+			} );
+
+			expect( state[ '123-456' ] ).toEqual( 'F' );
+			expect( state[ '123-789' ] ).toEqual( 'F' );
+		} );
+
+		test( 'should not a new follow when new posts are received if is_following_conversation is false', () => {
+			const original = deepFreeze( {} );
+
+			const state = items( original, {
+				type: READER_POSTS_RECEIVE,
+				posts: [ { site_ID: 123, ID: 456, is_following_conversation: false } ],
+			} );
+
+			expect( state[ '123-456' ] ).toEqual( undefined );
+		} );
+
+		test( 'should update an existing follow status when new posts are received', () => {
+			const original = deepFreeze( { '123-456': 'M' } );
+
+			const state = items( original, {
+				type: READER_POSTS_RECEIVE,
+				posts: [ { site_ID: 123, ID: 456, is_following_conversation: true } ],
 			} );
 
 			expect( state[ '123-456' ] ).toEqual( 'F' );
