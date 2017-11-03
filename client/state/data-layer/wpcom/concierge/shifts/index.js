@@ -8,7 +8,7 @@ import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/p
 import { fetchConciergeShiftsSuccess, fetchConciergeShiftsFailed } from 'state/concierge/actions';
 import { CONCIERGE_SHIFTS_FETCH } from 'state/action-types';
 
-export const fetchConciergeChats = ( { dispatch }, action ) => {
+export const handleFetchConciergeShifts = ( { dispatch }, action ) => {
 	const { scheduleId } = action;
 
 	dispatch(
@@ -26,6 +26,10 @@ export const fetchConciergeChats = ( { dispatch }, action ) => {
 
 export default {
 	[ CONCIERGE_SHIFTS_FETCH ]: [
-		dispatchRequest( fetchConciergeChats, fetchConciergeShiftsSuccess, fetchConciergeShiftsFailed ),
+		dispatchRequest(
+			handleFetchConciergeShifts,
+			fetchConciergeShiftsSuccess,
+			fetchConciergeShiftsFailed
+		),
 	],
 };
