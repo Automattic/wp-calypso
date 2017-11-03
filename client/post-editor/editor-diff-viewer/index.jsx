@@ -34,7 +34,9 @@ class EditorDiffViewer extends PureComponent {
 		const diffNode = thisNode.querySelector(
 			'.editor-diff-viewer__additions, .editor-diff-viewer__deletions'
 		);
-		thisNode.scrollTo( 0, get( diffNode, 'offsetTop', 0 ) );
+		const thisNodeHeight = get( thisNode, 'offsetHeight', 0 );
+		const offset = Math.max( 0, get( diffNode, 'offsetTop', 0 ) - thisNodeHeight / 2 );
+		thisNode.scrollTo( 0, offset );
 	};
 
 	componentDidMount() {
