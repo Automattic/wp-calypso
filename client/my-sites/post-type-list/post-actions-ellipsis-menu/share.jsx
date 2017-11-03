@@ -44,11 +44,12 @@ class PostActionsEllipsisMenuShare extends Component {
 	}
 
 	render() {
-		const { translate, status, isPublicizeEnabled: isPublicizeEnabledForSite } = this.props;
+		const { translate, status, type, isPublicizeEnabled: isPublicizeEnabledForSite } = this.props;
 		if (
 			! config.isEnabled( 'posts/post-type-list' ) ||
 			! includes( [ 'publish' ], status ) ||
-			! isPublicizeEnabledForSite
+			! isPublicizeEnabledForSite ||
+			type.name !== 'post'
 		) {
 			return null;
 		}
