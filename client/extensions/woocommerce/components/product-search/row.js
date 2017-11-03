@@ -7,13 +7,14 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, noop } from 'lodash';
+import { filter, get, head, noop, reduce, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
 import formatCurrency from 'lib/format-currency';
+import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -44,6 +45,10 @@ class ProductSearchRow extends Component {
 		singular: false,
 	};
 
+	state = {
+		variation: false,
+	};
+
 	componentDidMount() {
 		const { siteId, product, productId } = this.props;
 
@@ -70,17 +75,44 @@ class ProductSearchRow extends Component {
 	}
 
 	updateItem = attributes => {
-		const { onChange, variations } = this.props;
-		onChange( attributes, variations );
+		const { variations } = this.props;
+		// Don't swap the product if we have an "any" selected
+		if ( -1 !== values( attributes ).indexOf( 'any' ) ) {
+			this.setState( { variation: false } );
+			return;
+		}
+		// Using filter instead of find to make sure we find exactly one match.
+		const variation = filter( variations, v => {
+			return reduce(
+				v.attributes,
+				( result, a ) => {
+					return result && attributes[ a.name ] === a.option;
+				},
+				true
+			);
+		} );
+		if ( variation.length === 1 ) {
+			// We found a match.
+			this.setState( { variation: head( variation ) } );
+			return;
+		}
 	};
 
 	render() {
 		const { currency, product, isSelected } = this.props;
 		const { id, images, name, price } = product;
-		const nameWithPrice = name + ' - ' + formatCurrency( price, currency );
-		const imageSrc = get( images, '[0].src', false );
+		let nameWithPrice = name + ' - ' + formatCurrency( price, currency );
+		let imageSrc = get( images, '[0].src', false );
 		const labelId = `product-search-row-${ id }-label`;
 		const component = this.props.singular ? FormRadio : FormCheckbox;
+
+		const { variation } = this.state;
+		if ( variation ) {
+			const varName = formattedVariationName( variation );
+			const varPrice = formatCurrency( variation.price, currency );
+			nameWithPrice = `${ name } - ${ varName } - ${ varPrice }`;
+			imageSrc = get( variation.image, 'src', imageSrc );
+		}
 
 		const inputComponent = React.createElement( component, {
 			htmlFor: labelId,
