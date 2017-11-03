@@ -98,24 +98,66 @@ class ProductSearchRow extends Component {
 		}
 	};
 
+	removeVariation = event => {
+		this.setState( { variation: false } );
+		this.props.onChange( event );
+	};
+
+	renderSelectedVariations = () => {
+		const { currency, product } = this.props;
+		const { variation } = this.state;
+		if ( ! variation ) {
+			return null;
+		}
+		const { id } = variation;
+		const imageSrc = get( variation.image, 'src', get( product, 'images[0].src', false ) );
+		const varName = formattedVariationName( variation );
+		const varPrice = formatCurrency( variation.price, currency );
+		const nameWithPrice = `${ product.name } - ${ varName } - ${ varPrice }`;
+
+		// @todo Handle singluar selects
+		const inputComponent = React.createElement( FormCheckbox, {
+			name: `product-search_select-${ id }`,
+			value: id,
+			checked: true,
+			onChange: this.removeVariation,
+		} );
+
+		// Trick the onChange callback to add this ID to the list
+		this.props.onChange( { target: { value: id } } );
+
+		return (
+			<FormLabel>
+				{ inputComponent }
+				{ renderImage( imageSrc ) }
+				<span>{ nameWithPrice }</span>
+			</FormLabel>
+		);
+	};
+
+	renderVariations = () => {
+		const { isSelected } = this.props;
+		if ( ! isSelected ) {
+			return null;
+		}
+		return (
+			<div>
+				{ this.renderSelectedVariations() }
+				<ProductVariations product={ this.props.product } onChange={ this.updateItem } />
+			</div>
+		);
+	};
+
 	render() {
 		const { currency, product, isSelected } = this.props;
 		const { id, images, name, price } = product;
-		let nameWithPrice = name + ' - ' + formatCurrency( price, currency );
-		let imageSrc = get( images, '[0].src', false );
-		const labelId = `product-search-row-${ id }-label`;
+		const nameWithPrice = name + ' - ' + formatCurrency( price, currency );
+		const imageSrc = get( images, '[0].src', false );
+		const inputId = `product-search-row-${ id }-label`;
 		const component = this.props.singular ? FormRadio : FormCheckbox;
 
-		const { variation } = this.state;
-		if ( variation ) {
-			const varName = formattedVariationName( variation );
-			const varPrice = formatCurrency( variation.price, currency );
-			nameWithPrice = `${ name } - ${ varName } - ${ varPrice }`;
-			imageSrc = get( variation.image, 'src', imageSrc );
-		}
-
 		const inputComponent = React.createElement( component, {
-			htmlFor: labelId,
+			id: inputId,
 			name: `product-search_select-${ id }`,
 			value: id,
 			checked: isSelected,
@@ -124,14 +166,12 @@ class ProductSearchRow extends Component {
 
 		return (
 			<div className="product-search__row" key={ id }>
-				<FormLabel id={ labelId }>
+				<FormLabel htmlFor={ inputId }>
 					{ inputComponent }
 					{ renderImage( imageSrc ) }
 					<span>{ nameWithPrice }</span>
 				</FormLabel>
-				{ isSelected && (
-					<ProductVariations product={ this.props.product } onChange={ this.updateItem } />
-				) }
+				{ this.renderVariations() }
 			</div>
 		);
 	}

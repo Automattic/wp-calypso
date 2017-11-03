@@ -67,6 +67,23 @@ class ProductSearch extends Component {
 		);
 	}
 
+	onSearch = searchFilter => {
+		this.setState( { searchFilter } );
+	};
+
+	onProductCheckbox = productId => {
+		const { value } = this.props;
+		const selected = isProductSelected( value, productId );
+		const newValue = selected
+			? removeProductId( value, productId )
+			: addProductId( value, productId );
+		this.props.onChange( newValue );
+	};
+
+	onProductRadio = productId => {
+		this.props.onChange( productId );
+	};
+
 	renderSearch( searchFilter ) {
 		return <Search value={ searchFilter } onSearch={ this.onSearch } />;
 	}
@@ -91,33 +108,11 @@ class ProductSearch extends Component {
 		return <div className="product-search__list">{ filteredProducts.map( renderFunc ) }</div>;
 	}
 
-	onSearch = searchFilter => {
-		this.setState( { searchFilter } );
-	};
-
-	onProductCheckbox = e => {
-		const productId = Number( e.target.value );
-		const { value } = this.props;
-		const selected = isProductSelected( value, productId );
-		const newValue = selected
-			? removeProductId( value, productId )
-			: addProductId( value, productId );
-		this.props.onChange( newValue );
-	};
-
-	onProductRadio = event => {
-		const productId = Number( event.target.value );
-		this.props.onChange( productId );
-	};
-
 	render() {
-		const { singular } = this.props;
-		const { searchFilter } = this.state;
-
 		return (
 			<div className="product-search">
-				{ this.renderSearch( searchFilter ) }
-				{ this.renderList( singular ) }
+				{ this.renderSearch( this.state.searchFilter ) }
+				{ this.renderList( this.props.singular ) }
 			</div>
 		);
 	}
