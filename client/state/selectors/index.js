@@ -91,6 +91,7 @@ export getPublicizeConnection from './get-publicize-connection';
 export getPublicSites from './get-public-sites';
 export getRawOffsets from './get-raw-offsets';
 export getReaderAliasedFollowFeedUrl from './get-reader-aliased-follow-feed-url';
+export getReaderConversationFollowStatus from './get-reader-conversation-follow-status';
 export getReaderFeedsCountForQuery from './get-reader-feeds-count-for-query';
 export getReaderFeedsForQuery from './get-reader-feeds-for-query';
 export getReaderFollowedTags from './get-reader-followed-tags';
