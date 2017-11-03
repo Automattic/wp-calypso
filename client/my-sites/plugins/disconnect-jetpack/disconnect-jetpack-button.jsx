@@ -24,8 +24,7 @@ import {
 class DisconnectJetpackButton extends Component {
 	state = { dialogVisible: false };
 
-	handleClick = event => {
-		event.preventDefault();
+	handleClick = () => {
 		const { isMock, recordGoogleEvent, recordTracksEvent } = this.props;
 
 		if ( isMock ) {
