@@ -34,6 +34,7 @@ const activityItemSchema = {
 		actorRole: { type: 'string' },
 		actorType: { type: 'string' },
 		actorWpcomId: { type: 'integer' },
+		rewindId: { type: [ 'null', 'string' ] },
 	},
 };
 
