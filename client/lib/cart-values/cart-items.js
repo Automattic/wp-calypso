@@ -524,7 +524,18 @@ export function domainTransfer( properties ) {
 	return domainItem( domainProductSlugs.TRANSFER_IN, properties.domain, properties.source );
 }
 
-export function googleApps( properties ) {
+/**
+ * Retrieves all the G Suite items in the specified shopping cart.
+ * Out-dated name Google Apps is still used here for consistency in naming.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ */
+function getGoogleApps( cart ) {
+	return filter( getAll( cart ), isGoogleApps );
+}
+
+function googleApps( properties ) {
 	const productSlug = properties.product_slug || 'gapps',
 		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
 
@@ -918,6 +929,7 @@ export default {
 	getDomainRegistrationsWithoutPrivacy,
 	getDomainRegistrationTld,
 	getDomainTransfers,
+	getGoogleApps,
 	getIncludedDomain,
 	getItemForPlan,
 	getRenewalItemFromCartItem,

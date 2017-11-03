@@ -29,6 +29,12 @@ export default function() {
 	);
 
 	page(
+		'/checkout/thank-you/:site/:receiptId/with-gsuite/:gsuiteReceiptId',
+		controller.siteSelection,
+		checkoutController.checkoutThankYou
+	);
+
+	page(
 		'/checkout/features/:feature/:domain/:plan_name?',
 		controller.siteSelection,
 		checkoutController.checkout
@@ -48,6 +54,12 @@ export default function() {
 		'/checkout/:product/renew/:purchaseId/:domain',
 		controller.siteSelection,
 		checkoutController.checkout
+	);
+
+	page(
+		'/checkout/:site/with-gsuite/:domain/:receiptId?',
+		controller.siteSelection,
+		checkoutController.gsuiteNudge
 	);
 
 	// Visting /checkout without a plan or product should be redirected to /plans

@@ -14,19 +14,23 @@ import i18n from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
+import GoogleAppsDetails from './google-apps-details';
 import { isEnabled } from 'config';
-import { isBusiness } from 'lib/products-values';
+import { isBusiness, isGoogleApps } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 
 function trackOnboardingButtonClick() {
 	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );
 }
 
-const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
+const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
 	const plan = find( sitePlans.data, isBusiness );
+	const googleAppsWasPurchased = purchases.some( isGoogleApps );
 
 	return (
 		<div>
+			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
