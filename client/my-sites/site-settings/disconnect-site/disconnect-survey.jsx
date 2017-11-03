@@ -37,7 +37,7 @@ const DisconnectSurvey = ( { confirmHref, isPaidPlan, siteId, siteSlug, translat
 			href={ `/settings/disconnect-site/missing-feature/${ siteSlug }` }
 			className="disconnect-site__survey-one"
 		>
-			{ translate( 'This plan didn’t include what I needed' ) }
+			{ translate( "This plan didn't include what I needed" ) }
 		</CompactCard>
 		{ isPaidPlan && (
 			<CompactCard
