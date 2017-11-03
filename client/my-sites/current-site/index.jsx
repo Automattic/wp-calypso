@@ -66,6 +66,7 @@ class CurrentSite extends Component {
 
 		// Show a notice if there are stale items in the cart and it hasn't been shown in the last 10 minutes (cart abandonment)
 		if (
+			selectedSite &&
 			cartItems.hasStaleItem( CartStore.get() ) &&
 			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000
 		) {
