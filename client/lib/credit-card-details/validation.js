@@ -11,13 +11,13 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEbanx } from 'lib/credit-card-details/ebanx';
+import { isEbanx, isValidCPF } from 'lib/credit-card-details/ebanx';
 
 function ebanxFieldRules() {
 	return {
 		document: {
 			description: i18n.translate( 'Taxpayer Identification Number' ),
-			rules: [ 'required' ],
+			rules: [ 'validCPF' ],
 		},
 
 		'street-number': {
@@ -25,7 +25,7 @@ function ebanxFieldRules() {
 			rules: [ 'required' ],
 		},
 
-		address: {
+		'address-1': {
 			description: i18n.translate( 'Address' ),
 			rules: [ 'required' ],
 		},
@@ -48,47 +48,49 @@ function ebanxFieldRules() {
 }
 
 function creditCardFieldRules( additionalFieldRules = {} ) {
-	return Object.assign( {
-		name: {
-			description: i18n.translate( 'Name on Card', {
-				context: 'Upgrades: Card holder name label on credit card form',
-				textOnly: true,
-			} ),
-			rules: [ 'required' ],
-		},
+	return Object.assign(
+		{
+			name: {
+				description: i18n.translate( 'Name on Card', {
+					context: 'Upgrades: Card holder name label on credit card form',
+					textOnly: true,
+				} ),
+				rules: [ 'required' ],
+			},
 
-		number: {
-			description: i18n.translate( 'Card Number', {
-				context: 'Upgrades: Card number label on credit card form',
-				textOnly: true,
-			} ),
-			rules: [ 'required', 'validCreditCardNumber' ],
-		},
+			number: {
+				description: i18n.translate( 'Card Number', {
+					context: 'Upgrades: Card number label on credit card form',
+					textOnly: true,
+				} ),
+				rules: [ 'validCreditCardNumber' ],
+			},
 
-		'expiration-date': {
-			description: i18n.translate( 'Credit Card Expiration Date' ),
-			rules: [ 'required', 'validExpirationDate' ],
-		},
+			'expiration-date': {
+				description: i18n.translate( 'Credit Card Expiration Date' ),
+				rules: [ 'validExpirationDate' ],
+			},
 
-		cvv: {
-			description: i18n.translate( 'Credit Card CVV Code' ),
-			rules: [ 'required', 'validCvvNumber' ],
-		},
+			cvv: {
+				description: i18n.translate( 'Credit Card CVV Code' ),
+				rules: [ 'validCvvNumber' ],
+			},
 
-		country: {
-			description: i18n.translate( 'Country' ),
-			rules: [ 'required' ],
-		},
+			country: {
+				description: i18n.translate( 'Country' ),
+				rules: [ 'required' ],
+			},
 
-		'postal-code': {
-			description: i18n.translate( 'Postal Code', {
-				context: 'Upgrades: Postal code on credit card form',
-				textOnly: true,
-			} ),
-			rules: [ 'required' ],
+			'postal-code': {
+				description: i18n.translate( 'Postal Code', {
+					context: 'Upgrades: Postal code on credit card form',
+					textOnly: true,
+				} ),
+				rules: [ 'required' ],
+			},
 		},
-
-	}, additionalFieldRules );
+		additionalFieldRules
+	);
 }
 
 function parseExpiration( value ) {
@@ -153,6 +155,20 @@ validators.validExpirationDate = {
 		);
 	},
 	error: validationError,
+};
+
+validators.validCPF = {
+	isValid( value ) {
+		if ( ! value ) {
+			return false;
+		}
+		return isValidCPF( value );
+	},
+	error: function( description ) {
+		return i18n.translate( '%(description)s is invalid. Must be in format: 111-222-444-XX', {
+			args: { description: description },
+		} );
+	},
 };
 
 function validateCardDetails( cardDetails ) {

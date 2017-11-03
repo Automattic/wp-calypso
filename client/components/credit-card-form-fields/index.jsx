@@ -55,10 +55,10 @@ export class CreditCardFormFields extends React.Component {
 					name: fieldName,
 					// onBlur: this.handleFieldChange,
 					onChange: this.handleFieldChange,
-					value: this.getFieldValue( fieldName ),
+					value: this.getFieldValue( fieldName ) || '',
 					autoComplete: 'off',
 				},
-				props,
+				props
 			)
 		);
 	};
@@ -84,11 +84,14 @@ export class CreditCardFormFields extends React.Component {
 	}
 
 	handlePhoneFieldChange = ( { value, countryCode } ) => {
-		this.setState( {
-			phoneCountryCode: countryCode,
-		}, () => {
-			this.updateFieldValues( 'phone-number', value );
-		} );
+		this.setState(
+			{
+				phoneCountryCode: countryCode,
+			},
+			() => {
+				this.updateFieldValues( 'phone-number', value );
+			}
+		);
 	};
 
 	handleFieldChange = event => {
@@ -120,7 +123,7 @@ export class CreditCardFormFields extends React.Component {
 			<span key="ebanx-required-fields" className="credit-card-form-fields__info-text">
 				{ translate( 'The following fields are also required for payments in %(countryName)s', {
 					args: {
-						countryName
+						countryName,
 					},
 					context: 'Info text for extra ebanx fields in credit card form',
 				} ) }

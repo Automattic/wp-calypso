@@ -10,10 +10,12 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { validateCardDetails } from '../validation';
+import { isEbanx, isValidCPF } from 'lib/credit-card-details/ebanx';
 
 jest.mock( 'lib/credit-card-details/ebanx', () => {
 	return {
-		isEbanx: jest.fn( false )
+		isEbanx: jest.fn( false ),
+		isValidCPF: jest.fn( false ),
 	};
 } );
 
@@ -45,8 +47,8 @@ describe( 'validation', () => {
 		city: 'Maracanaú',
 		state: 'CE',
 		document: '853.513.468-93',
-		phone: '+85 2284-7035',
-		address: 'Rua E',
+		'phone-number': '+85 2284-7035',
+		'address-1': 'Rua E',
 		'street-number': '1040',
 	};
 
@@ -85,9 +87,6 @@ describe( 'validation', () => {
 				const invalidCardHolderName = { ...validCard, name: '' };
 				const result = validateCardDetails( invalidCardHolderName );
 
-				// eslint-disable-next-line
-				console.log( JSON.stringify( result ) );
-
 				expect( result ).to.be.eql( {
 					errors: {
 						name: [ 'Missing required Name on Card field' ],
@@ -117,11 +116,85 @@ describe( 'validation', () => {
 				} );
 			} );
 		} );
-		// placeholder for tests (not yet written)
-		describe.skip( 'validate ebanx non-credit card details', () => {
+
+		describe( 'validate ebanx non-credit card details', () => {
+			beforeAll( () => {
+				isEbanx.mockReturnValue( true );
+				isValidCPF.mockReturnValue( true );
+			} );
+
 			test( 'should return no errors when details are valid', () => {
 				const result = validateCardDetails( validBrazilianEbanxCard );
+
 				expect( result ).to.be.eql( { errors: {} } );
+			} );
+
+			test( 'should return error when city is missing', () => {
+				const invalidCity = { ...validBrazilianEbanxCard, city: '' };
+				const result = validateCardDetails( invalidCity );
+
+				expect( result ).to.be.eql( {
+					errors: {
+						city: [ 'Missing required City field' ],
+					},
+				} );
+			} );
+
+			test( 'should return error when state is missing', () => {
+				const invalidState = { ...validBrazilianEbanxCard, state: '' };
+				const result = validateCardDetails( invalidState );
+
+				expect( result ).to.be.eql( {
+					errors: {
+						state: [ 'Missing required State field' ],
+					},
+				} );
+			} );
+
+			test( 'should return error when address-1 is missing', () => {
+				const invalidAddress = { ...validBrazilianEbanxCard, 'address-1': '' };
+				const result = validateCardDetails( invalidAddress );
+
+				expect( result ).to.be.eql( {
+					errors: {
+						'address-1': [ 'Missing required Address field' ],
+					},
+				} );
+			} );
+
+			test( 'should return error when street-number is missing', () => {
+				const invalidStNo = { ...validBrazilianEbanxCard, 'street-number': '' };
+				const result = validateCardDetails( invalidStNo );
+
+				expect( result ).to.be.eql( {
+					errors: {
+						'street-number': [ 'Missing required Street Number field' ],
+					},
+				} );
+			} );
+
+			test( 'should return error when phone number is missing', () => {
+				const invalidStPhNo = { ...validBrazilianEbanxCard, 'phone-number': '' };
+				const result = validateCardDetails( invalidStPhNo );
+
+				expect( result ).to.be.eql( {
+					errors: {
+						'phone-number': [ 'Missing required Phone Number field' ],
+					},
+				} );
+			} );
+
+			test( 'should return error when CPF is invalid', () => {
+				isValidCPF.mockReturnValue( false );
+				const invalidCPF = { ...validBrazilianEbanxCard, document: 'blah' };
+				const result = validateCardDetails( invalidCPF );
+				expect( result ).to.be.eql( {
+					errors: {
+						document: [
+							'Taxpayer Identification Number is invalid. Must be in format: 111-222-444-XX',
+						],
+					},
+				} );
 			} );
 		} );
 	} );

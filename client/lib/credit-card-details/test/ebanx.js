@@ -11,9 +11,7 @@
  */
 import { isEbanx, isValidCPF } from '../ebanx';
 import { isEnabled } from 'config';
-import {
-	PAYMENT_PROCESSOR_EBANX_COUNTRY_CODES
-} from '../constants';
+import { PAYMENT_PROCESSOR_EBANX_COUNTRY_CODES } from '../constants';
 
 jest.mock( 'config', () => {
 	const config = () => 'development';
@@ -42,7 +40,11 @@ describe( 'Ebanx payment processing methods', () => {
 
 	describe( 'isValidCPF', () => {
 		test( 'should return true for valid CPF (Brazilian tax identification number)', () => {
-			expect( isValidCPF( '853.844.846-32' ) ).toEqual( true );
+			expect( isValidCPF( '853.513.468-93' ) ).toEqual( true );
+		} );
+		test( 'should return false for invalid CPF', () => {
+			expect( isValidCPF( '85384484632' ) ).toEqual( false );
+			expect( isValidCPF( '853.844.846.32' ) ).toEqual( false );
 		} );
 	} );
 } );
