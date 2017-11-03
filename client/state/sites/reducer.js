@@ -13,6 +13,7 @@ import { plans } from './plans/reducer';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
+import invites from './invites/reducer';
 import monitor from './monitor/reducer';
 import vouchers from './vouchers/reducer';
 import updates from './updates/reducer';
@@ -284,6 +285,7 @@ export default combineReducers( {
 	domains,
 	requestingAll,
 	items,
+	invites,
 	mediaStorage,
 	plans,
 	guidedTransfer,
