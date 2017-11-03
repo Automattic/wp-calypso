@@ -74,6 +74,6 @@ describe( 'OrderStatus', () => {
 	test( 'should not render anything if the status is not recognized', () => {
 		const order = { status: 'fake-status' };
 		const wrapper = shallow( <OrderStatus order={ order } translate={ identity } /> );
-		expect( wrapper.getNode() ).to.be.null;
+		expect( wrapper.getElement() ).to.be.null;
 	} );
 } );

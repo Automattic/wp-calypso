@@ -3,6 +3,8 @@
  * @jest-environment jsdom
  */
 
+/* eslint-disable max-len */
+
 /**
  * External dependencies
  */

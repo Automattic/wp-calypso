@@ -31,7 +31,9 @@ describe( 'ImageEditorToolbar', () => {
 	let wrapper;
 
 	beforeEach( () => {
-		wrapper = shallow( <ImageEditorCanvas isImageLoaded={ true } /> );
+		wrapper = shallow( <ImageEditorCanvas isImageLoaded={ true } />, {
+			disableLifecycleMethods: true,
+		} );
 	} );
 
 	test( 'should render cropping area when the image meets the minimum height and width', () => {

@@ -106,10 +106,12 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	componentDidMount() {
-		analytics.pageView.record(
-			'/checkout/domain-contact-information',
-			'Checkout > Domain Contact Information'
-		);
+		if ( analytics ) {
+			analytics.pageView.record(
+				'/checkout/domain-contact-information',
+				'Checkout > Domain Contact Information'
+			);
+		}
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
