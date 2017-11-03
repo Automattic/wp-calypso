@@ -156,16 +156,13 @@ const getStorePages = () => {
 			documentTitle: translate( 'Tax Settings' ),
 			path: '/store/settings/taxes/:site',
 		},
-	];
-
-	if ( config.isEnabled( 'woocommerce/extension-settings-email' ) ) {
-		pages.push( {
+		{
 			container: SettingsEmail,
 			configKey: 'woocommerce/extension-settings-email',
 			documentTitle: translate( 'Email' ),
 			path: '/store/settings/email/:site/:setup?',
-		} );
-	}
+		},
+	];
 
 	return pages;
 };
