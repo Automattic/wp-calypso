@@ -81,9 +81,11 @@ class Plans extends Component {
 		}
 
 		if ( this.props.hasPlan && ! this.redirecting ) {
+			this.redirecting = true;
 			this.redirect( CALYPSO_PLANS_PAGE );
 		}
 		if ( ! this.props.canPurchasePlans && ! this.redirecting ) {
+			this.redirecting = true;
 			if ( this.props.isCalypsoStartedConnection ) {
 				this.redirect( CALYPSO_REDIRECTION_PAGE );
 			} else {
