@@ -74,7 +74,7 @@ export class CommentAuthor extends Component {
 				<div className="comment__author-info">
 					<div className="comment__author-info-element">
 						{ this.commentHasLink() && (
-							<Gridicon icon="link" size="18" className="comment__author-has-link" />
+							<Gridicon icon="link" size={ 18 } className="comment__author-has-link" />
 						) }
 						<strong className="comment__author-name">
 							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
