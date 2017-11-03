@@ -47,6 +47,9 @@ class PostActionsEllipsisMenuView extends Component {
 		const { isPreviewable, previewUrl } = this.props;
 		this.props.bumpStat();
 		if ( ! isPreviewable ) {
+			// The default action for the link is to open the previewUrl with a target of _blank.
+			// This default action is canceled below for previewable sites.
+			// Returning early maintains this behavior for non-previewable sites.
 			return;
 		}
 
