@@ -14,15 +14,21 @@ import {
 	updateProduct,
 	fetchProduct,
 	fetchProducts,
+	productsUpdated,
 } from 'woocommerce/state/sites/products/actions';
 import {
 	handleProductCreate,
 	handleProductUpdate,
 	handleProductRequest,
 	productsRequest,
+	receivedProducts,
 } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
+import {
+	WOOCOMMERCE_API_REQUEST,
+	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
+	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+} from 'woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	describe( '#handleProductCreate', () => {
@@ -327,6 +333,60 @@ describe( 'handlers', () => {
 					},
 					action
 				)
+			);
+		} );
+	} );
+
+	describe( '#receivedProducts', () => {
+		test( 'should dispatch a success action on a good response', () => {
+			const dispatch = spy();
+
+			const products = [ { id: 1, name: 'Mittens' }, { id: 2, name: 'Scarf' } ];
+			const data = {
+				status: 200,
+				body: products,
+				headers: {
+					'X-WP-TotalPages': 1,
+					'X-WP-Total': 2,
+				},
+			};
+			const action = productsUpdated( 123, {}, products, 1, 2 );
+
+			receivedProducts( { dispatch }, action, { data } );
+
+			expect( dispatch ).to.have.been.calledWithMatch(
+				match( {
+					type: WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+					siteId: 123,
+					products,
+					params: {},
+					totalPages: 1,
+					totalProducts: 2,
+				} )
+			);
+		} );
+
+		test( 'should dispatch a failure action on a bad response', () => {
+			const dispatch = spy();
+
+			const response = {
+				code: 'rest_no_route',
+				data: { status: 404 },
+				message: 'No route was found matching the URL and request method',
+			};
+			const action = productsUpdated( 123, {}, response, 1, 2 );
+			const data = {
+				status: 404,
+				body: response,
+				headers: [],
+			};
+
+			receivedProducts( { dispatch }, action, { data } );
+			expect( dispatch ).to.have.been.calledWithMatch(
+				match( {
+					type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
+					siteId: 123,
+				} )
 			);
 		} );
 	} );
