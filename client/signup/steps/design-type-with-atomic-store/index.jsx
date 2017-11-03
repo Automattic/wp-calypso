@@ -32,6 +32,7 @@ import PressableStoreStep from '../design-type-with-store/pressable-store';
 import QueryGeo from 'components/data/query-geo';
 import { getGeoCountryShort } from 'state/geo/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import { getThemeForDesignType } from 'signup/utils';
 
 class DesignTypeWithAtomicStoreStep extends Component {
 	state = {
@@ -105,6 +106,8 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 		this.setState( { pendingStoreClick: false } );
 
+		const themeSlugWithRepo = getThemeForDesignType( designType );
+
 		this.props.setDesignType( designType );
 
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
@@ -129,6 +132,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
 			designType,
+			themeSlugWithRepo,
 		} );
 
 		// If the user chooses `store` as design type, redirect to the `store-nux` flow.
