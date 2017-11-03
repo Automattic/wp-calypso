@@ -17,13 +17,14 @@ export default {
 		},
 		defaultVariation: 'hideSurveyStep',
 	},
-	signupPressableStoreFlow: {
-		datestamp: '20171018',
+	signupAtomicStoreVsPressable: {
+		datestamp: '20171101',
 		variations: {
-			atomic: 99,
-			pressable: 1,
+			atomic: 10,
+			pressable: 90,
 		},
-		defaultVariation: 'atomic',
+		defaultVariation: 'pressable',
+		allowExistingUsers: true,
 	},
 	businessPlanDescriptionAT: {
 		datestamp: '20170605',
