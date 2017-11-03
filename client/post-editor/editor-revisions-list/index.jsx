@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -55,6 +56,33 @@ class EditorRevisionsList extends PureComponent {
 	componentWillUnmount() {
 		KeyboardShortcuts.off( 'move-selection-up', this.selectNextRevision );
 		KeyboardShortcuts.off( 'move-selection-down', this.selectPreviousRevision );
+	}
+
+	componentDidUpdate() {
+		this.scrollToSelectedItem();
+	}
+
+	scrollToSelectedItem() {
+		const thisNode = ReactDom.findDOMNode( this );
+		const scrollerNode = thisNode.querySelector( '.editor-revisions-list__scroller' );
+		const selectedNode = thisNode.querySelector( '.is-selected' );
+		const listNode = thisNode.querySelector( '.editor-revisions-list__list' );
+		const { bottom: selectedBottom, top: selectedTop } = selectedNode.getBoundingClientRect();
+		const { top: listTop } = listNode.getBoundingClientRect();
+		const {
+			bottom: scrollerBottom,
+			height: scrollerHeight,
+			top: scrollerTop,
+		} = scrollerNode.getBoundingClientRect();
+
+		const isAboveBounds = selectedTop < scrollerTop;
+		const isBelowBounds = selectedBottom > scrollerBottom;
+
+		const targetWhenAbove = selectedTop - listTop;
+		const targetWhenBelow = Math.abs( scrollerHeight - ( selectedBottom - listTop ) );
+
+		isAboveBounds && scrollerNode.scrollTo( 0, targetWhenAbove );
+		isBelowBounds && scrollerNode.scrollTo( 0, targetWhenBelow );
 	}
 
 	selectNextRevision = () => {
