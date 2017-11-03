@@ -63,7 +63,7 @@ export const People = createReactClass( {
 			case 'viewers':
 				return <ViewersList site={ site } label={ this.props.translate( 'Viewers' ) } />;
 			case 'invitations':
-				return <InvitationsList />;
+				return <InvitationsList site={ site } />;
 			default:
 				return null;
 		}

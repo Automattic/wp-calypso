@@ -1,26 +1,45 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
+import { requestInvites } from 'state/sites/invites/actions';
+import Card from 'components/card';
+import Gravatar from 'components/gravatar';
+
 
 const Invitation = ({
 	role,
 	user
 }) => (
-	<li>
+	<div>
+		<Gravatar user={ user } size={ 72 } />
 		<p>Role: { role }</p>
 		<p>Email: { user.email }</p>
-	</li>
+	</div>
 );
 
-const InvitationsList = ( {
-	invitees
-} ) => (
-	<ul>
-		{ invitees.map( invitee =>
-			<Invitation
-				key = { invitee.invite_key }
-				{ ...invitee }
-			/>
-		) }
-	</ul>
-);
 
-export default InvitationsList;
+class InvitationsList extends React.Component {
+	componentWillMount() {
+		this.props.requestInvites( this.props.site.ID );
+	}
+
+	render() {
+		return (
+			<Card>
+				{ this.props.invites.map( invitee =>
+						<Invitation
+							key = { invitee.invite_key }
+							{ ...invitee }
+						/>
+				) }
+			</Card>
+		);
+	}
+}
+
+export default connect(
+	state => {
+		return { invites: state.sites.invites.items }
+	},
+	{ requestInvites }
+)( InvitationsList );
