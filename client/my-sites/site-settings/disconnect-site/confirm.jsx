@@ -5,7 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { flowRight, get, isArray } from 'lodash';
+import { compact, find, flowRight, get, isArray, keys, without } from 'lodash';
 import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import DisconnectJetpack from 'blocks/disconnect-jetpack';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
+import NavigationLink from 'components/wizard/navigation-link';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
 import { submitSurvey } from 'lib/upgrades/actions';
 import Placeholder from 'my-sites/site-settings/placeholder';
@@ -33,19 +34,19 @@ class ConfirmDisconnection extends PureComponent {
 		translate: PropTypes.func,
 	};
 
+	static reasonWhitelist = {
+		'missing-feature': 'didNotInclude',
+		'too-difficult': 'tooHard',
+		'too-expensive': 'onlyNeedFree',
+		troubleshooting: 'troubleshooting',
+	};
+
 	submitSurvey = () => {
 		const { moment, purchase, reason, site, siteId, text } = this.props;
 
-		const reasonWhitelist = {
-			'missing-feature': 'didNotInclude',
-			'too-difficult': 'tooHard',
-			'too-expensive': 'onlyNeedFree',
-			troubleshooting: 'troubleshooting',
-		};
-
 		const surveyData = {
 			'why-cancel': {
-				response: get( reasonWhitelist, reason ),
+				response: get( this.constructor.reasonWhitelist, reason ),
 				text: isArray( text ) ? text.join() : text,
 			},
 		};
@@ -58,7 +59,11 @@ class ConfirmDisconnection extends PureComponent {
 	};
 
 	render() {
-		const { siteId, siteSlug, translate } = this.props;
+		const { reason, siteId, siteSlug, translate } = this.props;
+		const previousStep = find(
+			without( keys( this.constructor.reasonWhitelist ), 'troubleshooting' ), // There's no step for Troubleshooting
+			r => r === reason
+		);
 
 		if ( ! siteId ) {
 			return <Placeholder />;
@@ -81,6 +86,14 @@ class ConfirmDisconnection extends PureComponent {
 					siteId={ siteId }
 					stayConnectedHref={ '/settings/manage-connection/' + siteSlug }
 				/>
+				<div className="disconnect-site__navigation-links">
+					<NavigationLink
+						href={
+							'/settings/disconnect-site/' + compact( [ previousStep, siteSlug ] ).join( '/' )
+						}
+						direction="back"
+					/>
+				</div>
 			</Main>
 		);
 	}
