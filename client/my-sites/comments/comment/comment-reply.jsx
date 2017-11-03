@@ -81,12 +81,14 @@ export class CommentReply extends Component {
 	};
 
 	submitReply = () => {
-		const { approveComment, commentStatus, postId, replyToComment, siteId } = this.props;
+		const { approveComment, blurReply, commentStatus, postId, replyToComment, siteId } = this.props;
 		const { replyContent } = this.state;
 
 		const alsoApprove = 'approved' !== commentStatus;
 
 		replyToComment( replyContent, siteId, postId, { alsoApprove } );
+		this.setState( { replyContent: '' } );
+		blurReply();
 
 		if ( alsoApprove ) {
 			approveComment( siteId, postId, { previousStatus: commentStatus } );
