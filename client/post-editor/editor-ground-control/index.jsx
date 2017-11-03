@@ -14,7 +14,6 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import { isWithinBreakpoint } from 'lib/viewport';
 import Card from 'components/card';
 import Site from 'blocks/site';
 import postUtils from 'lib/posts/utils';
@@ -235,7 +234,7 @@ export class EditorGroundControl extends PureComponent {
 							) }
 					</div>
 				) }
-				{ hasRevisions && isWithinBreakpoint( '>660px' ) && <HistoryButton /> }
+				{ hasRevisions && <HistoryButton /> }
 			</div>
 		);
 	}
