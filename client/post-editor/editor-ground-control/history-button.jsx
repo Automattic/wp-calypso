@@ -21,7 +21,10 @@ const HistoryButton = ( {
 	translate,
 } ) => (
 	<div className="editor-ground-control__history">
-		<button className="editor-ground-control__save button is-link" onClick={ toggleDialog }>
+		<button
+			className="editor-ground-control__history-button button is-link"
+			onClick={ toggleDialog }
+		>
 			{ translate( 'History' ) }
 		</button>
 		<EditorRevisionsDialog onClose={ toggleDialog } postId={ postId } siteId={ siteId } />
