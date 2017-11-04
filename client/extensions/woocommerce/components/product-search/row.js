@@ -47,6 +47,7 @@ class ProductSearchRow extends Component {
 	};
 
 	state = {
+		variationsSelected: false,
 		variations: [],
 	};
 
@@ -79,14 +80,20 @@ class ProductSearchRow extends Component {
 
 	onChange = event => {
 		const productId = Number( event.target.value );
-		this.props.onChange( productId );
+		this.setState(
+			prevState => ( {
+				variations: filter( prevState.variations, item => item.id !== productId ),
+			} ),
+			() => {
+				this.props.onChange( productId );
+			}
+		);
 	};
 
 	updateItem = attributes => {
 		const { variations } = this.props;
 		// Don't swap the product if we have an "any" selected
 		if ( -1 !== values( attributes ).indexOf( 'any' ) ) {
-			this.setState( { variation: false } );
 			return;
 		}
 		// Using filter instead of find to make sure we find exactly one match.
@@ -105,13 +112,27 @@ class ProductSearchRow extends Component {
 			this.setState(
 				prevState => ( {
 					variations: uniqBy( [ ...prevState.variations, variation ], 'id' ),
+					variationsSelected: true,
 				} ),
 				() => {
+					this.props.onChange( this.props.product.id );
 					this.props.onChange( this.state.variations.map( v => v.id ) );
 				}
 			);
 			return;
 		}
+	};
+
+	showVariationForm = () => {
+		const { product } = this.props;
+		const { variations } = this.state;
+		return reduce(
+			variations,
+			( result, variation ) => {
+				return result || this.isSelected( variation.id );
+			},
+			this.isSelected( product.id )
+		);
 	};
 
 	renderSelectedVariations = () => {
@@ -124,8 +145,7 @@ class ProductSearchRow extends Component {
 	};
 
 	renderVariations = () => {
-		const { product } = this.props;
-		if ( ! this.isSelected( product.id ) ) {
+		if ( ! this.showVariationForm() ) {
 			return null;
 		}
 

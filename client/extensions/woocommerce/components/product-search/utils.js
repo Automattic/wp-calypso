@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { isArray, difference } from 'lodash';
+import { isArray, difference, uniq } from 'lodash';
 
 export function productContainsString( product, textString ) {
 	const matchString = textString.trim().toLocaleLowerCase();
@@ -24,7 +24,7 @@ export function isProductSelected( value = [], productId ) {
 
 export function addProductId( value = [], productId ) {
 	if ( isArray( productId ) ) {
-		return [ ...value, ...productId ];
+		return uniq( [ ...value, ...productId ] );
 	}
 	return [ ...value, productId ];
 }
