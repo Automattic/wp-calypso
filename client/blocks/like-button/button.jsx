@@ -106,11 +106,12 @@ class LikeButton extends PureComponent {
 			</span>
 		);
 
+		const href = isLink ? `/stats/post/${ postId }/${ slug }` : null;
 		return React.createElement(
 			containerTag,
 			omitBy(
 				{
-					href: isLink && `/stats/post/${ postId }/${ slug }`,
+					href,
 					className: classNames( containerClasses ),
 					onClick: ! isLink && this.toggleLiked,
 				},
