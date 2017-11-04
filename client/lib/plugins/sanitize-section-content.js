@@ -91,12 +91,7 @@ export const sanitizeSectionContent = content => {
 	const doc = parser.parseFromString( content, 'text/html' );
 
 	// this will let us visit every single DOM node programmatically
-	const walker = doc.createTreeWalker(
-		doc.body,
-		NodeFilter.SHOW_ALL,
-		{ acceptNode: () => NodeFilter.FILTER_ACCEPT },
-		false
-	);
+	const walker = doc.createTreeWalker( doc.body );
 
 	// we don't want to remove nodes while walking the tree
 	// or we'll invite data-race bugs. instead, we'll track
