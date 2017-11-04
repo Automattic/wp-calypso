@@ -60,14 +60,14 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 			<div style={ { textAlign: 'center' } }>
 				<img
 					src="/calypso/images/illustrations/illustration-shopping-bags.svg"
-					style={ { width: '210px', marginBottom: '10px' } }
+					style={ { width: '210px', height: '160px', marginBottom: '10px' } }
 				/>
 			</div>
 			<ButtonRow>
 				<Next step="add-new-page">{ translate( 'Get started!' ) }</Next>
 				<Quit>{ translate( 'No thanks.' ) }</Quit>
 			</ButtonRow>
-			<Link href="https://learn.wordpress.com/get-published/">
+			<Link href="https://en.support.wordpress.com/simple-payments/">
 				{ translate( 'Learn more about Simple Payments.' ) }
 			</Link>
 		</Step>
