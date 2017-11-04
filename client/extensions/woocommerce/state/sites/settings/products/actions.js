@@ -55,7 +55,7 @@ export const updateSettingsProducts = ( siteId, settingsData ) => dispatch => {
 	const updateData = Array.isArray( settingsData ) ? settingsData : [ settingsData ];
 	const updateAction = {
 		type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST,
-		data: settingsData,
+		data: updateData,
 		siteId,
 	};
 
@@ -74,7 +74,7 @@ export const updateSettingsProducts = ( siteId, settingsData ) => dispatch => {
 			dispatch( {
 				type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_FAILURE,
 				error: err,
-				data: settingsData,
+				data: updateData,
 				siteId,
 			} );
 		} );

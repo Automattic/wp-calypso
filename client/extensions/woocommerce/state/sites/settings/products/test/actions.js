@@ -60,6 +60,18 @@ describe( 'actions', () => {
 			} );
 		} );
 
+		test( 'should dispatch an action for single setting', () => {
+			const getState = () => ( {} );
+			const singleSetting = { id: 'foo', value: 'yes' };
+			const dispatch = spy();
+			updateSettingsProducts( siteId, singleSetting )( dispatch, getState );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST,
+				data: [ singleSetting ],
+				siteId,
+			} );
+		} );
+
 		test( 'should dispatch a success action with updated settings data when request completes', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
