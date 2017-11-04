@@ -273,7 +273,7 @@
     "mixedindentlint": "1.2.0",
     "nock": "8.0.0",
     "nodemon": "1.4.1",
-    "prettier": "github:automattic/calypso-prettier#14307ba5cc6bcfc00243f5e2d1b25c72d52c28c8",
+    "prettier": "github:automattic/calypso-prettier#717e62ee",
     "pretty-bytes": "4.0.2",
     "react-codemod": "reactjs/react-codemod",
     "react-test-renderer": "15.6.2",
