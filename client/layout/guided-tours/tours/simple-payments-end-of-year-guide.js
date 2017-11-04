@@ -57,10 +57,12 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 					}
 				) }
 			</p>
-			<img
-				src="https://i0.wp.com/en-support.files.wordpress.com/2017/03/editor-content-area_360.gif"
-				style={ { marginBottom: '10px', border: '3px solid #00AADC', borderRadius: '4px' } }
-			/>
+			<div style={ { textAlign: 'center' } }>
+				<img
+					src="/calypso/images/illustrations/illustration-shopping-bags.svg"
+					style={ { width: '210px', marginBottom: '10px' } }
+				/>
+			</div>
 			<ButtonRow>
 				<Next step="add-new-page">{ translate( 'Get started!' ) }</Next>
 				<Quit>{ translate( 'No thanks.' ) }</Quit>
