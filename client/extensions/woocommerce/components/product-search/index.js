@@ -92,15 +92,14 @@ class ProductSearch extends Component {
 		const { value } = this.props;
 		const filteredProducts = this.getFilteredProducts() || [];
 		const renderFunc = product => {
-			const isSelected = isProductSelected( value, product.id );
 			const onChange = singular ? this.onProductRadio : this.onProductCheckbox;
 			return (
 				<ProductSearchRow
 					key={ product.id }
-					isSelected={ isSelected }
 					onChange={ onChange }
 					product={ product }
 					singular={ singular }
+					value={ value }
 				/>
 			);
 		};

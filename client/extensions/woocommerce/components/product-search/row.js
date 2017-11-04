@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { filter, get, head, noop, reduce, values } from 'lodash';
+import { filter, get, head, noop, reduce, uniqBy, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
+import { isProductSelected } from './utils';
 import ProductVariations from './variations';
 
 function renderImage( imageSrc ) {
@@ -33,20 +34,20 @@ function renderImage( imageSrc ) {
 
 class ProductSearchRow extends Component {
 	static propTypes = {
-		isSelected: PropTypes.bool,
 		onChange: PropTypes.func,
 		product: PropTypes.object.isRequired,
 		singular: PropTypes.bool,
+		value: PropTypes.oneOfType( [ PropTypes.number, PropTypes.array ] ),
 	};
 
 	static defaultProps = {
-		isSelected: false,
 		onChange: noop,
 		singular: false,
+		value: [],
 	};
 
 	state = {
-		variation: false,
+		variations: [],
 	};
 
 	componentDidMount() {
@@ -74,6 +75,13 @@ class ProductSearchRow extends Component {
 		}
 	}
 
+	isSelected = id => isProductSelected( this.props.value, id );
+
+	onChange = event => {
+		const productId = Number( event.target.value );
+		this.props.onChange( productId );
+	};
+
 	updateItem = attributes => {
 		const { variations } = this.props;
 		// Don't swap the product if we have an "any" selected
@@ -82,7 +90,7 @@ class ProductSearchRow extends Component {
 			return;
 		}
 		// Using filter instead of find to make sure we find exactly one match.
-		const variation = filter( variations, v => {
+		const matchingVariations = filter( variations, v => {
 			return reduce(
 				v.attributes,
 				( result, a ) => {
@@ -91,55 +99,36 @@ class ProductSearchRow extends Component {
 				true
 			);
 		} );
-		if ( variation.length === 1 ) {
+		if ( matchingVariations.length === 1 ) {
 			// We found a match.
-			this.setState( { variation: head( variation ) } );
+			const variation = head( matchingVariations );
+			this.setState(
+				prevState => ( {
+					variations: uniqBy( [ ...prevState.variations, variation ], 'id' ),
+				} ),
+				() => {
+					this.props.onChange( this.state.variations.map( v => v.id ) );
+				}
+			);
 			return;
 		}
 	};
 
-	removeVariation = event => {
-		this.setState( { variation: false } );
-		this.props.onChange( event );
-	};
-
 	renderSelectedVariations = () => {
-		const { currency, product } = this.props;
-		const { variation } = this.state;
-		if ( ! variation ) {
+		if ( ! this.state.variations.length ) {
 			return null;
 		}
-		const { id } = variation;
-		const imageSrc = get( variation.image, 'src', get( product, 'images[0].src', false ) );
-		const varName = formattedVariationName( variation );
-		const varPrice = formatCurrency( variation.price, currency );
-		const nameWithPrice = `${ product.name } - ${ varName } - ${ varPrice }`;
-
-		// @todo Handle singluar selects
-		const inputComponent = React.createElement( FormCheckbox, {
-			name: `product-search_select-${ id }`,
-			value: id,
-			checked: true,
-			onChange: this.removeVariation,
-		} );
-
-		// Trick the onChange callback to add this ID to the list
-		this.props.onChange( { target: { value: id } } );
-
-		return (
-			<FormLabel>
-				{ inputComponent }
-				{ renderImage( imageSrc ) }
-				<span>{ nameWithPrice }</span>
-			</FormLabel>
+		return this.state.variations.map( variation =>
+			this.renderRow( { ...this.props.product, ...variation, isVariation: true } )
 		);
 	};
 
 	renderVariations = () => {
-		const { isSelected } = this.props;
-		if ( ! isSelected ) {
+		const { product } = this.props;
+		if ( ! this.isSelected( product.id ) ) {
 			return null;
 		}
+
 		return (
 			<div>
 				{ this.renderSelectedVariations() }
@@ -148,29 +137,42 @@ class ProductSearchRow extends Component {
 		);
 	};
 
-	render() {
-		const { currency, product, isSelected } = this.props;
-		const { id, images, name, price } = product;
-		const nameWithPrice = name + ' - ' + formatCurrency( price, currency );
-		const imageSrc = get( images, '[0].src', false );
-		const inputId = `product-search-row-${ id }-label`;
-		const component = this.props.singular ? FormRadio : FormCheckbox;
+	renderRow = product => {
+		const { currency, singular } = this.props;
+		const component = singular ? FormRadio : FormCheckbox;
+		const id = product.id;
+		const price = formatCurrency( product.price, currency );
+		let nameWithPrice = `${ product.name } - ${ price }`;
+		let imageSrc = get( product, 'images[0].src', false );
+		// Some things do need special handling…
+		if ( product.isVariation ) {
+			const varName = formattedVariationName( product );
+			nameWithPrice = `${ product.name } - ${ varName } - ${ price }`;
+			imageSrc = get( product.image, 'src', imageSrc );
+		}
+		const inputId = `product-search_select-${ id }`;
 
 		const inputComponent = React.createElement( component, {
 			id: inputId,
-			name: `product-search_select-${ id }`,
+			name: inputId,
 			value: id,
-			checked: isSelected,
-			onChange: this.props.onChange,
+			checked: this.isSelected( id ),
+			onChange: this.onChange,
 		} );
 
 		return (
-			<div className="product-search__row" key={ id }>
-				<FormLabel htmlFor={ inputId }>
-					{ inputComponent }
-					{ renderImage( imageSrc ) }
-					<span>{ nameWithPrice }</span>
-				</FormLabel>
+			<FormLabel htmlFor={ inputId } key={ id }>
+				{ inputComponent }
+				{ renderImage( imageSrc ) }
+				<span>{ nameWithPrice }</span>
+			</FormLabel>
+		);
+	};
+
+	render() {
+		return (
+			<div className="product-search__row">
+				{ this.renderRow( this.props.product ) }
 				{ this.renderVariations() }
 			</div>
 		);
