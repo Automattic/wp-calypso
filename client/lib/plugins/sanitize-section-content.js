@@ -166,11 +166,19 @@ export const sanitizeSectionContent = content => {
 	}
 
 	// once done walking the DOM tree
-	// remove the unwanted nodes
+	// remove the unwanted tags and transfer
+	// their children up a level in their place
 	removeList.forEach( node => {
+		const parent = node.parentNode;
+		let child;
+
 		try {
-			// DOM is fun
-			node.parentNode.removeChild( node );
+			// eslint-disable-next-line no-cond-assign
+			while ( ( child = node.firstChild ) ) {
+				parent.insertBefore( child, node );
+			}
+
+			parent.removeChild( node );
 		} catch ( e ) {
 			// this one could have originally existed
 			// under a node that we already removed,

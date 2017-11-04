@@ -23,19 +23,24 @@ const cleanNode = html => {
 };
 
 test( 'should allow whitelisted tags', () =>
-	expect( clean( '<div></div>' ) ).toBe( '<div></div>' ) );
+	expect( clean( '<div>👍</div>' ) ).toBe( '<div>👍</div>' ) );
 
 test( 'should strip out non-whitelisted tags', () =>
 	expect( clean( '<marquee></marquee>' ) ).toBe( '' ) );
 
+test( 'should preserve children of stripped tags', () =>
+	expect( clean( '<unsupported><b>👍</b></unsupported>' ) ).toBe( '<b>👍</b>' ) );
+
 test( 'should strip out content with non-whitelisted tags', () =>
-	expect( clean( '<p><script>alert("do bad things")</script></p>' ) ).toBe( '<p></p>' ) );
+	expect( clean( '<p><script>alert("do bad things")</script>👍</p>' ) ).toBe(
+		'<p>alert("do bad things")👍</p>'
+	) );
 
 test( 'should allow whitelisted attributes', () =>
 	expect( clean( '<img alt="graphic">' ) ).toBe( '<img alt="graphic">' ) );
 
 test( 'should strip out non-whitelisted attributes', () =>
-	expect( clean( '<span style="font-size: 128px;"></span>' ) ).toBe( '<span></span>' ) );
+	expect( clean( '<span style="font-size: 128px;">👍</span>' ) ).toBe( '<span>👍</span>' ) );
 
 test( 'should encode whitelisted attributes', () =>
 	expect( clean( '<img alt="javascript:foo()">' ) ).toBe( '<img alt="javascript%3Afoo()">' ) );
@@ -64,10 +69,10 @@ test( 'should only set link params if href set', () => {
 } );
 
 test( 'should bump up header levels', () => {
-	expect( clean( '<h1></h1>' ) ).toBe( '<h3></h3>' );
-	expect( clean( '<h2></h2>' ) ).toBe( '<h3></h3>' );
-	expect( clean( '<h3></h3>' ) ).toBe( '<h3></h3>' );
-	expect( clean( '<h4></h4>' ) ).toBe( '<h4></h4>' );
+	expect( clean( '<h1>👍</h1>' ) ).toBe( '<h3>👍</h3>' );
+	expect( clean( '<h2>👍</h2>' ) ).toBe( '<h3>👍</h3>' );
+	expect( clean( '<h3>👍</h3>' ) ).toBe( '<h3>👍</h3>' );
+	expect( clean( '<h4>👍</h4>' ) ).toBe( '<h4>👍</h4>' );
 } );
 
 test( 'should strip out <script> tags', () => expect( clean( '<script></script>' ) ).toBe( '' ) );
@@ -97,7 +102,7 @@ test( 'should prevent known XSS attacks', () => {
 
 	expect( clean( '<IMG SRC=javascript:alert(&quot;XSS&quot;)>' ) ).toBe( '<img>' );
 
-	expect( clean( '<IMG """><SCRIPT>alert("XSS")</SCRIPT>">' ) ).toBe( '<img>"&gt;' );
+	expect( clean( '<IMG """><SCRIPT>alert("XSS")</SCRIPT>">' ) ).toBe( '<img>alert("XSS")"&gt;' );
 
 	expect(
 		clean(
