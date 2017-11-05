@@ -292,6 +292,21 @@ export class EditorNotice extends Component {
 		const { siteId, message, status, onDismissClick } = this.props;
 		const text = this.getErrorMessage() || this.getText( message );
 
+		if ( message === 'updated' || message === 'published' ) {
+			return (
+				<div className={ classNames( 'editor-notice', { 'is-global': true } ) }>
+					{ siteId && <QueryPostTypes siteId={ siteId } /> }
+					{ text && (
+						<Notice
+							{ ...{ status, text, onDismissClick } }
+							duration={ 2000 }
+							showDismiss={ true }
+						/>
+					) }
+				</div>
+			);
+		}
+
 		return (
 			<div className={ classNames( 'editor-notice', { 'is-global': true } ) }>
 				{ siteId && <QueryPostTypes siteId={ siteId } /> }
