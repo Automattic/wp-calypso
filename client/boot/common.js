@@ -21,6 +21,8 @@ import { setCurrentUserId, setCurrentUserFlags } from 'state/current-user/action
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import touchDetect from 'lib/touch-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
+import { isDefaultLocale } from 'lib/i18n-utils';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
 const debug = debugFactory( 'calypso' );
 
@@ -133,8 +135,14 @@ export const locales = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
 	}
 
+	const currentLocaleSlug = getCurrentLocaleSlug( reduxStore.getState() );
+
 	// Use current user's locale if it was not bootstrapped
-	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && currentUser.get() ) {
+	if (
+		! config.isEnabled( 'wpcom-user-bootstrap' ) &&
+		currentUser.get() &&
+		isDefaultLocale( currentLocaleSlug )
+	) {
 		switchUserLocale( currentUser, reduxStore );
 	}
 };
