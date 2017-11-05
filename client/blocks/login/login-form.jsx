@@ -66,7 +66,9 @@ export class LoginForm extends Component {
 	componentDidMount() {
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isDisabledWhileLoading: false }, () => {
-			this.usernameOrEmail.focus();
+			if ( this.usernameOrEmail ) {
+				this.usernameOrEmail.focus();
+			}
 		} );
 	}
 
@@ -194,8 +196,8 @@ export class LoginForm extends Component {
 								<p>
 									{ this.props.translate(
 										'We found a WordPress.com account with the email address "%(email)s". ' +
-										'Log in to this account to connect it to your %(service)s profile, ' +
-										'or choose a different %(service)s profile.',
+											'Log in to this account to connect it to your %(service)s profile, ' +
+											'or choose a different %(service)s profile.',
 										{
 											args: {
 												email: this.props.socialAccountLinkEmail,
@@ -259,7 +261,7 @@ export class LoginForm extends Component {
 								this.props.translate(
 									// To make any changes to this copy please speak to the legal team
 									'By continuing with any of the options below, ' +
-									'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+										'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
 									{
 										components: {
 											tosLink: (
