@@ -126,12 +126,13 @@ export default {
 		defaultVariation: 'largePosts',
 	},
 	showNewPaymentMethods: {
-		datestamp: '20171101',
+		datestamp: '20171115',
 		variations: {
 			hide: 50,
 			show: 50,
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
+		countryCodeTargets: [ 'DE', 'BE' ],
 	},
 };

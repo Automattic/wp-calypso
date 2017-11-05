@@ -28,6 +28,7 @@ const paymentMethods = {
 		US: DEFAULT_PAYMENT_METHODS,
 		NL: [ 'credit-card', 'ideal', 'paypal' ],
 		DE: [ 'credit-card', 'giropay', 'paypal' ],
+		BE: [ 'credit-card', 'bancontact', 'paypal' ],
 	},
 
 	byWpcomLang: {},

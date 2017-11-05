@@ -6,6 +6,7 @@
 
 import { connect } from 'react-redux';
 import {
+	difference,
 	flatten,
 	filter,
 	find,
@@ -63,6 +64,7 @@ import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
 import { isDomainOnlySite, getCurrentUserPaymentMethods } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canAddGoogleApps } from 'lib/domains';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
@@ -485,13 +487,22 @@ const Checkout = createReactClass( {
 				cart={ this.props.cart }
 				transaction={ this.props.transaction }
 				cards={ this.props.cards }
-				paymentMethods={ this.props.paymentMethods }
+				paymentMethods={ this.paymentMethodsAbTestFilter() }
 				products={ this.props.productsList.get() }
 				selectedSite={ selectedSite }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 			/>
 		);
+	},
+
+	paymentMethodsAbTestFilter: function() {
+		// Giropay/Bancontact AB test in Germany and Belgium:
+		if ( abtest( 'showNewPaymentMethods', this.props.userCountryCode ) !== 'show' ) {
+			return difference( this.props.paymentMethods, [ 'bancontact', 'giropay' ] );
+		}
+
+		return this.props.paymentMethods;
 	},
 
 	isLoading: function() {
@@ -543,6 +554,7 @@ export default connect(
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			contactDetails: getContactDetailsCache( state ),
+			userCountryCode: getCurrentUserCountryCode( state ),
 		};
 	},
 	{

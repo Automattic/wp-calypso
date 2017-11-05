@@ -184,10 +184,9 @@ function isGermanyGiropayEnabled( cart ) {
 
 function isBelgiumBancontactEnabled( cart ) {
 	return (
-		true ||
-		( config.isEnabled( 'upgrades/belgium-bancontact' ) &&
-			cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Bancontact' ) >= 0 &&
-			'EUR' === cart.currency )
+		config.isEnabled( 'upgrades/belgium-bancontact' ) &&
+		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Bancontact' ) >= 0 &&
+		'EUR' === cart.currency
 	);
 }
 
