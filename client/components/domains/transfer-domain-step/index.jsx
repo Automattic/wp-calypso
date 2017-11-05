@@ -56,8 +56,8 @@ class TransferDomainStep extends React.Component {
 	getDefaultState() {
 		return {
 			searchQuery: this.props.initialQuery || '',
-			domain: 'andrija.me',
-			optionPicker: true,
+			domain: null,
+			optionPicker: false,
 		};
 	}
 

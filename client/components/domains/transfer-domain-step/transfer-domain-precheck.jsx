@@ -100,7 +100,9 @@ class TransferDomainPrecheck extends React.PureComponent {
 			: translate( 'Unlock the domain.' );
 		const message = unlocked
 			? translate( 'Your domain is unlocked at your current registrar.' )
-			: translate( 'Please unlock the domain at your current registrar so you can transfer it.' );
+			: translate(
+					"You'll need to unlock the domain at your current registrar before we can move it."
+				);
 		const explanation = translate(
 			'Your current domain provider has locked the domain to prevent unauthorized transfers.'
 		);
@@ -108,7 +110,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const button = unlocked ? (
 			<div className="transfer-domain-step__unlocked">
 				<Gridicon icon="checkmark" size={ 12 } />
-				<span>Unlocked</span>
+				<span>{ translate( 'Unlocked' ) }</span>
 			</div>
 		) : (
 			<Button disabled={ this.state.loading } onClick={ this.refreshStatus }>
@@ -128,16 +130,15 @@ class TransferDomainPrecheck extends React.PureComponent {
 			: translate( 'Disable privacy protection.' );
 		const message = privacy
 			? translate(
-					"We'll send an important email to {{strong}}%(email)s{{/strong}} to start the domain transfer. If you don't recognize" +
-						'this email address you might need to disable Whois privacy to make sure you receive it. After the transfer' +
-						'is complete you can make your registration information private again.',
+					"We'll send an email to {{strong}}%(email)s{{/strong}} to start the transfer process. Don't recognize " +
+						"that address? Then you have privacy protection, and you'll need to turn it off before we start.",
 					{
 						args: { email },
 						components: { strong: <strong /> },
 					}
 				)
 			: translate(
-					"We'll send an important email to {{strong}}%(email)s{{/strong}} to start the domain transfer. After the transfer" +
+					"We'll send an email to {{strong}}%(email)s{{/strong}} to start the transfer process. After the transfer" +
 						'is complete you can enable privacy to hide your registration information again.',
 					{
 						args: { email },
@@ -145,9 +146,9 @@ class TransferDomainPrecheck extends React.PureComponent {
 					}
 				);
 		const explanation = translate(
-			"We need to make sure we can reach you as the owner of the domain. If you don't " +
-				'recognize the e-mail address you might need to disable privacy protection at your current domain provider. ' +
-				'After the transfer is complete you can make your registration information private again.'
+			"It's important that we be able to reach you, because the transfer involves few emails. Privacy protection is great, " +
+				'but means that your contact information is hidden. To continue with the transfer, turn privacy protection off for now ' +
+				'- you can re-enable it once the transfer is done.'
 		);
 
 		return this.getSection( heading, message, explanation, 2 );
@@ -156,15 +157,15 @@ class TransferDomainPrecheck extends React.PureComponent {
 	getEppMessage() {
 		const { translate } = this.props;
 
-		const heading = translate( 'Write down domain authorization code.' );
+		const heading = translate( 'Get a domain authorization code.' );
 		const message = translate(
-			'Get an authorization code from your current registrar. We will e-mail you a link to enter it ' +
-				'so we can start the transfer process.'
+			"You'll need this code to okay the transfer. " +
+				"We'll send you and email with a link to the place where you'll need to enter it."
 		);
 		const explanation = translate(
-			'Log in to your current domain provider and get the domain authorization code to use later. This is a special ' +
-				'code linked to the domain like a password. It allows you to authorize the transfer of the domain. ' +
-				'This is also sometimes called a secret code, EPP code, or auth code.'
+			'A domain authorization code is a unique code linked only to your domain - kind of like a ' +
+				'password for your domain. Log in to your current domain provider to get one. ' +
+				"We call it a domain authorization code, but it's also called a secret code, auth code or EPP code."
 		);
 
 		return this.getSection( heading, message, explanation, 3 );
@@ -173,14 +174,9 @@ class TransferDomainPrecheck extends React.PureComponent {
 	render() {
 		const { translate } = this.props;
 		const headerLabel = translate(
-			'Log in to your current registrar and complete these steps to prepare your domain for transfer. ' +
-				'Changes can take up to X minutes to update. {{a}}Need Help?{{/a}}',
-			{
-				components: {
-					a: <a href="#" />,
-				},
-			}
+			'Log into your current registrar to complete a few preliminary steps.'
 		);
+
 		return (
 			<div className="transfer-domain-step__precheck">
 				<SectionHeader>{ headerLabel }</SectionHeader>
@@ -188,6 +184,18 @@ class TransferDomainPrecheck extends React.PureComponent {
 				{ this.getPrivacyMessage() }
 				{ this.getEppMessage() }
 				<div className="transfer-domain-step__continue">
+					<div>
+						{ translate(
+							'Note: These changes can take up to 20 minutes to take effect.{{br/}}' +
+								'Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
+							{
+								components: {
+									a: <a href="#" />,
+									br: <br />,
+								},
+							}
+						) }
+					</div>
 					<Button disabled={ ! this.state.unlocked } onClick={ this.onClick }>
 						{ translate( 'Continue' ) }
 					</Button>
