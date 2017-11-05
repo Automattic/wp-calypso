@@ -1,14 +1,12 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { map } from 'lodash';
+import { findIndex, get, isUndefined, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +20,7 @@ import { getPostRevision, getPostRevisions, getPostRevisionsAuthorsId } from 'st
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { isWithinBreakpoint } from 'lib/viewport';
+import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {
@@ -57,11 +56,43 @@ class EditorRevisionsList extends PureComponent {
 	componentDidMount() {
 		// Make sure that scroll position in the editor is not preserved.
 		window.scrollTo( 0, 0 );
+
+		KeyboardShortcuts.on( 'move-selection-up', this.selectNextRevision );
+		KeyboardShortcuts.on( 'move-selection-down', this.selectPreviousRevision );
+	}
+
+	componentWillUnmount() {
+		KeyboardShortcuts.off( 'move-selection-up', this.selectNextRevision );
+		KeyboardShortcuts.off( 'move-selection-down', this.selectPreviousRevision );
 	}
 
 	componentDidUpdate() {
 		this.trySelectingRevision();
 	}
+
+	selectNextRevision = () => {
+		const { revisions, selectedRevision } = this.props;
+		const selectedIdIndex = findIndex( revisions, selectedRevision );
+		const nextRevisionId = get( revisions, [ selectedIdIndex + 1, 'id' ] );
+
+		if ( isUndefined( nextRevisionId ) ) {
+			return;
+		}
+
+		this.props.selectRevision( nextRevisionId );
+	};
+
+	selectPreviousRevision = () => {
+		const { revisions, selectedRevision } = this.props;
+		const selectedIdIndex = findIndex( revisions, selectedRevision );
+		const previousRevisionId = get( revisions, [ selectedIdIndex - 1, 'id' ] );
+
+		if ( isUndefined( previousRevisionId ) ) {
+			return;
+		}
+
+		this.props.selectRevision( previousRevisionId );
+	};
 
 	render() {
 		return (
