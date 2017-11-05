@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { findIndex, get, isEmpty } from 'lodash';
+import { flatMap, get, isEmpty, zip } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,27 +30,28 @@ import { rewriteStream } from 'state/activity-log/log/is-discarded';
 const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 
 /**
- * Separates events into those before, at, and after a rewind operation
+ * Classifies events in a sorted list into pairs of a
+ * classifier and the event itself (for rendering)
  *
- * @param {Array} logs activity log items
+ * @param {Array} logs sorted activity log items
  * @param {Number} activityId selected rewind operation
- * @returns {[Array, ?Object, Array]} [ before, above, after ]
+ * @returns {Array<String, ?Object>} pairs of [ classifier, event ]
  */
-const splitByRewind = ( logs, activityId ) => {
-	const rewindIndex = findIndex( logs, log => log.activityId === activityId );
+const classifyEvents = ( logs, activityId ) => {
+	/** @type {Array<Array<Object, ?Object>>} contains pairs of [ log, next log ] **/
+	const logPairs = zip( logs, logs.slice( 1 ) );
 
-	// no dialog is open
-	if ( -1 === rewindIndex ) {
-		return [ logs, null, [] ];
-	}
+	return flatMap( logPairs, ( [ log, nextLog ] ) => {
+		if ( log.activityId === activityId ) {
+			return [ [ 'rewind-confirm-dialog', {} ], [ 'event', log ] ];
+		}
 
-	// first event is rewind
-	if ( 0 === rewindIndex ) {
-		return [ [], null, logs ];
-	}
+		if ( nextLog && nextLog.activityId === activityId ) {
+			return [ [ 'event-before-dialog', log ] ];
+		}
 
-	// everything else is standard
-	return [ logs.slice( 0, rewindIndex - 1 ), logs[ rewindIndex - 1 ], logs.slice( rewindIndex ) ];
+		return [ [ 'event', log ] ];
+	} );
 };
 
 class ActivityLogDay extends Component {
@@ -225,10 +226,7 @@ class ActivityLogDay extends Component {
 		);
 
 		const rewindButton = this.renderRewindButton( hasConfirmDialog ? '' : 'primary' );
-		const [ newer, above, older ] = splitByRewind(
-			rewriteStream( logs ),
-			requestedRestoreActivityId
-		);
+		const events = classifyEvents( rewriteStream( logs ), requestedRestoreActivityId );
 
 		const LogItem = ( { log, hasBreak } ) => (
 			<ActivityLogItem
@@ -255,10 +253,20 @@ class ActivityLogDay extends Component {
 				onOpen={ this.trackOpenDay }
 				onClose={ this.handleCloseDay( hasConfirmDialog ) }
 			>
-				{ newer.map( log => <LogItem { ...{ key: log.activityId, log } } /> ) }
-				{ above && <LogItem { ...{ key: above.activityId, log: above, hasBreak: true } } /> }
-				{ older.length > 0 && rewindConfirmDialog }
-				{ older.map( log => <LogItem { ...{ key: log.activityId, log } } /> ) }
+				{ events.map( ( [ type, log ] ) => {
+					const key = log.activityId;
+
+					switch ( type ) {
+						case 'event':
+							return <LogItem { ...{ key, log } } />;
+
+						case 'event-before-dialog':
+							return <LogItem { ...{ key, log, hasBreak: true } } />;
+
+						case 'rewind-confirm-dialog':
+							return rewindConfirmDialog;
+					}
+				} ) }
 			</FoldableCard>
 		);
 	}
