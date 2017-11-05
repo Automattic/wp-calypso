@@ -11,14 +11,21 @@ import { get, flow, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isPostRevisionsDialogVisible } from 'state/selectors';
+import { getPostRevisionsSelectedRevision, isPostRevisionsDialogVisible } from 'state/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { togglePostRevisionsDialog } from 'state/posts/revisions/actions';
 import EditorRevisions from 'post-editor/editor-revisions';
 import Dialog from 'components/dialog';
-import LoadButton from 'post-editor/editor-revisions-list/load-button';
 
 class PostRevisionsDialog extends PureComponent {
 	static propTypes = {
+		/**
+		 * loadRevision is passed through from `post-editor/post-editor.jsx`
+		 * @TODO untangle & reduxify
+		 */
+		loadRevision: PropTypes.func.isRequired,
 		onClose: PropTypes.func,
 
 		// connected to state
@@ -26,6 +33,7 @@ class PostRevisionsDialog extends PureComponent {
 
 		// connected to dispatch
 		recordTracksEvent: PropTypes.func.isRequired,
+		toggleDialog: PropTypes.func.isRequired,
 
 		// localize
 		translate: PropTypes.func.isRequired,
@@ -58,16 +66,34 @@ class PostRevisionsDialog extends PureComponent {
 		this.props.recordTracksEvent( 'calypso_editor_post_revisions_open' );
 	}
 
-	render() {
-		const { isVisible, onClose, translate } = this.props;
-		const dialogButtons = [
+	onLoadClick = () => {
+		const { loadRevision, revision, toggleDialog } = this.props;
+		loadRevision( revision );
+		toggleDialog();
+		this.props.recordTracksEvent( 'calypso_editor_post_revisions_load_revision' );
+	};
+
+	dialogButtons = () => {
+		const { postId, revision, siteId, translate } = this.props;
+		return [
 			{ action: 'cancel', compact: true, label: translate( 'Cancel' ) },
-			<LoadButton />,
+			{
+				action: 'load',
+				compact: true,
+				disabled: ! ( revision && postId && siteId ),
+				isPrimary: true,
+				label: translate( 'Load' ),
+				onClick: this.onLoadClick,
+			},
 		];
+	};
+
+	render() {
+		const { isVisible, onClose } = this.props;
 
 		return (
 			<Dialog
-				buttons={ dialogButtons }
+				buttons={ this.dialogButtons() }
 				className="editor-revisions__dialog"
 				isVisible={ isVisible }
 				onClose={ onClose }
@@ -83,7 +109,10 @@ export default flow(
 	connect(
 		state => ( {
 			isVisible: isPostRevisionsDialogVisible( state ),
+			postId: getEditorPostId( state ),
+			revision: getPostRevisionsSelectedRevision( state ),
+			siteId: getSelectedSiteId( state ),
 		} ),
-		{ recordTracksEvent }
+		{ recordTracksEvent, toggleDialog: togglePostRevisionsDialog }
 	)
 )( PostRevisionsDialog );

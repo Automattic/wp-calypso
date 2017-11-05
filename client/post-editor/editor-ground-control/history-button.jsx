@@ -15,6 +15,7 @@ import { togglePostRevisionsDialog } from 'state/posts/revisions/actions';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 
 const HistoryButton = ( {
+	loadRevision,
 	postId,
 	siteId,
 	togglePostRevisionsDialog: toggleDialog,
@@ -27,11 +28,18 @@ const HistoryButton = ( {
 		>
 			{ translate( 'History' ) }
 		</button>
-		<EditorRevisionsDialog onClose={ toggleDialog } postId={ postId } siteId={ siteId } />
+		<EditorRevisionsDialog
+			onClose={ toggleDialog }
+			loadRevision={ loadRevision }
+			postId={ postId }
+			siteId={ siteId }
+		/>
 	</div>
 );
 
 HistoryButton.PropTypes = {
+	loadRevision: PropTypes.func.isRequired,
+
 	// connected to dispatch
 	togglePostRevisionsDialog: PropTypes.func.isRequired,
 

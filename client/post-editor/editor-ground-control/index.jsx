@@ -34,6 +34,8 @@ export class EditorGroundControl extends PureComponent {
 		isPublishing: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		isSidebarOpened: PropTypes.bool,
+		loadRevision: PropTypes.func.isRequired,
+		nestedSidebar: NestedSidebarPropType,
 		moment: PropTypes.func,
 		onPreview: PropTypes.func,
 		onPublish: PropTypes.func,
@@ -200,7 +202,8 @@ export class EditorGroundControl extends PureComponent {
 	};
 
 	renderGroundControlQuickSaveButtons() {
-		const { isSaving, post, translate } = this.props;
+		const { isSaving, loadRevision, post, translate } = this.props;
+
 		const isSaveAvailable = this.isSaveAvailable();
 		const showingStatusLabel = this.shouldShowStatusLabel();
 		const showingSaveStatus = isSaveAvailable || showingStatusLabel;
@@ -234,7 +237,7 @@ export class EditorGroundControl extends PureComponent {
 							) }
 					</div>
 				) }
-				{ hasRevisions && <HistoryButton /> }
+				{ hasRevisions && <HistoryButton loadRevision={ loadRevision } /> }
 			</div>
 		);
 	}
