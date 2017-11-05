@@ -67,6 +67,9 @@ class EditorRevisionsList extends PureComponent {
 		const scrollerNode = thisNode.querySelector( '.editor-revisions-list__scroller' );
 		const selectedNode = thisNode.querySelector( '.is-selected' );
 		const listNode = thisNode.querySelector( '.editor-revisions-list__list' );
+		if ( ! ( scrollerNode && selectedNode && listNode ) ) {
+			return;
+		}
 		const { bottom: selectedBottom, top: selectedTop } = selectedNode.getBoundingClientRect();
 		const { top: listTop } = listNode.getBoundingClientRect();
 		const {
