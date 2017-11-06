@@ -174,7 +174,7 @@ button {
 .button.is-borderless {
 	border: none;
 	background: none;
-	color: $gray-text-min;
+	color: var( --button-is-borderless-color );
 	padding-left: 0;
 	padding-right: 0;
 
