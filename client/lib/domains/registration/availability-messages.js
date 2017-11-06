@@ -20,6 +20,10 @@ function getAvailabilityNotice( domain, error ) {
 
 	const tld = getTld( domain );
 
+	if ( error.error ) {
+		error = error.error;
+	}
+
 	switch ( error ) {
 		case domainAvailability.NOT_REGISTRABLE:
 			if ( tld ) {
@@ -125,6 +129,12 @@ function getAvailabilityNotice( domain, error ) {
 
 		case domainAvailability.EMPTY_QUERY:
 			message = translate( 'Please enter a domain name or keyword.' );
+			break;
+
+		case domainAvailability.INVALID_QUERY:
+			message = translate(
+				'Your search term can only contain alphanumeric characters, spaces, dots, or hyphens.'
+			);
 			break;
 
 		default:
