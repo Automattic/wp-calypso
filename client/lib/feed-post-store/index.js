@@ -24,6 +24,7 @@ import {
 	CONVERSATION_FOLLOW_STATUS_FOLLOWING,
 	CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
 } from 'state/reader/conversations/follow-status';
+import { reduxDispatch } from 'lib/redux-bridge';
 
 /**
  * Module variables
@@ -158,16 +159,15 @@ function _setBlogPost( post ) {
 		const newFollowStatus = post.is_following_conversation
 			? CONVERSATION_FOLLOW_STATUS_FOLLOWING
 			: CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING;
-		// @todo is it a terrible idea to connect() FeedPostStore? It feels like it.
-		// dispatch(
-		// 	bypassDataLayer(
-		// 		updateConversationFollowStatus( {
-		// 			siteId: post.site_ID,
-		// 			postId: post.ID,
-		// 			followStatus: newFollowStatus,
-		// 		} )
-		// 	)
-		// );
+		reduxDispatch(
+			bypassDataLayer(
+				updateConversationFollowStatus( {
+					siteId: post.site_ID,
+					postId: post.ID,
+					followStatus: newFollowStatus,
+				} )
+			)
+		);
 	}
 
 	return true;
