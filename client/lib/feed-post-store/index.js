@@ -18,6 +18,12 @@ import { action as FeedPostActionType } from './constants';
 import { action as FeedStreamActionType } from 'lib/feed-stream-store/constants';
 import { mc } from 'lib/analytics';
 import { pageViewForPost } from 'reader/stats';
+import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
+import { bypassDataLayer } from 'state/data-layer/utils';
+import {
+	CONVERSATION_FOLLOW_STATUS_FOLLOWING,
+	CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
+} from 'state/reader/conversations/follow-status';
 
 /**
  * Module variables
@@ -146,6 +152,24 @@ function _setBlogPost( post ) {
 	}
 
 	_postsForBlogs[ key ] = post;
+
+	// Send conversation follow status over to Redux
+	if ( post.hasOwnProperty( 'is_following_conversation' ) ) {
+		const newFollowStatus = post.is_following_conversation
+			? CONVERSATION_FOLLOW_STATUS_FOLLOWING
+			: CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING;
+		// @todo is it a terrible idea to connect() FeedPostStore? It feels like it.
+		// dispatch(
+		// 	bypassDataLayer(
+		// 		updateConversationFollowStatus( {
+		// 			siteId: post.site_ID,
+		// 			postId: post.ID,
+		// 			followStatus: newFollowStatus,
+		// 		} )
+		// 	)
+		// );
+	}
+
 	return true;
 }
 
