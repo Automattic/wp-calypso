@@ -13,6 +13,7 @@ import { get, isUndefined } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
+import CommentActions from 'my-sites/comments/comment/comment-actions';
 import CommentContent from 'my-sites/comments/comment/comment-content';
 import CommentHeader from 'my-sites/comments/comment/comment-header';
 import CommentReply from 'my-sites/comments/comment/comment-reply';
@@ -25,9 +26,12 @@ export class Comment extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
 		isBulkMode: PropTypes.bool,
+		isPersistent: PropTypes.bool,
 		isSelected: PropTypes.bool,
 		refreshCommentData: PropTypes.bool,
+		removeFromPersisted: PropTypes.func,
 		toggleSelected: PropTypes.func,
+		updatePersisted: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -85,21 +89,25 @@ export class Comment extends Component {
 	render() {
 		const {
 			commentId,
-			commentStatus,
+			commentIsPending,
 			isBulkMode,
 			isLoading,
 			isSelected,
 			refreshCommentData,
+			removeFromPersisted,
 			siteId,
+			updatePersisted,
 		} = this.props;
 		const { hasReplyFocus, isEditMode, isExpanded } = this.state;
 
+		const showActions = isExpanded || ( ! isBulkMode && commentIsPending );
+
 		const classes = classNames( 'comment', {
 			'is-bulk-mode': isBulkMode,
-			'is-collapsed': ! isExpanded && ! isBulkMode,
+			'is-collapsed': ! isExpanded,
 			'is-expanded': isExpanded,
 			'is-placeholder': isLoading,
-			'is-unapproved': 'unapproved' === commentStatus,
+			'is-pending': commentIsPending,
 		} );
 
 		return (
@@ -123,6 +131,12 @@ export class Comment extends Component {
 
 						<CommentContent { ...{ commentId, isExpanded } } />
 
+						{ showActions && (
+							<CommentActions
+								{ ...{ commentId, isExpanded, removeFromPersisted, updatePersisted } }
+							/>
+						) }
+
 						{ isExpanded && (
 							<CommentReply
 								{ ...{ commentId, hasReplyFocus } }
@@ -140,8 +154,9 @@ export class Comment extends Component {
 const mapStateToProps = ( state, { commentId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const comment = getSiteComment( state, siteId, commentId );
+	const commentStatus = get( comment, 'status' );
 	return {
-		commentStatus: get( comment, 'status' ),
+		commentIsPending: 'unapproved' === commentStatus,
 		isLoading: isUndefined( comment ),
 		minimumComment: getMinimumComment( comment ),
 		siteId,

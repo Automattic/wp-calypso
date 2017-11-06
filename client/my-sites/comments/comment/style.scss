@@ -243,6 +243,10 @@
 			color: $blue-wordpress;
 		}
 	}
+
+	.comment__content-body *:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .comment__content-preview {
@@ -281,6 +285,63 @@
 	a:focus,
 	a:hover {
 		color: $blue-wordpress;
+	}
+}
+
+// Comment Actions Block
+
+.comment__actions {
+	align-items: center;
+	display: flex;
+	flex-flow: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	margin: 0 56px;
+	padding-bottom: 8px;
+
+	@include breakpoint( '>960px' ) {
+		justify-content: flex-start;
+		margin-right: 16px;
+		margin-left: 40px;
+	}
+}
+
+.button.is-borderless.comment__action {
+	padding: 8px;
+
+	span {
+		display: none;
+		font-weight: 400;
+	}
+
+	&.comment__action-approve:hover {
+		color: $alert-green;
+	}
+	&.comment__action-like:hover {
+		color: $orange-jazzy;
+	}
+	&.comment__action-spam:hover,
+	&.comment__action-trash:hover {
+		color: $alert-red;
+	}
+
+	&.is-approved {
+		color: $alert-green;
+	}
+	&.is-liked {
+		color: $orange-jazzy;
+	}
+
+	@include breakpoint( '>960px' ) {
+		padding: 8px 16px;
+
+		.gridicon {
+			margin-right: 4px;
+		}
+
+		span {
+			display: inline;
+		}
 	}
 }
 
@@ -380,10 +441,14 @@
 // Collapsed View
 
 .card.comment.is-collapsed {
-	&.is-unapproved {
+	&.is-pending {
 		background: mix($alert-yellow, $white, 8.5%);
 		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px transparentize(lighten($gray, 20%), 0.5),
 			0 1px 2px lighten($gray, 30%);
+
+		.comment__content {
+			padding-bottom: 8px;
+		}
 	}
 }
 
@@ -406,11 +471,31 @@
 
 	.comment__content {
 		padding-top: 8px;
+		padding-bottom: 8px;
 
 		.comment__in-reply-to {
 			border-left: 4px solid lighten($gray, 30%);
 			margin-bottom: 1em;
 			padding: 2px 4px;
+		}
+	}
+
+	@include breakpoint( '<960px' ) {
+		.comment__content {
+			padding-bottom: 16px;
+		}
+
+		.comment__actions {
+			border-top: 1px solid lighten($gray, 30%);
+			padding-top: 8px;
+		}
+
+		.comment__action {
+			text-align: center;
+			span {
+				display: block;
+				padding-top: 4px;
+			}
 		}
 	}
 }
@@ -431,6 +516,10 @@
 
 	.comment__header .comment__author {
 		padding-left: 0;
+	}
+
+	&.is-pending .comment__content {
+		padding-bottom: 16px;
 	}
 }
 
@@ -487,6 +576,10 @@
 	}
 
 	.comment__in-reply-to {
+		display: none;
+	}
+
+	.comment__actions {
 		display: none;
 	}
 }

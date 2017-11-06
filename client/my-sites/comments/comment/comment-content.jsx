@@ -77,6 +77,7 @@ export class CommentContent extends Component {
 						<AutoDirection>
 							<Emojify>
 								<div
+									className="comment__content-body"
 									dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
 								/>
 							</Emojify>
