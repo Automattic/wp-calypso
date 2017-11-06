@@ -49,8 +49,8 @@ class PreSetupView extends Component {
 			state: PropTypes.string,
 			postalCode: PropTypes.string,
 			countryCode: PropTypes.string,
-		} ).isRequired,
-		settingsGeneralLoaded: PropTypes.bool.isRequired,
+		} ),
+		settingsGeneralLoaded: PropTypes.bool,
 		storeLocation: PropTypes.shape( {
 			street: PropTypes.string,
 			street2: PropTypes.string,
@@ -58,7 +58,7 @@ class PreSetupView extends Component {
 			state: PropTypes.string,
 			postcode: PropTypes.string,
 			country: PropTypes.string,
-		} ).isRequired,
+		} ),
 	};
 
 	componentWillReceiveProps = newProps => {
