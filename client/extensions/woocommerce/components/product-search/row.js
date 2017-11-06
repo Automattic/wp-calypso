@@ -7,7 +7,18 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { filter, forEach, get, head, noop, reduce, uniqBy, values } from 'lodash';
+import {
+	filter,
+	find,
+	forEach,
+	get,
+	head,
+	intersection,
+	noop,
+	reduce,
+	uniqBy,
+	values,
+} from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,7 +35,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
-import { isProductSelected } from './utils';
+import { isProductSelected, isVariableProduct } from './utils';
 import ProductVariations from './variations';
 
 class ProductSearchRow extends Component {
@@ -41,10 +52,13 @@ class ProductSearchRow extends Component {
 		value: [],
 	};
 
-	state = {
-		showForm: false,
-		variations: [],
-	};
+	constructor( props ) {
+		super( props );
+		this.state = {
+			showForm: false,
+			variations: [],
+		};
+	}
 
 	componentDidMount() {
 		const { siteId, product, productId } = this.props;
@@ -69,6 +83,13 @@ class ProductSearchRow extends Component {
 		if ( oldSiteId !== newSiteId || oldProductId !== newProductId ) {
 			this.props.fetchProducts( newSiteId, newProductId );
 		}
+
+		const selectedIds = intersection( newProps.value, newProps.product.variations );
+		const selectedVariations = selectedIds.map( id => find( newProps.variations, { id } ) );
+		this.state = {
+			showForm: Boolean( selectedIds.length ),
+			variations: filter( selectedVariations ) || [],
+		};
 	}
 
 	isSelected = id => isProductSelected( this.props.value, id );
@@ -170,7 +191,7 @@ class ProductSearchRow extends Component {
 		const { singular } = this.props;
 		const component = singular ? FormRadio : FormCheckbox;
 
-		if ( 'variable' === product.type && ! product.isVariation ) {
+		if ( isVariableProduct( product ) ) {
 			return <Count count={ this.state.variations.length } />;
 		}
 
@@ -192,7 +213,7 @@ class ProductSearchRow extends Component {
 			const varName = formattedVariationName( product );
 			nameWithPrice = `${ product.name } - ${ varName } - ${ price }`;
 		}
-		if ( 'variable' === product.type && ! product.isVariation ) {
+		if ( isVariableProduct( product ) ) {
 			return (
 				<span>
 					<span>{ nameWithPrice }</span>
@@ -223,7 +244,7 @@ class ProductSearchRow extends Component {
 		const inputId = `product-search_select-${ id }`;
 
 		const labelProps = {};
-		if ( 'variable' === product.type && ! product.isVariation ) {
+		if ( isVariableProduct( product ) ) {
 			labelProps.onClick = this.toggleCustomizeForm;
 		}
 

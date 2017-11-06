@@ -22,6 +22,10 @@ export function isProductSelected( value = [], productId ) {
 	return value === productId;
 }
 
+export function isVariableProduct( product ) {
+	return 'variable' === product.type && ! product.isVariation;
+}
+
 export function addProductId( value = [], productId ) {
 	if ( isArray( productId ) ) {
 		return uniq( [ ...value, ...productId ] );
