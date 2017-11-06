@@ -127,11 +127,10 @@ export class DomainDetailsForm extends PureComponent {
 		// only load the properties relevant to the main form fields
 		const formStateFromRedux = pick( this.props.contactDetails, this.fieldNames );
 		const { geo } = this.props;
+
 		if ( ! formStateFromRedux.countryCode ) {
 			formStateFromRedux.countryCode = get( geo, 'country_short', '' );
-		}
-		if ( ! formStateFromRedux.city ) {
-			formStateFromRedux.city = get( geo, 'city', '' );
+			formStateFromRedux.city = formStateFromRedux.city || get( geo, 'city', '' );
 		}
 
 		fn( null, formStateFromRedux );
@@ -293,8 +292,8 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	shouldDisplayAddressFieldset() {
-		const { contactDetails } = this.props;
-		return !! ( contactDetails || {} ).countryCode;
+		const { form } = this.state;
+		return !! get( form, 'countryCode.value', '' );
 	}
 
 	renderSubmitButton() {
