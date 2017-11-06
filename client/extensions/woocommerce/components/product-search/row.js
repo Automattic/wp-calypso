@@ -49,7 +49,6 @@ class ProductSearchRow extends Component {
 	static defaultProps = {
 		onChange: noop,
 		singular: false,
-		value: [],
 	};
 
 	constructor( props ) {
@@ -138,22 +137,28 @@ class ProductSearchRow extends Component {
 		if ( matchingVariations.length === 1 ) {
 			// We found a match.
 			const variation = head( matchingVariations );
+			if ( this.props.singular ) {
+				this.setState( { variations: [ variation ] } );
+				this.props.onChange( variation.id );
+				return;
+			}
 			this.setState(
 				prevState => ( {
 					variations: uniqBy( [ ...prevState.variations, variation ], 'id' ),
 				} ),
 				() => {
-					this.props.onChange( this.props.product.id );
 					forEach( this.state.variations, v => this.props.onChange( v.id ) );
 				}
 			);
-			return;
 		}
 	};
 
 	areAnySelected = () => {
-		const { product } = this.props;
+		const { product, singular } = this.props;
 		const { variations } = this.state;
+		if ( singular && variations[ 0 ] ) {
+			return this.isSelected( product.id ) || this.isSelected( variations[ 0 ].id );
+		}
 		return reduce(
 			variations,
 			( result, variation ) => {
