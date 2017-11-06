@@ -27,32 +27,21 @@ const DisconnectSurvey = ( { confirmHref, isPaidPlan, siteId, siteSlug, translat
 				}
 			) }
 		/>
-		<CompactCard
-			href={ `/settings/disconnect-site/too-difficult/${ siteSlug }` }
-			className="disconnect-site__survey-one"
-		>
+		<CompactCard href={ `/settings/disconnect-site/too-difficult/${ siteSlug }` }>
 			{ translate( 'It was too hard to configure Jetpack' ) }
 		</CompactCard>
-		<CompactCard
-			href={ `/settings/disconnect-site/missing-feature/${ siteSlug }` }
-			className="disconnect-site__survey-one"
-		>
-			{ translate( 'This plan didn’t include what I needed' ) }
+		<CompactCard href={ `/settings/disconnect-site/missing-feature/${ siteSlug }` }>
+			{ translate( 'A feature I need was missing.' ) }
 		</CompactCard>
 		{ isPaidPlan && (
-			<CompactCard
-				href={ `/settings/disconnect-site/too-expensive/${ siteSlug }` }
-				className="disconnect-site__survey-one"
-			>
+			<CompactCard href={ `/settings/disconnect-site/too-expensive/${ siteSlug }` }>
 				{ translate( 'This plan is too expensive' ) }
 			</CompactCard>
 		) }
-		<CompactCard
-			href={ confirmHref + '?reason=troubleshooting' }
-			className="disconnect-site__survey-one"
-		>
+		<CompactCard href={ confirmHref + '?reason=troubleshooting' }>
 			{ translate( "Troubleshooting — I'll be reconnecting afterwards" ) }
 		</CompactCard>
+		<CompactCard href={ confirmHref + '?reason=other' }>{ translate( 'Other' ) }</CompactCard>
 	</div>
 );
 
