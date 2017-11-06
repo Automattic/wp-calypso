@@ -25,6 +25,7 @@ export class CommentAuthor extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
 		isExpanded: PropTypes.bool,
+		isPostView: PropTypes.bool,
 	};
 
 	commentHasLink = () => {
@@ -49,6 +50,7 @@ export class CommentAuthor extends Component {
 			commentUrl,
 			gravatarUser,
 			isExpanded,
+			isPostView,
 			moment,
 			translate,
 		} = this.props;
@@ -79,7 +81,7 @@ export class CommentAuthor extends Component {
 						<strong className="comment__author-name">
 							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
 						</strong>
-						{ ! isExpanded && <CommentPostLink { ...{ commentId } } /> }
+						{ ! isExpanded && ! isPostView && <CommentPostLink { ...{ commentId } } /> }
 					</div>
 
 					<div className="comment__author-info-element">
