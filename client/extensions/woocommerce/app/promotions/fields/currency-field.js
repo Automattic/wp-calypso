@@ -24,7 +24,7 @@ const CurrencyField = ( props ) => {
 			<PriceInput
 				noWrap
 				size="4"
-				htmlFor={ fieldName + '-label' }
+				id={ fieldName + '-label' }
 				aria-describedby={ explanationText && fieldName + '-description' }
 				currency={ currency }
 				value={ renderedValue }
@@ -45,4 +45,3 @@ CurrencyField.PropTypes = {
 };
 
 export default CurrencyField;
-
