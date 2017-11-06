@@ -31,7 +31,7 @@ const DisconnectSurvey = ( { confirmHref, isPaidPlan, siteId, siteSlug, translat
 			{ translate( 'It was too hard to configure Jetpack' ) }
 		</CompactCard>
 		<CompactCard href={ `/settings/disconnect-site/missing-feature/${ siteSlug }` }>
-			{ translate( 'I was missing a feature' ) }
+			{ translate( 'A feature I need was missing.' ) }
 		</CompactCard>
 		{ isPaidPlan && (
 			<CompactCard href={ `/settings/disconnect-site/too-expensive/${ siteSlug }` }>
