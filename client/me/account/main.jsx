@@ -536,12 +536,12 @@ const Account = createReactClass( {
 				{ this.communityTranslator() }
 
 				{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
-				supportsCssCustomProperties() && (
-					<FormFieldset>
-						<FormLabel htmlFor="color_scheme">{ translate( 'Admin Color Scheme' ) }</FormLabel>
-						<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
-					</FormFieldset>
-				) }
+					supportsCssCustomProperties() && (
+						<FormFieldset>
+							<FormLabel htmlFor="color_scheme">{ translate( 'Admin Color Scheme' ) }</FormLabel>
+							<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
+						</FormFieldset>
+					) }
 
 				{ this.renderHolidaySnow() }
 
@@ -550,11 +550,9 @@ const Account = createReactClass( {
 					disabled={ isSubmitButtonDisabled }
 					onClick={ this.recordClickEvent( 'Save Account Settings Button' ) }
 				>
-					{ this.state.submittingForm ? (
-						translate( 'Saving…' )
-					) : (
-						translate( 'Save Account Settings' )
-					) }
+					{ this.state.submittingForm
+						? translate( 'Saving…' )
+						: translate( 'Save Account Settings' ) }
 				</FormButton>
 			</div>
 		);

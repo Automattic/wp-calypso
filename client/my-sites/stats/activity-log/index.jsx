@@ -612,13 +612,13 @@ class ActivityLog extends Component {
 					</section>
 				) }
 				{ ! isNull( logs ) &&
-				isEmpty( logs ) && (
-					<EmptyContent
-						title={ translate( 'No activity for %s', {
-							args: this.getStartMoment().format( 'MMMM YYYY' ),
-						} ) }
-					/>
-				) }
+					isEmpty( logs ) && (
+						<EmptyContent
+							title={ translate( 'No activity for %s', {
+								args: this.getStartMoment().format( 'MMMM YYYY' ),
+							} ) }
+						/>
+					) }
 				{ ! isEmpty( logs ) && (
 					<section className="activity-log__wrapper">
 						{ visualGroups

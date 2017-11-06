@@ -99,18 +99,15 @@ describe( 'index', () => {
 	} );
 
 	describe( 'getSelectedSite', () => {
-		xit(
-			'should return a site on the basis of the component `selectedSiteSlug` state property',
-			function() {
-				const fakeState = {
-					selectedSiteId: 42,
-				};
-				const selectedSite = SitesDropdown.prototype.getSelectedSite.call( { state: fakeState } );
-				expect( selectedSite ).to.be.eql( {
-					ID: 42,
-					slug: 'foo.wordpress.com',
-				} );
-			}
-		);
+		xit( 'should return a site on the basis of the component `selectedSiteSlug` state property', function() {
+			const fakeState = {
+				selectedSiteId: 42,
+			};
+			const selectedSite = SitesDropdown.prototype.getSelectedSite.call( { state: fakeState } );
+			expect( selectedSite ).to.be.eql( {
+				ID: 42,
+				slug: 'foo.wordpress.com',
+			} );
+		} );
 	} );
 } );

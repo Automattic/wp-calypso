@@ -71,18 +71,18 @@ class FeedHeader extends Component {
 							</span>
 						) }
 						{ feed &&
-						! feed.is_error && (
-							<div className="reader-feed-header__follow-button">
-								<ReaderFollowButton siteUrl={ feed.feed_URL } iconSize={ 24 } />
-							</div>
-						) }
+							! feed.is_error && (
+								<div className="reader-feed-header__follow-button">
+									<ReaderFollowButton siteUrl={ feed.feed_URL } iconSize={ 24 } />
+								</div>
+							) }
 						{ site &&
-						following &&
-						! isEmailBlocked && (
-							<div className="reader-feed-header__email-settings">
-								<ReaderEmailSettings siteId={ site.ID } />
-							</div>
-						) }
+							following &&
+							! isEmailBlocked && (
+								<div className="reader-feed-header__email-settings">
+									<ReaderEmailSettings siteId={ site.ID } />
+								</div>
+							) }
 					</div>
 				</div>
 				<Card className="reader-feed-header__site">
@@ -103,15 +103,15 @@ class FeedHeader extends Component {
 					<div className="reader-feed-header__details">
 						<span className="reader-feed-header__description">{ description }</span>
 						{ ownerDisplayName &&
-						! isAuthorNameBlacklisted( ownerDisplayName ) && (
-							<span className="reader-feed-header__byline">
-								{ translate( 'by %(author)s', {
-									args: {
-										author: ownerDisplayName,
-									},
-								} ) }
-							</span>
-						) }
+							! isAuthorNameBlacklisted( ownerDisplayName ) && (
+								<span className="reader-feed-header__byline">
+									{ translate( 'by %(author)s', {
+										args: {
+											author: ownerDisplayName,
+										},
+									} ) }
+								</span>
+							) }
 					</div>
 				</Card>
 			</div>

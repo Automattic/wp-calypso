@@ -22,13 +22,7 @@ import { getPostType } from 'state/post-types/selectors';
 import { getCurrentUserId, isValidCapability } from 'state/current-user/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
-function PostActionsEllipsisMenuEdit( {
-	translate,
-	canEdit,
-	status,
-	editUrl,
-	bumpStat,
-} ) {
+function PostActionsEllipsisMenuEdit( { translate, canEdit, status, editUrl, bumpStat } ) {
 	if ( 'trash' === status || ! canEdit ) {
 		return null;
 	}

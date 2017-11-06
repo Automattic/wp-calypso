@@ -70,11 +70,9 @@ class SuccessBanner extends PureComponent {
 				onDismissClick={ this.handleDismiss }
 				status="success"
 				title={
-					backupUrl ? (
-						translate( 'Your backup has been successfully created' )
-					) : (
-						translate( 'Your site has been successfully restored' )
-					)
+					backupUrl
+						? translate( 'Your backup has been successfully created' )
+						: translate( 'Your site has been successfully restored' )
 				}
 			>
 				{ backupUrl ? (
@@ -89,11 +87,11 @@ class SuccessBanner extends PureComponent {
 				) }
 				{
 					<p>
-						{ backupUrl ? (
-							translate( 'We successfully restored your site back to %s!', { args: date } )
-						) : (
-							translate( 'We successfully created a backup of your site as of %s!', { args: date } )
-						) }
+						{ backupUrl
+							? translate( 'We successfully restored your site back to %s!', { args: date } )
+							: translate( 'We successfully created a backup of your site as of %s!', {
+									args: date,
+								} ) }
 					</p>
 				}
 				{ backupUrl ? (

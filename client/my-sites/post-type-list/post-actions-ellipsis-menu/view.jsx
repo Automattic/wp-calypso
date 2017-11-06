@@ -70,11 +70,9 @@ class PostActionsEllipsisMenuView extends Component {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ includes( [ 'publish', 'private' ], status ) ? (
-					translate( 'View', { context: 'verb' } )
-				) : (
-					translate( 'Preview', { context: 'verb' } )
-				) }
+				{ includes( [ 'publish', 'private' ], status )
+					? translate( 'View', { context: 'verb' } )
+					: translate( 'Preview', { context: 'verb' } ) }
 			</PopoverMenuItem>
 		);
 	}

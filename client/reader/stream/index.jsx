@@ -478,11 +478,11 @@ class ReaderStream extends React.Component {
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
 				{ this.props.isMain &&
-				this.props.showMobileBackToSidebar && (
-					<MobileBackToSidebar>
-						<h1>{ this.props.translate( 'Streams' ) }</h1>
-					</MobileBackToSidebar>
-				) }
+					this.props.showMobileBackToSidebar && (
+						<MobileBackToSidebar>
+							<h1>{ this.props.translate( 'Streams' ) }</h1>
+						</MobileBackToSidebar>
+					) }
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />
 				{ this.props.children }

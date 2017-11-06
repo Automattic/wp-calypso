@@ -36,7 +36,7 @@ export const storeAndAnnounce = ( { dispatch }, { siteId, noticeId } ) => {
 	dispatch( {
 		type: JETPACK_CREDENTIALS_STORE,
 		credentials: { main: { type: 'auto' } }, // fake for now until data actually comes through
-		siteId
+		siteId,
 	} );
 
 	dispatch(

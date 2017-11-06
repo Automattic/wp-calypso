@@ -148,9 +148,9 @@ class ReaderPostOptionsMenu extends React.Component {
 			<span className={ classes }>
 				{ ! feed && post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
 				{ ! site &&
-				post &&
-				! post.is_external &&
-				post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
+					post &&
+					! post.is_external &&
+					post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
 				{ ! teams && <QueryReaderTeams /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
@@ -190,7 +190,9 @@ class ReaderPostOptionsMenu extends React.Component {
 					) }
 
 					{ ( this.props.showFollow || isEditPossible || post.URL ) &&
-					( isBlockPossible || isDiscoverPost ) && <hr className="reader-post-options-menu__hr" /> }
+						( isBlockPossible || isDiscoverPost ) && (
+							<hr className="reader-post-options-menu__hr" />
+						) }
 
 					{ isBlockPossible && (
 						<PopoverMenuItem onClick={ this.blockSite }>

@@ -60,11 +60,11 @@ class EditorRevisionsListItem extends PureComponent {
 					) }
 
 					{ this.props.revision.changes.added === 0 &&
-					this.props.revision.changes.removed === 0 && (
-						<span className="editor-revisions-list__minor-changes">
-							{ this.props.translate( 'minor changes' ) }
-						</span>
-					) }
+						this.props.revision.changes.removed === 0 && (
+							<span className="editor-revisions-list__minor-changes">
+								{ this.props.translate( 'minor changes' ) }
+							</span>
+						) }
 				</div>
 			</button>
 		);

@@ -137,19 +137,17 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 				{ 'organization' === registrantType && this.renderOrganizationFields() }
 
-				{ formIsValid ? (
-					this.props.children
-				) : (
-					map(
-						castArray( this.props.children ),
-						child =>
-							child.props.className.match( /submit-button/ )
-								? React.cloneElement( child, {
-										disabled: true,
-									} )
-								: child
-					)
-				) }
+				{ formIsValid
+					? this.props.children
+					: map(
+							castArray( this.props.children ),
+							child =>
+								child.props.className.match( /submit-button/ )
+									? React.cloneElement( child, {
+											disabled: true,
+										} )
+									: child
+						) }
 			</form>
 		);
 	}

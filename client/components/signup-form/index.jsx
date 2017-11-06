@@ -609,7 +609,8 @@ class SignupForm extends Component {
 					<SocialSignupForm
 						handleResponse={ this.props.handleSocialResponse }
 						socialService={ this.props.socialService }
-						socialServiceResponse={ this.props.socialServiceResponse } />
+						socialServiceResponse={ this.props.socialServiceResponse }
+					/>
 				) }
 
 				{ this.props.footerLink || this.footerLink() }

@@ -224,11 +224,9 @@ class ProfileLinksAddWordPress extends Component {
 	render() {
 		return (
 			<div>
-				{ 0 === this.props.publicSites.length ? (
-					this.renderInvitationForm()
-				) : (
-					this.renderAddableSitesForm()
-				) }
+				{ 0 === this.props.publicSites.length
+					? this.renderInvitationForm()
+					: this.renderAddableSitesForm() }
 			</div>
 		);
 	}

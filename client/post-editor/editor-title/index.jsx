@@ -94,13 +94,13 @@ class EditorTitle extends Component {
 		return (
 			<div className={ classes }>
 				{ post &&
-				post.ID &&
-				! PostUtils.isPage( post ) && (
-					<EditorPermalink
-						path={ isPermalinkEditable ? PostUtils.getPermalinkBasePath( post ) : post.URL }
-						isEditable={ isPermalinkEditable }
-					/>
-				) }
+					post.ID &&
+					! PostUtils.isPage( post ) && (
+						<EditorPermalink
+							path={ isPermalinkEditable ? PostUtils.getPermalinkBasePath( post ) : post.URL }
+							isEditable={ isPermalinkEditable }
+						/>
+					) }
 				<TrackInputChanges onNewValue={ this.recordChangeStats }>
 					<TextareaAutosize
 						tabIndex={ tabIndex }

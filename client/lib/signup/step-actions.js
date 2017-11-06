@@ -128,7 +128,8 @@ function createSiteWithCart(
 		},
 		validate: false,
 		find_available_url: isPurchasingItem,
-	}, function( error, response ) {
+	},
+	function( error, response ) {
 		if ( error ) {
 			callback( error );
 
@@ -348,7 +349,8 @@ export default {
 				access_token,
 				id_token,
 				signup_flow_name: flowName,
-			}, ( error, response ) => {
+			},
+			( error, response ) => {
 				const errors =
 					error && error.error
 						? [ { error: error.error, message: error.message, email: get( error, 'data.email' ) } ]
@@ -381,7 +383,8 @@ export default {
 							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
 						}
 					: null
-			), ( error, response ) => {
+			),
+			( error, response ) => {
 				const errors =
 						error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
 					bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
