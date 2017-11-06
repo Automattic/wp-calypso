@@ -26,6 +26,7 @@ import CommentCount from './comment-count';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
+import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 
 /**
  * PostCommentList, as the name would suggest, displays a list of comments for a post.
@@ -386,9 +387,13 @@ class PostCommentList extends React.Component {
 				? commentCount
 				: this.getCommentsCount( commentsTree.children );
 
+		const showConversationFollowButton =
+			this.props.showConversationFollowButton &&
+			shouldShowConversationFollowButton( this.props.post );
+
 		return (
 			<div className="comments__comment-list">
-				{ this.props.showConversationFollowButton && (
+				{ showConversationFollowButton && (
 					<ConversationFollowButton
 						className="comments__conversation-follow-button"
 						siteId={ siteId }
