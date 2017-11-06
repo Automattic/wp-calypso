@@ -105,7 +105,10 @@ class ProductSearchRow extends Component {
 		);
 	};
 
-	toggleCustomizeForm = () => {
+	toggleCustomizeForm = event => {
+		// This handler can be on the label, or button with the label, so we
+		// stop propagation to avoid immediate open-then-close behavior.
+		event.stopPropagation();
 		this.setState( prevState => {
 			// Open form
 			if ( ! prevState.showForm ) {
