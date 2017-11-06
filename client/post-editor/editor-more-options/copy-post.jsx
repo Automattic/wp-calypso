@@ -91,20 +91,16 @@ class EditorMoreOptionsCopyPost extends Component {
 				<EditorDrawerLabel
 					labelText={ this.isPost() ? translate( 'Copy Post' ) : translate( 'Copy Page' ) }
 					helpText={
-						this.isPost() ? (
-							translate( "Pick a post and we'll copy the title, content, tags and categories." )
-						) : (
-							translate( "Pick a page and we'll copy the title and content." )
-						)
+						this.isPost()
+							? translate( "Pick a post and we'll copy the title, content, tags and categories." )
+							: translate( "Pick a page and we'll copy the title and content." )
 					}
 				>
 					<Button borderless compact onClick={ this.openDialog }>
 						<Gridicon icon="clipboard" />
-						{ this.isPost() ? (
-							translate( 'Select a post to copy' )
-						) : (
-							translate( 'Select a page to copy' )
-						) }
+						{ this.isPost()
+							? translate( 'Select a post to copy' )
+							: translate( 'Select a page to copy' ) }
 					</Button>
 				</EditorDrawerLabel>
 				<Dialog
@@ -115,18 +111,14 @@ class EditorMoreOptionsCopyPost extends Component {
 					additionalClassNames="editor-more-options__copy-post-select-dialog"
 				>
 					<FormSectionHeading>
-						{ this.isPost() ? (
-							translate( 'Select a post to copy' )
-						) : (
-							translate( 'Select a page to copy' )
-						) }
+						{ this.isPost()
+							? translate( 'Select a post to copy' )
+							: translate( 'Select a page to copy' ) }
 					</FormSectionHeading>
 					<p>
-						{ this.isPost() ? (
-							translate( "Pick a post and we'll copy the title, content, tags and categories." )
-						) : (
-							translate( "Pick a page and we'll copy the title and content." )
-						) }
+						{ this.isPost()
+							? translate( "Pick a post and we'll copy the title, content, tags and categories." )
+							: translate( "Pick a page and we'll copy the title and content." ) }
 					</p>
 					{ siteId && (
 						<PostSelector

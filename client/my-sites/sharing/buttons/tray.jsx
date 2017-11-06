@@ -229,11 +229,9 @@ class SharingButtonsTray extends React.Component {
 						onClick={ this.toggleReorder }
 						disabled={ this.getButtonsOfCurrentVisibility().length <= 1 }
 					>
-						{ this.state.isReordering ? (
-							this.props.translate( 'Add / Remove' )
-						) : (
-							this.props.translate( 'Reorder' )
-						) }
+						{ this.state.isReordering
+							? this.props.translate( 'Add / Remove' )
+							: this.props.translate( 'Reorder' ) }
 					</button>
 					<button
 						type="button"

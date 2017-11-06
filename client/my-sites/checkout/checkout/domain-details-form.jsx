@@ -281,8 +281,9 @@ export class DomainDetailsForm extends PureComponent {
 			// The keys are mapped to snake_case when going to API and camelCase when the response is parsed and we are using
 			// kebab-case for HTML, so instead of using different variations all over the place, this accepts kebab-case and
 			// converts it to camelCase which is the format stored in the formState.
-			errorMessage: ( formState.getFieldErrorMessages( form, camelCase( name ) ) || [] )
-				.join( '\n' ),
+			errorMessage: ( formState.getFieldErrorMessages( form, camelCase( name ) ) || [] ).join(
+				'\n'
+			),
 			eventFormName: 'Checkout Form',
 		};
 	};

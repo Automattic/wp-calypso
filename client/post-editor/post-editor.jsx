@@ -401,11 +401,9 @@ export const PostEditor = createReactClass( {
 									{ this.state.post && isPage && site ? (
 										<EditorPageSlug
 											path={
-												this.state.post.URL && this.state.post.URL !== siteURL ? (
-													utils.getPagePath( this.state.post )
-												) : (
-													siteURL
-												)
+												this.state.post.URL && this.state.post.URL !== siteURL
+													? utils.getPagePath( this.state.post )
+													: siteURL
 											}
 										/>
 									) : null }

@@ -175,11 +175,9 @@ class MediaLibraryContent extends React.Component {
 			<NoticeAction
 				external={ true }
 				href={
-					upgradeNudgeFeature ? (
-						`/plans/compare/${ this.props.siteSlug }?feature=${ upgradeNudgeFeature }`
-					) : (
-						`/plans/${ this.props.siteSlug }`
-					)
+					upgradeNudgeFeature
+						? `/plans/compare/${ this.props.siteSlug }?feature=${ upgradeNudgeFeature }`
+						: `/plans/${ this.props.siteSlug }`
 				}
 				onClick={ this.recordPlansNavigation.bind(
 					this,

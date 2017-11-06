@@ -225,14 +225,14 @@ export class EditorGroundControl extends PureComponent {
 							</button>
 						) }
 						{ ! isSaveAvailable &&
-						showingStatusLabel && (
-							<span
-								className="editor-ground-control__save-status"
-								data-e2e-status={ isSaving ? 'Saving…' : 'Saved' }
-							>
-								{ isSaving ? translate( 'Saving…' ) : translate( 'Saved' ) }
-							</span>
-						) }
+							showingStatusLabel && (
+								<span
+									className="editor-ground-control__save-status"
+									data-e2e-status={ isSaving ? 'Saving…' : 'Saved' }
+								>
+									{ isSaving ? translate( 'Saving…' ) : translate( 'Saved' ) }
+								</span>
+							) }
 					</div>
 				) }
 				{ hasRevisions && (

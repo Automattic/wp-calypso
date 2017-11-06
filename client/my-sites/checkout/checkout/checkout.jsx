@@ -5,7 +5,17 @@
  */
 
 import { connect } from 'react-redux';
-import { flatten, filter, find, findIndex, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import {
+	flatten,
+	filter,
+	find,
+	findIndex,
+	get,
+	isEmpty,
+	isEqual,
+	reduce,
+	startsWith,
+} from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';

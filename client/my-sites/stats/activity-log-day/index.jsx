@@ -176,24 +176,20 @@ class ActivityLogDay extends Component {
 		return (
 			<div>
 				<div className="activity-log-day__day">
-					{ isToday ? (
-						translate( '%s — Today', {
-							args: formattedDate,
-							comment: 'Long date with today indicator, i.e. "January 1, 2017 — Today"',
-						} )
-					) : (
-						formattedDate
-					) }
+					{ isToday
+						? translate( '%s — Today', {
+								args: formattedDate,
+								comment: 'Long date with today indicator, i.e. "January 1, 2017 — Today"',
+							} )
+						: formattedDate }
 				</div>
 				<div className="activity-log-day__events">
-					{ isEmpty( logs ) ? (
-						noActivityText
-					) : (
-						translate( '%d Event', '%d Events', {
-							args: logs.length,
-							count: logs.length,
-						} )
-					) }
+					{ isEmpty( logs )
+						? noActivityText
+						: translate( '%d Event', '%d Events', {
+								args: logs.length,
+								count: logs.length,
+							} ) }
 				</div>
 			</div>
 		);

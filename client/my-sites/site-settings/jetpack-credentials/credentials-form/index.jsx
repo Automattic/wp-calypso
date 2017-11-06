@@ -191,11 +191,9 @@ export class CredentialsForm extends Component {
 								<FormLabel>
 									<div>{ translate( 'Private Key' ) }</div>
 									<Button disabled={ formIsSubmitting } onClick={ this.togglePrivateKeyField }>
-										{ showPrivateKeyField ? (
-											translate( 'Hide Private Key' )
-										) : (
-											translate( 'Show Private Key' )
-										) }
+										{ showPrivateKeyField
+											? translate( 'Hide Private Key' )
+											: translate( 'Show Private Key' ) }
 									</Button>
 									{ showPrivateKeyField && (
 										<div>

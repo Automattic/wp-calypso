@@ -309,20 +309,18 @@ class Post extends Component {
 						showFilters={ isEnabled( 'comments/filters-in-posts' ) }
 						showModerationTools={ isEnabled( 'comments/moderation-tools-in-posts' ) }
 						commentsFilter={
-							config.isEnabled( 'comments/filters-in-posts' ) ? (
-								this.state.commentsFilter
-							) : (
-								'approved'
-							)
+							config.isEnabled( 'comments/filters-in-posts' )
+								? this.state.commentsFilter
+								: 'approved'
 						}
 						onFilterChange={ this.setCommentsFilter }
 						onCommentsUpdate={ noop }
 					/>
 				) }
 				{ this.state.showShare &&
-				config.isEnabled( 'republicize' ) && (
-					<PostShare post={ this.props.post } siteId={ this.props.post.site_ID } />
-				) }
+					config.isEnabled( 'republicize' ) && (
+						<PostShare post={ this.props.post } siteId={ this.props.post.site_ID } />
+					) }
 			</Card>
 		);
 	}

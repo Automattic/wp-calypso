@@ -487,7 +487,7 @@ export class CommentList extends Component {
 						) ) }
 
 					{ isEnabled( 'comments/management/m3-design' ) &&
-					showPlaceholder && <Comment commentId={ 0 } key="comment-detail-placeholder" /> }
+						showPlaceholder && <Comment commentId={ 0 } key="comment-detail-placeholder" /> }
 
 					{ ! isEnabled( 'comments/management/m3-design' ) &&
 						map( commentsPage, commentId => (
@@ -512,7 +512,7 @@ export class CommentList extends Component {
 						) ) }
 
 					{ ! isEnabled( 'comments/management/m3-design' ) &&
-					showPlaceholder && <CommentDetailPlaceholder key="comment-detail-placeholder" /> }
+						showPlaceholder && <CommentDetailPlaceholder key="comment-detail-placeholder" /> }
 
 					{ showEmptyContent && (
 						<EmptyContent
@@ -526,15 +526,15 @@ export class CommentList extends Component {
 				</ReactCSSTransitionGroup>
 
 				{ ! showPlaceholder &&
-				! showEmptyContent && (
-					<Pagination
-						key="comment-list-pagination"
-						page={ validPage }
-						pageClick={ this.changePage }
-						perPage={ COMMENTS_PER_PAGE }
-						total={ commentsCount }
-					/>
-				) }
+					! showEmptyContent && (
+						<Pagination
+							key="comment-list-pagination"
+							page={ validPage }
+							pageClick={ this.changePage }
+							perPage={ COMMENTS_PER_PAGE }
+							total={ commentsCount }
+						/>
+					) }
 			</div>
 		);
 	}

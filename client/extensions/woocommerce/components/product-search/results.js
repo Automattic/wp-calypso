@@ -78,13 +78,11 @@ class ProductSearchResults extends Component {
 
 		return (
 			<div className={ classes }>
-				{ products.length ? (
-					products.map( p => (
-						<ProductItem key={ p.id } onClick={ onSelect } product={ p } search={ search } />
-					) )
-				) : (
-					this.renderNotFound()
-				) }
+				{ products.length
+					? products.map( p => (
+							<ProductItem key={ p.id } onClick={ onSelect } product={ p } search={ search } />
+						) )
+					: this.renderNotFound() }
 			</div>
 		);
 	}

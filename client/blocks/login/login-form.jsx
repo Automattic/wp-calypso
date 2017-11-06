@@ -227,9 +227,9 @@ export class LoginForm extends Component {
 						/>
 
 						{ requestError &&
-						requestError.field === 'usernameOrEmail' && (
-							<FormInputValidation isError text={ requestError.message } />
-						) }
+							requestError.field === 'usernameOrEmail' && (
+								<FormInputValidation isError text={ requestError.message } />
+							) }
 
 						<label htmlFor="password" className="login__form-userdata-username">
 							{ this.props.translate( 'Password' ) }
@@ -250,9 +250,9 @@ export class LoginForm extends Component {
 						/>
 
 						{ requestError &&
-						requestError.field === 'password' && (
-							<FormInputValidation isError text={ requestError.message } />
-						) }
+							requestError.field === 'password' && (
+								<FormInputValidation isError text={ requestError.message } />
+							) }
 					</div>
 
 					{ config.isEnabled( 'signup/social' ) && (

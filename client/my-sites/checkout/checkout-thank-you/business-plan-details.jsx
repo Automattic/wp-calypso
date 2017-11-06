@@ -62,18 +62,18 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 			) }
 
 			{ ! selectedFeature &&
-			isEnabled( 'manage/plugins/upload' ) && (
-				<PurchaseDetail
-					icon={ <img src="/calypso/images/upgrades/plugins.svg" /> }
-					title={ i18n.translate( 'Add a Plugin' ) }
-					description={ i18n.translate(
-						'Search and add plugins right from your dashboard, or upload a plugin ' +
-							'from your computer with a drag-and-drop interface.'
-					) }
-					buttonText={ i18n.translate( 'Upload a plugin now' ) }
-					href={ '/plugins/upload/' + selectedSite.slug }
-				/>
-			) }
+				isEnabled( 'manage/plugins/upload' ) && (
+					<PurchaseDetail
+						icon={ <img src="/calypso/images/upgrades/plugins.svg" /> }
+						title={ i18n.translate( 'Add a Plugin' ) }
+						description={ i18n.translate(
+							'Search and add plugins right from your dashboard, or upload a plugin ' +
+								'from your computer with a drag-and-drop interface.'
+						) }
+						buttonText={ i18n.translate( 'Upload a plugin now' ) }
+						href={ '/plugins/upload/' + selectedSite.slug }
+					/>
+				) }
 
 			<PurchaseDetail
 				icon={ <img src="/calypso/images/upgrades/adwords.svg" /> }

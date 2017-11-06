@@ -250,11 +250,9 @@ class Security2faCodePrompt extends React.Component {
 								this.onRequestCode( event );
 							}.bind( this ) }
 						>
-							{ this.state.codeRequestPerformed ? (
-								this.props.translate( 'Resend Code' )
-							) : (
-								this.props.translate( 'Send Code via SMS' )
-							) }
+							{ this.state.codeRequestPerformed
+								? this.props.translate( 'Resend Code' )
+								: this.props.translate( 'Send Code via SMS' ) }
 						</FormButton>
 					) : null }
 
