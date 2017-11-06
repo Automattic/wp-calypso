@@ -8,6 +8,7 @@ import addQueryArgs from 'lib/route/add-query-args';
 import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
+import { connect } from 'react-redux';
 import { get, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -32,6 +33,7 @@ import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
+import { getJetpackConnectRedirectAfterAuth } from 'state/selectors';
 import { login } from 'lib/paths';
 
 /**
@@ -60,7 +62,6 @@ class LoggedInForm extends Component {
 				already_authorized: PropTypes.bool,
 				jp_version: PropTypes.string.isRequired,
 				new_user_started_connection: PropTypes.bool,
-				redirect_after_auth: PropTypes.string.isRequired,
 				site: PropTypes.string.isRequired,
 			} ).isRequired,
 			siteReceived: PropTypes.bool,
@@ -97,6 +98,7 @@ class LoggedInForm extends Component {
 	}
 
 	componentWillReceiveProps( props ) {
+		const { redirectAfterAuth } = props;
 		const {
 			siteReceived,
 			queryObject,
@@ -109,7 +111,7 @@ class LoggedInForm extends Component {
 		// Instead, redirect back to admin as soon as we're connected
 		if ( props.isSSO || props.isWoo || this.isFromJpo( props ) ) {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
-				return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+				return this.props.goBackToWpAdmin( redirectAfterAuth );
 			}
 		} else if ( siteReceived ) {
 			return this.redirect();
@@ -134,6 +136,7 @@ class LoggedInForm extends Component {
 	}
 
 	redirect() {
+		const { redirectAfterAuth } = this.props;
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
 		if ( this.props.isSSO || this.props.isWoo || this.isFromJpo( this.props ) ) {
@@ -144,7 +147,7 @@ class LoggedInForm extends Component {
 				'SSO found:',
 				this.props.isSSO
 			);
-			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+			this.props.goBackToWpAdmin( redirectAfterAuth );
 		} else {
 			page.redirect( this.getRedirectionTarget() );
 		}
@@ -188,6 +191,7 @@ class LoggedInForm extends Component {
 	};
 
 	handleSubmit = () => {
+		const { redirectAfterAuth } = this.props;
 		const { queryObject, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 
 		if (
@@ -196,7 +200,7 @@ class LoggedInForm extends Component {
 			queryObject.already_authorized
 		) {
 			this.props.recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
-			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+			return this.props.goBackToWpAdmin( redirectAfterAuth );
 		}
 
 		if ( this.props.isAlreadyOnSitesList && queryObject.already_authorized ) {
@@ -440,17 +444,17 @@ class LoggedInForm extends Component {
 	}
 
 	renderFooterLinks() {
-		const { translate } = this.props;
+		const { redirectAfterAuth, translate } = this.props;
 		const {
 			queryObject,
 			authorizeSuccess,
 			isAuthorizing,
 			isRedirectingToWpAdmin,
 		} = this.props.jetpackConnectAuthorize;
-		const { blogname, redirect_after_auth } = queryObject;
+		const { blogname } = queryObject;
 		const redirectTo = addQueryArgs( queryObject, window.location.href );
 		const backToWpAdminLink = (
-			<LoggedOutFormLinkItem icon={ true } href={ redirect_after_auth }>
+			<LoggedOutFormLinkItem icon={ true } href={ redirectAfterAuth }>
 				<Gridicon size={ 18 } icon="arrow-left" />{' '}
 				{ translate( 'Return to %(sitename)s', {
 					args: { sitename: decodeEntities( blogname ) },
@@ -533,4 +537,6 @@ class LoggedInForm extends Component {
 	}
 }
 
-export default localize( LoggedInForm );
+export default connect( state => ( {
+	redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
+} ) )( localize( LoggedInForm ) );

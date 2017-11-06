@@ -7,7 +7,7 @@ exports[`AuthorizeForm should render LoggedInForm when logged in 1`] = `
   <div
     className="jetpack-connect__authorize-form"
   >
-    <Localized(LoggedInForm)
+    <Connect(Localized(LoggedInForm))
       authAttempts={0}
       calypsoStartedConnection={false}
       isAlreadyOnSitesList={false}
