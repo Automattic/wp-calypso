@@ -3,12 +3,8 @@
 /**
  * Internal dependencies
  */
-import { items, isRequesting, error } from '../reducer';
-import {
-	CONCIERGE_SHIFTS_FETCH,
-	CONCIERGE_SHIFTS_FETCH_FAILED,
-	CONCIERGE_SHIFTS_FETCH_SUCCESS,
-} from 'state/action-types';
+import { items, isFetching } from '../reducer';
+import { CONCIERGE_SHIFTS_FETCH, CONCIERGE_SHIFTS_UPDATE } from 'state/action-types';
 
 describe( 'concierge/shifts/reducer', () => {
 	const mockShifts = [ { description: 'shift1' }, { description: 'shift2' } ];
@@ -17,17 +13,9 @@ describe( 'concierge/shifts/reducer', () => {
 		type: CONCIERGE_SHIFTS_FETCH,
 	};
 
-	const fetchSucceededAction = {
-		type: CONCIERGE_SHIFTS_FETCH_SUCCESS,
+	const updateAction = {
+		type: CONCIERGE_SHIFTS_UPDATE,
 		shifts: mockShifts,
-	};
-
-	const fetchFailedAction = {
-		type: CONCIERGE_SHIFTS_FETCH_FAILED,
-		error: {
-			status: 400,
-			message: 'something go wrong!',
-		},
 	};
 
 	describe( 'items', () => {
@@ -40,50 +28,23 @@ describe( 'concierge/shifts/reducer', () => {
 			expect( items( state, fetchAction ) ).toBeNull();
 		} );
 
-		test( 'should be unchanged on receiving the failed action.', () => {
-			const state = mockShifts;
-			expect( items( state, fetchFailedAction ) ).toEqual( mockShifts );
-		} );
-
-		test( 'should be the received data on receiving the succeeded action.', () => {
+		test( 'should be the received data on receiving the update action.', () => {
 			const state = [];
-			expect( items( state, fetchSucceededAction ) ).toEqual( mockShifts );
+			expect( items( state, updateAction ) ).toEqual( mockShifts );
 		} );
 	} );
 
-	describe( 'isRequesting', () => {
+	describe( 'isFetching', () => {
 		test( 'should be defaulted as false.', () => {
-			expect( isRequesting( undefined, {} ) ).toBe( false );
+			expect( isFetching( undefined, {} ) ).toBe( false );
 		} );
 
 		test( 'should be true on receiving the fetch action.', () => {
-			expect( isRequesting( undefined, fetchAction ) ).toBe( true );
+			expect( isFetching( undefined, fetchAction ) ).toBe( true );
 		} );
 
-		test( 'should be false on receiving the failed action.', () => {
-			expect( isRequesting( undefined, fetchFailedAction ) ).toBe( false );
-		} );
-
-		test( 'should be false on receiving the succeeded action.', () => {
-			expect( isRequesting( undefined, fetchSucceededAction ) ).toBe( false );
-		} );
-	} );
-
-	describe( 'error', () => {
-		test( 'should be defauled as null.', () => {
-			expect( error( undefined, {} ) ).toBeNull();
-		} );
-
-		test( 'should be null on receiving the fetch action.', () => {
-			expect( error( undefined, fetchAction ) ).toBeNull();
-		} );
-
-		test( 'should be the error on receiving the failed action.', () => {
-			expect( error( undefined, fetchFailedAction ) ).toEqual( fetchFailedAction.error );
-		} );
-
-		test( 'should be null on receiving the succeeded action.', () => {
-			expect( error( undefined, fetchSucceededAction ) ).toBeNull();
+		test( 'should be false on receiving the update action.', () => {
+			expect( isFetching( undefined, updateAction ) ).toBe( false );
 		} );
 	} );
 } );
