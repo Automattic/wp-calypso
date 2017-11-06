@@ -10,7 +10,6 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	getRememberMe,
 	getRequestError,
 	getTwoFactorAuthNonce,
 	getTwoFactorAuthRequestError,
@@ -267,23 +266,6 @@ describe( 'selectors', () => {
 					},
 				} )
 			).to.eql( token );
-		} );
-	} );
-
-	describe( 'getRememberMe()', () => {
-		test( 'should return false by default', () => {
-			expect( getRememberMe( undefined ) ).to.be.false;
-		} );
-
-		test( "should return remember me flag when it's set", () => {
-			const rememberMe = true;
-			expect(
-				getRememberMe( {
-					login: {
-						rememberMe,
-					},
-				} )
-			).to.eql( rememberMe );
 		} );
 	} );
 
