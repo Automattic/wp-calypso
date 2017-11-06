@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flatMap, get, isEmpty, zip } from 'lodash';
+import { compact, flatMap, get, isEmpty, zip } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,24 +32,24 @@ const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
  * classifier and the event itself (for rendering)
  *
  * @param {Array} logs sorted activity log items
- * @param {Number} activityId selected rewind operation
+ * @param {?Number} backupId selected backup operation
+ * @param {?Number} restoreId selected rewind operation
  * @returns {Array<String, ?Object>} pairs of [ classifier, event ]
  */
-const classifyEvents = ( logs, activityId ) => {
+const classifyEvents = ( logs, { backupId, rewindId } ) => {
 	/** @type {Array<Array<Object, ?Object>>} contains pairs of [ log, next log ] **/
 	const logPairs = zip( logs, logs.slice( 1 ) );
 
-	return flatMap( logPairs, ( [ log, nextLog ] ) => {
-		if ( log.activityId === activityId ) {
-			return [ [ 'rewind-confirm-dialog', {} ], [ 'event', log ] ];
-		}
-
-		if ( nextLog && nextLog.activityId === activityId ) {
-			return [ [ 'event-before-dialog', log ] ];
-		}
-
-		return [ [ 'event', log ] ];
-	} );
+	return flatMap( logPairs, ( [ log, nextLog ] ) =>
+		compact( [
+			rewindId && log.activityId === rewindId && [ 'rewind-confirm-dialog', {} ],
+			backupId && log.activityId === backupId && [ 'backup-confirm-dialog', {} ],
+			[
+				rewindId && nextLog && nextLog.activityId === rewindId ? 'timeline-break-event' : 'event',
+				log,
+			],
+		] )
+	);
 };
 
 class ActivityLogDay extends Component {
@@ -228,7 +228,10 @@ class ActivityLogDay extends Component {
 		);
 
 		const rewindButton = this.renderRewindButton( hasConfirmDialog ? '' : 'primary' );
-		const events = classifyEvents( rewriteStream( logs, isDiscardedPerspective ), requestedRestoreActivityId );
+		const events = classifyEvents( rewriteStream( logs, isDiscardedPerspective ), {
+			backupId: requestedBackupId,
+			rewindId: requestedRestoreActivityId,
+		} );
 
 		const LogItem = ( { log, hasBreak } ) => (
 			<ActivityLogItem
@@ -259,14 +262,17 @@ class ActivityLogDay extends Component {
 					const key = log.activityId;
 
 					switch ( type ) {
+						case 'backup-confirm-dialog':
+							return backupConfirmDialog;
+
 						case 'event':
 							return <LogItem { ...{ key, log } } />;
 
-						case 'event-before-dialog':
+						case 'timeline-break-event':
 							return <LogItem { ...{ key, log, hasBreak: true } } />;
 
 						case 'rewind-confirm-dialog':
-							return rewindConfirmDialog;
+							return restoreConfirmDialog;
 					}
 				} ) }
 			</FoldableCard>
