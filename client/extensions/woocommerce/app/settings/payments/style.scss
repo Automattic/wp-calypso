@@ -3,7 +3,6 @@
 	flex-direction: column;
 	flex-grow: 1;
 	max-height: 80%;
-	max-width: 600px;
 
 	.dialog__content {
 		height: 100%;
@@ -40,10 +39,6 @@
 		padding: 0;
 		box-shadow: none;
 	}
-}
-
-&.store-location__edit-dialog {
-	max-width: 600px;
 }
 
 .payments__currency-container {
