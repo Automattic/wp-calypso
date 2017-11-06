@@ -5,7 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { compact, find, flowRight, get, isArray, keys, without } from 'lodash';
+import { compact, find, flowRight, isArray, without } from 'lodash';
 import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -34,20 +34,20 @@ class ConfirmDisconnection extends PureComponent {
 		translate: PropTypes.func,
 	};
 
-	static reasonWhitelist = {
-		'missing-feature': 'didNotInclude',
-		'too-difficult': 'tooHard',
-		'too-expensive': 'onlyNeedFree',
-		troubleshooting: 'troubleshooting',
-		other: 'other',
-	};
+	static reasonWhitelist = [
+		'missing-feature',
+		'too-difficult',
+		'too-expensive',
+		'troubleshooting',
+		'other',
+	];
 
 	submitSurvey = () => {
 		const { moment, purchase, reason, site, siteId, text } = this.props;
 
 		const surveyData = {
 			'why-cancel': {
-				response: get( this.constructor.reasonWhitelist, reason ),
+				response: find( this.constructor.reasonWhitelist, r => r === reason ),
 				text: isArray( text ) ? text.join() : text,
 			},
 		};
@@ -62,7 +62,7 @@ class ConfirmDisconnection extends PureComponent {
 	render() {
 		const { reason, siteId, siteSlug, translate } = this.props;
 		const previousStep = find(
-			without( keys( this.constructor.reasonWhitelist ), 'troubleshooting', 'other' ), // Redirect those back to initial survey
+			without( this.constructor.reasonWhitelist, 'troubleshooting', 'other' ), // Redirect those back to initial survey
 			r => r === reason
 		);
 
