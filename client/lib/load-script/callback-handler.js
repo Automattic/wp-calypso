@@ -52,7 +52,6 @@ export function removeScriptCallbacks( url ) {
 
 export function removeAllScriptCallbacks() {
 	debug( 'Removing all callbacks for scripts from all URLs' );
-
 	getCallbacksMap().clear();
 }
 
@@ -75,14 +74,16 @@ export function executeCallbacks( url, callbackArguments = null ) {
 }
 
 export function handleRequestSuccess( event ) {
-	const { target: { src: url } } = event;
+	const { target } = event;
+	const url = target.getAttribute( 'src' );
 	debug( `Handling successful request for "${ url }"` );
 	executeCallbacks( url );
 	this.onload = null;
 }
 
 export function handleRequestError( event ) {
-	const { target: { src: url } } = event;
+	const { target } = event;
+	const url = target.getAttribute( 'src' );
 	debug( `Handling failed request for "${ url }"` );
 	executeCallbacks( url, new Error( `Failed to load script "${ url }"` ) );
 	this.onerror = null;
