@@ -102,7 +102,7 @@ function getFixedDomainSearch( domainName ) {
 		.toLowerCase()
 		.replace( /^(https?:\/\/)?(www\.)?/, '' )
 		.replace( /\/$/, '' )
-		.replace( '_', '-' );
+		.replace( /_/g, '-' );
 }
 
 function isSubdomain( domainName ) {
