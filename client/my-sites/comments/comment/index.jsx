@@ -15,7 +15,6 @@ import { get, isUndefined } from 'lodash';
 import Card from 'components/card';
 import CommentContent from 'my-sites/comments/comment/comment-content';
 import CommentHeader from 'my-sites/comments/comment/comment-header';
-import CommentReply from 'my-sites/comments/comment/comment-reply';
 import QueryComment from 'components/data/query-comment';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
@@ -38,12 +37,16 @@ export class Comment extends Component {
 	state = {
 		hasReplyFocus: false,
 		isEditMode: false,
-		isExpanded: false,
+		isExpanded: true,
 	};
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.isBulkMode && ! this.props.isBulkMode ) {
 			this.setState( { isExpanded: false } );
+		}
+
+		if ( ! nextProps.isBulkMode && this.props.isBulkMode ) {
+			this.setState( { isExpanded: true } );
 		}
 	}
 
@@ -92,7 +95,7 @@ export class Comment extends Component {
 			refreshCommentData,
 			siteId,
 		} = this.props;
-		const { hasReplyFocus, isEditMode, isExpanded } = this.state;
+		const { isEditMode, isExpanded } = this.state;
 
 		const classes = classNames( 'comment', {
 			'is-bulk-mode': isBulkMode,
@@ -122,14 +125,6 @@ export class Comment extends Component {
 						/>
 
 						<CommentContent { ...{ commentId, isExpanded } } />
-
-						{ isExpanded && (
-							<CommentReply
-								{ ...{ commentId, hasReplyFocus } }
-								blurReply={ this.blurReply }
-								focusReply={ this.focusReply }
-							/>
-						) }
 					</div>
 				) }
 			</Card>
