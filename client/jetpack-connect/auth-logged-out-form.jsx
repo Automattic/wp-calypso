@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -21,6 +22,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { login } from 'lib/paths';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 
@@ -37,6 +39,7 @@ class LoggedOutForm extends Component {
 		path: PropTypes.string,
 
 		// Connected props
+		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -120,4 +123,6 @@ class LoggedOutForm extends Component {
 	}
 }
 
-export default localize( LoggedOutForm );
+export default connect( null, {
+	recordTracksEvent: recordTracksEventAction,
+} )( localize( LoggedOutForm ) );
