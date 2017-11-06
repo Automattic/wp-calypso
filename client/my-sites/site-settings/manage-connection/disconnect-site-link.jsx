@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import QuerySitePlans from 'components/data/query-site-plans';
 import SiteToolsLink from 'my-sites/site-settings/site-tools/link';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -32,8 +31,6 @@ class DisconnectSiteLink extends PureComponent {
 
 		return (
 			<div className="manage-connection__disconnect-link">
-				<QuerySitePlans siteId={ siteId } />
-
 				<SiteToolsLink
 					href={ '/settings/disconnect-site/' + siteSlug }
 					onClick={ this.handleClick }
