@@ -13,6 +13,12 @@ CreditCardFormFields
 
 Some of these fields use [masking](https://en.wikipedia.org/wiki/Input_mask), i.e. rules that govern what a user is allowed to enter in a text box.
 
+Brazil requires that users provide additional details when making payments. When a user selects Brazil from the country select menu, extra fields will appear:
+
+* Tax identification code, also known as [CPF](https://en.wikipedia.org/wiki/Cadastro_de_Pessoas_F%C3%ADsicas)
+* Phone number
+* Address, city and state details
+
 ## Usage
 
 ```jsx
