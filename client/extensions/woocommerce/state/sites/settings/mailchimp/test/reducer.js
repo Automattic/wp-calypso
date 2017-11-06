@@ -44,7 +44,7 @@ describe( 'reducer', () => {
 		const newState = reducer( {}, action );
 		expect( newState[ siteId ] ).to.exist;
 		expect( newState[ siteId ].settings ).to.exist;
-		expect( newState[ siteId ].settings.email.settings ).to.deep.equal( settings );
+		expect( newState[ siteId ].settings.mailchimp.settings ).to.deep.equal( settings );
 	} );
 
 	test( 'should merge lists data into settings and pick first as default if none is chosen', () => {
@@ -76,7 +76,7 @@ describe( 'reducer', () => {
 		const updatedState = reducer( firstState, listsAction );
 		expect( updatedState[ siteId ] ).to.exist;
 		expect( updatedState[ siteId ].settings ).to.exist;
-		expect( updatedState[ siteId ].settings.email.settings ).to.deep.equal( finalState );
+		expect( updatedState[ siteId ].settings.mailchimp.settings ).to.deep.equal( finalState );
 	} );
 
 	test( 'should merge lists data into settings and not update the chosen list when a list has been selected', () => {
@@ -108,7 +108,7 @@ describe( 'reducer', () => {
 		const updatedState = reducer( firstState, listsAction );
 		expect( updatedState[ siteId ] ).to.exist;
 		expect( updatedState[ siteId ].settings ).to.exist;
-		expect( updatedState[ siteId ].settings.email.settings ).to.deep.equal( finalState );
+		expect( updatedState[ siteId ].settings.mailchimp.settings ).to.deep.equal( finalState );
 	} );
 
 	test( 'success after failure should cancel failure indication for settings request', () => {
@@ -131,12 +131,12 @@ describe( 'reducer', () => {
 		const firstState = reducer( {}, settingsRequestError );
 		expect( firstState[ siteId ] ).to.exist;
 		expect( firstState[ siteId ].settings ).to.exist;
-		expect( firstState[ siteId ].settings.email.settingsRequestError ).to.deep.equal( error );
+		expect( firstState[ siteId ].settings.mailchimp.settingsRequestError ).to.deep.equal( error );
 
 		const updatedState = reducer( firstState, settingsSuccessAction );
 		expect( updatedState[ siteId ] ).to.exist;
 		expect( updatedState[ siteId ].settings ).to.exist;
-		expect( updatedState[ siteId ].settings.email.settingsRequestError ).to.equal( false );
+		expect( updatedState[ siteId ].settings.mailchimp.settingsRequestError ).to.equal( false );
 	} );
 
 	test( 'should mark submit request as submitting', () => {
@@ -147,7 +147,7 @@ describe( 'reducer', () => {
 		};
 
 		const newSiteData = reducer( {}, action );
-		expect( newSiteData[ siteId ].settings.email.apiKeySubmit ).to.eql( true );
+		expect( newSiteData[ siteId ].settings.mailchimp.apiKeySubmit ).to.eql( true );
 	} );
 
 	test( 'should mark submit request as false after submit success', () => {
@@ -165,7 +165,7 @@ describe( 'reducer', () => {
 
 		const newSiteData = reducer( {}, action );
 		const updatedState = reducer( newSiteData, secondAction );
-		expect( updatedState[ siteId ].settings.email.apiKeySubmit ).to.eql( false );
+		expect( updatedState[ siteId ].settings.mailchimp.apiKeySubmit ).to.eql( false );
 	} );
 
 	test( 'should mark submit request as false after submit error', () => {
@@ -183,7 +183,7 @@ describe( 'reducer', () => {
 
 		const newSiteData = reducer( {}, action );
 		const updatedState = reducer( newSiteData, secondAction );
-		expect( updatedState[ siteId ].settings.email.apiKeySubmit ).to.eql( false );
+		expect( updatedState[ siteId ].settings.mailchimp.apiKeySubmit ).to.eql( false );
 	} );
 
 	test( 'should mark saveSettings as true after dispatching mailChimpSaveSettings', () => {
@@ -194,7 +194,7 @@ describe( 'reducer', () => {
 		};
 
 		const newState = reducer( {}, action );
-		expect( newState[ siteId ].settings.email.saveSettings ).to.eql( true );
+		expect( newState[ siteId ].settings.mailchimp.saveSettings ).to.eql( true );
 	} );
 
 	test( 'should mark saveSettings as false after newsletter settings submit success', () => {
@@ -212,6 +212,6 @@ describe( 'reducer', () => {
 
 		const newSiteData = reducer( {}, action );
 		const updatedState = reducer( newSiteData, secondAction );
-		expect( updatedState[ siteId ].settings.email.saveSettings ).to.eql( false );
+		expect( updatedState[ siteId ].settings.mailchimp.saveSettings ).to.eql( false );
 	} );
 } );
