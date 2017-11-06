@@ -17,6 +17,7 @@ import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 const enhanceContextWithLogin = context => {
 	const { path, params: { flow, twoFactorAuthType, socialService } } = context;
@@ -103,5 +104,19 @@ export default {
 		);
 
 		next();
+	},
+
+	redirectDefaultLocale( context, next ) {
+		// Do not redirect if user is logged in
+		if ( getCurrentUser( context.store.getState() ) ) {
+			return next();
+		}
+
+		// only redirect `/log-in/en` to `/log-in`
+		if ( context.pathname !== '/log-in/en' ) {
+			return next();
+		}
+
+		page.replace( '/log-in', context.query );
 	},
 };

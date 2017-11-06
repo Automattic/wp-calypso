@@ -10,8 +10,13 @@ import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
 
 export default router => {
 	if ( config.isEnabled( 'login/wp-login' ) ) {
-		router( '/log-in/en', ( { res } ) => {
-			res.redirect( 301, '/log-in' );
+		router( '/log-in/en', ( { res, user }, next ) => {
+			// do not redirect if user is logged in
+			if ( user ) {
+				return next();
+			}
+
+			res.redirect( 302, '/log-in' );
 		} );
 	}
 
