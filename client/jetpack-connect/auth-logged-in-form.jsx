@@ -4,16 +4,17 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
 import addQueryArgs from 'lib/route/add-query-args';
 import debugModule from 'debug';
+import Gridicon from 'gridicons';
 import page from 'page';
-import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import AuthFormHeader from './auth-form-header';
 import Button from 'components/button';
 import Card from 'components/card';
 import FormLabel from 'components/forms/form-label';
@@ -32,7 +33,6 @@ import userUtilities from 'lib/user/utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { login } from 'lib/paths';
-import AuthFormHeader from './auth-form-header';
 
 /**
  * Constants
