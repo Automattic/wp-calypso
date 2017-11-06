@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { assign, forEach } from 'lodash';
+import { assign, forEach, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,8 +43,15 @@ export const items = createReducer(
 			return newState;
 		},
 		[ READER_CONVERSATION_UPDATE_FOLLOW_STATUS ]: ( state, action ) => {
+			const stateKey = key( action.payload.siteId, action.payload.postId );
+
+			// If followStatus is null, remove the key from the state map entirely
+			if ( action.payload.followStatus === null ) {
+				return omit( state, stateKey );
+			}
+
 			const newState = assign( {}, state, {
-				[ key( action.payload.siteId, action.payload.postId ) ]: action.payload.followStatus,
+				[ stateKey ]: action.payload.followStatus,
 			} );
 
 			return newState;

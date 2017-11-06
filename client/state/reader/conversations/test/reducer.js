@@ -57,6 +57,17 @@ describe( 'reducer', () => {
 			expect( state[ '123-456' ] ).toEqual( 'F' );
 		} );
 
+		test( 'should remove the given site and post from state entirely if followStatus is null', () => {
+			const original = deepFreeze( { '123-456': 'M' } );
+
+			const state = items( original, {
+				type: READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
+				payload: { siteId: 123, postId: 456, followStatus: null },
+			} );
+
+			expect( state[ '123-456' ] ).toEqual( undefined );
+		} );
+
 		test( 'should add a new follow when new posts are received', () => {
 			const original = deepFreeze( {} );
 
