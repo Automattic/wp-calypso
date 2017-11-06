@@ -24,6 +24,7 @@ export class CommentHeader extends PureComponent {
 			isBulkMode,
 			isEditMode,
 			isExpanded,
+			isPostView,
 			isSelected,
 			showAuthorMoreInfo,
 			toggleExpanded,
@@ -37,7 +38,7 @@ export class CommentHeader extends PureComponent {
 					</label>
 				) }
 
-				<CommentAuthor { ...{ commentId, isExpanded } } />
+				<CommentAuthor { ...{ commentId, isExpanded, isPostView } } />
 
 				{ showAuthorMoreInfo && <CommentAuthorMoreInfo { ...{ commentId } } /> }
 

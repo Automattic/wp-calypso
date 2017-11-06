@@ -196,7 +196,7 @@
 		flex-flow: row;
 		flex-wrap: nowrap;
 		justify-content: space-between;
-		margin: 8px 0 1em 0;
+		margin-top: 16px;
 	}
 
 	.comment__post-link {
@@ -217,6 +217,7 @@
 		flex-grow: 0;
 		flex-shrink: 0;
 		font-size: 12px;
+		margin-left: auto;
 		padding: 0 10px;
 	}
 
@@ -242,6 +243,10 @@
 		a:hover {
 			color: $blue-wordpress;
 		}
+	}
+
+	.comment__content-body {
+		margin-top: 16px;
 	}
 
 	.comment__content-body *:last-child {
@@ -471,12 +476,11 @@
 	}
 
 	.comment__content {
-		padding-top: 8px;
 		padding-bottom: 8px;
 
 		.comment__in-reply-to {
 			border-left: 4px solid lighten($gray, 30%);
-			margin-bottom: 1em;
+			margin: 16px 0;
 			padding: 2px 4px;
 		}
 	}

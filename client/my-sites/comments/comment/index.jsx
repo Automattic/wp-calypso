@@ -27,16 +27,12 @@ export class Comment extends Component {
 		commentId: PropTypes.number,
 		isBulkMode: PropTypes.bool,
 		isPersistent: PropTypes.bool,
+		isPostView: PropTypes.bool,
 		isSelected: PropTypes.bool,
 		refreshCommentData: PropTypes.bool,
 		removeFromPersisted: PropTypes.func,
 		toggleSelected: PropTypes.func,
 		updatePersisted: PropTypes.func,
-	};
-
-	static defaultProps = {
-		isBulkMode: false,
-		isSelected: false,
 	};
 
 	state = {
@@ -92,6 +88,7 @@ export class Comment extends Component {
 			commentIsPending,
 			isBulkMode,
 			isLoading,
+			isPostView,
 			isSelected,
 			refreshCommentData,
 			removeFromPersisted,
@@ -125,11 +122,11 @@ export class Comment extends Component {
 				{ ! isEditMode && (
 					<div className="comment__detail">
 						<CommentHeader
-							{ ...{ commentId, isBulkMode, isEditMode, isExpanded, isSelected } }
+							{ ...{ commentId, isBulkMode, isEditMode, isExpanded, isPostView, isSelected } }
 							toggleExpanded={ this.toggleExpanded }
 						/>
 
-						<CommentContent { ...{ commentId, isExpanded } } />
+						<CommentContent { ...{ commentId, isExpanded, isPostView } } />
 
 						{ showActions && (
 							<CommentActions
