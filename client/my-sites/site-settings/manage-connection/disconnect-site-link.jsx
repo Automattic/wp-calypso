@@ -25,11 +25,7 @@ class DisconnectSiteLink extends Component {
 		dialogVisible: false,
 	};
 
-	handleClick = event => {
-		if ( ! isEnabled( 'manage/site-settings/disconnect-flow' ) ) {
-			event.preventDefault();
-		}
-
+	handleClick = () => {
 		this.setState( {
 			dialogVisible: true,
 		} );
@@ -58,9 +54,7 @@ class DisconnectSiteLink extends Component {
 					href={
 						isEnabled( 'manage/site-settings/disconnect-flow' ) ? (
 							'/settings/disconnect-site/' + siteSlug
-						) : (
-							'#'
-						)
+						) : null
 					}
 					onClick={ this.handleClick }
 					title={ translate( 'Disconnect from WordPress.com' ) }
