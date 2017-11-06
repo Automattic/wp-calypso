@@ -21,6 +21,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
+import { createAccount as createAccountAction } from 'state/jetpack-connect/actions';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
@@ -28,7 +29,6 @@ const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedOutForm extends Component {
 	static propTypes = {
-		createAccount: PropTypes.func.isRequired,
 		jetpackConnectAuthorize: PropTypes.shape( {
 			bearerToken: PropTypes.string,
 			isAuthorizing: PropTypes.bool,
@@ -39,6 +39,7 @@ class LoggedOutForm extends Component {
 		path: PropTypes.string,
 
 		// Connected props
+		createAccount: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -125,4 +126,5 @@ class LoggedOutForm extends Component {
 
 export default connect( null, {
 	recordTracksEvent: recordTracksEventAction,
+	createAccount: createAccountAction,
 } )( localize( LoggedOutForm ) );
