@@ -20,7 +20,12 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
-import { changeCommentStatus, likeComment, unlikeComment } from 'state/comments/actions';
+import {
+	changeCommentStatus,
+	deleteComment,
+	likeComment,
+	unlikeComment,
+} from 'state/comments/actions';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -36,6 +41,14 @@ export class CommentActions extends Component {
 		commentId: PropTypes.number,
 		removeFromPersisted: PropTypes.func,
 		updatePersisted: PropTypes.func,
+	};
+
+	delete = () => {
+		const { deletePermanently, commentId, postId, removeFromPersisted, siteId } = this.props;
+
+		deletePermanently( siteId, postId, commentId );
+
+		removeFromPersisted( commentId );
 	};
 
 	hasAction = action => includes( commentActions[ this.props.commentStatus ], action );
@@ -155,6 +168,17 @@ export class CommentActions extends Component {
 					</Button>
 				) }
 
+				{ this.hasAction( 'delete' ) && (
+					<Button
+						borderless
+						className="comment__action comment__action-delete"
+						onClick={ this.delete }
+					>
+						<Gridicon icon="trash" />
+						<span>{ translate( 'Delete Permanently' ) }</span>
+					</Button>
+				) }
+
 				{ this.hasAction( 'like' ) && (
 					<Button
 						borderless
@@ -206,6 +230,16 @@ const mapDispatchToProps = dispatch => ( {
 					bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
 				),
 				changeCommentStatus( siteId, postId, commentId, status )
+			)
+		),
+	deletePermanently: ( siteId, postId, commentId ) =>
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_comment_management_delete' ),
+					bumpStat( 'calypso_comment_management', 'comment_deleted' )
+				),
+				deleteComment( siteId, postId, commentId, { showSuccessNotice: true } )
 			)
 		),
 	like: ( siteId, postId, commentId, analytics = { alsoApprove: false } ) =>

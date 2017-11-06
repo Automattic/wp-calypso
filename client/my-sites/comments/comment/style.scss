@@ -320,6 +320,7 @@
 	&.comment__action-like:hover {
 		color: $orange-jazzy;
 	}
+	&.comment__action-delete:hover,
 	&.comment__action-spam:hover,
 	&.comment__action-trash:hover {
 		color: $alert-red;
@@ -491,7 +492,10 @@
 		}
 
 		.comment__action {
+			flex-basis: 0;
+			flex-grow: 1;
 			text-align: center;
+
 			span {
 				display: block;
 				padding-top: 4px;
