@@ -400,17 +400,17 @@ class PostComment extends React.PureComponent {
 						className: 'comments__comment-username',
 					} ) }
 					{ this.props.showNestingReplyArrow &&
-					parentAuthorName && (
-						<span className="comments__comment-respondee">
-							<Gridicon icon="chevron-right" size={ 16 } />
-							{ this.renderAuthorTag( {
-								className: 'comments__comment-respondee-link',
-								authorName: parentAuthorName,
-								authorUrl: parentAuthorUrl,
-								commentId: parentCommentId,
-							} ) }
-						</span>
-					) }
+						parentAuthorName && (
+							<span className="comments__comment-respondee">
+								<Gridicon icon="chevron-right" size={ 16 } />
+								{ this.renderAuthorTag( {
+									className: 'comments__comment-respondee-link',
+									authorName: parentAuthorName,
+									authorUrl: parentAuthorUrl,
+									commentId: parentCommentId,
+								} ) }
+							</span>
+						) }
 					<div className="comments__comment-timestamp">
 						<a
 							href={ comment.URL }
@@ -439,14 +439,14 @@ class PostComment extends React.PureComponent {
 				) }
 
 				{ isEnabled( 'comments/moderation-tools-in-posts' ) &&
-				this.props.activeEditCommentId === this.props.commentId && (
-					<CommentEditForm
-						post={ this.props.post }
-						commentId={ this.props.commentId }
-						commentText={ comment.content }
-						onCommentSubmit={ this.props.onEditCommentCancel }
-					/>
-				) }
+					this.props.activeEditCommentId === this.props.commentId && (
+						<CommentEditForm
+							post={ this.props.post }
+							commentId={ this.props.commentId }
+							commentText={ comment.content }
+							onCommentSubmit={ this.props.onEditCommentCancel }
+						/>
+					) }
 
 				<CommentActions
 					post={ this.props.post || {} }

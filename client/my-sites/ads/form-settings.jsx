@@ -328,11 +328,9 @@ class AdsFormSettings extends Component {
 						name="taxid"
 						id="taxid"
 						placeholder={
-							this.state.taxid_last4 ? (
-								'On file. Last Four Digits: '.concat( this.state.taxid_last4 )
-							) : (
-								''
-							)
+							this.state.taxid_last4
+								? 'On file. Last Four Digits: '.concat( this.state.taxid_last4 )
+								: ''
 						}
 						value={ this.state.taxid || '' }
 						onChange={ this.handleChange }

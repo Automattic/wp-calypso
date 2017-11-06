@@ -149,11 +149,9 @@ class Protect extends Component {
 									disabled={ disabled || isIpWhitelisted }
 									compact
 								>
-									{ isIpWhitelisted ? (
-										translate( 'Already in whitelist' )
-									) : (
-										translate( 'Add to whitelist' )
-									) }
+									{ isIpWhitelisted
+										? translate( 'Already in whitelist' )
+										: translate( 'Add to whitelist' ) }
 								</Button>
 							) }
 						</p>

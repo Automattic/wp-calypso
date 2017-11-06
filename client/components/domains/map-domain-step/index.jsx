@@ -78,9 +78,9 @@ class MapDomainStep extends React.Component {
 	render() {
 		const suggestion = this.props.products.domain_map
 			? {
-				cost: this.props.products.domain_map.cost_display,
-				product_slug: this.props.products.domain_map.product_slug,
-			}
+					cost: this.props.products.domain_map.cost_display,
+					product_slug: this.props.products.domain_map.product_slug,
+				}
 			: { cost: null, product_slug: '' };
 		const { translate } = this.props;
 

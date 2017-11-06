@@ -137,7 +137,7 @@ class PromotionCreate extends React.Component {
 			promotion,
 			hasEdits,
 			products,
-			productCategories
+			productCategories,
 		} = this.props;
 		const { busy } = this.state;
 

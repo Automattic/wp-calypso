@@ -109,7 +109,8 @@ const ReaderListActions = {
 		wpcom.undocumented().readList( {
 			owner: owner,
 			slug: slug,
-		}, function( error, data ) {
+		},
+		function( error, data ) {
 			delete fetchingLists[ key ];
 			ReaderListsStore.setIsFetching( false );
 

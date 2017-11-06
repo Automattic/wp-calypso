@@ -297,17 +297,14 @@ describe( 'FeedPostList', () => {
 			expect( filteredPosts.length ).to.equal( 3 );
 		} );
 
-		test.skip(
-			'when following origin site, filters followed x-posts, but leaves comment notices',
-			function() {
-				filteredPosts = store.filterFollowedXPosts( posts );
-				expect( filteredPosts.length ).to.equal( 3 );
-				expect( filteredPosts[ 0 ].meta.data.post.site_URL ).to.equal( 'http://foo.bar.com' );
-				expect( filteredPosts[ 1 ].meta.data.post.site_URL ).to.equal(
-					'http://dailypost.wordpress.com'
-				);
-			}
-		);
+		test.skip( 'when following origin site, filters followed x-posts, but leaves comment notices', function() {
+			filteredPosts = store.filterFollowedXPosts( posts );
+			expect( filteredPosts.length ).to.equal( 3 );
+			expect( filteredPosts[ 0 ].meta.data.post.site_URL ).to.equal( 'http://foo.bar.com' );
+			expect( filteredPosts[ 1 ].meta.data.post.site_URL ).to.equal(
+				'http://dailypost.wordpress.com'
+			);
+		} );
 
 		test.skip( 'updates sites x-posted to', function() {
 			filteredPosts = store.filterFollowedXPosts( posts );

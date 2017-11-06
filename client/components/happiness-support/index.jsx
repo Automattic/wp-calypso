@@ -120,11 +120,9 @@ export class HappinessSupport extends Component {
 
 				<div className="happiness-support__buttons">
 					{ showLiveChatButton && <HappychatConnection /> }
-					{ showLiveChatButton && liveChatAvailable ? (
-						this.renderLiveChatButton()
-					) : (
-						this.renderContactButton()
-					) }
+					{ showLiveChatButton && liveChatAvailable
+						? this.renderLiveChatButton()
+						: this.renderContactButton() }
 					{ this.renderSupportButton() }
 				</div>
 			</div>

@@ -80,8 +80,8 @@ const DomainManagementData = createReactClass( {
 					context={ this.props.context }
 				/>
 				{ this.props.selectedSite && <QuerySitePlans siteId={ this.props.selectedSite.ID } /> && (
-					<QueryContactDetailsCache />
-				) }
+						<QueryContactDetailsCache />
+					) }
 			</div>
 		);
 	},

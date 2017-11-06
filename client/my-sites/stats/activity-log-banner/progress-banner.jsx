@@ -50,11 +50,9 @@ function ProgressBanner( {
 		<ActivityLogBanner
 			status="info"
 			title={
-				'restore' === action ? (
-					translate( 'Currently restoring your site' )
-				) : (
-					translate( 'Currently creating a downloadable backup of your site' )
-				)
+				'restore' === action
+					? translate( 'Currently restoring your site' )
+					: translate( 'Currently creating a downloadable backup of your site' )
 			}
 		>
 			{ 'restore' === action && (
@@ -73,11 +71,9 @@ function ProgressBanner( {
 						) }
 					</p>
 					<em>
-						{ 'queued' === status ? (
-							translate( 'Your restore will start in a moment.' )
-						) : (
-							translate( "We're on it! Your site is being restored." )
-						) }
+						{ 'queued' === status
+							? translate( 'Your restore will start in a moment.' )
+							: translate( "We're on it! Your site is being restored." ) }
 					</em>
 				</div>
 			) }
@@ -97,11 +93,9 @@ function ProgressBanner( {
 						) }
 					</p>
 					<em>
-						{ 0 < percent ? (
-							translate( "We're on it! Your download is being created." )
-						) : (
-							translate( 'The creation of your backup will start in a moment.' )
-						) }
+						{ 0 < percent
+							? translate( "We're on it! Your download is being created." )
+							: translate( 'The creation of your backup will start in a moment.' ) }
 					</em>
 				</div>
 			) }

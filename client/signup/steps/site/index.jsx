@@ -101,7 +101,8 @@ class Site extends React.Component {
 			blog_name: fields.site,
 			blog_title: fields.site,
 			validate: true,
-		}, function( error, response ) {
+		},
+		function( error, response ) {
 			let messages = {},
 				errorObject = {};
 

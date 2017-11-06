@@ -35,13 +35,13 @@ class Header extends React.Component {
 				<DomainTransferFlag domain={ domain } />
 
 				{ this.props.selectedSite &&
-				! this.props.selectedSite.jetpack && (
-					<PrimaryDomainButton
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						settingPrimaryDomain={ this.props.settingPrimaryDomain }
-					/>
-				) }
+					! this.props.selectedSite.jetpack && (
+						<PrimaryDomainButton
+							domain={ domain }
+							selectedSite={ this.props.selectedSite }
+							settingPrimaryDomain={ this.props.settingPrimaryDomain }
+						/>
+					) }
 			</SectionHeader>
 		);
 	}

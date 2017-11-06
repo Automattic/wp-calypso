@@ -88,14 +88,12 @@ class Locked extends React.Component {
 				<Card className="transfer-card">
 					<div>
 						<p>
-							{ privateDomain ? (
-								translate(
-									'To transfer your domain, we must unlock it and remove Privacy Protection. ' +
-										'Your contact information will be publicly available during the transfer period.'
-								)
-							) : (
-								translate( 'To transfer your domain, we must unlock it.' )
-							) }{' '}
+							{ privateDomain
+								? translate(
+										'To transfer your domain, we must unlock it and remove Privacy Protection. ' +
+											'Your contact information will be publicly available during the transfer period.'
+									)
+								: translate( 'To transfer your domain, we must unlock it.' ) }{' '}
 							<a
 								href={ support.TRANSFER_DOMAIN_REGISTRATION }
 								target="_blank"

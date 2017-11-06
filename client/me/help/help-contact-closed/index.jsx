@@ -24,30 +24,28 @@ const NonPlanPaidMessage = localize( ( { translate } ) => {
 	return (
 		<div>
 			<p>
-				{ Date.now() < closedStartDate ? (
-					translate(
-						'Private support will be closed from %(closed_start_date)s through %(closed_end_date)s, included. ' +
-							'We will reopen private support on %(support_resume_date)s.',
-						{
-							args: {
-								closed_start_date: closedStartDate.format( 'dddd, MMMM D' ),
-								closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
-								support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
-							},
-						}
-					)
-				) : (
-					translate(
-						'Private support will be closed through %(closed_end_date)s, included. ' +
-							'We will reopen private support on %(support_resume_date)s.',
-						{
-							args: {
-								closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
-								support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
-							},
-						}
-					)
-				) }
+				{ Date.now() < closedStartDate
+					? translate(
+							'Private support will be closed from %(closed_start_date)s through %(closed_end_date)s, included. ' +
+								'We will reopen private support on %(support_resume_date)s.',
+							{
+								args: {
+									closed_start_date: closedStartDate.format( 'dddd, MMMM D' ),
+									closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
+									support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
+								},
+							}
+						)
+					: translate(
+							'Private support will be closed through %(closed_end_date)s, included. ' +
+								'We will reopen private support on %(support_resume_date)s.',
+							{
+								args: {
+									closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
+									support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
+								},
+							}
+						) }
 			</p>
 			<p>
 				{ translate(
@@ -85,30 +83,28 @@ const PersonalAndPremiumPlanMessage = localize( ( { translate } ) => {
 	return (
 		<div>
 			<p>
-				{ Date.now() < closedStartDate ? (
-					translate(
-						'Live chat support will be closed from %(closed_start_date)s through %(closed_end_date)s, included. ' +
-							'Email support will be open during that time, and we will reopen live chat on %(support_resume_date)s.',
-						{
-							args: {
-								closed_start_date: closedStartDate.format( 'dddd, MMMM D' ),
-								closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
-								support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
-							},
-						}
-					)
-				) : (
-					translate(
-						'Private support will be closed through %(closed_end_date)s, included. ' +
-							'We will reopen private support on %(support_resume_date)s.',
-						{
-							args: {
-								closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
-								support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
-							},
-						}
-					)
-				) }
+				{ Date.now() < closedStartDate
+					? translate(
+							'Live chat support will be closed from %(closed_start_date)s through %(closed_end_date)s, included. ' +
+								'Email support will be open during that time, and we will reopen live chat on %(support_resume_date)s.',
+							{
+								args: {
+									closed_start_date: closedStartDate.format( 'dddd, MMMM D' ),
+									closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
+									support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
+								},
+							}
+						)
+					: translate(
+							'Private support will be closed through %(closed_end_date)s, included. ' +
+								'We will reopen private support on %(support_resume_date)s.',
+							{
+								args: {
+									closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
+									support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
+								},
+							}
+						) }
 			</p>
 			<p>
 				{ translate(
@@ -125,33 +121,31 @@ const BusinessPlanMessage = localize( ( { translate } ) => {
 	return (
 		<div>
 			<p>
-				{ Date.now() < closedStartDate ? (
-					translate(
-						'Live chat support will be closed from %(closed_start_date)s through %(closed_end_date)s, with the ' +
-							'exception of limited hours %(limited_hours_start_date)s–%(limited_hours_end_date)s. ' +
-							'Email support will be open during that time, and we will reopen live chat on %(support_resume_date)s.',
-						{
-							args: {
-								closed_start_date: closedStartDate.format( 'dddd, MMMM D' ),
-								closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
-								limited_hours_start_date: limitedHoursStartDate.format( 'MMMM D' ),
-								limited_hours_end_date: limitedHoursEndDate.format( 'D' ),
-								support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
-							},
-						}
-					)
-				) : (
-					translate(
-						'Private support will be closed through %(closed_end_date)s, included. ' +
-							'We will reopen private support on %(support_resume_date)s.',
-						{
-							args: {
-								closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
-								support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
-							},
-						}
-					)
-				) }
+				{ Date.now() < closedStartDate
+					? translate(
+							'Live chat support will be closed from %(closed_start_date)s through %(closed_end_date)s, with the ' +
+								'exception of limited hours %(limited_hours_start_date)s–%(limited_hours_end_date)s. ' +
+								'Email support will be open during that time, and we will reopen live chat on %(support_resume_date)s.',
+							{
+								args: {
+									closed_start_date: closedStartDate.format( 'dddd, MMMM D' ),
+									closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
+									limited_hours_start_date: limitedHoursStartDate.format( 'MMMM D' ),
+									limited_hours_end_date: limitedHoursEndDate.format( 'D' ),
+									support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
+								},
+							}
+						)
+					: translate(
+							'Private support will be closed through %(closed_end_date)s, included. ' +
+								'We will reopen private support on %(support_resume_date)s.',
+							{
+								args: {
+									closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
+									support_resume_date: supportResumeDate.format( 'dddd, MMMM D' ),
+								},
+							}
+						) }
 			</p>
 			<p>
 				{ translate(

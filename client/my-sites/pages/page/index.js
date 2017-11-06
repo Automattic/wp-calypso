@@ -400,11 +400,9 @@ class Page extends Component {
 						className="page__title"
 						href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
 						title={
-							canEdit ? (
-								translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
-							) : (
-								translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
-							)
+							canEdit
+								? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
+								: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
 						}
 						onClick={ this.props.recordPageTitle }
 					>
