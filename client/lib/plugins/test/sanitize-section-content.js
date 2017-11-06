@@ -142,3 +142,11 @@ test( 'should prevent known XSS attacks', () => {
 		).getAttribute( 'href' )
 	).toBeNull();
 } );
+
+test( 'should prevent backspace-based XSS attacks', () => {
+	const link = cleanNode(
+		'<a href="http://example.com">' + '\u0008'.repeat( 71 ) + 'javascript:alert(1)\u0022>xss</a>'
+	);
+
+	expect( link.getAttribute( 'href' ) ).toBe( 'http://example.com' );
+} );
