@@ -4,7 +4,7 @@
  * @format
  */
 
-import { assign } from 'lodash';
+import { assign, endsWith } from 'lodash';
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import classNames from 'classnames';
@@ -114,7 +114,7 @@ Markup = {
 					parsed.attrs.named.align,
 					parsed.attrs.named.classes
 				) }
-				style={ { width: Number( width ) } }
+				style={ { width: endsWith( width, 'px' ) ? width : Number( width ) } }
 			>
 				<dt className="wp-caption-dt" dangerouslySetInnerHTML={ { __html: img } } />
 				<dd className="wp-caption-dd">{ caption }</dd>
