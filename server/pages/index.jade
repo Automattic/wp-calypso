@@ -69,6 +69,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				link(rel='stylesheet', id='main-css', href=urls['style-debug-rtl.css'])
 			else
 				link(rel='stylesheet', id='main-css', href=urls['style-rtl.css'])
+
 			if sectionCssRtl
 				link(rel='stylesheet', id='section-css', href=sectionCssRtl)
 		else
@@ -118,12 +119,15 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 
 		if shouldUseStylePreloadCommon
 			if isRTL
-				link(rel='preload' as='style' href=urls['style-rtl.css'])
+				if 'development' === env || isDebug
+					link(rel='preload', as='style', href=urls['style-debug-rtl.css'])
+				else
+					link(rel='preload', as='style', href=urls['style-rtl.css'])
 			else
 				if 'development' === env || isDebug
-					link(rel='preload' as='style' href=urls['style-debug.css'])
+					link(rel='preload', as='style', href=urls['style-debug.css'])
 				else
-					link(rel='preload' as='style' href=urls['style.css'])
+					link(rel='preload', as='style', href=urls['style.css'])
 
 		if shouldUseScriptPreload
 			//- Preload our scripts
