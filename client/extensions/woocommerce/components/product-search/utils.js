@@ -3,13 +3,20 @@
 /**
  * External dependencies
  */
-import { isArray, difference, uniq } from 'lodash';
+import { difference, filter, isArray, uniq } from 'lodash';
 
 export function productContainsString( product, textString ) {
 	const matchString = textString.trim().toLocaleLowerCase();
 
 	if ( -1 < product.name.toLocaleLowerCase().indexOf( matchString ) ) {
 		// found in product name
+		return true;
+	}
+
+	const attributes = filter( product.attributes, { variation: true } );
+	const attrString = attributes.map( attr => attr.options.join( ' ' ) ).join( ' ' );
+	if ( -1 < attrString.toLocaleLowerCase().indexOf( matchString ) ) {
+		// found in attributes
 		return true;
 	}
 	return false;
