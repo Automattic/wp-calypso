@@ -35,6 +35,7 @@ export getActivityLogs from './get-activity-logs';
 export getBillingTransactions from './get-billing-transactions';
 export getBlockedSites from './get-blocked-sites';
 export getBlogStickers from './get-blog-stickers';
+export getConciergeShifts from './get-concierge-shifts';
 export getContactDetailsCache from './get-contact-details-cache';
 export getContactDetailsExtraCache from './get-contact-details-extra-cache';
 export getCredentialsAutoConfigStatus from './get-credentials-auto-config-status';
@@ -193,6 +194,7 @@ export isEligibleForDomainToPaidPlanUpsell from './is-eligible-for-domain-to-pai
 export isEligibleForFreeToPaidUpsell from './is-eligible-for-free-to-paid-upsell';
 export isEmailBlacklisted from './is-email-blacklisted';
 export isFetchingAutomatedTransferStatus from './is-fetching-automated-transfer-status';
+export isFetchingConciergeShifts from './is-fetching-concierge-shifts';
 export isFetchingJetpackModules from './is-fetching-jetpack-modules';
 export isFetchingMagicLoginAuth from './is-fetching-magic-login-auth';
 export isFetchingMagicLoginEmail from './is-fetching-magic-login-email';
