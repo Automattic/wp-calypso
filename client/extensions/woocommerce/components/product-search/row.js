@@ -7,11 +7,14 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { filter, get, head, noop, reduce, uniqBy, values } from 'lodash';
+import { filter, forEach, get, head, noop, reduce, uniqBy, values } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
+import Count from 'components/count';
 import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
 import formatCurrency from 'lib/format-currency';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
@@ -82,6 +85,19 @@ class ProductSearchRow extends Component {
 		);
 	};
 
+	toggleCustomizeForm = () => {
+		this.setState( prevState => {
+			// Open form
+			if ( ! prevState.showForm ) {
+				return { showForm: true };
+			}
+			// Only close form if nothing's selected
+			if ( prevState.showForm && ! this.areAnySelected() ) {
+				return { showForm: false };
+			}
+		} );
+	};
+
 	updateItem = attributes => {
 		const { variations } = this.props;
 		// Don't swap the product if we have an "any" selected
@@ -107,7 +123,7 @@ class ProductSearchRow extends Component {
 				} ),
 				() => {
 					this.props.onChange( this.props.product.id );
-					this.props.onChange( this.state.variations.map( v => v.id ) );
+					forEach( this.state.variations, v => this.props.onChange( v.id ) );
 				}
 			);
 			return;
@@ -154,6 +170,10 @@ class ProductSearchRow extends Component {
 		const { singular } = this.props;
 		const component = singular ? FormRadio : FormCheckbox;
 
+		if ( 'variable' === product.type && ! product.isVariation ) {
+			return <Count count={ this.state.variations.length } />;
+		}
+
 		return React.createElement( component, {
 			id: inputId,
 			name: inputId,
@@ -164,7 +184,7 @@ class ProductSearchRow extends Component {
 	};
 
 	renderInputName = product => {
-		const { currency } = this.props;
+		const { currency, translate } = this.props;
 		const price = formatCurrency( product.price, currency );
 		let nameWithPrice = `${ product.name } - ${ price }`;
 		// Some things do need special handling…
@@ -172,7 +192,17 @@ class ProductSearchRow extends Component {
 			const varName = formattedVariationName( product );
 			nameWithPrice = `${ product.name } - ${ varName } - ${ price }`;
 		}
-		return nameWithPrice;
+		if ( 'variable' === product.type && ! product.isVariation ) {
+			return (
+				<span>
+					<span>{ nameWithPrice }</span>
+					<Button compact onClick={ this.toggleCustomizeForm }>
+						{ translate( 'Customize' ) }
+					</Button>
+				</span>
+			);
+		}
+		return <span>{ nameWithPrice }</span>;
 	};
 
 	renderInputImage( product ) {
@@ -192,11 +222,16 @@ class ProductSearchRow extends Component {
 		const id = product.id;
 		const inputId = `product-search_select-${ id }`;
 
+		const labelProps = {};
+		if ( 'variable' === product.type && ! product.isVariation ) {
+			labelProps.onClick = this.toggleCustomizeForm;
+		}
+
 		return (
-			<FormLabel htmlFor={ inputId } key={ id }>
+			<FormLabel htmlFor={ inputId } key={ id } { ...labelProps }>
 				{ this.renderInputComponent( product ) }
 				{ this.renderInputImage( product ) }
-				<span>{ this.renderInputName( product ) }</span>
+				{ this.renderInputName( product ) }
 			</FormLabel>
 		);
 	};
@@ -228,4 +263,4 @@ export default connect(
 		};
 	},
 	dispatch => bindActionCreators( { fetchProductVariations }, dispatch )
-)( ProductSearchRow );
+)( localize( ProductSearchRow ) );
