@@ -36,21 +36,15 @@ const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
  * @param {?Number} restoreId selected rewind operation
  * @returns {Array<String, ?Object>} pairs of [ classifier, event ]
  */
-const classifyEvents = ( logs, { backupId, rewindId } ) => {
-	/** @type {Array<Array<Object, ?Object>>} contains pairs of [ log, next log ] **/
-	const logPairs = zip( logs, logs.slice( 1 ) );
-
-	return flatMap( logPairs, ( [ log, nextLog ] ) =>
+const classifyEvents = ( logs, { backupId = null, rewindId = null } ) =>
+	// the zip pairs up each log item with the following log item in the stream or undefined if at end
+	flatMap( zip( logs, logs.slice( 1 ) ), ( [ log, nextLog = {} ] ) =>
 		compact( [
-			rewindId && log.activityId === rewindId && [ 'rewind-confirm-dialog', {} ],
-			backupId && log.activityId === backupId && [ 'backup-confirm-dialog', {} ],
-			[
-				rewindId && nextLog && nextLog.activityId === rewindId ? 'timeline-break-event' : 'event',
-				log,
-			],
+			log.activityId === rewindId && [ 'rewind-confirm-dialog', {} ],
+			log.activityId === backupId && [ 'backup-confirm-dialog', {} ],
+			[ nextLog.activityId === rewindId ? 'timeline-break-event' : 'event', log ],
 		] )
 	);
-};
 
 class ActivityLogDay extends Component {
 	static propTypes = {
