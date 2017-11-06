@@ -9,207 +9,90 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { find, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import {
-	areSettingsGeneralLoaded,
-	areTaxCalculationsEnabled,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import {
-	areTaxSettingsLoaded,
-	getPricesIncludeTax,
-	getShippingIsTaxFree,
-} from 'woocommerce/state/sites/settings/tax/selectors';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import { updateTaxesEnabledSetting } from 'woocommerce/state/sites/settings/general/actions';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
-import { fetchTaxSettings, updateTaxSettings } from 'woocommerce/state/sites/settings/tax/actions';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import { fetchPlugins } from 'state/plugins/installed/actions';
+import { getPlugins, isRequesting } from 'state/plugins/installed/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
-import TaxSettingsSaveButton from './save-button';
-import SettingsNavigation from '../navigation';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import StoreAddress from 'woocommerce/components/store-address';
-import TaxesOptions from './taxes-options';
-import TaxesRates from './taxes-rates';
+import SettingsTaxesPlaceholder from './taxes-placeholder';
+import SettingsTaxesTaxJar from './taxes-taxjar';
+import SettingsTaxesWooCommerceServices from './taxes-wcs';
 
 class SettingsTaxes extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			isSaving: false,
-			pricesIncludeTaxes: props.pricesIncludeTaxes,
-			shippingIsTaxable: props.shippingIsTaxable,
-			taxesEnabled: props.taxesEnabled,
-			userBeganEditing: false,
-		};
-	}
-
 	static propTypes = {
-		site: PropTypes.shape( {
-			slug: PropTypes.string,
-			ID: PropTypes.number,
-		} ),
 		className: PropTypes.string,
+		siteId: PropTypes.number,
+		sitePluginsLoaded: PropTypes.bool,
+		taxJarPluginActive: PropTypes.bool,
 	};
 
 	componentDidMount = () => {
-		const { site } = this.props;
+		const { isRequestingSitePlugins, siteId, sitePluginsLoaded } = this.props;
 
-		if ( site && site.ID ) {
-			this.props.fetchTaxSettings( site.ID );
+		if ( siteId && ! isRequestingSitePlugins && ! sitePluginsLoaded ) {
+			this.props.fetchPlugins( [ siteId ] );
 		}
 	};
 
 	componentWillReceiveProps = newProps => {
-		if ( ! this.state.userBeganEditing ) {
-			const { site } = this.props;
-			const newSiteId = ( newProps.site && newProps.site.ID ) || null;
-			const oldSiteId = ( site && site.ID ) || null;
-			if ( oldSiteId !== newSiteId ) {
-				this.props.fetchTaxSettings( newSiteId );
-			}
+		const { isRequestingSitePlugins, siteId, sitePluginsLoaded } = newProps;
 
-			this.setState( {
-				pricesIncludeTaxes: newProps.pricesIncludeTaxes,
-				shippingIsTaxable: newProps.shippingIsTaxable,
-				taxesEnabled: newProps.taxesEnabled,
-			} );
+		if ( siteId && ! isRequestingSitePlugins && ! sitePluginsLoaded ) {
+			this.props.fetchPlugins( [ siteId ] );
 		}
-	};
-
-	onEnabledChange = () => {
-		this.setState( { taxesEnabled: ! this.state.taxesEnabled, userBeganEditing: true } );
-	};
-
-	onCheckboxChange = event => {
-		const option = event.target.name;
-		const value = event.target.checked;
-		this.setState( { [ option ]: value, userBeganEditing: true } );
-	};
-
-	pageHasChanges = () => {
-		return this.state.userBeganEditing;
-	};
-
-	onSave = ( event, onSuccessExtra ) => {
-		const { site, translate } = this.props;
-
-		event.preventDefault();
-		this.setState( { isSaving: true } );
-
-		const onSuccess = () => {
-			this.setState( { isSaving: false, userBeganEditing: false } );
-			if ( onSuccessExtra ) {
-				onSuccessExtra();
-			}
-			return successNotice( translate( 'Settings updated successfully.' ), {
-				duration: 4000,
-				displayOnNextPage: true,
-			} );
-		};
-
-		const onFailure = () => {
-			this.setState( { isSaving: false } );
-			return errorNotice(
-				translate( 'There was a problem saving your changes. Please try again.' )
-			);
-		};
-
-		// TODO - chain these
-
-		this.props.updateTaxesEnabledSetting( site.ID, this.state.taxesEnabled );
-
-		this.props.updateTaxSettings(
-			site.ID,
-			this.state.pricesIncludeTaxes || false,
-			! this.state.shippingIsTaxable, // note the inversion
-			onSuccess,
-			onFailure
-		);
-	};
-
-	onAddressChange = address => {
-		const { site } = this.props;
-		this.props.fetchTaxRates( site.ID, address, true );
 	};
 
 	render = () => {
-		const { className, loaded, site, translate } = this.props;
+		const { className, site, siteId, sitePluginsLoaded, siteSlug, taxJarPluginActive } = this.props;
 
-		if ( ! loaded ) {
-			// TODO placeholder
-			return <QuerySettingsGeneral siteId={ site.ID } />;
-		}
-
-		const breadcrumbs = [
-			<a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a>,
-			<span>{ translate( 'Taxes' ) }</span>,
-		];
+		const renderTaxesByTaxJar = taxJarPluginActive;
+		const renderTaxesByWCS = sitePluginsLoaded && ! taxJarPluginActive;
+		const renderPlaceholder = ! renderTaxesByTaxJar && ! renderTaxesByWCS;
 
 		return (
 			<Main className={ classNames( 'settings-taxes', className ) }>
-				<ActionHeader breadcrumbs={ breadcrumbs }>
-					<TaxSettingsSaveButton onSave={ this.onSave } />
-				</ActionHeader>
-				<SettingsNavigation activeSection="taxes" />
-				<div className="taxes__nexus">
-					<ExtendedHeader
-						label={ translate( 'Store Address' ) }
-						description={ translate(
-							'The address of where your business is located for tax purposes.'
-						) }
-					/>
-					<StoreAddress
-						className="taxes__store-address"
-						onSetAddress={ this.onAddressChange }
-						showLabel={ false }
-					/>
-				</div>
-				<TaxesRates
-					taxesEnabled={ this.state.taxesEnabled }
-					onEnabledChange={ this.onEnabledChange }
-					site={ site }
-				/>
-				<TaxesOptions
-					onCheckboxChange={ this.onCheckboxChange }
-					pricesIncludeTaxes={ this.state.pricesIncludeTaxes }
-					shippingIsTaxable={ this.state.shippingIsTaxable }
-				/>
+				{ renderPlaceholder && <SettingsTaxesPlaceholder siteSlug={ siteSlug } /> }
+				{ renderTaxesByTaxJar && <SettingsTaxesTaxJar site={ site } /> }
+				{ renderTaxesByWCS && (
+					<SettingsTaxesWooCommerceServices siteId={ siteId } siteSlug={ siteSlug } />
+				) }
 			</Main>
 		);
 	};
 }
 
 function mapStateToProps( state ) {
-	const loaded = areTaxSettingsLoaded( state ) && areSettingsGeneralLoaded( state );
 	const site = getSelectedSiteWithFallback( state );
-	const pricesIncludeTaxes = getPricesIncludeTax( state );
-	const shippingIsTaxable = ! getShippingIsTaxFree( state ); // note the inversion
-	const taxesEnabled = areTaxCalculationsEnabled( state );
+	const siteId = site ? site.ID : null;
+	const siteSlug = site ? site.slug : '';
+
+	const isRequestingSitePlugins = site ? isRequesting( state, siteId ) : false;
+	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
+	const sitePluginsLoaded = ! isEmpty( sitePlugins );
+	const taxJarPluginActive = !! find( sitePlugins, {
+		slug: 'taxjar-simplified-taxes-for-woocommerce',
+		active: true,
+	} );
 
 	return {
-		loaded,
-		pricesIncludeTaxes,
-		shippingIsTaxable,
+		isRequestingSitePlugins,
 		site,
-		taxesEnabled,
+		siteId,
+		sitePluginsLoaded,
+		siteSlug,
+		taxJarPluginActive,
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			fetchTaxRates,
-			fetchTaxSettings,
-			updateTaxesEnabledSetting,
-			updateTaxSettings,
+			fetchPlugins,
 		},
 		dispatch
 	);

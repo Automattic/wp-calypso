@@ -29,7 +29,7 @@
 	a.external-link {
 		margin-left: 8px;
 	}
-	
+
 	a.external-link .gridicons-external {
 		margin-left: 4px;
 	}
@@ -47,4 +47,8 @@
 			background-color: transparent;
 		}
 	}
+}
+
+.taxes__placeholder .card {
+	@include placeholder();
 }
