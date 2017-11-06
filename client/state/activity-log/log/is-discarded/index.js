@@ -19,7 +19,7 @@ import { memoize } from 'lodash';
  * @param {Number} ts timestamp in 's' or 'ms'
  * @returns {Number} timestamp in 'ms'
  */
-const ms = ts =>
+export const ms = ts =>
 	ts < 946702800000 // Jan 1, 2001 @ 00:00:00
 		? ts * 1000 // convert s -> ms
 		: ts;

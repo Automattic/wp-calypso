@@ -20,9 +20,9 @@ import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { withAnalytics as withAnalyticsAction } from 'state/analytics/actions';
-import { getRequestedRewind } from 'state/selectors';
+import { getActivityLog, getRequestedRewind } from 'state/selectors';
 import { rewindRequestDismiss as rewindRequestDismissAction } from 'state/activity-log/actions';
-import { rewriteStream } from 'state/activity-log/log/is-discarded';
+import { ms, rewriteStream } from 'state/activity-log/log/is-discarded';
 
 /**
  * Module constants
@@ -207,6 +207,7 @@ class ActivityLogDay extends Component {
 			applySiteOffset,
 			disableRestore,
 			hideRestore,
+			isDiscardedPerspective,
 			isToday,
 			logs,
 			requestedRestoreActivityId,
@@ -226,7 +227,7 @@ class ActivityLogDay extends Component {
 		);
 
 		const rewindButton = this.renderRewindButton( hasConfirmDialog ? '' : 'primary' );
-		const events = classifyEvents( rewriteStream( logs ), requestedRestoreActivityId );
+		const events = classifyEvents( rewriteStream( logs, isDiscardedPerspective ), requestedRestoreActivityId );
 
 		const LogItem = ( { log, hasBreak } ) => (
 			<ActivityLogItem
@@ -274,8 +275,14 @@ class ActivityLogDay extends Component {
 
 export default connect(
 	( state, { siteId } ) => {
+		const requestedRewind = getRequestedRewind( state, siteId );
+		const isDiscardedPerspective = requestedRewind
+			? new Date( ms( getActivityLog( state, siteId, requestedRewind ).activityTs ) )
+			: undefined;
+
 		return {
-			requestedRewind: getRequestedRewind( state, siteId ),
+			isDiscardedPerspective,
+			requestedRewind,
 		};
 	},
 	{
