@@ -5,7 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { camelCase, compact, find, flowRight, isArray, without } from 'lodash';
+import { compact, find, flowRight, isArray, without } from 'lodash';
 import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -47,7 +47,7 @@ class ConfirmDisconnection extends PureComponent {
 
 		const surveyData = {
 			'why-cancel': {
-				response: camelCase( find( this.constructor.reasonWhitelist, r => r === reason ) ),
+				response: find( this.constructor.reasonWhitelist, r => r === reason ),
 				text: isArray( text ) ? text.join() : text,
 			},
 		};
