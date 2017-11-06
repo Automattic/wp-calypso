@@ -16,6 +16,7 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import {
 	areSettingsLoaded,
 	areLabelsEnabled,
+	getLabelSettingsFormMeta,
 	getSelectedPaymentMethodId,
 } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
@@ -27,6 +28,7 @@ const LabelsSetupNotice = ( {
 	enabled,
 	hasLabelsPaymentMethod,
 	translate,
+	showNotice,
 } ) => {
 	if ( ! wcsEnabled ) {
 		return null;
@@ -34,6 +36,10 @@ const LabelsSetupNotice = ( {
 
 	if ( ! loaded ) {
 		return <QueryLabelSettings siteId={ site.ID } />;
+	}
+
+	if ( ! showNotice ) {
+		return null;
 	}
 
 	if ( enabled && ! hasLabelsPaymentMethod ) {
@@ -58,5 +64,6 @@ export default connect( state => {
 		loaded: areSettingsLoaded( state, site.ID ),
 		enabled: areLabelsEnabled( state, site.ID ),
 		hasLabelsPaymentMethod: Boolean( getSelectedPaymentMethodId( state, site.ID ) ),
+		showNotice: ( getLabelSettingsFormMeta( state, site.ID ) || {} ).can_manage_payments,
 	};
 } )( localize( LabelsSetupNotice ) );
