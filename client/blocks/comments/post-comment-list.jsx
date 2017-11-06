@@ -25,6 +25,7 @@ import PostCommentFormRoot from './form-root';
 import CommentCount from './comment-count';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
+import ConversationFollowButton from 'blocks/conversation-follow-button';
 
 /**
  * PostCommentList, as the name would suggest, displays a list of comments for a post.
@@ -55,6 +56,7 @@ class PostCommentList extends React.Component {
 		commentCount: PropTypes.number,
 		maxDepth: PropTypes.number,
 		showNestingReplyArrow: PropTypes.bool,
+		showConversationFollowButton: PropTypes.bool,
 		commentsFilter: PropTypes.string,
 
 		// To display comments with a different status but not fetch them
@@ -73,6 +75,7 @@ class PostCommentList extends React.Component {
 		showCommentCount: true,
 		maxDepth: Infinity,
 		showNestingReplyArrow: false,
+		showConversationFollowButton: false,
 	};
 
 	state = {
@@ -348,7 +351,13 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
-		const { commentsFilter, commentsTree, showFilters, commentCount } = this.props;
+		const {
+			post: { ID: postId, site_ID: siteId },
+			commentsFilter,
+			commentsTree,
+			showFilters,
+			commentCount,
+		} = this.props;
 		const {
 			haveEarlierCommentsToFetch,
 			haveLaterCommentsToFetch,
@@ -379,6 +388,13 @@ class PostCommentList extends React.Component {
 
 		return (
 			<div className="comments__comment-list">
+				{ this.props.showConversationFollowButton && (
+					<ConversationFollowButton
+						className="comments__conversation-follow-button"
+						siteId={ siteId }
+						postId={ postId }
+					/>
+				) }
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (
 					<div className="comments__info-bar">
 						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
