@@ -25,6 +25,7 @@ export class CommentContent extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
 		isExpanded: PropTypes.bool,
+		isPostView: PropTypes.bool,
 	};
 
 	trackDeepReaderLinkClick = () =>
@@ -49,7 +50,14 @@ export class CommentContent extends Component {
 	};
 
 	render() {
-		const { commentContent, commentId, commentStatus, isExpanded, translate } = this.props;
+		const {
+			commentContent,
+			commentId,
+			commentIsPending,
+			isExpanded,
+			isPostView,
+			translate,
+		} = this.props;
 		return (
 			<div className="comment__content">
 				{ ! isExpanded && (
@@ -64,13 +72,15 @@ export class CommentContent extends Component {
 
 				{ isExpanded && (
 					<div className="comment__content-full">
-						<div className="comment__content-info">
-							<CommentPostLink { ...{ commentId } } />
+						{ ( commentIsPending || ! isPostView ) && (
+							<div className="comment__content-info">
+								{ ! isPostView && <CommentPostLink { ...{ commentId } } /> }
 
-							{ 'unapproved' === commentStatus && (
-								<div className="comment__status-label">{ translate( 'Pending' ) }</div>
-							) }
-						</div>
+								{ commentIsPending && (
+									<div className="comment__status-label">{ translate( 'Pending' ) }</div>
+								) }
+							</div>
+						) }
 
 						{ this.renderInReplyTo() }
 
@@ -105,7 +115,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 
 	return {
 		commentContent: get( comment, 'content' ),
-		commentStatus: get( comment, 'status' ),
+		commentIsPending: 'unapproved' === get( comment, 'status' ),
 		commentUrl,
 		isJetpack,
 		parentCommentContent,

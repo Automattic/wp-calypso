@@ -408,6 +408,7 @@ export class CommentList extends Component {
 		const {
 			isCommentsTreeSupported,
 			isLoading,
+			isPostView,
 			page,
 			postId,
 			siteBlacklist,
@@ -442,7 +443,7 @@ export class CommentList extends Component {
 				) }
 				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
 
-				{ !! postId && <CommentListHeader postId={ postId } /> }
+				{ isPostView && <CommentListHeader postId={ postId } /> }
 
 				<CommentNavigation
 					commentsPage={ commentsPage }
@@ -473,6 +474,7 @@ export class CommentList extends Component {
 								key={ `comment-${ siteId }-${ commentId }` }
 								isBulkMode={ isBulkEdit }
 								isPersistent={ this.isCommentPersisted( commentId ) }
+								isPostView={ isPostView }
 								isSelected={ this.isCommentSelected( commentId ) }
 								refreshCommentData={
 									isCommentsTreeSupported &&
@@ -540,7 +542,8 @@ export class CommentList extends Component {
 
 const mapStateToProps = ( state, { postId, siteId, status } ) => {
 	const siteCommentsTree = getSiteCommentsTree( state, siteId, status );
-	const comments = !! postId
+	const isPostView = !! postId;
+	const comments = isPostView
 		? map( filter( siteCommentsTree, { postId } ), 'commentId' )
 		: map( siteCommentsTree, 'commentId' );
 
@@ -550,6 +553,7 @@ const mapStateToProps = ( state, { postId, siteId, status } ) => {
 		isCommentsTreeSupported:
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' ),
 		isLoading,
+		isPostView,
 		siteBlacklist: getSiteSetting( state, siteId, 'blacklist_keys' ),
 		siteId,
 	};
