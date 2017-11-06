@@ -9,7 +9,7 @@
 
 	.accessible-focus &:focus {
 		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
-		z-index: z-index('root', '.comment-detail.card.accessible-focus:focus');
+		z-index: z-index('root', '.card.comment.accessible-focus:focus');
 	}
 }
 
@@ -151,7 +151,7 @@
 
 .popover.comment__author-more-info-popover {
 	/* applying a lower z-index to ensure it is layered behind global notice */
-	z-index: z-index('root', '.popover.comment-detail__author-more-info');
+	z-index: z-index('root', '.popover.comment__author-more-info-popover');
 
 	.popover__inner {
 		color: $gray-text-min;
@@ -505,7 +505,7 @@
 .card.comment.is-bulk-mode {
 	&:hover {
 		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20%);
-		z-index: z-index('root', '.comment-detail.card.is-collapsed:hover');
+		z-index: z-index('root', '.card.comment.is-bulk-mode:hover');
 	}
 
 	a {
