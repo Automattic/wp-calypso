@@ -11,6 +11,23 @@
 	--masterbar-toggle-drafts-editor-background: darken( $blue-wordpress, 12% );
 	--masterbar-toggle-drafts-editor-border-color: darken( $blue-wordpress, 5% );
 	--masterbar-toggle-drafts-editor-hover-background: darken( $blue-wordpress, 17% );
+
+	--sidebar-color: $gray-dark;
+	--sidebar-background: lighten( $gray, 30% );
+	--sidebar-gridicon-fill: $gray;
+	--sidebar-heading-color: darken( $gray, 10% );
+	--sidebar-footer-button-color: darken( $gray, 10% );
+	--sidebar-menu-link-secondary-text-color: darken( $gray, 20% );
+	--sidebar-menu-a-first-child-after-background: hex-to-rgb( lighten( $gray, 30% ) );
+	--sidebar-menu-selected-background-color: $gray-text-min;
+	--sidebar-menu-selected-a-color: $white;
+	--sidebar-menu-selected-a-first-child-after-background: hex-to-rgb( $gray-text-min );
+
+	--button-is-borderless-color: $gray-text-min;
+	--count-border-color: $gray;
+	--count-color: $gray-text-min;
+	--current-site-switch-sites-background: lighten( $gray, 30% );
+	--profile-gravatar-user-secondary-info-color: darken( $gray, 20% );
 }
 
 //additional color schemes
@@ -27,12 +44,29 @@
 		--masterbar-toggle-drafts-editor-background: darken( $gray, 10% );
 		--masterbar-toggle-drafts-editor-border-color: lighten( $gray, 20% );
 		--masterbar-toggle-drafts-editor-hover-background: darken( $gray, 10% );
+
+		--sidebar-color: $gray-dark;
+		--sidebar-background: $white;
+		--sidebar-gridicon-fill: $gray-dark;
+		--sidebar-heading-color: lighten( $gray-dark, 10% );
+		--sidebar-footer-button-color: $gray-dark;
+		--sidebar-menu-link-secondary-text-color: $gray-dark;
+		--sidebar-menu-a-first-child-after-background: hex-to-rgb( $white );
+		--sidebar-menu-selected-background-color: lighten( $gray, 20% );
+		--sidebar-menu-selected-a-color: $gray-dark;
+		--sidebar-menu-selected-a-first-child-after-background: hex-to-rgb( lighten( $gray, 20% ) );
+
+		--button-is-borderless-color: $gray-dark;
+		--count-border-color: $gray-dark;
+		--count-color: $gray-dark;
+		--current-site-switch-sites-background: $white;
+		--profile-gravatar-user-secondary-info-color: $gray-dark;
 	}
 
 	&.is-dark {
 		--masterbar-color: $white;
 		--masterbar-background: $gray-dark;
-		--masterbar-border-color: darken( $gray, 10% );
+		--masterbar-border-color: $white;
 		--masterbar-item-hover-background: darken( $gray, 10% );
 		--masterbar-item-active-background: $gray-text-min;
 		--masterbar-item-new-color: $gray-dark;
@@ -41,5 +75,22 @@
 		--masterbar-toggle-drafts-editor-background: darken( $gray, 10% );
 		--masterbar-toggle-drafts-editor-border-color: $gray-dark;
 		--masterbar-toggle-drafts-editor-hover-background: lighten( $gray-text-min, 5% );
+
+		--sidebar-color: $white;
+		--sidebar-background: darken( $gray, 30% );
+		--sidebar-gridicon-fill: $white;
+		--sidebar-heading-color: $white;
+		--sidebar-footer-button-color: $white;
+		--sidebar-menu-link-secondary-text-color: $white;
+		--sidebar-menu-a-first-child-after-background: hex-to-rgb( darken( $gray, 30% ) );
+		--sidebar-menu-selected-background-color: $gray-dark;
+		--sidebar-menu-selected-a-color: $white;
+		--sidebar-menu-selected-a-first-child-after-background: hex-to-rgb( $gray-dark );
+
+		--button-is-borderless-color: $white;
+		--count-border-color: $white;
+		--count-color: $white;
+		--current-site-switch-sites-background: darken( $gray, 30% );
+		--profile-gravatar-user-secondary-info-color: $white;
 	}
 }
