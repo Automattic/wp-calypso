@@ -30,6 +30,7 @@ import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
+import fluxBridge from './flux-bridge';
 import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import help from './help/reducer';
@@ -191,6 +192,7 @@ export function createReduxStore( initialState = {} ) {
 	].filter( Boolean );
 
 	const enhancers = [
+		fluxBridge,
 		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
 		applyMiddleware( ...middlewares ),
 		isBrowser && sitesSync,
