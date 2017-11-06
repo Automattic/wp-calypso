@@ -83,7 +83,7 @@ export function switchCSS( elementId, cssUrl, callback = noop ) {
  * @param {Element} currentLink - a <link> DOM element that we want to use as a reference for stylesheet order
  * @param {Function} callback - a callback function to be called when the CSS has been loaded (after 500ms have passed).
  */
-function loadCSS( cssUrl, currentLink = null, callback = noop ) {
+function loadCSS( cssUrl, currentLink, callback = noop ) {
 	const link = Object.assign( document.createElement( 'link' ), {
 		rel: 'stylesheet',
 		type: 'text/css',
