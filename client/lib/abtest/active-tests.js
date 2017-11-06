@@ -80,16 +80,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	recommendShortestDomain: {
-		datestamp: '20171010',
-		variations: {
-			shortest: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	unlimitedThemeNudge: {
 		datestamp: '20171016',
 		variations: {
