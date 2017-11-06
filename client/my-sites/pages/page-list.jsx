@@ -98,6 +98,7 @@ const Pages = createReactClass( {
 		siteId: PropTypes.any,
 		hasSites: PropTypes.bool.isRequired,
 		trackScrollPage: PropTypes.func.isRequired,
+		query: PropTypes.object,
 	},
 
 	getDefaultProps() {
@@ -156,8 +157,8 @@ const Pages = createReactClass( {
 	},
 
 	getNoContentMessage() {
-		const { translate } = this.props;
-		const { search, status = 'published' } = this.props.query;
+		const { query = {}, translate, site, siteId } = this.props;
+		const { search, status = 'published' } = query;
 
 		if ( search ) {
 			return (
@@ -172,9 +173,8 @@ const Pages = createReactClass( {
 			);
 		}
 
-		const { site, siteId } = this.props;
 		const sitePart = ( site && site.slug ) || siteId;
-		const newPageLink = this.props.siteId ? '/page/' + sitePart : '/page';
+		const newPageLink = siteId ? '/page/' + sitePart : '/page';
 		let attributes;
 
 		switch ( status ) {
