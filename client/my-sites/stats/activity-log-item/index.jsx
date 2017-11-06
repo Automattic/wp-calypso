@@ -88,14 +88,81 @@ class ActivityLogItem extends Component {
 	}
 
 	renderHeader() {
-		const { log } = this.props;
+		const { applySiteOffset, log, moment } = this.props;
+		const { activityDescription, activityTitle } = log;
 
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor
 					{ ...pick( log, [ 'actorAvatarUrl', 'actorName', 'actorRole', 'actorType' ] ) }
 				/>
-				<div className="activity-log-item__title">{ log.activityTitle }</div>
+				<div className="activity-log-item__description">
+					{ ! activityDescription && activityTitle }
+					{ activityDescription &&
+						activityDescription.map( ( part, key ) => {
+							if ( 'string' === typeof part ) {
+								return part;
+							}
+
+							const { siteId, children, commentId, name, postId, type } = part;
+
+							switch ( type ) {
+								case 'comment':
+									return (
+										<a
+											key={ key }
+											href={ `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` }
+										>
+											{ children }
+										</a>
+									);
+
+								case 'filepath':
+									return (
+										<div>
+											<code>{ children }</code>
+										</div>
+									);
+
+								case 'person':
+									return (
+										<a key={ key } href={ `/people/edit/${ siteId }/${ name }` }>
+											<strong>{ children }</strong>
+										</a>
+									);
+
+								case 'plugin':
+									return (
+										<a key={ key } href={ `/plugins/${ name }/${ siteId }` }>
+											{ children }
+										</a>
+									);
+
+								case 'post':
+									return (
+										<a key={ key } href={ `/read/blogs/${ siteId }/posts/${ postId }` }>
+											<em>{ children }</em>
+										</a>
+									);
+
+								case 'theme':
+									return (
+										<a key={ key } href={ part.url } target="_blank" rel="noopener noreferrer">
+											<strong>
+												<em>{ children }</em>
+											</strong>
+										</a>
+									);
+
+								case 'time':
+									return applySiteOffset( moment.utc( part.time ) ).format( part.format );
+
+								default:
+									return null;
+							}
+						} ) }
+					{ /*<div className="activity-log-item__event">{ eventName }</div>*/ }
+				</div>
 			</div>
 		);
 	}

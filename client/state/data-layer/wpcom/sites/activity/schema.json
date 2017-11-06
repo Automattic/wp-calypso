@@ -77,7 +77,7 @@
 						}
 					]
 				},
-				"summary": { "type": "string" },
+				"summary": { "type": [ "object", "string" ] },
 				"target": { "type": "object" },
 				"target_ts": { "type": "number" },
 				"totalItems": {

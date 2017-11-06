@@ -7,6 +7,7 @@ import { get, map } from 'lodash';
 /**
  * Internal dependencies
  */
+import { parseBlock } from 'lib/notifications/note-block-parser';
 import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import apiResponseSchema from './schema';
 
@@ -37,6 +38,7 @@ export function transformer( apiResponse ) {
 export function processItem( item ) {
 	const published = item.published;
 	const actor = item.actor;
+	const isFormatted = 'string' !== typeof item.summary;
 
 	return {
 		/* activity actor */
@@ -57,8 +59,9 @@ export function processItem( item ) {
 		activityName: item.name,
 		activityStatus: item.status,
 		activityTargetTs: get( item, 'object.target_ts', undefined ),
-		activityTitle: get( item, 'summary', '' ),
+		activityTitle: isFormatted ? get( item, 'summary.text', '' ) : item.summary,
 		activityTs: Date.parse( published ),
+		activityDescription: isFormatted ? parseBlock( item.summary ) : undefined,
 	};
 }
 
