@@ -3,17 +3,9 @@
 /**
  * Internal dependencies
  */
-import {
-	fetchConciergeShifts,
-	fetchConciergeShiftsFailed,
-	fetchConciergeShiftsSuccess,
-} from '../actions';
+import { fetchConciergeShifts, updateConciergeShifts } from '../actions';
 
-import {
-	CONCIERGE_SHIFTS_FETCH,
-	CONCIERGE_SHIFTS_FETCH_FAILED,
-	CONCIERGE_SHIFTS_FETCH_SUCCESS,
-} from 'state/action-types';
+import { CONCIERGE_SHIFTS_FETCH, CONCIERGE_SHIFTS_UPDATE } from 'state/action-types';
 
 describe( 'state/concierge', () => {
 	describe( 'actions', () => {
@@ -26,19 +18,7 @@ describe( 'state/concierge', () => {
 			} );
 		} );
 
-		test( 'fetchConciergeShiftsFailed()', () => {
-			const error = {
-				status: 400,
-				message: 'something wrong!',
-			};
-
-			expect( fetchConciergeShiftsFailed( error ) ).toEqual( {
-				type: CONCIERGE_SHIFTS_FETCH_FAILED,
-				error,
-			} );
-		} );
-
-		test( 'fetchConciergeShiftsSuccess()', () => {
+		test( 'updateConciergeShifts()', () => {
 			const shifts = [
 				{
 					begin_timestamp: 100,
@@ -54,8 +34,8 @@ describe( 'state/concierge', () => {
 				},
 			];
 
-			expect( fetchConciergeShiftsSuccess( shifts ) ).toEqual( {
-				type: CONCIERGE_SHIFTS_FETCH_SUCCESS,
+			expect( updateConciergeShifts( shifts ) ).toEqual( {
+				type: CONCIERGE_SHIFTS_UPDATE,
 				shifts,
 			} );
 		} );
