@@ -47,7 +47,9 @@ export const CommentListHeader = ( {
 				actionText={ translate( 'View Post' ) }
 				backHref={ `/comments/all/${ siteSlug }` }
 			>
-				<div className="comment-list__header-title">{ postTitle || translate( 'Untitled' ) }</div>
+				<div className="comment-list__header-title">
+					{ postTitle.trim() || translate( 'Untitled' ) }
+				</div>
 				<div className="comment-list__header-date">{ formattedDate }</div>
 			</HeaderCake>
 		</div>
