@@ -4,39 +4,23 @@
  * @format
  */
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/dialog';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { isEnabled } from 'config';
 import SiteToolsLink from 'my-sites/site-settings/site-tools/link';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-class DisconnectSiteLink extends Component {
-	state = {
-		dialogVisible: false,
-	};
-
+class DisconnectSiteLink extends PureComponent {
 	handleClick = () => {
-		this.setState( {
-			dialogVisible: true,
-		} );
-
 		this.props.recordTracksEvent( 'calypso_jetpack_disconnect_start' );
-	};
-
-	handleHideDialog = () => {
-		this.setState( {
-			dialogVisible: false,
-		} );
 	};
 
 	render() {
@@ -51,11 +35,7 @@ class DisconnectSiteLink extends Component {
 				<QuerySitePlans siteId={ siteId } />
 
 				<SiteToolsLink
-					href={
-						isEnabled( 'manage/site-settings/disconnect-flow' ) ? (
-							'/settings/disconnect-site/' + siteSlug
-						) : null
-					}
+					href={ '/settings/disconnect-site/' + siteSlug }
 					onClick={ this.handleClick }
 					title={ translate( 'Disconnect from WordPress.com' ) }
 					description={ translate(
@@ -63,16 +43,6 @@ class DisconnectSiteLink extends Component {
 					) }
 					isWarning
 				/>
-
-				{ ! isEnabled( 'manage/site-settings/disconnect-flow' ) && (
-					<DisconnectJetpackDialog
-						isVisible={ this.state.dialogVisible }
-						onClose={ this.handleHideDialog }
-						isBroken={ false }
-						siteId={ siteId }
-						disconnectHref="/stats"
-					/>
-				) }
 			</div>
 		);
 	}
