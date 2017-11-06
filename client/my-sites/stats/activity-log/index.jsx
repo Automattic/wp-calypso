@@ -58,6 +58,7 @@ import {
 	getRewindStartDate,
 	isRewindActive as isRewindActiveSelector,
 	getRequestedBackup,
+	getBackupProgress,
 } from 'state/selectors';
 
 /**
@@ -209,6 +210,7 @@ class ActivityLog extends Component {
 			] ).isRequired,
 			timestamp: PropTypes.string.isRequired,
 		} ),
+		backupProgress: PropTypes.object,
 		recordTracksEvent: PropTypes.func.isRequired,
 		requestedRestoreActivity: PropTypes.shape( {
 			rewindId: PropTypes.string.isRequired,
@@ -349,56 +351,83 @@ class ActivityLog extends Component {
 		return includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) );
 	}
 
-	renderBanner() {
-		const { restoreProgress, siteId } = this.props;
+	/**
+	 * Check if the creation of a backup is under progress.
+	 *
+	 * @returns {boolean} True if a backup is being created.
+	 */
+	isBackupInProgress() {
+		return 0 < get( this.props, [ 'backupProgress', 'percent' ], 0 );
+	}
 
-		if ( ! restoreProgress ) {
-			return null;
-		}
-		const {
-			errorCode,
-			failureReason,
-			freshness,
-			percent,
-			restoreId,
-			siteTitle,
-			status,
-			timestamp,
-		} = restoreProgress;
+	renderOperationProgress() {
+		const { siteId, restoreProgress, backupProgress } = this.props;
 
-		if ( status === 'finished' ) {
-			return (
-				<div>
-					<QueryActivityLog siteId={ siteId } />
-					{ errorCode ? (
-						<ErrorBanner
-							errorCode={ errorCode }
-							failureReason={ failureReason }
-							requestDialog={ this.handleRequestDialog }
-							siteId={ siteId }
-							siteTitle={ siteTitle }
-							timestamp={ timestamp }
-						/>
-					) : (
-						<SuccessBanner
-							applySiteOffset={ this.applySiteOffset }
-							siteId={ siteId }
-							timestamp={ timestamp }
-						/>
-					) }
-				</div>
-			);
+		if ( !! restoreProgress ) {
+			return 'finished' === restoreProgress.status
+				? this.getEndBanner( siteId, restoreProgress )
+				: this.getProgressBanner( siteId, restoreProgress );
 		}
+
+		if ( !! backupProgress ) {
+			return 'finished' === backupProgress.status
+				? this.getEndBanner( siteId, backupProgress )
+				: this.getProgressBanner( siteId, backupProgress );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Display the status of the operation currently being performed.
+	 * @param   {integer} siteId   Id of the site where the operation is performed.
+	 * @param   {object}  progress Current status of operation.
+	 * @returns {object}           Card showing progress.
+	 */
+	getProgressBanner( siteId, progress ) {
+		const { freshness, percent, restoreId, downloadId, status, timestamp } = progress;
 		return (
 			<ProgressBanner
 				applySiteOffset={ this.applySiteOffset }
 				freshness={ freshness }
 				percent={ percent }
 				restoreId={ restoreId }
+				downloadId={ downloadId }
 				siteId={ siteId }
 				status={ status }
 				timestamp={ timestamp }
 			/>
+		);
+	}
+
+	/**
+	 * Display a success or error card based on the last status of operation.
+	 * @param   {integer} siteId   Id of the site where the operation was performed.
+	 * @param   {object}  progress Last status of operation.
+	 * @returns {object}           Card showing success or error.
+	 */
+	getEndBanner( siteId, progress ) {
+		const { errorCode, failureReason, siteTitle, timestamp } = progress;
+		return (
+			<div>
+				<QueryActivityLog siteId={ siteId } />
+				{ errorCode ? (
+					<ErrorBanner
+						errorCode={ errorCode }
+						failureReason={ failureReason }
+						requestDialog={ this.handleRequestDialog }
+						siteId={ siteId }
+						siteTitle={ siteTitle }
+						timestamp={ timestamp }
+					/>
+				) : (
+					<SuccessBanner
+						applySiteOffset={ this.applySiteOffset }
+						siteId={ siteId }
+						timestamp={ timestamp }
+					/>
+				) }
+			</div>
 		);
 	}
 
@@ -490,6 +519,7 @@ class ActivityLog extends Component {
 		}
 
 		const disableRestore = this.isRestoreInProgress();
+		const disableBackup = this.isBackupInProgress();
 
 		const restoreConfirmDialog = requestedRestoreActivity && (
 			<ActivityLogConfirmDialog
@@ -533,7 +563,7 @@ class ActivityLog extends Component {
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 				{ this.renderErrorMessage() }
 				{ hasFirstBackup && this.renderMonthNavigation() }
-				{ this.renderBanner() }
+				{ this.renderOperationProgress() }
 				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
 				{ isNull( logs ) && (
 					<section className="activity-log__wrapper">
@@ -600,6 +630,7 @@ class ActivityLog extends Component {
 												restoreConfirmDialog={ restoreConfirmDialog }
 												backupConfirmDialog={ backupConfirmDialog }
 												disableRestore={ disableRestore }
+												disableBackup={ disableBackup }
 												hideRestore={ ! rewindEnabledByConfig || ! isPressable }
 												isRewindActive={ isRewindActive }
 												logs={ events }
@@ -643,6 +674,7 @@ export default connect(
 			requestedBackup: getActivityLog( state, siteId, requestedBackupId ),
 			requestedBackupId,
 			restoreProgress: getRestoreProgress( state, siteId ),
+			backupProgress: getBackupProgress( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
 			rewindStartDate: getRewindStartDate( state, siteId ),
 			siteId,

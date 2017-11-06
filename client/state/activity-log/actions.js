@@ -24,6 +24,9 @@ import {
 	REWIND_BACKUP,
 	REWIND_BACKUP_REQUEST,
 	REWIND_BACKUP_DISMISS,
+	REWIND_BACKUP_PROGRESS_REQUEST,
+	REWIND_BACKUP_UPDATE_ERROR,
+	REWIND_BACKUP_UPDATE_PROGRESS,
 } from 'state/action-types';
 
 /**
@@ -259,7 +262,7 @@ export function rewindBackupDismiss( siteId ) {
 }
 
 /**
- * Create a backup of the site up the given timestamp.
+ * Create a backup of the site up the given rewind id.
  *
  * @param  {string|number} siteId   The site ID
  * @param  {number}        rewindId Id of activity up to the one the backup will be created.
@@ -270,5 +273,38 @@ export function rewindBackup( siteId, rewindId ) {
 		type: REWIND_BACKUP,
 		siteId,
 		rewindId,
+	};
+}
+
+/**
+ * Check progress of backup creation for the a given download id.
+ *
+ * @param  {string|number} siteId     The site ID
+ * @param  {number}        downloadId Id of the backup being created.
+ * @return {object}                   Action object
+ */
+export function getRewindBackupProgress( siteId, downloadId ) {
+	return {
+		type: REWIND_BACKUP_PROGRESS_REQUEST,
+		siteId,
+		downloadId,
+	};
+}
+
+export function updateRewindBackupProgress( siteId, downloadId, progress ) {
+	return {
+		type: REWIND_BACKUP_UPDATE_PROGRESS,
+		...progress,
+		downloadId,
+		siteId,
+		freshness: Date.now(),
+	};
+}
+
+export function rewindBackupUpdateError( siteId, error ) {
+	return {
+		type: REWIND_BACKUP_UPDATE_ERROR,
+		siteId,
+		error,
 	};
 }

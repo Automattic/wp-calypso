@@ -50,6 +50,7 @@ class ActivityLogDay extends Component {
 	static propTypes = {
 		applySiteOffset: PropTypes.func.isRequired,
 		disableRestore: PropTypes.bool.isRequired,
+		disableBackup: PropTypes.bool.isRequired,
 		hideRestore: PropTypes.bool,
 		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
@@ -69,6 +70,7 @@ class ActivityLogDay extends Component {
 
 	static defaultProps = {
 		disableRestore: false,
+		disableBackup: false,
 		isRewindActive: true,
 	};
 
@@ -136,7 +138,7 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Button to display.
 	 */
 	renderRewindButton( type = '' ) {
-		const { disableRestore, hideRestore, isToday } = this.props;
+		const { disableRestore, disableBackup, hideRestore, isToday } = this.props;
 
 		if ( hideRestore || isToday ) {
 			return null;
@@ -146,7 +148,9 @@ class ActivityLogDay extends Component {
 			<Button
 				className="activity-log-day__rewind-button"
 				compact
-				disabled={ disableRestore || ! this.props.isRewindActive || this.state.rewindHere }
+				disabled={
+					disableBackup || disableRestore || ! this.props.isRewindActive || this.state.rewindHere
+				}
 				onClick={ this.handleClickRestore }
 				primary={ 'primary' === type }
 			>
@@ -199,6 +203,7 @@ class ActivityLogDay extends Component {
 		const {
 			applySiteOffset,
 			disableRestore,
+			disableBackup,
 			hideRestore,
 			isDiscardedPerspective,
 			isToday,
@@ -232,6 +237,7 @@ class ActivityLogDay extends Component {
 				className={ hasBreak ? 'is-before-dialog' : '' }
 				applySiteOffset={ applySiteOffset }
 				disableRestore={ disableRestore }
+				disableBackup={ disableBackup }
 				hideRestore={ hideRestore }
 				log={ log }
 				requestDialog={ requestDialog }

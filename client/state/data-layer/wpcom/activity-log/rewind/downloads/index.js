@@ -11,7 +11,7 @@ import { pick } from 'lodash';
  * Internal dependencies
  */
 import { REWIND_BACKUP } from 'state/action-types';
-// import { rewindRestoreUpdateError, getRewindRestoreProgress } from 'state/activity-log/actions';
+import { rewindBackupUpdateError, getRewindBackupProgress } from 'state/activity-log/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -22,7 +22,7 @@ const fromApi = data => ( {
 } );
 
 const createBackup = ( { dispatch }, action ) => {
-	console.log( 'action', action );
+	console.warn( 'action', action );
 	dispatch(
 		http(
 			{
@@ -38,35 +38,31 @@ const createBackup = ( { dispatch }, action ) => {
 	);
 };
 
-export const receiveRestoreSuccess = ( { dispatch }, { siteId, timestamp }, apiData ) => {
+export const receiveBackupSuccess = ( { dispatch }, { siteId }, apiData ) => {
 	const { downloadId } = fromApi( apiData );
 	if ( downloadId ) {
 		debug( 'Request restore success, restore id:', downloadId );
-		console.log( siteId, timestamp, downloadId );
-		// dispatch( getRewindRestoreProgress( siteId, timestamp, downloadId ) );
+		console.warn( 'getRewindBackupProgress', siteId, downloadId );
+		dispatch( getRewindBackupProgress( siteId, downloadId ) );
 	} else {
 		debug( 'Request restore response missing restore_id' );
-		console.log( siteId, timestamp );
-		// dispatch(
-		// 	rewindRestoreUpdateError( siteId, timestamp, {
-		// 		status: 'finished',
-		// 		error: 'missing_restore_id',
-		// 		message: 'Bad response. No restore ID provided.',
-		// 	} )
-		// );
+		console.warn( 'rewindBackupUpdateError', siteId );
+		dispatch(
+			rewindBackupUpdateError( siteId, {
+				status: 'finished',
+				error: 'missing_download_id',
+				message: 'Bad response. No download ID provided.',
+			} )
+		);
 	}
 };
 
-export const receiveRestoreError = ( { dispatch }, { siteId, timestamp }, error ) => {
+export const receiveBackupError = ( { dispatch }, { siteId, timestamp }, error ) => {
 	debug( 'Request restore fail', error );
-	console.log( siteId, timestamp );
-	// dispatch(
-	// 	rewindRestoreUpdateError( siteId, timestamp, pick( error, [ 'error', 'status', 'message' ] ) )
-	// );
+	console.log( 'receiveBackupError', siteId, timestamp );
+	dispatch( rewindBackupUpdateError( siteId, pick( error, [ 'error', 'status', 'message' ] ) ) );
 };
 
 export default {
-	[ REWIND_BACKUP ]: [
-		dispatchRequest( createBackup, receiveRestoreSuccess, receiveRestoreError ),
-	],
+	[ REWIND_BACKUP ]: [ dispatchRequest( createBackup, receiveBackupSuccess, receiveBackupError ) ],
 };

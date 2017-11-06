@@ -16,8 +16,8 @@ export default combineReducers( {
 	logItems,
 	restoreProgress,
 	restoreRequest,
-	backupRequest,
 	backupProgress,
+	backupRequest,
 	rewindStatus,
 	rewindStatusError,
 } );

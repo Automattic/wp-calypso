@@ -28,6 +28,7 @@ class ActivityLogItem extends Component {
 	static propTypes = {
 		applySiteOffset: PropTypes.func.isRequired,
 		disableRestore: PropTypes.bool.isRequired,
+		disableBackup: PropTypes.bool.isRequired,
 		hideRestore: PropTypes.bool,
 		requestDialog: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
@@ -62,6 +63,7 @@ class ActivityLogItem extends Component {
 
 	static defaultProps = {
 		disableRestore: false,
+		disableBackup: false,
 	};
 
 	handleClickRestore = () =>
@@ -119,7 +121,13 @@ class ActivityLogItem extends Component {
 	}
 
 	renderItemAction() {
-		const { disableRestore, hideRestore, translate, log: { activityIsRewindable } } = this.props;
+		const {
+			disableRestore,
+			disableBackup,
+			hideRestore,
+			translate,
+			log: { activityIsRewindable },
+		} = this.props;
 
 		if ( hideRestore || ! activityIsRewindable ) {
 			return null;
@@ -135,7 +143,11 @@ class ActivityLogItem extends Component {
 					>
 						{ translate( 'Rewind to this point' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem icon="cloud-download" onClick={ this.handleClickBackup }>
+					<PopoverMenuItem
+						disabled={ disableBackup }
+						icon="cloud-download"
+						onClick={ this.handleClickBackup }
+					>
 						{ translate( 'Download backup' ) }
 					</PopoverMenuItem>
 				</EllipsisMenu>
