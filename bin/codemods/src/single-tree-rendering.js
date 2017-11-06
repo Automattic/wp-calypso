@@ -1,5 +1,6 @@
 /** @format */
 
+const _ = require( 'lodash' );
 const config = require( './config' );
 
 export default function transformer( file, api ) {
@@ -81,15 +82,37 @@ export default function transformer( file, api ) {
 		} )
 		.remove();
 
-	// Remove empty `import 'lib/react-helpers'`
-	root
+	// Find empty `import 'lib/react-helpers'`
+	let orphanImportHelpers = root
 		.find( j.ImportDeclaration, {
 			source: {
 				value: 'lib/react-helpers',
 			},
 		} )
-		.filter( p => ! p.value.specifiers.length )
-		.remove();
+		.filter( p => ! p.value.specifiers.length );
+
+	if ( orphanImportHelpers.size() ) {
+		// Find out if import had comment above it
+		let comment = _.get( orphanImportHelpers.nodes(), '[0].comments[0]', false );
+
+		// Remove empty `import 'lib/react-helpers'` (and any comments with it)
+		orphanImportHelpers.remove();
+
+		// Put back that removed comment (if any)
+		if ( comment ) {
+			// Find internal dependencies and place comment above first one
+			root
+				.find( j.ImportDeclaration )
+				.filter( p => {
+					let importValue = _.get( p, 'value.source.value', '' );
+					return importValue.indexOf( '/' ) > -1;
+				} )
+				.at( 0 )
+				.forEach( p => {
+					p.value.comments = [ comment ];
+				} );
+		}
+	}
 
 	// Add makeLayout and clientRender middlewares to route definitions
 	const routeDefs = root
