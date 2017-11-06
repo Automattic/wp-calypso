@@ -30,7 +30,7 @@ describe( 'reducer', () => {
 		};
 
 		const newSiteData = reducer( {}, action );
-		expect( newSiteData[ siteId ].settings.email.settingsRequest ).to.eql( true );
+		expect( newSiteData[ siteId ].settings.mailchimp.settingsRequest ).to.eql( true );
 	} );
 
 	test( 'should store data from the action', () => {
