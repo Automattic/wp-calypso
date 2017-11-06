@@ -53,7 +53,7 @@ const FormField = ( {
 	);
 
 	const formLabel = ( enableCheckbox || labelText ) && (
-		<FormLabel htmlFor={ fieldName + '-label' } required={ isRequired }>
+		<FormLabel htmlFor={ enableCheckbox ? null : `${ fieldName }-label` } required={ isRequired }>
 			{ enableCheckbox }
 			{ labelText }
 		</FormLabel>
