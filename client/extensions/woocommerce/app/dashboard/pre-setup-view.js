@@ -73,7 +73,9 @@ class PreSetupView extends Component {
 		// plugins are installed and activated
 
 		const onSuccess = () => {
-			this.setState( { isSaving: false } );
+			// No need to set isSaving to false here - we're navigating away from here
+			// and setting isSaving to false will just light the button up again right
+			// before the next step's dialog displays
 			return setSetStoreAddressDuringInitialSetup( this.props.site.ID, true );
 		};
 
