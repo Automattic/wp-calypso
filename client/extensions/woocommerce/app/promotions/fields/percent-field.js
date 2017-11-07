@@ -24,7 +24,7 @@ const PercentField = ( props ) => {
 	return (
 		<FormField { ...props } >
 			<FormTextInputWithAffixes
-				htmlFor={ fieldName + '-label' }
+				id={ fieldName + '-label' }
 				aria-describedby={ explanationText && fieldName + '-description' }
 				type="number"
 				min="0"
@@ -47,4 +47,3 @@ PercentField.PropTypes = {
 };
 
 export default PercentField;
-

@@ -93,7 +93,7 @@ function renderRow( component, rowText, rowValue, imageSrc, selected, onChange )
 	const labelId = `applies-to-row-${ rowValue }-label`;
 
 	const rowComponent = React.createElement( component, {
-		htmlFor: labelId,
+		id: labelId,
 		name: 'applies_to_select',
 		value: rowValue,
 		checked: selected,
@@ -102,7 +102,7 @@ function renderRow( component, rowText, rowValue, imageSrc, selected, onChange )
 
 	return (
 		<div className="promotion-applies-to-field__row" key={ rowValue }>
-			<FormLabel id={ labelId }>
+			<FormLabel htmlFor={ labelId }>
 				{ rowComponent }
 				{ renderImage( imageSrc ) }
 				<span>{ rowText }</span>
@@ -306,4 +306,3 @@ function mapStateToProps( state ) {
 }
 
 export default connect( mapStateToProps )( AppliesToFilteredList );
-

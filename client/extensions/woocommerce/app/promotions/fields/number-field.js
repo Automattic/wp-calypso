@@ -30,7 +30,7 @@ const NumberField = ( props ) => {
 	return (
 		<FormField { ...props } >
 			<FormTextInput
-				htmlFor={ fieldName + '-label' }
+				id={ fieldName + '-label' }
 				aria-describedby={ explanationText && fieldName + '-description' }
 				type="number"
 				min={ minValue }
@@ -54,4 +54,3 @@ NumberField.PropTypes = {
 };
 
 export default NumberField;
-
