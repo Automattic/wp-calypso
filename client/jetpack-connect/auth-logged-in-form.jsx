@@ -38,6 +38,7 @@ import { login } from 'lib/paths';
 import {
 	authorize as authorizeAction,
 	goBackToWpAdmin as goBackToWpAdminAction,
+	goToXmlrpcErrorFallbackUrl as goToXmlrpcErrorFallbackUrlAction,
 } from 'state/jetpack-connect/actions';
 
 /**
@@ -180,6 +181,7 @@ class LoggedInForm extends Component {
 	};
 
 	handleResolve = () => {
+		const { goToXmlrpcErrorFallbackUrl } = this.props;
 		const { queryObject, authorizationCode } = this.props.jetpackConnectAuthorize;
 		const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 		this.retryingAuth = false;
@@ -194,7 +196,7 @@ class LoggedInForm extends Component {
 		// To resolve, we redirect to the Jetpack Client, and attempt to complete the connection with
 		// legacy functions on the client.
 		this.props.recordTracksEvent( 'calypso_jpc_resolve_xmlrpc_error_click' );
-		this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
+		goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
 	};
 
 	handleSubmit = () => {
@@ -551,5 +553,6 @@ export default connect(
 	{
 		authorize: authorizeAction,
 		goBackToWpAdmin: goBackToWpAdminAction,
+		goToXmlrpcErrorFallbackUrl: goToXmlrpcErrorFallbackUrlAction,
 	}
 )( localize( LoggedInForm ) );
