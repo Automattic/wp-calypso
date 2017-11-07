@@ -17,7 +17,6 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getPost } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
 import { toggleSharePanel } from 'state/ui/post-type-list/actions';
 import { isPublicizeEnabled } from 'state/selectors';
 import config from 'config';
@@ -49,7 +48,7 @@ class PostActionsEllipsisMenuShare extends Component {
 			! config.isEnabled( 'posts/post-type-list' ) ||
 			! includes( [ 'publish' ], status ) ||
 			! isPublicizeEnabledForSite ||
-			type.name !== 'post'
+			'post' !== type
 		) {
 			return null;
 		}
@@ -71,7 +70,7 @@ const mapStateToProps = ( state, { globalId } ) => {
 	return {
 		status: post.status,
 		isPublicizeEnabled: isPublicizeEnabled( state, post.site_ID, post.type ),
-		type: getPostType( state, post.site_ID, post.type ),
+		type: post.type,
 	};
 };
 
