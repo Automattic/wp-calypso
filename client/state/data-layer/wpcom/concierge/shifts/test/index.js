@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { exponentialBackoff } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import {
 	fetchConciergeShifts,
 	storeFetchedConciergeShifts,
@@ -33,7 +33,7 @@ describe( 'wpcom-api', () => {
 						method: 'GET',
 						path: `/concierge/schedules/${ action.scheduleId }/shifts`,
 						apiNamespace: 'wpcom/v2',
-						retryPolicy: noRetry(),
+						retryPolicy: exponentialBackoff(),
 					},
 					action
 				)
