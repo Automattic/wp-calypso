@@ -80,7 +80,7 @@ describe( 'markup', () => {
 
 			expect( value.type ).to.equal( 'dl' );
 			expect( ReactDomServer.renderToStaticMarkup( value ) ).to.equal(
-				'<dl class="wp-caption" style="width:276px;"><dt class="wp-caption-dt"><img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="276" class="alignnone size-full wp-image-1"/></dt><dd class="wp-caption-dd">Logo</dd></dl>'
+				'<dl class="wp-caption" style="width:276px"><dt class="wp-caption-dt"><img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="276" class="alignnone size-full wp-image-1"/></dt><dd class="wp-caption-dd">Logo</dd></dl>'
 			);
 		} );
 
@@ -104,7 +104,7 @@ describe( 'markup', () => {
 
 			expect( value.type ).to.equal( 'dl' );
 			expect( ReactDomServer.renderToStaticMarkup( value ) ).to.equal(
-				'<dl class="wp-caption aligncenter" style="width:660px;"><dt class="wp-caption-dt"><img class="size-full wp-image-1627" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" /></dt><dd class="wp-caption-dd">Ceramic</dd></dl>'
+				'<dl class="wp-caption aligncenter" style="width:660px"><dt class="wp-caption-dt"><img class="size-full wp-image-1627" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" /></dt><dd class="wp-caption-dd">Ceramic</dd></dl>'
 			);
 		} );
 	} );

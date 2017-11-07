@@ -72,7 +72,7 @@ describe( 'RootChild', () => {
 			var tree = mount( React.createElement( Greeting ), { attachTo: container } );
 			tree.setProps( { toWhom: 'Universe' } );
 
-			expect( tree.ref( 'rootChild' ).textContent ).to.equal( 'Hello Universe!' );
+			expect( tree.ref( 'rootChild' ).innerHTML ).to.equal( 'Hello Universe!' );
 			tree.detach();
 		} );
 	} );
