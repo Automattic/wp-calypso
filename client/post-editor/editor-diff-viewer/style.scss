@@ -32,15 +32,15 @@
 	white-space: pre-wrap;
 	padding: 0;
 	background: transparent;
+}
 
-	.editor-diff-viewer__additions {
-		background: lighten($blue-wordpress, 58%);
-		border-bottom: 2px solid $blue-wordpress;
-	}
+.editor-diff-viewer__additions {
+	background: lighten($blue-wordpress, 58%);
+	border-bottom: 2px solid $blue-wordpress;
+}
 
-	.editor-diff-viewer__deletions {
-		background: lighten($alert-red, 38%);
-		border-bottom: 2px solid $alert-red;
-		text-decoration: line-through;
-	}
+.editor-diff-viewer__deletions {
+	background: lighten($alert-red, 38%);
+	border-bottom: 2px solid $alert-red;
+	text-decoration: line-through;
 }
