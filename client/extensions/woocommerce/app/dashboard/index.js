@@ -133,6 +133,12 @@ class Dashboard extends Component {
 			setStoreAddressDuringInitialSetup,
 		} = this.props;
 
+		// render should not be calling renderDashboardContent unless we have a site and ID,
+		// but let's check anyways in case that should change externally
+		if ( ! selectedSite || ! selectedSite.ID ) {
+			return null;
+		}
+
 		if ( ! finishedInstallOfRequiredPlugins ) {
 			return <RequiredPluginsInstallView site={ selectedSite } />;
 		}
@@ -142,7 +148,7 @@ class Dashboard extends Component {
 		}
 
 		if ( ! setStoreAddressDuringInitialSetup && ! hasProducts ) {
-			return <PreSetupView site={ selectedSite } />;
+			return <PreSetupView siteId={ selectedSite.ID } />;
 		}
 
 		if ( ! finishedInitialSetup ) {
