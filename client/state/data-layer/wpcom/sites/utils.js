@@ -142,7 +142,7 @@ export const handleWriteCommentFailure = (
 		commentId: placeholderId,
 		parentCommentId,
 		error,
-		errorType: rawError.error,
+		errorType: rawError && rawError.error,
 	} );
 
 	dispatch( errorNotice( error, { duration: 5000 } ) );
