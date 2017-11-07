@@ -17,16 +17,16 @@ import FormLegend from 'components/forms/form-legend';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormTextInput from 'components/forms/form-text-input';
 import Notice from 'components/notice';
-import QueryMailChimpSyncStatus from 'woocommerce/state/sites/settings/email/querySyncStatus';
+import QueryMailChimpSyncStatus from 'woocommerce/state/sites/settings/mailchimp/querySyncStatus';
 import {
 	syncStatus,
 	mailChimpSettings,
 	isRequestingSettings,
 	isRequestingSyncStatus,
 	isSavingSettings,
-	} from 'woocommerce/state/sites/settings/email/selectors';
-import { submitMailChimpNewsletterSettings, requestResync } from 'woocommerce/state/sites/settings/email/actions.js';
-import { isSubmittingNewsletterSetting, newsletterSettingsSubmitError } from 'woocommerce/state/sites/settings/email/selectors';
+	} from 'woocommerce/state/sites/settings/mailchimp/selectors';
+import { submitMailChimpNewsletterSettings, requestResync } from 'woocommerce/state/sites/settings/mailchimp/actions.js';
+import { isSubmittingNewsletterSetting, newsletterSettingsSubmitError } from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import SyncTab from './sync_tab.js';
 

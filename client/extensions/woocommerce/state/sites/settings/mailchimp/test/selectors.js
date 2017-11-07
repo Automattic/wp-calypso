@@ -62,7 +62,7 @@ const emailState = {
 			sites: {
 				123: {
 					settings: {
-						email: {
+						mailchimp: {
 							settings,
 							settingsRequest: false,
 							settingsRequestError: false,
@@ -102,7 +102,7 @@ const loadingSettings = Object.assign( {}, emailState, {
 	extensions: {
 		woocommerce: {
 			sites: {
-				123: { settings: { email: { settingsRequest: true } } },
+				123: { settings: { mailchimp: { settingsRequest: true } } },
 			},
 		},
 	},
@@ -112,7 +112,7 @@ const submittingApiKey = Object.assign( {}, emailState, {
 	extensions: {
 		woocommerce: {
 			sites: {
-				123: { settings: { email: { apiKeySubmit: true } } },
+				123: { settings: { mailchimp: { apiKeySubmit: true } } },
 			},
 		},
 	},
@@ -122,7 +122,7 @@ const invalidKey = Object.assign( {}, emailState, {
 	extensions: {
 		woocommerce: {
 			sites: {
-				123: { settings: { email: { settings: wrongKeyResponse } } },
+				123: { settings: { mailchimp: { settings: wrongKeyResponse } } },
 			},
 		},
 	},
@@ -132,7 +132,7 @@ const mailChimpNoSync = Object.assign( {}, emailState, {
 	extensions: {
 		woocommerce: {
 			sites: {
-				123: { settings: { email: { syncStatus: { mailchimp_list_name: 'n/a' } } } },
+				123: { settings: { mailchimp: { syncStatus: { mailchimp_list_name: 'n/a' } } } },
 			},
 		},
 	},
@@ -142,7 +142,7 @@ const mailChimpSaveSettings = Object.assign( {}, emailState, {
 	extensions: {
 		woocommerce: {
 			sites: {
-				123: { settings: { email: { saveSettings: true } } },
+				123: { settings: { mailchimp: { saveSettings: true } } },
 			},
 		},
 	},
@@ -152,7 +152,7 @@ const submitStoreInfoState = Object.assign( {}, emailState, {
 	extensions: {
 		woocommerce: {
 			sites: {
-				123: { settings: { email: { storeInfoSubmit: true } } },
+				123: { settings: { mailchimp: { storeInfoSubmit: true } } },
 			},
 		},
 	},

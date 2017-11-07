@@ -16,7 +16,7 @@ const basePath = ( siteId ) => (
 		'sites',
 		siteId,
 		'settings',
-		'email',
+		'mailchimp',
 	]
 );
 

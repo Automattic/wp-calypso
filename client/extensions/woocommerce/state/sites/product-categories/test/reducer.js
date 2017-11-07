@@ -80,7 +80,7 @@ describe( 'reducer', () => {
 			products: {},
 			stripeConnectAccount: {},
 			tax: {},
-			email: {
+			mailchimp: {
 				settings: {},
 				settingsRequest: false,
 				settingsRequestError: false,

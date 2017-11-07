@@ -18,8 +18,8 @@ import ActionHeader from 'woocommerce/components/action-header';
 import SettingsNavigation from '../navigation';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { mailChimpSaveSettings } from 'woocommerce/state/sites/settings/email/actions';
-import { isSavingSettings } from 'woocommerce/state/sites/settings/email/selectors';
+import { mailChimpSaveSettings } from 'woocommerce/state/sites/settings/mailchimp/actions';
+import { isSavingSettings } from 'woocommerce/state/sites/settings/mailchimp/selectors';
 
 const SettingsEmail = ( { site, translate, className, params, isSaving, mailChimpSaveSettings: saveSettings } ) => {
 	const breadcrumbs = [
