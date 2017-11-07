@@ -85,6 +85,7 @@ class LoggedInForm extends Component {
 		hasExpiredSecretError: PropTypes.bool,
 		hasXmlrpcError: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
+		redirectAfterAuth: PropTypes.string,
 		retryAuth: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
