@@ -103,11 +103,15 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const postType = get( stateProps, 'type.name' );
 	const onTrashClick = () => (
 		bumpStatGenerator( postType, 'trash', dispatchProps.bumpStat ),
-		dispatchProps.recordTracksEvent( 'calypso_post_type_list_' + postType + '_trashed' )
+		dispatchProps.recordTracksEvent( 'calypso_post_type_list_trashed', {
+			post_type: postType,
+		} )
 	);
 	const onDeleteClick = () => (
 		bumpStatGenerator( postType, 'delete', dispatchProps.bumpStat ),
-		dispatchProps.recordTracksEvent( 'calypso_post_type_list_' + postType + '_deleted' )
+		dispatchProps.recordTracksEvent( 'calypso_post_type_list_deleted', {
+			post_type: postType,
+		} )
 	);
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, {
 		onTrashClick,
