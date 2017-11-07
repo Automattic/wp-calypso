@@ -17,6 +17,7 @@ export default class PostCommentWithError extends React.Component {
 		const commentText = get( commentsTree, [ commentId, 'data', 'content' ] );
 		const commentParentId = get( commentsTree, [ commentId, 'data', 'parent', 'ID' ], null );
 		const placeholderError = get( commentsTree, [ commentId, 'data', 'placeholderError' ] );
+		const placeholderErrorType = get( commentsTree, [ commentId, 'data', 'placeholderErrorType' ] );
 
 		if ( activeReplyCommentId !== commentParentId ) {
 			return null;
@@ -31,6 +32,7 @@ export default class PostCommentWithError extends React.Component {
 				onUpdateCommentText={ onUpdateCommentText }
 				placeholderId={ commentId }
 				error={ placeholderError }
+				errorType={ placeholderErrorType }
 			/>
 		);
 	}
