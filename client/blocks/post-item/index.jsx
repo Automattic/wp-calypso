@@ -109,10 +109,11 @@ class PostItem extends React.Component {
 		} = this.props;
 
 		const title = post ? post.title : null;
+		const isPlaceholder = ! globalId;
 
 		const panelClasses = classnames( 'post-item__panel', className, {
 			'is-untitled': ! title,
-			'is-placeholder': ! globalId,
+			'is-placeholder': isPlaceholder,
 			'has-large-title': largeTitle,
 			'has-wrapped-title': wrapTitle,
 		} );
@@ -143,7 +144,7 @@ class PostItem extends React.Component {
 						</div>
 						<h1 className="post-item__title">
 							<a
-								href={ postUrl }
+								href={ isPlaceholder ? null : postUrl }
 								target={ externalPostLink ? '_blank' : null }
 								rel={ externalPostLink ? 'noopener noreferrer' : null }
 								className={ editLinkClasses }
