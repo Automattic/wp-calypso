@@ -35,7 +35,10 @@ import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getJetpackConnectRedirectAfterAuth } from 'state/selectors';
 import { login } from 'lib/paths';
-import { authorize as authorizeAction } from 'state/jetpack-connect/actions';
+import {
+	authorize as authorizeAction,
+	goBackToWpAdmin as goBackToWpAdminAction,
+} from 'state/jetpack-connect/actions';
 
 /**
  * Constants
@@ -48,7 +51,6 @@ class LoggedInForm extends Component {
 	static propTypes = {
 		authAttempts: PropTypes.number.isRequired,
 		calypsoStartedConnection: PropTypes.bool,
-		goBackToWpAdmin: PropTypes.func.isRequired,
 		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
@@ -75,6 +77,7 @@ class LoggedInForm extends Component {
 
 		// Connected props
 		authorize: PropTypes.func.isRequired,
+		goBackToWpAdmin: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -102,7 +105,7 @@ class LoggedInForm extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { redirectAfterAuth } = nextProps;
+		const { goBackToWpAdmin, redirectAfterAuth } = nextProps;
 		const {
 			siteReceived,
 			queryObject,
@@ -115,7 +118,7 @@ class LoggedInForm extends Component {
 		// Instead, redirect back to admin as soon as we're connected
 		if ( nextProps.isSSO || nextProps.isWoo || this.isFromJpo( nextProps ) ) {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
-				return this.props.goBackToWpAdmin( redirectAfterAuth );
+				return goBackToWpAdmin( redirectAfterAuth );
 			}
 		} else if ( siteReceived ) {
 			return this.redirect();
@@ -140,7 +143,7 @@ class LoggedInForm extends Component {
 	}
 
 	redirect() {
-		const { redirectAfterAuth } = this.props;
+		const { goBackToWpAdmin, redirectAfterAuth } = this.props;
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
 		if ( this.props.isSSO || this.props.isWoo || this.isFromJpo( this.props ) ) {
@@ -151,7 +154,7 @@ class LoggedInForm extends Component {
 				'SSO found:',
 				this.props.isSSO
 			);
-			this.props.goBackToWpAdmin( redirectAfterAuth );
+			goBackToWpAdmin( redirectAfterAuth );
 		} else {
 			page.redirect( this.getRedirectionTarget() );
 		}
@@ -195,7 +198,7 @@ class LoggedInForm extends Component {
 	};
 
 	handleSubmit = () => {
-		const { authorize, redirectAfterAuth } = this.props;
+		const { authorize, goBackToWpAdmin, redirectAfterAuth } = this.props;
 		const { queryObject, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 
 		if (
@@ -204,7 +207,7 @@ class LoggedInForm extends Component {
 			queryObject.already_authorized
 		) {
 			this.props.recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
-			return this.props.goBackToWpAdmin( redirectAfterAuth );
+			return goBackToWpAdmin( redirectAfterAuth );
 		}
 
 		if ( this.props.isAlreadyOnSitesList && queryObject.already_authorized ) {
@@ -547,5 +550,6 @@ export default connect(
 	} ),
 	{
 		authorize: authorizeAction,
+		goBackToWpAdmin: goBackToWpAdminAction,
 	}
 )( localize( LoggedInForm ) );
