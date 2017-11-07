@@ -6,7 +6,7 @@
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import {
-	requestFetchConciergeShifts,
+	fetchConciergeShifts,
 	storeFetchedConciergeShifts,
 	showConciergeShiftsFetchError,
 } from '../';
@@ -18,14 +18,14 @@ import {
 
 describe( 'wpcom-api', () => {
 	describe( 'concierge', () => {
-		test( 'requestFetchConciergeShifts()', () => {
+		test( 'fetchConciergeShifts()', () => {
 			const dispatch = jest.fn();
 			const action = {
 				type: CONCIERGE_SHIFTS_REQUEST,
 				scheduleId: 123,
 			};
 
-			requestFetchConciergeShifts( { dispatch }, action );
+			fetchConciergeShifts( { dispatch }, action );
 
 			expect( dispatch ).toHaveBeenCalledWith(
 				http(

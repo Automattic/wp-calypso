@@ -15,7 +15,7 @@ import { updateConciergeShifts } from 'state/concierge/actions';
 import { errorNotice } from 'state/notices/actions';
 import { CONCIERGE_SHIFTS_REQUEST } from 'state/action-types';
 
-export const requestFetchConciergeShifts = ( { dispatch }, action ) => {
+export const fetchConciergeShifts = ( { dispatch }, action ) => {
 	const { scheduleId } = action;
 
 	dispatch(
@@ -46,7 +46,7 @@ export const showConciergeShiftsFetchError = ( { dispatch } ) =>
 export default {
 	[ CONCIERGE_SHIFTS_REQUEST ]: [
 		dispatchRequest(
-			requestFetchConciergeShifts,
+			fetchConciergeShifts,
 			storeFetchedConciergeShifts,
 			showConciergeShiftsFetchError
 		),
