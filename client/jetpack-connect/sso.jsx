@@ -457,7 +457,10 @@ class JetpackSsoForm extends Component {
 						>
 							{ this.getReturnToSiteText() }
 						</LoggedOutFormLinkItem>
-						<JetpackConnectHappychatButton eventName="calypso_jpc_sso_chat_initiated">
+						<JetpackConnectHappychatButton
+							eventName="calypso_jpc_sso_chat_initiated"
+							label={ translate( 'Chat with Jetpack support' ) }
+						>
 							<HelpButton />
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
