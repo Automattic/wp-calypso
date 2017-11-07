@@ -360,31 +360,47 @@ class ActivityLog extends Component {
 		return 0 < get( this.props, [ 'backupProgress', 'percent' ], 0 );
 	}
 
-	renderOperationProgress() {
+	/**
+	 * Render a card showing the progress of a restore.
+	 *
+	 * @returns {object} Component showing progress.
+	 */
+	renderActionProgress() {
 		const { siteId, restoreProgress, backupProgress } = this.props;
 
+		if ( ! restoreProgress && ! backupProgress ) {
+			return null;
+		}
+
+		const cards = [];
+
 		if ( !! restoreProgress ) {
-			return 'finished' === restoreProgress.status
-				? this.getEndBanner( siteId, restoreProgress )
-				: this.getProgressBanner( siteId, restoreProgress );
+			cards.push(
+				'finished' === restoreProgress.status
+					? this.getEndBanner( siteId, restoreProgress )
+					: this.getProgressBanner( siteId, restoreProgress, 'restore' )
+			);
 		}
 
 		if ( !! backupProgress ) {
-			return isEmpty( backupProgress.url )
-				? this.getProgressBanner( siteId, backupProgress )
-				: this.getEndBanner( siteId, backupProgress );
+			cards.push(
+				isEmpty( backupProgress.url )
+					? this.getProgressBanner( siteId, backupProgress, 'backup' )
+					: this.getEndBanner( siteId, backupProgress )
+			);
 		}
 
-		return null;
+		return cards;
 	}
 
 	/**
 	 * Display the status of the operation currently being performed.
 	 * @param   {integer} siteId         Id of the site where the operation is performed.
 	 * @param   {object}  actionProgress Current status of operation performed.
+	 * @param   {string}  action         Action type. Allows to set the right text without waiting for data.
 	 * @returns {object}                 Card showing progress.
 	 */
-	getProgressBanner( siteId, actionProgress ) {
+	getProgressBanner( siteId, actionProgress, action ) {
 		const {
 			freshness,
 			percent,
@@ -396,6 +412,7 @@ class ActivityLog extends Component {
 		} = actionProgress;
 		return (
 			<ProgressBanner
+				key={ `progress-${ restoreId || downloadId }` }
 				applySiteOffset={ this.applySiteOffset }
 				freshness={ freshness }
 				percent={ percent || progress }
@@ -404,6 +421,7 @@ class ActivityLog extends Component {
 				siteId={ siteId }
 				status={ status }
 				timestamp={ timestamp }
+				action={ action }
 			/>
 		);
 	}
@@ -415,12 +433,22 @@ class ActivityLog extends Component {
 	 * @returns {object}           Card showing success or error.
 	 */
 	getEndBanner( siteId, progress ) {
-		const { errorCode, failureReason, siteTitle, timestamp, url } = progress;
+		const {
+			errorCode,
+			failureReason,
+			siteTitle,
+			timestamp,
+			url,
+			downloadCount,
+			restoreId,
+			downloadId,
+		} = progress;
 		return (
 			<div>
 				<QueryActivityLog siteId={ siteId } />
 				{ errorCode ? (
 					<ErrorBanner
+						key={ `error-${ restoreId || downloadId }` }
 						errorCode={ errorCode }
 						failureReason={ failureReason }
 						requestDialog={ this.handleRequestDialog }
@@ -430,10 +458,12 @@ class ActivityLog extends Component {
 					/>
 				) : (
 					<SuccessBanner
+						key={ `success-${ restoreId || downloadId }` }
 						applySiteOffset={ this.applySiteOffset }
 						siteId={ siteId }
 						timestamp={ timestamp }
 						backupUrl={ url }
+						downloadCount={ downloadCount }
 					/>
 				) }
 			</div>
@@ -572,7 +602,7 @@ class ActivityLog extends Component {
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 				{ this.renderErrorMessage() }
 				{ hasFirstBackup && this.renderMonthNavigation() }
-				{ this.renderOperationProgress() }
+				{ this.renderActionProgress() }
 				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
 				{ isNull( logs ) && (
 					<section className="activity-log__wrapper">

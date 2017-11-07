@@ -5,7 +5,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,19 +44,20 @@ function ProgressBanner( {
 	freshness,
 	restoreId,
 	downloadId,
+	action,
 } ) {
 	return (
 		<ActivityLogBanner
 			status="info"
 			title={
-				! isUndefined( restoreId ) ? (
+				'restore' === action ? (
 					translate( 'Currently restoring your site' )
 				) : (
 					translate( 'Currently creating a downloadable backup of your site' )
 				)
 			}
 		>
-			{ ! isUndefined( restoreId ) && (
+			{ 'restore' === action && (
 				<div>
 					<QueryRewindRestoreStatus
 						freshness={ freshness }
@@ -81,7 +81,7 @@ function ProgressBanner( {
 					</em>
 				</div>
 			) }
-			{ ! isUndefined( downloadId ) && (
+			{ 'backup' === action && (
 				<div>
 					<QueryRewindBackupStatus
 						freshness={ freshness }
@@ -98,15 +98,15 @@ function ProgressBanner( {
 					</p>
 					<em>
 						{ 0 < percent ? (
-							translate( 'The creation of your backup will start in a moment.' )
-						) : (
 							translate( "We're on it! Your download is being created." )
+						) : (
+							translate( 'The creation of your backup will start in a moment.' )
 						) }
 					</em>
 				</div>
 			) }
 			{ ( 'running' === status || ( 0 <= percent && percent <= 100 ) ) && (
-				<ProgressBar isPulsing value={ percent } />
+				<ProgressBar isPulsing value={ percent || 0 } />
 			) }
 		</ActivityLogBanner>
 	);
@@ -118,6 +118,7 @@ ProgressBanner.propTypes = {
 	siteId: PropTypes.number,
 	status: PropTypes.oneOf( [ 'queued', 'running' ] ),
 	timestamp: PropTypes.string,
+	action: PropTypes.oneOf( [ 'restore', 'backup' ] ),
 };
 
 export default localize( ProgressBanner );

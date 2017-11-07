@@ -13,8 +13,28 @@ import { localize } from 'i18n-calypso';
 import ActivityLogBanner from './index';
 import Button from 'components/button';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getSiteUrl } from 'state/selectors';
 import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
+
+/**
+ * Normalize timestamp values
+ *
+ * Some timestamps are in seconds instead
+ * of in milliseconds and this will make
+ * sure they are all reported in ms
+ *
+ * The chosen comparison date is older than
+ * WordPress so no backups should already
+ * exist prior to that date 😉
+ *
+ * @param {Number} ts timestamp in 's' or 'ms'
+ * @returns {Number} timestamp in 'ms'
+ */
+const ms = ts =>
+	ts < 946702800000 // Jan 1, 2001 @ 00:00:00
+		? ts * 1000 // convert s -> ms
+		: ts;
 
 class SuccessBanner extends PureComponent {
 	static propTypes = {
@@ -23,9 +43,11 @@ class SuccessBanner extends PureComponent {
 		siteUrl: PropTypes.string.isRequired,
 		timestamp: PropTypes.string,
 		backupUrl: PropTypes.string,
+		downloadCount: PropTypes.number,
 
 		// connect
 		dismissRewindRestoreProgress: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 
 		// localize
 		moment: PropTypes.func.isRequired,
@@ -34,9 +56,14 @@ class SuccessBanner extends PureComponent {
 
 	handleDismiss = () => this.props.dismissRewindRestoreProgress( this.props.siteId );
 
+	trackDownload = () =>
+		this.props.recordTracksEvent( 'calypso_activitylog_backup_download', {
+			downloadCount: this.props.downloadCount,
+		} );
+
 	render() {
 		const { applySiteOffset, moment, siteUrl, timestamp, translate, backupUrl } = this.props;
-
+		const date = applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' );
 		return (
 			<ActivityLogBanner
 				isDismissable
@@ -50,21 +77,27 @@ class SuccessBanner extends PureComponent {
 					)
 				}
 			>
-				<TrackComponentView
-					eventName="calypso_activitylog_successbanner_impression"
-					eventProperties={ {
-						restore_to: timestamp,
-					} }
-				/>
-				{ ! backupUrl && (
-					<p>
-						{ translate( 'We successfully restored your site back to %s!', {
-							args: applySiteOffset( moment.utc( timestamp ) ).format( 'LLLL' ),
-						} ) }
-					</p>
-				) }
 				{ backupUrl ? (
-					<Button href={ backupUrl } primary>
+					<TrackComponentView eventName="calypso_activitylog_backup_successbanner_impression" />
+				) : (
+					<TrackComponentView
+						eventName="calypso_activitylog_restore_successbanner_impression"
+						eventProperties={ {
+							restore_to: timestamp,
+						} }
+					/>
+				) }
+				{
+					<p>
+						{ backupUrl ? (
+							translate( 'We successfully restored your site back to %s!', { args: date } )
+						) : (
+							translate( 'We successfully created a backup of your site as of %s!', { args: date } )
+						) }
+					</p>
+				}
+				{ backupUrl ? (
+					<Button href={ backupUrl } onClick={ this.trackDownload } primary>
 						{ translate( 'Download your backup' ) }
 					</Button>
 				) : (
@@ -85,5 +118,6 @@ export default connect(
 	} ),
 	{
 		dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
+		recordTracksEvent: recordTracksEvent,
 	}
 )( localize( SuccessBanner ) );
