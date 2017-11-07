@@ -451,7 +451,7 @@ export class FullPostView extends React.Component {
 										commentCount={ commentCount }
 										maxDepth={ 1 }
 										commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-										showConversationFollowButton={ config.isEnabled( 'reader/conversations' ) }
+										showConversationFollowButton={ true }
 									/>
 								) }
 							</div>
