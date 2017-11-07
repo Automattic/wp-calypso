@@ -25,6 +25,7 @@ import QueryWhois from 'components/data/query-whois';
 
 class IcannVerificationCard extends React.Component {
 	static propTypes = {
+		hideAddressChangeButton: PropTypes.bool,
 		contactDetails: PropTypes.object,
 		explanationContext: PropTypes.string,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -94,7 +95,7 @@ class IcannVerificationCard extends React.Component {
 	}
 
 	renderStatus() {
-		const { translate, selectedDomainName, selectedSiteSlug } = this.props;
+		const { hideAddressChangeButton, translate, selectedDomainName, selectedSiteSlug } = this.props;
 		const changeEmailHref = domainManagementEditContactInfo( selectedSiteSlug, selectedDomainName );
 
 		const { emailSent, submitting } = this.state;
@@ -130,9 +131,11 @@ class IcannVerificationCard extends React.Component {
 								{ submitting ? translate( 'Sending…' ) : translate( 'Send Again' ) }
 							</Button>
 
-							<Button compact href={ changeEmailHref } onClick={ this.props.onClick }>
-								{ this.props.translate( 'Change Email Address' ) }
-							</Button>
+							{ ! hideAddressChangeButton && (
+								<Button compact href={ changeEmailHref } onClick={ this.props.onClick }>
+									{ this.props.translate( 'Change Email Address' ) }
+								</Button>
+							) }
 						</div>
 					) }
 				</div>

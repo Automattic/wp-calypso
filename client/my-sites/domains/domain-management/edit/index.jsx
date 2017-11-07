@@ -13,6 +13,7 @@ import page from 'page';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import { getSelectedDomain } from 'lib/domains';
 import Header from 'my-sites/domains/domain-management/components/header';
+import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
 import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import MaintenanceCard from 'my-sites/domains/domain-management/components/domain/maintenance-card';
@@ -22,6 +23,7 @@ import RegisteredDomain from './registered-domain';
 import { registrar as registrarNames } from 'lib/domains/constants';
 import SiteRedirect from './site-redirect';
 import Transfer from './transfer';
+import { transferStatus } from 'lib/domains/constants';
 import { type as domainTypes } from 'lib/domains/constants';
 import WpcomDomain from './wpcom-domain';
 
@@ -42,10 +44,31 @@ class Edit extends React.Component {
 				>
 					{ this.props.translate( 'Domain Settings' ) }
 				</Header>
+				{ this.renderEmailNotice() }
 				{ this.renderDetails( domain, Details ) }
 			</Main>
 		);
 	}
+
+	renderEmailNotice = () => {
+		const domain = this.props.domains && getSelectedDomain( this.props );
+		const isPendingVerification =
+			transferStatus.PENDING_OWNER === ( domain && domain.transferStatus );
+
+		if ( ! isPendingVerification ) {
+			return null;
+		}
+
+		return (
+			<div>
+				<IcannVerificationCard
+					hideAddressChangeButton={ true }
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSiteSlug={ this.props.selectedSite.slug }
+				/>
+			</div>
+		);
+	};
 
 	getDetailsForType = type => {
 		switch ( type ) {
