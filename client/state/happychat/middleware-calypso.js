@@ -29,6 +29,7 @@ import {
 } from 'state/action-types';
 import { sendEvent, sendLog, sendPreferences } from 'state/happychat/connection/actions';
 import { getGroups } from './selectors';
+import getSkills from 'state/happychat/selectors/get-skills';
 import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
 import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
@@ -138,11 +139,13 @@ export default store => next => action => {
 
 	switch ( action.type ) {
 		case HELP_CONTACT_FORM_SITE_SELECT:
-			isHappychatClientConnected( state )
-				? dispatch(
-						sendPreferences( getCurrentUserLocale( state ), getGroups( state, action.siteId ) )
-					)
-				: noop;
+			if ( isHappychatClientConnected( state ) ) {
+				const locales = getCurrentUserLocale( state );
+				const groups = getGroups( state, action.siteId );
+				const skills = getSkills( state, action.siteId );
+
+				dispatch( sendPreferences( locales, groups, skills ) );
+			}
 			break;
 
 		case ROUTE_SET:

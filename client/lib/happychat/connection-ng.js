@@ -48,16 +48,16 @@ class Connection {
 
 		this.openSocket = new Promise( ( resolve, reject ) => {
 			auth
-				.then( ( { url, user: { signer_user_id, jwt, locale, groups, geoLocation } } ) => {
+				.then( ( { url, user: { signer_user_id, jwt, locale, groups, skills, geoLocation } } ) => {
 					const socket = buildConnection( url );
 					socket
 						.once( 'connect', () => dispatch( receiveConnect() ) )
 						.on( 'token', handler => {
 							dispatch( receiveToken() );
-							handler( { signer_user_id, jwt, locale, groups } );
+							handler( { signer_user_id, jwt, locale, groups, skills } );
 						} )
 						.on( 'init', () => {
-							dispatch( receiveInit( { signer_user_id, locale, groups, geoLocation } ) );
+							dispatch( receiveInit( { signer_user_id, locale, groups, skills, geoLocation } ) );
 							dispatch( requestTranscript() );
 							resolve( socket );
 						} )
