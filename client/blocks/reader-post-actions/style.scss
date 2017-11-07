@@ -9,6 +9,23 @@
 	margin: 10px 0 0;
 }
 
+.reader-post-actions__liker {
+	display: flex;
+	max-height: 24px;
+	padding-top: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+.reader-post-actions__liker:last-child {
+	padding-bottom: 10px;
+}
+
+.reader-post-actions__liker-name {
+	// display: flex;
+	font-size: 14px;
+	padding-left: 10px;
+}
+
 .reader-post-actions .reader-post-actions__item {
 	margin-right: 13px;
 

@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +14,10 @@ import { markSeen } from 'lib/feed-post-store/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 
 class ReaderLikeButton extends React.Component {
+	static defaultProps = {
+		getRef: noop,
+	};
+
 	recordLikeToggle = liked => {
 		const post =
 			this.props.post ||
@@ -34,7 +39,11 @@ class ReaderLikeButton extends React.Component {
 	};
 
 	render() {
-		return <LikeButtonContainer { ...this.props } onLikeToggle={ this.recordLikeToggle } />;
+		return (
+			<div ref={ this.props.getRef }>
+				<LikeButtonContainer { ...this.props } onLikeToggle={ this.recordLikeToggle } />
+			</div>
+		);
 	}
 }
 
