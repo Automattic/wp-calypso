@@ -78,7 +78,7 @@ class PostItem extends React.Component {
 		);
 	}
 
-	renderVariableHeightContent() {
+	renderExpandedContent() {
 		const { post, isCurrentSharePanelOpen } = this.props;
 
 		if ( ! post || ! isCurrentSharePanelOpen ) {
@@ -122,11 +122,10 @@ class PostItem extends React.Component {
 		const isAuthorVisible =
 			isEnabled( 'posts/post-type-list' ) && this.hasMultipleUsers() && post && post.author;
 
-		const variableHeightContent = this.renderVariableHeightContent();
-		this.hasVariableHeightContent = !! variableHeightContent;
+		const expandedContent = this.renderExpandedContent();
 
 		const rootClasses = classnames( 'post-item', {
-			'is-expanded': this.hasVariableHeightContent,
+			'is-expanded': !! expandedContent,
 		} );
 
 		const editLinkClasses = classnames( 'post-item__title-link', {
@@ -160,7 +159,7 @@ class PostItem extends React.Component {
 					<PostTypeListPostThumbnail globalId={ globalId } />
 					<PostActionsEllipsisMenu globalId={ globalId } />
 				</div>
-				{ variableHeightContent }
+				{ expandedContent }
 			</div>
 		);
 	}
