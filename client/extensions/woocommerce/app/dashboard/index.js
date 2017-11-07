@@ -3,7 +3,6 @@
  *
  * @format
  */
-import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -39,6 +38,7 @@ import {
 import Main from 'components/main';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
+import Placeholder from './placeholder';
 import PreSetupView from './pre-setup-view';
 import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
@@ -50,37 +50,40 @@ class Dashboard extends Component {
 		className: PropTypes.string,
 		finishedInitialSetup: PropTypes.bool,
 		hasOrders: PropTypes.bool,
+		isSetupComplete: PropTypes.bool,
 		loading: PropTypes.bool,
 		selectedSite: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 			slug: PropTypes.string.isRequired,
 			URL: PropTypes.string.isRequired,
 		} ),
+		siteId: PropTypes.number,
 		mailChimpConfigured: PropTypes.bool,
 		fetchOrders: PropTypes.func,
 		fetchSetupChoices: PropTypes.func,
 		requestSyncStatus: PropTypes.func,
+		setupChoicesLoading: PropTypes.bool,
 	};
 
 	componentDidMount = () => {
-		const { selectedSite, productsLoaded } = this.props;
+		const { siteId, productsLoaded } = this.props;
 
-		if ( selectedSite && selectedSite.ID ) {
-			this.props.fetchSetupChoices( selectedSite.ID );
-			this.props.fetchOrders( selectedSite.ID );
-			this.props.requestSettings( selectedSite.ID );
+		if ( siteId ) {
+			this.props.fetchSetupChoices( siteId );
+			this.props.fetchOrders( siteId );
+			this.props.requestSettings( siteId );
 
 			if ( ! productsLoaded ) {
-				this.props.fetchProducts( selectedSite.ID, { page: 1 } );
+				this.props.fetchProducts( siteId, { page: 1 } );
 			}
 		}
 	};
 
 	componentWillReceiveProps = newProps => {
-		const { selectedSite, productsLoaded } = this.props;
+		const { siteId, productsLoaded } = this.props;
 
-		const newSiteId = newProps.selectedSite ? newProps.selectedSite.ID : null;
-		const oldSiteId = selectedSite ? selectedSite.ID : null;
+		const newSiteId = newProps.siteId ? newProps.siteId : null;
+		const oldSiteId = siteId ? siteId : null;
 
 		if ( newSiteId && oldSiteId !== newSiteId ) {
 			this.props.fetchSetupChoices( newSiteId );
@@ -122,21 +125,21 @@ class Dashboard extends Component {
 		return translate( 'Dashboard' );
 	};
 
-	renderDashboardContent = () => {
+	renderDashboardSetupContent = () => {
 		const {
 			finishedInstallOfRequiredPlugins,
 			finishedPageSetup,
 			finishedInitialSetup,
-			hasOrders,
 			hasProducts,
 			selectedSite,
 			setStoreAddressDuringInitialSetup,
+			setupChoicesLoading,
 		} = this.props;
 
-		// render should not be calling renderDashboardContent unless we have a site and ID,
-		// but let's check anyways in case that should change externally
-		if ( ! selectedSite || ! selectedSite.ID ) {
-			return null;
+		if ( setupChoicesLoading ) {
+			// Many of the clauses below depend on setup choices being in the state tree
+			// Show a placeholder while they load
+			return <Placeholder />;
 		}
 
 		if ( ! finishedInstallOfRequiredPlugins ) {
@@ -154,6 +157,14 @@ class Dashboard extends Component {
 		if ( ! finishedInitialSetup ) {
 			return <SetupTasksView onFinished={ this.onStoreSetupFinished } site={ selectedSite } />;
 		}
+	};
+
+	renderDashboardContent = () => {
+		const { hasOrders, loading, selectedSite } = this.props;
+
+		if ( loading || ! selectedSite ) {
+			return <Placeholder />;
+		}
 
 		let manageView = <ManageOrdersView site={ selectedSite } />;
 		if ( ! hasOrders ) {
@@ -163,21 +174,15 @@ class Dashboard extends Component {
 		return (
 			<div>
 				{ manageView }
-				{ ! this.props.mailChimpConfigured &&
-					( config.isEnabled( 'woocommerce/extension-settings-email' ) && (
-						<MailChimp site={ selectedSite } redirectToSettings dashboardView />
-					) ) }
+				{ ! this.props.mailChimpConfigured && (
+					<MailChimp site={ selectedSite } redirectToSettings dashboardView />
+				) }
 			</div>
 		);
 	};
 
 	render = () => {
-		const { className, loading, selectedSite } = this.props;
-
-		if ( loading || ! selectedSite ) {
-			// TODO reintroduce placeholder after new nux flow is finalized.
-			return null;
-		}
+		const { className, isSetupComplete, loading, selectedSite } = this.props;
 
 		return (
 			<Main className={ classNames( 'dashboard', className ) }>
@@ -185,7 +190,7 @@ class Dashboard extends Component {
 					breadcrumbs={ this.getBreadcrumb() }
 					isLoading={ loading || ! selectedSite }
 				/>
-				{ this.renderDashboardContent() }
+				{ isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent() }
 			</Main>
 		);
 	};
@@ -193,23 +198,38 @@ class Dashboard extends Component {
 
 function mapStateToProps( state ) {
 	const selectedSite = getSelectedSiteWithFallback( state );
-	const loading =
-		areOrdersLoading( state ) || areSetupChoicesLoading( state ) || areProductsLoading( state );
+	const siteId = selectedSite ? selectedSite.ID : null;
+	const setupChoicesLoading = areSetupChoicesLoading( state );
+	const loading = areOrdersLoading( state ) || setupChoicesLoading || areProductsLoading( state );
 	const hasOrders = getNewOrdersWithoutPayPalPending( state ).length > 0;
 	const hasProducts = getTotalProducts( state ) > 0;
 	const productsLoaded = areProductsLoaded( state );
 	const finishedInitialSetup = getFinishedInitialSetup( state );
+	const finishedInstallOfRequiredPlugins = getFinishedInstallOfRequiredPlugins( state );
+	const finishedPageSetup = getFinishedPageSetup( state );
+	const setStoreAddressDuringInitialSetup = getSetStoreAddressDuringInitialSetup( state );
+
+	// This prop toggles the display of the setup steps vs the normal dashboard.
+	const isSetupComplete =
+		siteId &&
+		finishedInstallOfRequiredPlugins &&
+		finishedPageSetup &&
+		setStoreAddressDuringInitialSetup &&
+		finishedInitialSetup;
 
 	return {
 		finishedInitialSetup,
-		finishedInstallOfRequiredPlugins: getFinishedInstallOfRequiredPlugins( state ),
-		finishedPageSetup: getFinishedPageSetup( state ),
+		finishedInstallOfRequiredPlugins,
+		finishedPageSetup,
 		hasOrders,
 		hasProducts,
-		productsLoaded,
+		isSetupComplete,
 		loading,
+		productsLoaded,
 		selectedSite,
-		setStoreAddressDuringInitialSetup: getSetStoreAddressDuringInitialSetup( state ),
+		setStoreAddressDuringInitialSetup,
+		setupChoicesLoading,
+		siteId,
 	};
 }
 
