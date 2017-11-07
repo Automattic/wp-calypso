@@ -225,6 +225,7 @@ export default {
 			'themeSlugWithRepo',
 		],
 	},
+
 	'site-picker': {
 		stepName: 'site-picker',
 		apiRequestFunction: stepActions.createSiteOrDomain,
@@ -241,5 +242,20 @@ export default {
 			'themeSlugWithRepo',
 		],
 		delayApiRequestUntilComplete: true,
+	},
+
+	'creds-permission': {
+		stepName: 'creds-permission',
+		providesDependencies: [],
+	},
+
+	'creds-complete': {
+		stepName: 'creds-complete',
+		providesDependencies: [],
+	},
+
+	'creds-confirm': {
+		stepName: 'creds-confirm',
+		providesDependencies: [],
 	},
 };
