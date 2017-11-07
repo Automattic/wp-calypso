@@ -17,6 +17,7 @@
 export areAllSitesSingleUser from './are-all-sites-single-user';
 export areSitePermalinksEditable from './are-site-permalinks-editable';
 export canCurrentUser from './can-current-user';
+export canCurrentUserEditPost from './can-current-user-edit-post';
 export canCurrentUserManagePlugins from './can-current-user-manage-plugins';
 export countPostLikes from './count-post-likes';
 export editedPostHasContent from './edited-post-has-content';
