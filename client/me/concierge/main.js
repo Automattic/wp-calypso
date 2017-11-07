@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { fetchConciergeShifts } from 'state/concierge/actions';
+import { requestConciergeShifts } from 'state/concierge/actions';
 import { getConciergeShifts } from 'state/selectors';
 
 class ConciergeMain extends Component {
 	componentDidMount() {
 		// TODO: pass in the real WP.com concierge schedule id.
-		this.props.fetchConciergeShifts( 123 );
+		this.props.requestConciergeShifts( 123 );
 	}
 
 	// TODO: render for real
@@ -36,6 +36,6 @@ export default connect(
 		shifts: getConciergeShifts( state ),
 	} ),
 	{
-		fetchConciergeShifts,
+		requestConciergeShifts,
 	}
 )( localize( ConciergeMain ) );
