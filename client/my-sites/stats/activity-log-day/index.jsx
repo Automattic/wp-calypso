@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flatMap, get, isEmpty, zip } from 'lodash';
+import { compact, flatMap, get, isEmpty, zip } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,25 +34,17 @@ const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
  * classifier and the event itself (for rendering)
  *
  * @param {Array} logs sorted activity log items
- * @param {Number} activityId selected rewind operation
+ * @param {?Number} rewindId selected rewind operation
  * @returns {Array<String, ?Object>} pairs of [ classifier, event ]
  */
-const classifyEvents = ( logs, activityId ) => {
-	/** @type {Array<Array<Object, ?Object>>} contains pairs of [ log, next log ] **/
-	const logPairs = zip( logs, logs.slice( 1 ) );
-
-	return flatMap( logPairs, ( [ log, nextLog ] ) => {
-		if ( log.activityId === activityId ) {
-			return [ [ 'rewind-confirm-dialog', {} ], [ 'event', log ] ];
-		}
-
-		if ( nextLog && nextLog.activityId === activityId ) {
-			return [ [ 'event-before-dialog', log ] ];
-		}
-
-		return [ [ 'event', log ] ];
-	} );
-};
+const classifyEvents = ( logs, { rewindId = null } ) =>
+	// the zip pairs up each log item with the following log item in the stream or undefined if at end
+	flatMap( zip( logs, logs.slice( 1 ) ), ( [ log, nextLog = {} ] ) =>
+		compact( [
+			log.activityId === rewindId && [ 'rewind-confirm-dialog', {} ],
+			[ nextLog.activityId === rewindId ? 'timeline-break-event' : 'event', log ],
+		] )
+	);
 
 class ActivityLogDay extends Component {
 	static propTypes = {
@@ -227,7 +219,9 @@ class ActivityLogDay extends Component {
 		);
 
 		const rewindButton = this.renderRewindButton( hasConfirmDialog ? '' : 'primary' );
-		const events = classifyEvents( rewriteStream( logs, isDiscardedPerspective ), requestedRestoreActivityId );
+		const events = classifyEvents( rewriteStream( logs, isDiscardedPerspective ), {
+			rewindId: requestedRestoreActivityId,
+		} );
 
 		const LogItem = ( { log, hasBreak } ) => (
 			<ActivityLogItem
