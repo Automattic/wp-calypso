@@ -5,6 +5,15 @@
 import { forEach } from 'lodash';
 import validUrl from 'valid-url';
 
+/**
+ * Determine if a given tag is allowed
+ *
+ * This only looks at the name of the tag to
+ * determine if it's white-listed.
+ *
+ * @param {String} tagName name of tag under inspection
+ * @returns {Boolean} whether the tag is allowed
+ */
 const isAllowedTag = tagName => {
 	switch ( tagName ) {
 		case '#text':
@@ -34,29 +43,48 @@ const isAllowedTag = tagName => {
 	}
 };
 
+/**
+ * Determine if a given attribute is allowed
+ *
+ * Note! Before adding more attributes here
+ *       make sure that we don't open up an
+ *       attribute which could allow for a
+ *       snippet of code to execute, such
+ *       as `onclick` or `onmouseover`
+ *
+ * @param {String} tagName name of tag on which attribute is found
+ * @param {String} attrName name of attribute under inspection
+ * @returns {Boolean} whether the attribute is allowed
+ */
 const isAllowedAttr = ( tagName, attrName ) => {
-	if ( 'a' === tagName && 'href' === attrName ) {
-		return true;
-	}
+	switch ( tagName ) {
+		case 'a':
+			return 'href' === attrName;
 
-	if ( 'iframe' === tagName ) {
-		switch ( attrName ) {
-			case 'class':
-			case 'type':
-			case 'height':
-			case 'width':
-			case 'src':
-				return true;
-			default:
-				return false;
-		}
-	}
+		case 'iframe':
+			switch ( attrName ) {
+				case 'class':
+				case 'type':
+				case 'height':
+				case 'width':
+				case 'src':
+					return true;
+				default:
+					return false;
+			}
 
-	if ( 'img' === tagName && ( 'alt' === attrName || 'src' === attrName ) ) {
-		return true;
-	}
+		case 'img':
+			switch ( attrName ) {
+				case 'alt':
+				case 'src':
+					return true;
+				default:
+					return false;
+			}
 
-	return false;
+		default:
+			return false;
+	}
 };
 
 const isValidYoutubeEmbed = node => {
