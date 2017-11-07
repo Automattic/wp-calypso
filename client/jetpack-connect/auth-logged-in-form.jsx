@@ -99,33 +99,33 @@ class LoggedInForm extends Component {
 		}
 	}
 
-	componentWillReceiveProps( props ) {
-		const { redirectAfterAuth } = props;
+	componentWillReceiveProps( nextProps ) {
+		const { redirectAfterAuth } = nextProps;
 		const {
 			siteReceived,
 			queryObject,
 			isRedirectingToWpAdmin,
 			authorizeSuccess,
 			authorizeError,
-		} = props.jetpackConnectAuthorize;
+		} = nextProps.jetpackConnectAuthorize;
 
 		// For SSO, WooCommerce Services, and JPO users, do not display plans page
 		// Instead, redirect back to admin as soon as we're connected
-		if ( props.isSSO || props.isWoo || this.isFromJpo( props ) ) {
+		if ( nextProps.isSSO || nextProps.isWoo || this.isFromJpo( nextProps ) ) {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
 				return this.props.goBackToWpAdmin( redirectAfterAuth );
 			}
 		} else if ( siteReceived ) {
 			return this.redirect();
-		} else if ( props.isAlreadyOnSitesList && queryObject.already_authorized ) {
+		} else if ( nextProps.isAlreadyOnSitesList && queryObject.already_authorized ) {
 			return this.redirect();
 		}
 		if (
 			authorizeError &&
-			props.authAttempts < MAX_AUTH_ATTEMPTS &&
+			nextProps.authAttempts < MAX_AUTH_ATTEMPTS &&
 			! this.retryingAuth &&
-			! props.requestHasXmlrpcError() &&
-			! props.requestHasExpiredSecretError() &&
+			! nextProps.requestHasXmlrpcError() &&
+			! nextProps.requestHasExpiredSecretError() &&
 			queryObject.site
 		) {
 			// Expired secret errors, and XMLRPC errors will be resolved in `handleResolve`.
@@ -133,7 +133,7 @@ class LoggedInForm extends Component {
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return this.props.retryAuth( queryObject.site, attempts + 1 );
+			return nextProps.retryAuth( queryObject.site, attempts + 1 );
 		}
 	}
 
