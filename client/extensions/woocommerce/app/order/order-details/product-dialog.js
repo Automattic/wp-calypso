@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +15,8 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
+import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
+import { getAllProductsWithVariations } from 'woocommerce/state/sites/products/selectors';
 import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProductSearch from 'woocommerce/components/product-search';
@@ -49,16 +52,40 @@ class OrderProductDialog extends Component {
 	};
 
 	handleProductSave = () => {
-		// map product IDs to products/variations:
-		// {
-		// 	product_id: item.id,
-		// 	name: item.name,
-		// 	sku: item.sku,
-		// 	price: item.price,
-		// 	subtotal: item.price,
-		// 	total: item.price,
-		// 	quantity: 1,
-		// }
+		const { allProducts, order, siteId } = this.props;
+		const products = this.state.products.map( p => {
+			return find( allProducts, { id: p } );
+		} );
+
+		const newLineItems = products.map( item => {
+			// Convert the product to the line_item format
+			const line = {
+				id: uniqueId( 'fee_' ),
+				name: item.name || '',
+				sku: item.sku,
+				price: item.price,
+				subtotal: item.price,
+				total: item.price,
+				quantity: 1,
+			};
+			// If no `productId`, this is not a variation
+			if ( ! item.productId ) {
+				return { ...line, product_id: item.id };
+			}
+
+			// This is a variation so name doesn't exist, and we'll pull from the base product
+			const baseProduct = find( allProducts, { id: Number( item.productId ) } );
+			const varName = formattedVariationName( item );
+			const name = baseProduct && baseProduct.name + ' - ' + varName;
+			return { ...line, name, product_id: item.productId, variation_id: item.id };
+		} );
+
+		const lineItems = order.line_items || [];
+		this.props.editOrder( siteId, {
+			id: order.id,
+			line_items: [ ...lineItems, ...newLineItems ],
+		} );
+
 		this.props.closeDialog();
 	};
 
@@ -97,8 +124,10 @@ export default connect(
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
 		const order = getOrderWithEdits( state );
+		const allProducts = getAllProductsWithVariations( state );
 
 		return {
+			allProducts,
 			siteId,
 			order,
 		};
