@@ -78,7 +78,8 @@ function hasPaymentMethod( purchase ) {
 		isPaidWithCreditCard( purchase ) ||
 		isPaidWithPayPalDirect( purchase ) ||
 		isPaidWithIdeal( purchase ) ||
-		isPaidWithGiropay( purchase )
+		isPaidWithGiropay( purchase ) ||
+		isPaidWithBancontact( purchase )
 	);
 }
 
@@ -144,6 +145,10 @@ function isPaidWithIdeal( purchase ) {
 
 function isPaidWithGiropay( purchase ) {
 	return 'Giropay' === purchase.payment.type;
+}
+
+function isPaidWithBancontact( purchase ) {
+	return 'Bancontact' === purchase.payment.type;
 }
 
 function isPendingTransfer( purchase ) {
@@ -259,6 +264,10 @@ function paymentLogoType( purchase ) {
 
 	if ( isPaidWithGiropay( purchase ) ) {
 		return 'giropay';
+	}
+
+	if ( isPaidWithBancontact( purchase ) ) {
+		return 'bancontact';
 	}
 
 	if ( isPaidWithPayPalDirect( purchase ) ) {

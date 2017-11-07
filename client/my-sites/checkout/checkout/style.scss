@@ -720,7 +720,7 @@
 		margin-left:8px;
 	}
 
-	&.ideal, &.giropay {
+	&.ideal, &.giropay, &.bancontact {
 		margin-left: 1em;
 	}
 
@@ -929,6 +929,11 @@
 	.checkout__giropay {
 	  width: 80px;
       margin: -10px 0;
+	}
+
+	.checkout__bancontact {
+	  width: 150px;
+	  margin: -10px 0;
 	}
 
   	.checkout__ideal {

@@ -178,6 +178,7 @@
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
 		"upgrades/netherlands-ideal": true,
+		"upgrades/belgium-bancontact": true,
 		"upgrades/germany-giropay": true,
 		"upgrades/paypal": true,
 		"upgrades/premium-themes": true,

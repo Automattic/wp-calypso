@@ -68,6 +68,8 @@ class SourcePaymentBox extends PureComponent {
 			return 'WPCOM_Billing_Stripe_Source_Ideal';
 		} else if ( paymentType === 'giropay' ) {
 			return 'WPCOM_Billing_Stripe_Source_Giropay';
+		} else if ( paymentType === 'bancontact' ) {
+			return 'WPCOM_Billing_Stripe_Source_Bancontact';
 		}
 		return 'WPCOM_Billing_Stripe_Source';
 	}
@@ -234,6 +236,8 @@ class SourcePaymentBox extends PureComponent {
 				return 'iDEAL';
 			case 'giropay':
 				return 'Giropay';
+			case 'bancontact':
+				return 'Bancontact';
 		}
 
 		return this.props.paymentType;
