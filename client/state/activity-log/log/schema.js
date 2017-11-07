@@ -26,6 +26,7 @@ const activityItemSchema = {
 		activityStatus: {
 			oneOf: [ { type: 'string' }, { type: 'null' } ],
 		},
+		activityTargetTs: { type: 'number' },
 		activityTitle: { type: 'string' },
 		activityTs: { type: 'integer' },
 		actorAvatarUrl: { type: 'string' },
