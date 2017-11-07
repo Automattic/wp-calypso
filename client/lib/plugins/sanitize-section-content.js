@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { forEach } from 'lodash';
 import validUrl from 'valid-url';
 
 const isAllowedTag = tagName => {
@@ -117,13 +118,11 @@ export const sanitizeSectionContent = content => {
 		const attrRemoveList = [];
 
 		// these aren't Arrays, so iteration is odd
-		for ( let i = 0; node.attributes && i < node.attributes.length; i++ ) {
-			const { name: attrName, value } = node.attributes[ i ];
-
+		forEach( node.attributes, ( { name: attrName, value } ) => {
 			// get rid of non-whitelisted attributes
 			if ( ! isAllowedAttr( tagName, attrName ) ) {
 				attrRemoveList.push( attrName );
-				continue;
+				return;
 			}
 
 			// for some, specifically links, we don't want to
@@ -133,21 +132,14 @@ export const sanitizeSectionContent = content => {
 				( ( 'src' === attrName || 'href' === attrName ) && validUrl.isWebUri( value ) ) ||
 				( 'iframe' === tagName && 'type' === attrName && isValidYoutubeEmbed( node ) )
 			) {
-				continue;
+				return;
 			}
 
 			// just don't even allow non-url links
 			if ( ( 'href' === attrName || 'src' === attrName ) && ! validUrl.isWebUri( value ) ) {
 				attrRemoveList.push( attrName );
-				continue;
 			}
-
-			// every other other allowed attribute must be sanitized
-			// this is a broad and clumsy stroke but it should be
-			// effective, leaning towards safety instead of
-			// compatibility with the remote HTML
-			node.setAttribute( attrName, encodeURIComponent( value ) );
-		}
+		} );
 
 		// actually remove the attributes
 		attrRemoveList.forEach( name => node.removeAttribute( name ) );

@@ -45,15 +45,19 @@ test( 'should allow whitelisted attributes', () =>
 test( 'should strip out non-whitelisted attributes', () =>
 	expect( clean( '<span style="font-size: 128px;">👍</span>' ) ).toBe( '<span>👍</span>' ) );
 
-test( 'should encode whitelisted attributes', () =>
-	expect( clean( '<img alt="javascript:foo()">' ) ).toBe( '<img alt="javascript%3Afoo()">' ) );
-
-test( 'should not encode links', () => {
+test( 'should allow http(s) links', () => {
 	const img = cleanNode( '<img src="http://example.com/images/1f39.png?v=25">' );
 	expect( img.getAttribute( 'src' ) ).toBe( 'http://example.com/images/1f39.png?v=25' );
 
 	const link = cleanNode( '<a id="test" href="https://github.com/README.md">docs</a>' );
 	expect( link.getAttribute( 'href' ) ).toBe( 'https://github.com/README.md' );
+} );
+
+test( 'should omit non http(s) links', () => {
+	expect( cleanNode( '<a href="file:///etc/passwd">a</a>' ).getAttribute( 'href' ) ).toBeNull();
+	expect( cleanNode( '<a href="javascript:alert(o)">a</a>' ).getAttribute( 'href' ) ).toBeNull();
+	expect( cleanNode( '<a href="ssh://bankvault">a</a>' ).getAttribute( 'href' ) ).toBeNull();
+	expect( cleanNode( '<a href="deep+link">a</a>' ).getAttribute( 'href' ) ).toBeNull();
 } );
 
 test( 'should set link params', () => {
