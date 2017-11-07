@@ -65,7 +65,7 @@ class EditorRevisionsList extends PureComponent {
 	scrollToSelectedItem() {
 		const thisNode = ReactDom.findDOMNode( this );
 		const scrollerNode = thisNode.querySelector( '.editor-revisions-list__scroller' );
-		const selectedNode = thisNode.querySelector( '.is-selected' );
+		const selectedNode = thisNode.querySelector( '.editor-revisions-list__revision.is-selected' );
 		const listNode = thisNode.querySelector( '.editor-revisions-list__list' );
 		if ( ! ( scrollerNode && selectedNode && listNode ) ) {
 			return;
