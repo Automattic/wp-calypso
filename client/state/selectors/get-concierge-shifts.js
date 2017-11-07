@@ -5,4 +5,4 @@
  */
 import { get } from 'lodash';
 
-export default state => get( state, 'concierge.shifts.items', null );
+export default state => get( state, 'concierge.shifts', null );

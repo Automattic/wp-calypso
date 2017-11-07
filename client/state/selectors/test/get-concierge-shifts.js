@@ -11,19 +11,17 @@ describe( 'getConciergeShifts()', () => {
 	} );
 
 	test( 'should return the items field under the concierge shift state tree.', () => {
-		const items = [
+		const shifts = [
 			{ description: 'shift 1' },
 			{ description: 'shift 2' },
 			{ description: 'shift 3' },
 		];
 		const state = {
 			concierge: {
-				shifts: {
-					items,
-				},
+				shifts,
 			},
 		};
 
-		expect( getConciergeShifts( state ) ).toEqual( items );
+		expect( getConciergeShifts( state ) ).toEqual( shifts );
 	} );
 } );
