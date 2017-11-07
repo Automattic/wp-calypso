@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { fetchConciergeShifts } from 'state/concierge/actions';
-import { getConciergeShifts, isFetchingConciergeShifts } from 'state/selectors';
+import { getConciergeShifts } from 'state/selectors';
 
 class ConciergeMain extends Component {
 	componentDidMount() {
@@ -21,9 +21,9 @@ class ConciergeMain extends Component {
 
 	// TODO: render for real
 	render() {
-		const { isFetching, shifts } = this.props;
+		const { shifts } = this.props;
 
-		if ( isFetching ) {
+		if ( ! shifts ) {
 			return <div>{ 'Fetching ... please wait.' }</div>;
 		}
 
@@ -34,7 +34,6 @@ class ConciergeMain extends Component {
 export default connect(
 	state => ( {
 		shifts: getConciergeShifts( state ),
-		isFetching: isFetchingConciergeShifts( state ),
 	} ),
 	{
 		fetchConciergeShifts,

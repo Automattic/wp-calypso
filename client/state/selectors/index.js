@@ -200,7 +200,6 @@ export isEligibleForDomainToPaidPlanUpsell from './is-eligible-for-domain-to-pai
 export isEligibleForFreeToPaidUpsell from './is-eligible-for-free-to-paid-upsell';
 export isEmailBlacklisted from './is-email-blacklisted';
 export isFetchingAutomatedTransferStatus from './is-fetching-automated-transfer-status';
-export isFetchingConciergeShifts from './is-fetching-concierge-shifts';
 export isFetchingJetpackModules from './is-fetching-jetpack-modules';
 export isFetchingMagicLoginAuth from './is-fetching-magic-login-auth';
 export isFetchingMagicLoginEmail from './is-fetching-magic-login-email';
