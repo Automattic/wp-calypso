@@ -19,7 +19,7 @@ import { bumpStatGenerator } from './utils';
 import { getPost, getPostPreviewUrl } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
-import { setPreviewUrl } from 'state/ui/preview/actions';
+import { setAllSitesPreviewSiteId, setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 class PostActionsEllipsisMenuView extends Component {
@@ -42,7 +42,7 @@ class PostActionsEllipsisMenuView extends Component {
 	};
 
 	previewPost = event => {
-		const { isPreviewable, previewUrl } = this.props;
+		const { isPreviewable, previewUrl, siteId } = this.props;
 		this.props.bumpStat();
 		if ( ! isPreviewable ) {
 			// The default action for the link is to open the previewUrl with a target of _blank.
@@ -51,6 +51,7 @@ class PostActionsEllipsisMenuView extends Component {
 			return;
 		}
 
+		this.props.setAllSitesPreviewSiteId( siteId );
 		this.props.setPreviewUrl( previewUrl );
 		this.props.setLayoutFocus( 'preview' );
 		event.preventDefault();
@@ -87,6 +88,7 @@ const mapStateToProps = ( state, { globalId } ) => {
 	}
 
 	return {
+		siteId: post.site_ID,
 		status: post.status,
 		isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
 		previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID ),
@@ -94,7 +96,12 @@ const mapStateToProps = ( state, { globalId } ) => {
 	};
 };
 
-const mapDispatchToProps = { setPreviewUrl, setLayoutFocus, bumpAnalyticsStat };
+const mapDispatchToProps = {
+	setAllSitesPreviewSiteId,
+	setPreviewUrl,
+	setLayoutFocus,
+	bumpAnalyticsStat,
+};
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const bumpStat = bumpStatGenerator(
