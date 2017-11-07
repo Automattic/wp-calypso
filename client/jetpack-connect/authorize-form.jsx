@@ -29,7 +29,6 @@ import {
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
-import { requestSites } from 'state/sites/actions';
 import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
@@ -55,7 +54,6 @@ class JetpackConnectAuthorizeForm extends Component {
 		setTracksAnonymousUserId: PropTypes.func,
 		requestHasExpiredSecretError: PropTypes.func,
 		requestHasXmlrpcError: PropTypes.func,
-		requestSites: PropTypes.func,
 		retryAuth: PropTypes.func,
 		siteSlug: PropTypes.string,
 		user: PropTypes.object,
@@ -165,7 +163,6 @@ export default connect(
 	{
 		recordTracksEvent,
 		setTracksAnonymousUserId,
-		requestSites,
 		retryAuth,
 	}
 )( localize( JetpackConnectAuthorizeForm ) );
