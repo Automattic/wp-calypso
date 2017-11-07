@@ -71,8 +71,10 @@ class LoggedInForm extends Component {
 		requestHasXmlrpcError: PropTypes.func.isRequired,
 		retryAuth: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
-		translate: PropTypes.func.isRequired,
 		user: PropTypes.object.isRequired,
+
+		// Connected props
+		translate: PropTypes.func.isRequired,
 	};
 
 	state = { haveAuthorized: false };
