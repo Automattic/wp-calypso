@@ -4,7 +4,7 @@
  * @format
  */
 
-import { get, find } from 'lodash';
+import { get, find, flatten, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +31,28 @@ export const getProduct = ( state, productId, siteId = getSelectedSiteId( state 
  */
 export const getAllProducts = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ], [] );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array}  The entire list of products for this site with variations inline as "products"
+ */
+export const getAllProductsWithVariations = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const products = get( state, `extensions.woocommerce.sites[${ siteId }].products.products`, [] );
+	const variations = get(
+		state,
+		`extensions.woocommerce.sites[${ siteId }].productVariations`,
+		{}
+	);
+	// Flatten variations from their productId mapping down into a single array
+	const variationsList = flatten(
+		map( variations, ( items, productId ) => {
+			return items.map( item => ( { ...item, productId: Number( productId ) } ) );
+		} )
+	);
+
+	return [ ...products, ...variationsList ];
 };
 
 /**
