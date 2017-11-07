@@ -1,10 +1,7 @@
 /**
  * External dependencies
- *
- * @format
  */
-
-import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
+import { camelCase, clone, isPlainObject, omit, pick, snakeCase } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 import url from 'url';
@@ -2040,11 +2037,12 @@ Undocumented.prototype.fetchDns = function( domainName, fn ) {
 	return this.wpcom.req.get( '/domains/' + domainName + '/dns', fn );
 };
 
-Undocumented.prototype.updateDns = function( domain, records, fn ) {
-	var filtered = reject( records, 'isBeingDeleted' ),
-		body = { dns: JSON.stringify( filtered ) };
+Undocumented.prototype.addDns = function( domainName, record, fn ) {
+	return this.wpcom.req.post( '/domains/' + domainName + '/dns/add', record, fn );
+};
 
-	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
+Undocumented.prototype.deleteDns = function( domainName, record, fn ) {
+	return this.wpcom.req.post( '/domains/' + domainName + '/dns/delete', record, fn );
 };
 
 Undocumented.prototype.applyDnsTemplate = function(
