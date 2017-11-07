@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classnames from 'classnames';
+import striptags from 'striptags';
 
 /**
  * Internal dependencies
@@ -383,6 +384,14 @@ class PostComment extends React.PureComponent {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
 		} );
 
+		// If we're showing an excerpt, limit the elements used
+		let commentContent;
+		if ( displayType === POST_COMMENT_DISPLAY_TYPES.excerpt ) {
+			commentContent = striptags( comment.content, [ 'p', 'br', 'em', 'strong', 'b', 'i', 'a' ] );
+		} else {
+			commentContent = comment.content;
+		}
+
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<li className={ postCommentClassnames }>
@@ -433,7 +442,7 @@ class PostComment extends React.PureComponent {
 
 				{ this.props.activeEditCommentId !== this.props.commentId && (
 					<PostCommentContent
-						content={ comment.content }
+						content={ commentContent }
 						setWithDimensionsRef={ this.props.setWithDimensionsRef }
 						isPlaceholder={ comment.isPlaceholder }
 						className={ displayType }
