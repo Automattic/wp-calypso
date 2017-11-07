@@ -44,4 +44,16 @@ sections.push( {
 	css: 'devdocs',
 } );
 
+if ( config.isEnabled( 'hello-world' ) ) {
+	sections.push( {
+		name: 'hello-world',
+		paths: [ '/hello-world' ],
+		module: 'hello-world',
+		enableLoggedOut: true,
+		secondary: false,
+		// group: 'sites',
+		isomorphic: true,
+	} );
+}
+
 module.exports = sections.concat( extensionSections.filter( Boolean ) );
