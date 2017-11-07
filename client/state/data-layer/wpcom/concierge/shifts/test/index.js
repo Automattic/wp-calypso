@@ -10,14 +10,18 @@ import {
 	storeFetchedConciergeShifts,
 	showConciergeShiftsFetchError,
 } from '../';
-import { CONCIERGE_SHIFTS_FETCH, CONCIERGE_SHIFTS_UPDATE, NOTICE_CREATE } from 'state/action-types';
+import {
+	CONCIERGE_SHIFTS_REQUEST,
+	CONCIERGE_SHIFTS_UPDATE,
+	NOTICE_CREATE,
+} from 'state/action-types';
 
 describe( 'wpcom-api', () => {
 	describe( 'concierge', () => {
 		test( 'requestFetchConciergeShifts()', () => {
 			const dispatch = jest.fn();
 			const action = {
-				type: CONCIERGE_SHIFTS_FETCH,
+				type: CONCIERGE_SHIFTS_REQUEST,
 				scheduleId: 123,
 			};
 

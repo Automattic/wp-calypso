@@ -3,17 +3,17 @@
 /**
  * Internal dependencies
  */
-import { fetchConciergeShifts, updateConciergeShifts } from '../actions';
+import { requestConciergeShifts, updateConciergeShifts } from '../actions';
 
-import { CONCIERGE_SHIFTS_FETCH, CONCIERGE_SHIFTS_UPDATE } from 'state/action-types';
+import { CONCIERGE_SHIFTS_REQUEST, CONCIERGE_SHIFTS_UPDATE } from 'state/action-types';
 
 describe( 'state/concierge', () => {
 	describe( 'actions', () => {
-		test( 'fetchConciergeShifts()', () => {
+		test( 'requestConciergeShifts()', () => {
 			const scheduleId = 123;
 
-			expect( fetchConciergeShifts( scheduleId ) ).toEqual( {
-				type: CONCIERGE_SHIFTS_FETCH,
+			expect( requestConciergeShifts( scheduleId ) ).toEqual( {
+				type: CONCIERGE_SHIFTS_REQUEST,
 				scheduleId,
 			} );
 		} );

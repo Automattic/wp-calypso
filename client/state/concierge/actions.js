@@ -3,10 +3,10 @@
 /**
  * Internal dependencies
  */
-import { CONCIERGE_SHIFTS_FETCH, CONCIERGE_SHIFTS_UPDATE } from 'state/action-types';
+import { CONCIERGE_SHIFTS_REQUEST, CONCIERGE_SHIFTS_UPDATE } from 'state/action-types';
 
-export const fetchConciergeShifts = scheduleId => ( {
-	type: CONCIERGE_SHIFTS_FETCH,
+export const requestConciergeShifts = scheduleId => ( {
+	type: CONCIERGE_SHIFTS_REQUEST,
 	scheduleId,
 } );
 

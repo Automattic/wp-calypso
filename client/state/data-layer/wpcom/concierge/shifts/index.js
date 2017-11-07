@@ -13,7 +13,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { updateConciergeShifts } from 'state/concierge/actions';
 import { errorNotice } from 'state/notices/actions';
-import { CONCIERGE_SHIFTS_FETCH } from 'state/action-types';
+import { CONCIERGE_SHIFTS_REQUEST } from 'state/action-types';
 
 export const requestFetchConciergeShifts = ( { dispatch }, action ) => {
 	const { scheduleId } = action;
@@ -44,7 +44,7 @@ export const showConciergeShiftsFetchError = ( { dispatch } ) =>
 	);
 
 export default {
-	[ CONCIERGE_SHIFTS_FETCH ]: [
+	[ CONCIERGE_SHIFTS_REQUEST ]: [
 		dispatchRequest(
 			requestFetchConciergeShifts,
 			storeFetchedConciergeShifts,
