@@ -100,13 +100,14 @@ const mapStateToProps = ( state, { globalId } ) => {
 const mapDispatchToProps = { trashPost, deletePost, bumpStat, recordTracksEvent };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const postType = get( stateProps, 'type.name' );
 	const onTrashClick = () => (
-		bumpStatGenerator( get( stateProps, 'type.name' ), 'trash', dispatchProps.bumpStat ),
-		dispatchProps.recordTracksEvent( 'calypso_post_type_list_post_trashed' )
+		bumpStatGenerator( postType, 'trash', dispatchProps.bumpStat ),
+		dispatchProps.recordTracksEvent( 'calypso_post_type_list_' + postType + '_trashed' )
 	);
 	const onDeleteClick = () => (
-		bumpStatGenerator( get( stateProps, 'type.name' ), 'delete', dispatchProps.bumpStat ),
-		dispatchProps.recordTracksEvent( 'calypso_post_type_list_post_deleted' )
+		bumpStatGenerator( postType, 'delete', dispatchProps.bumpStat ),
+		dispatchProps.recordTracksEvent( 'calypso_post_type_list_' + postType + '_deleted' )
 	);
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, {
 		onTrashClick,
