@@ -76,8 +76,8 @@ class ProductSearchRow extends Component {
 			return;
 		}
 
-		const { oldSiteId, oldProductId } = this.props;
-		const { newSiteId, newProductId } = newProps;
+		const { siteId: oldSiteId, productId: oldProductId } = this.props;
+		const { siteId: newSiteId, productId: newProductId } = newProps;
 
 		if ( oldSiteId !== newSiteId || oldProductId !== newProductId ) {
 			this.props.fetchProducts( newSiteId, newProductId );
