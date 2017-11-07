@@ -42,7 +42,8 @@ export class CommentHeader extends PureComponent {
 
 				{ showAuthorMoreInfo && <CommentAuthorMoreInfo { ...{ commentId } } /> }
 
-				{ ! isBulkMode && (
+				{ ! isBulkMode &&
+				isPostView && (
 					<Button
 						borderless
 						className="comment__toggle-expanded"

@@ -42,15 +42,23 @@ export class Comment extends Component {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.isBulkMode && ! this.props.isBulkMode ) {
-			this.setState( { isExpanded: false } );
+		if ( nextProps.isPostView ) {
+			if ( ! this.props.isPostView ) {
+				this.setState( { isExpanded: false } );
+			} else if ( this.props.isBulkMode && ! nextProps.isBulkMode ) {
+				this.setState( { isExpanded: false } );
+			} else if ( ! this.props.isBulkMode && nextProps.isBulkMode ) {
+				this.setState( { isExpanded: false } );
+			}
+		} else {
+			this.setState( { isExpanded: ! nextProps.isLoading && ! nextProps.isBulkMode } );
 		}
 	}
 
 	storeCardRef = card => ( this.commentCard = card );
 
 	keyDownHandler = event => {
-		const { isBulkMode } = this.props;
+		const { isBulkMode, isPostView } = this.props;
 		const { isEditMode, isExpanded } = this.state;
 
 		const commentHasFocus =
@@ -58,7 +66,7 @@ export class Comment extends Component {
 			this.commentCard &&
 			document.activeElement === ReactDom.findDOMNode( this.commentCard );
 
-		if ( isEditMode || ( isExpanded && ! commentHasFocus ) ) {
+		if ( isEditMode || ! isPostView || ( isExpanded && ! commentHasFocus ) ) {
 			return;
 		}
 
@@ -78,7 +86,7 @@ export class Comment extends Component {
 		} ) );
 
 	toggleExpanded = () => {
-		if ( ! this.props.isLoading && ! this.state.isEditMode ) {
+		if ( ! this.props.isLoading && ! this.state.isEditMode && this.props.isPostView ) {
 			this.setState( ( { isExpanded } ) => ( {
 				isExpanded: ! isExpanded,
 				isReplyVisible: false,
