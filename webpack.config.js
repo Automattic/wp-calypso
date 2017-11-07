@@ -1,4 +1,8 @@
-/***** WARNING: No ES6 modules here. Not transpiled! *****/
+/**
+ * **** WARNING: No ES6 modules here. Not transpiled! ****
+ *
+ * @format
+ */
 
 /**
  * External dependencies
@@ -45,8 +49,9 @@ function getAliasesForExtensions() {
 		.filter( filename => filename.indexOf( '.' ) === -1 ); // heuristic for finding directories
 
 	const aliasesMap = {};
-	extensionsNames.forEach( extensionName =>
-		aliasesMap[ extensionName ] = path.join( extensionsDirectory, extensionName )
+	extensionsNames.forEach(
+		extensionName =>
+			( aliasesMap[ extensionName ] = path.join( extensionsDirectory, extensionName ) )
 	);
 	return aliasesMap;
 }
@@ -56,11 +61,19 @@ const babelLoader = {
 	options: {
 		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
 		cacheIdentifier: cacheIdentifier,
-		plugins: [ [
-			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
-			{ async: config.isEnabled( 'code-splitting' ) }
-		] ]
-	}
+		plugins: [
+			[
+				path.join(
+					__dirname,
+					'server',
+					'bundler',
+					'babel',
+					'babel-plugin-transform-wpcalypso-async'
+				),
+				{ async: config.isEnabled( 'code-splitting' ) },
+			],
+		],
+	},
 };
 
 const webpackConfig = {
@@ -72,7 +85,7 @@ const webpackConfig = {
 		publicPath: '/calypso/',
 		filename: '[name].[chunkhash].js', // prefer the chunkhash, which depends on the chunk, not the entire build
 		chunkFilename: '[name].[chunkhash].js', // ditto
-		devtoolModuleFilenameTemplate: 'app:///[resource-path]'
+		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
 	},
 	module: {
 		// avoids this warning:
@@ -82,21 +95,21 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /node_modules[\/\\](?!notifications-panel)/,
-				loader: [ 'happypack/loader' ]
+				loader: [ 'happypack/loader' ],
 			},
 			{
 				test: /extensions[\/\\]index/,
 				exclude: path.join( __dirname, 'node_modules' ),
-				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' )
+				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
 			},
 			{
 				test: /sections.js$/,
 				exclude: path.join( __dirname, 'node_modules' ),
-				loader: path.join( __dirname, 'server', 'bundler', 'loader' )
+				loader: path.join( __dirname, 'server', 'bundler', 'loader' ),
 			},
 			{
 				test: /\.html$/,
-				loader: 'html-loader'
+				loader: 'html-loader',
 			},
 			{
 				include: require.resolve( 'tinymce/tinymce' ),
@@ -105,19 +118,16 @@ const webpackConfig = {
 			{
 				test: /node_modules[\/\\]tinymce/,
 				use: 'imports-loader?this=>window',
-			}
-		]
+			},
+		],
 	},
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx' ],
-		modules: [
-			path.join( __dirname, 'client' ),
-			'node_modules',
-		],
+		modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
 		alias: Object.assign(
 			{
 				'react-virtualized': 'react-virtualized/dist/commonjs',
-				'social-logos/example': 'social-logos/build/example'
+				'social-logos/example': 'social-logos/build/example',
 			},
 			getAliasesForExtensions()
 		),
@@ -129,20 +139,24 @@ const webpackConfig = {
 		Buffer: true,
 		__filename: 'mock',
 		__dirname: 'mock',
-		fs: 'empty'
+		fs: 'empty',
 	},
 	plugins: _.compact( [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
-			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
+			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
 		} ),
 		new webpack.IgnorePlugin( /^props$/ ),
-		new CopyWebpackPlugin( [ { from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' } ] ),
+		new CopyWebpackPlugin( [
+			{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
+		] ),
 		new HappyPack( {
 			loaders: _.compact( [
-				calypsoEnv === 'development' && config.isEnabled( 'webpack/hot-loader' ) && 'react-hot-loader',
-				babelLoader
-			] )
+				calypsoEnv === 'development' &&
+					config.isEnabled( 'webpack/hot-loader' ) &&
+					'react-hot-loader',
+				babelLoader,
+			] ),
 		} ),
 		new webpack.NamedModulesPlugin(),
 		new webpack.NamedChunksPlugin( chunk => {
@@ -154,11 +168,10 @@ const webpackConfig = {
 		new NameAllModulesPlugin(),
 		new AssetsPlugin( {
 			filename: 'assets.json',
-			path: path.join( __dirname, 'server', 'bundler' )
+			path: path.join( __dirname, 'server', 'bundler' ),
 		} ),
-
 	] ),
-	externals: [ 'electron' ]
+	externals: [ 'electron' ],
 };
 
 if ( calypsoEnv === 'desktop' ) {
@@ -192,7 +205,7 @@ if ( calypsoEnv === 'desktop' ) {
 	// NOTE: order matters. vendor must be before manifest.
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
 		new webpack.optimize.CommonsChunkPlugin( { name: 'vendor', minChunks: Infinity } ),
-		new webpack.optimize.CommonsChunkPlugin( { name: 'manifest' } )
+		new webpack.optimize.CommonsChunkPlugin( { name: 'manifest' } ),
 	] );
 
 	// jquery is only needed in the build for the desktop app
@@ -211,7 +224,7 @@ if ( calypsoEnv === 'development' ) {
 	] );
 	webpackConfig.entry.build = [
 		'webpack-hot-middleware/client',
-		path.join( __dirname, 'client', 'boot', 'app' )
+		path.join( __dirname, 'client', 'boot', 'app' ),
 	];
 	webpackConfig.devServer = { hot: true, inline: true };
 	webpackConfig.devtool = '#eval';
@@ -222,38 +235,46 @@ if ( calypsoEnv === 'development' ) {
 }
 
 if ( ! config.isEnabled( 'desktop' ) ) {
-	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' ) );
+	webpackConfig.plugins.push(
+		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
+	);
 }
 
 if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'client-records.json' );
-	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ) } ) );
+	webpackConfig.plugins.unshift(
+		new HardSourceWebpackPlugin( {
+			cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ),
+		} )
+	);
 }
 
 if ( process.env.DASHBOARD ) {
-	 // dashboard wants to be first
+	// dashboard wants to be first
 	webpackConfig.plugins.unshift( new DashboardPlugin() );
 }
 
 if ( process.env.WEBPACK_OUTPUT_JSON ) {
 	webpackConfig.devtool = 'cheap-module-source-map';
-	webpackConfig.plugins.push( new webpack.optimize.UglifyJsPlugin( {
-		minimize: true,
-		compress: {
-			warnings: false,
-			conditionals: true,
-			unused: true,
-			comparisons: true,
-			sequences: true,
-			dead_code: true,
-			evaluate: true,
-			if_return: true,
-			join_vars: true,
-			negate_iife: false,
-			screw_ie8: true
-		},
-		sourceMap: true
-	} ) );
+	webpackConfig.plugins.push(
+		new webpack.optimize.UglifyJsPlugin( {
+			minimize: true,
+			compress: {
+				warnings: false,
+				conditionals: true,
+				unused: true,
+				comparisons: true,
+				sequences: true,
+				dead_code: true,
+				evaluate: true,
+				if_return: true,
+				join_vars: true,
+				negate_iife: false,
+				screw_ie8: true,
+			},
+			sourceMap: true,
+		} )
+	);
 }
 
 module.exports = webpackConfig;
