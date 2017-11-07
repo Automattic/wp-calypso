@@ -109,6 +109,19 @@ const isValidYoutubeEmbed = node => {
 	);
 };
 
+const replacementFor = node => {
+	const tagName = node.nodeName.toLocaleLowerCase();
+
+	switch ( tagName ) {
+		case 'h1':
+		case 'h2':
+			return 'h3';
+
+		default:
+			return null;
+	}
+};
+
 /**
  * Sanitizes input HTML for security and styling
  *
@@ -122,10 +135,22 @@ export const sanitizeSectionContent = content => {
 	// this will let us visit every single DOM node programmatically
 	const walker = doc.createTreeWalker( doc.body );
 
-	// we don't want to remove nodes while walking the tree
-	// or we'll invite data-race bugs. instead, we'll track
-	// which ones we want to remove then drop them at the end
+	/**
+	 * we don't want to remove nodes while walking the tree
+	 * or we'll invite data-race bugs. instead, we'll track
+	 * which ones we want to remove then drop them at the end
+	 *
+	 * @type {Array<Node>} List of nodes to remove
+	 */
 	const removeList = [];
+
+	/**
+	 * track any tags we want to replace, we'll need to
+	 * transfer the children too when we do the swap
+	 *
+	 * @type {Array<Node, Node>} List of pairs of nodes and their replacements
+	 */
+	const replacements = [];
 
 	// walk over every DOM node
 	while ( walker.nextNode() ) {
@@ -135,6 +160,11 @@ export const sanitizeSectionContent = content => {
 		if ( ! isAllowedTag( tagName ) && ! isValidYoutubeEmbed( node ) ) {
 			removeList.push( node );
 			continue;
+		}
+
+		const replacement = replacementFor( node );
+		if ( replacement ) {
+			replacements.push( [ node, document.createElement( replacement ) ] );
 		}
 
 		// strip out anything not explicitly allowed
@@ -180,7 +210,17 @@ export const sanitizeSectionContent = content => {
 		}
 	}
 
-	// once done walking the DOM tree
+	// swap out any nodes that need replacements
+	replacements.forEach( ( [ node, newNode ] ) => {
+		let child;
+
+		while ( ( child = node.firstChild ) ) {
+			newNode.appendChild( child );
+		}
+
+		node.parentNode.replaceChild( newNode, node );
+	} );
+
 	// remove the unwanted tags and transfer
 	// their children up a level in their place
 	removeList.forEach( node => {
@@ -202,9 +242,5 @@ export const sanitizeSectionContent = content => {
 		}
 	} );
 
-	const html = doc.body.innerHTML;
-
-	// finally, bump higher-level headers down a few levels
-	// because we're sitting under an <h2> context already
-	return html.replace( /<h[12]/, '<h3' ).replace( /<\/h[12]/, '</h3' );
+	return doc.body.innerHTML;
 };
