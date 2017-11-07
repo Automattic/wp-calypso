@@ -39,6 +39,7 @@ import {
 	authorize as authorizeAction,
 	goBackToWpAdmin as goBackToWpAdminAction,
 	goToXmlrpcErrorFallbackUrl as goToXmlrpcErrorFallbackUrlAction,
+	retryAuth as retryAuthAction,
 } from 'state/jetpack-connect/actions';
 
 /**
@@ -72,16 +73,17 @@ class LoggedInForm extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		requestHasExpiredSecretError: PropTypes.func.isRequired,
 		requestHasXmlrpcError: PropTypes.func.isRequired,
-		retryAuth: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		user: PropTypes.object.isRequired,
 
 		// Connected props
 		authorize: PropTypes.func.isRequired,
 		goBackToWpAdmin: PropTypes.func.isRequired,
+		retryAuth: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
+	retryingAuth = false;
 	state = { haveAuthorized: false };
 
 	componentWillMount() {
@@ -106,7 +108,7 @@ class LoggedInForm extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { goBackToWpAdmin, redirectAfterAuth } = nextProps;
+		const { goBackToWpAdmin, redirectAfterAuth, retryAuth } = nextProps;
 		const {
 			siteReceived,
 			queryObject,
@@ -139,7 +141,7 @@ class LoggedInForm extends Component {
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return nextProps.retryAuth( queryObject.site, attempts + 1 );
+			return retryAuth( queryObject.site, attempts + 1 );
 		}
 	}
 
@@ -554,5 +556,6 @@ export default connect(
 		authorize: authorizeAction,
 		goBackToWpAdmin: goBackToWpAdminAction,
 		goToXmlrpcErrorFallbackUrl: goToXmlrpcErrorFallbackUrlAction,
+		retryAuth: retryAuthAction,
 	}
 )( localize( LoggedInForm ) );

@@ -14,7 +14,6 @@ import { get, includes } from 'lodash';
  */
 import Main from 'components/main';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
-import { retryAuth } from 'state/jetpack-connect/actions';
 import {
 	getAuthorizationData,
 	getAuthorizationRemoteSite,
@@ -54,7 +53,6 @@ class JetpackConnectAuthorizeForm extends Component {
 		setTracksAnonymousUserId: PropTypes.func,
 		requestHasExpiredSecretError: PropTypes.func,
 		requestHasXmlrpcError: PropTypes.func,
-		retryAuth: PropTypes.func,
 		siteSlug: PropTypes.string,
 		user: PropTypes.object,
 	};
@@ -163,6 +161,5 @@ export default connect(
 	{
 		recordTracksEvent,
 		setTracksAnonymousUserId,
-		retryAuth,
 	}
 )( localize( JetpackConnectAuthorizeForm ) );
