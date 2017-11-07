@@ -91,11 +91,11 @@ describe( 'reducer', () => {
 				posts: [ { site_ID: 123, ID: 456, is_following_conversation: false } ],
 			} );
 
-			expect( state[ '123-456' ] ).toEqual( undefined );
+			expect( state ).not.toHaveProperty( '123-456' );
 		} );
 
 		test( 'should update an existing follow status when new posts are received', () => {
-			const original = deepFreeze( { '123-456': 'M' } );
+			const original = deepFreeze( { '123-456': 'M', '123-678': 'M' } );
 
 			const state = items( original, {
 				type: READER_POSTS_RECEIVE,
@@ -103,6 +103,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state[ '123-456' ] ).toEqual( 'F' );
+			expect( state[ '123-678' ] ).toEqual( 'M' );
 		} );
 
 		test( 'will deserialize valid state', () => {

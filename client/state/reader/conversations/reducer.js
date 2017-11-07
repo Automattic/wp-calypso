@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { assign, forEach, omit } from 'lodash';
+import { assign, forEach, omit, size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,17 +62,19 @@ export const items = createReducer(
 				return state;
 			}
 
-			let newState = state;
+			const newState = {};
 
 			forEach( action.posts, post => {
 				if ( post.is_following_conversation ) {
-					newState = assign( {}, newState, {
-						[ key( post.site_ID, post.ID ) ]: CONVERSATION_FOLLOW_STATUS_FOLLOWING,
-					} );
+					newState[ key( post.site_ID, post.ID ) ] = CONVERSATION_FOLLOW_STATUS_FOLLOWING;
 				}
 			} );
 
-			return newState;
+			if ( size( newState ) === 0 ) {
+				return state;
+			}
+
+			return { ...state, ...newState };
 		},
 	},
 	itemsSchema
