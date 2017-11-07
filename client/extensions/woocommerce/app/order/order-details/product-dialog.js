@@ -62,7 +62,6 @@ class OrderProductDialog extends Component {
 			const line = {
 				id: uniqueId( 'fee_' ),
 				name: item.name || '',
-				sku: item.sku,
 				price: item.price,
 				subtotal: item.price,
 				total: item.price,
