@@ -111,6 +111,7 @@ export getRequestedRewind from './get-requested-rewind';
 export getRestoreError from './get-restore-error';
 export getRestoreProgress from './get-restore-progress';
 export getBackupProgress from './get-backup-progress';
+export getRequestedBackup from './get-requested-backup';
 export getRewindStartDate from './get-rewind-start-date';
 export getRewindStatusError from './get-rewind-status-error';
 export getScheduledPublicizeShareActionTime from './get-scheduled-publicize-share-action-time';

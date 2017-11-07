@@ -17,19 +17,14 @@ import { getRewindBackupProgress } from 'state/activity-log/actions';
 class QueryRewindBackupStatus extends PureComponent {
 	static propTypes = {
 		freshness: PropTypes.number,
-		queryDelay: PropTypes.number.isRequired,
 		downloadId: PropTypes.number,
 		siteId: PropTypes.number.isRequired,
 	};
 
-	static defaultProps = {
-		queryDelay: 0,
-	};
-
 	query( props ) {
-		const { getBackupProgress, queryDelay, downloadId, siteId } = props;
-		if ( ( siteId, downloadId ) ) {
-			delay( getBackupProgress, queryDelay, siteId, downloadId );
+		const { getBackupProgress, downloadId, siteId } = props;
+		if ( siteId && downloadId ) {
+			delay( getBackupProgress, 1500, siteId, downloadId );
 		}
 	}
 

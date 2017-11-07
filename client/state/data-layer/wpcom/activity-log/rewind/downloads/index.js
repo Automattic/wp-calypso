@@ -17,12 +17,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 const debug = debugFactory( 'calypso:data-layer:activity-log:rewind:to' );
 
-const fromApi = data => ( {
-	downloadId: +data.downloadId,
-} );
-
 const createBackup = ( { dispatch }, action ) => {
-	console.warn( 'action', action );
 	dispatch(
 		http(
 			{
@@ -38,15 +33,17 @@ const createBackup = ( { dispatch }, action ) => {
 	);
 };
 
+const fromApi = data => ( {
+	downloadId: +data.downloadId,
+} );
+
 export const receiveBackupSuccess = ( { dispatch }, { siteId }, apiData ) => {
 	const { downloadId } = fromApi( apiData );
 	if ( downloadId ) {
 		debug( 'Request restore success, restore id:', downloadId );
-		console.warn( 'getRewindBackupProgress', siteId, downloadId );
 		dispatch( getRewindBackupProgress( siteId, downloadId ) );
 	} else {
 		debug( 'Request restore response missing restore_id' );
-		console.warn( 'rewindBackupUpdateError', siteId );
 		dispatch(
 			rewindBackupUpdateError( siteId, {
 				status: 'finished',
@@ -59,7 +56,6 @@ export const receiveBackupSuccess = ( { dispatch }, { siteId }, apiData ) => {
 
 export const receiveBackupError = ( { dispatch }, { siteId, timestamp }, error ) => {
 	debug( 'Request restore fail', error );
-	console.log( 'receiveBackupError', siteId, timestamp );
 	dispatch( rewindBackupUpdateError( siteId, pick( error, [ 'error', 'status', 'message' ] ) ) );
 };
 

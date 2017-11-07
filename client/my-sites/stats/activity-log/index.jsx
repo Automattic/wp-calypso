@@ -370,9 +370,9 @@ class ActivityLog extends Component {
 		}
 
 		if ( !! backupProgress ) {
-			return 'finished' === backupProgress.status
-				? this.getEndBanner( siteId, backupProgress )
-				: this.getProgressBanner( siteId, backupProgress );
+			return isEmpty( backupProgress.url )
+				? this.getProgressBanner( siteId, backupProgress )
+				: this.getEndBanner( siteId, backupProgress );
 		}
 
 		return null;
@@ -380,17 +380,25 @@ class ActivityLog extends Component {
 
 	/**
 	 * Display the status of the operation currently being performed.
-	 * @param   {integer} siteId   Id of the site where the operation is performed.
-	 * @param   {object}  progress Current status of operation.
-	 * @returns {object}           Card showing progress.
+	 * @param   {integer} siteId         Id of the site where the operation is performed.
+	 * @param   {object}  actionProgress Current status of operation performed.
+	 * @returns {object}                 Card showing progress.
 	 */
-	getProgressBanner( siteId, progress ) {
-		const { freshness, percent, restoreId, downloadId, status, timestamp } = progress;
+	getProgressBanner( siteId, actionProgress ) {
+		const {
+			freshness,
+			percent,
+			progress,
+			restoreId,
+			downloadId,
+			status,
+			timestamp,
+		} = actionProgress;
 		return (
 			<ProgressBanner
 				applySiteOffset={ this.applySiteOffset }
 				freshness={ freshness }
-				percent={ percent }
+				percent={ percent || progress }
 				restoreId={ restoreId }
 				downloadId={ downloadId }
 				siteId={ siteId }
@@ -407,7 +415,7 @@ class ActivityLog extends Component {
 	 * @returns {object}           Card showing success or error.
 	 */
 	getEndBanner( siteId, progress ) {
-		const { errorCode, failureReason, siteTitle, timestamp } = progress;
+		const { errorCode, failureReason, siteTitle, timestamp, url } = progress;
 		return (
 			<div>
 				<QueryActivityLog siteId={ siteId } />
@@ -425,6 +433,7 @@ class ActivityLog extends Component {
 						applySiteOffset={ this.applySiteOffset }
 						siteId={ siteId }
 						timestamp={ timestamp }
+						backupUrl={ url }
 					/>
 				) }
 			</div>

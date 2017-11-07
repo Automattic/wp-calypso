@@ -21,7 +21,8 @@ class SuccessBanner extends PureComponent {
 		applySiteOffset: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		siteUrl: PropTypes.string.isRequired,
-		timestamp: PropTypes.string.isRequired,
+		timestamp: PropTypes.string,
+		backupUrl: PropTypes.string,
 
 		// connect
 		dismissRewindRestoreProgress: PropTypes.func.isRequired,
@@ -34,14 +35,20 @@ class SuccessBanner extends PureComponent {
 	handleDismiss = () => this.props.dismissRewindRestoreProgress( this.props.siteId );
 
 	render() {
-		const { applySiteOffset, moment, siteUrl, timestamp, translate } = this.props;
+		const { applySiteOffset, moment, siteUrl, timestamp, translate, backupUrl } = this.props;
 
 		return (
 			<ActivityLogBanner
 				isDismissable
 				onDismissClick={ this.handleDismiss }
 				status="success"
-				title={ translate( 'Your site has been successfully restored' ) }
+				title={
+					backupUrl ? (
+						translate( 'Your backup has been successfully created' )
+					) : (
+						translate( 'Your site has been successfully restored' )
+					)
+				}
 			>
 				<TrackComponentView
 					eventName="calypso_activitylog_successbanner_impression"
@@ -49,14 +56,20 @@ class SuccessBanner extends PureComponent {
 						restore_to: timestamp,
 					} }
 				/>
-				<p>
-					{ translate( 'We successfully restored your site back to %s!', {
-						args: applySiteOffset( moment.utc( timestamp ) ).format( 'LLLL' ),
-					} ) }
-				</p>
-				<Button href={ siteUrl } primary>
-					{ translate( 'View site' ) }
-				</Button>
+				{ ! backupUrl && (
+					<p>
+						{ translate( 'We successfully restored your site back to %s!', {
+							args: applySiteOffset( moment.utc( timestamp ) ).format( 'LLLL' ),
+						} ) }
+					</p>
+				) }
+				{ backupUrl ? (
+					<a href={ backupUrl }>{ translate( 'Download your backup' ) }</a>
+				) : (
+					<Button href={ siteUrl } primary>
+						{ translate( 'View site' ) }
+					</Button>
+				) }
 				{ '  ' }
 				<Button onClick={ this.handleDismiss }>{ translate( 'Thanks, got it!' ) }</Button>
 			</ActivityLogBanner>

@@ -22,7 +22,6 @@ const requestBackupProgress = ( { dispatch }, action ) => {
 	dispatch(
 		http(
 			{
-				apiVersion: '1',
 				method: 'GET',
 				apiNamespace: 'wpcom/v2',
 				path: `/sites/${ action.siteId }/rewind/downloads/${ action.downloadId }`,
@@ -35,29 +34,21 @@ const requestBackupProgress = ( { dispatch }, action ) => {
 	);
 };
 
-const fromApi = ( { backup_status = {} } ) => {
-	const {
-		backupPoint = '',
-		downloadId = 0,
-		progress = 0,
-		rewindId = 0,
-		startedAt = '',
-	} = backup_status;
-
-	return {
-		backupPoint: backupPoint,
-		downloadId: downloadId,
-		progress: progress,
-		rewindId: rewindId,
-		startedAt: startedAt,
-	};
-};
+const fromApi = data => ( {
+	backupPoint: data.backupPoint,
+	downloadId: +data.downloadId,
+	progress: +data.progress,
+	rewindId: data.rewindId,
+	startedAt: data.startedAt,
+	downloadCount: +data.downloadCount,
+	validUntil: data.validUntil,
+	url: data.url,
+} );
 
 export const receiveBackupProgress = ( { dispatch }, { siteId, downloadId }, apiData ) => {
 	const data = fromApi( apiData );
 
 	debug( 'Backup progress', data );
-	console.warn( 'Backup progress', data );
 
 	dispatch( updateRewindBackupProgress( siteId, downloadId, data ) );
 };
@@ -65,7 +56,6 @@ export const receiveBackupProgress = ( { dispatch }, { siteId, downloadId }, api
 // FIXME: Could be a network Error (instanceof Error) or an API error. Handle each case correctly.
 export const receiveBackupError = ( { dispatch }, action, error ) => {
 	debug( 'Backup progress error', error );
-	console.warn( 'Backup progress error', error );
 
 	dispatch(
 		createNotice(

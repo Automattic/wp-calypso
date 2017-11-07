@@ -47,12 +47,20 @@ function ProgressBanner( {
 	downloadId,
 } ) {
 	return (
-		<ActivityLogBanner status="info" title={ translate( 'Currently restoring your site' ) }>
+		<ActivityLogBanner
+			status="info"
+			title={
+				! isUndefined( restoreId ) ? (
+					translate( 'Currently restoring your site' )
+				) : (
+					translate( 'Creating a downloadable backup of your site' )
+				)
+			}
+		>
 			{ ! isUndefined( restoreId ) && (
 				<div>
 					<QueryRewindRestoreStatus
 						freshness={ freshness }
-						queryDelay={ 1500 }
 						restoreId={ restoreId }
 						siteId={ siteId }
 						timestamp={ timestamp }
@@ -77,7 +85,6 @@ function ProgressBanner( {
 				<div>
 					<QueryRewindBackupStatus
 						freshness={ freshness }
-						queryDelay={ 1500 }
 						downloadId={ downloadId }
 						siteId={ siteId }
 						timestamp={ timestamp }
@@ -97,7 +104,9 @@ function ProgressBanner( {
 					</em>
 				</div>
 			) }
-			{ 'running' === status && <ProgressBar isPulsing value={ percent } /> }
+			{ ( 'running' === status || ( 0 <= percent && percent <= 100 ) ) && (
+				<ProgressBar isPulsing value={ percent } />
+			) }
 		</ActivityLogBanner>
 	);
 }

@@ -21,7 +21,6 @@ export const backupRequest = keyedReducer( 'siteId', ( state = undefined, { type
 		case REWIND_BACKUP_DISMISS:
 		// Start backup
 		case REWIND_BACKUP:
-			console.warn( 'backupRequest' );
 			return undefined;
 
 		default:
@@ -32,23 +31,29 @@ export const backupRequest = keyedReducer( 'siteId', ( state = undefined, { type
 export const backupProgress = keyedReducer( 'siteId', ( state = undefined, action ) => {
 	switch ( action.type ) {
 		case REWIND_BACKUP:
-			console.warn( 'backupProgress', action );
 			return {
 				backupPoint: '',
 				downloadId: 0,
 				progress: 0,
 				rewindId: action.rewindId,
 				startedAt: '',
+				freshness: -Infinity,
+				downloadCount: 0,
+				validUntil: '',
+				url: '',
 			};
 
 		case REWIND_BACKUP_UPDATE_PROGRESS:
-			console.warn( 'backupUpdateProgress' );
 			return {
 				backupPoint: action.backupPoint,
 				downloadId: action.downloadId,
 				progress: action.progress,
 				rewindId: action.rewindId,
 				startedAt: action.startedAt,
+				freshness: action.freshness,
+				downloadCount: action.downloadCount,
+				validUntil: action.validUntil,
+				url: action.url,
 			};
 
 		case REWIND_BACKUP_DISMISS_PROGRESS:
