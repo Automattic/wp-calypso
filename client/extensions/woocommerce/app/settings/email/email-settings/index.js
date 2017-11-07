@@ -14,13 +14,14 @@ class Settings extends React.Component {
 	constructor( props ) {
 		super( props );
 	}
-
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		return (
-			<div className="email-settings">
+			<div className="email-settings__container">
 			</div>
 		);
 	}
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 Settings.propTypes = {

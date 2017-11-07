@@ -44,7 +44,7 @@ const SettingsEmail = ( { site, translate, className, params, isSaving, mailChim
 				</Button>
 			</ActionHeader>
 			<SettingsNavigation activeSection="email" />
-			{ config.isEnabled( 'woocommerce/extension-settings-email' ) &&
+			{ config.isEnabled( 'woocommerce/extension-settings-email-generic' ) &&
 				<EmailSettings siteId={ site.ID } />
 			}
 			<MailChimp siteId={ site.ID } site={ site } startWizard={ startWizard } />
