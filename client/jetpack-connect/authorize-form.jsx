@@ -123,7 +123,11 @@ class JetpackConnectAuthorizeForm extends Component {
 		return this.props.user ? (
 			<LoggedInForm { ...this.props } isSSO={ this.isSSO() } isWoo={ this.isWoo() } />
 		) : (
-			<LoggedOutForm { ...this.props } isSSO={ this.isSSO() } isWoo={ this.isWoo() } />
+			<LoggedOutForm
+				jetpackConnectAuthorize={ this.props.jetpackConnectAuthorize }
+				local={ this.props.locale }
+				path={ this.props.path }
+			/>
 		);
 	}
 
