@@ -22,7 +22,7 @@ const TextField = ( props ) => {
 	return (
 		<FormField { ...props } >
 			<FormTextInput
-				htmlFor={ fieldName + '-label' }
+				id={ fieldName + '-label' }
 				aria-describedby={ explanationText && fieldName + '-description' }
 				value={ renderedValue }
 				placeholder={ placeholderText }
@@ -41,4 +41,3 @@ TextField.PropTypes = {
 };
 
 export default TextField;
-
