@@ -18,7 +18,7 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
-import { areAllSitesSingleUser } from 'state/selectors';
+import { areAllSitesSingleUser, canCurrentUserEditPost } from 'state/selectors';
 import {
 	isSharePanelOpen,
 	isMultiSelectEnabled,
@@ -99,9 +99,10 @@ class PostItem extends React.Component {
 		const {
 			className,
 			post,
+			externalPostLink,
+			postUrl,
 			globalId,
 			isAllSitesModeSelected,
-			editUrl,
 			translate,
 			largeTitle,
 			wrapTitle,
@@ -128,6 +129,10 @@ class PostItem extends React.Component {
 			'is-expanded': this.hasVariableHeightContent,
 		} );
 
+		const editLinkClasses = classnames( 'post-item__title-link', {
+			'is-external': externalPostLink,
+		} );
+
 		return (
 			<div className={ rootClasses } ref={ this.setDomNode }>
 				<div className={ panelClasses }>
@@ -138,7 +143,12 @@ class PostItem extends React.Component {
 							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
 						</div>
 						<h1 className="post-item__title">
-							<a href={ editUrl } className="post-item__title-link">
+							<a
+								href={ postUrl }
+								target={ externalPostLink ? '_blank' : null }
+								rel={ externalPostLink ? 'noopener noreferrer' : null }
+								className={ editLinkClasses }
+							>
 								{ title || translate( 'Untitled' ) }
 							</a>
 						</h1>
@@ -159,8 +169,9 @@ class PostItem extends React.Component {
 PostItem.propTypes = {
 	translate: PropTypes.func,
 	globalId: PropTypes.string,
-	editUrl: PropTypes.string,
 	post: PropTypes.object,
+	canEdit: PropTypes.bool,
+	postUrl: PropTypes.string,
 	isAllSitesModeSelected: PropTypes.bool,
 	allSitesSingleUser: PropTypes.bool,
 	singleUserSite: PropTypes.bool,
@@ -182,12 +193,17 @@ export default connect(
 
 		const siteId = post.site_ID;
 
+		// Avoid rendering an external link while loading.
+		const externalPostLink = false === canCurrentUserEditPost( state, globalId );
+		const postUrl = externalPostLink ? post.URL : getEditorPath( state, siteId, post.ID );
+
 		return {
 			post,
+			externalPostLink,
+			postUrl,
 			isAllSitesModeSelected: getSelectedSiteId( state ) === null,
 			allSitesSingleUser: areAllSitesSingleUser( state ),
 			singleUserSite: isSingleUserSite( state, siteId ),
-			editUrl: getEditorPath( state, siteId, post.ID ),
 			isCurrentSharePanelOpen: isSharePanelOpen( state, globalId ),
 			isCurrentPostSelected: isPostSelected( state, globalId ),
 			multiSelectEnabled: isMultiSelectEnabled( state ),
