@@ -12,6 +12,7 @@ import { map, zipObject, fill, size, filter, get, compact, partition, min, noop 
  */
 import { getActiveReplyCommentId } from 'state/selectors';
 import PostComment from 'blocks/comments/post-comment';
+import QueryReaderTeams from 'components/data/query-reader-teams';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import {
 	commentsFetchingStatus,
@@ -19,12 +20,15 @@ import {
 	getExpansionsForPost,
 	getHiddenCommentsForPost,
 	getPostCommentsTree,
-	getReaderWatermark,
 } from 'state/comments/selectors';
+import { getReaderWatermark, getReaderTeams } from 'state/selectors';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import PostCommentFormRoot from 'blocks/comments/form-root';
 import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
+import { isAutomatticTeamMember } from 'reader/lib/teams';
+import { viewStream } from 'state/reader/watermarks/actions';
+import config from 'config';
 
 /**
  * ConversationsCommentList is the component that represents all of the comments for a conversations-stream
@@ -46,6 +50,7 @@ import { requestPostComments, requestComment, setActiveReply } from 'state/comme
  */
 
 const FETCH_NEW_COMMENTS_THRESHOLD = 20;
+const CONVERSATIONS_STREAM_ID = 'conversations';
 export class ConversationCommentList extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired, // required by PostComment
@@ -108,6 +113,9 @@ export class ConversationCommentList extends React.Component {
 		this.resetActiveReplyComment();
 		this.reqMoreComments();
 	}
+	componentWillUnmount() {
+		this.props.viewStream( { streamId: CONVERSATIONS_STREAM_ID } );
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		const { hiddenComments, commentsTree, siteId } = nextProps;
@@ -155,14 +163,15 @@ export class ConversationCommentList extends React.Component {
 
 	// @todo: move all expanded comment set per commentId logic to memoized selectors
 	getCommentsToShow = () => {
-		const { commentIds, expansions, commentsTree, sortedComments } = this.props;
+		const { commentIds, expansions, commentsTree, sortedComments, teams, watermark } = this.props;
 
 		let minId;
-		if ( config( 'reader/high-watermark' ) ) {
-			const firstUnseenComment = find(
-				sortedComments,
-				comment => this.props.watermark <= comment.date
-			);
+		if (
+			config.isEnabled( 'reader/high-watermark' ) &&
+			isAutomatticTeamMember( teams ) &&
+			watermark
+		) {
+			const firstUnseenComment = find( sortedComments, comment => watermark <= comment.date );
 			minId = get( firstUnseenComment, 'ID', Infinity );
 		} else {
 			minId = min( commentIds );
@@ -222,6 +231,7 @@ export class ConversationCommentList extends React.Component {
 
 		return (
 			<div className="conversations__comment-list">
+				<QueryReaderTeams />
 				<ul className="conversations__comment-list-ul">
 					{ showCaterpillar && (
 						<ConversationCaterpillar
@@ -287,10 +297,11 @@ const ConnectedConversationCommentList = connect(
 				siteId,
 				postId,
 			} ),
-			watermark: getReaderWatermark( state, { streamId: 'conversations' } ),
+			watermark: getReaderWatermark( state, { streamId: CONVERSATIONS_STREAM_ID } ),
+			teams: getReaderTeams( state ),
 		};
 	},
-	{ requestPostComments, requestComment, setActiveReply }
+	{ requestPostComments, requestComment, setActiveReply, viewStream }
 )( ConversationCommentList );
 
 export default ConnectedConversationCommentList;

@@ -14,7 +14,7 @@ import { READER_VIEW_STREAM } from 'state/action-types';
  * @param {String} streamId - stream being viewed
  * @returns {Object} action object for dispatch
  */
-export const viewStream = ( { mark, streamId } ) => {
+export const viewStream = ( { mark = Date.now(), streamId } ) => {
 	return {
 		type: READER_VIEW_STREAM,
 		mark,
