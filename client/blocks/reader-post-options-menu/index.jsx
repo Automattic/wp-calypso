@@ -9,7 +9,6 @@ import page from 'page';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -30,7 +29,7 @@ import { isAutomatticTeamMember } from 'reader/lib/teams';
 import { getReaderTeams } from 'state/selectors';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
-import { shouldShowComments } from 'blocks/comments/helper';
+import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
@@ -128,12 +127,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 		const followUrl = this.getFollowUrl();
 		const isTeamMember = isAutomatticTeamMember( teams );
-		const showConversationFollow =
-			config.isEnabled( 'reader/conversations' ) &&
-			siteId &&
-			! post.is_external &&
-			shouldShowComments( post ) &&
-			! isDiscoverPost;
+		const showConversationFollowButton = shouldShowConversationFollowButton( post );
 
 		let isBlockPossible = false;
 
@@ -170,12 +164,12 @@ class ReaderPostOptionsMenu extends React.Component {
 						<FollowButton
 							tagName={ PopoverMenuItem }
 							siteUrl={ followUrl }
-							followLabel={ showConversationFollow ? translate( 'Follow Site' ) : null }
-							followingLabel={ showConversationFollow ? translate( 'Following Site' ) : null }
+							followLabel={ showConversationFollowButton ? translate( 'Follow Site' ) : null }
+							followingLabel={ showConversationFollowButton ? translate( 'Following Site' ) : null }
 						/>
 					) }
 
-					{ showConversationFollow && (
+					{ showConversationFollowButton && (
 						<ConversationFollowButton
 							tagName={ PopoverMenuItem }
 							siteId={ siteId }
