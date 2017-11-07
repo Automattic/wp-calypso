@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { includes, isEmpty, keys, pick } from 'lodash';
+import { every, includes, isEmpty, keys, pick, trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -176,6 +176,13 @@ class PreSetupView extends Component {
 		const { contactDetails, settingsGeneralLoaded, translate } = this.props;
 		const showForm = contactDetails && settingsGeneralLoaded;
 
+		// Note: We will have to revisit this if/when we support countries that lack post codes
+		const requiredAddressFields = pick( this.state.address, [ 'street', 'city', 'postcode' ] );
+		const everyRequiredFieldHasAValue = every( requiredAddressFields, field => {
+			return ! isEmpty( trim( field ) );
+		} );
+		const submitDisabled = this.state.isSaving || ! everyRequiredFieldHasAValue;
+
 		if ( ! showForm ) {
 			return (
 				<div className="dashboard__placeholder">
@@ -193,7 +200,7 @@ class PreSetupView extends Component {
 					onChange={ this.onChange }
 				/>
 				<SetupFooter
-					disabled={ this.state.isSaving }
+					disabled={ submitDisabled }
 					onClick={ this.onNext }
 					label={ translate( "Let's Go!" ) }
 					primary
