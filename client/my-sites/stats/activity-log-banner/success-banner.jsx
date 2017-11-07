@@ -64,7 +64,9 @@ class SuccessBanner extends PureComponent {
 					</p>
 				) }
 				{ backupUrl ? (
-					<a href={ backupUrl }>{ translate( 'Download your backup' ) }</a>
+					<Button href={ backupUrl } primary>
+						{ translate( 'Download your backup' ) }
+					</Button>
 				) : (
 					<Button href={ siteUrl } primary>
 						{ translate( 'View site' ) }

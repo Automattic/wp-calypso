@@ -53,7 +53,7 @@ function ProgressBanner( {
 				! isUndefined( restoreId ) ? (
 					translate( 'Currently restoring your site' )
 				) : (
-					translate( 'Creating a downloadable backup of your site' )
+					translate( 'Currently creating a downloadable backup of your site' )
 				)
 			}
 		>
@@ -91,15 +91,16 @@ function ProgressBanner( {
 					/>
 					<p>
 						{ translate(
-							"We're in the process of creating a backup of your site. " +
-								"You'll be notified once it's complete."
+							"We're in the process of creating a downloadable backup of your site at %s. " +
+								"You'll be notified once it's complete.",
+							{ args: applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' ) }
 						) }
 					</p>
 					<em>
 						{ 0 < percent ? (
 							translate( 'The creation of your backup will start in a moment.' )
 						) : (
-							translate( "We're on it! Your backup is being created." )
+							translate( "We're on it! Your download is being created." )
 						) }
 					</em>
 				</div>
