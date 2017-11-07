@@ -57,7 +57,7 @@ describe( 'reducer', () => {
 			expect( state[ '123-456' ] ).toEqual( 'F' );
 		} );
 
-		test( 'should remove the given site and post from state entirely if followStatus is null', () => {
+		test( 'should remove the given site and post from state entirely if the user is not following the post', () => {
 			const original = deepFreeze( { '123-456': 'M' } );
 
 			const state = items( original, {
@@ -65,7 +65,7 @@ describe( 'reducer', () => {
 				payload: { siteId: 123, postId: 456, followStatus: null },
 			} );
 
-			expect( state[ '123-456' ] ).toEqual( undefined );
+			expect( state ).not.toHaveProperty( '123-456' );
 		} );
 
 		test( 'should add a new follow when new posts are received', () => {
@@ -83,7 +83,7 @@ describe( 'reducer', () => {
 			expect( state[ '123-789' ] ).toEqual( 'F' );
 		} );
 
-		test( 'should not a new follow when new posts are received if is_following_conversation is false', () => {
+		test( 'should not add a new follow from a post when is_following_conversation is false', () => {
 			const original = deepFreeze( {} );
 
 			const state = items( original, {

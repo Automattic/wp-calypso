@@ -15,6 +15,7 @@ import {
 } from 'state/action-types';
 import {
 	CONVERSATION_FOLLOW_STATUS_FOLLOWING,
+	CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
 	CONVERSATION_FOLLOW_STATUS_MUTING,
 } from './follow-status';
 import { combineReducers, createReducer } from 'state/utils';
@@ -46,7 +47,7 @@ export const items = createReducer(
 			const stateKey = key( action.payload.siteId, action.payload.postId );
 
 			// If followStatus is null, remove the key from the state map entirely
-			if ( action.payload.followStatus === null ) {
+			if ( action.payload.followStatus === CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING ) {
 				return omit( state, stateKey );
 			}
 

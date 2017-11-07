@@ -156,7 +156,7 @@ function _setBlogPost( post ) {
 
 	// Send conversation follow status over to Redux
 	if ( post.hasOwnProperty( 'is_following_conversation' ) ) {
-		const newFollowStatus = post.is_following_conversation
+		const followStatus = post.is_following_conversation
 			? CONVERSATION_FOLLOW_STATUS_FOLLOWING
 			: CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING;
 		reduxDispatch(
@@ -164,7 +164,7 @@ function _setBlogPost( post ) {
 				updateConversationFollowStatus( {
 					siteId: post.site_ID,
 					postId: post.ID,
-					followStatus: newFollowStatus,
+					followStatus,
 				} )
 			)
 		);
