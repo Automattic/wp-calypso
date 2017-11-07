@@ -15,7 +15,6 @@ import { get, includes } from 'lodash';
 import Main from 'components/main';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import {
-	authorize,
 	goBackToWpAdmin,
 	retryAuth,
 	goToXmlrpcErrorFallbackUrl,
@@ -46,7 +45,6 @@ import LoggedOutForm from './auth-logged-out-form';
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {
 		authAttempts: PropTypes.number,
-		authorize: PropTypes.func,
 		calypsoStartedConnection: PropTypes.bool,
 		goBackToWpAdmin: PropTypes.func,
 		goToXmlrpcErrorFallbackUrl: PropTypes.func,
@@ -171,7 +169,6 @@ export default connect(
 		};
 	},
 	{
-		authorize,
 		goBackToWpAdmin,
 		goToXmlrpcErrorFallbackUrl,
 		recordTracksEvent,

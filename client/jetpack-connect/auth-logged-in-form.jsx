@@ -35,6 +35,7 @@ import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getJetpackConnectRedirectAfterAuth } from 'state/selectors';
 import { login } from 'lib/paths';
+import { authorize as authorizeAction } from 'state/jetpack-connect/actions';
 
 /**
  * Constants
@@ -46,7 +47,6 @@ const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 class LoggedInForm extends Component {
 	static propTypes = {
 		authAttempts: PropTypes.number.isRequired,
-		authorize: PropTypes.func.isRequired,
 		calypsoStartedConnection: PropTypes.bool,
 		goBackToWpAdmin: PropTypes.func.isRequired,
 		isAlreadyOnSitesList: PropTypes.bool,
@@ -74,12 +74,14 @@ class LoggedInForm extends Component {
 		user: PropTypes.object.isRequired,
 
 		// Connected props
+		authorize: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
 	state = { haveAuthorized: false };
 
 	componentWillMount() {
+		const { authorize } = this.props;
 		const { queryObject, autoAuthorize } = this.props.jetpackConnectAuthorize;
 		this.props.recordTracksEvent( 'calypso_jpc_auth_view' );
 
@@ -95,7 +97,7 @@ class LoggedInForm extends Component {
 		if ( this.props.isSSO || doAutoAuthorize ) {
 			debug( 'Authorizing automatically on component mount' );
 			this.setState( { haveAuthorized: true } );
-			return this.props.authorize( queryObject );
+			return authorize( queryObject );
 		}
 	}
 
@@ -193,7 +195,7 @@ class LoggedInForm extends Component {
 	};
 
 	handleSubmit = () => {
-		const { redirectAfterAuth } = this.props;
+		const { authorize, redirectAfterAuth } = this.props;
 		const { queryObject, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 
 		if (
@@ -224,7 +226,7 @@ class LoggedInForm extends Component {
 		}
 
 		this.props.recordTracksEvent( 'calypso_jpc_approve_click' );
-		return this.props.authorize( queryObject );
+		return authorize( queryObject );
 	};
 
 	isAuthorizing() {
@@ -539,6 +541,11 @@ class LoggedInForm extends Component {
 	}
 }
 
-export default connect( state => ( {
-	redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
-} ) )( localize( LoggedInForm ) );
+export default connect(
+	state => ( {
+		redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
+	} ),
+	{
+		authorize: authorizeAction,
+	}
+)( localize( LoggedInForm ) );
