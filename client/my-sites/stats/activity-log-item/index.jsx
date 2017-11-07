@@ -28,8 +28,9 @@ class ActivityLogItem extends Component {
 	static propTypes = {
 		applySiteOffset: PropTypes.func.isRequired,
 		disableRestore: PropTypes.bool.isRequired,
+		disableBackup: PropTypes.bool.isRequired,
 		hideRestore: PropTypes.bool,
-		requestRestore: PropTypes.func.isRequired,
+		requestDialog: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 
 		log: PropTypes.shape( {
@@ -62,12 +63,13 @@ class ActivityLogItem extends Component {
 
 	static defaultProps = {
 		disableRestore: false,
+		disableBackup: false,
 	};
 
-	handleClickRestore = () => {
-		const { log, requestRestore } = this.props;
-		requestRestore( log.activityId, 'item' );
-	};
+	handleClickRestore = () =>
+		this.props.requestDialog( this.props.log.activityId, 'item', 'restore' );
+
+	handleClickBackup = () => this.props.requestDialog( this.props.log.activityId, 'item', 'backup' );
 
 	handleOpen = () => {
 		const { log, recordTracksEvent } = this.props;
@@ -119,7 +121,13 @@ class ActivityLogItem extends Component {
 	}
 
 	renderItemAction() {
-		const { disableRestore, hideRestore, translate, log: { activityIsRewindable } } = this.props;
+		const {
+			disableRestore,
+			disableBackup,
+			hideRestore,
+			translate,
+			log: { activityIsRewindable },
+		} = this.props;
 
 		if ( hideRestore || ! activityIsRewindable ) {
 			return null;
@@ -134,6 +142,13 @@ class ActivityLogItem extends Component {
 						onClick={ this.handleClickRestore }
 					>
 						{ translate( 'Rewind to this point' ) }
+					</PopoverMenuItem>
+					<PopoverMenuItem
+						disabled={ disableBackup }
+						icon="cloud-download"
+						onClick={ this.handleClickBackup }
+					>
+						{ translate( 'Download backup' ) }
 					</PopoverMenuItem>
 				</EllipsisMenu>
 			</div>

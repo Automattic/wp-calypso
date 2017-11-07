@@ -21,51 +21,81 @@ class ActivityLogConfirmDialog extends Component {
 		onClose: PropTypes.func.isRequired,
 		onConfirm: PropTypes.func.isRequired,
 		timestamp: PropTypes.number,
+		type: PropTypes.string,
+		icon: PropTypes.string,
 
 		// Localize
 		translate: PropTypes.func.isRequired,
 		moment: PropTypes.func.isRequired,
 	};
 
+	static defaultProps = {
+		type: 'restore',
+		icon: 'history',
+	};
+
+	handleClickCancel = () => this.props.onClose( this.props.type );
+	handleClickConfirm = () => this.props.onConfirm( this.props.type );
+
 	render() {
-		const { applySiteOffset, moment, timestamp, translate, onClose, onConfirm } = this.props;
+		const { applySiteOffset, moment, timestamp, translate, type, icon } = this.props;
+		const activityTime = applySiteOffset( moment.utc( timestamp ) ).format( 'LLL' );
+		const strings = {};
+
+		switch ( type ) {
+			case 'restore':
+				strings.title = translate( 'Rewind Site' );
+				strings.confirm = translate( 'Confirm Rewind' );
+				strings.highlight = translate(
+					'This is the selected point for your site Rewind. ' +
+						'Are you sure you want to rewind your site back to {{b}}%(time)s{{/b}}?',
+					{
+						args: { time: activityTime },
+						components: { b: <b /> },
+					}
+				);
+				break;
+			case 'backup':
+				strings.title = translate( 'Create downloadable backup' );
+				strings.confirm = translate( 'Create download' );
+				strings.highlight = translate(
+					'We will build a downloadable backup of your site at {{b}}%(time)s{{/b}}. ' +
+						'You will get a notification when the backup is ready to download.',
+					{
+						args: { time: activityTime },
+						components: { b: <b /> },
+					}
+				);
+				break;
+		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="activity-log-item activity-log-item__restore-confirm">
 				<div className="activity-log-item__type">
-					<ActivityIcon activityIcon={ 'history' } />
+					<ActivityIcon activityIcon={ icon } />
 				</div>
 				<Card className="activity-log-item__card">
-					<h5 className="activity-log-confirm-dialog__title">{ translate( 'Rewind Site' ) }</h5>
+					<h5 className="activity-log-confirm-dialog__title">{ strings.title }</h5>
 
-					<p className="activity-log-confirm-dialog__highlight">
-						{ translate(
-							'This is the selected point for your site Rewind. ' +
-								'Are you sure you want to rewind your site back to {{b}}%(time)s{{/b}}?',
-							{
-								args: {
-									time: applySiteOffset( moment.utc( timestamp ) ).format( 'LLL' ),
-								},
-								components: { b: <b /> },
-							}
-						) }
-					</p>
+					<p className="activity-log-confirm-dialog__highlight">{ strings.highlight }</p>
 
-					<div className="activity-log-confirm-dialog__notice">
-						<Gridicon icon={ 'notice' } />
-						<span className="activity-log-confirm-dialog__notice-content">
-							{ translate(
-								'This will remove all content and options created or changed since then.'
-							) }
-						</span>
-					</div>
+					{ 'restore' === type && (
+						<div className="activity-log-confirm-dialog__notice">
+							<Gridicon icon={ 'notice' } />
+							<span className="activity-log-confirm-dialog__notice-content">
+								{ translate(
+									'This will remove all content and options created or changed since then.'
+								) }
+							</span>
+						</div>
+					) }
 
 					<div className="activity-log-confirm-dialog__button-wrap">
 						<div className="activity-log-confirm-dialog__primary-actions">
-							<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
-							<Button primary onClick={ onConfirm }>
-								{ translate( 'Confirm Rewind' ) }
+							<Button onClick={ this.handleClickCancel }>{ translate( 'Cancel' ) }</Button>
+							<Button primary onClick={ this.handleClickConfirm }>
+								{ strings.confirm }
 							</Button>
 						</div>
 						<div className="activity-log-confirm-dialog__secondary-actions">

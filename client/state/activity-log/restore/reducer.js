@@ -7,7 +7,7 @@ import {
 	REWIND_RESTORE,
 	REWIND_RESTORE_DISMISS,
 	REWIND_RESTORE_DISMISS_PROGRESS,
-	REWIND_RESTORE_PLEASE,
+	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_PROGRESS,
 } from 'state/action-types';
 import { createReducer, keyedReducer } from 'state/utils';
@@ -56,6 +56,6 @@ export const restoreRequest = keyedReducer(
 	createReducer( undefined, {
 		[ REWIND_RESTORE ]: () => undefined,
 		[ REWIND_RESTORE_DISMISS ]: () => undefined,
-		[ REWIND_RESTORE_PLEASE ]: ( state, { activityId } ) => activityId,
+		[ REWIND_RESTORE_REQUEST ]: ( state, { activityId } ) => activityId,
 	} )
 );

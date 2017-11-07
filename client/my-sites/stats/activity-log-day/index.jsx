@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flatMap, get, isEmpty, zip } from 'lodash';
+import { compact, flatMap, get, isEmpty, zip } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,9 +19,7 @@ import ActivityLogItem from '../activity-log-item';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import { withAnalytics as withAnalyticsAction } from 'state/analytics/actions';
 import { getActivityLog, getRequestedRewind } from 'state/selectors';
-import { rewindRequestDismiss as rewindRequestDismissAction } from 'state/activity-log/actions';
 import { ms, rewriteStream } from 'state/activity-log/log/is-discarded';
 
 /**
@@ -34,36 +32,33 @@ const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
  * classifier and the event itself (for rendering)
  *
  * @param {Array} logs sorted activity log items
- * @param {Number} activityId selected rewind operation
+ * @param {?Number} backupId selected backup operation
+ * @param {?Number} restoreId selected rewind operation
  * @returns {Array<String, ?Object>} pairs of [ classifier, event ]
  */
-const classifyEvents = ( logs, activityId ) => {
-	/** @type {Array<Array<Object, ?Object>>} contains pairs of [ log, next log ] **/
-	const logPairs = zip( logs, logs.slice( 1 ) );
-
-	return flatMap( logPairs, ( [ log, nextLog ] ) => {
-		if ( log.activityId === activityId ) {
-			return [ [ 'rewind-confirm-dialog', {} ], [ 'event', log ] ];
-		}
-
-		if ( nextLog && nextLog.activityId === activityId ) {
-			return [ [ 'event-before-dialog', log ] ];
-		}
-
-		return [ [ 'event', log ] ];
-	} );
-};
+const classifyEvents = ( logs, { backupId = null, rewindId = null } ) =>
+	// the zip pairs up each log item with the following log item in the stream or undefined if at end
+	flatMap( zip( logs, logs.slice( 1 ) ), ( [ log, nextLog = {} ] ) =>
+		compact( [
+			log.activityId === rewindId && [ 'rewind-confirm-dialog', {} ],
+			log.activityId === backupId && [ 'backup-confirm-dialog', {} ],
+			[ nextLog.activityId === rewindId ? 'timeline-break-event' : 'event', log ],
+		] )
+	);
 
 class ActivityLogDay extends Component {
 	static propTypes = {
 		applySiteOffset: PropTypes.func.isRequired,
 		disableRestore: PropTypes.bool.isRequired,
+		disableBackup: PropTypes.bool.isRequired,
 		hideRestore: PropTypes.bool,
 		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
 		requestedRestoreActivityId: PropTypes.string,
-		requestRestore: PropTypes.func.isRequired,
-		rewindConfirmDialog: PropTypes.element,
+		requestDialog: PropTypes.func.isRequired,
+		closeDialog: PropTypes.func.isRequired,
+		restoreConfirmDialog: PropTypes.element,
+		backupConfirmDialog: PropTypes.element,
 		siteId: PropTypes.number,
 		tsEndOfSiteDay: PropTypes.number.isRequired,
 
@@ -71,11 +66,11 @@ class ActivityLogDay extends Component {
 		isToday: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		requestedRewind: PropTypes.string,
-		rewindRequestDismiss: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
 		disableRestore: false,
+		disableBackup: false,
 		isRewindActive: true,
 	};
 
@@ -99,10 +94,10 @@ class ActivityLogDay extends Component {
 			rewindHere: true,
 			dayExpanded: true,
 		} );
-		const { logs, requestRestore } = this.props;
+		const { logs, requestDialog } = this.props;
 		const lastLogId = get( logs, [ 0, 'activityId' ], null );
 		if ( lastLogId ) {
-			requestRestore( lastLogId, 'day' );
+			requestDialog( lastLogId, 'day', 'restore' );
 		}
 	};
 
@@ -126,15 +121,15 @@ class ActivityLogDay extends Component {
 			dayExpanded: false,
 		} );
 
-	closeDayAndRewindDialog = () => {
-		const { trackRewindCancel, rewindRequestDismiss, siteId } = this.props;
-		trackRewindCancel( siteId );
-		rewindRequestDismiss( siteId );
+	closeDayAndDialogs = () => {
+		const { closeDialog } = this.props;
+		closeDialog( 'restore' );
+		closeDialog( 'backup' );
 		this.closeDayOnly();
 	};
 
 	handleCloseDay = hasConfirmDialog =>
-		hasConfirmDialog ? this.closeDayAndRewindDialog : this.closeDayOnly;
+		hasConfirmDialog ? this.closeDayAndDialogs : this.closeDayOnly;
 
 	/**
 	 * Return a button to rewind to this point.
@@ -143,7 +138,7 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Button to display.
 	 */
 	renderRewindButton( type = '' ) {
-		const { disableRestore, hideRestore, isToday } = this.props;
+		const { disableRestore, disableBackup, hideRestore, isToday } = this.props;
 
 		if ( hideRestore || isToday ) {
 			return null;
@@ -153,7 +148,9 @@ class ActivityLogDay extends Component {
 			<Button
 				className="activity-log-day__rewind-button"
 				compact
-				disabled={ disableRestore || ! this.props.isRewindActive || this.state.rewindHere }
+				disabled={
+					disableBackup || disableRestore || ! this.props.isRewindActive || this.state.rewindHere
+				}
 				onClick={ this.handleClickRestore }
 				primary={ 'primary' === type }
 			>
@@ -206,37 +203,44 @@ class ActivityLogDay extends Component {
 		const {
 			applySiteOffset,
 			disableRestore,
+			disableBackup,
 			hideRestore,
 			isDiscardedPerspective,
 			isToday,
 			logs,
 			requestedRestoreActivityId,
-			requestRestore,
-			rewindConfirmDialog,
+			requestedBackupId,
+			requestDialog,
+			restoreConfirmDialog,
+			backupConfirmDialog,
 			siteId,
 			tsEndOfSiteDay,
 		} = this.props;
 
 		const rewindHere = this.state.rewindHere;
 		const dayExpanded = this.state.dayExpanded ? true : rewindHere;
-
+		const requestedActionId = requestedRestoreActivityId || requestedBackupId;
 		const hasConfirmDialog = logs.some(
 			( { activityId, activityTs } ) =>
-				activityId === requestedRestoreActivityId &&
-				( tsEndOfSiteDay - DAY_IN_MILLISECONDS <= activityTs && activityTs <= tsEndOfSiteDay )
+				activityId === requestedActionId &&
+				( tsEndOfSiteDay <= activityTs && activityTs < tsEndOfSiteDay + DAY_IN_MILLISECONDS )
 		);
 
 		const rewindButton = this.renderRewindButton( hasConfirmDialog ? '' : 'primary' );
-		const events = classifyEvents( rewriteStream( logs, isDiscardedPerspective ), requestedRestoreActivityId );
+		const events = classifyEvents( rewriteStream( logs, isDiscardedPerspective ), {
+			backupId: requestedBackupId,
+			rewindId: requestedRestoreActivityId,
+		} );
 
 		const LogItem = ( { log, hasBreak } ) => (
 			<ActivityLogItem
 				className={ hasBreak ? 'is-before-dialog' : '' }
 				applySiteOffset={ applySiteOffset }
 				disableRestore={ disableRestore }
+				disableBackup={ disableBackup }
 				hideRestore={ hideRestore }
 				log={ log }
-				requestRestore={ requestRestore }
+				requestDialog={ requestDialog }
 				siteId={ siteId }
 			/>
 		);
@@ -258,14 +262,17 @@ class ActivityLogDay extends Component {
 					const key = log.activityId;
 
 					switch ( type ) {
+						case 'backup-confirm-dialog':
+							return backupConfirmDialog;
+
 						case 'event':
 							return <LogItem { ...{ key, log } } />;
 
-						case 'event-before-dialog':
+						case 'timeline-break-event':
 							return <LogItem { ...{ key, log, hasBreak: true } } />;
 
 						case 'rewind-confirm-dialog':
-							return rewindConfirmDialog;
+							return restoreConfirmDialog;
 					}
 				} ) }
 			</FoldableCard>
@@ -287,11 +294,5 @@ export default connect(
 	},
 	{
 		recordTracksEvent: recordTracksEventAction,
-		rewindRequestDismiss: rewindRequestDismissAction,
-		trackRewindCancel: siteId =>
-			withAnalyticsAction(
-				recordTracksEventAction( 'calypso_activitylog_restore_cancel' ),
-				rewindRequestDismissAction( siteId )
-			),
 	}
 )( localize( ActivityLogDay ) );
