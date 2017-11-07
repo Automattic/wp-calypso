@@ -79,6 +79,7 @@ class LoggedInForm extends Component {
 		// Connected props
 		authorize: PropTypes.func.isRequired,
 		goBackToWpAdmin: PropTypes.func.isRequired,
+		goToXmlrpcErrorFallbackUrl: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		retryAuth: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
