@@ -3,7 +3,7 @@
   "version": "0.17.0",
   "dependencies": {
     "@types/node": {
-      "version": "8.0.48",
+      "version": "6.0.90",
       "dev": true
     },
     "5to6-codemod": {
@@ -1276,7 +1276,7 @@
       }
     },
     "crypto-browserify": {
-      "version": "3.12.0"
+      "version": "3.11.1"
     },
     "css-color-names": {
       "version": "0.0.3",
@@ -1682,8 +1682,8 @@
         }
       }
     },
-    "enzyme-adapter-react-16": {
-      "version": "1.0.4",
+    "enzyme-adapter-react-15": {
+      "version": "1.0.3",
       "dev": true,
       "dependencies": {
         "lodash": {
@@ -1693,7 +1693,7 @@
       }
     },
     "enzyme-adapter-utils": {
-      "version": "1.1.1",
+      "version": "1.1.0",
       "dev": true,
       "dependencies": {
         "lodash": {
@@ -3124,9 +3124,6 @@
         },
         "lodash.assign": {
           "version": "4.2.0"
-        },
-        "react": {
-          "version": "15.6.2"
         }
       }
     },
@@ -3201,15 +3198,7 @@
       }
     },
     "interpolate-components": {
-      "version": "1.1.0",
-      "dependencies": {
-        "react": {
-          "version": "15.6.2"
-        },
-        "react-dom": {
-          "version": "15.6.2"
-        }
-      }
+      "version": "1.1.0"
     },
     "interpret": {
       "version": "1.0.4"
@@ -4996,7 +4985,7 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "2.0.0"
+      "version": "1.2.7"
     },
     "npm-path": {
       "version": "1.1.0",
@@ -5214,7 +5203,7 @@
       "version": "1.0.0"
     },
     "parse5": {
-      "version": "3.0.3",
+      "version": "3.0.2",
       "dev": true
     },
     "parsejson": {
@@ -5380,7 +5369,7 @@
       }
     },
     "postcss-less": {
-      "version": "1.1.2",
+      "version": "1.1.1",
       "dev": true
     },
     "postcss-media-query-parser": {
@@ -5467,10 +5456,6 @@
       "resolved": "git://github.com/automattic/calypso-prettier.git#14307ba5cc6bcfc00243f5e2d1b25c72d52c28c8",
       "dev": true,
       "dependencies": {
-        "@types/node": {
-          "version": "6.0.90",
-          "dev": true
-        },
         "babel-code-frame": {
           "version": "7.0.0-alpha.12",
           "dev": true,
@@ -5541,10 +5526,6 @@
         },
         "minimist": {
           "version": "1.2.0",
-          "dev": true
-        },
-        "parse5": {
-          "version": "3.0.2",
           "dev": true
         },
         "postcss": {
@@ -5724,9 +5705,6 @@
     "randombytes": {
       "version": "2.0.5"
     },
-    "randomfill": {
-      "version": "1.0.3"
-    },
     "range-parser": {
       "version": "1.0.3"
     },
@@ -5742,12 +5720,7 @@
       }
     },
     "react": {
-      "version": "16.0.0",
-      "dependencies": {
-        "prop-types": {
-          "version": "15.6.0"
-        }
-      }
+      "version": "15.6.2"
     },
     "react-addons-create-fragment": {
       "version": "15.6.2"
@@ -5972,12 +5945,7 @@
       }
     },
     "react-dom": {
-      "version": "16.0.0",
-      "dependencies": {
-        "prop-types": {
-          "version": "15.6.0"
-        }
-      }
+      "version": "15.6.2"
     },
     "react-hot-api": {
       "version": "0.4.7"
@@ -6005,7 +5973,7 @@
       }
     },
     "react-test-renderer": {
-      "version": "16.0.0",
+      "version": "15.6.2",
       "dev": true
     },
     "react-transition-group": {
@@ -7160,12 +7128,7 @@
           "version": "2.8.29"
         },
         "webpack-sources": {
-          "version": "1.0.2",
-          "dependencies": {
-            "source-map": {
-              "version": "0.6.1"
-            }
-          }
+          "version": "1.0.1"
         }
       }
     },
@@ -7410,12 +7373,7 @@
           "version": "4.5.0"
         },
         "webpack-sources": {
-          "version": "1.0.2",
-          "dependencies": {
-            "source-map": {
-              "version": "0.6.1"
-            }
-          }
+          "version": "1.0.1"
         },
         "which-module": {
           "version": "2.0.0"
