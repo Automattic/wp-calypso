@@ -52,6 +52,14 @@ describe( 'Domain Details Form', () => {
 		},
 	};
 
+	const propsWithGeoData = {
+		...defaultProps,
+		geo: {
+			country_short: 'IT',
+			city: 'Roma',
+		},
+	};
+
 	const domainProduct = domainRegistration( {
 		productSlug: 'normal_domain',
 		domain: 'test.test',
@@ -197,6 +205,40 @@ describe( 'Domain Details Form', () => {
 			);
 			expect( inputs ).to.have.length( 1 );
 			expect( inputs.get( 0 ).props.name ).to.equal( 'postal-code' );
+		} );
+	} );
+
+	describe( 'Pre-populating fields with geo data', () => {
+		test( 'should populate form state model with country code and city when contact details not available', () => {
+			const wrapper = shallow( <DomainDetailsForm { ...propsWithGeoData } /> );
+			expect( wrapper.state().form.countryCode.value ).to.equal( 'IT' );
+			expect( wrapper.state().form.city.value ).to.equal( 'Roma' );
+		} );
+
+		test( 'should not populate form state model when contact details already contain country code', () => {
+			const wrapper = shallow(
+				<DomainDetailsForm
+					{ ...propsWithGeoData }
+					contactDetails={ {
+						countryCode: 'AU',
+					} }
+				/>
+			);
+			expect( wrapper.state().form.countryCode.value ).to.equal( 'AU' );
+			expect( wrapper.state().form.city.value ).to.equal( '' );
+		} );
+
+		test( 'should give preference to contact details city', () => {
+			const wrapper = shallow(
+				<DomainDetailsForm
+					{ ...propsWithGeoData }
+					contactDetails={ {
+						city: 'Marseille',
+					} }
+				/>
+			);
+			expect( wrapper.state().form.countryCode.value ).to.equal( 'IT' );
+			expect( wrapper.state().form.city.value ).to.equal( 'Marseille' );
 		} );
 	} );
 } );
