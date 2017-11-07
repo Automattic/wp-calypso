@@ -12,6 +12,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import LocaleSuggestions from 'components/locale-suggestions';
 import { LOGGED_OUT_PROPS } from './lib/authorize-form';
 import { LoggedOutFormTestComponent as LoggedOutForm } from '../auth-logged-out-form';
 
@@ -27,5 +28,24 @@ describe( 'LoggedOutForm', () => {
 		);
 
 		expect( wrapper ).toMatchSnapshot();
+	} );
+
+	test( 'should render with locale suggestions', () => {
+		const wrapper = shallow(
+			<LoggedOutForm
+				createAccount={ noop }
+				jetpackConnectAuthorize={ {
+					...LOGGED_OUT_PROPS.jetpackConnectAuthorize,
+					locale: 'es',
+				} }
+				locale="es"
+				path="/jetpack/connect/authorize/es"
+				recordTracksEvent={ noop }
+				translate={ identity }
+			/>
+		);
+
+		expect( wrapper ).toMatchSnapshot();
+		expect( wrapper.find( LocaleSuggestions ) ).toHaveLength( 1 );
 	} );
 } );
