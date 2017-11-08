@@ -19,6 +19,7 @@ import {
 	getSetStoreAddressDuringInitialSetup,
 	getTriedCustomizerDuringInitialSetup,
 	isDefaultShippingZoneCreated,
+	isStoreSetupComplete,
 	getCheckedTaxSetup,
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
@@ -241,6 +242,20 @@ describe( 'selectors', () => {
 
 		test( 'should get whether initial setup was completed from the state (124-false).', () => {
 			expect( getSetStoreAddressDuringInitialSetup( loadedState, 124 ) ).to.eql( false );
+		} );
+
+		test( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getSetStoreAddressDuringInitialSetup( loadedStateWithUi ) ).to.eql( true );
+		} );
+	} );
+
+	describe( '#isStoreSetupComplete', () => {
+		test( 'should get whether store setup was completed from the state (123-true).', () => {
+			expect( isStoreSetupComplete( loadedState, 123 ) ).to.eql( true );
+		} );
+
+		test( 'should get whether store setup was completed from the state (124-false).', () => {
+			expect( isStoreSetupComplete( loadedState, 124 ) ).to.eql( false );
 		} );
 
 		test( 'should get the siteId from the UI tree if not provided.', () => {

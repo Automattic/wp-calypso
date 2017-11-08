@@ -21,6 +21,7 @@ import {
 	getSetStoreAddressDuringInitialSetup,
 	getFinishedInstallOfRequiredPlugins,
 	getFinishedPageSetup,
+	isStoreSetupComplete,
 } from 'woocommerce/state/sites/setup-choices/selectors';
 import {
 	areOrdersLoading,
@@ -217,14 +218,7 @@ function mapStateToProps( state ) {
 	const finishedInstallOfRequiredPlugins = getFinishedInstallOfRequiredPlugins( state );
 	const finishedPageSetup = getFinishedPageSetup( state );
 	const setStoreAddressDuringInitialSetup = getSetStoreAddressDuringInitialSetup( state );
-
-	// This prop toggles the display of the setup steps vs the normal dashboard.
-	const isSetupComplete =
-		siteId &&
-		finishedInstallOfRequiredPlugins &&
-		finishedPageSetup &&
-		setStoreAddressDuringInitialSetup &&
-		finishedInitialSetup;
+	const isSetupComplete = isStoreSetupComplete( state );
 
 	return {
 		finishedInitialSetup,
