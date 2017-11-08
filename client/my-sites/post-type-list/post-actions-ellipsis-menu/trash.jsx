@@ -14,7 +14,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
-import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
+import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { trashPost, deletePost } from 'state/posts/actions';
 import { canCurrentUser } from 'state/selectors';
@@ -32,8 +32,8 @@ class PostActionsEllipsisMenuTrash extends Component {
 		canDelete: PropTypes.bool,
 		trashPost: PropTypes.func,
 		deletePost: PropTypes.func,
-		bumpTrashStat: PropTypes.func,
-		bumpDeleteStat: PropTypes.func,
+		onTrashClick: PropTypes.func,
+		onDeleteClick: PropTypes.func,
 	};
 
 	constructor() {
@@ -49,10 +49,10 @@ class PostActionsEllipsisMenuTrash extends Component {
 		}
 
 		if ( 'trash' !== status ) {
-			this.props.bumpTrashStat();
+			this.props.onTrashClick();
 			this.props.trashPost( siteId, postId );
 		} else if ( confirm( translate( 'Are you sure you want to permanently delete this post?' ) ) ) {
-			this.props.bumpDeleteStat();
+			this.props.onDeleteClick();
 			this.props.deletePost( siteId, postId );
 		}
 	}
@@ -97,22 +97,25 @@ const mapStateToProps = ( state, { globalId } ) => {
 	};
 };
 
-const mapDispatchToProps = { trashPost, deletePost, bumpAnalyticsStat };
+const mapDispatchToProps = { trashPost, deletePost, bumpStat, recordTracksEvent };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpTrashStat = bumpStatGenerator(
-		get( stateProps, 'type.name' ),
-		'trash',
-		dispatchProps.bumpAnalyticsStat
+	const postType = get( stateProps, 'type.name' );
+	const onTrashClick = () => (
+		bumpStatGenerator( postType, 'trash', dispatchProps.bumpStat ),
+		dispatchProps.recordTracksEvent( 'calypso_post_type_list_trashed', {
+			post_type: postType,
+		} )
 	);
-	const bumpDeleteStat = bumpStatGenerator(
-		get( stateProps, 'type.name' ),
-		'delete',
-		dispatchProps.bumpAnalyticsStat
+	const onDeleteClick = () => (
+		bumpStatGenerator( postType, 'delete', dispatchProps.bumpStat ),
+		dispatchProps.recordTracksEvent( 'calypso_post_type_list_deleted', {
+			post_type: postType,
+		} )
 	);
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, {
-		bumpTrashStat,
-		bumpDeleteStat,
+		onTrashClick,
+		onDeleteClick,
 	} );
 };
 
