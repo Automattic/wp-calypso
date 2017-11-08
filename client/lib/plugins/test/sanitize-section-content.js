@@ -39,6 +39,9 @@ test( 'should strip out content with non-whitelisted tags', () =>
 test( 'should strip out non-whitelisted children', () =>
 	expect( clean( '<marquee><marquee>👍</marquee></marquee>' ) ).toBe( '👍' ) );
 
+test( 'should not break when no attributes present', () =>
+	expect( clean( '<p></p>' ) ).toBe( '<p></p>' ) );
+
 test( 'should allow whitelisted attributes', () =>
 	expect( clean( '<img alt="graphic">' ) ).toBe( '<img alt="graphic">' ) );
 

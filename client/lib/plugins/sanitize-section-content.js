@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { forEach } from 'lodash';
+import { filter } from 'lodash';
 import validUrl from 'valid-url';
 
 /**
@@ -172,35 +172,23 @@ export const sanitizeSectionContent = content => {
 		// potential cross-site scripting attacks _and_
 		// prevent custom styles from interfering with
 		// our page's own rendering
-
-		const attrRemoveList = [];
-
-		// these aren't Arrays, so iteration is odd
-		forEach( node.attributes, ( { name: attrName, value } ) => {
-			// get rid of non-whitelisted attributes
-			if ( ! isAllowedAttr( tagName, attrName ) ) {
-				attrRemoveList.push( attrName );
-				return;
-			}
-
-			// for some, specifically links, we don't want to
-			// "sanitize" the values because we could mess them up
-			// for example, encoding a real URL will break it
-			if (
-				( ( 'src' === attrName || 'href' === attrName ) && validUrl.isWebUri( value ) ) ||
-				( 'iframe' === tagName && 'type' === attrName && isValidYoutubeEmbed( node ) )
-			) {
-				return;
-			}
-
-			// just don't even allow non-url links
-			if ( ( 'href' === attrName || 'src' === attrName ) && ! validUrl.isWebUri( value ) ) {
-				attrRemoveList.push( attrName );
-			}
-		} );
-
-		// actually remove the attributes
-		attrRemoveList.forEach( name => node.removeAttribute( name ) );
+		//
+		// Node.attributes is a NamedNodeMap, not an Array
+		// so it has no Array methods and the Attr nodes' indexes may differ
+		// Also there is no support for Node.getAttributeNames in IE :(
+		//
+		// Note that we must iterate twice because Node.attributes is
+		// a live collection and we will introduce bugs if we remove
+		// as we go on the first pass.
+		//
+		// @see https://developer.mozilla.org/en-US/docs/Web/API/Element/attributes
+		filter(
+			node.attributes,
+			( { name, value } ) =>
+				! isAllowedAttr( tagName, name ) ||
+				// only valid http(s) URLs are allowed
+				( ( 'href' === name || 'src' === name ) && ! validUrl.isWebUri( value ) )
+		).forEach( ( { name } ) => node.removeAttribute( name ) );
 
 		// of course, all links need to be normalized since
 		// they now exist inside of the Calypso context
