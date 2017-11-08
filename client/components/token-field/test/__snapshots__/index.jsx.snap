@@ -19,7 +19,7 @@ exports[`TokenField render should render tokens 1`] = `
         foo
       </span>
       <span
-        class="token-field__remove-token noticon noticon-close-alt"
+        class="token-field__remove-token"
       />
     </span>
     <span
@@ -32,7 +32,7 @@ exports[`TokenField render should render tokens 1`] = `
         bar
       </span>
       <span
-        class="token-field__remove-token noticon noticon-close-alt"
+        class="token-field__remove-token"
       />
     </span>
     <input
