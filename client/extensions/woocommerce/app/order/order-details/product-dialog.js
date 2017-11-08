@@ -23,6 +23,7 @@ import ProductSearch from 'woocommerce/components/product-search';
 
 class OrderProductDialog extends Component {
 	static propTypes = {
+		allProducts: PropTypes.array.isRequired,
 		isVisible: PropTypes.bool.isRequired,
 		editOrder: PropTypes.func.isRequired,
 		order: PropTypes.shape( {
