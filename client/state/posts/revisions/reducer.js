@@ -57,6 +57,7 @@ export function selection( state = {}, action ) {
 			return { ...state, revisionId: action.revisionId };
 		}
 		case POST_EDIT:
+		case POST_REVISIONS_TOGGLE_SHOWING_DIALOG:
 		case SELECTED_SITE_SET: {
 			return { ...state, revisionId: null };
 		}

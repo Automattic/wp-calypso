@@ -9,12 +9,16 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { requesting, revisions } from '../reducer';
+import reducer, { requesting, revisions, selection, ui } from '../reducer';
 import {
+	POST_EDIT,
 	POST_REVISIONS_RECEIVE,
 	POST_REVISIONS_REQUEST,
 	POST_REVISIONS_REQUEST_FAILURE,
 	POST_REVISIONS_REQUEST_SUCCESS,
+	POST_REVISIONS_SELECT,
+	POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
+	SELECTED_SITE_SET,
 } from 'state/action-types';
 
 describe( 'reducer', () => {
@@ -22,7 +26,6 @@ describe( 'reducer', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'requesting',
 			'revisions',
-			// @TODO add selection & ui tests
 			'selection',
 			'ui',
 		] );
@@ -256,6 +259,118 @@ describe( 'reducer', () => {
 						},
 					},
 				},
+			} );
+		} );
+	} );
+
+	describe( '#selection', () => {
+		test( 'should default to an empty object', () => {
+			const state = selection( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		test( 'should select provided revision id when none is selected', () => {
+			const state = selection( deepFreeze( {} ), {
+				type: POST_REVISIONS_SELECT,
+				revisionId: 1215,
+			} );
+			expect( state ).to.eql( {
+				revisionId: 1215,
+			} );
+		} );
+
+		test( 'should select provided revision id when another is already selected', () => {
+			const state = selection(
+				deepFreeze( {
+					revisionId: 1776,
+				} ),
+				{
+					type: POST_REVISIONS_SELECT,
+					revisionId: 1492,
+				}
+			);
+			expect( state ).to.eql( {
+				revisionId: 1492,
+			} );
+		} );
+
+		test( 'should clear selection when selecting site', () => {
+			const state = selection(
+				deepFreeze( {
+					revisionId: 1776,
+				} ),
+				{
+					type: SELECTED_SITE_SET,
+				}
+			);
+			expect( state ).to.eql( {
+				revisionId: null,
+			} );
+		} );
+
+		// @TODO validate this behavior
+		test( 'should clear selection when toggling dialog', () => {
+			const state = selection(
+				deepFreeze( {
+					revisionId: 1776,
+				} ),
+				{
+					type: POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
+				}
+			);
+			expect( state ).to.eql( {
+				revisionId: null,
+			} );
+		} );
+
+		test( 'should clear selection when editing post', () => {
+			const state = selection(
+				deepFreeze( {
+					revisionId: 1776,
+				} ),
+				{
+					type: POST_EDIT,
+				}
+			);
+			expect( state ).to.eql( {
+				revisionId: null,
+			} );
+		} );
+	} );
+
+	describe( '#ui', () => {
+		test( 'should default to an empty object', () => {
+			const state = ui( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		test( 'should show when unshown & toggling', () => {
+			const state = ui(
+				deepFreeze( {
+					isDialogVisible: false,
+				} ),
+				{
+					type: POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
+				}
+			);
+			expect( state ).to.eql( {
+				isDialogVisible: true,
+			} );
+		} );
+
+		test( 'should hide when shown & toggling', () => {
+			const state = ui(
+				deepFreeze( {
+					isDialogVisible: true,
+				} ),
+				{
+					type: POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
+				}
+			);
+			expect( state ).to.eql( {
+				isDialogVisible: false,
 			} );
 		} );
 	} );
