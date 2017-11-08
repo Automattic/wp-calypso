@@ -16,10 +16,8 @@ import { get } from 'lodash';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
-import { canCurrentUser } from 'state/selectors';
 import { getPost } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import { getCurrentUserId, isValidCapability } from 'state/current-user/selectors';
+import { canCurrentUserEditPost } from 'state/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 function PostActionsEllipsisMenuEdit( { translate, canEdit, status, editUrl, bumpStat } ) {
@@ -49,18 +47,8 @@ const mapStateToProps = ( state, { globalId } ) => {
 		return {};
 	}
 
-	const type = getPostType( state, post.site_ID, post.type );
-	const userId = getCurrentUserId( state );
-	const isAuthor = get( post.author, 'ID' ) === userId;
-
-	let capability = isAuthor ? 'edit_posts' : 'edit_others_posts';
-	const typeCapability = get( type, [ 'capabilities', capability ] );
-	if ( isValidCapability( state, post.site_ID, typeCapability ) ) {
-		capability = typeCapability;
-	}
-
 	return {
-		canEdit: canCurrentUser( state, post.site_ID, capability ),
+		canEdit: canCurrentUserEditPost( state, globalId ),
 		status: post.status,
 		editUrl: getEditorPath( state, post.site_ID, post.ID ),
 	};

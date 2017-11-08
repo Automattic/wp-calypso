@@ -14,10 +14,8 @@ import { get, includes } from 'lodash';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
-import { canCurrentUser } from 'state/selectors';
 import { getPost } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import { getCurrentUserId, isValidCapability } from 'state/current-user/selectors';
+import { canCurrentUserEditPost } from 'state/selectors';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 import { isEnabled } from 'config';
 import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
@@ -58,19 +56,9 @@ const mapStateToProps = ( state, { globalId } ) => {
 		return {};
 	}
 
-	const type = getPostType( state, post.site_ID, post.type );
-	const userId = getCurrentUserId( state );
-	const isAuthor = get( post.author, 'ID' ) === userId;
-
-	let capability = isAuthor ? 'edit_posts' : 'edit_others_posts';
-	const typeCapability = get( type, [ 'capabilities', capability ] );
-	if ( isValidCapability( state, post.site_ID, typeCapability ) ) {
-		capability = typeCapability;
-	}
-
 	return {
+		canEdit: canCurrentUserEditPost( state, globalId ),
 		status: post.status,
-		canEdit: canCurrentUser( state, post.site_ID, capability ),
 		duplicateUrl: getEditorDuplicatePostPath( state, post.site_ID, post.ID ),
 	};
 };
