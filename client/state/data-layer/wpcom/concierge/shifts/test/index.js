@@ -9,12 +9,10 @@ import {
 	fetchConciergeShifts,
 	storeFetchedConciergeShifts,
 	showConciergeShiftsFetchError,
+	conciergeShiftsFetchErrorNotice,
 } from '../';
-import {
-	CONCIERGE_SHIFTS_REQUEST,
-	CONCIERGE_SHIFTS_UPDATE,
-	NOTICE_CREATE,
-} from 'state/action-types';
+import { updateConciergeShifts } from 'state/concierge/actions';
+import { CONCIERGE_SHIFTS_REQUEST } from 'state/action-types';
 
 describe( 'wpcom-api', () => {
 	describe( 'concierge', () => {
@@ -50,10 +48,7 @@ describe( 'wpcom-api', () => {
 
 			storeFetchedConciergeShifts( { dispatch }, {}, mockShifts );
 
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: CONCIERGE_SHIFTS_UPDATE,
-				shifts: mockShifts,
-			} );
+			expect( dispatch ).toHaveBeenCalledWith( updateConciergeShifts( mockShifts ) );
 		} );
 
 		test( 'showConciergeShiftsFetchError()', () => {
@@ -63,14 +58,7 @@ describe( 'wpcom-api', () => {
 
 			// It should be enough to make sure it dispatches a error notice action here,
 			// instead for the whole action object and the text.
-			expect( dispatch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					type: NOTICE_CREATE,
-					notice: expect.objectContaining( {
-						status: 'is-error',
-					} ),
-				} )
-			);
+			expect( dispatch ).toHaveBeenCalledWith( conciergeShiftsFetchErrorNotice );
 		} );
 	} );
 } );
