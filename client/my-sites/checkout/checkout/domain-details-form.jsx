@@ -512,18 +512,12 @@ export class DomainDetailsForm extends PureComponent {
 			{
 				errors_count: ( errors && errors.length ) || 0,
 				submission_count: this.state.submissionCount + 1,
+				country_code_from_form: contactDetails.countryCode,
 			}
 		);
 
 		analytics.tracks.recordEvent( 'calypso_contact_information_form_submit', tracksEventObject );
 		this.setState( { submissionCount: this.state.submissionCount + 1 } );
-
-		analytics.tracks.recordEvent( 'calypso_contact_information_details_form_submit', {
-			city: contactDetails.city,
-			country_code: contactDetails.countryCode,
-			state: contactDetails.state,
-			postal_code: contactDetails.postalCode,
-		} );
 	}
 
 	finish() {
