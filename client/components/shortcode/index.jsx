@@ -21,7 +21,7 @@ import * as ShortcodesActions from 'lib/shortcodes/actions';
 import ShortcodeData from './data';
 import ShortcodeFrame from './frame';
 
-export default class extends React.Component {
+export default class Shortcode extends React.Component {
 	static displayName = 'Shortcode';
 
 	static propTypes = {
