@@ -164,7 +164,7 @@ describe( '#removeDuplicateGets', () => {
 } );
 
 describe( '#applyDuplicateHandlers', () => {
-	beforeAll( clearQueue );
+	beforeEach( clearQueue );
 
 	test( 'should return new requests', () => {
 		removeDuplicateGets( { nextRequest: cp( getSites ) } );
