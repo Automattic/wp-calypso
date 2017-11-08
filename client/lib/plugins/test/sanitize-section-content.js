@@ -78,6 +78,14 @@ test( 'should only set link params if href set', () => {
 	expect( clean( '<a>link</a>' ) ).toBe( '<a>link</a>' );
 } );
 
+test( 'should secure Youtube sources', () => {
+	const embed = cleanNode(
+		'<iframe type="text/html" class="youtube-player" src="http://youtube.com/123456" />'
+	);
+
+	expect( embed.getAttribute( 'src' ) ).toBe( 'https://youtube.com/123456' );
+} );
+
 test( 'should bump up header levels', () => {
 	expect( clean( '<h1>👍</h1>' ) ).toBe( '<h3>👍</h3>' );
 	expect( clean( '<h2>👍</h2>' ) ).toBe( '<h3>👍</h3>' );
