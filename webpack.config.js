@@ -65,8 +65,7 @@ function hasPkgEsnext( filepath ) {
 	const packageJsonText = fs.readFileSync( packageJsonPath,
 		{ encoding: 'utf-8' } );
 	const packageJson = JSON.parse( packageJsonText );
-	return {}.hasOwnProperty.call( packageJson, PROPKEY_ESNEXT ) ||
-		{}.hasOwnProperty.call( packageJson, 'module' );
+	return packageJson.hasOwnProperty( PROPKEY_ESNEXT ) || packageJson.hasOwnProperty( 'module' );
 }
 
 const babelLoader = {
