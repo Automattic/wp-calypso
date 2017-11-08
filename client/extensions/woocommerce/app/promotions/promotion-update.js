@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { debounce } from 'lodash';
+import { difference, debounce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,6 +39,7 @@ import { isValidPromotion } from './helpers';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
 import { ProtectFormGuard } from 'lib/protect-form';
+import { recordTrack } from 'woocommerce/lib/analytics';
 
 class PromotionUpdate extends React.Component {
 	static propTypes = {
@@ -90,6 +91,14 @@ class PromotionUpdate extends React.Component {
 			this.props.fetchPromotions( newSiteId );
 			this.props.fetchSettingsGeneral( newSiteId );
 		}
+
+		// Track user starting to edit this promotion.
+		if ( ! this.props.edits && newProps.edits ) {
+			const editedFields = difference( Object.keys( newProps.edits ), [ 'id', 'name', 'type' ] );
+			const initial_field = 1 === editedFields.length ? editedFields[ 0 ] : 'multiple';
+
+			recordTrack( 'calypso_woocommerce_promotion_existing_edit_start', { initial_field } );
+		}
 	}
 
 	componentWillUnmount() {
@@ -121,11 +130,20 @@ class PromotionUpdate extends React.Component {
 				);
 			};
 			dispatchDelete( site.ID, promotion, successAction, failureAction );
+
+			recordTrack( 'calypso_woocommerce_promotion_delete', {
+				type: promotion.type,
+				sale_price: promotion.salePrice,
+				percent_discount: promotion.percentDiscount,
+				fixed_discount: promotion.fixedDiscount,
+				start_date: promotion.startDate,
+				end_date: promotion.endDate,
+			} );
 		} );
 	};
 
 	onSave = () => {
-		const { site, promotion, translate } = this.props;
+		const { site, promotion, edits, translate } = this.props;
 
 		this.setState( () => ( { busy: true } ) );
 
@@ -158,6 +176,17 @@ class PromotionUpdate extends React.Component {
 		};
 
 		this.props.updatePromotion( site.ID, promotion, successAction, failureAction );
+
+		const edited_fields = difference( Object.keys( edits ), [ 'id', 'name', 'type' ] ).join();
+		recordTrack( 'calypso_woocommerce_promotion_update', {
+			edited_fields,
+			type: promotion.type,
+			sale_price: promotion.salePrice,
+			percent_discount: promotion.percentDiscount,
+			fixed_discount: promotion.fixedDiscount,
+			start_date: promotion.startDate,
+			end_date: promotion.endDate,
+		} );
 	};
 
 	render() {
@@ -206,9 +235,11 @@ function mapStateToProps( state, ownProps ) {
 	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
 	const products = getPromotionableProducts( state, site.ID );
 	const productCategories = getProductCategories( state, site.ID );
-	const hasEdits = Boolean( getPromotionEdits( state, promotionId, site.ID ) );
+	const edits = getPromotionEdits( state, promotionId, site.ID );
+	const hasEdits = Boolean( edits );
 
 	return {
+		edits,
 		hasEdits,
 		site,
 		promotion,
