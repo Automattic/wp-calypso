@@ -41,8 +41,8 @@ class ProductSearch extends Component {
 	}
 
 	componentWillReceiveProps( newProps ) {
-		const { oldSiteId } = this.props;
-		const { newSiteId } = newProps;
+		const { siteId: oldSiteId } = this.props;
+		const { siteId: newSiteId } = newProps;
 
 		if ( oldSiteId !== newSiteId ) {
 			this.props.fetchProducts( newSiteId, { offset: 0, per_page: 50 } );
