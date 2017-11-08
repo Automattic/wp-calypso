@@ -67,40 +67,32 @@ class Dashboard extends Component {
 	};
 
 	componentDidMount = () => {
-		const { siteId, productsLoaded } = this.props;
+		const { siteId } = this.props;
 
 		if ( siteId ) {
-			this.props.fetchSetupChoices( siteId );
-			this.props.fetchOrders( siteId );
-			this.props.requestSettings( siteId );
-
-			if ( ! productsLoaded ) {
-				this.fetchSiteProducts( siteId );
-			}
+			this.fetchStoreData();
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
+	componentDidUpdate = prevProps => {
+		const { siteId } = this.props;
+		const oldSiteId = prevProps.siteId ? prevProps.siteId : null;
+
+		if ( siteId && oldSiteId !== siteId ) {
+			this.fetchStoreData();
+		}
+	};
+
+	fetchStoreData = () => {
 		const { siteId, productsLoaded } = this.props;
+		this.props.fetchSetupChoices( siteId );
+		this.props.fetchOrders( siteId );
+		this.props.requestSettings( siteId );
 
-		const newSiteId = newProps.siteId ? newProps.siteId : null;
-		const oldSiteId = siteId ? siteId : null;
-
-		if ( newSiteId && oldSiteId !== newSiteId ) {
-			this.props.fetchSetupChoices( newSiteId );
-			this.props.fetchOrders( newSiteId );
-			this.props.requestSettings( newSiteId );
-
-			if ( ! productsLoaded ) {
-				this.fetchSiteProducts( newSiteId );
-			}
+		if ( ! productsLoaded ) {
+			const params = { page: 1 };
+			this.props.fetchProducts( siteId, params, null, null );
 		}
-	};
-
-	fetchSiteProducts = siteId => {
-		const params = { page: 1 };
-
-		this.props.fetchProducts( siteId, params, null, null );
 	};
 
 	getBreadcrumb = () => {
