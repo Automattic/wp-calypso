@@ -456,7 +456,7 @@ class RegisterDomainStep extends React.Component {
 								this.props.onDomainsAvailabilityChange( false );
 							} else if ( error && error.error ) {
 								error.code = error.error;
-								this.showValidationErrorMessage( domain, error );
+								this.showValidationErrorMessage( domain, error.code );
 							}
 
 							const analyticsResults = [
