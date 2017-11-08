@@ -35,7 +35,6 @@ export class EditorGroundControl extends PureComponent {
 		isSaving: PropTypes.bool,
 		isSidebarOpened: PropTypes.bool,
 		loadRevision: PropTypes.func.isRequired,
-		nestedSidebar: NestedSidebarPropType,
 		moment: PropTypes.func,
 		onPreview: PropTypes.func,
 		onPublish: PropTypes.func,
