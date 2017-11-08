@@ -114,7 +114,7 @@ Markup = {
 					parsed.attrs.named.align,
 					parsed.attrs.named.classes
 				) }
-				style={ { width: width } }
+				style={ { width: parseInt( width, 10 ) } }
 			>
 				<dt className="wp-caption-dt" dangerouslySetInnerHTML={ { __html: img } } />
 				<dd className="wp-caption-dd">{ caption }</dd>

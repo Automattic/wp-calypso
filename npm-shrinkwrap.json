@@ -1661,8 +1661,8 @@
         }
       }
     },
-    "enzyme-adapter-react-15": {
-      "version": "1.0.3",
+    "enzyme-adapter-react-16": {
+      "version": "1.0.4",
       "dev": true,
       "dependencies": {
         "lodash": {
@@ -3120,6 +3120,9 @@
         },
         "lodash.assign": {
           "version": "4.2.0"
+        },
+        "react": {
+          "version": "15.6.2"
         }
       }
     },
@@ -3194,7 +3197,15 @@
       }
     },
     "interpolate-components": {
-      "version": "1.1.0"
+      "version": "1.1.0",
+      "dependencies": {
+        "react": {
+          "version": "15.6.2"
+        },
+        "react-dom": {
+          "version": "15.6.2"
+        }
+      }
     },
     "interpret": {
       "version": "1.0.4"
@@ -4981,7 +4992,7 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "1.2.7"
+      "version": "2.0.0"
     },
     "npm-path": {
       "version": "1.1.0",
@@ -5681,7 +5692,12 @@
       }
     },
     "react": {
-      "version": "15.6.2"
+      "version": "16.0.0",
+      "dependencies": {
+        "prop-types": {
+          "version": "15.6.0"
+        }
+      }
     },
     "react-addons-create-fragment": {
       "version": "15.6.2"
@@ -5906,7 +5922,12 @@
       }
     },
     "react-dom": {
-      "version": "15.6.2"
+      "version": "16.0.0",
+      "dependencies": {
+        "prop-types": {
+          "version": "15.6.0"
+        }
+      }
     },
     "react-hot-api": {
       "version": "0.4.7"
@@ -5934,7 +5955,7 @@
       }
     },
     "react-test-renderer": {
-      "version": "15.6.2",
+      "version": "16.0.0",
       "dev": true
     },
     "react-transition-group": {
