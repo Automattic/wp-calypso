@@ -35,6 +35,13 @@ import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getJetpackConnectRedirectAfterAuth } from 'state/selectors';
 import { login } from 'lib/paths';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import {
+	authorize as authorizeAction,
+	goBackToWpAdmin as goBackToWpAdminAction,
+	goToXmlrpcErrorFallbackUrl as goToXmlrpcErrorFallbackUrlAction,
+	retryAuth as retryAuthAction,
+} from 'state/jetpack-connect/actions';
 
 /**
  * Constants
@@ -46,9 +53,7 @@ const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 class LoggedInForm extends Component {
 	static propTypes = {
 		authAttempts: PropTypes.number.isRequired,
-		authorize: PropTypes.func.isRequired,
 		calypsoStartedConnection: PropTypes.bool,
-		goBackToWpAdmin: PropTypes.func.isRequired,
 		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
@@ -66,20 +71,27 @@ class LoggedInForm extends Component {
 			} ).isRequired,
 			siteReceived: PropTypes.bool,
 		} ).isRequired,
-		recordTracksEvent: PropTypes.func.isRequired,
 		requestHasExpiredSecretError: PropTypes.func.isRequired,
 		requestHasXmlrpcError: PropTypes.func.isRequired,
-		retryAuth: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
-		translate: PropTypes.func.isRequired,
 		user: PropTypes.object.isRequired,
+
+		// Connected props
+		authorize: PropTypes.func.isRequired,
+		goBackToWpAdmin: PropTypes.func.isRequired,
+		goToXmlrpcErrorFallbackUrl: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
+		retryAuth: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
 	};
 
+	retryingAuth = false;
 	state = { haveAuthorized: false };
 
 	componentWillMount() {
+		const { authorize, recordTracksEvent } = this.props;
 		const { queryObject, autoAuthorize } = this.props.jetpackConnectAuthorize;
-		this.props.recordTracksEvent( 'calypso_jpc_auth_view' );
+		recordTracksEvent( 'calypso_jpc_auth_view' );
 
 		const doAutoAuthorize =
 			! this.props.isAlreadyOnSitesList &&
@@ -93,37 +105,37 @@ class LoggedInForm extends Component {
 		if ( this.props.isSSO || doAutoAuthorize ) {
 			debug( 'Authorizing automatically on component mount' );
 			this.setState( { haveAuthorized: true } );
-			return this.props.authorize( queryObject );
+			return authorize( queryObject );
 		}
 	}
 
-	componentWillReceiveProps( props ) {
-		const { redirectAfterAuth } = props;
+	componentWillReceiveProps( nextProps ) {
+		const { goBackToWpAdmin, redirectAfterAuth, retryAuth } = nextProps;
 		const {
 			siteReceived,
 			queryObject,
 			isRedirectingToWpAdmin,
 			authorizeSuccess,
 			authorizeError,
-		} = props.jetpackConnectAuthorize;
+		} = nextProps.jetpackConnectAuthorize;
 
 		// For SSO, WooCommerce Services, and JPO users, do not display plans page
 		// Instead, redirect back to admin as soon as we're connected
-		if ( props.isSSO || props.isWoo || this.isFromJpo( props ) ) {
+		if ( nextProps.isSSO || nextProps.isWoo || this.isFromJpo( nextProps ) ) {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
-				return this.props.goBackToWpAdmin( redirectAfterAuth );
+				return goBackToWpAdmin( redirectAfterAuth );
 			}
 		} else if ( siteReceived ) {
 			return this.redirect();
-		} else if ( props.isAlreadyOnSitesList && queryObject.already_authorized ) {
+		} else if ( nextProps.isAlreadyOnSitesList && queryObject.already_authorized ) {
 			return this.redirect();
 		}
 		if (
 			authorizeError &&
-			props.authAttempts < MAX_AUTH_ATTEMPTS &&
+			nextProps.authAttempts < MAX_AUTH_ATTEMPTS &&
 			! this.retryingAuth &&
-			! props.requestHasXmlrpcError() &&
-			! props.requestHasExpiredSecretError() &&
+			! nextProps.requestHasXmlrpcError() &&
+			! nextProps.requestHasExpiredSecretError() &&
 			queryObject.site
 		) {
 			// Expired secret errors, and XMLRPC errors will be resolved in `handleResolve`.
@@ -131,12 +143,12 @@ class LoggedInForm extends Component {
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return this.props.retryAuth( queryObject.site, attempts + 1 );
+			return retryAuth( queryObject.site, attempts + 1 );
 		}
 	}
 
 	redirect() {
-		const { redirectAfterAuth } = this.props;
+		const { goBackToWpAdmin, redirectAfterAuth } = this.props;
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 
 		if ( this.props.isSSO || this.props.isWoo || this.isFromJpo( this.props ) ) {
@@ -147,7 +159,7 @@ class LoggedInForm extends Component {
 				'SSO found:',
 				this.props.isSSO
 			);
-			this.props.goBackToWpAdmin( redirectAfterAuth );
+			goBackToWpAdmin( redirectAfterAuth );
 		} else {
 			page.redirect( this.getRedirectionTarget() );
 		}
@@ -166,32 +178,34 @@ class LoggedInForm extends Component {
 	};
 
 	handleSignOut = () => {
+		const { recordTracksEvent } = this.props;
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const redirect = addQueryArgs( queryObject, window.location.href );
-		this.props.recordTracksEvent( 'calypso_jpc_signout_click' );
+		recordTracksEvent( 'calypso_jpc_signout_click' );
 		userUtilities.logout( redirect );
 	};
 
 	handleResolve = () => {
+		const { goToXmlrpcErrorFallbackUrl, recordTracksEvent } = this.props;
 		const { queryObject, authorizationCode } = this.props.jetpackConnectAuthorize;
 		const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 		this.retryingAuth = false;
 		if ( this.props.requestHasExpiredSecretError() ) {
 			// In this case, we need to re-issue the secret.
 			// We do this by redirecting to Jetpack client, which will automatically redirect back here.
-			this.props.recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
+			recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
 			externalRedirect( queryObject.site + authUrl );
 			return;
 		}
 		// Otherwise, we assume the site is having trouble receive XMLRPC requests.
 		// To resolve, we redirect to the Jetpack Client, and attempt to complete the connection with
 		// legacy functions on the client.
-		this.props.recordTracksEvent( 'calypso_jpc_resolve_xmlrpc_error_click' );
-		this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
+		recordTracksEvent( 'calypso_jpc_resolve_xmlrpc_error_click' );
+		goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
 	};
 
 	handleSubmit = () => {
-		const { redirectAfterAuth } = this.props;
+		const { authorize, goBackToWpAdmin, recordTracksEvent, redirectAfterAuth } = this.props;
 		const { queryObject, authorizeError, authorizeSuccess } = this.props.jetpackConnectAuthorize;
 
 		if (
@@ -199,30 +213,30 @@ class LoggedInForm extends Component {
 			! this.props.isFetchingSites &&
 			queryObject.already_authorized
 		) {
-			this.props.recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
-			return this.props.goBackToWpAdmin( redirectAfterAuth );
+			recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
+			return goBackToWpAdmin( redirectAfterAuth );
 		}
 
 		if ( this.props.isAlreadyOnSitesList && queryObject.already_authorized ) {
-			this.props.recordTracksEvent( 'calypso_jpc_already_authorized_click' );
+			recordTracksEvent( 'calypso_jpc_already_authorized_click' );
 			return this.redirect();
 		}
 
 		if ( authorizeSuccess && ! queryObject.already_authorized ) {
-			this.props.recordTracksEvent( 'calypso_jpc_activate_click' );
+			recordTracksEvent( 'calypso_jpc_activate_click' );
 			return this.redirect();
 		}
 		if ( authorizeError ) {
-			this.props.recordTracksEvent( 'calypso_jpc_try_again_click' );
+			recordTracksEvent( 'calypso_jpc_try_again_click' );
 			return this.handleResolve();
 		}
 		if ( this.props.isAlreadyOnSitesList ) {
-			this.props.recordTracksEvent( 'calypso_jpc_return_site_click' );
+			recordTracksEvent( 'calypso_jpc_return_site_click' );
 			return this.redirect();
 		}
 
-		this.props.recordTracksEvent( 'calypso_jpc_approve_click' );
-		return this.props.authorize( queryObject );
+		recordTracksEvent( 'calypso_jpc_approve_click' );
+		return authorize( queryObject );
 	};
 
 	isAuthorizing() {
@@ -537,6 +551,15 @@ class LoggedInForm extends Component {
 	}
 }
 
-export default connect( state => ( {
-	redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
-} ) )( localize( LoggedInForm ) );
+export default connect(
+	state => ( {
+		redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
+	} ),
+	{
+		authorize: authorizeAction,
+		goBackToWpAdmin: goBackToWpAdminAction,
+		goToXmlrpcErrorFallbackUrl: goToXmlrpcErrorFallbackUrlAction,
+		recordTracksEvent: recordTracksEventAction,
+		retryAuth: retryAuthAction,
+	}
+)( localize( LoggedInForm ) );
