@@ -3,7 +3,7 @@
   "version": "0.17.0",
   "dependencies": {
     "@types/node": {
-      "version": "6.0.90",
+      "version": "8.0.50",
       "dev": true
     },
     "5to6-codemod": {
@@ -608,7 +608,7 @@
       "version": "1.6.0",
       "dependencies": {
         "browserslist": {
-          "version": "2.7.0"
+          "version": "2.8.0"
         },
         "semver": {
           "version": "5.4.1"
@@ -874,10 +874,10 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000758"
+      "version": "1.0.30000760"
     },
     "caniuse-lite": {
-      "version": "1.0.30000758"
+      "version": "1.0.30000760"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -1276,7 +1276,7 @@
       }
     },
     "crypto-browserify": {
-      "version": "3.11.1"
+      "version": "3.12.0"
     },
     "css-color-names": {
       "version": "0.0.3",
@@ -1693,7 +1693,7 @@
       }
     },
     "enzyme-adapter-utils": {
-      "version": "1.1.0",
+      "version": "1.1.1",
       "dev": true,
       "dependencies": {
         "lodash": {
@@ -1934,7 +1934,7 @@
       }
     },
     "eslint-config-wpcalypso": {
-      "version": "0.8.0",
+      "version": "1.2.0",
       "dev": true
     },
     "eslint-eslines": {
@@ -3417,7 +3417,7 @@
       "dev": true,
       "dependencies": {
         "async": {
-          "version": "2.5.0",
+          "version": "2.6.0",
           "dev": true
         }
       }
@@ -5203,7 +5203,7 @@
       "version": "1.0.0"
     },
     "parse5": {
-      "version": "3.0.2",
+      "version": "3.0.3",
       "dev": true
     },
     "parsejson": {
@@ -5369,7 +5369,7 @@
       }
     },
     "postcss-less": {
-      "version": "1.1.1",
+      "version": "1.1.2",
       "dev": true
     },
     "postcss-media-query-parser": {
@@ -5456,6 +5456,10 @@
       "resolved": "git://github.com/automattic/calypso-prettier.git#14307ba5cc6bcfc00243f5e2d1b25c72d52c28c8",
       "dev": true,
       "dependencies": {
+        "@types/node": {
+          "version": "6.0.90",
+          "dev": true
+        },
         "babel-code-frame": {
           "version": "7.0.0-alpha.12",
           "dev": true,
@@ -5526,6 +5530,10 @@
         },
         "minimist": {
           "version": "1.2.0",
+          "dev": true
+        },
+        "parse5": {
+          "version": "3.0.2",
           "dev": true
         },
         "postcss": {
@@ -5704,6 +5712,9 @@
     },
     "randombytes": {
       "version": "2.0.5"
+    },
+    "randomfill": {
+      "version": "1.0.3"
     },
     "range-parser": {
       "version": "1.0.3"
@@ -7128,7 +7139,12 @@
           "version": "2.8.29"
         },
         "webpack-sources": {
-          "version": "1.0.1"
+          "version": "1.0.2",
+          "dependencies": {
+            "source-map": {
+              "version": "0.6.1"
+            }
+          }
         }
       }
     },
@@ -7297,7 +7313,7 @@
       "version": "1.4.0",
       "dependencies": {
         "async": {
-          "version": "2.5.0"
+          "version": "2.6.0"
         }
       }
     },
@@ -7315,7 +7331,7 @@
           "version": "3.0.0"
         },
         "async": {
-          "version": "2.5.0"
+          "version": "2.6.0"
         },
         "camelcase": {
           "version": "4.1.0"
@@ -7373,7 +7389,12 @@
           "version": "4.5.0"
         },
         "webpack-sources": {
-          "version": "1.0.1"
+          "version": "1.0.2",
+          "dependencies": {
+            "source-map": {
+              "version": "0.6.1"
+            }
+          }
         },
         "which-module": {
           "version": "2.0.0"
