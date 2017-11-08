@@ -52,12 +52,12 @@ export function showUpdates( { streamId } ) {
 	};
 }
 
-export function selectItem( { streamId, postId } ) {
+export function selectItem( { streamId, index } ) {
 	return {
 		type: READER_STREAMS_SELECT_ITEM,
 		payload: {
 			streamId,
-			postId,
+			index,
 		},
 	};
 }

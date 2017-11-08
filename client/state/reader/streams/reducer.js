@@ -5,7 +5,7 @@
  */
 import { keyedReducer, combineReducers } from 'state/utils';
 import { itemsSchema } from './schema';
-import { READER_STREAMS_PAGE_RECEIVE } from 'state/action-types';
+import { READER_STREAMS_PAGE_RECEIVE, READER_STREAMS_SELECT_ITEM } from 'state/action-types';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 export const items = keyedReducer(
@@ -35,6 +35,20 @@ export const items = keyedReducer(
 
 items.schema = itemsSchema;
 
+export const selected = keyedReducer(
+	'payload.streamId',
+	( state = [], action ) => {
+		switch ( action.type ) {
+			case READER_STREAMS_SELECT_ITEM:
+				return action.payload.index;
+			default:
+				return state;
+		}
+	},
+	[ SERIALIZE, DESERIALIZE ]
+);
+
 export default combineReducers( {
 	items,
+	selected,
 } );
