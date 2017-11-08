@@ -77,7 +77,6 @@ FormField.PropTypes = {
 	isRequired: PropTypes.bool,
 	isEnableable: PropTypes.bool,
 	defaultValue: PropTypes.any,
-	children: PropTypes.isRequired,
 };
 
 export default FormField;

@@ -60,7 +60,6 @@ const DocsExample = ( { children, componentUsageStats = {}, toggleHandler, toggl
 };
 
 DocsExample.propTypes = {
-	children: PropTypes.element.isRequired,
 	componentUsageStats: PropTypes.shape( {
 		count: PropTypes.number,
 	} ),
