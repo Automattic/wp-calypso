@@ -147,7 +147,12 @@ class PostItem extends React.Component {
 							) }
 							{ ! isPlaceholder &&
 							externalPostLink && (
-								<ExternalLink icon={ true } href={ postUrl } className="post-item__title-link">
+								<ExternalLink
+									icon={ true }
+									href={ postUrl }
+									target="_blank"
+									className="post-item__title-link"
+								>
 									{ title || translate( 'Untitled' ) }
 								</ExternalLink>
 							) }
