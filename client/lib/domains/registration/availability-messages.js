@@ -20,10 +20,6 @@ function getAvailabilityNotice( domain, error ) {
 
 	const tld = getTld( domain );
 
-	if ( error.error ) {
-		error = error.error;
-	}
-
 	switch ( error ) {
 		case domainAvailability.NOT_REGISTRABLE:
 			if ( tld ) {
