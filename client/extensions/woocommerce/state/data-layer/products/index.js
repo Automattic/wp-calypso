@@ -16,6 +16,7 @@ import { get, post, put } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import {
 	fetchProducts,
+	fetchProductsFailure,
 	productUpdated,
 	productsUpdated,
 } from 'woocommerce/state/sites/products/actions';
@@ -38,8 +39,9 @@ export default {
 	],
 };
 
-function apiError( { dispatch }, action, error ) {
+export function apiError( { dispatch }, action, error ) {
 	warn( 'Products API Error: ', error );
+	dispatch( fetchProductsFailure( action.siteId, action.params ) );
 
 	if ( action.failureAction ) {
 		dispatch( action.failureAction );
