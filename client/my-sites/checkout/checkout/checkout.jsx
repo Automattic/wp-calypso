@@ -5,7 +5,17 @@
  */
 
 import { connect } from 'react-redux';
-import { flatten, filter, find, findIndex, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import {
+	flatten,
+	filter,
+	find,
+	findIndex,
+	get,
+	isEmpty,
+	isEqual,
+	reduce,
+	startsWith,
+} from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -292,7 +302,10 @@ const Checkout = createReactClass( {
 			return '/checkout/thank-you/features';
 		}
 
-		if ( abtest( 'gsuiteUpsell' ) === 'show' ) {
+		if (
+			abtest( 'gsuiteUpsell' ) === 'show' &&
+			abtest( 'signupAtomicStoreVsPressable' ) !== 'atomic'
+		) {
 			const domainReceiptId = get(
 				cartItems.getGoogleApps( cart ),
 				'0.extra.receipt_for_domain',
