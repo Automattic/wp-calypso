@@ -11,7 +11,6 @@ import { keyBy, merge } from 'lodash';
  */
 import {
 	POST_EDIT,
-	POST_REVISIONS_LOAD_REVISION,
 	POST_REVISIONS_RECEIVE,
 	POST_REVISIONS_REQUEST,
 	POST_REVISIONS_REQUEST_FAILURE,
@@ -68,9 +67,6 @@ export function selection( state = {}, action ) {
 
 export function ui( state = {}, action ) {
 	switch ( action.type ) {
-		case POST_REVISIONS_LOAD_REVISION: {
-			return { ...state, isDialogVisible: false };
-		}
 		case POST_REVISIONS_TOGGLE_SHOWING_DIALOG: {
 			return { ...state, isDialogVisible: ! state.isDialogVisible };
 		}

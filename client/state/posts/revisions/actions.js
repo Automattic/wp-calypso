@@ -90,19 +90,3 @@ export const selectPostRevision = revisionId => ( {
 export const togglePostRevisionsDialog = () => ( {
 	type: POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
 } );
-
-export const loadPostRevision = (
-	{ siteId, postId, postType = 'post', revision },
-	callback
-) => dispatch => {
-	/* This is not working -- figure out the necessary flux incantation
-	editPost( siteId, postId, {
-		content: revision.content,
-		title: revision.title,
-	} );
-	*/
-
-	dispatch( requestPostRevisions( siteId, postId, postType ) );
-	dispatch( { type: 'POST_REVISIONS_LOAD_REVISION' } );
-	typeof callback === 'function' && callback();
-};
