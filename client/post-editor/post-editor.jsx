@@ -68,7 +68,6 @@ import StatusLabel from 'post-editor/editor-status-label';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable, getSiteDomain } from 'state/sites/selectors';
-import { NESTED_SIDEBAR_NONE } from 'post-editor/editor-sidebar/constants';
 import { removep } from 'lib/formatting';
 
 export const PostEditor = createReactClass( {
