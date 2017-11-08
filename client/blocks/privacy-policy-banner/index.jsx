@@ -78,21 +78,17 @@ class PrivacyPolicyBanner extends Component {
 			return null;
 		}
 
-		const {
-			fetchingPreferences,
-			isPolicyAlreadyAccepted,
-			moment,
-			privacyPolicy,
-			translate,
-		} = this.props;
-
-		if ( fetchingPreferences ) {
+		if ( this.props.fetchingPreferences ) {
 			return null;
 		}
 
+		const { isPolicyAlreadyAccepted, moment, privacyPolicy, translate } = this.props;
+
+		let showPrivacyPolicyBanner = true;
+
 		// check if the user has already accepted/read the privacy policy.
 		if ( isPolicyAlreadyAccepted === true && ! config.isEnabled( 'privacy-policy/test' ) ) {
-			return <QueryPrivacyPolicy />;
+			showPrivacyPolicyBanner = false;
 		}
 
 		// check if the current policy is under the notification period.
@@ -103,30 +99,34 @@ class PrivacyPolicyBanner extends Component {
 			( ! notifyFrom.isBefore() || ! notifyTo.isAfter() ) &&
 			! config.isEnabled( 'privacy-policy/test' )
 		) {
-			return <QueryPrivacyPolicy />;
+			showPrivacyPolicyBanner = false;
 		}
 
 		return (
 			<div className="privacy-policy-banner">
 				<QueryPrivacyPolicy />
 
-				<Banner
-					callToAction={ translate( 'Learn More' ) }
-					description={ this.getDescription( privacyPolicy.modified ) }
-					disableHref={ true }
-					icon="pages"
-					onClick={ this.openPrivacyPolicyDialog }
-					title={ translate( 'Privacy Policy Updates.' ) }
-				/>
+				{ showPrivacyPolicyBanner && (
+					<Banner
+						callToAction={ translate( 'Learn More' ) }
+						description={ this.getDescription( privacyPolicy.modified ) }
+						disableHref={ true }
+						icon="pages"
+						onClick={ this.openPrivacyPolicyDialog }
+						title={ translate( 'Privacy Policy Updates.' ) }
+					/>
+				) }
 
-				<PrivacyPolicyDialog
-					isVisible={ this.state.showDialog }
-					content={ privacyPolicy.content }
-					title={ privacyPolicy.title }
-					version={ privacyPolicy.id }
-					onClose={ this.closePrivacyPolicyDialog }
-					onDismiss={ this.closePrivacyPolicyDialog }
-				/>
+				{ showPrivacyPolicyBanner && (
+					<PrivacyPolicyDialog
+						isVisible={ this.state.showDialog }
+						content={ privacyPolicy.content }
+						title={ privacyPolicy.title }
+						version={ privacyPolicy.id }
+						onClose={ this.closePrivacyPolicyDialog }
+						onDismiss={ this.closePrivacyPolicyDialog }
+					/>
+				) }
 			</div>
 		);
 	}
