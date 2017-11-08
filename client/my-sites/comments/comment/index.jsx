@@ -38,6 +38,7 @@ export class Comment extends Component {
 	state = {
 		isEditMode: false,
 		isExpanded: false,
+		isReplyVisible: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -71,9 +72,18 @@ export class Comment extends Component {
 
 	toggleExpanded = () => {
 		if ( ! this.props.isLoading && ! this.state.isEditMode ) {
-			this.setState( ( { isExpanded } ) => ( { isExpanded: ! isExpanded } ) );
+			this.setState( ( { isExpanded } ) => ( {
+				isExpanded: ! isExpanded,
+				isReplyVisible: false,
+			} ) );
 		}
 	};
+
+	toggleReply = () =>
+		this.setState( ( { isReplyVisible } ) => ( {
+			isExpanded: true,
+			isReplyVisible: ! isReplyVisible,
+		} ) );
 
 	toggleSelected = () => this.props.toggleSelected( this.props.minimumComment );
 
@@ -90,7 +100,7 @@ export class Comment extends Component {
 			siteId,
 			updatePersisted,
 		} = this.props;
-		const { isEditMode, isExpanded } = this.state;
+		const { isEditMode, isExpanded, isReplyVisible } = this.state;
 
 		const showActions = isExpanded || ( ! isBulkMode && commentIsPending );
 
@@ -100,6 +110,7 @@ export class Comment extends Component {
 			'is-expanded': isExpanded,
 			'is-placeholder': isLoading,
 			'is-pending': commentIsPending,
+			'is-reply-visible': isReplyVisible,
 		} );
 
 		return (
@@ -125,11 +136,12 @@ export class Comment extends Component {
 
 						{ showActions && (
 							<CommentActions
-								{ ...{ commentId, isExpanded, removeFromPersisted, updatePersisted } }
+								{ ...{ commentId, removeFromPersisted, updatePersisted } }
+								toggleReply={ this.toggleReply }
 							/>
 						) }
 
-						<CommentReply { ...{ commentId } } />
+						{ isExpanded && ! isBulkMode && <CommentReply { ...{ commentId, isReplyVisible } } /> }
 					</div>
 				) }
 			</Card>

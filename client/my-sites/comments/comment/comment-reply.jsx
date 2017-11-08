@@ -34,6 +34,7 @@ const TEXTAREA_VERTICAL_BORDER = 2;
 export class CommentReply extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
+		isReplyVisible: PropTypes.bool,
 	};
 
 	state = {
@@ -43,7 +44,11 @@ export class CommentReply extends Component {
 	};
 
 	componentDidMount() {
-		if ( this.props.hasReplyFocus ) {
+		this.textarea.focus();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.isReplyVisible && this.props.isReplyVisible ) {
 			this.textarea.focus();
 		}
 	}
