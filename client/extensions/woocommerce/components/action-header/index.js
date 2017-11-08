@@ -49,7 +49,7 @@ const ActionHeader = ( { children, breadcrumbs, isLoading } ) => {
 };
 
 ActionHeader.propTypes = {
-	breadcrumbs: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.node ), PropTypes.node ] ),
+	breadcrumbs: PropTypes.node,
 };
 
 export default ActionHeader;
