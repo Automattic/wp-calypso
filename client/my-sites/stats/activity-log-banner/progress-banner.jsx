@@ -41,7 +41,6 @@ function ProgressBanner( {
 	siteId,
 	timestamp,
 	translate,
-	freshness,
 	restoreId,
 	downloadId,
 	action,
@@ -58,7 +57,6 @@ function ProgressBanner( {
 			{ 'restore' === action && (
 				<div>
 					<QueryRewindRestoreStatus
-						freshness={ freshness }
 						restoreId={ restoreId }
 						siteId={ siteId }
 						timestamp={ timestamp }
@@ -79,12 +77,7 @@ function ProgressBanner( {
 			) }
 			{ 'backup' === action && (
 				<div>
-					<QueryRewindBackupStatus
-						freshness={ freshness }
-						downloadId={ downloadId }
-						siteId={ siteId }
-						timestamp={ timestamp }
-					/>
+					<QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } />
 					<p>
 						{ translate(
 							"We're in the process of creating a downloadable backup of your site at %s. " +
