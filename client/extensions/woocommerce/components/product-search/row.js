@@ -7,18 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import {
-	filter,
-	find,
-	forEach,
-	get,
-	head,
-	intersection,
-	noop,
-	reduce,
-	uniqBy,
-	values,
-} from 'lodash';
+import { filter, find, get, intersection, noop, reduce, uniqBy, values } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -95,14 +84,7 @@ class ProductSearchRow extends Component {
 
 	onChange = event => {
 		const productId = Number( event.target.value );
-		this.setState(
-			prevState => ( {
-				variations: filter( prevState.variations, item => item.id !== productId ),
-			} ),
-			() => {
-				this.props.onChange( productId );
-			}
-		);
+		this.props.onChange( productId );
 	};
 
 	toggleCustomizeForm = event => {
@@ -139,20 +121,20 @@ class ProductSearchRow extends Component {
 		} );
 		if ( matchingVariations.length === 1 ) {
 			// We found a match.
-			const variation = head( matchingVariations );
-			if ( this.props.singular ) {
-				this.setState( { variations: [ variation ] } );
-				this.props.onChange( variation.id );
-				return;
+			this.setState( prevState => {
+				// For singular selects, we can replace the old selected variation, but for
+				// multi-selects, we want to merge the new variation into the existing list
+				const newVariations = this.props.singular
+					? matchingVariations
+					: uniqBy( [ ...prevState.variations, ...matchingVariations ], 'id' );
+				return {
+					variations: newVariations,
+				};
+			} );
+			const variationId = get( matchingVariations, '[0].id', false );
+			if ( variationId && ! this.isSelected( variationId ) ) {
+				this.props.onChange( variationId );
 			}
-			this.setState(
-				prevState => ( {
-					variations: uniqBy( [ ...prevState.variations, variation ], 'id' ),
-				} ),
-				() => {
-					forEach( this.state.variations, v => this.props.onChange( v.id ) );
-				}
-			);
 		}
 	};
 
