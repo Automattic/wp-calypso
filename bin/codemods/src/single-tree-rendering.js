@@ -83,7 +83,7 @@ export default function transformer( file, api ) {
 		.remove();
 
 	// Find empty `import 'lib/react-helpers'`
-	let orphanImportHelpers = root
+	const orphanImportHelpers = root
 		.find( j.ImportDeclaration, {
 			source: {
 				value: 'lib/react-helpers',
@@ -93,7 +93,7 @@ export default function transformer( file, api ) {
 
 	if ( orphanImportHelpers.size() ) {
 		// Find out if import had comment above it
-		let comment = _.get( orphanImportHelpers.nodes(), '[0].comments[0]', false );
+		const comment = _.get( orphanImportHelpers.nodes(), '[0].comments[0]', false );
 
 		// Remove empty `import 'lib/react-helpers'` (and any comments with it)
 		orphanImportHelpers.remove();
@@ -104,7 +104,7 @@ export default function transformer( file, api ) {
 			root
 				.find( j.ImportDeclaration )
 				.filter( p => {
-					let importValue = _.get( p, 'value.source.value', '' );
+					const importValue = _.get( p, 'value.source.value', '' );
 					return importValue.indexOf( '/' ) > -1;
 				} )
 				.at( 0 )
