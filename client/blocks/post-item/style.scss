@@ -119,16 +119,6 @@ a.post-item__title-link:visited {
 	.post-item__panel.is-placeholder & {
 		@include placeholder;
 	}
-
-	&.is-external {
-		&:after {
-			@include noticon( '\f442' );
-			font-size: 18px;
-			padding-left: 3px;
-			vertical-align: middle;
-			color: $gray-text-min;
-		}
-	}
 }
 
 .post-item__meta {

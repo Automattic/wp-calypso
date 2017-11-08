@@ -25,6 +25,7 @@ import {
 	isPostSelected,
 } from 'state/ui/post-type-list/selectors';
 import { hideSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
+import ExternalLink from 'components/external-link';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import PostTime from 'blocks/post-time';
 import PostStatus from 'blocks/post-status';
@@ -129,10 +130,6 @@ class PostItem extends React.Component {
 			'is-expanded': !! expandedContent,
 		} );
 
-		const editLinkClasses = classnames( 'post-item__title-link', {
-			'is-external': externalPostLink,
-		} );
-
 		return (
 			<div className={ rootClasses } ref={ this.setDomNode }>
 				<div className={ panelClasses }>
@@ -143,14 +140,17 @@ class PostItem extends React.Component {
 							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
 						</div>
 						<h1 className="post-item__title">
-							<a
-								href={ isPlaceholder ? null : postUrl }
-								target={ externalPostLink ? '_blank' : null }
-								rel={ externalPostLink ? 'noopener noreferrer' : null }
-								className={ editLinkClasses }
-							>
-								{ title || translate( 'Untitled' ) }
-							</a>
+							{ ! externalPostLink && (
+								<a href={ isPlaceholder ? null : postUrl } className="post-item__title-link">
+									{ title || translate( 'Untitled' ) }
+								</a>
+							) }
+							{ ! isPlaceholder &&
+							externalPostLink && (
+								<ExternalLink icon={ true } href={ postUrl } className="post-item__title-link">
+									{ title || translate( 'Untitled' ) }
+								</ExternalLink>
+							) }
 						</h1>
 						<div className="post-item__meta">
 							<PostTime globalId={ globalId } />
