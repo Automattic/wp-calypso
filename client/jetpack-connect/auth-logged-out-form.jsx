@@ -124,6 +124,8 @@ class LoggedOutForm extends Component {
 	}
 }
 
+export { LoggedOutForm as LoggedOutFormTestComponent };
+
 export default connect( null, {
 	recordTracksEvent: recordTracksEventAction,
 	createAccount: createAccountAction,
