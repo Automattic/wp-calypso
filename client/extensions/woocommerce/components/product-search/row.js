@@ -226,7 +226,7 @@ class ProductSearchRow extends Component {
 				<span>
 					<span>{ nameWithPrice }</span>
 					<Button compact onClick={ this.toggleCustomizeForm }>
-						{ translate( 'Customize' ) }
+						{ translate( 'Select variations' ) }
 					</Button>
 				</span>
 			);
