@@ -34,6 +34,7 @@ import userUtilities from 'lib/user/utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getJetpackConnectRedirectAfterAuth } from 'state/selectors';
+import { isRequestingSite } from 'state/sites/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
@@ -46,6 +47,7 @@ import {
 import {
 	getAuthAttempts,
 	getAuthorizationRemoteSite,
+	getSiteIdFromQueryObject,
 	hasExpiredSecretError as hasExpiredSecretErrorSelector,
 	hasXmlrpcError as hasXmlrpcErrorSelector,
 	isCalypsoStartedConnection,
@@ -61,7 +63,6 @@ const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedInForm extends Component {
 	static propTypes = {
-		isFetchingAuthorizationSite: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
 		isSSO: PropTypes.bool,
 		isWoo: PropTypes.bool,
@@ -88,6 +89,7 @@ class LoggedInForm extends Component {
 		hasExpiredSecretError: PropTypes.bool,
 		hasXmlrpcError: PropTypes.bool,
 		isAlreadyOnSitesList: PropTypes.bool,
+		isFetchingAuthorizationSite: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectAfterAuth: PropTypes.string,
 		retryAuth: PropTypes.func.isRequired,
@@ -564,6 +566,7 @@ class LoggedInForm extends Component {
 export default connect(
 	state => {
 		const remoteSiteUrl = getAuthorizationRemoteSite( state );
+		const siteId = getSiteIdFromQueryObject( state );
 		const siteSlug = urlToSlug( remoteSiteUrl );
 
 		return {
@@ -572,6 +575,7 @@ export default connect(
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
+			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
 			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 			siteSlug,
 		};
