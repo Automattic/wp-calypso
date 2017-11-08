@@ -22,8 +22,6 @@ import ShortcodeData from './data';
 import ShortcodeFrame from './frame';
 
 export default class Shortcode extends React.Component {
-	static displayName = 'Shortcode';
-
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		children: PropTypes.string.isRequired,
