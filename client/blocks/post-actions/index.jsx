@@ -76,7 +76,7 @@ const PostActions = ( {
 								showLabel={ false }
 								commentCount={ post.discussion.comment_count }
 								tagName="a"
-								link={ `/comments/all/${ siteSlug }/${ post.ID }` }
+								href={ `/comments/all/${ siteSlug }/${ post.ID }` }
 							/>
 						) : (
 							<CommentButton

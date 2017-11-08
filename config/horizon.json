@@ -25,6 +25,8 @@
 		"code-splitting": true,
 		"comments/management": true,
 		"comments/management/jetpack-5.5": false,
+		"comments/management/quick-actions": true,
+		"comments/management/post-view": true,
 		"comments/management/sorting": true,
 		"devdocs": false,
 		"domains/cctlds": true,
