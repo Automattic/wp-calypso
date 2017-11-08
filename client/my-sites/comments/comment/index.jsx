@@ -36,7 +36,6 @@ export class Comment extends Component {
 	};
 
 	state = {
-		hasReplyFocus: false,
 		isEditMode: false,
 		isExpanded: false,
 	};
@@ -48,10 +47,6 @@ export class Comment extends Component {
 	}
 
 	storeCardRef = card => ( this.commentCard = card );
-
-	blurReply = () => this.setState( { hasReplyFocus: false } );
-
-	focusReply = () => this.setState( { hasReplyFocus: true } );
 
 	keyDownHandler = event => {
 		const { isBulkMode } = this.props;
@@ -95,7 +90,7 @@ export class Comment extends Component {
 			siteId,
 			updatePersisted,
 		} = this.props;
-		const { hasReplyFocus, isEditMode, isExpanded } = this.state;
+		const { isEditMode, isExpanded } = this.state;
 
 		const showActions = isExpanded || ( ! isBulkMode && commentIsPending );
 
@@ -134,13 +129,7 @@ export class Comment extends Component {
 							/>
 						) }
 
-						{ isExpanded && (
-							<CommentReply
-								{ ...{ commentId, hasReplyFocus } }
-								blurReply={ this.blurReply }
-								focusReply={ this.focusReply }
-							/>
-						) }
+						<CommentReply { ...{ commentId } } />
 					</div>
 				) }
 			</Card>

@@ -34,12 +34,10 @@ const TEXTAREA_VERTICAL_BORDER = 2;
 export class CommentReply extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
-		blurReply: PropTypes.func,
-		focusReply: PropTypes.func,
-		hasReplyFocus: PropTypes.bool,
 	};
 
 	state = {
+		hasReplyFocus: false,
 		replyContent: '',
 		textareaHeight: TEXTAREA_HEIGHT_COLLAPSED,
 	};
@@ -51,6 +49,10 @@ export class CommentReply extends Component {
 	}
 
 	storeTextareaRef = textarea => ( this.textarea = textarea );
+
+	blurReply = () => this.setState( { hasReplyFocus: false } );
+
+	focusReply = () => this.setState( { hasReplyFocus: true } );
 
 	calculateTextareaHeight = () => {
 		const textareaHeight = Math.min(
@@ -81,14 +83,14 @@ export class CommentReply extends Component {
 	};
 
 	submitReply = () => {
-		const { approveComment, blurReply, commentStatus, postId, replyToComment, siteId } = this.props;
+		const { approveComment, commentStatus, postId, replyToComment, siteId } = this.props;
 		const { replyContent } = this.state;
 
 		const alsoApprove = 'approved' !== commentStatus;
 
 		replyToComment( replyContent, siteId, postId, { alsoApprove } );
 		this.setState( { replyContent: '' } );
-		blurReply();
+		this.blurReply();
 
 		if ( alsoApprove ) {
 			approveComment( siteId, postId, { previousStatus: commentStatus } );
@@ -102,8 +104,8 @@ export class CommentReply extends Component {
 	};
 
 	render() {
-		const { blurReply, currentUser, focusReply, hasReplyFocus, translate } = this.props;
-		const { replyContent, textareaHeight } = this.state;
+		const { currentUser, translate } = this.props;
+		const { hasReplyFocus, replyContent, textareaHeight } = this.state;
 
 		const hasReplyContent = replyContent.trim().length > 0;
 		// Only show the scrollbar if the textarea content exceeds the max height
@@ -138,9 +140,9 @@ export class CommentReply extends Component {
 					<AutoDirection>
 						<textarea
 							className={ textareaClasses }
-							onBlur={ blurReply }
+							onBlur={ this.blurReply }
 							onChange={ this.updateTextarea }
-							onFocus={ focusReply }
+							onFocus={ this.focusReply }
 							onKeyDown={ this.keyDownHandler }
 							placeholder={ this.getPlaceholder() }
 							ref={ this.storeTextareaRef }
