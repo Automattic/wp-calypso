@@ -8,6 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { difference } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
@@ -33,6 +34,7 @@ import { isValidPromotion } from './helpers';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
 import { ProtectFormGuard } from 'lib/protect-form';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
 class PromotionCreate extends React.Component {
@@ -82,6 +84,18 @@ class PromotionCreate extends React.Component {
 			this.props.fetchPromotions( newSiteId );
 			this.props.fetchSettingsGeneral( newSiteId );
 		}
+
+		// Track user starting to edit this promotion.
+		if ( ! this.props.hasEdits && newProps.hasEdits ) {
+			const editedFields = difference( Object.keys( newProps.promotion ), [
+				'id',
+				'name',
+				'type',
+			] );
+			const initial_field = 1 === editedFields.length ? editedFields[ 0 ] : 'multiple';
+
+			recordTrack( 'calypso_woocommerce_promotion_new_edit_start', { initial_field } );
+		}
 	}
 
 	componentWillUnmount() {
@@ -127,6 +141,15 @@ class PromotionCreate extends React.Component {
 		};
 
 		this.props.createPromotion( site.ID, promotion, successAction, failureAction );
+
+		recordTrack( 'calypso_woocommerce_promotion_create', {
+			type: promotion.type,
+			sale_price: promotion.salePrice,
+			percent_discount: promotion.percentDiscount,
+			fixed_discount: promotion.fixedDiscount,
+			start_date: promotion.startDate,
+			end_date: promotion.endDate,
+		} );
 	};
 
 	render() {
