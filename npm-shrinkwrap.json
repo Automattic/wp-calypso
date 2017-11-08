@@ -3110,7 +3110,7 @@
       }
     },
     "i18n-calypso": {
-      "version": "1.8.3",
+      "version": "1.8.1",
       "dependencies": {
         "async": {
           "version": "1.5.2"
@@ -3120,6 +3120,9 @@
         },
         "lodash.assign": {
           "version": "4.2.0"
+        },
+        "react": {
+          "version": "15.6.2"
         }
       }
     },
