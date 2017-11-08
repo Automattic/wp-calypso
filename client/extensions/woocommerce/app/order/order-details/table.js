@@ -173,7 +173,6 @@ class OrderDetailsTable extends Component {
 				<Button
 					compact
 					borderless
-					icon
 					aria-label={ translate( 'Remove %(itemName)s from this order', {
 						args: { itemName: item.name },
 					} ) }
