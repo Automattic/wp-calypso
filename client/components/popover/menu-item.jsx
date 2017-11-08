@@ -17,7 +17,6 @@ export default class PopoverMenuItem extends Component {
 		isSelected: PropTypes.bool,
 		icon: PropTypes.string,
 		focusOnHover: PropTypes.bool,
-		children: PropTypes.node,
 	};
 
 	static defaultProps = {

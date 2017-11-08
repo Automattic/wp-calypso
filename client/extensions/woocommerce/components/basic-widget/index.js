@@ -32,7 +32,6 @@ BasicWidget.propTypes = {
 	buttonLabel: PropTypes.string,
 	buttonLink: PropTypes.string,
 	onButtonClick: PropTypes.func,
-	children: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.node ), PropTypes.node ] ),
 	className: PropTypes.string,
 	title: PropTypes.string,
 };

@@ -57,7 +57,6 @@ function renderValidationError( message ) {
 
 class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
-		children: PropTypes.node,
 		contactDetails: PropTypes.object,
 		contactDetailsValidationErrors: PropTypes.object,
 		isVisible: PropTypes.bool,
