@@ -100,10 +100,7 @@ const webpackConfig = {
 			},
 			{
 				include: require.resolve( 'tinymce/tinymce' ),
-				loader: 'exports-loader',
-				query: {
-					window: 'tinymce'
-				}
+				use: 'exports-loader?window=tinymce',
 			},
 			{
 				test: /node_modules[\/\\]tinymce/,
