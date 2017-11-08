@@ -11,18 +11,17 @@ import { each, isNaN, startsWith } from 'lodash';
  * Internal dependencies
  */
 import CommentsManagement from './main';
+// import CommentView from 'my-sites/comment/main';
 import route, { addQueryArgs } from 'lib/route';
-import { SITES_ONCE_CHANGED } from 'state/action-types';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
-import { changeCommentStatus } from 'state/comments/actions';
+import { changeCommentStatus, deleteComment } from 'state/comments/actions';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
 const mapPendingStatusToUnapproved = status => ( 'pending' === status ? 'unapproved' : status );
 
@@ -55,7 +54,6 @@ export const siteComments = context => {
 
 	renderWithReduxStore(
 		<CommentsManagement
-			basePath={ path }
 			changePage={ changePage( path ) }
 			page={ pageNumber }
 			siteFragment={ siteFragment }
@@ -87,7 +85,6 @@ export const postComments = ( { params, path, query, store } ) => {
 
 	renderWithReduxStore(
 		<CommentsManagement
-			basePath={ path }
 			changePage={ changePage( path ) }
 			page={ pageNumber }
 			postId={ postId }
@@ -104,7 +101,7 @@ const sanitizeQueryAction = action => {
 		return null;
 	}
 
-	const validActions = [ 'approve', 'trash', 'spam' ];
+	const validActions = [ 'approve', 'trash', 'spam', 'delete' ];
 	return validActions.indexOf( action.toLowerCase() ) > -1 ? action.toLowerCase() : null;
 };
 
@@ -130,26 +127,20 @@ export const comment = ( { query, params, path, store } ) => {
 	}
 
 	const action = sanitizeQueryAction( query.action );
+	const siteId = sanitizeInt( query.siteId );
 	const postId = sanitizeInt( query.postId );
-	if ( action && postId ) {
-		const { dispatch, getState } = store;
-		const siteId = getSelectedSiteId( getState() );
 
-		if ( ! siteId ) {
-			dispatch( {
-				type: SITES_ONCE_CHANGED,
-				listener: () =>
-					dispatch(
-						updateCommentStatus( getSelectedSiteId( getState() ), postId, commentId, action )
-					),
-			} );
+	if ( action && siteId && postId ) {
+		const { dispatch } = store;
+		if ( 'delete' === action ) {
+			dispatch( deleteComment( siteId, postId, commentId, { showSuccessNotice: true } ) );
 		} else {
-			dispatch( updateCommentStatus( getSelectedSiteId( getState() ), postId, commentId, action ) );
+			dispatch( updateCommentStatus( siteId, postId, commentId, action ) );
 		}
 	}
 
 	renderWithReduxStore(
-		<CommentsManagement { ...{ action, basePath: path, commentId, siteFragment } } />,
+		<CommentsManagement { ...{ action, commentId, siteFragment } } />,
 		'primary',
 		store
 	);
