@@ -18,7 +18,7 @@ render() {
 #### Props
 
 * `commentCount`: Number indicating the number of comments to be displayed next to the button.
-* `link`: String URL destination to be used with a `tagName` of `a`. Defaults to `null`.
+* `href`: String URL destination to be used with a `tagName` of `a`. Defaults to `null`.
 * `onClick`: Function to be executed when the user clicks the button.
 * `showLabel`: Boolean indicating whether or not the label with the comments count is visible. Defaults to `true`.
 * `size`: Number with the size of the comments icon to be displayed. Defaults to 24.
