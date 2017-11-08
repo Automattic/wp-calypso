@@ -88,6 +88,7 @@ export class Comment extends Component {
 			commentIsPending,
 			isBulkMode,
 			isLoading,
+			isPersistent,
 			isPostView,
 			isSelected,
 			refreshCommentData,
@@ -97,7 +98,7 @@ export class Comment extends Component {
 		} = this.props;
 		const { hasReplyFocus, isEditMode, isExpanded } = this.state;
 
-		const showActions = isExpanded || ( ! isBulkMode && commentIsPending );
+		const showActions = isExpanded || isPersistent || ( ! isBulkMode && commentIsPending );
 
 		const classes = classNames( 'comment', {
 			'is-bulk-mode': isBulkMode,
@@ -130,7 +131,8 @@ export class Comment extends Component {
 
 						{ showActions && (
 							<CommentActions
-								{ ...{ commentId, isExpanded, removeFromPersisted, updatePersisted } }
+								{ ...{ commentId, isExpanded, isPersistent, removeFromPersisted, updatePersisted } }
+								toggleExpanded={ this.toggleExpanded }
 							/>
 						) }
 

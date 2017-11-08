@@ -8,12 +8,15 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
-import { get, includes } from 'lodash';
+import { get, includes, isEmpty } from 'lodash';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
+import CommentConfirmation from 'my-sites/comments/comment/comment-confirmation';
+import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -39,8 +42,15 @@ const commentActions = {
 export class CommentActions extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
+		isExpanded: PropTypes.bool,
+		isPersistent: PropTypes.bool,
 		removeFromPersisted: PropTypes.func,
+		toggleExpanded: PropTypes.func,
 		updatePersisted: PropTypes.func,
+	};
+
+	state = {
+		previousCommentData: {},
 	};
 
 	delete = () => {
@@ -51,17 +61,24 @@ export class CommentActions extends Component {
 		removeFromPersisted( commentId );
 	};
 
+	deletePreviousCommentData = () => this.setState( { previousCommentData: {} } );
+
 	hasAction = action => includes( commentActions[ this.props.commentStatus ], action );
 
 	setSpam = () => {
-		const { commentId, removeFromPersisted } = this.props;
+		const { commentId, isExpanded, toggleExpanded, updatePersisted } = this.props;
+
+		if ( isExpanded ) {
+			toggleExpanded();
+		}
 
 		this.setStatus( 'spam' );
 
-		removeFromPersisted( commentId );
+		this.storePreviousCommentData();
+		updatePersisted( commentId );
 	};
 
-	setStatus = status => {
+	setStatus = ( status, options = { isUndo: false } ) => {
 		const {
 			changeStatus,
 			commentId,
@@ -71,11 +88,13 @@ export class CommentActions extends Component {
 			siteId,
 			unlike,
 		} = this.props;
+		const { isUndo } = options;
 
 		const alsoUnlike = commentIsLiked && 'approved' !== status;
 
 		changeStatus( siteId, postId, commentId, status, {
 			alsoUnlike,
+			isUndo,
 			previousStatus: commentStatus,
 		} );
 
@@ -85,12 +104,20 @@ export class CommentActions extends Component {
 	};
 
 	setTrash = () => {
-		const { commentId, removeFromPersisted } = this.props;
+		const { commentId, isExpanded, toggleExpanded, updatePersisted } = this.props;
+
+		if ( isExpanded ) {
+			toggleExpanded();
+		}
 
 		this.setStatus( 'trash' );
 
-		removeFromPersisted( commentId );
+		this.storePreviousCommentData();
+		updatePersisted( commentId );
 	};
+
+	storePreviousCommentData = () =>
+		this.setState( { previousCommentData: this.props.minimumComment } );
 
 	toggleApproved = () => {
 		const { commentId, commentIsApproved, commentStatus, updatePersisted } = this.props;
@@ -128,69 +155,113 @@ export class CommentActions extends Component {
 		}
 	};
 
+	undo = () => {
+		const { previousCommentData } = this.state;
+		if ( isEmpty( previousCommentData ) ) {
+			return;
+		}
+
+		const { commentId, like, postId, removeFromPersisted, siteId } = this.props;
+		const { isLiked, status } = previousCommentData;
+
+		this.setStatus( status, { isUndo: true } );
+
+		if ( isLiked ) {
+			like( siteId, postId, commentId, { alsoApprove: 'approved' === status } );
+		}
+
+		this.deletePreviousCommentData();
+		removeFromPersisted( commentId );
+	};
+
 	render() {
-		const { commentIsApproved, commentIsLiked, translate } = this.props;
+		const {
+			commentId,
+			commentIsApproved,
+			commentIsLiked,
+			commentStatus,
+			isPersistent,
+			translate,
+		} = this.props;
 
 		return (
-			<div className="comment__actions">
-				{ this.hasAction( 'approve' ) && (
-					<Button
-						borderless
-						className={ classNames( 'comment__action comment__action-approve', {
-							'is-approved': commentIsApproved,
-						} ) }
-						onClick={ this.toggleApproved }
-					>
-						<Gridicon icon={ commentIsApproved ? 'checkmark-circle' : 'checkmark' } />
-						<span>{ commentIsApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
-					</Button>
-				) }
+			<div>
+				<div className="comment__actions">
+					{ this.hasAction( 'approve' ) && (
+						<Button
+							borderless
+							className={ classNames( 'comment__action comment__action-approve', {
+								'is-approved': commentIsApproved,
+							} ) }
+							onClick={ this.toggleApproved }
+						>
+							<Gridicon icon={ commentIsApproved ? 'checkmark-circle' : 'checkmark' } />
+							<span>{ commentIsApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
+						</Button>
+					) }
 
-				{ this.hasAction( 'spam' ) && (
-					<Button
-						borderless
-						className="comment__action comment__action-spam"
-						onClick={ this.setSpam }
-					>
-						<Gridicon icon="spam" />
-						<span>{ translate( 'Spam' ) }</span>
-					</Button>
-				) }
+					{ this.hasAction( 'spam' ) && (
+						<Button
+							borderless
+							className="comment__action comment__action-spam"
+							onClick={ this.setSpam }
+						>
+							<Gridicon icon="spam" />
+							<span>{ translate( 'Spam' ) }</span>
+						</Button>
+					) }
 
-				{ this.hasAction( 'trash' ) && (
-					<Button
-						borderless
-						className="comment__action comment__action-trash"
-						onClick={ this.setTrash }
-					>
-						<Gridicon icon="trash" />
-						<span>{ translate( 'Trash' ) }</span>
-					</Button>
-				) }
+					{ this.hasAction( 'trash' ) && (
+						<Button
+							borderless
+							className="comment__action comment__action-trash"
+							onClick={ this.setTrash }
+						>
+							<Gridicon icon="trash" />
+							<span>{ translate( 'Trash' ) }</span>
+						</Button>
+					) }
 
-				{ this.hasAction( 'delete' ) && (
-					<Button
-						borderless
-						className="comment__action comment__action-delete"
-						onClick={ this.delete }
-					>
-						<Gridicon icon="trash" />
-						<span>{ translate( 'Delete Permanently' ) }</span>
-					</Button>
-				) }
+					{ this.hasAction( 'delete' ) && (
+						<Button
+							borderless
+							className="comment__action comment__action-delete"
+							onClick={ this.delete }
+						>
+							<Gridicon icon="trash" />
+							<span>{ translate( 'Delete Permanently' ) }</span>
+						</Button>
+					) }
 
-				{ this.hasAction( 'like' ) && (
-					<Button
-						borderless
-						className={ classNames( 'comment__action comment__action-like', {
-							'is-liked': commentIsLiked,
-						} ) }
-						onClick={ this.toggleLike }
-					>
-						<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
-						<span>{ commentIsLiked ? translate( 'Liked' ) : translate( 'Like' ) }</span>
-					</Button>
-				) }
+					{ this.hasAction( 'like' ) && (
+						<Button
+							borderless
+							className={ classNames( 'comment__action comment__action-like', {
+								'is-liked': commentIsLiked,
+							} ) }
+							onClick={ this.toggleLike }
+						>
+							<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
+							<span>{ commentIsLiked ? translate( 'Liked' ) : translate( 'Like' ) }</span>
+						</Button>
+					) }
+				</div>
+
+				<ReactCSSTransitionGroup
+					className="comment__confirmation-transition"
+					transitionEnterTimeout={ 150 }
+					transitionLeaveTimeout={ 150 }
+					transitionName="comment__confirmation-transition"
+				>
+					{ isPersistent &&
+					! includes( [ 'approved', 'unapproved' ], commentStatus ) && (
+						<CommentConfirmation
+							{ ...{ commentId } }
+							key="comment__confirmation"
+							undo={ this.undo }
+						/>
+					) }
+				</ReactCSSTransitionGroup>
 			</div>
 		);
 	}
@@ -205,6 +276,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		commentIsApproved: 'approved' === commentStatus,
 		commentIsLiked: get( comment, 'i_like' ),
 		commentStatus,
+		minimumComment: getMinimumComment( comment ),
 		postId: get( comment, 'post.ID' ),
 		siteId,
 	};
