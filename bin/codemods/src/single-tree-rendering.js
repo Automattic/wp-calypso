@@ -26,6 +26,9 @@ export default function transformer( file, api ) {
 	 * Removes the extra newlines between two import statements
  	 * caused by `insertAfter()`:
 	 * @link https://github.com/benjamn/recast/issues/371
+	 *
+	 * @param {string} str
+	 * @returns {string}
 	 */
 	function removeExtraNewlines( str ) {
 		return str.replace( /(import.*\n)\n+(import)/g, '$1$2' );
@@ -33,6 +36,9 @@ export default function transformer( file, api ) {
 
 	/**
 	 * Ensure `context` is among parameters
+	 *
+	 * @param {object} path Path object that wraps a single node
+	 * @returns {object} Single node object
 	 */
 	function ensureContextMiddleware( path ) {
 		// `context` param is already in
@@ -47,6 +53,9 @@ export default function transformer( file, api ) {
 
 	/**
 	 * Adds `next` to params and `next()` to body
+	 *
+	 * @param {object} path Path object that wraps a single node
+	 * @returns {object} Single node object
 	 */
 	function addNextMiddleware( path ) {
 		if ( path.value.params.length > 1 ) {
@@ -74,6 +83,9 @@ export default function transformer( file, api ) {
 	}
 
 	/**
+	 * Transform `renderWithReduxStore()` CallExpressions.
+	 *
+	 * @example
 	 * Input
 	 * ```
 	 * renderWithReduxStore(
@@ -87,6 +99,9 @@ export default function transformer( file, api ) {
 	 * ```
 	 * context.primary = <Example />;
 	 * ```
+	 *
+	 * @param {object} path Path object that wraps a single node
+	 * @returns {object} Single node object
 	 */
 	function transformRenderWithReduxStore( path ) {
 		const expressionCallee = {
@@ -97,6 +112,9 @@ export default function transformer( file, api ) {
 	}
 
 	/**
+	 * Transform `ReactDom.render()` CallExpressions.
+	 *
+	 * @example
 	 * Input
 	 * ```
 	 * ReactDom.render(
@@ -109,6 +127,9 @@ export default function transformer( file, api ) {
 	 * ```
 	 * context.primary = <Example />;
 	 * ```
+	 *
+	 * @param {object} path Path object that wraps a single node
+	 * @returns {object} Single node object
 	 */
 	function transformReactDomRender( path ) {
 		const expressionCallee = {
@@ -125,6 +146,11 @@ export default function transformer( file, api ) {
 	}
 
 	/**
+	 * Transform CallExpressions.
+	 * What kind of CallExpressions this replaces depends on `expressionCallee`
+	 * parameter.
+	 *
+	 * @example
 	 * Input
 	 * ```
 	 * DefinedByExpressionCallee(
@@ -137,6 +163,10 @@ export default function transformer( file, api ) {
 	 * ```
 	 * context.primary = <Example />;
 	 * ```
+	 *
+	 * @param {object} path Path object that wraps a single node
+	 * @param {object} expressionCallee `callee` parameter for finding `CallExpression` nodes.
+	 * @returns {object} Single node object
 	 */
 	function transformToContextLayout( path, expressionCallee ) {
 		if ( path.value.params.length !== 2 ) {
@@ -175,6 +205,7 @@ export default function transformer( file, api ) {
 		} )
 		.closest( j.FunctionExpression )
 		.replaceWith( ensureContextMiddleware )
+		// Receives already transformed object from `replaceWith()` above
 		.replaceWith( addNextMiddleware )
 		.forEach( transformReactDomRender );
 
