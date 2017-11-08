@@ -187,7 +187,7 @@ class ProductSearchRow extends Component {
 		}
 
 		return (
-			<div>
+			<div className="product-search__variation-selections-and-form">
 				{ this.renderSelectedVariations() }
 				<ProductVariations product={ this.props.product } onChange={ this.updateItem } />
 			</div>

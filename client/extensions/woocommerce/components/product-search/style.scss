@@ -26,10 +26,6 @@
 			cursor: pointer;
 			border-bottom: 1px solid $gray-light;
 
-			&:hover {
-				background: lighten( $gray-light, 2% );
-			}
-
 			&:last-child {
 				border-bottom: 0;
 			}
@@ -68,6 +64,14 @@
 				}
 			}
 
+			.count {
+				width: 16px;
+			}
+
+			.form-checkbox + .product-search__list-image {
+				margin-left: 26px;
+			}
+
 			.button {
 				position: absolute;
 				top: 12px;
@@ -76,8 +80,23 @@
 		}
 	}
 
+	.product-search__variation-selections-and-form {
+		background: lighten( $gray, 35% );
+		border-top: 1px solid $gray-light;
+
+		&:empty {
+			border: 0;
+		}
+	}
+
 	.product-search__variations {
-		padding: 8px 24px 16px;
+		padding: 16px;
+		padding-left: 58px;
+		border-top: 1px solid $gray-light;
+
+		.notice {
+			margin-bottom: 16px;
+		}
 
 		.form-legend {
 			font-weight: 400;
@@ -100,7 +119,11 @@
 		.product-search__variation-field {
 			flex: 0 1 calc(50% - 10px);
 			max-width: calc(50% - 10px);
-			margin-bottom: 20px;
+			margin-bottom: 16px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
 		}
 	}
 }

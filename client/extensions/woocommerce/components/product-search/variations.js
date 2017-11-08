@@ -12,8 +12,8 @@ import { localize } from 'i18n-calypso';
  */
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
+import Notice from 'components/notice';
 
 class ProductVariations extends Component {
 	static propTypes = {
@@ -67,12 +67,12 @@ class ProductVariations extends Component {
 		return (
 			<div className="product-search__variations">
 				<FormFieldset>
-					<FormLegend>
+					<Notice showDismiss={ false }>
 						{ translate(
 							'%(product)s has variations. Select a specific customization, or add the base product.',
 							{ args: { product: product.name } }
 						) }
-					</FormLegend>
+					</Notice>
 					<div className="product-search__variation-fields">
 						{ attributes.map( this.renderAttribute ) }
 					</div>
