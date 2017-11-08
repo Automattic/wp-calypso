@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import { isObject } from 'lodash';
+import { isObject, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,7 +37,7 @@ function renderSaveButton( onSave, promotion, isBusy, translate ) {
 	);
 
 	return (
-		<Button primary onClick={ onSave } disabled={ saveDisabled } busy={ isBusy }>
+		<Button primary onClick={ onSave || noop } disabled={ saveDisabled } busy={ isBusy }>
 			{ saveLabel }
 		</Button>
 	);
