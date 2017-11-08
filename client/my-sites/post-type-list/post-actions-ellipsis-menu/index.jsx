@@ -70,7 +70,6 @@ PostActionsEllipsisMenu.propTypes = {
 	siteId: PropTypes.number,
 	isKnownType: PropTypes.bool,
 	includeDefaultActions: PropTypes.bool,
-	children: PropTypes.node,
 };
 
 PostActionsEllipsisMenu.defaultProps = {
