@@ -19,7 +19,7 @@ import { bumpStatGenerator } from './utils';
 import { getPost, getPostPreviewUrl } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
-import { setPreviewUrl } from 'state/ui/preview/actions';
+import { setAllSitesPreviewSiteId, setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 class PostActionsEllipsisMenuView extends Component {
@@ -28,7 +28,6 @@ class PostActionsEllipsisMenuView extends Component {
 		translate: PropTypes.func.isRequired,
 		status: PropTypes.string,
 		isPreviewable: PropTypes.bool,
-		onClick: PropTypes.func,
 		previewUrl: PropTypes.string,
 		setPreviewUrl: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
@@ -39,20 +38,22 @@ class PostActionsEllipsisMenuView extends Component {
 		globalId: '',
 		status: 'draft',
 		isPreviewable: false,
-		onClick: () => {},
 		previewUrl: '',
 	};
 
 	previewPost = event => {
-		const { isPreviewable, previewUrl } = this.props;
+		const { isPreviewable, previewUrl, siteId } = this.props;
 		this.props.bumpStat();
 		if ( ! isPreviewable ) {
+			// The default action for the link is to open the previewUrl with a target of _blank.
+			// This default action is canceled below for previewable sites.
+			// Returning early maintains this behavior for non-previewable sites.
 			return;
 		}
 
+		this.props.setAllSitesPreviewSiteId( siteId );
 		this.props.setPreviewUrl( previewUrl );
 		this.props.setLayoutFocus( 'preview' );
-		this.props.onClick();
 		event.preventDefault();
 	};
 
@@ -85,6 +86,7 @@ const mapStateToProps = ( state, { globalId } ) => {
 	}
 
 	return {
+		siteId: post.site_ID,
 		status: post.status,
 		isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
 		previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID ),
@@ -92,7 +94,12 @@ const mapStateToProps = ( state, { globalId } ) => {
 	};
 };
 
-const mapDispatchToProps = { setPreviewUrl, setLayoutFocus, bumpAnalyticsStat };
+const mapDispatchToProps = {
+	setAllSitesPreviewSiteId,
+	setPreviewUrl,
+	setLayoutFocus,
+	bumpAnalyticsStat,
+};
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const bumpStat = bumpStatGenerator(
