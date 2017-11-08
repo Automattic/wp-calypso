@@ -16,6 +16,9 @@ import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
 import Notice from 'components/notice';
 
+// Use a constant for the default attribute state.
+const DEFAULT_ATTR = 'any';
+
 class ProductVariations extends Component {
 	static propTypes = {
 		onChange: PropTypes.func,
@@ -27,7 +30,7 @@ class ProductVariations extends Component {
 		this.state = {};
 		const attributes = filter( props.product.attributes, { variation: true } );
 		forEach( attributes, attr => {
-			this.state[ attr.name ] = 'any'; // Values default to any.
+			this.state[ attr.name ] = DEFAULT_ATTR;
 		} );
 	}
 
@@ -47,8 +50,8 @@ class ProductVariations extends Component {
 					id={ `select-${ kebabCase( attribute.name ) }` }
 					onChange={ this.onChange( attribute.name ) }
 				>
-					<option key={ 'any' } value="any">
-						{ translate( 'Any' ) }
+					<option key={ DEFAULT_ATTR } value={ DEFAULT_ATTR }>
+						{ translate( 'Select one' ) }
 					</option>
 					{ attribute.options.map( ( opt, i ) => <option key={ i }>{ opt }</option> ) }
 				</FormSelect>
@@ -71,7 +74,7 @@ class ProductVariations extends Component {
 					<FormLegend>
 						<Notice showDismiss={ false }>
 							{ translate(
-								'%(product)s has variations. Select a specific customization, or add the base product.',
+								'%(product)s has variations. Choose a specific customization to select.',
 								{ args: { product: product.name } }
 							) }
 						</Notice>
