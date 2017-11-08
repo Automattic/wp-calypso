@@ -108,8 +108,9 @@ export default function transformer( file, api ) {
 					return importValue.indexOf( '/' ) > -1;
 				} )
 				.at( 0 )
-				.forEach( p => {
+				.replaceWith( p => {
 					p.value.comments = [ comment ];
+					return p.value;
 				} );
 		}
 	}
