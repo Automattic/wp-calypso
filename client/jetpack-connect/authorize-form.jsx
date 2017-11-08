@@ -115,10 +115,6 @@ class JetpackConnectAuthorizeForm extends Component {
 			return this.renderNoQueryArgsError();
 		}
 
-		if ( queryObject && queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
-			this.renderForm();
-		}
-
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">{ this.renderForm() }</div>
