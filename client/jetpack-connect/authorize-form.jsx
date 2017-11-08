@@ -16,7 +16,6 @@ import Main from 'components/main';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import {
 	getAuthorizationData,
-	isRemoteSiteOnSitesList,
 	getSiteIdFromQueryObject,
 	getUserAlreadyConnected,
 } from 'state/jetpack-connect/selectors';
@@ -32,7 +31,6 @@ import LoggedOutForm from './auth-logged-out-form';
 
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {
-		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
 		jetpackConnectAuthorize: PropTypes.shape( {
@@ -130,7 +128,6 @@ export default connect(
 		const siteId = getSiteIdFromQueryObject( state );
 
 		return {
-			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
 			isFetchingSites: isRequestingSites( state ),
 			jetpackConnectAuthorize: getAuthorizationData( state ),

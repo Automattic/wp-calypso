@@ -49,6 +49,7 @@ import {
 	hasExpiredSecretError as hasExpiredSecretErrorSelector,
 	hasXmlrpcError as hasXmlrpcErrorSelector,
 	isCalypsoStartedConnection,
+	isRemoteSiteOnSitesList,
 } from 'state/jetpack-connect/selectors';
 
 /**
@@ -60,7 +61,6 @@ const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedInForm extends Component {
 	static propTypes = {
-		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
 		isSSO: PropTypes.bool,
@@ -87,6 +87,7 @@ class LoggedInForm extends Component {
 		goToXmlrpcErrorFallbackUrl: PropTypes.func.isRequired,
 		hasExpiredSecretError: PropTypes.bool,
 		hasXmlrpcError: PropTypes.bool,
+		isAlreadyOnSitesList: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectAfterAuth: PropTypes.string,
 		retryAuth: PropTypes.func.isRequired,
@@ -570,6 +571,7 @@ export default connect(
 			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
+			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 			siteSlug,
 		};
