@@ -14,8 +14,12 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import ConversationFollowButton from './button';
-import { isFollowingReaderConversation } from 'state/selectors';
+import { getReaderConversationFollowStatus } from 'state/selectors';
 import { followConversation, muteConversation } from 'state/reader/conversations/actions';
+import {
+	CONVERSATION_FOLLOW_STATUS_FOLLOWING,
+	CONVERSATION_FOLLOW_STATUS_MUTING,
+} from 'state/reader/conversations/follow-status';
 
 class ConversationFollowButtonContainer extends Component {
 	static propTypes = {
@@ -23,10 +27,17 @@ class ConversationFollowButtonContainer extends Component {
 		postId: PropTypes.number.isRequired,
 		onFollowToggle: PropTypes.func,
 		tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
+
+		/* This is a special prop for the Conversations stream, where we have a mixture
+		 * of explicitly followed posts (followStatus F) and implicitly followed posts
+		 * (followStatus null). We want to present them all as followed.
+		 */
+		showFollowingForAllUnmutedConversations: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onFollowToggle: noop,
+		showFollowingForAllUnmutedConversations: false,
 	};
 
 	handleFollowToggle = isRequestingFollow => {
@@ -42,9 +53,16 @@ class ConversationFollowButtonContainer extends Component {
 	};
 
 	render() {
+		let isFollowing = false;
+		if ( this.props.showFollowingForAllUnmutedConversations ) {
+			isFollowing = this.props.followStatus !== CONVERSATION_FOLLOW_STATUS_MUTING;
+		} else {
+			isFollowing = this.props.followStatus === CONVERSATION_FOLLOW_STATUS_FOLLOWING;
+		}
+
 		return (
 			<ConversationFollowButton
-				isFollowing={ this.props.isFollowing }
+				isFollowing={ isFollowing }
 				onFollowToggle={ this.handleFollowToggle }
 				className={ this.props.className }
 				tagName={ this.props.tagName }
@@ -55,7 +73,7 @@ class ConversationFollowButtonContainer extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		isFollowing: isFollowingReaderConversation( state, {
+		followStatus: getReaderConversationFollowStatus( state, {
 			siteId: ownProps.siteId,
 			postId: ownProps.postId,
 		} ),

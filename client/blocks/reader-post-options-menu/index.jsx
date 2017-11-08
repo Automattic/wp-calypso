@@ -38,6 +38,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		onBlock: PropTypes.func,
 		showFollow: PropTypes.bool,
 		position: PropTypes.string,
+		showFollowingForAllUnmutedConversations: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -174,6 +175,9 @@ class ReaderPostOptionsMenu extends React.Component {
 							tagName={ PopoverMenuItem }
 							siteId={ siteId }
 							postId={ postId }
+							showFollowingForAllUnmutedConversations={
+								this.props.showFollowingForAllUnmutedConversations
+							}
 						/>
 					) }
 

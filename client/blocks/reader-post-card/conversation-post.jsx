@@ -20,7 +20,7 @@ class ConversationPost extends React.Component {
 	render() {
 		return (
 			<div className="reader-post-card__conversation-post">
-				<CompactPostCard { ...this.props } />
+				<CompactPostCard { ...this.props } showFollowingForAllUnmutedConversations={ true } />
 				<ConversationPostList post={ this.props.post } commentIds={ this.props.commentIds } />
 			</div>
 		);

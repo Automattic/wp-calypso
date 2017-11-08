@@ -14,7 +14,14 @@ import ReaderExcerpt from 'blocks/reader-excerpt';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import FeaturedAsset from './featured-asset';
 
-const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
+const CompactPost = ( {
+	post,
+	postByline,
+	children,
+	isDiscover,
+	showFollowingForAllUnmutedConversations,
+	onClick,
+} ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="reader-post-card__post" onClick={ onClick }>
@@ -30,6 +37,7 @@ const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
 					showFollow={ true }
 					post={ post }
 					position="bottom"
+					showFollowingForAllUnmutedConversations={ showFollowingForAllUnmutedConversations }
 				/>
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
