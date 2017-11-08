@@ -71,13 +71,6 @@ exports[`AuthorizeForm should render LoggedOutForm when logged out 1`] = `
     className="jetpack-connect__authorize-form"
   >
     <Connect(Localized(LoggedOutForm))
-      authAttempts={0}
-      calypsoStartedConnection={false}
-      isAlreadyOnSitesList={false}
-      isFetchingAuthorizationSite={false}
-      isFetchingSites={false}
-      isSSO={false}
-      isWoo={false}
       jetpackConnectAuthorize={
         Object {
           "authorizeError": false,
@@ -112,10 +105,6 @@ exports[`AuthorizeForm should render LoggedOutForm when logged out 1`] = `
         }
       }
       path="/jetpack/connect/authorize"
-      recordTracksEvent={[Function]}
-      setTracksAnonymousUserId={[Function]}
-      siteSlug="an.example.site"
-      user={null}
     />
   </div>
 </JetpackConnectMainWrapper>
