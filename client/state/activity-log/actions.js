@@ -204,12 +204,11 @@ export function dismissRewindRestoreProgress( siteId ) {
 	};
 }
 
-export function getRewindRestoreProgress( siteId, timestamp, restoreId ) {
+export function getRewindRestoreProgress( siteId, restoreId ) {
 	return {
 		type: REWIND_RESTORE_PROGRESS_REQUEST,
 		siteId,
 		restoreId,
-		timestamp,
 	};
 }
 
@@ -217,7 +216,6 @@ export function updateRewindRestoreProgress( siteId, timestamp, restoreId, progr
 	return {
 		type: REWIND_RESTORE_UPDATE_PROGRESS,
 		...progress,
-		freshness: Date.now(),
 		restoreId,
 		siteId,
 		timestamp,
@@ -297,7 +295,6 @@ export function updateRewindBackupProgress( siteId, downloadId, progress ) {
 		...progress,
 		downloadId,
 		siteId,
-		freshness: Date.now(),
 	};
 }
 

@@ -56,11 +56,7 @@ function ProgressBanner( {
 		>
 			{ 'restore' === action && (
 				<div>
-					<QueryRewindRestoreStatus
-						restoreId={ restoreId }
-						siteId={ siteId }
-						timestamp={ timestamp }
-					/>
+					<QueryRewindRestoreStatus restoreId={ restoreId } siteId={ siteId } />
 					<p>
 						{ translate(
 							"We're in the process of restoring your site back to %s. " +
