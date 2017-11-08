@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { filter, forEach, kebabCase, sortBy } from 'lodash';
+import { filter, forEach, kebabCase, keys, sortBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -36,7 +36,17 @@ class ProductVariations extends Component {
 
 	onChange = name => event => {
 		this.state[ name ] = event.target.value;
-		this.props.onChange( this.state );
+		this.props.onChange( this.state, this.resetAttrs );
+	};
+
+	resetAttrs = () => {
+		this.setState( prevState => {
+			const newState = {};
+			keys( prevState ).map( name => {
+				newState[ name ] = DEFAULT_ATTR;
+			} );
+			return newState;
+		} );
 	};
 
 	renderAttribute = attribute => {
@@ -49,6 +59,7 @@ class ProductVariations extends Component {
 				<FormSelect
 					id={ `select-${ kebabCase( attribute.name ) }` }
 					onChange={ this.onChange( attribute.name ) }
+					value={ this.state[ attribute.name ] }
 				>
 					<option key={ DEFAULT_ATTR } value={ DEFAULT_ATTR }>
 						{ translate( 'Select one' ) }

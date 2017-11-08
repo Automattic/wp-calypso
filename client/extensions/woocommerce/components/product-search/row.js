@@ -103,7 +103,7 @@ class ProductSearchRow extends Component {
 		} );
 	};
 
-	updateItem = attributes => {
+	updateItem = ( attributes, callback ) => {
 		const { variations } = this.props;
 		// Don't swap the product if we have an "any" selected
 		if ( -1 !== values( attributes ).indexOf( 'any' ) ) {
@@ -134,6 +134,9 @@ class ProductSearchRow extends Component {
 			const variationId = get( matchingVariations, '[0].id', false );
 			if ( variationId && ! this.isSelected( variationId ) ) {
 				this.props.onChange( variationId );
+			}
+			if ( typeof callback === 'function' ) {
+				callback();
 			}
 		}
 	};
