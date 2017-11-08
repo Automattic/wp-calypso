@@ -171,7 +171,7 @@ describe( 'streams', () => {
 
 		it( 'should return a receivePage action', () => {
 			const { streamId, query } = action.payload;
-			expect( handlePage( action, data ) ).toEqual(
+			expect( handlePage( action, fromApi( data ) ) ).toEqual(
 				receivePage( { streamId, query, posts: data.posts } )
 			);
 		} );

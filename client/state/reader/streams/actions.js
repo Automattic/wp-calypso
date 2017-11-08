@@ -23,11 +23,14 @@ import {
  * @return {object}          The action object
  */
 export function requestPage( { streamId, query } ) {
+	const indexOfColon = streamId.indexOf( ':' );
+	const streamType = indexOfColon === -1 ? streamId : streamId.substring( 0, indexOfColon );
 	return {
 		type: READER_STREAMS_PAGE_REQUEST,
 		payload: {
 			streamId,
 			query,
+			streamType,
 		},
 	};
 }

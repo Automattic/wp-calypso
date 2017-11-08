@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { find, random } from 'lodash';
+import { random } from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -41,55 +41,44 @@ function getSeedForQuery() {
 	return random( 0, 10000 );
 }
 
-const streamToPathMatchers = [
-	// ordering here is by how often we expect each stream type to be used
-	// search is linear, so putting common things near the front can be helpful
-	// Each object is a composed of:
-	//   match: a regexp that matches against a stream ID
-	//   path: a function that given the action, returns The API path to hit
-	//   query: a function that given the action, returns the query to use.
-	{
-		match: /^following$/,
+// Each object is a composed of:
+//   path: a function that given the action, returns The API path to hit
+//   query: a function that given the action, returns the query to use.
+const streamApis = {
+	following: {
 		path: () => '/read/following',
 	},
-	{
-		match: /^search:/,
+	search: {
 		path: () => '/read/search',
 		query: ( { query, streamId } ) => {
 			return { ...query, q: streamIdSuffix( streamId ) };
 		},
 	},
-	{
-		match: /^feed:/,
+	feed: {
 		path: ( { streamId } ) => `/read/feed/${ streamIdSuffix( streamId ) }/posts`,
 	},
-	{
-		match: /^site:/,
+	site: {
 		path: ( { streamId } ) => `/read/sites/${ streamIdSuffix( streamId ) }/posts`,
 	},
-	{
-		match: /^conversations$/,
+	conversations: {
 		path: () => '/read/conversations',
 	},
-	{
-		match: /^featured:/,
+	featured: {
 		path: ( { streamId } ) => `/read/sites/${ streamIdSuffix( streamId ) }/featured`,
 	},
-	{
+	a8c: {
 		match: /^a8c$/,
 		path: () => '/read/a8c',
 	},
-	{
+	a8c_conversations: {
 		match: /^a8c_conversations$/,
 		path: () => '/read/conversations',
 		query: () => ( { index: 'a8c' } ),
 	},
-	{
-		match: /^likes$/,
+	likes: {
 		path: () => '/read/liked',
 	},
-	{
-		match: /^recommendations_posts$/,
+	recommendations_posts: {
 		path: () => '/read/recommendations/posts',
 		query: ( { query } ) => {
 			return {
@@ -99,8 +88,7 @@ const streamToPathMatchers = [
 			};
 		},
 	},
-	{
-		match: /^custom_recs/,
+	custom_recs_posts_with_images: {
 		path: () => '/read/recommendations/posts',
 		query: ( { query } ) => {
 			return Object.assign( {}, query, {
@@ -109,28 +97,13 @@ const streamToPathMatchers = [
 			} );
 		},
 	},
-	{
-		match: /^tag:/,
+	tag: {
 		path: () => '/read/tags/:tag/posts',
 	},
-	{
-		match: /^list:/,
+	list: {
 		path: () => '/read/list/:owner/:slug/posts',
 	},
-	{
-		match: /^featured:/,
-		path: ( { site } ) => `/read/sites/${ site }/featured`,
-	},
-];
-
-/**
- * Find the API descriptor for a stream ID
- * @param  {String} streamId A stream ID
- * @return {Object}          The API descriptor for the given stream. `null` if nothing matches.
- */
-function apiForStream( streamId ) {
-	return find( streamToPathMatchers, matcher => matcher.match.test( streamId ) );
-}
+};
 
 /**
  * Request a page for the given stream
@@ -138,8 +111,8 @@ function apiForStream( streamId ) {
  * @returns {object} http action for data-layer to dispatch
  */
 export function requestPage( action ) {
-	const { payload: { streamId } } = action;
-	const api = apiForStream( streamId );
+	const { payload: { streamId, streamType } } = action;
+	const api = streamApis[ streamType ];
 
 	if ( ! api ) {
 		warn( `Unable to determine api path for ${ streamId }` );
@@ -168,9 +141,9 @@ export function fromApi( data ) {
 	return ( data && data.posts ) || [];
 }
 
-export function handlePage( action, data ) {
+export function handlePage( action, posts ) {
 	const { streamId, query } = action.payload;
-	return receivePage( { streamId, query, data } );
+	return receivePage( { streamId, query, posts } );
 }
 
 export function handleError() {
