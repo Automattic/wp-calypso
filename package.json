@@ -135,7 +135,6 @@
     "redux-form": "7.0.2",
     "redux-thunk": "1.0.0",
     "rtlcss": "2.0.5",
-    "sanitize-html": "1.11.1",
     "semver": "5.1.0",
     "social-logos": "2.0.0",
     "socket.io-client": "1.4.5",
