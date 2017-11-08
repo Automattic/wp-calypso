@@ -35,8 +35,9 @@ class ProductVariations extends Component {
 	}
 
 	onChange = name => event => {
-		this.state[ name ] = event.target.value;
-		this.props.onChange( this.state, this.resetAttrs );
+		this.setState( { [ name ]: event.target.value }, () => {
+			this.props.onChange( this.state, this.resetAttrs );
+		} );
 	};
 
 	resetAttrs = () => {
@@ -61,10 +62,14 @@ class ProductVariations extends Component {
 					onChange={ this.onChange( attribute.name ) }
 					value={ this.state[ attribute.name ] }
 				>
-					<option key={ DEFAULT_ATTR } value={ DEFAULT_ATTR }>
+					<option key={ `${ attribute.name }-${ DEFAULT_ATTR }` } value={ DEFAULT_ATTR }>
 						{ translate( 'Select one' ) }
 					</option>
-					{ attribute.options.map( ( opt, i ) => <option key={ i }>{ opt }</option> ) }
+					{ attribute.options.map( ( opt, i ) => (
+						<option key={ `${ attribute.name }-${ i }` } value={ opt }>
+							{ opt }
+						</option>
+					) ) }
 				</FormSelect>
 			</div>
 		);

@@ -74,10 +74,10 @@ class ProductSearchRow extends Component {
 
 		const selectedIds = intersection( newProps.value, newProps.product.variations );
 		const selectedVariations = selectedIds.map( id => find( newProps.variations, { id } ) );
-		this.state = {
+		this.setState( {
 			showForm: Boolean( selectedIds.length ),
 			variations: filter( selectedVariations ) || [],
-		};
+		} );
 	}
 
 	isSelected = id => isProductSelected( this.props.value, id );
