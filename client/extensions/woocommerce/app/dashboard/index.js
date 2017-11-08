@@ -27,7 +27,7 @@ import {
 	getNewOrdersWithoutPayPalPending,
 } from 'woocommerce/state/sites/orders/selectors';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import { fetchProducts } from 'woocommerce/state/sites/products/actions';
+import { fetchProducts, fetchProductsFailure } from 'woocommerce/state/sites/products/actions';
 import { requestSettings } from 'woocommerce/state/sites/settings/mailchimp/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
@@ -74,7 +74,7 @@ class Dashboard extends Component {
 			this.props.requestSettings( siteId );
 
 			if ( ! productsLoaded ) {
-				this.props.fetchProducts( siteId, { page: 1 } );
+				this.fetchSiteProducts( siteId );
 			}
 		}
 	};
@@ -91,9 +91,18 @@ class Dashboard extends Component {
 			this.props.requestSettings( newSiteId );
 
 			if ( ! productsLoaded ) {
-				this.props.fetchProducts( newSiteId, { page: 1 } );
+				this.fetchSiteProducts( newSiteId );
 			}
 		}
+	};
+
+	fetchSiteProducts = siteId => {
+		const params = { page: 1 };
+		const failureAction = dispatch => {
+			dispatch( this.props.fetchProductsFailure( siteId, params ) );
+		};
+
+		this.props.fetchProducts( siteId, params, null, failureAction );
 	};
 
 	getBreadcrumb = () => {
@@ -239,6 +248,7 @@ function mapDispatchToProps( dispatch ) {
 			fetchOrders,
 			fetchSetupChoices,
 			fetchProducts,
+			fetchProductsFailure,
 			requestSettings,
 		},
 		dispatch
