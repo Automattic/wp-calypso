@@ -156,8 +156,9 @@ export const sanitizeSectionContent = content => {
 	while ( walker.nextNode() ) {
 		const node = walker.currentNode;
 		const tagName = node.nodeName.toLowerCase();
+		const isYoutube = isValidYoutubeEmbed( node );
 
-		if ( ! isAllowedTag( tagName ) && ! isValidYoutubeEmbed( node ) ) {
+		if ( ! isAllowedTag( tagName ) && ! isYoutube ) {
 			removeList.push( node );
 			continue;
 		}
@@ -195,6 +196,11 @@ export const sanitizeSectionContent = content => {
 		if ( 'a' === tagName && node.getAttribute( 'href' ) ) {
 			node.setAttribute( 'target', '_blank' );
 			node.setAttribute( 'rel', 'external noopener noreferrer' );
+		}
+
+		// prevent mixed-content issues from blocking Youtube embeds
+		if ( isYoutube ) {
+			node.setAttribute( 'src', node.getAttribute( 'src' ).replace( 'http://', 'https://' ) );
 		}
 	}
 
