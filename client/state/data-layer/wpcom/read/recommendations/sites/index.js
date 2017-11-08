@@ -22,12 +22,12 @@ export const requestRecommendedSites = ( { dispatch }, action ) => {
 			path: '/read/recommendations/sites',
 			query: pickBy(
 				{ number, offset, seed, posts_per_site: 0, algorithm: getDefaultSearchAlgorithm() },
-				Boolean,
+				Boolean
 			),
 			apiVersion: '1.2',
 			onSuccess: action,
 			onFailure: action,
-		} ),
+		} )
 	);
 };
 
@@ -56,7 +56,7 @@ export const receiveRecommendedSitesResponse = ( store, action, response ) => {
 			sites: fromApi( response ),
 			seed: action.payload.seed,
 			offset: action.payload.offset,
-		} ),
+		} )
 	);
 };
 
