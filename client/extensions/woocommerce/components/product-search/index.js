@@ -84,12 +84,12 @@ class ProductSearch extends Component {
 		this.props.onChange( productId );
 	};
 
-	renderSearch( searchFilter ) {
-		return <Search value={ searchFilter } onSearch={ this.onSearch } />;
-	}
+	renderSearch = () => {
+		return <Search value={ this.state.searchFilter } onSearch={ this.onSearch } />;
+	};
 
-	renderList( singular ) {
-		const { value } = this.props;
+	renderList = () => {
+		const { singular, value } = this.props;
 		const filteredProducts = this.getFilteredProducts() || [];
 		const renderFunc = product => {
 			const onChange = singular ? this.onProductRadio : this.onProductCheckbox;
@@ -105,13 +105,13 @@ class ProductSearch extends Component {
 		};
 
 		return <div className="product-search__list">{ filteredProducts.map( renderFunc ) }</div>;
-	}
+	};
 
 	render() {
 		return (
 			<div className="product-search">
-				{ this.renderSearch( this.state.searchFilter ) }
-				{ this.renderList( this.props.singular ) }
+				{ this.renderSearch() }
+				{ this.renderList() }
 			</div>
 		);
 	}
