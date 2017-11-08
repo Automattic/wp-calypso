@@ -21,7 +21,6 @@ class SidebarButton extends React.Component {
 		href: PropTypes.string,
 		onClick: PropTypes.func,
 		preloadSectionName: PropTypes.string,
-		children: PropTypes.node,
 	};
 
 	_preloaded = false;

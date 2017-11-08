@@ -22,7 +22,6 @@ import ErrorPanel from 'my-sites/stats/stats-error';
 
 class StoreStatsModule extends Component {
 	static propTypes = {
-		children: PropTypes.node,
 		data: PropTypes.array,
 		emptyMessage: PropTypes.string,
 		header: PropTypes.node,

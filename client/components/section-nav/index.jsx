@@ -22,7 +22,6 @@ import Search from 'components/search';
  */
 class SectionNav extends Component {
 	static propTypes = {
-		children: PropTypes.node,
 		selectedText: PropTypes.node,
 		selectedCount: PropTypes.number,
 		hasPinnedItems: PropTypes.bool,

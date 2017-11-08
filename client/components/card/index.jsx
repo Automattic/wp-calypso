@@ -16,7 +16,6 @@ class Card extends Component {
 		tagName: PropTypes.string,
 		target: PropTypes.string,
 		compact: PropTypes.bool,
-		children: PropTypes.node,
 		highlight: PropTypes.oneOf( [ false, 'error', 'info', 'success', 'warning' ] ),
 	};
 

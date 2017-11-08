@@ -13,7 +13,6 @@ class DialogBase extends Component {
 		autoFocus: PropTypes.bool,
 		baseClassName: PropTypes.string,
 		buttons: PropTypes.array,
-		children: PropTypes.node,
 		className: PropTypes.string,
 		isFullScreen: PropTypes.bool,
 		isVisible: PropTypes.bool,

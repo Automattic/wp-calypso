@@ -12,10 +12,6 @@ import { Provider as ReduxProvider } from 'react-redux';
 export default class extends React.Component {
 	static displayName = 'RootChild';
 
-	static propTypes = {
-		children: PropTypes.node,
-	};
-
 	static contextTypes = {
 		store: PropTypes.object,
 	};
