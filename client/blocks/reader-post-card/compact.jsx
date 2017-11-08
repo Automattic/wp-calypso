@@ -19,7 +19,7 @@ const CompactPost = ( {
 	postByline,
 	children,
 	isDiscover,
-	showFollowingForAllUnmutedConversations,
+	defaultConversationFollowStatus,
 	onClick,
 } ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -37,7 +37,7 @@ const CompactPost = ( {
 					showFollow={ true }
 					post={ post }
 					position="bottom"
-					showFollowingForAllUnmutedConversations={ showFollowingForAllUnmutedConversations }
+					defaultConversationFollowStatus={ defaultConversationFollowStatus }
 				/>
 				<AutoDirection>
 					<h1 className="reader-post-card__title">

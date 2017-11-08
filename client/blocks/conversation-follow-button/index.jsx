@@ -7,7 +7,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
+import { noop, includes, uniq } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -18,7 +18,7 @@ import { getReaderConversationFollowStatus } from 'state/selectors';
 import { followConversation, muteConversation } from 'state/reader/conversations/actions';
 import {
 	CONVERSATION_FOLLOW_STATUS_FOLLOWING,
-	CONVERSATION_FOLLOW_STATUS_MUTING,
+	CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
 } from 'state/reader/conversations/follow-status';
 
 class ConversationFollowButtonContainer extends Component {
@@ -32,12 +32,15 @@ class ConversationFollowButtonContainer extends Component {
 		 * of explicitly followed posts (followStatus F) and implicitly followed posts
 		 * (followStatus null). We want to present them all as followed.
 		 */
-		showFollowingForAllUnmutedConversations: PropTypes.bool,
+		defaultConversationFollowStatus: PropTypes.oneOf( [
+			CONVERSATION_FOLLOW_STATUS_FOLLOWING,
+			CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
+		] ),
 	};
 
 	static defaultProps = {
 		onFollowToggle: noop,
-		showFollowingForAllUnmutedConversations: false,
+		defaultConversationFollowStatus: CONVERSATION_FOLLOW_STATUS_FOLLOWING,
 	};
 
 	handleFollowToggle = isRequestingFollow => {
@@ -53,12 +56,10 @@ class ConversationFollowButtonContainer extends Component {
 	};
 
 	render() {
-		let isFollowing = false;
-		if ( this.props.showFollowingForAllUnmutedConversations ) {
-			isFollowing = this.props.followStatus !== CONVERSATION_FOLLOW_STATUS_MUTING;
-		} else {
-			isFollowing = this.props.followStatus === CONVERSATION_FOLLOW_STATUS_FOLLOWING;
-		}
+		const isFollowing = includes(
+			uniq( [ CONVERSATION_FOLLOW_STATUS_FOLLOWING, this.props.defaultConversationFollowStatus ] ),
+			this.props.followStatus
+		);
 
 		return (
 			<ConversationFollowButton
