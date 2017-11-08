@@ -34,7 +34,7 @@ import userUtilities from 'lib/user/utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getJetpackConnectRedirectAfterAuth } from 'state/selectors';
-import { isRequestingSite } from 'state/sites/selectors';
+import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
@@ -63,7 +63,6 @@ const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedInForm extends Component {
 	static propTypes = {
-		isFetchingSites: PropTypes.bool,
 		isSSO: PropTypes.bool,
 		isWoo: PropTypes.bool,
 		jetpackConnectAuthorize: PropTypes.shape( {
@@ -90,6 +89,7 @@ class LoggedInForm extends Component {
 		hasXmlrpcError: PropTypes.bool,
 		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
+		isFetchingSites: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectAfterAuth: PropTypes.string,
 		retryAuth: PropTypes.func.isRequired,
@@ -576,6 +576,7 @@ export default connect(
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
+			isFetchingSites: isRequestingSites( state ),
 			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 			siteSlug,
 		};

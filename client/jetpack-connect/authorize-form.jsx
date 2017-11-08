@@ -18,7 +18,6 @@ import { getAuthorizationData, getUserAlreadyConnected } from 'state/jetpack-con
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
-import { isRequestingSites } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
@@ -27,7 +26,6 @@ import LoggedOutForm from './auth-logged-out-form';
 
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {
-		isFetchingSites: PropTypes.bool,
 		jetpackConnectAuthorize: PropTypes.shape( {
 			queryObject: PropTypes.shape( {
 				client_id: PropTypes.string,
@@ -120,7 +118,6 @@ export { JetpackConnectAuthorizeForm as JetpackConnectAuthorizeFormTestComponent
 
 export default connect(
 	state => ( {
-		isFetchingSites: isRequestingSites( state ),
 		jetpackConnectAuthorize: getAuthorizationData( state ),
 		user: getCurrentUser( state ),
 		userAlreadyConnected: getUserAlreadyConnected( state ),
