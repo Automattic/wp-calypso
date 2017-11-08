@@ -37,11 +37,11 @@ import SuccessBanner from '../activity-log-banner/success-banner';
 import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
-	rewindRequestDismiss as rewindRequestDismissAction,
-	rewindRequestRestore as rewindRequestRestoreAction,
-	rewindRestore as rewindRestoreAction,
+	rewindRequestDismiss,
+	rewindRequestRestore,
+	rewindRestore,
 	rewindRequestBackup,
 	rewindBackupDismiss,
 	rewindBackup,
@@ -211,7 +211,7 @@ class ActivityLog extends Component {
 			timestamp: PropTypes.string.isRequired,
 		} ),
 		backupProgress: PropTypes.object,
-		recordTracksEvent: PropTypes.func.isRequired,
+		changePeriod: PropTypes.func,
 		requestedRestoreActivity: PropTypes.shape( {
 			rewindId: PropTypes.string.isRequired,
 			activityTs: PropTypes.number.isRequired,
@@ -247,20 +247,13 @@ class ActivityLog extends Component {
 		return getStartMoment( { gmtOffset, startDate, timezone } );
 	}
 
-	handlePeriodChange = ( { date, direction } ) => {
-		this.props.recordTracksEvent( 'calypso_activitylog_monthpicker_change', {
-			date: date.utc().toISOString(),
-			direction,
-		} );
-	};
-
 	handlePeriodChangeBottom = ( ...args ) => {
 		scrollTo( {
 			x: 0,
 			y: 0,
 			duration: 250,
 		} );
-		this.handlePeriodChange( ...args );
+		this.props.changePeriod( ...args );
 	};
 
 	/**
@@ -272,14 +265,13 @@ class ActivityLog extends Component {
 	 * @param {string} type       Type of dialog to show.
 	 */
 	handleRequestDialog = ( activityId, from, type ) => {
-		const { recordTracksEvent, rewindRequestRestore, requestBackup, siteId } = this.props;
-		recordTracksEvent( `calypso_activitylog_${ type }_request`, { from } );
+		const { siteId } = this.props;
 		switch ( type ) {
 			case 'restore':
-				rewindRequestRestore( siteId, activityId );
+				this.props.rewindRequestRestore( siteId, activityId, from );
 				break;
 			case 'backup':
-				requestBackup( siteId, activityId );
+				this.props.requestBackup( siteId, activityId, from );
 				break;
 		}
 	};
@@ -289,14 +281,13 @@ class ActivityLog extends Component {
 	 * @param {string} type Type of dialog to close.
 	 */
 	handleCloseDialog = type => {
-		const { recordTracksEvent, rewindRequestDismiss, dismissBackup, siteId } = this.props;
-		recordTracksEvent( `calypso_activitylog_${ type }_cancel` );
+		const { siteId } = this.props;
 		switch ( type ) {
 			case 'restore':
-				rewindRequestDismiss( siteId );
+				this.props.rewindRequestDismiss( siteId );
 				break;
 			case 'backup':
-				dismissBackup( siteId );
+				this.props.dismissBackup( siteId );
 				break;
 		}
 	};
@@ -306,25 +297,18 @@ class ActivityLog extends Component {
 	 * @param {string} type Type of dialog to close.
 	 */
 	handleConfirmDialog = type => {
-		const {
-			recordTracksEvent,
-			requestedRestoreActivity,
-			requestedBackup,
-			rewindRestore,
-			createBackup,
-			siteId,
-		} = this.props;
+		const { requestedRestoreActivity, requestedBackup, siteId } = this.props;
 		let actionId = null;
 
 		debug( `${ type } requested for after activity %o`, requestedRestoreActivity );
 		switch ( type ) {
 			case 'restore':
 				actionId = requestedRestoreActivity.rewindId;
-				rewindRestore( siteId, actionId );
+				this.props.rewindRestore( siteId, actionId );
 				break;
 			case 'backup':
 				actionId = requestedBackup.rewindId;
-				createBackup( siteId, actionId );
+				this.props.createBackup( siteId, actionId );
 				break;
 		}
 		scrollTo( {
@@ -332,7 +316,6 @@ class ActivityLog extends Component {
 			y: 0,
 			duration: 250,
 		} );
-		recordTracksEvent( `calypso_activitylog_${ type }_confirm`, { actionId } );
 	};
 
 	/**
@@ -514,7 +497,7 @@ class ActivityLog extends Component {
 			<StatsPeriodNavigation
 				date={ startOfMonth }
 				onPeriodChange={
-					position === 'bottom' ? this.handlePeriodChangeBottom : this.handlePeriodChange
+					position === 'bottom' ? this.handlePeriodChangeBottom : this.props.changePeriod
 				}
 				period="month"
 				url={ `/stats/activity/${ slug }` }
@@ -726,12 +709,40 @@ export default connect(
 		};
 	},
 	{
-		recordTracksEvent: recordTracksEventAction,
-		rewindRequestDismiss: rewindRequestDismissAction,
-		rewindRequestRestore: rewindRequestRestoreAction,
-		rewindRestore: rewindRestoreAction,
-		requestBackup: rewindRequestBackup,
-		dismissBackup: rewindBackupDismiss,
-		createBackup: rewindBackup,
+		changePeriod: ( { date, direction } ) =>
+			recordTracksEvent( 'calypso_activitylog_monthpicker_change', {
+				date: date.utc().toISOString(),
+				direction,
+			} ),
+		createBackup: ( siteId, actionId ) =>
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_backup_confirm', { actionId } ),
+				rewindBackup( siteId, actionId )
+			),
+		dismissBackup: siteId =>
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_backup_cancel' ),
+				rewindBackupDismiss( siteId )
+			),
+		rewindRequestDismiss: siteId =>
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_restore_cancel' ),
+				rewindRequestDismiss( siteId )
+			),
+		rewindRequestRestore: ( siteId, activityId, from ) =>
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_restore_request', { from } ),
+				rewindRequestRestore( siteId, activityId )
+			),
+		rewindRestore: ( siteId, actionId ) =>
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_restore_confirm', { actionId } ),
+				rewindRestore( siteId, actionId )
+			),
+		requestBackup: ( siteId, activityId, from ) =>
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_backup_request', { from } ),
+				rewindRequestBackup( siteId, activityId )
+			),
 	}
 )( localize( ActivityLog ) );
