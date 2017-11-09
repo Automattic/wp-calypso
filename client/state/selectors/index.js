@@ -42,6 +42,7 @@ export getCredentialsAutoConfigStatus from './get-credentials-auto-config-status
 export getCurrentLocaleSlug from './get-current-locale-slug';
 export getCurrentPlanPurchaseId from './get-current-plan-purchase-id';
 export getCurrentUserPaymentMethods from './get-current-user-payment-methods';
+export getCurrentUserRegisterDate from './get-current-user-register-date';
 export getImageEditorIsGreaterThanMinimumDimensions from './get-image-editor-is-greater-than-minimum-dimensions';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';

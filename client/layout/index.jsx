@@ -20,7 +20,6 @@ import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import GlobalNotices from 'components/global-notices';
-import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import notices from 'notices';
 import translator from 'lib/translator-jumpstart';
 import TranslatorInvitation from './community-translator/invitation';
@@ -180,8 +179,6 @@ const Layout = createReactClass( {
 						notices={ notices.list }
 						forcePinned={ 'post' === this.props.section.name }
 					/>
-
-					<PrivacyPolicyBanner />
 
 					<div id="primary" className="layout__primary">
 						{ this.props.primary }
