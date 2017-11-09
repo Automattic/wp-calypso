@@ -1,0 +1,12 @@
+{
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"begin_timestamp": { "type": "integer" },
+			"end_timestamp": { "type": "integer" },
+			"schedule_id": { "type": "integer" },
+			"description": { "type": "string" }
+		}
+	}
+}
