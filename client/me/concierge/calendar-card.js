@@ -54,7 +54,7 @@ class CalendarCard extends Component {
 			<div className="concierge__calendar-card-header">
 				<Gridicon icon="calendar" className="concierge__calendar-card-header-icon" />
 				<span>
-					<b>{ getDayOfWeekString( date ) } —</b> { date.format( ' MMMM D' ) }
+					<b>{ this.getDayOfWeekString( date ) } —</b> { date.format( ' MMMM D' ) }
 				</span>
 			</div>
 		);
