@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External Dependencies
  *
@@ -79,7 +80,7 @@ class ReaderInfiniteStream extends Component {
 			parent={ parent }
 		>
 			{ ( { measure } ) => (
-				<div key={ key } style={ style } className="reader-infinite-stream__row-wrapper">
+				<div key={ key } style={ style } className="reader-infinite-stream__row-wrapper" role="row">
 					<ComponentToMeasure { ...props } onShouldMeasure={ measure } />
 				</div>
 			) }
