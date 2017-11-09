@@ -1,0 +1,81 @@
+// banner
+.privacy-policy-banner {
+	max-width: 1040px;
+	margin: auto;
+}
+
+.is-reader-page .privacy-policy-banner {
+	margin: 30px auto;
+	max-width: 800px;
+}
+
+.is-section-preview .privacy-policy-banner {
+	margin: 24px;
+}
+
+// banner - editor section
+.is-section-post-editor .privacy-policy-banner {
+	margin: 60px auto 0;
+	max-width: 740px;
+
+	.card {
+		margin-left: 12px;
+		margin-right: 12px;
+	}
+}
+
+.is-section-post-editor.focus-sidebar .privacy-policy-banner {
+    @include breakpoint( ">660px" ) {
+		width: calc( 100% - ( 272px ) );
+		position: relative;
+		left: -135px;
+	}
+}
+
+// dialog
+.dialog.card.privacy-policy-banner__dialog {
+	max-width: 700px;
+	font-size: 14px;
+	overflow: hidden;
+
+	ol {
+		list-style-position: inside;
+		margin: 0;
+
+		@include breakpoint( ">660px" ) {
+			list-style-position: outside;
+			margin: 0 3em 1.5em;
+		}
+	}
+}
+
+.privacy-policy-banner__dialog-header {
+	display: flex;
+	align-items: center;
+	margin: -24px -24px 0;
+	padding: 0 24px;
+	background-color: #fbfcfd;
+	height: 116px;
+	box-shadow: 0 1px 0 0 lighten( $gray, 20% ),
+		0 1px 0 lighten( $gray, 40% );
+
+	p {
+		margin: 0;
+	}
+}
+
+.privacy-policy-banner__dialog-header-image {
+	width: (149 / 482) * 100%;
+	margin-right: 20px;
+}
+
+.privacy-policy-banner__dialog-header-text {
+	flex: 1;
+}
+
+.privacy-policy-banner__dialog-body {
+	overflow-y: auto;
+	height: 320px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
