@@ -42,17 +42,21 @@ export class Comment extends Component {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.isPostView ) {
-			if ( ! this.props.isPostView ) {
-				this.setState( { isExpanded: false } );
-			} else if ( this.props.isBulkMode && ! nextProps.isBulkMode ) {
-				this.setState( { isExpanded: false } );
-			} else if ( ! this.props.isBulkMode && nextProps.isBulkMode ) {
-				this.setState( { isExpanded: false } );
-			}
-		} else {
-			this.setState( { isExpanded: ! nextProps.isLoading && ! nextProps.isBulkMode } );
+		const { isBulkMode: wasBulkMode, isPostView: wasPostView } = this.props;
+		const { isBulkMode, isLoading, isPostView } = nextProps;
+		const { isExpanded: wasExpanded, isReplyVisible: wasReplyVisible } = this.state;
+
+		let isExpanded = wasExpanded;
+		if ( isPostView && ( ! wasPostView || wasBulkMode !== isBulkMode ) ) {
+			isExpanded = false;
+		} else if ( ! isPostView ) {
+			isExpanded = ! isLoading && ! isBulkMode;
 		}
+
+		const isReplyVisible =
+			wasPostView !== isPostView || wasBulkMode !== isBulkMode ? false : wasReplyVisible;
+
+		this.setState( { isExpanded, isReplyVisible } );
 	}
 
 	storeCardRef = card => ( this.commentCard = card );
