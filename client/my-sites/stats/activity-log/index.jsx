@@ -384,20 +384,11 @@ class ActivityLog extends Component {
 	 * @returns {object}                 Card showing progress.
 	 */
 	getProgressBanner( siteId, actionProgress, action ) {
-		const {
-			freshness,
-			percent,
-			progress,
-			restoreId,
-			downloadId,
-			status,
-			timestamp,
-		} = actionProgress;
+		const { percent, progress, restoreId, downloadId, status, timestamp } = actionProgress;
 		return (
 			<ProgressBanner
 				key={ `progress-${ restoreId || downloadId }` }
 				applySiteOffset={ this.applySiteOffset }
-				freshness={ freshness }
 				percent={ percent || progress }
 				restoreId={ restoreId }
 				downloadId={ downloadId }

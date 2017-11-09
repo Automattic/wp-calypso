@@ -1,49 +1,35 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
 
-import { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { delay } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getRewindBackupProgress } from 'state/activity-log/actions';
+import Interval, { EVERY_SECOND } from 'lib/interval';
+import { getRewindBackupProgress as getBackupProgress } from 'state/activity-log/actions';
 
-class QueryRewindBackupStatus extends PureComponent {
+class QueryRewindBackupStatus extends Component {
 	static propTypes = {
-		freshness: PropTypes.number,
 		downloadId: PropTypes.number,
 		siteId: PropTypes.number.isRequired,
 	};
 
-	query( props ) {
-		const { getBackupProgress, downloadId, siteId } = props;
+	query = () => {
+		const { downloadId, siteId } = this.props;
+
 		if ( siteId && downloadId ) {
-			delay( getBackupProgress, 1500, siteId, downloadId );
+			this.props.getBackupProgress( siteId, downloadId );
 		}
-	}
-
-	componentWillMount() {
-		this.query( this.props );
-	}
-
-	componentWillUpdate( nextProps ) {
-		const { freshness, downloadId } = this.props;
-		if ( downloadId !== nextProps.downloadId || freshness !== nextProps.freshness ) {
-			this.query( nextProps );
-		}
-	}
+	};
 
 	render() {
-		return null;
+		return <Interval onTick={ this.query } period={ EVERY_SECOND } />;
 	}
 }
 
-export default connect( null, {
-	getBackupProgress: getRewindBackupProgress,
-} )( QueryRewindBackupStatus );
+export default connect( null, { getBackupProgress } )( QueryRewindBackupStatus );
