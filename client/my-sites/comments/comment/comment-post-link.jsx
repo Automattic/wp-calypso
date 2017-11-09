@@ -32,7 +32,7 @@ const CommentPostLink = ( {
 		<Gridicon icon="chevron-right" size={ 18 } />
 
 		<a href={ `/comments/${ status }/${ siteSlug }/${ postId }` }>
-			{ postTitle || translate( 'Untitled' ) }
+			{ postTitle.trim() || translate( 'Untitled' ) }
 		</a>
 	</div>
 );
