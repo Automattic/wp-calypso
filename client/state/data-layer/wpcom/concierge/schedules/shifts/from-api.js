@@ -11,7 +11,7 @@ import { get } from 'lodash';
 import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import responseSchema from './schema';
 
-export const transformShift = shift => ( {
+const transformShift = shift => ( {
 	beginTimestamp: get( shift, 'begin_timestamp' ),
 	endTimestamp: get( shift, 'end_timestamp' ),
 	scheduleId: get( shift, 'schedule_id' ),
