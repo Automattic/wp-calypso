@@ -356,6 +356,7 @@
 .comment__reply {
 	background: $gray-light;
 	border-top: 1px solid lighten($gray, 30%);
+	display: none;
 	padding: 16px;
 }
 
@@ -528,6 +529,14 @@
 
 	&.is-pending .comment__content {
 		padding-bottom: 16px;
+	}
+}
+
+// Reply Visible
+
+.card.comment.is-reply-visible {
+	.comment__reply {
+		display: block;
 	}
 }
 
