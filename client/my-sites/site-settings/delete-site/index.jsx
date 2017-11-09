@@ -217,14 +217,15 @@ class DeleteSite extends Component {
 						<ActionPanelTitle>{ strings.exportContentFirst }</ActionPanelTitle>
 						<p>
 							{ translate(
-								'Before deleting your site, please take the time to export your content now. ' +
-									'All your posts, pages, and settings will be packaged into a .zip file that you can use in ' +
-									'the future to resume where you left off.'
+								'Before deleting your site, take a moment to export your content. ' +
+									'This will package the content of all your posts and pages, ' +
+									"along with your site's settings, into a .zip file. " +
+									"If you ever want to re-create your site, you'll be able to import the .zip file to a new site."
 							) }
 						</p>
 						<p>
 							{ translate(
-								'Keep in mind that this content {{strong}}can not{{/strong}} be recovered in the future.',
+								'This content {{strong}}can not{{/strong}} be recovered once your delete this site.',
 								{
 									components: {
 										strong: <strong />,
@@ -266,31 +267,51 @@ class DeleteSite extends Component {
 								</li>
 							</ul>
 						</ActionPanelFigure>
-						<p>
-							{ translate(
-								'This action {{strong}}can not{{/strong}} be undone. Deleting the site will remove all content, ' +
-									'contributors, domains, and upgrades from the site.',
-								{
-									components: {
-										strong: <strong />,
-									},
-								}
-							) }
-						</p>
-						<p>
-							{ translate(
-								"If you're unsure about what will be deleted or need any help, not to worry, our support team " +
-									'is here to answer any questions you might have.'
-							) }
-						</p>
-						<p>
-							<a
-								className="delete-site__body-text-link settings-action-panel__body-text-link"
-								href="/help/contact"
-							>
-								{ strings.contactSupport }
-							</a>
-						</p>
+						{ ! isAtomic && (
+							<div>
+								<p>
+									{ translate(
+										'Deletion {{strong}}can not{{/strong}} be undone, ' +
+											'and will remove all content, contributors, domains, and upgrades from this site.',
+										{
+											components: {
+												strong: <strong />,
+											},
+										}
+									) }
+								</p>
+								<p>
+									{ translate(
+										"If you're unsure about what deletion means or have any other questions, " +
+											'please chat with someone from our support team before proceeding.'
+									) }
+								</p>
+								<p>
+									<a
+										className="delete-site__body-text-link settings-action-panel__body-text-link"
+										href="/help/contact"
+									>
+										{ strings.contactSupport }
+									</a>
+								</p>
+							</div>
+						) }
+						{ isAtomic && (
+							<div>
+								<p>
+									{ translate(
+										"To delete this site, you'll need to contact our support team. Deletion can not be undone, " +
+											'and will remove all content, contributors, domains, and upgrades from this site.'
+									) }
+								</p>
+								<p>
+									{ translate(
+										"If you're unsure about what deletion means or have any other questions, " +
+											"you'll have a chance to chat with someone from our support team before anything happens."
+									) }
+								</p>
+							</div>
+						) }
 					</ActionPanelBody>
 					<ActionPanelFooter>
 						{ ! isAtomic && (
