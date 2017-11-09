@@ -30,9 +30,8 @@ function PostActionsEllipsisMenuDuplicate( {
 	bumpStat,
 } ) {
 	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
-	const validType = includes( [ 'post' ], type );
 
-	if ( ! isEnabled( 'posts/post-type-list' ) || ! canEdit || ! validStatus || ! validType ) {
+	if ( ! isEnabled( 'posts/post-type-list' ) || ! canEdit || ! validStatus || 'post' !== type ) {
 		return null;
 	}
 
