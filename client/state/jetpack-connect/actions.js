@@ -50,8 +50,13 @@ import config from 'config';
 import addQueryArgs from 'lib/route/add-query-args';
 import { externalRedirect } from 'lib/route/path';
 import { urlToSlug } from 'lib/url';
+import {
+	clearFlowType,
+	clearPlan,
+	persistFlowType,
+	persistSession,
+} from 'jetpack-connect/persistence-utils';
 import { JPC_PLANS_PAGE } from './constants';
-import { clearPlan } from 'jetpack-connect/persistence-utils';
 
 /**
  *  Local variables;
@@ -87,10 +92,11 @@ export function checkUrl( url, isUrlOnSites, flowType ) {
 			return;
 		}
 		if ( isUrlOnSites ) {
+			persistSession( url );
+			persistFlowType( flowType );
 			dispatch( {
 				type: JETPACK_CONNECT_CHECK_URL,
 				url: url,
-				flowType: flowType,
 			} );
 			setTimeout( () => {
 				dispatch( {
@@ -112,10 +118,11 @@ export function checkUrl( url, isUrlOnSites, flowType ) {
 		}
 		_fetching[ url ] = true;
 		setTimeout( () => {
+			persistSession( url );
+			persistFlowType( flowType );
 			dispatch( {
 				type: JETPACK_CONNECT_CHECK_URL,
 				url: url,
-				flowType: flowType,
 			} );
 		}, 1 );
 		Promise.all( [
@@ -558,6 +565,7 @@ export function authorizeSSO( siteId, ssoNonce, siteUrl ) {
 export function completeFlow( site ) {
 	return dispatch => {
 		clearPlan();
+		clearFlowType();
 		dispatch( {
 			type: JETPACK_CONNECT_COMPLETE_FLOW,
 			site,

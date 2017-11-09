@@ -8,15 +8,12 @@ import {
 	getAuthorizationRemoteQueryData,
 	getAuthorizationRemoteSite,
 	getConnectingSite,
-	getFlowType,
 	getJetpackSiteByUrl,
-	getSessions,
 	getSiteIdFromQueryObject,
 	getSSO,
 	getUserAlreadyConnected,
 	hasExpiredSecretError,
 	hasXmlrpcError,
-	isCalypsoStartedConnection,
 	isRedirectingToWpAdmin,
 	isRemoteSiteOnSitesList,
 } from '../selectors';
@@ -212,36 +209,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getSessions()', () => {
-		test( 'should return undefined if user has not started any jetpack connect sessions', () => {
-			const state = {
-				jetpackConnect: {},
-			};
-
-			expect( getSessions( state ) ).toBeUndefined();
-		} );
-
-		test( "should return all of the user's single sign-on sessions", () => {
-			const jetpackConnectSessions = {
-				'wordpress.com': {
-					timestamp: 1234567890,
-					flowType: 'premium',
-				},
-				'jetpack.me': {
-					timestamp: 2345678901,
-					flowType: 'pro',
-				},
-			};
-			const state = {
-				jetpackConnect: {
-					jetpackConnectSessions,
-				},
-			};
-
-			expect( getSessions( state ) ).toEqual( jetpackConnectSessions );
-		} );
-	} );
-
 	describe( '#getSSO()', () => {
 		test( 'should return undefined if user has not yet started the single sign-on flow', () => {
 			const state = {
@@ -292,65 +259,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isCalypsoStartedConnection()', () => {
-		test( 'should return true if the user have started a session in calypso less than an hour ago', () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectSessions: {
-						sitetest: {
-							timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
-							flowType: '',
-						},
-					},
-				},
-			};
-
-			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).toBe( true );
-		} );
-
-		test( 'should return true if the user has just started a session in calypso and site contains a forward slash', () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectSessions: {
-						'example.com::example123': {
-							timestamp: Date.now(),
-							flow: '',
-						},
-					},
-				},
-			};
-
-			expect( isCalypsoStartedConnection( state, 'example.com/example123' ) ).toBe( true );
-		} );
-
-		test( "should return false if the user haven't started a session in calypso  ", () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectSessions: {
-						sitetest: {},
-					},
-				},
-			};
-
-			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).toBe( false );
-		} );
-
-		test( 'should return false if the user started a session in calypso more than an hour ago', () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectSessions: {
-						sitetest: {
-							timestamp: new Date( Date.now() - 60 * 60 * 1000 ).getTime(),
-							flow: '',
-						},
-					},
-				},
-			};
-
-			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).toBe( false );
-		} );
-	} );
-
 	describe( '#isRedirectingToWpAdmin()', () => {
 		test( 'should return false if redirection flag is not set', () => {
 			const state = {
@@ -384,48 +292,6 @@ describe( 'selectors', () => {
 			};
 
 			expect( isRedirectingToWpAdmin( state ) ).toBe( true );
-		} );
-	} );
-
-	describe( '#getFlowType()', () => {
-		test( 'should return the flow of the session for a site', () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectSessions: {
-						sitetest: {
-							timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
-							flowType: 'pro',
-						},
-					},
-				},
-			};
-
-			expect( getFlowType( state, 'sitetest' ) ).toEqual( 'pro' );
-		} );
-
-		test( 'should return the flow of the session for a site with slash in the site slug', () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectSessions: {
-						'example.com::example123': {
-							timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
-							flowType: 'pro',
-						},
-					},
-				},
-			};
-
-			expect( getFlowType( state, 'example.com/example123' ) ).toEqual( 'pro' );
-		} );
-
-		test( "should return false if there's no session for a site", () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectSessions: {},
-				},
-			};
-
-			expect( getFlowType( state, 'sitetest' ) ).toBe( false );
 		} );
 	} );
 
