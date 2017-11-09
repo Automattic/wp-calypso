@@ -3,8 +3,7 @@
  *
  * @format
  */
-
-import { get } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -103,33 +102,29 @@ const getUserAlreadyConnected = state => {
 };
 
 /**
- * XMLRPC errors can be identified by the presence of an error message, the presence of an authorization code
- * and if the error message contains the string 'error'
+ * Returns true if there is an XMLRPC error.
  *
- * @param {object} state Global state tree
- * @returns {Boolean} If there's an xmlrpc error or not
+ * @param  {object}  state Global state tree
+ * @return {Boolean}       True if there's an xmlrpc error otherwise false
  */
 const hasXmlrpcError = function( state ) {
 	const authorizeData = getAuthorizationData( state );
 
-	return (
-		authorizeData &&
-		authorizeData.authorizeError &&
-		authorizeData.authorizeError.message &&
-		authorizeData.authorizationCode &&
-		authorizeData.authorizeError.message.indexOf( 'error' ) > -1
-	);
+	return includes( get( authorizeData, [ 'authorizeError', 'message' ] ), 'error' );
 };
 
+/**
+ * Returns true if there is an expired secret error.
+ *
+ * @param  {object}  state Global state tree
+ * @return {Boolean}       True if there's an xmlrpc error otherwise false
+ */
 const hasExpiredSecretError = function( state ) {
 	const authorizeData = getAuthorizationData( state );
 
-	return (
-		authorizeData &&
-		authorizeData.authorizeError &&
-		authorizeData.authorizeError.message &&
-		authorizeData.authorizationCode &&
-		authorizeData.authorizeError.message.indexOf( 'verify_secrets_expired' ) > -1
+	return includes(
+		get( authorizeData, [ 'authorizeError', 'message' ] ),
+		'verify_secrets_expired'
 	);
 };
 
