@@ -5,16 +5,38 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import CalendarStep from './calendar-step';
+import ConfirmationStep from './confirmation-step';
+import InfoStep from './info-step';
+import Skeleton from './skeleton';
 import QueryConciergeShifts from 'components/data/query-concierge-shifts';
 import { getConciergeShifts } from 'state/selectors';
 
+const STEP_COMPONENTS = [ InfoStep, CalendarStep, ConfirmationStep ];
+
 class ConciergeMain extends Component {
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			currentStep: 0,
+		};
+	}
+
+	goToPreviousStep = () => {
+		this.setState( { currentStep: this.state.currentStep - 1 } );
+	};
+
+	goToNextStep = () => {
+		this.setState( { currentStep: this.state.currentStep + 1 } );
+	};
+
 	render() {
+		const CurrentStep = STEP_COMPONENTS[ this.state.currentStep ];
 		const { shifts } = this.props;
 
 		// TODO:
@@ -23,7 +45,15 @@ class ConciergeMain extends Component {
 		return (
 			<div>
 				<QueryConciergeShifts scheduleId={ 123 } />
-				<div>{ JSON.stringify( shifts ) }</div>
+				{ shifts ? (
+					<CurrentStep
+						shifts={ shifts }
+						onComplete={ this.goToNextStep }
+						onBack={ this.goToPreviousStep }
+					/>
+				) : (
+					<Skeleton />
+				) }
 			</div>
 		);
 	}
@@ -34,4 +64,4 @@ export default connect(
 		shifts: getConciergeShifts( state ),
 	} ),
 	{ getConciergeShifts }
-)( localize( ConciergeMain ) );
+)( ConciergeMain );
