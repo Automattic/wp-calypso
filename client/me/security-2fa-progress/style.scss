@@ -36,7 +36,7 @@
 					width: 50%;
 				}
 
-				.noticon {
+				.gridicon {
 					background: $blue-wordpress;
 					color: $white;
 					border-color: $blue-wordpress;
@@ -60,7 +60,7 @@
 					width: 100%;
 				}
 
-				.noticon {
+				.gridicon {
 					background: lighten( $gray, 20% );
 					color: $gray;
 				}
@@ -70,16 +70,15 @@
 				}
 			}
 
-			.noticon {
+			.gridicon {
 				background: $white;
 				border: 1px lighten( $gray, 20% ) solid;
 				border-radius: 50%;
 				color: lighten( $gray, 20% );
 				display: block;
-				height: 48px;
 				margin: 0 auto;
 				position: relative;
-				width: 48px;
+				padding: 12px;
 
 				&:before {
 					font-size: 32px;
