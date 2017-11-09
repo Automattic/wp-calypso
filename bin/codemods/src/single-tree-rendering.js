@@ -104,10 +104,17 @@ export default function transformer( file, api ) {
 			root
 				.find( j.ImportDeclaration )
 				.filter( p => {
+					const internalDepsWithoutSlash = [
+						'config',
+						'controller',
+						'dispatcher',
+						'layout',
+						'sections',
+					];
 					const importValue = _.get( p, 'value.source.value', '' );
+
 					return (
-						importValue.indexOf( '/' ) > -1 ||
-						[ 'config', 'controller', 'dispatcher', 'layout' ].indexOf( importValue ) > -1
+						importValue.indexOf( '/' ) > -1 || internalDepsWithoutSlash.indexOf( importValue ) > -1
 					);
 				} )
 				.at( 0 )
