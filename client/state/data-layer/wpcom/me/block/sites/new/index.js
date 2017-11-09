@@ -47,7 +47,7 @@ export function receiveSiteBlock( store, action, response ) {
 }
 
 export function receiveSiteBlockError( { dispatch }, { payload: { siteId } } ) {
-	dispatch( errorNotice( translate( 'Sorry, we had a problem blocking that site.' ) ) );
+	dispatch( errorNotice( translate( 'Sorry, there was a problem blocking that site.' ) ) );
 	dispatch( bypassDataLayer( unblockSite( siteId ) ) );
 }
 
