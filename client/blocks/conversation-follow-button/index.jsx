@@ -56,10 +56,11 @@ class ConversationFollowButtonContainer extends Component {
 	};
 
 	render() {
-		const isFollowing = includes(
-			uniq( [ CONVERSATION_FOLLOW_STATUS_FOLLOWING, this.props.defaultConversationFollowStatus ] ),
-			this.props.followStatus
-		);
+		const validFollowingStatuses = uniq( [
+			CONVERSATION_FOLLOW_STATUS_FOLLOWING,
+			this.props.defaultConversationFollowStatus,
+		] );
+		const isFollowing = includes( validFollowingStatuses, this.props.followStatus );
 
 		return (
 			<ConversationFollowButton
