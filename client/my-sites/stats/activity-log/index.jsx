@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import config from 'config';
-import debugFactory from 'debug';
+import Gridicon from 'gridicons';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -64,7 +64,6 @@ import {
 /**
  * Module constants
  */
-const debug = debugFactory( 'calypso:activity-log' );
 const rewindEnabledByConfig = config.isEnabled( 'jetpack/activity-log/rewind' );
 
 const flushEmptyDays = days => [
@@ -292,31 +291,23 @@ class ActivityLog extends Component {
 		}
 	};
 
-	/**
-	 * Proceed with Restore, Backup, or Transfer since user confirmed it.
-	 * @param {string} type Type of dialog to close.
-	 */
-	handleConfirmDialog = type => {
-		const { requestedRestoreActivity, requestedBackup, siteId } = this.props;
-		let actionId = null;
+	confirmDownload = () => {
+		const { requestedBackup: { rewindId }, siteId } = this.props;
 
-		debug( `${ type } requested for after activity %o`, requestedRestoreActivity );
-		switch ( type ) {
-			case 'restore':
-				actionId = requestedRestoreActivity.rewindId;
-				this.props.rewindRestore( siteId, actionId );
-				break;
-			case 'backup':
-				actionId = requestedBackup.rewindId;
-				this.props.createBackup( siteId, actionId );
-				break;
-		}
-		scrollTo( {
-			x: 0,
-			y: 0,
-			duration: 250,
-		} );
+		this.props.createBackup( siteId, rewindId );
+		scrollTo( { x: 0, y: 0, duration: 250 } );
 	};
+
+	confirmRestore = () => {
+		const { requestedRestoreActivity: { rewindId }, siteId } = this.props;
+
+		this.props.rewindRestore( siteId, rewindId );
+		scrollTo( { x: 0, y: 0, duration: 250 } );
+	};
+
+	dismissBackup = () => this.props.dismissBackup( this.props.siteId );
+
+	dismissRestore = () => this.props.rewindRequestDismiss( this.props.siteId );
 
 	/**
 	 * Adjust a moment by the site timezone or gmt offset. Use the resulting function wherever log
@@ -536,24 +527,58 @@ class ActivityLog extends Component {
 
 		const restoreConfirmDialog = requestedRestoreActivity && (
 			<ActivityLogConfirmDialog
-				applySiteOffset={ this.applySiteOffset }
 				key="activity-rewind-dialog"
-				onClose={ this.handleCloseDialog }
-				onConfirm={ this.handleConfirmDialog }
-				timestamp={ requestedRestoreActivity.activityTs }
-			/>
+				confirmTitle={ translate( 'Confirm Rewind' ) }
+				onClose={ this.dismissRestore }
+				onConfirm={ this.confirmRestore }
+				title={ translate( 'Rewind Site' ) }
+			>
+				{ translate(
+					'This is the selected point for your site Rewind. ' +
+						'Are you sure you want to rewind your site back to {{b}}%(time)s{{/b}}?',
+					{
+						args: {
+							time: this.applySiteOffset(
+								moment.utc( requestedRestoreActivity.activityTs )
+							).format( 'LLL' ),
+						},
+						components: { b: <b /> },
+					}
+				) }
+				<div className="activity-log-confirm-dialog__notice">
+					<Gridicon icon={ 'notice' } />
+					<span className="activity-log-confirm-dialog__notice-content">
+						{ translate(
+							'This will remove all content and options created or changed since then.'
+						) }
+					</span>
+				</div>
+			</ActivityLogConfirmDialog>
 		);
 
 		const backupConfirmDialog = requestedBackup && (
 			<ActivityLogConfirmDialog
-				applySiteOffset={ this.applySiteOffset }
 				key="activity-backup-dialog"
-				onClose={ this.handleCloseDialog }
-				onConfirm={ this.handleConfirmDialog }
-				timestamp={ requestedBackup.activityTs }
+				confirmTitle={ translate( 'Create download' ) }
+				onClose={ this.dismissBackup }
+				onConfirm={ this.confirmDownload }
+				title={ translate( 'Create downloadable backup' ) }
 				type={ 'backup' }
 				icon={ 'cloud-download' }
-			/>
+			>
+				{ translate(
+					'We will build a downloadable backup of your site at {{b}}%(time)s{{/b}}. ' +
+						'You will get a notification when the backup is ready to download.',
+					{
+						args: {
+							time: this.applySiteOffset( moment.utc( requestedBackup.activityTs ) ).format(
+								'LLL'
+							),
+						},
+						components: { b: <b /> },
+					}
+				) }
+			</ActivityLogConfirmDialog>
 		);
 
 		const visualGroups = intoVisualGroups(
