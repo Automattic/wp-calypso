@@ -8,10 +8,9 @@ import {
 	fetchConciergeShifts,
 	storeFetchedConciergeShifts,
 	showConciergeShiftsFetchError,
-	conciergeShiftsFetchErrorNotice,
 } from '../';
 import { updateConciergeShifts } from 'state/concierge/actions';
-import { CONCIERGE_SHIFTS_REQUEST } from 'state/action-types';
+import { CONCIERGE_SHIFTS_REQUEST, NOTICE_CREATE } from 'state/action-types';
 
 describe( 'wpcom-api', () => {
 	describe( 'concierge', () => {
@@ -54,9 +53,24 @@ describe( 'wpcom-api', () => {
 
 			showConciergeShiftsFetchError( { dispatch } );
 
-			// It should be enough to make sure it dispatches a error notice action here,
-			// instead for the whole action object and the text.
-			expect( dispatch ).toHaveBeenCalledWith( conciergeShiftsFetchErrorNotice );
+			// the reason that we don't use `errorNotice` action creator here is that
+			// it contains the side effect that increments `notice.noticeId` field automatically.
+			// Thus:
+			// const notice1 = errorNotice( 'message' );
+			// const notice2 = errorNotice( 'message' );
+			// notice1 and notice2 are actually non-equal, since notice1.notice.noticeId is 1 while
+			// notice2.notice.noticeId is 2.
+			// Instead of hacking out the underlying id, I think using partial matching here would be more sustainable.
+			expect( dispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					type: NOTICE_CREATE,
+					notice: expect.objectContaining( {
+						status: 'is-error',
+						text:
+							"We've encountered problems trying to load available shifts. Please try again later.",
+					} ),
+				} )
+			);
 		} );
 	} );
 } );
