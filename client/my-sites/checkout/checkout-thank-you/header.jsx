@@ -183,10 +183,15 @@ class CheckoutThankYouHeader extends PureComponent {
 	};
 
 	getButton() {
-		const { translate, primaryPurchase, selectedSite } = this.props;
+		const { hasFailedPurchases, translate, primaryPurchase, selectedSite } = this.props;
 		const headerButtonClassName = 'button is-primary';
 
-		if ( isPlan( primaryPurchase ) && selectedSite && ! selectedSite.jetpack ) {
+		if (
+			! hasFailedPurchases &&
+			isPlan( primaryPurchase ) &&
+			selectedSite &&
+			! selectedSite.jetpack
+		) {
 			return (
 				<div className="checkout-thank-you__header-button">
 					<button className={ headerButtonClassName } onClick={ this.visitSite }>
@@ -204,11 +209,10 @@ class CheckoutThankYouHeader extends PureComponent {
 		const classes = { 'is-placeholder': ! isDataLoaded };
 
 		let svg = 'thank-you.svg';
-		if ( isDomainTransfer( primaryPurchase ) ) {
-			svg = 'check-emails-desktop.svg';
-		}
 		if ( hasFailedPurchases ) {
 			svg = 'items-failed.svg';
+		} else if ( isDomainTransfer( primaryPurchase ) ) {
+			svg = 'check-emails-desktop.svg';
 		}
 
 		return (
