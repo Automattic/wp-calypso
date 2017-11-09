@@ -32,11 +32,11 @@ const getDayOfWeekString = date => {
 	return date.format( 'dddd' );
 };
 
-class CalendarStep extends Component {
+class CalendarCard extends Component {
 	static propTypes = {
-		date: PropTypes.string.isRequired,
+		date: PropTypes.number.isRequired,
 		onSubmit: PropTypes.func.isRequired,
-		options: PropTypes.array.isRequired,
+		times: PropTypes.arrayOf( PropTypes.number ).isRequired,
 	};
 
 	renderHeader = () => {
@@ -53,24 +53,24 @@ class CalendarStep extends Component {
 	};
 
 	render() {
-		const { options } = this.props;
+		const { times } = this.props;
 
 		return (
 			<FoldableCard
 				className="concierge__calendar-card"
-				clickableHeader={ ! isEmpty( options ) }
+				clickableHeader={ ! isEmpty( times ) }
 				compact
-				disabled={ isEmpty( options ) }
-				summary={ isEmpty( options ) ? 'No sessions available' : null }
+				disabled={ isEmpty( times ) }
+				summary={ isEmpty( times ) ? 'No sessions available' : null }
 				header={ this.renderHeader() }
 			>
 				<form>
 					<FormFieldset>
 						<FormLabel htmlFor="concierge-start-time">Choose a starting time</FormLabel>
 						<FormSelect id="concierge-start-time">
-							{ options.map( time => (
+							{ times.map( time => (
 								<option value={ time } key={ time }>
-									{ time }
+									{ moment( time ).format( 'h:mma z' ) }
 								</option>
 							) ) }
 						</FormSelect>
@@ -88,4 +88,4 @@ class CalendarStep extends Component {
 	}
 }
 
-export default CalendarStep;
+export default CalendarCard;
