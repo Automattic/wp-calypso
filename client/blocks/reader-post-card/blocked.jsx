@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSiteUnblock } from 'state/reader/site-blocks/actions';
+import { unblockSite } from 'state/reader/site-blocks/actions';
 import Card from 'components/card';
 import { recordTrack as recordReaderTrack } from 'reader/stats';
 import { bumpStat, recordGoogleEvent } from 'state/analytics/actions';
@@ -50,5 +50,5 @@ class PostBlocked extends React.Component {
 export default connect( null, {
 	recordGoogleEvent,
 	bumpStat,
-	requestSiteUnblock,
+	unblockSite,
 } )( localize( PostBlocked ) );
