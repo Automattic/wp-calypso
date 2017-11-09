@@ -22,8 +22,8 @@ export const requestFeedSearch = ( {
 	},
 } );
 
-export const receiveFeedSearch = ( queryKey, feeds, total ) => ( {
+export const receiveFeedSearch = ( queryKey, feeds, total, algorithm ) => ( {
 	type: READER_FEED_SEARCH_RECEIVE,
-	payload: { feeds, total },
+	payload: { feeds, total, algorithm },
 	queryKey,
 } );

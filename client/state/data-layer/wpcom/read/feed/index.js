@@ -45,7 +45,8 @@ export function receiveFeeds( store, action, apiResponse ) {
 	} ) );
 
 	const total = apiResponse.total > 200 ? 200 : apiResponse.total;
-	store.dispatch( receiveFeedSearch( queryKey( action.payload ), feeds, total ) );
+	const algorithm = apiResponse.algorithm;
+	store.dispatch( receiveFeedSearch( queryKey( action.payload ), feeds, total, algorithm ) );
 }
 
 export function receiveError( store, action, error ) {
