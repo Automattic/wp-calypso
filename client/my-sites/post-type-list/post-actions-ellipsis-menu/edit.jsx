@@ -1,14 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -50,6 +48,7 @@ const mapStateToProps = ( state, { globalId } ) => {
 	return {
 		canEdit: canCurrentUserEditPost( state, globalId ),
 		status: post.status,
+		type: post.type,
 		editUrl: getEditorPath( state, post.site_ID, post.ID ),
 	};
 };
@@ -57,11 +56,7 @@ const mapStateToProps = ( state, { globalId } ) => {
 const mapDispatchToProps = { bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator(
-		get( stateProps, 'type.name' ),
-		'edit',
-		dispatchProps.bumpAnalyticsStat
-	);
+	const bumpStat = bumpStatGenerator( stateProps.type, 'edit', dispatchProps.bumpAnalyticsStat );
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
 };
 
