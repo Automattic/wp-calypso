@@ -19,8 +19,10 @@ const ActivityLogConfirmDialog = ( {
 	children,
 	confirmTitle,
 	icon = 'history',
+	notice,
 	onClose,
 	onConfirm,
+	supportLink,
 	title,
 	translate,
 } ) => (
@@ -32,6 +34,13 @@ const ActivityLogConfirmDialog = ( {
 			<h5 className="activity-log-confirm-dialog__title">{ title }</h5>
 
 			<div className="activity-log-confirm-dialog__highlight">{ children }</div>
+
+			{ notice && (
+				<div className="activity-log-confirm-dialog__notice">
+					<Gridicon icon={ 'notice' } />
+					{ notice }
+				</div>
+			) }
 
 			<div className="activity-log-confirm-dialog__button-wrap">
 				<div className="activity-log-confirm-dialog__primary-actions">
@@ -53,7 +62,7 @@ const ActivityLogConfirmDialog = ( {
 					</Button>
 					<HappychatButton
 						className="activity-log-confirm-dialog__more-info-link"
-						href="https://help.vaultpress.com/one-click-restore/"
+						href={ supportLink }
 					>
 						<Gridicon icon="chat" />
 						<span className="activity-log-confirm-dialog__more-info-link-text">
