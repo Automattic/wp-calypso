@@ -5,7 +5,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, zipObject, fill, size, filter, get, compact, partition, min, noop } from 'lodash';
+import {
+	map,
+	zipObject,
+	fill,
+	size,
+	filter,
+	get,
+	compact,
+	partition,
+	min,
+	noop,
+	last,
+} from 'lodash';
 
 /***
  * Internal dependencies
@@ -113,8 +125,15 @@ export class ConversationCommentList extends React.Component {
 		this.resetActiveReplyComment();
 		this.reqMoreComments();
 	}
+
 	componentWillUnmount() {
-		this.props.viewStream( { streamId: CONVERSATIONS_STREAM_ID } );
+		const { teams, sortedComments } = this.props;
+		const isA8c = isAutomatticTeamMember( teams );
+
+		if ( config.isEnabled( 'reader/high-watermark' ) && isA8c ) {
+			const mark = new Date( last( sortedComments ).date );
+			this.props.viewStream( { streamId: CONVERSATIONS_STREAM_ID, mark } );
+		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
