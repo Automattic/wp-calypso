@@ -1,6 +1,17 @@
 /** @format */
 
 /**
+ * This renders the Concierge Chats scheduling page. It is a "wizard" interface with three steps.
+ * Each step is a separate component that calls `onComplete` when the step is complete or `onBack`
+ * if the user requests to go back. This component uses those callbacks to keep track of the current
+ * step and render it.
+ *
+ * This is still a work in progress and right now it just sets up step navigation. Fetching full data
+ * and doing actual work will come later, at which point we'll determine how the step components will
+ * gather the data they need.
+ */
+
+/**
  * External dependencies
  */
 import React, { Component } from 'react';
