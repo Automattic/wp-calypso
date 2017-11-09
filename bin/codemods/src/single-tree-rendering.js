@@ -50,9 +50,9 @@ export default function transformer( file, api ) {
 	 * @param {string} parameter Parameter name
 	 * @returns {boolean}
 	 */
-	function hasParam( parameters = [], parameter ) {
-		return _.some( parameters, parameter => {
-			( parameter.name || parameter ) === 'context';
+	function hasParam( params = [], param ) {
+		return _.some( params, param => {
+			return ( param.name || param ) === 'context';
 		} );
 	}
 
@@ -64,7 +64,7 @@ export default function transformer( file, api ) {
 	 */
 	function ensureContextMiddleware( path ) {
 		// `context` param is already in
-		if ( hasParam( 'context' ) ) {
+		if ( hasParam( path.value.params, 'context' ) ) {
 			return path.value;
 		}
 		let ret = path.value;
