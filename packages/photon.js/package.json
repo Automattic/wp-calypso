@@ -1,6 +1,6 @@
 {
   "name": "photon",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "JavaScript library for the WordPress.com Photon image manipulation service",
   "main": "index.js",
   "scripts": {
@@ -32,11 +32,11 @@
   "homepage": "https://github.com/Automattic/photon.js",
   "dependencies": {
     "crc32": "0.2.2",
-    "debug": "2",
+    "debug": "3.1.0",
     "seed-random": "2.2.0"
   },
   "devDependencies": {
-    "browserify": "8.1.1",
-    "mocha": "2.4.5"
+    "browserify": "14.5.0",
+    "mocha": "3.5.3"
   }
 }

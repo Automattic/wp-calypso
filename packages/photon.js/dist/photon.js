@@ -1,4 +1,4 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var o;"undefined"!=typeof window?o=window:"undefined"!=typeof global?o=global:"undefined"!=typeof self&&(o=self),o.photon=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.photon = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -66,7 +66,8 @@ function photon (imageUrl, opts) {
     if (parsedUrl.search) {
       return null;
     }
-    params.pathname = url.format( parsedUrl ).substring(1);
+    var formattedUrl = url.format( parsedUrl );
+    params.pathname = 0 === formattedUrl.indexOf( '//' ) ? formattedUrl.substring(1) : formattedUrl;
     params.hostname = serverFromPathname( params.pathname );
     if ( wasSecure ) {
       params.query.ssl = 1;
@@ -119,7 +120,7 @@ function serverFromPathname( pathname ) {
   return server + '.wp.com';
 }
 
-},{"crc32":2,"debug":3,"seed-random":10,"url":11}],2:[function(require,module,exports){
+},{"crc32":2,"debug":3,"seed-random":11,"url":12}],2:[function(require,module,exports){
 (function () {
 	'use strict';
 
@@ -223,7 +224,7 @@ function serverFromPathname( pathname ) {
 }());
 
 },{}],3:[function(require,module,exports){
-
+(function (process){
 /**
  * This is the web browser implementation of `debug()`.
  *
@@ -246,12 +247,17 @@ exports.storage = 'undefined' != typeof chrome
  */
 
 exports.colors = [
-  'lightseagreen',
-  'forestgreen',
-  'goldenrod',
-  'dodgerblue',
-  'darkorchid',
-  'crimson'
+  '#0000CC', '#0000FF', '#0033CC', '#0033FF', '#0066CC', '#0066FF', '#0099CC',
+  '#0099FF', '#00CC00', '#00CC33', '#00CC66', '#00CC99', '#00CCCC', '#00CCFF',
+  '#3300CC', '#3300FF', '#3333CC', '#3333FF', '#3366CC', '#3366FF', '#3399CC',
+  '#3399FF', '#33CC00', '#33CC33', '#33CC66', '#33CC99', '#33CCCC', '#33CCFF',
+  '#6600CC', '#6600FF', '#6633CC', '#6633FF', '#66CC00', '#66CC33', '#9900CC',
+  '#9900FF', '#9933CC', '#9933FF', '#99CC00', '#99CC33', '#CC0000', '#CC0033',
+  '#CC0066', '#CC0099', '#CC00CC', '#CC00FF', '#CC3300', '#CC3333', '#CC3366',
+  '#CC3399', '#CC33CC', '#CC33FF', '#CC6600', '#CC6633', '#CC9900', '#CC9933',
+  '#CCCC00', '#CCCC33', '#FF0000', '#FF0033', '#FF0066', '#FF0099', '#FF00CC',
+  '#FF00FF', '#FF3300', '#FF3333', '#FF3366', '#FF3399', '#FF33CC', '#FF33FF',
+  '#FF6600', '#FF6633', '#FF9900', '#FF9933', '#FFCC00', '#FFCC33'
 ];
 
 /**
@@ -263,13 +269,28 @@ exports.colors = [
  */
 
 function useColors() {
+  // NB: In an Electron preload script, document will be defined but not fully
+  // initialized. Since we know we're in Chrome, we'll just detect this case
+  // explicitly
+  if (typeof window !== 'undefined' && window.process && window.process.type === 'renderer') {
+    return true;
+  }
+
+  // Internet Explorer and Edge do not support colors.
+  if (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
+    return false;
+  }
+
   // is webkit? http://stackoverflow.com/a/16459606/376773
-  return ('WebkitAppearance' in document.documentElement.style) ||
+  // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
+  return (typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance) ||
     // is firebug? http://stackoverflow.com/a/398120/376773
-    (window.console && (console.firebug || (console.exception && console.table))) ||
+    (typeof window !== 'undefined' && window.console && (window.console.firebug || (window.console.exception && window.console.table))) ||
     // is firefox >= v31?
     // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-    (navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31);
+    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31) ||
+    // double check webkit in userAgent just in case we are in a worker
+    (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/));
 }
 
 /**
@@ -277,7 +298,11 @@ function useColors() {
  */
 
 exports.formatters.j = function(v) {
-  return JSON.stringify(v);
+  try {
+    return JSON.stringify(v);
+  } catch (err) {
+    return '[UnexpectedJSONParseError]: ' + err.message;
+  }
 };
 
 
@@ -287,8 +312,7 @@ exports.formatters.j = function(v) {
  * @api public
  */
 
-function formatArgs() {
-  var args = arguments;
+function formatArgs(args) {
   var useColors = this.useColors;
 
   args[0] = (useColors ? '%c' : '')
@@ -298,17 +322,17 @@ function formatArgs() {
     + (useColors ? '%c ' : ' ')
     + '+' + exports.humanize(this.diff);
 
-  if (!useColors) return args;
+  if (!useColors) return;
 
   var c = 'color: ' + this.color;
-  args = [args[0], c, 'color: inherit'].concat(Array.prototype.slice.call(args, 1));
+  args.splice(1, 0, c, 'color: inherit')
 
   // the final "%c" is somewhat tricky, because there could be other
   // arguments passed either before or after the %c, so we need to
   // figure out the correct index to insert the CSS into
   var index = 0;
   var lastC = 0;
-  args[0].replace(/%[a-z%]/g, function(match) {
+  args[0].replace(/%[a-zA-Z%]/g, function(match) {
     if ('%%' === match) return;
     index++;
     if ('%c' === match) {
@@ -319,7 +343,6 @@ function formatArgs() {
   });
 
   args.splice(lastC, 0, c);
-  return args;
 }
 
 /**
@@ -366,6 +389,12 @@ function load() {
   try {
     r = exports.storage.debug;
   } catch(e) {}
+
+  // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
+  if (!r && typeof process !== 'undefined' && 'env' in process) {
+    r = process.env.DEBUG;
+  }
+
   return r;
 }
 
@@ -386,13 +415,14 @@ exports.enable(load());
  * @api private
  */
 
-function localstorage(){
+function localstorage() {
   try {
     return window.localStorage;
   } catch (e) {}
 }
 
-},{"./debug":4}],4:[function(require,module,exports){
+}).call(this,require('_process'))
+},{"./debug":4,"_process":6}],4:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -401,12 +431,17 @@ function localstorage(){
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = debug;
+exports = module.exports = createDebug.debug = createDebug['default'] = createDebug;
 exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
 exports.humanize = require('ms');
+
+/**
+ * Active `debug` instances.
+ */
+exports.instances = [];
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -418,32 +453,27 @@ exports.skips = [];
 /**
  * Map of special "%n" handling functions, for the debug "format" argument.
  *
- * Valid key names are a single, lowercased letter, i.e. "n".
+ * Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
  */
 
 exports.formatters = {};
 
 /**
- * Previously assigned color.
- */
-
-var prevColor = 0;
-
-/**
- * Previous log timestamp.
- */
-
-var prevTime;
-
-/**
  * Select a color.
- *
+ * @param {String} namespace
  * @return {Number}
  * @api private
  */
 
-function selectColor() {
-  return exports.colors[prevColor++ % exports.colors.length];
+function selectColor(namespace) {
+  var hash = 0, i;
+
+  for (i in namespace) {
+    hash  = ((hash << 5) - hash) + namespace.charCodeAt(i);
+    hash |= 0; // Convert to 32bit integer
+  }
+
+  return exports.colors[Math.abs(hash) % exports.colors.length];
 }
 
 /**
@@ -454,17 +484,15 @@ function selectColor() {
  * @api public
  */
 
-function debug(namespace) {
+function createDebug(namespace) {
 
-  // define the `disabled` version
-  function disabled() {
-  }
-  disabled.enabled = false;
+  var prevTime;
 
-  // define the `enabled` version
-  function enabled() {
+  function debug() {
+    // disabled?
+    if (!debug.enabled) return;
 
-    var self = enabled;
+    var self = debug;
 
     // set `diff` timestamp
     var curr = +new Date();
@@ -474,22 +502,22 @@ function debug(namespace) {
     self.curr = curr;
     prevTime = curr;
 
-    // add the `color` if not set
-    if (null == self.useColors) self.useColors = exports.useColors();
-    if (null == self.color && self.useColors) self.color = selectColor();
-
-    var args = Array.prototype.slice.call(arguments);
+    // turn the `arguments` into a proper Array
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
 
     args[0] = exports.coerce(args[0]);
 
     if ('string' !== typeof args[0]) {
-      // anything else let's inspect with %o
-      args = ['%o'].concat(args);
+      // anything else let's inspect with %O
+      args.unshift('%O');
     }
 
     // apply any `formatters` transformations
     var index = 0;
-    args[0] = args[0].replace(/%([a-z%])/g, function(match, format) {
+    args[0] = args[0].replace(/%([a-zA-Z%])/g, function(match, format) {
       // if we encounter an escaped % then don't increase the array index
       if (match === '%%') return match;
       index++;
@@ -505,19 +533,37 @@ function debug(namespace) {
       return match;
     });
 
-    if ('function' === typeof exports.formatArgs) {
-      args = exports.formatArgs.apply(self, args);
-    }
-    var logFn = enabled.log || exports.log || console.log.bind(console);
+    // apply env-specific formatting (colors, etc.)
+    exports.formatArgs.call(self, args);
+
+    var logFn = debug.log || exports.log || console.log.bind(console);
     logFn.apply(self, args);
   }
-  enabled.enabled = true;
 
-  var fn = exports.enabled(namespace) ? enabled : disabled;
+  debug.namespace = namespace;
+  debug.enabled = exports.enabled(namespace);
+  debug.useColors = exports.useColors();
+  debug.color = selectColor(namespace);
+  debug.destroy = destroy;
 
-  fn.namespace = namespace;
+  // env-specific initialization logic for debug instances
+  if ('function' === typeof exports.init) {
+    exports.init(debug);
+  }
 
-  return fn;
+  exports.instances.push(debug);
+
+  return debug;
+}
+
+function destroy () {
+  var index = exports.instances.indexOf(this);
+  if (index !== -1) {
+    exports.instances.splice(index, 1);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -531,10 +577,14 @@ function debug(namespace) {
 function enable(namespaces) {
   exports.save(namespaces);
 
-  var split = (namespaces || '').split(/[\s,]+/);
+  exports.names = [];
+  exports.skips = [];
+
+  var i;
+  var split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
   var len = split.length;
 
-  for (var i = 0; i < len; i++) {
+  for (i = 0; i < len; i++) {
     if (!split[i]) continue; // ignore empty strings
     namespaces = split[i].replace(/\*/g, '.*?');
     if (namespaces[0] === '-') {
@@ -542,6 +592,11 @@ function enable(namespaces) {
     } else {
       exports.names.push(new RegExp('^' + namespaces + '$'));
     }
+  }
+
+  for (i = 0; i < exports.instances.length; i++) {
+    var instance = exports.instances[i];
+    instance.enabled = exports.enabled(instance.namespace);
   }
 }
 
@@ -564,6 +619,9 @@ function disable() {
  */
 
 function enabled(name) {
+  if (name[name.length - 1] === '*') {
+    return true;
+  }
   var i, len;
   for (i = 0, len = exports.skips.length; i < len; i++) {
     if (exports.skips[i].test(name)) {
@@ -610,17 +668,24 @@ var y = d * 365.25;
  *  - `long` verbose formatting [false]
  *
  * @param {String|Number} val
- * @param {Object} options
+ * @param {Object} [options]
+ * @throws {Error} throw an error if val is not a non-empty string or a number
  * @return {String|Number}
  * @api public
  */
 
-module.exports = function(val, options){
+module.exports = function(val, options) {
   options = options || {};
-  if ('string' == typeof val) return parse(val);
-  return options.long
-    ? long(val)
-    : short(val);
+  var type = typeof val;
+  if (type === 'string' && val.length > 0) {
+    return parse(val);
+  } else if (type === 'number' && isNaN(val) === false) {
+    return options.long ? fmtLong(val) : fmtShort(val);
+  }
+  throw new Error(
+    'val is not a non-empty string or a valid number. val=' +
+      JSON.stringify(val)
+  );
 };
 
 /**
@@ -632,10 +697,16 @@ module.exports = function(val, options){
  */
 
 function parse(str) {
-  str = '' + str;
-  if (str.length > 10000) return;
-  var match = /^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(str);
-  if (!match) return;
+  str = String(str);
+  if (str.length > 100) {
+    return;
+  }
+  var match = /^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(
+    str
+  );
+  if (!match) {
+    return;
+  }
   var n = parseFloat(match[1]);
   var type = (match[2] || 'ms').toLowerCase();
   switch (type) {
@@ -673,6 +744,8 @@ function parse(str) {
     case 'msec':
     case 'ms':
       return n;
+    default:
+      return undefined;
   }
 }
 
@@ -684,11 +757,19 @@ function parse(str) {
  * @api private
  */
 
-function short(ms) {
-  if (ms >= d) return Math.round(ms / d) + 'd';
-  if (ms >= h) return Math.round(ms / h) + 'h';
-  if (ms >= m) return Math.round(ms / m) + 'm';
-  if (ms >= s) return Math.round(ms / s) + 's';
+function fmtShort(ms) {
+  if (ms >= d) {
+    return Math.round(ms / d) + 'd';
+  }
+  if (ms >= h) {
+    return Math.round(ms / h) + 'h';
+  }
+  if (ms >= m) {
+    return Math.round(ms / m) + 'm';
+  }
+  if (ms >= s) {
+    return Math.round(ms / s) + 's';
+  }
   return ms + 'ms';
 }
 
@@ -700,12 +781,12 @@ function short(ms) {
  * @api private
  */
 
-function long(ms) {
-  return plural(ms, d, 'day')
-    || plural(ms, h, 'hour')
-    || plural(ms, m, 'minute')
-    || plural(ms, s, 'second')
-    || ms + ' ms';
+function fmtLong(ms) {
+  return plural(ms, d, 'day') ||
+    plural(ms, h, 'hour') ||
+    plural(ms, m, 'minute') ||
+    plural(ms, s, 'second') ||
+    ms + ' ms';
 }
 
 /**
@@ -713,22 +794,217 @@ function long(ms) {
  */
 
 function plural(ms, n, name) {
-  if (ms < n) return;
-  if (ms < n * 1.5) return Math.floor(ms / n) + ' ' + name;
+  if (ms < n) {
+    return;
+  }
+  if (ms < n * 1.5) {
+    return Math.floor(ms / n) + ' ' + name;
+  }
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
 },{}],6:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],7:[function(require,module,exports){
 (function (global){
-/*! http://mths.be/punycode v1.2.4 by @mathias */
+/*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
 
 	/** Detect free variables */
-	var freeExports = typeof exports == 'object' && exports;
+	var freeExports = typeof exports == 'object' && exports &&
+		!exports.nodeType && exports;
 	var freeModule = typeof module == 'object' && module &&
-		module.exports == freeExports && module;
+		!module.nodeType && module;
 	var freeGlobal = typeof global == 'object' && global;
-	if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
+	if (
+		freeGlobal.global === freeGlobal ||
+		freeGlobal.window === freeGlobal ||
+		freeGlobal.self === freeGlobal
+	) {
 		root = freeGlobal;
 	}
 
@@ -754,8 +1030,8 @@ function plural(ms, n, name) {
 
 	/** Regular expressions */
 	regexPunycode = /^xn--/,
-	regexNonASCII = /[^ -~]/, // unprintable ASCII chars + non-ASCII chars
-	regexSeparators = /\x2E|\u3002|\uFF0E|\uFF61/g, // RFC 3490 separators
+	regexNonASCII = /[^\x20-\x7E]/, // unprintable ASCII chars + non-ASCII chars
+	regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, // RFC 3490 separators
 
 	/** Error messages */
 	errors = {
@@ -781,7 +1057,7 @@ function plural(ms, n, name) {
 	 * @returns {Error} Throws a `RangeError` with the applicable error message.
 	 */
 	function error(type) {
-		throw RangeError(errors[type]);
+		throw new RangeError(errors[type]);
 	}
 
 	/**
@@ -794,23 +1070,37 @@ function plural(ms, n, name) {
 	 */
 	function map(array, fn) {
 		var length = array.length;
+		var result = [];
 		while (length--) {
-			array[length] = fn(array[length]);
+			result[length] = fn(array[length]);
 		}
-		return array;
+		return result;
 	}
 
 	/**
-	 * A simple `Array#map`-like wrapper to work with domain name strings.
+	 * A simple `Array#map`-like wrapper to work with domain name strings or email
+	 * addresses.
 	 * @private
-	 * @param {String} domain The domain name.
+	 * @param {String} domain The domain name or email address.
 	 * @param {Function} callback The function that gets called for every
 	 * character.
 	 * @returns {Array} A new string of characters returned by the callback
 	 * function.
 	 */
 	function mapDomain(string, fn) {
-		return map(string.split(regexSeparators), fn).join('.');
+		var parts = string.split('@');
+		var result = '';
+		if (parts.length > 1) {
+			// In email addresses, only the domain name should be punycoded. Leave
+			// the local part (i.e. everything up to `@`) intact.
+			result = parts[0] + '@';
+			string = parts[1];
+		}
+		// Avoid `split(regex)` for IE8 compatibility. See #17.
+		string = string.replace(regexSeparators, '\x2E');
+		var labels = string.split('.');
+		var encoded = map(labels, fn).join('.');
+		return result + encoded;
 	}
 
 	/**
@@ -820,7 +1110,7 @@ function plural(ms, n, name) {
 	 * UCS-2 exposes as separate characters) into a single code point,
 	 * matching UTF-16.
 	 * @see `punycode.ucs2.encode`
-	 * @see <http://mathiasbynens.be/notes/javascript-encoding>
+	 * @see <https://mathiasbynens.be/notes/javascript-encoding>
 	 * @memberOf punycode.ucs2
 	 * @name decode
 	 * @param {String} string The Unicode input string (UCS-2).
@@ -914,7 +1204,7 @@ function plural(ms, n, name) {
 
 	/**
 	 * Bias adaptation function as per section 3.4 of RFC 3492.
-	 * http://tools.ietf.org/html/rfc3492#section-3.4
+	 * https://tools.ietf.org/html/rfc3492#section-3.4
 	 * @private
 	 */
 	function adapt(delta, numPoints, firstTime) {
@@ -1029,8 +1319,8 @@ function plural(ms, n, name) {
 	}
 
 	/**
-	 * Converts a string of Unicode symbols to a Punycode string of ASCII-only
-	 * symbols.
+	 * Converts a string of Unicode symbols (e.g. a domain name label) to a
+	 * Punycode string of ASCII-only symbols.
 	 * @memberOf punycode
 	 * @param {String} input The string of Unicode symbols.
 	 * @returns {String} The resulting Punycode string of ASCII-only symbols.
@@ -1143,17 +1433,18 @@ function plural(ms, n, name) {
 	}
 
 	/**
-	 * Converts a Punycode string representing a domain name to Unicode. Only the
-	 * Punycoded parts of the domain name will be converted, i.e. it doesn't
-	 * matter if you call it on a string that has already been converted to
-	 * Unicode.
+	 * Converts a Punycode string representing a domain name or an email address
+	 * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
+	 * it doesn't matter if you call it on a string that has already been
+	 * converted to Unicode.
 	 * @memberOf punycode
-	 * @param {String} domain The Punycode domain name to convert to Unicode.
+	 * @param {String} input The Punycoded domain name or email address to
+	 * convert to Unicode.
 	 * @returns {String} The Unicode representation of the given Punycode
 	 * string.
 	 */
-	function toUnicode(domain) {
-		return mapDomain(domain, function(string) {
+	function toUnicode(input) {
+		return mapDomain(input, function(string) {
 			return regexPunycode.test(string)
 				? decode(string.slice(4).toLowerCase())
 				: string;
@@ -1161,15 +1452,18 @@ function plural(ms, n, name) {
 	}
 
 	/**
-	 * Converts a Unicode string representing a domain name to Punycode. Only the
-	 * non-ASCII parts of the domain name will be converted, i.e. it doesn't
-	 * matter if you call it with a domain that's already in ASCII.
+	 * Converts a Unicode string representing a domain name or an email address to
+	 * Punycode. Only the non-ASCII parts of the domain name will be converted,
+	 * i.e. it doesn't matter if you call it with a domain that's already in
+	 * ASCII.
 	 * @memberOf punycode
-	 * @param {String} domain The domain name to convert, as a Unicode string.
-	 * @returns {String} The Punycode representation of the given domain name.
+	 * @param {String} input The domain name or email address to convert, as a
+	 * Unicode string.
+	 * @returns {String} The Punycode representation of the given domain name or
+	 * email address.
 	 */
-	function toASCII(domain) {
-		return mapDomain(domain, function(string) {
+	function toASCII(input) {
+		return mapDomain(input, function(string) {
 			return regexNonASCII.test(string)
 				? 'xn--' + encode(string)
 				: string;
@@ -1185,11 +1479,11 @@ function plural(ms, n, name) {
 		 * @memberOf punycode
 		 * @type String
 		 */
-		'version': '1.2.4',
+		'version': '1.4.1',
 		/**
 		 * An object of methods to convert from JavaScript's internal character
 		 * representation (UCS-2) to Unicode code points, and back.
-		 * @see <http://mathiasbynens.be/notes/javascript-encoding>
+		 * @see <https://mathiasbynens.be/notes/javascript-encoding>
 		 * @memberOf punycode
 		 * @type Object
 		 */
@@ -1214,22 +1508,25 @@ function plural(ms, n, name) {
 		define('punycode', function() {
 			return punycode;
 		});
-	} else if (freeExports && !freeExports.nodeType) {
-		if (freeModule) { // in Node.js or RingoJS v0.8.0+
+	} else if (freeExports && freeModule) {
+		if (module.exports == freeExports) {
+			// in Node.js, io.js, or RingoJS v0.8.0+
 			freeModule.exports = punycode;
-		} else { // in Narwhal or RingoJS v0.7.0-
+		} else {
+			// in Narwhal or RingoJS v0.7.0-
 			for (key in punycode) {
 				punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
 			}
 		}
-	} else { // in Rhino or a web browser
+	} else {
+		// in Rhino or a web browser
 		root.punycode = punycode;
 	}
 
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1315,7 +1612,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1402,13 +1699,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":7,"./encode":8}],10:[function(require,module,exports){
+},{"./decode":8,"./encode":9}],11:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -1585,7 +1882,7 @@ function tostring(a) {
 mixkey(Math.random(), pool);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1607,7 +1904,10 @@ mixkey(Math.random(), pool);
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+'use strict';
+
 var punycode = require('punycode');
+var util = require('./util');
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
@@ -1638,6 +1938,9 @@ function Url() {
 var protocolPattern = /^([a-z0-9.+-]+:)/i,
     portPattern = /:[0-9]*$/,
 
+    // Special case for a simple path URL
+    simplePathPattern = /^(\/\/?(?!\/)[^\?\s]*)(\?[^\s]*)?$/,
+
     // RFC 2396: characters reserved for delimiting URLs.
     // We actually just auto-escape these.
     delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
@@ -1654,8 +1957,8 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
     nonHostChars = ['%', '/', '?', ';', '#'].concat(autoEscape),
     hostEndingChars = ['/', '?', '#'],
     hostnameMaxLen = 255,
-    hostnamePartPattern = /^[a-z0-9A-Z_-]{0,63}$/,
-    hostnamePartStart = /^([a-z0-9A-Z_-]{0,63})(.*)$/,
+    hostnamePartPattern = /^[+a-z0-9A-Z_-]{0,63}$/,
+    hostnamePartStart = /^([+a-z0-9A-Z_-]{0,63})(.*)$/,
     // protocols that can allow "unsafe" and "unwise" chars.
     unsafeProtocol = {
       'javascript': true,
@@ -1682,7 +1985,7 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
     querystring = require('querystring');
 
 function urlParse(url, parseQueryString, slashesDenoteHost) {
-  if (url && isObject(url) && url instanceof Url) return url;
+  if (url && util.isObject(url) && url instanceof Url) return url;
 
   var u = new Url;
   u.parse(url, parseQueryString, slashesDenoteHost);
@@ -1690,15 +1993,48 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
 }
 
 Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
-  if (!isString(url)) {
+  if (!util.isString(url)) {
     throw new TypeError("Parameter 'url' must be a string, not " + typeof url);
   }
+
+  // Copy chrome, IE, opera backslash-handling behavior.
+  // Back slashes before the query string get converted to forward slashes
+  // See: https://code.google.com/p/chromium/issues/detail?id=25916
+  var queryIndex = url.indexOf('?'),
+      splitter =
+          (queryIndex !== -1 && queryIndex < url.indexOf('#')) ? '?' : '#',
+      uSplit = url.split(splitter),
+      slashRegex = /\\/g;
+  uSplit[0] = uSplit[0].replace(slashRegex, '/');
+  url = uSplit.join(splitter);
 
   var rest = url;
 
   // trim before proceeding.
   // This is to support parse stuff like "  http://foo.com  \n"
   rest = rest.trim();
+
+  if (!slashesDenoteHost && url.split('#').length === 1) {
+    // Try fast path regexp
+    var simplePath = simplePathPattern.exec(rest);
+    if (simplePath) {
+      this.path = rest;
+      this.href = rest;
+      this.pathname = simplePath[1];
+      if (simplePath[2]) {
+        this.search = simplePath[2];
+        if (parseQueryString) {
+          this.query = querystring.parse(this.search.substr(1));
+        } else {
+          this.query = this.search.substr(1);
+        }
+      } else if (parseQueryString) {
+        this.search = '';
+        this.query = {};
+      }
+      return this;
+    }
+  }
 
   var proto = protocolPattern.exec(rest);
   if (proto) {
@@ -1837,18 +2173,11 @@ Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
     }
 
     if (!ipv6Hostname) {
-      // IDNA Support: Returns a puny coded representation of "domain".
-      // It only converts the part of the domain name that
-      // has non ASCII characters. I.e. it dosent matter if
-      // you call it with a domain that already is in ASCII.
-      var domainArray = this.hostname.split('.');
-      var newOut = [];
-      for (var i = 0; i < domainArray.length; ++i) {
-        var s = domainArray[i];
-        newOut.push(s.match(/[^A-Za-z0-9_-]/) ?
-            'xn--' + punycode.encode(s) : s);
-      }
-      this.hostname = newOut.join('.');
+      // IDNA Support: Returns a punycoded representation of "domain".
+      // It only converts parts of the domain name that
+      // have non-ASCII characters, i.e. it doesn't matter if
+      // you call it with a domain that already is ASCII-only.
+      this.hostname = punycode.toASCII(this.hostname);
     }
 
     var p = this.port ? ':' + this.port : '';
@@ -1875,6 +2204,8 @@ Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
     // need to be.
     for (var i = 0, l = autoEscape.length; i < l; i++) {
       var ae = autoEscape[i];
+      if (rest.indexOf(ae) === -1)
+        continue;
       var esc = encodeURIComponent(ae);
       if (esc === ae) {
         esc = escape(ae);
@@ -1928,7 +2259,7 @@ function urlFormat(obj) {
   // If it's an obj, this is a no-op.
   // this way, you can call url_format() on strings
   // to clean up potentially wonky urls.
-  if (isString(obj)) obj = urlParse(obj);
+  if (util.isString(obj)) obj = urlParse(obj);
   if (!(obj instanceof Url)) return Url.prototype.format.call(obj);
   return obj.format();
 }
@@ -1959,7 +2290,7 @@ Url.prototype.format = function() {
   }
 
   if (this.query &&
-      isObject(this.query) &&
+      util.isObject(this.query) &&
       Object.keys(this.query).length) {
     query = querystring.stringify(this.query);
   }
@@ -2003,16 +2334,18 @@ function urlResolveObject(source, relative) {
 }
 
 Url.prototype.resolveObject = function(relative) {
-  if (isString(relative)) {
+  if (util.isString(relative)) {
     var rel = new Url();
     rel.parse(relative, false, true);
     relative = rel;
   }
 
   var result = new Url();
-  Object.keys(this).forEach(function(k) {
-    result[k] = this[k];
-  }, this);
+  var tkeys = Object.keys(this);
+  for (var tk = 0; tk < tkeys.length; tk++) {
+    var tkey = tkeys[tk];
+    result[tkey] = this[tkey];
+  }
 
   // hash is always overridden, no matter what.
   // even href="" will remove it.
@@ -2027,10 +2360,12 @@ Url.prototype.resolveObject = function(relative) {
   // hrefs like //foo/bar always cut to the protocol.
   if (relative.slashes && !relative.protocol) {
     // take everything except the protocol from relative
-    Object.keys(relative).forEach(function(k) {
-      if (k !== 'protocol')
-        result[k] = relative[k];
-    });
+    var rkeys = Object.keys(relative);
+    for (var rk = 0; rk < rkeys.length; rk++) {
+      var rkey = rkeys[rk];
+      if (rkey !== 'protocol')
+        result[rkey] = relative[rkey];
+    }
 
     //urlParse appends trailing / to urls like http://www.example.com
     if (slashedProtocol[result.protocol] &&
@@ -2052,9 +2387,11 @@ Url.prototype.resolveObject = function(relative) {
     // because that's known to be hostless.
     // anything else is assumed to be absolute.
     if (!slashedProtocol[relative.protocol]) {
-      Object.keys(relative).forEach(function(k) {
+      var keys = Object.keys(relative);
+      for (var v = 0; v < keys.length; v++) {
+        var k = keys[v];
         result[k] = relative[k];
-      });
+      }
       result.href = result.format();
       return result;
     }
@@ -2143,14 +2480,14 @@ Url.prototype.resolveObject = function(relative) {
     srcPath = srcPath.concat(relPath);
     result.search = relative.search;
     result.query = relative.query;
-  } else if (!isNullOrUndefined(relative.search)) {
+  } else if (!util.isNullOrUndefined(relative.search)) {
     // just pull out the search.
     // like href='?foo'.
     // Put this after the other two cases because it simplifies the booleans
     if (psychotic) {
       result.hostname = result.host = srcPath.shift();
       //occationaly the auth can get stuck only in host
-      //this especialy happens in cases like
+      //this especially happens in cases like
       //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
       var authInHost = result.host && result.host.indexOf('@') > 0 ?
                        result.host.split('@') : false;
@@ -2162,7 +2499,7 @@ Url.prototype.resolveObject = function(relative) {
     result.search = relative.search;
     result.query = relative.query;
     //to support http.request
-    if (!isNull(result.pathname) || !isNull(result.search)) {
+    if (!util.isNull(result.pathname) || !util.isNull(result.search)) {
       result.path = (result.pathname ? result.pathname : '') +
                     (result.search ? result.search : '');
     }
@@ -2189,15 +2526,15 @@ Url.prototype.resolveObject = function(relative) {
   // then it must NOT get a trailing slash.
   var last = srcPath.slice(-1)[0];
   var hasTrailingSlash = (
-      (result.host || relative.host) && (last === '.' || last === '..') ||
-      last === '');
+      (result.host || relative.host || srcPath.length > 1) &&
+      (last === '.' || last === '..') || last === '');
 
   // strip single dots, resolve double dots to parent dir
   // if the path tries to go above the root, `up` ends up > 0
   var up = 0;
   for (var i = srcPath.length; i >= 0; i--) {
     last = srcPath[i];
-    if (last == '.') {
+    if (last === '.') {
       srcPath.splice(i, 1);
     } else if (last === '..') {
       srcPath.splice(i, 1);
@@ -2232,7 +2569,7 @@ Url.prototype.resolveObject = function(relative) {
     result.hostname = result.host = isAbsolute ? '' :
                                     srcPath.length ? srcPath.shift() : '';
     //occationaly the auth can get stuck only in host
-    //this especialy happens in cases like
+    //this especially happens in cases like
     //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
     var authInHost = result.host && result.host.indexOf('@') > 0 ?
                      result.host.split('@') : false;
@@ -2256,7 +2593,7 @@ Url.prototype.resolveObject = function(relative) {
   }
 
   //to support request.http
-  if (!isNull(result.pathname) || !isNull(result.search)) {
+  if (!util.isNull(result.pathname) || !util.isNull(result.search)) {
     result.path = (result.pathname ? result.pathname : '') +
                   (result.search ? result.search : '');
   }
@@ -2279,20 +2616,23 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-function isString(arg) {
-  return typeof arg === "string";
-}
+},{"./util":13,"punycode":7,"querystring":10}],13:[function(require,module,exports){
+'use strict';
 
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
+module.exports = {
+  isString: function(arg) {
+    return typeof(arg) === 'string';
+  },
+  isObject: function(arg) {
+    return typeof(arg) === 'object' && arg !== null;
+  },
+  isNull: function(arg) {
+    return arg === null;
+  },
+  isNullOrUndefined: function(arg) {
+    return arg == null;
+  }
+};
 
-function isNull(arg) {
-  return arg === null;
-}
-function isNullOrUndefined(arg) {
-  return  arg == null;
-}
-
-},{"punycode":6,"querystring":9}]},{},[1])(1)
+},{}]},{},[1])(1)
 });

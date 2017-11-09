@@ -1,3 +1,8 @@
+2.0.1 / 2017-11-08
+==================
+
+  * Update to support Node.js version 7+ due to changes in `url.format` (#6, @DanReyLop)
+  * Update dependencies
 
 2.0.0 / 2016-02-02
 ==================
