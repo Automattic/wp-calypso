@@ -4,31 +4,31 @@
 import request from '../../request';
 import { setError } from '../../status/wc-api/actions';
 import {
-	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
-	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
+	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
+	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import { areSettingsProductsLoaded, areSettingsProductsLoading } from './selectors';
 
-export const fetchSettingsProducts = siteId => ( dispatch, getState ) => {
-	if (
-		areSettingsProductsLoaded( getState(), siteId ) ||
-		areSettingsProductsLoading( getState(), siteId )
-	) {
-		return;
-	}
+export const fetchEmailSettings = siteId => ( dispatch, getState ) => {
+	// if (
+	// 	areSettingsProductsLoaded( getState(), siteId ) ||
+	// 	areSettingsProductsLoading( getState(), siteId )
+	// ) {
+	// 	return;
+	// }
 
 	const getAction = {
-		type: WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
+		type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 		siteId,
 	};
 
 	dispatch( getAction );
 
 	return request( siteId )
-		.get( 'settings/products' )
+		.get( 'settings/email', 'wc/v2' )
 		.then( data => {
 			dispatch( {
-				type: WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
+				type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
 				siteId,
 				data,
 			} );
