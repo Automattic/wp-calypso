@@ -1,24 +1,47 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { createNotice } from 'state/notices/actions';
+import { errorNotice } from 'state/notices/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { REWIND_BACKUP_PROGRESS_REQUEST } from 'state/action-types';
 import { updateRewindBackupProgress } from 'state/activity-log/actions';
 
-const debug = debugFactory( 'calypso:data-layer:activity-log:rewind:backup-status' );
+/** @type {Number} how many ms between polls for same data */
+const POLL_INTERVAL = 1500;
 
-const requestBackupProgress = ( { dispatch }, action ) => {
+/** @type {Map<String, Number>} stores most-recent polling times */
+const recentRequests = new Map();
+
+/**
+ * Fetch status updates for backup file downloads
+ *
+ * Note! Eventually the manual "caching" here should be
+ * replaced by the `freshness` system in the data layer
+ * when it arrives. For now, it's statefully ugly.
+ *
+ * @param {Function} dispatch Redux dispatcher
+ * @param {Object} action Redux action
+ */
+const fetchProgress = ( { dispatch }, action ) => {
+	const { downloadId, siteId } = action;
+	const key = `${ siteId }-${ downloadId }`;
+
+	const lastUpdate = recentRequests.get( key ) || -Infinity;
+	const now = Date.now();
+
+	if ( now - lastUpdate < POLL_INTERVAL ) {
+		return;
+	}
+
+	recentRequests.set( key, now );
+
 	dispatch(
 		http(
 			{
@@ -45,28 +68,20 @@ const fromApi = data => ( {
 	url: data.url,
 } );
 
-export const receiveBackupProgress = ( { dispatch }, { siteId, downloadId }, apiData ) => {
-	const data = fromApi( apiData );
-
-	debug( 'Backup progress', data );
-
+export const updateProgress = ( { dispatch }, { siteId, downloadId }, data ) =>
 	dispatch( updateRewindBackupProgress( siteId, downloadId, data ) );
-};
 
-// FIXME: Could be a network Error (instanceof Error) or an API error. Handle each case correctly.
-export const receiveBackupError = ( { dispatch }, action, error ) => {
-	debug( 'Backup progress error', error );
-
+export const announceError = ( { dispatch } ) =>
 	dispatch(
-		createNotice(
-			'is-warning',
+		errorNotice(
 			translate( "Hmm, we can't update the status of your backup. Please refresh this page." )
 		)
 	);
-};
 
 export default {
 	[ REWIND_BACKUP_PROGRESS_REQUEST ]: [
-		dispatchRequest( requestBackupProgress, receiveBackupProgress, receiveBackupError ),
+		dispatchRequest( fetchProgress, updateProgress, announceError, {
+			fromApi,
+		} ),
 	],
 };
