@@ -32,6 +32,7 @@ export class Comment extends Component {
 		refreshCommentData: PropTypes.bool,
 		removeFromPersisted: PropTypes.func,
 		toggleSelected: PropTypes.func,
+		updateLastUndo: PropTypes.func,
 		updatePersisted: PropTypes.func,
 	};
 
@@ -98,6 +99,7 @@ export class Comment extends Component {
 			refreshCommentData,
 			removeFromPersisted,
 			siteId,
+			updateLastUndo,
 			updatePersisted,
 		} = this.props;
 		const { isEditMode, isExpanded, isReplyVisible } = this.state;
@@ -136,7 +138,7 @@ export class Comment extends Component {
 
 						{ showActions && (
 							<CommentActions
-								{ ...{ commentId, removeFromPersisted, updatePersisted } }
+								{ ...{ commentId, removeFromPersisted, updateLastUndo, updatePersisted } }
 								toggleReply={ this.toggleReply }
 							/>
 						) }
