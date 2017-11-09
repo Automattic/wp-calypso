@@ -18,7 +18,7 @@ import { getPost } from 'state/posts/selectors';
 import { canCurrentUserEditPost } from 'state/selectors';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 import { isEnabled } from 'config';
-import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
+import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 
 function PostActionsEllipsisMenuDuplicate( {
@@ -27,7 +27,7 @@ function PostActionsEllipsisMenuDuplicate( {
 	status,
 	type,
 	duplicateUrl,
-	bumpStat,
+	onDuplicateClick,
 } ) {
 	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
 
@@ -36,7 +36,7 @@ function PostActionsEllipsisMenuDuplicate( {
 	}
 
 	return (
-		<PopoverMenuItem href={ duplicateUrl } onClick={ bumpStat } icon="pages">
+		<PopoverMenuItem href={ duplicateUrl } onClick={ onDuplicateClick } icon="pages">
 			{ translate( 'Duplicate', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);
@@ -49,7 +49,7 @@ PostActionsEllipsisMenuDuplicate.propTypes = {
 	status: PropTypes.string,
 	type: PropTypes.string,
 	duplicateUrl: PropTypes.string,
-	bumpStat: PropTypes.func,
+	onDuplicateClick: PropTypes.func,
 };
 
 const mapStateToProps = ( state, { globalId } ) => {
@@ -66,15 +66,16 @@ const mapStateToProps = ( state, { globalId } ) => {
 	};
 };
 
-const mapDispatchToProps = { bumpAnalyticsStat };
+const mapDispatchToProps = { bumpStat, recordTracksEvent };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator(
-		stateProps.type,
-		'duplicate',
-		dispatchProps.bumpAnalyticsStat
+	const onDuplicateClick = () => (
+		bumpStatGenerator( stateProps.type, 'duplicate', dispatchProps.bumpStat ),
+		dispatchProps.recordTracksEvent( 'calypso_post_type_list_duplicate', {
+			post_type: stateProps.type,
+		} )
 	);
-	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
+	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onDuplicateClick } );
 };
 
 export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
