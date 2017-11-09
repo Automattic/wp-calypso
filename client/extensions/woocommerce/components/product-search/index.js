@@ -6,64 +6,127 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { trim } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import ProductSearchResults from './results';
-import SearchCard from 'components/search-card';
+import { getAllProducts } from 'woocommerce/state/sites/products/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import Search from 'components/search';
+import ProductSearchRow from './row';
+import { addProductId, isProductSelected, productContainsString, removeProductId } from './utils';
 
 class ProductSearch extends Component {
 	static propTypes = {
-		onSelect: PropTypes.func.isRequired,
+		singular: PropTypes.bool,
+		value: PropTypes.oneOfType( [ PropTypes.array, PropTypes.number ] ),
+		onChange: PropTypes.func.isRequired,
+		products: PropTypes.array,
 	};
 
-	state = {
-		query: '',
-	};
+	constructor( props ) {
+		super( props );
+		this.state = {
+			searchFilter: '',
+		};
+	}
 
-	handleSearch = query => {
+	componentDidMount() {
 		const { siteId } = this.props;
 
-		if ( trim( query ) === '' ) {
-			this.setState( { query: '' } );
-			return;
+		if ( siteId ) {
+			this.props.fetchProducts( siteId, { offset: 0, per_page: 50 } );
+		}
+	}
+
+	componentWillReceiveProps( newProps ) {
+		const { siteId: oldSiteId } = this.props;
+		const { siteId: newSiteId } = newProps;
+
+		if ( oldSiteId !== newSiteId ) {
+			this.props.fetchProducts( newSiteId, { offset: 0, per_page: 50 } );
+		}
+	}
+
+	getFilteredProducts() {
+		const { value, products } = this.props;
+		const { searchFilter } = this.state;
+
+		if ( 0 === searchFilter.length ) {
+			return products;
 		}
 
-		this.setState( { query } );
-		this.props.fetchProducts( siteId, { search: query } );
+		return (
+			products &&
+			products.filter( product => {
+				return (
+					productContainsString( product, searchFilter ) || isProductSelected( value, product.id )
+				);
+			} )
+		);
+	}
+
+	onSearch = searchFilter => {
+		this.setState( { searchFilter } );
 	};
 
-	handleSelect = product => {
-		// Clear the search field
-		this.setState( { query: '' } );
-		this.refs.searchCard.clear();
+	onProductCheckbox = productId => {
+		const { value } = this.props;
+		const selected = isProductSelected( value, productId );
+		const newValue = selected
+			? removeProductId( value, productId )
+			: addProductId( value, productId );
+		this.props.onChange( newValue );
+	};
 
-		// Pass products back to parent component
-		this.props.onSelect( product );
+	onProductRadio = productId => {
+		this.props.onChange( productId );
+	};
+
+	renderSearch = () => {
+		return <Search value={ this.state.searchFilter } onSearch={ this.onSearch } />;
+	};
+
+	renderList = () => {
+		const { singular, value } = this.props;
+		const filteredProducts = this.getFilteredProducts() || [];
+		const renderFunc = product => {
+			const onChange = singular ? this.onProductRadio : this.onProductCheckbox;
+			return (
+				<ProductSearchRow
+					key={ product.id }
+					onChange={ onChange }
+					product={ product }
+					singular={ singular }
+					value={ value }
+				/>
+			);
+		};
+
+		return <div className="product-search__list">{ filteredProducts.map( renderFunc ) }</div>;
 	};
 
 	render() {
-		const { translate } = this.props;
-
 		return (
 			<div className="product-search">
-				<SearchCard
-					ref="searchCard"
-					onSearch={ this.handleSearch }
-					delaySearch
-					delayTimeout={ 400 }
-					placeholder={ translate( 'Search products…' ) }
-				/>
-				<ProductSearchResults search={ this.state.query } onSelect={ this.handleSelect } />
+				{ this.renderSearch() }
+				{ this.renderList() }
 			</div>
 		);
 	}
 }
 
-export default connect( null, dispatch => bindActionCreators( { fetchProducts }, dispatch ) )(
-	localize( ProductSearch )
-);
+export default connect(
+	state => {
+		const site = getSelectedSiteWithFallback( state );
+		const siteId = site ? site.ID : null;
+		const products = getAllProducts( state, siteId );
+
+		return {
+			siteId,
+			products,
+		};
+	},
+	dispatch => bindActionCreators( { fetchProducts }, dispatch )
+)( ProductSearch );
