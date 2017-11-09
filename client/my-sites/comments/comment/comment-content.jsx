@@ -74,7 +74,7 @@ export class CommentContent extends Component {
 					<div className="comment__content-full">
 						{ ( commentIsPending || ! isPostView ) && (
 							<div className="comment__content-info">
-								{ ! isPostView && <CommentPostLink { ...{ commentId } } /> }
+								{ ! isPostView && <CommentPostLink { ...{ commentId, isExpanded } } /> }
 
 								{ commentIsPending && (
 									<div className="comment__status-label">{ translate( 'Pending' ) }</div>

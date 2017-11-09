@@ -81,7 +81,7 @@ export class CommentAuthor extends Component {
 						<strong className="comment__author-name">
 							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
 						</strong>
-						{ ! isExpanded && ! isPostView && <CommentPostLink { ...{ commentId } } /> }
+						{ ! isExpanded && ! isPostView && <CommentPostLink { ...{ commentId, isExpanded } } /> }
 					</div>
 
 					<div className="comment__author-info-element">

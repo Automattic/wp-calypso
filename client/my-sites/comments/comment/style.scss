@@ -209,7 +209,8 @@
 		white-space: nowrap;
 
 		.gridicon {
-			display: none;
+			color: $gray;
+			margin: 0 4px -3px 0;
 		}
 	}
 
@@ -287,6 +288,8 @@
 // Comment Post Link Block
 
 .comment__post-link {
+	font-family: $serif;
+
 	a {
 		color: $gray-text-min;
 	}
