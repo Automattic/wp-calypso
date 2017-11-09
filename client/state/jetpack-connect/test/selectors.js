@@ -9,21 +9,21 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getConnectingSite,
+	getAuthAttempts,
 	getAuthorizationData,
 	getAuthorizationRemoteQueryData,
 	getAuthorizationRemoteSite,
+	getConnectingSite,
+	getFlowType,
+	getJetpackSiteByUrl,
 	getSessions,
+	getSiteIdFromQueryObject,
 	getSSO,
+	hasExpiredSecretError,
+	hasXmlrpcError,
 	isCalypsoStartedConnection,
 	isRedirectingToWpAdmin,
 	isRemoteSiteOnSitesList,
-	getFlowType,
-	getJetpackSiteByUrl,
-	hasXmlrpcError,
-	getAuthAttempts,
-	hasExpiredSecretError,
-	getSiteIdFromQueryObject,
 } from '../selectors';
 
 describe( 'selectors', () => {
