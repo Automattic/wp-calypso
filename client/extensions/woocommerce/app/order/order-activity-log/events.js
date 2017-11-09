@@ -63,27 +63,31 @@ class OrderEvents extends Component {
 			return <p>{ translate( 'No activity yet' ) }</p>;
 		}
 
-		return days.map( day => {
-			const events = eventsByDay[ day ];
-			return (
-				<OrderEventsByDay
-					key={ day }
-					count={ events.length }
-					date={ day }
-					isOpen={ day === this.state.openDay }
-					onClick={ this.toggleOpenDay }
-				>
-					{ events.map( event => (
-						<OrderEvent
-							key={ `${ event.type }-${ event.key }` }
-							event={ event }
-							orderId={ this.props.orderId }
-							siteId={ this.props.siteId }
-						/>
-					) ) }
-				</OrderEventsByDay>
-			);
-		} );
+		return (
+			<div>
+				{ days.map( day => {
+					const events = eventsByDay[ day ];
+					return (
+						<OrderEventsByDay
+							key={ day }
+							count={ events.length }
+							date={ day }
+							isOpen={ day === this.state.openDay }
+							onClick={ this.toggleOpenDay }
+						>
+							{ events.map( event => (
+								<OrderEvent
+									key={ `${ event.type }-${ event.key }` }
+									event={ event }
+									orderId={ this.props.orderId }
+									siteId={ this.props.siteId }
+								/>
+							) ) }
+						</OrderEventsByDay>
+					);
+				} ) }
+			</div>
+		);
 	};
 
 	renderPlaceholder = () => {
