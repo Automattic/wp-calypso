@@ -33,6 +33,7 @@ import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-b
 import {
 	CONVERSATION_FOLLOW_STATUS_FOLLOWING,
 	CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
+	CONVERSATION_FOLLOW_STATUS_MUTING,
 } from 'state/reader/conversations/follow-status';
 
 class ReaderPostOptionsMenu extends React.Component {
@@ -45,6 +46,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		defaultConversationFollowStatus: PropTypes.oneOf( [
 			CONVERSATION_FOLLOW_STATUS_FOLLOWING,
 			CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
+			CONVERSATION_FOLLOW_STATUS_MUTING,
 		] ),
 	};
 

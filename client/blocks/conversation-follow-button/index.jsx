@@ -7,7 +7,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop, includes, uniq } from 'lodash';
+import { noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -19,6 +19,7 @@ import { followConversation, muteConversation } from 'state/reader/conversations
 import {
 	CONVERSATION_FOLLOW_STATUS_FOLLOWING,
 	CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
+	CONVERSATION_FOLLOW_STATUS_MUTING,
 } from 'state/reader/conversations/follow-status';
 
 class ConversationFollowButtonContainer extends Component {
@@ -27,20 +28,16 @@ class ConversationFollowButtonContainer extends Component {
 		postId: PropTypes.number.isRequired,
 		onFollowToggle: PropTypes.func,
 		tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
-
-		/* This is a special prop for the Conversations stream, where we have a mixture
-		 * of explicitly followed posts (followStatus F) and implicitly followed posts
-		 * (followStatus null). We want to present them all as followed.
-		 */
 		defaultConversationFollowStatus: PropTypes.oneOf( [
 			CONVERSATION_FOLLOW_STATUS_FOLLOWING,
 			CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
+			CONVERSATION_FOLLOW_STATUS_MUTING,
 		] ),
 	};
 
 	static defaultProps = {
 		onFollowToggle: noop,
-		defaultConversationFollowStatus: CONVERSATION_FOLLOW_STATUS_FOLLOWING,
+		defaultConversationFollowStatus: CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
 	};
 
 	handleFollowToggle = isRequestingFollow => {
@@ -56,11 +53,16 @@ class ConversationFollowButtonContainer extends Component {
 	};
 
 	render() {
-		const validFollowingStatuses = uniq( [
-			CONVERSATION_FOLLOW_STATUS_FOLLOWING,
-			this.props.defaultConversationFollowStatus,
-		] );
-		const isFollowing = includes( validFollowingStatuses, this.props.followStatus );
+		let followStatus;
+
+		// If follow status is not 'F' or 'M', then use the defaultConversationFollowStatus as the status
+		if ( this.props.defaultConversationFollowStatus && ! this.props.followStatus ) {
+			followStatus = this.props.defaultConversationFollowStatus;
+		} else {
+			followStatus = this.props.followStatus;
+		}
+
+		const isFollowing = followStatus === CONVERSATION_FOLLOW_STATUS_FOLLOWING;
 
 		return (
 			<ConversationFollowButton
