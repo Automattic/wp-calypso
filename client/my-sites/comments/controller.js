@@ -10,8 +10,9 @@ import { each, isNaN, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import CommentsManagement from './main';
-// import CommentView from 'my-sites/comment/main';
+import CommentView from 'my-sites/comment/main';
 import route, { addQueryArgs } from 'lib/route';
 import {
 	bumpStat,
@@ -101,8 +102,15 @@ const sanitizeQueryAction = action => {
 		return null;
 	}
 
-	const validActions = [ 'approve', 'trash', 'spam', 'delete' ];
-	return validActions.indexOf( action.toLowerCase() ) > -1 ? action.toLowerCase() : null;
+	const validActions = {
+		approve: 'approved',
+		trash: 'trash',
+		spam: 'spam',
+		delete: 'delete',
+	};
+	return validActions.hasOwnProperty( action.toLowerCase() )
+		? validActions[ action.toLowerCase() ]
+		: null;
 };
 
 const updateCommentStatus = ( siteId, postId, commentId, status ) =>
@@ -120,16 +128,21 @@ export const comment = ( { query, params, path, store } ) => {
 	const siteFragment = route.getSiteFragment( path );
 	const commentId = sanitizeInt( params.comment );
 
-	if ( ! commentId ) {
+	if ( ! commentId || ! isEnabled( 'comments/management/m3-design' ) ) {
 		return siteFragment
 			? page.redirect( `/comments/all/${ siteFragment }` )
 			: page.redirect( '/comments/all' );
 	}
 
 	const action = sanitizeQueryAction( query.action );
-	const siteId = sanitizeInt( query.siteId );
-	const postId = sanitizeInt( query.postId );
+	const siteId = sanitizeInt( query.site_id );
+	const postId = sanitizeInt( query.post_id );
 
+	/* SECURITY WARNING
+	 *
+	 * we may not have user capabilities loaded onto state.
+	 * We trust that the API will handle user capabilities for us.
+	 */
 	if ( action && siteId && postId ) {
 		const { dispatch } = store;
 		if ( 'delete' === action ) {
@@ -140,7 +153,7 @@ export const comment = ( { query, params, path, store } ) => {
 	}
 
 	renderWithReduxStore(
-		<CommentsManagement { ...{ action, commentId, siteFragment } } />,
+		<CommentView { ...{ action, commentId, siteFragment } } />,
 		'primary',
 		store
 	);
