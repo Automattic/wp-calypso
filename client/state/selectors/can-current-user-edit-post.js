@@ -9,9 +9,6 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getPost } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import { getCurrentUserId, isValidCapability } from 'state/current-user/selectors';
-import { canCurrentUser } from 'state/selectors';
 
 /**
  * Returns whether the current user can edit the post with the given global ID.
@@ -22,19 +19,5 @@ import { canCurrentUser } from 'state/selectors';
  */
 export default function canCurrentUserEditPost( state, globalId ) {
 	const post = getPost( state, globalId );
-	if ( ! post ) {
-		return null;
-	}
-
-	const type = getPostType( state, post.site_ID, post.type );
-	const userId = getCurrentUserId( state );
-	const isAuthor = get( post.author, 'ID' ) === userId;
-
-	let capability = isAuthor ? 'edit_posts' : 'edit_others_posts';
-	const typeCapability = get( type, [ 'capabilities', capability ] );
-	if ( isValidCapability( state, post.site_ID, typeCapability ) ) {
-		capability = typeCapability;
-	}
-
-	return canCurrentUser( state, post.site_ID, capability );
+	return get( post, [ 'capabilities', 'edit_post' ], null );
 }

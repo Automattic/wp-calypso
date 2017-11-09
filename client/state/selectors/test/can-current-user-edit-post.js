@@ -12,10 +12,8 @@ import { canCurrentUserEditPost } from '../';
 
 describe( 'canCurrentUserEditPost()', () => {
 	const fakeGlobalId = 'abcdef1234';
-	const fakeUserId = 1;
-	const fakeOtherUserId = 2;
-	const fakeSiteId = 3;
-	const fakePostId = 4;
+	const fakeSiteId = 1;
+	const fakePostId = 2;
 
 	test( 'should return null if the post is not known', () => {
 		const canEdit = canCurrentUserEditPost(
@@ -31,7 +29,7 @@ describe( 'canCurrentUserEditPost()', () => {
 		expect( canEdit ).to.be.null;
 	} );
 
-	test( "should allow based on 'edit_posts' for unrecognized post type (author)", () => {
+	test( 'should return null if the post capabilities are not known', () => {
 		const canEdit = canCurrentUserEditPost(
 			{
 				posts: {
@@ -44,12 +42,6 @@ describe( 'canCurrentUserEditPost()', () => {
 								if ( postId === fakePostId ) {
 									return {
 										type: 'post',
-										global_ID: fakeGlobalId,
-										site_ID: fakeSiteId,
-										ID: fakePostId,
-										author: {
-											ID: fakeUserId,
-										},
 									};
 								}
 
@@ -57,405 +49,6 @@ describe( 'canCurrentUserEditPost()', () => {
 							},
 						},
 					},
-				},
-				postTypes: {
-					items: {},
-				},
-				currentUser: {
-					id: fakeUserId,
-					capabilities: {
-						[ fakeSiteId ]: {
-							edit_posts: true,
-						},
-					},
-				},
-			},
-			fakeGlobalId
-		);
-
-		expect( canEdit ).to.be.true;
-	} );
-
-	test( "should deny based on 'edit_posts' for unrecognized post type (author)", () => {
-		const canEdit = canCurrentUserEditPost(
-			{
-				posts: {
-					items: {
-						[ fakeGlobalId ]: [ fakeSiteId, fakePostId ],
-					},
-					queries: {
-						[ fakeSiteId ]: {
-							getItem( postId ) {
-								if ( postId === fakePostId ) {
-									return {
-										type: 'post',
-										global_ID: fakeGlobalId,
-										site_ID: fakeSiteId,
-										ID: fakePostId,
-										author: {
-											ID: fakeUserId,
-										},
-									};
-								}
-
-								return null;
-							},
-						},
-					},
-				},
-				postTypes: {
-					items: {},
-				},
-				currentUser: {
-					id: fakeUserId,
-					capabilities: {
-						[ fakeSiteId ]: {
-							edit_posts: false,
-						},
-					},
-				},
-			},
-			fakeGlobalId
-		);
-
-		expect( canEdit ).to.be.false;
-	} );
-
-	test( "should allow based on 'edit_others_posts' for unrecognized post type (not author)", () => {
-		const canEdit = canCurrentUserEditPost(
-			{
-				posts: {
-					items: {
-						[ fakeGlobalId ]: [ fakeSiteId, fakePostId ],
-					},
-					queries: {
-						[ fakeSiteId ]: {
-							getItem( postId ) {
-								if ( postId === fakePostId ) {
-									return {
-										type: 'post',
-										global_ID: fakeGlobalId,
-										site_ID: fakeSiteId,
-										ID: fakePostId,
-										author: {
-											ID: fakeOtherUserId,
-										},
-									};
-								}
-
-								return null;
-							},
-						},
-					},
-				},
-				postTypes: {
-					items: {},
-				},
-				currentUser: {
-					id: fakeUserId,
-					capabilities: {
-						[ fakeSiteId ]: {
-							edit_others_posts: true,
-						},
-					},
-				},
-			},
-			fakeGlobalId
-		);
-
-		expect( canEdit ).to.be.true;
-	} );
-
-	test( "should deny based on 'edit_others_posts' for unrecognized post type (not author)", () => {
-		const canEdit = canCurrentUserEditPost(
-			{
-				posts: {
-					items: {
-						[ fakeGlobalId ]: [ fakeSiteId, fakePostId ],
-					},
-					queries: {
-						[ fakeSiteId ]: {
-							getItem( postId ) {
-								if ( postId === fakePostId ) {
-									return {
-										type: 'post',
-										global_ID: fakeGlobalId,
-										site_ID: fakeSiteId,
-										ID: fakePostId,
-										author: {
-											ID: fakeOtherUserId,
-										},
-									};
-								}
-
-								return null;
-							},
-						},
-					},
-				},
-				postTypes: {
-					items: {},
-				},
-				currentUser: {
-					id: fakeUserId,
-					capabilities: {
-						[ fakeSiteId ]: {
-							edit_others_posts: false,
-						},
-					},
-				},
-			},
-			fakeGlobalId
-		);
-
-		expect( canEdit ).to.be.false;
-	} );
-
-	test( 'should allow based on post type capability (author)', () => {
-		const canEdit = canCurrentUserEditPost(
-			{
-				posts: {
-					items: {
-						[ fakeGlobalId ]: [ fakeSiteId, fakePostId ],
-					},
-					queries: {
-						[ fakeSiteId ]: {
-							getItem( postId ) {
-								if ( postId === fakePostId ) {
-									return {
-										type: 'some_cpt',
-										global_ID: fakeGlobalId,
-										site_ID: fakeSiteId,
-										ID: fakePostId,
-										author: {
-											ID: fakeUserId,
-										},
-									};
-								}
-
-								return null;
-							},
-						},
-					},
-				},
-				postTypes: {
-					items: {
-						[ fakeSiteId ]: {
-							some_cpt: {
-								capabilities: {
-									edit_posts: 'cpt_edit_posts',
-								},
-							},
-						},
-					},
-				},
-				currentUser: {
-					id: fakeUserId,
-					capabilities: {
-						[ fakeSiteId ]: {
-							cpt_edit_posts: true,
-						},
-					},
-				},
-			},
-			fakeGlobalId
-		);
-
-		expect( canEdit ).to.be.true;
-	} );
-
-	test( 'should deny based on post type capability (author)', () => {
-		const canEdit = canCurrentUserEditPost(
-			{
-				posts: {
-					items: {
-						[ fakeGlobalId ]: [ fakeSiteId, fakePostId ],
-					},
-					queries: {
-						[ fakeSiteId ]: {
-							getItem( postId ) {
-								if ( postId === fakePostId ) {
-									return {
-										type: 'some_cpt',
-										global_ID: fakeGlobalId,
-										site_ID: fakeSiteId,
-										ID: fakePostId,
-										author: {
-											ID: fakeUserId,
-										},
-									};
-								}
-
-								return null;
-							},
-						},
-					},
-				},
-				postTypes: {
-					items: {
-						[ fakeSiteId ]: {
-							some_cpt: {
-								capabilities: {
-									edit_posts: 'cpt_edit_posts',
-								},
-							},
-						},
-					},
-				},
-				currentUser: {
-					id: fakeUserId,
-					capabilities: {
-						[ fakeSiteId ]: {
-							cpt_edit_posts: false,
-						},
-					},
-				},
-			},
-			fakeGlobalId
-		);
-
-		expect( canEdit ).to.be.false;
-	} );
-
-	test( 'should allow based on post type capability (not author)', () => {
-		const canEdit = canCurrentUserEditPost(
-			{
-				posts: {
-					items: {
-						[ fakeGlobalId ]: [ fakeSiteId, fakePostId ],
-					},
-					queries: {
-						[ fakeSiteId ]: {
-							getItem( postId ) {
-								if ( postId === fakePostId ) {
-									return {
-										type: 'some_cpt',
-										global_ID: fakeGlobalId,
-										site_ID: fakeSiteId,
-										ID: fakePostId,
-										author: {
-											ID: fakeOtherUserId,
-										},
-									};
-								}
-
-								return null;
-							},
-						},
-					},
-				},
-				postTypes: {
-					items: {
-						[ fakeSiteId ]: {
-							some_cpt: {
-								capabilities: {
-									edit_others_posts: 'cpt_edit_others_posts',
-								},
-							},
-						},
-					},
-				},
-				currentUser: {
-					id: fakeUserId,
-					capabilities: {
-						[ fakeSiteId ]: {
-							cpt_edit_others_posts: true,
-						},
-					},
-				},
-			},
-			fakeGlobalId
-		);
-
-		expect( canEdit ).to.be.true;
-	} );
-
-	test( 'should deny based on post type capability (not author)', () => {
-		const canEdit = canCurrentUserEditPost(
-			{
-				posts: {
-					items: {
-						[ fakeGlobalId ]: [ fakeSiteId, fakePostId ],
-					},
-					queries: {
-						[ fakeSiteId ]: {
-							getItem( postId ) {
-								if ( postId === fakePostId ) {
-									return {
-										type: 'some_cpt',
-										global_ID: fakeGlobalId,
-										site_ID: fakeSiteId,
-										ID: fakePostId,
-										author: {
-											ID: fakeOtherUserId,
-										},
-									};
-								}
-
-								return null;
-							},
-						},
-					},
-				},
-				postTypes: {
-					items: {
-						[ fakeSiteId ]: {
-							some_cpt: {
-								capabilities: {
-									edit_others_posts: 'cpt_edit_others_posts',
-								},
-							},
-						},
-					},
-				},
-				currentUser: {
-					id: fakeUserId,
-					capabilities: {
-						[ fakeSiteId ]: {
-							cpt_edit_others_posts: false,
-						},
-					},
-				},
-			},
-			fakeGlobalId
-		);
-
-		expect( canEdit ).to.be.false;
-	} );
-
-	test( 'should return null for unknown post type and unknown capability', () => {
-		const canEdit = canCurrentUserEditPost(
-			{
-				posts: {
-					items: {
-						[ fakeGlobalId ]: [ fakeSiteId, fakePostId ],
-					},
-					queries: {
-						[ fakeSiteId ]: {
-							getItem( postId ) {
-								if ( postId === fakePostId ) {
-									return {
-										type: 'post',
-										global_ID: fakeGlobalId,
-										site_ID: fakeSiteId,
-										ID: fakePostId,
-										author: {
-											ID: fakeUserId,
-										},
-									};
-								}
-
-								return null;
-							},
-						},
-					},
-				},
-				postTypes: {
-					items: {},
-				},
-				currentUser: {
-					id: fakeUserId,
-					capabilities: {},
 				},
 			},
 			fakeGlobalId
@@ -464,7 +57,7 @@ describe( 'canCurrentUserEditPost()', () => {
 		expect( canEdit ).to.be.null;
 	} );
 
-	test( 'should return null for known post type and unknown capability', () => {
+	test( 'should allow based on the post capabilities', () => {
 		const canEdit = canCurrentUserEditPost(
 			{
 				posts: {
@@ -476,12 +69,9 @@ describe( 'canCurrentUserEditPost()', () => {
 							getItem( postId ) {
 								if ( postId === fakePostId ) {
 									return {
-										type: 'some_cpt',
-										global_ID: fakeGlobalId,
-										site_ID: fakeSiteId,
-										ID: fakePostId,
-										author: {
-											ID: fakeUserId,
+										type: 'post',
+										capabilities: {
+											edit_post: true,
 										},
 									};
 								}
@@ -491,25 +81,41 @@ describe( 'canCurrentUserEditPost()', () => {
 						},
 					},
 				},
-				postTypes: {
+			},
+			fakeGlobalId
+		);
+
+		expect( canEdit ).to.be.true;
+	} );
+
+	test( 'should deny based on the post capabilities', () => {
+		const canEdit = canCurrentUserEditPost(
+			{
+				posts: {
 					items: {
+						[ fakeGlobalId ]: [ fakeSiteId, fakePostId ],
+					},
+					queries: {
 						[ fakeSiteId ]: {
-							some_cpt: {
-								capabilities: {
-									edit_posts: 'cpt_edit_posts',
-								},
+							getItem( postId ) {
+								if ( postId === fakePostId ) {
+									return {
+										type: 'post',
+										capabilities: {
+											edit_post: false,
+										},
+									};
+								}
+
+								return null;
 							},
 						},
 					},
-				},
-				currentUser: {
-					id: fakeUserId,
-					capabilities: {},
 				},
 			},
 			fakeGlobalId
 		);
 
-		expect( canEdit ).to.be.null;
+		expect( canEdit ).to.be.false;
 	} );
 } );
