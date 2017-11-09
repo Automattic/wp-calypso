@@ -77,7 +77,11 @@ const mapStateToProps = ( state, { globalId } ) => {
 const mapDispatchToProps = { toggleSharePanel, bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator( stateProps.type, 'share', dispatchProps.bumpAnalyticsStat );
+	const bumpStat = bumpStatGenerator(
+		stateProps.type,
+		'toggle_share_panel',
+		dispatchProps.bumpAnalyticsStat
+	);
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
 };
 
