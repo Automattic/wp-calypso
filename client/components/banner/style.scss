@@ -63,16 +63,15 @@
 		flex-shrink: 0;
 		height: 24px;
 		margin-right: 16px;
-		margin-top: -2px;
-		text-align: center;
-		top: 4px;
 		width: 24px;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.banner__icon {
 		align-self: center;
 		color: $white;
-		display: block;
+		display: flex;
 	}
 
 	.banner__icon-circle {
@@ -88,7 +87,7 @@
 			display: none;
 		}
 		.banner__icon-circle {
-			display: block;
+			display: flex;
 		}
 	}
 }
