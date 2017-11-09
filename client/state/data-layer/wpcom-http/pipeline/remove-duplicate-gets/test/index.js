@@ -8,6 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import { useFakeTimers } from 'test/helpers/use-sinon';
 import {
 	addResponder,
 	applyDuplicatesHandlers,
@@ -128,6 +129,10 @@ describe( '#addResponder', () => {
 } );
 
 describe( '#removeDuplicateGets', () => {
+	let clock;
+
+	useFakeTimers( fake => ( clock = fake ) );
+
 	beforeEach( clearRequestLog );
 
 	test( 'should pass through non-GET requests', () => {
@@ -161,11 +166,34 @@ describe( '#removeDuplicateGets', () => {
 
 		expect( processed.nextRequest ).to.be.null;
 	} );
+
+	test( 'should respect wide dedupe windows', () => {
+		removeDuplicateGets( { nextRequest: cp( getSites ) } );
+		applyDuplicatesHandlers( { originalRequest: cp( getSites ) } );
+
+		clock.tick( 10000 );
+
+		const processed = removeDuplicateGets( {
+			nextRequest: { ...getSites, options: { dedupeWindow: 20000 } },
+		} );
+
+		expect( processed.nextRequest ).to.be.null;
+	} );
+
+	test( 'should respect short dedupe windows', () => {
+		removeDuplicateGets( { nextRequest: cp( getSites ) } );
+		applyDuplicatesHandlers( { originalRequest: cp( getSites ) } );
+
+		clock.tick( 10000 );
+
+		const nextRequest = { ...getSites, options: { dedupeWindow: 200 } };
+		const processed = removeDuplicateGets( { nextRequest } );
+
+		expect( processed.nextRequest ).to.equal( nextRequest );
+	} );
 } );
 
 describe( '#applyDuplicateHandlers', () => {
-	beforeEach( clearRequestLog );
-
 	test( 'should return new requests', () => {
 		removeDuplicateGets( { nextRequest: cp( getSites ) } );
 

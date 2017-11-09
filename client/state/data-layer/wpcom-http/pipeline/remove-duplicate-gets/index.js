@@ -75,10 +75,8 @@ export const addResponder = ( list, item ) => ( {
  * @returns {OutboundData} filtered request info
  */
 export const removeDuplicateGets = outboundData => {
-	const {
-		nextRequest,
-		originalRequest: { options: { dedupeWindow = 0 } = {} } = {},
-	} = outboundData;
+	const { nextRequest } = outboundData;
+	const { options: { dedupeWindow = 0 } = {} } = nextRequest;
 
 	if ( ! isGetRequest( nextRequest ) ) {
 		return outboundData;
@@ -93,7 +91,7 @@ export const removeDuplicateGets = outboundData => {
 	const { lastRequest, queued } = requestLog.get( key ) || {};
 	const request = addResponder( queued || { failures: [], successes: [] }, nextRequest );
 	const now = Date.now();
-	const shouldDrop = lastRequest && now - lastRequest < dedupeWindow;
+	const shouldDrop = undefined !== lastRequest && now - lastRequest < dedupeWindow;
 
 	// on outbound block all further duplicates
 	// only update lastRequest time if actually sending out a new request
