@@ -113,7 +113,7 @@ class ActivityLogConfirmDialog extends Component {
 								className="activity-log-confirm-dialog__more-info-link"
 								href="https://help.vaultpress.com/one-click-restore/"
 							>
-								<Gridicon icon="chat" />
+								<img src="/calypso/images/illustrations/AnyQuestions.png" />
 								<span className="activity-log-confirm-dialog__more-info-link-text">
 									{ translate( 'Any Questions?' ) }
 								</span>
