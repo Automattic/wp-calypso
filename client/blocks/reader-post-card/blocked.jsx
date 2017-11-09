@@ -26,7 +26,7 @@ class PostBlocked extends React.Component {
 		recordReaderTrack( 'calypso_reader_unblock_site', {
 			blog_id: this.props.post.site_ID,
 		} );
-		this.props.requestSiteUnblock( this.props.post.site_ID );
+		this.props.unblockSite( this.props.post.site_ID );
 	};
 
 	render() {
