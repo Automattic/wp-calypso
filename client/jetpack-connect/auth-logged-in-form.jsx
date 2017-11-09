@@ -42,6 +42,7 @@ import {
 	goToXmlrpcErrorFallbackUrl as goToXmlrpcErrorFallbackUrlAction,
 	retryAuth as retryAuthAction,
 } from 'state/jetpack-connect/actions';
+import { hasExpiredSecretError, hasXmlrpcError } from 'state/jetpack-connect/selectors';
 
 /**
  * Constants
@@ -71,8 +72,6 @@ class LoggedInForm extends Component {
 			} ).isRequired,
 			siteReceived: PropTypes.bool,
 		} ).isRequired,
-		requestHasExpiredSecretError: PropTypes.func.isRequired,
-		requestHasXmlrpcError: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		user: PropTypes.object.isRequired,
 
@@ -81,6 +80,8 @@ class LoggedInForm extends Component {
 		goBackToWpAdmin: PropTypes.func.isRequired,
 		goToXmlrpcErrorFallbackUrl: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		requestHasExpiredSecretError: PropTypes.func.isRequired,
+		requestHasXmlrpcError: PropTypes.func.isRequired,
 		retryAuth: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -554,6 +555,8 @@ class LoggedInForm extends Component {
 export default connect(
 	state => ( {
 		redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
+		requestHasExpiredSecretError: () => hasExpiredSecretError( state ),
+		requestHasXmlrpcError: () => hasXmlrpcError( state ),
 	} ),
 	{
 		authorize: authorizeAction,
