@@ -140,7 +140,7 @@
     "socket.io-client": "1.4.5",
     "source-map": "0.1.39",
     "source-map-support": "0.3.2",
-    "store": "1.3.16",
+    "store": "2.0.12",
     "striptags": "2.1.1",
     "superagent": "2.1.0",
     "tinymce": "4.6.3",
