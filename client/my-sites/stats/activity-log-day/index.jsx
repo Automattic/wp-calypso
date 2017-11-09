@@ -18,7 +18,7 @@ import { compact, flatMap, get, isEmpty, zip } from 'lodash';
 import ActivityLogItem from '../activity-log-item';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getActivityLog, getRequestedRewind } from 'state/selectors';
 import { ms, rewriteStream } from 'state/activity-log/log/is-discarded';
 
@@ -64,7 +64,7 @@ class ActivityLogDay extends Component {
 
 		// Connected props
 		isToday: PropTypes.bool.isRequired,
-		recordTracksEvent: PropTypes.func.isRequired,
+		trackOpenDay: PropTypes.func.isRequired,
 		requestedRewind: PropTypes.string,
 	};
 
@@ -101,19 +101,13 @@ class ActivityLogDay extends Component {
 		}
 	};
 
-	trackOpenDay = () => {
-		const { logs, moment, recordTracksEvent, tsEndOfSiteDay } = this.props;
-
-		recordTracksEvent( 'calypso_activitylog_day_expand', {
-			log_count: logs.length,
-			ts_end_site_day: tsEndOfSiteDay,
-			utc_date: moment.utc( tsEndOfSiteDay ).format( 'YYYY-MM-DD' ),
-		} );
-
-		this.setState( {
-			dayExpanded: true,
-		} );
-	};
+	handleOpenDay = () =>
+		this.setState(
+			{
+				dayExpanded: true,
+			},
+			this.props.trackOpenDay
+		);
 
 	closeDayOnly = () =>
 		this.setState( {
@@ -251,7 +245,7 @@ class ActivityLogDay extends Component {
 				expandedSummary={ rewindButton }
 				summary={ rewindButton }
 				header={ this.renderEventsHeading() }
-				onOpen={ this.trackOpenDay }
+				onOpen={ this.handleOpenDay }
 				onClose={ this.handleCloseDay( hasConfirmDialog ) }
 			>
 				{ events.map( ( [ type, log ] ) => {
@@ -276,19 +270,28 @@ class ActivityLogDay extends Component {
 	}
 }
 
-export default connect(
-	( state, { siteId } ) => {
-		const requestedRewind = getRequestedRewind( state, siteId );
-		const isDiscardedPerspective = requestedRewind
-			? new Date( ms( getActivityLog( state, siteId, requestedRewind ).activityTs ) )
-			: undefined;
+export default localize(
+	connect(
+		( state, { siteId } ) => {
+			const requestedRewind = getRequestedRewind( state, siteId );
+			const isDiscardedPerspective = requestedRewind
+				? new Date( ms( getActivityLog( state, siteId, requestedRewind ).activityTs ) )
+				: undefined;
 
-		return {
-			isDiscardedPerspective,
-			requestedRewind,
-		};
-	},
-	{
-		recordTracksEvent: recordTracksEventAction,
-	}
-)( localize( ActivityLogDay ) );
+			return {
+				isDiscardedPerspective,
+				requestedRewind,
+			};
+		},
+		( dispatch, { logs, tsEndOfSiteDay, moment } ) => ( {
+			trackOpenDay: () =>
+				dispatch(
+					recordTracksEvent( 'calypso_activitylog_day_expand', {
+						log_count: logs.length,
+						ts_end_site_day: tsEndOfSiteDay,
+						utc_date: moment.utc( tsEndOfSiteDay ).format( 'YYYY-MM-DD' ),
+					} )
+				),
+		} )
+	)( ActivityLogDay )
+);
