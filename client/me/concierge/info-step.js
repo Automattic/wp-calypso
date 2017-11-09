@@ -15,7 +15,7 @@ import PrimaryHeader from './primary-header';
 
 class InfoStep extends Component {
 	static propTypes = {
-		onSubmit: PropTypes.func.isRequired,
+		onComplete: PropTypes.func.isRequired,
 	};
 
 	render() {
