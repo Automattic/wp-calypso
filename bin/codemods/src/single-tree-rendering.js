@@ -46,16 +46,14 @@ export default function transformer( file, api ) {
 	 * Check if `parameters` has `param` either as a string or as a name of
 	 * an object, which could be e.g. an `Identifier`.
 	 *
-	 * @param {array} parameters Parameters to look from
+	 * @param {array} parameters Parameters to look from. Could be an array of strings or Identifier objects.
 	 * @param {string} parameter Parameter name
 	 * @returns {boolean}
 	 */
-	function hasParam( parameters, parameter ) {
-		return (
-			_.findIndex( parameters || [], parameter => {
-				( parameter.name || parameter ) === 'context';
-			} ) !== -1
-		);
+	function hasParam( parameters = [], parameter ) {
+		return _.some( parameters, parameter => {
+			( parameter.name || parameter ) === 'context';
+		} );
 	}
 
 	/**
