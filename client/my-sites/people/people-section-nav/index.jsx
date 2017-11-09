@@ -111,13 +111,18 @@ class PeopleSectionNav extends Component {
 				path: '/people/viewers/' + siteFilter,
 				id: 'viewers',
 			},
+			{
+				title: translate( 'Invitations', { context: 'Filter label for invitations list' } ),
+				path: '/people/invitations/' + siteFilter,
+				id: 'invitations',
+			},
 		];
 
 		return filters;
 	}
 
 	getNavigableFilters() {
-		var allowedFilterIds = [ 'team' ];
+		var allowedFilterIds = [ 'team', 'invitations' ];
 		if ( config.isEnabled( 'manage/people/readers' ) ) {
 			allowedFilterIds.push( 'followers' );
 			allowedFilterIds.push( 'email-followers' );

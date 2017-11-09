@@ -11,6 +11,7 @@ import automatedTransfer from './automated-transfer';
 import blogStickers from './blog-stickers';
 import comments from './comments';
 import commentsTree from './comments-tree';
+import invites from './invites';
 import jitm from './jitm';
 import media from './media';
 import plugins from './plugins';
@@ -24,6 +25,7 @@ export default mergeHandlers(
 	blogStickers,
 	comments,
 	commentsTree,
+	invites,
 	config.isEnabled( 'jitms' ) ? jitm : null,
 	media,
 	plugins,
