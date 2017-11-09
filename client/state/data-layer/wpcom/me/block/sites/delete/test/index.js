@@ -38,6 +38,7 @@ describe( 'site-blocks', () => {
 			);
 		} );
 	} );
+
 	describe( 'fromApi', () => {
 		it( 'should throw an error for an unsuccesful unblock', () => {
 			expect( () => fromApi( { success: false } ) ).toThrow();
@@ -53,6 +54,7 @@ describe( 'site-blocks', () => {
 			receiveSiteUnblockError( unblockSite( 123 ), {
 				success: false,
 			} )( dispatch );
+
 			expect( dispatch ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					notice: expect.objectContaining( {
