@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import CalendarStep from './calendar-step';
 import ConfirmationStep from './confirmation-step';
 import InfoStep from './info-step';
+import Main from 'components/main';
 import Skeleton from './skeleton';
 import QueryConciergeShifts from 'components/data/query-concierge-shifts';
 import { getConciergeShifts } from 'state/selectors';
@@ -43,7 +44,7 @@ class ConciergeMain extends Component {
 		// 1. pass in the real scheduleId for WP.com concierge schedule.
 		// 2. render the shifts for real.
 		return (
-			<div>
+			<Main>
 				<QueryConciergeShifts scheduleId={ 123 } />
 				{ shifts ? (
 					<CurrentStep
@@ -54,7 +55,7 @@ class ConciergeMain extends Component {
 				) : (
 					<Skeleton />
 				) }
-			</div>
+			</Main>
 		);
 	}
 }

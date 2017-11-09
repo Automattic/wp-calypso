@@ -13,7 +13,6 @@ import FormattedHeader from 'components/formatted-header';
 
 class PrimaryHeader extends Component {
 	render() {
-		// TODO: Localize
 		return (
 			<Card>
 				<FormattedHeader
