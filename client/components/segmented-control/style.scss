@@ -50,12 +50,6 @@
 		color: $gray-dark;
 		outline: none;
 	}
-
-	.notouch & {
-		&:hover {
-			color: $gray-dark;
-		}
-	}
 }
 
 .keyboard-navigation .segmented-control__link:focus .segmented-control__text {
@@ -67,7 +61,11 @@
 	color: $gray-dark;
 }
 
-
+.notouch .segmented-control__link {
+	&:hover {
+		color: $gray-dark;
+	}
+}
 
 .segmented-control__text {
 	display: block;
