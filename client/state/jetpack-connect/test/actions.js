@@ -5,9 +5,8 @@
 /**
  * Internal dependencies
  */
-import path from 'lib/route/path';
+import * as actions from '../actions';
 import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
@@ -31,18 +30,8 @@ import {
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 
 describe( 'actions', () => {
-	let actions, sandbox;
 	const mySitesPath =
 		'/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
-
-	useSandbox( newSandbox => {
-		sandbox = newSandbox;
-		sandbox.stub( path, 'externalRedirect' );
-	} );
-
-	beforeEach( () => {
-		actions = require( '../actions' );
-	} );
 
 	describe( '#confirmJetpackInstallStatus()', () => {
 		test( 'should dispatch confirm status action when called', () => {
