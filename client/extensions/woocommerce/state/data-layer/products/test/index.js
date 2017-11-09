@@ -17,6 +17,7 @@ import {
 	productsUpdated,
 } from 'woocommerce/state/sites/products/actions';
 import {
+	apiError,
 	handleProductCreate,
 	handleProductUpdate,
 	handleProductRequest,
@@ -386,6 +387,31 @@ describe( 'handlers', () => {
 				match( {
 					type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 					siteId: 123,
+				} )
+			);
+		} );
+
+		test( 'apiError should dispatch a failure action on a failed fetchProducts', () => {
+			const dispatch = spy();
+
+			const response = {
+				code: 'rest_no_route',
+				data: { status: 404 },
+				message: 'No route was found matching the URL and request method',
+			};
+			const action = fetchProducts( 123, {} );
+			const data = {
+				status: 404,
+				body: response,
+				headers: [],
+			};
+
+			apiError( { dispatch }, action, { data } );
+			expect( dispatch ).to.have.been.calledWithMatch(
+				match( {
+					type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
+					siteId: 123,
+					params: {},
 				} )
 			);
 		} );

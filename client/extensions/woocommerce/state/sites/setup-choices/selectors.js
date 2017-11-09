@@ -151,3 +151,20 @@ export function getCheckedTaxSetup( state, siteId = getSelectedSiteId( state ) )
 export function getSetStoreAddressDuringInitialSetup( state, siteId = getSelectedSiteId( state ) ) {
 	return isChoiceTrue( state, siteId, 'set_store_address_during_initial_setup' );
 }
+
+/**
+ * Determine if all setup steps are complete
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether or not the site has completed all setup tasks
+ */
+export function isStoreSetupComplete( state, siteId = getSelectedSiteId( state ) ) {
+	return (
+		siteId &&
+		getFinishedInstallOfRequiredPlugins( state, siteId ) &&
+		getFinishedPageSetup( state, siteId ) &&
+		getSetStoreAddressDuringInitialSetup( state, siteId ) &&
+		getFinishedInitialSetup( state, siteId )
+	);
+}
