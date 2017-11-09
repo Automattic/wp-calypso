@@ -129,6 +129,7 @@ export class Comment extends Component {
 			'is-expanded': isExpanded,
 			'is-placeholder': isLoading,
 			'is-pending': commentIsPending,
+			'is-post-view': isPostView,
 			'is-reply-visible': isReplyVisible,
 		} );
 

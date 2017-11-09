@@ -29,10 +29,6 @@
 	display: flex;
 	flex-flow: row;
 	flex-wrap: nowrap;
-
-	.comment__author {
-		padding: 8px;
-	}
 }
 
 .comment__bulk-select {
@@ -64,11 +60,13 @@
 }
 
 // Comment Author Block
+
 .comment__author {
 	display: flex;
 	flex-flow: row;
 	flex-grow: 1;
 	flex-wrap: nowrap;
+	padding: 8px 16px 8px 8px;
 	width: 0;
 }
 
@@ -523,6 +521,8 @@
 // Expanded View
 
 .card.comment.is-expanded {
+	margin: 16px auto;
+
 	.comment__header {
 		border-bottom: 1px solid lighten($gray, 30%);
 
@@ -582,12 +582,20 @@
 		pointer-events: none;
 	}
 
-	.comment__header .comment__author {
+	.comment__author {
 		padding-left: 0;
 	}
 
 	&.is-pending .comment__content {
 		padding-bottom: 16px;
+	}
+}
+
+// Post View
+
+.card.comment.is-post-view {
+	.comment__author {
+		padding-right: 8px;
 	}
 }
 
@@ -610,8 +618,8 @@
 		display: none;
 	}
 
-	.comment__header .comment__author {
-		padding: 8px;
+	.comment__author {
+		padding: 8px 16px 8px 8px;
 	}
 
 	.comment__author-gravatar-placeholder {
