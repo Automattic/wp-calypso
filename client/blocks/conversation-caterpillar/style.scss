@@ -1,5 +1,6 @@
 .conversation-caterpillar {
 	display: flex;
+	position: relative;
 }
 
 .conversation-caterpillar__gravatars,
@@ -59,4 +60,71 @@
 
 .conversations__stream .conversation-caterpillar {
 	margin-top: 20px;
+}
+
+// Caterpillar animation
+.conversation-caterpillar {
+	animation-delay: 1.6s;
+	animation-duration: .15s;
+	animation-fill-mode: forwards;
+	animation-name: slideDownFadeOut;
+	visibility: visible;
+}
+
+@keyframes slideDownFadeOut {
+
+	0% {
+		transform: translateY( 0%) ;
+	}
+
+	100% {
+		transform: translateY( 60% );
+		opacity: 0;
+	}
+}
+
+@keyframes slideDownFadeIn {
+
+	0% {
+		transform: translateY( 0% );
+		opacity: 0;
+	}
+
+	100% {
+		transform: translateY( 60% );
+		opacity: 1;
+	}
+}
+
+// Conversations comment animation
+.comments__comment {
+	animation-delay: 1s;
+	animation-duration: .15s;
+	animation-iteration-count: 1;
+	animation-fill-mode: forwards;
+	animation-name: slideDownFadeIn;
+}
+
+@keyframes slideDownComment {
+
+	0% {
+		transform: translateY( 0% );
+	}
+
+	100% {
+		transform: translateY( 100% );
+	}
+}
+
+@keyframes slideDownFadeInComment {
+
+	0% {
+		transform: translateY( 0% );
+		opacity: 0;
+	}
+
+	100% {
+		transform: translateY( 60% );
+		opacity: 1;
+	}
 }
