@@ -12,6 +12,7 @@ import { get, includes, map, concat } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
 import Gridicon from 'gridicons';
+import { current as currentPage } from 'page';
 
 /**
  * Internal dependencies
@@ -68,6 +69,7 @@ import SectionHeader from 'components/section-header';
 import Tooltip from 'components/tooltip';
 import analytics from 'lib/analytics';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { sectionify } from 'lib/route/path';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -182,12 +184,11 @@ class PostShare extends Component {
 			},
 			{ service_all: 0 }
 		);
+		const additionalProperties = { context_path: sectionify( currentPage ) };
+		const eventProperties = { ...numberOfAccountsPerService, ...additionalProperties };
 
 		if ( this.state.scheduledDate ) {
-			analytics.tracks.recordEvent(
-				'calypso_publicize_share_schedule',
-				numberOfAccountsPerService
-			);
+			analytics.tracks.recordEvent( 'calypso_publicize_share_schedule', eventProperties );
 
 			this.props.schedulePostShareAction(
 				siteId,
@@ -197,10 +198,7 @@ class PostShare extends Component {
 				servicesToPublish.map( connection => connection.ID )
 			);
 		} else {
-			analytics.tracks.recordEvent(
-				'calypso_publicize_share_instantly',
-				numberOfAccountsPerService
-			);
+			analytics.tracks.recordEvent( 'calypso_publicize_share_instantly', eventProperties );
 			this.props.sharePost( siteId, postId, this.state.skipped, this.state.message );
 		}
 	};
