@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -33,7 +32,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 
 	test( 'should default to an empty object', () => {
 		const state = jetpackConnectAuthorize( undefined, {} );
-		expect( state ).to.eql( {} );
+		expect( state ).toEqual( {} );
 	} );
 
 	test( 'should set isAuthorizing to true when starting authorization', () => {
@@ -41,11 +40,13 @@ describe( '#jetpackConnectAuthorize()', () => {
 			type: JETPACK_CONNECT_AUTHORIZE,
 		} );
 
-		expect( state ).to.have.property( 'isAuthorizing' ).to.be.true;
-		expect( state ).to.have.property( 'authorizeSuccess' ).to.be.false;
-		expect( state ).to.have.property( 'authorizeError' ).to.be.false;
-		expect( state ).to.have.property( 'isRedirectingToWpAdmin' ).to.be.false;
-		expect( state ).to.have.property( 'autoAuthorize' ).to.be.false;
+		expect( state ).toEqual( {
+			isAuthorizing: true,
+			authorizeSuccess: false,
+			authorizeError: false,
+			isRedirectingToWpAdmin: false,
+			autoAuthorize: false,
+		} );
 	} );
 
 	test( 'should omit userData and bearerToken when starting authorization', () => {
@@ -62,8 +63,8 @@ describe( '#jetpackConnectAuthorize()', () => {
 			}
 		);
 
-		expect( state ).to.not.have.property( 'userData' );
-		expect( state ).to.not.have.property( 'bearerToken' );
+		expect( state ).not.toHaveProperty( 'userData' );
+		expect( state ).not.toHaveProperty( 'bearerToken' );
 	} );
 
 	test( 'should set authorizeSuccess to true when completed authorization successfully', () => {
@@ -75,13 +76,13 @@ describe( '#jetpackConnectAuthorize()', () => {
 			data,
 		} );
 
-		expect( state ).to.have.property( 'authorizeError' ).to.be.false;
-		expect( state ).to.have.property( 'authorizeSuccess' ).to.be.true;
-		expect( state ).to.have.property( 'autoAuthorize' ).to.be.false;
-		expect( state )
-			.to.have.property( 'plansUrl' )
-			.to.eql( data.plans_url );
-		expect( state ).to.have.property( 'siteReceived' ).to.be.false;
+		expect( state ).toMatchObject( {
+			authorizeError: false,
+			authorizeSuccess: true,
+			autoAuthorize: false,
+			plansUrl: data.plans_url,
+			siteReceived: false,
+		} );
 	} );
 
 	test( 'should set authorizeSuccess to false when an error occurred during authorization', () => {
@@ -91,12 +92,12 @@ describe( '#jetpackConnectAuthorize()', () => {
 			error,
 		} );
 
-		expect( state ).to.have.property( 'isAuthorizing' ).to.be.false;
-		expect( state )
-			.to.have.property( 'authorizeError' )
-			.to.eql( error );
-		expect( state ).to.have.property( 'authorizeSuccess' ).to.be.false;
-		expect( state ).to.have.property( 'autoAuthorize' ).to.be.false;
+		expect( state ).toEqual( {
+			isAuthorizing: false,
+			authorizeError: error,
+			authorizeSuccess: false,
+			autoAuthorize: false,
+		} );
 	} );
 
 	test( 'should set authorization code when login is completed', () => {
@@ -108,9 +109,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			},
 		} );
 
-		expect( state )
-			.to.have.property( 'authorizationCode' )
-			.to.eql( code );
+		expect( state ).toEqual( { authorizationCode: code } );
 	} );
 
 	test( 'should set siteReceived to true and omit some query object properties when received site list', () => {
@@ -131,16 +130,16 @@ describe( '#jetpackConnectAuthorize()', () => {
 			}
 		);
 
-		expect( state ).to.have.property( 'siteReceived' ).to.be.true;
-		expect( state ).to.have.property( 'isAuthorizing' ).to.be.false;
-		expect( state )
-			.to.have.property( 'queryObject' )
-			.to.eql( {
+		expect( state ).toMatchObject( {
+			siteReceived: true,
+			isAuthorizing: false,
+			queryObject: {
 				client_id: 'example.com',
 				redirect_uri: 'https://example.com/',
 				site: 'https://example.com/',
 				state: 1234567890,
-			} );
+			},
+		} );
 	} );
 
 	test( 'should use default authorize state when setting an empty connect query', () => {
@@ -148,12 +147,12 @@ describe( '#jetpackConnectAuthorize()', () => {
 			type: JETPACK_CONNECT_QUERY_SET,
 		} );
 
-		expect( state )
-			.to.have.property( 'queryObject' )
-			.to.eql( {} );
-		expect( state ).to.have.property( 'isAuthorizing' ).to.be.false;
-		expect( state ).to.have.property( 'authorizeSuccess' ).to.be.false;
-		expect( state ).to.have.property( 'authorizeError' ).to.be.false;
+		expect( state ).toMatchObject( {
+			queryObject: {},
+			isAuthorizing: false,
+			authorizeSuccess: false,
+			authorizeError: false,
+		} );
 	} );
 
 	test( 'should use new query object over default authorize state when setting a connect query', () => {
@@ -165,12 +164,12 @@ describe( '#jetpackConnectAuthorize()', () => {
 			queryObject,
 		} );
 
-		expect( state )
-			.to.have.property( 'queryObject' )
-			.to.eql( queryObject );
-		expect( state ).to.have.property( 'isAuthorizing' ).to.be.false;
-		expect( state ).to.have.property( 'authorizeSuccess' ).to.be.false;
-		expect( state ).to.have.property( 'authorizeError' ).to.be.false;
+		expect( state ).toMatchObject( {
+			queryObject: queryObject,
+			isAuthorizing: false,
+			authorizeSuccess: false,
+			authorizeError: false,
+		} );
 	} );
 
 	test( 'should set isAuthorizing and autoAuthorize to true when initiating an account creation', () => {
@@ -178,10 +177,12 @@ describe( '#jetpackConnectAuthorize()', () => {
 			type: JETPACK_CONNECT_CREATE_ACCOUNT,
 		} );
 
-		expect( state ).to.have.property( 'isAuthorizing' ).to.be.true;
-		expect( state ).to.have.property( 'authorizeSuccess' ).to.be.false;
-		expect( state ).to.have.property( 'authorizeError' ).to.be.false;
-		expect( state ).to.have.property( 'autoAuthorize' ).to.be.true;
+		expect( state ).toEqual( {
+			isAuthorizing: true,
+			authorizeSuccess: false,
+			authorizeError: false,
+			autoAuthorize: true,
+		} );
 	} );
 
 	test( 'should receive userData and bearerToken on successful account creation', () => {
@@ -198,16 +199,14 @@ describe( '#jetpackConnectAuthorize()', () => {
 			},
 		} );
 
-		expect( state ).to.have.property( 'isAuthorizing' ).to.be.true;
-		expect( state ).to.have.property( 'authorizeSuccess' ).to.be.false;
-		expect( state ).to.have.property( 'authorizeError' ).to.be.false;
-		expect( state ).to.have.property( 'autoAuthorize' ).to.be.true;
-		expect( state )
-			.to.have.property( 'userData' )
-			.to.eql( userData );
-		expect( state )
-			.to.have.property( 'bearerToken' )
-			.to.eql( bearer_token );
+		expect( state ).toMatchObject( {
+			isAuthorizing: true,
+			authorizeSuccess: false,
+			authorizeError: false,
+			autoAuthorize: true,
+			userData: userData,
+			bearerToken: bearer_token,
+		} );
 	} );
 
 	test( 'should mark authorizeError as true on unsuccessful account creation', () => {
@@ -217,10 +216,12 @@ describe( '#jetpackConnectAuthorize()', () => {
 			error,
 		} );
 
-		expect( state ).to.have.property( 'isAuthorizing' ).to.be.false;
-		expect( state ).to.have.property( 'authorizeSuccess' ).to.be.false;
-		expect( state ).to.have.property( 'authorizeError' ).to.be.true;
-		expect( state ).to.have.property( 'autoAuthorize' ).to.be.false;
+		expect( state ).toEqual( {
+			authorizeError: true,
+			authorizeSuccess: false,
+			autoAuthorize: false,
+			isAuthorizing: false,
+		} );
 	} );
 
 	test( 'should set isRedirectingToWpAdmin to true when an xmlrpc error occurs', () => {
@@ -228,7 +229,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			type: JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 		} );
 
-		expect( state ).to.have.property( 'isRedirectingToWpAdmin' ).to.be.true;
+		expect( state ).toEqual( { isRedirectingToWpAdmin: true } );
 	} );
 
 	test( 'should set isRedirectingToWpAdmin to true when a redirect to wp-admin is triggered', () => {
@@ -236,7 +237,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			type: JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 		} );
 
-		expect( state ).to.have.property( 'isRedirectingToWpAdmin' ).to.be.true;
+		expect( state ).toEqual( { isRedirectingToWpAdmin: true } );
 	} );
 
 	test( 'should set clientNotResponding when a site request to current client fails', () => {
@@ -244,7 +245,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			{ queryObject: { client_id: '123' } },
 			{ type: SITE_REQUEST_FAILURE, siteId: 123 }
 		);
-		expect( state ).to.have.property( 'clientNotResponding' ).to.be.true;
+		expect( state ).toMatchObject( { clientNotResponding: true } );
 	} );
 
 	test( 'should return the given state when a site request fails on a different site', () => {
@@ -253,7 +254,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			type: SITE_REQUEST_FAILURE,
 			siteId: 234,
 		} );
-		expect( state ).to.eql( originalState );
+		expect( state ).toEqual( originalState );
 	} );
 
 	test( 'should return the given state when a site request fails and no client id is set', () => {
@@ -262,7 +263,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			type: SITE_REQUEST_FAILURE,
 			siteId: 123,
 		} );
-		expect( state ).to.eql( originalState );
+		expect( state ).toEqual( originalState );
 	} );
 
 	test( 'should return the given state when a site request fails and no query object is set', () => {
@@ -271,7 +272,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			type: SITE_REQUEST_FAILURE,
 			siteId: 123,
 		} );
-		expect( state ).to.eql( originalState );
+		expect( state ).toEqual( originalState );
 	} );
 
 	test( 'should persist state when a site request to a different client fails', () => {
@@ -279,7 +280,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			{ queryObject: { client_id: '123' } },
 			{ type: SITE_REQUEST_FAILURE, siteId: 456 }
 		);
-		expect( state ).to.eql( { queryObject: { client_id: '123' } } );
+		expect( state ).toEqual( { queryObject: { client_id: '123' } } );
 	} );
 
 	test( 'should persist state', () => {
@@ -294,7 +295,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			type: SERIALIZE,
 		} );
 
-		expect( state ).to.be.eql( originalState );
+		expect( state ).toEqual( originalState );
 	} );
 
 	test( 'should load valid persisted state', () => {
@@ -309,7 +310,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			type: DESERIALIZE,
 		} );
 
-		expect( state ).to.be.eql( originalState );
+		expect( state ).toEqual( originalState );
 	} );
 
 	test( 'should not load stale state', () => {
@@ -324,6 +325,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 			type: DESERIALIZE,
 		} );
 
-		expect( state ).to.be.eql( {} );
+		expect( state ).toEqual( {} );
 	} );
 } );
