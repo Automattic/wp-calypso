@@ -105,7 +105,10 @@ export default function transformer( file, api ) {
 				.find( j.ImportDeclaration )
 				.filter( p => {
 					const importValue = _.get( p, 'value.source.value', '' );
-					return importValue.indexOf( '/' ) > -1;
+					return (
+						importValue.indexOf( '/' ) > -1 ||
+						[ 'config', 'controller', 'dispatcher', 'layout' ].indexOf( importValue ) > -1
+					);
 				} )
 				.at( 0 )
 				.replaceWith( p => {
