@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,18 +16,20 @@ import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
 import { getSiteComment } from 'state/selectors';
 
-const CommentPermailnk = ( { permaLink, translate } ) => (
-	<Card className="comment__comment-permalink">
-		<SectionHeader label={ translate( 'Comment Permalink' ) } />
-		<ExternalLink icon={ true } href={ permaLink }>
-			{ permaLink }
-		</ExternalLink>
-	</Card>
-);
+const CommentPermailnk = ( { isLoading, permaLink, translate } ) =>
+	! isLoading && (
+		<Card className="comment__comment-permalink">
+			<SectionHeader label={ translate( 'Comment Permalink' ) } />
+			<ExternalLink icon={ true } href={ permaLink }>
+				{ permaLink }
+			</ExternalLink>
+		</Card>
+	);
 
 CommentPermailnk.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	commentId: PropTypes.number.isRequired,
+	isLoading: PropTypes.bool.isRequired,
 	permaLink: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
@@ -36,6 +38,7 @@ const mapStateToProps = ( state, { siteId, commentId } ) => {
 	const comment = getSiteComment( state, siteId, commentId );
 
 	return {
+		isLoading: isUndefined( comment ),
 		permaLink: get( comment, 'URL', '' ),
 	};
 };
