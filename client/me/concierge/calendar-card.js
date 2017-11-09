@@ -1,13 +1,20 @@
 /** @format */
 
 /**
+ * CalendarCard represents a day of schedulable concierge chats. Each card is expandable to
+ * allow the user to select a specific time on the day. If the day has no availability, it will
+ * not be expandable. When you stack a group of these cards together you'll get the scheduling
+ * calendar view.
+ */
+
+/**
  * External dependencies
  */
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
-import { moment } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -53,7 +60,7 @@ class CalendarCard extends Component {
 	};
 
 	render() {
-		const { times } = this.props;
+		const { times, translate } = this.props;
 
 		return (
 			<FoldableCard
@@ -61,31 +68,33 @@ class CalendarCard extends Component {
 				clickableHeader={ ! isEmpty( times ) }
 				compact
 				disabled={ isEmpty( times ) }
-				summary={ isEmpty( times ) ? 'No sessions available' : null }
+				summary={ isEmpty( times ) ? translate( 'No sessions available' ) : null }
 				header={ this.renderHeader() }
 			>
-				<form>
-					<FormFieldset>
-						<FormLabel htmlFor="concierge-start-time">Choose a starting time</FormLabel>
-						<FormSelect id="concierge-start-time">
-							{ times.map( time => (
-								<option value={ time } key={ time }>
-									{ moment( time ).format( 'h:mma z' ) }
-								</option>
-							) ) }
-						</FormSelect>
-						<FormSettingExplanation>Sessions are 30 minutes long.</FormSettingExplanation>
-					</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="concierge-start-time">
+						{ translate( 'Choose a starting time' ) }
+					</FormLabel>
+					<FormSelect id="concierge-start-time">
+						{ times.map( time => (
+							<option value={ time } key={ time }>
+								{ moment( time ).format( 'h:mma z' ) }
+							</option>
+						) ) }
+					</FormSelect>
+					<FormSettingExplanation>
+						{ translate( 'Sessions are 30 minutes long.' ) }
+					</FormSettingExplanation>
+				</FormFieldset>
 
-					<FormFieldset>
-						<Button primary onClick={ this.props.onSubmit }>
-							Book this session
-						</Button>
-					</FormFieldset>
-				</form>
+				<FormFieldset>
+					<Button primary onClick={ this.props.onSubmit }>
+						{ translate( 'Book this session' ) }
+					</Button>
+				</FormFieldset>
 			</FoldableCard>
 		);
 	}
 }
 
-export default CalendarCard;
+export default localize( CalendarCard );
