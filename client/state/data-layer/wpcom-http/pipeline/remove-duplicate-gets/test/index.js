@@ -12,7 +12,7 @@ import {
 	addResponder,
 	applyDuplicatesHandlers,
 	buildKey,
-	clearQueue,
+	clearRequestLog,
 	removeDuplicateGets,
 } from '../';
 
@@ -128,7 +128,7 @@ describe( '#addResponder', () => {
 } );
 
 describe( '#removeDuplicateGets', () => {
-	beforeEach( clearQueue );
+	beforeEach( clearRequestLog );
 
 	test( 'should pass through non-GET requests', () => {
 		const primed = removeDuplicateGets( { nextRequest: cp( postLike ) } );
@@ -164,7 +164,7 @@ describe( '#removeDuplicateGets', () => {
 } );
 
 describe( '#applyDuplicateHandlers', () => {
-	beforeEach( clearQueue );
+	beforeEach( clearRequestLog );
 
 	test( 'should return new requests', () => {
 		removeDuplicateGets( { nextRequest: cp( getSites ) } );
