@@ -35,7 +35,7 @@ class ConciergeMain extends Component {
 		super( props );
 
 		this.state = {
-			currentStep: 0,
+			currentStep: 1,
 		};
 	}
 
