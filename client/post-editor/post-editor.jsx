@@ -715,7 +715,6 @@ export const PostEditor = createReactClass( {
 			recordStat( isPage ? 'page_trashed' : 'post_trashed' );
 			recordEvent( isPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
 			this.props.markSaved();
-			this.onClose();
 		}
 	},
 
