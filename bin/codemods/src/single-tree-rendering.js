@@ -1,11 +1,39 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
 const _ = require( 'lodash' );
+const fs = require( 'fs' );
+const repl = require( 'repl' );
+
+/**
+* Internal dependencies
+*/
 const config = require( './config' );
 
 export default function transformer( file, api ) {
 	const j = api.jscodeshift;
 	const root = j( file.source );
+
+	/**
+	 * Gather all of the external deps and throw them in a set
+	 */
+	const nodeJsDeps = repl._builtinLibs;
+	const packageJson = JSON.parse( fs.readFileSync( './package.json', 'utf8' ) );
+	const packageJsonDeps = []
+		.concat( nodeJsDeps )
+		.concat( Object.keys( packageJson.dependencies ) )
+		.concat( Object.keys( packageJson.devDependencies ) );
+
+	const externalDependenciesSet = new Set( packageJsonDeps );
+
+	/**
+	 * @param {object} importNode Node object
+	 * @returns {boolean}
+	 */
+	const isExternal = importNode =>
+		externalDependenciesSet.has( importNode.source.value.split( '/' )[ 0 ] );
 
 	/**
 	 * Removes the extra newlines between two import statements
@@ -103,20 +131,7 @@ export default function transformer( file, api ) {
 			// Find internal dependencies and place comment above first one
 			root
 				.find( j.ImportDeclaration )
-				.filter( p => {
-					const internalDepsWithoutSlash = [
-						'config',
-						'controller',
-						'dispatcher',
-						'layout',
-						'sections',
-					];
-					const importValue = _.get( p, 'value.source.value', '' );
-
-					return (
-						importValue.indexOf( '/' ) > -1 || internalDepsWithoutSlash.indexOf( importValue ) > -1
-					);
-				} )
+				.filter( p => ! isExternal( p.value ) )
 				.at( 0 )
 				.replaceWith( p => {
 					p.value.comments = [ comment ];
