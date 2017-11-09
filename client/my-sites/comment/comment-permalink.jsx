@@ -16,7 +16,7 @@ import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
 import { getSiteComment } from 'state/selectors';
 
-const CommentPermailnk = ( { isLoading, permaLink, translate } ) =>
+const CommentPermalink = ( { isLoading, permaLink, translate } ) =>
 	! isLoading && (
 		<Card className="comment__comment-permalink">
 			<SectionHeader label={ translate( 'Comment Permalink' ) } />
@@ -26,7 +26,7 @@ const CommentPermailnk = ( { isLoading, permaLink, translate } ) =>
 		</Card>
 	);
 
-CommentPermailnk.propTypes = {
+CommentPermalink.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	commentId: PropTypes.number.isRequired,
 	isLoading: PropTypes.bool.isRequired,
@@ -43,4 +43,4 @@ const mapStateToProps = ( state, { siteId, commentId } ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( CommentPermailnk ) );
+export default connect( mapStateToProps )( localize( CommentPermalink ) );
