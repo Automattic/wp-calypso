@@ -2,16 +2,12 @@
  * @format
  * @jest-environment jsdom
  */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
 /**
  * Internal dependencies
  */
 import path from 'lib/route/path';
+import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
@@ -31,19 +27,16 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	SITES_RECEIVE,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 
 describe( 'actions', () => {
-	let actions, sandbox, spy;
+	let actions, sandbox;
 	const mySitesPath =
 		'/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
 
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;
-		spy = sandbox.spy();
 		sandbox.stub( path, 'externalRedirect' );
 	} );
 
@@ -53,12 +46,13 @@ describe( 'actions', () => {
 
 	describe( '#confirmJetpackInstallStatus()', () => {
 		test( 'should dispatch confirm status action when called', () => {
+			const spy = jest.fn();
 			const { confirmJetpackInstallStatus } = actions;
 			const jetpackStatus = true;
 
 			confirmJetpackInstallStatus( jetpackStatus )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 				status: jetpackStatus,
 			} );
@@ -67,12 +61,13 @@ describe( 'actions', () => {
 
 	describe( '#dismissUrl()', () => {
 		test( 'should dispatch dismiss url status action when called', () => {
+			const spy = jest.fn();
 			const { dismissUrl } = actions;
 			const url = 'http://example.com';
 
 			dismissUrl( url )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
 				url: url,
 			} );
@@ -81,12 +76,13 @@ describe( 'actions', () => {
 
 	describe( '#goToRemoteAuth()', () => {
 		test( 'should dispatch redirect action when called', () => {
+			const spy = jest.fn();
 			const { goToRemoteAuth } = actions;
 			const url = 'http://example.com';
 
 			goToRemoteAuth( url )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_CONNECT_REDIRECT,
 				url: url,
 			} );
@@ -95,12 +91,13 @@ describe( 'actions', () => {
 
 	describe( '#goToPluginInstall()', () => {
 		test( 'should dispatch redirect action when called', () => {
+			const spy = jest.fn();
 			const { goToPluginInstall } = actions;
 			const url = 'http://example.com';
 
 			goToPluginInstall( url )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_CONNECT_REDIRECT,
 				url: url,
 			} );
@@ -109,12 +106,13 @@ describe( 'actions', () => {
 
 	describe( '#goToPluginActivation()', () => {
 		test( 'should dispatch redirect action when called', () => {
+			const spy = jest.fn();
 			const { goToPluginActivation } = actions;
 			const url = 'http://example.com';
 
 			goToPluginActivation( url )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_CONNECT_REDIRECT,
 				url: url,
 			} );
@@ -123,12 +121,13 @@ describe( 'actions', () => {
 
 	describe( '#goBackToWpAdmin()', () => {
 		test( 'should dispatch redirect action when called', () => {
+			const spy = jest.fn();
 			const { goBackToWpAdmin } = actions;
 			const url = 'http://example.com';
 
 			goBackToWpAdmin( url )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 			} );
 		} );
@@ -136,6 +135,7 @@ describe( 'actions', () => {
 
 	describe( '#goToXmlrpcErrorFallbackUrl()', () => {
 		test( 'should dispatch redirect with xmlrpc error action when called', () => {
+			const spy = jest.fn();
 			const { goToXmlrpcErrorFallbackUrl } = actions;
 			const queryObject = {
 				state: '12345678',
@@ -148,7 +148,7 @@ describe( 'actions', () => {
 
 			goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 				url,
 			} );
@@ -157,12 +157,13 @@ describe( 'actions', () => {
 
 	describe( '#retryAuth()', () => {
 		test( 'should dispatch redirect action when called', () => {
+			const spy = jest.fn();
 			const { retryAuth } = actions;
 			const url = 'http://example.com';
 
 			retryAuth( url, 0 )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_CONNECT_RETRY_AUTH,
 				slug: 'example.com',
 				attemptNumber: 0,
@@ -238,21 +239,23 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch authorize request action when thunk triggered', () => {
+				const spy = jest.fn();
 				const { authorize } = actions;
 
 				authorize( queryObject )( spy );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: JETPACK_CONNECT_AUTHORIZE,
 					queryObject,
 				} );
 			} );
 
 			test( 'should dispatch login complete action when request completes', () => {
+				const spy = jest.fn();
 				const { authorize } = actions;
 
 				return authorize( queryObject )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 						data: {
 							code: 'abcdefghi1234',
@@ -262,10 +265,11 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch authorize receive action when request completes', () => {
+				const spy = jest.fn();
 				const { authorize } = actions;
 
 				return authorize( queryObject )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 						siteId: client_id,
 						data: {
@@ -278,10 +282,11 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch sites receive action when request completes', () => {
+				const spy = jest.fn();
 				const { authorize } = actions;
 
 				return authorize( queryObject )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: SITES_RECEIVE,
 						sites: [ client_id ],
 					} );
@@ -289,10 +294,11 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch authorize receive site list action when request completes', () => {
+				const spy = jest.fn();
 				const { authorize } = actions;
 
 				return authorize( queryObject )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 						data: {
 							sites: [ client_id ],
@@ -326,10 +332,11 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch authorize receive action when request completes', () => {
+				const spy = jest.fn();
 				const { authorize } = actions;
 
 				return authorize( queryObject )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 						siteId: client_id,
 						data: null,
@@ -393,20 +400,22 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch validate action when thunk triggered', () => {
+				const spy = jest.fn();
 				const { validateSSONonce } = actions;
 
 				validateSSONonce( siteId, ssoNonce )( spy );
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					siteId: siteId,
 					type: JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 				} );
 			} );
 
 			test( 'should dispatch receive action when request completes', () => {
+				const spy = jest.fn();
 				const { validateSSONonce } = actions;
 
 				return validateSSONonce( siteId, ssoNonce )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						success: true,
 						blogDetails: blogDetails,
 						sharedDetails: sharedDetails,
@@ -436,10 +445,11 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch receive action when request completes', () => {
+				const spy = jest.fn();
 				const { validateSSONonce } = actions;
 
 				return validateSSONonce( siteId, ssoNonce )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						error: {
 							error: 'invalid_input',
 							message: 'sso_nonce is a required parameter for this endpoint',
@@ -476,20 +486,22 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch validate action when thunk triggered', () => {
+				const spy = jest.fn();
 				const { authorizeSSO } = actions;
 
 				authorizeSSO( siteId, ssoNonce, ssoUrl )( spy );
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					siteId: siteId,
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 				} );
 			} );
 
 			test( 'should dispatch receive action when request completes', () => {
+				const spy = jest.fn();
 				const { authorizeSSO } = actions;
 
 				return authorizeSSO( siteId, ssoNonce, ssoUrl )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						ssoUrl,
 						siteUrl: ssoUrl,
 						type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
@@ -518,10 +530,11 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch receive action when request completes', () => {
+				const spy = jest.fn();
 				const { authorizeSSO } = actions;
 
 				return authorizeSSO( siteId, ssoNonce, ssoUrl )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toHaveBeenLastCalledWith( {
 						error: {
 							error: 'invalid_input',
 							message: 'sso_nonce is a required parameter for this endpoint',
