@@ -16,6 +16,14 @@
  *   accompanying import statement.
  */
 
+/**
+ * External dependencies
+ */
+const _ = require( 'lodash' );
+
+/**
+ * Internal dependencies
+ */
 const config = require( './config' );
 
 export default function transformer( file, api ) {
@@ -35,6 +43,22 @@ export default function transformer( file, api ) {
 	}
 
 	/**
+	 * Check if `parameters` has `param` either as a string or as a name of
+	 * an object, which could be e.g. an `Identifier`.
+	 *
+	 * @param {array} parameters Parameters to look from
+	 * @param {string} parameter Parameter name
+	 * @returns {boolean}
+	 */
+	function hasParam( parameters, parameter ) {
+		return (
+			_.findIndex( parameters || [], parameter => {
+				( parameter.name || parameter ) === 'context';
+			} ) !== -1
+		);
+	}
+
+	/**
 	 * Ensure `context` is among parameters
 	 *
 	 * @param {object} path Path object that wraps a single node
@@ -42,7 +66,7 @@ export default function transformer( file, api ) {
 	 */
 	function ensureContextMiddleware( path ) {
 		// `context` param is already in
-		if ( path.value.params.indexOf( 'context' ) !== -1 ) {
+		if ( hasParam( 'context' ) ) {
 			return path.value;
 		}
 		let ret = path.value;
