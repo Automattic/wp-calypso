@@ -15,7 +15,7 @@ import FormRadio from 'components/forms/form-radio';
 import FormLabel from 'components/forms/form-label';
 import getPackageDescriptions from './get-package-descriptions';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import getProductLink from 'woocommerce/woocommerce-services/lib/utils/get-product-link';
 import { getSite } from 'state/sites/selectors';
 import { closeItemMove, setTargetPackage, moveItem } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
@@ -53,7 +53,7 @@ const MoveItemDialog = ( props ) => {
 	const openedPackage = selected[ openedPackageId ];
 	const items = openedPackage.items;
 	const item = items[ movedItemIndex ];
-	const itemUrl = getLink( '/store/product/:site/' + item.product_id, site );
+	const itemUrl = getProductLink( item.product_id, site );
 	const itemLink = <a href={ itemUrl } target="_blank" rel="noopener noreferrer">{ item.name }</a>;
 	let desc;
 
