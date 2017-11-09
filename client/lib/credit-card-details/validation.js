@@ -165,7 +165,7 @@ validators.validCPF = {
 		return isValidCPF( value );
 	},
 	error: function( description ) {
-		return i18n.translate( '%(description)s is invalid. Must be in format: 111-222-444-XX', {
+		return i18n.translate( '%(description)s is invalid. Must be in format: 111.444.777-XX', {
 			args: { description: description },
 		} );
 	},

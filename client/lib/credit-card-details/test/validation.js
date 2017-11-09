@@ -191,7 +191,7 @@ describe( 'validation', () => {
 				expect( result ).to.be.eql( {
 					errors: {
 						document: [
-							'Taxpayer Identification Number is invalid. Must be in format: 111-222-444-XX',
+							'Taxpayer Identification Number is invalid. Must be in format: 111.444.777-XX',
 						],
 					},
 				} );

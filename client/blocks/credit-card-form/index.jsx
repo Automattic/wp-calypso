@@ -56,13 +56,16 @@ const CreditCardForm = createReactClass( {
 		'number',
 		'cvv',
 		'expirationDate',
-		'country', 'postalCode',
+		'country',
+		'postalCode',
 		'streetNumber',
-		'address',
+		'address1',
+		'address2',
 		'phoneNumber',
+		'streetNumber',
 		'city',
 		'state',
-		'document'
+		'document',
 	],
 
 	componentWillMount() {
