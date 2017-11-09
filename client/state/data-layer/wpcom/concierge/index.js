@@ -4,6 +4,6 @@
  * Internal dependencies
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
-import shifts from './shifts';
+import schedules from './schedules';
 
-export default mergeHandlers( shifts );
+export default mergeHandlers( schedules );
