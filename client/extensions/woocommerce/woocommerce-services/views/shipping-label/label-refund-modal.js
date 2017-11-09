@@ -40,7 +40,7 @@ const RefundDialog = ( props ) => {
 
 	return (
 		<Dialog
-			additionalClassNames="label-refund-modal woocommerce"
+			additionalClassNames="label-refund-modal woocommerce wcc-root"
 			isVisible={ Boolean( refundDialog && refundDialog.labelId === labelId ) }
 			onClose={ onClose }
 			buttons={ buttons }>

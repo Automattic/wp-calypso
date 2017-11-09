@@ -25,7 +25,7 @@ const DetailsDialog = ( props ) => {
 
 	return (
 		<Dialog
-			additionalClassNames="label-details-modal woocommerce"
+			additionalClassNames="label-details-modal woocommerce wcc-root"
 			isVisible={ isVisible }
 			onClose={ onClose }
 			buttons={ buttons }>
