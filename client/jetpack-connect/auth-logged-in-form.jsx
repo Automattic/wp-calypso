@@ -42,7 +42,10 @@ import {
 	goToXmlrpcErrorFallbackUrl as goToXmlrpcErrorFallbackUrlAction,
 	retryAuth as retryAuthAction,
 } from 'state/jetpack-connect/actions';
-import { hasExpiredSecretError, hasXmlrpcError } from 'state/jetpack-connect/selectors';
+import {
+	hasExpiredSecretError as hasExpiredSecretErrorSelector,
+	hasXmlrpcError as hasXmlrpcErrorSelector,
+} from 'state/jetpack-connect/selectors';
 
 /**
  * Constants
@@ -79,9 +82,9 @@ class LoggedInForm extends Component {
 		authorize: PropTypes.func.isRequired,
 		goBackToWpAdmin: PropTypes.func.isRequired,
 		goToXmlrpcErrorFallbackUrl: PropTypes.func.isRequired,
+		hasExpiredSecretError: PropTypes.bool,
+		hasXmlrpcError: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
-		requestHasExpiredSecretError: PropTypes.func.isRequired,
-		requestHasXmlrpcError: PropTypes.func.isRequired,
 		retryAuth: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -135,8 +138,8 @@ class LoggedInForm extends Component {
 			authorizeError &&
 			nextProps.authAttempts < MAX_AUTH_ATTEMPTS &&
 			! this.retryingAuth &&
-			! nextProps.requestHasXmlrpcError() &&
-			! nextProps.requestHasExpiredSecretError() &&
+			! nextProps.hasXmlrpcError &&
+			! nextProps.hasExpiredSecretError &&
 			queryObject.site
 		) {
 			// Expired secret errors, and XMLRPC errors will be resolved in `handleResolve`.
@@ -191,7 +194,7 @@ class LoggedInForm extends Component {
 		const { queryObject, authorizationCode } = this.props.jetpackConnectAuthorize;
 		const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 		this.retryingAuth = false;
-		if ( this.props.requestHasExpiredSecretError() ) {
+		if ( this.props.hasExpiredSecretError ) {
 			// In this case, we need to re-issue the secret.
 			// We do this by redirecting to Jetpack client, which will automatically redirect back here.
 			recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
@@ -338,10 +341,10 @@ class LoggedInForm extends Component {
 		if ( authorizeError.message.indexOf( 'already_connected' ) >= 0 ) {
 			return <JetpackConnectNotices noticeType="alreadyConnected" />;
 		}
-		if ( this.props.requestHasExpiredSecretError() ) {
+		if ( this.props.hasExpiredSecretError ) {
 			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ queryObject.site } />;
 		}
-		if ( this.props.requestHasXmlrpcError() ) {
+		if ( this.props.hasXmlrpcError ) {
 			return this.renderXmlrpcFeedback();
 		}
 		return (
@@ -527,7 +530,7 @@ class LoggedInForm extends Component {
 				{ this.getDisclaimerText() }
 				<Button
 					primary
-					disabled={ this.isAuthorizing() || this.props.requestHasXmlrpcError() }
+					disabled={ this.isAuthorizing() || this.props.hasXmlrpcError }
 					onClick={ this.handleSubmit }
 				>
 					{ this.getButtonText() }
@@ -555,8 +558,8 @@ class LoggedInForm extends Component {
 export default connect(
 	state => ( {
 		redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
-		requestHasExpiredSecretError: () => hasExpiredSecretError( state ),
-		requestHasXmlrpcError: () => hasXmlrpcError( state ),
+		hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
+		hasXmlrpcError: hasXmlrpcErrorSelector( state ),
 	} ),
 	{
 		authorize: authorizeAction,
