@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, uniqueId } from 'lodash';
+import { find, uniqBy, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,9 +17,49 @@ import Dialog from 'components/dialog';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
 import { getAllProductsWithVariations } from 'woocommerce/state/sites/products/selectors';
+import { getOrderItemCost } from 'woocommerce/lib/order-values/totals';
 import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProductSearch from 'woocommerce/components/product-search';
+
+function getExistingLineItem( item, order ) {
+	const lineItems = order.line_items || [];
+	const matchedItem = ! item.productId
+		? { product_id: item.id }
+		: { product_id: item.productId, variation_id: item.id };
+	const existingLineItem = find( lineItems, matchedItem );
+	if ( existingLineItem ) {
+		const quantity = existingLineItem.quantity + 1;
+		const subtotal = getOrderItemCost( order, existingLineItem.id ) * quantity;
+		existingLineItem.quantity = quantity;
+		existingLineItem.subtotal = subtotal;
+		existingLineItem.total = subtotal;
+		return existingLineItem;
+	}
+	return false;
+}
+
+function createLineItem( item, allProducts ) {
+	const line = {
+		id: uniqueId( 'fee_' ),
+		name: item.name || '',
+		price: item.price,
+		subtotal: item.price,
+		total: item.price,
+		quantity: 1,
+	};
+	// If no `productId`, this is not a variation
+	if ( ! item.productId ) {
+		return { ...line, product_id: item.id };
+	}
+
+	// This is a variation so name doesn't exist, and we'll pull from the base product
+	const baseProduct = find( allProducts, { id: Number( item.productId ) } );
+	const varName = formattedVariationName( item );
+	const name = baseProduct && baseProduct.name + ' - ' + varName;
+
+	return { ...line, name, product_id: item.productId, variation_id: item.id };
+}
 
 class OrderProductDialog extends Component {
 	static propTypes = {
@@ -58,32 +98,19 @@ class OrderProductDialog extends Component {
 			return find( allProducts, { id: p } );
 		} );
 
+		const lineItems = order.line_items || [];
 		const newLineItems = products.map( item => {
-			// Convert the product to the line_item format
-			const line = {
-				id: uniqueId( 'fee_' ),
-				name: item.name || '',
-				price: item.price,
-				subtotal: item.price,
-				total: item.price,
-				quantity: 1,
-			};
-			// If no `productId`, this is not a variation
-			if ( ! item.productId ) {
-				return { ...line, product_id: item.id };
+			const existingLineItem = getExistingLineItem( item, order );
+			if ( existingLineItem ) {
+				return existingLineItem;
 			}
-
-			// This is a variation so name doesn't exist, and we'll pull from the base product
-			const baseProduct = find( allProducts, { id: Number( item.productId ) } );
-			const varName = formattedVariationName( item );
-			const name = baseProduct && baseProduct.name + ' - ' + varName;
-			return { ...line, name, product_id: item.productId, variation_id: item.id };
+			// Convert the product to the line_item format, using data from allProducts if necessary
+			return createLineItem( item, allProducts );
 		} );
 
-		const lineItems = order.line_items || [];
 		this.props.editOrder( siteId, {
 			id: order.id,
-			line_items: [ ...lineItems, ...newLineItems ],
+			line_items: uniqBy( [ ...lineItems, ...newLineItems ], 'id' ),
 		} );
 
 		this.props.closeDialog();
