@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { requestSiteUnblock, receiveSiteUnblock } from '../';
+import { requestSiteUnblock, receiveSiteUnblock, receiveSiteUnblockError, fromApi } from '../';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { blockSite, unblockSite } from 'state/reader/site-blocks/actions';
@@ -11,10 +11,8 @@ import { blockSite, unblockSite } from 'state/reader/site-blocks/actions';
 describe( 'site-blocks', () => {
 	describe( 'requestSiteUnblock', () => {
 		test( 'should dispatch an http request', () => {
-			const dispatch = jest.fn();
 			const action = unblockSite( 123 );
-			requestSiteUnblock( { dispatch }, action );
-			expect( dispatch ).toHaveBeenCalledWith(
+			expect( requestSiteUnblock( action ) ).toEqual(
 				http(
 					{
 						method: 'POST',
@@ -29,16 +27,9 @@ describe( 'site-blocks', () => {
 	} );
 
 	describe( 'receiveSiteUnblock', () => {
-		test( 'should dispatch a success notice', () => {
-			const dispatch = jest.fn();
-			receiveSiteUnblock(
-				{ dispatch },
-				{
-					payload: { siteId: 123 },
-				},
-				{ success: true }
-			);
-			expect( dispatch ).toHaveBeenCalledWith(
+		test( 'should return a success notice', () => {
+			const dispatchedAction = receiveSiteUnblock( unblockSite( 123 ), { success: true } );
+			expect( dispatchedAction ).toEqual(
 				expect.objectContaining( {
 					notice: expect.objectContaining( {
 						status: 'is-plain',
@@ -46,18 +37,22 @@ describe( 'site-blocks', () => {
 				} )
 			);
 		} );
+	} );
+	describe( 'fromApi', () => {
+		it( 'should throw an error for an unsuccesful unblock', () => {
+			expect( () => fromApi( { success: false } ) ).toThrow();
+		} );
+		it( 'should return original response for an succesful unblock', () => {
+			expect( fromApi( { success: true } ) ).toEqual( { success: true } );
+		} );
+	} );
 
+	describe( 'receiveSiteBlockError', () => {
 		test( 'should revert to the previous state if it fails', () => {
 			const dispatch = jest.fn();
-			receiveSiteUnblock(
-				{ dispatch },
-				{
-					payload: { siteId: 123 },
-				},
-				{
-					success: false,
-				}
-			);
+			receiveSiteUnblockError( unblockSite( 123 ), {
+				success: false,
+			} )( dispatch );
 			expect( dispatch ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					notice: expect.objectContaining( {

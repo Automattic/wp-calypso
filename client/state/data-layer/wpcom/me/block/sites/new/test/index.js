@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { requestSiteBlock, receiveSiteBlock } from '../';
+import { requestSiteBlock, receiveSiteBlock, fromApi, receiveSiteBlockError } from '../';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { blockSite, unblockSite } from 'state/reader/site-blocks/actions';
@@ -11,10 +11,8 @@ import { blockSite, unblockSite } from 'state/reader/site-blocks/actions';
 describe( 'site-blocks', () => {
 	describe( 'requestSiteBlock', () => {
 		test( 'should dispatch an http request', () => {
-			const dispatch = jest.fn();
 			const action = blockSite( 123 );
-			requestSiteBlock( { dispatch }, action );
-			expect( dispatch ).toHaveBeenCalledWith(
+			expect( requestSiteBlock( action ) ).toEqual(
 				http(
 					{
 						method: 'POST',
@@ -30,15 +28,7 @@ describe( 'site-blocks', () => {
 
 	describe( 'receiveSiteBlock', () => {
 		test( 'should dispatch a success notice', () => {
-			const dispatch = jest.fn();
-			receiveSiteBlock(
-				{ dispatch },
-				{
-					payload: { siteId: 123 },
-				},
-				{ success: true }
-			);
-			expect( dispatch ).toHaveBeenCalledWith(
+			expect( receiveSiteBlock() ).toEqual(
 				expect.objectContaining( {
 					notice: expect.objectContaining( {
 						status: 'is-success',
@@ -46,18 +36,24 @@ describe( 'site-blocks', () => {
 				} )
 			);
 		} );
+	} );
 
-		test( 'should revert to the previous state if it fails', () => {
+	describe( 'fromApi', () => {
+		it( 'should throw an error for an unsuccesful block', () => {
+			expect( () => fromApi( { success: false } ) ).toThrow();
+		} );
+		it( 'should return original response for an succesful block', () => {
+			expect( fromApi( { success: true } ) ).toEqual( { success: true } );
+		} );
+	} );
+
+	describe( 'receiveSiteBlockError', () => {
+		test( 'should revert to the previous state', () => {
 			const dispatch = jest.fn();
-			receiveSiteBlock(
-				{ dispatch },
-				{
-					payload: { siteId: 123 },
-				},
-				{
-					success: false,
-				}
-			);
+			receiveSiteBlockError( blockSite( 123 ), {
+				success: false,
+			} )( dispatch );
+
 			expect( dispatch ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					notice: expect.objectContaining( {
