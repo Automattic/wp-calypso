@@ -26,24 +26,25 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
-const getDayOfWeekString = date => {
-	const today = moment().startOf( 'day' );
-	const dayOffset = today.diff( date.startOf( 'day' ), 'days' );
-
-	switch ( dayOffset ) {
-		case 0:
-			return 'Today';
-		case -1:
-			return 'Tomorrow';
-	}
-	return date.format( 'dddd' );
-};
-
 class CalendarCard extends Component {
 	static propTypes = {
 		date: PropTypes.number.isRequired,
 		onSubmit: PropTypes.func.isRequired,
 		times: PropTypes.arrayOf( PropTypes.number ).isRequired,
+	};
+
+	getDayOfWeekString = date => {
+		const { translate } = this.props;
+		const today = moment().startOf( 'day' );
+		const dayOffset = today.diff( date.startOf( 'day' ), 'days' );
+
+		switch ( dayOffset ) {
+			case 0:
+				return translate( 'Today' );
+			case -1:
+				return translate( 'Tomorrow' );
+		}
+		return date.format( 'dddd' );
 	};
 
 	renderHeader = () => {
