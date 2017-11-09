@@ -66,8 +66,7 @@ describe( 'wpcom-api', () => {
 					type: NOTICE_CREATE,
 					notice: expect.objectContaining( {
 						status: 'is-error',
-						text:
-							"We've encountered problems trying to load available shifts. Please try again later.",
+						text: "We couldn't load our Concierge schedule. Please try again later.",
 					} ),
 				} )
 			);
