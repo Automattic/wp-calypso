@@ -18,9 +18,19 @@ exports[`TokenField render should render tokens 1`] = `
       >
         foo
       </span>
-      <span
-        class="token-field__remove-token noticon noticon-close-alt"
-      />
+      <svg
+        class="gridicon gridicons-cross-small token-field__remove-token"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g>
+          <path
+            d="M17.705 7.705l-1.41-1.41L12 10.59 7.705 6.295l-1.41 1.41L10.59 12l-4.295 4.295 1.41 1.41L12 13.41l4.295 4.295 1.41-1.41L13.41 12l4.295-4.295z"
+          />
+        </g>
+      </svg>
     </span>
     <span
       class="token-field__token"
@@ -31,9 +41,19 @@ exports[`TokenField render should render tokens 1`] = `
       >
         bar
       </span>
-      <span
-        class="token-field__remove-token noticon noticon-close-alt"
-      />
+      <svg
+        class="gridicon gridicons-cross-small token-field__remove-token"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g>
+          <path
+            d="M17.705 7.705l-1.41-1.41L12 10.59 7.705 6.295l-1.41 1.41L10.59 12l-4.295 4.295 1.41 1.41L12 13.41l4.295 4.295 1.41-1.41L13.41 12l4.295-4.295z"
+          />
+        </g>
+      </svg>
     </span>
     <input
       class="token-field__input"
