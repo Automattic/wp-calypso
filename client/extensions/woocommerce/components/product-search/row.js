@@ -75,7 +75,6 @@ class ProductSearchRow extends Component {
 		const selectedIds = intersection( newProps.value, newProps.product.variations );
 		const selectedVariations = selectedIds.map( id => find( newProps.variations, { id } ) );
 		this.setState( {
-			showForm: Boolean( selectedIds.length ),
 			variations: filter( selectedVariations ) || [],
 		} );
 	}
@@ -91,16 +90,7 @@ class ProductSearchRow extends Component {
 		// This handler can be on the label, or button with the label, so we
 		// stop propagation to avoid immediate open-then-close behavior.
 		event.stopPropagation();
-		this.setState( prevState => {
-			// Open form
-			if ( ! prevState.showForm ) {
-				return { showForm: true };
-			}
-			// Only close form if nothing's selected
-			if ( prevState.showForm && ! this.areAnySelected() ) {
-				return { showForm: false };
-			}
-		} );
+		this.setState( prevState => ( { showForm: ! prevState.showForm } ) );
 	};
 
 	updateItem = ( attributes, callback ) => {
@@ -164,7 +154,9 @@ class ProductSearchRow extends Component {
 		return (
 			<div className="product-search__variation-selections-and-form">
 				{ this.renderSelectedVariations() }
-				<ProductVariations product={ this.props.product } onChange={ this.updateItem } />
+				{ this.state.showForm && (
+					<ProductVariations product={ this.props.product } onChange={ this.updateItem } />
+				) }
 			</div>
 		);
 	};
