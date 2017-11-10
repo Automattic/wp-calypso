@@ -16,7 +16,7 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
 import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
-import { fetchOrder } from 'woocommerce/state/sites/orders/actions';
+import { fetchOrder, updateOrder } from 'woocommerce/state/sites/orders/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
@@ -30,7 +30,7 @@ import Main from 'components/main';
 import OrderCustomer from './order-customer';
 import OrderDetails from './order-details';
 import OrderActivityLog from './order-activity-log';
-import { updateOrder } from 'woocommerce/state/sites/orders/actions';
+import { ProtectFormGuard } from 'lib/protect-form';
 
 class Order extends Component {
 	componentDidMount() {
@@ -136,6 +136,7 @@ class Order extends Component {
 
 				<div className="order__container">
 					<LabelsSetupNotice />
+					{ isEditing && <ProtectFormGuard isChanged={ hasOrderEdits } /> }
 					<OrderDetails orderId={ orderId } />
 					<OrderActivityLog orderId={ orderId } siteId={ site.ID } />
 					<OrderCustomer orderId={ orderId } />
