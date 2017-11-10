@@ -42,7 +42,7 @@ describe( 'site-blocks', () => {
 		it( 'should throw an error for an unsuccessful block', () => {
 			expect( () => fromApi( { success: false } ) ).toThrow();
 		} );
-		it( 'should return original response for an successful block', () => {
+		it( 'should return original response for a successful block', () => {
 			expect( fromApi( { success: true } ) ).toEqual( { success: true } );
 		} );
 	} );
