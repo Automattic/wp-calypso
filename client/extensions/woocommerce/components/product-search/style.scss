@@ -30,7 +30,21 @@
 				border-bottom: 0;
 			}
 
-			label {
+			&.is-placeholder .product-search__row-item,
+			&.is-empty .product-search__row-item {
+				cursor: default;
+			}
+
+			&.is-placeholder span {
+				@include placeholder();
+
+				&.product-search__row-title {
+					width: 100px;
+				}
+			}
+
+			label,
+			.product-search__row-item {
 				width: 100%;
 				display: flex;
 				align-items: center;
