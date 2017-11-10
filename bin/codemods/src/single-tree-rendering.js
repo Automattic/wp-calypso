@@ -50,14 +50,14 @@ export default function transformer( file, api ) {
 	 * @param {string} parameter Parameter name
 	 * @returns {boolean}
 	 */
-	function hasParam( params = [], param ) {
+	function hasParam( params = [], paramValue ) {
 		return _.some( params, param => {
-			return ( param.name || param ) === 'context';
+			return ( param.name || param ) === paramValue;
 		} );
 	}
 
 	/**
-	 * Ensure `context` is among parameters
+	 * Ensure `context` is among params
 	 *
 	 * @param {object} path Path object that wraps a single node
 	 * @returns {object} Single node object
@@ -74,12 +74,16 @@ export default function transformer( file, api ) {
 	}
 
 	/**
-	 * Adds `next` to params and `next()` to body
+	 * Ensure `next` is among params and `next()` is in the block's body
 	 *
 	 * @param {object} path Path object that wraps a single node
 	 * @returns {object} Single node object
 	 */
-	function addNextMiddleware( path ) {
+	function ensureNextMiddleware( path ) {
+		// `next` param is already in
+		if ( hasParam( path.value.params, 'next' ) ) {
+			return path.value;
+		}
 		if ( path.value.params.length > 1 ) {
 			// More than just a context arg, possibly not a middleware
 			return path.value;
@@ -228,7 +232,7 @@ export default function transformer( file, api ) {
 		.closest( j.Function )
 		.replaceWith( ensureContextMiddleware )
 		// Receives already transformed object from `replaceWith()` above
-		.replaceWith( addNextMiddleware )
+		.replaceWith( ensureNextMiddleware )
 		.forEach( transformReactDomRender );
 
 	// Transform `renderWithReduxStore()` to `context.primary/secondary`
@@ -239,7 +243,7 @@ export default function transformer( file, api ) {
 			},
 		} )
 		.closestScope()
-		.replaceWith( addNextMiddleware )
+		.replaceWith( ensureNextMiddleware )
 		.forEach( transformRenderWithReduxStore );
 
 	// Remove `renderWithReduxStore` from `import { a, renderWithReduxStore, b } from 'lib/react-helpers'`
