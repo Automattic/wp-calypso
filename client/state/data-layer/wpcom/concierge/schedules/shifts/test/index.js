@@ -5,12 +5,18 @@
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
+	conciergeShiftsFetchError,
 	fetchConciergeShifts,
 	storeFetchedConciergeShifts,
 	showConciergeShiftsFetchError,
 } from '../';
 import { updateConciergeShifts } from 'state/concierge/actions';
-import { CONCIERGE_SHIFTS_REQUEST, NOTICE_CREATE } from 'state/action-types';
+import { CONCIERGE_SHIFTS_REQUEST } from 'state/action-types';
+
+// we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
+jest.mock( 'lib/impure-lodash', () => ( {
+	uniqueId: () => 'mock-unique-id',
+} ) );
 
 describe( 'wpcom-api', () => {
 	describe( 'concierge', () => {
@@ -53,23 +59,7 @@ describe( 'wpcom-api', () => {
 
 			showConciergeShiftsFetchError( { dispatch } );
 
-			// the reason that we don't use `errorNotice` action creator here is that
-			// it contains the side effect that increments `notice.noticeId` field automatically.
-			// Thus:
-			// const notice1 = errorNotice( 'message' );
-			// const notice2 = errorNotice( 'message' );
-			// notice1 and notice2 are actually non-equal, since notice1.notice.noticeId is 1 while
-			// notice2.notice.noticeId is 2.
-			// Instead of hacking out the underlying id, I think using partial matching here would be more sustainable.
-			expect( dispatch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					type: NOTICE_CREATE,
-					notice: expect.objectContaining( {
-						status: 'is-error',
-						text: "We couldn't load our Concierge schedule. Please try again later.",
-					} ),
-				} )
-			);
+			expect( dispatch ).toHaveBeenCalledWith( conciergeShiftsFetchError() );
 		} );
 	} );
 } );

@@ -32,10 +32,11 @@ export const fetchConciergeShifts = ( { dispatch }, action ) => {
 export const storeFetchedConciergeShifts = ( { dispatch }, action, shifts ) =>
 	dispatch( updateConciergeShifts( shifts ) );
 
+export const conciergeShiftsFetchError = () =>
+	errorNotice( translate( "We couldn't load our Concierge schedule. Please try again later." ) );
+
 export const showConciergeShiftsFetchError = ( { dispatch } ) =>
-	dispatch(
-		errorNotice( translate( "We couldn't load our Concierge schedule. Please try again later." ) )
-	);
+	dispatch( conciergeShiftsFetchError() );
 
 export default {
 	[ CONCIERGE_SHIFTS_REQUEST ]: [
