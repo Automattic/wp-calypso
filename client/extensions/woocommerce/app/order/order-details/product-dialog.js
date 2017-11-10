@@ -120,10 +120,16 @@ class OrderProductDialog extends Component {
 		const { closeDialog, isVisible, translate } = this.props;
 		const dialogClass = 'woocommerce order-details__dialog'; // eslint/css specificity hack
 
+		// Fake 1 so the string is already at singular when the first item is selected
+		const productsCount = this.state.products.length ? this.state.products.length : 1;
+		const buttonLabel = translate( 'Add Product', 'Add Products', {
+			count: productsCount,
+		} );
+
 		const dialogButtons = [
 			<Button onClick={ closeDialog }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary onClick={ this.handleProductSave } disabled={ ! this.state.products.length }>
-				{ translate( 'Add Product' ) }
+				{ buttonLabel }
 			</Button>,
 		];
 
