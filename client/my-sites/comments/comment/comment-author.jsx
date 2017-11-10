@@ -86,8 +86,8 @@ export class CommentAuthor extends Component {
 
 					<div className="comment__author-info-element">
 						<span className="comment__date">
-							<ExternalLink href={ commentUrl }>
-								{ isExpanded ? formattedDate : relativeDate }
+							<ExternalLink href={ commentUrl } title={ formattedDate }>
+								{ relativeDate }
 							</ExternalLink>
 						</span>
 						{ authorUrl && (
