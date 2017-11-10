@@ -3,7 +3,7 @@ var config = require( 'config' ),
 
 function getSectionsModule( sections ) {
 	var dependencies,
-		loadSection = '',
+		sectionPreLoaders = '',
 		sectionLoaders = '';
 
 	if ( config.isEnabled( 'code-splitting' ) ) {
@@ -21,7 +21,8 @@ function getSectionsModule( sections ) {
 		].join( '\n' );
 
 		sections.forEach( function( section ) {
-			loadSection += singleEnsure( section.name );
+			sectionPreLoaders += getSectionPreLoaderTemplate( section.name );
+
 			section.paths.forEach( function( path ) {
 				sectionLoaders += splitTemplate( path, section );
 			} );
@@ -31,7 +32,7 @@ function getSectionsModule( sections ) {
 			dependencies,
 			'function preload( sectionName ) {',
 			'	switch ( sectionName ) {',
-			'	' + loadSection,
+			'	' + sectionPreLoaders,
 			'	}',
 			'}',
 			'\n',
@@ -159,7 +160,7 @@ function requireTemplate( section ) {
 	return result.join( '\n' );
 }
 
-function singleEnsure( sectionName ) {
+function getSectionPreLoaderTemplate( sectionName ) {
 	var result = [
 		'case ' + JSON.stringify( sectionName ) + ':',
 		'	return require.ensure([], function() {}, ' + JSON.stringify( sectionName ) + ' );',
