@@ -482,10 +482,8 @@ export class CommentList extends Component {
 									isCommentsTreeSupported &&
 									! this.hasCommentJustMovedBackToCurrentStatus( commentId )
 								}
-								removeFromPersisted={ this.removeFromPersistedComments }
 								toggleSelected={ this.toggleCommentSelected }
 								updateLastUndo={ this.updateLastUndo }
-								updatePersisted={ this.updatePersistedComments }
 							/>
 						) ) }
 
