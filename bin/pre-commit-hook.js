@@ -84,7 +84,7 @@ files.forEach( file => {
 // linting should happen after formatting
 const lintResult = spawnSync(
 	'eslint-eslines',
-	[ ...files.filter( f => ! f.endsWith( '.scss' ) ), '--', '--diff=index' ],
+	[ ...files.filter( file => ! file.endsWith( '.scss' ) ), '--', '--diff=index' ],
 	{
 		shell: true,
 		stdio: 'inherit',
