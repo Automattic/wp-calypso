@@ -225,7 +225,7 @@ export default function transformer( file, api ) {
 				},
 			},
 		} )
-		.closest( j.FunctionExpression )
+		.closest( j.Function )
 		.replaceWith( ensureContextMiddleware )
 		// Receives already transformed object from `replaceWith()` above
 		.replaceWith( addNextMiddleware )
