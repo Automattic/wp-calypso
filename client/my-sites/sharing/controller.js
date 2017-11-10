@@ -23,7 +23,7 @@ import utils from 'lib/site/utils';
 
 const analyticsPageTitle = 'Sharing';
 
-export const layout = ( { contentComponent, path, store } ) => {
+export const layout = context => {
 	const site = sites().getSelectedSite();
 
 	if ( site && ! site.settings && utils.userCan( 'manage_options', site ) ) {
@@ -31,9 +31,9 @@ export const layout = ( { contentComponent, path, store } ) => {
 	}
 
 	renderWithReduxStore(
-		createElement( Sharing, { contentComponent, path } ),
+		createElement( Sharing, { contentComponent: context.contentComponent, path: context.path } ),
 		document.getElementById( 'primary' ),
-		store
+		context.store
 	);
 };
 
