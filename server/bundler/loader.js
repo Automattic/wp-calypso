@@ -1,13 +1,13 @@
-var config = require( 'config' ),
+const config = require( 'config' ),
 	utils = require( './utils' );
 
 function getSectionsModule( sections ) {
-	var dependencies,
-		sectionPreLoaders = '',
-		sectionLoaders = '';
+	let sectionLoaders = '';
 
 	if ( config.isEnabled( 'code-splitting' ) ) {
-		dependencies = [
+		let sectionPreLoaders = '';
+
+		const dependencies = [
 			"var config = require( 'config' ),",
 			"\tpage = require( 'page' ),",
 			"\tReact = require( 'react' ),",
@@ -19,7 +19,7 @@ function getSectionsModule( sections ) {
 			"\tswitchCSS = require( 'lib/i18n-utils/switch-locale' ).switchCSS,",
 			"\tdebug = require( 'debug' )( 'calypso:bundler:loader' );",
 			'\n',
-			'var _loadedSections = {};\n'
+			'var _loadedSections = {};\n',
 		].join( '\n' );
 
 		sections.forEach( function( section ) {
@@ -57,14 +57,14 @@ function getSectionsModule( sections ) {
 			'	load: function() {',
 			'		' + sectionLoaders,
 			'	}',
-			'};'
+			'};',
 		].join( '\n' );
 	}
 
-	dependencies = [
+	const dependencies = [
 		"var config = require( 'config' ),",
 		"\tpage = require( 'page' ),",
-		"\tcontroller = require( 'controller' );\n"
+		"\tcontroller = require( 'controller' );\n",
 	].join( '\n' );
 
 	sectionLoaders = getRequires( sections );
@@ -78,12 +78,12 @@ function getSectionsModule( sections ) {
 		'	load: function() {',
 		'		' + sectionLoaders,
 		'	}',
-		'};'
+		'};',
 	].join( '\n' );
 }
 
 function getRequires( sections ) {
-	var content = '';
+	let content = '';
 
 	sections.forEach( function( section ) {
 		content += requireTemplate( section );
@@ -93,14 +93,13 @@ function getRequires( sections ) {
 }
 
 function splitTemplate( path, section ) {
-	var pathRegex = getPathRegex( path ),
+	const pathRegex = getPathRegex( path ),
 		sectionString = JSON.stringify( section ),
 		sectionNameString = JSON.stringify( section.name ),
 		moduleString = JSON.stringify( section.module ),
-		envIdString = JSON.stringify( section.envId ),
-		result;
+		envIdString = JSON.stringify( section.envId );
 
-	result = [
+	const result = [
 		'page( ' + pathRegex + ', function( context, next ) {',
 		'	var envId = ' + envIdString + ';',
 		'	if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {',
@@ -135,7 +134,7 @@ function splitTemplate( path, section ) {
 		'		}',
 		'	},',
 		sectionNameString + ' );',
-		'} );\n'
+		'} );\n',
 	];
 
 	return result.join( '\n' );
@@ -150,11 +149,8 @@ function getPathRegex( pathString ) {
 }
 
 function requireTemplate( section ) {
-	var pathRegex,
-		result;
-
-	result = section.paths.reduce( function( acc, path ) {
-		pathRegex = getPathRegex( path );
+	const result = section.paths.reduce( function( acc, path ) {
+		const pathRegex = getPathRegex( path );
 
 		return acc.concat( [
 			'page( ' + pathRegex + ', function( context, next ) {',
@@ -165,7 +161,7 @@ function requireTemplate( section ) {
 			'	controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 			'	require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
 			'	next();',
-			'} );\n'
+			'} );\n',
 		] );
 	}, [] );
 
@@ -194,7 +190,7 @@ function getSectionPreLoaderTemplate( section ) {
 
 function sectionsWithCSSUrls( sections ) {
 	return sections.map( section => Object.assign( {}, section, section.css && {
-		cssUrls: utils.getCssUrls( section.css )
+		cssUrls: utils.getCssUrls( section.css ),
 	} ) );
 }
 
