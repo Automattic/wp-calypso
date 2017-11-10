@@ -472,6 +472,23 @@
 		display: inline-block;
 		margin-left: 4px;
 	}
+
+	.comment__edit-jetpack-update-notice {
+		color: $alert-red;
+		margin-left: 8px;
+		margin-right: 8px;
+
+		.gridicon {
+			margin-right: 4px;
+			vertical-align: middle;
+		}
+	}
+
+	.comment__edit-jetpack-update-notice-link {
+		color: $alert-red;
+		margin-left: 4px;
+		text-decoration: underline;
+	}
 }
 
 .comment__edit-header {
