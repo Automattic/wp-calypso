@@ -90,6 +90,7 @@
 		"plans/jetpack-config-v2": true,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
+		"posts/post-type-list": true,
 		"press-this": true,
 		"preview-layout": true,
 		"publicize-preview": true,

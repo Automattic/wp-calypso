@@ -117,4 +117,13 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	condensedPostList: {
+		datestamp: '20171113',
+		variations: {
+			condensedPosts: 100,
+			largePosts: 0,
+		},
+		defaultVariation: 'condensedPosts',
+		allowExistingUsers: true,
+	},
 };

@@ -133,7 +133,7 @@
 		"post-editor/image-editor": true,
 		"post-editor/media-advanced": false,
 		"post-editor/revisions": true,
-		"posts/post-type-list": false,
+		"posts/post-type-list": true,
 		"posts/post-type-list/bulk-edit": false,
 		"press-this": true,
 		"privacy-policy": true,
