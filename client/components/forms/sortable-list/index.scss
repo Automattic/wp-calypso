@@ -18,11 +18,11 @@
 
 	&.is-active > * {
 		box-shadow: 0 0 0 2px white, 0 0 0 4px $blue-medium;
+		z-index: z-index( 'root', '.sortable-list__item.is-draggable.is-active' );
 	}
 
 	&.is-draggable.is-active {
 		position: fixed;
-		z-index: z-index( 'root', '.sortable-list__item.is-draggable.is-active' );
 	}
 
 	&.is-shadow {
