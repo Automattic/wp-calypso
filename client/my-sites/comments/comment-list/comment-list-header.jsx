@@ -50,7 +50,7 @@ export const CommentListHeader = ( {
 				backHref={ `/comments/all/${ siteSlug }` }
 			>
 				<div className="comment-list__header-title">
-					{ translate( 'Commented on {{span}}%(postTitle)s{{/span}}', {
+					{ translate( 'Comments on {{span}}%(postTitle)s{{/span}}', {
 						args: { postTitle: title },
 						components: { span: <span /> },
 					} ) }
