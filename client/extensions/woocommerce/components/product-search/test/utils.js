@@ -12,6 +12,7 @@ import {
 	addProductId,
 	removeProductId,
 	isProductSelected,
+	areVariationsSelected,
 	productContainsString,
 	isVariableProduct,
 } from '../utils';
@@ -79,6 +80,30 @@ describe( 'isProductSelected', () => {
 	it( 'should be false if the value is not valid', () => {
 		expect( isProductSelected( false, 2 ) ).to.be.false;
 		expect( isProductSelected( null, 2 ) ).to.be.false;
+	} );
+} );
+
+describe( 'areVariationsSelected', () => {
+	it( 'should be a function', () => {
+		expect( areVariationsSelected ).to.be.a( 'function' );
+	} );
+
+	it( 'should be false if there are no variations', () => {
+		const product = {
+			variations: [],
+		};
+		expect( areVariationsSelected( 2, product ) ).to.be.false;
+		expect( areVariationsSelected( [], product ) ).to.be.false;
+		expect( areVariationsSelected( [ 1, 2, 3 ], product ) ).to.be.false;
+	} );
+
+	it( 'should be true if any variations are selected', () => {
+		const product = {
+			variations: [ 5, 6, 7 ],
+		};
+		expect( areVariationsSelected( 6, product ) ).to.be.true;
+		expect( areVariationsSelected( [ 1, 2, 5 ], product ) ).to.be.true;
+		expect( areVariationsSelected( [ 5, 6 ], product ) ).to.be.true;
 	} );
 } );
 

@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { difference, filter, isArray, uniq } from 'lodash';
+import { difference, filter, intersection, isArray, uniq } from 'lodash';
 
 /**
  * Check if a string is found in a product name or attribute option
@@ -41,6 +41,24 @@ export function isProductSelected( value = [], productId ) {
 		return -1 !== value.indexOf( productId );
 	}
 	return value === productId;
+}
+
+/**
+ * Check if any variations of a product are selected
+ *
+ * @param {Array} value An array of existing values
+ * @param {Object} product The product to check
+ * @return {Boolean} Whether any variations exist in the values list
+ */
+export function areVariationsSelected( value = [], product ) {
+	const variations = product.variations;
+	if ( ! variations.length ) {
+		return false;
+	}
+	if ( isArray( value ) && value.length ) {
+		return !! intersection( value, variations ).length;
+	}
+	return -1 !== variations.indexOf( value );
 }
 
 /**
