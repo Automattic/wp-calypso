@@ -15,7 +15,8 @@ function getSectionsModule( sections ) {
 			"\tLoadingError = require( 'layout/error' ),",
 			"\tcontroller = require( 'controller' ),",
 			"\trestoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
-			"\tpreloadHub = require( 'sections-preload' ).hub;",
+			"\tpreloadHub = require( 'sections-preload' ).hub,",
+			"\tdebug = require( 'debug' )( 'calypso:bundler:loader' );",
 			'\n',
 			'var _loadedSections = {};\n'
 		].join( '\n' );
@@ -161,9 +162,12 @@ function requireTemplate( section ) {
 }
 
 function getSectionPreLoaderTemplate( sectionName ) {
-	var result = [
-		'case ' + JSON.stringify( sectionName ) + ':',
-		'	return require.ensure([], function() {}, ' + JSON.stringify( sectionName ) + ' );',
+	const sectionNameString = JSON.stringify( sectionName );
+
+	const result = [
+		'case ' + sectionNameString + ':',
+		'	debug( \'Pre-loading Javascript for ' + sectionNameString + ' section\' );',
+		'	return require.ensure([], function() {}, ' + sectionNameString + ' );',
 	];
 
 	return result.join( '\n' );
