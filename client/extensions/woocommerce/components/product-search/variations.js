@@ -51,13 +51,12 @@ class ProductVariations extends Component {
 
 	renderAttribute = attribute => {
 		const { translate } = this.props;
+		const fieldId = kebabCase( attribute.name );
 		return (
-			<div className="product-search__variation-field" key={ attribute.id }>
-				<FormLabel htmlFor={ `select-${ kebabCase( attribute.name ) }` }>
-					{ attribute.name }
-				</FormLabel>
+			<div className="product-search__variation-field" key={ fieldId }>
+				<FormLabel htmlFor={ `select-${ fieldId }` }>{ attribute.name }</FormLabel>
 				<FormSelect
-					id={ `select-${ kebabCase( attribute.name ) }` }
+					id={ `select-${ fieldId }` }
 					onChange={ this.onChange( attribute.name ) }
 					value={ this.state[ attribute.name ] }
 				>
