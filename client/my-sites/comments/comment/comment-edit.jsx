@@ -103,54 +103,58 @@ export class CommentEdit extends Component {
 
 		return (
 			<div className="comment__edit">
-				<FormFieldset>
-					<FormLabel htmlFor="author">{ translate( 'Name' ) }</FormLabel>
-					{ isAuthorRegistered && (
-						<InfoPopover>
-							{ translate( "This user is registered, the name can't be edited." ) }
-						</InfoPopover>
-					) }
-					<FormTextInput
-						disabled={ ! isEditCommentSupported || isAuthorRegistered }
-						id="author"
-						onChange={ this.setAuthorDisplayNameValue }
-						value={ authorDisplayName }
+				<div className="comment__edit-header">{ translate( 'Edit Comment' ) }</div>
+
+				<div className="comment__edit-wrapper">
+					<FormFieldset>
+						<FormLabel htmlFor="author">{ translate( 'Name' ) }</FormLabel>
+						{ isAuthorRegistered && (
+							<InfoPopover>
+								{ translate( "This user is registered, the name can't be edited." ) }
+							</InfoPopover>
+						) }
+						<FormTextInput
+							disabled={ ! isEditCommentSupported || isAuthorRegistered }
+							id="author"
+							onChange={ this.setAuthorDisplayNameValue }
+							value={ authorDisplayName }
+						/>
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="author_url">{ translate( 'URL' ) }</FormLabel>
+						{ isAuthorRegistered && (
+							<InfoPopover>
+								{ translate( "This user is registered, the URL can't be edited." ) }
+							</InfoPopover>
+						) }
+						<FormTextInput
+							disabled={ ! isEditCommentSupported || isAuthorRegistered }
+							id="author_url"
+							onChange={ this.setAuthorUrlValue }
+							value={ authorUrl }
+						/>
+					</FormFieldset>
+
+					<FormTextarea
+						disabled={ ! isEditCommentSupported }
+						onChange={ this.setCommentContentValue }
+						value={ commentContent }
 					/>
-				</FormFieldset>
 
-				<FormFieldset>
-					<FormLabel htmlFor="author_url">{ translate( 'URL' ) }</FormLabel>
-					{ isAuthorRegistered && (
-						<InfoPopover>
-							{ translate( "This user is registered, the URL can't be edited." ) }
-						</InfoPopover>
+					{ ! isEditCommentSupported && (
+						<p className="comment__edit-jetpack-update-notice">
+							<Gridicon icon="notice-outline" />
+							{ translate( 'Comment editing requires a newer version of Jetpack.' ) }
+							<a
+								className="comment__edit-jetpack-update-notice-link"
+								href={ `/plugins/jetpack/${ siteSlug }` }
+							>
+								{ translate( 'Update Now' ) }
+							</a>
+						</p>
 					) }
-					<FormTextInput
-						disabled={ ! isEditCommentSupported || isAuthorRegistered }
-						id="author_url"
-						onChange={ this.setAuthorUrlValue }
-						value={ authorUrl }
-					/>
-				</FormFieldset>
-
-				<FormTextarea
-					disabled={ ! isEditCommentSupported }
-					onChange={ this.setCommentContentValue }
-					value={ commentContent }
-				/>
-
-				{ ! isEditCommentSupported && (
-					<p className="comment__edit-jetpack-update-notice">
-						<Gridicon icon="notice-outline" />
-						{ translate( 'Comment editing requires a newer version of Jetpack.' ) }
-						<a
-							className="comment__edit-jetpack-update-notice-link"
-							href={ `/plugins/jetpack/${ siteSlug }` }
-						>
-							{ translate( 'Update Now' ) }
-						</a>
-					</p>
-				) }
+				</div>
 
 				<div className="comment__edit-buttons">
 					<FormButton compact disabled={ ! isEditCommentSupported } onClick={ this.submitEdit }>
