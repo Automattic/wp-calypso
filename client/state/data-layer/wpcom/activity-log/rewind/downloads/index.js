@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import debugFactory from 'debug';
 import { pick } from 'lodash';
 
 /**
@@ -14,8 +13,6 @@ import { REWIND_BACKUP } from 'state/action-types';
 import { rewindBackupUpdateError, getRewindBackupProgress } from 'state/activity-log/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-
-const debug = debugFactory( 'calypso:data-layer:activity-log:rewind:to' );
 
 const createBackup = ( { dispatch }, action ) => {
 	dispatch(
@@ -40,10 +37,8 @@ const fromApi = data => ( {
 export const receiveBackupSuccess = ( { dispatch }, { siteId }, apiData ) => {
 	const { downloadId } = fromApi( apiData );
 	if ( downloadId ) {
-		debug( 'Request restore success, restore id:', downloadId );
-		dispatch( getRewindBackupProgress( siteId, downloadId ) );
+		dispatch( getRewindBackupProgress( siteId ) );
 	} else {
-		debug( 'Request restore response missing restore_id' );
 		dispatch(
 			rewindBackupUpdateError( siteId, {
 				status: 'finished',
@@ -54,8 +49,7 @@ export const receiveBackupSuccess = ( { dispatch }, { siteId }, apiData ) => {
 	}
 };
 
-export const receiveBackupError = ( { dispatch }, { siteId, timestamp }, error ) => {
-	debug( 'Request restore fail', error );
+export const receiveBackupError = ( { dispatch }, { siteId }, error ) => {
 	dispatch( rewindBackupUpdateError( siteId, pick( error, [ 'error', 'status', 'message' ] ) ) );
 };
 

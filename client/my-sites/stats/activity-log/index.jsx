@@ -30,6 +30,7 @@ import QueryActivityLog from 'components/data/query-activity-log';
 import QueryJetpackCredentials from 'components/data/query-jetpack-credentials';
 import QueryRewindStatus from 'components/data/query-rewind-status';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
+import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsFirstView from '../stats-first-view';
 import StatsNavigation from 'blocks/stats-navigation';
@@ -351,11 +352,16 @@ class ActivityLog extends Component {
 		}
 
 		if ( !! backupProgress ) {
-			cards.push(
-				isEmpty( backupProgress.url )
-					? this.getProgressBanner( siteId, backupProgress, 'backup' )
-					: this.getEndBanner( siteId, backupProgress )
-			);
+			if ( 0 <= backupProgress.progress ) {
+				cards.push( this.getProgressBanner( siteId, backupProgress, 'backup' ) );
+			} else if (
+				! isEmpty( backupProgress.url ) &&
+				Date.now() < Date.parse( backupProgress.validUntil )
+			) {
+				cards.push( this.getEndBanner( siteId, backupProgress ) );
+			} else if ( ! isEmpty( backupProgress.backupError ) ) {
+				cards.push( this.getEndBanner( siteId, backupProgress ) );
+			}
 		}
 
 		return cards;
@@ -394,6 +400,7 @@ class ActivityLog extends Component {
 	getEndBanner( siteId, progress ) {
 		const {
 			errorCode,
+			backupError,
 			failureReason,
 			siteTitle,
 			timestamp,
@@ -401,16 +408,23 @@ class ActivityLog extends Component {
 			downloadCount,
 			restoreId,
 			downloadId,
+			rewindId,
 		} = progress;
+		const { requestedRestoreActivityId } = this.props;
 		return (
 			<div key={ `end-banner-${ restoreId || downloadId }` }>
 				<QueryActivityLog siteId={ siteId } />
-				{ errorCode ? (
+				{ errorCode || backupError ? (
 					<ErrorBanner
 						key={ `error-${ restoreId || downloadId }` }
-						errorCode={ errorCode }
+						errorCode={ errorCode || backupError }
+						downloadId={ downloadId }
+						rewindId={ rewindId }
+						requestedRestoreActivityId={ requestedRestoreActivityId }
 						failureReason={ failureReason }
-						requestDialog={ this.handleRequestDialog }
+						createBackup={ this.props.createBackup }
+						rewindRestore={ this.props.rewindRestore }
+						closeDialog={ this.handleCloseDialog }
 						siteId={ siteId }
 						siteTitle={ siteTitle }
 						timestamp={ timestamp }
@@ -421,6 +435,7 @@ class ActivityLog extends Component {
 						applySiteOffset={ this.applySiteOffset }
 						siteId={ siteId }
 						timestamp={ timestamp }
+						downloadId={ downloadId }
 						backupUrl={ url }
 						downloadCount={ downloadCount }
 					/>
@@ -582,6 +597,7 @@ class ActivityLog extends Component {
 			<Main wideLayout>
 				{ rewindEnabledByConfig && <QueryRewindStatus siteId={ siteId } /> }
 				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
+				{ siteId && <QueryRewindBackupStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
 				<QueryJetpackCredentials siteId={ siteId } />
 				<StatsFirstView />

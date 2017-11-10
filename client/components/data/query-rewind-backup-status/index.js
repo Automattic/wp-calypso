@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Interval, { EVERY_SECOND } from 'lib/interval';
-import { getRewindBackupProgress as getBackupProgress } from 'state/activity-log/actions';
+import { getRewindBackupProgress } from 'state/activity-log/actions';
 
 class QueryRewindBackupStatus extends Component {
 	static propTypes = {
@@ -19,11 +19,24 @@ class QueryRewindBackupStatus extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
+	componentWillMount() {
+		// We want to run this only once: when the page is loaded. In such case, there is not known download Id.
+		// If there's a download Id here it means this was mounted during an action requesting progress for a
+		// specific download Id, so we will do nothing here,since it will be handled by the <Interval /> below.
+		if ( ! this.props.downloadId ) {
+			const { siteId } = this.props;
+
+			if ( siteId ) {
+				this.props.getRewindBackupProgress( siteId );
+			}
+		}
+	}
+
 	query = () => {
 		const { downloadId, siteId } = this.props;
 
 		if ( siteId && downloadId ) {
-			this.props.getBackupProgress( siteId, downloadId );
+			this.props.getRewindBackupProgress( siteId );
 		}
 	};
 
@@ -32,4 +45,4 @@ class QueryRewindBackupStatus extends Component {
 	}
 }
 
-export default connect( null, { getBackupProgress } )( QueryRewindBackupStatus );
+export default connect( null, { getRewindBackupProgress } )( QueryRewindBackupStatus );
