@@ -14,7 +14,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
-import Notice from 'components/notice';
 
 // Use a constant for the default attribute state.
 const DEFAULT_ATTR = 'any';
@@ -88,12 +87,9 @@ class ProductVariations extends Component {
 			<div className="product-search__variations">
 				<FormFieldset>
 					<FormLegend>
-						<Notice showDismiss={ false }>
-							{ translate(
-								'%(product)s has variations. Choose a specific customization to select.',
-								{ args: { product: product.name } }
-							) }
-						</Notice>
+						{ translate( '%(product)s has variations. Choose a specific customization to select.', {
+							args: { product: product.name },
+						} ) }
 					</FormLegend>
 					<div className="product-search__variation-fields">
 						{ attributes.map( this.renderAttribute ) }
