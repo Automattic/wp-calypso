@@ -110,7 +110,10 @@ const getUserAlreadyConnected = state => {
 const hasXmlrpcError = function( state ) {
 	const authorizeData = getAuthorizationData( state );
 
-	return includes( get( authorizeData, [ 'authorizeError', 'message' ] ), 'error' );
+	return (
+		!! get( authorizeData, 'authorizationCode', false ) &&
+		includes( get( authorizeData, [ 'authorizeError', 'message' ] ), 'error' )
+	);
 };
 
 /**
@@ -122,9 +125,9 @@ const hasXmlrpcError = function( state ) {
 const hasExpiredSecretError = function( state ) {
 	const authorizeData = getAuthorizationData( state );
 
-	return includes(
-		get( authorizeData, [ 'authorizeError', 'message' ] ),
-		'verify_secrets_expired'
+	return (
+		!! get( authorizeData, 'authorizationCode', false ) &&
+		includes( get( authorizeData, [ 'authorizeError', 'message' ] ), 'verify_secrets_expired' )
 	);
 };
 
