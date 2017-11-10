@@ -722,7 +722,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_ALL_PERSONAL_FEATURES,
 		getTitle: () => i18n.translate( 'All Personal features' ),
 		getDescription: () =>
-			i18n.translate( 'Also includes all features offered in the Premium plan.' ),
+			i18n.translate( 'Also includes all features offered in the Personal plan.' ),
 	},
 
 	[ FEATURE_ALL_PREMIUM_FEATURES ]: {
@@ -1350,7 +1350,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_MARKETING_AUTOMATION ]: {
 		getSlug: () => FEATURE_MARKETING_AUTOMATION,
-		getTitle: () => i18n.translate( 'Social Media Automation.' ),
+		getTitle: () => i18n.translate( 'Social Media Automation' ),
 		getDescription: () =>
 			i18n.translate(
 				'Re-share previously published content on social media, or schedule new shares in advance.'
