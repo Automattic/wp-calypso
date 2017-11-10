@@ -1,14 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +16,6 @@ import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
 import { getPost } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
 
 function PostActionsEllipsisMenuStats( {
 	translate,
@@ -63,19 +60,15 @@ const mapStateToProps = ( state, { globalId } ) => {
 		siteSlug: getSiteSlug( state, post.site_ID ),
 		postId: post.ID,
 		status: post.status,
+		type: post.type,
 		isStatsActive: false !== isJetpackModuleActive( state, post.site_ID, 'stats' ),
-		type: getPostType( state, post.site_ID, post.type ),
 	};
 };
 
 const mapDispatchToProps = { bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator(
-		get( stateProps, 'type.name' ),
-		'stats',
-		dispatchProps.bumpAnalyticsStat
-	);
+	const bumpStat = bumpStatGenerator( stateProps.type, 'stats', dispatchProps.bumpAnalyticsStat );
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
 };
 

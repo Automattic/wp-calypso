@@ -1,14 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +24,8 @@ class PostActionsEllipsisMenuShare extends Component {
 		globalId: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		status: PropTypes.string,
+		type: PropTypes.string,
+		isPublicizeEnabled: PropTypes.bool,
 		onClick: PropTypes.func,
 		bumpStat: PropTypes.func,
 	};
@@ -46,7 +46,7 @@ class PostActionsEllipsisMenuShare extends Component {
 		const { translate, status, type, isPublicizeEnabled: isPublicizeEnabledForSite } = this.props;
 		if (
 			! config.isEnabled( 'posts/post-type-list' ) ||
-			! includes( [ 'publish' ], status ) ||
+			'publish' !== status ||
 			! isPublicizeEnabledForSite ||
 			'post' !== type
 		) {
@@ -69,8 +69,8 @@ const mapStateToProps = ( state, { globalId } ) => {
 
 	return {
 		status: post.status,
-		isPublicizeEnabled: isPublicizeEnabled( state, post.site_ID, post.type ),
 		type: post.type,
+		isPublicizeEnabled: isPublicizeEnabled( state, post.site_ID, post.type ),
 	};
 };
 
@@ -78,8 +78,8 @@ const mapDispatchToProps = { toggleSharePanel, bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const bumpStat = bumpStatGenerator(
-		get( stateProps, 'type.name' ),
-		'share',
+		stateProps.type,
+		'toggle_share_panel',
 		dispatchProps.bumpAnalyticsStat
 	);
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
