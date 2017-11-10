@@ -15,7 +15,10 @@ import Button from 'components/button';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSiteUrl } from 'state/selectors';
-import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
+import {
+	dismissRewindRestoreProgress,
+	dismissRewindBackupProgress,
+} from 'state/activity-log/actions';
 
 /**
  * Normalize timestamp values
@@ -46,7 +49,8 @@ class SuccessBanner extends PureComponent {
 		downloadCount: PropTypes.number,
 
 		// connect
-		dismissRewindRestoreProgress: PropTypes.func.isRequired,
+		dismissRestoreProgress: PropTypes.func.isRequired,
+		dismissBackupProgress: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 
 		// localize
@@ -54,7 +58,10 @@ class SuccessBanner extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
-	handleDismiss = () => this.props.dismissRewindRestoreProgress( this.props.siteId );
+	handleDismiss = () =>
+		this.props.backupUrl
+			? this.props.dismissBackupProgress( this.props.siteId )
+			: this.props.dismissRestoreProgress( this.props.siteId );
 
 	trackDownload = () =>
 		this.props.recordTracksEvent( 'calypso_activitylog_backup_download', {
@@ -115,7 +122,8 @@ export default connect(
 		siteUrl: getSiteUrl( state, siteId ),
 	} ),
 	{
-		dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
+		dismissRestoreProgress: dismissRewindRestoreProgress,
+		dismissBackupProgress: dismissRewindBackupProgress,
 		recordTracksEvent: recordTracksEvent,
 	}
 )( localize( SuccessBanner ) );
