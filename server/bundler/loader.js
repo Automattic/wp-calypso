@@ -16,13 +16,14 @@ function getSectionsModule( sections ) {
 			"\tcontroller = require( 'controller' ),",
 			"\trestoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
 			"\tpreloadHub = require( 'sections-preload' ).hub,",
+			"\tswitchCSS = require( 'lib/i18n-utils/switch-locale' ).switchCSS,",
 			"\tdebug = require( 'debug' )( 'calypso:bundler:loader' );",
 			'\n',
 			'var _loadedSections = {};\n'
 		].join( '\n' );
 
 		sections.forEach( function( section ) {
-			sectionPreLoaders += getSectionPreLoaderTemplate( section.name );
+			sectionPreLoaders += getSectionPreLoaderTemplate( section );
 
 			section.paths.forEach( function( path ) {
 				sectionLoaders += splitTemplate( path, section );
@@ -32,6 +33,16 @@ function getSectionsModule( sections ) {
 		return [
 			dependencies,
 			'function preload( sectionName ) {',
+			'	var loadCSS = function( sectionName, cssUrls ) {',
+			'		var url = cssUrls.ltr;',
+			'',
+			'		if ( typeof document !== \'undefined\' && document.documentElement.dir === \'rtl\' ) {',
+			'			url = cssUrls.rtl;',
+			'		}',
+			'',
+			'		switchCSS( \'section-css\', url );',
+			'	};',
+			'',
 			'	switch ( sectionName ) {',
 			'	' + sectionPreLoaders,
 			'	}',
@@ -161,16 +172,24 @@ function requireTemplate( section ) {
 	return result.join( '\n' );
 }
 
-function getSectionPreLoaderTemplate( sectionName ) {
-	const sectionNameString = JSON.stringify( sectionName );
+function getSectionPreLoaderTemplate( section ) {
+	let cssLoader = '', bundleTypes = 'Javascript';
 
-	const result = [
-		'case ' + sectionNameString + ':',
-		'	debug( \'Pre-loading Javascript for ' + sectionNameString + ' section\' );',
-		'	return require.ensure([], function() {}, ' + sectionNameString + ' );',
-	];
+	if ( section.cssUrls ) {
+		cssLoader = `loadCSS( 'section-css', ${ section.cssUrls } );`;
+		bundleTypes += ' and CSS';
+	}
 
-	return result.join( '\n' );
+	const sectionNameString = JSON.stringify( section.name );
+
+	return `
+		case ${ sectionNameString }:
+			debug( 'Pre-loading ${ bundleTypes } for ${ sectionNameString } section' );
+
+			${ cssLoader }
+
+			return require.ensure( [], function() {}, ${ sectionNameString } );
+`;
 }
 
 function sectionsWithCSSUrls( sections ) {
