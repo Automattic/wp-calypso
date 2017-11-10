@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -69,12 +68,17 @@ const mapStateToProps = ( state, { globalId } ) => {
 const mapDispatchToProps = { bumpStat, recordTracksEvent };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const onDuplicateClick = () => (
-		bumpStatGenerator( stateProps.type, 'duplicate', dispatchProps.bumpStat ),
+	const bumpDuplicateStat = bumpStatGenerator(
+		stateProps.type,
+		'duplicate',
+		dispatchProps.bumpStat
+	);
+	const onDuplicateClick = () => {
+		bumpDuplicateStat();
 		dispatchProps.recordTracksEvent( 'calypso_post_type_list_duplicate', {
 			post_type: stateProps.type,
-		} )
-	);
+		} );
+	};
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onDuplicateClick } );
 };
 

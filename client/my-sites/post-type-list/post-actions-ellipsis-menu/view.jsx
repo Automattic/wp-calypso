@@ -1,14 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, includes } from 'lodash';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +16,6 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getPost, getPostPreviewUrl } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
 import { setAllSitesPreviewSiteId, setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -71,9 +69,11 @@ class PostActionsEllipsisMenuView extends Component {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ includes( [ 'publish', 'private' ], status )
-					? translate( 'View', { context: 'verb' } )
-					: translate( 'Preview', { context: 'verb' } ) }
+				{ includes( [ 'publish', 'private' ], status ) ? (
+					translate( 'View', { context: 'verb' } )
+				) : (
+					translate( 'Preview', { context: 'verb' } )
+				) }
 			</PopoverMenuItem>
 		);
 	}
@@ -88,9 +88,9 @@ const mapStateToProps = ( state, { globalId } ) => {
 	return {
 		siteId: post.site_ID,
 		status: post.status,
+		type: post.type,
 		isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
 		previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID ),
-		type: getPostType( state, post.site_ID, post.type ),
 	};
 };
 
@@ -102,11 +102,7 @@ const mapDispatchToProps = {
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator(
-		get( stateProps, 'type.name' ),
-		'view',
-		dispatchProps.bumpAnalyticsStat
-	);
+	const bumpStat = bumpStatGenerator( stateProps.type, 'view', dispatchProps.bumpAnalyticsStat );
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
 };
 

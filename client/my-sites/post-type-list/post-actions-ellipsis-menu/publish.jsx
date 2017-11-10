@@ -1,14 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, includes } from 'lodash';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +18,6 @@ import { bumpStatGenerator } from './utils';
 import { getPost } from 'state/posts/selectors';
 import { savePost } from 'state/posts/actions';
 import { canCurrentUser } from 'state/selectors';
-import { getPostType } from 'state/post-types/selectors';
 
 class PostActionsEllipsisMenuPublish extends Component {
 	static propTypes = {
@@ -73,21 +71,21 @@ const mapStateToProps = ( state, { globalId } ) => {
 		status: post.status,
 		siteId: post.site_ID,
 		postId: post.ID,
+		type: post.type,
 		canPublish: canCurrentUser( state, post.site_ID, 'publish_posts' ),
-		type: getPostType( state, post.site_ID, post.type ),
 	};
 };
 
 const mapDispatchToProps = { savePost, bumpStat, recordTracksEvent };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const postType = get( stateProps, 'type.name' );
-	const onPublishPost = () => (
-		bumpStatGenerator( postType, 'publish', dispatchProps.bumpStat ),
+	const bumpPublishStat = bumpStatGenerator( stateProps.type, 'publish', dispatchProps.bumpStat );
+	const onPublishPost = () => {
+		bumpPublishStat();
 		dispatchProps.recordTracksEvent( 'calypso_post_type_list_publish', {
-			post_type: postType,
-		} )
-	);
+			post_type: stateProps.type,
+		} );
+	};
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onPublishPost } );
 };
 
