@@ -11,10 +11,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-// import { isEnabled } from 'config';
 import EmptyContent from 'components/empty-content';
 import getSiteId from 'state/selectors/get-site-id';
-// import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
@@ -64,15 +62,10 @@ const mapStateToProps = ( state, ownProps ) => {
 	const { commentId, siteFragment } = ownProps;
 
 	const siteId = getSiteId( state, siteFragment );
-	// const isJetpack = isJetpackSite( state, siteId );
 	const comment = getSiteComment( state, siteId, commentId );
 	const postId = get( comment, 'post.ID' );
 
-	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' ) || false;
-	// const showJetpackUpdateScreen =
-	// 	isJetpack &&
-	// 	! isJetpackMinimumVersion( state, siteId, '5.5' ) &&
-	// 	isEnabled( 'comments/management/jetpack-5.5' );
+	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' ) !== false;
 
 	return {
 		siteId,
