@@ -24,10 +24,10 @@ export const HAPPYCHAT_SKILLS = {
 };
 
 // Groups
-export const HAPPYCHAT_GROUP_JPOP = 'JPOP';
-export const HAPPYCHAT_GROUP_WOO = 'WOO';
-export const HAPPYCHAT_GROUP_JPPHP = 'JPPHP';
-export const HAPPYCHAT_GROUP_WPCOM = 'WPCOM';
+export const HAPPYCHAT_GROUP_JPOP = 'jpop';
+export const HAPPYCHAT_GROUP_WOO = 'woo';
+export const HAPPYCHAT_GROUP_JPPHP = 'jpphp';
+export const HAPPYCHAT_GROUP_WPCOM = 'WP.com';
 
 // Message types
 export const HAPPYCHAT_MESSAGE_TYPES = {
