@@ -10,7 +10,7 @@ import { blockSite, unblockSite } from 'state/reader/site-blocks/actions';
 
 describe( 'site-blocks', () => {
 	describe( 'requestSiteUnblock', () => {
-		test( 'should dispatch an http request', () => {
+		test( 'should dispatch a HTTP request', () => {
 			const action = unblockSite( 123 );
 			expect( requestSiteUnblock( action ) ).toEqual(
 				http(
@@ -40,7 +40,7 @@ describe( 'site-blocks', () => {
 	} );
 
 	describe( 'fromApi', () => {
-		it( 'should throw an error for an unsuccesful unblock', () => {
+		it( 'should throw an error for an unsuccessful unblock', () => {
 			expect( () => fromApi( { success: false } ) ).toThrow();
 		} );
 		it( 'should return original response for an succesful unblock', () => {

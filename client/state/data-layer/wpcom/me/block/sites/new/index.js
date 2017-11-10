@@ -31,7 +31,7 @@ export function requestSiteBlock( action ) {
 
 export function fromApi( response ) {
 	if ( ! response.success ) {
-		throw new Error( 'siteblock has failed', response );
+		throw new Error( 'Site block was unsuccessful', response );
 	}
 	return response;
 }

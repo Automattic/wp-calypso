@@ -32,7 +32,7 @@ export function requestSiteUnblock( action ) {
 export function fromApi( response ) {
 	// don't need to check for existence of response because errors are handled
 	if ( ! response.success ) {
-		throw new Error( 'site unblock was unsuccesfull', response );
+		throw new Error( 'Site unblock was unsuccessful', response );
 	}
 	return response;
 }

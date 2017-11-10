@@ -39,10 +39,10 @@ describe( 'site-blocks', () => {
 	} );
 
 	describe( 'fromApi', () => {
-		it( 'should throw an error for an unsuccesful block', () => {
+		it( 'should throw an error for an unsuccessful block', () => {
 			expect( () => fromApi( { success: false } ) ).toThrow();
 		} );
-		it( 'should return original response for an succesful block', () => {
+		it( 'should return original response for an successful block', () => {
 			expect( fromApi( { success: true } ) ).toEqual( { success: true } );
 		} );
 	} );
