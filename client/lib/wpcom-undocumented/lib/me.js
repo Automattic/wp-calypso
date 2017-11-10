@@ -225,20 +225,6 @@ UndocumentedMe.prototype.backupCodes = function( callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.blockSite = function( site, callback ) {
-	var args = {
-		path: '/me/block/sites/' + encodeURIComponent( site ) + '/new',
-	};
-	return this.wpcom.req.post( args, callback );
-};
-
-UndocumentedMe.prototype.unblockSite = function( site, callback ) {
-	var args = {
-		path: '/me/block/sites/' + encodeURIComponent( site ) + '/delete',
-	};
-	return this.wpcom.req.post( args, callback );
-};
-
 UndocumentedMe.prototype.dismissSite = function( site, callback ) {
 	const args = {
 		path: '/me/dismiss/sites/' + encodeURIComponent( site ) + '/new',
