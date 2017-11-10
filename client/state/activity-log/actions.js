@@ -27,6 +27,7 @@ import {
 	REWIND_BACKUP_PROGRESS_REQUEST,
 	REWIND_BACKUP_UPDATE_ERROR,
 	REWIND_BACKUP_UPDATE_PROGRESS,
+	REWIND_BACKUP_DISMISS_PROGRESS,
 } from 'state/action-types';
 
 /**
@@ -289,6 +290,14 @@ export function getRewindBackupProgress( siteId, downloadId ) {
 	};
 }
 
+/**
+ * Update the status of the backup creation with its progress.
+ *
+ * @param  {string|number} siteId     The site ID
+ * @param  {number}        downloadId Id of the backup being created.
+ * @param  {number}        progress   Number from 0 to 100 that indicates the progress of the backup creation.
+ * @return {object}                   Action object
+ */
 export function updateRewindBackupProgress( siteId, downloadId, progress ) {
 	return {
 		type: REWIND_BACKUP_UPDATE_PROGRESS,
@@ -298,10 +307,30 @@ export function updateRewindBackupProgress( siteId, downloadId, progress ) {
 	};
 }
 
+/**
+ * Update the status of the backup creation when it errors.
+ *
+ * @param  {string|number} siteId The site ID
+ * @param  {string}        error  Error code
+ * @return {object}               Action object
+ */
 export function rewindBackupUpdateError( siteId, error ) {
 	return {
 		type: REWIND_BACKUP_UPDATE_ERROR,
 		siteId,
 		error,
+	};
+}
+
+/**
+ * Remove success banner.
+ *
+ * @param  {string|number} siteId The site ID
+ * @return {object}               Action object
+ */
+export function dismissRewindBackupProgress( siteId ) {
+	return {
+		type: REWIND_BACKUP_DISMISS_PROGRESS,
+		siteId,
 	};
 }
