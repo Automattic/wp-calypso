@@ -15,6 +15,7 @@ import { get, isUndefined } from 'lodash';
 import Card from 'components/card';
 import CommentActions from 'my-sites/comments/comment/comment-actions';
 import CommentContent from 'my-sites/comments/comment/comment-content';
+import CommentEdit from 'my-sites/comments/comment/comment-edit';
 import CommentHeader from 'my-sites/comments/comment/comment-header';
 import CommentReply from 'my-sites/comments/comment/comment-reply';
 import QueryComment from 'components/data/query-comment';
@@ -150,6 +151,10 @@ export class Comment extends Component {
 
 						{ isExpanded && ! isBulkMode && <CommentReply { ...{ commentId, isReplyVisible } } /> }
 					</div>
+				) }
+
+				{ isEditMode && (
+					<CommentEdit { ...{ commentId } } toggleEditMode={ this.toggleEditMode } />
 				) }
 			</Card>
 		);
