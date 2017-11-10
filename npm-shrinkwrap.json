@@ -1025,7 +1025,7 @@
       "version": "2.1.0"
     },
     "clone": {
-      "version": "1.0.2",
+      "version": "1.0.3",
       "dev": true
     },
     "clone-regexp": {
@@ -1043,7 +1043,7 @@
       "version": "1.1.0"
     },
     "color-convert": {
-      "version": "1.9.0"
+      "version": "1.9.1"
     },
     "color-diff": {
       "version": "0.1.7",
@@ -2211,7 +2211,7 @@
       "dev": true
     },
     "flow-parser": {
-      "version": "0.58.0",
+      "version": "0.59.0",
       "dev": true
     },
     "flux": {
@@ -5272,7 +5272,15 @@
       "resolved": "git+https://github.com/Automattic/node-phone.git#6be6549b03137f2cca01e202250bf2590750119e"
     },
     "photon": {
-      "version": "2.0.0"
+      "version": "2.0.1",
+      "dependencies": {
+        "debug": {
+          "version": "3.1.0"
+        },
+        "ms": {
+          "version": "2.0.0"
+        }
+      }
     },
     "pify": {
       "version": "3.0.0"
