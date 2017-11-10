@@ -33,6 +33,13 @@ class CalendarCard extends Component {
 		times: PropTypes.arrayOf( PropTypes.number ).isRequired,
 	};
 
+	/**
+	 * Returns a string representing the day of the week, with certain dates using natural
+	 * language like "Today" or "Tomorrow" instead of the name of the day.
+	 *
+	 * @param {Number} date Timestamp of the date
+	 * @returns {String} The name for the day of the week
+	 */
 	getDayOfWeekString = date => {
 		const { translate } = this.props;
 		const today = moment().startOf( 'day' );
@@ -48,6 +55,7 @@ class CalendarCard extends Component {
 	};
 
 	renderHeader = () => {
+		// The "Header" is that part of the foldable card that you click on to expand it.
 		const date = moment( this.props.date );
 
 		return (
