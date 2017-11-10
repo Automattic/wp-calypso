@@ -29,30 +29,30 @@ const changePage = path => pageNumber => {
 	return page( addQueryArgs( { page: pageNumber }, path ) );
 };
 
-export const siteComments = ( { params, path, query, store } ) => {
-	const siteFragment = route.getSiteFragment( path );
+export const siteComments = context => {
+	const siteFragment = route.getSiteFragment( context.path );
 
 	if ( ! siteFragment ) {
 		return page.redirect( '/comments/all' );
 	}
 
-	const status = mapPendingStatusToUnapproved( params.status );
+	const status = mapPendingStatusToUnapproved( context.params.status );
 
-	const pageNumber = sanitizeInt( query.page );
+	const pageNumber = sanitizeInt( context.query.page );
 	if ( ! pageNumber ) {
-		return changePage( path )( 1 );
+		return changePage( context.path )( 1 );
 	}
 
 	renderWithReduxStore(
 		<CommentsManagement
-			basePath={ path }
-			changePage={ changePage( path ) }
+			basePath={ context.path }
+			changePage={ changePage( context.path ) }
 			page={ pageNumber }
 			siteFragment={ siteFragment }
 			status={ status }
 		/>,
 		'primary',
-		store
+		context.store
 	);
 };
 
