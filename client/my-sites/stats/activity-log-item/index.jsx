@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import { pick } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -18,9 +17,6 @@ import ActivityIcon from './activity-icon';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FoldableCard from 'components/foldable-card';
 import PopoverMenuItem from 'components/popover/menu-item';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-
-const debug = debugFactory( 'calypso:activity-log:item' );
 
 const stopPropagation = event => event.stopPropagation();
 
@@ -53,9 +49,6 @@ class ActivityLogItem extends Component {
 			actorWpcomId: PropTypes.number.isRequired,
 		} ).isRequired,
 
-		// connect
-		recordTracksEvent: PropTypes.func.isRequired,
-
 		// localize
 		moment: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -70,19 +63,6 @@ class ActivityLogItem extends Component {
 		this.props.requestDialog( this.props.log.activityId, 'item', 'restore' );
 
 	handleClickBackup = () => this.props.requestDialog( this.props.log.activityId, 'item', 'backup' );
-
-	handleOpen = () => {
-		const { log, recordTracksEvent } = this.props;
-		const { activityGroup, activityName, activityTs } = log;
-
-		debug( 'opened log', log );
-
-		recordTracksEvent( 'calypso_activitylog_item_expand', {
-			group: activityGroup,
-			name: activityName,
-			timestamp: activityTs,
-		} );
-	};
 
 	//
 	// TODO: Descriptions are temporarily disabled and this method is not called.
@@ -181,10 +161,8 @@ class ActivityLogItem extends Component {
 				</div>
 				<FoldableCard
 					className="activity-log-item__card"
-					clickableHeader
 					expandedSummary={ this.renderItemAction() }
 					header={ this.renderHeader() }
-					onClick={ this.handleOpen }
 					summary={ this.renderItemAction() }
 				/>
 			</div>
@@ -192,6 +170,4 @@ class ActivityLogItem extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent: recordTracksEventAction,
-} )( localize( ActivityLogItem ) );
+export default connect()( localize( ActivityLogItem ) );
