@@ -398,7 +398,7 @@ class ActivityLog extends Component {
 			downloadId,
 		} = progress;
 		return (
-			<div>
+			<div key={ `end-banner-${ restoreId || downloadId }` }>
 				<QueryActivityLog siteId={ siteId } />
 				{ errorCode ? (
 					<ErrorBanner
