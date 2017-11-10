@@ -102,18 +102,7 @@ export class CommentActions extends Component {
 	};
 
 	showNotice = status => {
-		const {
-			changeStatus,
-			commentId,
-			like,
-			minimumComment,
-			postId,
-			removeFromPersisted,
-			siteId,
-			translate,
-			unlike,
-			updateLastUndo,
-		} = this.props;
+		const { minimumComment, translate } = this.props;
 
 		this.props.removeNotice( 'comment-notice' );
 
@@ -131,32 +120,44 @@ export class CommentActions extends Component {
 			button: translate( 'Undo' ),
 			id: 'comment-notice',
 			isPersistent: true,
-			onClick: () => {
-				const { isLiked: wasLiked, status: previousStatus } = minimumComment;
-				const alsoApprove = 'approved' !== status && 'approved' === previousStatus;
-				const alsoUnlike = ! wasLiked && 'approved' !== previousStatus;
-
-				updateLastUndo( commentId );
-
-				changeStatus( siteId, postId, commentId, previousStatus, {
-					alsoUnlike,
-					isUndo: true,
-					previousStatus: status,
-				} );
-
-				if ( wasLiked ) {
-					like( siteId, postId, commentId, { alsoApprove } );
-				} else if ( alsoUnlike ) {
-					unlike( siteId, postId, commentId );
-				}
-
-				removeFromPersisted( commentId );
-
-				this.props.removeNotice( 'comment-notice' );
-			},
+			onClick: this.undo( status, minimumComment ),
 		};
 
 		this.props.successNotice( message, noticeOptions );
+	};
+
+	undo = ( status, previousCommentData ) => () => {
+		const {
+			changeStatus,
+			commentId,
+			like,
+			postId,
+			removeFromPersisted,
+			siteId,
+			unlike,
+			updateLastUndo,
+		} = this.props;
+		const { isLiked: wasLiked, status: previousStatus } = previousCommentData;
+		const alsoApprove = 'approved' !== status && 'approved' === previousStatus;
+		const alsoUnlike = ! wasLiked && 'approved' !== previousStatus;
+
+		updateLastUndo( commentId );
+
+		changeStatus( siteId, postId, commentId, previousStatus, {
+			alsoUnlike,
+			isUndo: true,
+			previousStatus: status,
+		} );
+
+		if ( wasLiked ) {
+			like( siteId, postId, commentId, { alsoApprove } );
+		} else if ( alsoUnlike ) {
+			unlike( siteId, postId, commentId );
+		}
+
+		removeFromPersisted( commentId );
+
+		this.props.removeNotice( 'comment-notice' );
 	};
 
 	toggleApproved = () => {
