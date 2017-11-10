@@ -10,7 +10,6 @@ import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import page from 'page';
 import { translate } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,7 +28,6 @@ import {
 	isWpcomTheme,
 } from 'state/themes/selectors';
 import { clearActivated } from 'state/themes/actions';
-import { getSite, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const ThanksModal = createReactClass( {
@@ -54,22 +52,11 @@ const ThanksModal = createReactClass( {
 		isActivating: PropTypes.bool.isRequired,
 		isThemeWpcom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
-		visitSiteUrl: PropTypes.string,
 	},
 
 	onCloseModal() {
 		this.props.clearActivated( this.props.siteId );
 		this.setState( { show: false } );
-	},
-
-	visitSite() {
-		this.trackClick( 'visit site' );
-		page( this.props.visitSiteUrl );
-	},
-
-	goBack() {
-		this.trackClick( 'go back' );
-		this.onCloseModal();
 	},
 
 	onLinkClick( link ) {
@@ -79,15 +66,16 @@ const ThanksModal = createReactClass( {
 		};
 	},
 
-	renderBody() {
-		return (
-			<ul>
-				<li>
-					{ this.props.source === 'list' ? this.renderThemeInfo() : this.renderCustomizeInfo() }
-				</li>
-				<li>{ this.renderSupportInfo() }</li>
-			</ul>
-		);
+	learnThisTheme() {
+		this.trackClick( 'learn this theme' );
+		page( this.props.detailsUrl );
+		this.onCloseModal();
+	},
+
+	goToCustomizer() {
+		this.trackClick( 'thanks modal customize' );
+		page( this.props.customizeUrl );
+		this.onCloseModal();
 	},
 
 	renderThemeInfo() {
@@ -134,14 +122,18 @@ const ThanksModal = createReactClass( {
 		return (
 			<div>
 				<h1>
-					{ translate( 'Thanks for choosing {{br/}} %(themeName)s {{br/}} by %(themeAuthor)s', {
-						args: { themeName, themeAuthor },
+					{ translate( 'Thanks for choosing {{br/}} %(themeName)s', {
+						args: { themeName },
 						components: {
 							br: <br />,
 						},
 					} ) }
 				</h1>
-				{ this.renderBody() }
+				<span>
+					{ translate( 'by %(themeAuthor)s', {
+						args: { themeAuthor },
+					} ) }
+				</span>
 			</div>
 		);
 	},
@@ -156,17 +148,17 @@ const ThanksModal = createReactClass( {
 
 	render() {
 		const { currentTheme, hasActivated, isActivating } = this.props;
-		const visitSiteText = hasActivated
-			? translate( 'Visit site' )
+		const customizeSiteText = hasActivated
+			? translate( 'Customize site' )
 			: translate( 'Activating theme…' );
 		const buttons = [
-			{ action: 'back', label: translate( 'Back to themes' ), onClick: this.goBack },
+			{ action: 'learn', label: translate( 'Learn this theme' ), onClick: this.learnThisTheme },
 			{
-				action: 'visitSite',
-				label: visitSiteText,
+				action: 'customizeSite',
+				label: customizeSiteText,
 				isPrimary: true,
 				disabled: ! hasActivated,
-				onClick: this.visitSite,
+				onClick: this.goToCustomizer,
 			},
 		];
 
@@ -186,7 +178,6 @@ const ThanksModal = createReactClass( {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
-		const siteUrl = get( getSite( state, siteId ), 'URL' );
 		const currentThemeId = getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
 
@@ -196,7 +187,6 @@ export default connect(
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl: getThemeCustomizeUrl( state, currentThemeId, siteId ),
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
-			visitSiteUrl: siteUrl + ( isJetpackSite( state, siteId ) ? '' : '?next=customize' ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
