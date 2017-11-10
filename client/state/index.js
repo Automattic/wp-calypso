@@ -24,6 +24,7 @@ import automatedTransfer from './automated-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
+import concierge from './concierge/reducer';
 import consoleDispatcher from './console-dispatch';
 import countries from './countries/reducer';
 import countryStates from './country-states/reducer';
@@ -94,6 +95,7 @@ const reducers = {
 	billingTransactions,
 	comments,
 	componentsUsageStats,
+	concierge,
 	countries,
 	countryStates,
 	currentUser,
