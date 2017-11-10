@@ -24,7 +24,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
-import { isProductSelected, isVariableProduct } from './utils';
+import { areVariationsSelected, isProductSelected, isVariableProduct } from './utils';
 import ProductVariations from './variations';
 
 class ProductSearchRow extends Component {
@@ -142,18 +142,8 @@ class ProductSearchRow extends Component {
 	};
 
 	areAnySelected = () => {
-		const { product, singular } = this.props;
-		const { variations } = this.state;
-		if ( singular && variations[ 0 ] ) {
-			return this.isSelected( product.id ) || this.isSelected( variations[ 0 ].id );
-		}
-		return reduce(
-			variations,
-			( result, variation ) => {
-				return result || this.isSelected( variation.id );
-			},
-			this.isSelected( product.id )
-		);
+		const { product } = this.props;
+		return this.isSelected( product.id ) || areVariationsSelected( this.props.value, product );
 	};
 
 	renderSelectedVariations = () => {

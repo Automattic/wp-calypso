@@ -18,7 +18,13 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import NoResults from 'my-sites/no-results';
 import Search from 'components/search';
 import ProductSearchRow from './row';
-import { addProductId, isProductSelected, productContainsString, removeProductId } from './utils';
+import {
+	addProductId,
+	areVariationsSelected,
+	isProductSelected,
+	productContainsString,
+	removeProductId,
+} from './utils';
 
 class ProductSearch extends Component {
 	static propTypes = {
@@ -64,7 +70,9 @@ class ProductSearch extends Component {
 			products &&
 			products.filter( product => {
 				return (
-					productContainsString( product, searchFilter ) || isProductSelected( value, product.id )
+					productContainsString( product, searchFilter ) ||
+					isProductSelected( value, product.id ) ||
+					areVariationsSelected( value, product )
 				);
 			} )
 		);
