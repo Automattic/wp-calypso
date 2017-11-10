@@ -148,6 +148,7 @@
     "tracekit": "0.4.3",
     "tween.js": "16.3.1",
     "twemoji": "2.3",
+    "uglify-js": "2.7.0",
     "uuid": "2.0.1",
     "valid-url": "1.0.9",
     "walk": "2.3.4",
@@ -284,7 +285,6 @@
     "stylelint": "6.9.0",
     "supertest": "2.0.0",
     "terminal-kit": "1.13.13",
-    "uglify-js": "2.7.0",
     "webpack-bundle-analyzer": "2.8.2"
   },
   "optionalDependencies": {
