@@ -97,14 +97,16 @@ const mapStateToProps = ( state, { globalId } ) => {
 const mapDispatchToProps = { trashPost, deletePost, bumpStat, recordTracksEvent };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const bumpTrashStat = bumpStatGenerator( stateProps.type, 'trash', dispatchProps.bumpStat );
 	const onTrashClick = () => {
-		bumpStatGenerator( stateProps.type, 'trash', dispatchProps.bumpStat );
+		bumpTrashStat();
 		dispatchProps.recordTracksEvent( 'calypso_post_type_list_trash', {
 			post_type: stateProps.type,
 		} );
 	};
+	const bumpDeleteStat = bumpStatGenerator( stateProps.type, 'delete', dispatchProps.bumpStat );
 	const onDeleteClick = () => {
-		bumpStatGenerator( stateProps.type, 'delete', dispatchProps.bumpStat );
+		bumpDeleteStat();
 		dispatchProps.recordTracksEvent( 'calypso_post_type_list_delete', {
 			post_type: stateProps.type,
 		} );

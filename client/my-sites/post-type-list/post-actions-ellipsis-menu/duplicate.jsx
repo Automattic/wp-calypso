@@ -68,8 +68,13 @@ const mapStateToProps = ( state, { globalId } ) => {
 const mapDispatchToProps = { bumpStat, recordTracksEvent };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const bumpDuplicateStat = bumpStatGenerator(
+		stateProps.type,
+		'duplicate',
+		dispatchProps.bumpStat
+	);
 	const onDuplicateClick = () => {
-		bumpStatGenerator( stateProps.type, 'duplicate', dispatchProps.bumpStat );
+		bumpDuplicateStat();
 		dispatchProps.recordTracksEvent( 'calypso_post_type_list_duplicate', {
 			post_type: stateProps.type,
 		} );

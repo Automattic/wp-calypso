@@ -79,8 +79,9 @@ const mapStateToProps = ( state, { globalId } ) => {
 const mapDispatchToProps = { savePost, bumpStat, recordTracksEvent };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const bumpPublishStat = bumpStatGenerator( stateProps.type, 'publish', dispatchProps.bumpStat );
 	const onPublishPost = () => {
-		bumpStatGenerator( stateProps.type, 'publish', dispatchProps.bumpStat );
+		bumpPublishStat();
 		dispatchProps.recordTracksEvent( 'calypso_post_type_list_publish', {
 			post_type: stateProps.type,
 		} );
