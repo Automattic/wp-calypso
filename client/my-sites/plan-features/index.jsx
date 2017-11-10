@@ -369,7 +369,11 @@ class PlanFeatures extends Component {
 			? feature.getDescription( abtest, this.props.domainName )
 			: null;
 		return (
-			<PlanFeaturesItem key={ index } description={ description } hideInfoPopover={ false }>
+			<PlanFeaturesItem
+				key={ index }
+				description={ description }
+				hideInfoPopover={ feature.hideInfoPopover }
+			>
 				<span className="plan-features__item-info">
 					<span className="plan-features__item-title">{ feature.getTitle() }</span>
 				</span>
