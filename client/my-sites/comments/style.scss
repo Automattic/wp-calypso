@@ -79,6 +79,10 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+
+	span {
+		font-family: $serif;
+	}
 }
 .comment-list__header-date {
 	font-size: 13px;
