@@ -36,6 +36,7 @@ export getActivityLogs from './get-activity-logs';
 export getBillingTransactions from './get-billing-transactions';
 export getBlockedSites from './get-blocked-sites';
 export getBlogStickers from './get-blog-stickers';
+export getConciergeShifts from './get-concierge-shifts';
 export getContactDetailsCache from './get-contact-details-cache';
 export getContactDetailsExtraCache from './get-contact-details-extra-cache';
 export getCredentialsAutoConfigStatus from './get-credentials-auto-config-status';
