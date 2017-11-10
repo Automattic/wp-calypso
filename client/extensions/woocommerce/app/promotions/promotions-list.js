@@ -8,10 +8,12 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import EmptyContent from 'components/empty-content';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	getPromotions,
@@ -34,7 +36,26 @@ function promotionContainsString( promotion, textString ) {
 }
 
 const PromotionsList = props => {
-	const { site, filteredPromotions, promotionsPage, currentPage, perPage } = props;
+	const {
+		site,
+		searchFilter,
+		promotions,
+		filteredPromotions,
+		promotionsPage,
+		currentPage,
+		perPage,
+		translate,
+	} = props;
+
+	if ( promotions && 0 === filteredPromotions.length ) {
+		const message = translate( 'No promotions found for {{query /}}.', {
+			components: {
+				query: <em>{ searchFilter }</em>,
+			},
+		} );
+
+		return <EmptyContent title={ translate( 'No Results' ) } line={ message } />;
+	}
 
 	const switchPage = index => {
 		if ( site ) {
@@ -98,4 +119,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( PromotionsList );
+export default localize( connect( mapStateToProps, mapDispatchToProps )( PromotionsList ) );
