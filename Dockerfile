@@ -30,7 +30,7 @@ RUN        bash /tmp/env-config.sh
 # cache is empty, so we retry once if it failed
 COPY       ./package.json ./npm-shrinkwrap.json /calypso/
 RUN        true \
-           && npm install --production || npm install --production \
+           && npm install --production \
            && rm -rf /root/.npm \
            && true
 
