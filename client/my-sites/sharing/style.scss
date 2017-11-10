@@ -670,15 +670,11 @@
 	}
 }
 
-.sharing-buttons-preview__reblog .noticon,
-.sharing-buttons-preview__like .noticon {
+.sharing-buttons-preview__reblog .gridicon,
+.sharing-buttons-preview__like .gridicon {
 	vertical-align: top;
-	margin: 3px 4px 0 0;
-	color: $blue-medium;
-}
-
-.sharing-buttons-preview__like .noticon {
-	margin: 3px 2px 0 -1px;
+	margin: 2px 4px 0 0;
+	fill: $blue-medium;
 }
 
 .sharing-buttons-preview__fake-user {
