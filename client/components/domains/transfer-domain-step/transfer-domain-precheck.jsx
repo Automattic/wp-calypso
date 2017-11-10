@@ -179,7 +179,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 		return (
 			<div className="transfer-domain-step__precheck">
-				<SectionHeader>{ headerLabel }</SectionHeader>
+				<SectionHeader label={ headerLabel } />
 				{ this.getStatusMessage() }
 				{ this.getPrivacyMessage() }
 				{ this.getEppMessage() }

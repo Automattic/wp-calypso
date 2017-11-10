@@ -124,7 +124,11 @@ class TransferDomainOptions extends React.PureComponent {
 							<span>
 								<FormLegend>
 									{ translate( 'Make contact information private.' ) }
-									{ cost && translate( ' +%(cost)s / year', { args: { cost } } ) }
+									{ cost &&
+										translate( '{{small}}+%(cost)s / year{{/small}}', {
+											args: { cost },
+											components: { small: <small /> },
+										} ) }
 								</FormLegend>
 								{ translate(
 									'{{strong}}Recommended!{{/strong}} ' +
