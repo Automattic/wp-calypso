@@ -19,6 +19,7 @@ import getProductLink from 'woocommerce/woocommerce-services/lib/utils/get-produ
 import { getSite } from 'state/sites/selectors';
 import { closeItemMove, setTargetPackage, moveItem } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
 const MoveItemDialog = ( props ) => {
 	const {
@@ -31,7 +32,7 @@ const MoveItemDialog = ( props ) => {
 		openedPackageId,
 		selected,
 		all,
-		translate
+		translate,
 	} = props;
 
 	if ( -1 === movedItemIndex || ! showItemMoveDialog ) {
@@ -155,7 +156,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 		targetPackageId: shippingLabel.targetPackageId,
 		openedPackageId: shippingLabel.openedPackageId,
 		selected: shippingLabel.form.packages.selected,
-		all: shippingLabel.form.packages.all,
+		all: getAllPackageDefinitions( state, siteId ),
 	};
 };
 

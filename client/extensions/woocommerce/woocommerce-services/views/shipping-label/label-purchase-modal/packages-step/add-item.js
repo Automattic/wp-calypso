@@ -97,7 +97,7 @@ const AddItemDialog = ( props ) => {
 					{ translate( 'Which items would you like to add to {{pckg/}}?', {
 						components: {
 							pckg: getPackageNameElement( openedPackageId ),
-						}
+						},
 					} ) }
 				</p>
 				{ itemOptions }
