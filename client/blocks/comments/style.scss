@@ -225,7 +225,8 @@
 	position: relative;
 
 	&.depth-0,
-	&.depth-1 {
+	&.depth-1,
+	&.depth-2 {
 		padding-left: 42px;
 
 		> .comments__comment-author .gravatar {

@@ -358,6 +358,14 @@
 	}
 }
 
+.reader-full-post .comments__comment.depth-2 {
+	padding-left: 0;
+
+	> .comments__comment-author .gravatar {
+		left: -41px;
+	}
+}
+
 // Align meta info and post title
 .reader-full-post .has-author-link .author-compact-profile__avatar-link {
 	display: none;
