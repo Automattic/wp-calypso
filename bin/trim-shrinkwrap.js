@@ -9,19 +9,6 @@
 const fs = require( 'fs' );
 const shrinkwrap = require( '../npm-shrinkwrap.json' );
 
-( function removeOptionalDeps( root ) {
-	if ( ! root.dependencies ) {
-		return;
-	}
-	Object.keys( root.dependencies ).forEach( function ( dep ) {
-		if ( root.dependencies[ dep ].optional ) {
-			delete root.dependencies[ dep ];
-		} else {
-			removeOptionalDeps( root.dependencies[ dep ] );
-		}
-	} );
-} )( shrinkwrap );
-
 function isGitDep( rep ) {
 	return /^git/.test( rep );
 }
