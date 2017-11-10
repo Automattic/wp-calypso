@@ -62,7 +62,7 @@ export function rewindActivateFailure( siteId ) {
  * The API is subject to change, this documentation has been provided as a basis. For up to
  * date information, it's best to check the current state of the API.
  *
- * @typdef {Object} ActivityParams
+ * @typedef {Object} ActivityParams
  *
  * @property {number} dateStart Filter activity after this date (Unix millisecond timestamp).
  * @property {number} dateEnd   Filter activity before this date (Unix millisecond timestamp).
