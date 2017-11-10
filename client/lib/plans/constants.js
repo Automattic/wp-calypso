@@ -803,7 +803,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_SEO_PREVIEW_TOOLS ]: {
 		getSlug: () => FEATURE_SEO_PREVIEW_TOOLS,
-		getTitle: () => i18n.translate( 'SEO Preview Tools' ),
+		getTitle: () => i18n.translate( 'SEO Tools' ),
 	},
 
 	[ FEATURE_GOOGLE_ANALYTICS ]: {
@@ -1329,14 +1329,12 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_CONCIERGE_SETUP ]: {
 		getSlug: () => FEATURE_CONCIERGE_SETUP,
-		getTitle: () => i18n.translate( 'Concierge Setup' ),
-		hideInfoPopover: true,
+		getTitle: () => i18n.translate( 'Jetpack Concierge' ),
 	},
 
 	[ FEATURE_MARKETING_AUTOMATION ]: {
 		getSlug: () => FEATURE_MARKETING_AUTOMATION,
-		getTitle: () => i18n.translate( 'Marketing Automation' ),
-		hideInfoPopover: true,
+		getTitle: () => i18n.translate( 'Social Media Automation.' ),
 	},
 };
 
