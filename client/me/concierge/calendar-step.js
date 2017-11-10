@@ -5,7 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { moment } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
@@ -53,13 +53,18 @@ class CalendarStep extends Component {
 	};
 
 	render() {
+		const { translate } = this.props;
 		// TODO: Replace mock data with data from Redux
 		const availability = generateMockData();
 
 		return (
 			<div>
-				<HeaderCake onClick={ this.props.onBack } />
-				<CompactCard>Please select a day to have your Concierge session.</CompactCard>
+				<HeaderCake onClick={ this.props.onBack }>
+					{ translate( 'Choose Concierge Session' ) }
+				</HeaderCake>
+				<CompactCard>
+					{ translate( 'Please select a day to have your Concierge session.' ) }
+				</CompactCard>
 				{ availability.map( ( { date, times } ) => (
 					<CalendarCard
 						date={ date }
@@ -73,4 +78,4 @@ class CalendarStep extends Component {
 	}
 }
 
-export default CalendarStep;
+export default localize( CalendarStep );
