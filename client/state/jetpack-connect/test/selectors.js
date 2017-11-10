@@ -495,7 +495,9 @@ describe( 'selectors', () => {
 		const stateHasNoError = {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
-					authorizeError: false,
+					authorizeError: {
+						message: '',
+					},
 				},
 			},
 		};
@@ -504,7 +506,7 @@ describe( 'selectors', () => {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
 					authorizeError: {
-						message: 'Could not verify your request.',
+						message: 'There was an error.',
 					},
 				},
 			},
@@ -574,7 +576,7 @@ describe( 'selectors', () => {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
 					authorizeError: {
-						message: 'Could not verify your request.',
+						message: 'An error message including "verify_secrets_expired".',
 					},
 				},
 			},
