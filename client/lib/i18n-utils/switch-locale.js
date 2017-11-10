@@ -50,9 +50,10 @@ export default function switchLocale( localeSlug ) {
 		if ( typeof document !== 'undefined' ) {
 			document.documentElement.lang = localeSlug;
 			document.documentElement.dir = language.rtl ? 'rtl' : 'ltr';
-			const cssUrl = language.rtl
-				? window.app.staticUrls[ 'style-rtl.css' ]
-				: window.app.staticUrls[ 'style.css' ];
+
+			const directionFlag = language.rtl ? '-rtl' : '';
+			const debugFlag = process.env.NODE_ENV === 'development' ? '-debug' : '';
+			const cssUrl = window.app.staticUrls[ `style${ debugFlag }${ directionFlag }.css` ];
 			switchCSS( 'main-css', cssUrl );
 		}
 	} );
@@ -65,7 +66,7 @@ export function switchCSS( elementId, cssUrl, callback = noop ) {
 		return callback();
 	}
 
-	loadCSS( cssUrl, ( error, newLink ) => {
+	loadCSS( cssUrl, currentLink, ( error, newLink ) => {
 		if ( currentLink && currentLink.parentElement ) {
 			currentLink.parentElement.removeChild( currentLink );
 		}
@@ -79,9 +80,10 @@ export function switchCSS( elementId, cssUrl, callback = noop ) {
 /**
  * Loads a css stylesheet into the page
  * @param {string} cssUrl - a url to a css resource to be inserted into the page
+ * @param {Element} currentLink - a <link> DOM element that we want to use as a reference for stylesheet order
  * @param {Function} callback - a callback function to be called when the CSS has been loaded (after 500ms have passed).
  */
-function loadCSS( cssUrl, callback = noop ) {
+function loadCSS( cssUrl, currentLink, callback = noop ) {
 	const link = Object.assign( document.createElement( 'link' ), {
 		rel: 'stylesheet',
 		type: 'text/css',
@@ -101,5 +103,5 @@ function loadCSS( cssUrl, callback = noop ) {
 		setTimeout( onload, 500 );
 	}
 
-	document.head.appendChild( link );
+	document.head.insertBefore( link, currentLink ? currentLink.nextSibling : null );
 }
