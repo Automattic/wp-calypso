@@ -714,16 +714,22 @@ export const FEATURES_LIST = {
 	[ FEATURE_ALL_FREE_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_FREE_FEATURES,
 		getTitle: () => i18n.translate( 'All free features' ),
+		getDescription: () =>
+			i18n.translate( 'Also includes all features offered in the free version of Jetpack.' ),
 	},
 
 	[ FEATURE_ALL_PERSONAL_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_PERSONAL_FEATURES,
 		getTitle: () => i18n.translate( 'All Personal features' ),
+		getDescription: () =>
+			i18n.translate( 'Also includes all features offered in the Premium plan.' ),
 	},
 
 	[ FEATURE_ALL_PREMIUM_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_PREMIUM_FEATURES,
 		getTitle: () => i18n.translate( 'All Premium features' ),
+		getDescription: () =>
+			i18n.translate( 'Also includes all features offered in the Premium plan.' ),
 	},
 
 	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
@@ -794,6 +800,10 @@ export const FEATURES_LIST = {
 	[ FEATURE_VIDEO_CDN_LIMITED ]: {
 		getSlug: () => FEATURE_VIDEO_CDN_LIMITED,
 		getTitle: () => i18n.translate( '13GB Video Storage' ),
+		getDescription: () =>
+			i18n.translate(
+				'High-speed video hosting on our CDN, free of ads and watermarks, fully optimized for WordPress.'
+			),
 	},
 
 	[ FEATURE_VIDEO_CDN_UNLIMITED ]: {
@@ -804,6 +814,10 @@ export const FEATURES_LIST = {
 	[ FEATURE_SEO_PREVIEW_TOOLS ]: {
 		getSlug: () => FEATURE_SEO_PREVIEW_TOOLS,
 		getTitle: () => i18n.translate( 'SEO Tools' ),
+		getDescription: () =>
+			i18n.translate(
+				'Edit your page titles and meta descriptions, and preview how your content will appear on social media.'
+			),
 	},
 
 	[ FEATURE_GOOGLE_ANALYTICS ]: {
@@ -1330,11 +1344,17 @@ export const FEATURES_LIST = {
 	[ FEATURE_CONCIERGE_SETUP ]: {
 		getSlug: () => FEATURE_CONCIERGE_SETUP,
 		getTitle: () => i18n.translate( 'Jetpack Concierge' ),
+		getDescription: () =>
+			i18n.translate( 'A complimentary one-on-one education session with a Jetpack expert.' ),
 	},
 
 	[ FEATURE_MARKETING_AUTOMATION ]: {
 		getSlug: () => FEATURE_MARKETING_AUTOMATION,
 		getTitle: () => i18n.translate( 'Social Media Automation.' ),
+		getDescription: () =>
+			i18n.translate(
+				'Re-share previously published content on social media, or schedule new shares in advance.'
+			),
 	},
 };
 
