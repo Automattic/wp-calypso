@@ -39,6 +39,7 @@ import analytics from 'lib/analytics';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
+import { closeEditorSidebar, openEditorSidebar } from 'state/ui/editor/sidebar/actions';
 import {
 	getEditorPostId,
 	getEditorPath,
@@ -90,7 +91,6 @@ export const PostEditor = createReactClass( {
 		translate: PropTypes.func.isRequired,
 		hasBrokenPublicizeConnection: PropTypes.bool,
 		editPost: PropTypes.func,
-		setNestedSidebar: PropTypes.func.isRequired,
 		type: PropTypes.string,
 	},
 
@@ -112,7 +112,6 @@ export const PostEditor = createReactClass( {
 			showPreview: false,
 			isPostPublishPreview: false,
 			previewAction: null,
-			nestedSidebar: NESTED_SIDEBAR_NONE,
 		};
 	},
 
@@ -149,17 +148,18 @@ export const PostEditor = createReactClass( {
 		} );
 	},
 
-	componentDidUpdate( prevProps ) {
-		if (
-			prevProps.nestedSidebarTarget !== NESTED_SIDEBAR_NONE &&
-			this.props.nestedSidebarTarget === NESTED_SIDEBAR_NONE
-		) {
-			// NOTE: Make sure we scroll back to the top AND trigger a scroll
-			// event no matter the scroll position we're coming from.
-			// ( used to force-reset TinyMCE toolbar )
-			window.scrollTo( 0, 1 );
-			window.scrollTo( 0, 0 );
-		}
+	componentDidUpdate() {
+		// TODO: Is this still needed?
+		// if (
+		// 	prevProps.nestedSidebarTarget !== NESTED_SIDEBAR_NONE &&
+		// 	this.props.nestedSidebarTarget === NESTED_SIDEBAR_NONE
+		// ) {
+		// NOTE: Make sure we scroll back to the top AND trigger a scroll
+		// event no matter the scroll position we're coming from.
+		// ( used to force-reset TinyMCE toolbar )
+		window.scrollTo( 0, 1 );
+		window.scrollTo( 0, 0 );
+		// }
 	},
 
 	componentWillUpdate( nextProps, nextState ) {
@@ -270,7 +270,6 @@ export const PostEditor = createReactClass( {
 	},
 
 	loadRevision: function( revision ) {
-		this.props.setNestedSidebar( NESTED_SIDEBAR_NONE );
 		this.setState( { selectedRevisionId: null } );
 		this.restoreRevision( {
 			content: revision.content,
@@ -342,7 +341,6 @@ export const PostEditor = createReactClass( {
 						allPostsUrl={ this.getAllPostsUrl() }
 						nestedSidebar={ this.state.nestedSidebar }
 						// @TODO "base" revision for arbitrary comparison
-						setNestedSidebar={ this.setNestedSidebar }
 						selectedRevisionId={ this.state.selectedRevisionId }
 						isSidebarOpened={ this.props.layoutFocus === 'sidebar' }
 					/>
@@ -355,7 +353,6 @@ export const PostEditor = createReactClass( {
 								site={ site }
 								isPostPrivate={ utils.isPrivate( this.state.post ) }
 								postAuthor={ this.state.post ? this.state.post.author : null }
-								hasEditorNestedSidebar={ this.props.nestedSidebarTarget !== NESTED_SIDEBAR_NONE }
 							/>
 							<div className="post-editor__site">
 								<Site
@@ -369,7 +366,8 @@ export const PostEditor = createReactClass( {
 							</div>
 							<div
 								className={ classNames( 'post-editor__inner-content', {
-									'is-shown': this.props.nestedSidebarTarget === NESTED_SIDEBAR_NONE,
+									// TODO: Could we get rid of this class now?
+									'is-shown': true,
 								} ) }
 							>
 								<FeaturedImage
@@ -436,7 +434,6 @@ export const PostEditor = createReactClass( {
 						onSave={ this.onSave }
 						isPostPrivate={ utils.isPrivate( this.state.post ) }
 						confirmationSidebarStatus={ this.state.confirmationSidebar }
-						setNestedSidebar={ this.setNestedSidebar }
 						nestedSidebar={ this.state.nestedSidebar }
 					/>
 					{ this.props.isSitePreviewable ? (
@@ -1364,7 +1361,6 @@ const enhance = flow(
 				isSitePreviewable: isSitePreviewable( state, siteId ),
 				isEditorOnlyRouteInHistory: isEditorOnlyRouteInHistory( state ),
 				isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
-				nestedSidebarTarget: getNestedSidebarTarget( state ),
 			};
 		},
 		dispatch => {
@@ -1381,7 +1377,6 @@ const enhance = flow(
 					setNextLayoutFocus,
 					saveConfirmationSidebarPreference,
 					recordTracksEvent,
-					setNestedSidebar,
 					closeEditorSidebar,
 					openEditorSidebar,
 				},

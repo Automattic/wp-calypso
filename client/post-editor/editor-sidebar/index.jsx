@@ -10,6 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { NESTED_SIDEBAR_NONE } from 'state/ui/editor/sidebar/constants';
 import { setNestedSidebar, closeEditorSidebar } from 'state/ui/editor/sidebar/actions';
 import { getNestedSidebarTarget } from 'state/ui/editor/sidebar/selectors';
 import EditorDrawer from 'post-editor/editor-drawer';
@@ -18,7 +19,6 @@ import SidebarFooter from 'layout/sidebar/footer';
 import SidebarRegion from 'layout/sidebar/region';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import EditorDeletePost from 'post-editor/editor-delete-post';
-import { NESTED_SIDEBAR_NONE, NestedSidebarPropType } from './constants';
 
 export class EditorSidebar extends Component {
 	static propTypes = {
@@ -35,7 +35,6 @@ export class EditorSidebar extends Component {
 		setPostDate: PropTypes.func,
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
-		nestedSidebar: NestedSidebarPropType,
 		setNestedSidebar: PropTypes.func,
 	};
 
