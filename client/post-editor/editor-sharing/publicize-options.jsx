@@ -137,7 +137,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 					} )
 				: [],
 			requireCount = includes( map( targeted, 'service' ), 'twitter' ),
-			acceptableLength = requireCount ? 140 - 23 - 23 : null;
+			acceptableLength = requireCount ? 280 - 23 - 23 : null;
 
 		if ( ! this.hasConnections() ) {
 			return;

@@ -31,7 +31,7 @@ class PublicizeMessage extends Component {
 	static defaultProps = {
 		disabled: false,
 		message: '',
-		acceptableLength: 140,
+		acceptableLength: 280,
 		requireCount: false,
 	};
 
