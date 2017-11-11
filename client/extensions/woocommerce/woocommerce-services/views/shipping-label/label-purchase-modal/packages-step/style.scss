@@ -1,28 +1,10 @@
-&.dialog.card.packages-step__dialog {
-	top: -46px;
+.packages-step__dialog-package-option {
+	font-weight: normal;
+	margin-bottom: 10px;
+}
 
-	@include breakpoint( ">480px" ) {
-		top: 10%;
-		right: calc(50% - 200px);
-		bottom: 10%;
-		left: calc(50% - 200px);
-		width: 400px;
-	}
-
-	.packages-step__dialog-package-option {
-		font-weight: normal;
-		margin-bottom: 10px;
-	}
-
-	.packages-step__dialog-package-name {
-		font-weight: bold;
-	}
-
-	.packages-step__dialog-body {
-		@include breakpoint( "<480px" ) {
-			padding: 0 16px;
-		}
-	}
+.packages-step__dialog-package-name {
+	font-weight: bold;
 }
 
 .packages-step__contents {
