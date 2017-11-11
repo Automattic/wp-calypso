@@ -76,6 +76,10 @@ const createReduxForm = reduxForm( {
 			errors.name = translate( 'Zone name cannot be empty.' );
 		}
 
+		if ( /[<>&]/.test( data.description ) ) {
+			errors.description = translate( 'Description cannot contain the following characters: <, > or &.' );
+		}
+
 		return errors;
 	},
 } );
