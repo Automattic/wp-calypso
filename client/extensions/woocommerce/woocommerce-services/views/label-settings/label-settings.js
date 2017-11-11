@@ -124,7 +124,7 @@ class ShippingLabels extends Component {
 			<div>
 				<p className="label-settings__credit-card-description">{ description }</p>
 				{ paymentMethods.map( renderPaymentMethod ) }
-				<Button href={ getOrigin() + '/me/billing' } target="_blank" compact>
+				<Button href={ getOrigin() + '/me/purchases/add-credit-card' } target="_blank" compact>
 					{ buttonLabel }
 				</Button>
 			</div>
