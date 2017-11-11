@@ -25,13 +25,14 @@ const analyticsPageTitle = 'Sharing';
 
 export const layout = context => {
 	const site = sites().getSelectedSite();
+	const { contentComponent, path } = context;
 
 	if ( site && ! site.settings && utils.userCan( 'manage_options', site ) ) {
 		site.fetchSettings();
 	}
 
 	renderWithReduxStore(
-		createElement( Sharing, { contentComponent: context.contentComponent, path: context.path } ),
+		createElement( Sharing, { contentComponent, path } ),
 		document.getElementById( 'primary' ),
 		context.store
 	);
