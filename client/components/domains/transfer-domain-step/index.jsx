@@ -29,6 +29,7 @@ import {
 import Notice from 'components/notice';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -114,21 +115,23 @@ class TransferDomainStep extends React.Component {
 				{ this.notice() }
 				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="transfer-domain-step__domain-description">
-						<p>{ translate( 'Use your own domain for your WordPress.com site.' ) }</p>
-						<p>
+						<div className="transfer-domain-step__domain-heading">
+							{ translate( 'Use your own domain for your WordPress.com site.' ) }
+						</div>
+						<div>
 							{ translate(
-								'Enter the domain you want to transfer to WordPress.com and manage your domain and site' +
-									" all in one place. Domains purchased in the last 60 days can't be transferred. {{a}}Learn More{{/a}}",
+								'Enter the domain you want to transfer to WordPress.com so you can manage your domain and site' +
+									" all in one place. Domains purchases in the last 60 days can't be transferred. {{a}}Learn More{{/a}}",
 								{
 									components: { a: <a href="#" /> },
 								}
 							) }
-						</p>
+						</div>
 					</div>
 
 					<div className="transfer-domain-step__add-domain" role="group">
-						<input
-							className="transfer-domain-step__external-domain"
+						<FormTextInputWithAffixes
+							prefix="http://"
 							type="text"
 							value={ this.state.searchQuery }
 							placeholder={ translate( 'example.com' ) }
@@ -139,22 +142,24 @@ class TransferDomainStep extends React.Component {
 						/>
 					</div>
 					<button
+						disabled={ this.state.searchQuery.length === 0 }
 						className="transfer-domain-step__go button is-primary"
 						onClick={ this.recordGoButtonClick }
 					>
 						{ translate( 'Transfer to WordPress.com' ) }
 					</button>
 					{ this.domainRegistrationUpsell() }
-					<div>
+					<div className="transfer-domain-step__map-option">
 						<p>
 							{ translate(
-								"Don't want to transfer? You can {{a}}map it{{/a}} for %(cost)s instead.",
+								"Don't want to transfer? Keep it at your current domain provider " +
+									'and {{a}}map it{{/a}} for %(cost)s instead.',
 								{
 									args: { cost },
 									components: { a: <a href="#" onClick={ this.goToMapDomainStep } /> },
 								}
 							) }
-							<Gridicon icon="help" size={ 24 } />
+							<Gridicon icon="help" size={ 12 } />
 						</p>
 					</div>
 				</form>
