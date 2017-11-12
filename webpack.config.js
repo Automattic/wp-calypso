@@ -58,6 +58,7 @@ function getAliasesForExtensions() {
 /*
  * Find package.json for file at `filepath`.
  * Return `true` if it has a property whose key is `PROPKEY_ESNEXT` or 'module'.
+ * Taken from http://2ality.com/2017/06/pkg-esnext.html
  */
 function hasPkgEsnext( filepath ) {
 	const pkgRoot = findRoot( filepath );
