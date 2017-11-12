@@ -24,22 +24,26 @@ import FormTextInput from 'components/forms/form-text-input';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import { loginUser, formUpdate } from 'state/login/actions';
+import { getAuthAccountType, formUpdate, loginUser } from 'state/login/actions';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
+	getAuthAccountType as getAuthAccountTypeSelector,
 	getRequestError,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkEmail,
 	getSocialAccountLinkService,
 	isFormDisabled,
 } from 'state/login/selectors';
+import { isRegularAccount } from 'state/login/utils';
 import Notice from 'components/notice';
 import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
+		accountType: PropTypes.string,
 		formUpdate: PropTypes.func.isRequired,
+		getAuthAccountType: PropTypes.func.isRequired,
 		isFormDisabled: PropTypes.bool,
 		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
@@ -109,20 +113,42 @@ export class LoginForm extends Component {
 	onSubmitForm = event => {
 		event.preventDefault();
 
-		const { usernameOrEmail, password } = this.state;
-		const { onSuccess, redirectTo } = this.props;
+		const { usernameOrEmail } = this.state;
+		const { accountType } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
+		if ( isRegularAccount( accountType ) ) {
+			const { password } = this.state;
+			const { onSuccess, redirectTo } = this.props;
 
-		this.props
-			.loginUser( usernameOrEmail, password, redirectTo )
+			this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
+
+			this.props
+				.loginUser( usernameOrEmail, password, redirectTo )
+				.then( () => {
+					this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
+
+					onSuccess( redirectTo );
+				} )
+				.catch( error => {
+					this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
+						error_code: error.code,
+						error_message: error.message,
+					} );
+				} );
+
+			return;
+		}
+
+		this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type' );
+
+		this.props.getAuthAccountType( usernameOrEmail )
 			.then( () => {
-				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
+				this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_success' );
 
-				onSuccess( redirectTo );
+				this.password.focus();
 			} )
 			.catch( error => {
-				this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
+				this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_failure', {
 					error_code: error.code,
 					error_message: error.message,
 				} );
@@ -171,7 +197,7 @@ export class LoginForm extends Component {
 			isDisabled.disabled = true;
 		}
 
-		const { requestError, redirectTo, oauth2Client } = this.props;
+		const { accountType, requestError, redirectTo, oauth2Client } = this.props;
 		const linkingSocialUser = this.props.socialAccountIsLinking;
 		const isOauthLogin = !! oauth2Client;
 		let signupUrl = config( 'signup_url' );
@@ -231,28 +257,32 @@ export class LoginForm extends Component {
 								<FormInputValidation isError text={ requestError.message } />
 							) }
 
-						<label htmlFor="password" className="login__form-userdata-username">
-							{ this.props.translate( 'Password' ) }
-						</label>
+						{ ( linkingSocialUser || isRegularAccount( accountType ) ) && (
+							<div>
+								<label htmlFor="password" className="login__form-userdata-username">
+									{ this.props.translate( 'Password' ) }
+								</label>
 
-						<FormPasswordInput
-							autoCapitalize="off"
-							autoComplete="off"
-							className={ classNames( 'login__form-userdata-username-password', {
-								'is-error': requestError && requestError.field === 'password',
-							} ) }
-							onChange={ this.onChangeField }
-							id="password"
-							name="password"
-							ref={ this.savePasswordRef }
-							value={ this.state.password }
-							{ ...isDisabled }
-						/>
+								<FormPasswordInput
+									autoCapitalize="off"
+									autoComplete="off"
+									className={ classNames( 'login__form-userdata-username-password', {
+										'is-error': requestError && requestError.field === 'password',
+									} ) }
+									onChange={ this.onChangeField }
+									id="password"
+									name="password"
+									ref={ this.savePasswordRef }
+									value={ this.state.password }
+									{ ...isDisabled }
+								/>
 
-						{ requestError &&
-							requestError.field === 'password' && (
-								<FormInputValidation isError text={ requestError.message } />
-							) }
+								{ requestError &&
+									requestError.field === 'password' && (
+										<FormInputValidation isError text={ requestError.message } />
+									) }
+							</div>
+						) }
 					</div>
 
 					{ config.isEnabled( 'signup/social' ) && (
@@ -277,7 +307,10 @@ export class LoginForm extends Component {
 
 					<div className="login__form-action">
 						<FormsButton primary { ...isDisabled }>
-							{ this.props.translate( 'Log In' ) }
+							{ ( linkingSocialUser || isRegularAccount( accountType ) )
+								? this.props.translate( 'Log In' )
+								: this.props.translate( 'Continue' )
+							}
 						</FormsButton>
 					</div>
 
@@ -321,6 +354,7 @@ export class LoginForm extends Component {
 
 export default connect(
 	state => ( {
+		accountType: getAuthAccountTypeSelector( state ),
 		isFormDisabled: isFormDisabled( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		oauth2Client: getCurrentOAuth2Client( state ),
@@ -333,6 +367,7 @@ export default connect(
 	} ),
 	{
 		formUpdate,
+		getAuthAccountType,
 		loginUser,
 		recordTracksEvent,
 	}

@@ -12,6 +12,9 @@ import { get, isEmpty, omit } from 'lodash';
 import { combineReducers, createReducer } from 'state/utils';
 import magicLogin from './magic-login/reducer';
 import {
+	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
+	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
+	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS,
 	LOGIN_FORM_UPDATE,
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
@@ -47,6 +50,9 @@ import {
 import { login } from 'lib/paths';
 
 export const isRequesting = createReducer( false, {
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST ]: () => true,
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE ]: () => false,
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS ]: () => false,
 	[ LOGIN_REQUEST ]: () => true,
 	[ LOGIN_REQUEST_FAILURE ]: () => false,
 	[ LOGIN_REQUEST_SUCCESS ]: () => false,
@@ -75,6 +81,9 @@ export const redirectTo = createReducer( null, {
 } );
 
 export const isFormDisabled = createReducer( null, {
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST ]: () => true,
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE ]: () => false,
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS ]: () => false,
 	[ LOGIN_REQUEST ]: () => true,
 	[ LOGIN_REQUEST_FAILURE ]: () => false,
 	[ LOGIN_REQUEST_SUCCESS ]: () => true,
@@ -85,6 +94,9 @@ export const isFormDisabled = createReducer( null, {
 } );
 
 export const requestError = createReducer( null, {
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST ]: () => null,
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE ]: ( state, { error } ) => error,
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS ]: () => null,
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => error,
 	[ LOGIN_REQUEST_SUCCESS ]: () => null,
@@ -104,6 +116,9 @@ export const requestError = createReducer( null, {
 } );
 
 export const requestSuccess = createReducer( null, {
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST ]: () => null,
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE ]: () => false,
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS ]: () => true,
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_FAILURE ]: () => false,
 	[ LOGIN_REQUEST_SUCCESS ]: () => true,
@@ -252,7 +267,14 @@ export const socialAccountLink = createReducer(
 	}
 );
 
+export const authAccountType = createReducer( null, {
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST ]: () => null,
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE ]: () => null,
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS ]: ( state, { data: { type } } ) => type,
+} );
+
 export default combineReducers( {
+	authAccountType,
 	isFormDisabled,
 	isRequesting,
 	isRequestingTwoFactorAuth,

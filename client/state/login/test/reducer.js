@@ -48,6 +48,7 @@ import {
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'authAccountType',
 			'isFormDisabled',
 			'isRequesting',
 			'isRequestingTwoFactorAuth',

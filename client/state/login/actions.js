@@ -14,6 +14,9 @@ import { translate } from 'i18n-calypso';
  */
 import config from 'config';
 import {
+	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
+	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
+	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS,
 	LOGIN_FORM_UPDATE,
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
@@ -571,4 +574,40 @@ export const logoutUser = redirectTo => ( dispatch, getState ) => {
 
 			return Promise.reject( error );
 		} );
+};
+
+/**
+ * Retrieves the type of authentication of the account of the specified user.
+ *
+ * @param {String} usernameOrEmail - id of the user
+ * @return {Function} a promise that will resolve once the authentication account type has been retrieved
+ */
+export const getAuthAccountType = ( usernameOrEmail ) => dispatch => {
+	dispatch( {
+		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
+	} );
+
+	if ( usernameOrEmail === '' ) {
+		const error = {
+			code: 'empty_username',
+			message: translate( 'Please enter a username or email address.' ),
+			field: 'usernameOrEmail',
+		};
+
+		dispatch( {
+			type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
+			error,
+		} );
+
+		return Promise.reject( error );
+	}
+
+	dispatch( {
+		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS,
+		data: {
+			type: 'regular',
+		},
+	} );
+
+	return Promise.resolve();
 };

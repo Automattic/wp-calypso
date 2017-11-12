@@ -31,7 +31,7 @@ describe( 'LoginForm', () => {
 				<LoginForm translate={ noop } socialAccountLink={ { isLinking: false } } />
 			);
 			expect( wrapper.find( FormTextInput ).length ).to.equal( 1 );
-			expect( wrapper.find( FormPasswordInput ).length ).to.equal( 1 );
+			expect( wrapper.find( FormPasswordInput ).length ).to.equal( 0 );
 			expect( wrapper.find( FormsButton ).length ).to.equal( 1 );
 		} );
 	} );
