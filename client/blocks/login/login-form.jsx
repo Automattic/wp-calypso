@@ -29,10 +29,10 @@ import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
 	getRequestError,
-	isFormDisabled,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkEmail,
 	getSocialAccountLinkService,
+	isFormDisabled,
 } from 'state/login/selectors';
 import Notice from 'components/notice';
 import SocialLoginForm from './social';
@@ -40,8 +40,10 @@ import SocialLoginForm from './social';
 export class LoginForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
+		isFormDisabled: PropTypes.bool,
 		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
+		oauth2Client: PropTypes.object,
 		onSuccess: PropTypes.func.isRequired,
 		privateSite: PropTypes.bool,
 		redirectTo: PropTypes.string,
@@ -49,12 +51,10 @@ export class LoginForm extends Component {
 		socialAccountIsLinking: PropTypes.bool,
 		socialAccountLinkEmail: PropTypes.string,
 		socialAccountLinkService: PropTypes.string,
-		userEmail: PropTypes.string,
-		translate: PropTypes.func.isRequired,
-		isFormDisabled: PropTypes.bool,
-		oauth2Client: PropTypes.object,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
+		translate: PropTypes.func.isRequired,
+		userEmail: PropTypes.string,
 	};
 
 	state = {
@@ -321,15 +321,15 @@ export class LoginForm extends Component {
 
 export default connect(
 	state => ( {
-		redirectTo: getCurrentQueryArguments( state ).redirect_to,
-		userEmail: getCurrentQueryArguments( state ).email_address,
-		requestError: getRequestError( state ),
 		isFormDisabled: isFormDisabled( state ),
+		isLoggedIn: Boolean( getCurrentUserId( state ) ),
+		oauth2Client: getCurrentOAuth2Client( state ),
+		redirectTo: getCurrentQueryArguments( state ).redirect_to,
+		requestError: getRequestError( state ),
 		socialAccountIsLinking: getSocialAccountIsLinking( state ),
 		socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
 		socialAccountLinkService: getSocialAccountLinkService( state ),
-		isLoggedIn: Boolean( getCurrentUserId( state ) ),
-		oauth2Client: getCurrentOAuth2Client( state ),
+		userEmail: getCurrentQueryArguments( state ).email_address,
 	} ),
 	{
 		formUpdate,
