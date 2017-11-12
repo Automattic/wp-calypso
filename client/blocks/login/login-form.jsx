@@ -141,11 +141,10 @@ export class LoginForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type' );
 
-		this.props.getAuthAccountType( usernameOrEmail )
+		this.props
+			.getAuthAccountType( usernameOrEmail )
 			.then( () => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_success' );
-
-				this.password.focus();
 			} )
 			.catch( error => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_failure', {
@@ -307,10 +306,9 @@ export class LoginForm extends Component {
 
 					<div className="login__form-action">
 						<FormsButton primary { ...isDisabled }>
-							{ ( linkingSocialUser || isRegularAccount( accountType ) )
+							{ linkingSocialUser || isRegularAccount( accountType )
 								? this.props.translate( 'Log In' )
-								: this.props.translate( 'Continue' )
-							}
+								: this.props.translate( 'Continue' ) }
 						</FormsButton>
 					</div>
 

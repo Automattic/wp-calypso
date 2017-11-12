@@ -6,7 +6,7 @@
 
 import React from 'react';
 import request from 'superagent';
-import { get, omit } from 'lodash';
+import { get, omit, defer } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -582,24 +582,28 @@ export const logoutUser = redirectTo => ( dispatch, getState ) => {
  * @param {String} usernameOrEmail - id of the user
  * @return {Function} a promise that will resolve once the authentication account type has been retrieved
  */
-export const getAuthAccountType = ( usernameOrEmail ) => dispatch => {
+export const getAuthAccountType = usernameOrEmail => dispatch => {
 	dispatch( {
 		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
 	} );
 
 	if ( usernameOrEmail === '' ) {
-		const error = {
-			code: 'empty_username',
-			message: translate( 'Please enter a username or email address.' ),
-			field: 'usernameOrEmail',
-		};
+		return new Promise( ( resolve, reject ) => {
+			const error = {
+				code: 'empty_username',
+				message: translate( 'Please enter a username or email address.' ),
+				field: 'usernameOrEmail',
+			};
 
-		dispatch( {
-			type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
-			error,
+			defer( () => {
+				dispatch( {
+					type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
+					error,
+				} );
+
+				reject( error );
+			} );
 		} );
-
-		return Promise.reject( error );
 	}
 
 	dispatch( {
