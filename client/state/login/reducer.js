@@ -60,18 +60,18 @@ export const isRequesting = createReducer( false, {
 
 export const redirectTo = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
-	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
 	[ LOGIN_REQUEST_FAILURE ]: () => null,
+	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
 	[ SOCIAL_LOGIN_REQUEST ]: () => null,
-	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
 	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
+	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: () => null,
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: ( state, action ) =>
 		get( action, 'redirect_to', null ),
 	[ LOGOUT_REQUEST ]: () => null,
-	[ LOGOUT_REQUEST_SUCCESS ]: () => ( state, { data } ) => get( data, 'redirect_to', null ),
 	[ LOGOUT_REQUEST_FAILURE ]: () => null,
+	[ LOGOUT_REQUEST_SUCCESS ]: () => ( state, { data } ) => get( data, 'redirect_to', null ),
 } );
 
 export const isFormDisabled = createReducer( null, {
@@ -86,8 +86,8 @@ export const isFormDisabled = createReducer( null, {
 
 export const requestError = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
-	[ LOGIN_REQUEST_SUCCESS ]: () => null,
 	[ LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => error,
+	[ LOGIN_REQUEST_SUCCESS ]: () => null,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST ]: () => null,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { error } ) => error,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => null,
@@ -105,8 +105,8 @@ export const requestError = createReducer( null, {
 
 export const requestSuccess = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
-	[ LOGIN_REQUEST_SUCCESS ]: () => true,
 	[ LOGIN_REQUEST_FAILURE ]: () => false,
+	[ LOGIN_REQUEST_SUCCESS ]: () => true,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST ]: () => null,
 	[ SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS ]: () => true,
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
@@ -137,6 +137,7 @@ const updateTwoStepNonce = ( state, { twoStepNonce, nonceType } ) =>
 
 export const twoFactorAuth = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
+	[ LOGIN_REQUEST_FAILURE ]: () => null,
 	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => {
 		if ( data ) {
 			const rest = omit( data, 'redirect_to' );
@@ -148,8 +149,8 @@ export const twoFactorAuth = createReducer( null, {
 
 		return null;
 	},
-	[ LOGIN_REQUEST_FAILURE ]: () => null,
 	[ SOCIAL_LOGIN_REQUEST ]: () => null,
+	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
 	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => {
 		if ( data ) {
 			const rest = omit( data, 'redirect_to' );
@@ -161,7 +162,6 @@ export const twoFactorAuth = createReducer( null, {
 
 		return null;
 	},
-	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
 	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => null,
 	[ TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE ]: ( state, { twoStepNonce } ) =>
 		updateTwoStepNonce( state, { twoStepNonce, nonceType: 'sms' } ),
@@ -178,8 +178,8 @@ export const isRequestingTwoFactorAuth = createReducer( false, {
 
 export const twoFactorAuthRequestError = createReducer( null, {
 	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST ]: () => null,
-	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS ]: () => null,
 	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE ]: ( state, { error } ) => error,
+	[ TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS ]: () => null,
 	[ ROUTE_SET ]: () => null,
 	[ LOGIN_FORM_UPDATE ]: () => null,
 } );
