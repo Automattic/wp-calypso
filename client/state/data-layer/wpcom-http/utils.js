@@ -220,7 +220,7 @@ export const dispatchRequestEx = options => {
 		// create the low-level action we want to dispatch
 		const requestAction = createRequestAction( options, action );
 		// dispatch the low level action (if any was created) and return the result
-		return requestAction ? store.dispatch( requestAction ) : undefined;
+		return requestAction ? [].concat( requestAction ).forEach( store.dispatch ) : undefined;
 	};
 };
 
