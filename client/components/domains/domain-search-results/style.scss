@@ -32,7 +32,6 @@
 }
 
 .domain-search-results__transfer-card-copy {
-	margin-left: 10px;
 	p {
 		padding-top: 10px;
 		margin-bottom: 0;
@@ -40,5 +39,10 @@
 }
 
 .domain-search-results__transfer-card-link {
-	min-width: 190px;
+	text-align: right;
+	min-width: 100px;
+
+	@include breakpoint( '>660px' ) {
+		min-width: 170px;
+	}
 }
