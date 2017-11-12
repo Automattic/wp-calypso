@@ -11,15 +11,6 @@ import {
 	POST_REVISIONS_SELECT,
 	POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
 } from 'state/action-types';
-/*
-import {
-	autosave,
-	editPost,
-	startEditingExisting,
-	stopEditing,
-	updateMetadata,
-} from 'state/posts/actions';
-*/
 
 /**
  * Action creator function: POST_REVISIONS_REQUEST

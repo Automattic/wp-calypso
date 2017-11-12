@@ -14,7 +14,6 @@ import { hydrateRevision, normalizeRevision } from 'state/selectors/utils/revisi
 
 const getPostRevisions = createSelector(
 	( state, siteId, postId, normalizerName = null ) =>
-		// @TODO this should probably be gated & cached in a reducer or at least debounced
 		orderBy(
 			map( get( state.posts.revisions.revisions, [ siteId, postId ], {} ), revision =>
 				normalizeRevision( normalizerName, hydrateRevision( state, revision ) )
