@@ -22,6 +22,7 @@ import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestio
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import { isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
+import Card from 'components/card';
 import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { currentUserHasFlag } from 'state/current-user/selectors';
@@ -87,7 +88,7 @@ class DomainSearchResults extends React.Component {
 			includes( [ MAPPABLE, UNKNOWN ], lastDomainStatus ) &&
 			this.props.products.domain_map
 		) {
-			let components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
+			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
 			if ( isNextDomainFree( this.props.cart ) ) {
 				offer = translate(
@@ -106,41 +107,43 @@ class DomainSearchResults extends React.Component {
 				);
 			}
 
-			if ( this.props.transferInAllowed ) {
-				components = { a: <a href="#" onClick={ this.handleAddTransfer } />, small: <small /> };
-
-				if ( isNextDomainFree( this.props.cart ) ) {
-					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}transfer it{{/a}} for free.{{/small}}',
-						{ args: { domain }, components }
-					);
-				} else if ( ! this.props.domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
-					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}transfer it{{/a}}.{{/small}}',
-						{ args: { domain }, components }
-					);
-				} else {
-					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}transfer it{{/a}} ' +
-							'with WordPress.com Premium.{{/small}}',
-						{ args: { domain }, components }
-					);
-				}
-			}
-
 			const domainUnavailableMessage =
 				lastDomainStatus === UNKNOWN
-					? translate( '.%(tld)s domains are not offered on WordPress.com.', {
+					? translate( '{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com.', {
 							args: { tld: getTld( domain ) },
+							components: { strong: <strong /> },
 						} )
-					: translate( '%(domain)s is taken.', { args: { domain } } );
+					: translate( '{{strong}}%(domain)s{{/strong}} is taken.', {
+							args: { domain },
+							components: { strong: <strong /> },
+						} );
 
 			if ( this.props.offerUnavailableOption ) {
-				availabilityElement = (
-					<Notice status="is-warning" showDismiss={ false }>
-						{ domainUnavailableMessage } { offer }
-					</Notice>
-				);
+				if ( this.props.transferInAllowed ) {
+					availabilityElement = (
+						<Card className="domain-search-results__transfer-card" highlight="info">
+							<div className="domain-search-results__transfer-card-copy">
+								<div>{ domainUnavailableMessage }</div>
+								<p>
+									{ translate(
+										'If you already own this domain you can use it for your WordPress.com site.'
+									) }
+								</p>
+							</div>
+							<div className="domain-search-results__transfer-card-link">
+								{ translate( '{{a}}Yes, I own this domain{{/a}}', {
+									components: { a: <a href="#" onClick={ this.props.onClickTransfer } /> },
+								} ) }
+							</div>
+						</Card>
+					);
+				} else {
+					availabilityElement = (
+						<Notice status="is-warning" showDismiss={ false }>
+							{ domainUnavailableMessage } { offer }
+						</Notice>
+					);
+				}
 			}
 		}
 
