@@ -309,7 +309,6 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		// @TODO validate this behavior
 		test( 'should clear selection when toggling dialog', () => {
 			const state = selection(
 				deepFreeze( {

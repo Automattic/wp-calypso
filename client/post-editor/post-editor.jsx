@@ -149,17 +149,11 @@ export const PostEditor = createReactClass( {
 	},
 
 	componentDidUpdate() {
-		// TODO: Is this still needed?
-		// if (
-		// 	prevProps.nestedSidebarTarget !== NESTED_SIDEBAR_NONE &&
-		// 	this.props.nestedSidebarTarget === NESTED_SIDEBAR_NONE
-		// ) {
 		// NOTE: Make sure we scroll back to the top AND trigger a scroll
 		// event no matter the scroll position we're coming from.
 		// ( used to force-reset TinyMCE toolbar )
 		window.scrollTo( 0, 1 );
 		window.scrollTo( 0, 0 );
-		// }
 	},
 
 	componentWillUpdate( nextProps, nextState ) {
