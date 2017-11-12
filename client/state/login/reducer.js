@@ -253,17 +253,17 @@ export const socialAccountLink = createReducer(
 );
 
 export default combineReducers( {
+	isFormDisabled,
 	isRequesting,
 	isRequestingTwoFactorAuth,
 	magicLogin,
 	redirectTo,
-	isFormDisabled,
 	requestError,
 	requestNotice,
 	requestSuccess,
-	twoFactorAuth,
-	twoFactorAuthRequestError,
-	twoFactorAuthPushPoll,
 	socialAccount,
 	socialAccountLink,
+	twoFactorAuth,
+	twoFactorAuthPushPoll,
+	twoFactorAuthRequestError,
 } );
