@@ -3,9 +3,10 @@
  *
  * @format
  */
-
+import PropTypes from 'prop-types';
 import React from 'react';
-import { some } from 'lodash';
+import some from 'lodash/some';
+import noop from 'lodash/noop';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -32,11 +33,32 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
 import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
 
-class CreditCardPaymentBox extends React.Component {
-	state = {
-		progress: 0,
-		previousCart: null,
+export class CreditCardPaymentBox extends React.Component {
+	static propTypes = {
+		cart: PropTypes.object.isRequired,
+		transaction: PropTypes.object.isRequired,
+		transactionStep: PropTypes.object.isRequired,
+		cards: PropTypes.array,
+		countriesList: PropTypes.object,
+		initialCard: PropTypes.object,
+		onSubmit: PropTypes.func,
 	};
+
+	static defaultProps = {
+		cards: [],
+		countriesList: {},
+		initialCard: null,
+		onSubmit: noop,
+	};
+
+	constructor( props ) {
+		super( props );
+		this.state = {
+			progress: 0,
+			previousCart: null,
+		};
+		this.timer = null;
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if (
@@ -45,10 +67,19 @@ class CreditCardPaymentBox extends React.Component {
 		) {
 			this.timer = setInterval( this.tick, 100 );
 		}
+
+		if ( nextProps.transactionStep.error ) {
+			this.clearTickInterval();
+		}
 	}
 
 	componentWillUnmount() {
+		this.clearTickInterval();
+	}
+
+	clearTickInterval() {
 		clearInterval( this.timer );
+		this.timer = null;
 	}
 
 	tick = () => {
@@ -64,7 +95,7 @@ class CreditCardPaymentBox extends React.Component {
 				return false;
 
 			case INPUT_VALIDATION:
-				if ( this.props.transactionStep.error ) {
+				if ( transactionStep.error ) {
 					return false;
 				}
 				return true;
@@ -87,7 +118,7 @@ class CreditCardPaymentBox extends React.Component {
 
 	progressBar = () => {
 		return (
-			<div className="credit-card-payment-box__progress-bar">
+			<div className="checkout__credit-card-payment-box-progress-bar">
 				{ this.props.translate( 'Processing payment…' ) }
 				<ProgressBar value={ Math.round( this.state.progress ) } isPulsing />
 			</div>
@@ -95,7 +126,7 @@ class CreditCardPaymentBox extends React.Component {
 	};
 
 	paymentButtons = () => {
-		const cart = this.props.cart,
+		const { cart, transactionStep, translate } = this.props,
 			hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } ),
 			showPaymentChatButton =
 				config.isEnabled( 'upgrades/presale-chat' ) &&
@@ -105,12 +136,12 @@ class CreditCardPaymentBox extends React.Component {
 
 		return (
 			<div className={ paymentButtonClasses }>
-				<PayButton cart={ this.props.cart } transactionStep={ this.props.transactionStep } />
+				<PayButton cart={ cart } transactionStep={ transactionStep } />
 
 				<div className="checkout__secure-payment">
 					<div className="checkout__secure-payment-content">
 						<Gridicon icon="lock" />
-						{ this.props.translate( 'Secure Payment' ) }
+						{ translate( 'Secure Payment' ) }
 					</div>
 				</div>
 
@@ -121,8 +152,8 @@ class CreditCardPaymentBox extends React.Component {
 				{ showPaymentChatButton && (
 					<PaymentChatButton
 						paymentType="credits"
-						cart={ this.props.cart }
-						transactionStep={ this.props.transactionStep }
+						cart={ cart }
+						transactionStep={ transactionStep }
 					/>
 				) }
 			</div>
@@ -135,7 +166,7 @@ class CreditCardPaymentBox extends React.Component {
 			content = this.progressBar();
 		}
 
-		return <div className="payment-box-actions">{ content }</div>;
+		return <div className="checkout__payment-box-actions">{ content }</div>;
 	};
 
 	submit = event => {
@@ -147,15 +178,15 @@ class CreditCardPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		var cart = this.props.cart;
+		const { cart, cards, countriesList, initialCard, transaction } = this.props;
 
 		return (
 			<form autoComplete="off" onSubmit={ this.submit }>
 				<CreditCardSelector
-					cards={ this.props.cards }
-					countriesList={ this.props.countriesList }
-					initialCard={ this.props.initialCard }
-					transaction={ this.props.transaction }
+					cards={ cards }
+					countriesList={ countriesList }
+					initialCard={ initialCard }
+					transaction={ transaction }
 				/>
 
 				<TermsOfService
