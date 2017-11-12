@@ -34,11 +34,7 @@
 .transfer-domain-step__domain-description {
 	font-size: 16px;
 	color: #2e4453;
-
-	@include breakpoint( ">960px" ) {
-		float: left;
-		margin-bottom: 20px;
-	}
+	margin-bottom: 10px;
 }
 
 .transfer-domain-step__go {
