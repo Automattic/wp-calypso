@@ -20,6 +20,7 @@ import { getPromotions } from 'woocommerce/state/selectors/promotions';
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import { setPromotionSearch } from 'woocommerce/state/ui/promotions/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -37,10 +38,6 @@ class Promotions extends Component {
 
 	constructor( props ) {
 		super( props );
-
-		this.state = {
-			searchFilter: '',
-		};
 	}
 
 	componentDidMount() {
@@ -60,16 +57,12 @@ class Promotions extends Component {
 		}
 	}
 
-	onSearch = searchFilter => {
-		this.setState( () => ( { searchFilter } ) );
-	};
-
 	renderSearchCard() {
 		const { site, promotions, translate } = this.props;
 
 		return (
 			<SearchCard
-				onSearch={ this.onSearch }
+				onSearch={ this.props.setPromotionSearch }
 				delaySearch
 				delayTimeout={ 400 }
 				disabled={ ! site || ! promotions }
@@ -96,12 +89,10 @@ class Promotions extends Component {
 	}
 
 	renderContent() {
-		const { searchFilter } = this.state;
-
 		return (
 			<div>
 				{ this.renderSearchCard() }
-				<PromotionsList searchFilter={ searchFilter } />
+				<PromotionsList />
 			</div>
 		);
 	}
@@ -141,6 +132,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchPromotions,
+			setPromotionSearch,
 		},
 		dispatch
 	);

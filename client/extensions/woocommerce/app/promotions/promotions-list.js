@@ -20,6 +20,7 @@ import {
 	getPromotionsPage,
 	getPromotionsCurrentPage,
 	getPromotionsPerPage,
+	getPromotionsSearch,
 } from 'woocommerce/state/selectors/promotions';
 import PromotionsListTable from './promotions-list-table';
 import PromotionsListPagination from './promotions-list-pagination';
@@ -59,7 +60,7 @@ const PromotionsList = props => {
 
 	const switchPage = index => {
 		if ( site ) {
-			props.setPromotionsPage( site.ID, index, perPage );
+			props.setPromotionsPage( index, perPage );
 		}
 	};
 
@@ -88,15 +89,16 @@ PromotionsList.propTypes = {
 	promotionsPage: PropTypes.array,
 };
 
-function mapStateToProps( state, ownProps ) {
+function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const currentPage = site && getPromotionsCurrentPage( state );
 	const perPage = site && getPromotionsPerPage( state );
+	const searchFilter = getPromotionsSearch( state );
 	const promotions = site && getPromotions( state, site.ID );
 	const filteredPromotions =
 		promotions &&
 		promotions.filter( promotion => {
-			return promotionContainsString( promotion, ownProps.searchFilter );
+			return promotionContainsString( promotion, searchFilter );
 		} );
 	const promotionsPage = site && getPromotionsPage( filteredPromotions, currentPage, perPage );
 
@@ -107,6 +109,7 @@ function mapStateToProps( state, ownProps ) {
 		promotionsPage,
 		currentPage,
 		perPage,
+		searchFilter,
 	};
 }
 

@@ -44,6 +44,11 @@ export function getPromotionsPerPage( rootState ) {
 	return list.perPage;
 }
 
+export function getPromotionsSearch( rootState ) {
+	const list = get( rootState, [ 'extensions', 'woocommerce', 'ui', 'promotions', 'list' ], {} );
+	return list.searchFilter;
+}
+
 export function getCurrentlyEditingPromotionId(
 	rootState,
 	siteId = getSelectedSiteWithFallback( rootState )
