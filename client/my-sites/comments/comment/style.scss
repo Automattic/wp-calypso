@@ -178,14 +178,11 @@
 // Comment Content Block
 
 .comment__content {
-	padding: 0 16px 16px 56px;
-
-	.comment__content-info {
-		margin-top: 16px;
-	}
+	padding: 8px 16px 16px 56px;
 
 	.comment__post-link {
 		font-weight: 600;
+		margin-bottom: 16px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -208,7 +205,7 @@
 	.comment__in-reply-to {
 		border-left: 4px solid lighten($gray, 30%);
 		color: $gray-text-min;
-		margin: 16px 0;
+		margin-bottom: 16px;
 		overflow: hidden;
 		padding: 2px 4px;
 		text-overflow: ellipsis;
@@ -230,10 +227,6 @@
 		a:hover {
 			color: $blue-wordpress;
 		}
-	}
-
-	.comment__content-body {
-		margin-top: 16px;
 	}
 
 	.comment__content-body *:last-child {
@@ -505,6 +498,10 @@
 
 	.comment__author {
 		padding-left: 0;
+	}
+
+	.comment__content {
+		padding-top: 0;
 	}
 
 	.comment__in-reply-to {
