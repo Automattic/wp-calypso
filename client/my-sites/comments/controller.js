@@ -29,7 +29,8 @@ const changePage = path => pageNumber => {
 	return page( addQueryArgs( { page: pageNumber }, path ) );
 };
 
-export const siteComments = ( { params, path, query, store } ) => {
+export const siteComments = context => {
+	const { params, path, query, store } = context;
 	const siteFragment = route.getSiteFragment( path );
 
 	if ( ! siteFragment ) {
