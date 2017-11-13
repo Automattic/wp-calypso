@@ -1,9 +1,7 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import { compact, get, head, isEqual, sortBy, toPairs, unionWith } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
@@ -19,20 +17,20 @@ const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
  * @module state/data-layer/wpcom-http/optimizations/remove-duplicate-gets
  */
 
-/** @type {Map} holds in-transit request keys */
-const requestQueue = new Map();
+/** @type {Map<String,Object>} holds in-transit request keys */
+const requestLog = new Map();
 
 /**
  * Empties the duplication queue
  *
  * FOR TESTING ONLY!
  */
-export const clearQueue = () => {
+export const clearRequestLog = () => {
 	if ( 'undefined' !== typeof window ) {
 		throw new Error( '`clearQueue()` is not for use in production - only in testing!' );
 	}
 
-	requestQueue.clear();
+	requestLog.clear();
 };
 
 /**
@@ -78,6 +76,7 @@ export const addResponder = ( list, item ) => ( {
  */
 export const removeDuplicateGets = outboundData => {
 	const { nextRequest } = outboundData;
+	const { options: { dedupeWindow = 0 } = {} } = nextRequest;
 
 	if ( ! isGetRequest( nextRequest ) ) {
 		return outboundData;
@@ -89,12 +88,19 @@ export const removeDuplicateGets = outboundData => {
 	}
 
 	const key = buildKey( nextRequest );
-	const queued = requestQueue.get( key );
+	const { lastRequest, queued } = requestLog.get( key ) || {};
 	const request = addResponder( queued || { failures: [], successes: [] }, nextRequest );
+	const now = Date.now();
+	const shouldDrop = undefined !== lastRequest && now - lastRequest < dedupeWindow;
 
-	requestQueue.set( key, request );
+	// on outbound block all further duplicates
+	// only update lastRequest time if actually sending out a new request
+	requestLog.set( key, {
+		lastRequest: shouldDrop ? lastRequest : Infinity,
+		queued: request,
+	} );
 
-	return queued ? { ...outboundData, nextRequest: null } : outboundData;
+	return shouldDrop ? { ...outboundData, nextRequest: null } : outboundData;
 };
 
 /**
@@ -115,7 +121,7 @@ export const applyDuplicatesHandlers = inboundData => {
 	}
 
 	const key = buildKey( originalRequest );
-	const queued = requestQueue.get( key );
+	const { queued } = requestLog.get( key ) || {};
 
 	if ( ! queued ) {
 		debug(
@@ -126,7 +132,8 @@ export const applyDuplicatesHandlers = inboundData => {
 		return inboundData;
 	}
 
-	requestQueue.delete( key );
+	// reset the timer for this type of request
+	requestLog.set( key, { lastRequest: Date.now() } );
 
 	const responders = {
 		failures: unionWith( inboundData.failures || [], queued.failures, isEqual ),
