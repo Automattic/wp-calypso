@@ -100,10 +100,7 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				// Should Babel transpile the file at `filepath`?
-				include: ( filepath ) => {
-					return ( ! pathIsInside( filepath, nodeModulesDir ) ||
-						hasPkgEsnext( filepath ) );
-				},
+				include: ( filepath ) => ( ! pathIsInside( filepath, nodeModulesDir ) || hasPkgEsnext( filepath ) ),
 				loader: [ 'happypack/loader' ]
 			},
 			{
