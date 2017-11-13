@@ -20,8 +20,8 @@ describe( 'LoggedOutForm', () => {
 	test( 'should render', () => {
 		const wrapper = shallow(
 			<LoggedOutForm
+				authorizationData={ LOGGED_OUT_PROPS.jetpackConnectAuthorize }
 				createAccount={ noop }
-				jetpackConnectAuthorize={ LOGGED_OUT_PROPS.jetpackConnectAuthorize }
 				recordTracksEvent={ noop }
 				translate={ identity }
 			/>
@@ -33,11 +33,11 @@ describe( 'LoggedOutForm', () => {
 	test( 'should render with locale suggestions', () => {
 		const wrapper = shallow(
 			<LoggedOutForm
-				createAccount={ noop }
-				jetpackConnectAuthorize={ {
+				authorizationData={ {
 					...LOGGED_OUT_PROPS.jetpackConnectAuthorize,
 					locale: 'es',
 				} }
+				createAccount={ noop }
 				locale="es"
 				path="/jetpack/connect/authorize/es"
 				recordTracksEvent={ noop }
