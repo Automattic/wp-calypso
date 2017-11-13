@@ -267,7 +267,7 @@ class Draft extends Component {
 				<div className="draft__actions">
 					<p className="post-relative-time-status">
 						<span className="time">
-							<span className="noticon noticon-time" />
+							<Gridicon icon="time" size={ 18 } />
 							<span className="time-text" />
 						</span>
 					</p>
@@ -296,10 +296,12 @@ class Draft extends Component {
 		return (
 			<div className="draft__all-actions">
 				<PostRelativeTimeStatus post={ this.props.post } includeEditLink={ true } />
-				<span
-					className="draft__actions-toggle noticon noticon-ellipsis"
+				<Gridicon
+					className="draft__actions-toggle"
 					onClick={ this.togglePopoverMenu }
 					ref="popoverMenuButton"
+					icon="ellipsis"
+					size={ 18 }
 				/>
 				<PopoverMenu
 					isVisible={ this.state.showPopoverMenu }
