@@ -23,7 +23,9 @@ describe( '#jetpackConnectSessions()', () => {
 			url: 'https://example.wordpress.com',
 		} );
 
-		expect( typeof state ).toBe( 'object' );
+		expect( state ).toMatchObject( {
+			'example.wordpress.com': expect.any( Object ),
+		} );
 	} );
 
 	test( 'should convert forward slashes to double colon when checking a new url', () => {
@@ -32,7 +34,9 @@ describe( '#jetpackConnectSessions()', () => {
 			url: 'https://example.wordpress.com/example123',
 		} );
 
-		expect( typeof state ).toBe( 'object' );
+		expect( state ).toMatchObject( {
+			'example.wordpress.com::example123': expect.any( Object ),
+		} );
 	} );
 
 	test( 'should store a timestamp when checking a new url', () => {
