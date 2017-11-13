@@ -25,6 +25,9 @@ class EditorRevisionsListItem extends PureComponent {
 	render() {
 		const { revision, isMultiUserSite, translate } = this.props;
 		const authorName = get( revision, 'author.display_name' );
+		const added = get( revision, 'changes.added' );
+		const removed = get( revision, 'changes.removed' );
+
 		return (
 			<button
 				className="editor-revisions-list__button"
@@ -39,34 +42,34 @@ class EditorRevisionsListItem extends PureComponent {
 					isMultiUserSite && <span className="editor-revisions-list__author">{ authorName }</span> }
 
 				<div className="editor-revisions-list__changes">
-					{ revision.changes.added > 0 && (
+					{ added > 0 && (
 						<span
 							className="editor-revisions-list__additions"
 							aria-label={ translate( '%(changes)d word added', '%(changes)d words added', {
-								args: { changes: revision.changes.added },
-								count: revision.changes.added,
+								args: { changes: added },
+								count: added,
 							} ) }
 						>
 							<b>+</b>
-							{ revision.changes.added }
+							{ added }
 						</span>
 					) }
 
-					{ revision.changes.removed > 0 && (
+					{ removed > 0 && (
 						<span
 							className="editor-revisions-list__deletions"
 							aria-label={ translate( '%(changes)d word removed', '%(changes)d words removed', {
-								args: { changes: revision.changes.removed },
-								count: revision.changes.removed,
+								args: { changes: removed },
+								count: removed,
 							} ) }
 						>
 							<b>-</b>
-							{ revision.changes.removed }
+							{ removed }
 						</span>
 					) }
 
-					{ revision.changes.added === 0 &&
-						revision.changes.removed === 0 && (
+					{ added === 0 &&
+						removed === 0 && (
 							<span className="editor-revisions-list__minor-changes">{ translate( 'minor' ) }</span>
 						) }
 				</div>
