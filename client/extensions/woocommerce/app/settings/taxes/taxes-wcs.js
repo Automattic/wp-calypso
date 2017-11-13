@@ -51,9 +51,13 @@ class SettingsTaxesWooCommerceServices extends Component {
 	}
 
 	static propTypes = {
+		className: PropTypes.string,
+		loaded: PropTypes.bool,
+		pricesIncludeTaxes: PropTypes.bool,
+		shippingIsTaxable: PropTypes.bool,
 		siteSlug: PropTypes.string.isRequired,
 		siteId: PropTypes.number.isRequired,
-		className: PropTypes.string,
+		taxesEnabled: PropTypes.bool,
 	};
 
 	componentDidMount = () => {

@@ -27,11 +27,7 @@ class SettingsTaxesTaxJar extends Component {
 			options: PropTypes.shape( {
 				admin_url: PropTypes.string.isRequired,
 			} ),
-		} ),
-	};
-
-	onDeactivate = event => {
-		event.preventDefault();
+		} ).isRequired,
 	};
 
 	render = () => {

@@ -26,8 +26,10 @@ import SettingsTaxesWooCommerceServices from './taxes-wcs';
 class SettingsTaxes extends Component {
 	static propTypes = {
 		className: PropTypes.string,
+		isRequestingSitePlugins: PropTypes.bool,
 		siteId: PropTypes.number,
 		sitePluginsLoaded: PropTypes.bool,
+		siteSlug: PropTypes.string,
 		taxJarPluginActive: PropTypes.bool,
 	};
 
