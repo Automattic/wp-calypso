@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { isEnabled } from 'config';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -119,10 +120,12 @@ class PostItem extends React.Component {
 			'has-wrapped-title': wrapTitle,
 		} );
 
-		const isSiteInfoVisible = isEnabled( 'posts/post-type-list' ) && isAllSitesModeSelected;
+		const arePostsCondensed =
+			isEnabled( 'posts/post-type-list' ) && abtest( 'condensedPostList' ) === 'condensedPosts';
 
-		const isAuthorVisible =
-			isEnabled( 'posts/post-type-list' ) && this.hasMultipleUsers() && post && post.author;
+		const isSiteInfoVisible = arePostsCondensed && isAllSitesModeSelected;
+
+		const isAuthorVisible = arePostsCondensed && this.hasMultipleUsers() && post && post.author;
 
 		const expandedContent = this.renderExpandedContent();
 
@@ -146,16 +149,16 @@ class PostItem extends React.Component {
 								</a>
 							) }
 							{ ! isPlaceholder &&
-							externalPostLink && (
-								<ExternalLink
-									icon={ true }
-									href={ postUrl }
-									target="_blank"
-									className="post-item__title-link"
-								>
-									{ title || translate( 'Untitled' ) }
-								</ExternalLink>
-							) }
+								externalPostLink && (
+									<ExternalLink
+										icon={ true }
+										href={ postUrl }
+										target="_blank"
+										className="post-item__title-link"
+									>
+										{ title || translate( 'Untitled' ) }
+									</ExternalLink>
+								) }
 						</h1>
 						<div className="post-item__meta">
 							<PostTime globalId={ globalId } />
