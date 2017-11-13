@@ -516,12 +516,14 @@ class ThemeSheet extends React.Component {
 		const { getUrl } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
+		const { isActive } = this.props;
 
 		return (
 			<Button
 				className="theme__sheet-primary-button"
 				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }
+				primary={ isActive }
 			>
 				{ this.isLoaded() ? label : placeholder }
 				{ this.props.isWpcomTheme && this.renderPrice() }
