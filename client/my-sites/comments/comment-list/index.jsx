@@ -394,6 +394,8 @@ export class CommentList extends Component {
 
 	toggleSelectAll = selectedComments => this.setState( { selectedComments } );
 
+	updateLastUndo = commentId => this.setState( { lastUndo: commentId } );
+
 	updatePersistedComments = ( commentId, isUndo ) => {
 		if ( isUndo ) {
 			this.removeFromPersistedComments( commentId );
@@ -480,9 +482,8 @@ export class CommentList extends Component {
 									isCommentsTreeSupported &&
 									! this.hasCommentJustMovedBackToCurrentStatus( commentId )
 								}
-								removeFromPersisted={ this.removeFromPersistedComments }
 								toggleSelected={ this.toggleCommentSelected }
-								updatePersisted={ this.updatePersistedComments }
+								updateLastUndo={ this.updateLastUndo }
 							/>
 						) ) }
 

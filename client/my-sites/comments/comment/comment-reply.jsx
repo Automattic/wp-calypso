@@ -23,6 +23,7 @@ import {
 } from 'state/analytics/actions';
 import { changeCommentStatus, replyComment } from 'state/comments/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -88,12 +89,25 @@ export class CommentReply extends Component {
 	};
 
 	submitReply = () => {
-		const { approveComment, commentStatus, postId, replyToComment, siteId } = this.props;
+		const { approveComment, commentStatus, postId, replyToComment, siteId, translate } = this.props;
 		const { replyContent } = this.state;
+
+		this.props.removeNotice( 'comment-notice' );
 
 		const alsoApprove = 'approved' !== commentStatus;
 
 		replyToComment( replyContent, siteId, postId, { alsoApprove } );
+
+		this.props.successNotice(
+			alsoApprove
+				? translate( 'Comment approved and reply submitted.' )
+				: translate( 'Reply submitted.' ),
+			{
+				id: 'comment-notice',
+				isPersistent: true,
+			}
+		);
+
 		this.setState( { replyContent: '' } );
 		this.blurReply();
 
@@ -200,6 +214,7 @@ const mapDispatchToProps = ( dispatch, { commentId } ) => ( {
 				changeCommentStatus( siteId, postId, commentId, 'approved' )
 			)
 		),
+	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
 	replyToComment: ( replyContent, siteId, postId, analytics = { alsoApprove: false } ) =>
 		dispatch(
 			withAnalytics(
@@ -212,6 +227,7 @@ const mapDispatchToProps = ( dispatch, { commentId } ) => ( {
 				replyComment( replyContent, siteId, postId, commentId )
 			)
 		),
+	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentReply ) );
