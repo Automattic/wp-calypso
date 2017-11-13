@@ -14,7 +14,8 @@
 
 	&.is-pending {
 		background: mix($alert-yellow, $white, 8.5%);
-		border-left: 4px solid $alert-yellow;
+		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px transparentize(lighten($gray, 20%), 0.5),
+			0 1px 2px lighten($gray, 30%);
 	}
 
 	@include breakpoint( '<960px' ) {
@@ -351,9 +352,8 @@
 // Comment Reply Block
 
 .comment__reply {
-	border-top: 1px solid lighten($gray, 30%);
 	display: none;
-	padding: 16px;
+	padding: 0 16px 16px 16px;
 }
 
 .comment__reply-wrapper {
