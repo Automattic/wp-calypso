@@ -56,4 +56,52 @@ describe( 'fromApi()', () => {
 
 		expect( invalidateCall ).toThrowError( SchemaError );
 	} );
+
+	test( 'should invalidate missing begin_timestamp.', () => {
+		const invalidateMissingBeginTimestamp = () => {
+			const invalidResponse = [
+				{
+					end_timestamp: 400,
+					schedule_id: 999,
+					description: 'wrong',
+				},
+			];
+
+			fromApi( invalidResponse );
+		};
+
+		expect( invalidateMissingBeginTimestamp ).toThrowError( SchemaError );
+	} );
+
+	test( 'should invalidate missing end_timestamp.', () => {
+		const invalidateMissingEndTimestamp = () => {
+			const invalidResponse = [
+				{
+					begin_timestamp: 'haha',
+					schedule_id: 999,
+					description: 'wrong',
+				},
+			];
+
+			fromApi( invalidResponse );
+		};
+
+		expect( invalidateMissingEndTimestamp ).toThrowError( SchemaError );
+	} );
+
+	test( 'should invalidate missing schedule_id.', () => {
+		const invalidateMissingScheduleId = () => {
+			const invalidResponse = [
+				{
+					begin_timestamp: 'haha',
+					end_timestamp: 400,
+					description: 'wrong',
+				},
+			];
+
+			fromApi( invalidResponse );
+		};
+
+		expect( invalidateMissingScheduleId ).toThrowError( SchemaError );
+	} );
 } );

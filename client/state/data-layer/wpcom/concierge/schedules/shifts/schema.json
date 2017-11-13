@@ -2,6 +2,11 @@
 	"type": "array",
 	"items": {
 		"type": "object",
+		"required": [
+			"begin_timestamp",
+			"end_timestamp",
+			"schedule_id"
+		],
 		"properties": {
 			"begin_timestamp": { "type": "integer" },
 			"end_timestamp": { "type": "integer" },
