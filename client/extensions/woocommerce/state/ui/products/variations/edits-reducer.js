@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { compact, find, isEqual, uniqueId } from 'lodash';

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { every, filter, find, get, pick, reduce, some, sortBy, values } from 'lodash';

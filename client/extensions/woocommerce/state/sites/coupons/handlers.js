@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 import { trim } from 'lodash';
 import warn from 'lib/warn';

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { THEME_BACK_PATH_SET } from 'state/action-types';

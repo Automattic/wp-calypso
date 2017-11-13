@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { pick, omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';

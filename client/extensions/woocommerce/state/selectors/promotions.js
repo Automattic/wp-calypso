@@ -3,10 +3,10 @@
  */
 import { get, find, isObject } from 'lodash';
 
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { getSelectedSiteWithFallback } from '../sites/selectors';

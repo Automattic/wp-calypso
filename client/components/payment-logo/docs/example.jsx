@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -12,12 +12,12 @@ import React from 'react';
 import PaymentLogo from '../index';
 
 class PaymentLogoExamples extends React.PureComponent {
-    render() {
+	render() {
 		return (
 			<div>
-				<PaymentLogo type="amex" />  <PaymentLogo type="discover" /> {' '}
-				<PaymentLogo type="mastercard" />  <PaymentLogo type="visa" /> {' '}
-				<PaymentLogo type="paypal" isCompact />  <PaymentLogo type="paypal" />
+				<PaymentLogo type="amex" /> <PaymentLogo type="discover" /> {' '}
+				<PaymentLogo type="mastercard" /> <PaymentLogo type="visa" /> {' '}
+				<PaymentLogo type="paypal" isCompact /> <PaymentLogo type="paypal" />
 			</div>
 		);
 	}

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
@@ -11,11 +11,14 @@ import {
 	ZONINATOR_UPDATE_FEED,
 } from '../action-types';
 
-const isRequesting = createReducer( {}, {
-	[ ZONINATOR_REQUEST_FEED ]: () => true,
-	[ ZONINATOR_REQUEST_FEED_ERROR ]: () => false,
-	[ ZONINATOR_UPDATE_FEED ]: () => false,
-} );
+const isRequesting = createReducer(
+	{},
+	{
+		[ ZONINATOR_REQUEST_FEED ]: () => true,
+		[ ZONINATOR_REQUEST_FEED_ERROR ]: () => false,
+		[ ZONINATOR_UPDATE_FEED ]: () => false,
+	}
+);
 
 export const requesting = keyedReducer( 'siteId', keyedReducer( 'zoneId', isRequesting ) );
 

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -13,7 +13,7 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 
 class Cards extends React.Component {
-    static displayName = 'Cards';
+	static displayName = 'Cards';
 
 	state = {
 		compactCards: false,
