@@ -18,6 +18,7 @@ import moment from 'moment';
 import { themeActivated } from 'state/themes/actions';
 import analytics from 'lib/analytics';
 import { loadTrackingTool } from 'state/analytics/actions';
+import WordPressLogo from 'components/wordpress-logo';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
@@ -278,7 +279,7 @@ class CheckoutThankYou extends React.Component {
 		if ( ! purchases.length && ! failedPurchases.length && ! this.isGenericReceipt() ) {
 			// disabled because we use global loader icon
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			return <div className="wpcom-site__logo noticon noticon-wordpress" />;
+			return <WordPressLogo className="wpcom-site__logo" />;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
