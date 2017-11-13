@@ -3,16 +3,15 @@
  *
  * @format
  */
-
-import { get } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { AUTH_ATTEMPS_TTL } from './constants';
 import { getSiteByUrl } from 'state/sites/selectors';
 import { isStale } from './utils';
 import { urlToSlug } from 'lib/url';
-import { AUTH_ATTEMPS_TTL } from './constants';
 
 const getJetpackSiteByUrl = ( state, url ) => {
 	const site = getSiteByUrl( state, url );
@@ -103,33 +102,35 @@ const getUserAlreadyConnected = state => {
 };
 
 /**
- * XMLRPC errors can be identified by the presence of an error message, the presence of an authorization code
- * and if the error message contains the string 'error'
+ * Returns true if there is an XMLRPC error.
  *
- * @param {object} state Global state tree
- * @returns {Boolean} If there's an xmlrpc error or not
+ * XMLRPC errors can be identified by the presence of an error message, the presence of an
+ * authorization code, and if the error message contains the string 'error'.
+ *
+ * @param  {object}  state Global state tree
+ * @return {Boolean}       True if there's an xmlrpc error otherwise false
  */
 const hasXmlrpcError = function( state ) {
 	const authorizeData = getAuthorizationData( state );
 
 	return (
-		authorizeData &&
-		authorizeData.authorizeError &&
-		authorizeData.authorizeError.message &&
-		authorizeData.authorizationCode &&
-		authorizeData.authorizeError.message.indexOf( 'error' ) > -1
+		!! get( authorizeData, 'authorizationCode', false ) &&
+		includes( get( authorizeData, [ 'authorizeError', 'message' ] ), 'error' )
 	);
 };
 
+/**
+ * Returns true if there is an expired secret error.
+ *
+ * @param  {object}  state Global state tree
+ * @return {Boolean}       True if there's an xmlrpc error otherwise false
+ */
 const hasExpiredSecretError = function( state ) {
 	const authorizeData = getAuthorizationData( state );
 
 	return (
-		authorizeData &&
-		authorizeData.authorizeError &&
-		authorizeData.authorizeError.message &&
-		authorizeData.authorizationCode &&
-		authorizeData.authorizeError.message.indexOf( 'verify_secrets_expired' ) > -1
+		!! get( authorizeData, 'authorizationCode', false ) &&
+		includes( get( authorizeData, [ 'authorizeError', 'message' ] ), 'verify_secrets_expired' )
 	);
 };
 
