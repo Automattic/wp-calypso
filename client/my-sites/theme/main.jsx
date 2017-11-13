@@ -453,7 +453,10 @@ class ThemeSheet extends React.Component {
 
 	getDefaultOptionLabel = () => {
 		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased } = this.props;
-		if ( isLoggedIn && ! isActive ) {
+		if ( isActive ) {
+			// Customize size
+			return i18n.translate( 'Customize site' );
+		} else if ( isLoggedIn ) {
 			if ( isPremium && ! isPurchased ) {
 				// purchase
 				return i18n.translate( 'Pick this design' );
