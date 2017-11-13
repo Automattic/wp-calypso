@@ -154,15 +154,15 @@ export class CommentEdit extends Component {
 							</a>
 						</p>
 					) }
-				</div>
 
-				<div className="comment__edit-buttons">
-					<FormButton compact disabled={ ! isEditCommentSupported } onClick={ this.submitEdit }>
-						{ translate( 'Save' ) }
-					</FormButton>
-					<FormButton compact isPrimary={ false } onClick={ toggleEditMode } type="button">
-						{ translate( 'Cancel' ) }
-					</FormButton>
+					<div className="comment__edit-buttons">
+						<FormButton compact disabled={ ! isEditCommentSupported } onClick={ this.submitEdit }>
+							{ translate( 'Save' ) }
+						</FormButton>
+						<FormButton compact isPrimary={ false } onClick={ toggleEditMode } type="button">
+							{ translate( 'Cancel' ) }
+						</FormButton>
+					</div>
 				</div>
 			</div>
 		);
