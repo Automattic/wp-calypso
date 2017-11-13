@@ -15,9 +15,6 @@
 	"plugins": [
 		"add-module-exports",
 		"syntax-jsx",
-		[ "transform-builtin-extend", {
-			"globals": [ "Error" ]
-		} ],
 		"transform-export-extensions",
 		"transform-react-display-name",
 		"transform-react-jsx",
@@ -31,5 +28,14 @@
 				}
 			}
 		]
-	]
+	],
+	"env": {
+		"test": {
+			"plugins": [
+				[ "transform-builtin-extend", {
+					"globals": [ "Error" ]
+				} ],
+			]
+		}
+	}
 }
