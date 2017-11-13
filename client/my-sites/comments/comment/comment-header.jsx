@@ -4,13 +4,11 @@
  */
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import CommentAuthor from 'my-sites/comments/comment/comment-author';
 import CommentAuthorMoreInfo from 'my-sites/comments/comment/comment-author-more-info';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -19,16 +17,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class CommentHeader extends PureComponent {
 	render() {
-		const {
-			commentId,
-			isBulkMode,
-			isEditMode,
-			isExpanded,
-			isPostView,
-			isSelected,
-			showAuthorMoreInfo,
-			toggleExpanded,
-		} = this.props;
+		const { commentId, isBulkMode, isSelected, showAuthorMoreInfo } = this.props;
 
 		return (
 			<div className="comment__header">
@@ -38,33 +27,21 @@ export class CommentHeader extends PureComponent {
 					</label>
 				) }
 
-				<CommentAuthor { ...{ commentId, isExpanded, isPostView } } />
+				<CommentAuthor { ...{ commentId, isBulkMode } } />
 
 				{ showAuthorMoreInfo && <CommentAuthorMoreInfo { ...{ commentId } } /> }
-
-				{ ! isBulkMode &&
-				isPostView && (
-					<Button
-						borderless
-						className="comment__toggle-expanded"
-						disabled={ isEditMode }
-						onClick={ toggleExpanded }
-					>
-						<Gridicon icon="chevron-down" />
-					</Button>
-				) }
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { commentId, isExpanded } ) => {
+const mapStateToProps = ( state, { commentId, isBulkMode } ) => {
 	const siteId = getSelectedSiteId( state );
 	const comment = getSiteComment( state, siteId, commentId );
 	const commentType = get( comment, 'type', 'comment' );
 
 	return {
-		showAuthorMoreInfo: isExpanded && 'comment' === commentType,
+		showAuthorMoreInfo: ! isBulkMode && 'comment' === commentType,
 	};
 };
 

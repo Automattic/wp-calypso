@@ -37,40 +37,30 @@ export class Comment extends Component {
 
 	state = {
 		isEditMode: false,
-		isExpanded: false,
 		isReplyVisible: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		const { isBulkMode: wasBulkMode, isPostView: wasPostView } = this.props;
-		const { isBulkMode, isLoading, isPostView } = nextProps;
-		const { isExpanded: wasExpanded, isReplyVisible: wasReplyVisible } = this.state;
+		const { isBulkMode: wasBulkMode } = this.props;
+		const { isBulkMode } = nextProps;
+		const { isEditMode: wasEditMode, isReplyVisible: wasReplyVisible } = this.state;
 
-		let isExpanded = wasExpanded;
-		if ( isPostView && ( ! wasPostView || wasBulkMode !== isBulkMode ) ) {
-			isExpanded = false;
-		} else if ( ! isPostView ) {
-			isExpanded = ! isLoading && ! isBulkMode;
-		}
-
-		const isReplyVisible =
-			wasPostView !== isPostView || wasBulkMode !== isBulkMode ? false : wasReplyVisible;
-
-		this.setState( { isExpanded, isReplyVisible } );
+		this.setState( {
+			isEditMode: wasBulkMode !== isBulkMode ? false : wasEditMode,
+			isReplyVisible: wasBulkMode !== isBulkMode ? false : wasReplyVisible,
+		} );
 	}
 
 	storeCardRef = card => ( this.commentCard = card );
 
 	keyDownHandler = event => {
-		const { isBulkMode, isPostView } = this.props;
-		const { isEditMode, isExpanded } = this.state;
-
+		const { isBulkMode } = this.props;
 		const commentHasFocus =
 			document &&
 			this.commentCard &&
 			document.activeElement === ReactDom.findDOMNode( this.commentCard );
 
-		if ( isEditMode || ! isPostView || ( isExpanded && ! commentHasFocus ) ) {
+		if ( ! isBulkMode || ! commentHasFocus ) {
 			return;
 		}
 
@@ -78,31 +68,18 @@ export class Comment extends Component {
 			case 13: // enter
 			case 32: // space
 				event.preventDefault();
-				return isBulkMode ? this.toggleSelected() : this.toggleExpanded();
+				return this.toggleSelected();
 		}
 	};
 
 	toggleEditMode = () =>
 		this.setState( ( { isEditMode } ) => ( {
 			isEditMode: ! isEditMode,
-			isExpanded: ! isEditMode,
 			isReplyVisible: false,
 		} ) );
 
-	toggleExpanded = () => {
-		if ( ! this.props.isLoading && ! this.state.isEditMode && this.props.isPostView ) {
-			this.setState( ( { isExpanded } ) => ( {
-				isExpanded: ! isExpanded,
-				isReplyVisible: false,
-			} ) );
-		}
-	};
-
 	toggleReply = () =>
-		this.setState( ( { isReplyVisible } ) => ( {
-			isExpanded: true,
-			isReplyVisible: ! isReplyVisible,
-		} ) );
+		this.setState( ( { isReplyVisible } ) => ( { isReplyVisible: ! isReplyVisible } ) );
 
 	toggleSelected = () => this.props.toggleSelected( this.props.minimumComment );
 
@@ -118,15 +95,11 @@ export class Comment extends Component {
 			siteId,
 			updateLastUndo,
 		} = this.props;
-		const { isEditMode, isExpanded, isReplyVisible } = this.state;
-
-		const showActions = isExpanded || ( ! isBulkMode && commentIsPending );
+		const { isEditMode, isReplyVisible } = this.state;
 
 		const classes = classNames( 'comment', {
 			'is-bulk-mode': isBulkMode,
-			'is-collapsed': ! isExpanded,
 			'is-edit-mode': isEditMode,
-			'is-expanded': isExpanded,
 			'is-placeholder': isLoading,
 			'is-pending': commentIsPending,
 			'is-post-view': isPostView,
@@ -147,14 +120,11 @@ export class Comment extends Component {
 
 				{ ! isEditMode && (
 					<div className="comment__detail">
-						<CommentHeader
-							{ ...{ commentId, isBulkMode, isEditMode, isExpanded, isPostView, isSelected } }
-							toggleExpanded={ this.toggleExpanded }
-						/>
+						<CommentHeader { ...{ commentId, isBulkMode, isEditMode, isSelected } } />
 
-						<CommentContent { ...{ commentId, isExpanded, isPostView } } />
+						<CommentContent { ...{ commentId, isPostView } } />
 
-						{ showActions && (
+						{ ! isBulkMode && (
 							<CommentActions
 								{ ...{ commentId, updateLastUndo } }
 								toggleEditMode={ this.toggleEditMode }
@@ -162,7 +132,7 @@ export class Comment extends Component {
 							/>
 						) }
 
-						{ isExpanded && ! isBulkMode && <CommentReply { ...{ commentId, isReplyVisible } } /> }
+						{ ! isBulkMode && <CommentReply { ...{ commentId, isReplyVisible } } /> }
 					</div>
 				) }
 

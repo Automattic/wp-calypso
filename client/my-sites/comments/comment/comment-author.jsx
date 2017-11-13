@@ -24,7 +24,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 export class CommentAuthor extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
-		isExpanded: PropTypes.bool,
+		isBulkMode: PropTypes.bool,
 		isPostView: PropTypes.bool,
 	};
 
@@ -49,8 +49,7 @@ export class CommentAuthor extends Component {
 			commentType,
 			commentUrl,
 			gravatarUser,
-			isExpanded,
-			isPostView,
+			isBulkMode,
 			moment,
 			translate,
 		} = this.props;
@@ -81,7 +80,7 @@ export class CommentAuthor extends Component {
 						<strong className="comment__author-name">
 							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
 						</strong>
-						{ ! isExpanded && ! isPostView && <CommentPostLink { ...{ commentId, isExpanded } } /> }
+						{ isBulkMode && <CommentPostLink { ...{ commentId, isBulkMode } } /> }
 					</div>
 
 					<div className="comment__author-info-element">

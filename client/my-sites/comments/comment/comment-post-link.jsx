@@ -18,7 +18,7 @@ import { getSitePost } from 'state/posts/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const CommentPostLink = ( {
-	isExpanded,
+	isBulkMode,
 	isPostTitleLoaded,
 	postId,
 	postTitle,
@@ -30,7 +30,7 @@ const CommentPostLink = ( {
 	<div className="comment__post-link">
 		{ ! isPostTitleLoaded && <QueryPosts siteId={ siteId } postId={ postId } /> }
 
-		<Gridicon icon={ isExpanded ? 'posts' : 'chevron-right' } size={ 18 } />
+		<Gridicon icon={ isBulkMode ? 'chevron-right' : 'posts' } size={ 18 } />
 
 		<a href={ `/comments/${ status }/${ siteSlug }/${ postId }` }>
 			{ postTitle.trim() || translate( 'Untitled' ) }
