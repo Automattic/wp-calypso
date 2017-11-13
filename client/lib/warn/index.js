@@ -1,9 +1,16 @@
-/** @format */
-/* eslint-disable no-console */
+/**
+ * /* eslint-disable no-console
+ *
+ * @format
+ */
+
+/**
+ * Internal Dependencies
+ */
+import config from 'config';
 
 let warn;
-
-if ( process.env.NODE_ENV === 'development' ) {
+if ( config( 'env' ) !== 'production' && 'function' === typeof console.warn ) {
 	warn = ( ...args ) => console.warn( ...args );
 } else {
 	warn = () => {};
