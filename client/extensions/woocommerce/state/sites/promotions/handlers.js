@@ -91,6 +91,7 @@ export function promotionCreate( { dispatch }, action ) {
 		case 'fixed_cart':
 		case 'fixed_product':
 		case 'percent':
+		case 'free_shipping':
 			const coupon = createCouponUpdateFromPromotion( promotion );
 			dispatch( createCoupon( siteId, coupon, action.successAction, action.failureAction ) );
 			break;
@@ -112,6 +113,7 @@ export function promotionUpdate( { dispatch }, action ) {
 		case 'fixed_cart':
 		case 'fixed_product':
 		case 'percent':
+		case 'free_shipping':
 			const coupon = createCouponUpdateFromPromotion( promotion );
 			dispatch( updateCoupon( siteId, coupon, action.successAction, action.failureAction ) );
 			break;
@@ -130,6 +132,7 @@ export function promotionDelete( { dispatch }, action ) {
 		case 'fixed_cart':
 		case 'fixed_product':
 		case 'percent':
+		case 'free_shipping':
 			dispatch(
 				deleteCoupon( siteId, promotion.couponId, action.successAction, action.failureAction )
 			);

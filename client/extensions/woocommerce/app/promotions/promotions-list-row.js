@@ -25,6 +25,8 @@ function getPromotionTypeText( promotionType, translate ) {
 			return translate( 'Percent cart discount coupon' );
 		case 'product_sale':
 			return translate( 'Individual product sale' );
+		case 'free_shipping':
+			return translate( 'Free shipping' );
 	}
 }
 
