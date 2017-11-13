@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 import { PRIVACY_POLICY_ADD, PRIVACY_POLICY_REQUEST } from 'state/action-types';
 

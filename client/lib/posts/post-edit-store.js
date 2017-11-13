@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 import { assign, filter, isEqual, pickBy, without, omit } from 'lodash';
 import debugFactory from 'debug';

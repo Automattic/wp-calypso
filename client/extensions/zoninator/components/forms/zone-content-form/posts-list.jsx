@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -79,20 +79,25 @@ class PostsList extends Component {
 					</SearchAutocomplete>
 				</FormFieldset>
 
-				{ !! posts.length && ! requesting && (
-					<FormFieldset>
-						<p className={ explanationTextClass }>
-							{ translate(
-								"You can reorder the zone's content by dragging it to a different location on the list."
-							) }
-						</p>
-						<SortableList direction="vertical" onChange={ this.changePostOrder( fields ) }>
-							{ posts.map( ( post, index ) => (
-								<PostCard key={ index } post={ post } remove={ this.removePost( fields, index ) } />
-							) ) }
-						</SortableList>
-					</FormFieldset>
-				) }
+				{ !! posts.length &&
+					! requesting && (
+						<FormFieldset>
+							<p className={ explanationTextClass }>
+								{ translate(
+									"You can reorder the zone's content by dragging it to a different location on the list."
+								) }
+							</p>
+							<SortableList direction="vertical" onChange={ this.changePostOrder( fields ) }>
+								{ posts.map( ( post, index ) => (
+									<PostCard
+										key={ index }
+										post={ post }
+										remove={ this.removePost( fields, index ) }
+									/>
+								) ) }
+							</SortableList>
+						</FormFieldset>
+					) }
 
 				{ requesting && times( 3, index => <PostPlaceholder key={ index } /> ) }
 			</div>

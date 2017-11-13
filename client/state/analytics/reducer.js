@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { ANALYTICS_TRACKING_ON } from 'state/action-types';

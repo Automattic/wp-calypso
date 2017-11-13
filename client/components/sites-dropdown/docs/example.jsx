@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -12,9 +12,9 @@ import React from 'react';
 import SitesDropdown from 'components/sites-dropdown';
 
 export default class extends React.Component {
- static displayName = 'SitesDropdown';
+	static displayName = 'SitesDropdown';
 
- render() {
-	 return <SitesDropdown />;
- }
+	render() {
+		return <SitesDropdown />;
+	}
 }

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { put } from 'woocommerce/state/data-layer/request/actions';

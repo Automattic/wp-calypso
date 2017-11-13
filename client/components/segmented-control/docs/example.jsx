@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -16,7 +16,7 @@ import ControlItem from 'components/segmented-control/item';
  * Segmented Control Demo
  */
 class SegmentedControlDemo extends React.PureComponent {
-    static displayName = 'SegmentedControl';
+	static displayName = 'SegmentedControl';
 
 	static defaultProps = {
 		options: [
@@ -128,7 +128,7 @@ class SegmentedControlDemo extends React.PureComponent {
 		);
 	}
 
-	selectChildSegment = (childSelected, event) => {
+	selectChildSegment = ( childSelected, event ) => {
 		event.preventDefault();
 		this.setState( {
 			childSelected: childSelected,

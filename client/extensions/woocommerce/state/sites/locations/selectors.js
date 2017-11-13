@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { find, flatMap, get, isArray, isEmpty, omit, sortBy } from 'lodash';

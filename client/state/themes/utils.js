@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { every, get, includes, map, mapKeys, omit, omitBy, some, split, startsWith } from 'lodash';

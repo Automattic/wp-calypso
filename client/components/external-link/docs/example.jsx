@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -13,7 +13,7 @@ import ExternalLink from 'components/external-link';
 import Card from 'components/card';
 
 export default class extends React.Component {
-    static displayName = 'ExternalLink';
+	static displayName = 'ExternalLink';
 
 	render() {
 		return (

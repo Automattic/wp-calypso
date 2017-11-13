@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { NPS_SURVEY_DIALOG_IS_SHOWING } from 'state/action-types';

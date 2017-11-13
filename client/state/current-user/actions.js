@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { CURRENT_USER_ID_SET, CURRENT_USER_FLAGS_RECEIVE } from 'state/action-types';

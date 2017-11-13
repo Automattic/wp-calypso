@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { flow, forEach, get, map, mapKeys, mapValues, omit, pick } from 'lodash';
