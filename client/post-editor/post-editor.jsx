@@ -334,7 +334,6 @@ export const PostEditor = createReactClass( {
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						allPostsUrl={ this.getAllPostsUrl() }
 						nestedSidebar={ this.state.nestedSidebar }
-						// @TODO "base" revision for arbitrary comparison
 						selectedRevisionId={ this.state.selectedRevisionId }
 						isSidebarOpened={ this.props.layoutFocus === 'sidebar' }
 					/>
