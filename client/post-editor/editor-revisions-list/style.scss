@@ -91,7 +91,7 @@
 .editor-revisions-list__author {
 	font-size: 13px;
 	display: block;
-	margin-top: 4px;
+	margin-bottom: 4px;
 	color: $gray-text-min;
 }
 
@@ -136,4 +136,5 @@
 
 .editor-revisions-list__minor-changes {
 	top: 8px;
+	color: $gray-text-min;
 }
