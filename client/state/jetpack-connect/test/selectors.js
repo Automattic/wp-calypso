@@ -9,21 +9,21 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getConnectingSite,
+	getAuthAttempts,
 	getAuthorizationData,
 	getAuthorizationRemoteQueryData,
 	getAuthorizationRemoteSite,
+	getConnectingSite,
+	getFlowType,
+	getJetpackSiteByUrl,
 	getSessions,
+	getSiteIdFromQueryObject,
 	getSSO,
+	hasExpiredSecretError,
+	hasXmlrpcError,
 	isCalypsoStartedConnection,
 	isRedirectingToWpAdmin,
 	isRemoteSiteOnSitesList,
-	getFlowType,
-	getJetpackSiteByUrl,
-	hasXmlrpcError,
-	getAuthAttempts,
-	hasExpiredSecretError,
-	getSiteIdFromQueryObject,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -495,7 +495,9 @@ describe( 'selectors', () => {
 		const stateHasNoError = {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
-					authorizeError: false,
+					authorizeError: {
+						message: '',
+					},
 				},
 			},
 		};
@@ -504,7 +506,7 @@ describe( 'selectors', () => {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
 					authorizeError: {
-						message: 'Could not verify your request.',
+						message: 'There was an error.',
 					},
 				},
 			},
@@ -521,9 +523,9 @@ describe( 'selectors', () => {
 			},
 		};
 
-		test( 'should be undefined when there is an empty state', () => {
+		test( 'should be false when there is an empty state', () => {
 			const hasError = hasXmlrpcError( { jetpackConnect: {} } );
-			expect( hasError ).to.be.undefined;
+			expect( hasError ).to.be.false;
 		} );
 
 		test( 'should be false when there is no error', () => {
@@ -531,11 +533,11 @@ describe( 'selectors', () => {
 			expect( hasError ).to.be.false;
 		} );
 
-		test( 'should be undefined when there is no authorization code', () => {
+		test( 'should be false when there is no authorization code', () => {
 			// An authorization code is received during the jetpack.login portion of the connection
 			// XMLRPC errors happen only during jetpack.authorize which only happens after jetpack.login is succesful
 			const hasError = hasXmlrpcError( stateHasNoAuthorizationCode );
-			expect( hasError ).to.be.undefined;
+			expect( hasError ).to.be.false;
 		} );
 
 		test( 'should be false if a non-xmlrpc error is found', () => {
@@ -574,7 +576,7 @@ describe( 'selectors', () => {
 			jetpackConnect: {
 				jetpackConnectAuthorize: {
 					authorizeError: {
-						message: 'Could not verify your request.',
+						message: 'An error message including "verify_secrets_expired".',
 					},
 				},
 			},
@@ -591,9 +593,9 @@ describe( 'selectors', () => {
 			},
 		};
 
-		test( 'should be undefined when there is an empty state', () => {
+		test( 'should be false when there is an empty state', () => {
 			const hasError = hasExpiredSecretError( { jetpackConnect: {} } );
-			expect( hasError ).to.be.undefined;
+			expect( hasError ).to.be.false;
 		} );
 
 		test( 'should be false when there is no error', () => {
@@ -601,11 +603,11 @@ describe( 'selectors', () => {
 			expect( hasError ).to.be.false;
 		} );
 
-		test( 'should be undefined when there is no authorization code', () => {
+		test( 'should be false when there is no authorization code', () => {
 			// An authorization code is received during the jetpack.login portion of the connection
 			// Expired secret errors happen only during jetpack.authorize which only happens after jetpack.login is succesful
 			const hasError = hasExpiredSecretError( stateHasNoAuthorizationCode );
-			expect( hasError ).to.be.undefined;
+			expect( hasError ).to.be.false;
 		} );
 
 		test( 'should be false if no expired secret error is found', () => {
