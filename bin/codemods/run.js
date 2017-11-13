@@ -26,6 +26,18 @@ function getValidCodemodNames() {
 	].map( name => '- ' + name ).sort();
 }
 
+function generateNodeArgs( debug ) {
+	return debug ? [ '--inspect-brk' ] : [];
+}
+
+function generateJscodeshiftArgs( debug ) {
+	const args = config.jscodeshiftArgs;
+	if ( debug ) {
+		return [ ...args, '--run-in-band' ];
+	}
+	return args;
+}
+
 function generateBinArgs( name ) {
 	if ( config.codemodArgs.hasOwnProperty( name ) ) {
 		// Is the codemod defined in the codemodArgs object?
@@ -44,28 +56,34 @@ function generateBinArgs( name ) {
 	);
 }
 
-function runCodemod( codemodName, transformTargets) {
+function runCodemod( codemodName, transformTargets, debug ) {
 	const binArgs = [
-		...config.jscodeshiftArgs,
+		...generateNodeArgs( debug ),
+		path.join( '.', 'node_modules', '.bin', 'jscodeshift' ),
+		...generateJscodeshiftArgs( debug ),
 		...generateBinArgs( codemodName ),
 		...transformTargets,
 	];
 
 	process.stdout.write( `\nRunning ${ codemodName } on ${ transformTargets.join( ' ' ) }\n` );
 
-
-	const binPath = path.join( '.', 'node_modules', '.bin', 'jscodeshift' );
+	const binPath = process.execPath; // spawn the same Node binary that's running right now
 	const jscodeshift = child_process.spawnSync( binPath, binArgs, {
 		stdio: [ 'ignore', process.stdout, process.stderr ],
 	} );
 }
 
 function main() {
+	let debug = false;
 	const args = process.argv.slice( 2 );
-	if ( args.length === 0 || args.length === 1 ) {
+	if ( args[ 0 ] === '--debugger' ) {
+		debug = true;
+		args.shift();
+	}
+	if ( args.length < 2 ) {
 		process.stdout.write( [
 			'',
-			'./bin/codemods/run.js codemodName[,additionalCodemods…] target1 [additionalTargets…]',
+			'./bin/codemods/run.js [--debugger] codemodName[,additionalCodemods…] target1 [additionalTargets…]',
 			'',
 			'Valid transformation names:',
 			getValidCodemodNames().join( '\n' ),
@@ -78,7 +96,7 @@ function main() {
 	}
 
 	const [ names, ...targets ] = args;
-	names.split( ',' ).forEach( codemodName => runCodemod( codemodName, targets ) );
+	names.split( ',' ).forEach( codemodName => runCodemod( codemodName, targets, debug ) );
 }
 
 main();
