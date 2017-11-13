@@ -380,12 +380,15 @@ export const itemsSchema = {
 A JSON Schema must be provided if the subtree chooses to persist state. If we find that our persisted data doesn't
 match our described data shape, we should throw it out and rebuild that section of the tree with our default state.
 
-When using `createReducer` util you can pass a schema as a third param and all that will be handled for you.
+You can add a schema property to any reducer:
 ```javascript
 export const items = createReducer( defaultState, {
 	[THEMES_RECEIVE]: ( state, action ) => // ...
-}, itemsSchema );
+} );
+items.schema = itemsSchema;
 ```
+Note: we used to encourage passing in `itemsSchema` as a third parameter to createReducer.
+This is now deprecated because it is less flexible than adding a schema directly to any reducer.
 
 If you are not satisfied with the default handling, it is possible to implement your own `SERIALIZE` and
 `DESERIALIZE` action handlers in your reducers to customize data persistence. Always use a schema with your custom
@@ -393,7 +396,7 @@ handlers to avoid data shape errors.
 
 ### Opt-in to Persistence ( [#13542](https://github.com/Automattic/wp-calypso/pull/13542) )
 
-If we choose not to use `createReducer` we can opt-in to persistence by adding a schema as a property on the reducer.
+We can opt-in to persistence by adding a schema as a property on the reducer.
 We do this by combining all of our reducers using `combineReducers` from `state/utils` at every level of the tree instead
 of [combineReducers](http://redux.js.org/docs/api/combineReducers.html) from `redux`. Each reducer is then wrapped with
 `withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALIZE` if a schema is present and
