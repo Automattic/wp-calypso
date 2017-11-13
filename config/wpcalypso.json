@@ -98,6 +98,7 @@
 		"post-editor/image-editor": true,
 		"post-editor/preview-scroll-to-content": true,
 		"post-editor/revisions": true,
+		"posts/post-type-list": true,
 		"press-this": true,
 		"preview-layout": true,
 		"publicize-preview": true,

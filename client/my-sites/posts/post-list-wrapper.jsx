@@ -12,6 +12,7 @@ import React from 'react';
 import PostList from './post-list';
 import PostTypeList from 'my-sites/post-type-list';
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import { mapPostStatus } from 'lib/route/path';
 
 class PostListWrapper extends React.Component {
@@ -54,7 +55,8 @@ class PostListWrapper extends React.Component {
 	render() {
 		return (
 			<div>
-				{ config.isEnabled( 'posts/post-type-list' )
+				{ config.isEnabled( 'posts/post-type-list' ) &&
+				abtest( 'condensedPostList' ) === 'condensedPosts'
 					? this.renderPostTypeList()
 					: this.renderPostList() }
 			</div>
