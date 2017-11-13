@@ -61,7 +61,7 @@
 				width: 32px;
 				overflow: hidden;
 				position: relative;
-				margin: 0 12px;
+				margin: 0 12px 0 15px;
 
 				&.is-thumb-placeholder {
 					background: $gray-light;
@@ -82,8 +82,12 @@
 				width: 16px;
 			}
 
+			.form-checkbox {
+				margin-left: 7px;
+			}
+
 			.form-checkbox + .product-search__list-image {
-				margin-left: 26px;
+				margin-left: 22px;
 			}
 
 			.button {
@@ -99,7 +103,9 @@
 		border-top: 1px solid $gray-light;
 
 		label.form-label {
-			padding: 12px 32px;
+			.form-checkbox + .product-search__list-image {
+				margin-left: 38px;
+			}
 		}
 
 		&:empty {
@@ -108,7 +114,7 @@
 	}
 
 	.product-search__variations {
-		padding: 16px 16px 16px 74px;
+		padding: 16px 16px 16px 77px;
 		border-top: 1px solid $gray-light;
 
 		.form-legend {
