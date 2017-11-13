@@ -13,12 +13,15 @@ import {
 	getSessions,
 	getSiteIdFromQueryObject,
 	getSSO,
+	getUserAlreadyConnected,
 	hasExpiredSecretError,
 	hasXmlrpcError,
 	isCalypsoStartedConnection,
 	isRedirectingToWpAdmin,
 	isRemoteSiteOnSitesList,
 } from '../selectors';
+
+const jestExpect = global.expect;
 
 describe( 'selectors', () => {
 	describe( '#getConnectingSite()', () => {
@@ -690,6 +693,28 @@ describe( 'selectors', () => {
 				},
 			};
 			expect( getSiteIdFromQueryObject( state ) ).toBeNull();
+		} );
+	} );
+
+	describe( '#getUserAlreadyConnected()', () => {
+		const makeUserAlreadyConnectedState = result => ( {
+			jetpackConnect: {
+				jetpackConnectAuthorize: {
+					userAlreadyConnected: result,
+				},
+			},
+		} );
+
+		test( 'should return false if state is missing', () => {
+			jestExpect( getUserAlreadyConnected( {} ) ).toBe( false );
+		} );
+
+		test( 'should return the value from state', () => {
+			const falseState = makeUserAlreadyConnectedState( false );
+			jestExpect( getUserAlreadyConnected( falseState ) ).toBe( false );
+
+			const trueState = makeUserAlreadyConnectedState( true );
+			jestExpect( getUserAlreadyConnected( trueState ) ).toBe( true );
 		} );
 	} );
 } );

@@ -98,7 +98,7 @@ const getAuthAttempts = ( state, slug ) => {
 };
 
 const getUserAlreadyConnected = state => {
-	return !! getAuthorizationData( state ).userAlreadyConnected;
+	return get( getAuthorizationData( state ), 'userAlreadyConnected', false );
 };
 
 /**
