@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import { map, noop } from 'lodash';
+import { map, noop, pickBy } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -12,6 +12,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { receiveRecommendedSites } from 'state/reader/recommended-sites/actions';
 import { decodeEntities } from 'lib/formatting';
+import getDefaultSearchAlgorithm from 'reader/search-helper';
 
 export const requestRecommendedSites = ( { dispatch }, action ) => {
 	const { seed = 1, number = 10, offset = 0 } = action.payload;
@@ -19,7 +20,10 @@ export const requestRecommendedSites = ( { dispatch }, action ) => {
 		http( {
 			method: 'GET',
 			path: '/read/recommendations/sites',
-			query: { number, offset, seed, posts_per_site: 0 },
+			query: pickBy(
+				{ number, offset, seed, posts_per_site: 0, algorithm: getDefaultSearchAlgorithm() },
+				Boolean
+			),
 			apiVersion: '1.2',
 			onSuccess: action,
 			onFailure: action,

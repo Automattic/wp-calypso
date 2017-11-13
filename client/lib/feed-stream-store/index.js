@@ -14,6 +14,7 @@ import FeedStreamCache from './feed-stream-cache';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 import { keyToString, keysAreEqual } from './post-key';
+import { getDefaultSearchAlgorithm } from 'reader/search-helper';
 
 const wpcomUndoc = wpcom.undocumented();
 
@@ -186,31 +187,34 @@ function getStoreForSearch( storeId ) {
 	const slug = idParts.slice( 2 ).join( ':' );
 	// We can use a feed stream when it's a strict date sort.
 	// This lets us go deeper than 20 pages and let's the results auto-update
-	let stream;
-	if ( sort === 'date' ) {
-		stream = new FeedStream( {
-			id: storeId,
-			fetcher: fetcher,
-			keyMaker: siteKeyMaker,
-			perPage: 5,
-			onGapFetch: limitSiteParams,
-			onUpdateFetch: limitSiteParams,
-			maxUpdates: 20,
-		} );
-	} else {
-		stream = new PagedStream( {
-			id: storeId,
-			fetcher: fetcher,
-			keyMaker: siteKeyMaker,
-			perPage: 5,
-		} );
-	}
+	const stream =
+		sort === 'date'
+			? new FeedStream( {
+					id: storeId,
+					fetcher: fetcher,
+					keyMaker: siteKeyMaker,
+					perPage: 5,
+					onGapFetch: limitSiteParams,
+					onUpdateFetch: limitSiteParams,
+					maxUpdates: 20,
+				} )
+			: new PagedStream( {
+					id: storeId,
+					fetcher: fetcher,
+					keyMaker: siteKeyMaker,
+					perPage: 5,
+				} );
+
 	stream.sortOrder = sort;
 
 	function fetcher( query, callback ) {
 		query.q = slug;
 		query.meta = 'site';
 		query.sort = sort;
+		const defaultAlg = getDefaultSearchAlgorithm();
+		if ( defaultAlg ) {
+			query.algorithm = defaultAlg;
+		}
 		wpcomUndoc.readSearch( query, trainTracksProxyForStream( stream, callback ) );
 	}
 
@@ -312,6 +316,10 @@ function getStoreForRecommendedPosts( storeId ) {
 				break;
 			default:
 				query.algorithm = 'read:recommendations:posts/es/1';
+				break;
+		}
+		if ( getDefaultSearchAlgorithm() ) {
+			query.algorithm = getDefaultSearchAlgorithm();
 		}
 		wpcomUndoc.readRecommendedPosts( query, trainTracksProxyForStream( stream, callback ) );
 	}
