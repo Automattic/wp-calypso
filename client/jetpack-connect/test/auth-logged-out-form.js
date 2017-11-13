@@ -13,14 +13,14 @@ import React from 'react';
  * Internal dependencies
  */
 import LocaleSuggestions from 'components/locale-suggestions';
-import { LOGGED_OUT_PROPS } from './lib/authorize-form';
+import { JETPACK_CONNECT_AUTHORIZE_LOGGED_OUT } from './lib/authorize-form';
 import { LoggedOutFormTestComponent as LoggedOutForm } from '../auth-logged-out-form';
 
 describe( 'LoggedOutForm', () => {
 	test( 'should render', () => {
 		const wrapper = shallow(
 			<LoggedOutForm
-				authorizationData={ LOGGED_OUT_PROPS.jetpackConnectAuthorize }
+				authorizationData={ JETPACK_CONNECT_AUTHORIZE_LOGGED_OUT }
 				createAccount={ noop }
 				recordTracksEvent={ noop }
 				translate={ identity }
@@ -34,7 +34,7 @@ describe( 'LoggedOutForm', () => {
 		const wrapper = shallow(
 			<LoggedOutForm
 				authorizationData={ {
-					...LOGGED_OUT_PROPS.jetpackConnectAuthorize,
+					...JETPACK_CONNECT_AUTHORIZE_LOGGED_OUT,
 					locale: 'es',
 				} }
 				createAccount={ noop }

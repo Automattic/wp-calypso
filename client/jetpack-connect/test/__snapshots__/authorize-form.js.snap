@@ -9,45 +9,37 @@ exports[`AuthorizeForm should render LoggedInForm when logged in 1`] = `
   >
     <Connect(Localized(LoggedInForm))
       authAttempts={0}
+      authorizationRemoteQueryData={
+        Object {
+          "_ui": 1239876546,
+          "_ut": "wpcom:user_id",
+          "_wp_nonce": "fooBarNonce",
+          "blogname": "Example Blog",
+          "calypso_env": "production",
+          "client_id": "98765",
+          "from": "banner-44-slide-1-dashboard",
+          "home_url": "http://an.example.site",
+          "jp_version": "5.4",
+          "locale": "en",
+          "redirect_after_auth": "http://an.example.site/wp-admin/admin.php?page=jetpack",
+          "redirect_uri": "http://an.example.site/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2Fan.example.site%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack",
+          "scope": "administrator:fooBarBaz",
+          "secret": "fooBarSecret",
+          "site": "http://an.example.site",
+          "site_icon": "",
+          "site_lang": "en_US",
+          "site_url": "http://an.example.site",
+          "state": "2",
+          "user_email": "email@an.example.site",
+          "user_login": "theUserLogin",
+        }
+      }
       calypsoStartedConnection={false}
       isAlreadyOnSitesList={false}
       isFetchingAuthorizationSite={false}
       isFetchingSites={false}
       isSSO={false}
       isWoo={false}
-      jetpackConnectAuthorize={
-        Object {
-          "authorizeError": false,
-          "authorizeSuccess": false,
-          "clientNotResponding": true,
-          "isAuthorizing": false,
-          "queryObject": Object {
-            "_ui": 1239876546,
-            "_ut": "wpcom:user_id",
-            "_wp_nonce": "fooBarNonce",
-            "blogname": "Example Blog",
-            "calypso_env": "production",
-            "client_id": "98765",
-            "from": "banner-44-slide-1-dashboard",
-            "home_url": "http://an.example.site",
-            "jp_version": "5.4",
-            "locale": "en",
-            "redirect_after_auth": "http://an.example.site/wp-admin/admin.php?page=jetpack",
-            "redirect_uri": "http://an.example.site/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2Fan.example.site%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack",
-            "scope": "administrator:fooBarBaz",
-            "secret": "fooBarSecret",
-            "site": "http://an.example.site",
-            "site_icon": "",
-            "site_lang": "en_US",
-            "site_url": "http://an.example.site",
-            "state": "2",
-            "user_email": "email@an.example.site",
-            "user_login": "theUserLogin",
-          },
-          "timestamp": 1509368045859,
-          "userAlreadyConnected": false,
-        }
-      }
       path="/jetpack/connect/authorize"
       recordTracksEvent={[Function]}
       siteSlug="an.example.site"
@@ -71,39 +63,6 @@ exports[`AuthorizeForm should render LoggedOutForm when logged out 1`] = `
     className="jetpack-connect__authorize-form"
   >
     <Connect(Localized(LoggedOutForm))
-      jetpackConnectAuthorize={
-        Object {
-          "authorizeError": false,
-          "authorizeSuccess": false,
-          "clientNotResponding": true,
-          "isAuthorizing": false,
-          "queryObject": Object {
-            "_ui": "jetpack:fooBarBaz",
-            "_ut": "anon",
-            "_wp_nonce": "fooBarNonce",
-            "blogname": "Example Blog",
-            "calypso_env": "production",
-            "client_id": "98765",
-            "from": "banner-44-slide-1-dashboard",
-            "home_url": "http://an.example.site",
-            "jp_version": "5.4",
-            "locale": "en",
-            "redirect_after_auth": "http://an.example.site/wp-admin/admin.php?page=jetpack",
-            "redirect_uri": "http://an.example.site/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2Fan.example.site%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack",
-            "scope": "administrator:fooBarBaz",
-            "secret": "fooBarSecret",
-            "site": "http://an.example.site",
-            "site_icon": "",
-            "site_lang": "en_US",
-            "site_url": "http://an.example.site",
-            "state": "2",
-            "user_email": "email@an.example.site",
-            "user_login": "theUserLogin",
-          },
-          "timestamp": 1509368045859,
-          "userAlreadyConnected": false,
-        }
-      }
       path="/jetpack/connect/authorize"
     />
   </div>
