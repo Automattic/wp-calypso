@@ -99,8 +99,13 @@ export class CreditCardPaymentBox extends React.Component {
 				}
 				return true;
 
-			case SUBMITTING_PAYMENT_KEY_REQUEST:
 			case RECEIVED_PAYMENT_KEY_RESPONSE:
+				if ( this.props.transactionStep.error ) {
+					return false;
+				}
+				return true;
+
+			case SUBMITTING_PAYMENT_KEY_REQUEST:
 			case SUBMITTING_WPCOM_REQUEST:
 				return true;
 
