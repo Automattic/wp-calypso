@@ -2180,10 +2180,6 @@
       "version": "0.3.0",
       "dev": true
     },
-    "find-root": {
-      "version": "1.1.0",
-      "dev": true
-    },
     "find-up": {
       "version": "2.1.0"
     },
@@ -4985,7 +4981,7 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "2.1.0"
+      "version": "1.2.7"
     },
     "npm-path": {
       "version": "1.1.0",
