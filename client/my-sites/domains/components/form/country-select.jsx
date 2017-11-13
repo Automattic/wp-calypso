@@ -85,6 +85,7 @@ const CountrySelect = createReactClass( {
 						value={ value }
 						disabled={ this.props.disabled }
 						ref="input"
+						inputRef={ this.props.inputRef }
 						onChange={ this.props.onChange }
 						onClick={ this.recordCountrySelectClick }
 						isError={ this.props.isError }
