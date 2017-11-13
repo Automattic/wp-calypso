@@ -3,14 +3,22 @@
 @import 'components/accordion/style';
 
 .editor-revisions-list {
-	border-left: 1px solid darken($sidebar-bg-color, 5%);
 	position: absolute;
 	top: 0;
 	right: 0;
-	bottom: 73px;
-	z-index: 1; // Put the list above the action-buttons:before overlay gradient. -shaun
-	width: 230px;
 	background: $gray-light;
+
+	@include breakpoint( '<660px' ) {
+		left: 0;
+		height: 120px;
+	}
+
+	@include breakpoint( '>660px' ) {
+		border-left: 1px solid darken($sidebar-bg-color, 5%);
+		z-index: 1; // Put the list above the action-buttons:before overlay gradient. -shaun
+		width: 230px;
+		bottom: 73px;
+	}
 }
 
 .editor-revisions-list__header {
@@ -20,18 +28,6 @@
 	color: $gray-text-min;
 	background: $white;
 	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
-}
-
-.editor-revisions-list__revision {
-	border: 0;
-	font-family: inherit;
-	font-size: 100%;
-	font-style: inherit;
-	font-weight: inherit;
-	margin: 0;
-	outline: 0;
-	padding: 0;
-	vertical-align: baseline;
 }
 
 // Scrollable Box for Revisions List
@@ -47,6 +43,15 @@
 .editor-revisions-list__list {
 	list-style: none;
 	margin: 0;
+
+	@include breakpoint( '<660px' ) {
+		display: inline;
+		white-space: nowrap;
+	}
+}
+
+.editor-revisions-list__revision {
+	display: inline;
 }
 
 .editor-revisions-list__load-revision {
@@ -55,15 +60,21 @@
 
 // Individual Revision List Item
 .editor-revisions-list__button {
-	position: relative;
 	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
+	border-right: 1px solid darken($sidebar-bg-color, 5%);
 	color: $gray-dark;
 	cursor: pointer;
-	display: block;
 	text-align: left;
-	width: 100%;
 	padding: 8px 16px;
-	min-height: 60px;
+	min-height: 73px;
+	width: 60vw;
+
+	@include breakpoint( '>660px' ) {
+		display: block;
+		width: 100%;
+		border-right: none;
+		min-height: 60px;
+	}
 
 	&:hover {
 		background: $accordion-background-hover;

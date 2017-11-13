@@ -2,13 +2,18 @@
 .editor-diff-viewer {
 	margin: 0;
 	position: absolute;
-		top: 0;
-		bottom: 72px;
-		left: 0;
-	width: calc( 100% - 230px );
+	top: 120px;
+	bottom: 72px;
+	left: 0;
+	width: 100%;
 	box-sizing: border-box;
 	padding: 24px 32px 32px 32px;
 	overflow-y: auto;
+
+	@include breakpoint( '>660px' ) {
+		top: 0;
+		width: calc(100% - 230px);
+	}
 
 	.editor-diff-viewer__title {
 		font-family: $serif;
