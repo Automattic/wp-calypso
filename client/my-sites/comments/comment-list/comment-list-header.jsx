@@ -52,7 +52,7 @@ export const CommentListHeader = ( {
 				<div className="comment-list__header-title">
 					{ translate( 'Comments on {{span}}%(postTitle)s{{/span}}', {
 						args: { postTitle: title },
-						components: { span: <span /> },
+						components: { span: <span className="comment-list__header-post-title" /> },
 					} ) }
 				</div>
 				<div className="comment-list__header-date">{ formattedDate }</div>
