@@ -7,6 +7,8 @@ import { viewStream } from '../actions';
 import { watermarks } from '../reducer';
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
+jest.mock( 'lib/warn', () => () => {} );
+
 const streamId = 'special-chicken-stream';
 const mark = Date.now();
 
