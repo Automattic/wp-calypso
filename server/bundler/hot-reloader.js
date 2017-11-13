@@ -1,4 +1,8 @@
-/***** WARNING: ES5 code only here. Not transpiled! *****/
+/**
+ * ** WARNING: ES5 code only here. Not transpiled! ****
+ *
+ * @format
+ */
 
 /**
  * External dependencies
@@ -38,7 +42,6 @@ function sendStats( socket, stats, force ) {
 }
 
 hotReloader = {
-
 	listen: function( server, webpackCompiler ) {
 		io = socketio.listen( server, { 'log level': 1 } );
 		io.sockets.on( 'connection', function( socket ) {
@@ -74,7 +77,6 @@ hotReloader = {
 			io = null;
 		}
 	},
-
 };
 
 module.exports = hotReloader;

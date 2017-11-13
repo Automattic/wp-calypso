@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 var req = require( 'superagent' ),
 	bodyParser = require( 'body-parser' );
 
@@ -14,8 +17,8 @@ function oauth() {
 		client_id: config( 'desktop_oauth_client_id' ),
 		client_secret: config( 'desktop_oauth_client_secret' ),
 		wpcom_supports_2fa: true,
-		grant_type: 'password'
-	}
+		grant_type: 'password',
+	};
 }
 
 /*
@@ -24,23 +27,30 @@ function oauth() {
  */
 function proxyOAuth( request, response ) {
 	// We are making a password request, and want all the 2fa checks enabled
-	var data = Object.assign( {}, {
-		username: request.body.username,
-		password: request.body.password
-	}, oauth() );
+	var data = Object.assign(
+		{},
+		{
+			username: request.body.username,
+			password: request.body.password,
+		},
+		oauth()
+	);
 
 	if ( request.body.auth_code ) {
 		// Pass along the one-time password
 		data.wpcom_otp = request.body.auth_code;
 	}
 
-	req.post( config( 'desktop_oauth_token_endpoint' ) )
+	req
+		.post( config( 'desktop_oauth_token_endpoint' ) )
 		.type( 'form' )
 		.send( data )
-		.end( validateOauthResponse( response, function( error, res ) {
-			// Return the token as a response
-			response.json( res.body );
-		} ) );
+		.end(
+			validateOauthResponse( response, function( error, res ) {
+				// Return the token as a response
+				response.json( res.body );
+			} )
+		);
 }
 
 function checkConnection( serverResponse, fn ) {
@@ -48,22 +58,28 @@ function checkConnection( serverResponse, fn ) {
 		if ( typeof clientResponse === 'undefined' ) {
 			return serverResponse
 				.status( 408 )
-				.json( { error: 'invalid_request', error_description: 'The request to ' + error.host + ' failed (code ' + error.code + '), please check your internet connection and try again.' } );
+				.json( {
+					error: 'invalid_request',
+					error_description:
+						'The request to ' +
+						error.host +
+						' failed (code ' +
+						error.code +
+						'), please check your internet connection and try again.',
+				} );
 		}
 		fn( error, clientResponse );
-	}
+	};
 }
 
 function proxyError( serverResponse, fn ) {
 	return function( error, clientResponse ) {
 		// Error from the API, just pass back
 		if ( error ) {
-			return serverResponse
-				.status( error.status )
-				.json( clientResponse.body );
+			return serverResponse.status( error.status ).json( clientResponse.body );
 		}
 		fn( error, clientResponse );
-	}
+	};
 }
 
 function validateOauthResponse( serverResponse, fn ) {
@@ -76,19 +92,26 @@ function logout( request, response ) {
 }
 
 function sms( request, response ) {
-	var data = Object.assign( {}, {
-		username: request.body.username,
-		password: request.body.password,
-		wpcom_resend_otp: true
-	}, oauth() );
+	var data = Object.assign(
+		{},
+		{
+			username: request.body.username,
+			password: request.body.password,
+			wpcom_resend_otp: true,
+		},
+		oauth()
+	);
 
-	req.post( config( 'desktop_oauth_token_endpoint' ) )
+	req
+		.post( config( 'desktop_oauth_token_endpoint' ) )
 		.type( 'form' )
 		.send( data )
-		.end( validateOauthResponse( response, function( error, res ) {
-			response.json( res.body )
-		} ) );
-};
+		.end(
+			validateOauthResponse( response, function( error, res ) {
+				response.json( res.body );
+			} )
+		);
+}
 
 module.exports = function( app ) {
 	return app
@@ -96,4 +119,4 @@ module.exports = function( app ) {
 		.post( '/oauth', proxyOAuth )
 		.get( '/logout', logout )
 		.post( '/sms', sms );
-}
+};

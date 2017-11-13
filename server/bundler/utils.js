@@ -1,3 +1,4 @@
+/** @format */
 const crypto = require( 'crypto' );
 const fs = require( 'fs' );
 const qs = require( 'qs' );
@@ -33,9 +34,15 @@ function hashFile( path ) {
 }
 
 function getUrl( filename, hash ) {
-	return URL_BASE_PATH + '/' + filename + '?' + qs.stringify( {
-		v: hash
-	} );
+	return (
+		URL_BASE_PATH +
+		'/' +
+		filename +
+		'?' +
+		qs.stringify( {
+			v: hash,
+		} )
+	);
 }
 
 function getHashedUrl( filename ) {

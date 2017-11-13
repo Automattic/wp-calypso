@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import path from 'path';
 
 const fs = jest.genMockFromModule( 'fs' );

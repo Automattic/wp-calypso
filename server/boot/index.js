@@ -1,6 +1,9 @@
 /**
  * Module dependencies
+ *
+ * @format
  */
+
 const path = require( 'path' ),
 	build = require( 'build' ),
 	config = require( 'config' ),
@@ -52,8 +55,12 @@ function setup() {
 					next();
 				} );
 			} else {
-				console.info( chalk.red( '\nYou need to set `wordpress_logged_in_cookie` in secrets.json' +
-					' for wpcom-user-bootstrap to work in development.' ) );
+				console.info(
+					chalk.red(
+						'\nYou need to set `wordpress_logged_in_cookie` in secrets.json' +
+							' for wpcom-user-bootstrap to work in development.'
+					)
+				);
 			}
 		}
 	} else {
@@ -65,8 +72,12 @@ function setup() {
 	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', 'public' ) ) );
 
 	// service-worker needs to be served from root to avoid scope issues
-	app.use( '/service-worker.js',
-		express.static( path.resolve( __dirname, '..', '..', 'client', 'lib', 'service-worker', 'service-worker.js' ) ) );
+	app.use(
+		'/service-worker.js',
+		express.static(
+			path.resolve( __dirname, '..', '..', 'client', 'lib', 'service-worker', 'service-worker.js' )
+		)
+	);
 
 	// loaded when we detect stats blockers - see lib/analytics/index.js
 	app.get( '/nostats.js', function( request, response ) {
@@ -87,7 +98,10 @@ function setup() {
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		app.use( '/desktop', express.static( path.resolve( __dirname, '..', '..', '..', 'public_desktop' ) ) );
+		app.use(
+			'/desktop',
+			express.static( path.resolve( __dirname, '..', '..', '..', 'public_desktop' ) )
+		);
 	}
 
 	app.use( require( 'api' )() );

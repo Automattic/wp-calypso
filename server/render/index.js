@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
@@ -79,7 +82,10 @@ export function render( element, key = JSON.stringify( element ) ) {
 
 export function serverRender( req, res ) {
 	const context = req.context;
-	let title, metas = [], links = [], cacheKey = false;
+	let title,
+		metas = [],
+		links = [],
+		cacheKey = false;
 
 	if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
 		cacheKey = getCacheKey( context );

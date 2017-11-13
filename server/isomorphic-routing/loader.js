@@ -1,8 +1,14 @@
+/** @format */
 function getSectionsModule( sections ) {
-	var caseSections = ''
+	var caseSections = '';
 	sections.forEach( function( section ) {
 		if ( section.isomorphic ) {
-			caseSections += 'case ' + JSON.stringify( section.module ) + ': return require( ' + JSON.stringify( section.module ) + ' );\n';
+			caseSections +=
+				'case ' +
+				JSON.stringify( section.module ) +
+				': return require( ' +
+				JSON.stringify( section.module ) +
+				' );\n';
 		}
 	} );
 
@@ -13,12 +19,12 @@ function getSectionsModule( sections ) {
 		'	},',
 		' require: function( module ) {',
 		'		switch ( module ) {',
-					caseSections,
+		caseSections,
 		'			default:',
 		'				return null;',
 		'   }',
 		' }',
-		'};'
+		'};',
 	].join( '\n' );
 }
 

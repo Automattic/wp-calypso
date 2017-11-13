@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 var express = require( 'express' );
 
 /**
@@ -15,7 +18,7 @@ module.exports = function() {
 
 	app.get( '/version', function( request, response ) {
 		response.json( {
-			version: version
+			version: version,
 		} );
 	} );
 

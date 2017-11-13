@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 const fs = require( 'fs' );
 const path = require( 'path' );
 
@@ -11,7 +14,8 @@ const path = require( 'path' );
  * @return {String}    Module version
  */
 function getModuleVersion( id ) {
-	return require( path.dirname( require.resolve( id ) ).replace( /[\/\\]lib/, '' ) + '/package' ).version;
+	return require( path.dirname( require.resolve( id ) ).replace( /[\/\\]lib/, '' ) + '/package' )
+		.version;
 }
 
 /**
@@ -25,7 +29,9 @@ function getModuleVersion( id ) {
 module.exports = JSON.stringify( {
 	'babel-loader': getModuleVersion( 'babel-loader' ),
 	'babel-core': getModuleVersion( 'babel-core' ),
-	'babel-plugin-transform-wpcalypso-async': getModuleVersion( '../babel-plugin-transform-wpcalypso-async' ),
+	'babel-plugin-transform-wpcalypso-async': getModuleVersion(
+		'../babel-plugin-transform-wpcalypso-async'
+	),
 	babelrc: fs.readFileSync( path.resolve( __dirname, '../../../../.babelrc' ), 'utf8' ),
-	env: process.env.BABEL_ENV || process.env.NODE_ENV
+	env: process.env.BABEL_ENV || process.env.NODE_ENV,
 } );

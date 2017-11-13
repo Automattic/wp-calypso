@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { throttle } from 'lodash';
 
 /**
@@ -13,11 +16,7 @@ import analytics from '../lib/analytics';
 const THROTTLE_MILLIS = 1000 / config( 'statsd_analytics_response_time_max_logs_per_second' );
 
 const logAnalyticsThrottled = throttle( function( sectionName, duration ) {
-	analytics.statsd.recordTiming(
-		sectionName,
-		'response-time',
-		duration
-	);
+	analytics.statsd.recordTiming( sectionName, 'response-time', duration );
 }, THROTTLE_MILLIS );
 
 /*
