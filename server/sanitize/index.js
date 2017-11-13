@@ -1,7 +1,8 @@
+/** @format */
+
 /**
  * Encode single characters with backslashes.
  *
- * @format
  * @param {string} charStr single-character string.
  * @return {string} backslash escaped character.
  * @copyright (c) 2013, GoInstant Inc., a salesforce.com company.

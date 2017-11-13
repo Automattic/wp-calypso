@@ -1,7 +1,6 @@
+/** @format */
 /**
  * Module dependencies
- *
- * @format
  */
 
 const fs = require( 'fs' ),

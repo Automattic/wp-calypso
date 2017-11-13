@@ -1,7 +1,6 @@
+/** @format */
 /**
  * Module dependencies
- *
- * @format
  */
 
 var path = require( 'path' ),

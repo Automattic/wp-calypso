@@ -1,7 +1,6 @@
-/**
- * ** WARNING: ES5 code only here. Not transpiled! ****
- *
- * @format
+/** @format */
+/*
+ *  WARNING: ES5 code only here. Not transpiled! ****
  */
 
 /**

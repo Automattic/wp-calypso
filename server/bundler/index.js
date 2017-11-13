@@ -1,7 +1,6 @@
+/** @format */
 /**
  * External dependecies
- *
- * @format
  */
 
 const webpackMiddleware = require( 'webpack-dev-middleware' );
