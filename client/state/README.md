@@ -218,7 +218,7 @@ age( 23, { type: DESERIALIZE } ) === 23
 ```
 
 ### combineReducers( reducersObject )
-This has the same api as redux's famous combineReducers function. The only addition is that 
-each reducer is wrapped with `withSchemaValidation` which will perform validation on `DESERIALIZE`
-actions if a schema is present.  It returns initialState on both `SERIALIZE` and `DESERIALIZE` 
-if a schema is not present.
+This has a compatible function signature with redux's famous combineReducers function.
+The only addition is that each reducer is wrapped with `withSchemaValidation` which will perform
+validation on `DESERIALIZE` actions if a schema is present. It returns initialState on
+both `SERIALIZE` and `DESERIALIZE` if a schema is not present.
