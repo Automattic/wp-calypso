@@ -358,12 +358,7 @@ export const PostEditor = createReactClass( {
 								/>
 								<StatusLabel post={ this.state.savedPost } />
 							</div>
-							<div
-								className={ classNames( 'post-editor__inner-content', {
-									// TODO: Could we get rid of this class now?
-									'is-shown': true,
-								} ) }
-							>
+							<div className={ 'post-editor__inner-content is-shown' }>
 								<FeaturedImage
 									site={ site }
 									post={ this.state.post }
