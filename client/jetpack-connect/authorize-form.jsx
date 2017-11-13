@@ -39,9 +39,13 @@ class JetpackConnectAuthorizeForm extends Component {
 
 	componentWillMount() {
 		// set anonymous ID for cross-system analytics
-		const queryObject = this.props.authorizationRemoteQueryData;
-		if ( queryObject && queryObject._ui && 'anon' === queryObject._ut ) {
-			this.props.setTracksAnonymousUserId( queryObject._ui );
+		const { authorizationRemoteQueryData } = this.props;
+		if (
+			authorizationRemoteQueryData &&
+			authorizationRemoteQueryData._ui &&
+			'anon' === authorizationRemoteQueryData._ut
+		) {
+			this.props.setTracksAnonymousUserId( authorizationRemoteQueryData._ui );
 		}
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
 	}
