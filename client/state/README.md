@@ -17,6 +17,18 @@ const store = createReduxStore();
 
 All the application information and data in Calypso should go through this data flow. When you are creating a new module with new data requirements, you should add them to this global store.
 
+## Persistence
+When Calypso boots up it loads the last-known state out of persistent storage in the browser.
+If that state was saved from an old version of the reducer code it could be incompatible with the new state model.
+Over the course of time we've developed multiple ways for enforcing that the browser storage contains data
+of a compatible shape before deserializing.
+
+The first method was adding a json-schema as the third argument to `createReducer()`. This is now deprecated.
+A better method for adding a schema takes advantage of the fact that we have implemented our own version
+of `combineReducers()` that will check each reducer for a schema property and ensure the data shape is correct
+on deserialization.
+
+
 ## Utilities
 
 `state/utils.js` contains a number of helper utilities you may find useful in implementing your state subtree:
@@ -182,22 +194,11 @@ const hexNumbers = keyedReducer( 'counterId', hexPersister, [ DESERIALIZE, SERIA
 hexNumbers.hasCustomPersistence = true;
 ```
 
-### Persistence
-When Calypso boots up it loads the last-known state out of persistent storage in the browser.
-If that state was saved from an old version of the reducer code it could be incompatible with the new state model.
-Over the course of time we've developed multiple ways for enforcing that the browser storage contains data
-of a compatible shape before deserializing.
-
-The first method was adding a json-schema as the third argument to `createReducer()`. This is now deprecated.
-A better method for adding a schema takes advantage of the fact that we have implemented our own version
-of `combineReducers()` that will check each reducer for a schema property and ensure the data shape is correct
-on deserialization.
-
-#### withSchemaValidation( schema, reducer )
+### withSchemaValidation( schema, reducer )
 This helper takes in both a schema and a reducer and then produces a new reducer that
 conditionally loads the persisted state if it's shape is valid.
 
-##### Example
+#### Example
 
 ```js
 function ageReducer( state = 0, action ) {
@@ -216,7 +217,7 @@ age( -5, { type: DESERIALIZE } ) === 0
 age( 23, { type: DESERIALIZE } ) === 23
 ```
 
-#### combineReducers( reducersObject )
+### combineReducers( reducersObject )
 This has the same api as redux's famous combineReducers function. The only addition is that 
 each reducer is wrapped with `withSchemaValidation` which will perform validation on `DESERIALIZE`
 actions if a schema is present.  It returns initialState on both `SERIALIZE` and `DESERIALIZE` 
