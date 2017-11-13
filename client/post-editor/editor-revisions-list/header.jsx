@@ -4,31 +4,30 @@
  * External dependencies
  */
 
+import classNames from 'classnames';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import Button from 'components/button';
-
-const EditorRevisionsListHeader = ( { loadRevision, selectedRevisionId, translate } ) => (
-	<div className="editor-revisions-list__header">
-		<Button
-			compact
-			className="editor-revisions-list__load-revision"
-			disabled={ selectedRevisionId === null }
-			onClick={ loadRevision }
-		>
-			{ translate( 'Load revision in the editor' ) }
-		</Button>
-	</div>
-);
+const EditorRevisionsListHeader = ( { numRevisions, translate } ) => {
+	const classes = classNames( 'editor-revisions-list__header', {
+		'editor-revisions-list__loading-placeholder': ! numRevisions,
+	} );
+	return (
+		<div className={ classes }>
+			{ !! numRevisions &&
+				translate( '%(revisions)d revision', '%(revisions)d revisions', {
+					count: numRevisions,
+					args: { revisions: numRevisions },
+				} ) }
+		</div>
+	);
+};
 
 EditorRevisionsListHeader.propTypes = {
-	loadRevision: PropTypes.func,
-	selectedRevisionId: PropTypes.number,
+	numRevisions: PropTypes.number.isRequired,
+
+	// localize
 	translate: PropTypes.func.isRequired,
 };
 

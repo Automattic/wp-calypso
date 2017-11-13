@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -11,79 +11,40 @@ import { flow } from 'lodash';
 /**
  * Internal dependencies
  */
-import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'state/ui/editor/sidebar/constants';
-import {
-	closeEditorSidebar,
-	openEditorSidebar,
-	setNestedSidebar,
-} from 'state/ui/editor/sidebar/actions';
-import { getNestedSidebarTarget } from 'state/ui/editor/sidebar/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { togglePostRevisionsDialog } from 'state/posts/revisions/actions';
+import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 
-class HistoryButton extends PureComponent {
-	static propTypes = {
-		// passed props
-		isSidebarOpened: PropTypes.bool,
-		selectRevision: PropTypes.func.isRequired,
+const HistoryButton = ( {
+	loadRevision,
+	postId,
+	siteId,
+	togglePostRevisionsDialog: toggleDialog,
+	translate,
+} ) => (
+	<div className="editor-ground-control__history">
+		<button
+			className="editor-ground-control__history-button button is-link"
+			onClick={ toggleDialog }
+		>
+			{ translate( 'History' ) }
+		</button>
+		<EditorRevisionsDialog
+			onClose={ toggleDialog }
+			loadRevision={ loadRevision }
+			postId={ postId }
+			siteId={ siteId }
+		/>
+	</div>
+);
 
-		// connected props
-		closeEditorSidebar: PropTypes.func.isRequired,
-		nestedSidebarTarget: PropTypes.oneOf( [ NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS ] ),
-		openEditorSidebar: PropTypes.func.isRequired,
-		recordTracksEvent: PropTypes.func.isRequired,
-		setNestedSidebar: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
-	};
+HistoryButton.PropTypes = {
+	loadRevision: PropTypes.func.isRequired,
 
-	toggleShowing = () => {
-		const { isSidebarOpened, nestedSidebarTarget, selectRevision } = this.props;
-		// hide revisions if shown
-		if ( nestedSidebarTarget === NESTED_SIDEBAR_REVISIONS ) {
-			this.props.setNestedSidebar( NESTED_SIDEBAR_NONE );
-			return;
-		}
+	// connected to dispatch
+	togglePostRevisionsDialog: PropTypes.func.isRequired,
 
-		// otherwise, show revisions...
-		this.trackPostRevisionsOpen();
-		selectRevision( null );
-		this.props.setNestedSidebar( NESTED_SIDEBAR_REVISIONS );
+	// localize
+	translate: PropTypes.func,
+};
 
-		if ( ! isSidebarOpened ) {
-			this.props.openEditorSidebar();
-		}
-	};
-
-	trackPostRevisionsOpen() {
-		this.props.recordTracksEvent( 'calypso_editor_post_revisions_open', {
-			source: 'ground_control_history',
-		} );
-	}
-
-	render() {
-		return (
-			<div className="editor-ground-control__history">
-				<button
-					className="editor-ground-control__save button is-link"
-					onClick={ this.toggleShowing }
-				>
-					{ this.props.translate( 'History' ) }
-				</button>
-			</div>
-		);
-	}
-}
-
-export default flow(
-	localize,
-	connect(
-		state => ( {
-			nestedSidebarTarget: getNestedSidebarTarget( state ),
-		} ),
-		{
-			recordTracksEvent,
-			closeEditorSidebar,
-			openEditorSidebar,
-			setNestedSidebar,
-		}
-	)
-)( HistoryButton );
+export default flow( localize, connect( null, { togglePostRevisionsDialog } ) )( HistoryButton );

@@ -1,17 +1,25 @@
-.editor-revisions {
-	color: $gray-text;
-	cursor: pointer;
-	display: block;
-	font-size: 13px;
-	margin: 0 0 -16px;
-	padding: 16px 0;
-	text-align: left;
-	width: calc(100% + 32px);
+/** @format */
+.editor-revisions__dialog {
+	padding: 0;
+}
 
-	.gridicon {
-		color: $gray-text;
-		margin-left: -2px;
-		margin-right: 8px;
-		vertical-align: bottom;
+.editor-revisions__wrapper {
+	height: 100vh;
+	width: 100vw;
+}
+
+.editor-revisions-list__loading-placeholder {
+	@include placeholder(23%);
+}
+
+body.showing-post-revisions-dialog {
+	// Prevent scrolling the editor contents below the dialog
+	overflow-y: hidden;
+
+	.dialog.card {
+		@include breakpoint( '<660px' ) {
+			max-width: 100%;
+			max-height: 100%;
+		}
 	}
 }
