@@ -43,12 +43,11 @@ export class Comment extends Component {
 	componentWillReceiveProps( nextProps ) {
 		const { isBulkMode: wasBulkMode } = this.props;
 		const { isBulkMode } = nextProps;
-		const { isEditMode: wasEditMode, isReplyVisible: wasReplyVisible } = this.state;
 
-		this.setState( {
-			isEditMode: wasBulkMode !== isBulkMode ? false : wasEditMode,
-			isReplyVisible: wasBulkMode !== isBulkMode ? false : wasReplyVisible,
-		} );
+		this.setState( ( { isEditMode, isReplyVisible } ) => ( {
+			isEditMode: wasBulkMode !== isBulkMode ? false : isEditMode,
+			isReplyVisible: wasBulkMode !== isBulkMode ? false : isReplyVisible,
+		} ) );
 	}
 
 	storeCardRef = card => ( this.commentCard = card );
@@ -72,11 +71,12 @@ export class Comment extends Component {
 		}
 	};
 
-	toggleEditMode = () =>
+	toggleEditMode = () => {
 		this.setState( ( { isEditMode } ) => ( {
 			isEditMode: ! isEditMode,
 			isReplyVisible: false,
 		} ) );
+	};
 
 	toggleReply = () =>
 		this.setState( ( { isReplyVisible } ) => ( { isReplyVisible: ! isReplyVisible } ) );
