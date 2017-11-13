@@ -8,6 +8,7 @@ import { filter, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -123,7 +124,10 @@ class SharingButtonsPreview extends React.Component {
 		if ( this.props.showReblog ) {
 			return (
 				<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__reblog">
-					<span className="noticon noticon-reblog" />
+					// 16 is used in the preview to match the buttons on the frontend of the website.
+					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+					<Gridicon icon="reblog" size={ 16 } />
+					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 					{ this.props.translate( 'Reblog' ) }
 				</a>
 			);
@@ -135,7 +139,10 @@ class SharingButtonsPreview extends React.Component {
 			return (
 				<span>
 					<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__like">
-						<span className="noticon noticon-like" />
+						// 16 is used in the preview to match the buttons on the frontend of the website.
+						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+						<Gridicon icon="star" size={ 16 } />
+						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.translate( 'Like' ) }
 					</a>
 					<div className="sharing-buttons-preview__fake-user">
