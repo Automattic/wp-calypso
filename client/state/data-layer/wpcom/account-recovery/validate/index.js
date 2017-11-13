@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST } from 'state/action-types';

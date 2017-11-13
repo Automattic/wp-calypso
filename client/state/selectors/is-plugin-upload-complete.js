@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { isPluginUploadInProgress, getUploadedPluginId } from 'state/selectors';

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_JPO_CONNECT_SET } from 'state/action-types';

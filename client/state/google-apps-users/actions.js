@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * Internal Dependencies
- *
- * @format
+ * Internal dependencies
  */
 
 import wp from 'lib/wp';

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -13,7 +13,7 @@ import Card from 'components/card';
 import BulkSelect from 'components/bulk-select';
 
 export default class extends React.Component {
-    static displayName = 'BulkSelects';
+	static displayName = 'BulkSelects';
 
 	state = {
 		elements: [ { title: 'Apples', selected: true }, { title: 'Oranges', selected: false } ],

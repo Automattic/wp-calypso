@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -20,7 +20,7 @@ const noop = function() {};
 const action = () => alert( 'i <3 cake' );
 
 export default class extends React.PureComponent {
-    static displayName = 'Headers';
+	static displayName = 'Headers';
 
 	render() {
 		return (

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { isServiceWorkerSupported } from 'lib/service-worker';

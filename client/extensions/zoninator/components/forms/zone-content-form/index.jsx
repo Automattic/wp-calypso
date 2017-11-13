@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { PureComponent } from 'react';
@@ -48,7 +48,8 @@ class ZoneContentForm extends PureComponent {
 						rerenderOnEveryChange
 						name="posts"
 						props={ { requesting } }
-						component={ PostsList } />
+						component={ PostsList }
+					/>
 				</CompactCard>
 			</form>
 		);

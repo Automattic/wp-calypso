@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { keyToString } from 'lib/feed-stream-store/post-key';

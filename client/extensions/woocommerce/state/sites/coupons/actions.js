@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 import {
 	WOOCOMMERCE_COUPON_CREATE,
