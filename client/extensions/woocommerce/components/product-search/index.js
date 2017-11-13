@@ -101,7 +101,7 @@ class ProductSearch extends Component {
 
 	renderNoProducts = () => {
 		const { translate, site } = this.props;
-		const text = translate( "You don't have any products yet – {{a}}Add product{{/a}}", {
+		const text = translate( "You don't have any products yet – {{a}}Add a product{{/a}}", {
 			components: {
 				a: <a href={ getLink( '/store/product/:site/', site ) } />,
 			},

@@ -86,7 +86,7 @@ class ProductVariations extends Component {
 			<div className="product-search__variations">
 				<FormFieldset>
 					<FormLegend>
-						{ translate( '%(product)s has variations. Choose a specific customization to select.', {
+						{ translate( '%(product)s has variations. Choose a specific variation to add.', {
 							args: { product: product.name },
 						} ) }
 					</FormLegend>
