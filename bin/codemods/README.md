@@ -67,6 +67,25 @@ If you're developing your own transformations, it may be useful to know you can 
 ./node_modules/.bin/jscodeshift -t transformation.js [target files]
 ```
 
+## How to debug codemods
+
+If you are a codemod author, you may want to debug your codemod using the Chrome debugger. Then
+run the codemod script with a `--debugger` parameter:
+```bash
+npm run codemod -- --debugger my-transform client/target.js
+```
+This will run `jscodeshift` in a Node process with activated debugger server and will break on the
+first statement. That allows you to connect with Chrome and run the codemod script. (internally,
+the `--inspect-brk` command line option is passed to Node)
+
+`jscodeshift` will be run in a mode where it doesn't spawn child worker processes, but will execute
+everything in one Node process -- the one that's being debugged. (internally, the `--run-in-band`
+command line option is passed to `jscodeshift`)
+
+You can now connect to the running Node process from Chrome by opening the `chrome:inspect` page and
+selecting your local Node process from the list. Refer to the
+[official Node debugging guide](https://nodejs.org/en/docs/inspector/) if you run into any trouble.
+
 ## List of available transformations
 
 ### 5to6-codemod scripts ([docs](https://github.com/5to6/5to6-codemod#transforms))
