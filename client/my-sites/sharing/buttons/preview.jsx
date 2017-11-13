@@ -120,12 +120,13 @@ class SharingButtonsPreview extends React.Component {
 		);
 	};
 
+	// 16 is used in the preview to match the buttons on the frontend of the website.
 	getReblogButtonElement = () => {
 		if ( this.props.showReblog ) {
 			return (
 				<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__reblog">
-					// 16 is used in the preview to match the buttons on the frontend of the website.
 					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+					{ /* 16 is used in the preview to match the buttons on the frontend of the website. */ }
 					<Gridicon icon="reblog" size={ 16 } />
 					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 					{ this.props.translate( 'Reblog' ) }
@@ -139,8 +140,8 @@ class SharingButtonsPreview extends React.Component {
 			return (
 				<span>
 					<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__like">
-						// 16 is used in the preview to match the buttons on the frontend of the website.
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+						{ /* 16 is used in the preview to match the buttons on the frontend of the website. */ }
 						<Gridicon icon="star" size={ 16 } />
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.translate( 'Like' ) }
