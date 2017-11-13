@@ -1,7 +1,6 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
 
 import { isEmpty, pick } from 'lodash';

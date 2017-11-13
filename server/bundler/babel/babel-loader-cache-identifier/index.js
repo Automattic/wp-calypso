@@ -1,7 +1,6 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
 
 const fs = require( 'fs' );

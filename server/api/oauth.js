@@ -1,7 +1,6 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
 
 var req = require( 'superagent' ),
@@ -56,17 +55,15 @@ function proxyOAuth( request, response ) {
 function checkConnection( serverResponse, fn ) {
 	return function( error, clientResponse ) {
 		if ( typeof clientResponse === 'undefined' ) {
-			return serverResponse
-				.status( 408 )
-				.json( {
-					error: 'invalid_request',
-					error_description:
-						'The request to ' +
-						error.host +
-						' failed (code ' +
-						error.code +
-						'), please check your internet connection and try again.',
-				} );
+			return serverResponse.status( 408 ).json( {
+				error: 'invalid_request',
+				error_description:
+					'The request to ' +
+					error.host +
+					' failed (code ' +
+					error.code +
+					'), please check your internet connection and try again.',
+			} );
 		}
 		fn( error, clientResponse );
 	};

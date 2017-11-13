@@ -1,7 +1,6 @@
+/** @format */
 /**
  * Internal dependencies
- *
- * @format
  */
 
 const configPath = require( 'path' ).resolve( __dirname, '..', '..', 'config' );

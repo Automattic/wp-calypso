@@ -1,7 +1,6 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
 
 const kebabCase = require( 'lodash' ).kebabCase;

@@ -1,7 +1,6 @@
+/** @format */
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import Lru from 'lru';
