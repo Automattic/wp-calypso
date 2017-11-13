@@ -34,6 +34,7 @@ export class EditorGroundControl extends PureComponent {
 		isPublishing: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		isSidebarOpened: PropTypes.bool,
+		loadRevision: PropTypes.func.isRequired,
 		moment: PropTypes.func,
 		onPreview: PropTypes.func,
 		onPublish: PropTypes.func,
@@ -200,7 +201,7 @@ export class EditorGroundControl extends PureComponent {
 	};
 
 	renderGroundControlQuickSaveButtons() {
-		const { isSaving, isSidebarOpened, post, selectRevision, translate } = this.props;
+		const { isSaving, loadRevision, post, translate } = this.props;
 
 		const isSaveAvailable = this.isSaveAvailable();
 		const showingStatusLabel = this.shouldShowStatusLabel();
@@ -235,9 +236,7 @@ export class EditorGroundControl extends PureComponent {
 							) }
 					</div>
 				) }
-				{ hasRevisions && (
-					<HistoryButton selectRevision={ selectRevision } isSidebarOpened={ isSidebarOpened } />
-				) }
+				{ hasRevisions && <HistoryButton loadRevision={ loadRevision } /> }
 			</div>
 		);
 	}
@@ -293,6 +292,10 @@ export class EditorGroundControl extends PureComponent {
 		);
 	}
 
+	onBackButtonClick = () => {
+		page.back( this.props.allPostsUrl );
+	};
+
 	render() {
 		const { translate } = this.props;
 
@@ -302,7 +305,7 @@ export class EditorGroundControl extends PureComponent {
 					borderless
 					className="editor-ground-control__back"
 					href={ '' }
-					onClick={ page.back.bind( page, this.props.allPostsUrl ) }
+					onClick={ this.onBackButtonClick }
 					aria-label={ translate( 'Go back' ) }
 				>
 					<Gridicon icon="arrow-left" />

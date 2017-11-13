@@ -7,7 +7,6 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -26,8 +25,7 @@ import SiteNotice from './notice';
 import CartStore from 'lib/cart/store';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedOrAllSites } from 'state/selectors';
+import { getSelectedOrAllSites, getVisibleSites } from 'state/selectors';
 import { infoNotice, removeNotice } from 'state/notices/actions';
 import { getNoticeLastTimeShown } from 'state/notices/selectors';
 import { getSectionName } from 'state/ui/selectors';
@@ -175,16 +173,12 @@ class CurrentSite extends Component {
 }
 
 export default connect(
-	state => {
-		const user = getCurrentUser( state );
-
-		return {
-			selectedSite: getSelectedSite( state ),
-			anySiteSelected: getSelectedOrAllSites( state ),
-			siteCount: get( user, 'visible_site_count', 0 ),
-			staleCartItemNoticeLastTimeShown: getNoticeLastTimeShown( state, 'stale-cart-item-notice' ),
-			sectionName: getSectionName( state ),
-		};
-	},
+	state => ( {
+		selectedSite: getSelectedSite( state ),
+		anySiteSelected: getSelectedOrAllSites( state ),
+		siteCount: getVisibleSites( state ).length,
+		staleCartItemNoticeLastTimeShown: getNoticeLastTimeShown( state, 'stale-cart-item-notice' ),
+		sectionName: getSectionName( state ),
+	} ),
 	{ setLayoutFocus, infoNotice, removeNotice, recordTracksEvent }
 )( localize( CurrentSite ) );
