@@ -44,7 +44,7 @@ class EditorRevisions extends Component {
 
 			return (
 				<a
-					className="editor-revisions"
+					className="editor-revisions__wpadmin-link"
 					href={ revisionsLink }
 					target="_blank"
 					rel="noopener noreferrer"

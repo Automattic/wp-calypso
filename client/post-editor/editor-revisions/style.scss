@@ -8,6 +8,24 @@
 	width: 100vw;
 }
 
+.editor-revisions__wpadmin-link {
+	color: $gray-text;
+	cursor: pointer;
+	display: block;
+	font-size: 13px;
+	margin: 0 0 -16px;
+	padding: 16px 0;
+	text-align: left;
+	width: calc(100% + 32px);
+
+	.gridicon {
+		color: $gray-text;
+		margin-left: -2px;
+		margin-right: 8px;
+		vertical-align: bottom;
+	}
+}
+
 .editor-revisions-list__loading-placeholder {
 	@include placeholder(23%);
 }
