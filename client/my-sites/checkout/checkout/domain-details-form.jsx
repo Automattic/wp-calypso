@@ -128,6 +128,10 @@ export class DomainDetailsForm extends PureComponent {
 		if ( ! isEqual( previousFormValues, currentFormValues ) ) {
 			this.props.updateContactDetailsCache( this.getMainFieldValues() );
 		}
+
+		if ( ! isEqual( prevProps.cart, this.props.cart ) ) {
+			this.validateSteps();
+		}
 	}
 
 	loadFormStateFromRedux = fn => {
@@ -152,6 +156,18 @@ export class DomainDetailsForm extends PureComponent {
 
 	hasAnotherStep() {
 		return this.state.currentStep !== last( this.state.steps );
+	}
+
+	validateSteps() {
+		const updatedSteps = [ 'mainForm', ...this.getRequiredExtraSteps() ];
+		const newState = {
+			steps: updatedSteps,
+		};
+		if ( updatedSteps.indexOf( this.state.currentStep ) < 0 ) {
+			debug( 'Switching to step: mainForm' );
+			newState.currentStep = 'mainForm';
+		}
+		this.setState( newState );
 	}
 
 	getCountryCode() {
@@ -258,6 +274,7 @@ export class DomainDetailsForm extends PureComponent {
 			// All we need to do to disable everything is not show the .FR form
 			return [];
 		}
+
 		return intersection( cartItems.getTlds( this.props.cart ), tldsWithAdditionalDetailsForms );
 	}
 
