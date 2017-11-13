@@ -48,6 +48,7 @@ import {
 	getAuthAttempts,
 	getAuthorizationRemoteSite,
 	getSiteIdFromQueryObject,
+	getUserAlreadyConnected,
 	hasExpiredSecretError as hasExpiredSecretErrorSelector,
 	hasXmlrpcError as hasXmlrpcErrorSelector,
 	isCalypsoStartedConnection,
@@ -95,6 +96,7 @@ class LoggedInForm extends Component {
 		retryAuth: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		userAlreadyConnected: PropTypes.bool.isRequired,
 	};
 
 	retryingAuth = false;
@@ -579,6 +581,7 @@ export default connect(
 			isFetchingSites: isRequestingSites( state ),
 			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 			siteSlug,
+			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};
 	},
 	{

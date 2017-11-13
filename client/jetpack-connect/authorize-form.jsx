@@ -14,7 +14,7 @@ import { get, includes } from 'lodash';
  */
 import Main from 'components/main';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
-import { getAuthorizationData, getUserAlreadyConnected } from 'state/jetpack-connect/selectors';
+import { getAuthorizationData } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
@@ -120,7 +120,6 @@ export default connect(
 	state => ( {
 		jetpackConnectAuthorize: getAuthorizationData( state ),
 		user: getCurrentUser( state ),
-		userAlreadyConnected: getUserAlreadyConnected( state ),
 	} ),
 	{
 		recordTracksEvent,
