@@ -110,34 +110,8 @@ export class LoginForm extends Component {
 		} );
 	};
 
-	onSubmitForm = event => {
-		event.preventDefault();
-
+	getAuthAccountType() {
 		const { usernameOrEmail } = this.state;
-		const { accountType } = this.props;
-
-		if ( isRegularAccount( accountType ) ) {
-			const { password } = this.state;
-			const { onSuccess, redirectTo } = this.props;
-
-			this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
-
-			this.props
-				.loginUser( usernameOrEmail, password, redirectTo )
-				.then( () => {
-					this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
-
-					onSuccess( redirectTo );
-				} )
-				.catch( error => {
-					this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
-						error_code: error.code,
-						error_message: error.message,
-					} );
-				} );
-
-			return;
-		}
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type' );
 
@@ -154,6 +128,38 @@ export class LoginForm extends Component {
 					error_message: error.message,
 				} );
 			} );
+	}
+
+	loginUser() {
+		const { password, usernameOrEmail } = this.state;
+		const { onSuccess, redirectTo } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
+
+		this.props.loginUser( usernameOrEmail, password, redirectTo )
+			.then( () => {
+				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
+
+				onSuccess( redirectTo );
+			} )
+			.catch( error => {
+				this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
+					error_code: error.code,
+					error_message: error.message,
+				} );
+			} );
+	}
+
+	onSubmitForm = event => {
+		event.preventDefault();
+
+		if ( this.props.accountType === null ) {
+			this.getAuthAccountType();
+
+			return;
+		}
+
+		this.loginUser();
 	};
 
 	shouldUseRedirectLoginFlow() {
