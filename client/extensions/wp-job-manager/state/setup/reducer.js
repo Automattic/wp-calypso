@@ -21,9 +21,9 @@ import {
  * Returns the updated creating state after an action has been dispatched.
  * Creating state tracks whether pages are being created for a site.
  *
- * @param  {Object} state Current creating state
- * @param  {Object} action Action object
- * @return {Object} Updated creating state
+ * @param  {Boolean} state Current creating state
+ * @param  {Object}  action Action object
+ * @return {Object}  Updated creating state
  */
 export const creating = ( state = false, { type } ) =>
 	get(
@@ -40,9 +40,9 @@ export const creating = ( state = false, { type } ) =>
  * Returns the updated fetching state after an action has been dispatched.
  * Fetching state tracks whether setup status is being fetched for a site.
  *
- * @param  {Object} state Current fetching state
- * @param  {Object} action Action object
- * @return {Object} Updated fetching state
+ * @param  {Boolean} state Current fetching state
+ * @param  {Object}  action Action object
+ * @return {Object}  Updated fetching state
  */
 export const fetching = ( state = false, { type } ) =>
 	get(
@@ -58,9 +58,9 @@ export const fetching = ( state = false, { type } ) =>
 /**
  * Tracks whether or not to move to the next step in the wizard.
  *
- * @param  {Object} state Current state
- * @param  {Object} action Action object
- * @return {Object} Updated state
+ * @param  {Boolean} state Current state
+ * @param  {Object}  action Action object
+ * @return {Object}  Updated state
  */
 export const nextStep = ( state = false, { type } ) =>
 	WP_JOB_MANAGER_WIZARD_NEXT_STEP === type ? true : state;
@@ -68,9 +68,9 @@ export const nextStep = ( state = false, { type } ) =>
 /**
  * Tracks the setup status for a particular site.
  *
- * @param  {Object} state Current setup status
- * @param  {Object} action Action object
- * @return {Object} Updated setup status
+ * @param  {Boolean} state Current setup status
+ * @param  {Object}  action Action object
+ * @return {Object}  Updated setup status
  */
 export const status = ( state = false, { setupStatus, type } ) =>
 	WP_JOB_MANAGER_UPDATE_SETUP_STATUS === type ? setupStatus : state;

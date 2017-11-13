@@ -20,15 +20,20 @@ import {
  * Returns the updated fetching state after an action has been dispatched.
  * Fetching state tracks whether a settings fetch is in progress for a site.
  *
- * @param  {Object} state Current fetching state
- * @param  {Object} action Action object
- * @return {Object} Updated fetching state
+ * @param  {Boolean} state Current fetching state
+ * @param  {Object}  action Action object
+ * @return {Object}  Updated fetching state
  */
-export const fetching = ( state = false, { type } ) => get( {
-	[ WP_JOB_MANAGER_FETCH_SETTINGS ]: true,
-	[ WP_JOB_MANAGER_FETCH_ERROR ]: false,
-	[ WP_JOB_MANAGER_UPDATE_SETTINGS ]: false,
-}, type, state );
+export const fetching = ( state = false, { type } ) =>
+	get(
+		{
+			[ WP_JOB_MANAGER_FETCH_SETTINGS ]: true,
+			[ WP_JOB_MANAGER_FETCH_ERROR ]: false,
+			[ WP_JOB_MANAGER_UPDATE_SETTINGS ]: false,
+		},
+		type,
+		state
+	);
 
 /**
  * Tracks the settings for a particular site.
@@ -38,13 +43,14 @@ export const fetching = ( state = false, { type } ) => get( {
  * @return {Object} Updated settings
  */
 export const items = ( state = {}, { data, type } ) =>
-	WP_JOB_MANAGER_UPDATE_SETTINGS === type
-		? data
-		: state;
+	WP_JOB_MANAGER_UPDATE_SETTINGS === type ? data : state;
 
 items.schema = itemsSchema;
 
-export default keyedReducer( 'siteId', combineReducers( {
-	fetching,
-	items,
-} ) );
+export default keyedReducer(
+	'siteId',
+	combineReducers( {
+		fetching,
+		items,
+	} )
+);
