@@ -145,6 +145,8 @@ export class LoginForm extends Component {
 			.getAuthAccountType( usernameOrEmail )
 			.then( () => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_success' );
+
+				this.password.focus();
 			} )
 			.catch( error => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_failure', {
