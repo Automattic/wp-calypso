@@ -30,7 +30,6 @@ import QuerySettingsGeneral from 'woocommerce/components/query-settings-general'
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import { fetchTaxSettings, updateTaxSettings } from 'woocommerce/state/sites/settings/tax/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
 import TaxSettingsSaveButton from './save-button';
 import SettingsNavigation from '../navigation';
@@ -52,26 +51,24 @@ class SettingsTaxesWooCommerceServices extends Component {
 	}
 
 	static propTypes = {
-		site: PropTypes.shape( {
-			slug: PropTypes.string,
-			ID: PropTypes.number,
-		} ),
+		siteSlug: PropTypes.string.isRequired,
+		siteId: PropTypes.number.isRequired,
 		className: PropTypes.string,
 	};
 
 	componentDidMount = () => {
-		const { site } = this.props;
+		const { siteId } = this.props;
 
-		if ( site && site.ID ) {
-			this.props.fetchTaxSettings( site.ID );
+		if ( siteId ) {
+			this.props.fetchTaxSettings( siteId );
 		}
 	};
 
 	componentWillReceiveProps = newProps => {
 		if ( ! this.state.userBeganEditing ) {
-			const { site } = this.props;
-			const newSiteId = ( newProps.site && newProps.site.ID ) || null;
-			const oldSiteId = ( site && site.ID ) || null;
+			const { siteId } = this.props;
+			const newSiteId = newProps.siteId || null;
+			const oldSiteId = siteId || null;
 			if ( oldSiteId !== newSiteId ) {
 				this.props.fetchTaxSettings( newSiteId );
 			}
@@ -99,7 +96,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 	};
 
 	onSave = ( event, onSuccessExtra ) => {
-		const { site, translate } = this.props;
+		const { siteId, translate } = this.props;
 
 		event.preventDefault();
 		this.setState( { isSaving: true } );
@@ -124,10 +121,10 @@ class SettingsTaxesWooCommerceServices extends Component {
 
 		// TODO - chain these
 
-		this.props.updateTaxesEnabledSetting( site.ID, this.state.taxesEnabled );
+		this.props.updateTaxesEnabledSetting( siteId, this.state.taxesEnabled );
 
 		this.props.updateTaxSettings(
-			site.ID,
+			siteId,
 			this.state.pricesIncludeTaxes || false,
 			! this.state.shippingIsTaxable, // note the inversion
 			onSuccess,
@@ -136,8 +133,8 @@ class SettingsTaxesWooCommerceServices extends Component {
 	};
 
 	onAddressChange = address => {
-		const { site } = this.props;
-		this.props.fetchTaxRates( site.ID, address, true );
+		const { siteId } = this.props;
+		this.props.fetchTaxRates( siteId, address, true );
 	};
 
 	renderAddress = () => {
@@ -161,13 +158,13 @@ class SettingsTaxesWooCommerceServices extends Component {
 	};
 
 	renderRates = () => {
-		const { site } = this.props;
+		const { siteId } = this.props;
 
 		return (
 			<TaxesRates
 				taxesEnabled={ this.state.taxesEnabled }
 				onEnabledChange={ this.onEnabledChange }
-				site={ site }
+				siteId={ siteId }
 			/>
 		);
 	};
@@ -183,10 +180,12 @@ class SettingsTaxesWooCommerceServices extends Component {
 	};
 
 	render = () => {
-		const { className, loaded, site, translate } = this.props;
+		const { className, loaded, siteId, siteSlug, translate } = this.props;
 
 		const breadcrumbs = [
-			<a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a>,
+			<a href={ getLink( '/store/settings/:site/', { slug: siteSlug } ) }>
+				{ translate( 'Settings' ) }
+			</a>,
 			<span>{ translate( 'Taxes' ) }</span>,
 		];
 
@@ -196,7 +195,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 					<TaxSettingsSaveButton onSave={ this.onSave } />
 				</ActionHeader>
 				<SettingsNavigation activeSection="taxes" />
-				<QuerySettingsGeneral siteId={ site.ID } />
+				<QuerySettingsGeneral siteId={ siteId } />
 				{ loaded && this.renderAddress() }
 				{ loaded && this.renderRates() }
 				{ loaded && this.renderOptions() }
@@ -207,7 +206,6 @@ class SettingsTaxesWooCommerceServices extends Component {
 
 function mapStateToProps( state ) {
 	const loaded = areTaxSettingsLoaded( state ) && areSettingsGeneralLoaded( state );
-	const site = getSelectedSiteWithFallback( state );
 	const pricesIncludeTaxes = getPricesIncludeTax( state );
 	const shippingIsTaxable = ! getShippingIsTaxFree( state ); // note the inversion
 	const taxesEnabled = areTaxCalculationsEnabled( state );
@@ -216,7 +214,6 @@ function mapStateToProps( state ) {
 		loaded,
 		pricesIncludeTaxes,
 		shippingIsTaxable,
-		site,
 		taxesEnabled,
 	};
 }
