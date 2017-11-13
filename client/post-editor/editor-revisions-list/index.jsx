@@ -3,21 +3,21 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { head, map } from 'lodash';
+import { findIndex, get, head, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import EditorRevisionsListHeader from './header';
 import EditorRevisionsListItem from './item';
-import LoadButton from './load-button';
-import { getPostRevisionsSelectedRevisionId } from 'state/selectors';
 import { selectPostRevision } from 'state/posts/revisions/actions';
+import { getPostRevision, getPostRevisionsSelectedRevisionId } from 'state/selectors';
+import KeyboardShortcuts from 'lib/keyboard-shortcuts';
+import LoadButton from './load-button';
 
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {
@@ -45,6 +45,29 @@ class EditorRevisionsList extends PureComponent {
 		}
 	}
 
+	componentDidMount() {
+		// Make sure that scroll position in the editor is not preserved.
+		window.scrollTo( 0, 0 );
+
+		KeyboardShortcuts.on( 'move-selection-up', this.selectNextRevision );
+		KeyboardShortcuts.on( 'move-selection-down', this.selectPreviousRevision );
+	}
+
+	componentWillUnmount() {
+		KeyboardShortcuts.off( 'move-selection-up', this.selectNextRevision );
+		KeyboardShortcuts.off( 'move-selection-down', this.selectPreviousRevision );
+	}
+
+	selectNextRevision = () => {
+		const { nextRevisionId } = this.props;
+		nextRevisionId && this.props.selectPostRevision( nextRevisionId );
+	};
+
+	selectPreviousRevision = () => {
+		const { prevRevisionId } = this.props;
+		prevRevisionId && this.props.selectPostRevision( prevRevisionId );
+	};
+
 	render() {
 		const { postId, revisions, selectedRevisionId, siteId } = this.props;
 		return (
@@ -71,8 +94,18 @@ class EditorRevisionsList extends PureComponent {
 }
 
 export default connect(
-	state => ( {
-		selectedRevisionId: getPostRevisionsSelectedRevisionId( state ),
-	} ),
+	( state, { revisions } ) => {
+		const selectedRevisionId = getPostRevisionsSelectedRevisionId( state );
+		const selectedIdIndex = findIndex( revisions, { id: selectedRevisionId } );
+		const nextRevisionId = selectedRevisionId && get( revisions, [ selectedIdIndex - 1, 'id' ] );
+		const prevRevisionId = selectedRevisionId && get( revisions, [ selectedIdIndex + 1, 'id' ] );
+
+		return {
+			selectedRevision: getPostRevision( state, selectedRevisionId ),
+			nextRevisionId,
+			prevRevisionId,
+			selectedRevisionId,
+		};
+	},
 	{ selectPostRevision }
 )( EditorRevisionsList );
