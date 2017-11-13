@@ -13,6 +13,11 @@ const recastOptions = {
 	objectCurlySpacing: true,
 	quote: 'single',
 	useTabs: true,
+	trailingComma: {
+		objects: true,
+		arrays: true,
+		parameters: false,
+	}
 };
 const commonArgs = {
 	'5to6': [

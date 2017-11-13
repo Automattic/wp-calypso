@@ -24,6 +24,7 @@ import automatedTransfer from './automated-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
+import concierge from './concierge/reducer';
 import consoleDispatcher from './console-dispatch';
 import countries from './countries/reducer';
 import countryStates from './country-states/reducer';
@@ -52,6 +53,7 @@ import posts from './posts/reducer';
 import postTypes from './post-types/reducer';
 import preferences from './preferences/reducer';
 import preview from './preview/reducer';
+import privacyPolicy from './privacy-policy/reducer';
 import productsList from './products-list/reducer';
 import pushNotifications from './push-notifications/reducer';
 import purchases from './purchases/reducer';
@@ -93,6 +95,7 @@ const reducers = {
 	billingTransactions,
 	comments,
 	componentsUsageStats,
+	concierge,
 	countries,
 	countryStates,
 	currentUser,
@@ -122,6 +125,7 @@ const reducers = {
 	postTypes,
 	preferences,
 	preview,
+	privacyPolicy,
 	productsList,
 	purchases,
 	pushNotifications,

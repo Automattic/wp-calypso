@@ -1,9 +1,7 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React from 'react';
 import createReactClass from 'create-react-class';
 import ReactDom from 'react-dom';
@@ -52,6 +50,13 @@ import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
 import { getEditedPostValue, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { hasBrokenSiteUserConnection } from 'state/selectors';
+import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'state/ui/editor/sidebar/constants';
+import { getNestedSidebarTarget } from 'state/ui/editor/sidebar/selectors';
+import {
+	setNestedSidebar,
+	closeEditorSidebar,
+	openEditorSidebar,
+} from 'state/ui/editor/sidebar/actions';
 import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
@@ -72,10 +77,6 @@ import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable, getSiteDomain } from 'state/sites/selectors';
 import EditorDiffViewer from 'post-editor/editor-diff-viewer';
-import {
-	NESTED_SIDEBAR_NONE,
-	NESTED_SIDEBAR_REVISIONS,
-} from 'post-editor/editor-sidebar/constants';
 import { removep } from 'lib/formatting';
 
 export const PostEditor = createReactClass( {
@@ -98,6 +99,7 @@ export const PostEditor = createReactClass( {
 		translate: PropTypes.func.isRequired,
 		hasBrokenPublicizeConnection: PropTypes.bool,
 		editPost: PropTypes.func,
+		setNestedSidebar: PropTypes.func.isRequired,
 		type: PropTypes.string,
 	},
 
@@ -119,7 +121,6 @@ export const PostEditor = createReactClass( {
 			showPreview: false,
 			isPostPublishPreview: false,
 			previewAction: null,
-			nestedSidebar: NESTED_SIDEBAR_NONE,
 			selectedRevisionId: null,
 		};
 	},
@@ -157,10 +158,10 @@ export const PostEditor = createReactClass( {
 		} );
 	},
 
-	componentDidUpdate( prevProps, prevState ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			prevState.nestedSidebar !== NESTED_SIDEBAR_NONE &&
-			this.state.nestedSidebar === NESTED_SIDEBAR_NONE
+			prevProps.nestedSidebarTarget !== NESTED_SIDEBAR_NONE &&
+			this.props.nestedSidebarTarget === NESTED_SIDEBAR_NONE
 		) {
 			// NOTE: Make sure we scroll back to the top AND trigger a scroll
 			// event no matter the scroll position we're coming from.
@@ -272,21 +273,9 @@ export const PostEditor = createReactClass( {
 	},
 
 	toggleSidebar: function() {
-		if ( this.props.layoutFocus === 'sidebar' ) {
-			this.props.setEditorSidebar( 'closed' );
-			this.props.setLayoutFocus( 'content' );
-			recordStat( 'close-sidebar' );
-			recordEvent( 'Sidebar Toggle', 'close' );
-		} else {
-			this.props.setEditorSidebar( 'open' );
-			this.props.setLayoutFocus( 'sidebar' );
-			recordStat( 'open-sidebar' );
-			recordEvent( 'Sidebar Toggle', 'open' );
-		}
-	},
-
-	setNestedSidebar: function( nestedSidebar ) {
-		this.setState( { nestedSidebar } );
+		this.props.layoutFocus === 'sidebar'
+			? this.props.closeEditorSidebar()
+			: this.props.openEditorSidebar();
 	},
 
 	selectRevision: function( selectedRevisionId ) {
@@ -297,7 +286,7 @@ export const PostEditor = createReactClass( {
 	},
 
 	loadRevision: function( revision ) {
-		this.setNestedSidebar( NESTED_SIDEBAR_NONE );
+		this.props.setNestedSidebar( NESTED_SIDEBAR_NONE );
 		this.setState( { selectedRevisionId: null } );
 		this.restoreRevision( {
 			content: revision.content,
@@ -372,8 +361,6 @@ export const PostEditor = createReactClass( {
 						toggleSidebar={ this.toggleSidebar }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						allPostsUrl={ this.getAllPostsUrl() }
-						nestedSidebar={ this.state.nestedSidebar }
-						setNestedSidebar={ this.setNestedSidebar }
 						selectRevision={ this.selectRevision }
 						isSidebarOpened={ this.props.layoutFocus === 'sidebar' }
 					/>
@@ -386,7 +373,7 @@ export const PostEditor = createReactClass( {
 								site={ site }
 								isPostPrivate={ utils.isPrivate( this.state.post ) }
 								postAuthor={ this.state.post ? this.state.post.author : null }
-								hasEditorNestedSidebar={ this.state.nestedSidebar !== NESTED_SIDEBAR_NONE }
+								hasEditorNestedSidebar={ this.props.nestedSidebarTarget !== NESTED_SIDEBAR_NONE }
 							/>
 							<div className="post-editor__site">
 								<Site
@@ -400,7 +387,7 @@ export const PostEditor = createReactClass( {
 							</div>
 							<div
 								className={ classNames( 'post-editor__inner-content', {
-									'is-shown': this.state.nestedSidebar === NESTED_SIDEBAR_NONE,
+									'is-shown': this.props.nestedSidebarTarget === NESTED_SIDEBAR_NONE,
 								} ) }
 							>
 								<FeaturedImage
@@ -414,11 +401,9 @@ export const PostEditor = createReactClass( {
 									{ this.state.post && isPage && site ? (
 										<EditorPageSlug
 											path={
-												this.state.post.URL && this.state.post.URL !== siteURL ? (
-													utils.getPagePath( this.state.post )
-												) : (
-													siteURL
-												)
+												this.state.post.URL && this.state.post.URL !== siteURL
+													? utils.getPagePath( this.state.post )
+													: siteURL
 											}
 										/>
 									) : null }
@@ -456,7 +441,7 @@ export const PostEditor = createReactClass( {
 								/>
 								<EditorWordCount selectedText={ this.state.selectedText } />
 							</div>
-							{ this.state.nestedSidebar === NESTED_SIDEBAR_REVISIONS && (
+							{ this.props.nestedSidebarTarget === NESTED_SIDEBAR_REVISIONS && (
 								<EditorDiffViewer
 									siteId={ site.ID }
 									postId={ this.state.post.ID }
@@ -466,7 +451,6 @@ export const PostEditor = createReactClass( {
 						</div>
 					</div>
 					<EditorSidebar
-						toggleSidebar={ this.toggleSidebar }
 						savedPost={ this.state.savedPost }
 						post={ this.state.post }
 						isNew={ this.state.isNew }
@@ -477,8 +461,6 @@ export const PostEditor = createReactClass( {
 						onSave={ this.onSave }
 						isPostPrivate={ utils.isPrivate( this.state.post ) }
 						confirmationSidebarStatus={ this.state.confirmationSidebar }
-						setNestedSidebar={ this.setNestedSidebar }
-						nestedSidebar={ this.state.nestedSidebar }
 						loadRevision={ this.loadRevision }
 						selectedRevisionId={ this.state.selectedRevisionId }
 						selectRevision={ this.selectRevision }
@@ -733,7 +715,6 @@ export const PostEditor = createReactClass( {
 			recordStat( isPage ? 'page_trashed' : 'post_trashed' );
 			recordEvent( isPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
 			this.props.markSaved();
-			this.onClose();
 		}
 	},
 
@@ -1409,6 +1390,7 @@ const enhance = flow(
 				isSitePreviewable: isSitePreviewable( state, siteId ),
 				isEditorOnlyRouteInHistory: isEditorOnlyRouteInHistory( state ),
 				isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
+				nestedSidebarTarget: getNestedSidebarTarget( state ),
 			};
 		},
 		dispatch => {
@@ -1425,6 +1407,9 @@ const enhance = flow(
 					setNextLayoutFocus,
 					saveConfirmationSidebarPreference,
 					recordTracksEvent,
+					setNestedSidebar,
+					closeEditorSidebar,
+					openEditorSidebar,
 				},
 				dispatch
 			);

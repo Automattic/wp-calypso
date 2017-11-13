@@ -18,13 +18,14 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
-import { areAllSitesSingleUser } from 'state/selectors';
+import { areAllSitesSingleUser, canCurrentUserEditPost } from 'state/selectors';
 import {
 	isSharePanelOpen,
 	isMultiSelectEnabled,
 	isPostSelected,
 } from 'state/ui/post-type-list/selectors';
 import { hideSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
+import ExternalLink from 'components/external-link';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import PostTime from 'blocks/post-time';
 import PostStatus from 'blocks/post-status';
@@ -78,7 +79,7 @@ class PostItem extends React.Component {
 		);
 	}
 
-	renderVariableHeightContent() {
+	renderExpandedContent() {
 		const { post, isCurrentSharePanelOpen } = this.props;
 
 		if ( ! post || ! isCurrentSharePanelOpen ) {
@@ -99,19 +100,21 @@ class PostItem extends React.Component {
 		const {
 			className,
 			post,
+			externalPostLink,
+			postUrl,
 			globalId,
 			isAllSitesModeSelected,
-			editUrl,
 			translate,
 			largeTitle,
 			wrapTitle,
 		} = this.props;
 
 		const title = post ? post.title : null;
+		const isPlaceholder = ! globalId;
 
 		const panelClasses = classnames( 'post-item__panel', className, {
 			'is-untitled': ! title,
-			'is-placeholder': ! globalId,
+			'is-placeholder': isPlaceholder,
 			'has-large-title': largeTitle,
 			'has-wrapped-title': wrapTitle,
 		} );
@@ -121,11 +124,10 @@ class PostItem extends React.Component {
 		const isAuthorVisible =
 			isEnabled( 'posts/post-type-list' ) && this.hasMultipleUsers() && post && post.author;
 
-		const variableHeightContent = this.renderVariableHeightContent();
-		this.hasVariableHeightContent = !! variableHeightContent;
+		const expandedContent = this.renderExpandedContent();
 
 		const rootClasses = classnames( 'post-item', {
-			'is-expanded': this.hasVariableHeightContent,
+			'is-expanded': !! expandedContent,
 		} );
 
 		return (
@@ -138,9 +140,22 @@ class PostItem extends React.Component {
 							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
 						</div>
 						<h1 className="post-item__title">
-							<a href={ editUrl } className="post-item__title-link">
-								{ title || translate( 'Untitled' ) }
-							</a>
+							{ ! externalPostLink && (
+								<a href={ isPlaceholder ? null : postUrl } className="post-item__title-link">
+									{ title || translate( 'Untitled' ) }
+								</a>
+							) }
+							{ ! isPlaceholder &&
+							externalPostLink && (
+								<ExternalLink
+									icon={ true }
+									href={ postUrl }
+									target="_blank"
+									className="post-item__title-link"
+								>
+									{ title || translate( 'Untitled' ) }
+								</ExternalLink>
+							) }
 						</h1>
 						<div className="post-item__meta">
 							<PostTime globalId={ globalId } />
@@ -150,7 +165,7 @@ class PostItem extends React.Component {
 					<PostTypeListPostThumbnail globalId={ globalId } />
 					<PostActionsEllipsisMenu globalId={ globalId } />
 				</div>
-				{ variableHeightContent }
+				{ expandedContent }
 			</div>
 		);
 	}
@@ -159,8 +174,9 @@ class PostItem extends React.Component {
 PostItem.propTypes = {
 	translate: PropTypes.func,
 	globalId: PropTypes.string,
-	editUrl: PropTypes.string,
 	post: PropTypes.object,
+	canEdit: PropTypes.bool,
+	postUrl: PropTypes.string,
 	isAllSitesModeSelected: PropTypes.bool,
 	allSitesSingleUser: PropTypes.bool,
 	singleUserSite: PropTypes.bool,
@@ -182,12 +198,17 @@ export default connect(
 
 		const siteId = post.site_ID;
 
+		// Avoid rendering an external link while loading.
+		const externalPostLink = false === canCurrentUserEditPost( state, globalId );
+		const postUrl = externalPostLink ? post.URL : getEditorPath( state, siteId, post.ID );
+
 		return {
 			post,
+			externalPostLink,
+			postUrl,
 			isAllSitesModeSelected: getSelectedSiteId( state ) === null,
 			allSitesSingleUser: areAllSitesSingleUser( state ),
 			singleUserSite: isSingleUserSite( state, siteId ),
-			editUrl: getEditorPath( state, siteId, post.ID ),
 			isCurrentSharePanelOpen: isSharePanelOpen( state, globalId ),
 			isCurrentPostSelected: isPostSelected( state, globalId ),
 			multiSelectEnabled: isMultiSelectEnabled( state ),

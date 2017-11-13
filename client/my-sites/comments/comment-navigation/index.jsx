@@ -209,27 +209,27 @@ export class CommentNavigation extends Component {
 
 				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
 					{ isEnabled( 'comments/management/sorting' ) &&
-					isCommentsTreeSupported &&
-					hasComments && (
-						<SegmentedControl compact className="comment-navigation__sort-buttons">
-							<ControlItem
-								onClick={ setSortOrder( NEWEST_FIRST ) }
-								selected={ sortOrder === NEWEST_FIRST }
-							>
-								{ translate( 'Newest', {
-									comment: 'Chronological order for sorting the comments list.',
-								} ) }
-							</ControlItem>
-							<ControlItem
-								onClick={ setSortOrder( OLDEST_FIRST ) }
-								selected={ sortOrder === OLDEST_FIRST }
-							>
-								{ translate( 'Oldest', {
-									comment: 'Chronological order for sorting the comments list.',
-								} ) }
-							</ControlItem>
-						</SegmentedControl>
-					) }
+						isCommentsTreeSupported &&
+						hasComments && (
+							<SegmentedControl compact className="comment-navigation__sort-buttons">
+								<ControlItem
+									onClick={ setSortOrder( NEWEST_FIRST ) }
+									selected={ sortOrder === NEWEST_FIRST }
+								>
+									{ translate( 'Newest', {
+										comment: 'Chronological order for sorting the comments list.',
+									} ) }
+								</ControlItem>
+								<ControlItem
+									onClick={ setSortOrder( OLDEST_FIRST ) }
+									selected={ sortOrder === OLDEST_FIRST }
+								>
+									{ translate( 'Oldest', {
+										comment: 'Chronological order for sorting the comments list.',
+									} ) }
+								</ControlItem>
+							</SegmentedControl>
+						) }
 
 					{ hasComments && (
 						<Button compact onClick={ toggleBulkEdit }>

@@ -108,11 +108,9 @@ class StoreStatsChart extends Component {
 									tabClick={ this.tabClick }
 								>
 									<span className="store-stats-chart__value value">
-										{ tab.type === 'currency' ? (
-											formatCurrency( itemChartData.value, data[ selectedIndex ].currency )
-										) : (
-											Math.round( itemChartData.value * 100 ) / 100
-										) }
+										{ tab.type === 'currency'
+											? formatCurrency( itemChartData.value, data[ selectedIndex ].currency )
+											: Math.round( itemChartData.value * 100 ) / 100 }
 									</span>
 									<Delta
 										value={ `${ deltaValue }%` }

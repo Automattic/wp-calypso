@@ -36,9 +36,9 @@ export class Comment extends Component {
 	};
 
 	state = {
-		hasReplyFocus: false,
 		isEditMode: false,
 		isExpanded: false,
+		isReplyVisible: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -48,10 +48,6 @@ export class Comment extends Component {
 	}
 
 	storeCardRef = card => ( this.commentCard = card );
-
-	blurReply = () => this.setState( { hasReplyFocus: false } );
-
-	focusReply = () => this.setState( { hasReplyFocus: true } );
 
 	keyDownHandler = event => {
 		const { isBulkMode } = this.props;
@@ -76,9 +72,18 @@ export class Comment extends Component {
 
 	toggleExpanded = () => {
 		if ( ! this.props.isLoading && ! this.state.isEditMode ) {
-			this.setState( ( { isExpanded } ) => ( { isExpanded: ! isExpanded } ) );
+			this.setState( ( { isExpanded } ) => ( {
+				isExpanded: ! isExpanded,
+				isReplyVisible: false,
+			} ) );
 		}
 	};
+
+	toggleReply = () =>
+		this.setState( ( { isReplyVisible } ) => ( {
+			isExpanded: true,
+			isReplyVisible: ! isReplyVisible,
+		} ) );
 
 	toggleSelected = () => this.props.toggleSelected( this.props.minimumComment );
 
@@ -95,7 +100,7 @@ export class Comment extends Component {
 			siteId,
 			updatePersisted,
 		} = this.props;
-		const { hasReplyFocus, isEditMode, isExpanded } = this.state;
+		const { isEditMode, isExpanded, isReplyVisible } = this.state;
 
 		const showActions = isExpanded || ( ! isBulkMode && commentIsPending );
 
@@ -105,6 +110,7 @@ export class Comment extends Component {
 			'is-expanded': isExpanded,
 			'is-placeholder': isLoading,
 			'is-pending': commentIsPending,
+			'is-reply-visible': isReplyVisible,
 		} );
 
 		return (
@@ -130,17 +136,12 @@ export class Comment extends Component {
 
 						{ showActions && (
 							<CommentActions
-								{ ...{ commentId, isExpanded, removeFromPersisted, updatePersisted } }
+								{ ...{ commentId, removeFromPersisted, updatePersisted } }
+								toggleReply={ this.toggleReply }
 							/>
 						) }
 
-						{ isExpanded && (
-							<CommentReply
-								{ ...{ commentId, hasReplyFocus } }
-								blurReply={ this.blurReply }
-								focusReply={ this.focusReply }
-							/>
-						) }
+						{ isExpanded && ! isBulkMode && <CommentReply { ...{ commentId, isReplyVisible } } /> }
 					</div>
 				) }
 			</Card>

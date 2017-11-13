@@ -82,29 +82,29 @@ export class CommentsManagement extends Component {
 				) }
 				{ ! showJetpackUpdateScreen && <SidebarNavigation /> }
 				{ ! showJetpackUpdateScreen &&
-				showPermissionError && (
-					<EmptyContent
-						title={ preventWidows(
-							translate( "Oops! You don't have permission to manage comments." )
-						) }
-						line={ preventWidows(
-							translate( "If you think you should, contact this site's administrator." )
-						) }
-						illustration="/calypso/images/illustrations/illustration-500.svg"
-					/>
-				) }
+					showPermissionError && (
+						<EmptyContent
+							title={ preventWidows(
+								translate( "Oops! You don't have permission to manage comments." )
+							) }
+							line={ preventWidows(
+								translate( "If you think you should, contact this site's administrator." )
+							) }
+							illustration="/calypso/images/illustrations/illustration-500.svg"
+						/>
+					) }
 				{ ! showJetpackUpdateScreen &&
-				! showPermissionError && (
-					<CommentList
-						changePage={ changePage }
-						order={ 'desc' }
-						page={ page }
-						postId={ postId }
-						siteId={ siteId }
-						siteFragment={ siteFragment }
-						status={ status }
-					/>
-				) }
+					! showPermissionError && (
+						<CommentList
+							changePage={ changePage }
+							order={ 'desc' }
+							page={ page }
+							postId={ postId }
+							siteId={ siteId }
+							siteFragment={ siteFragment }
+							status={ status }
+						/>
+					) }
 			</Main>
 		);
 	}

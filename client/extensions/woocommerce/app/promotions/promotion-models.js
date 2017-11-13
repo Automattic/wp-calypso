@@ -196,7 +196,7 @@ const couponConditions = {
 		},
 		individualUse: {
 			component: FormField,
-			labelText: translate( 'Cannot be combined with any other promotion' ),
+			labelText: translate( 'Cannot be combined with any other coupon' ),
 			isEnableable: true,
 			defaultValue: true,
 		},

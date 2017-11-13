@@ -67,46 +67,46 @@ const PostActions = ( {
 				/>
 			</li>
 			{ ! isDraft &&
-			showComments && (
-				<li className="post-actions__item">
-					{ config.isEnabled( 'comments/management/post-view' ) ? (
-						<CommentButton
-							key="comment-button"
-							post={ post }
-							showLabel={ false }
-							commentCount={ post.discussion.comment_count }
-							tagName="a"
-							link={ `/comments/all/${ siteSlug }/${ post.ID }` }
-						/>
-					) : (
-						<CommentButton
-							key="comment-button"
-							post={ post }
-							showLabel={ false }
-							commentCount={ post.discussion.comment_count }
-							onClick={ toggleComments }
-							tagName="div"
-						/>
-					) }
-				</li>
-			) }
+				showComments && (
+					<li className="post-actions__item">
+						{ config.isEnabled( 'comments/management/post-view' ) ? (
+							<CommentButton
+								key="comment-button"
+								post={ post }
+								showLabel={ false }
+								commentCount={ post.discussion.comment_count }
+								tagName="a"
+								href={ `/comments/all/${ siteSlug }/${ post.ID }` }
+							/>
+						) : (
+							<CommentButton
+								key="comment-button"
+								post={ post }
+								showLabel={ false }
+								commentCount={ post.discussion.comment_count }
+								onClick={ toggleComments }
+								tagName="div"
+							/>
+						) }
+					</li>
+				) }
 			{ ! isDraft &&
-			showLikes && (
-				<li className="post-actions__item">
-					<LikeButton
-						key="like-button"
-						siteId={ +post.site_ID }
-						postId={ +post.ID }
-						post={ post }
-					/>
-				</li>
-			) }
+				showLikes && (
+					<li className="post-actions__item">
+						<LikeButton
+							key="like-button"
+							siteId={ +post.site_ID }
+							postId={ +post.ID }
+							post={ post }
+						/>
+					</li>
+				) }
 			{ ! isDraft &&
-			showStats && (
-				<li className="post-actions__item post-actions__total-views">
-					<PostTotalViews post={ post } clickHandler={ trackTotalViewsOnClick } />
-				</li>
-			) }
+				showStats && (
+					<li className="post-actions__item post-actions__total-views">
+						<PostTotalViews post={ post } clickHandler={ trackTotalViewsOnClick } />
+					</li>
+				) }
 		</ul>
 	);
 };

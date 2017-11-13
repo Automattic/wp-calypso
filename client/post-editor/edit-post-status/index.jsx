@@ -42,7 +42,6 @@ export class EditPostStatus extends Component {
 		status: PropTypes.string,
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
-		setNestedSidebar: PropTypes.func,
 		selectRevision: PropTypes.func,
 	};
 
@@ -105,39 +104,43 @@ export class EditPostStatus extends Component {
 				{ this.renderPostScheduling() }
 				{ this.renderPostVisibility() }
 				{ this.props.type === 'post' &&
-				! isPostPrivate &&
-				! isPasswordProtected && (
-					<label className="edit-post-status__sticky">
-						<span className="edit-post-status__label-text">
-							{ translate( 'Stick to the front page' ) }
-							<InfoPopover position="top right" gaEventCategory="Editor" popoverName="Sticky Post">
-								{ translate( 'Sticky posts will appear at the top of the posts listing.' ) }
-							</InfoPopover>
-						</span>
-						<FormToggle
-							checked={ isSticky }
-							onChange={ this.toggleStickyStatus }
-							aria-label={ translate( 'Stick post to the front page' ) }
-						/>
-					</label>
-				) }
+					! isPostPrivate &&
+					! isPasswordProtected && (
+						<label className="edit-post-status__sticky">
+							<span className="edit-post-status__label-text">
+								{ translate( 'Stick to the front page' ) }
+								<InfoPopover
+									position="top right"
+									gaEventCategory="Editor"
+									popoverName="Sticky Post"
+								>
+									{ translate( 'Sticky posts will appear at the top of the posts listing.' ) }
+								</InfoPopover>
+							</span>
+							<FormToggle
+								checked={ isSticky }
+								onChange={ this.toggleStickyStatus }
+								aria-label={ translate( 'Stick post to the front page' ) }
+							/>
+						</label>
+					) }
 				{ ! isPublished &&
-				! isScheduled &&
-				canPublish && (
-					<label className="edit-post-status__pending-review">
-						<span className="edit-post-status__label-text">
-							{ translate( 'Pending review' ) }
-							<InfoPopover position="top right">
-								{ translate( 'Flag this post to be reviewed for approval.' ) }
-							</InfoPopover>
-						</span>
-						<FormToggle
-							checked={ isPending }
-							onChange={ this.togglePendingStatus }
-							aria-label={ translate( 'Request review for post' ) }
-						/>
-					</label>
-				) }
+					! isScheduled &&
+					canPublish && (
+						<label className="edit-post-status__pending-review">
+							<span className="edit-post-status__label-text">
+								{ translate( 'Pending review' ) }
+								<InfoPopover position="top right">
+									{ translate( 'Flag this post to be reviewed for approval.' ) }
+								</InfoPopover>
+							</span>
+							<FormToggle
+								checked={ isPending }
+								onChange={ this.togglePendingStatus }
+								aria-label={ translate( 'Request review for post' ) }
+							/>
+						</label>
+					) }
 				{ ( isPublished || isScheduled || ( isPending && ! canPublish ) ) && (
 					<Button
 						className="edit-post-status__revert-to-draft"
@@ -150,7 +153,6 @@ export class EditPostStatus extends Component {
 				<Revisions
 					revisions={ this.props.post && this.props.post.revisions }
 					adminUrl={ adminUrl }
-					setNestedSidebar={ this.props.setNestedSidebar }
 					selectRevision={ this.props.selectRevision }
 				/>
 			</div>

@@ -89,16 +89,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	recommendShortestDomain: {
-		datestamp: '20171010',
-		variations: {
-			shortest: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	unlimitedThemeNudge: {
 		datestamp: '20171016',
 		variations: {
@@ -116,5 +106,15 @@ export default {
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
+	},
+	domainsCheckoutLocalizedAddresses: {
+		datestamp: '20171025',
+		variations: {
+			showLocalizedAddressFormats: 50,
+			showDefaultAddressFormat: 50,
+		},
+		defaultVariation: 'showDefaultAddressFormat',
+		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 };

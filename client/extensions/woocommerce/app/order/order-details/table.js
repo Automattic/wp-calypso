@@ -100,7 +100,10 @@ class OrderDetailsTable extends Component {
 	onChange = event => {
 		const { order } = this.props;
 		// Name is `quantity-x`, where x is the ID of the item
-		const id = parseInt( event.target.name.split( '-' )[ 1 ] );
+		let id = event.target.name.split( '-' )[ 1 ];
+		if ( ! isNaN( parseInt( id ) ) ) {
+			id = parseInt( id );
+		}
 		const item = find( order.line_items, { id } );
 		if ( ! item ) {
 			return;
@@ -170,7 +173,6 @@ class OrderDetailsTable extends Component {
 				<Button
 					compact
 					borderless
-					icon
 					aria-label={ translate( 'Remove %(itemName)s from this order', {
 						args: { itemName: item.name },
 					} ) }

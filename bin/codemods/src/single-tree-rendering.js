@@ -20,6 +20,8 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
+const fs = require( 'fs' );
+const repl = require( 'repl' );
 
 /**
  * Internal dependencies
@@ -29,6 +31,25 @@ const config = require( './config' );
 export default function transformer( file, api ) {
 	const j = api.jscodeshift;
 	const root = j( file.source );
+
+	/**
+	 * Gather all of the external deps and throw them in a set
+	 */
+	const nodeJsDeps = repl._builtinLibs;
+	const packageJson = JSON.parse( fs.readFileSync( './package.json', 'utf8' ) );
+	const packageJsonDeps = []
+		.concat( nodeJsDeps )
+		.concat( Object.keys( packageJson.dependencies ) )
+		.concat( Object.keys( packageJson.devDependencies ) );
+
+	const externalDependenciesSet = new Set( packageJsonDeps );
+
+	/**
+	 * @param {object} importNode Node object
+	 * @returns {boolean}
+	 */
+	const isExternal = importNode =>
+		externalDependenciesSet.has( importNode.source.value.split( '/' )[ 0 ] );
 
 	/**
 	 * Removes the extra newlines between two import statements
@@ -255,15 +276,35 @@ export default function transformer( file, api ) {
 		} )
 		.remove();
 
-	// Remove empty `import 'lib/react-helpers'`
-	root
+	// Find empty `import 'lib/react-helpers'`
+	const orphanImportHelpers = root
 		.find( j.ImportDeclaration, {
 			source: {
 				value: 'lib/react-helpers',
 			},
 		} )
-		.filter( p => ! p.value.specifiers.length )
-		.remove();
+		.filter( p => ! p.value.specifiers.length );
+
+	if ( orphanImportHelpers.size() ) {
+		// Find out if import had comment above it
+		const comment = _.get( orphanImportHelpers.nodes(), '[0].comments[0]', false );
+
+		// Remove empty `import 'lib/react-helpers'` (and any comments with it)
+		orphanImportHelpers.remove();
+
+		// Put back that removed comment (if any)
+		if ( comment ) {
+			// Find internal dependencies and place comment above first one
+			root
+				.find( j.ImportDeclaration )
+				.filter( p => ! isExternal( p.value ) )
+				.at( 0 )
+				.replaceWith( p => {
+					p.value.comments = [ comment ];
+					return p.value;
+				} );
+		}
+	}
 
 	// Add makeLayout and clientRender middlewares to route definitions
 	const routeDefs = root
@@ -285,5 +326,7 @@ export default function transformer( file, api ) {
 			.insertAfter( "import { makeLayout, render as clientRender } from 'controller';" );
 	}
 
-	return removeExtraNewlines( root.toSource( config.recastOptions ) );
+	const source = root.toSource( config.recastOptions );
+
+	return routeDefs.size() ? removeExtraNewlines( source ) : source;
 }

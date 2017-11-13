@@ -39,7 +39,7 @@ class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
-		description: PropTypes.string,
+		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 		disableHref: PropTypes.bool,
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
@@ -53,6 +53,7 @@ class Banner extends Component {
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 		siteSlug: PropTypes.string,
+		target: PropTypes.string,
 		title: PropTypes.string.isRequired,
 	};
 
@@ -126,7 +127,7 @@ class Banner extends Component {
 	}
 
 	getContent() {
-		const { callToAction, description, event, feature, list, price, title } = this.props;
+		const { callToAction, description, event, feature, list, price, title, target } = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
 
@@ -166,7 +167,13 @@ class Banner extends Component {
 							</div>
 						) }
 						{ callToAction && (
-							<Button compact href={ this.getHref() } onClick={ this.handleClick } primary>
+							<Button
+								compact
+								href={ this.getHref() }
+								onClick={ this.handleClick }
+								primary
+								target={ target }
+							>
 								{ callToAction }
 							</Button>
 						) }

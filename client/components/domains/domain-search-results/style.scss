@@ -23,3 +23,26 @@
 		}
 	}
 }
+
+.domain-search-results__transfer-card {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	font-size: 17px;
+}
+
+.domain-search-results__transfer-card-copy {
+	p {
+		padding-top: 10px;
+		margin-bottom: 0;
+	}
+}
+
+.domain-search-results__transfer-card-link {
+	text-align: right;
+	min-width: 100px;
+
+	@include breakpoint( '>660px' ) {
+		min-width: 170px;
+	}
+}

@@ -10,6 +10,7 @@ import { expect } from 'chai';
  */
 import {
 	getAllProducts,
+	getAllProductsWithVariations,
 	getProduct,
 	getProducts,
 	areProductsLoaded,
@@ -18,6 +19,7 @@ import {
 	getTotalProducts,
 } from '../selectors';
 import products from './fixtures/products';
+import productVariations from '../../product-variations/test/fixtures/variations';
 
 const preInitializedState = {
 	extensions: {
@@ -71,6 +73,7 @@ const loadedState = {
 						},
 						products,
 					},
+					productVariations,
 				},
 				401: {
 					products: {
@@ -114,6 +117,24 @@ describe( 'selectors', () => {
 
 		test( 'should return all loaded products for a given site.', () => {
 			expect( getAllProducts( loadedState, 123 ) ).to.eql( products );
+		} );
+	} );
+
+	describe( '#getAllProductsWithVariations', () => {
+		test( 'should get an empty array when woocommerce state is not available.', () => {
+			expect( getAllProductsWithVariations( preInitializedState, 123 ) ).to.eql( [] );
+		} );
+
+		test( 'should get an empty array if no products have loaded yet.', () => {
+			expect( getAllProductsWithVariations( loadingState, 123 ) ).to.eql( [] );
+		} );
+
+		test( 'should return all loaded products and variations for a given site.', () => {
+			const allProducts = getAllProductsWithVariations( loadedState, 123 );
+			expect( allProducts ).to.be.an( 'array' );
+			expect( allProducts ).to.include( products[ 1 ] );
+			expect( allProducts ).to.include( { ...productVariations[ 15 ][ 0 ], productId: 15 } );
+			expect( allProducts.length ).to.eql( 4 );
 		} );
 	} );
 

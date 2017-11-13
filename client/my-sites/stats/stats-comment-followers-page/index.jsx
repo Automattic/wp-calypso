@@ -115,10 +115,10 @@ class StatModuleFollowersPage extends Component {
 				<Card className={ classNames( classes ) }>
 					<div className="module-content">
 						{ noData &&
-						! hasError &&
-						! isLoading && (
-							<ErrorPanel className="is-empty-message" message={ translate( 'No followers' ) } />
-						) }
+							! hasError &&
+							! isLoading && (
+								<ErrorPanel className="is-empty-message" message={ translate( 'No followers' ) } />
+							) }
 
 						{ paginationSummary }
 

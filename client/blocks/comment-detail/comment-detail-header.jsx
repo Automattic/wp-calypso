@@ -94,21 +94,21 @@ export class CommentDetailHeader extends Component {
 				onMouseLeave={ this.onMouseLeave }
 			>
 				{ isExpanded &&
-				isEditMode && (
-					<div className="comment-detail__header-edit-mode">
-						<div className="comment-detail__header-edit-title">
-							<Gridicon icon="pencil" />
-							<span>{ translate( 'Edit Comment' ) }</span>
+					isEditMode && (
+						<div className="comment-detail__header-edit-mode">
+							<div className="comment-detail__header-edit-title">
+								<Gridicon icon="pencil" />
+								<span>{ translate( 'Edit Comment' ) }</span>
+							</div>
+							<Button
+								borderless
+								className="comment-detail__action-collapse"
+								onClick={ toggleEditMode }
+							>
+								<Gridicon icon="cross" />
+							</Button>
 						</div>
-						<Button
-							borderless
-							className="comment-detail__action-collapse"
-							onClick={ toggleEditMode }
-						>
-							<Gridicon icon="cross" />
-						</Button>
-					</div>
-				) }
+					) }
 
 				{ ! isExpanded && (
 					<div className="comment-detail__header-content">
@@ -159,32 +159,32 @@ export class CommentDetailHeader extends Component {
 					showQuickActions &&
 					! viewport.isMobile() ) ||
 					isExpanded ) &&
-				! isEditMode && (
-					<CommentDetailActions
-						compact={ showQuickActions && ! isExpanded }
-						commentIsLiked={ commentIsLiked }
-						commentStatus={ commentStatus }
-						deleteCommentPermanently={ deleteCommentPermanently }
-						toggleReply={ toggleReply }
-						toggleApprove={ toggleApprove }
-						toggleEditMode={ toggleEditMode }
-						toggleLike={ toggleLike }
-						toggleSpam={ toggleSpam }
-						toggleTrash={ toggleTrash }
-					/>
-				) }
+					! isEditMode && (
+						<CommentDetailActions
+							compact={ showQuickActions && ! isExpanded }
+							commentIsLiked={ commentIsLiked }
+							commentStatus={ commentStatus }
+							deleteCommentPermanently={ deleteCommentPermanently }
+							toggleReply={ toggleReply }
+							toggleApprove={ toggleApprove }
+							toggleEditMode={ toggleEditMode }
+							toggleLike={ toggleLike }
+							toggleSpam={ toggleSpam }
+							toggleTrash={ toggleTrash }
+						/>
+					) }
 
 				{ ! isBulkEdit &&
-				! isEditMode && (
-					<Button
-						borderless
-						className="comment-detail__action-collapse"
-						disabled={ isEditMode }
-						onClick={ isExpanded ? toggleExpanded : noop }
-					>
-						<Gridicon icon="chevron-down" />
-					</Button>
-				) }
+					! isEditMode && (
+						<Button
+							borderless
+							className="comment-detail__action-collapse"
+							disabled={ isEditMode }
+							onClick={ isExpanded ? toggleExpanded : noop }
+						>
+							<Gridicon icon="chevron-down" />
+						</Button>
+					) }
 			</div>
 		);
 	}

@@ -314,7 +314,9 @@ const Pages = createReactClass( {
 		}
 
 		const blogPostsPage = site &&
-		status === 'published' && <BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />;
+			status === 'published' && (
+				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+			);
 
 		return (
 			<div id="pages" className="pages__page-list">

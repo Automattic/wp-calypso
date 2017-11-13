@@ -37,6 +37,7 @@ const staticFiles = [
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
 	{ path: 'style-rtl.css' },
+	{ path: 'style-debug-rtl.css' },
 ];
 
 const staticFilesUrls = staticFiles.reduce( ( result, file ) => {

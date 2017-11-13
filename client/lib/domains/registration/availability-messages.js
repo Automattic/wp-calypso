@@ -127,6 +127,12 @@ function getAvailabilityNotice( domain, error ) {
 			message = translate( 'Please enter a domain name or keyword.' );
 			break;
 
+		case domainAvailability.INVALID_QUERY:
+			message = translate(
+				'Your search term can only contain alphanumeric characters, spaces, dots, or hyphens.'
+			);
+			break;
+
 		default:
 			message = translate(
 				'Sorry, there was a problem processing your request. Please try again in a few minutes.'

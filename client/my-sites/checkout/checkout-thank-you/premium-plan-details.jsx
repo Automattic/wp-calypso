@@ -46,16 +46,14 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 				icon={ <img src="/calypso/images/upgrades/advertising-removed.svg" /> }
 				title={ i18n.translate( 'Advertising Removed' ) }
 				description={
-					isPremiumPlan ? (
-						i18n.translate(
-							'With your plan, all WordPress.com advertising has been removed from your site.' +
-								' You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
-						)
-					) : (
-						i18n.translate(
-							'With your plan, all WordPress.com advertising has been removed from your site.'
-						)
-					)
+					isPremiumPlan
+						? i18n.translate(
+								'With your plan, all WordPress.com advertising has been removed from your site.' +
+									' You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
+							)
+						: i18n.translate(
+								'With your plan, all WordPress.com advertising has been removed from your site.'
+							)
 				}
 			/>
 

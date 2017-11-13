@@ -1,3 +1,5 @@
+$post-item-background-color: $white;
+
 $post-item-border-color: darken( $sidebar-bg-color, 5% );
 $expanded-post-item-outline-color: $sidebar-selected-color;
 
@@ -43,7 +45,7 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 		padding: 0 24px;
 	}
 
-	background: $white;
+	background: $post-item-background-color;
 }
 
 .post-item__select {
@@ -86,6 +88,14 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 
 .post-item__info {
 	display: flex;
+	flex-wrap: wrap;
+	overflow: hidden;
+	&::after {
+		@include long-content-fade(
+			$color: $post-item-background-color,
+			$size: 30px
+		);
+	}
 }
 
 .post-item__title {

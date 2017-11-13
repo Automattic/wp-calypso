@@ -15,12 +15,6 @@ import { get, includes } from 'lodash';
 import Main from 'components/main';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import {
-	authorize,
-	goBackToWpAdmin,
-	retryAuth,
-	goToXmlrpcErrorFallbackUrl,
-} from 'state/jetpack-connect/actions';
-import {
 	getAuthorizationData,
 	getAuthorizationRemoteSite,
 	isCalypsoStartedConnection,
@@ -34,7 +28,6 @@ import {
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
-import { requestSites } from 'state/sites/actions';
 import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
@@ -46,10 +39,7 @@ import LoggedOutForm from './auth-logged-out-form';
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {
 		authAttempts: PropTypes.number,
-		authorize: PropTypes.func,
 		calypsoStartedConnection: PropTypes.bool,
-		goBackToWpAdmin: PropTypes.func,
-		goToXmlrpcErrorFallbackUrl: PropTypes.func,
 		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
@@ -63,8 +53,6 @@ class JetpackConnectAuthorizeForm extends Component {
 		setTracksAnonymousUserId: PropTypes.func,
 		requestHasExpiredSecretError: PropTypes.func,
 		requestHasXmlrpcError: PropTypes.func,
-		requestSites: PropTypes.func,
-		retryAuth: PropTypes.func,
 		siteSlug: PropTypes.string,
 		user: PropTypes.object,
 	};
@@ -123,7 +111,11 @@ class JetpackConnectAuthorizeForm extends Component {
 		return this.props.user ? (
 			<LoggedInForm { ...this.props } isSSO={ this.isSSO() } isWoo={ this.isWoo() } />
 		) : (
-			<LoggedOutForm { ...this.props } isSSO={ this.isSSO() } isWoo={ this.isWoo() } />
+			<LoggedOutForm
+				jetpackConnectAuthorize={ this.props.jetpackConnectAuthorize }
+				local={ this.props.locale }
+				path={ this.props.path }
+			/>
 		);
 	}
 
@@ -171,12 +163,7 @@ export default connect(
 		};
 	},
 	{
-		authorize,
-		goBackToWpAdmin,
-		goToXmlrpcErrorFallbackUrl,
 		recordTracksEvent,
 		setTracksAnonymousUserId,
-		requestSites,
-		retryAuth,
 	}
 )( localize( JetpackConnectAuthorizeForm ) );

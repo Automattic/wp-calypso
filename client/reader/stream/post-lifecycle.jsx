@@ -123,7 +123,7 @@ export default class PostLifecycle extends React.Component {
 			return <PostPlaceholder />;
 		} else if ( post._state === 'error' ) {
 			return <PostUnavailable post={ post } />;
-		} else if ( includes( this.props.blockedSites, +postKey.blogId ) ) {
+		} else if ( ! post.is_external && includes( this.props.blockedSites, +post.site_ID ) ) {
 			return <PostBlocked post={ post } />;
 		} else if ( isXPost( post ) ) {
 			const xMetadata = XPostHelper.getXPostMetadata( post );

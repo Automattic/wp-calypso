@@ -1,14 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
  *
- * @format
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +19,6 @@ import { canCurrentUser } from 'state/selectors';
 import { getPost } from 'state/posts/selectors';
 import { restorePost } from 'state/posts/actions';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getPostType } from 'state/post-types/selectors';
 
 class PostActionsEllipsisMenuRestore extends Component {
 	static propTypes = {
@@ -77,23 +75,19 @@ const mapStateToProps = ( state, { globalId } ) => {
 		siteId: post.site_ID,
 		postId: post.ID,
 		status: post.status,
+		type: post.type,
 		canRestore: canCurrentUser(
 			state,
 			post.site_ID,
 			isAuthor ? 'delete_posts' : 'delete_others_posts'
 		),
-		type: getPostType( state, post.site_ID, post.type ),
 	};
 };
 
 const mapDispatchToProps = { restorePost, bumpAnalyticsStat };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator(
-		get( stateProps, 'type.name' ),
-		'restore',
-		dispatchProps.bumpAnalyticsStat
-	);
+	const bumpStat = bumpStatGenerator( stateProps.type, 'restore', dispatchProps.bumpAnalyticsStat );
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
 };
 

@@ -16,11 +16,6 @@ import config from 'config';
 
 export default class Emojify extends PureComponent {
 	static propTypes = {
-		children: PropTypes.oneOfType( [
-			PropTypes.array.isRequired,
-			PropTypes.object.isRequired,
-			PropTypes.string.isRequired,
-		] ),
 		imgClassName: PropTypes.string,
 	};
 

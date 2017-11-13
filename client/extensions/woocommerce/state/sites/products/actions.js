@@ -158,6 +158,14 @@ export function fetchProducts( siteId, params, successAction, failureAction ) {
 	};
 }
 
+export function fetchProductsFailure( siteId, params ) {
+	return {
+		type: WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
+		siteId,
+		params,
+	};
+}
+
 export function productsUpdated( siteId, params, products, totalPages, totalProducts ) {
 	// This passed through the API layer successfully, but failed at the remote site.
 	if ( ! isArray( products ) ) {

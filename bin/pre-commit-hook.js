@@ -18,6 +18,12 @@ const prettier = require( 'prettier' );
  */
 const shouldFormat = require( './utils/should-format' );
 
+/**
+ * Module constants
+ */
+const defaultPrettierConfig = undefined;
+const sassPrettierConfig = { parser: 'scss' };
+
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
 		'under the GNU General Public License v2 (or later). All materials must have ' +
@@ -38,7 +44,9 @@ function parseGitDiffToPathArray( command ) {
 		.toString()
 		.split( '\n' )
 		.map( name => name.trim() )
-		.filter( name => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) );
+		.filter(
+			name => name.endsWith( '.js' ) || name.endsWith( '.jsx' ) || name.endsWith( '.scss' )
+		);
 }
 
 const dirtyFiles = new Set( parseGitDiffToPathArray( 'git diff --name-only --diff-filter=ACM' ) );
@@ -57,7 +65,10 @@ files.forEach( file => {
 			return;
 		}
 
-		const formattedText = prettier.format( text, {} );
+		const formattedText = prettier.format(
+			text,
+			file.endsWith( '.scss' ) ? sassPrettierConfig : defaultPrettierConfig
+		);
 
 		// No change required.
 		if ( text === formattedText ) {
@@ -71,10 +82,14 @@ files.forEach( file => {
 } );
 
 // linting should happen after formatting
-const lintResult = spawnSync( 'eslint-eslines', [ ...files, '--', '--diff=index' ], {
-	shell: true,
-	stdio: 'inherit',
-} );
+const lintResult = spawnSync(
+	'eslint-eslines',
+	[ ...files.filter( file => ! file.endsWith( '.scss' ) ), '--', '--diff=index' ],
+	{
+		shell: true,
+		stdio: 'inherit',
+	}
+);
 
 if ( lintResult.status ) {
 	console.log(

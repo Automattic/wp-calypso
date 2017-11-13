@@ -1,9 +1,7 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
@@ -16,9 +14,22 @@ import { flow } from 'lodash';
  */
 import { isEnabled } from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
+import { NESTED_SIDEBAR_REVISIONS } from 'state/ui/editor/sidebar/constants';
+import { setNestedSidebar } from 'state/ui/editor/sidebar/actions';
 
 class EditorRevisions extends Component {
+	static propTypes = {
+		// passed props
+		adminUrl: PropTypes.string,
+		revisions: PropTypes.array,
+		selectRevision: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+
+		// connected props
+		setNestedSidebar: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
+	};
+
 	showRevisionsNestedSidebar = () => {
 		this.trackPostRevisionsOpen();
 		this.props.selectRevision( null );
@@ -74,12 +85,6 @@ class EditorRevisions extends Component {
 	}
 }
 
-EditorRevisions.propTypes = {
-	adminUrl: PropTypes.string,
-	revisions: PropTypes.array,
-	translate: PropTypes.func,
-	setNestedSidebar: PropTypes.func.isRequired,
-	selectRevision: PropTypes.func.isRequired,
-};
-
-export default flow( localize, connect( null, { recordTracksEvent } ) )( EditorRevisions );
+export default flow( localize, connect( null, { recordTracksEvent, setNestedSidebar } ) )(
+	EditorRevisions
+);

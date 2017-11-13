@@ -40,6 +40,7 @@ export class CommentActions extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
 		removeFromPersisted: PropTypes.func,
+		toggleReply: PropTypes.func,
 		updatePersisted: PropTypes.func,
 	};
 
@@ -129,7 +130,7 @@ export class CommentActions extends Component {
 	};
 
 	render() {
-		const { commentIsApproved, commentIsLiked, translate } = this.props;
+		const { commentIsApproved, commentIsLiked, toggleReply, translate } = this.props;
 
 		return (
 			<div className="comment__actions">
@@ -189,6 +190,17 @@ export class CommentActions extends Component {
 					>
 						<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
 						<span>{ commentIsLiked ? translate( 'Liked' ) : translate( 'Like' ) }</span>
+					</Button>
+				) }
+
+				{ this.hasAction( 'reply' ) && (
+					<Button
+						borderless
+						className="comment__action comment__action-reply"
+						onClick={ toggleReply }
+					>
+						<Gridicon icon="reply" />
+						<span>{ translate( 'Reply' ) }</span>
 					</Button>
 				) }
 			</div>

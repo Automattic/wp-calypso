@@ -451,16 +451,16 @@ class PostCommentList extends React.Component {
 				) }
 				{ this.renderCommentsList( displayedComments ) }
 				{ showViewMoreComments &&
-				this.props.startingCommentId && (
-					<span className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
-						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
-							args: {
-								shown: displayedCommentsCount,
-								total: actualCommentsCount,
-							},
-						} ) }
-					</span>
-				) }
+					this.props.startingCommentId && (
+						<span className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
+							{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
+								args: {
+									shown: displayedCommentsCount,
+									total: actualCommentsCount,
+								},
+							} ) }
+						</span>
+					) }
 				<PostCommentFormRoot
 					post={ this.props.post }
 					commentsTree={ this.props.commentsTree }

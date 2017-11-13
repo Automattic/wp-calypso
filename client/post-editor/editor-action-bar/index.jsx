@@ -67,9 +67,9 @@ class EditorActionBar extends Component {
 				</div>
 				<div className="editor-action-bar__cell is-right">
 					{ this.props.post &&
-					this.props.type === 'post' &&
-					! isPasswordProtected &&
-					! isPostPrivate && <EditorSticky /> }
+						this.props.type === 'post' &&
+						! isPasswordProtected &&
+						! isPostPrivate && <EditorSticky /> }
 					{ utils.isPublished( this.props.savedPost ) && (
 						<Button
 							href={ this.props.savedPost.URL }

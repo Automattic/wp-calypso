@@ -52,7 +52,7 @@ describe( 'processItem', () => {
 	test( 'should process an item', () => {
 		expect( processItem( VALID_API_ITEM ) )
 			.to.be.an( 'object' )
-			.that.has.keys( [
+			.that.contains.keys( [
 				'activityDate',
 				'activityGroup',
 				'activityIcon',

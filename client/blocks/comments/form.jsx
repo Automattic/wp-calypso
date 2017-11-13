@@ -159,7 +159,7 @@ class PostCommentForm extends React.Component {
 			return null;
 		}
 
-		switch ( error.error ) {
+		switch ( this.props.errorType ) {
 			case 'comment_duplicate':
 				message = translate(
 					"Duplicate comment detected. It looks like you've already said that!"

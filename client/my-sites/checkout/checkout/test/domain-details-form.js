@@ -142,7 +142,7 @@ describe( 'Domain Details Form', () => {
 		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 1 );
 	} );
 
-	describe( 'Country selection', () => {
+	describe( 'Google Apps Form UI state', () => {
 		let needsOnlyGoogleAppsDetailsStub;
 
 		useSandbox( sandbox => {
@@ -152,12 +152,29 @@ describe( 'Domain Details Form', () => {
 			);
 		} );
 
-		test( 'should not render address fieldset with no country data', () => {
+		test( 'should not render GAppsFieldset component when the cart does not contain a Google App', () => {
+			needsOnlyGoogleAppsDetailsStub.returns( false );
+			const wrapper = shallow( <DomainDetailsForm { ...propsWithCountry } /> );
+
+			expect( wrapper.find( 'GAppsFields' ) ).to.have.length( 0 );
+			expect( wrapper.find( '.checkout__domain-contact-details-fields' ) ).to.have.length( 1 );
+		} );
+
+		test( 'should render GAppsFieldset component when the cart contains only a Google App', () => {
+			needsOnlyGoogleAppsDetailsStub.returns( true );
+
+			const wrapper = shallow( <DomainDetailsForm { ...propsWithCountry } /> );
+
+			expect( wrapper.find( 'GAppsFieldset' ) ).to.have.length( 1 );
+			expect( wrapper.find( '.checkout__domain-contact-details-fields' ) ).to.have.length( 0 );
+		} );
+	} );
+
+	describe( 'Country selection', () => {
+		test( 'should not render address fieldset when a country code is not available', () => {
 			const wrapper = shallow( <DomainDetailsForm { ...defaultProps } /> );
 
-			expect(
-				wrapper.find( '.checkout__domain-details-country-dependent-address-fields' )
-			).to.have.length( 0 );
+			expect( wrapper.find( 'RegionAddressFieldsets' ) ).to.have.length( 0 );
 		} );
 
 		test( 'should not render address fieldset when no country selected', () => {
@@ -165,38 +182,13 @@ describe( 'Domain Details Form', () => {
 				<DomainDetailsForm { ...defaultProps } contactDetails={ { countryCode: '' } } />
 			);
 
-			expect(
-				wrapper.find( '.checkout__domain-details-country-dependent-address-fields' )
-			).to.have.length( 0 );
+			expect( wrapper.find( 'RegionAddressFieldsets' ) ).to.have.length( 0 );
 		} );
 
 		test( 'should render address fieldset when a valid countryCode is selected', () => {
 			const wrapper = shallow( <DomainDetailsForm { ...propsWithCountry } /> );
 
-			expect(
-				wrapper.find( '.checkout__domain-details-country-dependent-address-fields' )
-			).to.have.length( 1 );
-		} );
-
-		test( 'should render address, city, and postal code fields when the cart does not contain a Google App ', () => {
-			needsOnlyGoogleAppsDetailsStub.returns( false );
-			const wrapper = shallow( <DomainDetailsForm { ...propsWithCountry } /> );
-
-			expect(
-				wrapper.find( '.checkout__domain-details-country-dependent-address-fields Input' )
-			).to.have.length( 3 );
-		} );
-
-		test( 'should render postal code field when the cart contains only a Google App ', () => {
-			needsOnlyGoogleAppsDetailsStub.returns( true );
-
-			const wrapper = shallow( <DomainDetailsForm { ...propsWithCountry } /> );
-
-			const inputs = wrapper.find(
-				'.checkout__domain-details-country-dependent-address-fields Input'
-			);
-			expect( inputs ).to.have.length( 1 );
-			expect( inputs.get( 0 ).props.name ).to.equal( 'postal-code' );
+			expect( wrapper.find( 'RegionAddressFieldsets' ) ).to.have.length( 1 );
 		} );
 	} );
 } );
