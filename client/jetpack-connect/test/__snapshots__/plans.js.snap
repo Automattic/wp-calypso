@@ -4,7 +4,7 @@ exports[`Plans should render empty with a paid plan 1`] = `<components--data--qu
 
 exports[`Plans should render with a paid plan with showFirst prop 1`] = `
 <div>
-  <Connect(DocumentHead)
+  <components--data--document-head
     title="Plans"
   />
   <components--data--query-plans />
@@ -167,7 +167,7 @@ exports[`Plans should render with a paid plan with showFirst prop 1`] = `
 
 exports[`Plans should render with no plan (free) 1`] = `
 <div>
-  <Connect(DocumentHead)
+  <components--data--document-head
     title="Plans"
   />
   <components--data--query-plans />

@@ -16,6 +16,7 @@ import QueryPlans from 'components/data/query-plans';
 import { DEFAULT_PROPS, SELECTED_SITE, SITE_PLAN_PRO } from './lib/plans';
 import { PlansTestComponent as Plans } from '../plans';
 
+jest.mock( 'components/data/document-head', () => 'components--data--document-head' );
 jest.mock( 'components/data/query-plans', () => 'components--data--query-plans' );
 jest.mock( 'components/data/query-site-plans', () => 'components--data--query-site-plans' );
 jest.mock( 'jetpack-connect/happychat-button', () => 'jetpack-connect--happychat-button' );
