@@ -152,8 +152,8 @@ class JetpackConnectNotices extends Component {
 				return noticeValues;
 			case 'userIsAlreadyConnectedToSite':
 				noticeValues.text = translate(
-					'This WordPress.com account is already connected to an other user on this site. ' +
-						'Please login to an other WordPress.com account to complete the connection.'
+					'This WordPress.com account is already connected to another user on this site. ' +
+						'Please login to another WordPress.com account to complete the connection.'
 				);
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'notice';
