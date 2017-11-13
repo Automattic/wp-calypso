@@ -4,7 +4,7 @@ After learning a bit about the values of the project, let’s get a taste of the
 
 First [get setup with Calypso locally](../install.md) if you haven't already.
 
-Load [http://calypso.localhost:3000](http://calypso.localhost:3000/) in your browser. 
+Load [http://calypso.localhost:3000](http://calypso.localhost:3000/) in your browser.
 
 For this example to work, you need to have signed into WordPress **and** have already set up at least one site.
 
@@ -69,7 +69,7 @@ export default Controller;
 
 ### 4. Set up the route
 
-The next step is to create the main file for your section, called `index.js` within `hello-world`.  
+The next step is to create the main file for your section, called `index.js` within `hello-world`.
 Run the following command to create the file:
 
 ```
@@ -87,11 +87,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from 'my-sites/controller';
+import { navigation, siteSelection } from 'my-sites/controller';
 import helloWorldController from './controller';
 
 export default () => {
-	page( '/hello-world/:domain?', controller.siteSelection, controller.navigation, helloWorldController.helloWorld );
+	page( '/hello-world/:domain?', siteSelection, navigation, helloWorldController.helloWorld );
 };
 ```
 
@@ -220,7 +220,7 @@ That's it. Please check out the [CSS/Sass Coding Guidelines](../coding-guideline
 
 ### 3. Hook up controller
 
-Time to hook this up with our controller function. Open `/hello-world/controller.js`.  
+Time to hook this up with our controller function. Open `/hello-world/controller.js`.
 Import ReactDom, React and your new component at the top of the file:
 
 ```javascript
@@ -254,6 +254,6 @@ In the `Main` constant we are getting our main jsx file for our section. We then
 
 ### Ok, ready?
 
-Run `npm start` if it wasn't already running, and load [http://calypso.localhost:3000/hello-world](http://calypso.localhost:3000/hello-world) in your browser. You should see "Hello, World!" on the page next to the sidebar. And since we added `controller.siteSelection` in our initial route setup, changing a site in the sidebar should also work for your hello-world section. Happy _calypsoing_!
+Run `npm start` if it wasn't already running, and load [http://calypso.localhost:3000/hello-world](http://calypso.localhost:3000/hello-world) in your browser. You should see "Hello, World!" on the page next to the sidebar. And since we added `siteSelection` in our initial route setup, changing a site in the sidebar should also work for your hello-world section. Happy _calypsoing_!
 
 Previous: [Values](0-values.md) Next: [The Technology Behind Calypso](tech-behind-calypso.md)
