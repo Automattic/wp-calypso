@@ -188,14 +188,14 @@ If that state was saved from an old version of the reducer code it could be inco
 Over the course of time we've developed multiple ways for enforcing that the browser storage contains data
 of a compatible shape before deserializing.
 
-The first method was adding a json-schema as the third argument to `createReducer()`. This is now a deprecated
-method because it is relatively constrained in that it requires `createReducer()` to be the outermost function.
-The latest method for adding a schema takes advantage of the fact that we have implemented our own version
-of `combineReducers()` that will check each reducer for a schema property and ensure the data conforms on
-deserialization.
+The first method was adding a json-schema as the third argument to `createReducer()`. This is now deprecated.
+A better method for adding a schema takes advantage of the fact that we have implemented our own version
+of `combineReducers()` that will check each reducer for a schema property and ensure the data shape is correct
+on deserialization.
 
 #### withSchemaValidation( schema, reducer )
-This helper produces takes in a schema and a reducer and producers a new reducer that conditionally load the persisted state only if it's valid.
+This helper takes in both a schema and a reducer and then produces a new reducer that
+conditionally loads the persisted state if it's shape is valid.
 
 ##### Example
 
@@ -218,5 +218,6 @@ age( 23, { type: DESERIALIZE } ) === 23
 
 #### combineReducers( reducersObject )
 This has the same api as redux's famous combineReducers function. The only addition is that 
-each reducer is wrapped with `withSchemaValidation` which validates on `DESERIALIZE` if a schema is present and
-returns initial state on both `SERIALIZE` and `DESERIALIZE` if a schema is not present.
+each reducer is wrapped with `withSchemaValidation` which will perform validation on `DESERIALIZE`
+actions if a schema is present.  It returns initialState on both `SERIALIZE` and `DESERIALIZE` 
+if a schema is not present.
