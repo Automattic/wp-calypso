@@ -72,6 +72,13 @@ const flows = {
 		},
 	},
 
+	segment: {
+		steps: [ 'about', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'A new signup flow for segmenting our users',
+		lastModified: '2017-11-11',
+	},
+
 	premium: {
 		steps: [ 'design-type', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
