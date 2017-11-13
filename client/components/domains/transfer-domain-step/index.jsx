@@ -15,7 +15,7 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
-import { getFixedDomainSearch, checkDomainAvailability } from 'lib/domains';
+import { checkDomainAvailability, getFixedDomainSearch, getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
@@ -265,16 +265,33 @@ class TransferDomainStep extends React.Component {
 		checkDomainAvailability( domain, ( error, result ) => {
 			const status = get( result, 'status', error );
 			switch ( status ) {
-				case domainAvailability.MAPPABLE:
-				case domainAvailability.MAPPED:
-				case domainAvailability.UNKNOWN:
-					this.setState( { domain } );
-					return;
-
 				case domainAvailability.AVAILABLE:
 					this.setState( { suggestion: result } );
 					return;
+				case domainAvailability.MAPPABLE:
+				case domainAvailability.MAPPED:
+					if ( get( result, 'transferrable', error ) === true ) {
+						this.setState( { domain } );
+						return;
+					}
 
+					const tld = getTld( domain );
+
+					this.setState( {
+						notice: this.props.translate(
+							"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
+								'but you can {{a}}map it{{/a}} instead.',
+							{
+								args: { tld },
+								components: {
+									strong: <strong />,
+									a: <a href="#" onClick={ this.goToMapDomainStep } />,
+								},
+							}
+						),
+						noticeSeverity: 'info',
+					} );
+					return;
 				default:
 					const { message, severity } = getAvailabilityNotice( domain, status );
 					this.setState( { notice: message, noticeSeverity: severity } );
