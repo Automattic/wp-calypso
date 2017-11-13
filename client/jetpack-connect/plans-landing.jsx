@@ -5,11 +5,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -84,7 +86,7 @@ class PlansLanding extends Component {
 	};
 
 	render() {
-		const { basePlansPath, interval, requestingSites, site } = this.props;
+		const { basePlansPath, interval, requestingSites, site, translate } = this.props;
 
 		// We're redirecting in componentDidMount if the site is already connected
 		// so don't bother rendering any markup if this is the case
@@ -94,6 +96,8 @@ class PlansLanding extends Component {
 
 		return (
 			<div>
+				<DocumentHead title={ translate( 'Plans' ) } />
+
 				<QueryPlans />
 
 				<PlansGrid
@@ -130,4 +134,4 @@ export default connect(
 		recordTracksEvent,
 		selectPlanInAdvance,
 	}
-)( PlansLanding );
+)( localize( PlansLanding ) );
