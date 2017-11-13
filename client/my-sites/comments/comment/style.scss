@@ -445,6 +445,69 @@
 	}
 }
 
+// Comment Edit Block
+
+.comment__edit {
+	.form-fieldset {
+		padding: 0 8px;
+		width: 50%;
+	}
+
+	.form-textarea {
+		margin: 0px 8px 20px 8px;
+		transition: none;
+		width: 100%;
+	}
+
+	label {
+		display: inline-block;
+	}
+
+	input[type='text'],
+	textarea {
+		font-size: 14px;
+	}
+
+	.info-popover {
+		display: inline-block;
+		margin-left: 4px;
+		vertical-align: middle;
+	}
+
+	.comment__edit-jetpack-update-notice {
+		color: $alert-red;
+		margin-left: 8px;
+		margin-right: 8px;
+
+		.gridicon {
+			margin-right: 4px;
+			vertical-align: middle;
+		}
+	}
+
+	.comment__edit-jetpack-update-notice-link {
+		color: $alert-red;
+		margin-left: 4px;
+		text-decoration: underline;
+	}
+}
+
+.comment__edit-header {
+	border-bottom: 1px solid lighten($gray, 30%);
+	padding: 12px 16px;
+}
+
+.comment__edit-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 16px 8px 0 8px;
+}
+
+.comment__edit-buttons {
+	padding: 0 8px 16px 8px;
+	width: 100%;
+}
+
 // Collapsed View
 
 .card.comment.is-collapsed {
