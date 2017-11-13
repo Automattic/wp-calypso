@@ -32,8 +32,8 @@ class JetpackConnectAuthorizeForm extends Component {
 			client_id: PropTypes.string,
 			from: PropTypes.string,
 		} ).isRequired,
-		recordTracksEvent: PropTypes.func,
-		setTracksAnonymousUserId: PropTypes.func,
+		recordTracksEvent: PropTypes.func.isRequired,
+		setTracksAnonymousUserId: PropTypes.func.isRequired,
 		user: PropTypes.object,
 	};
 
