@@ -7,7 +7,6 @@ import ReactDom from 'react-dom';
 import Debug from 'debug';
 import page from 'page';
 import { get, isEmpty } from 'lodash';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -27,7 +26,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
 import { renderWithReduxStore } from 'lib/react-helpers';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 
 /**
@@ -178,8 +176,6 @@ export default {
 
 		removeSidebar( context );
 
-		context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
-
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
@@ -209,9 +205,6 @@ export default {
 		}
 
 		removeSidebar( context );
-
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
 
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
