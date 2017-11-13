@@ -222,7 +222,7 @@ class ThemeSheet extends React.Component {
 	};
 
 	renderScreenshot = () => {
-		const { demo_uri, retired, isWpcomTheme } = this.props;
+		const { demo_uri, retired, isActive, isWpcomTheme } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
 		const img = screenshotFull && (
 			<img className="theme__sheet-img" src={ screenshotFull + '?w=680' } />
@@ -231,7 +231,7 @@ class ThemeSheet extends React.Component {
 		if ( demo_uri && ! retired ) {
 			return (
 				<div className="theme__sheet-screenshot is-active" onClick={ this.previewAction }>
-					{ this.renderPreviewButton() }
+					{ isActive ? null : this.renderPreviewButton() }
 					{ img }
 				</div>
 			);
