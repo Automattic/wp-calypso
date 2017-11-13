@@ -180,10 +180,6 @@
 	padding: 0 16px 16px 56px;
 
 	.comment__content-info {
-		display: flex;
-		flex-flow: row;
-		flex-wrap: nowrap;
-		justify-content: space-between;
 		margin-top: 16px;
 	}
 
@@ -200,13 +196,11 @@
 	}
 
 	.comment__status-label {
-		align-self: center;
 		background: lighten($alert-yellow, 18%);
 		border-radius: 9px;
-		flex-grow: 0;
-		flex-shrink: 0;
+		float: right;
 		font-size: 12px;
-		margin-left: auto;
+		margin-left: 8px;
 		padding: 0 10px;
 	}
 

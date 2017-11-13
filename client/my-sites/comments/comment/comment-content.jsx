@@ -56,6 +56,7 @@ export class CommentContent extends Component {
 			commentIsPending,
 			isBulkMode,
 			isPostView,
+			parentCommentContent,
 			translate,
 		} = this.props;
 		return (
@@ -72,17 +73,17 @@ export class CommentContent extends Component {
 
 				{ ! isBulkMode && (
 					<div className="comment__content-full">
-						{ ( commentIsPending || ! isPostView ) && (
+						{ ( commentIsPending || parentCommentContent || ! isPostView ) && (
 							<div className="comment__content-info">
-								{ ! isPostView && <CommentPostLink { ...{ commentId, isBulkMode } } /> }
-
 								{ commentIsPending && (
 									<div className="comment__status-label">{ translate( 'Pending' ) }</div>
 								) }
+
+								{ ! isPostView && <CommentPostLink { ...{ commentId, isBulkMode } } /> }
+
+								{ this.renderInReplyTo() }
 							</div>
 						) }
-
-						{ this.renderInReplyTo() }
 
 						<AutoDirection>
 							<Emojify>
