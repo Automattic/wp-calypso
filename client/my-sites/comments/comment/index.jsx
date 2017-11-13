@@ -119,7 +119,7 @@ export class Comment extends Component {
 
 				{ ! isEditMode && (
 					<div className="comment__detail">
-						<CommentHeader { ...{ commentId, isBulkMode, isEditMode, isSelected } } />
+						<CommentHeader { ...{ commentId, isBulkMode, isEditMode, isPostView, isSelected } } />
 
 						<CommentContent { ...{ commentId, isBulkMode, isPostView } } />
 

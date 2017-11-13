@@ -17,7 +17,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class CommentHeader extends PureComponent {
 	render() {
-		const { commentId, isBulkMode, isSelected, showAuthorMoreInfo } = this.props;
+		const { commentId, isBulkMode, isPostView, isSelected, showAuthorMoreInfo } = this.props;
 
 		return (
 			<div className="comment__header">
@@ -27,7 +27,7 @@ export class CommentHeader extends PureComponent {
 					</label>
 				) }
 
-				<CommentAuthor { ...{ commentId, isBulkMode } } />
+				<CommentAuthor { ...{ commentId, isBulkMode, isPostView } } />
 
 				{ showAuthorMoreInfo && <CommentAuthorMoreInfo { ...{ commentId } } /> }
 			</div>

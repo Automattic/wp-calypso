@@ -50,6 +50,7 @@ export class CommentAuthor extends Component {
 			commentUrl,
 			gravatarUser,
 			isBulkMode,
+			isPostView,
 			moment,
 			translate,
 		} = this.props;
@@ -80,7 +81,7 @@ export class CommentAuthor extends Component {
 						<strong className="comment__author-name">
 							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
 						</strong>
-						{ isBulkMode && <CommentPostLink { ...{ commentId, isBulkMode } } /> }
+						{ isBulkMode && ! isPostView && <CommentPostLink { ...{ commentId, isBulkMode } } /> }
 					</div>
 
 					<div className="comment__author-info-element">
