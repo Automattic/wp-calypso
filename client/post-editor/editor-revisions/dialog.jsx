@@ -57,9 +57,12 @@ class PostRevisionsDialog extends PureComponent {
 		}
 
 		const bodyClassName = 'showing-post-revisions-dialog';
-		isVisible
-			? document.body.classList.add( bodyClassName )
-			: document.body.classList.remove( bodyClassName );
+
+		if ( isVisible ) {
+			document.body.classList.add( bodyClassName );
+		} else {
+			document.body.classList.remove( bodyClassName );
+		}
 	}
 
 	componentDidMount() {
