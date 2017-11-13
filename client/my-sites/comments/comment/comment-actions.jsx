@@ -41,6 +41,7 @@ const commentActions = {
 export class CommentActions extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
+		toggleEditMode: PropTypes.func,
 		toggleReply: PropTypes.func,
 		updateLastUndo: PropTypes.func,
 	};
@@ -151,7 +152,13 @@ export class CommentActions extends Component {
 	};
 
 	render() {
-		const { commentIsApproved, commentIsLiked, toggleReply, translate } = this.props;
+		const {
+			commentIsApproved,
+			commentIsLiked,
+			toggleEditMode,
+			toggleReply,
+			translate,
+		} = this.props;
 
 		return (
 			<div className="comment__actions">
@@ -211,6 +218,17 @@ export class CommentActions extends Component {
 					>
 						<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
 						<span>{ commentIsLiked ? translate( 'Liked' ) : translate( 'Like' ) }</span>
+					</Button>
+				) }
+
+				{ this.hasAction( 'edit' ) && (
+					<Button
+						borderless
+						className="comment__action comment__action-pencil"
+						onClick={ toggleEditMode }
+					>
+						<Gridicon icon="pencil" />
+						<span>{ translate( 'Edit' ) }</span>
 					</Button>
 				) }
 
