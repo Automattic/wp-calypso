@@ -111,12 +111,18 @@ export class NavigationLink extends Component {
 
 		if ( this.props.direction === 'back' ) {
 			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;
-			text = this.props.translate( 'Back' );
+			text =
+				'undefined' !== typeof this.props.labelText
+					? this.props.labelText
+					: this.props.translate( 'Back' );
 		}
 
 		if ( this.props.direction === 'forward' ) {
 			forwardGridicon = <Gridicon icon="arrow-right" size={ 18 } />;
-			text = this.props.translate( 'Skip for now' );
+			text =
+				'undefined' !== typeof this.props.labelText
+					? this.props.labelText
+					: this.props.translate( 'Skip for now' );
 		}
 
 		return (

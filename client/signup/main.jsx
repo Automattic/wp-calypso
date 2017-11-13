@@ -518,11 +518,13 @@ class Signup extends React.Component {
 		}
 
 		const flow = flows.getFlow( this.props.flowName );
+		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
 			<span>
 				<DocumentHead title={ this.pageTitle() } />
-				{ ! this.state.loadingScreenStartTime && (
+				{ ! this.state.loadingScreenStartTime &&
+				showProgressIndicator && (
 					<FlowProgressIndicator
 						positionInFlow={ this.positionInFlow() }
 						flowLength={ flow.steps.length }

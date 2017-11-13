@@ -5,6 +5,9 @@
  */
 
 import config from 'config';
+import CredsConfirmComponent from 'signup/steps/creds-confirm';
+import CredsCompleteComponent from 'signup/steps/creds-complete';
+import CredsPermissionComponent from 'signup/steps/creds-permission';
 import DesignTypeComponent from 'signup/steps/design-type';
 import DesignTypeWithStoreComponent from 'signup/steps/design-type-with-store';
 import DesignTypeWithAtomicStoreComponent from 'signup/steps/design-type-with-atomic-store';
@@ -23,6 +26,9 @@ import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
 import PlansAtomicStoreComponent from 'signup/steps/plans-atomic-store';
 
 export default {
+	'creds-confirm': CredsConfirmComponent,
+	'creds-complete': CredsCompleteComponent,
+	'creds-permission': CredsPermissionComponent,
 	'design-type': DesignTypeComponent,
 	'design-type-with-store': DesignTypeWithStoreComponent,
 	'design-type-with-store-nux': DesignTypeWithAtomicStoreComponent,
