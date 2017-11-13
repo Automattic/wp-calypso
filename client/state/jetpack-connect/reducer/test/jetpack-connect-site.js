@@ -1,6 +1,6 @@
 /** @format */
 /**
- * External dependencies
+ * Internal dependencies
  */
 import jetpackConnectSite from '../jetpack-connect-site';
 import {

@@ -1,6 +1,6 @@
 /** @format */
 /**
- * External dependencies
+ * Internal dependencies
  */
 import jetpackConnectSessions from '../jetpack-connect-sessions';
 import { DESERIALIZE, JETPACK_CONNECT_CHECK_URL } from 'state/action-types';
