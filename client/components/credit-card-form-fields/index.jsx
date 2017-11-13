@@ -125,15 +125,14 @@ export class CreditCardFormFields extends React.Component {
 					args: {
 						countryName,
 					},
-					context: 'Info text for extra ebanx fields in credit card form',
 				} ) }
 			</span>,
 
 			this.createField( 'document', Input, {
 				label: translate( 'Taxpayer Identification Number', {
-					context:
+					comment:
 						'Individual taxpayer registry identification required ' +
-						'for Brazilian payment methods using EBANX on credit card form',
+						'for Brazilian payment methods on credit card form',
 				} ),
 				key: 'document',
 			} ),
@@ -157,7 +156,7 @@ export class CreditCardFormFields extends React.Component {
 			this.createField( 'street-number', Input, {
 				inputMode: 'numeric',
 				label: translate( 'Street Number', {
-					context: 'Street number associated with address on credit card form',
+					comment: 'Street number associated with address on credit card form',
 				} ),
 				key: 'street-number',
 			} ),

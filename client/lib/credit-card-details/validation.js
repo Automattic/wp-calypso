@@ -53,7 +53,6 @@ function creditCardFieldRules( additionalFieldRules = {} ) {
 			name: {
 				description: i18n.translate( 'Name on Card', {
 					context: 'Upgrades: Card holder name label on credit card form',
-					textOnly: true,
 				} ),
 				rules: [ 'required' ],
 			},
@@ -61,7 +60,6 @@ function creditCardFieldRules( additionalFieldRules = {} ) {
 			number: {
 				description: i18n.translate( 'Card Number', {
 					context: 'Upgrades: Card number label on credit card form',
-					textOnly: true,
 				} ),
 				rules: [ 'validCreditCardNumber' ],
 			},
@@ -84,7 +82,6 @@ function creditCardFieldRules( additionalFieldRules = {} ) {
 			'postal-code': {
 				description: i18n.translate( 'Postal Code', {
 					context: 'Upgrades: Postal code on credit card form',
-					textOnly: true,
 				} ),
 				rules: [ 'required' ],
 			},
