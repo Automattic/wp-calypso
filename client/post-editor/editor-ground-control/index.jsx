@@ -14,6 +14,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
+import { isWithinBreakpoint } from 'lib/viewport';
 import Card from 'components/card';
 import Site from 'blocks/site';
 import postUtils from 'lib/posts/utils';
@@ -200,8 +201,7 @@ export class EditorGroundControl extends PureComponent {
 	};
 
 	renderGroundControlQuickSaveButtons() {
-		const { isSaving, isSidebarOpened, post, selectRevision, translate } = this.props;
-
+		const { isSaving, post, translate } = this.props;
 		const isSaveAvailable = this.isSaveAvailable();
 		const showingStatusLabel = this.shouldShowStatusLabel();
 		const showingSaveStatus = isSaveAvailable || showingStatusLabel;
@@ -235,9 +235,7 @@ export class EditorGroundControl extends PureComponent {
 							) }
 					</div>
 				) }
-				{ hasRevisions && (
-					<HistoryButton selectRevision={ selectRevision } isSidebarOpened={ isSidebarOpened } />
-				) }
+				{ hasRevisions && isWithinBreakpoint( '>660px' ) && <HistoryButton /> }
 			</div>
 		);
 	}

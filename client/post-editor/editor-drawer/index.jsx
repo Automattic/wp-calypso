@@ -85,7 +85,6 @@ class EditorDrawer extends Component {
 		onSave: PropTypes.func,
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
-		selectRevision: PropTypes.func,
 	};
 
 	onExcerptChange( event ) {
@@ -333,7 +332,6 @@ class EditorDrawer extends Component {
 					type={ type }
 					isPostPrivate={ this.props.isPostPrivate }
 					confirmationSidebarStatus={ this.props.confirmationSidebarStatus }
-					selectRevision={ this.props.selectRevision }
 				/>
 			</Accordion>
 		);

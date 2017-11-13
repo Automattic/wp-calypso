@@ -10,7 +10,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'state/ui/editor/sidebar/constants';
 import { setNestedSidebar, closeEditorSidebar } from 'state/ui/editor/sidebar/actions';
 import { getNestedSidebarTarget } from 'state/ui/editor/sidebar/selectors';
 import EditorDrawer from 'post-editor/editor-drawer';
@@ -19,7 +18,7 @@ import SidebarFooter from 'layout/sidebar/footer';
 import SidebarRegion from 'layout/sidebar/region';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import EditorDeletePost from 'post-editor/editor-delete-post';
-import EditorRevisionsList from 'post-editor/editor-revisions-list';
+import { NESTED_SIDEBAR_NONE, NestedSidebarPropType } from './constants';
 
 export class EditorSidebar extends Component {
 	static propTypes = {
@@ -36,14 +35,8 @@ export class EditorSidebar extends Component {
 		setPostDate: PropTypes.func,
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
-		loadRevision: PropTypes.func,
-		selectedRevisionId: PropTypes.number,
-		selectRevision: PropTypes.func,
-
-		// connected props
-		nestedSidebarTarget: PropTypes.oneOf( [ NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS ] ),
-		setNestedSidebar: PropTypes.func.isRequired,
-		closeEditorSidebar: PropTypes.func.isRequired,
+		nestedSidebar: NestedSidebarPropType,
+		setNestedSidebar: PropTypes.func,
 	};
 
 	closeSidebar = () => {
@@ -70,9 +63,6 @@ export class EditorSidebar extends Component {
 			confirmationSidebarStatus,
 			nestedSidebarTarget,
 			setNestedSidebar,
-			loadRevision,
-			selectedRevisionId,
-			selectRevision,
 		} = this.props;
 
 		const sidebarClassNames = classNames( 'editor-sidebar', {
@@ -98,17 +88,7 @@ export class EditorSidebar extends Component {
 						isPostPrivate={ isPostPrivate }
 						confirmationSidebarStatus={ confirmationSidebarStatus }
 						setNestedSidebar={ setNestedSidebar }
-						selectRevision={ selectRevision }
 					/>
-				</SidebarRegion>
-				<SidebarRegion className="editor-sidebar__nested-region editor-sidebar__nonscrolling-region">
-					{ nestedSidebarTarget === NESTED_SIDEBAR_REVISIONS && (
-						<EditorRevisionsList
-							loadRevision={ loadRevision }
-							selectedRevisionId={ selectedRevisionId }
-							selectRevision={ selectRevision }
-						/>
-					) }
 				</SidebarRegion>
 				<SidebarFooter>
 					{ nestedSidebarTarget === NESTED_SIDEBAR_NONE && (

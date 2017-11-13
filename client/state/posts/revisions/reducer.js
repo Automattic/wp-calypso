@@ -14,6 +14,8 @@ import {
 	POST_REVISIONS_REQUEST,
 	POST_REVISIONS_REQUEST_FAILURE,
 	POST_REVISIONS_REQUEST_SUCCESS,
+	POST_REVISIONS_SELECT,
+	SELECTED_SITE_SET,
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
@@ -47,7 +49,22 @@ export function revisions( state = {}, action ) {
 	return state;
 }
 
+// @TODO ensure no rehydration
+export function selection( state = {}, action ) {
+	switch ( action.type ) {
+		case SELECTED_SITE_SET: {
+			return { ...state, revisionId: null };
+		}
+		case POST_REVISIONS_SELECT: {
+			return { ...state, revisionId: action.revisionId };
+		}
+		default:
+			return state;
+	}
+}
+
 export default combineReducers( {
 	requesting,
 	revisions,
+	selection,
 } );

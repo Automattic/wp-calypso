@@ -19,7 +19,7 @@ import {
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'revisions' ] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'revisions', 'selection' ] );
 	} );
 
 	describe( '#requesting', () => {

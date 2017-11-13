@@ -5,18 +5,20 @@
  */
 
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { isObject } from 'lodash';
+import { flow, isObject } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { selectPostRevision } from 'state/posts/revisions/actions';
 import PostTime from 'reader/post-time';
 
 class EditorRevisionsListItem extends PureComponent {
 	selectRevision = () => {
-		this.props.selectRevision( this.props.revision.id );
+		this.props.selectPostRevision( this.props.revision.id );
 	};
 
 	render() {
@@ -73,8 +75,12 @@ class EditorRevisionsListItem extends PureComponent {
 
 EditorRevisionsListItem.propTypes = {
 	revision: PropTypes.object.isRequired,
-	selectRevision: PropTypes.func.isRequired,
+
+	// connected to dispatcher
+	selectPostRevision: PropTypes.func.isRequired,
+
+	// localize
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( EditorRevisionsListItem );
+export default flow( localize, connect( null, { selectPostRevision } ) )( EditorRevisionsListItem );

@@ -8,50 +8,37 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { map } from 'lodash';
+import { head, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import EditorRevisionsListHeader from './header';
 import EditorRevisionsListItem from './item';
-import QueryPostRevisions from 'components/data/query-post-revisions';
-import QueryUsers from 'components/data/query-users';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostRevision, getPostRevisions, getPostRevisionsAuthorsId } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { isWithinBreakpoint } from 'lib/viewport';
+import { getPostRevisionsSelectedRevisionId } from 'state/selectors';
+import { selectPostRevision } from 'state/posts/revisions/actions';
 
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {
-		authorsIds: PropTypes.array.isRequired,
-		loadRevision: PropTypes.func.isRequired,
 		postId: PropTypes.number,
 		revisions: PropTypes.array.isRequired,
-		selectedRevision: PropTypes.object,
 		selectedRevisionId: PropTypes.number,
-		selectRevision: PropTypes.func.isRequired,
-		siteId: PropTypes.number,
-		type: PropTypes.string,
 	};
 
-	loadRevision = () => {
-		this.props.loadRevision( this.props.selectedRevision );
-	};
-
-	trySelectingRevision() {
-		if (
-			this.props.selectedRevisionId === null &&
-			this.props.revisions.length > 0 &&
-			isWithinBreakpoint( '>660px' )
-		) {
-			this.props.selectRevision( this.props.revisions[ 0 ].id );
+	trySelectingFirstRevision = () => {
+		const { revisions } = this.props;
+		if ( ! revisions.length ) {
+			return;
 		}
-	}
+		const firstRevision = head( revisions );
+		if ( ! firstRevision.id ) {
+			return;
+		}
+		this.props.selectPostRevision( firstRevision.id );
+	};
 
 	componentWillMount() {
-		this.trySelectingRevision();
+		this.trySelectingFirstRevision();
 	}
 
 	componentDidMount() {
@@ -59,35 +46,24 @@ class EditorRevisionsList extends PureComponent {
 		window.scrollTo( 0, 0 );
 	}
 
-	componentDidUpdate() {
-		this.trySelectingRevision();
+	componentWillUpdate() {
+		this.trySelectingFirstRevision();
 	}
 
 	render() {
+		const { revisions, selectedRevisionId } = this.props;
 		return (
 			<div className="editor-revisions-list">
-				<QueryPostRevisions
-					postId={ this.props.postId }
-					postType={ this.props.type }
-					siteId={ this.props.siteId }
-				/>
-				<QueryUsers siteId={ this.props.siteId } userIds={ this.props.authorsIds } />
-				<EditorRevisionsListHeader
-					loadRevision={ this.loadRevision }
-					selectedRevisionId={ this.props.selectedRevisionId }
-				/>
+				<EditorRevisionsListHeader numRevisions={ revisions.length } />
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
-						{ map( this.props.revisions, revision => {
+						{ map( revisions, revision => {
 							const itemClasses = classNames( 'editor-revisions-list__revision', {
-								'is-selected': revision.id === this.props.selectedRevisionId,
+								'is-selected': revision.id === selectedRevisionId,
 							} );
 							return (
 								<li className={ itemClasses } key={ revision.id }>
-									<EditorRevisionsListItem
-										revision={ revision }
-										selectRevision={ this.props.selectRevision }
-									/>
+									<EditorRevisionsListItem revision={ revision } />
 								</li>
 							);
 						} ) }
@@ -98,16 +74,9 @@ class EditorRevisionsList extends PureComponent {
 	}
 }
 
-export default connect( ( state, { selectedRevisionId } ) => {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const type = getEditedPostValue( state, siteId, postId, 'type' );
-	return {
-		authorsIds: getPostRevisionsAuthorsId( state, siteId, postId ),
-		postId,
-		revisions: getPostRevisions( state, siteId, postId, 'display' ),
-		selectedRevision: getPostRevision( state, siteId, postId, selectedRevisionId, 'editing' ),
-		siteId,
-		type,
-	};
-} )( EditorRevisionsList );
+export default connect(
+	state => ( {
+		selectedRevisionId: getPostRevisionsSelectedRevisionId( state ),
+	} ),
+	{ selectPostRevision }
+)( EditorRevisionsList );

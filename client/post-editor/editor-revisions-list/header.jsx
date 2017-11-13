@@ -7,28 +7,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
-/**
- * Internal dependencies
- */
-import Button from 'components/button';
-
-const EditorRevisionsListHeader = ( { loadRevision, selectedRevisionId, translate } ) => (
+const EditorRevisionsListHeader = ( { numRevisions, translate } ) => (
 	<div className="editor-revisions-list__header">
-		<Button
-			compact
-			className="editor-revisions-list__load-revision"
-			disabled={ selectedRevisionId === null }
-			onClick={ loadRevision }
-		>
-			{ translate( 'Load revision in the editor' ) }
-		</Button>
+		<Gridicon icon="history" size={ 18 } />
+		{ translate( '%(revisions)d revision', '%(revisions)d revisions', {
+			count: numRevisions,
+			args: { revisions: numRevisions },
+		} ) }
 	</div>
 );
 
 EditorRevisionsListHeader.propTypes = {
-	loadRevision: PropTypes.func,
-	selectedRevisionId: PropTypes.number,
+	numRevisions: PropTypes.number.isRequired,
+
+	// localize
 	translate: PropTypes.func.isRequired,
 };
 

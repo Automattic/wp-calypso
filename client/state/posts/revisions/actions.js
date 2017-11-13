@@ -9,6 +9,7 @@ import {
 	POST_REVISIONS_REQUEST,
 	POST_REVISIONS_REQUEST_FAILURE,
 	POST_REVISIONS_REQUEST_SUCCESS,
+	POST_REVISIONS_SELECT,
 } from 'state/action-types';
 
 /**
@@ -70,4 +71,9 @@ export const receivePostRevisions = ( siteId, postId, revisions ) => ( {
 	siteId,
 	postId,
 	revisions,
+} );
+
+export const selectPostRevision = revisionId => ( {
+	type: POST_REVISIONS_SELECT,
+	revisionId,
 } );

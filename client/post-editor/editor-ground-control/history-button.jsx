@@ -11,79 +11,51 @@ import { flow } from 'lodash';
 /**
  * Internal dependencies
  */
-import { NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS } from 'state/ui/editor/sidebar/constants';
-import {
-	closeEditorSidebar,
-	openEditorSidebar,
-	setNestedSidebar,
-} from 'state/ui/editor/sidebar/actions';
-import { getNestedSidebarTarget } from 'state/ui/editor/sidebar/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import EditorRevisions from 'post-editor/editor-revisions';
+import Popover from 'components/popover';
 
 class HistoryButton extends PureComponent {
-	static propTypes = {
-		// passed props
-		isSidebarOpened: PropTypes.bool,
-		selectRevision: PropTypes.func.isRequired,
+	state = {};
 
-		// connected props
-		closeEditorSidebar: PropTypes.func.isRequired,
-		nestedSidebarTarget: PropTypes.oneOf( [ NESTED_SIDEBAR_NONE, NESTED_SIDEBAR_REVISIONS ] ),
-		openEditorSidebar: PropTypes.func.isRequired,
-		recordTracksEvent: PropTypes.func.isRequired,
-		setNestedSidebar: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
-	};
-
-	toggleShowing = () => {
-		const { isSidebarOpened, nestedSidebarTarget, selectRevision } = this.props;
-		// hide revisions if shown
-		if ( nestedSidebarTarget === NESTED_SIDEBAR_REVISIONS ) {
-			this.props.setNestedSidebar( NESTED_SIDEBAR_NONE );
-			return;
+	toggleShowingPopover = () => {
+		if ( ! this.state.isPopoverVisible ) {
+			this.props.recordTracksEvent( 'calypso_editor_post_revisions_open' );
 		}
-
-		// otherwise, show revisions...
-		this.trackPostRevisionsOpen();
-		selectRevision( null );
-		this.props.setNestedSidebar( NESTED_SIDEBAR_REVISIONS );
-
-		if ( ! isSidebarOpened ) {
-			this.props.openEditorSidebar();
-		}
-	};
-
-	trackPostRevisionsOpen() {
-		this.props.recordTracksEvent( 'calypso_editor_post_revisions_open', {
-			source: 'ground_control_history',
+		this.setState( {
+			isPopoverVisible: ! this.state.isPopoverVisible,
 		} );
-	}
+	};
 
 	render() {
+		const { translate } = this.props;
 		return (
 			<div className="editor-ground-control__history">
 				<button
 					className="editor-ground-control__save button is-link"
-					onClick={ this.toggleShowing }
+					onClick={ this.toggleShowingPopover }
+					ref="historyPopoverButton"
 				>
-					{ this.props.translate( 'History' ) }
+					{ translate( 'History' ) }
 				</button>
+				<Popover
+					isVisible={ this.state.isPopoverVisible }
+					context={ this.refs && this.refs.historyPopoverButton }
+					onClose={ this.toggleShowingPopover }
+				>
+					<EditorRevisions />
+				</Popover>
 			</div>
 		);
 	}
 }
 
-export default flow(
-	localize,
-	connect(
-		state => ( {
-			nestedSidebarTarget: getNestedSidebarTarget( state ),
-		} ),
-		{
-			recordTracksEvent,
-			closeEditorSidebar,
-			openEditorSidebar,
-			setNestedSidebar,
-		}
-	)
-)( HistoryButton );
+HistoryButton.PropTypes = {
+	// connected to dispatch
+	recordTracksEvent: PropTypes.func,
+
+	// localize
+	translate: PropTypes.func,
+};
+
+export default flow( localize, connect( null, { recordTracksEvent } ) )( HistoryButton );
