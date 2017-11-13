@@ -100,6 +100,17 @@ If you feel yourself waiting for someone to review a PR, don’t hesitate to per
 
 We encourage you to ask for help at any point. We want your first experience with Calypso to be a good one, so don’t be shy. If you’re wondering why something is the way it is, or how a decision was made, you can tag issues with **<span class="label type-question">[Type] Question</span>** or prefix them with “Question:”.
 
+## Jetpack Versions Compatibility
+
+While developing Calypso, we support the current Jetpack Version and the previous one.
+
+Calypso efforts will be focused on trying to achieve the best experience for users of the two latest versions.
+
+This means that we will eventually cut out sections in Calypso that are meant to configure the features in Jetpack for old releases and start prompting the user to upgrade their site's Jetpack plugin.
+This allows us to be on the cutting edge of user support for users that want to manage their sites from Calypso frequently.
+
+So, as an example, if current Jetpack Release was 4.9, we will make our biggest efforts in tuning Calypso for optimal performance and innovative features targeting Jetpack 4.9 and Jetpack 4.8. Meaning that older versions may be left behind as we introduce features and API changes in the Jetpack Plugin.
+
 ## License
 
 Calypso is licensed under [GNU General Public License v2 (or later)](../LICENSE.md).
