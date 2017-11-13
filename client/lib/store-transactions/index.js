@@ -279,7 +279,7 @@ function createEbanxToken( requestType, cardDetails, callback ) {
 		} else {
 			const errorMessage =
 				ebanxResponse.error.err.status_message || ebanxResponse.error.err.message;
-			callback( new Error( 'Ebanx Request Error: ' + errorMessage ) );
+			callback( new Error( 'Credit card Error: ' + errorMessage ) );
 		}
 	}
 }
