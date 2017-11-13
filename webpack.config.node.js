@@ -54,8 +54,7 @@ function getExternals() {
 	externals[ 'bundler/assets' ] = 'commonjs bundler/assets';
 	// Map React and redux to the minimized version in production
 	if ( config( 'env' ) === 'production' ) {
-		externals[ 'react-with-addons' ] = 'commonjs react/dist/react-with-addons.min';
-		externals.react = 'commonjs react/dist/react.min';
+		externals.react = 'commonjs react/umd/react.production.min.js';
 		externals.redux = 'commonjs redux/dist/redux.min';
 	}
 
