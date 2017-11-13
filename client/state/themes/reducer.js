@@ -343,6 +343,7 @@ export const queries = ( () => {
 		}
 	);
 } )();
+queries.hasCustomPersistence = true;
 
 /**
  * Returns the updated themes last query state.

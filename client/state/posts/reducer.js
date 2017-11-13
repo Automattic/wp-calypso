@@ -21,7 +21,7 @@ import {
  * Internal dependencies
  */
 import PostQueryManager from 'lib/query-manager/post';
-import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import {
 	EDITOR_START,
 	EDITOR_STOP,
@@ -281,15 +281,12 @@ export const queries = ( () => {
 				return mapValues( state, ( { data, options } ) => ( { data, options } ) );
 			},
 			[ DESERIALIZE ]: state => {
-				if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
-					return {};
-				}
-
 				return mapValues( state, ( { data, options } ) => {
 					return new PostQueryManager( data, options );
 				} );
 			},
-		}
+		},
+		queriesSchema
 	);
 } )();
 
