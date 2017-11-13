@@ -21,7 +21,6 @@ import {
 	isJetpackModuleActive,
 	isJetpackSite,
 	isRequestingSites,
-	getPrimaryDomainBySiteId,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { setSelectedSiteId, setSection, setAllSitesSelected } from 'state/ui/actions';
@@ -35,6 +34,7 @@ import analytics from 'lib/analytics';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import {
+	getPrimaryDomainBySiteId,
 	getPrimarySiteId,
 	getSiteId,
 	getSites,
