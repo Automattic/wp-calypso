@@ -160,5 +160,7 @@ export default function transformer( file, api ) {
 			.insertAfter( "import { makeLayout, render as clientRender } from 'controller';" );
 	}
 
-	return removeExtraNewlines( root.toSource( config.recastOptions ) );
+	const source = root.toSource( config.recastOptions );
+
+	return routeDefs.size() ? removeExtraNewlines( source ) : source;
 }
