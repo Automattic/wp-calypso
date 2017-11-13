@@ -5,46 +5,57 @@
  */
 
 import creditcards from 'creditcards';
-import { capitalize, compact, inRange, isArray, isEmpty } from 'lodash';
+import capitalize from 'lodash/capitalize';
+import compact from 'lodash/compact';
+import inRange from 'lodash/inRange';
+import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
+import pick from 'lodash/pick';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { isEbanx, isValidCPF } from 'lib/credit-card-details/ebanx';
+import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from './constants';
 
-function ebanxFieldRules() {
-	return {
-		document: {
-			description: i18n.translate( 'Taxpayer Identification Number' ),
-			rules: [ 'validCPF' ],
-		},
+function ebanxFieldRules( country ) {
+	const requiredFields = PAYMENT_PROCESSOR_EBANX_COUNTRIES[ country ].requiredFields || [];
 
-		'street-number': {
-			description: i18n.translate( 'Street Number' ),
-			rules: [ 'required' ],
-		},
+	return pick(
+		{
+			document: {
+				description: i18n.translate( 'Taxpayer Identification Number' ),
+				rules: [ 'validCPF' ],
+			},
 
-		'address-1': {
-			description: i18n.translate( 'Address' ),
-			rules: [ 'required' ],
-		},
+			'street-number': {
+				description: i18n.translate( 'Street Number' ),
+				rules: [ 'required' ],
+			},
 
-		state: {
-			description: i18n.translate( 'State' ),
-			rules: [ 'required' ],
-		},
+			'address-1': {
+				description: i18n.translate( 'Address' ),
+				rules: [ 'required' ],
+			},
 
-		city: {
-			description: i18n.translate( 'City' ),
-			rules: [ 'required' ],
-		},
+			state: {
+				description: i18n.translate( 'State' ),
+				rules: [ 'required' ],
+			},
 
-		'phone-number': {
-			description: i18n.translate( 'Phone Number' ),
-			rules: [ 'required' ],
+			city: {
+				description: i18n.translate( 'City' ),
+				rules: [ 'required' ],
+			},
+
+			'phone-number': {
+				description: i18n.translate( 'Phone Number' ),
+				rules: [ 'required' ],
+			},
 		},
-	};
+		requiredFields
+	);
 }
 
 function creditCardFieldRules( additionalFieldRules = {} ) {
@@ -239,7 +250,7 @@ function getErrors( field, value, cardDetails ) {
  */
 function getAdditionalFieldRules( { country } ) {
 	if ( isEbanx( country ) ) {
-		return ebanxFieldRules();
+		return ebanxFieldRules( country );
 	}
 	return null;
 }

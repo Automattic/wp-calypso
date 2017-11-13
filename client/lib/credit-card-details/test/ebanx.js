@@ -11,7 +11,6 @@
  */
 import { isEbanx, isValidCPF } from '../ebanx';
 import { isEnabled } from 'config';
-import { PAYMENT_PROCESSOR_EBANX_COUNTRY_CODES } from '../constants';
 
 jest.mock( 'config', () => {
 	const config = () => 'development';
@@ -34,7 +33,7 @@ describe( 'Ebanx payment processing methods', () => {
 			expect( isEbanx( 'AU' ) ).toEqual( false );
 		} );
 		test( 'should return true for ebanx country', () => {
-			expect( isEbanx( PAYMENT_PROCESSOR_EBANX_COUNTRY_CODES[ 0 ] ) ).toEqual( true );
+			expect( isEbanx( 'BR' ) ).toEqual( true );
 		} );
 	} );
 

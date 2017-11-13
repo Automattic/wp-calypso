@@ -53,7 +53,6 @@ export class CreditCardFormFields extends React.Component {
 					eventFormName: this.props.eventFormName,
 					isError: this.props.isFieldInvalid( fieldName ),
 					name: fieldName,
-					// onBlur: this.handleFieldChange,
 					onChange: this.handleFieldChange,
 					value: this.getFieldValue( fieldName ) || '',
 					autoComplete: 'off',
@@ -139,7 +138,6 @@ export class CreditCardFormFields extends React.Component {
 
 			this.createField( 'phone-number', FormPhoneMediaInput, {
 				onChange: this.handlePhoneFieldChange,
-				// onBlur: this.handlePhoneFieldChange,
 				countriesList: countriesList,
 				countryCode: phoneCountryCode,
 				label: translate( 'Phone' ),

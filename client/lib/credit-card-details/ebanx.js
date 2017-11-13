@@ -3,14 +3,14 @@
  *
  * @format
  */
-import includes from 'lodash/includes';
+import isUndefined from 'lodash/isUndefined';
 import isString from 'lodash/isString';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { PAYMENT_PROCESSOR_EBANX_COUNTRY_CODES } from './constants';
+import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from './constants';
 
 /**
  *
@@ -19,7 +19,7 @@ import { PAYMENT_PROCESSOR_EBANX_COUNTRY_CODES } from './constants';
  */
 export function isEbanx( countryCode = '' ) {
 	return (
-		includes( PAYMENT_PROCESSOR_EBANX_COUNTRY_CODES, countryCode ) &&
+		! isUndefined( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ] ) &&
 		config.isEnabled( 'upgrades/ebanx' )
 	);
 }
