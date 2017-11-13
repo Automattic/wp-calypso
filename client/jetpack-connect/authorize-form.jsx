@@ -14,7 +14,7 @@ import { get, includes } from 'lodash';
  */
 import Main from 'components/main';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
-import { getAuthorizationData } from 'state/jetpack-connect/selectors';
+import { getAuthorizationRemoteQueryData } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
@@ -26,11 +26,11 @@ import LoggedOutForm from './auth-logged-out-form';
 
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {
-		jetpackConnectAuthorize: PropTypes.shape( {
-			queryObject: PropTypes.shape( {
-				client_id: PropTypes.string,
-				from: PropTypes.string,
-			} ),
+		authorizationRemoteQueryData: PropTypes.shape( {
+			_ui: PropTypes.string,
+			_ut: PropTypes.string,
+			client_id: PropTypes.string,
+			from: PropTypes.string,
 		} ).isRequired,
 		recordTracksEvent: PropTypes.func,
 		setTracksAnonymousUserId: PropTypes.func,
@@ -39,7 +39,7 @@ class JetpackConnectAuthorizeForm extends Component {
 
 	componentWillMount() {
 		// set anonymous ID for cross-system analytics
-		const queryObject = this.props.jetpackConnectAuthorize.queryObject;
+		const queryObject = this.props.authorizationRemoteQueryData;
 		if ( queryObject && queryObject._ui && 'anon' === queryObject._ut ) {
 			this.props.setTracksAnonymousUserId( queryObject._ui );
 		}
@@ -48,7 +48,7 @@ class JetpackConnectAuthorizeForm extends Component {
 
 	isSSO() {
 		const cookies = cookie.parse( document.cookie );
-		const query = this.props.jetpackConnectAuthorize.queryObject;
+		const query = this.props.authorizationRemoteQueryData;
 		return (
 			query.from &&
 			'sso' === query.from &&
@@ -60,7 +60,7 @@ class JetpackConnectAuthorizeForm extends Component {
 
 	isWoo() {
 		const wooSlugs = [ 'woocommerce-setup-wizard', 'woocommerce-services' ];
-		const jetpackConnectSource = get( this.props, 'jetpackConnectAuthorize.queryObject.from' );
+		const jetpackConnectSource = get( this.props, 'authorizationRemoteQueryData.from' );
 
 		return includes( wooSlugs, jetpackConnectSource );
 	}
@@ -96,9 +96,9 @@ class JetpackConnectAuthorizeForm extends Component {
 	}
 
 	render() {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
+		const { authorizationRemoteQueryData } = this.props;
 
-		if ( typeof queryObject === 'undefined' ) {
+		if ( typeof authorizationRemoteQueryData === 'undefined' ) {
 			return this.renderNoQueryArgsError();
 		}
 
@@ -114,7 +114,7 @@ export { JetpackConnectAuthorizeForm as JetpackConnectAuthorizeFormTestComponent
 
 export default connect(
 	state => ( {
-		jetpackConnectAuthorize: getAuthorizationData( state ),
+		authorizationRemoteQueryData: getAuthorizationRemoteQueryData( state ),
 		user: getCurrentUser( state ),
 	} ),
 	{
