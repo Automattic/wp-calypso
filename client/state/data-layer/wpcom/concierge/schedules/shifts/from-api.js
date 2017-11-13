@@ -6,7 +6,7 @@
 import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import responseSchema from './schema';
 
-const transformShift = shift => ( {
+export const transformShift = shift => ( {
 	beginTimestamp: shift.begin_timestamp,
 	endTimestamp: shift.end_timestamp,
 	scheduleId: shift.schedule_id,

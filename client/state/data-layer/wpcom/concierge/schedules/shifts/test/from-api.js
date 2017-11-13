@@ -4,7 +4,26 @@
  * Internal dependencies
  */
 import { SchemaError } from 'state/data-layer/wpcom-http/utils';
-import fromApi from '../from-api';
+import fromApi, { transformShift } from '../from-api';
+
+describe( 'transformShift()', () => {
+	test( 'should pick out expected fields and make the keys camelCase.', () => {
+		const mockShift = {
+			begin_timestamp: 100,
+			end_timestamp: 200,
+			schedule_id: 999,
+			description: 'an example',
+			not_going_to_take_this: 'should ignore this one',
+		};
+
+		expect( transformShift( mockShift ) ).toEqual( {
+			beginTimestamp: mockShift.begin_timestamp,
+			endTimestamp: mockShift.end_timestamp,
+			scheduleId: mockShift.schedule_id,
+			description: mockShift.description,
+		} );
+	} );
+} );
 
 describe( 'fromApi()', () => {
 	test( 'should validate and transform the data successfully.', () => {
