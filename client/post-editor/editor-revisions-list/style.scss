@@ -5,9 +5,9 @@
 .editor-revisions-list {
 	border-left: 1px solid darken($sidebar-bg-color, 5%);
 	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 73px;
+	top: 0;
+	right: 0;
+	bottom: 73px;
 	z-index: 1; // Put the list above the action-buttons:before overlay gradient. -shaun
 	width: 230px;
 	background: $gray-light;
@@ -37,7 +37,7 @@
 // Scrollable Box for Revisions List
 .editor-revisions-list__scroller {
 	position: absolute;
-	top: 46px;
+	top: 47px;
 	right: 0;
 	bottom: 0;
 	left: 0;
@@ -55,6 +55,7 @@
 
 // Individual Revision List Item
 .editor-revisions-list__button {
+	position: relative;
 	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
 	color: $gray-dark;
 	cursor: pointer;
@@ -62,6 +63,7 @@
 	text-align: left;
 	width: 100%;
 	padding: 8px 16px;
+	min-height: 60px;
 
 	&:hover {
 		background: $accordion-background-hover;
@@ -80,27 +82,58 @@
 }
 
 .editor-revisions-list__date {
-	font-weight: bold;
+	color: $gray-text;
+	font-weight: 600;
 	display: block;
+	margin-bottom: 4px;
 }
 
 .editor-revisions-list__author {
-	font-size: 14px;
-	color: $gray-text;
+	font-size: 13px;
+	display: block;
+	margin-top: 4px;
+	color: $gray-text-min;
 }
 
 .editor-revisions-list__changes {
 	font-size: 13px;
+	display: block;
+}
+
+.editor-revisions-list__additions,
+.editor-revisions-list__deletions,
+.editor-revisions-list__minor-changes {
+	line-height: 1;
+
+	b {
+		display: inline-block;
+		border-radius: 12px;
+		padding: 0;
+		line-height: 12px;
+		font-size: 14px;
+		height: 14px;
+		width: 14px;
+		color: white;
+		text-align: center;
+		margin: 0 6px 0 0;
+		font-weight: normal;
+		box-sizing: border-box;
+	}
 }
 
 .editor-revisions-list__additions {
-	color: $blue-medium;
+	margin-right: 12px;
+	b {
+		background: $blue-medium;
+	}
 }
 
 .editor-revisions-list__deletions {
-	color: $alert-red;
+	b {
+		background: $alert-red;
+	}
 }
 
 .editor-revisions-list__minor-changes {
-	color: $gray-text-min;
+	top: 8px;
 }

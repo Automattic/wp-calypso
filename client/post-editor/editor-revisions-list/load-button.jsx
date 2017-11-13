@@ -11,46 +11,52 @@ import { flow } from 'lodash';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
-import { editPost } from 'state/posts/actions';
-import { getPostRevision } from 'state/selectors';
+import { loadPostRevision } from 'state/posts/revisions/actions';
+import { getPostRevisionsSelectedRevision } from 'state/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import libPostsActions from 'lib/posts/actions';
+//import libPostsActions from 'lib/posts/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 
 class LoadButton extends PureComponent {
 	static propTypes = {
+		// connected to state
 		postId: PropTypes.number,
+		revision: PropTypes.object,
 		siteId: PropTypes.number,
-		selectedRevisionId: PropTypes.number,
 	};
 
 	loadRevision = () => {
 		const { revision, postId, siteId } = this.props;
+
+		this.props.loadPostRevision( { revision, postId, siteId }, () => {
+			if ( isWithinBreakpoint( '<660px' ) ) {
+				this.props.setLayoutFocus( 'content' );
+			}
+		} );
+
+		/*
+		This is not working. Figure out why or rewrite
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		libPostsActions.edit( {
 			content: revision.content,
 			excerpt: revision.excerpt,
 			title: revision.title,
-		} );
-
-		this.props.editPost( siteId, postId, {
-			content: revision.content,
-			title: revision.title,
-		} );
-
-		if ( isWithinBreakpoint( '<660px' ) ) {
-			this.props.setLayoutFocus( 'content' );
-		}
+		} );*/
 
 		this.props.recordTracksEvent( 'calypso_editor_post_revisions_load_revision' );
 	};
 
 	render() {
+		const { revision, postId, siteId } = this.props;
+		const disabled = ! ( revision && postId && siteId );
+
 		return (
-			<Button primary onClick={ this.loadRevision }>
+			<Button primary onClick={ this.loadRevision } disabled={ disabled }>
 				{ this.props.translate( 'Load' ) }
 			</Button>
 		);
@@ -59,11 +65,13 @@ class LoadButton extends PureComponent {
 export default flow(
 	localize,
 	connect(
-		( state, { siteId, postId, selectedRevisionId } ) => ( {
-			revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
+		state => ( {
+			postId: getEditorPostId( state ),
+			revision: getPostRevisionsSelectedRevision( state ),
+			siteId: getSelectedSiteId( state ),
 		} ),
 		{
-			editPost,
+			loadPostRevision,
 			recordTracksEvent,
 			setLayoutFocus,
 		}

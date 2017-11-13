@@ -224,6 +224,7 @@ export isPendingEmailChange from './is-pending-email-change';
 export isPluginActive from './is-plugin-active';
 export isPluginUploadComplete from './is-plugin-upload-complete';
 export isPluginUploadInProgress from './is-plugin-upload-in-progress';
+export isPostRevisionsDialogVisible from './is-post-revisions-dialog-visible';
 export isPrivateSite from './is-private-site';
 export isPublicizeEnabled from './is-publicize-enabled';
 export isReaderCardExpanded from './is-reader-card-expanded';

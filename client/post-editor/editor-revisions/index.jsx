@@ -63,7 +63,11 @@ class EditorRevisions extends Component {
 
 		return (
 			<div className="editor-revisions__wrapper">
-				<QueryPostRevisions postId={ postId } siteId={ siteId } />
+				<QueryPostRevisions
+					postId={ postId }
+					siteId={ siteId }
+					selectedRevisionId={ selectedRevisionId }
+				/>
 				<QueryUsers siteId={ siteId } userIds={ authorsIds } />
 				<EditorDiffViewer
 					postId={ postId }
@@ -84,7 +88,7 @@ EditorRevisions.propTypes = {
 	authorsIds: PropTypes.array.isRequired,
 	postId: PropTypes.number.isRequired,
 	revisions: PropTypes.array.isRequired,
-	selectedRevisionId: PropTypes.number.isRequired,
+	selectedRevisionId: PropTypes.number,
 	siteId: PropTypes.number.isRequired,
 
 	// localize
