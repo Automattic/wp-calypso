@@ -306,6 +306,49 @@ export default function transformer( file, api ) {
 		}
 	}
 
+	/**
+  	 * Transform `ReactDom.unmountComponentAtNode()` CallExpressions.
+  	 *
+  	 * @example
+	 * Input:
+	 * ```
+	 * ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	 * ```
+	 *
+	 * Output:
+	 * ```
+	 * context.secondary = null;
+	 * ```
+	 */
+	root
+		.find( j.CallExpression, {
+			callee: {
+				type: 'MemberExpression',
+				object: {
+					name: 'ReactDom',
+				},
+				property: {
+					name: 'unmountComponentAtNode',
+				},
+			},
+		} )
+		.forEach( p => {
+			return _.get( p, 'value.arguments[0].arguments.value' ) === 'secondary';
+		} )
+		.replaceWith( p => {
+			// Returns `context.secondary = null`
+			return j.expressionStatement(
+				j.assignmentExpression(
+					'=',
+					j.memberExpression( j.identifier( 'context' ), j.identifier( 'secondary' ) ),
+					j.literal( null )
+				)
+			);
+		} )
+		.closest( j.Function )
+		.replaceWith( ensureContextMiddleware )
+		.replaceWith( ensureNextMiddleware );
+
 	// Add makeLayout and clientRender middlewares to route definitions
 	const routeDefs = root
 		.find( j.CallExpression, {
