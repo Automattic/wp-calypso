@@ -557,9 +557,9 @@ class LoggedInForm extends Component {
 
 export default connect(
 	state => ( {
-		redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 		hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 		hasXmlrpcError: hasXmlrpcErrorSelector( state ),
+		redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 	} ),
 	{
 		authorize: authorizeAction,
