@@ -130,6 +130,10 @@ export class LoginForm extends Component {
 			} );
 	}
 
+	isPasswordVisible() {
+		return this.props.socialAccountIsLinking || isRegularAccount( this.props.accountType );
+	}
+
 	loginUser() {
 		const { password, usernameOrEmail } = this.state;
 		const { onSuccess, redirectTo } = this.props;
@@ -204,7 +208,7 @@ export class LoginForm extends Component {
 			isDisabled.disabled = true;
 		}
 
-		const { accountType, requestError, redirectTo, oauth2Client } = this.props;
+		const { requestError, redirectTo, oauth2Client } = this.props;
 		const linkingSocialUser = this.props.socialAccountIsLinking;
 		const isOauthLogin = !! oauth2Client;
 		let signupUrl = config( 'signup_url' );
@@ -264,7 +268,7 @@ export class LoginForm extends Component {
 								<FormInputValidation isError text={ requestError.message } />
 							) }
 
-						{ ( linkingSocialUser || isRegularAccount( accountType ) ) && (
+						{ this.isPasswordVisible() && (
 							<div>
 								<label htmlFor="password" className="login__form-userdata-username">
 									{ this.props.translate( 'Password' ) }
@@ -314,7 +318,7 @@ export class LoginForm extends Component {
 
 					<div className="login__form-action">
 						<FormsButton primary { ...isDisabled }>
-							{ linkingSocialUser || isRegularAccount( accountType )
+							{ this.isPasswordVisible()
 								? this.props.translate( 'Log In' )
 								: this.props.translate( 'Continue' ) }
 						</FormsButton>
