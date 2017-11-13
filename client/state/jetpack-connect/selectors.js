@@ -98,7 +98,7 @@ const getAuthAttempts = ( state, slug ) => {
 };
 
 const getUserAlreadyConnected = state => {
-	return get( state, 'jetpackConnectAuthorize.userAlreadyConnected' );
+	return !! getAuthorizationData( state ).userAlreadyConnected;
 };
 
 /**
