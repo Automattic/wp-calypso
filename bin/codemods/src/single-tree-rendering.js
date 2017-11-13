@@ -256,6 +256,24 @@ export default function transformer( file, api ) {
 		.replaceWith( ensureNextMiddleware )
 		.forEach( transformReactDomRender );
 
+	// Find if `reactDom` is used
+	const reactDomDefs = root.find( j.MemberExpression, {
+		object: {
+			name: 'ReactDom',
+		},
+	} );
+
+	// Remove stranded `reactDom` imports
+	if ( ! reactDomDefs.size() ) {
+		root
+			.find( j.ImportDeclaration, {
+				source: {
+					value: 'react-dom',
+				},
+			} )
+			.remove();
+	}
+
 	// Transform `renderWithReduxStore()` to `context.primary/secondary`
 	root
 		.find( j.CallExpression, {
