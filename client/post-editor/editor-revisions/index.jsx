@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow } from 'lodash';
+import { flow, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,8 +39,8 @@ class EditorRevisions extends Component {
 		if ( adminUrl ) {
 			// This is what gets rendered in the sidebar
 			// @TODO take it out (& adminUrl too) when the feature flag is enabled
-			const lastRevision = revisions[ 0 ];
-			const revisionsLink = adminUrl + 'revision.php?revision=' + lastRevision;
+			const lastRevisionId = get( revisions, [ 0, 'id' ], 0 );
+			const revisionsLink = adminUrl + 'revision.php?revision=' + lastRevisionId;
 
 			return (
 				<a
