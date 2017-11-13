@@ -102,7 +102,6 @@ export class Comment extends Component {
 			'is-edit-mode': isEditMode,
 			'is-placeholder': isLoading,
 			'is-pending': commentIsPending,
-			'is-post-view': isPostView,
 			'is-reply-visible': isReplyVisible,
 		} );
 
@@ -122,7 +121,7 @@ export class Comment extends Component {
 					<div className="comment__detail">
 						<CommentHeader { ...{ commentId, isBulkMode, isEditMode, isSelected } } />
 
-						<CommentContent { ...{ commentId, isPostView } } />
+						<CommentContent { ...{ commentId, isBulkMode, isPostView } } />
 
 						{ ! isBulkMode && (
 							<CommentActions
