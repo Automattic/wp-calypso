@@ -19,6 +19,8 @@ export function isValidPromotion( promotion ) {
 		case 'fixed_product':
 			const validFixedDiscount = promotion.fixedDiscount && promotion.fixedDiscount > 0;
 			return validCouponCode && validFixedDiscount;
+		case 'free_shipping':
+			return validCouponCode;
 		default:
 			return false;
 	}

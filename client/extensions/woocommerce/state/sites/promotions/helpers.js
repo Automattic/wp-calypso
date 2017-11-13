@@ -38,6 +38,8 @@ export function createProductUpdateFromPromotion( promotion ) {
 }
 
 export function createPromotionFromCoupon( coupon ) {
+	const promotionTypeMeta = find( coupon.meta_data, { key: 'promotion_type' } );
+	const promotionType = ( promotionTypeMeta ? promotionTypeMeta.value : coupon.discount_type );
 	const couponCode = coupon.code;
 	const startDate = coupon.date_created;
 	const endDate = coupon.date_expires || undefined;
@@ -55,7 +57,7 @@ export function createPromotionFromCoupon( coupon ) {
 	const promotion = {
 		id: 'c' + coupon.id,
 		name: coupon.code,
-		type: coupon.discount_type,
+		type: promotionType,
 		appliesTo: calculateCouponAppliesTo( coupon ),
 		couponCode,
 		startDate,
@@ -89,27 +91,42 @@ export function createCouponUpdateFromPromotion( promotion ) {
 		throw new Error( 'Cannot create coupon from promotion with nonexistant couponCode' );
 	}
 
-	const amount = ( 'percent' === promotion.type
-		? promotion.percentDiscount
-		: promotion.fixedDiscount );
-
+	let amount = undefined;
+	let freeShipping = promotion.freeShipping;
+	let discountType = promotion.type;
+	const meta = [ { key: 'promotion_type', value: promotion.type } ];
 	const productIds = ( appliesTo && appliesTo.productIds ) || undefined;
 	const productCategoryIds = ( appliesTo && appliesTo.productCategoryIds ) || undefined;
 
+	switch ( promotion.type ) {
+		case 'percent':
+			amount = promotion.percentDiscount;
+			break;
+		case 'fixed_product':
+		case 'fixed_cart':
+			amount = promotion.fixedDiscount;
+			break;
+		case 'free_shipping':
+			freeShipping = true;
+			discountType = undefined; // let it go to default, since we don't care.
+			break;
+	}
+
 	return {
 		id: promotion.couponId, // May not be present in case of create.
-		discount_type: promotion.type,
+		discount_type: discountType,
 		code: promotion.couponCode,
 		amount: amount,
 		date_expires: promotion.endDate,
 		individual_use: promotion.individualUse,
 		usage_limit: promotion.usageLimit,
 		usage_limit_per_user: promotion.usageLimitPerUser,
-		free_shipping: promotion.freeShipping,
+		free_shipping: freeShipping,
 		minimum_amount: promotion.minimumAmount,
 		maximum_amount: promotion.maximumAmount,
 		product_ids: productIds,
 		product_categories: productCategoryIds,
+		meta_data: meta,
 	};
 }
 

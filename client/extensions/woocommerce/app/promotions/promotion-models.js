@@ -7,6 +7,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import CheckboxField from './fields/checkbox-field';
 import CurrencyField from './fields/currency-field';
 import DateField from './fields/date-field';
 import FormField from './fields/form-field';
@@ -26,6 +27,17 @@ const couponCodeField = {
 	),
 	placeholderText: translate( 'Enter coupon code' ),
 	isRequired: true,
+};
+
+/**
+ * "Free shipping" field, reused for all coupon prompotion types.
+ */
+const freeShippingField = {
+	component: CheckboxField,
+	labelText: translate( 'Free shipping' ),
+	explanationText: translate(
+		'This coupon also provides free shipping'
+	),
 };
 
 /**
@@ -217,6 +229,7 @@ const fixedProductModel = {
 				...fixedDiscountField,
 				labelText: translate( 'Product Discount', { context: 'noun' } )
 			},
+			freeShipping: freeShippingField,
 		},
 	},
 	conditions: couponConditions,
@@ -236,6 +249,7 @@ const fixedCartModel = {
 				...fixedDiscountField,
 				labelText: translate( 'Cart Discount', { context: 'noun' } ),
 			},
+			freeShipping: freeShippingField,
 		},
 	},
 	conditions: couponConditions,
@@ -256,6 +270,19 @@ const percentCartModel = {
 				labelText: translate( 'Percent Cart Discount', { context: 'noun' } ),
 				isRequired: true,
 			},
+			freeShipping: freeShippingField,
+		},
+	},
+	conditions: couponConditions,
+};
+
+const freeShippingModel = {
+	appliesWhenCoupon,
+	couponCode: {
+		labelText: translate( 'Coupon' ),
+		cssClass: 'promotions__promotion-form-card-primary',
+		fields: {
+			couponCode: couponCodeField,
 		},
 	},
 	conditions: couponConditions,
@@ -271,4 +298,5 @@ export default {
 	fixed_product: fixedProductModel,
 	fixed_cart: fixedCartModel,
 	percent: percentCartModel,
+	free_shipping: freeShippingModel,
 };
