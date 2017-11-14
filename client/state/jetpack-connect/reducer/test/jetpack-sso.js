@@ -3,7 +3,6 @@
  * External dependencies
  */
 import deepFreeze from 'deep-freeze';
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -50,7 +49,7 @@ const falseSSOValidation = Object.assign( successfulSSOValidation, { success: fa
 describe( '#jetpackSSO()', () => {
 	test( 'should default to an empty object', () => {
 		const state = jetpackSSO( undefined, {} );
-		expect( state ).to.eql( {} );
+		expect( state ).toEqual( {} );
 	} );
 
 	test( 'should set isValidating to true when validating', () => {
@@ -58,7 +57,7 @@ describe( '#jetpackSSO()', () => {
 			type: JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 		} );
 
-		expect( state ).to.have.property( 'isValidating', true );
+		expect( state ).toHaveProperty( 'isValidating', true );
 	} );
 
 	test( 'should set isAuthorizing to true when authorizing', () => {
@@ -66,7 +65,7 @@ describe( '#jetpackSSO()', () => {
 			type: JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 		} );
 
-		expect( state ).to.have.property( 'isAuthorizing', true );
+		expect( state ).toHaveProperty( 'isAuthorizing', true );
 	} );
 
 	test( 'should set isValidating to false after validation', () => {
@@ -82,7 +81,7 @@ describe( '#jetpackSSO()', () => {
 
 		actions.forEach( action => {
 			const state = jetpackSSO( undefined, action );
-			expect( state ).to.have.property( 'isValidating', false );
+			expect( state ).toHaveProperty( 'isValidating', false );
 		} );
 	} );
 
@@ -92,22 +91,20 @@ describe( '#jetpackSSO()', () => {
 		actions.forEach( action => {
 			const originalAction = deepFreeze( action );
 			const state = jetpackSSO( undefined, originalAction );
-			expect( state ).to.have.property( 'nonceValid', originalAction.success );
+			expect( state ).toHaveProperty( 'nonceValid', originalAction.success );
 		} );
 	} );
 
 	test( 'should store blog details after validation', () => {
 		const successState = jetpackSSO( undefined, successfulSSOValidation );
-		expect( successState )
-			.to.have.property( 'blogDetails' )
-			.to.be.eql( successfulSSOValidation.blogDetails );
+		expect( successState ).toMatchObject( { blogDetails: successfulSSOValidation.blogDetails } );
 	} );
 
 	test( 'should store shared details after validation', () => {
 		const successState = jetpackSSO( undefined, successfulSSOValidation );
-		expect( successState )
-			.to.have.property( 'sharedDetails' )
-			.to.be.eql( successfulSSOValidation.sharedDetails );
+		expect( successState ).toMatchObject( {
+			sharedDetails: successfulSSOValidation.sharedDetails,
+		} );
 	} );
 
 	test( 'should set isAuthorizing to false after authorization', () => {
@@ -127,7 +124,7 @@ describe( '#jetpackSSO()', () => {
 
 		actions.forEach( action => {
 			const state = jetpackSSO( undefined, action );
-			expect( state ).to.have.property( 'isAuthorizing', false );
+			expect( state ).toHaveProperty( 'isAuthorizing', false );
 		} );
 	} );
 
@@ -140,6 +137,6 @@ describe( '#jetpackSSO()', () => {
 
 		const state = jetpackSSO( undefined, action );
 
-		expect( state ).to.have.property( 'ssoUrl', action.ssoUrl );
+		expect( state ).toHaveProperty( 'ssoUrl', action.ssoUrl );
 	} );
 } );
