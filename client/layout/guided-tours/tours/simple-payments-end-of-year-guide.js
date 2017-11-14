@@ -89,11 +89,17 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 		</Step>
 		<Step name="editor-intro" placement="center">
 			<p>
-				{ translate( 'Add a payment button here, from within the Editor.', {
-					components: {
-						strong: <strong />,
-					},
-				} ) }
+				{ translate( 'Welcome to the Editor! ' ) }
+			</p>
+			<p>
+				{ translate(
+					'Click {{strong}}Next{{/strong}} to learn how to add a payment button.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				) }
 			</p>
 			<ButtonRow>
 				<Next step="editor-insert-button" />
