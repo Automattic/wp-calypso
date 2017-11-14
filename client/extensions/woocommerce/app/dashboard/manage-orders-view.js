@@ -6,7 +6,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import config from 'config';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -16,6 +15,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import DashboardWidget from 'woocommerce/components/dashboard-widget';
+import DashboardWidgetRow from 'woocommerce/components/dashboard-widget-row';
 import LabelsSetupNotice from 'woocommerce/woocommerce-services/components/labels-setup-notice';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
@@ -104,13 +105,12 @@ class ManageOrdersView extends Component {
 			return null;
 		}
 
-		const classes = classNames( 'card', 'dashboard__reviews-widget' );
 		const countText = translate( 'Pending review', 'Pending reviews', {
 			count: pendingReviews,
 		} );
 
 		return (
-			<div className={ classes }>
+			<DashboardWidget className="dashboard__reviews-widget" width="third">
 				<div>
 					<span>{ pendingReviews }</span>
 					<span>{ countText }</span>
@@ -120,7 +120,7 @@ class ManageOrdersView extends Component {
 						{ translate( 'Moderate', { context: 'Product reviews widget moderation button' } ) }
 					</Button>
 				</div>
-			</div>
+			</DashboardWidget>
 		);
 	};
 
@@ -154,11 +154,11 @@ class ManageOrdersView extends Component {
 
 				<LabelsSetupNotice />
 
-				<div className="dashboard__queue-widgets">
+				<DashboardWidgetRow>
 					{ this.possiblyRenderProcessOrdersWidget() }
 					{ config.isEnabled( 'woocommerce/extension-reviews' ) &&
 						this.possiblyRenderReviewsWidget() }
-				</div>
+				</DashboardWidgetRow>
 
 				<Card className="dashboard__reports-widget">
 					<div className="dashboard__reports-widget-content-wrapper">
