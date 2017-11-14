@@ -46,9 +46,16 @@ describe( '#likeComment()', () => {
 describe( '#updateCommentLikes()', () => {
 	test( 'should dispatch a comment like update action', () => {
 		const dispatch = spy();
+		const getState = () => ( {
+			comments: {
+				items: {
+					[ `${ SITE_ID }-${ POST_ID }` ]: [ { ID: 1, status: 'approved' } ],
+				},
+			},
+		} );
 
 		updateCommentLikes(
-			{ dispatch },
+			{ dispatch, getState },
 			{ siteId: SITE_ID, postId: POST_ID, commentId: 1 },
 			{
 				like_count: 4,
@@ -63,6 +70,26 @@ describe( '#updateCommentLikes()', () => {
 				postId: POST_ID,
 				commentId: 1,
 				like_count: 4,
+				meta: {
+					analytics: [
+						{
+							type: 'ANALYTICS_EVENT_RECORD',
+							payload: {
+								name: 'calypso_comment_management_like',
+								properties: { also_approve: false },
+								service: 'tracks',
+							},
+						},
+						{
+							type: 'ANALYTICS_STAT_BUMP',
+							payload: {
+								group: 'calypso_comment_management',
+								name: 'comment_liked',
+							},
+						},
+					],
+					dataLayer: { doBypass: true },
+				},
 			} )
 		);
 	} );
