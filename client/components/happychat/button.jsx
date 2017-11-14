@@ -18,7 +18,7 @@ import classnames from 'classnames';
  */
 import viewport from 'lib/viewport';
 import { getHappychatAuth } from 'state/happychat/utils';
-import { hasUnreadMessages } from 'state/happychat/selectors';
+import hasUnreadMessages from 'state/happychat/selectors/has-unread-messages';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';

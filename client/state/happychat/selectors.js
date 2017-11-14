@@ -1,21 +1,13 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { get, last } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
 import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from './constants';
 import { isEnabled } from 'config';
 import { isJetpackSite, getSite } from 'state/sites/selectors';
 import { isATEnabled } from 'lib/automated-transfer';
 import { getSectionName } from 'state/ui/selectors';
-import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeline';
-import getLostFocusTimestamp from 'state/happychat/selectors/get-lostfocus-timestamp';
 
 /**
  * Grab the group or groups for happychat based on siteId
@@ -45,19 +37,3 @@ export const getGroups = ( state, siteId ) => {
 	}
 	return groups;
 };
-
-export const hasUnreadMessages = createSelector(
-	state => {
-		const lastMessageTimestamp = get( last( getHappychatTimeline( state ) ), 'timestamp' );
-		const lostFocusAt = getLostFocusTimestamp( state );
-
-		return (
-			typeof lastMessageTimestamp === 'number' &&
-			typeof lostFocusAt === 'number' &&
-			// Message timestamps are reported in seconds. We need to multiply by 1000 to convert
-			// to milliseconds, so we can compare it to other JS-generated timestamps
-			lastMessageTimestamp * 1000 >= lostFocusAt
-		);
-	},
-	[ getHappychatTimeline, getLostFocusTimestamp ]
-);
