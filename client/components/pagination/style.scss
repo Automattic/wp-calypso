@@ -11,6 +11,7 @@
 	list-style: none;
 	align-items: center;
 	justify-content: center;
+	flex-wrap: wrap;
 	@include clear-fix;
 }
 
@@ -30,6 +31,8 @@
 		color: $gray-text-min;
 		text-align: center;
 		border-radius: 0;
+		display: flex;
+		flex-wrap: nowrap;
 
 		.gridicon {
 			top: 0;
