@@ -33,7 +33,6 @@ class EditorActionBar extends Component {
 		type: PropTypes.string,
 		isPostPrivate: PropTypes.bool,
 		postAuthor: PropTypes.object,
-		hasEditorNestedSidebar: PropTypes.bool,
 	};
 
 	state = {
@@ -51,9 +50,7 @@ class EditorActionBar extends Component {
 		return (
 			<div className="editor-action-bar">
 				<div className="editor-action-bar__cell is-left">
-					{ ! this.props.hasEditorNestedSidebar && (
-						<EditorStatusLabel post={ this.props.savedPost } advancedStatus />
-					) }
+					<EditorStatusLabel post={ this.props.savedPost } advancedStatus />
 				</div>
 				<div className="editor-action-bar__cell is-center">
 					{ multiUserSite && (

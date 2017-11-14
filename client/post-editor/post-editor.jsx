@@ -51,7 +51,6 @@ import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
 import { getEditedPostValue, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { hasBrokenSiteUserConnection, editedPostHasContent } from 'state/selectors';
-import { NESTED_SIDEBAR_NONE } from 'state/ui/editor/sidebar/constants';
 import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
@@ -147,19 +146,6 @@ export const PostEditor = createReactClass( {
 		this.setState( {
 			isEditorInitialized: false,
 		} );
-	},
-
-	componentDidUpdate( prevProps ) {
-		if (
-			prevProps.nestedSidebarTarget !== NESTED_SIDEBAR_NONE &&
-			this.props.nestedSidebarTarget === NESTED_SIDEBAR_NONE
-		) {
-			// NOTE: Make sure we scroll back to the top AND trigger a scroll
-			// event no matter the scroll position we're coming from.
-			// ( used to force-reset TinyMCE toolbar )
-			window.scrollTo( 0, 1 );
-			window.scrollTo( 0, 0 );
-		}
 	},
 
 	componentWillUpdate( nextProps, nextState ) {
@@ -339,7 +325,6 @@ export const PostEditor = createReactClass( {
 						toggleSidebar={ this.toggleSidebar }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						allPostsUrl={ this.getAllPostsUrl() }
-						nestedSidebar={ this.state.nestedSidebar }
 						selectedRevisionId={ this.state.selectedRevisionId }
 						isSidebarOpened={ this.props.layoutFocus === 'sidebar' }
 					/>
@@ -428,7 +413,6 @@ export const PostEditor = createReactClass( {
 						onSave={ this.onSave }
 						isPostPrivate={ utils.isPrivate( this.state.post ) }
 						confirmationSidebarStatus={ this.state.confirmationSidebar }
-						nestedSidebar={ this.state.nestedSidebar }
 					/>
 					{ this.props.isSitePreviewable ? (
 						<EditorPreview

@@ -43,7 +43,6 @@ export class EditPostStatus extends Component {
 		status: PropTypes.string,
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
-		setNestedSidebar: PropTypes.func,
 	};
 
 	constructor( props ) {

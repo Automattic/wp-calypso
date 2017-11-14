@@ -19,7 +19,6 @@ describe( 'reducer', () => {
 			'contactForm',
 			'imageEditor',
 			'videoEditor',
-			'sidebar',
 		] );
 	} );
 
