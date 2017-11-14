@@ -42,21 +42,18 @@ class PostListWrapper extends React.Component {
 			query.meta = 'counts';
 		}
 
-		return (
-			<PostTypeList
-				query={ query }
-				scrollContainer={ document.body }
-			/>
-		);
+		return <PostTypeList query={ query } scrollContainer={ document.body } />;
 	}
 
 	render() {
 		return (
 			<div>
 				{ config.isEnabled( 'posts/post-type-list' ) &&
-				abtest( 'condensedPostList' ) === 'condensedPosts'
-					? this.renderPostTypeList()
-					: this.renderPostList() }
+				abtest( 'condensedPostList' ) === 'condensedPosts' ? (
+					this.renderPostTypeList()
+				) : (
+					this.renderPostList()
+				) }
 			</div>
 		);
 	}

@@ -145,16 +145,16 @@ class PostItem extends React.Component {
 								</a>
 							) }
 							{ ! isPlaceholder &&
-								externalPostLink && (
-									<ExternalLink
-										icon={ true }
-										href={ postUrl }
-										target="_blank"
-										className="post-item__title-link"
-									>
-										{ title || translate( 'Untitled' ) }
-									</ExternalLink>
-								) }
+							externalPostLink && (
+								<ExternalLink
+									icon={ true }
+									href={ postUrl }
+									target="_blank"
+									className="post-item__title-link"
+								>
+									{ title || translate( 'Untitled' ) }
+								</ExternalLink>
+							) }
 						</h1>
 						<div className="post-item__meta">
 							<PostTime globalId={ globalId } />
