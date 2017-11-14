@@ -13,6 +13,12 @@ import { COMMENTS_LIKE, COMMENTS_UNLIKE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
 import { errorNotice } from 'state/notices/actions';
 
 export const unlikeComment = ( { dispatch }, action ) => {
@@ -30,13 +36,19 @@ export const unlikeComment = ( { dispatch }, action ) => {
 
 export const updateCommentLikes = ( { dispatch }, { siteId, postId, commentId }, { like_count } ) =>
 	dispatch(
-		bypassDataLayer( {
-			type: COMMENTS_UNLIKE,
-			siteId,
-			postId,
-			commentId,
-			like_count,
-		} )
+		withAnalytics(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_comment_management_unlike' ),
+				bumpStat( 'calypso_comment_management', 'comment_unliked' )
+			),
+			bypassDataLayer( {
+				type: COMMENTS_UNLIKE,
+				siteId,
+				postId,
+				commentId,
+				like_count,
+			} )
+		)
 	);
 
 /***

@@ -655,16 +655,7 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 			)
 		),
 
-	unlikeComment: ( commentId, postId ) =>
-		dispatch(
-			withAnalytics(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_unlike' ),
-					bumpStat( 'calypso_comment_management', 'comment_unliked' )
-				),
-				unlikeComment( siteId, postId, commentId )
-			)
-		),
+	unlikeComment: ( commentId, postId ) => dispatch( unlikeComment( siteId, postId, commentId ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentList ) );
