@@ -21,8 +21,6 @@ import {
 	isRemoteSiteOnSitesList,
 } from '../selectors';
 
-const jestExpect = global.expect;
-
 describe( 'selectors', () => {
 	describe( '#getConnectingSite()', () => {
 		test( 'should return undefined if user has not started connecting a site', () => {
@@ -706,15 +704,15 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return false if state is missing', () => {
-			jestExpect( getUserAlreadyConnected( {} ) ).toBe( false );
+			expect( getUserAlreadyConnected( {} ) ).toBe( false );
 		} );
 
 		test( 'should return the value from state', () => {
 			const falseState = makeUserAlreadyConnectedState( false );
-			jestExpect( getUserAlreadyConnected( falseState ) ).toBe( false );
+			expect( getUserAlreadyConnected( falseState ) ).toBe( false );
 
 			const trueState = makeUserAlreadyConnectedState( true );
-			jestExpect( getUserAlreadyConnected( trueState ) ).toBe( true );
+			expect( getUserAlreadyConnected( trueState ) ).toBe( true );
 		} );
 	} );
 } );
