@@ -85,7 +85,7 @@ class PostRevisionsDialog extends PureComponent {
 				compact: true,
 				disabled: ! ( revision && postId && siteId ),
 				isPrimary: true,
-				label: translate( 'Load' ),
+				label: translate( 'Load', { context: 'Load revision in editor' } ),
 				onClick: this.onLoadClick,
 			},
 		];
