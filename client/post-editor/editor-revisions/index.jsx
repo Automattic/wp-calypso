@@ -25,7 +25,7 @@ import QueryPostRevisions from 'components/data/query-post-revisions';
 import QueryUsers from 'components/data/query-users';
 
 class EditorRevisions extends Component {
-	render = () => {
+	render() {
 		const {
 			adminUrl,
 			authorsIds,
@@ -40,6 +40,16 @@ class EditorRevisions extends Component {
 			// This is what gets rendered in the sidebar
 			// @TODO take it out (& adminUrl too) when the feature flag is enabled
 			const lastRevisionId = get( revisions, [ 0, 'id' ], 0 );
+
+			if ( ! lastRevisionId ) {
+				return (
+					<span>
+						<QueryPostRevisions postId={ postId } siteId={ siteId } />
+						<QueryUsers siteId={ siteId } userIds={ authorsIds } />
+					</span>
+				);
+			}
+
 			const revisionsLink = adminUrl + 'revision.php?revision=' + lastRevisionId;
 
 			return (
@@ -77,7 +87,7 @@ class EditorRevisions extends Component {
 				<EditorRevisionsList postId={ postId } revisions={ revisions } siteId={ siteId } />
 			</div>
 		);
-	};
+	}
 }
 
 EditorRevisions.propTypes = {
