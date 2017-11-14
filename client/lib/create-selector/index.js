@@ -6,6 +6,7 @@
 
 import { memoize } from 'lodash';
 import shallowEqual from 'react-pure-render/shallowEqual';
+import LRU from 'lru';
 
 /**
  * Constants
@@ -86,10 +87,11 @@ const makeSelectorFromArray = dependants => ( state, ...args ) =>
 export default function createSelector(
 	selector,
 	getDependants = DEFAULT_GET_DEPENDANTS,
-	getCacheKey = DEFAULT_GET_CACHE_KEY
+	getCacheKey = DEFAULT_GET_CACHE_KEY,
+	options = { lruCacheSize: 100 }
 ) {
 	const memoizedSelector = memoize( selector, getCacheKey );
-	let lastDependants;
+	const dependentsPerKey = new LRU( { max: options.lruCacheSize } );
 
 	if ( Array.isArray( getDependants ) ) {
 		getDependants = makeSelectorFromArray( getDependants );
@@ -97,16 +99,26 @@ export default function createSelector(
 
 	return Object.assign(
 		function( state, ...args ) {
+			const cacheKey = getCacheKey( state, ...args );
 			let currentDependants = getDependants( state, ...args );
 			if ( ! Array.isArray( currentDependants ) ) {
 				currentDependants = [ currentDependants ];
 			}
 
-			if ( lastDependants && ! shallowEqual( currentDependants, lastDependants ) ) {
-				memoizedSelector.cache.clear();
-			}
+			let prevDependent = false;
+			try {
+				prevDependent = dependentsPerKey.get( cacheKey );
+			} catch ( e ) {}
 
-			lastDependants = currentDependants;
+			if (
+				prevDependent &&
+				! shallowEqual( currentDependants, dependentsPerKey.get( cacheKey ) )
+			) {
+				memoizedSelector.cache.delete( cacheKey );
+			}
+			try {
+				dependentsPerKey.set( cacheKey, currentDependants );
+			} catch ( e ) {}
 
 			return memoizedSelector( state, ...args );
 		},
