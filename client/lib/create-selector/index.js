@@ -3,10 +3,7 @@
 /**
  * External dependencies
  */
-
-import { memoize } from 'lodash';
 import shallowEqual from 'react-pure-render/shallowEqual';
-import LRU from 'lru';
 
 /**
  * Constants
@@ -87,40 +84,28 @@ const makeSelectorFromArray = dependants => ( state, ...args ) =>
 export default function createSelector(
 	selector,
 	getDependants = DEFAULT_GET_DEPENDANTS,
-	getCacheKey = DEFAULT_GET_CACHE_KEY,
-	options = { lruCacheSize: 100 }
+	getCacheKey = DEFAULT_GET_CACHE_KEY
 ) {
-	const memoizedSelector = memoize( selector, getCacheKey );
-	const dependentsPerKey = new LRU( { max: options.lruCacheSize } );
+	const dependentsPerKey = new Map();
+	const memo = new Map();
 
 	if ( Array.isArray( getDependants ) ) {
 		getDependants = makeSelectorFromArray( getDependants );
 	}
 
-	return Object.assign(
-		function( state, ...args ) {
-			const cacheKey = getCacheKey( state, ...args );
-			const currentDependants = [].concat( getDependants( state, ...args ) );
+	const memoizedSelector = function( state, ...args ) {
+		const cacheKey = getCacheKey( state, ...args );
+		const currentDependants = [].concat( getDependants( state, ...args ) );
 
-			let prevDependents;
-			// @TODO: I've uncovered a bug in lru. this should not be necessary.
-			// willl resolve this with the package maintainer.
-			// see very similar: https://github.com/chriso/lru/issues/19
-			try {
-				prevDependents = dependentsPerKey.get( cacheKey );
-			} catch ( e ) {
-				prevDependents = false;
-			}
+		const prevDependents = dependentsPerKey.get( cacheKey );
 
-			if ( ! shallowEqual( currentDependants, prevDependents ) ) {
-				memoizedSelector.cache.delete( cacheKey );
-			}
-			try {
-				dependentsPerKey.set( cacheKey, currentDependants );
-			} catch ( e ) {}
+		if ( ! memo.has( cacheKey ) || ! shallowEqual( currentDependants, prevDependents ) ) {
+			memo.set( cacheKey, selector( state, ...args ) );
+		}
+		dependentsPerKey.set( cacheKey, currentDependants );
 
-			return memoizedSelector( state, ...args );
-		},
-		{ memoizedSelector }
-	);
+		return memo.get( cacheKey );
+	};
+	memoizedSelector.cache = memo;
+	return memoizedSelector;
 }
