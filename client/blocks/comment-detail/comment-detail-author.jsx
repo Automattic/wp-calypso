@@ -13,7 +13,6 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import CommentDetailAuthorMoreInfo from './comment-detail-author-more-info';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
@@ -22,7 +21,6 @@ import { urlToDomainAndPath } from 'lib/url';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { gmtOffset, timezone } from 'lib/site/utils';
 import { getSite } from 'state/sites/selectors';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 export const CommentDetailAuthor = ( {
 	authorAvatarUrl,
@@ -111,14 +109,8 @@ export const CommentDetailAuthor = ( {
 	);
 };
 
-const mapStateToProps = ( state, { siteId, commentId, commentUrl } ) => {
-	const siteSlug = getSelectedSiteSlug( state );
+const mapStateToProps = ( state, { siteId } ) => ( {
+	site: getSite( state, siteId ),
+} );
 
-	return {
-		site: getSite( state, siteId ),
-		commentUrl: isEnabled( 'comments/management/comment-view' )
-			? `/comment/${ siteSlug }/${ commentId }`
-			: commentUrl,
-	};
-};
 export default connect( mapStateToProps )( localize( CommentDetailAuthor ) );
