@@ -13,7 +13,7 @@ import config from 'config';
  * Internal dependencies
  */
 import cartItems from './cart-items';
-import productsValues from 'lib/products-values';
+import { isCredits, isPrivacyProtection, whitelistAttributes } from 'lib/products-values';
 
 /**
  * Create a new empty cart.
@@ -41,11 +41,11 @@ function applyCoupon( coupon ) {
 }
 
 function canRemoveFromCart( cart, cartItem ) {
-	if ( productsValues.isCredits( cartItem ) ) {
+	if ( isCredits( cartItem ) ) {
 		return false;
 	}
 
-	if ( cartItems.hasRenewalItem( cart ) && productsValues.isPrivacyProtection( cartItem ) ) {
+	if ( cartItems.hasRenewalItem( cart ) && isPrivacyProtection( cartItem ) ) {
 		return false;
 	}
 
@@ -111,7 +111,7 @@ function fillInAllCartItemAttributes( cart, products ) {
 
 function fillInSingleCartItemAttributes( cartItem, products ) {
 	var product = products[ cartItem.product_slug ],
-		attributes = productsValues.whitelistAttributes( product );
+		attributes = whitelistAttributes( product );
 
 	return extend( {}, cartItem, attributes );
 }
@@ -184,5 +184,21 @@ export default {
 	isPaymentMethodEnabled,
 	isPayPalExpressEnabled,
 	isNetherlandsIdealEnabled,
+	isCreditCardPaymentsEnabled,
+};
+
+export {
+	applyCoupon,
+	canRemoveFromCart,
+	cartItems,
+	emptyCart,
+	fillInAllCartItemAttributes,
+	fillInSingleCartItemAttributes,
+	getNewMessages,
+	getRefundPolicy,
+	isFree,
+	isPaidForFullyInCredits,
+	isPaymentMethodEnabled,
+	isPayPalExpressEnabled,
 	isCreditCardPaymentsEnabled,
 };

@@ -535,7 +535,7 @@ function getGoogleApps( cart ) {
 	return filter( getAll( cart ), isGoogleApps );
 }
 
-function googleApps( properties ) {
+export function googleApps( properties ) {
 	const productSlug = properties.product_slug || 'gapps',
 		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
 

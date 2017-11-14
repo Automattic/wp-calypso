@@ -247,4 +247,6 @@ Shortcode.next = function( tag, text, index ) {
 	return result;
 };
 
+export const parse = Shortcode.parse;
+export const stringify = Shortcode.stringify;
 export default Shortcode;

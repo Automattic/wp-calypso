@@ -34,7 +34,10 @@ function recordRemoveEvent( cartItem ) {
 	analytics.tracks.recordEvent( 'calypso_cart_product_remove', removeNestedProperties( cartItem ) );
 }
 
-export default {
+const exported = {
 	recordEvents,
 	removeNestedProperties,
 };
+
+export default exported;
+export { recordEvents, removeNestedProperties };

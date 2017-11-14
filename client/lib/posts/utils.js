@@ -236,4 +236,7 @@ var utils = {
 	},
 };
 
+const { getPreviewURL, userCan, getEditURL } = utils;
+export { getFeaturedImageId, getPreviewURL, userCan, getEditURL };
+
 export default utils;

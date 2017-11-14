@@ -21,7 +21,6 @@ import analytics from 'lib/analytics';
 import Button from 'components/button';
 import config from 'config';
 import CurrentSite from 'my-sites/current-site';
-import productsValues from 'lib/products-values';
 import ManageMenu from './manage-menu';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
@@ -32,7 +31,7 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import StatsSparkline from 'blocks/stats-sparkline';
 import JetpackLogo from 'components/jetpack-logo';
-import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
+import { isPersonal, isPremium, isBusiness, isPlan, isFreeTrial } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -345,13 +344,13 @@ export class MySitesSidebar extends Component {
 
 		let linkClass = 'upgrades-nudge';
 
-		if ( site && productsValues.isPlan( site.plan ) ) {
+		if ( site && isPlan( site.plan ) ) {
 			linkClass += ' is-paid-plan';
 		}
 
 		let planName = site && site.plan.product_name_short;
 
-		if ( site && productsValues.isFreeTrial( site.plan ) ) {
+		if ( site && isFreeTrial( site.plan ) ) {
 			planName = this.props.translate( 'Trial', {
 				context: 'Label in the sidebar indicating that the user is on the free trial for a plan.',
 			} );

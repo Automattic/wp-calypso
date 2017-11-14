@@ -19,3 +19,5 @@ export function deserialize( node, _parsed ) {
 	const format = detectFormat( node );
 	return Strategies[ format.toLowerCase() ].deserialize( node, _parsed );
 }
+
+export default { deserialize };

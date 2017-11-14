@@ -10,7 +10,7 @@ import { assign, forEach, groupBy, includes, map, reduce, sortBy } from 'lodash'
 const sortByMenuOrder = list => sortBy( list, 'menu_order' );
 const getParentId = page => page.parent && page.parent.ID;
 
-export default {
+const helper = {
 	editLinkForPage: function( page, site ) {
 		if ( ! ( page && page.ID ) || ! ( site && site.ID ) ) {
 			return null;
@@ -76,3 +76,8 @@ export default {
 		return sortedPages;
 	},
 };
+
+const { editLinkForPage, statsLinkForPage, isFrontPage, sortPagesHierarchically } = helper;
+export { editLinkForPage, statsLinkForPage, isFrontPage, sortPagesHierarchically };
+
+export default helper;

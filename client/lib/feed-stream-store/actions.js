@@ -10,12 +10,14 @@ import { forEach, get } from 'lodash';
  * Internal Dependencies
  */
 import Dispatcher from 'dispatcher';
-import { action as ActionType } from './constants';
+import constants from './constants';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
 import feedPostListCache from './feed-stream-cache';
 import wpcom from 'lib/wp';
 import { reduxDispatch } from 'lib/redux-bridge';
 import { COMMENTS_RECEIVE } from 'state/action-types';
+
+const ActionType = constants.action;
 
 function getNextPageParams( store ) {
 	const params = {

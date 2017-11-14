@@ -47,3 +47,5 @@ const createSitePlanObject = plan => {
 export default {
 	createSitePlanObject,
 };
+
+export { createSitePlanObject };

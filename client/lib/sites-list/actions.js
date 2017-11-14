@@ -63,3 +63,11 @@ const SitesListActions = {
 };
 
 export default SitesListActions;
+
+export const {
+	removeSitesNotices,
+	disconnectedSite,
+	deleteSite,
+	receiveDeletedSite,
+	clearDeleteSiteStore,
+} = SitesListActions;

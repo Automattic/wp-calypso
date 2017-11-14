@@ -11,9 +11,13 @@ import React from 'react';
  */
 import PreviewMain from './main';
 
-export default {
+const controller = {
 	preview: function( context, next ) {
 		context.primary = <PreviewMain site={ context.params.site } />;
 		next();
 	},
 };
+
+const { preview } = controller;
+export { preview };
+export default controller;

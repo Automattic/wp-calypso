@@ -155,7 +155,7 @@ function canResumeFlow( flowName, progress ) {
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }
 
-export default {
+const exported = {
 	canResumeFlow: canResumeFlow,
 	getFlowName: getFlowName,
 	getFlowSteps: getFlowSteps,
@@ -170,4 +170,21 @@ export default {
 	getDestination: getDestination,
 	mergeFormWithValue: mergeFormWithValue,
 	getThemeForDesignType: getThemeForDesignType,
+};
+
+export default exported;
+export {
+	getFlowName,
+	getFlowSteps,
+	getStepName,
+	getLocale,
+	getStepSectionName,
+	getStepUrl,
+	getValidPath,
+	getPreviousStepName,
+	getNextStepName,
+	getValueFromProgressStore,
+	getDestination,
+	mergeFormWithValue,
+	getThemeForDesignType,
 };

@@ -39,7 +39,21 @@ function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
 	return managePurchase( siteName, purchaseId ) + `/payment/edit/${ cardId }`;
 }
 
-export default {
+const exported = {
+	addCardDetails,
+	addCreditCard,
+	billingHistory,
+	billingHistoryReceipt,
+	cancelPrivacyProtection,
+	cancelPurchase,
+	confirmCancelDomain,
+	editCardDetails,
+	managePurchase,
+	purchasesRoot,
+};
+
+export default exported;
+export {
 	addCardDetails,
 	addCreditCard,
 	billingHistory,

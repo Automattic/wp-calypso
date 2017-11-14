@@ -174,4 +174,5 @@ const UsersActions = {
 	},
 };
 
+export const fetchUsers = UsersActions.fetchUsers;
 export default UsersActions;
