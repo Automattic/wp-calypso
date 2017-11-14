@@ -17,6 +17,7 @@ import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import SectionHeader from 'components/section-header';
 import { checkInboundTransferStatus } from 'lib/domains';
+import support from 'lib/url/support';
 
 class TransferDomainPrecheck extends React.PureComponent {
 	static propTypes = {
@@ -55,7 +56,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 			this.setState( {
 				email: result.admin_email,
-				privacy: false,
+				privacy: result.privacy,
 				unlocked: result.unlocked,
 				loading: false,
 			} );
@@ -126,8 +127,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const { email, privacy } = this.state;
 
 		const heading = privacy
-			? translate( 'Privacy protection is disabled.' )
-			: translate( 'Disable privacy protection.' );
+			? translate( 'Disable privacy protection.' )
+			: translate( 'Privacy protection is disabled.' );
 		const message = privacy
 			? translate(
 					"We'll send an email to {{strong}}%(email)s{{/strong}} to start the transfer process. Don't recognize " +
@@ -138,7 +139,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 					}
 				)
 			: translate(
-					"We'll send an email to {{strong}}%(email)s{{/strong}} to start the transfer process. After the transfer" +
+					"We'll send an email to {{strong}}%(email)s{{/strong}} to start the transfer process. After the transfer " +
 						'is complete you can enable privacy to hide your registration information again.',
 					{
 						args: { email },
@@ -146,7 +147,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 					}
 				);
 		const explanation = translate(
-			"It's important that we be able to reach you, because the transfer involves few emails. Privacy protection is great, " +
+			"It's important that we are able to reach you, because the transfer involves few emails. Privacy protection is great, " +
 				'but means that your contact information is hidden. To continue with the transfer, turn privacy protection off for now ' +
 				'- you can re-enable it once the transfer is done.'
 		);
@@ -190,7 +191,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 								'Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
 							{
 								components: {
-									a: <a href="#" />,
+									a: <a href={ support.CALYPSO_CONTACT } rel="noopener noreferrer" />,
 									br: <br />,
 								},
 							}

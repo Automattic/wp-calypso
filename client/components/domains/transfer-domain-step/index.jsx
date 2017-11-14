@@ -32,6 +32,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import TransferDomainPrecheck from './transfer-domain-precheck';
 import TransferDomainOptions from './transfer-domain-options';
+import support from 'lib/url/support';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -163,7 +164,9 @@ class TransferDomainStep extends React.Component {
 									components: { a: <a href="#" onClick={ this.goToMapDomainStep } /> },
 								}
 							) }
-							<Gridicon icon="help" size={ 12 } />
+							<a href={ support.MAP_EXISTING_DOMAIN } rel="noopener noreferrer">
+								<Gridicon icon="help" size={ 12 } />
+							</a>
 						</p>
 					</div>
 				</form>

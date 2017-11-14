@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,9 +63,7 @@ class TransferDomainOptions extends React.PureComponent {
 	};
 
 	render() {
-		const cost = this.props.products.private_whois
-			? this.props.products.private_whois.cost_display
-			: null;
+		const cost = get( this.props.products, 'private_whois.cost_display', null );
 		const { translate } = this.props;
 
 		const headerLabel = translate(
