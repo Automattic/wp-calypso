@@ -235,6 +235,7 @@
 }
 
 .comment__content-preview {
+	max-height: 42px;
 	overflow: hidden;
 	position: relative;
 
@@ -257,6 +258,7 @@
 }
 
 @supports (-webkit-line-clamp: 2) {
+	.comment .comment__content-preview,
 	.comment.is-pending .comment__content-preview {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
