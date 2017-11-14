@@ -15,7 +15,7 @@ import { getPostRevisionsSelectedRevision, isPostRevisionsDialogVisible } from '
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { togglePostRevisionsDialog } from 'state/posts/revisions/actions';
+import { closePostRevisionsDialog } from 'state/posts/revisions/actions';
 import EditorRevisions from 'post-editor/editor-revisions';
 import Dialog from 'components/dialog';
 
@@ -32,8 +32,8 @@ class PostRevisionsDialog extends PureComponent {
 		isVisible: PropTypes.bool.isRequired,
 
 		// connected to dispatch
+		closeDialog: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
-		toggleDialog: PropTypes.func.isRequired,
 
 		// localize
 		translate: PropTypes.func.isRequired,
@@ -70,9 +70,9 @@ class PostRevisionsDialog extends PureComponent {
 	}
 
 	onLoadClick = () => {
-		const { loadRevision, revision, toggleDialog } = this.props;
+		const { loadRevision, revision, closeDialog } = this.props;
 		loadRevision( revision );
-		toggleDialog();
+		closeDialog();
 		this.props.recordTracksEvent( 'calypso_editor_post_revisions_load_revision' );
 	};
 
@@ -85,7 +85,7 @@ class PostRevisionsDialog extends PureComponent {
 				compact: true,
 				disabled: ! ( revision && postId && siteId ),
 				isPrimary: true,
-				label: translate( 'Load' ),
+				label: translate( 'Load', { context: 'Load revision in editor' } ),
 				onClick: this.onLoadClick,
 			},
 		];
@@ -116,6 +116,6 @@ export default flow(
 			revision: getPostRevisionsSelectedRevision( state ),
 			siteId: getSelectedSiteId( state ),
 		} ),
-		{ recordTracksEvent, toggleDialog: togglePostRevisionsDialog }
+		{ recordTracksEvent, closeDialog: closePostRevisionsDialog }
 	)
 )( PostRevisionsDialog );

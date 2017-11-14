@@ -106,8 +106,6 @@ class PostItem extends React.Component {
 			globalId,
 			isAllSitesModeSelected,
 			translate,
-			largeTitle,
-			wrapTitle,
 		} = this.props;
 
 		const title = post ? post.title : null;
@@ -116,8 +114,6 @@ class PostItem extends React.Component {
 		const panelClasses = classnames( 'post-item__panel', className, {
 			'is-untitled': ! title,
 			'is-placeholder': isPlaceholder,
-			'has-large-title': largeTitle,
-			'has-wrapped-title': wrapTitle,
 		} );
 
 		const arePostsCondensed =
@@ -149,16 +145,16 @@ class PostItem extends React.Component {
 								</a>
 							) }
 							{ ! isPlaceholder &&
-								externalPostLink && (
-									<ExternalLink
-										icon={ true }
-										href={ postUrl }
-										target="_blank"
-										className="post-item__title-link"
-									>
-										{ title || translate( 'Untitled' ) }
-									</ExternalLink>
-								) }
+							externalPostLink && (
+								<ExternalLink
+									icon={ true }
+									href={ postUrl }
+									target="_blank"
+									className="post-item__title-link"
+								>
+									{ title || translate( 'Untitled' ) }
+								</ExternalLink>
+							) }
 						</h1>
 						<div className="post-item__meta">
 							<PostTime globalId={ globalId } />
@@ -188,8 +184,6 @@ PostItem.propTypes = {
 	compact: PropTypes.bool,
 	isCurrentSharePanelOpen: PropTypes.bool,
 	hideSharePanel: PropTypes.func,
-	largeTitle: PropTypes.bool,
-	wrapTitle: PropTypes.bool,
 };
 
 export default connect(

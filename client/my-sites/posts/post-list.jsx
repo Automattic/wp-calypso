@@ -88,7 +88,7 @@ class PostList extends PureComponent {
 
 		return (
 			<div>
-				<QueryPosts siteId={ siteId } query={ query } largeTitles={ true } wrapTitles={ true } />
+				<QueryPosts siteId={ siteId } query={ query } />
 				<ConnectedPosts
 					incrementPage={ this.incrementPage }
 					pathname={ context.pathname }

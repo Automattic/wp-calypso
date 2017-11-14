@@ -12,12 +12,13 @@ import deepFreeze from 'deep-freeze';
 import reducer, { requesting, revisions, selection, ui } from '../reducer';
 import {
 	POST_EDIT,
+	POST_REVISIONS_DIALOG_CLOSE,
+	POST_REVISIONS_DIALOG_OPEN,
 	POST_REVISIONS_RECEIVE,
 	POST_REVISIONS_REQUEST,
 	POST_REVISIONS_REQUEST_FAILURE,
 	POST_REVISIONS_REQUEST_SUCCESS,
 	POST_REVISIONS_SELECT,
-	POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
 	SELECTED_SITE_SET,
 } from 'state/action-types';
 
@@ -309,13 +310,13 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should clear selection when toggling dialog', () => {
+		test( 'should clear selection when closing dialog', () => {
 			const state = selection(
 				deepFreeze( {
 					revisionId: 1776,
 				} ),
 				{
-					type: POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
+					type: POST_REVISIONS_DIALOG_CLOSE,
 				}
 			);
 			expect( state ).to.eql( {
@@ -345,31 +346,35 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		test( 'should show when unshown & toggling', () => {
-			const state = ui(
-				deepFreeze( {
-					isDialogVisible: false,
-				} ),
-				{
-					type: POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
-				}
-			);
-			expect( state ).to.eql( {
-				isDialogVisible: true,
+		describe( 'when POST_REVISIONS_DIALOG_OPEN action is disptached', () => {
+			test( 'should set isDialogVisible to true', () => {
+				const state = ui(
+					deepFreeze( {
+						isDialogVisible: false,
+					} ),
+					{
+						type: POST_REVISIONS_DIALOG_OPEN,
+					}
+				);
+				expect( state ).to.eql( {
+					isDialogVisible: true,
+				} );
 			} );
 		} );
 
-		test( 'should hide when shown & toggling', () => {
-			const state = ui(
-				deepFreeze( {
-					isDialogVisible: true,
-				} ),
-				{
-					type: POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
-				}
-			);
-			expect( state ).to.eql( {
-				isDialogVisible: false,
+		describe( 'when POST_REVISIONS_DIALOG_CLOSE action is disptached', () => {
+			test( 'should set isDialogVisible to false', () => {
+				const state = ui(
+					deepFreeze( {
+						isDialogVisible: true,
+					} ),
+					{
+						type: POST_REVISIONS_DIALOG_CLOSE,
+					}
+				);
+				expect( state ).to.eql( {
+					isDialogVisible: false,
+				} );
 			} );
 		} );
 	} );

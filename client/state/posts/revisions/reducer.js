@@ -16,7 +16,8 @@ import {
 	POST_REVISIONS_REQUEST_FAILURE,
 	POST_REVISIONS_REQUEST_SUCCESS,
 	POST_REVISIONS_SELECT,
-	POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
+	POST_REVISIONS_DIALOG_CLOSE,
+	POST_REVISIONS_DIALOG_OPEN,
 	SELECTED_SITE_SET,
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
@@ -57,7 +58,7 @@ export function selection( state = {}, action ) {
 			return { ...state, revisionId: action.revisionId };
 		}
 		case POST_EDIT:
-		case POST_REVISIONS_TOGGLE_SHOWING_DIALOG:
+		case POST_REVISIONS_DIALOG_CLOSE:
 		case SELECTED_SITE_SET: {
 			return { ...state, revisionId: null };
 		}
@@ -68,9 +69,10 @@ export function selection( state = {}, action ) {
 
 export function ui( state = {}, action ) {
 	switch ( action.type ) {
-		case POST_REVISIONS_TOGGLE_SHOWING_DIALOG: {
-			return { ...state, isDialogVisible: ! state.isDialogVisible };
-		}
+		case POST_REVISIONS_DIALOG_CLOSE:
+			return { ...state, isDialogVisible: false };
+		case POST_REVISIONS_DIALOG_OPEN:
+			return { ...state, isDialogVisible: true };
 		default:
 			return state;
 	}
