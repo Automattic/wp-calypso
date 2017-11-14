@@ -41,8 +41,6 @@ class PostTypeList extends Component {
 	static propTypes = {
 		// Props
 		query: PropTypes.object,
-		largeTitles: PropTypes.bool,
-		wrapTitles: PropTypes.bool,
 		scrollContainer: PropTypes.object,
 
 		// Connected props
@@ -184,7 +182,7 @@ class PostTypeList extends Component {
 	}
 
 	renderPlaceholder() {
-		return <PostItem key="placeholder" largeTitle={ this.props.largeTitles } />;
+		return <PostItem key="placeholder" />;
 	}
 
 	renderPost( post ) {
@@ -195,8 +193,6 @@ class PostTypeList extends Component {
 			<PostItem
 				key={ globalId }
 				globalId={ globalId }
-				largeTitle={ this.props.largeTitles }
-				wrapTitle={ this.props.wrapTitles }
 				singleUserQuery={ query && !! query.author }
 			/>
 		);
