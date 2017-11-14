@@ -27,11 +27,7 @@ describe( 'index', () => {
 	} );
 
 	beforeEach( () => {
-		getSitePosts.memoizedSelector.cache.clear();
-	} );
-
-	test( 'should expose its memoized function', () => {
-		expect( getSitePosts.memoizedSelector ).to.be.a( 'function' );
+		getSitePosts.cache.clear();
 	} );
 
 	test( 'should create a function which returns the expected value when called', () => {
@@ -88,8 +84,7 @@ describe( 'index', () => {
 		getSitePosts( state, 1, [] );
 
 		/* eslint-disable no-console */
-		// @TODO: make the warn happen only 3 times
-		expect( console.warn ).to.have.been.callCount( 6 );
+		expect( console.warn ).to.have.been.calledThrice;
 		/* eslint-enable no-console */
 	} );
 
@@ -318,8 +313,7 @@ describe( 'index', () => {
 
 		getSitePostsWithCustomGetCacheKey( { posts: {} }, 2916284 );
 
-		expect( getSitePostsWithCustomGetCacheKey.memoizedSelector.cache.has( 'CUSTOM2916284' ) ).to.be
-			.true;
+		expect( getSitePostsWithCustomGetCacheKey.cache.has( 'CUSTOM2916284' ) ).true;
 	} );
 
 	test( 'should call dependant state getter with arguments', () => {
