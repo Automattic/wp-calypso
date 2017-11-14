@@ -7,13 +7,16 @@
  *
  * Transforms `renderWithReduxStore()` to `context.primary/secondary`.
  *
- * Adds `context` to params in middlewares when using `ReactDom.render()`.
+ * Adds `context` to params in middlewares when needed
  *
  * Adds `next` to params and `next()` to body in middlewares when using
  *   `ReactDom.render()` or `renderWithReduxStore()`.
  *
  * Adds `makeLayout` and `clientRender` to `page()` route definitions and
  *   accompanying import statement.
+ *
+ * Removes:
+ *   ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
  */
 
 /**
@@ -325,17 +328,9 @@ export default function transformer( file, api ) {
 	}
 
 	/**
-  	 * Transform `ReactDom.unmountComponentAtNode()` CallExpressions.
-  	 *
-  	 * @example
-	 * Input:
+  	 * Removes:
 	 * ```
 	 * ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	 * ```
-	 *
-	 * Output:
-	 * ```
-	 * context.secondary = null;
 	 * ```
 	 */
 	root
@@ -353,19 +348,7 @@ export default function transformer( file, api ) {
 		.forEach( p => {
 			return _.get( p, 'value.arguments[0].arguments.value' ) === 'secondary';
 		} )
-		.replaceWith( p => {
-			// Returns `context.secondary = null`
-			return j.expressionStatement(
-				j.assignmentExpression(
-					'=',
-					j.memberExpression( j.identifier( 'context' ), j.identifier( 'secondary' ) ),
-					j.literal( null )
-				)
-			);
-		} )
-		.closest( j.Function )
-		.replaceWith( ensureContextMiddleware )
-		.replaceWith( ensureNextMiddleware );
+		.remove();
 
 	// Add makeLayout and clientRender middlewares to route definitions
 	const routeDefs = root
