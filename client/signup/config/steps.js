@@ -107,6 +107,11 @@ export default {
 		delayApiRequestUntilComplete: true,
 	},
 
+	about: {
+		stepName: 'about',
+		providesDependencies: [ 'themeSlugWithRepo', 'siteTitle' ],
+	},
+
 	user: {
 		stepName: 'user',
 		apiRequestFunction: stepActions.createAccount,
