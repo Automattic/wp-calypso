@@ -89,8 +89,11 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 		</Step>
 		<Step name="editor-intro" placement="center">
 			<p>
+				{ translate( 'Welcome to the Editor! ' ) }
+			</p>
+			<p>
 				{ translate(
-					'Welcome to the Editor! Click {{strong}}Next{{/strong}} to learn how to add a payment button.',
+					'Click {{strong}}Next{{/strong}} to learn how to add a payment button.',
 					{
 						components: {
 							strong: <strong />,
