@@ -35,13 +35,6 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 	justify-content: space-between;
 	align-items: center;
 	padding: 0 16px;
-
-	min-height: 89px;
-
-	@include breakpoint( ">480px" ) {
-		padding: 0 24px;
-	}
-
 	background: $post-item-background-color;
 }
 
