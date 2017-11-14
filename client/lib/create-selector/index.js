@@ -96,7 +96,6 @@ export default function createSelector(
 	const memoizedSelector = function( state, ...args ) {
 		const cacheKey = getCacheKey( state, ...args );
 		const currentDependants = [].concat( getDependants( state, ...args ) );
-
 		const prevDependents = dependentsPerKey.get( cacheKey );
 
 		if ( ! memo.has( cacheKey ) || ! shallowEqual( currentDependants, prevDependents ) ) {
