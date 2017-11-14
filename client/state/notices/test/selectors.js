@@ -13,7 +13,7 @@ import { getNotices } from '../selectors';
 describe( 'selectors', () => {
 	describe( 'getNotices()', () => {
 		beforeEach( () => {
-			getNotices.memoizedSelector.cache.clear();
+			getNotices.cache.clear();
 		} );
 
 		test( 'should return an array of notices', () => {

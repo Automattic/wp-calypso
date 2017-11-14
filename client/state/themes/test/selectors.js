@@ -86,10 +86,10 @@ const sidekick = {
 
 describe( 'themes selectors', () => {
 	beforeEach( () => {
-		getTheme.memoizedSelector.cache.clear();
-		getThemesForQuery.memoizedSelector.cache.clear();
-		getThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
-		isRequestingThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
+		getTheme.cache.clear();
+		getThemesForQuery.cache.clear();
+		getThemesForQueryIgnoringPage.cache.clear();
+		isRequestingThemesForQueryIgnoringPage.cache.clear();
 	} );
 
 	describe( '#getTheme()', () => {

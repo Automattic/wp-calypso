@@ -38,14 +38,14 @@ import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	beforeEach( () => {
-		getSitePosts.memoizedSelector.cache.clear();
-		getSitePost.memoizedSelector.cache.clear();
-		getSitePostsForQueryIgnoringPage.memoizedSelector.cache.clear();
-		isRequestingSitePostsForQueryIgnoringPage.memoizedSelector.cache.clear();
-		getNormalizedPost.memoizedSelector.cache.clear();
-		getSitePostsForQuery.memoizedSelector.cache.clear();
-		getSitePostsForQueryIgnoringPage.memoizedSelector.cache.clear();
-		isPostPublished.memoizedSelector.cache.clear();
+		getSitePosts.cache.clear();
+		getSitePost.cache.clear();
+		getSitePostsForQueryIgnoringPage.cache.clear();
+		isRequestingSitePostsForQueryIgnoringPage.cache.clear();
+		getNormalizedPost.cache.clear();
+		getSitePostsForQuery.cache.clear();
+		getSitePostsForQueryIgnoringPage.cache.clear();
+		isPostPublished.cache.clear();
 	} );
 
 	describe( '#getPost()', () => {
@@ -929,7 +929,7 @@ describe( 'selectors', () => {
 
 	describe( '#getEditedPost()', () => {
 		beforeEach( () => {
-			getEditedPost.memoizedSelector.cache.clear();
+			getEditedPost.cache.clear();
 		} );
 
 		test( 'should return the original post if no revisions exist on site', () => {
@@ -1621,7 +1621,7 @@ describe( 'selectors', () => {
 
 	describe( 'isEditedPostDirty()', () => {
 		beforeEach( () => {
-			isEditedPostDirty.memoizedSelector.cache.clear();
+			isEditedPostDirty.cache.clear();
 		} );
 
 		test( 'should return false if there are no edits for the post', () => {

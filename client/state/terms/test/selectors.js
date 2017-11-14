@@ -22,8 +22,8 @@ import TermQueryManager from 'lib/query-manager/term';
 
 describe( 'selectors', () => {
 	beforeEach( () => {
-		getTermsForQuery.memoizedSelector.cache.clear();
-		getTermsForQueryIgnoringPage.memoizedSelector.cache.clear();
+		getTermsForQuery.cache.clear();
+		getTermsForQueryIgnoringPage.cache.clear();
 	} );
 
 	describe( 'isRequestingTermsForQuery()', () => {
