@@ -145,7 +145,7 @@ describe( 'index', () => {
 					ID: 841,
 					site_ID: 2916284,
 					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-					title: 'Hello WorldChanged',
+					title: 'Hello Next World',
 				},
 				'6c831c187ffef321eb43a67761a525a3': {
 					ID: 413,
@@ -161,7 +161,7 @@ describe( 'index', () => {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Hello WorldChanged',
+				title: 'Hello Next World',
 			},
 		] );
 		expect( selector ).to.have.been.calledTwice;
