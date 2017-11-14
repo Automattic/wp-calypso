@@ -40,7 +40,7 @@
 		"jetpack/google-analytics-anonymize-ip": true,
 		"jetpack/google-analytics-for-stores": true,
 		"jetpack/happychat": true,
-		"jitms": false,
+		"jitms": true,
 		"login/magic-login": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,
