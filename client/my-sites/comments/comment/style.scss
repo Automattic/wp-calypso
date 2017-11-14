@@ -298,11 +298,11 @@
 .button.is-borderless.comment__action {
 	flex-basis: 0;
 	flex-grow: 1;
-	padding: 8px;
+	padding: 8px 4px;
 	text-align: center;
 
 	span {
-		display: block;
+		display: none;
 		font-weight: 400;
 		padding-top: 4px;
 	}
@@ -324,6 +324,12 @@
 	}
 	&.is-liked {
 		color: $orange-jazzy;
+	}
+
+	@include breakpoint( '>480px' ) {
+		span {
+			display: block;
+		}
 	}
 
 	@include breakpoint( '>960px' ) {
