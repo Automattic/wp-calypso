@@ -11,30 +11,31 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card/compact';
 import Header from './card/header';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { transferStatus } from 'lib/domains/constants';
+import support from 'lib/url/support';
+import { restartInboundTransfer } from 'lib/domains';
+import { fetchDomains } from 'lib/upgrades/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 
 class Transfer extends React.PureComponent {
-	domainWarnings() {
-		return (
-			<DomainWarnings
-				domain={ this.props.domain }
-				position="transfer-domain"
-				selectedSite={ this.props.selectedSite }
-				ruleWhiteList={ [ 'transferStatus' ] }
-			/>
-		);
-	}
-
 	render() {
+		const { domain } = this.props;
+		let content = this.getDomainDetailsCard();
+
+		if ( domain.transferStatus === transferStatus.CANCELLED ) {
+			content = this.getCancelledContent();
+		}
+
 		return (
-			<div>
-				{ this.domainWarnings() }
-				{ this.getDomainDetailsCard() }
+			<div className="edit__domain-details-card">
+				<Header domain={ domain } />
+				{ content }
 			</div>
 		);
 	}
@@ -43,26 +44,76 @@ class Transfer extends React.PureComponent {
 		this.props.paymentSettingsClick( this.props.domain );
 	};
 
+	restartTransfer = () => {
+		const { domain, selectedSite, translate } = this.props;
+
+		restartInboundTransfer( selectedSite.ID, domain.name, ( error, result ) => {
+			if ( result ) {
+				this.props.successNotice( translate( 'The transfer has been successfully restarted.' ), {
+					duration: 5000,
+				} );
+				fetchDomains( selectedSite.ID );
+			} else {
+				this.props.errorNotice(
+					error.message || translate( 'We were unable to restart the transfer.' ),
+					{
+						duration: 5000,
+					}
+				);
+			}
+		} );
+	};
+
+	getCancelledContent() {
+		const { domain, translate } = this.props;
+
+		return (
+			<Card>
+				<div>
+					<p className="edit__transfer_text_fail">{ translate( 'Domain Transfer Failed' ) }</p>
+					<p>
+						{ translate(
+							'We were unable to verify the transfer of {{strong}}%(domain)s{{/strong}}. The domain ' +
+								'authorization code from you current registrar was not provided to initiate the transfer. ' +
+								'{{a}}Learn More{{/a}}.',
+							{
+								components: {
+									strong: <strong />,
+									a: <a href={ '#' } />,
+								},
+								args: { domain: domain.name },
+							}
+						) }
+					</p>
+				</div>
+				<div>
+					<Button onClick={ this.restartTransfer }>
+						{ this.props.translate( 'Start Transfer Again' ) }
+					</Button>
+					<Button className="edit__transfer_button_margin" href={ support.CALYPSO_CONTACT }>
+						{ this.props.translate( 'Contact Support' ) }
+					</Button>
+				</div>
+			</Card>
+		);
+	}
+
 	getDomainDetailsCard() {
 		const { domain, selectedSite, translate } = this.props;
 
 		return (
-			<div className="edit__domain-details-card">
-				<Header domain={ domain } />
+			<Card>
+				<Property label={ translate( 'Type', { context: 'A type of domain.' } ) }>
+					{ translate( 'Incoming Domain Transfer' ) }
+				</Property>
 
-				<Card>
-					<Property label={ translate( 'Type', { context: 'A type of domain.' } ) }>
-						{ translate( 'Incoming Domain Transfer' ) }
-					</Property>
-
-					<SubscriptionSettings
-						type={ domain.type }
-						subscriptionId={ domain.subscriptionId }
-						siteSlug={ selectedSite.slug }
-						onClick={ this.handlePaymentSettingsClick }
-					/>
-				</Card>
-			</div>
+				<SubscriptionSettings
+					type={ domain.type }
+					subscriptionId={ domain.subscriptionId }
+					siteSlug={ selectedSite.slug }
+					onClick={ this.handlePaymentSettingsClick }
+				/>
+			</Card>
 		);
 	}
 }
@@ -81,5 +132,7 @@ const paymentSettingsClick = domain =>
 	);
 
 export default connect( null, {
+	errorNotice,
 	paymentSettingsClick,
+	successNotice,
 } )( localize( Transfer ) );

@@ -71,6 +71,7 @@ export class List extends React.Component {
 						'pendingGappsTosAcceptanceDomains',
 						'unverifiedDomainsCannotManage',
 						'wrongNSMappedDomains',
+						'transferStatus',
 					] }
 				/>
 			);

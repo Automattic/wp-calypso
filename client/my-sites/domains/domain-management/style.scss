@@ -263,6 +263,15 @@ input[type=radio].domain-management-list-item__radio {
 			cursor: pointer;
 		}
 	}
+
+	.edit__transfer_text_fail {
+		font-size: 18px;
+		font-weight: bold;
+	}
+
+	.edit__transfer_button_margin {
+		margin-left: 15px;
+	}
 }
 
 .domain-details-card__property {
