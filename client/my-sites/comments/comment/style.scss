@@ -484,6 +484,9 @@
 		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20%);
 		z-index: z-index('root', '.card.comment.is-bulk-mode:hover');
 	}
+	&.is-pending:hover {
+		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20%);
+	}
 
 	a {
 		color: $gray-text-min;
