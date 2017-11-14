@@ -11,7 +11,6 @@ import {
 	POST_REVISIONS_REQUEST_FAILURE,
 	POST_REVISIONS_REQUEST_SUCCESS,
 	POST_REVISIONS_SELECT,
-	POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
 } from 'state/action-types';
 
 /**
@@ -78,10 +77,6 @@ export const receivePostRevisions = ( siteId, postId, revisions ) => ( {
 export const selectPostRevision = revisionId => ( {
 	type: POST_REVISIONS_SELECT,
 	revisionId,
-} );
-
-export const togglePostRevisionsDialog = () => ( {
-	type: POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
 } );
 
 export const closePostRevisionsDialog = () => ( {
