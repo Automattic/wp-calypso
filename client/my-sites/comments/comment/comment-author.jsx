@@ -87,9 +87,9 @@ export class CommentAuthor extends Component {
 
 					<div className="comment__author-info-element">
 						<span className="comment__date">
-							<ExternalLink href={ commentUrl } title={ formattedDate }>
+							<a href={ commentUrl } title={ formattedDate }>
 								{ relativeDate }
-							</ExternalLink>
+							</a>
 						</span>
 						{ authorUrl && (
 							<span className="comment__author-url">
