@@ -4,6 +4,8 @@
  * Internal dependencies
  */
 import {
+	POST_REVISIONS_DIALOG_OPEN,
+	POST_REVISIONS_DIALOG_CLOSE,
 	POST_REVISIONS_RECEIVE,
 	POST_REVISIONS_REQUEST,
 	POST_REVISIONS_REQUEST_FAILURE,
@@ -80,4 +82,12 @@ export const selectPostRevision = revisionId => ( {
 
 export const togglePostRevisionsDialog = () => ( {
 	type: POST_REVISIONS_TOGGLE_SHOWING_DIALOG,
+} );
+
+export const closePostRevisionsDialog = () => ( {
+	type: POST_REVISIONS_DIALOG_CLOSE,
+} );
+
+export const openPostRevisionsDialog = () => ( {
+	type: POST_REVISIONS_DIALOG_OPEN,
 } );
