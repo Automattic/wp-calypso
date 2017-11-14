@@ -9,7 +9,7 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import i18n, { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import emailValidator from 'email-validator';
-import { debounce, flowRight as compose, map, size, update } from 'lodash';
+import { debounce, flowRight as compose, get, has, map, size, update } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -34,6 +34,7 @@ import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormRadio from 'components/forms/form-radio';
+import { recordTracksEvent } from 'state/analytics/actions';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import Notice from 'components/notice';
@@ -49,6 +50,7 @@ import { isRequestingMissingSites } from 'state/selectors';
 import _user from 'lib/user';
 
 const user = _user();
+const colorSchemeKey = 'calypso_preferences.colorScheme';
 
 /**
  * Debug instance
@@ -108,15 +110,14 @@ const Account = createReactClass( {
 	},
 
 	updateColorScheme( colorScheme ) {
-		const settingName = 'calypso_preferences.colorScheme';
-
 		// Set a fallback color scheme if no default value is provided by the API.
 		// This is a workaround that allows us to use userSettings.updateSetting() without an
 		// existing value. Without this workaround the save button wouldn't become active.
 		// TODO: the API should provide a default value, which would make this line obsolete
-		update( this.props.userSettings.settings, settingName, value => value || 'default' );
+		update( this.props.userSettings.settings, colorSchemeKey, value => value || 'default' );
 
-		this.updateUserSetting( settingName, colorScheme );
+		this.props.recordTracksEvent( 'calypso_color_schemes_select', { colorScheme } );
+		this.updateUserSetting( colorSchemeKey, colorScheme );
 	},
 
 	getEmailAddress() {
@@ -232,6 +233,16 @@ const Account = createReactClass( {
 	handleRadioChange( event ) {
 		const { name, value } = event.currentTarget;
 		this.setState( { [ name ]: value } );
+	},
+
+	handleSubmitButtonClick() {
+		const { unsavedSettings } = this.props.userSettings;
+		this.recordClickEvent( 'Save Account Settings Button' );
+		if ( has( unsavedSettings, colorSchemeKey ) ) {
+			this.props.recordTracksEvent( 'calypso_color_schemes_save', {
+				colorScheme: get( unsavedSettings, colorSchemeKey ),
+			} );
+		}
 	},
 
 	/**
@@ -548,7 +559,7 @@ const Account = createReactClass( {
 				<FormButton
 					isSubmitting={ this.state.submittingForm }
 					disabled={ isSubmitButtonDisabled }
-					onClick={ this.recordClickEvent( 'Save Account Settings Button' ) }
+					onClick={ this.handleSubmitButtonClick }
 				>
 					{ this.state.submittingForm
 						? translate( 'Saving…' )
@@ -748,7 +759,7 @@ export default compose(
 		state => ( {
 			requestingMissingSites: isRequestingMissingSites( state ),
 		} ),
-		dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
+		dispatch => bindActionCreators( { successNotice, errorNotice, recordTracksEvent }, dispatch )
 	),
 	localize,
 	protectForm
