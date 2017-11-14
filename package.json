@@ -148,6 +148,7 @@
     "tracekit": "0.4.3",
     "tween.js": "16.3.1",
     "twemoji": "2.3",
+    "uglify-js": "2.7.0",
     "uuid": "2.0.1",
     "valid-url": "1.0.9",
     "walk": "2.3.4",
@@ -161,8 +162,8 @@
     "wpcom-xhr-request": "1.1.1"
   },
   "engines": {
-    "node": "6.11.5",
-    "npm": "3.10.10"
+    "node": "8.9.1",
+    "npm": "5.5.1"
   },
   "scripts": {
     "preanalyze-bundles": "cross-env WEBPACK_OUTPUT_JSON=1 CALYPSO_ENV=production npm run -s env -- node --max_old_space_size=8192 ./node_modules/.bin/webpack --config webpack.config.js --profile --json > stats.json",
@@ -214,7 +215,6 @@
     "precommit": "npm run -s install-if-no-packages && node bin/pre-commit-hook.js",
     "prepush": "npm run -s install-if-no-packages && node bin/pre-push-hook.js",
     "rm": "node bin/rm.js",
-    "preshrinkwrap": "npm prune",
     "postshrinkwrap": "node bin/trim-shrinkwrap.js && touch node_modules",
     "prestart": "npm run -s install-if-deps-outdated && node bin/welcome.js && ( check-node-version --package || exit 0 )",
     "start": "npm run -s build",
@@ -236,7 +236,7 @@
     "test-server:coverage": "npm run -s test-server -- --coverage",
     "test-server:watch": "npm run -s test-server -- --watch",
     "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -e date \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\" \"!client/extensions/**\"",
-    "update-deps": "npm run -s rm -- node_modules && npm run -s rm -- npm-shrinkwrap.json && npm install && npm install && npm shrinkwrap --dev"
+    "update-deps": "npm run -s rm -- node_modules && npm run -s rm -- npm-shrinkwrap.json && npm install && npm shrinkwrap"
   },
   "devDependencies": {
     "5to6-codemod": "5to6/5to6-codemod#v1.7.0",
@@ -285,7 +285,6 @@
     "stylelint": "6.9.0",
     "supertest": "2.0.0",
     "terminal-kit": "1.13.13",
-    "uglify-js": "2.7.0",
     "webpack-bundle-analyzer": "2.8.2"
   },
   "optionalDependencies": {
