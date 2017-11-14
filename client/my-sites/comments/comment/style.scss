@@ -4,12 +4,22 @@
 
 .card.comment {
 	font-size: 14px;
-	margin: 0 auto;
+	margin: 10px auto;
 	padding: 0;
 
 	.accessible-focus &:focus {
 		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
 		z-index: z-index('root', '.card.comment.accessible-focus:focus');
+	}
+
+	&.is-pending {
+		background: mix($alert-yellow, $white, 8.5%);
+		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px transparentize(lighten($gray, 20%), 0.5),
+			0 1px 2px lighten($gray, 30%);
+	}
+
+	@include breakpoint( '<960px' ) {
+		margin: 0 auto;
 	}
 }
 
@@ -24,10 +34,6 @@
 	display: flex;
 	flex-flow: row;
 	flex-wrap: nowrap;
-
-	.comment__author {
-		padding: 8px;
-	}
 }
 
 .comment__bulk-select {
@@ -39,31 +45,14 @@
 	}
 }
 
-.button.comment__toggle-expanded {
-	border-radius: 0;
-	padding-left: 16px;
-	padding-right: 16px;
-
-	.gridicon {
-		fill: $gray;
-		transform: rotate(0deg);
-		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
-	}
-
-	&:focus,
-	&:hover {
-		.gridicon {
-			fill: $blue-medium;
-		}
-	}
-}
-
 // Comment Author Block
+
 .comment__author {
 	display: flex;
 	flex-flow: row;
 	flex-grow: 1;
 	flex-wrap: nowrap;
+	padding: 8px 16px 8px 8px;
 	width: 0;
 }
 
@@ -189,41 +178,36 @@
 // Comment Content Block
 
 .comment__content {
-	padding: 0 16px 16px 56px;
-
-	.comment__content-info {
-		display: flex;
-		flex-flow: row;
-		flex-wrap: nowrap;
-		justify-content: space-between;
-		margin-top: 16px;
-	}
+	padding: 8px 16px 16px 56px;
 
 	.comment__post-link {
 		font-weight: 600;
+		margin-bottom: 16px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 
 		.gridicon {
-			display: none;
+			color: $gray-text-min;
+			margin: 0 4px -3px 0;
 		}
 	}
 
 	.comment__status-label {
-		align-self: center;
 		background: lighten($alert-yellow, 18%);
 		border-radius: 9px;
-		flex-grow: 0;
-		flex-shrink: 0;
+		float: right;
 		font-size: 12px;
-		margin-left: auto;
+		margin-left: 8px;
 		padding: 0 10px;
 	}
 
 	.comment__in-reply-to {
+		border-left: 4px solid lighten($gray, 30%);
 		color: $gray-text-min;
+		margin-bottom: 16px;
 		overflow: hidden;
+		padding: 2px 4px;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 
@@ -243,10 +227,6 @@
 		a:hover {
 			color: $blue-wordpress;
 		}
-	}
-
-	.comment__content-body {
-		margin-top: 16px;
 	}
 
 	.comment__content-body *:last-child {
@@ -284,6 +264,8 @@
 // Comment Post Link Block
 
 .comment__post-link {
+	font-family: $serif;
+
 	a {
 		color: $gray-text-min;
 	}
@@ -297,26 +279,32 @@
 
 .comment__actions {
 	align-items: center;
+	border-top: 1px solid lighten($gray, 30%);
 	display: flex;
 	flex-flow: row;
 	flex-wrap: nowrap;
 	justify-content: space-between;
-	margin: 0 56px;
+	margin: 0 16px 0 56px;
+	padding-top: 8px;
 	padding-bottom: 8px;
 
 	@include breakpoint( '>960px' ) {
 		justify-content: flex-start;
-		margin-right: 16px;
 		margin-left: 40px;
+		padding-top: 0;
 	}
 }
 
 .button.is-borderless.comment__action {
-	padding: 8px;
+	flex-basis: 0;
+	flex-grow: 1;
+	padding: 8px 4px;
+	text-align: center;
 
 	span {
 		display: none;
 		font-weight: 400;
+		padding-top: 4px;
 	}
 
 	&.comment__action-approve:hover {
@@ -338,8 +326,17 @@
 		color: $orange-jazzy;
 	}
 
+	@include breakpoint( '>480px' ) {
+		span {
+			display: block;
+		}
+	}
+
 	@include breakpoint( '>960px' ) {
+		flex-basis: auto;
+		flex-grow: 0;
 		padding: 8px 16px;
+		text-align: left;
 
 		.gridicon {
 			margin-right: 4px;
@@ -354,21 +351,9 @@
 // Comment Reply Block
 
 .comment__reply {
-	background: $gray-light;
-	border-top: 1px solid lighten($gray, 30%);
 	display: none;
-	padding: 16px;
-}
-
-.comment__reply-wrapper {
-	line-height: 0;
-	overflow: hidden;
+	padding: 0 16px 16px 16px;
 	position: relative;
-	transition: box-shadow 0.15s ease-in-out;
-
-	&.has-focus {
-		box-shadow: 0 0 0 2px $blue-light;
-	}
 }
 
 .comment__reply-textarea {
@@ -378,9 +363,8 @@
 	min-height: 47px; // 1 line
 	overflow: hidden;
 	padding: 12px 70px 12px 16px;
-	position: relative;
 	resize: vertical;
-	transition: min-height 0.15s linear, padding-left 0.2s ease-in-out;
+	transition: min-height 0.15s linear;
 	white-space: pre-wrap;
 	word-wrap: break-word;
 
@@ -392,12 +376,7 @@
 	}
 
 	&:not(:focus) {
-		padding: 12px 16px 12px 48px;
 		resize: none;
-
-		&.has-content {
-			padding-right: 70px;
-		}
 	}
 
 	&:focus,
@@ -410,38 +389,19 @@
 	}
 }
 
-.comment__reply-wrapper .gravatar {
-	left: 16px;
-	position: absolute;
-	top: 12px;
-	transition: transform 0.2s ease-in-out;
-
-	&:not(.is-visible) {
-		transform: translate3d(-40px, 0, 0);
-	}
-}
-
 .comment__reply-submit {
 	color: $gray;
 	font-size: 12px;
 	font-weight: 600;
 	padding: 4px;
 	position: absolute;
-	right: -70px;
-	top: 11px;
+	right: 28px;
+	top: 12px;
 	text-transform: uppercase;
-	transition: transform 0.2s ease-in-out;
 
 	&.is-active {
 		color: $blue-wordpress;
 		cursor: pointer;
-	}
-
-	&.is-visible {
-		transform: translate3d(-88px, 0, 0);
-	}
-	&.is-visible.has-scrollbar {
-		transform: translate3d(-94px, 0, 0);
 	}
 }
 
@@ -508,73 +468,11 @@
 	width: 100%;
 }
 
-// Collapsed View
-
-.card.comment.is-collapsed {
-	&.is-pending {
-		background: mix($alert-yellow, $white, 8.5%);
-		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px transparentize(lighten($gray, 20%), 0.5),
-			0 1px 2px lighten($gray, 30%);
-
-		.comment__content {
-			padding-bottom: 8px;
-		}
-	}
-}
-
-// Expanded View
-
-.card.comment.is-expanded {
-	margin: 16px auto;
-
-	.comment__header {
-		border-bottom: 1px solid lighten($gray, 30%);
-
-		.button.comment__toggle-expanded {
-			border-left: 1px solid lighten($gray, 30%);
-		}
-
-		.comment__toggle-expanded .gridicon {
-			transform: rotate(180deg);
-		}
-	}
-
-	.comment__content {
-		padding-bottom: 8px;
-
-		.comment__in-reply-to {
-			border-left: 4px solid lighten($gray, 30%);
-			margin: 16px 0;
-			padding: 2px 4px;
-		}
-	}
-
-	@include breakpoint( '<960px' ) {
-		.comment__content {
-			padding-bottom: 16px;
-		}
-
-		.comment__actions {
-			border-top: 1px solid lighten($gray, 30%);
-			padding-top: 8px;
-		}
-
-		.comment__action {
-			flex-basis: 0;
-			flex-grow: 1;
-			text-align: center;
-
-			span {
-				display: block;
-				padding-top: 4px;
-			}
-		}
-	}
-}
-
 // Bulk Mode View
 
 .card.comment.is-bulk-mode {
+	margin: 0 auto;
+
 	&:hover {
 		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20%);
 		z-index: z-index('root', '.card.comment.is-bulk-mode:hover');
@@ -586,12 +484,18 @@
 		pointer-events: none;
 	}
 
-	.comment__header .comment__author {
+	.comment__author {
 		padding-left: 0;
 	}
 
-	&.is-pending .comment__content {
-		padding-bottom: 16px;
+	.comment__content {
+		padding-top: 0;
+	}
+
+	.comment__in-reply-to {
+		border: none;
+		margin: 0;
+		padding: 0;
 	}
 }
 
@@ -614,7 +518,7 @@
 		display: none;
 	}
 
-	.comment__header .comment__author {
+	.comment__author {
 		padding: 8px;
 	}
 
@@ -645,17 +549,11 @@
 		}
 	}
 
-	.button.comment__toggle-expanded {
+	.comment__author-more-info {
 		display: none;
 	}
 
-	.comment__content-preview {
-		background-color: lighten($gray, 30%);
-		color: transparent;
-		height: 21px;
-	}
-
-	.comment__in-reply-to {
+	.comment__content {
 		display: none;
 	}
 
