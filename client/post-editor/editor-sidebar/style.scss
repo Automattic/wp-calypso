@@ -52,14 +52,6 @@
 	font-weight: 500;
 	justify-content: space-between;
 	padding: 11px 15px 11px 16px;
-
-	@include breakpoint( '<660px' ) {
-		display: none;
-
-		.is-nested-sidebar-focused & {
-			display: flex;
-		}
-	}
 }
 
 .editor-sidebar__close.button.is-compact.is-borderless {
@@ -79,51 +71,6 @@
 	margin-left: 16px;
 	@include breakpoint( ">660px" ) {
 		display: none;
-	}
-}
-
-.editor-sidebar__parent-region {
-	display: flex;
-	flex-direction: column;
-	position: absolute;
-	top: 47px;
-	bottom: 47px;
-	width: 100%;
-	transition: transform 150ms cubic-bezier(0.075, 0.82, 0.165, 1);
-	overflow-y: auto;
-
-	.is-nested-sidebar-focused & {
-		transform: translateX( - ( $sidebar-width-max + 1 ) );
-	}
-
-	@include breakpoint( '<660px' ) {
-		position: relative;
-		top: 0;
-		left: 0;
-		transition: none;
-
-		.is-nested-sidebar-focused & {
-			transform: none;
-			display: none;
-		}
-	}
-}
-
-.editor-sidebar__nested-region {
-	transform: translateX( $sidebar-width-max + 1 );
-	transition: transform 150ms cubic-bezier( 0.075, 0.82, 0.165, 1 );
-
-	.is-nested-sidebar-focused & {
-		transform: translateX( 0 );
-	}
-
-	@include breakpoint( '<660px' ) {
-		display: none;
-		transition: none;
-
-		.is-nested-sidebar-focused & {
-			display: block;
-		}
 	}
 }
 
