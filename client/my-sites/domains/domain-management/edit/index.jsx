@@ -13,7 +13,7 @@ import page from 'page';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import { getSelectedDomain } from 'lib/domains';
 import Header from 'my-sites/domains/domain-management/components/header';
-import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
+import EmailVerificationCard from 'my-sites/domains/domain-management/components/email-verification';
 import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import MaintenanceCard from 'my-sites/domains/domain-management/components/domain/maintenance-card';
@@ -50,19 +50,23 @@ class Edit extends React.Component {
 		);
 	}
 
+	resendVerificationEmail = () => {
+		return null;
+	};
+
 	renderEmailNotice = () => {
 		const domain = this.props.domains && getSelectedDomain( this.props );
 		const isPendingVerification =
 			transferStatus.PENDING_OWNER === ( domain && domain.transferStatus );
 
 		if ( ! isPendingVerification ) {
-			return null;
+			// return null;
 		}
 
 		return (
 			<div>
-				<IcannVerificationCard
-					hideAddressChangeButton={ true }
+				<EmailVerificationCard
+					resendVerification={ this.resendVerificationEmail }
 					selectedDomainName={ this.props.selectedDomainName }
 					selectedSiteSlug={ this.props.selectedSite.slug }
 				/>
