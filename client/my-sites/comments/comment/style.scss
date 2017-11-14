@@ -347,17 +347,7 @@
 .comment__reply {
 	display: none;
 	padding: 0 16px 16px 16px;
-}
-
-.comment__reply-wrapper {
-	line-height: 0;
-	overflow: hidden;
 	position: relative;
-	transition: box-shadow 0.15s ease-in-out;
-
-	&.has-focus {
-		box-shadow: 0 0 0 2px $blue-light;
-	}
 }
 
 .comment__reply-textarea {
@@ -399,21 +389,13 @@
 	font-weight: 600;
 	padding: 4px;
 	position: absolute;
-	right: -70px;
-	top: 11px;
+	right: 28px;
+	top: 12px;
 	text-transform: uppercase;
-	transition: transform 0.2s ease-in-out;
 
 	&.is-active {
 		color: $blue-wordpress;
 		cursor: pointer;
-	}
-
-	&.is-visible {
-		transform: translate3d(-88px, 0, 0);
-	}
-	&.is-visible.has-scrollbar {
-		transform: translate3d(-94px, 0, 0);
 	}
 }
 

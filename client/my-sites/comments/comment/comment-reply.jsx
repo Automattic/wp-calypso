@@ -131,7 +131,6 @@ export class CommentReply extends Component {
 		const buttonClasses = classNames( 'comment__reply-submit', {
 			'has-scrollbar': hasScrollbar,
 			'is-active': hasReplyContent,
-			'is-visible': hasReplyFocus || hasReplyContent,
 		} );
 
 		const textareaClasses = classNames( 'comment__reply-textarea', {
