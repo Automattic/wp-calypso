@@ -93,6 +93,10 @@ function domainManagementTransfer( siteName, domainName, transferType = '' ) {
 	);
 }
 
+function domainManagementTransferIn( siteName, domainName ) {
+	return domainManagementTransfer( siteName, domainName, 'in' );
+}
+
 function domainManagementTransferOut( siteName, domainName ) {
 	return domainManagementTransfer( siteName, domainName, 'out' );
 }
@@ -127,6 +131,7 @@ export default {
 	domainManagementRedirectSettings,
 	domainManagementRoot,
 	domainManagementTransfer,
+	domainManagementTransferIn,
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,

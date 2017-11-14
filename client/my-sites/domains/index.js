@@ -126,11 +126,13 @@ export default function() {
 		domainManagementController.domainManagementList
 	);
 
-	page(
-		paths.domainManagementEdit( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementEdit
-	);
+	registerMultiPage( {
+		paths: [
+			paths.domainManagementEdit( ':site', ':domain' ),
+			paths.domainManagementTransferIn( ':site', ':domain' ),
+		],
+		handlers: [ ...getCommonHandlers(), domainManagementController.domainManagementEdit ],
+	} );
 
 	page(
 		paths.domainManagementPrivacyProtection( ':site', ':domain' ),
