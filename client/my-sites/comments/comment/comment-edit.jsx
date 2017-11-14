@@ -26,7 +26,6 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import { editComment } from 'state/comments/actions';
-import { getCurrentUserId } from 'state/current-user/selectors';
 import { removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteComment } from 'state/selectors';
 import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
@@ -94,7 +93,7 @@ export class CommentEdit extends Component {
 
 	render() {
 		const {
-			isAuthorEditable,
+			isAuthorRegistered,
 			isEditCommentSupported,
 			siteSlug,
 			toggleEditMode,
@@ -109,13 +108,13 @@ export class CommentEdit extends Component {
 				<div className="comment__edit-wrapper">
 					<FormFieldset>
 						<FormLabel htmlFor="author">{ translate( 'Name' ) }</FormLabel>
-						{ isAuthorEditable && (
+						{ isAuthorRegistered && (
 							<InfoPopover>
 								{ translate( "This user is registered, the name can't be edited." ) }
 							</InfoPopover>
 						) }
 						<FormTextInput
-							disabled={ ! isEditCommentSupported || isAuthorEditable }
+							disabled={ ! isEditCommentSupported || isAuthorRegistered }
 							id="author"
 							onChange={ this.setAuthorDisplayNameValue }
 							value={ authorDisplayName }
@@ -124,13 +123,13 @@ export class CommentEdit extends Component {
 
 					<FormFieldset>
 						<FormLabel htmlFor="author_url">{ translate( 'URL' ) }</FormLabel>
-						{ isAuthorEditable && (
+						{ isAuthorRegistered && (
 							<InfoPopover>
 								{ translate( "This user is registered, the URL can't be edited." ) }
 							</InfoPopover>
 						) }
 						<FormTextInput
-							disabled={ ! isEditCommentSupported || isAuthorEditable }
+							disabled={ ! isEditCommentSupported || isAuthorRegistered }
 							id="author_url"
 							onChange={ this.setAuthorUrlValue }
 							value={ authorUrl }
@@ -176,14 +175,12 @@ const mapStateToProps = ( state, { commentId } ) => {
 		! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' );
 	const comment = getSiteComment( state, siteId, commentId );
 	const authorDisplayName = decodeEntities( get( comment, 'author.name' ) );
-	const authorId = get( comment, 'author.ID' );
-	const isAuthorEditable = 0 !== authorId && getCurrentUserId( state ) !== authorId;
 
 	return {
 		authorDisplayName,
 		authorUrl: get( comment, 'author.URL', '' ),
 		commentContent: get( comment, 'raw_content' ),
-		isAuthorEditable,
+		isAuthorRegistered: 0 !== get( comment, 'author.ID' ),
 		isEditCommentSupported,
 		postId: get( comment, 'post.ID' ),
 		siteId,
