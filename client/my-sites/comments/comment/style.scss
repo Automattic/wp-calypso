@@ -248,9 +248,16 @@
 		width: 30%;
 	}
 }
+.comment.is-pending .comment__content-preview:after {
+	background: linear-gradient(
+		to right,
+		rgba(mix($alert-yellow, $white, 8.5%), 0),
+		rgba(mix($alert-yellow, $white, 8.5%), 1) 50%
+	);
+}
 
 @supports (-webkit-line-clamp: 2) {
-	.comment__content-preview {
+	.comment.is-pending .comment__content-preview {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;
