@@ -16,6 +16,7 @@ import Button from 'components/button';
 import formatCurrency from 'lib/format-currency';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
+import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
 	getOrderDiscountTax,
@@ -27,6 +28,7 @@ import {
 import {
 	getOrderItemCost,
 	getOrderRefundTotal,
+	getOrderShippingTotal,
 	getOrderTotal,
 } from 'woocommerce/lib/order-values/totals';
 import OrderAddItems from './add-items';
@@ -115,6 +117,20 @@ class OrderDetailsTable extends Component {
 		const total = subtotal;
 		const newItem = { ...item, quantity, subtotal, total };
 		this.props.onChange( { line_items: { [ index ]: newItem } } );
+	};
+
+	onShippingChange = event => {
+		const { order } = this.props;
+		const shippingLine = order.shipping_lines[ 0 ];
+		const total = event.target.value;
+		this.props.onChange( { shipping_lines: [ { ...shippingLine, total } ] } );
+	};
+
+	formatShippingValue = () => {
+		const { order } = this.props;
+		const shippingLine = order.shipping_lines[ 0 ];
+		const total = getCurrencyFormatDecimal( shippingLine.total );
+		this.props.onChange( { shipping_lines: [ { ...shippingLine, total } ] } );
 	};
 
 	onDelete = ( id, type = 'line_items' ) => {
@@ -286,9 +302,12 @@ class OrderDetailsTable extends Component {
 					<OrderTotalRow
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
-						value={ order.shipping_total }
+						value={ getOrderShippingTotal( order ) }
 						taxValue={ getOrderShippingTax( order ) }
 						showTax={ showTax }
+						isEditable={ isEditing }
+						onChange={ this.onShippingChange }
+						onBlur={ this.formatShippingValue }
 					/>
 					<OrderTotalRow
 						className="order-details__total-full"
