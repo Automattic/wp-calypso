@@ -17,6 +17,7 @@ import {
 	getPromotionsPage,
 	getPromotionsCurrentPage,
 	getPromotionsPerPage,
+	getPromotionsSearch,
 	getCurrentlyEditingPromotionId,
 } from '../promotions';
 
@@ -29,6 +30,7 @@ describe( 'promotions', () => {
 						list: {
 							currentPage: 12,
 							perPage: 30,
+							searchFilter: '',
 						},
 					},
 				},
@@ -106,6 +108,30 @@ describe( 'promotions', () => {
 		test( 'should return the per-page setting for promotions.', () => {
 			const perPage = getPromotionsPerPage( rootState );
 			expect( perPage ).to.equal( 30 );
+		} );
+	} );
+
+	describe( '#getPromotionsSearch', () => {
+		test( 'should return empty string by default.', () => {
+			const search = getPromotionsSearch( rootState );
+
+			expect( search ).to.equal( '' );
+		} );
+
+		test( 'should return search string', () => {
+			const newState = cloneDeep( rootState );
+			newState.extensions.woocommerce.ui.promotions.list.searchFilter = 'abc';
+
+			const search = getPromotionsSearch( newState );
+			expect( search ).to.equal( 'abc' );
+		} );
+
+		test( 'should return empty string even if state value is undefined', () => {
+			const newState = cloneDeep( rootState );
+			newState.extensions.woocommerce.ui.promotions.list.searchFilter = undefined;
+
+			const search = getPromotionsSearch( newState );
+			expect( search ).to.equal( '' );
 		} );
 	} );
 

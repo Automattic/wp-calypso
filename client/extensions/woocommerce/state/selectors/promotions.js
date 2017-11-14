@@ -46,7 +46,7 @@ export function getPromotionsPerPage( rootState ) {
 
 export function getPromotionsSearch( rootState ) {
 	const list = get( rootState, [ 'extensions', 'woocommerce', 'ui', 'promotions', 'list' ], {} );
-	return list.searchFilter;
+	return list.searchFilter || '';
 }
 
 export function getCurrentlyEditingPromotionId(
