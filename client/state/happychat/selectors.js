@@ -1,29 +1,20 @@
 /** @format */
+
 /**
  * External dependencies
  */
-import { get, includes, last } from 'lodash';
+import { get, last } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import {
-	HAPPYCHAT_GROUP_WPCOM,
-	HAPPYCHAT_GROUP_JPOP,
-	HAPPYCHAT_CHAT_STATUS_ABANDONED,
-	HAPPYCHAT_CHAT_STATUS_BLOCKED,
-	HAPPYCHAT_CHAT_STATUS_DEFAULT,
-	HAPPYCHAT_CHAT_STATUS_MISSED,
-	HAPPYCHAT_CHAT_STATUS_PENDING,
-} from './constants';
+import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from './constants';
 import { isEnabled } from 'config';
 import { isJetpackSite, getSite } from 'state/sites/selectors';
 import { isATEnabled } from 'lib/automated-transfer';
 import { getSectionName } from 'state/ui/selectors';
 import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeline';
-import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
-import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
 import getLostFocusTimestamp from 'state/happychat/selectors/get-lostfocus-timestamp';
 
 /**
@@ -54,26 +45,6 @@ export const getGroups = ( state, siteId ) => {
 	}
 	return groups;
 };
-
-/**
- * Returns true if the user should be able to send messages to operators based on
- * chat status. For example new chats and ongoing chats should be able to send messages,
- * but blocked or pending chats should not.
- * @param {Object} state - global redux state
- * @return {Boolean} Whether the user is able to send messages
- */
-export const canUserSendMessages = state =>
-	isHappychatClientConnected( state ) &&
-	! includes(
-		[
-			HAPPYCHAT_CHAT_STATUS_BLOCKED,
-			HAPPYCHAT_CHAT_STATUS_DEFAULT,
-			HAPPYCHAT_CHAT_STATUS_PENDING,
-			HAPPYCHAT_CHAT_STATUS_MISSED,
-			HAPPYCHAT_CHAT_STATUS_ABANDONED,
-		],
-		getHappychatChatStatus( state )
-	);
 
 export const hasUnreadMessages = createSelector(
 	state => {
