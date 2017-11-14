@@ -13,6 +13,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { updateConciergeShifts } from 'state/concierge/actions';
 import { errorNotice } from 'state/notices/actions';
 import { CONCIERGE_SHIFTS_REQUEST } from 'state/action-types';
+import fromApi from './from-api';
 
 export const fetchConciergeShifts = ( { dispatch }, action ) => {
 	const { scheduleId } = action;
@@ -43,7 +44,8 @@ export default {
 		dispatchRequest(
 			fetchConciergeShifts,
 			storeFetchedConciergeShifts,
-			showConciergeShiftsFetchError
+			showConciergeShiftsFetchError,
+			{ fromApi }
 		),
 	],
 };
