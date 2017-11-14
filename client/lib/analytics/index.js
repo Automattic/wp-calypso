@@ -514,3 +514,22 @@ const analytics = {
 };
 emitter( analytics );
 export default analytics;
+
+export const {
+	initialize,
+	setUser,
+	setSuperProps,
+	setSelectedSite,
+	setSiteCount,
+	setDispatch,
+	mc,
+	pageView,
+	timing,
+	tracks,
+	statsd,
+	ga,
+	hotjar,
+	identifyUser,
+	setProperties,
+	clearedIdentity,
+} = analytics;

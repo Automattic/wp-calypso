@@ -136,4 +136,7 @@ var LikeActions = {
 	},
 };
 
+export const likePost = LikeActions.likePost;
+export const unlikePost = LikeActions.unlikePost;
+
 export default LikeActions;

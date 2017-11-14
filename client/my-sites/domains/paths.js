@@ -112,7 +112,29 @@ function getSectionName( pathname ) {
 	return matches ? matches[ 1 ] : null;
 }
 
-export default {
+const exported = {
+	domainManagementAddGoogleApps,
+	domainManagementContactsPrivacy,
+	domainManagementDns,
+	domainManagementEdit,
+	domainManagementEditContactInfo,
+	domainManagementEmail,
+	domainManagementEmailForwarding,
+	domainManagementList,
+	domainManagementNameServers,
+	domainManagementPrimaryDomain,
+	domainManagementPrivacyProtection,
+	domainManagementRedirectSettings,
+	domainManagementRoot,
+	domainManagementTransfer,
+	domainManagementTransferOut,
+	domainManagementTransferToAnotherUser,
+	domainManagementTransferToOtherSite,
+	getSectionName,
+};
+
+export default exported;
+export {
 	domainManagementAddGoogleApps,
 	domainManagementContactsPrivacy,
 	domainManagementDns,

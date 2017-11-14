@@ -21,6 +21,7 @@ import {
 	isJetpackModuleActive,
 	isJetpackSite,
 	isRequestingSites,
+	getPrimaryDomainBySiteId,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { setSelectedSiteId, setSection, setAllSitesSelected } from 'state/ui/actions';

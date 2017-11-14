@@ -29,7 +29,7 @@ describe( 'MediaStore', () => {
 		sandbox.spy( Dispatcher, 'register' );
 		sandbox.stub( Dispatcher, 'waitFor' ).returns( true );
 
-		MediaStore = require( '../store' );
+		MediaStore = require( '../store' ).default;
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 

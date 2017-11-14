@@ -44,7 +44,7 @@ describe( 'mapped-domain', () => {
 	test(
 		'should use selectedSite.slug for URLs',
 		sinon.test( function() {
-			const paths = require( 'my-sites/domains/paths' );
+			const paths = require( 'my-sites/domains/paths' ).default;
 			const dnsStub = this.stub( paths, 'domainManagementDns' );
 			const emailStub = this.stub( paths, 'domainManagementEmail' );
 

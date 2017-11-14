@@ -293,6 +293,7 @@ export function isDependentProduct( product, dependentProduct, domainsWithPlansO
 			product.meta === dependentProduct.meta )
 	);
 }
+
 export function isFreeWordPressComDomain( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -375,46 +376,3 @@ export function isSpaceUpgrade( product ) {
 		'100gb_space_upgrade' === product.product_slug
 	);
 }
-
-export default {
-	formatProduct,
-	getDomainProductRanking,
-	includesProduct,
-	isBusiness,
-	isChargeback,
-	isCredits,
-	isCustomDesign,
-	isDependentProduct,
-	isDomainMapping,
-	isDomainProduct,
-	isDomainRedemption,
-	isDomainRegistration,
-	isDomainTransfer,
-	isDotComPlan,
-	isEnterprise,
-	isFreeJetpackPlan,
-	isFreePlan,
-	isPersonal,
-	isFreeTrial,
-	isFreeWordPressComDomain,
-	isGoogleApps,
-	isGuidedTransfer,
-	isJetpackBusiness,
-	isJetpackPlan,
-	isJetpackPremium,
-	isJetpackMonthlyPlan,
-	isVipPlan,
-	isMonthly,
-	isJpphpBundle,
-	isNoAds,
-	isPlan,
-	isPremium,
-	isPrivacyProtection,
-	isSiteRedirect,
-	isSpaceUpgrade,
-	isTheme,
-	isUnlimitedSpace,
-	isUnlimitedThemes,
-	isVideoPress,
-	whitelistAttributes,
-};

@@ -6,7 +6,7 @@
 
 import keyMirror from 'key-mirror';
 
-const type = keyMirror( {
+export const type = keyMirror( {
 	MAPPED: null,
 	REGISTERED: null,
 	SITE_REDIRECT: null,
@@ -14,21 +14,21 @@ const type = keyMirror( {
 	TRANSFER: null,
 } );
 
-const transferStatus = keyMirror( {
+export const transferStatus = keyMirror( {
 	PENDING_OWNER: null,
 	PENDING_REGISTRY: null,
 	CANCELLED: null,
 	COMPLETED: null,
 } );
 
-const registrar = {
+export const registrar = {
 	OPENHRS: 'OpenHRS',
 	OPENSRS: 'OpenSRS',
 	WWD: 'WWD',
 	MAINTENANCE: 'Registrar TLD Maintenance',
 };
 
-const domainAvailability = {
+export const domainAvailability = {
 	AVAILABLE: 'available',
 	MAPPABLE: 'mappable',
 	UNKNOWN: 'unknown',
@@ -47,7 +47,7 @@ const domainAvailability = {
 	RECENTLY_UNMAPPED: 'recently_mapped',
 };
 
-const dnsTemplates = {
+export const dnsTemplates = {
 	G_SUITE: {
 		PROVIDER: 'g-suite',
 		SERVICE: 'G-Suite',
@@ -62,11 +62,11 @@ const dnsTemplates = {
 	},
 };
 
-const domainProductSlugs = {
+export const domainProductSlugs = {
 	TRANSFER_IN: 'domain_transfer',
 };
 
-export default {
+const exported = {
 	dnsTemplates,
 	domainAvailability,
 	domainProductSlugs,
@@ -74,3 +74,5 @@ export default {
 	transferStatus,
 	type,
 };
+
+export default exported;

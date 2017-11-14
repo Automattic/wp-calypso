@@ -63,7 +63,7 @@ const remoteAuthPath =
 const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const remoteActivatePath = '/wp-admin/plugins.php';
 
-export default {
+const exported = {
 	confirmJetpackInstallStatus( status ) {
 		return dispatch => {
 			dispatch( {
@@ -179,6 +179,7 @@ export default {
 				} );
 		};
 	},
+
 	goToPlans( url ) {
 		return dispatch => {
 			dispatch( {
@@ -195,6 +196,7 @@ export default {
 			page.redirect( JPC_PLANS_PAGE + urlToSlug( url ) );
 		};
 	},
+
 	goToRemoteAuth( url ) {
 		return dispatch => {
 			dispatch( {
@@ -218,6 +220,7 @@ export default {
 			);
 		};
 	},
+
 	retryAuth( url, attemptNumber ) {
 		return dispatch => {
 			debug( 'retrying auth', url, attemptNumber );
@@ -245,6 +248,7 @@ export default {
 			);
 		};
 	},
+
 	goToPluginInstall( url ) {
 		return dispatch => {
 			dispatch( {
@@ -268,6 +272,7 @@ export default {
 			);
 		};
 	},
+
 	goToPluginActivation( url ) {
 		return dispatch => {
 			dispatch( {
@@ -291,6 +296,7 @@ export default {
 			);
 		};
 	},
+
 	goBackToWpAdmin( url ) {
 		return dispatch => {
 			dispatch( {
@@ -300,6 +306,7 @@ export default {
 			externalRedirect( url );
 		};
 	},
+
 	goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode ) {
 		return dispatch => {
 			const url = addQueryArgs(
@@ -314,6 +321,7 @@ export default {
 			externalRedirect( url );
 		};
 	},
+
 	createAccount( userData ) {
 		return dispatch => {
 			dispatch( recordTracksEvent( 'calypso_jpc_create_account', {} ) );
@@ -342,6 +350,7 @@ export default {
 			} );
 		};
 	},
+
 	isUserConnected( siteId, siteIsOnSitesList ) {
 		let accessibleSite;
 		return dispatch => {
@@ -388,6 +397,7 @@ export default {
 				} );
 		};
 	},
+
 	authorize( queryObject ) {
 		return dispatch => {
 			const { _wp_nonce, client_id, redirect_uri, scope, secret, state, jp_version } = queryObject;
@@ -478,6 +488,7 @@ export default {
 				} );
 		};
 	},
+
 	validateSSONonce( siteId, ssoNonce ) {
 		return dispatch => {
 			debug( 'Attempting to validate SSO for ' + siteId );
@@ -511,6 +522,7 @@ export default {
 				} );
 		};
 	},
+
 	authorizeSSO( siteId, ssoNonce, siteUrl ) {
 		return dispatch => {
 			debug( 'Attempting to authorize SSO for ' + siteId );
@@ -543,6 +555,7 @@ export default {
 				} );
 		};
 	},
+
 	selectPlanInAdvance( planSlug, site ) {
 		return dispatch => {
 			dispatch( {
@@ -552,6 +565,7 @@ export default {
 			} );
 		};
 	},
+
 	completeFlow( site ) {
 		return dispatch => {
 			dispatch( {
@@ -561,3 +575,25 @@ export default {
 		};
 	},
 };
+
+export default exported;
+
+export const {
+	confirmJetpackInstallStatus,
+	dismissUrl,
+	checkUrl,
+	goToPlans,
+	goToRemoteAuth,
+	retryAuth,
+	goToPluginInstall,
+	goToPluginActivation,
+	goBackToWpAdmin,
+	goToXmlrpcErrorFallbackUrl,
+	createAccount,
+	isUserConnected,
+	authorize,
+	validateSSONonce,
+	authorizeSSO,
+	selectPlanInAdvance,
+	completeFlow,
+} = exported;

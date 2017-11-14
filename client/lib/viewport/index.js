@@ -74,3 +74,5 @@ export default {
 	isWithinBreakpoint: isWithinBreakpoint,
 	getWindowInnerWidth: getWindowInnerWidth,
 };
+
+export { isMobile, isDesktop, isWithinBreakpoint, getWindowInnerWidth };

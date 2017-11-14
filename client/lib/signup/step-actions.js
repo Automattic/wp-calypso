@@ -219,7 +219,7 @@ function fetchReduxSite( siteSlug, { dispatch, getState }, callback ) {
 	);
 }
 
-function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
+export function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
 	async.parallel(
 		[
 			callback => {
@@ -262,7 +262,7 @@ function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
  * @param {string} username The username to get suggestions for.
  * @param {object} reduxState The Redux state object
  */
-function getUsernameSuggestion( username, reduxState ) {
+export function getUsernameSuggestion( username, reduxState ) {
 	const fields = {
 		givesuggestions: 1,
 		username: username,

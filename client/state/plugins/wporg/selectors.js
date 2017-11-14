@@ -25,4 +25,11 @@ const isFetched = function( state, pluginSlug ) {
 	return !! plugin.fetched;
 };
 
-export default { getPlugin, isFetching, isFetched };
+const exported = {
+	getPlugin,
+	isFetching,
+	isFetched,
+};
+
+export default exported;
+export { getPlugin, isFetching, isFetched };
