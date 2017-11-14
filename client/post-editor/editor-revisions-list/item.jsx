@@ -70,7 +70,9 @@ class EditorRevisionsListItem extends PureComponent {
 
 					{ added === 0 &&
 						removed === 0 && (
-							<span className="editor-revisions-list__minor-changes">{ translate( 'minor' ) }</span>
+							<span className="editor-revisions-list__minor-changes">
+								{ translate( 'minor', { context: 'post revisions: minor changes' } ) }
+							</span>
 						) }
 				</div>
 			</button>
