@@ -30,6 +30,10 @@ describe( 'index', () => {
 		getSitePosts.cache.clear();
 	} );
 
+	test( 'should expose its cache', () => {
+		expect( getSitePosts.cache instanceof Map ).ok;
+	} );
+
 	test( 'should create a function which returns the expected value when called', () => {
 		const state = {
 			posts: {
