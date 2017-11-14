@@ -100,10 +100,7 @@ export default function createSelector(
 	return Object.assign(
 		function( state, ...args ) {
 			const cacheKey = getCacheKey( state, ...args );
-			let currentDependants = getDependants( state, ...args );
-			if ( ! Array.isArray( currentDependants ) ) {
-				currentDependants = [ currentDependants ];
-			}
+			const currentDependants = [].concat( getDependants( state, ...args ) );
 
 			let prevDependents;
 			// @TODO: I've uncovered a bug in lru. this should not be necessary.
@@ -115,7 +112,7 @@ export default function createSelector(
 				prevDependents = false;
 			}
 
-			if ( prevDependents && ! shallowEqual( currentDependants, prevDependents ) ) {
+			if ( ! shallowEqual( currentDependants, prevDependents ) ) {
 				memoizedSelector.cache.delete( cacheKey );
 			}
 			try {
