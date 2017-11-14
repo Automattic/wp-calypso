@@ -45,8 +45,6 @@ class PostListWrapper extends React.Component {
 		return (
 			<PostTypeList
 				query={ query }
-				largeTitles={ true }
-				wrapTitles={ true }
 				scrollContainer={ document.body }
 			/>
 		);

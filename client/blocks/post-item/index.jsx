@@ -106,8 +106,6 @@ class PostItem extends React.Component {
 			globalId,
 			isAllSitesModeSelected,
 			translate,
-			largeTitle,
-			wrapTitle,
 		} = this.props;
 
 		const title = post ? post.title : null;
@@ -116,8 +114,6 @@ class PostItem extends React.Component {
 		const panelClasses = classnames( 'post-item__panel', className, {
 			'is-untitled': ! title,
 			'is-placeholder': isPlaceholder,
-			'has-large-title': largeTitle,
-			'has-wrapped-title': wrapTitle,
 		} );
 
 		const arePostsCondensed =
@@ -188,8 +184,6 @@ PostItem.propTypes = {
 	compact: PropTypes.bool,
 	isCurrentSharePanelOpen: PropTypes.bool,
 	hideSharePanel: PropTypes.func,
-	largeTitle: PropTypes.bool,
-	wrapTitle: PropTypes.bool,
 };
 
 export default connect(

@@ -36,8 +36,6 @@ function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 					<PostTypeList
 						key="list"
 						query={ userCanEdit ? query : null }
-						largeTitles={ true }
-						wrapTitles={ true }
 						scrollContainer={ document.body }
 					/>,
 				] }
