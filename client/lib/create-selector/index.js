@@ -101,8 +101,8 @@ export default function createSelector(
 
 		if ( ! memo.has( cacheKey ) || ! shallowEqual( currentDependants, prevDependents ) ) {
 			memo.set( cacheKey, selector( state, ...args ) );
+			dependentsPerKey.set( cacheKey, currentDependants );
 		}
-		dependentsPerKey.set( cacheKey, currentDependants );
 
 		return memo.get( cacheKey );
 	};
