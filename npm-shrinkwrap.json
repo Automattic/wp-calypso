@@ -3,7 +3,7 @@
   "version": "0.17.0",
   "dependencies": {
     "@types/node": {
-      "version": "8.0.50",
+      "version": "8.0.51",
       "dev": true
     },
     "5to6-codemod": {
@@ -13,7 +13,7 @@
       "dev": true,
       "dependencies": {
         "ast-types": {
-          "version": "0.9.14",
+          "version": "0.10.1",
           "dev": true
         },
         "esprima": {
@@ -25,7 +25,7 @@
           "dev": true
         },
         "recast": {
-          "version": "0.12.8",
+          "version": "0.12.9",
           "dev": true
         },
         "source-map": {
@@ -466,6 +466,10 @@
     "babel-plugin-transform-async-to-generator": {
       "version": "6.24.1"
     },
+    "babel-plugin-transform-builtin-extend": {
+      "version": "1.1.2",
+      "dev": true
+    },
     "babel-plugin-transform-class-constructor-call": {
       "version": "6.24.1",
       "dev": true
@@ -608,7 +612,7 @@
       "version": "1.6.0",
       "dependencies": {
         "browserslist": {
-          "version": "2.8.0"
+          "version": "2.9.0"
         },
         "semver": {
           "version": "5.4.1"
@@ -874,10 +878,10 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000760"
+      "version": "1.0.30000764"
     },
     "caniuse-lite": {
-      "version": "1.0.30000760"
+      "version": "1.0.30000764"
     },
     "cardinal": {
       "version": "1.0.0",
@@ -1936,7 +1940,7 @@
       "version": "1.0.1"
     },
     "espree": {
-      "version": "3.5.1",
+      "version": "3.5.2",
       "dev": true,
       "dependencies": {
         "acorn": {
@@ -5699,8 +5703,8 @@
     },
     "react-codemod": {
       "version": "4.0.0",
-      "from": "git://github.com/reactjs/react-codemod.git#0e6aabb233453b17c23d68bb181a3d70ad03f9c9",
-      "resolved": "git://github.com/reactjs/react-codemod.git#0e6aabb233453b17c23d68bb181a3d70ad03f9c9",
+      "from": "git://github.com/reactjs/react-codemod.git#f5a1282b80ab2280571a542e2ae98b91ca90a447",
+      "resolved": "git://github.com/reactjs/react-codemod.git#f5a1282b80ab2280571a542e2ae98b91ca90a447",
       "dev": true,
       "dependencies": {
         "babel-jest": {
@@ -6853,7 +6857,7 @@
       "version": "1.16.0"
     },
     "tar-stream": {
-      "version": "1.5.4",
+      "version": "1.5.5",
       "dependencies": {
         "inherits": {
           "version": "2.0.3"
