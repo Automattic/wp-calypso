@@ -106,6 +106,9 @@ export default function createSelector(
 			}
 
 			let prevDependents;
+			// @TODO: I've uncovered a bug in lru. this should not be necessary.
+			// willl resolve this with the package maintainer.
+			// see very similar: https://github.com/chriso/lru/issues/19
 			try {
 				prevDependents = dependentsPerKey.get( cacheKey );
 			} catch ( e ) {
