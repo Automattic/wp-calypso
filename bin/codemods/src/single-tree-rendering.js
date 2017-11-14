@@ -273,6 +273,13 @@ export default function transformer( file, api ) {
 	if ( ! reactDomDefs.size() ) {
 		root
 			.find( j.ImportDeclaration, {
+				specifiers: [
+					{
+						local: {
+							name: 'ReactDom',
+						},
+					},
+				],
 				source: {
 					value: 'react-dom',
 				},
