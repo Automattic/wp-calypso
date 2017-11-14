@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { get, flow, noop } from 'lodash';
+import { get, flow } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,7 +26,6 @@ class PostRevisionsDialog extends PureComponent {
 		 * @TODO untangle & reduxify
 		 */
 		loadRevision: PropTypes.func.isRequired,
-		onClose: PropTypes.func,
 
 		// connected to state
 		isVisible: PropTypes.bool.isRequired,
@@ -37,10 +36,6 @@ class PostRevisionsDialog extends PureComponent {
 
 		// localize
 		translate: PropTypes.func.isRequired,
-	};
-
-	static defaultProps = {
-		onClose: noop,
 	};
 
 	componentWillMount() {
@@ -92,14 +87,14 @@ class PostRevisionsDialog extends PureComponent {
 	};
 
 	render() {
-		const { isVisible, onClose } = this.props;
+		const { isVisible, closeDialog } = this.props;
 
 		return (
 			<Dialog
 				buttons={ this.dialogButtons() }
 				className="editor-revisions__dialog"
 				isVisible={ isVisible }
-				onClose={ onClose }
+				onClose={ closeDialog }
 			>
 				<EditorRevisions />
 			</Dialog>
