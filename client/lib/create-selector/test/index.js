@@ -87,7 +87,9 @@ describe( 'index', () => {
 		getSitePosts( state, [] );
 		getSitePosts( state, 1, [] );
 
-		expect( console.warn ).to.have.been.calledThrice;
+		/* eslint-disable no-console */
+		expect( console.warn ).to.have.been.callCount( 6 );
+		/* eslint-enable no-console */
 	} );
 
 	test( 'should return the expected value of differing arguments', () => {
@@ -123,7 +125,7 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledTwice;
 	} );
 
-	test( 'should bust the cache when watched state changes', () => {
+	test( 'should bust the cache when watched state changes and cacheKey is in the map', () => {
 		const currentState = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -143,7 +145,7 @@ describe( 'index', () => {
 					ID: 841,
 					site_ID: 2916284,
 					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-					title: 'Hello World',
+					title: 'Hello WorldChanged',
 				},
 				'6c831c187ffef321eb43a67761a525a3': {
 					ID: 413,
@@ -159,10 +161,51 @@ describe( 'index', () => {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Hello World',
+				title: 'Hello WorldChanged',
 			},
 		] );
 		expect( selector ).to.have.been.calledTwice;
+	} );
+
+	test( 'should keep the cache on a per-key basis', () => {
+		const getPostByIdWithDataSpy = sinon.spy( ( state, postId ) => {
+			return {
+				...state.posts[ postId ],
+				withData: true,
+			};
+		} );
+		const getPostByIdWithData = createSelector(
+			getPostByIdWithDataSpy,
+			( state, postId ) => state.posts[ postId ]
+		);
+
+		const post1 = { global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64' };
+		const post2 = { global_ID: '6c831c187ffef321eb43a67761a525a3' };
+
+		const prevState = {
+			posts: {
+				[ post1.global_ID ]: post1,
+			},
+		};
+
+		getPostByIdWithData( prevState, post1.global_ID );
+
+		const nextState = {
+			posts: {
+				[ post1.global_ID ]: post1,
+				[ post2.global_ID ]: post2,
+			},
+		};
+		expect( getPostByIdWithData( nextState, post1.global_ID ) ).to.eql( {
+			...post1,
+			withData: true,
+		} );
+		expect( getPostByIdWithData( nextState, post2.global_ID ) ).to.eql( {
+			...post2,
+			withData: true,
+		} );
+		getPostByIdWithData( nextState, post1.global_ID );
+		expect( getPostByIdWithDataSpy ).to.have.been.calledTwice;
 	} );
 
 	test( 'should accept an array of dependent state values', () => {
