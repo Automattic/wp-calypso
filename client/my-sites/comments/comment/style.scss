@@ -4,7 +4,7 @@
 
 .card.comment {
 	font-size: 14px;
-	margin: 10px auto;
+	margin: 0 auto;
 	padding: 0;
 
 	.accessible-focus &:focus {
@@ -18,8 +18,8 @@
 			0 1px 2px lighten($gray, 30%);
 	}
 
-	@include breakpoint( '<960px' ) {
-		margin: 0 auto;
+	@include breakpoint( '>660px' ) {
+		margin: 10px auto;
 	}
 }
 
