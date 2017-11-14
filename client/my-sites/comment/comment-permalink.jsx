@@ -27,7 +27,7 @@ const CommentPermalink = ( { isLoading, permaLink, translate } ) =>
 	);
 
 CommentPermalink.propTypes = {
-	siteId: PropTypes.number.isRequired,
+	siteId: PropTypes.number,
 	commentId: PropTypes.number.isRequired,
 	isLoading: PropTypes.bool.isRequired,
 	permaLink: PropTypes.string,

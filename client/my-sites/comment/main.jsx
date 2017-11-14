@@ -11,34 +11,39 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import getSiteId from 'state/selectors/get-site-id';
 import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import EmptyContent from 'components/empty-content';
 import DocumentHead from 'components/data/document-head';
+import ModerateComment from 'components/data/moderate-comment';
 import Comment from 'my-sites/comments/comment';
 import CommentPermalink from 'my-sites/comment/comment-permalink';
 import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
-import { getSiteComment, canCurrentUser } from 'state/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { preventWidows } from 'lib/formatting';
+import { getSiteComment, canCurrentUser } from 'state/selectors';
+import getSiteId from 'state/selectors/get-site-id';
 
 export class CommentView extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 		commentId: PropTypes.number.isRequired,
+		action: PropTypes.string,
 		canModerateComments: PropTypes.bool.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
-		const { siteId, postId, commentId, canModerateComments, translate } = this.props;
+		const { siteId, postId, commentId, action, canModerateComments, translate } = this.props;
 
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<Main className="comments" wideLayout>
 				<PageViewTracker path="/comment/:site" title="Comments" />
 				<DocumentHead title={ translate( 'Comment' ) } />
+				{ canModerateComments && (
+					<ModerateComment { ...{ siteId, postId, commentId, newStatus: action } } />
+				) }
 				<CommentListHeader { ...{ postId } } />
 				{ ! canModerateComments && (
 					<EmptyContent
