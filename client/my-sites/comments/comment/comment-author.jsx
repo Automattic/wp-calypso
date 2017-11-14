@@ -12,6 +12,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
@@ -19,7 +20,7 @@ import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 import { getSiteComment } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 export class CommentAuthor extends Component {
 	static propTypes = {
@@ -86,9 +87,15 @@ export class CommentAuthor extends Component {
 
 					<div className="comment__author-info-element">
 						<span className="comment__date">
-							<ExternalLink href={ commentUrl } title={ formattedDate }>
-								{ relativeDate }
-							</ExternalLink>
+							{ isEnabled( 'comments/management/comment-view' ) ? (
+								<a href={ commentUrl } title={ formattedDate }>
+									{ relativeDate }
+								</a>
+							) : (
+								<ExternalLink href={ commentUrl } title={ formattedDate }>
+									{ relativeDate }
+								</ExternalLink>
+							) }
 						</span>
 						{ authorUrl && (
 							<span className="comment__author-url">
@@ -107,6 +114,7 @@ export class CommentAuthor extends Component {
 
 const mapStateToProps = ( state, { commentId } ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const comment = getSiteComment( state, siteId, commentId );
 	const authorAvatarUrl = get( comment, 'author.avatar_URL' );
 	const authorDisplayName = decodeEntities( get( comment, 'author.name' ) );
@@ -119,7 +127,9 @@ const mapStateToProps = ( state, { commentId } ) => {
 		commentContent: get( comment, 'content' ),
 		commentDate: get( comment, 'date' ),
 		commentType: get( comment, 'type', 'comment' ),
-		commentUrl: get( comment, 'URL' ),
+		commentUrl: isEnabled( 'comments/management/comment-view' )
+			? `/comment/${ siteSlug }/${ commentId }`
+			: get( comment, 'URL' ),
 		gravatarUser,
 	};
 };

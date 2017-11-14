@@ -111,6 +111,7 @@ class ManageMenu extends PureComponent {
 				queryable: true,
 				config: 'comments/management',
 				link: '/comments',
+				paths: [ '/comment', '/comments' ],
 				wpAdminLink: 'edit-comments.php',
 				showOnAllMySites: false,
 			},
