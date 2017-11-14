@@ -30,11 +30,20 @@ export class CommentView extends Component {
 		commentId: PropTypes.number.isRequired,
 		action: PropTypes.string,
 		canModerateComments: PropTypes.bool.isRequired,
+		redirectToPostView: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
-		const { siteId, postId, commentId, action, canModerateComments, translate } = this.props;
+		const {
+			siteId,
+			postId,
+			commentId,
+			action,
+			canModerateComments,
+			redirectToPostView,
+			translate,
+		} = this.props;
 
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -42,7 +51,9 @@ export class CommentView extends Component {
 				<PageViewTracker path="/comment/:site" title="Comments" />
 				<DocumentHead title={ translate( 'Comment' ) } />
 				{ canModerateComments && (
-					<ModerateComment { ...{ siteId, postId, commentId, newStatus: action } } />
+					<ModerateComment
+						{ ...{ siteId, postId, commentId, newStatus: action, redirectToPostView } }
+					/>
 				) }
 				<CommentListHeader { ...{ postId } } />
 				{ ! canModerateComments && (

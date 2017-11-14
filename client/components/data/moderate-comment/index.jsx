@@ -28,6 +28,7 @@ class ModerateComment extends Component {
 		newStatus: PropTypes.string,
 		currentStatus: PropTypes.string,
 		updateCommentStatus: PropTypes.func.isRequired,
+		redirectToPostView: PropTypes.func.isRequired,
 		destroyComment: PropTypes.func.isRequired,
 	};
 
@@ -54,6 +55,7 @@ class ModerateComment extends Component {
 		commentId,
 		newStatus,
 		currentStatus,
+		redirectToPostView,
 		updateCommentStatus,
 		destroyComment,
 	} ) {
@@ -63,6 +65,7 @@ class ModerateComment extends Component {
 
 		if ( 'delete' === newStatus ) {
 			destroyComment();
+			redirectToPostView( postId );
 			return;
 		}
 
