@@ -41,6 +41,7 @@ env-config.sh
 /public/sections-rtl/*
 /public/images/flags/*.svg
 /public/images/flags/*.png
+/public/moment/*
 /server/devdocs/search-index.js
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json

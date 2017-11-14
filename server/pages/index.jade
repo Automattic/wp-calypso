@@ -243,6 +243,8 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		script(src=urls[ jsFile ])
 		if chunk
 			script(src=urls[ chunk ])
+		if momentLocaleFile
+			script(src=urls[ momentLocaleFile ])
 		script(type='text/javascript')!='window.AppBoot();'
 
 		script.

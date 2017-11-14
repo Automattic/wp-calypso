@@ -95,6 +95,10 @@ const webpackConfig = {
 				loader: path.join( __dirname, 'server', 'bundler', 'loader' )
 			},
 			{
+				include: path.join( __dirname, 'node_modules', 'i18n-calypso' ),
+				loader: path.join( __dirname, 'server', 'bundler', 'i18n-calypso-loader' )
+			},
+			{
 				test: /\.html$/,
 				loader: 'html-loader'
 			},
@@ -156,7 +160,7 @@ const webpackConfig = {
 			filename: 'assets.json',
 			path: path.join( __dirname, 'server', 'bundler' )
 		} ),
-
+		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 	] ),
 	externals: [ 'electron' ]
 };
