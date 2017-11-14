@@ -363,7 +363,7 @@ export const PostEditor = createReactClass( {
 								/>
 								<StatusLabel post={ this.state.savedPost } />
 							</div>
-							<div className={ 'post-editor__inner-content is-shown' }>
+							<div className="post-editor__inner-content">
 								<FeaturedImage
 									site={ site }
 									post={ this.state.post }
