@@ -26,7 +26,7 @@
 		"code-splitting": true,
 		"comments/management": true,
 		"comments/management/jetpack-5.5": false,
-		"comments/management/sorting": false,
+		"comments/management/sorting": true,
 		"desktop-promo": true,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
