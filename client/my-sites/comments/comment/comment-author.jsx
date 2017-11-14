@@ -87,9 +87,15 @@ export class CommentAuthor extends Component {
 
 					<div className="comment__author-info-element">
 						<span className="comment__date">
-							<a href={ commentUrl } title={ formattedDate }>
-								{ relativeDate }
-							</a>
+							{ isEnabled( 'comments/management/comment-view' ) ? (
+								<a href={ commentUrl } title={ formattedDate }>
+									{ relativeDate }
+								</a>
+							) : (
+								<ExternalLink href={ commentUrl } title={ formattedDate }>
+									{ relativeDate }
+								</ExternalLink>
+							) }
 						</span>
 						{ authorUrl && (
 							<span className="comment__author-url">
