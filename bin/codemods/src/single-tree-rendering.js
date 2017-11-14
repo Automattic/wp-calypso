@@ -16,7 +16,10 @@
  *   accompanying import statement.
  *
  * Removes:
- *   ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+ *   `ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );`
+ *
+ * Removes:
+ *   Un-used ReactDom imports.
  */
 
 /**
@@ -346,6 +349,7 @@ export default function transformer( file, api ) {
 			},
 		} )
 		.forEach( p => {
+			// Requires `document.getElementById( 'secondary' )`
 			return _.get( p, 'value.arguments[0].arguments.value' ) === 'secondary';
 		} )
 		.remove();
