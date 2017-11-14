@@ -18,8 +18,6 @@ import {
 	getAuthorizationData,
 	getAuthorizationRemoteSite,
 	isCalypsoStartedConnection,
-	hasXmlrpcError,
-	hasExpiredSecretError,
 	isRemoteSiteOnSitesList,
 	getAuthAttempts,
 	getSiteIdFromQueryObject,
@@ -51,8 +49,6 @@ class JetpackConnectAuthorizeForm extends Component {
 		} ).isRequired,
 		recordTracksEvent: PropTypes.func,
 		setTracksAnonymousUserId: PropTypes.func,
-		requestHasExpiredSecretError: PropTypes.func,
-		requestHasXmlrpcError: PropTypes.func,
 		siteSlug: PropTypes.string,
 		user: PropTypes.object,
 	};
@@ -144,8 +140,6 @@ export default connect(
 	state => {
 		const remoteSiteUrl = getAuthorizationRemoteSite( state );
 		const siteSlug = urlToSlug( remoteSiteUrl );
-		const requestHasExpiredSecretError = () => hasExpiredSecretError( state );
-		const requestHasXmlrpcError = () => hasXmlrpcError( state );
 		const siteId = getSiteIdFromQueryObject( state );
 
 		return {
@@ -155,8 +149,6 @@ export default connect(
 			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
 			isFetchingSites: isRequestingSites( state ),
 			jetpackConnectAuthorize: getAuthorizationData( state ),
-			requestHasExpiredSecretError,
-			requestHasXmlrpcError,
 			siteSlug,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
