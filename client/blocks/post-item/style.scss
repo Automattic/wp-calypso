@@ -41,10 +41,6 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 		min-height: 89px;
 	}
 
-	@include breakpoint( ">480px" ) {
-		padding: 0 24px;
-	}
-
 	background: $post-item-background-color;
 }
 
