@@ -105,15 +105,14 @@ export default function createSelector(
 				currentDependants = [ currentDependants ];
 			}
 
-			let prevDependent = false;
+			let prevDependents;
 			try {
-				prevDependent = dependentsPerKey.get( cacheKey );
-			} catch ( e ) {}
+				prevDependents = dependentsPerKey.get( cacheKey );
+			} catch ( e ) {
+				prevDependents = false;
+			}
 
-			if (
-				prevDependent &&
-				! shallowEqual( currentDependants, dependentsPerKey.get( cacheKey ) )
-			) {
+			if ( prevDependents && ! shallowEqual( currentDependants, prevDependents ) ) {
 				memoizedSelector.cache.delete( cacheKey );
 			}
 			try {
