@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { HAPPYCHAT_SKILL_PRODUCT, HAPPYCHAT_SKILL_LANGUAGE } from 'state/happychat/constants';
-import { getGroups } from 'state/happychat/selectors';
+import getGroups from 'state/happychat/selectors/get-groups';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 /**

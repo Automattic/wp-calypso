@@ -5,7 +5,7 @@
  */
 import wpcom from 'lib/wp';
 import config from 'config';
-import { getGroups } from 'state/happychat/selectors';
+import getGroups from 'state/happychat/selectors/get-groups';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import getSkills from 'state/happychat/selectors/get-skills';

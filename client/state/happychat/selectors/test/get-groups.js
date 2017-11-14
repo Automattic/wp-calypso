@@ -1,18 +1,13 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
-import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from '../constants';
-import { getGroups } from '../selectors';
 import { isEnabled } from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'state/happychat/constants';
 import { userState } from 'state/selectors/test/fixtures/user-state';
+import getGroups from '../get-groups';
 
 describe( 'selectors', () => {
 	describe( '#getGroups()', () => {
@@ -44,7 +39,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
+			expect( getGroups( state, siteId ) ).toMatchObject( [ HAPPYCHAT_GROUP_WPCOM ] );
 		} );
 
 		test( 'should return default group for no siteId', () => {
@@ -59,7 +54,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
+			expect( getGroups( state, siteId ) ).toMatchObject( [ HAPPYCHAT_GROUP_WPCOM ] );
 		} );
 
 		test( 'should return JPOP group for jetpack paid sites', () => {
@@ -88,7 +83,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_JPOP ] );
+			expect( getGroups( state, siteId ) ).toMatchObject( [ HAPPYCHAT_GROUP_JPOP ] );
 		} );
 
 		test( 'should return WPCOM for AT sites group for jetpack site', () => {
@@ -115,7 +110,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getGroups( state, siteId ) ).to.eql( [ HAPPYCHAT_GROUP_WPCOM ] );
+			expect( getGroups( state, siteId ) ).toMatchObject( [ HAPPYCHAT_GROUP_WPCOM ] );
 		} );
 
 		if ( isEnabled( 'jetpack/happychat' ) ) {
@@ -134,7 +129,7 @@ describe( 'selectors', () => {
 					},
 				};
 
-				expect( getGroups( state ) ).to.eql( [ HAPPYCHAT_GROUP_JPOP ] );
+				expect( getGroups( state ) ).toMatchObject( [ HAPPYCHAT_GROUP_JPOP ] );
 			} );
 		} else {
 			test.skip( 'should not return JPOP group if within the jetpackConnect section' );

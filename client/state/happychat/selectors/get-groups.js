@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from './constants';
+import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'state/happychat/constants';
 import { isEnabled } from 'config';
 import { isJetpackSite, getSite } from 'state/sites/selectors';
 import { isATEnabled } from 'lib/automated-transfer';
@@ -15,7 +15,7 @@ import { getSectionName } from 'state/ui/selectors';
  * @param {int} siteId The site id, if no siteId is present primary siteId will be used
  * @returns {array} of groups for site Id
  */
-export const getGroups = ( state, siteId ) => {
+export default ( state, siteId ) => {
 	const groups = [];
 
 	// For Jetpack Connect we need to direct chat users to the JPOP group, to account for cases
