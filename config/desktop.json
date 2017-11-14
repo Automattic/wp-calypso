@@ -23,6 +23,8 @@
 		"code-splitting": false,
 		"comments/management": true,
 		"comments/management/jetpack-5.5": false,
+		"comments/management/m3-design": false,
+		"comments/management/post-view": true,
 		"comments/management/sorting": false,
 		"desktop": true,
 		"desktop-promo": false,
