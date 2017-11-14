@@ -88,6 +88,7 @@ describe( 'index', () => {
 		getSitePosts( state, 1, [] );
 
 		/* eslint-disable no-console */
+		// @TODO: make the warn happen only 3 times
 		expect( console.warn ).to.have.been.callCount( 6 );
 		/* eslint-enable no-console */
 	} );
@@ -196,6 +197,7 @@ describe( 'index', () => {
 				[ post2.global_ID ]: post2,
 			},
 		};
+
 		expect( getPostByIdWithData( nextState, post1.global_ID ) ).to.eql( {
 			...post1,
 			withData: true,
