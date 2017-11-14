@@ -30,6 +30,11 @@ import { getReaderTeams } from 'state/selectors';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
+import {
+	CONVERSATION_FOLLOW_STATUS_FOLLOWING,
+	CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
+	CONVERSATION_FOLLOW_STATUS_MUTING,
+} from 'state/reader/conversations/follow-status';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
@@ -38,6 +43,11 @@ class ReaderPostOptionsMenu extends React.Component {
 		onBlock: PropTypes.func,
 		showFollow: PropTypes.bool,
 		position: PropTypes.string,
+		defaultConversationFollowStatus: PropTypes.oneOf( [
+			CONVERSATION_FOLLOW_STATUS_FOLLOWING,
+			CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
+			CONVERSATION_FOLLOW_STATUS_MUTING,
+		] ),
 	};
 
 	static defaultProps = {
@@ -174,6 +184,7 @@ class ReaderPostOptionsMenu extends React.Component {
 							tagName={ PopoverMenuItem }
 							siteId={ siteId }
 							postId={ postId }
+							defaultConversationFollowStatus={ this.props.defaultConversationFollowStatus }
 						/>
 					) }
 
