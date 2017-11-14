@@ -355,7 +355,7 @@ export default function transformer( file, api ) {
 				},
 			},
 		} )
-		.forEach( p => {
+		.filter( p => {
 			// Requires `document.getElementById( 'secondary' )`
 			return _.get( p, 'value.arguments[0].arguments.value' ) === 'secondary';
 		} )
