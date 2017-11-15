@@ -3,48 +3,17 @@
  * External dependencies
  */
 import React from 'react';
-import { PureComponent } from 'react';
-import moment from 'moment';
+import { PropTypes } from 'prop-types';
+
 /**
  * Internal dependencies
  */
-import smartSetState from 'lib/react-smart-set-state';
-import ticker from 'lib/ticker';
-import humanDate from 'lib/human-date';
+import TimeSince from 'components/time-since';
 
-export default class PostTime extends PureComponent {
-	smartSetState = smartSetState;
+const PostTime = ( { className, date } ) => <TimeSince className={ className } date={ date } />;
 
-	componentWillMount() {
-		this.update();
-	}
+PostTime.propTypes = {
+	date: PropTypes.string.isRequired,
+};
 
-	componentDidMount() {
-		ticker.on( 'tick', this.update );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		this.update( nextProps.date );
-	}
-
-	componentWillUnmount() {
-		ticker.off( 'tick', this.update );
-	}
-
-	update = date => {
-		date = date || this.props.date;
-		this.smartSetState( {
-			humanDate: humanDate( date ),
-			fullDate: moment( date ).format( 'llll' ),
-		} );
-	};
-
-	render() {
-		const date = this.props.date;
-		return (
-			<time className={ this.props.className } dateTime={ date } title={ this.state.fullDate }>
-				{ this.state.humanDate }
-			</time>
-		);
-	}
-}
+export default PostTime;

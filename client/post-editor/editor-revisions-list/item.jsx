@@ -15,7 +15,7 @@ import { flow, get } from 'lodash';
  */
 import { selectPostRevision } from 'state/posts/revisions/actions';
 import { isSingleUserSite } from 'state/sites/selectors';
-import PostTime from 'reader/post-time';
+import TimeSince from 'components/time-since';
 
 class EditorRevisionsListItem extends PureComponent {
 	selectRevision = () => {
@@ -35,7 +35,7 @@ class EditorRevisionsListItem extends PureComponent {
 				type="button"
 			>
 				<span className="editor-revisions-list__date">
-					<PostTime date={ revision.date } />
+					<TimeSince date={ revision.date } />
 				</span>
 
 				{ authorName &&
