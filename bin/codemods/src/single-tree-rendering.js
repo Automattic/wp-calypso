@@ -84,6 +84,38 @@ export default function transformer( file, api ) {
 	}
 
 	/**
+	 * Removes imports maintaining any comments above them
+	 *
+	 * @param {object} collection Collection containing at least one node. Comment is preserved only from first node.
+	 */
+	function removeImport( collection ) {
+		const node = collection.nodes()[ 0 ];
+
+		// Find out if import had comment above it
+		const comment = _.get( node, 'comments[0]', false );
+
+		// Remove import (and any comments with it)
+		collection.remove();
+
+		// Put back that removed comment (if any)
+		if ( comment ) {
+			const isRemovedExternal = isExternal( node );
+
+			// Find internal dependencies and place comment above first one
+			root
+				.find( j.ImportDeclaration )
+				.filter( p => {
+					return isExternal( p.value ) === isRemovedExternal;
+				} )
+				.at( 0 )
+				.replaceWith( p => {
+					p.value.comments = [ comment ];
+					return p.value;
+				} );
+		}
+	}
+
+	/**
 	 * Ensure `context` is among params
 	 *
 	 * @param {object} path Path object that wraps a single node
@@ -271,20 +303,22 @@ export default function transformer( file, api ) {
 
 	// Remove stranded `reactDom` imports
 	if ( ! reactDomDefs.size() ) {
-		root
-			.find( j.ImportDeclaration, {
-				specifiers: [
-					{
-						local: {
-							name: 'ReactDom',
-						},
+		const importReactDom = root.find( j.ImportDeclaration, {
+			specifiers: [
+				{
+					local: {
+						name: 'ReactDom',
 					},
-				],
-				source: {
-					value: 'react-dom',
 				},
-			} )
-			.remove();
+			],
+			source: {
+				value: 'react-dom',
+			},
+		} );
+
+		if ( importReactDom.size() ) {
+			removeImport( importReactDom );
+		}
 	}
 
 	// Transform `renderWithReduxStore()` to `context.primary/secondary`
@@ -317,24 +351,7 @@ export default function transformer( file, api ) {
 		.filter( p => ! p.value.specifiers.length );
 
 	if ( orphanImportHelpers.size() ) {
-		// Find out if import had comment above it
-		const comment = _.get( orphanImportHelpers.nodes(), '[0].comments[0]', false );
-
-		// Remove empty `import 'lib/react-helpers'` (and any comments with it)
-		orphanImportHelpers.remove();
-
-		// Put back that removed comment (if any)
-		if ( comment ) {
-			// Find internal dependencies and place comment above first one
-			root
-				.find( j.ImportDeclaration )
-				.filter( p => ! isExternal( p.value ) )
-				.at( 0 )
-				.replaceWith( p => {
-					p.value.comments = [ comment ];
-					return p.value;
-				} );
-		}
+		removeImport( orphanImportHelpers );
 	}
 
 	/**
