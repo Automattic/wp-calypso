@@ -86,19 +86,19 @@ export default function transformer( file, api ) {
 	/**
 	 * Removes imports maintaining any comments above them
 	 *
-	 * @param {object} collection Collection containing at least one node. Comment is preserved only from first node.
+	 * @param {object} collection Collection containing at least one node. Comments are preserved only from first node.
 	 */
 	function removeImport( collection ) {
 		const node = collection.nodes()[ 0 ];
 
-		// Find out if import had comment above it
-		const comment = _.get( node, 'comments[0]', false );
+		// Find out if import had comments above it
+		const comments = _.get( node, 'comments', [] );
 
 		// Remove import (and any comments with it)
 		collection.remove();
 
 		// Put back that removed comment (if any)
-		if ( comment ) {
+		if ( comments.length ) {
 			const isRemovedExternal = isExternal( node );
 
 			// Find internal dependencies and place comment above first one
@@ -109,7 +109,7 @@ export default function transformer( file, api ) {
 				} )
 				.at( 0 )
 				.replaceWith( p => {
-					p.value.comments = [ comment ];
+					p.value.comments = p.value.comments ? p.value.comments.concat( comments ) : comments;
 					return p.value;
 				} );
 		}
