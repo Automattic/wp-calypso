@@ -92,8 +92,9 @@ class OrderEvents extends Component {
 
 	renderPlaceholder = () => {
 		const noop = () => {};
+		const placeholderClassName = 'is-placeholder';
 		return (
-			<div className="is-placeholder">
+			<div className={ placeholderClassName }>
 				<OrderEventsByDay count={ 0 } date="" isOpen={ true } index={ 1 } onClick={ noop }>
 					<OrderEvent />
 				</OrderEventsByDay>
