@@ -1,5 +1,5 @@
 FROM       node:8.9.1
-MAINTAINER Automattic
+LABEL maintainer="Automattic"
 
 WORKDIR    /calypso
 
