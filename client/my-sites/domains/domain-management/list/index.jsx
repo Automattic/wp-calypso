@@ -384,7 +384,7 @@ export class List extends React.Component {
 		return domains.map( ( domain, index ) => {
 			return (
 				<ListItem
-					key={ domain.name }
+					key={ index + domain.name }
 					domain={ domain }
 					enableSelection={ this.state.changePrimaryDomainModeEnabled }
 					isSelected={ index === this.state.primaryDomainIndex }
@@ -401,7 +401,11 @@ export class List extends React.Component {
 	}
 
 	goToEditDomainRoot = domain => {
-		page( paths.domainManagementEdit( this.props.selectedSite.slug, domain.name ) );
+		if ( domain.type !== type.TRANSFER ) {
+			page( paths.domainManagementEdit( this.props.selectedSite.slug, domain.name ) );
+		} else {
+			page( paths.domainManagementTransferIn( this.props.selectedSite.slug, domain.name ) );
+		}
 	};
 }
 

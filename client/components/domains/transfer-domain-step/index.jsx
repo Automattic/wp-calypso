@@ -266,6 +266,7 @@ class TransferDomainStep extends React.Component {
 			const status = get( result, 'status', error );
 			switch ( status ) {
 				case domainAvailability.MAPPABLE:
+				case domainAvailability.MAPPED:
 				case domainAvailability.UNKNOWN:
 					this.setState( { domain } );
 					return;
