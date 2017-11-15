@@ -15,15 +15,17 @@ import { sendMessage, sendNotTyping, sendTyping } from 'state/happychat/connecti
 import { blur, focus, setCurrentMessage } from 'state/happychat/ui/actions';
 // selectors
 import { canUserSendMessages } from 'state/happychat/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 import getCurrentMessage from 'state/happychat/selectors/get-happychat-current-message';
 import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
 import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
+import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeline';
 import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-server-reachable';
 // UI components
 import HappychatConnection from 'components/happychat/connection-connected';
 import { Composer } from 'components/happychat/composer';
 import { Notices } from 'components/happychat/notices';
-import Timeline from 'components/happychat/timeline';
+import { Timeline } from 'components/happychat/timeline';
 
 /**
  * React component for rendering a happychat client as a full page
@@ -41,20 +43,28 @@ export class HappychatPage extends Component {
 		const {
 			chatStatus,
 			connectionStatus,
+			currentUserEmail,
 			disabled,
+			isCurrentUser,
 			isServerReachable,
 			message,
 			onSendMessage,
 			onSendNotTyping,
 			onSendTyping,
 			onSetCurrentMessage,
+			timeline,
 			translate,
 		} = this.props;
 
 		return (
 			<div className="happychat__page" aria-live="polite" aria-relevant="additions">
 				<HappychatConnection />
-				<Timeline />
+				<Timeline
+					currentUserEmail={ currentUserEmail }
+					isCurrentUser={ isCurrentUser }
+					timeline={ timeline }
+					translate={ translate }
+				/>
 				<Notices
 					chatStatus={ chatStatus }
 					connectionStatus={ connectionStatus }
@@ -78,7 +88,9 @@ export class HappychatPage extends Component {
 HappychatPage.propTypes = {
 	chatStatus: PropTypes.string,
 	connectionStatus: PropTypes.string,
+	currentUserEmail: PropTypes.string,
 	disabled: PropTypes.bool,
+	isCurrentUser: PropTypes.bool,
 	isServerReachable: PropTypes.bool,
 	message: PropTypes.string,
 	onSendMessage: PropTypes.func,
@@ -87,16 +99,27 @@ HappychatPage.propTypes = {
 	onSetCurrentMessage: PropTypes.func,
 	setBlurred: PropTypes.func,
 	setFocused: PropTypes.func,
+	timeline: PropTypes.array,
 	translate: PropTypes.func,
 };
 
-const mapState = state => ( {
-	chatStatus: getHappychatChatStatus( state ),
-	connectionStatus: getHappychatConnectionStatus( state ),
-	disabled: ! canUserSendMessages( state ),
-	isServerReachable: isHappychatServerReachable( state ),
-	message: getCurrentMessage( state ),
-} );
+const isCurrentUserHelper = currentUser => ( { user_id, source } ) => {
+	return user_id.toString() === currentUser.ID.toString() && source === 'customer';
+};
+
+const mapState = state => {
+	const currentUser = getCurrentUser( state );
+	return {
+		chatStatus: getHappychatChatStatus( state ),
+		connectionStatus: getHappychatConnectionStatus( state ),
+		currentUserEmail: currentUser.email,
+		disabled: ! canUserSendMessages( state ),
+		isCurrentUser: isCurrentUserHelper( currentUser ), // see redux-no-bound-selectors eslint-rule
+		isServerReachable: isHappychatServerReachable( state ),
+		message: getCurrentMessage( state ),
+		timeline: getHappychatTimeline( state ),
+	};
+};
 
 const mapDispatch = {
 	onSendMessage: sendMessage,
