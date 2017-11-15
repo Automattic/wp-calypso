@@ -14,7 +14,7 @@ import classnames from 'classnames';
 import { blur, focus, closeChat, minimizeChat, minimizedChat } from 'state/happychat/ui/actions';
 import isHappychatMinimizing from 'state/happychat/selectors/is-happychat-minimizing';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
-import HappychatConnection from './connection';
+import HappychatConnection from './connection-connected';
 import Title from './title';
 import Composer from './composer';
 import Notices from './notices';
