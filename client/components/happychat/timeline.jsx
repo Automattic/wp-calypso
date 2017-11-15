@@ -16,7 +16,7 @@ import { first, when, forEach } from './functional';
 import autoscroll from './autoscroll';
 import Emojify from 'components/emojify';
 import scrollbleed from './scrollbleed';
-import { isExternal, addSchemeIfMissing, setUrlScheme } from 'lib/url';
+import { addSchemeIfMissing, setUrlScheme } from './url';
 
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:happychat:timeline' );
@@ -33,7 +33,7 @@ const messageParagraph = ( { message, key, twemojiUrl } ) => (
  * Given a message and array of links contained within that message, returns the message
  * with clickable links inside of it.
  */
-const messageWithLinks = ( { message, key, links } ) => {
+const messageWithLinks = ( { message, key, links, isExternalUrl } ) => {
 	const children = links.reduce(
 		( { parts, last }, [ url, startIndex, length ] ) => {
 			const text = url;
@@ -42,7 +42,7 @@ const messageWithLinks = ( { message, key, links } ) => {
 			let target = null;
 
 			href = addSchemeIfMissing( href, 'http' );
-			if ( isExternal( href ) ) {
+			if ( isExternalUrl( href ) ) {
 				rel = 'noopener noreferrer';
 				target = '_blank';
 			} else if ( typeof window !== 'undefined' ) {
@@ -87,7 +87,7 @@ const messageText = when( linksNotEmpty, messageWithLinks, messageParagraph );
  * Group messages based on user so when any user sends multiple messages they will be grouped
  * within the same message bubble until it reaches a message from a different user.
  */
-const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl }, index ) => {
+const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl, isExternalUrl }, index ) => {
 	const [ event, ...rest ] = item;
 	return (
 		<div
@@ -103,9 +103,10 @@ const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl }, index ) => 
 					key: event.id,
 					links: event.links,
 					twemojiUrl,
+					isExternalUrl,
 				} ) }
 				{ rest.map( ( { message, id: key, links } ) =>
-					messageText( { message, key, links, twemojiUrl } )
+					messageText( { message, key, links, twemojiUrl, isExternalUrl } )
 				) }
 			</div>
 		</div>
@@ -165,6 +166,7 @@ const timelineHasContent = ( { timeline } ) => isArray( timeline ) && ! isEmpty(
 const renderTimeline = ( {
 	timeline,
 	isCurrentUser,
+	isExternalUrl,
 	onScrollContainer,
 	scrollbleedLock,
 	scrollbleedUnlock,
@@ -180,6 +182,7 @@ const renderTimeline = ( {
 			renderGroupedTimelineItem( {
 				item,
 				isCurrentUser: isCurrentUser( item[ 0 ] ),
+				isExternalUrl,
 				twemojiUrl,
 			} )
 		) }
@@ -195,6 +198,7 @@ export const Timeline = createReactClass( {
 	propTypes: {
 		currentUserEmail: PropTypes.string,
 		isCurrentUser: PropTypes.func,
+		isExternalUrl: PropTypes.func,
 		onScrollContainer: PropTypes.func,
 		timeline: PropTypes.array,
 		translate: PropTypes.func,
@@ -204,6 +208,7 @@ export const Timeline = createReactClass( {
 	getDefaultProps() {
 		return {
 			onScrollContainer: () => {},
+			isExternalUrl: () => true,
 		};
 	},
 
