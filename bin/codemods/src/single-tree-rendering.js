@@ -384,7 +384,22 @@ export default function transformer( file, api ) {
 				name: 'page',
 			},
 		} )
-		.filter( p => p.value.arguments.length > 1 && p.value.arguments[ 0 ].value !== '*' )
+		.filter( p => {
+			const lastArgument = _.last( p.value.arguments );
+
+			// Catch simple `() => page.redirect( '/' )` -redirect middlewares
+			const isPageRedirect = node =>
+				node.type === 'ArrowFunctionExpression' &&
+				_.get( node, 'body.callee.object.name' ) === 'page' &&
+				_.get( node, 'body.callee.property.name' ) === 'redirect';
+
+			return (
+				p.value.arguments.length > 1 &&
+				p.value.arguments[ 0 ].value !== '*' &&
+				lastArgument.type !== 'Literal' &&
+				! isPageRedirect( lastArgument )
+			);
+		} )
 		.forEach( p => {
 			p.value.arguments.push( j.identifier( 'makeLayout' ) );
 			p.value.arguments.push( j.identifier( 'clientRender' ) );
