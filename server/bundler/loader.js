@@ -172,7 +172,7 @@ function getSectionPreLoaderTemplate( section ) {
 	let cssLoader = '', bundleTypes = 'Javascript';
 
 	if ( section.cssUrls ) {
-		cssLoader = `loadCSS( 'section-css', ${ section.cssUrls } );`;
+		cssLoader = `loadCSS( 'section-css', ${ JSON.stringify( section.cssUrls ) } );`;
 		bundleTypes += ' and CSS';
 	}
 
