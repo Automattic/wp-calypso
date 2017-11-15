@@ -97,6 +97,12 @@ const getAuthAttempts = ( state, slug ) => {
 	return attemptsData ? attemptsData.attempt || 0 : 0;
 };
 
+/**
+ * Returns true if the user is already connected, otherwise false
+ *
+ * @param  {Object}  state Global state tree
+ * @return {boolean}       True if the user is connected otherwise false
+ */
 const getUserAlreadyConnected = state => {
 	return get( getAuthorizationData( state ), 'userAlreadyConnected', false );
 };
