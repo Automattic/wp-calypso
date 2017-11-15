@@ -33,6 +33,7 @@ import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { getJetpackConnectRedirectAfterAuth } from 'state/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { login } from 'lib/paths';
@@ -67,7 +68,6 @@ class LoggedInForm extends Component {
 	static propTypes = {
 		isSSO: PropTypes.bool,
 		isWoo: PropTypes.bool,
-		user: PropTypes.object.isRequired,
 
 		// Connected props
 		authAttempts: PropTypes.number.isRequired,
@@ -97,6 +97,7 @@ class LoggedInForm extends Component {
 		retryAuth: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		user: PropTypes.object.isRequired,
 		userAlreadyConnected: PropTypes.bool.isRequired,
 	};
 
@@ -583,6 +584,7 @@ export default connect(
 			isFetchingSites: isRequestingSites( state ),
 			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 			siteSlug,
+			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};
 	},
