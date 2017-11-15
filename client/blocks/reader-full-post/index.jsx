@@ -444,6 +444,7 @@ export class FullPostView extends React.Component {
 							<div className="reader-full-post__comments-wrapper" ref="commentsWrapper">
 								{ shouldShowComments( post ) && (
 									<Comments
+										showModerationTools={ true }
 										showNestingReplyArrow={ config.isEnabled( 'reader/nesting-arrow' ) }
 										ref="commentsList"
 										post={ post }
