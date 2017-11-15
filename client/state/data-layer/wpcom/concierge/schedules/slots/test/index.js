@@ -5,35 +5,35 @@
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
-	conciergeShiftsFetchError,
-	fetchConciergeShifts,
-	storeFetchedConciergeShifts,
-	showConciergeShiftsFetchError,
+	conciergeSlotsFetchError,
+	fetchConciergeSlots,
+	storeFetchedConciergeSlots,
+	showConciergeSlotsFetchError,
 } from '../';
-import { updateConciergeShifts } from 'state/concierge/actions';
-import { CONCIERGE_SHIFTS_REQUEST } from 'state/action-types';
+import { updateConciergeSlots } from 'state/concierge/actions';
+import { CONCIERGE_SLOTS_REQUEST } from 'state/action-types';
 
-// we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
+// we are mocking impure-lodash here, so that conciergeSlotsFetchError() will contain the expected id in the tests
 jest.mock( 'lib/impure-lodash', () => ( {
 	uniqueId: () => 'mock-unique-id',
 } ) );
 
 describe( 'wpcom-api', () => {
 	describe( 'concierge', () => {
-		test( 'fetchConciergeShifts()', () => {
+		test( 'fetchConciergeSlots()', () => {
 			const dispatch = jest.fn();
 			const action = {
-				type: CONCIERGE_SHIFTS_REQUEST,
+				type: CONCIERGE_SLOTS_REQUEST,
 				scheduleId: 123,
 			};
 
-			fetchConciergeShifts( { dispatch }, action );
+			fetchConciergeSlots( { dispatch }, action );
 
 			expect( dispatch ).toHaveBeenCalledWith(
 				http(
 					{
 						method: 'GET',
-						path: `/concierge/schedules/${ action.scheduleId }/shifts`,
+						path: `/concierge/schedules/${ action.scheduleId }/slots`,
 						apiNamespace: 'wpcom/v2',
 					},
 					action
@@ -41,25 +41,25 @@ describe( 'wpcom-api', () => {
 			);
 		} );
 
-		test( 'storeFetchedConciergeShifts()', () => {
+		test( 'storeFetchedConciergeSlots()', () => {
 			const dispatch = jest.fn();
-			const mockShifts = [
+			const mockSlots = [
 				{ description: 'shift 1' },
 				{ description: 'shift 2' },
 				{ description: 'shift 3' },
 			];
 
-			storeFetchedConciergeShifts( { dispatch }, {}, mockShifts );
+			storeFetchedConciergeSlots( { dispatch }, {}, mockSlots );
 
-			expect( dispatch ).toHaveBeenCalledWith( updateConciergeShifts( mockShifts ) );
+			expect( dispatch ).toHaveBeenCalledWith( updateConciergeSlots( mockSlots ) );
 		} );
 
-		test( 'showConciergeShiftsFetchError()', () => {
+		test( 'showConciergeSlotsFetchError()', () => {
 			const dispatch = jest.fn();
 
-			showConciergeShiftsFetchError( { dispatch } );
+			showConciergeSlotsFetchError( { dispatch } );
 
-			expect( dispatch ).toHaveBeenCalledWith( conciergeShiftsFetchError() );
+			expect( dispatch ).toHaveBeenCalledWith( conciergeSlotsFetchError() );
 		} );
 	} );
 } );

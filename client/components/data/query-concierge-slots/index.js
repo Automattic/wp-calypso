@@ -9,11 +9,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestConciergeShifts } from 'state/concierge/actions';
+import { requestConciergeSlots } from 'state/concierge/actions';
 
-class QueryConciergeShifts extends Component {
+class QueryConciergeSlots extends Component {
 	componentWillMount() {
-		this.props.requestConciergeShifts( this.props.scheduleId );
+		this.props.requestConciergeSlots( this.props.scheduleId );
 	}
 
 	render() {
@@ -21,4 +21,4 @@ class QueryConciergeShifts extends Component {
 	}
 }
 
-export default connect( state => state, { requestConciergeShifts } )( QueryConciergeShifts );
+export default connect( state => state, { requestConciergeSlots } )( QueryConciergeSlots );

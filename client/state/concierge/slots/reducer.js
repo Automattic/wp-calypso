@@ -4,11 +4,11 @@
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
-import { CONCIERGE_SHIFTS_REQUEST, CONCIERGE_SHIFTS_UPDATE } from 'state/action-types';
+import { CONCIERGE_SLOTS_REQUEST, CONCIERGE_SLOTS_UPDATE } from 'state/action-types';
 
-export const shifts = createReducer( null, {
-	[ CONCIERGE_SHIFTS_REQUEST ]: () => null,
-	[ CONCIERGE_SHIFTS_UPDATE ]: ( state, action ) => action.shifts,
+export const slots = createReducer( null, {
+	[ CONCIERGE_SLOTS_REQUEST ]: () => null,
+	[ CONCIERGE_SLOTS_UPDATE ]: ( state, action ) => action.slots,
 } );
 
-export default shifts;
+export default slots;

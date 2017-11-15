@@ -3,25 +3,25 @@
 /**
  * Internal dependencies
  */
-import { getConciergeShifts } from '../';
+import { getConciergeSlots } from '../';
 
-describe( 'getConciergeShifts()', () => {
+describe( 'getConciergeSlots()', () => {
 	test( 'should be defaulted to null.', () => {
-		expect( getConciergeShifts( {} ) ).toBeNull();
+		expect( getConciergeSlots( {} ) ).toBeNull();
 	} );
 
 	test( 'should return the items field under the concierge shift state tree.', () => {
-		const shifts = [
+		const slots = [
 			{ description: 'shift 1' },
 			{ description: 'shift 2' },
 			{ description: 'shift 3' },
 		];
 		const state = {
 			concierge: {
-				shifts,
+				slots,
 			},
 		};
 
-		expect( getConciergeShifts( state ) ).toEqual( shifts );
+		expect( getConciergeSlots( state ) ).toEqual( slots );
 	} );
 } );

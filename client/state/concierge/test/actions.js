@@ -3,23 +3,23 @@
 /**
  * Internal dependencies
  */
-import { requestConciergeShifts, updateConciergeShifts } from '../actions';
+import { requestConciergeSlots, updateConciergeSlots } from '../actions';
 
-import { CONCIERGE_SHIFTS_REQUEST, CONCIERGE_SHIFTS_UPDATE } from 'state/action-types';
+import { CONCIERGE_SLOTS_REQUEST, CONCIERGE_SLOTS_UPDATE } from 'state/action-types';
 
 describe( 'state/concierge', () => {
 	describe( 'actions', () => {
-		test( 'requestConciergeShifts()', () => {
+		test( 'requestConciergeSlots()', () => {
 			const scheduleId = 123;
 
-			expect( requestConciergeShifts( scheduleId ) ).toEqual( {
-				type: CONCIERGE_SHIFTS_REQUEST,
+			expect( requestConciergeSlots( scheduleId ) ).toEqual( {
+				type: CONCIERGE_SLOTS_REQUEST,
 				scheduleId,
 			} );
 		} );
 
-		test( 'updateConciergeShifts()', () => {
-			const shifts = [
+		test( 'updateConciergeSlots()', () => {
+			const slots = [
 				{
 					begin_timestamp: 100,
 					end_timestamp: 300,
@@ -34,9 +34,9 @@ describe( 'state/concierge', () => {
 				},
 			];
 
-			expect( updateConciergeShifts( shifts ) ).toEqual( {
-				type: CONCIERGE_SHIFTS_UPDATE,
-				shifts,
+			expect( updateConciergeSlots( slots ) ).toEqual( {
+				type: CONCIERGE_SLOTS_UPDATE,
+				slots,
 			} );
 		} );
 	} );

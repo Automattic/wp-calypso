@@ -10,19 +10,19 @@ import { translate } from 'i18n-calypso';
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { updateConciergeShifts } from 'state/concierge/actions';
+import { updateConciergeSlots } from 'state/concierge/actions';
 import { errorNotice } from 'state/notices/actions';
-import { CONCIERGE_SHIFTS_REQUEST } from 'state/action-types';
+import { CONCIERGE_SLOTS_REQUEST } from 'state/action-types';
 import fromApi from './from-api';
 
-export const fetchConciergeShifts = ( { dispatch }, action ) => {
+export const fetchConciergeSlots = ( { dispatch }, action ) => {
 	const { scheduleId } = action;
 
 	dispatch(
 		http(
 			{
 				method: 'GET',
-				path: `/concierge/schedules/${ scheduleId }/shifts`,
+				path: `/concierge/schedules/${ scheduleId }/slots`,
 				apiNamespace: 'wpcom/v2',
 			},
 			action
@@ -30,21 +30,21 @@ export const fetchConciergeShifts = ( { dispatch }, action ) => {
 	);
 };
 
-export const storeFetchedConciergeShifts = ( { dispatch }, action, shifts ) =>
-	dispatch( updateConciergeShifts( shifts ) );
+export const storeFetchedConciergeSlots = ( { dispatch }, action, slots ) =>
+	dispatch( updateConciergeSlots( slots ) );
 
-export const conciergeShiftsFetchError = () =>
+export const conciergeSlotsFetchError = () =>
 	errorNotice( translate( "We couldn't load our Concierge schedule. Please try again later." ) );
 
-export const showConciergeShiftsFetchError = ( { dispatch } ) =>
-	dispatch( conciergeShiftsFetchError() );
+export const showConciergeSlotsFetchError = ( { dispatch } ) =>
+	dispatch( conciergeSlotsFetchError() );
 
 export default {
-	[ CONCIERGE_SHIFTS_REQUEST ]: [
+	[ CONCIERGE_SLOTS_REQUEST ]: [
 		dispatchRequest(
-			fetchConciergeShifts,
-			storeFetchedConciergeShifts,
-			showConciergeShiftsFetchError,
+			fetchConciergeSlots,
+			storeFetchedConciergeSlots,
+			showConciergeSlotsFetchError,
 			{ fromApi }
 		),
 	],

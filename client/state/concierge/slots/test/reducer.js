@@ -3,34 +3,34 @@
 /**
  * Internal dependencies
  */
-import { shifts } from '../reducer';
-import { CONCIERGE_SHIFTS_REQUEST, CONCIERGE_SHIFTS_UPDATE } from 'state/action-types';
+import { slots } from '../reducer';
+import { CONCIERGE_SLOTS_REQUEST, CONCIERGE_SLOTS_UPDATE } from 'state/action-types';
 
-describe( 'concierge/shifts/reducer', () => {
-	const mockShifts = [ { description: 'shift1' }, { description: 'shift2' } ];
+describe( 'concierge/slots/reducer', () => {
+	const mockSlots = [ { description: 'shift1' }, { description: 'shift2' } ];
 
 	const requestAction = {
-		type: CONCIERGE_SHIFTS_REQUEST,
+		type: CONCIERGE_SLOTS_REQUEST,
 	};
 
 	const updateAction = {
-		type: CONCIERGE_SHIFTS_UPDATE,
-		shifts: mockShifts,
+		type: CONCIERGE_SLOTS_UPDATE,
+		slots: mockSlots,
 	};
 
-	describe( 'shifts', () => {
+	describe( 'slots', () => {
 		test( 'should be defaulted as null.', () => {
-			expect( shifts( undefined, {} ) ).toBeNull();
+			expect( slots( undefined, {} ) ).toBeNull();
 		} );
 
 		test( 'should be null on receiving the request action.', () => {
-			const state = mockShifts;
-			expect( shifts( state, requestAction ) ).toBeNull();
+			const state = mockSlots;
+			expect( slots( state, requestAction ) ).toBeNull();
 		} );
 
 		test( 'should be the received data on receiving the update action.', () => {
 			const state = [];
-			expect( shifts( state, updateAction ) ).toEqual( mockShifts );
+			expect( slots( state, updateAction ) ).toEqual( mockSlots );
 		} );
 	} );
 } );
