@@ -4,6 +4,7 @@
  * External dependencies
  */
 import shallowEqual from 'react-pure-render/shallowEqual';
+import { castArray } from 'lodash';
 
 /**
  * Constants
@@ -95,7 +96,7 @@ export default function createSelector(
 
 	const memoizedSelector = function( state, ...args ) {
 		const cacheKey = getCacheKey( state, ...args );
-		const currentDependants = [].concat( getDependants( state, ...args ) );
+		const currentDependants = castArray( getDependants( state, ...args ) );
 		const prevDependents = dependentsPerKey.get( cacheKey );
 
 		if ( ! memo.has( cacheKey ) || ! shallowEqual( currentDependants, prevDependents ) ) {
