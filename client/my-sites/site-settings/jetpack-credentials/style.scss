@@ -9,14 +9,13 @@
 .jetpack-credentials__connected {
 	float: right;
 	background: $alert-green;
-	padding: 0 8px;
-	margin: -4px;
-	font-size: 1.3rem;
+	padding: 4px 8px;
+	border-radius: 2px;
+	font-size: 12px;
 	color: $white;
 }
 
 .jetpack-credentials__connected-checkmark {
-	position: relative;
-	top: 3px;
-	margin-right: 3px;
+	vertical-align: top;
+	margin-right: 4px;
 }
