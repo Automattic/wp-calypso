@@ -11,21 +11,16 @@ import { flow } from 'lodash';
 /**
  * Internal dependencies
  */
-import { closePostRevisionsDialog, openPostRevisionsDialog } from 'state/posts/revisions/actions';
+import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 
-const HistoryButton = ( { loadRevision, postId, siteId, closeDialog, openDialog, translate } ) => (
+const HistoryButton = ( { loadRevision, postId, siteId, openDialog, translate } ) => (
 	<div className="editor-ground-control__history">
 		<button className="editor-ground-control__history-button button is-link" onClick={ openDialog }>
 			{ translate( 'History' ) }
 		</button>
-		<EditorRevisionsDialog
-			onClose={ closeDialog }
-			loadRevision={ loadRevision }
-			postId={ postId }
-			siteId={ siteId }
-		/>
+		<EditorRevisionsDialog loadRevision={ loadRevision } postId={ postId } siteId={ siteId } />
 	</div>
 );
 
@@ -33,7 +28,6 @@ HistoryButton.PropTypes = {
 	loadRevision: PropTypes.func.isRequired,
 
 	// connected to dispatch
-	closePostRevisionsDialog: PropTypes.func.isRequired,
 	openPostRevisionsDialog: PropTypes.func.isRequired,
 
 	// localize
@@ -43,7 +37,6 @@ HistoryButton.PropTypes = {
 export default flow(
 	localize,
 	connect( null, {
-		closeDialog: closePostRevisionsDialog,
 		openDialog: openPostRevisionsDialog,
 	} )
 )( HistoryButton );
