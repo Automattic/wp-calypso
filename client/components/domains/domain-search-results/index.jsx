@@ -31,6 +31,7 @@ import { TRANSFER_IN } from 'state/current-user/constants';
 class DomainSearchResults extends React.Component {
 	static propTypes = {
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		lastDomainIsTransferrable: PropTypes.bool,
 		lastDomainStatus: PropTypes.string,
 		lastDomainSearched: PropTypes.string,
 		cart: PropTypes.object,
@@ -53,7 +54,13 @@ class DomainSearchResults extends React.Component {
 	};
 
 	renderDomainAvailability() {
-		const { availableDomain, lastDomainStatus, lastDomainSearched: domain, translate } = this.props;
+		const {
+			availableDomain,
+			lastDomainIsTransferrable,
+			lastDomainStatus,
+			lastDomainSearched: domain,
+			translate,
+		} = this.props;
 		const availabilityElementClasses = classNames( {
 			'domain-search-results__domain-is-available': availableDomain,
 			'domain-search-results__domain-not-available': ! availableDomain,
@@ -124,6 +131,7 @@ class DomainSearchResults extends React.Component {
 				if (
 					this.props.transferInAllowed &&
 					! this.props.isSignupStep &&
+					lastDomainIsTransferrable &&
 					includes( [ MAPPABLE, MAPPED ], lastDomainStatus )
 				) {
 					availabilityElement = (
