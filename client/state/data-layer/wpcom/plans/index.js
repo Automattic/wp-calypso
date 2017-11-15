@@ -23,13 +23,14 @@ import {
  * @returns {Object} original action
  */
 export const requestPlans = action =>
-		http( {
+	http(
+		{
 			apiVersion: '1.4',
 			method: 'GET',
 			path: '/plans',
-			onSuccess: action,
-			onFailure: action,
-	} );
+		},
+		action
+	);
 
 /**
  * Dispatches returned WordPress.com plan data

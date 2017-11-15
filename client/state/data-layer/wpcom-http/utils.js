@@ -152,7 +152,7 @@ export const hasRequestLoaded = ( state, action ) =>
 export const trackRequests = next => ( store, action ) => {
 	// progress events don't affect
 	// any tracking meta at the moment
-	if ( getProgress( action ) ) {
+	if ( true !== get( action, 'meta.dataLayer.trackRequest' ) || getProgress( action ) ) {
 		return next( store, action );
 	}
 
@@ -219,26 +219,26 @@ export const requestDispatcher = middleware => ( initiator, onSuccess, onError, 
 	const { fromApi, onProgress } = { ...defaultOptions, ...options };
 
 	return middleware( ( store, action ) => {
-	const error = getError( action );
-	if ( undefined !== error ) {
-		return onError( store, action, error );
-	}
-
-	const data = getData( action );
-	if ( undefined !== data ) {
-		try {
-			return onSuccess( store, action, fromApi( data ) );
-		} catch ( err ) {
-			return onError( store, action, err );
+		const error = getError( action );
+		if ( undefined !== error ) {
+			return onError( store, action, error );
 		}
-	}
 
-	const progress = getProgress( action );
-	if ( undefined !== progress ) {
-		return onProgress( store, action, progress );
-	}
+		const data = getData( action );
+		if ( undefined !== data ) {
+			try {
+				return onSuccess( store, action, fromApi( data ) );
+			} catch ( err ) {
+				return onError( store, action, err );
+			}
+		}
 
-	return initiator( store, action );
+		const progress = getProgress( action );
+		if ( undefined !== progress ) {
+			return onProgress( store, action, progress );
+		}
+
+		return initiator( store, action );
 	} );
 };
 
@@ -309,8 +309,7 @@ export const exRequestDispatcher = middleware => options => {
 
 		return store.dispatch( requestAction );
 	} );
-
-	};
+};
 export const dispatchRequestEx = exRequestDispatcher( trackRequests );
 
 /*
