@@ -3,9 +3,8 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
 /**
@@ -22,10 +21,6 @@ import {
 	HAPPYCHAT_CONNECTION_STATUS_UNAUTHORIZED,
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 } from 'state/happychat/constants';
-import { localize } from 'i18n-calypso';
-import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
-import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
-import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-server-reachable';
 
 /*
  * Renders any notices about the chat session to the user
@@ -88,10 +83,9 @@ export class Notices extends Component {
 	}
 }
 
-const mapState = state => ( {
-	isServerReachable: isHappychatServerReachable( state ),
-	chatStatus: getHappychatChatStatus( state ),
-	connectionStatus: getHappychatConnectionStatus( state ),
-} );
-
-export default localize( connect( mapState )( Notices ) );
+Notices.propTypes = {
+	chatStatus: PropTypes.string,
+	connectionStatus: PropTypes.string,
+	isServerReachable: PropTypes.bool,
+	translate: PropTypes.func,
+};

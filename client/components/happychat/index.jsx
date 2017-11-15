@@ -25,13 +25,16 @@ import {
 // selectors
 import { canUserSendMessages } from 'state/happychat/selectors';
 import getCurrentMessage from 'state/happychat/selectors/get-happychat-current-message';
+import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
+import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
 import isHappychatMinimizing from 'state/happychat/selectors/is-happychat-minimizing';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
+import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-server-reachable';
 // UI components
 import HappychatConnection from './connection-connected';
 import { Title } from './title';
 import { Composer } from './composer';
-import Notices from './notices';
+import { Notices } from './notices';
 import Timeline from './timeline';
 
 /*
@@ -58,9 +61,12 @@ export class Happychat extends Component {
 
 	render() {
 		const {
+			chatStatus,
+			connectionStatus,
 			disabled,
 			isChatOpen,
 			isMinimizing,
+			isServerReachable,
 			message,
 			onSendMessage,
 			onSendNotTyping,
@@ -80,7 +86,12 @@ export class Happychat extends Component {
 				>
 					<Title onCloseChat={ this.onCloseChatTitle } translate={ translate } />
 					<Timeline />
-					<Notices />
+					<Notices
+						chatStatus={ chatStatus }
+						connectionStatus={ connectionStatus }
+						isServerReachable={ isServerReachable }
+						translate={ translate }
+					/>
 					<Composer
 						disabled={ disabled }
 						message={ message }
@@ -97,9 +108,13 @@ export class Happychat extends Component {
 }
 
 Happychat.propTypes = {
+	chatStatus: PropTypes.string,
+	connectionStatus: PropTypes.string,
+	currentUserEmail: PropTypes.string,
 	disabled: PropTypes.bool,
 	isChatOpen: PropTypes.bool,
 	isMinimizing: PropTypes.bool,
+	isServerReachable: PropTypes.bool,
 	message: PropTypes.string,
 	onCloseChat: PropTypes.func,
 	onMinimizeChat: PropTypes.func,
@@ -114,9 +129,12 @@ Happychat.propTypes = {
 };
 
 const mapState = state => ( {
+	chatStatus: getHappychatChatStatus( state ),
+	connectionStatus: getHappychatConnectionStatus( state ),
 	disabled: ! canUserSendMessages( state ),
 	isChatOpen: isHappychatOpen( state ),
 	isMinimizing: isHappychatMinimizing( state ),
+	isServerReachable: isHappychatServerReachable( state ),
 	message: getCurrentMessage( state ),
 } );
 
