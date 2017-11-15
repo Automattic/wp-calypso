@@ -13,7 +13,7 @@ import { spy } from 'sinon';
  */
 import { HappinessSupport } from '..';
 import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection';
+import HappychatConnection from 'components/happychat/connection-connected';
 import support from 'lib/url/support';
 
 describe( 'HappinessSupport', () => {
