@@ -101,10 +101,11 @@ export default function transformer( file, api ) {
 		if ( comments.length ) {
 			const isRemovedExternal = isExternal( node );
 
-			// Find internal dependencies and place comment above first one
+			// Find remaining external or internal dependencies and place comments above first one
 			root
 				.find( j.ImportDeclaration )
 				.filter( p => {
+					// Look for only imports that are same type as the removed import was
 					return isExternal( p.value ) === isRemovedExternal;
 				} )
 				.at( 0 )
