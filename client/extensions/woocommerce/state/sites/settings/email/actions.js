@@ -7,15 +7,15 @@ import {
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import { areSettingsProductsLoaded, areSettingsProductsLoading } from './selectors';
+import { areEmailSettingsLoaded, areEmailSettingsLoading } from './selectors';
 
 export const fetchEmailSettings = siteId => ( dispatch, getState ) => {
-	// if (
-	// 	areSettingsProductsLoaded( getState(), siteId ) ||
-	// 	areSettingsProductsLoading( getState(), siteId )
-	// ) {
-	// 	return;
-	// }
+	if (
+		areEmailSettingsLoaded( getState(), siteId ) ||
+		areEmailSettingsLoading( getState(), siteId )
+	) {
+		return;
+	}
 
 	const getAction = {
 		type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
@@ -25,7 +25,7 @@ export const fetchEmailSettings = siteId => ( dispatch, getState ) => {
 	dispatch( getAction );
 
 	return request( siteId )
-		.get( 'settings/email', 'wc/v2' )
+		.get( 'settings_email_groups' )
 		.then( data => {
 			dispatch( {
 				type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
