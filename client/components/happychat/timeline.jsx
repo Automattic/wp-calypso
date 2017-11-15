@@ -8,8 +8,6 @@ import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { assign, isArray, isEmpty } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,8 +16,6 @@ import { first, when, forEach } from './functional';
 import autoscroll from './autoscroll';
 import Emojify from 'components/emojify';
 import scrollbleed from './scrollbleed';
-import { getCurrentUser } from 'state/current-user/selectors';
-import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeline';
 import { isExternal, addSchemeIfMissing, setUrlScheme } from 'lib/url';
 
 import debugFactory from 'debug';
@@ -220,16 +216,3 @@ export const Timeline = createReactClass( {
 		);
 	},
 } );
-
-const mapProps = state => {
-	const current_user = getCurrentUser( state );
-	return {
-		timeline: getHappychatTimeline( state ),
-		isCurrentUser: ( { user_id, source } ) => {
-			return user_id.toString() === current_user.ID.toString() && source === 'customer';
-		},
-		currentUserEmail: current_user.email,
-	};
-};
-
-export default connect( mapProps )( localize( Timeline ) );
