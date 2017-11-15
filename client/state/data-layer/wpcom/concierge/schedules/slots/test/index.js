@@ -44,9 +44,9 @@ describe( 'wpcom-api', () => {
 		test( 'storeFetchedConciergeSlots()', () => {
 			const dispatch = jest.fn();
 			const mockSlots = [
-				{ description: 'shift 1' },
-				{ description: 'shift 2' },
-				{ description: 'shift 3' },
+				{ description: 'slot 1' },
+				{ description: 'slot 2' },
+				{ description: 'slot 3' },
 			];
 
 			storeFetchedConciergeSlots( { dispatch }, {}, mockSlots );

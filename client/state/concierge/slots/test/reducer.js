@@ -7,7 +7,7 @@ import { slots } from '../reducer';
 import { CONCIERGE_SLOTS_REQUEST, CONCIERGE_SLOTS_UPDATE } from 'state/action-types';
 
 describe( 'concierge/slots/reducer', () => {
-	const mockSlots = [ { description: 'shift1' }, { description: 'shift2' } ];
+	const mockSlots = [ { description: 'slot1' }, { description: 'slot2' } ];
 
 	const requestAction = {
 		type: CONCIERGE_SLOTS_REQUEST,

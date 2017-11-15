@@ -24,13 +24,13 @@ describe( 'state/concierge', () => {
 					begin_timestamp: 100,
 					end_timestamp: 300,
 					schedule_id: 123,
-					description: 'lovely shift 1',
+					description: 'lovely slot 1',
 				},
 				{
 					begin_timestamp: 200,
 					end_timestamp: 400,
 					schedule_id: 123,
-					description: 'cute shift 2',
+					description: 'cute slot 2',
 				},
 			];
 

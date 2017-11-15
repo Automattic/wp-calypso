@@ -10,11 +10,11 @@ describe( 'getConciergeSlots()', () => {
 		expect( getConciergeSlots( {} ) ).toBeNull();
 	} );
 
-	test( 'should return the items field under the concierge shift state tree.', () => {
+	test( 'should return the items field under the concierge slots state tree.', () => {
 		const slots = [
-			{ description: 'shift 1' },
-			{ description: 'shift 2' },
-			{ description: 'shift 3' },
+			{ description: 'slot 1' },
+			{ description: 'slot 2' },
+			{ description: 'slot 3' },
 		];
 		const state = {
 			concierge: {
