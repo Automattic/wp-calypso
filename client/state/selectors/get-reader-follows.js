@@ -36,7 +36,7 @@ const getReaderFollows = createSelector(
 		const withoutErrors = reject(
 			withSiteAndFeed,
 			item =>
-				( item.site && item.site.is_error && item.site.error.code === 410 ) ||
+				( item.site && item.site.is_error && item.site.error.statusCode === 410 ) ||
 				( item.feed && item.feed.is_error )
 		);
 		return withoutErrors;
