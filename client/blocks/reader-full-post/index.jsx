@@ -92,7 +92,6 @@ export class FullPostView extends React.Component {
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
 		this.attemptToSendPageView();
-
 		this.checkForCommentAnchor();
 
 		// If we have a comment anchor, scroll to comments
