@@ -295,14 +295,14 @@ export default function transformer( file, api ) {
 		.replaceWith( ensureNextMiddleware )
 		.forEach( transformReactDomRender );
 
-	// Find if `reactDom` is used
+	// Find if `ReactDom` is used
 	const reactDomDefs = root.find( j.MemberExpression, {
 		object: {
 			name: 'ReactDom',
 		},
 	} );
 
-	// Remove stranded `reactDom` imports
+	// Remove stranded `react-dom` imports
 	if ( ! reactDomDefs.size() ) {
 		const importReactDom = root.find( j.ImportDeclaration, {
 			specifiers: [
