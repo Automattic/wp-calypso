@@ -87,7 +87,6 @@ export default function createSelector(
 	getDependants = DEFAULT_GET_DEPENDANTS,
 	getCacheKey = DEFAULT_GET_CACHE_KEY
 ) {
-	const dependentsPerKey = new Map();
 	const memo = new Map();
 
 	if ( Array.isArray( getDependants ) ) {
@@ -96,15 +95,20 @@ export default function createSelector(
 
 	const memoizedSelector = function( state, ...args ) {
 		const cacheKey = getCacheKey( state, ...args );
-		const currentDependants = castArray( getDependants( state, ...args ) );
-		const prevDependents = dependentsPerKey.get( cacheKey );
+		const currentDependants = getDependants( state, ...args );
+		const { dependents: prevDependents } = memo.get( cacheKey ) || {};
 
-		if ( ! memo.has( cacheKey ) || ! shallowEqual( currentDependants, prevDependents ) ) {
-			memo.set( cacheKey, selector( state, ...args ) );
-			dependentsPerKey.set( cacheKey, currentDependants );
+		if (
+			! memo.has( cacheKey ) ||
+			! shallowEqual( castArray( currentDependants ), castArray( prevDependents ) )
+		) {
+			memo.set( cacheKey, {
+				dependents: currentDependants,
+				value: selector( state, ...[ ...args, currentDependants ] ),
+			} );
 		}
 
-		return memo.get( cacheKey );
+		return memo.get( cacheKey ).value;
 	};
 	memoizedSelector.cache = memo;
 	return memoizedSelector;

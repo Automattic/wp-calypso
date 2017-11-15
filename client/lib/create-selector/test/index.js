@@ -125,6 +125,19 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledTwice;
 	} );
 
+	test( 'should pass the value of the dependent as the last argument to the selector', () => {
+		const post1 = { global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64' };
+		const currentState = {
+			posts: {
+				[ post1.global_ID ]: post1,
+			},
+		};
+		const spy = sinon.spy();
+		const memoizedSelector = createSelector( spy, ( state, postId ) => state.posts[ postId ] );
+		memoizedSelector( currentState, post1.global_ID );
+		expect( spy ).calledWithExactly( currentState, post1.global_ID, post1 );
+	} );
+
 	test( 'should bust the cache when watched state changes', () => {
 		const currentState = {
 			posts: {
