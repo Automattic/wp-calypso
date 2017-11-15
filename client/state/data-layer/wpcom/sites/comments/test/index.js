@@ -19,10 +19,12 @@ import {
 	receiveCommentSuccess,
 	removeCommentStatusErrorNotice,
 } from '../';
-import { COMMENTS_EDIT, COMMENTS_RECEIVE } from 'state/action-types';
+import { COMMENTS_EDIT } from 'state/action-types';
 import {
 	requestComment as requestCommentAction,
 	editComment as editCommentAction,
+	receiveComments as receiveCommentsAction,
+	receiveCommentsError as receiveCommentsErrorAction,
 } from 'state/comments/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -57,12 +59,13 @@ describe( '#addComments', () => {
 		addComments( { dispatch }, { query }, { comments } );
 
 		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch.lastCall ).to.have.been.calledWith( {
-			type: 'COMMENTS_RECEIVE',
-			siteId: query.siteId,
-			postId: 1,
-			comments,
-		} );
+		expect( dispatch.lastCall ).to.have.been.calledWith(
+			receiveCommentsAction( {
+				siteId: query.siteId,
+				postId: 1,
+				comments,
+			} )
+		);
 	} );
 
 	test( 'should dispatch received comments into separate actions per post', () => {
@@ -128,17 +131,12 @@ describe( '#fetchCommentList', () => {
 } );
 
 describe( '#requestComment', () => {
-	let dispatch;
-	beforeEach( () => ( dispatch = spy() ) );
-
 	test( 'should dispatch http action', () => {
 		const siteId = '124';
 		const commentId = '579';
 		const action = requestCommentAction( { siteId, commentId } );
 
-		requestComment( { dispatch }, action );
-
-		expect( dispatch ).calledWith(
+		expect( requestComment( action ) ).eql(
 			http( {
 				method: 'GET',
 				path: `/sites/${ siteId }/comments/${ commentId }`,
@@ -151,51 +149,37 @@ describe( '#requestComment', () => {
 } );
 
 describe( '#receiveCommentSuccess', () => {
-	let dispatch;
-	beforeEach( () => ( dispatch = spy() ) );
-
 	test( 'should dispatch receive comments with a single comment', () => {
 		const siteId = '124';
 		const commentId = '579';
 		const response = { post: { ID: 1 } };
-		const action = requestCommentAction( { siteId, commentId } );
+		const requestAction = requestCommentAction( { siteId, commentId } );
 
-		receiveCommentSuccess( { dispatch }, action, response );
-
-		expect( dispatch ).calledWith( {
-			type: COMMENTS_RECEIVE,
-			siteId,
-			postId: response.post.ID,
-			comments: [ response ],
-			commentById: true,
-		} );
+		const dispatchedAction = receiveCommentSuccess( requestAction, response );
+		expect( dispatchedAction ).eql(
+			receiveCommentsAction( {
+				siteId,
+				postId: response.post.ID,
+				comments: [ response ],
+				commentById: true,
+			} )
+		);
 	} );
 } );
 
 describe( '#receiveCommentError', () => {
-	let dispatch;
-	beforeEach( () => ( dispatch = spy() ) );
-
-	test( 'should dispatch receive comments with a single comment', () => {
+	test( 'should dispatch receive error with a single comment', () => {
 		const siteId = '124';
 		const commentId = '579';
 		const response = { post: { ID: 1 } };
 		const action = requestCommentAction( { siteId, commentId } );
-		const getState = () => ( {
-			reader: {
-				sites: {
-					items: {
-						124: { title: 'sqeeeeee!' },
-					},
-				},
-			},
-		} );
 
-		receiveCommentError( { dispatch, getState }, action, response );
-		expect( dispatch ).to.have.been.calledWithMatch( {
-			siteId,
-			commentId,
-		} );
+		expect( receiveCommentError( action, response ) ).eql(
+			receiveCommentsErrorAction( {
+				siteId,
+				commentId,
+			} )
+		);
 	} );
 } );
 

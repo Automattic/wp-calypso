@@ -12,20 +12,22 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_LIST_REQUEST,
-	COMMENTS_RECEIVE,
 	COMMENT_REQUEST,
-	COMMENTS_RECEIVE_ERROR,
 	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_EDIT,
 } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest, dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import replies from './replies';
 import likes from './likes';
 import { errorNotice, removeNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
 import { getSiteComment } from 'state/selectors';
+import {
+	receiveComments,
+	receiveCommentsError as receiveCommentErrorAction,
+} from 'state/comments/actions';
 
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, status } = action;
@@ -84,38 +86,27 @@ const announceStatusChangeFailure = ( { dispatch }, action ) => {
 	);
 };
 
-export const requestComment = ( store, action ) => {
+export const requestComment = action => {
 	const { siteId, commentId, query } = action;
-	store.dispatch(
-		http( {
-			method: 'GET',
-			path: `/sites/${ siteId }/comments/${ commentId }`,
-			apiVersion: '1.1',
-			query,
-			onSuccess: action,
-			onFailure: action,
-		} )
-	);
+	return http( {
+		method: 'GET',
+		path: `/sites/${ siteId }/comments/${ commentId }`,
+		apiVersion: '1.1',
+		query,
+		onSuccess: action,
+		onFailure: action,
+	} );
 };
 
-export const receiveCommentSuccess = ( store, action, response ) => {
+export const receiveCommentSuccess = ( action, response ) => {
 	const { siteId } = action;
 	const postId = response && response.post && response.post.ID;
-	store.dispatch( {
-		type: COMMENTS_RECEIVE,
-		siteId,
-		postId,
-		comments: [ response ],
-		commentById: true,
-	} );
+	return receiveComments( { siteId, postId, comments: [ response ], commentById: true } );
 };
 
-export const receiveCommentError = ( { dispatch }, { siteId, commentId } ) =>
-	dispatch( {
-		type: COMMENTS_RECEIVE_ERROR,
-		siteId,
-		commentId,
-	} );
+export const receiveCommentError = ( { siteId, commentId } ) => {
+	return receiveCommentErrorAction( { siteId, commentId } );
+};
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
 export const fetchCommentsList = ( { dispatch }, action ) => {
@@ -162,12 +153,13 @@ export const addComments = ( { dispatch }, { query: { siteId, status } }, { comm
 	const byPost = groupBy( comments, ( { post: { ID } } ) => ID );
 
 	forEach( byPost, ( postComments, postId ) =>
-		dispatch( {
-			type: COMMENTS_RECEIVE,
-			siteId,
-			postId: parseInt( postId, 10 ), // keyBy => object property names are strings
-			comments: postComments,
-		} )
+		dispatch(
+			receiveComments( {
+				siteId,
+				postId: parseInt( postId, 10 ), // keyBy => object property names are strings
+				comments: postComments,
+			} )
+		)
 	);
 };
 
@@ -251,7 +243,11 @@ export const fetchHandler = {
 	],
 	[ COMMENTS_LIST_REQUEST ]: [ dispatchRequest( fetchCommentsList, addComments, announceFailure ) ],
 	[ COMMENT_REQUEST ]: [
-		dispatchRequest( requestComment, receiveCommentSuccess, receiveCommentError ),
+		dispatchRequestEx( {
+			fetch: requestComment,
+			onSuccess: receiveCommentSuccess,
+			onError: receiveCommentError,
+		} ),
 	],
 	[ COMMENTS_EDIT ]: [ dispatchRequest( editComment, updateComment, announceEditFailure ) ],
 };

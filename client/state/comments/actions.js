@@ -17,6 +17,8 @@ import {
 	COMMENTS_TREE_SITE_REQUEST,
 	READER_EXPAND_COMMENTS,
 	COMMENTS_SET_ACTIVE_REPLY,
+	COMMENTS_RECEIVE,
+	COMMENTS_RECEIVE_ERROR,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
@@ -32,6 +34,34 @@ export const requestComment = ( { siteId, commentId, query = {} } ) => ( {
 	siteId,
 	commentId,
 	query,
+} );
+
+/**
+ * Creates an action for receiving commenst for a specific post on a site.
+ * @param {Number} siteId site identifier
+ * @param {Number} postId post identifier
+ * @param {Array} comments the list of comments recieved
+ * @param {boolean} commentById were the comments retrieved by id directly
+ * @returns {Object} Action for receiving comments
+ */
+export const receiveComments = ( { siteId, postId, comments, commentById = false } ) => ( {
+	type: COMMENTS_RECEIVE,
+	siteId,
+	postId,
+	comments,
+	commentById,
+} );
+
+/**
+ * Creates an action for receiving comment errors.
+ * @param {Number} siteId site identifier
+ * @param {Number} commentId comment identifier
+ * @returns {Object} Action for receiving comment errors
+ */
+export const receiveCommentsError = ( { siteId, commentId } ) => ( {
+	type: COMMENTS_RECEIVE_ERROR,
+	siteId,
+	commentId,
 } );
 
 /***
