@@ -152,7 +152,11 @@ describe( '#receiveSuccess', () => {
 		const expectedRevisions = cloneDeep( normalizedPostRevisions );
 		if ( isEnabled( 'post-editor/revisions' ) ) {
 			forEach( expectedRevisions, revision => {
-				revision.changes = { added: 2, removed: 0 };
+				revision.summary = { added: 6, removed: 0 };
+				revision.changes = {
+					content: [ { added: true, count: 9, value: '<p>Lorem ipsum</p>' } ],
+					title: [ { added: true, count: 7, value: 'Sed nobis ab earum' } ],
+				};
 			} );
 		}
 
