@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
+import { isExternal } from 'lib/url';
 // actions
 import { sendMessage, sendNotTyping, sendTyping } from 'state/happychat/connection/actions';
 import { blur, focus, setCurrentMessage } from 'state/happychat/ui/actions';
@@ -47,6 +48,7 @@ export class HappychatPage extends Component {
 			currentUserEmail,
 			disabled,
 			isCurrentUser,
+			isExternalUrl,
 			isServerReachable,
 			message,
 			onSendMessage,
@@ -64,6 +66,7 @@ export class HappychatPage extends Component {
 				<Timeline
 					currentUserEmail={ currentUserEmail }
 					isCurrentUser={ isCurrentUser }
+					isExternalUrl={ isExternalUrl }
 					timeline={ timeline }
 					translate={ translate }
 					twemojiUrl={ twemojiUrl }
@@ -94,6 +97,7 @@ HappychatPage.propTypes = {
 	currentUserEmail: PropTypes.string,
 	disabled: PropTypes.bool,
 	isCurrentUser: PropTypes.func,
+	isExternalUrl: PropTypes.func,
 	isServerReachable: PropTypes.bool,
 	message: PropTypes.string,
 	onSendMessage: PropTypes.func,
@@ -119,6 +123,7 @@ const mapState = state => {
 		currentUserEmail: currentUser.email,
 		disabled: ! canUserSendMessages( state ),
 		isCurrentUser: isCurrentUserHelper( currentUser ), // see redux-no-bound-selectors eslint-rule
+		isExternalUrl: isExternal,
 		isServerReachable: isHappychatServerReachable( state ),
 		message: getCurrentMessage( state ),
 		timeline: getHappychatTimeline( state ),

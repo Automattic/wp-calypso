@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
+import { isExternal } from 'lib/url';
 // actions
 import { sendMessage, sendNotTyping, sendTyping } from 'state/happychat/connection/actions';
 import {
@@ -70,6 +71,7 @@ export class Happychat extends Component {
 			disabled,
 			isChatOpen,
 			isCurrentUser,
+			isExternalUrl,
 			isMinimizing,
 			isServerReachable,
 			message,
@@ -95,6 +97,7 @@ export class Happychat extends Component {
 					<Timeline
 						currentUserEmail={ currentUserEmail }
 						isCurrentUser={ isCurrentUser }
+						isExternalUrl={ isExternalUrl }
 						timeline={ timeline }
 						translate={ translate }
 						twemojiUrl={ twemojiUrl }
@@ -127,6 +130,7 @@ Happychat.propTypes = {
 	disabled: PropTypes.bool,
 	isChatOpen: PropTypes.bool,
 	isCurrentUser: PropTypes.func,
+	isExternalUrl: PropTypes.func,
 	isMinimizing: PropTypes.bool,
 	isServerReachable: PropTypes.bool,
 	message: PropTypes.string,
@@ -157,6 +161,7 @@ const mapState = state => {
 		disabled: ! canUserSendMessages( state ),
 		isChatOpen: isHappychatOpen( state ),
 		isCurrentUser: isCurrentUserHelper( currentUser ), // see redux-no-bound-selectors eslint-rule
+		isExternalUrl: isExternal,
 		isMinimizing: isHappychatMinimizing( state ),
 		isServerReachable: isHappychatServerReachable( state ),
 		message: getCurrentMessage( state ),
