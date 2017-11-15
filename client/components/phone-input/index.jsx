@@ -243,6 +243,7 @@ class PhoneInput extends React.PureComponent {
 					name={ this.props.name }
 					ref={ this.setNumberInputRef }
 					type="tel"
+					className={ this.props.isError && 'is-error' }
 				/>
 				<div className="phone-input__select-container">
 					<div className="phone-input__select-inner-container">
