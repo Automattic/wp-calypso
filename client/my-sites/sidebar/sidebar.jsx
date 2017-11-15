@@ -726,6 +726,6 @@ function mapStateToProps( state ) {
 }
 
 // TODO: make this pure when sites can be retrieved from the Redux state
-export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus }, null, {
-	pure: false,
-} )( localize( MySitesSidebar ) );
+export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )(
+	localize( MySitesSidebar )
+);
