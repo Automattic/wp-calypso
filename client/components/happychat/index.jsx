@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ import { blur, focus, closeChat, minimizeChat, minimizedChat } from 'state/happy
 import isHappychatMinimizing from 'state/happychat/selectors/is-happychat-minimizing';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import HappychatConnection from './connection-connected';
-import Title from './title';
+import { Title } from './title';
 import Composer from './composer';
 import Notices from './notices';
 import Timeline from './timeline';
@@ -43,7 +44,7 @@ export class Happychat extends Component {
 	};
 
 	render() {
-		const { isChatOpen, isMinimizing } = this.props;
+		const { isChatOpen, isMinimizing, translate } = this.props;
 
 		return (
 			<div className="happychat">
@@ -54,7 +55,7 @@ export class Happychat extends Component {
 						'is-minimizing': isMinimizing,
 					} ) }
 				>
-					<Title onCloseChat={ this.onCloseChatTitle } />
+					<Title onCloseChat={ this.onCloseChatTitle } translate={ translate } />
 					<Timeline />
 					<Notices />
 					<Composer />
@@ -101,4 +102,4 @@ const mapDispatch = dispatch => {
 	};
 };
 
-export default connect( mapState, mapDispatch )( Happychat );
+export default connect( mapState, mapDispatch )( localize( Happychat ) );

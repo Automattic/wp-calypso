@@ -5,7 +5,6 @@
  */
 import React from 'react';
 import GridIcon from 'gridicons';
-import { localize } from 'i18n-calypso';
 
 /*
  * React component for rendering title bar
@@ -20,5 +19,3 @@ export const Title = ( { onCloseChat, translate } ) => (
 		</div>
 	</div>
 );
-
-export default localize( Title );
