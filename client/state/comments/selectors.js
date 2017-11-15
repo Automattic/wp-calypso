@@ -56,11 +56,7 @@ export const getCommentById = createSelector(
 		);
 		return find( commentsForSite, comment => commentId === comment.ID );
 	},
-	( { state } ) => [
-		state.comments.items,
-		get( state.comments, 'items' ),
-		get( state.comments, 'errors' ),
-	]
+	( { state } ) => [ state.comments.items, state.comments.errors ]
 );
 /***
  * Get total number of comments on the server for a given post
