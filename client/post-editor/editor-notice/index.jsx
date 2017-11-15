@@ -13,6 +13,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import Notice from 'components/notice';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -33,6 +34,14 @@ export class EditorNotice extends Component {
 		status: PropTypes.string,
 		onDismissClick: PropTypes.func,
 		error: PropTypes.object,
+	};
+
+	handlePillExternalClick = () => {
+		analytics.tracks.recordEvent( 'calypso_editor_pill_site_external_click' );
+	};
+
+	handlePillAddAnotherPagePromptClick = () => {
+		analytics.tracks.recordEvent( 'calypso_editor_pill_add_another_page_prompt_click' );
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -112,11 +121,21 @@ export class EditorNotice extends Component {
 					return translate( 'Page published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
 							siteLink: (
-								<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+								<a
+									href={ site.URL }
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={ this.handlePillExternalClick }
+								>
 									{ site.title }
 								</a>
 							),
-							a: <a href={ `/page/${ site.slug }` } />,
+							a: (
+								<a
+									href={ `/page/${ site.slug }` }
+									onClick={ this.handlePillAddAnotherPagePromptClick }
+								/>
+							),
 						},
 						comment:
 							'Editor: Message displayed when a page is published, with a link to the site it was published on.',
@@ -128,7 +147,12 @@ export class EditorNotice extends Component {
 						args: { typeLabel },
 						components: {
 							siteLink: (
-								<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+								<a
+									href={ site.URL }
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={ this.handlePillExternalClick }
+								>
 									{ site.title }
 								</a>
 							),
@@ -141,7 +165,12 @@ export class EditorNotice extends Component {
 				return translate( 'Post published on {{siteLink/}}!', {
 					components: {
 						siteLink: (
-							<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+							<a
+								href={ site.URL }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ this.handlePillExternalClick }
+							>
 								{ site.title }
 							</a>
 						),
@@ -167,7 +196,12 @@ export class EditorNotice extends Component {
 					return translate( 'Page scheduled on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
 							siteLink: (
-								<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+								<a
+									href={ site.URL }
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={ this.handlePillExternalClick }
+								>
 									{ site.title }
 								</a>
 							),
@@ -183,7 +217,12 @@ export class EditorNotice extends Component {
 						args: { typeLabel },
 						components: {
 							siteLink: (
-								<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+								<a
+									href={ site.URL }
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={ this.handlePillExternalClick }
+								>
 									{ site.title }
 								</a>
 							),
@@ -196,7 +235,12 @@ export class EditorNotice extends Component {
 				return translate( 'Post scheduled on {{siteLink/}}!', {
 					components: {
 						siteLink: (
-							<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+							<a
+								href={ site.URL }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ this.handlePillExternalClick }
+							>
 								{ site.title }
 							</a>
 						),
@@ -247,7 +291,12 @@ export class EditorNotice extends Component {
 					return translate( 'Page updated on {{siteLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
 							siteLink: (
-								<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+								<a
+									href={ site.URL }
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={ this.handlePillExternalClick }
+								>
 									{ site.title }
 								</a>
 							),
@@ -263,7 +312,12 @@ export class EditorNotice extends Component {
 						args: { typeLabel },
 						components: {
 							siteLink: (
-								<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+								<a
+									href={ site.URL }
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={ this.handlePillExternalClick }
+								>
 									{ site.title }
 								</a>
 							),
@@ -276,7 +330,12 @@ export class EditorNotice extends Component {
 				return translate( 'Post updated on {{siteLink/}}!', {
 					components: {
 						siteLink: (
-							<a href={ site.URL } target="_blank" rel="noopener noreferrer">
+							<a
+								href={ site.URL }
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ this.handlePillExternalClick }
+							>
 								{ site.title }
 							</a>
 						),

@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import { withoutHttp } from 'lib/url';
 import ClipboardButton from 'components/forms/clipboard-button';
 import FormTextInput from 'components/forms/form-text-input';
@@ -54,6 +55,7 @@ class ClipboardButtonInputExport extends React.Component {
 				isCopied: false,
 			} );
 		}, 4000 );
+		analytics.tracks.recordEvent( 'calypso_editor_clipboard_button_url_copy' );
 	};
 
 	render() {

@@ -12,6 +12,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import SelectDropdown from 'components/select-dropdown';
@@ -52,6 +53,10 @@ class PreviewToolbar extends Component {
 		showSEO: true,
 	};
 
+	handleWebPreviewExternalClick = () => {
+		analytics.tracks.recordEvent( 'calypso_editor_preview_toolbar_external_click' );
+	};
+
 	constructor( props ) {
 		super();
 
@@ -82,6 +87,12 @@ class PreviewToolbar extends Component {
 			translate,
 		} = this.props;
 
+		// @todo: having trouble adding a Tracks event to the onClose event (see **HERE**)
+		// function handleClosePreview() {
+		// 	onClose;
+		// 	analytics.tracks.recordEvent( 'calypso_editor_preview_close_click' );
+		// }
+
 		const selectedDevice = this.devices[ currentDevice ];
 		const devicesToShow = showSEO ? possibleDevices.concat( 'seo' ) : possibleDevices;
 
@@ -93,7 +104,7 @@ class PreviewToolbar extends Component {
 						aria-label={ translate( 'Close preview' ) }
 						className="web-preview__close"
 						data-tip-target="web-preview__close"
-						onClick={ onClose }
+						onClick={ onClose } // **HERE**
 					>
 						<Gridicon icon={ isModalWindow ? 'cross' : 'arrow-left' } />
 					</Button>
@@ -138,6 +149,7 @@ class PreviewToolbar extends Component {
 							href={ externalUrl || previewUrl }
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ this.handleWebPreviewExternalClick }
 						>
 							<Gridicon icon="external" />
 						</Button>
