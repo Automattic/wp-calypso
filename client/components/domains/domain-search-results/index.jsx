@@ -119,7 +119,7 @@ class DomainSearchResults extends React.Component {
 						} );
 
 			if ( this.props.offerUnavailableOption ) {
-				if ( this.props.transferInAllowed ) {
+				if ( this.props.transferInAllowed && ! this.props.isSignupStep ) {
 					availabilityElement = (
 						<Card className="domain-search-results__transfer-card" highlight="info">
 							<div className="domain-search-results__transfer-card-copy">
@@ -212,7 +212,7 @@ class DomainSearchResults extends React.Component {
 					/>
 				);
 
-				if ( this.props.transferInAllowed ) {
+				if ( this.props.transferInAllowed && ! this.props.isSignupStep ) {
 					unavailableOffer = (
 						<DomainTransferSuggestion onButtonClick={ this.props.onClickTransfer } />
 					);

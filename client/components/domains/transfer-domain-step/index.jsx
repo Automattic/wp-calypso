@@ -30,6 +30,9 @@ import Notice from 'components/notice';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import TransferDomainPrecheck from './transfer-domain-precheck';
+import TransferDomainOptions from './transfer-domain-options';
+import support from 'lib/url/support';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -54,6 +57,8 @@ class TransferDomainStep extends React.Component {
 	getDefaultState() {
 		return {
 			searchQuery: this.props.initialQuery || '',
+			domain: null,
+			optionPicker: false,
 		};
 	}
 
@@ -104,14 +109,14 @@ class TransferDomainStep extends React.Component {
 		page( this.getMapDomainUrl() );
 	};
 
-	render() {
+	addTransfer() {
 		const cost = this.props.products.domain_map
 			? this.props.products.domain_map.cost_display
 			: null;
 		const { translate } = this.props;
 
 		return (
-			<div className="transfer-domain-step">
+			<div>
 				{ this.notice() }
 				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="transfer-domain-step__domain-description">
@@ -159,12 +164,46 @@ class TransferDomainStep extends React.Component {
 									components: { a: <a href="#" onClick={ this.goToMapDomainStep } /> },
 								}
 							) }
-							<Gridicon icon="help" size={ 12 } />
+							<a href={ support.MAP_EXISTING_DOMAIN } rel="noopener noreferrer">
+								<Gridicon icon="help" size={ 12 } />
+							</a>
 						</p>
 					</div>
 				</form>
 			</div>
 		);
+	}
+
+	transferDomainPrecheck() {
+		return <TransferDomainPrecheck domain={ this.state.domain } setValid={ this.precheckOk } />;
+	}
+
+	precheckOk = () => {
+		this.setState( { optionPicker: true } );
+	};
+
+	transferDomainOptions() {
+		return (
+			<TransferDomainOptions
+				domain={ this.state.domain }
+				onSubmit={ this.props.onTransferDomain }
+			/>
+		);
+	}
+
+	render() {
+		let content;
+		const { domain, optionPicker } = this.state;
+
+		if ( domain && ! optionPicker ) {
+			content = this.transferDomainPrecheck();
+		} else if ( domain && optionPicker ) {
+			content = this.transferDomainOptions();
+		} else {
+			content = this.addTransfer();
+		}
+
+		return <div className="transfer-domain-step">{ content }</div>;
 	}
 
 	domainRegistrationUpsell() {
@@ -228,7 +267,7 @@ class TransferDomainStep extends React.Component {
 			switch ( status ) {
 				case domainAvailability.MAPPABLE:
 				case domainAvailability.UNKNOWN:
-					this.props.onTransferDomain( domain );
+					this.setState( { domain } );
 					return;
 
 				case domainAvailability.AVAILABLE:
