@@ -5,6 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -48,7 +49,7 @@ class DiscoverSiteAttribution extends React.Component {
 						height="20"
 					/>
 				) : (
-					<span className="noticon noticon-website" />
+					<Gridicon icon="globe" size={ 18 } />
 				) }
 				<span>
 					<a
