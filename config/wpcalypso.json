@@ -142,6 +142,8 @@
 		"upgrades/in-app-purchase": false,
 		"upgrades/paypal": true,
 		"upgrades/netherlands-ideal": true,
+		"upgrades/germany-giropay": true,
+		"upgrades/belgium-bancontact": true,
 		"upgrades/premium-themes": true,
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
