@@ -76,7 +76,7 @@
 		left: 0;
 	width: 100%;
 	padding-top: 12px;
-	padding-bottom: 16px;
+	padding-bottom: 2px;
 	background: $white;
 	color: $gray;
 	cursor: pointer;
@@ -103,17 +103,13 @@
 	}
 }
 
+.plugin-sections__read-more-link .gridicon {
+	display: block;
+	margin: 0 auto;
+}
+
 .plugin-sections__read-more-text {
-	padding: 8px;
-
-	&:before {
-		@include noticon( '\f431', 16px );
-
-		position: absolute;
-		top: 22px;
-		left: 50%;
-		margin-left: -8px;
-	}
+	padding: 8px 8px 0;
 }
 
 .plugin-sections__header .card,
