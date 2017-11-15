@@ -50,11 +50,11 @@ const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
 
 // List of browser languages to show pride styling for.
 // Add a '*' element to show the styling for all visitors.
-const prideLanguages = [ 'en-au' ];
+const prideLanguages = [];
 
 // List of geolocated locations to show pride styling for.
 // Geolocation may not be 100% accurate.
-const prideLocations = [ 'au' ];
+const prideLocations = [];
 
 const sections = sectionsModule.get();
 
