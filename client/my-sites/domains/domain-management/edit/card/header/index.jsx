@@ -18,8 +18,8 @@ import SectionHeader from 'components/section-header';
 class Header extends React.Component {
 	static propTypes = {
 		domain: PropTypes.object.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-		settingPrimaryDomain: PropTypes.bool.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		settingPrimaryDomain: PropTypes.bool,
 	};
 
 	render() {

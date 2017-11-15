@@ -9,7 +9,6 @@ import {
 	flatten,
 	filter,
 	find,
-	findIndex,
 	get,
 	isEmpty,
 	isEqual,
@@ -32,7 +31,6 @@ import { cartItems } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
-import TransferDomainPrecheck from './transfer-domain-precheck';
 import { domainMapping } from 'lib/cart-values/cart-items';
 import { fetchReceiptCompleted } from 'state/receipts/actions';
 import { getExitCheckoutUrl } from 'lib/checkout';
@@ -81,7 +79,6 @@ const Checkout = createReactClass( {
 	getInitialState: function() {
 		return {
 			previousCart: null,
-			domainTransfers: {},
 		};
 	},
 
@@ -439,36 +436,8 @@ const Checkout = createReactClass( {
 		page( redirectPath );
 	},
 
-	setValidTransfer( domain ) {
-		const domainTransfers = {};
-		domainTransfers[ domain ] = true;
-
-		this.setState( {
-			domainTransfers: Object.assign( {}, this.state.domainTransfers, domainTransfers ),
-		} );
-	},
-
 	content: function() {
-		const { cart, selectedSite } = this.props;
-		const { domainTransfers } = this.state;
-
-		if ( ! this.isLoading() && cartItems.hasTransferProduct( this.props.cart ) ) {
-			const domainTransfersCart = cartItems.getDomainTransfers( cart );
-			const index = findIndex( domainTransfersCart, product => {
-				return ! domainTransfers[ product.meta ];
-			} );
-
-			if ( index !== -1 ) {
-				return (
-					<TransferDomainPrecheck
-						total={ domainTransfersCart.length }
-						current={ index }
-						domain={ domainTransfersCart[ index ].meta }
-						setValid={ this.setValidTransfer }
-					/>
-				);
-			}
-		}
+		const { selectedSite } = this.props;
 
 		if ( ! this.isLoading() && this.needsDomainDetails() ) {
 			return (
@@ -512,7 +481,9 @@ const Checkout = createReactClass( {
 		return (
 			cart &&
 			! hasDomainDetails( transaction ) &&
-			( cartItems.hasDomainRegistration( cart ) || cartItems.hasGoogleApps( cart ) )
+			( cartItems.hasDomainRegistration( cart ) ||
+				cartItems.hasGoogleApps( cart ) ||
+				cartItems.hasTransferProduct( cart ) )
 		);
 	},
 

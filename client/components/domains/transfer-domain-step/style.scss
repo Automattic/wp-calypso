@@ -58,3 +58,97 @@
 	font-size: 14px;
 	text-align: center;
 }
+
+.transfer-domain-step__precheck, .transfer-domain-step__options {
+	background: white;
+
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+
+	div {
+		&.foldable-card.card {
+			margin-bottom: 0;
+
+			&.is-expanded {
+				margin-top: 0;
+			}
+		}
+	}
+
+	.transfer-domain-step__section-heading {
+		font-weight: 500;
+	}
+
+	.transfer-domain-step__unlocked {
+		color: $green-jetpack;
+
+		svg {
+			padding-right: 4px;
+		}
+	}
+
+	.transfer-domain-step__section-heading-number {
+		width: 20px;
+		height: 20px;
+		line-height: 20px;
+		display: inline-block;
+		border-radius: 15px;
+		background-color: rgb(68, 68, 68);
+		color: white;
+		font-size: 13px;
+		text-align: center;
+		margin-right: 5px;
+	}
+
+	.transfer-domain-step__continue {
+		font-size: 12px;
+		display: flex;
+		flex: 1 0;
+		align-items: center;
+		justify-content: space-between;
+
+		div {
+			padding-left: 20px;
+		}
+
+		button {
+			margin: 20px;
+
+			&.transfer-domain-step__in-card {
+				margin: 0;
+			}
+		}
+	}
+
+	.foldable-card__content {
+		font-size: 13px;
+	}
+
+	.section-header {
+		font-size: 14px;
+	}
+
+	.hide-secondary {
+		span {
+			&.foldable-card__secondary {
+				flex: 0 1;
+			}
+		}
+	}
+}
+
+.transfer-domain-step__options {
+	label {
+		color: $gray;
+	}
+
+	legend {
+		small {
+			padding-left: 10px;
+			color: $blue-wordpress;
+		}
+
+		color: $gray-dark;
+		margin-bottom: 0;
+		font-size: 15px;
+	}
+}

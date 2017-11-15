@@ -66,12 +66,21 @@ export class TransferDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	handleTransferDomain = domain => {
+	handleTransferDomain = ( domain, nameservers, privacy, dnsImport ) => {
 		const { selectedSiteSlug } = this.props;
 
 		this.setState( { errorMessage: null } );
 
-		upgradesActions.addItem( cartItems.domainTransfer( { domain } ) );
+		upgradesActions.addItem(
+			cartItems.domainTransfer( {
+				domain,
+				extra: {
+					nameservers,
+					privacy,
+					dnsImport,
+				},
+			} )
+		);
 
 		page( '/checkout/' + selectedSiteSlug );
 	};
