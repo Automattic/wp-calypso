@@ -51,8 +51,7 @@ class SettingsTaxesTaxJar extends Component {
 						<p>
 							{ translate(
 								"Your store's taxes are being managed by the {{b}}TaxJar - Sales Tax Automation " +
-									'for WooCommerce plugin{{/b}}. This optional plugin adds automated reporting, filing and multi-nexus ' +
-									'support for your store.',
+									'for WooCommerce{{/b}} plugin. This optional plugin provides features such as:',
 								{
 									components: {
 										b: <strong />,
@@ -60,24 +59,27 @@ class SettingsTaxesTaxJar extends Component {
 								}
 							) }
 						</p>
+						<ul>
+							<li>{ translate( 'Automated reporting & filing' ) }</li>
+							<li>{ translate( 'Multi-nexus support' ) }</li>
+						</ul>
 						<p>
 							{ translate(
-								'You can manage settings, including your personal TaxJar API key, in the plugin settings. '
-							) }
-							<ExternalLink icon href={ adminUrl } rel="noopener noreferrer">
-								{ translate( 'Plugin settings' ) }
-							</ExternalLink>
-						</p>
-						<p>
-							{ translate(
-								"Or, if you don't require those features, you can {{a}}remove this plugin{{/a}} and " +
-									"we'll automatically provide sales tax calculations for your store through WooCommerce Services.",
+								"If you don't need these features we recommend {{a}}removing this plugin{{/a}}. Don't worry, " +
+									"{{b}}we'll still handle sales tax calculations for you{{/b}}.",
 								{
 									components: {
 										a: <a href={ pluginUrl } className="taxes__tax-jar-deactivate" />,
+										b: <strong />,
 									},
 								}
 							) }
+						</p>
+						<p>
+							{ translate( "You can manage this plugin's settings in wp-admin. " ) }
+							<ExternalLink icon href={ adminUrl } rel="noopener noreferrer">
+								{ translate( 'Plugin settings' ) }
+							</ExternalLink>
 						</p>
 					</Card>
 				</div>
