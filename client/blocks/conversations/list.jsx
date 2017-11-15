@@ -17,6 +17,7 @@ import {
 	min,
 	noop,
 	last,
+	find,
 } from 'lodash';
 
 /***
@@ -190,7 +191,10 @@ export class ConversationCommentList extends React.Component {
 			isAutomatticTeamMember( teams ) &&
 			watermark
 		) {
-			const firstUnseenComment = find( sortedComments, comment => watermark <= comment.date );
+			const firstUnseenComment = find(
+				sortedComments,
+				comment => watermark < +new Date( comment.date )
+			);
 			minId = get( firstUnseenComment, 'ID', Infinity );
 		} else {
 			minId = min( commentIds );
