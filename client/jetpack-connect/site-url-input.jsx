@@ -65,6 +65,10 @@ class JetpackConnectSiteUrlInput extends Component {
 		return translate( 'Connecting…' );
 	}
 
+	getTermsOfJetpackSyncUrl() {
+		return 'https://jetpack.com/support/what-data-does-jetpack-sync/';
+	}
+
 	getTermsOfServiceUrl() {
 		return 'https://' + getLocaleSlug() + '.wordpress.com/tos/';
 	}
@@ -73,13 +77,23 @@ class JetpackConnectSiteUrlInput extends Component {
 		return (
 			<p className="jetpack-connect__tos-link">
 				{ this.props.translate(
-					'By connecting your site you agree to our fascinating {{a}}Terms of Service{{/a}}.',
+					'By connecting you agree to our fascinating {{tosLinkText}}Terms of Service{{/tosLinkText}} ' +
+						'and to sync {{syncLinkText}}certain data and settings{{/syncLinkText}} to WordPress.com',
 					{
 						components: {
-							a: (
+							tosLinkText: (
 								<a
 									className="jetpack-connect__tos-link-text"
 									href={ this.getTermsOfServiceUrl() }
+									onClick={ this.props.handleOnClickTos }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+							syncLinkText: (
+								<a
+									className="jetpack-connect__sync-link-text"
+									href={ this.getTermsOfJetpackSyncUrl() }
 									onClick={ this.props.handleOnClickTos }
 									target="_blank"
 									rel="noopener noreferrer"
