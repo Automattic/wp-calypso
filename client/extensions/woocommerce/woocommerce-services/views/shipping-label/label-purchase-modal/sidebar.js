@@ -43,11 +43,11 @@ const Sidebar = ( props ) => {
 				value={ paperSize }
 				updateValue={ onPaperSizeChange }
 				error={ errors.paperSize } />
-			<FormLabel>
+			<FormLabel className="label-purchase-modal__option-email-customer">
 				<FormCheckbox checked={ emailDetails } onChange={ onEmailDetailsChange } />
 				<span>{ translate( 'Email shipment details to the customer' ) }</span>
 			</FormLabel>
-			<FormLabel>
+			<FormLabel className="label-purchase-modal__option-mark-order-fulfilled">
 				<FormCheckbox checked={ fulfillOrder } onChange={ onFulfillOrderChange } />
 				<span>{ translate( 'Mark the order as fulfilled' ) }</span>
 			</FormLabel>

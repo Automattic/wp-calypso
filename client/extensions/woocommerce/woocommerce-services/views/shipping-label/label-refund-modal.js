@@ -17,7 +17,7 @@ import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/sta
 import formatCurrency from 'lib/format-currency';
 
 const RefundDialog = ( props ) => {
-	const { orderId, siteId, refundDialog, created, refundableAmount, currency, labelId, translate, moment } = props;
+	const { orderId, siteId, refundDialog, createdDate, refundableAmount, currency, labelId, translate, moment } = props;
 
 	const getRefundableAmount = () => {
 		return formatCurrency( refundableAmount, currency );
@@ -40,7 +40,7 @@ const RefundDialog = ( props ) => {
 
 	return (
 		<Dialog
-			additionalClassNames="label-refund-modal woocommerce"
+			additionalClassNames="label-refund-modal woocommerce wcc-root"
 			isVisible={ Boolean( refundDialog && refundDialog.labelId === labelId ) }
 			onClose={ onClose }
 			buttons={ buttons }>
@@ -53,7 +53,7 @@ const RefundDialog = ( props ) => {
 			</p>
 			<dl>
 				<dt>{ translate( 'Purchase date' ) }</dt>
-				<dd>{ moment( created ).format( 'MMMM Do YYYY, h:mm a' ) }</dd>
+				<dd>{ moment( createdDate ).format( 'MMMM Do YYYY, h:mm a' ) }</dd>
 
 				<dt>{ translate( 'Amount eligible for refund' ) }</dt>
 				<dd>{ getRefundableAmount() }</dd>
@@ -66,7 +66,7 @@ RefundDialog.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	orderId: PropTypes.number.isRequired,
 	refundDialog: PropTypes.object,
-	created: PropTypes.number,
+	createdDate: PropTypes.number,
 	refundableAmount: PropTypes.number,
 	currency: PropTypes.string,
 	labelId: PropTypes.number,

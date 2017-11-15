@@ -49,25 +49,23 @@
 	&:focus {
 		color: $gray-dark;
 		outline: none;
-
-		.keyboard-navigation & .segmented-control__text {
-			outline: dotted 1px $gray-dark;
-		}
-	}
-
-	.notouch & {
-		&:hover {
-			color: $gray-dark;
-		}
-	}
-
-	.segmented-control__item.is-selected & {
-		border-color: $gray-dark;
-		color: $gray-dark;
 	}
 }
 
+.keyboard-navigation .segmented-control__link:focus .segmented-control__text {
+	outline: dotted 1px $gray-dark;
+}
 
+.segmented-control__item.is-selected .segmented-control__link {
+	border-color: $gray-dark;
+	color: $gray-dark;
+}
+
+.notouch .segmented-control__link {
+	&:hover {
+		color: $gray-dark;
+	}
+}
 
 .segmented-control__text {
 	display: block;
