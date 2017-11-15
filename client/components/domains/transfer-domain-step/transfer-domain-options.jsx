@@ -14,7 +14,6 @@ import { get } from 'lodash';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import SectionHeader from 'components/section-header';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -74,7 +73,7 @@ class TransferDomainOptions extends React.PureComponent {
 
 		return (
 			<div className="transfer-domain-step__options">
-				<SectionHeader>{ headerLabel }</SectionHeader>
+				<Card compact={ true }>{ headerLabel }</Card>
 				<Card>
 					<FormFieldset>
 						<FormLabel>

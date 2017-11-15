@@ -139,17 +139,18 @@
 
 .transfer-domain-step__options {
 	label {
-		color: $gray;
+		color: darken( $gray, 20% );
 	}
 
 	legend {
 		small {
+			font-size: 14px;
 			padding-left: 10px;
 			color: $blue-wordpress;
 		}
 
 		color: $gray-dark;
 		margin-bottom: 0;
-		font-size: 15px;
+		font-size: 16px;
 	}
 }
