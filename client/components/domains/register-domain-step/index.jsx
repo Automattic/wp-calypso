@@ -753,6 +753,9 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	showValidationErrorMessage( domain, error ) {
+		if ( this.props.transferInAllowed && includes( [ domainAvailability.MAPPED ], error ) ) {
+			return;
+		}
 		const { message, severity } = getAvailabilityNotice( domain, error );
 		this.setState( { notice: message, noticeSeverity: severity } );
 	}

@@ -59,7 +59,7 @@ class DomainSearchResults extends React.Component {
 			'domain-search-results__domain-not-available': ! availableDomain,
 		} );
 		const suggestions = this.props.suggestions || [];
-		const { MAPPABLE, UNKNOWN } = domainAvailability;
+		const { MAPPABLE, MAPPED, UNKNOWN } = domainAvailability;
 
 		let availabilityElement, domainSuggestionElement, offer;
 
@@ -85,26 +85,28 @@ class DomainSearchResults extends React.Component {
 			);
 		} else if (
 			suggestions.length !== 0 &&
-			includes( [ MAPPABLE, UNKNOWN ], lastDomainStatus ) &&
+			includes( [ MAPPABLE, MAPPED, UNKNOWN ], lastDomainStatus ) &&
 			this.props.products.domain_map
 		) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
-			if ( isNextDomainFree( this.props.cart ) ) {
-				offer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
-					{ args: { domain }, components }
-				);
-			} else if ( ! this.props.domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
-				offer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
-					{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
-				);
-			} else {
-				offer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} with WordPress.com Premium.{{/small}}',
-					{ args: { domain }, components }
-				);
+			if ( lastDomainStatus !== MAPPED ) {
+				if ( isNextDomainFree( this.props.cart ) ) {
+					offer = translate(
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
+						{ args: { domain }, components }
+					);
+				} else if ( ! this.props.domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
+					offer = translate(
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
+						{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
+					);
+				} else {
+					offer = translate(
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} with WordPress.com Premium.{{/small}}',
+						{ args: { domain }, components }
+					);
+				}
 			}
 
 			const domainUnavailableMessage =
@@ -119,7 +121,11 @@ class DomainSearchResults extends React.Component {
 						} );
 
 			if ( this.props.offerUnavailableOption ) {
-				if ( this.props.transferInAllowed && ! this.props.isSignupStep ) {
+				if (
+					this.props.transferInAllowed &&
+					! this.props.isSignupStep &&
+					includes( [ MAPPABLE, MAPPED ], lastDomainStatus )
+				) {
 					availabilityElement = (
 						<Card className="domain-search-results__transfer-card" highlight="info">
 							<div className="domain-search-results__transfer-card-copy">
