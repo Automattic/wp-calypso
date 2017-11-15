@@ -497,7 +497,16 @@ const Checkout = createReactClass( {
 	},
 
 	paymentMethodsAbTestFilter: function() {
-		// Giropay/Bancontact AB test in Germany and Belgium:
+		// Apply AB test to payment methods, for Giropay And Bancontact
+		// Only run this if the user is eligible for one of these payment methods
+		if (
+			-1 === this.props.paymentMethods.indexOf( 'bancontact' ) &&
+			-1 === this.props.paymentMethods.indexOf( 'giropay' )
+		) {
+			return this.props.paymentMethods;
+		}
+
+		// If not in the 'show' variation, remove bancontact and giropay from the current methods
 		if ( abtest( 'showNewPaymentMethods', this.props.userCountryCode ) !== 'show' ) {
 			return difference( this.props.paymentMethods, [ 'bancontact', 'giropay' ] );
 		}
