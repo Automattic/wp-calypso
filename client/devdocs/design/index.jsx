@@ -29,6 +29,7 @@ import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
 import Buttons from 'components/button/docs/example';
 import Cards from 'components/card/docs/example';
+import Checklist from 'my-sites/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 import Collection from 'devdocs/design/search-collection';
@@ -133,6 +134,7 @@ class DesignAssets extends React.Component {
 					<ButtonGroups />
 					<Buttons componentUsageStats={ componentsUsageStats.button } />
 					<Cards />
+					<Checklist />
 					<ClipboardButtonInput />
 					<ClipboardButtons />
 					<Count />
