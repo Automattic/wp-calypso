@@ -25,6 +25,10 @@ export function createProductUpdateFromPromotion( promotion ) {
 	const { productIds } = promotion.appliesTo || {};
 	const id = productIds && productIds[ 0 ];
 
+	// If dates are null, that means they were enabled but not selected, so use today as default.
+	const startDate = null === promotion.startDate ? new Date().toISOString() : promotion.startDate;
+	const endDate = null === promotion.endDate ? new Date().toISOString() : promotion.endDate;
+
 	if ( ! id ) {
 		throw new Error( 'Cannot create product from promotion, product id not found.' );
 	}
@@ -32,8 +36,8 @@ export function createProductUpdateFromPromotion( promotion ) {
 	return {
 		id,
 		sale_price: promotion.salePrice,
-		date_on_sale_from: promotion.startDate,
-		date_on_sale_to: promotion.endDate,
+		date_on_sale_from: startDate,
+		date_on_sale_to: endDate,
 	};
 }
 
@@ -98,6 +102,9 @@ export function createCouponUpdateFromPromotion( promotion ) {
 	const productIds = ( appliesTo && appliesTo.productIds ) || undefined;
 	const productCategoryIds = ( appliesTo && appliesTo.productCategoryIds ) || undefined;
 
+	// If end date is null, that means it was enabled but not selected, so use today as default.
+	const endDate = null === promotion.endDate ? new Date().toISOString() : promotion.endDate;
+
 	switch ( promotion.type ) {
 		case 'percent':
 			amount = promotion.percentDiscount;
@@ -117,7 +124,7 @@ export function createCouponUpdateFromPromotion( promotion ) {
 		discount_type: discountType,
 		code: promotion.couponCode,
 		amount: amount,
-		date_expires: promotion.endDate,
+		date_expires: endDate,
 		individual_use: promotion.individualUse,
 		usage_limit: promotion.usageLimit,
 		usage_limit_per_user: promotion.usageLimitPerUser,

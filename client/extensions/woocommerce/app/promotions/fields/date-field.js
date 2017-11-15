@@ -12,7 +12,7 @@ import DatePicker from 'components/date-picker';
 import FormField from './form-field';
 
 const DateField = ( props ) => {
-	const { fieldName, explanationText, value, edit, moment } = props;
+	const { fieldName, explanationText, disabledDays, value, edit, moment } = props;
 	const selectedDay = ( value ? new Date( value ) : new Date() );
 
 	const onSelectDay = ( day ) => {
@@ -26,6 +26,7 @@ const DateField = ( props ) => {
 				calendarViewDate={ selectedDay }
 				selectedDay={ selectedDay }
 				onSelectDay={ onSelectDay }
+				disabledDays={ disabledDays }
 			/>
 		</FormField>
 	);

@@ -21,33 +21,33 @@ For each promotion type, a model is returned in the following format:
 	cardModel1: {
 		labelText: translate( 'Card 1' ),
 		fields: {
-			fieldModel1: <promotion field>,
-			fieldModel2: <promotion field>,
+			fieldModel1: <TextField />,
+			fieldModel2: <CurrencyField />,
 		},
 	},
 	cardModel2: {
 		labelText: translate( 'Card 2' ),
 		fields: {
-			fieldModel3: <promotion field>,
-			fieldModel4: <promotion field>,
+			fieldModel3: <NumberField />,
+			fieldModel4: <CheckboxField />,
 		},
 	},
 }
 ```
 
-### Promotion Field Models
+### Promotion Field Components
 
-For each field in a promotion model, there is a model in the following format:
+For each field in a promotion model, there is a component that will be rendered.
+In addition to whatever props are already set on the component from the model,
+the following props will be added at runtime:
 
 ```js
 {
-	component: FormField Component,
-	labelText: string,
-	explanationText: string (optional),
-	placeholderText: string (optional),
-	isRequired: boolean (optional),
-	isEnableable: boolean (optional),
-	defaultValue: any (optional),
+	key: (the field name, for react iteration indexing),
+	value: (the current value of the field),
+	promotion: (the promotion the field belongs to),
+	fieldName: (the field name used),
+	edit: (edit function used to modify upon change, in the form of: function( fieldName, newValue ) ),
+	currency: (the current currency to be used),
 }
 ```
-
