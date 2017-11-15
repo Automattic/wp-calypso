@@ -93,7 +93,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = status( undefined, { type: '@@UNKNOWN_ACTION' } );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).to.deep.equal( false );
 		} );
 
 		test( 'should index setup status by site ID', () => {
