@@ -48,24 +48,8 @@
 	color: inherit;
 }
 
-.site-tools__link:hover {
-	.site-tools__noticon {
-		color: lighten( $gray, 10% );
-	}
-}
 
 .site-tools__option-marker {
 	flex: 0 0 auto;
 	padding-left: 24px;
-}
-
-.site-tools__arrow {
-	transform: rotate( -90deg );
-}
-
-.site-tools__noticon {
-	font-size: 36px;
-	color: lighten( $gray, 20% );
-	line-height: 48px;
-	cursor: pointer;
 }
