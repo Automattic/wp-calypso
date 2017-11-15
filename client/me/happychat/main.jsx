@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 // actions
 import { sendMessage, sendNotTyping, sendTyping } from 'state/happychat/connection/actions';
 import { blur, focus, setCurrentMessage } from 'state/happychat/ui/actions';
@@ -54,6 +55,7 @@ export class HappychatPage extends Component {
 			onSetCurrentMessage,
 			timeline,
 			translate,
+			twemojiUrl,
 		} = this.props;
 
 		return (
@@ -64,6 +66,7 @@ export class HappychatPage extends Component {
 					isCurrentUser={ isCurrentUser }
 					timeline={ timeline }
 					translate={ translate }
+					twemojiUrl={ twemojiUrl }
 				/>
 				<Notices
 					chatStatus={ chatStatus }
@@ -90,7 +93,7 @@ HappychatPage.propTypes = {
 	connectionStatus: PropTypes.string,
 	currentUserEmail: PropTypes.string,
 	disabled: PropTypes.bool,
-	isCurrentUser: PropTypes.bool,
+	isCurrentUser: PropTypes.func,
 	isServerReachable: PropTypes.bool,
 	message: PropTypes.string,
 	onSendMessage: PropTypes.func,
@@ -101,6 +104,7 @@ HappychatPage.propTypes = {
 	setFocused: PropTypes.func,
 	timeline: PropTypes.array,
 	translate: PropTypes.func,
+	twemojiUrl: PropTypes.string,
 };
 
 const isCurrentUserHelper = currentUser => ( { user_id, source } ) => {
@@ -118,6 +122,7 @@ const mapState = state => {
 		isServerReachable: isHappychatServerReachable( state ),
 		message: getCurrentMessage( state ),
 		timeline: getHappychatTimeline( state ),
+		twemojiUrl: config( 'twemoji_cdn_url' ),
 	};
 };
 

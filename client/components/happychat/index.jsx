@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 // actions
 import { sendMessage, sendNotTyping, sendTyping } from 'state/happychat/connection/actions';
 import {
@@ -78,6 +79,7 @@ export class Happychat extends Component {
 			onSetCurrentMessage,
 			timeline,
 			translate,
+			twemojiUrl,
 		} = this.props;
 
 		return (
@@ -95,6 +97,7 @@ export class Happychat extends Component {
 						isCurrentUser={ isCurrentUser }
 						timeline={ timeline }
 						translate={ translate }
+						twemojiUrl={ twemojiUrl }
 					/>
 					<Notices
 						chatStatus={ chatStatus }
@@ -123,7 +126,7 @@ Happychat.propTypes = {
 	currentUserEmail: PropTypes.string,
 	disabled: PropTypes.bool,
 	isChatOpen: PropTypes.bool,
-	isCurrentUser: PropTypes.bool,
+	isCurrentUser: PropTypes.func,
 	isMinimizing: PropTypes.bool,
 	isServerReachable: PropTypes.bool,
 	message: PropTypes.string,
@@ -138,6 +141,7 @@ Happychat.propTypes = {
 	setFocused: PropTypes.func,
 	timeline: PropTypes.array,
 	translate: PropTypes.func,
+	twemojiUrl: PropTypes.string,
 };
 
 const isCurrentUserHelper = currentUser => ( { user_id, source } ) => {
@@ -157,6 +161,7 @@ const mapState = state => {
 		isServerReachable: isHappychatServerReachable( state ),
 		message: getCurrentMessage( state ),
 		timeline: getHappychatTimeline( state ),
+		twemojiUrl: config( 'twemoji_cdn_url' ),
 	};
 };
 
