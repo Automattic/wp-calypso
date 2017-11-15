@@ -1,58 +1,106 @@
-Products Settings
+Email Settings
 ================
 
 This module is used to manage settings for products for a site.
 
 ## Actions
 
-### `fetchSettingsProducts( siteId: number )`
+### `fetchEmailSettings( siteId: number )`
 
-Pull products settings from the remote site. Does not run if the settings are loading or already loaded.
+Pull email settings from the remote site. Does not run if the settings are loading or already loaded.
 
 ## Reducer
 
-This is saved on a per-site basis, either as "LOADING" (when requesting settings), or a list of settings as returned from the site's API.
+This is saved on a per-site basis, either as "LOADING" (when requesting settings), or a list of settings as returned from the site's `settings_email_groups` API.
 
 ```js
 {
 	"settings": {
-		"products": "LOADING",
+		"email": "LOADING",
 	}
 	// or
 	"settings": {
-		"products": [ {
-			"id": "woocommerce_weight_unit",
-			"label": "Weight unit",
-			"description": "This controls what unit you will define weights in.",
-			"type": "select",
-			"default": "kg",
-			"options": {
-				"kg": "kg",
-				"g": "g",
-				"lbs": "lbs",
-				"oz": "oz"
+		"email": [
+			{
+				id: 'woocommerce_email_from_name',
+				value: '',
+				group_id: 'email',
 			},
-			"tip": "This controls what unit you will define weights in.",
-			"value": "lbs",
-		} ]
+			{
+				id: 'woocommerce_email_from_address',
+				value: '',
+				group_id: 'email',
+			},
+			{
+				id: 'enabled',
+				value: 'yes',
+				group_id: 'email_new_order',
+			},
+			{
+				id: 'recipient',
+				value: 'admin_1@test.com',
+				group_id: 'email_new_order',
+			},
+			{
+				id: 'enabled',
+				value: 'yes',
+				group_id: 'email_cancelled_order',
+			},
+			{
+				id: 'recipient',
+				value: '',
+				group_id: 'email_cancelled_order',
+			},
+			{
+				id: 'enabled',
+				value: 'yes',
+				group_id: 'email_failed_order',
+			},
+			{
+				id: 'recipient',
+				value: '',
+				group_id: 'email_failed_order',
+			},
+			{
+				id: 'enabled',
+				value: 'yes',
+				group_id: 'email_customer_on_hold_order',
+			},
+			{
+				id: 'enabled',
+				value: 'yes',
+				group_id: 'email_customer_processing_order',
+			},
+			{
+				id: 'enabled',
+				value: 'yes',
+				group_id: 'email_customer_completed_order',
+			},
+			{
+				id: 'enabled',
+				value: 'yes',
+				group_id: 'email_customer_refunded_order',
+			},
+			{
+				id: 'enabled',
+				value: 'yes',
+				group_id: 'email_customer_new_account',
+			},
+		];
 	}, { … } ],
 }
 ```
 
 ## Selectors
 
-### `areSettingsProductsLoaded( state, [siteId] )`
+### `areEmailSettingsLoaded( state, [siteId] )`
 
-Whether the settings list has been successfully loaded from the server. Optional `siteId`, will default to currently selected site.
+Whether the email settings has been successfully loaded from the server. Optional `siteId`, will default to currently selected site.
 
-### `areSettingsProductsLoading( state, [siteId] )`
+### `areEmailSettingsLoading( state, [siteId] )`
 
-Whether the settings list is currently being retrieved from the server. Optional `siteId`, will default to currently selected site.
+Whether the email settings are currently being retrieved from the server. Optional `siteId`, will default to currently selected site.
 
-### `getWeightUnitSetting( state, siteId: number )`
+### `getEmailSettings( state, siteId: number )`
 
-Gets weight unit setting from API data.
-
-### `getDimensionsUnitSetting( state, siteId: number )`
-
-Gets dimensions unit setting from API data.
+Gets the email settings store in Redux state tree.
