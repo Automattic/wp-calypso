@@ -35,7 +35,7 @@ class EditorRevisionsListItem extends PureComponent {
 				type="button"
 			>
 				<span className="editor-revisions-list__date">
-					<TimeSince date={ revision.date } />
+					<TimeSince date={ revision.date } defaultFormat="lll" />
 				</span>
 
 				{ authorName &&
