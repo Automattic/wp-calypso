@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -100,17 +100,15 @@ class InviteAcceptLoggedIn extends React.Component {
 				<InviteFormHeader { ...this.props.invite } user={ this.props.user } matchEmailError />
 				<div className="invite-accept-logged-in__button-bar">
 					<Button onClick={ this.signInLink } href={ this.props.signInLink }>
-						{ this.props.invite.knownUser ? (
-							this.props.translate( 'Sign In as %(email)s', {
-								context: 'button',
-								args: { email: this.props.invite.sentTo },
-							} )
-						) : (
-							this.props.translate( 'Register as %(email)s', {
-								context: 'button',
-								args: { email: this.props.invite.sentTo },
-							} )
-						) }
+						{ this.props.invite.knownUser
+							? this.props.translate( 'Sign In as %(email)s', {
+									context: 'button',
+									args: { email: this.props.invite.sentTo },
+								} )
+							: this.props.translate( 'Register as %(email)s', {
+									context: 'button',
+									args: { email: this.props.invite.sentTo },
+								} ) }
 					</Button>
 				</div>
 			</Card>

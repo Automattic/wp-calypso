@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -13,7 +13,7 @@ import LikeButton from 'blocks/like-button/button';
 import Card from 'components/card/compact';
 
 class SimpleLikeButtonContainer extends React.PureComponent {
-    state = {
+	state = {
 		liked: !! this.props.liked,
 		count: this.props.likeCount || 0,
 	};
@@ -38,7 +38,7 @@ class SimpleLikeButtonContainer extends React.PureComponent {
 }
 
 class LikeButtons extends React.PureComponent {
-    static displayName = 'LikeButton';
+	static displayName = 'LikeButton';
 
 	render() {
 		return (

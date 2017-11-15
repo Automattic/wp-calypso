@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { numberFormat } from 'i18n-calypso';

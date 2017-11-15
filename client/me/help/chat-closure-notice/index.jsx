@@ -24,11 +24,9 @@ const Notice = localize( ( { translate, closedFrom, closedTo, reason } ) => (
 			{ title( { translate, closedFrom, closedTo, reason } ) }
 		</FormSectionHeading>
 		<div>
-			{ i18n.moment().isBefore( closedFrom ) ? (
-				upcoming( { translate, closedFrom, closedTo, reason } )
-			) : (
-				closed( { translate, closedFrom, closedTo, reason } )
-			) }
+			{ i18n.moment().isBefore( closedFrom )
+				? upcoming( { translate, closedFrom, closedTo, reason } )
+				: closed( { translate, closedFrom, closedTo, reason } ) }
 		</div>
 	</div>
 ) );

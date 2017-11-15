@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -22,7 +22,6 @@ class StatusLabel extends React.PureComponent {
 	static propTypes = {
 		onClick: PropTypes.func,
 		post: PropTypes.object,
-		type: PropTypes.string,
 		advancedStatus: PropTypes.bool,
 	};
 
@@ -30,7 +29,6 @@ class StatusLabel extends React.PureComponent {
 		onClick: null,
 		post: null,
 		advancedStatus: false,
-		type: 'post',
 	};
 
 	state = {

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -13,7 +13,7 @@ import Card from 'components/card';
 import HappinessSupport from 'components/happiness-support';
 
 export default class extends React.Component {
-    static displayName = 'HappinessSupport';
+	static displayName = 'HappinessSupport';
 
 	render() {
 		return (

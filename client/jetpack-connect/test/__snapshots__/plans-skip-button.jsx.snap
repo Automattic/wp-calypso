@@ -11,11 +11,11 @@ exports[`PlansSkipButton should render 1`] = `
   >
     Start with free
     <svg
-      className="gridicon gridicons-arrow-right"
-      height={24}
+      className="gridicon gridicons-arrow-right needs-offset-y"
+      height={18}
       onClick={undefined}
       viewBox="0 0 24 24"
-      width={24}
+      width={18}
       xmlns="http://www.w3.org/2000/svg"
     >
       <g>
@@ -39,11 +39,11 @@ exports[`PlansSkipButton should render arrow-left in rtl mode 1`] = `
   >
     Start with free
     <svg
-      className="gridicon gridicons-arrow-left"
-      height={24}
+      className="gridicon gridicons-arrow-left needs-offset-y"
+      height={18}
       onClick={undefined}
       viewBox="0 0 24 24"
-      width={24}
+      width={18}
       xmlns="http://www.w3.org/2000/svg"
     >
       <g>

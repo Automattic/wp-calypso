@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { isEmpty } from 'lodash';
@@ -25,7 +25,8 @@ class StripeConnectAccount extends Component {
 			lastName: PropTypes.string,
 			logo: PropTypes.string,
 		} ),
-		onDisconnect: PropTypes.func, // TODO - require most of these props in subsequent PR
+		isDeauthorizing: PropTypes.bool.isRequired,
+		onDeauthorize: PropTypes.func.isRequired,
 	};
 
 	renderLogo = () => {
@@ -61,19 +62,17 @@ class StripeConnectAccount extends Component {
 		);
 	};
 
-	// TODO - when we are ready to connect this for-reals, this layer may not be needed
-	onDisconnect = event => {
+	onDeauthorize = event => {
 		event.preventDefault();
-		if ( this.props.onDisconnect ) {
-			this.props.onDisconnect();
-		}
+		this.props.onDeauthorize();
 	};
 
 	renderStatus = () => {
-		const { stripeConnectAccount, translate } = this.props;
+		const { isDeauthorizing, stripeConnectAccount, translate } = this.props;
 		const { isActivated } = stripeConnectAccount;
 
 		let status = null;
+		let deauthorize = null;
 
 		if ( isActivated ) {
 			status = (
@@ -89,12 +88,22 @@ class StripeConnectAccount extends Component {
 			);
 		}
 
+		if ( isDeauthorizing ) {
+			deauthorize = (
+				<span className="stripe__connect-account-disconnect">{ translate( 'Disconnecting' ) }</span>
+			);
+		} else {
+			deauthorize = (
+				<a href="#" className="stripe__connect-account-disconnect" onClick={ this.onDeauthorize }>
+					{ translate( 'Disconnect' ) }
+				</a>
+			);
+		}
+
 		return (
 			<div>
 				{ status }
-				<a href="#" className="stripe__connect-account-disconnect" onClick={ this.onDisconnect }>
-					{ translate( 'Disconnect' ) }
-				</a>
+				{ deauthorize }
 			</div>
 		);
 	};

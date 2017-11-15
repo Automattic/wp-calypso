@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -77,7 +77,7 @@ var suggestions = [
 ];
 
 class TokenFields extends React.PureComponent {
-    static displayName = 'TokenFields';
+	static displayName = 'TokenFields';
 
 	state = {
 		tokenSuggestions: suggestions,

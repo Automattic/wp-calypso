@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -46,7 +46,6 @@ const TableRow = ( { className, isHeader, href, children, ...props } ) => {
 };
 
 TableRow.propTypes = {
-	children: PropTypes.node,
 	className: PropTypes.string,
 	href: PropTypes.string,
 	isHeader: PropTypes.bool,

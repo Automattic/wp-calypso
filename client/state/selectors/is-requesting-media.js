@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import MediaQueryManager from 'lib/query-manager/media';

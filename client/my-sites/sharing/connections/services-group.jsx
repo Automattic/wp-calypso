@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -36,19 +36,17 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 		<div className="sharing-services-group">
 			<SectionHeader label={ title } />
 			<ul className="sharing-services-group__services">
-				{ services.length ? (
-					services.map( service => {
-						const Component = Components.hasOwnProperty( service.ID )
-							? Components[ service.ID ]
-							: Service;
+				{ services.length
+					? services.map( service => {
+							const Component = Components.hasOwnProperty( service.ID )
+								? Components[ service.ID ]
+								: Service;
 
-						return <Component key={ service.ID } service={ service } />;
-					} )
-				) : (
-					times( NUMBER_OF_PLACEHOLDERS, index => (
-						<ServicePlaceholder key={ 'service-placeholder-' + index } />
-					) )
-				) }
+							return <Component key={ service.ID } service={ service } />;
+						} )
+					: times( NUMBER_OF_PLACEHOLDERS, index => (
+							<ServicePlaceholder key={ 'service-placeholder-' + index } />
+						) ) }
 			</ul>
 		</div>
 	);

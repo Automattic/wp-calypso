@@ -1,10 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import jetpackConnectSite from '../jetpack-connect-site';
@@ -20,7 +15,7 @@ describe( '#jetpackConnectSite()', () => {
 	test( 'should default to an empty object', () => {
 		const state = jetpackConnectSite( undefined, {} );
 
-		expect( state ).to.eql( {} );
+		expect( state ).toEqual( {} );
 	} );
 
 	test( 'should add the url and mark it as currently fetching', () => {
@@ -29,16 +24,14 @@ describe( '#jetpackConnectSite()', () => {
 			url: 'https://example.wordpress.com',
 		} );
 
-		expect( state )
-			.to.have.property( 'url' )
-			.to.eql( 'https://example.wordpress.com' );
-		expect( state ).to.have.property( 'isFetching' ).to.be.true;
-		expect( state ).to.have.property( 'isFetched' ).to.be.false;
-		expect( state ).to.have.property( 'isDismissed' ).to.be.false;
-		expect( state ).to.have.property( 'installConfirmedByUser' ).to.be.null;
-		expect( state )
-			.to.have.property( 'data' )
-			.to.eql( {} );
+		expect( state ).toMatchObject( {
+			url: 'https://example.wordpress.com',
+			isFetching: true,
+			isFetched: false,
+			isDismissed: false,
+			installConfirmedByUser: null,
+			data: {},
+		} );
 	} );
 
 	test( 'should mark the url as fetched if it is the current one', () => {
@@ -58,11 +51,11 @@ describe( '#jetpackConnectSite()', () => {
 			}
 		);
 
-		expect( state ).to.have.property( 'isFetching' ).to.be.false;
-		expect( state ).to.have.property( 'isFetched' ).to.be.true;
-		expect( state )
-			.to.have.property( 'data' )
-			.to.eql( data );
+		expect( state ).toMatchObject( {
+			isFetching: false,
+			isFetched: true,
+			data: data,
+		} );
 	} );
 
 	test( 'should not mark the url as fetched if it is not the current one', () => {
@@ -82,8 +75,8 @@ describe( '#jetpackConnectSite()', () => {
 			}
 		);
 
-		expect( state ).to.eql( { url: 'https://automattic.com' } );
-		expect( state ).to.not.have.property( 'isFetched' );
+		expect( state ).toEqual( { url: 'https://automattic.com' } );
+		expect( state ).not.toHaveProperty( 'isFetched' );
 	} );
 
 	test( 'should mark the url as dismissed if it is the current one', () => {
@@ -95,8 +88,10 @@ describe( '#jetpackConnectSite()', () => {
 			}
 		);
 
-		expect( state ).to.have.property( 'installConfirmedByUser' ).to.be.null;
-		expect( state ).to.have.property( 'isDismissed' ).to.be.true;
+		expect( state ).toMatchObject( {
+			installConfirmedByUser: null,
+			isDismissed: true,
+		} );
 	} );
 
 	test( 'should not mark the url as dismissed if it is not the current one', () => {
@@ -108,7 +103,7 @@ describe( '#jetpackConnectSite()', () => {
 			}
 		);
 
-		expect( state ).to.eql( { url: 'https://automattic.com' } );
+		expect( state ).toEqual( { url: 'https://automattic.com' } );
 	} );
 
 	test( 'should schedule a redirect to the url if it is the current one', () => {
@@ -120,7 +115,7 @@ describe( '#jetpackConnectSite()', () => {
 			}
 		);
 
-		expect( state ).to.have.property( 'isRedirecting' ).to.be.true;
+		expect( state ).toMatchObject( { isRedirecting: true } );
 	} );
 
 	test( 'should not schedule a redirect to the url if it is not the current one', () => {
@@ -132,7 +127,7 @@ describe( '#jetpackConnectSite()', () => {
 			}
 		);
 
-		expect( state ).to.eql( { url: 'https://automattic.com' } );
+		expect( state ).toEqual( { url: 'https://automattic.com' } );
 	} );
 
 	test( 'should set the jetpack confirmed status to the new one', () => {
@@ -144,6 +139,6 @@ describe( '#jetpackConnectSite()', () => {
 			}
 		);
 
-		expect( state ).to.have.property( 'installConfirmedByUser' ).to.be.true;
+		expect( state ).toMatchObject( { installConfirmedByUser: true } );
 	} );
 } );

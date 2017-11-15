@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { connect } from 'react-redux';
@@ -77,10 +77,13 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
-import { getSiteOptions, isSiteAutomatedTransfer } from 'state/selectors';
+import { hasSitePendingAutomatedTransfer, isSiteAutomatedTransfer } from 'state/selectors';
 
 function getPurchases( props ) {
-	return ( props.receipt.data && props.receipt.data.purchases ) || [];
+	return [
+		...get( props, 'receipt.data.purchases', [] ),
+		...get( props, 'gsuiteReceipt.data.purchases', [] ),
+	];
 }
 
 function getFailedPurchases( props ) {
@@ -99,6 +102,7 @@ class CheckoutThankYou extends React.Component {
 		failedPurchases: PropTypes.array,
 		productsList: PropTypes.object.isRequired,
 		receiptId: PropTypes.number,
+		gsuiteReceiptId: PropTypes.number,
 		selectedFeature: PropTypes.string,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	};
@@ -106,7 +110,14 @@ class CheckoutThankYou extends React.Component {
 	componentDidMount() {
 		this.redirectIfThemePurchased();
 
-		const { receipt, receiptId, selectedSite, sitePlans } = this.props;
+		const {
+			gsuiteReceipt,
+			gsuiteReceiptId,
+			receipt,
+			receiptId,
+			selectedSite,
+			sitePlans,
+		} = this.props;
 
 		if ( selectedSite && receipt.hasLoadedFromServer && this.hasPlanOrDomainProduct() ) {
 			this.props.refreshSitePlans( selectedSite );
@@ -116,6 +127,15 @@ class CheckoutThankYou extends React.Component {
 
 		if ( receiptId && ! receipt.hasLoadedFromServer && ! receipt.isRequesting ) {
 			this.props.fetchReceipt( receiptId );
+		}
+
+		if (
+			gsuiteReceiptId &&
+			gsuiteReceipt &&
+			! gsuiteReceipt.hasLoadedFromServer &&
+			! gsuiteReceipt.isRequesting
+		) {
+			this.props.fetchReceipt( gsuiteReceiptId );
 		}
 
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
@@ -178,7 +198,8 @@ class CheckoutThankYou extends React.Component {
 
 		return (
 			( ! this.props.selectedSite || this.props.sitePlans.hasLoadedFromServer ) &&
-			this.props.receipt.hasLoadedFromServer
+			this.props.receipt.hasLoadedFromServer &&
+			( ! this.props.gsuiteReceipt || this.props.gsuiteReceipt.hasLoadedFromServer )
 		);
 	};
 
@@ -268,9 +289,9 @@ class CheckoutThankYou extends React.Component {
 			return <RebrandCitiesThankYou receipt={ this.props.receipt } />;
 		}
 
-		const { signupIsStore, isAtomicSite } = this.props;
+		const { hasPendingAT, isAtomicSite } = this.props;
 
-		if ( wasDotcomPlanPurchased && ( signupIsStore || isAtomicSite ) ) {
+		if ( wasDotcomPlanPurchased && ( hasPendingAT || isAtomicSite ) ) {
 			return (
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
@@ -447,15 +468,15 @@ export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
 		const planSlug = getSitePlanSlug( state, siteId );
-		const siteOptions = getSiteOptions( state, siteId );
 
 		return {
 			planSlug,
 			receipt: getReceiptById( state, props.receiptId ),
+			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
 			user: getCurrentUser( state ),
 			userDate: getCurrentUserDate( state ),
-			signupIsStore: get( siteOptions, 'signup_is_store', false ),
+			hasPendingAT: hasSitePendingAutomatedTransfer( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
 		};
 	},

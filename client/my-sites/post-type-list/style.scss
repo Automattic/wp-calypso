@@ -46,3 +46,17 @@
 	max-height: 100%;
 	max-width: none;
 }
+
+
+.post-type-list__max-pages-notice {
+	text-align: center;
+	margin: 16px 0;
+	font-size: 14px;
+	color: $gray-text-min;
+}
+
+a.post-type-list__max-pages-notice-link {
+	cursor: pointer;
+	color: $gray-text-min;
+	text-decoration: underline;
+}

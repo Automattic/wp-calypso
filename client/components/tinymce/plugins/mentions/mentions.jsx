@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -263,16 +263,16 @@ export class Mentions extends Component {
 			<div ref={ this.setPopoverContext }>
 				<QueryUsersSuggestions siteId={ siteId } />
 				{ this.matchingSuggestions.length > 0 &&
-				showPopover && (
-					<SuggestionList
-						query={ query }
-						suggestions={ this.matchingSuggestions }
-						selectedSuggestionId={ selectedSuggestionId }
-						popoverContext={ popoverContext }
-						onClick={ this.insertSuggestion }
-						onClose={ this.hidePopover }
-					/>
-				) }
+					showPopover && (
+						<SuggestionList
+							query={ query }
+							suggestions={ this.matchingSuggestions }
+							selectedSuggestionId={ selectedSuggestionId }
+							popoverContext={ popoverContext }
+							onClick={ this.insertSuggestion }
+							onClose={ this.hidePopover }
+						/>
+					) }
 			</div>
 		);
 	}

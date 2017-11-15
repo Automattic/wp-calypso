@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -157,26 +157,22 @@ class EasyTab extends Component {
 									<ul className="wp-super-cache__cache-test-results">
 										{ Object.keys( attempts ).map( key => (
 											<li className="wp-super-cache__cache-test-results-item" key={ key }>
-												{ key === 'prime' ? (
-													translate( 'Fetching %(url)s to prime cache', {
-														args: { url: site && site.URL },
-													} )
-												) : (
-													translate( 'Fetching %(key)s copy of %(url)s', {
-														args: {
-															key: key,
-															url: site && site.URL,
-														},
-													} )
-												) }
+												{ key === 'prime'
+													? translate( 'Fetching %(url)s to prime cache', {
+															args: { url: site && site.URL },
+														} )
+													: translate( 'Fetching %(key)s copy of %(url)s', {
+															args: {
+																key: key,
+																url: site && site.URL,
+															},
+														} ) }
 												<Gridicon
 													className="wp-super-cache__cache-test-results-icon"
 													icon={
-														get( attempts[ key ], 'status', false ) ? (
-															'checkmark-circle'
-														) : (
-															'cross-circle'
-														)
+														get( attempts[ key ], 'status', false )
+															? 'checkmark-circle'
+															: 'cross-circle'
 													}
 													size={ 24 }
 												/>
@@ -208,17 +204,17 @@ class EasyTab extends Component {
 							{ translate( 'Delete Cache' ) }
 						</Button>
 						{ site.jetpack &&
-						site.is_multisite && (
-							<Button
-								compact
-								busy={ this.state.isDeletingAll }
-								disabled={ isDeleting || isReadOnly }
-								name="wp_delete_all_cache"
-								onClick={ this.deleteAllCaches }
-							>
-								{ translate( 'Delete Cache On All Blogs' ) }
-							</Button>
-						) }
+							site.is_multisite && (
+								<Button
+									compact
+									busy={ this.state.isDeletingAll }
+									disabled={ isDeleting || isReadOnly }
+									name="wp_delete_all_cache"
+									onClick={ this.deleteAllCaches }
+								>
+									{ translate( 'Delete Cache On All Blogs' ) }
+								</Button>
+							) }
 					</div>
 				</Card>
 				<QueryStatus siteId={ siteId } />

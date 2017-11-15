@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -57,7 +57,6 @@ function renderValidationError( message ) {
 
 class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
-		children: PropTypes.node,
 		contactDetails: PropTypes.object,
 		contactDetailsValidationErrors: PropTypes.object,
 		isVisible: PropTypes.bool,
@@ -138,19 +137,17 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 				{ 'organization' === registrantType && this.renderOrganizationFields() }
 
-				{ formIsValid ? (
-					this.props.children
-				) : (
-					map(
-						castArray( this.props.children ),
-						child =>
-							child.props.className.match( /submit-button/ )
-								? React.cloneElement( child, {
-										disabled: true,
-									} )
-								: child
-					)
-				) }
+				{ formIsValid
+					? this.props.children
+					: map(
+							castArray( this.props.children ),
+							child =>
+								child.props.className.match( /submit-button/ )
+									? React.cloneElement( child, {
+											disabled: true,
+										} )
+									: child
+						) }
 			</form>
 		);
 	}

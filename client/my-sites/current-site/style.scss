@@ -94,7 +94,7 @@
 }
 
 .current-site__switch-sites {
-	background: $sidebar-bg-color;
+	background: var( --current-site-switch-sites-background );
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 	display: block;
 	box-sizing: border-box;

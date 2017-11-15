@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -173,26 +173,26 @@ class StatsDatePicker extends Component {
 					<div className="stats-section-title">
 						<h3>{ sectionTitle }</h3>
 						{ showQueryDate &&
-						isAutoRefreshAllowedForQuery( query ) && (
-							<div
-								className="stats-date-picker__refresh-status"
-								ref={ this.bindStatusIndicator }
-								onMouseEnter={ this.showTooltip }
-								onMouseLeave={ this.hideTooltip }
-							>
-								<span className="stats-date-picker__update-date">
-									{ this.renderQueryDate() }
-									<Tooltip
-										isVisible={ this.state.isTooltipVisible }
-										onClose={ this.hideTooltip }
-										position="bottom"
-										context={ this.statusIndicator }
-									>
-										{ translate( 'Auto-refreshing every 3 minutes' ) }
-									</Tooltip>
-								</span>
-							</div>
-						) }
+							isAutoRefreshAllowedForQuery( query ) && (
+								<div
+									className="stats-date-picker__refresh-status"
+									ref={ this.bindStatusIndicator }
+									onMouseEnter={ this.showTooltip }
+									onMouseLeave={ this.hideTooltip }
+								>
+									<span className="stats-date-picker__update-date">
+										{ this.renderQueryDate() }
+										<Tooltip
+											isVisible={ this.state.isTooltipVisible }
+											onClose={ this.hideTooltip }
+											position="bottom"
+											context={ this.statusIndicator }
+										>
+											{ translate( 'Auto-refreshing every 3 minutes' ) }
+										</Tooltip>
+									</span>
+								</div>
+							) }
 					</div>
 				) }
 			</div>

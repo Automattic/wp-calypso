@@ -1,11 +1,12 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import {
 	ZONINATOR_REQUEST_FEED,
+	ZONINATOR_REQUEST_FEED_ERROR,
 	ZONINATOR_SAVE_FEED,
 	ZONINATOR_UPDATE_FEED,
 } from '../action-types';
@@ -24,11 +25,24 @@ export const requestFeed = ( siteId, zoneId ) => ( {
 } );
 
 /**
+ * Returns an action object to indicate that an error was received when fetching a feed.
+ *
+ * @param  {Number} siteId Site ID
+ * @param  {Number} zoneId Zone ID
+ * @return {Action}        Action object
+ */
+export const requestFeedError = ( siteId, zoneId ) => ( {
+	type: ZONINATOR_REQUEST_FEED_ERROR,
+	siteId,
+	zoneId,
+} );
+
+/**
  * Returns an action object to indicate that the feed should be saved.
  *
  * @param  {Number} siteId  Site ID
  * @param  {Number} zoneId  Zone ID
- * @param  {String} zoneId  Form name
+ * @param  {String} form    Form name
  * @param  {Array}  posts   Feed posts
  * @return {Object}         Action object
  */

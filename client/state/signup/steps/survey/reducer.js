@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { SIGNUP_STEPS_SURVEY_SET, SIGNUP_COMPLETE_RESET } from 'state/action-types';

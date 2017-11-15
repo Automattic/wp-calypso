@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -23,7 +23,7 @@ import ZoneDetailsForm from '../../forms/zone-details-form';
 import ZoneNotFound from './zone-not-found';
 import { saveFeed } from '../../../state/feeds/actions';
 import { deleteZone, saveZone } from '../../../state/zones/actions';
-import { getFeed } from '../../../state/feeds/selectors';
+import { getFeed, isRequestingFeed } from '../../../state/feeds/selectors';
 import { getZone, isRequestingZones } from '../../../state/zones/selectors';
 import { settingsPath } from '../../../app/util';
 
@@ -31,7 +31,8 @@ class Zone extends Component {
 	static propTypes = {
 		deleteZone: PropTypes.func.isRequired,
 		feed: PropTypes.array,
-		isRequesting: PropTypes.bool,
+		requestingFeed: PropTypes.bool,
+		requestingZones: PropTypes.bool,
 		saveFeed: PropTypes.func.isRequired,
 		saveZone: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
@@ -58,7 +59,7 @@ class Zone extends Component {
 		this.props.saveFeed( this.props.siteId, this.props.zoneId, form, data.posts );
 
 	renderContent() {
-		const { feed, siteSlug, translate, zone } = this.props;
+		const { feed, requestingFeed, requestingZones, siteSlug, translate, zone } = this.props;
 		const { showDeleteDialog } = this.state;
 
 		if ( ! zone ) {
@@ -77,12 +78,14 @@ class Zone extends Component {
 
 				<ZoneDetailsForm
 					label={ translate( 'Zone label' ) }
+					requesting={ requestingZones }
 					onSubmit={ this.saveZoneDetails }
 					initialValues={ zone }
 				/>
 
 				<ZoneContentForm
 					label={ translate( 'Zone content' ) }
+					requesting={ requestingFeed }
 					onSubmit={ this.saveZoneFeed }
 					initialValues={ { posts: feed } }
 				/>
@@ -91,7 +94,7 @@ class Zone extends Component {
 	}
 
 	render() {
-		const { isRequesting, siteId, siteSlug, translate, zone, zoneId } = this.props;
+		const { requestingZones, siteId, siteSlug, translate, zone, zoneId } = this.props;
 
 		const deleteButton = (
 			<Button compact primary scary onClick={ this.showDeleteDialog }>
@@ -110,7 +113,7 @@ class Zone extends Component {
 					{ translate( 'Edit zone' ) }
 				</HeaderCake>
 
-				{ ! isRequesting && this.renderContent() }
+				{ ! requestingZones && this.renderContent() }
 			</div>
 		);
 	}
@@ -121,7 +124,8 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			isRequesting: isRequestingZones( state, siteId ),
+			requestingFeed: isRequestingFeed( state, siteId, zoneId ),
+			requestingZones: isRequestingZones( state, siteId ),
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
 			zone: getZone( state, siteId, zoneId ),

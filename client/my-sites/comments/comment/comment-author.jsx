@@ -12,25 +12,37 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
 import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
-import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { decodeEntities } from 'lib/formatting';
-import { gmtOffset, timezone } from 'lib/site/utils';
 import { urlToDomainAndPath } from 'lib/url';
 import { getSiteComment } from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 export class CommentAuthor extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
-		isExpanded: PropTypes.bool,
+		isBulkMode: PropTypes.bool,
+		isPostView: PropTypes.bool,
+	};
+
+	commentHasLink = () => {
+		if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
+			const parser = new DOMParser();
+			const commentDom = parser.parseFromString( this.props.commentContent, 'text/html' );
+
+			return !! commentDom.getElementsByTagName( 'a' ).length;
+		}
+
+		return false;
 	};
 
 	render() {
 		const {
+			authorAvatarUrl,
 			authorDisplayName,
 			authorUrl,
 			commentDate,
@@ -38,54 +50,61 @@ export class CommentAuthor extends Component {
 			commentType,
 			commentUrl,
 			gravatarUser,
-			isExpanded,
+			isBulkMode,
+			isPostView,
 			moment,
-			site,
 			translate,
 		} = this.props;
 
-		const localizedDate = convertDateToUserLocation(
-			commentDate || moment(),
-			timezone( site ),
-			gmtOffset( site )
-		);
-
-		const formattedDate = localizedDate.format( 'll LT' );
+		const formattedDate = moment( commentDate ).format( 'll LT' );
 
 		const relativeDate = moment()
 			.subtract( 1, 'month' )
-			.isBefore( localizedDate )
-			? localizedDate.fromNow()
-			: localizedDate.format( 'll' );
+			.isBefore( commentDate )
+			? moment( commentDate ).fromNow()
+			: moment( commentDate ).format( 'll' );
 
 		return (
 			<div className="comment__author">
 				<div className="comment__author-avatar">
 					{ /* A comment can be of type 'comment', 'pingback' or 'trackback'. */ }
-					{ 'comment' === commentType && <Gravatar user={ gravatarUser } /> }
+					{ 'comment' === commentType && !! authorAvatarUrl && <Gravatar user={ gravatarUser } /> }
+					{ 'comment' === commentType &&
+						! authorAvatarUrl && <span className="comment__author-gravatar-placeholder" /> }
 					{ 'comment' !== commentType && <Gridicon icon="link" size={ 24 } /> }
 				</div>
 
 				<div className="comment__author-info">
 					<div className="comment__author-info-element">
+						{ this.commentHasLink() && (
+							<Gridicon icon="link" size={ 18 } className="comment__author-has-link" />
+						) }
 						<strong className="comment__author-name">
 							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
 						</strong>
-						{ ! isExpanded && <CommentPostLink { ...{ commentId } } /> }
+						{ isBulkMode && ! isPostView && <CommentPostLink { ...{ commentId, isBulkMode } } /> }
 					</div>
 
 					<div className="comment__author-info-element">
 						<span className="comment__date">
-							<ExternalLink href={ commentUrl }>
-								{ isExpanded ? formattedDate : relativeDate }
-							</ExternalLink>
+							{ isEnabled( 'comments/management/comment-view' ) ? (
+								<a href={ commentUrl } title={ formattedDate }>
+									{ relativeDate }
+								</a>
+							) : (
+								<ExternalLink href={ commentUrl } title={ formattedDate }>
+									{ relativeDate }
+								</ExternalLink>
+							) }
 						</span>
-						<span className="comment__author-url">
-							<span className="comment__author-url-separator">&middot;</span>
-							<ExternalLink href={ authorUrl }>
-								<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
-							</ExternalLink>
-						</span>
+						{ authorUrl && (
+							<span className="comment__author-url">
+								<span className="comment__author-url-separator">&middot;</span>
+								<ExternalLink href={ authorUrl }>
+									<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
+								</ExternalLink>
+							</span>
+						) }
 					</div>
 				</div>
 			</div>
@@ -94,10 +113,9 @@ export class CommentAuthor extends Component {
 }
 
 const mapStateToProps = ( state, { commentId } ) => {
-	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const comment = getSiteComment( state, siteId, commentId );
-
 	const authorAvatarUrl = get( comment, 'author.avatar_URL' );
 	const authorDisplayName = decodeEntities( get( comment, 'author.name' ) );
 	const gravatarUser = { avatar_URL: authorAvatarUrl, display_name: authorDisplayName };
@@ -106,11 +124,13 @@ const mapStateToProps = ( state, { commentId } ) => {
 		authorAvatarUrl,
 		authorDisplayName,
 		authorUrl: get( comment, 'author.URL', '' ),
+		commentContent: get( comment, 'content' ),
 		commentDate: get( comment, 'date' ),
 		commentType: get( comment, 'type', 'comment' ),
-		commentUrl: get( comment, 'URL' ),
+		commentUrl: isEnabled( 'comments/management/comment-view' )
+			? `/comment/${ siteSlug }/${ commentId }`
+			: get( comment, 'URL' ),
 		gravatarUser,
-		site,
 	};
 };
 

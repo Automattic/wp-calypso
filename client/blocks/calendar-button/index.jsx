@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -17,7 +17,6 @@ import AsyncLoad from 'components/async-load';
 
 class CalendarButton extends Component {
 	static propTypes = {
-		children: PropTypes.element,
 		icon: PropTypes.string,
 		popoverPosition: PropTypes.string,
 		type: PropTypes.string,

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -82,6 +82,7 @@ class Signup extends React.Component {
 			user: user.get(),
 			loginHandler: null,
 			hasCartItems: false,
+			plans: false,
 		};
 	}
 
@@ -201,12 +202,19 @@ class Signup extends React.Component {
 	}
 
 	componentWillReceiveProps( { signupDependencies, stepName } ) {
+		const urlPath = location.href;
+		const query = url.parse( urlPath, true ).query;
+
 		if ( this.props.stepName !== stepName ) {
 			this.recordStep( stepName );
 		}
 
 		if ( stepName === this.state.resumingStep ) {
 			this.setState( { resumingStep: undefined } );
+		}
+
+		if ( query.plans ) {
+			this.setState( { plans: true } );
 		}
 
 		this.checkForCartItems( signupDependencies );
@@ -348,7 +356,9 @@ class Signup extends React.Component {
 		);
 	};
 
-	goToStep = ( stepName, stepSectionName ) => {
+	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
+	// to `store-nux`. If not specified, the current flow (`this.props.flowName`) continues.
+	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
 		if ( this.state.scrolling ) {
 			return;
 		}
@@ -370,23 +380,28 @@ class Signup extends React.Component {
 		// redirect the user to the next step
 		scrollPromise.then( () => {
 			if ( ! this.isEveryStepSubmitted() ) {
-				page(
-					utils.getStepUrl( this.props.flowName, stepName, stepSectionName, this.props.locale )
-				);
+				if ( flowName !== this.props.flowName ) {
+					// if flow is being changed, tell SignupFlowController about the change and save
+					// a new value of `signupFlowName` to local storage.
+					this.signupFlowController.changeFlowName( flowName );
+				}
+				page( utils.getStepUrl( flowName, stepName, stepSectionName, this.props.locale ) );
 			} else if ( this.isEveryStepSubmitted() ) {
 				this.goToFirstInvalidStep();
 			}
 		} );
 	};
 
-	goToNextStep = () => {
-		const flowSteps = flows.getFlow( this.props.flowName, this.props.stepName ).steps,
+	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
+	// to `store-nux`. If not specified, the current flow (`this.props.flowName`) continues.
+	goToNextStep = ( nextFlowName = this.props.flowName ) => {
+		const flowSteps = flows.getFlow( nextFlowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
 			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
 			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
-		this.goToStep( nextStepName, nextStepSection );
+		this.goToStep( nextStepName, nextStepSection, nextFlowName );
 	};
 
 	goToFirstInvalidStep = () => {
@@ -451,10 +466,11 @@ class Signup extends React.Component {
 			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
 			flow = flows.getFlow( this.props.flowName ),
 			hideFreePlan = !! (
-				this.props.signupDependencies &&
-				this.props.signupDependencies.domainItem &&
-				this.props.signupDependencies.domainItem.is_domain_registration &&
-				this.props.domainsWithPlansOnly
+				this.state.plans ||
+				( this.props.signupDependencies &&
+					this.props.signupDependencies.domainItem &&
+					this.props.signupDependencies.domainItem.is_domain_registration &&
+					this.props.domainsWithPlansOnly )
 			);
 
 		return (

@@ -1,13 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { findIndex, map } from 'lodash';
+import { findIndex, map, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,12 +15,14 @@ import { findIndex, map } from 'lodash';
 import FormFieldset from 'components/forms/form-fieldset';
 import SortableList from 'components/forms/sortable-list';
 import PostCard from './post-card';
+import PostPlaceholder from './post-placeholder';
 import RecentPostsDropdown from '../../recent-posts-dropdown';
 import SearchAutocomplete from './../../search-autocomplete';
 
 class PostsList extends Component {
 	static propTypes = {
 		fields: PropTypes.object.isRequired,
+		requesting: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -53,9 +55,8 @@ class PostsList extends Component {
 	};
 
 	render() {
-		const { fields, translate } = this.props;
+		const { fields, requesting, translate } = this.props;
 		const posts = fields.getAll() || [];
-		const showPosts = posts.length > 0;
 
 		const explanationTextClass = 'zoninator__zone-text';
 
@@ -78,20 +79,27 @@ class PostsList extends Component {
 					</SearchAutocomplete>
 				</FormFieldset>
 
-				{ showPosts && (
-					<FormFieldset>
-						<p className={ explanationTextClass }>
-							{ translate(
-								"You can reorder the zone's content by dragging it to a different location on the list."
-							) }
-						</p>
-						<SortableList direction="vertical" onChange={ this.changePostOrder( fields ) }>
-							{ posts.map( ( post, index ) => (
-								<PostCard key={ index } post={ post } remove={ this.removePost( fields, index ) } />
-							) ) }
-						</SortableList>
-					</FormFieldset>
-				) }
+				{ !! posts.length &&
+					! requesting && (
+						<FormFieldset>
+							<p className={ explanationTextClass }>
+								{ translate(
+									"You can reorder the zone's content by dragging it to a different location on the list."
+								) }
+							</p>
+							<SortableList direction="vertical" onChange={ this.changePostOrder( fields ) }>
+								{ posts.map( ( post, index ) => (
+									<PostCard
+										key={ index }
+										post={ post }
+										remove={ this.removePost( fields, index ) }
+									/>
+								) ) }
+							</SortableList>
+						</FormFieldset>
+					) }
+
+				{ requesting && times( 3, index => <PostPlaceholder key={ index } /> ) }
 			</div>
 		);
 	}

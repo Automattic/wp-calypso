@@ -1,10 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -12,12 +14,18 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import AuthCaptureToggle from 'woocommerce/components/auth-capture-toggle';
+import { deauthorizeAccount } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
-import { getStripeSampleStatementDescriptor } from './payment-method-stripe-utils.js';
+import {
+	getIsDeauthorizing,
+	getStripeConnectAccount,
+} from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getStripeSampleStatementDescriptor } from './payment-method-stripe-utils';
 import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
 import StripeConnectAccount from './payment-method-stripe-connect-account';
 
@@ -68,6 +76,11 @@ class PaymentMethodStripeConnectedDialog extends Component {
 		this.props.onEditField( { target: { name: 'capture', value: 'yes' } } );
 	};
 
+	onDeauthorize = () => {
+		const { siteId } = this.props;
+		this.props.deauthorizeAccount( siteId );
+	};
+
 	renderMoreSettings = () => {
 		const { domain, method, onEditField, translate } = this.props;
 		const sampleDescriptor = getStripeSampleStatementDescriptor( domain );
@@ -111,15 +124,23 @@ class PaymentMethodStripeConnectedDialog extends Component {
 	};
 
 	getButtons = () => {
-		const { onCancel, onDone, stripeConnectAccount, translate } = this.props;
+		const { onCancel, onDone, isDeauthorizing, stripeConnectAccount, translate } = this.props;
 
 		const buttons = [];
 
+		const disabled = isDeauthorizing;
+
 		if ( stripeConnectAccount.isActivated ) {
-			buttons.push( { action: 'cancel', label: translate( 'Cancel' ), onClick: onCancel } );
+			buttons.push( {
+				action: 'cancel',
+				disabled,
+				label: translate( 'Cancel' ),
+				onClick: onCancel,
+			} );
 
 			buttons.push( {
 				action: 'save',
+				disabled,
 				label: translate( 'Done' ),
 				onClick: onDone,
 				isPrimary: true,
@@ -127,6 +148,7 @@ class PaymentMethodStripeConnectedDialog extends Component {
 		} else {
 			buttons.push( {
 				action: 'cancel',
+				disabled,
 				label: translate( 'Close' ),
 				onClick: onCancel,
 				isPrimary: true,
@@ -137,7 +159,7 @@ class PaymentMethodStripeConnectedDialog extends Component {
 	};
 
 	render() {
-		const { stripeConnectAccount, translate } = this.props;
+		const { isDeauthorizing, stripeConnectAccount, translate } = this.props;
 
 		return (
 			<Dialog
@@ -146,11 +168,38 @@ class PaymentMethodStripeConnectedDialog extends Component {
 				isVisible
 			>
 				<div className="stripe__method-edit-header">{ translate( 'Manage Stripe' ) }</div>
-				<StripeConnectAccount stripeConnectAccount={ stripeConnectAccount } />
+				<StripeConnectAccount
+					isDeauthorizing={ isDeauthorizing }
+					onDeauthorize={ this.onDeauthorize }
+					stripeConnectAccount={ stripeConnectAccount }
+				/>
 				{ stripeConnectAccount.isActivated && this.renderMoreSettings() }
 			</Dialog>
 		);
 	}
 }
 
-export default localize( PaymentMethodStripeConnectedDialog );
+function mapStateToProps( state ) {
+	const site = getSelectedSiteWithFallback( state );
+	const siteId = site.ID || false;
+	const isDeauthorizing = getIsDeauthorizing( state, siteId );
+	const stripeConnectAccount = getStripeConnectAccount( state, siteId );
+	return {
+		isDeauthorizing,
+		siteId,
+		stripeConnectAccount,
+	};
+}
+
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			deauthorizeAccount,
+		},
+		dispatch
+	);
+}
+
+export default localize(
+	connect( mapStateToProps, mapDispatchToProps )( PaymentMethodStripeConnectedDialog )
+);

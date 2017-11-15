@@ -37,6 +37,7 @@ const staticFiles = [
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
 	{ path: 'style-rtl.css' },
+	{ path: 'style-debug-rtl.css' },
 ];
 
 const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
@@ -165,7 +166,7 @@ function getDefaultContext( request ) {
 		bodyClasses.push( 'pride' );
 	}
 
-	if ( request.context.sectionCss ) {
+	if ( request.context && request.context.sectionCss ) {
 		const urls = utils.getCssUrls( request.context.sectionCss );
 		sectionCss = urls.ltr;
 		sectionCssRtl = urls.rtl;

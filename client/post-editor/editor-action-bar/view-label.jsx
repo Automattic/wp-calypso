@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -34,8 +34,8 @@ function EditorActionBarViewLabel( { translate, siteId, typeSlug, type } ) {
 	return (
 		<span className="editor-action-bar__view-label">
 			{ siteId &&
-			'page' !== typeSlug &&
-			'post' !== typeSlug && <QueryPostTypes siteId={ siteId } /> }
+				'page' !== typeSlug &&
+				'post' !== typeSlug && <QueryPostTypes siteId={ siteId } /> }
 			{ label }
 		</span>
 	);

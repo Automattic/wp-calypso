@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -219,11 +219,9 @@ class SiteSettingsFormDiscussion extends Component {
 				id="close_comments_days_old"
 				className="small-text"
 				value={
-					'undefined' === typeof fields.close_comments_days_old ? (
-						14
-					) : (
-						fields.close_comments_days_old
-					)
+					'undefined' === typeof fields.close_comments_days_old
+						? 14
+						: fields.close_comments_days_old
 				}
 				onChange={ onChangeField( 'close_comments_days_old' ) }
 				disabled={ isRequestingSettings || isSavingSettings }
@@ -613,21 +611,21 @@ class SiteSettingsFormDiscussion extends Component {
 				</Card>
 
 				{ isJetpack &&
-				jetpackSettingsUISupported && (
-					<div>
-						<QueryJetpackModules siteId={ siteId } />
+					jetpackSettingsUISupported && (
+						<div>
+							<QueryJetpackModules siteId={ siteId } />
 
-						{ this.renderSectionHeader( translate( 'Subscriptions' ), false ) }
+							{ this.renderSectionHeader( translate( 'Subscriptions' ), false ) }
 
-						<Subscriptions
-							onSubmitForm={ handleSubmitForm }
-							handleAutosavingToggle={ handleAutosavingToggle }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							fields={ fields }
-						/>
-					</div>
-				) }
+							<Subscriptions
+								onSubmitForm={ handleSubmitForm }
+								handleAutosavingToggle={ handleAutosavingToggle }
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								fields={ fields }
+							/>
+						</div>
+					) }
 			</form>
 		);
 	}

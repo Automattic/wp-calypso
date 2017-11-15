@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import async from 'async';
@@ -416,13 +416,25 @@ function retarget() {
 		return;
 	}
 
+	// Non rate limited retargeting
+	debug( 'Retargeting: Quantcast' );
+
+	// Quantcast
+	if ( isQuantcastEnabled ) {
+		window._qevents.push( {
+			qacct: TRACKING_IDS.quantcast,
+			event: 'refresh',
+		} );
+	}
+
+	// Rate limited retargeting
 	const nowTimestamp = Date.now() / 1000;
 	if ( nowTimestamp < lastRetargetTime + retargetingPeriod ) {
 		return;
 	}
 	lastRetargetTime = nowTimestamp;
 
-	debug( 'Retargeting' );
+	debug( 'Retargeting: others (rate limited)' );
 
 	// Facebook
 	if ( isFacebookEnabled ) {
@@ -442,14 +454,6 @@ function retarget() {
 				google_remarketing_only: true,
 			} );
 		}
-	}
-
-	// Quantcast
-	if ( isQuantcastEnabled ) {
-		window._qevents.push( {
-			qacct: TRACKING_IDS.quantcast,
-			event: 'refresh',
-		} );
 	}
 
 	// One by AOL

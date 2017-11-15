@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -26,7 +26,7 @@ import PostExcerpt from 'components/post-excerpt';
 import updatePostStatus from 'components/update-post-status';
 import utils from 'lib/posts/utils';
 import config from 'config';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getPostPreviewUrl } from 'state/posts/selectors';
@@ -103,6 +103,7 @@ class Post extends Component {
 
 	publishPost = () => {
 		this.props.updatePostStatus( 'publish' );
+		this.props.recordTracksEvent( 'calypso_post_type_list_publish', { post_type: 'post' } );
 		this.props.recordPublishPost();
 	};
 
@@ -113,11 +114,13 @@ class Post extends Component {
 
 	deletePost = () => {
 		this.props.updatePostStatus( 'delete' );
+		this.props.recordTracksEvent( 'calypso_post_type_list_delete', { post_type: 'post' } );
 		this.props.recordDeletePost();
 	};
 
 	trashPost = () => {
 		this.props.updatePostStatus( 'trash' );
+		this.props.recordTracksEvent( 'calypso_post_type_list_trash', { post_type: 'post' } );
 		this.props.recordTrashPost();
 	};
 
@@ -309,20 +312,18 @@ class Post extends Component {
 						showFilters={ isEnabled( 'comments/filters-in-posts' ) }
 						showModerationTools={ isEnabled( 'comments/moderation-tools-in-posts' ) }
 						commentsFilter={
-							config.isEnabled( 'comments/filters-in-posts' ) ? (
-								this.state.commentsFilter
-							) : (
-								'approved'
-							)
+							config.isEnabled( 'comments/filters-in-posts' )
+								? this.state.commentsFilter
+								: 'approved'
 						}
 						onFilterChange={ this.setCommentsFilter }
 						onCommentsUpdate={ noop }
 					/>
 				) }
 				{ this.state.showShare &&
-				config.isEnabled( 'republicize' ) && (
-					<PostShare post={ this.props.post } siteId={ this.props.post.site_ID } />
-				) }
+					config.isEnabled( 'republicize' ) && (
+						<PostShare post={ this.props.post } siteId={ this.props.post.site_ID } />
+					) }
 			</Card>
 		);
 	}
@@ -347,6 +348,7 @@ const mapDispatch = {
 		actions[ key ] = partial( recordEvent, event );
 		return actions;
 	}, {} ),
+	recordTracksEvent,
 };
 
 export default connect( ( state, { post } ) => {

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -39,11 +39,11 @@ const DocsExample = ( { children, componentUsageStats = {}, toggleHandler, toggl
 		<section className="docs-example">
 			<header className="docs-example__header">
 				{ toggleHandler &&
-				toggleText && (
-					<span className="docs-example__toggle">
-						<DocsExampleToggle onClick={ toggleHandler } text={ toggleText } />
-					</span>
-				) }
+					toggleText && (
+						<span className="docs-example__toggle">
+							<DocsExampleToggle onClick={ toggleHandler } text={ toggleText } />
+						</span>
+					) }
 			</header>
 
 			<div className="docs-example__main">{ children }</div>
@@ -60,7 +60,6 @@ const DocsExample = ( { children, componentUsageStats = {}, toggleHandler, toggl
 };
 
 DocsExample.propTypes = {
-	children: PropTypes.element.isRequired,
 	componentUsageStats: PropTypes.shape( {
 		count: PropTypes.number,
 	} ),

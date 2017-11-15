@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getFeed } from '../selectors';
+import { getFeed, isRequestingFeed } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 1234;
@@ -16,6 +16,58 @@ describe( 'selectors', () => {
 
 	const primaryZoneId = 5678;
 	const secondaryZoneId = 8765;
+
+	describe( 'isRequestingFeed()', () => {
+		it( 'should return false if no state exists', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						feeds: undefined,
+					},
+				},
+			};
+
+			const isRequesting = isRequestingFeed( state, 123, 456 );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return false if no site is attached', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						feeds: {
+							requesting: {
+								[ 123 ]: { 456: true },
+							},
+						},
+					},
+				},
+			};
+
+			const isRequesting = isRequestingFeed( state, 111, 456 );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return true if a feed is being fetched', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						feeds: {
+							requesting: {
+								[ 123 ]: { 456: true },
+							},
+						},
+					},
+				},
+			};
+
+			const isRequesting = isRequestingFeed( state, 123, 456 );
+
+			expect( isRequesting ).to.be.true;
+		} );
+	} );
 
 	describe( 'getFeed()', () => {
 		const primaryFeed = [ 1, 2, 3, 4, 5 ];

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -94,7 +94,7 @@ class MasterbarItemNew extends React.Component {
 						position={ this.getPopoverPosition() }
 					/>
 				</MasterbarItem>
-				<AsyncLoad require="layout/masterbar/drafts" />
+				<AsyncLoad require="layout/masterbar/drafts" placeholder={ null } />
 			</div>
 		);
 	}

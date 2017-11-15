@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { mergeHandlers } from 'state/action-watchers/utils';
@@ -15,6 +15,7 @@ import jitm from './jitm';
 import media from './media';
 import plugins from './plugins';
 import posts from './posts';
+import rewind from './rewind';
 import simplePayments from './simple-payments';
 
 export default mergeHandlers(
@@ -27,5 +28,6 @@ export default mergeHandlers(
 	media,
 	plugins,
 	posts,
+	rewind,
 	simplePayments
 );

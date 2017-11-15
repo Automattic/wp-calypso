@@ -36,4 +36,9 @@
 			width: 16px;
 		}
 	}
+
+  	&.is-ideal {
+		background-image: url( '/calypso/images/upgrades/ideal.svg' );
+		height: 30px;
+	}
 }

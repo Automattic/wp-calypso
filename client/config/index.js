@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import createConfig from 'lib/create-config';

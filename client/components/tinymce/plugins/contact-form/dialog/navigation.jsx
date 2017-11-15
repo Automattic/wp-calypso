@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -37,11 +37,9 @@ class ContactFormDialogNavigation extends React.Component {
 							count={ tab === 'fields' ? this.props.fieldCount : null }
 							onClick={ () => this.props.onChangeTabs( tab ) }
 						>
-							{ tab === 'fields' ? (
-								this.props.translate( 'Form Fields' )
-							) : (
-								this.props.translate( 'Settings' )
-							) }
+							{ tab === 'fields'
+								? this.props.translate( 'Form Fields' )
+								: this.props.translate( 'Settings' ) }
 						</SectionNavTabItem>
 					) ) }
 				</SectionNavTabs>

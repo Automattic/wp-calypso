@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { flow, get, isUndefined, map, noop, omit, omitBy } from 'lodash';

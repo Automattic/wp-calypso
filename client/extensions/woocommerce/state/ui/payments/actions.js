@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { WOOCOMMERCE_PAYMENT_ACTION_LIST_CREATE } from 'woocommerce/state/action-types';

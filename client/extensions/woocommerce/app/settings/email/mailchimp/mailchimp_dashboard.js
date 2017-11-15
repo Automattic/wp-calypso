@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,131 +17,18 @@ import FormLegend from 'components/forms/form-legend';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormTextInput from 'components/forms/form-text-input';
 import Notice from 'components/notice';
-import QueryMailChimpSyncStatus from 'woocommerce/state/sites/settings/email/querySyncStatus';
+import QueryMailChimpSyncStatus from 'woocommerce/state/sites/settings/mailchimp/querySyncStatus';
 import {
 	syncStatus,
 	mailChimpSettings,
 	isRequestingSettings,
 	isRequestingSyncStatus,
 	isSavingSettings,
-	} from 'woocommerce/state/sites/settings/email/selectors';
-import { submitMailChimpNewsletterSettings, requestResync } from 'woocommerce/state/sites/settings/email/actions.js';
-import { isSubmittingNewsletterSetting, newsletterSettingsSubmitError } from 'woocommerce/state/sites/settings/email/selectors';
+	} from 'woocommerce/state/sites/settings/mailchimp/selectors';
+import { submitMailChimpNewsletterSettings, requestResync } from 'woocommerce/state/sites/settings/mailchimp/actions.js';
+import { isSubmittingNewsletterSetting, newsletterSettingsSubmitError } from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
-
-const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting } ) => {
-	const { account_name, store_syncing, product_count, mailchimp_total_products,
-		mailchimp_total_orders, order_count } = syncState;
-	const hasProductInfo = ( undefined !== product_count ) && ( undefined !== mailchimp_total_products );
-	const products = hasProductInfo ? ( product_count + '/' + mailchimp_total_products ) : '';
-	const hasOrdersInfo = ( undefined !== order_count ) && ( undefined !== mailchimp_total_orders );
-	const orders = hasOrdersInfo ? ( order_count + '/' + mailchimp_total_orders ) : '';
-
-	const synced = () => (
-		<Notice
-			status="is-success"
-			isCompact
-			showDismiss={ false }
-			text={ translate(
-				'{{div}}{{div_name}}%(mailingListname)s{{/div_name}} {{div_info}}list synced.{{/div_info}}{{/div}}',
-				{
-					components: {
-						div: <div className="mailchimp__sync-notice-content" />,
-						div_name: <span className="mailchimp__sync-notice-list" />,
-						div_info: <span className="mailchimp__sync-notice-info" />,
-					},
-					args: { mailingListname: syncState.mailchimp_list_name }
-				} ) }
-		/>
-	);
-
-	const syncing = () => (
-		<Notice
-			className="mailchimp__sync-notice-syncing"
-			status="is-info"
-			isCompact
-			showDismiss={ false }
-			text={ translate(
-				'{{div}}{{div_name}}%(mailingListname)s{{/div_name}} {{div_info}}list is being synced.{{/div_info}}{{/div}}',
-				{
-					components: {
-						div: <div className="mailchimp__sync-notice-content" />,
-						div_name: <span className="mailchimp__sync-notice-list" />,
-						div_info: <span className="mailchimp__sync-notice-info" />,
-					},
-					args: { mailingListname: syncState.mailchimp_list_name }
-				} ) }
-		/>
-	);
-
-	const loadingSyncStatus = () => (
-		<Notice
-			isCompact
-			showDismiss={ false }
-			text={ translate( 'Loading sync status.' ) }
-		/>
-	);
-
-	const onResyncClick = () => {
-		! store_syncing && resync( siteId );
-	};
-
-	const notice = ( () => {
-		if ( isRequesting && isEmpty( syncState ) ) {
-			return loadingSyncStatus();
-		}
-		return store_syncing ? syncing() : synced();
-	} )();
-
-	return (
-		<div>
-			<div className="mailchimp__account-info-name">
-				{ translate( '{{span_info}}MailChimp account:{{/span_info}} {{span}}%(account_name)s{{/span}}', {
-					components: {
-						span_info: <span className="mailchimp__account-info" />,
-						span: <span />,
-					},
-					args: {
-						account_name
-					}
-				} ) }
-			</div>
-			<span className="mailchimp__sync-status">
-				{ notice }
-				<a className="mailchimp__resync-link" onClick={ onResyncClick }>
-					{ translate( 'Resync', { comment: 'to synchronize again' } ) }
-				</a>
-			</span>
-			<div className="mailchimp__account-data">
-				{ translate( '{{span_info}}Products:{{/span_info}} {{span}}%(products)s{{/span}}', {
-					components: {
-						span_info: <span className="mailchimp__account-info" />,
-						span: <span />,
-					},
-					args: {
-						products
-					}
-				} ) }
-				{ translate( '{{span_info}}Orders:{{/span_info}} {{span}}%(orders)s{{/span}}', {
-					components: {
-						span_info: <span className="mailchimp__account-info-orders" />,
-						span: <span />,
-					},
-					args: {
-						orders
-					}
-				} ) }
-			</div>
-		</div>
-	);
-} );
-
-SyncTab.propTypes = {
-	siteId: PropTypes.number.isRequired,
-	syncState: PropTypes.object,
-	isRequestingSettings: PropTypes.bool,
-	resync: PropTypes.func.isRequired,
-};
+import SyncTab from './sync_tab.js';
 
 const Settings = localize( ( { translate, settings, oldCheckbox, onChange } ) => {
 	const onCheckedStateChange = () => {

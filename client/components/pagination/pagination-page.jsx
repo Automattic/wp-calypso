@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import classNames from 'classnames';
@@ -50,7 +50,7 @@ class PaginationPage extends Component {
 	};
 
 	render() {
-		const { currentPage, numberFormat, pageNumber, totalPages } = this.props;
+		const { translate, currentPage, numberFormat, pageNumber, totalPages } = this.props;
 
 		switch ( pageNumber ) {
 			case 'more':
@@ -66,7 +66,8 @@ class PaginationPage extends Component {
 				return (
 					<li className={ listClass }>
 						<Button borderless onClick={ this.clickHandler } disabled={ currentPage <= 1 }>
-							<Gridicon icon="arrow-left" />
+							<Gridicon icon="arrow-left" size={ 18 } />
+							{ translate( 'Previous' ) }
 						</Button>
 					</li>
 				);
@@ -78,7 +79,8 @@ class PaginationPage extends Component {
 				return (
 					<li className={ listClass }>
 						<Button borderless onClick={ this.clickHandler } disabled={ currentPage >= totalPages }>
-							<Gridicon icon="arrow-right" />
+							{ translate( 'Next' ) }
+							<Gridicon icon="arrow-right" size={ 18 } />
 						</Button>
 					</li>
 				);

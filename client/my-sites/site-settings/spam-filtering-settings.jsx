@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -110,9 +110,9 @@ const SpamFilteringSettings = ( {
 						onChange={ onChangeField( 'wordpress_api_key' ) }
 					/>
 					{ ( isValidKey || isInvalidKey ) &&
-					! inTransition && (
-						<FormInputValidation isError={ isInvalidKey } text={ validationText } />
-					) }
+						! inTransition && (
+							<FormInputValidation isError={ isInvalidKey } text={ validationText } />
+						) }
 					{ ( ! wordpress_api_key || isInvalidKey || ! isValidKey ) && (
 						<FormSettingExplanation>
 							{ translate(

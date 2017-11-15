@@ -1,19 +1,24 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { trim } from 'lodash';
+import warn from 'lib/warn';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import debugFactory from 'debug';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import request from 'woocommerce/state/sites/http-request';
-import { WOOCOMMERCE_COUPONS_REQUEST } from 'woocommerce/state/action-types';
-import { couponsUpdated } from './actions';
+import {
+	WOOCOMMERCE_COUPON_CREATE,
+	WOOCOMMERCE_COUPON_DELETE,
+	WOOCOMMERCE_COUPON_UPDATE,
+	WOOCOMMERCE_COUPONS_REQUEST,
+} from 'woocommerce/state/action-types';
+import { couponDeleted, couponUpdated, couponsUpdated } from './actions';
 
 const debug = debugFactory( 'woocommerce:coupons' );
 
@@ -21,6 +26,9 @@ export default {
 	[ WOOCOMMERCE_COUPONS_REQUEST ]: [
 		dispatchRequest( requestCoupons, requestCouponsSuccess, apiError ),
 	],
+	[ WOOCOMMERCE_COUPON_CREATE ]: [ dispatchRequest( couponCreate, couponCreateSuccess, apiError ) ],
+	[ WOOCOMMERCE_COUPON_UPDATE ]: [ dispatchRequest( couponUpdate, couponUpdateSuccess, apiError ) ],
+	[ WOOCOMMERCE_COUPON_DELETE ]: [ dispatchRequest( couponDelete, couponDeleteSuccess, apiError ) ],
 };
 
 export function requestCoupons( { dispatch }, action ) {
@@ -51,10 +59,54 @@ export function requestCouponsSuccess( { dispatch }, action, { data } ) {
 	dispatch( couponsUpdated( siteId, params, body, totalPages, totalCoupons ) );
 }
 
+export function couponCreate( { dispatch }, action ) {
+	const { siteId, coupon } = action;
+	const path = 'coupons';
+
+	dispatch( request( siteId, action ).post( path, coupon ) );
+}
+
+export function couponCreateSuccess( { dispatch }, action ) {
+	dispatch( couponUpdated( action.siteId, action.coupon ) );
+	if ( action.successAction ) {
+		dispatch( action.successAction );
+	}
+}
+
+export function couponUpdate( { dispatch }, action ) {
+	const { siteId, coupon } = action;
+	const path = `coupons/${ coupon.id }`;
+
+	dispatch( request( siteId, action ).put( path, coupon ) );
+}
+
+export function couponUpdateSuccess( { dispatch }, action ) {
+	dispatch( couponUpdated( action.siteId, action.coupon ) );
+	if ( action.successAction ) {
+		dispatch( action.successAction );
+	}
+}
+
+export function couponDelete( { dispatch }, action ) {
+	const { siteId, couponId } = action;
+	const path = `coupons/${ couponId }?force=true`;
+
+	dispatch( request( siteId, action ).del( path ) );
+}
+
+export function couponDeleteSuccess( { dispatch }, action ) {
+	dispatch( couponDeleted( action.siteId, action.couponId ) );
+	if ( action.successAction ) {
+		dispatch( action.successAction );
+	}
+}
+
 function apiError( { dispatch }, action, error ) {
-	// Discard this request.
-	// TODO: Consider if we need an application error state here.
-	debug( 'API Error: ', error );
+	warn( 'Coupon API Error: ', error );
+
+	if ( action.failureAction ) {
+		dispatch( action.failureAction );
+	}
 }
 
 function isValidCouponsArray( coupons ) {

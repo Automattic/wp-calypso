@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import { filter, find, flow, forEach, map, pull, take } from 'lodash';

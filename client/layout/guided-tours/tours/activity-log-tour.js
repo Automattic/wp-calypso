@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -86,8 +86,12 @@ export const ActivityLogTour = makeTour(
 		<Step
 			name="actions"
 			arrow="top-right"
-			target=".has-expanded-summary .activity-log-item:not(.is-discarded) .foldable-card__secondary"
-			placement="beside"
+			target={
+				'.has-expanded-summary .activity-log-item:not(.is-discarded) ' +
+				'.foldable-card__secondary .foldable-card__summary-expanded .ellipsis-menu__toggle'
+			}
+			placement="below"
+			style={ { marginLeft: '-18px' } }
 		>
 			<p>
 				{ translate(

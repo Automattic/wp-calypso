@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { forOwn, get, reduce, isArray, map, flatten } from 'lodash';

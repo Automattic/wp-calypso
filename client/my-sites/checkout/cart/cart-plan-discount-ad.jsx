@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { connect } from 'react-redux';
@@ -55,49 +55,34 @@ class CartPlanDiscountAd extends Component {
 			plan = find( sitePlans.data, isBusiness );
 		}
 
-		if ( plan.rawDiscount === 0 ) {
+		if ( plan.rawDiscount === 0 || ! plan.isDomainUpgrade ) {
 			return null;
-		}
-
-		if ( plan.isDomainUpgrade ) {
-			return (
-				<CartAd>
-					<p className="cart__cart-plan-discount-ad-paragraph">
-						{ translate(
-							"You're getting a %(discount)s discount off the regular price of the plan (%(originalPrice)s)" +
-								', because you already paid for the domain.',
-							{
-								args: {
-									discount: plan.formattedDiscount,
-									originalPrice: plan.formattedOriginalPrice,
-								},
-							}
-						) }
-					</p>
-					<p className="cart__cart-plan-discount-ad-paragraph">
-						{ translate(
-							'The plan and the domain can be renewed together for %(originalPrice)s / year.',
-							{
-								args: {
-									originalPrice: plan.formattedOriginalPrice,
-								},
-							}
-						) }
-					</p>
-				</CartAd>
-			);
 		}
 
 		return (
 			<CartAd>
-				<strong>
-					{ translate( "You're saving %(discount)s!", {
-						args: {
-							discount: plan.formattedDiscount,
-						},
-					} ) }
-				</strong>{' '}
-				{ plan.discountReason }
+				<p className="cart__cart-plan-discount-ad-paragraph">
+					{ translate(
+						"You're getting a %(discount)s discount off the regular price of the plan (%(originalPrice)s)" +
+							', because you already paid for the domain.',
+						{
+							args: {
+								discount: plan.formattedDiscount,
+								originalPrice: plan.formattedOriginalPrice,
+							},
+						}
+					) }
+				</p>
+				<p className="cart__cart-plan-discount-ad-paragraph">
+					{ translate(
+						'The plan and the domain can be renewed together for %(originalPrice)s / year.',
+						{
+							args: {
+								originalPrice: plan.formattedOriginalPrice,
+							},
+						}
+					) }
+				</p>
 			</CartAd>
 		);
 	}

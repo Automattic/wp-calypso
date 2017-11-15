@@ -31,9 +31,7 @@
 		}
 	}
 
-	.form-label {
-		display: inline-block;
-		margin-bottom: 5px;
+	.form-fieldset:last-child {
+		margin-bottom: 0;
 	}
 }
-

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -16,6 +16,8 @@ import Gridicon from 'gridicons';
  */
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
 import AccordionSection from 'components/accordion/section';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
@@ -89,20 +91,16 @@ class EditorMoreOptionsCopyPost extends Component {
 				<EditorDrawerLabel
 					labelText={ this.isPost() ? translate( 'Copy Post' ) : translate( 'Copy Page' ) }
 					helpText={
-						this.isPost() ? (
-							translate( "Pick a post and we'll copy the title, content, tags and categories." )
-						) : (
-							translate( "Pick a page and we'll copy the title and content." )
-						)
+						this.isPost()
+							? translate( "Pick a post and we'll copy the title, content, tags and categories." )
+							: translate( "Pick a page and we'll copy the title and content." )
 					}
 				>
 					<Button borderless compact onClick={ this.openDialog }>
 						<Gridicon icon="clipboard" />
-						{ this.isPost() ? (
-							translate( 'Select a post to copy' )
-						) : (
-							translate( 'Select a page to copy' )
-						) }
+						{ this.isPost()
+							? translate( 'Select a post to copy' )
+							: translate( 'Select a page to copy' ) }
 					</Button>
 				</EditorDrawerLabel>
 				<Dialog
@@ -113,18 +111,14 @@ class EditorMoreOptionsCopyPost extends Component {
 					additionalClassNames="editor-more-options__copy-post-select-dialog"
 				>
 					<FormSectionHeading>
-						{ this.isPost() ? (
-							translate( 'Select a post to copy' )
-						) : (
-							translate( 'Select a page to copy' )
-						) }
+						{ this.isPost()
+							? translate( 'Select a post to copy' )
+							: translate( 'Select a page to copy' ) }
 					</FormSectionHeading>
 					<p>
-						{ this.isPost() ? (
-							translate( "Pick a post and we'll copy the title, content, tags and categories." )
-						) : (
-							translate( "Pick a page and we'll copy the title and content." )
-						) }
+						{ this.isPost()
+							? translate( "Pick a post and we'll copy the title, content, tags and categories." )
+							: translate( "Pick a page and we'll copy the title and content." ) }
 					</p>
 					{ siteId && (
 						<PostSelector
@@ -147,9 +141,13 @@ class EditorMoreOptionsCopyPost extends Component {
 }
 
 export default connect( state => {
+	const postId = getEditorPostId( state );
 	const siteId = getSelectedSiteId( state );
+	const type = getEditedPostValue( state, siteId, postId, 'type' );
+
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		type,
 	};
 } )( localize( EditorMoreOptionsCopyPost ) );

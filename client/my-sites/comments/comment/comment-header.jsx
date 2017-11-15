@@ -2,61 +2,46 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import CommentAuthor from 'my-sites/comments/comment/comment-author';
 import CommentAuthorMoreInfo from 'my-sites/comments/comment/comment-author-more-info';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-export const CommentHeader = ( {
-	commentId,
-	isBulkMode,
-	isEditMode,
-	isExpanded,
-	isSelected,
-	showAuthorMoreInfo,
-	toggleExpanded,
-} ) => (
-	<div className="comment__header">
-		{ isBulkMode && (
-			<label className="comment__bulk-select">
-				<FormCheckbox checked={ isSelected } onChange={ noop } />
-			</label>
-		) }
+export class CommentHeader extends PureComponent {
+	render() {
+		const { commentId, isBulkMode, isPostView, isSelected, showAuthorMoreInfo } = this.props;
 
-		<CommentAuthor { ...{ commentId, isExpanded } } />
+		return (
+			<div className="comment__header">
+				{ isBulkMode && (
+					<label className="comment__bulk-select">
+						<FormCheckbox checked={ isSelected } />
+					</label>
+				) }
 
-		{ showAuthorMoreInfo && <CommentAuthorMoreInfo { ...{ commentId } } /> }
+				<CommentAuthor { ...{ commentId, isBulkMode, isPostView } } />
 
-		{ ! isBulkMode && (
-			<Button
-				borderless
-				className="comment__toggle-expanded"
-				disabled={ isEditMode }
-				onClick={ toggleExpanded }
-			>
-				<Gridicon icon="chevron-down" />
-			</Button>
-		) }
-	</div>
-);
+				{ showAuthorMoreInfo && <CommentAuthorMoreInfo { ...{ commentId } } /> }
+			</div>
+		);
+	}
+}
 
-const mapStateToProps = ( state, { commentId, isExpanded } ) => {
+const mapStateToProps = ( state, { commentId, isBulkMode } ) => {
 	const siteId = getSelectedSiteId( state );
 	const comment = getSiteComment( state, siteId, commentId );
 	const commentType = get( comment, 'type', 'comment' );
 
 	return {
-		showAuthorMoreInfo: isExpanded && 'comment' === commentType,
+		showAuthorMoreInfo: ! isBulkMode && 'comment' === commentType,
 	};
 };
 

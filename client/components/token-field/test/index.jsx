@@ -71,13 +71,13 @@ describe( 'TokenField', () => {
 	}
 
 	function getTokensHTML() {
-		const textNodes = tokenFieldNode.find( '.token-field__token-text' );
+		const textNodes = wrapper.find( '.token-field__token-text' );
 
 		return textNodes.map( getNodeInnerHtml );
 	}
 
 	function getSuggestionsText( selector ) {
-		const suggestionNodes = tokenFieldNode.find( selector || '.token-field__suggestion' );
+		const suggestionNodes = wrapper.find( selector || '.token-field__suggestion' );
 
 		return suggestionNodes.map( getSuggestionNodeText );
 	}
@@ -110,8 +110,8 @@ describe( 'TokenField', () => {
 
 	beforeEach( () => {
 		wrapper = mount( <TokenFieldWrapper /> );
-		tokenFieldNode = wrapper.ref( 'tokenField' );
-		textInputNode = tokenFieldNode.find( '.token-field__input' );
+		tokenFieldNode = wrapper.find( '.token-field' );
+		textInputNode = wrapper.find( '.token-field__input' );
 		textInputNode.simulate( 'focus' );
 	} );
 
@@ -128,9 +128,10 @@ describe( 'TokenField', () => {
 		} );
 
 		test( 'should display tokens with escaped special characters properly', () => {
-			wrapper.setState( {
+			wrapper.instance().setState( {
 				tokens: fixtures.specialTokens.textEscaped,
 			} );
+			wrapper.update();
 			expect( getTokensHTML() ).to.deep.equal( fixtures.specialTokens.htmlEscaped );
 		} );
 
@@ -231,7 +232,7 @@ describe( 'TokenField', () => {
 				sendKeyDown( keyCodes.downArrow ); // 'to'
 				expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'o' ] );
 
-				const hoverSuggestion = tokenFieldNode.find( '.token-field__suggestion' ).at( 5 ); // 'it'
+				const hoverSuggestion = wrapper.find( '.token-field__suggestion' ).at( 5 ); // 'it'
 				expect( getSuggestionNodeText( hoverSuggestion ) ).to.deep.equal( [ 'i', 't' ] );
 
 				// before sending a hover event, we need to wait for
@@ -256,7 +257,7 @@ describe( 'TokenField', () => {
 			setText( 'baz' );
 			sendKeyDown( keyCodes.tab );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
-			expect( textInputNode.prop( 'value' ) ).to.equal( '' );
+			expect( textInputNode.instance().value ).to.equal( '' );
 		} );
 
 		test( 'should not allow adding blank tokens with Tab', () => {
@@ -274,7 +275,7 @@ describe( 'TokenField', () => {
 			setText( 'baz' );
 			sendKeyDown( keyCodes.enter );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
-			expect( textInputNode.prop( 'value' ) ).to.equal( '' );
+			expect( textInputNode.instance().value ).to.equal( '' );
 		} );
 
 		test( 'should not allow adding blank tokens with Enter', () => {
@@ -305,7 +306,7 @@ describe( 'TokenField', () => {
 			sendKeyDown( keyCodes.comma, true );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar' ] );
 			// The text input does not register the < keypress when it is sent this way.
-			expect( textInputNode.prop( 'value' ) ).to.equal( 'baz' );
+			expect( textInputNode.instance().value ).to.equal( 'baz' );
 		} );
 
 		test( 'should trim token values when adding', () => {
@@ -324,14 +325,9 @@ describe( 'TokenField', () => {
 
 			function testSavedState( isActive ) {
 				expect( wrapper.state( 'tokens' ) ).to.deep.equal( expectedTokens );
-				expect( textInputNode.prop( 'value' ) ).to.equal( '' );
+				expect( textInputNode.instance().value ).to.equal( '' );
 				expect( getSelectedSuggestion() ).to.equal( null );
-				expect(
-					tokenFieldNode
-						.find( 'div' )
-						.first()
-						.hasClass( 'is-active' )
-				).to.equal( isActive );
+				expect( wrapper.find( '.is-active' ).length === 1 ).to.equal( isActive );
 			}
 
 			document.activeElement.blur();
@@ -382,13 +378,7 @@ describe( 'TokenField', () => {
 
 				// wait for setState call
 				this.clock.tick( 10 );
-
-				expect(
-					tokenFieldNode
-						.find( 'div' )
-						.first()
-						.hasClass( 'is-active' )
-				).to.equal( true );
+				expect( wrapper.find( '.is-active' ).length ).to.equal( 1 );
 			} )
 		);
 
@@ -452,46 +442,46 @@ describe( 'TokenField', () => {
 		test( 'should add multiple comma-separated tokens when pasting', () => {
 			setText( 'baz, quux, wut' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux' ] );
-			expect( textInputNode.prop( 'value' ) ).to.equal( ' wut' );
+			expect( textInputNode.instance().value ).to.equal( ' wut' );
 			setText( 'wut,' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux', 'wut' ] );
-			expect( textInputNode.prop( 'value' ) ).to.equal( '' );
+			expect( textInputNode.instance().value ).to.equal( '' );
 		} );
 
 		test( 'should add multiple tab-separated tokens when pasting', () => {
 			setText( 'baz\tquux\twut' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux' ] );
-			expect( textInputNode.prop( 'value' ) ).to.equal( 'wut' );
+			expect( textInputNode.instance().value ).to.equal( 'wut' );
 		} );
 
 		test( 'should not duplicate tokens when pasting', () => {
 			setText( 'baz \tbaz,  quux \tquux,quux , wut  \twut, wut' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux', 'wut' ] );
-			expect( textInputNode.prop( 'value' ) ).to.equal( ' wut' );
+			expect( textInputNode.instance().value ).to.equal( ' wut' );
 		} );
 
 		test( 'should skip empty tokens at the beginning of a paste', () => {
 			setText( ',  ,\t \t  ,,baz, quux' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
-			expect( textInputNode.prop( 'value' ) ).to.equal( ' quux' );
+			expect( textInputNode.instance().value ).to.equal( ' quux' );
 		} );
 
 		test( 'should skip empty tokens at the beginning of a paste', () => {
 			setText( ',  ,\t \t  ,,baz, quux' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
-			expect( textInputNode.prop( 'value' ) ).to.equal( ' quux' );
+			expect( textInputNode.instance().value ).to.equal( ' quux' );
 		} );
 
 		test( 'should skip empty tokens in the middle of a paste', () => {
 			setText( 'baz,  ,\t \t  ,,quux' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
-			expect( textInputNode.prop( 'value' ) ).to.equal( 'quux' );
+			expect( textInputNode.instance().value ).to.equal( 'quux' );
 		} );
 
 		test( 'should skip empty tokens at the end of a paste', () => {
 			setText( 'baz, quux,  ,\t \t  ,,   ' );
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz', 'quux' ] );
-			expect( textInputNode.prop( 'value' ) ).to.equal( '   ' );
+			expect( textInputNode.instance().value ).to.equal( '   ' );
 		} );
 	} );
 

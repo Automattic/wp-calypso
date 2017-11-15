@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -98,6 +98,7 @@ const Pages = createReactClass( {
 		siteId: PropTypes.any,
 		hasSites: PropTypes.bool.isRequired,
 		trackScrollPage: PropTypes.func.isRequired,
+		query: PropTypes.object,
 	},
 
 	getDefaultProps() {
@@ -156,7 +157,8 @@ const Pages = createReactClass( {
 	},
 
 	getNoContentMessage() {
-		const { search, translate } = this.props;
+		const { query = {}, translate, site, siteId } = this.props;
+		const { search, status = 'published' } = query;
 
 		if ( search ) {
 			return (
@@ -171,13 +173,12 @@ const Pages = createReactClass( {
 			);
 		}
 
-		const { site, siteId, status = 'published' } = this.props;
 		const sitePart = ( site && site.slug ) || siteId;
-		const newPageLink = this.props.siteId ? '/page/' + sitePart : '/page';
+		const newPageLink = siteId ? '/page/' + sitePart : '/page';
 		let attributes;
 
 		switch ( status ) {
-			case 'drafts':
+			case 'draft,pending':
 				attributes = {
 					title: translate( "You don't have any drafts." ),
 					line: translate( 'Would you like to create one?' ),
@@ -185,7 +186,7 @@ const Pages = createReactClass( {
 					actionURL: newPageLink,
 				};
 				break;
-			case 'scheduled':
+			case 'future':
 				attributes = {
 					title: translate( "You don't have any scheduled pages yet." ),
 					line: translate( 'Would you like to create one?' ),
@@ -193,7 +194,7 @@ const Pages = createReactClass( {
 					actionURL: newPageLink,
 				};
 				break;
-			case 'trashed':
+			case 'trash':
 				attributes = {
 					title: translate( "You don't have any pages in your trash folder." ),
 					line: translate( 'Everything you write is solid gold.' ),
@@ -313,7 +314,9 @@ const Pages = createReactClass( {
 		}
 
 		const blogPostsPage = site &&
-		status === 'published' && <BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />;
+			status === 'published' && (
+				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+			);
 
 		return (
 			<div id="pages" className="pages__page-list">

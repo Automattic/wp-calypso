@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -12,7 +12,7 @@ import React from 'react';
 import ClipboardButtonInput from '../';
 
 export default class extends React.PureComponent {
-    static displayName = 'ClipboardButtonInput';
+	static displayName = 'ClipboardButtonInput';
 
 	render() {
 		return (

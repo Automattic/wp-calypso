@@ -25,6 +25,8 @@ import PostCommentFormRoot from './form-root';
 import CommentCount from './comment-count';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
+import ConversationFollowButton from 'blocks/conversation-follow-button';
+import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 
 /**
  * PostCommentList, as the name would suggest, displays a list of comments for a post.
@@ -55,6 +57,12 @@ class PostCommentList extends React.Component {
 		commentCount: PropTypes.number,
 		maxDepth: PropTypes.number,
 		showNestingReplyArrow: PropTypes.bool,
+		showConversationFollowButton: PropTypes.bool,
+		commentsFilter: PropTypes.string,
+
+		// To display comments with a different status but not fetch them
+		// e.g. Reader full post view showing unapproved comments made to a moderated site
+		commentsFilterDisplay: PropTypes.string,
 
 		// connect()ed props:
 		commentsTree: PropTypes.object,
@@ -68,6 +76,7 @@ class PostCommentList extends React.Component {
 		showCommentCount: true,
 		maxDepth: Infinity,
 		showNestingReplyArrow: false,
+		showConversationFollowButton: false,
 	};
 
 	state = {
@@ -343,7 +352,13 @@ class PostCommentList extends React.Component {
 			return null;
 		}
 
-		const { commentsFilter, commentsTree, showFilters, commentCount } = this.props;
+		const {
+			post: { ID: postId, site_ID: siteId },
+			commentsFilter,
+			commentsTree,
+			showFilters,
+			commentCount,
+		} = this.props;
 		const {
 			haveEarlierCommentsToFetch,
 			haveLaterCommentsToFetch,
@@ -372,8 +387,19 @@ class PostCommentList extends React.Component {
 				? commentCount
 				: this.getCommentsCount( commentsTree.children );
 
+		const showConversationFollowButton =
+			this.props.showConversationFollowButton &&
+			shouldShowConversationFollowButton( this.props.post );
+
 		return (
 			<div className="comments__comment-list">
+				{ showConversationFollowButton && (
+					<ConversationFollowButton
+						className="comments__conversation-follow-button"
+						siteId={ siteId }
+						postId={ postId }
+					/>
+				) }
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (
 					<div className="comments__info-bar">
 						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
@@ -425,16 +451,16 @@ class PostCommentList extends React.Component {
 				) }
 				{ this.renderCommentsList( displayedComments ) }
 				{ showViewMoreComments &&
-				this.props.startingCommentId && (
-					<span className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
-						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
-							args: {
-								shown: displayedCommentsCount,
-								total: actualCommentsCount,
-							},
-						} ) }
-					</span>
-				) }
+					this.props.startingCommentId && (
+						<span className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
+							{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
+								args: {
+									shown: displayedCommentsCount,
+									total: actualCommentsCount,
+								},
+							} ) }
+						</span>
+					) }
 				<PostCommentFormRoot
 					post={ this.props.post }
 					commentsTree={ this.props.commentsTree }
@@ -453,7 +479,7 @@ export default connect(
 			state,
 			ownProps.post.site_ID,
 			ownProps.post.ID,
-			ownProps.commentsFilter
+			ownProps.commentsFilterDisplay ? ownProps.commentsFilterDisplay : ownProps.commentsFilter
 		),
 		commentsFetchingStatus: commentsFetchingStatus(
 			state,

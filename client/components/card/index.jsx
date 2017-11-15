@@ -16,7 +16,6 @@ class Card extends Component {
 		tagName: PropTypes.string,
 		target: PropTypes.string,
 		compact: PropTypes.bool,
-		children: PropTypes.node,
 		highlight: PropTypes.oneOf( [ false, 'error', 'info', 'success', 'warning' ] ),
 	};
 
@@ -26,7 +25,7 @@ class Card extends Component {
 	};
 
 	render() {
-		const { href, tagName, target, compact, children, highlight } = this.props;
+		const { children, compact, highlight, href, onClick, tagName, target } = this.props;
 
 		const highlightClass = highlight ? 'is-' + highlight : false;
 
@@ -35,6 +34,7 @@ class Card extends Component {
 			this.props.className,
 			{
 				'is-card-link': !! href,
+				'is-clickable': !! onClick,
 				'is-compact': compact,
 			},
 			highlightClass

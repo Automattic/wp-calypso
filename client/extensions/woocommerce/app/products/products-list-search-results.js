@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -14,15 +14,16 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
-	getTotalProductSearchResults,
-	areProductSearchResultsLoaded,
-	getProductSearchQuery,
+	getTotalProducts,
+	areProductsLoaded,
+	getProducts,
 } from 'woocommerce/state/sites/products/selectors';
 import {
-	getProductSearchCurrentPage,
-	getProductSearchResults,
-	getProductSearchRequestedPage,
+	getProductsCurrentPage,
+	getProductsCurrentSearch,
+	getProductsRequestedPage,
 } from 'woocommerce/state/ui/products/selectors';
+
 import ProductsListPagination from './products-list-pagination';
 import ProductsListTable from './products-list-table';
 
@@ -82,27 +83,16 @@ ProductsListSearchResults.propTypes = {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const query = site && getProductSearchQuery( state, site.ID );
-	const currentPage = site && getProductSearchCurrentPage( state, site.ID );
+	const search = site && getProductsCurrentSearch( state, site.ID );
+	const currentPage = site && getProductsCurrentPage( state, site.ID );
+	const currentQuery = { page: currentPage, search };
 	const currentPageLoaded =
-		site &&
-		currentPage &&
-		areProductSearchResultsLoaded(
-			state,
-			{ page: currentPage, per_page: 10, search: query },
-			site.ID
-		);
-	const requestedPage = site && getProductSearchRequestedPage( state, site.ID );
+		site && currentPage && areProductsLoaded( state, currentQuery, site.ID );
+	const requestedPage = site && getProductsRequestedPage( state, site.ID );
 	const requestedPageLoaded =
-		site &&
-		requestedPage &&
-		areProductSearchResultsLoaded(
-			state,
-			{ page: requestedPage, per_page: 10, search: query },
-			site.ID
-		);
-	const totalProducts = site && getTotalProductSearchResults( state, site.ID );
-	const products = site && getProductSearchResults( state, site.ID );
+		site && requestedPage && areProductsLoaded( state, { page: requestedPage, search }, site.ID );
+	const totalProducts = site && getTotalProducts( state, currentQuery, site.ID );
+	const products = site && getProducts( state, currentQuery, site.ID );
 
 	return {
 		site,
@@ -112,7 +102,7 @@ function mapStateToProps( state ) {
 		requestedPageLoaded,
 		products,
 		totalProducts,
-		query,
+		query: search,
 	};
 }
 

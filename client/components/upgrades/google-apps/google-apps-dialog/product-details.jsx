@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -31,7 +31,7 @@ class GoogleAppsProductDetails extends Component {
 
 					<p>
 						{ translate(
-							"We've partnered with Google to offer you email, storage, docs, calendars " +
+							"We've teamed up with Google to offer you email, storage, docs, calendars, " +
 								'and more, integrated with your site.'
 						) }
 					</p>
@@ -52,7 +52,12 @@ class GoogleAppsProductDetails extends Component {
 				<div className="google-apps-dialog__product-features">
 					<h5 className="google-apps-dialog__product-feature">
 						<img src="/calypso/images/g-suite/logo_gmail_48dp.svg" />
-						<p>{ translate( 'Professional email address' ) }</p>
+						<p>
+							{ translate( 'Professional email {{nowrap}}(@%(domain)s){{/nowrap}}', {
+								args: { domain: this.props.domain },
+								components: { nowrap: <span className="google-apps-dialog__domain" /> },
+							} ) }
+						</p>
 					</h5>
 
 					<h5 className="google-apps-dialog__product-feature">
@@ -66,7 +71,7 @@ class GoogleAppsProductDetails extends Component {
 					</h5>
 
 					<h5 className="google-apps-dialog__product-feature">
-						<img src="/calypso/images/g-suite/logo_hangouts_48dp.svg" />
+						<img src="/calypso/images/g-suite/logo_hangouts_48px.png" />
 						<p>{ translate( 'Video and voice calls' ) }</p>
 					</h5>
 				</div>

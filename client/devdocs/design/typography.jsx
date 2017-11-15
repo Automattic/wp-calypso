@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -78,6 +78,13 @@ export default class Typography extends React.PureComponent {
 						<a href="/devdocs/typography">Typography</a>
 					</h2>
 					<h3>Interface Typography</h3>
+					<p>
+						We use system fonts which improve the page rendering speed.<br />
+						<code>
+							-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu",
+							"Cantarell", "Helvetica Neue", sans-serif
+						</code>
+					</p>
 					<Card>
 						<p style={ interfaceTitle }>Quick foxes jump nightly above wizards.</p>
 						<p style={ interfaceSubtitle }>Pack my box with five dozen liquor jugs</p>
@@ -90,6 +97,10 @@ export default class Typography extends React.PureComponent {
 						<p style={ interfaceCaption }>Views per page</p>
 					</Card>
 					<h3>Content Typography</h3>
+					<p>
+						We use <code>Noto Serif</code> which helps to make the web more beautiful across
+						platforms for all languages.
+					</p>
 					<Card>
 						<p style={ contentTitle }>Quick foxes jump nightly above wizards.</p>
 						<p style={ contentSubtitle }>Pack my box with five dozen liquor jugs</p>

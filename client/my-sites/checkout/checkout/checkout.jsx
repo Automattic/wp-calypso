@@ -1,11 +1,20 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { connect } from 'react-redux';
-import { flatten, find, findIndex, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import {
+	flatten,
+	filter,
+	find,
+	get,
+	isEmpty,
+	isEqual,
+	reduce,
+	startsWith,
+} from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -16,12 +25,12 @@ import createReactClass from 'create-react-class';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
-import TransferDomainPrecheck from './transfer-domain-precheck';
 import { domainMapping } from 'lib/cart-values/cart-items';
 import { fetchReceiptCompleted } from 'state/receipts/actions';
 import { getExitCheckoutUrl } from 'lib/checkout';
@@ -31,6 +40,7 @@ import notices from 'notices';
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import purchasePaths from 'me/purchases/paths';
+import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryGeo from 'components/data/query-geo';
 import SecurePaymentForm from './secure-payment-form';
@@ -42,6 +52,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
 import upgradesActions from 'lib/upgrades/actions';
+import { getContactDetailsCache } from 'state/selectors';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import { isValidFeatureKey, getUpgradePlanSlugFromPath } from 'lib/plans';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
@@ -50,6 +61,7 @@ import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
 import { isDomainOnlySite, getCurrentUserPaymentMethods } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { canAddGoogleApps } from 'lib/domains';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
 import { loadTrackingTool } from 'state/analytics/actions';
@@ -67,7 +79,6 @@ const Checkout = createReactClass( {
 	getInitialState: function() {
 		return {
 			previousCart: null,
-			domainTransfers: {},
 		};
 	},
 
@@ -114,6 +125,24 @@ const Checkout = createReactClass( {
 		if ( ! isEqual( previousCart, nextCart ) ) {
 			this.redirectIfEmptyCart();
 			this.setState( { previousCart: nextCart } );
+		}
+
+		if (
+			abtest( 'gsuiteUpsell' ) === 'show' &&
+			this.props.contactDetails &&
+			cartItems.hasGoogleApps( this.props.cart ) &&
+			this.needsDomainDetails()
+		) {
+			this.setDomainDetailsForGsuiteCart();
+		}
+	},
+
+	setDomainDetailsForGsuiteCart() {
+		const { contactDetails, cart } = this.props;
+		const domainReceiptId = get( cartItems.getGoogleApps( cart ), '0.extra.receipt_for_domain', 0 );
+
+		if ( domainReceiptId ) {
+			upgradesActions.setDomainDetails( contactDetails );
 		}
 	},
 
@@ -254,16 +283,42 @@ const Checkout = createReactClass( {
 				renewalItem.extra.purchaseDomain,
 				renewalItem.extra.purchaseId
 			);
-		} else if ( cartItems.hasFreeTrial( cart ) ) {
+		}
+
+		if ( cartItems.hasFreeTrial( cart ) ) {
 			return selectedSiteSlug
 				? `/plans/${ selectedSiteSlug }/thank-you`
 				: '/checkout/thank-you/plans';
-		} else if ( cart.create_new_blog ) {
+		}
+
+		if ( cart.create_new_blog ) {
 			return `/checkout/thank-you/no-site/${ receiptId }`;
 		}
 
 		if ( ! selectedSiteSlug ) {
 			return '/checkout/thank-you/features';
+		}
+
+		if ( abtest( 'gsuiteUpsell' ) === 'show' ) {
+			const domainReceiptId = get(
+				cartItems.getGoogleApps( cart ),
+				'0.extra.receipt_for_domain',
+				0
+			);
+			if ( domainReceiptId ) {
+				return `/checkout/thank-you/${ selectedSiteSlug }/${ domainReceiptId }/with-gsuite/${ receiptId }`;
+			}
+
+			if ( ! cartItems.hasGoogleApps( cart ) && cartItems.hasDomainRegistration( cart ) ) {
+				const domainsForGsuite = filter( cartItems.getDomainRegistrations( cart ), ( { meta } ) =>
+					canAddGoogleApps( meta )
+				);
+
+				if ( domainsForGsuite.length ) {
+					return `/checkout/${ selectedSiteSlug }/with-gsuite/${ domainsForGsuite[ 0 ]
+						.meta }/${ receiptId }`;
+				}
+			}
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
@@ -381,36 +436,8 @@ const Checkout = createReactClass( {
 		page( redirectPath );
 	},
 
-	setValidTransfer( domain ) {
-		const domainTransfers = {};
-		domainTransfers[ domain ] = true;
-
-		this.setState( {
-			domainTransfers: Object.assign( {}, this.state.domainTransfers, domainTransfers ),
-		} );
-	},
-
 	content: function() {
-		const { cart, selectedSite } = this.props;
-		const { domainTransfers } = this.state;
-
-		if ( ! this.isLoading() && cartItems.hasTransferProduct( this.props.cart ) ) {
-			const domainTransfersCart = cartItems.getDomainTransfers( cart );
-			const index = findIndex( domainTransfersCart, product => {
-				return ! domainTransfers[ product.meta ];
-			} );
-
-			if ( index !== -1 ) {
-				return (
-					<TransferDomainPrecheck
-						total={ domainTransfersCart.length }
-						current={ index }
-						domain={ domainTransfersCart[ index ].meta }
-						setValid={ this.setValidTransfer }
-					/>
-				);
-			}
-		}
+		const { selectedSite } = this.props;
 
 		if ( ! this.isLoading() && this.needsDomainDetails() ) {
 			return (
@@ -454,7 +481,9 @@ const Checkout = createReactClass( {
 		return (
 			cart &&
 			! hasDomainDetails( transaction ) &&
-			( cartItems.hasDomainRegistration( cart ) || cartItems.hasGoogleApps( cart ) )
+			( cartItems.hasDomainRegistration( cart ) ||
+				cartItems.hasGoogleApps( cart ) ||
+				cartItems.hasTransferProduct( cart ) )
 		);
 	},
 
@@ -462,6 +491,7 @@ const Checkout = createReactClass( {
 		return (
 			<div className="main main-column" role="main">
 				<div className="checkout">
+					<QueryContactDetailsCache />
 					<QueryStoredCards />
 					<QueryGeo />
 
@@ -483,6 +513,7 @@ export default connect(
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
+			contactDetails: getContactDetailsCache( state ),
 		};
 	},
 	{

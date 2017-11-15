@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -52,7 +52,7 @@ class Transfer extends React.PureComponent {
 
 				<Card>
 					<Property label={ translate( 'Type', { context: 'A type of domain.' } ) }>
-						{ translate( 'Transfer' ) }
+						{ translate( 'Incoming Domain Transfer' ) }
 					</Property>
 
 					<SubscriptionSettings

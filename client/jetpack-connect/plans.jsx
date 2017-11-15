@@ -26,7 +26,6 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
-import { getPlansBySite } from 'state/sites/plans/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { addItem } from 'lib/upgrades/actions';
@@ -56,14 +55,9 @@ const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
 const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
-	static propTypes = {
-		sitePlans: PropTypes.object.isRequired,
-		showJetpackFreePlan: PropTypes.bool,
-	};
+	static propTypes = { showJetpackFreePlan: PropTypes.bool };
 
-	static defaultProps = {
-		siteSlug: '*',
-	};
+	static defaultProps = { siteSlug: '*' };
 
 	redirecting = false;
 
@@ -87,9 +81,11 @@ class Plans extends Component {
 		}
 
 		if ( this.props.hasPlan && ! this.redirecting ) {
+			this.redirecting = true;
 			this.redirect( CALYPSO_PLANS_PAGE );
 		}
 		if ( ! this.props.canPurchasePlans && ! this.redirecting ) {
+			this.redirecting = true;
 			if ( this.props.isCalypsoStartedConnection ) {
 				this.redirect( CALYPSO_REDIRECTION_PAGE );
 			} else {
@@ -284,7 +280,10 @@ class Plans extends Component {
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
 					<LoggedOutFormLinks>
-						<JetpackConnectHappychatButton label={ helpButtonLabel }>
+						<JetpackConnectHappychatButton
+							label={ helpButtonLabel }
+							eventName="calypso_jpc_plans_chat_initiated"
+						>
 							<HelpButton onClick={ this.handleHelpButtonClick } label={ helpButtonLabel } />
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
@@ -313,7 +312,6 @@ export default connect(
 			selectedSiteSlug,
 			selectedPlan,
 			isAutomatedTransfer: selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : false,
-			sitePlans: getPlansBySite( state, selectedSite ),
 			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 			userId: user ? user.ID : null,
 			canPurchasePlans: selectedSite

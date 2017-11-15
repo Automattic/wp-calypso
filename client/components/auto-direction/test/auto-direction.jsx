@@ -25,7 +25,7 @@ describe( 'AutoDirection', () => {
 				</AutoDirection>
 			);
 
-			expect( wrapper.node.props.direction ).to.equal( 'rtl' );
+			expect( wrapper.getElement().props.direction ).to.equal( 'rtl' );
 		} );
 
 		test( "doesn't add a direction to LTR text", () => {
@@ -35,7 +35,7 @@ describe( 'AutoDirection', () => {
 				</AutoDirection>
 			);
 
-			expect( wrapper.node.props ).to.not.have.property( 'direction' );
+			expect( wrapper.getElement().props ).to.not.have.property( 'direction' );
 		} );
 
 		test( 'adds a direction to the parent of an inline component', () => {
@@ -47,7 +47,7 @@ describe( 'AutoDirection', () => {
 				</AutoDirection>
 			);
 
-			expect( wrapper.node.props.direction ).to.equal( 'rtl' );
+			expect( wrapper.getElement().props.direction ).to.equal( 'rtl' );
 
 			// Things get weird when mounting a stateless component, so just check for the HTML, instead.
 			expect( wrapper.html() ).to.include( '<div class="emojify">השנה היא 2017.</div>' );

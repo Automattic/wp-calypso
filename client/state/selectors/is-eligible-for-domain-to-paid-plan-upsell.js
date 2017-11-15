@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { canCurrentUser, isMappedDomainSite, isSiteOnFreePlan, isVipSite } from 'state/selectors';

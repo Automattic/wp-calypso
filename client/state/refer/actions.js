@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { AFFILIATE_REFERRAL } from 'state/action-types';

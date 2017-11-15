@@ -3,10 +3,10 @@
  */
 import { get, find, isObject } from 'lodash';
 
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { getSelectedSiteWithFallback } from '../sites/selectors';
@@ -26,13 +26,11 @@ export function getPromotion(
 }
 
 export function getPromotionsPage(
-	rootState,
-	siteId = getSelectedSiteWithFallback( rootState ),
+	promotions,
 	page,
 	perPage
 ) {
 	const offset = ( page - 1 ) * perPage;
-	const promotions = getPromotions( rootState, siteId );
 	return promotions ? promotions.slice( offset, offset + perPage ) : null;
 }
 
@@ -79,5 +77,17 @@ export function getPromotionWithLocalEdits(
 		return { ...promotion, ...promotionEdits };
 	}
 	return null;
+}
+
+export function getPromotionableProducts(
+	rootState,
+	siteId = getSelectedSiteWithFallback( rootState )
+) {
+	const promotions = get(
+		rootState,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'promotions' ],
+		{}
+	);
+	return promotions.products;
 }
 

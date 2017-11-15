@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,11 +13,118 @@ import {
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
+	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_FAILURE,
+	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import { LOADING } from 'woocommerce/state/constants';
+import { ERROR, LOADING } from 'woocommerce/state/constants';
 import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
+	test( 'should mark the settings products tree as "error" when update request fails', () => {
+		const siteId = 123;
+		const action = {
+			type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_FAILURE,
+			siteId,
+		};
+
+		const newSiteData = reducer( {}, action );
+		expect( newSiteData[ siteId ].settings.products ).to.eql( ERROR );
+	} );
+
+	test( 'should not change if data.update is missing', () => {
+		const siteId = 123;
+		const settings = [
+			{
+				id: 'some-setting',
+				value: 'yes',
+			},
+			{
+				id: 'another-setting',
+				value: 'no',
+			},
+			{
+				id: 'chicken-and-ribs',
+				value: '1337',
+			},
+			{
+				id: 'yummy-bbq',
+				value: 'no',
+			},
+		];
+		const action = {
+			type: WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
+			siteId,
+			data: settings,
+		};
+		const newState = reducer( {}, action );
+
+		const updateAction = {
+			type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_SUCCESS,
+			siteId,
+			data: {},
+		};
+		const updatedState = reducer( newState, updateAction );
+		expect( updatedState[ siteId ] ).to.exist;
+		expect( updatedState[ siteId ].settings ).to.exist;
+		expect( updatedState[ siteId ].settings.products ).to.deep.equal( settings );
+	} );
+
+	test( 'should update the settings from data', () => {
+		const siteId = 123;
+		const settings = [
+			{
+				id: 'some-setting',
+				value: 'yes',
+			},
+			{
+				id: 'another-setting',
+				value: 'no',
+			},
+			{
+				id: 'chicken-and-ribs',
+				value: '1337',
+			},
+			{
+				id: 'yummy-bbq',
+				value: 'no',
+			},
+		];
+		const action = {
+			type: WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
+			siteId,
+			data: settings,
+		};
+		const newState = reducer( {}, action );
+		expect( newState[ siteId ] ).to.exist;
+		expect( newState[ siteId ].settings ).to.exist;
+		expect( newState[ siteId ].settings.products ).to.deep.equal( settings );
+
+		const updateAction = {
+			type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_SUCCESS,
+			siteId,
+			data: {
+				update: [
+					{
+						id: 'chicken-and-ribs',
+						value: '10',
+					},
+					{
+						id: 'yummy-bbq',
+						value: 'YAS',
+					},
+				],
+			},
+		};
+
+		const updatedState = reducer( newState, updateAction );
+		const newSettingsProducts = updatedState[ siteId ].settings.products;
+		expect( newSettingsProducts.length ).to.equal( 4 );
+		const ribs = find( newSettingsProducts, { id: 'chicken-and-ribs' } );
+		expect( ribs.value ).to.equal( '10' );
+		const bbq = find( newSettingsProducts, { id: 'yummy-bbq' } );
+		expect( bbq.value ).to.equal( 'YAS' );
+	} );
+
 	test( 'should mark the settings products tree as "loading"', () => {
 		const siteId = 123;
 		const action = {

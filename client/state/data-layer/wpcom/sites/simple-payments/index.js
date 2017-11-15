@@ -1,10 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
-import { filter, toPairs, noop } from 'lodash';
+import { get, noop, toPairs } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,14 +17,13 @@ import {
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_DELETE,
 } from 'state/action-types';
 import {
-	receiveProduct,
 	receiveProductsList,
 	receiveUpdateProduct,
 	receiveDeleteProduct,
 } from 'state/simple-payments/product-list/actions';
 import { metaKeyToSchemaKeyMap, metadataSchema } from 'state/simple-payments/product-list/schema';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx, TransformerError } from 'state/data-layer/wpcom-http/utils';
 import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
 import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
 import formatCurrency from 'lib/format-currency';
@@ -59,11 +58,15 @@ function customPostMetadataToProductAttributes( metadata ) {
 }
 
 /**
- * Formats /posts endpoint response into a product object
+ * Validates a `/posts` endpoint response and converts it into a product object
  * @param { Object } customPost raw /post endpoint response to format
  * @returns { Object } sanitized and formatted product
  */
 export function customPostToProduct( customPost ) {
+	if ( ! isValidSimplePaymentsProduct( customPost ) ) {
+		throw new TransformerError( 'Custom post is not a valid simple payment product', customPost );
+	}
+
 	const metadataAttributes = customPostMetadataToProductAttributes( customPost.metadata );
 
 	return {
@@ -73,6 +76,26 @@ export function customPostToProduct( customPost ) {
 		featuredImageId: getFeaturedImageId( customPost ),
 		...metadataAttributes,
 	};
+}
+
+/**
+ * Extract custom posts array from `responseData`, filter out invalid items and convert the
+ * valid custom posts to products.
+ * @param {Object} responseData JSON data with shape `{ posts }`
+ * @return {Array} validated and converted product list
+ */
+export function customPostsToProducts( responseData ) {
+	const posts = get( responseData, 'posts', [] );
+	const validProducts = posts
+		.map( post => {
+			try {
+				return customPostToProduct( post );
+			} catch ( error ) {
+				return null;
+			}
+		} )
+		.filter( Boolean );
+	return validProducts;
 }
 
 /**
@@ -117,143 +140,89 @@ export function productToCustomPost( product ) {
 	};
 }
 
-/**
- * Issues an API request to fetch a product by its ID for a site.
- *
- * @param  {Object}  store  Redux store
- * @param  {Object}  action Action object
- */
-export function requestSimplePaymentsProduct( { dispatch }, action ) {
-	const { siteId, productId } = action;
+const replaceProductList = ( { siteId }, products ) => receiveProductsList( siteId, products );
+const addOrUpdateProduct = ( { siteId }, newProduct ) => receiveUpdateProduct( siteId, newProduct );
+const deleteProduct = ( { siteId }, deletedPost ) => receiveDeleteProduct( siteId, deletedPost.ID );
 
-	dispatch(
+export const handleProductGet = dispatchRequestEx( {
+	fetch: action =>
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ siteId }/posts/${ productId }`,
+				path: `/sites/${ action.siteId }/posts/${ action.productId }`,
 			},
 			action
-		)
-	);
-}
+		),
+	fromApi: customPostToProduct,
+	onSuccess: addOrUpdateProduct,
+	onError: noop,
+} );
 
-/**
- * Issues an API request to fetch products for a site.
- *
- * @param  {Object}  store  Redux store
- * @param  {Object}  action Action object
- */
-export function requestSimplePaymentsProducts( { dispatch }, action ) {
-	const { siteId } = action;
-
-	dispatch(
+export const handleProductList = dispatchRequestEx( {
+	fetch: action =>
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ siteId }/posts`,
+				path: `/sites/${ action.siteId }/posts`,
 				query: {
 					type: SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
 					status: 'publish',
 				},
 			},
 			action
-		)
-	);
-}
+		),
+	fromApi: customPostsToProducts,
+	onSuccess: replaceProductList,
+	onError: noop,
+} );
 
-/**
- * Issues an API request to add a new product
- * @param {Object} store Redux store
- * @param {Object} action Action object
- */
-export function requestSimplePaymentsProductAdd( { dispatch }, action ) {
-	const { siteId, product } = action;
-
-	dispatch(
+export const handleProductListAdd = dispatchRequestEx( {
+	fetch: action =>
 		http(
 			{
 				method: 'POST',
-				path: `/sites/${ siteId }/posts/new`,
-				body: productToCustomPost( product ),
+				path: `/sites/${ action.siteId }/posts/new`,
+				body: productToCustomPost( action.product ),
 			},
 			action
-		)
-	);
-}
+		),
+	fromApi: customPostToProduct,
+	onSuccess: addOrUpdateProduct,
+	onError: noop,
+} );
 
-/**
- * Issues an API request to edit a product
- * @param {Object} store Redux store
- * @param {Object} action Action object
- */
-export function requestSimplePaymentsProductEdit( { dispatch }, action ) {
-	const { siteId, product, productId } = action;
-
-	dispatch(
+export const handleProductListEdit = dispatchRequestEx( {
+	fetch: action =>
 		http(
 			{
 				method: 'POST',
-				path: `/sites/${ siteId }/posts/${ productId }`,
-				body: productToCustomPost( product ),
+				path: `/sites/${ action.siteId }/posts/${ action.productId }`,
+				body: productToCustomPost( action.product ),
 			},
 			action
-		)
-	);
-}
+		),
+	fromApi: customPostToProduct,
+	onSuccess: addOrUpdateProduct,
+	onError: noop,
+} );
 
-/**
- * Issues an API request to delete a product
- * @param {Object} store Redux store
- * @param {Object} action Action object
- */
-export function requestSimplePaymentsProductDelete( { dispatch }, action ) {
-	const { siteId, productId } = action;
-
-	dispatch(
+export const handleProductListDelete = dispatchRequestEx( {
+	fetch: action =>
 		http(
 			{
 				method: 'POST',
-				path: `/sites/${ siteId }/posts/${ productId }/delete`,
+				path: `/sites/${ action.siteId }/posts/${ action.productId }/delete`,
 			},
 			action
-		)
-	);
-}
-
-export const addProduct = ( { dispatch }, { siteId }, newProduct ) =>
-	dispatch( receiveUpdateProduct( siteId, customPostToProduct( newProduct ) ) );
-
-export const deleteProduct = ( { dispatch }, { siteId }, deletedProduct ) =>
-	dispatch( receiveDeleteProduct( siteId, deletedProduct.ID ) );
-
-export const listProduct = ( { dispatch }, { siteId }, product ) => {
-	if ( ! isValidSimplePaymentsProduct( product ) ) {
-		return;
-	}
-
-	dispatch( receiveProduct( siteId, customPostToProduct( product ) ) );
-};
-
-export const listProducts = ( { dispatch }, { siteId }, { posts: products } ) => {
-	const validProducts = filter( products, isValidSimplePaymentsProduct );
-
-	dispatch( receiveProductsList( siteId, validProducts.map( customPostToProduct ) ) );
-};
+		),
+	onSuccess: deleteProduct,
+	onError: noop,
+} );
 
 export default {
-	[ SIMPLE_PAYMENTS_PRODUCT_GET ]: [
-		dispatchRequest( requestSimplePaymentsProduct, listProduct, noop ),
-	],
-	[ SIMPLE_PAYMENTS_PRODUCTS_LIST ]: [
-		dispatchRequest( requestSimplePaymentsProducts, listProducts, noop ),
-	],
-	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_ADD ]: [
-		dispatchRequest( requestSimplePaymentsProductAdd, addProduct, noop ),
-	],
-	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_EDIT ]: [
-		dispatchRequest( requestSimplePaymentsProductEdit, addProduct, noop ),
-	],
-	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_DELETE ]: [
-		dispatchRequest( requestSimplePaymentsProductDelete, deleteProduct, noop ),
-	],
+	[ SIMPLE_PAYMENTS_PRODUCT_GET ]: [ handleProductGet ],
+	[ SIMPLE_PAYMENTS_PRODUCTS_LIST ]: [ handleProductList ],
+	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_ADD ]: [ handleProductListAdd ],
+	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_EDIT ]: [ handleProductListEdit ],
+	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_DELETE ]: [ handleProductListDelete ],
 };

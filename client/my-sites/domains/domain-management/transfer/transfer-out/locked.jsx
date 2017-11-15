@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -43,21 +43,6 @@ class Locked extends React.Component {
 		} );
 	};
 
-	requestTransferCode() {
-		const options = {
-			siteId: this.props.selectedSite.ID,
-			domainName: this.props.selectedDomainName,
-			unlock: false,
-			disablePrivacy: false,
-		};
-
-		this.setState( { submitting: true } );
-		requestTransferCode( options, error => {
-			this.setState( { submitting: false } );
-			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
-		} );
-	}
-
 	isManualTransferRequired() {
 		return getSelectedDomain( this.props ).manualTransferRequired;
 	}
@@ -74,11 +59,6 @@ class Locked extends React.Component {
 		);
 	}
 
-	handleGiveMeTheCodeClick = event => {
-		event.preventDefault();
-		this.requestTransferCode();
-	};
-
 	render() {
 		const { translate } = this.props;
 		const { privateDomain } = getSelectedDomain( this.props );
@@ -88,25 +68,18 @@ class Locked extends React.Component {
 				<Card className="transfer-card">
 					<div>
 						<p>
-							{ privateDomain ? (
-								translate(
-									'To transfer your domain, we must unlock it and remove Privacy Protection. ' +
-										'Your contact information will be publicly available during the transfer period.'
-								)
-							) : (
-								translate( 'To transfer your domain, we must unlock it.' )
-							) }{' '}
+							{ privateDomain
+								? translate(
+										'To transfer your domain, we must unlock it and remove Privacy Protection. ' +
+											'Your contact information will be publicly available during the transfer period.'
+									)
+								: translate( 'To transfer your domain, we must unlock it.' ) }{' '}
 							<a
 								href={ support.TRANSFER_DOMAIN_REGISTRATION }
 								target="_blank"
 								rel="noopener noreferrer"
 							>
 								{ translate( 'Learn More.' ) }
-							</a>
-						</p>
-						<p className="transfer__small-text">
-							<a href="" onClick={ this.handleGiveMeTheCodeClick }>
-								{ translate( 'I just want the transfer code for now.' ) }
 							</a>
 						</p>
 						{ this.isManualTransferRequired() && this.renderManualTransferInfo() }

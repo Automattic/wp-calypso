@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { startsWith } from 'lodash';
@@ -18,11 +18,9 @@ class CartEmpty extends React.Component {
 				</div>
 				<div className="cart-buttons">
 					<button className="cart-checkout-button button is-primary" onClick={ this.handleClick }>
-						{ this.shouldShowPlanButton() ? (
-							this.props.translate( 'Add a Plan' )
-						) : (
-							this.props.translate( 'Add a Domain' )
-						) }
+						{ this.shouldShowPlanButton()
+							? this.props.translate( 'Add a Plan' )
+							: this.props.translate( 'Add a Domain' ) }
 					</button>
 				</div>
 			</div>

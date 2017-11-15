@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
@@ -1215,6 +1215,7 @@ Undocumented.prototype.paypalExpressUrl = function( data, fn ) {
  *
  * @param {Function} fn - The callback funtion
  * @api public
+ * @returns {Promise} promise
  */
 Undocumented.prototype.exampleDomainSuggestions = function( fn ) {
 	return this.wpcom.req.get( { path: '/domains/suggestions/examples' }, function(

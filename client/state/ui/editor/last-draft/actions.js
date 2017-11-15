@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';

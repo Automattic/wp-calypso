@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -174,11 +174,9 @@ class Unlocked extends React.Component {
 				compact
 				primary
 			>
-				{ this.state.sent ? (
-					translate( 'Resend Transfer Code' )
-				) : (
-					translate( 'Send Transfer Code' )
-				) }
+				{ this.state.sent
+					? translate( 'Resend Transfer Code' )
+					: translate( 'Send Transfer Code' ) }
 			</Button>
 		);
 	}
@@ -220,18 +218,16 @@ class Unlocked extends React.Component {
 				{ translate(
 					'The registry for your domain requires a special process for transfers. '
 				) }{' '}
-				{ sent ? (
-					translate(
-						'Our Happiness Engineers have been notified about ' +
-							'your transfer request and will be in touch shortly to help ' +
-							'you complete the process.'
-					)
-				) : (
-					translate(
-						'Please request an authorization code to notify our ' +
-							'Happiness Engineers of your intention.'
-					)
-				) }
+				{ sent
+					? translate(
+							'Our Happiness Engineers have been notified about ' +
+								'your transfer request and will be in touch shortly to help ' +
+								'you complete the process.'
+						)
+					: translate(
+							'Please request an authorization code to notify our ' +
+								'Happiness Engineers of your intention.'
+						) }
 			</p>
 		);
 	}

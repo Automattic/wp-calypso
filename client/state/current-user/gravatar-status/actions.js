@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { GRAVATAR_RECEIVE_IMAGE_FAILURE, GRAVATAR_UPLOAD_REQUEST } from 'state/action-types';

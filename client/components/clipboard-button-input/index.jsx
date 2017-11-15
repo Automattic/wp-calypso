@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -75,11 +75,9 @@ class ClipboardButtonInputExport extends React.Component {
 					disabled={ disabled }
 					compact
 				>
-					{ this.state.isCopied ? (
-						translate( 'Copied!' )
-					) : (
-						translate( 'Copy', { context: 'verb' } )
-					) }
+					{ this.state.isCopied
+						? translate( 'Copied!' )
+						: translate( 'Copy', { context: 'verb' } ) }
 				</ClipboardButton>
 			</span>
 		);

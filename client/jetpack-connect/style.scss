@@ -99,10 +99,6 @@
 	.button {
 		width: 100%;
 	}
-
-	.logged-out-form__links .gridicon {
-		top: 2px;
-	}
 }
 
 .jetpack-connect__back-button {
@@ -467,15 +463,6 @@
 	word-break: break-word;
 }
 
-.jetpack-connect__help-button {
-	.gridicon {
-		width: 18px;
-		height: 18px;
-		position: relative;
-		top: 4px;
-	}
-}
-
 .jetpack-connect__error-details {
 	margin-bottom: 16px;
 }
@@ -543,4 +530,26 @@
 
 .jetpack-connect__auth-form-header-image {
 	text-align: center;
+}
+
+@media ( max-height: 920px ) {
+	.jetpack-connect__hide-plan-icons {
+		.jetpack-connect__plans-nav-buttons {
+			margin-bottom: 0;
+		}
+
+		.jetpack-connect__plans {
+			.plans-wrapper {
+				padding-bottom: 0;
+			}
+
+			.plan-features__graphic {
+				display: none;
+			}
+
+			.plan-features__pricing {
+				padding-top: 16px;
+			}
+		}
+	}
 }

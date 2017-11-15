@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -47,15 +47,13 @@ class ContactFormDialogFormSettings extends React.Component {
 				<SectionHeader label={ this.props.translate( 'Contact Form Notification Settings' ) } />
 				<Card>
 					<p>
-						{ this.props.postType === 'post' ? (
-							this.props.translate(
-								'If you don’t make any changes here, feedback will be sent to the author of the post and the subject will be the name of this post.'
-							)
-						) : (
-							this.props.translate(
-								'If you don’t make any changes here, feedback will be sent to the author of the page and the subject will be the name of this page.'
-							)
-						) }
+						{ this.props.postType === 'post'
+							? this.props.translate(
+									'If you don’t make any changes here, feedback will be sent to the author of the post and the subject will be the name of this post.'
+								)
+							: this.props.translate(
+									'If you don’t make any changes here, feedback will be sent to the author of the page and the subject will be the name of this page.'
+								) }
 					</p>
 
 					<FormFieldset>

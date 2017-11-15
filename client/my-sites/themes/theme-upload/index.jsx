@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -212,13 +212,13 @@ class Upload extends React.Component {
 		return (
 			<Card>
 				{ ! inProgress &&
-				! complete && <UploadDropZone doUpload={ uploadAction } disabled={ disabled } /> }
+					! complete && <UploadDropZone doUpload={ uploadAction } disabled={ disabled } /> }
 				{ inProgress && this.renderProgressBar() }
 				{ complete && ! failed && uploadedTheme && this.renderTheme() }
 				{ complete &&
-				this.props.isSiteAutomatedTransfer && (
-					<WpAdminAutoLogin site={ this.props.selectedSite } />
-				) }
+					this.props.isSiteAutomatedTransfer && (
+						<WpAdminAutoLogin site={ this.props.selectedSite } />
+					) }
 			</Card>
 		);
 	}

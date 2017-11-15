@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -21,7 +21,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import {
 	getStripeSampleStatementDescriptor,
 	hasStripeKeyPairForMode,
-} from './payment-method-stripe-utils.js';
+} from './payment-method-stripe-utils';
 import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
 import TestLiveToggle from 'woocommerce/components/test-live-toggle';
 

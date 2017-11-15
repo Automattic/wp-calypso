@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -12,9 +12,9 @@ import React from 'react';
 import Gauge from 'components/gauge';
 
 export default class extends React.PureComponent {
- static displayName = 'Gauge';
+	static displayName = 'Gauge';
 
- render() {
-	 return <Gauge percentage={ 27 } metric={ 'test' } />;
- }
+	render() {
+		return <Gauge percentage={ 27 } metric={ 'test' } />;
+	}
 }

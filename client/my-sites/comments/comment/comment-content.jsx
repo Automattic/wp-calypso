@@ -24,14 +24,15 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 export class CommentContent extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
-		isExpanded: PropTypes.bool,
+		isBulkMode: PropTypes.bool,
+		isPostView: PropTypes.bool,
 	};
 
 	trackDeepReaderLinkClick = () =>
 		this.props.isJetpack ? noop : this.props.recordReaderCommentOpened();
 
 	renderInReplyTo = () => {
-		const { commentUrl, isExpanded, parentCommentContent, translate } = this.props;
+		const { commentUrl, isBulkMode, parentCommentContent, translate } = this.props;
 
 		if ( ! parentCommentContent ) {
 			return null;
@@ -39,7 +40,7 @@ export class CommentContent extends Component {
 
 		return (
 			<div className="comment__in-reply-to">
-				{ ! isExpanded && <Gridicon icon="reply" size={ 18 } /> }
+				{ isBulkMode && <Gridicon icon="reply" size={ 18 } /> }
 				<span>{ translate( 'In reply to:' ) }</span>
 				<a href={ commentUrl } onClick={ this.trackDeepReaderLinkClick }>
 					<Emojify>{ parentCommentContent }</Emojify>
@@ -49,10 +50,18 @@ export class CommentContent extends Component {
 	};
 
 	render() {
-		const { commentContent, commentId, isExpanded } = this.props;
+		const {
+			commentContent,
+			commentId,
+			commentIsPending,
+			isBulkMode,
+			isPostView,
+			parentCommentContent,
+			translate,
+		} = this.props;
 		return (
 			<div className="comment__content">
-				{ ! isExpanded && (
+				{ isBulkMode && (
 					<div className="comment__content-preview">
 						{ this.renderInReplyTo() }
 
@@ -62,15 +71,24 @@ export class CommentContent extends Component {
 					</div>
 				) }
 
-				{ isExpanded && (
+				{ ! isBulkMode && (
 					<div className="comment__content-full">
-						<CommentPostLink { ...{ commentId } } />
+						{ ( commentIsPending || parentCommentContent || ! isPostView ) && (
+							<div className="comment__content-info">
+								{ commentIsPending && (
+									<div className="comment__status-label">{ translate( 'Pending' ) }</div>
+								) }
 
-						{ this.renderInReplyTo() }
+								{ ! isPostView && <CommentPostLink { ...{ commentId, isBulkMode } } /> }
+
+								{ this.renderInReplyTo() }
+							</div>
+						) }
 
 						<AutoDirection>
 							<Emojify>
 								<div
+									className="comment__content-body"
 									dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
 								/>
 							</Emojify>
@@ -98,6 +116,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 
 	return {
 		commentContent: get( comment, 'content' ),
+		commentIsPending: 'unapproved' === get( comment, 'status' ),
 		commentUrl,
 		isJetpack,
 		parentCommentContent,

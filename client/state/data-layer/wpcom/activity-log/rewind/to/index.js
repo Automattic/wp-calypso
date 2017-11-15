@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import debugFactory from 'debug';
@@ -38,7 +38,7 @@ export const receiveRestoreSuccess = ( { dispatch }, { siteId, timestamp }, apiD
 	const { restoreId } = fromApi( apiData );
 	if ( restoreId ) {
 		debug( 'Request restore success, restore id:', restoreId );
-		dispatch( getRewindRestoreProgress( siteId, timestamp, restoreId ) );
+		dispatch( getRewindRestoreProgress( siteId, restoreId ) );
 	} else {
 		debug( 'Request restore response missing restore_id' );
 		dispatch(

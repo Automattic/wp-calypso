@@ -1,35 +1,74 @@
 /**
  * External dependencies
  */
-import { find, uniqueId } from 'lodash';
+import { find } from 'lodash';
 
 export function createPromotionFromProduct( product ) {
+	const salePrice = product.sale_price;
+	const startDate = product.date_on_sale_from || undefined;
+	const endDate = product.date_on_sale_to || undefined;
+	const productId = product.id;
+
 	return {
-		id: uniqueId( 'promotion:' ),
+		id: 'p' + product.id,
 		name: product.name,
 		type: 'product_sale',
 		appliesTo: { productIds: [ product.id ] },
-		salePrice: product.sale_price,
-		startDate: product.date_on_sale_from_gmt,
-		endDate: product.date_on_sale_to_gmt,
+		salePrice,
+		startDate,
+		endDate,
+		productId,
+	};
+}
+
+export function createProductUpdateFromPromotion( promotion ) {
+	const { productIds } = promotion.appliesTo || {};
+	const id = productIds && productIds[ 0 ];
+
+	if ( ! id ) {
+		throw new Error( 'Cannot create product from promotion, product id not found.' );
+	}
+
+	return {
+		id,
+		sale_price: promotion.salePrice,
+		date_on_sale_from: promotion.startDate,
+		date_on_sale_to: promotion.endDate,
 	};
 }
 
 export function createPromotionFromCoupon( coupon ) {
+	const promotionTypeMeta = find( coupon.meta_data, { key: 'promotion_type' } );
+	const promotionType = ( promotionTypeMeta ? promotionTypeMeta.value : coupon.discount_type );
+	const couponCode = coupon.code;
+	const startDate = coupon.date_created;
+	const endDate = coupon.date_expires || undefined;
+	const individualUse = coupon.individual_use || undefined;
+	const usageLimit = coupon.usage_limit || undefined;
+	const usageLimitPerUser = coupon.usage_limit_per_user || undefined;
+	const freeShipping = coupon.free_shipping || undefined;
+	const minimumAmount = (
+		( '0.00' !== coupon.minimum_amount ) ? coupon.minimum_amount : undefined
+	);
+	const maximumAmount = (
+		( '0.00' !== coupon.maximum_amount ) ? coupon.maximum_amount : undefined
+	);
+
 	const promotion = {
-		id: uniqueId( 'promotion:' ),
+		id: 'c' + coupon.id,
 		name: coupon.code,
-		type: coupon.discount_type,
+		type: promotionType,
 		appliesTo: calculateCouponAppliesTo( coupon ),
-		couponCode: coupon.code,
-		startDate: coupon.date_created_gmt,
-		endDate: coupon.date_expires_gmt,
-		individualUse: coupon.individual_use,
-		usageLimit: coupon.usage_limit,
-		usageLimitPerUser: coupon.usage_limit_per_user,
-		freeShipping: coupon.free_shipping,
-		minimumAmount: coupon.minimum_amount,
-		maximumAmount: coupon.maximum_amount,
+		couponCode,
+		startDate,
+		endDate,
+		individualUse,
+		usageLimit,
+		usageLimitPerUser,
+		freeShipping,
+		minimumAmount,
+		maximumAmount,
+		couponId: coupon.id,
 	};
 
 	switch ( coupon.discount_type ) {
@@ -43,6 +82,52 @@ export function createPromotionFromCoupon( coupon ) {
 	}
 
 	return promotion;
+}
+
+export function createCouponUpdateFromPromotion( promotion ) {
+	const { appliesTo } = promotion;
+
+	if ( ! promotion.couponCode ) {
+		throw new Error( 'Cannot create coupon from promotion with nonexistant couponCode' );
+	}
+
+	let amount = undefined;
+	let freeShipping = promotion.freeShipping;
+	let discountType = promotion.type;
+	const meta = [ { key: 'promotion_type', value: promotion.type } ];
+	const productIds = ( appliesTo && appliesTo.productIds ) || undefined;
+	const productCategoryIds = ( appliesTo && appliesTo.productCategoryIds ) || undefined;
+
+	switch ( promotion.type ) {
+		case 'percent':
+			amount = promotion.percentDiscount;
+			break;
+		case 'fixed_product':
+		case 'fixed_cart':
+			amount = promotion.fixedDiscount;
+			break;
+		case 'free_shipping':
+			freeShipping = true;
+			discountType = undefined; // let it go to default, since we don't care.
+			break;
+	}
+
+	return {
+		id: promotion.couponId, // May not be present in case of create.
+		discount_type: discountType,
+		code: promotion.couponCode,
+		amount: amount,
+		date_expires: promotion.endDate,
+		individual_use: promotion.individualUse,
+		usage_limit: promotion.usageLimit,
+		usage_limit_per_user: promotion.usageLimitPerUser,
+		free_shipping: freeShipping,
+		minimum_amount: promotion.minimumAmount,
+		maximum_amount: promotion.maximumAmount,
+		product_ids: productIds,
+		product_categories: productCategoryIds,
+		meta_data: meta,
+	};
 }
 
 function calculateCouponAppliesTo( coupon ) {

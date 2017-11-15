@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import page from 'page';
@@ -289,11 +289,9 @@ class ConfirmCancelDomain extends React.Component {
 						className="confirm-cancel-domain__reasons-dropdown"
 						key="confirm-cancel-domain__reasons-dropdown"
 						selectedText={
-							selectedReason ? (
-								selectedReason.label
-							) : (
-								this.props.translate( 'Please let us know why you wish to cancel.' )
-							)
+							selectedReason
+								? selectedReason.label
+								: this.props.translate( 'Please let us know why you wish to cancel.' )
 						}
 						options={ cancellationReasons }
 						onSelect={ this.onReasonChange }

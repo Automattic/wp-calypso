@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -22,6 +22,8 @@ import Emojify from 'components/emojify';
 import titlecase from 'to-title-case';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
+import { get } from 'lodash';
+import { recordTrack } from 'reader/stats';
 
 class StatsListItem extends React.Component {
 	static displayName = 'StatsListItem';
@@ -45,6 +47,14 @@ class StatsListItem extends React.Component {
 			this.removeMenuListener();
 		}
 	}
+
+	isFollowersModule = () => {
+		return !! this.props.followList;
+	};
+
+	getSiteIdForFollow = () => {
+		return get( this.props, 'data.actions[0].data.blog_id' );
+	};
 
 	closeMenu = () => {
 		this.removeMenuListener();
@@ -92,7 +102,11 @@ class StatsListItem extends React.Component {
 			} else if ( this.props.data.page && ! this.props.children ) {
 				gaEvent = [ 'Clicked', moduleName, 'Summary Link' ].join( ' ' );
 				page( this.props.data.page );
-			} else if ( this.props.data.link && ! this.props.children ) {
+			} else if (
+				this.props.data.link &&
+				! this.props.children &&
+				! ( this.isFollowersModule() && this.getSiteIdForFollow() )
+			) {
 				gaEvent = [ 'Clicked', moduleName, 'External Link' ].join( ' ' );
 
 				window.open( this.props.data.link );
@@ -214,8 +228,33 @@ class StatsListItem extends React.Component {
 			}
 
 			if ( data.link ) {
+				const href = data.link;
+				let onClickHandler = this.preventDefaultOnClick;
+				const siteId = this.getSiteIdForFollow();
+				if ( this.isFollowersModule && siteId ) {
+					onClickHandler = event => {
+						const modifierPressed =
+							event.button > 0 ||
+							event.metaKey ||
+							event.controlKey ||
+							event.shiftKey ||
+							event.altKey;
+						recordTrack( 'calypso_reader_stats_module_site_stream_link_click', {
+							siteId,
+							module_name: this.props.moduleName,
+							modifier_pressed: modifierPressed,
+						} );
+
+						if ( modifierPressed ) {
+							return;
+						}
+
+						event.preventDefault();
+						page( `/read/blogs/${ siteId }` );
+					};
+				}
 				itemLabel = (
-					<a onClick={ this.preventDefaultOnClick } href={ data.link }>
+					<a onClick={ onClickHandler } href={ href }>
 						{ labelItem.label }
 					</a>
 				);

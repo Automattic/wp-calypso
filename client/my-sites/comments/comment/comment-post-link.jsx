@@ -18,20 +18,22 @@ import { getSitePost } from 'state/posts/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const CommentPostLink = ( {
+	isBulkMode,
 	isPostTitleLoaded,
 	postId,
 	postTitle,
 	siteId,
 	siteSlug,
+	status,
 	translate,
 } ) => (
 	<div className="comment__post-link">
 		{ ! isPostTitleLoaded && <QueryPosts siteId={ siteId } postId={ postId } /> }
 
-		<Gridicon icon="chevron-right" size={ 18 } />
+		<Gridicon icon={ isBulkMode ? 'chevron-right' : 'posts' } size={ 18 } />
 
-		<a href={ `/comments/all/${ siteSlug }/${ postId }` }>
-			{ postTitle || translate( 'Untitled' ) }
+		<a href={ `/comments/${ status }/${ siteSlug }/${ postId }` }>
+			{ postTitle.trim() || translate( 'Untitled' ) }
 		</a>
 	</div>
 );
@@ -41,6 +43,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 	const siteSlug = getSelectedSiteSlug( state );
 
 	const comment = getSiteComment( state, siteId, commentId );
+	const commentStatus = get( comment, 'status' );
 
 	const postId = get( comment, 'post.ID' );
 	const post = getSitePost( state, siteId, postId );
@@ -53,6 +56,8 @@ const mapStateToProps = ( state, { commentId } ) => {
 		postId,
 		postTitle,
 		siteSlug,
+		siteId,
+		status: 'unapproved' === commentStatus ? 'pending' : commentStatus,
 	};
 };
 

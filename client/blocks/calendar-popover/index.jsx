@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -18,8 +18,6 @@ import PostSchedule from 'components/post-schedule';
 
 class CalendarPopover extends Component {
 	static propTypes = {
-		children: PropTypes.element,
-
 		// connect props
 		gmtOffset: PropTypes.number,
 		timezoneValue: PropTypes.string,

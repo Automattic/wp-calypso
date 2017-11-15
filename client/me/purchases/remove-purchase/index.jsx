@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { connect } from 'react-redux';
@@ -398,17 +398,15 @@ class RemovePurchase extends Component {
 						args: { productName },
 						components: { siteName: <em>{ this.props.selectedSite.domain }</em> },
 					} ) }{' '}
-					{ isGoogleApps( purchase ) ? (
-						translate(
-							'Your G Suite account will continue working without interruption. ' +
-								'You will be able to manage your G Suite billing directly through Google.'
-						)
-					) : (
-						translate(
-							'You will not be able to reuse it again without purchasing a new subscription.',
-							{ comment: "'it' refers to a product purchased by a user" }
-						)
-					) }
+					{ isGoogleApps( purchase )
+						? translate(
+								'Your G Suite account will continue working without interruption. ' +
+									'You will be able to manage your G Suite billing directly through Google.'
+							)
+						: translate(
+								'You will not be able to reuse it again without purchasing a new subscription.',
+								{ comment: "'it' refers to a product purchased by a user" }
+							) }
 				</p>
 
 				{ isPlan( purchase ) && hasIncludedDomain( purchase ) && includedDomainText }

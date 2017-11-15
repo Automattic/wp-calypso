@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -29,6 +29,7 @@ import notices from 'notices';
 import analytics from 'lib/analytics';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import getHappychatUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import {
 	isTicketSupportEligible,
@@ -40,7 +41,7 @@ import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import {
-	sendChatMessage as sendHappychatMessage,
+	sendMessage as sendHappychatMessage,
 	sendUserInfo,
 } from 'state/happychat/connection/actions';
 import { openChat as openHappychat } from 'state/happychat/ui/actions';
@@ -144,7 +145,7 @@ class HelpContact extends React.Component {
 		this.props.openHappychat();
 		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
 
-		this.props.sendUserInfo( howCanWeHelp, howYouFeel, site );
+		this.props.sendUserInfo( this.props.getUserInfo( { howCanWeHelp, howYouFeel, site } ) );
 		this.props.sendHappychatMessage( message, { includeInSummary: true } );
 
 		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
@@ -731,7 +732,7 @@ class HelpContact extends React.Component {
 				>
 					{ this.getView() }
 				</Card>
-				<HappychatConnection />
+				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				<QueryOlark />
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
@@ -747,6 +748,7 @@ export default connect(
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
+			getUserInfo: getHappychatUserInfo( state ),
 			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
 			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
@@ -758,6 +760,7 @@ export default connect(
 			ticketSupportEligible: isTicketSupportEligible( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
+			shouldStartHappychatConnection: ! isRequestingSites( state ) && helpSelectedSiteId,
 			isRequestingSites: isRequestingSites( state ),
 			isSelectedHelpSiteOnPaidPlan: isCurrentPlanPaid( state, helpSelectedSiteId ),
 			selectedSitePlanSlug: selectedSitePlan && selectedSitePlan.product_slug,

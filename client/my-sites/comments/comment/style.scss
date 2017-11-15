@@ -6,12 +6,26 @@
 	font-size: 14px;
 	margin: 0 auto;
 	padding: 0;
-	transition: margin 0.15s linear;
 
 	.accessible-focus &:focus {
 		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
-		z-index: z-index('root', '.comment-detail.card.accessible-focus:focus');
+		z-index: z-index('root', '.card.comment.accessible-focus:focus');
 	}
+
+	&.is-pending {
+		background: mix($alert-yellow, $white, 8.5%);
+		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px transparentize(lighten($gray, 20%), 0.5),
+			0 1px 2px lighten($gray, 30%);
+	}
+
+	@include breakpoint( '>660px' ) {
+		margin: 10px auto;
+	}
+}
+
+// `transition` here is applied with less specificity to avoid overwriting ReactCSSTransitionGroup's animation.
+.comment {
+	transition: margin 0.15s linear;
 }
 
 // Comment Header Block
@@ -20,10 +34,6 @@
 	display: flex;
 	flex-flow: row;
 	flex-wrap: nowrap;
-
-	.comment__author {
-		padding: 8px;
-	}
 }
 
 .comment__bulk-select {
@@ -35,28 +45,14 @@
 	}
 }
 
-.button.comment__toggle-expanded {
-	border-radius: 0;
-	padding-left: 16px;
-	padding-right: 16px;
-
-	.gridicon {
-		fill: $gray;
-		transform: rotate(0deg);
-		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
-	}
-
-	&:hover .gridicon {
-		fill: $blue-medium;
-	}
-}
-
 // Comment Author Block
+
 .comment__author {
 	display: flex;
 	flex-flow: row;
 	flex-grow: 1;
 	flex-wrap: nowrap;
+	padding: 8px 16px 8px 8px;
 	width: 0;
 }
 
@@ -80,6 +76,11 @@
 	display: flex;
 	flex-flow: column;
 	width: calc(100% - 48px);
+}
+
+.comment__author-has-link {
+	margin: 0 4px -4px 0;
+	color: $alert-red;
 }
 
 .comment__author-info-element {
@@ -139,7 +140,7 @@
 
 .popover.comment__author-more-info-popover {
 	/* applying a lower z-index to ensure it is layered behind global notice */
-	z-index: z-index('root', '.popover.comment-detail__author-more-info');
+	z-index: z-index('root', '.popover.comment__author-more-info-popover');
 
 	.popover__inner {
 		color: $gray-text-min;
@@ -177,27 +178,36 @@
 // Comment Content Block
 
 .comment__content {
-	padding: 0 16px 16px 56px;
-
-	@include breakpoint( '>480px' ) {
-		padding-right: 56px;
-	}
+	padding: 8px 16px 16px 56px;
 
 	.comment__post-link {
 		font-weight: 600;
-		margin: 8px 0 1em 0;
+		margin-bottom: 16px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 
 		.gridicon {
-			display: none;
+			color: $gray-text-min;
+			margin: 0 4px -3px 0;
 		}
 	}
 
+	.comment__status-label {
+		background: lighten($alert-yellow, 18%);
+		border-radius: 9px;
+		float: right;
+		font-size: 12px;
+		margin-left: 8px;
+		padding: 0 10px;
+	}
+
 	.comment__in-reply-to {
+		border-left: 4px solid lighten($gray, 30%);
 		color: $gray-text-min;
+		margin-bottom: 16px;
 		overflow: hidden;
+		padding: 2px 4px;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 
@@ -217,6 +227,10 @@
 		a:hover {
 			color: $blue-wordpress;
 		}
+	}
+
+	.comment__content-body *:last-child {
+		margin-bottom: 0;
 	}
 }
 
@@ -250,6 +264,8 @@
 // Comment Post Link Block
 
 .comment__post-link {
+	font-family: $serif;
+
 	a {
 		color: $gray-text-min;
 	}
@@ -259,38 +275,289 @@
 	}
 }
 
-// Expanded View
+// Comment Actions Block
 
-.card.comment.is-expanded {
-	margin: 16px auto;
+.comment__actions {
+	align-items: center;
+	border-top: 1px solid lighten($gray, 30%);
+	display: flex;
+	flex-flow: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	margin: 0 16px 0 56px;
+	padding-top: 8px;
+	padding-bottom: 8px;
 
-	.comment__header {
-		border-bottom: 1px solid lighten($gray, 30%);
+	@include breakpoint( '>960px' ) {
+		justify-content: flex-start;
+		margin-left: 40px;
+		padding-top: 0;
+	}
+}
 
-		.button.comment__toggle-expanded {
-			border-left: 1px solid lighten($gray, 30%);
-		}
+.button.is-borderless.comment__action {
+	flex-basis: 0;
+	flex-grow: 1;
+	padding: 8px 4px;
+	text-align: center;
 
-		.comment__toggle-expanded .gridicon {
-			transform: rotate(180deg);
+	span {
+		display: none;
+		font-weight: 400;
+		padding-top: 4px;
+	}
+
+	&.comment__action-approve:hover {
+		color: $alert-green;
+	}
+	&.comment__action-like:hover {
+		color: $orange-jazzy;
+	}
+	&.comment__action-delete:hover,
+	&.comment__action-spam:hover,
+	&.comment__action-trash:hover {
+		color: $alert-red;
+	}
+
+	&.is-approved {
+		color: $alert-green;
+	}
+	&.is-liked {
+		color: $orange-jazzy;
+	}
+
+	@include breakpoint( '>480px' ) {
+		span {
+			display: block;
 		}
 	}
 
-	.comment__content {
-		padding-top: 8px;
+	@include breakpoint( '>960px' ) {
+		flex-basis: auto;
+		flex-grow: 0;
+		padding: 8px 16px;
+		text-align: left;
 
-		.comment__in-reply-to {
-			border-left: 4px solid lighten($gray, 30%);
-			margin-bottom: 1em;
-			padding: 2px 4px;
+		.gridicon {
+			margin-right: 4px;
+		}
+
+		span {
+			display: inline;
 		}
 	}
+}
+
+// Comment Reply Block
+
+.comment__reply {
+	display: none;
+	padding: 0 16px 16px 16px;
+	position: relative;
+}
+
+.comment__reply-textarea {
+	font-size: 14px;
+	height: 47px; // 1 line
+	line-height: 21px;
+	min-height: 47px; // 1 line
+	overflow: hidden;
+	padding: 12px 70px 12px 16px;
+	resize: vertical;
+	transition: min-height 0.15s linear;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+
+	&::placeholder {
+		color: $gray-text-min;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	&:not(:focus) {
+		resize: none;
+	}
+
+	&:focus,
+	&.has-focus {
+		min-height: 68px; // 2 lines
+	}
+
+	&.has-scrollbar {
+		overflow-y: auto;
+	}
+}
+
+.comment__reply-submit {
+	color: $gray;
+	font-size: 12px;
+	font-weight: 600;
+	padding: 4px;
+	position: absolute;
+	right: 28px;
+	top: 12px;
+	text-transform: uppercase;
+
+	&.is-active {
+		color: $blue-wordpress;
+		cursor: pointer;
+	}
+}
+
+// Comment Edit Block
+
+.comment__edit {
+	.form-fieldset {
+		padding: 0 8px;
+		width: 50%;
+	}
+
+	.form-textarea {
+		margin: 0px 8px 20px 8px;
+		transition: none;
+		width: 100%;
+	}
+
+	label {
+		display: inline-block;
+	}
+
+	input[type='text'],
+	textarea {
+		font-size: 14px;
+	}
+
+	.info-popover {
+		display: inline-block;
+		margin-left: 4px;
+		vertical-align: middle;
+	}
+
+	.comment__edit-jetpack-update-notice {
+		color: $alert-red;
+		margin-left: 8px;
+		margin-right: 8px;
+
+		.gridicon {
+			margin-right: 4px;
+			vertical-align: middle;
+		}
+	}
+
+	.comment__edit-jetpack-update-notice-link {
+		color: $alert-red;
+		margin-left: 4px;
+		text-decoration: underline;
+	}
+}
+
+.comment__edit-header {
+	border-bottom: 1px solid lighten($gray, 30%);
+	padding: 12px 16px;
+}
+
+.comment__edit-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 16px 8px 0 8px;
+}
+
+.comment__edit-buttons {
+	padding: 0 8px 16px 8px;
+	width: 100%;
 }
 
 // Bulk Mode View
 
 .card.comment.is-bulk-mode {
-	.comment__header .comment__author {
+	margin: 0 auto;
+
+	&:hover {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20%);
+		z-index: z-index('root', '.card.comment.is-bulk-mode:hover');
+	}
+
+	a {
+		color: $gray-text-min;
+		cursor: default;
+		pointer-events: none;
+	}
+
+	.comment__author {
 		padding-left: 0;
+	}
+
+	.comment__content {
+		padding-top: 0;
+	}
+
+	.comment__in-reply-to {
+		border: none;
+		margin: 0;
+		padding: 0;
+	}
+}
+
+// Reply Visible
+
+.card.comment.is-reply-visible {
+	.comment__reply {
+		display: block;
+	}
+}
+
+// Placeholder View
+
+.card.comment.is-placeholder {
+	@include placeholder();
+
+	background-color: $white;
+
+	.comment__bulk-select {
+		display: none;
+	}
+
+	.comment__author {
+		padding: 8px;
+	}
+
+	.comment__author-gravatar-placeholder {
+		background-color: lighten($gray, 30%);
+		border-radius: 50%;
+		display: block;
+		height: 32px;
+		width: 32px;
+	}
+
+	.comment__author-info {
+		padding: 5px 8px 5px 0;
+	}
+
+	.comment__author-info-element {
+		background-color: lighten($gray, 30%);
+		color: transparent;
+		height: 16px;
+
+		a,
+		a:focus,
+		a:hover,
+		.gridicon,
+		.comment__author-url-separator {
+			color: transparent;
+			cursor: default;
+		}
+	}
+
+	.comment__author-more-info {
+		display: none;
+	}
+
+	.comment__content {
+		display: none;
+	}
+
+	.comment__actions {
+		display: none;
 	}
 }

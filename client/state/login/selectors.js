@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import { get, isEmpty } from 'lodash';
 
 /**
@@ -161,16 +160,6 @@ export const getRequestNotice = state => {
  */
 export const getRedirectTo = state => {
 	return get( state, 'login.redirectTo', null );
-};
-
-/***
- * Retrieves the remember me flag that was set when logging in.
- *
- * @param  {Object}   state  Global state tree
- * @return {Boolean}         Remember me flag for authentication
- */
-export const getRememberMe = state => {
-	return get( state, 'login.rememberMe', false );
 };
 
 /***

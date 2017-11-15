@@ -1,11 +1,14 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import { includes } from 'lodash';
+
 /**
  * Internal dependencies
- *
- * @format
  */
-
 import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { PLAN_FREE } from 'lib/plans/constants';
+import { PLAN_FREE, PLAN_JETPACK_FREE } from 'lib/plans/constants';
 
 /**
  * Returns true if site is on a free plan, false if the site is not
@@ -22,7 +25,7 @@ const isSiteOnFreePlan = ( state, siteId ) => {
 		return false;
 	}
 
-	return currentPlan.productSlug === PLAN_FREE;
+	return includes( [ PLAN_FREE, PLAN_JETPACK_FREE ], currentPlan.productSlug );
 };
 
 export default isSiteOnFreePlan;

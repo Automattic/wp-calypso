@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
 
 class EditorDrawerWell extends Component {
 	static propTypes = {
-		children: PropTypes.node,
 		disabled: PropTypes.bool,
 		empty: PropTypes.bool,
 		icon: PropTypes.string,

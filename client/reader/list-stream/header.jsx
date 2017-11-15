@@ -50,16 +50,16 @@ const ListStreamHeader = ( {
 			) }
 
 			{ showEdit &&
-			editUrl && (
-				<div className="list-stream__header-edit">
-					<a href={ editUrl } rel={ isExternal( editUrl ) ? 'external' : '' }>
-						<span className="list-stream__header-action-icon">
-							<Gridicon icon="cog" size={ 24 } />
-						</span>
-						<span className="list-stream__header-action-label">{ translate( 'Edit' ) }</span>
-					</a>
-				</div>
-			) }
+				editUrl && (
+					<div className="list-stream__header-edit">
+						<a href={ editUrl } rel={ isExternal( editUrl ) ? 'external' : '' }>
+							<span className="list-stream__header-action-icon">
+								<Gridicon icon="cog" size={ 24 } />
+							</span>
+							<span className="list-stream__header-action-label">{ translate( 'Edit' ) }</span>
+						</a>
+					</div>
+				) }
 		</Card>
 	);
 };

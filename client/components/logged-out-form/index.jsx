@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -14,9 +14,7 @@ import { omit } from 'lodash';
  */
 import Card from 'components/card';
 
-export default class extends React.Component {
-	static displayName = 'LoggedOutForm';
-
+export default class LoggedOutForm extends React.Component {
 	static propTypes = {
 		children: PropTypes.node.isRequired,
 		className: PropTypes.string,

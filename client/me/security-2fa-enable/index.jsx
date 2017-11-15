@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -334,11 +334,9 @@ class Security2faEnable extends React.Component {
 					disabled={ this.state.submittingForm }
 					name="verificationCode"
 					placeholder={
-						'sms' === this.state.method ? (
-							constants.sevenDigit2faPlaceholder
-						) : (
-							constants.sixDigit2faPlaceholder
-						)
+						'sms' === this.state.method
+							? constants.sevenDigit2faPlaceholder
+							: constants.sixDigit2faPlaceholder
 					}
 					onFocus={ function() {
 						analytics.ga.recordEvent( 'Me', 'Focused On 2fa Enable Verification Code Input' );
@@ -375,15 +373,13 @@ class Security2faEnable extends React.Component {
 						);
 					}.bind( this ) }
 				>
-					{ this.state.submittingCode ? (
-						this.props.translate( 'Enabling…', {
-							context: 'A button label used during Two-Step setup.',
-						} )
-					) : (
-						this.props.translate( 'Enable', {
-							context: 'A button label used during Two-Step setup.',
-						} )
-					) }
+					{ this.state.submittingCode
+						? this.props.translate( 'Enabling…', {
+								context: 'A button label used during Two-Step setup.',
+							} )
+						: this.props.translate( 'Enable', {
+								context: 'A button label used during Two-Step setup.',
+							} ) }
 				</FormButton>
 
 				<FormButton

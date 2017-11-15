@@ -93,19 +93,19 @@ class FollowingManageSearchFeedsResults extends React.Component {
 					rowRenderer={ siteRowRenderer }
 				/>
 				{ ! showMoreResults &&
-				searchResultsCount > 10 && (
-					<div className="following-manage__show-more">
-						<Button
-							compact
-							icon
-							onClick={ onShowMoreResultsClicked }
-							className="following-manage__show-more-button button"
-						>
-							<Gridicon icon="chevron-down" />
-							{ translate( 'Show more' ) }
-						</Button>
-					</div>
-				) }
+					searchResultsCount > 10 && (
+						<div className="following-manage__show-more">
+							<Button
+								compact
+								icon
+								onClick={ onShowMoreResultsClicked }
+								className="following-manage__show-more-button button"
+							>
+								<Gridicon icon="chevron-down" />
+								{ translate( 'Show more' ) }
+							</Button>
+						</div>
+					) }
 			</div>
 		);
 	}
