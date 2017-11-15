@@ -13,7 +13,7 @@ import createSelector from 'lib/create-selector';
 import { countDiffWords, diffWords } from 'lib/text-utils';
 import getPostRevisions from 'state/selectors/get-post-revisions';
 
-const MAX_DIFF_WORDS = 10000;
+const MAX_DIFF_CONTENT_LENGTH = 10000;
 
 const diffKey = ( key, obj1, obj2 ) =>
 	map( diffWords( get( obj1, key, '' ), get( obj2, key, '' ) ), change =>
@@ -39,7 +39,7 @@ const getPostRevisionChanges = createSelector(
 		const previousRevision = get( orderedRevisions, [ revisionIndex + 1 ], {} );
 		const combinedLength = getCombinedLength( [ previousRevision, revision ] );
 
-		if ( combinedLength > MAX_DIFF_WORDS ) {
+		if ( combinedLength > MAX_DIFF_CONTENT_LENGTH ) {
 			return { content: [], title: [], tooLong: true };
 		}
 		const title = diffKey( 'title', previousRevision, revision );
