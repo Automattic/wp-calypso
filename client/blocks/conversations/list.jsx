@@ -195,7 +195,7 @@ export class ConversationCommentList extends React.Component {
 				sortedComments,
 				comment => watermark < +new Date( comment.date )
 			);
-			minId = get( firstUnseenComment, 'ID', Infinity );
+			minId = get( firstUnseenComment, 'ID', last( sortedComments ).ID );
 		} else {
 			minId = min( commentIds );
 		}
