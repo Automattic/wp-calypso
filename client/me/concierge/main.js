@@ -10,20 +10,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import QueryConciergeShifts from 'components/data/query-concierge-shifts';
-import { getConciergeShifts } from 'state/selectors';
+import QueryConciergeSlots from 'components/data/query-concierge-slots';
+import { getConciergeSlots } from 'state/selectors';
 
 class ConciergeMain extends Component {
 	render() {
-		const { shifts } = this.props;
+		const { slots } = this.props;
 
 		// TODO:
 		// 1. pass in the real scheduleId for WP.com concierge schedule.
-		// 2. render the shifts for real.
+		// 2. render the slots for real.
 		return (
 			<div>
-				<QueryConciergeShifts scheduleId={ 123 } />
-				<div>{ JSON.stringify( shifts ) }</div>
+				<QueryConciergeSlots scheduleId={ 123 } />
+				<div>{ JSON.stringify( slots ) }</div>
 			</div>
 		);
 	}
@@ -31,7 +31,7 @@ class ConciergeMain extends Component {
 
 export default connect(
 	state => ( {
-		shifts: getConciergeShifts( state ),
+		slots: getConciergeSlots( state ),
 	} ),
-	{ getConciergeShifts }
+	{ getConciergeSlots }
 )( localize( ConciergeMain ) );

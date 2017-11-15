@@ -3,40 +3,40 @@
 /**
  * Internal dependencies
  */
-import { requestConciergeShifts, updateConciergeShifts } from '../actions';
+import { requestConciergeSlots, updateConciergeSlots } from '../actions';
 
-import { CONCIERGE_SHIFTS_REQUEST, CONCIERGE_SHIFTS_UPDATE } from 'state/action-types';
+import { CONCIERGE_SLOTS_REQUEST, CONCIERGE_SLOTS_UPDATE } from 'state/action-types';
 
 describe( 'state/concierge', () => {
 	describe( 'actions', () => {
-		test( 'requestConciergeShifts()', () => {
+		test( 'requestConciergeSlots()', () => {
 			const scheduleId = 123;
 
-			expect( requestConciergeShifts( scheduleId ) ).toEqual( {
-				type: CONCIERGE_SHIFTS_REQUEST,
+			expect( requestConciergeSlots( scheduleId ) ).toEqual( {
+				type: CONCIERGE_SLOTS_REQUEST,
 				scheduleId,
 			} );
 		} );
 
-		test( 'updateConciergeShifts()', () => {
-			const shifts = [
+		test( 'updateConciergeSlots()', () => {
+			const slots = [
 				{
 					begin_timestamp: 100,
 					end_timestamp: 300,
 					schedule_id: 123,
-					description: 'lovely shift 1',
+					description: 'lovely slot 1',
 				},
 				{
 					begin_timestamp: 200,
 					end_timestamp: 400,
 					schedule_id: 123,
-					description: 'cute shift 2',
+					description: 'cute slot 2',
 				},
 			];
 
-			expect( updateConciergeShifts( shifts ) ).toEqual( {
-				type: CONCIERGE_SHIFTS_UPDATE,
-				shifts,
+			expect( updateConciergeSlots( slots ) ).toEqual( {
+				type: CONCIERGE_SLOTS_UPDATE,
+				slots,
 			} );
 		} );
 	} );
