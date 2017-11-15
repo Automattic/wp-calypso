@@ -12,7 +12,7 @@ import { get, isArray } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
-export const getEmailSettings = ( state, siteId ) => {
+export const getEmailSettings = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'email' ] );
 };
 
