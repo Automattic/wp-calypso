@@ -34,8 +34,10 @@ import userUtilities from 'lib/user/utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getJetpackConnectRedirectAfterAuth } from 'state/selectors';
+import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import { urlToSlug } from 'lib/url';
 import {
 	authorize as authorizeAction,
 	goBackToWpAdmin as goBackToWpAdminAction,
@@ -43,8 +45,14 @@ import {
 	retryAuth as retryAuthAction,
 } from 'state/jetpack-connect/actions';
 import {
+	getAuthAttempts,
+	getAuthorizationRemoteSite,
+	getSiteIdFromQueryObject,
+	getUserAlreadyConnected,
 	hasExpiredSecretError as hasExpiredSecretErrorSelector,
 	hasXmlrpcError as hasXmlrpcErrorSelector,
+	isCalypsoStartedConnection,
+	isRemoteSiteOnSitesList,
 } from 'state/jetpack-connect/selectors';
 
 /**
@@ -56,11 +64,6 @@ const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedInForm extends Component {
 	static propTypes = {
-		authAttempts: PropTypes.number.isRequired,
-		calypsoStartedConnection: PropTypes.bool,
-		isAlreadyOnSitesList: PropTypes.bool,
-		isFetchingSites: PropTypes.bool,
-		isFetchingAuthorizationSite: PropTypes.bool,
 		isSSO: PropTypes.bool,
 		isWoo: PropTypes.bool,
 		jetpackConnectAuthorize: PropTypes.shape( {
@@ -75,18 +78,25 @@ class LoggedInForm extends Component {
 			} ).isRequired,
 			siteReceived: PropTypes.bool,
 		} ).isRequired,
-		siteSlug: PropTypes.string.isRequired,
 		user: PropTypes.object.isRequired,
 
 		// Connected props
+		authAttempts: PropTypes.number.isRequired,
 		authorize: PropTypes.func.isRequired,
+		calypsoStartedConnection: PropTypes.bool,
 		goBackToWpAdmin: PropTypes.func.isRequired,
 		goToXmlrpcErrorFallbackUrl: PropTypes.func.isRequired,
 		hasExpiredSecretError: PropTypes.bool,
 		hasXmlrpcError: PropTypes.bool,
+		isAlreadyOnSitesList: PropTypes.bool,
+		isFetchingAuthorizationSite: PropTypes.bool,
+		isFetchingSites: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
+		redirectAfterAuth: PropTypes.string,
 		retryAuth: PropTypes.func.isRequired,
+		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		userAlreadyConnected: PropTypes.bool.isRequired,
 	};
 
 	retryingAuth = false;
@@ -556,11 +566,24 @@ class LoggedInForm extends Component {
 }
 
 export default connect(
-	state => ( {
-		hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
-		hasXmlrpcError: hasXmlrpcErrorSelector( state ),
-		redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
-	} ),
+	state => {
+		const remoteSiteUrl = getAuthorizationRemoteSite( state );
+		const siteId = getSiteIdFromQueryObject( state );
+		const siteSlug = urlToSlug( remoteSiteUrl );
+
+		return {
+			authAttempts: getAuthAttempts( state, siteSlug ),
+			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
+			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
+			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
+			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
+			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
+			isFetchingSites: isRequestingSites( state ),
+			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
+			siteSlug,
+			userAlreadyConnected: getUserAlreadyConnected( state ),
+		};
+	},
 	{
 		authorize: authorizeAction,
 		goBackToWpAdmin: goBackToWpAdminAction,
