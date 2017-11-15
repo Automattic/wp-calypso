@@ -25,8 +25,8 @@ class EditorRevisionsListItem extends PureComponent {
 	render() {
 		const { revision, isMultiUserSite, translate } = this.props;
 		const authorName = get( revision, 'author.display_name' );
-		const added = get( revision, 'changes.added' );
-		const removed = get( revision, 'changes.removed' );
+		const added = get( revision, 'summary.added' );
+		const removed = get( revision, 'summary.removed' );
 
 		return (
 			<button
