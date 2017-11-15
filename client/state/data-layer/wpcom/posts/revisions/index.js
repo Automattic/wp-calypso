@@ -8,13 +8,13 @@ import {
 	flow,
 	forEach,
 	get,
+	isUndefined,
 	map,
 	mapKeys,
 	mapValues,
 	omit,
-	pick,
 	omitBy,
-	isUndefined,
+	pick,
 } from 'lodash';
 
 /**
