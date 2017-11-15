@@ -104,7 +104,7 @@ class EditorRevisionsList extends PureComponent {
 	};
 
 	render() {
-		const { revisions, selectedRevisionId, siteId } = this.props;
+		const { postId, revisions, selectedRevisionId, siteId } = this.props;
 		return (
 			<div className="editor-revisions-list">
 				<EditorRevisionsListHeader numRevisions={ revisions.length } />
@@ -116,7 +116,11 @@ class EditorRevisionsList extends PureComponent {
 							} );
 							return (
 								<li className={ itemClasses } key={ revision.id }>
-									<EditorRevisionsListItem revision={ revision } siteId={ siteId } />
+									<EditorRevisionsListItem
+										postId={ postId }
+										revision={ revision }
+										siteId={ siteId }
+									/>
 								</li>
 							);
 						} ) }

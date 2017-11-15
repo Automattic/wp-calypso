@@ -49,6 +49,9 @@ class EditorDiffViewer extends PureComponent {
 
 	render() {
 		const { revisionChanges } = this.props;
+		if ( revisionChanges.tooLong ) {
+			return <div className="editor-diff-viewer">TOO LONG!</div>;
+		}
 		return (
 			<div className="editor-diff-viewer">
 				<h1 className="editor-diff-viewer__title">
