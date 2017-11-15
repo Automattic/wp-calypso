@@ -19,6 +19,7 @@ import {
 	isLoaded,
 	getFormErrors,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
 const PackageList = ( props ) => {
 	const { orderId, siteId, selected, all, errors, packageId, translate } = props;
@@ -99,7 +100,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 		errors,
 		packageId: shippingLabel.openedPackageId,
 		selected: shippingLabel.form.packages.selected,
-		all: shippingLabel.form.packages.all,
+		all: getAllPackageDefinitions( state, siteId ),
 	};
 };
 

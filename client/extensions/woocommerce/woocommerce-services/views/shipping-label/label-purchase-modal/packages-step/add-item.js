@@ -90,14 +90,14 @@ const AddItemDialog = ( props ) => {
 				onClickOutside={ onClose }
 				onClose={ onClose }
 				buttons={ buttons }
-				additionalClassNames="wcc-root packages-step__dialog" >
+				additionalClassNames="wcc-root woocommerce packages-step__dialog" >
 			<FormSectionHeading>{ translate( 'Add item' ) }</FormSectionHeading>
 			<div className="packages-step__dialog-body">
 				<p>
 					{ translate( 'Which items would you like to add to {{pckg/}}?', {
 						components: {
 							pckg: getPackageNameElement( openedPackageId ),
-						}
+						},
 					} ) }
 				</p>
 				{ itemOptions }
