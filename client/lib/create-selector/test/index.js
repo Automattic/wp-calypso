@@ -125,7 +125,7 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledTwice;
 	} );
 
-	test( 'should bust the cache when watched state changes and cacheKey is in the map', () => {
+	test( 'should bust the cache when watched state changes', () => {
 		const currentState = {
 			posts: {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': {
