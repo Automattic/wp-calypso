@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { map, get, last, uniqBy, size, filter, takeRight, compact } from 'lodash';
 import { localize } from 'i18n-calypso';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /***
  * Internal dependencies
@@ -94,27 +95,33 @@ class ConversationCaterpillarComponent extends React.Component {
 		return (
 			<div className="conversation-caterpillar">
 				<div className="conversation-caterpillar__gravatars" onClick={ this.handleTickle }>
-					{ map( displayedAuthors, ( author, index ) => {
-						let gravClasses = 'conversation-caterpillar__gravatar';
-						// If we have more than 5 gravs,
-						// add a additional class so we can hide some on small screens
-						if (
-							displayedAuthorsCount > gravatarSmallScreenThreshold &&
-							index < displayedAuthorsCount - gravatarSmallScreenThreshold
-						) {
-							gravClasses += ' is-hidden-on-small-screens';
-						}
+					<ReactCSSTransitionGroup
+						transitionName="slideDownFadeIn"
+						transitionEnterTimeout={ 500 }
+						transitionLeaveTimeout={ 300 }
+					>
+						{ map( displayedAuthors, ( author, index ) => {
+							let gravClasses = 'conversation-caterpillar__gravatar';
+							// If we have more than 5 gravs,
+							// add a additional class so we can hide some on small screens
+							if (
+								displayedAuthorsCount > gravatarSmallScreenThreshold &&
+								index < displayedAuthorsCount - gravatarSmallScreenThreshold
+							) {
+								gravClasses += ' is-hidden-on-small-screens';
+							}
 
-						return (
-							<Gravatar
-								className={ gravClasses }
-								key={ author.ID }
-								user={ author }
-								size={ 32 }
-								aria-hidden="true"
-							/>
-						);
-					} ) }
+							return (
+								<Gravatar
+									className={ gravClasses }
+									key={ author.ID }
+									user={ author }
+									size={ 32 }
+									aria-hidden="true"
+								/>
+							);
+						} ) }
+					</ReactCSSTransitionGroup>
 				</div>
 				<button
 					className="conversation-caterpillar__count"
