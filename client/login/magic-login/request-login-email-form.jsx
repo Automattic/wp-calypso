@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -111,15 +111,15 @@ class RequestLoginEmailForm extends React.Component {
 					/>
 				) }
 				{ currentUser &&
-				currentUser.username && (
-					<p>
-						{ translate( 'NOTE: You are already logged in as user: %(user)s', {
-							args: {
-								user: currentUser.username,
-							},
-						} ) }
-					</p>
-				) }
+					currentUser.username && (
+						<p>
+							{ translate( 'NOTE: You are already logged in as user: %(user)s', {
+								args: {
+									user: currentUser.username,
+								},
+							} ) }
+						</p>
+					) }
 				<LoggedOutForm onSubmit={ this.onSubmit }>
 					<p>
 						{ translate(

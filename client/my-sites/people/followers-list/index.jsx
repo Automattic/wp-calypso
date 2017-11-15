@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -82,7 +82,8 @@ const Followers = localize(
 						);
 						( 'email' === this.props.type
 							? EmailFollowersActions
-							: FollowersActions ).removeFollower( this.props.site.ID, follower );
+							: FollowersActions
+						).removeFollower( this.props.site.ID, follower );
 					} else {
 						analytics.ga.recordEvent(
 							'People',
@@ -218,9 +219,9 @@ const Followers = localize(
 						label={ headerText }
 						site={ this.props.site }
 						count={
-							this.props.fetching || this.props.fetchOptions.search ? null : (
-								this.props.totalFollowers
-							)
+							this.props.fetching || this.props.fetchOptions.search
+								? null
+								: this.props.totalFollowers
 						}
 					>
 						{ downloadListLink && (

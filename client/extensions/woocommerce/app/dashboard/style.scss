@@ -1,9 +1,28 @@
 .dashboard__manage-has-orders,
 .dashboard__manage-no-orders,
+.dashboard__placeholder,
 .dashboard__setup-wrapper {
 	@include breakpoint( ">660px" ) {
 		margin-top: 58px;
 	}
+}
+
+.dashboard__placeholder .card {
+	@include placeholder();
+}
+
+.dashboard__placeholder-large button,
+.dashboard__placeholder-small button {
+	display: none;
+}
+
+.dashboard__placeholder-small {
+	height: 250px;
+}
+
+.dashboard__placeholder-large {
+	margin-bottom: 16px;
+	height: 200px;
 }
 
 .dashboard__setup-header {

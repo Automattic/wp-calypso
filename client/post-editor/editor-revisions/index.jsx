@@ -1,85 +1,111 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow } from 'lodash';
+import { flow, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { NESTED_SIDEBAR_REVISIONS } from 'post-editor/editor-sidebar/constants';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import {
+	getPostRevisions,
+	getPostRevisionsAuthorsId,
+	getPostRevisionsSelectedRevisionId,
+} from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import EditorDiffViewer from 'post-editor/editor-diff-viewer';
+import EditorRevisionsList from 'post-editor/editor-revisions-list';
+import QueryPostRevisions from 'components/data/query-post-revisions';
+import QueryUsers from 'components/data/query-users';
 
 class EditorRevisions extends Component {
-	showRevisionsNestedSidebar = () => {
-		this.trackPostRevisionsOpen();
-		this.props.selectRevision( null );
-		this.props.setNestedSidebar( NESTED_SIDEBAR_REVISIONS );
-	};
+	render = () => {
+		const {
+			adminUrl,
+			authorsIds,
+			postId,
+			revisions,
+			selectedRevisionId,
+			siteId,
+			translate,
+		} = this.props;
 
-	trackPostRevisionsOpen() {
-		this.props.recordTracksEvent( 'calypso_editor_post_revisions_open', {
-			source: 'settings_status_sidebar',
-		} );
-	}
+		if ( adminUrl ) {
+			// This is what gets rendered in the sidebar
+			// @TODO take it out (& adminUrl too) when the feature flag is enabled
+			const lastRevisionId = get( revisions, [ 0, 'id' ], 0 );
+			const revisionsLink = adminUrl + 'revision.php?revision=' + lastRevisionId;
 
-	render() {
-		const { adminUrl, revisions, translate } = this.props;
-
-		if ( ! revisions || ! revisions.length ) {
-			return null;
-		}
-
-		if ( isEnabled( 'post-editor/revisions' ) ) {
 			return (
-				<button
-					className="editor-revisions"
-					title={ translate( 'Open list of revisions' ) }
-					onClick={ this.showRevisionsNestedSidebar }
+				<a
+					className="editor-revisions__wpadmin-link"
+					href={ revisionsLink }
+					target="_blank"
+					rel="noopener noreferrer"
+					aria-label={ translate( 'Open list of revisions' ) }
 				>
+					<QueryPostRevisions postId={ postId } siteId={ siteId } />
+					<QueryUsers siteId={ siteId } userIds={ authorsIds } />
 					<Gridicon icon="history" size={ 18 } />
 					{ translate( '%(revisions)d revision', '%(revisions)d revisions', {
 						count: revisions.length,
 						args: { revisions: revisions.length },
 					} ) }
-				</button>
+				</a>
 			);
 		}
 
-		const lastRevision = revisions[ 0 ];
-		const revisionsLink = adminUrl + 'revision.php?revision=' + lastRevision;
 		return (
-			<a
-				className="editor-revisions"
-				href={ revisionsLink }
-				target="_blank"
-				rel="noopener noreferrer"
-				aria-label={ translate( 'Open list of revisions' ) }
-			>
-				<Gridicon icon="history" size={ 18 } />
-				{ translate( '%(revisions)d revision', '%(revisions)d revisions', {
-					count: revisions.length,
-					args: { revisions: revisions.length },
-				} ) }
-			</a>
+			<div className="editor-revisions__wrapper">
+				<QueryPostRevisions
+					postId={ postId }
+					siteId={ siteId }
+					selectedRevisionId={ selectedRevisionId }
+				/>
+				<QueryUsers siteId={ siteId } userIds={ authorsIds } />
+				<EditorDiffViewer
+					postId={ postId }
+					selectedRevisionId={ selectedRevisionId }
+					siteId={ siteId }
+				/>
+				<EditorRevisionsList postId={ postId } revisions={ revisions } siteId={ siteId } />
+			</div>
 		);
-	}
+	};
 }
 
 EditorRevisions.propTypes = {
+	// @TODO adminUrl exists for sidebar fallback UI -- remove when that's taken out
 	adminUrl: PropTypes.string,
-	revisions: PropTypes.array,
-	translate: PropTypes.func,
-	setNestedSidebar: PropTypes.func.isRequired,
-	selectRevision: PropTypes.func.isRequired,
+
+	// connected
+	authorsIds: PropTypes.array.isRequired,
+	postId: PropTypes.number.isRequired,
+	revisions: PropTypes.array.isRequired,
+	selectedRevisionId: PropTypes.number,
+	siteId: PropTypes.number.isRequired,
+
+	// localize
+	translate: PropTypes.func.isRequired,
 };
 
-export default flow( localize, connect( null, { recordTracksEvent } ) )( EditorRevisions );
+export default flow(
+	localize,
+	connect( state => {
+		const postId = getEditorPostId( state );
+		const siteId = getSelectedSiteId( state );
+		return {
+			authorsIds: getPostRevisionsAuthorsId( state, siteId, postId ),
+			postId,
+			revisions: getPostRevisions( state, siteId, postId, 'display' ),
+			selectedRevisionId: getPostRevisionsSelectedRevisionId( state ),
+			siteId,
+		};
+	} )
+)( EditorRevisions );

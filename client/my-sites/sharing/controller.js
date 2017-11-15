@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import { createElement } from 'react';
@@ -23,8 +23,9 @@ import utils from 'lib/site/utils';
 
 const analyticsPageTitle = 'Sharing';
 
-export const layout = ( { contentComponent, path, store } ) => {
+export const layout = context => {
 	const site = sites().getSelectedSite();
+	const { contentComponent, path, store } = context;
 
 	if ( site && ! site.settings && utils.userCan( 'manage_options', site ) ) {
 		site.fetchSettings();

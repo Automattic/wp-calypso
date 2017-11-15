@@ -239,23 +239,23 @@ class FollowingManage extends Component {
 					) }
 				</div>
 				{ hasFollows &&
-				! sitesQuery && (
-					<RecommendedSites
-						sites={ take( filteredRecommendedSites, 2 ) }
-						followSource={ READER_FOLLOWING_MANAGE_RECOMMENDATION }
-					/>
-				) }
+					! sitesQuery && (
+						<RecommendedSites
+							sites={ take( filteredRecommendedSites, 2 ) }
+							followSource={ READER_FOLLOWING_MANAGE_RECOMMENDATION }
+						/>
+					) }
 				{ !! sitesQuery &&
-				! isFollowByUrlWithNoSearchResults && (
-					<FollowingManageSearchFeedsResults
-						searchResults={ searchResults }
-						showMoreResults={ showMoreResults }
-						onShowMoreResultsClicked={ this.handleShowMoreClicked }
-						width={ this.state.width }
-						searchResultsCount={ searchResultsCount }
-						query={ sitesQuery }
-					/>
-				) }
+					! isFollowByUrlWithNoSearchResults && (
+						<FollowingManageSearchFeedsResults
+							searchResults={ searchResults }
+							showMoreResults={ showMoreResults }
+							onShowMoreResultsClicked={ this.handleShowMoreClicked }
+							width={ this.state.width }
+							searchResultsCount={ searchResultsCount }
+							query={ sitesQuery }
+						/>
+					) }
 				{ showExistingSubscriptions && (
 					<FollowingManageSubscriptions
 						width={ this.state.width }

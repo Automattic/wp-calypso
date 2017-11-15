@@ -19,9 +19,9 @@ class ErrorBanner extends PureComponent {
 	static propTypes = {
 		errorCode: PropTypes.string.isRequired,
 		failureReason: PropTypes.string.isRequired,
-		requestRestore: PropTypes.func.isRequired,
+		requestDialog: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
-		timestamp: PropTypes.number.isRequired,
+		timestamp: PropTypes.string.isRequired,
 
 		// connect
 		dismissRewindRestoreProgress: PropTypes.func.isRequired,
@@ -35,7 +35,7 @@ class ErrorBanner extends PureComponent {
 		failureReason: '',
 	};
 
-	handleClickRestore = () => this.props.requestRestore( this.props.timestamp );
+	handleClickRestart = () => this.props.requestDialog( this.props.timestamp, 'status', 'restore' );
 
 	handleDismiss = () => this.props.dismissRewindRestoreProgress( this.props.siteId );
 
@@ -58,7 +58,7 @@ class ErrorBanner extends PureComponent {
 					} }
 				/>
 				<p>{ translate( 'We came across a problem while trying to restore your site.' ) }</p>
-				<Button primary onClick={ this.handleClickRestore }>
+				<Button primary onClick={ this.handleClickRestart }>
 					{ translate( 'Try again' ) }
 				</Button>
 				{ '  ' }

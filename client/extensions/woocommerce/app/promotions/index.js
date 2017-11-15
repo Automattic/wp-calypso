@@ -10,11 +10,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import EmptyContent from 'components/empty-content';
 import { fetchPromotions } from 'woocommerce/state/sites/promotions/actions';
 import { getPromotions } from 'woocommerce/state/selectors/promotions';
 import ActionHeader from 'woocommerce/components/action-header';
@@ -35,6 +35,14 @@ class Promotions extends Component {
 		fetchPromotions: PropTypes.func.isRequired,
 	};
 
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			searchFilter: '',
+		};
+	}
+
 	componentDidMount() {
 		const { site } = this.props;
 		if ( site && site.ID ) {
@@ -52,13 +60,16 @@ class Promotions extends Component {
 		}
 	}
 
+	onSearch = searchFilter => {
+		this.setState( () => ( { searchFilter } ) );
+	};
+
 	renderSearchCard() {
 		const { site, promotions, translate } = this.props;
 
-		// TODO: Implement onSearch
 		return (
 			<SearchCard
-				onSearch={ noop }
+				onSearch={ this.onSearch }
 				delaySearch
 				delayTimeout={ 400 }
 				disabled={ ! site || ! promotions }
@@ -67,9 +78,40 @@ class Promotions extends Component {
 		);
 	}
 
+	renderEmptyContent() {
+		const { site, translate } = this.props;
+
+		const emptyContentAction = (
+			<Button href={ getLink( '/store/promotion/:site/', site ) }>
+				{ translate( 'Add a promotion!' ) }
+			</Button>
+		);
+
+		return (
+			<EmptyContent
+				title={ translate( "You don't have any promotions." ) }
+				action={ emptyContentAction }
+			/>
+		);
+	}
+
+	renderContent() {
+		const { searchFilter } = this.state;
+
+		return (
+			<div>
+				{ this.renderSearchCard() }
+				<PromotionsList searchFilter={ searchFilter } />
+			</div>
+		);
+	}
+
 	render() {
-		const { site, className, translate } = this.props;
+		const { site, className, promotions, translate } = this.props;
 		const classes = classNames( 'promotions__list', className );
+		const isEmpty = site && promotions && 0 === promotions.length;
+
+		const content = isEmpty ? this.renderEmptyContent() : this.renderContent();
 
 		return (
 			<Main className={ classes }>
@@ -79,8 +121,7 @@ class Promotions extends Component {
 						{ translate( 'Add promotion' ) }
 					</Button>
 				</ActionHeader>
-				{ this.renderSearchCard() }
-				<PromotionsList />
+				{ content }
 			</Main>
 		);
 	}

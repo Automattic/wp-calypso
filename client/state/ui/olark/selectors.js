@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { STATUS_READY, STATUS_TIMEOUT, OPERATOR_STATUS_AVAILABLE } from './constants';

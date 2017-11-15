@@ -29,6 +29,10 @@
 		padding-right: 48px;
 	}
 
+	&.is-clickable {
+		cursor: pointer;
+	}
+
 	&.is-error {
 		box-shadow: inset 3px 0 0 $alert-red;
 	}
@@ -69,4 +73,3 @@ a.card:focus {
 		color: $link-highlight;
 	}
 }
-

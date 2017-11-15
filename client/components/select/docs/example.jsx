@@ -1,13 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
 
 class Selects extends React.PureComponent {
-    render() {
+	render() {
 		return (
 			<div className="docs__design-group">
 				<h2>

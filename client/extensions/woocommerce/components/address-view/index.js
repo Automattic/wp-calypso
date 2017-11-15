@@ -1,18 +1,20 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { find, isEmpty, trim } from 'lodash';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import { getCountries } from 'woocommerce/lib/countries';
 import FormCountrySelectFromApi from 'woocommerce/components/form-location-select/countries';
 import FormStateSelectFromApi from 'woocommerce/components/form-location-select/states';
@@ -47,6 +49,21 @@ class AddressView extends Component {
 		},
 		isEditable: false,
 		showAllLocations: false,
+	};
+
+	constructor( props ) {
+		super( props );
+		this.state = {
+			showAddressLine2: ! isEmpty( trim( props.address.street2 ) ),
+		};
+	}
+
+	componentWillReceiveProps = newProps => {
+		// We allow address line 2 to unhide -- but once shown, we don't hide it
+		// because that's visually disturbing
+		if ( ! isEmpty( trim( newProps.address.street2 ) ) ) {
+			this.setState( { showAddressLine2: true } );
+		}
 	};
 
 	getCountryData = () => {
@@ -116,9 +133,39 @@ class AddressView extends Component {
 		);
 	};
 
+	onClickShowAddressLine2 = event => {
+		event.preventDefault();
+		this.setState( { showAddressLine2: true } );
+	};
+
+	renderAddressLine2 = () => {
+		const { address, onChange, translate } = this.props;
+		const { street2 } = address;
+		const { showAddressLine2 } = this.state;
+
+		if ( showAddressLine2 ) {
+			return (
+				<FormFieldSet>
+					<FormTextInput name="street2" onChange={ onChange } value={ street2 } />
+				</FormFieldSet>
+			);
+		}
+
+		return (
+			<Button
+				borderless
+				className="address-view__show-line-2"
+				onClick={ this.onClickShowAddressLine2 }
+			>
+				<Gridicon icon="plus-small" />
+				{ translate( 'Add Address Line 2' ) }
+			</Button>
+		);
+	};
+
 	renderEditable = () => {
 		const { onChange, translate } = this.props;
-		const { city, postcode, street, street2 } = this.props.address;
+		const { city, postcode, street } = this.props.address;
 
 		return (
 			<div className="address-view__fields-editable">
@@ -126,9 +173,7 @@ class AddressView extends Component {
 					<FormLabel>{ translate( 'Street address' ) }</FormLabel>
 					<FormTextInput name="street" onChange={ onChange } value={ street } />
 				</FormFieldSet>
-				<FormFieldSet>
-					<FormTextInput name="street2" onChange={ onChange } value={ street2 } />
-				</FormFieldSet>
+				{ this.renderAddressLine2() }
 				<div className="address-view__editable-city-state-postcode">
 					<FormFieldSet>
 						<FormLabel>{ translate( 'City' ) }</FormLabel>

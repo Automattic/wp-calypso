@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -24,8 +24,7 @@ import {
 class DisconnectJetpackButton extends Component {
 	state = { dialogVisible: false };
 
-	handleClick = event => {
-		event.preventDefault();
+	handleClick = () => {
 		const { isMock, recordGoogleEvent, recordTracksEvent } = this.props;
 
 		if ( isMock ) {
@@ -76,7 +75,7 @@ class DisconnectJetpackButton extends Component {
 				<DisconnectJetpackDialog
 					isVisible={ this.state.dialogVisible }
 					onClose={ this.hideDialog }
-					isBroken={ false }
+					isBroken
 					siteId={ site.ID }
 					disconnectHref={ this.props.redirect }
 				/>

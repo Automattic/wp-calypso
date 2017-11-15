@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -15,6 +15,7 @@ import i18n from 'i18n-calypso';
 import {
 	isDomainMapping,
 	isDomainRegistration,
+	isDomainTransfer,
 	isGoogleApps,
 	isGuidedTransfer,
 } from 'lib/products-values';
@@ -37,7 +38,8 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedP
 		purchases.some( isGoogleApps ) ||
 		purchases.some( isDomainRegistration ) ||
 		purchases.some( isDomainMapping ) ||
-		purchases.some( isGuidedTransfer );
+		purchases.some( isGuidedTransfer ) ||
+		purchases.some( isDomainTransfer );
 
 	if ( shouldHideFeaturesHeading ) {
 		return <div />;

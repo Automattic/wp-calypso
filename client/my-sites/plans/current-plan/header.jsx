@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import classNames from 'classnames';
@@ -76,15 +76,13 @@ class CurrentPlanHeader extends Component {
 			<Card className="current-plan__header-purchase-info-wrapper" compact>
 				<div className={ classes }>
 					<span className="current-plan__header-expires-in">
-						{ hasAutoRenew && currentPlan.autoRenewDateMoment ? (
-							translate( 'Set to Auto Renew on %s.', {
-								args: invoke( currentPlan, 'autoRenewDateMoment.format', 'LL' ),
-							} )
-						) : (
-							translate( 'Expires on %s.', {
-								args: invoke( currentPlan, 'userFacingExpiryMoment.format', 'LL' ),
-							} )
-						) }
+						{ hasAutoRenew && currentPlan.autoRenewDateMoment
+							? translate( 'Set to Auto Renew on %s.', {
+									args: invoke( currentPlan, 'autoRenewDateMoment.format', 'LL' ),
+								} )
+							: translate( 'Expires on %s.', {
+									args: invoke( currentPlan, 'userFacingExpiryMoment.format', 'LL' ),
+								} ) }
 					</span>
 					{ currentPlan.userIsOwner && (
 						<Button

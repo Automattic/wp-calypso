@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -79,13 +79,11 @@ class StoreStatsListView extends Component {
 					<DatePicker
 						period={ unit }
 						date={
-							unit === 'week' ? (
-								moment( selectedDate, 'YYYY-MM-DD' )
-									.subtract( 1, 'days' )
-									.format( 'YYYY-MM-DD' )
-							) : (
-								selectedDate
-							)
+							unit === 'week'
+								? moment( selectedDate, 'YYYY-MM-DD' )
+										.subtract( 1, 'days' )
+										.format( 'YYYY-MM-DD' )
+								: selectedDate
 						}
 						query={ listviewQuery }
 						statsType={ statType }

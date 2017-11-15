@@ -13,8 +13,7 @@ import React from 'react';
  */
 import PlansGrid from '../plans-grid';
 import QueryPlans from 'components/data/query-plans';
-import { DEFAULT_PROPS, getSitePlans, SELECTED_SITE, SITE_PLAN_PRO } from './lib/plans';
-import { PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
+import { DEFAULT_PROPS, SELECTED_SITE, SITE_PLAN_PRO } from './lib/plans';
 import { PlansTestComponent as Plans } from '../plans';
 
 jest.mock( 'components/data/query-plans', () => 'components--data--query-plans' );
@@ -37,7 +36,6 @@ describe( 'Plans', () => {
 				{ ...DEFAULT_PROPS }
 				hasPlan={ true }
 				selectedSite={ { ...SELECTED_SITE, plan: SITE_PLAN_PRO } }
-				sitePlans={ getSitePlans( PLAN_JETPACK_BUSINESS ) }
 			/>
 		);
 
@@ -53,7 +51,6 @@ describe( 'Plans', () => {
 				hasPlan={ true }
 				selectedSite={ { ...SELECTED_SITE, plan: SITE_PLAN_PRO } }
 				showFirst={ true }
-				sitePlans={ getSitePlans( PLAN_JETPACK_BUSINESS ) }
 			/>
 		);
 
@@ -70,7 +67,6 @@ describe( 'Plans', () => {
 		wrapper.setProps( {
 			hasPlan: true,
 			selectedSite: { ...SELECTED_SITE, plan: SITE_PLAN_PRO },
-			sitePlans: getSitePlans( PLAN_JETPACK_BUSINESS ),
 		} );
 
 		expect( redirect.mock.calls.length ).toBe( 1 );
@@ -92,7 +88,6 @@ describe( 'Plans', () => {
 					plan: SITE_PLAN_PRO,
 					is_automated_transfer: true,
 				} }
-				sitePlans={ getSitePlans( PLAN_JETPACK_BUSINESS ) }
 			/>
 		);
 

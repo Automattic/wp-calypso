@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -17,7 +17,6 @@ import contextTypes from '../context-types';
 export default class Next extends Component {
 	static propTypes = {
 		step: PropTypes.string.isRequired,
-		children: PropTypes.node,
 	};
 
 	static contextTypes = contextTypes;

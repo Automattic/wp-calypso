@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -131,22 +131,25 @@ class StatModuleFollowers extends Component {
 					<div className="followers">
 						<div className="module-content">
 							{ noData &&
-							! hasError &&
-							! isLoading && (
-								<ErrorPanel className="is-empty-message" message={ translate( 'No followers' ) } />
-							) }
+								! hasError &&
+								! isLoading && (
+									<ErrorPanel
+										className="is-empty-message"
+										message={ translate( 'No followers' ) }
+									/>
+								) }
 
 							{ this.filterSelect() }
 
 							<div className="tab-content wpcom-followers stats-async-metabox-wrapper">
 								<div className="module-content-text module-content-text-stat">
 									{ wpcomData &&
-									!! wpcomData.total_wpcom && (
-										<p>
-											{ translate( 'Total WordPress.com Followers' ) }:{' '}
-											{ numberFormat( wpcomData.total_wpcom ) }
-										</p>
-									) }
+										!! wpcomData.total_wpcom && (
+											<p>
+												{ translate( 'Total WordPress.com Followers' ) }:{' '}
+												{ numberFormat( wpcomData.total_wpcom ) }
+											</p>
+										) }
 								</div>
 								<StatsListLegend value={ translate( 'Since' ) } label={ translate( 'Follower' ) } />
 								{ hasWpcomFollowers && (
@@ -162,12 +165,12 @@ class StatModuleFollowers extends Component {
 							<div className="tab-content email-followers stats-async-metabox-wrapper">
 								<div className="module-content-text module-content-text-stat">
 									{ emailData &&
-									!! emailData.total_email && (
-										<p>
-											{ translate( 'Total Email Followers' ) }:{' '}
-											{ numberFormat( emailData.total_email ) }
-										</p>
-									) }
+										!! emailData.total_email && (
+											<p>
+												{ translate( 'Total Email Followers' ) }:{' '}
+												{ numberFormat( emailData.total_email ) }
+											</p>
+										) }
 								</div>
 
 								<StatsListLegend value={ translate( 'Since' ) } label={ translate( 'Follower' ) } />

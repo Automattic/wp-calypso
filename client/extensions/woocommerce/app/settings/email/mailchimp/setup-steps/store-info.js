@@ -48,11 +48,11 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 	};
 
 	return (
-		<FormFieldset className="setup-steps__store-info-field">
+		<div className="setup-steps__store-info-field">
 			<p>
 				{ translate(
-					'MailChimp needs to know a few basic information about your store ' +
-						'to provide you the best experience. Note that every field is required.'
+					'MailChimp needs to know some basic information about your store ' +
+						'to provide you with the best experience. Note that every field is required.'
 				) }
 			</p>
 			<SettingsPaymentsLocationCurrency />
@@ -62,38 +62,44 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 					? translate( 'number needs at least 6 digits' )
 					: translate( 'field is required' );
 				return (
-					<div key={ index }>
-						<FormLabel>
-							{ item.label }
-						</FormLabel>
-						<FormTextInput
-							name={ item.name }
-							isError={ error }
-							onChange={ onChange }
-							value={ storeData[ item.name ] || '' }
-						/>
-						{ error && <FormInputValidation
-							isError
-							text={ errorMsg } /> }
-					</div>
+					<FormFieldset key={ index }>
+						<div>
+							<FormLabel>
+								{ item.label }
+							</FormLabel>
+							<FormTextInput
+								name={ item.name }
+								isError={ error }
+								onChange={ onChange }
+								value={ storeData[ item.name ] || '' }
+							/>
+							{ error && <FormInputValidation
+								isError
+								text={ errorMsg } /> }
+						</div>
+					</FormFieldset>
 				);
 			} ) }
-			<FormLabel>
-				{ translate( 'Locale' ) }
-				<LanguagePicker
-					languages={ config( 'languages' ) }
-					valueKey="langSlug"
-					value={ storeData.store_locale }
-					onChange={ selectLanguage }
-				/>
-			</FormLabel>
-			<FormLabel>
-				{ translate( 'Store Timezone' ) }
-			</FormLabel>
-			<TimeZone
-				selectedZone={ storeData.store_timezone }
-				onSelect={ onTimezoneSelect } />
-		</FormFieldset>
+			<FormFieldset>
+				<FormLabel>
+					{ translate( 'Locale' ) }
+					<LanguagePicker
+						languages={ config( 'languages' ) }
+						valueKey="langSlug"
+						value={ storeData.store_locale }
+						onChange={ selectLanguage }
+					/>
+				</FormLabel>
+			</FormFieldset>
+			<FormFieldset>
+				<FormLabel>
+					{ translate( 'Store Timezone' ) }
+				</FormLabel>
+				<TimeZone
+					selectedZone={ storeData.store_timezone }
+					onSelect={ onTimezoneSelect } />
+			</FormFieldset>
+		</div>
 	);
 };
 

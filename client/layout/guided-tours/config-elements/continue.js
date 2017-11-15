@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -19,7 +19,6 @@ export default class Continue extends Component {
 	static contextTypes = contextTypes;
 
 	static propTypes = {
-		children: PropTypes.node,
 		click: PropTypes.bool,
 		hidden: PropTypes.bool,
 		icon: PropTypes.string,

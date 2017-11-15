@@ -145,12 +145,10 @@ class OrderFulfillment extends Component {
 			hasLabelsPaymentMethod,
 		} = this.props;
 		const orderFinished = isOrderFinished( order.status );
-		const orderCancelled = 'cancelled' === order.status;
-		const showLabels =
-			wcsEnabled && labelsLoaded && labelsEnabled && hasLabelsPaymentMethod && ! orderCancelled;
-		const labelsLoading = wcsEnabled && ! labelsLoaded && ! orderCancelled;
+		const showLabels = wcsEnabled && labelsLoaded && labelsEnabled && hasLabelsPaymentMethod;
+		const labelsLoading = wcsEnabled && ! labelsLoaded;
 
-		if ( ( orderFinished || orderCancelled ) && ! labelsLoading && ! showLabels ) {
+		if ( orderFinished ) {
 			return null;
 		}
 

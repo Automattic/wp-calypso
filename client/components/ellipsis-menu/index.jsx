@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -22,7 +22,6 @@ class EllipsisMenu extends Component {
 		translate: PropTypes.func,
 		toggleTitle: PropTypes.string,
 		position: PropTypes.string,
-		children: PropTypes.node,
 		disabled: PropTypes.bool,
 		onClick: PropTypes.func,
 		onToggle: PropTypes.func,

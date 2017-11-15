@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -14,7 +14,6 @@ class WidgetGroup extends Component {
 	};
 
 	static propTypes = {
-		children: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.node ), PropTypes.node ] ),
 		className: PropTypes.string,
 		maxColumns: PropTypes.number,
 		title: PropTypes.string,

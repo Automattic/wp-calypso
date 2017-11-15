@@ -10,7 +10,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import middleware from '../middleware';
-import { HAPPYCHAT_RECEIVE_EVENT } from 'state/action-types';
+import { HAPPYCHAT_IO_RECEIVE_MESSAGE } from 'state/action-types';
 
 describe( 'Audio Middleware', () => {
 	let next;
@@ -50,8 +50,8 @@ describe( 'Audio Middleware', () => {
 
 	test( 'should not play any sound when no audio support', () => {
 		const action = {
-			type: HAPPYCHAT_RECEIVE_EVENT,
-			event: {
+			type: HAPPYCHAT_IO_RECEIVE_MESSAGE,
+			message: {
 				source: 'operator',
 			},
 		};
@@ -67,8 +67,8 @@ describe( 'Audio Middleware', () => {
 
 	test( 'should play sound when receiving a new message from the operator', () => {
 		const action = {
-			type: HAPPYCHAT_RECEIVE_EVENT,
-			event: {
+			type: HAPPYCHAT_IO_RECEIVE_MESSAGE,
+			message: {
 				source: 'operator',
 			},
 		};

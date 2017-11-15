@@ -191,7 +191,7 @@
 	transition-delay: 0.4s;
 
 	@include breakpoint( "<480px" ) {
-		background: var( --masterbar-background-color );
+		background: var( --masterbar-background );
 	}
 }
 

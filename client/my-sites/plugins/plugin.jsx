@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -271,9 +271,9 @@ const SinglePlugin = createReactClass( {
 						isPlaceholder
 						notices={ this.state.notices }
 						isInstalledOnSite={
-							this.isFetchingSites() ? null : (
-								!! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
-							)
+							this.isFetchingSites()
+								? null
+								: !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
 						}
 						plugin={ this.getPlugin() }
 						siteUrl={ this.props.siteUrl }
@@ -382,9 +382,9 @@ const SinglePlugin = createReactClass( {
 						sites={ this.state.sites }
 						selectedSite={ selectedSite }
 						isInstalledOnSite={
-							this.isFetchingSites() ? null : (
-								!! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
-							)
+							this.isFetchingSites()
+								? null
+								: !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
 						}
 						isInstalling={ installing }
 						allowedActions={ allowedPluginActions }

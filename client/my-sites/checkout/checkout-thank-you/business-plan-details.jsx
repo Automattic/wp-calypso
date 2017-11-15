@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { find } from 'lodash';
@@ -14,19 +14,23 @@ import i18n from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
+import GoogleAppsDetails from './google-apps-details';
 import { isEnabled } from 'config';
-import { isBusiness } from 'lib/products-values';
+import { isBusiness, isGoogleApps } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 
 function trackOnboardingButtonClick() {
 	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );
 }
 
-const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
+const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
 	const plan = find( sitePlans.data, isBusiness );
+	const googleAppsWasPurchased = purchases.some( isGoogleApps );
 
 	return (
 		<div>
+			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
@@ -58,18 +62,18 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 			) }
 
 			{ ! selectedFeature &&
-			isEnabled( 'manage/plugins/upload' ) && (
-				<PurchaseDetail
-					icon={ <img src="/calypso/images/upgrades/plugins.svg" /> }
-					title={ i18n.translate( 'Add a Plugin' ) }
-					description={ i18n.translate(
-						'Search and add plugins right from your dashboard, or upload a plugin ' +
-							'from your computer with a drag-and-drop interface.'
-					) }
-					buttonText={ i18n.translate( 'Upload a plugin now' ) }
-					href={ '/plugins/upload/' + selectedSite.slug }
-				/>
-			) }
+				isEnabled( 'manage/plugins/upload' ) && (
+					<PurchaseDetail
+						icon={ <img src="/calypso/images/upgrades/plugins.svg" /> }
+						title={ i18n.translate( 'Add a Plugin' ) }
+						description={ i18n.translate(
+							'Search and add plugins right from your dashboard, or upload a plugin ' +
+								'from your computer with a drag-and-drop interface.'
+						) }
+						buttonText={ i18n.translate( 'Upload a plugin now' ) }
+						href={ '/plugins/upload/' + selectedSite.slug }
+					/>
+				) }
 
 			<PurchaseDetail
 				icon={ <img src="/calypso/images/upgrades/adwords.svg" /> }

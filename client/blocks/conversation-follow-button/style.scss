@@ -1,0 +1,76 @@
+.conversation-follow-button,
+button.conversation-follow-button {
+	border: 0;
+	padding: 0;
+
+	.gridicons-reader-follow-conversation {
+		fill: $blue-medium;
+		pointer-events: auto;
+	}
+
+	.conversation-follow-button__label {
+		color: $blue-medium;
+	}
+
+	&:hover {
+		color: $blue-medium;
+
+		.gridicons-reader-follow-conversation {
+			fill: $blue-medium;
+		}
+	}
+
+	&:focus {
+		box-shadow: none;
+	}
+
+	// Hides Following icon by default
+	.gridicons-reader-following-conversation {
+		display: none;
+		pointer-events: none;
+	}
+
+	&.is-following {
+
+		.gridicons-reader-following-conversation {
+			display: inline-block;
+			fill: $alert-green;
+			pointer-events: auto;
+		}
+
+		.conversation-follow-button__label {
+			color: $alert-green;
+		}
+
+		// Hides Follow icon if already following
+		.gridicons-reader-follow-conversation {
+			display: none;
+			pointer-events: none;
+		}
+
+		&:hover {
+			color: $alert-green;
+
+			.gridicons-reader-following-conversation {
+				fill: $alert-green;
+			}
+		}
+	}
+
+	.gridicons-reader-following-conversation {
+		pointer-events: none;
+	}
+
+	.gridicon {
+		height: 18px;
+		padding-right: 4px;
+		top: 5px;
+		width: 18px;
+	}
+}
+
+.conversation-follow-button__label {
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
+}

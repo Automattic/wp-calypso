@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -100,7 +100,7 @@ class StatsPostPerformance extends Component {
 			<div>
 				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
 				{ siteId &&
-				post && <QueryPostStats siteId={ siteId } postId={ post.ID } fields={ [ 'views' ] } /> }
+					post && <QueryPostStats siteId={ siteId } postId={ post.ID } fields={ [ 'views' ] } /> }
 				<SectionHeader label={ translate( 'Latest Post Summary' ) } href={ summaryUrl } />
 				<Card className={ cardClass }>
 					<StatsModulePlaceholder isLoading={ loading && ! post } />

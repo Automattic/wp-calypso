@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { combineTours } from 'layout/guided-tours/config-elements';
@@ -11,6 +11,8 @@ import { GDocsIntegrationTour } from 'layout/guided-tours/tours/gdocs-integratio
 import { SimplePaymentsTour } from 'layout/guided-tours/tours/simple-payments-tour';
 import { EditorBasicsTour } from 'layout/guided-tours/tours/editor-basics-tour';
 import { MediaBasicsTour } from 'layout/guided-tours/tours/media-basics-tour';
+import { ActivityLogTour } from 'layout/guided-tours/tours/activity-log-tour';
+import { SimplePaymentsEndOfYearGuide } from 'layout/guided-tours/tours/simple-payments-end-of-year-guide';
 
 export default combineTours( {
 	main: MainTour,
@@ -19,4 +21,6 @@ export default combineTours( {
 	tutorialSitePreview: TutorialSitePreviewTour,
 	gdocsIntegrationTour: GDocsIntegrationTour,
 	simplePaymentsTour: SimplePaymentsTour,
+	activityLogTour: ActivityLogTour,
+	simplePaymentsEndOfYearGuide: SimplePaymentsEndOfYearGuide,
 } );

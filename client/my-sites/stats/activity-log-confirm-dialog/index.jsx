@@ -2,8 +2,7 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,86 +14,66 @@ import Card from 'components/card';
 import Gridicon from 'gridicons';
 import HappychatButton from 'components/happychat/button';
 
-class ActivityLogConfirmDialog extends Component {
-	static propTypes = {
-		applySiteOffset: PropTypes.func.isRequired,
-		onClose: PropTypes.func.isRequired,
-		onConfirm: PropTypes.func.isRequired,
-		timestamp: PropTypes.number,
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+const ActivityLogConfirmDialog = ( {
+	children,
+	confirmTitle,
+	icon = 'history',
+	notice,
+	onClose,
+	onConfirm,
+	supportLink,
+	title,
+	translate,
+} ) => (
+	<div className="activity-log-item activity-log-item__restore-confirm">
+		<div className="activity-log-item__type">
+			<ActivityIcon activityIcon={ icon } />
+		</div>
+		<Card className="activity-log-item__card">
+			<h5 className="activity-log-confirm-dialog__title">{ title }</h5>
 
-		// Localize
-		translate: PropTypes.func.isRequired,
-		moment: PropTypes.func.isRequired,
-	};
+			<div className="activity-log-confirm-dialog__highlight">{ children }</div>
 
-	render() {
-		const { applySiteOffset, moment, timestamp, translate, onClose, onConfirm } = this.props;
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<div className="activity-log-item activity-log-item__restore-confirm">
-				<div className="activity-log-item__type">
-					<ActivityIcon activityIcon={ 'history' } />
+			{ notice && (
+				<div className="activity-log-confirm-dialog__notice">
+					<Gridicon icon={ 'notice' } />
+					{ notice }
 				</div>
-				<Card className="activity-log-item__card">
-					<h5 className="activity-log-confirm-dialog__title">{ translate( 'Rewind Site' ) }</h5>
+			) }
 
-					<p className="activity-log-confirm-dialog__highlight">
-						{ translate(
-							'This is the selected point for your site Rewind. ' +
-								'Are you sure you want to rewind your site back to {{b}}%(time)s{{/b}}?',
-							{
-								args: {
-									time: applySiteOffset( moment.utc( timestamp ) ).format( 'LLL' ),
-								},
-								components: { b: <b /> },
-							}
-						) }
-					</p>
-
-					<div className="activity-log-confirm-dialog__notice">
-						<Gridicon icon={ 'notice' } />
-						<span className="activity-log-confirm-dialog__notice-content">
-							{ translate(
-								'This will remove all content and options created or changed since then.'
-							) }
+			<div className="activity-log-confirm-dialog__button-wrap">
+				<div className="activity-log-confirm-dialog__primary-actions">
+					<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
+					<Button primary onClick={ onConfirm }>
+						{ confirmTitle }
+					</Button>
+				</div>
+				<div className="activity-log-confirm-dialog__secondary-actions">
+					<Button
+						borderless={ true }
+						className="activity-log-confirm-dialog__more-info-link"
+						href="https://help.vaultpress.com/one-click-restore/"
+					>
+						<Gridicon icon="notice" />
+						<span className="activity-log-confirm-dialog__more-info-link-text">
+							{ translate( 'More info' ) }
 						</span>
-					</div>
-
-					<div className="activity-log-confirm-dialog__button-wrap">
-						<div className="activity-log-confirm-dialog__primary-actions">
-							<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
-							<Button primary onClick={ onConfirm }>
-								{ translate( 'Confirm Rewind' ) }
-							</Button>
-						</div>
-						<div className="activity-log-confirm-dialog__secondary-actions">
-							<Button
-								borderless={ true }
-								className="activity-log-confirm-dialog__more-info-link"
-								href="https://help.vaultpress.com/one-click-restore/"
-							>
-								<Gridicon icon="notice" />
-								<span className="activity-log-confirm-dialog__more-info-link-text">
-									{ translate( 'More info' ) }
-								</span>
-							</Button>
-							<HappychatButton
-								className="activity-log-confirm-dialog__more-info-link"
-								href="https://help.vaultpress.com/one-click-restore/"
-							>
-								<Gridicon icon="chat" />
-								<span className="activity-log-confirm-dialog__more-info-link-text">
-									{ translate( 'Any Questions?' ) }
-								</span>
-							</HappychatButton>
-						</div>
-					</div>
-				</Card>
+					</Button>
+					<HappychatButton
+						className="activity-log-confirm-dialog__more-info-link"
+						href={ supportLink }
+					>
+						<Gridicon icon="chat" />
+						<span className="activity-log-confirm-dialog__more-info-link-text">
+							{ translate( 'Any Questions?' ) }
+						</span>
+					</HappychatButton>
+				</div>
 			</div>
-		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
-	}
-}
+		</Card>
+	</div>
+);
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default localize( ActivityLogConfirmDialog );

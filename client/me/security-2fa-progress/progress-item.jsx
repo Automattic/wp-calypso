@@ -1,13 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-progress' );
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 export default class extends React.Component {
 	static displayName = 'Security2faProgressItem';
@@ -20,11 +21,6 @@ export default class extends React.Component {
 		debug( this.constructor.displayName + ' React component will unmount.' );
 	}
 
-	noticon = () => {
-		var icon = 'noticon-' + this.props.icon;
-		return classNames( 'noticon', icon );
-	};
-
 	highlight = () => {
 		return classNames( {
 			'security-2fa-progress__item': true,
@@ -36,7 +32,7 @@ export default class extends React.Component {
 	render() {
 		return (
 			<div className={ this.highlight() }>
-				<span className={ this.noticon() } />
+				<Gridicon icon={ this.props.icon } />
 				<label>{ this.props.label } </label>
 			</div>
 		);

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { isNumber } from 'lodash';
@@ -39,7 +39,7 @@ export function handleProductVariationsRequest( store, action ) {
 		dispatchWithProps( dispatch, getState, successAction, props );
 	};
 
-	const endpoint = 'products/' + productId + '/variations';
+	const endpoint = 'products/' + productId + '/variations?per_page=100';
 	store.dispatch( get( siteId, endpoint, updatedAction, failureAction ) );
 }
 

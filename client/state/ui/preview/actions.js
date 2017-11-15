@@ -1,15 +1,16 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import {
+	PREVIEW_SITE_SET,
+	PREVIEW_TOOL_SET,
+	PREVIEW_TYPE_RESET,
+	PREVIEW_TYPE_SET,
 	PREVIEW_URL_CLEAR,
 	PREVIEW_URL_SET,
-	PREVIEW_TOOL_SET,
-	PREVIEW_TYPE_SET,
-	PREVIEW_TYPE_RESET,
 } from 'state/action-types';
 
 import { clearCustomizations } from 'state/preview/actions';
@@ -39,6 +40,13 @@ export function setPreviewType( previewType ) {
 export function resetPreviewType() {
 	return {
 		type: PREVIEW_TYPE_RESET,
+	};
+}
+
+export function setAllSitesPreviewSiteId( siteId ) {
+	return {
+		type: PREVIEW_SITE_SET,
+		siteId,
 	};
 }
 

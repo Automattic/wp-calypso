@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { dispatchWithProps } from 'woocommerce/state/helpers';

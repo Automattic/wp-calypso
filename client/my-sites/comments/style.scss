@@ -1,5 +1,6 @@
+/** @format */
 .comment-navigation {
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		.section-nav__mobile-header:after {
 			padding-left: 8px;
 		}
@@ -20,13 +21,13 @@
 .comment-navigation.is-bulk-edit {
 	padding-right: 0;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		.section-nav__mobile-header {
 			display: none;
 		}
 
 		.comment-navigation__bulk-count {
-			width: calc( 100% - 70px );
+			width: calc(100% - 70px);
 		}
 
 		.comment-navigation__close-bulk {
@@ -73,6 +74,24 @@
 	}
 }
 
+.comment-list__header-title {
+	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.comment-list__header-post-title {
+	font-family: $serif;
+}
+
+.comment-list__header-date {
+	font-size: 13px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .comment-list .pagination {
 	margin-top: 16px;
 }
@@ -81,7 +100,7 @@
 	display: none;
 
 	&.comment-list__transition-enter-active {
-		animation: comment-list__transition-enter .15s linear;
+		animation: comment-list__transition-enter 0.15s linear;
 	}
 }
 
@@ -90,7 +109,7 @@
 
 	&.comment-list__transition-leave-active {
 		opacity: 0.01;
-		transition: opacity .15s linear;
+		transition: opacity 0.15s linear;
 	}
 }
 

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { DROPZONE_SHOW, DROPZONE_HIDE } from 'state/action-types';

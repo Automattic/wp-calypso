@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { PureComponent } from 'react';
@@ -19,7 +19,6 @@ import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
 import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';
-import { abtest } from 'lib/abtest';
 
 class PaymentBox extends PureComponent {
 	constructor() {
@@ -38,6 +37,8 @@ class PaymentBox extends PureComponent {
 
 	getPaymentProviderName( method ) {
 		switch ( method ) {
+			case 'ideal':
+				return 'iDEAL';
 			case 'credit-card':
 				return translate( 'Credit or debit card' );
 			case 'paypal':
@@ -63,6 +64,13 @@ class PaymentBox extends PureComponent {
 				return (
 					<div className="checkout__provider">
 						<Gridicon icon="credit-card" className="checkout__credit-card" />
+						{ this.getPaymentProviderName( method ) }
+					</div>
+				);
+			case 'ideal':
+				return (
+					<div className="checkout__provider">
+						<img src="/calypso/images/upgrades/ideal.svg" alt="iDEAL" className="checkout__ideal" />
 						{ this.getPaymentProviderName( method ) }
 					</div>
 				);
@@ -99,55 +107,25 @@ class PaymentBox extends PureComponent {
 		} );
 	}
 
-	getCardTitle() {
-		if ( abtest( 'checkoutPaymentMethodTabs' ) === 'tabs' ) {
-			const formatHeaderClass = 'formatted-header',
-				formatHeaderTitleClass = 'formatted-header__title';
-
-			return (
-				<header className={ formatHeaderClass }>
-					<h1 className={ formatHeaderTitleClass }>
-						{ this.props.paymentMethods ? (
-							translate( 'Great choice! How would you like to pay?' )
-						) : (
-							this.props.title
-						) }
-					</h1>
-				</header>
-			);
-		}
-
-		return <SectionHeader label={ this.props.title } />;
-	}
-
-	getSectionNav() {
-		if ( abtest( 'checkoutPaymentMethodTabs' ) === 'tabs' ) {
-			const titleText = this.props.currentPaymentMethod
-				? translate( 'Pay with %(paymentMethod)s', {
-						args: {
-							paymentMethod: this.getPaymentProviderName( this.props.currentPaymentMethod ),
-						},
-					} )
-				: translate( 'Loading…' );
-
-			return (
-				<SectionNav selectedText={ titleText }>
-					<NavTabs>{ this.getPaymentMethods() }</NavTabs>
-				</SectionNav>
-			);
-		}
-
-		return null;
-	}
-
 	render() {
 		const cardClass = classNames( 'payment-box', this.props.classSet ),
 			contentClass = classNames( 'payment-box__content', this.props.contentClassSet );
 
+		const titleText = this.props.currentPaymentMethod
+			? translate( 'Pay with %(paymentMethod)s', {
+					args: {
+						paymentMethod: this.getPaymentProviderName( this.props.currentPaymentMethod ),
+					},
+				} )
+			: translate( 'Loading…' );
+
 		return (
 			<div className="checkout__payment-box-container" key={ this.props.currentPage }>
-				{ this.getCardTitle() }
-				{ this.getSectionNav() }
+				{ this.props.title ? <SectionHeader label={ this.props.title } /> : null }
+
+				<SectionNav selectedText={ titleText }>
+					<NavTabs>{ this.getPaymentMethods() }</NavTabs>
+				</SectionNav>
 
 				<Card className={ cardClass }>
 					<div className="checkout__box-padding">

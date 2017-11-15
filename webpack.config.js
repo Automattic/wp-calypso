@@ -100,10 +100,7 @@ const webpackConfig = {
 			},
 			{
 				include: require.resolve( 'tinymce/tinymce' ),
-				loader: 'exports-loader',
-				query: {
-					window: 'tinymce'
-				}
+				use: 'exports-loader?window=tinymce',
 			},
 			{
 				test: /node_modules[\/\\]tinymce/,
@@ -136,9 +133,7 @@ const webpackConfig = {
 	},
 	plugins: _.compact( [
 		new webpack.DefinePlugin( {
-			'process.env': {
-				NODE_ENV: JSON.stringify( bundleEnv )
-			},
+			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
 		} ),
 		new webpack.IgnorePlugin( /^props$/ ),

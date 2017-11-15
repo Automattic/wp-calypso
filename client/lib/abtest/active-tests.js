@@ -17,13 +17,14 @@ export default {
 		},
 		defaultVariation: 'hideSurveyStep',
 	},
-	signupPressableStoreFlow: {
-		datestamp: '20171018',
+	signupAtomicStoreVsPressable: {
+		datestamp: '20171101',
 		variations: {
-			atomic: 99,
-			pressable: 1,
+			atomic: 10,
+			pressable: 90,
 		},
-		defaultVariation: 'atomic',
+		defaultVariation: 'pressable',
+		allowExistingUsers: true,
 	},
 	businessPlanDescriptionAT: {
 		datestamp: '20170605',
@@ -69,6 +70,15 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
+	jetpackHidePlanIconsOnMobile: {
+		datestamp: '20171031',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'show',
+		allowExistingUsers: true,
+	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',
 		variations: {
@@ -79,26 +89,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	recommendShortestDomain: {
-		datestamp: '20171010',
-		variations: {
-			shortest: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
-	checkoutPaymentMethodTabs: {
-		datestamp: '20171019',
-		variations: {
-			tabs: 50,
-			original: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	unlimitedThemeNudge: {
 		datestamp: '20171016',
 		variations: {
@@ -106,6 +96,34 @@ export default {
 			show: 50,
 		},
 		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
+	gsuiteUpsell: {
+		datestamp: '20171025',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
+	domainsCheckoutLocalizedAddresses: {
+		datestamp: '20171025',
+		variations: {
+			showLocalizedAddressFormats: 50,
+			showDefaultAddressFormat: 50,
+		},
+		defaultVariation: 'showDefaultAddressFormat',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
+	condensedPostList: {
+		datestamp: '20171113',
+		variations: {
+			condensedPosts: 5,
+			largePosts: 95,
+		},
+		defaultVariation: 'largePosts',
 		allowExistingUsers: true,
 	},
 };

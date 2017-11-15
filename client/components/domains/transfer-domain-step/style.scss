@@ -1,0 +1,60 @@
+.transfer-domain-step {
+	padding: 0;
+
+	form.transfer-domain-step__form {
+		padding: 20px;
+		margin-bottom: 9px;
+	}
+
+	p {
+		margin-bottom: 0;
+		opacity: 0.7;
+	}
+
+	.domain-product-price {
+		float: left;
+		margin-bottom: 20px;
+		min-width: 0;
+
+		@include breakpoint( ">960px" ) {
+			float: right;
+			margin-bottom: 0;
+		}
+	}
+
+	.notice {
+		margin-top: 25px;
+	}
+
+	.transfer-domain-step__domain-availability {
+		margin-top: 30px;
+	}
+}
+
+.transfer-domain-step__domain-description {
+	font-size: 16px;
+	color: #2e4453;
+	margin-bottom: 10px;
+}
+
+.transfer-domain-step__go {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.transfer-domain-step__domain-heading {
+	font-size: 18px;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+.transfer-domain-step__add-domain {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.transfer-domain-step__map-option {
+	font-size: 14px;
+	text-align: center;
+}

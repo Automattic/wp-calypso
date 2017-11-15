@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -19,10 +19,13 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSitePostsForQueryIgnoringPage,
 	getSitePostsForQueryIgnoringPage,
+	getSitePostsFoundForQuery,
 	getSitePostsLastPageForQuery,
 } from 'state/posts/selectors';
+import ListEnd from 'components/list-end';
 import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
+import PostTypeListMaxPagesNotice from './max-pages-notice';
 
 /**
  * Constants
@@ -30,20 +33,23 @@ import PostTypeListEmptyContent from './empty-content';
 // When this many pixels or less are below the viewport, begin loading the next
 // page of items.
 const LOAD_NEXT_PAGE_THRESHOLD_PIXELS = 400;
+// The maximum number of pages of results that can be displayed in "All My
+// Sites" (API endpoint limitation).
+const MAX_ALL_SITES_PAGES = 10;
 
 class PostTypeList extends Component {
 	static propTypes = {
 		// Props
 		query: PropTypes.object,
-		largeTitles: PropTypes.bool,
-		wrapTitles: PropTypes.bool,
 		scrollContainer: PropTypes.object,
 
 		// Connected props
 		siteId: PropTypes.number,
 		posts: PropTypes.array,
 		isRequestingPosts: PropTypes.bool,
-		lastPage: PropTypes.number,
+		totalPostCount: PropTypes.number,
+		totalPageCount: PropTypes.number,
+		lastPageToRequest: PropTypes.number,
 	};
 
 	constructor() {
@@ -103,12 +109,16 @@ class PostTypeList extends Component {
 			return 1;
 		}
 
-		const query = this.props.query || {};
-		const postsPerPage = query.number || DEFAULT_POST_QUERY.number;
+		const postsPerPage = this.getPostsPerPageCount();
 		const pageCount = Math.ceil( posts.length / postsPerPage );
 
 		// Avoid making more than 5 concurrent requests on page load.
 		return Math.min( pageCount, 5 );
+	}
+
+	getPostsPerPageCount() {
+		const query = this.props.query || {};
+		return query.number || DEFAULT_POST_QUERY.number;
 	}
 
 	getScrollTop() {
@@ -122,35 +132,57 @@ class PostTypeList extends Component {
 		return scrollContainer.scrollTop;
 	}
 
+	hasListFullyLoaded() {
+		const { lastPageToRequest, isRequestingPosts } = this.props;
+		const { maxRequestedPage } = this.state;
+
+		return ! isRequestingPosts && maxRequestedPage >= lastPageToRequest;
+	}
+
 	maybeLoadNextPage() {
-		const { scrollContainer, lastPage, isRequestingPosts } = this.props;
-		if ( ! scrollContainer ) {
+		const { scrollContainer, lastPageToRequest, isRequestingPosts } = this.props;
+		const { maxRequestedPage } = this.state;
+		if ( ! scrollContainer || isRequestingPosts || maxRequestedPage >= lastPageToRequest ) {
 			return;
 		}
+
 		const scrollTop = this.getScrollTop();
 		const { scrollHeight, clientHeight } = scrollContainer;
+		const pixelsBelowViewport = scrollHeight - scrollTop - clientHeight;
 		if (
 			typeof scrollTop !== 'number' ||
 			typeof scrollHeight !== 'number' ||
-			typeof clientHeight !== 'number'
+			typeof clientHeight !== 'number' ||
+			pixelsBelowViewport > LOAD_NEXT_PAGE_THRESHOLD_PIXELS
 		) {
 			return;
 		}
-		const pixelsBelowViewport = scrollHeight - scrollTop - clientHeight;
-		const { maxRequestedPage } = this.state;
-		if (
-			pixelsBelowViewport <= LOAD_NEXT_PAGE_THRESHOLD_PIXELS &&
-			maxRequestedPage < lastPage &&
-			! isRequestingPosts
-		) {
-			this.setState( {
-				maxRequestedPage: maxRequestedPage + 1,
-			} );
+
+		this.setState( { maxRequestedPage: maxRequestedPage + 1 } );
+	}
+
+	renderListEnd() {
+		return <ListEnd />;
+	}
+
+	renderMaxPagesNotice() {
+		const { siteId, totalPageCount, totalPostCount } = this.props;
+		const isTruncated =
+			null === siteId && this.hasListFullyLoaded() && totalPageCount > MAX_ALL_SITES_PAGES;
+
+		if ( ! isTruncated ) {
+			return null;
 		}
+
+		const displayedPosts = this.getPostsPerPageCount() * MAX_ALL_SITES_PAGES;
+
+		return (
+			<PostTypeListMaxPagesNotice displayedPosts={ displayedPosts } totalPosts={ totalPostCount } />
+		);
 	}
 
 	renderPlaceholder() {
-		return <PostItem key="placeholder" largeTitle={ this.props.largeTitles } />;
+		return <PostItem key="placeholder" />;
 	}
 
 	renderPost( post ) {
@@ -161,15 +193,13 @@ class PostTypeList extends Component {
 			<PostItem
 				key={ globalId }
 				globalId={ globalId }
-				largeTitle={ this.props.largeTitles }
-				wrapTitle={ this.props.wrapTitles }
 				singleUserQuery={ query && !! query.author }
 			/>
 		);
 	}
 
 	render() {
-		const { query, siteId, posts, isRequestingPosts, lastPage } = this.props;
+		const { query, siteId, posts, isRequestingPosts } = this.props;
 		const { maxRequestedPage } = this.state;
 		const isLoadedAndEmpty = query && posts && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
@@ -186,7 +216,8 @@ class PostTypeList extends Component {
 				{ isLoadedAndEmpty && (
 					<PostTypeListEmptyContent type={ query.type } status={ query.status } />
 				) }
-				{ ( maxRequestedPage < lastPage || isRequestingPosts ) && this.renderPlaceholder() }
+				{ this.renderMaxPagesNotice() }
+				{ this.hasListFullyLoaded() ? this.renderListEnd() : this.renderPlaceholder() }
 			</div>
 		);
 	}
@@ -194,12 +225,17 @@ class PostTypeList extends Component {
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
-	const lastPage = getSitePostsLastPageForQuery( state, siteId, ownProps.query );
+
+	const totalPageCount = getSitePostsLastPageForQuery( state, siteId, ownProps.query );
+	const lastPageToRequest =
+		siteId === null ? Math.min( MAX_ALL_SITES_PAGES, totalPageCount ) : totalPageCount;
 
 	return {
 		siteId,
 		posts: getSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		isRequestingPosts: isRequestingSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
-		lastPage,
+		totalPostCount: getSitePostsFoundForQuery( state, siteId, ownProps.query ),
+		totalPageCount,
+		lastPageToRequest,
 	};
 } )( PostTypeList );

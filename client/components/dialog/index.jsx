@@ -1,9 +1,7 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { defer, noop } from 'lodash';
@@ -21,6 +19,7 @@ class Dialog extends Component {
 		leaveTimeout: PropTypes.number,
 		onClose: PropTypes.func,
 		onClosed: PropTypes.func,
+		shouldCloseOnEsc: PropTypes.bool,
 	};
 
 	static defaultProps = {

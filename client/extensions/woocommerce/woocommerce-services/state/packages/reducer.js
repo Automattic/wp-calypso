@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { cloneDeep, concat, difference, omitBy, omit, trim, uniq } from 'lodash';

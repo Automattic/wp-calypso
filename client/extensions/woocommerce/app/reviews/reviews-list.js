@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -191,11 +191,9 @@ class ReviewsList extends Component {
 			<div className="reviews__container">
 				<ReviewsFilterNav productId={ productId } status={ currentStatus } />
 
-				{ ! reviewsLoaded || ( reviews && reviews.length ) ? (
-					this.renderReviews()
-				) : (
-					this.renderNoContent()
-				) }
+				{ ! reviewsLoaded || ( reviews && reviews.length )
+					? this.renderReviews()
+					: this.renderNoContent() }
 
 				<Pagination
 					page={ currentPage }

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -41,7 +41,7 @@ const ProductsListRow = ( { site, product } ) => {
 	const renderStock = () => (
 		<div>
 			{ ( product.manage_stock &&
-			'simple' === product.type && <span>{ product.stock_quantity }</span> ) || <span>-</span> }
+				'simple' === product.type && <span>{ product.stock_quantity }</span> ) || <span>-</span> }
 		</div>
 	);
 

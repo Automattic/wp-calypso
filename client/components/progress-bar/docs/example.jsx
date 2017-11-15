@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -12,7 +12,7 @@ import React from 'react';
 import ProgressBar from 'components/progress-bar';
 
 export default class extends React.PureComponent {
-    static displayName = 'ProgressBar';
+	static displayName = 'ProgressBar';
 
 	state = {
 		compact: false,

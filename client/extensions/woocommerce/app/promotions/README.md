@@ -16,12 +16,22 @@ by promotion type.
 
 For each promotion type, a model is returned in the following format:
 
-**Note: this will be expanded to include different kinds of fields, like constraints.**
-
 ```js
 {
-	field1: <promotion field>,
-	field2: <promotion field>,
+	cardModel1: {
+		labelText: translate( 'Card 1' ),
+		fields: {
+			fieldModel1: <promotion field>,
+			fieldModel2: <promotion field>,
+		},
+	},
+	cardModel2: {
+		labelText: translate( 'Card 2' ),
+		fields: {
+			fieldModel3: <promotion field>,
+			fieldModel4: <promotion field>,
+		},
+	},
 }
 ```
 
@@ -36,6 +46,8 @@ For each field in a promotion model, there is a model in the following format:
 	explanationText: string (optional),
 	placeholderText: string (optional),
 	isRequired: boolean (optional),
+	isEnableable: boolean (optional),
+	defaultValue: any (optional),
 }
 ```
 

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -83,17 +83,17 @@ class Wizard extends Component {
 				{ component }
 
 				{ ! hideNavigation &&
-				totalSteps > 1 && (
-					<div className="wizard__navigation-links">
-						{ stepIndex > 0 && (
-							<NavigationLink direction="back" href={ backUrl } text={ backText } />
-						) }
+					totalSteps > 1 && (
+						<div className="wizard__navigation-links">
+							{ stepIndex > 0 && (
+								<NavigationLink direction="back" href={ backUrl } text={ backText } />
+							) }
 
-						{ stepIndex < totalSteps - 1 && (
-							<NavigationLink direction="forward" href={ forwardUrl } text={ forwardText } />
-						) }
-					</div>
-				) }
+							{ stepIndex < totalSteps - 1 && (
+								<NavigationLink direction="forward" href={ forwardUrl } text={ forwardText } />
+							) }
+						</div>
+					) }
 			</div>
 		);
 	}

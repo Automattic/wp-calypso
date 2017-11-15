@@ -41,7 +41,12 @@ describe( 'ForgotUsername', () => {
 
 			// Expect the fields to be disabled
 			inputSelectors.forEach( selector => {
-				expect( wrapper.find( selector ).prop( 'disabled' ) ).to.be.ok;
+				expect(
+					wrapper
+						.find( selector )
+						.first()
+						.prop( 'disabled' )
+				).to.be.ok;
 			} );
 		} );
 	} );
@@ -56,7 +61,12 @@ describe( 'ForgotUsername', () => {
 			} );
 
 			// Expect the button to be disabled
-			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
+			expect(
+				wrapper
+					.find( '.forgot-username-form__submit-button' )
+					.first()
+					.prop( 'disabled' )
+			).to.be.ok;
 		} );
 
 		test( 'should be disabled if lastName is blank', () => {
@@ -68,7 +78,12 @@ describe( 'ForgotUsername', () => {
 			} );
 
 			// Expect the button to be disabled
-			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
+			expect(
+				wrapper
+					.find( '.forgot-username-form__submit-button' )
+					.first()
+					.prop( 'disabled' )
+			).to.be.ok;
 		} );
 
 		test( 'should be disabled if url is blank', () => {
@@ -80,7 +95,12 @@ describe( 'ForgotUsername', () => {
 			} );
 
 			// Expect the button to be disabled
-			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
+			expect(
+				wrapper
+					.find( '.forgot-username-form__submit-button' )
+					.first()
+					.prop( 'disabled' )
+			).to.be.ok;
 		} );
 
 		test( 'should be enabled when all fields are filled in', () => {
@@ -92,8 +112,12 @@ describe( 'ForgotUsername', () => {
 			} );
 
 			// Expect the button to be enabled
-			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.not.be
-				.ok;
+			expect(
+				wrapper
+					.find( '.forgot-username-form__submit-button' )
+					.first()
+					.prop( 'disabled' )
+			).to.not.be.ok;
 		} );
 
 		test( 'should be disabled when submitted', () => {
@@ -107,10 +131,20 @@ describe( 'ForgotUsername', () => {
 			} );
 
 			inputSelectors.forEach( selector => {
-				expect( wrapper.find( selector ).prop( 'disabled' ) ).to.be.ok;
+				expect(
+					wrapper
+						.find( selector )
+						.first()
+						.prop( 'disabled' )
+				).to.be.ok;
 			} );
 
-			expect( wrapper.find( '.forgot-username-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
+			expect(
+				wrapper
+					.find( '.forgot-username-form__submit-button' )
+					.first()
+					.prop( 'disabled' )
+			).to.be.ok;
 		} );
 	} );
 } );

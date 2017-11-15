@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -13,7 +13,7 @@ import FeatureExample from '../index';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 
 export default class extends React.Component {
-    static displayName = 'FeatureExample';
+	static displayName = 'FeatureExample';
 
 	getContent = () => {
 		const plugins = [

@@ -1,17 +1,17 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { assign, filter, map, pick, sortBy, transform } from 'lodash';
-import sanitizeHtml from 'sanitize-html';
 
 /**
  * Internal dependencies
  */
 import { decodeEntities } from 'lib/formatting';
 import { parseHtml } from 'lib/formatting';
+import { sanitizeSectionContent } from './sanitize-section-content';
 
 /**
  * @param  {Object} site       Site Object
@@ -147,43 +147,7 @@ const PluginUtils = {
 		} );
 	},
 
-	sanitizeSectionContent: content => {
-		return sanitizeHtml( content, {
-			allowedTags: [
-				'h4',
-				'h5',
-				'h6',
-				'blockquote',
-				'code',
-				'b',
-				'i',
-				'em',
-				'strong',
-				'a',
-				'p',
-				'img',
-				'ul',
-				'ol',
-				'li',
-			],
-			allowedAttributes: { a: [ 'href', 'target', 'rel' ], img: [ 'src' ] },
-			allowedSchemes: [ 'http', 'https' ],
-			transformTags: {
-				h1: 'h3',
-				h2: 'h3',
-				a: ( tagName, attribs ) => {
-					return {
-						tagName: 'a',
-						attribs: {
-							...pick( attribs, [ 'href' ] ),
-							target: '_blank',
-							rel: 'external noopener noreferrer',
-						},
-					};
-				},
-			},
-		} );
-	},
+	sanitizeSectionContent,
 
 	normalizePluginData: function( plugin, pluginData ) {
 		plugin = this.whiteListPluginData( assign( plugin, pluginData ) );

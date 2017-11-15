@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -56,6 +56,20 @@ class BlogSettings extends Component {
 			'is-expanded': isExpanded,
 		} );
 
+		const settingKeys = [
+			'new_comment',
+			'comment_like',
+			'post_like',
+			'follow',
+			'achievement',
+			'mentions',
+			'scheduled_publicize',
+		];
+
+		if ( site.options.is_wpcom_store ) {
+			settingKeys.push( 'store_order' );
+		}
+
 		return (
 			<Card className={ styles }>
 				<Header { ...{ site, settings, disableToggle } } onToggle={ this.onToggle } />
@@ -72,15 +86,7 @@ class BlogSettings extends Component {
 									onSave,
 									onSaveToAll,
 								} }
-								settingKeys={ [
-									'new_comment',
-									'comment_like',
-									'post_like',
-									'follow',
-									'achievement',
-									'mentions',
-									'scheduled_publicize',
-								] }
+								settingKeys={ settingKeys }
 							/>
 						);
 					}

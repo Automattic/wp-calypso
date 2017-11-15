@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -15,7 +15,7 @@ import Card from 'components/card';
 import Gridicon from 'gridicons';
 
 class Buttons extends React.PureComponent {
-    static displayName = 'ButtonGroup';
+	static displayName = 'ButtonGroup';
 
 	state = {
 		compact: false,

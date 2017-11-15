@@ -11,24 +11,28 @@ import { map } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRequestingLists } from 'woocommerce/state/sites/settings/email/selectors';
+import { isRequestingLists } from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
-import QueryMailChimpLists from 'woocommerce/state/sites/settings/email/queryLists';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import Notice from 'components/notice';
+import QueryMailChimpLists from 'woocommerce/state/sites/settings/mailchimp/queryLists';
 
 const NewsletterSettings = ( { storeData = {}, onChange, siteId, isRequesting, translate } ) => {
 	return (
 		<FormFieldset className="setup-steps__store-info-field">
 			<QueryMailChimpLists siteId={ siteId } />
-			<div className="setup-steps__login-title">{ translate( 'Now choose a list to sync!' ) }</div>
-			<p>{ translate(
+			<p>{ translate( 'Finally, choose a mailing list to sync with your store.' ) }</p>
+			<Notice>
+				<p>{ translate(
 					'Choose your list carefully as you wont be able to change it later. ' +
 					'Create a list in MailChimp if you have not already done so.'
-				) }
-			</p>
+					) }
+				</p>
+			</Notice>
 			<FormLabel>
-				{ translate( 'Newsletter' ) }
+				{ translate( 'Mailing list' ) }
 			</FormLabel>
 			<FormSelect
 				name={ 'mailchimp_list' }
@@ -41,12 +45,12 @@ const NewsletterSettings = ( { storeData = {}, onChange, siteId, isRequesting, t
 					) )
 				}
 			</FormSelect>
-			<p className="setup-steps__sync-explanation">
+			<FormSettingExplanation className="setup-steps__sync-explanation">
 				{ translate(
-					'We will then sync your orders so you can segment based on purchase ' +
-						'history and products so you automatically add product information into customer emails.'
+					'We\'ll sync your orders with this list so you can segment based on purchase history. We\'ll also ' +
+						'sync products so you can add relevant product information to customer emails.'
 				) }
-			</p>
+			</FormSettingExplanation>
 		</FormFieldset>
 	);
 };

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -92,13 +92,11 @@ class StoreStats extends Component {
 						period={ unit }
 						// this is needed to counter the +1d adjustment made in DatePicker for weeks
 						date={
-							unit === 'week' ? (
-								moment( selectedDate, 'YYYY-MM-DD' )
-									.subtract( 1, 'days' )
-									.format( 'YYYY-MM-DD' )
-							) : (
-								selectedDate
-							)
+							unit === 'week'
+								? moment( selectedDate, 'YYYY-MM-DD' )
+										.subtract( 1, 'days' )
+										.format( 'YYYY-MM-DD' )
+								: selectedDate
 						}
 						query={ ordersQuery }
 						statsType="statsOrders"

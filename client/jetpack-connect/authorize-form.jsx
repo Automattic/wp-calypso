@@ -14,47 +14,18 @@ import { get, includes } from 'lodash';
  */
 import Main from 'components/main';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
-import {
-	createAccount,
-	authorize,
-	goBackToWpAdmin,
-	retryAuth,
-	goToXmlrpcErrorFallbackUrl,
-} from 'state/jetpack-connect/actions';
-import {
-	getAuthorizationData,
-	getAuthorizationRemoteSite,
-	isCalypsoStartedConnection,
-	hasXmlrpcError,
-	hasExpiredSecretError,
-	isRemoteSiteOnSitesList,
-	getAuthAttempts,
-	getSiteIdFromQueryObject,
-	getUserAlreadyConnected,
-} from 'state/jetpack-connect/selectors';
+import { getAuthorizationData } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
-import { requestSites } from 'state/sites/actions';
-import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
-import { urlToSlug } from 'lib/url';
 import LoggedInForm from './auth-logged-in-form';
 import LoggedOutForm from './auth-logged-out-form';
 
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {
-		authAttempts: PropTypes.number,
-		authorize: PropTypes.func,
-		calypsoStartedConnection: PropTypes.bool,
-		createAccount: PropTypes.func,
-		goBackToWpAdmin: PropTypes.func,
-		goToXmlrpcErrorFallbackUrl: PropTypes.func,
-		isAlreadyOnSitesList: PropTypes.bool,
-		isFetchingAuthorizationSite: PropTypes.bool,
-		isFetchingSites: PropTypes.bool,
 		jetpackConnectAuthorize: PropTypes.shape( {
 			queryObject: PropTypes.shape( {
 				client_id: PropTypes.string,
@@ -63,11 +34,6 @@ class JetpackConnectAuthorizeForm extends Component {
 		} ).isRequired,
 		recordTracksEvent: PropTypes.func,
 		setTracksAnonymousUserId: PropTypes.func,
-		requestHasExpiredSecretError: PropTypes.func,
-		requestHasXmlrpcError: PropTypes.func,
-		requestSites: PropTypes.func,
-		retryAuth: PropTypes.func,
-		siteSlug: PropTypes.string,
 		user: PropTypes.object,
 	};
 
@@ -113,7 +79,7 @@ class JetpackConnectAuthorizeForm extends Component {
 					actionURL="/jetpack/connect"
 				/>
 				<LoggedOutFormLinks>
-					<JetpackConnectHappychatButton>
+					<JetpackConnectHappychatButton eventName="calypso_jpc_noqueryarguments_chat_initiated">
 						<HelpButton onClick={ this.handleClickHelp } />
 					</JetpackConnectHappychatButton>
 				</LoggedOutFormLinks>
@@ -125,7 +91,11 @@ class JetpackConnectAuthorizeForm extends Component {
 		return this.props.user ? (
 			<LoggedInForm { ...this.props } isSSO={ this.isSSO() } isWoo={ this.isWoo() } />
 		) : (
-			<LoggedOutForm { ...this.props } isSSO={ this.isSSO() } isWoo={ this.isWoo() } />
+			<LoggedOutForm
+				jetpackConnectAuthorize={ this.props.jetpackConnectAuthorize }
+				local={ this.props.locale }
+				path={ this.props.path }
+			/>
 		);
 	}
 
@@ -136,10 +106,6 @@ class JetpackConnectAuthorizeForm extends Component {
 			return this.renderNoQueryArgsError();
 		}
 
-		if ( queryObject && queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
-			this.renderForm();
-		}
-
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">{ this.renderForm() }</div>
@@ -148,36 +114,15 @@ class JetpackConnectAuthorizeForm extends Component {
 	}
 }
 
-export default connect(
-	state => {
-		const remoteSiteUrl = getAuthorizationRemoteSite( state );
-		const siteSlug = urlToSlug( remoteSiteUrl );
-		const requestHasExpiredSecretError = () => hasExpiredSecretError( state );
-		const requestHasXmlrpcError = () => hasXmlrpcError( state );
-		const siteId = getSiteIdFromQueryObject( state );
+export { JetpackConnectAuthorizeForm as JetpackConnectAuthorizeFormTestComponent };
 
-		return {
-			authAttempts: getAuthAttempts( state, siteSlug ),
-			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
-			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
-			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
-			isFetchingSites: isRequestingSites( state ),
-			jetpackConnectAuthorize: getAuthorizationData( state ),
-			requestHasExpiredSecretError,
-			requestHasXmlrpcError,
-			siteSlug,
-			user: getCurrentUser( state ),
-			userAlreadyConnected: getUserAlreadyConnected( state ),
-		};
-	},
+export default connect(
+	state => ( {
+		jetpackConnectAuthorize: getAuthorizationData( state ),
+		user: getCurrentUser( state ),
+	} ),
 	{
-		authorize,
-		createAccount,
-		goBackToWpAdmin,
-		goToXmlrpcErrorFallbackUrl,
 		recordTracksEvent,
 		setTracksAnonymousUserId,
-		requestSites,
-		retryAuth,
 	}
 )( localize( JetpackConnectAuthorizeForm ) );

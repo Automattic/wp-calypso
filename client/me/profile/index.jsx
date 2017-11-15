@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -117,11 +117,9 @@ const Profile = createReactClass( {
 								}
 								onClick={ this.recordClickEvent( 'Save Profile Details Button' ) }
 							>
-								{ this.state.submittingForm ? (
-									this.props.translate( 'Saving…' )
-								) : (
-									this.props.translate( 'Save Profile Details' )
-								) }
+								{ this.state.submittingForm
+									? this.props.translate( 'Saving…' )
+									: this.props.translate( 'Save Profile Details' ) }
 							</FormButton>
 						</p>
 					</form>

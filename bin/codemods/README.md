@@ -4,6 +4,30 @@
 
 Code modification scripts, also known as codemods, are transformation scripts that can simultaneously modify multiple files with precision and reliability. Codemods were popularized by [Facebook's engineering team](https://medium.com/@cpojer/effective-javascript-codemods-5a6686bb46fb) and depends greatly on Facebook's [jscodeshift](https://github.com/facebook/jscodeshift) library, which wraps over a library named [recast](https://github.com/benjamn/recast) (author of which is associated with the [Meteor](https://www.meteor.com/) project).
 
+## How to write codemods
+
+Place your codemod under `src` folder:
+```bash
+touch ./bin/codemods/src/your-transformation-name.js
+```
+
+Here's a stub to begin with:
+```js
+const config = require( './config' );
+
+export default function transformer( file, api ) {
+	const j = api.jscodeshift;
+	const root = j( file.source );
+
+	// Modify file's AST (Abstract Syntax Tree) structure here
+
+	return root.toSource( config.recastOptions );
+}
+```
+
+A nifty tool to explore AST structures is [AST explorer](https://astexplorer.net/).
+You can choose "recast" as a parser and "jscodeshift" from "Transform" menu.
+
 ## How to run our codemods
 
 It's easy! Our codemod script uses the following CLI:
@@ -92,6 +116,10 @@ If you're developing your own transformations, it may be useful to know you can 
 
 - rename-combine-reducers
 	- This transformation converts combineReducersWithPersistence imports to use combineReducers from 'state/utils'
+
+- single-tree-rendering
+	- Instead of rendering two distinct React element trees to the `#primary` and `#secondary` <div>s,
+	use a single `Layout` component tree that includes both, and render it to `#layout`.
 
 - sort-imports
 	- This transformation adds import comment blocks and sorts them as necessary.

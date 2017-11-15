@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -23,27 +23,25 @@ class Security2faStatus extends React.Component {
 	render() {
 		return (
 			<p>
-				{ this.props.twoStepEnabled ? (
-					this.props.translate(
-						'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}on{{/onOff}}.',
-						{
-							components: {
-								status: <span className="security-2fa-status__heading" />,
-								onOff: <span className="security-2fa-status__on" />,
-							},
-						}
-					)
-				) : (
-					this.props.translate(
-						'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}off{{/onOff}}.',
-						{
-							components: {
-								status: <span className="security-2fa-status__heading" />,
-								onOff: <span className="security-2fa-status__off" />,
-							},
-						}
-					)
-				) }
+				{ this.props.twoStepEnabled
+					? this.props.translate(
+							'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}on{{/onOff}}.',
+							{
+								components: {
+									status: <span className="security-2fa-status__heading" />,
+									onOff: <span className="security-2fa-status__on" />,
+								},
+							}
+						)
+					: this.props.translate(
+							'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}off{{/onOff}}.',
+							{
+								components: {
+									status: <span className="security-2fa-status__heading" />,
+									onOff: <span className="security-2fa-status__off" />,
+								},
+							}
+						) }
 			</p>
 		);
 	}

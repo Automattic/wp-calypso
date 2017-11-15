@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { PureComponent } from 'react';
@@ -41,17 +41,19 @@ class NpsSurveyExample extends PureComponent {
 					<NpsSurvey name="api-valid-test-survey" onClose={ this.handleClose } />
 				) }
 				{ this.state.isClosed &&
-				this.props.hasAnswered && (
-					<div>
-						User closed survey after submitting:
-						<ul>
-							<li>Survey name: { this.props.surveyName }</li>
-							<li>Score: { this.props.surveyScore }</li>
-						</ul>
-					</div>
-				) }
+					this.props.hasAnswered && (
+						<div>
+							User closed survey after submitting:
+							<ul>
+								<li>Survey name: { this.props.surveyName }</li>
+								<li>Score: { this.props.surveyScore }</li>
+							</ul>
+						</div>
+					) }
 				{ this.state.isClosed &&
-				this.props.hasAnsweredWithNoScore && <div>User dismissed survey without submitting.</div> }
+					this.props.hasAnsweredWithNoScore && (
+						<div>User dismissed survey without submitting.</div>
+					) }
 				{ this.state.isClosed && this.props.isSubmitFailure && <div>Error submitting survey.</div> }
 			</div>
 		);

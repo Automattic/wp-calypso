@@ -1,11 +1,11 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import classNames from 'classnames';
-import { defer } from 'lodash';
+import { capitalize, defer } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -21,7 +21,6 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
-import FormCheckbox from 'components/forms/form-checkbox';
 import { getCurrentQueryArguments } from 'state/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
@@ -62,13 +61,14 @@ export class LoginForm extends Component {
 		isDisabledWhileLoading: true,
 		usernameOrEmail: this.props.socialAccountLinkEmail || this.props.userEmail || '',
 		password: '',
-		rememberMe: false,
 	};
 
 	componentDidMount() {
+		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isDisabledWhileLoading: false }, () => {
-			// eslint-disable-line react/no-did-mount-set-state
-			this.usernameOrEmail.focus();
+			if ( this.usernameOrEmail ) {
+				this.usernameOrEmail.focus();
+			}
 		} );
 	}
 
@@ -84,7 +84,7 @@ export class LoginForm extends Component {
 		}
 
 		if ( requestError.field === 'usernameOrEmail' ) {
-			defer( () => this.usernameOrEmail.focus() );
+			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		}
 	}
 
@@ -106,26 +106,16 @@ export class LoginForm extends Component {
 		} );
 	};
 
-	onChangeRememberMe = event => {
-		const { name, checked } = event.target;
-
-		this.props.recordTracksEvent( 'calypso_login_block_remember_me_click', { new_value: checked } );
-
-		this.setState( { [ name ]: checked } );
-	};
-
 	onSubmitForm = event => {
 		event.preventDefault();
 
 		const { usernameOrEmail, password } = this.state;
 		const { onSuccess, redirectTo } = this.props;
 
-		const rememberMe = this.props.socialAccountIsLinking ? true : this.state.rememberMe;
-
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
 		this.props
-			.loginUser( usernameOrEmail, password, rememberMe, redirectTo )
+			.loginUser( usernameOrEmail, password, redirectTo )
 			.then( () => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 
@@ -206,19 +196,21 @@ export class LoginForm extends Component {
 								<p>
 									{ this.props.translate(
 										'We found a WordPress.com account with the email address "%(email)s". ' +
-											'Log in to this account to connect it to your %(service)s profile.',
+											'Log in to this account to connect it to your %(service)s profile, ' +
+											'or choose a different %(service)s profile.',
 										{
 											args: {
 												email: this.props.socialAccountLinkEmail,
-												service: this.props.socialAccountLinkService,
+												service: capitalize( this.props.socialAccountLinkService ),
 											},
 										}
 									) }
 								</p>
 							</div>
 						) }
+
 						<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
-							{ this.props.translate( 'Username or Email Address' ) }
+							{ this.props.translate( 'Email Address or Username' ) }
 						</label>
 
 						<FormTextInput
@@ -235,9 +227,9 @@ export class LoginForm extends Component {
 						/>
 
 						{ requestError &&
-						requestError.field === 'usernameOrEmail' && (
-							<FormInputValidation isError text={ requestError.message } />
-						) }
+							requestError.field === 'usernameOrEmail' && (
+								<FormInputValidation isError text={ requestError.message } />
+							) }
 
 						<label htmlFor="password" className="login__form-userdata-username">
 							{ this.props.translate( 'Password' ) }
@@ -258,31 +250,18 @@ export class LoginForm extends Component {
 						/>
 
 						{ requestError &&
-						requestError.field === 'password' && (
-							<FormInputValidation isError text={ requestError.message } />
-						) }
+							requestError.field === 'password' && (
+								<FormInputValidation isError text={ requestError.message } />
+							) }
 					</div>
-
-					{ ! linkingSocialUser && (
-						<div className="login__form-remember-me">
-							<label>
-								<FormCheckbox
-									name="rememberMe"
-									checked={ this.state.rememberMe }
-									onChange={ this.onChangeRememberMe }
-									{ ...isDisabled }
-								/>
-								<span>{ this.props.translate( 'Keep me logged in' ) }</span>
-							</label>
-						</div>
-					) }
 
 					{ config.isEnabled( 'signup/social' ) && (
 						<p className="login__form-terms">
 							{ preventWidows(
 								this.props.translate(
 									// To make any changes to this copy please speak to the legal team
-									'By logging in via any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+									'By continuing with any of the options below, ' +
+										'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
 									{
 										components: {
 											tosLink: (
@@ -315,18 +294,25 @@ export class LoginForm extends Component {
 						</div>
 					) }
 				</Card>
+
 				{ config.isEnabled( 'signup/social' ) && (
-					<Card className="login__form-social">
-						<SocialLoginForm
-							onSuccess={ this.props.onSuccess }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
-							linkingSocialService={
-								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
-							}
-							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-						/>
-					</Card>
+					<div className="login__form-social">
+						<div className="login__form-social-divider">
+							<span>{ this.props.translate( 'or' ) }</span>
+						</div>
+
+						<Card>
+							<SocialLoginForm
+								onSuccess={ this.props.onSuccess }
+								socialService={ this.props.socialService }
+								socialServiceResponse={ this.props.socialServiceResponse }
+								linkingSocialService={
+									this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
+								}
+								uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
+							/>
+						</Card>
+					</div>
 				) }
 			</form>
 		);

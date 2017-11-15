@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -131,6 +131,13 @@ const newTLDs = [
 	'.holiday',
 	'.house',
 	'.immo',
+	'.in',
+	'.co.in',
+	'.net.in',
+	'.gen.in',
+	'.firm.in',
+	'.find.in',
+	'.org.in',
 	'.industries',
 	'.institute',
 	'.insure',
@@ -333,7 +340,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		let buttonClasses, buttonContent;
 
 		if ( domain ) {
-			const testTLDs = [ '.de', '.in' ];
+			const testTLDs = [ '.de' ];
 
 			// Grab everything from the first dot, so 'example.co.uk' will
 			// match '.co.uk' but not '.uk'

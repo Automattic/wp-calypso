@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -15,13 +15,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import CommentButton from 'blocks/comment-button';
 import LikeButton from 'my-sites/post-like-button';
 import PostTotalViews from 'my-sites/posts/post-total-views';
 import { canCurrentUser } from 'state/selectors';
-import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackModuleActive, isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 
 const getContentLink = ( state, siteId, post ) => {
@@ -47,6 +48,7 @@ const PostActions = ( {
 	showComments,
 	showLikes,
 	showStats,
+	siteSlug,
 	toggleComments,
 	trackRelativeTimeStatusOnClick,
 	trackTotalViewsOnClick,
@@ -65,35 +67,46 @@ const PostActions = ( {
 				/>
 			</li>
 			{ ! isDraft &&
-			showComments && (
-				<li className="post-actions__item">
-					<CommentButton
-						key="comment-button"
-						post={ post }
-						showLabel={ false }
-						commentCount={ post.discussion.comment_count }
-						onClick={ toggleComments }
-						tagName="div"
-					/>
-				</li>
-			) }
+				showComments && (
+					<li className="post-actions__item">
+						{ config.isEnabled( 'comments/management/post-view' ) ? (
+							<CommentButton
+								key="comment-button"
+								post={ post }
+								showLabel={ false }
+								commentCount={ post.discussion.comment_count }
+								tagName="a"
+								href={ `/comments/all/${ siteSlug }/${ post.ID }` }
+							/>
+						) : (
+							<CommentButton
+								key="comment-button"
+								post={ post }
+								showLabel={ false }
+								commentCount={ post.discussion.comment_count }
+								onClick={ toggleComments }
+								tagName="div"
+							/>
+						) }
+					</li>
+				) }
 			{ ! isDraft &&
-			showLikes && (
-				<li className="post-actions__item">
-					<LikeButton
-						key="like-button"
-						siteId={ +post.site_ID }
-						postId={ +post.ID }
-						post={ post }
-					/>
-				</li>
-			) }
+				showLikes && (
+					<li className="post-actions__item">
+						<LikeButton
+							key="like-button"
+							siteId={ +post.site_ID }
+							postId={ +post.ID }
+							post={ post }
+						/>
+					</li>
+				) }
 			{ ! isDraft &&
-			showStats && (
-				<li className="post-actions__item post-actions__total-views">
-					<PostTotalViews post={ post } clickHandler={ trackTotalViewsOnClick } />
-				</li>
-			) }
+				showStats && (
+					<li className="post-actions__item post-actions__total-views">
+						<PostTotalViews post={ post } clickHandler={ trackTotalViewsOnClick } />
+					</li>
+				) }
 		</ul>
 	);
 };
@@ -109,6 +122,7 @@ PostActions.propTypes = {
 
 const mapStateToProps = ( state, { siteId, post } ) => {
 	const isJetpack = isJetpackSite( state, siteId );
+	const siteSlug = getSiteSlug( state, siteId );
 
 	// TODO: Maybe add dedicated selectors for the following.
 	const showComments =
@@ -125,6 +139,7 @@ const mapStateToProps = ( state, { siteId, post } ) => {
 		showComments,
 		showLikes,
 		showStats,
+		siteSlug,
 	};
 };
 

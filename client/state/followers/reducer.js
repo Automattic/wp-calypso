@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { keyBy, mapValues, omit, union, without } from 'lodash';

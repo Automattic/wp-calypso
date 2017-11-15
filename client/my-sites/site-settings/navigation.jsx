@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import PropTypes from 'prop-types';
@@ -81,15 +81,15 @@ export class SiteSettingsNavigation extends Component {
 					</NavItem>
 
 					{ config.isEnabled( 'manage/security' ) &&
-					site.jetpack && (
-						<NavItem
-							path={ `/settings/security/${ site.slug }` }
-							preloadSectionName="settings-security"
-							selected={ section === 'security' }
-						>
-							{ strings.security }
-						</NavItem>
-					) }
+						site.jetpack && (
+							<NavItem
+								path={ `/settings/security/${ site.slug }` }
+								preloadSectionName="settings-security"
+								selected={ section === 'security' }
+							>
+								{ strings.security }
+							</NavItem>
+						) }
 				</NavTabs>
 			</SectionNav>
 		);

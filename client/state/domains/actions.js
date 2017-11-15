@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';

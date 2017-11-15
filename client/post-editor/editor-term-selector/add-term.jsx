@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -17,6 +17,8 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import TermFormDialog from 'blocks/term-form-dialog';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
 
@@ -24,9 +26,9 @@ class TermSelectorAddTerm extends Component {
 	static propTypes = {
 		labels: PropTypes.object,
 		onSuccess: PropTypes.func,
-		postType: PropTypes.string,
 		taxonomy: PropTypes.string,
 		terms: PropTypes.array,
+		type: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -50,7 +52,7 @@ class TermSelectorAddTerm extends Component {
 	};
 
 	render() {
-		const { labels, onSuccess, postType, terms, taxonomy } = this.props;
+		const { labels, onSuccess, type, terms, taxonomy } = this.props;
 		const totalTerms = terms ? terms.length : 0;
 		const classes = classNames( 'editor-term-selector__add-term', {
 			'is-compact': totalTerms < 8,
@@ -64,7 +66,7 @@ class TermSelectorAddTerm extends Component {
 				<TermFormDialog
 					showDialog={ this.state.showDialog }
 					onClose={ this.closeDialog }
-					postType={ postType }
+					postType={ type }
 					taxonomy={ taxonomy }
 					onSuccess={ onSuccess }
 				/>
@@ -73,14 +75,16 @@ class TermSelectorAddTerm extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const { taxonomy, postType } = ownProps;
+export default connect( ( state, { taxonomy } ) => {
 	const siteId = getSelectedSiteId( state );
-	const taxonomyDetails = getPostTypeTaxonomy( state, siteId, postType, taxonomy );
+	const postId = getEditorPostId( state );
+	const type = getEditedPostValue( state, siteId, postId, 'type' );
+	const taxonomyDetails = getPostTypeTaxonomy( state, siteId, type, taxonomy );
 	const labels = get( taxonomyDetails, 'labels', {} );
 
 	return {
 		terms: getTerms( state, siteId, taxonomy ),
 		labels,
+		type,
 	};
 } )( TermSelectorAddTerm );

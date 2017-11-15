@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -87,11 +87,9 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 				{ /*<p className="shipping__zones-row-location-description">{ locationDescription }</p>*/ }
 			</div>
 			<div className="shipping__zones-row-methods">
-				{ methods && methods.length ? (
-					Object.keys( methods ).map( renderMethod )
-				) : (
-					renderMethodCell( translate( 'No shipping methods' ) )
-				) }
+				{ methods && methods.length
+					? Object.keys( methods ).map( renderMethod )
+					: renderMethodCell( translate( 'No shipping methods' ) ) }
 			</div>
 			<div className="shipping__zones-row-actions">
 				<Button

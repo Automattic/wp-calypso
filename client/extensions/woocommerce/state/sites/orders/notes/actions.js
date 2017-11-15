@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { areOrderNotesLoaded, areOrderNotesLoading } from './selectors';

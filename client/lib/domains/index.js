@@ -1,11 +1,11 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import inherits from 'inherits';
-import { some, includes, find } from 'lodash';
+import { includes, find, replace, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -50,6 +50,22 @@ function checkDomainAvailability( domainName, onComplete ) {
 	} );
 }
 
+function checkInboundTransferStatus( domainName, onComplete ) {
+	if ( ! domainName ) {
+		onComplete( null );
+		return;
+	}
+
+	wpcom.undocumented().getInboundTransferStatus( domainName, function( serverError, result ) {
+		if ( serverError ) {
+			onComplete( serverError.error );
+			return;
+		}
+
+		onComplete( null, result );
+	} );
+}
+
 function canRedirect( siteId, domainName, onComplete ) {
 	if ( ! domainName ) {
 		onComplete( new ValidationError( 'empty_query' ) );
@@ -85,7 +101,8 @@ function getFixedDomainSearch( domainName ) {
 		.trim()
 		.toLowerCase()
 		.replace( /^(https?:\/\/)?(www\.)?/, '' )
-		.replace( /\/$/, '' );
+		.replace( /\/$/, '' )
+		.replace( /_/g, '-' );
 }
 
 function isSubdomain( domainName ) {
@@ -173,10 +190,23 @@ function getTld( domainName ) {
 	return tld;
 }
 
+function getDomainProductSlug( domain ) {
+	const tld = getTld( domain );
+	const tldSlug = replace( tld, /\./g, 'dot' );
+
+	if ( includes( [ 'com', 'net', 'org' ], tldSlug ) ) {
+		return 'domain_reg';
+	}
+
+	return `dot${ tldSlug }_domain`;
+}
+
 export {
 	canAddGoogleApps,
 	canRedirect,
 	checkDomainAvailability,
+	checkInboundTransferStatus,
+	getDomainProductSlug,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,
 	getPrimaryDomain,

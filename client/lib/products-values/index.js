@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { assign, difference, isEmpty, pick } from 'lodash';
@@ -27,6 +27,7 @@ import {
 	PLAN_CHARGEBACK,
 	PLAN_MONTHLY_PERIOD,
 } from 'lib/plans/constants';
+import { isTransfer } from 'lib/cart-values/cart-items';
 
 import schema from './schema.json';
 
@@ -53,7 +54,7 @@ function assertValidProduct( product ) {
 	}
 }
 
-function formatProduct( product ) {
+export function formatProduct( product ) {
 	return assign( {}, product, {
 		product_slug: product.product_slug || product.productSlug,
 		product_type: product.product_type || product.productType,
@@ -65,42 +66,42 @@ function formatProduct( product ) {
 	} );
 }
 
-function isChargeback( product ) {
+export function isChargeback( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === PLAN_CHARGEBACK;
 }
 
-function includesProduct( products, product ) {
+export function includesProduct( products, product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return products.indexOf( product.product_slug ) >= 0;
 }
 
-function isFreePlan( product ) {
+export function isFreePlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === PLAN_FREE;
 }
 
-function isFreeJetpackPlan( product ) {
+export function isFreeJetpackPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === PLAN_JETPACK_FREE;
 }
 
-function isFreeTrial( product ) {
+export function isFreeTrial( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return Boolean( product.free_trial );
 }
 
-function isPersonal( product ) {
+export function isPersonal( product ) {
 	const personalProducts = [ PLAN_PERSONAL, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ];
 
 	product = formatProduct( product );
@@ -109,7 +110,7 @@ function isPersonal( product ) {
 	return personalProducts.indexOf( product.product_slug ) >= 0;
 }
 
-function isPremium( product ) {
+export function isPremium( product ) {
 	const premiumProducts = [ PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
 
 	product = formatProduct( product );
@@ -118,7 +119,7 @@ function isPremium( product ) {
 	return premiumProducts.indexOf( product.product_slug ) >= 0;
 }
 
-function isBusiness( product ) {
+export function isBusiness( product ) {
 	const businessProducts = [ PLAN_BUSINESS, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
 
 	product = formatProduct( product );
@@ -127,60 +128,60 @@ function isBusiness( product ) {
 	return businessProducts.indexOf( product.product_slug ) >= 0;
 }
 
-function isEnterprise( product ) {
+export function isEnterprise( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === PLAN_WPCOM_ENTERPRISE;
 }
 
-function isJetpackPlan( product ) {
+export function isJetpackPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return JETPACK_PLANS.indexOf( product.product_slug ) >= 0;
 }
 
-function isJetpackBusiness( product ) {
+export function isJetpackBusiness( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return isBusiness( product ) && isJetpackPlan( product );
 }
 
-function isJetpackPremium( product ) {
+export function isJetpackPremium( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return isPremium( product ) && isJetpackPlan( product );
 }
 
-function isVipPlan( product ) {
+export function isVipPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'vip' === product.product_slug;
 }
 
-function isJetpackMonthlyPlan( product ) {
+export function isJetpackMonthlyPlan( product ) {
 	return isMonthly( product ) && isJetpackPlan( product );
 }
 
-function isMonthly( product ) {
+export function isMonthly( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return parseInt( product.bill_period, 10 ) === PLAN_MONTHLY_PERIOD;
 }
 
-function isJpphpBundle( product ) {
+export function isJpphpBundle( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === PLAN_HOST_BUNDLE;
 }
 
-function isPlan( product ) {
+export function isPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
@@ -193,18 +194,18 @@ function isPlan( product ) {
 	);
 }
 
-function isDotComPlan( product ) {
+export function isDotComPlan( product ) {
 	return isPlan( product ) && ! isJetpackPlan( product );
 }
 
-function isPrivacyProtection( product ) {
+export function isPrivacyProtection( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === 'private_whois';
 }
 
-function isDomainProduct( product ) {
+export function isDomainProduct( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
@@ -213,42 +214,49 @@ function isDomainProduct( product ) {
 	);
 }
 
-function isDomainRedemption( product ) {
+export function isDomainRedemption( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === 'domain_redemption';
 }
 
-function isDomainRegistration( product ) {
+export function isDomainRegistration( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return !! product.is_domain_registration;
 }
 
-function isDomainMapping( product ) {
+export function isDomainMapping( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === 'domain_map';
 }
 
-function isSiteRedirect( product ) {
+export function isSiteRedirect( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === 'offsite_redirect';
 }
 
-function isCredits( product ) {
+export function isDomainTransfer( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isTransfer( product );
+}
+
+export function isCredits( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'wordpress-com-credits' === product.product_slug;
 }
 
-function getDomainProductRanking( product ) {
+export function getDomainProductRanking( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
@@ -261,7 +269,7 @@ function getDomainProductRanking( product ) {
 	}
 }
 
-function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
+export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
 	let isPlansOnlyDependent = false;
 
 	product = formatProduct( product );
@@ -285,13 +293,13 @@ function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
 			product.meta === dependentProduct.meta )
 	);
 }
-function isFreeWordPressComDomain( product ) {
+export function isFreeWordPressComDomain( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 	return product.is_free === true;
 }
 
-function isGoogleApps( product ) {
+export function isGoogleApps( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
@@ -302,60 +310,60 @@ function isGoogleApps( product ) {
 	);
 }
 
-function isGuidedTransfer( product ) {
+export function isGuidedTransfer( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'guided_transfer' === product.product_slug;
 }
 
-function isTheme( product ) {
+export function isTheme( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'premium_theme' === product.product_slug;
 }
 
-function isCustomDesign( product ) {
+export function isCustomDesign( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'custom-design' === product.product_slug;
 }
 
-function isNoAds( product ) {
+export function isNoAds( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'no-adverts/no-adverts.php' === product.product_slug;
 }
 
-function isVideoPress( product ) {
+export function isVideoPress( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'videopress' === product.product_slug;
 }
 
-function isUnlimitedSpace( product ) {
+export function isUnlimitedSpace( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'unlimited_space' === product.product_slug;
 }
 
-function isUnlimitedThemes( product ) {
+export function isUnlimitedThemes( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'unlimited_themes' === product.product_slug;
 }
 
-function whitelistAttributes( product ) {
+export function whitelistAttributes( product ) {
 	return pick( product, Object.keys( schema.properties ) );
 }
 
-function isSpaceUpgrade( product ) {
+export function isSpaceUpgrade( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
@@ -381,6 +389,7 @@ export default {
 	isDomainProduct,
 	isDomainRedemption,
 	isDomainRegistration,
+	isDomainTransfer,
 	isDotComPlan,
 	isEnterprise,
 	isFreeJetpackPlan,

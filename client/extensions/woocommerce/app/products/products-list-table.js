@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -19,7 +19,10 @@ import TableItem from 'woocommerce/components/table/table-item';
 
 const ProductsListTable = ( { translate, products, site, isRequesting } ) => {
 	const headings = (
-		<TableRow isHeader className={ classNames( { 'products__list-placeholder': ! products } ) }>
+		<TableRow
+			isHeader
+			className={ classNames( { 'products__list-placeholder': ! products.length } ) }
+		>
 			{ [
 				translate( 'Product' ),
 				translate( 'Inventory' ),
@@ -39,12 +42,12 @@ const ProductsListTable = ( { translate, products, site, isRequesting } ) => {
 				className={ classNames( { 'is-requesting': isRequesting } ) }
 				horizontalScroll
 			>
-				{ products &&
+				{ !! products.length &&
 					products.map( ( product, i ) => (
 						<ProductsListRow key={ i } site={ site } product={ product } />
 					) ) }
 			</Table>
-			{ ! products && <div className="products__list-placeholder" /> }
+			{ ! products.length && <div className="products__list-placeholder" /> }
 		</div>
 	);
 };

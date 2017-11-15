@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -225,25 +225,25 @@ class PreloadTab extends Component {
 						</FormFieldset>
 
 						{ post_count &&
-						post_count > 100 && (
-							<FormFieldset>
-								<FormLabel htmlFor="preload_posts">{ translate( 'Preload Posts' ) }</FormLabel>
-								<FormSelect
-									className="wp-super-cache__preload-posts"
-									disabled={ isRequesting || isSaving }
-									id="preload_posts"
-									name="preload_posts"
-									onChange={ handleSelect }
-									value={ preload_posts || 'all' }
-								>
-									{ this.getPreloadPostsOptions( post_count ).map( option => (
-										<option key={ option } value={ option }>
-											{ option }
-										</option>
-									) ) }
-								</FormSelect>
-							</FormFieldset>
-						) }
+							post_count > 100 && (
+								<FormFieldset>
+									<FormLabel htmlFor="preload_posts">{ translate( 'Preload Posts' ) }</FormLabel>
+									<FormSelect
+										className="wp-super-cache__preload-posts"
+										disabled={ isRequesting || isSaving }
+										id="preload_posts"
+										name="preload_posts"
+										onChange={ handleSelect }
+										value={ preload_posts || 'all' }
+									>
+										{ this.getPreloadPostsOptions( post_count ).map( option => (
+											<option key={ option } value={ option }>
+												{ option }
+											</option>
+										) ) }
+									</FormSelect>
+								</FormFieldset>
+							) }
 
 						<hr />
 

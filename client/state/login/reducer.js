@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { get, isEmpty, omit } from 'lodash';
@@ -72,12 +72,6 @@ export const redirectTo = createReducer( null, {
 	[ LOGOUT_REQUEST ]: () => null,
 	[ LOGOUT_REQUEST_SUCCESS ]: () => ( state, { data } ) => get( data, 'redirect_to', null ),
 	[ LOGOUT_REQUEST_FAILURE ]: () => null,
-} );
-
-export const rememberMe = createReducer( null, {
-	[ LOGIN_REQUEST ]: () => null,
-	[ LOGIN_REQUEST_SUCCESS ]: ( state, action ) => action.rememberMe,
-	[ LOGIN_REQUEST_FAILURE ]: () => false,
 } );
 
 export const isFormDisabled = createReducer( null, {
@@ -263,7 +257,6 @@ export default combineReducers( {
 	isRequestingTwoFactorAuth,
 	magicLogin,
 	redirectTo,
-	rememberMe,
 	isFormDisabled,
 	requestError,
 	requestNotice,

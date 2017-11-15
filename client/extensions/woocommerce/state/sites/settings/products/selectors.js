@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { find, get, isArray } from 'lodash';
@@ -58,4 +58,18 @@ export function getDimensionsUnitSetting( state, siteId = getSelectedSiteId( sta
 	const productsSettings = getRawProductsSettings( state, siteId );
 	const unit = find( productsSettings, item => item.id === 'woocommerce_dimension_unit' );
 	return unit || {};
+}
+
+/**
+ * Gets an arbitrary product setting value from API data.
+ *
+ * @param {Object} state Global state tree
+ * @param {String} id setting name / id of the products setting you would like the value of
+ * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @return {mixed} value for the products setting returned from the API
+ */
+export function getProductsSettingValue( state, id, siteId = getSelectedSiteId( state ) ) {
+	const productsSettings = getRawProductsSettings( state, siteId );
+	const setting = find( productsSettings, item => item.id === id );
+	return setting ? setting.value : null;
 }

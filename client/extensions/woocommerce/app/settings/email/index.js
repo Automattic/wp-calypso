@@ -1,25 +1,27 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
+import config from 'config';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Button from 'components/button';
-import MailChimp from './mailchimp';
-import ActionHeader from 'woocommerce/components/action-header';
-import SettingsNavigation from '../navigation';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { mailChimpSaveSettings } from 'woocommerce/state/sites/settings/email/actions';
-import { isSavingSettings } from 'woocommerce/state/sites/settings/email/selectors';
+import { mailChimpSaveSettings } from 'woocommerce/state/sites/settings/mailchimp/actions';
+import { isSavingSettings } from 'woocommerce/state/sites/settings/mailchimp/selectors';
+import ActionHeader from 'woocommerce/components/action-header';
+import Button from 'components/button';
+import EmailSettings from './email-settings';
+import MailChimp from './mailchimp';
+import Main from 'components/main';
+import SettingsNavigation from '../navigation';
 
 const SettingsEmail = ( { site, translate, className, params, isSaving, mailChimpSaveSettings: saveSettings } ) => {
 	const breadcrumbs = [
@@ -42,6 +44,9 @@ const SettingsEmail = ( { site, translate, className, params, isSaving, mailChim
 				</Button>
 			</ActionHeader>
 			<SettingsNavigation activeSection="email" />
+			{ config.isEnabled( 'woocommerce/extension-settings-email-generic' ) &&
+				<EmailSettings siteId={ site.ID } />
+			}
 			<MailChimp siteId={ site.ID } site={ site } startWizard={ startWizard } />
 		</Main>
 	);

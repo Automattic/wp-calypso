@@ -1,9 +1,10 @@
-/**
- * Internal dependencies
- *
+/*
  * @format
  */
 
+/**
+ * Internal dependencies
+ */
 import * as DiscoverHelper from 'reader/discover/helper';
 
 export function shouldShowComments( post ) {

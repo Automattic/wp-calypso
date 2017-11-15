@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -204,11 +204,9 @@ class SiteVerification extends Component {
 			<FormInputValidation
 				isError={ true }
 				text={
-					isPasteError ? (
-						translate( 'Verification code should be copied and pasted into this field.' )
-					) : (
-						translate( 'Invalid site verification tag.' )
-					)
+					isPasteError
+						? translate( 'Verification code should be copied and pasted into this field.' )
+						: translate( 'Invalid site verification tag.' )
 				}
 			/>
 		);
@@ -304,17 +302,17 @@ class SiteVerification extends Component {
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				{ siteIsJetpack &&
-				isVerificationToolsActive === false && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ translate( 'Site Verification Services are disabled in Jetpack.' ) }
-					>
-						<NoticeAction onClick={ this.activateVerificationServices }>
-							{ translate( 'Enable' ) }
-						</NoticeAction>
-					</Notice>
-				) }
+					isVerificationToolsActive === false && (
+						<Notice
+							status="is-warning"
+							showDismiss={ false }
+							text={ translate( 'Site Verification Services are disabled in Jetpack.' ) }
+						>
+							<NoticeAction onClick={ this.activateVerificationServices }>
+								{ translate( 'Enable' ) }
+							</NoticeAction>
+						</Notice>
+					) }
 
 				<SectionHeader label={ translate( 'Site Verification Services' ) }>
 					<Button

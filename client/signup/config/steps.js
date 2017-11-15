@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { current } from 'page';
@@ -86,8 +86,8 @@ export default {
 		providesDependencies: [ 'designType', 'themeSlugWithRepo' ],
 	},
 
-	'design-type-with-atomic-store': {
-		stepName: 'design-type-with-atomic-store',
+	'design-type-with-store-nux': {
+		stepName: 'design-type-with-store-nux',
 		providesDependencies: [ 'designType', 'themeSlugWithRepo' ],
 	},
 
@@ -105,6 +105,11 @@ export default {
 			isDomainOnly: false,
 		},
 		delayApiRequestUntilComplete: true,
+	},
+
+	about: {
+		stepName: 'about',
+		providesDependencies: [ 'themeSlugWithRepo', 'siteTitle' ],
 	},
 
 	user: {
@@ -134,8 +139,8 @@ export default {
 		providesDependencies: [ 'cartItem', 'privacyItem' ],
 	},
 
-	'plans-atomic-store': {
-		stepName: 'plans-atomic-store',
+	'plans-store-nux': {
+		stepName: 'plans-store-nux',
 		apiRequestFunction: stepActions.addPlanToCart,
 		dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
 		providesDependencies: [ 'cartItem', 'privacyItem' ],

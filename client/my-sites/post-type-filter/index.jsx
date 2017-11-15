@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -44,7 +44,7 @@ const PostTypeFilter = createReactClass( {
 			author: PropTypes.number, // User ID
 			status: PropTypes.string,
 			type: PropTypes.string.isRequired,
-		} ).isRequired,
+		} ),
 		jetpack: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		counts: PropTypes.object,
@@ -144,6 +144,11 @@ const PostTypeFilter = createReactClass( {
 
 	render() {
 		const { authorToggleHidden, jetpack, query, siteId, statusSlug } = this.props;
+
+		if ( ! query ) {
+			return null;
+		}
+
 		const navItems = this.getNavItems();
 		const selectedItem = find( navItems, 'selected' ) || {};
 
@@ -194,7 +199,7 @@ export default connect(
 	( state, { query } ) => {
 		const siteId = getSelectedSiteId( state );
 		let authorToggleHidden = false;
-		if ( query.type === 'post' ) {
+		if ( query && query.type === 'post' ) {
 			if ( siteId ) {
 				authorToggleHidden = isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId );
 			} else {

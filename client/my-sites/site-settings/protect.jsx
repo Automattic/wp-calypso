@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -149,11 +149,9 @@ class Protect extends Component {
 									disabled={ disabled || isIpWhitelisted }
 									compact
 								>
-									{ isIpWhitelisted ? (
-										translate( 'Already in whitelist' )
-									) : (
-										translate( 'Add to whitelist' )
-									) }
+									{ isIpWhitelisted
+										? translate( 'Already in whitelist' )
+										: translate( 'Add to whitelist' ) }
 								</Button>
 							) }
 						</p>

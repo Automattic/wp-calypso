@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST } from 'state/action-types';

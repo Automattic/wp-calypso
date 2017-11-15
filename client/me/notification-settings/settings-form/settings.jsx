@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -76,16 +76,16 @@ class NotificationSettingsForm extends PureComponent {
 						onToggle={ this.props.onToggle }
 					/>
 					{ this.props.devices &&
-					this.props.devices.length > 0 && (
-						<Stream
-							key={ streams.DEVICES }
-							blogId={ this.props.blogId }
-							devices={ this.props.devices }
-							settingKeys={ this.props.settingKeys }
-							settings={ this.props.settings.get( streams.DEVICES ) }
-							onToggle={ this.props.onToggle }
-						/>
-					) }
+						this.props.devices.length > 0 && (
+							<Stream
+								key={ streams.DEVICES }
+								blogId={ this.props.blogId }
+								devices={ this.props.devices }
+								settingKeys={ this.props.settingKeys }
+								settings={ this.props.settings.get( streams.DEVICES ) }
+								onToggle={ this.props.onToggle }
+							/>
+						) }
 					<Stream
 						key={ 'selected-stream' }
 						className={ 'selected-stream' }

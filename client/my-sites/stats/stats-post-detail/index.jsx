@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -133,44 +133,46 @@ class StatsPostDetail extends Component {
 				<StatsPlaceholder isLoading={ isLoading } />
 
 				{ ! isLoading &&
-				countViews === 0 && (
-					<EmptyContent
-						title={ noViewsLabel }
-						line={ translate( 'Learn some tips to attract more visitors' ) }
-						action={ translate( 'Get more traffic!' ) }
-						actionURL="https://en.support.wordpress.com/getting-more-views-and-traffic/"
-						actionTarget="blank"
-						illustration="/calypso/images/stats/illustration-stats.svg"
-						illustrationWidth={ 150 }
-					/>
-				) }
+					countViews === 0 && (
+						<EmptyContent
+							title={ noViewsLabel }
+							line={ translate( 'Learn some tips to attract more visitors' ) }
+							action={ translate( 'Get more traffic!' ) }
+							actionURL="https://en.support.wordpress.com/getting-more-views-and-traffic/"
+							actionTarget="blank"
+							illustration="/calypso/images/stats/illustration-stats.svg"
+							illustrationWidth={ 150 }
+						/>
+					) }
 
 				{ ! isLoading &&
-				countViews > 0 && (
-					<div>
-						<PostSummary siteId={ siteId } postId={ postId } />
+					countViews > 0 && (
+						<div>
+							<PostSummary siteId={ siteId } postId={ postId } />
 
-						{ !! postId && <PostLikes siteId={ siteId } postId={ postId } postType={ postType } /> }
+							{ !! postId && (
+								<PostLikes siteId={ siteId } postId={ postId } postType={ postType } />
+							) }
 
-						<PostMonths
-							dataKey="years"
-							title={ translate( 'Months and Years' ) }
-							total={ translate( 'Total' ) }
-							siteId={ siteId }
-							postId={ postId }
-						/>
+							<PostMonths
+								dataKey="years"
+								title={ translate( 'Months and Years' ) }
+								total={ translate( 'Total' ) }
+								siteId={ siteId }
+								postId={ postId }
+							/>
 
-						<PostMonths
-							dataKey="averages"
-							title={ translate( 'Average per Day' ) }
-							total={ translate( 'Overall' ) }
-							siteId={ siteId }
-							postId={ postId }
-						/>
+							<PostMonths
+								dataKey="averages"
+								title={ translate( 'Average per Day' ) }
+								total={ translate( 'Overall' ) }
+								siteId={ siteId }
+								postId={ postId }
+							/>
 
-						<PostWeeks siteId={ siteId } postId={ postId } />
-					</div>
-				) }
+							<PostWeeks siteId={ siteId } postId={ postId } />
+						</div>
+					) }
 
 				<WebPreview
 					showPreview={ this.state.showPreview }

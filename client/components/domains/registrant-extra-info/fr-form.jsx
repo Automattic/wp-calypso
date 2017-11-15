@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-import { castArray, defaults, get, identity, isEmpty, isString, map, noop } from 'lodash';
+import { castArray, defaults, get, identity, isEmpty, isString, map, noop, toUpper } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,6 +34,14 @@ function onlyNumericCharacters( string ) {
 	return isString( string ) ? string.replace( /[^0-9]/g, '' ) : '';
 }
 
+/*
+ * Sanitize a VAT string by removing everything except digits,
+ * letters, plus or star symbols.
+ */
+export function sanitizeVat( string ) {
+	return isString( string ) ? toUpper( string ).replace( /[^0-9A-Z+*]/g, '' ) : '';
+}
+
 // If we set a field to null, react decides it's uncontrolled and complains
 // and we don't particularly want to make the parent remember all our fields
 // so we use these values to plug missing.
@@ -49,7 +57,6 @@ function renderValidationError( message ) {
 
 class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
-		children: PropTypes.node,
 		contactDetails: PropTypes.object,
 		contactDetailsValidationErrors: PropTypes.object,
 		isVisible: PropTypes.bool,
@@ -66,6 +73,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	sanitizeFunctions = {
 		sirenSiret: onlyNumericCharacters,
 		trademarkNumber: onlyNumericCharacters,
+		registrantVatId: sanitizeVat,
 	};
 
 	componentWillMount() {
@@ -129,19 +137,17 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 				{ 'organization' === registrantType && this.renderOrganizationFields() }
 
-				{ formIsValid ? (
-					this.props.children
-				) : (
-					map(
-						castArray( this.props.children ),
-						child =>
-							child.props.className.match( /submit-button/ )
-								? React.cloneElement( child, {
-										disabled: true,
-									} )
-								: child
-					)
-				) }
+				{ formIsValid
+					? this.props.children
+					: map(
+							castArray( this.props.children ),
+							child =>
+								child.props.className.match( /submit-button/ )
+									? React.cloneElement( child, {
+											disabled: true,
+										} )
+									: child
+						) }
 			</form>
 		);
 	}
@@ -160,7 +166,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 				translate(
 					'The VAT Number field is a pattern ' +
 						'of letters and numbers that depends on the country, ' +
-						'but it always includes a 2 letter country code'
+						'but it always starts with a 2 letter country code'
 				)
 			);
 
