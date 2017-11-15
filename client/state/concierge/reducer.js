@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
-import shifts from './shifts/reducer';
+import slots from './slots/reducer';
 
 export default combineReducers( {
-	shifts,
+	slots,
 } );
