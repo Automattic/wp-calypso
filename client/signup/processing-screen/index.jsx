@@ -169,10 +169,6 @@ export class SignupProcessingScreen extends Component {
 				);
 	}
 
-	currentFlowIncludesDomainStep() {
-		return this.props.flowSteps.indexOf( 'domains' ) !== -1;
-	}
-
 	handleClick( ctaName, redirectTo = '' ) {
 		if ( ! this.props.loginHandler ) {
 			return;
@@ -292,8 +288,9 @@ export class SignupProcessingScreen extends Component {
 	render() {
 		if (
 			! this.state.hasPaidSubscription &&
-			this.currentFlowIncludesDomainStep() &&
-			! this.props.useOAuth2Layout
+			! this.props.useOAuth2Layout &&
+			this.props.flowSteps.indexOf( 'domains' ) !== -1 &&
+			this.props.flowSteps.indexOf( 'plans' ) !== -1
 		) {
 			return this.renderUpgradeScreen();
 		}
