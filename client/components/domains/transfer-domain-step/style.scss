@@ -8,7 +8,6 @@
 
 	p {
 		margin-bottom: 0;
-		opacity: 0.7;
 	}
 
 	.domain-product-price {
@@ -33,18 +32,17 @@
 
 .transfer-domain-step__domain-description {
 	font-size: 16px;
-	color: #2e4453;
-	margin-bottom: 10px;
+	margin-bottom: 20px;
 }
 
 .transfer-domain-step__go {
-	margin-top: 10px;
+	margin-top: 20px;
 	margin-bottom: 10px;
 }
 
 .transfer-domain-step__domain-heading {
 	font-size: 18px;
-	font-weight: bold;
+	font-weight: 500;
 	margin-bottom: 10px;
 }
 
@@ -55,8 +53,13 @@
 }
 
 .transfer-domain-step__map-option {
-	font-size: 14px;
-	text-align: center;
+	color: darken( $gray, 20% );
+}
+
+.transfer-domain-step__map-help {
+	color: $gray;
+	position: relative;
+	top: 2px;
 }
 
 .transfer-domain-step__precheck, .transfer-domain-step__options {
