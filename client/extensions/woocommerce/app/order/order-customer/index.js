@@ -17,6 +17,7 @@ import Card from 'components/card';
 import CustomerAddressDialog from './dialog';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import { isCurrentlyEditingOrder, getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
+import { isOrderFinished } from 'woocommerce/lib/order-status';
 import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -85,6 +86,7 @@ class OrderCustomerInfo extends Component {
 		}
 
 		const { billing, shipping } = order;
+		const isEditable = isEditing && ! isOrderFinished( order.status );
 
 		return (
 			<div className="order-customer">
@@ -94,7 +96,7 @@ class OrderCustomerInfo extends Component {
 						<div className="order-customer__billing">
 							<h3 className="order-customer__billing-details">
 								{ translate( 'Billing Details' ) }
-								{ isEditing ? (
+								{ isEditable ? (
 									<Button
 										compact
 										className="order-customer__edit-link"
@@ -121,7 +123,7 @@ class OrderCustomerInfo extends Component {
 						<div className="order-customer__shipping">
 							<h3 className="order-customer__shipping-details">
 								{ translate( 'Shipping Details' ) }
-								{ isEditing ? (
+								{ isEditable ? (
 									<Button
 										compact
 										className="order-customer__edit-link"
