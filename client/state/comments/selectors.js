@@ -58,6 +58,11 @@ export const getCommentById = createSelector(
 	},
 	( { state } ) => [ state.comments.items, state.comments.errors ]
 );
+
+export const getCommentErrors = state => {
+	return state.comments.errors;
+};
+
 /***
  * Get total number of comments on the server for a given post
  * @param {Object} state redux state
