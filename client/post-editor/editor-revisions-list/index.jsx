@@ -105,8 +105,11 @@ class EditorRevisionsList extends PureComponent {
 
 	render() {
 		const { revisions, selectedRevisionId, siteId } = this.props;
+		const classes = classNames( 'editor-revisions-list', {
+			'is-loading': ! revisions.length,
+		} );
 		return (
-			<div className="editor-revisions-list">
+			<div className={ classes }>
 				<EditorRevisionsListHeader numRevisions={ revisions.length } />
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">

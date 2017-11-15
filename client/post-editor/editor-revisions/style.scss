@@ -27,10 +27,6 @@
 	}
 }
 
-.editor-revisions-list__loading-placeholder {
-	@include placeholder(23%);
-}
-
 body.showing-post-revisions-dialog {
 	// Prevent scrolling the editor contents below the dialog
 	overflow-y: hidden;
