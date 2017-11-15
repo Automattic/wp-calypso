@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import QueryConciergeShifts from 'components/data/query-concierge-shifts';
-import { getConciergeShifts } from 'state/selectors';
+import QueryConciergeSlots from 'components/data/query-concierge-slots';
+import { getConciergeSlots } from 'state/selectors';
 
 class ConciergeMain extends Component {
 	render() {
@@ -22,7 +22,7 @@ class ConciergeMain extends Component {
 		// 2. render the shifts for real.
 		return (
 			<div>
-				<QueryConciergeShifts scheduleId={ 123 } />
+				<QueryConciergeSlots scheduleId={ 123 } />
 				<div>{ JSON.stringify( shifts ) }</div>
 			</div>
 		);
@@ -31,7 +31,7 @@ class ConciergeMain extends Component {
 
 export default connect(
 	state => ( {
-		shifts: getConciergeShifts( state ),
+		shifts: getConciergeSlots( state ),
 	} ),
-	{ getConciergeShifts }
+	{ getConciergeSlots }
 )( localize( ConciergeMain ) );
