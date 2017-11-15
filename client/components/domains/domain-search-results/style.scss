@@ -26,23 +26,48 @@
 
 .domain-search-results__transfer-card {
 	display: flex;
-	flex-direction: row;
-	align-items: center;
-	font-size: 17px;
+	flex-direction: column;
+
+	@include breakpoint( '>480px' ) {
+		align-items: center;
+		flex-direction: row;
+	}
 }
 
 .domain-search-results__transfer-card-copy {
+	font-size: 16px;
+
 	p {
-		padding-top: 10px;
 		margin-bottom: 0;
+	}
+
+	@include breakpoint( '>480px' ) {
+		padding-right: 10px;
+	}
+
+	@include breakpoint( '>660px' ) {
+		font-size: 18px;
+
+		p {
+			font-size: 16px;
+		}
 	}
 }
 
 .domain-search-results__transfer-card-link {
-	text-align: right;
-	min-width: 100px;
+	flex-shrink: 0;
+	width: 100%;
 
-	@include breakpoint( '>660px' ) {
-		min-width: 170px;
+	a {
+		display: block;
+		padding: 15px 0 0;
+	}
+
+	@include breakpoint( '>480px' ) {
+		width: auto;
+
+		a {
+			padding: 0;
+		}
 	}
 }
