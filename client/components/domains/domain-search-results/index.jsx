@@ -97,23 +97,21 @@ class DomainSearchResults extends React.Component {
 		) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
-			if ( lastDomainStatus !== MAPPED ) {
-				if ( isNextDomainFree( this.props.cart ) ) {
-					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
-						{ args: { domain }, components }
-					);
-				} else if ( ! this.props.domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
-					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
-						{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
-					);
-				} else {
-					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} with WordPress.com Premium.{{/small}}',
-						{ args: { domain }, components }
-					);
-				}
+			if ( isNextDomainFree( this.props.cart ) ) {
+				offer = translate(
+					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
+					{ args: { domain }, components }
+				);
+			} else if ( ! this.props.domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
+				offer = translate(
+					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
+					{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
+				);
+			} else {
+				offer = translate(
+					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} with WordPress.com Premium.{{/small}}',
+					{ args: { domain }, components }
+				);
 			}
 
 			const domainUnavailableMessage =
@@ -151,7 +149,7 @@ class DomainSearchResults extends React.Component {
 							</div>
 						</Card>
 					);
-				} else {
+				} else if ( lastDomainStatus !== MAPPED ) {
 					availabilityElement = (
 						<Notice status="is-warning" showDismiss={ false }>
 							{ domainUnavailableMessage } { offer }
