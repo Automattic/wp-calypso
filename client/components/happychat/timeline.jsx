@@ -23,9 +23,9 @@ const debug = debugFactory( 'calypso:happychat:timeline' );
 
 const linksNotEmpty = ( { links } ) => ! isEmpty( links );
 
-const messageParagraph = ( { message, key } ) => (
+const messageParagraph = ( { message, key, twemojiUrl } ) => (
 	<p key={ key }>
-		<Emojify>{ message }</Emojify>
+		<Emojify twemojiUrl={ twemojiUrl }>{ message }</Emojify>
 	</p>
 );
 
@@ -87,7 +87,7 @@ const messageText = when( linksNotEmpty, messageWithLinks, messageParagraph );
  * Group messages based on user so when any user sends multiple messages they will be grouped
  * within the same message bubble until it reaches a message from a different user.
  */
-const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
+const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl }, index ) => {
 	const [ event, ...rest ] = item;
 	return (
 		<div
@@ -102,8 +102,11 @@ const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
 					name: event.name,
 					key: event.id,
 					links: event.links,
+					twemojiUrl,
 				} ) }
-				{ rest.map( ( { message, id: key, links } ) => messageText( { message, key, links } ) ) }
+				{ rest.map( ( { message, id: key, links } ) =>
+					messageText( { message, key, links, twemojiUrl } )
+				) }
 			</div>
 		</div>
 	);
@@ -165,6 +168,7 @@ const renderTimeline = ( {
 	onScrollContainer,
 	scrollbleedLock,
 	scrollbleedUnlock,
+	twemojiUrl,
 } ) => (
 	<div
 		className="happychat__conversation"
@@ -176,6 +180,7 @@ const renderTimeline = ( {
 			renderGroupedTimelineItem( {
 				item,
 				isCurrentUser: isCurrentUser( item[ 0 ] ),
+				twemojiUrl,
 			} )
 		) }
 	</div>
@@ -193,6 +198,7 @@ export const Timeline = createReactClass( {
 		onScrollContainer: PropTypes.func,
 		timeline: PropTypes.array,
 		translate: PropTypes.func,
+		twemojiUrl: PropTypes.string,
 	},
 
 	getDefaultProps() {
