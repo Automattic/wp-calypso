@@ -143,8 +143,18 @@ function hasPendingGoogleAppsUsers( domain ) {
 	);
 }
 
-function getSelectedDomain( { domains, selectedDomainName } ) {
-	return find( domains.list, { name: selectedDomainName } );
+function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
+	return find( domains.list, domain => {
+		if ( domain.name !== selectedDomainName ) {
+			return false;
+		}
+
+		if ( isTransfer && domain.type === domainTypes.TRANSFER ) {
+			return true;
+		}
+
+		return domain.type !== domainTypes.TRANSFER;
+	} );
 }
 
 function isRegisteredDomain( domain ) {
