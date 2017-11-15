@@ -63,24 +63,22 @@
 }
 
 // Caterpillar animation
-.conversation-caterpillar {
-	animation-delay: 1.6s;
-	animation-duration: .15s;
+.slideDownFadeOut-enter {
+	opacity: 1;
+	transform: translateY( 0% );
+}
+.slideDownFadeOut-enter.slideDownFadeOut-enter-active {
+	transition: all 150ms ease-in;
 	animation-fill-mode: forwards;
-	animation-name: slideDownFadeOut;
 	visibility: visible;
 }
-
-@keyframes slideDownFadeOut {
-
-	0% {
-		transform: translateY( 0%) ;
-	}
-
-	100% {
-		transform: translateY( 60% );
-		opacity: 0;
-	}
+.slideDownFadeOut-leave {
+	transform: translateY( 60% );
+	opacity: 0;
+}
+.slideDownFadeOut-leave.slideDownFadeOut-leave-active {
+	transition: all 150ms ease-in;
+	animation-fill-mode: forwards;
 }
 
 @keyframes slideDownFadeIn {
@@ -97,13 +95,13 @@
 }
 
 // Conversations comment animation
-.comments__comment {
-	animation-delay: 1s;
-	animation-duration: .15s;
-	animation-iteration-count: 1;
-	animation-fill-mode: forwards;
-	animation-name: slideDownFadeIn;
-}
+// .comments__comment {
+// 	animation-delay: 1s;
+// 	animation-duration: .15s;
+// 	animation-iteration-count: 1;
+// 	animation-fill-mode: forwards;
+// 	animation-name: slideDownFadeIn;
+// }
 
 @keyframes slideDownComment {
 
