@@ -373,10 +373,8 @@ export default function transformer( file, api ) {
 				},
 			},
 		} )
-		.filter( p => {
-			// Requires `document.getElementById( 'secondary' )`
-			return _.get( p, 'value.arguments[0].arguments.value' ) === 'secondary';
-		} )
+		// Ensures we remove only nodes containing `document.getElementById( 'secondary' )`
+		.filter( p => _.get( p, 'value.arguments[0].arguments[0].value' ) === 'secondary' )
 		.remove();
 
 	// Add makeLayout and clientRender middlewares to route definitions
