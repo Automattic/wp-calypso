@@ -40,11 +40,7 @@ class SocialSignupForm extends Component {
 		// If calypso is loaded in a popup, we don't want to open a second popup for social signup
 		// let's use the redirect flow instead in that case
 		const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
-		// also disable the popup flow for all safari versions
-		// See https://github.com/google/google-api-javascript-client/issues/297#issuecomment-333869742
-		const isSafari =
-			typeof window !== 'undefined' && /^(?!.*chrome).*safari/i.test( window.navigator.userAgent );
-		return isPopup || isSafari;
+		return isPopup;
 	}
 
 	render() {
