@@ -9,14 +9,15 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import { withoutHttp } from 'lib/url';
 import ClipboardButton from 'components/forms/clipboard-button';
 import FormTextInput from 'components/forms/form-text-input';
+import { composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 class ClipboardButtonInputExport extends React.Component {
 	constructor( props ) {
@@ -55,7 +56,7 @@ class ClipboardButtonInputExport extends React.Component {
 				isCopied: false,
 			} );
 		}, 4000 );
-		analytics.tracks.recordEvent( 'calypso_editor_clipboard_button_url_copy' );
+		this.props.wpcomEditorToolbarWebPreviewClipboardUrlButtonClick();
 	};
 
 	render() {
@@ -86,4 +87,10 @@ class ClipboardButtonInputExport extends React.Component {
 	}
 }
 
-export default localize( ClipboardButtonInputExport );
+const wpcomEditorToolbarWebPreviewClipboardUrlButtonClick = () => {
+	composeAnalytics( recordTracksEvent( 'calypso_editor_clipboard_url_button_click', {} ) );
+};
+
+export default connect( null, {
+	wpcomEditorToolbarWebPreviewClipboardUrlButtonClick,
+} )( localize( ClipboardButtonInputExport ) );

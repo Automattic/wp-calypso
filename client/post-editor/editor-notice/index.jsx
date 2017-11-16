@@ -13,7 +13,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import Notice from 'components/notice';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -22,6 +21,7 @@ import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isMobile } from 'lib/viewport';
+import { composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 export class EditorNotice extends Component {
 	static propTypes = {
@@ -37,11 +37,11 @@ export class EditorNotice extends Component {
 	};
 
 	handlePillExternalClick = () => {
-		analytics.tracks.recordEvent( 'calypso_editor_pill_site_external_click' );
+		this.props.wpcomEditorToolbarWebPreviewPillExternalClick();
 	};
 
 	handlePillAddAnotherPagePromptClick = () => {
-		analytics.tracks.recordEvent( 'calypso_editor_pill_add_another_page_prompt_click' );
+		this.props.wpcomEditorToolbarWebPreviewAddPagePromptClick();
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -360,6 +360,14 @@ export class EditorNotice extends Component {
 	}
 }
 
+const wpcomEditorToolbarWebPreviewPillExternalClick = () => {
+	composeAnalytics( recordTracksEvent( 'calypso_editor_pill_site_external_click', {} ) );
+};
+
+const wpcomEditorToolbarWebPreviewAddPagePromptClick = () => {
+	composeAnalytics( recordTracksEvent( 'calypso_editor_pill_add_page_prompt_click', {} ) );
+};
+
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
@@ -375,5 +383,9 @@ export default connect(
 			typeObject: getPostType( state, siteId, post.type ),
 		};
 	},
-	{ setLayoutFocus }
+	{
+		setLayoutFocus,
+		wpcomEditorToolbarWebPreviewPillExternalClick,
+		wpcomEditorToolbarWebPreviewAddPagePromptClick,
+	}
 )( localize( EditorNotice ) );

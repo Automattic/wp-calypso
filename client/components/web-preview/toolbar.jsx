@@ -8,16 +8,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { partial } from 'lodash';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import ClipboardButtonInput from 'components/clipboard-button-input';
+import { composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 
@@ -53,12 +54,12 @@ class PreviewToolbar extends Component {
 		showSEO: true,
 	};
 
-	handleWebPreviewExternalClick = () => {
-		analytics.tracks.recordEvent( 'calypso_editor_preview_toolbar_external_click' );
+	handleEditorWebPreviewExternalClick = () => {
+		this.props.wpcomEditorToolbarWebPreviewExternalClick();
 	};
 
-	handleClosePreview = () => {
-		analytics.tracks.recordEvent( 'calypso_editor_preview_close_click' );
+	handleEditorWebPreviewClose = () => {
+		this.props.wpcomEditorToolbarWebPreviewClose();
 		this.props.onClose();
 	};
 
@@ -102,7 +103,7 @@ class PreviewToolbar extends Component {
 						aria-label={ translate( 'Close preview' ) }
 						className="web-preview__close"
 						data-tip-target="web-preview__close"
-						onClick={ this.handleClosePreview }
+						onClick={ this.handleEditorWebPreviewClose }
 					>
 						<Gridicon icon={ isModalWindow ? 'cross' : 'arrow-left' } />
 					</Button>
@@ -147,7 +148,7 @@ class PreviewToolbar extends Component {
 							href={ externalUrl || previewUrl }
 							target="_blank"
 							rel="noopener noreferrer"
-							onClick={ this.handleWebPreviewExternalClick }
+							onClick={ this.handleEditorWebPreviewExternalClick }
 						>
 							<Gridicon icon="external" />
 						</Button>
@@ -159,4 +160,15 @@ class PreviewToolbar extends Component {
 	}
 }
 
-export default localize( PreviewToolbar );
+const wpcomEditorToolbarWebPreviewExternalClick = () => {
+	composeAnalytics( recordTracksEvent( 'calypso_editor_preview_toolbar_external_click', {} ) );
+};
+
+const wpcomEditorToolbarWebPreviewClose = () => {
+	composeAnalytics( recordTracksEvent( 'calypso_editor_preview_close_click', {} ) );
+};
+
+export default connect( null, {
+	wpcomEditorToolbarWebPreviewExternalClick,
+	wpcomEditorToolbarWebPreviewClose,
+} )( localize( PreviewToolbar ) );
