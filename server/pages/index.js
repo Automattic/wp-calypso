@@ -87,8 +87,7 @@ function generateStaticUrls() {
 	const assets = getAssets();
 
 	forEach( assets, ( asset, name ) => {
-		urls[ name ] =
-			config( 'env' ) === 'development' ? asset.js : asset.js.replace( '.js', '.min.js' );
+		urls[ name ] = asset.js;
 	} );
 
 	return urls;
