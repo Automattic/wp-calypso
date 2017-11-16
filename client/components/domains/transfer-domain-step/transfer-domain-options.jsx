@@ -143,7 +143,11 @@ class TransferDomainOptions extends React.PureComponent {
 
 					<div className="transfer-domain-step__continue">
 						<div />
-						<Button className="transfer-domain-step__in-card" onClick={ this.onClick }>
+						<Button
+							className="transfer-domain-step__in-card"
+							onClick={ this.onClick }
+							primary={ true }
+						>
 							{ translate( 'Continue' ) }
 						</Button>
 					</div>
