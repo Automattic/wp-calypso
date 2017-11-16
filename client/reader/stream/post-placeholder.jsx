@@ -11,6 +11,7 @@ import Card from 'components/card';
 
 class PostPlaceholder extends React.PureComponent {
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Card tagName="article" className="reader__card is-placeholder">
 				<div className="reader__post-header">
@@ -24,9 +25,9 @@ class PostPlaceholder extends React.PureComponent {
 						<h4 className="reader__site-name">
 							<span className="reader__placeholder-text">Loading Sites</span>
 						</h4>
-						<time className="reader__post-time">
+						<div className="reader__post-time-placeholder">
 							<span className="reader__placeholder-text">10 min</span>
-						</time>
+						</div>
 					</div>
 				</div>
 
@@ -46,6 +47,7 @@ class PostPlaceholder extends React.PureComponent {
 				</ul>
 			</Card>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

@@ -64,21 +64,6 @@
 	}
 }
 
-.reader__post-time {
-	color: lighten( $gray, 10 );
-	font-size: 12px;
-	line-height: 1;
-	white-space: nowrap;
-
-	@include breakpoint( "<480px" ) {
-		font-size: 11px;
-	}
-}
-
-.reader__post-time a {
-	color: inherit;
-}
-
 .reader__post-title {
 	clear: none;
 	font-family: $serif;
