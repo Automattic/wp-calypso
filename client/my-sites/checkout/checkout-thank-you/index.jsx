@@ -235,7 +235,9 @@ class CheckoutThankYou extends React.Component {
 				return page( `/plans/my-plan/${ site }` );
 			} else if (
 				purchases.some( isDomainProduct ) ||
-				purchases.some( isDomainRedemption || purchases.some( isSiteRedirect ) )
+				purchases.some( isDomainTransfer ) ||
+				purchases.some( isDomainRedemption ) ||
+				purchases.some( isSiteRedirect )
 			) {
 				return page( domainsPaths.domainManagementList( this.props.selectedSite.slug ) );
 			} else if ( purchases.some( isGoogleApps ) ) {
