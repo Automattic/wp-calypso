@@ -19,13 +19,16 @@ import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import ActivityLogDay from '../activity-log-day';
 import ActivityLogDayPlaceholder from '../activity-log-day/placeholder';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
+import CompactCard from 'components/card/compact';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
+import Gridicon from 'gridicons';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
+import QueryJetpackCredentials from 'components/data/query-jetpack-credentials';
 import QueryRewindStatus from 'components/data/query-rewind-status';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -34,7 +37,7 @@ import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
@@ -58,6 +61,7 @@ import {
 	isRewindActive as isRewindActiveSelector,
 	getRequestedBackup,
 	getBackupProgress,
+	hasMainCredentials,
 } from 'state/selectors';
 
 /**
@@ -483,6 +487,7 @@ class ActivityLog extends Component {
 			canViewActivityLog,
 			gmtOffset,
 			hasFirstBackup,
+			hasMainCredentials, // eslint-disable-line no-shadow
 			isPressable,
 			isRewindActive,
 			logs,
@@ -491,6 +496,7 @@ class ActivityLog extends Component {
 			requestedRestoreActivityId,
 			requestedBackup,
 			requestedBackupId,
+			selectedSite,
 			siteId,
 			slug,
 			startDate,
@@ -583,6 +589,8 @@ class ActivityLog extends Component {
 			.utc()
 			.startOf( 'day' );
 
+		const credsUrl = '/settings/security/' + selectedSite.slug;
+
 		return (
 			<Main wideLayout>
 				{ rewindEnabledByConfig && <QueryRewindStatus siteId={ siteId } /> }
@@ -591,9 +599,26 @@ class ActivityLog extends Component {
 					{ ...getActivityLogQuery( { gmtOffset, startDate, timezone } ) }
 				/>
 				<QuerySiteSettings siteId={ siteId } />
+				<QueryJetpackCredentials siteId={ siteId } />
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
+				{ ! hasMainCredentials && (
+					<CompactCard
+						highlight="info"
+						href={ credsUrl }
+						className="activity-log__credentials-notice"
+					>
+						<span className="activity-log__credentials-notice-icon">
+							<Gridicon icon="history" size={ 24 } />
+						</span>
+						<span className="activity-log__credentials-notice-text">
+							{ translate(
+								'Add your credentials to enable backups and security scanning for your site.'
+							) }
+						</span>
+					</CompactCard>
+				) }
 				{ this.renderErrorMessage() }
 				{ hasFirstBackup && this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
@@ -699,6 +724,7 @@ export default connect(
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
 			hasFirstBackup: ! isEmpty( getRewindStartDate( state, siteId ) ),
+			hasMainCredentials: hasMainCredentials( state, siteId ),
 			isRewindActive: isRewindActiveSelector( state, siteId ),
 			logs: getActivityLogs(
 				state,
@@ -712,6 +738,7 @@ export default connect(
 			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
+			selectedSite: getSelectedSite( state, siteId ),
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),

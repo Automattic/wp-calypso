@@ -46,3 +46,31 @@
 	font-size: 12px;
 	color: $gray-text-min;
 }
+
+.activity-log__credentials-notice .card__link-indicator,
+.activity-log__credentials-notice.card:hover .card__link-indicator {
+	color: $blue-wordpress;
+}
+
+.activity-log__credentials-notice-icon {
+	display: inline-block;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background: $blue-wordpress;
+}
+
+.activity-log__credentials-notice-icon .gridicon {
+	color: #fff;
+	margin-left: 6px;
+	margin-top: 6px;
+}
+
+.activity-log__credentials-notice-text {
+	color: $gray-dark;
+	font-weight: 600;
+	font-size: 1.6rem;
+	margin-left: 2rem;
+	position: relative;
+	top: -6px;
+}
