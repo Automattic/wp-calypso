@@ -13,21 +13,25 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import ChecklistHeader from './header';
-import ChecklistTask from './task';
-import ChecklistPlaceholder from './placeholder';
+import ChecklistHeader from './checklist-header';
+import ChecklistTask from './checklist-task';
+import ChecklistPlaceholder from './checklist-placeholder';
 
 export class Checklist extends Component {
 	static propTypes = {
 		tasks: PropTypes.array,
-		onClickTask: PropTypes.func,
+		onAction: PropTypes.func,
+		onToggle: PropTypes.func,
 		isLoading: PropTypes.bool,
+		placeholderCount: PropTypes.number,
 	};
 
 	static defaultProps = {
 		tasks: [],
-		onClickTask: noop,
+		onAction: noop,
+		onToggle: noop,
 		isLoading: true,
+		placeholderCount: 5,
 	};
 
 	state = {
@@ -42,17 +46,40 @@ export class Checklist extends Component {
 		return filter( this.props.tasks, task => task.completed );
 	}
 
+	getUncompletedTasks() {
+		return filter( this.props.tasks, task => ! task.completed );
+	}
+
 	renderPlaceholder() {
 		return (
 			<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
 				<ChecklistHeader total={ 0 } completed={ 0 } hideCompleted={ false } />
-				{ range( 5 ).map( index => <ChecklistPlaceholder key={ index } /> ) }
+				{ range( this.props.placeholderCount ).map( index => (
+					<ChecklistPlaceholder key={ index } />
+				) ) }
 			</div>
 		);
 	}
 
+	renderTask = task => {
+		return (
+			<ChecklistTask
+				key={ task.id }
+				id={ task.id }
+				title={ task.title }
+				completedTitle={ task.completedTitle }
+				completedButtonText={ task.completedButtonText }
+				description={ task.description }
+				duration={ task.duration }
+				completed={ task.completed }
+				onAction={ this.props.onAction }
+				onToggle={ this.props.onToggle }
+			/>
+		);
+	};
+
 	render() {
-		const { isLoading, onClickTask, tasks } = this.props;
+		const { isLoading, tasks } = this.props;
 
 		if ( isLoading ) {
 			return this.renderPlaceholder();
@@ -66,20 +93,8 @@ export class Checklist extends Component {
 					hideCompleted={ this.state.hideCompleted }
 					onClick={ this.toggleCompleted }
 				/>
-				{ tasks.map(
-					task =>
-						! ( this.state.hideCompleted && task.completed ) && (
-							<ChecklistTask
-								key={ task.title }
-								title={ task.title }
-								completedTitle={ task.completedTitle }
-								description={ task.description }
-								duration={ task.duration }
-								completed={ task.completed }
-								onClick={ onClickTask }
-							/>
-						)
-				) }
+				{ ! this.state.hideCompleted && this.getCompletedTasks().map( this.renderTask ) }
+				{ this.getUncompletedTasks().map( this.renderTask ) }
 			</div>
 		);
 	}

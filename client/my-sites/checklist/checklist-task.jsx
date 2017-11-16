@@ -16,15 +16,19 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import ScreenReaderText from 'components/screen-reader-text';
 
 export class ChecklistTask extends PureComponent {
 	static propTypes = {
+		id: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 		completedTitle: PropTypes.string,
+		completedButtonText: PropTypes.string,
 		description: PropTypes.string.isRequired,
 		duration: PropTypes.string,
 		completed: PropTypes.bool,
-		onClick: PropTypes.func,
+		onAction: PropTypes.func,
+		onToggle: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -32,15 +36,18 @@ export class ChecklistTask extends PureComponent {
 	};
 
 	handleClick = () => {
-		this.props.onClick( omit( this.props, [ 'onClick' ] ) );
+		this.props.onAction( this.props.id );
+	};
+
+	handleToggle = () => {
+		this.props.onToggle( this.props.id );
 	};
 
 	render() {
-		const { completed, completedTitle, description, duration, title, translate } = this.props;
+		const { completed, completedTitle, completedButtonText, description, duration, title, translate } = this.props;
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Card compact className={ classNames( 'checklist-task', { completed } ) }>
+			<Card compact className={ classNames( 'checklist-task', { 'is-completed': completed, 'has-actionlink': completed && completedButtonText  } ) }>
 				<div className="checklist-task__primary">
 					<h5 className="checklist-task__title">{ ( completed && completedTitle ) || title }</h5>
 					<p className="checklist-task__description">{ description }</p>
@@ -52,7 +59,7 @@ export class ChecklistTask extends PureComponent {
 				</div>
 				<div className="checklist-task__secondary">
 					<Button className="checklist-task__action" onClick={ this.handleClick }>
-						{ translate( 'Do it!' ) }
+						{ completed && completedButtonText ? translate( completedButtonText ) : translate( 'Do it!' ) }
 					</Button>
 					{ duration && (
 						<small className="checklist-task__duration">
@@ -60,10 +67,12 @@ export class ChecklistTask extends PureComponent {
 						</small>
 					) }
 				</div>
-				{ completed && <Gridicon icon="checkmark" size={ 18 } /> }
+				<span className="checklist-task__icon" onClick={ this.handleToggle } tabIndex="0" role="button" aria-pressed={ completed ? 'true' : 'false' }>
+					<ScreenReaderText>{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }</ScreenReaderText>
+					{ completed && <Gridicon icon="checkmark" size={ 18 } /> }
+				</span>
 			</Card>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

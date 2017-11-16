@@ -16,6 +16,8 @@ import Card from 'components/card';
 import ScreenReaderText from 'components/screen-reader-text';
 import ProgressBar from 'components/progress-bar';
 
+let globalIndex = 0;
+
 export class ChecklistHeader extends PureComponent {
 	static propTypes = {
 		total: PropTypes.number.isRequired,
@@ -24,13 +26,17 @@ export class ChecklistHeader extends PureComponent {
 		onClick: PropTypes.func,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.index = globalIndex++;
+	}
+
 	render() {
 		const { completed, hideCompleted, total, translate } = this.props;
 		const buttonText = hideCompleted
 			? translate( 'Show completed' )
 			: translate( 'Hide completed' );
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Card compact className="checklist-header">
 				<div className="checklist-header__main">
@@ -41,15 +47,14 @@ export class ChecklistHeader extends PureComponent {
 					<ProgressBar compact total={ total } value={ completed } />
 				</div>
 				<div className="checklist-header__secondary">
-					<span className="checklist-header__summary">{ buttonText }</span>
-					<button className="checklist-header__action" onClick={ this.props.onClick }>
+					<label htmlFor={ `checklist-header-${ this.index }` } className="checklist-header__summary">{ buttonText }</label>
+					<button id={ `checklist-header-${ this.index }` } className="checklist-header__action" onClick={ this.props.onClick }>
 						<ScreenReaderText>{ buttonText }</ScreenReaderText>
 						<Gridicon icon="chevron-down" />
 					</button>
 				</div>
 			</Card>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
