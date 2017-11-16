@@ -9,6 +9,7 @@ import { findIndex, get, isUndefined, map, omitBy, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import createSelector from 'lib/create-selector';
 import { countDiffWords, diffWords } from 'lib/text-utils';
 import getPostRevisions from 'state/selectors/get-post-revisions';
@@ -29,10 +30,15 @@ const getCombinedLength = list =>
 
 const getPostRevisionChanges = createSelector(
 	( state, siteId, postId, revisionId ) => {
+		const noChanges = { content: [], title: [] };
+		if ( ! isEnabled( 'post-editor/revisions' ) ) {
+			return noChanges;
+		}
+
 		const orderedRevisions = getPostRevisions( state, siteId, postId, 'display' );
 		const revisionIndex = findIndex( orderedRevisions, { id: revisionId } );
 		if ( revisionIndex === -1 ) {
-			return { content: [], summary: [], title: [] };
+			return noChanges;
 		}
 
 		const revision = orderedRevisions[ revisionIndex ];
@@ -40,7 +46,7 @@ const getPostRevisionChanges = createSelector(
 		const combinedLength = getCombinedLength( [ previousRevision, revision ] );
 
 		if ( combinedLength > MAX_DIFF_CONTENT_LENGTH ) {
-			return { content: [], summary: [], title: [], tooLong: true };
+			return { ...noChanges, tooLong: true };
 		}
 		const title = diffKey( 'title', previousRevision, revision );
 		const content = diffKey( 'content', previousRevision, revision );
