@@ -133,6 +133,5 @@ export default {
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
-		countryCodeTargets: [ 'DE', 'BE' ],
 	},
 };
