@@ -9,7 +9,7 @@ import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -51,7 +51,7 @@ class EditorDiffViewer extends PureComponent {
 	render() {
 		const { revisionChanges } = this.props;
 		const classes = classNames( 'editor-diff-viewer', {
-			'is-loading': ! revisionChanges.title.length,
+			'is-loading': ! has( revisionChanges, 'title[0].value' ),
 		} );
 		return (
 			<div className={ classes }>

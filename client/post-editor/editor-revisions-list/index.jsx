@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { findIndex, get, head, map } from 'lodash';
+import { findIndex, get, head, isEmpty, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -106,7 +106,7 @@ class EditorRevisionsList extends PureComponent {
 	render() {
 		const { revisions, selectedRevisionId, siteId } = this.props;
 		const classes = classNames( 'editor-revisions-list', {
-			'is-loading': ! revisions.length,
+			'is-loading': isEmpty( revisions ),
 		} );
 		return (
 			<div className={ classes }>
