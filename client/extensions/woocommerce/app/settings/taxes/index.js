@@ -33,16 +33,18 @@ class SettingsTaxes extends Component {
 		taxJarPluginActive: PropTypes.bool,
 	};
 
-	maybeFetchPlugins = props => {
+	maybeFetchPlugins = ( props, force = false ) => {
 		const { isRequestingSitePlugins, siteId, sitePluginsLoaded } = props;
 
-		if ( siteId && ! isRequestingSitePlugins && ! sitePluginsLoaded ) {
-			this.props.fetchPlugins( [ siteId ] );
+		if ( siteId && ! isRequestingSitePlugins ) {
+			if ( force || ! sitePluginsLoaded ) {
+				this.props.fetchPlugins( [ siteId ] );
+			}
 		}
 	};
 
 	componentDidMount = () => {
-		this.maybeFetchPlugins( this.props );
+		this.maybeFetchPlugins( this.props, true );
 	};
 
 	componentWillReceiveProps = newProps => {
