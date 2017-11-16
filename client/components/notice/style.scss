@@ -239,18 +239,14 @@ a.notice__action {
 		display: inline-block;
 		margin: 0;
 		font-size: 12px;
-		font-weight: 600;
 		align-self: center;
 		margin-left: 16px;
 		padding: 0 8px;
-		text-decoration: underline;
-		text-transform: uppercase;
 
 		&:hover,
 		&:active,
 		&:focus {
 			background: transparent;
-			text-decoration: none;
 		}
 
 		.gridicon {
