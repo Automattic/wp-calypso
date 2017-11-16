@@ -58,30 +58,28 @@ class InboundTransferEmailVerificationCard extends React.Component {
 		}
 
 		return (
-			<div>
-				<EmailVerificationCard
-					contactEmail={ contactEmail }
-					verificationExplanation={ translate(
-						'We need to check your contact information to make sure you can be reached. Please verify your ' +
-							'details using the email we sent you to begin transferring the domain to WordPress.com. ' +
-							'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
-						{
-							components: {
-								learnMoreLink: (
-									<a
-										href="http://support.wordpress.com"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-					resendVerification={ resendInboundTransferEmail }
-					selectedDomainName={ selectedDomainName }
-					selectedSiteSlug={ selectedSiteSlug }
-				/>
-			</div>
+			<EmailVerificationCard
+				contactEmail={ contactEmail }
+				verificationExplanation={ translate(
+					'We need to check your contact information to make sure you can be reached. Please verify your ' +
+						'details using the email we sent you to begin transferring the domain to WordPress.com. ' +
+						'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+					{
+						components: {
+							learnMoreLink: (
+								<a
+									href="http://support.wordpress.com"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				) }
+				resendVerification={ resendInboundTransferEmail }
+				selectedDomainName={ selectedDomainName }
+				selectedSiteSlug={ selectedSiteSlug }
+			/>
 		);
 	}
 }
