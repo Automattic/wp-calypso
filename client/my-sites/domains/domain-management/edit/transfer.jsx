@@ -70,7 +70,7 @@ class Transfer extends React.PureComponent {
 		return (
 			<Card>
 				<div>
-					<p className="edit__transfer_text_fail">{ translate( 'Domain Transfer Failed' ) }</p>
+					<p className="edit__transfer-text-fail">{ translate( 'Domain Transfer Failed' ) }</p>
 					<p>
 						{ translate(
 							'We were unable to verify the transfer of {{strong}}%(domain)s{{/strong}}. The domain ' +
@@ -90,7 +90,7 @@ class Transfer extends React.PureComponent {
 					<Button onClick={ this.restartTransfer }>
 						{ this.props.translate( 'Start Transfer Again' ) }
 					</Button>
-					<Button className="edit__transfer_button_margin" href={ support.CALYPSO_CONTACT }>
+					<Button className="edit__transfer-button-margin" href={ support.CALYPSO_CONTACT }>
 						{ this.props.translate( 'Contact Support' ) }
 					</Button>
 				</div>
