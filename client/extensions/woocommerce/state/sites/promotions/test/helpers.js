@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -60,6 +61,23 @@ describe( 'helpers', () => {
 			expect( productData.id ).to.equal( 52 );
 			expect( productData.date_on_sale_from ).to.equal( promotion.startDate );
 			expect( productData.date_on_sale_to ).to.equal( promotion.endDate );
+		} );
+
+		test( 'should default dates to today if they are null', () => {
+			const promotion = {
+				type: 'product_sale',
+				salePrice: '20',
+				startDate: null,
+				endDate: null,
+				appliesTo: { productIds: [ 52 ] },
+			};
+
+			const productData = createProductUpdateFromPromotion( promotion );
+
+			expect( productData.date_on_sale_from ).to.exist;
+			expect( moment( productData.date_on_sale_from ).isSame( moment(), 'd' ) ).to.be.true;
+			expect( productData.date_on_sale_to ).to.exist;
+			expect( moment( productData.date_on_sale_to ).isSame( moment(), 'd' ) ).to.be.true;
 		} );
 
 		test( 'should throw if promotion does not apply to product', () => {

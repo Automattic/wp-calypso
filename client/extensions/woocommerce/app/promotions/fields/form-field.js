@@ -10,6 +10,7 @@ import classNames from 'classnames';
  */
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
@@ -23,6 +24,7 @@ const FormField = ( {
 	children,
 	value,
 	edit,
+	validationErrorText,
 } ) => {
 	const isValueValid = ! ( 'undefined' === typeof value );
 	const showChildren = ( isEnableable ? isValueValid : true );
@@ -59,6 +61,10 @@ const FormField = ( {
 		</FormLabel>
 	);
 
+	const validationError = validationErrorText && (
+		<FormInputValidation isError text={ validationErrorText } />
+	);
+
 	return (
 		<FormFieldset className="fields__fieldset">
 			{ formLabel }
@@ -66,6 +72,7 @@ const FormField = ( {
 				{ showChildren && children }
 				{ explanation }
 			</div>
+			{ showChildren && validationError }
 		</FormFieldset>
 	);
 };
@@ -77,6 +84,7 @@ FormField.PropTypes = {
 	isRequired: PropTypes.bool,
 	isEnableable: PropTypes.bool,
 	defaultValue: PropTypes.any,
+	validationErrorText: PropTypes.string,
 };
 
 export default FormField;
