@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { compact, flatMap, get, isEmpty, zip } from 'lodash';
+import { compact, find, get, isEmpty, zip } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,15 +36,39 @@ const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
  * @param {?Number} restoreId selected rewind operation
  * @returns {Array<String, ?Object>} pairs of [ classifier, event ]
  */
-const classifyEvents = ( logs, { backupId = null, rewindId = null } ) =>
+const classifyEvents = ( logs, { backupId = null, rewindId = null } ) => {
+	const restoreTime = get( find( logs, { activityId: rewindId } ), 'activityTs' );
+
 	// the zip pairs up each log item with the following log item in the stream or undefined if at end
-	flatMap( zip( logs, logs.slice( 1 ) ), ( [ log, nextLog = {} ] ) =>
-		compact( [
-			log.activityId === rewindId && [ 'rewind-confirm-dialog', {} ],
-			log.activityId === backupId && [ 'backup-confirm-dialog', {} ],
-			[ nextLog.activityId === rewindId ? 'timeline-break-event' : 'event', log ],
-		] )
+	const eventPairs = zip( logs, logs.slice( 1 ) );
+
+	const processed = eventPairs.reduce(
+		( next, [ log, nextLog = {} ] ) => {
+			const { events, hasRewindDialog } = next;
+			const needsRewindDialog = ! hasRewindDialog && log.activityTs === restoreTime;
+
+			return {
+				events: [
+					...events,
+					...compact( [
+						needsRewindDialog && [ 'rewind-confirm-dialog', {} ],
+						log.activityId === backupId && [ 'backup-confirm-dialog', {} ],
+						[
+							! hasRewindDialog && nextLog.activityTs === restoreTime
+								? 'timeline-break-event'
+								: 'event',
+							log,
+						],
+					] ),
+				],
+				hasRewindDialog: hasRewindDialog || needsRewindDialog,
+			};
+		},
+		{ events: [], hasRewindDialog: false }
 	);
+
+	return processed.events;
+};
 
 class ActivityLogDay extends Component {
 	static propTypes = {
