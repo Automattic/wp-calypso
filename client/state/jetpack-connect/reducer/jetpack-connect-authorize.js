@@ -2,7 +2,7 @@
 /**
  * External dependencis
  */
-import { isEmpty, omit } from 'lodash';
+import { includes, isEmpty, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,6 +34,7 @@ function buildDefaultAuthorizeState() {
 		authorizeError: false,
 		timestamp: Date.now(),
 		userAlreadyConnected: false,
+		autoAuthorize: false,
 	};
 }
 
@@ -75,7 +76,17 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 			} );
 		case JETPACK_CONNECT_QUERY_SET:
 			const queryObject = Object.assign( {}, action.queryObject );
-			return Object.assign( {}, buildDefaultAuthorizeState(), { queryObject: queryObject } );
+			const shouldAutoAuthorize = includes(
+				[ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ],
+				queryObject.from
+			);
+			const additionalQueryArgs = shouldAutoAuthorize ? { autoAuthorize: true } : {};
+			return Object.assign(
+				{},
+				buildDefaultAuthorizeState(),
+				{ queryObject },
+				additionalQueryArgs
+			);
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
 			return Object.assign( {}, state, {
 				isAuthorizing: true,
