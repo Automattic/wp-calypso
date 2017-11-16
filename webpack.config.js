@@ -30,6 +30,7 @@ const config = require( './server/config' );
  */
 const calypsoEnv = config( 'env_id' );
 const bundleEnv = config( 'env' );
+const isDevelopment = bundleEnv === 'development';
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -77,7 +78,7 @@ const babelLoader = {
 };
 
 const webpackConfig = {
-	bail: calypsoEnv !== 'development',
+	bail: ! isDevelopment,
 	entry: {},
 	devtool: 'false',
 	output: {
@@ -152,9 +153,7 @@ const webpackConfig = {
 		] ),
 		new HappyPack( {
 			loaders: _.compact( [
-				calypsoEnv === 'development' &&
-					config.isEnabled( 'webpack/hot-loader' ) &&
-					'react-hot-loader',
+				isDevelopment && config.isEnabled( 'webpack/hot-loader' ) && 'react-hot-loader',
 				babelLoader,
 			] ),
 		} ),
@@ -213,7 +212,7 @@ if ( calypsoEnv === 'desktop' ) {
 	webpackConfig.externals.push( 'jquery' );
 }
 
-if ( calypsoEnv === 'development' ) {
+if ( isDevelopment ) {
 	// we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
 	// also we don't minify so dont name them .min.js
 	webpackConfig.output.filename = '[name].js';
@@ -254,7 +253,7 @@ if ( process.env.DASHBOARD ) {
 	webpackConfig.plugins.unshift( new DashboardPlugin() );
 }
 
-if ( process.env.WEBPACK_OUTPUT_JSON || bundleEnv === 'production' ) {
+if ( process.env.WEBPACK_OUTPUT_JSON || ! isDevelopment ) {
 	webpackConfig.devtool = 'cheap-module-source-map';
 	webpackConfig.plugins.push(
 		new UglifyJsPlugin( {
@@ -262,7 +261,7 @@ if ( process.env.WEBPACK_OUTPUT_JSON || bundleEnv === 'production' ) {
 			cache: true,
 			parallel: true,
 			uglifyOptions: { ecma: 5 },
-			sourceMap: true,
+			sourceMap: !! process.env.WEBPACK_OUTPUT_JSON,
 		} )
 	);
 }
