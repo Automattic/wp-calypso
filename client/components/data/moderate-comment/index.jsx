@@ -17,7 +17,7 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
-import { changeCommentStatus, deleteComment } from 'state/comments/actions';
+import { changeCommentStatus } from 'state/comments/actions';
 import { getSiteComment } from 'state/selectors';
 
 class ModerateComment extends Component {
@@ -28,8 +28,6 @@ class ModerateComment extends Component {
 		newStatus: PropTypes.string,
 		currentStatus: PropTypes.string,
 		updateCommentStatus: PropTypes.func.isRequired,
-		redirectToPostView: PropTypes.func.isRequired,
-		destroyComment: PropTypes.func.isRequired,
 	};
 
 	componentDidMount() {
@@ -49,23 +47,15 @@ class ModerateComment extends Component {
 		this.moderate( nextProps );
 	}
 
-	moderate( {
-		siteId,
-		postId,
-		commentId,
-		newStatus,
-		currentStatus,
-		redirectToPostView,
-		updateCommentStatus,
-		destroyComment,
-	} ) {
-		if ( ! siteId || ! postId || ! commentId || ! newStatus || newStatus === currentStatus ) {
-			return;
-		}
-
-		if ( 'delete' === newStatus ) {
-			destroyComment();
-			redirectToPostView( postId );
+	moderate( { siteId, postId, commentId, newStatus, currentStatus, updateCommentStatus } ) {
+		if (
+			! siteId ||
+			! postId ||
+			! commentId ||
+			! newStatus ||
+			newStatus === currentStatus ||
+			'delete' === newStatus
+		) {
 			return;
 		}
 
@@ -96,16 +86,6 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, newStatus } 
 					bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + newStatus )
 				),
 				changeCommentStatus( siteId, postId, commentId, newStatus )
-			)
-		),
-	destroyComment: () =>
-		dispatch(
-			withAnalytics(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_delete' ),
-					bumpStat( 'calypso_comment_management', 'comment_deleted' )
-				),
-				deleteComment( siteId, postId, commentId )
 			)
 		),
 } );
