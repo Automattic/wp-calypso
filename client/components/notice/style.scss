@@ -8,6 +8,7 @@
 	background: $gray-dark;
 	color: $white;
 	border-radius: 3px;
+	line-height: 1.5;
 
 	// Success!
 	&.is-success {
@@ -212,6 +213,10 @@ a.notice__action {
 		.notice__icon {
 			width: 18px;
 			height: 18px;
+		}
+
+		.gridicon {
+			margin-top: 6px;
 		}
 	}
 
