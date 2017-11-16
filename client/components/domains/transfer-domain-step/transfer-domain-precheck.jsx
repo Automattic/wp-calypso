@@ -102,9 +102,14 @@ class TransferDomainPrecheck extends React.PureComponent {
 			: translate(
 					"You'll need to unlock the domain at your current registrar before we can move it."
 				);
-		const explanation = translate(
-			'Your current domain provider has locked the domain to prevent unauthorized transfers.'
-		);
+		const explanation = unlocked
+			? translate(
+					'Domain providers place a lock on domains to prevent unauthorized transfers. Yours is ' +
+						"unlocked and ready to transfer. We'll automatically lock it after the transfer completes."
+				)
+			: translate(
+					'Your current domain provider has locked the domain to prevent unauthorized transfers.'
+				);
 
 		const button = unlocked ? (
 			<div className="transfer-domain-step__unlocked">
