@@ -31,6 +31,7 @@ import { TRANSFER_IN } from 'state/current-user/constants';
 class DomainSearchResults extends React.Component {
 	static propTypes = {
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		lastDomainIsTransferrable: PropTypes.bool,
 		lastDomainStatus: PropTypes.string,
 		lastDomainSearched: PropTypes.string,
 		cart: PropTypes.object,
@@ -53,13 +54,19 @@ class DomainSearchResults extends React.Component {
 	};
 
 	renderDomainAvailability() {
-		const { availableDomain, lastDomainStatus, lastDomainSearched: domain, translate } = this.props;
+		const {
+			availableDomain,
+			lastDomainIsTransferrable,
+			lastDomainStatus,
+			lastDomainSearched: domain,
+			translate,
+		} = this.props;
 		const availabilityElementClasses = classNames( {
 			'domain-search-results__domain-is-available': availableDomain,
 			'domain-search-results__domain-not-available': ! availableDomain,
 		} );
 		const suggestions = this.props.suggestions || [];
-		const { MAPPABLE, UNKNOWN } = domainAvailability;
+		const { MAPPABLE, MAPPED, UNKNOWN } = domainAvailability;
 
 		let availabilityElement, domainSuggestionElement, offer;
 
@@ -85,7 +92,7 @@ class DomainSearchResults extends React.Component {
 			);
 		} else if (
 			suggestions.length !== 0 &&
-			includes( [ MAPPABLE, UNKNOWN ], lastDomainStatus ) &&
+			includes( [ MAPPABLE, MAPPED, UNKNOWN ], lastDomainStatus ) &&
 			this.props.products.domain_map
 		) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
@@ -119,7 +126,12 @@ class DomainSearchResults extends React.Component {
 						} );
 
 			if ( this.props.offerUnavailableOption ) {
-				if ( this.props.transferInAllowed && ! this.props.isSignupStep ) {
+				if (
+					this.props.transferInAllowed &&
+					! this.props.isSignupStep &&
+					lastDomainIsTransferrable &&
+					includes( [ MAPPABLE, MAPPED ], lastDomainStatus )
+				) {
 					availabilityElement = (
 						<Card className="domain-search-results__transfer-card" highlight="info">
 							<div className="domain-search-results__transfer-card-copy">
@@ -137,7 +149,7 @@ class DomainSearchResults extends React.Component {
 							</div>
 						</Card>
 					);
-				} else {
+				} else if ( lastDomainStatus !== MAPPED ) {
 					availabilityElement = (
 						<Notice status="is-warning" showDismiss={ false }>
 							{ domainUnavailableMessage } { offer }
