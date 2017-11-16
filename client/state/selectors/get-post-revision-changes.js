@@ -32,7 +32,7 @@ const getPostRevisionChanges = createSelector(
 		const orderedRevisions = getPostRevisions( state, siteId, postId, 'display' );
 		const revisionIndex = findIndex( orderedRevisions, { id: revisionId } );
 		if ( revisionIndex === -1 ) {
-			return { content: [], title: [] };
+			return { content: [], summary: [], title: [] };
 		}
 
 		const revision = orderedRevisions[ revisionIndex ];
@@ -40,7 +40,7 @@ const getPostRevisionChanges = createSelector(
 		const combinedLength = getCombinedLength( [ previousRevision, revision ] );
 
 		if ( combinedLength > MAX_DIFF_CONTENT_LENGTH ) {
-			return { content: [], title: [], tooLong: true };
+			return { content: [], summary: [], title: [], tooLong: true };
 		}
 		const title = diffKey( 'title', previousRevision, revision );
 		const content = diffKey( 'content', previousRevision, revision );
