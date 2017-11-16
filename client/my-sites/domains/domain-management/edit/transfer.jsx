@@ -43,7 +43,7 @@ class Transfer extends React.PureComponent {
 				{ content }
 				<VerticalNav>
 					<VerticalNavItem path={ path }>
-						{ this.props.translate( 'Cancel Domain Transfer' ) }
+						{ this.props.translate( 'Cancel Transfer' ) }
 					</VerticalNavItem>
 				</VerticalNav>
 			</div>
