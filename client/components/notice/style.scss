@@ -8,6 +8,7 @@
 	background: $gray-dark;
 	color: $white;
 	border-radius: 3px;
+	line-height: 1.5;
 
 	// Success!
 	&.is-success {
@@ -87,6 +88,11 @@
 	a {
 		text-decoration: underline;
 		color: $white;
+
+		&:hover {
+			color: $white;
+			text-decoration: none;
+		}
 	}
 
 	ul {
@@ -155,6 +161,8 @@ a.notice__action {
 	white-space: nowrap;
 	color: lighten( $gray, 10% );
 	padding: 13px;
+	display: flex;
+	align-items: center;
 
 	@include breakpoint( ">480px" ) {
 			flex-shrink: 1;
@@ -196,24 +204,25 @@ a.notice__action {
 	text-decoration: none;
 	text-transform: none;
 	vertical-align: middle;
+	line-height: 1.5;
 
 	.notice__content {
 		font-size: 12px;
-		padding: 6px 8px;
-	}
-
-	.notice__text {
-		line-height: 1;
+		padding: 6px 10px;
 	}
 
 	.notice__icon-wrapper {
-		width: 24px;
+		width: 28px;
 
 		.notice__icon {
 			width: 18px;
 			height: 18px;
 			align-self: center;
 			margin: 0;
+		}
+
+		.gridicon {
+			margin-top: 6px;
 		}
 	}
 
@@ -235,18 +244,14 @@ a.notice__action {
 		display: inline-block;
 		margin: 0;
 		font-size: 12px;
-		font-weight: 600;
 		align-self: center;
 		margin-left: 16px;
-		padding: 0 8px;
-		text-decoration: underline;
-		text-transform: uppercase;
+		padding: 0 10px;
 
 		&:hover,
 		&:active,
 		&:focus {
 			background: transparent;
-			text-decoration: none;
 		}
 
 		.gridicon {
