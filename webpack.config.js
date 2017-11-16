@@ -257,11 +257,10 @@ if ( process.env.WEBPACK_OUTPUT_JSON || ! isDevelopment ) {
 	webpackConfig.devtool = 'cheap-module-source-map';
 	webpackConfig.plugins.push(
 		new UglifyJsPlugin( {
-			test: '*.js|*.jsx',
 			cache: true,
 			parallel: true,
 			uglifyOptions: { ecma: 5 },
-			sourceMap: !! process.env.WEBPACK_OUTPUT_JSON,
+			sourceMap: isDevelopment,
 		} )
 	);
 }
