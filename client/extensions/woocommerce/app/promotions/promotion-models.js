@@ -26,7 +26,7 @@ const couponCodeField = (
 			'Only apply this promotion when the customer supplies the coupon code'
 		) }
 		placeholderText={ translate( 'Enter coupon code' ) }
-		isRequired={ true }
+		isRequired
 	/>
 );
 
@@ -109,7 +109,7 @@ const appliesToProductSale = {
 		appliesTo: (
 			<PromotionAppliesToField
 				selectionTypes={ [ { type: 'productIds' } ] }
-				singular={ true }
+				singular
 				// TODO: Remove this text after variable products are supported.
 				explanationText={ translate( 'Note: Variable products cannot be selected.' ) }
 			/>
@@ -142,7 +142,7 @@ const EndDateField = ( props ) => {
 	return (
 		<DateField
 			labelText={ translate( 'End Date' ) }
-			isEnableable={ true }
+			isEnableable
 			validationErrorText={ validationError }
 			disabledDays={ [ { before: new Date( startDate ) } ] }
 			{ ...props }
@@ -162,7 +162,7 @@ const productSaleModel = {
 			salePrice: (
 				<CurrencyField
 					labelText={ translate( 'Product Sale Price' ) }
-					isRequired={ true }
+					isRequired
 				/>
 			),
 		},
@@ -174,7 +174,7 @@ const productSaleModel = {
 			startDate: (
 				<DateField
 					labelText={ translate( 'Start Date' ) }
-					isEnableable={ true }
+					isEnableable
 					disabledDays={ [ { before: new Date() } ] }
 				/>
 			),
@@ -194,33 +194,33 @@ const couponConditions = {
 		minimumAmount: (
 			<CurrencyField
 				labelText={ translate( 'This promotion requires a minimum purchase' ) }
-				isEnableable={ true }
+				isEnableable
 			/>
 		),
 		maximumAmount: (
 			<CurrencyField
 				labelText={ translate( 'Don\'t apply this promotion if the order value exceeds a specific amount' ) }
-				isEnableable={ true }
+				isEnableable
 			/>
 		),
 		usageLimit: (
 			<NumberField
 				labelText={ translate( 'Limit number of times this promotion can be used in total' ) }
-				isEnableable={ true }
+				isEnableable
 				minValue={ 0 }
 			/>
 		),
 		usageLimitPerUser: (
 			<NumberField
 				labelText={ translate( 'Limit total times each customer can use this promotion' ) }
-				isEnableable={ true }
+				isEnableable
 				minValue={ 0 }
 			/>
 		),
 		individualUse: (
 			<FormField
 				labelText={ translate( 'Cannot be combined with any other coupon' ) }
-				isEnableable={ true }
+				isEnableable
 				defaultValue={ true }
 			/>
 		),
@@ -240,7 +240,7 @@ const fixedProductModel = {
 			fixedDiscount: (
 				<CurrencyField
 					labelText={ translate( 'Product Discount', { context: 'noun' } ) }
-					isRequired={ true }
+					isRequired
 				/>
 			),
 			freeShipping: freeShippingField,
@@ -262,7 +262,7 @@ const fixedCartModel = {
 			fixedDiscount: (
 				<CurrencyField
 					labelText={ translate( 'Cart Discount', { context: 'noun' } ) }
-					isRequired={ true }
+					isRequired
 				/>
 			),
 			freeShipping: freeShippingField,
@@ -284,7 +284,7 @@ const percentCartModel = {
 			percentDiscount: (
 				<PercentField
 					labelText={ translate( 'Percent Cart Discount', { context: 'noun' } ) }
-					isRequired={ true }
+					isRequired
 				/>
 			),
 			freeShipping: freeShippingField,
