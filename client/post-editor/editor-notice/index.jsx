@@ -21,7 +21,7 @@ import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isMobile } from 'lib/viewport';
-import recordTracksEvent from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export class EditorNotice extends Component {
 	static propTypes = {

@@ -18,7 +18,7 @@ import Button from 'components/button';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import ClipboardButtonInput from 'components/clipboard-button-input';
-import recordTracksEvent from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 

@@ -17,7 +17,7 @@ import { connect } from 'react-redux';
 import { withoutHttp } from 'lib/url';
 import ClipboardButton from 'components/forms/clipboard-button';
 import FormTextInput from 'components/forms/form-text-input';
-import recordTracksEvent from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ClipboardButtonInputExport extends React.Component {
 	constructor( props ) {
@@ -66,7 +66,15 @@ class ClipboardButtonInputExport extends React.Component {
 		return (
 			<span className={ classes }>
 				<FormTextInput
-					{ ...omit( this.props, 'className', 'hideHttp', 'moment', 'numberFormat', 'translate' ) }
+					{ ...omit(
+						this.props,
+						'className',
+						'hideHttp',
+						'moment',
+						'numberFormat',
+						'translate',
+						'recordTracksEvent'
+					) }
 					value={ hideHttp ? withoutHttp( value ) : value }
 					type="text"
 					selectOnFocus
