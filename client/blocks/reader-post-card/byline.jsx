@@ -11,7 +11,7 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import ReaderAvatar from 'blocks/reader-avatar';
-import PostTime from 'reader/post-time';
+import TimeSince from 'components/time-since';
 import { getSiteName } from 'reader/get-helpers';
 import {
 	recordAction,
@@ -143,7 +143,7 @@ class PostByline extends React.Component {
 										target="_blank"
 										rel="noopener noreferrer"
 									>
-										<PostTime date={ post.date } />
+										<TimeSince date={ post.date } />
 									</a>
 								</span>
 							) }
