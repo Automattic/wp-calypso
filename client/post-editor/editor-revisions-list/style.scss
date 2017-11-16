@@ -99,7 +99,9 @@
 		border-right: none;
 		min-height: 60px;
 	}
+}
 
+.editor-revisions-list__button {
 	&:hover {
 		background: $accordion-background-hover;
 	}
