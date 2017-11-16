@@ -66,6 +66,16 @@ describe( 'Theme', () => {
 				assert.include( src, '/screenshot.png' );
 			} );
 
+			test( 'should include photon parameters', () => {
+				const imgNode = themeNode.getElementsByTagName( 'img' )[ 0 ];
+				const src = imgNode.getAttribute( 'src' );
+				const { query } = parse( src, true );
+
+				expect( query ).toMatchObject( {
+					w: expect.stringMatching( /\d+/ ),
+				} );
+			} );
+
 			test( 'should call onScreenshotClick() on click on screenshot', () => {
 				const imgNode = themeNode.getElementsByTagName( 'img' )[ 0 ];
 				TestUtils.Simulate.click( imgNode );
