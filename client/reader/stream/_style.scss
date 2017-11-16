@@ -106,8 +106,13 @@
 			width: 16px;
 		}
 
-		.reader__post-time {
+		.reader__post-time-placeholder {
 			position: relative;
+			font-size: 14px;
+
+			@include breakpoint( "<480px" ) {
+				font-size: 13px;
+			}
 		}
 	}
 
