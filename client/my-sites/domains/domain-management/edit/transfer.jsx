@@ -70,7 +70,7 @@ class Transfer extends React.PureComponent {
 		return (
 			<Card>
 				<div>
-					<p className="edit__transfer-text-fail">{ translate( 'Domain Transfer Failed' ) }</p>
+					<p className="edit__transfer-text-fail">{ translate( 'Domain transfer failed' ) }</p>
 					<p>
 						{ translate(
 							'We were unable to verify the transfer of {{strong}}%(domain)s{{/strong}}. The domain ' +
