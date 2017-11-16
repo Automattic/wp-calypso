@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { every, includes, isEmpty, keys, pick, trim } from 'lodash';
+import { every, find, includes, isEmpty, keys, pick, trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
