@@ -15,7 +15,7 @@ import classnames from 'classnames';
  */
 import { isEnabled } from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
-import PostTime from 'reader/post-time';
+import TimeSince from 'components/time-since';
 import Gravatar from 'components/gravatar';
 import { recordAction, recordGaEvent, recordTrack, recordPermalinkClick } from 'reader/stats';
 import { getStreamUrl } from 'reader/route';
@@ -420,7 +420,7 @@ class PostComment extends React.PureComponent {
 							rel="noopener noreferrer"
 							onClick={ this.handleCommentPermalinkClick }
 						>
-							<PostTime date={ comment.date } />
+							<TimeSince date={ comment.date } />
 						</a>
 					</div>
 				</div>

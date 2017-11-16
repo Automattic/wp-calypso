@@ -14,7 +14,7 @@ import Gridicon from 'gridicons';
 import AutoDirection from 'components/auto-direction';
 import ExternalLink from 'components/external-link';
 import { recordPermalinkClick } from 'reader/stats';
-import PostTime from 'reader/post-time';
+import TimeSince from 'components/time-since';
 import ReaderFullPostHeaderTags from './header-tags';
 import { isDiscoverPost } from 'reader/discover/helper';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
@@ -66,7 +66,7 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							<PostTime date={ post.date } />
+							<TimeSince date={ post.date } />
 						</a>
 					</span>
 				) : null }
