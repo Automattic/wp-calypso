@@ -177,12 +177,15 @@ class TransferDomainPrecheck extends React.PureComponent {
 	}
 
 	getHeader() {
-		const { translate } = this.props;
+		const { translate, domain } = this.props;
 
 		return (
 			<Card compact={ true } className="transfer-domain-step__title">
 				<FormattedHeader
-					headerText={ translate( "Let's get your domain ready to transfer." ) }
+					headerText={ translate( "Let's get {{strong}}%(domain)s{{/strong}} ready to transfer.", {
+						args: { domain },
+						components: { strong: <strong /> },
+					} ) }
 					subHeaderText={ translate(
 						'Log into your current registrar to complete a few preliminary steps.'
 					) }
