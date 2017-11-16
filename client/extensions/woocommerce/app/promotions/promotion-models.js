@@ -118,6 +118,51 @@ const appliesToProductSale = {
 };
 
 /**
+ * Checks validition of start date and end date.
+ *
+ * @param { string } startDateString String form of end date, or null/undefined.
+ * @param { string } endDateString String form of end date, or null/undefined.
+ * @return { boolean } True if the end date is before the start date, false if not.
+ */
+function isEndDateBeforeStartDate( startDateString, endDateString ) {
+	const startDate = startDateString ? new Date( startDateString ) : new Date();
+	const endDate = endDateString ? new Date( endDateString ) : new Date();
+
+	// Clear the times, we only care about days.
+	startDate.setHours( 0, 0, 0, 0 );
+	endDate.setHours( 0, 0, 0, 0 );
+
+	return ( endDate < startDate );
+}
+
+/**
+ * Start date condition field
+ *
+ * @param { Object } props Component properties
+ * @param { Object } props.promotion Promotion API object
+ * @param { string } props.value Current value for end date.
+ * @return { Object } React component instance.
+ */
+const StartDateField = ( props ) => {
+	const { promotion, value } = props;
+	let validationErrorText = null;
+
+	if ( isEndDateBeforeStartDate( value, promotion.endDate ) ) {
+		validationErrorText = translate( 'Start date cannot be after end date.' );
+	}
+
+	return (
+		<DateField
+			labelText={ translate( 'Start Date' ) }
+			isEnableable
+			validationErrorText={ validationErrorText }
+			disabledDays={ [ { before: new Date() } ] }
+			{ ...props }
+		/>
+	);
+};
+
+/**
  * End date condition field
  *
  * @param { Object } props Component properties
@@ -128,22 +173,17 @@ const appliesToProductSale = {
 const EndDateField = ( props ) => {
 	const { promotion, value } = props;
 	const startDate = promotion.startDate ? new Date( promotion.startDate ) : new Date();
-	const endDate = value ? new Date( value ) : new Date();
-	let validationError = null;
+	let validationErrorText = null;
 
-	// Clear the times, we only care about days.
-	startDate.setHours( 0, 0, 0, 0 );
-	endDate.setHours( 0, 0, 0, 0 );
-
-	if ( endDate < startDate ) {
-		validationError = translate( 'End date cannot be before start date.' );
+	if ( isEndDateBeforeStartDate( startDate, value ) ) {
+		validationErrorText = translate( 'End date cannot be before start date.' );
 	}
 
 	return (
 		<DateField
 			labelText={ translate( 'End Date' ) }
 			isEnableable
-			validationErrorText={ validationError }
+			validationErrorText={ validationErrorText }
 			disabledDays={ [ { before: new Date( startDate ) } ] }
 			{ ...props }
 		/>
@@ -171,13 +211,7 @@ const productSaleModel = {
 		labelText: translate( 'Conditions', { context: 'noun' } ),
 		cssClass: 'promotions__promotion-form-card-conditions',
 		fields: {
-			startDate: (
-				<DateField
-					labelText={ translate( 'Start Date' ) }
-					isEnableable
-					disabledDays={ [ { before: new Date() } ] }
-				/>
-			),
+			startDate: <StartDateField />,
 			endDate: <EndDateField />,
 		},
 	},
