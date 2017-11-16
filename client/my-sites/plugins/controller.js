@@ -21,7 +21,7 @@ import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
-import { renderWithReduxStore, renderPage } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import { setSection } from 'state/ui/actions';
 import { getSelectedSite, getSection } from 'state/ui/selectors';
 import { hasJetpackSites, getSelectedOrAllSitesWithPlugins } from 'state/selectors';
@@ -230,7 +230,7 @@ const controller = {
 	},
 
 	upload( context ) {
-		renderPage( context, <PluginUpload /> );
+		renderWithReduxStore( <PluginUpload />, document.getElementById( 'primary' ), context.store );
 	},
 
 	jetpackCanUpdate( filter, context, next ) {
