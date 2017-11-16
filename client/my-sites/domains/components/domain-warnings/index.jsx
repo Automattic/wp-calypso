@@ -775,7 +775,7 @@ export class DomainWarnings extends React.PureComponent {
 		let compactMessage = null;
 		let message = translate( 'Transfer in Progress' );
 
-		const domainManagementLink = paths.domainManagementEdit(
+		const domainManagementLink = paths.domainManagementTransferIn(
 			this.props.selectedSite.slug,
 			domainInTransfer.name
 		);
