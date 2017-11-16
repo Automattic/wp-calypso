@@ -7,5 +7,5 @@ export const CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES = [
 	'AR', 'AT', 'BA', 'BG', 'CH', 'CL', 'CZ', 'DE',
 	'DK', 'EE', 'FI', 'FR', 'HU', 'IS', 'IL', 'LU', 'MC',
 	'NL', 'NO', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK', 'SV',
-	'UY', 'VE'
+	'UY', 'VE',
 ];

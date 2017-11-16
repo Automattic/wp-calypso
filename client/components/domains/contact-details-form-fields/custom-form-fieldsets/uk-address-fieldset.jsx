@@ -11,33 +11,25 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { StateSelect, Input } from 'my-sites/domains/components/form';
+import { Input } from 'my-sites/domains/components/form';
 
-const UsAddressFieldset = props => {
-	const { getFieldProps, translate, countryCode } = props;
+const UkAddressFieldset = props => {
+	const { getFieldProps, translate } = props;
 	return (
-		<div className="domain-form-fieldsets__address-fields us-address-fieldset">
+		<div className="custom-form-fieldsets__address-fields uk-address-fieldset">
 			<Input label={ translate( 'City' ) } { ...getFieldProps( 'city', true ) } />
-			<StateSelect
-				label={ translate( 'State' ) }
-				countryCode={ countryCode }
-				{ ...getFieldProps( 'state', true ) }
-			/>
 			<Input label={ translate( 'Postal Code' ) } { ...getFieldProps( 'postal-code', true ) } />
 		</div>
 	);
 };
 
-UsAddressFieldset.propTypes = {
-	countryCode: PropTypes.string,
+UkAddressFieldset.propTypes = {
 	getFieldProps: PropTypes.func,
 	translate: PropTypes.func,
 };
 
-UsAddressFieldset.defaultProps = {
-	countryCode: 'US',
+UkAddressFieldset.defaultProps = {
 	getFieldProps: noop,
 	translate: identity,
 };
-
-export default localize( UsAddressFieldset );
+export default localize( UkAddressFieldset );
