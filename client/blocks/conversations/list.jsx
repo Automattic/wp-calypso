@@ -25,6 +25,7 @@ import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import PostCommentFormRoot from 'blocks/comments/form-root';
 import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
+import { getErrorKey } from 'state/comments/utils';
 
 /**
  * ConversationsCommentList is the component that represents all of the comments for a conversations-stream
@@ -125,7 +126,7 @@ export class ConversationCommentList extends React.Component {
 			Object.keys( this.getCommentsToShow() )
 		);
 		inaccessible
-			.filter( commentId => ! commentErrors[ `${ siteId }-${ commentId }` ] )
+			.filter( commentId => ! commentErrors[ getErrorKey( siteId, commentId ) ] )
 			.forEach( commentId => {
 				nextProps.requestComment( {
 					commentId,
