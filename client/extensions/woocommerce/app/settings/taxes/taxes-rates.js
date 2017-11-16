@@ -44,20 +44,20 @@ class TaxesRates extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
-	componentDidMount = () => {
-		const { address, loadedSettingsGeneral, loadedTaxRates, siteId } = this.props;
+	maybeFetchRates = props => {
+		const { address, loadedSettingsGeneral, loadedTaxRates, siteId } = props;
 
 		if ( loadedSettingsGeneral && ! loadedTaxRates ) {
 			this.props.fetchTaxRates( siteId, address );
 		}
 	};
 
+	componentDidMount = () => {
+		this.maybeFetchRates( this.props );
+	};
+
 	componentWillReceiveProps = nextProps => {
-		if ( nextProps.loadedSettingsGeneral ) {
-			if ( ! nextProps.loadedTaxRates ) {
-				this.props.fetchTaxRates( nextProps.siteId, nextProps.address );
-			}
-		}
+		this.maybeFetchRates( nextProps );
 	};
 
 	renderInfo = () => {
