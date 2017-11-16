@@ -12,10 +12,27 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 
+import { getSelectedSiteId } from 'state/ui/selectors';
+import QuerySiteChecklist from 'components/data/query-site-checklist';
+
 class Show extends PureComponent {
 	render() {
-		return <p>{ this.props.translate( 'show!' ) }</p>;
+		const { siteId } = this.props;
+
+		return (
+			<p>
+				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+				{ this.props.translate( 'show!' ) }
+			</p>
+		);
 	}
 }
 
-export default connect()( localize( Show ) );
+const mapStateToProps = state => {
+	return {
+		siteId: getSelectedSiteId( state ),
+	};
+};
+const mapDispatchToProps = null;
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Show ) );
