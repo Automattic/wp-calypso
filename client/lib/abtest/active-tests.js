@@ -133,5 +133,6 @@ export default {
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 };
