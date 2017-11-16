@@ -24,13 +24,13 @@ const RadioButton = ( props ) => {
 	);
 };
 
-const AddressSummary = ( { values, originalValues, countriesData } ) => {
+const AddressSummary = ( { values, originalValues, countriesData, expandStateName = false } ) => {
 	originalValues = originalValues || {};
 	const { state, country } = values;
 
 	let stateStr = '';
 	if ( state ) {
-		const statesMap = ( countriesData[ country ] || {} ).states || {};
+		const statesMap = ( expandStateName && ( countriesData[ country ] || {} ).states ) || {};
 		stateStr = statesMap[ state ] || state;
 	}
 	const countryStr = countriesData[ country ].name;

@@ -30,6 +30,7 @@ const renderSummary = ( {
 		storeOptions,
 		errors,
 		translate,
+		expandStateName = false,
 	}, showCountry ) => {
 	if ( normalizationInProgress ) {
 		return translate( 'Validating address…' );
@@ -42,7 +43,7 @@ const renderSummary = ( {
 	// Summary format: "city, state  postcode [, country]"
 	let str = city + ', ';
 	if ( state ) {
-		const statesMap = ( countriesData[ country ] || {} ).states || {};
+		const statesMap = ( expandStateName && ( countriesData[ country ] || {} ).states ) || {};
 		str += ( statesMap[ state ] || state ) + '\xa0 ';  // append two spaces: non-breaking and normal
 	}
 	str += ( 'US' === country ? postcode.split( '-' )[ 0 ] : postcode );
