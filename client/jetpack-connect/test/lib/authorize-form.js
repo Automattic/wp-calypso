@@ -86,21 +86,17 @@ export const LOGGED_OUT_PROPS = deepFreeze( {
 	isAlreadyOnSitesList: false,
 	isFetchingAuthorizationSite: false,
 	isFetchingSites: false,
+	isLoggedIn: true,
 	path: '/jetpack/connect/authorize',
 	recordTracksEvent: noop,
 	setTracksAnonymousUserId: noop,
 	siteSlug: SITE_SLUG,
-	user: null,
 } );
 
 export const LOGGED_IN_PROPS = deepFreeze( {
 	authorizationRemoteQueryData: JETPACK_CONNECT_AUTHORIZE_LOGGED_IN.queryObject,
+	isLoggedIn: true,
 	path: '/jetpack/connect/authorize',
 	recordTracksEvent: noop,
 	setTracksAnonymousUserId: noop,
-	user: {
-		ID: USER_ID,
-		display_name: "An Example User's Name",
-		username: 'exampleusername',
-	},
 } );

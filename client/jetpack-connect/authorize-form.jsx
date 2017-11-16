@@ -15,7 +15,7 @@ import { get, includes } from 'lodash';
 import Main from 'components/main';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import { getAuthorizationRemoteQueryData } from 'state/jetpack-connect/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import MainWrapper from './main-wrapper';
@@ -32,9 +32,9 @@ class JetpackConnectAuthorizeForm extends Component {
 			client_id: PropTypes.string,
 			from: PropTypes.string,
 		} ).isRequired,
+		isLoggedIn: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		setTracksAnonymousUserId: PropTypes.func.isRequired,
-		user: PropTypes.object,
 	};
 
 	componentWillMount() {
@@ -92,7 +92,7 @@ class JetpackConnectAuthorizeForm extends Component {
 	}
 
 	renderForm() {
-		return this.props.user ? (
+		return this.props.isLoggedIn ? (
 			<LoggedInForm isSSO={ this.isSSO() } isWoo={ this.isWoo() } />
 		) : (
 			<LoggedOutForm local={ this.props.locale } path={ this.props.path } />
@@ -119,7 +119,7 @@ export { JetpackConnectAuthorizeForm as JetpackConnectAuthorizeFormTestComponent
 export default connect(
 	state => ( {
 		authorizationRemoteQueryData: getAuthorizationRemoteQueryData( state ),
-		user: getCurrentUser( state ),
+		isLoggedIn: !! getCurrentUserId( state ),
 	} ),
 	{
 		recordTracksEvent,
