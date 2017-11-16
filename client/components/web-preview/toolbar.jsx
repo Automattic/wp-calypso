@@ -160,13 +160,11 @@ class PreviewToolbar extends Component {
 	}
 }
 
-const wpcomEditorToolbarWebPreviewExternalClick = () => {
+const wpcomEditorToolbarWebPreviewExternalClick = () =>
 	composeAnalytics( recordTracksEvent( 'calypso_editor_preview_toolbar_external_click', {} ) );
-};
 
-const wpcomEditorToolbarWebPreviewClose = () => {
+const wpcomEditorToolbarWebPreviewClose = () =>
 	composeAnalytics( recordTracksEvent( 'calypso_editor_preview_close_click', {} ) );
-};
 
 export default connect( null, {
 	wpcomEditorToolbarWebPreviewExternalClick,

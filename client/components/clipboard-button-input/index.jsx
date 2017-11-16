@@ -87,9 +87,8 @@ class ClipboardButtonInputExport extends React.Component {
 	}
 }
 
-const wpcomEditorToolbarWebPreviewClipboardUrlButtonClick = () => {
+const wpcomEditorToolbarWebPreviewClipboardUrlButtonClick = () =>
 	composeAnalytics( recordTracksEvent( 'calypso_editor_clipboard_url_button_click', {} ) );
-};
 
 export default connect( null, {
 	wpcomEditorToolbarWebPreviewClipboardUrlButtonClick,

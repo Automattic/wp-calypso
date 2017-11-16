@@ -360,13 +360,11 @@ export class EditorNotice extends Component {
 	}
 }
 
-const wpcomEditorToolbarWebPreviewPillExternalClick = () => {
+const wpcomEditorToolbarWebPreviewPillExternalClick = () =>
 	composeAnalytics( recordTracksEvent( 'calypso_editor_pill_site_external_click', {} ) );
-};
 
-const wpcomEditorToolbarWebPreviewAddPagePromptClick = () => {
+const wpcomEditorToolbarWebPreviewAddPagePromptClick = () =>
 	composeAnalytics( recordTracksEvent( 'calypso_editor_pill_add_page_prompt_click', {} ) );
-};
 
 export default connect(
 	state => {
