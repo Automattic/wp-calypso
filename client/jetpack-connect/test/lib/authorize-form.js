@@ -52,7 +52,7 @@ export const JETPACK_CONNECT_AUTHORIZE_LOGGED_IN = deepFreeze( {
 	clientNotResponding: true,
 	isAuthorizing: false,
 	queryObject: {
-		_ui: USER_ID,
+		_ui: '' + USER_ID,
 		_ut: 'wpcom:user_id',
 		_wp_nonce: 'fooBarNonce',
 		blogname: 'Example Blog',
@@ -94,15 +94,10 @@ export const LOGGED_OUT_PROPS = deepFreeze( {
 } );
 
 export const LOGGED_IN_PROPS = deepFreeze( {
-	authAttempts: 0,
-	calypsoStartedConnection: false,
-	isAlreadyOnSitesList: false,
-	isFetchingAuthorizationSite: false,
-	isFetchingSites: false,
 	authorizationRemoteQueryData: JETPACK_CONNECT_AUTHORIZE_LOGGED_IN.queryObject,
 	path: '/jetpack/connect/authorize',
 	recordTracksEvent: noop,
-	siteSlug: SITE_SLUG,
+	setTracksAnonymousUserId: noop,
 	user: {
 		ID: USER_ID,
 		display_name: "An Example User's Name",
