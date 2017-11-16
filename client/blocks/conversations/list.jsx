@@ -19,7 +19,6 @@ import {
 	getExpansionsForPost,
 	getHiddenCommentsForPost,
 	getPostCommentsTree,
-	getCommentErrors,
 } from 'state/comments/selectors';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
@@ -110,7 +109,7 @@ export class ConversationCommentList extends React.Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { hiddenComments, commentsTree, siteId, commentErrors } = nextProps;
+		const { hiddenComments, commentsTree, siteId } = nextProps;
 
 		// if we are running low on comments to expand then fetch more
 		if ( size( hiddenComments ) < FETCH_NEW_COMMENTS_THRESHOLD ) {
@@ -124,15 +123,12 @@ export class ConversationCommentList extends React.Component {
 			commentsTree,
 			Object.keys( this.getCommentsToShow() )
 		);
-
-		inaccessible
-			.filter( commentId => ! commentErrors[ `${ siteId }-${ commentId }` ] )
-			.forEach( commentId => {
-				nextProps.requestComment( {
-					commentId,
-					siteId,
-				} );
+		inaccessible.forEach( commentId => {
+			nextProps.requestComment( {
+				commentId,
+				siteId,
 			} );
+		} );
 	}
 
 	getParentId = ( commentsTree, childId ) =>
@@ -281,7 +277,6 @@ const ConnectedConversationCommentList = connect(
 				siteId,
 				postId,
 			} ),
-			commentErrors: getCommentErrors( state ),
 		};
 	},
 	{ requestPostComments, requestComment, setActiveReply }
