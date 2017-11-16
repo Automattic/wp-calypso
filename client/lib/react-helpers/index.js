@@ -17,10 +17,6 @@ export function concatTitle( ...parts ) {
 	return parts.join( ' › ' );
 }
 
-export function renderPage( context, component ) {
-	renderWithReduxStore( component, document.getElementById( 'primary' ), context.store );
-}
-
 export function recordPageView( path, ...title ) {
 	analytics.pageView.record( path, concatTitle( ...title ) );
 }
