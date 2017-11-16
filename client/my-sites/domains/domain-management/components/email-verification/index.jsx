@@ -15,14 +15,11 @@ import classNames from 'classnames';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { errorNotice } from 'state/notices/actions';
-import { getRegistrantWhois } from 'state/selectors';
-import QueryWhois from 'components/data/query-whois';
 
 class EmailVerificationCard extends React.Component {
 	static propTypes = {
 		changeEmailHref: PropTypes.string,
-		contactDetails: PropTypes.object,
+		contactEmail: PropTypes.string.isRequired,
 		verificationExplanation: PropTypes.array.isRequired,
 		resendVerification: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -66,7 +63,7 @@ class EmailVerificationCard extends React.Component {
 	};
 
 	renderStatus() {
-		const { changeEmailHref, translate } = this.props;
+		const { changeEmailHref, contactEmail, translate } = this.props;
 		const { emailSent, submitting } = this.state;
 		const statusClassNames = classNames( 'email-verification__status-container', {
 			waiting: ! emailSent,
@@ -74,13 +71,13 @@ class EmailVerificationCard extends React.Component {
 		} );
 		let statusIcon = 'notice-outline';
 		let statusText = translate( 'Check your email — instructions sent to %(email)s.', {
-			args: { email: this.props.contactDetails.email },
+			args: { email: contactEmail },
 		} );
 
 		if ( emailSent ) {
 			statusIcon = 'mail';
 			statusText = translate( 'Sent to %(email)s. Check your email to verify.', {
-				args: { email: this.props.contactDetails.email },
+				args: { email: contactEmail },
 			} );
 		}
 
@@ -114,29 +111,16 @@ class EmailVerificationCard extends React.Component {
 	}
 
 	render() {
-		const { verificationExplanation, selectedDomainName } = this.props;
-
-		if ( ! this.props.contactDetails ) {
-			return <QueryWhois domain={ selectedDomainName } />;
-		}
-
 		return (
 			<Card highlight="warning" className="email-verification">
-				<QueryWhois domain={ selectedDomainName } />
 				<div className="email-verification__explanation">
 					<h1 className="email-verification__heading">Important: Verify Your Email Address</h1>
-					{ verificationExplanation }
+					{ this.props.verificationExplanation }
 				</div>
-
 				{ this.renderStatus() }
 			</Card>
 		);
 	}
 }
 
-export default connect(
-	( state, ownProps ) => ( {
-		contactDetails: getRegistrantWhois( state, ownProps.selectedDomainName ),
-	} ),
-	{ errorNotice }
-)( localize( EmailVerificationCard ) );
+export default localize( EmailVerificationCard );
