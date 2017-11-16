@@ -200,9 +200,9 @@ export class Theme extends Component {
 			</span>
 		);
 
-		const width = 340;
-		const themeImgSrc = photon( screenshot, { width } );
-		const themeImgSrcDoubleDpi = photon( screenshot, { width, zoom: 2 } );
+		const fit = '479,360';
+		const themeImgSrc = photon( screenshot, { fit } );
+		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
 
 		return (
 			<Card className={ themeClass }>

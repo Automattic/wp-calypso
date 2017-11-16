@@ -72,7 +72,7 @@ describe( 'Theme', () => {
 				const { query } = parse( src, true );
 
 				expect( query ).toMatchObject( {
-					w: expect.stringMatching( /\d+/ ),
+					fit: expect.stringMatching( /\d+,\d+/ ),
 				} );
 			} );
 
