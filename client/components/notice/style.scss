@@ -88,6 +88,11 @@
 	a {
 		text-decoration: underline;
 		color: $white;
+
+		&:hover {
+			color: $white;
+			text-decoration: none;
+		}
 	}
 
 	ul {
