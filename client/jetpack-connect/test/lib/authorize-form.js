@@ -80,17 +80,11 @@ export const JETPACK_CONNECT_AUTHORIZE_LOGGED_IN = deepFreeze( {
 } );
 
 export const LOGGED_OUT_PROPS = deepFreeze( {
-	authAttempts: 0,
 	authorizationRemoteQueryData: JETPACK_CONNECT_AUTHORIZE_LOGGED_OUT.queryObject,
-	calypsoStartedConnection: false,
-	isAlreadyOnSitesList: false,
-	isFetchingAuthorizationSite: false,
-	isFetchingSites: false,
-	isLoggedIn: true,
+	isLoggedIn: false,
 	path: '/jetpack/connect/authorize',
 	recordTracksEvent: noop,
 	setTracksAnonymousUserId: noop,
-	siteSlug: SITE_SLUG,
 } );
 
 export const LOGGED_IN_PROPS = deepFreeze( {
