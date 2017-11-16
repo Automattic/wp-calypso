@@ -141,12 +141,12 @@ export default class PostQueryManager extends PaginatedQueryManager {
 				break;
 
 			case 'modified':
-				order = moment( postA.modified ).diff( postB.modified );
+				order = new Date( postA.modified ) - new Date( postB.modified );
 				break;
 
 			case 'date':
 			default:
-				order = moment( postA.date ).diff( postB.date );
+				order = new Date( postA.date ) - new Date( postB.date );
 		}
 
 		// Default to descending order, opposite sign of ordered result
