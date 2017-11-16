@@ -57,6 +57,11 @@ class PreviewToolbar extends Component {
 		analytics.tracks.recordEvent( 'calypso_editor_preview_toolbar_external_click' );
 	};
 
+	handleClosePreview = () => {
+		analytics.tracks.recordEvent( 'calypso_editor_preview_close_click' );
+		this.props.onClose();
+	};
+
 	constructor( props ) {
 		super();
 
@@ -74,7 +79,6 @@ class PreviewToolbar extends Component {
 			editUrl,
 			externalUrl,
 			isModalWindow,
-			onClose,
 			onEdit,
 			previewUrl,
 			setDeviceViewport,
@@ -87,12 +91,6 @@ class PreviewToolbar extends Component {
 			translate,
 		} = this.props;
 
-		// @todo: having trouble adding a Tracks event to the onClose event (see **HERE**)
-		// function handleClosePreview() {
-		// 	onClose;
-		// 	analytics.tracks.recordEvent( 'calypso_editor_preview_close_click' );
-		// }
-
 		const selectedDevice = this.devices[ currentDevice ];
 		const devicesToShow = showSEO ? possibleDevices.concat( 'seo' ) : possibleDevices;
 
@@ -104,7 +102,7 @@ class PreviewToolbar extends Component {
 						aria-label={ translate( 'Close preview' ) }
 						className="web-preview__close"
 						data-tip-target="web-preview__close"
-						onClick={ onClose } // **HERE**
+						onClick={ this.handleClosePreview }
 					>
 						<Gridicon icon={ isModalWindow ? 'cross' : 'arrow-left' } />
 					</Button>
