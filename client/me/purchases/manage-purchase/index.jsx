@@ -59,6 +59,7 @@ import {
 	isDomainProduct,
 	isDomainRegistration,
 	isDomainMapping,
+	isDomainTransfer,
 	isTheme,
 } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
@@ -288,7 +289,7 @@ class ManagePurchase extends Component {
 			);
 		}
 
-		if ( isDomainProduct( purchase ) ) {
+		if ( isDomainProduct( purchase ) || isDomainTransfer( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
 					<Gridicon icon="domains" size={ 54 } />
@@ -325,6 +326,11 @@ class ManagePurchase extends Component {
 						domain: selectedSite.domain,
 					},
 				}
+			);
+		} else if ( isDomainTransfer( purchase ) ) {
+			description = translate(
+				'Transfers an existing domain from another provider to WordPress.com, ' +
+					'helping you manage your site and domain in one place.'
 			);
 		}
 
