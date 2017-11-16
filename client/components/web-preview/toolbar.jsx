@@ -12,6 +12,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import { decodeURIComponentIfValid } from 'lib/url';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import SelectDropdown from 'components/select-dropdown';
@@ -121,7 +122,7 @@ class PreviewToolbar extends Component {
 				{ showUrl && (
 					<ClipboardButtonInput
 						className="web-preview__url-clipboard-input"
-						value={ externalUrl || previewUrl }
+						value={ decodeURIComponentIfValid( externalUrl || previewUrl ) }
 						hideHttp
 					/>
 				) }
