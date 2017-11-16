@@ -13,7 +13,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostRevisionChanges } from 'state/selectors';
+import { getPostRevision, getPostRevisionChanges } from 'state/selectors';
 import EditorDiffChanges from './changes';
 
 class EditorDiffViewer extends PureComponent {
@@ -48,17 +48,22 @@ class EditorDiffViewer extends PureComponent {
 	}
 
 	render() {
-		const { revisionChanges } = this.props;
-		if ( revisionChanges.tooLong ) {
-			return <div className="editor-diff-viewer">TOO LONG!</div>;
-		}
+		const { revision, revisionChanges } = this.props;
 		return (
 			<div className="editor-diff-viewer">
 				<h1 className="editor-diff-viewer__title">
-					<EditorDiffChanges changes={ revisionChanges.title } />
+					{ revisionChanges.tooLong ? (
+						revision.title
+					) : (
+						<EditorDiffChanges changes={ revisionChanges.title } />
+					) }
 				</h1>
 				<pre className="editor-diff-viewer__content">
-					<EditorDiffChanges changes={ revisionChanges.content } />
+					{ revisionChanges.tooLong ? (
+						revision.content
+					) : (
+						<EditorDiffChanges changes={ revisionChanges.content } />
+					) }
 				</pre>
 			</div>
 		);
@@ -66,5 +71,6 @@ class EditorDiffViewer extends PureComponent {
 }
 
 export default connect( ( state, { siteId, postId, selectedRevisionId } ) => ( {
+	revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
 	revisionChanges: getPostRevisionChanges( state, siteId, postId, selectedRevisionId ),
 } ) )( EditorDiffViewer );
