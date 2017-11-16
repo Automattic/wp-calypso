@@ -18,3 +18,4 @@ Over a week:
 ## Props
 
 - `date`: Date, The date to show
+- `defaultFormat`: String, Override the formatting of dates older than 1 week.
