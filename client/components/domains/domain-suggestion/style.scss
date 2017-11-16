@@ -44,9 +44,15 @@
 
 	.notice.is-compact {
 		margin: 0 0 0 8px;
+		background: $gray-light;
+		color: darken( $gray-text-min, 10% );
+
+		.notice__content {
+			padding: 4px 8px;
+		}
 	}
 
-	.notice__icon {
+	.notice__icon-wrapper {
 		display: none;
 	}
 
