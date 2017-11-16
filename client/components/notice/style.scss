@@ -161,6 +161,8 @@ a.notice__action {
 	white-space: nowrap;
 	color: lighten( $gray, 10% );
 	padding: 13px;
+	display: flex;
+	align-items: center;
 
 	@include breakpoint( ">480px" ) {
 			flex-shrink: 1;
