@@ -327,4 +327,39 @@ describe( '#jetpackConnectAuthorize()', () => {
 
 		expect( state ).toEqual( {} );
 	} );
+
+	test( 'should not auto-authorize by default', () => {
+		const state = jetpackConnectAuthorize( undefined, {
+			type: JETPACK_CONNECT_QUERY_SET,
+		} );
+		expect( state.autoAuthorize ).toEqual( false );
+	} );
+
+	test( 'should not auto-authorize non-Woo users', () => {
+		const state = jetpackConnectAuthorize( undefined, {
+			type: JETPACK_CONNECT_QUERY_SET,
+			queryObject: {
+				from: 'somewhere-else',
+			},
+		} );
+		expect( state.autoAuthorize ).toEqual( false );
+	} );
+
+	test( 'should auto-authorize Woo users', () => {
+		const stateFromWooCommerceServicesPlugin = jetpackConnectAuthorize( undefined, {
+			type: JETPACK_CONNECT_QUERY_SET,
+			queryObject: {
+				from: 'woocommerce-services-auto-authorize',
+			},
+		} );
+		expect( stateFromWooCommerceServicesPlugin.autoAuthorize ).toEqual( true );
+
+		const stateFromWooCommerceWizard = jetpackConnectAuthorize( undefined, {
+			type: JETPACK_CONNECT_QUERY_SET,
+			queryObject: {
+				from: 'woocommerce-setup-wizard',
+			},
+		} );
+		expect( stateFromWooCommerceWizard.autoAuthorize ).toEqual( true );
+	} );
 } );
