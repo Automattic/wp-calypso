@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { findIndex, get, isUndefined, map, reduce, omitBy } from 'lodash';
+import { findIndex, get, isUndefined, map, omitBy, reduce } from 'lodash';
 
 /**
  * Internal dependencies
