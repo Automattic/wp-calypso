@@ -8,7 +8,6 @@
 
 	p {
 		margin-bottom: 0;
-		opacity: 0.7;
 	}
 
 	.domain-product-price {
@@ -33,18 +32,17 @@
 
 .transfer-domain-step__domain-description {
 	font-size: 16px;
-	color: #2e4453;
-	margin-bottom: 10px;
+	margin-bottom: 20px;
 }
 
 .transfer-domain-step__go {
-	margin-top: 10px;
+	margin-top: 20px;
 	margin-bottom: 10px;
 }
 
 .transfer-domain-step__domain-heading {
 	font-size: 18px;
-	font-weight: bold;
+	font-weight: 500;
 	margin-bottom: 10px;
 }
 
@@ -55,31 +53,30 @@
 }
 
 .transfer-domain-step__map-option {
-	font-size: 14px;
-	text-align: center;
+	color: darken( $gray, 20% );
+}
+
+.transfer-domain-step__map-help {
+	color: $gray;
+	position: relative;
+	top: 2px;
 }
 
 .transfer-domain-step__precheck, .transfer-domain-step__options {
-	background: white;
+	.foldable-card.card {
+		margin-bottom: 0;
 
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
-
-	div {
-		&.foldable-card.card {
-			margin-bottom: 0;
-
-			&.is-expanded {
-				margin-top: 0;
-			}
+		&.is-expanded {
+			margin-top: 0;
 		}
 	}
 
-	.transfer-domain-step__section-heading {
-		font-weight: 500;
+	.transfer-domain-step__section {
+		display: flex;
 	}
 
 	.transfer-domain-step__unlocked {
-		color: $green-jetpack;
+		color: $alert-green;
 
 		svg {
 			padding-right: 4px;
@@ -87,40 +84,44 @@
 	}
 
 	.transfer-domain-step__section-heading-number {
-		width: 20px;
-		height: 20px;
-		line-height: 20px;
-		display: inline-block;
-		border-radius: 15px;
-		background-color: rgb(68, 68, 68);
-		color: white;
-		font-size: 13px;
+		width: 28px;
+		height: 28px;
+		line-height: 28px;
+		border-radius: 50%;
+		border: 1px solid lighten( $gray, 20% );
+		background-color: $gray-light;
+		color: darken( $gray, 20% );
+		font-size: 18px;
 		text-align: center;
-		margin-right: 5px;
+		margin-right: 15px;
+		flex-shrink: 0;
+	}
+
+	.transfer-domain-step__section-heading {
+		font-size: 16px;
+	}
+
+	.transfer-domain-step__section-explanation {
+		margin-left: 48px;
 	}
 
 	.transfer-domain-step__continue {
-		font-size: 12px;
 		display: flex;
-		flex: 1 0;
 		align-items: center;
 		justify-content: space-between;
 
-		div {
-			padding-left: 20px;
-		}
-
 		button {
-			margin: 20px;
-
-			&.transfer-domain-step__in-card {
-				margin: 0;
-			}
+			flex-shrink: 0;
+			margin-left: 15px;
 		}
 	}
 
-	.foldable-card__content {
-		font-size: 13px;
+	.transfer-domain-step__continue-text {
+		p {
+			color: darken( $gray, 10% );
+			font-size: 14px;
+			max-width: 500px;
+		}
 	}
 
 	.section-header {
@@ -138,17 +139,18 @@
 
 .transfer-domain-step__options {
 	label {
-		color: $gray;
+		color: darken( $gray, 20% );
 	}
 
 	legend {
 		small {
+			font-size: 14px;
 			padding-left: 10px;
 			color: $blue-wordpress;
 		}
 
 		color: $gray-dark;
 		margin-bottom: 0;
-		font-size: 15px;
+		font-size: 16px;
 	}
 }

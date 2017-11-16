@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
-import SectionHeader from 'components/section-header';
+import Card from 'components/card';
 import { checkInboundTransferStatus } from 'lib/domains';
 import support from 'lib/url/support';
 
@@ -65,13 +65,11 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 	getSection( heading, message, explanation, position, button ) {
 		const header = (
-			<div>
-				<div className="transfer-domain-step__section-heading">
-					<span className="transfer-domain-step__section-heading-number">{ position }</span>
-					{ heading }
-				</div>
+			<div className="transfer-domain-step__section">
+				<span className="transfer-domain-step__section-heading-number">{ position }</span>
 				<div>
-					<small>{ message }</small>
+					<strong className="transfer-domain-step__section-heading">{ heading }</strong>
+					<div className="transfer-domain-step__section-message">{ message }</div>
 				</div>
 			</div>
 		);
@@ -87,7 +85,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 				summary={ button }
 				expandedSummary={ button }
 			>
-				{ explanation }
+				<div className="transfer-domain-step__section-explanation">{ explanation }</div>
 			</FoldableCard>
 		);
 	}
@@ -175,32 +173,34 @@ class TransferDomainPrecheck extends React.PureComponent {
 	render() {
 		const { translate } = this.props;
 		const headerLabel = translate(
-			'Log into your current registrar to complete a few preliminary steps.'
+			"Let's get your domain ready to transfer. " +
+				'Log into your current registrar to complete a few preliminary steps.'
 		);
 
 		return (
 			<div className="transfer-domain-step__precheck">
-				<SectionHeader label={ headerLabel } />
+				<Card compact={ true }>{ headerLabel }</Card>
 				{ this.getStatusMessage() }
 				{ this.getPrivacyMessage() }
 				{ this.getEppMessage() }
-				<div className="transfer-domain-step__continue">
-					<div>
-						{ translate(
-							'Note: These changes can take up to 20 minutes to take effect.{{br/}}' +
-								'Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
-							{
-								components: {
-									a: <a href={ support.CALYPSO_CONTACT } rel="noopener noreferrer" />,
-									br: <br />,
-								},
-							}
-						) }
+				<Card className="transfer-domain-step__continue">
+					<div className="transfer-domain-step__continue-text">
+						<p>
+							{ translate(
+								'Note: These changes can take up to 20 minutes to take effect. ' +
+									'Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
+								{
+									components: {
+										a: <a href={ support.CALYPSO_CONTACT } rel="noopener noreferrer" />,
+									},
+								}
+							) }
+						</p>
 					</div>
-					<Button disabled={ ! this.state.unlocked } onClick={ this.onClick }>
+					<Button disabled={ ! this.state.unlocked } onClick={ this.onClick } primary={ true }>
 						{ translate( 'Continue' ) }
 					</Button>
-				</div>
+				</Card>
 			</div>
 		);
 	}

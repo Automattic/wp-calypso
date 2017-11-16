@@ -27,6 +27,7 @@ import {
 	recordGoButtonClickInMapDomain,
 } from 'state/domains/actions';
 import Notice from 'components/notice';
+import Card from 'components/card';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
@@ -121,12 +122,12 @@ class TransferDomainStep extends React.Component {
 				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="transfer-domain-step__domain-description">
 						<div className="transfer-domain-step__domain-heading">
-							{ translate( 'Use your own domain for your WordPress.com site.' ) }
+							{ translate( 'Manage your domain and site together on WordPress.com.' ) }
 						</div>
 						<div>
 							{ translate(
-								'Enter the domain you want to transfer to WordPress.com so you can manage your domain and site' +
-									" all in one place. Domains purchases in the last 60 days can't be transferred. {{a}}Learn More{{/a}}",
+								'Transfer your domain from your current provider to WordPress.com so ' +
+									'you can manage your domain and site in the same place. {{a}}Learn More{{/a}}',
 								{
 									components: { a: <a href="#" /> },
 								}
@@ -154,22 +155,28 @@ class TransferDomainStep extends React.Component {
 						{ translate( 'Transfer to WordPress.com' ) }
 					</button>
 					{ this.domainRegistrationUpsell() }
-					<div className="transfer-domain-step__map-option">
-						<p>
-							{ translate(
-								"Don't want to transfer? Keep it at your current domain provider " +
-									'and {{a}}map it{{/a}} for %(cost)s instead.',
-								{
-									args: { cost },
-									components: { a: <a href="#" onClick={ this.goToMapDomainStep } /> },
-								}
-							) }
-							<a href={ support.MAP_EXISTING_DOMAIN } rel="noopener noreferrer">
-								<Gridicon icon="help" size={ 12 } />
-							</a>
-						</p>
-					</div>
 				</form>
+
+				<Card className="transfer-domain-step__map-option">
+					<strong>{ translate( 'Manage your domain and site separately.' ) }</strong>
+					<p>
+						{ translate(
+							'Leave the domain at your current provider and {{a}}manually connect it{{/a}} to ' +
+								'your WordPress.com site for %(cost)s.',
+							{
+								args: { cost },
+								components: { a: <a href="#" onClick={ this.goToMapDomainStep } /> },
+							}
+						) }
+						<a
+							className="transfer-domain-step__map-help"
+							href={ support.MAP_EXISTING_DOMAIN }
+							rel="noopener noreferrer"
+						>
+							<Gridicon icon="help" size={ 18 } />
+						</a>
+					</p>
+				</Card>
 			</div>
 		);
 	}
