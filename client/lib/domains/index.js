@@ -66,6 +66,22 @@ function checkInboundTransferStatus( domainName, onComplete ) {
 	} );
 }
 
+function restartInboundTransfer( siteId, domainName, onComplete ) {
+	if ( ! domainName || ! siteId ) {
+		onComplete( null );
+		return;
+	}
+
+	wpcom.undocumented().restartInboundTransfer( siteId, domainName, function( serverError, result ) {
+		if ( serverError ) {
+			onComplete( serverError.error );
+			return;
+		}
+
+		onComplete( null, result );
+	} );
+}
+
 function canRedirect( siteId, domainName, onComplete ) {
 	if ( ! domainName ) {
 		onComplete( new ValidationError( 'empty_query' ) );
@@ -232,4 +248,5 @@ export {
 	isMappedDomain,
 	isRegisteredDomain,
 	isSubdomain,
+	restartInboundTransfer,
 };

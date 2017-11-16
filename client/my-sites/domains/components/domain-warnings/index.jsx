@@ -775,12 +775,13 @@ export class DomainWarnings extends React.PureComponent {
 		let compactMessage = null;
 		let message = translate( 'Transfer in Progress' );
 
+		const domainManagementLink = paths.domainManagementEdit(
+			this.props.selectedSite.slug,
+			domainInTransfer.name
+		);
+
 		const action = (
-			<NoticeAction
-				href={ paths.domainManagementEdit( this.props.selectedSite.slug, domainInTransfer ) }
-			>
-				{ translate( 'Fix' ) }
-			</NoticeAction>
+			<NoticeAction href={ domainManagementLink }>{ translate( 'Fix' ) }</NoticeAction>
 		);
 
 		switch ( domainInTransfer.transferStatus ) {
@@ -802,13 +803,11 @@ export class DomainWarnings extends React.PureComponent {
 				status = 'is-error';
 				compactMessage = translate( 'Domain transfer failed' );
 				message = translate(
-					'The transfer of {{strong}}%(domain)s{{/strong}} has been cancelled. We were unable to ' +
-						'verify the email address and authorization code within 7 days of the transfer request. ' +
-						'If you still want to transfer the domain you can {{a}}try again{{/a}}.',
+					'The transfer of {{strong}}%(domain)s{{/strong}} has failed. {{a}}More info{{/a}}',
 					{
 						components: {
 							strong: <strong />,
-							a: <a href="#" />,
+							a: <a href={ domainManagementLink } />,
 						},
 						args: { domain: domainInTransfer.name },
 					}
