@@ -52,3 +52,9 @@
 .taxes__placeholder .card {
 	@include placeholder();
 }
+
+.taxes__tax-jar-info p {
+	&:last-child {
+		margin-bottom: 0;
+	}
+}

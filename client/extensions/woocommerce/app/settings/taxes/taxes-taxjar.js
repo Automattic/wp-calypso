@@ -46,8 +46,8 @@ class SettingsTaxesTaxJar extends Component {
 			<Main className={ classNames( 'settings-taxes', className ) }>
 				<ActionHeader breadcrumbs={ breadcrumbs } />
 				<SettingsNavigation activeSection="taxes" />
-				<div className="taxes__tax-jar">
-					<Card>
+				<div>
+					<Card className="taxes__tax-jar-info">
 						<p>
 							{ translate(
 								"Your store's taxes are being managed by the {{b}}TaxJar - Sales Tax Automation " +
@@ -69,7 +69,7 @@ class SettingsTaxesTaxJar extends Component {
 									"{{b}}we'll still handle sales tax calculations for you{{/b}}.",
 								{
 									components: {
-										a: <a href={ pluginUrl } className="taxes__tax-jar-deactivate" />,
+										a: <a href={ pluginUrl } />,
 										b: <strong />,
 									},
 								}
