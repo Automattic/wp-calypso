@@ -20,8 +20,8 @@ import { shallow } from 'enzyme';
  */
 import { Theme } from '../';
 
-jest.mock( 'components/popover/menu', () => require( 'components/empty-component' ) );
-jest.mock( 'components/popover/menu-item', () => require( 'components/empty-component' ) );
+jest.mock( 'components/popover/menu', () => 'components--popover--menu' );
+jest.mock( 'components/popover/menu-item', () => 'components--popover--menu-item' );
 jest.mock( 'lib/user', () => () => {} );
 
 describe( 'Theme', () => {
@@ -94,6 +94,11 @@ describe( 'Theme', () => {
 
 				assert( more.length === 1, 'More button container not found' );
 				assert( more[ 0 ].getElementsByTagName( 'button' ).length === 1, 'More button not found' );
+			} );
+
+			test( 'should match snapshot', () => {
+				const rendered = shallow( <Theme { ...props } /> );
+				expect( rendered ).toMatchSnapshot();
 			} );
 		} );
 
