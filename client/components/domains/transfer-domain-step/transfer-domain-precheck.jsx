@@ -16,6 +16,7 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import Card from 'components/card';
+import FormattedHeader from 'components/formatted-header';
 import { checkInboundTransferStatus } from 'lib/domains';
 import support from 'lib/url/support';
 
@@ -175,16 +176,27 @@ class TransferDomainPrecheck extends React.PureComponent {
 		return this.getSection( heading, message, explanation, 3 );
 	}
 
+	getHeader() {
+		const { translate } = this.props;
+
+		return (
+			<Card compact={ true } className="transfer-domain-step__title">
+				<FormattedHeader
+					headerText={ translate( "Let's get your domain ready to transfer." ) }
+					subHeaderText={ translate(
+						'Log into your current registrar to complete a few preliminary steps.'
+					) }
+				/>
+			</Card>
+		);
+	}
+
 	render() {
 		const { translate } = this.props;
-		const headerLabel = translate(
-			"Let's get your domain ready to transfer. " +
-				'Log into your current registrar to complete a few preliminary steps.'
-		);
 
 		return (
 			<div className="transfer-domain-step__precheck">
-				<Card compact={ true }>{ headerLabel }</Card>
+				{ this.getHeader() }
 				{ this.getStatusMessage() }
 				{ this.getPrivacyMessage() }
 				{ this.getEppMessage() }
