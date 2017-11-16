@@ -49,11 +49,9 @@ class PostListWrapper extends React.Component {
 		return (
 			<div>
 				{ config.isEnabled( 'posts/post-type-list' ) &&
-				abtest( 'condensedPostList' ) === 'condensedPosts' ? (
-					this.renderPostTypeList()
-				) : (
-					this.renderPostList()
-				) }
+				abtest( 'condensedPostList' ) === 'condensedPosts'
+					? this.renderPostTypeList()
+					: this.renderPostList() }
 			</div>
 		);
 	}
