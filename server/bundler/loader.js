@@ -16,8 +16,7 @@ function getSectionsModule( sections ) {
 			"\tcontroller = require( 'controller' ),",
 			"\trestoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
 			"\tpreloadHub = require( 'sections-preload' ).hub,",
-			"\tswitchCSS = require( 'lib/i18n-utils/switch-locale' ).switchCSS,",
-			"\tdebug = require( 'debug' )( 'calypso:bundler:loader' );",
+			"\tswitchCSS = require( 'lib/i18n-utils/switch-locale' ).switchCSS;",
 			'\n',
 			'var _loadedSections = {};\n',
 		].join( '\n' );
@@ -33,14 +32,14 @@ function getSectionsModule( sections ) {
 		return [
 			dependencies,
 			'function preload( sectionName ) {',
-			'	var loadCSS = function( sectionName, cssUrls ) {',
-			'		var url = cssUrls.ltr;',
+			'	var loadCSS = function( id, urls ) {',
+			'		var url = urls.ltr;',
 			'',
 			'		if ( typeof document !== \'undefined\' && document.documentElement.dir === \'rtl\' ) {',
-			'			url = cssUrls.rtl;',
+			'			url = urls.rtl;',
 			'		}',
 			'',
-			'		switchCSS( \'section-css\', url );',
+			'		switchCSS( \'section-css-\' + id, url );',
 			'	};',
 			'',
 			'	switch ( sectionName ) {',
@@ -169,19 +168,16 @@ function requireTemplate( section ) {
 }
 
 function getSectionPreLoaderTemplate( section ) {
-	let cssLoader = '', bundleTypes = 'Javascript';
+	let cssLoader = '';
 
-	if ( section.cssUrls ) {
-		cssLoader = `loadCSS( 'section-css', ${ JSON.stringify( section.cssUrls ) } );`;
-		bundleTypes += ' and CSS';
+	if ( section.css ) {
+		cssLoader = `loadCSS( ${ JSON.stringify( section.css.id ) }, ${ JSON.stringify( section.css.urls ) } );`;
 	}
 
 	const sectionNameString = JSON.stringify( section.name );
 
 	return `
 		case ${ sectionNameString }:
-			debug( 'Pre-loading ${ bundleTypes } for ${ sectionNameString } section' );
-
 			${ cssLoader }
 
 			return require.ensure( [], function() {}, ${ sectionNameString } );
@@ -190,7 +186,10 @@ function getSectionPreLoaderTemplate( section ) {
 
 function sectionsWithCSSUrls( sections ) {
 	return sections.map( section => Object.assign( {}, section, section.css && {
-		cssUrls: utils.getCssUrls( section.css ),
+		css: {
+			id: section.css,
+			urls: utils.getCssUrls( section.css ),
+		},
 	} ) );
 }
 
