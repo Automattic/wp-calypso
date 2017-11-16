@@ -37,6 +37,7 @@ export class ChecklistHeader extends PureComponent {
 			? translate( 'Show completed' )
 			: translate( 'Hide completed' );
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Card compact className="checklist-header">
 				<div className="checklist-header__main">
@@ -47,14 +48,24 @@ export class ChecklistHeader extends PureComponent {
 					<ProgressBar compact total={ total } value={ completed } />
 				</div>
 				<div className="checklist-header__secondary">
-					<label htmlFor={ `checklist-header-${ this.index }` } className="checklist-header__summary">{ buttonText }</label>
-					<button id={ `checklist-header-${ this.index }` } className="checklist-header__action" onClick={ this.props.onClick }>
+					<label
+						htmlFor={ `checklist-header-${ this.index }` }
+						className="checklist-header__summary"
+					>
+						{ buttonText }
+					</label>
+					<button
+						id={ `checklist-header-${ this.index }` }
+						className="checklist-header__action"
+						onClick={ this.props.onClick }
+					>
 						<ScreenReaderText>{ buttonText }</ScreenReaderText>
 						<Gridicon icon="chevron-down" />
 					</button>
 				</div>
 			</Card>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

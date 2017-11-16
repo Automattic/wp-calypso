@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop, omit } from 'lodash';
+import { noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -44,10 +44,26 @@ export class ChecklistTask extends PureComponent {
 	};
 
 	render() {
-		const { completed, completedTitle, completedButtonText, description, duration, title, translate } = this.props;
+		const {
+			completed,
+			completedTitle,
+			completedButtonText,
+			description,
+			duration,
+			title,
+			translate,
+		} = this.props;
+		const hasActionlink = completed && completedButtonText;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Card compact className={ classNames( 'checklist-task', { 'is-completed': completed, 'has-actionlink': completed && completedButtonText  } ) }>
+			<Card
+				compact
+				className={ classNames( 'checklist-task', {
+					'is-completed': completed,
+					'has-actionlink': hasActionlink,
+				} ) }
+			>
 				<div className="checklist-task__primary">
 					<h5 className="checklist-task__title">{ ( completed && completedTitle ) || title }</h5>
 					<p className="checklist-task__description">{ description }</p>
@@ -59,7 +75,7 @@ export class ChecklistTask extends PureComponent {
 				</div>
 				<div className="checklist-task__secondary">
 					<Button className="checklist-task__action" onClick={ this.handleClick }>
-						{ completed && completedButtonText ? translate( completedButtonText ) : translate( 'Do it!' ) }
+						{ hasActionlink ? completedButtonText : translate( 'Do it!' ) }
 					</Button>
 					{ duration && (
 						<small className="checklist-task__duration">
@@ -67,12 +83,21 @@ export class ChecklistTask extends PureComponent {
 						</small>
 					) }
 				</div>
-				<span className="checklist-task__icon" onClick={ this.handleToggle } tabIndex="0" role="button" aria-pressed={ completed ? 'true' : 'false' }>
-					<ScreenReaderText>{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }</ScreenReaderText>
+				<span
+					className="checklist-task__icon"
+					onClick={ this.handleToggle }
+					tabIndex="0"
+					role="button"
+					aria-pressed={ completed ? 'true' : 'false' }
+				>
+					<ScreenReaderText>
+						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
+					</ScreenReaderText>
 					{ completed && <Gridicon icon="checkmark" size={ 18 } /> }
 				</span>
 			</Card>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
