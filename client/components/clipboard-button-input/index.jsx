@@ -17,7 +17,7 @@ import { connect } from 'react-redux';
 import { withoutHttp } from 'lib/url';
 import ClipboardButton from 'components/forms/clipboard-button';
 import FormTextInput from 'components/forms/form-text-input';
-import { composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import recordTracksEvent from 'state/analytics/actions';
 
 class ClipboardButtonInputExport extends React.Component {
 	constructor( props ) {
@@ -56,7 +56,7 @@ class ClipboardButtonInputExport extends React.Component {
 				isCopied: false,
 			} );
 		}, 4000 );
-		this.props.wpcomEditorToolbarWebPreviewClipboardUrlButtonClick();
+		this.props.recordTracksEvent( 'calypso_editor_clipboard_url_button_click' );
 	};
 
 	render() {
@@ -87,9 +87,6 @@ class ClipboardButtonInputExport extends React.Component {
 	}
 }
 
-const wpcomEditorToolbarWebPreviewClipboardUrlButtonClick = () =>
-	composeAnalytics( recordTracksEvent( 'calypso_editor_clipboard_url_button_click', {} ) );
-
 export default connect( null, {
-	wpcomEditorToolbarWebPreviewClipboardUrlButtonClick,
+	recordTracksEvent,
 } )( localize( ClipboardButtonInputExport ) );

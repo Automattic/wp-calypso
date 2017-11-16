@@ -21,7 +21,7 @@ import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isMobile } from 'lib/viewport';
-import { composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import recordTracksEvent from 'state/analytics/actions';
 
 export class EditorNotice extends Component {
 	static propTypes = {
@@ -37,11 +37,11 @@ export class EditorNotice extends Component {
 	};
 
 	handlePillExternalClick = () => {
-		this.props.wpcomEditorToolbarWebPreviewPillExternalClick();
+		this.props.recordTracksEvent( 'calypso_editor_pill_site_external_click' );
 	};
 
-	handlePillAddAnotherPagePromptClick = () => {
-		this.props.wpcomEditorToolbarWebPreviewAddPagePromptClick();
+	handlePillAddPagePromptClick = () => {
+		this.props.recordTracksEvent( 'calypso_editor_pill_add_page_prompt_click' );
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -131,10 +131,7 @@ export class EditorNotice extends Component {
 								</a>
 							),
 							a: (
-								<a
-									href={ `/page/${ site.slug }` }
-									onClick={ this.handlePillAddAnotherPagePromptClick }
-								/>
+								<a href={ `/page/${ site.slug }` } onClick={ this.handlePillAddPagePromptClick } />
 							),
 						},
 						comment:
@@ -360,12 +357,6 @@ export class EditorNotice extends Component {
 	}
 }
 
-const wpcomEditorToolbarWebPreviewPillExternalClick = () =>
-	composeAnalytics( recordTracksEvent( 'calypso_editor_pill_site_external_click', {} ) );
-
-const wpcomEditorToolbarWebPreviewAddPagePromptClick = () =>
-	composeAnalytics( recordTracksEvent( 'calypso_editor_pill_add_page_prompt_click', {} ) );
-
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
@@ -383,7 +374,6 @@ export default connect(
 	},
 	{
 		setLayoutFocus,
-		wpcomEditorToolbarWebPreviewPillExternalClick,
-		wpcomEditorToolbarWebPreviewAddPagePromptClick,
+		recordTracksEvent,
 	}
 )( localize( EditorNotice ) );

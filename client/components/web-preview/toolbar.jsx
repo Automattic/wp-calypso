@@ -18,7 +18,7 @@ import Button from 'components/button';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import ClipboardButtonInput from 'components/clipboard-button-input';
-import { composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import recordTracksEvent from 'state/analytics/actions';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 
@@ -55,11 +55,11 @@ class PreviewToolbar extends Component {
 	};
 
 	handleEditorWebPreviewExternalClick = () => {
-		this.props.wpcomEditorToolbarWebPreviewExternalClick();
+		this.props.recordTracksEvent( 'calypso_editor_preview_toolbar_external_click' );
 	};
 
 	handleEditorWebPreviewClose = () => {
-		this.props.wpcomEditorToolbarWebPreviewClose();
+		this.props.recordTracksEvent( 'calypso_editor_preview_close_click' );
 		this.props.onClose();
 	};
 
@@ -160,13 +160,6 @@ class PreviewToolbar extends Component {
 	}
 }
 
-const wpcomEditorToolbarWebPreviewExternalClick = () =>
-	composeAnalytics( recordTracksEvent( 'calypso_editor_preview_toolbar_external_click', {} ) );
-
-const wpcomEditorToolbarWebPreviewClose = () =>
-	composeAnalytics( recordTracksEvent( 'calypso_editor_preview_close_click', {} ) );
-
 export default connect( null, {
-	wpcomEditorToolbarWebPreviewExternalClick,
-	wpcomEditorToolbarWebPreviewClose,
+	recordTracksEvent,
 } )( localize( PreviewToolbar ) );
