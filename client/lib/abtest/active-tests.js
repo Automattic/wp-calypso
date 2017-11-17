@@ -117,6 +117,15 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	buttonsColorOnPostSignup: {
+		datestamp: '20171108',
+		variations: {
+			keep: 50,
+			change: 50,
+		},
+		defaultVariation: 'keep',
+		allowExistingUsers: true,
+	},
 	condensedPostList: {
 		datestamp: '20171113',
 		variations: {
