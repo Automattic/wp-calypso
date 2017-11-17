@@ -131,9 +131,9 @@ export function serverRender( req, res ) {
 	context.config = config.ssrConfig;
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		res.render( 'desktop.jade', context );
+		res.render( 'desktop', context );
 	} else {
-		res.render( 'index.jade', context );
+		res.render( 'index', context );
 	}
 }
 
@@ -144,7 +144,7 @@ export function serverRenderError( err, req, res, next ) {
 		}
 		req.error = err;
 		res.status( err.status || 500 );
-		res.render( '500.jade', req.context );
+		res.render( '500', req.context );
 		return;
 	}
 
