@@ -8,28 +8,15 @@
 		margin-bottom: 16px;
 	}
 
+	img {
+	}
+
 	p {
 		color: $gray-text-min;
 		font-size: 14px;
 
 		&:last-child {
 			margin-bottom: 0;
-		}
-	}
-	
-	@include breakpoint( ">960px" ) {
-		text-align: left;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-
-		&.is-third-width {
-			flex: none;
-			min-width: 30%;
-		}
-
-		&.is-two-thirds-width {
-			flex: 1;
 		}
 	}
 }

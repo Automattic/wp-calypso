@@ -1,14 +1,26 @@
 @include breakpoint( ">960px" ) {
 	.dashboard-widget-row {
 		display: flex;
+		align-items: flex-start;
 
-		div {
-			margin-left: 8px;
-			flex-grow: 1;
-		}
+		.dashboard-widget {
+			margin-right: 16px;
 
-		div:first-child {
-			margin-left: 0px;
+			&:last-child {
+				margin-right: 0;
+			}
+
+			@include breakpoint( ">960px" ) {
+				text-align: left;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				flex: 1;
+
+				&.is-two-thirds-width {
+					flex: 2;
+				}
+			}
 		}
 	}
 }
