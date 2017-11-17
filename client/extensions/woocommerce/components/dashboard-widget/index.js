@@ -23,20 +23,20 @@ const DashboardWidget = props => {
 		'is-flush-image': imageFlush,
 	} );
 
-	const imageComponent = <img src={ image } />;
+	const imageComponent = <img className="dashboard-widget__image" src={ image } />;
 
 	return (
 		<Card className={ classes }>
-			{ isTopImage && imageComponent }
 			<div className="dashboard-widget__content">
+				{ isTopImage && imageComponent }
 				{ image && 'left' === imagePosition && imageComponent }
 				<div className="dashboard-widget__children">
 					{ title && <h2>{ title }</h2> }
 					{ children }
 				</div>
 				{ image && 'right' === imagePosition && imageComponent }
+				{ image && 'bottom' === imagePosition && imageComponent }
 			</div>
-			{ image && 'bottom' === imagePosition && imageComponent }
 		</Card>
 	);
 };

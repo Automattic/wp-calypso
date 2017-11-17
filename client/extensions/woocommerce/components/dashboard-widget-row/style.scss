@@ -1,25 +1,28 @@
-@include breakpoint( ">960px" ) {
-	.dashboard-widget-row {
-		display: flex;
-		align-items: flex-start;
+.dashboard-widget-row {
+	display: flex;
+	align-items: flex-start;
+	flex-direction: column;
 
-		.dashboard-widget {
-			margin-right: 16px;
+	@include breakpoint( ">660px" ) {
+		flex-direction: row;
+	}
 
-			&:last-child {
-				margin-right: 0;
-			}
+	.dashboard-widget {
+		margin-right: 16px;
 
-			@include breakpoint( ">960px" ) {
-				text-align: left;
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				flex: 1;
+		@include breakpoint( "<660px" ) {
+			width: 100%;
+		}
 
-				&.is-two-thirds-width {
-					flex: 2;
-				}
+		&:last-child {
+			margin-right: 0;
+		}
+
+		@include breakpoint( ">660px" ) {
+			flex: 1;
+
+			&.is-two-thirds-width {
+				flex: 2;
 			}
 		}
 	}
