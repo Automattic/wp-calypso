@@ -51,7 +51,7 @@ class EditorDiffViewer extends PureComponent {
 	render() {
 		const { revision, revisionChanges } = this.props;
 		const classes = classNames( 'editor-diff-viewer', {
-			'is-loading': ! has( revisionChanges, 'title[0].value' ),
+			'is-loading': ! ( revisionChanges.tooLong || has( revisionChanges, 'title[0].value' ) ),
 		} );
 		return (
 			<div className={ classes }>
