@@ -9,9 +9,10 @@ Code modification scripts, also known as codemods, are transformation scripts th
 
 ## Getting started
 
-Install calypso-codemods using `npm`:
+Install calypso-codemods using `npm` or `yarn`:
 ```
 npm install -g calypso-codemods
+yarn add global calypso-codemods
 ```
 
 Now you can run codemods using the following cli:
@@ -92,4 +93,21 @@ calypso-codemods commonjs-imports,commonjs-exports,named-export-from-default cli
 	- Note: It only needs to be run twice because of a bug where in certain cases an extra newline is added
 	on the first run.  The second run removes the extra newline.
 
-## Writing your own codemods
+## Contributing codemods
+### Write the transform
+Write your transform using the standard jscodeshift api and place it in the transforms directory.
+You can look at the current directory for inspiration.
+
+### Add some tests!
+calypso-codemods uses jest snapshots to maintain its tests.
+in order to easily add tests for a new transform, follow these steps:
+
+1. add a directory to `tests` with the exact same name as the added transform. 
+2. add a file named `codemod.spec.js` with this as its contents contents:
+```javascript
+test_folder(__dirname);
+```
+3. add any input files to the folder that you wish to be tested
+4. run `npm test` or `yarn test`. if the tests fail, its usually because a snapshot would be modified and behavior has changed. If you've verified that the updated snapshots look correct, then you can update the snapshots with: `yarn test -- -u`.
+
+5. make sure to commit any modified snapshots and include it in your pull request
