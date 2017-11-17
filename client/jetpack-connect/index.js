@@ -55,14 +55,14 @@ export default function() {
 	page( '/jetpack/connect/akismet', '/jetpack/connect/store' );
 	page( '/jetpack/connect/akismet/:interval', redirectToStoreWithInterval );
 
+	page( '/jetpack/connect/plans/:site?', siteSelection, controller.plansSelection );
+	page( '/jetpack/connect/plans/:interval/:site', siteSelection, controller.plansSelection );
+
 	page(
 		'/jetpack/connect/:locale?',
 		controller.redirectWithoutLocaleifLoggedIn,
 		controller.connect
 	);
-
-	page( '/jetpack/connect/plans/:site', siteSelection, controller.plansSelection );
-	page( '/jetpack/connect/plans/:interval/:site', siteSelection, controller.plansSelection );
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso );
 	page( '/jetpack/sso/*', controller.sso );
