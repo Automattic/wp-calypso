@@ -236,6 +236,7 @@ export default {
 		const analyticsBasePath = basePath + '/:site';
 
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
+		analytics.tracks.recordEvent( 'calypso_plans_pre_selection' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 		renderWithReduxStore(
