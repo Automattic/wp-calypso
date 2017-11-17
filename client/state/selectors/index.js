@@ -48,6 +48,7 @@ export getImageEditorIsGreaterThanMinimumDimensions from './get-image-editor-is-
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
 export getJetpackConnectRedirectAfterAuth from './get-jetpack-connect-redirect-after-auth';
+export getJetpackConnectJetpackVersion from './get-jetpack-connect-jetpack-version';
 export getJetpackCredentials from './get-jetpack-credentials';
 export getJetpackJumpstartStatus from './get-jetpack-jumpstart-status';
 export getJetpackModule from './get-jetpack-module';
