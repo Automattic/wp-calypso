@@ -1,21 +1,10 @@
 .posts.main {
 	display: block;
 	max-width: 720px;
-
-	@include breakpoint( ">1280px" ) {
-		display: flex;
-		max-width: 1440px;
-		justify-content: center;
-	}
 }
 
 .posts__primary {
-	flex-grow: 1;
 	max-width: 720px;
-
-	@include breakpoint( ">1280px" ) {
-		min-width: 520px;
-	}
 }
 
 .posts__list {
