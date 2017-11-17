@@ -295,33 +295,6 @@ export default function transformer( file, api ) {
 		.replaceWith( ensureNextMiddleware )
 		.forEach( transformReactDomRender );
 
-	// Find if `ReactDom` is used
-	const reactDomDefs = root.find( j.MemberExpression, {
-		object: {
-			name: 'ReactDom',
-		},
-	} );
-
-	// Remove stranded `react-dom` imports
-	if ( ! reactDomDefs.size() ) {
-		const importReactDom = root.find( j.ImportDeclaration, {
-			specifiers: [
-				{
-					local: {
-						name: 'ReactDom',
-					},
-				},
-			],
-			source: {
-				value: 'react-dom',
-			},
-		} );
-
-		if ( importReactDom.size() ) {
-			removeImport( importReactDom );
-		}
-	}
-
 	// Transform `renderWithReduxStore()` to `context.primary/secondary`
 	root
 		.find( j.CallExpression, {
@@ -376,6 +349,33 @@ export default function transformer( file, api ) {
 		// Ensures we remove only nodes containing `document.getElementById( 'secondary' )`
 		.filter( p => _.get( p, 'value.arguments[0].arguments[0].value' ) === 'secondary' )
 		.remove();
+
+	// Find if `ReactDom` is used
+	const reactDomDefs = root.find( j.MemberExpression, {
+		object: {
+			name: 'ReactDom',
+		},
+	} );
+
+	// Remove stranded `react-dom` imports
+	if ( ! reactDomDefs.size() ) {
+		const importReactDom = root.find( j.ImportDeclaration, {
+			specifiers: [
+				{
+					local: {
+						name: 'ReactDom',
+					},
+				},
+			],
+			source: {
+				value: 'react-dom',
+			},
+		} );
+
+		if ( importReactDom.size() ) {
+			removeImport( importReactDom );
+		}
+	}
 
 	// Add makeLayout and clientRender middlewares to route definitions
 	const routeDefs = root
