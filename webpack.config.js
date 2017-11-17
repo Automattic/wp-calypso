@@ -253,14 +253,14 @@ if ( process.env.DASHBOARD ) {
 	webpackConfig.plugins.unshift( new DashboardPlugin() );
 }
 
-if ( process.env.WEBPACK_OUTPUT_JSON || ! isDevelopment ) {
+if ( ! isDevelopment ) {
 	webpackConfig.devtool = 'cheap-module-source-map';
 	webpackConfig.plugins.push(
 		new UglifyJsPlugin( {
 			cache: true,
 			parallel: true,
 			uglifyOptions: { ecma: 5 },
-			sourceMap: isDevelopment,
+			sourceMap: false,
 		} )
 	);
 }
