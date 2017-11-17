@@ -117,6 +117,45 @@ export default function transformer( file, api ) {
 	}
 
 	/**
+	 * Catch simple redirect middlewares by looking for `page.redirect()`
+	 *
+	 * @example
+	 * // Middleware could look like this:
+	 * () => page.redirect('/foo')
+	 *
+	 * // ...or this:
+	 * context => { page.redirect(`/foo/${context.bar}`) }
+	 *
+	 * // ...or even:
+	 * () => {
+	 *   if (true) {
+	 *      page.redirect('/foo');
+     *   } else {
+	 *      page.redirect('/bar');
+     *   }
+	 * }
+	 *
+	 * @param {object} node
+	 * @returns {boolean} True if any `page.redirect()` exist inside the function node, otherwise False
+	 */
+	function isRedirectMiddleware( node ) {
+		return (
+			j( node )
+				.find( j.MemberExpression, {
+					object: {
+						type: 'Identifier',
+						name: 'page',
+					},
+					property: {
+						type: 'Identifier',
+						name: 'redirect',
+					},
+				} )
+				.size() > 0
+		);
+	}
+
+	/**
 	 * Ensure `context` is among params
 	 *
 	 * @param {object} path Path object that wraps a single node
@@ -387,17 +426,11 @@ export default function transformer( file, api ) {
 		.filter( p => {
 			const lastArgument = _.last( p.value.arguments );
 
-			// Catch simple `() => page.redirect( '/' )` -redirect middlewares
-			const isPageRedirect = node =>
-				node.type === 'ArrowFunctionExpression' &&
-				_.get( node, 'body.callee.object.name' ) === 'page' &&
-				_.get( node, 'body.callee.property.name' ) === 'redirect';
-
 			return (
 				p.value.arguments.length > 1 &&
 				p.value.arguments[ 0 ].value !== '*' &&
-				lastArgument.type !== 'Literal' &&
-				! isPageRedirect( lastArgument )
+				[ 'Identifier', 'MemberExpression' ].indexOf( lastArgument.type ) > -1 &&
+				! isRedirectMiddleware( lastArgument )
 			);
 		} )
 		.forEach( p => {
