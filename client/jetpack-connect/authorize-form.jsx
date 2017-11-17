@@ -6,7 +6,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -49,18 +48,6 @@ class JetpackConnectAuthorizeForm extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
 	}
 
-	isSSO() {
-		const cookies = cookie.parse( document.cookie );
-		const query = this.props.authorizationRemoteQueryData;
-		return (
-			query.from &&
-			'sso' === query.from &&
-			cookies.jetpack_sso_approved &&
-			query.client_id &&
-			query.client_id === cookies.jetpack_sso_approved
-		);
-	}
-
 	handleClickHelp = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
@@ -85,7 +72,7 @@ class JetpackConnectAuthorizeForm extends Component {
 
 	renderForm() {
 		return this.props.isLoggedIn ? (
-			<LoggedInForm isSSO={ this.isSSO() } />
+			<LoggedInForm />
 		) : (
 			<LoggedOutForm local={ this.props.locale } path={ this.props.path } />
 		);

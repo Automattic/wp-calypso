@@ -5,11 +5,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import addQueryArgs from 'lib/route/add-query-args';
+import cookie from 'cookie';
 import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
-import { includes, startsWith } from 'lodash';
+import { get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -72,8 +73,6 @@ const PRESSABLE_PARTNER_ID = 49640;
 
 class LoggedInForm extends Component {
 	static propTypes = {
-		isSSO: PropTypes.bool,
-
 		// Connected props
 		authAttempts: PropTypes.number.isRequired,
 		authorizationData: PropTypes.shape( {
@@ -123,7 +122,7 @@ class LoggedInForm extends Component {
 
 		// isSSO is a separate case from the rest since we have already validated
 		// it in authorize-form.jsx. Therefore, if it's set, just authorize and redirect.
-		if ( this.props.isSSO || doAutoAuthorize ) {
+		if ( this.isSso() || doAutoAuthorize ) {
 			debug( 'Authorizing automatically on component mount' );
 			this.setState( { haveAuthorized: true } );
 			return authorize( queryObject );
@@ -140,10 +139,8 @@ class LoggedInForm extends Component {
 			authorizeError,
 		} = nextProps.authorizationData;
 
-		// For SSO, WooCommerce Services, and JPO users, do not display plans page
-		// Instead, redirect back to admin as soon as we're connected
 		if (
-			nextProps.isSSO ||
+			nextProps.isSso( nextProps ) ||
 			this.isWoo( nextProps ) ||
 			this.isFromJpo( nextProps ) ||
 			this.shouldRedirectJetpackStart( nextProps )
@@ -178,7 +175,7 @@ class LoggedInForm extends Component {
 		const { from } = this.props;
 
 		if (
-			this.props.isSSO ||
+			this.isSso() ||
 			this.isWoo() ||
 			this.isFromJpo() ||
 			this.shouldRedirectJetpackStart( this.props )
@@ -188,7 +185,7 @@ class LoggedInForm extends Component {
 				'Connection initiated via: ',
 				from,
 				'SSO found:',
-				this.props.isSSO
+				this.isSso()
 			);
 			goBackToWpAdmin( redirectAfterAuth );
 		} else {
@@ -200,6 +197,21 @@ class LoggedInForm extends Component {
 		return startsWith( from, 'jpo' );
 	}
 
+	isSso( props ) {
+		const cookies = cookie.parse( document.cookie );
+		const client_id = get( props, [ 'authorizeData', 'queryObject' ] );
+		return (
+			'sso' === props.from &&
+			cookies.jetpack_sso_approved &&
+			client_id &&
+			client_id === cookies.jetpack_sso_approved
+		);
+	}
+
+	isWoo( { from } = this.props ) {
+		return includes( [ 'woocommerce-setup-wizard', 'woocommerce-services' ], from );
+	}
+
 	shouldRedirectJetpackStart( { partnerId } ) {
 		const partnerRedirectFlag = config.isEnabled(
 			'jetpack/connect-redirect-pressable-credential-approval'
@@ -209,10 +221,6 @@ class LoggedInForm extends Component {
 		// a credential approval screen. Otherwise, we need to redirect all other partners back
 		// to wp-admin.
 		return partnerRedirectFlag ? partnerId && PRESSABLE_PARTNER_ID !== partnerId : partnerId;
-	}
-
-	isWoo( { from } = this.props ) {
-		return includes( [ 'woocommerce-setup-wizard', 'woocommerce-services' ], from );
 	}
 
 	handleClickDisclaimer = () => {
