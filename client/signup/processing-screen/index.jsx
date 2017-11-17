@@ -188,7 +188,7 @@ export class SignupProcessingScreen extends Component {
 
 	handleClickUpgradeButton = () => {
 		this.handleClick(
-			'upgrade`_plan',
+			'upgrade_plan',
 			this.state.siteSlug ? `/plans/${ this.state.siteSlug }` : ''
 		);
 	};
