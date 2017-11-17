@@ -25,7 +25,15 @@
 				justify-content: space-between;
 
 				.dashboard-widget__image {
-					max-width: 50%;
+					max-width: 328px;
+				}
+			}
+
+			&.is-flush-image {
+				.dashboard-widget__content {
+					.dashboard-widget__image {
+						max-width: 352px;
+					}
 				}
 			}
 
@@ -109,10 +117,10 @@
 		}
 	}
 
-	h2 {
-		font-size: 24px;
-		line-height: 1.2em;
-		margin-bottom: 16px;
+	.dashboard-widget__title {
+		font-size: 16px;
+		font-weight: 600;
+		margin-bottom: 6px;
 	}
 
 	.dashboard-widget__image {

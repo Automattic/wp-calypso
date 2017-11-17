@@ -31,7 +31,7 @@ const DashboardWidget = props => {
 				{ isTopImage && imageComponent }
 				{ image && 'left' === imagePosition && imageComponent }
 				<div className="dashboard-widget__children">
-					{ title && <h2>{ title }</h2> }
+					{ title && <h2 className="dashboard-widget__title">{ title }</h2> }
 					{ children }
 				</div>
 				{ image && 'right' === imagePosition && imageComponent }
