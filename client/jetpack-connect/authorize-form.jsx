@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import cookie from 'cookie';
-import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,13 +61,6 @@ class JetpackConnectAuthorizeForm extends Component {
 		);
 	}
 
-	isWoo() {
-		const wooSlugs = [ 'woocommerce-setup-wizard', 'woocommerce-services' ];
-		const jetpackConnectSource = get( this.props, 'authorizationRemoteQueryData.from' );
-
-		return includes( wooSlugs, jetpackConnectSource );
-	}
-
 	handleClickHelp = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
@@ -93,7 +85,7 @@ class JetpackConnectAuthorizeForm extends Component {
 
 	renderForm() {
 		return this.props.isLoggedIn ? (
-			<LoggedInForm isSSO={ this.isSSO() } isWoo={ this.isWoo() } />
+			<LoggedInForm isSSO={ this.isSSO() } />
 		) : (
 			<LoggedOutForm local={ this.props.locale } path={ this.props.path } />
 		);

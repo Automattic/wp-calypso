@@ -9,8 +9,8 @@ import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
+import { includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -73,7 +73,6 @@ const PRESSABLE_PARTNER_ID = 49640;
 class LoggedInForm extends Component {
 	static propTypes = {
 		isSSO: PropTypes.bool,
-		isWoo: PropTypes.bool,
 
 		// Connected props
 		authAttempts: PropTypes.number.isRequired,
@@ -145,7 +144,7 @@ class LoggedInForm extends Component {
 		// Instead, redirect back to admin as soon as we're connected
 		if (
 			nextProps.isSSO ||
-			nextProps.isWoo ||
+			this.isWoo( nextProps ) ||
 			this.isFromJpo( nextProps ) ||
 			this.shouldRedirectJetpackStart( nextProps )
 		) {
@@ -180,7 +179,7 @@ class LoggedInForm extends Component {
 
 		if (
 			this.props.isSSO ||
-			this.props.isWoo ||
+			this.isWoo() ||
 			this.isFromJpo() ||
 			this.shouldRedirectJetpackStart( this.props )
 		) {
@@ -210,6 +209,10 @@ class LoggedInForm extends Component {
 		// a credential approval screen. Otherwise, we need to redirect all other partners back
 		// to wp-admin.
 		return partnerRedirectFlag ? partnerId && PRESSABLE_PARTNER_ID !== partnerId : partnerId;
+	}
+
+	isWoo( { from } = this.props ) {
+		return includes( [ 'woocommerce-setup-wizard', 'woocommerce-services' ], from );
 	}
 
 	handleClickDisclaimer = () => {
