@@ -15,6 +15,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import FormattedHeader from 'components/formatted-header';
 import SiteCard from './site-card';
 import versionCompare from 'lib/version-compare';
+import { getJetpackConnectJetpackVersion } from 'state/selectors';
 
 class AuthFormHeader extends Component {
 	getState() {
@@ -122,8 +123,8 @@ class AuthFormHeader extends Component {
 	}
 
 	getSiteCard() {
-		const version = get( this.props, [ 'authorize', 'queryObject', 'jp_version' ], '0.1' );
-		if ( ! versionCompare( version, '4.0.3', '>' ) ) {
+		const { jetpackVersion } = this.props;
+		if ( ! versionCompare( jetpackVersion, '4.0.3', '>' ) ) {
 			return null;
 		}
 
@@ -153,7 +154,8 @@ export default connect( state => {
 	const authorize = getAuthorizationData( state );
 	return {
 		authorize,
-		user: getCurrentUser( state ),
 		isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
+		jetpackVersion: getJetpackConnectJetpackVersion( state ),
+		user: getCurrentUser( state ),
 	};
 } )( localize( AuthFormHeader ) );
