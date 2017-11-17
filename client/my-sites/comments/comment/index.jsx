@@ -25,6 +25,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class Comment extends Component {
 	static propTypes = {
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
 		commentId: PropTypes.number,
 		isBulkMode: PropTypes.bool,
 		isPersistent: PropTypes.bool,
@@ -85,6 +87,8 @@ export class Comment extends Component {
 
 	render() {
 		const {
+			siteId,
+			postId,
 			commentId,
 			commentIsPending,
 			isBulkMode,
@@ -92,7 +96,6 @@ export class Comment extends Component {
 			isPostView,
 			isSelected,
 			refreshCommentData,
-			siteId,
 			updateLastUndo,
 		} = this.props;
 		const { isEditMode, isReplyVisible } = this.state;
@@ -125,7 +128,7 @@ export class Comment extends Component {
 
 						{ ! isBulkMode && (
 							<CommentActions
-								{ ...{ commentId, updateLastUndo } }
+								{ ...{ siteId, postId, commentId, updateLastUndo } }
 								toggleEditMode={ this.toggleEditMode }
 								toggleReply={ this.toggleReply }
 							/>
@@ -148,10 +151,11 @@ const mapStateToProps = ( state, { commentId } ) => {
 	const comment = getSiteComment( state, siteId, commentId );
 	const commentStatus = get( comment, 'status' );
 	return {
+		siteId,
+		postId: get( comment, 'post.ID' ),
 		commentIsPending: 'unapproved' === commentStatus,
 		isLoading: isUndefined( comment ),
 		minimumComment: getMinimumComment( comment ),
-		siteId,
 	};
 };
 
