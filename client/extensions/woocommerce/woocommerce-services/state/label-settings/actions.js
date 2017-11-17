@@ -58,7 +58,7 @@ export const fetchSettings = siteId => ( dispatch, getState ) => {
 };
 
 export const submit = ( siteId, onSaveSuccess, onSaveFailure ) => ( dispatch, getState ) => {
-	dispatch( setFormMetaProperty( 'isSaving', true ) );
+	dispatch( setFormMetaProperty( siteId, 'isSaving', true ) );
 	api
 		.post( siteId, api.url.accountSettings, getLabelSettingsFormData( getState() ) )
 		.then( onSaveSuccess )
