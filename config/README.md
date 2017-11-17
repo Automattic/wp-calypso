@@ -1,7 +1,7 @@
 Config
 ======
 
-This dir is used to store `.json` config files. At boot-up time, the server decides which config file to use based on the `NODE_ENV` environment variable. The default value is `"development"`. The entire configuration is available on the server-side and most keys are also exposed to the client.  The config is sent to the client as part of the initial payload in `server/render/index.js` and `server/pages/index.jade`.
+This dir is used to store `.json` config files. At boot-up time, the server decides which config file to use based on the `NODE_ENV` environment variable. The default value is `"development"`. The entire configuration is available on the server-side and most keys are also exposed to the client.  The config is sent to the client as part of the initial payload in `server/render/index.js` and `server/pages/index.pug`.
 
 If it is necessary to access a `config` value on the client-side, add the property name to the `client.json` file, which is whitelist of config properties that will be exposed to the client.
 
