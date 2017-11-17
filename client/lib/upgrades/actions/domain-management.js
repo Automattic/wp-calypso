@@ -148,21 +148,23 @@ function fetchDomains( siteId ) {
 		siteId,
 	} );
 
-	wpcom.site( siteId ).domains( function( error, data ) {
-		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.DOMAINS_FETCH_FAILED,
-				siteId,
-				error,
-			} );
-		} else {
+	wpcom
+		.site( siteId )
+		.domains()
+		.then( data => {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.DOMAINS_FETCH_COMPLETED,
 				siteId,
 				domains: domainsAssembler.createDomainObjects( data.domains ),
 			} );
-		}
-	} );
+		} )
+		.catch( error => {
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.DOMAINS_FETCH_FAILED,
+				siteId,
+				error,
+			} );
+		} );
 }
 
 function fetchWhois( domainName ) {

@@ -63,7 +63,7 @@ describe( 'actions', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.get( `/rest/v1.1/sites/${ siteId }/domains` )
+				.get( `/rest/v1.2/sites/${ siteId }/domains` )
 				.reply( 200, wpcomResponse );
 		} );
 
@@ -87,7 +87,7 @@ describe( 'actions', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.get( `/rest/v1.1/sites/${ siteId }/domains` )
+				.get( `/rest/v1.2/sites/${ siteId }/domains` )
 				.reply( 403, wpcomErrorResponse );
 		} );
 
