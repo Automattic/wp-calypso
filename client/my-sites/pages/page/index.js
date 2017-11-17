@@ -26,6 +26,7 @@ import utils from 'lib/posts/utils';
 import classNames from 'classnames';
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
+import { preload } from 'sections-preload';
 import { getSite, hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isFrontPage, isPostsPage } from 'state/pages/selectors';
@@ -35,6 +36,10 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getPreviewURL } from 'lib/posts/utils';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
+
+function preloadEditor() {
+	preload( 'post-editor' );
+}
 
 class Page extends Component {
 	static propTypes = {
@@ -182,7 +187,7 @@ class Page extends Component {
 		}
 
 		return (
-			<PopoverMenuItem onClick={ this.editPage }>
+			<PopoverMenuItem onClick={ this.editPage } onMouseOver={ preloadEditor }>
 				<Gridicon icon="pencil" size={ 18 } />
 				{ this.props.translate( 'Edit' ) }
 			</PopoverMenuItem>
