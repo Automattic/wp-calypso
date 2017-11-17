@@ -55,6 +55,10 @@ class TransferDomainPrecheck extends React.PureComponent {
 				return;
 			}
 
+			if ( result.unlocked ) {
+				this.showNextStep();
+			}
+
 			this.setState( {
 				email: result.admin_email,
 				privacy: result.privacy,
@@ -69,7 +73,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 	};
 
 	getSection( heading, message, buttonText, position, lockStatus ) {
-		const { currentStep } = this.state;
+		const { currentStep, loading, unlocked } = this.state;
 		const sectionClasses = classNames( 'transfer-domain-step__section', {
 			'is-expanded': position === currentStep,
 			'is-complete': position < currentStep,
@@ -90,7 +94,11 @@ class TransferDomainPrecheck extends React.PureComponent {
 						{ position === currentStep && (
 							<div>
 								<div className="transfer-domain-step__section-message">{ message }</div>
-								<Button compact onClick={ this.showNextStep }>
+								<Button
+									compact
+									onClick={ unlocked ? this.showNextStep : this.refreshStatus }
+									disabled={ loading }
+								>
 									{ buttonText }
 								</Button>
 							</div>
@@ -103,7 +111,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 	getStatusMessage() {
 		const { translate } = this.props;
-		const { unlocked } = this.state;
+		const { unlocked, loading } = this.state;
 
 		const heading = unlocked
 			? translate( 'Domain is unlocked.' )
@@ -114,7 +122,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 					"Your domain is locked to prevent unauthorized transfers. You'll need to unlock " +
 						'it before we can move it.'
 				);
-		const buttonText = translate( "I've unlocked my domain" );
+		const buttonText = loading ? translate( 'Checking…' ) : translate( "I've unlocked my domain" );
 
 		const lockStatus = unlocked ? (
 			<div className="transfer-domain-step__lock-status transfer-domain-step__unlocked">
