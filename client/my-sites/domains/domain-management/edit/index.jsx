@@ -3,9 +3,9 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import page from 'page';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -54,8 +54,7 @@ class Edit extends React.Component {
 
 	renderInboundTransferEmailNotice = () => {
 		const domain = this.props.domains && getSelectedDomain( this.props );
-		const isPendingVerification =
-			transferStatus.PENDING_OWNER === ( domain && domain.transferStatus );
+		const isPendingVerification = transferStatus.PENDING_OWNER === get( domain, 'transferStatus' );
 
 		if ( ! isPendingVerification ) {
 			return null;
