@@ -584,6 +584,22 @@ Undocumented.prototype.restartInboundTransfer = function( siteId, domain, fn ) {
 };
 
 /**
+ * Initiates a resend of the inbound transfer verification email.
+ * @param {string} domain - The domain name to check.
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.resendInboundTransferEmail = function( domain, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/domains/${ encodeURIComponent( domain ) }/resend-inbound-transfer-email`,
+		},
+		fn
+	);
+};
+
+/**
  * Determine whether a domain name can be used for Site Redirect
  *
  * @param {int|string} siteId The site ID
