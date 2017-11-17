@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -16,24 +19,22 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 const NotificationsOrigin = ( { item, recipient, onChange, isPlaceholder } ) => (
 	<ListItem>
 		<ListItemField className="components__notification-origin">
-			{ ! isPlaceholder
-				? <FormLabel>
-					{ item.title }
-				</FormLabel>
-				: <p className="components__is-placeholder" />
-			}
+			{ ! isPlaceholder ? (
+				<FormLabel>{ item.title }</FormLabel>
+			) : (
+				<p className="components__is-placeholder" />
+			) }
 			<FormTextInput
 				className={ isPlaceholder ? 'components__is-placeholder' : null }
 				name={ item.field }
 				onChange={ onChange }
 				value={ recipient }
 			/>
-			{ ! isPlaceholder
-				? <FormSettingExplanation>
-					{ item.subtitle }
-				</FormSettingExplanation>
-				: <p className="components__is-placeholder" />
-			}
+			{ ! isPlaceholder ? (
+				<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
+			) : (
+				<p className="components__is-placeholder" />
+			) }
 		</ListItemField>
 	</ListItem>
 );
@@ -44,4 +45,4 @@ NotificationsOrigin.propTypes = {
 	onChange: PropTypes.func.isRequired,
 };
 
-export default NotificationsOrigin ;
+export default NotificationsOrigin;

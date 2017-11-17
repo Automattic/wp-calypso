@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -28,7 +31,7 @@ const originNotifications = [
 	{
 		field: 'woocommerce_email_from_address',
 		title: translate( 'From name' ),
-		subtitle: translate( 'Emails will appear in recipients inboxes \'from\' this name.' ),
+		subtitle: translate( "Emails will appear in recipients inboxes 'from' this name." ),
 	},
 	{
 		field: 'woocommerce_email_from_name',
@@ -46,12 +49,12 @@ const internalNotifications = [
 	{
 		field: 'email_cancelled_order',
 		title: translate( 'Cancelled order' ),
-		subtitle: translate( 'Sent when a new order is marked \'cancelled\'.' ),
+		subtitle: translate( "Sent when a new order is marked 'cancelled'." ),
 	},
 	{
 		field: 'email_failed_order',
 		title: translate( 'Failed order' ),
-		subtitle: translate( 'Sent when a new order is marked \'failed\'.' ),
+		subtitle: translate( "Sent when a new order is marked 'failed'." ),
 	},
 ];
 
@@ -60,22 +63,22 @@ const customerNotifications = [
 	{
 		field: 'email_customer_on_hold_order',
 		title: translate( 'Order pending payment' ),
-		subtitle: translate( 'Sent when an order is marked \'payment pending\'.' ),
+		subtitle: translate( "Sent when an order is marked 'payment pending'." ),
 	},
 	{
 		field: 'email_customer_processing_order',
 		title: translate( 'Processing order' ),
-		subtitle: translate( 'Sent when an order is marked \'payment processing\'.' ),
+		subtitle: translate( "Sent when an order is marked 'payment processing'." ),
 	},
 	{
 		field: 'email_customer_completed_order',
 		title: translate( 'Completed order' ),
-		subtitle: translate( 'Sent when an order is marked \'paid in full\'.' ),
+		subtitle: translate( "Sent when an order is marked 'paid in full'." ),
 	},
 	{
 		field: 'email_customer_refunded_order',
 		title: translate( 'Refunded order' ),
-		subtitle: translate( 'Sent when an order is marked \'payment refunded\'.' ),
+		subtitle: translate( "Sent when an order is marked 'payment refunded'." ),
 	},
 	{
 		field: 'email_customer_new_account',
@@ -85,11 +88,14 @@ const customerNotifications = [
 ];
 
 class Settings extends React.Component {
+	constructor( props ) {
+		super( props );
+	}
 
-	fetchSettings = ( props ) => {
+	fetchSettings = props => {
 		const { siteId, fetchSettings } = props;
 		siteId && fetchSettings( siteId );
-	}
+	};
 
 	componentDidMount = () => {
 		this.fetchSettings( this.props );
@@ -103,57 +109,62 @@ class Settings extends React.Component {
 
 	notificationsToggle = () => {
 		undefined;
-	}
+	};
 
 	recipientsChange = () => {
 		undefined;
-	}
+	};
 
 	renderOriginNotification = ( item, index ) => {
 		const { settings, loaded, loading } = this.props;
-		return <NotificationsOrigin
-			key={ index }
-			item={ item }
-			isPlaceholder={ loading }
-			recipient={ loaded ? settings.email[ item.field ] : '' }
-			onChange={ this.recipientsChange }
-		/>;
-	}
+		return (
+			<NotificationsOrigin
+				key={ index }
+				item={ item }
+				isPlaceholder={ loading }
+				recipient={ loaded ? settings.email[ item.field ] : '' }
+				onChange={ this.recipientsChange }
+			/>
+		);
+	};
 
 	renderInternalNotification = ( item, index ) => {
 		const { settings, loaded, loading } = this.props;
-		return <InternalNotification
-			key={ index }
-			item={ item }
-			checked={ 'yes' === ( loaded && settings[ item.field ].enabled ) }
-			recipient={ loaded ? settings[ item.field ].recipient : '' }
-			isPlaceholder={ loading }
-			onToggle={ this.notificationsToggle }
-			onChange={ this.recipientsChange }
-		/>;
-	}
+		return (
+			<InternalNotification
+				key={ index }
+				item={ item }
+				checked={ 'yes' === ( loaded && settings[ item.field ].enabled ) }
+				recipient={ loaded ? settings[ item.field ].recipient : '' }
+				isPlaceholder={ loading }
+				onToggle={ this.notificationsToggle }
+				onChange={ this.recipientsChange }
+			/>
+		);
+	};
 
 	renderCustomerNotification = ( item, index ) => {
 		const { settings, loaded, loading } = this.props;
-		return <CustomerNotification
-			key={ index }
-			item={ item }
-			isPlaceholder={ loading }
-			checked={ 'yes' === ( loaded && settings[ item.field ].enabled ) }
-			onToggle={ this.notificationsToggle }
-		/>;
-	}
+		return (
+			<CustomerNotification
+				key={ index }
+				item={ item }
+				isPlaceholder={ loading }
+				checked={ 'yes' === ( loaded && settings[ item.field ].enabled ) }
+				onToggle={ this.notificationsToggle }
+			/>
+		);
+	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
+		const { loading, loaded, settings } = this.props;
+		const waiting = ! loaded || loading;
+
 		return (
 			<div className="email-settings__container">
-				<ExtendedHeader
-					label={ translate( 'Origin' ) }
-				/>
-				<List>
-					{ originNotifications.map( this.renderOriginNotification ) }
-				</List>
+				<ExtendedHeader label={ translate( 'Origin' ) } />
+				<List>{ originNotifications.map( this.renderOriginNotification ) }</List>
 				<div>
 					<ExtendedHeader
 						label={ translate( 'Internal notifications' ) }
@@ -181,12 +192,8 @@ class Settings extends React.Component {
 					/>
 					<List>
 						<ListHeader>
-							<ListItemField>
-								{ translate( 'Email' ) }
-							</ListItemField>
-							<ListItemField>
-								{ translate( 'Enabled' ) }
-							</ListItemField>
+							<ListItemField>{ translate( 'Email' ) }</ListItemField>
+							<ListItemField>{ translate( 'Enabled' ) }</ListItemField>
 						</ListHeader>
 						{ customerNotifications.map( this.renderCustomerNotification ) }
 					</List>
@@ -207,7 +214,8 @@ Settings.propTypes = {
 function mapStateToProps( state, props ) {
 	return {
 		settings: areEmailSettingsLoaded( state, props.siteId )
-			? getEmailSettings( state, props.siteId ) : {},
+			? getEmailSettings( state, props.siteId )
+			: {},
 		loading: areEmailSettingsLoading( state, props.siteId ),
 		loaded: areEmailSettingsLoaded( state, props.siteId ),
 	};

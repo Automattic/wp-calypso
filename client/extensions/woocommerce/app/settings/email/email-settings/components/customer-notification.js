@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -16,28 +19,23 @@ import ListItemField from 'woocommerce/components/list/list-item-field';
 const CustomerNotification = ( { item, checked, onToggle, isPlaceholder } ) => (
 	<ListItem className="components__notification-component-item">
 		<ListItemField className="components__notification-component-title-long">
-			{ ! isPlaceholder
-				? <FormLabel>
-					{ item.title }
-				</FormLabel>
-				: <p className="components__is-placeholder" />
-			}
-			{ ! isPlaceholder
-				? <FormSettingExplanation>
-					{ item.subtitle }
-				</FormSettingExplanation>
-				: <p className="components__is-placeholder" />
-			}
+			{ ! isPlaceholder ? (
+				<FormLabel>{ item.title }</FormLabel>
+			) : (
+				<p className="components__is-placeholder" />
+			) }
+			{ ! isPlaceholder ? (
+				<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
+			) : (
+				<p className="components__is-placeholder" />
+			) }
 		</ListItemField>
 		<ListItemField className="components__notification-component-toggle">
-			{ ! isPlaceholder
-				? <CompactFormToggle
-					checked={ checked }
-					onChange={ onToggle }
-					id={ item.field }
-				/>
-				: <p className="components__is-placeholder" />
-			}
+			{ ! isPlaceholder ? (
+				<CompactFormToggle checked={ checked } onChange={ onToggle } id={ item.field } />
+			) : (
+				<p className="components__is-placeholder" />
+			) }
 		</ListItemField>
 	</ListItem>
 );
@@ -48,4 +46,4 @@ CustomerNotification.propTypes = {
 	onToggle: PropTypes.func.isRequired,
 };
 
-export default CustomerNotification ;
+export default CustomerNotification;
