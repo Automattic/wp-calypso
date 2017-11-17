@@ -530,6 +530,16 @@ export function domainTransfer( properties ) {
 }
 
 /**
+ * Creates a new shopping cart item for an incoming domain transfer privacy.
+ *
+ * @param {Object} properties - list of properties
+ * @returns {Object} the new item as `CartItemValue` object
+ */
+export function domainTransferPrivacy( properties ) {
+	return domainItem( domainProductSlugs.TRANSFER_IN_PRIVACY, properties.domain, properties.source );
+}
+
+/**
  * Retrieves all the G Suite items in the specified shopping cart.
  * Out-dated name Google Apps is still used here for consistency in naming.
  *
@@ -663,6 +673,16 @@ export function getDomainRegistrations( cart ) {
 }
 
 /**
+ * Retrieves all the domain registration items in the specified shopping cart.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ */
+export function getDomainIncomingTransfers( cart ) {
+	return filter( getAll( cart ), { product_slug: 'domain_transfer' } );
+}
+
+/**
  * Retrieves all the domain mapping items in the specified shopping cart.
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -780,6 +800,22 @@ export function getDomainRegistrationsWithoutPrivacy( cart ) {
 }
 
 /**
+ * Retrieves the domain incoming transfer items in the specified shopping cart that do not have corresponding
+ * private incoming transfer item.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
+ */
+export function getDomainIncomingTransfersWithoutPrivacy( cart ) {
+	return getDomainRegistrations( cart ).filter( function( cartItem ) {
+		return ! some( cart.products, {
+			meta: cartItem.meta,
+			product_slug: 'domain_transfer_privacy',
+		} );
+	} );
+}
+
+/**
  * Changes presence of a privacy protection for the given domain cart items.
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -792,6 +828,23 @@ export function changePrivacyForDomains( cart, domainItems, changeFunction ) {
 		null,
 		domainItems.map( function( item ) {
 			return changeFunction( domainPrivacyProtection( { domain: item.meta } ) );
+		} )
+	);
+}
+
+/**
+ * Changes presence of a privacy protection for the given domain transfer cart items.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Object[]} domainItems - the list of `CartItemValue` objects for domain registrations
+ * @param {Function} changeFunction - the function that adds/removes the privacy protection to a shopping cart
+ * @returns {Function} the function that adds/removes privacy protections from the shopping cart
+ */
+export function changePrivacyForDomainTransfers( cart, domainItems, changeFunction ) {
+	return flow.apply(
+		null,
+		domainItems.map( function( item ) {
+			return changeFunction( domainTransferPrivacy( { domain: item.meta } ) );
 		} )
 	);
 }

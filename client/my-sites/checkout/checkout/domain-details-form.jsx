@@ -588,11 +588,14 @@ export class DomainDetailsForm extends PureComponent {
 			title = this.props.translate( 'Domain Contact Information' );
 		}
 
+		const renderPrivacy =
+			( cartItems.hasDomainRegistration( this.props.cart ) &&
+				this.allDomainRegistrationsSupportPrivacy() ) ||
+			cartItems.hasTransferProduct( this.props.cart );
+
 		return (
 			<div>
-				{ cartItems.hasDomainRegistration( this.props.cart ) &&
-					this.allDomainRegistrationsSupportPrivacy() &&
-					this.renderPrivacySection() }
+				{ renderPrivacy && this.renderPrivacySection() }
 				<PaymentBox currentPage={ this.state.currentStep } classSet={ classSet } title={ title }>
 					{ this.renderCurrentForm() }
 				</PaymentBox>
