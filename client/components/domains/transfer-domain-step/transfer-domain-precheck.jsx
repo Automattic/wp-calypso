@@ -176,11 +176,11 @@ class TransferDomainPrecheck extends React.PureComponent {
 				"password for your domain. Log in to your current registrar to get one. We'll send you an email " +
 				'with a link to enter it and officially okay the transfer. We call it a domain authorization code, ' +
 				'but it might be called a secret code, auth code, or EPP code. {{a}}Learn more{{/a}}.',
-				{
-					components: {
-						a: <a href="#" rel="noopener noreferrer" />,
-					},
-				}
+			{
+				components: {
+					a: <a href="#" rel="noopener noreferrer" />,
+				},
+			}
 		);
 		const buttonText = translate( 'I have my authorization code' );
 
@@ -200,6 +200,10 @@ class TransferDomainPrecheck extends React.PureComponent {
 					subHeaderText={ translate(
 						'Log into your current registrar to complete a few preliminary steps.'
 					) }
+				/>
+				<img
+					className="transfer-domain-step__illustration"
+					src={ '/calypso/images/illustrations/migrating-host-diy.svg' }
 				/>
 			</Card>
 		);
