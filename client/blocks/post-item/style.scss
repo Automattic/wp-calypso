@@ -61,6 +61,8 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 	position: relative;
 	width: 100%;
 	margin-right: auto;
+	word-break: break-all;
+	word-wrap: break-word;
 
 	padding: 16px 0;
 	.post-item__card.is-mini & {
