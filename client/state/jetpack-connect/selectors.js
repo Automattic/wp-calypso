@@ -34,7 +34,7 @@ const getAuthorizationRemoteQueryData = state => {
 };
 
 const getAuthorizationRemoteSite = state => {
-	return get( getAuthorizationRemoteQueryData( state ), [ 'site' ] );
+	return get( getAuthorizationRemoteQueryData( state ), 'site' );
 };
 
 const isRemoteSiteOnSitesList = state => {
