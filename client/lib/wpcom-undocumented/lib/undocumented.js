@@ -490,37 +490,6 @@ Undocumented.prototype.createInviteValidation = function( siteId, usernamesOrEma
 };
 
 /**
- * GET/POST site checklist
- *
- * @param {int|string} [siteId] The site ID
- * @param {string} [method] The request method
- * @param {object} [data] The POST data
- * @param {Function} fn The callback function
- * @return {object} Request object
- * @api public
- */
-Undocumented.prototype.checklist = function( siteId, method = 'get', data = {}, fn ) {
-	debug( '/sites/:site_id:/checklist query' );
-
-	if ( 'function' === typeof method ) {
-		fn = method;
-		method = 'get';
-		data = {};
-	}
-
-	// If no apiVersion was specified, use the settings api version with the widest support (1.1)
-	const apiVersion = data.apiVersion || '1.1';
-	const body = omit( data, [ 'apiVersion' ] );
-	const path = '/sites/' + siteId + '/checklist';
-
-	if ( 'get' === method ) {
-		return this.wpcom.req.get( path, { apiVersion }, fn );
-	}
-
-	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
-};
-
-/**
  * GET/POST site settings
  *
  * @param {int|string} [siteId] The site ID

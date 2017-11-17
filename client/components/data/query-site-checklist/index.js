@@ -11,28 +11,28 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSiteChecklist } from 'state/site-checklist/selectors';
 import { requestSiteChecklist } from 'state/site-checklist/actions';
 
 class QuerySiteChecklist extends Component {
+	static propTypes = {
+		requestSiteChecklist: PropTypes.func,
+		siteId: PropTypes.number,
+	};
+
 	componentWillMount() {
-		this.requestChecklist( this.props );
+		this.request();
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { siteId } = this.props;
-		if ( ! nextProps.siteId || siteId === nextProps.siteId ) {
+		if ( ! nextProps.siteId || this.props.siteId === nextProps.siteId ) {
 			return;
 		}
 
-		this.requestChecklist( nextProps );
+		this.request();
 	}
 
-	requestChecklist( props ) {
-		const { requestingSiteChecklist, siteId } = props;
-		if ( ! requestingSiteChecklist && siteId ) {
-			requestSiteChecklist( siteId );
-		}
+	request() {
+		this.props.requestSiteChecklist( this.props.siteId );
 	}
 
 	render() {
@@ -40,17 +40,4 @@ class QuerySiteChecklist extends Component {
 	}
 }
 
-QuerySiteChecklist.propTypes = {
-	siteId: PropTypes.number,
-	requestingSiteChecklist: PropTypes.bool,
-	requestSiteChecklist: PropTypes.func,
-};
-
-export default connect(
-	( state, { siteId } ) => {
-		return {
-			requestingSiteChecklist: isRequestingSiteChecklist( state, siteId ),
-		};
-	},
-	{ requestSiteChecklist }
-)( QuerySiteChecklist );
+export default connect( () => ( {} ), { requestSiteChecklist } )( QuerySiteChecklist );
