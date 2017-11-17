@@ -1,6 +1,10 @@
 .credentials-form__row {
 	display: flex;
 	flex-wrap: wrap;
+
+	.form-fieldset:last-child {
+		margin-bottom: 24px;
+	}
 }
 
 .credentials-form__server-address,
