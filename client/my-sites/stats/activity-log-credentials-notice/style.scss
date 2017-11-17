@@ -1,3 +1,8 @@
+.activity-log-credentials-notice {
+	display: flex;
+	align-items: center;
+}
+
 .activity-log-credentials-notice .card__link-indicator,
 .activity-log-credentials-notice.card:hover .card__link-indicator {
 	color: $blue-wordpress;
@@ -13,15 +18,10 @@
 
 .activity-log-credentials-notice__icon .gridicon {
 	color: #fff;
-	margin-left: 6px;
-	margin-top: 6px;
+	margin: 6px;
 }
 
 .activity-log-credentials-notice__text {
 	color: $gray-dark;
-	font-weight: 600;
-	font-size: 1.6rem;
-	margin-left: 2rem;
-	position: relative;
-	top: -6px;
+	margin-left: 16px;
 }

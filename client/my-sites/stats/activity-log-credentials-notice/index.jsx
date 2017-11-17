@@ -18,16 +18,14 @@ import {
 class ActivityLogCredentialsNotice extends Component {
 	render() {
 		const {
-			selectedSite,
+			selectedSite: { slug },
 			translate,
 		} = this.props;
-
-		const credsUrl = '/settings/security/' + selectedSite.slug;
 
 		return (
 			<CompactCard
 				highlight="info"
-				href={ credsUrl }
+				href={ `/settings/security/${ slug }` }
 				className="activity-log-credentials-notice"
 			>
 				<span className="activity-log-credentials-notice__icon">
