@@ -41,7 +41,7 @@ const ReprintDialog = ( props ) => {
 			isVisible={ Boolean( reprintDialog && reprintDialog.labelId === labelId ) }
 			onClose={ onClose }
 			buttons={ buttons }
-			additionalClassNames="label-reprint-modal woocommerce">
+			additionalClassNames="label-reprint-modal woocommerce wcc-root">
 			<FormSectionHeading>
 				{ translate( 'Reprint shipping label' ) }
 			</FormSectionHeading>
