@@ -1,0 +1,15 @@
+.email-settings__origin {
+	padding: 0px;
+}
+
+.email-settings__origin-title,
+.email-settings__internal-notifications-title,
+.email-settings__customer-notifications-title {
+	margin-bottom: 0px;
+}
+
+.email-settings__internal-notifications-legend,
+.email-settings__customer-notifications-legend {
+	margin-bottom: 0px;
+	background: $gray-light;
+}
