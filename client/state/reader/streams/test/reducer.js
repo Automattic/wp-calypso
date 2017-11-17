@@ -12,6 +12,8 @@ import { receivePage, selectItem } from '../actions';
 import { items, selected } from '../reducer';
 import { withSchemaValidation } from 'state/utils';
 
+jest.mock( 'lib/warn', () => () => {} );
+
 const saveAction = { type: SERIALIZE };
 const loadAction = { type: DESERIALIZE };
 describe( 'stream items reducer', () => {
