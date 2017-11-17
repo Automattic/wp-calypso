@@ -46,7 +46,7 @@ RUN        true \
 # not trigger additional install as part of the build
 # in the following step.
 COPY       . /calypso/
-RUN        touch npm-shrinkwrap.json node_modules
+RUN        touch node_modules
 
 # Build the final layer
 #
