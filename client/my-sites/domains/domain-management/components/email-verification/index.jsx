@@ -8,12 +8,14 @@ import React from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import { errorNotice } from 'state/notices/actions';
 
 class EmailVerificationCard extends React.Component {
 	static propTypes = {
@@ -122,4 +124,4 @@ class EmailVerificationCard extends React.Component {
 	}
 }
 
-export default localize( EmailVerificationCard );
+export default connect( null, { errorNotice } )( localize( EmailVerificationCard ) );
