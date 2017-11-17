@@ -3,13 +3,14 @@
 /**
  * External dependencies
  */
-
+import deterministicStringify from 'json-stable-stringify';
 import schemaValidator from 'is-my-json-valid';
-import { get, identity, noop } from 'lodash';
+import { get, identity, merge, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { keyedReducer } from 'state/utils';
 import warn from 'lib/warn';
 
 /**
@@ -95,10 +96,83 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 	// the actual parser
 	return data => transform( validate( data ) );
 };
+const getRequestStatus = action => {
+	if ( undefined !== getError( action ) ) {
+		return 'failure';
+	}
+
+	if ( undefined !== getData( action ) ) {
+		return 'success';
+	}
+
+	return 'pending';
+};
+
+export const getRequestKey = fullAction => {
+	const { meta, ...action } = fullAction; // eslint-disable-line no-unused-vars
+	const requestKey = get( meta, 'dataLayer.requestKey' );
+
+	return requestKey ? requestKey : deterministicStringify( action );
+};
+
+export const getRequest = ( state, key ) => state.dataRequests[ key ] || {};
+
+export const requestsReducerItem = (
+	state = null,
+	{ meta: { dataLayer: { lastUpdated, pendingSince, status } = {} } = {} }
+) => Object.assign( { status }, lastUpdated && { lastUpdated }, pendingSince && { pendingSince } );
+
+export const reducer = keyedReducer( 'meta.dataLayer.requestKey', requestsReducerItem );
+
+export const isRequestLoading = ( state, action ) =>
+	getRequest( state, getRequestKey( action ) ).status === 'pending';
+
+export const hasRequestLoaded = ( state, action ) =>
+	getRequest( state, getRequestKey( action ) ).lastUpdated > -Infinity;
+
+/**
+ * Tracks the state of network activity for a given request type
+ *
+ * When we issue _REQUEST type actions they usually create some
+ * associated network activity by means of an HTTP request.
+ * We may want to know what the status of those requests are, if
+ * they have completed or if they have failed.
+ *
+ * This tracker stores the meta data for those requests which
+ * can then be independently polled by React components which
+ * need to know about those data requests.
+ *
+ * Note that this is meta data about remote data requests and
+ * _not_ about network activity, which is why this is code is
+ * here operating on the _REQUEST actions and not in the HTTP
+ * pipeline as a processor on HTTP_REQUEST actions.
+ *
+ * @param {Function} next next link in HTTP middleware chain
+ * @returns {Function} middleware function to track requests
+ */
+export const trackRequests = next => ( store, action ) => {
+	// progress events don't affect
+	// any tracking meta at the moment
+	if ( true !== get( action, 'meta.dataLayer.trackRequest' ) || getProgress( action ) ) {
+		return next( store, action );
+	}
+
+	const requestKey = getRequestKey( action );
+	const status = getRequestStatus( action );
+	const dataLayer = Object.assign(
+		{ requestKey, status },
+		status === 'pending' ? { pendingSince: Date.now() } : { lastUpdated: Date.now() }
+	);
+
+	const dispatch = response => store.dispatch( merge( response, { meta: { dataLayer } } ) );
+
+	next( { ...store, dispatch }, action );
+};
 
 /**
  * @type Object default dispatchRequest options
  * @property {Function} fromApi validates and transforms API response data
+ * @property {Function} middleware chain of functions to process before dispatch
  * @property {Function} onProgress called on progress events
  */
 const defaultOptions = {
@@ -131,41 +205,45 @@ const defaultOptions = {
  *   onProgress :: ReduxStore -> Action -> Dispatcher -> ProgressData
  *   fromApi    :: ResponseData -> [ Boolean, Data ]
  *
+ * @param {Function} middleware intercepts requests moving through the system
  * @param {Function} initiator called if action lacks response meta; should create HTTP request
  * @param {Function} onSuccess called if the action meta includes response data
  * @param {Function} onError called if the action meta includes error data
  * @param {Object} options configures additional dispatching behaviors
  + @param {Function} [options.fromApi] maps between API data and Calypso data
  + @param {Function} [options.onProgress] called on progress events when uploading
+ * @param {Function} [options.middleware] runs before the dispatch itself
+ * @param {Function} [options.onProgress] called on progress events when uploading
  * @returns {?*} please ignore return values, they are undefined
  */
-export const dispatchRequest = ( initiator, onSuccess, onError, options = {} ) => (
-	store,
-	action
-) => {
+export const requestDispatcher = middleware => ( initiator, onSuccess, onError, options = {} ) => {
 	const { fromApi, onProgress } = { ...defaultOptions, ...options };
 
-	const error = getError( action );
-	if ( undefined !== error ) {
-		return onError( store, action, error );
-	}
-
-	const data = getData( action );
-	if ( undefined !== data ) {
-		try {
-			return onSuccess( store, action, fromApi( data ) );
-		} catch ( err ) {
-			return onError( store, action, err );
+	return middleware( ( store, action ) => {
+		const error = getError( action );
+		if ( undefined !== error ) {
+			return onError( store, action, error );
 		}
-	}
 
-	const progress = getProgress( action );
-	if ( undefined !== progress ) {
-		return onProgress( store, action, progress );
-	}
+		const data = getData( action );
+		if ( undefined !== data ) {
+			try {
+				return onSuccess( store, action, fromApi( data ) );
+			} catch ( err ) {
+				return onError( store, action, err );
+			}
+		}
 
-	return initiator( store, action );
+		const progress = getProgress( action );
+		if ( undefined !== progress ) {
+			return onProgress( store, action, progress );
+		}
+
+		return initiator( store, action );
+	} );
 };
+
+export const dispatchRequest = requestDispatcher( trackRequests );
 
 /**
  * Dispatches to appropriate function based on HTTP request meta
@@ -195,15 +273,16 @@ export const dispatchRequest = ( initiator, onSuccess, onError, options = {} ) =
  *   onProgress :: Action -> ProgressData -> Action
  *   fromApi    :: ResponseData -> TransformedData throws TransformerError|SchemaError
  *
+ * @param {Function} middleware intercepts requests moving through the system
  * @param {Object} options object with named parameters:
- * @param {Function} fetch called if action lacks response meta; should create HTTP request
- * @param {Function} onSuccess called if the action meta includes response data
- * @param {Function} onError called if the action meta includes error data
- * @param {Function} onProgress called on progress events when uploading
- * @param {Function} fromApi maps between API data and Calypso data
+ * @param {Function} options.fetch called if action lacks response meta; should create HTTP request
+ * @param {Function} options.onSuccess called if the action meta includes response data
+ * @param {Function} options.onError called if the action meta includes error data
+ * @param {Function} options.onProgress called on progress events when uploading
+ * @param {Function} options.fromApi maps between API data and Calypso data
  * @returns {Action} action or action thunk to be executed in response to HTTP event
  */
-export const dispatchRequestEx = options => {
+export const exRequestDispatcher = middleware => options => {
 	if ( ! options.fetch ) {
 		warn( 'fetch handler is not defined: no request will ever be issued' );
 	}
@@ -216,7 +295,7 @@ export const dispatchRequestEx = options => {
 		warn( 'onError handler is not defined: error during the request is being ignored' );
 	}
 
-	return ( store, action ) => {
+	return middleware( ( store, action ) => {
 		// create the low-level action we want to dispatch
 		const requestAction = createRequestAction( options, action );
 
@@ -230,8 +309,9 @@ export const dispatchRequestEx = options => {
 		}
 
 		return store.dispatch( requestAction );
-	};
+	} );
 };
+export const dispatchRequestEx = exRequestDispatcher( trackRequests );
 
 /*
  * Converts an application-level Calypso action that's handled by the data-layer middleware
