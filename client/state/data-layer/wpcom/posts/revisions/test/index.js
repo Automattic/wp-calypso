@@ -4,13 +4,12 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { cloneDeep, forEach, map } from 'lodash';
+import { cloneDeep, map } from 'lodash';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { fetchPostRevisions, normalizeRevision, receiveSuccess, receiveError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
@@ -150,15 +149,6 @@ describe( '#receiveSuccess', () => {
 		receiveSuccess( { dispatch }, action, successfulPostRevisionsResponse );
 
 		const expectedRevisions = cloneDeep( normalizedPostRevisions );
-		if ( isEnabled( 'post-editor/revisions' ) ) {
-			forEach( expectedRevisions, revision => {
-				revision.summary = { added: 6, removed: 0 };
-				revision.changes = {
-					content: [ { added: true, count: 9, value: '<p>Lorem ipsum</p>' } ],
-					title: [ { added: true, count: 7, value: 'Sed nobis ab earum' } ],
-				};
-			} );
-		}
 
 		expect( dispatch ).to.have.callCount( 2 );
 		expect( dispatch ).to.have.been.calledWith( receivePostRevisionsSuccess( 12345678, 10 ) );
