@@ -9,8 +9,8 @@ import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
-import { get, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +18,7 @@ import { localize } from 'i18n-calypso';
 import AuthFormHeader from './auth-form-header';
 import Button from 'components/button';
 import Card from 'components/card';
+import config from 'config';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
@@ -34,7 +35,6 @@ import userUtilities from 'lib/user/utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getJetpackConnectRedirectAfterAuth, getJetpackConnectPartnerId } from 'state/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -56,7 +56,11 @@ import {
 	hasXmlrpcError as hasXmlrpcErrorSelector,
 	isRemoteSiteOnSitesList,
 } from 'state/jetpack-connect/selectors';
-import config from 'config';
+import {
+	getJetpackConnectFrom,
+	getJetpackConnectPartnerId,
+	getJetpackConnectRedirectAfterAuth,
+} from 'state/selectors';
 
 /**
  * Constants
@@ -86,6 +90,7 @@ class LoggedInForm extends Component {
 		} ).isRequired,
 		authorize: PropTypes.func.isRequired,
 		calypsoStartedConnection: PropTypes.bool,
+		from: PropTypes.string,
 		goBackToWpAdmin: PropTypes.func.isRequired,
 		goToXmlrpcErrorFallbackUrl: PropTypes.func.isRequired,
 		hasExpiredSecretError: PropTypes.bool,
@@ -172,18 +177,18 @@ class LoggedInForm extends Component {
 
 	redirect() {
 		const { goBackToWpAdmin, redirectAfterAuth } = this.props;
-		const { queryObject } = this.props.authorizationData;
+		const { from } = this.props;
 
 		if (
 			this.props.isSSO ||
 			this.props.isWoo ||
-			this.isFromJpo( this.props ) ||
+			this.isFromJpo() ||
 			this.shouldRedirectJetpackStart( this.props )
 		) {
 			debug(
 				'Going back to WP Admin.',
 				'Connection initiated via: ',
-				queryObject.from,
+				from,
 				'SSO found:',
 				this.props.isSSO
 			);
@@ -193,8 +198,8 @@ class LoggedInForm extends Component {
 		}
 	}
 
-	isFromJpo( props ) {
-		return startsWith( get( props, [ 'authorizationData', 'queryObject', 'from' ] ), 'jpo' );
+	isFromJpo( { from } = this.props ) {
+		return startsWith( from, 'jpo' );
 	}
 
 	shouldRedirectJetpackStart( { partnerId } ) {
@@ -611,18 +616,19 @@ export default connect(
 			authAttempts: getAuthAttempts( state, siteSlug ),
 			authorizationData: getAuthorizationData( state ),
 			calypsoStartedConnection: isCalypsoStartedConnection( remoteSiteUrl ),
+			from: getJetpackConnectFrom( state ),
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
 			isFetchingSites: isRequestingSites( state ),
+			partnerId: getJetpackConnectPartnerId( state ),
 			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 			remoteSiteUrl,
 			siteId,
 			siteSlug,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
-			partnerId: getJetpackConnectPartnerId( state ),
 		};
 	},
 	{
