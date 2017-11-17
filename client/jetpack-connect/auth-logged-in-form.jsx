@@ -83,7 +83,6 @@ class LoggedInForm extends Component {
 			isRedirectingToWpAdmin: PropTypes.bool,
 			queryObject: PropTypes.shape( {
 				already_authorized: PropTypes.bool,
-				jp_version: PropTypes.string.isRequired,
 				new_user_started_connection: PropTypes.bool,
 			} ).isRequired,
 			siteReceived: PropTypes.bool,
