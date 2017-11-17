@@ -72,15 +72,16 @@ class TransferDomainPrecheck extends React.PureComponent {
 		this.setState( { currentStep: this.state.currentStep + 1 } );
 	};
 
-	getSection( heading, message, buttonText, position, lockStatus ) {
+	getSection( heading, message, buttonText, step, lockStatus ) {
 		const { currentStep, loading, unlocked } = this.state;
+		const isAtCurrentStep = step === currentStep;
+		const isStepFinished = currentStep > step;
 		const sectionClasses = classNames( 'transfer-domain-step__section', {
-			'is-expanded': position === currentStep,
-			'is-complete': position < currentStep,
+			'is-expanded': isAtCurrentStep,
+			'is-complete': isStepFinished,
 		} );
 
-		const sectionIcon =
-			currentStep > position ? <Gridicon icon="checkmark-circle" size={ 36 } /> : position;
+		const sectionIcon = isStepFinished ? <Gridicon icon="checkmark-circle" size={ 36 } /> : step;
 
 		return (
 			<Card compact>
@@ -91,7 +92,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 							<strong>{ heading }</strong>
 							{ lockStatus }
 						</div>
-						{ position === currentStep && (
+						{ isAtCurrentStep && (
 							<div>
 								<div className="transfer-domain-step__section-message">{ message }</div>
 								<Button
