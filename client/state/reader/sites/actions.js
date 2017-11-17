@@ -40,6 +40,7 @@ export function requestSite( siteId ) {
 					'feed_URL',
 					'capabilities',
 					'prefer_feed',
+					'subscribers_count',
 					'options', // have to include this to get options at all
 				].join( ',' ),
 				options: [ 'is_mapped_domain', 'unmapped_url', 'is_redirect' ].join( ',' ),
