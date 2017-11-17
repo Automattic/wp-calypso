@@ -30,6 +30,12 @@
 	}
 }
 
+.transfer-domain-step__title {
+	.formatted-header {
+		margin: 10px 0;
+	}
+}
+
 .transfer-domain-step__domain-description {
 	font-size: 16px;
 	margin-bottom: 20px;
@@ -62,78 +68,83 @@
 	top: 2px;
 }
 
-.transfer-domain-step__precheck, .transfer-domain-step__options {
-	.foldable-card.card {
-		margin-bottom: 0;
+.transfer-domain-step__section-heading-number {
+	width: 28px;
+	height: 28px;
+	line-height: 28px;
+	border-radius: 50%;
+	border: 1px solid lighten( $gray, 20% );
+	background-color: $gray-light;
+	color: darken( $gray, 20% );
+	font-size: 18px;
+	text-align: center;
+	margin-right: 15px;
+	flex-shrink: 0;
+}
 
-		&.is-expanded {
-			margin-top: 0;
-		}
-	}
+.transfer-domain-step__section-heading {
+	font-size: 16px;
+}
 
-	.transfer-domain-step__section {
-		display: flex;
-	}
+.transfer-domain-step__section {
+	align-items: center;
+	display: flex;
+	padding: 5px 0;
 
-	.transfer-domain-step__unlocked {
-		color: $alert-green;
-
-		svg {
-			padding-right: 4px;
-		}
-	}
-
-	.transfer-domain-step__section-heading-number {
-		width: 28px;
-		height: 28px;
-		line-height: 28px;
-		border-radius: 50%;
-		border: 1px solid lighten( $gray, 20% );
-		background-color: $gray-light;
-		color: darken( $gray, 20% );
-		font-size: 18px;
-		text-align: center;
-		margin-right: 15px;
-		flex-shrink: 0;
+	.transfer-domain-step__section-text {
+		flex-basis: 100%;
 	}
 
 	.transfer-domain-step__section-heading {
-		font-size: 16px;
+		color: darken( $gray, 20% );
 	}
 
-	.transfer-domain-step__section-explanation {
-		margin-left: 48px;
+	.button {
+		margin-top: 20px;
 	}
 
-	.transfer-domain-step__continue {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
+	&.is-expanded {
+		align-items: flex-start;
 
-		button {
-			flex-shrink: 0;
-			margin-left: 15px;
+		.transfer-domain-step__section-heading {
+			color: $gray-dark;
 		}
 	}
+}
 
-	.transfer-domain-step__continue-text {
-		p {
-			color: darken( $gray, 10% );
-			font-size: 14px;
-			max-width: 500px;
-		}
+.transfer-domain-step__lock-status {
+	float: right;
+	font-size: 12px;
+
+	svg {
+		padding-right: 4px;
 	}
 
-	.section-header {
+	&.transfer-domain-step__unlocked {
+		color: $alert-green;
+	}
+
+	&.transfer-domain-step__locked {
+		color: $alert-red;
+	}
+}
+
+.transfer-domain-step__continue-text {
+	p {
+		color: darken( $gray, 10% );
 		font-size: 14px;
+		max-width: 500px;
 	}
+}
 
-	.hide-secondary {
-		span {
-			&.foldable-card__secondary {
-				flex: 0 1;
-			}
-		}
+.transfer-domain-step__continue {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	button {
+		flex-shrink: 0;
+		margin-left: 15px;
 	}
 }
 

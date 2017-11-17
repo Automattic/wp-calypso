@@ -14,8 +14,8 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import Button from 'components/button';
-import FoldableCard from 'components/foldable-card';
 import Card from 'components/card';
+import FormattedHeader from 'components/formatted-header';
 import { checkInboundTransferStatus } from 'lib/domains';
 import support from 'lib/url/support';
 
@@ -30,6 +30,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		privacy: false,
 		email: '',
 		loading: true,
+		currentStep: 1,
 	};
 
 	componentWillMount() {
@@ -63,30 +64,39 @@ class TransferDomainPrecheck extends React.PureComponent {
 		} );
 	};
 
-	getSection( heading, message, explanation, position, button ) {
-		const header = (
-			<div className="transfer-domain-step__section">
-				<span className="transfer-domain-step__section-heading-number">{ position }</span>
-				<div>
-					<strong className="transfer-domain-step__section-heading">{ heading }</strong>
-					<div className="transfer-domain-step__section-message">{ message }</div>
-				</div>
-			</div>
-		);
+	showNextStep = () => {
+		this.setState( { currentStep: this.state.currentStep + 1 } );
+	};
 
-		const cardClasses = classNames( {
-			'hide-secondary': ! button,
+	getSection( heading, message, buttonText, position, lockStatus ) {
+		const { currentStep } = this.state;
+		const sectionClasses = classNames( 'transfer-domain-step__section', {
+			'is-expanded': position === currentStep,
 		} );
 
+		const sectionIcon =
+			currentStep > position ? <Gridicon icon="checkmark-circle" size={ 24 } /> : position;
+
 		return (
-			<FoldableCard
-				className={ cardClasses }
-				header={ header }
-				summary={ button }
-				expandedSummary={ button }
-			>
-				<div className="transfer-domain-step__section-explanation">{ explanation }</div>
-			</FoldableCard>
+			<Card compact>
+				<div className={ sectionClasses }>
+					<span className="transfer-domain-step__section-heading-number">{ sectionIcon }</span>
+					<div className="transfer-domain-step__section-text">
+						<div className="transfer-domain-step__section-heading">
+							<strong>{ heading }</strong>
+							{ lockStatus }
+						</div>
+						{ position === currentStep && (
+							<div>
+								<div className="transfer-domain-step__section-message">{ message }</div>
+								<Button compact onClick={ this.showNextStep }>
+									{ buttonText }
+								</Button>
+							</div>
+						) }
+					</div>
+				</div>
+			</Card>
 		);
 	}
 
@@ -100,57 +110,43 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const message = unlocked
 			? translate( 'Your domain is unlocked at your current registrar.' )
 			: translate(
-					"You'll need to unlock the domain at your current registrar before we can move it."
+					"Your domain is locked to prevent unauthorized transfers. You'll need to unlock " +
+						'it before we can move it.'
 				);
-		const explanation = translate(
-			'Your current domain provider has locked the domain to prevent unauthorized transfers.'
-		);
+		const buttonText = translate( "I've unlocked my domain" );
 
-		const button = unlocked ? (
-			<div className="transfer-domain-step__unlocked">
+		const lockStatus = unlocked ? (
+			<div className="transfer-domain-step__lock-status transfer-domain-step__unlocked">
 				<Gridicon icon="checkmark" size={ 12 } />
 				<span>{ translate( 'Unlocked' ) }</span>
 			</div>
 		) : (
-			<Button disabled={ this.state.loading } onClick={ this.refreshStatus }>
-				{ translate( 'Check Again' ) }
-			</Button>
+			<div className="transfer-domain-step__lock-status transfer-domain-step__locked">
+				<Gridicon icon="cross" size={ 12 } />
+				<span>{ translate( 'Locked' ) }</span>
+			</div>
 		);
 
-		return this.getSection( heading, message, explanation, 1, button );
+		return this.getSection( heading, message, buttonText, 1, lockStatus );
 	}
 
 	getPrivacyMessage() {
 		const { translate } = this.props;
-		const { email, privacy } = this.state;
+		const { email } = this.state;
 
-		const heading = privacy
-			? translate( 'Disable privacy protection.' )
-			: translate( 'Privacy protection is disabled.' );
-		const message = privacy
-			? translate(
-					"We'll send an email to {{strong}}%(email)s{{/strong}} to start the transfer process. Don't recognize " +
-						"that address? Then you have privacy protection, and you'll need to turn it off before we start.",
-					{
-						args: { email },
-						components: { strong: <strong /> },
-					}
-				)
-			: translate(
-					"We'll send an email to {{strong}}%(email)s{{/strong}} to start the transfer process. After the transfer " +
-						'is complete you can enable privacy to hide your registration information again.',
-					{
-						args: { email },
-						components: { strong: <strong /> },
-					}
-				);
-		const explanation = translate(
-			"It's important that we are able to reach you, because the transfer involves few emails. Privacy protection is great, " +
-				'but means that your contact information is hidden. To continue with the transfer, turn privacy protection off for now ' +
-				'- you can re-enable it once the transfer is done.'
+		const heading = translate( 'Verify we can get in touch.' );
+		const message = translate(
+			"We'll send an email to {{strong}}%(email)s{{/strong}} to start the transfer process. Make sure " +
+				"you have access to that address. Don't recognize it? Then you have privacy protection, " +
+				"and you'll need to turn it off before we start.",
+			{
+				args: { email },
+				components: { strong: <strong /> },
+			}
 		);
+		const buttonText = translate( 'I can access this email address' );
 
-		return this.getSection( heading, message, explanation, 2 );
+		return this.getSection( heading, message, buttonText, 2 );
 	}
 
 	getEppMessage() {
@@ -158,28 +154,40 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 		const heading = translate( 'Get a domain authorization code.' );
 		const message = translate(
-			"You'll need this code to okay the transfer. " +
-				"We'll send you and email with a link to the place where you'll need to enter it."
+			'A domain authorization code is a unique code linked only to your domain — kind of like a ' +
+				"password for your domain. Log in to your current registrar to get one. We'll send you an email " +
+				'with a link to enter it and officially okay the transfer. We call it a domain authorization code, ' +
+				'but it might be called a secret code, auth code, or EPP code.'
 		);
-		const explanation = translate(
-			'A domain authorization code is a unique code linked only to your domain - kind of like a ' +
-				'password for your domain. Log in to your current domain provider to get one. ' +
-				"We call it a domain authorization code, but it's also called a secret code, auth code or EPP code."
-		);
+		const buttonText = translate( 'I have my authorization code' );
 
-		return this.getSection( heading, message, explanation, 3 );
+		return this.getSection( heading, message, buttonText, 3 );
+	}
+
+	getHeader() {
+		const { translate, domain } = this.props;
+
+		return (
+			<Card compact={ true } className="transfer-domain-step__title">
+				<FormattedHeader
+					headerText={ translate( "Let's get {{strong}}%(domain)s{{/strong}} ready to transfer.", {
+						args: { domain },
+						components: { strong: <strong /> },
+					} ) }
+					subHeaderText={ translate(
+						'Log into your current registrar to complete a few preliminary steps.'
+					) }
+				/>
+			</Card>
+		);
 	}
 
 	render() {
 		const { translate } = this.props;
-		const headerLabel = translate(
-			"Let's get your domain ready to transfer. " +
-				'Log into your current registrar to complete a few preliminary steps.'
-		);
 
 		return (
 			<div className="transfer-domain-step__precheck">
-				<Card compact={ true }>{ headerLabel }</Card>
+				{ this.getHeader() }
 				{ this.getStatusMessage() }
 				{ this.getPrivacyMessage() }
 				{ this.getEppMessage() }
