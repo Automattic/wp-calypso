@@ -147,6 +147,7 @@ export const hasRequestLoaded = ( state, action ) =>
  * here operating on the _REQUEST actions and not in the HTTP
  * pipeline as a processor on HTTP_REQUEST actions.
  *
+ * @param {Function} next next link in HTTP middleware chain
  * @returns {Function} middleware function to track requests
  */
 export const trackRequests = next => ( store, action ) => {
