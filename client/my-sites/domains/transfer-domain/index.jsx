@@ -66,7 +66,7 @@ export class TransferDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	handleTransferDomain = ( domain, nameservers, privacy, dnsImport ) => {
+	handleTransferDomain = domain => {
 		const { selectedSiteSlug } = this.props;
 
 		this.setState( { errorMessage: null } );
@@ -74,11 +74,6 @@ export class TransferDomain extends Component {
 		upgradesActions.addItem(
 			cartItems.domainTransfer( {
 				domain,
-				extra: {
-					nameservers,
-					privacy,
-					dnsImport,
-				},
 			} )
 		);
 

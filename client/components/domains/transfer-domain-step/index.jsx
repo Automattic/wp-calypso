@@ -32,7 +32,6 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import { getSelectedSite } from 'state/ui/selectors';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import TransferDomainPrecheck from './transfer-domain-precheck';
-import TransferDomainOptions from './transfer-domain-options';
 import support from 'lib/url/support';
 
 class TransferDomainStep extends React.Component {
@@ -59,7 +58,6 @@ class TransferDomainStep extends React.Component {
 		return {
 			searchQuery: this.props.initialQuery || '',
 			domain: null,
-			optionPicker: false,
 		};
 	}
 
@@ -182,30 +180,20 @@ class TransferDomainStep extends React.Component {
 	}
 
 	transferDomainPrecheck() {
-		return <TransferDomainPrecheck domain={ this.state.domain } setValid={ this.precheckOk } />;
-	}
-
-	precheckOk = () => {
-		this.setState( { optionPicker: true } );
-	};
-
-	transferDomainOptions() {
 		return (
-			<TransferDomainOptions
+			<TransferDomainPrecheck
 				domain={ this.state.domain }
-				onSubmit={ this.props.onTransferDomain }
+				setValid={ this.props.onTransferDomain }
 			/>
 		);
 	}
 
 	render() {
 		let content;
-		const { domain, optionPicker } = this.state;
+		const { domain } = this.state;
 
-		if ( domain && ! optionPicker ) {
+		if ( domain ) {
 			content = this.transferDomainPrecheck();
-		} else if ( domain && optionPicker ) {
-			content = this.transferDomainOptions();
 		} else {
 			content = this.addTransfer();
 		}
