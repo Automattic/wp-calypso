@@ -185,6 +185,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 	render() {
 		const { translate } = this.props;
+		const { unlocked, currentStep } = this.state;
 
 		return (
 			<div className="transfer-domain-step__precheck">
@@ -206,7 +207,11 @@ class TransferDomainPrecheck extends React.PureComponent {
 							) }
 						</p>
 					</div>
-					<Button disabled={ ! this.state.unlocked } onClick={ this.onClick } primary={ true }>
+					<Button
+						disabled={ ! unlocked || currentStep < 4 }
+						onClick={ this.onClick }
+						primary={ true }
+					>
 						{ translate( 'Continue' ) }
 					</Button>
 				</Card>
