@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -17,7 +17,6 @@ import contextTypes from '../context-types';
 
 export default class LinkQuit extends Component {
 	static propTypes = {
-		children: PropTypes.node,
 		primary: PropTypes.bool,
 		subtle: PropTypes.bool,
 		href: PropTypes.string,

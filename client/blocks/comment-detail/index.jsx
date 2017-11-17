@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -27,8 +27,10 @@ import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getPostCommentsTree } from 'state/comments/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
-import { getSite, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
+import config from 'config';
 
 /**
  * Creates a stripped down comment object containing only the information needed by
@@ -129,6 +131,18 @@ export class CommentDetail extends Component {
 
 	exitReplyState = () => this.setState( { isReplyMode: false } );
 
+	getPostUrl = () => {
+		const { commentStatus, postId, postUrl, siteSlug } = this.props;
+
+		if ( ! config.isEnabled( 'comments/management/post-view' ) ) {
+			return postUrl;
+		}
+
+		const status = 'unapproved' === commentStatus ? 'pending' : commentStatus;
+
+		return `/comments/${ status }/${ siteSlug }/${ postId }`;
+	};
+
 	toggleApprove = e => {
 		e.stopPropagation();
 
@@ -224,7 +238,7 @@ export class CommentDetail extends Component {
 
 	trackDeepReaderLinkClick = () => {
 		const { isJetpack, parentCommentContent } = this.props;
-		if ( isJetpack ) {
+		if ( isJetpack || config.isEnabled( 'comments/management/post-view' ) ) {
 			return;
 		}
 		if ( parentCommentContent ) {
@@ -262,20 +276,18 @@ export class CommentDetail extends Component {
 			postAuthorDisplayName,
 			postId,
 			postTitle,
-			postUrl,
 			refreshCommentData,
 			repliedToComment,
 			replyComment,
-			site,
 			siteBlacklist,
 			siteId,
 			translate,
 		} = this.props;
 
+		const { isEditMode, isExpanded } = this.state;
+
 		const authorDisplayName = authorName || translate( 'Anonymous' );
 		const authorIsBlocked = this.isAuthorBlacklisted();
-
-		const { isEditMode, isExpanded } = this.state;
 
 		const classes = classNames( 'comment-detail', {
 			'author-is-blocked': authorIsBlocked,
@@ -298,7 +310,9 @@ export class CommentDetail extends Component {
 				className={ classes }
 				tabIndex="0"
 			>
-				{ refreshCommentData && <QueryComment commentId={ commentId } siteId={ siteId } /> }
+				{ refreshCommentData && (
+					<QueryComment commentId={ commentId } siteId={ siteId } forceWpcom />
+				) }
 
 				{ ! isPostTitleLoaded && <QueryPosts siteId={ siteId } postId={ postId } /> }
 
@@ -318,7 +332,6 @@ export class CommentDetail extends Component {
 					isExpanded={ isExpanded }
 					postId={ postId }
 					postTitle={ postTitle }
-					site={ site }
 					toggleApprove={ this.toggleApprove }
 					toggleEditMode={ this.toggleEditMode }
 					toggleExpanded={ this.toggleExpanded }
@@ -337,7 +350,7 @@ export class CommentDetail extends Component {
 							parentCommentContent={ parentCommentContent }
 							postAuthorDisplayName={ postAuthorDisplayName }
 							postTitle={ postTitle }
-							postUrl={ postUrl }
+							postUrl={ this.getPostUrl() }
 							siteId={ siteId }
 							onClick={ this.trackDeepReaderLinkClick }
 						/>
@@ -449,8 +462,8 @@ const mapStateToProps = ( state, ownProps ) => {
 		postUrl: isJetpack ? get( comment, 'URL' ) : `/read/blogs/${ siteId }/posts/${ postId }`,
 		postTitle,
 		repliedToComment: get( comment, 'replied' ), // TODO: not available in the current data structure
+		siteSlug: getSelectedSiteSlug( state ),
 		siteId: get( comment, 'siteId', siteId ),
-		site: getSite( state, siteId ),
 	};
 };
 

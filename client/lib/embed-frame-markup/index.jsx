@@ -7,8 +7,7 @@
  */
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import createFragment from 'react-addons-create-fragment';
-import { mapValues } from 'lodash';
+import { flatMap, map } from 'lodash';
 
 /**
  * Constants
@@ -23,11 +22,9 @@ export default function generateEmbedFrameMarkup( { body, scripts, styles } = {}
 	return renderToStaticMarkup(
 		<html>
 			<head>
-				{ createFragment(
-					mapValues( styles, style => {
-						return <link rel="stylesheet" media={ style.media } href={ style.src } />;
-					} )
-				) }
+				{ map( styles, ( { media, src }, key ) => (
+					<link key={ key } rel="stylesheet" media={ media } href={ src } />
+				) ) }
 				<style dangerouslySetInnerHTML={ { __html: 'a { cursor: default; }' } } />
 			</head>
 			<body style={ { margin: 0 } }>
@@ -46,25 +43,19 @@ export default function generateEmbedFrameMarkup( { body, scripts, styles } = {}
 				`,
 					} }
 				/>
-				{ createFragment(
-					mapValues( scripts, script => {
-						let extra;
-						if ( script.extra ) {
-							extra = (
-								<script
-									dangerouslySetInnerHTML={ {
-										__html: script.extra,
-									} }
-								/>
-							);
-						}
-
-						return createFragment( {
-							extra: extra,
-							script: <script src={ script.src } />,
-						} );
-					} )
-				) }
+				{ flatMap( scripts, ( { extra, src }, key ) => {
+					return [
+						extra ? (
+							<script
+								key={ key + '-extra' }
+								dangerouslySetInnerHTML={ {
+									__html: extra,
+								} }
+							/>
+						) : null,
+						<script key={ key } src={ src } />,
+					];
+				} ) }
 			</body>
 		</html>
 	);

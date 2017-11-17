@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -72,11 +72,11 @@ class AuthorCompactProfile extends React.Component {
 					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
 				</a>
 				{ hasAuthorName &&
-				! hasMatchingAuthorAndSiteNames && (
-					<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>
-						{ author.name }
-					</ReaderAuthorLink>
-				) }
+					! hasMatchingAuthorAndSiteNames && (
+						<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>
+							{ author.name }
+						</ReaderAuthorLink>
+					) }
 				{ siteName && (
 					<ReaderSiteStreamLink
 						className="author-compact-profile__site-link"

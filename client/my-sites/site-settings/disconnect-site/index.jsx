@@ -6,6 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { flowRight, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -13,6 +14,7 @@ import DisconnectSurvey from './disconnect-survey';
 import MissingFeature from './missing-feature';
 import TooDifficult from './too-difficult';
 import TooExpensive from './too-expensive';
+import Troubleshoot from './troubleshoot';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'components/wizard/navigation-link';
@@ -47,7 +49,7 @@ const DisconnectSite = ( { reason, siteSlug, translate } ) => {
 				<FormattedHeader
 					headerText={ translate( 'Disconnect Site' ) }
 					subHeaderText={ translate(
-						"We'd love to know why you're disconnecting -- it will help us improve Jetpack."
+						"We'd love to know why you're disconnecting — it will help us improve Jetpack."
 					) }
 				/>
 				<ReasonComponent confirmHref={ confirmHref } />
@@ -55,6 +57,7 @@ const DisconnectSite = ( { reason, siteSlug, translate } ) => {
 					<NavigationLink href={ backHref } direction="back" />
 					<NavigationLink href={ confirmHref } direction="forward" />
 				</div>
+				<Troubleshoot />
 			</Main>
 		</div>
 	);

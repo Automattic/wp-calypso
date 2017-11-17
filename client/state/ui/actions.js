@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import {
@@ -10,6 +10,7 @@ import {
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE,
+	NAVIGATE,
 } from 'state/action-types';
 
 /**
@@ -80,3 +81,11 @@ export const toggleNotificationsPanel = () => {
 		type: NOTIFICATIONS_PANEL_TOGGLE,
 	};
 };
+
+/**
+ * Returns an action object signalling navigation to the given path.
+ *
+ * @param  {String} path Navigation path
+ * @return {Object}      Action object
+ */
+export const navigate = path => ( { type: NAVIGATE, path } );

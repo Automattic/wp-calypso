@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import ReactDom from 'react-dom';
@@ -55,7 +55,7 @@ function determinePostType( context ) {
 	return context.params.type;
 }
 
-function renderEditor( context, postType ) {
+function renderEditor( context ) {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	ReactDom.render(
 		React.createElement(
@@ -64,7 +64,6 @@ function renderEditor( context, postType ) {
 			React.createElement( PostEditor, {
 				user: user,
 				userUtils: userUtils,
-				type: postType,
 			} )
 		),
 		document.getElementById( 'primary' )
@@ -287,7 +286,7 @@ export default {
 			unsubscribe = context.store.subscribe( startEditingOnSiteSelected );
 		}
 
-		renderEditor( context, postType );
+		renderEditor( context );
 	},
 
 	exitPost: function( context, next ) {

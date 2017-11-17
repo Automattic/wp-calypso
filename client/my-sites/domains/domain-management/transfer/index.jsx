@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import { connect } from 'react-redux';
@@ -37,13 +37,13 @@ function Transfer( props ) {
 					{ translate( 'Transfer to another registrar' ) }
 				</VerticalNavItem>
 				{ ! isAutomatedTransfer &&
-				! isDomainOnly && (
-					<VerticalNavItem
-						path={ paths.domainManagementTransferToAnotherUser( slug, selectedDomainName ) }
-					>
-						{ translate( 'Transfer to another user' ) }
-					</VerticalNavItem>
-				) }
+					! isDomainOnly && (
+						<VerticalNavItem
+							path={ paths.domainManagementTransferToAnotherUser( slug, selectedDomainName ) }
+						>
+							{ translate( 'Transfer to another user' ) }
+						</VerticalNavItem>
+					) }
 				{ ! isAutomatedTransfer && (
 					<VerticalNavItem
 						path={ paths.domainManagementTransferToOtherSite( slug, selectedDomainName ) }

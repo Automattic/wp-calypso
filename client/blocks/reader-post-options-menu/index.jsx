@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import { requestSiteBlock } from 'state/reader/site-blocks/actions';
+import { blockSite } from 'state/reader/site-blocks/actions';
 import PostUtils from 'lib/posts/utils';
 import FollowButton from 'reader/follow-button';
 import * as DiscoverHelper from 'reader/discover/helper';
@@ -28,6 +28,8 @@ import QueryReaderTeams from 'components/data/query-reader-teams';
 import { isAutomatticTeamMember } from 'reader/lib/teams';
 import { getReaderTeams } from 'state/selectors';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
+import ConversationFollowButton from 'blocks/conversation-follow-button';
+import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
@@ -48,7 +50,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		stats.recordAction( 'blocked_blog' );
 		stats.recordGaEvent( 'Clicked Block Site' );
 		stats.recordTrackForPost( 'calypso_reader_block_site', this.props.post );
-		this.props.requestSiteBlock( this.props.post.site_ID );
+		this.props.blockSite( this.props.post.site_ID );
 		this.props.onBlock();
 	};
 
@@ -120,10 +122,12 @@ class ReaderPostOptionsMenu extends React.Component {
 
 	render() {
 		const { post, site, feed, teams, translate, position } = this.props;
+		const { ID: postId, site_ID: siteId } = post;
 		const isEditPossible = PostUtils.userCan( 'edit_post', post );
 		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 		const followUrl = this.getFollowUrl();
 		const isTeamMember = isAutomatticTeamMember( teams );
+		const showConversationFollowButton = shouldShowConversationFollowButton( post );
 
 		let isBlockPossible = false;
 
@@ -144,9 +148,9 @@ class ReaderPostOptionsMenu extends React.Component {
 			<span className={ classes }>
 				{ ! feed && post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
 				{ ! site &&
-				post &&
-				! post.is_external &&
-				post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
+					post &&
+					! post.is_external &&
+					post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
 				{ ! teams && <QueryReaderTeams /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
@@ -157,7 +161,20 @@ class ReaderPostOptionsMenu extends React.Component {
 					{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
 
 					{ this.props.showFollow && (
-						<FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } />
+						<FollowButton
+							tagName={ PopoverMenuItem }
+							siteUrl={ followUrl }
+							followLabel={ showConversationFollowButton ? translate( 'Follow Site' ) : null }
+							followingLabel={ showConversationFollowButton ? translate( 'Following Site' ) : null }
+						/>
+					) }
+
+					{ showConversationFollowButton && (
+						<ConversationFollowButton
+							tagName={ PopoverMenuItem }
+							siteId={ siteId }
+							postId={ postId }
+						/>
 					) }
 
 					{ post.URL && (
@@ -173,7 +190,9 @@ class ReaderPostOptionsMenu extends React.Component {
 					) }
 
 					{ ( this.props.showFollow || isEditPossible || post.URL ) &&
-					( isBlockPossible || isDiscoverPost ) && <hr className="reader-post-options-menu__hr" /> }
+						( isBlockPossible || isDiscoverPost ) && (
+							<hr className="reader-post-options-menu__hr" />
+						) }
 
 					{ isBlockPossible && (
 						<PopoverMenuItem onClick={ this.blockSite }>
@@ -203,6 +222,6 @@ export default connect(
 		};
 	},
 	{
-		requestSiteBlock,
+		blockSite,
 	}
 )( localize( ReaderPostOptionsMenu ) );

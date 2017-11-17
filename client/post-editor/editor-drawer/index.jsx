@@ -1,11 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import createFragment from 'react-addons-create-fragment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flow, get } from 'lodash';
@@ -86,8 +85,6 @@ class EditorDrawer extends Component {
 		onSave: PropTypes.func,
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
-		setNestedSidebar: PropTypes.func,
-		selectRevision: PropTypes.func,
 	};
 
 	onExcerptChange( event ) {
@@ -116,27 +113,28 @@ class EditorDrawer extends Component {
 		recordEvent( 'Changed Excerpt' );
 	}
 
-	renderTaxonomies() {
-		const { type, canJetpackUseTaxonomies } = this.props;
+	// Categories & Tags
+	renderCategories() {
+		const { type } = this.props;
 
 		// Compatibility: Allow Tags for pages when supported prior to launch
 		// of custom post types feature (#6934). [TODO]: Remove after launch.
 		const isCustomTypesEnabled = config.isEnabled( 'manage/custom-post-types' );
 		const typeSupportsTags = ! isCustomTypesEnabled && this.currentPostTypeSupports( 'tags' );
 
-		// Categories & Tags
-		let categories;
 		if ( 'post' === type || typeSupportsTags ) {
-			categories = <CategoriesTagsAccordion />;
+			return <CategoriesTagsAccordion />;
 		}
+	}
 
-		// Custom Taxonomies
-		let taxonomies;
+	// Custom Taxonomies
+	renderTaxonomies() {
+		const { canJetpackUseTaxonomies } = this.props;
+		const isCustomTypesEnabled = config.isEnabled( 'manage/custom-post-types' );
+
 		if ( isCustomTypesEnabled && false !== canJetpackUseTaxonomies ) {
-			taxonomies = <EditorDrawerTaxonomies />;
+			return <EditorDrawerTaxonomies />;
 		}
-
-		return createFragment( { categories, taxonomies } );
 	}
 
 	renderPostFormats() {
@@ -276,7 +274,7 @@ class EditorDrawer extends Component {
 			return;
 		}
 
-		return <EditorMoreOptionsCopyPost type={ type } />;
+		return <EditorMoreOptionsCopyPost />;
 	}
 
 	renderMoreOptions() {
@@ -318,24 +316,22 @@ class EditorDrawer extends Component {
 		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
 		const postDate = get( this.props.post, 'date', null );
 		const postStatus = get( this.props.post, 'status', null );
-		const { translate } = this.props;
+		const { translate, type } = this.props;
 
 		return (
 			<Accordion title={ translate( 'Status' ) } e2eTitle="status">
 				<EditPostStatus
 					savedPost={ this.props.savedPost }
 					postDate={ postDate }
-					type={ this.props.type }
 					onSave={ this.props.onSave }
 					onTrashingPost={ this.props.onTrashingPost }
 					onPrivatePublish={ this.props.onPrivatePublish }
 					setPostDate={ this.props.setPostDate }
 					site={ this.props.site }
 					status={ postStatus }
+					type={ type }
 					isPostPrivate={ this.props.isPostPrivate }
 					confirmationSidebarStatus={ this.props.confirmationSidebarStatus }
-					setNestedSidebar={ this.props.setNestedSidebar }
-					selectRevision={ this.props.selectRevision }
 				/>
 			</Accordion>
 		);
@@ -349,6 +345,7 @@ class EditorDrawer extends Component {
 				{ site && <QueryPostTypes siteId={ site.ID } /> }
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 				{ this.renderStatus() }
+				{ this.renderCategories() }
 				{ this.renderTaxonomies() }
 				{ this.renderFeaturedImage() }
 				{ this.renderPageOptions() }
@@ -376,6 +373,7 @@ const enhance = flow(
 				isJetpack: isJetpackSite( state, siteId ),
 				isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 				jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
+				type,
 				typeObject: getPostType( state, siteId, type ),
 			};
 		},

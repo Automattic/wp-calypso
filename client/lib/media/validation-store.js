@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { isEmpty, mapValues, pickBy, without } from 'lodash';

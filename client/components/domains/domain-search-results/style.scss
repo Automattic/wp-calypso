@@ -1,4 +1,4 @@
-.domain-search-results__domain-availability {
+.domain-search-results__domain-availability, .transfer-domain-step__domain-availability {
 	.notice.is-success {
 		margin: 0;
 	}
@@ -20,6 +20,54 @@
 		small {
 			display: block;
 			font-size: 12px;
+		}
+	}
+}
+
+.domain-search-results__transfer-card {
+	display: flex;
+	flex-direction: column;
+
+	@include breakpoint( '>480px' ) {
+		align-items: center;
+		flex-direction: row;
+	}
+}
+
+.domain-search-results__transfer-card-copy {
+	font-size: 16px;
+
+	p {
+		margin-bottom: 0;
+	}
+
+	@include breakpoint( '>480px' ) {
+		padding-right: 10px;
+	}
+
+	@include breakpoint( '>660px' ) {
+		font-size: 18px;
+
+		p {
+			font-size: 16px;
+		}
+	}
+}
+
+.domain-search-results__transfer-card-link {
+	flex-shrink: 0;
+	width: 100%;
+
+	a {
+		display: block;
+		padding: 15px 0 0;
+	}
+
+	@include breakpoint( '>480px' ) {
+		width: auto;
+
+		a {
+			padding: 0;
 		}
 	}
 }

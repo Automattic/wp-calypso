@@ -22,14 +22,20 @@ import ProductSearch from 'woocommerce/components/product-search';
 import { ProtectFormGuard } from 'lib/protect-form';
 import SectionHeader from 'components/section-header';
 
-const noop = () => {};
-
 class OrderCreate extends Component {
 	editOrder = order => {
 		const { site } = this.props;
 		if ( site && site.ID ) {
 			this.props.editOrder( site.ID, order );
 		}
+	};
+
+	state = {
+		list: [],
+	};
+
+	updateProducts = list => {
+		this.setState( { list } );
 	};
 
 	render() {
@@ -51,7 +57,7 @@ class OrderCreate extends Component {
 
 					<SectionHeader label={ translate( 'Add products to the order' ) } />
 					<Card className="order-create__card">
-						<ProductSearch onSelect={ noop } />
+						<ProductSearch onChange={ this.updateProducts } value={ this.state.list } />
 					</Card>
 
 					<SectionHeader label={ translate( 'How will these products be shipped?' ) } />

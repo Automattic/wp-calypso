@@ -1,18 +1,12 @@
 #!/usr/bin/env node
 require( 'babel-register' );
-var request = require( 'request' );
-var vm = require( 'vm' );
-var _ = require( 'lodash' );
-var assert = require( 'assert' );
-var path = require( 'path' );
-var fs = require( 'fs' );
-var forIn = require( 'lodash/forIn' );
-var mapValues = require( 'lodash/mapValues' );
-var orderBy = require( 'lodash/orderBy' );
-var last = require( 'lodash/last' );
-var includes = require( 'lodash/includes' );
+const request = require( 'request' );
+const vm = require( 'vm' );
+const _ = require( 'lodash' );
+const path = require( 'path' );
+const fs = require( 'fs' );
 
-var areaCodes = {
+const areaCodes = {
 	CA: [ "204", "236", "249", "250", "289", "306", "343", "365", "387", "403", "416", "418", "431", "437", "438", "450", "506", "514", "519", "548", "579", "581", "587", "604", "613", "639", "647", "672", "705", "709", "742", "778", "780", "782", "807", "819", "825", "867", "873", "902", "905" ],
 	DO: [ "809", "829", "849" ],
 	PR: [ "787", "939" ]
@@ -24,7 +18,7 @@ var areaCodes = {
  * Priorities should be distinct among the same dial code group.
  * @type Object
  */
-var priorityData = {
+const priorityData = {
 	// dial code: +1
 	US: 10,
 	CA: 5,
@@ -72,9 +66,9 @@ var priorityData = {
 	BQ: 1
 };
 
-var LIBPHONENUMBER_METADATA_URL = 'https://raw.githubusercontent.com/googlei18n/libphonenumber/master/javascript/i18n/phonenumbers/metadatalite.js';
+const LIBPHONENUMBER_METADATA_URL = 'https://raw.githubusercontent.com/googlei18n/libphonenumber/master/javascript/i18n/phonenumbers/metadatalite.js';
 
-var libPhoneNumberIndexes = {
+const libPhoneNumberIndexes = {
 	COUNTRY_CODE: 9,
 	COUNTRY_DIAL_CODE: 10,
 	INTERNATIONAL_PREFIX: 11,
@@ -85,20 +79,16 @@ var libPhoneNumberIndexes = {
 	REGION_AREA_CODE: 23
 };
 
-var numberFormatIndexes = {
+const numberFormatIndexes = {
 	PATTERN: 1,
 	FORMAT: 2,
 	LEADING_DIGIT_PATTERN: 3,
 	NATIONAL_CALLING_FORMAT: 4
 };
 
-var aliases = {
+const aliases = {
 	UK: 'GB'
 };
-
-function tabs( depth ) {
-	return _.times( depth, _.constant( '\t' ) ).join( '' );
-}
 
 function getLibPhoneNumberData() {
 	return new Promise( function( resolve, reject ) {
@@ -107,9 +97,9 @@ function getLibPhoneNumberData() {
 				throw error || response.statusCode;
 			}
 
-			var capture = body.substring( body.indexOf( 'countryToMetadata = ' ) + 20, body.length - 2 );
-			var sandbox = { container: {} };
-			var script = new vm.Script( 'container.data = ' + capture );
+			const capture = body.substring( body.indexOf( 'countryToMetadata = ' ) + 20, body.length - 2 );
+			const sandbox = { container: {} };
+			const script = new vm.Script( 'container.data = ' + capture );
 
 			try {
 				script.runInNewContext( sandbox );
@@ -131,59 +121,8 @@ function processNumberFormat( format ) {
 		match: format[ numberFormatIndexes.PATTERN ],
 		replace: format[ numberFormatIndexes.FORMAT ],
 		nationalFormat: format[ numberFormatIndexes.NATIONAL_CALLING_FORMAT ] || undefined,
-		leadingDigitPattern: last( format[ numberFormatIndexes.LEADING_DIGIT_PATTERN ] || [] )
+		leadingDigitPattern: _.last( format[ numberFormatIndexes.LEADING_DIGIT_PATTERN ] || [] )
 	}
-}
-
-function parseJSStringToData( str ) {
-	var sandbox = { container: {} };
-	var script = new vm.Script( 'container.data = ' + str );
-	script.runInNewContext( sandbox );
-	return sandbox.container.data;
-}
-
-/**
- * Serializes a simple object into a JS script, parseable by an ES5 compiler.
- * @param {*} thing
- * @param {number} [depth=0] Internally used for adding tabs to nested objects.
- * @returns {string} - String representation of the given object.
- */
-function toJSString( thing, depth ) {
-	depth = depth || 0;
-	if ( _.isString( thing ) ) {
-		return '"' + thing.replace( /\\/g, '\\\\' ) + '"';
-	} else if ( _.isNumber( thing ) ) {
-		return thing;
-	} else if ( _.isArray( thing ) ) {
-		return '[\n' + thing.map( function( val ) {
-				return tabs( depth + 1 ) + toJSString( val, depth + 1 );
-			} ).join( ',\n' ) + '\n' + tabs( depth ) + ']'
-	} else if ( _.isUndefined( thing ) ) {
-		return 'undefined';
-	} else if ( _.isNull( thing ) ) {
-		return 'null';
-	} else if ( _.isBoolean( thing ) ) {
-		return thing.toString();
-	} else if ( _.isRegExp( thing ) ) {
-		return thing;
-	} else if ( _.isObject( thing ) ) {
-		var res = '{\n';
-		const keys = Object.keys( thing );
-		res = keys.reduce( function( res, key, idx ) {
-			return res + tabs( depth + 1 ) + objectKeyToJSString( key ) + ': ' + toJSString( thing[ key ], depth + 1 ) + ( idx === keys.length - 1 ? '' : ',' ) + '\n'
-		}, res );
-		res += tabs( depth ) + '}';
-		return res;
-	} else {
-		throw new Error( 'Unsupported thing: ' + thing );
-	}
-}
-
-function objectKeyToJSString( key ) {
-	if ( /[\[\]\|]|(?:^(?:do|if|in|of)$)/.test( key ) ) {
-		return '"' + key + '"';
-	}
-	return key;
 }
 
 /**
@@ -192,7 +131,7 @@ function objectKeyToJSString( key ) {
  * @returns {Object} obj, with keys with value "undefined" removed.
  */
 function deepRemoveUndefinedKeysFromObject( obj ) {
-	for ( var key in obj ) {
+	for ( let key in obj ) {
 		if ( obj.hasOwnProperty( key ) ) {
 			if ( _.isUndefined( obj[ key ] ) ) {
 				delete obj[ key ];
@@ -206,7 +145,7 @@ function deepRemoveUndefinedKeysFromObject( obj ) {
 
 function generateDeepRemoveEmptyArraysFromObject( allowedKeys ) {
 	return function deepRemoveEmptyArraysFromObject( obj ) {
-		for ( var key in obj ) {
+		for ( let key in obj ) {
 			if ( obj.hasOwnProperty( key ) ) {
 				if ( _.includes( allowedKeys, key ) && _.isArray( obj[ key ] ) && obj[ key ].length === 0 ) {
 					delete obj[ key ];
@@ -224,7 +163,7 @@ function removeAllNumberKeys( obj ) {
 }
 
 function removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode( countryData ) {
-	for ( var key in countryData ) {
+	for ( let key in countryData ) {
 		if ( countryData.hasOwnProperty( key ) ) {
 			const country = countryData[ key ],
 				{ countryDialCode, dialCode } = country;
@@ -243,11 +182,11 @@ function removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode( countryDat
  * @returns {{}}
  */
 function processLibPhoneNumberMetadata( libPhoneNumberData ) {
-	var data = {};
-	for ( var countryCode in libPhoneNumberData ) {
+	const data = {};
+	for ( let countryCode in libPhoneNumberData ) {
 		if ( libPhoneNumberData.hasOwnProperty( countryCode ) ) {
-			var countryCodeUpper = countryCode.toUpperCase();
-			var country = libPhoneNumberData[ countryCode ];
+			const countryCodeUpper = countryCode.toUpperCase();
+			const country = libPhoneNumberData[ countryCode ];
 			data[ countryCodeUpper ] = {
 				isoCode: countryCodeUpper,
 				dialCode: String( country[ libPhoneNumberIndexes.COUNTRY_DIAL_CODE ] + ( country[ libPhoneNumberIndexes.REGION_AREA_CODE ] || '' ) ),
@@ -262,8 +201,8 @@ function processLibPhoneNumberMetadata( libPhoneNumberData ) {
 		}
 	}
 
-	var noPattern = _.filter( data, _.conforms( { patterns: function( patterns ) { return patterns.length === 0 } } ) );
-	forIn( noPattern, function( country ) {
+	const noPattern = _.filter( data, _.conforms( { patterns: function( patterns ) { return patterns.length === 0 } } ) );
+	_.forIn( noPattern, function( country ) {
 		country.patternRegion = ( _.maxBy( _.values( _.filter( data, _.conforms( { dialCode: function ( d ) { return d === country.dialCode } } ) ) ), 'priority' ) || {} ).isoCode;
 		console.log( 'Info: ' + country.isoCode + ' didn\'t have a pattern' + ( country.patternRegion ? ' so we use ' + country.patternRegion : '.' ) );
 	} );
@@ -331,47 +270,43 @@ function insertCountryAliases( data ) {
 }
 
 /**
- * Converts a given object to a JS string, then compiles and executes the given string and compares the two with deep
- * equality. If they are deeply equal, returns the JS string.
- * @param {{}} data
- * @returns {string}
+ * Wraps and saves data to '../client/components/phone-input/data.js'
+ * @param {Object} data
  */
-function convertToJSStringAndVerify( data ) {
-	const dataString = toJSString( data );
-	const parsedData = parseJSStringToData( dataString );
-	assert.deepEqual( parsedData , data );
-	return dataString;
-}
-
-/**
- * Wraps and saves a given JS string to '../client/components/phone-input/data.js'
- * @param dataString
- */
-function saveToFile( dataString ) {
-	var scriptStr = '// Generated by build-metadata.js\n/* eslint-disable */\nmodule.exports = ' + dataString + ';\n/* eslint-enable */\n';
-	var filePath = path.resolve( __dirname, '..', 'client', 'components', 'phone-input', 'data.js' );
+function saveToFile( data ) {
+	const scriptStr = (
+		'/** @format */\n' +
+		'// Generated by build-metadata.js\n' +
+		'/* eslint-disable */\n' +
+		Object
+			.keys( data )
+			.map( key => `export const ${ key } = ${ JSON.stringify( data[ key ], null, '\t' ) };\n` )
+			.join( '\n' ) +
+		'/* eslint-enable */\n'
+	);
+	const filePath = path.resolve( __dirname, '..', 'client', 'components', 'phone-input', 'data.js' );
 	fs.writeFileSync( filePath, scriptStr );
 }
 
 function generateDialCodeMap( metadata ) {
-	var res = {};
+	const res = {};
 	function addValue( key, value ) {
 		if ( ! /^\d+$/.test( key ) ) {
 			console.warn( 'Warning: ' + value + ' has invalid dialCode: ' + key );
 			return;
 		}
 		res[ key ] = res[ key ] || [];
-		if ( ! includes( res[ key ], value ) ) {
+		if ( ! _.includes( res[ key ], value ) ) {
 			res[ key ].push( value );
 		}
 	}
-	forIn( metadata, function( country ) {
+	_.forIn( metadata, function( country ) {
 		addValue( country.dialCode, country.isoCode );
 		( country.areaCodes || [] ).forEach( function( areaCode ) { addValue( country.dialCode + areaCode, country.isoCode ) } );
 	} );
 
-	return mapValues( res, function ( countryCodes ) {
-		return orderBy( countryCodes, function( countryCode ) { return metadata[ countryCode ].priority || 0 }, 'desc' );
+	return _.mapValues( res, function ( countryCodes ) {
+		return _.orderBy( countryCodes, function( countryCode ) { return metadata[ countryCode ].priority || 0 }, 'desc' );
 	} );
 }
 
@@ -391,7 +326,6 @@ getLibPhoneNumberData()
 	.then( removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode )
 	.then( generateFullDataset )
 	.then( deepRemoveUndefinedKeysFromObject )
-	.then( convertToJSStringAndVerify )
 	.then( saveToFile )
 	.catch( function( error ) {
 		console.error( error.stack );

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * Internal Dependencies
- *
- * @format
+ * Internal dependencies
  */
 
 import config from 'config';

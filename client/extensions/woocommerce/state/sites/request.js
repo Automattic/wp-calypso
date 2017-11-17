@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { omit, mapValues, isArray, isObject } from 'lodash';

@@ -12,7 +12,7 @@ import {
 	SERIALIZE,
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
-	HAPPYCHAT_SEND_MESSAGE,
+	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
 } from 'state/action-types';
 import { lostFocusAt, currentMessage } from '../reducer';
@@ -54,8 +54,8 @@ describe( 'reducers', () => {
 			expect( result ).to.eql( 'abcd' );
 		} );
 
-		test( 'resets to empty string on HAPPYCHAT_SEND_MESSAGE', () => {
-			const action = { type: HAPPYCHAT_SEND_MESSAGE, message: 'abcd' };
+		test( 'resets to empty string on HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE', () => {
+			const action = { type: HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE, payload: { message: 'abcd' } };
 			const result = currentMessage( 'abcd', action );
 			expect( result ).to.eql( '' );
 		} );

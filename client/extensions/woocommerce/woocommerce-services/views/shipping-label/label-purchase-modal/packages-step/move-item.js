@@ -13,13 +13,13 @@ import { localize } from 'i18n-calypso';
 import Dialog from 'components/dialog';
 import FormRadio from 'components/forms/form-radio';
 import FormLabel from 'components/forms/form-label';
-import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import getPackageDescriptions from './get-package-descriptions';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import getProductLink from 'woocommerce/woocommerce-services/lib/utils/get-product-link';
 import { getSite } from 'state/sites/selectors';
 import { closeItemMove, setTargetPackage, moveItem } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
 const MoveItemDialog = ( props ) => {
 	const {
@@ -32,7 +32,7 @@ const MoveItemDialog = ( props ) => {
 		openedPackageId,
 		selected,
 		all,
-		translate
+		translate,
 	} = props;
 
 	if ( -1 === movedItemIndex || ! showItemMoveDialog ) {
@@ -54,7 +54,7 @@ const MoveItemDialog = ( props ) => {
 	const openedPackage = selected[ openedPackageId ];
 	const items = openedPackage.items;
 	const item = items[ movedItemIndex ];
-	const itemUrl = getLink( '/store/product/:site/' + item.product_id, site );
+	const itemUrl = getProductLink( item.product_id, site );
 	const itemLink = <a href={ itemUrl } target="_blank" rel="noopener noreferrer">{ item.name }</a>;
 	let desc;
 
@@ -104,12 +104,24 @@ const MoveItemDialog = ( props ) => {
 
 	const onClose = () => props.closeItemMove( orderId, siteId );
 
+	const buttons = [
+		{ action: 'cancel', label: translate( 'Cancel' ), onClick: onClose },
+		{
+			action: 'move',
+			label: translate( 'Move' ),
+			isPrimary: true,
+			disabled: targetPackageId === openedPackageId,  // Result of targetPackageId initialization
+			onClick: () => props.moveItem( orderId, siteId, openedPackageId, movedItemIndex, targetPackageId ),
+		},
+	];
+
 	return (
 		<Dialog isVisible={ showItemMoveDialog }
 				isFullScreen={ false }
 				onClickOutside={ onClose }
 				onClose={ onClose }
-				additionalClassNames="wcc-root packages-step__dialog" >
+				buttons={ buttons }
+				additionalClassNames="wcc-root woocommerce packages-step__dialog" >
 			<FormSectionHeading>{ translate( 'Move item' ) }</FormSectionHeading>
 			<div className="packages-step__dialog-body">
 				<p>{ desc }</p>
@@ -118,15 +130,6 @@ const MoveItemDialog = ( props ) => {
 				{ renderNewPackageOption() }
 				{ renderIndividualOption() }
 			</div>
-			<ActionButtons buttons={ [
-				{
-					label: translate( 'Move' ),
-					isPrimary: true,
-					isDisabled: targetPackageId === openedPackageId,  // Result of targetPackageId initialization
-					onClick: () => props.moveItem( orderId, siteId, openedPackageId, movedItemIndex, targetPackageId ),
-				},
-				{ label: translate( 'Cancel' ), onClick: onClose },
-			] } />
 		</Dialog>
 	);
 };
@@ -153,7 +156,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 		targetPackageId: shippingLabel.targetPackageId,
 		openedPackageId: shippingLabel.openedPackageId,
 		selected: shippingLabel.form.packages.selected,
-		all: shippingLabel.form.packages.all,
+		all: getAllPackageDefinitions( state, siteId ),
 	};
 };
 

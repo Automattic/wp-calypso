@@ -24,8 +24,6 @@ class MissingFeature extends PureComponent {
 		const { translate } = this.props;
 		return {
 			themes: translate( 'Themes' ),
-			plugins: translate( 'Plugins' ),
-			support: translate( 'Support' ),
 			seo: translate( 'SEO' ),
 			ads: translate( 'Ads' ),
 			ecommerce: translate( 'Ecommerce' ),
@@ -50,7 +48,7 @@ class MissingFeature extends PureComponent {
 
 		return (
 			<div className="disconnect-site__missing-feature">
-				<SectionHeader label={ translate( 'Which feature where you looking for?' ) } />
+				<SectionHeader label={ translate( 'Which feature(s) were you looking for?' ) } />
 				<Card>
 					<TokenField
 						onChange={ this.handleTokenChange }
@@ -59,13 +57,17 @@ class MissingFeature extends PureComponent {
 					/>
 					<Button
 						disabled={ isEmpty( this.state.tokens ) }
-						href={ addQueryArgs(
-							{
-								reason: 'missing-feature',
-								text: this.state.tokens.map( this.normalizeToken ).sort(),
-							},
-							confirmHref
-						) }
+						href={
+							! isEmpty( this.state.tokens )
+								? addQueryArgs(
+										{
+											reason: 'missing-feature',
+											text: this.state.tokens.map( this.normalizeToken ).sort(),
+										},
+										confirmHref
+									)
+								: null
+						}
 						primary
 					>
 						{ translate( 'Submit' ) }

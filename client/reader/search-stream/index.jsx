@@ -126,7 +126,7 @@ class SearchStream extends React.Component {
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
-			searchPlaceholderText = translate( 'Search billions of WordPress.com posts…' );
+			searchPlaceholderText = translate( 'Search billions of WordPress posts…' );
 		}
 
 		const documentTitle = translate( '%s ‹ Reader', {

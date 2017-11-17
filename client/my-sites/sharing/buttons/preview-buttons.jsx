@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { filter, isEqual } from 'lodash';
@@ -256,11 +256,9 @@ class SharingButtonsPreviewButtons extends React.Component {
 	render() {
 		return (
 			<div className="sharing-buttons-preview-buttons">
-				{ 'official' === this.props.style ? (
-					this.getOfficialPreviewElement()
-				) : (
-					this.getCustomPreviewElement()
-				) }
+				{ 'official' === this.props.style
+					? this.getOfficialPreviewElement()
+					: this.getCustomPreviewElement() }
 				{ this.getMorePreviewElement() }
 			</div>
 		);

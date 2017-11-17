@@ -344,6 +344,7 @@ export default class QueryManager {
 				const shouldAdjustFoundCount = ! isReceivedQueryKey;
 
 				const query = this.constructor.QueryKey.parse( queryKey );
+				let needsSort = false;
 				items.forEach( receivedItem => {
 					// Find item in known data for query
 					const receivedItemKey = receivedItem[ this.options.itemKey ];
@@ -389,10 +390,14 @@ export default class QueryManager {
 							receivedItemKey
 						);
 
-						// Re-sort the set
-						this.constructor.sort( memo[ queryKey ].itemKeys, nextItems, query );
+						// The itemKeys will need to be re-sorted after all items are processed
+						needsSort = true;
 					}
 				} );
+
+				if ( needsSort ) {
+					this.constructor.sort( memo[ queryKey ].itemKeys, nextItems, query );
+				}
 
 				isModified = isModified || memo[ queryKey ] !== queryDetails;
 				return memo;

@@ -1,35 +1,114 @@
 /** @format */
+// @TODO we should decouple from accordion styles
 @import 'components/accordion/style';
 
 .editor-revisions-list {
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-	overflow: hidden;
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: $gray-light;
+
+	@include breakpoint( '<660px' ) {
+		left: 0;
+		height: 120px;
+	}
+
+	@include breakpoint( '>660px' ) {
+		border-left: 1px solid darken($sidebar-bg-color, 5%);
+		z-index: 1; // Put the list above the action-buttons:before overlay gradient. -shaun
+		width: 230px;
+		bottom: 73px;
+	}
+}
+
+.editor-revisions-list__header {
+	$editor-revisions-list-header-height: 46px;
+	$editor-revisions-list-header-font-size: 16px;
+	padding: 0 16px;
+	height: $editor-revisions-list-header-height;
+	line-height: $editor-revisions-list-header-height;
+	color: $gray-text-min;
+	background: $white;
+	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
+
+	.editor-revisions-list.is-loading & {
+		position: relative;
+
+		&:before {
+			content: '';
+			display: block;
+			position: absolute;
+			top: ($editor-revisions-list-header-height - $editor-revisions-list-header-font-size) / 2;
+			width: 50%;
+			height: $editor-revisions-list-header-font-size;
+			@include placeholder(23%);
+		}
+	}
+}
+
+// Scrollable Box for Revisions List
+.editor-revisions-list__scroller {
+	position: absolute;
+	top: 47px;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	overflow-y: auto;
+}
+
+.editor-revisions-list__list {
+	list-style: none;
+	margin: 0;
+
+	@include breakpoint( '<660px' ) {
+		display: inline;
+		white-space: nowrap;
+	}
+
+	&:before {
+		content: '';
+		display: block;
+		box-sizing: border-box;
+		@include placeholder(23%);
+	}
+}
+
+.editor-revisions-list__revision {
+	display: inline;
+}
+
+.editor-revisions-list__load-revision {
+	width: 100%;
+}
+
+// Individual Revision List Item
+.editor-revisions-list.is-loading .editor-revisions-list__list:before,
+.editor-revisions-list__button {
+	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
+	border-right: 1px solid darken($sidebar-bg-color, 5%);
+	color: $gray-dark;
+	cursor: pointer;
+	text-align: left;
+	padding: 8px 16px;
+	min-height: 73px;
+	width: 60vw;
+
+	@include breakpoint( '>660px' ) {
+		display: block;
+		width: 100%;
+		border-right: none;
+		min-height: 60px;
+	}
 }
 
 .editor-revisions-list__button {
-	// NOTE: this is imitating the style of an accordion (with subtitle), with
-	// support for being "selected" and no right arrow
-	background-color: $accordion-background-collapsed;
-	border-top: 1px solid darken($sidebar-bg-color, 5%);
-	color: $gray-dark;
-	cursor: pointer;
-	display: block;
-	font-size: 13px;
-	margin: 0;
-	padding: ($accordion-padding - $accordion-subtitle-height / 2) $accordion-padding;
-	text-align: left;
-	width: 100%;
-
 	&:hover {
 		background: $accordion-background-hover;
-		color: $blue-medium;
 	}
 
 	.editor-revisions-list__revision.is-selected > &,
 	.editor-revisions-list__revision.is-selected > &:hover {
-		background: $blue-medium;
+		background: $gray-text-min;
 
 		// NOTE: force with a heavy specificity white text, see discussion on
 		// https://github.com/Automattic/wp-calypso/pull/13367#discussion_r114108253
@@ -40,50 +119,59 @@
 }
 
 .editor-revisions-list__date {
-	font-weight: bold;
+	color: $gray-text;
+	font-weight: 600;
+	display: block;
+	margin-bottom: 4px;
 }
 
-.editor-revisions-list__changes {
-	padding-top: 5px;
-	font-size: 11px;
-}
-
-.editor-revisions-list__additions {
-	color: $blue-medium;
-}
-
-.editor-revisions-list__deletions {
-	color: $alert-red;
-}
-
-.editor-revisions-list__minor-changes {
+.editor-revisions-list__author {
+	font-size: 13px;
+	display: block;
+	margin-bottom: 4px;
 	color: $gray-text-min;
 }
 
-.editor-revisions-list__scroller {
-	padding: 10px 0;
-	height: 100%;
-	overflow-y: auto;
-	overflow-x: hidden;
-	-webkit-overflow-scrolling: touch;
-}
-
-.editor-revisions-list__list,
-.editor-revisions-list__header {
-	background: $white;
-	border-top: 1px solid darken($sidebar-bg-color, 5%);
-	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
+.editor-revisions-list__changes {
 	font-size: 13px;
+	display: block;
 }
 
-.editor-revisions-list__list {
-	border-top: none;
+.editor-revisions-list__additions,
+.editor-revisions-list__deletions,
+.editor-revisions-list__minor-changes {
+	line-height: 1;
+
+	b {
+		display: inline-block;
+		border-radius: 12px;
+		padding: 0;
+		line-height: 12px;
+		font-size: 14px;
+		height: 14px;
+		width: 14px;
+		color: white;
+		text-align: center;
+		margin: 0 6px 0 0;
+		font-weight: normal;
+		box-sizing: border-box;
+	}
 }
 
-.editor-revisions-list__header {
-	padding: 1rem;
+.editor-revisions-list__additions {
+	margin-right: 12px;
+	b {
+		background: $blue-medium;
+	}
 }
 
-.editor-revisions-list__load-revision {
-	width: 100%;
+.editor-revisions-list__deletions {
+	b {
+		background: $alert-red;
+	}
+}
+
+.editor-revisions-list__minor-changes {
+	top: 8px;
+	color: $gray-text-min;
 }

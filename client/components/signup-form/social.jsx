@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -20,6 +20,8 @@ class SocialSignupForm extends Component {
 	static propTypes = {
 		handleResponse: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+		socialService: PropTypes.string,
+		socialServiceResponse: PropTypes.object,
 	};
 
 	handleGoogleResponse = ( response, triggeredByUser = true ) => {
@@ -27,15 +29,28 @@ class SocialSignupForm extends Component {
 			return;
 		}
 
-		if ( ! triggeredByUser ) {
-			// TODO: handle social signup for the redirect flow
+		if ( ! triggeredByUser && this.props.socialService !== 'google' ) {
 			return;
 		}
 
 		this.props.handleResponse( 'google', response.Zi.access_token, response.Zi.id_token );
 	};
 
+	shouldUseRedirectFlow() {
+		// If calypso is loaded in a popup, we don't want to open a second popup for social signup
+		// let's use the redirect flow instead in that case
+		const isPopup = typeof window !== 'undefined' && window.opener && window.opener !== window;
+		// also disable the popup flow for all safari versions
+		// See https://github.com/google/google-api-javascript-client/issues/297#issuecomment-333869742
+		const isSafari =
+			typeof window !== 'undefined' && /^(?!.*chrome).*safari/i.test( window.navigator.userAgent );
+		return isPopup || isSafari;
+	}
+
 	render() {
+		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
+		const redirectUri = uxMode === 'redirect' ? `https://${ window.location.host }/start` : null;
+
 		return (
 			<Card className="signup-form__social">
 				<p>
@@ -48,6 +63,8 @@ class SocialSignupForm extends Component {
 					<GoogleLoginButton
 						clientId={ config( 'google_oauth_client_id' ) }
 						responseHandler={ this.handleGoogleResponse }
+						redirectUri={ redirectUri }
+						uxMode={ uxMode }
 					/>
 				</div>
 			</Card>

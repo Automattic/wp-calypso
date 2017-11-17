@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 
 const GettingStarted = localize( ( { translate, onClick, isPlaceholder, site, redirectToSettings } ) => {
 	const allow = translate( 'Allow customers to subscribe to your Email list' );
-	const send = translate( 'Send abandon cart emails' );
+	const send = translate( 'Send abandoned cart emails' );
 	const create = translate( 'Create purchase-based segments for targeted campaigns' );
 	const getStarted = translate( 'Get started with MailChimp' );
 	const list = [ allow, send, create ];
@@ -29,7 +29,7 @@ const GettingStarted = localize( ( { translate, onClick, isPlaceholder, site, re
 					{ translate( 'Allow your customers to subscribe to your MailChimp email list.' ) }
 				</div>
 			</Card>
-			{ ! isPlaceholder && <Card>
+			{ ! isPlaceholder && <Card className="mailchimp__getting-started-content">
 				<span>
 					<img
 						src={ '/calypso/images/illustrations/illustration-layout.svg' }

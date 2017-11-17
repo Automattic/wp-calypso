@@ -1,8 +1,3 @@
-.post-type-list:not( .is-empty ) {
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% );
-}
-
 .post-type-list__bulk-edit-bar {
 	display: flex;
 	align-items: center;
@@ -50,4 +45,18 @@
 	transform: translate( -50%, -50% );
 	max-height: 100%;
 	max-width: none;
+}
+
+
+.post-type-list__max-pages-notice {
+	text-align: center;
+	margin: 16px 0;
+	font-size: 14px;
+	color: $gray-text-min;
+}
+
+a.post-type-list__max-pages-notice-link {
+	cursor: pointer;
+	color: $gray-text-min;
+	text-decoration: underline;
 }

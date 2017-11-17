@@ -1,11 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import {
-	assign,
 	compact,
 	every,
 	filter,
@@ -68,36 +67,44 @@ export const getSiteBySlug = createSelector(
 );
 
 /**
- * Returns a normalized site object by its ID. Intends to replicate
- * the site object returned from the legacy `sites-list` module.
- *
+ * Memoization cache for the `getSite` selector
+ */
+let getSiteCache = new WeakMap();
+
+/**
+ * Returns a normalized site object by its ID or site slug.
  *
  * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {Number|String}  siteIdOrSlug Site ID or site slug
  * @return {?Object}        Site object
  */
-export const getSite = createSelector(
-	( state, siteId ) => {
-		let site =
-			getRawSite( state, siteId ) ||
-			// Support for non-ID site retrieval
-			// Replaces SitesList#getSite
-			getSiteBySlug( state, siteId );
+export function getSite( state, siteIdOrSlug ) {
+	const rawSite = getRawSite( state, siteIdOrSlug ) || getSiteBySlug( state, siteIdOrSlug );
+	if ( ! rawSite ) {
+		return null;
+	}
 
-		if ( ! site ) {
-			return null;
-		}
+	// Use the rawSite object itself as a WeakMap key
+	const cachedSite = getSiteCache.get( rawSite );
+	if ( cachedSite ) {
+		return cachedSite;
+	}
 
-		// To avoid mutating the original site object, create a shallow clone
-		// before assigning computed properties
-		site = { ...site };
-		assign( site, getSiteComputedAttributes( state, siteId ) );
-		assign( site, getJetpackComputedAttributes( state, siteId ) );
+	const site = {
+		...rawSite,
+		...getSiteComputedAttributes( state, rawSite.ID ),
+		...getJetpackComputedAttributes( state, rawSite.ID ),
+	};
 
-		return site;
-	},
-	state => [ state.sites.items, state.currentUser.capabilities ]
-);
+	// Once the `rawSite` object becomes outdated, i.e., state gets updated with a newer version
+	// and no more references are held, the key will be automatically removed from the WeakMap.
+	getSiteCache.set( rawSite, site );
+	return site;
+}
+
+getSite.clearCache = () => {
+	getSiteCache = new WeakMap();
+};
 
 export function getJetpackComputedAttributes( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {

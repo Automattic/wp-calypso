@@ -24,15 +24,13 @@
 		margin-top: 16px;
 	}
 
-	.shipping-label__item-actions {
+	.shipping-label__item-detail, .shipping-label__item-actions {
 		display: flex;
 		justify-content: space-between;
-		font-size: 12px;
-		margin-bottom: 0;
 
 		a {
 			display: inline-block;
-			margin-top: 10px;
+			font-size: 12px;
 		}
 
 		span svg,
@@ -41,23 +39,22 @@
 			top: 2px;
 			margin-right: 2px;
 		}
+	}
+	
+	.shipping-label__item-detail {
+		margin-bottom: 6px;
+		
+		a {
+			vertical-align: text-top;
+		}			
+	}
 
-		.is-refund-pending {
-			color: $alert-yellow;
-		}
-
-		.is-refund-checking {
-			color: $alert-yellow;
-			animation: loading-fade 1.6s ease-in-out infinite;
-		}
-
-		.is-refund-complete {
-			color: $alert-green;
-		}
-
-		.is-refund-rejected {
-			color: $alert-red;
-		}
+	.shipping-label__item-actions {
+		margin-bottom: 0;
+		
+		a {
+			margin-top: 10px;
+		}			
 	}
 
 	.shipping-label__purchase-error {
@@ -80,6 +77,19 @@
 	dd {
 		margin-left: 0;
 	}
+}
+
+&.dialog.card.label-details-modal {
+	width: 460px;
+
+	dd {
+		margin-left: 0;
+
+		ul {
+			margin-left: 1.2em;
+		}
+	}
+
 }
 
 .error-notice {

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -24,6 +24,11 @@ import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import {
+	hasOAuthParamsInLocation,
+	hasOAuthCompleteInLocation,
+} from './stripe/payment-method-stripe-utils';
+import { openPaymentMethodForEdit } from 'woocommerce/state/ui/payments/methods/actions';
 import Main from 'components/main';
 import SettingsPaymentsLocationCurrency from './payments-location-currency';
 import SettingsNavigation from '../navigation';
@@ -36,6 +41,7 @@ class SettingsPayments extends Component {
 		isSaving: PropTypes.bool,
 		site: PropTypes.shape( {
 			slug: PropTypes.string,
+			ID: PropTypes.number,
 		} ),
 		className: PropTypes.string,
 	};
@@ -45,6 +51,13 @@ class SettingsPayments extends Component {
 
 		if ( site && site.ID ) {
 			this.props.fetchSetupChoices( site.ID );
+		}
+
+		// If we are in the middle of the Stripe Connect OAuth flow
+		// go ahead and option the Stripe dialog right away so
+		// we can complete the flow
+		if ( hasOAuthParamsInLocation() || hasOAuthCompleteInLocation() ) {
+			this.props.openPaymentMethodForEdit( site.ID, 'stripe' );
 		}
 	};
 
@@ -120,6 +133,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			createPaymentSettingsActionList,
 			fetchSetupChoices,
+			openPaymentMethodForEdit,
 		},
 		dispatch
 	);

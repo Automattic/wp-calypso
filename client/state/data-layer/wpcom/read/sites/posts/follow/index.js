@@ -17,13 +17,15 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
+import { getReaderConversationFollowStatus } from 'state/selectors';
 
-export function requestConversationFollow( { dispatch }, action ) {
+export function requestConversationFollow( { dispatch, getState }, action ) {
 	const actionWithRevert = merge( {}, action, {
 		meta: {
-			// @todo once we've added convo follow to Redux state, use selector to get previous state
-			// hardcoded for the moment to support tests
-			previousState: 'M',
+			previousState: getReaderConversationFollowStatus( getState(), {
+				siteId: action.payload.siteId,
+				postId: action.payload.postId,
+			} ),
 		},
 	} );
 	dispatch(
@@ -31,7 +33,7 @@ export function requestConversationFollow( { dispatch }, action ) {
 			{
 				method: 'POST',
 				apiNamespace: 'wpcom/v2',
-				path: `/read/sites/${ action.payload.blogId }/posts/${ action.payload.postId }/follow`,
+				path: `/read/sites/${ action.payload.siteId }/posts/${ action.payload.postId }/follow`,
 				body: {}, // have to have an empty body to make wpcom-http happy
 			},
 			actionWithRevert
@@ -56,7 +58,7 @@ export function receiveConversationFollow( store, action, response ) {
 
 export function receiveConversationFollowError(
 	{ dispatch },
-	{ payload: { blogId, postId }, meta: { previousState } }
+	{ payload: { siteId, postId }, meta: { previousState } }
 ) {
 	dispatch(
 		errorNotice(
@@ -67,8 +69,8 @@ export function receiveConversationFollowError(
 	dispatch(
 		bypassDataLayer(
 			updateConversationFollowStatus( {
-				blogId: blogId,
-				postId: postId,
+				siteId,
+				postId,
 				followStatus: previousState,
 			} )
 		)

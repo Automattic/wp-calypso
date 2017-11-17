@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { connect } from 'react-redux';
@@ -81,11 +81,9 @@ class MasterbarLoggedIn extends React.Component {
 					} ) }
 					preloadSection={ () => preload( domainOnlySite ? 'domains' : 'stats' ) }
 				>
-					{ this.props.user.get().site_count > 1 ? (
-						translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
-					) : (
-						translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } )
-					) }
+					{ this.props.user.get().site_count > 1
+						? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
+						: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
 				<Item
 					tipTarget="reader"

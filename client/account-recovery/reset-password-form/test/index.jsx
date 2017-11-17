@@ -59,7 +59,12 @@ describe( 'ResetPasswordForm', () => {
 
 			// Expect the fields to be disabled
 			inputSelectors.forEach( selector => {
-				expect( wrapper.find( selector ).prop( 'disabled' ) ).to.be.ok;
+				expect(
+					wrapper
+						.find( selector )
+						.first()
+						.prop( 'disabled' )
+				).to.be.ok;
 			} );
 		} );
 	} );
@@ -71,7 +76,12 @@ describe( 'ResetPasswordForm', () => {
 			);
 
 			// Expect the button to be disabled
-			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
+			expect(
+				wrapper
+					.find( '.reset-password-form__submit-button' )
+					.first()
+					.prop( 'disabled' )
+			).to.be.ok;
 		} );
 
 		test( 'should be enabled if a reset option is selected', () => {
@@ -80,8 +90,12 @@ describe( 'ResetPasswordForm', () => {
 			);
 			wrapper.setState( { selectedMethod: 'primary_email' } );
 
-			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.not.be
-				.ok;
+			expect(
+				wrapper
+					.find( '.reset-password-form__submit-button' )
+					.first()
+					.prop( 'disabled' )
+			).to.not.be.ok;
 		} );
 
 		test( 'should be disabled when isRequesting is true.', () => {
@@ -93,7 +107,8 @@ describe( 'ResetPasswordForm', () => {
 				/>
 			);
 
-			expect( wrapper.find( '.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.be.ok;
+			expect( wrapper.find( 'button.reset-password-form__submit-button' ).prop( 'disabled' ) ).to.be
+				.ok;
 		} );
 	} );
 } );

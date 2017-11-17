@@ -34,7 +34,7 @@ There are also several optional configuration settings available:
 
 * `localeTargets` - By default, tests only run on users where the locale is set to English. You can also run for all locales by setting `localeTargets` to 'any', or to an array of a specific locale or locales  `localeTargets: ['de']`
 Don't forget: any test that runs for locales other than English means strings will need to be translated.
-* `countryCodeTarget` - Only run tests for users from a specific country. You'll need to pass the current user country to the abtest method when calling it.
+* `countryCodeTargets` - (array) Only run tests for users from specific countries. You'll need to pass the current user country to the abtest method when calling it.
 * `assignmentMethod` - By default, test variations are assigned using a random number generator. You can also assign test variations using the 'userId'. Using the userId to assign test variations will still assign a random assignment; however, it ensures the user is assigned the same assignment in the event their local storage gets cleared or is compromised. This includes cases where they manually clear their local storage, use multiple devices, or use an incognito window (storageless browser). This assignment method should not be used if a user does not have a userId by the time the AB test starts.
 
 Next, in your code, import the `abtest` method from the `abtest` module:
@@ -112,7 +112,7 @@ The key used in the `ABTests` object above is comprised object key name from the
 
 When you set up an A/B test, think about what you want to measure its impact on. For example, if you run a test within the NUX flow you might want to measure its impact on how many people successfully sign up for an account. We call this the _conversion event_.
 
-You should make sure that the conversion event is being record in Tracks prior to deploying your A/B test. To create a new event, see the Tracks API section in the [Analytics README](https://wpcalypso.wordpress.com/devdocs/client/analytics/README.md).
+You should make sure that the conversion event is being record in Tracks prior to deploying your A/B test. To create a new event, see the Tracks API section in the [Analytics README](../analytics/README.md).
 
 ## Ensuring users don't participate in future tests
 

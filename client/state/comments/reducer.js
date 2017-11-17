@@ -145,7 +145,7 @@ export function items( state = {}, action ) {
 			};
 		case COMMENTS_RECEIVE_ERROR:
 		case COMMENTS_WRITE_ERROR:
-			const { error } = action;
+			const { error, errorType } = action;
 			return {
 				...state,
 				[ stateKey ]: map(
@@ -153,6 +153,7 @@ export function items( state = {}, action ) {
 					updateComment( commentId, {
 						placeholderState: PLACEHOLDER_STATE.ERROR,
 						placeholderError: error,
+						placeholderErrorType: errorType,
 					} )
 				),
 			};

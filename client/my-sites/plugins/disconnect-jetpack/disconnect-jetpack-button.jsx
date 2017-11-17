@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -16,29 +16,29 @@ import { connect } from 'react-redux';
 import Button from 'components/button';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/dialog';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import {
+	recordGoogleEvent as recordGoogleEventAction,
+	recordTracksEvent as recordTracksEventAction,
+} from 'state/analytics/actions';
 
 class DisconnectJetpackButton extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = { dialogVisible: false };
-	}
+	state = { dialogVisible: false };
 
-	handleClick = event => {
-		event.preventDefault();
-		const { isMock, recordGoogleEvent: recordGAEvent } = this.props;
+	handleClick = () => {
+		const { isMock, recordGoogleEvent, recordTracksEvent } = this.props;
 
 		if ( isMock ) {
 			return;
 		}
 		this.setState( { dialogVisible: true } );
-		recordGAEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
+		recordGoogleEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
+		recordTracksEvent( 'calypso_jetpack_disconnect_start' );
 	};
 
 	hideDialog = () => {
-		const { recordGoogleEvent: recordGAEvent } = this.props;
+		const { recordGoogleEvent } = this.props;
 		this.setState( { dialogVisible: false } );
-		recordGAEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
+		recordGoogleEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
 	};
 
 	render() {
@@ -75,7 +75,7 @@ class DisconnectJetpackButton extends Component {
 				<DisconnectJetpackDialog
 					isVisible={ this.state.dialogVisible }
 					onClose={ this.hideDialog }
-					isBroken={ false }
+					isBroken
 					siteId={ site.ID }
 					disconnectHref={ this.props.redirect }
 				/>
@@ -92,10 +92,14 @@ DisconnectJetpackButton.propTypes = {
 	isMock: PropTypes.bool,
 	text: PropTypes.string,
 	recordGoogleEvent: PropTypes.func.isRequired,
+	recordTracksEvent: PropTypes.func.isRequired,
 };
 
 DisconnectJetpackButton.defaultProps = {
 	linkDisplay: true,
 };
 
-export default connect( null, { recordGoogleEvent } )( localize( DisconnectJetpackButton ) );
+export default connect( null, {
+	recordGoogleEvent: recordGoogleEventAction,
+	recordTracksEvent: recordTracksEventAction,
+} )( localize( DisconnectJetpackButton ) );

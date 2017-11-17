@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { difference, flatten, groupBy, sortBy, toPairs } from 'lodash';

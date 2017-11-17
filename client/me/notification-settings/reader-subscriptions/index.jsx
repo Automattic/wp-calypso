@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -217,11 +217,9 @@ const NotificationSubscriptions = createReactClass( {
 							disabled={ this.getDisabledState() }
 							onClick={ this.recordClickEvent( 'Save Notification Settings Button' ) }
 						>
-							{ this.state.submittingForm ? (
-								this.props.translate( 'Saving…' )
-							) : (
-								this.props.translate( 'Save Notification Settings' )
-							) }
+							{ this.state.submittingForm
+								? this.props.translate( 'Saving…' )
+								: this.props.translate( 'Save Notification Settings' ) }
 						</FormButton>
 					</form>
 				</Card>

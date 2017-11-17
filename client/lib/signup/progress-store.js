@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { assign, clone, find, get, isEmpty, map, omit } from 'lodash';
@@ -34,6 +34,10 @@ var SignupProgressStore = {
 	reset: function() {
 		signupProgress = [];
 		store.remove( STORAGE_KEY );
+	},
+	getFromCache: function() {
+		loadProgressFromCache();
+		return this.get();
 	},
 };
 

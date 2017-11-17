@@ -20,10 +20,18 @@ import {
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
-export const requestComment = ( { siteId, commentId } ) => ( {
+/**
+ * Creates an action that requests a single comment for a given site.
+ * @param {Number} siteId Site identifier
+ * @param {Number} commentId Comment identifier
+ * @param {Object} query API call parameters
+ * @returns {Object} Action that requests a single comment
+ */
+export const requestComment = ( { siteId, commentId, query = {} } ) => ( {
 	type: COMMENT_REQUEST,
 	siteId,
 	commentId,
+	query,
 } );
 
 /***

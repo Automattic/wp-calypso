@@ -1,8 +1,5 @@
-/**
- * /* eslint-disable
- *
- * @format
- */
+/** @format */
+/* eslint-disable */
 
 export default [
 	{

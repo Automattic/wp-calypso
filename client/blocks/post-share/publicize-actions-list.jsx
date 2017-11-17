@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -15,7 +15,6 @@ import Gridicon from 'gridicons';
  */
 import { getPostShareScheduledActions, getPostSharePublishedActions } from 'state/selectors';
 import QuerySharePostActions from 'components/data/query-share-post-actions/index.jsx';
-import CompactCard from 'components/card/compact';
 import SocialLogo from 'social-logos';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
@@ -68,7 +67,7 @@ class PublicizeActionsList extends PureComponent {
 		const { service, connectionName, shareDate, message } = item;
 
 		return (
-			<CompactCard className="post-share__footer-items" key={ index }>
+			<div className="post-share__footer-items" key={ index }>
 				<div className="post-share__footer-item">
 					<div className="post-share__handle">
 						<SocialLogo icon={ service === 'google_plus' ? 'google-plus' : service } />
@@ -81,7 +80,7 @@ class PublicizeActionsList extends PureComponent {
 					<div className="post-share__message">{ message }</div>
 				</div>
 				{ this.renderFooterSectionItemActions( item ) }
-			</CompactCard>
+			</div>
 		);
 	}
 

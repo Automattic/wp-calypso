@@ -17,8 +17,7 @@
 	@import 'app/settings/email/mailchimp/style';
 	@import 'app/products/product-form';
 	@import 'app/products/products-list';
-	@import 'app/promotions/promotion-form';
-	@import 'app/promotions/promotions-list';
+	@import 'app/promotions/style';
 	@import 'app/reviews/style';
 	@import 'app/settings/shipping/style';
 	@import 'app/settings/taxes/style';
@@ -53,39 +52,10 @@
 
 	@import 'woocommerce-services/style';
 
-	.components__action-header {
-		width: 100%;
-	}
-
-	.components__action-header-actions {
-		position: absolute;
-		top: 16px;
-		right: 24px;
-
-		.button {
-			margin-left: 8px;
-		}
-	}
-
 	.section-nav {
 		@include breakpoint( ">660px" ) {
 			margin-top: 58px;
 		}
-	}
-
-	.pagination__list {
-		background: $white;
-		border: 1px solid lighten( $gray, 25% );
-		padding: 8px;
-	}
-
-	.pagination__list-item .button {
-		padding: 0 8px;
-		line-height: 34px;
-	}
-
-	.pagination__list-item.is-selected {
-		border: 1px solid lighten( $gray, 20% );
 	}
 
 	@include breakpoint( ">660px" ) {

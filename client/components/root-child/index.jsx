@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import ReactDom from 'react-dom';
@@ -9,13 +9,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
-export default class extends React.Component {
-	static displayName = 'RootChild';
-
-	static propTypes = {
-		children: PropTypes.node,
-	};
-
+export default class RootChild extends React.Component {
 	static contextTypes = {
 		store: PropTypes.object,
 	};

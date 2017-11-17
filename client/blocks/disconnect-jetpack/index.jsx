@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -16,7 +16,10 @@ import { noop } from 'lodash';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import {
+	recordGoogleEvent as recordGoogleEventAction,
+	recordTracksEvent as recordTracksEventAction,
+} from 'state/analytics/actions';
 import { disconnect } from 'state/jetpack/connection/actions';
 import { disconnectedSite as disconnectedSiteDeprecated } from 'lib/sites-list/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
@@ -41,6 +44,7 @@ class DisconnectJetpack extends PureComponent {
 		siteTitle: PropTypes.string,
 		setAllSitesSelected: PropTypes.func,
 		recordGoogleEvent: PropTypes.func,
+		recordTracksEvent: PropTypes.func,
 		disconnect: PropTypes.func,
 		successNotice: PropTypes.func,
 		errorNotice: PropTypes.func,
@@ -162,12 +166,14 @@ class DisconnectJetpack extends PureComponent {
 			infoNotice: showInfoNotice,
 			removeNotice: removeInfoNotice,
 			disconnect: disconnectSite,
-			recordGoogleEvent: recordGAEvent,
+			recordGoogleEvent,
+			recordTracksEvent,
 		} = this.props;
 
 		onDisconnectClick();
 
-		recordGAEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
+		recordTracksEvent( 'calypso_jetpack_disconnect_confirm' );
+		recordGoogleEvent( 'Jetpack', 'Clicked To Confirm Disconnect Jetpack Dialog' );
 
 		const { notice } = showInfoNotice(
 			translate( 'Disconnecting %(siteName)s.', { args: { siteName: siteTitle } } ),
@@ -189,14 +195,14 @@ class DisconnectJetpack extends PureComponent {
 				showSuccessNotice(
 					translate( 'Successfully disconnected %(siteName)s.', { args: { siteName: siteTitle } } )
 				);
-				recordGAEvent( 'Jetpack', 'Successfully Disconnected' );
+				recordGoogleEvent( 'Jetpack', 'Successfully Disconnected' );
 			},
 			() => {
 				removeInfoNotice( notice.noticeId );
 				showErrorNotice(
 					translate( '%(siteName)s failed to disconnect', { args: { siteName: siteTitle } } )
 				);
-				recordGAEvent( 'Jetpack', 'Failed Disconnected Site' );
+				recordGoogleEvent( 'Jetpack', 'Failed Disconnected Site' );
 			}
 		);
 	};
@@ -281,7 +287,8 @@ export default connect(
 	},
 	{
 		setAllSitesSelected,
-		recordGoogleEvent,
+		recordGoogleEvent: recordGoogleEventAction,
+		recordTracksEvent: recordTracksEventAction,
 		disconnect,
 		successNotice,
 		errorNotice,

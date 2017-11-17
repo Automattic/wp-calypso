@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { find, isEmpty, isNumber, isNil, map, pullAll } from 'lodash';

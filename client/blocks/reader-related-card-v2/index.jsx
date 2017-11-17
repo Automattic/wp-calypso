@@ -38,19 +38,19 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 			</a>
 			<div className="reader-related-card-v2__byline">
 				{ authorName &&
-				authorAndSiteAreDifferent && (
-					<span className="reader-related-card-v2__byline-author">
-						<ReaderAuthorLink
-							author={ post.author }
-							siteUrl={ siteUrl }
-							post={ post }
-							onClick={ onSiteClick }
-							className="reader-related-card-v2__link"
-						>
-							{ authorName }
-						</ReaderAuthorLink>
-					</span>
-				) }
+					authorAndSiteAreDifferent && (
+						<span className="reader-related-card-v2__byline-author">
+							<ReaderAuthorLink
+								author={ post.author }
+								siteUrl={ siteUrl }
+								post={ post }
+								onClick={ onSiteClick }
+								className="reader-related-card-v2__link"
+							>
+								{ authorName }
+							</ReaderAuthorLink>
+						</span>
+					) }
 				<span className="reader-related-card-v2__byline-site">
 					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">
 						{ siteName }

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -34,6 +34,7 @@ import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import Dialog from 'components/dialog';
+import CloseOnEscape from 'components/close-on-escape';
 import accept from 'lib/accept';
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { getSite } from 'state/sites/selectors';
@@ -603,7 +604,9 @@ export class EditorMediaModal extends Component {
 				onClose={ this.onClose }
 				additionalClassNames="editor-media-modal"
 				shouldCloseOnOverlayClick={ this.shouldClose() }
+				shouldCloseOnEsc={ false }
 			>
+				<CloseOnEscape onEscape={ this.onClose } />
 				{ this.renderContent() }
 			</Dialog>
 		);

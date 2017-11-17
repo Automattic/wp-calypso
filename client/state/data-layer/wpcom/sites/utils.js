@@ -117,7 +117,8 @@ export const updatePlaceholderComment = (
  */
 export const handleWriteCommentFailure = (
 	{ dispatch, getState },
-	{ siteId, postId, parentCommentId, placeholderId }
+	{ siteId, postId, parentCommentId, placeholderId },
+	rawError
 ) => {
 	// Dispatch error notice
 	const post = getSitePost( getState(), siteId, postId );
@@ -141,6 +142,7 @@ export const handleWriteCommentFailure = (
 		commentId: placeholderId,
 		parentCommentId,
 		error,
+		errorType: rawError && rawError.error,
 	} );
 
 	dispatch( errorNotice( error, { duration: 5000 } ) );

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { USER_DEVICES_REQUEST, USER_DEVICES_ADD } from 'state/action-types';

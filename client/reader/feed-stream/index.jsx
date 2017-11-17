@@ -41,7 +41,7 @@ class FeedStream extends React.Component {
 		const emptyContent = <EmptyContent />;
 		const title = getSiteName( { feed, site } ) || this.props.translate( 'Loading Feed' );
 
-		if ( feed && feed.is_error ) {
+		if ( ( feed && feed.is_error ) || ( site && site.is_error && site.error.code === 410 ) ) {
 			return <FeedError sidebarTitle={ title } />;
 		}
 

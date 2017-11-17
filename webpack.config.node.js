@@ -1,4 +1,8 @@
-/***** WARNING: No ES6 modules here. Not transpiled! *****/
+/**
+ * **** WARNING: No ES6 modules here. Not transpiled! ****
+ *
+ * @format
+ */
 
 /**
  * External dependencies
@@ -27,7 +31,8 @@ function getExternals() {
 
 	// Don't bundle any node_modules, both to avoid a massive bundle, and problems
 	// with modules that are incompatible with webpack bundling.
-	fs.readdirSync( 'node_modules' )
+	fs
+		.readdirSync( 'node_modules' )
 		.filter( function( module ) {
 			return [ '.bin' ].indexOf( module ) === -1;
 		} )
@@ -43,7 +48,8 @@ function getExternals() {
 	// Exclude the devdocs search-index, as it's huge.
 	externals[ 'devdocs/search-index' ] = 'commonjs devdocs/search-index';
 	// Exclude the devdocs components usage stats data
-	externals[ 'devdocs/components-usage-stats.json' ] = 'commonjs devdocs/components-usage-stats.json';
+	externals[ 'devdocs/components-usage-stats.json' ] =
+		'commonjs devdocs/components-usage-stats.json';
 	// Exclude server/bundler/assets, since the files it requires don't exist until the bundler has run
 	externals[ 'bundler/assets' ] = 'commonjs bundler/assets';
 	// Map React and redux to the minimized version in production
@@ -59,14 +65,22 @@ function getExternals() {
 const babelLoader = {
 	loader: 'babel-loader',
 	options: {
-		plugins: [ [
-			path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
-			{ async: false }
-		] ],
+		plugins: [
+			[
+				path.join(
+					__dirname,
+					'server',
+					'bundler',
+					'babel',
+					'babel-plugin-transform-wpcalypso-async'
+				),
+				{ async: false },
+			],
+		],
 		cacheDirectory: path.join( __dirname, 'build', '.babel-server-cache' ),
 		cacheIdentifier: cacheIdentifier,
-	}
-}
+	},
+};
 
 const webpackConfig = {
 	devtool: 'source-map',
@@ -81,19 +95,19 @@ const webpackConfig = {
 			{
 				test: /extensions[\/\\]index/,
 				exclude: path.join( __dirname, 'node_modules' ),
-				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' )
+				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
 			},
 			{
 				test: /sections.js$/,
 				exclude: path.join( __dirname, 'node_modules' ),
-				loader: path.join( __dirname, 'server', 'isomorphic-routing', 'loader' )
+				loader: path.join( __dirname, 'server', 'isomorphic-routing', 'loader' ),
 			},
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
-				loader: [ 'happypack/loader' ]
+				loader: [ 'happypack/loader' ],
 			},
-		]
+		],
 	},
 	resolve: {
 		modules: [
@@ -109,36 +123,65 @@ const webpackConfig = {
 		// Tell webpack we want to supply absolute paths for server code,
 		// specifically needed by the client code bundler.
 		__filename: true,
-		__dirname: true
+		__dirname: true,
 	},
 	plugins: _.compact( [
 		// Require source-map-support at the top, so we get source maps for the bundle
-		new webpack.BannerPlugin( { banner: 'require( "source-map-support" ).install();', raw: true, entryOnly: false } ),
+		new webpack.BannerPlugin( {
+			banner: 'require( "source-map-support" ).install();',
+			raw: true,
+			entryOnly: false,
+		} ),
 		new webpack.DefinePlugin( {
-			'PROJECT_NAME': JSON.stringify( config( 'project' ) )
+			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
 		} ),
 		new HappyPack( { loaders: [ babelLoader ] } ),
+		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]abtest$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]sites-list$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]olark$/, 'lodash/noop' ), // Depends on DOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]user$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]post-normalizer[\/\\]rule-create-better-excerpt$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^components[\/\\]seo[\/\\]reader-preview$/, 'components/empty-component' ), // Conflicts with component-closest module
-		new webpack.NormalModuleReplacementPlugin( /^components[\/\\]popover$/, 'components/null-component' ), // Depends on BOM and interactions don't work without JS
-		new webpack.NormalModuleReplacementPlugin( /^my-sites[\/\\]themes[\/\\]theme-upload$/, 'components/empty-component' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^client[\/\\]layout[\/\\]guided-tours[\/\\]config$/, 'components/empty-component' ), // should never be required server side
-		new webpack.NormalModuleReplacementPlugin( /^components[\/\\]site-selector$/, 'components/null-component' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin(
+			/^lib[\/\\]post-normalizer[\/\\]rule-create-better-excerpt$/,
+			'lodash/noop'
+		), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin(
+			/^components[\/\\]seo[\/\\]reader-preview$/,
+			'components/empty-component'
+		), // Conflicts with component-closest module
+		new webpack.NormalModuleReplacementPlugin(
+			/^components[\/\\]popover$/,
+			'components/null-component'
+		), // Depends on BOM and interactions don't work without JS
+		new webpack.NormalModuleReplacementPlugin(
+			/^my-sites[\/\\]themes[\/\\]theme-upload$/,
+			'components/empty-component'
+		), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin(
+			/^client[\/\\]layout[\/\\]guided-tours[\/\\]config$/,
+			'components/empty-component'
+		), // should never be required server side
+		new webpack.NormalModuleReplacementPlugin(
+			/^components[\/\\]site-selector$/,
+			'components/null-component'
+		), // Depends on BOM
 	] ),
-	externals: getExternals()
+	externals: getExternals(),
 };
 
 if ( ! config.isEnabled( 'desktop' ) ) {
-	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' ) );
+	webpackConfig.plugins.push(
+		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
+	);
 }
 
 if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'server-records.json' );
-	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'server' ) } ) );
+	webpackConfig.plugins.unshift(
+		new HardSourceWebpackPlugin( {
+			cacheDirectory: path.join( __dirname, '.webpack-cache', 'server' ),
+		} )
+	);
 }
 
 module.exports = webpackConfig;

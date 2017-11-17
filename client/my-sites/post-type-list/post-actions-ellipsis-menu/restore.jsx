@@ -1,9 +1,9 @@
+/** @format */
+
 /**
  * External dependencies
  *
- * @format
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,7 +13,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
-import { mc } from 'lib/analytics';
+import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
+import { bumpStatGenerator } from './utils';
 import { canCurrentUser } from 'state/selectors';
 import { getPost } from 'state/posts/selectors';
 import { restorePost } from 'state/posts/actions';
@@ -28,6 +29,7 @@ class PostActionsEllipsisMenuRestore extends Component {
 		canRestore: PropTypes.bool,
 		status: PropTypes.string,
 		restorePost: PropTypes.func.isRequired,
+		bumpStat: PropTypes.func,
 	};
 
 	constructor() {
@@ -42,7 +44,7 @@ class PostActionsEllipsisMenuRestore extends Component {
 			return;
 		}
 
-		mc.bumpStat( 'calypso_cpt_actions', 'restore' );
+		this.props.bumpStat();
 		this.props.restorePost( siteId, postId );
 	}
 
@@ -60,26 +62,35 @@ class PostActionsEllipsisMenuRestore extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const post = getPost( state, ownProps.globalId );
-		if ( ! post ) {
-			return {};
-		}
+const mapStateToProps = ( state, { globalId } ) => {
+	const post = getPost( state, globalId );
+	if ( ! post ) {
+		return {};
+	}
 
-		const userId = getCurrentUserId( state );
-		const isAuthor = post.author && post.author.ID === userId;
+	const userId = getCurrentUserId( state );
+	const isAuthor = post.author && post.author.ID === userId;
 
-		return {
-			siteId: post.site_ID,
-			postId: post.ID,
-			status: post.status,
-			canRestore: canCurrentUser(
-				state,
-				post.site_ID,
-				isAuthor ? 'delete_posts' : 'delete_others_posts'
-			),
-		};
-	},
-	{ restorePost }
-)( localize( PostActionsEllipsisMenuRestore ) );
+	return {
+		siteId: post.site_ID,
+		postId: post.ID,
+		status: post.status,
+		type: post.type,
+		canRestore: canCurrentUser(
+			state,
+			post.site_ID,
+			isAuthor ? 'delete_posts' : 'delete_others_posts'
+		),
+	};
+};
+
+const mapDispatchToProps = { restorePost, bumpAnalyticsStat };
+
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const bumpStat = bumpStatGenerator( stateProps.type, 'restore', dispatchProps.bumpAnalyticsStat );
+	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
+	localize( PostActionsEllipsisMenuRestore )
+);

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';

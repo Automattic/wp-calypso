@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -69,16 +69,16 @@ class StatsMostPopular extends Component {
 							</span>
 						</div>
 						{ ! percent &&
-						! requesting && (
-							<div className="most-popular__empty">
-								<span className="most-popular__notice">
-									{ translate( 'No popular day and time recorded', {
-										context: 'Message on stats insights page when no most popular data exists.',
-										comment: 'Should be limited to 32 characters to prevent wrapping',
-									} ) }
-								</span>
-							</div>
-						) }
+							! requesting && (
+								<div className="most-popular__empty">
+									<span className="most-popular__notice">
+										{ translate( 'No popular day and time recorded', {
+											context: 'Message on stats insights page when no most popular data exists.',
+											comment: 'Should be limited to 32 characters to prevent wrapping',
+										} ) }
+									</span>
+								</div>
+							) }
 					</div>
 				</Card>
 			</div>

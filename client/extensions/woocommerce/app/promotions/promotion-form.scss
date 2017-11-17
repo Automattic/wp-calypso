@@ -30,45 +30,8 @@
 			height: 400px;
 		}
 	}
-}
 
-.form-label {
-	margin-bottom: 5px;
-}
-
-.promotions__promotion-form-discount-type-and-amount {
-	display: flex;
-
-	@include breakpoint( ">960px" ) {
-		align-items: flex-end;
-	}
-
-	.form-fieldset {
-		flex: 1;
-		margin-right: 16px;
-
-		&:last-child {
-			margin-right: 0;
-		}
-	}
-
-	@include breakpoint( "<960px" ) {
-		flex-direction: column;
-
-		label + select {
-			width: 100%;
-		}
-
-		.form-fieldset {
-			margin-right: 0;
-			width: 100%;
-		}
-	}
-
-	.form-select {
-		@include breakpoint( ">960px" ) {
-			max-width: 200px;
-		}
+	.form-fieldset:last-child {
+		margin-bottom: 0;
 	}
 }
-

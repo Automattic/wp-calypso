@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -181,11 +181,9 @@ export class PluginsListHeader extends PureComponent {
 					key="plugin-list-header__buttons-deactivate"
 					disabled={ ! this.props.haveActiveSelected }
 					onClick={
-						isJetpackSelected ? (
-							this.props.deactiveAndDisconnectSelected
-						) : (
-							this.props.deactivateSelected
-						)
+						isJetpackSelected
+							? this.props.deactiveAndDisconnectSelected
+							: this.props.deactivateSelected
 					}
 				>
 					{ translate( 'Deactivate' ) }
@@ -317,11 +315,9 @@ export class PluginsListHeader extends PureComponent {
 						key="plugin__actions_disconnect"
 						disabled={ ! this.props.haveActiveSelected }
 						onClick={
-							isJetpackSelected ? (
-								this.props.deactiveAndDisconnectSelected
-							) : (
-								this.props.deactivateSelected
-							)
+							isJetpackSelected
+								? this.props.deactiveAndDisconnectSelected
+								: this.props.deactivateSelected
 						}
 					>
 						{ translate( 'Deactivate' ) }

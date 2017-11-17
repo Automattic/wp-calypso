@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -14,8 +14,13 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 import { areLocationsLoaded, getStates } from 'woocommerce/state/sites/locations/selectors';
+import {
+	areSettingsGeneralLoaded,
+	getStoreLocation,
+} from 'woocommerce/state/sites/settings/general/selectors';
 import { decodeEntities } from 'lib/formatting';
 import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -37,18 +42,26 @@ class FormStateSelectFromApi extends Component {
 	};
 
 	componentWillMount() {
-		const { siteId, isLoaded } = this.props;
+		this.fetchData( this.props );
+	}
 
-		if ( siteId && ! isLoaded ) {
-			this.props.fetchLocations( siteId );
+	componentWillReceiveProps( newProps ) {
+		if ( newProps.siteId !== this.props.siteId ) {
+			this.fetchData( newProps );
 		}
 	}
 
-	componentWillReceiveProps( { siteId } ) {
-		if ( siteId !== this.props.siteId ) {
+	fetchData = ( { siteId, isLoaded, areSettingsLoaded } ) => {
+		if ( ! siteId ) {
+			return;
+		}
+		if ( ! isLoaded ) {
 			this.props.fetchLocations( siteId );
 		}
-	}
+		if ( ! areSettingsLoaded ) {
+			this.props.fetchSettingsGeneral( siteId );
+		}
+	};
 
 	renderOption = option => {
 		return (
@@ -98,17 +111,25 @@ class FormStateSelectFromApi extends Component {
 
 export default connect(
 	( state, props ) => {
-		const { country } = props;
+		const address = getStoreLocation( state );
+		const areSettingsLoaded = areSettingsGeneralLoaded( state );
+		let { country, value } = props;
+		// If value or country are empty, use the store's address
+		country = ! country ? address.country : country;
+		value = ! value ? address.state : value;
+
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site.ID || null;
 		const isLoaded = areLocationsLoaded( state, siteId );
 		const locationsList = getStates( state, country, siteId );
 
 		return {
-			siteId,
-			locationsList,
+			areSettingsLoaded,
 			isLoaded,
+			locationsList,
+			siteId,
+			value,
 		};
 	},
-	dispatch => bindActionCreators( { fetchLocations }, dispatch )
+	dispatch => bindActionCreators( { fetchLocations, fetchSettingsGeneral }, dispatch )
 )( localize( FormStateSelectFromApi ) );

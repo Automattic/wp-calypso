@@ -40,12 +40,15 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese')
 		link(rel='stylesheet', href='//s1.wp.com/i/noticons/noticons.css?v=20150727')
 		if isRTL
-			link(rel='stylesheet', href=urls['style-rtl.css'])
+			if 'development' === env || isDebug
+				link(rel='stylesheet', id='main-css', href=urls['style-debug-rtl.css'])
+			else
+				link(rel='stylesheet', id='main-css', href=urls['style-rtl.css'])
 		else
 			if 'development' === env || isDebug
-				link(rel='stylesheet', href=urls['style-debug.css'])
+				link(rel='stylesheet', id='main-css', href=urls['style-debug.css'])
 			else
-				link(rel='stylesheet', href=urls['style.css'])
+				link(rel='stylesheet', id='main-css', href=urls['style.css'])
 
 	body(class=isRTL ? 'rtl' : '')
 		#wpcom.wpcom-site
@@ -58,10 +61,13 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 								h2.empty-content__title Unsupported Browser
 								h3.empty-content__line
 									| Unfortunately this page cannot be used by your browser. You can either
+									=  ' '
 									a(
 										href=dashboardUrl
 									) use the classic WordPress dashboard
 									| , or
+									=  ' '
 									a(
 										href="https://browsehappy.com"
 									) upgrade your browser
+									=  '.'

@@ -1,7 +1,8 @@
+/** @format */
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { values, reject } from 'lodash';
@@ -21,13 +22,24 @@ import { getFeed } from 'state/reader/feeds/selectors';
  */
 const getReaderFollows = createSelector(
 	state => {
+		// remove subs where the sub has an error
 		const items = reject( values( state.reader.follows.items ), 'error' );
+
 		// this is important. don't mutate the original items.
-		return items.map( item => ( {
+		const withSiteAndFeed = items.map( item => ( {
 			...item,
 			site: getSite( state, item.blog_ID ),
 			feed: getFeed( state, item.feed_ID ),
 		} ) );
+
+		// remove subs where the feed or site has an error
+		const withoutErrors = reject(
+			withSiteAndFeed,
+			item =>
+				( item.site && item.site.is_error && item.site.error.statusCode === 410 ) ||
+				( item.feed && item.feed.is_error )
+		);
+		return withoutErrors;
 	},
 	state => [
 		state.reader.follows.items,

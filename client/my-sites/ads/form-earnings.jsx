@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -360,27 +360,27 @@ class AdsFormEarnings extends Component {
 						{ this.earningsBreakdown() }
 					</div>
 				</Card>
-				{ this.state.earnings && this.checkSize( this.state.earnings.wordads ) ? (
-					this.earningsTable(
-						this.state.earnings.wordads,
-						translate( 'Earnings History' ),
-						'wordads'
-					)
-				) : null }
-				{ this.state.earnings && this.checkSize( this.state.earnings.sponsored ) ? (
-					this.earningsTable(
-						this.state.earnings.sponsored,
-						translate( 'Sponsored Content History' ),
-						'sponsored'
-					)
-				) : null }
-				{ this.state.earnings && this.checkSize( this.state.earnings.adjustment ) ? (
-					this.earningsTable(
-						this.state.earnings.adjustment,
-						translate( 'Adjustments History' ),
-						'adjustment'
-					)
-				) : null }
+				{ this.state.earnings && this.checkSize( this.state.earnings.wordads )
+					? this.earningsTable(
+							this.state.earnings.wordads,
+							translate( 'Earnings History' ),
+							'wordads'
+						)
+					: null }
+				{ this.state.earnings && this.checkSize( this.state.earnings.sponsored )
+					? this.earningsTable(
+							this.state.earnings.sponsored,
+							translate( 'Sponsored Content History' ),
+							'sponsored'
+						)
+					: null }
+				{ this.state.earnings && this.checkSize( this.state.earnings.adjustment )
+					? this.earningsTable(
+							this.state.earnings.adjustment,
+							translate( 'Adjustments History' ),
+							'adjustment'
+						)
+					: null }
 			</div>
 		);
 	}

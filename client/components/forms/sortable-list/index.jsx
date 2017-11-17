@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 import { assign, findIndex, fromPairs, noop } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -43,10 +44,12 @@ class SortableList extends React.Component {
 
 	componentDidMount() {
 		document.addEventListener( 'mousemove', this.onMouseMove );
+		document.addEventListener( 'mouseup', this.onMouseUp );
 	}
 
 	componentWillUnmount() {
 		document.removeEventListener( 'mousemove', this.onMouseMove );
+		document.removeEventListener( 'mouseup', this.onMouseUp );
 	}
 
 	getPositionForCursorElement = ( element, event ) => {
@@ -328,7 +331,7 @@ class SortableList extends React.Component {
 					disabled={ null === this.state.activeIndex || this.state.activeIndex === 0 }
 				>
 					<span className="screen-reader-text">{ this.props.translate( 'Move previous' ) }</span>
-					<span className="noticon noticon-expand" />
+					<Gridicon icon="chevron-down" size={ 24 } />
 				</button>
 				<button
 					type="button"
@@ -340,7 +343,7 @@ class SortableList extends React.Component {
 					}
 				>
 					<span className="screen-reader-text">{ this.props.translate( 'Move next' ) }</span>
-					<span className="noticon noticon-collapse" />
+					<Gridicon icon="chevron-up" size={ 24 } />
 				</button>
 			</div>
 		);

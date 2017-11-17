@@ -2,10 +2,9 @@
 /**
  * External dependencies
  */
+import page from 'page';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import page from 'page';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,11 +13,11 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
-import { recordTracksEvent } from 'state/analytics/actions';
-import SiteUrlInput from '../site-url-input';
-import ReaderBack from 'blocks/reader-full-post/back';
-import WordPressLogo from 'components/wordpress-logo';
 import JetpackLogo from 'components/jetpack-logo';
+import ReaderBack from 'blocks/reader-full-post/back';
+import SiteUrlInput from '../site-url-input';
+import WordPressLogo from 'components/wordpress-logo';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class JetpackNewSite extends Component {
 	constructor() {
@@ -136,11 +135,4 @@ class JetpackNewSite extends Component {
 	}
 }
 
-export default connect( null, dispatch =>
-	bindActionCreators(
-		{
-			recordTracksEvent,
-		},
-		dispatch
-	)
-)( localize( JetpackNewSite ) );
+export default connect( null, { recordTracksEvent } )( localize( JetpackNewSite ) );

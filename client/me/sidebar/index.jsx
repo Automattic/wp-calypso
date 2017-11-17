@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -160,11 +160,9 @@ const MeSidebar = createReactClass( {
 						<SidebarItem
 							selected={ selected === 'notifications' }
 							link={
-								config.isEnabled( 'me/notifications' ) ? (
-									'/me/notifications'
-								) : (
-									'//wordpress.com/me/notifications'
-								)
+								config.isEnabled( 'me/notifications' )
+									? '/me/notifications'
+									: '//wordpress.com/me/notifications'
 							}
 							label={ translate( 'Notification Settings' ) }
 							icon="bell"

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 const fs = require( 'fs' );
@@ -32,6 +32,7 @@ sections.push( {
 	module: 'devdocs',
 	secondary: true,
 	enableLoggedOut: true,
+	css: 'devdocs',
 } );
 
 sections.push( {
@@ -40,6 +41,7 @@ sections.push( {
 	module: 'devdocs',
 	secondary: false,
 	enableLoggedOut: true,
+	css: 'devdocs',
 } );
 
 module.exports = sections.concat( extensionSections.filter( Boolean ) );

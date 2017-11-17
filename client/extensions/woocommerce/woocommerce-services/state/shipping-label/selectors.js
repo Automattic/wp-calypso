@@ -61,6 +61,11 @@ export const getSelectedPaymentMethod = ( state, orderId, siteId = getSelectedSi
 	return shippingLabel.paymentMethod;
 };
 
+export const hasRefreshedLabelStatus = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	return shippingLabel && shippingLabel.refreshedLabelStatus;
+};
+
 export const getForm = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return shippingLabel && shippingLabel.form;

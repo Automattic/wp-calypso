@@ -1,13 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, includes } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,33 +24,23 @@ import ExistingSite from 'signup/steps/design-type-with-store/existing-site';
 import NavigationLink from 'signup/navigation-link';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
-import { getTld } from 'lib/domains';
+import { getDomainProductSlug } from 'lib/domains';
 
 class SiteOrDomain extends Component {
-	getDomainProductSlug( domain ) {
-		const tld = getTld( domain );
-
-		if ( includes( [ 'com', 'net', 'org' ], tld ) ) {
-			return 'domain_reg';
-		}
-
-		return `dot${ tld }_domain`;
-	}
-
 	getDomainName() {
-		const { queryObject, step } = this.props;
+		const { initialContext: { query }, step } = this.props;
 		let domain,
 			isValidDomain = false;
 
-		if ( queryObject && queryObject.new ) {
-			domain = queryObject.new;
+		if ( query && query.new ) {
+			domain = query.new;
 		} else if ( step && step.domainItem ) {
 			domain = step.domainItem.meta;
 		}
 
 		if ( domain ) {
 			if ( domain.split( '.' ).length > 1 ) {
-				const productSlug = this.getDomainProductSlug( domain );
+				const productSlug = getDomainProductSlug( domain );
 
 				isValidDomain = !! this.props.productsList[ productSlug ];
 			}
@@ -140,7 +130,7 @@ class SiteOrDomain extends Component {
 		const { stepName, goToStep, goToNextStep } = this.props;
 
 		const domain = this.getDomainName();
-		const productSlug = this.getDomainProductSlug( domain );
+		const productSlug = getDomainProductSlug( domain );
 		const domainItem = cartItems.domainRegistration( { productSlug, domain } );
 		const siteUrl = domain;
 

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -11,6 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -21,10 +22,12 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
+import { getSiteSlug } from 'state/sites/selectors';
 
 const ConnectedSingleSiteWpcom = connectOptions( props => {
-	const { siteId, currentPlanSlug, translate } = props;
+	const { siteId, siteSlug, currentPlanSlug, translate } = props;
 
+	const upsellUrl = abtest( 'unlimitedThemeNudge' ) === 'show' && `/plans/${ siteSlug }`;
 	return (
 		<div>
 			<SidebarNavigation />
@@ -42,7 +45,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 				/>
 			) }
 
-			<ThemeShowcase { ...props } siteId={ siteId }>
+			<ThemeShowcase { ...props } upsellUrl={ upsellUrl } siteId={ siteId }>
 				{ siteId && <QuerySitePlans siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				<ThanksModal source={ 'list' } />
@@ -54,6 +57,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 export default connect( ( state, { siteId } ) => {
 	const currentPlan = getCurrentPlan( state, siteId );
 	return {
+		siteSlug: getSiteSlug( state, siteId ),
 		currentPlanSlug: get( currentPlan, 'productSlug', null ),
 	};
 } )( ConnectedSingleSiteWpcom );

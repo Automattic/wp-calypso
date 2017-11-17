@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 import { forEach, get, includes, orderBy, reject } from 'lodash';
 import { translate } from 'i18n-calypso';

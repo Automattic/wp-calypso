@@ -21,13 +21,24 @@ describe( 'conversation-follow', () => {
 	describe( 'requestConversationFollow', () => {
 		test( 'should dispatch an http request', () => {
 			const dispatch = jest.fn();
-			const action = followConversation( { blogId: 123, postId: 456 } );
+			const action = followConversation( { siteId: 123, postId: 456 } );
 			const actionWithRevert = merge( {}, action, {
 				meta: {
 					previousState: CONVERSATION_FOLLOW_STATUS_MUTING,
 				},
 			} );
-			requestConversationFollow( { dispatch }, action );
+			const getState = () => {
+				return {
+					reader: {
+						conversations: {
+							items: {
+								'123-456': 'M',
+							},
+						},
+					},
+				};
+			};
+			requestConversationFollow( { dispatch, getState }, action );
 			expect( dispatch ).toHaveBeenCalledWith(
 				http(
 					{
@@ -48,7 +59,7 @@ describe( 'conversation-follow', () => {
 			receiveConversationFollow(
 				{ dispatch },
 				{
-					payload: { blogId: 123, postId: 456 },
+					payload: { siteId: 123, postId: 456 },
 					meta: { previousState: CONVERSATION_FOLLOW_STATUS_MUTING },
 				},
 				{ success: true }
@@ -67,7 +78,7 @@ describe( 'conversation-follow', () => {
 			receiveConversationFollow(
 				{ dispatch },
 				{
-					payload: { blogId: 123, postId: 456 },
+					payload: { siteId: 123, postId: 456 },
 					meta: { previousState: CONVERSATION_FOLLOW_STATUS_MUTING },
 				},
 				{
@@ -84,7 +95,7 @@ describe( 'conversation-follow', () => {
 			expect( dispatch ).toHaveBeenCalledWith(
 				bypassDataLayer(
 					updateConversationFollowStatus( {
-						blogId: 123,
+						siteId: 123,
 						postId: 456,
 						followStatus: CONVERSATION_FOLLOW_STATUS_MUTING,
 					} )

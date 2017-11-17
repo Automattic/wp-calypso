@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -138,13 +138,14 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, listLabel, themesCount } = this.props;
+		const { source, query, listLabel, themesCount, upsellUrl } = this.props;
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
 				<ThemesSelectionHeader label={ listLabel } count={ themesCount } />
 				<ThemesList
+					upsellUrl={ upsellUrl }
 					themes={ this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }

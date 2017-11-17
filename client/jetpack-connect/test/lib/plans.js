@@ -1,18 +1,13 @@
-/**
- * @format
- * @jest-environment jsdom
- */
+/** @format */
 /**
  * External dependencies
  */
-import React from 'react';
 import { identity, noop } from 'lodash';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import { PlansTestComponent as Plans } from '../../plans';
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_FREE,
@@ -237,192 +232,7 @@ export const CART = deepFreeze( {
 	hasPendingServerUpdates: false,
 } );
 
-export const SITE_PLANS = deepFreeze( {
-	data: [
-		{
-			autoRenew: false,
-			autoRenewDateMoment: null,
-			canStartTrial: false,
-			currentPlan: false,
-			currencyCode: 'EUR',
-			discountReason: null,
-			expiryMoment: null,
-			formattedDiscount: '€0',
-			formattedOriginalPrice: '€0',
-			formattedPrice: '€59.88',
-			freeTrial: false,
-			hasDomainCredit: false,
-			id: null,
-			interval: 365,
-			isDomainUpgrade: false,
-			productName: 'Premium',
-			productSlug: 'jetpack_premium',
-			rawDiscount: 0,
-			rawPrice: 59.88,
-			subscribedDayMoment: '2017-10-18T22:00:00.000Z',
-			userFacingExpiryMoment: null,
-			userIsOwner: false,
-		},
-		{
-			autoRenew: false,
-			autoRenewDateMoment: null,
-			canStartTrial: false,
-			currentPlan: false,
-			currencyCode: 'EUR',
-			discountReason: null,
-			expiryMoment: null,
-			formattedDiscount: '€0',
-			formattedOriginalPrice: '€0',
-			formattedPrice: '€155.88',
-			freeTrial: false,
-			hasDomainCredit: false,
-			id: null,
-			interval: 365,
-			isDomainUpgrade: false,
-			productName: 'Professional',
-			productSlug: 'jetpack_business',
-			rawDiscount: 0,
-			rawPrice: 155.88,
-			subscribedDayMoment: '2017-10-18T22:00:00.000Z',
-			userFacingExpiryMoment: null,
-			userIsOwner: false,
-		},
-		{
-			autoRenew: false,
-			autoRenewDateMoment: null,
-			canStartTrial: false,
-			currentPlan: false,
-			currencyCode: 'EUR',
-			discountReason: null,
-			expiryMoment: null,
-			formattedDiscount: '€0',
-			formattedOriginalPrice: '€0',
-			formattedPrice: '€0',
-			freeTrial: false,
-			hasDomainCredit: false,
-			id: 0,
-			interval: -1,
-			isDomainUpgrade: false,
-			productName: 'Free',
-			productSlug: 'jetpack_free',
-			rawDiscount: 0,
-			rawPrice: 0,
-			subscribedDayMoment: '2017-10-18T22:00:00.000Z',
-			userFacingExpiryMoment: null,
-			userIsOwner: false,
-		},
-		{
-			autoRenew: false,
-			autoRenewDateMoment: null,
-			canStartTrial: false,
-			currentPlan: false,
-			currencyCode: 'EUR',
-			discountReason: null,
-			expiryMoment: null,
-			formattedDiscount: '€0',
-			formattedOriginalPrice: '€0',
-			formattedPrice: '€6.99',
-			freeTrial: false,
-			hasDomainCredit: false,
-			id: null,
-			interval: 31,
-			isDomainUpgrade: false,
-			productName: 'Premium',
-			productSlug: 'jetpack_premium_monthly',
-			rawDiscount: 0,
-			rawPrice: 6.99,
-			subscribedDayMoment: '2017-10-18T22:00:00.000Z',
-			userFacingExpiryMoment: null,
-			userIsOwner: false,
-		},
-		{
-			autoRenew: false,
-			autoRenewDateMoment: null,
-			canStartTrial: false,
-			currentPlan: false,
-			currencyCode: 'EUR',
-			discountReason: null,
-			expiryMoment: null,
-			formattedDiscount: '€0',
-			formattedOriginalPrice: '€0',
-			formattedPrice: '€19.99',
-			freeTrial: false,
-			hasDomainCredit: false,
-			id: null,
-			interval: 31,
-			isDomainUpgrade: false,
-			productName: 'Professional',
-			productSlug: 'jetpack_business_monthly',
-			rawDiscount: 0,
-			rawPrice: 19.99,
-			subscribedDayMoment: '2017-10-18T22:00:00.000Z',
-			userFacingExpiryMoment: null,
-			userIsOwner: false,
-		},
-		{
-			autoRenew: false,
-			autoRenewDateMoment: null,
-			canStartTrial: false,
-			currentPlan: false,
-			currencyCode: 'EUR',
-			discountReason: null,
-			expiryMoment: null,
-			formattedDiscount: '€0',
-			formattedOriginalPrice: '€0',
-			formattedPrice: '€35.88',
-			freeTrial: false,
-			hasDomainCredit: false,
-			id: null,
-			interval: 365,
-			isDomainUpgrade: false,
-			productName: 'Personal',
-			productSlug: 'jetpack_personal',
-			rawDiscount: 0,
-			rawPrice: 35.88,
-			subscribedDayMoment: '2017-10-18T22:00:00.000Z',
-			userFacingExpiryMoment: null,
-			userIsOwner: false,
-		},
-		{
-			autoRenew: false,
-			autoRenewDateMoment: null,
-			canStartTrial: false,
-			currentPlan: false,
-			currencyCode: 'EUR',
-			discountReason: null,
-			expiryMoment: null,
-			formattedDiscount: '€0',
-			formattedOriginalPrice: '€0',
-			formattedPrice: '€3.50',
-			freeTrial: false,
-			hasDomainCredit: false,
-			id: null,
-			interval: 31,
-			isDomainUpgrade: false,
-			productName: 'Personal',
-			productSlug: 'jetpack_personal_monthly',
-			rawDiscount: 0,
-			rawPrice: 3.5,
-			subscribedDayMoment: '2017-10-18T22:00:00.000Z',
-			userFacingExpiryMoment: null,
-			userIsOwner: false,
-		},
-	],
-	error: null,
-	hasLoadedFromServer: true,
-	isRequesting: false,
-} );
-
 export const PLANS_SLUG = '*';
-
-export function getSitePlans( currentPlan = PLAN_JETPACK_FREE ) {
-	return {
-		...SITE_PLANS,
-		data: SITE_PLANS.data.map(
-			plan => ( plan.productSlug === currentPlan ? { ...plan, currentPlan: true } : plan )
-		),
-	};
-}
 
 export const DEFAULT_PROPS = {
 	basePlansPath: BASE_PLANS_PATH,
@@ -434,6 +244,7 @@ export const DEFAULT_PROPS = {
 	flowType: false,
 	getPlanBySlug: noop,
 	goBackToWpAdmin: noop,
+	hasPlan: false,
 	isAutomatedTransfer: false,
 	isRequestingPlans: false,
 	isRtlLayout: false,
@@ -443,13 +254,8 @@ export const DEFAULT_PROPS = {
 	selectedSite: SELECTED_SITE,
 	selectedSiteSlug: SITE_SLUG,
 	selectPlanInAdvance: noop,
-	sitePlans: getSitePlans(),
 	siteSlug: PLANS_SLUG,
 	transaction: TRANSACTION,
 	translate: identity,
 	userId: USER_ID,
 };
-
-export default function PlansWrapper( props ) {
-	return <Plans { ...DEFAULT_PROPS } { ...props } />;
-}

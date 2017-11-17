@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -226,11 +226,9 @@ const BillingReceipt = createReactClass( {
 						</li>
 						{ this.ref() }
 						{ this.paymentMethod() }
-						{ transaction.cc_num !== 'XXXX' ? (
-							this.renderBillingDetails()
-						) : (
-							this.renderEmptyBillingDetails()
-						) }
+						{ transaction.cc_num !== 'XXXX'
+							? this.renderBillingDetails()
+							: this.renderEmptyBillingDetails() }
 					</ul>
 					{ this.renderLineItems() }
 				</Card>

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { every, isEmpty, isEqual, omit, pick, reject } from 'lodash';

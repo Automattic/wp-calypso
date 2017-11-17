@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { extend } from 'lodash';
@@ -144,6 +144,12 @@ function isPaymentMethodEnabled( cart, method ) {
 			return isCreditCardPaymentsEnabled( cart );
 		case 'paypal':
 			return isPayPalExpressEnabled( cart );
+		case 'ideal':
+			return isNetherlandsIdealEnabled( cart );
+		case 'giropay':
+			return isGermanyGiropayEnabled( cart );
+		case 'bancontact':
+			return isBelgiumBancontactEnabled( cart );
 		default:
 			return false;
 	}
@@ -160,6 +166,30 @@ function isPayPalExpressEnabled( cart ) {
 	);
 }
 
+function isNetherlandsIdealEnabled( cart ) {
+	return (
+		config.isEnabled( 'upgrades/netherlands-ideal' ) &&
+		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Ideal' ) >= 0 &&
+		'EUR' === cart.currency
+	);
+}
+
+function isGermanyGiropayEnabled( cart ) {
+	return (
+		config.isEnabled( 'upgrades/germany-giropay' ) &&
+		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Giropay' ) >= 0 &&
+		'EUR' === cart.currency
+	);
+}
+
+function isBelgiumBancontactEnabled( cart ) {
+	return (
+		config.isEnabled( 'upgrades/belgium-bancontact' ) &&
+		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Bancontact' ) >= 0 &&
+		'EUR' === cart.currency
+	);
+}
+
 export default {
 	applyCoupon,
 	canRemoveFromCart,
@@ -173,5 +203,6 @@ export default {
 	isPaidForFullyInCredits,
 	isPaymentMethodEnabled,
 	isPayPalExpressEnabled,
+	isNetherlandsIdealEnabled,
 	isCreditCardPaymentsEnabled,
 };

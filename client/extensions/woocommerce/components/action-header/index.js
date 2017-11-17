@@ -1,11 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { isArray } from 'lodash';
 
 /**
@@ -14,10 +15,8 @@ import { isArray } from 'lodash';
 import Card from 'components/card';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StickyPanel from 'components/sticky-panel';
-import Notice from 'components/notice';
-import config from 'config';
 
-const ActionHeader = ( { children, breadcrumbs } ) => {
+const ActionHeader = ( { children, breadcrumbs, isLoading } ) => {
 	// TODO: Implement proper breadcrumbs component.
 	// For v1, we will just pass in a prop from each page.
 	let breadcrumbsOutput = breadcrumbs;
@@ -36,22 +35,13 @@ const ActionHeader = ( { children, breadcrumbs } ) => {
 		} );
 	}
 
-	const showNonAtomicWarrningNotice = config.isEnabled( 'woocommerce/store-on-non-atomic-sites' );
+	const breadcrumbClasses = classNames( 'action-header__breadcrumbs', { 'is-loading': isLoading } );
 
 	return (
 		<StickyPanel>
 			<SidebarNavigation />
-			{ showNonAtomicWarrningNotice && (
-				<Notice
-					status="is-warning"
-					className="action-header__notice"
-					isCompact={ true }
-					text={ 'Store on non Atomic Jetpack site development mode!' }
-					showDismiss={ false }
-				/>
-			) }
 			<Card className="action-header__header">
-				<span className="action-header__breadcrumbs">{ breadcrumbsOutput }</span>
+				<span className={ breadcrumbClasses }>{ breadcrumbsOutput }</span>
 				<div className="action-header__actions">{ children }</div>
 			</Card>
 		</StickyPanel>
@@ -59,8 +49,7 @@ const ActionHeader = ( { children, breadcrumbs } ) => {
 };
 
 ActionHeader.propTypes = {
-	breadcrumbs: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.node ), PropTypes.node ] ),
-	children: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.node ), PropTypes.node ] ),
+	breadcrumbs: PropTypes.node,
 };
 
 export default ActionHeader;

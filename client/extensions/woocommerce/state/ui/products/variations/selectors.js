@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { compact, get, find, isNumber, isEqual } from 'lodash';

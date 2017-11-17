@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -87,25 +87,30 @@ class GoogleLoginButton extends Component {
 			.then( gapi =>
 				gapi.client
 					.init( {
-						client_id: this.props.clientId,
-						scope: this.props.scope,
 						fetch_basic_profile: this.props.fetchBasicProfile,
 						ux_mode: this.props.uxMode,
 						redirect_uri: this.props.redirectUri,
 					} )
-					.then( () => {
-						this.setState( { isDisabled: false } );
+					.then( () =>
+						gapi.auth2
+							.init( {
+								client_id: this.props.clientId,
+								scope: this.props.scope,
+							} )
+							.then( () => {
+								this.setState( { isDisabled: false } );
 
-						const googleAuth = gapi.auth2.getAuthInstance();
-						const currentUser = googleAuth.currentUser.get();
+								const googleAuth = gapi.auth2.getAuthInstance();
+								const currentUser = googleAuth.currentUser.get();
 
-						// handle social authentication response from a redirect-based oauth2 flow
-						if ( currentUser ) {
-							this.props.responseHandler( currentUser, false );
-						}
+								// handle social authentication response from a redirect-based oauth2 flow
+								if ( currentUser && this.props.uxMode === 'redirect' ) {
+									this.props.responseHandler( currentUser, false );
+								}
 
-						return gapi; // don't try to return googleAuth here, it's a thenable but not a valid promise
-					} )
+								return gapi; // don't try to return googleAuth here, it's a thenable but not a valid promise
+							} )
+					)
 			)
 			.catch( error => {
 				this.initialized = null;

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -17,11 +17,7 @@ import { trim } from 'lodash';
  */
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
-import {
-	fetchProducts,
-	fetchProductSearchResults,
-	clearProductSearch,
-} from 'woocommerce/state/sites/products/actions';
+import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
@@ -41,8 +37,6 @@ class Products extends Component {
 			slug: PropTypes.string,
 		} ),
 		fetchProducts: PropTypes.func.isRequired,
-		fetchProductSearchResults: PropTypes.func.isRequired,
-		clearProductSearch: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -69,7 +63,7 @@ class Products extends Component {
 	switchPage = page => {
 		const { site } = this.props;
 		if ( trim( this.state.query ) !== '' ) {
-			this.props.fetchProductSearchResults( site.ID, page );
+			this.props.fetchProducts( site.ID, { page, search: this.state.query } );
 		} else {
 			this.props.fetchProducts( site.ID, { page } );
 		}
@@ -80,12 +74,11 @@ class Products extends Component {
 
 		if ( trim( query ) === '' ) {
 			this.setState( { query: '' } );
-			this.props.clearProductSearch( site.ID );
 			return;
 		}
 
 		this.setState( { query } );
-		this.props.fetchProductSearchResults( site.ID, 1, query );
+		this.props.fetchProducts( site.ID, { search: query } );
 	};
 
 	render() {
@@ -140,9 +133,10 @@ class Products extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const productsLoaded = site && areProductsLoaded( state, { page: 1, per_page: 10 }, site.ID );
-	const totalProducts = site && getTotalProducts( state, site.ID );
-	const productsLoading = site && areProductsLoading( state, { page: 1, per_page: 10 }, site.ID );
+	const defaultParams = {};
+	const productsLoaded = site && areProductsLoaded( state, defaultParams, site.ID );
+	const totalProducts = site && getTotalProducts( state, defaultParams, site.ID );
+	const productsLoading = site && areProductsLoading( state, defaultParams, site.ID );
 	return {
 		site,
 		productsLoaded,
@@ -152,14 +146,7 @@ function mapStateToProps( state ) {
 }
 
 function mapDispatchToProps( dispatch ) {
-	return bindActionCreators(
-		{
-			fetchProducts,
-			fetchProductSearchResults,
-			clearProductSearch,
-		},
-		dispatch
-	);
+	return bindActionCreators( { fetchProducts }, dispatch );
 }
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( Products ) );

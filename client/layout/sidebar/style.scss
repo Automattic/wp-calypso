@@ -1,9 +1,10 @@
 .sidebar {
+	color: var( --sidebar-color );
 	display: flex;
 	flex-direction: column;
 	overflow: auto;
 	padding: 0;
-	background: $sidebar-bg-color;
+	background: var( --sidebar-background );
 	position: fixed;
 		top: 47px;
 		bottom: 0;
@@ -69,7 +70,7 @@
 
 // Sidebar group headings
 .sidebar__heading {
-	color: darken( $gray, 10% );
+	color: var( --sidebar-heading-color );
 	font-weight: 600;
 	font-size: 12px;
 	margin: 16px 8px 6px 14px;
@@ -114,12 +115,11 @@
 				right: 0;
 				bottom: 0;
 			width: 15%;
-			background: linear-gradient(
-				to right,
-				rgba( $sidebar-bg-color, 0 ),
-				rgba( $sidebar-bg-color, 1 ) 50% );
+
+			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ) );
 
 			@include breakpoint( "<660px" ) {
+
 				background: linear-gradient(
 					to right,
 					rgba( $gray-light, 0 ),
@@ -133,7 +133,7 @@
 		line-height: 1;
 		position: relative;
 		padding: 11px 16px 11px 18px;
-		color: $sidebar-text-color;
+		color: var( --sidebar-color );
 		box-sizing: border-box;
 		white-space: nowrap;
 		overflow: hidden;
@@ -155,13 +155,13 @@
 			position: absolute;
 			right: 0;
 			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
-			color: darken( $gray, 20% );
+			color: var( --sidebar-menu-link-secondary-text-color );
 		}
 	}
 
 	.gridicon,
 	.jetpack-logo {
-		fill: $gray;
+		fill: var( --sidebar-gridicon-fill );
 		height: 24px;
 		width: 24px;
 		margin-right: 6px;
@@ -222,21 +222,23 @@ form.sidebar__button input {
 	bottom: -10px;
 	right: -10px;
 	left: -10px;
+	width: 100%;
 }
 
 // Selected Menu
 @include breakpoint( ">660px" ) {
 	.sidebar__menu .selected {
-		background-color: $sidebar-selected-color;
+		background-color: var( --sidebar-menu-selected-background-color );
 
 		a {
-			color: $white;
+			color: var( --sidebar-menu-selected-a-color );
+
+			.sidebar__menu-link-secondary-text {
+				color: inherit;
+			}
 
 			&:first-child:after {
-				background: linear-gradient(
-					to right,
-					rgba( $sidebar-selected-color, 0 ),
-					rgba( $sidebar-selected-color, 1 ) 50% );
+				background: overflow-gradient( var( --sidebar-menu-selected-a-first-child-after-background ) );
 			}
 		}
 
@@ -251,7 +253,7 @@ form.sidebar__button input {
 
 		.gridicon,
 		.jetpack-logo {
-			fill: $white;
+			fill: var( --sidebar-menu-selected-a-color );
 		}
 
 		&.is-action-button-selected a {
@@ -365,7 +367,7 @@ form.sidebar__button input {
 	font-size: 11px;
 	font-weight: 600;
 	padding: 8px;
-	color: darken( $gray, 10% );
+	color: var( --sidebar-footer-button-color );
 	line-height: 2.1;
 	margin-right: auto;
 

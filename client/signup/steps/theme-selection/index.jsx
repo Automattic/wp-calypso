@@ -80,17 +80,7 @@ class ThemeSelectionStep extends Component {
 		);
 	}
 
-	shouldGoToFirstStep() {
-		const { dependencyStore } = this.props;
-
-		return (
-			isEnabled( 'signup/atomic-store-flow' ) &&
-			this.props.designType === 'store' &&
-			dependencyStore.themeSlugWithRepo
-		);
-	}
-
-	shouldSkipStep() {
+	isStoreSignup() {
 		const { signupDependencies = {} } = this.props;
 
 		return (
@@ -99,40 +89,23 @@ class ThemeSelectionStep extends Component {
 		);
 	}
 
-	componentWillMount() {
-		if ( this.shouldGoToFirstStep() ) {
-			this.props.goToStep( 'design-type-with-atomic-store' );
-		} else if ( this.shouldSkipStep() ) {
-			SignupActions.submitSignupStep(
-				{
-					stepName: this.props.stepName,
-					processingMessage: this.props.translate( 'Adding your theme' ),
-					repoSlug: '',
-				},
-				null,
-				{
-					themeSlugWithRepo: '',
-				}
-			);
-
-			this.props.goToNextStep();
-		}
-	}
-
 	render = () => {
-		if ( this.shouldGoToFirstStep() || this.shouldSkipStep() ) {
-			return null;
-		}
-
+		const storeSignup = this.isStoreSignup();
 		const defaultDependencies = this.props.useHeadstart
 			? { themeSlugWithRepo: 'pub/twentysixteen' }
 			: undefined;
 		const { translate } = this.props;
-		const headerText = translate( 'Choose a theme.' );
-		const subHeaderText = translate(
-			'Pick one of our popular themes to get started or choose from hundreds more after you sign up.',
-			{ context: 'Themes step subheader in Signup' }
-		);
+		const headerText = storeSignup
+			? translate( 'Choose a store theme.' )
+			: translate( 'Choose a theme.' );
+		const subHeaderText = storeSignup
+			? translate( 'Pick one of our store themes to start with. You can change this later.', {
+					context: 'Themes step subheader in Signup',
+				} )
+			: translate(
+					'Pick one of our popular themes to get started or choose from hundreds more after you sign up.',
+					{ context: 'Themes step subheader in Signup' }
+				);
 
 		return (
 			<StepWrapper

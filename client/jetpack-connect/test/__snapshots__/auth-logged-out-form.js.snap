@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoggedOutForm should render 1`] = `
+<div>
+  <Connect(Localized(AuthFormHeader)) />
+  <Connect(Localized(SignupForm))
+    disabled={false}
+    email="email@an.example.site"
+    footerLink={
+      <LoggedOutFormLinks>
+        <LoggedOutFormLinkItem
+          href="https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fexample.com%2F%3F_ui%3Djetpack%253AfooBarBaz%26_ut%3Danon%26_wp_nonce%3DfooBarNonce%26blogname%3DExample%2520Blog%26calypso_env%3Dproduction%26client_id%3D98765%26from%3Dbanner-44-slide-1-dashboard%26home_url%3Dhttp%253A%252F%252Fan.example.site%26jp_version%3D5.4%26locale%3Den%26redirect_after_auth%3Dhttp%253A%252F%252Fan.example.site%252Fwp-admin%252Fadmin.php%253Fpage%253Djetpack%26redirect_uri%3Dhttp%253A%252F%252Fan.example.site%252Fwp-admin%252Fadmin.php%253Fpage%253Djetpack%2526action%253Dauthorize%2526_wpnonce%253DfooBarNonce%2526redirect%253Dhttp%25253A%25252F%25252Fan.example.site%25252Fwp-admin%25252Fadmin.php%25253Fpage%25253Djetpack%26scope%3Dadministrator%253AfooBarBaz%26secret%3DfooBarSecret%26site%3Dhttp%253A%252F%252Fan.example.site%26site_icon%3D%26site_lang%3Den_US%26site_url%3Dhttp%253A%252F%252Fan.example.site%26state%3D2%26user_email%3Demail%2540an.example.site%26user_login%3DtheUserLogin&email_address=email%40an.example.site"
+        >
+          Already have an account? Sign in
+        </LoggedOutFormLinkItem>
+        <Localized(JetpackConnectHelpButton)
+          onClick={[Function]}
+        />
+      </LoggedOutFormLinks>
+    }
+    redirectToAfterLoginUrl="https://example.com/?_ui=jetpack%3AfooBarBaz&_ut=anon&_wp_nonce=fooBarNonce&blogname=Example%20Blog&calypso_env=production&client_id=98765&from=banner-44-slide-1-dashboard&home_url=http%3A%2F%2Fan.example.site&jp_version=5.4&locale=en&redirect_after_auth=http%3A%2F%2Fan.example.site%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack&redirect_uri=http%3A%2F%2Fan.example.site%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3DfooBarNonce%26redirect%3Dhttp%253A%252F%252Fan.example.site%252Fwp-admin%252Fadmin.php%253Fpage%253Djetpack&scope=administrator%3AfooBarBaz&secret=fooBarSecret&site=http%3A%2F%2Fan.example.site&site_icon=&site_lang=en_US&site_url=http%3A%2F%2Fan.example.site&state=2&user_email=email%40an.example.site&user_login=theUserLogin"
+    submitButtonText="Sign Up and Connect Jetpack"
+    submitForm={[Function]}
+    submitting={false}
+    suggestedUsername=""
+  />
+</div>
+`;
+
+exports[`LoggedOutForm should render with locale suggestions 1`] = `
+<div>
+  <LocaleSuggestions
+    locale="es"
+    path="/jetpack/connect/authorize/es"
+  />
+  <Connect(Localized(AuthFormHeader)) />
+  <Connect(Localized(SignupForm))
+    disabled={false}
+    email="email@an.example.site"
+    footerLink={
+      <LoggedOutFormLinks>
+        <LoggedOutFormLinkItem
+          href="https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fexample.com%2F%3F_ui%3Djetpack%253AfooBarBaz%26_ut%3Danon%26_wp_nonce%3DfooBarNonce%26blogname%3DExample%2520Blog%26calypso_env%3Dproduction%26client_id%3D98765%26from%3Dbanner-44-slide-1-dashboard%26home_url%3Dhttp%253A%252F%252Fan.example.site%26jp_version%3D5.4%26locale%3Den%26redirect_after_auth%3Dhttp%253A%252F%252Fan.example.site%252Fwp-admin%252Fadmin.php%253Fpage%253Djetpack%26redirect_uri%3Dhttp%253A%252F%252Fan.example.site%252Fwp-admin%252Fadmin.php%253Fpage%253Djetpack%2526action%253Dauthorize%2526_wpnonce%253DfooBarNonce%2526redirect%253Dhttp%25253A%25252F%25252Fan.example.site%25252Fwp-admin%25252Fadmin.php%25253Fpage%25253Djetpack%26scope%3Dadministrator%253AfooBarBaz%26secret%3DfooBarSecret%26site%3Dhttp%253A%252F%252Fan.example.site%26site_icon%3D%26site_lang%3Den_US%26site_url%3Dhttp%253A%252F%252Fan.example.site%26state%3D2%26user_email%3Demail%2540an.example.site%26user_login%3DtheUserLogin&email_address=email%40an.example.site"
+        >
+          Already have an account? Sign in
+        </LoggedOutFormLinkItem>
+        <Localized(JetpackConnectHelpButton)
+          onClick={[Function]}
+        />
+      </LoggedOutFormLinks>
+    }
+    redirectToAfterLoginUrl="https://example.com/?_ui=jetpack%3AfooBarBaz&_ut=anon&_wp_nonce=fooBarNonce&blogname=Example%20Blog&calypso_env=production&client_id=98765&from=banner-44-slide-1-dashboard&home_url=http%3A%2F%2Fan.example.site&jp_version=5.4&locale=en&redirect_after_auth=http%3A%2F%2Fan.example.site%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack&redirect_uri=http%3A%2F%2Fan.example.site%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack%26action%3Dauthorize%26_wpnonce%3DfooBarNonce%26redirect%3Dhttp%253A%252F%252Fan.example.site%252Fwp-admin%252Fadmin.php%253Fpage%253Djetpack&scope=administrator%3AfooBarBaz&secret=fooBarSecret&site=http%3A%2F%2Fan.example.site&site_icon=&site_lang=en_US&site_url=http%3A%2F%2Fan.example.site&state=2&user_email=email%40an.example.site&user_login=theUserLogin"
+    submitButtonText="Sign Up and Connect Jetpack"
+    submitForm={[Function]}
+    submitting={false}
+    suggestedUsername=""
+  />
+</div>
+`;

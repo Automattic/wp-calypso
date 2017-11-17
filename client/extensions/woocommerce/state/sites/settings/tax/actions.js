@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { areTaxSettingsLoaded, areTaxSettingsLoading } from './selectors';

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -61,7 +61,18 @@ class ShippingSettingsSaveButton extends Component {
 			translate( 'There was a problem saving the shipping settings. Please try again.' )
 		);
 
-		this.props.createWcsShippingSaveActionList( successAction, failureAction );
+		const noLabelsPaymentAction = errorNotice(
+			translate( 'A payment method is required to print shipping labels.' ),
+			{
+				duration: 4000,
+			}
+		);
+
+		this.props.createWcsShippingSaveActionList(
+			successAction,
+			failureAction,
+			noLabelsPaymentAction
+		);
 	};
 
 	redirect = () => {

@@ -41,6 +41,8 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REPRINT_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_DETAILS_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PACKAGE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ITEM_MOVE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM,
@@ -716,7 +718,6 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_RESPONSE ] = ( state, { res
 		refundDialog: null,
 		labels: [ ...state.labels ],
 	};
-	newState.refundDialog = null;
 	newState.labels[ labelIndex ] = labelData;
 
 	return newState;
@@ -755,6 +756,20 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT ] = ( state ) => {
 		reprintDialog: { ...state.reprintDialog,
 			isFetching: true,
 		},
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_DETAILS_DIALOG ] = ( state, { labelId } ) => {
+	return { ...state,
+		detailsDialog: {
+			labelId,
+		},
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG ] = ( state ) => {
+	return { ...state,
+		detailsDialog: null,
 	};
 };
 

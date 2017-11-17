@@ -165,6 +165,7 @@ class OrderCustomerCard extends Component {
 				</div>
 				<AddressView
 					isEditable
+					showAllLocations
 					onChange={ this.onAddressChange( 'shipping' ) }
 					address={ this.getAddressViewFormat( get( order, [ 'shipping' ], {} ) ) }
 				/>
@@ -221,6 +222,7 @@ class OrderCustomerCard extends Component {
 					</div>
 					<AddressView
 						isEditable
+						showAllLocations
 						onChange={ this.onAddressChange( 'billing' ) }
 						address={ this.getAddressViewFormat( get( order, [ 'billing' ], {} ) ) }
 					/>

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -17,7 +17,7 @@ import { canCurrentUser } from 'state/selectors';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import { isSiteAutomatedTransfer, hasSitePendingAutomatedTransfer } from 'state/selectors';
 import route from 'lib/route';
 
 class App extends Component {
@@ -27,6 +27,7 @@ class App extends Component {
 		canUserManageOptions: PropTypes.bool.isRequired,
 		currentRoute: PropTypes.string.isRequired,
 		isAtomicSite: PropTypes.bool.isRequired,
+		hasPendingAutomatedTransfer: PropTypes.bool.isRequired,
 		children: PropTypes.element.isRequired,
 	};
 
@@ -46,6 +47,7 @@ class App extends Component {
 			children,
 			canUserManageOptions,
 			isAtomicSite,
+			hasPendingAutomatedTransfer,
 			currentRoute,
 			translate,
 		} = this.props;
@@ -62,17 +64,18 @@ class App extends Component {
 			return null;
 		}
 
-		if ( 'wpcalypso' !== config( 'env_id' ) && 'development' !== config( 'env_id' ) ) {
-			// Show stats page for non Atomic sites for now
-			if ( ! isAtomicSite && ! config.isEnabled( 'woocommerce/store-on-non-atomic-sites' ) ) {
-				this.redirect();
-				return null;
-			}
+		if (
+			! isAtomicSite &&
+			! hasPendingAutomatedTransfer &&
+			! config.isEnabled( 'woocommerce/store-on-non-atomic-sites' )
+		) {
+			this.redirect();
+			return null;
+		}
 
-			if ( ! canUserManageOptions ) {
-				this.redirect();
-				return null;
-			}
+		if ( ! canUserManageOptions ) {
+			this.redirect();
+			return null;
 		}
 
 		const documentTitle = this.props.documentTitle || translate( 'Store' );
@@ -92,10 +95,14 @@ function mapStateToProps( state ) {
 	const canUserManageOptions =
 		( siteId && canCurrentUser( state, siteId, 'manage_options' ) ) || false;
 	const isAtomicSite = ( siteId && !! isSiteAutomatedTransfer( state, siteId ) ) || false;
+	const hasPendingAutomatedTransfer =
+		( siteId && !! hasSitePendingAutomatedTransfer( state, siteId ) ) || false;
+
 	return {
 		siteId,
 		canUserManageOptions,
 		isAtomicSite,
+		hasPendingAutomatedTransfer,
 		currentRoute: page.current,
 	};
 }

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -13,9 +13,11 @@ import { find, flowRight, get, values } from 'lodash';
 /**
  * Internal dependencies
  */
+import HeaderCake from 'components/header-cake';
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
+import { addSiteFragment } from 'lib/route/path';
 import sectionsModule from 'sections';
 import { Tabs } from '../../constants';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -58,10 +60,22 @@ class Navigation extends Component {
 	}
 
 	render() {
+		const { siteSlug, translate } = this.props;
+
 		return (
-			<SectionNav selectedText="Settings">
-				<SectionNavTabs>{ values( Tabs ).map( tab => this.renderTabItem( tab ) ) }</SectionNavTabs>
-			</SectionNav>
+			<div>
+				<HeaderCake
+					backText={ translate( 'Plugin Overview' ) }
+					backHref={ siteSlug && addSiteFragment( '/plugins/wp-job-manager', siteSlug ) }
+				>
+					WP Job Manager
+				</HeaderCake>
+				<SectionNav selectedText="Settings">
+					<SectionNavTabs>
+						{ values( Tabs ).map( tab => this.renderTabItem( tab ) ) }
+					</SectionNavTabs>
+				</SectionNav>
+			</div>
 		);
 	}
 }

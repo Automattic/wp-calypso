@@ -62,6 +62,12 @@ const sections = [
 		secondary: true,
 	},
 	{
+		name: 'concierge',
+		paths: [ '/me/concierge' ],
+		module: 'me/concierge',
+		group: 'me',
+	},
+	{
 		name: 'media',
 		paths: [ '/media' ],
 		module: 'my-sites/media',
@@ -262,6 +268,7 @@ sections.push( {
 	module: 'reader/full-post',
 	secondary: false,
 	group: 'reader',
+	css: 'reader-full-post',
 } );
 
 sections.push( {

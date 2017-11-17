@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -12,6 +12,7 @@ import { get, includes, map, concat } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
 import Gridicon from 'gridicons';
+import { current as currentPage } from 'page';
 
 /**
  * Internal dependencies
@@ -19,6 +20,7 @@ import Gridicon from 'gridicons';
 import QueryPostTypes from 'components/data/query-post-types';
 import QueryPosts from 'components/data/query-posts';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
+import QuerySitePlans from 'components/data/query-site-plans';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import NoticeAction from 'components/notice/notice-action';
@@ -52,6 +54,7 @@ import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
 import Notice from 'components/notice';
 import {
 	hasFeature,
+	isRequestingSitePlans as siteIsRequestingPlans,
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
 } from 'state/sites/plans/selectors';
@@ -66,6 +69,7 @@ import SectionHeader from 'components/section-header';
 import Tooltip from 'components/tooltip';
 import analytics from 'lib/analytics';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { sectionify } from 'lib/route/path';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -180,12 +184,11 @@ class PostShare extends Component {
 			},
 			{ service_all: 0 }
 		);
+		const additionalProperties = { context_path: sectionify( currentPage ) };
+		const eventProperties = { ...numberOfAccountsPerService, ...additionalProperties };
 
 		if ( this.state.scheduledDate ) {
-			analytics.tracks.recordEvent(
-				'calypso_publicize_share_schedule',
-				numberOfAccountsPerService
-			);
+			analytics.tracks.recordEvent( 'calypso_publicize_share_schedule', eventProperties );
 
 			this.props.schedulePostShareAction(
 				siteId,
@@ -195,10 +198,7 @@ class PostShare extends Component {
 				servicesToPublish.map( connection => connection.ID )
 			);
 		} else {
-			analytics.tracks.recordEvent(
-				'calypso_publicize_share_instantly',
-				numberOfAccountsPerService
-			);
+			analytics.tracks.recordEvent( 'calypso_publicize_share_instantly', eventProperties );
 			this.props.sharePost( siteId, postId, this.state.skipped, this.state.message );
 		}
 	};
@@ -536,6 +536,7 @@ class PostShare extends Component {
 		const {
 			hasRepublicizeFeature,
 			hasFetchedConnections,
+			isRequestingSitePlans,
 			postId,
 			siteId,
 			siteSlug,
@@ -549,7 +550,7 @@ class PostShare extends Component {
 		}
 
 		const classes = classNames( 'post-share__wrapper', {
-			'is-placeholder': ! hasFetchedConnections,
+			'is-placeholder': ! hasFetchedConnections || isRequestingSitePlans,
 			'has-connections': this.hasConnections(),
 			'has-republicize-scheduling-feature': hasRepublicizeFeature,
 		} );
@@ -559,10 +560,24 @@ class PostShare extends Component {
 				<TrackComponentView eventName="calypso_publicize_post_share_view" />
 				<QueryPostTypes siteId={ siteId } />
 				<QueryPublicizeConnections siteId={ siteId } />
+				<QuerySitePlans siteId={ siteId } />
 
 				<div className={ classes }>
 					<div className="post-share__head">
-						<h4 className="post-share__title">{ translate( 'Share this post' ) }</h4>
+						<h4 className="post-share__title">
+							<span>{ translate( 'Share this post' ) }</span>
+							{ showClose && (
+								<Button
+									borderless
+									aria-label={ translate( 'Close post sharing' ) }
+									className="post-share__close"
+									data-tip-target="post-share__close"
+									onClick={ onClose }
+								>
+									<Gridicon icon="cross" />
+								</Button>
+							) }
+						</h4>
 						<div className="post-share__subtitle">
 							{ translate(
 								'Share your post on all of your connected social media accounts using ' +
@@ -575,17 +590,6 @@ class PostShare extends Component {
 							) }
 						</div>
 					</div>
-					{ showClose && (
-						<Button
-							borderless
-							aria-label={ translate( 'Close post sharing' ) }
-							className="post-share__close"
-							data-tip-target="post-share__close"
-							onClick={ onClose }
-						>
-							<Gridicon icon="cross" />
-						</Button>
-					) }
 					{ ! hasFetchedConnections && <div className="post-share__placeholder" /> }
 					{ this.renderRequestSharingNotice() }
 					{ this.renderConnectionsWarning() }
@@ -622,6 +626,7 @@ export default connect(
 			planSlug,
 			isJetpack: isJetpackSite( state, siteId ),
 			hasFetchedConnections: siteHasFetchedConnections( state, siteId ),
+			isRequestingSitePlans: siteIsRequestingPlans( state, siteId ),
 			hasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			siteSlug: getSiteSlug( state, siteId ),
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, postType ),

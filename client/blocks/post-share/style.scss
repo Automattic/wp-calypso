@@ -1,4 +1,4 @@
-$section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+$section-border: solid 1px darken( $sidebar-bg-color, 5% );
 
 .post-share .card.banner,
 .card.post-share__upgrade-nudge {
@@ -18,11 +18,17 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 }
 
 .post-share__title {
+	display: flex;
+
 	font-size: 15px;
 	margin: 16px 0 4px;
 
 	@include breakpoint( ">660px" ) {
 		font-size: 18px;
+	}
+
+	span {
+		flex: 1;
 	}
 }
 
@@ -59,13 +65,9 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 	}
 }
 
-.post-share__close {
-	position: absolute;
-	top: 0;
-	right: 0;
-	&.button.is-borderless { // for specificity
-		padding: 10px;
-	}
+.button.post-share__close {
+	margin-top: -6px;
+	padding: 0;
 }
 
 .post-share__form {
@@ -269,6 +271,7 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 .post-share__button-actions {
 	display: flex;
 	justify-content: flex-end;
+	margin-top: 8px;
 }
 
 .post-share__share-combo {
@@ -282,13 +285,28 @@ $section-border: solid 1px transparentize( lighten( $gray, 20% ), .5 );
 
 .post-share .post-share__footer-nav {
 	margin: 0;
+	box-shadow: none;
+	border-top: $section-border;
 }
 
 .post-share .post-share__footer-items {
 	align-items: center;
+	box-sizing: border-box;
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: space-between;
+
+	margin: 0 auto 1px;
+	padding: 16px;
+
+	background: $white;
+
+	border-top: $section-border;
+
+	@include breakpoint( ">480px" ) {
+		margin-bottom: 1px;
+		padding: 16px 24px;
+	}
 
 	&::after {
 		content: '';

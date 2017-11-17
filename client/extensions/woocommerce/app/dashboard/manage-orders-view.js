@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -16,6 +16,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import LabelsSetupNotice from 'woocommerce/woocommerce-services/components/labels-setup-notice';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
 import {
@@ -150,6 +151,8 @@ class ManageOrdersView extends Component {
 						{ ( orders.length && <span>{ translate( 'You have new orders 🎉' ) }</span> ) || '' }
 					</h2>
 				</div>
+
+				<LabelsSetupNotice />
 
 				<div className="dashboard__queue-widgets">
 					{ this.possiblyRenderProcessOrdersWidget() }

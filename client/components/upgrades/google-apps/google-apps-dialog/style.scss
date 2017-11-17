@@ -63,6 +63,11 @@
 	}
 }
 
+.google-apps-dialog__domain {
+	display: inline-block;
+	max-width: 20em;
+}
+
 .google-apps-dialog__price-per-user {
 	color: $blue-medium;
 	font-size: 18px;

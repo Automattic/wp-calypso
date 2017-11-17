@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import debugFactory from 'debug';
@@ -130,12 +130,14 @@ ABTest.prototype.init = function( name, geoLocation ) {
 	this.assignmentMethod = assignmentMethod;
 	this.experimentId = name + '_' + variationDatestamp;
 
-	if ( testConfig.countryCodeTarget ) {
+	if ( testConfig.countryCodeTargets ) {
 		if ( false !== geoLocation ) {
-			this.countryCodeTarget = testConfig.countryCodeTarget;
+			this.countryCodeTargets = testConfig.countryCodeTargets;
 			this.geoLocation = geoLocation;
 		} else {
-			throw new Error( 'Test config has geoTarget, but no geoLocation passed to abtest function' );
+			throw new Error(
+				'Test config has countryCodeTargets, but no geoLocation passed to abtest function'
+			);
 		}
 	}
 
@@ -212,14 +214,16 @@ ABTest.prototype.isEligibleForAbTest = function() {
 		}
 	}
 
-	if ( this.countryCodeTarget && this.countryCodeTarget !== this.geoLocation ) {
-		debug(
-			'%s: geoLocation is %s, test targets %s',
-			this.experimentId,
-			this.geoLocation,
-			this.countryCodeTarget
-		);
-		return false;
+	if ( this.countryCodeTargets ) {
+		if ( this.countryCodeTargets.indexOf( this.geoLocation ) === -1 ) {
+			debug(
+				'%s: geoLocation is %s, test targets: %s',
+				this.experimentId,
+				this.geoLocation,
+				this.countryCodeTargets.join( ', ' )
+			);
+			return false;
+		}
 	}
 
 	if ( this.hasBeenInPreviousSeriesTest() ) {

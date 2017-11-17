@@ -5,15 +5,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { find, findIndex, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import formatCurrency from 'lib/format-currency';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
+import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
 	getOrderDiscountTax,
@@ -25,9 +28,12 @@ import {
 import {
 	getOrderItemCost,
 	getOrderRefundTotal,
+	getOrderShippingTotal,
 	getOrderTotal,
 } from 'woocommerce/lib/order-values/totals';
+import OrderAddItems from './add-items';
 import OrderTotalRow from './row-total';
+import ScreenReaderText from 'components/screen-reader-text';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -66,7 +72,7 @@ class OrderDetailsTable extends Component {
 	};
 
 	renderTableHeader = () => {
-		const { translate } = this.props;
+		const { isEditing, translate } = this.props;
 		return (
 			<TableRow className="order-details__header">
 				<TableItem isHeader className="order-details__item-product">
@@ -84,6 +90,11 @@ class OrderDetailsTable extends Component {
 				<TableItem isHeader className="order-details__item-total">
 					{ translate( 'Total' ) }
 				</TableItem>
+				{ isEditing && (
+					<TableItem isHeader className="order-details__item-delete">
+						<ScreenReaderText>{ translate( 'Delete' ) }</ScreenReaderText>
+					</TableItem>
+				) }
 			</TableRow>
 		);
 	};
@@ -91,7 +102,10 @@ class OrderDetailsTable extends Component {
 	onChange = event => {
 		const { order } = this.props;
 		// Name is `quantity-x`, where x is the ID of the item
-		const id = parseInt( event.target.name.split( '-' )[ 1 ] );
+		let id = event.target.name.split( '-' )[ 1 ];
+		if ( ! isNaN( parseInt( id ) ) ) {
+			id = parseInt( id );
+		}
 		const item = find( order.line_items, { id } );
 		if ( ! item ) {
 			return;
@@ -102,7 +116,36 @@ class OrderDetailsTable extends Component {
 		const subtotal = getOrderItemCost( order, id ) * quantity;
 		const total = subtotal;
 		const newItem = { ...item, quantity, subtotal, total };
-		this.props.onChange( { [ index ]: newItem } );
+		this.props.onChange( { line_items: { [ index ]: newItem } } );
+	};
+
+	onShippingChange = event => {
+		const { order } = this.props;
+		const shippingLine = order.shipping_lines[ 0 ];
+		const total = event.target.value;
+		this.props.onChange( { shipping_lines: [ { ...shippingLine, total } ] } );
+	};
+
+	formatShippingValue = () => {
+		const { order } = this.props;
+		const shippingLine = order.shipping_lines[ 0 ];
+		const total = getCurrencyFormatDecimal( shippingLine.total );
+		this.props.onChange( { shipping_lines: [ { ...shippingLine, total } ] } );
+	};
+
+	onDelete = ( id, type = 'line_items' ) => {
+		return () => {
+			const index = findIndex( this.props.order[ type ], { id } );
+			if ( index >= 0 ) {
+				let newItem;
+				if ( 'line_items' === type ) {
+					newItem = { id, quantity: 0, subtotal: 0 };
+				} else {
+					newItem = { id, name: null, total: 0 };
+				}
+				this.props.onChange( { [ type ]: { [ index ]: newItem } } );
+			}
+		};
 	};
 
 	renderQuantity = item => {
@@ -136,9 +179,33 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
-	renderOrderItems = ( item, i ) => {
+	renderDeleteButton = ( item, type ) => {
+		const { isEditing, translate } = this.props;
+		if ( ! isEditing ) {
+			return null;
+		}
+		return (
+			<TableItem className="order-details__item-delete">
+				<Button
+					compact
+					borderless
+					aria-label={ translate( 'Remove %(itemName)s from this order', {
+						args: { itemName: item.name },
+					} ) }
+					onClick={ this.onDelete( item.id, type ) }
+				>
+					<Gridicon icon="trash" />
+				</Button>
+			</TableItem>
+		);
+	};
+
+	renderOrderItem = ( item, i ) => {
 		const { order } = this.props;
 		const tax = getOrderLineItemTax( order, item.id );
+		if ( item.quantity <= 0 ) {
+			return null;
+		}
 		return (
 			<TableRow key={ item.id } className="order-details__items">
 				<TableItem isRowHeader className="order-details__item-product">
@@ -157,13 +224,17 @@ class OrderDetailsTable extends Component {
 				<TableItem className="order-details__item-total">
 					{ formatCurrency( item.total, order.currency ) }
 				</TableItem>
+				{ this.renderDeleteButton( item, 'line_items' ) }
 			</TableRow>
 		);
 	};
 
-	renderOrderFees = item => {
+	renderOrderFee = item => {
 		const { order, translate } = this.props;
 		const tax = getOrderFeeTax( order, item.id );
+		if ( item.total <= 0 ) {
+			return null;
+		}
 		return (
 			<TableRow key={ item.id } className="order-details__items">
 				<TableItem isRowHeader className="order-details__item-product" colSpan="3">
@@ -176,7 +247,17 @@ class OrderDetailsTable extends Component {
 				<TableItem className="order-details__item-total">
 					{ formatCurrency( item.total, order.currency ) }
 				</TableItem>
+				{ this.renderDeleteButton( item, 'fee_lines' ) }
 			</TableRow>
+		);
+	};
+
+	renderTaxWarning = () => {
+		const { translate } = this.props;
+		return (
+			<FormSettingExplanation>
+				{ translate( 'If applicable, taxes will be updated after saving.' ) }
+			</FormSettingExplanation>
 		);
 	};
 
@@ -205,11 +286,12 @@ class OrderDetailsTable extends Component {
 		return (
 			<div>
 				<Table className={ tableClasses } header={ this.renderTableHeader() }>
-					{ order.line_items.map( this.renderOrderItems ) }
-					{ order.fee_lines.map( this.renderOrderFees ) }
+					{ order.line_items.map( this.renderOrderItem ) }
+					{ order.fee_lines.map( this.renderOrderFee ) }
 				</Table>
+				{ isEditing && <OrderAddItems /> }
 
-				<div className={ totalsClasses }>
+				<Table className={ totalsClasses } compact>
 					<OrderTotalRow
 						currency={ order.currency }
 						label={ translate( 'Discount' ) }
@@ -220,9 +302,12 @@ class OrderDetailsTable extends Component {
 					<OrderTotalRow
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
-						value={ order.shipping_total }
+						value={ getOrderShippingTotal( order ) }
 						taxValue={ getOrderShippingTax( order ) }
 						showTax={ showTax }
+						isEditable={ isEditing }
+						onChange={ this.onShippingChange }
+						onBlur={ this.formatShippingValue }
 					/>
 					<OrderTotalRow
 						className="order-details__total-full"
@@ -241,14 +326,8 @@ class OrderDetailsTable extends Component {
 							showTax={ showTax }
 						/>
 					) }
-					{ isEditing && (
-						<FormSettingExplanation>
-							{ translate(
-								'The total might not reflect updated tax values, tax will update when saved.'
-							) }
-						</FormSettingExplanation>
-					) }
-				</div>
+				</Table>
+				{ isEditing && this.renderTaxWarning() }
 			</div>
 		);
 	}

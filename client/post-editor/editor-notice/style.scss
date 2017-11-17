@@ -17,7 +17,12 @@
 
 		a {
 			text-decoration: underline;
+			color: $white;
 			background-image: none;
+
+			&:hover {
+				text-decoration: none;
+			}
 		}
 	}
 
@@ -41,32 +46,22 @@
 
 			@include breakpoint( '>660px' ) {
 				display: flex;
-				border-radius: 20px;
 				margin: 0;
 				overflow: hidden;
-			}
-		}
-
-		.notice__icon {
-			@include breakpoint( '>660px' ) {
-				padding: 8px 0 8px 16px;
+				align-items: center;
 			}
 		}
 
 		.notice__content {
 			flex-basis: auto;
 			flex-grow: 1;
-
-			@include breakpoint( '>660px' ) {
-				padding: 9px 13px;
-			}
 		}
 
 		.notice__dismiss {
 			flex-shrink: 0;
 
 			@include breakpoint( '>660px' ) {
-				padding: 8px 16px;
+				padding-top: 0;
 			}
 		}
 	}

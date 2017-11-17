@@ -22,7 +22,7 @@ describe( 'WpcomLoginForm', () => {
 	};
 
 	test( 'should render default fields as expected.', () => {
-		const wrapper = shallow( <WpcomLoginForm { ...props } /> );
+		const wrapper = shallow( <WpcomLoginForm { ...props } />, { disableLifecycleMethods: true } );
 
 		// should render root form element
 		const form = wrapper.find( 'form' );
@@ -54,7 +54,8 @@ describe( 'WpcomLoginForm', () => {
 					foo: 'bar',
 					lorem: 'ipsum',
 				} }
-			/>
+			/>,
+			{ disableLifecycleMethods: true }
 		);
 
 		expect( wrapper.find( 'input[type="hidden"]' ) ).to.have.length( 6 );
@@ -64,7 +65,8 @@ describe( 'WpcomLoginForm', () => {
 
 	test( 'its action should be under the wpcom subdomain that `redirectTo` prop contains.', () => {
 		const wrapper = shallow(
-			<WpcomLoginForm { ...props } redirectTo="https://foo.wordpress.com" />
+			<WpcomLoginForm { ...props } redirectTo="https://foo.wordpress.com" />,
+			{ disableLifecycleMethods: true }
 		);
 
 		expect( wrapper.find( 'form' ).prop( 'action' ) ).to.equal(
@@ -79,7 +81,8 @@ describe( 'WpcomLoginForm', () => {
 
 	test( 'its action should has no subdomain when `hostname` is wpcalypso.wpcom or horizon.wpcom.', () => {
 		const wrapper = shallow(
-			<WpcomLoginForm { ...props } redirectTo="https://foo.wordpress.com" />
+			<WpcomLoginForm { ...props } redirectTo="https://foo.wordpress.com" />,
+			{ disableLifecycleMethods: true }
 		);
 
 		// should has the same hostname with redirectTo prop.
@@ -111,7 +114,9 @@ describe( 'WpcomLoginForm', () => {
 	} );
 
 	test( 'its action should has no subdomain when `redirectTo` prop is not a subdomain of wpcom.', () => {
-		const wrapper = shallow( <WpcomLoginForm { ...props } redirectTo="https://wordpress.org" /> );
+		const wrapper = shallow( <WpcomLoginForm { ...props } redirectTo="https://wordpress.org" />, {
+			disableLifecycleMethods: true,
+		} );
 
 		expect( wrapper.find( 'form' ).prop( 'action' ) ).to.equal(
 			'https://wordpress.com/wp-login.php'

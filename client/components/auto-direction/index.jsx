@@ -1,11 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { get } from 'lodash';
 
 /**
@@ -215,10 +214,6 @@ const AutoDirection = props => {
 	const directionedChild = setChildDirection( children );
 
 	return directionedChild;
-};
-
-AutoDirection.propTypes = {
-	children: PropTypes.node,
 };
 
 export default AutoDirection;

@@ -8,6 +8,11 @@
 	.segmented-control {
 		margin: 20px;
 	}
+
+	.comments__conversation-follow-button {
+		float: right;
+		margin-top: 4px;
+	}
 }
 
 // Comment Counter
@@ -52,6 +57,7 @@
 
 			white-space: pre-wrap;
 			word-wrap: break-word;
+			word-break: break-word;
 		}
 
 		textarea {
@@ -407,6 +413,10 @@ a.comments__comment-username {
 		color: darken( $gray, 30% );
 		margin: 8px 0 16px;
 		padding: 8px 16px;
+	}
+
+	pre {
+		white-space: pre-wrap;
 	}
 }
 

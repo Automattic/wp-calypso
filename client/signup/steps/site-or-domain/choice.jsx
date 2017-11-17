@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -40,7 +40,7 @@ export default class SiteOrDomainChoice extends Component {
 		}
 
 		return (
-			<div className="site-or-domain__choice" key={ choice.type }>
+			<div className="site-or-domain__choice" data-e2e-type={ choice.type } key={ choice.type }>
 				<a className="site-or-domain__choice-link" onClick={ this.handleClickChoice }>
 					<Card compact className="site-or-domain__choice-image">
 						{ choice.image }

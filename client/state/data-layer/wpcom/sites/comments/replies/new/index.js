@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { COMMENTS_REPLY_WRITE } from 'state/action-types';

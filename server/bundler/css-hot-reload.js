@@ -117,7 +117,13 @@ function setup( io ) {
 
 	fs.readdirSync( PUBLIC_DIR ).forEach( function( file ) {
 		if ( '.css' === file.slice( -4 ) ) {
-			var fullPath = path.join( PUBLIC_DIR, file );
+			const fullPath = path.join( PUBLIC_DIR, file );
+			publicCssFiles[ fullPath ] = md5File.sync( fullPath );
+		}
+	} );
+	fs.readdirSync( path.join( PUBLIC_DIR, 'sections' ) ).forEach( function( file ) {
+		if ( '.css' === file.slice( -4 ) ) {
+			const fullPath = path.join( PUBLIC_DIR, 'sections', file );
 			publicCssFiles[ fullPath ] = md5File.sync( fullPath );
 		}
 	} );

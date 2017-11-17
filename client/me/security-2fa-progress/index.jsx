@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -42,13 +42,13 @@ class Security2faProgress extends React.Component {
 
 					<ProgressItem
 						label={ this.props.translate( 'Verify Code' ) }
-						icon="send-to-phone"
+						icon="lock"
 						step={ this.stepClass( 2 ) }
 					/>
 
 					<ProgressItem
 						label={ this.props.translate( 'Generate Backup Codes' ) }
-						icon="refresh"
+						icon="sync"
 						step={ this.stepClass( 3 ) }
 					/>
 				</div>

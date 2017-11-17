@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import config from 'config';
@@ -18,6 +18,13 @@ import { action as FeedPostActionType } from './constants';
 import { action as FeedStreamActionType } from 'lib/feed-stream-store/constants';
 import { mc } from 'lib/analytics';
 import { pageViewForPost } from 'reader/stats';
+import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
+import { bypassDataLayer } from 'state/data-layer/utils';
+import {
+	CONVERSATION_FOLLOW_STATUS_FOLLOWING,
+	CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
+} from 'state/reader/conversations/follow-status';
+import { reduxDispatch } from 'lib/redux-bridge';
 
 /**
  * Module variables
@@ -146,6 +153,23 @@ function _setBlogPost( post ) {
 	}
 
 	_postsForBlogs[ key ] = post;
+
+	// Send conversation follow status over to Redux
+	if ( post.hasOwnProperty( 'is_following_conversation' ) ) {
+		const followStatus = post.is_following_conversation
+			? CONVERSATION_FOLLOW_STATUS_FOLLOWING
+			: CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING;
+		reduxDispatch(
+			bypassDataLayer(
+				updateConversationFollowStatus( {
+					siteId: post.site_ID,
+					postId: post.ID,
+					followStatus,
+				} )
+			)
+		);
+	}
+
 	return true;
 }
 

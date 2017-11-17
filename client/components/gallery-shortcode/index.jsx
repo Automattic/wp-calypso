@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -23,9 +23,7 @@ import { GalleryDefaultAttrs } from 'lib/media/constants';
  */
 const debug = debugModule( 'calypso:gallery-shortcode' );
 
-export default class extends React.Component {
-	static displayName = 'GalleryShortcode';
-
+export default class GalleryShortcode extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		children: PropTypes.string,

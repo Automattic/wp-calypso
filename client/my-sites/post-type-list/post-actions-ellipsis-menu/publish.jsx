@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,7 +13,8 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
-import { mc } from 'lib/analytics';
+import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
+import { bumpStatGenerator } from './utils';
 import { getPost } from 'state/posts/selectors';
 import { savePost } from 'state/posts/actions';
 import { canCurrentUser } from 'state/selectors';
@@ -28,6 +28,7 @@ class PostActionsEllipsisMenuPublish extends Component {
 		postId: PropTypes.number,
 		canPublish: PropTypes.bool,
 		savePost: PropTypes.func,
+		onPublishPost: PropTypes.func,
 	};
 
 	constructor() {
@@ -42,7 +43,7 @@ class PostActionsEllipsisMenuPublish extends Component {
 			return;
 		}
 
-		mc.bumpStat( 'calypso_cpt_actions', 'publish' );
+		this.props.onPublishPost();
 		this.props.savePost( siteId, postId, { status: 'publish' } );
 	}
 
@@ -60,19 +61,34 @@ class PostActionsEllipsisMenuPublish extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const post = getPost( state, ownProps.globalId );
-		if ( ! post ) {
-			return {};
-		}
+const mapStateToProps = ( state, { globalId } ) => {
+	const post = getPost( state, globalId );
+	if ( ! post ) {
+		return {};
+	}
 
-		return {
-			status: post.status,
-			siteId: post.site_ID,
-			postId: post.ID,
-			canPublish: canCurrentUser( state, post.site_ID, 'publish_posts' ),
-		};
-	},
-	{ savePost }
-)( localize( PostActionsEllipsisMenuPublish ) );
+	return {
+		status: post.status,
+		siteId: post.site_ID,
+		postId: post.ID,
+		type: post.type,
+		canPublish: canCurrentUser( state, post.site_ID, 'publish_posts' ),
+	};
+};
+
+const mapDispatchToProps = { savePost, bumpStat, recordTracksEvent };
+
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const bumpPublishStat = bumpStatGenerator( stateProps.type, 'publish', dispatchProps.bumpStat );
+	const onPublishPost = () => {
+		bumpPublishStat();
+		dispatchProps.recordTracksEvent( 'calypso_post_type_list_publish', {
+			post_type: stateProps.type,
+		} );
+	};
+	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onPublishPost } );
+};
+
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
+	localize( PostActionsEllipsisMenuPublish )
+);

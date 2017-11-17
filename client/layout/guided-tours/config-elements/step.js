@@ -1,13 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { debounce, defer } from 'lodash';
+import { defer } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -59,6 +59,12 @@ export default class Step extends Component {
 	};
 
 	static contextTypes = contextTypes;
+
+	/**
+	 * Flag to determine if we're repositioning the Step dialog
+	 * @type {boolean} True if the Step dialog is being repositioned.
+	 */
+	isUpdatingPosition = false;
 
 	componentWillMount() {
 		this.start();
@@ -210,9 +216,15 @@ export default class Step extends Component {
 		return this.lastTransitionTimestamp && Date.now() - this.lastTransitionTimestamp < 500;
 	}
 
-	onScrollOrResize = debounce( () => {
-		this.setStepPosition( this.props );
-	}, 50 );
+	onScrollOrResize = () => {
+		if ( ! this.isUpdatingPosition ) {
+			requestAnimationFrame( () => {
+				this.setStepPosition( this.props );
+				this.isUpdatingPosition = false;
+			} );
+			this.isUpdatingPosition = true;
+		}
+	};
 
 	setStepPosition( props, shouldScrollTo ) {
 		const { placement, target } = props;

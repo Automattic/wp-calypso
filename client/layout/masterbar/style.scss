@@ -3,7 +3,7 @@ $autobar-height: 20px;
 
 // The WordPress.com Masterbar
 .masterbar {
-	background: var( --masterbar-background-color );
+	background: var( --masterbar-background );
 	border-bottom: 1px solid var( --masterbar-border-color );
 	color: var( --masterbar-color );
 	font-size: 16px;
@@ -212,7 +212,7 @@ $autobar-height: 20px;
 
 	// active state when editing
 	.is-group-editor & {
-		background: darken( $masterbar-color, 17% );
+		background: var( --masterbar-item-new-editor-background );
 		color: $white;
 	}
 
@@ -222,7 +222,7 @@ $autobar-height: 20px;
 	}
 
 	.is-group-editor &:hover {
-		background: darken( $masterbar-color, 13% );
+		background: var( --masterbar-item-new-editor-hover-background );
 	}
 
 }
@@ -391,8 +391,8 @@ $autobar-height: 20px;
 	}
 
 	.is-group-editor & {
-		background: darken( $masterbar-color, 12% );
-		border-left: 1px solid darken( $masterbar-color, 5% );
+		background: var( --masterbar-toggle-drafts-editor-background );
+		border-left: 1px solid var( --masterbar-toggle-drafts-editor-border-color );
 
 		.count {
 			color: $gray-light;
@@ -400,7 +400,7 @@ $autobar-height: 20px;
 	}
 
 	.is-group-editor &:hover {
-		background: darken( $masterbar-color, 17% );
+		background: var( --masterbar-toggle-drafts-editor-hover-background );
 
 		.count {
 			color: $white;

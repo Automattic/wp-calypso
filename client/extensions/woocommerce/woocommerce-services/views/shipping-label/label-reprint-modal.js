@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -25,11 +24,24 @@ const ReprintDialog = ( props ) => {
 	const onConfirm = () => props.confirmReprint( orderId, siteId );
 	const onPaperSizeChange = ( value ) => props.updatePaperSize( orderId, siteId, value );
 
+	const buttons = [
+		{ action: 'cancel', label: translate( 'Cancel' ), onClick: onClose },
+		{
+			action: 'confirm',
+			onClick: onConfirm,
+			isPrimary: true,
+			disabled: reprintDialog && reprintDialog.isFetching,
+			additionalClassNames: reprintDialog && reprintDialog.isFetching ? 'is-busy' : '',
+			label: translate( 'Print' ),
+		},
+	];
+
 	return (
 		<Dialog
 			isVisible={ Boolean( reprintDialog && reprintDialog.labelId === labelId ) }
 			onClose={ onClose }
-			additionalClassNames="label-reprint-modal woocommerce">
+			buttons={ buttons }
+			additionalClassNames="label-reprint-modal woocommerce wcc-root">
 			<FormSectionHeading>
 				{ translate( 'Reprint shipping label' ) }
 			</FormSectionHeading>
@@ -46,19 +58,6 @@ const ReprintDialog = ( props ) => {
 				title={ translate( 'Paper size' ) }
 				value={ paperSize }
 				updateValue={ onPaperSizeChange } />
-			<ActionButtons buttons={ [
-				{
-					onClick: onConfirm,
-					isPrimary: true,
-					isDisabled: reprintDialog && reprintDialog.isFetching,
-					isBusy: reprintDialog && reprintDialog.isFetching,
-					label: translate( 'Print' ),
-				},
-				{
-					onClick: onClose,
-					label: translate( 'Cancel' ),
-				},
-			] } />
 		</Dialog>
 	);
 };

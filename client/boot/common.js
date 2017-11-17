@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import debugFactory from 'debug';
@@ -36,10 +36,23 @@ const switchUserLocale = ( currentUser, reduxStore ) => {
 
 const setupContextMiddleware = reduxStore => {
 	page( '*', ( context, next ) => {
-		const parsed = url.parse( location.href, true );
+		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
+		const parsed = url.parse( context.canonicalPath, true );
+		context.prevPath = parsed.path === context.path ? false : parsed.path;
+		context.query = parsed.query;
 
-		// Decode the pathname by default (now disabled in page.js)
-		context.pathname = decodeURIComponent( context.pathname );
+		context.hashstring = ( parsed.hash && parsed.hash.substring( 1 ) ) || '';
+		// set `context.hash` (we have to parse manually)
+		if ( context.hashstring ) {
+			try {
+				context.hash = qs.parse( context.hashstring );
+			} catch ( e ) {
+				debug( 'failed to query-string parse `location.hash`', e );
+				context.hash = {};
+			}
+		} else {
+			context.hash = {};
+		}
 
 		context.store = reduxStore;
 
@@ -49,28 +62,6 @@ const setupContextMiddleware = reduxStore => {
 			return;
 		}
 
-		// set `context.query`
-		const querystringStart = context.canonicalPath.indexOf( '?' );
-
-		if ( querystringStart !== -1 ) {
-			context.query = qs.parse( context.canonicalPath.substring( querystringStart + 1 ) );
-		} else {
-			context.query = {};
-		}
-
-		context.prevPath = parsed.path === context.path ? false : parsed.path;
-
-		// set `context.hash` (we have to parse manually)
-		if ( parsed.hash && parsed.hash.length > 1 ) {
-			try {
-				context.hash = qs.parse( parsed.hash.substring( 1 ) );
-			} catch ( e ) {
-				debug( 'failed to query-string parse `location.hash`', e );
-				context.hash = {};
-			}
-		} else {
-			context.hash = {};
-		}
 		next();
 	} );
 };

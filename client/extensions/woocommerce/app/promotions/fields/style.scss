@@ -1,0 +1,139 @@
+.fields__fieldset {
+	.form-label {
+		input[type=checkbox] {
+			margin-right: 8px;
+		}
+	}
+}
+
+.fields__fieldset {
+	.fields__fieldset-children-enableable {
+		margin-top: 8px;
+
+		&:empty {
+			margin: 0;
+		}
+	}
+
+	.date-picker {
+		max-width: 280px;
+		border: 1px solid lighten( $gray, 30% );
+		padding: 16px;
+
+		.DayPicker-NavBar {
+			margin-left: 16px;
+			margin-right: 16px;
+		}
+	}
+}
+
+.promotions__promotion-form-card-conditions {
+	padding-top: 16px;
+	padding-bottom: 16px;
+
+	.form-label {
+		font-weight: 400;
+		margin-bottom: 0;
+	}
+
+	.form-fieldset {
+		border-bottom: 1px solid lighten( $gray, 32% );
+		padding-bottom: 16px;
+		margin-bottom: 16px;
+		margin-left: -16px;
+		margin-right: -16px;
+		padding-left: 16px;
+		padding-right: 16px;
+
+		@include breakpoint( ">480px" ) {
+			margin-left: -24px;
+			margin-right: -24px;
+			padding-left: 24px;
+			padding-right: 24px;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+			padding-bottom: 0;
+			border-bottom: 0;
+		}
+	}
+}
+
+.promotion-applies-to-field {
+	.search {
+		margin-bottom: 0;
+		border: 1px solid lighten( $gray, 20% );
+		z-index: 0; // Keeps search from overlapping header above.
+		box-sizing: border-box;
+		z-index: 9;
+	}
+
+	.form-fieldset {
+		margin-bottom: 0;
+	}
+
+	select + .promotion-applies-to-field__filtered-list {
+		margin-top: 16px;
+
+		&:empty {
+			margin-top: 0;
+		}
+	}
+
+	.promotion-applies-to-field__list {
+		position: relative;
+		border: 1px solid lighten( $gray, 20% );
+		border-top: 0;
+		overflow-y: auto;
+		max-height: 250px;
+
+		.promotion-applies-to-field__row {
+			background-color: $white;
+			cursor: pointer;
+			border-bottom: 1px solid $gray-light;
+
+			&:hover {
+				background: lighten( $gray-light, 2% );
+			}
+
+			&:last-child {
+				border-bottom: 0;
+			}
+
+			label {
+				width: 100%;
+				display: flex;
+				align-items: center;
+				padding: 12px 16px;
+				margin: 0;
+				font-weight: 400;
+				cursor: pointer;
+			}
+
+			.promotion-applies-to-field__list-image {
+				display: inline-block;
+				height: 32px;
+				width: 32px;
+				overflow: hidden;
+				position: relative;
+				margin: 0 12px;
+
+				&.is-thumb-placeholder {
+					background: $gray-light;
+				}
+
+				img {
+					position: absolute;
+					left: 50%;
+					top: 50%;
+					height: 100%;
+					width: auto;
+					-webkit-transform: translate( -50%, -50% );
+					transform: translate( -50%, -50% );
+				}
+			}
+
+		}
+	}
+}

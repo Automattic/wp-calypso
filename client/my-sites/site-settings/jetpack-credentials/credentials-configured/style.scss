@@ -1,0 +1,31 @@
+.credentials-configured__header {
+	width: 85%;
+}
+
+.credentials-configured__header-gridicon {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 10px;
+}
+
+.credentials-configured__header-configured-text,
+.credentials-configured__header-text {
+	display: inline-block;
+	vertical-align: middle;
+	width: 85%;
+}
+
+.credentials-configured__header-gridicon {
+	color: $alert-green;
+}
+
+.credentials-configured__header-protocol {
+	font-weight: bold;
+	font-size: 1.5rem;
+}
+
+.credentials-configured__header-description {
+	width: 500px;
+	color: $gray;
+	font-size: 1.3rem;
+}

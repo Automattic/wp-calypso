@@ -1,11 +1,11 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import React from 'react';
 import page from 'page';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,15 +13,20 @@ import page from 'page';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import { getSelectedDomain } from 'lib/domains';
 import Header from 'my-sites/domains/domain-management/components/header';
+import InboundTransferEmailVerificationCard from 'my-sites/domains/domain-management/components/inbound-transfer-verification';
 import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import MaintenanceCard from 'my-sites/domains/domain-management/components/domain/maintenance-card';
 import MappedDomain from './mapped-domain';
 import paths from 'my-sites/domains/paths';
 import RegisteredDomain from './registered-domain';
-import { registrar as registrarNames } from 'lib/domains/constants';
+import {
+	registrar as registrarNames,
+	transferStatus,
+	type as domainTypes,
+} from 'lib/domains/constants';
 import SiteRedirect from './site-redirect';
-import { type as domainTypes } from 'lib/domains/constants';
+import Transfer from './transfer';
 import WpcomDomain from './wpcom-domain';
 
 class Edit extends React.Component {
@@ -41,10 +46,27 @@ class Edit extends React.Component {
 				>
 					{ this.props.translate( 'Domain Settings' ) }
 				</Header>
+				{ this.renderInboundTransferEmailNotice() }
 				{ this.renderDetails( domain, Details ) }
 			</Main>
 		);
 	}
+
+	renderInboundTransferEmailNotice = () => {
+		const domain = this.props.domains && getSelectedDomain( this.props );
+		const isPendingVerification = transferStatus.PENDING_OWNER === get( domain, 'transferStatus' );
+
+		if ( ! isPendingVerification ) {
+			return null;
+		}
+
+		return (
+			<InboundTransferEmailVerificationCard
+				selectedDomainName={ this.props.selectedDomainName }
+				selectedSiteSlug={ this.props.selectedSite.slug }
+			/>
+		);
+	};
 
 	getDetailsForType = type => {
 		switch ( type ) {
@@ -56,6 +78,9 @@ class Edit extends React.Component {
 
 			case domainTypes.SITE_REDIRECT:
 				return SiteRedirect;
+
+			case domainTypes.TRANSFER:
+				return Transfer;
 
 			case domainTypes.WPCOM:
 				return WpcomDomain;

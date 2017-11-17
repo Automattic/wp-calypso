@@ -63,7 +63,7 @@ export const fromApi = ( siteId, data ) => {
 						isLiked: Boolean( data.i_like ),
 					},
 					data.parent &&
-					data.parent.type === 'comment' && { parentId: parseInt( data.parent.ID, 10 ) },
+						data.parent.type === 'comment' && { parentId: parseInt( data.parent.ID, 10 ) },
 					{
 						postId: parseInt( data.post.ID, 10 ),
 						siteId,

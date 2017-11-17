@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { Me } from 'wpcom';
@@ -222,20 +222,6 @@ UndocumentedMe.prototype.backupCodes = function( callback ) {
 		path: '/me/two-step/backup-codes/new',
 	};
 
-	return this.wpcom.req.post( args, callback );
-};
-
-UndocumentedMe.prototype.blockSite = function( site, callback ) {
-	var args = {
-		path: '/me/block/sites/' + encodeURIComponent( site ) + '/new',
-	};
-	return this.wpcom.req.post( args, callback );
-};
-
-UndocumentedMe.prototype.unblockSite = function( site, callback ) {
-	var args = {
-		path: '/me/block/sites/' + encodeURIComponent( site ) + '/delete',
-	};
 	return this.wpcom.req.post( args, callback );
 };
 

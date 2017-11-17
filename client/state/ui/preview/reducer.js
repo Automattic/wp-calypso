@@ -1,10 +1,11 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import {
+	PREVIEW_SITE_SET,
 	PREVIEW_URL_CLEAR,
 	PREVIEW_URL_SET,
 	PREVIEW_TOOL_SET,
@@ -12,6 +13,14 @@ import {
 	PREVIEW_TYPE_RESET,
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
+
+export function currentPreviewSiteId( state = null, action ) {
+	switch ( action.type ) {
+		case PREVIEW_SITE_SET:
+			return action.siteId;
+	}
+	return state;
+}
 
 export function currentPreviewUrl( state = null, action ) {
 	switch ( action.type ) {
@@ -43,6 +52,7 @@ export function activeDesignTool( state = null, action ) {
 }
 
 export default combineReducers( {
+	currentPreviewSiteId,
 	currentPreviewUrl,
 	currentPreviewType,
 	activeDesignTool,

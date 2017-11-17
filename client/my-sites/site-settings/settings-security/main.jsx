@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -23,6 +24,7 @@ import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice
 import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import Placeholder from 'my-sites/site-settings/placeholder';
+import Backups from 'my-sites/site-settings/jetpack-credentials';
 
 const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
 	if ( ! site ) {
@@ -64,6 +66,7 @@ const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<SiteSettingsNavigation site={ site } section="security" />
+			{ config.isEnabled( 'jetpack/credentials' ) && <Backups /> }
 			<JetpackMonitor />
 			<FormSecurity />
 		</Main>

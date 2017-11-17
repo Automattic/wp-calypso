@@ -18,17 +18,18 @@ import Emojify from '..';
 describe( 'Emojify', () => {
 	describe( 'component rendering', () => {
 		test( 'wraps a string in a div', () => {
-			const wrapper = shallow( <Emojify>Foo</Emojify> );
-			expect( wrapper.find( 'div' ).node.ref ).to.equal( 'emojified' );
+			const wrapper = shallow( <Emojify>Foo</Emojify>, { disableLifecycleMethods: true } );
+			expect( wrapper.find( 'div' ).getElement().ref ).to.equal( 'emojified' );
 		} );
 
 		test( 'wraps a block in a div', () => {
 			const wrapper = shallow(
 				<Emojify>
 					<p>Bar</p>
-				</Emojify>
+				</Emojify>,
+				{ disableLifecycleMethods: true }
 			);
-			expect( wrapper.find( 'div' ).node.ref ).to.equal( 'emojified' );
+			expect( wrapper.find( 'div' ).getElement().ref ).to.equal( 'emojified' );
 		} );
 
 		test( 'replaces emoji in a string', () => {
@@ -54,8 +55,10 @@ describe( 'Emojify', () => {
 		} );
 
 		test( 'maintains custom props', () => {
-			const wrapper = shallow( <Emojify alt="bar">השנה היא 2017.</Emojify> );
-			expect( wrapper.node.props.alt ).to.equal( 'bar' );
+			const wrapper = shallow( <Emojify alt="bar">השנה היא 2017.</Emojify>, {
+				disableLifecycleMethods: true,
+			} );
+			expect( wrapper.getElement().props.alt ).to.equal( 'bar' );
 		} );
 	} );
 } );

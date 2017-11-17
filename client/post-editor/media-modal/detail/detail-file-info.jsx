@@ -1,13 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import createFragment from 'react-addons-create-fragment';
 import classNames from 'classnames';
 
 /**
@@ -35,19 +34,15 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 				break;
 
 			case 'dimensions':
-				value = createFragment( {
-					width: (
-						<abbr title={ this.props.translate( 'Width in pixels' ) }>
-							{ this.props.item.width }
-						</abbr>
-					),
-					separator: ' ✕ ',
-					height: (
-						<abbr title={ this.props.translate( 'Height in pixels' ) }>
-							{ this.props.item.height }
-						</abbr>
-					),
-				} );
+				value = [
+					<abbr key="width" title={ this.props.translate( 'Width in pixels' ) }>
+						{ this.props.item.width }
+					</abbr>,
+					' ✕ ',
+					<abbr key="height" title={ this.props.translate( 'Height in pixels' ) }>
+						{ this.props.item.height }
+					</abbr>,
+				];
 				break;
 
 			case 'date':

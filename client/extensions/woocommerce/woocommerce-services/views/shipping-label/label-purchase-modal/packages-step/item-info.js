@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import getProductLink from 'woocommerce/woocommerce-services/lib/utils/get-product-link';
 import { getSite } from 'state/sites/selectors';
 import { openItemMove } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
@@ -29,7 +29,7 @@ const ItemInfo = ( props ) => {
 
 	const productLink = item.url
 		? <a
-			href={ getLink( '/store/product/:site/' + item.product_id, site ) }
+			href={ getProductLink( item.product_id, site ) }
 			target="_blank"
 			rel="noopener noreferrer">
 			{ item.name }

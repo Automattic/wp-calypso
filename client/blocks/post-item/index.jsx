@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -13,19 +13,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import { isEnabled } from 'config';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
-import { areAllSitesSingleUser } from 'state/selectors';
+import { areAllSitesSingleUser, canCurrentUserEditPost } from 'state/selectors';
 import {
 	isSharePanelOpen,
 	isMultiSelectEnabled,
 	isPostSelected,
 } from 'state/ui/post-type-list/selectors';
 import { hideSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
-import Card from 'components/card';
+import ExternalLink from 'components/external-link';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import PostTime from 'blocks/post-time';
 import PostStatus from 'blocks/post-status';
@@ -79,7 +80,7 @@ class PostItem extends React.Component {
 		);
 	}
 
-	renderVariableHeightContent() {
+	renderExpandedContent() {
 		const { post, isCurrentSharePanelOpen } = this.props;
 
 		if ( ! post || ! isCurrentSharePanelOpen ) {
@@ -100,44 +101,37 @@ class PostItem extends React.Component {
 		const {
 			className,
 			post,
+			externalPostLink,
+			postUrl,
 			globalId,
 			isAllSitesModeSelected,
-			compact,
-			editUrl,
 			translate,
-			largeTitle,
-			wrapTitle,
 		} = this.props;
 
 		const title = post ? post.title : null;
+		const isPlaceholder = ! globalId;
 
-		const cardClasses = classnames( 'post-item__card', className, {
+		const panelClasses = classnames( 'post-item__panel', className, {
 			'is-untitled': ! title,
-			'is-mini': compact,
-			'is-placeholder': ! globalId,
-			'has-large-title': largeTitle,
-			'has-wrapped-title': wrapTitle,
+			'is-placeholder': isPlaceholder,
 		} );
 
-		const isSiteInfoVisible = isEnabled( 'posts/post-type-list' ) && isAllSitesModeSelected;
+		const arePostsCondensed =
+			isEnabled( 'posts/post-type-list' ) && abtest( 'condensedPostList' ) === 'condensedPosts';
 
-		const isAuthorVisible =
-			isEnabled( 'posts/post-type-list' ) &&
-			this.hasMultipleUsers() &&
-			! compact &&
-			post &&
-			post.author;
+		const isSiteInfoVisible = arePostsCondensed && isAllSitesModeSelected;
 
-		const variableHeightContent = this.renderVariableHeightContent();
-		this.hasVariableHeightContent = !! variableHeightContent;
+		const isAuthorVisible = arePostsCondensed && this.hasMultipleUsers() && post && post.author;
+
+		const expandedContent = this.renderExpandedContent();
 
 		const rootClasses = classnames( 'post-item', {
-			'is-expanded': this.hasVariableHeightContent,
+			'is-expanded': !! expandedContent,
 		} );
 
 		return (
 			<div className={ rootClasses } ref={ this.setDomNode }>
-				<Card compact className={ cardClasses }>
+				<div className={ panelClasses }>
 					{ this.renderSelectionCheckbox() }
 					<div className="post-item__detail">
 						<div className="post-item__info">
@@ -145,9 +139,22 @@ class PostItem extends React.Component {
 							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
 						</div>
 						<h1 className="post-item__title">
-							<a href={ editUrl } className="post-item__title-link">
-								{ title || translate( 'Untitled' ) }
-							</a>
+							{ ! externalPostLink && (
+								<a href={ isPlaceholder ? null : postUrl } className="post-item__title-link">
+									{ title || translate( 'Untitled' ) }
+								</a>
+							) }
+							{ ! isPlaceholder &&
+							externalPostLink && (
+								<ExternalLink
+									icon={ true }
+									href={ postUrl }
+									target="_blank"
+									className="post-item__title-link"
+								>
+									{ title || translate( 'Untitled' ) }
+								</ExternalLink>
+							) }
 						</h1>
 						<div className="post-item__meta">
 							<PostTime globalId={ globalId } />
@@ -156,8 +163,8 @@ class PostItem extends React.Component {
 					</div>
 					<PostTypeListPostThumbnail globalId={ globalId } />
 					<PostActionsEllipsisMenu globalId={ globalId } />
-				</Card>
-				{ variableHeightContent }
+				</div>
+				{ expandedContent }
 			</div>
 		);
 	}
@@ -166,8 +173,9 @@ class PostItem extends React.Component {
 PostItem.propTypes = {
 	translate: PropTypes.func,
 	globalId: PropTypes.string,
-	editUrl: PropTypes.string,
 	post: PropTypes.object,
+	canEdit: PropTypes.bool,
+	postUrl: PropTypes.string,
 	isAllSitesModeSelected: PropTypes.bool,
 	allSitesSingleUser: PropTypes.bool,
 	singleUserSite: PropTypes.bool,
@@ -176,8 +184,6 @@ PostItem.propTypes = {
 	compact: PropTypes.bool,
 	isCurrentSharePanelOpen: PropTypes.bool,
 	hideSharePanel: PropTypes.func,
-	largeTitle: PropTypes.bool,
-	wrapTitle: PropTypes.bool,
 };
 
 export default connect(
@@ -189,12 +195,17 @@ export default connect(
 
 		const siteId = post.site_ID;
 
+		// Avoid rendering an external link while loading.
+		const externalPostLink = false === canCurrentUserEditPost( state, globalId );
+		const postUrl = externalPostLink ? post.URL : getEditorPath( state, siteId, post.ID );
+
 		return {
 			post,
+			externalPostLink,
+			postUrl,
 			isAllSitesModeSelected: getSelectedSiteId( state ) === null,
 			allSitesSingleUser: areAllSitesSingleUser( state ),
 			singleUserSite: isSingleUserSite( state, siteId ),
-			editUrl: getEditorPath( state, siteId, post.ID ),
 			isCurrentSharePanelOpen: isSharePanelOpen( state, globalId ),
 			isCurrentPostSelected: isPostSelected( state, globalId ),
 			multiSelectEnabled: isMultiSelectEnabled( state ),

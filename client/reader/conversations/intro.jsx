@@ -64,33 +64,31 @@ class ConversationsIntro extends React.Component {
 				<div className="conversations__intro-header">
 					<div className="conversations__intro-copy">
 						<span>
-							{ isInternal ? (
-								translate(
-									'{{strong}}Welcome to A8C Conversations{{/strong}}, where you can read ' +
-										'and reply to all your P2 conversations in one place. ' +
-										"Automattic P2 posts you've liked or commented on " +
-										'will appear when they have new comments. ' +
-										'{{a}}More info. {{/a}}',
-									{
-										components: {
-											strong: <strong />,
-											a: <a href="http://wp.me/p5PDj3-44u" />,
-										},
-									}
-								)
-							) : (
-								translate(
-									'{{strong}}Welcome to Conversations.{{/strong}} You can read ' +
-										'and reply to all your conversations in one place. ' +
-										"WordPress posts you've liked or commented on " +
-										'will appear when they have new comments.',
-									{
-										components: {
-											strong: <strong />,
-										},
-									}
-								)
-							) }
+							{ isInternal
+								? translate(
+										'{{strong}}Welcome to A8C Conversations{{/strong}}, where you can read ' +
+											'and reply to all your P2 conversations in one place. ' +
+											"Automattic P2 posts you've liked or commented on " +
+											'will appear when they have new comments. ' +
+											'{{a}}More info. {{/a}}',
+										{
+											components: {
+												strong: <strong />,
+												a: <a href="http://wp.me/p5PDj3-44u" />,
+											},
+										}
+									)
+								: translate(
+										'{{strong}}Welcome to Conversations.{{/strong}} You can read ' +
+											'and reply to all your conversations in one place. ' +
+											"WordPress posts you've liked or commented on " +
+											'will appear when they have new comments.',
+										{
+											components: {
+												strong: <strong />,
+											},
+										}
+									) }
 						</span>
 					</div>
 					<div className="conversations__intro-character" />

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import PropTypes from 'prop-types';
@@ -287,17 +287,15 @@ const CreditCardForm = createReactClass( {
 					<em>{ this.props.translate( 'All fields required' ) }</em>
 
 					<FormButton disabled={ this.state.formSubmitting } type="submit">
-						{ this.state.formSubmitting ? (
-							this.props.translate( 'Saving Card…', {
-								context: 'Button label',
-								comment: 'Credit card',
-							} )
-						) : (
-							this.props.translate( 'Save Card', {
-								context: 'Button label',
-								comment: 'Credit card',
-							} )
-						) }
+						{ this.state.formSubmitting
+							? this.props.translate( 'Saving Card…', {
+									context: 'Button label',
+									comment: 'Credit card',
+								} )
+							: this.props.translate( 'Save Card', {
+									context: 'Button label',
+									comment: 'Credit card',
+								} ) }
 					</FormButton>
 				</CompactCard>
 			</form>

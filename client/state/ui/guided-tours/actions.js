@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { GUIDED_TOUR_UPDATE } from 'state/action-types';

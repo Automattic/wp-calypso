@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -71,11 +71,9 @@ class SiteOwnership extends Component {
 		return (
 			<div>
 				<FormSettingExplanation>
-					{ userIsMaster ? (
-						translate( "You are the owner of this site's connection to WordPress.com." )
-					) : (
-						translate( "Somebody else owns this site's connection to WordPress.com." )
-					) }
+					{ userIsMaster
+						? translate( "You are the owner of this site's connection to WordPress.com." )
+						: translate( "Somebody else owns this site's connection to WordPress.com." ) }
 				</FormSettingExplanation>
 				{ userIsMaster && this.renderCurrentUser() }
 			</div>

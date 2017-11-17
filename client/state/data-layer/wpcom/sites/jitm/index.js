@@ -1,9 +1,9 @@
 /** @format */
 
 /**
- * External dependencies
+ * External Dependencies
  */
-import { get } from 'lodash';
+import { noop, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,9 +11,10 @@ import { get } from 'lodash';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { isJetpackSite } from 'state/sites/selectors';
-import { JITM_SET, SECTION_SET, SELECTED_SITE_SET } from 'state/action-types';
+import { SECTION_SET, SELECTED_SITE_SET, JITM_DISMISS } from 'state/action-types';
 import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import schema from './schema.json';
+import { clearJITM, insertJITM } from 'state/jitm/actions';
 
 /**
  * Poor man's process manager
@@ -31,10 +32,20 @@ const process = {
 	lastSite: null,
 };
 
+/**
+ * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.
+ * @param {string} str The string to decode
+ * @return {string} The decoded string
+ */
 const unescapeDecimalEntities = str => {
 	return str.replace( /&#(\d+);/g, ( match, entity ) => String.fromCharCode( entity ) );
 };
 
+/**
+ * Given an object from the api, prepare it to be consumed by the ui by transforming the shape of the data
+ * @param {object} jitms The jitms to display from the api
+ * @return {object} The transformed data to display
+ */
 const transformApiRequest = ( { data: jitms } ) =>
 	jitms.map( jitm => ( {
 		message: unescapeDecimalEntities( jitm.content.message ),
@@ -43,13 +54,6 @@ const transformApiRequest = ( { data: jitms } ) =>
 		callToAction: unescapeDecimalEntities( jitm.CTA.message ),
 		id: jitm.id,
 	} ) );
-
-const insertJITM = ( dispatch, siteId, messagePath, jitms ) =>
-	dispatch( {
-		type: JITM_SET,
-		keyedPath: messagePath + siteId,
-		jitms: jitms.map( jitm => ( { ...jitm, lastUpdated: Date.now() } ) ),
-	} );
 
 /**
  * Processes the current state and determines if it should fire a jitm request
@@ -87,6 +91,34 @@ export const fetchJITM = ( state, dispatch, action ) => {
 		)
 	);
 };
+
+/**
+ * Dismisses a jitm on the jetpack site, it returns nothing useful and will return no useful error, so we'll
+ * fail and succeed silently.
+ * @param {function} dispatch The dispatch function
+ * @param {object} action The dismissal action
+ * @return {undefined}
+ */
+export const doDismissJITM = ( { dispatch }, action ) =>
+	dispatch(
+		http(
+			{
+				apiNamespace: 'rest',
+				method: 'POST',
+				path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+				query: {
+					path: '/jetpack/v4/jitm',
+					body: JSON.stringify( {
+						feature_class: action.featureClass,
+						id: action.id,
+					} ),
+					http_envelope: 1,
+					json: false,
+				},
+			},
+			action
+		)
+	);
 
 /**
  * Called when a route change might have occured
@@ -139,20 +171,22 @@ export const handleSiteSelection = ( { getState, dispatch }, action ) => {
  * @param {number} siteId The site id
  * @param {object} jitms The jitms
  * @param {number} site_id The site id
+ * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @return {undefined} Nothing
  */
 export const receiveJITM = ( { dispatch }, { siteId, site_id, messagePath }, jitms ) =>
-	insertJITM( dispatch, siteId || site_id, messagePath, jitms );
+	dispatch( insertJITM( siteId || site_id, messagePath, jitms ) );
 
 /**
  * Called when a jitm fails for any network related reason
  * @param {function} dispatch The dispatch function
  * @param {number} siteId The site id
  * @param {number} site_id The site id
+ * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @return {undefined} Nothing
  */
 export const failedJITM = ( { dispatch }, { siteId, site_id, messagePath } ) =>
-	insertJITM( dispatch, siteId || site_id, messagePath, [] );
+	dispatch( clearJITM( siteId || site_id, messagePath ) );
 
 export default {
 	[ SECTION_SET ]: [
@@ -165,4 +199,5 @@ export default {
 			fromApi: makeParser( schema, {}, transformApiRequest ),
 		} ),
 	],
+	[ JITM_DISMISS ]: [ dispatchRequest( doDismissJITM, noop, noop, {} ) ],
 };

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -32,22 +32,20 @@ class EditorDeletePost extends React.Component {
 	};
 
 	sendToTrash = () => {
+		if ( ! utils.userCan( 'delete_post', this.props.post ) ) {
+			return;
+		}
+
 		this.setState( { isTrashing: true } );
 
-		const handleTrashingPost = function( error ) {
-			if ( error ) {
-				this.setState( { isTrashing: false } );
-			}
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		actions.trash( this.props.post, error => {
+			this.setState( { isTrashing: false } );
 
 			if ( this.props.onTrashingPost ) {
 				this.props.onTrashingPost( error );
 			}
-		}.bind( this );
-
-		if ( utils.userCan( 'delete_post', this.props.post ) ) {
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			actions.trash( this.props.post, handleTrashingPost );
-		}
+		} );
 	};
 
 	onSendToTrash = () => {

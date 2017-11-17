@@ -60,6 +60,7 @@
 				"generator": { "type": "object" },
 				"gridicon": { "type": "string" },
 				"is_rewindable": { "type": "boolean" },
+				"rewind_id": { "type": [ "null", "string" ] },
 				"items": {
 					"type": "array",
 					"items": { "type": "object" }
@@ -78,6 +79,7 @@
 				},
 				"summary": { "type": "string" },
 				"target": { "type": "object" },
+				"target_ts": { "type": "number" },
 				"totalItems": {
 					"min": 0,
 					"type": "integer"},

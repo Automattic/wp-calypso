@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -235,6 +235,7 @@ class ThemeShowcase extends React.Component {
 						</Button>
 					) }
 					<ThemesSelection
+						upsellUrl={ this.props.upsellUrl }
 						search={ search }
 						tier={ this.props.tier }
 						filter={ filter }

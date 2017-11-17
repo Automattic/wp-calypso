@@ -49,14 +49,6 @@
 	}
 }
 
-// Override the price inputs in details-table
-&.order-customer__dialog.dialog__content {
-	.form-text-input,
-	.form-text-input-with-affixes input {
-		text-align: left;
-	}
-}
-
 &.order-customer__dialog {
 	.order-customer__fieldset {
 		display: flex;

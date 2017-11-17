@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -129,7 +129,7 @@ const AddPackageDialog = props => {
 	return (
 		<Dialog
 			isVisible={ showModal }
-			additionalClassNames="packages__add-edit-dialog woocommerce"
+			additionalClassNames="packages__add-edit-dialog woocommerce wcc-root"
 			onClose={ onClose }
 			buttons={ buttons }
 		>

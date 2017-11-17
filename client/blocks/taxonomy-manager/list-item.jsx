@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -184,11 +184,11 @@ class TaxonomyManagerListItem extends Component {
 					) }
 					{ canSetAsDefault && ! isDefault && <PopoverMenuSeparator /> }
 					{ canSetAsDefault &&
-					! isDefault && (
-						<PopoverMenuItem onClick={ this.setAsDefault } icon="checkmark-circle">
-							{ translate( 'Set as default' ) }
-						</PopoverMenuItem>
-					) }
+						! isDefault && (
+							<PopoverMenuItem onClick={ this.setAsDefault } icon="checkmark-circle">
+								{ translate( 'Set as default' ) }
+							</PopoverMenuItem>
+						) }
 				</EllipsisMenu>
 				<Dialog
 					isVisible={ this.state.showDeleteDialog }

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -174,15 +174,15 @@ class VideoEditor extends Component {
 							/>
 						</div>
 						{ uploadProgress &&
-						! error &&
-						! isSelectingFrame && (
-							<ProgressBar
-								className="video-editor__progress-bar"
-								isPulsing={ true }
-								total={ 100 }
-								value={ uploadProgress }
-							/>
-						) }
+							! error &&
+							! isSelectingFrame && (
+								<ProgressBar
+									className="video-editor__progress-bar"
+									isPulsing={ true }
+									total={ 100 }
+									value={ uploadProgress }
+								/>
+							) }
 						<span className="video-editor__text">
 							{ translate( 'Select a frame to use as the thumbnail image or upload your own.' ) }
 						</span>

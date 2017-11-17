@@ -21,7 +21,8 @@ describe( 'Dropdown', () => {
 
 	test( 'should render a dropdown given a list of options and the current selection', () => {
 		const wrapper = shallow(
-			<Dropdown selected={ { label: 'Select option', icon: 'home' } } options={ options } />
+			<Dropdown selected={ { label: 'Select option', icon: 'home' } } options={ options } />,
+			{ disableLifecycleMethods: true }
 		);
 
 		const select = wrapper.find( '.sub-masterbar-nav__select' );
@@ -46,7 +47,8 @@ describe( 'Dropdown', () => {
 
 	test( 'should be toggled by clicking the selected item', () => {
 		const wrapper = shallow(
-			<Dropdown selected={ { label: 'Select option', icon: 'home' } } options={ options } />
+			<Dropdown selected={ { label: 'Select option', icon: 'home' } } options={ options } />,
+			{ disableLifecycleMethods: true }
 		);
 
 		expect( wrapper.hasClass( 'is-collapsed' ) ).to.equal( true );
@@ -62,7 +64,8 @@ describe( 'Dropdown', () => {
 
 	test( 'should close after invoking onSelect from its children', () => {
 		const wrapper = shallow(
-			<Dropdown selected={ { label: 'Select option', icon: 'home' } } options={ options } />
+			<Dropdown selected={ { label: 'Select option', icon: 'home' } } options={ options } />,
+			{ disableLifecycleMethods: true }
 		);
 
 		wrapper.find( '.sub-masterbar-nav__select' ).simulate( 'click' );

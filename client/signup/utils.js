@@ -4,7 +4,7 @@
  * @format
  */
 
-import { find, indexOf, isEmpty, merge, pick } from 'lodash';
+import { filter, find, indexOf, isEmpty, merge, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -138,12 +138,25 @@ function getThemeForDesignType( designType ) {
 			return 'pub/altofocus';
 		case 'page':
 			return 'pub/dara';
+		case 'store':
+			return 'pub/dara';
 		default:
 			return 'pub/twentyseventeen';
 	}
 }
 
+function canResumeFlow( flowName, progress ) {
+	const flow = flows.getFlow( flowName );
+	const flowStepsInProgressStore = filter(
+		progress,
+		step => -1 !== flow.steps.indexOf( step.stepName )
+	);
+
+	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
+}
+
 export default {
+	canResumeFlow: canResumeFlow,
 	getFlowName: getFlowName,
 	getFlowSteps: getFlowSteps,
 	getStepName: getStepName,

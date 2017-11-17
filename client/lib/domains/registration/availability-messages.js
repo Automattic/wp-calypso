@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -125,6 +125,12 @@ function getAvailabilityNotice( domain, error ) {
 
 		case domainAvailability.EMPTY_QUERY:
 			message = translate( 'Please enter a domain name or keyword.' );
+			break;
+
+		case domainAvailability.INVALID_QUERY:
+			message = translate(
+				'Your search term can only contain alphanumeric characters, spaces, dots, or hyphens.'
+			);
 			break;
 
 		default:

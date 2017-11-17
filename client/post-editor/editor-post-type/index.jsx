@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -57,8 +57,8 @@ function EditorPostType( { translate, siteId, typeSlug, type, globalId, isSettin
 	return (
 		<span className={ classes }>
 			{ siteId &&
-			'page' !== typeSlug &&
-			'post' !== typeSlug && <QueryPostTypes siteId={ siteId } /> }
+				'page' !== typeSlug &&
+				'post' !== typeSlug && <QueryPostTypes siteId={ siteId } /> }
 			{ label } <PostStatus globalId={ globalId } showAll showIcon={ false } />
 		</span>
 	);

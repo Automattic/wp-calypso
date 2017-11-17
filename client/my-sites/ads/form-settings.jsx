@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
  */
 import Card from 'components/card';
 import StateSelector from 'components/forms/us-state-selector';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormSectionHeading from 'components/forms/form-section-heading';
@@ -110,6 +111,15 @@ class AdsFormSettings extends Component {
 		} );
 	};
 
+	handleDisplayToggle = name => () => {
+		this.setState( prevState => ( {
+			display_options: {
+				...prevState.display_options,
+				[ name ]: ! this.state.display_options[ name ],
+			},
+		} ) );
+	};
+
 	handleResidentCheckbox = () => {
 		const isResident = ! this.state.us_checked;
 
@@ -160,6 +170,7 @@ class AdsFormSettings extends Component {
 			us_checked: false,
 			who_owns: 'person',
 			zip: '',
+			display_options: {},
 			isLoading: false,
 			isSubmitting: false,
 			error: {},
@@ -182,6 +193,7 @@ class AdsFormSettings extends Component {
 			us_resident: this.state.us_resident,
 			who_owns: this.state.who_owns,
 			zip: this.state.zip,
+			display_options: this.state.display_options,
 		};
 	}
 
@@ -267,6 +279,70 @@ class AdsFormSettings extends Component {
 		);
 	}
 
+	displayOptions() {
+		const { translate } = this.props;
+
+		return (
+			<div>
+				<FormFieldset className="ads__settings-display-toggles">
+					<FormLegend>{ translate( 'Display ads below posts on' ) }</FormLegend>
+					<CompactFormToggle
+						checked={ !! this.state.display_options.display_front_page }
+						disabled={ this.state.isLoading }
+						onChange={ this.handleDisplayToggle( 'display_front_page' ) }
+					>
+						{ translate( 'Front page' ) }
+					</CompactFormToggle>
+					<CompactFormToggle
+						checked={ !! this.state.display_options.display_post }
+						disabled={ this.state.isLoading }
+						onChange={ this.handleDisplayToggle( 'display_post' ) }
+					>
+						{ translate( 'Posts' ) }
+					</CompactFormToggle>
+					<CompactFormToggle
+						checked={ !! this.state.display_options.display_page }
+						disabled={ this.state.isLoading }
+						onChange={ this.handleDisplayToggle( 'display_page' ) }
+					>
+						{ translate( 'Pages' ) }
+					</CompactFormToggle>
+					<CompactFormToggle
+						checked={ !! this.state.display_options.display_archive }
+						disabled={ this.state.isLoading }
+						onChange={ this.handleDisplayToggle( 'display_archive' ) }
+					>
+						{ translate( 'Archives' ) }
+					</CompactFormToggle>
+				</FormFieldset>
+				<FormFieldset className="ads__settings-display-toggles">
+					<FormLegend>{ translate( 'Additional ad placements' ) }</FormLegend>
+					<CompactFormToggle
+						checked={ !! this.state.display_options.enable_header_ad }
+						disabled={ this.state.isLoading }
+						onChange={ this.handleDisplayToggle( 'enable_header_ad' ) }
+					>
+						{ translate( 'Top of each page' ) }
+					</CompactFormToggle>
+					<CompactFormToggle
+						checked={ !! this.state.display_options.second_belowpost }
+						disabled={ this.state.isLoading }
+						onChange={ this.handleDisplayToggle( 'second_belowpost' ) }
+					>
+						{ translate( 'Second ad below post' ) }
+					</CompactFormToggle>
+					<CompactFormToggle
+						checked={ !! this.state.display_options.sidebar }
+						disabled={ this.state.isLoading }
+						onChange={ this.handleDisplayToggle( 'sidebar' ) }
+					>
+						{ translate( 'Sidebar' ) }
+					</CompactFormToggle>
+				</FormFieldset>
+			</div>
+		);
+	}
+
 	siteOwnerOptions() {
 		const { translate } = this.props;
 
@@ -328,11 +404,9 @@ class AdsFormSettings extends Component {
 						name="taxid"
 						id="taxid"
 						placeholder={
-							this.state.taxid_last4 ? (
-								'On file. Last Four Digits: '.concat( this.state.taxid_last4 )
-							) : (
-								''
-							)
+							this.state.taxid_last4
+								? 'On file. Last Four Digits: '.concat( this.state.taxid_last4 )
+								: ''
 						}
 						value={ this.state.taxid || '' }
 						onChange={ this.handleChange }
@@ -463,6 +537,8 @@ class AdsFormSettings extends Component {
 					</FormButtonsBar>
 
 					{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
+
+					{ ! this.props.siteIsJetpack ? this.displayOptions() : null }
 
 					<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
 					{ this.siteOwnerOptions() }

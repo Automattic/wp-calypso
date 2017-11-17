@@ -5,19 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-	map,
-	zipObject,
-	fill,
-	size,
-	filter,
-	get,
-	compact,
-	partition,
-	some,
-	min,
-	noop,
-} from 'lodash';
+import { map, zipObject, fill, size, filter, get, compact, partition, min, noop } from 'lodash';
 
 /***
  * Internal dependencies
@@ -34,7 +22,7 @@ import {
 } from 'state/comments/selectors';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import PostCommentForm from 'blocks/comments/form';
+import PostCommentFormRoot from 'blocks/comments/form-root';
 import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
 
 /**
@@ -211,31 +199,6 @@ export class ConversationCommentList extends React.Component {
 		this.setActiveReplyComment( null );
 	};
 
-	renderCommentForm = () => {
-		const { post, commentsTree } = this.props;
-		const commentText = this.state.commentText;
-
-		// Are we displaying the comment form at the top-level?
-		if (
-			this.props.activeReplyCommentId ||
-			some( commentsTree, comment => {
-				return comment.data && comment.data.isPlaceholder && ! comment.data.parent;
-			} )
-		) {
-			return null;
-		}
-
-		return (
-			<PostCommentForm
-				ref="postCommentForm"
-				post={ post }
-				parentCommentId={ null }
-				commentText={ commentText }
-				onUpdateCommentText={ this.onUpdateCommentText }
-			/>
-		);
-	};
-
 	render() {
 		const { commentsTree, post, enableCaterpillar } = this.props;
 
@@ -283,7 +246,13 @@ export class ConversationCommentList extends React.Component {
 							/>
 						);
 					} ) }
-					{ this.renderCommentForm() }
+					<PostCommentFormRoot
+						post={ this.props.post }
+						commentsTree={ this.props.commentsTree }
+						commentText={ this.state.commentText }
+						onUpdateCommentText={ this.onUpdateCommentText }
+						activeReplyCommentId={ this.props.activeReplyCommentId }
+					/>
 				</ul>
 			</div>
 		);

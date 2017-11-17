@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AuthorizeForm should render LoggedInForm when logged in 1`] = `
+<JetpackConnectMainWrapper
+  isWide={false}
+>
+  <div
+    className="jetpack-connect__authorize-form"
+  >
+    <Connect(Localized(LoggedInForm))
+      isSSO={false}
+      isWoo={false}
+    />
+  </div>
+</JetpackConnectMainWrapper>
+`;
+
+exports[`AuthorizeForm should render LoggedOutForm when logged out 1`] = `
+<JetpackConnectMainWrapper
+  isWide={false}
+>
+  <div
+    className="jetpack-connect__authorize-form"
+  >
+    <Connect(Localized(LoggedOutForm))
+      path="/jetpack/connect/authorize"
+    />
+  </div>
+</JetpackConnectMainWrapper>
+`;

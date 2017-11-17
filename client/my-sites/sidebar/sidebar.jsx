@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import classNames from 'classnames';
@@ -21,7 +21,6 @@ import analytics from 'lib/analytics';
 import Button from 'components/button';
 import config from 'config';
 import CurrentSite from 'my-sites/current-site';
-import productsValues from 'lib/products-values';
 import ManageMenu from './manage-menu';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
@@ -32,7 +31,7 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import StatsSparkline from 'blocks/stats-sparkline';
 import JetpackLogo from 'components/jetpack-logo';
-import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
+import { isPlan, isFreeTrial, isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -55,7 +54,6 @@ import {
 	isSitePreviewable,
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route/path';
-import { abtest } from 'lib/abtest';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 
@@ -112,7 +110,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	itemLinkClass = ( paths, existingClasses ) => {
-		var classSet = {};
+		const classSet = {};
 
 		if ( typeof existingClasses !== 'undefined' ) {
 			if ( ! Array.isArray( existingClasses ) ) {
@@ -346,13 +344,13 @@ export class MySitesSidebar extends Component {
 
 		let linkClass = 'upgrades-nudge';
 
-		if ( site && productsValues.isPlan( site.plan ) ) {
+		if ( site && isPlan( site.plan ) ) {
 			linkClass += ' is-paid-plan';
 		}
 
 		let planName = site && site.plan.product_name_short;
 
-		if ( site && productsValues.isFreeTrial( site.plan ) ) {
+		if ( site && isFreeTrial( site.plan ) ) {
 			planName = this.props.translate( 'Trial', {
 				context: 'Label in the sidebar indicating that the user is on the free trial for a plan.',
 			} );
@@ -579,10 +577,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	getAddNewSiteUrl() {
-		if ( this.props.hasJetpackSites || abtest( 'newSiteWithJetpack' ) === 'showNewJetpackSite' ) {
-			return '/jetpack/new/?ref=calypso-selector';
-		}
-		return config( 'signup_url' ) + '?ref=calypso-selector';
+		return '/jetpack/new/?ref=calypso-selector';
 	}
 
 	addNewSite() {
@@ -729,7 +724,6 @@ function mapStateToProps( state ) {
 	};
 }
 
-// TODO: make this pure when sites can be retrieved from the Redux state
-export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus }, null, {
-	pure: false,
-} )( localize( MySitesSidebar ) );
+export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )(
+	localize( MySitesSidebar )
+);

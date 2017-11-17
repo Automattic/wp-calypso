@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import { isCurrentlyEditingOrder, getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
+import { isOrderEditable } from 'woocommerce/lib/order-status';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
 import OrderCreated from '../order-created';
@@ -43,10 +44,10 @@ class OrderDetails extends Component {
 		}
 	};
 
-	updateLineItems = item => {
+	updateOrder = newOrder => {
 		const { siteId, order } = this.props;
 		if ( siteId ) {
-			this.props.editOrder( siteId, { id: order.id, line_items: item } );
+			this.props.editOrder( siteId, { id: order.id, ...newOrder } );
 		}
 	};
 
@@ -67,8 +68,8 @@ class OrderDetails extends Component {
 				<OrderDetailsTable
 					order={ order }
 					site={ site }
-					isEditing
-					onChange={ this.updateLineItems }
+					isEditing={ isOrderEditable( order.status ) }
+					onChange={ this.updateOrder }
 				/>
 			);
 		}

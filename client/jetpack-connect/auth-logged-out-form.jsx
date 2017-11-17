@@ -3,31 +3,34 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import debugFactory from 'debug';
 import PropTypes from 'prop-types';
-import debugModule from 'debug';
+import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import addQueryArgs from 'lib/route/add-query-args';
+import AuthFormHeader from './auth-form-header';
 import config from 'config';
 import HelpButton from './help-button';
-import { login } from 'lib/paths';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import addQueryArgs from 'lib/route/add-query-args';
 import LocaleSuggestions from 'components/locale-suggestions';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
-import AuthFormHeader from './auth-form-header';
+import { createAccount as createAccountAction } from 'state/jetpack-connect/actions';
+import { getAuthorizationData } from 'state/jetpack-connect/selectors';
+import { login } from 'lib/paths';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
-const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
+const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedOutForm extends Component {
 	static propTypes = {
-		createAccount: PropTypes.func.isRequired,
-		jetpackConnectAuthorize: PropTypes.shape( {
+		authorizationData: PropTypes.shape( {
 			bearerToken: PropTypes.string,
 			isAuthorizing: PropTypes.bool,
 			queryObject: PropTypes.object.isRequired,
@@ -35,6 +38,10 @@ class LoggedOutForm extends Component {
 		} ).isRequired,
 		locale: PropTypes.string,
 		path: PropTypes.string,
+
+		// Connected props
+		createAccount: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -43,7 +50,7 @@ class LoggedOutForm extends Component {
 	}
 
 	getRedirectAfterLoginUrl() {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
+		const { queryObject } = this.props.authorizationData;
 		return addQueryArgs( queryObject, window.location.href );
 	}
 
@@ -57,7 +64,7 @@ class LoggedOutForm extends Component {
 	};
 
 	renderLoginUser() {
-		const { userData, bearerToken, queryObject } = this.props.jetpackConnectAuthorize;
+		const { userData, bearerToken, queryObject } = this.props.authorizationData;
 
 		return (
 			<WpcomLoginForm
@@ -77,7 +84,7 @@ class LoggedOutForm extends Component {
 
 	renderFooterLink() {
 		const redirectTo = this.getRedirectAfterLoginUrl();
-		const emailAddress = this.props.jetpackConnectAuthorize.queryObject.user_email;
+		const emailAddress = this.props.authorizationData.queryObject.user_email;
 
 		return (
 			<LoggedOutFormLinks>
@@ -96,7 +103,7 @@ class LoggedOutForm extends Component {
 	}
 
 	render() {
-		const { isAuthorizing, userData, queryObject } = this.props.jetpackConnectAuthorize;
+		const { isAuthorizing, userData, queryObject } = this.props.authorizationData;
 
 		return (
 			<div>
@@ -118,4 +125,14 @@ class LoggedOutForm extends Component {
 	}
 }
 
-export default localize( LoggedOutForm );
+export { LoggedOutForm as LoggedOutFormTestComponent };
+
+export default connect(
+	state => ( {
+		authorizationData: getAuthorizationData( state ),
+	} ),
+	{
+		recordTracksEvent: recordTracksEventAction,
+		createAccount: createAccountAction,
+	}
+)( localize( LoggedOutForm ) );

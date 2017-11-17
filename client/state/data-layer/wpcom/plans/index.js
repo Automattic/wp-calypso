@@ -1,11 +1,10 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
-
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { PLANS_REQUEST } from 'state/action-types';
 import {
 	plansReceiveAction,
@@ -20,47 +19,46 @@ import {
 /**
  * Dispatches a request to fetch all available WordPress.com plans
  *
- * @param {Function} dispatch Redux dispatcher
  * @param {Object} action Redux action
  * @returns {Object} original action
  */
-export const requestPlans = ( { dispatch }, action ) =>
-	dispatch(
-		http( {
+export const requestPlans = action =>
+	http(
+		{
 			apiVersion: '1.4',
 			method: 'GET',
 			path: '/plans',
-			onSuccess: action,
-			onFailure: action,
-		} )
+		},
+		action
 	);
 
 /**
  * Dispatches returned WordPress.com plan data
  *
- * @param {Function} dispatch Redux dispatcher
  * @param {Object} action Redux action
  * @param {Array} plans raw data from plans API
+ * @returns {Array<Object>} Redux actions
  */
-export const receivePlans = ( { dispatch }, action, plans ) => {
-	dispatch( plansRequestSuccessAction() );
-	dispatch( plansReceiveAction( plans ) );
-};
+export const receivePlans = ( action, plans ) => [
+	plansRequestSuccessAction(),
+	plansReceiveAction( plans ),
+];
 
 /**
  * Dispatches returned error from plans request
  *
- * @param {Function} dispatch Redux dispatcher
  * @param {Object} action Redux action
  * @param {Object} rawError raw error from HTTP request
+ * @returns {Object} Redux action
  */
-export const receiveError = ( { dispatch }, action, rawError ) => {
-	const error = rawError instanceof Error ? rawError.message : rawError;
+export const receiveError = ( action, rawError ) =>
+	plansRequestFailureAction( rawError instanceof Error ? rawError.message : rawError );
 
-	dispatch( plansRequestFailureAction( error ) );
-};
-
-export const dispatchPlansRequest = dispatchRequest( requestPlans, receivePlans, receiveError );
+export const dispatchPlansRequest = dispatchRequestEx( {
+	fetch: requestPlans,
+	onSuccess: receivePlans,
+	onError: receiveError,
+} );
 
 export default {
 	[ PLANS_REQUEST ]: [ dispatchPlansRequest ],

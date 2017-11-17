@@ -1,14 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity, omit } from 'lodash';
+import { identity, isEmpty, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +22,23 @@ import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import support from 'lib/url/support';
+import config from 'config';
+
+function getSocialServiceFromClientId( clientId ) {
+	if ( ! clientId ) {
+		return null;
+	}
+
+	if ( clientId === config( 'google_oauth_client_id' ) ) {
+		return 'google';
+	}
+
+	if ( clientId === config( 'facebook_app_id' ) ) {
+		return 'facebook';
+	}
+
+	return null;
+}
 
 export class UserStep extends Component {
 	static propTypes = {
@@ -30,6 +47,7 @@ export class UserStep extends Component {
 		translate: PropTypes.func,
 		subHeaderText: PropTypes.string,
 		isSocialSignupEnabled: PropTypes.bool,
+		initialContext: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -145,7 +163,7 @@ export class UserStep extends Component {
 		this.submit( {
 			userData,
 			form: formWithoutPassword,
-			queryArgs: this.props.queryObject || {},
+			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
 		} );
 	};
 
@@ -188,8 +206,12 @@ export class UserStep extends Component {
 	}
 
 	getRedirectToAfterLoginUrl() {
-		if ( this.props.oauth2Signup && this.props.queryObject.oauth2_redirect ) {
-			return this.props.queryObject.oauth2_redirect;
+		if (
+			this.props.oauth2Signup &&
+			this.props.initialContext &&
+			this.props.initialContext.query.oauth2_redirect
+		) {
+			return this.props.initialContext.query.oauth2_redirect;
 		}
 
 		const stepAfterRedirect =
@@ -222,6 +244,17 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
+		let socialService, socialServiceResponse;
+		const hashObject = this.props.initialContext && this.props.initialContext.hash;
+		if ( this.props.isSocialSignupEnabled && ! isEmpty( hashObject ) ) {
+			const clientId = hashObject.client_id;
+			socialService = getSocialServiceFromClientId( clientId );
+
+			if ( socialService ) {
+				socialServiceResponse = hashObject;
+			}
+		}
+
 		return (
 			<SignupForm
 				{ ...omit( this.props, [ 'translate' ] ) }
@@ -234,6 +267,8 @@ export class UserStep extends Component {
 				suggestedUsername={ this.props.suggestedUsername }
 				handleSocialResponse={ this.handleSocialResponse }
 				isSocialSignupEnabled={ this.props.isSocialSignupEnabled }
+				socialService={ socialService }
+				socialServiceResponse={ socialServiceResponse }
 			/>
 		);
 	}

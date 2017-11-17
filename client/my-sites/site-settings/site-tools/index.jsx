@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -74,7 +74,7 @@ class SiteTools extends Component {
 		);
 		const deleteSite = translate( 'Delete your site permanently' );
 		const deleteSiteText = translate(
-			'Delete all your posts, pages, media and data, ' + "and give up your site's address."
+			"Delete all your posts, pages, media, and data, and give up your site's address."
 		);
 		const manageConnectionTitle = translate( 'Manage your connection' );
 		const manageConnectionText = translate(
@@ -84,7 +84,9 @@ class SiteTools extends Component {
 		const importTitle = translate( 'Import' );
 		const importText = translate( 'Import content from another WordPress or Medium site.' );
 		const exportTitle = translate( 'Export' );
-		const exportText = translate( 'Export content from your site. You own your data.' );
+		const exportText = translate(
+			'Export content from your site. You own your data — take it anywhere!'
+		);
 
 		let changeAddressText = translate( "Register a new domain or change your site's address." );
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
@@ -156,7 +158,7 @@ class SiteTools extends Component {
 	checkForSubscriptions = event => {
 		trackDeleteSiteOption( 'delete-site' );
 
-		if ( ! some( this.props.sitePurchases, 'active' ) ) {
+		if ( this.props.isAtomic || ! some( this.props.sitePurchases, 'active' ) ) {
 			return true;
 		}
 
@@ -185,6 +187,7 @@ export default connect( state => {
 	}
 
 	return {
+		isAtomic,
 		siteSlug,
 		sitePurchases: getSitePurchases( state, siteId ),
 		purchasesError: getPurchasesError( state ),
@@ -193,7 +196,7 @@ export default connect( state => {
 		showChangeAddress: ! isJetpack && ! isVip,
 		showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
 		showDeleteContent: ! isJetpack && ! isVip,
-		showDeleteSite: ! isJetpack && ! isVip && sitePurchasesLoaded,
+		showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 		showManageConnection: isJetpack && ! isAtomic,
 	};
 } )( localize( SiteTools ) );

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -27,7 +27,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
 import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
@@ -36,6 +35,7 @@ import { getAvailabilityNotice } from 'lib/domains/registration/availability-mes
 import SearchCard from 'components/search-card';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
+import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
@@ -47,6 +47,8 @@ import {
 	getDomainsSuggestionsError,
 } from 'state/domains/suggestions/selectors';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { currentUserHasFlag } from 'state/current-user/selectors';
+import { TRANSFER_IN } from 'state/current-user/constants';
 
 const domains = wpcom.domains();
 
@@ -133,6 +135,7 @@ class RegisterDomainStep extends React.Component {
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
+		onAddTransfer: PropTypes.func,
 		designType: PropTypes.string,
 	};
 
@@ -154,15 +157,19 @@ class RegisterDomainStep extends React.Component {
 
 	getState() {
 		const suggestion = this.props.suggestion ? getFixedDomainSearch( this.props.suggestion ) : '';
+		const loadingResults = Boolean( suggestion );
 
 		return {
 			clickedExampleSuggestion: false,
 			lastQuery: suggestion,
 			lastDomainSearched: null,
 			lastDomainStatus: null,
-			loadingResults: Boolean( suggestion ),
+			lastDomainIsTransferrable: false,
+			loadingResults: loadingResults,
+			loadingSubdomainResults: this.props.includeWordPressDotCom && loadingResults,
 			notice: null,
 			searchResults: null,
+			subdomainSearchResults: null,
 		};
 	}
 
@@ -217,6 +224,11 @@ class RegisterDomainStep extends React.Component {
 
 			if ( state.lastSurveyVertical && state.lastSurveyVertical !== this.props.surveyVertical ) {
 				state.loadingResults = true;
+
+				if ( this.props.includeWordPressDotCom ) {
+					state.loadingSubdomainResults = true;
+				}
+
 				delete state.lastSurveyVertical;
 			}
 
@@ -322,12 +334,16 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	onSearchChange = searchQuery => {
+		const loadingResults = Boolean( getFixedDomainSearch( searchQuery ) );
+
 		this.setState( {
 			lastQuery: searchQuery,
 			lastDomainSearched: null,
-			loadingResults: Boolean( getFixedDomainSearch( searchQuery ) ),
+			loadingResults: loadingResults,
+			loadingSubdomainResults: loadingResults,
 			notice: null,
 			searchResults: null,
+			subdomainSearchResults: null,
 		} );
 	};
 
@@ -355,6 +371,7 @@ class RegisterDomainStep extends React.Component {
 		this.setState( {
 			lastDomainSearched: domain,
 			searchResults: [],
+			subdomainSearchResults: [],
 			railcarSeed: this.getNewRailcarSeed(),
 		} );
 
@@ -368,7 +385,7 @@ class RegisterDomainStep extends React.Component {
 							/^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?\.[a-z]{2,63}$/i
 						)
 					) {
-						this.setState( { lastDomainStatus: null } );
+						this.setState( { lastDomainStatus: null, lastDomainIsTransferrable: false } );
 						return callback();
 					}
 					if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
@@ -381,7 +398,10 @@ class RegisterDomainStep extends React.Component {
 						const { AVAILABLE, UNKNOWN } = domainAvailability;
 						const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
 
-						this.setState( { lastDomainStatus: status } );
+						this.setState( {
+							lastDomainStatus: status,
+							lastDomainIsTransferrable: !! result.transferrable,
+						} );
 						if ( isDomainAvailable ) {
 							this.setState( { notice: null } );
 						} else {
@@ -400,10 +420,14 @@ class RegisterDomainStep extends React.Component {
 					} );
 				},
 				callback => {
+					const suggestionQuantity = this.props.includeWordPressDotCom
+						? SUGGESTION_QUANTITY - 1
+						: SUGGESTION_QUANTITY;
+
 					const query = {
 						query: domain,
-						quantity: SUGGESTION_QUANTITY,
-						include_wordpressdotcom: this.props.includeWordPressDotCom,
+						quantity: suggestionQuantity,
+						include_wordpressdotcom: false,
 						include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 						tld_weight_overrides: this.getTldWeightOverrides(),
 						vendor: searchVendor,
@@ -436,7 +460,7 @@ class RegisterDomainStep extends React.Component {
 								this.props.onDomainsAvailabilityChange( false );
 							} else if ( error && error.error ) {
 								error.code = error.error;
-								this.showValidationErrorMessage( domain, error );
+								this.showValidationErrorMessage( domain, error.code );
 							}
 
 							const analyticsResults = [
@@ -477,27 +501,7 @@ class RegisterDomainStep extends React.Component {
 					! exactMatchBeforeTld( suggestion ) && suggestion.isRecommended !== true;
 				const availableSuggestions = reject( suggestions, isFreeOrUnknown );
 
-				let recommendedSuggestion = null;
-
-				if ( abtest( 'recommendShortestDomain' ) === 'shortest' ) {
-					const shortestDomainBase = availableSuggestions
-						.map( suggestion => {
-							const dotPos = suggestion.domain_name.indexOf( '.' );
-							return suggestion.domain_name.slice(
-								0,
-								-1 === dotPos ? suggestion.domain_name.length : dotPos
-							);
-						} )
-						.reduce( ( left, right ) => ( left.length <= right.length ? left : right ) );
-
-					const shortestDomainBeforeTld = suggestion =>
-						startsWith( suggestion.domain_name, `${ shortestDomainBase }.` );
-
-					recommendedSuggestion = find( availableSuggestions, shortestDomainBeforeTld );
-				} else {
-					recommendedSuggestion = find( availableSuggestions, exactMatchBeforeTld );
-				}
-
+				const recommendedSuggestion = find( availableSuggestions, exactMatchBeforeTld );
 				if ( recommendedSuggestion ) {
 					recommendedSuggestion.isRecommended = true;
 				} else if ( availableSuggestions.length > 0 ) {
@@ -520,6 +524,63 @@ class RegisterDomainStep extends React.Component {
 				);
 			}
 		);
+
+		if ( this.props.includeWordPressDotCom ) {
+			const subdomainQuery = {
+				query: domain,
+				quantity: 1,
+				include_wordpressdotcom: true,
+				include_dotblogsubdomain: false,
+				tld_weight_overrides: null,
+				vendor: 'wpcom',
+				vertical: this.props.surveyVertical,
+			};
+
+			domains
+				.suggestions( subdomainQuery )
+				.then( subdomainSuggestions => {
+					this.props.onDomainsAvailabilityChange( true );
+					const timeDiff = Date.now() - timestamp;
+					const analyticsResults = subdomainSuggestions.map( suggestion => suggestion.domain_name );
+
+					this.props.recordSearchResultsReceive(
+						domain,
+						analyticsResults,
+						timeDiff,
+						subdomainSuggestions.length,
+						this.props.analyticsSection
+					);
+
+					this.setState(
+						{
+							subdomainSearchResults: subdomainSuggestions,
+							loadingSubdomainResults: false,
+						},
+						this.save
+					);
+				} )
+				.catch( error => {
+					const timeDiff = Date.now() - timestamp;
+
+					if ( error && error.statusCode === 503 ) {
+						this.props.onDomainsAvailabilityChange( false );
+					} else if ( error && error.error ) {
+						error.code = error.error;
+						this.showValidationErrorMessage( domain, error );
+					}
+
+					const analyticsResults = [
+						error.code || error.error || 'ERROR' + ( error.statusCode || '' ),
+					];
+					this.props.recordSearchResultsReceive(
+						domain,
+						analyticsResults,
+						timeDiff,
+						-1,
+						this.props.analyticsSection
+					);
+				} );
+		}
 	};
 
 	getStrippedDomainBase( domain ) {
@@ -534,7 +595,7 @@ class RegisterDomainStep extends React.Component {
 
 	initialSuggestions() {
 		let domainRegistrationSuggestions;
-		let domainMappingSuggestion;
+		let domainUnavailableSuggestion;
 		let suggestions;
 
 		if ( this.isLoadingSuggestions() || isEmpty( this.props.products ) ) {
@@ -559,7 +620,7 @@ class RegisterDomainStep extends React.Component {
 				);
 			}, this );
 
-			domainMappingSuggestion = (
+			domainUnavailableSuggestion = (
 				<DomainMappingSuggestion
 					isSignupStep={ this.props.isSignupStep }
 					onButtonClick={ this.goToMapDomainStep }
@@ -569,6 +630,12 @@ class RegisterDomainStep extends React.Component {
 					products={ this.props.products }
 				/>
 			);
+
+			if ( this.props.transferInAllowed && ! this.props.isSignupStep ) {
+				domainUnavailableSuggestion = (
+					<DomainTransferSuggestion onButtonClick={ this.goToTransferDomainStep } />
+				);
+			}
 		}
 
 		return (
@@ -577,13 +644,13 @@ class RegisterDomainStep extends React.Component {
 				className="register-domain-step__domain-suggestions"
 			>
 				{ domainRegistrationSuggestions }
-				{ domainMappingSuggestion }
+				{ domainUnavailableSuggestion }
 			</div>
 		);
 	}
 
 	allSearchResults() {
-		const { lastDomainSearched, lastDomainStatus } = this.state;
+		const { lastDomainIsTransferrable, lastDomainSearched, lastDomainStatus } = this.state;
 		const matchesSearchedDomain = suggestion => suggestion.domain_name === lastDomainSearched;
 		const availableDomain =
 			lastDomainStatus === domainAvailability.AVAILABLE &&
@@ -591,6 +658,14 @@ class RegisterDomainStep extends React.Component {
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
 		let suggestions = reject( this.state.searchResults, matchesSearchedDomain );
+
+		if ( this.props.includeWordPressDotCom ) {
+			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
+				suggestions.unshift( { is_placeholder: true } );
+			} else if ( this.state.subdomainSearchResults && this.state.subdomainSearchResults.length ) {
+				suggestions.unshift( this.state.subdomainSearchResults[ 0 ] );
+			}
+		}
 
 		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
 			// the search returned no results
@@ -615,13 +690,16 @@ class RegisterDomainStep extends React.Component {
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				lastDomainSearched={ lastDomainSearched }
 				lastDomainStatus={ lastDomainStatus }
+				lastDomainIsTransferrable={ lastDomainIsTransferrable }
 				onAddMapping={ onAddMapping }
 				onClickResult={ this.props.onAddDomain }
 				onClickMapping={ this.goToMapDomainStep }
+				onAddTransfer={ this.props.onAddTransfer }
+				onClickTransfer={ this.goToTransferDomainStep }
 				suggestions={ suggestions }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
-				offerMappingOption={ this.props.offerMappingOption }
+				offerUnavailableOption={ this.props.offerUnavailableOption }
 				placeholderQuantity={ SUGGESTION_QUANTITY }
 				isSignupStep={ this.props.isSignupStep }
 				railcarSeed={ this.state.railcarSeed }
@@ -647,6 +725,22 @@ class RegisterDomainStep extends React.Component {
 		return mapDomainUrl;
 	}
 
+	getTransferDomainUrl() {
+		let transferDomainUrl;
+
+		if ( this.props.transferDomainUrl ) {
+			transferDomainUrl = this.props.transferDomainUrl;
+		} else {
+			const query = qs.stringify( { initialQuery: this.state.lastQuery.trim() } );
+			transferDomainUrl = `${ this.props.basePath }/transfer`;
+			if ( this.props.selectedSite ) {
+				transferDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;
+			}
+		}
+
+		return transferDomainUrl;
+	}
+
 	goToMapDomainStep = event => {
 		event.preventDefault();
 
@@ -655,7 +749,22 @@ class RegisterDomainStep extends React.Component {
 		page( this.getMapDomainUrl() );
 	};
 
+	goToTransferDomainStep = event => {
+		event.preventDefault();
+
+		this.props.recordTransferDomainButtonClick( this.props.analyticsSection );
+
+		page( this.getTransferDomainUrl() );
+	};
+
 	showValidationErrorMessage( domain, error ) {
+		if (
+			this.props.transferInAllowed &&
+			includes( [ domainAvailability.MAPPED ], error ) &&
+			this.state.lastDomainIsTransferrable
+		) {
+			return;
+		}
 		const { message, severity } = getAvailabilityNotice( domain, error );
 		this.setState( { notice: message, noticeSeverity: severity } );
 	}
@@ -665,6 +774,12 @@ const recordMapDomainButtonClick = section =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Clicked "Map it" Button' ),
 		recordTracksEvent( 'calypso_domain_search_results_mapping_button_click', { section } )
+	);
+
+const recordTransferDomainButtonClick = section =>
+	composeAnalytics(
+		recordGoogleEvent( 'Domain Search', 'Clicked "Use a Domain I own" Button' ),
+		recordTracksEvent( 'calypso_domain_search_results_transfer_button_click', { section } )
 	);
 
 const recordSearchFormSubmit = ( searchBoxValue, section, timeDiffFromLastSearch, count, vendor ) =>
@@ -736,6 +851,7 @@ export default connect(
 			currentUser: getCurrentUser( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
+			transferInAllowed: currentUserHasFlag( state, TRANSFER_IN ),
 		};
 	},
 	{
@@ -744,5 +860,6 @@ export default connect(
 		recordSearchFormSubmit,
 		recordSearchFormView,
 		recordSearchResultsReceive,
+		recordTransferDomainButtonClick,
 	}
 )( localize( RegisterDomainStep ) );

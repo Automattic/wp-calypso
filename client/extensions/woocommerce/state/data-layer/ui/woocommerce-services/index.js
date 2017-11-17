@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { isEmpty } from 'lodash';
@@ -16,7 +16,11 @@ import {
 	actionListStepFailure,
 	actionListClear,
 } from 'woocommerce/state/action-list/actions';
-import { getLabelSettingsFormMeta } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
+import {
+	areLabelsEnabled,
+	getLabelSettingsFormMeta,
+	getSelectedPaymentMethodId,
+} from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import { getPackagesForm } from 'woocommerce/woocommerce-services/state/packages/selectors';
 import { submit as submitLabels } from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import { submit as submitPackages } from 'woocommerce/woocommerce-services/state/packages/actions';
@@ -83,7 +87,13 @@ export default {
 		 * @param {Object} action - an action containing successAction and failureAction
 		 */
 		( store, action ) => {
-			const { successAction, failureAction } = action;
+			const { successAction, failureAction, noLabelsPaymentAction } = action;
+
+			const state = store.getState();
+			if ( areLabelsEnabled( state ) && ! getSelectedPaymentMethodId( state ) ) {
+				store.dispatch( noLabelsPaymentAction );
+				return;
+			}
 
 			/**
 			 * A callback issued after a successful request

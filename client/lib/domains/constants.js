@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import keyMirror from 'key-mirror';
@@ -11,6 +11,14 @@ const type = keyMirror( {
 	REGISTERED: null,
 	SITE_REDIRECT: null,
 	WPCOM: null,
+	TRANSFER: null,
+} );
+
+const transferStatus = keyMirror( {
+	PENDING_OWNER: null,
+	PENDING_REGISTRY: null,
+	CANCELLED: null,
+	COMPLETED: null,
 } );
 
 const registrar = {
@@ -30,6 +38,7 @@ const domainAvailability = {
 	FORBIDDEN: 'forbidden_domain',
 	FORBIDDEN_SUBDOMAIN: 'forbidden_subdomain',
 	EMPTY_QUERY: 'empty_query',
+	INVALID_QUERY: 'invalid_query',
 	INVALID: 'invalid_domain',
 	INVALID_TLD: 'invalid_tld',
 	RESTRICTED: 'restricted_domain',
@@ -53,9 +62,15 @@ const dnsTemplates = {
 	},
 };
 
+const domainProductSlugs = {
+	TRANSFER_IN: 'domain_transfer',
+};
+
 export default {
 	dnsTemplates,
 	domainAvailability,
+	domainProductSlugs,
 	registrar,
+	transferStatus,
 	type,
 };

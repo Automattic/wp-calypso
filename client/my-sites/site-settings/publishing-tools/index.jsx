@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -104,11 +104,9 @@ class PublishingTools extends Component {
 						moduleUnavailable
 					}
 				>
-					{ regeneratingPostByEmail ? (
-						translate( 'Regenerating…' )
-					) : (
-						translate( 'Regenerate address' )
-					) }
+					{ regeneratingPostByEmail
+						? translate( 'Regenerating…' )
+						: translate( 'Regenerate address' ) }
 				</Button>
 			</div>
 		);

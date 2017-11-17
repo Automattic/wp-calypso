@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -161,11 +161,9 @@ const Security2faBackupCodes = createReactClass( {
 					</Button>
 				</SectionHeader>
 				<Card>
-					{ this.state.generatingCodes || this.state.backupCodes.length ? (
-						this.renderList()
-					) : (
-						this.renderPrompt()
-					) }
+					{ this.state.generatingCodes || this.state.backupCodes.length
+						? this.renderList()
+						: this.renderPrompt() }
 				</Card>
 			</div>
 		);

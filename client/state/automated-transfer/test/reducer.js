@@ -14,6 +14,8 @@ import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_STATUS_REQUEST as REQUEST_STATUS,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
+	SERIALIZE,
+	DESERIALIZE,
 } from 'state/action-types';
 
 describe( 'state', () => {
@@ -44,6 +46,20 @@ describe( 'state', () => {
 					const action = { type: REQUEST_STATUS };
 
 					expect( fetchingStatus( null, action ) ).to.be.true;
+				} );
+
+				test( "should never persist whether it's fetching status", () => {
+					expect(
+						fetchingStatus( true, {
+							type: SERIALIZE,
+						} )
+					).to.be.null;
+
+					expect(
+						fetchingStatus( true, {
+							type: DESERIALIZE,
+						} )
+					).to.be.false;
 				} );
 			} );
 		} );

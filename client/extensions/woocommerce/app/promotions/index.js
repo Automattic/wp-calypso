@@ -10,16 +10,17 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import EmptyContent from 'components/empty-content';
 import { fetchPromotions } from 'woocommerce/state/sites/promotions/actions';
 import { getPromotions } from 'woocommerce/state/selectors/promotions';
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import { setPromotionSearch } from 'woocommerce/state/ui/promotions/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -34,6 +35,10 @@ class Promotions extends Component {
 		promotions: PropTypes.array,
 		fetchPromotions: PropTypes.func.isRequired,
 	};
+
+	constructor( props ) {
+		super( props );
+	}
 
 	componentDidMount() {
 		const { site } = this.props;
@@ -55,10 +60,9 @@ class Promotions extends Component {
 	renderSearchCard() {
 		const { site, promotions, translate } = this.props;
 
-		// TODO: Implement onSearch
 		return (
 			<SearchCard
-				onSearch={ noop }
+				onSearch={ this.props.setPromotionSearch }
 				delaySearch
 				delayTimeout={ 400 }
 				disabled={ ! site || ! promotions }
@@ -67,9 +71,38 @@ class Promotions extends Component {
 		);
 	}
 
+	renderEmptyContent() {
+		const { site, translate } = this.props;
+
+		const emptyContentAction = (
+			<Button href={ getLink( '/store/promotion/:site/', site ) }>
+				{ translate( 'Add a promotion!' ) }
+			</Button>
+		);
+
+		return (
+			<EmptyContent
+				title={ translate( "You don't have any promotions." ) }
+				action={ emptyContentAction }
+			/>
+		);
+	}
+
+	renderContent() {
+		return (
+			<div>
+				{ this.renderSearchCard() }
+				<PromotionsList />
+			</div>
+		);
+	}
+
 	render() {
-		const { site, className, translate } = this.props;
+		const { site, className, promotions, translate } = this.props;
 		const classes = classNames( 'promotions__list', className );
+		const isEmpty = site && promotions && 0 === promotions.length;
+
+		const content = isEmpty ? this.renderEmptyContent() : this.renderContent();
 
 		return (
 			<Main className={ classes }>
@@ -79,8 +112,7 @@ class Promotions extends Component {
 						{ translate( 'Add promotion' ) }
 					</Button>
 				</ActionHeader>
-				{ this.renderSearchCard() }
-				<PromotionsList />
+				{ content }
 			</Main>
 		);
 	}
@@ -100,6 +132,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchPromotions,
+			setPromotionSearch,
 		},
 		dispatch
 	);

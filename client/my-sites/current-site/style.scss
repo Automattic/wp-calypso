@@ -94,7 +94,7 @@
 }
 
 .current-site__switch-sites {
-	background: $sidebar-bg-color;
+	background: var( --current-site-switch-sites-background );
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 	display: block;
 	box-sizing: border-box;
@@ -129,7 +129,6 @@
 .current-site .notice.is-compact {
 	display: flex;
 	margin: 0;
-	padding: 0 0 0 4px;
 	border-radius: 0;
 
 	@include breakpoint( "<660px" ) {
@@ -144,5 +143,9 @@
 
 	.notice__action {
 		margin-left: auto;
+	}
+
+	.notice__icon-wrapper {
+		border-radius: 0;
 	}
 }

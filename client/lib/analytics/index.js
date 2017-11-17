@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import cookie from 'cookie';
@@ -160,6 +160,11 @@ function buildQuerystringNoPrefix( group, name ) {
 // this helps avoid some nasty coupling, but it's not the cleanest code - sorry.
 let mostRecentUrlPath = null;
 
+// pathCounter is used to keep track of the order of calypso_page_view Tracks
+// events. The pathCounter value is appended to the last_pageview_path_with_count and
+// this_pageview_path_with_count Tracks event props.
+let pathCounter = 0;
+
 if ( typeof window !== 'undefined' ) {
 	window.addEventListener( 'popstate', function() {
 		// throw away our URL value if the user used the back/forward buttons
@@ -241,7 +246,10 @@ const analytics = {
 			// add delay to avoid stale `_dl` in recorded calypso_page_view event details
 			// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript
 			setTimeout( () => {
-				params.last_pageview_path = mostRecentUrlPath;
+				params.last_pageview_path_with_count =
+					mostRecentUrlPath + '(' + pathCounter.toString() + ')';
+				pathCounter++;
+				params.this_pageview_path_with_count = urlPath + '(' + pathCounter.toString() + ')';
 				analytics.tracks.recordPageView( urlPath, params );
 				analytics.ga.recordPageView( urlPath, pageTitle );
 				analytics.emit( 'page-view', urlPath, pageTitle );

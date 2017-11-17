@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -22,6 +21,7 @@ import {
 	getSetStoreAddressDuringInitialSetup,
 	getFinishedInstallOfRequiredPlugins,
 	getFinishedPageSetup,
+	isStoreSetupComplete,
 } from 'woocommerce/state/sites/setup-choices/selectors';
 import {
 	areOrdersLoading,
@@ -29,11 +29,7 @@ import {
 } from 'woocommerce/state/sites/orders/selectors';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import { requestSyncStatus } from 'woocommerce/state/sites/settings/email/actions';
-import {
-	isRequestingSyncStatus,
-	hasMailChimpConnection,
-} from 'woocommerce/state/sites/settings/email/selectors';
+import { requestSettings } from 'woocommerce/state/sites/settings/mailchimp/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	getTotalProducts,
@@ -43,6 +39,7 @@ import {
 import Main from 'components/main';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
+import Placeholder from './placeholder';
 import PreSetupView from './pre-setup-view';
 import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
@@ -54,46 +51,47 @@ class Dashboard extends Component {
 		className: PropTypes.string,
 		finishedInitialSetup: PropTypes.bool,
 		hasOrders: PropTypes.bool,
+		isSetupComplete: PropTypes.bool,
 		loading: PropTypes.bool,
 		selectedSite: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 			slug: PropTypes.string.isRequired,
 			URL: PropTypes.string.isRequired,
 		} ),
+		siteId: PropTypes.number,
 		mailChimpConfigured: PropTypes.bool,
 		fetchOrders: PropTypes.func,
 		fetchSetupChoices: PropTypes.func,
 		requestSyncStatus: PropTypes.func,
+		setupChoicesLoading: PropTypes.bool,
 	};
 
 	componentDidMount = () => {
-		const { selectedSite, productsLoaded } = this.props;
+		const { siteId } = this.props;
 
-		if ( selectedSite && selectedSite.ID ) {
-			this.props.fetchSetupChoices( selectedSite.ID );
-			this.props.fetchOrders( selectedSite.ID );
-			this.props.requestSyncStatus( selectedSite.ID );
-
-			if ( ! productsLoaded ) {
-				this.props.fetchProducts( selectedSite.ID, { page: 1 } );
-			}
+		if ( siteId ) {
+			this.fetchStoreData();
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
-		const { selectedSite, productsLoaded } = this.props;
+	componentDidUpdate = prevProps => {
+		const { siteId } = this.props;
+		const oldSiteId = prevProps.siteId ? prevProps.siteId : null;
 
-		const newSiteId = newProps.selectedSite ? newProps.selectedSite.ID : null;
-		const oldSiteId = selectedSite ? selectedSite.ID : null;
+		if ( siteId && oldSiteId !== siteId ) {
+			this.fetchStoreData();
+		}
+	};
 
-		if ( newSiteId && oldSiteId !== newSiteId ) {
-			this.props.fetchSetupChoices( newSiteId );
-			this.props.fetchOrders( newSiteId );
-			this.props.requestSyncStatus( newSiteId );
+	fetchStoreData = () => {
+		const { siteId, productsLoaded } = this.props;
+		this.props.fetchSetupChoices( siteId );
+		this.props.fetchOrders( siteId );
+		this.props.requestSettings( siteId );
 
-			if ( ! productsLoaded ) {
-				this.props.fetchProducts( newSiteId, { page: 1 } );
-			}
+		if ( ! productsLoaded ) {
+			const params = { page: 1 };
+			this.props.fetchProducts( siteId, params, null, null );
 		}
 	};
 
@@ -126,16 +124,22 @@ class Dashboard extends Component {
 		return translate( 'Dashboard' );
 	};
 
-	renderDashboardContent = () => {
+	renderDashboardSetupContent = () => {
 		const {
 			finishedInstallOfRequiredPlugins,
 			finishedPageSetup,
 			finishedInitialSetup,
-			hasOrders,
 			hasProducts,
 			selectedSite,
 			setStoreAddressDuringInitialSetup,
+			setupChoicesLoading,
 		} = this.props;
+
+		if ( setupChoicesLoading ) {
+			// Many of the clauses below depend on setup choices being in the state tree
+			// Show a placeholder while they load
+			return <Placeholder />;
+		}
 
 		if ( ! finishedInstallOfRequiredPlugins ) {
 			return <RequiredPluginsInstallView site={ selectedSite } />;
@@ -146,11 +150,19 @@ class Dashboard extends Component {
 		}
 
 		if ( ! setStoreAddressDuringInitialSetup && ! hasProducts ) {
-			return <PreSetupView site={ selectedSite } />;
+			return <PreSetupView siteId={ selectedSite.ID } />;
 		}
 
 		if ( ! finishedInitialSetup ) {
 			return <SetupTasksView onFinished={ this.onStoreSetupFinished } site={ selectedSite } />;
+		}
+	};
+
+	renderDashboardContent = () => {
+		const { hasOrders, loading, selectedSite } = this.props;
+
+		if ( loading || ! selectedSite ) {
+			return <Placeholder />;
 		}
 
 		let manageView = <ManageOrdersView site={ selectedSite } />;
@@ -161,26 +173,23 @@ class Dashboard extends Component {
 		return (
 			<div>
 				{ manageView }
-				{ ! this.props.mailChimpConfigured &&
-					( config.isEnabled( 'woocommerce/extension-settings-email' ) && (
-						<MailChimp site={ selectedSite } redirectToSettings />
-					) ) }
+				{ ! this.props.mailChimpConfigured && (
+					<MailChimp site={ selectedSite } redirectToSettings dashboardView />
+				) }
 			</div>
 		);
 	};
 
 	render = () => {
-		const { className, loading, selectedSite } = this.props;
-
-		if ( loading || ! selectedSite ) {
-			// TODO have a placeholder/loading view instead
-			return null;
-		}
+		const { className, isSetupComplete, loading, selectedSite } = this.props;
 
 		return (
 			<Main className={ classNames( 'dashboard', className ) }>
-				<ActionHeader breadcrumbs={ this.getBreadcrumb() } />
-				{ this.renderDashboardContent() }
+				<ActionHeader
+					breadcrumbs={ this.getBreadcrumb() }
+					isLoading={ loading || ! selectedSite }
+				/>
+				{ isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent() }
 			</Main>
 		);
 	};
@@ -188,28 +197,31 @@ class Dashboard extends Component {
 
 function mapStateToProps( state ) {
 	const selectedSite = getSelectedSiteWithFallback( state );
-	const loading =
-		areOrdersLoading( state ) ||
-		areSetupChoicesLoading( state ) ||
-		areProductsLoading( state ) ||
-		isRequestingSyncStatus( state );
+	const siteId = selectedSite ? selectedSite.ID : null;
+	const setupChoicesLoading = areSetupChoicesLoading( state );
+	const loading = areOrdersLoading( state ) || setupChoicesLoading || areProductsLoading( state );
 	const hasOrders = getNewOrdersWithoutPayPalPending( state ).length > 0;
 	const hasProducts = getTotalProducts( state ) > 0;
 	const productsLoaded = areProductsLoaded( state );
-	const mailChimpConfigured = hasMailChimpConnection( state );
 	const finishedInitialSetup = getFinishedInitialSetup( state );
+	const finishedInstallOfRequiredPlugins = getFinishedInstallOfRequiredPlugins( state );
+	const finishedPageSetup = getFinishedPageSetup( state );
+	const setStoreAddressDuringInitialSetup = getSetStoreAddressDuringInitialSetup( state );
+	const isSetupComplete = isStoreSetupComplete( state );
 
 	return {
 		finishedInitialSetup,
-		finishedInstallOfRequiredPlugins: getFinishedInstallOfRequiredPlugins( state ),
-		finishedPageSetup: getFinishedPageSetup( state ),
+		finishedInstallOfRequiredPlugins,
+		finishedPageSetup,
 		hasOrders,
 		hasProducts,
-		mailChimpConfigured,
-		productsLoaded,
+		isSetupComplete,
 		loading,
+		productsLoaded,
 		selectedSite,
-		setStoreAddressDuringInitialSetup: getSetStoreAddressDuringInitialSetup( state ),
+		setStoreAddressDuringInitialSetup,
+		setupChoicesLoading,
+		siteId,
 	};
 }
 
@@ -219,7 +231,7 @@ function mapDispatchToProps( dispatch ) {
 			fetchOrders,
 			fetchSetupChoices,
 			fetchProducts,
-			requestSyncStatus,
+			requestSettings,
 		},
 		dispatch
 	);

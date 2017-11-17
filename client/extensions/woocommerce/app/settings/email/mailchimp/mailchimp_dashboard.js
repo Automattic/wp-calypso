@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Button from 'components/button';
 import Card from 'components/card';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -18,96 +17,20 @@ import FormLegend from 'components/forms/form-legend';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormTextInput from 'components/forms/form-text-input';
 import Notice from 'components/notice';
-import QueryMailChimpSyncStatus from 'woocommerce/state/sites/settings/email/querySyncStatus';
+import QueryMailChimpSyncStatus from 'woocommerce/state/sites/settings/mailchimp/querySyncStatus';
 import {
 	syncStatus,
 	mailChimpSettings,
-	isRequestingSettings
-	} from 'woocommerce/state/sites/settings/email/selectors';
-import { submitMailChimpNewsletterSettings, requestResync } from 'woocommerce/state/sites/settings/email/actions.js';
-import { isSubmittingNewsletterSetting, newsletterSettingsSubmitError } from 'woocommerce/state/sites/settings/email/selectors';
+	isRequestingSettings,
+	isRequestingSyncStatus,
+	isSavingSettings,
+	} from 'woocommerce/state/sites/settings/mailchimp/selectors';
+import { submitMailChimpNewsletterSettings, requestResync } from 'woocommerce/state/sites/settings/mailchimp/actions.js';
+import { isSubmittingNewsletterSetting, newsletterSettingsSubmitError } from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
+import SyncTab from './sync_tab.js';
 
-const SyncTab = localize( ( { siteId, translate, syncState, resync } ) => {
-	const { account_name, store_syncing, product_count, mailchimp_total_products,
-		mailchimp_total_orders, order_count } = syncState;
-	const hasProductInfo = ( undefined !== product_count ) && ( undefined !== mailchimp_total_products );
-	const products = hasProductInfo ? ( product_count + '/' + mailchimp_total_products ) : '';
-	const hasOrdersInfo = ( undefined !== order_count ) && ( undefined !== mailchimp_total_orders );
-	const orders = hasOrdersInfo ? ( order_count + '/' + mailchimp_total_orders ) : '';
-
-	const synced = () => (
-		<Notice
-			status="is-success"
-			isCompact
-			showDismiss={ false }
-			text={ translate( '%(mailingListname)s list synced.', {
-				args: { mailingListname: syncState.mailchimp_list_name } } ) }
-		/>
-	);
-
-	const syncing = () => (
-		<Notice
-			status="is-warning"
-			isCompact
-			showDismiss={ false }
-			text={ translate( '%(mailingListname)s list is being synced.', {
-				args: { mailingListname: syncState.mailchimp_list_name } } ) }
-		/>
-	);
-
-	const onResyncClick = () => {
-		! store_syncing && resync( siteId );
-	};
-
-	return (
-		<div>
-			<div className="mailchimp__account-info-name">
-				{ translate( '{{span_info}}MailChimp account:{{/span_info}} {{span}}%(account_name)s{{/span}}', {
-					components: {
-						span_info: <span className="mailchimp__account-info" />,
-						span: <span />,
-					},
-					args: {
-						account_name
-					}
-				} ) }
-			</div>
-			<span className="mailchimp__sync-status">{ store_syncing ? syncing() : synced() }</span>
-			<a className="mailchimp__resync-link" onClick={ onResyncClick }>
-				{ translate( 'Resync', { comment: 'to synchronize again' } ) }
-			</a>
-			<div>
-				{ translate( '{{span_info}}Products:{{/span_info}} {{span}}%(products)s{{/span}}', {
-					components: {
-						span_info: <span className="mailchimp__account-info" />,
-						span: <span />,
-					},
-					args: {
-						products
-					}
-				} ) }
-				{ translate( '{{span_info}}Orders:{{/span_info}} {{span}}%(orders)s{{/span}}', {
-					components: {
-						span_info: <span className="mailchimp__account-info-orders" />,
-						span: <span />,
-					},
-					args: {
-						orders
-					}
-				} ) }
-			</div>
-		</div>
-	);
-} );
-
-SyncTab.propTypes = {
-	siteId: PropTypes.number.isRequired,
-	syncState: PropTypes.object,
-	resync: PropTypes.func.isRequired,
-};
-
-const Settings = localize( ( { translate, settings, oldCheckbox, isSaving, onChange, onSave } ) => {
+const Settings = localize( ( { translate, settings, oldCheckbox, onChange } ) => {
 	const onCheckedStateChange = () => {
 		const currentValue = settings.mailchimp_checkbox_defaults;
 		const nextValue = currentValue === 'check' ? 'uncheck' : 'check';
@@ -150,14 +73,17 @@ const Settings = localize( ( { translate, settings, oldCheckbox, isSaving, onCha
 						/>
 						<span>{ translate( 'Subscribe message is checked by default' ) }</span>
 					</FormLabel>
-					<FormLabel className="mailchimp__dashboard-settings-form-field">
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel className="mailchimp__dashboard-settings-form-field mailchimp__dashboard-settings-subscribe-message">
 						<span>{ translate( 'Subscribe message' ) }</span>
-						<FormTextInput
-							name="newsletter_label"
-							onChange={ onNewsletterLabelChange }
-							value={ settings.newsletter_label }
-						/>
 					</FormLabel>
+					<FormTextInput
+						name="newsletter_label"
+						onChange={ onNewsletterLabelChange }
+						value={ settings.newsletter_label }
+					/>
+
 				</FormFieldset>
 			</span>
 			<span className="mailchimp__dashboard-settings-preview">
@@ -167,15 +93,6 @@ const Settings = localize( ( { translate, settings, oldCheckbox, isSaving, onCha
 							<FormCheckbox checked={ 'check' === subscriptionPromptState } disabled />
 							<span>{ settings.newsletter_label }</span>
 						</FormLabel>}
-				</div>
-				<div className="mailchimp__dashboard-settings-save">
-					<Button
-						primary
-						onClick={ onSave }
-						busy={ isSaving }
-						disabled={ isSaving }>
-						{ translate( 'Save' ) }
-					</Button>
 				</div>
 			</span>
 		</div>
@@ -208,6 +125,9 @@ class MailChimpDashboard extends React.Component {
 			} else {
 				nextProps.successNotice( translate( 'Email settings saved.' ), { duration: 4000 } );
 			}
+		}
+		if ( ( false === this.props.saveSettingsRequest ) && nextProps.saveSettingsRequest ) {
+			this.onSave();
 		}
 	}
 
@@ -242,14 +162,17 @@ class MailChimpDashboard extends React.Component {
 				<Card className="mailchimp__dashboard" >
 					<div className="mailchimp__dashboard-first-section" >
 						<span className="mailchimp__dashboard-title-and-slogan">
-							<div className="mailchimp__dashboard-title">MailChimp</div>
-							<div className="mailchimp__header-description">
-								{ translate( 'Allow customers to subscribe to your MailChimp email list' ) }
+							<div>
+								<div className="mailchimp__dashboard-title">MailChimp</div>
+								<div className="mailchimp__header-description">
+									{ translate( 'Allow customers to subscribe to your MailChimp email list' ) }
+								</div>
 							</div>
 						</span>
 						<span className="mailchimp__dashboard-sync-status" >
 							<SyncTab
 								siteId={ siteId }
+								isRequesting={ this.props.isRequestingSyncStatus }
 								syncState={ syncStatusData }
 								resync={ this.props.requestResync } />
 						</span>
@@ -290,7 +213,9 @@ export default connect(
 		siteId,
 		syncStatusData: syncStatus( state, siteId ),
 		isRequestingSettings: isRequestingSettings( state, siteId ),
+		isRequestingSyncStatus: isRequestingSyncStatus( state, siteId ),
 		isSaving: isSubmittingNewsletterSetting( state, siteId ),
+		saveSettingsRequest: isSavingSettings( state, siteId ),
 		newsletterSettingsSubmitError: newsletterSettingsSubmitError( state, siteId ),
 		settings: mailChimpSettings( state, siteId ),
 	} ),

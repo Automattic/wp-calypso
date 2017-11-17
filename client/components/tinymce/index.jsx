@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { assign, forEach } from 'lodash';
@@ -550,12 +550,12 @@ export default class extends React.Component {
 		return (
 			<div className={ containerClassName }>
 				{ 'html' === mode &&
-				config.isEnabled( 'post-editor/html-toolbar' ) && (
-					<EditorHtmlToolbar
-						content={ this.refs.text }
-						onToolbarChangeContent={ this.onToolbarChangeContent }
-					/>
-				) }
+					config.isEnabled( 'post-editor/html-toolbar' ) && (
+						<EditorHtmlToolbar
+							content={ this.refs.text }
+							onToolbarChangeContent={ this.onToolbarChangeContent }
+						/>
+					) }
 				<textarea
 					ref="text"
 					className={ className }

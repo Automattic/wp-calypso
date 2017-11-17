@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -19,6 +19,7 @@ export default class InfoPopover extends Component {
 		autoRtl: PropTypes.bool,
 		className: PropTypes.string,
 		gaEventCategory: PropTypes.string,
+		icon: PropTypes.string,
 		iconSize: PropTypes.number,
 		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( {
@@ -40,6 +41,7 @@ export default class InfoPopover extends Component {
 
 	static defaultProps = {
 		autoRtl: true,
+		icon: 'info-outline',
 		iconSize: 18,
 		position: 'bottom',
 	};
@@ -73,7 +75,7 @@ export default class InfoPopover extends Component {
 					this.props.className
 				) }
 			>
-				<Gridicon icon="info-outline" size={ this.props.iconSize } />
+				<Gridicon icon={ this.props.icon } size={ this.props.iconSize } />
 				<Popover
 					autoRtl={ this.props.autoRtl }
 					id={ this.props.id }

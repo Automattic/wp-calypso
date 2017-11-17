@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -40,7 +40,7 @@ class RequiredPagesSetupView extends Component {
 				<SetupHeader
 					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
 					imageWidth={ 160 }
-					title={ translate( 'Setting up your store' ) }
+					title={ translate( 'Building your store' ) }
 					subtitle={ translate( "Give us a minute and we'll move right along." ) }
 				>
 					<ProgressBar value={ 100 } isPulsing />

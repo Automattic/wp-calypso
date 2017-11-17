@@ -13,6 +13,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
  } from '../../action-types';
+import * as selectors from '../selectors';
 
 const orderId = 1;
 const siteId = 123456;
@@ -64,25 +65,6 @@ function createGetStateFn( newProps = { origin: {}, destination: {} } ) {
 	};
 }
 
-function createGetFormErrorsFn( opts = {} ) {
-	const errors = {};
-	const defaultError = {
-		address: 'This address is not recognized. Please try another.',
-	};
-
-	if ( opts.setOriginError ) {
-		errors.origin = defaultError;
-	}
-
-	if ( opts.setDestinationError ) {
-		errors.destination = defaultError;
-	}
-
-	return function() {
-		return errors;
-	};
-}
-
 describe( 'Shipping label Actions', () => {
 	describe( '#openPrintingFlow', () => {
 		nock( 'https://public-api.wordpress.com:443' )
@@ -103,10 +85,7 @@ describe( 'Shipping label Actions', () => {
 
 			openPrintingFlow( orderId, siteId )(
 				dispatchSpy,
-				createGetStateFn( { origin: { ignoreValidation: true } } ),
-				createGetFormErrorsFn(
-					{ setOriginError: false, setDestinationError: false }
-				)
+				createGetStateFn( { origin: { ignoreValidation: true } } )
 			);
 
 			it( 'toggle origin', () => {
@@ -132,12 +111,11 @@ describe( 'Shipping label Actions', () => {
 		describe( 'origin errors exist', () => {
 			const dispatchSpy = sinon.spy();
 
+			const errorStub = sinon.stub( selectors, 'getFormErrors' ).returns( { origin: true } );
+
 			openPrintingFlow( orderId, siteId )(
 				dispatchSpy,
-				createGetStateFn(),
-				createGetFormErrorsFn(
-					{ setOriginError: true, setDestinationError: false }
-				)
+				createGetStateFn()
 			);
 
 			it( 'toggles origin', () => {
@@ -155,6 +133,8 @@ describe( 'Shipping label Actions', () => {
 					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW, orderId, siteId,
 				} ) ).to.equal( true );
 			} );
+
+			errorStub.restore();
 		} );
 
 		describe( 'destination validation ignored', () => {
@@ -164,10 +144,7 @@ describe( 'Shipping label Actions', () => {
 				dispatchSpy,
 				createGetStateFn( {
 					destination: { ignoreValidation: true },
-				} ),
-				createGetFormErrorsFn(
-					{ setOriginError: false, setDestinationError: false }
-				)
+				} )
 			);
 
 			it( 'toggle destination', () => {
@@ -190,12 +167,11 @@ describe( 'Shipping label Actions', () => {
 		describe( 'destination errors exist', () => {
 			const dispatchSpy = sinon.spy();
 
+			const errorStub = sinon.stub( selectors, 'getFormErrors' ).returns( { destination: true } );
+
 			openPrintingFlow( orderId, siteId )(
 				dispatchSpy,
-				createGetStateFn(),
-				createGetFormErrorsFn(
-					{ setOriginError: false, setDestinationError: true }
-				)
+				createGetStateFn()
 			);
 
 			it( 'toggle destination', () => {
@@ -213,6 +189,8 @@ describe( 'Shipping label Actions', () => {
 					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW, orderId, siteId,
 				} ) ).to.equal( true );
 			} );
+
+			errorStub.restore();
 		} );
 
 		nock.cleanAll();

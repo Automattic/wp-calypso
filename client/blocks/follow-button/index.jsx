@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import PropTypes from 'prop-types';
@@ -30,6 +30,7 @@ class FollowButtonContainer extends Component {
 	static defaultProps = {
 		onFollowToggle: noop,
 	};
+
 	handleFollowToggle = following => {
 		if ( following ) {
 			const followData = omitBy(

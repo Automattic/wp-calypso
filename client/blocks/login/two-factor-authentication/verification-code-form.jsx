@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -160,9 +160,9 @@ class VerificationCodeForm extends Component {
 						/>
 
 						{ requestError &&
-						requestError.field === 'twoStepCode' && (
-							<FormInputValidation isError text={ requestError.message } />
-						) }
+							requestError.field === 'twoStepCode' && (
+								<FormInputValidation isError text={ requestError.message } />
+							) }
 					</FormFieldset>
 
 					<FormButton

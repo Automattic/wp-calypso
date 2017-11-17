@@ -18,6 +18,10 @@
 	@include breakpoint( "<660px" ) {
 		padding-left: 24px;
 	}
+
+	&.is-loading {
+		@include placeholder();
+	}
 }
 
 .action-header__breadcrumbs-separator {

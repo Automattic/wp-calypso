@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -18,8 +18,13 @@ import {
 	getContinents,
 	getCountries,
 } from 'woocommerce/state/sites/locations/selectors';
+import {
+	areSettingsGeneralLoaded,
+	getStoreLocation,
+} from 'woocommerce/state/sites/settings/general/selectors';
 import { decodeEntities } from 'lib/formatting';
 import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -41,18 +46,26 @@ class FormCountrySelectFromApi extends Component {
 	};
 
 	componentWillMount() {
-		const { siteId, isLoaded } = this.props;
+		this.fetchData( this.props );
+	}
 
-		if ( siteId && ! isLoaded ) {
-			this.props.fetchLocations( siteId );
+	componentWillReceiveProps( newProps ) {
+		if ( newProps.siteId !== this.props.siteId ) {
+			this.fetchData( newProps );
 		}
 	}
 
-	componentWillReceiveProps( { siteId } ) {
-		if ( siteId !== this.props.siteId ) {
+	fetchData = ( { siteId, isLoaded, areSettingsLoaded } ) => {
+		if ( ! siteId ) {
+			return;
+		}
+		if ( ! isLoaded ) {
 			this.props.fetchLocations( siteId );
 		}
-	}
+		if ( ! areSettingsLoaded ) {
+			this.props.fetchSettingsGeneral( siteId );
+		}
+	};
 
 	renderOption = option => {
 		return (
@@ -80,9 +93,13 @@ class FormCountrySelectFromApi extends Component {
 }
 
 export default connect(
-	state => {
+	( state, props ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site.ID || null;
+		const address = getStoreLocation( state );
+		const areSettingsLoaded = areSettingsGeneralLoaded( state );
+		const value = ! props.value ? address.country : props.value;
+
 		const locationsList = [];
 		const isLoaded = areLocationsLoaded( state, siteId );
 		const continents = getContinents( state, siteId );
@@ -97,10 +114,12 @@ export default connect(
 		} );
 
 		return {
-			siteId,
-			locationsList: sortPopularCountriesToTop( locationsList ),
+			areSettingsLoaded,
 			isLoaded,
+			locationsList: sortPopularCountriesToTop( locationsList ),
+			siteId,
+			value,
 		};
 	},
-	dispatch => bindActionCreators( { fetchLocations }, dispatch )
+	dispatch => bindActionCreators( { fetchLocations, fetchSettingsGeneral }, dispatch )
 )( localize( FormCountrySelectFromApi ) );

@@ -2,44 +2,43 @@
 /**
  * External dependencies
  */
+import cookie from 'cookie';
+import debugModule from 'debug';
+import Gridicon from 'gridicons';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import debugModule from 'debug';
 import { get, map } from 'lodash';
-import Gridicon from 'gridicons';
-import cookie from 'cookie';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import FormattedHeader from 'components/formatted-header';
+import addQueryArgs from 'lib/route/add-query-args';
+import analytics from 'lib/analytics';
+import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import Gravatar from 'components/gravatar';
-import Button from 'components/button';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import { login } from 'lib/paths';
-import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
-import { getSSO } from 'state/jetpack-connect/selectors';
-import addQueryArgs from 'lib/route/add-query-args';
 import config from 'config';
+import Dialog from 'components/dialog';
+import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import EmptyContent from 'components/empty-content';
+import FormattedHeader from 'components/formatted-header';
+import Gravatar from 'components/gravatar';
+import HelpButton from './help-button';
+import JetpackConnectHappychatButton from './happychat-button';
+import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
+import Main from 'components/main';
+import MainWrapper from './main-wrapper';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import { decodeEntities } from 'lib/formatting';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import Dialog from 'components/dialog';
-import analytics from 'lib/analytics';
-import MainWrapper from './main-wrapper';
-import HelpButton from './help-button';
-import JetpackConnectHappychatButton from './happychat-button';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import { getSSO } from 'state/jetpack-connect/selectors';
+import { login } from 'lib/paths';
+import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
 
 /*
  * Module variables
@@ -458,7 +457,10 @@ class JetpackSsoForm extends Component {
 						>
 							{ this.getReturnToSiteText() }
 						</LoggedOutFormLinkItem>
-						<JetpackConnectHappychatButton>
+						<JetpackConnectHappychatButton
+							eventName="calypso_jpc_sso_chat_initiated"
+							label={ translate( 'Chat with Jetpack support' ) }
+						>
 							<HelpButton />
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
@@ -484,12 +486,8 @@ export default connect(
 			sharedDetails: get( jetpackSSO, 'sharedDetails' ),
 		};
 	},
-	dispatch =>
-		bindActionCreators(
-			{
-				authorizeSSO,
-				validateSSONonce,
-			},
-			dispatch
-		)
+	{
+		authorizeSSO,
+		validateSSONonce,
+	}
 )( localize( JetpackSsoForm ) );

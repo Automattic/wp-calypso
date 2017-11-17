@@ -1,55 +1,33 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { delay } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getRewindRestoreProgress as getRewindRestoreProgressAction } from 'state/activity-log/actions';
+import Interval, { EVERY_SECOND } from 'lib/interval';
+import { getRewindRestoreProgress } from 'state/activity-log/actions';
 
-class QueryRewindRestoreStatus extends PureComponent {
+class QueryRewindRestoreStatus extends Component {
 	static propTypes = {
-		freshness: PropTypes.number,
-		queryDelay: PropTypes.number.isRequired,
 		restoreId: PropTypes.number,
 		siteId: PropTypes.number.isRequired,
-		timestamp: PropTypes.number.isRequired,
 	};
 
-	static defaultProps = {
-		queryDelay: 0,
+	query = () => {
+		const { restoreId, siteId } = this.props;
+		if ( siteId && restoreId ) {
+			this.props.getRewindRestoreProgress( siteId, restoreId );
+		}
 	};
-
-	query( props ) {
-		const { getRewindRestoreProgress, queryDelay, restoreId, siteId, timestamp } = props;
-		if ( ( siteId, timestamp, restoreId ) ) {
-			delay( getRewindRestoreProgress, queryDelay, siteId, timestamp, restoreId );
-		}
-	}
-
-	componentWillMount() {
-		this.query( this.props );
-	}
-
-	componentWillUpdate( nextProps ) {
-		const { freshness, restoreId } = this.props;
-		if ( restoreId !== nextProps.restoreId || freshness !== nextProps.freshness ) {
-			this.query( nextProps );
-		}
-	}
 
 	render() {
-		return null;
+		return <Interval onTick={ this.query } period={ EVERY_SECOND } />;
 	}
 }
 
-export default connect( null, {
-	getRewindRestoreProgress: getRewindRestoreProgressAction,
-} )( QueryRewindRestoreStatus );
+export default connect( null, { getRewindRestoreProgress } )( QueryRewindRestoreStatus );

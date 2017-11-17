@@ -1,13 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
 import { connect } from 'react-redux';
-import createFragment from 'react-addons-create-fragment';
-import { groupBy, head, mapValues, noop, values } from 'lodash';
+import { groupBy, head, map, noop, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -61,7 +60,7 @@ class MediaLibraryContent extends React.Component {
 
 	renderErrors() {
 		const errorTypes = values( this.props.mediaValidationErrors ).map( head );
-		const notices = mapValues( groupBy( errorTypes ), ( occurrences, errorType ) => {
+		return map( groupBy( errorTypes ), ( occurrences, errorType ) => {
 			let message, onDismiss;
 			const i18nOptions = {
 				count: occurrences.length,
@@ -145,14 +144,12 @@ class MediaLibraryContent extends React.Component {
 			}
 
 			return (
-				<Notice status={ status } text={ message } onDismissClick={ onDismiss }>
+				<Notice key={ errorType } status={ status } text={ message } onDismissClick={ onDismiss }>
 					{ this.renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) }
 					{ tryAgain && this.renderTryAgain() }
 				</Notice>
 			);
 		} );
-
-		return createFragment( notices );
 	}
 
 	renderTryAgain() {
@@ -178,11 +175,9 @@ class MediaLibraryContent extends React.Component {
 			<NoticeAction
 				external={ true }
 				href={
-					upgradeNudgeFeature ? (
-						`/plans/compare/${ this.props.siteSlug }?feature=${ upgradeNudgeFeature }`
-					) : (
-						`/plans/${ this.props.siteSlug }`
-					)
+					upgradeNudgeFeature
+						? `/plans/compare/${ this.props.siteSlug }?feature=${ upgradeNudgeFeature }`
+						: `/plans/${ this.props.siteSlug }`
 				}
 				onClick={ this.recordPlansNavigation.bind(
 					this,

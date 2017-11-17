@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { localize } from 'i18n-calypso';
@@ -12,7 +12,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import classnames from 'classnames';
 import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';
 import CountrySelect from 'my-sites/domains/components/form/country-select';
@@ -36,14 +35,6 @@ class PaypalPaymentBox extends React.Component {
 	state = {
 		country: null,
 		formDisabled: false,
-	};
-
-	handleToggle = event => {
-		event.preventDefault();
-
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Or Use Credit Card Link' );
-		analytics.tracks.recordEvent( 'calypso_checkout_switch_to_card' );
-		this.props.onToggle( 'credit-card' );
 	};
 
 	handleChange = event => {
@@ -145,21 +136,6 @@ class PaypalPaymentBox extends React.Component {
 		} );
 	};
 
-	renderSecurePaymentNotice = () => {
-		if ( abtest( 'checkoutPaymentMethodTabs' ) === 'tabs' ) {
-			return (
-				<div className="checkout__secure-payment">
-					<div className="checkout__secure-payment-content">
-						<Gridicon icon="lock" />
-						{ this.props.translate( 'Secure Payment' ) }
-					</div>
-				</div>
-			);
-		}
-
-		return null;
-	};
-
 	render = () => {
 		const hasBusinessPlanInCart = some( this.props.cart.products, {
 			product_slug: PLAN_BUSINESS,
@@ -168,12 +144,8 @@ class PaypalPaymentBox extends React.Component {
 				config.isEnabled( 'upgrades/presale-chat' ) &&
 				abtest( 'presaleChatButton' ) === 'showChatButton' &&
 				hasBusinessPlanInCart,
-			creditCardButtonClasses = classnames( 'credit-card-payment-box__switch-link', {
-				'credit-card-payment-box__switch-link-left': showPaymentChatButton,
-			} ),
-			paymentButtonsClasses = classnames( 'payment-box__payment-buttons', {
-				'payment-box__payment-buttons-test': abtest( 'checkoutPaymentMethodTabs' ) === 'tabs',
-			} );
+			paymentButtonClasses = 'payment-box__payment-buttons';
+
 		return (
 			<form onSubmit={ this.redirectToPayPal }>
 				<div className="checkout__payment-box-sections">
@@ -206,7 +178,7 @@ class PaypalPaymentBox extends React.Component {
 				/>
 
 				<div className="payment-box-actions">
-					<div className={ paymentButtonsClasses }>
+					<div className={ paymentButtonClasses }>
 						<span className="checkout__pay-button">
 							<button
 								type="submit"
@@ -218,17 +190,12 @@ class PaypalPaymentBox extends React.Component {
 							<SubscriptionText cart={ this.props.cart } />
 						</span>
 
-						{ this.renderSecurePaymentNotice() }
-
-						{ this.props.onToggle &&
-						cartValues.isCreditCardPaymentsEnabled( this.props.cart ) && (
-							<a href="" className={ creditCardButtonClasses } onClick={ this.handleToggle }>
-								{ this.props.translate( 'or use a credit card', {
-									context: 'Upgrades: PayPal checkout screen',
-									comment: 'Checkout with PayPal -- or use a credit card',
-								} ) }
-							</a>
-						) }
+						<div className="checkout__secure-payment">
+							<div className="checkout__secure-payment-content">
+								<Gridicon icon="lock" />
+								{ this.props.translate( 'Secure Payment' ) }
+							</div>
+						</div>
 
 						{ showPaymentChatButton && (
 							<PaymentChatButton paymentType="paypal" cart={ this.props.cart } />

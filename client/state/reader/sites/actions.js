@@ -14,6 +14,7 @@ import {
 	READER_SITE_REQUEST_FAILURE,
 	READER_SITE_UPDATE,
 } from 'state/action-types';
+import { fields } from './fields';
 
 export function requestSite( siteId ) {
 	return function( dispatch ) {
@@ -27,21 +28,7 @@ export function requestSite( siteId ) {
 			.undocumented()
 			.readSite( {
 				site: siteId,
-				fields: [
-					'ID',
-					'name',
-					'title',
-					'URL',
-					'icon',
-					'is_jetpack',
-					'description',
-					'is_private',
-					'feed_ID',
-					'feed_URL',
-					'capabilities',
-					'prefer_feed',
-					'options', // have to include this to get options at all
-				].join( ',' ),
+				fields: fields.join( ',' ),
 				options: [ 'is_mapped_domain', 'unmapped_url', 'is_redirect' ].join( ',' ),
 			} )
 			.then(
@@ -52,15 +39,15 @@ export function requestSite( siteId ) {
 					} );
 					return data;
 				},
-				function failure( err ) {
+				function failure( error ) {
 					dispatch( {
 						type: READER_SITE_REQUEST_FAILURE,
 						payload: {
 							ID: siteId,
 						},
-						error: err,
+						error,
 					} );
-					throw err;
+					throw error;
 				}
 			);
 	};

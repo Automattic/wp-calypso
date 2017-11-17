@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
+import { abtest } from 'lib/abtest';
 
 /**
  * Constants
@@ -27,6 +28,9 @@ class JetpackPlansGrid extends Component {
 		onSelect: PropTypes.func,
 		selectedSite: PropTypes.object,
 		showFirst: PropTypes.bool,
+
+		// Connected
+		translate: PropTypes.func.isRequired,
 	};
 
 	renderConnectHeader() {
@@ -46,8 +50,11 @@ class JetpackPlansGrid extends Component {
 	}
 
 	render() {
+		const mainClassName =
+			abtest( 'jetpackHidePlanIconsOnMobile' ) === 'hide' && 'jetpack-connect__hide-plan-icons';
+
 		return (
-			<Main wideLayout>
+			<Main wideLayout className={ mainClassName }>
 				<div className="jetpack-connect__plans">
 					{ this.renderConnectHeader() }
 					<div id="plans">

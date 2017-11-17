@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 import config from 'config';
 import React, { Component } from 'react';
@@ -128,32 +128,32 @@ class GoogleAnalyticsForm extends Component {
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				{ isJetpackUnsupported &&
-				! showUpgradeNudge && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ translate( 'Google Analytics require a newer version of Jetpack.' ) }
-					>
-						<NoticeAction href={ `/plugins/jetpack/${ siteSlug }` }>
-							{ translate( 'Update Now' ) }
-						</NoticeAction>
-					</Notice>
-				) }
+					! showUpgradeNudge && (
+						<Notice
+							status="is-warning"
+							showDismiss={ false }
+							text={ translate( 'Google Analytics require a newer version of Jetpack.' ) }
+						>
+							<NoticeAction href={ `/plugins/jetpack/${ siteSlug }` }>
+								{ translate( 'Update Now' ) }
+							</NoticeAction>
+						</Notice>
+					) }
 
 				{ siteIsJetpack &&
-				jetpackModuleActive === false &&
-				! isJetpackUnsupported &&
-				! showUpgradeNudge && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ translate( 'The Google Analytics module is disabled in Jetpack.' ) }
-					>
-						<NoticeAction onClick={ activateGoogleAnalytics }>
-							{ translate( 'Enable' ) }
-						</NoticeAction>
-					</Notice>
-				) }
+					jetpackModuleActive === false &&
+					! isJetpackUnsupported &&
+					! showUpgradeNudge && (
+						<Notice
+							status="is-warning"
+							showDismiss={ false }
+							text={ translate( 'The Google Analytics module is disabled in Jetpack.' ) }
+						>
+							<NoticeAction onClick={ activateGoogleAnalytics }>
+								{ translate( 'Enable' ) }
+							</NoticeAction>
+						</Notice>
+					) }
 
 				<SectionHeader label={ translate( 'Google Analytics' ) }>
 					{ ! showUpgradeNudge && (
@@ -171,15 +171,13 @@ class GoogleAnalyticsForm extends Component {
 				{ showUpgradeNudge ? (
 					<Banner
 						description={
-							siteIsJetpack ? (
-								translate(
-									'Upgrade to the Professional Plan and include your own analytics tracking ID.'
-								)
-							) : (
-								translate(
-									'Upgrade to the Business Plan and include your own analytics tracking ID.'
-								)
-							)
+							siteIsJetpack
+								? translate(
+										'Upgrade to the Professional Plan and include your own analytics tracking ID.'
+									)
+								: translate(
+										'Upgrade to the Business Plan and include your own analytics tracking ID.'
+									)
 						}
 						event={ 'google_analytics_settings' }
 						feature={ FEATURE_GOOGLE_ANALYTICS }

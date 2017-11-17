@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -138,13 +138,13 @@ class StatsComments extends Component {
 				<Card className={ classes }>
 					<div className="module-content">
 						{ noData &&
-						! hasError &&
-						! requestingCommentsStats && (
-							<StatsErrorPanel
-								className="is-empty-message"
-								message={ translate( 'No comments posted' ) }
-							/>
-						) }
+							! hasError &&
+							! requestingCommentsStats && (
+								<StatsErrorPanel
+									className="is-empty-message"
+									message={ translate( 'No comments posted' ) }
+								/>
+							) }
 
 						<StatsModuleSelectDropdown options={ selectOptions } onSelect={ this.changeFilter } />
 

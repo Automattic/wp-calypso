@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { PureComponent } from 'react';
@@ -19,7 +19,6 @@ export default class FormToggle extends PureComponent {
 		className: PropTypes.string,
 		toggling: PropTypes.bool,
 		'aria-label': PropTypes.string,
-		children: PropTypes.node,
 	};
 
 	static defaultProps = {

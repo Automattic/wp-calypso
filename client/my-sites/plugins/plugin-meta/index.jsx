@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -499,7 +499,7 @@ class PluginMeta extends Component {
 		return (
 			<div className="plugin-meta">
 				{ this.props.atEnabled &&
-				this.props.selectedSite && <QueryEligibility siteId={ this.props.selectedSite.ID } /> }
+					this.props.selectedSite && <QueryEligibility siteId={ this.props.selectedSite.ID } /> }
 				<Card>
 					{ this.displayBanner() }
 					<div className={ cardClasses }>
@@ -525,44 +525,44 @@ class PluginMeta extends Component {
 				) }
 
 				{ ! this.props.isMock &&
-				get( this.props.selectedSite, 'jetpack' ) && (
-					<PluginInformation
-						plugin={ this.props.plugin }
-						isPlaceholder={ this.props.isPlaceholder }
-						site={ this.props.selectedSite }
-						pluginVersion={ plugin && plugin.version }
-						siteVersion={
-							this.props.selectedSite && this.props.selectedSite.options.software_version
-						}
-						hasUpdate={ this.getAvailableNewVersions().length > 0 }
-					/>
-				) }
+					get( this.props.selectedSite, 'jetpack' ) && (
+						<PluginInformation
+							plugin={ this.props.plugin }
+							isPlaceholder={ this.props.isPlaceholder }
+							site={ this.props.selectedSite }
+							pluginVersion={ plugin && plugin.version }
+							siteVersion={
+								this.props.selectedSite && this.props.selectedSite.options.software_version
+							}
+							hasUpdate={ this.getAvailableNewVersions().length > 0 }
+						/>
+					) }
 
 				{ this.props.atEnabled && this.maybeDisplayUnsupportedNotice() }
 
 				{ this.props.atEnabled &&
-				this.hasBusinessPlan() &&
-				! get( this.props.selectedSite, 'jetpack' ) && (
-					<PluginAutomatedTransfer plugin={ this.props.plugin } />
-				) }
+					this.hasBusinessPlan() &&
+					! get( this.props.selectedSite, 'jetpack' ) && (
+						<PluginAutomatedTransfer plugin={ this.props.plugin } />
+					) }
 
 				{ ( ( this.props.selectedSite && get( this.props.selectedSite, 'jetpack' ) ) ||
 					this.hasBusinessPlan() ||
 					this.isWpcomPreinstalled() ) && <div style={ { marginBottom: 16 } } /> }
 
 				{ this.props.selectedSite &&
-				! get( this.props.selectedSite, 'jetpack' ) &&
-				! this.hasBusinessPlan() &&
-				! this.isWpcomPreinstalled() && (
-					<div className="plugin-meta__upgrade_nudge">
-						<Banner
-							feature={ FEATURE_UPLOAD_PLUGINS }
-							event={ 'calypso_plugin_detail_page_upgrade_nudge' }
-							plan={ PLAN_BUSINESS }
-							title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
-						/>
-					</div>
-				) }
+					! get( this.props.selectedSite, 'jetpack' ) &&
+					! this.hasBusinessPlan() &&
+					! this.isWpcomPreinstalled() && (
+						<div className="plugin-meta__upgrade_nudge">
+							<Banner
+								feature={ FEATURE_UPLOAD_PLUGINS }
+								event={ 'calypso_plugin_detail_page_upgrade_nudge' }
+								plan={ PLAN_BUSINESS }
+								title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
+							/>
+						</div>
+					) }
 
 				{ this.getVersionWarning() }
 				{ this.getUpdateWarning() }

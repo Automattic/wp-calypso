@@ -18,6 +18,12 @@
 	}
 }
 
+.disconnect-site__site-settings {
+	.section-header__label:before {
+		background: inherit;
+	}
+}
+
 .disconnect-site__navigation-links {
 	text-align: center;
 }

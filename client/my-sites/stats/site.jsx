@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import page from 'page';
@@ -29,6 +29,7 @@ import config from 'config';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 
 class StatsSite extends Component {
 	constructor( props ) {
@@ -119,6 +120,7 @@ class StatsSite extends Component {
 
 		return (
 			<Main wideLayout={ true }>
+				<PrivacyPolicyBanner />
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation

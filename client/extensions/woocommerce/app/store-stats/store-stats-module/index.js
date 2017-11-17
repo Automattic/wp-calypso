@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -22,7 +22,6 @@ import ErrorPanel from 'my-sites/stats/stats-error';
 
 class StoreStatsModule extends Component {
 	static propTypes = {
-		children: PropTypes.node,
 		data: PropTypes.array,
 		emptyMessage: PropTypes.string,
 		header: PropTypes.node,
@@ -60,11 +59,11 @@ class StoreStatsModule extends Component {
 					</Card>
 				) }
 				{ ! isLoading &&
-				hasEmptyData && (
-					<Card className="stats-module is-showing-error has-no-data">
-						<ErrorPanel message={ emptyMessage } />
-					</Card>
-				) }
+					hasEmptyData && (
+						<Card className="stats-module is-showing-error has-no-data">
+							<ErrorPanel message={ emptyMessage } />
+						</Card>
+					) }
 				{ ! isLoading && ! hasEmptyData && children }
 			</div>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */

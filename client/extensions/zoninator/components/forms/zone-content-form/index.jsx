@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { PureComponent } from 'react';
@@ -25,6 +25,7 @@ class ZoneContentForm extends PureComponent {
 		handleSubmit: PropTypes.func.isRequired,
 		label: PropTypes.string.isRequired,
 		onSubmit: PropTypes.func.isRequired,
+		requesting: PropTypes.bool,
 		submitting: PropTypes.bool.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -32,17 +33,23 @@ class ZoneContentForm extends PureComponent {
 	save = data => this.props.onSubmit( form, data );
 
 	render() {
-		const { handleSubmit, label, submitting, translate } = this.props;
+		const { handleSubmit, label, requesting, submitting, translate } = this.props;
+		const isDisabled = requesting || submitting;
 
 		return (
 			<form onSubmit={ handleSubmit( this.save ) }>
 				<SectionHeader label={ label }>
-					<FormButton compact disabled={ submitting }>
+					<FormButton compact disabled={ isDisabled }>
 						{ translate( 'Save' ) }
 					</FormButton>
 				</SectionHeader>
 				<CompactCard>
-					<FieldArray rerenderOnEveryChange name="posts" component={ PostsList } />
+					<FieldArray
+						rerenderOnEveryChange
+						name="posts"
+						props={ { requesting } }
+						component={ PostsList }
+					/>
 				</CompactCard>
 			</form>
 		);

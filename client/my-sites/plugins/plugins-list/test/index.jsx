@@ -11,7 +11,7 @@ import React from 'react';
 import {
 	renderIntoDocument as testRenderer,
 	scryRenderedComponentsWithType,
-} from 'react-addons-test-utils';
+} from 'react-dom/test-utils';
 import { Provider as ReduxProvider } from 'react-redux';
 
 /**

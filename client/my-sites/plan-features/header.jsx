@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -126,14 +126,14 @@ class PlanFeaturesHeader extends Component {
 				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? billingTimeFrame : '' }
 					{ isDiscounted &&
-					! isPlaceholder && (
-						<InfoPopover
-							className="plan-features__header-tip-info"
-							position={ isMobile() ? 'top' : 'bottom left' }
-						>
-							{ translate( 'Price for the next 12 months' ) }
-						</InfoPopover>
-					) }
+						! isPlaceholder && (
+							<InfoPopover
+								className="plan-features__header-tip-info"
+								position={ isMobile() ? 'top' : 'bottom left' }
+							>
+								{ translate( 'Price for the next 12 months' ) }
+							</InfoPopover>
+						) }
 				</p>
 			);
 		}

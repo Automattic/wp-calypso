@@ -1,4 +1,7 @@
 .order-fulfillment {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
 	background: lighten( $blue-light, 25% );
 
 	&.is-completed {
@@ -8,6 +11,11 @@
 			color: $alert-green;
 		}
 	}
+}
+
+.order-fulfillment__print-container {
+	display: flex;
+	align-items: center;
 }
 
 .order-fulfillment__tracking,
