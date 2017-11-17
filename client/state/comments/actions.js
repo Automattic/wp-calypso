@@ -37,11 +37,11 @@ export const requestComment = ( { siteId, commentId, query = {} } ) => ( {
 } );
 
 /**
- * Creates an action for receiving commenst for a specific post on a site.
+ * Creates an action for receiving comments for a specific post on a site.
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
- * @param {Array} comments the list of comments recieved
- * @param {boolean} commentById were the comments retrieved by id directly
+ * @param {Array} comments the list of comments received
+ * @param {Boolean} commentById were the comments retrieved by ID directly?
  * @returns {Object} Action for receiving comments
  */
 export const receiveComments = ( { siteId, postId, comments, commentById = false } ) => ( {
