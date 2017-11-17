@@ -36,6 +36,7 @@
 	justify-content: space-between;
 
 	.formatted-header {
+		flex-basis: 100%;
 		margin: 10px 0;
 		text-align: left;
 	}
@@ -173,7 +174,6 @@
 	p {
 		color: darken( $gray, 10% );
 		font-size: 14px;
-		max-width: 500px;
 	}
 }
 
