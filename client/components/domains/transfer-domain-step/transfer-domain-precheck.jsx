@@ -120,7 +120,12 @@ class TransferDomainPrecheck extends React.PureComponent {
 			? translate( 'Your domain is unlocked at your current registrar.' )
 			: translate(
 					"Your domain is locked to prevent unauthorized transfers. You'll need to unlock " +
-						'it before we can move it.'
+						'it at your current domiain provider before we can move it. {{a}}Here are instructions for unlocking it{{/a}}',
+					{
+						components: {
+							a: <a href="#" rel="noopener noreferrer" />,
+						},
+					}
 				);
 		const buttonText = loading ? translate( 'Checking…' ) : translate( "I've unlocked my domain" );
 
@@ -146,11 +151,15 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const heading = translate( 'Verify we can get in touch.' );
 		const message = translate(
 			"We'll send an email to {{strong}}%(email)s{{/strong}} to start the transfer process. Make sure " +
-				"you have access to that address. Don't recognize it? Then you have privacy protection, " +
-				"and you'll need to turn it off before we start.",
+				"you have access to that address. Don't recognize it? Then you have privacy protection enabled. " +
+				"You'll need to log in to your current domain provider and {{a}}turn it off{{/a}} before we start. " +
+				"Don't worry, you can re-enable it once the transfer is done.",
 			{
 				args: { email },
-				components: { strong: <strong /> },
+				components: {
+					strong: <strong />,
+					a: <a href="#" rel="noopener noreferrer" />,
+				},
 			}
 		);
 		const buttonText = translate( 'I can access this email address' );
@@ -166,7 +175,12 @@ class TransferDomainPrecheck extends React.PureComponent {
 			'A domain authorization code is a unique code linked only to your domain — kind of like a ' +
 				"password for your domain. Log in to your current registrar to get one. We'll send you an email " +
 				'with a link to enter it and officially okay the transfer. We call it a domain authorization code, ' +
-				'but it might be called a secret code, auth code, or EPP code.'
+				'but it might be called a secret code, auth code, or EPP code. {{a}}Learn more{{/a}}.',
+				{
+					components: {
+						a: <a href="#" rel="noopener noreferrer" />,
+					},
+				}
 		);
 		const buttonText = translate( 'I have my authorization code' );
 
@@ -205,7 +219,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 					<div className="transfer-domain-step__continue-text">
 						<p>
 							{ translate(
-								'Note: These changes can take up to 20 minutes to take effect. ' +
+								'Note: These changes can take some time to take effect. ' +
 									'Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
 								{
 									components: {
