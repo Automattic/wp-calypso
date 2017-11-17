@@ -27,7 +27,12 @@ class EditorRevisionsList extends PureComponent {
 		selectedRevisionId: PropTypes.number,
 	};
 
-	trySelectingTimeout = null;
+	trySelectingInterval = null;
+
+	selectRevision = revisionId => {
+		clearInterval( this.trySelectingInterval );
+		this.props.selectPostRevision( revisionId );
+	};
 
 	trySelectingFirstRevision = () => {
 		const { revisions } = this.props;
@@ -38,17 +43,8 @@ class EditorRevisionsList extends PureComponent {
 		if ( ! firstRevision.id ) {
 			return;
 		}
-		this.props.selectPostRevision( firstRevision.id );
+		this.selectRevision( firstRevision.id );
 	};
-
-	componentWillReceiveProps( { selectedRevisionId } ) {
-		if (
-			! this.trySelectingTimeout &&
-			( ! selectedRevisionId || ! this.props.selectedRevisionId )
-		) {
-			this.trySelectingTimeout = setTimeout( this.trySelectingFirstRevision, 300 );
-		}
-	}
 
 	componentDidMount() {
 		// Make sure that scroll position in the editor is not preserved.
@@ -56,11 +52,17 @@ class EditorRevisionsList extends PureComponent {
 
 		KeyboardShortcuts.on( 'move-selection-up', this.selectNextRevision );
 		KeyboardShortcuts.on( 'move-selection-down', this.selectPreviousRevision );
+
+		if ( ! this.props.selectedRevisionId ) {
+			this.trySelectingInterval = setInterval( this.trySelectingFirstRevision, 500 );
+		}
 	}
 
 	componentWillUnmount() {
 		KeyboardShortcuts.off( 'move-selection-up', this.selectNextRevision );
 		KeyboardShortcuts.off( 'move-selection-down', this.selectPreviousRevision );
+
+		clearInterval( this.trySelectingInterval );
 	}
 
 	componentDidUpdate() {
@@ -95,19 +97,20 @@ class EditorRevisionsList extends PureComponent {
 
 	selectNextRevision = () => {
 		const { nextRevisionId } = this.props;
-		nextRevisionId && this.props.selectPostRevision( nextRevisionId );
+		nextRevisionId && this.selectRevision( nextRevisionId );
 	};
 
 	selectPreviousRevision = () => {
 		const { prevRevisionId } = this.props;
-		prevRevisionId && this.props.selectPostRevision( prevRevisionId );
+		prevRevisionId && this.selectRevision( prevRevisionId );
 	};
 
 	render() {
-		const { revisions, selectedRevisionId, siteId } = this.props;
+		const { postId, revisions, selectedRevisionId, siteId } = this.props;
 		const classes = classNames( 'editor-revisions-list', {
 			'is-loading': isEmpty( revisions ),
 		} );
+
 		return (
 			<div className={ classes }>
 				<EditorRevisionsListHeader numRevisions={ revisions.length } />
@@ -119,7 +122,11 @@ class EditorRevisionsList extends PureComponent {
 							} );
 							return (
 								<li className={ itemClasses } key={ revision.id }>
-									<EditorRevisionsListItem revision={ revision } siteId={ siteId } />
+									<EditorRevisionsListItem
+										postId={ postId }
+										revision={ revision }
+										siteId={ siteId }
+									/>
 								</li>
 							);
 						} ) }
