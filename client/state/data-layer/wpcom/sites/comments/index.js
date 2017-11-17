@@ -88,14 +88,15 @@ const announceStatusChangeFailure = ( { dispatch }, action ) => {
 
 export const requestComment = action => {
 	const { siteId, commentId, query } = action;
-	return http( {
-		method: 'GET',
-		path: `/sites/${ siteId }/comments/${ commentId }`,
-		apiVersion: '1.1',
-		query,
-		onSuccess: action,
-		onFailure: action,
-	} );
+	return http(
+		{
+			method: 'GET',
+			path: `/sites/${ siteId }/comments/${ commentId }`,
+			apiVersion: '1.1',
+			query,
+		},
+		action
+	);
 };
 
 export const receiveCommentSuccess = ( action, response ) => {
@@ -156,7 +157,7 @@ export const addComments = ( { dispatch }, { query: { siteId, status } }, { comm
 		dispatch(
 			receiveComments( {
 				siteId,
-				postId: parseInt( postId, 10 ), // keyBy => object property names are strings
+				postId: +postId, // keyBy => object property names are strings
 				comments: postComments,
 			} )
 		)

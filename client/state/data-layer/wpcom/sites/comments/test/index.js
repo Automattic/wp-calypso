@@ -137,13 +137,14 @@ describe( '#requestComment', () => {
 		const action = requestCommentAction( { siteId, commentId } );
 
 		expect( requestComment( action ) ).eql(
-			http( {
-				method: 'GET',
-				path: `/sites/${ siteId }/comments/${ commentId }`,
-				apiVersion: '1.1',
-				onSuccess: action,
-				onFailure: action,
-			} )
+			http(
+				{
+					method: 'GET',
+					path: `/sites/${ siteId }/comments/${ commentId }`,
+					apiVersion: '1.1',
+				},
+				action
+			)
 		);
 	} );
 } );
