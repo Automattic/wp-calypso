@@ -18,6 +18,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
+import FormattedHeader from 'components/formatted-header';
 import { getProductsList } from 'state/products-list/selectors';
 
 class TransferDomainOptions extends React.PureComponent {
@@ -61,19 +62,28 @@ class TransferDomainOptions extends React.PureComponent {
 		this.toggle( 'dnsImport', event.target.checked );
 	};
 
+	getHeader() {
+		const { translate } = this.props;
+
+		return (
+			<Card compact={ true } className="transfer-domain-step__title">
+				<FormattedHeader
+					headerText={ translate( 'Choose the settings you want to transfer.' ) }
+					subHeaderText={ translate(
+						'Make sure the everything will be configured the way you want it.'
+					) }
+				/>
+			</Card>
+		);
+	}
+
 	render() {
 		const cost = get( this.props.products, 'private_whois.cost_display', null );
 		const { translate } = this.props;
 
-		const headerLabel = translate(
-			"You have a few options for how to set up your domain once it's transferred. " +
-				'Review these options and choose the ones that apply to ensure that everything is ' +
-				'configured the way you want it.'
-		);
-
 		return (
 			<div className="transfer-domain-step__options">
-				<Card compact={ true }>{ headerLabel }</Card>
+				{ this.getHeader() }
 				<Card>
 					<FormFieldset>
 						<FormLabel>
@@ -143,7 +153,11 @@ class TransferDomainOptions extends React.PureComponent {
 
 					<div className="transfer-domain-step__continue">
 						<div />
-						<Button className="transfer-domain-step__in-card" onClick={ this.onClick }>
+						<Button
+							className="transfer-domain-step__in-card"
+							onClick={ this.onClick }
+							primary={ true }
+						>
 							{ translate( 'Continue' ) }
 						</Button>
 					</div>

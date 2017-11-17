@@ -30,6 +30,12 @@
 	}
 }
 
+.transfer-domain-step__title {
+	.formatted-header {
+		margin: 10px 0;
+	}
+}
+
 .transfer-domain-step__domain-description {
 	font-size: 16px;
 	margin-bottom: 20px;
@@ -120,7 +126,6 @@
 		p {
 			color: darken( $gray, 10% );
 			font-size: 14px;
-			max-width: 500px;
 		}
 	}
 
@@ -140,6 +145,7 @@
 .transfer-domain-step__options {
 	label {
 		color: darken( $gray, 20% );
+		font-size: 15px;
 	}
 
 	legend {

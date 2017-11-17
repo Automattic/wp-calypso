@@ -16,6 +16,7 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import Card from 'components/card';
+import FormattedHeader from 'components/formatted-header';
 import { checkInboundTransferStatus } from 'lib/domains';
 import support from 'lib/url/support';
 
@@ -102,9 +103,14 @@ class TransferDomainPrecheck extends React.PureComponent {
 			: translate(
 					"You'll need to unlock the domain at your current registrar before we can move it."
 				);
-		const explanation = translate(
-			'Your current domain provider has locked the domain to prevent unauthorized transfers.'
-		);
+		const explanation = unlocked
+			? translate(
+					'Domain providers place a lock on domains to prevent unauthorized transfers. Yours is ' +
+						"unlocked and ready to transfer. We'll automatically lock it after the transfer completes."
+				)
+			: translate(
+					'Your current domain provider has locked the domain to prevent unauthorized transfers.'
+				);
 
 		const button = unlocked ? (
 			<div className="transfer-domain-step__unlocked">
@@ -170,16 +176,30 @@ class TransferDomainPrecheck extends React.PureComponent {
 		return this.getSection( heading, message, explanation, 3 );
 	}
 
+	getHeader() {
+		const { translate, domain } = this.props;
+
+		return (
+			<Card compact={ true } className="transfer-domain-step__title">
+				<FormattedHeader
+					headerText={ translate( "Let's get {{strong}}%(domain)s{{/strong}} ready to transfer.", {
+						args: { domain },
+						components: { strong: <strong /> },
+					} ) }
+					subHeaderText={ translate(
+						'Log into your current registrar to complete a few preliminary steps.'
+					) }
+				/>
+			</Card>
+		);
+	}
+
 	render() {
 		const { translate } = this.props;
-		const headerLabel = translate(
-			"Let's get your domain ready to transfer. " +
-				'Log into your current registrar to complete a few preliminary steps.'
-		);
 
 		return (
 			<div className="transfer-domain-step__precheck">
-				<Card compact={ true }>{ headerLabel }</Card>
+				{ this.getHeader() }
 				{ this.getStatusMessage() }
 				{ this.getPrivacyMessage() }
 				{ this.getEppMessage() }
