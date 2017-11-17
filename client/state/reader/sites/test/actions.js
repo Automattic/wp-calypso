@@ -15,6 +15,7 @@ import {
 	READER_SITE_REQUEST_FAILURE,
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
+import { fields } from '../fields';
 
 describe( 'actions', () => {
 	describe( 'a valid fetch', () => {
@@ -25,21 +26,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/read/sites/1' )
 				.query( {
-					fields: [
-						'ID',
-						'name',
-						'title',
-						'URL',
-						'icon',
-						'is_jetpack',
-						'description',
-						'is_private',
-						'feed_ID',
-						'feed_URL',
-						'capabilities',
-						'prefer_feed',
-						'options', // have to include this to get options at all
-					].join( ',' ),
+					fields: fields.join( ',' ),
 					options: [ 'is_mapped_domain', 'unmapped_url', 'is_redirect' ].join( ',' ),
 				} )
 				.reply( 200, {
