@@ -20,12 +20,12 @@ function main() {
 		process.stdout.write(
 			[
 				'',
-				'./bin/codemods/run.js codemodName[,additionalCodemods…] target1 [additionalTargets…]',
+				'calypso-codemods codemodName[,additionalCodemods…] target1 [additionalTargets…]',
 				'',
 				'Valid transformation names:',
 				api.getValidCodemodNames().join('\n'),
 				'',
-				'Example: "./bin/codemods/run.js commonjs-imports client/blocks client/devdocs"',
+				'Example: "calypso-codemods commonjs-imports client/blocks client/devdocs"',
 				'',
 			].join('\n')
 		);

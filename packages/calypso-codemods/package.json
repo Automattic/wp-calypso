@@ -1,35 +1,36 @@
 {
-  "name": "calypso-codemods",
-  "version": "0.1.0",
-  "description": "jscodeshift transforms used to upgrade calypso code",
-  "main": "run.js",
-  "scripts": {
-    "test": "jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Automattic/calypso-codemods.git"
-  },
-  "author": "samouri",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Automattic/calypso-codemods/issues"
-  },
-  "homepage": "https://github.com/Automattic/calypso-codemods#readme",
-  "devDependencies": {
-    "jest": "^21.2.1",
-    "prettier": "^1.7.4"
-  },
-  "dependencies": {
-    "5to6-codemod": "^1.7.1",
-    "jscodeshift": "0.3.32",
-    "lodash": "^4.17.4",
-    "react-codemod": "^4.0.0"
-  },
-  "jest": {
-    "setupFiles": [
-      "<rootDir>/setup-tests.js"
-    ],
-    "testRegex": "codemod\\.spec\\.js$"
-  }
+	"name": "calypso-codemods",
+	"version": "0.1.2",
+	"description": "jscodeshift transforms used to upgrade calypso code",
+	"main": "./api.js",
+	"bin": {
+		"calypso-codemods": "./index.js"
+	},
+	"scripts": {
+		"test": "jest"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/calypso-codemods.git"
+	},
+	"author": "samouri",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Automattic/calypso-codemods/issues"
+	},
+	"homepage": "https://github.com/Automattic/calypso-codemods#readme",
+	"devDependencies": {
+		"jest": "^21.2.1",
+		"prettier": "^1.7.4"
+	},
+	"dependencies": {
+		"5to6-codemod": "^1.7.1",
+		"jscodeshift": "0.3.32",
+		"lodash": "^4.17.4",
+		"react-codemod": "^4.0.0"
+	},
+	"jest": {
+		"setupFiles": ["<rootDir>/setup-tests.js"],
+		"testRegex": "codemod\\.spec\\.js$"
+	}
 }
