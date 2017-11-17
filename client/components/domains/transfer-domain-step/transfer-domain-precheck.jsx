@@ -72,10 +72,11 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const { currentStep } = this.state;
 		const sectionClasses = classNames( 'transfer-domain-step__section', {
 			'is-expanded': position === currentStep,
+			'is-complete': position < currentStep,
 		} );
 
 		const sectionIcon =
-			currentStep > position ? <Gridicon icon="checkmark-circle" size={ 24 } /> : position;
+			currentStep > position ? <Gridicon icon="checkmark-circle" size={ 36 } /> : position;
 
 		return (
 			<Card compact>

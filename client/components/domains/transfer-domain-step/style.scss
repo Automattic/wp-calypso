@@ -82,10 +82,6 @@
 	flex-shrink: 0;
 }
 
-.transfer-domain-step__section-heading {
-	font-size: 16px;
-}
-
 .transfer-domain-step__section {
 	align-items: center;
 	display: flex;
@@ -97,6 +93,10 @@
 
 	.transfer-domain-step__section-heading {
 		color: darken( $gray, 20% );
+		align-items: center;
+		display: flex;
+		font-size: 16px;
+		justify-content: space-between;
 	}
 
 	.button {
@@ -110,10 +110,22 @@
 			color: $gray-dark;
 		}
 	}
+
+	&.is-complete {
+		.transfer-domain-step__section-heading-number {
+			background: none;
+			border: none;
+			color: $alert-green;
+
+			.gridicon {
+				margin-left: -4px;
+				margin-top: -4px;
+			}
+		}
+	}
 }
 
 .transfer-domain-step__lock-status {
-	float: right;
 	font-size: 12px;
 
 	svg {
