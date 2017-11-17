@@ -106,7 +106,7 @@ describe( 'getPostRevisionChanges', () => {
 		title: [],
 	};
 
-	test( 'should return an empty array for content, summary, & title if the revision is not found', () => {
+	test( 'should return noChanges if the revision is not found', () => {
 		expect( getPostRevisionChanges( outOfOrderState, 12345678, 10, 14 ) ).to.eql( noChanges );
 	} );
 
