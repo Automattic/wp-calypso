@@ -85,7 +85,7 @@ describe( 'stream selected', () => {
 
 	describe( 'schema', () => {
 		const selectedWithValidation = withSchemaValidation( selected.schema, selected );
-		const validState = deepfreeze( { following: 0, 'feed:123': 42 } );
+		const validState = deepfreeze( { following: 0, 'feed:123': 42, elmo: 'is red' } );
 		const invalidState = deepfreeze( { chickens: Infinity } );
 
 		it( 'should never deserialize', () => {

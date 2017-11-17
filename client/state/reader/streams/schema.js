@@ -3,7 +3,7 @@
 export const itemsSchema = {
 	type: 'object',
 	patternProperties: {
-		'(w|d)+': {
+		'(\\w|\\d)+': {
 			type: 'array',
 		},
 	},
