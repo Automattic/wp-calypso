@@ -22,6 +22,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { createAccount as createAccountAction } from 'state/jetpack-connect/actions';
+import { getAuthorizationData } from 'state/jetpack-connect/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
@@ -29,7 +30,7 @@ const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedOutForm extends Component {
 	static propTypes = {
-		jetpackConnectAuthorize: PropTypes.shape( {
+		authorizationData: PropTypes.shape( {
 			bearerToken: PropTypes.string,
 			isAuthorizing: PropTypes.bool,
 			queryObject: PropTypes.object.isRequired,
@@ -49,7 +50,7 @@ class LoggedOutForm extends Component {
 	}
 
 	getRedirectAfterLoginUrl() {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
+		const { queryObject } = this.props.authorizationData;
 		return addQueryArgs( queryObject, window.location.href );
 	}
 
@@ -63,7 +64,7 @@ class LoggedOutForm extends Component {
 	};
 
 	renderLoginUser() {
-		const { userData, bearerToken, queryObject } = this.props.jetpackConnectAuthorize;
+		const { userData, bearerToken, queryObject } = this.props.authorizationData;
 
 		return (
 			<WpcomLoginForm
@@ -83,7 +84,7 @@ class LoggedOutForm extends Component {
 
 	renderFooterLink() {
 		const redirectTo = this.getRedirectAfterLoginUrl();
-		const emailAddress = this.props.jetpackConnectAuthorize.queryObject.user_email;
+		const emailAddress = this.props.authorizationData.queryObject.user_email;
 
 		return (
 			<LoggedOutFormLinks>
@@ -102,7 +103,7 @@ class LoggedOutForm extends Component {
 	}
 
 	render() {
-		const { isAuthorizing, userData, queryObject } = this.props.jetpackConnectAuthorize;
+		const { isAuthorizing, userData, queryObject } = this.props.authorizationData;
 
 		return (
 			<div>
@@ -126,7 +127,12 @@ class LoggedOutForm extends Component {
 
 export { LoggedOutForm as LoggedOutFormTestComponent };
 
-export default connect( null, {
-	recordTracksEvent: recordTracksEventAction,
-	createAccount: createAccountAction,
-} )( localize( LoggedOutForm ) );
+export default connect(
+	state => ( {
+		authorizationData: getAuthorizationData( state ),
+	} ),
+	{
+		recordTracksEvent: recordTracksEventAction,
+		createAccount: createAccountAction,
+	}
+)( localize( LoggedOutForm ) );

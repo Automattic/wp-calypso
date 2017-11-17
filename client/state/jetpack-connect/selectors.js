@@ -30,7 +30,7 @@ const getAuthorizationData = state => {
 };
 
 const getAuthorizationRemoteQueryData = state => {
-	return get( getAuthorizationData( state ), [ 'queryObject' ] );
+	return get( getAuthorizationData( state ), 'queryObject' );
 };
 
 const getAuthorizationRemoteSite = state => {
