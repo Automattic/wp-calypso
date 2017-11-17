@@ -136,6 +136,7 @@ const AddPackageDialog = props => {
 			<FormSectionHeading>{ heading }</FormSectionHeading>
 			{ showSegmentedControl && (
 				<SegmentedControl
+					primary
 					className="packages__mode-select"
 					initialSelected={ mode }
 					onSelect={ switchMode }
