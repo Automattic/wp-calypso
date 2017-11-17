@@ -6,6 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -140,4 +141,4 @@ const mapDispatch = {
 	setFocused: focus,
 };
 
-export default connect( mapState, mapDispatch )( HappychatPage );
+export default connect( mapState, mapDispatch )( localize( HappychatPage ) );
