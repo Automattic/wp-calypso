@@ -34,7 +34,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 const ThanksModal = createReactClass( {
 	displayName: 'ThanksModal',
-	trackClick: trackClick.bind( null, 'current theme' ),
 
 	propTypes: {
 		// Where is the modal being used?
@@ -60,6 +59,10 @@ const ThanksModal = createReactClass( {
 	onCloseModal() {
 		this.props.clearActivated( this.props.siteId );
 		this.setState( { show: false } );
+	},
+
+	trackClick( eventName, verb ) {
+		trackClick( 'current theme', eventName, verb );
 	},
 
 	visitSite() {
