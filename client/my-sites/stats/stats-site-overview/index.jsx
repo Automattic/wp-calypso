@@ -24,7 +24,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 const StatsSiteOverview = createReactClass( {
 	displayName: 'StatsSiteOverview',
 
-	proptypes: {
+	propTypes: {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		period: PropTypes.string,
