@@ -4,16 +4,21 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { withSchemaValidation } from 'state/utils';
 import {
 	WP_JOB_MANAGER_FETCH_ERROR,
 	WP_JOB_MANAGER_FETCH_SETTINGS,
 	WP_JOB_MANAGER_UPDATE_SETTINGS,
 } from '../../action-types';
-import reducer, { fetching, items } from '../reducer';
+import reducer, { fetching, items as unvalidatedItems } from '../reducer';
+
+const items = withSchemaValidation( unvalidatedItems.schema, unvalidatedItems );
 
 describe( 'reducer', () => {
 	test( 'should initialize to an empty object', () => {
@@ -64,6 +69,36 @@ describe( 'reducer', () => {
 		test( 'should return an empty object if settings are not being updated', () => {
 			const state = items( undefined, { type: '@@UNKNOWN_ACTION', data } );
 
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		test( 'should persist state', () => {
+			const original = deepFreeze( {
+				job_manager_per_page: 20,
+				job_manager_hide_filled_positions: true,
+				job_manager_hide_expired: true,
+			} );
+			const state = items( original, { type: SERIALIZE } );
+			expect( state ).to.deep.equal( original );
+		} );
+
+		test( 'should restore valid persisted state', () => {
+			const original = deepFreeze( {
+				job_manager_per_page: 20,
+				job_manager_hide_filled_positions: true,
+				job_manager_hide_expired: true,
+			} );
+			const state = items( original, { type: DESERIALIZE } );
+			expect( state ).to.deep.equal( original );
+		} );
+
+		test( 'should not restore invalid persisted state', () => {
+			const original = deepFreeze( {
+				job_manager_per_page: 'this should be an integer',
+				job_manager_hide_filled_positions: true,
+				job_manager_hide_expired: true,
+			} );
+			const state = items( original, { type: DESERIALIZE } );
 			expect( state ).to.deep.equal( {} );
 		} );
 	} );
