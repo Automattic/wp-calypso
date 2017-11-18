@@ -32,17 +32,4 @@ if ( needsInstall() ) {
 		process.exit( installResult );
 	}
 	fs.utimesSync( 'node_modules', Date.now(), Date.now() );
-
-	// Cleanup old Githooks (remove in a few months from June 2017)
-	const path = require( 'path' );
-	const rm = file => fs.existsSync( file ) && fs.unlinkSync( file );
-	rm( path.join( '.git', 'hooks', 'pre-push' ) );
-	rm( path.join( '.git', 'hooks', 'pre-commit' ) );
-	rm( path.join( 'bin', 'pre-push' ) );
-	rm( path.join( 'bin', 'pre-commit' ) );
-	process.exit( spawnSync( 'npm', [ 'run', 'install' ], {
-		shell: true,
-		stdio: 'inherit',
-		cwd: path.join( 'node_modules', 'husky' ),
-	} ).status );
 }
