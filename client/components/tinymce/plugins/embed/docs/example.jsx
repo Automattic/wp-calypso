@@ -51,13 +51,6 @@ class EmbedDialogExample extends PureComponent {
 					onUpdate={ this.onUpdate }
 					siteId={ this.props.siteId }
 				/>
-
-				{/*
-				todo this isn't showing a preview at first, but then if you change the url it'll render a preview of the new url
-				need to trigger something so that it shows it when it first gets rendered
-
-				it might also only work well w/ youtube, even though other services work fine in editor. test them here too.
-				*/}
 			</Card>
 		);
 	}
@@ -72,10 +65,10 @@ const connectedEmbedDialogExample = connect( state => {
 connectedEmbedDialogExample.displayName = 'EmbedDialogExample';
 
 // todo
-	// connecting this component feels wrong. it's an example, so shouldn't it instantiate EmbedDialog with renderWithReduxStore
-	// like components/tinymce/plugins/embed/plugin.js does, rather than getting the siteid here?
-	// this is what the simple-payments example does, though.
-	// maybe because inside devdocs we can't use getSelectedSiteId(), we have to use get( getCurrentUser( state ), 'primary_blog' ),
-		// if that's the reason, would it be better to just pass in a hardcoded site ID here, instead of connect()ing this component?
+// connecting this component feels wrong. it's an example, so shouldn't it instantiate EmbedDialog with renderWithReduxStore
+// like components/tinymce/plugins/embed/plugin.js does, rather than getting the siteid here?
+// this is what the simple-payments example does, though.
+// maybe because inside devdocs we can't use getSelectedSiteId(), we have to use get( getCurrentUser( state ), 'primary_blog' ),
+// if that's the reason, would it be better to just pass in a hardcoded site ID here, instead of connect()ing this component?
 
 export default connectedEmbedDialogExample;
