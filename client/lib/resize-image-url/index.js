@@ -79,22 +79,23 @@ export default function resizeImageUrl( imageUrl, resize, height ) {
 
 	parsedUrl.query = omit( parsedUrl.query, SIZE_PARAMS );
 
+	const service = findKey(
+		SERVICE_HOSTNAME_PATTERNS,
+		String.prototype.match.bind( parsedUrl.hostname )
+	);
+
 	if ( 'number' === typeof resize ) {
-		const service = findKey(
-			SERVICE_HOSTNAME_PATTERNS,
-			String.prototype.match.bind( parsedUrl.hostname )
-		);
 		if ( 'gravatar' === service ) {
 			resize = { s: resize };
 		} else {
 			resize = height > 0 ? { fit: [ resize, height ].join() } : { w: resize };
-
-			// External URLs are made "safe" (i.e. passed through Photon), so
-			// recurse with an assumed set of query arguments for Photon
-			if ( ! service ) {
-				return resizeImageUrl( safeImageUrl( imageUrl ), resize );
-			}
 		}
+	}
+
+	// External URLs are made "safe" (i.e. passed through Photon), so
+	// recurse with an assumed set of query arguments for Photon
+	if ( ! service ) {
+		return resizeImageUrl( safeImageUrl( imageUrl ), resize );
 	}
 
 	// Map sizing parameters, multiplying their values by the scale factor
