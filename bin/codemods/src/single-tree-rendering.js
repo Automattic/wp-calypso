@@ -380,6 +380,24 @@ export default function transformer( file, api ) {
 		}
 	}
 
+	// Replace `navigation` with `makeNavigation` in:
+	// `import { navigation } from 'my-sites/controller'`
+	const importMySitesController = root
+		.find( j.ImportDeclaration, {
+			source: {
+				value: 'my-sites/controller',
+			},
+		} )
+		.filter( p => p.value.specifiers.some( n => n.local.name === 'navigation' ) )
+		.replaceWith( p => {
+			p.value.specifiers = p.value.specifiers.map( specifier => {
+				return specifier.local.name === 'navigation'
+					? j.importSpecifier( j.identifier( 'makeNavigation' ) )
+					: specifier;
+			} );
+			return p.value;
+		} );
+
 	// Add makeLayout and clientRender middlewares to route definitions
 	const routeDefs = root
 		.find( j.CallExpression, {
@@ -389,10 +407,11 @@ export default function transformer( file, api ) {
 		} )
 		.filter( p => p.value.arguments.length > 1 && p.value.arguments[ 0 ].value !== '*' )
 		.forEach( p => {
-			// Replace `navigation` with `makeNavigation` for files under `/client/my-sites/*`
-			if ( file.path.startsWith( 'client/my-sites/' ) ) {
-				p.value.arguments = p.value.arguments.map( param => {
-					return param.name === 'navigation' ? j.identifier( 'makeNavigation' ) : param;
+			// Replace `navigation` with `makeNavigation` for files which had
+			// `import { navigation } from 'my-sites/controller'`
+			if ( importMySitesController.size() ) {
+				p.value.arguments = p.value.arguments.map( argument => {
+					return argument.name === 'navigation' ? j.identifier( 'makeNavigation' ) : argument;
 				} );
 			}
 
@@ -401,26 +420,6 @@ export default function transformer( file, api ) {
 		} );
 
 	if ( routeDefs.size() ) {
-		// Replace `navigation` with `makeNavigation` in:
-		// `import { navigation } from 'my-sites/controller'`
-		// ...at files under `/client/my-sites/*`.
-		if ( file.path.startsWith( 'client/my-sites/' ) ) {
-			root
-				.find( j.ImportDeclaration, {
-					source: {
-						value: 'my-sites/controller',
-					},
-				} )
-				.replaceWith( p => {
-					p.value.specifiers = p.value.specifiers.map( identifier => {
-						return identifier.local.name === 'navigation'
-							? j.importSpecifier( j.identifier( 'makeNavigation' ) )
-							: identifier;
-					} );
-					return p.value;
-				} );
-		}
-
 		root
 			.find( j.ImportDeclaration )
 			.at( -1 )
