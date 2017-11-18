@@ -17,6 +17,7 @@ import sites from './sites/reducer';
 import tags from './tags/reducer';
 import teams from './teams/reducer';
 import thumbnails from './thumbnails/reducer';
+import watermarks from './watermarks/reducer';
 
 export default combineReducers( {
 	conversations,
@@ -32,4 +33,5 @@ export default combineReducers( {
 	tags,
 	teams,
 	thumbnails,
+	watermarks,
 } );
