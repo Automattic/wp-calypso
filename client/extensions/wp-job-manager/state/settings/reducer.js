@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { combineReducers, keyedReducer } from 'state/utils';
@@ -24,16 +19,19 @@ import {
  * @param  {Object}  action Action object
  * @return {Object}  Updated fetching state
  */
-export const fetching = ( state = false, { type } ) =>
-	get(
-		{
-			[ WP_JOB_MANAGER_FETCH_SETTINGS ]: true,
-			[ WP_JOB_MANAGER_FETCH_ERROR ]: false,
-			[ WP_JOB_MANAGER_UPDATE_SETTINGS ]: false,
-		},
-		type,
-		state
-	);
+export const fetching = ( state = false, { type } ) => {
+	switch ( type ) {
+		case WP_JOB_MANAGER_FETCH_SETTINGS:
+			return true;
+
+		case WP_JOB_MANAGER_FETCH_ERROR:
+		case WP_JOB_MANAGER_UPDATE_SETTINGS:
+			return false;
+
+		default:
+			return state;
+	}
+};
 
 /**
  * Tracks the settings for a particular site.

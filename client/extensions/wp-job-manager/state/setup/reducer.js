@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { combineReducers, keyedReducer } from 'state/utils';
@@ -26,16 +21,19 @@ import {
  * @param  {Object}  action Action object
  * @return {Object}  Updated creating state
  */
-export const creating = ( state = false, { type } ) =>
-	get(
-		{
-			[ WP_JOB_MANAGER_CREATE_PAGES ]: true,
-			[ WP_JOB_MANAGER_CREATE_PAGES_ERROR ]: false,
-			[ WP_JOB_MANAGER_WIZARD_NEXT_STEP ]: false,
-		},
-		type,
-		state
-	);
+export const creating = ( state = false, { type } ) => {
+	switch ( type ) {
+		case WP_JOB_MANAGER_CREATE_PAGES:
+			return true;
+
+		case WP_JOB_MANAGER_CREATE_PAGES_ERROR:
+		case WP_JOB_MANAGER_WIZARD_NEXT_STEP:
+			return false;
+
+		default:
+			return state;
+	}
+};
 
 /**
  * Returns the updated fetching state after an action has been dispatched.
@@ -45,16 +43,19 @@ export const creating = ( state = false, { type } ) =>
  * @param  {Object}  action Action object
  * @return {Object}  Updated fetching state
  */
-export const fetching = ( state = false, { type } ) =>
-	get(
-		{
-			[ WP_JOB_MANAGER_FETCH_SETUP_STATUS ]: true,
-			[ WP_JOB_MANAGER_FETCH_SETUP_STATUS_ERROR ]: false,
-			[ WP_JOB_MANAGER_UPDATE_SETUP_STATUS ]: false,
-		},
-		type,
-		state
-	);
+export const fetching = ( state = false, { type } ) => {
+	switch ( type ) {
+		case WP_JOB_MANAGER_FETCH_SETUP_STATUS:
+			return true;
+
+		case WP_JOB_MANAGER_FETCH_SETUP_STATUS_ERROR:
+		case WP_JOB_MANAGER_UPDATE_SETUP_STATUS:
+			return false;
+
+		default:
+			return state;
+	}
+};
 
 /**
  * Tracks whether or not to move to the next step in the wizard.
