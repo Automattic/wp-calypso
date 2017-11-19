@@ -1,0 +1,13 @@
+exports[`test basic.js 0`] = `
+"/* @format */
+import { map, pick, zip } from \"lodash\";
+
+"
+`;
+
+exports[`test comments-in-between.js 0`] = `
+"// 1 - zippy
+import { map, pick, zip } from \"lodash\";
+
+"
+`;
