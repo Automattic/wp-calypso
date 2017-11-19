@@ -136,7 +136,7 @@ export default function transformer(file, api) {
 			root
 				.find(j.ImportDeclaration)
 				.at(0)
-				.insertAfter("import { localize } from 'i18n-calypso';");
+				.insertAfter('import { localize } from "i18n-calypso";');
 		}
 	}
 
