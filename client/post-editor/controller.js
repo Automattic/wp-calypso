@@ -239,7 +239,7 @@ export default {
 				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			} else if ( postID ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				actions.startEditingExisting( siteId, postID, site );
+				actions.startEditingExisting( site, postID );
 				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
 			} else {
 				const postOptions = { type: postType };
@@ -255,7 +255,7 @@ export default {
 				}
 
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				actions.startEditingNew( siteId, postOptions, site );
+				actions.startEditingNew( site, postOptions );
 				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			}
 		}

@@ -98,17 +98,16 @@ PostActions = {
 	/**
 	 * Start keeping track of edits to a new post
 	 *
-	 * @param {Number} siteId  Site ID
-	 * @param {Object} options Edit options
 	 * @param {Object} site    Site object
+	 * @param {Object} options Edit options
 	 */
-	startEditingNew: function( siteId, options, site ) {
+	startEditingNew: function( site, options ) {
 		var args;
 		options = options || {};
 
 		args = {
 			type: 'DRAFT_NEW_POST',
-			siteId: siteId,
+			siteId: site.ID,
 			postType: options.type || 'post',
 			title: options.title,
 			content: options.content,
@@ -121,29 +120,28 @@ PostActions = {
 	/**
 	 * Load an existing post and keep track of edits to it
 	 *
-	 * @param {Number} siteId Site ID to load post from
-	 * @param {Number} postId Post ID to load
 	 * @param {Object} site   Site object
+	 * @param {Number} postId Post ID to load
 	 */
-	startEditingExisting: function( siteId, postId, site ) {
+	startEditingExisting: function( site, postId ) {
 		var currentPost = PostEditStore.get(),
 			postHandle;
 
-		if ( ! siteId ) {
+		if ( ! site || ! site.ID ) {
 			return;
 		}
 
-		if ( currentPost && currentPost.site_ID === siteId && currentPost.ID === postId ) {
+		if ( currentPost && currentPost.site_ID === site.ID && currentPost.ID === postId ) {
 			return; // already editing same post
 		}
 
 		Dispatcher.handleViewAction( {
 			type: 'START_EDITING_POST',
-			siteId: siteId,
+			siteId: site.ID,
 			postId: postId,
 		} );
 
-		postHandle = wpcom.site( siteId ).post( postId );
+		postHandle = wpcom.site( site.ID ).post( postId );
 
 		postHandle.get( { context: 'edit', meta: 'autosave' }, function( error, data ) {
 			Dispatcher.handleServerAction( {
@@ -164,7 +162,7 @@ PostActions = {
 		} );
 	},
 
-	autosave: function( callback, site ) {
+	autosave: function( site, callback ) {
 		var post = PostEditStore.get(),
 			savedPost = PostEditStore.getSavedPost(),
 			siteHandle = wpcom.undocumented().site( post.site_ID );
@@ -211,7 +209,7 @@ PostActions = {
 				}
 			);
 		} else {
-			PostActions.saveEdited( null, null, callback, { recordSaveEvent: false }, site );
+			PostActions.saveEdited( site, null, null, callback, { recordSaveEvent: false } );
 		}
 	},
 
@@ -294,13 +292,13 @@ PostActions = {
 	/**
 	 * Calls out to API to save a Post object
 	 *
+	 * @param {Object} site Site object
 	 * @param {object} attributes post attributes to change before saving
 	 * @param {object} context additional properties for recording the save event
 	 * @param {function} callback receives ( err, post ) arguments
 	 * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
-	 * @param {Object} site Site object
 	 */
-	saveEdited: function( attributes, context, callback, options, site ) {
+	saveEdited: function( site, attributes, context, callback, options ) {
 		var post, postHandle, query, changedAttributes, rawContent, mode, isNew;
 
 		Dispatcher.handleViewAction( {
@@ -403,29 +401,30 @@ PostActions = {
 	/**
 	 * Calls out to API to update Post object with any changed attributes
 	 *
+	 * @param {Object} site Site object
 	 * @param {object} post to be changed
 	 * @param {object} attributes only send the attributes to be changed
 	 * @param {function} callback callback receives ( err, post ) arguments
-	 * @param {Object} site Site object
+
 	 */
-	update: function( post, attributes, callback, site ) {
+	update: function( site, post, attributes, callback ) {
 		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
 
-		postHandle.update( attributes, PostActions.receiveUpdate.bind( null, callback, site ) );
+		postHandle.update( attributes, PostActions.receiveUpdate.bind( site, null, callback ) );
 	},
 
 	/**
 	 * Sends `delete` request to the API. The first request
 	 * updates status to `trash`, the second request deletes the post.
 	 *
+	 * @param {Object} site Site object
 	 * @param {object} post to be trashed
 	 * @param {function} callback that receives ( err, post ) arguments
-	 * @param {Object} site Site object
 	 */
-	trash: function( post, callback, site ) {
+	trash: function( site, post, callback ) {
 		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
 
-		postHandle.delete( PostActions.receiveUpdate.bind( null, callback, site ) );
+		postHandle.delete( PostActions.receiveUpdate.bind( site, null, callback ) );
 	},
 
 	/**
@@ -435,10 +434,10 @@ PostActions = {
 	 * @param {function} callback that receives ( err, post ) arguments
 	 * @param {Object} site Site object
 	 */
-	restore: function( post, callback, site ) {
+	restore: function( site, post, callback ) {
 		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
 
-		postHandle.restore( PostActions.receiveUpdate.bind( null, callback, site ) );
+		postHandle.restore( PostActions.receiveUpdate.bind( site, null, callback ) );
 	},
 
 	queryPosts: function( options, postListStoreId = 'default' ) {
@@ -531,7 +530,7 @@ PostActions = {
 		} );
 	},
 
-	receiveUpdate: function( callback, site, error, data ) {
+	receiveUpdate: function( site, callback, error, data ) {
 		var original;
 
 		if ( ! error ) {

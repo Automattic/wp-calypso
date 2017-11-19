@@ -42,17 +42,13 @@ class EditorDeletePost extends React.Component {
 		this.setState( { isTrashing: true } );
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.trash(
-			this.props.post,
-			error => {
-				this.setState( { isTrashing: false } );
+		actions.trash( this.props.site, this.props.post, error => {
+			this.setState( { isTrashing: false } );
 
-				if ( this.props.onTrashingPost ) {
-					this.props.onTrashingPost( error );
-				}
-			},
-			this.props.site
-		);
+			if ( this.props.onTrashingPost ) {
+				this.props.onTrashingPost( error );
+			}
+		} );
 	};
 
 	onSendToTrash = () => {

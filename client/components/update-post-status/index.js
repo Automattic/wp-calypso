@@ -148,7 +148,7 @@ const updatePostStatus = WrappedComponent =>
 							updated: true,
 						} );
 						previousStatus = post.status;
-						PostActions.trash( post, setNewStatus, site );
+						PostActions.trash( site, post, setNewStatus );
 						return;
 
 					case 'restore':
@@ -158,7 +158,7 @@ const updatePostStatus = WrappedComponent =>
 							updated: true,
 						} );
 						previousStatus = 'trash';
-						PostActions.restore( post, setNewStatus, site );
+						PostActions.restore( site, post, setNewStatus );
 						return;
 
 					default:
@@ -167,17 +167,12 @@ const updatePostStatus = WrappedComponent =>
 							updatedStatus: 'updating',
 							updated: true,
 						} );
-						PostActions.update(
-							post,
-							{ status },
-							( error, resultPost ) => {
-								if ( ! setNewStatus( error, resultPost ) ) {
-									return;
-								}
-								setTimeout( this.resetState, RESET_TIMEOUT_MS );
-							},
-							site
-						);
+						PostActions.update( site, post, { status }, ( error, resultPost ) => {
+							if ( ! setNewStatus( error, resultPost ) ) {
+								return;
+							}
+							setTimeout( this.resetState, RESET_TIMEOUT_MS );
+						} );
 				}
 			};
 
