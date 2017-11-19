@@ -1,0 +1,15 @@
+exports[`test basic.js 0`] = `
+"import React from \"react\";
+
+import { localize } from \'i18n-calypso\';
+
+const PrettyComponent = React.createClass({
+	render() {
+		this.props.translate(\"codemods are fun\");
+	},
+});
+
+export default localize(PrettyComponent);
+
+"
+`;
