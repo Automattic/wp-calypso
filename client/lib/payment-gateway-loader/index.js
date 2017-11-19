@@ -33,33 +33,31 @@ function PaymentGatewayLoader() {
  * @param {string} gatewayUrl - the URL to fetch the script
  * @param {string} gatewayNamespace - the global namespace of the script
  * @param {boolean} loadJquery - is jQuery required
- * @param {function} callback - the callback function
- * @returns {void}
+ * @returns {Promise} promise
  */
 PaymentGatewayLoader.prototype.ready = function(
 	gatewayUrl,
 	gatewayNamespace,
-	loadJquery = false,
-	callback
+	loadJquery = false
 ) {
-	if ( window[ gatewayNamespace ] ) {
-		return callback( null, window[ gatewayNamespace ] );
-	}
+	return new Promise( ( resolve, reject ) => {
+		if ( window[ gatewayNamespace ] ) {
+			resolve( window[ gatewayNamespace ] );
+			return;
+		}
 
-	const loaderFunction = loadJquery ? loadjQueryDependentScript : loadScript;
+		const loaderFunction = loadJquery ? loadjQueryDependentScript : loadScript;
 
-	loaderFunction(
-		gatewayUrl,
-		function( error ) {
+		loaderFunction( gatewayUrl, function( error ) {
 			if ( error ) {
-				callback( error );
+				reject( error );
 				return;
 			}
 
 			debug( 'Payment gateway ' + gatewayNamespace + ' loaded for the first time' );
-			callback( null, window[ gatewayNamespace ] );
-		}.bind( this )
-	);
+			resolve( window[ gatewayNamespace ] );
+		} );
+	} );
 };
 
 /**

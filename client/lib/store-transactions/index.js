@@ -212,24 +212,20 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 				return;
 			}
 
-			paymentGatewayLoader.ready( configuration.js_url, 'Paygate', true, function(
-				loaderError,
-				Paygate
-			) {
-				var parameters;
-				if ( loaderError ) {
+			paymentGatewayLoader
+				.ready( configuration.js_url, 'Paygate', true )
+				.then( Paygate => {
+					Paygate.setProcessor( configuration.processor );
+					Paygate.setApiUrl( configuration.api_url );
+					Paygate.setPublicKey( configuration.public_key );
+					Paygate.setEnvironment( configuration.environment );
+
+					const parameters = getPaygateParameters( cardDetails );
+					Paygate.createToken( parameters, onSuccess, onFailure );
+				} )
+				.catch( loaderError => {
 					callback( loaderError );
-					return;
-				}
-
-				Paygate.setProcessor( configuration.processor );
-				Paygate.setApiUrl( configuration.api_url );
-				Paygate.setPublicKey( configuration.public_key );
-				Paygate.setEnvironment( configuration.environment );
-
-				parameters = getPaygateParameters( cardDetails );
-				Paygate.createToken( parameters, onSuccess, onFailure );
-			} );
+				} );
 		}
 	);
 
