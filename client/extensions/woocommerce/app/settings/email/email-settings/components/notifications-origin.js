@@ -15,10 +15,10 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 const NotificationsOrigin = ( { item, recipient, onChange } ) => (
 	<FormFieldset>
 		<FormLabel>
-			{ item.field }
+			{ item.title }
 		</FormLabel>
 		<FormTextInput
-			name={ item.name }
+			name={ item.field }
 			onChange={ onChange }
 			value={ recipient }
 		/>
@@ -29,10 +29,8 @@ const NotificationsOrigin = ( { item, recipient, onChange } ) => (
 );
 
 NotificationsOrigin.propTypes = {
-	checked: PropTypes.bool,
 	recipient: PropTypes.string,
 	item: PropTypes.object,
-	onToggle: PropTypes.func.isRequired,
 	onChange: PropTypes.func.isRequired,
 };
 

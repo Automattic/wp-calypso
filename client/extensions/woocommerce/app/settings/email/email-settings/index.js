@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { bindActionCreators } from 'redux';
-import { localize } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -28,32 +28,31 @@ import NotificationsOrigin from './components/notifications-origin';
 const fromName =
 	{
 		field: 'woocommerce_email_from_address',
-		title: '',
-		subtitle: '',
+		title: translate( 'From name' ),
+		subtitle: translate( 'Emails will appear in recipients inpboxses \'from\' this name.' ),
 	};
-
 const fromAddress =
 	{
 		field: 'woocommerce_email_from_name',
-		title: '',
-		subtitle: '',
+		title: translate( 'From address' ),
+		subtitle: translate( 'If recipients reply to store emails they will be sent to this address.' ),
 	};
 
 const internalNotifications = [
 	{
 		field: 'email_new_order',
-		title: '',
-		subtitle: '',
+		title: translate( 'New order' ),
+		subtitle: translate( 'Sent when a new order is received.' ),
 	},
 	{
 		field: 'email_cancelled_order',
-		title: '',
-		subtitle: '',
+		title: translate( 'Cancelled order' ),
+		subtitle: translate( 'Sent when a new order is marked \'cancelled\'.' ),
 	},
 	{
 		field: 'email_failed_order',
-		title: '',
-		subtitle: '',
+		title: translate( 'Failed order' ),
+		subtitle: translate( 'Sent when a new order is marked \'failed\'.' ),
 	},
 ];
 
@@ -61,28 +60,28 @@ const internalNotifications = [
 const customerNotifications = [
 	{
 		field: 'email_customer_on_hold_order',
-		title: '',
-		subtitle: '',
+		title: translate( 'Order pending payment' ),
+		subtitle: translate( 'Sent when an order is marked \'payment pending\'.' ),
 	},
 	{
 		field: 'email_customer_processing_order',
-		title: '',
-		subtitle: '',
+		title: translate( 'Processing order' ),
+		subtitle: translate( 'Sent when an order is marked \'payment processing\'.' ),
 	},
 	{
 		field: 'email_customer_completed_order',
-		title: '',
-		subtitle: '',
+		title: translate( 'Completed order' ),
+		subtitle: translate( 'Sent when an order is marked \'paid in full\'.' ),
 	},
 	{
 		field: 'email_customer_refunded_order',
-		title: '',
-		subtitle: '',
+		title: translate( 'Refunded order' ),
+		subtitle: translate( 'Sent when an order is marked \'payment refunded\'.' ),
 	},
 	{
 		field: 'email_customer_new_account',
-		title: '',
-		subtitle: '',
+		title: translate( 'Refunded order' ),
+		subtitle: translate( 'Sent when an order is marked \'payment refunded\'.' ),
 	},
 ];
 >>>>>>> Add first pass of email settings UI
@@ -147,7 +146,12 @@ class Settings extends React.Component {
 				</div>
 				<div className="email-settings__internal-notifications">
 					<Card className="email-settings__internal-notifications-title">
-						Internal notifications
+						<div className="email-settings__section-title-text">
+							{ translate( 'Internal notifications' ) }
+						</div>
+						<div className="email-settings__section-subtitle-text">
+							{ translate( 'Email notifications sent to store staff.' ) }
+						</div>
 					</Card>
 					<Card className="email-settings__internal-notifications-legend">
 						<span>
@@ -182,7 +186,12 @@ class Settings extends React.Component {
 				</div>
 				<div className="email-settings__customer-notifications">
 					<Card className="email-settings__customer-notifications-title">
-						Customer notifications
+					<div className="email-settings__section-title-text">
+							{ translate( 'Customer notifications' ) }
+						</div>
+						<div className="email-settings__section-subtitle-text">
+							{ translate( 'Email notifications sent to your customers.' ) }
+						</div>
 					</Card>
 					<Card className="email-settings__customer-notifications-legend">
 						<span>
@@ -241,4 +250,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( Settings ) );
+export default connect( mapStateToProps, mapDispatchToProps )( Settings );

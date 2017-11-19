@@ -8,30 +8,34 @@ import React from 'react';
  * Internal dependencies
  */
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 const InternalNotification = ( { item, recipient, checked, onToggle, onChange } ) => (
-	<FormFieldset>
-		<FormLabel>
-			{ item.field }
-		</FormLabel>
-		<FormSettingExplanation>
-			{ item.subtitle }
-		</FormSettingExplanation>
+	<div className="components__notification-component">
+		<span className="components__notification-component-title" >
+			<FormLabel>
+				{ item.title }
+			</FormLabel>
+			<FormSettingExplanation>
+				{ item.subtitle }
+			</FormSettingExplanation>
+		</span>
 		<FormTextInput
-			name={ item.name }
+			className="components__notification-component-input"
+			name={ item.field }
 			onChange={ onChange }
 			value={ recipient }
 		/>
-		<CompactFormToggle
-			checked={ checked }
-			onChange={ onToggle }
-			id={ item.field }
-		/>
-	</FormFieldset>
+		<span className="components__notification-component-toggle">
+			<CompactFormToggle
+				checked={ checked }
+				onChange={ onToggle }
+				id={ item.field }
+			/>
+		</span>
+	</div>
 );
 
 InternalNotification.propTypes = {
