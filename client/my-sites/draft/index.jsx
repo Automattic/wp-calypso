@@ -89,7 +89,7 @@ class Draft extends Component {
 		}.bind( this );
 
 		if ( utils.userCan( 'delete_post', this.props.post ) ) {
-			actions.trash( this.props.post, updateStatus, this.props.site );
+			actions.trash( this.props.site, this.props.post, updateStatus );
 		}
 	};
 
@@ -115,7 +115,7 @@ class Draft extends Component {
 		}.bind( this );
 
 		if ( utils.userCan( 'delete_post', this.props.post ) ) {
-			actions.restore( this.props.post, updateStatus, this.props.site );
+			actions.restore( this.props.site, this.props.post, updateStatus );
 		}
 	};
 

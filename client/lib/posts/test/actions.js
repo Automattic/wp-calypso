@@ -181,7 +181,7 @@ describe( 'actions', () => {
 			const spy = sandbox.spy();
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( false );
 
-			PostActions.saveEdited( null, {}, spy, sampleSite );
+			PostActions.saveEdited( sampleSite, null, {}, spy );
 
 			defer( () => {
 				expect( spy ).to.have.been.calledOnce;
@@ -197,7 +197,7 @@ describe( 'actions', () => {
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( true );
 			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( {} );
 
-			PostActions.saveEdited( null, {}, spy, sampleSite );
+			PostActions.saveEdited( sampleSite, null, {}, spy );
 
 			defer( () => {
 				expect( spy ).to.have.been.calledOnce;
@@ -229,30 +229,25 @@ describe( 'actions', () => {
 			};
 			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( changedAttributes );
 
-			PostActions.saveEdited(
-				null,
-				{},
-				( error, data ) => {
-					const normalizedAttributes = {
-						ID: 777,
-						site_ID: 123,
-						author: 3,
-						title: 'OMG Unicorns',
-						terms: {},
-					};
+			PostActions.saveEdited( sampleSite, null, {}, ( error, data ) => {
+				const normalizedAttributes = {
+					ID: 777,
+					site_ID: 123,
+					author: 3,
+					title: 'OMG Unicorns',
+					terms: {},
+				};
 
-					expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
-					expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
-						error: null,
-						post: normalizedAttributes,
-						type: 'RECEIVE_POST_BEING_EDITED',
-					} );
-					expect( error ).to.be.null;
-					expect( data ).to.eql( normalizedAttributes );
-					done();
-				},
-				sampleSite
-			);
+				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
+				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+					error: null,
+					post: normalizedAttributes,
+					type: 'RECEIVE_POST_BEING_EDITED',
+				} );
+				expect( error ).to.be.null;
+				expect( data ).to.eql( normalizedAttributes );
+				done();
+			} );
 		} );
 	} );
 } );
