@@ -11,13 +11,19 @@
 		margin-left: 15px;
 	}
 
-	.country {
-		label {
-			display: none;
-		}
+	.credit-card-form-fields__state-field {
+		flex-basis: calc( 100% );
 	}
 
-	@include breakpoint( ">480px" ) {
+	.form__hidden-input a {
+		display: block;
+		font-size:  12px;
+		margin-top: -10px;
+		margin-left: 15px;
+		margin-bottom: 15px;
+	}
+
+	@include breakpoint( '>480px' ) {
 		.cvv,
 		.expiration-date {
 			flex-basis: calc( 50% - 15px );
@@ -29,6 +35,30 @@
 
 		.postal-code {
 			flex-basis: 8em;
+		}
+
+		&.ebanx-details-required {
+
+			.address-2,
+			.country,
+			.city {
+				flex-basis: calc( 100% - 15px );
+			}
+
+			.street-number {
+				flex-basis: calc( 33% - 15px);
+			}
+
+			.address-1 {
+				flex-basis: calc( 66% - 15px);
+			}
+
+			.document,
+			.phone,
+			.credit-card-form-fields__state-field,
+			.postal-code {
+				flex-basis: calc( 50% - 15px );
+			}
 		}
 	}
 }
@@ -42,19 +72,25 @@
 		width: 100%;
 	}
 
-	input[ disabled ] {
+	input[disabled] {
 		cursor: not-allowed;
 	}
-}
 
-.credit-card-form-fields__label {
 	label {
 		color: darken( $gray, 10% );
-		display: none;
 		font-size: 11px;
 		font-weight: bold;
 		position: absolute;
-		left: 13px;
-		top: 12px;
+		left: -1000px;
+		top: -1000px;
+		margin: 0;
 	}
+}
+
+.credit-card-form-fields__info-text {
+	margin-left: 15px;
+	color: lighten( $gray, 10% );
+	display: block;
+	font-size: 12px;
+	font-style: italic;
 }

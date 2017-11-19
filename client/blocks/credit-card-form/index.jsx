@@ -48,7 +48,22 @@ const CreditCardForm = createReactClass( {
 	},
 
 	_mounted: false,
-	fieldNames: [ 'name', 'number', 'cvv', 'expirationDate', 'country', 'postalCode' ],
+	fieldNames: [
+		'name',
+		'number',
+		'cvv',
+		'expirationDate',
+		'country',
+		'postalCode',
+		'streetNumber',
+		'address1',
+		'address2',
+		'phoneNumber',
+		'streetNumber',
+		'city',
+		'state',
+		'document',
+	],
 
 	componentWillMount() {
 		this._mounted = true;
@@ -217,6 +232,13 @@ const CreditCardForm = createReactClass( {
 			month: cardDetails[ 'expiration-date' ].split( '/' )[ 0 ],
 			year: cardDetails[ 'expiration-date' ].split( '/' )[ 1 ],
 			name: cardDetails.name,
+			document: cardDetails.document,
+			street_number: cardDetails[ 'street-number' ],
+			address_1: cardDetails[ 'address-1' ],
+			address_2: cardDetails[ 'address-2' ],
+			city: cardDetails.city,
+			state: cardDetails.state,
+			phone_number: cardDetails[ 'phone-number' ],
 			cardToken,
 		};
 	},
