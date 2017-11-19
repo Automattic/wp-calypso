@@ -19,29 +19,27 @@
  * @returns {string}
  */
 
-const config = require("./config");
-
 export default function transformer(file, api) {
-  const j = api.jscodeshift;
+	const j = api.jscodeshift;
 
-  return j(file.source)
-    .find(j.ImportDeclaration)
-    .filter(dec => dec.value.source.value.startsWith("lodash/"))
-    .replaceWith(node => {
-      return Object.assign(
-        j.importDeclaration(
-          [
-            j.importSpecifier(
-              j.identifier(node.value.source.value.replace("lodash/", "")),
-              j.identifier(node.value.specifiers[0].local.name)
-            )
-          ],
-          j.literal("lodash")
-        ),
-        {
-          comments: node.value.comments
-        }
-      );
-    })
-    .toSource(config.recastOptions);
+	return j(file.source)
+		.find(j.ImportDeclaration)
+		.filter(dec => dec.value.source.value.startsWith("lodash/"))
+		.replaceWith(node => {
+			return Object.assign(
+				j.importDeclaration(
+					[
+						j.importSpecifier(
+							j.identifier(node.value.source.value.replace("lodash/", "")),
+							j.identifier(node.value.specifiers[0].local.name)
+						),
+					],
+					j.literal("lodash")
+				),
+				{
+					comments: node.value.comments,
+				}
+			);
+		})
+		.toSource();
 }

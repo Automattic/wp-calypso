@@ -4,21 +4,21 @@
  *
  * It is smart enough to retain whether or not a docblock should keep a prettier/formatter pragma
  */
-const fs = require('fs');
-const path = require('path');
-const _ = require('lodash');
-const config = require(path.join(__dirname, '../config'));
+const fs = require("fs");
+const path = require("path");
+const _ = require("lodash");
+const config = require(path.join(__dirname, "../config"));
 
 function findPkgJson(target) {
 	let root = path.dirname(target);
-	while (root !== '/') {
-		const filepath = path.join(root, 'package.json');
+	while (root !== "/") {
+		const filepath = path.join(root, "package.json");
 		if (fs.existsSync(filepath)) {
-			return JSON.parse(fs.readFileSync(filepath, 'utf8'));
+			return JSON.parse(fs.readFileSync(filepath, "utf8"));
 		}
-		root = path.join(root, '../');
+		root = path.join(root, "../");
 	}
-	throw new Error('could not find a pkg json');
+	throw new Error("could not find a pkg json");
 }
 
 /**
@@ -42,14 +42,14 @@ const getPackageJsonDeps = (function() {
 	};
 })();
 
-const nodeJsDeps = require('repl')._builtinLibs;
+const nodeJsDeps = require("repl")._builtinLibs;
 const externalBlock = {
-	type: 'Block',
-	value: '*\n * External dependencies\n ',
+	type: "Block",
+	value: "*\n * External dependencies\n ",
 };
 const internalBlock = {
-	type: 'Block',
-	value: '*\n * Internal dependencies\n ',
+	type: "Block",
+	value: "*\n * Internal dependencies\n ",
 };
 
 /**
@@ -59,31 +59,31 @@ const internalBlock = {
  * @param {String} text text to scan for the format keyword within the first docblock
  */
 const shouldFormat = text => {
-	const firstDocBlockStartIndex = text.indexOf('/**');
+	const firstDocBlockStartIndex = text.indexOf("/**");
 
 	if (-1 === firstDocBlockStartIndex) {
 		return false;
 	}
 
-	const firstDocBlockEndIndex = text.indexOf('*/', firstDocBlockStartIndex + 1);
+	const firstDocBlockEndIndex = text.indexOf("*/", firstDocBlockStartIndex + 1);
 
 	if (-1 === firstDocBlockEndIndex) {
 		return false;
 	}
 
 	const firstDocBlockText = text.substring(firstDocBlockStartIndex, firstDocBlockEndIndex + 1);
-	return firstDocBlockText.indexOf('@format') >= 0;
+	return firstDocBlockText.indexOf("@format") >= 0;
 };
 
 /**
  * Removes the extra newlines between two import statements
  */
-const removeExtraNewlines = str => str.replace(/(import.*\n)\n+(import)/g, '$1$2');
+const removeExtraNewlines = str => str.replace(/(import.*\n)\n+(import)/g, "$1$2");
 
 /**
  * Adds a newline in between the last import of external deps + the internal deps docblock
  */
-const addNewlineBeforeDocBlock = str => str.replace(/(import.*\n)(\/\*\*)/, '$1\n$2');
+const addNewlineBeforeDocBlock = str => str.replace(/(import.*\n)(\/\*\*)/, "$1\n$2");
 
 /**
  *
@@ -102,7 +102,7 @@ module.exports = function(file, api) {
 	// we recursively search up from the file.path to figure out the location of the package.json file
 	const externalDependenciesSet = getPackageJsonDeps(file.path);
 	const isExternal = importNode =>
-		externalDependenciesSet.has(importNode.source.value.split('/')[0]);
+		externalDependenciesSet.has(importNode.source.value.split("/")[0]);
 
 	// if there are no deps at all, then return early.
 	if (_.isEmpty(declarations.nodes())) {
@@ -110,7 +110,7 @@ module.exports = function(file, api) {
 	}
 
 	const withoutComments = declarations.nodes().map(node => {
-		node.comments = '';
+		node.comments = "";
 		return node;
 	});
 
@@ -125,7 +125,7 @@ module.exports = function(file, api) {
 	}
 
 	const newDeclarations = []
-		.concat(includeFormatBlock && '/** @format */')
+		.concat(includeFormatBlock && "/** @format */")
 		.concat(externalDeps)
 		.concat(internalDeps);
 
@@ -139,5 +139,5 @@ module.exports = function(file, api) {
 		return;
 	});
 
-	return addNewlineBeforeDocBlock(removeExtraNewlines(src.toSource(config.recastOptions)));
+	return addNewlineBeforeDocBlock(removeExtraNewlines(src.toSource()));
 };

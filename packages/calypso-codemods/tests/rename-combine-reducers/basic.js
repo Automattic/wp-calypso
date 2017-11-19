@@ -1,1 +1,6 @@
-import { combineReducers } from 'redux';
+import { combineReducersWithPersistence } from "state/utils";
+
+combineReducersWithPersistence({
+	foo,
+	bar,
+});

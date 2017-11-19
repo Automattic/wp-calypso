@@ -1,1 +1,10 @@
-exports[`test basic.js 0`] = `""`;
+exports[`test basic.js 0`] = `
+"import { combineReducers } from \"state/utils\";
+
+combineReducers({
+	foo,
+	bar,
+});
+
+"
+`;
