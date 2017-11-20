@@ -31,14 +31,14 @@ function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />
 			{ false !== userCanEdit &&
-			false !== postTypeSupported && [
-				<PostTypeFilter key="filter" query={ userCanEdit ? query : null } />,
-				<PostTypeList
-					key="list"
-					query={ userCanEdit ? query : null }
-					scrollContainer={ document.body }
-				/>,
-			] }
+				false !== postTypeSupported && [
+					<PostTypeFilter key="filter" query={ userCanEdit ? query : null } />,
+					<PostTypeList
+						key="list"
+						query={ userCanEdit ? query : null }
+						scrollContainer={ document.body }
+					/>,
+				] }
 			{ false === postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
 			{ false === userCanEdit && <PostTypeForbidden /> }
 		</Main>
