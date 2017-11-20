@@ -410,7 +410,7 @@ PostActions = {
 	update: function( site, post, attributes, callback ) {
 		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
 
-		postHandle.update( attributes, PostActions.receiveUpdate.bind( site, null, callback ) );
+		postHandle.update( attributes, PostActions.receiveUpdate.bind( null, site, callback ) );
 	},
 
 	/**
@@ -424,7 +424,7 @@ PostActions = {
 	trash: function( site, post, callback ) {
 		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
 
-		postHandle.delete( PostActions.receiveUpdate.bind( site, null, callback ) );
+		postHandle.delete( PostActions.receiveUpdate.bind( null, site, callback ) );
 	},
 
 	/**
@@ -437,7 +437,7 @@ PostActions = {
 	restore: function( site, post, callback ) {
 		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
 
-		postHandle.restore( PostActions.receiveUpdate.bind( site, null, callback ) );
+		postHandle.restore( PostActions.receiveUpdate.bind( null, site, callback ) );
 	},
 
 	queryPosts: function( options, postListStoreId = 'default' ) {
