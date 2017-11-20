@@ -17,9 +17,14 @@ import Gridicon from 'gridicons';
  */
 import { isEnabled } from 'config';
 import { ga } from 'lib/analytics';
+import { preload } from 'sections-preload';
 import { userCan } from 'lib/posts/utils';
 import { isPublicizeEnabled } from 'state/selectors';
 import { getSiteSlug, isSitePreviewable } from 'state/sites/selectors';
+
+function preloadEditor() {
+	preload( 'post-editor' );
+}
 
 const edit = () => ga.recordEvent( 'Posts', 'Clicked Edit Post' );
 const copy = () => ga.recordEvent( 'Posts', 'Clicked Copy Post' );
@@ -54,6 +59,7 @@ const getAvailableControls = props => {
 			href: editURL,
 			icon: 'pencil',
 			onClick: edit,
+			onMouseOver: preloadEditor,
 			text: translate( 'Edit' ),
 		} );
 	}
@@ -136,6 +142,7 @@ const getAvailableControls = props => {
 			href: `/post/${ siteSlug }?copy=${ post.ID }`,
 			icon: 'clipboard',
 			onClick: copy,
+			onMouseOver: preloadEditor,
 			text: translate( 'Copy' ),
 		} );
 	}
@@ -173,6 +180,7 @@ const getControlElements = controls =>
 				className={ `post-controls__${ control.className }` }
 				href={ control.href }
 				onClick={ control.disabled ? noop : control.onClick }
+				onMouseOver={ control.onMouseOver ? control.onMouseOver : noop }
 				target={ control.target ? control.target : null }
 			>
 				<Gridicon icon={ control.icon } size={ 18 } />
