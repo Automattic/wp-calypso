@@ -429,7 +429,7 @@ export default function transformer( file, api ) {
 			return (
 				p.value.arguments.length > 1 &&
 				p.value.arguments[ 0 ].value !== '*' &&
-				[ 'Identifier', 'MemberExpression' ].indexOf( lastArgument.type ) > -1 &&
+				[ 'Identifier', 'MemberExpression', 'CallExpression' ].indexOf( lastArgument.type ) > -1 &&
 				! isRedirectMiddleware( lastArgument )
 			);
 		} )
