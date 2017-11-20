@@ -8,25 +8,29 @@ import React from 'react';
  * Internal dependencies
  */
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 const CustomerNotification = ( { item, checked, onToggle } ) => (
-	<FormFieldset>
-		<FormLabel>
-			{ item.field }
-		</FormLabel>
-		<FormSettingExplanation>
-			{ item.subtitle }
-		</FormSettingExplanation>
-		<CompactFormToggle
-			checked={ checked }
-			onChange={ onToggle }
-			id={ item.field }
-		/>
-	</FormFieldset>
+	<div className="components__notification-component">
+		<span className="components__notification-component-title" >
+			<FormLabel>
+				{ item.title }
+			</FormLabel>
+			<FormSettingExplanation>
+				{ item.subtitle }
+			</FormSettingExplanation>
+		</span>
+		<span className="components__notifcation-component-toggle" >
+			<CompactFormToggle
+				checked={ checked }
+				onChange={ onToggle }
+				id={ item.field }
+			/>
+		</span>
+	</div>
 );
+
 
 CustomerNotification.propTypes = {
 	checked: PropTypes.bool,
