@@ -135,7 +135,7 @@ const updatePostStatus = WrappedComponent =>
 
 						if ( typeof window === 'object' && window.confirm( strings[ type ].deleteWarning ) ) {
 							// eslint-disable-line no-alert
-							PostActions.trash( post, setNewStatus );
+							PostActions.trash( site, post, setNewStatus );
 						} else {
 							this.resetState();
 						}
