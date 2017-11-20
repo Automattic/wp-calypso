@@ -87,6 +87,7 @@ class EditorLocation extends React.Component {
 	};
 
 	onSearchSelect = result => {
+		this.resetError();
 		PostActions.updateMetadata( {
 			geo_latitude: result.geometry.location.lat,
 			geo_longitude: result.geometry.location.lng,
