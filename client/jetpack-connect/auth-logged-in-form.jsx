@@ -34,7 +34,7 @@ import userUtilities from 'lib/user/utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getJetpackConnectRedirectAfterAuth } from 'state/selectors';
+import { getJetpackConnectRedirectAfterAuth, getJetpackConnectPartnerId } from 'state/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -471,7 +471,14 @@ class LoggedInForm extends Component {
 	}
 
 	getRedirectionTarget() {
-		return PLANS_PAGE + this.props.siteSlug;
+		const { partnerId, siteSlug } = this.props;
+
+		// Redirect sites hosted on Pressable with a partner plan to some URL.
+		// 51652 is a testing partner ID.
+		if ( 49640 === partnerId || 51652 === partnerId ) {
+			return '/me';
+		}
+		return PLANS_PAGE + siteSlug;
 	}
 
 	renderFooterLinks() {
@@ -588,6 +595,7 @@ export default connect(
 			siteSlug,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
+			partnerId: getJetpackConnectPartnerId( state ),
 		};
 	},
 	{
