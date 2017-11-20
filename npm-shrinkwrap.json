@@ -86,8 +86,8 @@
       }
     },
     "acorn": {
-      "version": "3.3.0",
-      "integrity": "sha1-ReN/s56No/JbruP/U2niu18iAXo="
+      "version": "1.2.2",
+      "integrity": "sha1-yM4n3grMdtiW0rH6099YjZ6C8BQ="
     },
     "acorn-dynamic-import": {
       "version": "2.0.2",
@@ -121,6 +121,13 @@
       "dev": true,
       "requires": {
         "acorn": "3.3.0"
+      },
+      "dependencies": {
+        "acorn": {
+          "version": "3.3.0",
+          "integrity": "sha1-ReN/s56No/JbruP/U2niu18iAXo=",
+          "dev": true
+        }
       }
     },
     "after": {
@@ -2441,6 +2448,12 @@
       "requires": {
         "acorn": "3.3.0",
         "is-expression": "2.1.0"
+      },
+      "dependencies": {
+        "acorn": {
+          "version": "3.3.0",
+          "integrity": "sha1-ReN/s56No/JbruP/U2niu18iAXo="
+        }
       }
     },
     "constants-browserify": {
@@ -4304,10 +4317,6 @@
         "object-keys": "1.0.11"
       },
       "dependencies": {
-        "acorn": {
-          "version": "1.2.2",
-          "integrity": "sha1-yM4n3grMdtiW0rH6099YjZ6C8BQ="
-        },
         "isarray": {
           "version": "0.0.1",
           "integrity": "sha1-ihis/Kmo9Bd+Cav8YDiTmwXR7t8="
@@ -6595,6 +6604,12 @@
       "requires": {
         "acorn": "3.3.0",
         "object-assign": "4.1.1"
+      },
+      "dependencies": {
+        "acorn": {
+          "version": "3.3.0",
+          "integrity": "sha1-ReN/s56No/JbruP/U2niu18iAXo="
+        }
       }
     },
     "is-extendable": {
@@ -6998,131 +7013,6 @@
       "version": "1.1.3",
       "integrity": "sha512-Cu/kb+4HiNSejAPhSaN1VukdNTTi/r4/e+yykqjlG/IW+1gZH5b4+Bq3whDX4tvbYugta3r8KTMUiqT3fIGxuQ==",
       "dev": true
-    },
-    "jade": {
-      "version": "github:pugjs/jade#29784fd1ec6043397f4b43d45b4ee9e25177b940",
-      "requires": {
-        "jade-code-gen": "0.0.4",
-        "jade-filters": "1.1.0",
-        "jade-lexer": "0.0.9",
-        "jade-linker": "0.0.3",
-        "jade-load": "0.0.4",
-        "jade-parser": "0.0.9",
-        "jade-runtime": "2.0.0",
-        "jade-strip-comments": "1.0.0"
-      }
-    },
-    "jade-attrs": {
-      "version": "2.0.0",
-      "integrity": "sha1-QT6QkAaG/LqTZKYl2u5vLqWqpQg=",
-      "requires": {
-        "constantinople": "3.1.0",
-        "jade-runtime": "1.1.0",
-        "js-stringify": "1.0.2"
-      },
-      "dependencies": {
-        "jade-runtime": {
-          "version": "1.1.0",
-          "integrity": "sha1-ER1Zu1AkdmtG4P58NXdR4MiEOj4="
-        }
-      }
-    },
-    "jade-code-gen": {
-      "version": "0.0.4",
-      "integrity": "sha1-Jwo5RsHT/YeEXUGno15pj5mrgwk=",
-      "requires": {
-        "constantinople": "3.1.0",
-        "doctypes": "1.1.0",
-        "jade-attrs": "2.0.0",
-        "jade-runtime": "1.1.0",
-        "js-stringify": "1.0.2",
-        "void-elements": "2.0.1",
-        "with": "5.1.1"
-      },
-      "dependencies": {
-        "jade-runtime": {
-          "version": "1.1.0",
-          "integrity": "sha1-ER1Zu1AkdmtG4P58NXdR4MiEOj4="
-        }
-      }
-    },
-    "jade-error": {
-      "version": "1.2.0",
-      "integrity": "sha1-OAaNtoNSg0W44btUZJgY95wRIQo="
-    },
-    "jade-filters": {
-      "version": "1.1.0",
-      "integrity": "sha1-BkxZWVC+lbpMv0g2l3yTGSgc+78=",
-      "requires": {
-        "clean-css": "3.4.28",
-        "constantinople": "3.1.0",
-        "jade-error": "1.2.0",
-        "jade-walk": "0.0.3",
-        "jstransformer": "0.0.3",
-        "resolve": "1.5.0",
-        "uglify-js": "2.7.0"
-      }
-    },
-    "jade-lexer": {
-      "version": "0.0.9",
-      "integrity": "sha1-4d3eHe/3nF5IjRIP60VKdRKG3SM=",
-      "requires": {
-        "character-parser": "2.2.0",
-        "is-expression": "1.0.2",
-        "jade-error": "1.2.0"
-      },
-      "dependencies": {
-        "acorn": {
-          "version": "2.7.0",
-          "integrity": "sha1-q259nYhqrKiwhbwzEreaGYQz8Oc="
-        },
-        "is-expression": {
-          "version": "1.0.2",
-          "integrity": "sha1-o0W5Yhjp3yHmVRDDm03DYC/dP5Y=",
-          "requires": {
-            "acorn": "2.7.0",
-            "object-assign": "4.1.1"
-          }
-        }
-      }
-    },
-    "jade-linker": {
-      "version": "0.0.3",
-      "integrity": "sha1-JrYojeUeS1WNUsZQOlrMwI4AeKA=",
-      "requires": {
-        "jade-error": "1.2.0",
-        "jade-walk": "0.0.3"
-      }
-    },
-    "jade-load": {
-      "version": "0.0.4",
-      "integrity": "sha1-9cI08ojO+A6qbkqoH+p1SzAIDPo=",
-      "requires": {
-        "jade-walk": "0.0.3"
-      }
-    },
-    "jade-parser": {
-      "version": "0.0.9",
-      "integrity": "sha1-4+rNhaDvk81OY6LOzvkHoCbG08s=",
-      "requires": {
-        "jade-error": "1.2.0",
-        "token-stream": "0.0.1"
-      }
-    },
-    "jade-runtime": {
-      "version": "2.0.0",
-      "integrity": "sha1-crxYHWQN3HMyPJdzKqn3cfJT8UQ="
-    },
-    "jade-strip-comments": {
-      "version": "1.0.0",
-      "integrity": "sha1-5ukc7TpeUm3mQqn0PHcKHYAyHaY=",
-      "requires": {
-        "jade-error": "1.2.0"
-      }
-    },
-    "jade-walk": {
-      "version": "0.0.3",
-      "integrity": "sha1-O8R8H5fYIDAxxPf2XLoSKk1Gsxs="
     },
     "jed": {
       "version": "1.0.2",
@@ -8673,8 +8563,8 @@
       }
     },
     "jstransformer": {
-      "version": "0.0.3",
-      "integrity": "sha1-NHSVvT/hz+jwPi1xV4rLkCSCbPU=",
+      "version": "1.0.0",
+      "integrity": "sha1-7Yvwkh4vPx7U1cGkT2hwntJHIsM=",
       "requires": {
         "is-promise": "2.1.0",
         "promise": "7.3.1"
@@ -11263,6 +11153,122 @@
         "parse-asn1": "5.1.0",
         "randombytes": "2.0.5"
       }
+    },
+    "pug": {
+      "version": "2.0.0-rc.4",
+      "integrity": "sha512-SL7xovj6E2Loq9N0UgV6ynjMLW4urTFY/L/Fprhvz13Xc5vjzkjZjI1QHKq31200+6PSD8PyU6MqrtCTJj6/XA==",
+      "requires": {
+        "pug-code-gen": "2.0.0",
+        "pug-filters": "2.1.5",
+        "pug-lexer": "3.1.0",
+        "pug-linker": "3.0.3",
+        "pug-load": "2.0.9",
+        "pug-parser": "4.0.0",
+        "pug-runtime": "2.0.3",
+        "pug-strip-comments": "1.0.2"
+      }
+    },
+    "pug-attrs": {
+      "version": "2.0.2",
+      "integrity": "sha1-i+KyIlVo/6ddG4Zpgr/59BEa/8s=",
+      "requires": {
+        "constantinople": "3.1.0",
+        "js-stringify": "1.0.2",
+        "pug-runtime": "2.0.3"
+      }
+    },
+    "pug-code-gen": {
+      "version": "2.0.0",
+      "integrity": "sha512-E4oiJT+Jn5tyEIloj8dIJQognbiNNp0i0cAJmYtQTFS0soJ917nlIuFtqVss3IXMEyQKUew3F4gIkBpn18KbVg==",
+      "requires": {
+        "constantinople": "3.1.0",
+        "doctypes": "1.1.0",
+        "js-stringify": "1.0.2",
+        "pug-attrs": "2.0.2",
+        "pug-error": "1.3.2",
+        "pug-runtime": "2.0.3",
+        "void-elements": "2.0.1",
+        "with": "5.1.1"
+      }
+    },
+    "pug-error": {
+      "version": "1.3.2",
+      "integrity": "sha1-U659nSm7A89WRJOgJhCfVMR/XyY="
+    },
+    "pug-filters": {
+      "version": "2.1.5",
+      "integrity": "sha512-xkw71KtrC4sxleKiq+cUlQzsiLn8pM5+vCgkChW2E6oNOzaqTSIBKIQ5cl4oheuDzvJYCTSYzRaVinMUrV4YLQ==",
+      "requires": {
+        "clean-css": "3.4.28",
+        "constantinople": "3.1.0",
+        "jstransformer": "1.0.0",
+        "pug-error": "1.3.2",
+        "pug-walk": "1.1.5",
+        "resolve": "1.5.0",
+        "uglify-js": "2.7.0"
+      }
+    },
+    "pug-lexer": {
+      "version": "3.1.0",
+      "integrity": "sha1-/QhzdtSmdbT1n4/vQiiDQ06VgaI=",
+      "requires": {
+        "character-parser": "2.2.0",
+        "is-expression": "3.0.0",
+        "pug-error": "1.3.2"
+      },
+      "dependencies": {
+        "acorn": {
+          "version": "4.0.13",
+          "integrity": "sha1-EFSVrlNh1pe9GVyCUZLhrX8lN4c="
+        },
+        "is-expression": {
+          "version": "3.0.0",
+          "integrity": "sha1-Oayqa+f9HzRx3ELHQW5hwkMXrJ8=",
+          "requires": {
+            "acorn": "4.0.13",
+            "object-assign": "4.1.1"
+          }
+        }
+      }
+    },
+    "pug-linker": {
+      "version": "3.0.3",
+      "integrity": "sha512-DCKczglCXOzJ1lr4xUj/lVHYvS+lGmR2+KTCjZjtIpdwaN7lNOoX2SW6KFX5X4ElvW+6ThwB+acSUg08UJFN5A==",
+      "requires": {
+        "pug-error": "1.3.2",
+        "pug-walk": "1.1.5"
+      }
+    },
+    "pug-load": {
+      "version": "2.0.9",
+      "integrity": "sha512-BDdZOCru4mg+1MiZwRQZh25+NTRo/R6/qArrdWIf308rHtWA5N9kpoUskRe4H6FslaQujC+DigH9LqlBA4gf6Q==",
+      "requires": {
+        "object-assign": "4.1.1",
+        "pug-walk": "1.1.5"
+      }
+    },
+    "pug-parser": {
+      "version": "4.0.0",
+      "integrity": "sha512-ocEUFPdLG9awwFj0sqi1uiZLNvfoodCMULZzkRqILryIWc/UUlDlxqrKhKjAIIGPX/1SNsvxy63+ayEGocGhQg==",
+      "requires": {
+        "pug-error": "1.3.2",
+        "token-stream": "0.0.1"
+      }
+    },
+    "pug-runtime": {
+      "version": "2.0.3",
+      "integrity": "sha1-mBYmB7D86eJU1CfzOYelrucWi9o="
+    },
+    "pug-strip-comments": {
+      "version": "1.0.2",
+      "integrity": "sha1-0xOvoBvMN0mA4TmeI+vy65vchRM=",
+      "requires": {
+        "pug-error": "1.3.2"
+      }
+    },
+    "pug-walk": {
+      "version": "1.1.5",
+      "integrity": "sha512-rJlH1lXerCIAtImXBze3dtKq/ykZMA4rpO9FnPcIgsWcxZLOvd8zltaoeOVFyBSSqCkhhJWbEbTMga8UxWUUSA=="
     },
     "pump": {
       "version": "1.0.3",
@@ -15523,6 +15529,12 @@
       "requires": {
         "acorn": "3.3.0",
         "acorn-globals": "3.1.0"
+      },
+      "dependencies": {
+        "acorn": {
+          "version": "3.3.0",
+          "integrity": "sha1-ReN/s56No/JbruP/U2niu18iAXo="
+        }
       }
     },
     "wordwrap": {

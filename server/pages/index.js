@@ -369,7 +369,7 @@ function setUpRoute( req, res, next ) {
 }
 
 function render404( request, response ) {
-	response.status( 404 ).render( '404.jade', {
+	response.status( 404 ).render( '404', {
 		urls: generateStaticUrls(),
 	} );
 }
@@ -522,7 +522,7 @@ module.exports = function() {
 			? primaryBlogUrl + '/wp-admin'
 			: 'https://dashboard.wordpress.com/wp-admin/';
 
-		res.render( 'browsehappy.jade', {
+		res.render( 'browsehappy', {
 			...req.context,
 			dashboardUrl,
 		} );
