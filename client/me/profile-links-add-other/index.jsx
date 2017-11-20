@@ -3,23 +3,22 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
-import FormButton from 'components/forms/form-button';
-import eventRecorder from 'me/event-recorder';
 import Notice from 'components/notice';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const ProfileLinksAddOther = createReactClass( {
 	displayName: 'ProfileLinksAddOther',
-	mixins: [ eventRecorder ],
 
 	getInitialState() {
 		return {
@@ -59,6 +58,24 @@ const ProfileLinksAddOther = createReactClass( {
 		return false;
 	},
 
+	recordClickEvent( action ) {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	},
+
+	getClickHandler( action ) {
+		return () => this.recordClickEvent( action );
+	},
+
+	getFocusHandler( action ) {
+		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
+	},
+
+	handleCancelButtonClick( event ) {
+		event.preventDefault();
+		this.recordClickEvent( 'Cancel Other Site Button' );
+		this.props.onCancel();
+	},
+
 	onSubmit( event ) {
 		event.preventDefault();
 
@@ -78,11 +95,6 @@ const ProfileLinksAddOther = createReactClass( {
 			],
 			this.onSubmitResponse
 		);
-	},
-
-	onCancel( event ) {
-		event.preventDefault();
-		this.props.onCancel();
 	},
 
 	onSubmitResponse( error, data ) {
@@ -139,7 +151,7 @@ const ProfileLinksAddOther = createReactClass( {
 					<FormTextInput
 						className="profile-links-add-other__value"
 						placeholder={ this.props.translate( 'Enter a URL' ) }
-						onFocus={ this.recordFocusEvent( 'Add Other Site URL Field' ) }
+						onFocus={ this.getFocusHandler( 'Add Other Site URL Field' ) }
 						name="value"
 						value={ this.state.value }
 						onChange={ this.handleChange }
@@ -147,7 +159,7 @@ const ProfileLinksAddOther = createReactClass( {
 					<FormTextInput
 						className="profile-links-add-other__title"
 						placeholder={ this.props.translate( 'Enter a description' ) }
-						onFocus={ this.recordFocusEvent( 'Add Other Site Description Field' ) }
+						onFocus={ this.getFocusHandler( 'Add Other Site Description Field' ) }
 						name="title"
 						value={ this.state.title }
 						onChange={ this.handleChange }
@@ -155,14 +167,14 @@ const ProfileLinksAddOther = createReactClass( {
 					<FormButton
 						className="profile-links-add-other__add"
 						disabled={ this.getFormDisabled() }
-						onClick={ this.recordClickEvent( 'Save Other Site Button' ) }
+						onClick={ this.getClickHandler( 'Save Other Site Button' ) }
 					>
 						{ this.props.translate( 'Add Site' ) }
 					</FormButton>
 					<FormButton
 						className="profile-links-add-other__cancel"
 						isPrimary={ false }
-						onClick={ this.recordClickEvent( 'Cancel Other Site Button', this.onCancel ) }
+						onClick={ this.handleCancelButtonClick }
 					>
 						{ this.props.translate( 'Cancel' ) }
 					</FormButton>
@@ -177,4 +189,6 @@ const ProfileLinksAddOther = createReactClass( {
 	},
 } );
 
-export default localize( ProfileLinksAddOther );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( ProfileLinksAddOther ) );
