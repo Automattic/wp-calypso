@@ -235,17 +235,6 @@ class Plans extends Component {
 		page.redirect( checkoutPath );
 	};
 
-	storeSelectedPlan = cartItem => {
-		this.props.recordTracksEvent( 'calypso_jpc_plans_store_plan', {
-			user: this.props.userId,
-			plan: cartItem ? cartItem.product_slug : 'free',
-		} );
-		this.props.selectPlanInAdvance(
-			cartItem ? cartItem.product_slug : 'free',
-			this.props.siteSlug
-		);
-	};
-
 	render() {
 		const { interval, isRtlLayout, selectedSite, translate } = this.props;
 
