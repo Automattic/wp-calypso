@@ -15,7 +15,7 @@ import { getPostRevisionsSelectedRevision, isPostRevisionsDialogVisible } from '
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { closePostRevisionsDialog } from 'state/posts/revisions/actions';
+import { closePostRevisionsDialog, selectPostRevision } from 'state/posts/revisions/actions';
 import EditorRevisions from 'post-editor/editor-revisions';
 import Dialog from 'components/dialog';
 
@@ -45,6 +45,7 @@ class PostRevisionsDialog extends PureComponent {
 
 	componentWillMount() {
 		this.toggleBodyClass( { isVisible: this.props.isVisible } );
+		this.props.selectPostRevision( null );
 	}
 
 	componentWillUpdate( { isVisible } ) {
@@ -116,6 +117,6 @@ export default flow(
 			revision: getPostRevisionsSelectedRevision( state ),
 			siteId: getSelectedSiteId( state ),
 		} ),
-		{ recordTracksEvent, closeDialog: closePostRevisionsDialog }
+		{ recordTracksEvent, closeDialog: closePostRevisionsDialog, selectPostRevision }
 	)
 )( PostRevisionsDialog );
