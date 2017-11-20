@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
-import { get, includes } from 'lodash';
+import { get, includes, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,6 +44,10 @@ export class CommentActions extends Component {
 		toggleEditMode: PropTypes.func,
 		toggleReply: PropTypes.func,
 		updateLastUndo: PropTypes.func,
+	};
+
+	static defaultProps = {
+		updateLastUndo: noop,
 	};
 
 	delete = () => {
