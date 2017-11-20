@@ -229,24 +229,4 @@ export default {
 			context.store
 		);
 	},
-
-	plansPreSelection( context ) {
-		const analyticsPageTitle = 'Plans';
-		const basePath = route.sectionify( context.path );
-		const analyticsBasePath = basePath + '/:site';
-
-		analytics.tracks.recordEvent( 'calypso_plans_view' );
-		analytics.tracks.recordEvent( 'calypso_plans_pre_selection' );
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		renderWithReduxStore(
-			<Plans
-				context={ context }
-				showFirst={ true }
-				destinationType={ context.params.destinationType }
-			/>,
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
 };
