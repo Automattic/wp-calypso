@@ -1,6 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
+
 const chalk = require( 'chalk' );
 const fs = require( 'fs' );
 const path = require( 'path' );
@@ -14,7 +16,8 @@ const configRoot = path.resolve( __dirname, '../../', 'config' );
  * @param {String} filename basename of config file to read, e.g. 'development.json'
  * @returns {String} contents of file
  */
-const readConfigFile = filename => fs.readFileSync( path.join( configRoot, filename ), { encoding: 'utf8' } );
+const readConfigFile = filename =>
+	fs.readFileSync( path.join( configRoot, filename ), { encoding: 'utf8' } );
 
 /**
  * Reads and parses the data from a
@@ -32,7 +35,7 @@ const environmentKeys = fs
 	.filter( filename => /\.json$/.test( path.basename( filename ) ) ) // only the JSON config files
 	.filter( filename => '_shared.json' !== filename ) // base config for all environments
 	.filter( filename => 'client.json' !== filename ) // whitelist of keys allowed in client
-	.filter( filename => ! ( /secrets/g ).test( filename ) ) // secret tokens not part of this system
+	.filter( filename => ! /secrets/g.test( filename ) ) // secret tokens not part of this system
 	.map( filename => [ filename, Object.keys( parseConfig( filename ) ) ] );
 
 /** @type {Object} config data in the shared config file (defaults) */
@@ -51,10 +54,10 @@ environmentKeys.forEach( ( [ filename, keys ] ) => {
 		if ( ! sharedConfig.hasOwnProperty( key ) ) {
 			console.error(
 				`${ chalk.red( 'Configuration Error' ) }\n` +
-				`Key ${ chalk.blue( key ) } defined in ${ chalk.blue( filename ) } ` +
-				`but not in ${ chalk.blue( '_shared.json' ) }\n` +
-				`Please add a default value in ${ chalk.blue( '_shared.json' ) } ` +
-				`before adding overrides in the environment-specific config files.`
+					`Key ${ chalk.blue( key ) } defined in ${ chalk.blue( filename ) } ` +
+					`but not in ${ chalk.blue( '_shared.json' ) }\n` +
+					`Please add a default value in ${ chalk.blue( '_shared.json' ) } ` +
+					`before adding overrides in the environment-specific config files.`
 			);
 
 			process.exit( 1 ); //eslint-disable-line

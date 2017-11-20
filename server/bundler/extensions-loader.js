@@ -1,3 +1,4 @@
+/** @format */
 const fs = require( 'fs' );
 const path = require( 'path' );
 const camelCase = require( 'lodash' ).camelCase;
@@ -8,7 +9,9 @@ function getReducerPath( extensionDir ) {
 }
 
 function generateReducerRequireString( extensionDir ) {
-	return `'${ camelCase( extensionDir ) }': require( 'extensions/${ extensionDir }/state/reducer' )`;
+	return `'${ camelCase(
+		extensionDir
+	) }': require( 'extensions/${ extensionDir }/state/reducer' )`;
 }
 
 function generateExtensionsModuleString( reducerRequires ) {
@@ -23,7 +26,7 @@ function generateExtensionsModuleString( reducerRequires ) {
 
 function getReducersSync( extensionDirs = [] ) {
 	return extensionDirs
-		.filter( ( extensionDir ) => fs.existsSync( getReducerPath( extensionDir ) ) )
+		.filter( extensionDir => fs.existsSync( getReducerPath( extensionDir ) ) )
 		.map( generateReducerRequireString );
 }
 
@@ -32,25 +35,23 @@ function getExtensionsModuleSync( extensionDirs ) {
 }
 
 function pathExists( testPath ) {
-	return new Promise( ( resolve ) => {
-		fs.access( testPath, fs.constants.F_OK, ( err ) => resolve( ! err ) );
+	return new Promise( resolve => {
+		fs.access( testPath, fs.constants.F_OK, err => resolve( ! err ) );
 	} );
 }
 
 function getReducersAsync( extensionDirs = [] ) {
 	const dirsWithReducers = Promise.all(
-		extensionDirs.map( ( extensionDir ) =>
-			pathExists( getReducerPath( extensionDir ) )
-				.then( ( exists ) => exists && extensionDir ) )
+		extensionDirs.map( extensionDir =>
+			pathExists( getReducerPath( extensionDir ) ).then( exists => exists && extensionDir )
+		)
 	).then( compact );
 
-	return dirsWithReducers.then( dirs =>
-		dirs.map( generateReducerRequireString ) );
+	return dirsWithReducers.then( dirs => dirs.map( generateReducerRequireString ) );
 }
 
 function getExtensionsModuleAsync( extensionDirs ) {
-	return getReducersAsync( extensionDirs )
-		.then( generateExtensionsModuleString );
+	return getReducersAsync( extensionDirs ).then( generateExtensionsModuleString );
 }
 
 module.exports = function( content ) {
@@ -69,7 +70,6 @@ module.exports = function( content ) {
 	}
 
 	getExtensionsModuleAsync( extensionDirs )
-		.then( ( moduleString ) => callback( null, moduleString ) )
-		.catch( ( reason ) => callback( reason ) );
+		.then( moduleString => callback( null, moduleString ) )
+		.catch( reason => callback( reason ) );
 };
-

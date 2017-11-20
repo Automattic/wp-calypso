@@ -1,3 +1,4 @@
+/** @format */
 const config = require( 'config' ),
 	utils = require( './utils' );
 
@@ -35,11 +36,11 @@ function getSectionsModule( sections ) {
 			'	var loadCSS = function( id, urls ) {',
 			'		var url = urls.ltr;',
 			'',
-			'		if ( typeof document !== \'undefined\' && document.documentElement.dir === \'rtl\' ) {',
+			"		if ( typeof document !== 'undefined' && document.documentElement.dir === 'rtl' ) {",
 			'			url = urls.rtl;',
 			'		}',
 			'',
-			'		switchCSS( \'section-css-\' + id, url );',
+			"		switchCSS( 'section-css-' + id, url );",
 			'	};',
 			'',
 			'	switch ( sectionName ) {',
@@ -171,7 +172,9 @@ function getSectionPreLoaderTemplate( section ) {
 	let cssLoader = '';
 
 	if ( section.css ) {
-		cssLoader = `loadCSS( ${ JSON.stringify( section.css.id ) }, ${ JSON.stringify( section.css.urls ) } );`;
+		cssLoader = `loadCSS( ${ JSON.stringify( section.css.id ) }, ${ JSON.stringify(
+			section.css.urls
+		) } );`;
 	}
 
 	const sectionNameString = JSON.stringify( section.name );
@@ -185,12 +188,18 @@ function getSectionPreLoaderTemplate( section ) {
 }
 
 function sectionsWithCSSUrls( sections ) {
-	return sections.map( section => Object.assign( {}, section, section.css && {
-		css: {
-			id: section.css,
-			urls: utils.getCssUrls( section.css ),
-		},
-	} ) );
+	return sections.map( section =>
+		Object.assign(
+			{},
+			section,
+			section.css && {
+				css: {
+					id: section.css,
+					urls: utils.getCssUrls( section.css ),
+				},
+			}
+		)
+	);
 }
 
 module.exports = function( content ) {

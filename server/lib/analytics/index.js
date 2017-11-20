@@ -1,6 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
+
 import superagent from 'superagent';
 
 /**
@@ -18,18 +20,18 @@ const analytics = {
 				const url = statsdTimingUrl( featureSlug, eventType, duration );
 				superagent.get( url ).end();
 			}
-		}
+		},
 	},
 
 	tracks: {
 		createPixel: function( data ) {
-			data._rt = ( new Date ).getTime();
+			data._rt = new Date().getTime();
 			data._ = '_';
 			const pixelUrl = URL.format( {
 				protocol: 'http',
 				host: 'pixel.wp.com',
 				pathname: '/t.gif',
-				query: data
+				query: data,
 			} );
 			superagent.get( pixelUrl ).end();
 		},
@@ -49,19 +51,24 @@ const analytics = {
 			const date = new Date();
 			const acceptLanguageHeader = req.get( 'Accept-Language' ) || '';
 
-			this.createPixel( assign( {
-				_en: eventName,
-				_ts: date.getTime(),
-				_tz: date.getTimezoneOffset() / 60,
-				_ui: req.query._ui,
-				_ut: req.query._ut,
-				_dl: req.get( 'Referer' ),
-				_lg: acceptLanguageHeader.split( ',' )[ 0 ],
-				_pf: req.useragent.platform,
-				_via_ip: req.get( 'x-forwarded-for' ) || req.connection.remoteAddress,
-				_via_ua: req.useragent.source
-			}, eventProperties ) );
+			this.createPixel(
+				assign(
+					{
+						_en: eventName,
+						_ts: date.getTime(),
+						_tz: date.getTimezoneOffset() / 60,
+						_ui: req.query._ui,
+						_ut: req.query._ut,
+						_dl: req.get( 'Referer' ),
+						_lg: acceptLanguageHeader.split( ',' )[ 0 ],
+						_pf: req.useragent.platform,
+						_via_ip: req.get( 'x-forwarded-for' ) || req.connection.remoteAddress,
+						_via_ua: req.useragent.source,
+					},
+					eventProperties
+				)
+			);
 		},
-	}
+	},
 };
 export default analytics;

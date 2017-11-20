@@ -1,4 +1,7 @@
-/***** WARNING: ES5 code only here. Used by un-transpiled script! *****/
+/** @format */
+/*
+ * WARNING: ES5 code only here. Used by un-transpiled script!
+ */
 
 /**
  * Module dependencies
@@ -22,14 +25,17 @@ function getDataFromFile( file ) {
 }
 
 module.exports = function( configPath, defaultOpts ) {
-	var opts = assign( {
-			env: 'development',
-		}, defaultOpts ),
+	var opts = assign(
+			{
+				env: 'development',
+			},
+			defaultOpts
+		),
 		data = {},
 		configFiles = [
 			path.resolve( configPath, '_shared.json' ),
 			path.resolve( configPath, opts.env + '.json' ),
-			path.resolve( configPath, opts.env + '.local.json' )
+			path.resolve( configPath, opts.env + '.local.json' ),
 		],
 		realSecretsPath = path.resolve( configPath, 'secrets.json' ),
 		emptySecretsPath = path.resolve( configPath, 'empty-secrets.json' ),
@@ -54,6 +60,6 @@ module.exports = function( configPath, defaultOpts ) {
 
 	const serverData = assign( {}, data, getDataFromFile( secretsPath ) );
 	const clientData = assign( {}, data );
-	
+
 	return { serverData, clientData };
-}
+};
