@@ -93,7 +93,7 @@ class TransactionsHeader extends React.Component {
 	}
 
 	renderDatePopover() {
-		var isVisible = 'date' === this.state.activePopover,
+		const isVisible = 'date' === this.state.activePopover,
 			classes = classNames( {
 				'filter-popover': true,
 				'is-popped': isVisible,
@@ -102,7 +102,7 @@ class TransactionsHeader extends React.Component {
 				return this.props.moment().subtract( n, 'months' );
 			}, this ),
 			monthPickers = previousMonths.map( function( month, index ) {
-				var analyticsEvent = 'Current Month';
+				let analyticsEvent = 'Current Month';
 
 				if ( 1 === index ) {
 					analyticsEvent = '1 Month Before';
@@ -165,7 +165,7 @@ class TransactionsHeader extends React.Component {
 	}
 
 	togglePopover( name ) {
-		var activePopover;
+		let activePopover;
 		if ( this.state.activePopover === name ) {
 			activePopover = '';
 		} else {
@@ -176,11 +176,9 @@ class TransactionsHeader extends React.Component {
 	}
 
 	renderDatePicker( titleKey, titleTranslated, date, analyticsEvent ) {
-		var filter = { date: date },
-			isSelected,
-			classes;
-
-		var currentDate = this.props.filter.date || {};
+		const filter = { date: date };
+		const currentDate = this.props.filter.date || {};
+		let isSelected;
 
 		if ( date.newest ) {
 			isSelected = date.newest === currentDate.newest;
@@ -192,7 +190,7 @@ class TransactionsHeader extends React.Component {
 			isSelected = false;
 		}
 
-		classes = classNames( {
+		const classes = classNames( {
 			'transactions-header__date-picker': true,
 			selected: isSelected,
 		} );
@@ -227,7 +225,7 @@ class TransactionsHeader extends React.Component {
 	}
 
 	renderAppsPopover() {
-		var isVisible = 'apps' === this.state.activePopover,
+		const isVisible = 'apps' === this.state.activePopover,
 			classes = classNames( {
 				'filter-popover': true,
 				'is-popped': isVisible,
@@ -268,7 +266,7 @@ class TransactionsHeader extends React.Component {
 	}
 
 	renderAppPicker( title, app, analyticsEvent ) {
-		var filter = { app: app },
+		const filter = { app: app },
 			classes = classNames( {
 				'app-picker': true,
 				selected: app === this.props.filter.app,
