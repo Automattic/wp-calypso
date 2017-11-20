@@ -806,8 +806,8 @@ export function getDomainRegistrationsWithoutPrivacy( cart ) {
  * @param {Object} cart - cart as `CartValue` object
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
-export function getDomainIncomingTransfersWithoutPrivacy( cart ) {
-	return getDomainRegistrations( cart ).filter( function( cartItem ) {
+export function getDomainTransfersWithoutPrivacy( cart ) {
+	return getDomainTransfers( cart ).filter( function( cartItem ) {
 		return ! some( cart.products, {
 			meta: cartItem.meta,
 			product_slug: 'domain_transfer_privacy',
@@ -827,34 +827,31 @@ export function changePrivacyForDomains( cart, domainItems, changeFunction ) {
 	return flow.apply(
 		null,
 		domainItems.map( function( item ) {
+			if ( isTransfer( item ) ) {
+				return changeFunction( domainTransferPrivacy( { domain: item.meta } ) );
+			}
 			return changeFunction( domainPrivacyProtection( { domain: item.meta } ) );
 		} )
 	);
 }
 
-/**
- * Changes presence of a privacy protection for the given domain transfer cart items.
- *
- * @param {Object} cart - cart as `CartValue` object
- * @param {Object[]} domainItems - the list of `CartItemValue` objects for domain registrations
- * @param {Function} changeFunction - the function that adds/removes the privacy protection to a shopping cart
- * @returns {Function} the function that adds/removes privacy protections from the shopping cart
- */
-export function changePrivacyForDomainTransfers( cart, domainItems, changeFunction ) {
-	return flow.apply(
-		null,
-		domainItems.map( function( item ) {
-			return changeFunction( domainTransferPrivacy( { domain: item.meta } ) );
-		} )
+export function addPrivacyToAllDomains( cart ) {
+	return changePrivacyForDomains(
+		cart,
+		[
+			...getDomainRegistrationsWithoutPrivacy( cart ),
+			...getDomainTransfersWithoutPrivacy( cart ),
+		],
+		add
 	);
 }
 
-export function addPrivacyToAllDomains( cart ) {
-	return changePrivacyForDomains( cart, getDomainRegistrationsWithoutPrivacy( cart ), add );
-}
-
 export function removePrivacyFromAllDomains( cart ) {
-	return changePrivacyForDomains( cart, getDomainRegistrations( cart ), remove );
+	return changePrivacyForDomains(
+		cart,
+		[ ...getDomainRegistrations( cart ), ...getDomainTransfers( cart ) ],
+		remove
+	);
 }
 
 /**
@@ -987,6 +984,7 @@ export default {
 	getDomainRegistrationsWithoutPrivacy,
 	getDomainRegistrationTld,
 	getDomainTransfers,
+	getDomainTransfersWithoutPrivacy,
 	getGoogleApps,
 	getIncludedDomain,
 	getItemForPlan,

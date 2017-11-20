@@ -67,7 +67,7 @@ class PrivacyProtection extends Component {
 								<FormRadio
 									value="private"
 									id="registrantType"
-									checked={ this.props.allDomainsHavePrivacy }
+									checked={ this.props.checkPrivacyRadio }
 									onChange={ this.enablePrivacy }
 								/>
 								<p className="checkout__privacy-protection-radio-text">
@@ -111,7 +111,7 @@ class PrivacyProtection extends Component {
 								<FormRadio
 									value="public"
 									id="registrantType"
-									checked={ ! this.props.allDomainsHavePrivacy }
+									checked={ ! this.props.checkPrivacyRadio }
 									onChange={ this.disablePrivacy }
 								/>
 								<p className="checkout__privacy-protection-radio-text">

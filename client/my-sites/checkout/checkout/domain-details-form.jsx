@@ -318,8 +318,11 @@ export class DomainDetailsForm extends PureComponent {
 		return cartItems.hasOnlyDomainRegistrationsWithPrivacySupport( this.props.cart );
 	}
 
-	allDomainRegistrationsHavePrivacy() {
-		return cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0;
+	allProductsHavePrivacy() {
+		return (
+			cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0 &&
+			cartItems.getDomainTransfersWithoutPrivacy( this.props.cart ).length === 0
+		);
 	}
 
 	renderSubmitButton() {
@@ -341,7 +344,7 @@ export class DomainDetailsForm extends PureComponent {
 	renderPrivacySection() {
 		return (
 			<PrivacyProtection
-				allDomainsHavePrivacy={ this.allDomainRegistrationsHavePrivacy() }
+				checkPrivacyRadio={ this.allProductsHavePrivacy() }
 				cart={ this.props.cart }
 				countriesList={ countriesList }
 				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
