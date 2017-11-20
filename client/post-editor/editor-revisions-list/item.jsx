@@ -88,7 +88,7 @@ EditorRevisionsListItem.propTypes = {
 
 	// connected to state
 	isMultiUserSite: PropTypes.bool.isRequired,
-	revisionChanges: PropTypes.array.isRequired,
+	revisionChanges: PropTypes.object.isRequired,
 
 	// connected to dispatcher
 	selectPostRevision: PropTypes.func.isRequired,
