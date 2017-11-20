@@ -6,75 +6,72 @@
 import React from 'react';
 import classNames from 'classnames';
 import closest from 'component-closest';
-import createReactClass from 'create-react-class';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { last, map, range, uniq } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { recordGoogleEvent } from 'state/analytics/actions';
 
 /**
  * Internal dependencies
  */
 import tableRows from './table-rows';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-const TransactionsHeader = createReactClass( {
-	getInitialState: function() {
-		return {
-			activePopover: '',
-			searchValue: '',
-		};
-	},
+class TransactionsHeader extends React.Component {
+	state = {
+		activePopover: '',
+		searchValue: '',
+	};
 
-	preventEnterKeySubmission: function( event ) {
+	preventEnterKeySubmission = event => {
 		event.preventDefault();
-	},
+	};
 
-	componentWillMount: function() {
+	componentWillMount() {
 		document.body.addEventListener( 'click', this.closePopoverIfClickedOutside );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		document.body.removeEventListener( 'click', this.closePopoverIfClickedOutside );
-	},
+	}
 
-	recordClickEvent( action ) {
+	recordClickEvent = action => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	},
+	};
 
 	getDatePopoverItemClickHandler( analyticsEvent, filter ) {
 		return () => {
 			this.recordClickEvent( 'Date Popover Item: ' + analyticsEvent );
 			this.handlePickerSelection( filter );
 		};
-	},
+	}
 
 	getAppPopoverItemClickHandler( analyticsEvent, filter ) {
 		return () => {
 			this.recordClickEvent( 'App Popover Item: ' + analyticsEvent );
 			this.handlePickerSelection( filter );
 		};
-	},
+	}
 
-	handleDatePopoverLinkClick() {
+	handleDatePopoverLinkClick = () => {
 		this.recordClickEvent( 'Toggle Date Popover in Billing History' );
 		this.togglePopover( 'date' );
-	},
+	};
 
-	handleAppsPopoverLinkClick() {
+	handleAppsPopoverLinkClick = () => {
 		this.recordClickEvent( 'Toggle Apps Popover in Billing History' );
 		this.togglePopover( 'apps' );
-	},
+	};
 
-	closePopoverIfClickedOutside: function( event ) {
+	closePopoverIfClickedOutside = event => {
 		if ( closest( event.target, 'thead' ) ) {
 			return;
 		}
 
 		this.setState( { activePopover: '' } );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<thead>
 				<tr className="billing-history__header-row">
@@ -88,14 +85,14 @@ const TransactionsHeader = createReactClass( {
 				</tr>
 			</thead>
 		);
-	},
+	}
 
-	setFilter: function( filter ) {
+	setFilter( filter ) {
 		this.setState( { activePopover: '' } );
 		this.props.onNewFilter( filter );
-	},
+	}
 
-	renderDatePopover: function() {
+	renderDatePopover() {
 		var isVisible = 'date' === this.state.activePopover,
 			classes = classNames( {
 				'filter-popover': true,
@@ -165,9 +162,9 @@ const TransactionsHeader = createReactClass( {
 				</div>
 			</div>
 		);
-	},
+	}
 
-	togglePopover: function( name ) {
+	togglePopover( name ) {
 		var activePopover;
 		if ( this.state.activePopover === name ) {
 			activePopover = '';
@@ -176,9 +173,9 @@ const TransactionsHeader = createReactClass( {
 		}
 
 		this.setState( { activePopover: activePopover } );
-	},
+	}
 
-	renderDatePicker: function( titleKey, titleTranslated, date, analyticsEvent ) {
+	renderDatePicker( titleKey, titleTranslated, date, analyticsEvent ) {
 		var filter = { date: date },
 			isSelected,
 			classes;
@@ -214,22 +211,22 @@ const TransactionsHeader = createReactClass( {
 				</td>
 			</tr>
 		);
-	},
+	}
 
-	handlePickerSelection: function( filter ) {
+	handlePickerSelection( filter ) {
 		this.setFilter( filter );
 		this.setState( { searchValue: '' } );
-	},
+	}
 
-	getFilterCount: function( filter ) {
+	getFilterCount( filter ) {
 		if ( ! this.props.transactions ) {
 			return;
 		}
 
 		return tableRows.filter( this.props.transactions, filter ).length;
-	},
+	}
 
-	renderAppsPopover: function() {
+	renderAppsPopover() {
 		var isVisible = 'apps' === this.state.activePopover,
 			classes = classNames( {
 				'filter-popover': true,
@@ -264,13 +261,13 @@ const TransactionsHeader = createReactClass( {
 				</div>
 			</div>
 		);
-	},
+	}
 
-	getApps: function() {
+	getApps() {
 		return uniq( map( this.props.transactions, 'service' ) );
-	},
+	}
 
-	renderAppPicker: function( title, app, analyticsEvent ) {
+	renderAppPicker( title, app, analyticsEvent ) {
 		var filter = { app: app },
 			classes = classNames( {
 				'app-picker': true,
@@ -287,8 +284,8 @@ const TransactionsHeader = createReactClass( {
 				<td className="transactions-header__count">{ this.getFilterCount( filter ) }</td>
 			</tr>
 		);
-	},
-} );
+	}
+}
 
 export default connect( null, {
 	recordGoogleEvent,
