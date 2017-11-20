@@ -145,58 +145,53 @@ class Plans extends Component {
 	}
 
 	autoselectPlan() {
-		if ( ! this.props.showFirst ) {
-			if (
-				this.props.flowType === 'personal' ||
-				this.props.selectedPlan === PLAN_JETPACK_PERSONAL
-			) {
-				const plan = this.props.getPlanBySlug( PLAN_JETPACK_PERSONAL );
-				if ( plan ) {
-					this.selectPlan( plan );
-					return;
-				}
+		if ( this.props.flowType === 'personal' || this.props.selectedPlan === PLAN_JETPACK_PERSONAL ) {
+			const plan = this.props.getPlanBySlug( PLAN_JETPACK_PERSONAL );
+			if ( plan ) {
+				this.selectPlan( plan );
+				return;
 			}
-			if ( this.props.selectedPlan === PLAN_JETPACK_PERSONAL_MONTHLY ) {
-				const plan = this.props.getPlanBySlug( PLAN_JETPACK_PERSONAL_MONTHLY );
-				if ( plan ) {
-					this.selectPlan( plan );
-					return;
-				}
+		}
+		if ( this.props.selectedPlan === PLAN_JETPACK_PERSONAL_MONTHLY ) {
+			const plan = this.props.getPlanBySlug( PLAN_JETPACK_PERSONAL_MONTHLY );
+			if ( plan ) {
+				this.selectPlan( plan );
+				return;
 			}
-			if ( this.props.flowType === 'pro' || this.props.selectedPlan === PLAN_JETPACK_BUSINESS ) {
-				const plan = this.props.getPlanBySlug( PLAN_JETPACK_BUSINESS );
-				if ( plan ) {
-					this.selectPlan( plan );
-					return;
-				}
+		}
+		if ( this.props.flowType === 'pro' || this.props.selectedPlan === PLAN_JETPACK_BUSINESS ) {
+			const plan = this.props.getPlanBySlug( PLAN_JETPACK_BUSINESS );
+			if ( plan ) {
+				this.selectPlan( plan );
+				return;
 			}
-			if ( this.props.selectedPlan === PLAN_JETPACK_BUSINESS_MONTHLY ) {
-				const plan = this.props.getPlanBySlug( PLAN_JETPACK_BUSINESS_MONTHLY );
-				if ( plan ) {
-					this.selectPlan( plan );
-					return;
-				}
+		}
+		if ( this.props.selectedPlan === PLAN_JETPACK_BUSINESS_MONTHLY ) {
+			const plan = this.props.getPlanBySlug( PLAN_JETPACK_BUSINESS_MONTHLY );
+			if ( plan ) {
+				this.selectPlan( plan );
+				return;
 			}
-			if ( this.props.flowType === 'premium' || this.props.selectedPlan === PLAN_JETPACK_PREMIUM ) {
-				const plan = this.props.getPlanBySlug( PLAN_JETPACK_PREMIUM );
-				if ( plan ) {
-					this.selectPlan( plan );
-					return;
-				}
+		}
+		if ( this.props.flowType === 'premium' || this.props.selectedPlan === PLAN_JETPACK_PREMIUM ) {
+			const plan = this.props.getPlanBySlug( PLAN_JETPACK_PREMIUM );
+			if ( plan ) {
+				this.selectPlan( plan );
+				return;
 			}
-			if (
-				this.props.flowType === 'premium' ||
-				this.props.selectedPlan === PLAN_JETPACK_PREMIUM_MONTHLY
-			) {
-				const plan = this.props.getPlanBySlug( PLAN_JETPACK_PREMIUM_MONTHLY );
-				if ( plan ) {
-					this.selectPlan( plan );
-					return;
-				}
+		}
+		if (
+			this.props.flowType === 'premium' ||
+			this.props.selectedPlan === PLAN_JETPACK_PREMIUM_MONTHLY
+		) {
+			const plan = this.props.getPlanBySlug( PLAN_JETPACK_PREMIUM_MONTHLY );
+			if ( plan ) {
+				this.selectPlan( plan );
+				return;
 			}
-			if ( this.props.selectedPlan === 'free' || this.props.selectedPlan === PLAN_JETPACK_FREE ) {
-				this.selectFreeJetpackPlan();
-			}
+		}
+		if ( this.props.selectedPlan === 'free' || this.props.selectedPlan === PLAN_JETPACK_FREE ) {
+			this.selectFreeJetpackPlan();
 		}
 	}
 
@@ -240,25 +235,14 @@ class Plans extends Component {
 		page.redirect( checkoutPath );
 	};
 
-	storeSelectedPlan = cartItem => {
-		this.props.recordTracksEvent( 'calypso_jpc_plans_store_plan', {
-			user: this.props.userId,
-			plan: cartItem ? cartItem.product_slug : 'free',
-		} );
-		this.props.selectPlanInAdvance(
-			cartItem ? cartItem.product_slug : 'free',
-			this.props.siteSlug
-		);
-	};
-
 	render() {
-		const { interval, isRtlLayout, selectedSite, showFirst, translate } = this.props;
+		const { interval, isRtlLayout, selectedSite, translate } = this.props;
 
 		if (
 			this.redirecting ||
 			this.hasPreSelectedPlan() ||
-			( ! showFirst && ! this.props.canPurchasePlans ) ||
-			( ! showFirst && this.props.hasPlan )
+			! this.props.canPurchasePlans ||
+			this.props.hasPlan
 		) {
 			return <QueryPlans />;
 		}
@@ -270,12 +254,11 @@ class Plans extends Component {
 				<QueryPlans />
 				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				<PlansGrid
-					basePlansPath={ showFirst ? '/jetpack/connect/authorize' : '/jetpack/connect/plans' }
-					onSelect={ showFirst ? this.storeSelectedPlan : this.selectPlan }
+					basePlansPath={ '/jetpack/connect/plans' }
+					onSelect={ this.selectPlan }
 					hideFreePlan={ true }
 					isLanding={ false }
 					interval={ interval }
-					showFirst={ showFirst }
 					selectedSite={ selectedSite }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />

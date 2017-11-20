@@ -30,8 +30,6 @@ export default function() {
 
 	page( '/jetpack/connect', controller.connect );
 
-	page( '/jetpack/connect/choose/:site', controller.plansPreSelection );
-
 	page(
 		'/jetpack/connect/authorize/:localeOrInterval?',
 		controller.redirectWithoutLocaleifLoggedIn,
