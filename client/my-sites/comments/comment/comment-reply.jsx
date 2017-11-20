@@ -13,7 +13,6 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
-import Gravatar from 'components/gravatar';
 import { decodeEntities } from 'lib/formatting';
 import {
 	bumpStat,
@@ -22,7 +21,7 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import { changeCommentStatus, replyComment } from 'state/comments/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -88,12 +87,25 @@ export class CommentReply extends Component {
 	};
 
 	submitReply = () => {
-		const { approveComment, commentStatus, postId, replyToComment, siteId } = this.props;
+		const { approveComment, commentStatus, postId, replyToComment, siteId, translate } = this.props;
 		const { replyContent } = this.state;
+
+		this.props.removeNotice( 'comment-notice' );
 
 		const alsoApprove = 'approved' !== commentStatus;
 
 		replyToComment( replyContent, siteId, postId, { alsoApprove } );
+
+		this.props.successNotice(
+			alsoApprove
+				? translate( 'Comment approved and reply submitted.' )
+				: translate( 'Reply submitted.' ),
+			{
+				id: 'comment-notice',
+				isPersistent: true,
+			}
+		);
+
 		this.setState( { replyContent: '' } );
 		this.blurReply();
 
@@ -109,24 +121,17 @@ export class CommentReply extends Component {
 	};
 
 	render() {
-		const { currentUser, translate } = this.props;
+		const { translate } = this.props;
 		const { hasReplyFocus, replyContent, textareaHeight } = this.state;
 
 		const hasReplyContent = replyContent.trim().length > 0;
 		// Only show the scrollbar if the textarea content exceeds the max height
 		const hasScrollbar = textareaHeight === TEXTAREA_MAX_HEIGHT;
 
-		const wrapperClasses = classNames( 'comment__reply-wrapper', {
-			'has-focus': hasReplyFocus,
-		} );
-
 		const buttonClasses = classNames( 'comment__reply-submit', {
 			'has-scrollbar': hasScrollbar,
 			'is-active': hasReplyContent,
-			'is-visible': hasReplyFocus || hasReplyContent,
 		} );
-
-		const gravatarClasses = classNames( { 'is-visible': ! hasReplyFocus } );
 
 		const textareaClasses = classNames( 'comment__reply-textarea', {
 			'has-content': hasReplyContent,
@@ -141,31 +146,23 @@ export class CommentReply extends Component {
 
 		return (
 			<form className="comment__reply">
-				<div className={ wrapperClasses }>
-					<AutoDirection>
-						<textarea
-							className={ textareaClasses }
-							onBlur={ this.blurReply }
-							onChange={ this.updateTextarea }
-							onFocus={ this.focusReply }
-							onKeyDown={ this.keyDownHandler }
-							placeholder={ this.getPlaceholder() }
-							ref={ this.storeTextareaRef }
-							style={ textareaStyle }
-							value={ replyContent }
-						/>
-					</AutoDirection>
+				<AutoDirection>
+					<textarea
+						className={ textareaClasses }
+						onBlur={ this.blurReply }
+						onChange={ this.updateTextarea }
+						onFocus={ this.focusReply }
+						onKeyDown={ this.keyDownHandler }
+						placeholder={ this.getPlaceholder() }
+						ref={ this.storeTextareaRef }
+						style={ textareaStyle }
+						value={ replyContent }
+					/>
+				</AutoDirection>
 
-					<Gravatar className={ gravatarClasses } size={ 24 } user={ currentUser } />
-
-					<button
-						className={ buttonClasses }
-						disabled={ ! hasReplyContent }
-						onClick={ this.submit }
-					>
-						{ translate( 'Send' ) }
-					</button>
-				</div>
+				<button className={ buttonClasses } disabled={ ! hasReplyContent } onClick={ this.submit }>
+					{ translate( 'Send' ) }
+				</button>
 			</form>
 		);
 	}
@@ -178,7 +175,6 @@ const mapStateToProps = ( state, { commentId } ) => {
 	return {
 		authorDisplayName: decodeEntities( get( comment, 'author.name' ) ),
 		commentStatus: get( comment, 'status' ),
-		currentUser: getCurrentUser( state ),
 		postId: get( comment, 'post.ID' ),
 		siteId,
 	};
@@ -200,6 +196,7 @@ const mapDispatchToProps = ( dispatch, { commentId } ) => ( {
 				changeCommentStatus( siteId, postId, commentId, 'approved' )
 			)
 		),
+	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
 	replyToComment: ( replyContent, siteId, postId, analytics = { alsoApprove: false } ) =>
 		dispatch(
 			withAnalytics(
@@ -212,6 +209,7 @@ const mapDispatchToProps = ( dispatch, { commentId } ) => ( {
 				replyComment( replyContent, siteId, postId, commentId )
 			)
 		),
+	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentReply ) );

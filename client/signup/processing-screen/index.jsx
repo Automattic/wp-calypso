@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -19,6 +19,7 @@ import Button from 'components/button';
 import Notice from 'components/notice';
 import analytics from 'lib/analytics';
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
+import { abtest } from 'lib/abtest';
 
 export class SignupProcessingScreen extends Component {
 	static propTypes = {
@@ -169,10 +170,6 @@ export class SignupProcessingScreen extends Component {
 				);
 	}
 
-	currentFlowIncludesDomainStep() {
-		return this.props.flowSteps.indexOf( 'domains' ) !== -1;
-	}
-
 	handleClick( ctaName, redirectTo = '' ) {
 		if ( ! this.props.loginHandler ) {
 			return;
@@ -191,7 +188,7 @@ export class SignupProcessingScreen extends Component {
 
 	handleClickUpgradeButton = () => {
 		this.handleClick(
-			'upgrade`_plan',
+			'upgrade_plan',
 			this.state.siteSlug ? `/plans/${ this.state.siteSlug }` : ''
 		);
 	};
@@ -202,6 +199,7 @@ export class SignupProcessingScreen extends Component {
 
 	renderUpgradeNudge() {
 		const { translate } = this.props;
+		const isVariation = abtest( 'buttonsColorOnPostSignup' ) === 'change';
 
 		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
 		return (
@@ -236,6 +234,7 @@ export class SignupProcessingScreen extends Component {
 					{ translate( "Looks like your new online home doesn't have its own domain name." ) }
 				</p>
 				<Button
+					primary={ isVariation }
 					disabled={ ! this.props.loginHandler }
 					className="signup-pricessing__upgrade-button"
 					onClick={ this.handleClickUpgradeButton }
@@ -252,6 +251,7 @@ export class SignupProcessingScreen extends Component {
 		const title = this.props.loginHandler
 			? translate( 'Congratulations! Your site is live.' )
 			: translate( 'Congratulations! Your website is almost ready.' );
+		const isVariation = abtest( 'buttonsColorOnPostSignup' ) === 'change';
 
 		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
 		return (
@@ -269,14 +269,14 @@ export class SignupProcessingScreen extends Component {
 
 					{ this.props.loginHandler ? (
 						<Button
-							primary
+							primary={ ! isVariation }
 							className="email-confirmation__button"
 							onClick={ this.props.loginHandler }
 						>
 							{ translate( 'View My Site' ) }
 						</Button>
 					) : (
-						<Button primary disabled className="email-confirmation__button">
+						<Button primary={ ! isVariation } disabled className="email-confirmation__button">
 							{ translate( 'Please wait…' ) }
 						</Button>
 					) }
@@ -292,8 +292,9 @@ export class SignupProcessingScreen extends Component {
 	render() {
 		if (
 			! this.state.hasPaidSubscription &&
-			this.currentFlowIncludesDomainStep() &&
-			! this.props.useOAuth2Layout
+			! this.props.useOAuth2Layout &&
+			this.props.flowSteps.indexOf( 'domains' ) !== -1 &&
+			this.props.flowSteps.indexOf( 'plans' ) !== -1
 		) {
 			return this.renderUpgradeScreen();
 		}

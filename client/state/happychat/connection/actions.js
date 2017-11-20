@@ -278,13 +278,16 @@ export const sendNotTyping = () => sendTyping( false );
  *
  * @param { String } locale representing the user selected locale
  * @param { Array } groups of string happychat groups (wp.com, jpop) based on the site selected
+ * @param { Object } skills object based on product and language ( formerly group and locale )
+ *
  * @return { Object } Action object
  */
-export const sendPreferences = ( locale, groups ) => ( {
+export const sendPreferences = ( locale, groups, skills ) => ( {
 	type: HAPPYCHAT_IO_SEND_PREFERENCES,
 	event: 'preferences',
 	payload: {
 		locale,
 		groups,
+		skills,
 	},
 } );

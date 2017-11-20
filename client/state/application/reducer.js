@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { CONNECTION_LOST, CONNECTION_RESTORED } from 'state/action-types';

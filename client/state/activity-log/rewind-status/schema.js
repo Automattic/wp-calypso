@@ -9,7 +9,7 @@ export const rewindStatusSchema = {
 				active: { type: 'boolean' },
 				plan: { type: 'string' },
 				isPressable: { type: 'boolean' },
-				firstBackupDate: { type: 'string' },
+				firstBackupDate: { type: [ 'null', 'string' ] },
 			},
 		},
 	},

@@ -6,20 +6,22 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-import { identity } from 'lodash';
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';
 import sinon from 'sinon';
+import TestUtils from 'react-dom/test-utils';
+import { assert } from 'chai';
+import { identity } from 'lodash';
+import { parse } from 'url';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
 import { Theme } from '../';
 
-jest.mock( 'components/popover/menu', () => require( 'components/empty-component' ) );
-jest.mock( 'components/popover/menu-item', () => require( 'components/empty-component' ) );
+jest.mock( 'components/popover/menu', () => 'components--popover--menu' );
+jest.mock( 'components/popover/menu-item', () => 'components--popover--menu-item' );
 jest.mock( 'lib/user', () => () => {} );
 
 describe( 'Theme', () => {
@@ -28,9 +30,10 @@ describe( 'Theme', () => {
 	beforeEach( () => {
 		props = {
 			theme: {
-				id: 'atheme',
-				name: 'Theme name',
-				screenshot: '/theme/screenshot.png',
+				id: 'twentyseventeen',
+				name: 'Twenty Seventeen',
+				screenshot:
+					'https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?ssl=1',
 			},
 			buttonContents: { dummyAction: { label: 'Dummy action', action: sinon.spy() } }, // TODO: test if called when clicked
 			translate: identity,
@@ -54,12 +57,23 @@ describe( 'Theme', () => {
 					'className does not contain "theme is-actionable"'
 				);
 
-				assert( themeNode.getElementsByTagName( 'h2' )[ 0 ].textContent === 'Theme name' );
+				assert( themeNode.getElementsByTagName( 'h2' )[ 0 ].textContent === 'Twenty Seventeen' );
 			} );
 
 			test( 'should render a screenshot', () => {
 				const imgNode = themeNode.getElementsByTagName( 'img' )[ 0 ];
-				assert.include( imgNode.getAttribute( 'src' ), '/theme/screenshot.png' );
+				const src = imgNode.getAttribute( 'src' );
+				assert.include( src, '/screenshot.png' );
+			} );
+
+			test( 'should include photon parameters', () => {
+				const imgNode = themeNode.getElementsByTagName( 'img' )[ 0 ];
+				const src = imgNode.getAttribute( 'src' );
+				const { query } = parse( src, true );
+
+				expect( query ).toMatchObject( {
+					fit: expect.stringMatching( /\d+,\d+/ ),
+				} );
 			} );
 
 			test( 'should call onScreenshotClick() on click on screenshot', () => {
@@ -80,6 +94,11 @@ describe( 'Theme', () => {
 
 				assert( more.length === 1, 'More button container not found' );
 				assert( more[ 0 ].getElementsByTagName( 'button' ).length === 1, 'More button not found' );
+			} );
+
+			test( 'should match snapshot', () => {
+				const rendered = shallow( <Theme { ...props } /> );
+				expect( rendered ).toMatchSnapshot();
 			} );
 		} );
 

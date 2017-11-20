@@ -321,6 +321,7 @@
 @import 'my-sites/ads/style';
 @import 'my-sites/all-sites/style';
 @import 'my-sites/all-sites-icon/style';
+@import 'my-sites/comment/style';
 @import 'my-sites/comments/style';
 @import 'my-sites/comments/comment/style';
 @import 'my-sites/current-site/style';
@@ -401,6 +402,7 @@
 @import 'my-sites/stats/activity-log/style';
 @import 'my-sites/stats/activity-log-banner/style';
 @import 'my-sites/stats/activity-log-confirm-dialog/style';
+@import 'my-sites/stats/activity-log-credentials-notice/style';
 @import 'my-sites/stats/activity-log-day/style';
 @import 'my-sites/stats/activity-log-item/style';
 @import 'my-sites/stats/all-time/style';
@@ -447,6 +449,7 @@
 @import 'notices/style';
 @import 'my-sites/domains/domain-management/style';
 @import 'my-sites/domains/domain-management/email/style';
+@import 'my-sites/domains/domain-management/components/email-verification/style';
 @import 'my-sites/domains/domain-management/components/icann-verification/style';
 @import 'notifications/style';
 @import 'post-editor/media-modal/style';

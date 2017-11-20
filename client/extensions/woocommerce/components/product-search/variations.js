@@ -14,7 +14,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
-import Notice from 'components/notice';
 
 // Use a constant for the default attribute state.
 const DEFAULT_ATTR = 'any';
@@ -52,13 +51,12 @@ class ProductVariations extends Component {
 
 	renderAttribute = attribute => {
 		const { translate } = this.props;
+		const fieldId = kebabCase( attribute.name );
 		return (
-			<div className="product-search__variation-field" key={ attribute.id }>
-				<FormLabel htmlFor={ `select-${ kebabCase( attribute.name ) }` }>
-					{ attribute.name }
-				</FormLabel>
+			<div className="product-search__variation-field" key={ fieldId }>
+				<FormLabel htmlFor={ `select-${ fieldId }` }>{ attribute.name }</FormLabel>
 				<FormSelect
-					id={ `select-${ kebabCase( attribute.name ) }` }
+					id={ `select-${ fieldId }` }
 					onChange={ this.onChange( attribute.name ) }
 					value={ this.state[ attribute.name ] }
 				>
@@ -88,12 +86,9 @@ class ProductVariations extends Component {
 			<div className="product-search__variations">
 				<FormFieldset>
 					<FormLegend>
-						<Notice showDismiss={ false }>
-							{ translate(
-								'%(product)s has variations. Choose a specific customization to select.',
-								{ args: { product: product.name } }
-							) }
-						</Notice>
+						{ translate( '%(product)s has variations. Choose a specific variation to add.', {
+							args: { product: product.name },
+						} ) }
 					</FormLegend>
 					<div className="product-search__variation-fields">
 						{ attributes.map( this.renderAttribute ) }

@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { cloneDeep, difference, get, isEqual, map, omit, reduce, values } from 'lodash';
+import { clone, difference, get, isEqual, map, omit, reduce, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -251,9 +251,8 @@ export default class QueryManager {
 				if ( ! item || ! isEqual( mergedItem, item ) ) {
 					// Did not exist previously or has changed
 					if ( memo === this.data.items ) {
-						// Create a copy of memo, as we don't want to mutate the
-						// original items set
-						memo = cloneDeep( memo );
+						// Create a copy of memo, as we don't want to mutate the original items set
+						memo = clone( memo );
 					}
 
 					memo[ receivedItemKey ] = mergedItem;
@@ -344,6 +343,7 @@ export default class QueryManager {
 				const shouldAdjustFoundCount = ! isReceivedQueryKey;
 
 				const query = this.constructor.QueryKey.parse( queryKey );
+				let needsSort = false;
 				items.forEach( receivedItem => {
 					// Find item in known data for query
 					const receivedItemKey = receivedItem[ this.options.itemKey ];
@@ -356,7 +356,7 @@ export default class QueryManager {
 						if ( ! updatedItem || ! this.constructor.matches( query, updatedItem ) ) {
 							// Create a copy of the original details to avoid mutating
 							if ( memo[ queryKey ] === queryDetails ) {
-								memo[ queryKey ] = cloneDeep( queryDetails );
+								memo[ queryKey ] = clone( queryDetails );
 							}
 
 							// Omit item by slicing previous and next
@@ -376,7 +376,7 @@ export default class QueryManager {
 
 						// Create a copy of the original details to avoid mutating
 						if ( memo[ queryKey ] === queryDetails ) {
-							memo[ queryKey ] = cloneDeep( queryDetails );
+							memo[ queryKey ] = clone( queryDetails );
 						}
 
 						// Increment found count for query
@@ -389,10 +389,14 @@ export default class QueryManager {
 							receivedItemKey
 						);
 
-						// Re-sort the set
-						this.constructor.sort( memo[ queryKey ].itemKeys, nextItems, query );
+						// The itemKeys will need to be re-sorted after all items are processed
+						needsSort = true;
 					}
 				} );
+
+				if ( needsSort ) {
+					this.constructor.sort( memo[ queryKey ].itemKeys, nextItems, query );
+				}
 
 				isModified = isModified || memo[ queryKey ] !== queryDetails;
 				return memo;

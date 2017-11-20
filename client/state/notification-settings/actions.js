@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { NOTIFICATION_SETTINGS_REQUEST, NOTIFICATION_SETTINGS_UPDATE } from 'state/action-types';

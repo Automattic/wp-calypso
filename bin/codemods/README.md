@@ -28,6 +28,8 @@ export default function transformer( file, api ) {
 A nifty tool to explore AST structures is [AST explorer](https://astexplorer.net/).
 You can choose "recast" as a parser and "jscodeshift" from "Transform" menu.
 
+For more, check [an awesome list of jscodeshift resources and tips](https://github.com/sejoker/awesome-jscodeshift).
+
 ## How to run our codemods
 
 It's easy! Our codemod script uses the following CLI:
@@ -66,6 +68,25 @@ If you're developing your own transformations, it may be useful to know you can 
 ```bash
 ./node_modules/.bin/jscodeshift -t transformation.js [target files]
 ```
+
+## How to debug codemods
+
+If you are a codemod author, you may want to debug your codemod using the Chrome debugger. Then
+run the codemod script with a `--debugger` parameter:
+```bash
+npm run codemod -- --debugger my-transform client/target.js
+```
+This will run `jscodeshift` in a Node process with activated debugger server and will break on the
+first statement. That allows you to connect with Chrome and run the codemod script. (internally,
+the `--inspect-brk` command line option is passed to Node)
+
+`jscodeshift` will be run in a mode where it doesn't spawn child worker processes, but will execute
+everything in one Node process -- the one that's being debugged. (internally, the `--run-in-band`
+command line option is passed to `jscodeshift`)
+
+You can now connect to the running Node process from Chrome by opening the `chrome:inspect` page and
+selecting your local Node process from the list. Refer to the
+[official Node debugging guide](https://nodejs.org/en/docs/inspector/) if you run into any trouble.
 
 ## List of available transformations
 

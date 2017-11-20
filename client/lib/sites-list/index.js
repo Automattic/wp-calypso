@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * Internal Dependencies
- *
- * @format
+ * Internal dependencies
  */
 
 import { action as InvitesActionTypes } from 'lib/invites/constants';

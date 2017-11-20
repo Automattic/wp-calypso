@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { createInitialFormState, createNullFieldValues, initializeFields } from '../';

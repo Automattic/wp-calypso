@@ -58,6 +58,16 @@ class ThanksModal extends Component {
 		trackClick( 'current theme', eventName, verb );
 	};
 
+	visitSite = () => {
+		this.trackClick( 'visit site' );
+		page( this.props.visitSiteUrl );
+	};
+
+	goBack = () => {
+		this.trackClick( 'go back' );
+		this.onCloseModal();
+	};
+
 	onLinkClick = link => {
 		return () => {
 			this.onCloseModal();

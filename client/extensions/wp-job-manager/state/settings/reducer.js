@@ -1,10 +1,9 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_JOB_MANAGER_FETCH_ERROR,
@@ -16,21 +15,23 @@ import {
  * Returns the updated fetching state after an action has been dispatched.
  * Fetching state tracks whether a settings fetch is in progress for a site.
  *
- * @param  {Object} state Current fetching state
- * @param  {Object} action Action object
- * @return {Object} Updated fetching state
+ * @param  {Boolean} state Current fetching state
+ * @param  {Object}  action Action object
+ * @return {Object}  Updated fetching state
  */
-export const fetching = createReducer(
-	{},
-	{
-		[ WP_JOB_MANAGER_FETCH_SETTINGS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-		[ WP_JOB_MANAGER_UPDATE_SETTINGS ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
-		[ WP_JOB_MANAGER_FETCH_ERROR ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+export const fetching = ( state = false, { type } ) => {
+	switch ( type ) {
+		case WP_JOB_MANAGER_FETCH_SETTINGS:
+			return true;
+
+		case WP_JOB_MANAGER_FETCH_ERROR:
+		case WP_JOB_MANAGER_UPDATE_SETTINGS:
+			return false;
+
+		default:
+			return state;
 	}
-);
+};
 
 /**
  * Tracks the settings for a particular site.
@@ -39,18 +40,15 @@ export const fetching = createReducer(
  * @param  {Object} action Action object
  * @return {Object} Updated settings
  */
-export const items = createReducer(
-	{},
-	{
-		[ WP_JOB_MANAGER_UPDATE_SETTINGS ]: ( state, { siteId, data } ) => ( {
-			...state,
-			[ siteId ]: data,
-		} ),
-	},
-	itemsSchema
-);
+export const items = ( state = {}, { data, type } ) =>
+	WP_JOB_MANAGER_UPDATE_SETTINGS === type ? data : state;
 
-export default combineReducers( {
-	fetching,
-	items,
-} );
+items.schema = itemsSchema;
+
+export default keyedReducer(
+	'siteId',
+	combineReducers( {
+		fetching,
+		items,
+	} )
+);

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { assign, includes, reject } from 'lodash';
@@ -70,6 +70,13 @@ const flows = {
 		meta: {
 			skipBundlingPlan: true,
 		},
+	},
+
+	segment: {
+		steps: [ 'about', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'A new signup flow for segmenting our users',
+		lastModified: '2017-11-11',
 	},
 
 	premium: {

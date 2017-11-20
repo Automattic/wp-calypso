@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { PureComponent } from 'react';
@@ -128,6 +128,10 @@ export class DomainDetailsForm extends PureComponent {
 		if ( ! isEqual( previousFormValues, currentFormValues ) ) {
 			this.props.updateContactDetailsCache( this.getMainFieldValues() );
 		}
+
+		if ( ! isEqual( prevProps.cart, this.props.cart ) ) {
+			this.validateSteps();
+		}
 	}
 
 	loadFormStateFromRedux = fn => {
@@ -154,6 +158,18 @@ export class DomainDetailsForm extends PureComponent {
 		return this.state.currentStep !== last( this.state.steps );
 	}
 
+	validateSteps() {
+		const updatedSteps = [ 'mainForm', ...this.getRequiredExtraSteps() ];
+		const newState = {
+			steps: updatedSteps,
+		};
+		if ( updatedSteps.indexOf( this.state.currentStep ) < 0 ) {
+			debug( 'Switching to step: mainForm' );
+			newState.currentStep = 'mainForm';
+		}
+		this.setState( newState );
+	}
+
 	getCountryCode() {
 		const { contactDetails } = this.props;
 		return ( contactDetails || {} ).countryCode;
@@ -175,7 +191,9 @@ export class DomainDetailsForm extends PureComponent {
 		}
 
 		const allFieldValues = this.getMainFieldValues();
-		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
+		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' ).concat(
+			map( cartItems.getDomainTransfers( this.props.cart ), 'meta' )
+		);
 		wpcom.validateDomainContactInformation(
 			allFieldValues,
 			domainNames,
@@ -200,7 +218,8 @@ export class DomainDetailsForm extends PureComponent {
 	needsOnlyGoogleAppsDetails() {
 		return (
 			cartItems.hasGoogleApps( this.props.cart ) &&
-			! cartItems.hasDomainRegistration( this.props.cart )
+			! cartItems.hasDomainRegistration( this.props.cart ) &&
+			! cartItems.hasTransferProduct( this.props.cart )
 		);
 	}
 
@@ -258,6 +277,7 @@ export class DomainDetailsForm extends PureComponent {
 			// All we need to do to disable everything is not show the .FR form
 			return [];
 		}
+
 		return intersection( cartItems.getTlds( this.props.cart ), tldsWithAdditionalDetailsForms );
 	}
 

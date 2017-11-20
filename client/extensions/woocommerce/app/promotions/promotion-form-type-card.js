@@ -23,6 +23,8 @@ function getExplanation( promotionType, translate ) {
 			return translate( 'Issue a coupon with a discount for the entire cart amount.' );
 		case 'percent':
 			return translate( 'Issue a coupon with a percentage discount for the entire cart.' );
+		case 'free_shipping':
+			return translate( 'Issue a free shipping coupon.' );
 	}
 }
 
@@ -55,6 +57,9 @@ const PromotionFormTypeCard = ( {
 					</option>
 					<option value="percent" disabled={ couponTypesDisabled }>
 						{ translate( 'Percent cart discount coupon' ) }
+					</option>
+					<option value="free_shipping" disabled={ couponTypesDisabled }>
+						{ translate( 'Free shipping' ) }
 					</option>
 					<option value="product_sale" disabled={ productTypesDisabled }>
 						{ translate( 'Individual product sale' ) }

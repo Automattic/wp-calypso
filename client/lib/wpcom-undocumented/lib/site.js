@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import debugFactory from 'debug';
@@ -86,18 +86,8 @@ function UndocumentedSite( id, wpcom ) {
 	this._id = id;
 }
 
-UndocumentedSite.prototype.domains = function( callback ) {
-	return this.wpcom.req.get( `/sites/${ this._id }/domains`, { apiVersion: '1.2' }, function(
-		error,
-		response
-	) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, response );
-	} );
+UndocumentedSite.prototype.domains = function() {
+	return this.wpcom.req.get( `/sites/${ this._id }/domains`, { apiVersion: '1.2' } );
 };
 
 UndocumentedSite.prototype.postFormatsList = function( callback ) {

@@ -1,13 +1,11 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 
 /**
@@ -21,10 +19,8 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
-const StatsSiteOverview = createReactClass( {
-	displayName: 'StatsSiteOverview',
-
-	proptypes: {
+class StatsSiteOverview extends Component {
+	static propTypes = {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		period: PropTypes.string,
@@ -34,11 +30,11 @@ const StatsSiteOverview = createReactClass( {
 		summaryData: PropTypes.object,
 		insights: PropTypes.bool,
 		title: PropTypes.string,
-	},
+	};
 
-	isValueLow( value ) {
+	isValueLow = value => {
 		return ! value || 0 === value;
-	},
+	};
 
 	render() {
 		const { siteId, siteSlug, path, summaryData, query, title } = this.props;
@@ -84,8 +80,8 @@ const StatsSiteOverview = createReactClass( {
 				</Card>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( ( state, ownProps ) => {
 	const { siteId, date, period, siteSlug } = ownProps;

@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import { requestSiteBlock } from 'state/reader/site-blocks/actions';
+import { blockSite } from 'state/reader/site-blocks/actions';
 import PostUtils from 'lib/posts/utils';
 import FollowButton from 'reader/follow-button';
 import * as DiscoverHelper from 'reader/discover/helper';
@@ -50,7 +50,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		stats.recordAction( 'blocked_blog' );
 		stats.recordGaEvent( 'Clicked Block Site' );
 		stats.recordTrackForPost( 'calypso_reader_block_site', this.props.post );
-		this.props.requestSiteBlock( this.props.post.site_ID );
+		this.props.blockSite( this.props.post.site_ID );
 		this.props.onBlock();
 	};
 
@@ -222,6 +222,6 @@ export default connect(
 		};
 	},
 	{
-		requestSiteBlock,
+		blockSite,
 	}
 )( localize( ReaderPostOptionsMenu ) );

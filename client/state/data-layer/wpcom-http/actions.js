@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';

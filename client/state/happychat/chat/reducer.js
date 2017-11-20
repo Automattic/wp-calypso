@@ -1,9 +1,9 @@
 /** @format */
 
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 import { concat, filter, find, map, get, sortBy, takeRight } from 'lodash';
 import validator from 'is-my-json-valid';

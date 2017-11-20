@@ -506,6 +506,7 @@ const Account = createReactClass( {
 						disabled={ this.getDisabledState() }
 						id="user_URL"
 						name="user_URL"
+						type="url"
 						onFocus={ this.recordFocusEvent( 'Web Address Field' ) }
 						value={ this.getUserSetting( 'user_URL' ) || '' }
 						onChange={ this.updateUserSettingInput }

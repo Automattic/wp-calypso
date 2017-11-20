@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -243,6 +243,7 @@ class PhoneInput extends React.PureComponent {
 					name={ this.props.name }
 					ref={ this.setNumberInputRef }
 					type="tel"
+					className={ classnames( { 'is-error': this.props.isError } ) }
 				/>
 				<div className="phone-input__select-container">
 					<div className="phone-input__select-inner-container">

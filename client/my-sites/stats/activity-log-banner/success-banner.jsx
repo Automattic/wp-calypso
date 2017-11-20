@@ -15,7 +15,10 @@ import Button from 'components/button';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSiteUrl } from 'state/selectors';
-import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
+import {
+	dismissRewindRestoreProgress,
+	dismissRewindBackupProgress,
+} from 'state/activity-log/actions';
 
 /**
  * Normalize timestamp values
@@ -46,7 +49,8 @@ class SuccessBanner extends PureComponent {
 		downloadCount: PropTypes.number,
 
 		// connect
-		dismissRewindRestoreProgress: PropTypes.func.isRequired,
+		dismissRestoreProgress: PropTypes.func.isRequired,
+		dismissBackupProgress: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 
 		// localize
@@ -54,7 +58,10 @@ class SuccessBanner extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
-	handleDismiss = () => this.props.dismissRewindRestoreProgress( this.props.siteId );
+	handleDismiss = () =>
+		this.props.backupUrl
+			? this.props.dismissBackupProgress( this.props.siteId )
+			: this.props.dismissRestoreProgress( this.props.siteId );
 
 	trackDownload = () =>
 		this.props.recordTracksEvent( 'calypso_activitylog_backup_download', {
@@ -64,16 +71,22 @@ class SuccessBanner extends PureComponent {
 	render() {
 		const { applySiteOffset, moment, siteUrl, timestamp, translate, backupUrl } = this.props;
 		const date = applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' );
+		const params = backupUrl
+			? {
+					title: translate( 'Your backup is now available for download' ),
+					icon: 'cloud-download',
+				}
+			: {
+					title: translate( 'Your site has been successfully restored' ),
+					icon: 'history',
+				};
 		return (
 			<ActivityLogBanner
 				isDismissable
 				onDismissClick={ this.handleDismiss }
 				status="success"
-				title={
-					backupUrl
-						? translate( 'Your backup has been successfully created' )
-						: translate( 'Your site has been successfully restored' )
-				}
+				title={ params.title }
+				icon={ params.icon }
 			>
 				{ backupUrl ? (
 					<TrackComponentView eventName="calypso_activitylog_backup_successbanner_impression" />
@@ -88,15 +101,13 @@ class SuccessBanner extends PureComponent {
 				{
 					<p>
 						{ backupUrl
-							? translate( 'We successfully restored your site back to %s!', { args: date } )
-							: translate( 'We successfully created a backup of your site as of %s!', {
-									args: date,
-								} ) }
+							? translate( 'We successfully created a backup of your site to %s!', { args: date } )
+							: translate( 'We successfully restored your site back to %s!', { args: date } ) }
 					</p>
 				}
 				{ backupUrl ? (
 					<Button href={ backupUrl } onClick={ this.trackDownload } primary>
-						{ translate( 'Download your backup' ) }
+						{ translate( 'Download' ) }
 					</Button>
 				) : (
 					<Button href={ siteUrl } primary>
@@ -104,7 +115,9 @@ class SuccessBanner extends PureComponent {
 					</Button>
 				) }
 				{ '  ' }
-				<Button onClick={ this.handleDismiss }>{ translate( 'Thanks, got it!' ) }</Button>
+				{ ! backupUrl && (
+					<Button onClick={ this.handleDismiss }>{ translate( 'Thanks, got it!' ) }</Button>
+				) }
 			</ActivityLogBanner>
 		);
 	}
@@ -115,7 +128,8 @@ export default connect(
 		siteUrl: getSiteUrl( state, siteId ),
 	} ),
 	{
-		dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
+		dismissRestoreProgress: dismissRewindRestoreProgress,
+		dismissBackupProgress: dismissRewindBackupProgress,
 		recordTracksEvent: recordTracksEvent,
 	}
 )( localize( SuccessBanner ) );

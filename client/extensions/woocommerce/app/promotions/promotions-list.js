@@ -1,23 +1,26 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import EmptyContent from 'components/empty-content';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	getPromotions,
 	getPromotionsPage,
 	getPromotionsCurrentPage,
 	getPromotionsPerPage,
+	getPromotionsSearch,
 } from 'woocommerce/state/selectors/promotions';
 import PromotionsListTable from './promotions-list-table';
 import PromotionsListPagination from './promotions-list-pagination';
@@ -34,11 +37,30 @@ function promotionContainsString( promotion, textString ) {
 }
 
 const PromotionsList = props => {
-	const { site, filteredPromotions, promotionsPage, currentPage, perPage } = props;
+	const {
+		site,
+		searchFilter,
+		promotions,
+		filteredPromotions,
+		promotionsPage,
+		currentPage,
+		perPage,
+		translate,
+	} = props;
+
+	if ( promotions && 0 === filteredPromotions.length ) {
+		const message = translate( 'No promotions found for {{query /}}.', {
+			components: {
+				query: <em>{ searchFilter }</em>,
+			},
+		} );
+
+		return <EmptyContent title={ translate( 'No Results' ) } line={ message } />;
+	}
 
 	const switchPage = index => {
 		if ( site ) {
-			props.setPromotionsPage( site.ID, index, perPage );
+			props.setPromotionsPage( index, perPage );
 		}
 	};
 
@@ -67,15 +89,16 @@ PromotionsList.propTypes = {
 	promotionsPage: PropTypes.array,
 };
 
-function mapStateToProps( state, ownProps ) {
+function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const currentPage = site && getPromotionsCurrentPage( state );
 	const perPage = site && getPromotionsPerPage( state );
+	const searchFilter = getPromotionsSearch( state );
 	const promotions = site && getPromotions( state, site.ID );
 	const filteredPromotions =
 		promotions &&
 		promotions.filter( promotion => {
-			return promotionContainsString( promotion, ownProps.searchFilter );
+			return promotionContainsString( promotion, searchFilter );
 		} );
 	const promotionsPage = site && getPromotionsPage( filteredPromotions, currentPage, perPage );
 
@@ -86,6 +109,7 @@ function mapStateToProps( state, ownProps ) {
 		promotionsPage,
 		currentPage,
 		perPage,
+		searchFilter,
 	};
 }
 
@@ -98,4 +122,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( PromotionsList );
+export default localize( connect( mapStateToProps, mapDispatchToProps )( PromotionsList ) );

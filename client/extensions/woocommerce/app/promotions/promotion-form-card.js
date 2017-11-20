@@ -9,8 +9,19 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Card from 'components/card';
-import { renderField } from './fields';
 import SectionHeader from 'components/section-header';
+
+function renderField( fieldName, fieldComponent, promotion, edit, currency ) {
+	const props = {
+		key: fieldName,
+		value: promotion[ fieldName ],
+		promotion,
+		fieldName,
+		edit,
+		currency,
+	};
+	return React.cloneElement( fieldComponent, props );
+}
 
 const promotionFieldEdit = ( siteId, promotion, editPromotion ) => ( fieldName, newValue ) => {
 	const newPromotion = {
@@ -29,8 +40,8 @@ const PromotionFormCard = ( {
 } ) => {
 	const edit = promotionFieldEdit( siteId, promotion, editPromotion );
 	const fields = Object.keys( cardModel.fields ).map( ( fieldName ) => {
-		const fieldModel = cardModel.fields[ fieldName ];
-		return renderField( fieldName, fieldModel, promotion, edit, currency );
+		const fieldComponent = cardModel.fields[ fieldName ];
+		return renderField( fieldName, fieldComponent, promotion, edit, currency );
 	} );
 
 	const classes = classNames(

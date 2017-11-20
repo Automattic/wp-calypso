@@ -79,6 +79,7 @@ import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import Suggestions from 'components/suggestions/docs/example';
+import TimeSince from 'components/time-since/docs/example';
 import Timezone from 'components/timezone/docs/example';
 import TokenFields from 'components/token-field/docs/example';
 import Tooltip from 'components/tooltip/docs/example';
@@ -182,6 +183,7 @@ class DesignAssets extends React.Component {
 					<SpinnerButton searchKeywords="loading input submit" />
 					<SpinnerLine searchKeywords="loading" />
 					<Suggestions />
+					<TimeSince />
 					<Timezone />
 					<TokenFields />
 					<Tooltip />

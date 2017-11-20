@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -145,7 +145,7 @@ class SharingPreviewPane extends PureComponent {
 							) }
 						</p>
 					</div>
-					<VerticalMenu onClick={ this.selectPreview } initialItemIndex={ initialMenuItemIndex } >
+					<VerticalMenu onClick={ this.selectPreview } initialItemIndex={ initialMenuItemIndex }>
 						{ services.map( service => <SocialItem { ...{ key: service, service } } /> ) }
 					</VerticalMenu>
 				</div>

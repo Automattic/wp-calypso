@@ -1,0 +1,27 @@
+.activity-log-credentials-notice {
+	display: flex;
+	align-items: center;
+}
+
+.activity-log-credentials-notice .card__link-indicator,
+.activity-log-credentials-notice.card:hover .card__link-indicator {
+	color: $blue-wordpress;
+}
+
+.activity-log-credentials-notice__icon {
+	display: inline-block;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background: $blue-wordpress;
+}
+
+.activity-log-credentials-notice__icon .gridicon {
+	color: #fff;
+	margin: 6px;
+}
+
+.activity-log-credentials-notice__text {
+	color: $gray-dark;
+	margin-left: 16px;
+}

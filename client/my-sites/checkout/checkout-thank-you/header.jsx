@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { PureComponent } from 'react';
@@ -24,6 +24,7 @@ import {
 } from 'lib/products-values';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
+import { preventWidows } from 'lib/formatting';
 
 class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -48,7 +49,9 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
-			return translate( 'Check your email for important information about your transfer.' );
+			return preventWidows(
+				translate( 'Check your email! There are important next steps waiting in your inbox.' )
+			);
 		}
 
 		return translate( 'Congratulations on your purchase!' );
@@ -143,8 +146,9 @@ class CheckoutThankYouHeader extends PureComponent {
 
 		if ( isDomainTransfer( primaryPurchase ) ) {
 			return translate(
-				"We're processing your request to transfer {{strong}}%(domainName)s{{/strong}} to WordPress.com. " +
-					'Be on the lookout for an important mail from us to confirm the transfer.',
+				'We sent an email with an important link. Please open the email and click the link to confirm ' +
+					'that you want to transfer {{strong}}%(domainName)s{{/strong}} to WordPress.com. ' +
+					"The transfer can't complete until you do!",
 				{
 					args: { domainName: primaryPurchase.meta },
 					components: { strong: <strong /> },
@@ -183,10 +187,15 @@ class CheckoutThankYouHeader extends PureComponent {
 	};
 
 	getButton() {
-		const { translate, primaryPurchase, selectedSite } = this.props;
+		const { hasFailedPurchases, translate, primaryPurchase, selectedSite } = this.props;
 		const headerButtonClassName = 'button is-primary';
 
-		if ( isPlan( primaryPurchase ) && selectedSite && ! selectedSite.jetpack ) {
+		if (
+			! hasFailedPurchases &&
+			isPlan( primaryPurchase ) &&
+			selectedSite &&
+			! selectedSite.jetpack
+		) {
 			return (
 				<div className="checkout-thank-you__header-button">
 					<button className={ headerButtonClassName } onClick={ this.visitSite }>
@@ -204,11 +213,10 @@ class CheckoutThankYouHeader extends PureComponent {
 		const classes = { 'is-placeholder': ! isDataLoaded };
 
 		let svg = 'thank-you.svg';
-		if ( isDomainTransfer( primaryPurchase ) ) {
-			svg = 'check-emails-desktop.svg';
-		}
 		if ( hasFailedPurchases ) {
 			svg = 'items-failed.svg';
+		} else if ( isDomainTransfer( primaryPurchase ) ) {
+			svg = 'check-emails-desktop.svg';
 		}
 
 		return (

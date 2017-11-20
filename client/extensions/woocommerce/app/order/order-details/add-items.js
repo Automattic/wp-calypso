@@ -11,6 +11,7 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import OrderFeeDialog from './fee-dialog';
+import OrderProductDialog from './product-dialog';
 
 class OrderAddItems extends Component {
 	state = {
@@ -35,6 +36,10 @@ class OrderAddItems extends Component {
 				</Button>
 				<OrderFeeDialog
 					isVisible={ 'fee' === this.state.showDialog }
+					closeDialog={ this.toggleDialog( false ) }
+				/>
+				<OrderProductDialog
+					isVisible={ 'product' === this.state.showDialog }
 					closeDialog={ this.toggleDialog( false ) }
 				/>
 			</div>

@@ -50,11 +50,11 @@ const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
 
 // List of browser languages to show pride styling for.
 // Add a '*' element to show the styling for all visitors.
-const prideLanguages = [ 'en-au' ];
+const prideLanguages = [];
 
 // List of geolocated locations to show pride styling for.
 // Geolocation may not be 100% accurate.
-const prideLocations = [ 'au' ];
+const prideLocations = [];
 
 const sections = sectionsModule.get();
 
@@ -87,8 +87,7 @@ function generateStaticUrls() {
 	const assets = getAssets();
 
 	forEach( assets, ( asset, name ) => {
-		urls[ name ] =
-			config( 'env' ) === 'development' ? asset.js : asset.js.replace( '.js', '.min.js' );
+		urls[ name ] = asset.js;
 	} );
 
 	return urls;
@@ -147,7 +146,7 @@ function getDefaultContext( request ) {
 	const cacheKey = getCacheKey( request );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
-	let sectionCss, sectionCssRtl;
+	let sectionCss;
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
@@ -167,9 +166,10 @@ function getDefaultContext( request ) {
 	}
 
 	if ( request.context && request.context.sectionCss ) {
-		const urls = utils.getCssUrls( request.context.sectionCss );
-		sectionCss = urls.ltr;
-		sectionCssRtl = urls.rtl;
+		sectionCss = {
+			id: request.context.sectionCss,
+			urls: utils.getCssUrls( request.context.sectionCss ),
+		};
 	}
 
 	const shouldUseSingleCDN =
@@ -205,7 +205,6 @@ function getDefaultContext( request ) {
 		shouldUseSingleCDN,
 		bodyClasses,
 		sectionCss,
-		sectionCssRtl,
 	} );
 
 	context.app = {
@@ -369,7 +368,7 @@ function setUpRoute( req, res, next ) {
 }
 
 function render404( request, response ) {
-	response.status( 404 ).render( '404.jade', {
+	response.status( 404 ).render( '404', {
 		urls: generateStaticUrls(),
 	} );
 }
@@ -522,7 +521,7 @@ module.exports = function() {
 			? primaryBlogUrl + '/wp-admin'
 			: 'https://dashboard.wordpress.com/wp-admin/';
 
-		res.render( 'browsehappy.jade', {
+		res.render( 'browsehappy', {
 			...req.context,
 			dashboardUrl,
 		} );

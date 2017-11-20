@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import validator from 'is-my-json-valid';
@@ -48,7 +48,7 @@ export function isValidStateWithSchema( state, schema ) {
  * Note! This will only apply the supplied reducer to
  * the item referenced by the supplied key in the action.
  *
- * If no key exists whose name matches the given keyName
+ * If no key exists whose name matches the given lodash style keyPath
  * then this super-reducer will abort and return the
  * previous state.
  *
@@ -58,7 +58,7 @@ export function isValidStateWithSchema( state, schema ) {
  * These will apply to every item in the collection
  * and they may not have the necessary key: for
  * example, the DESERIALIZE and SERIALIZE actions
- * may apply to all items.
+ * may apply to all items and are included by default.
  *
  * @example
  * const age = ( state = 0, action ) =>
@@ -93,20 +93,20 @@ export function isValidStateWithSchema( state, schema ) {
  *
  * // now every item can decide what to do for persistence
  *
- * @param {string} keyName lodash-style path to the key in action referencing item in state map
+ * @param {string} keyPath lodash-style path to the key in action referencing item in state map
  * @param {Function} reducer applied to referenced item in state map
  * @param {Array} globalActions set of types which apply to every item in the collection
  * @return {Function} super-reducer applying reducer over map of keyed items
  */
-export const keyedReducer = ( keyName, reducer, globalActions ) => {
+export const keyedReducer = ( keyPath, reducer, globalActions = [ SERIALIZE, DESERIALIZE ] ) => {
 	// some keys are invalid
-	if ( 'string' !== typeof keyName ) {
+	if ( 'string' !== typeof keyPath ) {
 		throw new TypeError(
 			`Key name passed into ``keyedReducer`` must be a string but I detected a ${ typeof keyName }`
 		);
 	}
 
-	if ( ! keyName.length ) {
+	if ( ! keyPath.length ) {
 		throw new TypeError(
 			'Key name passed into `keyedReducer` must have a non-zero length but I detected an empty string'
 		);
@@ -129,7 +129,7 @@ export const keyedReducer = ( keyName, reducer, globalActions ) => {
 		}
 
 		// don't allow coercion of key name: null => 0
-		const itemKey = get( action, keyName, undefined );
+		const itemKey = get( action, keyPath, undefined );
 
 		// if the action doesn't contain a valid reference
 		// then return without any updates

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -12,7 +12,7 @@ import React from 'react';
 import InfoPopover from 'components/info-popover';
 
 class InfoPopoverExample extends React.PureComponent {
-    static displayName = 'InfoPopover';
+	static displayName = 'InfoPopover';
 
 	state = {
 		popoverPosition: 'bottom left',

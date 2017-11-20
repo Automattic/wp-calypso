@@ -25,6 +25,10 @@ export function createProductUpdateFromPromotion( promotion ) {
 	const { productIds } = promotion.appliesTo || {};
 	const id = productIds && productIds[ 0 ];
 
+	// If dates are null, that means they were enabled but not selected, so use today as default.
+	const startDate = null === promotion.startDate ? new Date().toISOString() : promotion.startDate;
+	const endDate = null === promotion.endDate ? new Date().toISOString() : promotion.endDate;
+
 	if ( ! id ) {
 		throw new Error( 'Cannot create product from promotion, product id not found.' );
 	}
@@ -32,12 +36,14 @@ export function createProductUpdateFromPromotion( promotion ) {
 	return {
 		id,
 		sale_price: promotion.salePrice,
-		date_on_sale_from: promotion.startDate,
-		date_on_sale_to: promotion.endDate,
+		date_on_sale_from: startDate,
+		date_on_sale_to: endDate,
 	};
 }
 
 export function createPromotionFromCoupon( coupon ) {
+	const promotionTypeMeta = find( coupon.meta_data, { key: 'promotion_type' } );
+	const promotionType = ( promotionTypeMeta ? promotionTypeMeta.value : coupon.discount_type );
 	const couponCode = coupon.code;
 	const startDate = coupon.date_created;
 	const endDate = coupon.date_expires || undefined;
@@ -55,7 +61,7 @@ export function createPromotionFromCoupon( coupon ) {
 	const promotion = {
 		id: 'c' + coupon.id,
 		name: coupon.code,
-		type: coupon.discount_type,
+		type: promotionType,
 		appliesTo: calculateCouponAppliesTo( coupon ),
 		couponCode,
 		startDate,
@@ -89,27 +95,45 @@ export function createCouponUpdateFromPromotion( promotion ) {
 		throw new Error( 'Cannot create coupon from promotion with nonexistant couponCode' );
 	}
 
-	const amount = ( 'percent' === promotion.type
-		? promotion.percentDiscount
-		: promotion.fixedDiscount );
-
+	let amount = undefined;
+	let freeShipping = promotion.freeShipping;
+	let discountType = promotion.type;
+	const meta = [ { key: 'promotion_type', value: promotion.type } ];
 	const productIds = ( appliesTo && appliesTo.productIds ) || undefined;
 	const productCategoryIds = ( appliesTo && appliesTo.productCategoryIds ) || undefined;
 
+	// If end date is null, that means it was enabled but not selected, so use today as default.
+	const endDate = null === promotion.endDate ? new Date().toISOString() : promotion.endDate;
+
+	switch ( promotion.type ) {
+		case 'percent':
+			amount = promotion.percentDiscount;
+			break;
+		case 'fixed_product':
+		case 'fixed_cart':
+			amount = promotion.fixedDiscount;
+			break;
+		case 'free_shipping':
+			freeShipping = true;
+			discountType = undefined; // let it go to default, since we don't care.
+			break;
+	}
+
 	return {
 		id: promotion.couponId, // May not be present in case of create.
-		discount_type: promotion.type,
+		discount_type: discountType,
 		code: promotion.couponCode,
 		amount: amount,
-		date_expires: promotion.endDate,
+		date_expires: endDate,
 		individual_use: promotion.individualUse,
 		usage_limit: promotion.usageLimit,
 		usage_limit_per_user: promotion.usageLimitPerUser,
-		free_shipping: promotion.freeShipping,
+		free_shipping: freeShipping,
 		minimum_amount: promotion.minimumAmount,
 		maximum_amount: promotion.maximumAmount,
 		product_ids: productIds,
 		product_categories: productCategoryIds,
+		meta_data: meta,
 	};
 }
 

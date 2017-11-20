@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';

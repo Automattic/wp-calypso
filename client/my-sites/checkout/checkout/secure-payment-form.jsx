@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -300,6 +300,8 @@ const SecurePaymentForm = createReactClass( {
 				);
 
 			case 'ideal':
+			case 'giropay':
+			case 'bancontact':
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import store from 'store';
@@ -211,7 +211,7 @@ PostActions = {
 				}
 			);
 		} else {
-			PostActions.saveEdited( null, null, callback, { recordSaveEvent: false } );
+			PostActions.saveEdited( null, null, callback, { recordSaveEvent: false, autosave: true } );
 		}
 	},
 
@@ -347,6 +347,9 @@ PostActions = {
 			context: 'edit',
 			apiVersion: '1.2',
 		};
+		if ( options && options.autosave ) {
+			query.autosave = options.autosave;
+		}
 
 		if ( ! options || options.recordSaveEvent !== false ) {
 			recordSaveEvent( context ); // do this before changing status from 'future'

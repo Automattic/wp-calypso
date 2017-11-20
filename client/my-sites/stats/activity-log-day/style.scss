@@ -2,6 +2,46 @@
 .activity-log-day {
 	background: none;
 	box-shadow: none;
+	position: relative;
+
+	// Fades out or covers up the timline line (on the left) at the end of events lists
+	&:last-of-type {
+		&:before {
+			content: '';
+			position: absolute;
+				bottom: 0;
+				left: 33px;
+			height: 72px;
+			width: 2px;
+			background-image: linear-gradient( transparent, $gray-light );
+
+			@include breakpoint( "<480px" ) {
+				left: 29px;
+			}
+		}
+
+		> .foldable-card__content.foldable-card__content {
+			padding-bottom: 0;
+		}
+
+		.activity-log-item {
+			&:last-of-type {
+				&:before {
+					content: '';
+					position: absolute;
+						bottom: 0;
+						left: 33px;
+					height: 72px;
+					width: 2px;
+					background: $gray-light;
+
+					@include breakpoint( "<480px" ) {
+						left: 21px;
+					}
+				}
+			}
+		}
+	}
 
 	> .foldable-card__header {
 		background: $white;

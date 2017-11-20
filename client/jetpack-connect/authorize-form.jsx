@@ -14,61 +14,45 @@ import { get, includes } from 'lodash';
  */
 import Main from 'components/main';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
-import {
-	getAuthorizationData,
-	getAuthorizationRemoteSite,
-	isCalypsoStartedConnection,
-	hasXmlrpcError,
-	hasExpiredSecretError,
-	isRemoteSiteOnSitesList,
-	getAuthAttempts,
-	getSiteIdFromQueryObject,
-	getUserAlreadyConnected,
-} from 'state/jetpack-connect/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getAuthorizationRemoteQueryData } from 'state/jetpack-connect/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
-import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
-import { urlToSlug } from 'lib/url';
 import LoggedInForm from './auth-logged-in-form';
 import LoggedOutForm from './auth-logged-out-form';
 
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {
-		authAttempts: PropTypes.number,
-		calypsoStartedConnection: PropTypes.bool,
-		isAlreadyOnSitesList: PropTypes.bool,
-		isFetchingAuthorizationSite: PropTypes.bool,
-		isFetchingSites: PropTypes.bool,
-		jetpackConnectAuthorize: PropTypes.shape( {
-			queryObject: PropTypes.shape( {
-				client_id: PropTypes.string,
-				from: PropTypes.string,
-			} ),
+		authorizationRemoteQueryData: PropTypes.shape( {
+			_ui: PropTypes.string,
+			_ut: PropTypes.string,
+			client_id: PropTypes.string,
+			from: PropTypes.string,
 		} ).isRequired,
-		recordTracksEvent: PropTypes.func,
-		setTracksAnonymousUserId: PropTypes.func,
-		requestHasExpiredSecretError: PropTypes.func,
-		requestHasXmlrpcError: PropTypes.func,
-		siteSlug: PropTypes.string,
-		user: PropTypes.object,
+		isLoggedIn: PropTypes.bool.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
+		setTracksAnonymousUserId: PropTypes.func.isRequired,
 	};
 
 	componentWillMount() {
 		// set anonymous ID for cross-system analytics
-		const queryObject = this.props.jetpackConnectAuthorize.queryObject;
-		if ( queryObject && queryObject._ui && 'anon' === queryObject._ut ) {
-			this.props.setTracksAnonymousUserId( queryObject._ui );
+		const { authorizationRemoteQueryData } = this.props;
+		if (
+			authorizationRemoteQueryData &&
+			authorizationRemoteQueryData._ui &&
+			'anon' === authorizationRemoteQueryData._ut
+		) {
+			this.props.setTracksAnonymousUserId( authorizationRemoteQueryData._ui );
 		}
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
 	}
 
 	isSSO() {
 		const cookies = cookie.parse( document.cookie );
-		const query = this.props.jetpackConnectAuthorize.queryObject;
+		const query = this.props.authorizationRemoteQueryData;
 		return (
 			query.from &&
 			'sso' === query.from &&
@@ -80,7 +64,7 @@ class JetpackConnectAuthorizeForm extends Component {
 
 	isWoo() {
 		const wooSlugs = [ 'woocommerce-setup-wizard', 'woocommerce-services' ];
-		const jetpackConnectSource = get( this.props, 'jetpackConnectAuthorize.queryObject.from' );
+		const jetpackConnectSource = get( this.props, 'authorizationRemoteQueryData.from' );
 
 		return includes( wooSlugs, jetpackConnectSource );
 	}
@@ -108,26 +92,18 @@ class JetpackConnectAuthorizeForm extends Component {
 	}
 
 	renderForm() {
-		return this.props.user ? (
-			<LoggedInForm { ...this.props } isSSO={ this.isSSO() } isWoo={ this.isWoo() } />
+		return this.props.isLoggedIn ? (
+			<LoggedInForm isSSO={ this.isSSO() } isWoo={ this.isWoo() } />
 		) : (
-			<LoggedOutForm
-				jetpackConnectAuthorize={ this.props.jetpackConnectAuthorize }
-				local={ this.props.locale }
-				path={ this.props.path }
-			/>
+			<LoggedOutForm local={ this.props.locale } path={ this.props.path } />
 		);
 	}
 
 	render() {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
+		const { authorizationRemoteQueryData } = this.props;
 
-		if ( typeof queryObject === 'undefined' ) {
+		if ( typeof authorizationRemoteQueryData === 'undefined' ) {
 			return this.renderNoQueryArgsError();
-		}
-
-		if ( queryObject && queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
-			this.renderForm();
 		}
 
 		return (
@@ -141,27 +117,10 @@ class JetpackConnectAuthorizeForm extends Component {
 export { JetpackConnectAuthorizeForm as JetpackConnectAuthorizeFormTestComponent };
 
 export default connect(
-	state => {
-		const remoteSiteUrl = getAuthorizationRemoteSite( state );
-		const siteSlug = urlToSlug( remoteSiteUrl );
-		const requestHasExpiredSecretError = () => hasExpiredSecretError( state );
-		const requestHasXmlrpcError = () => hasXmlrpcError( state );
-		const siteId = getSiteIdFromQueryObject( state );
-
-		return {
-			authAttempts: getAuthAttempts( state, siteSlug ),
-			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
-			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
-			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
-			isFetchingSites: isRequestingSites( state ),
-			jetpackConnectAuthorize: getAuthorizationData( state ),
-			requestHasExpiredSecretError,
-			requestHasXmlrpcError,
-			siteSlug,
-			user: getCurrentUser( state ),
-			userAlreadyConnected: getUserAlreadyConnected( state ),
-		};
-	},
+	state => ( {
+		authorizationRemoteQueryData: getAuthorizationRemoteQueryData( state ),
+		isLoggedIn: !! getCurrentUserId( state ),
+	} ),
 	{
 		recordTracksEvent,
 		setTracksAnonymousUserId,

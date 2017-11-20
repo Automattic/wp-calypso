@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -9,6 +9,7 @@ import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import Immutable from 'immutable';
 import { includes, zip } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -88,9 +89,12 @@ class BlogSettingsHeader extends PureComponent {
 				</div>
 				{ ! this.props.disableToggle ? (
 					<div className="blogs-settings__header-expand">
-						<a
-							className={ 'noticon noticon-' + ( this.state.isExpanded ? 'collapse' : 'expand' ) }
-						/>
+						<a>
+							<Gridicon
+								icon={ this.state.isExpanded ? 'chevron-up' : 'chevron-down' }
+								size={ 18 }
+							/>
+						</a>
 					</div>
 				) : null }
 			</header>

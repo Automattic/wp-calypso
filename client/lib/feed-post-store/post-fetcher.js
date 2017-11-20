@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import { assign, noop, pick, pickBy } from 'lodash';

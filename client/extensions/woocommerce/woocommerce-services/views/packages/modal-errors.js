@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { memoize, omitBy, reduce, some, trim } from 'lodash';

@@ -1,10 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import jetpackConnectSessions from '../jetpack-connect-sessions';
@@ -19,7 +14,7 @@ describe( '#jetpackConnectSessions()', () => {
 
 	test( 'should default to an empty object', () => {
 		const state = jetpackConnectSessions( undefined, {} );
-		expect( state ).to.eql( {} );
+		expect( state ).toEqual( {} );
 	} );
 
 	test( 'should add the url slug as a new property when checking a new url', () => {
@@ -28,9 +23,9 @@ describe( '#jetpackConnectSessions()', () => {
 			url: 'https://example.wordpress.com',
 		} );
 
-		expect( state )
-			.to.have.property( 'example.wordpress.com' )
-			.to.be.a( 'object' );
+		expect( state ).toMatchObject( {
+			'example.wordpress.com': expect.any( Object ),
+		} );
 	} );
 
 	test( 'should convert forward slashes to double colon when checking a new url', () => {
@@ -39,25 +34,21 @@ describe( '#jetpackConnectSessions()', () => {
 			url: 'https://example.wordpress.com/example123',
 		} );
 
-		expect( state )
-			.to.have.property( 'example.wordpress.com::example123' )
-			.to.be.a( 'object' );
+		expect( state ).toMatchObject( {
+			'example.wordpress.com::example123': expect.any( Object ),
+		} );
 	} );
 
 	test( 'should store a timestamp when checking a new url', () => {
-		const nowTime = Date.now();
 		const state = jetpackConnectSessions( undefined, {
 			type: JETPACK_CONNECT_CHECK_URL,
 			url: 'https://example.wordpress.com',
 		} );
 
-		expect( state[ 'example.wordpress.com' ] )
-			.to.have.property( 'timestamp' )
-			.to.be.at.least( nowTime );
+		expect( state[ 'example.wordpress.com' ] ).toMatchObject( { timestamp: expect.any( Number ) } );
 	} );
 
 	test( 'should update the timestamp when checking an existent url', () => {
-		const nowTime = Date.now();
 		const state = jetpackConnectSessions(
 			{ 'example.wordpress.com': { timestamp: 1 } },
 			{
@@ -66,9 +57,7 @@ describe( '#jetpackConnectSessions()', () => {
 			}
 		);
 
-		expect( state[ 'example.wordpress.com' ] )
-			.to.have.property( 'timestamp' )
-			.to.be.at.least( nowTime );
+		expect( state[ 'example.wordpress.com' ] ).toMatchObject( { timestamp: expect.any( Number ) } );
 	} );
 
 	test( 'should not restore a state with a property without a timestamp', () => {
@@ -79,7 +68,7 @@ describe( '#jetpackConnectSessions()', () => {
 			}
 		);
 
-		expect( state ).to.be.eql( {} );
+		expect( state ).toEqual( {} );
 	} );
 
 	test( 'should not restore a state with a property with a non-integer timestamp', () => {
@@ -90,7 +79,7 @@ describe( '#jetpackConnectSessions()', () => {
 			}
 		);
 
-		expect( state ).to.be.eql( {} );
+		expect( state ).toEqual( {} );
 	} );
 
 	test( 'should not restore a state with a property with a stale timestamp', () => {
@@ -101,7 +90,7 @@ describe( '#jetpackConnectSessions()', () => {
 			}
 		);
 
-		expect( state ).to.be.eql( {} );
+		expect( state ).toEqual( {} );
 	} );
 
 	test( 'should not restore a state with a session stored with extra properties', () => {
@@ -113,7 +102,7 @@ describe( '#jetpackConnectSessions()', () => {
 			}
 		);
 
-		expect( state ).to.be.eql( {} );
+		expect( state ).toEqual( {} );
 	} );
 
 	test( 'should restore a valid state', () => {
@@ -125,7 +114,7 @@ describe( '#jetpackConnectSessions()', () => {
 			}
 		);
 
-		expect( state ).to.be.eql( { 'example.wordpress.com': { timestamp } } );
+		expect( state ).toEqual( { 'example.wordpress.com': { timestamp } } );
 	} );
 
 	test( 'should restore a valid state including dashes, slashes and semicolons', () => {
@@ -137,7 +126,7 @@ describe( '#jetpackConnectSessions()', () => {
 			}
 		);
 
-		expect( state ).to.be.eql( { 'https://example.wordpress.com:3000/test-one': { timestamp } } );
+		expect( state ).toEqual( { 'https://example.wordpress.com:3000/test-one': { timestamp } } );
 	} );
 
 	test( 'should restore only sites with non-stale timestamps', () => {
@@ -152,6 +141,6 @@ describe( '#jetpackConnectSessions()', () => {
 			}
 		);
 
-		expect( state ).to.be.eql( { 'automattic.wordpress.com': { timestamp } } );
+		expect( state ).toEqual( { 'automattic.wordpress.com': { timestamp } } );
 	} );
 } );

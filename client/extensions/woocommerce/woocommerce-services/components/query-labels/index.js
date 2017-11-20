@@ -11,27 +11,30 @@ import { bindActionCreators } from 'redux';
  */
 import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
 import QueryPackages from 'woocommerce/woocommerce-services/components/query-packages';
-import { fetchLabelsData } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import { isLoaded, isFetching, isError } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { fetchLabelsData, fetchLabelsStatus } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	hasRefreshedLabelStatus,
+	isError,
+	isFetching,
+	isLoaded,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 class QueryLabels extends Component {
-	fetch() {
-		const { orderId, siteId } = this.props;
-		this.props.fetchLabelsData( orderId, siteId );
+	fetch( props ) {
+		const { orderId, siteId, loaded, fetching, error, refreshedLabelStatus } = props;
+		if ( ! loaded && ! fetching && ! error ) {
+			this.props.fetchLabelsData( orderId, siteId );
+		} else if ( loaded && ! refreshedLabelStatus ) {
+			this.props.fetchLabelsStatus( orderId, siteId );
+		}
 	}
 
 	componentWillMount() {
-		const { loaded, fetching, error } = this.props;
-		if ( ! loaded && ! fetching && ! error ) {
-			this.fetch();
-		}
+		this.fetch( this.props );
 	}
 
-	componentWillReceiveProps( props ) {
-		const { loaded, fetching, error } = props;
-		if ( ! loaded && ! fetching && ! error ) {
-			this.fetch();
-		}
+	componentWillReceiveProps( newProps ) {
+		this.fetch( newProps );
 	}
 
 	render() {
@@ -56,8 +59,10 @@ export default connect(
 		loaded: isLoaded( state, orderId ),
 		fetching: isFetching( state, orderId ),
 		error: isError( state, orderId ),
+		refreshedLabelStatus: hasRefreshedLabelStatus( state, orderId ),
 	} ),
 	( dispatch ) => bindActionCreators( {
 		fetchLabelsData,
+		fetchLabelsStatus,
 	}, dispatch )
 )( QueryLabels );

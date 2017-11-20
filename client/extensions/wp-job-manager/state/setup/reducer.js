@@ -1,10 +1,9 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
-
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'state/utils';
 import {
 	WP_JOB_MANAGER_CREATE_PAGES,
 	WP_JOB_MANAGER_CREATE_PAGES_ERROR,
@@ -18,88 +17,72 @@ import {
  * Returns the updated creating state after an action has been dispatched.
  * Creating state tracks whether pages are being created for a site.
  *
- * @param  {Object} state Current creating state
- * @param  {Object} action Action object
- * @return {Object} Updated creating state
+ * @param  {Boolean} state Current creating state
+ * @param  {Object}  action Action object
+ * @return {Object}  Updated creating state
  */
-export const creating = createReducer(
-	{},
-	{
-		[ WP_JOB_MANAGER_CREATE_PAGES ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
-		[ WP_JOB_MANAGER_CREATE_PAGES_ERROR ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
-		[ WP_JOB_MANAGER_WIZARD_NEXT_STEP ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
+export const creating = ( state = false, { type } ) => {
+	switch ( type ) {
+		case WP_JOB_MANAGER_CREATE_PAGES:
+			return true;
+
+		case WP_JOB_MANAGER_CREATE_PAGES_ERROR:
+		case WP_JOB_MANAGER_WIZARD_NEXT_STEP:
+			return false;
+
+		default:
+			return state;
 	}
-);
+};
 
 /**
  * Returns the updated fetching state after an action has been dispatched.
  * Fetching state tracks whether setup status is being fetched for a site.
  *
- * @param  {Object} state Current fetching state
- * @param  {Object} action Action object
- * @return {Object} Updated fetching state
+ * @param  {Boolean} state Current fetching state
+ * @param  {Object}  action Action object
+ * @return {Object}  Updated fetching state
  */
-export const fetching = createReducer(
-	{},
-	{
-		[ WP_JOB_MANAGER_FETCH_SETUP_STATUS ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: true,
-		} ),
-		[ WP_JOB_MANAGER_FETCH_SETUP_STATUS_ERROR ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
-		[ WP_JOB_MANAGER_UPDATE_SETUP_STATUS ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: false,
-		} ),
+export const fetching = ( state = false, { type } ) => {
+	switch ( type ) {
+		case WP_JOB_MANAGER_FETCH_SETUP_STATUS:
+			return true;
+
+		case WP_JOB_MANAGER_FETCH_SETUP_STATUS_ERROR:
+		case WP_JOB_MANAGER_UPDATE_SETUP_STATUS:
+			return false;
+
+		default:
+			return state;
 	}
-);
+};
 
 /**
  * Tracks whether or not to move to the next step in the wizard.
  *
- * @param  {Object} state Current state
- * @param  {Object} action Action object
- * @return {Object} Updated state
+ * @param  {Boolean} state Current state
+ * @param  {Object}  action Action object
+ * @return {Object}  Updated state
  */
-export const nextStep = createReducer(
-	{},
-	{
-		[ WP_JOB_MANAGER_WIZARD_NEXT_STEP ]: ( state, { siteId } ) => ( {
-			...state,
-			[ siteId ]: true,
-		} ),
-	}
-);
+export const nextStep = ( state = false, { type } ) =>
+	WP_JOB_MANAGER_WIZARD_NEXT_STEP === type ? true : state;
 
 /**
  * Tracks the setup status for a particular site.
  *
- * @param  {Object} state Current setup status
- * @param  {Object} action Action object
- * @return {Object} Updated setup status
+ * @param  {Boolean} state Current setup status
+ * @param  {Object}  action Action object
+ * @return {Object}  Updated setup status
  */
-export const status = createReducer(
-	{},
-	{
-		[ WP_JOB_MANAGER_UPDATE_SETUP_STATUS ]: ( state, { siteId, setupStatus } ) => ( {
-			...state,
-			[ siteId ]: setupStatus,
-		} ),
-	}
-);
+export const status = ( state = false, { setupStatus, type } ) =>
+	WP_JOB_MANAGER_UPDATE_SETUP_STATUS === type ? setupStatus : state;
 
-export default combineReducers( {
-	creating,
-	fetching,
-	nextStep,
-	status,
-} );
+export default keyedReducer(
+	'siteId',
+	combineReducers( {
+		creating,
+		fetching,
+		nextStep,
+		status,
+	} )
+);

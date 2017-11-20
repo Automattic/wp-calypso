@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
@@ -560,6 +560,40 @@ Undocumented.prototype.getInboundTransferStatus = function( domain, fn ) {
 	return this.wpcom.req.get(
 		{
 			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-status`,
+		},
+		fn
+	);
+};
+
+/**
+ * Restarts a failed inbound domain transfer
+ *
+ * @param {int|string} siteId The site ID
+ * @param {string} domain The domain name
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.restartInboundTransfer = function( siteId, domain, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-restart/${ siteId }`,
+		},
+		fn
+	);
+};
+
+/**
+ * Initiates a resend of the inbound transfer verification email.
+ * @param {string} domain - The domain name to check.
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.resendInboundTransferEmail = function( domain, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/domains/${ encodeURIComponent( domain ) }/resend-inbound-transfer-email`,
 		},
 		fn
 	);

@@ -103,14 +103,6 @@
 	}
 }
 
-.plugin-item__meta.has-update {
-	@include breakpoint( "<480px" ) {
-		& ~ .plugin-item__meta.is-warning .noticon {
-			margin-right: 30px !important;
-		}
-	}
-}
-
 // Plugin actions and Count
 .plugin-item__count,
 .plugin-item__actions {

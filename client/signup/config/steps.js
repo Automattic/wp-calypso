@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { current } from 'page';
@@ -105,6 +105,11 @@ export default {
 			isDomainOnly: false,
 		},
 		delayApiRequestUntilComplete: true,
+	},
+
+	about: {
+		stepName: 'about',
+		providesDependencies: [ 'themeSlugWithRepo', 'siteTitle' ],
 	},
 
 	user: {

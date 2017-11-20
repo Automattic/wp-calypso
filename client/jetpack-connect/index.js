@@ -8,7 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from './controller';
-import sitesController from 'my-sites/controller';
+import { siteSelection } from 'my-sites/controller';
 
 const redirectToStoreWithInterval = context => {
 	const interval =
@@ -29,8 +29,6 @@ export default function() {
 	);
 
 	page( '/jetpack/connect', controller.connect );
-
-	page( '/jetpack/connect/choose/:site', controller.plansPreSelection );
 
 	page(
 		'/jetpack/connect/authorize/:localeOrInterval?',
@@ -61,13 +59,8 @@ export default function() {
 		controller.connect
 	);
 
-	page( '/jetpack/connect/plans/:site', sitesController.siteSelection, controller.plansSelection );
-
-	page(
-		'/jetpack/connect/plans/:interval/:site',
-		sitesController.siteSelection,
-		controller.plansSelection
-	);
+	page( '/jetpack/connect/plans/:site', siteSelection, controller.plansSelection );
+	page( '/jetpack/connect/plans/:interval/:site', siteSelection, controller.plansSelection );
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso );
 	page( '/jetpack/sso/*', controller.sso );

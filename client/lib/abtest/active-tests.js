@@ -117,4 +117,31 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	buttonsColorOnPostSignup: {
+		datestamp: '20171108',
+		variations: {
+			keep: 50,
+			change: 50,
+		},
+		defaultVariation: 'keep',
+		allowExistingUsers: true,
+	},
+	condensedPostList: {
+		datestamp: '20171113',
+		variations: {
+			condensedPosts: 5,
+			largePosts: 95,
+		},
+		defaultVariation: 'largePosts',
+	},
+	showNewPaymentMethods: {
+		datestamp: '20171115',
+		variations: {
+			hide: 50,
+			show: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
 };

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { WOOCOMMERCE_CURRENCY_CHANGE } from '../../../action-types';

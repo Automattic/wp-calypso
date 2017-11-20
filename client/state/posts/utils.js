@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import {
@@ -133,6 +133,12 @@ export function mergeIgnoringArrays( object, ...sources ) {
 }
 
 /**
+ * Memoization cache for `normalizePostForDisplay`. If an identical `post` object was
+ * normalized before, retrieve the normalized value from cache instead of recomputing.
+ */
+const normalizePostCache = new WeakMap();
+
+/**
  * Returns a normalized post object given its raw form. A normalized post
  * includes common transformations to prepare the post for display.
  *
@@ -144,7 +150,13 @@ export function normalizePostForDisplay( post ) {
 		return null;
 	}
 
-	return normalizeDisplayFlow( cloneDeep( post ) );
+	let normalizedPost = normalizePostCache.get( post );
+	if ( ! normalizedPost ) {
+		// `normalizeDisplayFlow` mutates its argument properties -- hence deep clone is needed
+		normalizedPost = normalizeDisplayFlow( cloneDeep( post ) );
+		normalizePostCache.set( post, normalizedPost );
+	}
+	return normalizedPost;
 }
 
 /**

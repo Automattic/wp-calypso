@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import i18n from 'i18n-calypso';
@@ -149,18 +149,22 @@ export default {
 		const selectedSite =
 			getSelectedSite( state ) || getSiteBySlug( state, site ) || getSiteBySlug( state, domain );
 
-		const handleAddGoogleApps = googleAppsCartItem => {
+		if ( ! selectedSite ) {
+			return null;
+		}
+
+		const handleAddGoogleApps = ( googleAppsCartItem, siteSlug ) => {
 			googleAppsCartItem.extra = {
 				...googleAppsCartItem.extra,
 				receipt_for_domain: receiptId,
 			};
 
 			upgradesActions.addItem( googleAppsCartItem );
-			page( `/checkout/${ site }` );
+			page( `/checkout/${ siteSlug }` );
 		};
 
-		const handleClickSkip = () => {
-			page( `/checkout/thank-you/${ site }/${ receiptId }` );
+		const handleClickSkip = siteSlug => {
+			page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
 		};
 
 		renderWithReduxStore(
@@ -168,7 +172,7 @@ export default {
 				domain={ domain }
 				productsList={ productsList }
 				receiptId={ Number( receiptId ) }
-				selectedSite={ selectedSite }
+				selectedSiteId={ selectedSite.ID }
 				onAddGoogleApps={ handleAddGoogleApps }
 				onClickSkip={ handleClickSkip }
 			/>,

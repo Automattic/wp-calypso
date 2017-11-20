@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import update from 'immutability-helper';
@@ -521,7 +521,12 @@ export function domainRedemption( properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 export function domainTransfer( properties ) {
-	return domainItem( domainProductSlugs.TRANSFER_IN, properties.domain, properties.source );
+	return assign(
+		domainItem( domainProductSlugs.TRANSFER_IN, properties.domain, properties.source ),
+		{
+			...( properties.extra ? { extra: properties.extra } : {} ),
+		}
+	);
 }
 
 /**

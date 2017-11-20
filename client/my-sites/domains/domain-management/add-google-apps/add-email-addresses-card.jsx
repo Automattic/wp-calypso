@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { find, groupBy, isEmpty, map, mapValues } from 'lodash';

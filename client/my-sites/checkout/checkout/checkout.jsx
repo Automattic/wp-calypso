@@ -1,15 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { connect } from 'react-redux';
 import {
+	difference,
 	flatten,
 	filter,
 	find,
-	findIndex,
 	get,
 	isEmpty,
 	isEqual,
@@ -32,7 +32,6 @@ import { cartItems } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
-import TransferDomainPrecheck from './transfer-domain-precheck';
 import { domainMapping } from 'lib/cart-values/cart-items';
 import { fetchReceiptCompleted } from 'state/receipts/actions';
 import { getExitCheckoutUrl } from 'lib/checkout';
@@ -63,6 +62,7 @@ import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
 import { isDomainOnlySite, getCurrentUserPaymentMethods } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canAddGoogleApps } from 'lib/domains';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
@@ -81,7 +81,6 @@ const Checkout = createReactClass( {
 	getInitialState: function() {
 		return {
 			previousCart: null,
-			domainTransfers: {},
 		};
 	},
 
@@ -439,36 +438,8 @@ const Checkout = createReactClass( {
 		page( redirectPath );
 	},
 
-	setValidTransfer( domain ) {
-		const domainTransfers = {};
-		domainTransfers[ domain ] = true;
-
-		this.setState( {
-			domainTransfers: Object.assign( {}, this.state.domainTransfers, domainTransfers ),
-		} );
-	},
-
 	content: function() {
-		const { cart, selectedSite } = this.props;
-		const { domainTransfers } = this.state;
-
-		if ( ! this.isLoading() && cartItems.hasTransferProduct( this.props.cart ) ) {
-			const domainTransfersCart = cartItems.getDomainTransfers( cart );
-			const index = findIndex( domainTransfersCart, product => {
-				return ! domainTransfers[ product.meta ];
-			} );
-
-			if ( index !== -1 ) {
-				return (
-					<TransferDomainPrecheck
-						total={ domainTransfersCart.length }
-						current={ index }
-						domain={ domainTransfersCart[ index ].meta }
-						setValid={ this.setValidTransfer }
-					/>
-				);
-			}
-		}
+		const { selectedSite } = this.props;
 
 		if ( ! this.isLoading() && this.needsDomainDetails() ) {
 			return (
@@ -485,13 +456,31 @@ const Checkout = createReactClass( {
 				cart={ this.props.cart }
 				transaction={ this.props.transaction }
 				cards={ this.props.cards }
-				paymentMethods={ this.props.paymentMethods }
+				paymentMethods={ this.paymentMethodsAbTestFilter() }
 				products={ this.props.productsList.get() }
 				selectedSite={ selectedSite }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 			/>
 		);
+	},
+
+	paymentMethodsAbTestFilter: function() {
+		// Apply AB test to payment methods, for Giropay And Bancontact
+		// Only run this if the user is eligible for one of these payment methods
+		if (
+			-1 === this.props.paymentMethods.indexOf( 'bancontact' ) &&
+			-1 === this.props.paymentMethods.indexOf( 'giropay' )
+		) {
+			return this.props.paymentMethods;
+		}
+
+		// If not in the 'show' variation, remove bancontact and giropay from the current methods
+		if ( abtest( 'showNewPaymentMethods', this.props.userCountryCode ) !== 'show' ) {
+			return difference( this.props.paymentMethods, [ 'bancontact', 'giropay' ] );
+		}
+
+		return this.props.paymentMethods;
 	},
 
 	isLoading: function() {
@@ -512,7 +501,9 @@ const Checkout = createReactClass( {
 		return (
 			cart &&
 			! hasDomainDetails( transaction ) &&
-			( cartItems.hasDomainRegistration( cart ) || cartItems.hasGoogleApps( cart ) )
+			( cartItems.hasDomainRegistration( cart ) ||
+				cartItems.hasGoogleApps( cart ) ||
+				cartItems.hasTransferProduct( cart ) )
 		);
 	},
 
@@ -543,6 +534,7 @@ export default connect(
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			contactDetails: getContactDetailsCache( state ),
+			userCountryCode: getCurrentUserCountryCode( state ),
 		};
 	},
 	{

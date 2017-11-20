@@ -44,21 +44,6 @@ describe( 'Plans', () => {
 		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
 	} );
 
-	test( 'should render with a paid plan with showFirst prop', () => {
-		const wrapper = shallow(
-			<Plans
-				{ ...DEFAULT_PROPS }
-				hasPlan={ true }
-				selectedSite={ { ...SELECTED_SITE, plan: SITE_PLAN_PRO } }
-				showFirst={ true }
-			/>
-		);
-
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.find( PlansGrid ) ).toHaveLength( 1 );
-		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
-	} );
-
 	test( 'should redirect on update from free to paid plan', () => {
 		const wrapper = mount( <Plans { ...DEFAULT_PROPS } /> );
 

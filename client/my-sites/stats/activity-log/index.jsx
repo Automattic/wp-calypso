@@ -16,6 +16,7 @@ import { first, get, groupBy, includes, isEmpty, isNull, last, range } from 'lod
  */
 import ActivityLogBanner from '../activity-log-banner';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
+import ActivityLogCredentialsNotice from '../activity-log-credentials-notice';
 import ActivityLogDay from '../activity-log-day';
 import ActivityLogDayPlaceholder from '../activity-log-day/placeholder';
 import ActivityLogRewindToggle from './activity-log-rewind-toggle';
@@ -26,6 +27,7 @@ import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
+import QueryJetpackCredentials from 'components/data/query-jetpack-credentials';
 import QueryRewindStatus from 'components/data/query-rewind-status';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -58,6 +60,7 @@ import {
 	isRewindActive as isRewindActiveSelector,
 	getRequestedBackup,
 	getBackupProgress,
+	hasMainCredentials,
 } from 'state/selectors';
 
 /**
@@ -398,7 +401,7 @@ class ActivityLog extends Component {
 			downloadId,
 		} = progress;
 		return (
-			<div>
+			<div key={ `end-banner-${ restoreId || downloadId }` }>
 				<QueryActivityLog siteId={ siteId } />
 				{ errorCode ? (
 					<ErrorBanner
@@ -483,6 +486,7 @@ class ActivityLog extends Component {
 			canViewActivityLog,
 			gmtOffset,
 			hasFirstBackup,
+			hasMainCredentials, // eslint-disable-line no-shadow
 			isPressable,
 			isRewindActive,
 			logs,
@@ -514,7 +518,7 @@ class ActivityLog extends Component {
 			[ 'queued', 'running' ],
 			get( this.props, [ 'restoreProgress', 'status' ] )
 		);
-		const disableBackup = 0 < get( this.props, [ 'backupProgress', 'percent' ], 0 );
+		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
 		const restoreConfirmDialog = requestedRestoreActivity && (
 			<ActivityLogConfirmDialog
@@ -591,9 +595,11 @@ class ActivityLog extends Component {
 					{ ...getActivityLogQuery( { gmtOffset, startDate, timezone } ) }
 				/>
 				<QuerySiteSettings siteId={ siteId } />
+				<QueryJetpackCredentials siteId={ siteId } />
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
+				{ ! hasMainCredentials && <ActivityLogCredentialsNotice /> }
 				{ this.renderErrorMessage() }
 				{ hasFirstBackup && this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
@@ -699,6 +705,7 @@ export default connect(
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
 			hasFirstBackup: ! isEmpty( getRewindStartDate( state, siteId ) ),
+			hasMainCredentials: hasMainCredentials( state, siteId ),
 			isRewindActive: isRewindActiveSelector( state, siteId ),
 			logs: getActivityLogs(
 				state,

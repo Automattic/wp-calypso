@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { assign, filter, map, pick, sortBy, transform } from 'lodash';

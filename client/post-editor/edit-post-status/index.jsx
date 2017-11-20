@@ -1,21 +1,23 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
-import Revisions from 'post-editor/editor-revisions';
+import EditorRevisionsLegacyLink from 'post-editor/editor-revisions/legacy-link';
 import postUtils from 'lib/posts/utils';
 import InfoPopover from 'components/info-popover';
 import siteUtils from 'lib/site/utils';
@@ -42,7 +44,6 @@ export class EditPostStatus extends Component {
 		status: PropTypes.string,
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
-		selectRevision: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -150,11 +151,12 @@ export class EditPostStatus extends Component {
 						<Gridicon icon="undo" size={ 18 } /> { translate( 'Revert to draft' ) }
 					</Button>
 				) }
-				<Revisions
-					revisions={ this.props.post && this.props.post.revisions }
-					adminUrl={ adminUrl }
-					selectRevision={ this.props.selectRevision }
-				/>
+				{ ! isEnabled( 'post-editor/revisions' ) && (
+					<EditorRevisionsLegacyLink
+						adminUrl={ adminUrl }
+						revisionsFromPostObj={ get( this.props, 'post.revisions' ) }
+					/>
+				) }
 			</div>
 		);
 	}

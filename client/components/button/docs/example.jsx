@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -16,7 +16,7 @@ import config from 'config';
 import DocsExample from 'devdocs/docs-example';
 
 class Buttons extends React.PureComponent {
-    static displayName = 'Buttons';
+	static displayName = 'Buttons';
 
 	state = {
 		compactButtons: false,

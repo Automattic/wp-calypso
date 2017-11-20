@@ -182,14 +182,13 @@ const getLabelRates = ( orderId, siteId, dispatch, getState, handleResponse ) =>
 
 export const openPrintingFlow = ( orderId, siteId ) => (
 	dispatch,
-	getState,
-	getErrors = getFormErrors
+	getState
 ) => {
 	const state = getShippingLabel( getState(), orderId, siteId );
 	const storeOptions = state.storeOptions;
 	let form = state.form;
 	const { origin, destination } = form;
-	const errors = getErrors( getState(), orderId, siteId );
+	const errors = getFormErrors( getState(), orderId, siteId );
 	const promisesQueue = [];
 
 	if ( ! origin.ignoreValidation &&
@@ -779,7 +778,7 @@ export const fetchLabelsStatus = ( orderId, siteId ) => ( dispatch, getState ) =
 		};
 		const setIsSaving = ( saving ) => {
 			if ( ! saving ) {
-				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_STATUS_RESPONSE, labelId, response, error } );
+				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_STATUS_RESPONSE, orderId, siteId, labelId, response, error } );
 				if ( error ) {
 					dispatch( NoticeActions.errorNotice( error.toString() ) );
 				}

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -39,15 +39,15 @@ class PostShareExample extends Component {
 				{ siteId && <QueryPosts siteId={ siteId } query={ { number: 1, type: 'post' } } /> }
 
 				{ site &&
-				post && (
-					<p>
-						Site: <strong>{ site.name }</strong> ({ siteId })<br />
-						Plan: <strong>{ planSlug }</strong>
-						<br />
-						Post: <em>{ post.title }</em>
-						<br />
-					</p>
-				) }
+					post && (
+						<p>
+							Site: <strong>{ site.name }</strong> ({ siteId })<br />
+							Plan: <strong>{ planSlug }</strong>
+							<br />
+							Post: <em>{ post.title }</em>
+							<br />
+						</p>
+					) }
 
 				<p onClick={ this.toggleEnable }>
 					<label>

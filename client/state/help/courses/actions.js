@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { HELP_COURSES_RECEIVE } from 'state/action-types';

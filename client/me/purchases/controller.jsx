@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import { partial } from 'lodash';
@@ -22,7 +22,7 @@ import NoSitesMessage from 'components/empty-content/no-sites-message';
 import paths from './paths';
 import PurchasesHeader from './purchases-list/header';
 import PurchasesList from './purchases-list';
-import { concatTitle, recordPageView, renderPage } from 'lib/react-helpers';
+import { concatTitle, recordPageView, renderWithReduxStore } from 'lib/react-helpers';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 import titles from './titles';
 import userFactory from 'lib/user';
@@ -41,16 +41,17 @@ export default {
 
 		recordPurchasesPageView( paths.addCardDetails(), 'Add Card Details' );
 
-		renderPage(
-			context,
-			<AddCardDetails purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+		renderWithReduxStore(
+			<AddCardDetails purchaseId={ parseInt( context.params.purchaseId, 10 ) } />,
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
 	addCreditCard( context ) {
 		recordPurchasesPageView( paths.addCreditCard(), 'Add Credit Card' );
 
-		renderPage( context, <AddCreditCard /> );
+		renderWithReduxStore( <AddCreditCard />, document.getElementById( 'primary' ), context.store );
 	},
 
 	cancelPrivacyProtection( context ) {
@@ -58,9 +59,10 @@ export default {
 
 		recordPurchasesPageView( paths.cancelPrivacyProtection(), 'Cancel Privacy Protection' );
 
-		renderPage(
-			context,
-			<CancelPrivacyProtection purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+		renderWithReduxStore(
+			<CancelPrivacyProtection purchaseId={ parseInt( context.params.purchaseId, 10 ) } />,
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -69,9 +71,10 @@ export default {
 
 		recordPurchasesPageView( paths.cancelPurchase(), 'Cancel Purchase' );
 
-		renderPage(
-			context,
-			<CancelPurchase purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+		renderWithReduxStore(
+			<CancelPurchase purchaseId={ parseInt( context.params.purchaseId, 10 ) } />,
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -80,9 +83,10 @@ export default {
 
 		recordPurchasesPageView( paths.confirmCancelDomain(), 'Confirm Cancel Domain' );
 
-		renderPage(
-			context,
-			<ConfirmCancelDomain purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+		renderWithReduxStore(
+			<ConfirmCancelDomain purchaseId={ parseInt( context.params.purchaseId, 10 ) } />,
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -91,12 +95,13 @@ export default {
 
 		recordPurchasesPageView( paths.editCardDetails(), 'Edit Card Details' );
 
-		renderPage(
-			context,
+		renderWithReduxStore(
 			<EditCardDetails
 				cardId={ context.params.cardId }
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			/>
+			/>,
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -105,7 +110,11 @@ export default {
 
 		recordPurchasesPageView( paths.purchasesRoot() );
 
-		renderPage( context, <PurchasesList noticeType={ context.params.noticeType } /> );
+		renderWithReduxStore(
+			<PurchasesList noticeType={ context.params.noticeType } />,
+			document.getElementById( 'primary' ),
+			context.store
+		);
 	},
 
 	managePurchase( context ) {
@@ -113,12 +122,13 @@ export default {
 
 		recordPurchasesPageView( paths.managePurchase(), 'Manage Purchase' );
 
-		renderPage(
-			context,
+		renderWithReduxStore(
 			<ManagePurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				destinationType={ context.params.destinationType }
-			/>
+			/>,
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -131,12 +141,13 @@ export default {
 
 		recordPurchasesPageView( context.path, 'No Sites' );
 
-		renderPage(
-			context,
+		renderWithReduxStore(
 			<Main>
 				<PurchasesHeader section={ 'purchases' } />
 				<NoSitesMessage />
-			</Main>
+			</Main>,
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 };

@@ -179,11 +179,11 @@ describe( 'reducer', () => {
 					{},
 					{
 						type: READER_SITE_REQUEST_FAILURE,
-						error: { code: 410 },
+						error: { statusCode: 410 },
 						payload: { ID: 666 },
 					}
 				)
-			).to.deep.equal( { 666: { ID: 666, is_error: true, error: { code: 410 } } } );
+			).to.deep.equal( { 666: { ID: 666, is_error: true, error: { statusCode: 410 } } } );
 		} );
 
 		test( 'should overwrite an existing entry on receiving a new feed', () => {
@@ -204,7 +204,7 @@ describe( 'reducer', () => {
 			expect(
 				items( startingState, {
 					type: READER_SITE_REQUEST_FAILURE,
-					error: { code: 500 },
+					error: { statusCode: 500 },
 					payload: { ID: 666 },
 				} )
 			).to.deep.equal( startingState );

@@ -62,11 +62,9 @@ class PostActionsEllipsisMenuTrash extends Component {
 
 		return (
 			<PopoverMenuItem onClick={ this.trashPost } icon="trash">
-				{ 'trash' === status ? (
-					translate( 'Delete Permanently' )
-				) : (
-					translate( 'Trash', { context: 'verb' } )
-				) }
+				{ 'trash' === status
+					? translate( 'Delete Permanently' )
+					: translate( 'Trash', { context: 'verb' } ) }
 			</PopoverMenuItem>
 		);
 	}

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -13,7 +13,7 @@ import PlanCompareCard from '../index';
 import PlanCompareCardItem from '../item';
 
 export default class extends React.PureComponent {
-    static displayName = 'PlanCompareCard';
+	static displayName = 'PlanCompareCard';
 
 	render() {
 		return (

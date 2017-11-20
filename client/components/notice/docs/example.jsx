@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -13,7 +13,7 @@ import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
 
 class Notices extends React.PureComponent {
-    state = {
+	state = {
 		compactNotices: false,
 	};
 
