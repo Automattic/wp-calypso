@@ -1,3 +1,5 @@
+Dockerfile
+.dockerignore
 .git
 .npm-debug.log*
 .vscode
