@@ -3,26 +3,22 @@
 /**
  * External dependencies
  */
-
+import React from 'react';
+import classNames from 'classnames';
+import closest from 'component-closest';
+import createReactClass from 'create-react-class';
+import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 import { last, map, range, uniq } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
-import React from 'react';
-import createReactClass from 'create-react-class';
-import closest from 'component-closest';
-import classNames from 'classnames';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 /**
  * Internal dependencies
  */
 import tableRows from './table-rows';
-import eventRecorder from 'me/event-recorder';
 
 const TransactionsHeader = createReactClass( {
-	displayName: 'TransactionsHeader',
-
-	mixins: [ eventRecorder ],
-
 	getInitialState: function() {
 		return {
 			activePopover: '',
@@ -40,6 +36,34 @@ const TransactionsHeader = createReactClass( {
 
 	componentWillUnmount: function() {
 		document.body.removeEventListener( 'click', this.closePopoverIfClickedOutside );
+	},
+
+	recordClickEvent( action ) {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	},
+
+	getDatePopoverItemClickHandler( analyticsEvent, filter ) {
+		return () => {
+			this.recordClickEvent( 'Date Popover Item: ' + analyticsEvent );
+			this.handlePickerSelection( filter );
+		};
+	},
+
+	getAppPopoverItemClickHandler( analyticsEvent, filter ) {
+		return () => {
+			this.recordClickEvent( 'App Popover Item: ' + analyticsEvent );
+			this.handlePickerSelection( filter );
+		};
+	},
+
+	handleDatePopoverLinkClick() {
+		this.recordClickEvent( 'Toggle Date Popover in Billing History' );
+		this.togglePopover( 'date' );
+	},
+
+	handleAppsPopoverLinkClick() {
+		this.recordClickEvent( 'Toggle Apps Popover in Billing History' );
+		this.togglePopover( 'apps' );
 	},
 
 	closePopoverIfClickedOutside: function( event ) {
@@ -101,10 +125,7 @@ const TransactionsHeader = createReactClass( {
 			<div className={ classes }>
 				<strong
 					className="filter-popover-toggle date-toggle"
-					onClick={ this.recordClickEvent(
-						'Toggle Date Popover in Billing History',
-						this.togglePopover.bind( this, 'date' )
-					) }
+					onClick={ this.handleDatePopoverLinkClick }
 				>
 					{ this.props.translate( 'Date' ) }
 					<Gridicon icon="chevron-down" size={ 18 } />
@@ -185,10 +206,7 @@ const TransactionsHeader = createReactClass( {
 			<tr
 				key={ titleKey }
 				className={ classes }
-				onClick={ this.recordClickEvent(
-					'Date Popover Item: ' + analyticsEvent,
-					this.handlePickerSelection.bind( this, filter )
-				) }
+				onClick={ this.getDatePopoverItemClickHandler( analyticsEvent, filter ) }
 			>
 				<td className="descriptor">{ titleTranslated }</td>
 				<td className="transactions-header__count">
@@ -225,10 +243,7 @@ const TransactionsHeader = createReactClass( {
 			<div className={ classes }>
 				<strong
 					className="filter-popover-toggle app-toggle"
-					onClick={ this.recordClickEvent(
-						'Toggle Apps Popover in Billing History',
-						this.togglePopover.bind( this, 'apps' )
-					) }
+					onClick={ this.handleAppsPopoverLinkClick }
 				>
 					{ this.props.translate( 'All Apps' ) }
 					<Gridicon icon="chevron-down" size={ 18 } />
@@ -266,10 +281,7 @@ const TransactionsHeader = createReactClass( {
 			<tr
 				key={ app }
 				className={ classes }
-				onClick={ this.recordClickEvent(
-					'App Popover Item: ' + analyticsEvent,
-					this.handlePickerSelection.bind( this, filter )
-				) }
+				onClick={ this.getAppPopoverItemClickHandler( analyticsEvent, filter ) }
 			>
 				<td className="descriptor">{ title }</td>
 				<td className="transactions-header__count">{ this.getFilterCount( filter ) }</td>
@@ -278,4 +290,6 @@ const TransactionsHeader = createReactClass( {
 	},
 } );
 
-export default localize( TransactionsHeader );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( TransactionsHeader ) );
