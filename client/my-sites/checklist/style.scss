@@ -1,17 +1,17 @@
 /** @format */
 
-.checklist-header {
+.checklist__header {
 	display: flex;
 	flex-direction: row;
 
-	&__main {
+	&-main {
 		display: flex;
 		flex: 1 1;
 		flex-direction: column;
 		align-items: stretch;
 	}
 
-	&__secondary {
+	&-secondary {
 		display: flex;
 		flex: 2 1;
 		flex-direction: row;
@@ -20,34 +20,34 @@
 		padding-right: 36px;
 	}
 
-	&__progress {
+	&-progress {
 		display: flex;
 		flex-direction: row;
 		font-size: 14px;
 		white-space: nowrap;
 	}
 
-	&__progress-text {
+	&-progress-text {
 		display: flex;
 		flex: 1 1;
 		margin: 0;
 		color: $gray;
 	}
 
-	&__progress-number {
+	&-progress-number {
 		display: flex;
 		color: $gray;
 		padding-left: 1em;
 	}
 
-	&__summary {
+	&-summary {
 		font-size: 12px;
 		line-height: 24px;
 		color: $gray;
 		cursor: pointer;
 	}
 
-	&__action {
+	&-action {
 		position: absolute;
 		top: 0;
 		right: 0;
@@ -70,7 +70,7 @@
 		}
 	}
 
-	.checklist.is-expanded &__action {
+	.checklist.is-expanded &-action {
 		.gridicon {
 			transform: rotate(180deg);
 		}
@@ -81,7 +81,7 @@
 	}
 }
 
-.checklist-task {
+.checklist__task {
 	&.card {
 		display: flex;
 		flex-direction: row;
@@ -106,7 +106,7 @@
 		border-left: 1px solid lighten($gray, 20%);
 	}
 
-	&__icon {
+	&-icon {
 		display: block;
 		position: absolute;
 		top: 18px;
@@ -119,13 +119,13 @@
 		cursor: pointer;
 	}
 
-	&__primary {
+	&-primary {
 		display: flex;
 		flex-direction: column;
 		flex: 1 1 90%;
 	}
 
-	&__secondary {
+	&-secondary {
 		display: flex;
 		flex: 1 1 10%;
 		align-items: start;
@@ -137,41 +137,41 @@
 		}
 	}
 
-	&__title {
+	&-title {
 		color: $blue-wordpress;
 		font-weight: 400;
 		font-size: 16px;
 	}
 
-	&__description {
+	&-description {
 		font-size: 14px;
 	}
 
-	&__duration {
+	&-duration {
 		font-size: 12px;
 		color: $gray;
 
-		.checklist-task__primary & {
+		.checklist__task-primary & {
 			display: inline-block;
 		}
 
-		.checklist-task__secondary & {
+		.checklist__task-secondary & {
 			display: none;
 		}
 
 		@include breakpoint( '<480px' ) {
-			.checklist-task__primary & {
+			.checklist__task-primary & {
 				display: none;
 			}
 
-			.checklist-task__secondary & {
+			.checklist__task-secondary & {
 				display: inline-block;
 				margin-left: 1.5em;
 			}
 		}
 	}
 
-	&__action {
+	&-action {
 		white-space: nowrap;
 	}
 
@@ -180,20 +180,20 @@
 		padding-bottom: 12px;
 		background: $gray-light;
 
-		.checklist-task__icon {
+		.checklist__task-icon {
 			top: 13px;
 			background: $alert-green;
 			border-color: $alert-green;
 		}
 
-		.checklist-task__title {
+		.checklist__task-title {
 			color: $gray;
 			font-size: 14px;
 		}
 
-		.checklist-task__description,
-		.checklist-task__duration,
-		.checklist-task__secondary {
+		.checklist__task-description,
+		.checklist__task-duration,
+		.checklist__task-secondary {
 			display: none;
 		}
 
@@ -206,11 +206,11 @@
 	}
 
 	&.is-completed.has-actionlink {
-		.checklist-task__secondary {
+		.checklist__task-secondary {
 			display: flex;
 		}
 
-		.checklist-task__action {
+		.checklist__task-action {
 			background: transparent;
 			border: 0;
 			padding: 0;
@@ -223,27 +223,27 @@
 		}
 
 		@include breakpoint( '<480px' ) {
-			.checklist-task__action {
+			.checklist__task-action {
 				padding-right: 0;
 			}
 		}
 	}
 
 	&.is-placeholder {
-		.checklist-task__title,
-		.checklist-task__description,
-		.checklist-task__duration {
+		.checklist__task-title,
+		.checklist__task-description,
+		.checklist__task-duration {
 			background-color: lighten($gray, 25%);
 			color: transparent;
 			animation: pulse-light 3s ease-in-out infinite;
 		}
 
-		.checklist-task__title {
+		.checklist__task-title {
 			width: 65%;
 			margin-bottom: 2px;
 		}
 
-		.checklist-task__duration {
+		.checklist__task-duration {
 			width: 50%;
 		}
 	}

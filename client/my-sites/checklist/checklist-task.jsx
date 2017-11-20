@@ -55,36 +55,35 @@ export class ChecklistTask extends PureComponent {
 		} = this.props;
 		const hasActionlink = completed && completedButtonText;
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Card
 				compact
-				className={ classNames( 'checklist-task', {
+				className={ classNames( 'checklist__task', {
 					'is-completed': completed,
 					'has-actionlink': hasActionlink,
 				} ) }
 			>
-				<div className="checklist-task__primary">
-					<h5 className="checklist-task__title">{ ( completed && completedTitle ) || title }</h5>
-					<p className="checklist-task__description">{ description }</p>
+				<div className="checklist__task-primary">
+					<h5 className="checklist__task-title">{ ( completed && completedTitle ) || title }</h5>
+					<p className="checklist__task-description">{ description }</p>
 					{ duration && (
-						<small className="checklist-task__duration">
+						<small className="checklist__task-duration">
 							{ translate( 'Estimated time:' ) } { duration }
 						</small>
 					) }
 				</div>
-				<div className="checklist-task__secondary">
-					<Button className="checklist-task__action" onClick={ this.handleClick }>
+				<div className="checklist__task-secondary">
+					<Button className="checklist__task-action" onClick={ this.handleClick }>
 						{ hasActionlink ? completedButtonText : translate( 'Do it!' ) }
 					</Button>
 					{ duration && (
-						<small className="checklist-task__duration">
+						<small className="checklist__task-duration">
 							{ translate( 'Estimated time:' ) } { duration }
 						</small>
 					) }
 				</div>
 				<span
-					className="checklist-task__icon"
+					className="checklist__task-icon"
 					onClick={ this.handleToggle }
 					tabIndex="0"
 					role="button"
@@ -97,7 +96,6 @@ export class ChecklistTask extends PureComponent {
 				</span>
 			</Card>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

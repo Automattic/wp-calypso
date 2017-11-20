@@ -12,16 +12,14 @@ import React from 'react';
 import Card from 'components/card';
 
 export default function ChecklistPlaceholder() {
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<Card compact className="checklist-task is-placeholder">
-			<div className="checklist-task__primary">
-				<h5 className="checklist-task__title">Task title</h5>
-				<p className="checklist-task__description">This is an example</p>
-				<small className="checklist-task__duration">Estimated time</small>
+		<Card compact className="checklist__task is-placeholder">
+			<div className="checklist__task-primary">
+				<h5 className="checklist__task-title">Task title</h5>
+				<p className="checklist__task-description">This is an example</p>
+				<small className="checklist__task-duration">Estimated time</small>
 			</div>
-			<div className="checklist-task__secondary" />
+			<div className="checklist__task-secondary" />
 		</Card>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }

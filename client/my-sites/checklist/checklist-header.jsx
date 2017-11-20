@@ -16,8 +16,6 @@ import Card from 'components/card';
 import ScreenReaderText from 'components/screen-reader-text';
 import ProgressBar from 'components/progress-bar';
 
-let globalIndex = 0;
-
 export class ChecklistHeader extends PureComponent {
 	static propTypes = {
 		total: PropTypes.number.isRequired,
@@ -26,37 +24,28 @@ export class ChecklistHeader extends PureComponent {
 		onClick: PropTypes.func,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.index = globalIndex++;
-	}
-
 	render() {
 		const { completed, hideCompleted, total, translate } = this.props;
 		const buttonText = hideCompleted
 			? translate( 'Show completed' )
 			: translate( 'Hide completed' );
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Card compact className="checklist-header">
-				<div className="checklist-header__main">
-					<div className="checklist-header__progress">
-						<h4 className="checklist-header__progress-text">{ translate( 'Your setup list' ) }</h4>
-						<span className="checklist-header__progress-number">{ `${ completed }/${ total }` }</span>
+			<Card compact className="checklist__header">
+				<div className="checklist__header-main">
+					<div className="checklist__header-progress">
+						<h4 className="checklist__header-progress-text">{ translate( 'Your setup list' ) }</h4>
+						<span className="checklist__header-progress-number">{ `${ completed }/${ total }` }</span>
 					</div>
 					<ProgressBar compact total={ total } value={ completed } />
 				</div>
-				<div className="checklist-header__secondary">
-					<label
-						htmlFor={ `checklist-header-${ this.index }` }
-						className="checklist-header__summary"
-					>
+				<div className="checklist__header-secondary">
+					<label htmlFor="checklist__header-action" className="checklist__header-summary">
 						{ buttonText }
 					</label>
 					<button
-						id={ `checklist-header-${ this.index }` }
-						className="checklist-header__action"
+						id="checklist__header-action"
+						className="checklist__header-action"
 						onClick={ this.props.onClick }
 					>
 						<ScreenReaderText>{ buttonText }</ScreenReaderText>
@@ -65,7 +54,6 @@ export class ChecklistHeader extends PureComponent {
 				</div>
 			</Card>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
