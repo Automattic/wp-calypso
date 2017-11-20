@@ -107,8 +107,9 @@ a.post-item__title-link:visited {
 }
 
 .post-item__meta {
+	display: flex;
 	font-size: 12px;
-	line-height: 14px;
+	line-height: 18px;
 	color: $gray-text-min;
 }
 
@@ -117,6 +118,7 @@ a.post-item__title-link:visited {
 .post-item__meta .post-status__text {
 	margin-bottom: 0;
 	vertical-align: top;
+	line-height: inherit;
 }
 
 .post-item__meta .post-status {
@@ -128,4 +130,29 @@ a.post-item__title-link:visited {
 	height: 14px;
 	margin-top: -3px;
 	margin-right: 2px;
+}
+
+.post-item__post-actions {
+	margin: 0 0 0 12px;
+	justify-content: flex-start;
+
+	.post-actions__item {
+		margin-right: 10px;
+
+		.comment-button__label,
+		.like-button__label,
+		.stat-update-indicator {
+			font-size: 12px;
+		}
+
+		.like-button__label,
+		.stat-update-indicator {
+
+		}
+
+		.like-button__like-icons {
+			height: 18px;
+			width: 18px;
+		}
+	}
 }

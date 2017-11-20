@@ -28,6 +28,7 @@ import {
 import { hideSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
 import ExternalLink from 'components/external-link';
 import FormInputCheckbox from 'components/forms/form-checkbox';
+import PostActions from 'blocks/post-actions';
 import PostTime from 'blocks/post-time';
 import PostStatus from 'blocks/post-status';
 import PostShare from 'blocks/post-share';
@@ -145,19 +146,27 @@ class PostItem extends React.Component {
 								</a>
 							) }
 							{ ! isPlaceholder &&
-							externalPostLink && (
-								<ExternalLink
-									icon={ true }
-									href={ postUrl }
-									target="_blank"
-									className="post-item__title-link"
-								>
-									{ title || translate( 'Untitled' ) }
-								</ExternalLink>
-							) }
+								externalPostLink && (
+									<ExternalLink
+										icon={ true }
+										href={ postUrl }
+										target="_blank"
+										className="post-item__title-link"
+									>
+										{ title || translate( 'Untitled' ) }
+									</ExternalLink>
+								) }
 						</h1>
 						<div className="post-item__meta">
 							<PostTime globalId={ globalId } />
+							{ post && (
+								<PostActions
+									className={ 'post-item__post-actions' }
+									compact={ true }
+									post={ post }
+									siteId={ +post.site_ID }
+								/>
+							) }
 							<PostStatus globalId={ globalId } />
 						</div>
 					</div>
