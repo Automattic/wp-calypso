@@ -133,8 +133,9 @@ class Popover extends Component {
 			return null;
 		}
 
-		this.debug( 'Update position after inject DOM' );
-		this.setPosition();
+		this.debug( 'Update position after render completes' );
+
+		setTimeout( () => this.setPosition(), 0 );
 	}
 
 	componentWillUnmount() {
