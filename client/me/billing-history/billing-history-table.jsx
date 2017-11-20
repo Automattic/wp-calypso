@@ -3,9 +3,7 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -18,23 +16,16 @@ import { isSendingBillingReceiptEmail } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'state/billing-transactions/actions';
 
-const BillingHistoryTable = createReactClass( {
-	displayName: 'BillingHistoryTable',
-
-	emailReceipt( receiptId, event ) {
-		event.preventDefault();
-		this.props.sendBillingReceiptEmail( receiptId );
-	},
-
-	recordClickEvent( eventAction ) {
+class BillingHistoryTable extends React.Component {
+	recordClickEvent = eventAction => {
 		this.props.recordGoogleEvent( 'Me', eventAction );
-	},
+	};
 
-	handleReceiptLinkClick() {
+	handleReceiptLinkClick = () => {
 		return this.recordClickEvent( 'View Receipt in Billing History' );
-	},
+	};
 
-	getEmailReceiptLinkClickHandler( receiptId ) {
+	getEmailReceiptLinkClickHandler = receiptId => {
 		const { sendBillingReceiptEmail } = this.props;
 
 		return event => {
@@ -42,9 +33,9 @@ const BillingHistoryTable = createReactClass( {
 			this.recordClickEvent( 'Email Receipt in Billing History' );
 			sendBillingReceiptEmail( receiptId );
 		};
-	},
+	};
 
-	renderEmailAction( receiptId ) {
+	renderEmailAction = receiptId => {
 		const { translate } = this.props;
 
 		if ( this.props.sendingBillingReceiptEmail( receiptId ) ) {
@@ -56,9 +47,9 @@ const BillingHistoryTable = createReactClass( {
 				{ translate( 'Email Receipt' ) }
 			</a>
 		);
-	},
+	};
 
-	renderTransaction( transaction ) {
+	renderTransaction = transaction => {
 		const { translate } = this.props;
 
 		return (
@@ -73,7 +64,7 @@ const BillingHistoryTable = createReactClass( {
 				{ this.renderEmailAction( transaction.id ) }
 			</div>
 		);
-	},
+	};
 
 	render() {
 		const { translate } = this.props;
@@ -96,8 +87,8 @@ const BillingHistoryTable = createReactClass( {
 				transactionRenderer={ this.renderTransaction }
 			/>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => {
