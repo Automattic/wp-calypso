@@ -3,10 +3,8 @@
 /**
  * External dependencies
  */
-
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import page from 'page';
 import { translate } from 'i18n-calypso';
@@ -32,11 +30,8 @@ import { clearActivated } from 'state/themes/actions';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-const ThanksModal = createReactClass( {
-	displayName: 'ThanksModal',
-	trackClick: trackClick.bind( null, 'current theme' ),
-
-	propTypes: {
+class ThanksModal extends Component {
+	static propTypes = {
 		// Where is the modal being used?
 		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
 		// Connected props
@@ -55,31 +50,35 @@ const ThanksModal = createReactClass( {
 		isThemeWpcom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
 		visitSiteUrl: PropTypes.string,
-	},
+	};
 
-	onCloseModal() {
+	onCloseModal = () => {
 		this.props.clearActivated( this.props.siteId );
 		this.setState( { show: false } );
-	},
+	};
 
-	visitSite() {
+	trackClick = ( eventName, verb ) => {
+		trackClick( 'current theme', eventName, verb );
+	};
+
+	visitSite = () => {
 		this.trackClick( 'visit site' );
 		page( this.props.visitSiteUrl );
-	},
+	};
 
-	goBack() {
+	goBack = () => {
 		this.trackClick( 'go back' );
 		this.onCloseModal();
-	},
+	};
 
-	onLinkClick( link ) {
+	onLinkClick = link => {
 		return () => {
 			this.onCloseModal();
 			this.trackClick( link, 'click' );
 		};
-	},
+	};
 
-	renderBody() {
+	renderBody = () => {
 		return (
 			<ul>
 				<li>
@@ -88,25 +87,25 @@ const ThanksModal = createReactClass( {
 				<li>{ this.renderSupportInfo() }</li>
 			</ul>
 		);
-	},
+	};
 
-	renderThemeInfo() {
+	renderThemeInfo = () => {
 		return translate( '{{a}}Learn more about{{/a}} this theme.', {
 			components: {
 				a: <a href={ this.props.detailsUrl } onClick={ this.onLinkClick( 'theme info' ) } />,
 			},
 		} );
-	},
+	};
 
-	renderCustomizeInfo() {
+	renderCustomizeInfo = () => {
 		return translate( '{{a}}Customize{{/a}} this design.', {
 			components: {
 				a: <a href={ this.props.customizeUrl } onClick={ this.onLinkClick( 'customize' ) } />,
 			},
 		} );
-	},
+	};
 
-	renderSupportInfo() {
+	renderSupportInfo = () => {
 		const { author_uri: authorUri } = this.props.currentTheme;
 
 		if ( this.props.forumUrl ) {
@@ -126,9 +125,9 @@ const ThanksModal = createReactClass( {
 		}
 
 		return null;
-	},
+	};
 
-	renderContent() {
+	renderContent = () => {
 		const { name: themeName, author: themeAuthor } = this.props.currentTheme;
 
 		return (
@@ -144,15 +143,15 @@ const ThanksModal = createReactClass( {
 				{ this.renderBody() }
 			</div>
 		);
-	},
+	};
 
-	renderLoading() {
+	renderLoading = () => {
 		return (
 			<div className="themes__thanks-modal-loading">
 				<PulsingDot active={ true } />
 			</div>
 		);
-	},
+	};
 
 	render() {
 		const { currentTheme, hasActivated, isActivating } = this.props;
@@ -180,8 +179,8 @@ const ThanksModal = createReactClass( {
 				{ hasActivated && currentTheme ? this.renderContent() : this.renderLoading() }
 			</Dialog>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => {
