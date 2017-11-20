@@ -9,7 +9,12 @@ import { omitBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { DEFAULT_QUERY, getNormalizedOrdersQuery, removeTemporaryIds } from './utils';
+import {
+	DEFAULT_QUERY,
+	getNormalizedOrdersQuery,
+	removeTemporaryIds,
+	transformOrderForApi,
+} from './utils';
 import { areOrdersLoaded, areOrdersLoading, isOrderLoaded, isOrderLoading } from './selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
@@ -136,7 +141,7 @@ export const updateOrder = ( siteId, { id: orderId, ...order } ) => ( dispatch, 
 		siteId = getSelectedSiteId( state );
 	}
 
-	order = removeTemporaryIds( order );
+	order = transformOrderForApi( removeTemporaryIds( order ) );
 
 	const updateAction = {
 		type: WOOCOMMERCE_ORDER_UPDATE,
