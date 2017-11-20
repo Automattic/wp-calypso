@@ -121,7 +121,7 @@ class OrderDetailsTable extends Component {
 
 	onShippingChange = event => {
 		const { order } = this.props;
-		const shippingLine = order.shipping_lines[ 0 ];
+		const shippingLine = order.shipping_lines[ 0 ] || { method_id: 'manual' };
 		const total = event.target.value;
 		this.props.onChange( { shipping_lines: [ { ...shippingLine, total } ] } );
 	};
