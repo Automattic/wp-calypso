@@ -70,8 +70,8 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			else
 				link(rel='stylesheet', id='main-css', href=urls['style-rtl.css'])
 
-			if sectionCssRtl
-				link(rel='stylesheet', id='section-css', href=sectionCssRtl)
+			if sectionCss
+				link(rel='stylesheet', id='section-css-' + sectionCss.id, href=sectionCss.urls.rtl)
 		else
 			if 'development' === env || isDebug
 				link(rel='stylesheet', id='main-css', href=urls['style-debug.css'])
@@ -79,7 +79,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				link(rel='stylesheet', id='main-css', href=urls['style.css'])
 
 			if sectionCss
-				link(rel='stylesheet', id='section-css', href=sectionCss)
+				link(rel='stylesheet', id='section-css-' + sectionCss.id, href=sectionCss.urls.ltr)
 
 		if shouldUsePreconnect
 			//- Preconnect to our CDN hosts
@@ -109,13 +109,11 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			else
 				link(rel='preload' as='style' href='//s1.wp.com/i/noticons/noticons.css?v=20150727')
 
-		if shouldUseStylePreloadSection
+		if shouldUseStylePreloadSection && sectionCss
 			if isRTL
-				if sectionCssRtl
-					link(rel='preload' as='style' href=sectionCssRtl)
+				link(rel='preload', as='style', href=sectionCss.urls.rtl)
 			else
-				if sectionCss
-					link(rel='preload' as='style' href=sectionCss)
+				link(rel='preload', as='style', href=sectionCss.urls.ltr)
 
 		if shouldUseStylePreloadCommon
 			if isRTL

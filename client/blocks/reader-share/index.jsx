@@ -21,9 +21,13 @@ import ReaderPopoverMenu from 'components/reader-popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'gridicons';
 import * as stats from 'reader/stats';
-import { preload as preloadSection } from 'sections-preload';
+import { preload } from 'sections-preload';
 import SiteSelector from 'components/site-selector';
 import { getPrimarySiteId } from 'state/selectors';
+
+function preloadEditor() {
+	preload( 'post-editor' );
+}
 
 /**
  * Local variables
@@ -164,10 +168,6 @@ class ReaderShare extends React.Component {
 		}
 	};
 
-	preloadEditor() {
-		preloadSection( 'post-editor' );
-	}
-
 	render() {
 		const { translate } = this.props;
 		const buttonClasses = classnames( {
@@ -181,8 +181,8 @@ class ReaderShare extends React.Component {
 			{
 				className: 'reader-share',
 				onClick: this.toggle,
-				onTouchStart: this.preloadEditor,
-				onMouseEnter: this.preloadEditor,
+				onTouchStart: preloadEditor,
+				onMouseEnter: preloadEditor,
 				ref: 'shareButton',
 			},
 			[

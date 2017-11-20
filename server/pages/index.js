@@ -147,7 +147,7 @@ function getDefaultContext( request ) {
 	const cacheKey = getCacheKey( request );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
-	let sectionCss, sectionCssRtl;
+	let sectionCss;
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
@@ -167,9 +167,10 @@ function getDefaultContext( request ) {
 	}
 
 	if ( request.context && request.context.sectionCss ) {
-		const urls = utils.getCssUrls( request.context.sectionCss );
-		sectionCss = urls.ltr;
-		sectionCssRtl = urls.rtl;
+		sectionCss = {
+			id: request.context.sectionCss,
+			urls: utils.getCssUrls( request.context.sectionCss ),
+		};
 	}
 
 	const shouldUseSingleCDN =
@@ -205,7 +206,6 @@ function getDefaultContext( request ) {
 		shouldUseSingleCDN,
 		bodyClasses,
 		sectionCss,
-		sectionCssRtl,
 	} );
 
 	context.app = {

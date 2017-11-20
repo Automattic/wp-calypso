@@ -18,6 +18,7 @@ import { flowRight } from 'lodash';
 import ListEnd from 'components/list-end';
 import QueryPosts from 'components/data/query-posts';
 import Page from './page';
+import { preload } from 'sections-preload';
 import infiniteScroll from 'lib/mixins/infinite-scroll';
 import EmptyContent from 'components/empty-content';
 import NoResults from 'my-sites/no-results';
@@ -32,6 +33,10 @@ import {
 	isSitePostsLastPageForQuery,
 } from 'state/posts/selectors';
 import { getSite } from 'state/sites/selectors';
+
+function preloadEditor() {
+	preload( 'post-editor' );
+}
 
 export default class PageList extends Component {
 	static propTypes = {
@@ -218,6 +223,7 @@ const Pages = createReactClass( {
 				line={ attributes.line }
 				action={ attributes.action }
 				actionURL={ attributes.actionURL }
+				actionHoverCallback={ preloadEditor }
 				illustration={ attributes.illustration }
 				illustrationWidth={ attributes.illustrationWidth }
 			/>

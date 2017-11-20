@@ -17,6 +17,7 @@ import debugFactory from 'debug';
 import QueryPosts from 'components/data/query-posts';
 import Post from './post';
 import PostPlaceholder from './post-placeholder';
+import { preload } from 'sections-preload';
 import EmptyContent from 'components/empty-content';
 import InfiniteList from 'components/infinite-list';
 import NoResults from 'my-sites/no-results';
@@ -33,6 +34,10 @@ import {
 const debug = debugFactory( 'calypso:my-sites:posts' );
 
 const GUESSED_POST_HEIGHT = 250;
+
+function preloadEditor() {
+	preload( 'post-editor' );
+}
 
 class PostList extends PureComponent {
 	static propTypes = {
@@ -250,6 +255,7 @@ const Posts = localize(
 					line={ attributes.line }
 					action={ attributes.action }
 					actionURL={ attributes.actionURL }
+					actionHoverCallback={ preloadEditor }
 					illustration={ attributes.illustration }
 					illustrationWidth={ attributes.illustrationWidth }
 				/>
