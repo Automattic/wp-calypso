@@ -10,6 +10,11 @@ import classnames from 'classnames';
 import { noop, omit } from 'lodash';
 import Gridicon from 'gridicons';
 
+/**
+ * Internal dependencies
+ */
+import ExternalLink from 'components/external-link';
+
 export default class PopoverMenuItem extends Component {
 	static propTypes = {
 		href: PropTypes.string,
@@ -18,6 +23,7 @@ export default class PopoverMenuItem extends Component {
 		icon: PropTypes.string,
 		focusOnHover: PropTypes.bool,
 		onMouseOver: PropTypes.func,
+		isExternalLink: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -37,11 +43,23 @@ export default class PopoverMenuItem extends Component {
 	};
 
 	render() {
-		const { children, className, href, icon, isSelected } = this.props;
+		const {
+			children,
+			className,
+			focusOnHover,
+			href,
+			icon,
+			isSelected,
+			isExternalLink,
+		} = this.props;
 		const classes = classnames( 'popover__menu-item', className, {
 			'is-selected': isSelected,
 		} );
-		const ItemComponent = href ? 'a' : 'button';
+
+		let ItemComponent = href ? 'a' : 'button';
+		if ( isExternalLink && href ) {
+			ItemComponent = ExternalLink;
+		}
 
 		return (
 			<ItemComponent
@@ -50,6 +68,7 @@ export default class PopoverMenuItem extends Component {
 				tabIndex="-1"
 				{ ...omit( this.props, 'icon', 'focusOnHover', 'isSelected' ) }
 				className={ classes }
+				icon={ isExternalLink }
 			>
 				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
 				{ children }
