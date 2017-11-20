@@ -26,6 +26,7 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { updatePlugin } from 'state/plugins/installed/actions';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import { infoNotice } from 'state/notices/actions';
+import PostCommentList from 'blocks/comments';
 
 export class CommentsManagement extends Component {
 	static propTypes = {
@@ -51,18 +52,35 @@ export class CommentsManagement extends Component {
 		this.props.updatePlugin( siteId, jetpackPlugin );
 	};
 
+	renderCommentList = () => {
+		const { changePage, page, postId, siteFragment, siteId, status } = this.props;
+		if ( ! siteId ) {
+			return;
+		}
+		if ( !! postId && 'all' === status ) {
+			return (
+				<PostCommentList
+					post={ { ID: postId, site_ID: siteId } }
+					commentComponent="comment"
+					commentsFilter="all"
+				/>
+			);
+		}
+		return (
+			<CommentList
+				changePage={ changePage }
+				order={ 'desc' }
+				page={ page }
+				postId={ postId }
+				siteId={ siteId }
+				siteFragment={ siteFragment }
+				status={ status }
+			/>
+		);
+	};
+
 	render() {
-		const {
-			changePage,
-			showJetpackUpdateScreen,
-			page,
-			postId,
-			showPermissionError,
-			siteId,
-			siteFragment,
-			status,
-			translate,
-		} = this.props;
+		const { showJetpackUpdateScreen, showPermissionError, siteId, translate } = this.props;
 
 		return (
 			<Main className="comments" wideLayout>
@@ -93,18 +111,7 @@ export class CommentsManagement extends Component {
 							illustration="/calypso/images/illustrations/illustration-500.svg"
 						/>
 					) }
-				{ ! showJetpackUpdateScreen &&
-					! showPermissionError && (
-						<CommentList
-							changePage={ changePage }
-							order={ 'desc' }
-							page={ page }
-							postId={ postId }
-							siteId={ siteId }
-							siteFragment={ siteFragment }
-							status={ status }
-						/>
-					) }
+				{ ! showJetpackUpdateScreen && ! showPermissionError && this.renderCommentList() }
 			</Main>
 		);
 	}

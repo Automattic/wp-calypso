@@ -93,6 +93,7 @@ export class Comment extends Component {
 			siteId,
 			postId,
 			commentId,
+			className,
 			commentIsPending,
 			isBulkMode,
 			isLoading,
@@ -103,7 +104,7 @@ export class Comment extends Component {
 		} = this.props;
 		const { isEditMode, isReplyVisible } = this.state;
 
-		const classes = classNames( 'comment', {
+		const classes = classNames( 'comment', className, {
 			'is-bulk-mode': isBulkMode,
 			'is-edit-mode': isEditMode,
 			'is-placeholder': isLoading,
