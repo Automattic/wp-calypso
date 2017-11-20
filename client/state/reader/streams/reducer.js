@@ -5,8 +5,12 @@
  */
 import { keyedReducer, combineReducers } from 'state/utils';
 import { itemsSchema } from './schema';
-import { READER_STREAMS_PAGE_RECEIVE, READER_STREAMS_SELECT_ITEM } from 'state/action-types';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import {
+	READER_STREAMS_PAGE_RECEIVE,
+	READER_STREAMS_SELECT_ITEM,
+	SERIALIZE,
+	DESERIALIZE,
+} from 'state/action-types';
 
 export const items = keyedReducer(
 	'payload.streamId',
