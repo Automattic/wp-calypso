@@ -39,10 +39,6 @@ class CredsConfirmStep extends Component {
 		this.props.goToStep( 'creds-complete' );
 	};
 
-	contactSupport = () => {
-		// open happychat
-	};
-
 	renderStepContent = () => {
 		const { translate } = this.props;
 
@@ -56,7 +52,6 @@ class CredsConfirmStep extends Component {
 							'support staff is available to answer any questions you might have.'
 					) }
 				</p>
-				<Button onClick={ this.contactSupport }>{ translate( 'Contact support' ) }</Button>
 				<Button primary onClick={ this.shareCredentials }>
 					{ translate( 'Share credentials' ) }
 				</Button>
