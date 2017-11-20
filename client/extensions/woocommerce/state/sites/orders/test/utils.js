@@ -10,7 +10,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import existingOrder from './fixtures/order';
-import { removeTemporaryIds } from '../utils';
+import { removeTemporaryIds, transformOrderForApi } from '../utils';
 
 describe( 'removeTemporaryIds', () => {
 	test( 'should return the same order when there are no temporary IDs', () => {
@@ -105,5 +105,63 @@ describe( 'removeTemporaryIds', () => {
 				total: 10,
 			},
 		] );
+	} );
+} );
+
+describe( 'transformOrderForApi', () => {
+	test( 'should return a full order object', () => {
+		expect( transformOrderForApi( existingOrder ) ).to.eql( existingOrder );
+	} );
+
+	test( 'should convert totals to strings', () => {
+		const order = { total: 11.5, total_tax: 0 };
+		expect( transformOrderForApi( order ) ).to.eql( { total: '11.50', total_tax: '0.00' } );
+	} );
+
+	test( 'should dive into line_items to convert prices', () => {
+		const order = {
+			line_items: [ { name: 'Example', subtotal: 12.5, quantity: '1', price: '12.5' } ],
+		};
+		const apiOrder = transformOrderForApi( order );
+		expect( apiOrder.line_items[ 0 ].name ).to.eql( 'Example' );
+		expect( apiOrder.line_items[ 0 ].subtotal ).to.eql( '12.50' );
+		expect( apiOrder.line_items[ 0 ].quantity ).to.eql( 1 );
+		expect( apiOrder.line_items[ 0 ].price ).to.eql( 12.5 );
+	} );
+
+	test( 'should dive into shipping_lines to convert prices', () => {
+		const order = {
+			shipping_lines: [ { method_title: 'USPS', total: 5 } ],
+		};
+		const apiOrder = transformOrderForApi( order );
+		expect( apiOrder.shipping_lines[ 0 ].method_title ).to.eql( 'USPS' );
+		expect( apiOrder.shipping_lines[ 0 ].total ).to.eql( '5.00' );
+	} );
+
+	test( 'should dive into fee_lines to convert prices', () => {
+		const order = {
+			fee_lines: [ { name: 'Fee', total: 5 } ],
+		};
+		const apiOrder = transformOrderForApi( order );
+		expect( apiOrder.fee_lines[ 0 ].name ).to.eql( 'Fee' );
+		expect( apiOrder.fee_lines[ 0 ].total ).to.eql( '5.00' );
+	} );
+
+	test( 'should dive into coupon_lines to convert prices', () => {
+		const order = {
+			coupon_lines: [ { code: 'new-10-off', discount: 10 } ],
+		};
+		const apiOrder = transformOrderForApi( order );
+		expect( apiOrder.coupon_lines[ 0 ].code ).to.eql( 'new-10-off' );
+		expect( apiOrder.coupon_lines[ 0 ].discount ).to.eql( '10.00' );
+	} );
+
+	test( 'should dive into refunds to convert prices', () => {
+		const order = {
+			refunds: [ { reason: 'Example reason', total: 25 } ],
+		};
+		const apiOrder = transformOrderForApi( order );
+		expect( apiOrder.refunds[ 0 ].reason ).to.eql( 'Example reason' );
+		expect( apiOrder.refunds[ 0 ].total ).to.eql( '25.00' );
 	} );
 } );
