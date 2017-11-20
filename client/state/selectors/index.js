@@ -130,6 +130,7 @@ export getSelectedOrAllSitesWithPlugins from './get-selected-or-all-sites-with-p
 export getSelectedOrPrimarySiteId from './get-selected-or-primary-site-id';
 export getSharingButtons from './get-sharing-buttons';
 export getSimplePayments from './get-simple-payments';
+export getSiteChecklist from './get-site-checklist';
 export getSiteComment from './get-site-comment';
 export getSiteComments from './get-site-comments';
 export getSiteCommentsTree from './get-site-comments-tree';
