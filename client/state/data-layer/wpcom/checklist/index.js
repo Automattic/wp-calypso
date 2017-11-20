@@ -10,6 +10,7 @@ import { noop } from 'lodash';
 import { SITE_CHECKLIST_REQUEST } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
+import { receiveSiteChecklist } from 'state/checklist/actions';
 
 export const fetchChecklist = ( { dispatch }, action ) => {
 	dispatch(
@@ -24,7 +25,16 @@ export const fetchChecklist = ( { dispatch }, action ) => {
 	);
 };
 
-const dispatchChecklistRequest = dispatchRequest( fetchChecklist, noop, noop );
+export const receiveSuccess = ( { dispatch }, action, checklist ) => {
+	dispatch(
+		receiveSiteChecklist(
+			action.siteId,
+			checklist
+		)
+	);
+};
+
+const dispatchChecklistRequest = dispatchRequest( fetchChecklist, receiveSuccess, noop );
 
 export default {
 	[ SITE_CHECKLIST_REQUEST ]: [ dispatchChecklistRequest ],
