@@ -112,7 +112,7 @@ class OrderDetailsTable extends Component {
 		}
 		const index = findIndex( order.line_items, { id } );
 		// A zero quantity does strange things with the price, so we'll force 1
-		const quantity = parseInt( event.target.value ) || 1;
+		const quantity = Math.abs( event.target.value ) || 1;
 		const subtotal = getOrderItemCost( order, id ) * quantity;
 		const total = subtotal;
 		const newItem = { ...item, quantity, subtotal, total };
