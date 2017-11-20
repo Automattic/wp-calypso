@@ -13,18 +13,35 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import TransactionsTable from './transactions-table';
-import eventRecorder from 'me/event-recorder';
 import purchasesPaths from 'me/purchases/paths';
 import { isSendingBillingReceiptEmail } from 'state/selectors';
-import { sendBillingReceiptEmail } from 'state/billing-transactions/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'state/billing-transactions/actions';
 
 const BillingHistoryTable = createReactClass( {
 	displayName: 'BillingHistoryTable',
-	mixins: [ eventRecorder ],
 
 	emailReceipt( receiptId, event ) {
 		event.preventDefault();
 		this.props.sendBillingReceiptEmail( receiptId );
+	},
+
+	recordClickEvent( eventAction ) {
+		this.props.recordGoogleEvent( 'Me', eventAction );
+	},
+
+	handleReceiptLinkClick() {
+		return this.recordClickEvent( 'View Receipt in Billing History' );
+	},
+
+	getEmailReceiptLinkClickHandler( receiptId ) {
+		const { sendBillingReceiptEmail } = this.props;
+
+		return event => {
+			event.preventDefault();
+			this.recordClickEvent( 'Email Receipt in Billing History' );
+			sendBillingReceiptEmail( receiptId );
+		};
 	},
 
 	renderEmailAction( receiptId ) {
@@ -35,13 +52,7 @@ const BillingHistoryTable = createReactClass( {
 		}
 
 		return (
-			<a
-				href="#"
-				onClick={ this.recordClickEvent(
-					'Email Receipt in Billing History',
-					this.emailReceipt.bind( this, receiptId )
-				) }
-			>
+			<a href="#" onClick={ this.getEmailReceiptLinkClickHandler( receiptId ) }>
 				{ translate( 'Email Receipt' ) }
 			</a>
 		);
@@ -55,7 +66,7 @@ const BillingHistoryTable = createReactClass( {
 				<a
 					className="billing-history__view-receipt"
 					href={ purchasesPaths.billingHistoryReceipt( transaction.id ) }
-					onClick={ this.recordClickEvent( 'View Receipt in Billing History' ) }
+					onClick={ this.handleReceiptLinkClick }
 				>
 					{ translate( 'View Receipt' ) }
 				</a>
@@ -98,5 +109,8 @@ export default connect(
 			sendingBillingReceiptEmail,
 		};
 	},
-	{ sendBillingReceiptEmail }
+	{
+		recordGoogleEvent,
+		sendBillingReceiptEmail: sendBillingReceiptEmailAction,
+	}
 )( localize( BillingHistoryTable ) );
