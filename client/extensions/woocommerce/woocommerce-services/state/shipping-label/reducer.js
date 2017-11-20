@@ -73,10 +73,10 @@ const generateUniqueBoxId = ( keyBase, boxIds ) => {
 const reducers = {};
 
 reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT ] =
-	( state, { formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods, enabled } ) => {
+	( state, actionData ) => {
 		return {
 			...state,
-			...initializeLabelsState( formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods, enabled ),
+			...initializeLabelsState( omit( actionData, 'type', 'siteId' ) ),
 		};
 	};
 

@@ -5,23 +5,25 @@ import { isEmpty, mapValues } from 'lodash';
 
 /**
  * Parses the data passed from the backed into a Redux state to be used in the label purchase flow
- * @param {Object} formData form data
- * @param {Object} labelsData labels data
- * @param {string} paperSize selected paper size
- * @param {Object} storeOptions store options (weight/dimensions units etc)
- * @param {Number} paymentMethod selected payment method
- * @param {Number} numPaymentMethods number of payments methods stored with the jetpack master account
- * @param {Bool} enabled checks if labels were enabled in the settings
+ * @param {Object} data data to initialize the labels state from
  * @returns {Object} labels Redux state
  */
-export default ( formData, labelsData, paperSize, storeOptions, paymentMethod, numPaymentMethods, enabled ) => {
-	if ( ! formData ) {
+export default ( data ) => {
+	if ( ! data ) {
 		return {
 			loaded: false,
 			isFetching: false,
 			error: false,
 		};
 	}
+
+	const {
+		formData,
+		labelsData,
+		paperSize,
+		storeOptions,
+		canChangeCountries,
+	} = data;
 
 	// The phone field is never prefilled, so if it's present it means the address is fully valid
 	const hasOriginAddress = Boolean( formData.origin.phone );
@@ -31,12 +33,9 @@ export default ( formData, labelsData, paperSize, storeOptions, paymentMethod, n
 		loaded: true,
 		isFetching: false,
 		error: false,
-		enabled,
 		refreshedLabelStatus: false,
 		labels: labelsData || [],
 		paperSize,
-		paymentMethod,
-		numPaymentMethods,
 		storeOptions,
 		fulfillOrder: true,
 		emailDetails: true,
@@ -51,7 +50,7 @@ export default ( formData, labelsData, paperSize, storeOptions, paymentMethod, n
 				ignoreValidation: hasOriginAddress ? null : mapValues( formData.origin, () => true ),
 				selectNormalized: true,
 				normalizationInProgress: false,
-				allowChangeCountry: false,
+				allowChangeCountry: Boolean( canChangeCountries ),
 			},
 			destination: {
 				values: formData.destination,
@@ -62,7 +61,7 @@ export default ( formData, labelsData, paperSize, storeOptions, paymentMethod, n
 				ignoreValidation: hasDestinationAddress ? null : mapValues( formData.destination, () => true ),
 				selectNormalized: true,
 				normalizationInProgress: false,
-				allowChangeCountry: false,
+				allowChangeCountry: Boolean( canChangeCountries ),
 			},
 			packages: {
 				all: formData.all_packages,
