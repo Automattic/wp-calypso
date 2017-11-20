@@ -266,32 +266,32 @@ export class LoginForm extends Component {
 								<FormInputValidation isError text={ requestError.message } />
 							) }
 
-						{ this.isPasswordVisible() && (
-							<div>
-								<label htmlFor="password">
-									{ this.props.translate( 'Password' ) }
-								</label>
+						<div className={ classNames( 'login__form-password', {
+							'is-hidden': ! this.isPasswordVisible(),
+						} ) }>
+							<label htmlFor="password">
+								{ this.props.translate( 'Password' ) }
+							</label>
 
-								<FormPasswordInput
-									autoCapitalize="off"
-									autoComplete="off"
-									className={ classNames( {
-										'is-error': requestError && requestError.field === 'password',
-									} ) }
-									onChange={ this.onChangeField }
-									id="password"
-									name="password"
-									ref={ this.savePasswordRef }
-									value={ this.state.password }
-									{ ...isDisabled }
-								/>
+							<FormPasswordInput
+								autoCapitalize="off"
+								autoComplete="off"
+								className={ classNames( {
+									'is-error': requestError && requestError.field === 'password',
+								} ) }
+								onChange={ this.onChangeField }
+								id="password"
+								name="password"
+								ref={ this.savePasswordRef }
+								value={ this.state.password }
+								{ ...isDisabled }
+							/>
 
-								{ requestError &&
-									requestError.field === 'password' && (
-										<FormInputValidation isError text={ requestError.message } />
-									) }
-							</div>
-						) }
+							{ requestError &&
+								requestError.field === 'password' && (
+									<FormInputValidation isError text={ requestError.message } />
+								) }
+						</div>
 					</div>
 
 					{ config.isEnabled( 'signup/social' ) && (
