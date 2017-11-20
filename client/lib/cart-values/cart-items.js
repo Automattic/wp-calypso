@@ -673,16 +673,6 @@ export function getDomainRegistrations( cart ) {
 }
 
 /**
- * Retrieves all the domain registration items in the specified shopping cart.
- *
- * @param {Object} cart - cart as `CartValue` object
- * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
- */
-export function getDomainIncomingTransfers( cart ) {
-	return filter( getAll( cart ), { product_slug: 'domain_transfer' } );
-}
-
-/**
  * Retrieves all the domain mapping items in the specified shopping cart.
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -810,7 +800,7 @@ export function getDomainTransfersWithoutPrivacy( cart ) {
 	return getDomainTransfers( cart ).filter( function( cartItem ) {
 		return ! some( cart.products, {
 			meta: cartItem.meta,
-			product_slug: 'domain_transfer_privacy',
+			product_slug: domainProductSlugs.TRANSFER_IN_PRIVACY,
 		} );
 	} );
 }
