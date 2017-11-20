@@ -249,6 +249,7 @@ class Plans extends Component {
 			cartItem ? cartItem.product_slug : 'free',
 			this.props.siteSlug
 		);
+		page.redirect( '/jetpack/connect' );
 	};
 
 	render() {
@@ -323,7 +324,7 @@ export default connect(
 			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSiteSlug ),
 			redirectingToWpAdmin: isRedirectingToWpAdmin( state ),
 			isRtlLayout: isRtl( state ),
-			hasPlan: isSiteOnPaidPlan( state, selectedSite.ID ),
+			hasPlan: selectedSite && isSiteOnPaidPlan( state, selectedSite.ID ),
 		};
 	},
 	{

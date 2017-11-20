@@ -204,7 +204,7 @@ export default {
 		const basePath = route.sectionify( context.path );
 		const analyticsBasePath = basePath + '/:site';
 
-		if ( ! isJetpack ) {
+		if ( siteId && ! isJetpack ) {
 			return;
 		}
 
@@ -223,6 +223,7 @@ export default {
 					destinationType={ context.params.destinationType }
 					basePlansPath={ '/jetpack/connect/plans' }
 					interval={ context.params.interval }
+					showFirst={ ! siteId }
 				/>
 			</CheckoutData>,
 			document.getElementById( 'primary' ),
