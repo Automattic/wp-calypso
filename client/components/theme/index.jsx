@@ -11,6 +11,7 @@ import classNames from 'classnames';
 import { get, isEmpty, isEqual, noop, some } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import photon from 'photon';
 
 /**
  * Internal dependencies
@@ -199,6 +200,10 @@ export class Theme extends Component {
 			</span>
 		);
 
+		const fit = '479,360';
+		const themeImgSrc = photon( screenshot, { fit } );
+		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
+
 		return (
 			<Card className={ themeClass }>
 				{ this.isBeginnerTheme() && (
@@ -214,8 +219,8 @@ export class Theme extends Component {
 						{ screenshot ? (
 							<img
 								className="theme__img"
-								src={ screenshot + '?w=340' }
-								srcSet={ screenshot + '?w=340 1x, ' + screenshot + '?w=680 2x' }
+								src={ themeImgSrc }
+								srcSet={ `${ themeImgSrc } 1x ${ themeImgSrcDoubleDpi } 2x` }
 								onClick={ this.onScreenshotClick }
 								id={ screenshotID }
 							/>
