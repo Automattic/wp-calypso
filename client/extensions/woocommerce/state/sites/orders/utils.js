@@ -81,7 +81,9 @@ export function transformOrderForApi( order ) {
 		'total_tax',
 	];
 	forEach( totalsAndTaxes, key => {
-		order[ key ] = getCurrencyFormatString( order[ key ], order.currency );
+		if ( isNumber( order[ key ] ) || order[ key ] ) {
+			order[ key ] = getCurrencyFormatString( order[ key ], order.currency );
+		}
 	} );
 
 	const transformOrderData = ( data, strings = [], prices = [], integers = [], floats = [] ) => {
