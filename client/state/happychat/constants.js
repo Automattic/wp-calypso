@@ -18,10 +18,8 @@ export const HAPPYCHAT_CONNECTION_STATUS_UNAUTHORIZED = 'unauthorized';
 export const HAPPYCHAT_MAX_STORED_MESSAGES = 30;
 
 // Skills
-export const HAPPYCHAT_SKILLS = {
-	PRODUCT: 'product',
-	LANGUAGE: 'language',
-};
+export const HAPPYCHAT_SKILL_PRODUCT = 'product';
+export const HAPPYCHAT_SKILL_LANGUAGE = 'language';
 
 // Groups
 export const HAPPYCHAT_GROUP_JPOP = 'jpop';

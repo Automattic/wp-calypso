@@ -11,12 +11,12 @@ import { expect } from 'chai';
 import {
 	HAPPYCHAT_GROUP_WPCOM,
 	HAPPYCHAT_GROUP_JPOP,
-	HAPPYCHAT_SKILLS,
+	HAPPYCHAT_SKILL_PRODUCT,
+	HAPPYCHAT_SKILL_LANGUAGE,
 } from 'state/happychat/constants';
 import getSkills from 'state/happychat/selectors/get-skills';
 
 describe( '#getSkills()', () => {
-	let _window; // Keep a copy of the original window if any
 	const uiState = {
 		ui: {
 			section: {
@@ -24,15 +24,6 @@ describe( '#getSkills()', () => {
 			},
 		},
 	};
-
-	beforeEach( () => {
-		_window = global.window;
-		global.window = {};
-	} );
-
-	afterEach( () => {
-		global.window = _window;
-	} );
 
 	test( 'should return default product for no sites', () => {
 		const siteId = 1;
@@ -51,8 +42,8 @@ describe( '#getSkills()', () => {
 			},
 		};
 		expect( getSkills( state, siteId ) ).to.eql( {
-			[ HAPPYCHAT_SKILLS.PRODUCT ]: [ HAPPYCHAT_GROUP_WPCOM ],
-			[ HAPPYCHAT_SKILLS.LANGUAGE ]: [ 'en' ],
+			[ HAPPYCHAT_SKILL_PRODUCT ]: [ HAPPYCHAT_GROUP_WPCOM ],
+			[ HAPPYCHAT_SKILL_LANGUAGE ]: [ 'en' ],
 		} );
 	} );
 
@@ -73,7 +64,7 @@ describe( '#getSkills()', () => {
 			},
 		};
 		expect( getSkills( state, siteId ) ).to.eql( {
-			[ HAPPYCHAT_SKILLS.PRODUCT ]: [ HAPPYCHAT_GROUP_WPCOM ],
+			[ HAPPYCHAT_SKILL_PRODUCT ]: [ HAPPYCHAT_GROUP_WPCOM ],
 		} );
 	} );
 
@@ -108,8 +99,8 @@ describe( '#getSkills()', () => {
 		};
 
 		expect( getSkills( state, siteId ) ).to.eql( {
-			[ HAPPYCHAT_SKILLS.PRODUCT ]: [ HAPPYCHAT_GROUP_JPOP ],
-			[ HAPPYCHAT_SKILLS.LANGUAGE ]: [ 'fr' ],
+			[ HAPPYCHAT_SKILL_PRODUCT ]: [ HAPPYCHAT_GROUP_JPOP ],
+			[ HAPPYCHAT_SKILL_LANGUAGE ]: [ 'fr' ],
 		} );
 	} );
 } );

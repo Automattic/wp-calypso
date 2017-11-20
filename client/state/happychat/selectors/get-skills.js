@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { HAPPYCHAT_SKILLS } from 'state/happychat/constants';
+import { HAPPYCHAT_SKILL_PRODUCT, HAPPYCHAT_SKILL_LANGUAGE } from 'state/happychat/constants';
 import { getGroups } from 'state/happychat/selectors';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 
@@ -18,12 +18,12 @@ import { getCurrentUserLocale } from 'state/current-user/selectors';
 export default ( state, siteId ) => {
 	const skills = {
 		// TODO: we should rename this to getProduct when cleaning up groups and locales
-		[ HAPPYCHAT_SKILLS.PRODUCT ]: getGroups( state, siteId ),
+		[ HAPPYCHAT_SKILL_PRODUCT ]: getGroups( state, siteId ),
 	};
 
 	const language = getCurrentUserLocale( state );
 	if ( language ) {
-		skills[ HAPPYCHAT_SKILLS.LANGUAGE ] = [ language ];
+		skills[ HAPPYCHAT_SKILL_LANGUAGE ] = [ language ];
 	}
 
 	return skills;
