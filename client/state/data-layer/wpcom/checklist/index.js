@@ -17,7 +17,7 @@ export const fetchChecklist = ( { dispatch }, action ) => {
 			{
 				path: `/sites/${ action.siteId }/checklist`,
 				method: 'GET',
-				apiNamespace: 'wp/v2',
+				apiNamespace: 'rest/v1',
 			},
 			action
 		)
