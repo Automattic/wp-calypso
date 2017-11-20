@@ -132,7 +132,7 @@ class ActivityLogDay extends Component {
 	 * @returns { object } Button to display.
 	 */
 	renderRewindButton( type = '' ) {
-		const { disableRestore, disableBackup, hideRestore, isToday } = this.props;
+		const { disableRestore, hideRestore, isToday } = this.props;
 
 		if ( hideRestore || isToday ) {
 			return null;
@@ -142,9 +142,7 @@ class ActivityLogDay extends Component {
 			<Button
 				className="activity-log-day__rewind-button"
 				compact
-				disabled={
-					disableBackup || disableRestore || ! this.props.isRewindActive || this.state.rewindHere
-				}
+				disabled={ disableRestore || ! this.props.isRewindActive || this.state.rewindHere }
 				onClick={ this.handleClickRestore }
 				primary={ 'primary' === type }
 			>
