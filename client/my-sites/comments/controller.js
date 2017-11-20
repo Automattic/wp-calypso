@@ -49,7 +49,7 @@ const changePage = path => pageNumber => {
 };
 
 export const siteComments = context => {
-	const { params, path, query, store } = context;
+	const { params, path, query } = context;
 	const siteFragment = route.getSiteFragment( path );
 
 	if ( ! siteFragment ) {
@@ -71,11 +71,12 @@ export const siteComments = context => {
 			status={ status }
 		/>,
 		'primary',
-		store
+		context.store
 	);
 };
 
-export const postComments = ( { params, path, query, store } ) => {
+export const postComments = context => {
+	const { params, path, query } = context;
 	const siteFragment = route.getSiteFragment( path );
 
 	if ( ! siteFragment ) {
@@ -103,11 +104,12 @@ export const postComments = ( { params, path, query, store } ) => {
 			status={ status }
 		/>,
 		'primary',
-		store
+		context.store
 	);
 };
 
-export const comment = ( { query, params, path, store } ) => {
+export const comment = context => {
+	const { params, path, query } = context;
 	const siteFragment = route.getSiteFragment( path );
 	const commentId = sanitizeInt( params.comment );
 
@@ -122,7 +124,7 @@ export const comment = ( { query, params, path, store } ) => {
 	renderWithReduxStore(
 		<CommentView { ...{ action, commentId, siteFragment } } />,
 		'primary',
-		store
+		context.store
 	);
 };
 
