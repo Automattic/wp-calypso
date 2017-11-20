@@ -85,7 +85,7 @@ describe( 'middleware', () => {
 		} );
 
 		test( 'HAPPYCHAT_IO_SEND_MESSAGE_PREFERENCES', () => {
-			const action = sendPreferences( 'locale', [] );
+			const action = sendPreferences( 'locale', [], {} );
 			actionMiddleware( action );
 			expect( connection.send ).toHaveBeenCalledWith( action );
 		} );
