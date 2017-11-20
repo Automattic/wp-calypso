@@ -93,6 +93,7 @@ class LoggedInForm extends Component {
 		isFetchingSites: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectAfterAuth: PropTypes.string,
+		remoteSiteUrl: PropTypes.string,
 		retryAuth: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
