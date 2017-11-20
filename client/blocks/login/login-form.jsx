@@ -229,30 +229,28 @@ export class LoginForm extends Component {
 				<Card className="login__form">
 					<div className="login__form-userdata">
 						{ linkingSocialUser && (
-							<div className="login__form-link-social-notice">
-								<p>
-									{ this.props.translate(
-										'We found a WordPress.com account with the email address "%(email)s". ' +
-											'Log in to this account to connect it to your %(service)s profile, ' +
-											'or choose a different %(service)s profile.',
-										{
-											args: {
-												email: this.props.socialAccountLinkEmail,
-												service: capitalize( this.props.socialAccountLinkService ),
-											},
-										}
-									) }
-								</p>
-							</div>
+							<p>
+								{ this.props.translate(
+									'We found a WordPress.com account with the email address "%(email)s". ' +
+										'Log in to this account to connect it to your %(service)s profile, ' +
+										'or choose a different %(service)s profile.',
+									{
+										args: {
+											email: this.props.socialAccountLinkEmail,
+											service: capitalize( this.props.socialAccountLinkService ),
+										},
+									}
+								) }
+							</p>
 						) }
 
-						<label htmlFor="usernameOrEmail" className="login__form-userdata-username">
+						<label htmlFor="usernameOrEmail">
 							{ this.props.translate( 'Email Address or Username' ) }
 						</label>
 
 						<FormTextInput
 							autoCapitalize="off"
-							className={ classNames( 'login__form-userdata-username-input', {
+							className={ classNames( {
 								'is-error': requestError && requestError.field === 'usernameOrEmail',
 							} ) }
 							onChange={ this.onChangeField }
@@ -270,14 +268,14 @@ export class LoginForm extends Component {
 
 						{ this.isPasswordVisible() && (
 							<div>
-								<label htmlFor="password" className="login__form-userdata-username">
+								<label htmlFor="password">
 									{ this.props.translate( 'Password' ) }
 								</label>
 
 								<FormPasswordInput
 									autoCapitalize="off"
 									autoComplete="off"
-									className={ classNames( 'login__form-userdata-username-password', {
+									className={ classNames( {
 										'is-error': requestError && requestError.field === 'password',
 									} ) }
 									onChange={ this.onChangeField }
