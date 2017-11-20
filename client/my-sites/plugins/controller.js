@@ -186,16 +186,18 @@ function renderProvisionPlugins( context ) {
 }
 
 const controller = {
-	plugins( filter, context, next ) {
+	plugins( context, next ) {
+		context.params.pluginFilter = context.params.pluginFilter || 'all';
 		const siteUrl = route.getSiteFragment( context.path );
-		const basePath = route.sectionify( context.path ).replace( '/' + filter, '' );
+		const basePath = route
+			.sectionify( context.path )
+			.replace( '/' + context.params.pluginFilter, '' );
 
 		// bail if no site is selected and the user has no Jetpack sites.
 		if ( ! siteUrl && ! hasJetpackSites( context.store.getState() ) ) {
 			return next();
 		}
 
-		context.params.pluginFilter = filter;
 		notices.clearNotices( 'notices' );
 		renderPluginList( context, basePath );
 	},
@@ -233,11 +235,11 @@ const controller = {
 		renderWithReduxStore( <PluginUpload />, document.getElementById( 'primary' ), context.store );
 	},
 
-	jetpackCanUpdate( filter, context, next ) {
+	jetpackCanUpdate( context, next ) {
 		const selectedSites = getSelectedOrAllSitesWithPlugins( context.store.getState() );
 		let redirectToPlugins = false;
 
-		if ( 'updates' === filter && selectedSites.length ) {
+		if ( 'updates' === context.params.pluginFilter && selectedSites.length ) {
 			redirectToPlugins = ! some( selectedSites, function( site ) {
 				return site && site.jetpack && site.canUpdateFiles;
 			} );

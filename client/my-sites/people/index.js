@@ -13,16 +13,15 @@ import peopleController from './controller';
 
 export default function() {
 	if ( config.isEnabled( 'manage/people' ) ) {
-		[ 'team', 'followers', 'email-followers', 'viewers' ].forEach( function( filter ) {
-			page( '/people/' + filter, siteSelection, sites );
-			page(
-				'/people/' + filter + '/:site_id',
-				peopleController.enforceSiteEnding,
-				siteSelection,
-				navigation,
-				peopleController.people.bind( null, filter )
-			);
-		} );
+		page( '/people/:filter(team|followers|email-followers|viewers)', siteSelection, sites );
+
+		page(
+			'/people/:filter(team|followers|email-followers|viewers)/:site_id',
+			peopleController.enforceSiteEnding,
+			siteSelection,
+			navigation,
+			peopleController.people
+		);
 
 		page(
 			'/people/new/:site_id',
