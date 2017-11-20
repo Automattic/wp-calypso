@@ -220,7 +220,7 @@ export class Theme extends Component {
 							<img
 								className="theme__img"
 								src={ themeImgSrc }
-								srcSet={ `${ themeImgSrc } 1x ${ themeImgSrcDoubleDpi } 2x` }
+								srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
 								onClick={ this.onScreenshotClick }
 								id={ screenshotID }
 							/>
