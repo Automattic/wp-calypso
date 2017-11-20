@@ -5,7 +5,6 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import createReactClass from 'create-react-class';
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -18,36 +17,34 @@ import safeProtocolUrl from 'lib/safe-protocol-url';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { withoutHttp } from 'lib/url';
 
-const ProfileLink = createReactClass( {
-	getDefaultProps() {
-		return {
-			imageSize: 100,
-			title: '',
-			url: '',
-			slug: '',
-			isPlaceholder: false,
-		};
-	},
+class ProfileLink extends React.Component {
+	static defaultProps = {
+		imageSize: 100,
+		title: '',
+		url: '',
+		slug: '',
+		isPlaceholder: false,
+	};
 
-	propTypes: {
+	static propTypes = {
 		imageSize: PropTypes.number,
 		title: PropTypes.string.isRequired,
 		url: PropTypes.string.isRequired,
 		slug: PropTypes.string.isRequired,
-	},
+	};
 
-	recordClickEvent( action ) {
+	recordClickEvent = action => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	},
+	};
 
-	getClickHandler( action ) {
+	getClickHandler = action => {
 		return () => this.recordClickEvent( action );
-	},
+	};
 
-	handleRemoveButtonClick() {
+	handleRemoveButtonClick = () => {
 		this.recordClickEvent( 'Remove Link Next to Site' );
 		this.props.onRemoveLink();
-	},
+	};
 
 	renderRemove() {
 		return (
@@ -60,7 +57,7 @@ const ProfileLink = createReactClass( {
 				<Gridicon icon="cross" />
 			</Button>
 		);
-	},
+	}
 
 	render() {
 		const classes = classNames( {
@@ -103,8 +100,8 @@ const ProfileLink = createReactClass( {
 				{ this.props.isPlaceholder ? null : this.renderRemove() }
 			</li>
 		);
-	},
-} );
+	}
+}
 
 export default connect( null, {
 	recordGoogleEvent,
