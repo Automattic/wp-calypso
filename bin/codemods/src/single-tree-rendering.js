@@ -7,13 +7,19 @@
  *
  * Transforms `renderWithReduxStore()` to `context.primary/secondary`.
  *
- * Adds `context` to params in middlewares when using `ReactDom.render()`.
+ * Adds `context` to params in middlewares when needed
  *
  * Adds `next` to params and `next()` to body in middlewares when using
  *   `ReactDom.render()` or `renderWithReduxStore()`.
  *
  * Adds `makeLayout` and `clientRender` to `page()` route definitions and
  *   accompanying import statement.
+ *
+ * Removes:
+ *   `ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );`
+ *
+ * Removes:
+ *   Un-used ReactDom imports.
  */
 
 /**
@@ -75,6 +81,39 @@ export default function transformer( file, api ) {
 		return _.some( params, param => {
 			return ( param.name || param ) === paramValue;
 		} );
+	}
+
+	/**
+	 * Removes imports maintaining any comments above them
+	 *
+	 * @param {object} collection Collection containing at least one node. Comments are preserved only from first node.
+	 */
+	function removeImport( collection ) {
+		const node = collection.nodes()[ 0 ];
+
+		// Find out if import had comments above it
+		const comments = _.get( node, 'comments', [] );
+
+		// Remove import (and any comments with it)
+		collection.remove();
+
+		// Put back that removed comment (if any)
+		if ( comments.length ) {
+			const isRemovedExternal = isExternal( node );
+
+			// Find remaining external or internal dependencies and place comments above first one
+			root
+				.find( j.ImportDeclaration )
+				.filter( p => {
+					// Look for only imports that are same type as the removed import was
+					return isExternal( p.value ) === isRemovedExternal;
+				} )
+				.at( 0 )
+				.replaceWith( p => {
+					p.value.comments = p.value.comments ? p.value.comments.concat( comments ) : comments;
+					return p.value;
+				} );
+		}
 	}
 
 	/**
@@ -286,23 +325,55 @@ export default function transformer( file, api ) {
 		.filter( p => ! p.value.specifiers.length );
 
 	if ( orphanImportHelpers.size() ) {
-		// Find out if import had comment above it
-		const comment = _.get( orphanImportHelpers.nodes(), '[0].comments[0]', false );
+		removeImport( orphanImportHelpers );
+	}
 
-		// Remove empty `import 'lib/react-helpers'` (and any comments with it)
-		orphanImportHelpers.remove();
+	/**
+  	 * Removes:
+	 * ```
+	 * ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	 * ```
+	 */
+	root
+		.find( j.CallExpression, {
+			callee: {
+				type: 'MemberExpression',
+				object: {
+					name: 'ReactDom',
+				},
+				property: {
+					name: 'unmountComponentAtNode',
+				},
+			},
+		} )
+		// Ensures we remove only nodes containing `document.getElementById( 'secondary' )`
+		.filter( p => _.get( p, 'value.arguments[0].arguments[0].value' ) === 'secondary' )
+		.remove();
 
-		// Put back that removed comment (if any)
-		if ( comment ) {
-			// Find internal dependencies and place comment above first one
-			root
-				.find( j.ImportDeclaration )
-				.filter( p => ! isExternal( p.value ) )
-				.at( 0 )
-				.replaceWith( p => {
-					p.value.comments = [ comment ];
-					return p.value;
-				} );
+	// Find if `ReactDom` is used
+	const reactDomDefs = root.find( j.MemberExpression, {
+		object: {
+			name: 'ReactDom',
+		},
+	} );
+
+	// Remove stranded `react-dom` imports
+	if ( ! reactDomDefs.size() ) {
+		const importReactDom = root.find( j.ImportDeclaration, {
+			specifiers: [
+				{
+					local: {
+						name: 'ReactDom',
+					},
+				},
+			],
+			source: {
+				value: 'react-dom',
+			},
+		} );
+
+		if ( importReactDom.size() ) {
+			removeImport( importReactDom );
 		}
 	}
 
