@@ -235,6 +235,7 @@
 }
 
 .comment__content-preview {
+	max-height: 42px;
 	overflow: hidden;
 	position: relative;
 
@@ -248,9 +249,17 @@
 		width: 30%;
 	}
 }
+.comment.is-pending .comment__content-preview:after {
+	background: linear-gradient(
+		to right,
+		rgba(mix($alert-yellow, $white, 8.5%), 0),
+		rgba(mix($alert-yellow, $white, 8.5%), 1) 50%
+	);
+}
 
 @supports (-webkit-line-clamp: 2) {
-	.comment__content-preview {
+	.comment .comment__content-preview,
+	.comment.is-pending .comment__content-preview {
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;
@@ -476,6 +485,9 @@
 	&:hover {
 		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20%);
 		z-index: z-index('root', '.card.comment.is-bulk-mode:hover');
+	}
+	&.is-pending:hover {
+		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20%);
 	}
 
 	a {
