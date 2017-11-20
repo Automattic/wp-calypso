@@ -12,10 +12,6 @@ import qs from 'querystring';
 export default class extends React.Component {
 	static displayName = 'EditorLocationMap';
 
-	mapRef = undefined;
-	map = undefined;
-	marker = undefined;
-
 	static propTypes = {
 		coordinates: PropTypes.array,
 		onError: PropTypes.func,
@@ -30,7 +26,7 @@ export default class extends React.Component {
 
 	componentDidMount() {
 		// Connect the initMap() function within this class to the global window
-		// context, so Google Maps can invoke it
+		// context, so Google Maps can invoke it.
 		window.initMap = this.initMap.bind( this );
 
 		const src =
@@ -46,23 +42,32 @@ export default class extends React.Component {
 	}
 
 	initMap() {
-		const markerPosition = {
-			lat: this.props.coordinates[ 0 ],
-			lng: this.props.coordinates[ 1 ],
-		};
-
 		this.map = new google.maps.Map( this.mapRef, {
 			zoom: 12,
-			center: markerPosition,
 		} );
 
-		// This event listener will call setMarker() when the map is clicked.
+		// This event listener will call props.onSelect(), which will cause a
+		// component re-render, which will cause componentDidUpdate to run,
+		// setting the map marker on the clicked location.
 		this.map.addListener( 'click', event => {
-			this.setMarker( event.latLng );
+			this.props.onSelect( {
+				geometry: {
+					location: {
+						lat: event.latLng.lat(),
+						lng: event.latLng.lng(),
+					},
+				},
+			} );
 		} );
+	}
 
-		// Adds a marker at the center of the map.
-		this.setMarker( markerPosition );
+	componentDidUpdate() {
+		if ( this.map && this.props.coordinates ) {
+			this.setMarker( {
+				lat: this.props.coordinates[ 0 ],
+				lng: this.props.coordinates[ 1 ],
+			} );
+		}
 	}
 
 	// Adds a marker to the map
@@ -74,14 +79,7 @@ export default class extends React.Component {
 			map: this.map,
 		} );
 
-		this.props.onSelect( {
-			geometry: {
-				location: {
-					lat: typeof location.lat === 'function' ? location.lat() : location.lat,
-					lng: typeof location.lng === 'function' ? location.lng() : location.lng,
-				},
-			},
-		} );
+		this.map.panTo( this.marker.getPosition() );
 	}
 
 	// Deletes all markers in the array by removing references to them.

@@ -18,11 +18,6 @@ import EditorLocationSearch from './search';
 import EditorLocationMap from './map';
 import Notice from 'components/notice';
 
-/**
- * Module variables
- */
-// const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
-
 class EditorLocation extends React.Component {
 	static displayName = 'EditorLocation';
 
