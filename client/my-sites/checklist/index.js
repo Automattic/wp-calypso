@@ -13,5 +13,5 @@ import { navigation, siteSelection } from 'my-sites/controller';
 import { show } from './controller';
 
 export default function() {
-	page( '/tasks/:domain?', siteSelection, navigation, show );
+	page( '/checklist/:domain?', siteSelection, navigation, show );
 }

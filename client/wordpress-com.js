@@ -173,11 +173,11 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'tasks',
-		paths: [ '/tasks' ],
-		module: 'my-sites/tasks',
+		name: 'checklist',
+		paths: [ '/checklist' ],
+		module: 'my-sites/checklist',
 		secondary: true,
-		group: 'tasks',
+		group: 'checklist',
 	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
