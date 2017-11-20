@@ -32,7 +32,7 @@ export default class PopoverMenuItem extends Component {
 		onMouseOver: noop,
 	};
 
-	handleMouseOver = ( event ) => {
+	handleMouseOver = event => {
 		const { focusOnHover } = this.props;
 
 		if ( focusOnHover ) {
@@ -43,15 +43,7 @@ export default class PopoverMenuItem extends Component {
 	};
 
 	render() {
-		const {
-			children,
-			className,
-			focusOnHover,
-			href,
-			icon,
-			isSelected,
-			isExternalLink,
-		} = this.props;
+		const { children, className, href, icon, isSelected, isExternalLink } = this.props;
 		const classes = classnames( 'popover__menu-item', className, {
 			'is-selected': isSelected,
 		} );
