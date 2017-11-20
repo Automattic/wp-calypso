@@ -187,17 +187,16 @@ function renderProvisionPlugins( context ) {
 
 const controller = {
 	plugins( context, next ) {
-		context.params.pluginFilter = context.params.pluginFilter || 'all';
+		const { pluginFilter: filter = 'all' } = context.params;
 		const siteUrl = route.getSiteFragment( context.path );
-		const basePath = route
-			.sectionify( context.path )
-			.replace( '/' + context.params.pluginFilter, '' );
+		const basePath = route.sectionify( context.path ).replace( '/' + filter, '' );
 
 		// bail if no site is selected and the user has no Jetpack sites.
 		if ( ! siteUrl && ! hasJetpackSites( context.store.getState() ) ) {
 			return next();
 		}
 
+		context.params.pluginFilter = filter;
 		notices.clearNotices( 'notices' );
 		renderPluginList( context, basePath );
 	},
