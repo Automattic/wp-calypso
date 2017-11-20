@@ -104,6 +104,8 @@ export class NavigationLink extends Component {
 	}
 
 	render() {
+		const { translate, labelText } = this.props;
+
 		if (
 			this.props.positionInFlow === 0 &&
 			this.props.direction === 'back' &&
@@ -116,12 +118,12 @@ export class NavigationLink extends Component {
 
 		if ( this.props.direction === 'back' ) {
 			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;
-			text = this.props.labelText ? this.props.labelText : this.props.translate( 'Back' );
+			text = labelText ? labelText : translate( 'Back' );
 		}
 
 		if ( this.props.direction === 'forward' ) {
 			forwardGridicon = <Gridicon icon="arrow-right" size={ 18 } />;
-			text = this.props.labelText ? this.props.labelText : this.props.translate( 'Skip for now' );
+			text = labelText ? labelText : translate( 'Skip for now' );
 		}
 
 		return (
