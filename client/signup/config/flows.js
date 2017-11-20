@@ -248,6 +248,18 @@ const flows = {
 		description: 'Used by `get.blog` users that connect their site to WordPress.com',
 		lastModified: '2016-11-14',
 	},
+
+	'pressable-nux': {
+		steps: [ 'creds-permission', 'creds-confirm', 'creds-complete' ],
+		destination: () => {
+			return '/stats';
+		},
+		description: 'Allow new Pressable users to grant permission to server credentials',
+		lastModified: '2017-11-20',
+		disallowResume: true,
+		allowContinue: false,
+		hideFlowProgress: true,
+	},
 };
 
 if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {

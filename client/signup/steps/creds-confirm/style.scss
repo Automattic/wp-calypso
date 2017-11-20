@@ -1,0 +1,32 @@
+.creds-confirm__card {
+	text-align: center;
+	max-width: 640px;
+	padding: 4rem;
+	margin-top: 1px;
+	padding-bottom: 3rem;
+}
+
+.creds-confirm__title {
+	display: inline-block;
+	font-size: 2.5rem;
+	font-weight: 300;
+	letter-spacing: .15rem;
+	color: $gray-text;
+}
+
+.creds-confirm__description {
+	color: $gray-text-min;
+	font-size: 1.5rem;
+	font-weight: 100;
+	line-height: 2.5rem;
+}
+
+.creds-confirm__image {
+	max-width: 200px;
+	display: block;
+	margin: 2rem auto;
+}
+
+.creds-confirm .button.is-primary {
+	margin-left: 1rem;
+} 
