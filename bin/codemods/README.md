@@ -28,6 +28,8 @@ export default function transformer( file, api ) {
 A nifty tool to explore AST structures is [AST explorer](https://astexplorer.net/).
 You can choose "recast" as a parser and "jscodeshift" from "Transform" menu.
 
+For more, check [an awesome list of jscodeshift resources and tips](https://github.com/sejoker/awesome-jscodeshift).
+
 ## How to run our codemods
 
 It's easy! Our codemod script uses the following CLI:
