@@ -1,4 +1,5 @@
 .git
+.npm-debug.log*
 .vscode
 /.babel-cache
 /build
