@@ -4,7 +4,6 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -17,16 +16,12 @@ import FormTextInput from 'components/forms/form-text-input';
 import Notice from 'components/notice';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-const ProfileLinksAddOther = createReactClass( {
-	displayName: 'ProfileLinksAddOther',
-
-	getInitialState() {
-		return {
-			title: '',
-			value: '',
-			lastError: false,
-		};
-	},
+class ProfileLinksAddOther extends React.Component {
+	state = {
+		title: '',
+		value: '',
+		lastError: false,
+	};
 
 	// As the user types, the component state changes thanks to the LinkedStateMixin.
 	// This function, called in render, validates their input on each state change
@@ -56,27 +51,32 @@ const ProfileLinksAddOther = createReactClass( {
 		}
 
 		return false;
-	},
+	}
 
-	recordClickEvent( action ) {
+	recordClickEvent = action => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	},
+	};
 
-	getClickHandler( action ) {
+	getClickHandler = action => {
 		return () => this.recordClickEvent( action );
-	},
+	};
 
-	getFocusHandler( action ) {
+	getFocusHandler = action => {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
-	},
+	};
 
-	handleCancelButtonClick( event ) {
+	handleCancelButtonClick = event => {
 		event.preventDefault();
 		this.recordClickEvent( 'Cancel Other Site Button' );
 		this.props.onCancel();
-	},
+	};
 
-	onSubmit( event ) {
+	handleChange = e => {
+		const { name, value } = e.currentTarget;
+		this.setState( { [ name ]: value } );
+	};
+
+	onSubmit = event => {
 		event.preventDefault();
 
 		// When the form's submit button is disabled, the form's onSubmit does not
@@ -95,9 +95,9 @@ const ProfileLinksAddOther = createReactClass( {
 			],
 			this.onSubmitResponse
 		);
-	},
+	};
 
-	onSubmitResponse( error, data ) {
+	onSubmitResponse = ( error, data ) => {
 		if ( error ) {
 			this.setState( {
 				lastError: this.props.translate( 'Unable to add link right now. Please try again later.' ),
@@ -115,13 +115,13 @@ const ProfileLinksAddOther = createReactClass( {
 		} else {
 			this.props.onSuccess();
 		}
-	},
+	};
 
-	clearLastError() {
+	clearLastError = () => {
 		this.setState( {
 			lastError: false,
 		} );
-	},
+	};
 
 	possiblyRenderError() {
 		if ( ! this.state.lastError ) {
@@ -136,7 +136,7 @@ const ProfileLinksAddOther = createReactClass( {
 				text={ this.state.lastError }
 			/>
 		);
-	},
+	}
 
 	render() {
 		return (
@@ -181,13 +181,8 @@ const ProfileLinksAddOther = createReactClass( {
 				</FormFieldset>
 			</form>
 		);
-	},
-
-	handleChange( e ) {
-		const { name, value } = e.currentTarget;
-		this.setState( { [ name ]: value } );
-	},
-} );
+	}
+}
 
 export default connect( null, {
 	recordGoogleEvent,
