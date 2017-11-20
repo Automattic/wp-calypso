@@ -359,6 +359,7 @@ const reloadProxy = () => {
  */
 function uninstall() {
 	debug( 'uninstall()' );
+	event.unbind( window, 'message', onmessage );
 	document.body.removeChild( iframe );
 	loaded = false;
 	iframe = null;
