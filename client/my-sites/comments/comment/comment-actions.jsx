@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
-import { get, includes, invoke } from 'lodash';
+import { get, includes, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,6 +46,10 @@ export class CommentActions extends Component {
 		updateLastUndo: PropTypes.func,
 	};
 
+	static defaultProps = {
+		updateLastUndo: noop,
+	};
+
 	delete = () => {
 		const { deletePermanently, commentId, postId, siteId } = this.props;
 		deletePermanently( siteId, postId, commentId );
@@ -64,11 +68,12 @@ export class CommentActions extends Component {
 			postId,
 			siteId,
 			unlike,
+			updateLastUndo,
 		} = this.props;
 
 		const alsoUnlike = commentIsLiked && 'approved' !== status;
 
-		invoke( this.props, 'updateLastUndo', null );
+		updateLastUndo( null );
 
 		changeStatus( siteId, postId, commentId, status, {
 			alsoUnlike,
@@ -110,12 +115,12 @@ export class CommentActions extends Component {
 	};
 
 	undo = ( status, previousCommentData ) => () => {
-		const { changeStatus, commentId, like, postId, siteId, unlike } = this.props;
+		const { changeStatus, commentId, like, postId, siteId, unlike, updateLastUndo } = this.props;
 		const { isLiked: wasLiked, status: previousStatus } = previousCommentData;
 		const alsoApprove = 'approved' !== status && 'approved' === previousStatus;
 		const alsoUnlike = ! wasLiked && 'approved' !== previousStatus;
 
-		invoke( this.props, 'updateLastUndo', commentId );
+		updateLastUndo( commentId );
 
 		changeStatus( siteId, postId, commentId, previousStatus, {
 			alsoUnlike,
