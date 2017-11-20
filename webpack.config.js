@@ -17,19 +17,20 @@ const path = require( 'path' );
 const webpack = require( 'webpack' );
 const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 const AssetsPlugin = require( 'assets-webpack-plugin' );
+const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 
 /**
  * Internal dependencies
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
-const UseMinifiedFiles = require( './server/bundler/webpack-plugins/use-minified-files' );
 
 /**
  * Internal variables
  */
 const calypsoEnv = config( 'env_id' );
 const bundleEnv = config( 'env' );
+const isDevelopment = bundleEnv === 'development';
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -77,14 +78,14 @@ const babelLoader = {
 };
 
 const webpackConfig = {
-	bail: calypsoEnv !== 'development',
+	bail: ! isDevelopment,
 	entry: {},
 	devtool: 'false',
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
-		filename: '[name].[chunkhash].js', // prefer the chunkhash, which depends on the chunk, not the entire build
-		chunkFilename: '[name].[chunkhash].js', // ditto
+		filename: '[name].[chunkhash].min.js', // prefer the chunkhash, which depends on the chunk, not the entire build
+		chunkFilename: '[name].[chunkhash].min.js', // ditto
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
 	},
 	module: {
@@ -152,9 +153,7 @@ const webpackConfig = {
 		] ),
 		new HappyPack( {
 			loaders: _.compact( [
-				calypsoEnv === 'development' &&
-					config.isEnabled( 'webpack/hot-loader' ) &&
-					'react-hot-loader',
+				isDevelopment && config.isEnabled( 'webpack/hot-loader' ) && 'react-hot-loader',
 				babelLoader,
 			] ),
 		} ),
@@ -213,8 +212,9 @@ if ( calypsoEnv === 'desktop' ) {
 	webpackConfig.externals.push( 'jquery' );
 }
 
-if ( calypsoEnv === 'development' ) {
+if ( isDevelopment ) {
 	// we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
+	// also we don't minify so dont name them .min.js
 	webpackConfig.output.filename = '[name].js';
 	webpackConfig.output.chunkFilename = '[name].js';
 
@@ -229,7 +229,6 @@ if ( calypsoEnv === 'development' ) {
 	webpackConfig.devServer = { hot: true, inline: true };
 	webpackConfig.devtool = '#eval';
 } else {
-	webpackConfig.plugins.push( new UseMinifiedFiles() );
 	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
 	webpackConfig.devtool = false;
 }
@@ -254,25 +253,14 @@ if ( process.env.DASHBOARD ) {
 	webpackConfig.plugins.unshift( new DashboardPlugin() );
 }
 
-if ( process.env.WEBPACK_OUTPUT_JSON ) {
+if ( ! isDevelopment ) {
 	webpackConfig.devtool = 'cheap-module-source-map';
 	webpackConfig.plugins.push(
-		new webpack.optimize.UglifyJsPlugin( {
-			minimize: true,
-			compress: {
-				warnings: false,
-				conditionals: true,
-				unused: true,
-				comparisons: true,
-				sequences: true,
-				dead_code: true,
-				evaluate: true,
-				if_return: true,
-				join_vars: true,
-				negate_iife: false,
-				screw_ie8: true,
-			},
-			sourceMap: true,
+		new UglifyJsPlugin( {
+			cache: true,
+			parallel: true,
+			uglifyOptions: { ecma: 5 },
+			sourceMap: false,
 		} )
 	);
 }
