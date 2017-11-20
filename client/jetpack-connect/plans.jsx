@@ -62,12 +62,7 @@ class Plans extends Component {
 	redirecting = false;
 
 	componentDidMount() {
-		if ( this.props.isAutomatedTransfer && ! this.redirecting && this.props.selectedSite ) {
-			this.redirecting = true;
-			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
-		} else if ( this.hasPreSelectedPlan() ) {
-			this.autoselectPlan();
-		} else {
+		if ( ! this.maybeRedirect() ) {
 			this.props.recordTracksEvent( 'calypso_jpc_plans_view', {
 				user: this.props.userId,
 			} );
@@ -75,28 +70,35 @@ class Plans extends Component {
 	}
 
 	componentDidUpdate() {
-		if ( this.props.isAutomatedTransfer && ! this.redirecting && this.props.selectedSite ) {
-			this.redirecting = true;
-			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
-		}
+		this.maybeRedirect();
+	}
 
-		if ( this.props.hasPlan && ! this.redirecting ) {
-			this.redirecting = true;
-			this.redirect( CALYPSO_PLANS_PAGE );
+	maybeRedirect = () => {
+		if ( this.props.isAutomatedTransfer ) {
+			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+			return true;
 		}
-		if ( ! this.props.canPurchasePlans && ! this.redirecting ) {
-			this.redirecting = true;
+		if ( this.hasPreSelectedPlan() ) {
+			this.autoselectPlan();
+			return true;
+		}
+		if ( this.props.hasPlan ) {
+			this.redirect( CALYPSO_PLANS_PAGE );
+			return true;
+		}
+		if ( ! this.props.canPurchasePlans ) {
 			if ( this.props.isCalypsoStartedConnection ) {
 				this.redirect( CALYPSO_REDIRECTION_PAGE );
 			} else {
 				this.redirectToWpAdmin();
 			}
+			return true;
 		}
-
-		if ( ! this.props.isRequestingPlans && this.isFlowTypePaid() && ! this.redirecting ) {
-			return this.autoselectPlan();
+		if ( this.isFlowTypePaid() ) {
+			this.autoselectPlan();
+			return true;
 		}
-	}
+	};
 
 	handleSkipButtonClick = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
