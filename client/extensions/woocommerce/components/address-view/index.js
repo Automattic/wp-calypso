@@ -147,6 +147,9 @@ class AddressView extends Component {
 
 	renderStatic = () => {
 		const { name, street, street2, city, state, postcode, country } = this.props.address;
+
+		const countryData = find( getCountries(), { code: country } );
+
 		return (
 			<div className="address-view__fields-static">
 				<p className="address-view__address-name">{ name }</p>
@@ -157,7 +160,7 @@ class AddressView extends Component {
 					, { state && <span className="address-view__state">{ state }</span> }
 					&nbsp; { postcode && <span className="address-view__postcode">{ postcode }</span> }
 				</p>
-				<p>{ country }</p>
+				<p>{ countryData ? countryData.name : country }</p>
 			</div>
 		);
 	};
