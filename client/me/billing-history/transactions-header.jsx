@@ -225,14 +225,14 @@ class TransactionsHeader extends React.Component {
 	}
 
 	renderAppsPopover() {
-		const isVisible = 'apps' === this.state.activePopover,
-			classes = classNames( {
-				'filter-popover': true,
-				'is-popped': isVisible,
-			} ),
-			appPickers = this.getApps().map( function( app ) {
-				return this.renderAppPicker( app, app, 'Specific App' );
-			}, this );
+		const isVisible = 'apps' === this.state.activePopover;
+		const classes = classNames( {
+			'filter-popover': true,
+			'is-popped': isVisible,
+		} );
+		const appPickers = this.getApps().map( function( app ) {
+			return this.renderAppPicker( app, app, 'Specific App' );
+		}, this );
 
 		return (
 			<div className={ classes }>
@@ -266,11 +266,11 @@ class TransactionsHeader extends React.Component {
 	}
 
 	renderAppPicker( title, app, analyticsEvent ) {
-		const filter = { app: app },
-			classes = classNames( {
-				'app-picker': true,
-				selected: app === this.props.filter.app,
-			} );
+		const filter = { app };
+		const classes = classNames( {
+			'app-picker': true,
+			selected: app === this.props.filter.app,
+		} );
 
 		return (
 			<tr
