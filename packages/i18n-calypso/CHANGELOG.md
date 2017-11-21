@@ -1,3 +1,7 @@
+1.8.4
+------
+Bump `interpolate-components` to 1.1.1 (for React 16 compat).
+
 1.8.3
 ------
 Change localize hoc's es6 class --> [create-react-class](https://www.npmjs.com/package/create-react-class) so that the code is still technically es5 and will not need a build step.
@@ -24,7 +28,7 @@ Improve input file pattern support, see [#25](https://github.com/Automattic/i18n
 
 1.7.2
 -----
-Update `moment-timezone` to version `0.5.11`. 
+Update `moment-timezone` to version `0.5.11`.
 
 1.7.1
 -----

@@ -1,6 +1,6 @@
 {
   "name": "i18n-calypso",
-  "version": "1.8.3",
+  "version": "1.8.4",
   "description": "i18n JavaScript library on top of Jed originally used in Calypso",
   "main": "index.js",
   "repository": {
@@ -25,7 +25,7 @@
     "create-react-class": "^15.6.2",
     "debug": "2.2.0",
     "globby": "^6.1.0",
-    "interpolate-components": "1.1.0",
+    "interpolate-components": "1.1.1",
     "jed": "1.0.2",
     "jstimezonedetect": "1.0.5",
     "lodash.assign": "^4.0.8",
