@@ -31,7 +31,7 @@ import { addItem } from 'lib/upgrades/actions';
 import { selectPlanInAdvance, goBackToWpAdmin, completeFlow } from 'state/jetpack-connect/actions';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { getPlanBySlug } from 'state/plans/selectors';
+import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import {
 	canCurrentUser,
@@ -75,11 +75,19 @@ class Plans extends Component {
 			this.props.goBackToWpAdmin( nextProps.selectedSite.URL + JETPACK_ADMIN_PATH );
 			return true;
 		}
-		if ( prevProps.selectedPlan !== nextProps.selectedPlan && !! nextProps.selectedPlan ) {
+		if (
+			( prevProps.selectedPlan !== nextProps.selectedPlan ||
+				prevProps.isRequestingPlans !== nextProps.isRequestingPlans ) &&
+			!! nextProps.selectedPlan
+		) {
 			this.autoselectPlan();
 			return true;
 		}
-		if ( prevProps.flowType !== nextProps.flowType && this.isFlowTypePaid( nextProps.flowType ) ) {
+		if (
+			( prevProps.flowType !== nextProps.flowType ||
+				prevProps.isRequestingPlans !== nextProps.isRequestingPlans ) &&
+			this.isFlowTypePaid( nextProps.flowType )
+		) {
 			this.autoselectPlan();
 			return true;
 		}
@@ -218,8 +226,21 @@ class Plans extends Component {
 	};
 
 	render() {
-		const { interval, isRtlLayout, selectedSite, translate } = this.props;
+		const { interval, isRtlLayout, selectedSite, translate, flowType, selectedPlan } = this.props;
 
+		if (
+			this.isFlowTypePaid( flowType ) ||
+			!! selectedPlan ||
+			! this.props.canPurchasePlans ||
+			this.props.hasPlan
+		) {
+			return (
+				<div>
+					<QueryPlans />
+					{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
+				</div>
+			);
+		}
 		const helpButtonLabel = translate( 'Need help?' );
 
 		return (
@@ -274,6 +295,7 @@ export default connect(
 				? canCurrentUser( state, selectedSite.ID, 'manage_options' )
 				: true,
 			flowType: getFlowType( state, selectedSiteSlug ),
+			isRequestingPlans: isRequestingPlans( state ),
 			getPlanBySlug: searchPlanBySlug,
 			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSiteSlug ),
 			isRtlLayout: isRtl( state ),
