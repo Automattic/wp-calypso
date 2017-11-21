@@ -2,14 +2,13 @@
 /**
  * External dependencies
  */
-
-var req = require( 'superagent' ),
-	bodyParser = require( 'body-parser' );
+const req = require( 'superagent' );
+const bodyParser = require( 'body-parser' );
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' );
+const config = require( 'config' );
 
 function oauth() {
 	return {
@@ -26,7 +25,7 @@ function oauth() {
  */
 function proxyOAuth( request, response ) {
 	// We are making a password request, and want all the 2fa checks enabled
-	var data = Object.assign(
+	const data = Object.assign(
 		{},
 		{
 			username: request.body.username,
@@ -89,7 +88,7 @@ function logout( request, response ) {
 }
 
 function sms( request, response ) {
-	var data = Object.assign(
+	const data = Object.assign(
 		{},
 		{
 			username: request.body.username,
