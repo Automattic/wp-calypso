@@ -19,7 +19,7 @@ import ActivityLogItem from '../activity-log-item';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getActivityLog, getRequestedRewind } from 'state/selectors';
+import { getActivityLog, getRequestedRewind, getRewindEvents } from 'state/selectors';
 import { ms, rewriteStream } from 'state/activity-log/log/is-discarded';
 
 /**
@@ -200,6 +200,7 @@ class ActivityLogDay extends Component {
 			requestedBackupId,
 			requestDialog,
 			restoreConfirmDialog,
+			rewindEvents,
 			backupConfirmDialog,
 			siteId,
 			tsEndOfSiteDay,
@@ -215,7 +216,7 @@ class ActivityLogDay extends Component {
 		);
 
 		const rewindButton = this.renderRewindButton( hasConfirmDialog ? '' : 'primary' );
-		const events = classifyEvents( rewriteStream( logs, isDiscardedPerspective ), {
+		const events = classifyEvents( rewriteStream( logs, rewindEvents, isDiscardedPerspective ), {
 			backupId: requestedBackupId,
 			rewindId: requestedRestoreActivityId,
 		} );
@@ -279,6 +280,7 @@ export default localize(
 			return {
 				isDiscardedPerspective,
 				requestedRewind,
+				rewindEvents: getRewindEvents( state, siteId ),
 			};
 		},
 		( dispatch, { logs, tsEndOfSiteDay, moment } ) => ( {

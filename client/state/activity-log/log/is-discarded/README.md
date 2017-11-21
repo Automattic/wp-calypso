@@ -29,7 +29,7 @@ The simplest way to use this is to pass in a list of activity log events to the
 built in helper method, `rewriteStream`.
 
 ```js
-const log = rewriteStream( getActivityLogs( … ) )
+const log = rewriteStream( getActivityLogs( … ), getRewindEvents( … ) )
 ```
 
 Of course, this _is_ just a helper around the two more fundamental bits: one
@@ -48,7 +48,7 @@ We just have to pass in the timestamp from the mid-stream event which we will
 use as our point of observation.
 
 ```js
-const log = rewriteStream( getActivityLogs( … ), selectedEvent.activityTs )
+const log = rewriteStream( getActivityLogs( … ), getRewindEvents( … ), selectedEvent.activityTs )
 ```
 
 Obviously every event newer than the mid-stream event will be discarded because
