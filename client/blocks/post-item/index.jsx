@@ -159,6 +159,7 @@ class PostItem extends React.Component {
 						</h1>
 						<div className="post-item__meta">
 							<PostTime globalId={ globalId } />
+							<PostStatus globalId={ globalId } />
 							{ post && (
 								<PostActions
 									className="post-item__post-actions"
@@ -168,7 +169,6 @@ class PostItem extends React.Component {
 									statsIcon="stats-alt"
 								/>
 							) }
-							<PostStatus globalId={ globalId } />
 						</div>
 					</div>
 					<PostTypeListPostThumbnail globalId={ globalId } />
