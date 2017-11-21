@@ -161,7 +161,7 @@ class PostItem extends React.Component {
 							<PostTime globalId={ globalId } />
 							{ post && (
 								<PostActions
-									className={ 'post-item__post-actions' }
+									className="post-item__post-actions"
 									compact={ true }
 									post={ post }
 									siteId={ +post.site_ID }
