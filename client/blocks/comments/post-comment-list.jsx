@@ -28,7 +28,7 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 
-import ThreadedComment from 'my-sites/comments/comment/threaded-comment';
+import ThreadedComment from 'my-sites/comments/comment-threaded-list/threaded-comment';
 
 /**
  * PostCommentList, as the name would suggest, displays a list of comments for a post.
@@ -477,13 +477,15 @@ class PostCommentList extends React.Component {
 							} ) }
 						</span>
 					) }
-				<PostCommentFormRoot
-					post={ this.props.post }
-					commentsTree={ this.props.commentsTree }
-					commentText={ this.state.commentText }
-					onUpdateCommentText={ this.onUpdateCommentText }
-					activeReplyCommentId={ this.props.activeReplyCommentId }
-				/>
+				{ 'comment' !== this.props.commentComponent && (
+					<PostCommentFormRoot
+						post={ this.props.post }
+						commentsTree={ this.props.commentsTree }
+						commentText={ this.state.commentText }
+						onUpdateCommentText={ this.onUpdateCommentText }
+						activeReplyCommentId={ this.props.activeReplyCommentId }
+					/>
+				) }
 			</div>
 		);
 	}

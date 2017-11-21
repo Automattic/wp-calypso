@@ -26,7 +26,7 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { updatePlugin } from 'state/plugins/installed/actions';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import { infoNotice } from 'state/notices/actions';
-import PostCommentList from 'blocks/comments';
+import CommentThreadedList from 'my-sites/comments/comment-threaded-list';
 
 export class CommentsManagement extends Component {
 	static propTypes = {
@@ -58,13 +58,7 @@ export class CommentsManagement extends Component {
 			return;
 		}
 		if ( !! postId && 'all' === status ) {
-			return (
-				<PostCommentList
-					post={ { ID: postId, site_ID: siteId } }
-					commentComponent="comment"
-					commentsFilter="all"
-				/>
-			);
+			return <CommentThreadedList { ...{ postId, siteFragment, siteId } } />;
 		}
 		return (
 			<CommentList
