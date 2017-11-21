@@ -18,14 +18,13 @@ import AddProfileLinksButtons from 'me/profile-links/add-buttons';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Notice from 'components/notice';
-import eventRecorder from 'me/event-recorder';
 import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
 import ProfileLinksAddOther from 'me/profile-links-add-other';
 
 const ProfileLinks = createReactClass( {
 	displayName: 'ProfileLinks',
 
-	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
+	mixins: [ observe( 'userProfileLinks' ) ],
 
 	componentDidMount() {
 		this.props.userProfileLinks.getProfileLinks();
