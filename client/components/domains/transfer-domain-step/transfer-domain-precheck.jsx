@@ -90,18 +90,21 @@ class TransferDomainPrecheck extends React.PureComponent {
 					<div className="transfer-domain-step__section-text">
 						<div className="transfer-domain-step__section-heading">
 							<strong>{ heading }</strong>
-							{ lockStatus }
+							{ isStepFinished && lockStatus }
 						</div>
 						{ isAtCurrentStep && (
 							<div>
 								<div className="transfer-domain-step__section-message">{ message }</div>
-								<Button
-									compact
-									onClick={ unlocked ? this.showNextStep : this.refreshStatus }
-									disabled={ loading }
-								>
-									{ buttonText }
-								</Button>
+								<div className="transfer-domain-step__section-action">
+									<Button
+										compact
+										onClick={ unlocked ? this.showNextStep : this.refreshStatus }
+										busy={ loading }
+									>
+										{ buttonText }
+									</Button>
+									{ lockStatus }
+								</div>
 							</div>
 						) }
 					</div>
@@ -121,24 +124,33 @@ class TransferDomainPrecheck extends React.PureComponent {
 			? translate( 'Your domain is unlocked at your current registrar.' )
 			: translate(
 					"Your domain is locked to prevent unauthorized transfers. You'll need to unlock " +
-						'it at your current domiain provider before we can move it. {{a}}Here are instructions for unlocking it{{/a}}',
+						'it at your current domiain provider before we can move it. {{a}}Here are instructions for unlocking it{{/a}}. ' +
+						'It might take a few minutes for any changes to take effect.',
 					{
 						components: {
 							a: <a href="#" rel="noopener noreferrer" />,
 						},
 					}
 				);
-		const buttonText = loading ? translate( 'Checking…' ) : translate( "I've unlocked my domain" );
+		const buttonText = translate( "I've unlocked my domain" );
 
-		const lockStatus = unlocked ? (
-			<div className="transfer-domain-step__lock-status transfer-domain-step__unlocked">
-				<Gridicon icon="checkmark" size={ 12 } />
-				<span>{ translate( 'Unlocked' ) }</span>
-			</div>
-		) : (
-			<div className="transfer-domain-step__lock-status transfer-domain-step__locked">
-				<Gridicon icon="cross" size={ 12 } />
-				<span>{ translate( 'Locked' ) }</span>
+		let lockStatusClasses = unlocked
+			? 'transfer-domain-step__lock-status transfer-domain-step__unlocked'
+			: 'transfer-domain-step__lock-status transfer-domain-step__locked';
+
+		let lockStatusIcon = unlocked ? 'checkmark' : 'cross';
+		let lockStatusText = unlocked ? translate( 'Unlocked' ) : translate( 'Locked' );
+
+		if ( loading ) {
+			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__checking';
+			lockStatusIcon = 'sync';
+			lockStatusText = 'Checking…';
+		}
+
+		const lockStatus = (
+			<div className={ lockStatusClasses }>
+				<Gridicon icon={ lockStatusIcon } size={ 12 } />
+				<span>{ lockStatusText }</span>
 			</div>
 		);
 
