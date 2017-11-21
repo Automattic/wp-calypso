@@ -313,8 +313,8 @@ export class SeoForm extends React.Component {
 		const jetpackUpdateUrl = getJetpackPluginUrl( slug );
 
 		const nudgeTitle = siteIsJetpack
-			? translate( 'Enable SEO Tools features by upgrading to Jetpack Professional' )
-			: translate( 'Enable SEO Tools features by upgrading to the Business Plan' );
+			? translate( 'Enable SEO Tools by upgrading to Jetpack Professional' )
+			: translate( 'Enable SEO Tools by upgrading to Jetpack Business' );
 
 		const seoSubmitButton = (
 			<Button
@@ -401,7 +401,7 @@ export class SeoForm extends React.Component {
 				{ ! this.props.hasAdvancedSEOFeature && (
 					<Banner
 						description={ translate(
-							'Adds tools to optimize your site for search engines and social media sharing.'
+							'Get tools to optimize your site for improved performance in search engine results.'
 						) }
 						event={ 'calypso_seo_settings_upgrade_nudge' }
 						feature={ FEATURE_ADVANCED_SEO }
