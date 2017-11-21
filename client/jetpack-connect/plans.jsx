@@ -3,7 +3,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -32,7 +31,7 @@ import { addItem } from 'lib/upgrades/actions';
 import { selectPlanInAdvance, goBackToWpAdmin, completeFlow } from 'state/jetpack-connect/actions';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
+import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import {
 	canCurrentUser,
@@ -42,7 +41,6 @@ import {
 } from 'state/selectors';
 import {
 	getFlowType,
-	isRedirectingToWpAdmin,
 	getSiteSelectedPlan,
 	getGlobalSelectedPlan,
 	isCalypsoStartedConnection,
@@ -55,47 +53,46 @@ const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
 const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
-	static propTypes = { showJetpackFreePlan: PropTypes.bool };
-
 	static defaultProps = { siteSlug: '*' };
 
-	redirecting = false;
-
 	componentDidMount() {
-		if ( ! this.maybeRedirect() ) {
+		if ( ! this.maybeRedirect( {}, this.props ) ) {
 			this.props.recordTracksEvent( 'calypso_jpc_plans_view', {
 				user: this.props.userId,
 			} );
 		}
 	}
 
-	componentDidUpdate() {
-		this.maybeRedirect();
-	}
+	componentWillReceiveProps = nextProps => {
+		this.maybeRedirect( this.props, nextProps );
+	};
 
-	maybeRedirect = () => {
-		if ( this.props.isAutomatedTransfer ) {
-			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+	maybeRedirect = ( prevProps, nextProps ) => {
+		if (
+			prevProps.isAutomatedTransfer !== nextProps.isAutomatedTransfer &&
+			nextProps.isAutomatedTransfer
+		) {
+			this.props.goBackToWpAdmin( nextProps.selectedSite.URL + JETPACK_ADMIN_PATH );
 			return true;
 		}
-		if ( this.hasPreSelectedPlan() ) {
+		if ( prevProps.selectedPlan !== nextProps.selectedPlan && !! nextProps.selectedPlan ) {
 			this.autoselectPlan();
 			return true;
 		}
-		if ( this.props.hasPlan ) {
+		if ( prevProps.flowType !== nextProps.flowType && this.isFlowTypePaid( nextProps.flowType ) ) {
+			this.autoselectPlan();
+			return true;
+		}
+		if ( prevProps.hasPlan !== nextProps.hasPlan && nextProps.hasPlan ) {
 			this.redirect( CALYPSO_PLANS_PAGE );
 			return true;
 		}
-		if ( ! this.props.canPurchasePlans ) {
+		if ( ! nextProps.canPurchasePlans ) {
 			if ( this.props.isCalypsoStartedConnection ) {
 				this.redirect( CALYPSO_REDIRECTION_PAGE );
 			} else {
-				this.redirectToWpAdmin();
+				this.redirectToWpAdmin( nextProps );
 			}
-			return true;
-		}
-		if ( this.isFlowTypePaid() ) {
-			this.autoselectPlan();
 			return true;
 		}
 		return false;
@@ -111,40 +108,23 @@ class Plans extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
-	isFlowTypePaid() {
-		return (
-			this.props.flowType === 'pro' ||
-			this.props.flowType === 'premium' ||
-			this.props.flowType === 'personal'
-		);
+	isFlowTypePaid( flowType ) {
+		return flowType === 'pro' || flowType === 'premium' || flowType === 'personal';
 	}
 
-	redirectToWpAdmin() {
-		if ( this.props.redirectingToWpAdmin ) {
-			return;
-		}
-
-		const { redirectAfterAuth } = this.props;
+	redirectToWpAdmin( props ) {
+		const { redirectAfterAuth } = props;
 		if ( redirectAfterAuth ) {
-			this.props.goBackToWpAdmin( redirectAfterAuth );
-		} else if ( this.props.selectedSite ) {
-			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+			props.goBackToWpAdmin( redirectAfterAuth );
+		} else if ( props.selectedSite ) {
+			this.props.goBackToWpAdmin( props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
 		this.props.completeFlow();
 	}
 
 	redirect( path ) {
 		page.redirect( path + this.props.selectedSiteSlug );
-		this.redirecting = true;
 		this.props.completeFlow();
-	}
-
-	hasPreSelectedPlan() {
-		if ( this.isFlowTypePaid() ) {
-			return true;
-		}
-
-		return !! this.props.selectedPlan;
 	}
 
 	autoselectPlan() {
@@ -209,7 +189,7 @@ class Plans extends Component {
 		if ( this.props.calypsoStartedConnection ) {
 			this.redirect( CALYPSO_REDIRECTION_PAGE );
 		} else {
-			this.redirectToWpAdmin();
+			this.redirectToWpAdmin( this.props );
 		}
 	}
 
@@ -233,22 +213,12 @@ class Plans extends Component {
 		mc.bumpStat( 'calypso_jpc_plan_selection', cartItem.product_slug );
 
 		addItem( cartItem );
-		this.redirecting = true;
 		this.props.completeFlow();
 		page.redirect( checkoutPath );
 	};
 
 	render() {
 		const { interval, isRtlLayout, selectedSite, translate } = this.props;
-
-		if (
-			this.redirecting ||
-			this.hasPreSelectedPlan() ||
-			! this.props.canPurchasePlans ||
-			this.props.hasPlan
-		) {
-			return <QueryPlans />;
-		}
 
 		const helpButtonLabel = translate( 'Need help?' );
 
@@ -304,12 +274,10 @@ export default connect(
 				? canCurrentUser( state, selectedSite.ID, 'manage_options' )
 				: true,
 			flowType: getFlowType( state, selectedSiteSlug ),
-			isRequestingPlans: isRequestingPlans( state ),
 			getPlanBySlug: searchPlanBySlug,
 			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSiteSlug ),
-			redirectingToWpAdmin: isRedirectingToWpAdmin( state ),
 			isRtlLayout: isRtl( state ),
-			hasPlan: isSiteOnPaidPlan( state, selectedSite.ID ),
+			hasPlan: selectedSite && isSiteOnPaidPlan( state, selectedSite.ID ),
 		};
 	},
 	{
