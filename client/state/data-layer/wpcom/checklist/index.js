@@ -8,33 +8,34 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { SITE_CHECKLIST_REQUEST } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveSiteChecklist } from 'state/checklist/actions';
 
-export const fetchChecklist = ( { dispatch }, action ) => {
-	dispatch(
-		http(
-			{
-				path: `/sites/${ action.siteId }/checklist`,
-				method: 'GET',
-				apiNamespace: 'rest/v1',
+export const fetchChecklist = action =>
+	http(
+		{
+			path: `/sites/${ action.siteId }/checklist`,
+			method: 'GET',
+			apiNamespace: 'rest/v1',
+			query: {
+				http_envelope: 1,
 			},
-			action
-		)
+		},
+		action
 	);
-};
 
-export const receiveSuccess = ( { dispatch }, action, checklist ) => {
-	dispatch(
-		receiveSiteChecklist(
+export const receiveSuccess = ( action, checklist ) =>
+	receiveSiteChecklist(
 			action.siteId,
 			checklist
-		)
 	);
-};
 
-const dispatchChecklistRequest = dispatchRequest( fetchChecklist, receiveSuccess, noop );
+const dispatchChecklistRequest = dispatchRequestEx( {
+	fetch: fetchChecklist,
+	onSuccess: receiveSuccess,
+	onError: noop,
+} );
 
 export default {
 	[ SITE_CHECKLIST_REQUEST ]: [ dispatchChecklistRequest ],
