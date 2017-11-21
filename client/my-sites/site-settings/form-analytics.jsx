@@ -173,16 +173,16 @@ class GoogleAnalyticsForm extends Component {
 						description={
 							siteIsJetpack
 								? translate(
-										'Upgrade to the Professional Plan and include your own analytics tracking ID.'
+										"Add your unique tracking ID to monitor your site's performance in Google Analytics."
 									)
 								: translate(
-										'Upgrade to the Business Plan and include your own analytics tracking ID.'
+										"Add your unique tracking ID to monitor your site's performance in Google Analytics."
 									)
 						}
 						event={ 'google_analytics_settings' }
 						feature={ FEATURE_GOOGLE_ANALYTICS }
 						plan={ PLAN_BUSINESS }
-						title={ translate( 'Add Google Analytics' ) }
+						title={ translate( 'Enable Google Analytics by upgrading to Jetpack Professional' ) }
 					/>
 				) : (
 					<Card className="analytics-settings site-settings__analytics-settings">
