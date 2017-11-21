@@ -28,8 +28,6 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 
-import ThreadedComment from 'my-sites/comments/comment-threaded-list/threaded-comment';
-
 /**
  * PostCommentList, as the name would suggest, displays a list of comments for a post.
  * It has the capability of either starting from the latest comment for a post,
@@ -66,8 +64,6 @@ class PostCommentList extends React.Component {
 		// e.g. Reader full post view showing unapproved comments made to a moderated site
 		commentsFilterDisplay: PropTypes.string,
 
-		commentComponent: PropTypes.string,
-
 		// connect()ed props:
 		commentsTree: PropTypes.object,
 		requestPostComments: PropTypes.func.isRequired,
@@ -81,7 +77,6 @@ class PostCommentList extends React.Component {
 		maxDepth: Infinity,
 		showNestingReplyArrow: false,
 		showConversationFollowButton: false,
-		commentComponent: 'post-comment',
 	};
 
 	state = {
@@ -209,17 +204,6 @@ class PostCommentList extends React.Component {
 
 		// TODO Should not need to bind here
 		const onEditCommentClick = this.onEditCommentClick.bind( this, commentId );
-
-		if ( 'comment' === this.props.commentComponent ) {
-			return (
-				<ThreadedComment
-					commentId={ commentId }
-					commentsTree={ this.props.commentsTree }
-					depth={ 0 }
-					key={ commentId }
-				/>
-			);
-		}
 
 		return (
 			<PostComment
@@ -477,15 +461,13 @@ class PostCommentList extends React.Component {
 							} ) }
 						</span>
 					) }
-				{ 'comment' !== this.props.commentComponent && (
-					<PostCommentFormRoot
-						post={ this.props.post }
-						commentsTree={ this.props.commentsTree }
-						commentText={ this.state.commentText }
-						onUpdateCommentText={ this.onUpdateCommentText }
-						activeReplyCommentId={ this.props.activeReplyCommentId }
-					/>
-				) }
+				<PostCommentFormRoot
+					post={ this.props.post }
+					commentsTree={ this.props.commentsTree }
+					commentText={ this.state.commentText }
+					onUpdateCommentText={ this.onUpdateCommentText }
+					activeReplyCommentId={ this.props.activeReplyCommentId }
+				/>
 			</div>
 		);
 	}
