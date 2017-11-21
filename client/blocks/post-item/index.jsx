@@ -165,6 +165,7 @@ class PostItem extends React.Component {
 									compact={ true }
 									post={ post }
 									siteId={ +post.site_ID }
+									statsIcon="stats-alt"
 								/>
 							) }
 							<PostStatus globalId={ globalId } />

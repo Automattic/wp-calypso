@@ -20,7 +20,16 @@ import QuerySites from 'components/data/query-sites';
 import { getPostStat } from 'state/stats/posts/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
-function PostTotalViews( { clickHandler, numberFormat, post, size, slug, translate, viewCount } ) {
+function PostTotalViews( {
+	clickHandler,
+	icon,
+	numberFormat,
+	post,
+	size,
+	slug,
+	translate,
+	viewCount,
+} ) {
 	const { ID: postId, site_ID: siteId } = post;
 	let viewsCountDisplay = '',
 		viewsTitle;
@@ -52,7 +61,7 @@ function PostTotalViews( { clickHandler, numberFormat, post, size, slug, transla
 			onClick={ clickHandler }
 		>
 			<QueryPostStats siteId={ siteId } postId={ postId } fields={ [ 'views' ] } />
-			<Gridicon icon="visible" size={ size } />
+			<Gridicon icon={ icon } size={ size } />
 			<StatUpdateIndicator updateOn={ viewsCountDisplay }>
 				{ viewsCountDisplay }
 			</StatUpdateIndicator>
@@ -62,6 +71,7 @@ function PostTotalViews( { clickHandler, numberFormat, post, size, slug, transla
 
 PostTotalViews.propTypes = {
 	clickHandler: PropTypes.func,
+	icon: PropTypes.string,
 	numberFormat: PropTypes.func,
 	post: PropTypes.object.isRequired,
 	size: PropTypes.number,
@@ -71,6 +81,7 @@ PostTotalViews.propTypes = {
 };
 
 PostTotalViews.defaultProps = {
+	icon: 'visible',
 	size: 24,
 };
 

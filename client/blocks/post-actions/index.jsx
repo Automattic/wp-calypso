@@ -50,6 +50,7 @@ const PostActions = ( {
 	showLikes,
 	showStats,
 	siteSlug,
+	statsIcon,
 	toggleComments,
 	trackRelativeTimeStatusOnClick,
 	trackTotalViewsOnClick,
@@ -111,7 +112,12 @@ const PostActions = ( {
 			{ ! isDraft &&
 				showStats && (
 					<li className="post-actions__item post-actions__total-views">
-						<PostTotalViews post={ post } size={ size } clickHandler={ trackTotalViewsOnClick } />
+						<PostTotalViews
+							icon={ statsIcon }
+							post={ post }
+							size={ size }
+							clickHandler={ trackTotalViewsOnClick }
+						/>
 					</li>
 				) }
 		</ul>
@@ -123,9 +129,14 @@ PostActions.propTypes = {
 	compact: PropTypes.bool,
 	post: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
+	statsIcon: PropTypes.string,
 	toggleComments: PropTypes.func,
 	trackRelativeTimeStatusOnClick: PropTypes.func,
 	trackTotalViewsOnClick: PropTypes.func,
+};
+
+PostActions.defaultProps = {
+	statsIcon: 'visible',
 };
 
 const mapStateToProps = ( state, { siteId, post } ) => {
