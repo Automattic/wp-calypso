@@ -964,6 +964,7 @@ export default {
 	domainRedemption,
 	domainRegistration,
 	domainTransfer,
+	domainTransferPrivacy,
 	fillGoogleAppsRegistrationData,
 	findFreeTrial,
 	getAll,
