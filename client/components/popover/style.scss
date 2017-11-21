@@ -200,11 +200,6 @@
 		border: 0;
 	}
 
-	// Menu Items with Icons
-	&.has-icon:not( .external-link ) {
-		padding-left: 42px;
-	}
-
 	// with gridicons
 	.gridicon {
 		color: lighten( $gray, 10 );
