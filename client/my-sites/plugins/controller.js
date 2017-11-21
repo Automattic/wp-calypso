@@ -186,7 +186,8 @@ function renderProvisionPlugins( context ) {
 }
 
 const controller = {
-	plugins( filter, context, next ) {
+	plugins( context, next ) {
+		const { pluginFilter: filter = 'all' } = context.params;
 		const siteUrl = route.getSiteFragment( context.path );
 		const basePath = route.sectionify( context.path ).replace( '/' + filter, '' );
 
@@ -233,11 +234,11 @@ const controller = {
 		renderWithReduxStore( <PluginUpload />, document.getElementById( 'primary' ), context.store );
 	},
 
-	jetpackCanUpdate( filter, context, next ) {
+	jetpackCanUpdate( context, next ) {
 		const selectedSites = getSelectedOrAllSitesWithPlugins( context.store.getState() );
 		let redirectToPlugins = false;
 
-		if ( 'updates' === filter && selectedSites.length ) {
+		if ( 'updates' === context.params.pluginFilter && selectedSites.length ) {
 			redirectToPlugins = ! some( selectedSites, function( site ) {
 				return site && site.jetpack && site.canUpdateFiles;
 			} );

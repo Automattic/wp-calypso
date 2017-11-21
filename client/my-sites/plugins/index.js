@@ -68,19 +68,17 @@ export default function() {
 			siteSelection,
 			navigation,
 			ifSimpleSiteThenRedirectTo( '/plugins' ),
-			pluginsController.plugins.bind( null, 'all' ),
+			pluginsController.plugins,
 			sites
 		);
 
-		[ 'active', 'inactive', 'updates' ].forEach( filter =>
-			page(
-				`/plugins/${ filter }/:site_id?`,
-				siteSelection,
-				navigation,
-				pluginsController.jetpackCanUpdate.bind( null, filter ),
-				pluginsController.plugins.bind( null, filter ),
-				sites
-			)
+		page(
+			'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
+			siteSelection,
+			navigation,
+			pluginsController.jetpackCanUpdate,
+			pluginsController.plugins,
+			sites
 		);
 
 		page(
