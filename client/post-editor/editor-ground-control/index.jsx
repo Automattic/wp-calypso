@@ -214,7 +214,6 @@ export class EditorGroundControl extends PureComponent {
 
 		return (
 			<div className="editor-ground-control__quick-save">
-				{ hasRevisions && <HistoryButton loadRevision={ loadRevision } /> }
 				{ showingSaveStatus && (
 					<div className="editor-ground-control__status">
 						{ isSaveAvailable && (
@@ -237,6 +236,7 @@ export class EditorGroundControl extends PureComponent {
 							) }
 					</div>
 				) }
+				{ hasRevisions && <HistoryButton loadRevision={ loadRevision } /> }
 			</div>
 		);
 	}
