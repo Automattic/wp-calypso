@@ -156,6 +156,7 @@
 
 .transfer-domain-step__lock-status {
 	font-size: 12px;
+	flex-shrink: 0;
 
 	svg {
 		padding-right: 4px;
