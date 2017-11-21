@@ -28,7 +28,7 @@ import {
 	SITE_SETTINGS_SAVE_SUCCESS,
 } from 'state/action-types';
 import { sendEvent, sendLog, sendPreferences } from 'state/happychat/connection/actions';
-import { getGroups } from './selectors';
+import getGroups from 'state/happychat/selectors/get-groups';
 import getSkills from 'state/happychat/selectors/get-skills';
 import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
 import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';

@@ -14,11 +14,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { sendMessage } from 'state/happychat/connection/actions';
+import { sendMessage, sendTyping, sendNotTyping } from 'state/happychat/connection/actions';
 import { setCurrentMessage } from 'state/happychat/ui/actions';
-import { sendTyping, sendNotTyping } from 'state/happychat/connection/actions';
 import getCurrentMessage from 'state/happychat/selectors/get-happychat-current-message';
-import { canUserSendMessages } from 'state/happychat/selectors';
+import canUserSendMessages from 'state/happychat/selectors/can-user-send-messages';
 import scrollbleed from './scrollbleed';
 
 const sendThrottledTyping = throttle(
