@@ -414,7 +414,7 @@ export class MySitesSidebar extends Component {
 		return (
 			isCountryAllowed && (
 				<SidebarItem
-					label={ translate( 'Store (BETA)' ) }
+					label={ translate( 'Store' ) }
 					link={ storeLink }
 					onNavigate={ this.trackStoreClick }
 					icon="cart"
