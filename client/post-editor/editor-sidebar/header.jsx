@@ -4,14 +4,17 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { flow } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import EditorPostType from 'post-editor/editor-post-type';
+import { closeEditorSidebar } from 'state/ui/editor/sidebar/actions';
 
 const EditorSidebarHeader = ( { closeSidebar, translate } ) => (
 	<div className="editor-sidebar__header">
@@ -33,4 +36,9 @@ EditorSidebarHeader.propTypes = {
 	closeSidebar: PropTypes.func,
 };
 
-export default localize( EditorSidebarHeader );
+export default flow(
+	localize,
+	connect( null, {
+		closeSidebar: closeEditorSidebar,
+	} )
+)( EditorSidebarHeader );

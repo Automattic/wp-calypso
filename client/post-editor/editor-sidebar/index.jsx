@@ -3,13 +3,11 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-import { closeEditorSidebar } from 'state/ui/editor/sidebar/actions';
 import EditorDrawer from 'post-editor/editor-drawer';
 import EditorSidebarHeader from './header';
 import SidebarFooter from 'layout/sidebar/footer';
@@ -48,7 +46,7 @@ export class EditorSidebar extends Component {
 
 		return (
 			<div className="editor-sidebar">
-				<EditorSidebarHeader closeSidebar={ this.props.closeEditorSidebar } />
+				<EditorSidebarHeader />
 				<EditorActionBar isNew={ isNew } post={ post } savedPost={ savedPost } site={ site } />
 				<EditorDrawer
 					site={ site }
@@ -69,7 +67,4 @@ export class EditorSidebar extends Component {
 	}
 }
 
-export default connect( null, {
-	// TODO: connect this closer to its usage
-	closeEditorSidebar,
-} )( EditorSidebar );
+export default EditorSidebar;
