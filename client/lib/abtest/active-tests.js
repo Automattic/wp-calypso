@@ -20,11 +20,12 @@ export default {
 	signupAtomicStoreVsPressable: {
 		datestamp: '20171101',
 		variations: {
-			atomic: 10,
-			pressable: 90,
+			atomic: 99,
+			pressable: 1,
 		},
-		defaultVariation: 'pressable',
+		defaultVariation: 'atomic',
 		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
 	businessPlanDescriptionAT: {
 		datestamp: '20170605',
