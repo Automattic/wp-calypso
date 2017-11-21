@@ -108,6 +108,11 @@
 }
 
 .billing-history__service-name {
+	small,
+	strong {
+		word-break: break-word;
+	}
+
 	strong {
 		font-weight: normal;
 	}
