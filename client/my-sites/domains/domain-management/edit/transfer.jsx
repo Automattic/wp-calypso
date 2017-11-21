@@ -22,6 +22,9 @@ import support from 'lib/url/support';
 import { restartInboundTransfer } from 'lib/domains';
 import { fetchDomains } from 'lib/upgrades/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
+import VerticalNav from 'components/vertical-nav';
+import VerticalNavItem from 'components/vertical-nav/item';
+import { cancelPurchase as cancelPurchaseLink } from 'me/purchases/paths';
 
 class Transfer extends React.PureComponent {
 	render() {
@@ -32,10 +35,17 @@ class Transfer extends React.PureComponent {
 			content = this.getCancelledContent();
 		}
 
+		const path = cancelPurchaseLink( this.props.selectedSite.slug, domain.subscriptionId );
+
 		return (
 			<div className="edit__domain-details-card">
 				<Header domain={ domain } />
 				{ content }
+				<VerticalNav>
+					<VerticalNavItem path={ path }>
+						{ this.props.translate( 'Cancel Transfer' ) }
+					</VerticalNavItem>
+				</VerticalNav>
 			</div>
 		);
 	}

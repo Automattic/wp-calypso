@@ -29,7 +29,13 @@ import previousStep from 'components/marketing-survey/cancel-purchase-form/previ
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { getPurchase, isDataLoading } from '../utils';
-import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan } from 'lib/products-values';
+import {
+	isDomainRegistration,
+	isDomainTransfer,
+	isPlan,
+	isGoogleApps,
+	isJetpackPlan,
+} from 'lib/products-values';
 import notices from 'notices';
 import purchasePaths from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -421,6 +427,10 @@ class RemovePurchase extends Component {
 
 		const purchase = getPurchase( this.props );
 		if ( ! isRemovable( purchase ) ) {
+			return null;
+		}
+
+		if ( isDomainTransfer( purchase ) ) {
 			return null;
 		}
 
