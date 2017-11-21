@@ -96,6 +96,7 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 	// the actual parser
 	return data => transform( validate( data ) );
 };
+
 const getRequestStatus = action => {
 	if ( undefined !== getError( action ) ) {
 		return 'failure';
@@ -115,20 +116,18 @@ export const getRequestKey = fullAction => {
 	return requestKey ? requestKey : deterministicStringify( action );
 };
 
-export const getRequest = ( state, key ) => state.dataRequests[ key ] || {};
-
 export const requestsReducerItem = (
 	state = null,
 	{ meta: { dataLayer: { lastUpdated, pendingSince, status } = {} } = {} }
-) => Object.assign( { status }, lastUpdated && { lastUpdated }, pendingSince && { pendingSince } );
+) =>
+	Object.assign(
+		{ ...state },
+		{ status },
+		lastUpdated && { lastUpdated },
+		pendingSince && { pendingSince }
+	);
 
 export const reducer = keyedReducer( 'meta.dataLayer.requestKey', requestsReducerItem );
-
-export const isRequestLoading = ( state, action ) =>
-	getRequest( state, getRequestKey( action ) ).status === 'pending';
-
-export const hasRequestLoaded = ( state, action ) =>
-	getRequest( state, getRequestKey( action ) ).lastUpdated > -Infinity;
 
 /**
  * Tracks the state of network activity for a given request type

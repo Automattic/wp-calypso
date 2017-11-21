@@ -115,6 +115,7 @@ export getReaderTags from './get-reader-tags';
 export getReaderTeams from './get-reader-teams';
 export getReaderWatermark from './get-reader-watermark';
 export getRegistrantWhois from './get-registrant-whois';
+export getRequest from './get-request';
 export getRequestedRewind from './get-requested-rewind';
 export getRestoreError from './get-restore-error';
 export getRestoreProgress from './get-restore-progress';
