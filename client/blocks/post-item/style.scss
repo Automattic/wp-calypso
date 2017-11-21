@@ -120,6 +120,10 @@ a.post-item__title-link:visited {
 	line-height: inherit;
 }
 
+.post-item__meta .post-time {
+	margin-top: 2px;
+}
+
 .post-item__meta .post-status {
 	margin-left: 7px;
 }
@@ -137,6 +141,7 @@ a.post-item__title-link:visited {
 	line-height: 18px;
 
 	.post-actions__item {
+		height: 18px;
 		margin-right: 10px;
 
 		.comment-button__label,
@@ -151,8 +156,19 @@ a.post-item__title-link:visited {
 			height: 18px;
 			width: 18px;
 			margin-right: 2px;
+			position: relative;
+			left: -3px;
+			top: -1px;
 		}
 
-		
+		.comment-button__icon {
+			position: relative;
+			left: -3px;
+		}
+
+		&.post-actions__total-views .gridicon {
+			position: relative;
+			left: -3px;
+		}
 	}
 }
