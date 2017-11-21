@@ -4,11 +4,11 @@
  * Internal dependencies
  */
 import { SchemaError } from 'state/data-layer/wpcom-http/utils';
-import fromApi, { transformSlot } from '../from-api';
+import fromApi, { transformShift } from '../from-api';
 
-describe( 'transformSlot()', () => {
+describe( 'transformShift()', () => {
 	test( 'should pick out expected fields and make the keys camelCase.', () => {
-		const mockSlot = {
+		const mockShift = {
 			begin_timestamp: 100,
 			end_timestamp: 200,
 			schedule_id: 999,
@@ -16,11 +16,11 @@ describe( 'transformSlot()', () => {
 			not_going_to_take_this: 'should ignore this one',
 		};
 
-		expect( transformSlot( mockSlot ) ).toEqual( {
-			beginTimestamp: mockSlot.begin_timestamp,
-			endTimestamp: mockSlot.end_timestamp,
-			scheduleId: mockSlot.schedule_id,
-			description: mockSlot.description,
+		expect( transformShift( mockShift ) ).toEqual( {
+			beginTimestamp: mockShift.begin_timestamp,
+			endTimestamp: mockShift.end_timestamp,
+			scheduleId: mockShift.schedule_id,
+			description: mockShift.description,
 		} );
 	} );
 } );
@@ -32,13 +32,13 @@ describe( 'fromApi()', () => {
 				begin_timestamp: 100,
 				end_timestamp: 200,
 				schedule_id: 999,
-				description: 'slot 1',
+				description: 'shift 1',
 			},
 			{
 				begin_timestamp: 300,
 				end_timestamp: 400,
 				schedule_id: 999,
-				description: 'slot 2',
+				description: 'shift 2',
 			},
 		];
 
