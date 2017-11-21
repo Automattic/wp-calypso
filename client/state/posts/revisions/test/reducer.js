@@ -310,20 +310,6 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should clear selection when closing dialog', () => {
-			const state = selection(
-				deepFreeze( {
-					revisionId: 1776,
-				} ),
-				{
-					type: POST_REVISIONS_DIALOG_CLOSE,
-				}
-			);
-			expect( state ).to.eql( {
-				revisionId: null,
-			} );
-		} );
-
 		test( 'should clear selection when editing post', () => {
 			const state = selection(
 				deepFreeze( {
