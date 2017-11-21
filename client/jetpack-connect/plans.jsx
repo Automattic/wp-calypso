@@ -234,13 +234,9 @@ class Plans extends Component {
 			! this.props.canPurchasePlans ||
 			this.props.hasPlan
 		) {
-			return (
-				<div>
-					<QueryPlans />
-					{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
-				</div>
-			);
+			return <QueryPlans />;
 		}
+
 		const helpButtonLabel = translate( 'Need help?' );
 
 		return (
