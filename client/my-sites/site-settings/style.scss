@@ -110,8 +110,13 @@
 		padding-top: 20px;
 	}
 
-	.site-settings__analytics-stores-basic-settings {
+	.site-settings__analytics-stores-settings {
 		padding-bottom: 20px;
+
+		.site-settings__analytics-stores-child-settings {
+			margin-top: 10px;
+			margin-left: 20px;
+		}
 	}
 
 	.site-settings__blogaddress-settings {

@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,29 +14,42 @@ import { localize } from 'i18n-calypso';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import config from 'config';
 import FormLegend from 'components/forms/form-legend';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 class FormAnalyticsStores extends Component {
 	handleToggleChange = name => () => {
 		this.props.handleToggleChange( name );
 	};
 
-	renderSettings = ( settings, disableAll ) => {
+	renderSettings = ( settings, disableAll, isChild = false ) => {
 		const { fields } = this.props;
 
-		// TODO - disable changes to a (child) setting if a required (parent) setting is not enabled
+		const classes = classNames( {
+			'site-settings__analytics-stores-settings': ! isChild,
+			'site-settings__analytics-stores-child-settings': isChild,
+		} );
 
 		return (
-			<div className="site-settings__analytics-stores-basic-settings">
-				{ settings.map( setting => (
-					<CompactFormToggle
-						checked={ fields.wga ? Boolean( fields.wga[ setting.key ] ) : false }
-						disabled={ disableAll }
-						key={ setting.key }
-						onChange={ this.handleToggleChange( setting.key ) }
-					>
-						{ setting.label }
-					</CompactFormToggle>
-				) ) }
+			<div className={ classes }>
+				{ settings.map( setting => {
+					const checked = fields.wga ? Boolean( fields.wga[ setting.key ] ) : false;
+					return (
+						<div key={ setting.key }>
+							<CompactFormToggle
+								checked={ checked }
+								disabled={ disableAll }
+								onChange={ this.handleToggleChange( setting.key ) }
+							>
+								{ setting.label }
+							</CompactFormToggle>
+							{ setting.explanation && (
+								<FormSettingExplanation>{ setting.explanation }</FormSettingExplanation>
+							) }
+							{ setting.children &&
+								this.renderSettings( setting.children, disableAll || ! checked, true ) }
+						</div>
+					);
+				} ) }
 			</div>
 		);
 	};
@@ -65,31 +79,28 @@ class FormAnalyticsStores extends Component {
 				explanation: translate(
 					'Before enabling, turn on enhanced eCommerce in your Google Analytics dashboard.'
 				),
-			},
-			{
-				key: 'enh_ec_track_remove_from_cart',
-				label: translate( 'Remove from Cart events' ),
-				requires: 'enh_ec_tracking',
-			},
-			{
-				key: 'enh_ec_track_prod_impression',
-				label: translate( 'Product impressions from listing pages' ),
-				requires: 'enh_ec_tracking',
-			},
-			{
-				key: 'enh_ec_track_prod_click',
-				label: translate( 'Product clicks from listing pages' ),
-				requires: 'enh_ec_tracking',
-			},
-			{
-				key: 'enh_ec_track_prod_detail_view',
-				label: translate( 'Product detail views' ),
-				requires: 'enh_ec_tracking',
-			},
-			{
-				key: 'enh_ec_track_checkout_started',
-				label: translate( 'Checkout process initiated' ),
-				requires: 'enh_ec_tracking',
+				children: [
+					{
+						key: 'enh_ec_track_remove_from_cart',
+						label: translate( 'Remove from Cart events' ),
+					},
+					{
+						key: 'enh_ec_track_prod_impression',
+						label: translate( 'Product impressions from listing pages' ),
+					},
+					{
+						key: 'enh_ec_track_prod_click',
+						label: translate( 'Product clicks from listing pages' ),
+					},
+					{
+						key: 'enh_ec_track_prod_detail_view',
+						label: translate( 'Product detail views' ),
+					},
+					{
+						key: 'enh_ec_track_checkout_started',
+						label: translate( 'Checkout process initiated' ),
+					},
+				],
 			},
 		];
 
@@ -98,7 +109,7 @@ class FormAnalyticsStores extends Component {
 
 	render = () => {
 		const { disabled, translate } = this.props;
-		const showEnhanced = config.get( 'jetpack/google-analytics-for-stores-enhanced' );
+		const showEnhanced = config.isEnabled( 'jetpack/google-analytics-for-stores-enhanced' );
 
 		return (
 			<div>
