@@ -108,6 +108,14 @@ export class LoginForm extends Component {
 				this.setState( { usernameOrEmail: nextProps.socialAccountLinkEmail } );
 			}
 		}
+
+		if ( this.props.accountType !== null && nextProps.accountType === null ) {
+			defer( () => this.usernameOrEmail.focus() );
+		}
+
+		if ( this.props.accountType === null && nextProps.accountType === 'regular' ) {
+			defer( () => this.password.focus() );
+		}
 	}
 
 	onChangeField = event => {
@@ -127,8 +135,6 @@ export class LoginForm extends Component {
 			.getAuthAccountType( usernameOrEmail )
 			.then( () => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_success' );
-
-				this.password.focus();
 			} )
 			.catch( error => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_failure', {
@@ -160,8 +166,6 @@ export class LoginForm extends Component {
 		event.preventDefault();
 
 		this.props.resetAuthAccountType();
-
-		defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 	};
 
 	loginUser() {
