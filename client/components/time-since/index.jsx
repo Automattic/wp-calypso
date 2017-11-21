@@ -32,11 +32,11 @@ export default class TimeSince extends PureComponent {
 	}
 
 	update = date => {
-		const { defaultFormat } = this.props;
+		const { dateFormat } = this.props;
 		date = date || this.props.date;
 
 		this.smartSetState( {
-			humanDate: humanDate( date, defaultFormat ),
+			humanDate: humanDate( date, dateFormat ),
 			fullDate: moment( date ).format( 'llll' ),
 		} );
 	};

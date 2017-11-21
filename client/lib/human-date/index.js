@@ -8,7 +8,7 @@ import i18n from 'i18n-calypso';
 
 const MILLIS_IN_MINUTE = 60 * 1000;
 
-export default function humanDate( dateOrMoment, defaultFormat = 'll' ) {
+export default function humanDate( dateOrMoment, dateFormat = 'll' ) {
 	const now = i18n.moment();
 	dateOrMoment = i18n.moment( dateOrMoment );
 
@@ -51,5 +51,5 @@ export default function humanDate( dateOrMoment, defaultFormat = 'll' ) {
 		} );
 	}
 
-	return dateOrMoment.format( defaultFormat );
+	return dateOrMoment.format( dateFormat );
 }
