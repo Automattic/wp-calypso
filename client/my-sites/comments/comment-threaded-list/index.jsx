@@ -82,6 +82,7 @@ export class CommentThreadedList extends Component {
 							commentsTree={ commentsTree }
 							depth={ 0 }
 							key={ commentId }
+							siteId={ siteId }
 						/>
 					) ) }
 

@@ -4,14 +4,16 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, map } from 'lodash';
+import { drop, filter, isUndefined, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Comment from 'my-sites/comments/comment';
 import Notice from 'components/notice';
+import { getSiteComment } from 'state/selectors';
 
 export class ThreadedComment extends Component {
 	static propTypes = {
@@ -27,7 +29,7 @@ export class ThreadedComment extends Component {
 	showReplies = () => this.setState( { isExpanded: true } );
 
 	render() {
-		const { commentId, commentsTree, depth, translate } = this.props;
+		const { commentId, commentsTree, depth, isLoading, siteId, translate } = this.props;
 		const { isExpanded } = this.state;
 
 		const replyTree = filter( commentsTree, { commentParentId: commentId } );
@@ -36,24 +38,36 @@ export class ThreadedComment extends Component {
 			<div className={ `comment-threaded-list__comment depth-${ depth }` }>
 				<Comment { ...{ commentId } } isPostView refreshCommentData />
 
-				{ !! replyTree.length &&
-					! isExpanded && (
+				{ !! replyTree.length && (
+					<ConnectedThreadedComment
+						commentId={ replyTree[ 0 ].commentId }
+						commentsTree={ commentsTree }
+						depth={ depth + 1 }
+						key={ replyTree[ 0 ].commentId }
+						siteId={ siteId }
+					/>
+				) }
+
+				{ ! isLoading &&
+					! isExpanded &&
+					replyTree.length > 1 && (
 						<Notice
 							className="comment-threaded-list__more-replies"
 							icon="reply"
 							showDismiss={ false }
 						>
-							<a onClick={ this.showReplies }>{ translate( 'Show replies' ) }</a>
+							<a onClick={ this.showReplies }>{ translate( 'Load more replies' ) }</a>
 						</Notice>
 					) }
 
 				{ isExpanded &&
-					map( replyTree, ( { commentId: replyId } ) => (
-						<LocalizedThreadedComment
+					map( drop( replyTree ), ( { commentId: replyId } ) => (
+						<ConnectedThreadedComment
 							commentId={ replyId }
 							commentsTree={ commentsTree }
 							depth={ depth + 1 }
 							key={ replyId }
+							siteId={ siteId }
 						/>
 					) ) }
 			</div>
@@ -61,6 +75,10 @@ export class ThreadedComment extends Component {
 	}
 }
 
-const LocalizedThreadedComment = localize( ThreadedComment );
+const mapStateToProps = ( state, { siteId, commentId } ) => ( {
+	isLoading: isUndefined( getSiteComment( state, siteId, commentId ) ),
+} );
 
-export default LocalizedThreadedComment;
+const ConnectedThreadedComment = connect( mapStateToProps )( localize( ThreadedComment ) );
+
+export default ConnectedThreadedComment;
