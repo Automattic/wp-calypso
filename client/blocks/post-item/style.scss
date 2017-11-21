@@ -70,18 +70,6 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 	}
 }
 
-.post-item__info {
-	display: flex;
-	flex-wrap: wrap;
-	overflow: hidden;
-	&::after {
-		@include long-content-fade(
-			$color: $post-item-background-color,
-			$size: 30px
-		);
-	}
-}
-
 .post-item__title {
 	@extend %content-font;
 	margin-bottom: 2px;
