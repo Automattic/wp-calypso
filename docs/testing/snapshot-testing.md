@@ -13,7 +13,7 @@ However, if the change was intentional, follow these steps to update the snapsho
    # --testPathPattern is optional but will be much faster by only running matching tests
    npm run test-client -- --updateSnapshot --testPathPattern client/components
    ```
-1. Review the diff and ensure the changes are expecte and intentional
+1. Review the diff and ensure the changes are expected and intentional
 1. Commit
 
 ## What are snapshots?
