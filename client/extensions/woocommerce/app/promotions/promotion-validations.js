@@ -17,7 +17,7 @@ import { isEmpty, isUndefined } from 'lodash';
  */
 export function validateCouponCode( fieldName, promotion, currency, showEmpty ) {
 	if ( showEmpty && isEmpty( promotion.couponCode ) ) {
-		return translate( 'Coupon code cannot be blank.' );
+		return translate( 'Enter a coupon code so your customers can access this promotion.' );
 	}
 }
 
@@ -48,7 +48,7 @@ export function validateFixedDiscount( fieldName, promotion, currency, showEmpty
  */
 export function validatePercentDiscount( fieldName, promotion, currency, showEmpty ) {
 	if ( showEmpty && isEmpty( promotion.percentDiscount ) ) {
-		return translate( 'Discount cannot be blank.' );
+		return translate( 'Add a discount for your customers.' );
 	}
 	if ( 0 >= promotion.percentDiscount ) {
 		return translate( 'Discount must be greater than zero.' );
@@ -65,7 +65,7 @@ export function validatePercentDiscount( fieldName, promotion, currency, showEmp
  */
 export function validateSalePrice( fieldName, promotion, currency, showEmpty ) {
 	if ( showEmpty && isEmpty( promotion.salePrice ) ) {
-		return translate( 'Sale price cannot be blank.' );
+		return translate( 'Define a sale price.' );
 	}
 	if ( 0 >= promotion.salePrice ) {
 		return translate( 'Sale price must be greater than zero.' );
@@ -150,7 +150,7 @@ export function validateMinimumAmount( fieldName, promotion, currency, showEmpty
 	}
 
 	if ( showEmpty && isEmpty( minimumAmount ) ) {
-		return translate( 'Amount cannot be blank.' );
+		return translate( 'Define a minimum amount.' );
 	}
 
 	if ( null !== minimumAmount ) {

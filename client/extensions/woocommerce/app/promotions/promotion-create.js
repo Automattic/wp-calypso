@@ -114,7 +114,9 @@ class PromotionCreate extends React.Component {
 		if ( errors ) {
 			this.setState( () => ( { busy: false, saveAttempted: true } ) );
 			this.props.errorNotice(
-				translate( 'Invalid field data. Please correct the highlighted fields and try again.' ),
+				translate(
+					'There is missing or invalid information. Please correct the highlighted fields and try again.'
+				),
 				{
 					duration: 8000,
 				}
