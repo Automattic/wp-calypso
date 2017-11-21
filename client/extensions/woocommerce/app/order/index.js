@@ -43,19 +43,20 @@ class Order extends Component {
 	}
 
 	componentWillReceiveProps( newProps ) {
-		if ( newProps.orderId !== this.props.orderId || newProps.siteId !== this.props.siteId ) {
+		const { orderId: oldOrderId, siteId: oldSiteId } = this.props;
+		const { orderId: newOrderId, siteId: newSiteId } = newProps;
+		if ( newOrderId !== oldOrderId || newSiteId !== oldSiteId ) {
 			// New order or site should clear any pending edits
-			this.props.clearOrderEdits( this.props.siteId );
+			this.props.clearOrderEdits( oldSiteId );
 			// And fetch the new order's info
-			this.props.fetchOrder( newProps.siteId, newProps.orderId );
-			this.props.fetchNotes( newProps.siteId, newProps.orderId );
-		} else if (
-			newProps.order &&
-			this.props.order &&
-			newProps.order.status !== this.props.order.status
-		) {
-			// A status change should force a notes refresh
-			this.props.fetchNotes( newProps.siteId, newProps.orderId, true );
+			this.props.fetchOrder( newSiteId, newOrderId );
+			this.props.fetchNotes( newSiteId, newOrderId );
+			return;
+		}
+
+		if ( this.props.isEditing && ! newProps.isEditing ) {
+			// Leaving edit state should re-fetch notes
+			this.props.fetchNotes( newSiteId, newOrderId, true );
 		}
 	}
 
