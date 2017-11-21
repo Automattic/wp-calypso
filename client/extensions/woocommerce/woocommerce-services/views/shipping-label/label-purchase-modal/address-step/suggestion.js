@@ -24,13 +24,13 @@ const RadioButton = ( props ) => {
 	);
 };
 
-const AddressSummary = ( { values, originalValues, countriesData } ) => {
+const AddressSummary = ( { values, originalValues, countriesData, expandStateName = false } ) => {
 	originalValues = originalValues || {};
 	const { state, country } = values;
 
 	let stateStr = '';
 	if ( state ) {
-		const statesMap = ( countriesData[ country ] || {} ).states || {};
+		const statesMap = ( expandStateName && ( countriesData[ country ] || {} ).states ) || {};
 		stateStr = statesMap[ state ] || state;
 	}
 	const countryStr = countriesData[ country ].name;
@@ -57,7 +57,7 @@ const AddressSummary = ( { values, originalValues, countriesData } ) => {
 		<div className="address-step__suggestion-summary">
 			<p>{ getValue( 'name' ) }</p>
 			<p>{ getValue( 'address' ) } { getValue( 'address_2' ) }</p>
-			<p>{ getValue( 'city' ) }, { getValue( 'postcode' ) } { getValue( 'state' ) }</p>
+			<p>{ getValue( 'city' ) }, { getValue( 'state' ) }&nbsp; { getValue( 'postcode' ) }</p>
 			<p>{ getValue( 'country' ) }</p>
 		</div>
 	);
