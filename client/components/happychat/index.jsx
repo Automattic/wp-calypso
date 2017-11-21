@@ -148,7 +148,7 @@ Happychat.propTypes = {
 	twemojiUrl: PropTypes.string,
 };
 
-const isCurrentUserHelper = currentUser => ( { user_id, source } ) => {
+const isMessageFromCurrentUser = currentUser => ( { user_id, source } ) => {
 	return user_id.toString() === currentUser.ID.toString() && source === 'customer';
 };
 
@@ -160,7 +160,7 @@ const mapState = state => {
 		currentUserEmail: currentUser.email,
 		disabled: ! canUserSendMessages( state ),
 		isChatOpen: isHappychatOpen( state ),
-		isCurrentUser: isCurrentUserHelper( currentUser ), // see redux-no-bound-selectors eslint-rule
+		isCurrentUser: isMessageFromCurrentUser( currentUser ), // see redux-no-bound-selectors eslint-rule
 		isExternalUrl: isExternal,
 		isMinimizing: isHappychatMinimizing( state ),
 		isServerReachable: isHappychatServerReachable( state ),
