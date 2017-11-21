@@ -274,6 +274,7 @@ $plan-features-sidebar-width: 272px;
 
 .popover.plan-features__header-tip-info .popover__inner {
 	white-space: nowrap;
+	max-width: 500px;
 }
 
 .plan-features__price {
@@ -429,7 +430,7 @@ $plan-features-sidebar-width: 272px;
  }
 
 
-/*= Plans in Signup 
+/*= Plans in Signup
 ========================================*/
 
 .price-toggle {
