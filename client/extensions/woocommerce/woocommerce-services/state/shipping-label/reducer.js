@@ -59,6 +59,9 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER,
 } from '../action-types';
+import {
+	WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
+} from 'woocommerce/state/action-types';
 import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
 import initializeLabelsState from 'woocommerce/woocommerce-services/lib/initialize-labels-state';
 
@@ -771,6 +774,11 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG ] = ( state )
 	return { ...state,
 		detailsDialog: null,
 	};
+};
+
+// Reset the state when the order changes
+reducers[ WOOCOMMERCE_ORDER_UPDATE_SUCCESS ] = () => {
+	return initializeLabelsState();
 };
 
 export default keyedReducer( 'orderId', ( state = initializeLabelsState(), action ) => {
