@@ -19,7 +19,7 @@ export const itemsSchema = {
 					expiry: { type: [ 'null', 'string' ] },
 					expirySoon: { type: 'boolean' },
 					googleAppsSubscription: { type: 'object' },
-					hasPrivacyProtection: { type: 'boolean' },
+					hasPrivacyProtectionProduct: { type: 'boolean' },
 					hasRegistration: { type: 'boolean' },
 					hasZone: { type: 'boolean' },
 					isPendingIcannVerification: { type: 'boolean' },

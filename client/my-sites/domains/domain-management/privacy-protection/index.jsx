@@ -63,7 +63,7 @@ class PrivacyProtection extends Component {
 	canAddPrivacyProtection() {
 		const domain = getSelectedDomain( this.props );
 
-		return domain && domain.type === domainTypes.REGISTERED && ! domain.hasPrivacyProtection;
+		return domain && domain.type === domainTypes.REGISTERED && ! domain.hasPrivacyProtectionProduct;
 	}
 
 	render() {

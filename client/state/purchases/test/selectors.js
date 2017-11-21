@@ -89,7 +89,7 @@ describe( 'selectors', () => {
 				expiryDate: undefined,
 				expiryMoment: null,
 				expiryStatus: '',
-				hasPrivacyProtection: false,
+				hasPrivacyProtectionProduct: false,
 				includedDomain: undefined,
 				isCancelable: false,
 				isDomainRegistration: false,

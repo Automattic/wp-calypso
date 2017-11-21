@@ -47,15 +47,15 @@ class Unlocked extends React.Component {
 	handleCancelTransferClick = () => {
 		const { translate } = this.props;
 		const {
-			privateDomain,
-			hasPrivacyProtection,
+			privacyEnabled,
+			hasPrivacyProtectionProduct,
 			pendingTransfer,
 			domainLockingAvailable,
 		} = getSelectedDomain( this.props );
 
 		this.setState( { submitting: true } );
 
-		const enablePrivacy = hasPrivacyProtection && ! privateDomain;
+		const enablePrivacy = hasPrivacyProtectionProduct && ! privacyEnabled;
 		const lockDomain = domainLockingAvailable;
 
 		cancelTransferRequest(
@@ -136,8 +136,8 @@ class Unlocked extends React.Component {
 	};
 
 	isDomainAlwaysTransferrable() {
-		const { domainLockingAvailable, hasPrivacyProtection } = getSelectedDomain( this.props );
-		return ! domainLockingAvailable && ! hasPrivacyProtection;
+		const { domainLockingAvailable, hasPrivacyProtectionProduct } = getSelectedDomain( this.props );
+		return ! domainLockingAvailable && ! hasPrivacyProtectionProduct;
 	}
 
 	renderCancelButton( domain ) {
@@ -262,8 +262,8 @@ class Unlocked extends React.Component {
 		const { translate } = this.props;
 		const { submitting } = this.state;
 		const domain = getSelectedDomain( this.props );
-		const { privateDomain, hasPrivacyProtection, domainLockingAvailable } = domain;
-		const privacyDisabled = hasPrivacyProtection && ! privateDomain;
+		const { privacyEnabled, hasPrivacyProtectionProduct, domainLockingAvailable } = domain;
+		const privacyDisabled = hasPrivacyProtectionProduct && ! privacyEnabled;
 
 		let domainStateMessage;
 		if ( domainLockingAvailable && privacyDisabled ) {

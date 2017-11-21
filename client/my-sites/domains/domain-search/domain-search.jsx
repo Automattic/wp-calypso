@@ -89,7 +89,7 @@ class DomainSearch extends Component {
 			cartItems.domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug,
-				extra: { privacy_available: suggestion.supports_privacy },
+				extra: { private_registration_product_purchase_allowed: suggestion.supports_privacy },
 			} ),
 		];
 

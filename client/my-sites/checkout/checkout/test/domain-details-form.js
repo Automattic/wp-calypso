@@ -61,14 +61,14 @@ describe( 'Domain Details Form', () => {
 		productSlug: 'normal_domain',
 		domain: 'test.test',
 		extra: {
-			privacy_available: true,
+			private_registration_product_purchase_allowed: true,
 		},
 	} );
 
 	const domainProductWithoutPrivacy = domainRegistration( {
 		productSlug: 'unprivate_domain',
 		extra: {
-			privacy_available: false,
+			private_registration_product_purchase_allowed: false,
 		},
 	} );
 

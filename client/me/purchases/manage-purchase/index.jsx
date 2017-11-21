@@ -24,7 +24,7 @@ import CompactCard from 'components/card/compact';
 import config from 'config';
 import {
 	getName,
-	hasPrivacyProtection,
+	hasPrivacyProtectionProduct,
 	isCancelable,
 	isExpired,
 	isExpiring,
@@ -132,7 +132,7 @@ class ManagePurchase extends Component {
 			product_slug: purchase.productSlug,
 		} );
 
-		if ( hasPrivacyProtection( purchase ) ) {
+		if ( hasPrivacyProtectionProduct( purchase ) ) {
 			const privacyItem = cartItems.getRenewalItemFromCartItem(
 				cartItems.domainPrivacyProtection( {
 					domain: purchase.meta,
@@ -290,7 +290,7 @@ class ManagePurchase extends Component {
 
 		if (
 			isExpired( purchase ) ||
-			! hasPrivacyProtection( purchase ) ||
+			! hasPrivacyProtectionProduct( purchase ) ||
 			! getSelectedSite( this.props )
 		) {
 			return null;

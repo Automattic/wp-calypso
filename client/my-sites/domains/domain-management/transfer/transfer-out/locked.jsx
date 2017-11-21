@@ -25,13 +25,13 @@ class Locked extends React.Component {
 	};
 
 	unlockAndRequestTransferCode = () => {
-		const { privateDomain, hasPrivacyProtection } = getSelectedDomain( this.props );
+		const { privacyEnabled, hasPrivacyProtectionProduct } = getSelectedDomain( this.props );
 
 		const options = {
 			siteId: this.props.selectedSite.ID,
 			domainName: this.props.selectedDomainName,
 			unlock: true,
-			disablePrivacy: privateDomain && hasPrivacyProtection,
+			disablePrivacy: privacyEnabled && hasPrivacyProtectionProduct,
 		};
 
 		this.setState( { submitting: true } );
@@ -61,14 +61,14 @@ class Locked extends React.Component {
 
 	render() {
 		const { translate } = this.props;
-		const { privateDomain } = getSelectedDomain( this.props );
+		const { privacyEnabled } = getSelectedDomain( this.props );
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Transfer Domain' ) } />
 				<Card className="transfer-card">
 					<div>
 						<p>
-							{ privateDomain
+							{ privacyEnabled
 								? translate(
 										'To transfer your domain, we must unlock it and remove Privacy Protection. ' +
 											'Your contact information will be publicly available during the transfer period.'

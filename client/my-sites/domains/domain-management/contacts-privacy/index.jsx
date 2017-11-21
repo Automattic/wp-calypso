@@ -39,15 +39,22 @@ class ContactsPrivacy extends React.PureComponent {
 
 		const { translate, whois } = this.props;
 		const domain = getSelectedDomain( this.props );
-		const { hasPrivacyProtection, privateDomain, privacyAvailable, currentUserCanManage } = domain;
-		const contactInformation = privateDomain
+		const {
+			hasPrivacyProtectionProduct,
+			privacyEnabled,
+			privacyProductAvailable,
+			currentUserCanManage,
+		} = domain;
+		const contactInformation = privacyEnabled
 			? findPrivacyServiceWhois( whois.data )
 			: findRegistrantWhois( whois.data );
 
 		return (
 			<Main className="contacts-privacy">
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
-					{ privacyAvailable ? translate( 'Contacts and Privacy' ) : translate( 'Contacts' ) }
+					{ privacyProductAvailable
+						? translate( 'Contacts and Privacy' )
+						: translate( 'Contacts' ) }
 				</Header>
 
 				<VerticalNav>
@@ -55,9 +62,9 @@ class ContactsPrivacy extends React.PureComponent {
 						contactInformation={ contactInformation }
 						selectedDomainName={ this.props.selectedDomainName }
 						selectedSite={ this.props.selectedSite }
-						hasPrivacyProtection={ hasPrivacyProtection }
-						privateDomain={ privateDomain }
-						privacyAvailable={ privacyAvailable }
+						hasPrivacyProtectionProduct={ hasPrivacyProtectionProduct }
+						privacyEnabled={ privacyEnabled }
+						privacyProductAvailable={ privacyProductAvailable }
 						currentUserCanManage={ currentUserCanManage }
 					/>
 
@@ -70,8 +77,8 @@ class ContactsPrivacy extends React.PureComponent {
 						{ translate( 'Edit Contact Info' ) }
 					</VerticalNavItem>
 
-					{ ! hasPrivacyProtection &&
-						privacyAvailable && (
+					{ ! hasPrivacyProtectionProduct &&
+						privacyProductAvailable && (
 							<VerticalNavItem
 								path={ domainManagementPrivacyProtection(
 									this.props.selectedSite.slug,

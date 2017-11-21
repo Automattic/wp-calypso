@@ -23,7 +23,7 @@ import {
 } from 'state/purchases/selectors';
 import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
+import { hasPrivacyProtectionProduct, isRefundable } from 'lib/purchases';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import notices from 'notices';
@@ -77,7 +77,7 @@ class CancelPrivacyProtection extends Component {
 		const { selectedSite } = props,
 			purchase = getPurchase( props );
 
-		return selectedSite && purchase && hasPrivacyProtection( purchase );
+		return selectedSite && purchase && hasPrivacyProtectionProduct( purchase );
 	};
 
 	cancel = event => {

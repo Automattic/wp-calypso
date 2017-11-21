@@ -67,7 +67,7 @@ state.sites.domains = {
 				expiry: setMomentType,
 				expirySoon: Boolean,
 				googleAppsSubscription: String,
-				hasPrivacyProtection: Boolean,
+				hasPrivacyProtectionProduct: Boolean,
 				hasRegistration: Boolean,
 				hasZone: Boolean,
 				isPendingIcannVerification: Boolean,
