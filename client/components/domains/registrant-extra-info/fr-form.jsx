@@ -90,11 +90,19 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		} );
 	}
 
-	handleChangeEvent = event => {
+	handleChangeContactEvent = event => {
 		const field = event.target.id;
 		const value = this.sanitizeField( event.target.value, field );
 
 		debug( 'Setting ' + field + ' to ' + value );
+		this.props.updateContactDetailsCache( { [ field ]: value } );
+	};
+
+	handleChangeContactExtraEvent = event => {
+		const field = event.target.id;
+		const value = this.sanitizeField( event.target.value, field );
+
+		debug( 'Setting extra.' + field + ' to ' + value );
 		this.props.updateContactDetailsCache( {
 			extra: { [ field ]: value },
 		} );
@@ -119,7 +127,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 							value="individual"
 							id="registrantType"
 							checked={ 'individual' === registrantType }
-							onChange={ this.handleChangeEvent }
+							onChange={ this.handleChangeContactExtraEvent }
 						/>
 						<span>{ translate( 'An individual' ) }</span>
 					</FormLabel>
@@ -129,7 +137,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 							value="organization"
 							id="registrantType"
 							checked={ 'organization' === registrantType }
-							onChange={ this.handleChangeEvent }
+							onChange={ this.handleChangeContactExtraEvent }
 						/>
 						<span>{ translate( 'A company or organization' ) }</span>
 					</FormLabel>
@@ -191,6 +199,23 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		return (
 			<div>
 				<FormFieldset>
+					<FormLabel className="registrant-extra-info__optional" htmlFor="organization">
+						{ translate( 'Organization Name' ) }
+					</FormLabel>
+					<FormTextInput
+						id="organization"
+						value={ contactDetails.organization }
+						autoCapitalize="off"
+						autoComplete="off"
+						autoCorrect="off"
+						placeholder={ '' }
+						onChange={ this.handleChangeContactEvent }
+						isError={ Boolean( validationErrors.organization ) }
+					/>
+					{ validationErrors.organization && translate( 'Organization field is required' ) }
+				</FormFieldset>
+
+				<FormFieldset>
 					<FormLabel className="registrant-extra-info__optional" htmlFor="registrantVatId">
 						{ translate( 'VAT Number' ) }
 						{ this.renderOptional() }
@@ -202,7 +227,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoComplete="off"
 						autoCorrect="off"
 						placeholder={ translate( 'ex. FRXX123456789' ) }
-						onChange={ this.handleChangeEvent }
+						onChange={ this.handleChangeContactExtraEvent }
 						isError={ Boolean( registrantVatIdValidationMessage ) }
 					/>
 					{ registrantVatIdValidationMessage }
@@ -226,7 +251,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoComplete="off"
 						autoCorrect="off"
 						isError={ Boolean( sirenSiretValidationMessage ) }
-						onChange={ this.handleChangeEvent }
+						onChange={ this.handleChangeContactExtraEvent }
 					/>
 					{ sirenSiretValidationMessage }
 				</FormFieldset>
@@ -249,7 +274,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 							comment: 'ex is short for example. The number is the EU trademark number format.',
 						} ) }
 						isError={ ! isEmpty( trademarkNumberValidationMessage ) }
-						onChange={ this.handleChangeEvent }
+						onChange={ this.handleChangeContactExtraEvent }
 					/>
 					{ trademarkNumberValidationMessage }
 				</FormFieldset>
