@@ -36,7 +36,7 @@ describe( 'actions', () => {
 	};
 
 	describe( '#addStoredCard', () => {
-		const paygateToken = 'pg_1234',
+		const cardToken = 'pg_1234',
 			item = { stored_details_id: 123 };
 		let sandbox;
 
@@ -49,7 +49,7 @@ describe( 'actions', () => {
 				} ),
 			} ) );
 
-			const result = addStoredCard( paygateToken )( spy );
+			const result = addStoredCard( cardToken )( spy );
 
 			return result.then( () => {
 				expect( spy ).to.have.been.calledWith( {
