@@ -7,12 +7,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 const CustomerNotification = ( { item, checked, onToggle } ) => (
-	<div className="components__notification-component">
+	<Card className="components__notification-component">
 		<span className="components__notification-component-title" >
 			<FormLabel>
 				{ item.title }
@@ -21,16 +22,15 @@ const CustomerNotification = ( { item, checked, onToggle } ) => (
 				{ item.subtitle }
 			</FormSettingExplanation>
 		</span>
-		<span className="components__notifcation-component-toggle" >
-			<CompactFormToggle
+		<span className="components__notification-component-toggle">
+		<CompactFormToggle
 				checked={ checked }
 				onChange={ onToggle }
 				id={ item.field }
 			/>
 		</span>
-	</div>
+	</Card>
 );
-
 
 CustomerNotification.propTypes = {
 	checked: PropTypes.bool,

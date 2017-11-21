@@ -36,21 +36,67 @@
 .components__notification-component {
 	display: flex;
 	align-items: center;
+	margin: 0px;
+	padding: 0px;
 }
 
 .components__notification-component-title {
 	min-width: 300px;
 	flex-grow: 0;
-	flex-shrink: 1;
 	padding: 24px;
 }
 
-.components__notification-component-input {
-	width: auto;
+.email-settings__internal-notifications-legend,
+.email-settings__customer-notifications-legend {
+	padding: 0px;
+	display: flex;
+}
+
+.email-settings__customer-notifications-legend-option,
+.email-settings__internal-notifications-legend-option {
+	padding: 12px 24px 12px 24px;
+	min-width: 300px;
 	flex-grow: 1;
+	flex-shrink: 1;
+}
+
+.email-settings__internal-notifications-legend-input {
+	padding: 12px 24px 12px 24px;
+	max-width: 240px;
+	flex-grow: 1;
+	flex-shrink: 1;
+}
+
+
+.components__notification-component-input {
+	max-width: 240px;
+	flex-grow: 1;
+	flex-shrink: 1;
+}
+
+.email-settings__internal-notifications-legend-toggle {
+	text-align: right;
+	padding: 12px 24px 12px 24px;
 }
 
 .components__notification-component-toggle {
-	//float: right;
-	flex-grow: 0;
+	flex-grow: 1;
+	.form-toggle__label {
+		float: right;
+		padding-right: 12px;
+	}
+}
+
+.email-settings__loading-card {
+	margin: 0px 0px 16px 0px;
+	padding-bottom: 0px;
+}
+
+.email-settings__loading {
+	@include placeholder();
+	pointer-events: none;
+	background: $white;
+	height: 14px;
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background-color: lighten( $gray, 25% );
 }

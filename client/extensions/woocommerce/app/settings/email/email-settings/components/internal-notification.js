@@ -7,13 +7,14 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 const InternalNotification = ( { item, recipient, checked, onToggle, onChange } ) => (
-	<div className="components__notification-component">
+	<Card className="components__notification-component">
 		<span className="components__notification-component-title" >
 			<FormLabel>
 				{ item.title }
@@ -35,7 +36,7 @@ const InternalNotification = ( { item, recipient, checked, onToggle, onChange } 
 				id={ item.field }
 			/>
 		</span>
-	</div>
+	</Card>
 );
 
 InternalNotification.propTypes = {

@@ -12,10 +12,6 @@ import { connect } from 'react-redux';
  */
 import { fetchEmailSettings } from 'woocommerce/state/sites/settings/email/actions';
 import {
-<<<<<<< HEAD
-	fetchEmailSettings,
-} from 'woocommerce/state/sites/settings/email/actions';
-=======
 	getEmailSettings,
 	areEmailSettingsLoading,
 	areEmailSettingsLoaded,
@@ -84,7 +80,6 @@ const customerNotifications = [
 		subtitle: translate( 'Sent when an order is marked \'payment refunded\'.' ),
 	},
 ];
->>>>>>> Add first pass of email settings UI
 
 class Settings extends React.Component {
 
@@ -111,13 +106,10 @@ class Settings extends React.Component {
 		undefined;
 	}
 
-<<<<<<< HEAD
-=======
 	recipientsChange = () => {
 		undefined;
 	}
 
->>>>>>> Add first pass of email settings UI
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		const { loading, loaded, settings } = this.props;
@@ -154,35 +146,39 @@ class Settings extends React.Component {
 						</div>
 					</Card>
 					<Card className="email-settings__internal-notifications-legend">
-						<span>
+						<span className="email-settings__internal-notifications-legend-option">
 							Email
 						</span>
-						<span>
+						<span className="email-settings__internal-notifications-legend-input">
 							Recipients (comma separated)
 						</span>
-						<span>
+						<span className="email-settings__internal-notifications-legend-toggle">
 							Enabled
 						</span>
 					</Card>
-					<Card className="email-settings__internal-notifications-settings">
 					{
-							internalNotifications.map( ( item, index ) => {
-								if ( waiting ) {
+						waiting &&
+							<Card className="email-settings__loading-card" >
+								{ internalNotifications.map( ( item, index ) => {
 									return <p key={ index } className="email-settings__loading" />;
-								}
-								return (
-									<InternalNotification
+								} ) }
+							</Card>
+					}
+					{
+						loaded &&
+							<Card className="email-settings__internal-notifications-settings">
+								{ internalNotifications.map( ( item, index ) => {
+									return <InternalNotification
 										key={ index }
 										item={ item }
 										checked={ 'yes' === settings[ item.field ].enabled }
 										recipient={ settings[ item.field ].recipient }
 										onToggle={ this.notificationsToggle }
 										onChange={ this.recipientsChange }
-									/>
-								);
-							} )
-						}
-					</Card>
+									/>;
+								} ) }
+							</Card>
+					}
 				</div>
 				<div className="email-settings__customer-notifications">
 					<Card className="email-settings__customer-notifications-title">
@@ -194,30 +190,34 @@ class Settings extends React.Component {
 						</div>
 					</Card>
 					<Card className="email-settings__customer-notifications-legend">
-						<span>
+						<span className="email-settings__internal-notifications-legend-option">
 							Email
 						</span>
-						<span>
+						<span className="email-settings__internal-notifications-legend-toggle">
 							Enabled
 						</span>
 					</Card>
-					<Card className="email-settings__customer-notifications-settings">
-						{
-							customerNotifications.map( ( item, index ) => {
-								if ( waiting ) {
+					{
+						waiting &&
+							<Card className="email-settings__loading-card" >
+								{ customerNotifications.map( ( item, index ) => {
 									return <p key={ index } className="email-settings__loading" />;
-								}
-								return (
-									<CustomerNotification
+								} ) }
+							</Card>
+					}
+					{
+						loaded &&
+							<Card className="email-settings__customer-notifications-settings">
+								{ customerNotifications.map( ( item, index ) => {
+									return <CustomerNotification
 										key={ index }
 										item={ item }
 										checked={ 'yes' === settings[ item.field ].enabled }
 										onToggle={ this.notificationsToggle }
-									/>
-								);
-							} )
-						}
-					</Card>
+									/>;
+								} ) }
+							</Card>
+					}
 				</div>
 			</div>
 		);
