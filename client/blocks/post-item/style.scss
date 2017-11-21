@@ -107,9 +107,8 @@ a.post-item__title-link:visited {
 }
 
 .post-item__meta {
-	display: flex;
 	font-size: 12px;
-	line-height: 18px;
+	line-height: 14px;
 	color: $gray-text-min;
 }
 
@@ -133,8 +132,9 @@ a.post-item__title-link:visited {
 }
 
 .post-item__post-actions {
-	margin: 0 0 0 12px;
+	margin: 4px 0 0 0;
 	justify-content: flex-start;
+	line-height: 18px;
 
 	.post-actions__item {
 		margin-right: 10px;
@@ -143,6 +143,8 @@ a.post-item__title-link:visited {
 		.like-button__label,
 		.stat-update-indicator {
 			font-size: 12px;
+			min-width: 40px;
+			padding-top: 0;
 		}
 
 		.like-button__like-icons {
