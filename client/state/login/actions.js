@@ -17,6 +17,7 @@ import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS,
+	LOGIN_AUTH_ACCOUNT_TYPE_RESET,
 	LOGIN_FORM_UPDATE,
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
@@ -615,3 +616,12 @@ export const getAuthAccountType = usernameOrEmail => dispatch => {
 
 	return Promise.resolve();
 };
+
+/**
+ * Resets the type of authentication of the account of the current user.
+ *
+ * @return {Object} an action that can be dispatched
+ */
+export const resetAuthAccountType = () => ( {
+	type: LOGIN_AUTH_ACCOUNT_TYPE_RESET,
+} );
