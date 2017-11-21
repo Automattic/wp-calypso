@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { getRequest, getRequestKey } from 'state/data-layer/wpcom-http/utils';
+import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 
 /**
  * Returns meta information about data requests going through the data layer
@@ -12,7 +12,7 @@ import { getRequest, getRequestKey } from 'state/data-layer/wpcom-http/utils';
  * @returns {*} metadata about request
  */
 export default ( state, action ) => {
-	const data = getRequest( state, getRequestKey( action ) );
+	const data = state.dataRequests[ getRequestKey( action ) ] || {};
 
 	return {
 		...data,
