@@ -14,7 +14,7 @@ import createSelector from 'lib/create-selector';
 import { countDiffWords, diffWords } from 'lib/text-utils';
 import getPostRevisions from 'state/selectors/get-post-revisions';
 
-const MAX_DIFF_CONTENT_LENGTH = 20000;
+const MAX_DIFF_CONTENT_LENGTH = 50000;
 
 const diffKey = ( key, obj1, obj2 ) =>
 	map( diffWords( get( obj1, key, '' ), get( obj2, key, '' ) ), change =>
