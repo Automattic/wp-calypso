@@ -6,7 +6,7 @@
 
 import debugModule from 'debug';
 import store from 'store';
-import { assign, find, isEmpty, some } from 'lodash';
+import { assign, find, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -167,28 +167,23 @@ SitesList.prototype.createSiteObject = function( site ) {
 		return Site( site );
 	}
 };
+
 /**
  * Marks collisions between .com sites and Jetpack sites that have the same URL
  * Add the hasConflict attribute to .com sites that collide with Jetpack sites.
  *
  * @api private
  *
+ * @param {Object[]} sites mix of site objects
  */
 SitesList.prototype.markCollisions = function( sites ) {
-	sites.forEach( function( site, index, collisions ) {
-		var hasCollision;
+	const jetpackDomains = new Set();
 
-		if ( ! site.jetpack ) {
-			hasCollision = some( collisions, function( someSite ) {
-				return (
-					someSite.jetpack &&
-					site.ID !== someSite.ID &&
-					withoutHttp( site.URL ) === withoutHttp( someSite.URL )
-				);
-			} );
-			if ( hasCollision ) {
-				site.hasConflict = true;
-			}
+	sites.forEach( site => site.jetpack && jetpackDomains.add( withoutHttp( site.URL ) ) );
+
+	sites.forEach( site => {
+		if ( ! site.jetpack && jetpackDomains.has( withoutHttp( site.URL ) ) ) {
+			site.hasConflict = true;
 		}
 	} );
 };
