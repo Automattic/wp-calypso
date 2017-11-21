@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import tableRows from './table-rows';
+import Button from 'components/button';
 import Card from 'components/card';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
@@ -250,9 +251,7 @@ class BillingReceipt extends React.Component {
 							context: 'transactionService is a website, such as WordPress.com.',
 						} ) }
 					</a>
-					<a href="#" onClick={ this.handlePrintLinkClick } className="button is-secondary">
-						{ translate( 'Print Receipt' ) }
-					</a>
+					<Button onClick={ this.handlePrintLinkClick }>{ translate( 'Print Receipt' ) }</Button>
 				</Card>
 			</div>
 		);
