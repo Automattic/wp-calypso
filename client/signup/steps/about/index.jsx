@@ -26,16 +26,20 @@ import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormInputCheckbox from 'components/forms/form-checkbox';
 
 class AboutStep extends Component {
 	componentWillMount() {
 		this.formStateController = new formState.Controller( {
-			fieldNames: [ 'siteTitle' ],
+			fieldNames: [ 'siteTitle', 'siteGoals' ],
 			validatorFunction: noop,
 			onNewState: this.setFormState,
 			hideFieldErrorsOnChange: true,
 			initialState: {
 				siteTitle: {
+					value: '',
+				},
+				siteGoals: {
 					value: '',
 				},
 			},
@@ -93,28 +97,101 @@ class AboutStep extends Component {
 		goToNextStep();
 	};
 
+	renderGoalCheckboxes() {
+		return (
+			<div className="about__checkboxes">
+				<FormLabel htmlFor="share" className="about__checkbox-option">
+					<FormInputCheckbox
+						name="siteGoals"
+						id="share"
+						onChange={ this.handleChangeEvent }
+						value="Share ideas, experiences, updates, reviews, stories, videos, or photos"
+						className="about__checkbox"
+					/>
+					<span className="about__checkbox-label">
+						Share ideas, experiences, updates, reviews, stories, videos, or photos
+					</span>
+				</FormLabel>
+
+				<FormLabel htmlFor="promote" className="about__checkbox-option">
+					<FormInputCheckbox
+						name="siteGoals"
+						id="promote"
+						onChange={ this.handleChangeEvent }
+						value="Promote your business, skills, organization, or events"
+						className="about__checkbox"
+					/>
+					<span className="about__checkbox-label">
+						Promote your business, skills, organization, or events
+					</span>
+				</FormLabel>
+
+				<FormLabel htmlFor="educate" className="about__checkbox-option">
+					<FormInputCheckbox
+						name="siteGoals"
+						id="educate"
+						onChange={ this.handleChangeEvent }
+						value="Offer education, training, or mentoring"
+						className="about__checkbox"
+					/>
+					<span className="about__checkbox-label">Offer education, training, or mentoring</span>
+				</FormLabel>
+
+				<FormLabel htmlFor="sell" className="about__checkbox-option">
+					<FormInputCheckbox
+						name="siteGoals"
+						id="sell"
+						onChange={ this.handleChangeEvent }
+						value="Sell products or collect payments"
+						className="about__checkbox"
+					/>
+					<span className="about__checkbox-label">Sell products or collect payments</span>
+				</FormLabel>
+
+				<FormLabel htmlFor="showcase" className="about__checkbox-option">
+					<FormInputCheckbox
+						name="siteGoals"
+						id="showcase"
+						onChange={ this.handleChangeEvent }
+						value="Showcase your portfolio"
+						className="about__checkbox"
+					/>
+					<span className="about__checkbox-label">Showcase your portfolio</span>
+				</FormLabel>
+			</div>
+		);
+	}
+
 	renderContent() {
 		const { translate, siteTitle } = this.props;
 
 		return (
-			<form onSubmit={ this.handleSubmit }>
-				<Card>
-					<FormFieldset>
-						<FormLabel htmlFor="siteTitle">What would you like to name your site?</FormLabel>
-						<FormTextInput
-							id="siteTitle"
-							name="siteTitle"
-							placeholder="eg: Mel's Diner, Stevie’s Blog, Vail Renovations"
-							defaultValue={ siteTitle }
-							onChange={ this.handleChangeEvent }
-						/>
-					</FormFieldset>
-				</Card>
+			<div className="about__wrapper">
+				<form onSubmit={ this.handleSubmit }>
+					<Card>
+						<FormFieldset>
+							<FormLabel htmlFor="siteTitle">What would you like to name your site?</FormLabel>
+							<FormTextInput
+								id="siteTitle"
+								name="siteTitle"
+								placeholder="eg: Mel's Diner, Stevie’s Blog, Vail Renovations"
+								defaultValue={ siteTitle }
+								onChange={ this.handleChangeEvent }
+							/>
+						</FormFieldset>
 
-				<Button primary={ true } type="submit">
-					{ translate( 'Continue' ) }
-				</Button>
-			</form>
+						<FormFieldset>
+							<FormLabel>What’s the primary goal you have for your site?</FormLabel>
+							{ this.renderGoalCheckboxes() }
+						</FormFieldset>
+					</Card>
+					<div className="about__submit-wrapper">
+						<Button primary={ true } type="submit">
+							{ translate( 'Continue' ) }
+						</Button>
+					</div>
+				</form>
+			</div>
 		);
 	}
 
