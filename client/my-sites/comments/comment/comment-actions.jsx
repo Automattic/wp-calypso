@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
-import { get, includes, noop } from 'lodash';
+import { get, includes, isUndefined, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -49,6 +49,15 @@ export class CommentActions extends Component {
 
 	static defaultProps = {
 		updateLastUndo: noop,
+	};
+
+	delete = () => {
+		if (
+			isUndefined( window ) ||
+			window.confirm( this.props.translate( 'Delete this comment permanently?' ) )
+		) {
+			this.props.deletePermanently();
+		}
 	};
 
 	hasAction = action => includes( commentActions[ this.props.commentStatus ], action );
@@ -192,7 +201,7 @@ export class CommentActions extends Component {
 					<Button
 						borderless
 						className="comment__action comment__action-delete"
-						onClick={ this.props.deletePermanently }
+						onClick={ this.delete }
 					>
 						<Gridicon icon="trash" />
 						<span>{ translate( 'Delete Permanently' ) }</span>
