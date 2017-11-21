@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import config from 'config';
 import FormLegend from 'components/forms/form-legend';
 
 class FormAnalyticsStores extends Component {
@@ -55,7 +56,7 @@ class FormAnalyticsStores extends Component {
 		return this.renderSettings( settings, disableAll );
 	};
 
-	renderAdvancedSettings = disableAll => {
+	renderEnhancedSettings = disableAll => {
 		const { translate } = this.props;
 		const settings = [
 			{
@@ -97,15 +98,14 @@ class FormAnalyticsStores extends Component {
 
 	render = () => {
 		const { disabled, translate } = this.props;
-
-		// TODO config flag it
+		const showEnhanced = config.get( 'jetpack/google-analytics-for-stores-enhanced' );
 
 		return (
 			<div>
 				<FormLegend>{ translate( 'Basic store analytics' ) }</FormLegend>
 				{ this.renderBasicSettings( disabled ) }
-				<FormLegend>{ translate( 'Advanced store analytics' ) }</FormLegend>
-				{ this.renderAdvancedSettings( disabled ) }
+				{ showEnhanced && <FormLegend>{ translate( 'Enhanced store analytics' ) }</FormLegend> }
+				{ showEnhanced && this.renderEnhancedSettings( disabled ) }
 			</div>
 		);
 	};
