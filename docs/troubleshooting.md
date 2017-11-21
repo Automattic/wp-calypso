@@ -42,18 +42,18 @@ Examples of this error message can look like:
 `client/state/data-layer/wpcom/read/site/post-email-subscriptions/new/test ENOSPC`
 
 
-Build system observes files for modificatio using inotify. By default on some systems the inotify limit is set below to what is actually needed to run Calypso. For example on some Ubuntu distributions it is set to 8192. When this limit is excided the build crashes. 
+Build system observes files for modification using inotify. By default on some systems the inotify limit is set below to what is actually needed to run Calypso. For example on some Ubuntu distributions it is set to 8192. When this limit is excided the build crashes. 
 
 ##### Solution
 
-Solution is provided for Ubuntu. For other distributions please check how to change infotify limit in that distribution documentation.
+Solution is provided for Ubuntu. For other distributions please check how to change inotify limit in that distribution documentation.
 
 To observe number of inotify limit:
 ```
 $ cat /proc/sys/fs/inotify/max_user_watches
 ```
 
-To pernamently change inotify limit:
+To permanently change inotify limit ( Ubuntu and similar only ):
 ```
 $ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
 $ sudo sysctl -p
