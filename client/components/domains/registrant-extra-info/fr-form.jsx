@@ -210,9 +210,10 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCorrect="off"
 						placeholder={ '' }
 						onChange={ this.handleChangeContactEvent }
-						isError={ Boolean( validationErrors.organization ) }
+						isError={ Boolean( contactDetailsValidationErrors.organization ) }
 					/>
-					{ validationErrors.organization && translate( 'Organization field is required' ) }
+					{ contactDetailsValidationErrors.organization &&
+						renderValidationError( translate( 'Organization field is required' ) ) }
 				</FormFieldset>
 
 				<FormFieldset>

@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { isString, reduce, update } from 'lodash';
+import { isEmpty, isString, reduce, update } from 'lodash';
 import validatorFactory from 'is-my-json-valid';
 import debugFactory from 'debug';
 
@@ -74,9 +74,17 @@ export default function validateContactDetails( contactDetails ) {
 				.split( '.' )
 				.slice( 1 );
 
+			// In order to capture the relationship between the organization
+			// and extra.individualType fields, the rule ends up in the root
+			// path.
+			// We've only got one such case at the moment, so we can insert this
+			// hack, but if we need to tell multiple such rules apart, we're
+			// going to need to add a some magic to map schemas to fields
+			const correctedPath = isEmpty( path ) ? [ 'organization' ] : path;
+
 			const appendThisMessage = before => [ ...( before || [] ), ruleNameFromMessage( message ) ];
 
-			return update( accumulatedErrors, path, appendThisMessage );
+			return update( accumulatedErrors, correctedPath, appendThisMessage );
 		},
 		{}
 	);

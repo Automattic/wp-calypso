@@ -55,11 +55,11 @@ describe( 'validateContactDetails', () => {
 				extra: { registrantType: 'organization' },
 			} );
 
-			test( 'should accept an organization data', () => {
+			test( 'should accept an organization', () => {
 				expect( validateContactDetails( organizationDetails ) ).to.eql( {} );
 			} );
 
-			test( 'should be required', () => {
+			test( 'should not be missing', () => {
 				const testDetails = omit( organizationDetails, 'organization' );
 
 				const result = validateContactDetails( testDetails );
