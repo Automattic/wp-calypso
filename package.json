@@ -288,6 +288,6 @@
     "webpack-bundle-analyzer": "2.8.2"
   },
   "optionalDependencies": {
-    "fsevents": "1.1.1"
+    "fsevents": "1.1.3"
   }
 }
