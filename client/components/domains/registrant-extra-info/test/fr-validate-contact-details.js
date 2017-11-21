@@ -49,6 +49,59 @@ describe( 'validateContactDetails', () => {
 		[ '33445848600019' ],
 	];
 
+	describe( 'organization', () => {
+		describe( 'with registrantType: organization', () => {
+			const organizationDetails = Object.assign( {}, contactDetails, {
+				extra: { registrantType: 'organization' },
+			} );
+
+			test( 'should accept an organization data', () => {
+				expect( validateContactDetails( organizationDetails ) ).to.eql( {} );
+			} );
+
+			test( 'should be required', () => {
+				const testDetails = omit( organizationDetails, 'organization' );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.have.property( 'organization' );
+			} );
+
+			test( 'should not be empty', () => {
+				const testDetails = Object.assign( {}, organizationDetails, { organization: '' } );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.have.property( 'organization' );
+			} );
+		} );
+
+		describe( 'with registrantType: individual', () => {
+			const individualDetails = Object.assign( {}, contactDetails, {
+				extra: { registrantType: 'individual' },
+			} );
+
+			test( 'should accept missing organization', () => {
+				const testDetails = omit( individualDetails, 'organization' );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.eql( {} );
+			} );
+
+			test( 'should accept null organization', () => {
+				const testDetails = Object.assign( {}, individualDetails, { organization: '' } );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.eql( {} );
+			} );
+
+			test( 'should accept empty organization', () => {
+				const testDetails = Object.assign( {}, individualDetails, { organization: '' } );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.eql( {} );
+			} );
+		} );
+	} );
+
 	describe( 'SIREN/SIRET', () => {
 		test( 'should accept all real SIRET examples', () => {
 			realSiretNumbers.forEach( ( [ sirenSiret ] ) => {
