@@ -60,7 +60,7 @@ class RemovePurchase extends Component {
 		receiveDeletedSite: PropTypes.func.isRequired,
 		removePurchase: PropTypes.func.isRequired,
 		selectedPurchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool, PropTypes.undefined ] ),
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		setAllSitesSelected: PropTypes.func.isRequired,
 	};
 

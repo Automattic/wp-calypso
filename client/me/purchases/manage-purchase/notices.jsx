@@ -39,7 +39,7 @@ class PurchaseNotice extends Component {
 		isDataLoading: PropTypes.bool,
 		handleRenew: PropTypes.func,
 		selectedPurchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool, PropTypes.undefined ] ),
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		editCardDetailsPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	};
 
