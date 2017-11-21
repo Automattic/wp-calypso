@@ -2,9 +2,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import sinon from 'sinon';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -62,40 +60,30 @@ const SUCCESS_RESPONSE = deepFreeze( {
 } );
 
 describe( 'receiveActivityLog', () => {
-	test( 'should dispatch activity log update action', () => {
-		const dispatch = sinon.spy();
-		receiveActivityLog( { dispatch }, { siteId: SITE_ID }, SUCCESS_RESPONSE );
-		expect( dispatch ).to.have.been.called.once;
-		expect( dispatch.args[ 0 ][ 0 ] )
-			.to.be.an( 'object' )
-			.that.has.keys( [ 'data', 'found', 'query', 'siteId', 'type' ] )
-			.that.includes( {
-				found: 1,
-				type: ACTIVITY_LOG_UPDATE,
-			} );
+	test( 'should return activity log update action', () => {
+		const response = receiveActivityLog( { siteId: SITE_ID }, SUCCESS_RESPONSE );
+		expect( response ).toHaveProperty( 'data' );
+		expect( response ).toHaveProperty( 'query' );
+		expect( response ).toMatchObject( {
+			found: 1,
+			siteId: SITE_ID,
+			type: ACTIVITY_LOG_UPDATE,
+		} );
 	} );
 } );
 
 describe( 'receiveActivityLogError', () => {
-	test( 'should dispatch activity log error action', () => {
-		const dispatch = sinon.spy();
-		receiveActivityLogError( { dispatch } );
-		expect( dispatch ).to.have.been.called.once;
-		expect( dispatch ).to.have.been.calledWith(
+	test( 'should return activity log error action', () =>
+		expect( receiveActivityLogError() ).toEqual(
 			errorNotice( translate( 'Error receiving activity for site.' ), { id: '1' } )
-		);
-	} );
+		) );
 } );
 
 describe( 'handleActivityLogRequest', () => {
-	test( 'should dispatch HTTP action with default when no params are passed', () => {
+	test( 'should return HTTP action with default when no params are passed', () => {
 		const action = activityLogRequest( SITE_ID );
-		const dispatch = sinon.spy();
 
-		handleActivityLogRequest( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( handleActivityLogRequest( action ) ).toMatchObject(
 			http(
 				{
 					apiNamespace: 'wpcom/v2',
@@ -108,7 +96,7 @@ describe( 'handleActivityLogRequest', () => {
 		);
 	} );
 
-	test( 'should dispatch HTTP action with provided parameters', () => {
+	test( 'should return HTTP action with provided parameters', () => {
 		const action = activityLogRequest( SITE_ID, {
 			date_end: 1500300000000,
 			date_start: 1500000000000,
@@ -116,12 +104,8 @@ describe( 'handleActivityLogRequest', () => {
 			name: 'post__published',
 			number: 10,
 		} );
-		const dispatch = sinon.spy();
 
-		handleActivityLogRequest( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( handleActivityLogRequest( action ) ).toMatchObject(
 			http(
 				{
 					apiNamespace: 'wpcom/v2',
@@ -145,12 +129,8 @@ describe( 'handleActivityLogRequest', () => {
 			dateEnd: 1500300000000,
 			dateStart: 1500000000000,
 		} );
-		const dispatch = sinon.spy();
 
-		handleActivityLogRequest( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( handleActivityLogRequest( action ) ).toMatchObject(
 			http(
 				{
 					apiNamespace: 'wpcom/v2',
