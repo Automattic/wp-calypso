@@ -18,7 +18,7 @@ import { LOADING } from 'woocommerce/state/constants';
  * @return {Array} Email settings.
  */
 export const getEmailSettings = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'email' ] );
+	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'email' ], null );
 };
 
 /**

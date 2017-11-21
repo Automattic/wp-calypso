@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import {
 	fetchEmailSettings,
-} from 'woocommerce/state/sites/settings/email/actions.js';
+} from 'woocommerce/state/sites/settings/email/actions';
 
 class Settings extends React.Component {
 
