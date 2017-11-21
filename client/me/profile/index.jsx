@@ -5,31 +5,31 @@
  */
 import React from 'react';
 import createReactClass from 'create-react-class';
-import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import { protectForm } from 'lib/protect-form';
+import Card from 'components/card';
+import EditGravatar from 'blocks/edit-gravatar';
 import formBase from 'me/form-base';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
-import EditGravatar from 'blocks/edit-gravatar';
-import ProfileLinks from 'me/profile-links';
-import userProfileLinks from 'lib/user-profile-links';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import Card from 'components/card';
-import observe from 'lib/mixins/data-observe';
+import FormTextInput from 'components/forms/form-text-input';
 import Main from 'components/main';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import observe from 'lib/mixins/data-observe';
+import ProfileLinks from 'me/profile-links';
+import ReauthRequired from 'me/reauth-required';
 import SectionHeader from 'components/section-header';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import userProfileLinks from 'lib/user-profile-links';
+import { protectForm } from 'lib/protect-form';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:me:profile' );
