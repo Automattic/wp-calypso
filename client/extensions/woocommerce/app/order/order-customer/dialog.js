@@ -66,14 +66,27 @@ class CustomerAddressDialog extends Component {
 		updateAddress: noop,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			address: props.address,
-			phoneCountry: 'US',
-			emailValidMessage: false,
-		};
+	state = {};
+
+	componentDidMount() {
+		this.initializeState();
 	}
+
+	componentDidUpdate( prevProps ) {
+		// Modal was just opened
+		if ( this.props.isVisible && ! prevProps.isVisible ) {
+			this.initializeState();
+		}
+	}
+
+	initializeState = () => {
+		const { address = {} } = this.props;
+		this.setState( {
+			address,
+			phoneCountry: address.country || 'US',
+			emailValidMessage: false,
+		} );
+	};
 
 	updateAddress = () => {
 		this.props.updateAddress( this.state.address );
@@ -176,6 +189,10 @@ class CustomerAddressDialog extends Component {
 	render() {
 		const { isBilling, isVisible, translate } = this.props;
 		const { address, emailValidMessage } = this.state;
+		if ( ! address ) {
+			return null;
+		}
+
 		const dialogButtons = [
 			<Button onClick={ this.closeDialog }>{ translate( 'Close' ) }</Button>,
 			<Button primary onClick={ this.updateAddress } disabled={ !! emailValidMessage }>
