@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import TransactionsTable from './transactions-table';
 import purchasesPaths from 'me/purchases/paths';
+import TransactionsTable from './transactions-table';
 import { isSendingBillingReceiptEmail } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'state/billing-transactions/actions';
