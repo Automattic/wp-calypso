@@ -170,15 +170,9 @@ class GoogleAnalyticsForm extends Component {
 
 				{ showUpgradeNudge ? (
 					<Banner
-						description={
-							siteIsJetpack
-								? translate(
-										"Add your unique tracking ID to monitor your site's performance in Google Analytics."
-									)
-								: translate(
-										"Add your unique tracking ID to monitor your site's performance in Google Analytics."
-									)
-						}
+						description={ translate(
+							"Add your unique tracking ID to monitor your site's performance in Google Analytics."
+						) }
 						event={ 'google_analytics_settings' }
 						feature={ FEATURE_GOOGLE_ANALYTICS }
 						plan={ PLAN_BUSINESS }
