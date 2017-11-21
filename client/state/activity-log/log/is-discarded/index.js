@@ -71,9 +71,8 @@ export const makeIsDiscarded = ( rewinds, viewFrom ) => {
 	return isDiscarded;
 };
 
-export const rewriteStream = ( events, viewFrom = Date.now() ) => {
-	const rewinds = getRewinds( events ).filter( ( [ rp ] ) => rp <= viewFrom );
-	const isDiscarded = makeIsDiscarded( rewinds, viewFrom );
+export const rewriteStream = ( events, rewinds, viewFrom = Date.now() ) => {
+	const isDiscarded = makeIsDiscarded( rewinds.filter( ( [ rp ] ) => rp <= viewFrom ), viewFrom );
 
 	return events.map( event => ( {
 		...event,

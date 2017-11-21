@@ -118,6 +118,7 @@ export getRegistrantWhois from './get-registrant-whois';
 export getRequestedRewind from './get-requested-rewind';
 export getRestoreError from './get-restore-error';
 export getRestoreProgress from './get-restore-progress';
+export getRewindEvents from './get-rewind-events';
 export getBackupProgress from './get-backup-progress';
 export getRequestedBackup from './get-requested-backup';
 export getRewindStartDate from './get-rewind-start-date';
