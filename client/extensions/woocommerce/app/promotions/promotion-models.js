@@ -20,11 +20,10 @@ import {
 	validateAppliesToSingleProduct,
 	validateCouponAppliesTo,
 	validateCouponCode,
+	validateDiscount,
 	validateEndDate,
-	validateFixedDiscount,
 	validateMaximumAmount,
 	validateMinimumAmount,
-	validatePercentDiscount,
 	validateSalePrice,
 	validateStartEndDate,
 	validateUsageLimit,
@@ -202,7 +201,7 @@ const productSaleModel = {
 		},
 	},
 	conditions: {
-		labelText: translate( 'Conditions', { context: 'noun' } ),
+		labelText: translate( 'Conditions', { comment: 'must be met to use coupon' } ),
 		cssClass: 'promotions__promotion-form-card-conditions',
 		fields: {
 			startDate: {
@@ -221,7 +220,7 @@ const productSaleModel = {
  * Conditions for all coupon types.
  */
 const couponConditions = {
-	labelText: translate( 'Conditions', { context: 'noun' } ),
+	labelText: translate( 'Conditions', { comment: 'must be met to use coupon' } ),
 	cssClass: 'promotions__promotion-form-card-conditions',
 	fields: {
 		endDate: {
@@ -294,11 +293,11 @@ const fixedProductModel = {
 			fixedDiscount: {
 				component: (
 					<CurrencyField
-						labelText={ translate( 'Product Discount', { context: 'noun' } ) }
+						labelText={ translate( 'Product Discount', { comment: 'for coupon' } ) }
 						isRequired
 					/>
 				),
-				validate: validateFixedDiscount,
+				validate: validateDiscount,
 			},
 			freeShipping: {
 				component: freeShippingField,
@@ -324,11 +323,11 @@ const fixedCartModel = {
 			fixedDiscount: {
 				component: (
 					<CurrencyField
-						labelText={ translate( 'Cart Discount', { context: 'noun' } ) }
+						labelText={ translate( 'Cart Discount', { comment: 'for coupon' } ) }
 						isRequired
 					/>
 				),
-				validate: validateFixedDiscount,
+				validate: validateDiscount,
 			},
 			freeShipping: {
 				component: freeShippingField,
@@ -354,11 +353,11 @@ const percentCartModel = {
 			percentDiscount: {
 				component: (
 					<PercentField
-						labelText={ translate( 'Percent Cart Discount', { context: 'noun' } ) }
+						labelText={ translate( 'Percent Cart Discount', { comment: 'for coupon' } ) }
 						isRequired
 					/>
 				),
-				validate: validatePercentDiscount,
+				validate: validateDiscount,
 			},
 			freeShipping: {
 				component: freeShippingField,

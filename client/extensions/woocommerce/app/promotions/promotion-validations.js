@@ -22,35 +22,19 @@ export function validateCouponCode( fieldName, promotion, currency, showEmpty ) 
 }
 
 /**
- * Validates a fixed currency discount.
+ * Validates a numeric discount.
  * @param { String } fieldName The field name to be validated.
  * @param { Object } promotion The promotion to be validated.
  * @param { String } currency The currency to be used for validation.
  * @param { bool } showEmpty True if empty fields should result in a validation error.
  * @return { string } Returns a validation error, or undefined if none.
  */
-export function validateFixedDiscount( fieldName, promotion, currency, showEmpty ) {
-	if ( showEmpty && isEmpty( promotion.fixedDiscount ) ) {
+export function validateDiscount( fieldName, promotion, currency, showEmpty ) {
+	const discount = promotion[ fieldName ];
+	if ( showEmpty && isEmpty( discount ) ) {
 		return translate( 'Discount cannot be blank.' );
 	}
-	if ( 0 >= promotion.fixedDiscount ) {
-		return translate( 'Discount must be greater than zero.' );
-	}
-}
-
-/**
- * Validates a percentage discount.
- * @param { String } fieldName The field name to be validated.
- * @param { Object } promotion The promotion to be validated.
- * @param { String } currency The currency to be used for validation.
- * @param { bool } showEmpty True if empty fields should result in a validation error.
- * @return { string } Returns a validation error, or undefined if none.
- */
-export function validatePercentDiscount( fieldName, promotion, currency, showEmpty ) {
-	if ( showEmpty && isEmpty( promotion.percentDiscount ) ) {
-		return translate( 'Add a discount for your customers.' );
-	}
-	if ( 0 >= promotion.percentDiscount ) {
+	if ( 0 >= discount ) {
 		return translate( 'Discount must be greater than zero.' );
 	}
 }
@@ -127,7 +111,6 @@ export function validateEndDate( fieldName, promotion ) {
 		// Field is not enabled.
 		return;
 	}
-
 	if ( isEndDateBeforeStartDate( null, promotion.endDate ) ) {
 		return translate( 'End date cannot be in the past.' );
 	}
@@ -148,11 +131,9 @@ export function validateMinimumAmount( fieldName, promotion, currency, showEmpty
 		// Field is not enabled.
 		return;
 	}
-
 	if ( showEmpty && isEmpty( minimumAmount ) ) {
 		return translate( 'Define a minimum amount.' );
 	}
-
 	if ( null !== minimumAmount ) {
 		if ( 0 >= minimumAmount ) {
 			return translate( 'Amount must be greater than zero.' );
@@ -179,11 +160,9 @@ export function validateMaximumAmount( fieldName, promotion, currency, showEmpty
 		// Field is not enabled.
 		return;
 	}
-
 	if ( showEmpty && isEmpty( maximumAmount ) ) {
 		return translate( 'Amount cannot be blank.' );
 	}
-
 	if ( null !== maximumAmount ) {
 		if ( 0 >= maximumAmount ) {
 			return translate( 'Amount must be greater than zero.' );
@@ -210,11 +189,9 @@ export function validateUsageLimit( fieldName, promotion, currency, showEmpty ) 
 		// Field is not enabled.
 		return;
 	}
-
 	if ( showEmpty && isEmpty( usageLimit ) ) {
 		return translate( 'Number cannot be blank.' );
 	}
-
 	if ( null !== usageLimit ) {
 		if ( 0 >= usageLimit ) {
 			return translate( 'Number must be greater than zero.' );
@@ -241,11 +218,9 @@ export function validateUsageLimitPerUser( fieldName, promotion, currency, showE
 		// Field is not enabled.
 		return;
 	}
-
 	if ( showEmpty && isEmpty( usageLimitPerUser ) ) {
 		return translate( 'Number cannot be blank.' );
 	}
-
 	if ( null !== usageLimitPerUser ) {
 		if ( 0 >= usageLimitPerUser ) {
 			return translate( 'Number must be greater than zero.' );
