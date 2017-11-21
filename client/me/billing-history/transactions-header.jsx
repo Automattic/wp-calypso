@@ -176,7 +176,7 @@ class TransactionsHeader extends React.Component {
 	}
 
 	renderDatePicker( titleKey, titleTranslated, date, analyticsEvent ) {
-		const filter = { date: date };
+		const filter = { date };
 		const currentDate = this.props.filter.date || {};
 		let isSelected;
 
