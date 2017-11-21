@@ -98,6 +98,7 @@ class Plans extends Component {
 			this.autoselectPlan();
 			return true;
 		}
+		return false;
 	};
 
 	handleSkipButtonClick = () => {
