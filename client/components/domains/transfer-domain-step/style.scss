@@ -156,6 +156,7 @@
 
 .transfer-domain-step__lock-status {
 	font-size: 12px;
+	flex-shrink: 0;
 
 	svg {
 		padding-right: 4px;
@@ -170,6 +171,13 @@
 	}
 }
 
+.transfer-domain-step__admin-email {
+	hyphens: auto;
+	overflow-wrap: break-word;
+	word-break: break-word;
+	word-wrap: break-word;
+}
+
 .transfer-domain-step__continue-text {
 	p {
 		color: darken( $gray, 10% );
@@ -181,10 +189,21 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	flex-direction: column;
 
 	button {
 		flex-shrink: 0;
-		margin-left: 15px;
+		margin-top: 15px;
+		width: 100%;
+	}
+
+	@include breakpoint( '>660px' ) {
+		flex-direction: row;
+
+		button {
+			margin: 0 0 0 15px;
+			width: auto;
+		}
 	}
 }
 
