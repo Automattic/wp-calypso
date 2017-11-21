@@ -215,7 +215,7 @@ describe( 'getPostRevisionChanges', () => {
 				{ count: 1, added: true, value: 'of' },
 				{ count: 1, value: ' ' },
 				{ count: 1, removed: true, value: 'title' },
-				{ count: 1, added: true, value: '19961' },
+				{ count: 1, added: true, value: '49961' },
 			],
 		} );
 	} );
