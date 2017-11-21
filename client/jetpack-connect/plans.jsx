@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, isEqual, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -56,7 +56,7 @@ class Plans extends Component {
 	static defaultProps = { siteSlug: '*' };
 
 	componentDidMount() {
-		if ( ! this.maybeRedirect( {}, this.props ) ) {
+		if ( ! this.maybeRedirect( this.props ) ) {
 			this.props.recordTracksEvent( 'calypso_jpc_plans_view', {
 				user: this.props.userId,
 			} );
@@ -64,42 +64,43 @@ class Plans extends Component {
 	}
 
 	componentWillReceiveProps = nextProps => {
-		this.maybeRedirect( this.props, nextProps );
+		const propsToCompare = [
+			'isAutomatedTransfer',
+			'selectedPlan',
+			'isRequestingPlans',
+			'flowType',
+			'hasPlan',
+			'canPurchasePlans',
+			'isCalypsoStartedConnection',
+		];
+
+		if ( ! isEqual( pick( this.props, propsToCompare ), pick( nextProps, propsToCompare ) ) ) {
+			this.maybeRedirect( nextProps );
+		}
 	};
 
-	maybeRedirect = ( prevProps, nextProps ) => {
-		if (
-			prevProps.isAutomatedTransfer !== nextProps.isAutomatedTransfer &&
-			nextProps.isAutomatedTransfer
-		) {
-			this.props.goBackToWpAdmin( nextProps.selectedSite.URL + JETPACK_ADMIN_PATH );
+	maybeRedirect = props => {
+		if ( props.isAutomatedTransfer ) {
+			this.props.goBackToWpAdmin( props.selectedSite.URL + JETPACK_ADMIN_PATH );
 			return true;
 		}
-		if (
-			( prevProps.selectedPlan !== nextProps.selectedPlan ||
-				prevProps.isRequestingPlans !== nextProps.isRequestingPlans ) &&
-			!! nextProps.selectedPlan
-		) {
+		if ( !! props.selectedPlan ) {
 			this.autoselectPlan();
 			return true;
 		}
-		if (
-			( prevProps.flowType !== nextProps.flowType ||
-				prevProps.isRequestingPlans !== nextProps.isRequestingPlans ) &&
-			this.isFlowTypePaid( nextProps.flowType )
-		) {
+		if ( this.isFlowTypePaid( props.flowType ) ) {
 			this.autoselectPlan();
 			return true;
 		}
-		if ( prevProps.hasPlan !== nextProps.hasPlan && nextProps.hasPlan ) {
+		if ( props.hasPlan ) {
 			this.redirect( CALYPSO_PLANS_PAGE );
 			return true;
 		}
-		if ( ! nextProps.canPurchasePlans ) {
-			if ( this.props.isCalypsoStartedConnection ) {
+		if ( ! props.canPurchasePlans ) {
+			if ( props.isCalypsoStartedConnection ) {
 				this.redirect( CALYPSO_REDIRECTION_PAGE );
 			} else {
-				this.redirectToWpAdmin( nextProps );
+				this.redirectToWpAdmin( props );
 			}
 			return true;
 		}
