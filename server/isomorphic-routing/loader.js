@@ -1,6 +1,7 @@
 /** @format */
+
 function getSectionsModule( sections ) {
-	var caseSections = '';
+	let caseSections = '';
 	sections.forEach( function( section ) {
 		if ( section.isomorphic ) {
 			caseSections +=
