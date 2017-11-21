@@ -158,7 +158,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 			{
 				args: { email },
 				components: {
-					strong: <strong />,
+					strong: <strong className="transfer-domain-step__admin-email" />,
 					a: <a href="#" rel="noopener noreferrer" />,
 				},
 			}
