@@ -59,7 +59,7 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 
 .post-item__detail {
 	position: relative;
-	width: 100%;
+	width: calc( 100% - 50px );
 	margin-right: auto;
 	word-break: break-word;
 	word-wrap: break-word;
