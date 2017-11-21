@@ -19,6 +19,9 @@ class StepWrapper extends Component {
 	static propTypes = {
 		shouldHideNavButtons: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
+		hideFormattedHeader: PropTypes.bool,
+		hideBack: PropTypes.bool,
+		hideSkip: PropTypes.bool,
 	};
 
 	renderBack() {
