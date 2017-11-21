@@ -4,7 +4,9 @@ This is an overview of [snapshot testing](https://facebook.github.io/jest/docs/e
 
 ## Broken snapshots
 
-When a snapshot test fails, it just means that a component's rendering has changed. If that was unintended,  then the snapshot test just prevented a bug 😊. However, if the change was intentional, follow these steps to update the snapshot:
+When a snapshot test fails, it just means that a component's rendering has changed. If that was unintended,  then the snapshot test just prevented a bug 😊
+
+However, if the change was intentional, follow these steps to update the snapshot:
 
 1. Run the following to update the snapshots:
    ```sh
