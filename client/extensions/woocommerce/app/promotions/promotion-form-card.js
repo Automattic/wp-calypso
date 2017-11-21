@@ -11,7 +11,10 @@ import classNames from 'classnames';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 
-function renderField( fieldName, fieldComponent, promotion, edit, currency ) {
+function renderField( fieldName, fieldModel, promotion, edit, currency, showEmptyValidationErrors ) {
+	const { component, validate } = fieldModel;
+	const validationError = validate && validate( fieldName, promotion, currency, showEmptyValidationErrors );
+
 	const props = {
 		key: fieldName,
 		value: promotion[ fieldName ],
@@ -19,8 +22,9 @@ function renderField( fieldName, fieldComponent, promotion, edit, currency ) {
 		fieldName,
 		edit,
 		currency,
+		validationErrorText: validationError,
 	};
-	return React.cloneElement( fieldComponent, props );
+	return React.cloneElement( component, props );
 }
 
 const promotionFieldEdit = ( siteId, promotion, editPromotion ) => ( fieldName, newValue ) => {
@@ -37,11 +41,12 @@ const PromotionFormCard = ( {
 	promotion,
 	cardModel,
 	editPromotion,
+	showEmptyValidationErrors,
 } ) => {
 	const edit = promotionFieldEdit( siteId, promotion, editPromotion );
 	const fields = Object.keys( cardModel.fields ).map( ( fieldName ) => {
-		const fieldComponent = cardModel.fields[ fieldName ];
-		return renderField( fieldName, fieldComponent, promotion, edit, currency );
+		const fieldModel = cardModel.fields[ fieldName ];
+		return renderField( fieldName, fieldModel, promotion, edit, currency, showEmptyValidationErrors );
 	} );
 
 	const classes = classNames(
@@ -71,6 +76,7 @@ PromotionFormCard.PropTypes = {
 		labelText: PropTypes.string.isRequired,
 		fields: PropTypes.object.isRequired,
 	} ).isRequired,
+	showEmptyValidationErrors: PropTypes.bool,
 };
 
 export default PromotionFormCard;
