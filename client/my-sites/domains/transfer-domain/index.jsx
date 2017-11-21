@@ -77,6 +77,12 @@ export class TransferDomain extends Component {
 			} )
 		);
 
+		upgradesActions.addItem(
+			cartItems.domainTransferPrivacy( {
+				domain,
+			} )
+		);
+
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
