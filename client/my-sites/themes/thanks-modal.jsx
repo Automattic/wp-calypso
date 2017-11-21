@@ -172,7 +172,11 @@ class ThanksModal extends Component {
 			? translate( 'Customize site' )
 			: translate( 'Activating theme…' );
 		const buttons = [
-			{ action: 'learn', label: translate( 'Learn this theme' ), onClick: this.learnThisTheme },
+			{
+				action: 'learn',
+				label: translate( 'Learn about this theme' ),
+				onClick: this.learnThisTheme,
+			},
 			{
 				action: 'customizeSite',
 				label: customizeSiteText,
