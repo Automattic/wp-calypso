@@ -11,15 +11,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import tableRows from './table-rows';
 import Button from 'components/button';
 import Card from 'components/card';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
 import DocumentHead from 'components/data/document-head';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import purchasesPaths from 'me/purchases/paths';
+import QueryBillingTransactions from 'components/data/query-billing-transactions';
+import tableRows from './table-rows';
 import { getPastBillingTransaction, getPastBillingTransactions } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
