@@ -16,7 +16,7 @@ import { localize } from 'i18n-calypso';
 
 import analytics from 'lib/analytics';
 import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection';
+import HappychatConnection from 'components/happychat/connection-connected';
 import { isEnabled } from 'config';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
