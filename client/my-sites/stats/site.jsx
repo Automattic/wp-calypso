@@ -131,7 +131,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					<ChecklistBanner task={ { id: 'task-id', title: 'Title', description: 'Description' } } />
+					<ChecklistBanner />
 					<ChartTabs
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
