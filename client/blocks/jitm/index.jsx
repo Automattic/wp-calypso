@@ -36,6 +36,7 @@ export const JITM = ( {
 			onDismiss={ onDismiss( currentSite.ID, id, featureClass ) }
 			event={ `jitm_nudge_click_${ id }` }
 			href={ `https://jetpack.com/redirect/?source=jitm-${ id }&site=${ currentSite.domain }` }
+			target={ '_blank' }
 		/>
 	);
 
