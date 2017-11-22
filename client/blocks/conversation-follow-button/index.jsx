@@ -7,7 +7,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
+import { assign, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -16,7 +16,8 @@ import { connect } from 'react-redux';
 import ConversationFollowButton from './button';
 import { isFollowingReaderConversation } from 'state/selectors';
 import { followConversation, muteConversation } from 'state/reader/conversations/actions';
-import { recordTrackForPost } from 'reader/stats';
+import { getTracksPropertiesForPost } from 'reader/stats';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ConversationFollowButtonContainer extends Component {
 	static propTypes = {
@@ -35,15 +36,18 @@ class ConversationFollowButtonContainer extends Component {
 	handleFollowToggle = isRequestingFollow => {
 		const { siteId, postId, post, followSource } = this.props;
 
+		const tracksProperties = assign( getTracksPropertiesForPost( post ), {
+			follow_source: followSource,
+		} );
+
 		if ( isRequestingFollow ) {
-			recordTrackForPost( 'calypso_reader_conversations_post_followed', post, {
-				follow_source: followSource,
-			} );
+			this.props.recordTracksEvent(
+				'calypso_reader_conversations_post_followed',
+				tracksProperties
+			);
 			this.props.followConversation( { siteId, postId } );
 		} else {
-			recordTrackForPost( 'calypso_reader_conversations_post_muted', post, {
-				follow_source: followSource,
-			} );
+			this.props.recordTracksEvent( 'calypso_reader_conversations_post_muted', tracksProperties );
 			this.props.muteConversation( { siteId, postId } );
 		}
 
@@ -72,5 +76,6 @@ export default connect(
 	{
 		followConversation,
 		muteConversation,
+		recordTracksEvent,
 	}
 )( ConversationFollowButtonContainer );
