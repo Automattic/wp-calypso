@@ -23,9 +23,10 @@
 		&.is-right {
 			flex-direction: row;
 			text-align: left;
-			align-items: center;
 
 			.dashboard-widget__content {
+				align-items: center;
+
 				@include breakpoint( ">660px" ) {
 					flex-direction: row;
 					justify-content: space-between;
