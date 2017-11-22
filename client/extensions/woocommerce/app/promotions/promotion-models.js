@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +16,19 @@ import NumberField from './fields/number-field';
 import PercentField from './fields/percent-field';
 import TextField from './fields/text-field';
 import PromotionAppliesToField from './fields/promotion-applies-to-field';
+import {
+	validateAppliesToSingleProduct,
+	validateCouponAppliesTo,
+	validateCouponCode,
+	validateDiscount,
+	validateEndDate,
+	validateMaximumAmount,
+	validateMinimumAmount,
+	validateSalePrice,
+	validateStartEndDate,
+	validateUsageLimit,
+	validateUsageLimitPerUser,
+} from './promotion-validations';
 
 /**
  * "Coupon code" field reused for all coupon promotion types.
@@ -49,20 +63,23 @@ const appliesToCoupon = {
 	labelText: translate( 'Applies to' ),
 	cssClass: 'promotions__promotion-form-card-applies-to',
 	fields: {
-		appliesTo: (
-			<PromotionAppliesToField
-				selectionTypes={ [
-					{ labelText: translate( 'All Products' ), type: 'all' },
-					{ labelText: translate( 'Specific Products' ), type: 'productIds' },
-					{ labelText: translate( 'Product Categories' ), type: 'productCategoryIds' },
-				] }
-				// TODO: Remove this text after variable products are supported.
-				explanationText={ translate(
-					'Note: Variable products cannot be selected directly, ' +
-					'only via Product Categories or All Products.'
-				) }
-			/>
-		),
+		appliesTo: {
+			component: (
+				<PromotionAppliesToField
+					selectionTypes={ [
+						{ labelText: translate( 'All Products' ), type: 'all' },
+						{ labelText: translate( 'Specific Products' ), type: 'productIds' },
+						{ labelText: translate( 'Product Categories' ), type: 'productCategoryIds' },
+					] }
+					// TODO: Remove this text after variable products are supported.
+					explanationText={ translate(
+						'Note: Variable products cannot be selected directly, ' +
+						'only via Product Categories or All Products.'
+					) }
+				/>
+			),
+			validate: validateCouponAppliesTo,
+		},
 	},
 };
 
@@ -73,29 +90,31 @@ const appliesWhenCoupon = {
 	labelText: translate( 'Applies when' ),
 	cssClass: 'promotions__promotion-form-card-applies-to',
 	fields: {
-		appliesTo: (
-			<PromotionAppliesToField
-				selectionTypes={ [
-					{
-						labelText: translate( 'Any product is in the cart' ),
-						type: 'all',
-					},
-					{
-						labelText: translate( 'A specific product is in the cart' ),
-						type: 'productIds',
-					},
-					{
-						labelText: translate( 'A product from a specific category is in the cart' ),
-						type: 'productCategoryIds',
-					},
-				] }
-				// TODO: Remove this text after variable products are supported.
-				explanationText={ translate(
-					'Note: Variable products cannot be selected directly, ' +
-					'only via Product Categories or All Products.'
-				) }
-			/>
-		),
+		appliesTo: {
+			component: (
+				<PromotionAppliesToField
+					selectionTypes={ [
+						{
+							labelText: translate( 'Any product is in the cart' ),
+							type: 'all',
+						},
+						{
+							labelText: translate( 'A specific product is in the cart' ),
+							type: 'productIds',
+						},
+						{
+							labelText: translate( 'A product from a specific category is in the cart' ),
+							type: 'productCategoryIds',
+						},
+					] }
+					// TODO: Remove this text after variable products are supported.
+					explanationText={ translate(
+						'Note: Variable products cannot be selected directly, ' +
+						'only via Product Categories or All Products.'
+					) }
+				/>
+			),
+		},
 	},
 };
 
@@ -106,34 +125,19 @@ const appliesToProductSale = {
 	labelText: translate( 'Applies to product' ),
 	cssClass: 'promotions__promotion-form-card-applies-to',
 	fields: {
-		appliesTo: (
-			<PromotionAppliesToField
-				selectionTypes={ [ { type: 'productIds' } ] }
-				singular
-				// TODO: Remove this text after variable products are supported.
-				explanationText={ translate( 'Note: Variable products cannot be selected.' ) }
-			/>
-		),
+		appliesTo: {
+			component: (
+				<PromotionAppliesToField
+					selectionTypes={ [ { type: 'productIds' } ] }
+					singular
+					// TODO: Remove this text after variable products are supported.
+					explanationText={ translate( 'Note: Variable products cannot be selected.' ) }
+				/>
+			),
+			validate: validateAppliesToSingleProduct,
+		},
 	},
 };
-
-/**
- * Checks validition of start date and end date.
- *
- * @param { string } startDateString String form of end date, or null/undefined.
- * @param { string } endDateString String form of end date, or null/undefined.
- * @return { boolean } True if the end date is before the start date, false if not.
- */
-function isEndDateBeforeStartDate( startDateString, endDateString ) {
-	const startDate = startDateString ? new Date( startDateString ) : new Date();
-	const endDate = endDateString ? new Date( endDateString ) : new Date();
-
-	// Clear the times, we only care about days.
-	startDate.setHours( 0, 0, 0, 0 );
-	endDate.setHours( 0, 0, 0, 0 );
-
-	return ( endDate < startDate );
-}
 
 /**
  * Start date condition field
@@ -144,18 +148,10 @@ function isEndDateBeforeStartDate( startDateString, endDateString ) {
  * @return { Object } React component instance.
  */
 const StartDateField = ( props ) => {
-	const { promotion, value } = props;
-	let validationErrorText = null;
-
-	if ( isEndDateBeforeStartDate( value, promotion.endDate ) ) {
-		validationErrorText = translate( 'Start date cannot be after end date.' );
-	}
-
 	return (
 		<DateField
 			labelText={ translate( 'Start Date' ) }
 			isEnableable
-			validationErrorText={ validationErrorText }
 			disabledDays={ [ { before: new Date() } ] }
 			{ ...props }
 		/>
@@ -171,19 +167,13 @@ const StartDateField = ( props ) => {
  * @return { Object } React component instance.
  */
 const EndDateField = ( props ) => {
-	const { promotion, value } = props;
+	const { promotion } = props;
 	const startDate = promotion.startDate ? new Date( promotion.startDate ) : new Date();
-	let validationErrorText = null;
-
-	if ( isEndDateBeforeStartDate( startDate, value ) ) {
-		validationErrorText = translate( 'End date cannot be before start date.' );
-	}
 
 	return (
 		<DateField
 			labelText={ translate( 'End Date' ) }
 			isEnableable
-			validationErrorText={ validationErrorText }
 			disabledDays={ [ { before: new Date( startDate ) } ] }
 			{ ...props }
 		/>
@@ -199,20 +189,29 @@ const productSaleModel = {
 		labelText: translate( 'Product & Sale Price' ),
 		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
-			salePrice: (
-				<CurrencyField
-					labelText={ translate( 'Product Sale Price' ) }
-					isRequired
-				/>
-			),
+			salePrice: {
+				component: (
+					<CurrencyField
+						labelText={ translate( 'Product Sale Price' ) }
+						isRequired
+					/>
+				),
+				validate: validateSalePrice,
+			},
 		},
 	},
 	conditions: {
-		labelText: translate( 'Conditions', { context: 'noun' } ),
+		labelText: translate( 'Conditions', { comment: 'must be met to use coupon' } ),
 		cssClass: 'promotions__promotion-form-card-conditions',
 		fields: {
-			startDate: <StartDateField />,
-			endDate: <EndDateField />,
+			startDate: {
+				component: <StartDateField />,
+				validate: validateStartEndDate,
+			},
+			endDate: {
+				component: <EndDateField />,
+				validate: validateStartEndDate,
+			},
 		},
 	},
 };
@@ -221,43 +220,60 @@ const productSaleModel = {
  * Conditions for all coupon types.
  */
 const couponConditions = {
-	labelText: translate( 'Conditions', { context: 'noun' } ),
+	labelText: translate( 'Conditions', { comment: 'must be met to use coupon' } ),
 	cssClass: 'promotions__promotion-form-card-conditions',
 	fields: {
-		endDate: <EndDateField />,
-		minimumAmount: (
-			<CurrencyField
-				labelText={ translate( 'This promotion requires a minimum purchase' ) }
-				isEnableable
-			/>
-		),
-		maximumAmount: (
-			<CurrencyField
-				labelText={ translate( 'Don\'t apply this promotion if the order value exceeds a specific amount' ) }
-				isEnableable
-			/>
-		),
-		usageLimit: (
-			<NumberField
-				labelText={ translate( 'Limit number of times this promotion can be used in total' ) }
-				isEnableable
-				minValue={ 0 }
-			/>
-		),
-		usageLimitPerUser: (
-			<NumberField
-				labelText={ translate( 'Limit total times each customer can use this promotion' ) }
-				isEnableable
-				minValue={ 0 }
-			/>
-		),
-		individualUse: (
-			<FormField
-				labelText={ translate( 'Cannot be combined with any other coupon' ) }
-				isEnableable
-				defaultValue={ true }
-			/>
-		),
+		endDate: {
+			component: <EndDateField />,
+			validate: validateEndDate,
+		},
+		minimumAmount: {
+			component: (
+				<CurrencyField
+					labelText={ translate( 'This promotion requires a minimum purchase' ) }
+					isEnableable
+				/>
+			),
+			validate: validateMinimumAmount,
+		},
+		maximumAmount: {
+			component: (
+				<CurrencyField
+					labelText={ translate( 'Don\'t apply this promotion if the order value exceeds a specific amount' ) }
+					isEnableable
+				/>
+			),
+			validate: validateMaximumAmount,
+		},
+		usageLimit: {
+			component: (
+				<NumberField
+					labelText={ translate( 'Limit number of times this promotion can be used in total' ) }
+					isEnableable
+					minValue={ 0 }
+				/>
+			),
+			validate: validateUsageLimit,
+		},
+		usageLimitPerUser: {
+			component: (
+				<NumberField
+					labelText={ translate( 'Limit total times each customer can use this promotion' ) }
+					isEnableable
+					minValue={ 0 }
+				/>
+			),
+			validate: validateUsageLimitPerUser,
+		},
+		individualUse: {
+			component: (
+				<FormField
+					labelText={ translate( 'Cannot be combined with any other coupon' ) }
+					isEnableable
+					defaultValue={ true }
+				/>
+			),
+		},
 	},
 };
 
@@ -270,14 +286,22 @@ const fixedProductModel = {
 		labelText: translate( 'Coupon Code & Discount' ),
 		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
-			couponCode: couponCodeField,
-			fixedDiscount: (
-				<CurrencyField
-					labelText={ translate( 'Product Discount', { context: 'noun' } ) }
-					isRequired
-				/>
-			),
-			freeShipping: freeShippingField,
+			couponCode: {
+				component: couponCodeField,
+				validate: validateCouponCode,
+			},
+			fixedDiscount: {
+				component: (
+					<CurrencyField
+						labelText={ translate( 'Product Discount', { comment: 'for coupon' } ) }
+						isRequired
+					/>
+				),
+				validate: validateDiscount,
+			},
+			freeShipping: {
+				component: freeShippingField,
+			},
 		},
 	},
 	conditions: couponConditions,
@@ -292,14 +316,22 @@ const fixedCartModel = {
 		labelText: translate( 'Coupon Code & Discount' ),
 		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
-			couponCode: couponCodeField,
-			fixedDiscount: (
-				<CurrencyField
-					labelText={ translate( 'Cart Discount', { context: 'noun' } ) }
-					isRequired
-				/>
-			),
-			freeShipping: freeShippingField,
+			couponCode: {
+				component: couponCodeField,
+				validate: validateCouponCode,
+			},
+			fixedDiscount: {
+				component: (
+					<CurrencyField
+						labelText={ translate( 'Cart Discount', { comment: 'for coupon' } ) }
+						isRequired
+					/>
+				),
+				validate: validateDiscount,
+			},
+			freeShipping: {
+				component: freeShippingField,
+			},
 		},
 	},
 	conditions: couponConditions,
@@ -314,14 +346,22 @@ const percentCartModel = {
 		labelText: translate( 'Coupon Code & Discount' ),
 		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
-			couponCode: couponCodeField,
-			percentDiscount: (
-				<PercentField
-					labelText={ translate( 'Percent Cart Discount', { context: 'noun' } ) }
-					isRequired
-				/>
-			),
-			freeShipping: freeShippingField,
+			couponCode: {
+				component: couponCodeField,
+				validate: validateCouponCode,
+			},
+			percentDiscount: {
+				component: (
+					<PercentField
+						labelText={ translate( 'Percent Cart Discount', { comment: 'for coupon' } ) }
+						isRequired
+					/>
+				),
+				validate: validateDiscount,
+			},
+			freeShipping: {
+				component: freeShippingField,
+			},
 		},
 	},
 	conditions: couponConditions,
@@ -333,7 +373,10 @@ const freeShippingModel = {
 		labelText: translate( 'Coupon' ),
 		cssClass: 'promotions__promotion-form-card-primary',
 		fields: {
-			couponCode: couponCodeField,
+			couponCode: {
+				component: couponCodeField,
+				validate: validateCouponCode,
+			},
 		},
 	},
 	conditions: couponConditions,
@@ -344,10 +387,40 @@ const freeShippingModel = {
  *
  * Note: The keys of this object correspond with promotion.type
  */
-export default {
+const allModels = {
 	product_sale: productSaleModel,
 	fixed_product: fixedProductModel,
 	fixed_cart: fixedCartModel,
 	percent: percentCartModel,
 	free_shipping: freeShippingModel,
 };
+export default allModels;
+
+/**
+ * Validate all fields for the given promotion model.
+ *
+ * @param { Object } promotion The promotion to validate.
+ * @param { String } currency The currency to use for validations.
+ * @param { bool } showEmptyValidationErrors True if empty required fields should be errors.
+ * @return { Object } Validation error strings keyed by their field names.
+ */
+export function validateAll( promotion, currency, showEmptyValidationErrors ) {
+	const promotionModel = allModels[ promotion.type ];
+	const errors = {};
+
+	// Iterate all fields in the model and validate them.
+	// Adding any errors by field name.
+	for ( const cardName in promotionModel ) {
+		const { fields } = promotionModel[ cardName ];
+		for ( const fieldName in fields ) {
+			const { validate } = fields[ fieldName ];
+			const error = validate &&
+				validate( fieldName, promotion, currency, showEmptyValidationErrors );
+			if ( error ) {
+				errors[ fieldName ] = error;
+			}
+		}
+	}
+
+	return ( ! isEmpty( errors ) ? errors : null );
+}

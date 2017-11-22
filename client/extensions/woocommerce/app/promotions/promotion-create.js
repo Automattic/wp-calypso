@@ -30,12 +30,12 @@ import {
 	getPromotionableProducts,
 	getPromotionWithLocalEdits,
 } from 'woocommerce/state/selectors/promotions';
-import { isValidPromotion } from './helpers';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
 import { ProtectFormGuard } from 'lib/protect-form';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { validateAll } from './promotion-models';
 
 class PromotionCreate extends React.Component {
 	static propTypes = {
@@ -62,6 +62,7 @@ class PromotionCreate extends React.Component {
 
 		this.state = {
 			busy: false,
+			saveAttempted: false,
 		};
 	}
 
@@ -106,9 +107,24 @@ class PromotionCreate extends React.Component {
 	}
 
 	onSave = () => {
-		const { site, promotion, translate } = this.props;
+		const { site, promotion, currency, translate } = this.props;
+		const validatingPromotion = promotion || { type: 'fixed_product' };
+		const errors = validateAll( validatingPromotion, currency, true );
 
-		this.setState( () => ( { busy: true } ) );
+		if ( errors ) {
+			this.setState( () => ( { busy: false, saveAttempted: true } ) );
+			this.props.errorNotice(
+				translate(
+					'There is missing or invalid information. Please correct the highlighted fields and try again.'
+				),
+				{
+					duration: 8000,
+				}
+			);
+			return;
+		}
+
+		this.setState( () => ( { busy: true, saveAttempted: true } ) );
 
 		const getSuccessNotice = () => {
 			return successNotice(
@@ -162,17 +178,14 @@ class PromotionCreate extends React.Component {
 			products,
 			productCategories,
 		} = this.props;
-		const { busy } = this.state;
-
-		const isValid = 'undefined' !== typeof site && isValidPromotion( promotion );
-		const saveEnabled = isValid && ! busy && hasEdits;
+		const { saveAttempted, busy } = this.state;
 
 		return (
 			<Main className={ className }>
 				<PromotionHeader
 					site={ site }
 					promotion={ promotion }
-					onSave={ saveEnabled ? this.onSave : false }
+					onSave={ this.onSave }
 					isBusy={ busy }
 				/>
 				<ProtectFormGuard isChanged={ hasEdits } />
@@ -183,6 +196,7 @@ class PromotionCreate extends React.Component {
 					editPromotion={ this.props.editPromotion }
 					products={ products }
 					productCategories={ productCategories }
+					showEmptyValidationErrors={ saveAttempted }
 				/>
 			</Main>
 		);
@@ -213,6 +227,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			editPromotion,
+			errorNotice,
 			clearPromotionEdits,
 			createPromotion,
 			fetchProductCategories,

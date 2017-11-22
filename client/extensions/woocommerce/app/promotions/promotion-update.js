@@ -35,11 +35,11 @@ import {
 	getPromotionWithLocalEdits,
 	getPromotionableProducts,
 } from 'woocommerce/state/selectors/promotions';
-import { isValidPromotion } from './helpers';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
 import { ProtectFormGuard } from 'lib/protect-form';
 import { recordTrack } from 'woocommerce/lib/analytics';
+import { validateAll } from './promotion-models';
 
 class PromotionUpdate extends React.Component {
 	static propTypes = {
@@ -69,6 +69,7 @@ class PromotionUpdate extends React.Component {
 
 		this.state = {
 			busy: false,
+			saveAttempted: false,
 		};
 	}
 
@@ -143,9 +144,24 @@ class PromotionUpdate extends React.Component {
 	};
 
 	onSave = () => {
-		const { site, promotion, edits, translate } = this.props;
+		const { site, promotion, edits, currency, translate } = this.props;
+		const validatingPromotion = promotion || { type: 'fixed_product' };
+		const errors = validateAll( validatingPromotion, currency, true );
 
-		this.setState( () => ( { busy: true } ) );
+		if ( errors ) {
+			this.setState( () => ( { busy: false, saveAttempted: true } ) );
+			this.props.errorNotice(
+				translate(
+					'There is missing or invalid information. Please correct the highlighted fields and try again.'
+				),
+				{
+					duration: 8000,
+				}
+			);
+			return;
+		}
+
+		this.setState( () => ( { busy: true, saveAttempted: true } ) );
 
 		const getSuccessNotice = () => {
 			return successNotice(
@@ -161,7 +177,7 @@ class PromotionUpdate extends React.Component {
 		const successAction = dispatch => {
 			this.props.clearPromotionEdits( site.ID );
 			dispatch( getSuccessNotice( promotion ) );
-			this.setState( () => ( { busy: false } ) );
+			this.setState( () => ( { busy: false, saveAttempted: false } ) );
 		};
 
 		const failureAction = dispatch => {
@@ -177,7 +193,7 @@ class PromotionUpdate extends React.Component {
 
 		this.props.updatePromotion( site.ID, promotion, successAction, failureAction );
 
-		const edited_fields = difference( Object.keys( edits ), [ 'id', 'name', 'type' ] ).join();
+		const edited_fields = difference( Object.keys( edits || {} ), [ 'id', 'name', 'type' ] ).join();
 		recordTrack( 'calypso_woocommerce_promotion_update', {
 			edited_fields,
 			type: promotion.type,
@@ -199,10 +215,7 @@ class PromotionUpdate extends React.Component {
 			productCategories,
 			hasEdits,
 		} = this.props;
-		const { busy } = this.state;
-
-		const isValid = 'undefined' !== typeof site && isValidPromotion( promotion );
-		const saveEnabled = isValid && ! busy && hasEdits;
+		const { saveAttempted, busy } = this.state;
 
 		return (
 			<Main className={ className }>
@@ -210,7 +223,7 @@ class PromotionUpdate extends React.Component {
 					site={ site }
 					promotion={ promotion }
 					onTrash={ this.onTrash }
-					onSave={ saveEnabled ? this.onSave : false }
+					onSave={ this.onSave }
 					isBusy={ busy }
 				/>
 				<ProtectFormGuard isChanged={ hasEdits } />
@@ -221,6 +234,7 @@ class PromotionUpdate extends React.Component {
 					editPromotion={ this.props.editPromotion }
 					products={ products }
 					productCategories={ productCategories }
+					showEmptyValidationErrors={ saveAttempted }
 				/>
 			</Main>
 		);
@@ -253,6 +267,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			editPromotion,
+			errorNotice,
 			clearPromotionEdits,
 			fetchSettingsGeneral,
 			fetchPromotions,

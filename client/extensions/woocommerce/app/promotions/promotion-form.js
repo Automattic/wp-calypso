@@ -36,6 +36,7 @@ export default class PromotionForm extends React.PureComponent {
 		editPromotion: PropTypes.func.isRequired,
 		products: PropTypes.array,
 		productCategories: PropTypes.array,
+		showEmptyValidationErrors: PropTypes.bool,
 	};
 
 	calculatePromotionName = ( promotion ) => {
@@ -62,7 +63,7 @@ export default class PromotionForm extends React.PureComponent {
 	}
 
 	renderFormCards( promotion ) {
-		const { siteId, currency } = this.props;
+		const { siteId, currency, showEmptyValidationErrors } = this.props;
 		const model = promotionModels[ promotion.type ];
 		const editPromotion = this.editPromotionWithNameUpdate;
 
@@ -80,6 +81,7 @@ export default class PromotionForm extends React.PureComponent {
 					currency,
 					promotion,
 					editPromotion,
+					showEmptyValidationErrors,
 				} } />
 			);
 		} );
