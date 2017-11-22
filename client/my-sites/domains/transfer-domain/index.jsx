@@ -71,11 +71,21 @@ export class TransferDomain extends Component {
 
 		this.setState( { errorMessage: null } );
 
-		upgradesActions.addItem(
+		const transferItems = [];
+
+		transferItems.push(
 			cartItems.domainTransfer( {
 				domain,
 			} )
 		);
+
+		transferItems.push(
+			cartItems.domainTransferPrivacy( {
+				domain,
+			} )
+		);
+
+		upgradesActions.addItems( transferItems );
 
 		page( '/checkout/' + selectedSiteSlug );
 	};

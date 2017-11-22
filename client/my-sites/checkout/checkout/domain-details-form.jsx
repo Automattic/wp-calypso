@@ -318,8 +318,11 @@ export class DomainDetailsForm extends PureComponent {
 		return cartItems.hasOnlyDomainRegistrationsWithPrivacySupport( this.props.cart );
 	}
 
-	allDomainRegistrationsHavePrivacy() {
-		return cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0;
+	allDomainItemsHavePrivacy() {
+		return (
+			cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0 &&
+			cartItems.getDomainTransfersWithoutPrivacy( this.props.cart ).length === 0
+		);
 	}
 
 	renderSubmitButton() {
@@ -341,7 +344,7 @@ export class DomainDetailsForm extends PureComponent {
 	renderPrivacySection() {
 		return (
 			<PrivacyProtection
-				allDomainsHavePrivacy={ this.allDomainRegistrationsHavePrivacy() }
+				checkPrivacyRadio={ this.allDomainItemsHavePrivacy() }
 				cart={ this.props.cart }
 				countriesList={ countriesList }
 				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
@@ -588,11 +591,14 @@ export class DomainDetailsForm extends PureComponent {
 			title = this.props.translate( 'Domain Contact Information' );
 		}
 
+		const renderPrivacy =
+			( cartItems.hasDomainRegistration( this.props.cart ) &&
+				this.allDomainRegistrationsSupportPrivacy() ) ||
+			cartItems.hasTransferProduct( this.props.cart );
+
 		return (
 			<div>
-				{ cartItems.hasDomainRegistration( this.props.cart ) &&
-					this.allDomainRegistrationsSupportPrivacy() &&
-					this.renderPrivacySection() }
+				{ renderPrivacy && this.renderPrivacySection() }
 				<PaymentBox currentPage={ this.state.currentStep } classSet={ classSet } title={ title }>
 					{ this.renderCurrentForm() }
 				</PaymentBox>

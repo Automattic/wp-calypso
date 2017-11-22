@@ -64,6 +64,7 @@ const dnsTemplates = {
 
 const domainProductSlugs = {
 	TRANSFER_IN: 'domain_transfer',
+	TRANSFER_IN_PRIVACY: 'domain_transfer_privacy',
 };
 
 export default {
