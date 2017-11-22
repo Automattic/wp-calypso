@@ -71,15 +71,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	jetpackHidePlanIconsOnMobile: {
-		datestamp: '20171031',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'show',
-		allowExistingUsers: true,
-	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',
 		variations: {
