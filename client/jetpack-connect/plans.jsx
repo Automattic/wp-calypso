@@ -230,8 +230,11 @@ class Plans extends Component {
 
 	render() {
 		const {
+			canPurchasePlans,
+			hasPlan,
 			flowType,
 			interval,
+			isAutomatedTransfer,
 			isRtlLayout,
 			notJetpack,
 			selectedPlan,
@@ -243,8 +246,9 @@ class Plans extends Component {
 			this.isFlowTypePaid( flowType ) ||
 			!! selectedPlan ||
 			notJetpack ||
-			! this.props.canPurchasePlans ||
-			this.props.hasPlan
+			! canPurchasePlans ||
+			hasPlan ||
+			isAutomatedTransfer
 		) {
 			return <QueryPlans />;
 		}
