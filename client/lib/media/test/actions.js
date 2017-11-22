@@ -23,6 +23,7 @@ import {
 	DUMMY_URL,
 } from './fixtures';
 import { stubs } from './mocks/lib/wp';
+import { site } from './fixtures/site';
 
 jest.mock( 'lib/media/library-selected-store', () => ( {
 	getAll: () => [ require( './fixtures' ).DUMMY_ITEM ],
@@ -177,7 +178,7 @@ describe( 'MediaActions', () => {
 
 	describe( '#add()', () => {
 		test( 'should accept a single upload', () => {
-			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+			return MediaActions.add( site, DUMMY_UPLOAD ).then( () => {
 				expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
 				expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
 					type: 'CREATE_MEDIA_ITEM',
@@ -186,7 +187,7 @@ describe( 'MediaActions', () => {
 		} );
 
 		test( 'should accept an array of uploads', () => {
-			return MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] ).then( () => {
+			return MediaActions.add( site, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] ).then( () => {
 				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
 				expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
 					type: 'CREATE_MEDIA_ITEM',
@@ -195,7 +196,7 @@ describe( 'MediaActions', () => {
 		} );
 
 		test( 'should accept a file URL', () => {
-			return MediaActions.add( DUMMY_SITE_ID, DUMMY_URL ).then( () => {
+			return MediaActions.add( site, DUMMY_URL ).then( () => {
 				expect( stubs.mediaAddUrls ).to.have.been.calledWithMatch( {}, DUMMY_URL );
 			} );
 		} );
@@ -203,7 +204,7 @@ describe( 'MediaActions', () => {
 		test( 'should accept a FileList of uploads', () => {
 			const uploads = [ DUMMY_UPLOAD, DUMMY_UPLOAD ];
 			uploads.__proto__ = new window.FileList(); // eslint-disable-line no-proto
-			return MediaActions.add( DUMMY_SITE_ID, uploads ).then( () => {
+			return MediaActions.add( site, uploads ).then( () => {
 				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
 				expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
 					type: 'CREATE_MEDIA_ITEM',
@@ -212,7 +213,7 @@ describe( 'MediaActions', () => {
 		} );
 
 		test( 'should accept a Blob object wrapper and pass it as "file" parameter', () => {
-			return MediaActions.add( DUMMY_SITE_ID, DUMMY_BLOB_UPLOAD ).then( () => {
+			return MediaActions.add( site, DUMMY_BLOB_UPLOAD ).then( () => {
 				expect( stubs.mediaAdd ).to.have.been.calledWithMatch( {}, { file: DUMMY_BLOB_UPLOAD } );
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 					type: 'RECEIVE_MEDIA_ITEM',
@@ -224,7 +225,7 @@ describe( 'MediaActions', () => {
 		} );
 
 		test( 'should call to the WordPress.com REST API', () => {
-			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+			return MediaActions.add( site, DUMMY_UPLOAD ).then( () => {
 				expect( stubs.mediaAdd ).to.have.been.calledWithMatch( {}, DUMMY_UPLOAD );
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 					type: 'RECEIVE_MEDIA_ITEM',
@@ -236,7 +237,7 @@ describe( 'MediaActions', () => {
 		} );
 
 		test( 'should immediately receive a transient object', () => {
-			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+			return MediaActions.add( site, DUMMY_UPLOAD ).then( () => {
 				expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
 					type: 'CREATE_MEDIA_ITEM',
 					data: {
@@ -251,7 +252,7 @@ describe( 'MediaActions', () => {
 		test( 'should attach file upload to a post if one is being edited', () => {
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
-			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+			return MediaActions.add( site, DUMMY_UPLOAD ).then( () => {
 				expect( stubs.mediaAdd ).to.have.been.calledWithMatch(
 					{},
 					{
@@ -265,7 +266,7 @@ describe( 'MediaActions', () => {
 		test( 'should attach URL upload to a post if one is being edited', () => {
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
-			return MediaActions.add( DUMMY_SITE_ID, DUMMY_URL ).then( () => {
+			return MediaActions.add( site, DUMMY_URL ).then( () => {
 				expect( stubs.mediaAddUrls ).to.have.been.calledWithMatch(
 					{},
 					{
@@ -283,7 +284,7 @@ describe( 'MediaActions', () => {
 			Dispatcher.handleServerAction.restore();
 			sandbox.stub( Dispatcher, 'handleServerAction' ).throws();
 
-			return MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] )
+			return MediaActions.add( site, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] )
 				.then( () => {
 					expect( Dispatcher.handleServerAction ).to.have.thrown;
 				} )
@@ -295,7 +296,7 @@ describe( 'MediaActions', () => {
 
 	describe( '#addExternal()', () => {
 		test( 'should accept an upload', () => {
-			return MediaActions.addExternal( DUMMY_SITE_ID, [ DUMMY_UPLOAD ], 'external' ).then( () => {
+			return MediaActions.addExternal( site, [ DUMMY_UPLOAD ], 'external' ).then( () => {
 				expect( stubs.mediaAddExternal ).to.have.been.calledWithMatch( 'external', [
 					DUMMY_UPLOAD.guid,
 				] );

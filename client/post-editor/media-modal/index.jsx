@@ -163,14 +163,14 @@ export class EditorMediaModal extends Component {
 				// Copy the selected item from the external source. Note we pass the actual media data as we need this to generate
 				// transient placeholders. This is done after the state changes so our transients and external items appear
 				// in the WordPress library that we've just switched to
-				MediaActions.addExternal( site.ID, selectedMedia, originalSource );
+				MediaActions.addExternal( site, selectedMedia, originalSource );
 			}
 		);
 	}
 
 	copyExternal( selectedMedia, originalSource ) {
 		const { site } = this.props;
-		MediaActions.addExternal( site.ID, selectedMedia, originalSource );
+		MediaActions.addExternal( site, selectedMedia, originalSource );
 	}
 
 	confirmSelection = () => {
