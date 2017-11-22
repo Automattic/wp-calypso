@@ -4,6 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -12,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
-
+import { abtest } from 'lib/abtest';
 /**
  * Constants
  */
@@ -45,8 +46,13 @@ class JetpackPlansGrid extends Component {
 	}
 
 	render() {
+		const hiddenForAll = abtest( 'jetpackHidePlanIconsForAllDevices' ) === 'hide';
+		const mainClassName = classNames( 'jetpack-connect__hide-plan-icons', {
+			'jetpack-connect__hide-plan-icons-large': hiddenForAll,
+		} );
+
 		return (
-			<Main wideLayout className="jetpack-connect__hide-plan-icons">
+			<Main wideLayout className={ mainClassName }>
 				<div className="jetpack-connect__plans">
 					{ this.renderConnectHeader() }
 					<div id="plans">
