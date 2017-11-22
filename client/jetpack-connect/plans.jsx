@@ -86,11 +86,7 @@ class Plans extends Component {
 			this.props.goBackToWpAdmin( props.selectedSite.URL + JETPACK_ADMIN_PATH );
 			return true;
 		}
-		if ( !! props.selectedPlan ) {
-			this.autoselectPlan();
-			return true;
-		}
-		if ( this.isFlowTypePaid( props.flowType ) ) {
+		if ( this.hasPreSelectedPlan( props ) ) {
 			this.autoselectPlan();
 			return true;
 		}
@@ -136,6 +132,14 @@ class Plans extends Component {
 	redirect( path ) {
 		page.redirect( path + this.props.selectedSiteSlug );
 		this.props.completeFlow();
+	}
+
+	hasPreSelectedPlan( props ) {
+		if ( this.isFlowTypePaid( props.flowType ) ) {
+			return true;
+		}
+
+		return !! props.selectedPlan;
 	}
 
 	autoselectPlan() {
@@ -232,19 +236,16 @@ class Plans extends Component {
 		const {
 			canPurchasePlans,
 			hasPlan,
-			flowType,
 			interval,
 			isAutomatedTransfer,
 			isRtlLayout,
 			notJetpack,
-			selectedPlan,
 			selectedSite,
 			translate,
 		} = this.props;
 
 		if (
-			this.isFlowTypePaid( flowType ) ||
-			!! selectedPlan ||
+			this.hasPreSelectedPlan( this.props ) ||
 			notJetpack ||
 			! canPurchasePlans ||
 			hasPlan ||
