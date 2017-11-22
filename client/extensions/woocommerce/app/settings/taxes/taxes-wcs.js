@@ -31,22 +31,23 @@ import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import { fetchTaxSettings, updateTaxSettings } from 'woocommerce/state/sites/settings/tax/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import Main from 'components/main';
-import TaxSettingsSaveButton from './save-button';
+import { ProtectFormGuard } from 'lib/protect-form';
 import SettingsNavigation from '../navigation';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import StoreAddress from 'woocommerce/components/store-address';
 import TaxesOptions from './taxes-options';
 import TaxesRates from './taxes-rates';
+import TaxSettingsSaveButton from './save-button';
 
 class SettingsTaxesWooCommerceServices extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
+			hasEdits: false,
 			isSaving: false,
 			pricesIncludeTaxes: props.pricesIncludeTaxes,
 			shippingIsTaxable: props.shippingIsTaxable,
 			taxesEnabled: props.taxesEnabled,
-			userBeganEditing: false,
 		};
 	}
 
@@ -69,7 +70,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 	};
 
 	componentWillReceiveProps = newProps => {
-		if ( ! this.state.userBeganEditing ) {
+		if ( ! this.state.hasEdits ) {
 			const { siteId } = this.props;
 			const newSiteId = newProps.siteId || null;
 			const oldSiteId = siteId || null;
@@ -86,17 +87,13 @@ class SettingsTaxesWooCommerceServices extends Component {
 	};
 
 	onEnabledChange = () => {
-		this.setState( { taxesEnabled: ! this.state.taxesEnabled, userBeganEditing: true } );
+		this.setState( { taxesEnabled: ! this.state.taxesEnabled, hasEdits: true } );
 	};
 
 	onCheckboxChange = event => {
 		const option = event.target.name;
 		const value = event.target.checked;
-		this.setState( { [ option ]: value, userBeganEditing: true } );
-	};
-
-	pageHasChanges = () => {
-		return this.state.userBeganEditing;
+		this.setState( { [ option ]: value, hasEdits: true } );
 	};
 
 	onSave = ( event, onSuccessExtra ) => {
@@ -106,7 +103,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		this.setState( { isSaving: true } );
 
 		const onSuccess = () => {
-			this.setState( { isSaving: false, userBeganEditing: false } );
+			this.setState( { isSaving: false, hasEdits: false } );
 			if ( onSuccessExtra ) {
 				onSuccessExtra();
 			}
@@ -203,6 +200,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 				{ loaded && this.renderAddress() }
 				{ loaded && this.renderRates() }
 				{ loaded && this.renderOptions() }
+				<ProtectFormGuard isChanged={ this.state.hasEdits } />
 			</Main>
 		);
 	};
