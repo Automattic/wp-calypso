@@ -11,10 +11,11 @@ const child_process = require("child_process");
  * Internal dependencies
  */
 const config = require(path.join(__dirname, "config"));
+const transformsDir = path.join(__dirname, "./transforms");
 
 function getLocalCodemodFileNames() {
 	const jsFiles = fs
-		.readdirSync(path.join(__dirname, "./transforms"))
+		.readdirSync(transformsDir)
 		.filter(filename => filename.endsWith(".js"))
 		.map(name => path.basename(name, ".js")); // strip path and extension from filename
 
@@ -34,8 +35,7 @@ function generateBinArgs(name) {
 	}
 
 	if (getLocalCodemodFileNames().includes(name)) {
-		// Is the codemod a local script defined in bin/codemods/src folder?
-		return [`--transform=./transforms/${name}.js`];
+		return [`--transform=${transformsDir}/${name}.js`];
 	}
 
 	throw new Error(`"${name}" is an unrecognized codemod.`);
