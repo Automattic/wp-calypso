@@ -34,6 +34,7 @@ import {
 	isJetpackSite,
 	siteSupportsGoogleAnalyticsIPAnonymization,
 	siteSupportsGoogleAnalyticsBasicEcommerceTracking,
+	siteSupportsGoogleAnalyticsEnhancedEcommerceTracking,
 } from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -100,6 +101,7 @@ class GoogleAnalyticsForm extends Component {
 			siteIsJetpack,
 			siteSlug,
 			siteSupportsBasicEcommerceTracking,
+			siteSupportsEnhancedEcommerceTracking,
 			siteSupportsIPAnonymization,
 			translate,
 			uniqueEventTracker,
@@ -122,6 +124,10 @@ class GoogleAnalyticsForm extends Component {
 			config.isEnabled( 'jetpack/google-analytics-anonymize-ip' ) &&
 			siteIsJetpack &&
 			siteSupportsIPAnonymization;
+		const showEnhancedAnalyticsForStores =
+			config.isEnabled( 'jetpack/google-analytics-for-stores-enhanced' ) &&
+			siteIsJetpack &&
+			siteSupportsEnhancedEcommerceTracking;
 
 		return (
 			<form id="site-settings" onSubmit={ handleSubmitForm }>
@@ -237,6 +243,7 @@ class GoogleAnalyticsForm extends Component {
 							<FormAnalyticsStores
 								fields={ fields }
 								handleToggleChange={ this.handleToggleChange }
+								showEnhanced={ showEnhancedAnalyticsForStores }
 							/>
 						) }
 						<p>
@@ -292,6 +299,10 @@ const mapStateToProps = state => {
 		state,
 		siteId
 	);
+	const siteSupportsEnhancedEcommerceTracking = siteSupportsGoogleAnalyticsEnhancedEcommerceTracking(
+		state,
+		siteId
+	);
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled =
 		site &&
@@ -310,6 +321,7 @@ const mapStateToProps = state => {
 		jetpackVersionSupportsModule,
 		sitePlugins,
 		siteSupportsBasicEcommerceTracking,
+		siteSupportsEnhancedEcommerceTracking,
 		siteSupportsIPAnonymization,
 	};
 };

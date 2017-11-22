@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import config from 'config';
 import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
@@ -108,8 +107,7 @@ class FormAnalyticsStores extends Component {
 	};
 
 	render = () => {
-		const { disabled, translate } = this.props;
-		const showEnhanced = config.isEnabled( 'jetpack/google-analytics-for-stores-enhanced' );
+		const { disabled, showEnhanced, translate } = this.props;
 
 		return (
 			<div>

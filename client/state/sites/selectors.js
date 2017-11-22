@@ -1069,3 +1069,17 @@ export const siteSupportsGoogleAnalyticsIPAnonymization = ( state, siteId ) => {
 export const siteSupportsGoogleAnalyticsBasicEcommerceTracking = ( state, siteId ) => {
 	return isJetpackMinimumVersion( state, siteId, '5.4-beta3' );
 };
+
+/**
+ * Returns true if the version of Jetpack on the site supports Google Analytics Enhanced eCommerce Tracking.
+ * False otherwise.
+ *
+ * @param {Object} state  Global state tree
+ * @param {Object} siteId Site ID
+ * @return {?Boolean}     Whether site supports the settings.
+ */
+export const siteSupportsGoogleAnalyticsEnhancedEcommerceTracking = ( state, siteId ) => {
+	// TODO - update to correct version (5.6-beta?) when https://github.com/Automattic/jetpack/pull/8182 and
+	// https://github.com/Automattic/jetpack/pull/8198 land
+	return isJetpackMinimumVersion( state, siteId, '5.5' );
+};
