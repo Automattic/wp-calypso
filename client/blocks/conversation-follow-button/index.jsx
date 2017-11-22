@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import ConversationFollowButton from './button';
 import { isFollowingReaderConversation } from 'state/selectors';
 import { followConversation, muteConversation } from 'state/reader/conversations/actions';
+import { recordTrackForPost } from 'reader/stats';
 
 class ConversationFollowButtonContainer extends Component {
 	static propTypes = {
@@ -23,6 +24,8 @@ class ConversationFollowButtonContainer extends Component {
 		postId: PropTypes.number.isRequired,
 		onFollowToggle: PropTypes.func,
 		tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
+		post: PropTypes.object, // for stats only
+		followSource: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -30,11 +33,17 @@ class ConversationFollowButtonContainer extends Component {
 	};
 
 	handleFollowToggle = isRequestingFollow => {
-		const { siteId, postId } = this.props;
+		const { siteId, postId, post, followSource } = this.props;
 
 		if ( isRequestingFollow ) {
+			recordTrackForPost( 'calypso_reader_conversations_post_followed', post, {
+				follow_source: followSource,
+			} );
 			this.props.followConversation( { siteId, postId } );
 		} else {
+			recordTrackForPost( 'calypso_reader_conversations_post_muted', post, {
+				follow_source: followSource,
+			} );
 			this.props.muteConversation( { siteId, postId } );
 		}
 

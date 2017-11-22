@@ -27,6 +27,7 @@ import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
+import { COMMENT_LIST } from 'reader/follow-button/follow-sources';
 
 /**
  * PostCommentList, as the name would suggest, displays a list of comments for a post.
@@ -398,6 +399,8 @@ class PostCommentList extends React.Component {
 						className="comments__conversation-follow-button"
 						siteId={ siteId }
 						postId={ postId }
+						post={ this.props.post }
+						followSource={ COMMENT_LIST }
 					/>
 				) }
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (
