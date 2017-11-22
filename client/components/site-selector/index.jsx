@@ -180,7 +180,7 @@ class SiteSelector extends Component {
 
 	onSiteSelect = ( event, siteId ) => {
 		const handledByHost = this.props.onSiteSelect( siteId );
-		this.props.onClose( event );
+		this.props.onClose( event, siteId );
 
 		const node = ReactDom.findDOMNode( this.refs.selector );
 		if ( node ) {
