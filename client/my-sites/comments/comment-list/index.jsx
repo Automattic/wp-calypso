@@ -546,10 +546,10 @@ export class CommentList extends Component {
 }
 
 const mapStateToProps = ( state, { postId, siteId, status } ) => {
-	const siteCommentsTree = filter( getSiteCommentsTree( state, siteId, status ), {
-		commentParentId: 0,
-	} );
 	const isPostView = !! postId;
+	const siteCommentsTree = isPostView
+		? filter( getSiteCommentsTree( state, siteId, status ), { commentParentId: 0 } )
+		: getSiteCommentsTree( state, siteId, status );
 	const comments = isPostView
 		? map( filter( siteCommentsTree, { postId } ), 'commentId' )
 		: map( siteCommentsTree, 'commentId' );
