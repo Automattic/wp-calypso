@@ -14,11 +14,5 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import Show from '../show';
 
 export function show( context ) {
-	renderWithReduxStore(
-		React.createElement( Show, {
-			context,
-		} ),
-		'primary',
-		context.store
-	);
+	renderWithReduxStore( <Show />, 'primary', context.store );
 }
