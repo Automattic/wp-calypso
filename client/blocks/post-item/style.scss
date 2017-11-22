@@ -59,24 +59,14 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 
 .post-item__detail {
 	position: relative;
-	width: 100%;
+	width: calc( 100% - 50px );
 	margin-right: auto;
+	word-break: break-word;
+	word-wrap: break-word;
 
 	padding: 16px 0;
 	.post-item__card.is-mini & {
 		padding: 12px 0;
-	}
-}
-
-.post-item__info {
-	display: flex;
-	flex-wrap: wrap;
-	overflow: hidden;
-	&::after {
-		@include long-content-fade(
-			$color: $post-item-background-color,
-			$size: 30px
-		);
 	}
 }
 
