@@ -13,6 +13,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import DomainProductPrice from 'components/domains/domain-product-price';
+import Button from 'components/button';
 
 class DomainSuggestion extends React.Component {
 	static propTypes = {
@@ -50,7 +51,13 @@ class DomainSuggestion extends React.Component {
 					{ children }
 					{ ! hidePrice && <DomainProductPrice rule={ priceRule } price={ price } /> }
 				</div>
-				<div className="domain-suggestion__action">{ this.props.buttonContent }</div>
+				<Button
+					borderless
+					onClick={ this.props.onButtonClick }
+					className="domain-suggestion__action"
+				>
+					{ this.props.buttonContent }
+				</Button>
 				<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
 			</div>
 		);
