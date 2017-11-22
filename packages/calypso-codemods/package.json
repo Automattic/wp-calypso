@@ -1,6 +1,6 @@
 {
 	"name": "calypso-codemods",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "jscodeshift transforms used to upgrade calypso code",
 	"main": "./api.js",
 	"bin": {
