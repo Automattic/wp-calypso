@@ -8,7 +8,7 @@ import { findIndex, get, isUndefined, map, omitBy, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+// import analytics from 'lib/analytics';
 import { isEnabled } from 'config';
 import createSelector from 'lib/create-selector';
 import { countDiffWords, diffWords } from 'lib/text-utils';
@@ -48,16 +48,16 @@ const getPostRevisionChanges = createSelector(
 		if ( combinedLength > MAX_DIFF_CONTENT_LENGTH ) {
 			return { ...noChanges, tooLong: true };
 		}
-		const diffStartTime = Date.now();
+		// const diffStartTime = Date.now();
 
 		const title = diffKey( 'title', previousRevision, revision );
 		const content = diffKey( 'content', previousRevision, revision );
 		const summary = countDiffWords( title.concat( content ) );
 
-		const diffEndTime = Date.now();
-		const duration = diffEndTime - diffStartTime;
+		// const diffEndTime = Date.now();
+		// const duration = diffEndTime - diffStartTime;
 
-		analytics.timing.record( 'post-revisions-diff-wait', duration );
+		// analytics.timing.record( 'post-revisions-diff-wait', duration );
 
 		return {
 			content,
