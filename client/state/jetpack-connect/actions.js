@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:jetpack-connect:actions' );
