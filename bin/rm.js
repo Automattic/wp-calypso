@@ -29,7 +29,7 @@ const deleteFolderRecursive = ( dir ) => {
 	if ( 'win32' === os.platform() ) {
 		spawnSync( 'rd', [ '/S', '/Q', path.normalize( dir ) ], { shell: true } );
 	} else {
-		spawnSync( 'rm', [ '-rf', path ] );
+		spawnSync( 'rm', [ '-rf', dir ] );
 	}
 };
 
