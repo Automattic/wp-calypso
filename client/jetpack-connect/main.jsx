@@ -18,11 +18,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteUrlInput from './site-url-input';
-import {
-	getGlobalSelectedPlan,
-	getConnectingSite,
-	getJetpackSiteByUrl,
-} from 'state/jetpack-connect/selectors';
+import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
@@ -33,6 +29,7 @@ import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import untrailingslashit from 'lib/route/untrailingslashit';
+import { retrievePlan } from './cookies';
 import {
 	confirmJetpackInstallStatus,
 	dismissUrl,
@@ -255,7 +252,8 @@ class JetpackConnectMain extends Component {
 	handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
 	getTexts() {
-		const { type, selectedPlan, translate } = this.props;
+		const { type, translate } = this.props;
+		const selectedPlan = retrievePlan();
 
 		if (
 			type === 'pro' ||
@@ -504,7 +502,6 @@ const connectComponent = connect(
 		jetpackConnectSite: getConnectingSite( state ),
 		getJetpackSiteByUrl: url => getJetpackSiteByUrl( state, url ),
 		isRequestingSites: isRequestingSites( state ),
-		selectedPlan: getGlobalSelectedPlan( state ),
 	} ),
 	{
 		confirmJetpackInstallStatus,

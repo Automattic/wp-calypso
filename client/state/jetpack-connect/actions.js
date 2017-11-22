@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:jetpack-connect:actions' );
@@ -33,7 +32,6 @@ import {
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	JETPACK_CONNECT_RETRY_AUTH,
-	JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -541,15 +539,6 @@ export default {
 						error: pick( error, [ 'error', 'status', 'message' ] ),
 					} );
 				} );
-		};
-	},
-	selectPlanInAdvance( planSlug, site ) {
-		return dispatch => {
-			dispatch( {
-				type: JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
-				plan: planSlug,
-				site: site,
-			} );
 		};
 	},
 	completeFlow( site ) {

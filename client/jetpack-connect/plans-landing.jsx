@@ -16,11 +16,11 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import PlansGrid from './plans-grid';
 import PlansSkipButton from './plans-skip-button';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { selectPlanInAdvance } from 'state/jetpack-connect/actions';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import QueryPlans from 'components/data/query-plans';
 import addQueryArgs from 'lib/route/add-query-args';
+import { storePlan } from './cookies';
 
 const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 
@@ -66,7 +66,8 @@ class PlansLanding extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_store_plan', {
 			plan: cartItem ? cartItem.product_slug : 'free',
 		} );
-		this.props.selectPlanInAdvance( cartItem ? cartItem.product_slug : 'free', '*' );
+
+		storePlan( cartItem ? cartItem.product_slug : 'free' );
 
 		setTimeout( () => {
 			page.redirect( redirectUrl );
@@ -128,6 +129,5 @@ export default connect(
 	},
 	{
 		recordTracksEvent,
-		selectPlanInAdvance,
 	}
 )( PlansLanding );
