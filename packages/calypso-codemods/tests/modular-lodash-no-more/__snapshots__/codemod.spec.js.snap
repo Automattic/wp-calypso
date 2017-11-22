@@ -1,6 +1,8 @@
-exports[`test basic.js 0`] = `
-"import { map } from \"lodash\";
-import { zip } from \"lodash\";
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic.js 1`] = `
+"import { map } from \\"lodash\\";
+import { zip } from \\"lodash\\";
 
 "
 `;

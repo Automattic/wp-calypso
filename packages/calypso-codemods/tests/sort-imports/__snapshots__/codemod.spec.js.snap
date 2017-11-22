@@ -1,45 +1,47 @@
-exports[`test incorrect-docblocks.js 0`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`incorrect-docblocks.js 1`] = `
 "/**
  * External dependencies
  */
-import fs from \"fs\";
+import fs from \\"fs\\";
 
 /**
  * Internal dependencies
  */
-import chickenLibrary from \"chicken\";
-import okapiMe from \"okapi-me\";
+import chickenLibrary from \\"chicken\\";
+import okapiMe from \\"okapi-me\\";
 
 function hello() {}
 
 "
 `;
 
-exports[`test only-imports.js 0`] = `
+exports[`only-imports.js 1`] = `
 "/**
  * External dependencies
  */
-import fs from \"fs\";
+import fs from \\"fs\\";
 
 /**
  * Internal dependencies
  */
-import chickenLibrary from \"chicken\";
-import okapiMe from \"okapi-me\";
+import chickenLibrary from \\"chicken\\";
+import okapiMe from \\"okapi-me\\";
 "
 `;
 
-exports[`test with-body.js 0`] = `
+exports[`with-body.js 1`] = `
 "/**
  * External dependencies
  */
-import fs from \"fs\";
+import fs from \\"fs\\";
 
 /**
  * Internal dependencies
  */
-import chickenLibrary from \"chicken\";
-import okapiMe from \"okapi-me\";
+import chickenLibrary from \\"chicken\\";
+import okapiMe from \\"okapi-me\\";
 
 const x = 5;
 "

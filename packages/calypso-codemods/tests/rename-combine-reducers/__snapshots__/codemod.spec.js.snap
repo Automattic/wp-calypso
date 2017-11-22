@@ -1,5 +1,7 @@
-exports[`test basic.js 0`] = `
-"import { combineReducers } from \"state/utils\";
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic.js 1`] = `
+"import { combineReducers } from \\"state/utils\\";
 
 combineReducers({
 	foo,

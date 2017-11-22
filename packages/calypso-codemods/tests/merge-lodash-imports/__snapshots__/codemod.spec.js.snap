@@ -1,13 +1,15 @@
-exports[`test basic.js 0`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic.js 1`] = `
 "/* @format */
-import { map, pick, zip } from \"lodash\";
+import { map, pick, zip } from \\"lodash\\";
 
 "
 `;
 
-exports[`test comments-in-between.js 0`] = `
+exports[`comments-in-between.js 1`] = `
 "// 1 - zippy
-import { map, pick, zip } from \"lodash\";
+import { map, pick, zip } from \\"lodash\\";
 
 "
 `;

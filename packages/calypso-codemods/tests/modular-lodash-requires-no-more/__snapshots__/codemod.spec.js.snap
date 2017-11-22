@@ -1,13 +1,15 @@
-exports[`test basic.js 0`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic.js 1`] = `
 "/**
  * External dependencies
  */
-import { zip as zippy } from \"lodash\";
+import { zip as zippy } from \\"lodash\\";
 
-import { map as mappy } from \"lodash\";
-import { find } from \"lodash\";
+import { map as mappy } from \\"lodash\\";
+import { find } from \\"lodash\\";
 
 "
 `;
 
-exports[`test comments-in-between.js 0`] = `""`;
+exports[`comments-in-between.js 1`] = `""`;
