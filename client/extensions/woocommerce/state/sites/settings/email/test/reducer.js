@@ -29,15 +29,49 @@ describe( 'reducer', () => {
 
 	test( 'should store data from the action', () => {
 		const siteId = 123;
-		const settings = [ {}, {} ];
+		const settings = [
+			{
+				id: 'woocommerce_email_from_name',
+				value: '',
+				group_id: 'email',
+			},
+			{
+				id: 'woocommerce_email_from_address',
+				value: 'test@test.com',
+				group_id: 'email',
+			},
+			{
+				id: 'enabled',
+				value: 'yes',
+				group_id: 'email_new_order',
+			},
+			{
+				id: 'recipient',
+				value: 'admin_1@test.com',
+				group_id: 'email_new_order',
+			},
+		];
+
+		const expectedResult = {
+			email: {
+				woocommerce_email_from_name: '',
+				woocommerce_email_from_address: 'test@test.com',
+			},
+			email_new_order: {
+				enabled: 'yes',
+				recipient: 'admin_1@test.com',
+			},
+		};
+
 		const action = {
 			type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
 			siteId,
 			data: settings,
 		};
+
 		const newState = reducer( {}, action );
 		expect( newState[ siteId ] ).to.exist;
 		expect( newState[ siteId ].settings ).to.exist;
-		expect( newState[ siteId ].settings.email ).to.deep.equal( settings );
+		expect( newState[ siteId ].settings.email ).to.deep.equal( expectedResult );
 	} );
 } );
