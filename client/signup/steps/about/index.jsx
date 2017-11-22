@@ -18,6 +18,8 @@ import formState from 'lib/form-state';
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+import { setSiteGoals } from 'state/signup/steps/site-goals/actions';
+import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 //Form components
@@ -37,10 +39,10 @@ class AboutStep extends Component {
 			hideFieldErrorsOnChange: true,
 			initialState: {
 				siteTitle: {
-					value: '',
+					value: this.props.siteTitle,
 				},
 				siteGoals: {
-					value: '',
+					value: this.props.siteGoals,
 				},
 			},
 		} );
@@ -59,6 +61,31 @@ class AboutStep extends Component {
 		} );
 	};
 
+	checkBoxHandleChange = event => {
+		const fieldValue = formState.getFieldValue( this.state.form, 'siteGoals' );
+		const valuesArray = fieldValue ? fieldValue.split( ',' ) : [];
+
+		if ( valuesArray.indexOf( event.target.value ) === -1 ) {
+			valuesArray.push( event.target.value );
+		} else {
+			valuesArray.splice( valuesArray.indexOf( event.target.value ), 1 );
+		}
+
+		this.formStateController.handleFieldChange( {
+			name: event.target.name,
+			value: valuesArray.join( ',' ),
+		} );
+	};
+
+	isCheckBoxChecked( goal ) {
+		const initialVal = this.props.siteGoals.split( ',' );
+		if ( initialVal.indexOf( goal ) !== -1 ) {
+			return true;
+		}
+
+		return false;
+	}
+
 	handleSubmit = event => {
 		event.preventDefault();
 		const { goToNextStep, stepName, translate } = this.props;
@@ -70,10 +97,11 @@ class AboutStep extends Component {
 
 		//Inputs
 		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
+		const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
 
+		//Site Title
 		if ( siteTitleInput !== '' ) {
 			siteTitleValue = siteTitleInput;
-
 			this.props.setSiteTitle( siteTitleValue );
 			this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
 				field: 'Site title',
@@ -81,6 +109,8 @@ class AboutStep extends Component {
 			} );
 		}
 
+		//Site Goals
+		this.props.setSiteGoals( siteGoalsInput );
 		this.props.setDesignType( designType );
 
 		SignupActions.submitSignupStep(
@@ -104,8 +134,9 @@ class AboutStep extends Component {
 					<FormInputCheckbox
 						name="siteGoals"
 						id="share"
-						onChange={ this.handleChangeEvent }
-						value="Share ideas, experiences, updates, reviews, stories, videos, or photos"
+						onChange={ this.checkBoxHandleChange }
+						defaultChecked={ this.isCheckBoxChecked( 'share' ) }
+						value="share"
 						className="about__checkbox"
 					/>
 					<span className="about__checkbox-label">
@@ -117,8 +148,9 @@ class AboutStep extends Component {
 					<FormInputCheckbox
 						name="siteGoals"
 						id="promote"
-						onChange={ this.handleChangeEvent }
-						value="Promote your business, skills, organization, or events"
+						onChange={ this.checkBoxHandleChange }
+						defaultChecked={ this.isCheckBoxChecked( 'promote' ) }
+						value="promote"
 						className="about__checkbox"
 					/>
 					<span className="about__checkbox-label">
@@ -130,8 +162,9 @@ class AboutStep extends Component {
 					<FormInputCheckbox
 						name="siteGoals"
 						id="educate"
-						onChange={ this.handleChangeEvent }
-						value="Offer education, training, or mentoring"
+						onChange={ this.checkBoxHandleChange }
+						defaultChecked={ this.isCheckBoxChecked( 'educate' ) }
+						value="educate"
 						className="about__checkbox"
 					/>
 					<span className="about__checkbox-label">Offer education, training, or mentoring</span>
@@ -141,8 +174,9 @@ class AboutStep extends Component {
 					<FormInputCheckbox
 						name="siteGoals"
 						id="sell"
-						onChange={ this.handleChangeEvent }
-						value="Sell products or collect payments"
+						onChange={ this.checkBoxHandleChange }
+						defaultChecked={ this.isCheckBoxChecked( 'sell' ) }
+						value="sell"
 						className="about__checkbox"
 					/>
 					<span className="about__checkbox-label">Sell products or collect payments</span>
@@ -152,8 +186,9 @@ class AboutStep extends Component {
 					<FormInputCheckbox
 						name="siteGoals"
 						id="showcase"
-						onChange={ this.handleChangeEvent }
-						value="Showcase your portfolio"
+						onChange={ this.checkBoxHandleChange }
+						defaultChecked={ this.isCheckBoxChecked( 'showcase' ) }
+						value="showcase"
 						className="about__checkbox"
 					/>
 					<span className="about__checkbox-label">Showcase your portfolio</span>
@@ -217,6 +252,7 @@ class AboutStep extends Component {
 export default connect(
 	state => ( {
 		siteTitle: getSiteTitle( state ),
+		siteGoals: getSiteGoals( state ),
 	} ),
-	{ setSiteTitle, setDesignType, recordTracksEvent }
+	{ setSiteTitle, setDesignType, setSiteGoals, recordTracksEvent }
 )( localize( AboutStep ) );
