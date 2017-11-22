@@ -19,10 +19,16 @@ import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteChecklist } from 'state/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
+import { onboardingTasks } from '../onboardingChecklist';
 
 class ChecklistShow extends PureComponent {
 	render() {
-		const { siteId, translate } = this.props;
+		const { siteId, siteChecklist, translate } = this.props;
+		let tasks = null;
+
+		if ( siteChecklist && siteChecklist.tasks ) {
+			tasks = onboardingTasks( siteChecklist.tasks );
+		}
 
 		return (
 			<Main>
@@ -33,7 +39,7 @@ class ChecklistShow extends PureComponent {
 					<h2 className="checklist-show__header-text">
 						{ translate( "Let's get your site ready for its debut with a few quick setup steps" ) }
 					</h2>
-					<Checklist placeholderCount={ 5 } />
+					<Checklist isLoading={ ! tasks } tasks={ tasks } />
 				</Card>
 			</Main>
 		);
