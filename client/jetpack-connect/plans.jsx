@@ -66,14 +66,14 @@ class Plans extends Component {
 
 	componentWillReceiveProps = nextProps => {
 		const propsToCompare = [
-			'isAutomatedTransfer',
-			'selectedPlan',
-			'isRequestingPlans',
+			'canPurchasePlans',
 			'flowType',
 			'hasPlan',
-			'canPurchasePlans',
+			'isAutomatedTransfer',
 			'isCalypsoStartedConnection',
+			'isRequestingPlans',
 			'notJetpack',
+			'selectedPlan',
 		];
 
 		if ( ! isEqual( pick( this.props, propsToCompare ), pick( nextProps, propsToCompare ) ) ) {
@@ -234,9 +234,9 @@ class Plans extends Component {
 			interval,
 			isRtlLayout,
 			notJetpack,
+			selectedPlan,
 			selectedSite,
 			translate,
-			selectedPlan,
 		} = this.props;
 
 		if (
