@@ -4,11 +4,12 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Banner from 'components/banner';
 import Main from 'components/main';
 import FormattedHeader from 'components/formatted-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
@@ -44,10 +45,34 @@ class JetpackPlansGrid extends Component {
 		return <FormattedHeader headerText={ headerText } subHeaderText={ subheaderText } />;
 	}
 
+	renderBlackFridayOffer() {
+		const { translate } = this.props;
+
+		const startDate = new Date( 'Nov 24 2017 00:00:00 GMT' );
+		const endDate = new Date( 'Nov 27 2017 23:59:59 GMT-8' );
+
+		if ( moment().isBetween( startDate, endDate ) ) {
+			return (
+				<Banner
+					callToAction={ translate( 'Get the coupon code' ) }
+					title={ '' }
+					description={ translate(
+						'Our Black Friday sale is going on now. Take up to 60% off all plans through November 27.'
+					) }
+					dismissTemporary={ true }
+					href={ 'https://jetpack.com/black-friday/' }
+					target={ '_blank' }
+				/>
+			);
+		}
+		return null;
+	}
+
 	render() {
 		return (
 			<Main wideLayout className="jetpack-connect__hide-plan-icons">
 				<div className="jetpack-connect__plans">
+					{ this.renderBlackFridayOffer() }
 					{ this.renderConnectHeader() }
 					<div id="plans">
 						<PlansFeaturesMain
