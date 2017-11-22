@@ -277,7 +277,8 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				}
 				if ( isJetpackMinimumVersion( state, siteId, '5.5' ) ) {
 					// TODO - update to correct version (5.6-beta?) when https://github.com/Automattic/jetpack/pull/8182 and
-					// https://github.com/Automattic/jetpack/pull/8198 land
+					// https://github.com/Automattic/jetpack/pull/8198 and
+					// https://github.com/Automattic/jetpack/pull/8218 land
 					jetpackSiteSettingsAPIVersion = '1.4';
 				}
 			}
