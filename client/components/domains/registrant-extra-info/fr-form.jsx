@@ -9,7 +9,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-import { castArray, defaults, get, identity, isEmpty, isString, map, noop, toUpper } from 'lodash';
+import {
+	castArray,
+	defaults,
+	get,
+	identity,
+	isEmpty,
+	isString,
+	map,
+	noop,
+	set,
+	toUpper,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -90,22 +101,18 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		} );
 	}
 
-	handleChangeContactEvent = event => {
-		const field = event.target.id;
-		const value = this.sanitizeField( event.target.value, field );
-
+	updateContactDetails( field, value ) {
+		const sanitizedValue = this.sanitizeField( field, value );
 		debug( 'Setting ' + field + ' to ' + value );
-		this.props.updateContactDetailsCache( { [ field ]: value } );
+		this.props.updateContactDetailsCache( set( {}, field, sanitizedValue ) );
+	}
+
+	handleChangeContactEvent = event => {
+		this.updateContactDetails( event.target.id, event.target.value );
 	};
 
 	handleChangeContactExtraEvent = event => {
-		const field = event.target.id;
-		const value = this.sanitizeField( event.target.value, field );
-
-		debug( 'Setting extra.' + field + ' to ' + value );
-		this.props.updateContactDetailsCache( {
-			extra: { [ field ]: value },
-		} );
+		this.updateContactDetails( `extra.${ event.target.id }`, event.target.value );
 	};
 
 	render() {
@@ -303,7 +310,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		);
 	}
 
-	sanitizeField( value, field ) {
+	sanitizeField( field, value ) {
 		return ( this.sanitizeFunctions[ field ] || identity )( value );
 	}
 }
