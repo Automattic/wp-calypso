@@ -52,8 +52,9 @@ export const ActivityLogTour = makeTour(
 		>
 			<p>
 				{ translate(
-					'Each of these blocks represent a daily backup of your site. ' +
-						'To restore your site to a given day, click on the respective rewind button.'
+					'Each block collects all the activities performed on your site ' +
+						'like publishing a post or updating a plugin. ' +
+						'To restore your site to a particular day, click its rewind button.'
 				) }
 			</p>
 			<ButtonRow>
@@ -64,7 +65,7 @@ export const ActivityLogTour = makeTour(
 		<Step name="expand" arrow="top-left" target=".has-expanded-summary" placement="below">
 			<p>
 				{ translate(
-					'You can also click on each daily block to show more details. ' +
+					'You can click on each block to show more details. ' +
 						'When expanded, it will display every event that happened on that day.'
 				) }
 			</p>
@@ -94,10 +95,7 @@ export const ActivityLogTour = makeTour(
 			style={ { marginLeft: '-18px' } }
 		>
 			<p>
-				{ translate(
-					"In here you'll find each event's options, such as rewinding one by one. " +
-						'Now, go explore!'
-				) }
+				{ translate( "In here you'll find each event's options, such as rewinding one by one." ) }
 			</p>
 			<ButtonRow>
 				<Quit primary>{ translate( 'Got it, thanks!' ) }</Quit>
