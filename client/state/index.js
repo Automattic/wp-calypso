@@ -22,6 +22,7 @@ import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
 import automatedTransfer from './automated-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
+import checklist from './checklist/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
 import concierge from './concierge/reducer';
@@ -94,6 +95,7 @@ const reducers = {
 	application,
 	automatedTransfer,
 	billingTransactions,
+	checklist,
 	comments,
 	componentsUsageStats,
 	concierge,
