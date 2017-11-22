@@ -28,7 +28,6 @@
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	justify-content: space-between;
 
 	@include breakpoint( "<660px" ) {
 		flex-direction: column;
