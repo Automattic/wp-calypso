@@ -186,7 +186,7 @@
     "build-devdocs:components-usage-stats:_env": "node server/devdocs/bin/generate-components-usage-stats.js \"client/**/*.js\" \"client/**/*.jsx\" \"!**/docs/**\" \"!**/test/**\" \"!**/docs-example/**\"",
     "build-devdocs:index": "npm run -s env -- npm run -s build-devdocs:index:_env",
     "build-devdocs:index:_env": "node server/devdocs/bin/generate-devdocs-index \"**/*.md\" \".github/**.md\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
-    "prebuild-docker": "npm run -s distclean && ( touch env-config.sh || type nul >> env-config.sh )",
+    "prebuild-docker": "touch env-config.sh || type nul >> env-config.sh",
     "build-docker": "docker build -t wp-calypso .",
     "prebuild-server": "mkdirp build",
     "build-server": "npm run -s env -- webpack --display-error-details --config webpack.config.node.js",
