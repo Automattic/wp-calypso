@@ -16,7 +16,7 @@ const SetupStart = ( { goToNextStep, translate } ) => (
 		<div className="credentials-setup-flow__header-text">
 			<h3 className="credentials-setup-flow__header-text-title">{ translate( 'Add site credentials' ) }</h3>
 			<h4 className="credentials-setup-flow__header-text-description">
-				{ translate( 'Used to perform automatic actions on your server including backing up and restoring.' ) }
+				{ translate( 'Allows Jetpack to perform automated tasks like backing up or restoring your site.' ) }
 			</h4>
 		</div>
 	</CompactCard>
