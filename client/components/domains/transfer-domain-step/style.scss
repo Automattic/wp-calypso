@@ -177,6 +177,11 @@
 	&.transfer-domain-step__locked {
 		color: $alert-red;
 	}
+
+	&.transfer-domain-step__refresh {
+		color: $blue-wordpress;
+		cursor: pointer;
+	}
 }
 
 .transfer-domain-step__admin-email {
