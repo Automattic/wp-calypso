@@ -387,7 +387,9 @@ export class List extends React.Component {
 				<ListItem
 					key={ index + domain.name }
 					domain={ domain }
-					enableSelection={ this.state.changePrimaryDomainModeEnabled }
+					enableSelection={
+						this.state.changePrimaryDomainModeEnabled && domain.type !== type.TRANSFER
+					}
 					isSelected={ index === this.state.primaryDomainIndex }
 					selectionIndex={ index }
 					busy={ this.state.settingPrimaryDomain && index === this.state.primaryDomainIndex }
