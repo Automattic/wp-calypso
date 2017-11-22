@@ -108,10 +108,8 @@
 }
 
 .billing-history__service-name {
-	small,
-	strong {
-		word-break: break-word;
-	}
+	hyphens: auto;
+	overflow-wrap: break-word;
 
 	strong {
 		font-weight: normal;
