@@ -30,9 +30,6 @@ class Settings extends React.Component {
 		siteId && fetch( siteId );
 	}
 
-	constructor( props ) {
-		super( props );
-	}
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		return (

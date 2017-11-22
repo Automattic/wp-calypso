@@ -135,6 +135,10 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getEmailSettings', () => {
+		test( 'should be null  when woocommerce state is not available.', () => {
+			expect( getEmailSettings( preInitializedState, 123 ) ).to.be.null;
+		} );
+
 		test( 'should get the email setting from the state.', () => {
 			expect( getEmailSettings( loadedState, 123 ) ).to.eql( data );
 		} );
