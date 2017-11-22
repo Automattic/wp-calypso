@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { noop } from 'lodash';
 import { connect } from 'react-redux';
 
@@ -23,27 +22,21 @@ import MediaValidationStore from 'lib/media/validation-store';
 import markup from 'post-editor/media-modal/markup';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const TinyMCEDropZone = createReactClass( {
-	displayName: 'TinyMCEDropZone',
-
-	propTypes: {
+class TinyMCEDropZone extends React.Component {
+	static propTypes = {
 		editor: PropTypes.object,
 		onInsertMedia: PropTypes.func,
 		onRenderModal: PropTypes.func,
-	},
+	};
 
-	getInitialState() {
-		return {
-			isDragging: false,
-		};
-	},
+	static defaultProps = {
+		onInsertMedia: noop,
+		onRenderModal: noop,
+	};
 
-	getDefaultProps() {
-		return {
-			onInsertMedia: noop,
-			onRenderModal: noop,
-		};
-	},
+	state = {
+		isDragging: false,
+	};
 
 	componentDidMount() {
 		const { editor } = this.props;
@@ -51,7 +44,7 @@ const TinyMCEDropZone = createReactClass( {
 		window.addEventListener( 'dragleave', this.stopDragging );
 		editor.dom.bind( editor.getWin(), 'dragleave', this.stopDragging );
 		editor.dom.bind( editor.getWin(), 'dragover', this.fakeDragEnterIfNecessary );
-	},
+	}
 
 	componentWillUnmount() {
 		const { editor } = this.props;
@@ -59,9 +52,9 @@ const TinyMCEDropZone = createReactClass( {
 		window.removeEventListener( 'dragleave', this.stopDragging );
 		editor.dom.unbind( editor.getWin(), 'dragleave', this.stopDragging );
 		editor.dom.unbind( editor.getWin(), 'dragover', this.fakeDragEnterIfNecessary );
-	},
+	}
 
-	redirectEditorDragEvent( event ) {
+	redirectEditorDragEvent = event => {
 		// When an item is dragged over the iframe container, we need to copy
 		// and dispatch the event to the parent window. We use the CustomEvent
 		// constructor rather than MouseEvent because MouseEvent may lose some
@@ -72,9 +65,9 @@ const TinyMCEDropZone = createReactClass( {
 		this.setState( {
 			isDragging: true,
 		} );
-	},
+	};
 
-	fakeDragEnterIfNecessary( event ) {
+	fakeDragEnterIfNecessary = event => {
 		// It was found that Chrome only triggered the `dragenter` event on
 		// every odd drag over the iframe element. The logic here ensures that
 		// if the more frequent `dragover` event occurs while not aware of a
@@ -88,15 +81,15 @@ const TinyMCEDropZone = createReactClass( {
 				type: 'dragenter',
 			} )
 		);
-	},
+	};
 
-	stopDragging() {
+	stopDragging = () => {
 		this.setState( {
 			isDragging: false,
 		} );
-	},
+	};
 
-	insertMedia() {
+	insertMedia = () => {
 		const { site, onInsertMedia, onRenderModal } = this.props;
 
 		if ( ! site ) {
@@ -124,7 +117,7 @@ const TinyMCEDropZone = createReactClass( {
 		}
 
 		analytics.mc.bumpStat( 'editor_upload_via', 'editor_drop' );
-	},
+	};
 
 	render() {
 		const { site } = this.props;
@@ -141,8 +134,8 @@ const TinyMCEDropZone = createReactClass( {
 				onAddMedia={ this.insertMedia }
 			/>
 		);
-	},
-} );
+	}
+}
 
 export default connect( state => ( {
 	site: getSelectedSite( state ),
