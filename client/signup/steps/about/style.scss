@@ -1,0 +1,34 @@
+.about__wrapper {
+	max-width: 550px;
+	margin: 0 auto;
+}
+
+.about__checkboxes {
+	border: 1px solid lighten( $gray, 20% );
+	border-radius: 3px;
+}
+
+.about__checkbox-option {
+	border-top: 1px solid lighten( $gray, 20% );
+	color: darken( $gray, 20% );
+	display: block;
+	font-weight: normal;
+	margin: 0;
+	padding: 15px;
+
+	&:first-child {
+		border-top: 0;
+	}
+}
+
+.about__checkbox {
+	margin-right: 10px;
+}
+
+.about__checkbox-label {
+	display: inline-block;
+}
+
+.about__submit-wrapper {
+	text-align: center;
+}
