@@ -71,11 +71,6 @@ const appliesToCoupon = {
 						{ labelText: translate( 'Specific Products' ), type: 'productIds' },
 						{ labelText: translate( 'Product Categories' ), type: 'productCategoryIds' },
 					] }
-					// TODO: Remove this text after variable products are supported.
-					explanationText={ translate(
-						'Note: Variable products cannot be selected directly, ' +
-						'only via Product Categories or All Products.'
-					) }
 				/>
 			),
 			validate: validateCouponAppliesTo,
@@ -107,11 +102,6 @@ const appliesWhenCoupon = {
 							type: 'productCategoryIds',
 						},
 					] }
-					// TODO: Remove this text after variable products are supported.
-					explanationText={ translate(
-						'Note: Variable products cannot be selected directly, ' +
-						'only via Product Categories or All Products.'
-					) }
 				/>
 			),
 		},
@@ -130,8 +120,6 @@ const appliesToProductSale = {
 				<PromotionAppliesToField
 					selectionTypes={ [ { type: 'productIds' } ] }
 					singular
-					// TODO: Remove this text after variable products are supported.
-					explanationText={ translate( 'Note: Variable products cannot be selected.' ) }
 				/>
 			),
 			validate: validateAppliesToSingleProduct,
