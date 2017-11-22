@@ -23,7 +23,7 @@ export class CommentRepliesList extends Component {
 		this.state = { showAllReplies: false };
 	}
 
-	toggleShowAllRepliesReplies = () =>
+	toggleShowAllReplies = () =>
 		this.setState( ( { showAllReplies } ) => ( { showAllReplies: ! showAllReplies } ) );
 
 	render() {
@@ -49,7 +49,7 @@ export class CommentRepliesList extends Component {
 						<Notice
 							icon="chevron-down"
 							showDismiss={ false }
-							text={ translate( 'Show %(remainingReplies)d more comments', {
+							text={ translate( 'Show %(remainingReplies)d more replies', {
 								args: { remainingReplies: replies.length - 5 },
 							} ) }
 						>
