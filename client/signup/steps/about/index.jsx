@@ -21,6 +21,7 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { setSiteGoals } from 'state/signup/steps/site-goals/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getThemeForSiteGoals, getSiteTypeForSiteGoals } from 'signup/utils';
 
 //Form components
 import Card from 'components/card';
@@ -91,9 +92,9 @@ class AboutStep extends Component {
 		const { goToNextStep, stepName, translate } = this.props;
 
 		//Defaults
-		const themeRepo = 'pub/radcliffe-2',
-			designType = 'blog';
-		let siteTitleValue = 'Site Title';
+		let themeRepo = 'pub/radcliffe-2',
+			designType = 'blog',
+			siteTitleValue = 'Site Title';
 
 		//Inputs
 		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
@@ -111,6 +112,15 @@ class AboutStep extends Component {
 
 		//Site Goals
 		this.props.setSiteGoals( siteGoalsInput );
+		themeRepo = getThemeForSiteGoals( siteGoalsInput );
+		designType = getSiteTypeForSiteGoals( siteGoalsInput );
+
+		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
+			field: 'Site goals',
+			value: siteGoalsInput,
+		} );
+
+		//SET SITETYPE
 		this.props.setDesignType( designType );
 
 		SignupActions.submitSignupStep(

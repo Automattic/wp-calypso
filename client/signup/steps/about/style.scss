@@ -19,6 +19,11 @@
 	&:first-child {
 		border-top: 0;
 	}
+
+	&:hover {
+		cursor: pointer;
+		background: $gray-light;
+	}
 }
 
 .about__checkbox {

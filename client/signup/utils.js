@@ -145,6 +145,46 @@ function getThemeForDesignType( designType ) {
 	}
 }
 
+function getThemeForSiteGoals( siteGoals ) {
+	const siteGoalsValue = siteGoals.split( ',' );
+
+	if ( siteGoalsValue.indexOf( 'sell' ) !== -1 ) {
+		return 'pub/dara';
+	}
+
+	if ( siteGoalsValue.indexOf( 'promote' ) !== -1 ) {
+		return 'pub/radcliffe-2';
+	}
+
+	if ( siteGoalsValue.indexOf( 'educate' ) !== -1 ) {
+		return 'pub/twentyfifteen';
+	}
+
+	if ( siteGoalsValue.indexOf( 'showcase' ) !== -1 ) {
+		return 'pub/altofocus';
+	}
+
+	return 'pub/independent-publisher-2';
+}
+
+function getSiteTypeForSiteGoals( siteGoals ) {
+	const siteGoalsValue = siteGoals.split( ',' );
+
+	if ( siteGoalsValue.indexOf( 'sell' ) !== -1 ) {
+		return 'store';
+	}
+
+	if ( siteGoalsValue.indexOf( 'promote' ) !== -1 ) {
+		return 'page';
+	}
+
+	if ( siteGoalsValue.indexOf( 'showcase' ) !== -1 ) {
+		return 'portfolio';
+	}
+
+	return 'blog';
+}
+
 function canResumeFlow( flowName, progress ) {
 	const flow = flows.getFlow( flowName );
 	const flowStepsInProgressStore = filter(
@@ -170,4 +210,6 @@ export default {
 	getDestination: getDestination,
 	mergeFormWithValue: mergeFormWithValue,
 	getThemeForDesignType: getThemeForDesignType,
+	getThemeForSiteGoals: getThemeForSiteGoals,
+	getSiteTypeForSiteGoals: getSiteTypeForSiteGoals,
 };
