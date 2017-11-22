@@ -6,7 +6,6 @@
 
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -23,7 +22,7 @@ import { onboardingTasks } from '../onboardingChecklist';
 
 class ChecklistShow extends PureComponent {
 	render() {
-		const { siteId, siteChecklist, translate } = this.props;
+		const { siteId, siteChecklist } = this.props;
 		let tasks = null;
 
 		if ( siteChecklist && siteChecklist.tasks ) {
@@ -32,12 +31,12 @@ class ChecklistShow extends PureComponent {
 
 		return (
 			<Main>
-				<DocumentHead title={ translate( 'Site Checklist' ) } />
+				<DocumentHead title="Site Checklist" />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				<Card>
-					<h1 className="checklist-show__header-heading">{ translate( 'Welcome back!' ) }</h1>
+					<h1 className="checklist-show__header-heading">Welcome back!</h1>
 					<h2 className="checklist-show__header-text">
-						{ translate( "Let's get your site ready for its debut with a few quick setup steps" ) }
+						Let's get your site ready for its debut with a few quick setup steps
 					</h2>
 					<Checklist isLoading={ ! tasks } tasks={ tasks } />
 				</Card>
@@ -53,4 +52,4 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = null;
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ChecklistShow ) );
+export default connect( mapStateToProps, mapDispatchToProps )( ChecklistShow );
