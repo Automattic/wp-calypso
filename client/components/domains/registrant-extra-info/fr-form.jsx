@@ -196,10 +196,23 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			renderValidationError( trademarkNumberStrings[ error ] )
 		);
 
+		// Note organization is the level above the other extra fields
+		const organizationValidationStrings = {
+			maxLength: translate( 'Too long, please limit the organization name to 100 characters.' ),
+			not: translate( 'Please use only the characters “{{validCharacters}}”',
+				{ args: { validCharacters: 'a-z A-Z 0-9 . , ( ) @ & \' - [space]' } }
+			),
+			$ref: translate( 'Organization field is required' ),
+		};
+
+		const organizationValidationMessage = map( contactDetailsValidationErrors.organization, error =>
+			renderValidationError( organizationValidationStrings[ error ] )
+		);
+
 		return (
 			<div>
 				<FormFieldset>
-					<FormLabel className="registrant-extra-info__optional" htmlFor="organization">
+					<FormLabel className="registrant-extra-info" htmlFor="organization">
 						{ translate( 'Organization Name' ) }
 					</FormLabel>
 					<FormTextInput
@@ -210,10 +223,9 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoCorrect="off"
 						placeholder={ '' }
 						onChange={ this.handleChangeContactEvent }
-						isError={ Boolean( contactDetailsValidationErrors.organization ) }
+						isError={ Boolean( ! isEmpty( organizationValidationMessage ) ) }
 					/>
-					{ contactDetailsValidationErrors.organization &&
-						renderValidationError( translate( 'Organization field is required' ) ) }
+					{ organizationValidationMessage }
 				</FormFieldset>
 
 				<FormFieldset>

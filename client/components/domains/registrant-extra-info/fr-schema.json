@@ -35,6 +35,11 @@
 		{
 			"type": "object",
 			"properties": {
+				"organization": {
+					"type": "string",
+					"not": { "pattern": "[^a-zA-Z0-9.,()@&' -]" },
+					"maxLength": 100
+				},
 				"extra": {
 					"type": "object",
 					"properties": {

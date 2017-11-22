@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { omit } from 'lodash';
+import { omit, repeat } from 'lodash';
 
 /**
  * Internal dependencies
@@ -68,6 +68,24 @@ describe( 'validateContactDetails', () => {
 
 			test( 'should not be empty', () => {
 				const testDetails = Object.assign( {}, organizationDetails, { organization: '' } );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.have.property( 'organization' );
+			} );
+
+			test( 'should reject long strings', () => {
+				const testDetails = Object.assign( {}, organizationDetails, {
+					organization: repeat( '0123456789', 11 ),
+				} );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.have.property( 'organization' );
+			} );
+
+			test( 'should reject invalid characters', () => {
+				const testDetails = Object.assign( {}, organizationDetails, {
+					organization: 'No bangs, please!',
+				} );
 
 				const result = validateContactDetails( testDetails );
 				expect( result ).to.have.property( 'organization' );
