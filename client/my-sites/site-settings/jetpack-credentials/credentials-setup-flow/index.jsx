@@ -12,7 +12,6 @@ import { get } from 'lodash';
 import SetupStart from './setup-start';
 import SetupTos from './setup-tos';
 import SetupForm from './setup-form';
-import SetupFooter from './setup-footer';
 
 class CredentialsSetupFlow extends Component {
 	static propTypes = {
@@ -74,7 +73,6 @@ class CredentialsSetupFlow extends Component {
 						updateCredentials={ updateCredentials }
 					/>
 				) }
-				<SetupFooter />
 			</div>
 		);
 	}
