@@ -7,18 +7,21 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { forEach } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 
+import Main from 'components/main';
+import DocumentHead from 'components/data/document-head';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteChecklist } from 'state/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 
 class Show extends PureComponent {
 	render() {
-		const { siteId, siteChecklist } = this.props;
+		const { siteId, siteChecklist, translate } = this.props;
 		let completedTaskCount = 0;
 		let taskCount = 0;
 		let text = '';
@@ -34,10 +37,11 @@ class Show extends PureComponent {
 		}
 
 		return (
-			<p>
+			<Main>
+				<DocumentHead title={ translate( 'Site Checklist' ) } />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ text }
-			</p>
+			</Main>
 		);
 	}
 }
@@ -49,4 +53,4 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = null;
 
-export default connect( mapStateToProps, mapDispatchToProps )( Show );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Show ) );
