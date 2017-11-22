@@ -56,10 +56,6 @@ const SitesListActions = {
 			site,
 		} );
 	},
-
-	clearDeleteSiteStore() {
-		Dispatcher.handleViewAction( { type: 'CLEAR_DELETED_SITE' } );
-	},
 };
 
 export default SitesListActions;
