@@ -432,17 +432,7 @@ class ActivityLog extends Component {
 			return null;
 		}
 
-		const { isPressable, rewindStatusError, translate } = this.props;
-
-		// Do not match null
-		// FIXME: This is for internal testing
-		if ( false === isPressable ) {
-			return (
-				<ActivityLogBanner status="info" icon={ null }>
-					{ translate( 'Rewind is currently only available for Pressable sites' ) }
-				</ActivityLogBanner>
-			);
-		}
+		const { rewindStatusError, translate } = this.props;
 
 		if ( rewindStatusError ) {
 			return (
