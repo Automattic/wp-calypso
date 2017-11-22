@@ -62,6 +62,7 @@ class JetpackPlansGrid extends Component {
 					dismissTemporary={ true }
 					href={ 'https://jetpack.com/black-friday/' }
 					target={ '_blank' }
+					event={ 'calypso_jpc_blackfriday_click' }
 				/>
 			);
 		}
