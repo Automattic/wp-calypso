@@ -166,6 +166,11 @@
 		height: 70px;
 		overflow: hidden;
 
+		@include breakpoint( ">1040px" ) {
+			width: 100px;
+			height: 100px;
+		}
+
 		img {
 			position: absolute;
 			left: 50%;
@@ -212,9 +217,14 @@
 .products__product-form-images-wrapper {
 	width: 100%;
 	margin-bottom: 16px;
+
 	@include breakpoint( ">960px" ) {
 		margin-bottom: 0;
 		width: 250px;
+	}
+
+	@include breakpoint( ">1040px" ) {
+		width: 339px;
 	}
 }
 
