@@ -212,7 +212,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		return (
 			<div>
 				<FormFieldset>
-					<FormLabel className="registrant-extra-info" htmlFor="organization">
+					<FormLabel className="registrant-extra-info__organization" htmlFor="organization">
 						{ translate( 'Organization Name' ) }
 					</FormLabel>
 					<FormTextInput
