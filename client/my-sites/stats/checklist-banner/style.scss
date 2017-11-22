@@ -1,0 +1,91 @@
+/** @format */
+
+.checklist-banner {
+	display: flex;
+	flex-direction: row;
+	background: #daf5fb;
+	min-height: 200px;
+
+	.gauge__label .gauge__metric {
+		text-transform: none;
+		letter-spacing: 0;
+	}
+
+	@include breakpoint( '<660px' ) {
+		flex-direction: column;
+
+		.gauge {
+			display: none;
+		}
+	}
+}
+
+.checklist-banner__progress {
+	display: none;
+	margin-bottom: 16px;
+
+	@include breakpoint( '<660px' ) {
+		display: block;
+	}
+
+	.progress-bar {
+		clear: both;
+		background: #fff;
+	}
+}
+
+.checklist-banner__progress-title {
+	float: left;
+	font-weight: 500;
+}
+
+.checklist-banner__progress-desc {
+	float: right;
+}
+
+.checklist-banner__content {
+	flex: 1 1;
+	padding: 0 330px 0 24px;
+
+	@include breakpoint( '1040px-1280px' ) {
+		padding-right: calc(40% - 20px);
+	}
+
+	@include breakpoint( '<1040px' ) {
+		padding-right: 0;
+	}
+
+	@include breakpoint( '<660px' ) {
+		padding-left: 0;
+	}
+}
+
+.checklist-banner__title {
+	font-size: 26px;
+}
+
+.checklist-banner__button {
+	vertical-align: middle;
+	margin-right: 1em;
+}
+
+.checklist-banner__actions {
+	.checklist-banner__link {
+		display: inline-block;
+		padding: 10px 0;
+		color: inherit;
+		text-decoration: underline;
+	}
+}
+
+.checklist-banner__image {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	max-width: 40%;
+
+	@include breakpoint( '<1040px' ) {
+		display: none;
+	}
+}

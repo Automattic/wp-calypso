@@ -30,6 +30,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
+import ChecklistBanner from './checklist-banner';
 
 class StatsSite extends Component {
 	constructor( props ) {
@@ -130,6 +131,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
+					<ChecklistBanner task={ { id: 'task-id', title: 'Title', description: 'Description' } } />
 					<ChartTabs
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
