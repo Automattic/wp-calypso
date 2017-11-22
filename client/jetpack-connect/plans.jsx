@@ -37,6 +37,7 @@ import {
 	canCurrentUser,
 	getJetpackConnectRedirectAfterAuth,
 	isRtl,
+	isSiteAutomatedTransfer,
 	isSiteOnPaidPlan,
 } from 'state/selectors';
 import {
@@ -46,7 +47,7 @@ import {
 	isCalypsoStartedConnection,
 } from 'state/jetpack-connect/selectors';
 import { mc } from 'lib/analytics';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
@@ -72,6 +73,7 @@ class Plans extends Component {
 			'hasPlan',
 			'canPurchasePlans',
 			'isCalypsoStartedConnection',
+			'notJetpack',
 		];
 
 		if ( ! isEqual( pick( this.props, propsToCompare ), pick( nextProps, propsToCompare ) ) ) {
@@ -92,7 +94,7 @@ class Plans extends Component {
 			this.autoselectPlan();
 			return true;
 		}
-		if ( props.hasPlan ) {
+		if ( props.hasPlan || props.notJetpack ) {
 			this.redirect( CALYPSO_PLANS_PAGE );
 			return true;
 		}
@@ -227,11 +229,20 @@ class Plans extends Component {
 	};
 
 	render() {
-		const { interval, isRtlLayout, selectedSite, translate, flowType, selectedPlan } = this.props;
+		const {
+			flowType,
+			interval,
+			isRtlLayout,
+			notJetpack,
+			selectedSite,
+			translate,
+			selectedPlan,
+		} = this.props;
 
 		if (
 			this.isFlowTypePaid( flowType ) ||
 			!! selectedPlan ||
+			notJetpack ||
 			! this.props.canPurchasePlans ||
 			this.props.hasPlan
 		) {
@@ -297,6 +308,7 @@ export default connect(
 			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSiteSlug ),
 			isRtlLayout: isRtl( state ),
 			hasPlan: selectedSite && isSiteOnPaidPlan( state, selectedSite.ID ),
+			notJetpack: ! ( selectedSite && isJetpackSite( state, selectedSite.ID ) ),
 		};
 	},
 	{
