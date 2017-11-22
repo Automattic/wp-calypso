@@ -13,6 +13,8 @@ import { find } from 'lodash';
 import Checklist from '../';
 
 export default class ChecklistExample extends Component {
+	static displayName = 'Checklist';
+
 	state = {
 		showPlaceholder: false,
 		tasks: [

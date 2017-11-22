@@ -12,6 +12,8 @@ import React from 'react';
 import PaymentLogo from '../index';
 
 class PaymentLogoExamples extends React.PureComponent {
+	static displayName = 'PaymentLogo';
+
 	render() {
 		return (
 			<div>
