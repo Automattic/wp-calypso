@@ -124,11 +124,5 @@ function isValidCouponsArray( coupons ) {
 }
 
 function isValidCoupon( coupon ) {
-	return (
-		coupon &&
-		coupon.id &&
-		'number' === typeof coupon.id &&
-		coupon.code &&
-		'string' === typeof coupon.code
-	);
+	return coupon && coupon.id && 'number' === typeof coupon.id && 'string' === typeof coupon.code;
 }
