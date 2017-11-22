@@ -40,8 +40,7 @@ class BillingReceipt extends React.Component {
 		this.recordClickEvent( 'Contact {appName} Support in Billing History Receipt' );
 	};
 
-	handlePrintLinkClick = event => {
-		event.preventDefault();
+	handlePrintLinkClick = () => {
 		this.recordClickEvent( 'Print Receipt Button in Billing History Receipt' );
 		window.print();
 	};
