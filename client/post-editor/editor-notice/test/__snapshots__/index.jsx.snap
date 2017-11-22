@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditorNotice should display custom post type view label 1`] = `
+<div
+  className="editor-notice is-global"
+>
+  <Localized(Notice)
+    showDismiss={true}
+    status="is-success"
+    text={
+      Array [
+        "Post published on ",
+        <a
+          href="https://example.wordpress.com"
+          onClick={[Function]}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Example Site
+        </a>,
+        "!",
+      ]
+    }
+  />
+</div>
+`;
+
+exports[`EditorNotice should display publish success for page 1`] = `
+<div
+  className="editor-notice is-global"
+>
+  <Localized(Notice)
+    showDismiss={true}
+    status="is-success"
+    text={
+      Array [
+        "Page published on ",
+        <a
+          href="https://example.wordpress.com"
+          onClick={[Function]}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Example Site
+        </a>,
+        "! ",
+        <a
+          href="/page/example.wordpress.com"
+          onClick={[Function]}
+        >
+          Add another page
+        </a>,
+      ]
+    }
+  />
+</div>
+`;
