@@ -9,6 +9,11 @@ export const storePlan = planSlug => {
 	document.cookie = cookie.serialize( 'jetpack_connect_selected_plan', planSlug, options );
 };
 
+export const clearPlan = () => {
+	const options = { path: '/' };
+	document.cookie = cookie.serialize( 'jetpack_connect_selected_plan', '', options );
+};
+
 export const retrievePlan = () => {
 	const cookies = cookie.parse( document.cookie );
 	return cookies.jetpack_connect_selected_plan;

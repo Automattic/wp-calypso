@@ -50,6 +50,7 @@ import addQueryArgs from 'lib/route/add-query-args';
 import { externalRedirect } from 'lib/route/path';
 import { urlToSlug } from 'lib/url';
 import { JPC_PLANS_PAGE } from './constants';
+import { clearPlan } from 'client/jetpack-connect/cookies';
 
 /**
  *  Local variables;
@@ -543,6 +544,7 @@ export default {
 	},
 	completeFlow( site ) {
 		return dispatch => {
+			clearPlan();
 			dispatch( {
 				type: JETPACK_CONNECT_COMPLETE_FLOW,
 				site,
