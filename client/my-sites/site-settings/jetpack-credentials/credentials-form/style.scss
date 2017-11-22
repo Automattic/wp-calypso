@@ -1,3 +1,9 @@
+.jetpack-credentials {
+	.form-fieldset {
+		width: 100%;
+	}
+}
+
 .credentials-form__row {
 	display: flex;
 	flex-wrap: wrap;
@@ -7,19 +13,21 @@
 	}
 }
 
-.credentials-form__server-address,
-.credentials-form__username,
-.credentials-form__password {
-	flex: 1 0 240px;
-}
+@include breakpoint( ">960px" ) {
+	.credentials-form__server-address,
+	.credentials-form__username,
+	.credentials-form__password {
+		flex: 1 0 240px;
+	}
 
-.credentials-form__server-address,
-.credentials-form__username {
-	margin-right: 16px;
-}
+	.credentials-form__server-address,
+	.credentials-form__username {
+		margin-right: 16px;
+	}
 
-.credentials-form__port-number {
-	flex: 0 0 160px;
+	.credentials-form__port-number {
+		flex: 0 0 160px;
+	}
 }
 
 .credentials-form__private-key {

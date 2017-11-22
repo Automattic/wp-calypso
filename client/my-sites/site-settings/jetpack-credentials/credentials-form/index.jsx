@@ -96,7 +96,7 @@ export class CredentialsForm extends Component {
 
 				<div className="credentials-form__row">
 					<FormFieldset className="credentials-form__server-address">
-						<FormLabel hrmlFor="host-address">{ translate( 'Server Address' ) }</FormLabel>
+						<FormLabel htmlFor="host-address">{ translate( 'Server Address' ) }</FormLabel>
 						<FormTextInput
 							name="host"
 							id="host-address"
@@ -187,7 +187,9 @@ export class CredentialsForm extends Component {
 								className="credentials-form__private-key"
 							/>
 							<p className="form-setting-explanation">
-								This field is only required if your host uses key based authentication.
+								{ translate(
+									'This field is only required if your host uses key based authentication.'
+								) }
 							</p>
 						</div>
 					) }
