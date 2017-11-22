@@ -787,7 +787,7 @@ export class DomainWarnings extends React.PureComponent {
 			case transferStatus.PENDING_OWNER:
 				compactMessage = translate( 'Transfer confirmation required' );
 				message = translate(
-					'We sent an e-mail to confirm the transfer of {{strong}}%(domain)s{{/strong}}. {{a}}More Info{{/a}}',
+					'We sent an email to confirm the transfer of {{strong}}%(domain)s{{/strong}}. {{a}}More Info{{/a}}',
 					{
 						components: {
 							strong: <strong />,
