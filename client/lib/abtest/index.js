@@ -71,6 +71,8 @@ const parseDateStamp = datestamp => {
 const languageSlugs = map( config( 'languages' ), 'langSlug' );
 const langSlugIsValid = slug => languageSlugs.indexOf( slug ) !== -1;
 
+const crypto = require( 'crypto' );
+
 ABTest.prototype.init = function( name, geoLocation ) {
 	if ( ! /^[A-Za-z\d]+$/.test( name ) ) {
 		throw new Error( 'The test name "' + name + '" should be camel case' );
@@ -282,7 +284,7 @@ ABTest.prototype.assignVariation = function() {
 	);
 
 	if ( this.assignmentMethod === 'userId' && ! isNaN( +userId ) ) {
-		randomAllocationAmount = Number( user.data.ID ) % allocationsTotal;
+		randomAllocationAmount = this.assignVariationWithCrypto( userId ) * allocationsTotal;
 	} else {
 		randomAllocationAmount = Math.random() * allocationsTotal;
 	}
@@ -293,6 +295,16 @@ ABTest.prototype.assignVariation = function() {
 			return variationName;
 		}
 	}
+};
+
+ABTest.prototype.assignVariationWithCrypto = function( userId ) {
+	// Put userId and experimentId into md5 hashing algo to randomly assign variation
+	// The returned value will be a float between 0 and 1.
+	const md5 = crypto.createHash( 'md5' );
+	md5.update( String( userId ) + this.experimentId ); // Hash userId and experiment Id
+	const hash = md5.digest( 'hex' ); // Build the hashed data
+	const hash_slice = hash.slice( 0, 6 ); // Only use first 6 chars
+	return parseInt( hash_slice, 16 ) / 0xffffff; // Divide by the largest 6 digit hex number
 };
 
 ABTest.prototype.recordVariation = function( variation ) {
