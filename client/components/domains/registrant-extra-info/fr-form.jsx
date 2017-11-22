@@ -199,9 +199,9 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		// Note organization is the level above the other extra fields
 		const organizationValidationStrings = {
 			maxLength: translate( 'Too long, please limit the organization name to 100 characters.' ),
-			not: translate( 'Please use only the characters “{{validCharacters}}”',
-				{ args: { validCharacters: 'a-z A-Z 0-9 . , ( ) @ & \' - [space]' } }
-			),
+			not: translate( 'Please use only the characters “%(validCharacters)s”', {
+				args: { validCharacters: "a-z A-Z 0-9 . , ( ) @ & ' - [space]" },
+			} ),
 			$ref: translate( 'Organization field is required' ),
 		};
 
