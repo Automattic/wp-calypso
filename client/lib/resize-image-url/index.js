@@ -94,8 +94,9 @@ export default function resizeImageUrl( imageUrl, resize, height ) {
 
 	// External URLs are made "safe" (i.e. passed through Photon), so
 	// recurse with an assumed set of query arguments for Photon
-	if ( ! service ) {
-		return resizeImageUrl( safeImageUrl( imageUrl ), resize );
+	const safeUrl = safeImageUrl( imageUrl );
+	if ( ! service && safeUrl !== imageUrl ) {
+		return resizeImageUrl( safeUrl, resize );
 	}
 
 	// Map sizing parameters, multiplying their values by the scale factor
