@@ -381,7 +381,7 @@ export class DomainDetailsForm extends PureComponent {
 						count: this.getNumberOfDomainRegistrations(),
 					}
 				) }
-				{ ...this.getFieldProps( 'organization' ) }
+				{ ...this.getFieldProps( 'organization', true ) }
 			/>
 		);
 	}
