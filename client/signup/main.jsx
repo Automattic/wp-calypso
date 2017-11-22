@@ -201,7 +201,7 @@ class Signup extends React.Component {
 		this.recordStep();
 	}
 
-	componentWillReceiveProps( { signupDependencies, stepName } ) {
+	componentWillReceiveProps( { signupDependencies, stepName, flowName } ) {
 		const urlPath = location.href;
 		const query = url.parse( urlPath, true ).query;
 
@@ -215,6 +215,10 @@ class Signup extends React.Component {
 
 		if ( query.plans ) {
 			this.setState( { plans: true } );
+		}
+
+		if ( this.props.flowName !== flowName ) {
+			this.signupFlowController.changeFlowName( flowName );
 		}
 
 		this.checkForCartItems( signupDependencies );
@@ -380,11 +384,6 @@ class Signup extends React.Component {
 		// redirect the user to the next step
 		scrollPromise.then( () => {
 			if ( ! this.isEveryStepSubmitted() ) {
-				if ( flowName !== this.props.flowName ) {
-					// if flow is being changed, tell SignupFlowController about the change and save
-					// a new value of `signupFlowName` to local storage.
-					this.signupFlowController.changeFlowName( flowName );
-				}
 				page( utils.getStepUrl( flowName, stepName, stepSectionName, this.props.locale ) );
 			} else if ( this.isEveryStepSubmitted() ) {
 				this.goToFirstInvalidStep();
