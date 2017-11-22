@@ -210,7 +210,11 @@ export function isDomainProduct( product ) {
 	assertValidProduct( product );
 
 	return (
-		isDomainMapping( product ) || isDomainRegistration( product ) || isPrivacyProtection( product )
+		isDomainMapping( product ) ||
+		isDomainRegistration( product ) ||
+		isPrivacyProtection( product ) ||
+		isDomainTransfer( product ) ||
+		isDomainTransferPrivacy( product )
 	);
 }
 
@@ -247,6 +251,13 @@ export function isDomainTransfer( product ) {
 	assertValidProduct( product );
 
 	return isTransfer( product );
+}
+
+export function isDomainTransferPrivacy( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.product_slug === 'domain_transfer_privacy';
 }
 
 export function isCredits( product ) {
@@ -390,6 +401,7 @@ export default {
 	isDomainRedemption,
 	isDomainRegistration,
 	isDomainTransfer,
+	isDomainTransferPrivacy,
 	isDotComPlan,
 	isEnterprise,
 	isFreeJetpackPlan,

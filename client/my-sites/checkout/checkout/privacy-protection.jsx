@@ -38,9 +38,12 @@ class PrivacyProtection extends Component {
 
 	render() {
 		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
+		const domainTransfers = cartItems.getDomainTransfers( this.props.cart );
 		const { translate } = this.props;
 		const numberOfDomainRegistrations = domainRegistrations.length;
-		const hasOneFreePrivacy = this.hasDomainPartOfPlan() && numberOfDomainRegistrations === 1;
+		const hasOneFreePrivacy =
+			this.hasDomainPartOfPlan() &&
+			( numberOfDomainRegistrations === 1 || domainTransfers.length === 1 );
 
 		return (
 			<div>
