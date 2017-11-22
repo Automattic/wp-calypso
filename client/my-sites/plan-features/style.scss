@@ -272,11 +272,6 @@ $plan-features-sidebar-width: 272px;
 	display: inline-block;
 }
 
-.popover.plan-features__header-tip-info .popover__inner {
-	white-space: nowrap;
-	max-width: 500px;
-}
-
 .plan-features__price {
 	&.is-placeholder {
 		@include placeholder( 23% );

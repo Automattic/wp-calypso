@@ -106,7 +106,7 @@ class PlanFeaturesHeader extends Component {
 		const price = formatCurrency( rawPrice, currencyCode );
 
 		return translate(
-			'We’ll deduct the cost of your current plan from the full price (%(price)s)',
+			"We'll deduct the cost of your current plan from the full price (%(price)s) for the next 12 months.",
 			{ args: { price } }
 		);
 	}
