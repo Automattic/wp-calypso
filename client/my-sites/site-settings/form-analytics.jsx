@@ -123,6 +123,10 @@ class GoogleAnalyticsForm extends Component {
 			siteIsJetpack &&
 			siteSupportsIPAnonymization;
 
+		const nudgeTitle = siteIsJetpack
+			? translate( 'Enable Google Analytics by upgrading to Jetpack Professional' )
+			: translate( 'Enable Google Analytics by upgrading to the Business plan' );
+
 		return (
 			<form id="site-settings" onSubmit={ handleSubmitForm }>
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
@@ -176,7 +180,7 @@ class GoogleAnalyticsForm extends Component {
 						event={ 'google_analytics_settings' }
 						feature={ FEATURE_GOOGLE_ANALYTICS }
 						plan={ PLAN_BUSINESS }
-						title={ translate( 'Enable Google Analytics by upgrading to Jetpack Professional' ) }
+						title={ nudgeTitle }
 					/>
 				) : (
 					<Card className="analytics-settings site-settings__analytics-settings">

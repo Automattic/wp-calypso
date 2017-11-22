@@ -314,7 +314,7 @@ export class SeoForm extends React.Component {
 
 		const nudgeTitle = siteIsJetpack
 			? translate( 'Enable SEO Tools by upgrading to Jetpack Professional' )
-			: translate( 'Enable SEO Tools by upgrading to Jetpack Business' );
+			: translate( 'Enable SEO Tools by upgrading to the Business plan' );
 
 		const seoSubmitButton = (
 			<Button
