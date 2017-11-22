@@ -10,11 +10,6 @@ import classnames from 'classnames';
 import { noop, omit } from 'lodash';
 import Gridicon from 'gridicons';
 
-/**
- * Internal dependencies
- */
-import ExternalLink from 'components/external-link';
-
 export default class PopoverMenuItem extends Component {
 	static propTypes = {
 		href: PropTypes.string,
@@ -23,7 +18,6 @@ export default class PopoverMenuItem extends Component {
 		icon: PropTypes.string,
 		focusOnHover: PropTypes.bool,
 		onMouseOver: PropTypes.func,
-		isExternalLink: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -32,7 +26,7 @@ export default class PopoverMenuItem extends Component {
 		onMouseOver: noop,
 	};
 
-	handleMouseOver = event => {
+	handleMouseOver = ( event ) => {
 		const { focusOnHover } = this.props;
 
 		if ( focusOnHover ) {
@@ -43,25 +37,19 @@ export default class PopoverMenuItem extends Component {
 	};
 
 	render() {
-		const { children, className, href, icon, isSelected, isExternalLink } = this.props;
-		const itemProps = omit( this.props, 'icon', 'focusOnHover', 'isSelected', 'isExternalLink' );
+		const { children, className, href, icon, isSelected } = this.props;
 		const classes = classnames( 'popover__menu-item', className, {
 			'is-selected': isSelected,
 		} );
-
-		let ItemComponent = href ? 'a' : 'button';
-		if ( isExternalLink && href ) {
-			ItemComponent = ExternalLink;
-			itemProps.icon = true;
-		}
+		const ItemComponent = href ? 'a' : 'button';
 
 		return (
 			<ItemComponent
 				role="menuitem"
 				onMouseOver={ this.handleMouseOver }
 				tabIndex="-1"
+				{ ...omit( this.props, 'icon', 'focusOnHover', 'isSelected' ) }
 				className={ classes }
-				{ ...itemProps }
 			>
 				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
 				{ children }

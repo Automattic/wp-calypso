@@ -56,7 +56,7 @@ class PostActionsEllipsisMenuView extends Component {
 	};
 
 	render() {
-		const { translate, status, previewUrl, isPreviewable } = this.props;
+		const { translate, status, previewUrl } = this.props;
 		if ( ! previewUrl ) {
 			return null;
 		}
@@ -68,7 +68,6 @@ class PostActionsEllipsisMenuView extends Component {
 				icon="visible"
 				target="_blank"
 				rel="noopener noreferrer"
-				isExternalLink={ ! isPreviewable }
 			>
 				{ includes( [ 'publish', 'private' ], status )
 					? translate( 'View', { context: 'verb' } )
