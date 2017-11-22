@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
+import { expect as chaiExpect } from 'chai';
 import { shallow } from 'enzyme';
 import { translate } from 'i18n-calypso';
 import React from 'react';
@@ -17,7 +17,7 @@ describe( 'EditorNotice', () => {
 	test( 'should not render a notice if no message is specified', () => {
 		const wrapper = shallow( <EditorNotice /> );
 
-		expect( wrapper ).to.not.have.descendants( Notice );
+		chaiExpect( wrapper ).to.not.have.descendants( Notice );
 	} );
 
 	test( 'should display an no content error message if recognized', () => {
@@ -30,13 +30,13 @@ describe( 'EditorNotice', () => {
 			/>
 		);
 
-		expect( wrapper.find( Notice ) )
+		chaiExpect( wrapper.find( Notice ) )
 			.to.have.prop( 'text' )
 			.equal( "You haven't written anything yet!" );
-		expect( wrapper.find( Notice ) )
+		chaiExpect( wrapper.find( Notice ) )
 			.to.have.prop( 'status' )
 			.equal( 'is-error' );
-		expect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
+		chaiExpect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
 	} );
 
 	test( 'should display a fallback error message', () => {
@@ -50,14 +50,14 @@ describe( 'EditorNotice', () => {
 			/>
 		);
 
-		expect( wrapper ).to.have.descendants( Notice );
-		expect( wrapper.find( Notice ) )
+		chaiExpect( wrapper ).to.have.descendants( Notice );
+		chaiExpect( wrapper.find( Notice ) )
 			.to.have.prop( 'text' )
 			.equal( 'Publishing of post failed.' );
-		expect( wrapper.find( Notice ) )
+		chaiExpect( wrapper.find( Notice ) )
 			.to.have.prop( 'status' )
 			.equal( 'is-error' );
-		expect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
+		chaiExpect( wrapper.find( Notice ) ).to.have.prop( 'showDismiss' ).be.true;
 	} );
 
 	test( 'should display publish success for page', () => {
@@ -75,21 +75,8 @@ describe( 'EditorNotice', () => {
 			/>
 		);
 
-		expect( wrapper.find( Notice ) )
-			.to.have.prop( 'text' )
-			.eql(
-				translate( 'Page published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
-					components: {
-						siteLink: (
-							<a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">
-								Example Site
-							</a>
-						),
-						a: <a href="/page/example.wordpress.com" />,
-					},
-				} )
-			);
-		expect( wrapper.find( Notice ) )
+		expect( wrapper ).toMatchSnapshot();
+		chaiExpect( wrapper.find( Notice ) )
 			.to.have.prop( 'status' )
 			.equal( 'is-success' );
 	} );
@@ -113,20 +100,8 @@ describe( 'EditorNotice', () => {
 			/>
 		);
 
-		expect( wrapper.find( Notice ) )
-			.to.have.prop( 'text' )
-			.eql(
-				translate( 'Post published on {{siteLink/}}!', {
-					components: {
-						siteLink: (
-							<a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">
-								Example Site
-							</a>
-						),
-					},
-				} )
-			);
-		expect( wrapper.find( Notice ) )
+		expect( wrapper ).toMatchSnapshot();
+		chaiExpect( wrapper.find( Notice ) )
 			.to.have.prop( 'status' )
 			.equal( 'is-success' );
 	} );
