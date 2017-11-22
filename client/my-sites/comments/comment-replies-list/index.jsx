@@ -36,14 +36,6 @@ export class CommentRepliesList extends Component {
 
 		return (
 			<div className={ classes }>
-				{ map( repliesToShow, ( { commentId } ) => (
-					<Comment
-						commentId={ commentId }
-						key={ `comment-${ siteId }-${ commentParentId }-${ commentId }` }
-						refreshCommentData={ true }
-						isPostView={ true }
-					/>
-				) ) }
 				{ ! showAllReplies &&
 					replies.length > 5 && (
 						<Notice
@@ -58,6 +50,14 @@ export class CommentRepliesList extends Component {
 							</NoticeAction>
 						</Notice>
 					) }
+				{ map( repliesToShow, ( { commentId } ) => (
+					<Comment
+						commentId={ commentId }
+						key={ `comment-${ siteId }-${ commentParentId }-${ commentId }` }
+						refreshCommentData={ true }
+						isPostView={ true }
+					/>
+				) ) }
 			</div>
 		);
 	}
