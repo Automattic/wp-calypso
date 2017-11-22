@@ -209,7 +209,10 @@ PostActions = {
 				}
 			);
 		} else {
-			PostActions.saveEdited( site, null, null, callback, { recordSaveEvent: false } );
+			PostActions.saveEdited( site, null, null, callback, {
+				recordSaveEvent: false,
+				autosave: true,
+			} );
 		}
 	},
 
