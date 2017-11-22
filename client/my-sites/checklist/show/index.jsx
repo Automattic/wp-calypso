@@ -6,7 +6,6 @@
 
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import { forEach } from 'lodash';
 
 /**
@@ -50,4 +49,4 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = null;
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( Show ) );
+export default connect( mapStateToProps, mapDispatchToProps )( Show );
