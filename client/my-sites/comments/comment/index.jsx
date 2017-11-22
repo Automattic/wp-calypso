@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import ReactDom from 'react-dom';
-import { get, isUndefined } from 'lodash';
+import { get, isEqual, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -51,6 +51,9 @@ export class Comment extends Component {
 			isReplyVisible: wasBulkMode !== isBulkMode ? false : isReplyVisible,
 		} ) );
 	}
+
+	shouldComponentUpdate = ( nextProps, nextState ) =>
+		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
 
 	storeCardRef = card => ( this.commentCard = card );
 

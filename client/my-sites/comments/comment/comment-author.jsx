@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import { get } from 'lodash';
+import { get, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,6 +28,8 @@ export class CommentAuthor extends Component {
 		isBulkMode: PropTypes.bool,
 		isPostView: PropTypes.bool,
 	};
+
+	shouldComponentUpdate = nextProps => ! isEqual( this.props, nextProps );
 
 	commentHasLink = () => {
 		if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
