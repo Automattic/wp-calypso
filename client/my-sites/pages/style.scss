@@ -132,10 +132,13 @@
 
 .page__title,
 .page__title:visited {
-	display: inline;
+	@extend %content-font;
 	color: $gray-dark;
-	font-weight: bold;
-	font-family: $serif;
+	font-weight: 700;
+	font-size: 18px;
+	line-height: 1.2;
+
+	display: inline;
 	margin-right: 33px;
 
 	.gridicon {

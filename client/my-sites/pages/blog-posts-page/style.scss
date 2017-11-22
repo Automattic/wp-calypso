@@ -4,7 +4,7 @@
 	padding: 16px;
 
 	@include breakpoint( ">480px" ) {
-		padding: 16px 24px;	
+		padding: 16px 24px;
 	}
 }
 
@@ -18,11 +18,14 @@
 }
 
 .blog-posts-page__title {
-	display: inline;
+	@extend %content-font;
 	color: $gray-dark;
-	font-weight: bold;
-	font-family: $serif;
-	margin-right: 33px;
+	font-weight: 700;
+	font-size: 18px;
+	line-height: 1.2;
+
+	display: inline;
+	margin-bottom: 2px;
 
 	&.is-disabled {
 		color: $gray;
