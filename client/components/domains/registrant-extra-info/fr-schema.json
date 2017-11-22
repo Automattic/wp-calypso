@@ -11,9 +11,8 @@
 				}
 			]
 		},
-		"organizationRequiredForIndividualTypeOrganization": {
+		"organizationIsRequiredWhenRegistrantTypeIsOrganization": {
 			"not": {
-				"comment": "",
 				"properties": {
 					"extra": {
 						"properties": {
@@ -31,7 +30,7 @@
 
 	"type": "object",
 	"allOf": [
-		{ "$ref": "#/definitions/organizationRequiredForIndividualTypeOrganization" },
+		{ "$ref": "#/definitions/organizationIsRequiredWhenRegistrantTypeIsOrganization" },
 		{
 			"type": "object",
 			"properties": {
