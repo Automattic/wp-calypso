@@ -577,3 +577,10 @@ a.comments__comment-username {
 .comments__comment-actions-read-more-icon {
 	fill: $blue-medium;
 }
+
+// Hide certain elements in excerpt comments
+.comments__comment-content-wrapper.is-excerpt {
+	blockquote {
+		display: none;
+	}
+}

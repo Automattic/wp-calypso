@@ -383,9 +383,6 @@ class PostComment extends React.PureComponent {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
 		} );
 
-		const commentContent =
-			displayType === POST_COMMENT_DISPLAY_TYPES.excerpt ? comment.excerpt : comment.content;
-
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<li className={ postCommentClassnames }>
@@ -436,7 +433,7 @@ class PostComment extends React.PureComponent {
 
 				{ this.props.activeEditCommentId !== this.props.commentId && (
 					<PostCommentContent
-						content={ commentContent }
+						content={ comment.content }
 						setWithDimensionsRef={ this.props.setWithDimensionsRef }
 						isPlaceholder={ comment.isPlaceholder }
 						className={ displayType }
