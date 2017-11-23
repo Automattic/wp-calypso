@@ -222,6 +222,7 @@ export const announceDeleteSuccess = ( { dispatch }, { options } ) => {
 	dispatch(
 		successNotice( translate( 'Comment deleted permanently.' ), {
 			duration: 5000,
+			id: 'comment-notice',
 			isPersistent: true,
 		} )
 	);
