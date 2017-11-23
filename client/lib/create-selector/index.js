@@ -3,13 +3,13 @@
 /**
  * External dependencies
  */
-import { castArray, isObject, forEach } from 'lodash';
+import { castArray, isObject, forEach, fill } from 'lodash';
 
 /**
  * A map that starts out Weak and if a primitive value is ever added to it
  * then it converts into a strong map.
  */
-class LazyWeakMap {
+export class LazyWeakMap {
 	map = new WeakMap();
 	isWeak = true;
 
@@ -150,7 +150,14 @@ export default function createSelector(
 		if ( ! currMemo.has( cacheKey ) ) {
 			// call the selector with all of the dependents as args so it can use the fruits of
 			// the cpu cycles used during dependent calculation
-			currMemo.set( cacheKey, selector( state, ...[ ...args, ...currentDependants ] ) );
+			const emptySelectorArgs = fill(
+				new Array( Math.max( arity( selector ) - args.length, 0 ) ),
+				undefined
+			);
+			currMemo.set(
+				cacheKey,
+				selector( state, ...[ ...args, ...emptySelectorArgs, ...currentDependants ] )
+			);
 		}
 
 		memoizedSelector.cache = memo;
@@ -159,4 +166,21 @@ export default function createSelector(
 
 	memoizedSelector.cache = memo;
 	return memoizedSelector;
+}
+
+export function arity( fn ) {
+	const arityRegex = /arguments\[(\d+)\]/g;
+
+	const namedParametersCount = fn.length;
+	const fnString = fn.toString();
+	let maxParamAccessed = 0;
+
+	let match = arityRegex.exec( fnString );
+	while ( match ) {
+		if ( match ) {
+			maxParamAccessed = Math.max( maxParamAccessed, match[ 1 ] + 1 );
+		}
+		match = arityRegex.exec( fnString );
+	}
+	return Math.max( namedParametersCount, maxParamAccessed );
 }

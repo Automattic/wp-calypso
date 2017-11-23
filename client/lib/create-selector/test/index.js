@@ -9,7 +9,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import createSelector from '../';
+import createSelector, { LazyWeakMap } from '../';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'index', () => {
@@ -27,11 +27,11 @@ describe( 'index', () => {
 	} );
 
 	beforeEach( () => {
-		getSitePosts.clearCache();
+		getSitePosts.cache.clear();
 	} );
 
 	test( 'should expose its cache', () => {
-		expect( getSitePosts.cache instanceof WeakMap ).ok;
+		expect( getSitePosts.cache instanceof LazyWeakMap ).ok;
 	} );
 
 	test( 'should create a function which returns the expected value when called', () => {
@@ -336,7 +336,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should call dependant state getter with arguments', () => {
-		const getDeps = sinon.spy( () => ( {} ) );
+		const getDeps = sinon.spy();
 		const memoizedSelector = createSelector( () => null, getDeps );
 		const state = {};
 
@@ -346,8 +346,8 @@ describe( 'index', () => {
 	} );
 
 	test( 'should handle an array of selectors instead of a dependant state getter', () => {
-		const getPosts = sinon.spy( () => ( {} ) );
-		const getQuuxs = sinon.spy( () => ( {} ) );
+		const getPosts = sinon.spy();
+		const getQuuxs = sinon.spy();
 		const memoizedSelector = createSelector( () => null, [ getPosts, getQuuxs ] );
 		const state = {};
 
