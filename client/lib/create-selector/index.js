@@ -136,8 +136,8 @@ export default function createSelector(
 
 		// create a map of maps based on dependents in order to cache selector results.
 		// ideally each map is a WeakMap but we fallback to a regular Map if a key woul be a non-object
-		// the reason this is beneficial over just using a cacheKey in a regular map, is that now we can
-		// garbage collect any values that are based on dependents that no longer exist so the memory usage
+		// the reason this charade is beneficial over standard memoization techniques is that now we can
+		// garbage collect any values that are based on outdated dependents so the memory usage
 		// should never balloon
 		let currMemo = memo;
 		forEach( currentDependants, dependent => {
