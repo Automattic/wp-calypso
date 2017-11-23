@@ -15,6 +15,7 @@ import { translate } from 'i18n-calypso';
 import config from 'config';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
+	LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
 	LOGIN_AUTH_ACCOUNT_TYPE_RESET,
 	LOGIN_FORM_UPDATE,
@@ -583,6 +584,11 @@ export const logoutUser = redirectTo => ( dispatch, getState ) => {
  * @return {Function} a promise that will resolve once the authentication account type has been retrieved
  */
 export const getAuthAccountType = usernameOrEmail => dispatch => {
+	dispatch( {
+		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
+		usernameOrEmail,
+	} );
+
 	if ( usernameOrEmail === '' ) {
 		return new Promise( ( resolve, reject ) => {
 			const error = {
@@ -603,7 +609,7 @@ export const getAuthAccountType = usernameOrEmail => dispatch => {
 	}
 
 	dispatch( {
-		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
+		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
 		usernameOrEmail,
 	} );
 

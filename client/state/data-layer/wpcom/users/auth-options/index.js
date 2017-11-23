@@ -11,7 +11,7 @@ import { get } from 'lodash';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
-	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
+	LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
 } from 'state/action-types';
@@ -62,5 +62,5 @@ const getAuthAccountTypeRequest = dispatchRequest(
 );
 
 export default {
-	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST ]: [ getAuthAccountTypeRequest ],
+	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING ]: [ getAuthAccountTypeRequest ],
 };
