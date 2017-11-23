@@ -36,6 +36,7 @@ describe( 'assembler', () => {
 		redirectDomainObject = {
 			autoRenewalMoment: undefined,
 			currentUserCanManage: undefined,
+			canSetAsPrimary: undefined,
 			domainLockingAvailable: undefined,
 			expirationMoment: undefined,
 			expired: undefined,
