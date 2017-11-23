@@ -3,41 +3,41 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import createReactClass from 'create-react-class';
-import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
+import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import { protectForm } from 'lib/protect-form';
+import Card from 'components/card';
+import EditGravatar from 'blocks/edit-gravatar';
 import formBase from 'me/form-base';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
-import EditGravatar from 'blocks/edit-gravatar';
-import ProfileLinks from 'me/profile-links';
-import userProfileLinks from 'lib/user-profile-links';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import Card from 'components/card';
-import observe from 'lib/mixins/data-observe';
-import eventRecorder from 'me/event-recorder';
+import FormTextInput from 'components/forms/form-text-input';
 import Main from 'components/main';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import observe from 'lib/mixins/data-observe';
+import ProfileLinks from 'me/profile-links';
+import ReauthRequired from 'me/reauth-required';
 import SectionHeader from 'components/section-header';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import userProfileLinks from 'lib/user-profile-links';
+import { protectForm } from 'lib/protect-form';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:me:profile' );
 
 const Profile = createReactClass( {
 	displayName: 'Profile',
 
-	mixins: [ formBase, observe( 'userSettings' ), eventRecorder ],
+	mixins: [ formBase, observe( 'userSettings' ) ],
 
 	componentDidMount() {
 		debug( this.displayName + ' component is mounted.' );
@@ -45,6 +45,14 @@ const Profile = createReactClass( {
 
 	componentWillUnmount() {
 		debug( this.displayName + ' component is unmounting.' );
+	},
+
+	getClickHandler( action ) {
+		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	},
+
+	getFocusHandler( action ) {
+		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	},
 
 	render() {
@@ -67,7 +75,7 @@ const Profile = createReactClass( {
 								id="first_name"
 								name="first_name"
 								onChange={ this.updateSetting }
-								onFocus={ this.recordFocusEvent( 'First Name Field' ) }
+								onFocus={ this.getFocusHandler( 'First Name Field' ) }
 								value={ this.getSetting( 'first_name' ) }
 							/>
 						</FormFieldset>
@@ -79,7 +87,7 @@ const Profile = createReactClass( {
 								id="last_name"
 								name="last_name"
 								onChange={ this.updateSetting }
-								onFocus={ this.recordFocusEvent( 'Last Name Field' ) }
+								onFocus={ this.getFocusHandler( 'Last Name Field' ) }
 								value={ this.getSetting( 'last_name' ) }
 							/>
 						</FormFieldset>
@@ -93,7 +101,7 @@ const Profile = createReactClass( {
 								id="display_name"
 								name="display_name"
 								onChange={ this.updateSetting }
-								onFocus={ this.recordFocusEvent( 'Display Name Field' ) }
+								onFocus={ this.getFocusHandler( 'Display Name Field' ) }
 								value={ this.getSetting( 'display_name' ) }
 							/>
 						</FormFieldset>
@@ -105,7 +113,7 @@ const Profile = createReactClass( {
 								id="description"
 								name="description"
 								onChange={ this.updateSetting }
-								onFocus={ this.recordFocusEvent( 'About Me Field' ) }
+								onFocus={ this.getFocusHandler( 'About Me Field' ) }
 								value={ this.getSetting( 'description' ) }
 							/>
 						</FormFieldset>
@@ -115,7 +123,7 @@ const Profile = createReactClass( {
 								disabled={
 									! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState()
 								}
-								onClick={ this.recordClickEvent( 'Save Profile Details Button' ) }
+								onClick={ this.getClickHandler( 'Save Profile Details Button' ) }
 							>
 								{ this.state.submittingForm
 									? this.props.translate( 'Saving…' )
@@ -131,7 +139,7 @@ const Profile = createReactClass( {
 								components: {
 									profilelink: (
 										<a
-											onClick={ this.recordClickEvent( 'My Profile Link' ) }
+											onClick={ this.getClickHandler( 'My Profile Link' ) }
 											href={ gravatarProfileLink }
 											target="_blank"
 											rel="noopener noreferrer"
@@ -139,7 +147,7 @@ const Profile = createReactClass( {
 									),
 									hovercardslink: (
 										<a
-											onClick={ this.recordClickEvent( 'Gravatar Hovercards Link' ) }
+											onClick={ this.getClickHandler( 'Gravatar Hovercards Link' ) }
 											href="https://support.wordpress.com/gravatar-hovercards/"
 											target="_blank"
 											rel="noopener noreferrer"
@@ -157,4 +165,6 @@ const Profile = createReactClass( {
 	},
 } );
 
-export default flowRight( protectForm, localize )( Profile );
+const connectComponent = connect( null, { recordGoogleEvent } );
+
+export default flowRight( connectComponent, protectForm, localize )( Profile );
