@@ -18,7 +18,7 @@ class PluginAction extends React.Component {
 		if ( ! this.props.disabledInfo ) {
 			this.props.action();
 		} else {
-			this.infoPopover._onClick( event );
+			this.infoPopover.handleClick( event );
 		}
 	};
 
