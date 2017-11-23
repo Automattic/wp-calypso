@@ -11,8 +11,8 @@ import React from 'react';
  */
 
 import { renderWithReduxStore } from 'lib/react-helpers';
-import Show from '../show';
+import ChecklistShow from '../checklist-show';
 
 export function show( context ) {
-	renderWithReduxStore( <Show />, 'primary', context.store );
+	renderWithReduxStore( <ChecklistShow />, 'primary', context.store );
 }
