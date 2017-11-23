@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
 import { get, isEqual, pick } from 'lodash';
@@ -38,7 +39,6 @@ import {
 	getJetpackConnectRedirectAfterAuth,
 	isRtl,
 	isSiteAutomatedTransfer,
-	isSiteOnPaidPlan,
 } from 'state/selectors';
 import {
 	getFlowType,
@@ -47,7 +47,7 @@ import {
 	isCalypsoStartedConnection,
 } from 'state/jetpack-connect/selectors';
 import { mc } from 'lib/analytics';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
@@ -55,6 +55,12 @@ const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
 	static defaultProps = { siteSlug: '*' };
+
+	static propTypes = {
+		// Connected props
+		isAutomatedTransfer: PropTypes.bool, // null indicates unknown
+		hasPlan: PropTypes.bool, // null indicates unknown
+	};
 
 	componentDidMount() {
 		if ( ! this.maybeRedirect( this.props ) ) {
@@ -248,8 +254,8 @@ class Plans extends Component {
 			this.hasPreSelectedPlan( this.props ) ||
 			notJetpack ||
 			! canPurchasePlans ||
-			hasPlan ||
-			isAutomatedTransfer
+			false !== hasPlan ||
+			false !== isAutomatedTransfer
 		) {
 			return <QueryPlans />;
 		}
@@ -301,7 +307,7 @@ export default connect(
 			selectedSite,
 			selectedSiteSlug,
 			selectedPlan,
-			isAutomatedTransfer: selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : false,
+			isAutomatedTransfer: selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : null,
 			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 			userId: user ? user.ID : null,
 			canPurchasePlans: selectedSite
@@ -312,7 +318,7 @@ export default connect(
 			getPlanBySlug: searchPlanBySlug,
 			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSiteSlug ),
 			isRtlLayout: isRtl( state ),
-			hasPlan: selectedSite && isSiteOnPaidPlan( state, selectedSite.ID ),
+			hasPlan: selectedSite ? isCurrentPlanPaid( state, selectedSite.ID ) : null,
 			notJetpack: ! ( selectedSite && isJetpackSite( state, selectedSite.ID ) ),
 		};
 	},
