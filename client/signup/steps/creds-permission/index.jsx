@@ -14,6 +14,7 @@ import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import Button from 'components/button';
 import QuerySites from 'components/data/query-sites';
+import SignupActions from 'lib/signup/actions';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -33,7 +34,14 @@ class CredsPermissionStep extends Component {
 
 	shareCredentials = () => {
 		this.autoConfigCredentials();
+		
 		this.props.recordTracksEvent( 'calypso_pressable_nux_credentials_share', {} );
+		
+		SignupActions.submitSignupStep( {
+			processingMessage: this.props.translate( 'Setting up your site' ),
+			stepName: this.props.stepName,
+		} );
+
 		this.props.goToStep( 'creds-complete' );
 	};
 
