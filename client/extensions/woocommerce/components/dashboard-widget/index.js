@@ -1,4 +1,5 @@
 /**
+ * /* eslint-disable wpcalypso/jsx-classname-namespace
  * External dependencies
  *
  * @format
