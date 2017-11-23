@@ -110,7 +110,7 @@ export class CommentEdit extends Component {
 						<FormLabel htmlFor="author">{ translate( 'Name' ) }</FormLabel>
 						{ isAuthorRegistered && (
 							<InfoPopover>
-								{ translate( "This user is registered, the name can't be edited." ) }
+								{ translate( "This user is registered; the name can't be edited." ) }
 							</InfoPopover>
 						) }
 						<FormTextInput
@@ -125,7 +125,7 @@ export class CommentEdit extends Component {
 						<FormLabel htmlFor="author_url">{ translate( 'URL' ) }</FormLabel>
 						{ isAuthorRegistered && (
 							<InfoPopover>
-								{ translate( "This user is registered, the URL can't be edited." ) }
+								{ translate( "This user is registered; the URL can't be edited." ) }
 							</InfoPopover>
 						) }
 						<FormTextInput
