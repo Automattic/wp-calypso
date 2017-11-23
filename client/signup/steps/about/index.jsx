@@ -99,6 +99,7 @@ class AboutStep extends Component {
 		//Inputs
 		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 		const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
+		const siteGoalsArray = siteGoalsInput.split( ',' );
 
 		//Site Title
 		if ( siteTitleInput !== '' ) {
@@ -115,10 +116,12 @@ class AboutStep extends Component {
 		themeRepo = getThemeForSiteGoals( siteGoalsInput );
 		designType = getSiteTypeForSiteGoals( siteGoalsInput );
 
-		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
-			field: 'Site goals',
-			value: siteGoalsInput,
-		} );
+		for ( let i = 0; i < siteGoalsArray.length; i++ ) {
+			this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
+				field: 'Site goal: ' + siteGoalsArray[ i ],
+				value: true,
+			} );
+		}
 
 		//SET SITETYPE
 		this.props.setDesignType( designType );
