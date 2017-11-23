@@ -602,14 +602,13 @@ class ActivityLog extends Component {
 				{ hasFirstBackup && this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
 				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
-				{ requestData.logs.isLoading &&
-					! requestData.logs.hasLoaded && (
-						<section className="activity-log__wrapper">
-							<ActivityLogDayPlaceholder />
-							<ActivityLogDayPlaceholder />
-							<ActivityLogDayPlaceholder />
-						</section>
-					) }
+				{ ! requestData.logs.hasLoaded && (
+					<section className="activity-log__wrapper">
+						<ActivityLogDayPlaceholder />
+						<ActivityLogDayPlaceholder />
+						<ActivityLogDayPlaceholder />
+					</section>
+				) }
 				{ requestData.logs.hasLoaded &&
 					isEmpty( logs ) && (
 						<EmptyContent
