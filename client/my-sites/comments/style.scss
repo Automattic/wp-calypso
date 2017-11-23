@@ -74,6 +74,28 @@
 	}
 }
 
+.comment-threaded-list .notice a {
+	cursor: pointer;
+}
+
+.comment-threaded-list__more-replies {
+	border-radius: 0 0 3px 3px;
+	margin-bottom: 10px;
+
+	@include breakpoint( '>660px' ) {
+		margin-top: -10px;
+	}
+
+	.notice__icon-wrapper {
+		border-top-left-radius: 0;
+	}
+}
+
+.comment-threaded-list__comment.depth-1 {
+	margin-top: 1px;
+	padding-left: 47px;
+}
+
 .comment-list__header-title {
 	font-weight: 600;
 	overflow: hidden;
