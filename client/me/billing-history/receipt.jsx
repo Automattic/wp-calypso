@@ -3,38 +3,47 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import createReactClass from 'create-react-class';
+import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
-import tableRows from './table-rows';
-import eventRecorder from 'me/event-recorder';
+import Button from 'components/button';
 import Card from 'components/card';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
 import DocumentHead from 'components/data/document-head';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import purchasesPaths from 'me/purchases/paths';
+import QueryBillingTransactions from 'components/data/query-billing-transactions';
+import tableRows from './table-rows';
 import { getPastBillingTransaction, getPastBillingTransactions } from 'state/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-const BillingReceipt = createReactClass( {
-	displayName: 'BillingReceipt',
-	mixins: [ eventRecorder ],
-
+class BillingReceipt extends React.Component {
 	componentDidMount() {
 		this.redirectIfInvalidTransaction();
-	},
+	}
 
 	componentDidUpdate() {
 		this.redirectIfInvalidTransaction();
-	},
+	}
+
+	recordClickEvent = action => {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	};
+
+	handleSupportLinkClick = () => {
+		this.recordClickEvent( 'Contact {appName} Support in Billing History Receipt' );
+	};
+
+	handlePrintLinkClick = () => {
+		this.recordClickEvent( 'Print Receipt Button in Billing History Receipt' );
+		window.print();
+	};
 
 	redirectIfInvalidTransaction() {
 		const { totalTransactions, transaction } = this.props;
@@ -42,12 +51,7 @@ const BillingReceipt = createReactClass( {
 		if ( ! transaction && totalTransactions !== null ) {
 			page.redirect( purchasesPaths.billingHistory() );
 		}
-	},
-
-	printReceipt( event ) {
-		event.preventDefault();
-		window.print();
-	},
+	}
 
 	ref() {
 		const { transaction, translate } = this.props;
@@ -62,7 +66,7 @@ const BillingReceipt = createReactClass( {
 				<span>{ transaction.pay_ref }</span>
 			</li>
 		);
-	},
+	}
 
 	paymentMethod() {
 		const { transaction, translate } = this.props;
@@ -82,7 +86,7 @@ const BillingReceipt = createReactClass( {
 				<span>{ text }</span>
 			</li>
 		);
-	},
+	}
 
 	renderTitle() {
 		const { translate } = this.props;
@@ -92,7 +96,7 @@ const BillingReceipt = createReactClass( {
 				{ translate( 'Billing History' ) }
 			</HeaderCake>
 		);
-	},
+	}
 
 	renderPlaceholder() {
 		return (
@@ -108,7 +112,7 @@ const BillingReceipt = createReactClass( {
 				</div>
 			</Card>
 		);
-	},
+	}
 
 	renderBillingDetails() {
 		const { transaction, translate } = this.props;
@@ -123,7 +127,7 @@ const BillingReceipt = createReactClass( {
 				<div contentEditable="true">{ transaction.cc_email }</div>
 			</li>
 		);
-	},
+	}
 
 	renderEmptyBillingDetails() {
 		const { translate } = this.props;
@@ -134,7 +138,7 @@ const BillingReceipt = createReactClass( {
 				<div contentEditable="true" />
 			</li>
 		);
-	},
+	}
 
 	renderLineItems() {
 		const { transaction, translate } = this.props;
@@ -186,7 +190,7 @@ const BillingReceipt = createReactClass( {
 				</table>
 			</div>
 		);
-	},
+	}
 
 	renderBillingHistory() {
 		const { transaction, translate } = this.props;
@@ -237,9 +241,7 @@ const BillingReceipt = createReactClass( {
 					<a
 						href={ transaction.support }
 						className="button is-primary"
-						onClick={ this.recordClickEvent(
-							'Contact {appName} Support in Billing History Receipt'
-						) }
+						onClick={ this.handleSupportLinkClick }
 					>
 						{ translate( 'Contact %(transactionService)s Support', {
 							args: {
@@ -248,20 +250,11 @@ const BillingReceipt = createReactClass( {
 							context: 'transactionService is a website, such as WordPress.com.',
 						} ) }
 					</a>
-					<a
-						href="#"
-						onClick={ this.recordClickEvent(
-							'Print Receipt Button in Billing History Receipt',
-							this.printReceipt
-						) }
-						className="button is-secondary"
-					>
-						{ translate( 'Print Receipt' ) }
-					</a>
+					<Button onClick={ this.handlePrintLinkClick }>{ translate( 'Print Receipt' ) }</Button>
 				</Card>
 			</div>
 		);
-	},
+	}
 
 	render() {
 		const { transaction, translate } = this.props;
@@ -280,14 +273,19 @@ const BillingReceipt = createReactClass( {
 				{ transaction ? this.renderBillingHistory() : this.renderPlaceholder() }
 			</Main>
 		);
+	}
+}
+
+export default connect(
+	( state, ownProps ) => {
+		const transactions = getPastBillingTransactions( state );
+
+		return {
+			transaction: getPastBillingTransaction( state, ownProps.transactionId ),
+			totalTransactions: transactions ? transactions.length : null,
+		};
 	},
-} );
-
-export default connect( ( state, ownProps ) => {
-	const transactions = getPastBillingTransactions( state );
-
-	return {
-		transaction: getPastBillingTransaction( state, ownProps.transactionId ),
-		totalTransactions: transactions ? transactions.length : null,
-	};
-} )( localize( BillingReceipt ) );
+	{
+		recordGoogleEvent,
+	}
+)( localize( BillingReceipt ) );
