@@ -168,7 +168,7 @@ class Dashboard extends Component {
 		}
 
 		// This is temporary
-		if ( ! loading ) {
+		if ( ! loading && this.props.query && this.props.query.test ) {
 			return <TestDashboard />;
 		}
 
