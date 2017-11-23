@@ -17,6 +17,7 @@
     "> 1%"
   ],
   "dependencies": {
+    "ajv": "5.4.0",
     "assets-webpack-plugin": "3.5.1",
     "async": "0.9.0",
     "autoprefixer": "6.3.5",
