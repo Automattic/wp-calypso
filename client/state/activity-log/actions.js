@@ -283,15 +283,13 @@ export function rewindBackup( siteId, rewindId ) {
 /**
  * Check progress of backup creation for the a given download id.
  *
- * @param  {string|number} siteId     The site ID
- * @param  {number}        downloadId Id of the backup being created.
- * @return {object}                   Action object
+ * @param  {string|number} siteId The site ID
+ * @return {object}               Action object
  */
-export function getRewindBackupProgress( siteId, downloadId ) {
+export function getRewindBackupProgress( siteId ) {
 	return {
 		type: REWIND_BACKUP_PROGRESS_REQUEST,
 		siteId,
-		downloadId,
 	};
 }
 
@@ -315,27 +313,31 @@ export function updateRewindBackupProgress( siteId, downloadId, progress ) {
 /**
  * Update the status of the backup creation when it errors.
  *
- * @param  {string|number} siteId The site ID
- * @param  {string}        error  Error code
- * @return {object}               Action object
+ * @param  {string|number} siteId     The site ID
+ * @param  {number}        downloadId Id of the backup being created.
+ * @param  {object}        error      Info about downloadable backup and error.
+ * @return {object}                   Action object
  */
-export function rewindBackupUpdateError( siteId, error ) {
+export function rewindBackupUpdateError( siteId, downloadId, error ) {
 	return {
 		type: REWIND_BACKUP_UPDATE_ERROR,
 		siteId,
-		error,
+		downloadId,
+		...error,
 	};
 }
 
 /**
  * Remove success banner.
  *
- * @param  {string|number} siteId The site ID
- * @return {object}               Action object
+ * @param  {string|number} siteId     The site ID
+ * @param  {number}        downloadId Id of the backup being dismissed.
+ * @return {object}                   Action object
  */
-export function dismissRewindBackupProgress( siteId ) {
+export function dismissRewindBackupProgress( siteId, downloadId ) {
 	return {
 		type: REWIND_BACKUP_DISMISS_PROGRESS,
 		siteId,
+		downloadId,
 	};
 }

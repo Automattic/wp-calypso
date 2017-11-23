@@ -47,6 +47,7 @@ class SuccessBanner extends PureComponent {
 		timestamp: PropTypes.string,
 		backupUrl: PropTypes.string,
 		downloadCount: PropTypes.number,
+		downloadId: PropTypes.number,
 
 		// connect
 		dismissRestoreProgress: PropTypes.func.isRequired,
@@ -60,7 +61,7 @@ class SuccessBanner extends PureComponent {
 
 	handleDismiss = () =>
 		this.props.backupUrl
-			? this.props.dismissBackupProgress( this.props.siteId )
+			? this.props.dismissBackupProgress( this.props.siteId, this.props.downloadId )
 			: this.props.dismissRestoreProgress( this.props.siteId );
 
 	trackDownload = () =>
