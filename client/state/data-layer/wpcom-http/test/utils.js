@@ -1,12 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
-/**
  * Internal dependencies
  */
 import {
@@ -16,6 +10,8 @@ import {
 	dispatchRequest,
 	dispatchRequestEx,
 	makeParser,
+	reducer,
+	trackRequests,
 } from '../utils.js';
 
 describe( 'WPCOM HTTP Data Layer', () => {
@@ -30,19 +26,19 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		test( 'should return successful response data if available', () => {
 			const data = { utterance: 'Bork bork' };
 
-			expect( getData( withData( data ) ) ).to.equal( data );
+			expect( getData( withData( data ) ) ).toEqual( data );
 		} );
 
 		test( 'should return undefined if no response data available', () => {
 			const action = { type: 'SLUGGER' };
 
-			expect( getData( action ) ).to.be.undefined;
+			expect( getData( action ) ).toBeUndefined();
 		} );
 		test( 'should return valid-but-falsey data', () => {
-			expect( getData( withData( '' ) ) ).to.equal( '' );
-			expect( getData( withData( null ) ) ).to.equal( null );
-			expect( getData( withData( 0 ) ) ).to.equal( 0 );
-			expect( getData( withData( false ) ) ).to.equal( false );
+			expect( getData( withData( '' ) ) ).toBe( '' );
+			expect( getData( withData( null ) ) ).toBe( null );
+			expect( getData( withData( 0 ) ) ).toBe( 0 );
+			expect( getData( withData( false ) ) ).toBe( false );
 		} );
 	} );
 
@@ -50,20 +46,20 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		test( 'should return failing error data if available', () => {
 			const error = { utterance: 'Bork bork' };
 
-			expect( getError( withError( error ) ) ).to.equal( error );
+			expect( getError( withError( error ) ) ).toEqual( error );
 		} );
 
 		test( 'should return undefined if no error data available', () => {
 			const action = { type: 'SLUGGER' };
 
-			expect( getError( action ) ).to.be.undefined;
+			expect( getError( action ) ).toBeUndefined();
 		} );
 
 		test( 'should return valid-but-falsey data', () => {
-			expect( getError( withError( '' ) ) ).to.equal( '' );
-			expect( getError( withError( null ) ) ).to.equal( null );
-			expect( getError( withError( 0 ) ) ).to.equal( 0 );
-			expect( getError( withError( false ) ) ).to.equal( false );
+			expect( getError( withError( '' ) ) ).toBe( '' );
+			expect( getError( withError( null ) ) ).toBe( null );
+			expect( getError( withError( 0 ) ) ).toBe( 0 );
+			expect( getError( withError( false ) ) ).toBe( false );
 		} );
 	} );
 
@@ -71,13 +67,86 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		test( 'should return progress data if available', () => {
 			const progress = { total: 1234, loaded: 123 };
 
-			expect( getProgress( withProgress( progress ) ) ).to.equal( progress );
+			expect( getProgress( withProgress( progress ) ) ).toEqual( progress );
 		} );
 		test( 'should return valid-but-falsey data', () => {
-			expect( getProgress( withProgress( '' ) ) ).to.equal( '' );
-			expect( getProgress( withProgress( null ) ) ).to.equal( null );
-			expect( getProgress( withProgress( 0 ) ) ).to.equal( 0 );
-			expect( getProgress( withProgress( false ) ) ).to.equal( false );
+			expect( getProgress( withProgress( '' ) ) ).toBe( '' );
+			expect( getProgress( withProgress( null ) ) ).toBe( null );
+			expect( getProgress( withProgress( 0 ) ) ).toBe( 0 );
+			expect( getProgress( withProgress( false ) ) ).toBe( false );
+		} );
+	} );
+
+	describe( '#reducer', () => {
+		test( 'should update based on presence of request meta key', () =>
+			expect(
+				reducer( {}, { meta: { dataLayer: { status: 'pending', requestKey: 'cats' } } } )
+			).toMatchObject( {
+				cats: { status: 'pending' },
+			} ) );
+
+		test( 'should only update requested meta key', () => {
+			const prev = { cats: { status: 'pending' } };
+			const action = { meta: { dataLayer: { status: 'failure', requestKey: 'dogs' } } };
+
+			expect( reducer( prev, action ) ).toMatchObject( {
+				cats: { status: 'pending' },
+				dogs: { status: 'failure' },
+			} );
+		} );
+
+		test( 'should not update just because an action has meta', () =>
+			expect( reducer( {}, { meta: { value: 1337 } } ) ).toEqual( {} ) );
+
+		test( 'should track previous request when updating', () => {
+			const prev = { dogs: { status: 'success', lastUpdated: 1000 } };
+			const action = {
+				meta: { dataLayer: { requestKey: 'dogs', status: 'pending', pendingSince: 1500 } },
+			};
+
+			const next = reducer( prev, action );
+
+			expect( next ).toMatchObject( { dogs: { lastUpdated: 1000 } } );
+		} );
+
+		test( 'should not care if pending flag is persisted', () => {} );
+	} );
+
+	describe( '#trackRequests', () => {
+		test( 'should bypass actions without opt-in flag', () => {
+			const store = {};
+			const action = {};
+			const next = jest.fn();
+
+			trackRequests( next )( store, action );
+
+			expect( next ).toHaveBeenCalledWith( store, action );
+		} );
+
+		test( 'should bypass progress events', () => {
+			const store = {};
+			const action = { meta: { dataLayer: { trackRequest: true, progress: {} } } };
+			const next = jest.fn();
+
+			trackRequests( next )( store, action );
+
+			expect( next ).toHaveBeenCalledWith( store, action );
+		} );
+
+		test( 'should inject false dispatcher', () => {
+			const store = { dispatch: jest.fn() };
+			const action = { meta: { dataLayer: { trackRequest: true } } };
+			const next = jest.fn();
+
+			trackRequests( next )( store, action );
+
+			const { dispatch } = next.mock.calls[ 0 ][ 0 ];
+
+			dispatch( {} );
+
+			const args = store.dispatch.mock.calls[ 0 ];
+			expect( args.length ).toBe( 1 );
+			expect( args[ 0 ] ).toMatchObject( { meta: { dataLayer: {} } } );
 		} );
 	} );
 
@@ -99,62 +168,62 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		let store;
 
 		beforeEach( () => {
-			initiator = spy();
-			onSuccess = spy();
-			onFailure = spy();
-			onProgress = spy();
+			initiator = jest.fn();
+			onSuccess = jest.fn();
+			onFailure = jest.fn();
+			onProgress = jest.fn();
 			dispatcher = dispatchRequest( initiator, onSuccess, onFailure, { onProgress } );
-			store = spy();
+			store = jest.fn();
 		} );
 
 		test( 'should call the initiator if meta information missing', () => {
 			dispatcher( store, empty );
 
-			expect( initiator ).to.have.been.calledWith( store, empty );
-			expect( onSuccess ).to.not.have.been.called;
-			expect( onFailure ).to.not.have.been.called;
-			expect( onProgress ).to.not.have.been.called;
+			expect( initiator ).toHaveBeenCalledWith( store, empty );
+			expect( onSuccess ).not.toHaveBeenCalled();
+			expect( onFailure ).not.toHaveBeenCalled();
+			expect( onProgress ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should call onSuccess if meta includes response data', () => {
 			dispatcher( store, success );
 
-			expect( initiator ).to.not.have.been.called;
-			expect( onSuccess ).to.have.been.calledWith( store, success, data );
-			expect( onFailure ).to.not.have.been.called;
-			expect( onProgress ).to.not.have.been.called;
+			expect( initiator ).not.toHaveBeenCalled();
+			expect( onSuccess ).toHaveBeenCalledWith( store, success, data );
+			expect( onFailure ).not.toHaveBeenCalled();
+			expect( onProgress ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should call onFailure if meta includes error data', () => {
 			dispatcher( store, failure );
 
-			expect( initiator ).to.not.have.been.called;
-			expect( onSuccess ).to.not.have.been.called;
-			expect( onFailure ).to.have.been.calledWith( store, failure, error );
-			expect( onProgress ).to.not.have.been.called;
+			expect( initiator ).not.toHaveBeenCalled();
+			expect( onSuccess ).not.toHaveBeenCalled();
+			expect( onFailure ).toHaveBeenCalledWith( store, failure, error );
+			expect( onProgress ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should call onFailure if meta includes both response data and error data', () => {
 			dispatcher( store, both );
 
-			expect( initiator ).to.not.have.been.called;
-			expect( onSuccess ).to.not.have.been.called;
-			expect( onFailure ).to.have.been.calledWith( store, both, error );
-			expect( onProgress ).to.not.have.been.called;
+			expect( initiator ).not.toHaveBeenCalled();
+			expect( onSuccess ).not.toHaveBeenCalled();
+			expect( onFailure ).toHaveBeenCalledWith( store, both, error );
+			expect( onProgress ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should call onProgress if meta includes progress data', () => {
 			dispatcher( store, progress );
 
-			expect( initiator ).to.not.have.been.called;
-			expect( onSuccess ).to.not.have.been.called;
-			expect( onFailure ).to.not.have.been.called;
-			expect( onProgress ).to.have.been.calledWith( store, progress, progressInfo );
+			expect( initiator ).not.toHaveBeenCalled();
+			expect( onSuccess ).not.toHaveBeenCalled();
+			expect( onFailure ).not.toHaveBeenCalled();
+			expect( onProgress ).toHaveBeenCalledWith( store, progress, progressInfo );
 		} );
 
 		test( 'should not throw runtime error if onProgress is not specified', () => {
 			dispatcher = dispatchRequest( initiator, onSuccess, onFailure );
-			expect( () => dispatcher( store, progress ) ).to.not.throw( TypeError );
+			expect( () => dispatcher( store, progress ) ).not.toThrow( TypeError );
 		} );
 
 		test( 'should validate response data', () => {
@@ -166,9 +235,9 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			const fromApi = makeParser( schema );
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, success, data );
 
-			expect( initiator ).to.not.have.been.called;
-			expect( onSuccess ).to.have.been.called;
-			expect( onFailure ).to.not.have.been.called;
+			expect( initiator ).not.toHaveBeenCalled();
+			expect( onSuccess ).toHaveBeenCalled();
+			expect( onFailure ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should fail-over on invalid response data', () => {
@@ -180,9 +249,9 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			const fromApi = makeParser( schema );
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, success, data );
 
-			expect( initiator ).to.not.have.been.called;
-			expect( onSuccess ).to.not.have.been.called;
-			expect( onFailure ).to.have.been.called;
+			expect( initiator ).not.toHaveBeenCalled();
+			expect( onSuccess ).not.toHaveBeenCalled();
+			expect( onFailure ).toHaveBeenCalled();
 		} );
 
 		test( 'should validate with additional fields', () => {
@@ -197,9 +266,9 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			const fromApi = makeParser( schema );
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, action, extra );
 
-			expect( initiator ).to.not.have.been.called;
-			expect( onSuccess ).to.have.been.called;
-			expect( onFailure ).to.not.have.been.called;
+			expect( initiator ).not.toHaveBeenCalled();
+			expect( onSuccess ).toHaveBeenCalled();
+			expect( onFailure ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should filter out additional fields', () => {
@@ -214,10 +283,10 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			const fromApi = makeParser( schema );
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, action, extra );
 
-			expect( initiator ).to.not.have.been.called;
-			expect( onSuccess ).to.have.been.called;
-			expect( onSuccess ).to.have.been.calledWithExactly( store, action, { count: 15 } );
-			expect( onFailure ).to.not.have.been.called;
+			expect( initiator ).not.toHaveBeenCalled();
+			expect( onSuccess ).toHaveBeenCalled();
+			expect( onSuccess ).toHaveBeenCalledWith( store, action, { count: 15 } );
+			expect( onFailure ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should transform validated output', () => {
@@ -234,13 +303,12 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			const fromApi = makeParser( schema, {}, transformer );
 			dispatchRequest( initiator, onSuccess, onFailure, { fromApi } )( store, action, extra );
 
-			expect( initiator ).to.not.have.been.called;
-			expect( onSuccess ).to.have.been.called;
-			expect( onSuccess ).to.have.been.calledWithExactly( store, action, {
+			expect( initiator ).not.toHaveBeenCalled();
+			expect( onSuccess ).toHaveBeenCalledWith( store, action, {
 				tribbleCount: 30,
 				haveTrouble: true,
 			} );
-			expect( onFailure ).to.not.have.been.called;
+			expect( onFailure ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -276,39 +344,39 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		let store;
 
 		beforeEach( () => {
-			dispatch = spy();
+			dispatch = jest.fn();
 			store = { dispatch };
 		} );
 
 		test( 'should initiate request if meta information missing', () => {
 			dispatcher( store, fetchHttpAction );
-			expect( dispatch ).to.have.been.calledWith( fetchAction );
+			expect( dispatch ).toHaveBeenCalledWith( fetchAction );
 		} );
 
 		test( 'should call onSuccess if meta includes response data', () => {
 			dispatcher( store, successHttpAction );
-			expect( dispatch ).to.have.been.calledWith( successAction );
+			expect( dispatch ).toHaveBeenCalledWith( successAction );
 		} );
 
 		test( 'should call onError if meta includes error data', () => {
 			dispatcher( store, failureHttpAction );
-			expect( dispatch ).to.have.been.calledWith( failureAction );
+			expect( dispatch ).toHaveBeenCalledWith( failureAction );
 		} );
 
 		test( 'should call onError if meta includes both response data and error data', () => {
 			dispatcher( store, bothHttpAction );
-			expect( dispatch ).to.have.been.calledWith( failureAction );
+			expect( dispatch ).toHaveBeenCalledWith( failureAction );
 		} );
 
 		test( 'should call onProgress if meta includes progress data', () => {
 			dispatcher( store, progressHttpAction );
-			expect( dispatch ).to.have.been.calledWith( progressAction );
+			expect( dispatch ).toHaveBeenCalledWith( progressAction );
 		} );
 
 		test( 'should not throw runtime error if onProgress is not specified', () => {
 			expect( () => {
 				dispatchRequestEx( { fetch, onSuccess, onError } )( store, progressHttpAction );
-			} ).to.not.throw( TypeError );
+			} ).not.toThrow( TypeError );
 		} );
 
 		test( 'should validate response data', () => {
@@ -317,7 +385,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				properties: { count: { type: 'integer' } },
 			} );
 			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, successHttpAction );
-			expect( dispatch ).to.have.been.calledWith( successAction );
+			expect( dispatch ).toHaveBeenCalledWith( successAction );
 		} );
 
 		test( 'should fail-over on invalid response data', () => {
@@ -326,7 +394,11 @@ describe( 'WPCOM HTTP Data Layer', () => {
 				properties: { count: { type: 'string' } },
 			} );
 			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, successHttpAction );
-			expect( dispatch ).to.have.been.calledWithMatch( { type: 'FAILURE' } );
+
+			const args = dispatch.mock.calls[ 0 ];
+
+			expect( args.length ).toBe( 1 );
+			expect( args[ 0 ] ).toMatchObject( { type: 'FAILURE' } );
 		} );
 
 		test( 'should validate with additional fields', () => {
@@ -341,7 +413,11 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			};
 
 			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, action );
-			expect( dispatch ).to.have.been.calledWithMatch( { type: 'SUCCESS' } );
+
+			const args = dispatch.mock.calls[ 0 ];
+
+			expect( args.length ).toBe( 1 );
+			expect( args[ 0 ] ).toMatchObject( { type: 'SUCCESS' } );
 		} );
 
 		test( 'should filter out additional fields', () => {
@@ -356,7 +432,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			};
 
 			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, action );
-			expect( dispatch ).to.have.been.calledWith( { type: 'SUCCESS', data: { count: 15 } } );
+			expect( dispatch ).toHaveBeenCalledWith( { type: 'SUCCESS', data: { count: 15 } } );
 		} );
 
 		test( 'should transform validated output', () => {
@@ -374,7 +450,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 
 			dispatchRequestEx( { fetch, onSuccess, onError, fromApi } )( store, action );
 
-			expect( dispatch ).to.have.been.calledWith( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: 'SUCCESS',
 				data: {
 					tribbleCount: 30,
