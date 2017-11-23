@@ -135,6 +135,7 @@
 		@include breakpoint( '<480px' ) {
 			flex-flow: row;
 			font-size: 11px;
+			margin-right: auto;
 		}
 	}
 }

@@ -155,15 +155,10 @@ export class PluginAutoUpdateToggle extends Component {
 				'DISABLE_AUTOUPDATE_PLUGIN',
 			] ),
 			getDisabledInfo = this.getDisabledInfo(),
-			label = getDisabledInfo
-				? translate( 'Autoupdates disabled', {
-						context:
-							'this goes next to an icon that displays if the plugin has "autoupdates disabled" active',
-					} )
-				: translate( 'Autoupdates', {
-						context:
-							'this goes next to an icon that displays if the plugin has "autoupdates" active',
-					} );
+			label = translate( 'Autoupdates', {
+				context:
+					'this goes next to an icon that displays if the plugin has "autoupdates", both enabled and disabled',
+			} );
 
 		return (
 			<PluginAction
