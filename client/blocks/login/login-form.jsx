@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import classNames from 'classnames';
 import { capitalize, defer, includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -78,9 +77,7 @@ export class LoginForm extends Component {
 	componentDidMount() {
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
-			if ( this.usernameOrEmail ) {
-				this.usernameOrEmail.focus();
-			}
+			this.usernameOrEmail && this.usernameOrEmail.focus();
 		} );
 	}
 
@@ -92,7 +89,7 @@ export class LoginForm extends Component {
 		}
 
 		if ( requestError.field === 'password' ) {
-			defer( () => this.password.focus() );
+			defer( () => this.password && this.password.focus() );
 		}
 
 		if ( requestError.field === 'usernameOrEmail' ) {
@@ -110,12 +107,12 @@ export class LoginForm extends Component {
 			}
 		}
 
-		if ( this.props.accountType !== null && nextProps.accountType === null ) {
-			defer( () => this.usernameOrEmail.focus() );
+		if ( this.props.hasAccountTypeLoaded && ! nextProps.hasAccountTypeLoaded ) {
+			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		}
 
-		if ( this.props.accountType === null && nextProps.accountType === 'regular' ) {
-			defer( () => this.password.focus() );
+		if ( ! this.props.hasAccountTypeLoaded && isRegularAccount( nextProps.accountType ) ) {
+			defer( () => this.password && this.password.focus() );
 		}
 	}
 
