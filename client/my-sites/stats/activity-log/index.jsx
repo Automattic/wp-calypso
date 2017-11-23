@@ -597,7 +597,7 @@ class ActivityLog extends Component {
 			<Main wideLayout>
 				{ rewindEnabledByConfig && <QueryRewindStatus siteId={ siteId } /> }
 				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
-				{ siteId && <QueryRewindBackupStatus siteId={ siteId } /> }
+				{ siteId && isRewindActive && <QueryRewindBackupStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
 				<QueryJetpackCredentials siteId={ siteId } />
 				<StatsFirstView />
