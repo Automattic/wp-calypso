@@ -131,7 +131,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		commentContent: get( comment, 'content' ),
 		commentIsPending: 'unapproved' === get( comment, 'status' ),
 		isJetpack,
-		isParentCommentLoaded: 0 === parentCommentId || !! parentCommentContent,
+		isParentCommentLoaded: ! parentCommentId || !! parentCommentContent,
 		parentCommentContent,
 		parentCommentId,
 		parentCommentUrl,
