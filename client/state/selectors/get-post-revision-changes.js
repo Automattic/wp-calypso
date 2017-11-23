@@ -30,6 +30,9 @@ const getCombinedLength = list =>
 
 const getPostRevisionChanges = createSelector(
 	( state, siteId, postId, revisionId ) => {
+
+		require( 'lib/analytics' );
+
 		const noChanges = { content: [], summary: {}, title: [] };
 		if ( ! isEnabled( 'post-editor/revisions' ) ) {
 			return noChanges;
