@@ -5,7 +5,6 @@
  */
 
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -20,7 +19,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Site from 'blocks/site';
 import Gridicon from 'gridicons';
-import config from 'config';
 import SiteNotice from './notice';
 import CartStore from 'lib/cart/store';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -33,7 +31,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class CurrentSite extends Component {
 	static propTypes = {
-		isPreviewShowing: PropTypes.bool,
 		siteCount: PropTypes.number.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object,
@@ -91,37 +88,6 @@ class CurrentSite extends Component {
 		analytics.ga.recordEvent( 'Sidebar', 'Clicked Switch Site' );
 	};
 
-	previewSite = event => this.props.onClick && this.props.onClick( event );
-
-	renderSiteViewLink() {
-		if ( config.isEnabled( 'standalone-site-preview' ) ) {
-			return;
-		}
-
-		const { isPreviewShowing, selectedSite, translate } = this.props;
-
-		const viewText = selectedSite.is_previewable
-			? translate( 'Site Preview' )
-			: translate( 'View site' );
-
-		const viewIcon = selectedSite.is_previewable ? 'computer' : 'external';
-
-		return (
-			<a
-				href={ selectedSite.URL }
-				onClick={ this.previewSite }
-				className={ classNames( 'current-site__view-site', {
-					selected: isPreviewShowing,
-				} ) }
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				<span className="current-site__view-site-text">{ viewText }</span>
-				<Gridicon icon={ viewIcon } />
-			</a>
-		);
-	}
-
 	render() {
 		const { selectedSite, translate, anySiteSelected } = this.props;
 
@@ -158,7 +124,6 @@ class CurrentSite extends Component {
 				{ selectedSite ? (
 					<div>
 						<Site site={ selectedSite } />
-						{ this.renderSiteViewLink() }
 					</div>
 				) : (
 					<AllSites />

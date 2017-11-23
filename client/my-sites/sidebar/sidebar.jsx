@@ -612,7 +612,7 @@ export class MySitesSidebar extends Component {
 			<div>
 				<SidebarMenu>
 					<ul>
-						{ config.isEnabled( 'standalone-site-preview' ) && this.preview() }
+						{ this.preview() }
 						{ this.stats() }
 						{ this.plan() }
 						{ this.store() }

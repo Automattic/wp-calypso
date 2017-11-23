@@ -94,7 +94,6 @@
 		"signup/domain-first-flow": true,
 		"signup/social": false,
 		"signup/social-management": true,
-		"standalone-site-preview": true,
 		"signup/wpcc": true,
 		"ui/first-view": false,
 		"upgrades/checkout": true,
