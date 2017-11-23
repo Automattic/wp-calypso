@@ -98,7 +98,7 @@ export const requestComment = action => {
 				apiVersion: '1.1',
 				query,
 			},
-			//if we see a force=wpcom, don't retry try dropping the query param to see if the remote has the comment.
+			//if we see ?force=wpcom, on failure, retry against the real site instead.
 			query.force && { retryPolicy: noRetry() }
 		),
 		action
@@ -112,7 +112,8 @@ export const receiveCommentSuccess = ( action, response ) => {
 };
 
 export const receiveCommentError = ( { siteId, commentId, query = {} } ) => {
-	//if we see a force=wpcom, on retry try dropping the query param to see if the remote has the comment.
+	// we can't tell the difference between a network failure and a shadow sync failure
+	// so if the request drops out automatically retry against the real site
 	const { force, ...retryQuery } = query;
 	if ( force === 'wpcom' ) {
 		return requestCommentAction( { siteId, commentId, query: retryQuery } );
