@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -46,7 +46,7 @@ class JetpackPlansGrid extends Component {
 	}
 
 	renderBlackFridayOffer() {
-		const { translate } = this.props;
+		const { translate, moment } = this.props;
 
 		const startDate = new Date( 'Nov 24 2017 00:00:00 GMT' );
 		const endDate = new Date( 'Nov 27 2017 23:59:59 GMT-8' );
