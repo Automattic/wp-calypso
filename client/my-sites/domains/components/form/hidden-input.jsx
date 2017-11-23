@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
