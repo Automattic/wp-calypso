@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -21,27 +20,26 @@ import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 import Notice from 'components/notice';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-const Security2faBackupCodes = createReactClass( {
-	displayName: 'Security2faBackupCodes',
+class Security2faBackupCodes extends Component {
+	constructor( props ) {
+		super( props );
+		const printed = this.props.userSettings.getSetting( 'two_step_backup_codes_printed' );
 
-	getInitialState: function() {
-		var printed = this.props.userSettings.getSetting( 'two_step_backup_codes_printed' );
-
-		return {
-			printed: printed,
+		this.state = {
+			printed,
 			verified: printed,
 			showPrompt: ! printed,
 			backupCodes: [],
 			generatingCodes: false,
 		};
-	},
+	}
 
-	handleGenerateButtonClick() {
+	handleGenerateButtonClick = () => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Generate New Backup Codes Button' );
 		this.onGenerate();
-	},
+	};
 
-	onGenerate: function() {
+	onGenerate = () => {
 		this.setState( {
 			generatingCodes: true,
 			verified: false,
@@ -49,9 +47,9 @@ const Security2faBackupCodes = createReactClass( {
 		} );
 
 		twoStepAuthorization.backupCodes( this.onRequestComplete );
-	},
+	};
 
-	onRequestComplete: function( error, data ) {
+	onRequestComplete = ( error, data ) => {
 		if ( error ) {
 			this.setState( {
 				lastError: this.props.translate(
@@ -65,24 +63,24 @@ const Security2faBackupCodes = createReactClass( {
 			backupCodes: data.codes,
 			generatingCodes: false,
 		} );
-	},
+	};
 
-	onNextStep: function() {
+	onNextStep = () => {
 		this.setState( {
 			backupCodes: [],
 			printed: true,
 		} );
-	},
+	};
 
-	onVerified: function() {
+	onVerified = () => {
 		this.setState( {
 			printed: true,
 			verified: true,
 			showPrompt: false,
 		} );
-	},
+	};
 
-	renderStatus: function() {
+	renderStatus() {
 		if ( ! this.state.printed ) {
 			return (
 				<Notice
@@ -111,9 +109,9 @@ const Security2faBackupCodes = createReactClass( {
 				text={ this.props.translate( 'Backup codes have been verified' ) }
 			/>
 		);
-	},
+	}
 
-	renderList: function() {
+	renderList() {
 		return (
 			<Security2faBackupCodesList
 				backupCodes={ this.state.backupCodes }
@@ -122,9 +120,9 @@ const Security2faBackupCodes = createReactClass( {
 				showList
 			/>
 		);
-	},
+	}
 
-	renderPrompt: function() {
+	renderPrompt() {
 		return (
 			<div>
 				<p>
@@ -140,9 +138,9 @@ const Security2faBackupCodes = createReactClass( {
 				{ this.state.showPrompt && <Security2faBackupCodesPrompt onSuccess={ this.onVerified } /> }
 			</div>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<div className="security-2fa-backup-codes">
 				<SectionHeader label={ this.props.translate( 'Backup Codes' ) }>
@@ -161,8 +159,8 @@ const Security2faBackupCodes = createReactClass( {
 				</Card>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( null, {
 	recordGoogleEvent,
