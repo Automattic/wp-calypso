@@ -7,6 +7,7 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-backup-codes' );
 
@@ -17,15 +18,13 @@ import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import Card from 'components/card';
-import eventRecorder from 'me/event-recorder';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 import Notice from 'components/notice';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const Security2faBackupCodes = createReactClass( {
 	displayName: 'Security2faBackupCodes',
-
-	mixins: [ eventRecorder ],
 
 	componentDidMount: function() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
@@ -45,6 +44,11 @@ const Security2faBackupCodes = createReactClass( {
 			backupCodes: [],
 			generatingCodes: false,
 		};
+	},
+
+	handleGenerateButtonClick() {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Generate New Backup Codes Button' );
+		this.onGenerate();
 	},
 
 	onGenerate: function() {
@@ -155,7 +159,7 @@ const Security2faBackupCodes = createReactClass( {
 					<Button
 						compact
 						disabled={ this.state.generatingCodes || !! this.state.backupCodes.length }
-						onClick={ this.recordClickEvent( 'Generate New Backup Codes Button', this.onGenerate ) }
+						onClick={ this.handleGenerateButtonClick }
 					>
 						{ this.props.translate( 'Generate New Backup Codes' ) }
 					</Button>
@@ -170,4 +174,6 @@ const Security2faBackupCodes = createReactClass( {
 	},
 } );
 
-export default localize( Security2faBackupCodes );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Security2faBackupCodes ) );
