@@ -26,6 +26,7 @@ const ruleWhiteList = [
 	'expiringDomainsCannotManage',
 	'wrongNSMappedDomains',
 	'pendingGappsTosAcceptanceDomains',
+	'transferStatus',
 ];
 
 const CurrentSiteDomainWarnings = ( { domains, isJetpack, selectedSite } ) => {

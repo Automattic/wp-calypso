@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import { moment } from 'i18n-calypso';
 
 /**
