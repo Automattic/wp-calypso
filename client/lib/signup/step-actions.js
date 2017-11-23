@@ -5,11 +5,10 @@
  */
 
 import debugFactory from 'debug';
-import { assign, defer, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
+import { assign, defer, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
 import async from 'async';
 import { parse as parseURL } from 'url';
 import page from 'page';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies

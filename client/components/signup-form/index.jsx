@@ -6,13 +6,12 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { map, forEach, head, includes, keys } from 'lodash';
+import { find, forEach, head, includes, keys, map } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { find } from 'lodash';
 
 /**
  * Internal dependencies

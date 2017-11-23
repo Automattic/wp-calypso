@@ -5,8 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import identity from 'lodash/identity';
-import noop from 'lodash/noop';
+import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**

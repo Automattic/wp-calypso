@@ -5,8 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import some from 'lodash/some';
-import noop from 'lodash/noop';
+import { noop, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
