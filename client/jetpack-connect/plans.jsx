@@ -254,8 +254,8 @@ class Plans extends Component {
 			this.hasPreSelectedPlan( this.props ) ||
 			notJetpack ||
 			! canPurchasePlans ||
-			hasPlan ||
-			isAutomatedTransfer
+			false !== hasPlan ||
+			false !== isAutomatedTransfer
 		) {
 			return <QueryPlans />;
 		}
