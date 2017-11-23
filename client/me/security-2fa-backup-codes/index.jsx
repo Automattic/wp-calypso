@@ -3,21 +3,20 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
-import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import Card from 'components/card';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 import Notice from 'components/notice';
+import SectionHeader from 'components/section-header';
+import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
+import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
+import twoStepAuthorization from 'lib/two-step-authorization';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class Security2faBackupCodes extends Component {
