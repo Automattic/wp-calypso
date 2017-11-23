@@ -1,5 +1,5 @@
 /**
- * /* eslint-disable wpcalypso/jsx-classname-namespace
+ *
  * External dependencies
  *
  * @format
@@ -24,6 +24,7 @@ const DashboardWidget = props => {
 		'is-flush-image': imageFlush,
 	} );
 
+	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	const imageComponent = <img className="dashboard-widget__image" src={ image } />;
 
 	return (
