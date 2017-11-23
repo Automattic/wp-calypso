@@ -9,8 +9,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import createReactClass from 'create-react-class';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-setup-backup-codes' );
 
 /**
  * Internal dependencies
@@ -30,12 +28,7 @@ const Security2faSetupBackupCodes = createReactClass( {
 	},
 
 	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
 		twoStepAuthorization.backupCodes( this.onRequestComplete );
-	},
-
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
 	},
 
 	getInitialState: function() {
