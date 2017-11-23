@@ -235,10 +235,12 @@ export class CommentList extends Component {
 			this.setState( { lastUndo: null } );
 		}
 
-		if ( doPersist ) {
-			this.updatePersistedComments( commentId, isUndo );
-		} else {
-			this.removeFromPersistedComments( commentId );
+		if ( ! isEnabled( 'comments/management/m3-design' ) ) {
+			if ( doPersist ) {
+				this.updatePersistedComments( commentId, isUndo );
+			} else {
+				this.removeFromPersistedComments( commentId );
+			}
 		}
 
 		this.props.removeNotice( `comment-notice-${ commentId }` );
@@ -475,7 +477,6 @@ export class CommentList extends Component {
 								commentId={ commentId }
 								key={ `comment-${ siteId }-${ commentId }` }
 								isBulkMode={ isBulkEdit }
-								isPersistent={ this.isCommentPersisted( commentId ) }
 								isPostView={ isPostView }
 								isSelected={ this.isCommentSelected( commentId ) }
 								refreshCommentData={

@@ -29,7 +29,6 @@ export class Comment extends Component {
 		postId: PropTypes.number,
 		commentId: PropTypes.number,
 		isBulkMode: PropTypes.bool,
-		isPersistent: PropTypes.bool,
 		isPostView: PropTypes.bool,
 		isSelected: PropTypes.bool,
 		refreshCommentData: PropTypes.bool,
