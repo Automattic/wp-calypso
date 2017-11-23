@@ -23,7 +23,6 @@ import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import config from 'config';
 import ProfileGravatar from 'me/profile-gravatar';
-import eventRecorder from 'me/event-recorder';
 import userFactory from 'lib/user';
 const user = userFactory();
 import userUtilities from 'lib/user/utils';
@@ -32,10 +31,10 @@ import purchasesPaths from 'me/purchases/paths';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { logoutUser } from 'state/login/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const MeSidebar = createReactClass( {
 	displayName: 'MeSidebar',
-	mixins: [ eventRecorder ],
 
 	componentDidMount: function() {
 		debug( 'The MeSidebar React component is mounted.' );
@@ -67,7 +66,7 @@ const MeSidebar = createReactClass( {
 			userUtilities.logout( redirect );
 		}
 
-		this.recordClickEvent( 'Sidebar Sign Out Link' );
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Sidebar Sign Out Link' );
 	},
 
 	render: function() {
@@ -214,6 +213,7 @@ const enhance = flow(
 		} ),
 		{
 			logoutUser,
+			recordGoogleEvent,
 			setNextLayoutFocus,
 		}
 	)
