@@ -11,7 +11,7 @@ export const itemsSchema = {
 				themes: { type: 'number' },
 				total: { type: 'number' },
 				translations: { type: 'number' },
-				wordress: { type: 'number' },
+				wordpress: { type: 'number' },
 				wp_version: { type: 'string' },
 			},
 		},

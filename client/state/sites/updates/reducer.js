@@ -20,6 +20,7 @@ import {
 	SITE_UPDATES_REQUEST_FAILURE,
 	SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
 	SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
+	SITE_PLUGIN_UPDATED,
 } from 'state/action-types';
 
 import { itemsSchema } from './schema';
@@ -58,6 +59,21 @@ export const items = createReducer(
 					total: state[ siteId ].total - 1,
 				},
 			} );
+		},
+		[ SITE_PLUGIN_UPDATED ]: ( state, { siteId } ) => {
+			const siteUpdates = state[ siteId ];
+			if ( ! siteUpdates ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ siteId ]: {
+					...siteUpdates,
+					plugins: siteUpdates.plugins - 1,
+					total: siteUpdates.total - 1,
+				},
+			};
 		},
 	},
 	itemsSchema
