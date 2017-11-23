@@ -6,12 +6,9 @@
 
 import React from 'react';
 import createReactClass from 'create-react-class';
-import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import { flow } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-const debug = debugFactory( 'calypso:me:sidebar' );
 
 /**
  * Internal dependencies
@@ -35,10 +32,6 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 
 const MeSidebar = createReactClass( {
 	displayName: 'MeSidebar',
-
-	componentDidMount: function() {
-		debug( 'The MeSidebar React component is mounted.' );
-	},
 
 	onNavigate: function() {
 		this.props.setNextLayoutFocus( 'content' );
