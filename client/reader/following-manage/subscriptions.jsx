@@ -113,10 +113,16 @@ class FollowingManageSubscriptions extends Component {
 					</div>
 					<div className="following-manage__subscriptions-import-export">
 						<EllipsisMenu toggleTitle={ translate( 'More' ) } position="bottom">
-							<PopoverMenuItem className="following-manage__subscriptions-import-export-menu-item">
+							<PopoverMenuItem
+								className="following-manage__subscriptions-import-export-menu-item"
+								itemComponent="div"
+							>
 								<ReaderImportButton />
 							</PopoverMenuItem>
-							<PopoverMenuItem className="following-manage__subscriptions-import-export-menu-item">
+							<PopoverMenuItem
+								className="following-manage__subscriptions-import-export-menu-item"
+								itemComponent="div"
+							>
 								<ReaderExportButton />
 							</PopoverMenuItem>
 						</EllipsisMenu>

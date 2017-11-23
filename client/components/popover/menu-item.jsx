@@ -24,12 +24,14 @@ export default class PopoverMenuItem extends Component {
 		focusOnHover: PropTypes.bool,
 		onMouseOver: PropTypes.func,
 		isExternalLink: PropTypes.bool,
+		itemComponent: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
 	};
 
 	static defaultProps = {
 		isSelected: false,
 		focusOnHover: true,
 		onMouseOver: noop,
+		itemComponent: 'button',
 	};
 
 	handleMouseOver = event => {
@@ -56,10 +58,12 @@ export default class PopoverMenuItem extends Component {
 			'is-selected': isSelected,
 		} );
 
-		let ItemComponent = href ? 'a' : 'button';
+		let ItemComponent = this.props.itemComponent;
 		if ( isExternalLink && href ) {
 			ItemComponent = ExternalLink;
 			itemProps.icon = true;
+		} else if ( href ) {
+			ItemComponent = 'a';
 		}
 
 		return (
