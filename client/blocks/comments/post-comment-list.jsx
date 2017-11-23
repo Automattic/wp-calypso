@@ -27,7 +27,6 @@ import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
-import { COMMENT_LIST } from 'reader/follow-button/follow-sources';
 
 /**
  * PostCommentList, as the name would suggest, displays a list of comments for a post.
@@ -60,6 +59,7 @@ class PostCommentList extends React.Component {
 		showNestingReplyArrow: PropTypes.bool,
 		showConversationFollowButton: PropTypes.bool,
 		commentsFilter: PropTypes.string,
+		followSource: PropTypes.string,
 
 		// To display comments with a different status but not fetch them
 		// e.g. Reader full post view showing unapproved comments made to a moderated site
@@ -359,6 +359,7 @@ class PostCommentList extends React.Component {
 			commentsTree,
 			showFilters,
 			commentCount,
+			followSource,
 		} = this.props;
 		const {
 			haveEarlierCommentsToFetch,
@@ -400,7 +401,7 @@ class PostCommentList extends React.Component {
 						siteId={ siteId }
 						postId={ postId }
 						post={ this.props.post }
-						followSource={ COMMENT_LIST }
+						followSource={ followSource }
 					/>
 				) }
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (
