@@ -85,6 +85,11 @@ export function activityLogRequest( siteId, params ) {
 		type: ACTIVITY_LOG_REQUEST,
 		params,
 		siteId,
+		meta: {
+			dataLayer: {
+				trackRequest: true,
+			},
+		},
 	};
 }
 

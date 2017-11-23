@@ -36,6 +36,7 @@ import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
+import { activityLogRequest } from 'state/activity-log/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
@@ -51,6 +52,7 @@ import {
 	canCurrentUser,
 	getActivityLog,
 	getActivityLogs,
+	getRequest,
 	getRequestedRewind,
 	getRestoreProgress,
 	getRewindStatusError,
@@ -474,21 +476,20 @@ class ActivityLog extends Component {
 	render() {
 		const {
 			canViewActivityLog,
-			gmtOffset,
 			hasFirstBackup,
 			hasMainCredentials, // eslint-disable-line no-shadow
 			isPressable,
 			isRewindActive,
+			logRequestQuery,
 			logs,
 			moment,
+			requestData,
 			requestedRestoreActivity,
 			requestedRestoreActivityId,
 			requestedBackup,
 			requestedBackupId,
 			siteId,
 			slug,
-			startDate,
-			timezone,
 			translate,
 		} = this.props;
 
@@ -580,10 +581,7 @@ class ActivityLog extends Component {
 		return (
 			<Main wideLayout>
 				{ rewindEnabledByConfig && <QueryRewindStatus siteId={ siteId } /> }
-				<QueryActivityLog
-					siteId={ siteId }
-					{ ...getActivityLogQuery( { gmtOffset, startDate, timezone } ) }
-				/>
+				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
 				<QuerySiteSettings siteId={ siteId } />
 				<QueryJetpackCredentials siteId={ siteId } />
 				<StatsFirstView />
@@ -594,14 +592,14 @@ class ActivityLog extends Component {
 				{ hasFirstBackup && this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
 				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
-				{ isNull( logs ) && (
+				{ ! requestData.logs.hasLoaded && (
 					<section className="activity-log__wrapper">
 						<ActivityLogDayPlaceholder />
 						<ActivityLogDayPlaceholder />
 						<ActivityLogDayPlaceholder />
 					</section>
 				) }
-				{ ! isNull( logs ) &&
+				{ requestData.logs.hasLoaded &&
 					isEmpty( logs ) && (
 						<EmptyContent
 							title={ translate( 'No activity for %s', {
@@ -690,6 +688,7 @@ export default connect(
 		const timezone = getSiteTimezoneValue( state, siteId );
 		const requestedRestoreActivityId = getRequestedRewind( state, siteId );
 		const requestedBackupId = getRequestedBackup( state, siteId );
+		const logRequestQuery = getActivityLogQuery( { gmtOffset, startDate, timezone } );
 
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
@@ -697,6 +696,7 @@ export default connect(
 			hasFirstBackup: ! isEmpty( getRewindStartDate( state, siteId ) ),
 			hasMainCredentials: hasMainCredentials( state, siteId ),
 			isRewindActive: isRewindActiveSelector( state, siteId ),
+			logRequestQuery,
 			logs: getActivityLogs(
 				state,
 				siteId,
@@ -708,6 +708,7 @@ export default connect(
 			requestedBackupId,
 			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
+			requestData: { logs: getRequest( state, activityLogRequest( siteId, logRequestQuery ) ) },
 			rewindStatusError: getRewindStatusError( state, siteId ),
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
