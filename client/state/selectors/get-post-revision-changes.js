@@ -8,7 +8,7 @@ import { findIndex, get, isUndefined, map, omitBy, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-// import analytics from 'lib/analytics';
+import analytics from 'lib/analytics';
 import { isEnabled } from 'config';
 import createSelector from 'lib/create-selector';
 import { countDiffWords, diffWords } from 'lib/text-utils';
@@ -30,8 +30,6 @@ const getCombinedLength = list =>
 
 const getPostRevisionChanges = createSelector(
 	( state, siteId, postId, revisionId ) => {
-
-		require( 'lib/analytics' );
 
 		const noChanges = { content: [], summary: {}, title: [] };
 		if ( ! isEnabled( 'post-editor/revisions' ) ) {
