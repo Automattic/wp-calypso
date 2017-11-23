@@ -18,8 +18,12 @@ class PluginAction extends React.Component {
 		if ( ! this.props.disabledInfo ) {
 			this.props.action();
 		} else {
-			this.refs.infoPopover._onClick( event );
+			this.infoPopover._onClick( event );
 		}
+	};
+
+	disabledInfoLabelRef = ref => {
+		this.disabledInfoLabel = ref;
 	};
 
 	renderLabel() {
@@ -28,12 +32,20 @@ class PluginAction extends React.Component {
 		}
 
 		return (
-			<span className="plugin-action__label" ref="disabledInfoLabel" onClick={ this.handleAction }>
+			<span
+				className="plugin-action__label"
+				ref={ this.disabledInfoLabelRef }
+				onClick={ this.handleAction }
+			>
 				{ this.props.label }
 				{ this.renderDisabledInfo() }
 			</span>
 		);
 	}
+
+	infoPopoverRef = ref => {
+		this.infoPopover = ref;
+	};
 
 	renderDisabledInfo() {
 		if ( ! this.props.disabledInfo ) {
@@ -46,8 +58,8 @@ class PluginAction extends React.Component {
 				position="bottom left"
 				popoverName={ 'Plugin Action Disabled' + this.props.label }
 				gaEventCategory="Plugins"
-				ref="infoPopover"
-				ignoreContext={ this.refs && this.refs.disabledInfoLabel }
+				ref={ this.infoPopoverRef }
+				ignoreContext={ this.disabledInfoLabel }
 			>
 				{ this.props.disabledInfo }
 			</InfoPopover>

@@ -25,7 +25,9 @@ class PluginRemoveButton extends React.Component {
 	removeAction = () => {
 		accept(
 			this.props.translate(
-				'Are you sure you want to remove {{strong}}%(pluginName)s{{/strong}} from %(siteName)s? {{br /}} {{em}}This will deactivate the plugin and delete all associated files and data.{{/em}}',
+				'Are you sure you want to remove {{strong}}%(pluginName)s{{/strong}} from' +
+					' %(siteName)s? {{br /}} {{em}}This will deactivate the plugin and delete all' +
+					' associated files and data.{{/em}}',
 				{
 					components: {
 						em: <em />,
@@ -125,6 +127,7 @@ class PluginRemoveButton extends React.Component {
 					<li key={ 'reason-i' + i + '-' + this.props.site.ID }>{ reason }</li>
 				) );
 				html.push(
+					/* eslint-disable wpcalypso/jsx-classname-namespace */
 					<ul className="plugin-action__disabled-info-list" key="reason-shell-list">
 						{ list }
 					</ul>
@@ -141,11 +144,7 @@ class PluginRemoveButton extends React.Component {
 			html.push(
 				<ExternalLink
 					key="external-link"
-					onClick={ analytics.ga.recordEvent.bind(
-						this,
-						'Plugins',
-						'Clicked How do I fix diabled plugin removal.'
-					) }
+					onClick={ this.handleHowDoIFixThisButtonClick }
 					href="https://jetpack.me/support/site-management/#file-update-disabled"
 				>
 					{ this.props.translate( 'How do I fix this?' ) }
@@ -155,6 +154,10 @@ class PluginRemoveButton extends React.Component {
 			return html;
 		}
 		return null;
+	};
+
+	handleHowDoIFixThisButtonClick = () => {
+		analytics.ga.recordEvent( 'Plugins', 'Clicked How do I fix disabled plugin removal.' );
 	};
 
 	renderButton = () => {
