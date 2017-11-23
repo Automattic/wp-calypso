@@ -133,10 +133,10 @@ class Plans extends Component {
 	}
 
 	autoselectPlan( props ) {
-		const { selectFreeJetpackPlan, selectedPlan, selectedPlanSlug } = props;
+		const { selectedPlan, selectedPlanSlug } = props;
 
 		if ( selectedPlanSlug === PLAN_JETPACK_FREE || selectedPlanSlug === 'free' ) {
-			selectFreeJetpackPlan();
+			this.selectFreeJetpackPlan();
 			return;
 		}
 		if ( selectedPlan ) {
