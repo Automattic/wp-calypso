@@ -17,6 +17,7 @@ import {
 	values,
 	omit,
 } from 'lodash';
+import striptags from 'striptags';
 
 /**
  * Internal dependencies
@@ -52,6 +53,10 @@ const isCommentManagementEdit = newProperties =>
 	has( newProperties, 'authorDisplayName' ) &&
 	has( newProperties, 'authorUrl' );
 
+const getCommentExcerpt = commentContent => {
+	return striptags( commentContent, [ 'p', 'br', 'em', 'strong', 'b', 'i', 'a' ] );
+};
+
 const updateComment = ( commentId, newProperties ) => comment => {
 	if ( comment.ID !== commentId ) {
 		return comment;
@@ -79,6 +84,7 @@ const updateComment = ( commentId, newProperties ) => comment => {
 		...( updateLikeCount && {
 			like_count: newProperties.i_like ? comment.like_count + 1 : comment.like_count - 1,
 		} ),
+		excerpt: getCommentExcerpt( newComment.content ),
 	};
 };
 
@@ -116,6 +122,7 @@ export function items( state = {}, action ) {
 			const comments = map( action.comments, _comment => ( {
 				..._comment,
 				contiguous: ! action.commentById,
+				excerpt: getCommentExcerpt( _comment.content ),
 			} ) );
 			const allComments = unionBy( state[ stateKey ], comments, 'ID' );
 			return {
