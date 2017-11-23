@@ -41,8 +41,8 @@ const checkDimension = dimension => {
 		return '';
 	}
 
-	if ( dimension < 0 ) {
-		return '0';
+	if ( 0 >= dimension ) {
+		return '';
 	}
 
 	return dimension;
