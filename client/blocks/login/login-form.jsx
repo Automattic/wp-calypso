@@ -5,11 +5,12 @@
  */
 
 import classNames from 'classnames';
-import { capitalize, defer } from 'lodash';
+import { capitalize, defer, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 import qs from 'qs';
 
 /**
@@ -280,15 +281,18 @@ export class LoginForm extends Component {
 						) }
 
 						<label htmlFor="usernameOrEmail">
-							{ this.props.translate( 'Email Address or Username' ) }
-							{ this.isPasswordView() && (
-								<span>
-									{ ' ' }
-									(<a href="#" onClick={ this.resetView }>
-										{ this.props.translate( 'change' ) }
-									</a>)
-								</span>
-							) }
+							{ this.isPasswordView() ? (
+									<a href="#" className="login__form-change-username" onClick={ this.resetView }>
+										<Gridicon icon="arrow-left" size={ 18 } />
+
+										{ includes( this.state.usernameOrEmail, '@' )
+											? this.props.translate( 'Change Email Address' )
+											: this.props.translate( 'Change Username' )
+										}
+									</a>
+								)
+								: this.props.translate( 'Email Address or Username' )
+							}
 						</label>
 
 						<FormTextInput
