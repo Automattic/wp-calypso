@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { flow } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -30,15 +29,13 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { logoutUser } from 'state/login/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-const MeSidebar = createReactClass( {
-	displayName: 'MeSidebar',
-
-	onNavigate: function() {
+class MeSidebar extends React.Component {
+	onNavigate = () => {
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
-	},
+	};
 
-	onSignOut: function() {
+	onSignOut = () => {
 		const currentUser = this.props.currentUser;
 
 		// If user is using en locale, redirect to app promo page on sign out
@@ -60,9 +57,9 @@ const MeSidebar = createReactClass( {
 		}
 
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Sidebar Sign Out Link' );
-	},
+	};
 
-	render: function() {
+	render() {
 		const { context, translate } = this.props;
 		const filterMap = {
 			'/me': 'profile',
@@ -179,9 +176,9 @@ const MeSidebar = createReactClass( {
 				<SidebarFooter />
 			</Sidebar>
 		);
-	},
+	}
 
-	renderNextStepsItem: function( selected ) {
+	renderNextStepsItem( selected ) {
 		const { currentUser, translate } = this.props;
 
 		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
@@ -195,8 +192,8 @@ const MeSidebar = createReactClass( {
 				/>
 			);
 		}
-	},
-} );
+	}
+}
 
 const enhance = flow(
 	localize,
