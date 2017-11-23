@@ -273,6 +273,7 @@ export const authAccountType = createReducer( null, {
 	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE ]: () => null,
 	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS ]: ( state, { data: { type } } ) => type,
 	[ LOGIN_AUTH_ACCOUNT_TYPE_RESET ]: () => null,
+	[ ROUTE_SET ]: () => null,
 } );
 
 export default combineReducers( {
