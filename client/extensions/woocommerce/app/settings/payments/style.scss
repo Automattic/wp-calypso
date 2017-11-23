@@ -1,8 +1,5 @@
 &.payments__dialog {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	max-height: 80%;
+	max-width: 660px;
 
 	.dialog__content {
 		height: 100%;
