@@ -42,7 +42,7 @@ export class CommentContent extends Component {
 			<div className="comment__in-reply-to">
 				{ isBulkMode && <Gridicon icon="reply" size={ 18 } /> }
 				<span>{ translate( 'In reply to:' ) }</span>
-				<a href={ commentUrl } onClick={ this.trackDeepReaderLinkClick }>
+				<a href={ commentUrl } onClick={ this.trackDeepReaderLinkClick } tabIndex="0">
 					<Emojify>{ parentCommentContent }</Emojify>
 				</a>
 			</div>

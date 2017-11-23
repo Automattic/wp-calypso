@@ -67,10 +67,11 @@
 .comment-navigation__close-bulk {
 	margin-left: auto;
 	padding: 0;
-	a {
-		cursor: pointer;
-		display: inline-block;
+	button.is-borderless {
 		padding: 10px 16px;
+		.gridicon {
+			top: 4px;
+		}
 	}
 }
 

@@ -22,9 +22,9 @@ export class CommentHeader extends PureComponent {
 		return (
 			<div className="comment__header">
 				{ isBulkMode && (
-					<label className="comment__bulk-select">
-						<FormCheckbox checked={ isSelected } />
-					</label>
+					<span className="comment__bulk-select">
+						<FormCheckbox checked={ isSelected } tabIndex="0" />
+					</span>
 				) }
 
 				<CommentAuthor { ...{ commentId, isBulkMode, isPostView } } />

@@ -171,6 +171,7 @@ export class CommentActions extends Component {
 							'is-approved': commentIsApproved,
 						} ) }
 						onClick={ this.toggleApproved }
+						tabIndex="0"
 					>
 						<Gridicon icon={ commentIsApproved ? 'checkmark-circle' : 'checkmark' } />
 						<span>{ commentIsApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
@@ -182,6 +183,7 @@ export class CommentActions extends Component {
 						borderless
 						className="comment__action comment__action-spam"
 						onClick={ this.setSpam }
+						tabIndex="0"
 					>
 						<Gridicon icon="spam" />
 						<span>{ translate( 'Spam' ) }</span>
@@ -193,6 +195,7 @@ export class CommentActions extends Component {
 						borderless
 						className="comment__action comment__action-trash"
 						onClick={ this.setTrash }
+						tabIndex="0"
 					>
 						<Gridicon icon="trash" />
 						<span>{ translate( 'Trash' ) }</span>
@@ -204,6 +207,7 @@ export class CommentActions extends Component {
 						borderless
 						className="comment__action comment__action-delete"
 						onClick={ this.delete }
+						tabIndex="0"
 					>
 						<Gridicon icon="trash" />
 						<span>{ translate( 'Delete Permanently' ) }</span>
@@ -217,6 +221,7 @@ export class CommentActions extends Component {
 							'is-liked': commentIsLiked,
 						} ) }
 						onClick={ this.toggleLike }
+						tabIndex="0"
 					>
 						<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
 						<span>{ commentIsLiked ? translate( 'Liked' ) : translate( 'Like' ) }</span>
@@ -228,6 +233,7 @@ export class CommentActions extends Component {
 						borderless
 						className="comment__action comment__action-pencil"
 						onClick={ toggleEditMode }
+						tabIndex="0"
 					>
 						<Gridicon icon="pencil" />
 						<span>{ translate( 'Edit' ) }</span>
@@ -239,6 +245,7 @@ export class CommentActions extends Component {
 						borderless
 						className="comment__action comment__action-reply"
 						onClick={ toggleReply }
+						tabIndex="0"
 					>
 						<Gridicon icon="reply" />
 						<span>{ translate( 'Reply' ) }</span>
