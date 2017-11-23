@@ -3,20 +3,19 @@
 /**
  * External dependencies
  */
-
+import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 
 /**
  * Internal dependencies
  */
+import Notice from 'components/notice';
 import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 import Security2faProgress from 'me/security-2fa-progress';
-import twoStepAuthorization from 'lib/two-step-authorization';
 import support from 'lib/url/support';
-import Notice from 'components/notice';
+import twoStepAuthorization from 'lib/two-step-authorization';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class Security2faSetupBackupCodes extends React.Component {
