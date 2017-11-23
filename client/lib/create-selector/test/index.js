@@ -27,11 +27,11 @@ describe( 'index', () => {
 	} );
 
 	beforeEach( () => {
-		getSitePosts.cache.clear();
+		getSitePosts.clearCache();
 	} );
 
 	test( 'should expose its cache', () => {
-		expect( getSitePosts.cache instanceof Map ).ok;
+		expect( getSitePosts.cache instanceof WeakMap ).ok;
 	} );
 
 	test( 'should create a function which returns the expected value when called', () => {
@@ -328,13 +328,15 @@ describe( 'index', () => {
 			( state, siteId ) => `CUSTOM${ siteId }`
 		);
 
-		getSitePostsWithCustomGetCacheKey( { posts: {} }, 2916284 );
+		const state = { posts: {} };
+		getSitePostsWithCustomGetCacheKey( state, 2916284 );
 
-		expect( getSitePostsWithCustomGetCacheKey.cache.has( 'CUSTOM2916284' ) ).true;
+		expect( getSitePostsWithCustomGetCacheKey.cache.get( state.posts ).has( 'CUSTOM2916284' ) )
+			.true;
 	} );
 
 	test( 'should call dependant state getter with arguments', () => {
-		const getDeps = sinon.spy();
+		const getDeps = sinon.spy( () => ( {} ) );
 		const memoizedSelector = createSelector( () => null, getDeps );
 		const state = {};
 
@@ -344,8 +346,8 @@ describe( 'index', () => {
 	} );
 
 	test( 'should handle an array of selectors instead of a dependant state getter', () => {
-		const getPosts = sinon.spy();
-		const getQuuxs = sinon.spy();
+		const getPosts = sinon.spy( () => ( {} ) );
+		const getQuuxs = sinon.spy( () => ( {} ) );
 		const memoizedSelector = createSelector( () => null, [ getPosts, getQuuxs ] );
 		const state = {};
 
