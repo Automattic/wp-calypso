@@ -288,52 +288,7 @@ At a high level, implementing this is straightforward. We subscribe to any Redux
 our browser storage with the new state of the Redux tree. On page load, if we detect stored state in browser storage during
 our initial render, we create our Redux store with that persisted initial state.
 
-However we quickly run into the following problems:
-
-#### Problem: Subtrees may contain class instances
-
-Subtrees may contain class instances. In some cases this is expected, because certain branches have chosen to use
-Immutable.js for performance reasons. However, attempting to serialize class instances will throw errors while saving
-to browser storage.
-
-#### Solution: SERIALIZE and DESERIALIZE actions
-
-To work around this we create two special action types: `SERIALIZE` and `DESERIALIZE`. These actions are not dispatched,
-but are instead used with the reducer directly to prepare state to be serialized to browser storage, and for
-deserializing persisted state to an acceptable initialState for the Redux store.
-
-
-```javascript
-reducer( reduxStore.getState(), { type: 'SERIALIZE' } )
-```
-and
-
-```javascript
-reducer( browserState, { type: 'DESERIALIZE' } )
-```
-
-Because browser storage is only capable of storing simple JavaScript objects, the purpose of the `SERIALIZE` action
-type reducer handler is to return a plain object representation. In a subtree that uses Immutable.js it should be
-similar to:
-```javascript
-export const items = createReducer( defaultState, {
-	[THEMES_RECEIVE]: ( state, action ) => // ...
-	[SERIALIZE]: state => state.toJS()
-} );
-```
-
-In turn, when the store instance is initialized with the browser storage copy of state, you can convert
-your subtree state back to its expected format from the `DESERIALIZE` handler. In a subtree that uses Immutable.js
-instead of returning a plain object, we create an Immutable.js instance:
-```javascript
-export const items = createReducer( defaultState, {
-	[THEMES_RECEIVE]: ( state, action ) => // ...
-	[DESERIALIZE]: state => fromJS( state )
-} );
-```
-If your reducer state can be serialized by the browser without additional work (eg a plain object, string or boolean),
-the `SERIALIZE` and `DESERIALIZE` handlers are not needed. However, please note that the subtree can still see errors
-from changing data shapes, as described below.
+However we quickly ran into a problem:
 
 #### Problem: Data shapes change over time ( [#3101](https://github.com/Automattic/wp-calypso/pull/3101) )
 
@@ -377,51 +332,30 @@ export const itemsSchema = {
 };
 ```
 
-A JSON Schema must be provided if the subtree chooses to persist state. If we find that our persisted data doesn't
-match our described data shape, we should throw it out and rebuild that section of the tree with our default state.
+In order to [opt-in](https://github.com/Automattic/wp-calypso/pull/13542) to persistence,
+A JSON Schema must be provided as a property of the reducer.
+If we find that the shape of the persisted data doesn't match the schema, we throw it out
+and rebuild that section of the tree with its default state.
+
+We do this by combining all of our reducers using `combineReducers` from `state/utils` at every level of the tree instead
+of [combineReducers](http://redux.js.org/docs/api/combineReducers.html) from `redux`. Each reducer is then wrapped with
+`withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALIZE`.
 
 You can add a schema property to any reducer:
 ```javascript
 export const items = createReducer( defaultState, {
 	[THEMES_RECEIVE]: ( state, action ) => // ...
 } );
-items.schema = itemsSchema;
+items.schema = itemsSchema; // this will now be persisted
 ```
 Note: we used to encourage passing in `itemsSchema` as a third parameter to createReducer.
 This is now deprecated because it is less flexible than adding a schema directly to any reducer.
 
 If you are not satisfied with the default handling, it is possible to implement your own `SERIALIZE` and
-`DESERIALIZE` action handlers in your reducers to customize data persistence. Always use a schema with your custom
-handlers to avoid data shape errors.
+`DESERIALIZE` action handlers in your reducers to customize data persistence. To ensure that we
+don't return initial state incorrectly from the default handling provided by `withSchemaValidation`,
+you need to set a boolean flag `hasCustomPersistence` to true:
 
-### Opt-in to Persistence ( [#13542](https://github.com/Automattic/wp-calypso/pull/13542) )
-
-We can opt-in to persistence by adding a schema as a property on the reducer.
-We do this by combining all of our reducers using `combineReducers` from `state/utils` at every level of the tree instead
-of [combineReducers](http://redux.js.org/docs/api/combineReducers.html) from `redux`. Each reducer is then wrapped with
-`withSchemaValidation` which returns a wrapped reducer that validates on `DESERIALIZE` if a schema is present and
-returns initial state on both `SERIALIZE` and `DESERIALIZE` if a schema is not present.
-
-To opt-out of persistence we combine the reducers without any attached schema.
-```javascript
-return combineReducers( {
-    age,
-    height,
-} );
-```
-
-To persist, we add the schema as a property on the reducer:
-```javascript
-age.schema = ageSchema;
-return combineReducers( {
-    age,
-    height,
-} );
-```
-
-For a reducer that has custom handlers (needs to perform transforms), we assume the reducer is checking the schema already,
-on `DESERIALIZE` so all we need to do is set a boolean bit on the reducer, to ensure that we don't return initial state
-incorrectly from the default handling provided by `withSchemaValidation`.
 ```javascript
 date.hasCustomPersistence = true;
 return combineReducers( {
@@ -430,7 +364,6 @@ return combineReducers( {
     date,
 } );
 ```
-
 ### Not persisting data
 
 Some subtrees may choose to never persist data. One such example of this is our online connection state. If connection
