@@ -459,6 +459,10 @@
 		right: -12px;
 		top: 0;
 		background: radial-gradient( ellipse at center, rgba( $gray-dark,.125 ) 0%, rgba( $white,0 ) 75%, rgba( $white,0 ) 90% );
+
+		@include breakpoint( ">1280px" ) {
+			display: none;
+		}
 	}
 }
 
