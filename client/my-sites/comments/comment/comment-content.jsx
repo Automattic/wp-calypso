@@ -16,11 +16,12 @@ import AutoDirection from 'components/auto-direction';
 import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
 import Emojify from 'components/emojify';
 import QueryComment from 'components/data/query-comment';
+import { isEnabled } from 'config';
 import { stripHTML, decodeEntities } from 'lib/formatting';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { getParentComment, getSiteComment } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 export class CommentContent extends Component {
 	static propTypes = {
@@ -114,6 +115,7 @@ export class CommentContent extends Component {
 
 const mapStateToProps = ( state, { commentId } ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const isJetpack = isJetpackSite( state, siteId );
 
 	const comment = getSiteComment( state, siteId, commentId );
@@ -123,9 +125,14 @@ const mapStateToProps = ( state, { commentId } ) => {
 	const parentCommentId = get( comment, 'parent.ID', 0 );
 	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
 
-	const parentCommentUrl = isJetpack
-		? get( parentComment, 'URL' )
-		: `/read/blogs/${ siteId }/posts/${ postId }#comment-${ parentCommentId }`;
+	let parentCommentUrl;
+	if ( isEnabled( 'comments/management/comment-view' ) ) {
+		parentCommentUrl = `/comment/${ siteSlug }/${ parentCommentId }`;
+	} else if ( isJetpack ) {
+		parentCommentUrl = get( parentComment, 'URL' );
+	} else {
+		parentCommentUrl = `/read/blogs/${ siteId }/posts/${ postId }#comment-${ parentCommentId }`;
+	}
 
 	return {
 		commentContent: get( comment, 'content' ),
