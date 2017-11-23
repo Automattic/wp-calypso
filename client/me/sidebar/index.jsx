@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { flow } from 'lodash';
@@ -12,22 +11,26 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
+import config from 'config';
+import ProfileGravatar from 'me/profile-gravatar';
+import purchasesPaths from 'me/purchases/paths';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
-import config from 'config';
-import ProfileGravatar from 'me/profile-gravatar';
 import userFactory from 'lib/user';
-const user = userFactory();
 import userUtilities from 'lib/user/utils';
-import Button from 'components/button';
-import purchasesPaths from 'me/purchases/paths';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { logoutUser } from 'state/login/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+
+/**
+ * Module variables
+ */
+const user = userFactory();
 
 class MeSidebar extends React.Component {
 	onNavigate = () => {
