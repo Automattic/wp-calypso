@@ -23,8 +23,6 @@ import Plans from './plans';
 import PlansLanding from './plans-landing';
 import route from 'lib/route';
 import userFactory from 'lib/user';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
 import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
@@ -197,16 +195,9 @@ export default {
 	},
 
 	plansSelection( context ) {
-		const state = context.store.getState();
-		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
 		const analyticsPageTitle = 'Plans';
 		const basePath = route.sectionify( context.path );
 		const analyticsBasePath = basePath + '/:site';
-
-		if ( ! isJetpack ) {
-			return;
-		}
 
 		removeSidebar( context );
 

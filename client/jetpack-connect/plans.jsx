@@ -3,10 +3,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, isEqual, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -38,65 +37,73 @@ import {
 	canCurrentUser,
 	getJetpackConnectRedirectAfterAuth,
 	isRtl,
+	isSiteAutomatedTransfer,
 	isSiteOnPaidPlan,
 } from 'state/selectors';
 import {
 	getFlowType,
-	isRedirectingToWpAdmin,
 	getSiteSelectedPlan,
 	getGlobalSelectedPlan,
 	isCalypsoStartedConnection,
 } from 'state/jetpack-connect/selectors';
 import { mc } from 'lib/analytics';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
 const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
-	static propTypes = { showJetpackFreePlan: PropTypes.bool };
-
 	static defaultProps = { siteSlug: '*' };
 
-	redirecting = false;
-
 	componentDidMount() {
-		if ( this.props.isAutomatedTransfer && ! this.redirecting && this.props.selectedSite ) {
-			this.redirecting = true;
-			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
-		} else if ( this.hasPreSelectedPlan() ) {
-			this.autoselectPlan();
-		} else {
+		if ( ! this.maybeRedirect( this.props ) ) {
 			this.props.recordTracksEvent( 'calypso_jpc_plans_view', {
 				user: this.props.userId,
 			} );
 		}
 	}
 
-	componentDidUpdate() {
-		if ( this.props.isAutomatedTransfer && ! this.redirecting && this.props.selectedSite ) {
-			this.redirecting = true;
-			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
-		}
+	componentWillReceiveProps = nextProps => {
+		const propsToCompare = [
+			'canPurchasePlans',
+			'flowType',
+			'hasPlan',
+			'isAutomatedTransfer',
+			'isCalypsoStartedConnection',
+			'isRequestingPlans',
+			'notJetpack',
+			'selectedPlan',
+		];
 
-		if ( this.props.hasPlan && ! this.redirecting ) {
-			this.redirecting = true;
-			this.redirect( CALYPSO_PLANS_PAGE );
+		if ( ! isEqual( pick( this.props, propsToCompare ), pick( nextProps, propsToCompare ) ) ) {
+			this.maybeRedirect( nextProps );
 		}
-		if ( ! this.props.canPurchasePlans && ! this.redirecting ) {
-			this.redirecting = true;
-			if ( this.props.isCalypsoStartedConnection ) {
+	};
+
+	maybeRedirect = props => {
+		if ( props.isAutomatedTransfer ) {
+			this.props.goBackToWpAdmin( props.selectedSite.URL + JETPACK_ADMIN_PATH );
+			return true;
+		}
+		if ( this.hasPreSelectedPlan( props ) ) {
+			this.autoselectPlan();
+			return true;
+		}
+		if ( props.hasPlan || props.notJetpack ) {
+			this.redirect( CALYPSO_PLANS_PAGE );
+			return true;
+		}
+		if ( ! props.canPurchasePlans ) {
+			if ( props.isCalypsoStartedConnection ) {
 				this.redirect( CALYPSO_REDIRECTION_PAGE );
 			} else {
-				this.redirectToWpAdmin();
+				this.redirectToWpAdmin( props );
 			}
+			return true;
 		}
-
-		if ( ! this.props.isRequestingPlans && this.isFlowTypePaid() && ! this.redirecting ) {
-			return this.autoselectPlan();
-		}
-	}
+		return false;
+	};
 
 	handleSkipButtonClick = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
@@ -108,40 +115,31 @@ class Plans extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
-	isFlowTypePaid() {
-		return (
-			this.props.flowType === 'pro' ||
-			this.props.flowType === 'premium' ||
-			this.props.flowType === 'personal'
-		);
+	isFlowTypePaid( flowType ) {
+		return flowType === 'pro' || flowType === 'premium' || flowType === 'personal';
 	}
 
-	redirectToWpAdmin() {
-		if ( this.props.redirectingToWpAdmin ) {
-			return;
-		}
-
-		const { redirectAfterAuth } = this.props;
+	redirectToWpAdmin( props ) {
+		const { redirectAfterAuth } = props;
 		if ( redirectAfterAuth ) {
-			this.props.goBackToWpAdmin( redirectAfterAuth );
-		} else if ( this.props.selectedSite ) {
-			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+			props.goBackToWpAdmin( redirectAfterAuth );
+		} else if ( props.selectedSite ) {
+			this.props.goBackToWpAdmin( props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
 		this.props.completeFlow();
 	}
 
 	redirect( path ) {
 		page.redirect( path + this.props.selectedSiteSlug );
-		this.redirecting = true;
 		this.props.completeFlow();
 	}
 
-	hasPreSelectedPlan() {
-		if ( this.isFlowTypePaid() ) {
+	hasPreSelectedPlan( props ) {
+		if ( this.isFlowTypePaid( props.flowType ) ) {
 			return true;
 		}
 
-		return !! this.props.selectedPlan;
+		return !! props.selectedPlan;
 	}
 
 	autoselectPlan() {
@@ -206,7 +204,7 @@ class Plans extends Component {
 		if ( this.props.calypsoStartedConnection ) {
 			this.redirect( CALYPSO_REDIRECTION_PAGE );
 		} else {
-			this.redirectToWpAdmin();
+			this.redirectToWpAdmin( this.props );
 		}
 	}
 
@@ -230,19 +228,28 @@ class Plans extends Component {
 		mc.bumpStat( 'calypso_jpc_plan_selection', cartItem.product_slug );
 
 		addItem( cartItem );
-		this.redirecting = true;
 		this.props.completeFlow();
 		page.redirect( checkoutPath );
 	};
 
 	render() {
-		const { interval, isRtlLayout, selectedSite, translate } = this.props;
+		const {
+			canPurchasePlans,
+			hasPlan,
+			interval,
+			isAutomatedTransfer,
+			isRtlLayout,
+			notJetpack,
+			selectedSite,
+			translate,
+		} = this.props;
 
 		if (
-			this.redirecting ||
-			this.hasPreSelectedPlan() ||
-			! this.props.canPurchasePlans ||
-			this.props.hasPlan
+			this.hasPreSelectedPlan( this.props ) ||
+			notJetpack ||
+			! canPurchasePlans ||
+			hasPlan ||
+			isAutomatedTransfer
 		) {
 			return <QueryPlans />;
 		}
@@ -304,9 +311,9 @@ export default connect(
 			isRequestingPlans: isRequestingPlans( state ),
 			getPlanBySlug: searchPlanBySlug,
 			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSiteSlug ),
-			redirectingToWpAdmin: isRedirectingToWpAdmin( state ),
 			isRtlLayout: isRtl( state ),
-			hasPlan: isSiteOnPaidPlan( state, selectedSite.ID ),
+			hasPlan: selectedSite && isSiteOnPaidPlan( state, selectedSite.ID ),
+			notJetpack: ! ( selectedSite && isJetpackSite( state, selectedSite.ID ) ),
 		};
 	},
 	{
