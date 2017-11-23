@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-import shallowEqual from 'react-pure-render/shallowEqual';
-import { castArray } from 'lodash';
+import { castArray, isObject, forEach, first } from 'lodash';
 
 /**
  * Constants
@@ -87,7 +86,7 @@ export default function createSelector(
 	getDependants = DEFAULT_GET_DEPENDANTS,
 	getCacheKey = DEFAULT_GET_CACHE_KEY
 ) {
-	const memo = new Map();
+	let memo;
 
 	if ( Array.isArray( getDependants ) ) {
 		getDependants = makeSelectorFromArray( getDependants );
@@ -95,21 +94,49 @@ export default function createSelector(
 
 	const memoizedSelector = function( state, ...args ) {
 		const cacheKey = getCacheKey( state, ...args );
-		const currentDependants = getDependants( state, ...args );
-		const { dependents: prevDependents } = memo.get( cacheKey ) || {};
+		const currentDependants = castArray( getDependants( state, ...args ) );
 
-		if (
-			! memo.has( cacheKey ) ||
-			! shallowEqual( castArray( currentDependants ), castArray( prevDependents ) )
-		) {
-			memo.set( cacheKey, {
-				dependents: currentDependants,
-				value: selector( state, ...[ ...args, currentDependants ] ),
-			} );
+		// create a map of maps based on dependents in order to cache selector results.
+		// ideally each map is a WeakMap but we fallback to a regular Map if the next key would be a primitive.
+		// the reason this is beneficial over just using a cacheKey in a regular map, is that now we can
+		// garbage collect any values that are based on dependents that no longer exist so the memory usage
+		// should never balloon
+		//
+		// note: the last key is always undefined and therefore becomes a regular Map
+		// this is useful because cacheKey is the last key and always is a String
+		memo = memo || createMap( first( currentDependants ) ); // we need to wait to create the first memo map because we don't know if it will be object or not
+		let currMemo = memo;
+		forEach( currentDependants, ( dependent, i ) => {
+			if ( ! currMemo.has( dependent ) ) {
+				const nextKey = currentDependants[ i + 1 ];
+				currMemo.set( dependent, createMap( nextKey ) );
+			}
+			currMemo = currMemo.get( dependent );
+		} );
+
+		if ( ! currMemo.has( cacheKey ) ) {
+			// call the selector with all of the dependents as args so it can use the fruits of
+			// the cpu cycles used during dependent calculation
+			currMemo.set( cacheKey, selector( state, ...[ ...args, ...currentDependants ] ) );
 		}
 
-		return memo.get( cacheKey ).value;
+		memoizedSelector.cache = memo;
+		return currMemo.get( cacheKey );
 	};
-	memoizedSelector.cache = memo;
+	memoizedSelector.clearCache = () => {
+		memo = new WeakMap();
+		memoizedSelector.cache = memo;
+	};
 	return memoizedSelector;
+}
+
+/*
+ * Maybe makes a WeakMap, maybe makes a Map.
+ * All depends on what you want to put in it
+ */
+function createMap( potentialKey ) {
+	if ( isObject( potentialKey ) ) {
+		return new WeakMap();
+	}
+	return new Map();
 }
