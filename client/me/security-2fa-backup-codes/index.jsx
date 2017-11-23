@@ -8,8 +8,6 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-backup-codes' );
 
 /**
  * Internal dependencies
@@ -25,14 +23,6 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 
 const Security2faBackupCodes = createReactClass( {
 	displayName: 'Security2faBackupCodes',
-
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
-
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
 
 	getInitialState: function() {
 		var printed = this.props.userSettings.getSetting( 'two_step_backup_codes_printed' );
