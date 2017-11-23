@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import createReactClass from 'create-react-class';
@@ -17,14 +18,12 @@ const debug = debugFactory( 'calypso:me:security:2fa-setup-backup-codes' );
 import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 import Security2faProgress from 'me/security-2fa-progress';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import eventRecorder from 'me/event-recorder';
 import support from 'lib/url/support';
 import Notice from 'components/notice';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const Security2faSetupBackupCodes = createReactClass( {
 	displayName: 'Security2faSetupBackupCodes',
-
-	mixins: [ eventRecorder ],
 
 	propTypes: {
 		onFinished: PropTypes.func.isRequired,
@@ -44,6 +43,10 @@ const Security2faSetupBackupCodes = createReactClass( {
 			backupCodes: [],
 			lastError: false,
 		};
+	},
+
+	getClickHandler( action ) {
+		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	},
 
 	onRequestComplete: function( error, data ) {
@@ -78,7 +81,7 @@ const Security2faSetupBackupCodes = createReactClass( {
 					supportLink: (
 						<a
 							href={ support.CALYPSO_CONTACT }
-							onClick={ this.recordClickEvent( 'No Backup Codes Contact Support Link' ) }
+							onClick={ this.getClickHandler( 'No Backup Codes Contact Support Link' ) }
 						/>
 					),
 				},
@@ -121,4 +124,6 @@ const Security2faSetupBackupCodes = createReactClass( {
 	},
 } );
 
-export default localize( Security2faSetupBackupCodes );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Security2faSetupBackupCodes ) );
