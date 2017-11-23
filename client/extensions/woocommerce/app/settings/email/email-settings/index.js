@@ -16,10 +16,13 @@ import {
 	areEmailSettingsLoading,
 	areEmailSettingsLoaded,
 } from 'woocommerce/state/sites/settings/email/selectors';
-import Card from 'components/card';
 import CustomerNotification from './components/customer-notification';
+import ExtendedHeader from 'woocommerce/components/extended-header';
 import InternalNotification from './components/internal-notification';
 import NotificationsOrigin from './components/notifications-origin';
+import List from 'woocommerce/components/list/list';
+import ListHeader from 'woocommerce/components/list/list-header';
+import ListItemField from 'woocommerce/components/list/list-item-field';
 
 const fromName =
 	{
@@ -110,114 +113,89 @@ class Settings extends React.Component {
 		undefined;
 	}
 
+	renderInternalNotification = ( item, index ) => {
+		const { settings, loaded } = this.props;
+		return <InternalNotification
+			key={ index }
+			item={ item }
+			checked={ 'yes' === ( loaded && settings[ item.field ].enabled ) }
+			recipient={ loaded ? settings[ item.field ].recipient : '' }
+			isPlaceholder={ ! loaded }
+			onToggle={ this.notificationsToggle }
+			onChange={ this.recipientsChange }
+		/>;
+	}
+
+	renderCustomerNotification = ( item, index ) => {
+		const { settings, loaded } = this.props;
+		return <CustomerNotification
+			key={ index }
+			item={ item }
+			isPlaceholder={ ! loaded }
+			checked={ 'yes' === ( loaded && settings[ item.field ].enabled ) }
+			onToggle={ this.notificationsToggle }
+		/>;
+	}
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
-		const { loading, loaded, settings } = this.props;
-		const waiting = ! loaded || loading;
+		const { loaded, settings } = this.props;
 
 		return (
 			<div className="email-settings__container">
-				<div className="email-settings__origin">
-					<Card className="email-settings__origin-title">
-						Origin
-					</Card>
-					<Card className="email-settings__origin-settings">
-						{ waiting && <p className="email-settings__loading" /> }
-						{ loaded && <NotificationsOrigin
-								item={ fromName }
-								recipient={ settings.email[ fromName.field ] }
-								onChange={ this.recipientsChange }
-							/> }
-						{ waiting && <p className="email-settings__loading" /> }
-						{ loaded && <NotificationsOrigin
-								item={ fromAddress }
-								recipient={ settings.email[ fromAddress.field ] }
-								onChange={ this.recipientsChange }
-							/> }
-					</Card>
-				</div>
+				<List className="email-settings__origin">
+					<ExtendedHeader
+						label={ translate( 'Origin' ) }
+					/>
+					<NotificationsOrigin
+						item={ fromName }
+						isPlaceholder={ ! loaded }
+						recipient={ loaded ? settings.email[ fromName.field ] : '' }
+						onChange={ this.recipientsChange }
+					/>
+					<NotificationsOrigin
+						item={ fromAddress }
+						isPlaceholder={ ! loaded }
+						recipient={ loaded ? settings.email[ fromAddress.field ] : '' }
+						onChange={ this.recipientsChange }
+					/>
+				</List>
 				<div className="email-settings__internal-notifications">
-					<Card className="email-settings__internal-notifications-title">
-						<div className="email-settings__section-title-text">
-							{ translate( 'Internal notifications' ) }
-						</div>
-						<div className="email-settings__section-subtitle-text">
-							{ translate( 'Email notifications sent to store staff.' ) }
-						</div>
-					</Card>
-					<Card className="email-settings__internal-notifications-legend">
-						<span className="email-settings__internal-notifications-legend-option">
-							Email
-						</span>
-						<span className="email-settings__internal-notifications-legend-input">
-							Recipients (comma separated)
-						</span>
-						<span className="email-settings__internal-notifications-legend-toggle">
-							Enabled
-						</span>
-					</Card>
-					{
-						waiting &&
-							<Card className="email-settings__loading-card" >
-								{ internalNotifications.map( ( item, index ) => {
-									return <p key={ index } className="email-settings__loading" />;
-								} ) }
-							</Card>
-					}
-					{
-						loaded &&
-							<Card className="email-settings__internal-notifications-settings">
-								{ internalNotifications.map( ( item, index ) => {
-									return <InternalNotification
-										key={ index }
-										item={ item }
-										checked={ 'yes' === settings[ item.field ].enabled }
-										recipient={ settings[ item.field ].recipient }
-										onToggle={ this.notificationsToggle }
-										onChange={ this.recipientsChange }
-									/>;
-								} ) }
-							</Card>
-					}
+					<ExtendedHeader
+						label={ translate( 'Internal notifications' ) }
+						description={ translate( 'Email notifications sent to store staff.' ) }
+					/>
+					<List>
+						<ListHeader>
+							<ListItemField className="shipping-zone__location-title">
+								{ translate( 'Email' ) }
+							</ListItemField>
+							<ListItemField className="shipping-zone__location-summary">
+								{ translate( 'Recipients (comma separated)' ) }
+							</ListItemField>
+							<ListItemField className="shipping-zone__location-summary">
+								{ translate( 'Enabled' ) }
+							</ListItemField>
+						</ListHeader>
+						{ internalNotifications.map( this.renderInternalNotification ) }
+					</List>
 				</div>
 				<div className="email-settings__customer-notifications">
-					<Card className="email-settings__customer-notifications-title">
-					<div className="email-settings__section-title-text">
-							{ translate( 'Customer notifications' ) }
-						</div>
-						<div className="email-settings__section-subtitle-text">
-							{ translate( 'Email notifications sent to your customers.' ) }
-						</div>
-					</Card>
-					<Card className="email-settings__customer-notifications-legend">
-						<span className="email-settings__internal-notifications-legend-option">
-							Email
-						</span>
-						<span className="email-settings__internal-notifications-legend-toggle">
-							Enabled
-						</span>
-					</Card>
-					{
-						waiting &&
-							<Card className="email-settings__loading-card" >
-								{ customerNotifications.map( ( item, index ) => {
-									return <p key={ index } className="email-settings__loading" />;
-								} ) }
-							</Card>
-					}
-					{
-						loaded &&
-							<Card className="email-settings__customer-notifications-settings">
-								{ customerNotifications.map( ( item, index ) => {
-									return <CustomerNotification
-										key={ index }
-										item={ item }
-										checked={ 'yes' === settings[ item.field ].enabled }
-										onToggle={ this.notificationsToggle }
-									/>;
-								} ) }
-							</Card>
-					}
+					<ExtendedHeader
+						label={ translate( 'Customer notifications' ) }
+						description={ translate( 'Email notifications sent to your customers.' ) }
+					/>
+					<List>
+						<ListHeader>
+							<ListItemField className="shipping-zone__location-title">
+								{ translate( 'Email' ) }
+							</ListItemField>
+							<ListItemField className="shipping-zone__location-summary">
+								{ translate( 'Enabled' ) }
+							</ListItemField>
+						</ListHeader>
+						{ customerNotifications.map( this.renderCustomerNotification ) }
+					</List>
 				</div>
 			</div>
 		);
