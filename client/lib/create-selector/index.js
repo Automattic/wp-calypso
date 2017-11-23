@@ -3,7 +3,45 @@
 /**
  * External dependencies
  */
-import { castArray, isObject, forEach, first } from 'lodash';
+import { castArray, isObject, forEach } from 'lodash';
+
+/**
+ * A map that starts out Weak and if a primitive value is ever added to it
+ * then it converts into a strong map.
+ */
+class LazyWeakMap {
+	map = new WeakMap();
+	isWeak = true;
+
+	clear() {
+		if ( this.isWeak ) {
+			this.map = new WeakMap();
+		} else {
+			this.map.clear();
+		}
+		return this;
+	}
+
+	set( k, v ) {
+		if ( this.isWeak && ! isObject( k ) ) {
+			this.isWeak = false;
+			const oldMap = this.map;
+			this.map = new Map( oldMap.entries );
+		}
+		this.map.set( k, v );
+		return this;
+	}
+
+	delete( k ) {
+		return this.map.delete( k );
+	}
+	get( k ) {
+		return this.map.get( k );
+	}
+	has( k ) {
+		return this.map.has( k );
+	}
+}
 
 /**
  * Constants
@@ -86,7 +124,7 @@ export default function createSelector(
 	getDependants = DEFAULT_GET_DEPENDANTS,
 	getCacheKey = DEFAULT_GET_CACHE_KEY
 ) {
-	let memo;
+	const memo = new LazyWeakMap();
 
 	if ( Array.isArray( getDependants ) ) {
 		getDependants = makeSelectorFromArray( getDependants );
@@ -97,19 +135,14 @@ export default function createSelector(
 		const currentDependants = castArray( getDependants( state, ...args ) );
 
 		// create a map of maps based on dependents in order to cache selector results.
-		// ideally each map is a WeakMap but we fallback to a regular Map if the next key would be a primitive.
+		// ideally each map is a WeakMap but we fallback to a regular Map if a key woul be a non-object
 		// the reason this is beneficial over just using a cacheKey in a regular map, is that now we can
 		// garbage collect any values that are based on dependents that no longer exist so the memory usage
 		// should never balloon
-		//
-		// note: the last key is always undefined and therefore becomes a regular Map
-		// this is useful because cacheKey is the last key and always is a String
-		memo = memo || createMap( first( currentDependants ) ); // we need to wait to create the first memo map because we don't know if it will be object or not
 		let currMemo = memo;
-		forEach( currentDependants, ( dependent, i ) => {
+		forEach( currentDependants, dependent => {
 			if ( ! currMemo.has( dependent ) ) {
-				const nextKey = currentDependants[ i + 1 ];
-				currMemo.set( dependent, createMap( nextKey ) );
+				currMemo.set( dependent, new LazyWeakMap() );
 			}
 			currMemo = currMemo.get( dependent );
 		} );
@@ -123,20 +156,7 @@ export default function createSelector(
 		memoizedSelector.cache = memo;
 		return currMemo.get( cacheKey );
 	};
-	memoizedSelector.clearCache = () => {
-		memo = new WeakMap();
-		memoizedSelector.cache = memo;
-	};
-	return memoizedSelector;
-}
 
-/*
- * Maybe makes a WeakMap, maybe makes a Map.
- * All depends on what you want to put in it
- */
-function createMap( potentialKey ) {
-	if ( isObject( potentialKey ) ) {
-		return new WeakMap();
-	}
-	return new Map();
+	memoizedSelector.cache = memo;
+	return memoizedSelector;
 }
