@@ -20,7 +20,7 @@ class QuerySiteChecklist extends Component {
 	};
 
 	componentWillMount() {
-		this.request();
+		this.request( this.props.siteId );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -28,11 +28,13 @@ class QuerySiteChecklist extends Component {
 			return;
 		}
 
-		this.request();
+		this.request( nextProps.siteId );
 	}
 
-	request() {
-		this.props.requestSiteChecklist( this.props.siteId );
+	request( siteId ) {
+		if ( siteId ) {
+			this.props.requestSiteChecklist( siteId );
+		}
 	}
 
 	render() {
