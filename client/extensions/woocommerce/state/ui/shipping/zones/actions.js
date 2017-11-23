@@ -122,7 +122,7 @@ export function createShippingZoneDeleteActionList( successAction, failureAction
  *
  * @return {Object} Action object.
  */
-export function createAddDefultShippingZoneActionList() {
+export function createAddDefaultShippingZoneActionList() {
 	return {
 		type: WOOCOMMERCE_SHIPPING_ZONE_DEFAULT_ACTION_LIST_CREATE,
 	};

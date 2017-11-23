@@ -11,7 +11,6 @@ import { find, flatten, isEmpty, isNil, map, omit, some, xor } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getShippingZonesEdits } from 'woocommerce/state/ui/shipping/zones/selectors';
 import {
 	createShippingZone,
 	updateShippingZone,
@@ -38,7 +37,12 @@ import {
 	getShippingZoneLocationsWithEdits,
 	areCurrentlyEditingShippingZoneLocationsValid,
 } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
-import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
+import {
+	generateCurrentlyEditingZoneName,
+	generateZoneName,
+	getCurrentlyEditingShippingZone,
+	getShippingZonesEdits,
+} from 'woocommerce/state/ui/shipping/zones/selectors';
 import { getCurrentlyEditingShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
 import { getShippingZoneMethod } from 'woocommerce/state/sites/shipping-zone-methods/selectors';
@@ -50,10 +54,6 @@ import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { getCountryName } from 'woocommerce/state/sites/locations/selectors';
 import { isDefaultShippingZoneCreated } from 'woocommerce/state/sites/setup-choices/selectors';
 import { setCreatedDefaultShippingZone } from 'woocommerce/state/sites/setup-choices/actions';
-import {
-	generateZoneName,
-	generateCurrentlyEditingZoneName,
-} from 'woocommerce/state/ui/shipping/zones/selectors';
 
 const createShippingZoneSuccess = actionList => (
 	dispatch,
