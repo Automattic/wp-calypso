@@ -56,12 +56,11 @@ class Security2faSetupBackupCodes extends React.Component {
 	};
 
 	possiblyRenderError() {
-		var errorMessage;
 		if ( ! this.state.lastError ) {
 			return;
 		}
 
-		errorMessage = this.props.translate(
+		const errorMessage = this.props.translate(
 			'There was an error retrieving back up codes. Please {{supportLink}}contact support{{/supportLink}}',
 			{
 				components: {
