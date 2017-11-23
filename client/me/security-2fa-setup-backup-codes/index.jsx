@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import createReactClass from 'create-react-class';
 
 /**
  * Internal dependencies
@@ -20,29 +19,25 @@ import support from 'lib/url/support';
 import Notice from 'components/notice';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-const Security2faSetupBackupCodes = createReactClass( {
-	displayName: 'Security2faSetupBackupCodes',
+class Security2faSetupBackupCodes extends React.Component {
+	state = {
+		backupCodes: [],
+		lastError: false,
+	};
 
-	propTypes: {
+	static propTypes = {
 		onFinished: PropTypes.func.isRequired,
-	},
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		twoStepAuthorization.backupCodes( this.onRequestComplete );
-	},
+	}
 
-	getInitialState: function() {
-		return {
-			backupCodes: [],
-			lastError: false,
-		};
-	},
-
-	getClickHandler( action ) {
+	getClickHandler = action => {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	},
+	};
 
-	onRequestComplete: function( error, data ) {
+	onRequestComplete = ( error, data ) => {
 		if ( error ) {
 			this.setState( {
 				lastError: this.props.translate(
@@ -55,13 +50,13 @@ const Security2faSetupBackupCodes = createReactClass( {
 		this.setState( {
 			backupCodes: data.codes,
 		} );
-	},
+	};
 
-	onFinished: function() {
+	onFinished = () => {
 		this.props.onFinished();
-	},
+	};
 
-	possiblyRenderError: function() {
+	possiblyRenderError() {
 		var errorMessage;
 		if ( ! this.state.lastError ) {
 			return;
@@ -82,9 +77,9 @@ const Security2faSetupBackupCodes = createReactClass( {
 		);
 
 		return <Notice showDismiss={ false } status="is-error" text={ errorMessage } />;
-	},
+	}
 
-	renderList: function() {
+	renderList() {
 		if ( this.state.lastError ) {
 			return null;
 		}
@@ -96,9 +91,9 @@ const Security2faSetupBackupCodes = createReactClass( {
 				showList
 			/>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				<Security2faProgress step={ 3 } />
@@ -114,8 +109,8 @@ const Security2faSetupBackupCodes = createReactClass( {
 				{ this.renderList() }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( null, {
 	recordGoogleEvent,
