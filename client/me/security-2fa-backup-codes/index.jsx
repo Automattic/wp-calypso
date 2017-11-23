@@ -19,7 +19,7 @@ import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-class Security2faBackupCodes extends Component {
+class Security2faBackupCodes extends React.Component {
 	constructor( props ) {
 		super( props );
 		const printed = this.props.userSettings.getSetting( 'two_step_backup_codes_printed' );
