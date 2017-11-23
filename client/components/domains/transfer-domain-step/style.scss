@@ -128,10 +128,6 @@
 		justify-content: space-between;
 	}
 
-	.button {
-		margin-top: 20px;
-	}
-
 	&.is-expanded {
 		align-items: flex-start;
 
@@ -154,12 +150,24 @@
 	}
 }
 
+.transfer-domain-step__section-action {
+	align-items: center;
+	display: flex;
+	margin-top: 20px;
+}
+
 .transfer-domain-step__lock-status {
 	font-size: 12px;
-	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	margin-left: 10px;
 
-	svg {
-		padding-right: 4px;
+	.gridicon {
+		margin-right: 2px;
+	}
+
+	&.transfer-domain-step__checking {
+		color: $gray;
 	}
 
 	&.transfer-domain-step__unlocked {
@@ -168,6 +176,11 @@
 
 	&.transfer-domain-step__locked {
 		color: $alert-red;
+	}
+
+	&.transfer-domain-step__refresh {
+		color: $blue-wordpress;
+		cursor: pointer;
 	}
 }
 

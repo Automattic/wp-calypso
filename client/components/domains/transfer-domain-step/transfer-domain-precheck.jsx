@@ -47,7 +47,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		this.props.setValid( this.props.domain );
 	};
 
-	refreshStatus = () => {
+	refreshStatus = ( proceedToNextStep = true ) => {
 		this.setState( { loading: true } );
 
 		checkInboundTransferStatus( this.props.domain, ( error, result ) => {
@@ -55,7 +55,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 				return;
 			}
 
-			if ( result.unlocked ) {
+			if ( proceedToNextStep && result.unlocked ) {
 				this.showNextStep();
 			}
 
@@ -68,11 +68,15 @@ class TransferDomainPrecheck extends React.PureComponent {
 		} );
 	};
 
+	refreshStatusOnly = () => {
+		this.refreshStatus( false );
+	};
+
 	showNextStep = () => {
 		this.setState( { currentStep: this.state.currentStep + 1 } );
 	};
 
-	getSection( heading, message, buttonText, step, lockStatus ) {
+	getSection( heading, message, buttonText, step, stepStatus ) {
 		const { currentStep, loading, unlocked } = this.state;
 		const isAtCurrentStep = step === currentStep;
 		const isStepFinished = currentStep > step;
@@ -90,18 +94,21 @@ class TransferDomainPrecheck extends React.PureComponent {
 					<div className="transfer-domain-step__section-text">
 						<div className="transfer-domain-step__section-heading">
 							<strong>{ heading }</strong>
-							{ lockStatus }
+							{ isStepFinished && stepStatus }
 						</div>
 						{ isAtCurrentStep && (
 							<div>
 								<div className="transfer-domain-step__section-message">{ message }</div>
-								<Button
-									compact
-									onClick={ unlocked ? this.showNextStep : this.refreshStatus }
-									disabled={ loading }
-								>
-									{ buttonText }
-								</Button>
+								<div className="transfer-domain-step__section-action">
+									<Button
+										compact
+										onClick={ unlocked ? this.showNextStep : this.refreshStatus }
+										busy={ loading }
+									>
+										{ buttonText }
+									</Button>
+									{ stepStatus }
+								</div>
 							</div>
 						) }
 					</div>
@@ -112,7 +119,9 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 	getStatusMessage() {
 		const { translate } = this.props;
-		const { unlocked, loading } = this.state;
+		const { currentStep, unlocked, loading } = this.state;
+		const step = 1;
+		const isStepFinished = currentStep > step;
 
 		const heading = unlocked
 			? translate( 'Domain is unlocked.' )
@@ -121,33 +130,44 @@ class TransferDomainPrecheck extends React.PureComponent {
 			? translate( 'Your domain is unlocked at your current registrar.' )
 			: translate(
 					"Your domain is locked to prevent unauthorized transfers. You'll need to unlock " +
-						'it at your current domiain provider before we can move it. {{a}}Here are instructions for unlocking it{{/a}}',
+						'it at your current domain provider before we can move it. {{a}}Here are instructions for unlocking it{{/a}}. ' +
+						'It might take a few minutes for any changes to take effect.',
 					{
 						components: {
 							a: <a href="#" rel="noopener noreferrer" />,
 						},
 					}
 				);
-		const buttonText = loading ? translate( 'Checking…' ) : translate( "I've unlocked my domain" );
+		const buttonText = translate( "I've unlocked my domain" );
 
-		const lockStatus = unlocked ? (
-			<div className="transfer-domain-step__lock-status transfer-domain-step__unlocked">
-				<Gridicon icon="checkmark" size={ 12 } />
-				<span>{ translate( 'Unlocked' ) }</span>
-			</div>
-		) : (
-			<div className="transfer-domain-step__lock-status transfer-domain-step__locked">
-				<Gridicon icon="cross" size={ 12 } />
-				<span>{ translate( 'Locked' ) }</span>
+		let lockStatusClasses = unlocked
+			? 'transfer-domain-step__lock-status transfer-domain-step__unlocked'
+			: 'transfer-domain-step__lock-status transfer-domain-step__locked';
+
+		let lockStatusIcon = unlocked ? 'checkmark' : 'cross';
+		let lockStatusText = unlocked ? translate( 'Unlocked' ) : translate( 'Locked' );
+
+		if ( loading && ! isStepFinished ) {
+			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__checking';
+			lockStatusIcon = 'sync';
+			lockStatusText = 'Checking…';
+		}
+
+		const lockStatus = (
+			<div className={ lockStatusClasses }>
+				<Gridicon icon={ lockStatusIcon } size={ 12 } />
+				<span>{ lockStatusText }</span>
 			</div>
 		);
 
-		return this.getSection( heading, message, buttonText, 1, lockStatus );
+		return this.getSection( heading, message, buttonText, step, lockStatus );
 	}
 
 	getPrivacyMessage() {
 		const { translate } = this.props;
-		const { email } = this.state;
+		const { currentStep, email, loading } = this.state;
+		const step = 2;
+		const isStepFinished = currentStep > step;
 
 		const heading = translate( 'Verify we can get in touch.' );
 		const message = translate(
@@ -165,7 +185,20 @@ class TransferDomainPrecheck extends React.PureComponent {
 		);
 		const buttonText = translate( 'I can access this email address' );
 
-		return this.getSection( heading, message, buttonText, 2 );
+		const statusClasses = loading
+			? 'transfer-domain-step__lock-status transfer-domain-step__checking'
+			: 'transfer-domain-step__lock-status transfer-domain-step__refresh';
+		const statusIcon = 'sync';
+		const statusText = loading ? translate( 'Checking…' ) : translate( 'Refresh email address' );
+
+		const stepStatus = ! isStepFinished && (
+			<a className={ statusClasses } onClick={ this.refreshStatusOnly }>
+				<Gridicon icon={ statusIcon } size={ 12 } />
+				<span>{ statusText }</span>
+			</a>
+		);
+
+		return this.getSection( heading, message, buttonText, step, stepStatus );
 	}
 
 	getEppMessage() {
