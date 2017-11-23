@@ -6,7 +6,7 @@
 
 import debugModule from 'debug';
 import store from 'store';
-import { assign, find, isEmpty, some } from 'lodash';
+import { assign, find, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,8 +18,7 @@ import Searchable from 'lib/mixins/searchable';
 import Emitter from 'lib/mixins/emitter';
 import { isPlan } from 'lib/products-values';
 import userUtils from 'lib/user/utils';
-import { withoutHttp } from 'lib/url';
-
+import { markCollisions } from './utils';
 const debug = debugModule( 'calypso:sites-list' );
 
 /**
@@ -167,31 +166,8 @@ SitesList.prototype.createSiteObject = function( site ) {
 		return Site( site );
 	}
 };
-/**
- * Marks collisions between .com sites and Jetpack sites that have the same URL
- * Add the hasConflict attribute to .com sites that collide with Jetpack sites.
- *
- * @api private
- *
- */
-SitesList.prototype.markCollisions = function( sites ) {
-	sites.forEach( function( site, index, collisions ) {
-		var hasCollision;
 
-		if ( ! site.jetpack ) {
-			hasCollision = some( collisions, function( someSite ) {
-				return (
-					someSite.jetpack &&
-					site.ID !== someSite.ID &&
-					withoutHttp( site.URL ) === withoutHttp( someSite.URL )
-				);
-			} );
-			if ( hasCollision ) {
-				site.hasConflict = true;
-			}
-		}
-	} );
-};
+SitesList.prototype.markCollisions = markCollisions;
 
 /**
  * Parse data return from the API
