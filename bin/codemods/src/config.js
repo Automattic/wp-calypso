@@ -1,5 +1,6 @@
 const jscodeshiftArgs = [
 	'--extensions=js,jsx',
+	'--cpus=4',
 ];
 
 // Used primarily by 5to6-codemod transformations

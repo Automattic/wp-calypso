@@ -143,7 +143,7 @@ const webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx' ],
-		modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
+		modules: [ __dirname, path.join( __dirname, 'client' ), 'node_modules' ],
 		alias: Object.assign(
 			{
 				'react-virtualized': 'react-virtualized/dist/commonjs',
