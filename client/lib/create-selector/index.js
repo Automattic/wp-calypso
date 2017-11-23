@@ -160,7 +160,6 @@ export default function createSelector(
 			);
 		}
 
-		memoizedSelector.cache = memo;
 		return currMemo.get( cacheKey );
 	};
 
