@@ -6,18 +6,33 @@
 	background: #daf5fb;
 	min-height: 200px;
 
-	.gauge__label .gauge__metric {
+	@include breakpoint( '<660px' ) {
+		flex-direction: column;
+	}
+}
+
+.checklist-banner__gauge {
+	position: relative;
+
+	.gauge__metric {
 		text-transform: none;
 		letter-spacing: 0;
 	}
 
 	@include breakpoint( '<660px' ) {
-		flex-direction: column;
-
-		.gauge {
-			display: none;
-		}
+		display: none;
 	}
+}
+
+.checklist-banner__gauge-additional-text {
+	position: absolute;
+	top: 36px;
+	left: 0;
+	width: 100%;
+	text-align: center;
+	font-size: 10px;
+	font-weight: bold;
+	color: darken($gray, 20%);
 }
 
 .checklist-banner__progress {
@@ -64,6 +79,13 @@
 	font-size: 26px;
 }
 
+.checklist-banner__description {
+	a {
+		color: inherit;
+		text-decoration: underline;
+	}
+}
+
 .checklist-banner__button {
 	vertical-align: middle;
 	margin-right: 1em;
@@ -86,6 +108,16 @@
 	max-width: 40%;
 
 	@include breakpoint( '<1040px' ) {
+		display: none;
+	}
+}
+
+.checklist-banner__close {
+	position: absolute;
+	top: 8px;
+	right: 16px;
+
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }

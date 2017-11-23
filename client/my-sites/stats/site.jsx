@@ -131,7 +131,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					<ChecklistBanner />
+					<ChecklistBanner siteId={ siteId } slug={ slug } />
 					<ChartTabs
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
