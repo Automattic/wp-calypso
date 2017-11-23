@@ -4,6 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import { isEmpty, map, some } from 'lodash';
@@ -122,12 +123,14 @@ const PackageInfo = ( props ) => {
 
 	const renderPackageSelect = () => {
 		if ( isIndividualPackage ) {
+			const dimensionsClass = classNames( { 'is-error': pckgErrors.dimensions } );
 			return ( <div>
 				<div className="packages-step__package-items-header">
 					<FormLegend>{ translate( 'Individually Shipped Item' ) }</FormLegend>
 				</div>
 				<span className="packages-step__package-item-description">{ translate( 'Item Dimensions' ) } - </span>
-				<span>{ renderPackageDimensions( pckg, dimensionUnit ) }</span>
+				<span className={ dimensionsClass }>{ renderPackageDimensions( pckg, dimensionUnit ) }</span>
+				{ pckgErrors.dimensions && <FieldError text={ pckgErrors.dimensions } /> }
 			</div> );
 		}
 
@@ -136,7 +139,7 @@ const PackageInfo = ( props ) => {
 				<div className="packages-step__package-items-header">
 					<FormLegend>{ translate( 'Shipping Package' ) }</FormLegend>
 				</div>
-				<FormSelect onChange={ packageOptionChange } value={ pckg.box_id } isError={ pckgErrors.box_id }>
+				<FormSelect onChange={ packageOptionChange } value={ pckg.box_id } isError={ pckgErrors.box_id || pckgErrors.dimensions }>
 					<option value={ 'not_selected' } key={ 'not_selected' }>{ translate( 'Please select a package' ) }</option> )
 					{ map( packageGroups, ( group, groupId ) => {
 						if ( isEmpty( group.definitions ) ) {
