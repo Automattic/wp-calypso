@@ -9,7 +9,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-import { castArray, defaults, get, identity, isEmpty, isString, map, noop, toUpper } from 'lodash';
+import {
+	castArray,
+	defaults,
+	get,
+	identity,
+	isEmpty,
+	isString,
+	map,
+	noop,
+	set,
+	toUpper,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -90,14 +101,18 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		} );
 	}
 
-	handleChangeEvent = event => {
-		const field = event.target.id;
-		const value = this.sanitizeField( event.target.value, field );
-
+	updateContactDetails( field, value ) {
+		const sanitizedValue = this.sanitizeField( field, value );
 		debug( 'Setting ' + field + ' to ' + value );
-		this.props.updateContactDetailsCache( {
-			extra: { [ field ]: value },
-		} );
+		this.props.updateContactDetailsCache( set( {}, field, sanitizedValue ) );
+	}
+
+	handleChangeContactEvent = event => {
+		this.updateContactDetails( event.target.id, event.target.value );
+	};
+
+	handleChangeContactExtraEvent = event => {
+		this.updateContactDetails( `extra.${ event.target.id }`, event.target.value );
 	};
 
 	render() {
@@ -119,7 +134,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 							value="individual"
 							id="registrantType"
 							checked={ 'individual' === registrantType }
-							onChange={ this.handleChangeEvent }
+							onChange={ this.handleChangeContactExtraEvent }
 						/>
 						<span>{ translate( 'An individual' ) }</span>
 					</FormLabel>
@@ -129,7 +144,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 							value="organization"
 							id="registrantType"
 							checked={ 'organization' === registrantType }
-							onChange={ this.handleChangeEvent }
+							onChange={ this.handleChangeContactExtraEvent }
 						/>
 						<span>{ translate( 'A company or organization' ) }</span>
 					</FormLabel>
@@ -188,8 +203,38 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			renderValidationError( trademarkNumberStrings[ error ] )
 		);
 
+		// Note organization is the level above the other extra fields
+		const organizationValidationStrings = {
+			maxLength: translate( 'Too long, please limit the organization name to 100 characters.' ),
+			not: translate( 'Please use only the characters “%(validCharacters)s”', {
+				args: { validCharacters: "a-z A-Z 0-9 . , ( ) @ & ' - [space]" },
+			} ),
+			$ref: translate( 'Organization field is required' ),
+		};
+
+		const organizationValidationMessage = map( contactDetailsValidationErrors.organization, error =>
+			renderValidationError( organizationValidationStrings[ error ] )
+		);
+
 		return (
 			<div>
+				<FormFieldset>
+					<FormLabel className="registrant-extra-info__organization" htmlFor="organization">
+						{ translate( 'Organization Name' ) }
+					</FormLabel>
+					<FormTextInput
+						id="organization"
+						value={ contactDetails.organization }
+						autoCapitalize="off"
+						autoComplete="off"
+						autoCorrect="off"
+						placeholder={ '' }
+						onChange={ this.handleChangeContactEvent }
+						isError={ Boolean( ! isEmpty( organizationValidationMessage ) ) }
+					/>
+					{ organizationValidationMessage }
+				</FormFieldset>
+
 				<FormFieldset>
 					<FormLabel className="registrant-extra-info__optional" htmlFor="registrantVatId">
 						{ translate( 'VAT Number' ) }
@@ -202,7 +247,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoComplete="off"
 						autoCorrect="off"
 						placeholder={ translate( 'ex. FRXX123456789' ) }
-						onChange={ this.handleChangeEvent }
+						onChange={ this.handleChangeContactExtraEvent }
 						isError={ Boolean( registrantVatIdValidationMessage ) }
 					/>
 					{ registrantVatIdValidationMessage }
@@ -226,7 +271,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 						autoComplete="off"
 						autoCorrect="off"
 						isError={ Boolean( sirenSiretValidationMessage ) }
-						onChange={ this.handleChangeEvent }
+						onChange={ this.handleChangeContactExtraEvent }
 					/>
 					{ sirenSiretValidationMessage }
 				</FormFieldset>
@@ -249,7 +294,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 							comment: 'ex is short for example. The number is the EU trademark number format.',
 						} ) }
 						isError={ ! isEmpty( trademarkNumberValidationMessage ) }
-						onChange={ this.handleChangeEvent }
+						onChange={ this.handleChangeContactExtraEvent }
 					/>
 					{ trademarkNumberValidationMessage }
 				</FormFieldset>
@@ -265,7 +310,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 		);
 	}
 
-	sanitizeField( value, field ) {
+	sanitizeField( field, value ) {
 		return ( this.sanitizeFunctions[ field ] || identity )( value );
 	}
 }

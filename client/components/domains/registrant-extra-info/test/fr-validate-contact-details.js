@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { omit } from 'lodash';
+import { omit, repeat } from 'lodash';
 
 /**
  * Internal dependencies
@@ -48,6 +48,77 @@ describe( 'validateContactDetails', () => {
 		[ '47793466500035' ],
 		[ '33445848600019' ],
 	];
+
+	describe( 'organization', () => {
+		describe( 'with registrantType: organization', () => {
+			const organizationDetails = Object.assign( {}, contactDetails, {
+				extra: { registrantType: 'organization' },
+			} );
+
+			test( 'should accept an organization', () => {
+				expect( validateContactDetails( organizationDetails ) ).to.eql( {} );
+			} );
+
+			test( 'should not be missing', () => {
+				const testDetails = omit( organizationDetails, 'organization' );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.have.property( 'organization' );
+			} );
+
+			test( 'should not be empty', () => {
+				const testDetails = Object.assign( {}, organizationDetails, { organization: '' } );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.have.property( 'organization' );
+			} );
+
+			test( 'should reject long strings', () => {
+				const testDetails = Object.assign( {}, organizationDetails, {
+					organization: repeat( '0123456789', 11 ),
+				} );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.have.property( 'organization' );
+			} );
+
+			test( 'should reject invalid characters', () => {
+				const testDetails = Object.assign( {}, organizationDetails, {
+					organization: 'No bangs, please!',
+				} );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.have.property( 'organization' );
+			} );
+		} );
+
+		describe( 'with registrantType: individual', () => {
+			const individualDetails = Object.assign( {}, contactDetails, {
+				extra: { registrantType: 'individual' },
+			} );
+
+			test( 'should accept missing organization', () => {
+				const testDetails = omit( individualDetails, 'organization' );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.eql( {} );
+			} );
+
+			test( 'should accept null organization', () => {
+				const testDetails = Object.assign( {}, individualDetails, { organization: '' } );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.eql( {} );
+			} );
+
+			test( 'should accept empty organization', () => {
+				const testDetails = Object.assign( {}, individualDetails, { organization: '' } );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.eql( {} );
+			} );
+		} );
+	} );
 
 	describe( 'SIREN/SIRET', () => {
 		test( 'should accept all real SIRET examples', () => {
