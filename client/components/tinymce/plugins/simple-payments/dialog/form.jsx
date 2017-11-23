@@ -82,18 +82,18 @@ const validate = ( values, props ) => {
 	const errors = {};
 
 	if ( ! values.title ) {
-		errors.title = translate( 'This can not be empty.' );
+		errors.title = translate( 'This cannot be empty.' );
 	}
 
 	if ( ! values.price ) {
-		errors.price = translate( 'Price can not be empty.' );
+		errors.price = translate( 'Price cannot be empty.' );
 	} else if ( parseFloat( values.price ) === NaN ) {
 		errors.price = translate( 'Invalid price' );
 	} else if ( parseFloat( values.price ) < 0 ) {
-		errors.price = translate( 'Price can not be negative.' );
+		errors.price = translate( 'Price cannot be negative.' );
 	} else if ( decimalPlaces( values.price ) > precision ) {
 		if ( precision === 0 ) {
-			errors.price = translate( 'Price can not have decimal places.' );
+			errors.price = translate( 'Price cannot have decimal places.' );
 		} else {
 			const countDecimal = translate(
 				'%(precision)d decimal place',
@@ -105,14 +105,14 @@ const validate = ( values, props ) => {
 					},
 				}
 			);
-			errors.price = translate( 'Price can not have more than %(countDecimal)s.', {
+			errors.price = translate( 'Price cannot have more than %(countDecimal)s.', {
 				args: { countDecimal },
 			} );
 		}
 	}
 
 	if ( ! values.email ) {
-		errors.email = translate( 'Email address can not be empty.' );
+		errors.email = translate( 'Email address cannot be empty.' );
 	} else if ( ! emailValidator.validate( values.email ) ) {
 		errors.email = translate( '%(email)s is not a valid email address.', {
 			args: { email: values.email },
