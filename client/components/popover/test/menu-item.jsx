@@ -22,7 +22,7 @@ describe( 'PopoverMenuItem', () => {
 		expect( wrapper.type() ).toEqual( 'div' );
 	} );
 
-	test( 'should be a anchor if the href prop is set', () => {
+	test( 'should be a link if the href prop is set', () => {
 		const wrapper = shallow( <PopoverMenuItem href={ 'xyz' } /> );
 		expect( wrapper.type() ).toEqual( 'a' );
 	} );
