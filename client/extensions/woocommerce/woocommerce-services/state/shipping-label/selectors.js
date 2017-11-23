@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, get, isEmpty, isEqual, isNaN, isNumber, map, mapValues, sum } from 'lodash';
+import { find, get, isEmpty, isEqual, isFinite, map, mapValues, some, sum } from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -152,15 +152,17 @@ const getPackagesErrors = ( values ) => mapValues( values, ( pckg ) => {
 		errors.box_id = translate( 'Please select a package' );
 	}
 
-	if ( isNaN( pckg.weight ) || ! isNumber( pckg.weight ) || 0 >= pckg.weight ) {
+	const isInvalidDimension = ( dimension ) => ( ! isFinite( dimension ) || 0 >= dimension );
+
+	if ( isInvalidDimension( pckg.weight ) ) {
 		errors.weight = translate( 'Invalid weight' );
 	}
 
-	const hasInvalidDimensions = [
+	const hasInvalidDimensions = some( [
 		pckg.length,
 		pckg.width,
 		pckg.height,
-	].reduce( ( result, dimension ) => ( result || isNaN( dimension ) || ! isNumber( dimension ) || 0 >= dimension ), false );
+	], isInvalidDimension );
 	if ( hasInvalidDimensions ) {
 		errors.dimensions = translate( 'Package dimensions must be greater than zero' );
 	}
