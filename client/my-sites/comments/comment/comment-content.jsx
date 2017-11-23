@@ -7,14 +7,15 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import { get, noop } from 'lodash';
+import { get, isEmpty, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
 import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
+import Emojify from 'components/emojify';
+import QueryComment from 'components/data/query-comment';
 import { stripHTML, decodeEntities } from 'lib/formatting';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { getParentComment, getSiteComment } from 'state/selectors';
@@ -32,7 +33,7 @@ export class CommentContent extends Component {
 		this.props.isJetpack ? noop : this.props.recordReaderCommentOpened();
 
 	renderInReplyTo = () => {
-		const { commentUrl, isBulkMode, parentCommentContent, translate } = this.props;
+		const { isBulkMode, parentCommentContent, parentCommentUrl, translate } = this.props;
 
 		if ( ! parentCommentContent ) {
 			return null;
@@ -43,7 +44,7 @@ export class CommentContent extends Component {
 				{ isBulkMode && <Gridicon icon="reply" size={ 18 } /> }
 				<span>{ translate( 'In reply to:' ) }</span>
 				<a
-					href={ commentUrl }
+					href={ parentCommentUrl }
 					onClick={ this.trackDeepReaderLinkClick }
 					tabIndex={ isBulkMode ? -1 : 0 }
 				>
@@ -59,12 +60,19 @@ export class CommentContent extends Component {
 			commentId,
 			commentIsPending,
 			isBulkMode,
+			isParentCommentLoaded,
 			isPostView,
 			parentCommentContent,
+			parentCommentId,
+			siteId,
 			translate,
 		} = this.props;
 		return (
 			<div className="comment__content">
+				{ ! isParentCommentLoaded && (
+					<QueryComment commentId={ parentCommentId } siteId={ siteId } forceWpcom />
+				) }
+
 				{ isBulkMode && (
 					<div className="comment__content-preview">
 						{ this.renderInReplyTo() }
@@ -111,20 +119,24 @@ const mapStateToProps = ( state, { commentId } ) => {
 	const comment = getSiteComment( state, siteId, commentId );
 	const postId = get( comment, 'post.ID' );
 
-	const commentUrl = isJetpack
-		? get( comment, 'URL' )
-		: `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }`;
-
 	const parentComment = getParentComment( state, siteId, postId, commentId );
+	const parentCommentId = get( comment, 'parent.ID', 0 );
 	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
+
+	const parentCommentUrl = isJetpack
+		? get( parentComment, 'URL' )
+		: `/read/blogs/${ siteId }/posts/${ postId }#comment-${ parentCommentId }`;
 
 	return {
 		commentContent: get( comment, 'content' ),
 		commentIsPending: 'unapproved' === get( comment, 'status' ),
-		commentUrl,
 		isJetpack,
+		isParentCommentLoaded: 0 === parentCommentId || !! parentCommentContent,
 		parentCommentContent,
+		parentCommentId,
+		parentCommentUrl,
 		postId,
+		siteId,
 	};
 };
 
