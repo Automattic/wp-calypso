@@ -1,0 +1,28 @@
+.creds-complete__card {
+	text-align: center;
+	max-width: 640px;
+	padding: 4rem;
+	margin-top: 1px;
+	padding-bottom: 3rem;
+}
+
+.creds-complete__title {
+	display: inline-block;
+	font-size: 2.5rem;
+	font-weight: 300;
+	letter-spacing: .15rem;
+	color: $gray-text;
+}
+
+.creds-complete__image {
+	max-width: 140px;
+	display: block;
+	margin: 2rem auto;
+}
+
+.creds-complete__description {
+	color: $gray-text-min;
+	font-size: 1.4rem;
+	font-weight: 100;
+	line-height: 2.5rem;
+} 
