@@ -18,14 +18,13 @@ import { sectionify } from 'lib/route';
 import Sharing from './main';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
-import sites from 'lib/sites-list';
-import utils from 'lib/site/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import { requestSiteSettings } from 'state/site-settings/actions';
 import { reduxDispatch } from 'lib/redux-bridge/index';
-import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
+import { isJetpackSite, getSiteSlug, getSiteOption } from 'state/sites/selectors';
+import versionCompare from 'lib/version-compare';
 
 const analyticsPageTitle = 'Sharing';
 
@@ -86,22 +85,29 @@ export const connections = ( context, next ) => {
 };
 
 export const buttons = ( context, next ) => {
-	const site = sites().getSelectedSite();
-	const basePath = sectionify( context.path );
-	const baseAnalyticsPath = site ? basePath + '/:site' : basePath;
+	const { store, path } = context;
+	const state = store.getState();
+
+	const siteId = getSelectedSiteId( state );
+
+	const basePath = sectionify( path );
+	const baseAnalyticsPath = siteId ? basePath + '/:site' : basePath;
 
 	pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > Sharing Buttons' );
 
-	if ( site && ! utils.userCan( 'manage_options', site ) ) {
+	if ( siteId && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
 		notices.error(
 			translate( 'You are not authorized to manage sharing settings for this site.' )
 		);
 	}
 
+	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+
 	if (
-		site &&
-		site.jetpack &&
-		( ! site.isModuleActive( 'sharedaddy' ) || site.versionCompare( '3.4-dev', '<' ) )
+		siteId &&
+		isJetpackSite( state, siteId ) &&
+		( ! isJetpackModuleActive( state, siteId, 'sharedaddy' ) ||
+			versionCompare( siteJetpackVersion, '3.4-dev', '<' ) )
 	) {
 		notices.error(
 			translate(
