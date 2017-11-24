@@ -14,9 +14,6 @@ import page from 'page';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-/* eslint-disable no-restricted-imports */
-import sitesFactory from 'lib/sites-list';
-const sites = sitesFactory();
 /* eslint-enable no-restricted-imports */
 import userFactory from 'lib/user';
 const user = userFactory();
@@ -188,23 +185,8 @@ function createSiteWithCart(
 	} );
 }
 
-function fetchSitesUntilSiteAppears( siteSlug, callback ) {
-	if ( sites.select( siteSlug ) ) {
-		callback();
-		return;
-	}
-
-	sites.once( 'change', function() {
-		fetchSitesUntilSiteAppears( siteSlug, callback );
-	} );
-
-	// this call is deferred because sites.fetching is not set to false until
-	// after sites has emitted a `change` event
-	defer( sites.fetch.bind( sites ) );
-}
-
-function fetchReduxSite( siteSlug, { dispatch, getState }, callback ) {
-	if ( getSiteId( getState(), siteSlug ) ) {
+function fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) {
+	if ( getSiteId( reduxStore.getState(), siteSlug ) ) {
 		debug( 'fetchReduxSite: found new site' );
 		callback();
 		return;
@@ -213,23 +195,18 @@ function fetchReduxSite( siteSlug, { dispatch, getState }, callback ) {
 	// Have to manually call the thunk in order to access the promise on which
 	// to call `then`.
 	debug( 'fetchReduxSite: requesting all sites', siteSlug );
-	requestSites()( dispatch ).then( () =>
-		fetchReduxSite( siteSlug, { dispatch, getState }, callback )
-	);
+	reduxStore
+		.dispatch( requestSites() )
+		.then( () => fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) );
 }
 
 function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
 	async.parallel(
 		[
-			callback => {
-				fetchSitesUntilSiteAppears( siteSlug, callback );
-			},
+			callback => fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ),
 			callback => {
 				user.once( 'change', callback );
 				user.fetch();
-			},
-			callback => {
-				reduxStore ? fetchReduxSite( siteSlug, reduxStore, callback ) : callback();
 			},
 		],
 		onComplete
@@ -408,7 +385,7 @@ export default {
 		}
 	},
 
-	createSite( callback, { themeSlugWithRepo }, { site } ) {
+	createSite( callback, { themeSlugWithRepo }, { site }, reduxStore ) {
 		var data = {
 			blog_name: site,
 			blog_title: '',
@@ -427,9 +404,11 @@ export default {
 			}
 
 			if ( user.get() && isEmpty( errors ) ) {
-				fetchSitesAndUser( siteSlug, () => {
-					callback( undefined, providedDependencies );
-				} );
+				fetchSitesAndUser(
+					siteSlug,
+					() => callback( undefined, providedDependencies ),
+					reduxStore
+				);
 			} else {
 				callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
 			}
