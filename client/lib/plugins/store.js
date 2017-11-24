@@ -23,6 +23,8 @@ import versionCompare from 'lib/version-compare';
 import PluginUtils from 'lib/plugins/utils';
 import JetpackSite from 'lib/site/jetpack';
 import Site from 'lib/site';
+import { reduxDispatch } from 'lib/redux-bridge';
+import { sitePluginUpdated } from 'state/sites/updates/actions';
 
 /*
  * Constants
@@ -320,7 +322,7 @@ PluginsStore.dispatchToken = Dispatcher.register( function( { action } ) {
 					action.plugin.slug,
 					Object.assign( { update: { recentlyUpdated: true } }, action.data )
 				);
-				sitesList.onUpdatedPlugin( action.site );
+				reduxDispatch( sitePluginUpdated( action.site.ID ) );
 				setTimeout(
 					PluginsActions.removePluginUpdateInfo.bind( PluginsActions, action.site, action.plugin ),
 					_UPDATED_PLUGIN_INFO_TIME_TO_LIVE

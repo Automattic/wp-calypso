@@ -6,7 +6,7 @@
 
 import debugModule from 'debug';
 import store from 'store';
-import { assign, find, isEmpty } from 'lodash';
+import { find, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -573,20 +573,6 @@ SitesList.prototype.canManageSelectedOrAll = function() {
 			return false;
 		}
 	} );
-};
-
-SitesList.prototype.onUpdatedPlugin = function( site ) {
-	if ( ! site.jetpack ) {
-		return;
-	}
-	site = this.getSite( site.slug );
-
-	if ( site.updates && site.updates.plugins ) {
-		let siteUpdateInfo = assign( {}, site.updates );
-		siteUpdateInfo.plugins--;
-		siteUpdateInfo.total--;
-		site.set( { updates: siteUpdateInfo } );
-	}
 };
 
 export default SitesList;

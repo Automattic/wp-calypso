@@ -9,9 +9,6 @@ export default function() {
 		getSite: function() {
 			return {};
 		},
-		onUpdatedPlugin: function() {
-			return;
-		},
 		getNetworkSites: function() {
 			return [];
 		},
