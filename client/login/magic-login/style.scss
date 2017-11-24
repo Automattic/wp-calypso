@@ -18,6 +18,14 @@
 	max-width: 400px;
 }
 
+.magic-login__form {
+	margin-bottom: 0;
+
+	p {
+		margin-bottom: 0;
+	}
+}
+
 .magic-login__form-header {
 	font-size: 22px;
 	margin-bottom: 24px;
@@ -72,5 +80,6 @@
 
 .magic-login__check-email-image {
 	display: block;
+	height: 132px;
 	margin: 0 auto 1.5em;
 }
