@@ -30,6 +30,37 @@
 	line-height: 1.2em;
 }
 
+.about__segmented-control-wrapper {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.about__segmented-control {
+	flex-grow: 1;
+}
+
+.about__segment-label {
+	color: darken( $gray, 20% );
+
+	&:hover {
+		cursor: pointer;
+	}
+}
+
+.about__min-label {
+	padding-right: 15px;
+}
+
+.about__max-label {
+	padding-left: 15px;
+}
+
 .about__submit-wrapper {
 	text-align: center;
+	margin-bottom: 20px;
+}
+
+.about__last-fieldset {
+	margin-bottom: 0;
 }
