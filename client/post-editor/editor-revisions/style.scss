@@ -2,8 +2,6 @@
 .editor-revisions__dialog {
 	padding: 0;
 	overflow-x: hidden;
-	// Enable GPU acceleration to solve Safari rendering bug (see issue #20000)
-	transform: translate3d(0, 0, 0);
 }
 
 .editor-revisions__wrapper {
