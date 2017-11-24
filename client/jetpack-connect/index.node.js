@@ -3,10 +3,14 @@
  * Internal dependencies
  */
 import controller from './controller';
+import { makeLayout } from 'controller';
 
 export default function( router ) {
-	router( '/jetpack/connect/store', controller.plansLanding );
-	router( '/jetpack/connect/store/:interval', controller.plansLanding );
+	router(
+		'/jetpack/connect/store/:interval(monthly|yearly)?',
+		controller.plansLanding,
+		makeLayout
+	);
 
 	router(
 		'/jetpack/connect/:from(akismet|vaultpress)/:interval(yearly|monthly)?',
