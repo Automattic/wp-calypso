@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { HappychatConnection } from 'happychat-client';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import config from 'config';
 import { getHappychatAuth } from 'state/happychat/utils';
 import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
 import { initConnection } from 'state/happychat/connection/actions';
-import { HappychatConnection } from 'components/happychat/connection';
 
 export default connect(
 	state => ( {
