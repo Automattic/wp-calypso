@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { Composer, Notices, Timeline } from 'happychat-client';
 
 /**
  * Internal dependencies
@@ -26,9 +27,6 @@ import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeli
 import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-server-reachable';
 // UI components
 import HappychatConnection from 'components/happychat/connection-connected';
-import { Composer } from 'components/happychat/composer';
-import { Notices } from 'components/happychat/notices';
-import { Timeline } from 'components/happychat/timeline';
 
 /**
  * React component for rendering a happychat client as a full page

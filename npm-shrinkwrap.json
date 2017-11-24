@@ -217,32 +217,6 @@
       "requires": {
         "delegates": "1.0.0",
         "readable-stream": "2.3.3"
-      },
-      "dependencies": {
-        "inherits": {
-          "version": "2.0.3",
-          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-        },
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        }
       }
     },
     "argparse": {
@@ -412,7 +386,7 @@
       "integrity": "sha1-a8vQOKM3xwYn5/zkQ4+lgYjwk3s=",
       "requires": {
         "browserslist": "1.3.6",
-        "caniuse-db": "1.0.30000769",
+        "caniuse-db": "1.0.30000770",
         "normalize-range": "0.1.2",
         "num2fraction": "1.2.2",
         "postcss": "5.2.18",
@@ -471,7 +445,7 @@
         "babel-traverse": "6.26.0",
         "babel-types": "6.26.0",
         "babylon": "6.18.0",
-        "convert-source-map": "1.5.0",
+        "convert-source-map": "1.5.1",
         "debug": "2.2.0",
         "json5": "0.5.1",
         "lodash": "4.15.0",
@@ -1273,16 +1247,16 @@
         "babel-plugin-transform-es2015-unicode-regex": "6.24.1",
         "babel-plugin-transform-exponentiation-operator": "6.24.1",
         "babel-plugin-transform-regenerator": "6.26.0",
-        "browserslist": "2.9.0",
+        "browserslist": "2.9.1",
         "invariant": "2.2.2",
         "semver": "5.4.1"
       },
       "dependencies": {
         "browserslist": {
-          "version": "2.9.0",
-          "integrity": "sha512-vJEBcDTANoDhSHL46NeOEW5hvQw7It9uCqzeFPQhpawXfnOwnpvW5C97vn1eGJ7iCkSg8wWU0nYObE7d/N95Iw==",
+          "version": "2.9.1",
+          "integrity": "sha512-3n3nPdbUqn3nWmsy4PeSQthz2ja1ndpoXta+dwFFNhveGjMg6FXpWYe12vsTpNoXJbzx3j7GZXdtoVIdvh3JbA==",
           "requires": {
-            "caniuse-lite": "1.0.30000769",
+            "caniuse-lite": "1.0.30000770",
             "electron-to-chromium": "1.3.27"
           }
         },
@@ -1566,32 +1540,6 @@
       "integrity": "sha1-ysMo977kVzDUBLaSID/LWQ4XLV4=",
       "requires": {
         "readable-stream": "2.3.3"
-      },
-      "dependencies": {
-        "inherits": {
-          "version": "2.0.3",
-          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-        },
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        }
       }
     },
     "blessed": {
@@ -1776,7 +1724,7 @@
       "version": "1.3.6",
       "integrity": "sha1-lS/0jVZGPTtTj4XvL46t39KEsTM=",
       "requires": {
-        "caniuse-db": "1.0.30000769"
+        "caniuse-db": "1.0.30000770"
       }
     },
     "bser": {
@@ -1805,8 +1753,8 @@
       "integrity": "sha1-Jw8HbFpywC9bZaR9+Uxf46J4iS8="
     },
     "builtin-status-codes": {
-      "version": "3.0.0",
-      "integrity": "sha1-hZgoeOIbmOHGZCXgPQF0eI9Wnug="
+      "version": "2.0.0",
+      "integrity": "sha1-byIAO6rPADzNKHr+aHIVH93FhXk="
     },
     "bytes": {
       "version": "2.4.0",
@@ -1893,12 +1841,12 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000769",
-      "integrity": "sha1-wjC5wbno2z4cDYWMluaFdBuWzBA="
+      "version": "1.0.30000770",
+      "integrity": "sha1-z2iuHLioL208Nd9Bxi3Glz5HAkQ="
     },
     "caniuse-lite": {
-      "version": "1.0.30000769",
-      "integrity": "sha1-1oxaoHcuo+rGyX1C4jnJtNMmG5M="
+      "version": "1.0.30000770",
+      "integrity": "sha1-vI5/ULBzJzOQ22qzVzeJCaFOm9s="
     },
     "cardinal": {
       "version": "1.0.0",
@@ -2069,7 +2017,6 @@
       "requires": {
         "anymatch": "1.3.2",
         "async-each": "1.0.1",
-        "fsevents": "1.1.3",
         "glob-parent": "2.0.0",
         "inherits": "2.0.1",
         "is-binary-path": "1.0.1",
@@ -2327,7 +2274,7 @@
       "integrity": "sha1-NPw2cs0kOT6LtH5wyqApOBH08sU=",
       "dev": true,
       "requires": {
-        "commander": "2.11.0",
+        "commander": "2.12.1",
         "detective": "4.5.0",
         "glob": "5.0.15",
         "graceful-fs": "4.1.11",
@@ -2339,8 +2286,8 @@
       },
       "dependencies": {
         "commander": {
-          "version": "2.11.0",
-          "integrity": "sha512-b0553uYA5YAEGgyYIGYROzKQ7X5RAqedkfjiZxwi0kL1g3bOaBNNZfYkzt/CL0umgD5wc9Jec2FbB98CjkMRvQ==",
+          "version": "2.12.1",
+          "integrity": "sha512-PCNLExLlI5HiPdaJs4pMXwOTHkSCpNQ1QJH9ykZLKtKEyKu3p9HgmH5l97vM8c0IUz6d54l+xEu2GG9yuYrFzA==",
           "dev": true
         },
         "glob": {
@@ -2427,6 +2374,10 @@
             "string_decoder": "0.10.31",
             "util-deprecate": "1.0.2"
           }
+        },
+        "string_decoder": {
+          "version": "0.10.31",
+          "integrity": "sha1-YuIDvEF2bGwoyfyEMB2rHFMQ+pQ="
         }
       }
     },
@@ -2511,8 +2462,8 @@
       "dev": true
     },
     "convert-source-map": {
-      "version": "1.5.0",
-      "integrity": "sha1-ms1whRxtXf3ZPZKC5e35SgP/RrU="
+      "version": "1.5.1",
+      "integrity": "sha1-uCeAl7m8IpNl3lxiz1/K7YtVmeU="
     },
     "cookie": {
       "version": "0.1.2",
@@ -2759,6 +2710,29 @@
       "requires": {
         "inherits": "2.0.1",
         "readable-stream": "1.1.14"
+      },
+      "dependencies": {
+        "isarray": {
+          "version": "0.0.1",
+          "integrity": "sha1-ihis/Kmo9Bd+Cav8YDiTmwXR7t8=",
+          "dev": true
+        },
+        "readable-stream": {
+          "version": "1.1.14",
+          "integrity": "sha1-fPTFTvZI44EwhMY23SB54WbAgdk=",
+          "dev": true,
+          "requires": {
+            "core-util-is": "1.0.2",
+            "inherits": "2.0.1",
+            "isarray": "0.0.1",
+            "string_decoder": "0.10.31"
+          }
+        },
+        "string_decoder": {
+          "version": "0.10.31",
+          "integrity": "sha1-YuIDvEF2bGwoyfyEMB2rHFMQ+pQ=",
+          "dev": true
+        }
       }
     },
     "css-what": {
@@ -2802,7 +2776,7 @@
       "version": "1.0.0",
       "integrity": "sha1-dUu1v+VUUdpppYuU1F9MWwRi1Y8=",
       "requires": {
-        "es5-ext": "0.10.35"
+        "es5-ext": "0.10.37"
       }
     },
     "d3-array": {
@@ -2818,12 +2792,12 @@
       "integrity": "sha1-vHZD/KjlOoNH4vva/6I2eWtYUJs="
     },
     "d3-format": {
-      "version": "1.2.0",
-      "integrity": "sha1-a0gLqohohdRlHcJIqPSsnaFtsHo="
+      "version": "1.2.1",
+      "integrity": "sha512-U4zRVLDXW61bmqoo+OJ/V687e1T5nVd3TAKAJKgtpZ/P1JsMgyod0y9br+mlQOryTAACdiXI3wCjuERHFNp91w=="
     },
     "d3-interpolate": {
-      "version": "1.1.5",
-      "integrity": "sha1-aeCZ/zkhRxblY8muw+qdHqS4p58=",
+      "version": "1.1.6",
+      "integrity": "sha512-mOnv5a+pZzkNIHtw/V6I+w9Lqm9L5bG3OTXPM5A+QO0yyVMQ4W1uZhR+VOJmazaOZXri2ppbiZ5BUNWT0pFM9A==",
       "requires": {
         "d3-color": "1.0.3"
       }
@@ -2839,10 +2813,10 @@
         "d3-array": "1.2.0",
         "d3-collection": "1.0.4",
         "d3-color": "1.0.3",
-        "d3-format": "1.2.0",
-        "d3-interpolate": "1.1.5",
-        "d3-time": "1.0.7",
-        "d3-time-format": "2.1.0"
+        "d3-format": "1.2.1",
+        "d3-interpolate": "1.1.6",
+        "d3-time": "1.0.8",
+        "d3-time-format": "2.1.1"
       }
     },
     "d3-selection": {
@@ -2857,14 +2831,14 @@
       }
     },
     "d3-time": {
-      "version": "1.0.7",
-      "integrity": "sha1-lMr27bt4ebuAnQ0fdXK8SEgvcnA="
+      "version": "1.0.8",
+      "integrity": "sha512-YRZkNhphZh3KcnBfitvF3c6E0JOFGikHZ4YqD+Lzv83ZHn1/u6yGenRU1m+KAk9J1GnZMnKcrtfvSktlA1DXNQ=="
     },
     "d3-time-format": {
-      "version": "2.1.0",
-      "integrity": "sha512-mqTsfDTylgwE3YE/VNs9oB2OGX274fO0B5j1irbgLQI+X3FPoJg25pesNxrcdZ2nBeRx/6sHDJlDyMIjWL0BGQ==",
+      "version": "2.1.1",
+      "integrity": "sha512-8kAkymq2WMfzW7e+s/IUNAtN/y3gZXGRrdGfo6R8NKPAA85UBTxZg5E61bR6nLwjPjj4d3zywSQe1CkYLPFyrw==",
       "requires": {
-        "d3-time": "1.0.7"
+        "d3-time": "1.0.8"
       }
     },
     "dashdash": {
@@ -3166,7 +3140,7 @@
       "dev": true,
       "requires": {
         "browserslist": "1.3.6",
-        "caniuse-db": "1.0.30000769",
+        "caniuse-db": "1.0.30000770",
         "css-rule-stream": "1.1.0",
         "duplexer2": "0.0.2",
         "jsonfilter": "1.1.2",
@@ -3265,6 +3239,29 @@
       "dev": true,
       "requires": {
         "readable-stream": "1.1.14"
+      },
+      "dependencies": {
+        "isarray": {
+          "version": "0.0.1",
+          "integrity": "sha1-ihis/Kmo9Bd+Cav8YDiTmwXR7t8=",
+          "dev": true
+        },
+        "readable-stream": {
+          "version": "1.1.14",
+          "integrity": "sha1-fPTFTvZI44EwhMY23SB54WbAgdk=",
+          "dev": true,
+          "requires": {
+            "core-util-is": "1.0.2",
+            "inherits": "2.0.1",
+            "isarray": "0.0.1",
+            "string_decoder": "0.10.31"
+          }
+        },
+        "string_decoder": {
+          "version": "0.10.31",
+          "integrity": "sha1-YuIDvEF2bGwoyfyEMB2rHFMQ+pQ=",
+          "dev": true
+        }
       }
     },
     "duplexify": {
@@ -3275,34 +3272,6 @@
         "inherits": "2.0.1",
         "readable-stream": "2.3.3",
         "stream-shift": "1.0.0"
-      },
-      "dependencies": {
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          },
-          "dependencies": {
-            "inherits": {
-              "version": "2.0.3",
-              "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-            }
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        }
       }
     },
     "ecc-jsbn": {
@@ -3539,7 +3508,7 @@
       "integrity": "sha512-dSZ90ZI6alGwiztSLjikF1MEmn22uNy8Vw0qpUMxZf32Wu20MupPflZG5BCXWReP65izgly5TbBYyxl0sQ3hcw==",
       "dev": true,
       "requires": {
-        "enzyme-adapter-utils": "1.1.1",
+        "enzyme-adapter-utils": "1.2.0",
         "lodash": "4.17.4",
         "object.assign": "4.0.4",
         "object.values": "1.0.4",
@@ -3554,8 +3523,8 @@
       }
     },
     "enzyme-adapter-utils": {
-      "version": "1.1.1",
-      "integrity": "sha512-XU41nEiTl7O2JJvRA7JoCMhkDYRW9mQAgiy67Yz9BqTiRP/ldwuJYX8Gkom2LlihKIb9wy96IDuayR3RQspSNg==",
+      "version": "1.2.0",
+      "integrity": "sha512-6CeIrmymLWoQgvH5m/ixJLaCsa6pSoWU2nlMeO0nHCZR8LQ+tKzP/jPh4qceTPlB4oFfyMRFeqr0+IryY4gAxg==",
       "dev": true,
       "requires": {
         "lodash": "4.17.4",
@@ -3641,8 +3610,8 @@
       }
     },
     "es5-ext": {
-      "version": "0.10.35",
-      "integrity": "sha1-GO6FjOajxFx9eekcFfzKnsVoSU8=",
+      "version": "0.10.37",
+      "integrity": "sha1-DudB0Ui4AGm6J9AgOTdWryV978M=",
       "requires": {
         "es6-iterator": "2.0.3",
         "es6-symbol": "3.1.1"
@@ -3657,7 +3626,7 @@
       "integrity": "sha1-p96IkUGgWpSwhUQDstCg+/qY87c=",
       "requires": {
         "d": "1.0.0",
-        "es5-ext": "0.10.35",
+        "es5-ext": "0.10.37",
         "es6-symbol": "3.1.1"
       }
     },
@@ -3666,7 +3635,7 @@
       "integrity": "sha1-kTbgUD3MBqMBaQ8LsU/042TpSfA=",
       "requires": {
         "d": "1.0.0",
-        "es5-ext": "0.10.35",
+        "es5-ext": "0.10.37",
         "es6-iterator": "2.0.3",
         "es6-set": "0.1.5",
         "es6-symbol": "3.1.1",
@@ -3683,7 +3652,7 @@
       "integrity": "sha1-0rPsXU2ADO2BjbU40ol02wpzzLE=",
       "requires": {
         "d": "1.0.0",
-        "es5-ext": "0.10.35",
+        "es5-ext": "0.10.37",
         "es6-iterator": "2.0.3",
         "es6-symbol": "3.1.1",
         "event-emitter": "0.3.5"
@@ -3694,7 +3663,7 @@
       "integrity": "sha1-vwDvT9q2uhtG7Le2KbTH7VcVzHc=",
       "requires": {
         "d": "1.0.0",
-        "es5-ext": "0.10.35"
+        "es5-ext": "0.10.37"
       }
     },
     "es6-templates": {
@@ -3710,7 +3679,7 @@
       "integrity": "sha1-XjqzIlH/0VOKH45f+hNXdy+S2W8=",
       "requires": {
         "d": "1.0.0",
-        "es5-ext": "0.10.35",
+        "es5-ext": "0.10.37",
         "es6-iterator": "2.0.3",
         "es6-symbol": "3.1.1"
       }
@@ -4151,7 +4120,7 @@
       "integrity": "sha1-34xp7vFkeSPHFXuc6DhAYQsCzDk=",
       "requires": {
         "d": "1.0.0",
-        "es5-ext": "0.10.35"
+        "es5-ext": "0.10.37"
       }
     },
     "event-stream": {
@@ -4488,33 +4457,6 @@
             "which": "1.3.0"
           }
         },
-        "inherits": {
-          "version": "2.0.3",
-          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=",
-          "dev": true
-        },
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "dev": true,
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "dev": true,
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        },
         "through2": {
           "version": "2.0.3",
           "integrity": "sha1-AARWmzfHx0ujnEPzzteNGtlBQL4=",
@@ -4668,34 +4610,6 @@
       "requires": {
         "inherits": "2.0.1",
         "readable-stream": "2.3.3"
-      },
-      "dependencies": {
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          },
-          "dependencies": {
-            "inherits": {
-              "version": "2.0.3",
-              "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-            }
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        }
       }
     },
     "flux": {
@@ -4750,12 +4664,18 @@
       "integrity": "sha1-+8cfDEGt6zf5bFd60e1C2P2sypE="
     },
     "form-data": {
-      "version": "2.3.1",
-      "integrity": "sha1-b7lPvXGIUwbXPRXMSX/kzE7NRL8=",
+      "version": "1.0.0-rc4",
+      "integrity": "sha1-BaxrwiIntD5EYfSIFhVUaZ1Pi14=",
       "requires": {
-        "asynckit": "0.4.0",
+        "async": "1.5.2",
         "combined-stream": "1.0.5",
         "mime-types": "2.1.17"
+      },
+      "dependencies": {
+        "async": {
+          "version": "1.5.2",
+          "integrity": "sha1-7GphrlZIDAw8skHJVhjiCJL5Zyo="
+        }
       }
     },
     "formatio": {
@@ -4788,34 +4708,6 @@
       "requires": {
         "inherits": "2.0.1",
         "readable-stream": "2.3.3"
-      },
-      "dependencies": {
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          },
-          "dependencies": {
-            "inherits": {
-              "version": "2.0.3",
-              "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-            }
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        }
       }
     },
     "fs-extra": {
@@ -4841,800 +4733,12 @@
         "graceful-fs": "4.1.11",
         "iferr": "0.1.5",
         "imurmurhash": "0.1.4",
-        "readable-stream": "1.1.14"
+        "readable-stream": "2.3.3"
       }
     },
     "fs.realpath": {
       "version": "1.0.0",
       "integrity": "sha1-FQStJSMVjKpA20onh8sBQRmU6k8="
-    },
-    "fsevents": {
-      "version": "1.1.3",
-      "integrity": "sha512-WIr7iDkdmdbxu/Gh6eKEZJL6KPE74/5MEsf2whTOFNxbIoIixogroLdKYqB6FDav4Wavh/lZdzzd3b2KxIXC5Q==",
-      "optional": true,
-      "requires": {
-        "nan": "2.8.0",
-        "node-pre-gyp": "0.6.39"
-      },
-      "dependencies": {
-        "abbrev": {
-          "version": "1.1.0",
-          "integrity": "sha1-0FVMIlZjbi9W58LlrRg/hZQo2B8=",
-          "optional": true
-        },
-        "ajv": {
-          "version": "4.11.8",
-          "integrity": "sha1-gv+wKynmYq5TvcIK8VlHcGc5xTY=",
-          "optional": true,
-          "requires": {
-            "co": "4.6.0",
-            "json-stable-stringify": "1.0.1"
-          }
-        },
-        "ansi-regex": {
-          "version": "2.1.1",
-          "integrity": "sha1-w7M6te42DYbg5ijwRorn7yfWVN8="
-        },
-        "aproba": {
-          "version": "1.1.1",
-          "integrity": "sha1-ldNgDwdxCqDpKYxyatXs8urLq6s=",
-          "optional": true
-        },
-        "are-we-there-yet": {
-          "version": "1.1.4",
-          "integrity": "sha1-u13KOCu5TwXhUZQ3PRb9O6HKEQ0=",
-          "optional": true,
-          "requires": {
-            "delegates": "1.0.0",
-            "readable-stream": "2.2.9"
-          }
-        },
-        "asn1": {
-          "version": "0.2.3",
-          "integrity": "sha1-2sh4dxPJlmhJ/IGAd36+nB3fO4Y=",
-          "optional": true
-        },
-        "assert-plus": {
-          "version": "0.2.0",
-          "integrity": "sha1-104bh+ev/A24qttwIfP+SBAasjQ=",
-          "optional": true
-        },
-        "asynckit": {
-          "version": "0.4.0",
-          "integrity": "sha1-x57Zf380y48robyXkLzDZkdLS3k=",
-          "optional": true
-        },
-        "aws-sign2": {
-          "version": "0.6.0",
-          "integrity": "sha1-FDQt0428yU0OW4fXY81jYSwOeU8=",
-          "optional": true
-        },
-        "aws4": {
-          "version": "1.6.0",
-          "integrity": "sha1-g+9cqGCysy5KDe7e6MdxudtXRx4=",
-          "optional": true
-        },
-        "balanced-match": {
-          "version": "0.4.2",
-          "integrity": "sha1-yz8+PHMtwPAe5wtAPzAuYddwmDg="
-        },
-        "bcrypt-pbkdf": {
-          "version": "1.0.1",
-          "integrity": "sha1-Y7xdy2EzG5K8Bf1SiVPDNGKgb40=",
-          "optional": true,
-          "requires": {
-            "tweetnacl": "0.14.5"
-          }
-        },
-        "block-stream": {
-          "version": "0.0.9",
-          "integrity": "sha1-E+v+d4oDIFz+A3UUgeu0szAMEmo=",
-          "requires": {
-            "inherits": "2.0.3"
-          }
-        },
-        "boom": {
-          "version": "2.10.1",
-          "integrity": "sha1-OciRjO/1eZ+D+UkqhI9iWt0Mdm8=",
-          "requires": {
-            "hoek": "2.16.3"
-          }
-        },
-        "brace-expansion": {
-          "version": "1.1.7",
-          "integrity": "sha1-Pv/DxQ4ABTH7cg6v+A8K6O8jz1k=",
-          "requires": {
-            "balanced-match": "0.4.2",
-            "concat-map": "0.0.1"
-          }
-        },
-        "buffer-shims": {
-          "version": "1.0.0",
-          "integrity": "sha1-mXjOMXOIxkmth5MCjDR37wRKi1E="
-        },
-        "caseless": {
-          "version": "0.12.0",
-          "integrity": "sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=",
-          "optional": true
-        },
-        "co": {
-          "version": "4.6.0",
-          "integrity": "sha1-bqa989hTrlTMuOR7+gvz+QMfsYQ=",
-          "optional": true
-        },
-        "code-point-at": {
-          "version": "1.1.0",
-          "integrity": "sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c="
-        },
-        "combined-stream": {
-          "version": "1.0.5",
-          "integrity": "sha1-k4NwpXtKUd6ix3wV1cX9+JUWQAk=",
-          "requires": {
-            "delayed-stream": "1.0.0"
-          }
-        },
-        "concat-map": {
-          "version": "0.0.1",
-          "integrity": "sha1-2Klr13/Wjfd5OnMDajug1UBdR3s="
-        },
-        "console-control-strings": {
-          "version": "1.1.0",
-          "integrity": "sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4="
-        },
-        "core-util-is": {
-          "version": "1.0.2",
-          "integrity": "sha1-tf1UIgqivFq1eqtxQMlAdUUDwac="
-        },
-        "cryptiles": {
-          "version": "2.0.5",
-          "integrity": "sha1-O9/s3GCBR8HGcgL6KR59ylnqo7g=",
-          "requires": {
-            "boom": "2.10.1"
-          }
-        },
-        "dashdash": {
-          "version": "1.14.1",
-          "integrity": "sha1-hTz6D3y+L+1d4gMmuN1YEDX24vA=",
-          "optional": true,
-          "requires": {
-            "assert-plus": "1.0.0"
-          },
-          "dependencies": {
-            "assert-plus": {
-              "version": "1.0.0",
-              "integrity": "sha1-8S4PPF13sLHN2RRpQuTpbB5N1SU=",
-              "optional": true
-            }
-          }
-        },
-        "debug": {
-          "version": "2.6.8",
-          "integrity": "sha1-5zFTHKLt4n0YgiJCfaF4IdaP9Pw=",
-          "optional": true,
-          "requires": {
-            "ms": "2.0.0"
-          }
-        },
-        "deep-extend": {
-          "version": "0.4.2",
-          "integrity": "sha1-SLaZwn4zS/ifEIkr5DL25MfTSn8=",
-          "optional": true
-        },
-        "delayed-stream": {
-          "version": "1.0.0",
-          "integrity": "sha1-3zrhmayt+31ECqrgsp4icrJOxhk="
-        },
-        "delegates": {
-          "version": "1.0.0",
-          "integrity": "sha1-hMbhWbgZBP3KWaDvRM2HDTElD5o=",
-          "optional": true
-        },
-        "detect-libc": {
-          "version": "1.0.2",
-          "integrity": "sha1-ca1dIEvxempsqPRQxhRUBm70YeE=",
-          "optional": true
-        },
-        "ecc-jsbn": {
-          "version": "0.1.1",
-          "integrity": "sha1-D8c6ntXw1Tw4GTOYUj735UN3dQU=",
-          "optional": true,
-          "requires": {
-            "jsbn": "0.1.1"
-          }
-        },
-        "extend": {
-          "version": "3.0.1",
-          "integrity": "sha1-p1Xqe8Gt/MWjHOfnYtuq3F5jZEQ=",
-          "optional": true
-        },
-        "extsprintf": {
-          "version": "1.0.2",
-          "integrity": "sha1-4QgOBljjALBilJkMxw4VAiNf1VA="
-        },
-        "forever-agent": {
-          "version": "0.6.1",
-          "integrity": "sha1-+8cfDEGt6zf5bFd60e1C2P2sypE=",
-          "optional": true
-        },
-        "form-data": {
-          "version": "2.1.4",
-          "integrity": "sha1-M8GDrPGTJ27KqYFDpp6Uv+4XUNE=",
-          "optional": true,
-          "requires": {
-            "asynckit": "0.4.0",
-            "combined-stream": "1.0.5",
-            "mime-types": "2.1.15"
-          }
-        },
-        "fs.realpath": {
-          "version": "1.0.0",
-          "integrity": "sha1-FQStJSMVjKpA20onh8sBQRmU6k8="
-        },
-        "fstream": {
-          "version": "1.0.11",
-          "integrity": "sha1-XB+x8RdHcRTwYyoOtLcbPLD9MXE=",
-          "requires": {
-            "graceful-fs": "4.1.11",
-            "inherits": "2.0.3",
-            "mkdirp": "0.5.1",
-            "rimraf": "2.6.1"
-          }
-        },
-        "fstream-ignore": {
-          "version": "1.0.5",
-          "integrity": "sha1-nDHa40dnAY/h0kmyTa2mfQktoQU=",
-          "optional": true,
-          "requires": {
-            "fstream": "1.0.11",
-            "inherits": "2.0.3",
-            "minimatch": "3.0.4"
-          }
-        },
-        "gauge": {
-          "version": "2.7.4",
-          "integrity": "sha1-LANAXHU4w51+s3sxcCLjJfsBi/c=",
-          "optional": true,
-          "requires": {
-            "aproba": "1.1.1",
-            "console-control-strings": "1.1.0",
-            "has-unicode": "2.0.1",
-            "object-assign": "4.1.1",
-            "signal-exit": "3.0.2",
-            "string-width": "1.0.2",
-            "strip-ansi": "3.0.1",
-            "wide-align": "1.1.2"
-          }
-        },
-        "getpass": {
-          "version": "0.1.7",
-          "integrity": "sha1-Xv+OPmhNVprkyysSgmBOi6YhSfo=",
-          "optional": true,
-          "requires": {
-            "assert-plus": "1.0.0"
-          },
-          "dependencies": {
-            "assert-plus": {
-              "version": "1.0.0",
-              "integrity": "sha1-8S4PPF13sLHN2RRpQuTpbB5N1SU=",
-              "optional": true
-            }
-          }
-        },
-        "glob": {
-          "version": "7.1.2",
-          "integrity": "sha512-MJTUg1kjuLeQCJ+ccE4Vpa6kKVXkPYJ2mOCQyUuKLcLQsdrMCpBPUi8qVE6+YuaJkozeA9NusTAw3hLr8Xe5EQ==",
-          "requires": {
-            "fs.realpath": "1.0.0",
-            "inflight": "1.0.6",
-            "inherits": "2.0.3",
-            "minimatch": "3.0.4",
-            "once": "1.4.0",
-            "path-is-absolute": "1.0.1"
-          }
-        },
-        "graceful-fs": {
-          "version": "4.1.11",
-          "integrity": "sha1-Dovf5NHduIVNZOBOp8AOKgJuVlg="
-        },
-        "har-schema": {
-          "version": "1.0.5",
-          "integrity": "sha1-0mMTX0MwfALGAq/I/pWXDAFRNp4=",
-          "optional": true
-        },
-        "har-validator": {
-          "version": "4.2.1",
-          "integrity": "sha1-M0gdDxu/9gDdID11gSpqX7oALio=",
-          "optional": true,
-          "requires": {
-            "ajv": "4.11.8",
-            "har-schema": "1.0.5"
-          }
-        },
-        "has-unicode": {
-          "version": "2.0.1",
-          "integrity": "sha1-4Ob+aijPUROIVeCG0Wkedx3iqLk=",
-          "optional": true
-        },
-        "hawk": {
-          "version": "3.1.3",
-          "integrity": "sha1-B4REvXwWQLD+VA0sm3PVlnjo4cQ=",
-          "requires": {
-            "boom": "2.10.1",
-            "cryptiles": "2.0.5",
-            "hoek": "2.16.3",
-            "sntp": "1.0.9"
-          }
-        },
-        "hoek": {
-          "version": "2.16.3",
-          "integrity": "sha1-ILt0A9POo5jpHcRxCo/xuCdKJe0="
-        },
-        "http-signature": {
-          "version": "1.1.1",
-          "integrity": "sha1-33LiZwZs0Kxn+3at+OE0qPvPkb8=",
-          "optional": true,
-          "requires": {
-            "assert-plus": "0.2.0",
-            "jsprim": "1.4.0",
-            "sshpk": "1.13.0"
-          }
-        },
-        "inflight": {
-          "version": "1.0.6",
-          "integrity": "sha1-Sb1jMdfQLQwJvJEKEHW6gWW1bfk=",
-          "requires": {
-            "once": "1.4.0",
-            "wrappy": "1.0.2"
-          }
-        },
-        "inherits": {
-          "version": "2.0.3",
-          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-        },
-        "ini": {
-          "version": "1.3.4",
-          "integrity": "sha1-BTfLedr1m1mhpRff9wbIbsA5Fi4=",
-          "optional": true
-        },
-        "is-fullwidth-code-point": {
-          "version": "1.0.0",
-          "integrity": "sha1-754xOG8DGn8NZDr4L95QxFfvAMs=",
-          "requires": {
-            "number-is-nan": "1.0.1"
-          }
-        },
-        "is-typedarray": {
-          "version": "1.0.0",
-          "integrity": "sha1-5HnICFjfDBsR3dppQPlgEfzaSpo=",
-          "optional": true
-        },
-        "isarray": {
-          "version": "1.0.0",
-          "integrity": "sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE="
-        },
-        "isstream": {
-          "version": "0.1.2",
-          "integrity": "sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=",
-          "optional": true
-        },
-        "jodid25519": {
-          "version": "1.0.2",
-          "integrity": "sha1-BtSRIlUJNBlHfUJWM2BuDpB4KWc=",
-          "optional": true,
-          "requires": {
-            "jsbn": "0.1.1"
-          }
-        },
-        "jsbn": {
-          "version": "0.1.1",
-          "integrity": "sha1-peZUwuWi3rXyAdls77yoDA7y9RM=",
-          "optional": true
-        },
-        "json-schema": {
-          "version": "0.2.3",
-          "integrity": "sha1-tIDIkuWaLwWVTOcnvT8qTogvnhM=",
-          "optional": true
-        },
-        "json-stable-stringify": {
-          "version": "1.0.1",
-          "integrity": "sha1-mnWdOcXy/1A/1TAGRu1EX4jE+a8=",
-          "optional": true,
-          "requires": {
-            "jsonify": "0.0.0"
-          }
-        },
-        "json-stringify-safe": {
-          "version": "5.0.1",
-          "integrity": "sha1-Epai1Y/UXxmg9s4B1lcB4sc1tus=",
-          "optional": true
-        },
-        "jsonify": {
-          "version": "0.0.0",
-          "integrity": "sha1-LHS27kHZPKUbe1qu6PUDYx0lKnM=",
-          "optional": true
-        },
-        "jsprim": {
-          "version": "1.4.0",
-          "integrity": "sha1-o7h+QCmNjDgFUtjMdiigu5WiKRg=",
-          "optional": true,
-          "requires": {
-            "assert-plus": "1.0.0",
-            "extsprintf": "1.0.2",
-            "json-schema": "0.2.3",
-            "verror": "1.3.6"
-          },
-          "dependencies": {
-            "assert-plus": {
-              "version": "1.0.0",
-              "integrity": "sha1-8S4PPF13sLHN2RRpQuTpbB5N1SU=",
-              "optional": true
-            }
-          }
-        },
-        "mime-db": {
-          "version": "1.27.0",
-          "integrity": "sha1-gg9XIpa70g7CXtVeW13oaeVDbrE="
-        },
-        "mime-types": {
-          "version": "2.1.15",
-          "integrity": "sha1-pOv1BkCUVpI3uM9wBGd20J/JKu0=",
-          "requires": {
-            "mime-db": "1.27.0"
-          }
-        },
-        "minimatch": {
-          "version": "3.0.4",
-          "integrity": "sha512-yJHVQEhyqPLUTgt9B83PXu6W3rx4MvvHvSUvToogpwoGDOUQ+yDrR0HRot+yOCdCO7u4hX3pWft6kWBBcqh0UA==",
-          "requires": {
-            "brace-expansion": "1.1.7"
-          }
-        },
-        "minimist": {
-          "version": "0.0.8",
-          "integrity": "sha1-hX/Kv8M5fSYluCKCYuhqp6ARsF0="
-        },
-        "mkdirp": {
-          "version": "0.5.1",
-          "integrity": "sha1-MAV0OOrGz3+MR2fzhkjWaX11yQM=",
-          "requires": {
-            "minimist": "0.0.8"
-          }
-        },
-        "ms": {
-          "version": "2.0.0",
-          "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=",
-          "optional": true
-        },
-        "node-pre-gyp": {
-          "version": "0.6.39",
-          "integrity": "sha512-OsJV74qxnvz/AMGgcfZoDaeDXKD3oY3QVIbBmwszTFkRisTSXbMQyn4UWzUMOtA5SVhrBZOTp0wcoSBgfMfMmQ==",
-          "optional": true,
-          "requires": {
-            "detect-libc": "1.0.2",
-            "hawk": "3.1.3",
-            "mkdirp": "0.5.1",
-            "nopt": "4.0.1",
-            "npmlog": "4.1.0",
-            "rc": "1.2.1",
-            "request": "2.81.0",
-            "rimraf": "2.6.1",
-            "semver": "5.3.0",
-            "tar": "2.2.1",
-            "tar-pack": "3.4.0"
-          }
-        },
-        "nopt": {
-          "version": "4.0.1",
-          "integrity": "sha1-0NRoWv1UFRk8jHUFYC0NF81kR00=",
-          "optional": true,
-          "requires": {
-            "abbrev": "1.1.0",
-            "osenv": "0.1.4"
-          }
-        },
-        "npmlog": {
-          "version": "4.1.0",
-          "integrity": "sha512-ocolIkZYZt8UveuiDS0yAkkIjid1o7lPG8cYm05yNYzBn8ykQtaiPMEGp8fY9tKdDgm8okpdKzkvu1y9hUYugA==",
-          "optional": true,
-          "requires": {
-            "are-we-there-yet": "1.1.4",
-            "console-control-strings": "1.1.0",
-            "gauge": "2.7.4",
-            "set-blocking": "2.0.0"
-          }
-        },
-        "number-is-nan": {
-          "version": "1.0.1",
-          "integrity": "sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0="
-        },
-        "oauth-sign": {
-          "version": "0.8.2",
-          "integrity": "sha1-Rqarfwrq2N6unsBWV4C31O/rnUM=",
-          "optional": true
-        },
-        "object-assign": {
-          "version": "4.1.1",
-          "integrity": "sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=",
-          "optional": true
-        },
-        "once": {
-          "version": "1.4.0",
-          "integrity": "sha1-WDsap3WWHUsROsF9nFC6753Xa9E=",
-          "requires": {
-            "wrappy": "1.0.2"
-          }
-        },
-        "os-homedir": {
-          "version": "1.0.2",
-          "integrity": "sha1-/7xJiDNuDoM94MFox+8VISGqf7M=",
-          "optional": true
-        },
-        "os-tmpdir": {
-          "version": "1.0.2",
-          "integrity": "sha1-u+Z0BseaqFxc/sdm/lc0VV36EnQ=",
-          "optional": true
-        },
-        "osenv": {
-          "version": "0.1.4",
-          "integrity": "sha1-Qv5tWVPfBsgGS+bxdsPQWqqjRkQ=",
-          "optional": true,
-          "requires": {
-            "os-homedir": "1.0.2",
-            "os-tmpdir": "1.0.2"
-          }
-        },
-        "path-is-absolute": {
-          "version": "1.0.1",
-          "integrity": "sha1-F0uSaHNVNP+8es5r9TpanhtcX18="
-        },
-        "performance-now": {
-          "version": "0.2.0",
-          "integrity": "sha1-M+8wxcd9TqIcWlOGnZG1bY8lVeU=",
-          "optional": true
-        },
-        "process-nextick-args": {
-          "version": "1.0.7",
-          "integrity": "sha1-FQ4gt1ZZCtP5EJPyWk8q2L/zC6M="
-        },
-        "punycode": {
-          "version": "1.4.1",
-          "integrity": "sha1-wNWmOycYgArY4esPpSachN1BhF4=",
-          "optional": true
-        },
-        "qs": {
-          "version": "6.4.0",
-          "integrity": "sha1-E+JtKK1rD/qpExLNO/cI7TUecjM=",
-          "optional": true
-        },
-        "rc": {
-          "version": "1.2.1",
-          "integrity": "sha1-LgPo5C7kULjLPc5lvhv4l04d/ZU=",
-          "optional": true,
-          "requires": {
-            "deep-extend": "0.4.2",
-            "ini": "1.3.4",
-            "minimist": "1.2.0",
-            "strip-json-comments": "2.0.1"
-          },
-          "dependencies": {
-            "minimist": {
-              "version": "1.2.0",
-              "integrity": "sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ=",
-              "optional": true
-            }
-          }
-        },
-        "readable-stream": {
-          "version": "2.2.9",
-          "integrity": "sha1-z3jsb0ptHrQ9JkiMrJfwQudLf8g=",
-          "requires": {
-            "buffer-shims": "1.0.0",
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "string_decoder": "1.0.1",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "request": {
-          "version": "2.81.0",
-          "integrity": "sha1-xpKJRqDgbF+Nb4qTM0af/aRimKA=",
-          "optional": true,
-          "requires": {
-            "aws-sign2": "0.6.0",
-            "aws4": "1.6.0",
-            "caseless": "0.12.0",
-            "combined-stream": "1.0.5",
-            "extend": "3.0.1",
-            "forever-agent": "0.6.1",
-            "form-data": "2.1.4",
-            "har-validator": "4.2.1",
-            "hawk": "3.1.3",
-            "http-signature": "1.1.1",
-            "is-typedarray": "1.0.0",
-            "isstream": "0.1.2",
-            "json-stringify-safe": "5.0.1",
-            "mime-types": "2.1.15",
-            "oauth-sign": "0.8.2",
-            "performance-now": "0.2.0",
-            "qs": "6.4.0",
-            "safe-buffer": "5.0.1",
-            "stringstream": "0.0.5",
-            "tough-cookie": "2.3.2",
-            "tunnel-agent": "0.6.0",
-            "uuid": "3.0.1"
-          }
-        },
-        "rimraf": {
-          "version": "2.6.1",
-          "integrity": "sha1-wjOOxkPfeht/5cVPqG9XQopV8z0=",
-          "requires": {
-            "glob": "7.1.2"
-          }
-        },
-        "safe-buffer": {
-          "version": "5.0.1",
-          "integrity": "sha1-0mPKVGls2KMGtcplUekt5XkY++c="
-        },
-        "semver": {
-          "version": "5.3.0",
-          "integrity": "sha1-myzl094C0XxgEq0yaqa00M9U+U8=",
-          "optional": true
-        },
-        "set-blocking": {
-          "version": "2.0.0",
-          "integrity": "sha1-BF+XgtARrppoA93TgrJDkrPYkPc=",
-          "optional": true
-        },
-        "signal-exit": {
-          "version": "3.0.2",
-          "integrity": "sha1-tf3AjxKH6hF4Yo5BXiUTK3NkbG0=",
-          "optional": true
-        },
-        "sntp": {
-          "version": "1.0.9",
-          "integrity": "sha1-ZUEYTMkK7qbG57NeJlkIJEPGYZg=",
-          "requires": {
-            "hoek": "2.16.3"
-          }
-        },
-        "sshpk": {
-          "version": "1.13.0",
-          "integrity": "sha1-/yo+T9BEl1Vf7Zezmg/YL6+zozw=",
-          "optional": true,
-          "requires": {
-            "asn1": "0.2.3",
-            "assert-plus": "1.0.0",
-            "bcrypt-pbkdf": "1.0.1",
-            "dashdash": "1.14.1",
-            "ecc-jsbn": "0.1.1",
-            "getpass": "0.1.7",
-            "jodid25519": "1.0.2",
-            "jsbn": "0.1.1",
-            "tweetnacl": "0.14.5"
-          },
-          "dependencies": {
-            "assert-plus": {
-              "version": "1.0.0",
-              "integrity": "sha1-8S4PPF13sLHN2RRpQuTpbB5N1SU=",
-              "optional": true
-            }
-          }
-        },
-        "string-width": {
-          "version": "1.0.2",
-          "integrity": "sha1-EYvfW4zcUaKn5w0hHgfisLmxB9M=",
-          "requires": {
-            "code-point-at": "1.1.0",
-            "is-fullwidth-code-point": "1.0.0",
-            "strip-ansi": "3.0.1"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.1",
-          "integrity": "sha1-YuIA8DmVWmgQ2N8KM//A8BNmLZg=",
-          "requires": {
-            "safe-buffer": "5.0.1"
-          }
-        },
-        "stringstream": {
-          "version": "0.0.5",
-          "integrity": "sha1-TkhM1N5aC7vuGORjB3EKioFiGHg=",
-          "optional": true
-        },
-        "strip-ansi": {
-          "version": "3.0.1",
-          "integrity": "sha1-ajhfuIU9lS1f8F0Oiq+UJ43GPc8=",
-          "requires": {
-            "ansi-regex": "2.1.1"
-          }
-        },
-        "strip-json-comments": {
-          "version": "2.0.1",
-          "integrity": "sha1-PFMZQukIwml8DsNEhYwobHygpgo=",
-          "optional": true
-        },
-        "tar": {
-          "version": "2.2.1",
-          "integrity": "sha1-jk0qJWwOIYXGsYrWlK7JaLg8sdE=",
-          "requires": {
-            "block-stream": "0.0.9",
-            "fstream": "1.0.11",
-            "inherits": "2.0.3"
-          }
-        },
-        "tar-pack": {
-          "version": "3.4.0",
-          "integrity": "sha1-I74tf2cagzk3bL2wuP4/3r8xeYQ=",
-          "optional": true,
-          "requires": {
-            "debug": "2.6.8",
-            "fstream": "1.0.11",
-            "fstream-ignore": "1.0.5",
-            "once": "1.4.0",
-            "readable-stream": "2.2.9",
-            "rimraf": "2.6.1",
-            "tar": "2.2.1",
-            "uid-number": "0.0.6"
-          }
-        },
-        "tough-cookie": {
-          "version": "2.3.2",
-          "integrity": "sha1-8IH3bkyFcg5sN6X6ztc3FQ2EByo=",
-          "optional": true,
-          "requires": {
-            "punycode": "1.4.1"
-          }
-        },
-        "tunnel-agent": {
-          "version": "0.6.0",
-          "integrity": "sha1-J6XeoGs2sEoKmWZ3SykIaPD8QP0=",
-          "optional": true,
-          "requires": {
-            "safe-buffer": "5.0.1"
-          }
-        },
-        "tweetnacl": {
-          "version": "0.14.5",
-          "integrity": "sha1-WuaBd/GS1EViadEIr6k/+HQ/T2Q=",
-          "optional": true
-        },
-        "uid-number": {
-          "version": "0.0.6",
-          "integrity": "sha1-DqEOgDXo61uOREnwbaHHMGY7qoE=",
-          "optional": true
-        },
-        "util-deprecate": {
-          "version": "1.0.2",
-          "integrity": "sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8="
-        },
-        "uuid": {
-          "version": "3.0.1",
-          "integrity": "sha1-ZUS7ot/ajBzxfmKaOjBeK7H+5sE=",
-          "optional": true
-        },
-        "verror": {
-          "version": "1.3.6",
-          "integrity": "sha1-z/XfEpRtKX0rqu+qJoniW+AcAFw=",
-          "optional": true,
-          "requires": {
-            "extsprintf": "1.0.2"
-          }
-        },
-        "wide-align": {
-          "version": "1.1.2",
-          "integrity": "sha512-ijDLlyQ7s6x1JgCLur53osjm/UXUYD9+0PbYKrBsYisYXzCxN+HC3mYDNy/dWdmf3AwqwU3CXwDCvsNgGK1S0w==",
-          "optional": true,
-          "requires": {
-            "string-width": "1.0.2"
-          }
-        },
-        "wrappy": {
-          "version": "1.0.2",
-          "integrity": "sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8="
-        }
-      }
     },
     "fstream": {
       "version": "1.0.11",
@@ -5966,11 +5070,6 @@
         "vinyl": "0.5.3"
       },
       "dependencies": {
-        "inherits": {
-          "version": "2.0.3",
-          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=",
-          "dev": true
-        },
         "minimist": {
           "version": "1.2.0",
           "integrity": "sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ=",
@@ -5980,28 +5079,6 @@
           "version": "3.0.0",
           "integrity": "sha1-m+3VygiXlJvKR+f/QIBi1Un1h/I=",
           "dev": true
-        },
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "dev": true,
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "dev": true,
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
         },
         "through2": {
           "version": "2.0.3",
@@ -6052,6 +5129,39 @@
           "dev": true,
           "requires": {
             "amdefine": "1.0.1"
+          }
+        }
+      }
+    },
+    "happychat-client": {
+      "version": "github:automattic/happychat-client#7f1b61addad856829742f74904531e073eccc9e0",
+      "requires": {
+        "classnames": "1.1.1",
+        "create-react-class": "15.6.2",
+        "gridicons": "2.1.0",
+        "lodash": "4.15.0",
+        "prop-types": "15.5.10",
+        "react": "15.6.2",
+        "react-dom": "15.6.2",
+        "react-pure-render": "1.0.2",
+        "react-redux": "5.0.6",
+        "redux": "3.7.2",
+        "redux-devtools-extension": "2.13.2",
+        "socket.io-client": "1.4.5",
+        "twemoji": "2.3.0",
+        "uuid": "2.0.1",
+        "wpcom-oauth-cors": "1.0.1",
+        "wpcom-xhr-request": "1.1.1"
+      },
+      "dependencies": {
+        "redux": {
+          "version": "3.7.2",
+          "integrity": "sha512-pNqnf9q1hI5HHZRBkj3bAngGZW/JMCmexDlOxw4XagXY2o1327nHH54LoTjiPJ0gizoqPDRqWyX/00g0hD6w+A==",
+          "requires": {
+            "lodash": "4.15.0",
+            "lodash-es": "4.17.4",
+            "loose-envify": "1.3.1",
+            "symbol-observable": "1.0.4"
           }
         }
       }
@@ -6209,8 +5319,8 @@
       "integrity": "sha512-v0XCLxICi9nPfYrS9RL8HbYnXi9obYAeLbSP00BmnZwCK9+Ih9WOjoZ8YoHCoav2csqn4FOz4Orldsy2dmDwmQ=="
     },
     "hoist-non-react-statics": {
-      "version": "1.2.0",
-      "integrity": "sha1-qkSM8JhtVcxAdzsXF0t90GbLfPs="
+      "version": "2.3.1",
+      "integrity": "sha1-ND24TGAYxlB3iJgkATWhQg7iLOA="
     },
     "home-or-tmp": {
       "version": "2.0.0",
@@ -6315,37 +5425,6 @@
         "entities": "1.1.1",
         "inherits": "2.0.1",
         "readable-stream": "2.3.3"
-      },
-      "dependencies": {
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "dev": true,
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          },
-          "dependencies": {
-            "inherits": {
-              "version": "2.0.3",
-              "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=",
-              "dev": true
-            }
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "dev": true,
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        }
       }
     },
     "http-errors": {
@@ -6417,7 +5496,7 @@
       "integrity": "sha512-vAEAmvbuytZEs/2d0M4WJYCKtzuCt4L2R7jMg57yO50kCmm5uPIj/9EJadum+MBPU7JgyWzDHH5J8PDr7deW4A==",
       "requires": {
         "async": "1.5.2",
-        "commander": "2.11.0",
+        "commander": "2.12.1",
         "create-react-class": "15.6.2",
         "debug": "2.2.0",
         "globby": "6.1.0",
@@ -6437,8 +5516,8 @@
           "integrity": "sha1-7GphrlZIDAw8skHJVhjiCJL5Zyo="
         },
         "commander": {
-          "version": "2.11.0",
-          "integrity": "sha512-b0553uYA5YAEGgyYIGYROzKQ7X5RAqedkfjiZxwi0kL1g3bOaBNNZfYkzt/CL0umgD5wc9Jec2FbB98CjkMRvQ=="
+          "version": "2.12.1",
+          "integrity": "sha512-PCNLExLlI5HiPdaJs4pMXwOTHkSCpNQ1QJH9ykZLKtKEyKu3p9HgmH5l97vM8c0IUz6d54l+xEu2GG9yuYrFzA=="
         },
         "lodash.assign": {
           "version": "4.2.0",
@@ -6540,8 +5619,8 @@
       "integrity": "sha1-sX0I0ya0Qj5Wjv9xn5GwscvfafE="
     },
     "ini": {
-      "version": "1.3.4",
-      "integrity": "sha1-BTfLedr1m1mhpRff9wbIbsA5Fi4="
+      "version": "1.3.5",
+      "integrity": "sha512-RZY5huIKCMRWDUqZlEi72f/lmXKMvuszcMBduliQ3nnWbx9X/ZBQO7DijMEYS9EhHBb2qacRUMtC7svLwe0lcw=="
     },
     "inline-process-browser": {
       "version": "1.0.0",
@@ -7869,7 +6948,7 @@
         "babel-jest": "21.2.0",
         "babel-plugin-istanbul": "4.1.5",
         "chalk": "2.3.0",
-        "convert-source-map": "1.5.0",
+        "convert-source-map": "1.5.1",
         "graceful-fs": "4.1.11",
         "jest-config": "21.2.1",
         "jest-haste-map": "21.2.0",
@@ -8335,7 +7414,7 @@
             "babylon": "5.8.38",
             "bluebird": "2.11.0",
             "chalk": "1.0.0",
-            "convert-source-map": "1.5.0",
+            "convert-source-map": "1.5.1",
             "core-js": "1.2.7",
             "debug": "2.2.0",
             "detect-indent": "3.0.1",
@@ -8723,6 +7802,26 @@
         "level-errors": "1.0.5",
         "readable-stream": "1.1.14",
         "xtend": "4.0.1"
+      },
+      "dependencies": {
+        "isarray": {
+          "version": "0.0.1",
+          "integrity": "sha1-ihis/Kmo9Bd+Cav8YDiTmwXR7t8="
+        },
+        "readable-stream": {
+          "version": "1.1.14",
+          "integrity": "sha1-fPTFTvZI44EwhMY23SB54WbAgdk=",
+          "requires": {
+            "core-util-is": "1.0.2",
+            "inherits": "2.0.1",
+            "isarray": "0.0.1",
+            "string_decoder": "0.10.31"
+          }
+        },
+        "string_decoder": {
+          "version": "0.10.31",
+          "integrity": "sha1-YuIDvEF2bGwoyfyEMB2rHFMQ+pQ="
+        }
       }
     },
     "level-packager": {
@@ -9289,32 +8388,6 @@
       "requires": {
         "errno": "0.1.4",
         "readable-stream": "2.3.3"
-      },
-      "dependencies": {
-        "inherits": {
-          "version": "2.0.3",
-          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-        },
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        }
       }
     },
     "meow": {
@@ -9446,30 +8519,6 @@
         "through2": "2.0.3"
       },
       "dependencies": {
-        "inherits": {
-          "version": "2.0.3",
-          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-        },
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        },
         "through2": {
           "version": "2.0.3",
           "integrity": "sha1-AARWmzfHx0ujnEPzzteNGtlBQL4=",
@@ -9810,32 +8859,6 @@
         "url": "0.11.0",
         "util": "0.10.3",
         "vm-browserify": "0.0.4"
-      },
-      "dependencies": {
-        "inherits": {
-          "version": "2.0.3",
-          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-        },
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        }
       }
     },
     "node-localstorage": {
@@ -10281,8 +9304,8 @@
       }
     },
     "onecolor": {
-      "version": "3.0.4",
-      "integrity": "sha1-daRvgNpseqpbTarhekcZi9llJJQ=",
+      "version": "3.0.5",
+      "integrity": "sha1-Nu/zIgE3nv3xGA+0ReUajiQl+fY=",
       "dev": true
     },
     "onetime": {
@@ -10430,26 +9453,6 @@
         "inherits": {
           "version": "2.0.3",
           "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-        },
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
         }
       }
     },
@@ -10696,7 +9699,7 @@
       "integrity": "sha1-GVV2CVno0aEcsqUOyD7sRwYz5J8=",
       "dev": true,
       "requires": {
-        "onecolor": "3.0.4",
+        "onecolor": "3.0.5",
         "synesthesia": "1.0.1"
       }
     },
@@ -11036,7 +10039,7 @@
         "globby": "6.1.0",
         "graphql": "0.10.1",
         "ignore": "3.3.5",
-        "jest-docblock": "21.3.0-beta.8",
+        "jest-docblock": "21.3.0-beta.9",
         "jest-validate": "21.1.0",
         "leven": "2.1.0",
         "mem": "1.1.0",
@@ -11141,8 +10144,8 @@
           "dev": true
         },
         "jest-docblock": {
-          "version": "21.3.0-beta.8",
-          "integrity": "sha512-qd63DpJjctWfOt9eM9OkwmZ8RiL7uFRM+5Tq31T/4E3q8Z+b7U1HCgNXX5WXYij91Dg47DAxx+lruAYGEMto1w==",
+          "version": "21.3.0-beta.9",
+          "integrity": "sha512-czI8xmQ23y/r/iuzfdXZo75CWtLwcJqUQbjRh35exODglkx2kftLoI6rc5+1eXvOPOgNqcBm83/8HtiELRwIsQ==",
           "dev": true,
           "requires": {
             "detect-newline": "2.1.0"
@@ -11579,7 +10582,7 @@
       "integrity": "sha1-2M6ctX6NZNnHut2YdsfDTL48cHc=",
       "requires": {
         "deep-extend": "0.4.2",
-        "ini": "1.3.4",
+        "ini": "1.3.5",
         "minimist": "1.2.0",
         "strip-json-comments": "2.0.1"
       },
@@ -11615,6 +10618,12 @@
       "integrity": "sha1-MYc3698IGko7zUaCVmNnTL6YNus=",
       "requires": {
         "hoist-non-react-statics": "1.2.0"
+      },
+      "dependencies": {
+        "hoist-non-react-statics": {
+          "version": "1.2.0",
+          "integrity": "sha1-qkSM8JhtVcxAdzsXF0t90GbLfPs="
+        }
       }
     },
     "react-codemod": {
@@ -12228,12 +11237,6 @@
         "lodash-es": "4.17.4",
         "loose-envify": "1.3.1",
         "prop-types": "15.5.10"
-      },
-      "dependencies": {
-        "hoist-non-react-statics": {
-          "version": "2.3.1",
-          "integrity": "sha1-ND24TGAYxlB3iJgkATWhQg7iLOA="
-        }
       }
     },
     "react-test-renderer": {
@@ -12286,35 +11289,6 @@
       "requires": {
         "pinkie-promise": "2.0.1",
         "readable-stream": "2.3.3"
-      },
-      "dependencies": {
-        "inherits": {
-          "version": "2.0.3",
-          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=",
-          "dev": true
-        },
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "dev": true,
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "dev": true,
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        }
       }
     },
     "read-file-stdin": {
@@ -12359,18 +11333,21 @@
       }
     },
     "readable-stream": {
-      "version": "1.1.14",
-      "integrity": "sha1-fPTFTvZI44EwhMY23SB54WbAgdk=",
+      "version": "2.3.3",
+      "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
       "requires": {
         "core-util-is": "1.0.2",
-        "inherits": "2.0.1",
-        "isarray": "0.0.1",
-        "string_decoder": "0.10.31"
+        "inherits": "2.0.3",
+        "isarray": "1.0.0",
+        "process-nextick-args": "1.0.7",
+        "safe-buffer": "5.1.1",
+        "string_decoder": "1.0.3",
+        "util-deprecate": "1.0.2"
       },
       "dependencies": {
-        "isarray": {
-          "version": "0.0.1",
-          "integrity": "sha1-ihis/Kmo9Bd+Cav8YDiTmwXR7t8="
+        "inherits": {
+          "version": "2.0.3",
+          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
         }
       }
     },
@@ -12382,32 +11359,6 @@
         "minimatch": "3.0.4",
         "readable-stream": "2.3.3",
         "set-immediate-shim": "1.0.1"
-      },
-      "dependencies": {
-        "inherits": {
-          "version": "2.0.3",
-          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-        },
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        }
       }
     },
     "readline-sync": {
@@ -12472,6 +11423,10 @@
       "version": "3.0.4",
       "integrity": "sha1-cwGTdPejJHZeTjPzZ8JzCnhaMwU="
     },
+    "redux-devtools-extension": {
+      "version": "2.13.2",
+      "integrity": "sha1-4Pmo6N/KfBe+kscSSVijuU6ykR0="
+    },
     "redux-form": {
       "version": "7.0.2",
       "integrity": "sha512-R1H9APwnBiJE31FWS2vBlM6NplH7AQb+3FJ3Z2e5B1flbgAZbFr7S0R9yrL8P4yy1liIAJcLreI1Ji4KA6KMtA==",
@@ -12486,10 +11441,6 @@
         "prop-types": "15.5.10"
       },
       "dependencies": {
-        "hoist-non-react-statics": {
-          "version": "2.3.1",
-          "integrity": "sha1-ND24TGAYxlB3iJgkATWhQg7iLOA="
-        },
         "lodash": {
           "version": "4.17.4",
           "integrity": "sha1-eCA6TRwyiuHYbcpkYONptX9AVa4="
@@ -12702,6 +11653,15 @@
         "uuid": "3.1.0"
       },
       "dependencies": {
+        "form-data": {
+          "version": "2.3.1",
+          "integrity": "sha1-b7lPvXGIUwbXPRXMSX/kzE7NRL8=",
+          "requires": {
+            "asynckit": "0.4.0",
+            "combined-stream": "1.0.5",
+            "mime-types": "2.1.17"
+          }
+        },
         "qs": {
           "version": "6.5.1",
           "integrity": "sha512-eRzhrN1WSINYCDCbrz796z37LOe3m5tmW7RQf6oBntukAG1nmovJvhnwHHRMAfeoItc1m2Hk02WER2aQ/iqs+A=="
@@ -12931,7 +11891,6 @@
         "anymatch": "1.3.2",
         "exec-sh": "0.2.1",
         "fb-watchman": "2.0.0",
-        "fsevents": "1.1.3",
         "minimatch": "3.0.4",
         "minimist": "1.2.0",
         "walker": "1.0.7",
@@ -13590,32 +12549,6 @@
       "integrity": "sha1-osfIWH5U2UJ+qe2zrD8s1SLfN4s=",
       "requires": {
         "readable-stream": "2.3.3"
-      },
-      "dependencies": {
-        "inherits": {
-          "version": "2.0.3",
-          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-        },
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        }
       }
     },
     "store": {
@@ -13628,34 +12561,6 @@
       "requires": {
         "inherits": "2.0.1",
         "readable-stream": "2.3.3"
-      },
-      "dependencies": {
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          },
-          "dependencies": {
-            "inherits": {
-              "version": "2.0.3",
-              "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-            }
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        }
       }
     },
     "stream-combiner": {
@@ -13684,31 +12589,9 @@
         "xtend": "4.0.1"
       },
       "dependencies": {
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          },
-          "dependencies": {
-            "inherits": {
-              "version": "2.0.3",
-              "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-            }
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
+        "builtin-status-codes": {
+          "version": "3.0.0",
+          "integrity": "sha1-hZgoeOIbmOHGZCXgPQF0eI9Wnug="
         }
       }
     },
@@ -13767,8 +12650,11 @@
       }
     },
     "string_decoder": {
-      "version": "0.10.31",
-      "integrity": "sha1-YuIDvEF2bGwoyfyEMB2rHFMQ+pQ="
+      "version": "1.0.3",
+      "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
+      "requires": {
+        "safe-buffer": "5.1.1"
+      }
     },
     "stringmap": {
       "version": "0.2.2",
@@ -14014,46 +12900,9 @@
         "readable-stream": "2.3.3"
       },
       "dependencies": {
-        "async": {
-          "version": "1.5.2",
-          "integrity": "sha1-7GphrlZIDAw8skHJVhjiCJL5Zyo="
-        },
-        "form-data": {
-          "version": "1.0.0-rc4",
-          "integrity": "sha1-BaxrwiIntD5EYfSIFhVUaZ1Pi14=",
-          "requires": {
-            "async": "1.5.2",
-            "combined-stream": "1.0.5",
-            "mime-types": "2.1.17"
-          }
-        },
-        "inherits": {
-          "version": "2.0.3",
-          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-        },
         "qs": {
           "version": "6.5.1",
           "integrity": "sha512-eRzhrN1WSINYCDCbrz796z37LOe3m5tmW7RQf6oBntukAG1nmovJvhnwHHRMAfeoItc1m2Hk02WER2aQ/iqs+A=="
-        },
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
         }
       }
     },
@@ -14085,6 +12934,10 @@
         "lower-case": "1.1.4",
         "upper-case": "1.1.3"
       }
+    },
+    "symbol-observable": {
+      "version": "1.0.4",
+      "integrity": "sha1-Kb9hXUqnEhvdiYsi1LP5vE4qoD0="
     },
     "symbol-tree": {
       "version": "3.2.2",
@@ -14210,32 +13063,6 @@
         "end-of-stream": "1.4.0",
         "readable-stream": "2.3.3",
         "xtend": "4.0.1"
-      },
-      "dependencies": {
-        "inherits": {
-          "version": "2.0.3",
-          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
-        },
-        "readable-stream": {
-          "version": "2.3.3",
-          "integrity": "sha512-m+qzzcn7KUxEmd1gMbchF+Y2eIUbieUaxkWtptyHywrX0rE8QEYqPC07Vuy4Wm32/xE16NcdBctb8S0Xe/5IeQ==",
-          "requires": {
-            "core-util-is": "1.0.2",
-            "inherits": "2.0.3",
-            "isarray": "1.0.0",
-            "process-nextick-args": "1.0.7",
-            "safe-buffer": "5.1.1",
-            "string_decoder": "1.0.3",
-            "util-deprecate": "1.0.2"
-          }
-        },
-        "string_decoder": {
-          "version": "1.0.3",
-          "integrity": "sha512-4AH6Z5fzNNBcH+6XDMfA/BTt87skxqJlO0lAh3Dker5zThcAxG6mKz+iGu308UKoPPQ8Dcqx/4JhujzltRa+hQ==",
-          "requires": {
-            "safe-buffer": "5.1.1"
-          }
-        }
       }
     },
     "temp": {
@@ -14314,6 +13141,10 @@
             "isarray": "0.0.1",
             "string_decoder": "0.10.31"
           }
+        },
+        "string_decoder": {
+          "version": "0.10.31",
+          "integrity": "sha1-YuIDvEF2bGwoyfyEMB2rHFMQ+pQ="
         }
       }
     },
@@ -15197,7 +14028,7 @@
       "requires": {
         "acorn": "5.2.1",
         "chalk": "1.1.3",
-        "commander": "2.11.0",
+        "commander": "2.12.1",
         "ejs": "2.5.7",
         "express": "4.16.2",
         "filesize": "3.5.11",
@@ -15257,8 +14088,8 @@
           }
         },
         "commander": {
-          "version": "2.11.0",
-          "integrity": "sha512-b0553uYA5YAEGgyYIGYROzKQ7X5RAqedkfjiZxwi0kL1g3bOaBNNZfYkzt/CL0umgD5wc9Jec2FbB98CjkMRvQ==",
+          "version": "2.12.1",
+          "integrity": "sha512-PCNLExLlI5HiPdaJs4pMXwOTHkSCpNQ1QJH9ykZLKtKEyKu3p9HgmH5l97vM8c0IUz6d54l+xEu2GG9yuYrFzA==",
           "dev": true
         },
         "content-disposition": {
@@ -15472,8 +14303,8 @@
           "dev": true
         },
         "ultron": {
-          "version": "1.1.0",
-          "integrity": "sha1-sHoualQagV/Go0zNRTO67DB8qGQ=",
+          "version": "1.1.1",
+          "integrity": "sha512-UIEXBNeYmKptWH6z8ZnqTeS8fV74zG0/eRU9VGkpzz+LIJNs8W/zM/L+7ctCkRrgbNnnR0xxw4bKOr0cW0N0Og==",
           "dev": true
         },
         "utils-merge": {
@@ -15492,7 +14323,7 @@
           "dev": true,
           "requires": {
             "safe-buffer": "5.0.1",
-            "ultron": "1.1.0"
+            "ultron": "1.1.1"
           },
           "dependencies": {
             "safe-buffer": {
@@ -15526,7 +14357,7 @@
       "integrity": "sha1-h+G+UP8FXQVbeWosVDgfMq8vVbk=",
       "requires": {
         "blessed": "0.1.81",
-        "commander": "2.11.0",
+        "commander": "2.12.1",
         "cross-spawn": "4.0.2",
         "filesize": "3.5.11",
         "socket.io": "1.7.4",
@@ -15542,8 +14373,8 @@
           "integrity": "sha1-c5JncZI7Whl0etZmqlzUv5xunOg="
         },
         "commander": {
-          "version": "2.11.0",
-          "integrity": "sha512-b0553uYA5YAEGgyYIGYROzKQ7X5RAqedkfjiZxwi0kL1g3bOaBNNZfYkzt/CL0umgD5wc9Jec2FbB98CjkMRvQ=="
+          "version": "2.12.1",
+          "integrity": "sha512-PCNLExLlI5HiPdaJs4pMXwOTHkSCpNQ1QJH9ykZLKtKEyKu3p9HgmH5l97vM8c0IUz6d54l+xEu2GG9yuYrFzA=="
         },
         "component-emitter": {
           "version": "1.2.1",
@@ -15829,12 +14660,6 @@
       "requires": {
         "builtin-status-codes": "2.0.0",
         "uppercamelcase": "1.1.0"
-      },
-      "dependencies": {
-        "builtin-status-codes": {
-          "version": "2.0.0",
-          "integrity": "sha1-byIAO6rPADzNKHr+aHIVH93FhXk="
-        }
       }
     },
     "wpcom": {
@@ -15910,6 +14735,26 @@
               "integrity": "sha1-BuHqgILCyxTjmAbiLi9vdX+Srzk="
             }
           }
+        }
+      }
+    },
+    "wpcom-oauth-cors": {
+      "version": "1.0.1",
+      "integrity": "sha1-aLnjcXDXiYvkQbF3B2NVHBZ75nA=",
+      "requires": {
+        "debug": "2.1.0"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "2.1.0",
+          "integrity": "sha1-M6uRVlnYwsyKQUQ9lNbr03aX7SE=",
+          "requires": {
+            "ms": "0.6.2"
+          }
+        },
+        "ms": {
+          "version": "0.6.2",
+          "integrity": "sha1-2JwhJMb9wTU9Zai3e/GqxLGTcIw="
         }
       }
     },

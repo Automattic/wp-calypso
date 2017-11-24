@@ -14,6 +14,7 @@
 	"testEnvironment": "node",
 	"testMatch": [ "<rootDir>/client/**/test/*.js?(x)" ],
 	"testURL": "https://example.com",
+	"transformIgnorePatterns": ["<rootDir>/node_modules[/](?!happychat-client)"],
 	"setupTestFrameworkScriptFile": "<rootDir>/test/client/setup-test-framework.js",
 	"verbose": false
 }

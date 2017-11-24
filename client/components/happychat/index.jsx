@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { Composer, Notices, Timeline, Title } from 'happychat-client';
 
 /**
  * Internal dependencies
@@ -36,10 +37,6 @@ import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-server-reachable';
 // UI components
 import HappychatConnection from './connection-connected';
-import { Title } from './title';
-import { Composer } from './composer';
-import { Notices } from './notices';
-import { Timeline } from './timeline';
 
 /*
  * Main chat UI component
