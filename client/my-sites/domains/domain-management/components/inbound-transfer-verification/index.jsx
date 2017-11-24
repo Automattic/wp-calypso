@@ -12,6 +12,7 @@ import { isEmpty } from 'lodash';
  */
 import EmailVerificationCard from 'my-sites/domains/domain-management/components/email-verification';
 import { checkInboundTransferStatus, resendInboundTransferEmail } from 'lib/domains';
+import support from 'lib/url/support';
 
 class InboundTransferEmailVerificationCard extends React.Component {
 	static propTypes = {
@@ -68,8 +69,7 @@ class InboundTransferEmailVerificationCard extends React.Component {
 						components: {
 							learnMoreLink: (
 								<a
-									href="http://support.wordpress.com"
-									target="_blank"
+									href={ support.INCOMING_DOMAIN_TRANSFER }
 									rel="noopener noreferrer"
 								/>
 							),
