@@ -29,14 +29,15 @@ class Plans extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
 		context: PropTypes.object.isRequired,
-		intervalType: PropTypes.string,
-		selectedSite: PropTypes.object,
 		displayJetpackPlans: PropTypes.bool,
+		intervalType: PropTypes.string,
+		selectedFeature: PropTypes.string,
+		selectedSite: PropTypes.object,
 	};
 
 	static defaultProps = {
-		intervalType: 'yearly',
 		displayJetpackPlans: false,
+		intervalType: 'yearly',
 	};
 
 	componentDidMount() {
