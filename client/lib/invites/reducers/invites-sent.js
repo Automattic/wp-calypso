@@ -5,7 +5,7 @@
 import { action as ActionTypes } from 'lib/invites/constants';
 
 export const initialState = {
-	success: {},
+	successes: {},
 	errors: {},
 };
 
@@ -23,8 +23,8 @@ export const reducer = ( state = initialState, { action: { type, data, formId } 
 		case ActionTypes.RECEIVE_SENDING_INVITES_SUCCESS:
 			return {
 				...state,
-				success: {
-					...state.success,
+				successes: {
+					...state.successes,
 					[ formId ]: data,
 				},
 			};
