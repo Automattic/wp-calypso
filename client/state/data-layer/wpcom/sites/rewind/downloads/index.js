@@ -131,6 +131,22 @@ export const dismissBackup = ( { dispatch }, action ) =>
 	);
 
 /**
+ * On successful dismiss, the card will be removed and we don't need to do anything further.
+ * If request succeeded but backup couldn't be dismissed, a notice will be shown.
+ *
+ * @param {function} dispatch Method to trigger a state change.
+ * @param {object}   action   Changeset to update state.
+ * @param {data}     data     Description of request result.
+ */
+export const backupSilentlyDismissed = ( { dispatch }, action, data ) => {
+	if ( ! data.dismissed ) {
+		dispatch(
+			errorNotice( translate( 'Dismissing backup failed. Please reload and try again.' ) )
+		);
+	}
+};
+
+/**
  * If a dismiss request fails, an error notice will be shown.
  *
  * @param {function} dispatch Method to trigger a state change.
@@ -145,22 +161,17 @@ export const backupDismissFailed = ( { dispatch } ) =>
  * @param   {object} data   The data received from API response.
  * @returns {object} Parsed response data.
  */
-const fromBackupDismiss = data => {
-	if ( ! data.dismissed ) {
-		throw false;
-	}
-	return {
-		downloadId: +data.download_id,
-		dismissed: data.is_dismissed,
-	};
-};
+const fromBackupDismiss = data => ( {
+	downloadId: +data.download_id,
+	dismissed: data.is_dismissed,
+} );
 
 export default {
 	[ REWIND_BACKUP_PROGRESS_REQUEST ]: [
 		dispatchRequest( fetchProgress, updateProgress, announceError ),
 	],
 	[ REWIND_BACKUP_DISMISS_PROGRESS ]: [
-		dispatchRequest( dismissBackup, null, backupDismissFailed, {
+		dispatchRequest( dismissBackup, backupSilentlyDismissed, backupDismissFailed, {
 			fromApi: fromBackupDismiss,
 		} ),
 	],
