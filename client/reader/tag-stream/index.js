@@ -12,6 +12,6 @@ import { initAbTests, preloadReaderBundle, sidebar, updateLastRoute } from 'read
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( '/tag/*', preloadReaderBundle, initAbTests, makeLayout, clientRender );
+	page( '/tag/*', preloadReaderBundle, initAbTests );
 	page( '/tag/:tag', updateLastRoute, sidebar, tagListing, makeLayout, clientRender );
 }
