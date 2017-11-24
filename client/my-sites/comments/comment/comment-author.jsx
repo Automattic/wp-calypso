@@ -90,11 +90,15 @@ export class CommentAuthor extends Component {
 					<div className="comment__author-info-element">
 						<span className="comment__date">
 							{ isEnabled( 'comments/management/comment-view' ) ? (
-								<a href={ commentUrl } title={ formattedDate }>
+								<a href={ commentUrl } tabIndex={ isBulkMode ? -1 : 0 } title={ formattedDate }>
 									{ relativeDate }
 								</a>
 							) : (
-								<ExternalLink href={ commentUrl } title={ formattedDate }>
+								<ExternalLink
+									href={ commentUrl }
+									tabIndex={ isBulkMode ? -1 : 0 }
+									title={ formattedDate }
+								>
 									{ relativeDate }
 								</ExternalLink>
 							) }
@@ -102,7 +106,7 @@ export class CommentAuthor extends Component {
 						{ authorUrl && (
 							<span className="comment__author-url">
 								<span className="comment__author-url-separator">&middot;</span>
-								<ExternalLink href={ authorUrl }>
+								<ExternalLink href={ authorUrl } tabIndex={ isBulkMode ? -1 : 0 }>
 									<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
 								</ExternalLink>
 							</span>

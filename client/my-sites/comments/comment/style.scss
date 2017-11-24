@@ -398,14 +398,13 @@
 	}
 }
 
-.comment__reply-submit {
+.comment__reply-submit.button.is-compact.is-borderless {
 	color: $gray;
-	font-size: 12px;
 	font-weight: 600;
 	padding: 4px;
 	position: absolute;
 	right: 28px;
-	top: 12px;
+	top: 13px;
 	text-transform: uppercase;
 
 	&.is-active {

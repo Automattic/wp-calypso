@@ -13,6 +13,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
+import Button from 'components/button';
 import { decodeEntities } from 'lib/formatting';
 import {
 	bumpStat,
@@ -160,9 +161,16 @@ export class CommentReply extends Component {
 					/>
 				</AutoDirection>
 
-				<button className={ buttonClasses } disabled={ ! hasReplyContent } onClick={ this.submit }>
+				<Button
+					borderless
+					className={ buttonClasses }
+					compact
+					disabled={ ! hasReplyContent }
+					onClick={ this.submit }
+					tabIndex="0"
+				>
 					{ translate( 'Send' ) }
-				</button>
+				</Button>
 			</form>
 		);
 	}

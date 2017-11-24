@@ -116,7 +116,6 @@ export class Comment extends Component {
 				onClick={ isBulkMode ? this.toggleSelected : false }
 				onKeyDown={ this.keyDownHandler }
 				ref={ this.storeCardRef }
-				tabIndex="0"
 			>
 				{ refreshCommentData && (
 					<QueryComment commentId={ commentId } siteId={ siteId } forceWpcom />

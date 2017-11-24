@@ -32,7 +32,7 @@ const CommentPostLink = ( {
 
 		<Gridicon icon={ isBulkMode ? 'chevron-right' : 'posts' } size={ 18 } />
 
-		<a href={ `/comments/${ status }/${ siteSlug }/${ postId }` }>
+		<a href={ `/comments/${ status }/${ siteSlug }/${ postId }` } tabIndex={ isBulkMode ? -1 : 0 }>
 			{ postTitle.trim() || translate( 'Untitled' ) }
 		</a>
 	</div>

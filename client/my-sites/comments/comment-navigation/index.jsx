@@ -184,9 +184,9 @@ export class CommentNavigation extends Component {
 						</ButtonGroup>
 					</CommentNavigationTab>
 					<CommentNavigationTab className="comment-navigation__close-bulk">
-						<a onClick={ toggleBulkEdit }>
+						<Button borderless onClick={ toggleBulkEdit } tabIndex="0">
 							<Gridicon icon="cross" />
-						</a>
+						</Button>
 					</CommentNavigationTab>
 				</SectionNav>
 			);
