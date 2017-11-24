@@ -1,8 +1,11 @@
 /** @format */
 const config = require( 'config' ),
-	utils = require( './utils' );
+	utils = require( './utils' ),
+	camelCase = require( 'lodash' ).camelCase;
 
 function getSectionsModule( sections ) {
+	const extensionReducerLoader = getExtensionReducerLoader();
+
 	let sectionLoaders = '';
 
 	if ( config.isEnabled( 'code-splitting' ) ) {
@@ -17,7 +20,9 @@ function getSectionsModule( sections ) {
 			"\tcontroller = require( 'controller' ),",
 			"\trestoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
 			"\tpreloadHub = require( 'sections-preload' ).hub,",
-			"\tswitchCSS = require( 'lib/i18n-utils/switch-locale' ).switchCSS;",
+			"\tswitchCSS = require( 'lib/i18n-utils/switch-locale' ).switchCSS,",
+			"\tcombineReducers = require( 'state/utils' ).combineReducers,",
+			"\treducers = require( 'state' ).reducers;\n",
 			'\n',
 			'var _loadedSections = {};\n',
 		].join( '\n' );
@@ -32,6 +37,7 @@ function getSectionsModule( sections ) {
 
 		return [
 			dependencies,
+			extensionReducerLoader,
 			'function preload( sectionName ) {',
 			'	var loadCSS = function( id, urls ) {',
 			'		var url = urls.ltr;',
@@ -64,13 +70,16 @@ function getSectionsModule( sections ) {
 	const dependencies = [
 		"var config = require( 'config' ),",
 		"\tpage = require( 'page' ),",
-		"\tcontroller = require( 'controller' );\n",
+		"\tcontroller = require( 'controller' ),",
+		"\tcombineReducers = require( 'state/utils' ).combineReducers,",
+		"\treducers = require( 'state' ).reducers;\n",
 	].join( '\n' );
 
 	sectionLoaders = getRequires( sections );
 
 	return [
 		dependencies,
+		extensionReducerLoader,
 		'module.exports = {',
 		'	get: function() {',
 		'		return ' + JSON.stringify( sections ) + ';',
@@ -92,11 +101,24 @@ function getRequires( sections ) {
 	return content;
 }
 
+function getExtensionReducerLoader() {
+	return [
+		'var extensionReducers = {};',
+		'function loadExtensionReducer( store, key, reducer ) {',
+		'	extensionReducers[ key ] = reducer;',
+		'	reducers.extensions = combineReducers( extensionReducers );',
+		'	store.replaceReducer( combineReducers( reducers ) );',
+		'}',
+	].join( '\n' );
+}
+
 function splitTemplate( path, section ) {
 	const pathRegex = getPathRegex( path ),
 		sectionString = JSON.stringify( section ),
 		sectionNameString = JSON.stringify( section.name ),
 		moduleString = JSON.stringify( section.module ),
+		reducerStoreKeyString = JSON.stringify( camelCase( section.name ) ),
+		reducerPathString = JSON.stringify( section.module + '/state/reducer' ),
 		envIdString = JSON.stringify( section.envId );
 
 	const result = [
@@ -119,6 +141,13 @@ function splitTemplate( path, section ) {
 		'		controller.setSection( ' + sectionString + ' )( context );',
 		'		if ( ! _loadedSections[ ' + moduleString + ' ] ) {',
 		'			require( ' + moduleString + ' )( controller.clientRouter );',
+		section.asyncLoadReducer
+			? 'loadExtensionReducer( context.store, ' +
+				reducerStoreKeyString +
+				', require( ' +
+				reducerPathString +
+				' ) );'
+			: '',
 		'			_loadedSections[ ' + moduleString + ' ] = true;',
 		'		}',
 		'		context.store.dispatch( activateNextLayoutFocus() );',
