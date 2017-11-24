@@ -1,30 +1,35 @@
 /** @format */
-
-/**
- * External dependencies
- */
-
-import { fromJS } from 'immutable';
-
 /**
  * Internal dependencies
  */
 import { action as ActionTypes } from 'lib/invites/constants';
 
-const initialState = fromJS( {
-	success: {},
+export const initialState = {
+	successes: {},
 	errors: {},
-} );
-
-const reducer = ( state = initialState, payload ) => {
-	const { action } = payload;
-	switch ( action.type ) {
-		case ActionTypes.RECEIVE_SENDING_INVITES_SUCCESS:
-			return state.setIn( [ 'success', action.formId ], action.data );
-		case ActionTypes.RECEIVE_SENDING_INVITES_ERROR:
-			return state.setIn( [ 'error', action.formId ], action.data );
-	}
-	return state;
 };
 
-export { initialState, reducer };
+export const reducer = ( state = initialState, { action: { type, data, formId } } ) => {
+	switch ( type ) {
+		case ActionTypes.RECEIVE_SENDING_INVITES_ERROR:
+			return {
+				...state,
+				errors: {
+					...state.errors,
+					[ formId ]: data,
+				},
+			};
+
+		case ActionTypes.RECEIVE_SENDING_INVITES_SUCCESS:
+			return {
+				...state,
+				successes: {
+					...state.successes,
+					[ formId ]: data,
+				},
+			};
+
+		default:
+			return state;
+	}
+};

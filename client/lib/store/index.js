@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 
@@ -27,8 +25,8 @@ import emitter from 'lib/mixins/emitter';
  * @return {Object} Store built from reducer.
  */
 export const createReducerStore = ( reducer, initialState = {}, waitFor = [] ) => {
-	let state = initialState,
-		ReducerStore = {};
+	let state = initialState;
+	const ReducerStore = {};
 
 	emitter( ReducerStore );
 
