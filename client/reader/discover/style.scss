@@ -46,11 +46,16 @@
 		margin-right: 6px;
 	}
 
-	.gridicons-globe {
-		vertical-align: text-bottom;
-		background-color: lighten( $gray, 20% );
-		color: $white;
+	.site-icon {
 		margin-right: 6px;
+		float: left;
+	}
+
+	.site-icon:not(.has-icon) {
+		background: lighten( $gray, 20% );
+		.gridicon {
+			color: $white;
+		}
 	}
 
 	.follow-button {

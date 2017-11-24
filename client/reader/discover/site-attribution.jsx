@@ -2,10 +2,11 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import { get } from 'lodash';
+import path from 'path';
 
 /**
  * Internal dependencies
@@ -14,16 +15,12 @@ import { translate } from 'i18n-calypso';
 import FollowButton from 'reader/follow-button';
 import { getLinkProps } from './helper';
 import { recordFollowToggle, recordSiteClick } from './stats';
+import { getSiteUrl, getSourceFollowUrl, getSourceData } from 'reader/discover/helper';
+import SiteIcon from 'blocks/site-icon';
 
 class DiscoverSiteAttribution extends React.Component {
 	static propTypes = {
-		attribution: PropTypes.shape( {
-			blog_name: PropTypes.string.isRequired,
-			blog_url: PropTypes.string.isRequired,
-			avatar_url: PropTypes.string,
-		} ).isRequired,
-		siteUrl: PropTypes.string.isRequired,
-		followUrl: PropTypes.string.isRequired,
+		post: PropTypes.object.isRequired,
 	};
 
 	onSiteClick = () => recordSiteClick( this.props.siteUrl );
@@ -31,16 +28,26 @@ class DiscoverSiteAttribution extends React.Component {
 	onFollowToggle = isFollowing => recordFollowToggle( isFollowing, this.props.siteUrl );
 
 	render() {
-		const attribution = this.props.attribution;
+		const { post } = this.props;
+		const attribution = get( post, 'discover_metadata.attribution' );
+		const siteUrl = getSiteUrl( post );
+		const followUrl = getSourceFollowUrl( post );
+		const { blogId } = getSourceData( post );
 		const classes = classNames( 'discover-attribution is-site', {
 			'is-missing-avatar': ! attribution.avatar_url,
 		} );
-		const siteLinkProps = getLinkProps( this.props.siteUrl );
+		const siteLinkProps = getLinkProps( siteUrl );
 		const siteClasses = classNames( 'discover-attribution__blog ignore-click' );
+
+		let avatarUrl = attribution.avatar_url;
+		// Drop default avatar
+		if ( path.basename( avatarUrl ) === 'defaultavatar.png' ) {
+			avatarUrl = null;
+		}
 
 		return (
 			<div className={ classes }>
-				{ attribution.avatar_url ? (
+				{ avatarUrl ? (
 					<img
 						className="gravatar"
 						src={ encodeURI( attribution.avatar_url ) }
@@ -49,25 +56,25 @@ class DiscoverSiteAttribution extends React.Component {
 						height="20"
 					/>
 				) : (
-					<Gridicon icon="globe" size={ 18 } />
+					<SiteIcon siteId={ blogId } size={ 20 } />
 				) }
 				<span>
 					<a
 						{ ...siteLinkProps }
 						className={ siteClasses }
-						href={ encodeURI( this.props.siteUrl ) }
+						href={ encodeURI( siteUrl ) }
 						onClick={ this.onSiteClick }
 					>
 						{ translate( 'visit' ) } <em>{ attribution.blog_name }</em>
 					</a>
 				</span>
-				{ !! this.props.followUrl ? (
+				{ followUrl && (
 					<FollowButton
-						siteUrl={ this.props.followUrl }
+						siteUrl={ followUrl }
 						iconSize={ 20 }
 						onFollowToggle={ this.onFollowToggle }
 					/>
-				) : null }
+				) }
 			</div>
 		);
 	}
