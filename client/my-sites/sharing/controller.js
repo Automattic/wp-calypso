@@ -20,15 +20,23 @@ import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
 import sites from 'lib/sites-list';
 import utils from 'lib/site/utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { canCurrentUser } from 'state/selectors';
+import { getSiteSettings } from 'state/site-settings/selectors';
+import { requestSiteSettings } from 'state/site-settings/actions';
+import { reduxDispatch } from 'lib/redux-bridge/index';
 
 const analyticsPageTitle = 'Sharing';
 
 export const layout = context => {
-	const site = sites().getSelectedSite();
 	const { contentComponent, path, store } = context;
+	const state = store.getState();
 
-	if ( site && ! site.settings && utils.userCan( 'manage_options', site ) ) {
-		site.fetchSettings();
+	const siteId = getSelectedSiteId( state );
+	const siteSettings = getSiteSettings( state, siteId );
+
+	if ( siteId && ! siteSettings && canCurrentUser( state, siteId, 'manage_options' ) ) {
+		reduxDispatch( requestSiteSettings( siteId ) );
 	}
 
 	renderWithReduxStore(
