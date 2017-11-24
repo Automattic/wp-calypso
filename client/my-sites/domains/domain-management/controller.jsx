@@ -26,6 +26,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import TransferData from 'components/data/domain-management/transfer';
 import WhoisData from 'components/data/domain-management/whois';
+import { decodeURIComponentIfValid } from 'lib/url';
 
 const productsList = new ProductsList();
 
@@ -58,7 +59,7 @@ export default {
 				component={ component }
 				context={ pageContext }
 				productsList={ productsList }
-				selectedDomainName={ pageContext.params.domain }
+				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
@@ -224,7 +225,7 @@ export default {
 		renderWithReduxStore(
 			<SiteRedirectData
 				component={ DomainManagement.SiteRedirect }
-				selectedDomainName={ pageContext.params.domain }
+				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store

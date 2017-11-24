@@ -70,6 +70,11 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	font-weight: 600;
+}
+
+.domain-management-header__title {
+	font-weight: normal;
 }
 
 .domain-management-list__notice {
