@@ -57,7 +57,7 @@ import { activateModule } from 'state/jetpack/modules/actions';
 import { isBusiness, isEnterprise, isJetpackBusiness } from 'lib/products-values';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
-import { FEATURE_ADVANCED_SEO, PLAN_BUSINESS } from 'lib/plans/constants';
+import { FEATURE_SEO_PREVIEW_TOOLS, PLAN_BUSINESS } from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -398,13 +398,13 @@ export class SeoForm extends React.Component {
 						</Notice>
 					) }
 
-				{ ! this.props.hasAdvancedSEOFeature && (
+				{ ! this.props.hasSeoPreviewFeature && (
 					<Banner
 						description={ translate(
 							'Adds tools to optimize your site for search engines and social media sharing.'
 						) }
 						event={ 'calypso_seo_settings_upgrade_nudge' }
-						feature={ FEATURE_ADVANCED_SEO }
+						feature={ FEATURE_SEO_PREVIEW_TOOLS }
 						plan={ PLAN_BUSINESS }
 						title={ nudgeTitle }
 					/>
@@ -527,7 +527,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
 		activePlugins: getPlugins( state, [ siteId ], 'active' ),
-		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
+		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),
 	};
