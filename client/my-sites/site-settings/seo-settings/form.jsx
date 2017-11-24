@@ -1,12 +1,9 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { Set } from 'immutable';
 import {
 	get,
 	includes,
@@ -99,7 +96,7 @@ export class SeoForm extends React.Component {
 		// from overwriting local stateful edits that
 		// are in progress and haven't yet been saved
 		// to the server
-		dirtyFields: Set(),
+		dirtyFields: new Set(),
 		invalidatedSiteObject: this.props.selectedSite,
 	};
 
@@ -133,7 +130,7 @@ export class SeoForm extends React.Component {
 					...stateForSite( nextSite ),
 					seoTitleFormats: nextProps.storedTitleFormats,
 					invalidatedSiteObject: nextSite,
-					dirtyFields: Set(),
+					dirtyFields: new Set(),
 				},
 				this.refreshCustomTitles
 			);
@@ -145,10 +142,13 @@ export class SeoForm extends React.Component {
 		};
 
 		if ( ! isFetchingSite ) {
+			const nextDirtyFields = new Set( dirtyFields );
+			nextDirtyFields.delete( 'seoTitleFormats' );
+
 			nextState = {
 				...nextState,
 				seoTitleFormats: nextProps.storedTitleFormats,
-				dirtyFields: dirtyFields.delete( 'seoTitleFormats' ),
+				dirtyFields: nextDirtyFields,
 			};
 		}
 
@@ -157,32 +157,33 @@ export class SeoForm extends React.Component {
 		}
 
 		// Don't update state for fields the user has edited
-		nextState = omit( nextState, dirtyFields.toArray() );
+		nextState = omit( nextState, Array.from( dirtyFields ) );
 
-		this.setState( {
-			...nextState,
-		} );
+		this.setState( nextState );
 	}
 
 	handleMetaChange = ( { target: { value: frontPageMetaDescription } } ) => {
-		const { dirtyFields } = this.state;
+		const dirtyFields = new Set( this.state.dirtyFields );
+		dirtyFields.add( 'frontPageMetaDescription' );
 
 		// Don't allow html tags in the input field
 		const hasHtmlTagError = anyHtmlTag.test( frontPageMetaDescription );
 
 		this.setState(
-			Object.assign( { hasHtmlTagError }, ! hasHtmlTagError && { frontPageMetaDescription }, {
-				dirtyFields: dirtyFields.add( 'frontPageMetaDescription' ),
-			} )
+			Object.assign(
+				{ dirtyFields, hasHtmlTagError },
+				! hasHtmlTagError && { frontPageMetaDescription }
+			)
 		);
 	};
 
 	updateTitleFormats = seoTitleFormats => {
-		const { dirtyFields } = this.state;
+		const dirtyFields = new Set( this.state.dirtyFields );
+		dirtyFields.add( 'seoTitleFormats' );
 
 		this.setState( {
 			seoTitleFormats,
-			dirtyFields: dirtyFields.add( 'seoTitleFormats' ),
+			dirtyFields,
 		} );
 	};
 
