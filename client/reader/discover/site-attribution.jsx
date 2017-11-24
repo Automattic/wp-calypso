@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get } from 'lodash';
 import path from 'path';
@@ -17,6 +18,8 @@ import { getLinkProps } from './helper';
 import { recordFollowToggle, recordSiteClick } from './stats';
 import { getSiteUrl, getSourceFollowUrl, getSourceData } from 'reader/discover/helper';
 import SiteIcon from 'blocks/site-icon';
+import { getSite } from 'state/reader/sites/selectors';
+import QueryReaderSite from 'components/data/query-reader-site';
 
 class DiscoverSiteAttribution extends React.Component {
 	static propTypes = {
@@ -28,11 +31,11 @@ class DiscoverSiteAttribution extends React.Component {
 	onFollowToggle = isFollowing => recordFollowToggle( isFollowing, this.props.siteUrl );
 
 	render() {
-		const { post } = this.props;
+		const { post, site } = this.props;
 		const attribution = get( post, 'discover_metadata.attribution' );
 		const siteUrl = getSiteUrl( post );
 		const followUrl = getSourceFollowUrl( post );
-		const { blogId } = getSourceData( post );
+		const { blogId: siteId } = getSourceData( post );
 		const classes = classNames( 'discover-attribution is-site', {
 			'is-missing-avatar': ! attribution.avatar_url,
 		} );
@@ -47,7 +50,7 @@ class DiscoverSiteAttribution extends React.Component {
 
 		return (
 			<div className={ classes }>
-				{ avatarUrl ? (
+				{ avatarUrl && (
 					<img
 						className="gravatar"
 						src={ encodeURI( attribution.avatar_url ) }
@@ -55,9 +58,9 @@ class DiscoverSiteAttribution extends React.Component {
 						width="20"
 						height="20"
 					/>
-				) : (
-					<SiteIcon siteId={ blogId } size={ 20 } />
 				) }
+				{ ! avatarUrl && siteId && <QueryReaderSite siteId={ siteId } /> }
+				{ ! avatarUrl && <SiteIcon site={ site } size={ 20 } /> }
 				<span>
 					<a
 						{ ...siteLinkProps }
@@ -80,4 +83,9 @@ class DiscoverSiteAttribution extends React.Component {
 	}
 }
 
-export default DiscoverSiteAttribution;
+export default connect( ( state, ownProps ) => {
+	const { blogId: siteId } = getSourceData( ownProps.post );
+	return {
+		site: getSite( state, siteId ),
+	};
+} )( DiscoverSiteAttribution );
