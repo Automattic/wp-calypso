@@ -96,12 +96,13 @@ class DashboardWidget extends Component {
 				</Tooltip>
 				{ hasSettingsPanel && (
 					<Popover
+						className="dashboard-widget__settings-popover"
 						context={ this.settingsToggle }
 						isVisible={ showDialog }
 						onClose={ this.onSettingsPanelClose }
 						position="bottom left"
 					>
-						<div className="dashboard-widget__settings-panel-wrapper">{ settingsPanel }</div>
+						{ settingsPanel }
 					</Popover>
 				) }
 				<div className="dashboard-widget__content">
