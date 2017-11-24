@@ -40,11 +40,13 @@ export default {
 
 	saveToken( context ) {
 		const token = context.query.token;
+		const url = context.query.url;
 
-		if ( ! token ) {
+		if ( ! token || ! url ) {
 			return page.redirect( '/' );
 		}
 
+		context.store.dispatch( setOnboardingUrl( url ) );
 		context.store.dispatch( setOnboardingToken( token ) );
 
 		page.redirect( '/onboarding/start' );
