@@ -21,7 +21,8 @@ class EmailVerificationCard extends React.Component {
 	static propTypes = {
 		changeEmailHref: PropTypes.string,
 		contactEmail: PropTypes.string.isRequired,
-		verificationExplanation: PropTypes.array.isRequired,
+		verificationExplanation: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] )
+			.isRequired,
 		resendVerification: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
