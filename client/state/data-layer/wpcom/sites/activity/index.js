@@ -69,7 +69,7 @@ export const continuePolling = ( { dispatch }, action ) => {
 			return;
 		}
 
-		const data = fromApi( rawData );
+		const data = fromApi( rawData ).items;
 
 		const newestDate = data.reduce(
 			( newest, { activityTs } ) => Math.max( newest, activityTs ),
@@ -131,8 +131,15 @@ export const handleActivityLogRequest = action => {
 	);
 };
 
-export const receiveActivityLog = ( action, data ) =>
-	activityLogUpdate( action.siteId, data, data.totalItems, action.params );
+export const receiveActivityLog = ( action, data ) => {
+	return activityLogUpdate(
+		action.siteId,
+		data.items,
+		data.totalItems,
+		data.oldestItemTs,
+		action.params
+	);
+};
 
 export const receiveActivityLogError = () =>
 	errorNotice( translate( 'Error receiving activity for site.' ) );

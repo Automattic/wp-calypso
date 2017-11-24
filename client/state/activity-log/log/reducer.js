@@ -1,5 +1,10 @@
 /** @format */
 /**
+ * External dependencies
+ */
+import { get, merge } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import ActivityQueryManager from 'lib/query-manager/activity';
@@ -7,18 +12,21 @@ import { ACTIVITY_LOG_UPDATE, DESERIALIZE, SERIALIZE } from 'state/action-types'
 import { isValidStateWithSchema, keyedReducer } from 'state/utils';
 import { logItemsSchema } from './schema';
 
-export const logItem = ( state = undefined, { type, data, found, query } ) => {
+export const logItem = ( state = undefined, { type, data, found, oldestItemTs, query } ) => {
 	switch ( type ) {
 		case ACTIVITY_LOG_UPDATE:
-			return ( state || new ActivityQueryManager() ).receive( data, { found, query } );
+			return merge(
+				( state || new ActivityQueryManager() ).receive( data, { found, oldestItemTs, query } ),
+				{ oldestItemTs: 0 < oldestItemTs ? oldestItemTs : get( state, 'oldestItemTs', 0 ) }
+			);
 
 		case DESERIALIZE:
 			return isValidStateWithSchema( state, logItemsSchema )
-				? new ActivityQueryManager( state.data, state.options )
+				? merge( new ActivityQueryManager( state.data, state.options ), { oldestItemTs } )
 				: undefined;
 
 		case SERIALIZE:
-			return { data: state.data, options: state.options };
+			return { data: state.data, options: state.options, oldestItemTs };
 
 		default:
 			return state;
