@@ -72,7 +72,7 @@ describe( 'selectors', () => {
 	const stateWithNoItems = createStateWithItems( {} );
 
 	beforeEach( () => {
-		getSite.cache.clear();
+		getSite.clearCache();
 		getSiteCollisions.cache.clear();
 		getSiteBySlug.cache.clear();
 	} );
