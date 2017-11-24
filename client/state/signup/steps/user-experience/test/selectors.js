@@ -8,22 +8,22 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSiteGoals } from '../selectors';
+import { getUserExperience } from '../selectors';
 
 describe( 'selectors', () => {
 	test( 'should return empty string as a default state', () => {
-		expect( getSiteGoals( { signup: undefined } ) ).to.be.eql( '' );
+		expect( getUserExperience( { signup: undefined } ) ).to.be.eql( '' );
 	} );
 
-	test( 'should return site goals from the state', () => {
+	test( 'should return user experience level from the state', () => {
 		expect(
-			getSiteGoals( {
+			getUserExperience( {
 				signup: {
 					steps: {
-						siteGoals: 'Showcase creative work',
+						userExperience: 5,
 					},
 				},
 			} )
-		).to.be.eql( 'Showcase creative work' );
+		).to.be.eql( 5 );
 	} );
 } );

@@ -9,18 +9,18 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { SIGNUP_STEPS_SITE_GOALS_SET } from 'state/action-types';
+import { SIGNUP_STEPS_USER_EXPERIENCE_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
-	test( 'should update the site goals', () => {
+	test( "should add the user's experience level", () => {
 		expect(
 			reducer(
 				{},
 				{
-					type: SIGNUP_STEPS_SITE_GOALS_SET,
-					siteGoals: 'Showcase creative work',
+					type: SIGNUP_STEPS_USER_EXPERIENCE_SET,
+					userExperience: 5,
 				}
 			)
-		).to.be.eql( 'Showcase creative work' );
+		).to.be.eql( 5 );
 	} );
 } );
