@@ -27,7 +27,6 @@ function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon } ) {
 	const classes = classNames( 'site-icon', {
 		'is-blank': ! iconSrc,
 		'is-transient': isTransientIcon,
-		'has-icon': !! iconSrc,
 	} );
 
 	const style = {

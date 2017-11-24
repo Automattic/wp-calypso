@@ -49,13 +49,14 @@
 	.site-icon {
 		margin-right: 6px;
 		float: left;
-	}
-
-	.site-icon:not(.has-icon) {
 		background: lighten( $gray, 20% );
 		.gridicon {
 			color: $white;
 		}
+	}
+
+	.site-icon:not(.is-blank) {
+		background: inherit;
 	}
 
 	.follow-button {
