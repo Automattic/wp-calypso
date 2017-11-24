@@ -12,6 +12,7 @@ import { get, isEqual, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Card from 'components/card';
 import CommentActions from 'my-sites/comments/comment/comment-actions';
 import CommentContent from 'my-sites/comments/comment/comment-content';
@@ -146,7 +147,10 @@ export class Comment extends Component {
 					<CommentEdit { ...{ commentId } } toggleEditMode={ this.toggleEditMode } />
 				) }
 
-				{ isPostView && <CommentRepliesList { ...{ siteId, commentParentId: commentId } } /> }
+				{ isPostView &&
+					isEnabled( 'comments/management/threaded-view' ) && (
+						<CommentRepliesList { ...{ siteId, commentParentId: commentId } } />
+					) }
 			</Card>
 		);
 	}

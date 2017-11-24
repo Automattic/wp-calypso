@@ -24,6 +24,7 @@
 		"comments/management/quick-actions": true,
 		"comments/management/post-view": true,
 		"comments/management/sorting": true,
+		"comments/management/threaded-view": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
 		"desktop-promo": true,

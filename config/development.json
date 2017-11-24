@@ -49,6 +49,7 @@
 		"comments/management/post-view": true,
 		"comments/management/quick-actions": true,
 		"comments/management/sorting": true,
+		"comments/management/threaded-view": true,
 		"css-hot-reload": true,
 		"desktop-promo": true,
 		"devdocs": true,
