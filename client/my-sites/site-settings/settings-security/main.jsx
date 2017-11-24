@@ -64,7 +64,9 @@ const SiteSettingsSecurity = ( { rewindActive, site, siteId, siteIsJetpack, tran
 
 	return (
 		<Main className="settings-security__main site-settings">
-			<QueryRewindStatus siteId={ siteId } />
+			{ config.isEnabled( 'jetpack/activity-log/rewind' ) && (
+				<QueryRewindStatus siteId={ siteId } />
+			) }
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
