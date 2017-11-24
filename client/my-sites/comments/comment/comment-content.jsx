@@ -13,13 +13,15 @@ import { get, noop } from 'lodash';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
 import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
+import Emojify from 'components/emojify';
+import QueryComment from 'components/data/query-comment';
+import { isEnabled } from 'config';
 import { stripHTML, decodeEntities } from 'lib/formatting';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { getParentComment, getSiteComment } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 export class CommentContent extends Component {
 	static propTypes = {
@@ -32,7 +34,7 @@ export class CommentContent extends Component {
 		this.props.isJetpack ? noop : this.props.recordReaderCommentOpened();
 
 	renderInReplyTo = () => {
-		const { commentUrl, isBulkMode, parentCommentContent, translate } = this.props;
+		const { isBulkMode, parentCommentContent, parentCommentUrl, translate } = this.props;
 
 		if ( ! parentCommentContent ) {
 			return null;
@@ -43,7 +45,7 @@ export class CommentContent extends Component {
 				{ isBulkMode && <Gridicon icon="reply" size={ 18 } /> }
 				<span>{ translate( 'In reply to:' ) }</span>
 				<a
-					href={ commentUrl }
+					href={ parentCommentUrl }
 					onClick={ this.trackDeepReaderLinkClick }
 					tabIndex={ isBulkMode ? -1 : 0 }
 				>
@@ -59,12 +61,19 @@ export class CommentContent extends Component {
 			commentId,
 			commentIsPending,
 			isBulkMode,
+			isParentCommentLoaded,
 			isPostView,
 			parentCommentContent,
+			parentCommentId,
+			siteId,
 			translate,
 		} = this.props;
 		return (
 			<div className="comment__content">
+				{ ! isParentCommentLoaded && (
+					<QueryComment commentId={ parentCommentId } siteId={ siteId } forceWpcom />
+				) }
+
 				{ isBulkMode && (
 					<div className="comment__content-preview">
 						{ this.renderInReplyTo() }
@@ -106,25 +115,35 @@ export class CommentContent extends Component {
 
 const mapStateToProps = ( state, { commentId } ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const isJetpack = isJetpackSite( state, siteId );
 
 	const comment = getSiteComment( state, siteId, commentId );
 	const postId = get( comment, 'post.ID' );
 
-	const commentUrl = isJetpack
-		? get( comment, 'URL' )
-		: `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }`;
-
 	const parentComment = getParentComment( state, siteId, postId, commentId );
+	const parentCommentId = get( comment, 'parent.ID', 0 );
 	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
+
+	let parentCommentUrl;
+	if ( isEnabled( 'comments/management/comment-view' ) ) {
+		parentCommentUrl = `/comment/${ siteSlug }/${ parentCommentId }`;
+	} else if ( isJetpack ) {
+		parentCommentUrl = get( parentComment, 'URL' );
+	} else {
+		parentCommentUrl = `/read/blogs/${ siteId }/posts/${ postId }#comment-${ parentCommentId }`;
+	}
 
 	return {
 		commentContent: get( comment, 'content' ),
 		commentIsPending: 'unapproved' === get( comment, 'status' ),
-		commentUrl,
 		isJetpack,
+		isParentCommentLoaded: ! parentCommentId || !! parentCommentContent,
 		parentCommentContent,
+		parentCommentId,
+		parentCommentUrl,
 		postId,
+		siteId,
 	};
 };
 
