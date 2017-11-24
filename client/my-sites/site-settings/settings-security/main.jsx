@@ -20,13 +20,15 @@ import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import FormSecurity from 'my-sites/site-settings/form-security';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { isRewindActive } from 'state/selectors';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import Backups from 'my-sites/site-settings/jetpack-credentials';
+import QueryRewindStatus from 'components/data/query-rewind-status';
 
-const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
+const SiteSettingsSecurity = ( { rewindActive, site, siteId, siteIsJetpack, translate } ) => {
 	if ( ! site ) {
 		return <Placeholder />;
 	}
@@ -62,11 +64,14 @@ const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
 
 	return (
 		<Main className="settings-security__main site-settings">
+			{ config.isEnabled( 'jetpack/activity-log/rewind' ) && (
+				<QueryRewindStatus siteId={ siteId } />
+			) }
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<SiteSettingsNavigation site={ site } section="security" />
-			{ config.isEnabled( 'jetpack/credentials' ) && <Backups /> }
+			{ config.isEnabled( 'jetpack/credentials' ) && rewindActive && <Backups /> }
 			<JetpackMonitor />
 			<FormSecurity />
 		</Main>
@@ -74,6 +79,7 @@ const SiteSettingsSecurity = ( { site, siteId, siteIsJetpack, translate } ) => {
 };
 
 SiteSettingsSecurity.propTypes = {
+	rewindActive: PropTypes.bool,
 	site: PropTypes.object,
 	siteId: PropTypes.number,
 	siteIsJetpack: PropTypes.bool,
@@ -82,7 +88,9 @@ SiteSettingsSecurity.propTypes = {
 export default connect( state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
+
 	return {
+		rewindActive: isRewindActive( state, siteId ),
 		site,
 		siteId,
 		siteIsJetpack: isJetpackSite( state, siteId ),
