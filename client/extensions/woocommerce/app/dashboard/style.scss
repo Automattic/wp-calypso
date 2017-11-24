@@ -340,7 +340,21 @@
 	}
 }
 
-.dashboard__reviews-widget .dashboard-widget__content {
+@include breakpoint( ">960px" ) {
+	.dashboard__queue-widgets {
+		display: flex;
+
+		div {
+			flex-grow: 1;
+		}
+
+		div:nth-child( 2 ) {
+			margin-left: 8px;
+		}
+	}
+}
+
+.dashboard__reviews-widget {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;

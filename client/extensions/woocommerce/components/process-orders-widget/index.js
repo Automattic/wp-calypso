@@ -6,23 +6,24 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import DashboardWidget from 'woocommerce/components/dashboard-widget';
 import formatCurrency from 'lib/format-currency';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
-const ProcessOrdersWidget = ( { site, orders, currency, ordersRevenue, translate } ) => {
+const ProcessOrdersWidget = ( { className, site, orders, currency, ordersRevenue, translate } ) => {
+	const classes = classNames( 'card', 'process-orders-widget__container', className );
 	const currencyValue = ( currency && currency.value ) || '';
 	const orderCountPhrase = translate( 'New order', 'New orders', {
 		count: orders.length,
 	} );
 	return (
-		<DashboardWidget width="two-thirds" className="process-orders-widget">
+		<div className={ classes }>
 			<div>
 				<span>{ orders.length }</span>
 				<span className="process-orders-widget__order-label">✨ { orderCountPhrase }</span>
@@ -38,7 +39,7 @@ const ProcessOrdersWidget = ( { site, orders, currency, ordersRevenue, translate
 					{ translate( 'Process orders' ) }
 				</Button>
 			</div>
-		</DashboardWidget>
+		</div>
 	);
 };
 
@@ -46,6 +47,7 @@ ProcessOrdersWidget.propTypes = {
 	site: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,
 	} ),
+	className: PropTypes.string,
 	orders: PropTypes.array,
 	ordersRevenue: PropTypes.number,
 	currency: PropTypes.shape( {
