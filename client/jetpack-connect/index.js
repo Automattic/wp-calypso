@@ -38,8 +38,7 @@ export default function() {
 		controller.authorizeForm
 	);
 
-	page( '/jetpack/connect/store', controller.plansLanding );
-	page( '/jetpack/connect/store/:interval', controller.plansLanding );
+	page( '/jetpack/connect/store/:interval(yearly|monthly)?', controller.plansLanding );
 
 	page( '/jetpack/connect/:from(akismet|vaultpress)/:interval(yearly|monthly)?', ( { params } ) =>
 		page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
