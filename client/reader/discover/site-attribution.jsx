@@ -36,9 +36,6 @@ class DiscoverSiteAttribution extends React.Component {
 		const siteUrl = getSiteUrl( post );
 		const followUrl = getSourceFollowUrl( post );
 		const { blogId: siteId } = getSourceData( post );
-		const classes = classNames( 'discover-attribution is-site', {
-			'is-missing-avatar': ! attribution.avatar_url,
-		} );
 		const siteLinkProps = getLinkProps( siteUrl );
 		const siteClasses = classNames( 'discover-attribution__blog ignore-click' );
 
@@ -48,8 +45,9 @@ class DiscoverSiteAttribution extends React.Component {
 			avatarUrl = null;
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className={ classes }>
+			<div className="discover__attribution is-site">
 				{ avatarUrl && (
 					<img
 						className="gravatar"
@@ -80,6 +78,7 @@ class DiscoverSiteAttribution extends React.Component {
 				) }
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
