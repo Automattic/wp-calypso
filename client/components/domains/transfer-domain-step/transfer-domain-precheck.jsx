@@ -134,7 +134,12 @@ class TransferDomainPrecheck extends React.PureComponent {
 						'It might take a few minutes for any changes to take effect.',
 					{
 						components: {
-							a: <a href="#" rel="noopener noreferrer" />,
+							a: (
+								<a
+									href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
+									rel="noopener noreferrer"
+								/>
+							),
 						},
 					}
 				);
@@ -179,7 +184,12 @@ class TransferDomainPrecheck extends React.PureComponent {
 				args: { email },
 				components: {
 					strong: <strong className="transfer-domain-step__admin-email" />,
-					a: <a href="#" rel="noopener noreferrer" />,
+					a: (
+						<a
+							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
+							rel="noopener noreferrer"
+						/>
+					),
 				},
 			}
 		);
@@ -212,7 +222,12 @@ class TransferDomainPrecheck extends React.PureComponent {
 				'but it might be called a secret code, auth code, or EPP code. {{a}}Learn more{{/a}}.',
 			{
 				components: {
-					a: <a href="#" rel="noopener noreferrer" />,
+					a: (
+						<a
+							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE }
+							rel="noopener noreferrer"
+						/>
+					),
 				},
 			}
 		);

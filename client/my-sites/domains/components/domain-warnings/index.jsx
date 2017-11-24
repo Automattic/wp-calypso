@@ -804,7 +804,12 @@ export class DomainWarnings extends React.PureComponent {
 					{
 						components: {
 							strong: <strong />,
-							a: <a href="#" rel="noopener noreferrer" />,
+							a: (
+								<a
+									href={ support.INCOMING_DOMAIN_TRANSFER_STATUS_AND_FAILED_TRANSFERS }
+									rel="noopener noreferrer"
+								/>
+							),
 						},
 						args: { domain: domainInTransfer.name },
 					}
