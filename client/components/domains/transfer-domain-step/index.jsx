@@ -33,11 +33,13 @@ import { getSelectedSite } from 'state/ui/selectors';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import TransferDomainPrecheck from './transfer-domain-precheck';
 import support from 'lib/url/support';
+import HeaderCake from 'components/header-cake';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
 		products: PropTypes.object.isRequired,
 		cart: PropTypes.object,
+		goBack: PropTypes.func,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		initialQuery: PropTypes.string,
 		analyticsSection: PropTypes.string.isRequired,
@@ -188,6 +190,14 @@ class TransferDomainStep extends React.Component {
 		);
 	}
 
+	goBack = () => {
+		if ( this.state.domain ) {
+			this.setState( { domain: null } );
+		} else {
+			this.props.goBack();
+		}
+	};
+
 	render() {
 		let content;
 		const { domain } = this.state;
@@ -198,7 +208,14 @@ class TransferDomainStep extends React.Component {
 			content = this.addTransfer();
 		}
 
-		return <div className="transfer-domain-step">{ content }</div>;
+		return (
+			<div className="transfer-domain-step">
+				<HeaderCake onClick={ this.goBack }>
+					{ this.props.translate( 'Use My Own Domain' ) }
+				</HeaderCake>
+				<div>{ content }</div>
+			</div>
+		);
 	}
 
 	domainRegistrationUpsell() {
