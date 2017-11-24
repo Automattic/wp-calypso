@@ -519,7 +519,7 @@ const analytics = {
  * @param  {Function} func Google Analytics tracking function
  * @return {Function}      Wrapped function
  */
-function makeGoogleAnalyticsTrackingFunction( func ) {
+export function makeGoogleAnalyticsTrackingFunction( func ) {
 	return function( ...args ) {
 		if ( ! isGoogleAnalyticsAllowed() ) {
 			gaDebug( '[Disallowed] analytics %s( %o )', func.name, args );
