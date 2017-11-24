@@ -5,6 +5,7 @@
  */
 import classNames from 'classnames';
 import { capitalize, defer, includes } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -19,6 +20,7 @@ import config from 'config';
 import FormsButton from 'components/forms/form-button';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
+import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
@@ -30,6 +32,7 @@ import {
 	loginUser,
 	resetAuthAccountType,
 } from 'state/login/actions';
+import { login } from 'lib/paths';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
@@ -40,13 +43,14 @@ import {
 	getSocialAccountLinkService,
 	isFormDisabled as isFormDisabledSelector,
 } from 'state/login/selectors';
-import { isRegularAccount } from 'state/login/utils';
+import { isPasswordlessAccount, isRegularAccount } from 'state/login/utils';
 import Notice from 'components/notice';
 import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
 		accountType: PropTypes.string,
+		fetchMagicLoginRequestEmail: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
 		getAuthAccountType: PropTypes.func.isRequired,
 		hasAccountTypeLoaded: PropTypes.bool.isRequired,
@@ -113,6 +117,23 @@ export class LoginForm extends Component {
 
 		if ( ! this.props.hasAccountTypeLoaded && isRegularAccount( nextProps.accountType ) ) {
 			defer( () => this.password && this.password.focus() );
+		}
+
+		if ( ! this.props.hasAccountTypeLoaded && isPasswordlessAccount( nextProps.accountType ) ) {
+			this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link' );
+
+			this.props.fetchMagicLoginRequestEmail( this.state.usernameOrEmail )
+				.then( () => {
+					this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_success' );
+				} )
+				.catch( error => {
+					this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_failure', {
+						error_code: error.code,
+						error_message: error.message,
+					} );
+				} );
+
+			page( login( { isNative: true, twoFactorAuthType: 'link' } ) );
 		}
 	}
 
@@ -423,6 +444,7 @@ export default connect(
 		};
 	},
 	{
+		fetchMagicLoginRequestEmail,
 		formUpdate,
 		getAuthAccountType,
 		loginUser,
