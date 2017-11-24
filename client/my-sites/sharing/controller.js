@@ -22,7 +22,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import { requestSiteSettings } from 'state/site-settings/actions';
-import { reduxDispatch } from 'lib/redux-bridge/index';
 import { isJetpackSite, getSiteSlug, getSiteOption } from 'state/sites/selectors';
 import versionCompare from 'lib/version-compare';
 
@@ -36,7 +35,7 @@ export const layout = context => {
 	const siteSettings = getSiteSettings( state, siteId );
 
 	if ( siteId && ! siteSettings && canCurrentUser( state, siteId, 'manage_options' ) ) {
-		reduxDispatch( requestSiteSettings( siteId ) );
+		store.dispatch( requestSiteSettings( siteId ) );
 	}
 
 	renderWithReduxStore(
