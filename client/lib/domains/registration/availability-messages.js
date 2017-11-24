@@ -123,6 +123,13 @@ function getAvailabilityNotice( domain, error ) {
 			);
 			break;
 
+		case domainAvailability.UNKOWN_ACTIVE:
+			message = translate(
+				'This domain is still active and is not available to map yet. ' +
+					'Please try again later or contact support.'
+			);
+			break;
+
 		case domainAvailability.EMPTY_QUERY:
 			message = translate( 'Please enter a domain name or keyword.' );
 			break;
