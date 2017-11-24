@@ -412,7 +412,7 @@ const analytics = {
 			}
 		},
 
-		recordPageView: makeSafeDebuggableGoogleAnalyticsFunc( function recordPageView(
+		recordPageView: makeGoogleAnalyticsTrackingFunction( function recordPageView(
 			urlPath,
 			pageTitle
 		) {
@@ -428,7 +428,7 @@ const analytics = {
 			} );
 		} ),
 
-		recordEvent: makeSafeDebuggableGoogleAnalyticsFunc( function recordEvent(
+		recordEvent: makeGoogleAnalyticsTrackingFunction( function recordEvent(
 			category,
 			action,
 			label,
@@ -449,7 +449,7 @@ const analytics = {
 			window.ga( 'send', 'event', category, action, label, value );
 		} ),
 
-		recordTiming: makeSafeDebuggableGoogleAnalyticsFunc( function recordTiming(
+		recordTiming: makeGoogleAnalyticsTrackingFunction( function recordTiming(
 			urlPath,
 			eventType,
 			duration,
@@ -519,7 +519,7 @@ const analytics = {
  * @param  {Function} func Google Analytics tracking function
  * @return {Function}      Wrapped function
  */
-function makeSafeDebuggableGoogleAnalyticsFunc( func ) {
+function makeGoogleAnalyticsTrackingFunction( func ) {
 	return function( ...args ) {
 		if ( ! isGoogleAnalyticsAllowed() ) {
 			gaDebug( '[Disallowed] analytics %s( %o )', func.name, args );
