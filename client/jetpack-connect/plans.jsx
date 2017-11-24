@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { retrievePlan } from './cookies';
+import { clearPlan, retrievePlan } from './cookies';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -142,6 +142,7 @@ class Plans extends Component {
 	}
 
 	selectFreeJetpackPlan() {
+		clearPlan();
 		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
 			user: this.props.userId,
 		} );
@@ -156,6 +157,7 @@ class Plans extends Component {
 
 	selectPlan = cartItem => {
 		const checkoutPath = `/checkout/${ this.props.selectedSite.slug }`;
+		clearPlan();
 
 		if ( ! cartItem || cartItem.product_slug === PLAN_JETPACK_FREE ) {
 			return this.selectFreeJetpackPlan();
