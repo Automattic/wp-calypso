@@ -29,7 +29,7 @@ function FormattedHeader( { headerText, subHeaderText } ) {
 }
 
 FormattedHeader.propTypes = {
-	headerText: PropTypes.string,
+	headerText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 	subHeaderText: PropTypes.node,
 };
 
