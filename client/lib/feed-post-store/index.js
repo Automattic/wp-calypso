@@ -20,10 +20,7 @@ import { mc } from 'lib/analytics';
 import { pageViewForPost } from 'reader/stats';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
-import {
-	CONVERSATION_FOLLOW_STATUS_FOLLOWING,
-	CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING,
-} from 'state/reader/conversations/follow-status';
+import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
 import { reduxDispatch } from 'lib/redux-bridge';
 
 /**
@@ -157,8 +154,8 @@ function _setBlogPost( post ) {
 	// Send conversation follow status over to Redux
 	if ( post.hasOwnProperty( 'is_following_conversation' ) ) {
 		const followStatus = post.is_following_conversation
-			? CONVERSATION_FOLLOW_STATUS_FOLLOWING
-			: CONVERSATION_FOLLOW_STATUS_NOT_FOLLOWING;
+			? CONVERSATION_FOLLOW_STATUS.following
+			: CONVERSATION_FOLLOW_STATUS.not_following;
 		reduxDispatch(
 			bypassDataLayer(
 				updateConversationFollowStatus( {

@@ -15,7 +15,7 @@ import {
 	followConversation,
 	updateConversationFollowStatus,
 } from 'state/reader/conversations/actions';
-import { CONVERSATION_FOLLOW_STATUS_MUTING } from 'state/reader/conversations/follow-status';
+import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
 
 describe( 'conversation-follow', () => {
 	describe( 'requestConversationFollow', () => {
@@ -24,7 +24,7 @@ describe( 'conversation-follow', () => {
 			const action = followConversation( { siteId: 123, postId: 456 } );
 			const actionWithRevert = merge( {}, action, {
 				meta: {
-					previousState: CONVERSATION_FOLLOW_STATUS_MUTING,
+					previousState: CONVERSATION_FOLLOW_STATUS.muting,
 				},
 			} );
 			const getState = () => {
@@ -60,7 +60,7 @@ describe( 'conversation-follow', () => {
 				{ dispatch },
 				{
 					payload: { siteId: 123, postId: 456 },
-					meta: { previousState: CONVERSATION_FOLLOW_STATUS_MUTING },
+					meta: { previousState: CONVERSATION_FOLLOW_STATUS.muting },
 				},
 				{ success: true }
 			);
@@ -79,7 +79,7 @@ describe( 'conversation-follow', () => {
 				{ dispatch },
 				{
 					payload: { siteId: 123, postId: 456 },
-					meta: { previousState: CONVERSATION_FOLLOW_STATUS_MUTING },
+					meta: { previousState: CONVERSATION_FOLLOW_STATUS.muting },
 				},
 				{
 					success: false,
@@ -97,7 +97,7 @@ describe( 'conversation-follow', () => {
 					updateConversationFollowStatus( {
 						siteId: 123,
 						postId: 456,
-						followStatus: CONVERSATION_FOLLOW_STATUS_MUTING,
+						followStatus: CONVERSATION_FOLLOW_STATUS.muting,
 					} )
 				)
 			);
