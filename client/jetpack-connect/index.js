@@ -10,12 +10,6 @@ import page from 'page';
 import controller from './controller';
 import { siteSelection } from 'my-sites/controller';
 
-const redirectToStoreWithInterval = context => {
-	const interval =
-		context && context.params && context.params.interval ? context.params.interval : '';
-	page.redirect( `/jetpack/connect/store/${ interval }` );
-};
-
 export default function() {
 	page(
 		'/jetpack/connect/:type(personal|premium|pro)/:interval(yearly|monthly)?',
@@ -44,14 +38,11 @@ export default function() {
 		controller.authorizeForm
 	);
 
-	page( '/jetpack/connect/store', controller.plansLanding );
-	page( '/jetpack/connect/store/:interval', controller.plansLanding );
+	page( '/jetpack/connect/store/:interval(yearly|monthly)?', controller.plansLanding );
 
-	page( '/jetpack/connect/vaultpress', '/jetpack/connect/store' );
-	page( '/jetpack/connect/vaultpress/:interval', redirectToStoreWithInterval );
-
-	page( '/jetpack/connect/akismet', '/jetpack/connect/store' );
-	page( '/jetpack/connect/akismet/:interval', redirectToStoreWithInterval );
+	page( '/jetpack/connect/:from(akismet|vaultpress)/:interval(yearly|monthly)?', ( { params } ) =>
+		page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
+	);
 
 	page(
 		'/jetpack/connect/:locale?',
