@@ -21,10 +21,11 @@ import SharingConnections from './connections/connections';
 import sites from 'lib/sites-list';
 import utils from 'lib/site/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { canCurrentUser } from 'state/selectors';
+import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import { requestSiteSettings } from 'state/site-settings/actions';
 import { reduxDispatch } from 'lib/redux-bridge/index';
+import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 
 const analyticsPageTitle = 'Sharing';
 
@@ -47,21 +48,33 @@ export const layout = context => {
 };
 
 export const connections = ( context, next ) => {
-	const site = sites().getSelectedSite();
-	const basePath = sectionify( context.path );
-	const baseAnalyticsPath = site ? basePath + '/:site' : basePath;
+	const { store, path } = context;
+	const state = store.getState();
 
-	if ( site && ! utils.userCan( 'publish_posts', site ) ) {
+	const siteId = getSelectedSiteId( state );
+
+	const basePath = sectionify( path );
+	const baseAnalyticsPath = siteId ? basePath + '/:site' : basePath;
+
+	if ( siteId && ! canCurrentUser( state, siteId, 'publish_posts' ) ) {
 		notices.error(
 			translate( 'You are not authorized to manage sharing settings for this site.' )
 		);
 	}
 
-	if ( site && site.jetpack && ! site.isModuleActive( 'publicize' ) ) {
+	if (
+		siteId &&
+		isJetpackSite( state, siteId ) &&
+		! isJetpackModuleActive( state, siteId, 'publicize' )
+	) {
+		const siteSlug = getSiteSlug( state, siteId );
+
 		// Redirect to sharing buttons if Jetpack Publicize module is not
 		// active, but ShareDaddy is active
 		page.redirect(
-			site.isModuleActive( 'sharedaddy' ) ? '/sharing/buttons/' + sites.selected : '/stats'
+			isJetpackModuleActive( state, siteId, 'sharedaddy' )
+				? `/sharing/buttons/${ siteSlug }`
+				: '/stats'
 		);
 	} else {
 		pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > Connections' );
