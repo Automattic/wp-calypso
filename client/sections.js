@@ -19,8 +19,11 @@ const extensionSections = extensions.map( extension => {
 		const pkg = JSON.parse(
 			fs.readFileSync( path.join( __dirname, 'extensions', extension, 'package.json' ) )
 		);
+		const asyncLoadReducer = fs.existsSync(
+			path.join( __dirname, 'extensions', extension, 'state', 'reducer.js' )
+		);
 
-		return Object.assign( {}, pkg.section, { envId: pkg.env_id } );
+		return Object.assign( {}, pkg.section, { envId: pkg.env_id, asyncLoadReducer } );
 	} catch ( e ) {
 		return null;
 	}

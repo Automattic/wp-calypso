@@ -17,7 +17,7 @@ import analyticsTracking from './analytics/reducer';
 import sitesSync from './sites/enhancer';
 import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
-import extensionsModule from 'extensions';
+import extensions from './extensions/reducer';
 import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
 import automatedTransfer from './automated-transfer/reducer';
@@ -86,9 +86,6 @@ import config from 'config';
 /**
  * Module variables
  */
-
-// Consolidate the extension reducers under 'extensions' for namespacing.
-const extensions = combineReducers( extensionsModule.reducers() );
 
 const reducers = {
 	analyticsTracking,
