@@ -19,7 +19,7 @@ All the application information and data in Calypso should go through this data 
 
 ## Persistence
 When Calypso boots up it loads the last-known state out of persistent storage in the browser.
-If that state was saved from an old version of the reducer code it could be incompatible with the new state model.
+If that state were saved from an old version of the reducer code it could be incompatible with the new state model.
 Over the course of time we've developed multiple ways for enforcing that the browser storage contains data
 of a compatible shape before deserializing.
 
@@ -218,7 +218,7 @@ age( 23, { type: DESERIALIZE } ) === 23
 ```
 
 ### combineReducers( reducersObject )
-This has a compatible function signature with redux's famous combineReducers function.
+A wrapper around Redux's `combineReducers()` which shares an identical function signature.
 The only addition is that each reducer is wrapped with `withSchemaValidation` which will perform
 validation on `DESERIALIZE` actions if a schema is present. It returns initialState on
 both `SERIALIZE` and `DESERIALIZE` if a schema is not present.

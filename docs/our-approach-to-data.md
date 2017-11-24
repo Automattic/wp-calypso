@@ -333,7 +333,7 @@ export const itemsSchema = {
 ```
 
 In order to [opt-in](https://github.com/Automattic/wp-calypso/pull/13542) to persistence,
-A JSON Schema must be provided as a property of the reducer.
+a JSON Schema must be provided as a property of the reducer.
 If we find that the shape of the persisted data doesn't match the schema, we throw it out
 and rebuild that section of the tree with its default state.
 
