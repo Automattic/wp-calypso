@@ -528,7 +528,7 @@ function makeGoogleAnalyticsTrackingFunction( func ) {
 
 		analytics.ga.initialize();
 
-		func.call( args );
+		func.apply( null, args );
 	};
 }
 
