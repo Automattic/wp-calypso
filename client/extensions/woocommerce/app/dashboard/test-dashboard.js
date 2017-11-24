@@ -17,6 +17,7 @@ import DashboardWidgetRow from 'woocommerce/components/dashboard-widget-row';
 
 class TestDashboard extends Component {
 	render = () => {
+		const aSettingsPanel = <div>Neat Settings Stuff</div>;
 		return (
 			<div className="dashboard__setup-wrapper">
 				<DashboardWidget
@@ -24,6 +25,7 @@ class TestDashboard extends Component {
 					imagePosition="bottom"
 					image="/calypso/images/extensions/woocommerce/woocommerce-reports.svg"
 					imageFlush
+					settingsPanel={ aSettingsPanel }
 				>
 					<p>Image position set to bottom imageFlush true</p>
 					<p>
@@ -38,6 +40,7 @@ class TestDashboard extends Component {
 						width="third"
 						imageFlush
 						image="/calypso/images/extensions/woocommerce/woocommerce-reports.svg"
+						settingsPanel={ aSettingsPanel }
 					>
 						<p>Image position set to top imageFlush true.</p>
 						<p>
@@ -49,6 +52,7 @@ class TestDashboard extends Component {
 						imagePosition="top"
 						width="third"
 						image="/calypso/images/extensions/woocommerce/woocommerce-reports.svg"
+						settingsPanel={ aSettingsPanel }
 					>
 						<p>Image position set to top imageFlush false.</p>
 						<p>

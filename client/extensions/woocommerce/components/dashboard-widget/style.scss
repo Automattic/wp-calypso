@@ -6,6 +6,20 @@
 		flex-direction: column;
 	}
 
+	.dashboard-widget__settings-toggle {
+		position: absolute;
+		top: 8px;
+		right: 8px;
+		cursor: pointer;
+		display: none;
+	}
+
+	&.has-settings-panel {
+		.dashboard-widget__settings-toggle {
+			display: block;
+		}
+	}
+
 	&.one-third {
 		.dashboard-widget__image {
 			max-width: 181px;
