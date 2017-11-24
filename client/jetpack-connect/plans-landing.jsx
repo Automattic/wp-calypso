@@ -20,7 +20,7 @@ import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import QueryPlans from 'components/data/query-plans';
 import addQueryArgs from 'lib/route/add-query-args';
-import { storePlan } from './cookies';
+import { storePlan } from './persistence-utils';
 
 const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 

@@ -29,7 +29,7 @@ import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import untrailingslashit from 'lib/route/untrailingslashit';
-import { retrievePlan } from './cookies';
+import { retrievePlan } from './persistence-utils';
 import {
 	confirmJetpackInstallStatus,
 	dismissUrl,
