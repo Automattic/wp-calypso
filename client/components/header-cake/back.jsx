@@ -27,15 +27,17 @@ const HIDE_BACK_CRITERIA = {
 
 class HeaderCakeBack extends Component {
 	static propTypes = {
-		onClick: PropTypes.func,
 		href: PropTypes.string,
+		onClick: PropTypes.func,
 		text: PropTypes.string,
+		showTextOnMobile: PropTypes.bool,
 		spacer: PropTypes.bool,
 	};
 
 	static defaultProps = {
-		spacer: false,
 		disabled: false,
+		showTextOnMobile: false,
+		spacer: false,
 	};
 
 	state = {
@@ -59,9 +61,10 @@ class HeaderCakeBack extends Component {
 
 	hideText( text ) {
 		if (
-			( this.state.windowWidth <= HIDE_BACK_CRITERIA.windowWidth &&
+			! this.props.showTextOnMobile &&
+			( ( this.state.windowWidth <= HIDE_BACK_CRITERIA.windowWidth &&
 				text.length >= HIDE_BACK_CRITERIA.characterLength ) ||
-			this.state.windowWidth <= 300
+				this.state.windowWidth <= 300 )
 		) {
 			return true;
 		}
