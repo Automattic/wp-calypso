@@ -13,6 +13,7 @@ import notification from './notification';
 import settings from './settings';
 import sendVerificationEmail from './send-verification-email';
 import countries from './transactions/supported-countries';
+import userProfileLinks from './user-profile-links';
 
 export default mergeHandlers(
 	block,
@@ -20,5 +21,6 @@ export default mergeHandlers(
 	devices,
 	notification,
 	settings,
-	sendVerificationEmail
+	sendVerificationEmail,
+	userProfileLinks
 );
