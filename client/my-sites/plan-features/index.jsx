@@ -416,7 +416,14 @@ class PlanFeatures extends Component {
 	}
 
 	renderBottomButtons() {
-		const { canPurchase, planProperties, isInSignup, isLandingPage, site } = this.props;
+		const {
+			canPurchase,
+			isInSignup,
+			isLandingPage,
+			planProperties,
+			site,
+			selectedPlan,
+		} = this.props;
 
 		return map( planProperties, properties => {
 			const {
@@ -437,20 +444,21 @@ class PlanFeatures extends Component {
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
+						available={ available }
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
-						available={ available }
-						primaryUpgrade={ primaryUpgrade }
-						planName={ planConstantObj.getTitle() }
-						onUpgradeClick={ onUpgradeClick }
 						freePlan={ isFreePlan( planName ) }
-						isPlaceholder={ isPlaceholder }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
+						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						manageHref={ `/plans/my-plan/${ site.slug }` }
+						planName={ planConstantObj.getTitle() }
 						planType={ planName }
+						primaryUpgrade={ primaryUpgrade }
+						onUpgradeClick={ onUpgradeClick }
+						selectedPlan={ selectedPlan }
 					/>
 				</td>
 			);
