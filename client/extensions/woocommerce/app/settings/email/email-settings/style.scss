@@ -1,128 +1,28 @@
-.email-settings__origin {
-	padding: 0px;
-}
-
-.email-settings__internal-notifications,
-.email-settings__customer-notifications {
-	padding: 0px;
-}
-
-.email-settings__origin-title,
-.email-settings__internal-notifications-title,
-.email-settings__customer-notifications-title {
-	margin-bottom: 0px;
-}
-
-.email-settings__internal-notifications-legend,
-.email-settings__customer-notifications-legend {
-	margin-bottom: 0px;
-	background: $gray-light;
-}
-
-.email-settings__section-title-text {
-	font-size: 18px;
-	font-weight: 500;
-	padding-bottom: 4px;
-}
-
-.email-settings__section-subtitle-text {
-	color: $gray-text-min;
-	font-size: 12px;
-	line-height: 18px;
-	padding-bottom: 4px;
-}
-.email-settings__customer-notifications-settings,
-.email-settings__internal-notifications-settings {
-	display: flex;
-	flex-direction: column;
-	padding: 0px;
-}
-
-.components__notification-component {
-	display: flex;
-	align-items: center;
-	margin: 0px;
-	padding: 0px;
-}
 
 .components__notification-component-title {
-	width: 300px;
-	flex-grow: 0;
-	padding: 24px;
+	width: 50%;
 }
 
-.email-settings__internal-notifications-legend,
-.email-settings__customer-notifications-legend {
-	display: flex;
-	flex-direction: row;
-	padding: 16px 0;
-	align-items: center;
-	font-weight: 600;
-	&:not( :last-child ) {
-		border-bottom: 1px solid lighten( $gray, 20% );
-	}
-}
-
-.email-settings__customer-notifications-legend-option,
-.email-settings__internal-notifications-legend-option {
-	padding: 12px 24px 12px 24px;
-	width: 300px;
-}
-
-.email-settings__internal-notifications-legend-input {
-	padding: 12px 24px 12px 0px;
-	flex-grow: 1;
+.components__notification-component-input.list-item-field {
+	padding-left: 0px;
+	padding-right: 0px;
 	flex-shrink: 1;
-}
- 
-
-.components__notification-component-input {
-	max-width: 240px;
-	flex-grow: 1;
-	flex-shrink: 1;
-}
-
-.email-settings__internal-notifications-legend-toggle {
-	flex-grow: 1;
-	text-align: right;
-	padding: 12px 24px 12px 24px;
+	width: 40%;
 }
 
 .components__notification-component-toggle {
-	flex-grow: 1;
-	.form-toggle__label {
-		float: right;
-		padding-right: 24px;
-		padding-left: 24px;
-	}
+	width: 80px;
 }
 
-.email-settings__loading-card {
-	margin: 0px 0px 16px 0px;
-	padding-bottom: 0px;
+.components__notification-component-toggle-label.list-item-field {
+	width: 80px;
+	padding-left: 6px;
 }
 
-.components__notification-placeholder-input,
-.components__notification-placeholder-toggle,
-.components__notification-placeholder-title {
-	@include placeholder();
-	pointer-events: none;
-	background: $white;
-	height: 14px;
-	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: lighten( $gray, 25% );
+.components__notification-component-item.list-item {
+	flex-wrap: nowrap;
 }
 
-.components__notification-placeholder-toggle {
-	width: 24px;
-	margin-right: 24px;
-	float: right;
-}
-
-.components__notification-placeholder-title {
-	width: 300px;
-}
-
-.components__notification-placeholder-input {
-	width: 240px; 
+.components__notification-origin {
+	width: 75%;
 }

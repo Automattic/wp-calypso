@@ -14,8 +14,8 @@ import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 
 const CustomerNotification = ( { item, checked, onToggle, isPlaceholder } ) => (
-	<ListItem className="components__notification-component">
-		<ListItemField className="components__notification-component-title" >
+	<ListItem className="components__notification-component-item">
+		<ListItemField>
 			{ ! isPlaceholder
 				? <FormLabel>
 					{ item.title }

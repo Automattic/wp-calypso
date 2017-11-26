@@ -15,7 +15,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 const InternalNotification = ( { item, recipient, checked, onToggle, onChange, isPlaceholder } ) => (
-	<ListItem className="components__notification-component">
+	<ListItem className="components__notification-component-item">
 		<ListItemField className="components__notification-component-title" >
 			{ ! isPlaceholder
 				? <FormLabel>
@@ -30,10 +30,9 @@ const InternalNotification = ( { item, recipient, checked, onToggle, onChange, i
 				: <p className="components__notification-placeholder-title" />
 			}
 		</ListItemField>
-		<ListItemField>
+		<ListItemField className="components__notification-component-input" >
 			{ ! isPlaceholder
 				? <FormTextInput
-					className="components__notification-component-input"
 					name={ item.field }
 					onChange={ onChange }
 					value={ recipient }

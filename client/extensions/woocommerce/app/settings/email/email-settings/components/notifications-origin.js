@@ -15,7 +15,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 const NotificationsOrigin = ( { item, recipient, onChange } ) => (
 	<ListItem>
-		<ListItemField>
+		<ListItemField className="components__notification-origin">
 			<FormLabel>
 				{ item.title }
 			</FormLabel>

@@ -143,7 +143,7 @@ class Settings extends React.Component {
 
 		return (
 			<div className="email-settings__container">
-				<List className="email-settings__origin">
+				<List>
 					<ExtendedHeader
 						label={ translate( 'Origin' ) }
 					/>
@@ -160,37 +160,37 @@ class Settings extends React.Component {
 						onChange={ this.recipientsChange }
 					/>
 				</List>
-				<div className="email-settings__internal-notifications">
+				<div>
 					<ExtendedHeader
 						label={ translate( 'Internal notifications' ) }
 						description={ translate( 'Email notifications sent to store staff.' ) }
 					/>
 					<List>
 						<ListHeader>
-							<ListItemField className="shipping-zone__location-title">
+							<ListItemField className="components__notification-component-title">
 								{ translate( 'Email' ) }
 							</ListItemField>
-							<ListItemField className="shipping-zone__location-summary">
+							<ListItemField className="components__notification-component-input">
 								{ translate( 'Recipients (comma separated)' ) }
 							</ListItemField>
-							<ListItemField className="shipping-zone__location-summary">
+							<ListItemField className="components__notification-component-toggle-label">
 								{ translate( 'Enabled' ) }
 							</ListItemField>
 						</ListHeader>
 						{ internalNotifications.map( this.renderInternalNotification ) }
 					</List>
 				</div>
-				<div className="email-settings__customer-notifications">
+				<div>
 					<ExtendedHeader
 						label={ translate( 'Customer notifications' ) }
 						description={ translate( 'Email notifications sent to your customers.' ) }
 					/>
 					<List>
 						<ListHeader>
-							<ListItemField className="shipping-zone__location-title">
+							<ListItemField>
 								{ translate( 'Email' ) }
 							</ListItemField>
-							<ListItemField className="shipping-zone__location-summary">
+							<ListItemField>
 								{ translate( 'Enabled' ) }
 							</ListItemField>
 						</ListHeader>
