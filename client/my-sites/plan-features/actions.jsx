@@ -21,33 +21,56 @@ import { getPlanClass, isMonthly } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const PlanFeaturesActions = ( {
+	available = true,
 	canPurchase,
 	className,
-	available = true,
+	currentSitePlan,
 	current = false,
-	primaryUpgrade = false,
 	freePlan = false,
-	onUpgradeClick = noop,
+	manageHref,
+	isLandingPage,
 	isPlaceholder = false,
 	isPopular,
 	isInSignup,
-	translate,
-	manageHref,
-	isLandingPage,
+	onUpgradeClick = noop,
 	planName,
-	currentSitePlan,
 	planType,
+	primaryUpgrade = false,
+	selectedPlan,
 	recordTracksEvent: trackTracksEvent,
+	translate,
 } ) => {
+	const decodeSelectedPlan = () => {
+		if ( selectedPlan === 'jetpack_business' ) {
+			selectedPlan = 'Professional';
+		}
+		if ( selectedPlan === 'jetpack_premium' ) {
+			selectedPlan = 'Premium';
+		}
+		if ( selectedPlan === 'jetpack_personal' ) {
+			selectedPlan = 'Personal';
+		}
+	};
+	decodeSelectedPlan();
+
 	let upgradeButton;
-	const classes = classNames(
-		'plan-features__actions-button',
-		{
-			'is-current': current,
-			'is-primary': ( primaryUpgrade && ! isPlaceholder ) || isPopular,
-		},
-		className
-	);
+	const classes = selectedPlan
+		? classNames(
+				'plan-features__actions-button',
+				{
+					'is-current': current,
+					'is-primary': planName === selectedPlan,
+				},
+				className
+			)
+		: classNames(
+				'plan-features__actions-button',
+				{
+					'is-current': current,
+					'is-primary': ( primaryUpgrade && ! isPlaceholder ) || isPopular,
+				},
+				className
+			);
 
 	if ( current && ! isInSignup ) {
 		upgradeButton = (
@@ -105,16 +128,17 @@ const PlanFeaturesActions = ( {
 };
 
 PlanFeaturesActions.propTypes = {
+	available: PropTypes.bool,
 	canPurchase: PropTypes.bool.isRequired,
 	className: PropTypes.string,
-	primaryUpgrade: PropTypes.bool,
 	current: PropTypes.bool,
-	available: PropTypes.bool,
-	onUpgradeClick: PropTypes.func,
 	freePlan: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
+	onUpgradeClick: PropTypes.func,
 	planType: PropTypes.string,
+	primaryUpgrade: PropTypes.bool,
+	selectedPlan: PropTypes.string,
 };
 
 export default connect(

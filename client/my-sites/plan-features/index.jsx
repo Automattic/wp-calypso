@@ -297,7 +297,14 @@ class PlanFeatures extends Component {
 	}
 
 	renderTopButtons() {
-		const { canPurchase, isLandingPage, planProperties, isInSignup, site } = this.props;
+		const {
+			canPurchase,
+			isInSignup,
+			isLandingPage,
+			planProperties,
+			selectedPlan,
+			site,
+		} = this.props;
 
 		return map( planProperties, properties => {
 			const {
@@ -334,6 +341,7 @@ class PlanFeatures extends Component {
 						isLandingPage={ isLandingPage }
 						manageHref={ `/plans/my-plan/${ site.slug }` }
 						planType={ planName }
+						selectedPlan={ selectedPlan }
 					/>
 				</td>
 			);
