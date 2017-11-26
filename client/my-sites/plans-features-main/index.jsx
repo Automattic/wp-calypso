@@ -391,22 +391,23 @@ class PlansFeaturesMain extends Component {
 }
 
 PlansFeaturesMain.propTypes = {
-	site: PropTypes.object,
+	basePlansPath: PropTypes.string,
+	displayJetpackPlans: PropTypes.bool.isRequired,
+	hideFreePlan: PropTypes.bool,
+	intervalType: PropTypes.string,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
-	basePlansPath: PropTypes.string,
-	intervalType: PropTypes.string,
 	onUpgradeClick: PropTypes.func,
-	hideFreePlan: PropTypes.bool,
-	showFAQ: PropTypes.bool,
 	selectedFeature: PropTypes.string,
-	displayJetpackPlans: PropTypes.bool.isRequired,
+	selectedPlan: PropTypes.string,
+	showFAQ: PropTypes.bool,
+	site: PropTypes.object,
 };
 
 PlansFeaturesMain.defaultProps = {
 	basePlansPath: null,
-	intervalType: 'yearly',
 	hideFreePlan: false,
+	intervalType: 'yearly',
 	site: {},
 	showFAQ: true,
 };
