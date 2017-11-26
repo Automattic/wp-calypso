@@ -456,24 +456,25 @@ class PlanFeatures extends Component {
 }
 
 PlanFeatures.propTypes = {
+	basePlansPath: PropTypes.string,
 	canPurchase: PropTypes.bool.isRequired,
+	displayJetpackPlans: PropTypes.bool,
+	isInSignup: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plans prop or isPlaceholder prop
 	plans: PropTypes.array,
 	planProperties: PropTypes.array,
-	isInSignup: PropTypes.bool,
-	basePlansPath: PropTypes.string,
 	selectedFeature: PropTypes.string,
+	selectedPlan: PropTypes.string,
 	site: PropTypes.object,
-	displayJetpackPlans: PropTypes.bool,
 };
 
 PlanFeatures.defaultProps = {
-	onUpgradeClick: noop,
-	isInSignup: false,
 	basePlansPath: null,
-	site: {},
 	displayJetpackPlans: false,
+	isInSignup: false,
+	site: {},
+	onUpgradeClick: noop,
 };
 
 export default connect(

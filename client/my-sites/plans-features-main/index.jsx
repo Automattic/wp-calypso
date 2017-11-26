@@ -40,16 +40,17 @@ import SegmentedControlItem from 'components/segmented-control/item';
 class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
 		const {
-			site,
-			intervalType,
-			onUpgradeClick,
-			hideFreePlan,
-			isInSignup,
-			isLandingPage,
 			basePlansPath,
-			selectedFeature,
 			displayJetpackPlans,
 			domainName,
+			hideFreePlan,
+			intervalType,
+			isInSignup,
+			isLandingPage,
+			onUpgradeClick,
+			selectedFeature,
+			selectedPlan,
+			site,
 		} = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
@@ -66,15 +67,16 @@ class PlansFeaturesMain extends Component {
 			return (
 				<div className="plans-features-main__group" data-e2e-plans="jetpack">
 					<PlanFeatures
-						plans={ jetpackPlans }
-						selectedFeature={ selectedFeature }
-						onUpgradeClick={ onUpgradeClick }
+						basePlansPath={ basePlansPath }
+						displayJetpackPlans={ displayJetpackPlans }
+						domainName={ domainName }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
-						basePlansPath={ basePlansPath }
+						onUpgradeClick={ onUpgradeClick }
+						plans={ jetpackPlans }
+						selectedFeature={ selectedFeature }
+						selectedPlan={ selectedPlan }
 						site={ site }
-						domainName={ domainName }
-						displayJetpackPlans={ displayJetpackPlans }
 					/>
 				</div>
 			);
@@ -93,15 +95,16 @@ class PlansFeaturesMain extends Component {
 			return (
 				<div className="plans-features-main__group" data-e2e-plans="jetpack">
 					<PlanFeatures
-						plans={ jetpackPlans }
-						selectedFeature={ selectedFeature }
-						onUpgradeClick={ onUpgradeClick }
+						basePlansPath={ basePlansPath }
+						displayJetpackPlans={ displayJetpackPlans }
+						domainName={ domainName }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
-						basePlansPath={ basePlansPath }
+						onUpgradeClick={ onUpgradeClick }
+						plans={ jetpackPlans }
+						selectedFeature={ selectedFeature }
+						selectedPlan={ selectedPlan }
 						site={ site }
-						domainName={ domainName }
-						displayJetpackPlans={ displayJetpackPlans }
 					/>
 				</div>
 			);
