@@ -57,7 +57,7 @@ import { activateModule } from 'state/jetpack/modules/actions';
 import { isBusiness, isEnterprise, isJetpackBusiness } from 'lib/products-values';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
-import { FEATURE_SEO_PREVIEW_TOOLS, PLAN_BUSINESS } from 'lib/plans/constants';
+import { FEATURE_SEO_PREVIEW_TOOLS, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -405,7 +405,7 @@ export class SeoForm extends React.Component {
 						) }
 						event={ 'calypso_seo_settings_upgrade_nudge' }
 						feature={ FEATURE_SEO_PREVIEW_TOOLS }
-						plan={ PLAN_BUSINESS }
+						plan={ PLAN_JETPACK_BUSINESS }
 						title={ nudgeTitle }
 					/>
 				) }
