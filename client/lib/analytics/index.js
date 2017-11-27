@@ -513,4 +513,9 @@ const analytics = {
 	},
 };
 emitter( analytics );
+
 export default analytics;
+export const ga = analytics.ga;
+export const mc = analytics.mc;
+export const pageView = analytics.pageView;
+export const tracks = analytics.tracks;
