@@ -9,6 +9,9 @@ import {
 	addUserProfileLinksError,
 	addUserProfileLinksMalformed,
 	addUserProfileLinksSuccess,
+	deleteUserProfileLink,
+	deleteUserProfileLinkError,
+	deleteUserProfileLinkSuccess,
 	receiveUserProfileLinks,
 	requestUserProfileLinks,
 	resetUserProfileLinkErrors,
@@ -19,6 +22,9 @@ import {
 	USER_PROFILE_LINKS_ADD_FAILURE,
 	USER_PROFILE_LINKS_ADD_MALFORMED,
 	USER_PROFILE_LINKS_ADD_SUCCESS,
+	USER_PROFILE_LINKS_DELETE,
+	USER_PROFILE_LINKS_DELETE_FAILURE,
+	USER_PROFILE_LINKS_DELETE_SUCCESS,
 	USER_PROFILE_LINKS_RECEIVE,
 	USER_PROFILE_LINKS_REQUEST,
 	USER_PROFILE_LINKS_RESET_ERRORS,
@@ -37,6 +43,10 @@ describe( 'actions', () => {
 			value: 'https://wordpress.com/',
 		},
 	];
+	const error = {
+		status: 403,
+		message: 'An active access token must be used to query information about the current user.',
+	};
 
 	describe( 'requestUserProfileLinks()', () => {
 		test( 'should return a user profile links request action object', () => {
@@ -83,10 +93,6 @@ describe( 'actions', () => {
 
 	describe( 'addUserProfileLinksError()', () => {
 		test( 'should return a user profile links add error action object', () => {
-			const error = {
-				status: 403,
-				message: 'An active access token must be used to query information about the current user.',
-			};
 			const action = addUserProfileLinksError( profileLinks, error );
 
 			expect( action ).toEqual( {
@@ -125,6 +131,43 @@ describe( 'actions', () => {
 
 			expect( action ).toEqual( {
 				type: USER_PROFILE_LINKS_RESET_ERRORS,
+			} );
+		} );
+	} );
+
+	describe( 'deleteUserProfileLink()', () => {
+		test( 'should return a user profile links delete action object', () => {
+			const linkSlug = 'https-wordpress-com';
+			const action = deleteUserProfileLink( linkSlug );
+
+			expect( action ).toEqual( {
+				type: USER_PROFILE_LINKS_DELETE,
+				linkSlug,
+			} );
+		} );
+	} );
+
+	describe( 'deleteUserProfileLinkSuccess()', () => {
+		test( 'should return a user profile links delete success action object', () => {
+			const linkSlug = 'https-wordpress-com';
+			const action = deleteUserProfileLinkSuccess( linkSlug );
+
+			expect( action ).toEqual( {
+				type: USER_PROFILE_LINKS_DELETE_SUCCESS,
+				linkSlug,
+			} );
+		} );
+	} );
+
+	describe( 'deleteUserProfileLinkError()', () => {
+		test( 'should return a user profile links delete error action object', () => {
+			const linkSlug = 'https-wordpress-com';
+			const action = deleteUserProfileLinkError( linkSlug, error );
+
+			expect( action ).toEqual( {
+				type: USER_PROFILE_LINKS_DELETE_FAILURE,
+				linkSlug,
+				error,
 			} );
 		} );
 	} );
