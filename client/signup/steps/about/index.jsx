@@ -20,7 +20,11 @@ import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { setSiteGoals } from 'state/signup/steps/site-goals/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
+import { setUserExperience } from 'state/signup/steps/user-experience/actions';
+import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import userFactory from 'lib/user';
+const user = userFactory();
 
 //Form components
 import Card from 'components/card';
@@ -29,8 +33,17 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
+import SegmentedControl from 'components/segmented-control';
+import ControlItem from 'components/segmented-control/item';
 
 class AboutStep extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			userExperience: this.props.userExperience,
+		};
+	}
+
 	componentWillMount() {
 		this.formStateController = new formState.Controller( {
 			fieldNames: [ 'siteTitle', 'siteGoals' ],
@@ -86,6 +99,14 @@ class AboutStep extends Component {
 		return false;
 	}
 
+	handleSegmentClick( value ) {
+		return function() {
+			this.setState( {
+				userExperience: value,
+			} );
+		}.bind( this );
+	}
+
 	handleSubmit = event => {
 		event.preventDefault();
 		const { goToNextStep, stepName, translate } = this.props;
@@ -98,6 +119,7 @@ class AboutStep extends Component {
 		//Inputs
 		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 		const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
+		const userExperienceInput = this.state.userExperience;
 
 		//Site Title
 		if ( siteTitleInput !== '' ) {
@@ -112,6 +134,16 @@ class AboutStep extends Component {
 		//Site Goals
 		this.props.setSiteGoals( siteGoalsInput );
 		this.props.setDesignType( designType );
+
+		//User Experience
+		if ( ! user.get() && userExperienceInput !== '' ) {
+			this.props.setUserExperience( userExperienceInput );
+
+			this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
+				field: 'User Experience',
+				value: userExperienceInput,
+			} );
+		}
 
 		SignupActions.submitSignupStep(
 			{
@@ -197,6 +229,69 @@ class AboutStep extends Component {
 		);
 	}
 
+	renderExperienceOptions() {
+		if ( user.get() ) {
+			return null;
+		}
+
+		return (
+			<FormFieldset className="about__last-fieldset">
+				<FormLabel>How comfortable are you with creating a website?</FormLabel>
+				<div className="about__segmented-control-wrapper">
+					<span
+						className="about__segment-label about__min-label"
+						onClick={ this.handleSegmentClick( 1 ) }
+					>
+						Beginner
+					</span>
+
+					<SegmentedControl className="is-primary about__segmented-control">
+						<ControlItem
+							selected={ this.state.userExperience === 1 }
+							onClick={ this.handleSegmentClick( 1 ) }
+						>
+							1
+						</ControlItem>
+
+						<ControlItem
+							selected={ this.state.userExperience === 2 }
+							onClick={ this.handleSegmentClick( 2 ) }
+						>
+							2
+						</ControlItem>
+
+						<ControlItem
+							selected={ this.state.userExperience === 3 }
+							onClick={ this.handleSegmentClick( 3 ) }
+						>
+							3
+						</ControlItem>
+
+						<ControlItem
+							selected={ this.state.userExperience === 4 }
+							onClick={ this.handleSegmentClick( 4 ) }
+						>
+							4
+						</ControlItem>
+
+						<ControlItem
+							selected={ this.state.userExperience === 5 }
+							onClick={ this.handleSegmentClick( 5 ) }
+						>
+							5
+						</ControlItem>
+					</SegmentedControl>
+					<span
+						className="about__segment-label about__max-label"
+						onClick={ this.handleSegmentClick( 5 ) }
+					>
+						Expert
+					</span>
+				</div>
+			</FormFieldset>
+		);
+	}
+
 	renderContent() {
 		const { translate, siteTitle } = this.props;
 
@@ -219,6 +314,8 @@ class AboutStep extends Component {
 							<FormLabel>What’s the primary goal you have for your site?</FormLabel>
 							{ this.renderGoalCheckboxes() }
 						</FormFieldset>
+
+						{ this.renderExperienceOptions() }
 					</Card>
 					<div className="about__submit-wrapper">
 						<Button primary={ true } type="submit">
@@ -253,6 +350,7 @@ export default connect(
 	state => ( {
 		siteTitle: getSiteTitle( state ),
 		siteGoals: getSiteGoals( state ),
+		userExperience: getUserExperience( state ),
 	} ),
-	{ setSiteTitle, setDesignType, setSiteGoals, recordTracksEvent }
+	{ setSiteTitle, setDesignType, setSiteGoals, setUserExperience, recordTracksEvent }
 )( localize( AboutStep ) );
