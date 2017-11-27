@@ -79,7 +79,7 @@ const AddressSuggestion = ( {
 		<div>
 			<Notice
 				className={ errorClass }
-				status="is-warning"
+				status="is-info"
 				showDismiss={ false } >
 				{ translate( 'We have slightly modified the address entered. ' +
 					'If correct, please use the suggested address to ensure accurate delivery.' ) }
