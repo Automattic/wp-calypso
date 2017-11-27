@@ -63,6 +63,7 @@ import {
 const MAX_AUTH_ATTEMPTS = 3;
 const PLANS_PAGE = '/jetpack/connect/plans/';
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
+const PRESSABLE_CLIENT_ID = 49640;
 
 class LoggedInForm extends Component {
 	static propTypes = {
@@ -474,9 +475,8 @@ class LoggedInForm extends Component {
 		const { partnerId, siteId, siteSlug } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
-		// 51652 is a testing partner ID.
-		if ( 49640 === partnerId || 51652 === partnerId ) {
-			return '/start/pressable-nux?blogid=' + siteId;
+		if ( PRESSABLE_CLIENT_ID === partnerId ) {
+			return `/start/pressable-nux?blogid=${ siteId }`;
 		}
 
 		return PLANS_PAGE + siteSlug;
