@@ -3,51 +3,39 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-backup-codes' );
 
 /**
  * Internal dependencies
  */
-import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
-import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import Card from 'components/card';
-import eventRecorder from 'me/event-recorder';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 import Notice from 'components/notice';
+import SectionHeader from 'components/section-header';
+import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
+import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-const Security2faBackupCodes = createReactClass( {
-	displayName: 'Security2faBackupCodes',
+class Security2faBackupCodes extends React.Component {
+	constructor( props ) {
+		super( props );
+		const printed = this.props.userSettings.getSetting( 'two_step_backup_codes_printed' );
 
-	mixins: [ eventRecorder ],
-
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
-
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
-
-	getInitialState: function() {
-		var printed = this.props.userSettings.getSetting( 'two_step_backup_codes_printed' );
-
-		return {
-			printed: printed,
+		this.state = {
+			printed,
 			verified: printed,
 			showPrompt: ! printed,
 			backupCodes: [],
 			generatingCodes: false,
 		};
-	},
+	}
 
-	onGenerate: function() {
+	handleGenerateButtonClick = () => {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Generate New Backup Codes Button' );
+
 		this.setState( {
 			generatingCodes: true,
 			verified: false,
@@ -55,9 +43,9 @@ const Security2faBackupCodes = createReactClass( {
 		} );
 
 		twoStepAuthorization.backupCodes( this.onRequestComplete );
-	},
+	};
 
-	onRequestComplete: function( error, data ) {
+	onRequestComplete = ( error, data ) => {
 		if ( error ) {
 			this.setState( {
 				lastError: this.props.translate(
@@ -71,24 +59,24 @@ const Security2faBackupCodes = createReactClass( {
 			backupCodes: data.codes,
 			generatingCodes: false,
 		} );
-	},
+	};
 
-	onNextStep: function() {
+	onNextStep = () => {
 		this.setState( {
 			backupCodes: [],
 			printed: true,
 		} );
-	},
+	};
 
-	onVerified: function() {
+	onVerified = () => {
 		this.setState( {
 			printed: true,
 			verified: true,
 			showPrompt: false,
 		} );
-	},
+	};
 
-	renderStatus: function() {
+	renderStatus() {
 		if ( ! this.state.printed ) {
 			return (
 				<Notice
@@ -117,9 +105,9 @@ const Security2faBackupCodes = createReactClass( {
 				text={ this.props.translate( 'Backup codes have been verified' ) }
 			/>
 		);
-	},
+	}
 
-	renderList: function() {
+	renderList() {
 		return (
 			<Security2faBackupCodesList
 				backupCodes={ this.state.backupCodes }
@@ -128,9 +116,9 @@ const Security2faBackupCodes = createReactClass( {
 				showList
 			/>
 		);
-	},
+	}
 
-	renderPrompt: function() {
+	renderPrompt() {
 		return (
 			<div>
 				<p>
@@ -146,16 +134,16 @@ const Security2faBackupCodes = createReactClass( {
 				{ this.state.showPrompt && <Security2faBackupCodesPrompt onSuccess={ this.onVerified } /> }
 			</div>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<div className="security-2fa-backup-codes">
 				<SectionHeader label={ this.props.translate( 'Backup Codes' ) }>
 					<Button
 						compact
 						disabled={ this.state.generatingCodes || !! this.state.backupCodes.length }
-						onClick={ this.recordClickEvent( 'Generate New Backup Codes Button', this.onGenerate ) }
+						onClick={ this.handleGenerateButtonClick }
 					>
 						{ this.props.translate( 'Generate New Backup Codes' ) }
 					</Button>
@@ -167,7 +155,9 @@ const Security2faBackupCodes = createReactClass( {
 				</Card>
 			</div>
 		);
-	},
-} );
+	}
+}
 
-export default localize( Security2faBackupCodes );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Security2faBackupCodes ) );
