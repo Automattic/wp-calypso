@@ -107,6 +107,7 @@
 		"woocommerce/extension-orders-create": false,
 		"woocommerce/extension-orders-edit": false,
 		"woocommerce/extension-products": false,
+		"woocommerce/extension-product-categories": false,
 		"woocommerce/extension-promotions": false,
 		"woocommerce/extension-reviews": false,
 		"woocommerce/extension-settings": false,
