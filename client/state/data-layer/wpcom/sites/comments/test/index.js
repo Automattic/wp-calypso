@@ -29,6 +29,7 @@ import {
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, removeNotice } from 'state/notices/actions';
+import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 const query = {
 	siteId: 1337,
@@ -147,6 +148,25 @@ describe( '#requestComment', () => {
 			)
 		);
 	} );
+
+	test( 'when we see an attempt to use the wpcom endpoint over a jetpack remote, we do not attempt to retry using that query', () => {
+		const siteId = '124';
+		const commentId = '579';
+		const action = requestCommentAction( { siteId, commentId, query: { force: 'wpcom' } } );
+
+		expect( requestComment( action ) ).eql(
+			http(
+				{
+					method: 'GET',
+					path: `/sites/${ siteId }/comments/${ commentId }`,
+					apiVersion: '1.1',
+					query: { force: 'wpcom' },
+					retryPolicy: noRetry(),
+				},
+				action
+			)
+		);
+	} );
 } );
 
 describe( '#receiveCommentSuccess', () => {
@@ -177,6 +197,20 @@ describe( '#receiveCommentError', () => {
 
 		expect( receiveCommentError( action, response ) ).eql(
 			receiveCommentsErrorAction( {
+				siteId,
+				commentId,
+			} )
+		);
+	} );
+
+	test( 'when we see a failed shadow comment get, we should dispatch retry to the remote', () => {
+		const siteId = '124';
+		const commentId = '579';
+		const response = { post: { ID: 1 } };
+		const action = requestCommentAction( { siteId, commentId, query: { force: 'wpcom' } } );
+
+		expect( receiveCommentError( action, response ) ).eql(
+			requestCommentAction( {
 				siteId,
 				commentId,
 			} )

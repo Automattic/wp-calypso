@@ -27,7 +27,9 @@ import { getSiteComment } from 'state/selectors';
 import {
 	receiveComments,
 	receiveCommentsError as receiveCommentErrorAction,
+	requestComment as requestCommentAction,
 } from 'state/comments/actions';
+import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, status } = action;
@@ -89,12 +91,16 @@ const announceStatusChangeFailure = ( { dispatch }, action ) => {
 export const requestComment = action => {
 	const { siteId, commentId, query } = action;
 	return http(
-		{
-			method: 'GET',
-			path: `/sites/${ siteId }/comments/${ commentId }`,
-			apiVersion: '1.1',
-			query,
-		},
+		Object.assign(
+			{
+				method: 'GET',
+				path: `/sites/${ siteId }/comments/${ commentId }`,
+				apiVersion: '1.1',
+				query,
+			},
+			//if we see ?force=wpcom, on failure, retry against the real site instead.
+			query.force && { retryPolicy: noRetry() }
+		),
 		action
 	);
 };
@@ -105,7 +111,13 @@ export const receiveCommentSuccess = ( action, response ) => {
 	return receiveComments( { siteId, postId, comments: [ response ], commentById: true } );
 };
 
-export const receiveCommentError = ( { siteId, commentId } ) => {
+export const receiveCommentError = ( { siteId, commentId, query = {} } ) => {
+	// we can't tell the difference between a network failure and a shadow sync failure
+	// so if the request drops out automatically retry against the real site
+	const { force, ...retryQuery } = query;
+	if ( force === 'wpcom' ) {
+		return requestCommentAction( { siteId, commentId, query: retryQuery } );
+	}
 	return receiveCommentErrorAction( { siteId, commentId } );
 };
 
