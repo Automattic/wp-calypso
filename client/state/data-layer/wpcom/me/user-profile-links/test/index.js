@@ -5,8 +5,11 @@
  */
 import {
 	addUserProfileLinks,
+	deleteUserProfileLink,
 	handleAddError,
 	handleAddSuccess,
+	handleDeleteError,
+	handleDeleteSuccess,
 	handleRequestSuccess,
 	requestUserProfileLinks,
 } from '../';
@@ -16,6 +19,9 @@ import {
 	addUserProfileLinksError,
 	addUserProfileLinksMalformed,
 	addUserProfileLinksSuccess,
+	deleteUserProfileLink as deleteUserProfileLinkAction,
+	deleteUserProfileLinkError,
+	deleteUserProfileLinkSuccess,
 	receiveUserProfileLinks,
 } from 'state/user-profile-links/actions';
 import { USER_PROFILE_LINKS_RECEIVE } from 'state/action-types';
@@ -35,6 +41,10 @@ describe( 'wpcom-api', () => {
 				value: 'https://wordpress.com/',
 			},
 		];
+		const error = {
+			status: 403,
+			message: 'An active access token must be used to query information about the current user.',
+		};
 
 		describe( 'requestUserProfileLinks()', () => {
 			test( 'should dispatch HTTP request to fetch the users profile links endpoint', () => {
@@ -135,16 +145,57 @@ describe( 'wpcom-api', () => {
 		describe( 'handleAddError()', () => {
 			test( 'should dispatch user profile links add error action', () => {
 				const dispatch = jest.fn();
-				const error = {
-					status: 403,
-					message:
-						'An active access token must be used to query information about the current user.',
-				};
 
 				handleAddError( { dispatch }, { profileLinks }, error );
 
 				expect( dispatch ).toHaveBeenCalledTimes( 1 );
 				expect( dispatch ).toHaveBeenCalledWith( addUserProfileLinksError( profileLinks, error ) );
+			} );
+		} );
+
+		describe( 'deleteUserProfileLink()', () => {
+			test( 'should dispatch a POST HTTP request to the delete user profile link endpoint', () => {
+				const dispatch = jest.fn();
+				const linkSlug = 'https-wordpress-com';
+				const action = deleteUserProfileLinkAction( linkSlug );
+
+				deleteUserProfileLink( { dispatch }, action );
+
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith(
+					http(
+						{
+							apiVersion: '1.1',
+							method: 'POST',
+							path: '/me/settings/profile-links/' + linkSlug + '/delete',
+						},
+						action
+					)
+				);
+			} );
+		} );
+
+		describe( 'handleDeleteSuccess()', () => {
+			test( 'should dispatch user profile links delete success action', () => {
+				const dispatch = jest.fn();
+				const linkSlug = 'https-wordpress-com';
+
+				handleDeleteSuccess( { dispatch }, { linkSlug } );
+
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith( deleteUserProfileLinkSuccess( linkSlug ) );
+			} );
+		} );
+
+		describe( 'handleDeleteError()', () => {
+			test( 'should dispatch user profile links add error action', () => {
+				const dispatch = jest.fn();
+				const linkSlug = 'https-wordpress-com';
+
+				handleDeleteError( { dispatch }, { linkSlug }, error );
+
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith( deleteUserProfileLinkError( linkSlug, error ) );
 			} );
 		} );
 	} );
