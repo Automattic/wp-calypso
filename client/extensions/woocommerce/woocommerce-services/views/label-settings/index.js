@@ -21,7 +21,7 @@ import FormToggle from 'components/forms/form-toggle';
 import LabelSettings from './label-settings';
 import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
 import { setFormDataValue, restorePristineSettings } from '../../state/label-settings/actions';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getLabelSettingsFormData,
 	getLabelSettingsFormMeta,
@@ -34,11 +34,7 @@ class AccountSettingsRootView extends Component {
 	}
 
 	render() {
-		const { formData, formMeta, storeOptions, siteId, translate, show } = this.props;
-
-		if ( ! show ) {
-			return null;
-		}
+		const { formData, formMeta, storeOptions, siteId, translate } = this.props;
 
 		if ( ! formMeta || ( ! formMeta.isFetching && ! formMeta.can_manage_payments ) ) {
 			return <QueryLabelSettings siteId={ siteId } />;
@@ -100,7 +96,6 @@ AccountSettingsRootView.propTypes = {
 
 function mapStateToProps( state ) {
 	return {
-		show: getSelectedSite( state ).plan.user_is_owner,
 		siteId: getSelectedSiteId( state ),
 		storeOptions: getLabelSettingsStoreOptions( state ),
 		formData: getLabelSettingsFormData( state ),
