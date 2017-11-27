@@ -210,11 +210,7 @@ export function isDomainProduct( product ) {
 	assertValidProduct( product );
 
 	return (
-		isDomainMapping( product ) ||
-		isDomainRegistration( product ) ||
-		isPrivacyProtection( product ) ||
-		isDomainTransfer( product ) ||
-		isDomainTransferPrivacy( product )
+		isDomainMapping( product ) || isDomainRegistration( product ) || isPrivacyProtection( product )
 	);
 }
 
@@ -244,6 +240,13 @@ export function isSiteRedirect( product ) {
 	assertValidProduct( product );
 
 	return product.product_slug === 'offsite_redirect';
+}
+
+export function isDomainTransferProduct( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isDomainTransfer( product ) || isDomainTransferPrivacy( product );
 }
 
 export function isDomainTransfer( product ) {
@@ -402,6 +405,7 @@ export default {
 	isDomainRegistration,
 	isDomainTransfer,
 	isDomainTransferPrivacy,
+	isDomainTransferProduct,
 	isDotComPlan,
 	isEnterprise,
 	isFreeJetpackPlan,
