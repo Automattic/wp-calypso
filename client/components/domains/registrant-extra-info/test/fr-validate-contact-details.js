@@ -35,6 +35,22 @@ describe( 'validateContactDetails', () => {
 		expect( validateContactDetails( contactDetails ) ).to.eql( {} );
 	} );
 
+	test( 'should handle missing extra', () => {
+		const testDetails = omit( contactDetails, 'extra' );
+
+		expect(	validateContactDetails( testDetails ) )
+			.to.have.property( 'extra' );
+	} );
+
+	test( 'should handle null extra', () => {
+		const testDetails = Object.assign( {}, contactDetails, {
+			extra: null,
+		} );
+
+		expect( validateContactDetails( testDetails ) )
+			.to.have.property( 'extra' );
+	} );
+
 	// validateContactDetails data
 	const realSiretNumbers = [
 		[ '77575187800015' ],
