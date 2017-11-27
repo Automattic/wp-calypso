@@ -56,6 +56,7 @@ import {
 	isCalypsoStartedConnection,
 	isRemoteSiteOnSitesList,
 } from 'state/jetpack-connect/selectors';
+import config from 'config';
 
 /**
  * Constants
@@ -475,7 +476,10 @@ class LoggedInForm extends Component {
 		const { partnerId, siteId, siteSlug } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
-		if ( PRESSABLE_CLIENT_ID === partnerId ) {
+		if (
+			config.isEnabled( 'jetpack/connect-redirect-pressable-credential-approval' ) &&
+			PRESSABLE_CLIENT_ID === partnerId
+		) {
 			return `/start/pressable-nux?blogid=${ siteId }`;
 		}
 

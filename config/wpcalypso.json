@@ -41,6 +41,7 @@
 		"help/courses": true,
 		"jetpack/activity-log": true,
 		"jetpack/api-cache": true,
+		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/happychat": true,
 		"jetpack/google-analytics-anonymize-ip": true,
 		"jetpack/google-analytics-for-stores": true,

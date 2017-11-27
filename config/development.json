@@ -67,6 +67,7 @@
 		"jetpack/activity-log": true,
 		"jetpack/activity-log/rewind": true,
 		"jetpack/api-cache": true,
+		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/credentials": true,
 		"jetpack/happychat": true,
 		"jetpack/google-analytics-anonymize-ip": true,
