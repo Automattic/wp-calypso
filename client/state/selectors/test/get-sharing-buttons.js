@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSharingButtons } from '../';
+import { getSharingButtons } from 'state/selectors';
 
 describe( 'getSharingButtons()', () => {
 	test( 'should return null if the site is not tracked', () => {

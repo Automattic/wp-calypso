@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { countPostLikes } from '../';
+import { countPostLikes } from 'state/selectors';
 
 describe( 'countPostLikes()', () => {
 	test( 'should return null if the site has never been fetched', () => {

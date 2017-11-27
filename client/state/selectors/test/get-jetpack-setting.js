@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getJetpackSetting } from '../';
+import { getJetpackSetting } from 'state/selectors';
 import { settings as SETTINGS_FIXTURE } from './fixtures/jetpack-settings';
 
 describe( 'getJetpackSetting()', () => {

@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSiteIconUrl } from '../';
+import { getSiteIconUrl } from 'state/selectors';
 import MediaQueryManager from 'lib/query-manager/media';
 
 describe( 'getSiteIconUrl()', () => {

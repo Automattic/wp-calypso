@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getMediaStorageLimit } from '..';
+import { getMediaStorageLimit } from 'state/selectors';
 
 describe( 'getMediaStorageLimit()', () => {
 	test( 'should return null if the site is unknown', () => {

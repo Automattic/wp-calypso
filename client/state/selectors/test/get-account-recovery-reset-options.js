@@ -8,7 +8,7 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import { getAccountRecoveryResetOptions } from '../';
+import { getAccountRecoveryResetOptions } from 'state/selectors';
 
 describe( 'getAccountRecoveryResetOptions()', () => {
 	test( 'should return the items array under accountRecovery/reset substate tree.', () => {

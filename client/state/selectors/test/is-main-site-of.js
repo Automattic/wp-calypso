@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isMainSiteOf } from '../';
+import { isMainSiteOf } from 'state/selectors';
 
 describe( 'isMainSiteOf()', () => {
 	test( 'should return null if no sites exist in state', () => {

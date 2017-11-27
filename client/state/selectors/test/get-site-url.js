@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSiteUrl } from '..';
+import { getSiteUrl } from 'state/selectors';
 
 describe( 'getSiteUrl()', () => {
 	test( 'should return null if the site is unknown', () => {

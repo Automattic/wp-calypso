@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSiteGmtOffset } from '../';
+import { getSiteGmtOffset } from 'state/selectors';
 
 describe( 'getSiteGmtOffset()', () => {
 	test( 'should return null if the site has never been fetched', () => {

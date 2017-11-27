@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isVipSite } from '../';
+import { isVipSite } from 'state/selectors';
 
 describe( 'isVipSite()', () => {
 	test( 'returns null if site does not exist', () => {

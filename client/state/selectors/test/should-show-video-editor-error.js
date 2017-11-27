@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { shouldShowVideoEditorError } from '../';
+import { shouldShowVideoEditorError } from 'state/selectors';
 
 describe( 'shouldShowVideoEditorError()', () => {
 	test( 'should return the poster error state', () => {

@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getMenuItemTypes } from '../';
+import { getMenuItemTypes } from 'state/selectors';
 
 describe( 'getMenuItemTypes()', () => {
 	const defaultItems = [

@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingBillingTransactions } from '../';
+import { isRequestingBillingTransactions } from 'state/selectors';
 
 describe( 'isRequestingBillingTransactions()', () => {
 	test( 'should return true if the billing transactions are being fetched', () => {

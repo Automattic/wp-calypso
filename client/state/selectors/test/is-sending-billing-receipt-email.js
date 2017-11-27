@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isSendingBillingReceiptEmail } from '../';
+import { isSendingBillingReceiptEmail } from 'state/selectors';
 
 describe( 'isSendingBillingReceiptEmail()', () => {
 	test( 'should return true if the receipt email is being sent for that receiptId', () => {

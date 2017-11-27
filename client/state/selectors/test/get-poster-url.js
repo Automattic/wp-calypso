@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getPosterUrl } from '../';
+import { getPosterUrl } from 'state/selectors';
 
 describe( 'getPosterUrl()', () => {
 	test( 'should return the current video editor poster', () => {

@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getAccountRecoveryResetPasswordError } from '../';
+import { getAccountRecoveryResetPasswordError } from 'state/selectors';
 
 describe( 'getAccountRecoveryResetPasswordError()', () => {
 	test( 'should return the error field under resetPassword state tree.', () => {

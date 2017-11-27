@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getJpoConnect } from '../';
+import { getJpoConnect } from 'state/selectors';
 
 describe( 'getJpoConnect', () => {
 	test( 'should return null as a default state', () => {

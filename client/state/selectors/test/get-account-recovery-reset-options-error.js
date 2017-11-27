@@ -8,7 +8,7 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import { getAccountRecoveryResetOptionsError } from '../';
+import { getAccountRecoveryResetOptionsError } from 'state/selectors';
 
 describe( 'getAccountRecoveryResetOptionsError()', () => {
 	test( 'should return the error under account recovery state tree.', () => {

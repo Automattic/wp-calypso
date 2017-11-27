@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getMagicLoginCurrentView } from '../';
+import { getMagicLoginCurrentView } from 'state/selectors';
 
 describe( 'getMagicLoginCurrentView()', () => {
 	test( 'should return null if there is no information yet', () => {

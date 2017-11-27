@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getMagicLoginRequestedEmailSuccessfully } from '../';
+import { getMagicLoginRequestedEmailSuccessfully } from 'state/selectors';
 
 describe( 'getMagicLoginRequestedEmailSuccessfully()', () => {
 	test( 'should return false if there is no information yet', () => {

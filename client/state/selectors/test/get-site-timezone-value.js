@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSiteTimezoneValue } from '../';
+import { getSiteTimezoneValue } from 'state/selectors';
 
 describe( 'getSiteTimezoneValue()', () => {
 	test( 'should return null if the site has never been fetched', () => {

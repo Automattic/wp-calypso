@@ -260,7 +260,7 @@ When using selectors, you can import directly from `state/selectors`. For exampl
 import { canCurrentUser } from 'state/selectors';
 ```
 
-In this example, the logic for the selector exists at the file `state/selectors/can-current-user.js`. When creating a selector, you must also include its default function export in the list of exports in `state/selectors/index.js`.
+In this example, the logic for the selector exists at the file `state/selectors/can-current-user.js`.
 
 It's important that selectors always be pure functions, meaning that the function should always return the same result when passed identical arguments in sequence. There should be no side-effects of calling a selector. For example, in a selector you should never trigger an AJAX request or assign values to variables defined outside the scope of the function.
 

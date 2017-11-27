@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isDomainOnlySite } from '../';
+import { isDomainOnlySite } from 'state/selectors';
 
 describe( '#isDomainOnlySite()', () => {
 	const siteId = 77203074;

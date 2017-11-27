@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getThemeShowcaseTitle } from '../';
+import { getThemeShowcaseTitle } from 'state/selectors';
 import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeShowcaseTitle()', () => {

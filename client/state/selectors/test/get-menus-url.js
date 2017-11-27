@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getMenusUrl } from '../';
+import { getMenusUrl } from 'state/selectors';
 
 const state = {
 	currentUser: {

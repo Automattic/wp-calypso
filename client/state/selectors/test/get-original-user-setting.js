@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getOriginalUserSetting } from '../';
+import { getOriginalUserSetting } from 'state/selectors';
 
 describe( 'getOriginalUserSetting()', () => {
 	test( 'should return null if the server values were not received yet', () => {

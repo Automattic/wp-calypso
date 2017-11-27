@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSiteSetting } from '../';
+import { getSiteSetting } from 'state/selectors';
 
 describe( 'getSiteSettings()', () => {
 	const state = {

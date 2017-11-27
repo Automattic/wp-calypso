@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getPosterUploadProgress } from '../';
+import { getPosterUploadProgress } from 'state/selectors';
 
 describe( 'getPosterUploadProgress()', () => {
 	test( 'should return the upload progress', () => {

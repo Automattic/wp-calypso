@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isDropZoneVisible } from '../';
+import { isDropZoneVisible } from 'state/selectors';
 
 describe( 'isDropZoneVisible()', () => {
 	test( 'should return false as a default state', () => {

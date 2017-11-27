@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { isBusinessPlanUser } from '../';
+import { isBusinessPlanUser } from 'state/selectors';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 describe( 'isBusinessPlanUser()', () => {

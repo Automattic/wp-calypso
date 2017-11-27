@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getMagicLoginRequestedAuthSuccessfully } from '../';
+import { getMagicLoginRequestedAuthSuccessfully } from 'state/selectors';
 
 describe( 'getMagicLoginRequestedAuthSuccessfully()', () => {
 	test( 'should return false if there is no information yet', () => {

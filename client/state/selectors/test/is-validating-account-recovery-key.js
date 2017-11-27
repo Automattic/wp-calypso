@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { isValidatingAccountRecoveryKey } from '../';
+import { isValidatingAccountRecoveryKey } from 'state/selectors';
 
 describe( 'isValidatingAccountRecoveryKey()', () => {
 	test( 'should return the requesting field under the validate substate tree.', () => {

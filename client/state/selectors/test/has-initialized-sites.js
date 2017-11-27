@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { hasInitializedSites } from '../';
+import { hasInitializedSites } from 'state/selectors';
 
 describe( 'hasInitializedSites()', () => {
 	test( 'should return false if site selection has not occurred', () => {

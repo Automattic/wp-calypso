@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isDeletingSite } from '../';
+import { isDeletingSite } from 'state/selectors';
 
 describe( 'isDeletingSite()', () => {
 	test( 'should return false if no requests have been triggered', () => {

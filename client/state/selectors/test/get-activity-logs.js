@@ -7,7 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getActivityLogs } from '..';
+import { getActivityLogs } from 'state/selectors';
 import ActivityQueryManager from 'lib/query-manager/activity';
 
 const SITE_ID = 1234;

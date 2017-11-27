@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingMediaItem } from '../';
+import { isRequestingMediaItem } from 'state/selectors';
 
 describe( 'isRequestingMediaItem()', () => {
 	const state = {

@@ -7,7 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getCurrentPlanPurchaseId } from '..';
+import { getCurrentPlanPurchaseId } from 'state/selectors';
 
 describe( 'getCurrentPlanPurchaseId()', () => {
 	it( 'should return null if the site is unknown', () => {

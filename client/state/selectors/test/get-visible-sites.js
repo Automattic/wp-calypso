@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getVisibleSites } from '../';
+import { getVisibleSites } from 'state/selectors';
 import { userState } from './fixtures/user-state';
 
 describe( 'getVisibleSites()', () => {
