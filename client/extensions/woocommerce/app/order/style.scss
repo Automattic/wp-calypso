@@ -24,6 +24,26 @@
 		}
 	}
 
+	@include breakpoint( ">1040px" ) {
+		.order-details {
+			order: 1;
+			flex: 2;
+			margin-right: 16px;
+		}
+
+		.order-activity-log {
+			order: 3;
+			flex: none;
+			margin-right: 0;
+			width: 100%;
+		}
+
+		.order-customer {
+			order: 2;
+			flex: 1;
+		}
+	}
+
 	.section-header__label {
 		font-size: 16px;
 	}
@@ -32,6 +52,10 @@
 		.table-row:hover {
 			background: transparent;
 		}
+	}
+
+	.labels-setup-notice {
+		width: 100%;
 	}
 }
 

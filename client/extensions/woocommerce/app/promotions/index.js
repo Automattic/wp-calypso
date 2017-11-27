@@ -105,7 +105,7 @@ class Promotions extends Component {
 		const content = isEmpty ? this.renderEmptyContent() : this.renderContent();
 
 		return (
-			<Main className={ classes }>
+			<Main className={ classes } wideLayout>
 				<SidebarNavigation />
 				<ActionHeader breadcrumbs={ <span>{ translate( 'Promotions' ) }</span> }>
 					<Button primary href={ getLink( '/store/promotion/:site/', site ) }>

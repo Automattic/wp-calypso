@@ -185,7 +185,7 @@ class ProductUpdate extends React.Component {
 		const saveEnabled = isValid && ! isBusy && hasEdits;
 
 		return (
-			<Main className={ className }>
+			<Main className={ className } wideLayout>
 				<SidebarNavigation />
 				<ProductHeader
 					site={ site }

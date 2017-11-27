@@ -194,7 +194,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		];
 
 		return (
-			<Main className={ classNames( 'settings-taxes', className ) }>
+			<Main className={ classNames( 'settings-taxes', className ) } wideLayout>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
 					<TaxSettingsSaveButton onSave={ this.onSave } />
 				</ActionHeader>

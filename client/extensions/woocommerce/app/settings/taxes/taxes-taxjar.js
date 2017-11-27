@@ -43,7 +43,7 @@ class SettingsTaxesTaxJar extends Component {
 		const pluginUrl = getLink( '/plugins/taxjar-simplified-taxes-for-woocommerce/:site', site );
 
 		return (
-			<Main className={ classNames( 'settings-taxes', className ) }>
+			<Main className={ classNames( 'settings-taxes', className ) } wideLayout>
 				<ActionHeader breadcrumbs={ breadcrumbs } />
 				<SettingsNavigation activeSection="taxes" />
 				<div>

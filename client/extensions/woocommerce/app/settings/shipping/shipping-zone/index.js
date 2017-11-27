@@ -133,7 +133,7 @@ class Shipping extends Component {
 		const { className, isRestOfTheWorld, hasEdits, siteId } = this.props;
 
 		return (
-			<Main className={ classNames( 'shipping', className ) }>
+			<Main className={ classNames( 'shipping', className ) } wideLayout>
 				<ProtectFormGuard isChanged={ hasEdits } />
 				<QueryShippingZones siteId={ siteId } />
 				<QuerySettingsGeneral siteId={ siteId } />

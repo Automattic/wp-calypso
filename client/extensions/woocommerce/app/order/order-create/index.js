@@ -45,7 +45,7 @@ class OrderCreate extends Component {
 			<span>{ translate( 'New Order' ) }</span>,
 		];
 		return (
-			<Main className={ className }>
+			<Main className={ className } wideLayout>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
 					<Button primary>{ translate( 'Save Order' ) }</Button>
 				</ActionHeader>
