@@ -158,7 +158,7 @@ describe( 'markup', () => {
 				);
 
 				expect( value ).to.equal(
-					'<img src="http://example.com/image.png?w=1024" width="1024" height="410" class="alignnone size-large wp-image-1"/>'
+					'<img src="https://i2.wp.com/example.com/image.png?w=1024" width="1024" height="410" class="alignnone size-large wp-image-1"/>'
 				);
 			} );
 
@@ -183,7 +183,7 @@ describe( 'markup', () => {
 				);
 
 				expect( value ).to.equal(
-					'<img src="http://example.com/image.png?w=410" width="410" height="1024" class="alignnone size-large wp-image-1"/>'
+					'<img src="https://i2.wp.com/example.com/image.png?w=410" width="410" height="1024" class="alignnone size-large wp-image-1"/>'
 				);
 			} );
 
