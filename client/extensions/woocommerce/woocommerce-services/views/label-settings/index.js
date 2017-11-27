@@ -36,7 +36,7 @@ class AccountSettingsRootView extends Component {
 	render() {
 		const { formData, formMeta, storeOptions, siteId, translate } = this.props;
 
-		if ( ! formMeta || ( ! formMeta.isFetching && ! formMeta.can_manage_payments ) ) {
+		if ( ! formMeta ) {
 			return <QueryLabelSettings siteId={ siteId } />;
 		}
 		const setValue = ( key, value ) => this.props.setFormDataValue( siteId, key, value );
@@ -61,6 +61,10 @@ class AccountSettingsRootView extends Component {
 					selectedPaymentMethod={ ( formData || {} ).selected_payment_method_id }
 					paperSize={ ( formData || {} ).paper_size }
 					storeOptions={ storeOptions }
+					canEditPayments={ formMeta.can_manage_payments }
+					canEditSettings={ Boolean( formMeta.can_manage_payments || formMeta.can_edit_settings ) }
+					masterUserName={ formMeta.master_user_name }
+					masterUserLogin={ formMeta.master_user_login }
 				/>
 			);
 		};
@@ -79,7 +83,11 @@ class AccountSettingsRootView extends Component {
 					) }
 				>
 					{ renderToggle && (
-						<FormToggle checked={ formData.enabled } onChange={ onEnabledToggle } />
+						<FormToggle
+							checked={ formData.enabled }
+							onChange={ onEnabledToggle }
+							disabled={ Boolean( ! formMeta.can_manage_payments && ! formMeta.can_edit_settings ) }
+						/>
 					) }
 				</ExtendedHeader>
 				<Card className={ classNames( 'label-settings__labels-container', { hidden } ) }>
