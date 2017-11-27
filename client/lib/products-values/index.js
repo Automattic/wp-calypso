@@ -27,7 +27,7 @@ import {
 	PLAN_CHARGEBACK,
 	PLAN_MONTHLY_PERIOD,
 } from 'lib/plans/constants';
-import { isTransfer } from 'lib/cart-values/cart-items';
+import { domainProductSlugs } from 'lib/domains/constants';
 
 import schema from './schema.json';
 
@@ -250,7 +250,7 @@ export function isDomainTransfer( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return isTransfer( product );
+	return product.product_slug === domainProductSlugs.TRANSFER_IN;
 }
 
 export function isDomainTransferPrivacy( product ) {

@@ -34,6 +34,7 @@ import {
 	isDomainProduct,
 	isDomainRedemption,
 	isDomainRegistration,
+	isDomainTransfer,
 	isFreeTrial,
 	isFreeWordPressComDomain,
 	isGoogleApps,
@@ -345,7 +346,7 @@ export function hasRenewalItem( cart ) {
  * @returns {boolean} true if there is at least one domain transfer item, false otherwise
  */
 export function hasTransferProduct( cart ) {
-	return some( getAll( cart ), isTransfer );
+	return some( getAll( cart ), isDomainTransfer );
 }
 
 /**
@@ -817,7 +818,7 @@ export function changePrivacyForDomains( cart, domainItems, changeFunction ) {
 	return flow.apply(
 		null,
 		domainItems.map( function( item ) {
-			if ( isTransfer( item ) ) {
+			if ( isDomainTransfer( item ) ) {
 				return changeFunction( domainTransferPrivacy( { domain: item.meta } ) );
 			}
 			return changeFunction( domainPrivacyProtection( { domain: item.meta } ) );
@@ -852,16 +853,6 @@ export function removePrivacyFromAllDomains( cart ) {
  */
 export function isRenewal( cartItem ) {
 	return cartItem.extra && cartItem.extra.purchaseType === 'renewal';
-}
-
-/**
- * Determines whether a cart item is a transfer
- *
- * @param {Object} cartItem - `CartItemValue` object
- * @returns {boolean} true if item is a renewal
- */
-export function isTransfer( cartItem ) {
-	return cartItem.product_slug === domainProductSlugs.TRANSFER_IN;
 }
 
 /**
@@ -989,7 +980,6 @@ export default {
 	guidedTransferItem,
 	isDomainBeingUsedForPlan,
 	isNextDomainFree,
-	isTransfer,
 	hasDomainCredit,
 	hasDomainInCart,
 	hasDomainMapping,
