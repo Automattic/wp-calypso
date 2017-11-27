@@ -35,10 +35,7 @@ class Security2faBackupCodes extends React.Component {
 
 	handleGenerateButtonClick = () => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Generate New Backup Codes Button' );
-		this.onGenerate();
-	};
 
-	onGenerate = () => {
 		this.setState( {
 			generatingCodes: true,
 			verified: false,
