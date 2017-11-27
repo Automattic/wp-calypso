@@ -19,12 +19,7 @@
 		max-height: 13px * 1.6;
 		overflow: hidden;
 		position: relative;
-		width: calc( 100% - 95px );
-
-		&::after {
-			@include long-content-fade( $size: 35px );
-
-		}
+		max-width: calc( 100% - 95px );
 	}
 
 	.gravatar {
