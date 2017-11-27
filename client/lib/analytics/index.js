@@ -201,160 +201,11 @@ const analytics = {
 		_dispatch = dispatch;
 	},
 
-	mc: {
-		bumpStat: function( group, name ) {
-			if ( 'object' === typeof group ) {
-				mcDebug( 'Bumping stats %o', group );
-			} else {
-				mcDebug( 'Bumping stat %s:%s', group, name );
-			}
-
-			if ( config( 'mc_analytics_enabled' ) ) {
-				const uriComponent = buildQuerystring( group, name );
-				new Image().src =
-					document.location.protocol +
-					'//pixel.wp.com/g.gif?v=wpcom-no-pv' +
-					uriComponent +
-					'&t=' +
-					Math.random();
-			}
-		},
-
-		bumpStatWithPageView: function( group, name ) {
-			// this function is fairly dangerous, as it bumps page views for wpcom and should only be called in very specific cases.
-			if ( 'object' === typeof group ) {
-				mcDebug( 'Bumping page view with props %o', group );
-			} else {
-				mcDebug( 'Bumping page view %s:%s', group, name );
-			}
-
-			if ( config( 'mc_analytics_enabled' ) ) {
-				const uriComponent = buildQuerystringNoPrefix( group, name );
-				new Image().src =
-					document.location.protocol +
-					'//pixel.wp.com/g.gif?v=wpcom' +
-					uriComponent +
-					'&t=' +
-					Math.random();
-			}
-		},
-	},
-
-	// pageView is a wrapper for pageview events across Tracks and GA
-	pageView: {
-		record: function( urlPath, pageTitle, params = {} ) {
-			// add delay to avoid stale `_dl` in recorded calypso_page_view event details
-			// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript
-			setTimeout( () => {
-				params.last_pageview_path_with_count =
-					mostRecentUrlPath + '(' + pathCounter.toString() + ')';
-				pathCounter++;
-				params.this_pageview_path_with_count = urlPath + '(' + pathCounter.toString() + ')';
-				analytics.tracks.recordPageView( urlPath, params );
-				analytics.ga.recordPageView( urlPath, pageTitle );
-				analytics.emit( 'page-view', urlPath, pageTitle );
-				mostRecentUrlPath = urlPath;
-			}, 0 );
-		},
-	},
-
 	timing: {
 		record: function( eventType, duration, triggerName ) {
 			const urlPath = mostRecentUrlPath || 'unknown';
 			analytics.ga.recordTiming( urlPath, eventType, duration, triggerName );
 			analytics.statsd.recordTiming( urlPath, eventType, duration, triggerName );
-		},
-	},
-
-	tracks: {
-		recordEvent: function( eventName, eventProperties ) {
-			let superProperties;
-
-			eventProperties = eventProperties || {};
-
-			if ( process.env.NODE_ENV !== 'production' ) {
-				for ( const key in eventProperties ) {
-					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
-						const errorMessage =
-							`Unable to record event "${ eventName }" because nested` +
-							`properties are not supported by Tracks. Check '${ key }' on`;
-						console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
-
-						return;
-					}
-				}
-			}
-
-			tracksDebug( 'Record event "%s" called with props %o', eventName, eventProperties );
-
-			if ( eventName.indexOf( 'calypso_' ) !== 0 ) {
-				tracksDebug( '- Event name must be prefixed by "calypso_"' );
-				return;
-			}
-
-			if ( _superProps ) {
-				_dispatch && _dispatch( { type: ANALYTICS_SUPER_PROPS_UPDATE } );
-				superProperties = _superProps.getAll( _selectedSite, _siteCount );
-				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
-			}
-
-			// Remove properties that have an undefined value
-			// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-			eventProperties = omit( eventProperties, isUndefined );
-
-			tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
-
-			window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
-			analytics.emit( 'record-event', eventName, eventProperties );
-		},
-
-		recordPageView: function( urlPath, params ) {
-			let eventProperties = {
-				path: urlPath,
-				do_not_track: doNotTrack() ? 1 : 0,
-			};
-
-			// add optional path params
-			if ( params ) {
-				eventProperties = assign( eventProperties, params );
-			}
-
-			// Record all `utm` marketing parameters as event properties on the page view event
-			// so we can analyze their performance with our analytics tools
-			if ( window.location ) {
-				const parsedUrl = url.parse( window.location.href );
-				const urlParams = qs.parse( parsedUrl.query );
-				const utmParams = pickBy( urlParams, function( value, key ) {
-					return startsWith( key, 'utm_' );
-				} );
-
-				eventProperties = assign( eventProperties, utmParams );
-			}
-
-			analytics.tracks.recordEvent( 'calypso_page_view', eventProperties );
-
-			// Ensure every Calypso user is added to our retargeting audience via the AdWords retargeting tag
-			retarget();
-
-			// Track the page view with DCM Floodlight as well
-			recordPageViewInFloodlight( urlPath );
-		},
-
-		createRandomId,
-
-		/**
-		 * Returns the anoymous id stored in the `tk_ai` cookie
-		 *
-		 * @returns {String} - The Tracks anonymous user id
-		 */
-		anonymousUserId: function() {
-			const cookies = cookie.parse( document.cookie );
-
-			return cookies.tk_ai;
-		},
-
-		setAnonymousUserId: function( anonId ) {
-			window._tkq.push( [ 'identifyAnonUser', anonId ] );
 		},
 	},
 
@@ -396,75 +247,6 @@ const analytics = {
 	},
 
 	// Google Analytics usage and event stat tracking
-	ga: {
-		initialized: false,
-
-		initialize: function() {
-			const parameters = {};
-			if ( ! analytics.ga.initialized ) {
-				if ( _user && _user.get() ) {
-					parameters.userId = 'u-' + _user.get().ID;
-				}
-
-				window.ga( 'create', config( 'google_analytics_key' ), 'auto', parameters );
-
-				analytics.ga.initialized = true;
-			}
-		},
-
-		recordPageView: function( urlPath, pageTitle ) {
-			if ( ! isGoogleAnalyticsAllowed() ) {
-				return;
-			}
-
-			analytics.ga.initialize();
-
-			gaDebug( 'Recording Page View ~ [URL: ' + urlPath + '] [Title: ' + pageTitle + ']' );
-
-			// Set the current page so all GA events are attached to it.
-			window.ga( 'set', 'page', urlPath );
-
-			window.ga( 'send', {
-				hitType: 'pageview',
-				page: urlPath,
-				title: pageTitle,
-			} );
-		},
-
-		recordEvent: function( category, action, label, value ) {
-			if ( ! isGoogleAnalyticsAllowed() ) {
-				return;
-			}
-
-			analytics.ga.initialize();
-
-			let debugText = 'Recording Event ~ [Category: ' + category + '] [Action: ' + action + ']';
-
-			if ( 'undefined' !== typeof label ) {
-				debugText += ' [Option Label: ' + label + ']';
-			}
-
-			if ( 'undefined' !== typeof value ) {
-				debugText += ' [Option Value: ' + value + ']';
-			}
-
-			gaDebug( debugText );
-
-			window.ga( 'send', 'event', category, action, label, value );
-		},
-
-		recordTiming: function( urlPath, eventType, duration, triggerName ) {
-			if ( ! isGoogleAnalyticsAllowed() ) {
-				return;
-			}
-
-			analytics.ga.initialize();
-
-			gaDebug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
-
-			window.ga( 'send', 'timing', urlPath, eventType, duration, triggerName );
-		},
-	},
 
 	// HotJar tracking
 	hotjar: {
@@ -492,7 +274,7 @@ const analytics = {
 	},
 
 	identifyUser: function() {
-		const anonymousUserId = this.tracks.anonymousUserId();
+		const anonymousUserId = analytics.tracks.anonymousUserId();
 
 		// Don't identify the user if we don't have one
 		if ( _user && _user.initialized ) {
@@ -513,4 +295,228 @@ const analytics = {
 	},
 };
 emitter( analytics );
-export default analytics;
+
+const ga = {
+	initialized: false,
+
+	initialize: function() {
+		const parameters = {};
+		if ( ! ga.initialized ) {
+			if ( _user && _user.get() ) {
+				parameters.userId = 'u-' + _user.get().ID;
+			}
+
+			window.ga( 'create', config( 'google_analytics_key' ), 'auto', parameters );
+
+			ga.initialized = true;
+		}
+	},
+
+	recordPageView: function( urlPath, pageTitle ) {
+		if ( ! isGoogleAnalyticsAllowed() ) {
+			return;
+		}
+
+		ga.initialize();
+
+		gaDebug( 'Recording Page View ~ [URL: ' + urlPath + '] [Title: ' + pageTitle + ']' );
+
+		// Set the current page so all GA events are attached to it.
+		window.ga( 'set', 'page', urlPath );
+
+		window.ga( 'send', {
+			hitType: 'pageview',
+			page: urlPath,
+			title: pageTitle,
+		} );
+	},
+
+	recordEvent: function( category, action, label, value ) {
+		if ( ! isGoogleAnalyticsAllowed() ) {
+			return;
+		}
+
+		ga.initialize();
+
+		let debugText = 'Recording Event ~ [Category: ' + category + '] [Action: ' + action + ']';
+
+		if ( 'undefined' !== typeof label ) {
+			debugText += ' [Option Label: ' + label + ']';
+		}
+
+		if ( 'undefined' !== typeof value ) {
+			debugText += ' [Option Value: ' + value + ']';
+		}
+
+		gaDebug( debugText );
+
+		window.ga( 'send', 'event', category, action, label, value );
+	},
+
+	recordTiming: function( urlPath, eventType, duration, triggerName ) {
+		if ( ! isGoogleAnalyticsAllowed() ) {
+			return;
+		}
+
+		ga.initialize();
+
+		gaDebug( 'Recording Timing ~ [URL: ' + urlPath + '] [Duration: ' + duration + ']' );
+
+		window.ga( 'send', 'timing', urlPath, eventType, duration, triggerName );
+	},
+};
+
+const mc = {
+	bumpStat: function( group, name ) {
+		if ( 'object' === typeof group ) {
+			mcDebug( 'Bumping stats %o', group );
+		} else {
+			mcDebug( 'Bumping stat %s:%s', group, name );
+		}
+
+		if ( config( 'mc_analytics_enabled' ) ) {
+			const uriComponent = buildQuerystring( group, name );
+			new Image().src =
+				document.location.protocol +
+				'//pixel.wp.com/g.gif?v=wpcom-no-pv' +
+				uriComponent +
+				'&t=' +
+				Math.random();
+		}
+	},
+
+	bumpStatWithPageView: function( group, name ) {
+		// this function is fairly dangerous, as it bumps page views for wpcom and should only be called in very specific cases.
+		if ( 'object' === typeof group ) {
+			mcDebug( 'Bumping page view with props %o', group );
+		} else {
+			mcDebug( 'Bumping page view %s:%s', group, name );
+		}
+
+		if ( config( 'mc_analytics_enabled' ) ) {
+			const uriComponent = buildQuerystringNoPrefix( group, name );
+			new Image().src =
+				document.location.protocol +
+				'//pixel.wp.com/g.gif?v=wpcom' +
+				uriComponent +
+				'&t=' +
+				Math.random();
+		}
+	},
+};
+
+const tracks = {
+	recordEvent: function( eventName, eventProperties ) {
+		let superProperties;
+
+		eventProperties = eventProperties || {};
+
+		if ( process.env.NODE_ENV !== 'production' ) {
+			for ( const key in eventProperties ) {
+				if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
+					const errorMessage =
+						`Unable to record event "${ eventName }" because nested` +
+						`properties are not supported by Tracks. Check '${ key }' on`;
+					console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
+
+					return;
+				}
+			}
+		}
+
+		tracksDebug( 'Record event "%s" called with props %o', eventName, eventProperties );
+
+		if ( eventName.indexOf( 'calypso_' ) !== 0 ) {
+			tracksDebug( '- Event name must be prefixed by "calypso_"' );
+			return;
+		}
+
+		if ( _superProps ) {
+			_dispatch && _dispatch( { type: ANALYTICS_SUPER_PROPS_UPDATE } );
+			superProperties = _superProps.getAll( _selectedSite, _siteCount );
+			eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
+		}
+
+		// Remove properties that have an undefined value
+		// This allows a caller to easily remove properties from the recorded set by setting them to undefined
+		eventProperties = omit( eventProperties, isUndefined );
+
+		tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
+
+		window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
+		analytics.emit( 'record-event', eventName, eventProperties );
+	},
+
+	recordPageView: function( urlPath, params ) {
+		let eventProperties = {
+			path: urlPath,
+			do_not_track: doNotTrack() ? 1 : 0,
+		};
+
+		// add optional path params
+		if ( params ) {
+			eventProperties = assign( eventProperties, params );
+		}
+
+		// Record all `utm` marketing parameters as event properties on the page view event
+		// so we can analyze their performance with our analytics tools
+		if ( window.location ) {
+			const parsedUrl = url.parse( window.location.href );
+			const urlParams = qs.parse( parsedUrl.query );
+			const utmParams = pickBy( urlParams, function( value, key ) {
+				return startsWith( key, 'utm_' );
+			} );
+
+			eventProperties = assign( eventProperties, utmParams );
+		}
+
+		tracks.recordEvent( 'calypso_page_view', eventProperties );
+
+		// Ensure every Calypso user is added to our retargeting audience via the AdWords retargeting tag
+		retarget();
+
+		// Track the page view with DCM Floodlight as well
+		recordPageViewInFloodlight( urlPath );
+	},
+
+	createRandomId,
+
+	/**
+		 * Returns the anoymous id stored in the `tk_ai` cookie
+		 *
+		 * @returns {String} - The Tracks anonymous user id
+		 */
+	anonymousUserId: function() {
+		const cookies = cookie.parse( document.cookie );
+
+		return cookies.tk_ai;
+	},
+
+	setAnonymousUserId: function( anonId ) {
+		window._tkq.push( [ 'identifyAnonUser', anonId ] );
+	},
+};
+
+// pageView is a wrapper for pageview events across Tracks and GA
+const pageView = {
+	record: function( urlPath, pageTitle, params = {} ) {
+		// add delay to avoid stale `_dl` in recorded calypso_page_view event details
+		// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript
+		setTimeout( () => {
+			params.last_pageview_path_with_count = mostRecentUrlPath + '(' + pathCounter.toString() + ')';
+			pathCounter++;
+			params.this_pageview_path_with_count = urlPath + '(' + pathCounter.toString() + ')';
+			tracks.recordPageView( urlPath, params );
+			ga.recordPageView( urlPath, pageTitle );
+			analytics.emit( 'page-view', urlPath, pageTitle );
+			mostRecentUrlPath = urlPath;
+		}, 0 );
+	},
+};
+
+analytics.ga = ga;
+analytics.mc = mc;
+analytics.pageView = pageView;
+analytics.tracks = tracks;
+
+export { analytics as default, ga, mc, pageView, tracks };
