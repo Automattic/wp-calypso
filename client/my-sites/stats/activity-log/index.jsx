@@ -19,7 +19,6 @@ import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import ActivityLogCredentialsNotice from '../activity-log-credentials-notice';
 import ActivityLogDay from '../activity-log-day';
 import ActivityLogDayPlaceholder from '../activity-log-day/placeholder';
-import ActivityLogRewindToggle from './activity-log-rewind-toggle';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
@@ -607,7 +606,6 @@ class ActivityLog extends Component {
 				{ this.renderErrorMessage() }
 				{ hasFirstBackup && this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
-				{ ! isRewindActive && !! isPressable && <ActivityLogRewindToggle siteId={ siteId } /> }
 				{ ! requestData.logs.hasLoaded && (
 					<section className="activity-log__wrapper">
 						<ActivityLogDayPlaceholder />
