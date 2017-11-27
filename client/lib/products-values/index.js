@@ -257,7 +257,7 @@ export function isDomainTransferPrivacy( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === 'domain_transfer_privacy';
+	return product.product_slug === domainProductSlugs.TRANSFER_IN_PRIVACY;
 }
 
 export function isCredits( product ) {
