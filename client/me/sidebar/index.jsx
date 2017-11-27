@@ -3,50 +3,42 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import createReactClass from 'create-react-class';
-import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import { flow } from 'lodash';
 import { localize } from 'i18n-calypso';
 
-const debug = debugFactory( 'calypso:me:sidebar' );
-
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
+import config from 'config';
+import ProfileGravatar from 'me/profile-gravatar';
+import purchasesPaths from 'me/purchases/paths';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
-import config from 'config';
-import ProfileGravatar from 'me/profile-gravatar';
-import eventRecorder from 'me/event-recorder';
 import userFactory from 'lib/user';
-const user = userFactory();
 import userUtilities from 'lib/user/utils';
-import Button from 'components/button';
-import purchasesPaths from 'me/purchases/paths';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { logoutUser } from 'state/login/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
-const MeSidebar = createReactClass( {
-	displayName: 'MeSidebar',
-	mixins: [ eventRecorder ],
+/**
+ * Module variables
+ */
+const user = userFactory();
 
-	componentDidMount: function() {
-		debug( 'The MeSidebar React component is mounted.' );
-	},
-
-	onNavigate: function() {
+class MeSidebar extends React.Component {
+	onNavigate = () => {
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
-	},
+	};
 
-	onSignOut: function() {
+	onSignOut = () => {
 		const currentUser = this.props.currentUser;
 
 		// If user is using en locale, redirect to app promo page on sign out
@@ -67,10 +59,26 @@ const MeSidebar = createReactClass( {
 			userUtilities.logout( redirect );
 		}
 
-		this.recordClickEvent( 'Sidebar Sign Out Link' );
-	},
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Sidebar Sign Out Link' );
+	};
 
-	render: function() {
+	renderNextStepsItem( selected ) {
+		const { currentUser, translate } = this.props;
+
+		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
+			return (
+				<SidebarItem
+					selected={ selected === 'next' }
+					link="/me/next"
+					label={ translate( 'Next Steps' ) }
+					icon="list-checkmark"
+					onNavigate={ this.onNavigate }
+				/>
+			);
+		}
+	}
+
+	render() {
 		const { context, translate } = this.props;
 		const filterMap = {
 			'/me': 'profile',
@@ -187,24 +195,8 @@ const MeSidebar = createReactClass( {
 				<SidebarFooter />
 			</Sidebar>
 		);
-	},
-
-	renderNextStepsItem: function( selected ) {
-		const { currentUser, translate } = this.props;
-
-		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
-			return (
-				<SidebarItem
-					selected={ selected === 'next' }
-					link="/me/next"
-					label={ translate( 'Next Steps' ) }
-					icon="list-checkmark"
-					onNavigate={ this.onNavigate }
-				/>
-			);
-		}
-	},
-} );
+	}
+}
 
 const enhance = flow(
 	localize,
@@ -214,6 +206,7 @@ const enhance = flow(
 		} ),
 		{
 			logoutUser,
+			recordGoogleEvent,
 			setNextLayoutFocus,
 		}
 	)
