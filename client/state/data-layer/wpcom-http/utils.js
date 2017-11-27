@@ -75,7 +75,12 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 	// note: this property does not nest deeply into the data structure, that is, properties
 	// of a property that aren't in the schema could still come through since only the top
 	// level of properties are pruned
-	const filter = schemaValidator.filter( { ...schema, additionalProperties: false } );
+	const filter = schemaValidator.filter(
+		Object.assign(
+			schema,
+			schema.type && schema.type === 'object' && { additionalProperties: false }
+		)
+	);
 
 	const validate = data => {
 		if ( ! validator( data ) ) {

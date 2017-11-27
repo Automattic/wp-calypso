@@ -27,6 +27,7 @@ import Main from 'components/main';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
 import QueryJetpackCredentials from 'components/data/query-jetpack-credentials';
+import QueryRewindState from 'components/data/query-rewind-state';
 import QueryRewindStatus from 'components/data/query-rewind-status';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
@@ -594,6 +595,7 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
+				{ rewindEnabledByConfig && <QueryRewindState siteId={ siteId } /> }
 				{ rewindEnabledByConfig && <QueryRewindStatus siteId={ siteId } /> }
 				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
 				{ siteId && isRewindActive && <QueryRewindBackupStatus siteId={ siteId } /> }
