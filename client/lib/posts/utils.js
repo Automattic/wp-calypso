@@ -7,7 +7,7 @@
 import url from 'url';
 import i18n from 'i18n-calypso';
 import moment from 'moment-timezone';
-import { includes } from 'lodash';
+import { includes, memoize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,17 @@ import { getFeaturedImageId } from './utils-ssr-ready';
 
 var utils = {
 	getFeaturedImageId,
+
+	/**
+	 * This is a stop-gap measure to prevent performance issues on mobile clients.
+	 * @TODO remove references to this function once:
+	 *   * diffing is fast on mobile devices
+	 *   * diffing is calculated on the server
+	 * ...whichever comes first :)
+	 */
+	deviceSupportsRevisions: memoize(
+		() => global.navigator && navigator.userAgent && ! navigator.userAgent.match( /mobile/i )
+	),
 
 	getEditURL: function( post, site ) {
 		let basePath = '';

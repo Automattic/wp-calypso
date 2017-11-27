@@ -206,7 +206,10 @@ export class EditorGroundControl extends PureComponent {
 		const isSaveAvailable = this.isSaveAvailable();
 		const showingStatusLabel = this.shouldShowStatusLabel();
 		const showingSaveStatus = isSaveAvailable || showingStatusLabel;
-		const hasRevisions = isEnabled( 'post-editor/revisions' ) && get( post, 'revisions.length' );
+		const hasRevisions =
+			isEnabled( 'post-editor/revisions' ) &&
+			postUtils.deviceSupportsRevisions() &&
+			get( post, 'revisions.length' );
 
 		if ( ! ( showingSaveStatus || hasRevisions ) ) {
 			return;
