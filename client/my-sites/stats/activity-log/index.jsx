@@ -603,7 +603,7 @@ class ActivityLog extends Component {
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ ! hasMainCredentials && <ActivityLogCredentialsNotice /> }
+				{ isRewindActive && ! hasMainCredentials && <ActivityLogCredentialsNotice /> }
 				{ this.renderErrorMessage() }
 				{ hasFirstBackup && this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
