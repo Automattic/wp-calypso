@@ -75,7 +75,8 @@ class ShippingLabels extends Component {
 		return (
 			<Notice status="is-warning" showDismiss={ false }>
 				{ translate(
-					'Only the site owner can manage shipping label payment methods. Please contact %(ownerName)s (%(ownerLogin)s) to manage payment methods.',
+					'Only the site owner can manage shipping label payment methods. Please' +
+						' contact %(ownerName)s (%(ownerLogin)s) to manage payment methods.',
 					{
 						args: {
 							ownerName: masterUserName,
@@ -96,7 +97,8 @@ class ShippingLabels extends Component {
 		return (
 			<Notice status="is-warning" showDismiss={ false }>
 				{ translate(
-					'Only the site owner can change these settings. Please contact %(ownerName)s (%(ownerLogin)s) to change the shipping label settings.',
+					'Only the site owner can change these settings. Please contact %(ownerName)s (%(ownerLogin)s)' +
+						' to change the shipping label settings.',
 					{
 						args: {
 							ownerName: masterUserName,
