@@ -8,24 +8,31 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { items } from '../reducer';
-import { USER_PROFILE_LINKS_RECEIVE } from 'state/action-types';
+import { errors, items } from '../reducer';
+import {
+	USER_PROFILE_LINKS_ADD_DUPLICATE,
+	USER_PROFILE_LINKS_ADD_FAILURE,
+	USER_PROFILE_LINKS_ADD_MALFORMED,
+	USER_PROFILE_LINKS_ADD_SUCCESS,
+	USER_PROFILE_LINKS_RECEIVE,
+	USER_PROFILE_LINKS_RESET_ERRORS,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
-	describe( 'items', () => {
-		const profileLinks = [
-			{
-				link_slug: 'wordpress-org',
-				title: 'WordPress.org',
-				value: 'https://wordpress.org/',
-			},
-			{
-				link_slug: 'wordpress-com',
-				title: 'WordPress.com',
-				value: 'https://wordpress.com/',
-			},
-		];
+	const profileLinks = [
+		{
+			link_slug: 'wordpress-org',
+			title: 'WordPress.org',
+			value: 'https://wordpress.org/',
+		},
+		{
+			link_slug: 'wordpress-com',
+			title: 'WordPress.com',
+			value: 'https://wordpress.com/',
+		},
+	];
 
+	describe( 'items', () => {
 		test( 'should default to an empty array', () => {
 			const state = items( undefined, {} );
 			expect( state ).toEqual( [] );
@@ -60,6 +67,67 @@ describe( 'reducer', () => {
 			} );
 
 			expect( newState ).toEqual( newProfileLinks );
+		} );
+	} );
+
+	describe( 'errors', () => {
+		test( 'should default to an empty object', () => {
+			const state = errors( undefined, {} );
+			expect( state ).toEqual( {} );
+		} );
+
+		test( 'should reset all errors in state on success', () => {
+			const state = deepFreeze( { error: 'An error has occurred' } );
+			const newState = errors( state, {
+				type: USER_PROFILE_LINKS_ADD_SUCCESS,
+				profileLinks,
+			} );
+
+			expect( newState ).toEqual( {} );
+		} );
+
+		test( 'should store duplicate links as errors in state', () => {
+			const state = deepFreeze( { error: 'An error has occurred' } );
+			const newState = errors( state, {
+				type: USER_PROFILE_LINKS_ADD_DUPLICATE,
+				profileLinks,
+			} );
+
+			expect( newState ).toEqual( { duplicate: profileLinks } );
+		} );
+
+		test( 'should store malformed links as errors in state', () => {
+			const state = deepFreeze( { error: 'An error has occurred' } );
+			const newState = errors( state, {
+				type: USER_PROFILE_LINKS_ADD_MALFORMED,
+				profileLinks,
+			} );
+
+			expect( newState ).toEqual( { malformed: profileLinks } );
+		} );
+
+		test( 'should store request errors in state', () => {
+			const error = {
+				status: 403,
+				message: 'An active access token must be used to query information about the current user.',
+			};
+			const state = deepFreeze( { malformed: profileLinks } );
+			const newState = errors( state, {
+				type: USER_PROFILE_LINKS_ADD_FAILURE,
+				profileLinks,
+				error,
+			} );
+
+			expect( newState ).toEqual( { error } );
+		} );
+
+		test( 'should reset all errors in state when specifically requested', () => {
+			const state = deepFreeze( { error: 'An error has occurred' } );
+			const newState = errors( state, {
+				type: USER_PROFILE_LINKS_RESET_ERRORS,
+			} );
+
+			expect( newState ).toEqual( {} );
 		} );
 	} );
 } );
