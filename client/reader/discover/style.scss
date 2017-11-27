@@ -6,6 +6,8 @@
 	position: relative;
 	margin-top: 13px;
 	margin-bottom: 8px;
+	display: flex;
+	align-items: center;
 
 	&.is-site {
 		margin-top: 15px;
@@ -27,7 +29,6 @@
 	.gravatar {
 		background: $gray-light;
 		position: relative;
-			top: 6px;
 		margin: 1px 6px 1px 0;
 	}
 
@@ -48,7 +49,6 @@
 
 	.site-icon {
 		margin-right: 6px;
-		float: left;
 		background: lighten( $gray, 20% );
 		.gridicon {
 			color: $white;
@@ -63,10 +63,8 @@
 		position: static;
 		border: none;
 		padding: 0;
-		vertical-align: text-bottom;
 		color: lighten( $gray, 10% );
 		font-size: 13px;
-		line-height: 16px;
 		background: transparent;
 		float: none;
 

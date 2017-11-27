@@ -46,7 +46,7 @@ class DiscoverSiteAttribution extends React.Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className="discover__attribution is-site">
+			<div className="discover-attribution is-site">
 				{ avatarUrl && (
 					<img
 						className="gravatar"
