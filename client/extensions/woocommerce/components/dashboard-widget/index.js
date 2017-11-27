@@ -84,6 +84,7 @@ class DashboardWidget extends Component {
 					onMouseEnter={ this.showTooltip }
 					onMouseLeave={ this.hideTooltip }
 					ref={ this.setSettingsToggle }
+					size={ 18 }
 				/>
 				<Tooltip
 					baseClassName="dashboard-widget__settings-tooltip"
