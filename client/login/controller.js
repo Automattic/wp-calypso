@@ -92,14 +92,13 @@ export default {
 
 		const previousQuery = context.state || {};
 
-		const { client_id, email, token, tt } = previousQuery;
+		const { client_id, email, token } = previousQuery;
 
 		context.primary = (
 			<HandleEmailedLinkForm
 				clientId={ client_id }
 				emailAddress={ email }
 				token={ token }
-				tokenTime={ tt }
 			/>
 		);
 
