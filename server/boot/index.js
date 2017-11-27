@@ -81,7 +81,13 @@ function setup() {
 	// loaded when we detect stats blockers - see lib/analytics/index.js
 	app.get( '/nostats.js', function( request, response ) {
 		const analytics = require( '../lib/analytics' );
-		analytics.tracks.recordEvent( 'calypso_stats_blocked', {}, request );
+		analytics.tracks.recordEvent(
+			'calypso_stats_blocked',
+			{
+				do_not_track: request.headers.dnt,
+			},
+			request
+		);
 		response.setHeader( 'content-type', 'application/javascript' );
 		response.end( "console.log('Stats are disabled');" );
 	} );
