@@ -59,13 +59,16 @@ export const fetchSettings = siteId => ( dispatch, getState ) => {
 
 export const submit = ( siteId, onSaveSuccess, onSaveFailure ) => ( dispatch, getState ) => {
 	dispatch( setFormMetaProperty( siteId, 'isSaving', true ) );
+	dispatch( setFormMetaProperty( siteId, 'pristine', true ) );
 	api
 		.post( siteId, api.url.accountSettings, getLabelSettingsFormData( getState() ) )
 		.then( onSaveSuccess )
-		.catch( onSaveFailure )
+		.catch( err => {
+			dispatch( setFormMetaProperty( siteId, 'pristine', false ) );
+			return onSaveFailure( err );
+		} )
 		.then( () => {
 			dispatch( setFormMetaProperty( siteId, 'isSaving', false ) );
-			dispatch( setFormMetaProperty( siteId, 'pristine', true ) );
 		} );
 };
 
