@@ -123,7 +123,7 @@
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"wpcom_signup_id": "39911",

@@ -153,7 +153,7 @@
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/store-on-non-atomic-sites": true,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",
 	"wpcom_signup_id": "39911",
