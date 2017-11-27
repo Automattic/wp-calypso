@@ -74,6 +74,4 @@ in the `value` and `onChange` props of the component. Possible values are `value
 
 `onChange` - **optional** Handler called when the selected value is changed
 
-`onClick` - **optional** Handler called when the picker is clicked on. Useful for hooking
-in telemetry, e.g., the `eventRecorder.recordClickEvent` method.
-------------
+`onClick` - **optional** Handler called when the picker is clicked on.
