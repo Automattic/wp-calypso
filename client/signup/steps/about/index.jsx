@@ -23,6 +23,9 @@ import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { setUserExperience } from 'state/signup/steps/user-experience/actions';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { setSurvey } from 'state/signup/steps/survey/actions';
+import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
+import { hints } from 'lib/signup/hint-data';
 import userFactory from 'lib/user';
 const user = userFactory();
 
@@ -35,18 +38,21 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
+import Suggestions from 'components/suggestions';
 
 class AboutStep extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
+			query: '',
+			siteTopicValue: this.props.siteTopic,
 			userExperience: this.props.userExperience,
 		};
 	}
 
 	componentWillMount() {
 		this.formStateController = new formState.Controller( {
-			fieldNames: [ 'siteTitle', 'siteGoals' ],
+			fieldNames: [ 'siteTitle', 'siteGoals', 'siteTopic' ],
 			validatorFunction: noop,
 			onNewState: this.setFormState,
 			hideFieldErrorsOnChange: true,
@@ -57,6 +63,9 @@ class AboutStep extends Component {
 				siteGoals: {
 					value: this.props.siteGoals,
 				},
+				siteTopic: {
+					value: '',
+				},
 			},
 		} );
 
@@ -66,6 +75,44 @@ class AboutStep extends Component {
 	setFormState = state => {
 		this.setState( { form: state } );
 	};
+
+	setSuggestionsRef = ref => {
+		this.suggestionsRef = ref;
+	};
+
+	hideSuggestions = () => {
+		this.setState( { query: '' } );
+	};
+
+	handleSuggestionChangeEvent = event => {
+		this.setState( { query: event.target.value } );
+		this.setState( { siteTopicValue: event.target.value } );
+
+		this.formStateController.handleFieldChange( {
+			name: event.target.name,
+			value: event.target.value,
+		} );
+	};
+
+	handleKeyDown = event => {
+		this.suggestionsRef.handleKeyEvent( event );
+	};
+
+	handleSuggestionMouseDown = position => {
+		this.setState( { siteTopicValue: position.label } );
+		this.hideSuggestions();
+
+		this.formStateController.handleFieldChange( {
+			name: 'siteTopic',
+			value: position.label,
+		} );
+	};
+
+	getSuggestions() {
+		return hints
+			.filter( hint => this.state.query && hint.match( new RegExp( this.state.query, 'i' ) ) )
+			.map( hint => ( { label: hint } ) );
+	}
 
 	handleChangeEvent = event => {
 		this.formStateController.handleFieldChange( {
@@ -120,6 +167,7 @@ class AboutStep extends Component {
 		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 		const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
 		const userExperienceInput = this.state.userExperience;
+		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
 
 		//Site Title
 		if ( siteTitleInput !== '' ) {
@@ -133,6 +181,19 @@ class AboutStep extends Component {
 
 		//Site Goals
 		this.props.setSiteGoals( siteGoalsInput );
+
+		//Site Topic
+		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
+			field: 'Site topic',
+			value: siteTopicInput,
+		} );
+
+		this.props.setSurvey( {
+			vertical: siteTopicInput,
+			otherText: '',
+			siteType: designType,
+		} );
+
 		this.props.setDesignType( designType );
 
 		//User Experience
@@ -311,6 +372,26 @@ class AboutStep extends Component {
 						</FormFieldset>
 
 						<FormFieldset>
+							<FormLabel>What will your site be about?</FormLabel>
+							<FormTextInput
+								id="siteTopic"
+								name="siteTopic"
+								placeholder="eg: Fashion, travel, design, plumber, electrician"
+								value={ this.state.siteTopicValue }
+								onChange={ this.handleSuggestionChangeEvent }
+								onBlur={ this.hideSuggestions }
+								onKeyDown={ this.handleKeyDown }
+								autoComplete="off"
+							/>
+							<Suggestions
+								ref={ this.setSuggestionsRef }
+								query={ this.state.query }
+								suggestions={ this.getSuggestions() }
+								suggest={ this.handleSuggestionMouseDown }
+							/>
+						</FormFieldset>
+
+						<FormFieldset>
 							<FormLabel>What’s the primary goal you have for your site?</FormLabel>
 							{ this.renderGoalCheckboxes() }
 						</FormFieldset>
@@ -350,7 +431,8 @@ export default connect(
 	state => ( {
 		siteTitle: getSiteTitle( state ),
 		siteGoals: getSiteGoals( state ),
+		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
 	} ),
-	{ setSiteTitle, setDesignType, setSiteGoals, setUserExperience, recordTracksEvent }
+	{ setSiteTitle, setDesignType, setSiteGoals, setSurvey, setUserExperience, recordTracksEvent }
 )( localize( AboutStep ) );
