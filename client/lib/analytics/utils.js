@@ -17,7 +17,13 @@ const debug = debugFactory( 'calypso:analytics:utils' );
  * @returns {Boolean} true if Do Not Track is enabled in the user's browser.
  */
 export function doNotTrack() {
-	const result = '1' === navigator.doNotTrack;
+	const result = Boolean(
+		window &&
+			// Internet Explorer 11 uses window.doNotTrack rather than navigator.doNotTrack.
+			// Safari 7.1.3+ uses window.doNotTrack rather than navigator.doNotTrack.
+			// MDN ref: https://developer.mozilla.org/en-US/docs/Web/API/navigator/doNotTrack#Browser_compatibility
+			( window.doNotTrack === '1' || ( window.navigator && window.navigator.doNotTrack === '1' ) )
+	);
 	debug( `Do Not Track: ${ result }` );
 	return result;
 }
