@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { partial } from 'lodash';
+import { noop, partial } from 'lodash';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -43,29 +43,34 @@ const recordEvent = partial( recordGoogleEvent, 'Posts' );
 
 const PostActions = ( {
 	className,
+	compact,
 	contentLink,
 	post,
 	showComments,
 	showLikes,
 	showStats,
 	siteSlug,
+	statsIcon,
 	toggleComments,
 	trackRelativeTimeStatusOnClick,
 	trackTotalViewsOnClick,
 } ) => {
 	const { contentLinkURL, contentLinkTarget } = contentLink;
 	const isDraft = post.status === 'draft';
+	const size = compact ? 18 : 24;
 
 	return (
 		<ul className={ classnames( 'post-actions', className ) }>
-			<li className="post-actions__item post-actions__relative-time">
-				<PostRelativeTimeStatus
-					post={ post }
-					link={ contentLinkURL }
-					target={ contentLinkTarget }
-					onClick={ trackRelativeTimeStatusOnClick }
-				/>
-			</li>
+			{ ! compact && (
+				<li className="post-actions__item post-actions__relative-time">
+					<PostRelativeTimeStatus
+						post={ post }
+						link={ contentLinkURL }
+						target={ contentLinkTarget }
+						onClick={ trackRelativeTimeStatusOnClick }
+					/>
+				</li>
+			) }
 			{ ! isDraft &&
 				showComments && (
 					<li className="post-actions__item">
@@ -77,6 +82,7 @@ const PostActions = ( {
 								commentCount={ post.discussion.comment_count }
 								tagName="a"
 								href={ `/comments/all/${ siteSlug }/${ post.ID }` }
+								size={ size }
 							/>
 						) : (
 							<CommentButton
@@ -84,8 +90,9 @@ const PostActions = ( {
 								post={ post }
 								showLabel={ false }
 								commentCount={ post.discussion.comment_count }
-								onClick={ toggleComments }
+								onClick={ toggleComments || noop }
 								tagName="div"
+								size={ size }
 							/>
 						) }
 					</li>
@@ -95,6 +102,7 @@ const PostActions = ( {
 					<li className="post-actions__item">
 						<LikeButton
 							key="like-button"
+							iconSize={ size }
 							siteId={ +post.site_ID }
 							postId={ +post.ID }
 							post={ post }
@@ -104,7 +112,12 @@ const PostActions = ( {
 			{ ! isDraft &&
 				showStats && (
 					<li className="post-actions__item post-actions__total-views">
-						<PostTotalViews post={ post } clickHandler={ trackTotalViewsOnClick } />
+						<PostTotalViews
+							icon={ statsIcon }
+							post={ post }
+							size={ size }
+							clickHandler={ trackTotalViewsOnClick }
+						/>
 					</li>
 				) }
 		</ul>
@@ -113,11 +126,17 @@ const PostActions = ( {
 
 PostActions.propTypes = {
 	className: PropTypes.string,
+	compact: PropTypes.bool,
 	post: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
-	toggleComments: PropTypes.func.isRequired,
+	statsIcon: PropTypes.string,
+	toggleComments: PropTypes.func,
 	trackRelativeTimeStatusOnClick: PropTypes.func,
 	trackTotalViewsOnClick: PropTypes.func,
+};
+
+PostActions.defaultProps = {
+	statsIcon: 'visible',
 };
 
 const mapStateToProps = ( state, { siteId, post } ) => {
