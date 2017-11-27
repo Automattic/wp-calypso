@@ -599,7 +599,7 @@ class ActivityLog extends Component {
 				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
 				{ siteId && isRewindActive && <QueryRewindBackupStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
-				<QueryJetpackCredentials siteId={ siteId } />
+				{ isRewindActive && <QueryJetpackCredentials siteId={ siteId } /> }
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
