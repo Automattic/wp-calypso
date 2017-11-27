@@ -72,6 +72,7 @@ class Team extends React.Component {
 						},
 					}
 				);
+				headerText = headerText[ 0 ];
 			}
 
 			people = (
