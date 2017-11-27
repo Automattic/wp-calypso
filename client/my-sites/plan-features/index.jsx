@@ -449,7 +449,7 @@ class PlanFeatures extends Component {
 		} );
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
 	}
