@@ -224,24 +224,17 @@ describe( '#saveZone()', () => {
 } );
 
 describe( '#handleZoneCreated()', () => {
-	const getState = () => ( {
-		sites: {
-			items: {
-				[ 123 ]: { URL: 'test.dev' },
-			},
-		},
-	} );
-
 	test( 'should dispatch `navigate`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
 			siteId: 123,
+			siteSlug: 'test.dev',
 			form: 'form',
 			data: { name: 'Test Zone' },
 		};
 
-		handleZoneCreated( { dispatch, getState }, action, { data: zone } );
+		handleZoneCreated( { dispatch }, action, { data: zone } );
 
 		expect( dispatch ).to.have.been.calledWith(
 			navigate( '/extensions/zoninator/zone/test.dev/43' )
@@ -253,11 +246,12 @@ describe( '#handleZoneCreated()', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
 			siteId: 123,
+			siteSlug: 'test.dev',
 			form: 'form',
 			data: { name: 'Test Zone' },
 		};
 
-		handleZoneCreated( { dispatch, getState }, action, { data: zone } );
+		handleZoneCreated( { dispatch }, action, { data: zone } );
 
 		expect( dispatch ).to.have.been.calledWith( stopSubmit( 'form' ) );
 	} );
@@ -267,11 +261,12 @@ describe( '#handleZoneCreated()', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
 			siteId: 123,
+			siteSlug: 'test.dev',
 			form: 'form',
 			data: { name: 'Test Zone' },
 		};
 
-		handleZoneCreated( { dispatch, getState }, action, { data: zone } );
+		handleZoneCreated( { dispatch }, action, { data: zone } );
 
 		expect( dispatch ).to.have.been.calledWith( updateZone( 123, zone.term_id, fromApi( zone ) ) );
 	} );
@@ -285,7 +280,7 @@ describe( '#handleZoneCreated()', () => {
 			data: { name: 'Test Zone' },
 		};
 
-		handleZoneCreated( { dispatch, getState }, action, { data: zone } );
+		handleZoneCreated( { dispatch }, action, { data: zone } );
 
 		expect( dispatch ).to.have.been.calledWith(
 			successNotice( translate( 'Zone saved!' ), { id: 'zoninator-zone-create' } )
@@ -294,24 +289,6 @@ describe( '#handleZoneCreated()', () => {
 } );
 
 describe( '#handleZoneSaved()', () => {
-	const getState = () => ( {
-		extensions: {
-			zoninator: {
-				zones: {
-					items: {
-						123: {
-							456: {
-								id: 456,
-								name: 'Before',
-								description: 'Zone description',
-							},
-						},
-					},
-				},
-			},
-		},
-	} );
-
 	test( 'should dispatch `initialize`', () => {
 		const dispatch = sinon.spy();
 		const action = {
@@ -319,16 +296,16 @@ describe( '#handleZoneSaved()', () => {
 			siteId: 123,
 			zoneId: 456,
 			form: 'form',
-			data: { name: 'After' },
+			data: { id: 456, name: 'After', description: 'A description' },
 		};
 
-		handleZoneSaved( { dispatch, getState }, action );
+		handleZoneSaved( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledWith(
 			initialize( 'form', {
 				id: 456,
 				name: 'After',
-				description: 'Zone description',
+				description: 'A description',
 			} )
 		);
 	} );
@@ -343,7 +320,7 @@ describe( '#handleZoneSaved()', () => {
 			data: { name: 'Test zone' },
 		};
 
-		handleZoneSaved( { dispatch, getState }, action );
+		handleZoneSaved( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledWith( stopSubmit( 'form' ) );
 	} );
@@ -355,16 +332,16 @@ describe( '#handleZoneSaved()', () => {
 			siteId: 123,
 			zoneId: 456,
 			form: 'form',
-			data: { name: 'After' },
+			data: { id: 456, name: 'After', description: '' },
 		};
 
-		handleZoneSaved( { dispatch, getState }, action );
+		handleZoneSaved( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledWith(
 			updateZone( 123, 456, {
 				id: 456,
 				name: 'After',
-				description: 'Zone description',
+				description: '',
 			} )
 		);
 	} );
@@ -379,7 +356,7 @@ describe( '#handleZoneSaved()', () => {
 			data: { name: 'Test zone' },
 		};
 
-		handleZoneSaved( { dispatch, getState }, action );
+		handleZoneSaved( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledWith(
 			successNotice( translate( 'Zone saved!' ), { id: 'zoninator-zone-create' } )
@@ -460,23 +437,16 @@ describe( '#deleteZone()', () => {
 } );
 
 describe( '#announceZoneDeleted()', () => {
-	const getState = () => ( {
-		sites: {
-			items: {
-				[ 123 ]: { URL: 'test.dev' },
-			},
-		},
-	} );
-
 	test( 'should dispatch `navigate`', () => {
 		const dispatch = sinon.spy();
 		const action = {
 			type: 'DUMMY_ACTION',
 			siteId: 123,
+			siteSlug: 'test.dev',
 			zoneId: 456,
 		};
 
-		announceZoneDeleted( { dispatch, getState }, action );
+		announceZoneDeleted( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledWith( navigate( '/extensions/zoninator/test.dev' ) );
 	} );
@@ -486,10 +456,11 @@ describe( '#announceZoneDeleted()', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
 			siteId: 123,
+			siteSlug: 'test.dev',
 			zoneId: 456,
 		};
 
-		announceZoneDeleted( { dispatch, getState }, action );
+		announceZoneDeleted( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledWith( requestZones( 123 ) );
 	} );
@@ -499,10 +470,11 @@ describe( '#announceZoneDeleted()', () => {
 		const action = {
 			type: 'DUMMY_ACTION',
 			siteId: 123,
+			siteSlug: 'test.dev',
 			zoneId: 456,
 		};
 
-		announceZoneDeleted( { dispatch, getState }, action );
+		announceZoneDeleted( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledWith(
 			successNotice( translate( 'The zone has been deleted.' ), { id: 'zoninator-zone-delete' } )
