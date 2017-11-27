@@ -8,6 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from './controller';
+import { makeLayout } from 'controller';
 import { siteSelection } from 'my-sites/controller';
 
 export default function() {
@@ -38,9 +39,9 @@ export default function() {
 		controller.authorizeForm
 	);
 
-	page( '/jetpack/connect/store/:interval(yearly|monthly)?', controller.plansLanding );
+	page( '/jetpack/connect/store/:interval(monthly|yearly)?', controller.plansLanding, makeLayout );
 
-	page( '/jetpack/connect/:from(akismet|vaultpress)/:interval(yearly|monthly)?', ( { params } ) =>
+	page( '/jetpack/connect/:from(akismet|vaultpress)/:interval(monthly|yearly)?', ( { params } ) =>
 		page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
 	);
 

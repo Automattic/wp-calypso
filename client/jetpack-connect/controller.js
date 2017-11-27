@@ -170,32 +170,26 @@ export default {
 	},
 
 	plansLanding( context, next ) {
-		try {
-			const analyticsPageTitle = 'Plans';
-			const basePath = route.sectionify( context.path );
-			const analyticsBasePath = basePath + '/:site';
+		const analyticsPageTitle = 'Plans';
+		const basePath = route.sectionify( context.path );
+		const analyticsBasePath = basePath + '/:site';
 
-			context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
+		context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
 
-			if ( ! context.isServerSide ) {
-				analytics.tracks.recordEvent( 'calypso_plans_view' );
-				analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-			}
-
-			context.primary = (
-				<PlansLanding
-					context={ context }
-					destinationType={ context.params.destinationType }
-					interval={ context.params.interval }
-					basePlansPath={ '/jetpack/connect/store' }
-					url={ context.query.site }
-				/>
-			);
-		} catch ( err ) {
-			debug( 'Render error', err );
-			delete context.primary;
-			delete context.secondary;
+		if ( ! context.isServerSide ) {
+			analytics.tracks.recordEvent( 'calypso_plans_view' );
+			analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 		}
+
+		context.primary = (
+			<PlansLanding
+				context={ context }
+				destinationType={ context.params.destinationType }
+				interval={ context.params.interval }
+				basePlansPath={ '/jetpack/connect/store' }
+				url={ context.query.site }
+			/>
+		);
 		return next();
 	},
 
