@@ -79,10 +79,7 @@ class HandleEmailedLinkForm extends React.Component {
 			hasSubmitted: true,
 		} );
 
-		this.props.fetchMagicLoginAuthenticate(
-			this.props.emailAddress,
-			this.props.token,
-		);
+		this.props.fetchMagicLoginAuthenticate( this.props.token );
 	};
 
 	// Lifted from `blocks/login`
