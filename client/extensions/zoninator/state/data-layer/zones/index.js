@@ -6,7 +6,7 @@
 
 import { translate } from 'i18n-calypso';
 import { initialize, startSubmit, stopSubmit } from 'redux-form';
-import { merge, reduce } from 'lodash';
+import { reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,8 +15,6 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { navigate } from 'state/ui/actions';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getZone } from '../../zones/selectors';
 import { requestZones, requestError, updateZone, updateZones } from '../../zones/actions';
 import { fromApi } from './utils';
 import {
@@ -114,20 +112,18 @@ const announceZoneSaved = ( dispatch, { form, siteId }, zone ) => {
 	dispatch( successNotice( translate( 'Zone saved!' ), { id: saveZoneNotice } ) );
 };
 
-export const handleZoneCreated = ( { dispatch, getState }, action, response ) => {
-	const siteSlug = getSiteSlug( getState(), action.siteId );
+export const handleZoneCreated = ( { dispatch }, action, response ) => {
 	const zone = fromApi( response.data );
 
-	dispatch( navigate( `${ settingsPath }/zone/${ siteSlug }/${ zone.id }` ) );
+	dispatch( navigate( `${ settingsPath }/zone/${ action.siteSlug }/${ zone.id }` ) );
 	announceZoneSaved( dispatch, action, zone );
 };
 
-export const handleZoneSaved = ( { dispatch, getState }, action ) => {
-	const { data, form, siteId, zoneId } = action;
-	const newZone = merge( {}, getZone( getState(), siteId, zoneId ), data );
+export const handleZoneSaved = ( { dispatch }, action ) => {
+	const { data, form } = action;
 
-	dispatch( initialize( form, newZone ) );
-	announceZoneSaved( dispatch, action, newZone );
+	dispatch( initialize( form, data ) );
+	announceZoneSaved( dispatch, action, data );
 };
 
 export const announceSaveFailure = ( { dispatch }, { form } ) => {
@@ -157,8 +153,8 @@ export const deleteZone = ( { dispatch }, action ) => {
 	);
 };
 
-export const announceZoneDeleted = ( { dispatch, getState }, { siteId } ) => {
-	dispatch( navigate( `${ settingsPath }/${ getSiteSlug( getState(), siteId ) }` ) );
+export const announceZoneDeleted = ( { dispatch }, { siteId, siteSlug } ) => {
+	dispatch( navigate( `${ settingsPath }/${ siteSlug }` ) );
 	dispatch( requestZones( siteId ) );
 	dispatch( successNotice( translate( 'The zone has been deleted.' ), { id: deleteZoneNotice } ) );
 };

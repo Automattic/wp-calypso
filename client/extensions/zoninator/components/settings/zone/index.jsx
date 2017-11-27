@@ -50,7 +50,8 @@ class Zone extends Component {
 
 	hideDeleteDialog = () => this.setState( { showDeleteDialog: false } );
 
-	deleteZone = () => this.props.deleteZone( this.props.siteId, this.props.zoneId );
+	deleteZone = () =>
+		this.props.deleteZone( this.props.siteId, this.props.siteSlug, this.props.zoneId );
 
 	saveZoneDetails = ( form, data ) =>
 		this.props.saveZone( this.props.siteId, this.props.zoneId, form, data );
