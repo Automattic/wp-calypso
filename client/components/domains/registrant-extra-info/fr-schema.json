@@ -98,9 +98,11 @@
 								{ "$ref": "#/definitions/empty" }
 							]
 						}
-					}
+					},
+					"required": [ "registrantType" ]
 				}
-			}
+			},
+			"required": [ "extra" ]
 		}
 	],
 	"note": "We'll want to fetch this through the API, where wpcom.undocumented already has `mapKeysRecursively()` & `camelCase()`"
