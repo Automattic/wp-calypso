@@ -139,7 +139,12 @@ class LoggedInForm extends Component {
 
 		// For SSO, WooCommerce Services, and JPO users, do not display plans page
 		// Instead, redirect back to admin as soon as we're connected
-		if ( nextProps.isSSO || nextProps.isWoo || this.isFromJpo( nextProps ) ) {
+		if (
+			nextProps.isSSO ||
+			nextProps.isWoo ||
+			this.isFromJpo( nextProps ) ||
+			this.shouldRedirectJetpackStart( nextProps )
+		) {
 			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
 				return goBackToWpAdmin( redirectAfterAuth );
 			}
@@ -169,7 +174,12 @@ class LoggedInForm extends Component {
 		const { goBackToWpAdmin, redirectAfterAuth } = this.props;
 		const { queryObject } = this.props.authorizationData;
 
-		if ( this.props.isSSO || this.props.isWoo || this.isFromJpo( this.props ) ) {
+		if (
+			this.props.isSSO ||
+			this.props.isWoo ||
+			this.isFromJpo( this.props ) ||
+			this.shouldRedirectJetpackStart( this.props )
+		) {
 			debug(
 				'Going back to WP Admin.',
 				'Connection initiated via: ',
@@ -185,6 +195,18 @@ class LoggedInForm extends Component {
 
 	isFromJpo( props ) {
 		return startsWith( get( props, [ 'authorizationData', 'queryObject', 'from' ] ), 'jpo' );
+	}
+
+	shouldRedirectJetpackStart( props ) {
+		const partnerId = parseInt( get( props, 'partnerId' ), 10 );
+		const partnerRedirectFlag = config.isEnabled(
+			'jetpack/connect-redirect-pressable-credential-approval'
+		);
+
+		// If the redirect flag is set, then we conditionally redirect the Pressable client to
+		// a credential approval screen. Otherwise, we need to redirect all other partners back
+		// to wp-admin.
+		return partnerRedirectFlag ? partnerId && PRESSABLE_CLIENT_ID !== partnerId : partnerId;
 	}
 
 	handleClickDisclaimer = () => {
@@ -478,7 +500,7 @@ class LoggedInForm extends Component {
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
 			config.isEnabled( 'jetpack/connect-redirect-pressable-credential-approval' ) &&
-			PRESSABLE_CLIENT_ID === partnerId
+			PRESSABLE_CLIENT_ID === parseInt( partnerId, 10 )
 		) {
 			return `/start/pressable-nux?blogid=${ siteId }`;
 		}
