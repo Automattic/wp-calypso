@@ -133,7 +133,7 @@
 		"woocommerce/extension-dashboard": true,
 		"woocommerce/extension-orders": true,
 		"woocommerce/extension-orders-create": false,
-		"woocommerce/extension-orders-edit": false,
+		"woocommerce/extension-orders-edit": true,
 		"woocommerce/extension-products": true,
 		"woocommerce/extension-promotions": true,
 		"woocommerce/extension-reviews": true,
