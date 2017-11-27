@@ -13,19 +13,6 @@
 		margin-top: 15px;
 	}
 
-	.gridicons-arrow-right {
-		height: 12px;
-		width: 12px;
-		fill: $white;
-		background: $gray;
-		padding: 4px;
-		border-radius: 100%;
-		position: relative;
-			top: 6px;
-		margin-right: 6px;
-
-	}
-
 	.gravatar {
 		background: $gray-light;
 		position: relative;
@@ -50,6 +37,7 @@
 	.site-icon {
 		margin-right: 6px;
 		background: lighten( $gray, 20% );
+
 		.gridicon {
 			color: $white;
 		}
