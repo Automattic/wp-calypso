@@ -10,12 +10,18 @@ import { noop } from 'lodash';
  */
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { USER_PROFILE_LINKS_ADD, USER_PROFILE_LINKS_REQUEST } from 'state/action-types';
+import {
+	USER_PROFILE_LINKS_ADD,
+	USER_PROFILE_LINKS_DELETE,
+	USER_PROFILE_LINKS_REQUEST,
+} from 'state/action-types';
 import {
 	addUserProfileLinksDuplicate,
 	addUserProfileLinksError,
 	addUserProfileLinksMalformed,
 	addUserProfileLinksSuccess,
+	deleteUserProfileLinkError,
+	deleteUserProfileLinkSuccess,
 	receiveUserProfileLinks,
 } from 'state/user-profile-links/actions';
 
@@ -23,6 +29,7 @@ import {
  * Dispatches a request to fetch profile links of the current user
  *
  * @param   {Function} dispatch Redux dispatcher
+ * @param   {Object}   action   Redux action
  * @returns {Object} Dispatched http action
  */
 export const requestUserProfileLinks = ( { dispatch }, action ) =>
@@ -52,6 +59,7 @@ export const handleRequestSuccess = ( { dispatch }, action, { profile_links } ) 
  * Dispatches a request to add profile links for the current user
  *
  * @param   {Function} dispatch Redux dispatcher
+ * @param   {Object}   action   Redux action
  * @returns {Object} Dispatched http action
  */
 export const addUserProfileLinks = ( { dispatch }, action ) =>
@@ -99,11 +107,51 @@ export const handleAddSuccess = ( { dispatch }, action, data ) => {
  *
  * @param   {Function} dispatch Redux dispatcher
  * @param   {Object}   action   Redux action
- * @param   {Array}    data     Response from the endpoint
+ * @param   {Object}   error    Error returned
  * @returns {Object} Dispatched user profile links add error action
  */
 export const handleAddError = ( { dispatch }, { profileLinks }, error ) =>
 	dispatch( addUserProfileLinksError( profileLinks, error ) );
+
+/**
+ * Dispatches a request to delete a profile link for the current user
+ *
+ * @param   {Function} dispatch Redux dispatcher
+ * @param   {Object}   action   Redux action
+ * @returns {Object} Dispatched http action
+ */
+export const deleteUserProfileLink = ( { dispatch }, action ) =>
+	dispatch(
+		http(
+			{
+				apiVersion: '1.1',
+				method: 'POST',
+				path: '/me/settings/profile-links/' + action.linkSlug + '/delete',
+			},
+			action
+		)
+	);
+
+/**
+ * Dispatches a user profile links deletion success action when the request succeeded.
+ *
+ * @param   {Function} dispatch Redux dispatcher
+ * @param   {Object}   action   Redux action
+ * @returns {Object} Dispatched user profile links delete success action
+ */
+export const handleDeleteSuccess = ( { dispatch }, { linkSlug } ) =>
+	dispatch( deleteUserProfileLinkSuccess( linkSlug ) );
+
+/**
+ * Dispatches a user profile links deletion error action when the request failed.
+ *
+ * @param   {Function} dispatch Redux dispatcher
+ * @param   {Object}   action   Redux action
+ * @param   {Object}   error    Error returned
+ * @returns {Object} Dispatched user profile links delete error action
+ */
+export const handleDeleteError = ( { dispatch }, { linkSlug }, error ) =>
+	dispatch( deleteUserProfileLinkError( linkSlug, error ) );
 
 export default {
 	[ USER_PROFILE_LINKS_REQUEST ]: [
@@ -111,5 +159,8 @@ export default {
 	],
 	[ USER_PROFILE_LINKS_ADD ]: [
 		dispatchRequest( addUserProfileLinks, handleAddSuccess, handleAddError ),
+	],
+	[ USER_PROFILE_LINKS_DELETE ]: [
+		dispatchRequest( deleteUserProfileLink, handleDeleteSuccess, handleDeleteError ),
 	],
 };
