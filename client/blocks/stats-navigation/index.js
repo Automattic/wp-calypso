@@ -14,7 +14,7 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Intervals from './intervals';
 import FollowersCount from 'blocks/followers-count';
-import { isPluginActive } from 'state/selectors';
+import { isPluginActive, isSiteAutomatedTransfer } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
 import { getJetpackSites } from 'state/selectors';
@@ -33,10 +33,10 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = item => {
-		const { isStore, isJetpack } = this.props;
+		const { isStore, isAtomic, isJetpack } = this.props;
 		switch ( item ) {
 			case 'activity':
-				return config.isEnabled( 'jetpack/activity-log' ) && isJetpack;
+				return config.isEnabled( 'jetpack/activity-log' ) && isJetpack && ! isAtomic;
 			case 'store':
 				return isStore;
 			default:
@@ -83,6 +83,7 @@ export default connect( ( state, { siteId } ) => {
 	return {
 		isJetpack,
 		jetPackSites: getJetpackSites( state ),
+		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isStore: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
 		siteId,
 	};
