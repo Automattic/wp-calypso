@@ -145,24 +145,6 @@ export class LoginForm extends Component {
 		} );
 	};
 
-	getAuthAccountType() {
-		const { usernameOrEmail } = this.state;
-
-		this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type' );
-
-		this.props
-			.getAuthAccountType( usernameOrEmail )
-			.then( () => {
-				this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_success' );
-			} )
-			.catch( error => {
-				this.props.recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_failure', {
-					error_code: error.code,
-					error_message: error.message,
-				} );
-			} );
-	}
-
 	isFullView() {
 		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
@@ -183,6 +165,8 @@ export class LoginForm extends Component {
 
 	resetView = event => {
 		event.preventDefault();
+
+		this.props.recordTracksEvent( 'calypso_login_block_login_form_change_username_or_email' );
 
 		this.props.resetAuthAccountType();
 	};
@@ -211,7 +195,7 @@ export class LoginForm extends Component {
 		event.preventDefault();
 
 		if ( ! this.props.hasAccountTypeLoaded ) {
-			this.getAuthAccountType();
+			this.props.getAuthAccountType( this.state.usernameOrEmail );
 
 			return;
 		}

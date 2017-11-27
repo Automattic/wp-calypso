@@ -51,6 +51,7 @@ import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'state/login/selectors
 import { getCurrentUser } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 function getSMSMessageFromResponse( response ) {
 	const phoneNumber = get( response, 'body.data.phone_number' );
@@ -581,39 +582,46 @@ export const logoutUser = redirectTo => ( dispatch, getState ) => {
  * Retrieves the type of authentication of the account of the specified user.
  *
  * @param {String} usernameOrEmail - id of the user
- * @return {Function} a promise that will resolve once the authentication account type has been retrieved
+ * @return {Function} an action thunk
  */
 export const getAuthAccountType = usernameOrEmail => dispatch => {
+	dispatch(
+		recordTracksEvent( 'calypso_login_block_login_form_get_auth_type' )
+	);
+
 	dispatch( {
 		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
 		usernameOrEmail,
 	} );
 
 	if ( usernameOrEmail === '' ) {
-		return new Promise( ( resolve, reject ) => {
-			const error = {
-				code: 'empty_username',
-				message: translate( 'Please enter a username or email address.' ),
-				field: 'usernameOrEmail',
-			};
+		const error = {
+			code: 'empty_username',
+			message: translate( 'Please enter a username or email address.' ),
+			field: 'usernameOrEmail',
+		};
 
-			defer( () => {
-				dispatch( {
-					type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
-					error,
-				} );
+		dispatch(
+			recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_failure', {
+				error_code: error.code,
+				error_message: error.message,
+			} )
+		);
 
-				reject( error );
+		defer( () => {
+			dispatch( {
+				type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
+				error,
 			} );
 		} );
+
+		return;
 	}
 
 	dispatch( {
 		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
 		usernameOrEmail,
 	} );
-
-	return Promise.resolve();
 };
 
 /**
