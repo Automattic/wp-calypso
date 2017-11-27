@@ -9,6 +9,9 @@ import {
 	USER_PROFILE_LINKS_ADD_FAILURE,
 	USER_PROFILE_LINKS_ADD_MALFORMED,
 	USER_PROFILE_LINKS_ADD_SUCCESS,
+	USER_PROFILE_LINKS_DELETE,
+	USER_PROFILE_LINKS_DELETE_FAILURE,
+	USER_PROFILE_LINKS_DELETE_SUCCESS,
 	USER_PROFILE_LINKS_RECEIVE,
 	USER_PROFILE_LINKS_REQUEST,
 	USER_PROFILE_LINKS_RESET_ERRORS,
@@ -58,6 +61,7 @@ export const addUserProfileLinksSuccess = profileLinks => ( {
  * Returns an action object to signal that adding user profile links was not successful.
  *
  * @param  {Array}  profileLinks Array containing the profile links from the request.
+ * @param  {Object} error        Error received
  * @return {Object}              Action object
  */
 export const addUserProfileLinksError = ( profileLinks, error ) => ( {
@@ -95,4 +99,39 @@ export const addUserProfileLinksMalformed = profileLinks => ( {
  */
 export const resetUserProfileLinkErrors = () => ( {
 	type: USER_PROFILE_LINKS_RESET_ERRORS,
+} );
+
+/**
+ * Returns an action object to signal a request for the deletion of a user profile link.
+ *
+ * @param  {String} linkSlug Slug of the user profile link to delete.
+ * @return {Object}          Action object
+ */
+export const deleteUserProfileLink = linkSlug => ( {
+	type: USER_PROFILE_LINKS_DELETE,
+	linkSlug,
+} );
+
+/**
+ * Returns an action object to signal that request for the deletion of a user profile link was successful.
+ *
+ * @param  {String} linkSlug Slug of the user profile link to delete.
+ * @return {Object}          Action object
+ */
+export const deleteUserProfileLinkSuccess = linkSlug => ( {
+	type: USER_PROFILE_LINKS_DELETE_SUCCESS,
+	linkSlug,
+} );
+
+/**
+ * Returns an action object to signal that request for the deletion of a user profile link was not successful.
+ *
+ * @param  {String} linkSlug Slug of the user profile link to delete.
+ * @param  {Object} error    Error received
+ * @return {Object}          Action object
+ */
+export const deleteUserProfileLinkError = ( linkSlug, error ) => ( {
+	type: USER_PROFILE_LINKS_DELETE_FAILURE,
+	linkSlug,
+	error,
 } );
