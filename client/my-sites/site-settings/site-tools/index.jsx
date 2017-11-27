@@ -13,7 +13,7 @@ import { some } from 'lodash';
  */
 import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
 import config from 'config';
-import { tracks } from 'lib/analytics';
+import analytics from 'lib/analytics';
 import { localize } from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
 import SiteToolsLink from './link';
@@ -28,7 +28,7 @@ import {
 import notices from 'notices';
 
 const trackDeleteSiteOption = option => {
-	tracks.recordEvent( 'calypso_settings_delete_site_options', {
+	analytics.tracks.recordEvent( 'calypso_settings_delete_site_options', {
 		option: option,
 	} );
 };

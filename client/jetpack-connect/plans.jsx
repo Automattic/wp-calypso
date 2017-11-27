@@ -46,9 +46,10 @@ import {
 	getGlobalSelectedPlan,
 	isCalypsoStartedConnection,
 } from 'state/jetpack-connect/selectors';
-import { mc } from 'lib/analytics';
+import analytics from 'lib/analytics';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 
+const { mc } = analytics;
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
 const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';

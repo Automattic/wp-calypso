@@ -12,7 +12,7 @@ import { translate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import notices from 'notices';
-import { pageView } from 'lib/analytics';
+import analytics from 'lib/analytics';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { sectionify } from 'lib/route';
 import Sharing from './main';
@@ -21,6 +21,7 @@ import SharingConnections from './connections/connections';
 import sites from 'lib/sites-list';
 import utils from 'lib/site/utils';
 
+const { pageView } = analytics;
 const analyticsPageTitle = 'Sharing';
 
 export const layout = context => {

@@ -12,7 +12,7 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import { tracks } from 'lib/analytics';
+import analytics from 'lib/analytics';
 import AllTours from 'layout/guided-tours/config';
 import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
@@ -24,6 +24,8 @@ import {
 	quitGuidedTour,
 	resetGuidedToursHistory,
 } from 'state/ui/guided-tours/actions';
+
+const { tracks } = analytics;
 
 class GuidedTours extends Component {
 	shouldComponentUpdate( nextProps ) {

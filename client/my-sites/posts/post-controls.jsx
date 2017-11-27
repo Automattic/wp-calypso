@@ -16,11 +16,12 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import { ga } from 'lib/analytics';
+import analytics from 'lib/analytics';
 import { userCan } from 'lib/posts/utils';
 import { isPublicizeEnabled } from 'state/selectors';
 import { getSiteSlug, isSitePreviewable } from 'state/sites/selectors';
 
+const { ga } = analytics;
 const edit = () => ga.recordEvent( 'Posts', 'Clicked Edit Post' );
 const copy = () => ga.recordEvent( 'Posts', 'Clicked Copy Post' );
 const viewStats = () => ga.recordEvent( 'Posts', 'Clicked View Post Stats' );

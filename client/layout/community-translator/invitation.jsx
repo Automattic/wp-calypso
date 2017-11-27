@@ -13,7 +13,9 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import invitationUtils from './invitation-utils';
-import { ga as googleAnalytics } from 'lib/analytics';
+import analytics from 'lib/analytics';
+
+const { ga: googleAnalytics } = analytics;
 
 class CommunityTranslatorInvitation extends React.Component {
 	static displayName = 'CommunityTranslatorInvitation';

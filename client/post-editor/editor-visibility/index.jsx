@@ -24,7 +24,7 @@ import DropdownItem from 'components/select-dropdown/item';
 import touchDetect from 'lib/touch-detect';
 import postActions from 'lib/posts/actions';
 import { recordEvent, recordStat } from 'lib/posts/stats';
-import { tracks } from 'lib/analytics';
+import analytics from 'lib/analytics';
 import accept from 'lib/accept';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -104,7 +104,7 @@ class EditorVisibility extends React.Component {
 		if ( this.getVisibility() !== newVisibility ) {
 			recordStat( 'visibility-set-' + newVisibility );
 			recordEvent( 'Changed visibility', newVisibility );
-			tracks.recordEvent( 'calypso_editor_visibility_set', {
+			analytics.tracks.recordEvent( 'calypso_editor_visibility_set', {
 				context: this.props.context,
 				visibility: newVisibility,
 			} );
