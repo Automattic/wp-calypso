@@ -118,8 +118,8 @@ class AboutStep extends Component {
 
 		for ( let i = 0; i < siteGoalsArray.length; i++ ) {
 			this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
-				field: 'Site goal: ' + siteGoalsArray[ i ],
-				value: true,
+				field: 'Site goals',
+				value: siteGoalsArray[ i ],
 			} );
 		}
 
