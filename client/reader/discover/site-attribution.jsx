@@ -58,7 +58,7 @@ class DiscoverSiteAttribution extends React.Component {
 				) }
 				{ ! avatarUrl && siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
 				{ ! avatarUrl && <SiteIcon site={ site } size={ 20 } /> }
-				<span>
+				<span className="discover-attribution__site-title">
 					<a
 						{ ...siteLinkProps }
 						className={ siteClasses }

@@ -1,16 +1,30 @@
 .is-reader-page .discover-attribution {
+	align-items: flex-start;
+	display: flex;
+	color: $gray;
 	font-size: 13px;
 	font-family: $sans;
-	text-transform: lowercase;
-	color: $gray;
-	position: relative;
-	margin-top: 13px;
 	margin-bottom: 8px;
-	display: flex;
-	align-items: center;
+	margin-top: 13px;
+	position: relative;
+	text-transform: lowercase;
 
 	&.is-site {
 		margin-top: 15px;
+	}
+
+	.discover-attribution__site-title {
+		flex-shrink: 0;
+		line-height: 1.6;
+		max-height: 13px * 1.6;
+		overflow: hidden;
+		position: relative;
+		width: calc( 100% - 95px );
+
+		&::after {
+			@include long-content-fade( $size: 35px );
+
+		}
 	}
 
 	.gravatar {
@@ -48,13 +62,14 @@
 	}
 
 	.follow-button {
-		position: static;
-		border: none;
-		padding: 0;
-		color: lighten( $gray, 10% );
-		font-size: 13px;
 		background: transparent;
+		border: 0;
+		color: lighten( $gray, 10% );
 		float: none;
+		font-size: 13px;
+		padding: 0;
+		position: relative;
+			top: -1px;
 
 		&.is-following {
 			color: $alert-green;
