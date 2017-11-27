@@ -140,7 +140,7 @@ class LoggedInForm extends Component {
 		} = nextProps.authorizationData;
 
 		if (
-			nextProps.isSso( nextProps ) ||
+			this.isSso( nextProps ) ||
 			this.isWoo( nextProps ) ||
 			this.isFromJpo( nextProps ) ||
 			this.shouldRedirectJetpackStart( nextProps )
