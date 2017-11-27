@@ -15,6 +15,7 @@
 			"not": {
 				"properties": {
 					"extra": {
+						"type": "object",
 						"properties": {
 							"registrantType": {
 								"type": "string",
