@@ -14,6 +14,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import resizeImageUrl from 'lib/resize-image-url';
+import safeImageUrl from 'lib/safe-image-url';
 import { getNormalizedPost } from 'state/posts/selectors';
 
 function PostTypeListPostThumbnail( { thumbnail } ) {
@@ -25,7 +26,7 @@ function PostTypeListPostThumbnail( { thumbnail } ) {
 		<div className={ classes }>
 			{ thumbnail && (
 				<img
-					src={ resizeImageUrl( thumbnail, { h: 80 } ) }
+					src={ resizeImageUrl( safeImageUrl( thumbnail ), { h: 80 } ) }
 					className="post-type-list__post-thumbnail"
 				/>
 			) }
