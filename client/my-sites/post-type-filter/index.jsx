@@ -118,7 +118,7 @@ const PostTypeFilter = createReactClass( {
 	},
 
 	renderMultiSelectButton() {
-		if ( ! isEnabled( 'posts/post-type-list/bulk-edit' ) ) {
+		if ( ! isEnabled( 'posts/post-type-list/bulk-edit' ) || ! this.props.siteId ) {
 			return null;
 		}
 
