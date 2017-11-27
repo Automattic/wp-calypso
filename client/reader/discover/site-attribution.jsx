@@ -6,8 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { get } from 'lodash';
-import path from 'path';
+import { get, endsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -41,7 +40,7 @@ class DiscoverSiteAttribution extends React.Component {
 
 		let avatarUrl = attribution.avatar_url;
 		// Drop default avatar
-		if ( path.basename( avatarUrl ) === 'defaultavatar.png' ) {
+		if ( endsWith( avatarUrl, 'defaultavatar.png' ) ) {
 			avatarUrl = null;
 		}
 
@@ -57,7 +56,7 @@ class DiscoverSiteAttribution extends React.Component {
 						height="20"
 					/>
 				) }
-				{ ! avatarUrl && siteId && <QueryReaderSite siteId={ siteId } /> }
+				{ ! avatarUrl && siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
 				{ ! avatarUrl && <SiteIcon site={ site } size={ 20 } /> }
 				<span>
 					<a
