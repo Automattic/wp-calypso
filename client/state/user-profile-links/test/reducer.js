@@ -14,6 +14,8 @@ import {
 	USER_PROFILE_LINKS_ADD_FAILURE,
 	USER_PROFILE_LINKS_ADD_MALFORMED,
 	USER_PROFILE_LINKS_ADD_SUCCESS,
+	USER_PROFILE_LINKS_DELETE_FAILURE,
+	USER_PROFILE_LINKS_DELETE_SUCCESS,
 	USER_PROFILE_LINKS_RECEIVE,
 	USER_PROFILE_LINKS_RESET_ERRORS,
 } from 'state/action-types';
@@ -67,6 +69,16 @@ describe( 'reducer', () => {
 			} );
 
 			expect( newState ).toEqual( newProfileLinks );
+		} );
+
+		test( 'should delete profile links by slug from state', () => {
+			const state = deepFreeze( profileLinks );
+			const newState = items( state, {
+				type: USER_PROFILE_LINKS_DELETE_SUCCESS,
+				linkSlug: profileLinks[ 0 ].link_slug,
+			} );
+
+			expect( newState ).toEqual( [ profileLinks[ 1 ] ] );
 		} );
 	} );
 
@@ -128,6 +140,33 @@ describe( 'reducer', () => {
 			} );
 
 			expect( newState ).toEqual( {} );
+		} );
+
+		test( 'should reset all errors in state on delete success', () => {
+			const state = deepFreeze( { error: 'An error has occurred' } );
+			const linkSlug = 'https-wordpress-com';
+			const newState = errors( state, {
+				type: USER_PROFILE_LINKS_DELETE_SUCCESS,
+				linkSlug,
+			} );
+
+			expect( newState ).toEqual( {} );
+		} );
+
+		test( 'should store delete request errors in state', () => {
+			const error = {
+				status: 404,
+				message: 'The requested profile link was not found.',
+			};
+			const linkSlug = 'https-wordpress-com';
+			const state = deepFreeze( {} );
+			const newState = errors( state, {
+				type: USER_PROFILE_LINKS_DELETE_FAILURE,
+				linkSlug,
+				error,
+			} );
+
+			expect( newState ).toEqual( { error } );
 		} );
 	} );
 } );
