@@ -1,12 +1,19 @@
 /** @format */
 .editor-revisions__dialog {
+	display: flex;
 	padding: 0;
-	overflow-x: hidden;
 }
 
 .editor-revisions__wrapper {
-	height: 100vh;
-	width: 100vw;
+	display: flex;
+	width: 90vw;
+	height: calc(90vh - 73px);
+
+	@include breakpoint( '<660px' ) {
+		flex-direction: column-reverse;
+		width: 100vw;
+		height: calc(100vh - 73px);
+	}
 }
 
 .editor-revisions__wpadmin-link {

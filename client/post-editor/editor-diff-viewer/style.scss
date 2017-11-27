@@ -1,19 +1,10 @@
 /** @format */
 .editor-diff-viewer {
+	flex: 1;
 	margin: 0;
-	position: absolute;
-	top: 120px;
-	bottom: 72px;
-	left: 0;
-	width: 100%;
-	box-sizing: border-box;
 	padding: 24px 32px 32px 32px;
+	box-sizing: border-box;
 	overflow-y: auto;
-
-	@include breakpoint( '>660px' ) {
-		top: 0;
-		width: calc(100% - 230px);
-	}
 
 	.editor-diff-viewer__title {
 		font-family: $serif;

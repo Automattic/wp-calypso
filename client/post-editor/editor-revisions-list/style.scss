@@ -3,21 +3,16 @@
 @import 'components/accordion/style';
 
 .editor-revisions-list {
-	position: absolute;
-	top: 0;
-	right: 0;
+	position: relative;
 	background: $gray-light;
-
-	@include breakpoint( '<660px' ) {
-		left: 0;
-		height: 120px;
-	}
+	flex-basis: 120px;
+	flex-grow: 0;
+	flex-shrink: 0;
 
 	@include breakpoint( '>660px' ) {
 		border-left: 1px solid darken($sidebar-bg-color, 5%);
 		z-index: 1; // Put the list above the action-buttons:before overlay gradient. -shaun
-		width: 230px;
-		bottom: 73px;
+		flex-basis: 230px;
 	}
 }
 
@@ -54,6 +49,10 @@
 	bottom: 0;
 	left: 0;
 	overflow-y: auto;
+
+	@include breakpoint( '<660px' ) {
+		overflow-y: hidden;
+	}
 }
 
 .editor-revisions-list__list {
