@@ -37,7 +37,7 @@ class EditorDiffViewer extends PureComponent {
 		);
 		const thisNodeHeight = get( thisNode, 'offsetHeight', 0 );
 		const offset = Math.max( 0, get( diffNode, 'offsetTop', 0 ) - thisNodeHeight / 2 );
-		thisNode.scrollTo( 0, offset );
+		thisNode.scrollTop = offset;
 	};
 
 	componentDidMount() {
