@@ -18,6 +18,7 @@ const tasks = {
 		duration: '10 mins',
 		completedTitle: 'You updated your About page',
 		completedButtonText: 'Change',
+		url: '/pages/$siteSlug',
 	},
 	avatar_uploaded: {
 		title: 'Upload your profile picture',
@@ -26,6 +27,7 @@ const tasks = {
 		duration: '2 mins',
 		completedTitle: 'You uploaded an avatar',
 		completedButtonText: 'Change',
+		url: '/me',
 	},
 	blogname_set: {
 		title: 'Personalize your site',
@@ -33,6 +35,7 @@ const tasks = {
 		duration: '1 min',
 		completedTitle: 'You updated your site title',
 		completedButtonText: 'Edit',
+		url: '/settings/general/$siteSlug',
 	},
 	blogdescription_set: {
 		title: 'Create a tagline',
@@ -40,6 +43,7 @@ const tasks = {
 		duration: '2 mins',
 		completedTitle: 'You created a tagline',
 		completedButtonText: 'Change',
+		url: '/settings/general/$siteSlug',
 	},
 	contact_page_updated: {
 		title: 'Personalize your Contact page',
@@ -47,6 +51,7 @@ const tasks = {
 		duration: '2 mins',
 		completedTitle: 'You updated your Contact page',
 		completedButtonText: 'Edit',
+		url: '/pages/$siteSlug',
 	},
 	custom_domain_registered: {
 		title: 'Register a custom domain',
@@ -55,6 +60,7 @@ const tasks = {
 		duration: '2 mins',
 		completedTitle: 'You registered a custom domain',
 		completedButtonText: 'Add email',
+		url: '/domains/add/$siteSlug',
 	},
 	domain_selected: {
 		title: 'Pick a website address',
@@ -68,6 +74,7 @@ const tasks = {
 		duration: '10 mins',
 		completedTitle: 'You published your first blog post',
 		completedButtonText: 'Edit',
+		url: '/posts/$siteSlug',
 	},
 	site_created: {
 		title: 'Create your site',
@@ -81,6 +88,7 @@ const tasks = {
 		duration: '1 min',
 		completedTitle: 'You uploaded a site icon',
 		completedButtonText: 'Change',
+		url: '/settings/general/$siteSlug',
 	},
 	social_links_set: {
 		title: 'Display links to your social accounts',
@@ -88,6 +96,7 @@ const tasks = {
 		duration: '2 mins',
 		completedTitle: 'You added your social accounts.',
 		completedButtonText: 'Change',
+		url: '/customize/$siteSlug',
 	},
 };
 
@@ -105,8 +114,16 @@ const sequence = [
 	'custom_domain_registered',
 ];
 
+export const urlForTask = ( id, siteSlug ) => {
+	const task = tasks[ id ];
+	if ( task && task.url ) {
+		return task.url.replace( '$siteSlug', siteSlug );
+	}
+};
+
 export const onboardingTasks = currentState =>
 	map( sequence, id => {
 		const completed = currentState[ id ];
-		return assign( { id, completed }, tasks[ id ] );
+		const task = tasks[ id ];
+		return assign( { id, completed }, task );
 	} );
