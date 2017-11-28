@@ -68,8 +68,6 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER,
 } from '../action-types.js';
 
-const FORM_STEPS = [ 'origin', 'destination', 'packages', 'rates' ];
-
 export const fetchLabelsData = ( orderId, siteId ) => ( dispatch ) => {
 	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_IS_FETCHING, orderId, siteId, isFetching: true } );
 
@@ -105,38 +103,31 @@ const waitForAllPromises = ( promises ) => {
 };
 
 /**
- * Recursively checks the form for errors and returns a step with an error in it or null
+ * Checks the form for errors and returns a step with an error in it or null
  * @param {Object} form the form
  * @param {Object} errors error tree
  * @param {Number} currentStepIndex (optional) index of the step where the check should start, defaults to 0
  *
  * @returns {String} erroneous step name or null
  */
-const getFirstErroneousStep = ( form, errors, currentStepIndex = 0 ) => {
-	if ( currentStepIndex >= FORM_STEPS.length ) {
-		return null;
+const getFirstErroneousStep = ( form, errors ) => {
+	if ( ! form.origin.isNormalized || ! isEqual( form.origin.values, form.origin.normalized ) ) {
+		return 'origin';
 	}
 
-	const stepToCheck = FORM_STEPS[ currentStepIndex ];
-	switch ( stepToCheck ) {
-		case 'origin':
-			if ( ! form.origin.isNormalized || ! isEqual( form.origin.values, form.origin.normalized ) ) {
-				return 'origin';
-			}
-		case 'destination':
-			if ( ! form.destination.isNormalized || ! isEqual( form.destination.values, form.destination.normalized ) ) {
-				return 'destination';
-			}
-		case 'packages':
-			if ( hasNonEmptyLeaves( errors.packages ) ) {
-				return 'packages';
-			}
-		case 'rates':
-			if ( hasNonEmptyLeaves( errors.rates ) ) {
-				return 'rates';
-			}
+	if ( ! form.destination.isNormalized || ! isEqual( form.destination.values, form.destination.normalized ) ) {
+		return 'destination';
 	}
-	return getFirstErroneousStep( form, errors, currentStepIndex + 1 );
+
+	if ( hasNonEmptyLeaves( errors.packages ) ) {
+		return 'packages';
+	}
+
+	if ( hasNonEmptyLeaves( errors.rates ) ) {
+		return 'rates';
+	}
+
+	return null;
 };
 
 const expandFirstErroneousStep = ( orderId, siteId, dispatch, getState ) => {
