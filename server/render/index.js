@@ -1,6 +1,8 @@
 /** @format */
 /**
  * External dependencies
+ *
+ * @format
  */
 
 import ReactDomServer from 'react-dom/server';
@@ -97,7 +99,7 @@ export function serverRender( req, res ) {
 	if (
 		config.isEnabled( 'server-side-rendering' ) &&
 		context.layout &&
-		! context.user &&
+		! context.isLoggedIn &&
 		cacheKey &&
 		isDefaultLocale( context.lang )
 	) {
