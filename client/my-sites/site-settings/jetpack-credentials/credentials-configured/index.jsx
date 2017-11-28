@@ -90,7 +90,7 @@ class CredentialsConfigured extends Component {
 
 		if ( isPressable ) {
 			return (
-				<CompactCard className="credentials-configured" onClick={ this.toggleRevoking }>
+				<CompactCard className="credentials-configured" onClick={ this.toggleRevoking } href="#">
 					<Gridicon
 						icon="checkmark-circle"
 						size={ 48 }
