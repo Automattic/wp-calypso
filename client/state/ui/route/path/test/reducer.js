@@ -19,6 +19,6 @@ describe( 'reducer', () => {
 		} );
 
 		expect( state.initial ).to.equal( '/themes' );
-		expect( state.current ).to.deep.equal( '/themes' );
+		expect( state.current ).to.equal( '/themes' );
 	} );
 } );
