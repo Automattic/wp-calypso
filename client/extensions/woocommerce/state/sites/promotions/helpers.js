@@ -3,6 +3,11 @@
  */
 import { find } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
+
 export function createPromotionFromProduct( product ) {
 	const salePrice = product.sale_price;
 	const startDate = product.date_on_sale_from || undefined;
@@ -26,8 +31,7 @@ export function createPromotionFromProduct( product ) {
 function createProductName( product ) {
 	if ( product.productId ) {
 		// It's a variation, append the options.
-		const options = product.attributes.map( attr => attr.option ).join( ', ' );
-		return product.name + ' (' + options + ')';
+		return product.name + ' (' + formattedVariationName( product ) + ')';
 	}
 
 	// Just a normal product.
