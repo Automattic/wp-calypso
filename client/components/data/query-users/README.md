@@ -43,4 +43,4 @@ The site ID for which we request post revisions.
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-Limit result set to specific IDs.
+Limit result set to specific IDs. The userIds will be filtered to exclude the current user in order to only request data that is not present yet, as well as to preserve the current user state.
