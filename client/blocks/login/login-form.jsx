@@ -21,7 +21,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
-import { getCurrentQueryArguments } from 'state/ui/selectors';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { loginUser, formUpdate } from 'state/login/actions';
