@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import switchLocale from 'lib/i18n-utils/switch-locale';

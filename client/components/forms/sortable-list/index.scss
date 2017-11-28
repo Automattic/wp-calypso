@@ -18,11 +18,11 @@
 
 	&.is-active > * {
 		box-shadow: 0 0 0 2px white, 0 0 0 4px $blue-medium;
+		z-index: z-index( 'root', '.sortable-list__item.is-draggable.is-active' );
 	}
 
 	&.is-draggable.is-active {
 		position: fixed;
-		z-index: z-index( 'root', '.sortable-list__item.is-draggable.is-active' );
 	}
 
 	&.is-shadow {
@@ -76,7 +76,7 @@
 	}
 }
 
-.sortable-list.is-horizontal .sortable-list__navigation-button .noticon {
+.sortable-list.is-horizontal .sortable-list__navigation-button .gridicon {
 	transform: rotate( 90deg ) translateX( 1px );
 }
 
@@ -96,11 +96,6 @@
 	}
 }
 
-.sortable-list.is-vertical .sortable-list__navigation-button .noticon {
+.sortable-list.is-vertical .sortable-list__navigation-button .gridicon {
 	transform: rotate( 180deg ) translateX( 1px );
-}
-
-.sortable-list__navigation-button .noticon {
-	font-size: 24px;
-	font-weight: bold;
 }

@@ -8,7 +8,6 @@ The "new" reader full post component
 - `blogId`: The blog id for the post
 - `postId`: The post id
 - `onClose`: An onClose event handler function
-- `onPostNotFound` : A Post not found handler function
 
 *optional*
 - `referral`: An object containing a `blogId` and `postId`

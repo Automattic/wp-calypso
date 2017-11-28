@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { addHandlers } from 'state/data-layer/extensions-middleware';

@@ -272,10 +272,6 @@ $plan-features-sidebar-width: 272px;
 	display: inline-block;
 }
 
-.popover.plan-features__header-tip-info .popover__inner {
-	white-space: nowrap;
-}
-
 .plan-features__price {
 	&.is-placeholder {
 		@include placeholder( 23% );
@@ -429,7 +425,7 @@ $plan-features-sidebar-width: 272px;
  }
 
 
-/*= Plans in Signup 
+/*= Plans in Signup
 ========================================*/
 
 .price-toggle {

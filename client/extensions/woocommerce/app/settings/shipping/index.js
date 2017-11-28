@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -23,7 +23,7 @@ const Shipping = ( { className } ) => {
 	const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
 
 	return (
-		<Main className={ classNames( 'shipping', className ) }>
+		<Main className={ classNames( 'shipping', className ) } wideLayout>
 			<ShippingHeader />
 			<ShippingOrigin />
 			<ShippingZoneList />

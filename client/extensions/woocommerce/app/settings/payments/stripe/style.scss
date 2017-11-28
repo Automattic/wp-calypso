@@ -75,4 +75,19 @@
 	font-size: 18px;
 	justify-content: space-between;
 	padding: 0 0 16px 0;
+
+	&.placeholder {
+		margin-bottom: 16px;
+		width: 30%;
+		@include placeholder();
+	}
+}
+
+.stripe__method-edit-body {
+	padding: 0 0 16px 0;
+
+	&.placeholder {
+		height: 60px;
+		@include placeholder();
+	}
 }

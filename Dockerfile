@@ -1,5 +1,5 @@
-FROM       node:6.11.2
-MAINTAINER Automattic
+FROM       node:8.9.1
+LABEL maintainer="Automattic"
 
 WORKDIR    /calypso
 
@@ -25,12 +25,9 @@ RUN        bash /tmp/env-config.sh
 # and should only change as often as the dependencies
 # change. This layer should allow for final build times
 # to be limited only by the Calypso build speed.
-#
-# Sometimes "npm install" fails the first time when the
-# cache is empty, so we retry once if it failed
 COPY       ./package.json ./npm-shrinkwrap.json /calypso/
 RUN        true \
-           && npm install --production || npm install --production \
+           && npm install --production \
            && rm -rf /root/.npm \
            && true
 

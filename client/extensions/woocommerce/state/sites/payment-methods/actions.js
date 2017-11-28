@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import getPaymentMethodDetails from '../../../lib/get-payment-method-details';

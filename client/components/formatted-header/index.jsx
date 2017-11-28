@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -29,7 +29,7 @@ function FormattedHeader( { headerText, subHeaderText } ) {
 }
 
 FormattedHeader.propTypes = {
-	headerText: PropTypes.string,
+	headerText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 	subHeaderText: PropTypes.node,
 };
 

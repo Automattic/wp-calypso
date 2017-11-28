@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -18,13 +18,10 @@ const LoadStatus = {
 	FAILED: 'FAILED',
 };
 
-export default class extends React.Component {
-	static displayName = 'ImagePreloader';
-
+export default class ImagePreloader extends React.Component {
 	static propTypes = {
 		src: PropTypes.string,
 		placeholder: PropTypes.element.isRequired,
-		children: PropTypes.node,
 		onLoad: PropTypes.func,
 		onError: PropTypes.func,
 	};

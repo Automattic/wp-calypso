@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -97,7 +97,7 @@ class MediaLibraryExternalHeader extends React.Component {
 		const { site, selectedItems, source, onSourceChange } = this.props;
 
 		onSourceChange( '', () => {
-			MediaActions.addExternal( site.ID, selectedItems, source );
+			MediaActions.addExternal( site, selectedItems, source );
 		} );
 	};
 

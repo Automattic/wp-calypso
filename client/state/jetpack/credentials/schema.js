@@ -1,3 +1,4 @@
+/** @format */
 export const itemsSchema = {
 	type: 'object',
 	items: {
@@ -7,7 +8,7 @@ export const itemsSchema = {
 			host: { type: 'string' },
 			port: { type: 'number' },
 			protocol: { type: 'string' },
-			pass: { type: 'bool' },
+			pass: { type: 'boolean' },
 			user: { type: 'string' },
 		},
 	},

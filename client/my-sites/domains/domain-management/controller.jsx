@@ -1,9 +1,10 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
+import { includes } from 'lodash';
 import page from 'page';
 import React from 'react';
 
@@ -49,9 +50,12 @@ export default {
 			'Domain Management › Edit'
 		);
 
+		const isTransfer = includes( pageContext.path, '/transfer/in/' );
+		const component = isTransfer ? DomainManagement.TransferIn : DomainManagement.Edit;
+
 		renderWithReduxStore(
 			<DomainManagementData
-				component={ DomainManagement.Edit }
+				component={ component }
 				context={ pageContext }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }

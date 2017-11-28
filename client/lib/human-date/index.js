@@ -1,14 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import i18n from 'i18n-calypso';
 
 const MILLIS_IN_MINUTE = 60 * 1000;
 
-export default function humanDate( dateOrMoment ) {
+export default function humanDate( dateOrMoment, dateFormat = 'll' ) {
 	const now = i18n.moment();
 	dateOrMoment = i18n.moment( dateOrMoment );
 
@@ -51,5 +51,5 @@ export default function humanDate( dateOrMoment ) {
 		} );
 	}
 
-	return dateOrMoment.format( 'll' );
+	return dateOrMoment.format( dateFormat );
 }

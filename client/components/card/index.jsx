@@ -16,7 +16,6 @@ class Card extends Component {
 		tagName: PropTypes.string,
 		target: PropTypes.string,
 		compact: PropTypes.bool,
-		children: PropTypes.node,
 		highlight: PropTypes.oneOf( [ false, 'error', 'info', 'success', 'warning' ] ),
 	};
 
@@ -44,13 +43,11 @@ class Card extends Component {
 		const omitProps = [ 'compact', 'highlight', 'tagName' ];
 
 		let linkIndicator;
-		if ( href || onClick ) {
+		if ( href ) {
 			linkIndicator = (
 				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
 			);
-		}
-
-		if ( ! href ) {
+		} else {
 			omitProps.push( 'href', 'target' );
 		}
 

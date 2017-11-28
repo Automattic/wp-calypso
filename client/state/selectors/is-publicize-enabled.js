@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { isJetpackModuleActive, getSiteOption } from 'state/sites/selectors';

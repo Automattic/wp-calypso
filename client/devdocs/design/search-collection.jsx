@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -63,12 +63,12 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 	return (
 		<div className="design__collection">
 			{ showCounter > 1 &&
-			filter && (
-				<div className="design__instance-links">
-					<span>Showing </span>
-					{ summary }...
-				</div>
-			) }
+				filter && (
+					<div className="design__instance-links">
+						<span>Showing </span>
+						{ summary }...
+					</div>
+				) }
 			{ examples }
 		</div>
 	);

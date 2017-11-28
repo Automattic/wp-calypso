@@ -80,20 +80,6 @@ class ThemeSelectionStep extends Component {
 		);
 	}
 
-	shouldGoToFirstStep() {
-		const { dependencyStore } = this.props;
-
-		return (
-			isEnabled( 'signup/atomic-store-flow' ) &&
-			this.props.designType === 'store' &&
-			dependencyStore.themeSlugWithRepo
-		);
-	}
-
-	shouldSkipStep() {
-		return false;
-	}
-
 	isStoreSignup() {
 		const { signupDependencies = {} } = this.props;
 
@@ -103,31 +89,7 @@ class ThemeSelectionStep extends Component {
 		);
 	}
 
-	componentWillMount() {
-		if ( this.shouldGoToFirstStep() ) {
-			this.props.goToStep( 'design-type-with-atomic-store' );
-		} else if ( this.shouldSkipStep() ) {
-			SignupActions.submitSignupStep(
-				{
-					stepName: this.props.stepName,
-					processingMessage: this.props.translate( 'Adding your theme' ),
-					repoSlug: '',
-				},
-				null,
-				{
-					themeSlugWithRepo: '',
-				}
-			);
-
-			this.props.goToNextStep();
-		}
-	}
-
 	render = () => {
-		if ( this.shouldGoToFirstStep() || this.shouldSkipStep() ) {
-			return null;
-		}
-
 		const storeSignup = this.isStoreSignup();
 		const defaultDependencies = this.props.useHeadstart
 			? { themeSlugWithRepo: 'pub/twentysixteen' }

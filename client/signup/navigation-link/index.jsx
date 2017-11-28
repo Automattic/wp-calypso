@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -23,10 +23,15 @@ export class NavigationLink extends Component {
 		goToNextStep: PropTypes.func,
 		direction: PropTypes.oneOf( [ 'back', 'forward' ] ),
 		flowName: PropTypes.string.isRequired,
+		labelText: PropTypes.string,
 		positionInFlow: PropTypes.number,
 		previousPath: PropTypes.string,
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string.isRequired,
+	};
+
+	static defaultProps = {
+		labelText: '',
 	};
 
 	/**
@@ -99,6 +104,8 @@ export class NavigationLink extends Component {
 	}
 
 	render() {
+		const { translate, labelText } = this.props;
+
 		if (
 			this.props.positionInFlow === 0 &&
 			this.props.direction === 'back' &&
@@ -111,12 +118,12 @@ export class NavigationLink extends Component {
 
 		if ( this.props.direction === 'back' ) {
 			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;
-			text = this.props.translate( 'Back' );
+			text = labelText ? labelText : translate( 'Back' );
 		}
 
 		if ( this.props.direction === 'forward' ) {
 			forwardGridicon = <Gridicon icon="arrow-right" size={ 18 } />;
-			text = this.props.translate( 'Skip for now' );
+			text = labelText ? labelText : translate( 'Skip for now' );
 		}
 
 		return (

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import React from 'react';
@@ -37,8 +37,8 @@ export default {
 		next();
 	},
 
-	people( filter, context ) {
-		renderPeopleList( filter, context );
+	people( context ) {
+		renderPeopleList( context );
 	},
 
 	invitePeople( context ) {
@@ -59,8 +59,11 @@ function redirectToTeam( context ) {
 	page.redirect( '/people/team' );
 }
 
-function renderPeopleList( filter, context ) {
-	context.store.dispatch( setTitle( i18n.translate( 'People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+function renderPeopleList( context ) {
+	const filter = context.params.filter;
+
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'People', { textOnly: true } ) ) );
 
 	renderWithReduxStore(
 		React.createElement( PeopleList, {

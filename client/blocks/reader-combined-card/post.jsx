@@ -19,7 +19,7 @@ import ReaderExcerpt from 'blocks/reader-excerpt';
 import ReaderVisitLink from 'blocks/reader-visit-link';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import { recordPermalinkClick } from 'reader/stats';
-import PostTime from 'reader/post-time';
+import TimeSince from 'components/time-since';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import * as stats from 'reader/stats';
@@ -144,20 +144,20 @@ class ReaderCombinedCardPost extends React.Component {
 							</ReaderAuthorLink>
 						) }
 						{ post.date &&
-						post.URL && (
-							<span className="reader-combined-card__timestamp">
-								{ hasAuthorName && <span>, </span> }
-								<a
-									className="reader-combined-card__timestamp-link"
-									onClick={ recordDateClick }
-									href={ post.URL }
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<PostTime date={ post.date } />
-								</a>
-							</span>
-						) }
+							post.URL && (
+								<span className="reader-combined-card__timestamp">
+									{ hasAuthorName && <span>, </span> }
+									<a
+										className="reader-combined-card__timestamp-link"
+										onClick={ recordDateClick }
+										href={ post.URL }
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										<TimeSince date={ post.date } />
+									</a>
+								</span>
+							) }
 					</div>
 				</div>
 			</li>

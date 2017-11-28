@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { combineTours } from 'layout/guided-tours/config-elements';
@@ -12,6 +12,7 @@ import { SimplePaymentsTour } from 'layout/guided-tours/tours/simple-payments-to
 import { EditorBasicsTour } from 'layout/guided-tours/tours/editor-basics-tour';
 import { MediaBasicsTour } from 'layout/guided-tours/tours/media-basics-tour';
 import { ActivityLogTour } from 'layout/guided-tours/tours/activity-log-tour';
+import { SimplePaymentsEndOfYearGuide } from 'layout/guided-tours/tours/simple-payments-end-of-year-guide';
 
 export default combineTours( {
 	main: MainTour,
@@ -21,4 +22,5 @@ export default combineTours( {
 	gdocsIntegrationTour: GDocsIntegrationTour,
 	simplePaymentsTour: SimplePaymentsTour,
 	activityLogTour: ActivityLogTour,
+	simplePaymentsEndOfYearGuide: SimplePaymentsEndOfYearGuide,
 } );

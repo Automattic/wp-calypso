@@ -20,11 +20,17 @@ describe( 'resizeImageUrl()', () => {
 		expect( resizeImageUrl( 1 ) ).to.equal( 1 );
 	} );
 
-	test( 'should strip original query params', () => {
+	test( 'should strip original query params (WP.com)', () => {
 		const resizedUrl = resizeImageUrl( imageUrl );
 		expect( resizedUrl ).to.equal(
 			'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg'
 		);
+	} );
+
+	test( 'should strip original query params (Photon)', () => {
+		const original = 'https://i0.wp.com/example.com/foo.png?fit=meh';
+		const resizedUrl = resizeImageUrl( original );
+		expect( resizedUrl ).to.equal( 'https://i0.wp.com/example.com/foo.png' );
 	} );
 
 	test( 'should not attempt to resize non-HTTP protocols', () => {
@@ -113,6 +119,12 @@ describe( 'resizeImageUrl()', () => {
 				const resized = resizeImageUrl( original, 40, 20 );
 				const expected = 'https://i0.wp.com/example.com/foo.png?ssl=1&fit=40%2C20';
 				expect( resized ).to.equal( expected );
+			} );
+
+			test( 'returns null for URLs with query string', () => {
+				const original = 'https://example.com/foo.png?bar=baz';
+				const resized = resizeImageUrl( original, 40, 20 );
+				expect( resized ).to.be.null;
 			} );
 		} );
 	} );

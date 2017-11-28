@@ -31,7 +31,7 @@ class Reviews extends Component {
 		const classes = classNames( 'reviews__list', className );
 
 		return (
-			<Main className={ classes }>
+			<Main className={ classes } wideLayout>
 				<SidebarNavigation />
 				<ActionHeader breadcrumbs={ <span>{ translate( 'Reviews' ) }</span> } />
 				<ReviewsList

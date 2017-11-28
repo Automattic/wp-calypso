@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { isEmpty, omit } from 'lodash';
@@ -13,7 +13,7 @@ import inherits from 'inherits';
 /**
  * Internal dependencies
  */
-import paygateLoader from 'lib/paygate-loader';
+import paymentGatewayLoader from 'lib/payment-gateway-loader';
 import { validateCardDetails } from 'lib/credit-card-details';
 import {
 	INPUT_VALIDATION,
@@ -126,13 +126,13 @@ TransactionFlow.prototype._paymentHandlers = {
 		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with new card' );
 
-		this._createPaygateToken(
-			function( paygateToken ) {
+		this._createCardToken(
+			function( cardToken ) {
 				const { name, country, 'postal-code': zip } = newCardDetails;
 
 				this._submitWithPayment( {
 					payment_method: 'WPCOM_Billing_MoneyPress_Paygate',
-					payment_key: paygateToken,
+					payment_key: cardToken,
 					name,
 					zip,
 					country,
@@ -147,13 +147,13 @@ TransactionFlow.prototype._paymentHandlers = {
 	},
 };
 
-TransactionFlow.prototype._createPaygateToken = function( callback ) {
+TransactionFlow.prototype._createCardToken = function( callback ) {
 	this._pushStep( { name: SUBMITTING_PAYMENT_KEY_REQUEST } );
 
-	createPaygateToken(
+	createCardToken(
 		'new_purchase',
 		this._initialData.payment.newCardDetails,
-		function( error, paygateToken ) {
+		function( error, cardToken ) {
 			if ( error ) {
 				return this._pushStep( {
 					name: RECEIVED_PAYMENT_KEY_RESPONSE,
@@ -163,7 +163,7 @@ TransactionFlow.prototype._createPaygateToken = function( callback ) {
 			}
 
 			this._pushStep( { name: RECEIVED_PAYMENT_KEY_RESPONSE } );
-			callback( paygateToken );
+			callback( cardToken );
 		}.bind( this )
 	);
 };
@@ -212,21 +212,20 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 				return;
 			}
 
-			paygateLoader.ready( configuration.js_url, function( error, Paygate ) {
-				var parameters;
-				if ( error ) {
-					callback( error );
-					return;
-				}
+			paymentGatewayLoader
+				.ready( configuration.js_url, 'Paygate', true )
+				.then( Paygate => {
+					Paygate.setProcessor( configuration.processor );
+					Paygate.setApiUrl( configuration.api_url );
+					Paygate.setPublicKey( configuration.public_key );
+					Paygate.setEnvironment( configuration.environment );
 
-				Paygate.setProcessor( configuration.processor );
-				Paygate.setApiUrl( configuration.api_url );
-				Paygate.setPublicKey( configuration.public_key );
-				Paygate.setEnvironment( configuration.environment );
-
-				parameters = getPaygateParameters( cardDetails );
-				Paygate.createToken( parameters, onSuccess, onFailure );
-			} );
+					const parameters = getPaygateParameters( cardDetails );
+					Paygate.createToken( parameters, onSuccess, onFailure );
+				} )
+				.catch( loaderError => {
+					callback( loaderError );
+				} );
 		}
 	);
 
@@ -241,6 +240,10 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 	function onFailure() {
 		callback( new Error( 'Paygate Request Error' ) );
 	}
+}
+
+function createCardToken( requestType, cardDetails, callback ) {
+	return createPaygateToken( requestType, cardDetails, callback );
 }
 
 function getPaygateParameters( cardDetails ) {
@@ -278,7 +281,7 @@ function fullCreditsPayment() {
 }
 
 export default {
-	createPaygateToken,
+	createCardToken,
 	fullCreditsPayment,
 	hasDomainDetails,
 	newCardPayment,

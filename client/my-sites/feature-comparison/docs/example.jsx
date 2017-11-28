@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -14,7 +14,7 @@ import PlanCompareCard from 'my-sites/plan-compare-card/index';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 
 export default class extends React.PureComponent {
-    static displayName = 'FeatureComparison';
+	static displayName = 'FeatureComparison';
 
 	render() {
 		return (

@@ -80,170 +80,138 @@ export class CredentialsForm extends Component {
 		const { showPrivateKeyField, formErrors } = this.state;
 
 		return (
-			<FormFieldset className="credentials-form">
-				<table>
-					<tbody>
-						<tr>
-							<td colSpan="2" className="credentials-form__protocol-field">
-								<FormLabel>
-									<div>{ translate( 'Credential Type' ) }</div>
-									<FormSelect
-										name="protocol"
-										value={ get( this.state.form, 'protocol', 'ssh' ) }
-										onChange={ this.handleFieldChange }
-										disabled={ formIsSubmitting }
-									>
-										<option value="ssh">{ translate( 'SSH' ) }</option>
-										<option value="sftp">{ translate( 'SFTP' ) }</option>
-										<option value="ftp">{ translate( 'FTP' ) }</option>
-									</FormSelect>
-								</FormLabel>
-							</td>
-						</tr>
-						<tr>
-							<td className="credentials-form__host-field">
-								<FormLabel>
-									<div>{ translate( 'Server Address' ) }</div>
-									<FormTextInput
-										name="host"
-										placeholder={ translate( 'yoursite.com' ) }
-										value={ get( this.state.form, 'host', '' ) }
-										onChange={ this.handleFieldChange }
-										disabled={ formIsSubmitting }
-										isError={ !! formErrors.host }
-									/>
-									{ formErrors.host && (
-										<FormInputValidation isError={ true } text={ formErrors.host } />
-									) }
-								</FormLabel>
-							</td>
-							<td className="credentials-form__port-field">
-								<FormLabel>
-									<div>{ translate( 'Port Number' ) }</div>
-									<FormTextInput
-										name="port"
-										placeholder={ translate( '22' ) }
-										value={ get( this.state.form, 'port', '' ) }
-										onChange={ this.handleFieldChange }
-										disabled={ formIsSubmitting }
-										isError={ !! formErrors.port }
-									/>
-									{ formErrors.port && (
-										<FormInputValidation isError={ true } text={ formErrors.port } />
-									) }
-								</FormLabel>
-							</td>
-						</tr>
-						<tr>
-							<td colSpan="2" className="credentials-form__user-field">
-								<FormLabel>
-									<div>{ translate( 'Username' ) }</div>
-									<FormTextInput
-										name="user"
-										placeholder={ translate( 'username' ) }
-										value={ get( this.state.form, 'user', '' ) }
-										onChange={ this.handleFieldChange }
-										disabled={ formIsSubmitting }
-										isError={ !! formErrors.user }
-									/>
-									{ formErrors.user && (
-										<FormInputValidation isError={ true } text={ formErrors.user } />
-									) }
-								</FormLabel>
-							</td>
-						</tr>
-						<tr>
-							<td colSpan="2" className="credentials-form__pass-field">
-								<FormLabel>
-									<div>{ translate( 'Password' ) }</div>
-									<FormPasswordInput
-										name="pass"
-										placeholder={ translate( 'password' ) }
-										value={ get( this.state.form, 'pass', '' ) }
-										onChange={ this.handleFieldChange }
-										disabled={ formIsSubmitting }
-										isError={ !! formErrors.pass }
-									/>
-									{ formErrors.pass && (
-										<FormInputValidation isError={ true } text={ formErrors.pass } />
-									) }
-								</FormLabel>
-							</td>
-						</tr>
-						<tr>
-							<td colSpan="2" className="credentials-form__abspath-field">
-								<FormLabel>
-									<div>{ translate( 'Upload Path' ) }</div>
-									<FormTextInput
-										name="abspath"
-										placeholder={ translate( '/public_html' ) }
-										value={ get( this.state.form, 'abspath', '' ) }
-										onChange={ this.handleFieldChange }
-										disabled={ formIsSubmitting }
-										isError={ !! formErrors.abspath }
-									/>
-									{ formErrors.abspath && (
-										<FormInputValidation isError={ true } text={ formErrors.abspath } />
-									) }
-								</FormLabel>
-							</td>
-						</tr>
-						<tr>
-							<td colSpan="2" className="credentials-form__kpri-field">
-								<FormLabel>
-									<div>{ translate( 'Private Key' ) }</div>
-									<Button disabled={ formIsSubmitting } onClick={ this.togglePrivateKeyField }>
-										{ showPrivateKeyField ? (
-											translate( 'Hide Private Key' )
-										) : (
-											translate( 'Show Private Key' )
-										) }
-									</Button>
-									{ showPrivateKeyField && (
-										<div>
-											<FormTextArea
-												name="kpri"
-												value={ get( this.state.form, 'kpri', '' ) }
-												onChange={ this.handleFieldChange }
-												disabled={ formIsSubmitting }
-											/>
-											<p className="credentials-form__private-key-description">
-												This field is only required if your host uses key based authentication.
-											</p>
-										</div>
-									) }
-								</FormLabel>
-							</td>
-						</tr>
-						<tr>
-							<td colSpan="2">
-								<Button primary disabled={ formIsSubmitting } onClick={ this.handleSubmit }>
-									{ translate( 'Save' ) }
-								</Button>
-								{ this.props.showCancelButton && (
-									<Button
-										disabled={ formIsSubmitting }
-										onClick={ onCancel }
-										className="credentials-form__cancel-button"
-									>
-										{ translate( 'Cancel' ) }
-									</Button>
+			<div>
+				<FormFieldset>
+					<FormLabel htmlFor="protocol-type">{ translate( 'Credential Type' ) }</FormLabel>
+					<FormSelect
+						name="protocol"
+						id="protocol-type"
+						value={ get( this.state.form, 'protocol', 'ssh' ) }
+						onChange={ this.handleFieldChange }
+						disabled={ formIsSubmitting }
+					>
+						<option value="ssh">{ translate( 'SSH' ) }</option>
+						<option value="sftp">{ translate( 'SFTP' ) }</option>
+						<option value="ftp">{ translate( 'FTP' ) }</option>
+					</FormSelect>
+				</FormFieldset>
+
+				<div className="credentials-form__row">
+					<FormFieldset className="credentials-form__server-address">
+						<FormLabel htmlFor="host-address">{ translate( 'Server Address' ) }</FormLabel>
+						<FormTextInput
+							name="host"
+							id="host-address"
+							placeholder={ translate( 'yoursite.com' ) }
+							value={ get( this.state.form, 'host', '' ) }
+							onChange={ this.handleFieldChange }
+							disabled={ formIsSubmitting }
+							isError={ !! formErrors.host }
+						/>
+						{ formErrors.host && <FormInputValidation isError={ true } text={ formErrors.host } /> }
+					</FormFieldset>
+
+					<FormFieldset className="credentials-form__port-number">
+						<FormLabel htmlFor="server-port">{ translate( 'Port Number' ) }</FormLabel>
+						<FormTextInput
+							name="port"
+							id="server-port"
+							placeholder={ translate( '22' ) }
+							value={ get( this.state.form, 'port', '' ) }
+							onChange={ this.handleFieldChange }
+							disabled={ formIsSubmitting }
+							isError={ !! formErrors.port }
+						/>
+						{ formErrors.port && <FormInputValidation isError={ true } text={ formErrors.port } /> }
+					</FormFieldset>
+				</div>
+
+				<div className="credentials-form__row">
+					<FormFieldset className="credentials-form__username">
+						<FormLabel htmlFor="server-username">{ translate( 'Username' ) }</FormLabel>
+						<FormTextInput
+							name="user"
+							id="server-username"
+							placeholder={ translate( 'username' ) }
+							value={ get( this.state.form, 'user', '' ) }
+							onChange={ this.handleFieldChange }
+							disabled={ formIsSubmitting }
+							isError={ !! formErrors.user }
+						/>
+						{ formErrors.user && <FormInputValidation isError={ true } text={ formErrors.user } /> }
+					</FormFieldset>
+
+					<FormFieldset className="credentials-form__password">
+						<FormLabel htmlFor="server-password">{ translate( 'Password' ) }</FormLabel>
+						<FormPasswordInput
+							name="pass"
+							id="server-password"
+							placeholder={ translate( 'password' ) }
+							value={ get( this.state.form, 'pass', '' ) }
+							onChange={ this.handleFieldChange }
+							disabled={ formIsSubmitting }
+							isError={ !! formErrors.pass }
+						/>
+						{ formErrors.pass && <FormInputValidation isError={ true } text={ formErrors.pass } /> }
+					</FormFieldset>
+				</div>
+
+				<FormFieldset>
+					<FormLabel htmlFor="wordpress-path">{ translate( 'Upload Path' ) }</FormLabel>
+					<FormTextInput
+						name="abspath"
+						id="wordpress-path"
+						placeholder={ translate( '/public_html/wordpress-site/' ) }
+						value={ get( this.state.form, 'abspath', '' ) }
+						onChange={ this.handleFieldChange }
+						disabled={ formIsSubmitting }
+						isError={ !! formErrors.abspath }
+					/>
+					{ formErrors.abspath && (
+						<FormInputValidation isError={ true } text={ formErrors.abspath } />
+					) }
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel>{ translate( 'Private Key' ) }</FormLabel>
+					<Button disabled={ formIsSubmitting } onClick={ this.togglePrivateKeyField }>
+						{ showPrivateKeyField
+							? translate( 'Hide Private Key' )
+							: translate( 'Show Private Key' ) }
+					</Button>
+					{ showPrivateKeyField && (
+						<div>
+							<FormTextArea
+								name="kpri"
+								value={ get( this.state.form, 'kpri', '' ) }
+								onChange={ this.handleFieldChange }
+								disabled={ formIsSubmitting }
+								className="credentials-form__private-key"
+							/>
+							<p className="form-setting-explanation">
+								{ translate(
+									'This field is only required if your host uses key based authentication.'
 								) }
-								{ this.props.showDeleteButton && (
-									<Button
-										borderless={ true }
-										disabled={ formIsSubmitting }
-										onClick={ this.handleDelete }
-										className="credentials-form__delete-button"
-									>
-										{ translate( 'Delete' ) }
-									</Button>
-								) }
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</FormFieldset>
+							</p>
+						</div>
+					) }
+				</FormFieldset>
+
+				<FormFieldset>
+					<Button primary disabled={ formIsSubmitting } onClick={ this.handleSubmit }>
+						{ translate( 'Save' ) }
+					</Button>
+					{ this.props.showCancelButton && (
+						<Button
+							disabled={ formIsSubmitting }
+							onClick={ onCancel }
+							className="credentials-form__cancel-button"
+						>
+							{ translate( 'Cancel' ) }
+						</Button>
+					) }
+				</FormFieldset>
+			</div>
 		);
 	}
 }

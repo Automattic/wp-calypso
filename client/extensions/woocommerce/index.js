@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import config from 'config';
@@ -12,11 +12,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import App from './app';
-import controller from 'my-sites/controller';
 import Dashboard from './app/dashboard';
 import EmptyContent from 'components/empty-content';
-import { navigation, siteSelection } from 'my-sites/controller';
+import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import installActionHandlers from './state/data-layer';
 import Order from './app/order';
@@ -156,16 +156,13 @@ const getStorePages = () => {
 			documentTitle: translate( 'Tax Settings' ),
 			path: '/store/settings/taxes/:site',
 		},
-	];
-
-	if ( config.isEnabled( 'woocommerce/extension-settings-email' ) ) {
-		pages.push( {
+		{
 			container: SettingsEmail,
 			configKey: 'woocommerce/extension-settings-email',
 			documentTitle: translate( 'Email' ),
 			path: '/store/settings/email/:site/:setup?',
-		} );
-	}
+		},
+	];
 
 	return pages;
 };
@@ -175,6 +172,22 @@ function addStorePage( storePage, storeNavigation ) {
 		const component = React.createElement( storePage.container, { params: context.params } );
 		const appProps =
 			( storePage.documentTitle && { documentTitle: storePage.documentTitle } ) || {};
+
+		let analyticsPath = storePage.path;
+		const { filter } = context.params;
+		if ( filter ) {
+			analyticsPath = analyticsPath.replace( ':filter', filter );
+		}
+
+		let analyticsPageTitle = 'Store';
+		if ( storePage.documentTitle ) {
+			analyticsPageTitle += ` > ${ storePage.documentTitle }`;
+		} else {
+			analyticsPageTitle += ' > Dashboard';
+		}
+
+		analytics.pageView.record( analyticsPath, analyticsPageTitle );
+
 		renderWithReduxStore(
 			React.createElement( App, appProps, component ),
 			document.getElementById( 'primary' ),
@@ -221,7 +234,7 @@ export default function() {
 	} );
 
 	// Add pages that use my-sites navigation instead
-	page( '/store/stats/:type/:unit', controller.siteSelection, controller.sites );
+	page( '/store/stats/:type/:unit', siteSelection, sites );
 	page( '/store/stats/:type/:unit/:site', siteSelection, navigation, StatsController );
 
 	page( '/store/*', notFoundError );

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -49,16 +49,18 @@ class SitePicker extends React.Component {
 		}
 	}
 
-	onClose = event => {
+	onClose = ( event, selectedSiteId ) => {
 		if ( event.key === 'Escape' ) {
 			this.closePicker();
 		} else {
 			// We use setNext here, because on mobile we want to show sidebar
 			// instead of Stats page after picking a site
 			this.props.setNextLayoutFocus( 'sidebar' );
-			this.scrollToTop();
+			if ( selectedSiteId ) {
+				this.scrollToTop();
+			}
 		}
-		this.props.onClose( event );
+		this.props.onClose( event, selectedSiteId );
 	};
 
 	scrollToTop = () => {
@@ -66,15 +68,17 @@ class SitePicker extends React.Component {
 		window.scrollTo( 0, 0 );
 	};
 
-	closePicker = () => {
+	closePicker = selectedSiteId => {
 		if ( this.props.currentLayoutFocus === 'sites' ) {
 			this.props.setLayoutFocus( 'sidebar' );
-			this.scrollToTop();
+			if ( selectedSiteId ) {
+				this.scrollToTop();
+			}
 		}
 	};
 
 	handleClickOutside = () => {
-		this.closePicker();
+		this.closePicker( null );
 	};
 
 	render() {

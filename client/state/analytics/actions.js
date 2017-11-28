@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { curry, flatMap, get, isFunction, merge, property } from 'lodash';

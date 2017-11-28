@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -305,26 +305,26 @@ class ThemesMagicSearchCard extends React.Component {
 					>
 						{ searchField }
 						{ ! isMobile() &&
-						this.state.searchInput !== '' && (
-							<div className="themes-magic-search-card__icon">
-								<Gridicon
-									icon="cross"
-									className="themes-magic-search-card__icon-close"
-									tabIndex="0"
-									onClick={ this.clearSearch }
-									aria-controls={ 'search-component-magic-search' }
-									aria-label={ translate( 'Clear Search' ) }
-								/>
-							</div>
-						) }
+							this.state.searchInput !== '' && (
+								<div className="themes-magic-search-card__icon">
+									<Gridicon
+										icon="cross"
+										className="themes-magic-search-card__icon-close"
+										tabIndex="0"
+										onClick={ this.clearSearch }
+										aria-controls={ 'search-component-magic-search' }
+										aria-label={ translate( 'Clear Search' ) }
+									/>
+								</div>
+							) }
 						{ isPremiumThemesEnabled &&
-						showTierThemesControl && (
-							<SegmentedControl
-								initialSelected={ this.props.tier }
-								options={ tiers }
-								onSelect={ this.props.select }
-							/>
-						) }
+							showTierThemesControl && (
+								<SegmentedControl
+									initialSelected={ this.props.tier }
+									options={ tiers }
+									onSelect={ this.props.select }
+								/>
+							) }
 					</div>
 				</StickyPanel>
 				<div onClick={ this.handleClickInside }>

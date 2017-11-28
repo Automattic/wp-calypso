@@ -44,9 +44,26 @@
 
 	.notice.is-compact {
 		margin: 0 0 0 8px;
+		color: $white;
+
+		&.is-success {
+			background: $alert-green;
+		}
+
+		&.is-info {
+			background: $blue-wordpress;
+		}
+
+		&.is-warning {
+			background: $alert-yellow;
+		}
+
+		.notice__content {
+			padding: 4px 8px;
+		}
 	}
 
-	.notice__icon {
+	.notice__icon-wrapper {
 		display: none;
 	}
 
@@ -87,7 +104,7 @@
 	}
 }
 
-.domain-suggestion__action {
+.button.domain-suggestion__action {
 	flex: 1 0 auto;
 	min-width: 66px;
 	text-align: center;

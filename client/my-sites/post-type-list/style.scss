@@ -23,7 +23,7 @@
 	align-self: stretch;
 	overflow: hidden;
 
-	margin: 8px 0;
+	margin: 8px 0 8px 8px;
 	.post-item__card.is-mini & {
 		margin: 0;
 	}
@@ -45,4 +45,18 @@
 	transform: translate( -50%, -50% );
 	max-height: 100%;
 	max-width: none;
+}
+
+
+.post-type-list__max-pages-notice {
+	text-align: center;
+	margin: 16px 0;
+	font-size: 14px;
+	color: $gray-text-min;
+}
+
+a.post-type-list__max-pages-notice-link {
+	cursor: pointer;
+	color: $gray-text-min;
+	text-decoration: underline;
 }

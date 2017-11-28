@@ -14,16 +14,18 @@ import { translate } from 'i18n-calypso';
 import { READER_CONVERSATION_MUTE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, plainNotice } from 'state/notices/actions';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
+import { getReaderConversationFollowStatus } from 'state/selectors';
 
-export function requestConversationMute( { dispatch }, action ) {
+export function requestConversationMute( { dispatch, getState }, action ) {
 	const actionWithRevert = merge( {}, action, {
 		meta: {
-			// @todo once we've added convo follow to Redux state, use selector to get previous state
-			// hardcoded for the moment to support tests
-			previousState: 'F',
+			previousState: getReaderConversationFollowStatus( getState(), {
+				siteId: action.payload.siteId,
+				postId: action.payload.postId,
+			} ),
 		},
 	} );
 	dispatch(
@@ -48,7 +50,7 @@ export function receiveConversationMute( store, action, response ) {
 	}
 
 	store.dispatch(
-		successNotice( translate( 'The conversation has been successfully unfollowed.' ), {
+		plainNotice( translate( 'The conversation has been successfully unfollowed.' ), {
 			duration: 5000,
 		} )
 	);

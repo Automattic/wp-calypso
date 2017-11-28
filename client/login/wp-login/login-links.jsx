@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -138,7 +138,12 @@ export class LoginLinks extends React.Component {
 		}
 
 		return (
-			<a href="#" key="magic-login-link" onClick={ this.handleMagicLoginLinkClick }>
+			<a
+				href="#"
+				key="magic-login-link"
+				data-e2e-link="magic-login-link"
+				onClick={ this.handleMagicLoginLinkClick }
+			>
 				{ this.props.translate( 'Email me a login link' ) }
 			</a>
 		);

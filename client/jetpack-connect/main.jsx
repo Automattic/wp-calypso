@@ -18,11 +18,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteUrlInput from './site-url-input';
-import {
-	getGlobalSelectedPlan,
-	getConnectingSite,
-	getJetpackSiteByUrl,
-} from 'state/jetpack-connect/selectors';
+import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
@@ -33,6 +29,7 @@ import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import untrailingslashit from 'lib/route/untrailingslashit';
+import { retrievePlan } from './persistence-utils';
 import {
 	confirmJetpackInstallStatus,
 	dismissUrl,
@@ -255,7 +252,8 @@ class JetpackConnectMain extends Component {
 	handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
 	getTexts() {
-		const { type, selectedPlan, translate } = this.props;
+		const { type, translate } = this.props;
+		const selectedPlan = retrievePlan();
 
 		if (
 			type === 'pro' ||
@@ -348,7 +346,7 @@ class JetpackConnectMain extends Component {
 		const { translate } = this.props;
 		return (
 			<LoggedOutFormLinks>
-				<JetpackConnectHappychatButton>
+				<JetpackConnectHappychatButton eventName="calypso_jpc_siteentry_chat_initiated">
 					<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
 						{ translate( 'Install Jetpack manually' ) }
 					</LoggedOutFormLinkItem>
@@ -479,7 +477,7 @@ class JetpackConnectMain extends Component {
 					<div className="jetpack-connect__navigation">{ this.renderBackButton() }</div>
 				</div>
 				<LoggedOutFormLinks>
-					<JetpackConnectHappychatButton>
+					<JetpackConnectHappychatButton eventName="calypso_jpc_instructions_chat_initiated">
 						<HelpButton />
 					</JetpackConnectHappychatButton>
 				</LoggedOutFormLinks>
@@ -504,7 +502,6 @@ const connectComponent = connect(
 		jetpackConnectSite: getConnectingSite( state ),
 		getJetpackSiteByUrl: url => getJetpackSiteByUrl( state, url ),
 		isRequestingSites: isRequestingSites( state ),
-		selectedPlan: getGlobalSelectedPlan( state ),
 	} ),
 	{
 		confirmJetpackInstallStatus,

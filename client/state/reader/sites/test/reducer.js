@@ -173,17 +173,17 @@ describe( 'reducer', () => {
 			expect( items( validState, { type: DESERIALIZE } ) ).to.deep.equal( validState );
 		} );
 
-		test( 'should stash an error object in the map if the request fails', () => {
+		test( 'should stash an error object in the map if the request fails with a 410', () => {
 			expect(
 				items(
 					{},
 					{
 						type: READER_SITE_REQUEST_FAILURE,
-						error: new Error( 'request failed' ),
+						error: { statusCode: 410 },
 						payload: { ID: 666 },
 					}
 				)
-			).to.deep.equal( { 666: { ID: 666, is_error: true } } );
+			).to.deep.equal( { 666: { ID: 666, is_error: true, error: { statusCode: 410 } } } );
 		} );
 
 		test( 'should overwrite an existing entry on receiving a new feed', () => {
@@ -204,7 +204,7 @@ describe( 'reducer', () => {
 			expect(
 				items( startingState, {
 					type: READER_SITE_REQUEST_FAILURE,
-					error: new Error( 'request failed' ),
+					error: { statusCode: 500 },
 					payload: { ID: 666 },
 				} )
 			).to.deep.equal( startingState );

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import debugFactory from 'debug';
@@ -9,11 +9,20 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { fetchCoupons } from 'woocommerce/state/sites/coupons/actions';
-import { fetchProducts } from 'woocommerce/state/sites/products/actions';
+import { createProductUpdateFromPromotion, createCouponUpdateFromPromotion } from './helpers';
 import {
+	fetchCoupons,
+	createCoupon,
+	updateCoupon,
+	deleteCoupon,
+} from 'woocommerce/state/sites/coupons/actions';
+import { fetchProducts } from 'woocommerce/state/sites/products/actions';
+import { updateProduct } from 'woocommerce/state/sites/products/actions';
+import {
+	WOOCOMMERCE_PROMOTION_CREATE,
+	WOOCOMMERCE_PROMOTION_UPDATE,
+	WOOCOMMERCE_PROMOTION_DELETE,
 	WOOCOMMERCE_PROMOTIONS_REQUEST,
-	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 	WOOCOMMERCE_COUPONS_UPDATED,
 } from 'woocommerce/state/action-types';
 
@@ -24,8 +33,10 @@ const debug = debugFactory( 'woocommerce:promotions' );
 const itemsPerPage = 30;
 
 export default {
+	[ WOOCOMMERCE_PROMOTION_CREATE ]: [ promotionCreate ],
+	[ WOOCOMMERCE_PROMOTION_UPDATE ]: [ promotionUpdate ],
+	[ WOOCOMMERCE_PROMOTION_DELETE ]: [ promotionDelete ],
 	[ WOOCOMMERCE_PROMOTIONS_REQUEST ]: [ promotionsRequest ],
-	[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: [ productsRequestSuccess ],
 	[ WOOCOMMERCE_COUPONS_UPDATED ]: [ couponsUpdated ],
 };
 
@@ -52,23 +63,6 @@ export function promotionsRequest( { dispatch }, action ) {
 	dispatch( fetchCoupons( siteId, { offset: 0, per_page: perPage } ) );
 }
 
-export function productsRequestSuccess( { dispatch }, action ) {
-	const { siteId, products, params, totalProducts } = action;
-
-	if ( undefined !== params.offset ) {
-		debug(
-			`Products ${ params.offset + 1 }-${ params.offset +
-				products.length } out of ${ totalProducts } received.`
-		);
-
-		const remainder = totalProducts - params.offset - products.length;
-		if ( remainder ) {
-			const offset = params.offset + products.length;
-			dispatch( fetchProducts( siteId, { offset, per_page: params.per_page } ) );
-		}
-	}
-}
-
 export function couponsUpdated( { dispatch }, action ) {
 	const { siteId, coupons, params, totalCoupons } = action;
 
@@ -84,4 +78,75 @@ export function couponsUpdated( { dispatch }, action ) {
 			dispatch( fetchCoupons( siteId, { offset, per_page: params.per_page } ) );
 		}
 	}
+}
+
+export function promotionCreate( { dispatch }, action ) {
+	const { siteId, promotion } = action;
+
+	switch ( promotion.type ) {
+		case 'product_sale':
+			const product = createProductUpdateFromPromotion( promotion );
+			dispatch( updateProduct( siteId, product, action.successAction, action.failureAction ) );
+			break;
+		case 'fixed_cart':
+		case 'fixed_product':
+		case 'percent':
+		case 'free_shipping':
+			const coupon = createCouponUpdateFromPromotion( promotion );
+			dispatch( createCoupon( siteId, coupon, action.successAction, action.failureAction ) );
+			break;
+	}
+}
+
+export function promotionUpdate( { dispatch }, action ) {
+	const { siteId, promotion } = action;
+
+	switch ( promotion.type ) {
+		case 'product_sale':
+			const product = createProductUpdateFromPromotion( promotion );
+			if ( product.id !== promotion.productId ) {
+				// This product sale is changing product, so remove it from the previous one.
+				dispatch( clearProductSale( siteId, promotion.productId, null, action.failureAction ) );
+			}
+			dispatch( updateProduct( siteId, product, action.successAction, action.failureAction ) );
+			break;
+		case 'fixed_cart':
+		case 'fixed_product':
+		case 'percent':
+		case 'free_shipping':
+			const coupon = createCouponUpdateFromPromotion( promotion );
+			dispatch( updateCoupon( siteId, coupon, action.successAction, action.failureAction ) );
+			break;
+	}
+}
+
+export function promotionDelete( { dispatch }, action ) {
+	const { siteId, promotion } = action;
+
+	switch ( promotion.type ) {
+		case 'product_sale':
+			dispatch(
+				clearProductSale( siteId, promotion.productId, action.successAction, action.failureAction )
+			);
+			break;
+		case 'fixed_cart':
+		case 'fixed_product':
+		case 'percent':
+		case 'free_shipping':
+			dispatch(
+				deleteCoupon( siteId, promotion.couponId, action.successAction, action.failureAction )
+			);
+			break;
+	}
+}
+
+function clearProductSale( siteId, productId, successAction, failureAction ) {
+	const productUpdateData = {
+		id: productId,
+		sale_price: '',
+		date_on_sale_from: null,
+		date_on_sale_to: null,
+	};
+
+	return updateProduct( siteId, productUpdateData, successAction, failureAction );
 }

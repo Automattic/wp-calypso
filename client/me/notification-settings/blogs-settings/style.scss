@@ -73,17 +73,16 @@
 	border: 1px solid white;
 	height: 32px;
 	width: 32px;
-	line-height: 32px;
 	overflow: hidden;
 	align-self: center;
 	margin-right: 12px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
-.notification-settings-blog-settings-placeholder__blog__content__icon__noticon {
-	color: #fff;
-	font-size: 32px;
-	line-height: 32px;
-	width: 32px;
+.notification-settings-blog-settings-placeholder__blog__content__icon__gridicon {
+	fill: #fff;
 }
 
 .notification-settings-blog-settings-placeholder__blog__info {

@@ -14,7 +14,6 @@ import { includes, size, some } from 'lodash';
 import Dialog from 'components/dialog';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
-import ActionButtons from 'woocommerce/woocommerce-services/components/action-buttons';
 import getPackageDescriptions from './get-package-descriptions';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { closeAddItem, setAddedItem, addItems } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
@@ -74,32 +73,35 @@ const AddItemDialog = ( props ) => {
 
 	const onClose = () => props.closeAddItem( orderId, siteId );
 
+	const buttons = [
+		{ action: 'close', label: translate( 'Close' ), onClick: onClose },
+		{
+			action: 'add',
+			label: translate( 'Add' ),
+			isPrimary: true,
+			disabled: ! some( addedItems, size ),
+			onClick: () => props.addItems( orderId, siteId, openedPackageId ),
+		},
+	];
+
 	return (
 		<Dialog isVisible={ showAddItemDialog }
 				isFullScreen={ false }
 				onClickOutside={ onClose }
 				onClose={ onClose }
-				additionalClassNames="wcc-root packages-step__dialog" >
+				buttons={ buttons }
+				additionalClassNames="wcc-root woocommerce packages-step__dialog" >
 			<FormSectionHeading>{ translate( 'Add item' ) }</FormSectionHeading>
 			<div className="packages-step__dialog-body">
 				<p>
 					{ translate( 'Which items would you like to add to {{pckg/}}?', {
 						components: {
 							pckg: getPackageNameElement( openedPackageId ),
-						}
+						},
 					} ) }
 				</p>
 				{ itemOptions }
 			</div>
-			<ActionButtons buttons={ [
-				{
-					label: translate( 'Add' ),
-					isPrimary: true,
-					isDisabled: ! some( addedItems, size ),
-					onClick: () => props.addItems( orderId, siteId, openedPackageId ),
-				},
-				{ label: translate( 'Close' ), onClick: onClose },
-			] } />
 		</Dialog>
 	);
 };

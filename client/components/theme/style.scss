@@ -255,8 +255,7 @@ $theme-info-height: 54px;
 		}
 	}
 
-	.noticon {
-		font-size: 24px;
+	.gridicon {
 		transition: all .15s cubic-bezier(0.175,.885,.32,1.275);
 	}
 
@@ -267,17 +266,17 @@ $theme-info-height: 54px;
 	&:hover {
 		background-color: transparentize( $gray-light, 0.7 );
 
-		.noticon {
+		.gridicon {
 			color: $blue-medium;
 		}
 
-		&.is-active .noticon {
+		&.is-active .gridicon {
 			color: $white;
 		}
 	}
 
 	&.is-open {
-		.noticon {
+		.gridicon {
 			transform: rotate(90deg);
 		}
 	}

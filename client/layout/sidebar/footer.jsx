@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -24,9 +24,9 @@ const SidebarFooter = ( { translate, children, isHappychatButtonVisible } ) => (
 			<Gridicon icon="help-outline" />
 		</Button>
 		{ isHappychatButtonVisible &&
-		config.isEnabled( 'happychat' ) && (
-			<HappychatButton className="sidebar__footer-chat" allowMobileRedirect />
-		) }
+			config.isEnabled( 'happychat' ) && (
+				<HappychatButton className="sidebar__footer-chat" allowMobileRedirect />
+			) }
 	</div>
 );
 

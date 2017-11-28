@@ -1,14 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, find } from 'lodash';
+import { get, find, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -56,9 +56,13 @@ class SharingPreviewPane extends PureComponent {
 
 	constructor( props ) {
 		super( props );
-		this.state = {
-			selectedService: props.selectedService || props.services[ 0 ],
-		};
+
+		const connectedServices = map( props.connections, 'service' );
+		const firstConnectedService = find( props.services, service => {
+			return find( connectedServices, connectedService => service === connectedService );
+		} );
+		const selectedService = props.selectedService || firstConnectedService;
+		this.state = { selectedService };
 	}
 
 	selectPreview = selectedService => {

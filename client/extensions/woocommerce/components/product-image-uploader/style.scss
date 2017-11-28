@@ -11,6 +11,11 @@
 		width: 250px;
 	}
 
+	@include breakpoint( ">1040px" ) {
+		width: 337px;
+		height: 337px;
+	}
+
 	.product-image-uploader__picker {
 		position: absolute;
 		top: 0;
@@ -64,6 +69,11 @@
 		margin-right: 16px;
 	}
 
+	@include breakpoint( ">1040px" ) {
+		width: 100px;
+		height: 100px;
+	}
+
 	&:nth-child( 3n ) {
 		@include breakpoint( ">960px" ) {
 			margin-right: 0;
@@ -83,6 +93,10 @@
 
 		@include breakpoint( ">960px" ) {
 			height: 72px;
+		}
+
+		@include breakpoint( ">1040px" ) {
+			height: 100px;
 		}
 
 		.gridicon {

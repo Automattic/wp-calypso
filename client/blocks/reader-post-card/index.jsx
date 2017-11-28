@@ -242,7 +242,7 @@ class ReaderPostCard extends React.Component {
 					postKey={ postKey }
 				>
 					{ isDailyPostChallengeOrPrompt( post ) &&
-					site && <DailyPostButton post={ post } site={ site } /> }
+						site && <DailyPostButton post={ post } site={ site } /> }
 					{ discoverFollowButton }
 					{ readerPostActions }
 				</StandardPost>
@@ -250,18 +250,18 @@ class ReaderPostCard extends React.Component {
 		}
 
 		const followUrl = feed ? feed.feed_URL : post.site_URL;
-
+		const onClick = ! isPhotoPost && ! compact ? this.handleCardClick : noop;
 		return (
-			<Card className={ classes } onClick={ ! isPhotoPost && ! compact && this.handleCardClick }>
+			<Card className={ classes } onClick={ onClick }>
 				{ ! compact && postByline }
 				{ showPrimaryFollowButton &&
-				followUrl && (
-					<FollowButton
-						siteUrl={ followUrl }
-						followSource={ followSource }
-						railcar={ post.railcar }
-					/>
-				) }
+					followUrl && (
+						<FollowButton
+							siteUrl={ followUrl }
+							followSource={ followSource }
+							railcar={ post.railcar }
+						/>
+					) }
 				{ readerPostCard }
 				{ this.props.children }
 			</Card>

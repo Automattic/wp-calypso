@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -121,11 +121,9 @@ class SharingButtonsAppearance extends Component {
 		return (
 			<fieldset className="buttons__fieldset sharing-buttons__fieldset">
 				<legend className="buttons__fieldset-heading sharing-buttons__fieldset-heading">
-					{ isJetpack ? (
-						translate( 'Like', { context: 'Sharing options: Header' } )
-					) : (
-						translate( 'Reblog & Like', { context: 'Sharing options: Header' } )
-					) }
+					{ isJetpack
+						? translate( 'Like', { context: 'Sharing options: Header' } )
+						: translate( 'Reblog & Like', { context: 'Sharing options: Header' } ) }
 				</legend>
 				{ this.getReblogOptionElement() }
 				<label>
@@ -170,11 +168,9 @@ class SharingButtonsAppearance extends Component {
 					className="button is-primary sharing-buttons__submit"
 					disabled={ this.props.saving || ! this.props.initialized }
 				>
-					{ this.props.saving ? (
-						this.props.translate( 'Saving…' )
-					) : (
-						this.props.translate( 'Save Changes' )
-					) }
+					{ this.props.saving
+						? this.props.translate( 'Saving…' )
+						: this.props.translate( 'Save Changes' ) }
 				</button>
 			</div>
 		);

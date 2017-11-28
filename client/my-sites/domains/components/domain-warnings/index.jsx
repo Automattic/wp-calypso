@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import PropTypes from 'prop-types';
@@ -21,10 +21,9 @@ import NoticeAction from 'components/notice/notice-action';
 import PendingGappsTosNotice from './pending-gapps-tos-notice';
 import purchasesPaths from 'me/purchases/paths';
 import { type as domainTypes, transferStatus } from 'lib/domains/constants';
-import { isSubdomain } from 'lib/domains';
+import { isSubdomain, hasPendingGoogleAppsUsers } from 'lib/domains';
 import support from 'lib/url/support';
 import paths from 'my-sites/domains/paths';
-import { hasPendingGoogleAppsUsers } from 'lib/domains';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
 const debug = _debug( 'calypso:domain-warnings' );
@@ -769,30 +768,43 @@ export class DomainWarnings extends React.PureComponent {
 			return null;
 		}
 
-		const { translate } = this.props;
+		const { isCompact, translate } = this.props;
 
 		let status = 'is-warning';
 		let compactMessage = null;
-		let message = translate( 'Transfer in Progress' );
+		let message;
+
+		const domainManagementLink = paths.domainManagementTransferIn(
+			this.props.selectedSite.slug,
+			domainInTransfer.name
+		);
 
 		const action = (
-			<NoticeAction
-				href={ paths.domainManagementEdit( this.props.selectedSite.slug, domainInTransfer ) }
-			>
-				{ translate( 'Fix' ) }
-			</NoticeAction>
+			<NoticeAction href={ domainManagementLink }>{ translate( 'Info' ) }</NoticeAction>
 		);
 
 		switch ( domainInTransfer.transferStatus ) {
 			case transferStatus.PENDING_OWNER:
 				compactMessage = translate( 'Transfer confirmation required' );
 				message = translate(
+					'We sent an email to confirm the transfer of {{strong}}%(domain)s{{/strong}}. {{a}}More Info{{/a}}',
+					{
+						components: {
+							strong: <strong />,
+							a: <a href={ domainManagementLink } rel="noopener noreferrer" />,
+						},
+						args: { domain: domainInTransfer.name },
+					}
+				);
+				break;
+			case transferStatus.PENDING_REGISTRY:
+				message = translate(
 					'The transfer of {{strong}}%(domain)s{{/strong}} is in progress. We are waiting ' +
 						'for authorization from your current domain provider to proceed. {{a}}Learn more{{/a}}',
 					{
 						components: {
 							strong: <strong />,
-							a: <a href="#" />,
+							a: <a href="#" rel="noopener noreferrer" />,
 						},
 						args: { domain: domainInTransfer.name },
 					}
@@ -802,13 +814,11 @@ export class DomainWarnings extends React.PureComponent {
 				status = 'is-error';
 				compactMessage = translate( 'Domain transfer failed' );
 				message = translate(
-					'The transfer of {{strong}}%(domain)s{{/strong}} has been cancelled. We were unable to ' +
-						'verify the email address and authorization code within 7 days of the transfer request. ' +
-						'If you still want to transfer the domain you can {{a}}try again{{/a}}.',
+					'The transfer of {{strong}}%(domain)s{{/strong}} has failed. {{a}}More info{{/a}}',
 					{
 						components: {
 							strong: <strong />,
-							a: <a href="#" />,
+							a: <a href={ domainManagementLink } rel="noopener noreferrer" />,
 						},
 						args: { domain: domainInTransfer.name },
 					}
@@ -816,16 +826,21 @@ export class DomainWarnings extends React.PureComponent {
 				break;
 		}
 
+		// If no message set, no notice for current state
+		if ( ( isCompact && ! compactMessage ) || ( ! isCompact && ! message ) ) {
+			return null;
+		}
+
 		return (
 			<Notice
-				isCompact={ this.props.isCompact }
+				isCompact={ isCompact }
 				status={ status }
 				showDismiss={ false }
 				className="domain-warnings__notice"
 				key="transfer-status"
-				text={ this.props.isCompact && compactMessage }
+				text={ isCompact && compactMessage }
 			>
-				{ this.props.isCompact ? compactMessage && action : message }
+				{ isCompact ? compactMessage && action : message }
 			</Notice>
 		);
 	};

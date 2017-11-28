@@ -1,21 +1,23 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
-import Revisions from 'post-editor/editor-revisions';
+import EditorRevisionsLegacyLink from 'post-editor/editor-revisions/legacy-link';
 import postUtils from 'lib/posts/utils';
 import InfoPopover from 'components/info-popover';
 import siteUtils from 'lib/site/utils';
@@ -42,8 +44,6 @@ export class EditPostStatus extends Component {
 		status: PropTypes.string,
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
-		setNestedSidebar: PropTypes.func,
-		selectRevision: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -105,39 +105,43 @@ export class EditPostStatus extends Component {
 				{ this.renderPostScheduling() }
 				{ this.renderPostVisibility() }
 				{ this.props.type === 'post' &&
-				! isPostPrivate &&
-				! isPasswordProtected && (
-					<label className="edit-post-status__sticky">
-						<span className="edit-post-status__label-text">
-							{ translate( 'Stick to the front page' ) }
-							<InfoPopover position="top right" gaEventCategory="Editor" popoverName="Sticky Post">
-								{ translate( 'Sticky posts will appear at the top of the posts listing.' ) }
-							</InfoPopover>
-						</span>
-						<FormToggle
-							checked={ isSticky }
-							onChange={ this.toggleStickyStatus }
-							aria-label={ translate( 'Stick post to the front page' ) }
-						/>
-					</label>
-				) }
+					! isPostPrivate &&
+					! isPasswordProtected && (
+						<label className="edit-post-status__sticky">
+							<span className="edit-post-status__label-text">
+								{ translate( 'Stick to the front page' ) }
+								<InfoPopover
+									position="top right"
+									gaEventCategory="Editor"
+									popoverName="Sticky Post"
+								>
+									{ translate( 'Sticky posts will appear at the top of the posts listing.' ) }
+								</InfoPopover>
+							</span>
+							<FormToggle
+								checked={ isSticky }
+								onChange={ this.toggleStickyStatus }
+								aria-label={ translate( 'Stick post to the front page' ) }
+							/>
+						</label>
+					) }
 				{ ! isPublished &&
-				! isScheduled &&
-				canPublish && (
-					<label className="edit-post-status__pending-review">
-						<span className="edit-post-status__label-text">
-							{ translate( 'Pending review' ) }
-							<InfoPopover position="top right">
-								{ translate( 'Flag this post to be reviewed for approval.' ) }
-							</InfoPopover>
-						</span>
-						<FormToggle
-							checked={ isPending }
-							onChange={ this.togglePendingStatus }
-							aria-label={ translate( 'Request review for post' ) }
-						/>
-					</label>
-				) }
+					! isScheduled &&
+					canPublish && (
+						<label className="edit-post-status__pending-review">
+							<span className="edit-post-status__label-text">
+								{ translate( 'Pending review' ) }
+								<InfoPopover position="top right">
+									{ translate( 'Flag this post to be reviewed for approval.' ) }
+								</InfoPopover>
+							</span>
+							<FormToggle
+								checked={ isPending }
+								onChange={ this.togglePendingStatus }
+								aria-label={ translate( 'Request review for post' ) }
+							/>
+						</label>
+					) }
 				{ ( isPublished || isScheduled || ( isPending && ! canPublish ) ) && (
 					<Button
 						className="edit-post-status__revert-to-draft"
@@ -147,12 +151,12 @@ export class EditPostStatus extends Component {
 						<Gridicon icon="undo" size={ 18 } /> { translate( 'Revert to draft' ) }
 					</Button>
 				) }
-				<Revisions
-					revisions={ this.props.post && this.props.post.revisions }
-					adminUrl={ adminUrl }
-					setNestedSidebar={ this.props.setNestedSidebar }
-					selectRevision={ this.props.selectRevision }
-				/>
+				{ ! ( isEnabled( 'post-editor/revisions' ) && postUtils.deviceSupportsRevisions() ) && (
+					<EditorRevisionsLegacyLink
+						adminUrl={ adminUrl }
+						revisionsFromPostObj={ get( this.props, 'post.revisions' ) }
+					/>
+				) }
 			</div>
 		);
 	}

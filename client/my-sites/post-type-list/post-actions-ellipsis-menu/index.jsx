@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import PropTypes from 'prop-types';
 import React, { Children, cloneElement } from 'react';
 
@@ -58,7 +57,6 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 PostActionsEllipsisMenu.propTypes = {
 	globalId: PropTypes.string,
 	includeDefaultActions: PropTypes.bool,
-	children: PropTypes.node,
 };
 
 PostActionsEllipsisMenu.defaultProps = {

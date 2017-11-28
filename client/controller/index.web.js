@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import React from 'react';
@@ -74,6 +74,6 @@ export function redirectLoggedIn( context, next ) {
 	next();
 }
 
-function render( context ) {
+export function render( context ) {
 	ReactDom.render( context.layout, document.getElementById( 'wpcom' ) );
 }

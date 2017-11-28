@@ -215,11 +215,9 @@ class Orders extends Component {
 			<div className="orders__container">
 				<OrdersFilterNav searchRef={ setSearchRef } status={ currentStatus } />
 
-				{ ! ordersLoaded || ( orders && orders.length ) ? (
-					this.renderOrderItems()
-				) : (
-					this.renderNoContent()
-				) }
+				{ ! ordersLoaded || ( orders && orders.length )
+					? this.renderOrderItems()
+					: this.renderNoContent() }
 
 				<Pagination
 					page={ currentPage }

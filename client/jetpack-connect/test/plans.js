@@ -30,6 +30,20 @@ describe( 'Plans', () => {
 		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
 	} );
 
+	test( 'should render empty with unknown plan', () => {
+		const wrapper = shallow( <Plans { ...DEFAULT_PROPS } hasPlan={ null } /> );
+
+		expect( wrapper.find( PlansGrid ) ).toHaveLength( 0 );
+		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should render empty with unknown Atomic', () => {
+		const wrapper = shallow( <Plans { ...DEFAULT_PROPS } isAutomatedTransfer={ null } /> );
+
+		expect( wrapper.find( PlansGrid ) ).toHaveLength( 0 );
+		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
+	} );
+
 	test( 'should render empty with a paid plan', () => {
 		const wrapper = shallow(
 			<Plans
@@ -44,23 +58,8 @@ describe( 'Plans', () => {
 		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
 	} );
 
-	test( 'should render with a paid plan with showFirst prop', () => {
-		const wrapper = shallow(
-			<Plans
-				{ ...DEFAULT_PROPS }
-				hasPlan={ true }
-				selectedSite={ { ...SELECTED_SITE, plan: SITE_PLAN_PRO } }
-				showFirst={ true }
-			/>
-		);
-
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.find( PlansGrid ) ).toHaveLength( 1 );
-		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
-	} );
-
-	test( 'should redirect on update from free to paid plan', () => {
-		const wrapper = mount( <Plans { ...DEFAULT_PROPS } /> );
+	test( 'should redirect when hasPlan is loaded', () => {
+		const wrapper = mount( <Plans { ...DEFAULT_PROPS } hasPlan={ null } selectedSite={ null } /> );
 
 		const redirect = ( wrapper.instance().redirect = jest.fn() );
 

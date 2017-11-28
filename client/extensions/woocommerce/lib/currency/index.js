@@ -22,3 +22,22 @@ export function getCurrencyFormatDecimal( number, currency = 'USD' ) {
 	}
 	return Math.round( number * Math.pow( 10, precision ) ) / Math.pow( 10, precision );
 }
+
+/**
+ * Get the string representation of a floating point number to the precision used by a given currency.
+ * This is different from `formatCurrency` by not returning the currency symbol.
+ *
+ * @param {Number|String} number A floating point number (or integer), or string that converts to a number
+ * @param {String} currency A 3-character currency label, e.g. 'GBP' – see `getCurrencyDefaults`
+ * @return {String} The original number rounded to a decimal point
+ */
+export function getCurrencyFormatString( number, currency = 'USD' ) {
+	const { precision } = getCurrencyDefaults( currency );
+	if ( 'number' !== typeof number ) {
+		number = parseFloat( number );
+	}
+	if ( isNaN( number ) ) {
+		return '';
+	}
+	return number.toFixed( precision );
+}

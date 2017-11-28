@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -189,6 +189,8 @@ const RegisteredDomain = createReactClass( {
 	},
 
 	contactsPrivacyNavItem() {
+		const { privacyAvailable } = this.props.domain;
+		const { translate } = this.props;
 		const path = paths.domainManagementContactsPrivacy(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -196,7 +198,7 @@ const RegisteredDomain = createReactClass( {
 
 		return (
 			<VerticalNavItem path={ path }>
-				{ this.props.translate( 'Contacts and Privacy' ) }
+				{ privacyAvailable ? translate( 'Contacts and Privacy' ) : translate( 'Contacts' ) }
 			</VerticalNavItem>
 		);
 	},
@@ -220,12 +222,12 @@ const RegisteredDomain = createReactClass( {
 				{ this.domainWarnings() }
 				<div className="domain-details-card">
 					{ domain.isPendingIcannVerification &&
-					domain.currentUserCanManage && (
-						<IcannVerificationCard
-							selectedDomainName={ domain.name }
-							selectedSiteSlug={ this.props.selectedSite.slug }
-						/>
-					) }
+						domain.currentUserCanManage && (
+							<IcannVerificationCard
+								selectedDomainName={ domain.name }
+								selectedSiteSlug={ this.props.selectedSite.slug }
+							/>
+						) }
 
 					<Header { ...this.props } />
 

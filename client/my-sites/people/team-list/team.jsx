@@ -99,9 +99,9 @@ class Team extends React.Component {
 					label={ headerText }
 					site={ this.props.site }
 					count={
-						this.props.fetchingUsers || this.props.fetchOptions.search ? null : (
-							this.props.totalUsers
-						)
+						this.props.fetchingUsers || this.props.fetchOptions.search
+							? null
+							: this.props.totalUsers
 					}
 				/>
 				<Card className={ listClass }>{ people }</Card>

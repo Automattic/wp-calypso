@@ -1,5 +1,4 @@
 .global-notices {
-	overflow: hidden;
 	text-align: right;
 	pointer-events: none;
 
@@ -35,28 +34,23 @@
 	margin-bottom: 0;
 	text-align: left;
 	pointer-events: auto;
+	border-radius: 0;
+	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.2 ),
+		0 0 56px rgba( 0, 0, 0, 0.15 );
+
+	.notice__icon-wrapper {
+		border-radius: 0;
+	}
 
 	@include breakpoint( ">660px" ) {
 		display: flex;
-		border-radius: 20px;
 		overflow: hidden;
 		margin-bottom: 24px;
-	}
-}
+		border-radius: 3px;
 
-.global-notices .notice__icon {
-
-	@include breakpoint( ">660px" ) {
-		padding: 8px 0 8px 16px;
-	}
-}
-
-.global-notices .notice__content {
-	flex-basis: auto;
-	flex-grow: 1;
-
-	@include breakpoint( ">660px" ) {
-		padding: 9px 13px;
+		.notice__icon-wrapper {
+			border-radius: 3px 0 0 3px;
+		}
 	}
 }
 
@@ -64,7 +58,7 @@
 
 	@include breakpoint( ">660px" ) {
 		font-size: 14px;
-		padding: 9px 16px;
+		padding: 13px 16px;
 	}
 }
 
@@ -72,6 +66,6 @@
 	flex-shrink: 0;
 
 	@include breakpoint( ">660px" ) {
-		padding: 8px 16px;
+		padding: 13px 16px 0;
 	}
 }

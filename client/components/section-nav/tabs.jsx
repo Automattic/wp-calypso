@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -16,6 +16,7 @@ import { debounce } from 'lodash';
 import DropdownItem from 'components/select-dropdown/item';
 import SelectDropdown from 'components/select-dropdown';
 import viewport from 'lib/viewport';
+import afterLayoutFlush from 'lib/after-layout-flush';
 
 /**
  * Internal Variables
@@ -42,18 +43,20 @@ class NavTabs extends Component {
 	};
 
 	componentDidMount() {
-		this.setDropdown();
-		this.debouncedAfterResize = debounce( this.setDropdown, 300 );
-
-		window.addEventListener( 'resize', this.debouncedAfterResize );
+		this.setDropdownAfterLayoutFlush();
+		window.addEventListener( 'resize', this.setDropdownDebounced );
 	}
 
 	componentDidUpdate() {
-		this.setDropdown();
+		this.setDropdownAfterLayoutFlush();
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.debouncedAfterResize );
+		window.removeEventListener( 'resize', this.setDropdownDebounced );
+		// cancel the debounced `setDropdown` calls that might be already scheduled.
+		// see https://lodash.com/docs/4.17.4#debounce to learn about the `cancel` method.
+		this.setDropdownDebounced.cancel();
+		this.setDropdownAfterLayoutFlush.cancel();
 	}
 
 	render() {
@@ -151,6 +154,14 @@ class NavTabs extends Component {
 			} );
 		}
 	};
+
+	setDropdownDebounced = debounce( this.setDropdown, 300 );
+
+	// setDropdown reads element sizes from DOM. If called synchronously in the middle of a React
+	// update, it causes a synchronous layout reflow, doing the layout two or more times instead
+	// of just once after all the DOM writes are finished. Prevent that by scheduling the call
+	// just *after* the next layout flush.
+	setDropdownAfterLayoutFlush = afterLayoutFlush( this.setDropdown );
 
 	keyHandler = event => {
 		switch ( event.keyCode ) {

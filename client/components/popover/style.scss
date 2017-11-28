@@ -200,16 +200,18 @@
 		border: 0;
 	}
 
-	// Menu Items with Icons
-	&.has-icon {
-		padding-left: 42px;
-	}
-
 	// with gridicons
 	.gridicon {
 		color: lighten( $gray, 10 );
 		vertical-align: bottom;
 		margin-right: 8px;
+	}
+	.gridicons-cloud-download {
+		position: relative;
+		top: 2px;
+	}
+	.gridicons-external {
+		top: 0;
 	}
 	&.is-compact {
 		padding: 6px 12px;

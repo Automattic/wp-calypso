@@ -17,6 +17,7 @@ import {
 	getPromotionsPage,
 	getPromotionsCurrentPage,
 	getPromotionsPerPage,
+	getPromotionsSearch,
 	getCurrentlyEditingPromotionId,
 } from '../promotions';
 
@@ -29,6 +30,7 @@ describe( 'promotions', () => {
 						list: {
 							currentPage: 12,
 							perPage: 30,
+							searchFilter: '',
 						},
 					},
 				},
@@ -76,7 +78,8 @@ describe( 'promotions', () => {
 
 	describe( '#getPromotionsPage', () => {
 		test( 'should return only promotions for a given page.', () => {
-			const page = getPromotionsPage( rootState, 123, 1, 2 );
+			const promotions = getPromotions( rootState, 123 );
+			const page = getPromotionsPage( promotions, 1, 2 );
 
 			expect( page ).to.exist;
 			expect( page.length ).to.equal( 2 );
@@ -85,7 +88,8 @@ describe( 'promotions', () => {
 		} );
 
 		test( 'should advance the offset for pages > 1.', () => {
-			const page = getPromotionsPage( rootState, 123, 2, 2 );
+			const promotions = getPromotions( rootState, 123 );
+			const page = getPromotionsPage( promotions, 2, 2 );
 
 			expect( page ).to.exist;
 			expect( page.length ).to.equal( 1 );
@@ -104,6 +108,30 @@ describe( 'promotions', () => {
 		test( 'should return the per-page setting for promotions.', () => {
 			const perPage = getPromotionsPerPage( rootState );
 			expect( perPage ).to.equal( 30 );
+		} );
+	} );
+
+	describe( '#getPromotionsSearch', () => {
+		test( 'should return empty string by default.', () => {
+			const search = getPromotionsSearch( rootState );
+
+			expect( search ).to.equal( '' );
+		} );
+
+		test( 'should return search string', () => {
+			const newState = cloneDeep( rootState );
+			newState.extensions.woocommerce.ui.promotions.list.searchFilter = 'abc';
+
+			const search = getPromotionsSearch( newState );
+			expect( search ).to.equal( 'abc' );
+		} );
+
+		test( 'should return empty string even if state value is undefined', () => {
+			const newState = cloneDeep( rootState );
+			newState.extensions.woocommerce.ui.promotions.list.searchFilter = undefined;
+
+			const search = getPromotionsSearch( newState );
+			expect( search ).to.equal( '' );
 		} );
 	} );
 
@@ -147,23 +175,6 @@ describe( 'promotions', () => {
 
 			expect( edits ).to.exist;
 			expect( edits.id ).to.equal( 'coupon:3' );
-			expect( edits.type ).to.equal( 'empty33' );
-		} );
-
-		it( 'should return edits for a given object placeholder id', () => {
-			const editedState = cloneDeep( rootState );
-			const placeholderId = { placeholder: 'promotion_5' };
-			editedState.extensions.woocommerce.ui.promotions.edits = {
-				[ 123 ]: {
-					creates: [ { id: placeholderId, type: 'empty33' } ],
-					currentlyEditingId: placeholderId,
-				},
-			};
-
-			const edits = getPromotionEdits( editedState, placeholderId, 123 );
-
-			expect( edits ).to.exist;
-			expect( edits.id ).to.equal( placeholderId );
 			expect( edits.type ).to.equal( 'empty33' );
 		} );
 	} );

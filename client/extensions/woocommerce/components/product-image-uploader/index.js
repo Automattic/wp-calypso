@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -186,7 +186,7 @@ class ProductImageUploader extends Component {
 
 		MediaValidationStore.on( 'change', this.storeValidationErrors );
 		MediaStore.on( 'change', handleUpload );
-		MediaActions.add( site.ID, filesToUpload );
+		MediaActions.add( site, filesToUpload );
 	};
 
 	renderCompactUploader() {

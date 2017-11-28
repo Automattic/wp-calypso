@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -36,6 +36,7 @@ import PlanIcon from 'components/plans/plan-icon';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import formatCurrency from 'lib/format-currency';
 
 class PlanFeaturesHeader extends Component {
 	render() {
@@ -95,13 +96,27 @@ class PlanFeaturesHeader extends Component {
 		);
 	}
 
+	getDiscountTooltipMessage() {
+		const { currencyCode, currentSitePlan, translate, rawPrice } = this.props;
+
+		if ( currentSitePlan.productSlug === PLAN_FREE ) {
+			return translate( 'Price for the next 12 months' );
+		}
+
+		const price = formatCurrency( rawPrice, currencyCode );
+
+		return translate(
+			"We'll deduct the cost of your current plan from the full price (%(price)s) for the next 12 months.",
+			{ args: { price } }
+		);
+	}
+
 	getBillingTimeframe() {
 		const {
 			billingTimeFrame,
 			discountPrice,
 			isPlaceholder,
 			site,
-			translate,
 			isSiteAT,
 			hideMonthly,
 			isInSignup,
@@ -126,14 +141,14 @@ class PlanFeaturesHeader extends Component {
 				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? billingTimeFrame : '' }
 					{ isDiscounted &&
-					! isPlaceholder && (
-						<InfoPopover
-							className="plan-features__header-tip-info"
-							position={ isMobile() ? 'top' : 'bottom left' }
-						>
-							{ translate( 'Price for the next 12 months' ) }
-						</InfoPopover>
-					) }
+						! isPlaceholder && (
+							<InfoPopover
+								className="plan-features__header-tip-info"
+								position={ isMobile() ? 'top' : 'bottom left' }
+							>
+								{ this.getDiscountTooltipMessage() }
+							</InfoPopover>
+						) }
 				</p>
 			);
 		}

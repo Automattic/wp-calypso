@@ -4,10 +4,17 @@
 		float:left;
 	}
 
+	&:nth-child(1) {
+		width: 100%;
+		@include breakpoint( '>660px' ) {
+			width: 50%;
+		}
+	}
+
 	&:nth-child(2) {
 		width: 100%;
 		@include breakpoint( '>660px' ) {
-			width: 54%;
+			width: 50%;
 		}
 	}
 
@@ -25,10 +32,20 @@
 }
 
 &.packages__add-edit-dialog {
-	max-width: 600px;
+	height: 90%;
+	width: 90%;
 
 	.form-setting-explanation {
 		display: inline-block;
+	}
+
+	.dialog__content {
+		flex-grow: 1;
+	}
+
+	@include breakpoint( '>660px' ) {
+		width: 610px;
+		height: 610px;
 	}
 }
 

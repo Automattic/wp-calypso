@@ -1,13 +1,8 @@
-/**
- * External dependencies
- */
-import { isEmpty, pick } from 'lodash';
-import qs from 'qs';
-
+/** @format */
 /**
  * Internal dependencies
  */
-import { serverRender } from 'render';
+import { serverRender, serverRenderIfCached } from 'render';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 
@@ -33,6 +28,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 			expressApp.get(
 				route,
 				setUpRoute,
+				serverRenderIfCached,
 				combineMiddlewares(
 					setSectionMiddlewareFactory( section ),
 					setRouteMiddleware,
@@ -45,10 +41,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 }
 
 function setRouteMiddleware( context, next ) {
-	context.store.dispatch( setRouteAction(
-		context.pathname,
-		context.query
-	) );
+	context.store.dispatch( setRouteAction( context.pathname, context.query ) );
 
 	next();
 }
@@ -74,32 +67,23 @@ function getEnhancedContext( req, res ) {
 		query: req.query,
 		protocol: req.protocol,
 		host: req.headers.host,
-		res
+		res,
 	} );
 }
 
 function applyMiddlewares( context, expressNext, ...middlewares ) {
-	const liftedMiddlewares = middlewares.map( middleware => next => middleware( context, ( err ) => {
-		if ( err ) {
-			expressNext( err ); // Call express' next( err ) for error handling (and bail early from this route)
-		} else {
-			next();
-		}
-	} ) );
+	const liftedMiddlewares = middlewares.map( middleware => next =>
+		middleware( context, err => {
+			if ( err ) {
+				expressNext( err ); // Call express' next( err ) for error handling (and bail early from this route)
+			} else {
+				next();
+			}
+		} )
+	 );
 	compose( ...liftedMiddlewares )();
 }
 
 function compose( ...functions ) {
-	return functions.reduceRight( ( composed, f ) => (
-		() => f( composed )
-	), () => {} );
-}
-
-export function getCacheKey( context ) {
-	if ( isEmpty( context.query ) || isEmpty( context.cacheQueryKeys ) ) {
-		return context.pathname;
-	}
-
-	const cachedQueryParams = pick( context.query, context.cacheQueryKeys );
-	return context.pathname + '?' + qs.stringify( cachedQueryParams, { sort: ( a, b ) => a.localCompare( b ) } );
+	return functions.reduceRight( ( composed, f ) => () => f( composed ), () => {} );
 }

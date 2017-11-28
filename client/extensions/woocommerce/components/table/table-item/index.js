@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -55,7 +55,6 @@ TableItem.propTypes = {
 	isHeader: PropTypes.bool,
 	isRowHeader: PropTypes.bool,
 	isTitle: PropTypes.bool,
-	children: PropTypes.node,
 };
 
 export default TableItem;

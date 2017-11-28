@@ -51,12 +51,8 @@
 	.is-error,
 	.is-warning,
 	.is-success {
-		.gridicon {
-			margin-top: -2px;
-		}
-
-		span:first-child {
-			margin-right: 6px;
+		.notice__icon {
+			display: block;
 		}
 	}
 
@@ -112,6 +108,10 @@
 .label-purchase-modal__step-title,
 .label-purchase-modal__step-status {
 	float: left;
+}
+
+.label-purchase-modal__step-status {
+	margin: 3px 0 0 5px;
 }
 
 .label-purchase-modal__step-title {

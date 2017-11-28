@@ -1,6 +1,8 @@
+/** @format */
 /**
  * External dependecies
  */
+
 const webpackMiddleware = require( 'webpack-dev-middleware' );
 const webpack = require( 'webpack' );
 const chalk = require( 'chalk' );
@@ -21,9 +23,11 @@ function middleware( app ) {
 
 	app.set( 'compiler', compiler );
 
-	compiler.apply( new webpack.ProgressPlugin( {
-		profile: true,
-	} ) );
+	compiler.apply(
+		new webpack.ProgressPlugin( {
+			profile: true,
+		} )
+	);
 
 	compiler.plugin( 'done', function() {
 		built = true;
@@ -41,7 +45,9 @@ function middleware( app ) {
 			process.nextTick( function() {
 				if ( beforeFirstCompile ) {
 					beforeFirstCompile = false;
-					console.info( chalk.cyan( `\nReady! You can load http://calypso.localhost:${ port }/ now. Have fun!` ) );
+					console.info(
+						chalk.cyan( `\nReady! You can load http://calypso.localhost:${ port }/ now. Have fun!` )
+					);
 				} else {
 					console.info( chalk.cyan( '\nReady! All assets are re-compiled. Have fun!' ) );
 				}
@@ -54,7 +60,9 @@ function middleware( app ) {
 			return next();
 		}
 
-		console.info( 'Compiling assets... Wait until you see Ready! and then try http://calypso.localhost:3000/ again.' );
+		console.info(
+			'Compiling assets... Wait until you see Ready! and then try http://calypso.localhost:3000/ again.'
+		);
 
 		// a special message for newcomers, because seeing a blank page is confusing
 		if ( request.url === '/' ) {
@@ -75,23 +83,25 @@ function middleware( app ) {
 	}
 
 	app.use( waitForCompiler );
-	app.use( webpackMiddleware( compiler, {
-		publicPath: '/calypso/',
-		stats: {
-			colors: true,
-			hash: true,
-			version: false,
-			timings: true,
-			assets: false,
-			chunks: true,
-			chunkModules: false,
-			modules: false,
-			cached: false,
-			reasons: false,
-			source: false,
-			errorDetails: true
-		}
-	} ) );
+	app.use(
+		webpackMiddleware( compiler, {
+			publicPath: '/calypso/',
+			stats: {
+				colors: true,
+				hash: true,
+				version: false,
+				timings: true,
+				assets: false,
+				chunks: true,
+				chunkModules: false,
+				modules: false,
+				cached: false,
+				reasons: false,
+				source: false,
+				errorDetails: true,
+			},
+		} )
+	);
 }
 
 module.exports = middleware;

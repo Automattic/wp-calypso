@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { connect } from 'react-redux';
@@ -29,7 +29,13 @@ import previousStep from 'components/marketing-survey/cancel-purchase-form/previ
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { getPurchase, isDataLoading } from '../utils';
-import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan } from 'lib/products-values';
+import {
+	isDomainRegistration,
+	isDomainTransfer,
+	isPlan,
+	isGoogleApps,
+	isJetpackPlan,
+} from 'lib/products-values';
 import notices from 'notices';
 import purchasePaths from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -60,7 +66,7 @@ class RemovePurchase extends Component {
 		receiveDeletedSite: PropTypes.func.isRequired,
 		removePurchase: PropTypes.func.isRequired,
 		selectedPurchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool, PropTypes.undefined ] ),
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		setAllSitesSelected: PropTypes.func.isRequired,
 	};
 
@@ -398,17 +404,15 @@ class RemovePurchase extends Component {
 						args: { productName },
 						components: { siteName: <em>{ this.props.selectedSite.domain }</em> },
 					} ) }{' '}
-					{ isGoogleApps( purchase ) ? (
-						translate(
-							'Your G Suite account will continue working without interruption. ' +
-								'You will be able to manage your G Suite billing directly through Google.'
-						)
-					) : (
-						translate(
-							'You will not be able to reuse it again without purchasing a new subscription.',
-							{ comment: "'it' refers to a product purchased by a user" }
-						)
-					) }
+					{ isGoogleApps( purchase )
+						? translate(
+								'Your G Suite account will continue working without interruption. ' +
+									'You will be able to manage your G Suite billing directly through Google.'
+							)
+						: translate(
+								'You will not be able to reuse it again without purchasing a new subscription.',
+								{ comment: "'it' refers to a product purchased by a user" }
+							) }
 				</p>
 
 				{ isPlan( purchase ) && hasIncludedDomain( purchase ) && includedDomainText }
@@ -423,6 +427,10 @@ class RemovePurchase extends Component {
 
 		const purchase = getPurchase( this.props );
 		if ( ! isRemovable( purchase ) ) {
+			return null;
+		}
+
+		if ( isDomainTransfer( purchase ) ) {
 			return null;
 		}
 

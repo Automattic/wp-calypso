@@ -72,7 +72,7 @@ describe( 'selectors', () => {
 	const stateWithNoItems = createStateWithItems( {} );
 
 	beforeEach( () => {
-		getSite.memoizedSelector.cache.clear();
+		getSite.clearCache();
 		getSiteCollisions.memoizedSelector.cache.clear();
 		getSiteBySlug.memoizedSelector.cache.clear();
 	} );
@@ -134,29 +134,29 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return a normalized site with computed attributes', () => {
-			const site = getSite(
-				{
-					...userState,
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								name: 'WordPress.com Example Blog',
-								URL: 'https://example.com',
-								options: {
-									unmapped_url: 'https://example.wordpress.com',
-								},
+			const jetpackMinVersion = config( 'jetpack_min_version' );
+			const state = {
+				...userState,
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							name: 'WordPress.com Example Blog',
+							URL: 'https://example.com',
+							jetpack: true,
+							options: {
+								jetpack_version: jetpackMinVersion,
+								unmapped_url: 'https://example.wordpress.com',
 							},
 						},
 					},
-					siteSettings: {
-						items: {},
-					},
 				},
-				2916284
-			);
+				siteSettings: {
+					items: {},
+				},
+			};
 
-			expect( site ).to.eql( {
+			const expectedSite = {
 				ID: 2916284,
 				name: 'WordPress.com Example Blog',
 				URL: 'https://example.com',
@@ -166,11 +166,33 @@ describe( 'selectors', () => {
 				hasConflict: false,
 				is_customizable: false,
 				is_previewable: true,
+				jetpack: true,
+				hasMinimumJetpackVersion: true,
+				canAutoupdateFiles: false,
+				canUpdateFiles: false,
+				canManage: true,
+				isMainNetworkSite: false,
+				isSecondaryNetworkSite: true,
+				isSiteUpgradeable: null,
 				options: {
+					jetpack_version: jetpackMinVersion,
 					default_post_format: 'standard',
 					unmapped_url: 'https://example.wordpress.com',
 				},
-			} );
+			};
+
+			const site = getSite( state, 2916284 );
+			expect( site ).to.eql( expectedSite );
+
+			// Verify that getting by slug returns the object memoized when previously getting by ID
+			const memoizedSlugSite = getSite( state, 'example.com' );
+			expect( memoizedSlugSite ).to.equal( site );
+
+			// Clear the memo cache and verify computed attributes are computed when getting by slug
+			getSite.clearCache();
+			const nonMemoizedSlugSite = getSite( state, 'example.com' );
+			expect( nonMemoizedSlugSite ).to.not.equal( memoizedSlugSite );
+			expect( nonMemoizedSlugSite ).to.eql( expectedSite );
 		} );
 
 		test( 'should return a normalized site with correct slug when sites with collisions are passed in attributes', () => {
@@ -222,6 +244,52 @@ describe( 'selectors', () => {
 					unmapped_url: 'https://example.wordpress.com',
 				},
 			} );
+		} );
+
+		test( 'should return an identical memoized site object when called for second time', () => {
+			const site = {
+				ID: 123,
+				name: 'Example Blog',
+				URL: 'https://example.wordpress.com',
+			};
+			const state = {
+				...userState,
+				sites: {
+					items: {
+						[ site.ID ]: site,
+					},
+				},
+			};
+
+			// Calling the selector two times on the same state should return identical value
+			const firstSite = getSite( state, 123 );
+			const secondSite = getSite( state, 123 );
+			expect( firstSite ).to.be.ok;
+			expect( secondSite ).to.be.ok;
+			expect( firstSite ).to.equal( secondSite );
+
+			// Construct an updated state with new items, but the first site object itself is unmodified
+			const altSite = {
+				ID: 456,
+				name: 'Alternative Blog',
+				URL: 'https://alt.wordpress.com',
+			};
+			const updatedState = {
+				...userState,
+				sites: {
+					items: {
+						[ site.ID ]: site,
+						[ altSite.ID ]: altSite,
+					},
+				},
+			};
+			// Check that the new site is returned
+			const altGotSite = getSite( updatedState, 456 );
+			expect( altGotSite ).to.have.property( 'ID', 456 );
+
+			// And that the old one was memoized and identical site object is returned
+			const thirdSite = getSite( updatedState, 123 );
+			expect( thirdSite ).to.equal( firstSite );
 		} );
 	} );
 

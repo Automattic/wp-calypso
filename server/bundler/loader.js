@@ -1,13 +1,14 @@
-var config = require( 'config' ),
+/** @format */
+const config = require( 'config' ),
 	utils = require( './utils' );
 
 function getSectionsModule( sections ) {
-	var dependencies,
-		loadSection = '',
-		sectionLoaders = '';
+	let sectionLoaders = '';
 
 	if ( config.isEnabled( 'code-splitting' ) ) {
-		dependencies = [
+		let sectionPreLoaders = '';
+
+		const dependencies = [
 			"var config = require( 'config' ),",
 			"\tpage = require( 'page' ),",
 			"\tReact = require( 'react' ),",
@@ -15,13 +16,15 @@ function getSectionsModule( sections ) {
 			"\tLoadingError = require( 'layout/error' ),",
 			"\tcontroller = require( 'controller' ),",
 			"\trestoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
-			"\tpreloadHub = require( 'sections-preload' ).hub;",
+			"\tpreloadHub = require( 'sections-preload' ).hub,",
+			"\tswitchCSS = require( 'lib/i18n-utils/switch-locale' ).switchCSS;",
 			'\n',
-			'var _loadedSections = {};\n'
+			'var _loadedSections = {};\n',
 		].join( '\n' );
 
 		sections.forEach( function( section ) {
-			loadSection += singleEnsure( section.name );
+			sectionPreLoaders += getSectionPreLoaderTemplate( section );
+
 			section.paths.forEach( function( path ) {
 				sectionLoaders += splitTemplate( path, section );
 			} );
@@ -29,9 +32,19 @@ function getSectionsModule( sections ) {
 
 		return [
 			dependencies,
-			'function preload( section ) {',
-			'	switch ( section ) {',
-			'	' + loadSection,
+			'function preload( sectionName ) {',
+			'	var loadCSS = function( id, urls ) {',
+			'		var url = urls.ltr;',
+			'',
+			"		if ( typeof document !== 'undefined' && document.documentElement.dir === 'rtl' ) {",
+			'			url = urls.rtl;',
+			'		}',
+			'',
+			"		switchCSS( 'section-css-' + id, url );",
+			'	};',
+			'',
+			'	switch ( sectionName ) {',
+			'	' + sectionPreLoaders,
 			'	}',
 			'}',
 			'\n',
@@ -44,14 +57,14 @@ function getSectionsModule( sections ) {
 			'	load: function() {',
 			'		' + sectionLoaders,
 			'	}',
-			'};'
+			'};',
 		].join( '\n' );
 	}
 
-	dependencies = [
+	const dependencies = [
 		"var config = require( 'config' ),",
 		"\tpage = require( 'page' ),",
-		"\tcontroller = require( 'controller' );\n"
+		"\tcontroller = require( 'controller' );\n",
 	].join( '\n' );
 
 	sectionLoaders = getRequires( sections );
@@ -65,12 +78,12 @@ function getSectionsModule( sections ) {
 		'	load: function() {',
 		'		' + sectionLoaders,
 		'	}',
-		'};'
+		'};',
 	].join( '\n' );
 }
 
 function getRequires( sections ) {
-	var content = '';
+	let content = '';
 
 	sections.forEach( function( section ) {
 		content += requireTemplate( section );
@@ -80,14 +93,13 @@ function getRequires( sections ) {
 }
 
 function splitTemplate( path, section ) {
-	var pathRegex = getPathRegex( path ),
+	const pathRegex = getPathRegex( path ),
 		sectionString = JSON.stringify( section ),
 		sectionNameString = JSON.stringify( section.name ),
 		moduleString = JSON.stringify( section.module ),
-		envIdString = JSON.stringify( section.envId ),
-		result;
+		envIdString = JSON.stringify( section.envId );
 
-	result = [
+	const result = [
 		'page( ' + pathRegex + ', function( context, next ) {',
 		'	var envId = ' + envIdString + ';',
 		'	if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {',
@@ -120,10 +132,9 @@ function splitTemplate( path, section ) {
 		'			context.store.dispatch( { type: "SECTION_SET", isLoading: false } );',
 		'			LoadingError.show( ' + sectionNameString + ' );',
 		'		}',
-		'		return;',
 		'	},',
 		sectionNameString + ' );',
-		'} );\n'
+		'} );\n',
 	];
 
 	return result.join( '\n' );
@@ -138,11 +149,8 @@ function getPathRegex( pathString ) {
 }
 
 function requireTemplate( section ) {
-	var pathRegex,
-		result;
-
-	result = section.paths.reduce( function( acc, path ) {
-		pathRegex = getPathRegex( path );
+	const result = section.paths.reduce( function( acc, path ) {
+		const pathRegex = getPathRegex( path );
 
 		return acc.concat( [
 			'page( ' + pathRegex + ', function( context, next ) {',
@@ -153,27 +161,45 @@ function requireTemplate( section ) {
 			'	controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
 			'	require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
 			'	next();',
-			'} );\n'
+			'} );\n',
 		] );
 	}, [] );
 
 	return result.join( '\n' );
 }
 
-function singleEnsure( chunkName ) {
-	var result = [
-		'case ' + JSON.stringify( chunkName ) + ':',
-		'	return require.ensure([], function() {}, ' + JSON.stringify( chunkName ) + ' );',
-		'	break;\n'
-	];
+function getSectionPreLoaderTemplate( section ) {
+	let cssLoader = '';
 
-	return result.join( '\n' );
+	if ( section.css ) {
+		cssLoader = `loadCSS( ${ JSON.stringify( section.css.id ) }, ${ JSON.stringify(
+			section.css.urls
+		) } );`;
+	}
+
+	const sectionNameString = JSON.stringify( section.name );
+
+	return `
+		case ${ sectionNameString }:
+			${ cssLoader }
+
+			return require.ensure( [], function() {}, ${ sectionNameString } );
+`;
 }
 
 function sectionsWithCSSUrls( sections ) {
-	return sections.map( section => Object.assign( {}, section, section.css && {
-		cssUrls: utils.getCssUrls( section.css )
-	} ) );
+	return sections.map( section =>
+		Object.assign(
+			{},
+			section,
+			section.css && {
+				css: {
+					id: section.css,
+					urls: utils.getCssUrls( section.css ),
+				},
+			}
+		)
+	);
 }
 
 module.exports = function( content ) {

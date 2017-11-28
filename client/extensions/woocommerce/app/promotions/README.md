@@ -16,26 +16,67 @@ by promotion type.
 
 For each promotion type, a model is returned in the following format:
 
-**Note: this will be expanded to include different kinds of fields, like constraints.**
-
 ```js
 {
-	field1: <promotion field>,
-	field2: <promotion field>,
+	cardModel1: {
+		labelText: translate( 'Card 1' ),
+		fields: {
+			fieldModel1: {
+				component: <TextField />,
+				validate: ( fieldName, promotion, currency, showEmpty ) => { … }
+			},
+			fieldModel2: {
+				component: <CurrencyField />,
+				validate: ( fieldName, promotion, currency, showEmpty ) => { … }
+			},
+		},
+	},
+	cardModel2: {
+		labelText: translate( 'Card 2' ),
+		fields: {
+			fieldModel3: {
+				component: <NumberField />,
+				validate: ( fieldName, promotion, currency, showEmpty ) => { … }
+			},
+			fieldModel4: {
+				component: <CheckboxField />,
+				validate: ( fieldName, promotion, currency, showEmpty ) => { … }
+			},
+		},
+	},
 }
 ```
 
-### Promotion Field Models
+### Promotion Field
 
-For each field in a promotion model, there is a model in the following format:
+Each promotion field will be rendered according to its model.
+
+#### Components
+
+For each field in a promotion model, there is a component that will be rendered.
+In addition to whatever props are already set on the component from the model,
+the following props will be added at runtime:
 
 ```js
 {
-	component: FormField Component,
-	labelText: string,
-	explanationText: string (optional),
-	placeholderText: string (optional),
-	isRequired: boolean (optional),
+	key: (the field name, for react iteration indexing),
+	value: (the current value of the field),
+	promotion: (the promotion the field belongs to),
+	fieldName: (the field name used),
+	edit: (edit function used to modify upon change, in the form of: function( fieldName, newValue ) ),
+	currency: (the current currency to be used),
 }
 ```
 
+#### Validate
+
+The validation function for a promotion field is optional, but very useful.
+
+It takes the following parameters:
+* fieldName (string) The name of the promotion field being validated.
+* promotion (Object) The promotion being validated.
+* currency (string) The currency under which the validation is occurring.
+* showEmpty (bool) True if the validator should issue errors for empty fields.
+
+And it should return a translated text string to be displayed if a validation error is found.
+Otherwise, returning `undefined` or some other falsy value.

@@ -196,7 +196,7 @@ describe( 'loadScript/callback-handler', () => {
 	describe( 'handleRequestSuccess( event )', () => {
 		const url = '/';
 		const thisObject = {};
-		const eventObject = { target: { src: url } };
+		const eventObject = { target: { getAttribute: () => url } };
 		const callback = jest.fn();
 
 		beforeAll( function() {
@@ -216,7 +216,7 @@ describe( 'loadScript/callback-handler', () => {
 	describe( 'handleRequestError( event )', () => {
 		const url = '/';
 		const thisObject = {};
-		const eventObject = { target: { src: url } };
+		const eventObject = { target: { getAttribute: () => url } };
 		const callback = jest.fn();
 
 		beforeAll( function() {

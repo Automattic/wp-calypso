@@ -13,7 +13,7 @@ import {
 	muteConversation,
 	updateConversationFollowStatus,
 } from 'state/reader/conversations/actions';
-import { CONVERSATION_FOLLOW_STATUS_MUTING } from 'state/reader/conversations/follow-status';
+import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
 
 describe( 'actions', () => {
 	describe( '#followConversation', () => {
@@ -41,11 +41,11 @@ describe( 'actions', () => {
 			const action = updateConversationFollowStatus( {
 				siteId: 123,
 				postId: 456,
-				followStatus: CONVERSATION_FOLLOW_STATUS_MUTING,
+				followStatus: CONVERSATION_FOLLOW_STATUS.muting,
 			} );
 			expect( action ).toEqual( {
 				type: READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
-				payload: { siteId: 123, postId: 456, followStatus: CONVERSATION_FOLLOW_STATUS_MUTING },
+				payload: { siteId: 123, postId: 456, followStatus: CONVERSATION_FOLLOW_STATUS.muting },
 			} );
 		} );
 	} );

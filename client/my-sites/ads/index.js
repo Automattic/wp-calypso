@@ -1,24 +1,17 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import controller from 'my-sites/controller';
+import { navigation, siteSelection, sites } from 'my-sites/controller';
 import adsController from './controller';
 
 export default function() {
-	page( '/ads', controller.siteSelection, controller.sites );
+	page( '/ads', siteSelection, sites );
 	page( '/ads/:site_id', adsController.redirect );
-	page(
-		'/ads/:section/:site_id',
-		controller.siteSelection,
-		controller.navigation,
-		adsController.layout
-	);
+	page( '/ads/:section/:site_id', siteSelection, navigation, adsController.layout );
 }

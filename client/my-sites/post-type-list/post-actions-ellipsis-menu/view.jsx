@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -17,9 +16,8 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getPost, getPostPreviewUrl } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
-import { setPreviewUrl } from 'state/ui/preview/actions';
+import { setAllSitesPreviewSiteId, setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 class PostActionsEllipsisMenuView extends Component {
@@ -28,7 +26,6 @@ class PostActionsEllipsisMenuView extends Component {
 		translate: PropTypes.func.isRequired,
 		status: PropTypes.string,
 		isPreviewable: PropTypes.bool,
-		onClick: PropTypes.func,
 		previewUrl: PropTypes.string,
 		setPreviewUrl: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
@@ -39,25 +36,27 @@ class PostActionsEllipsisMenuView extends Component {
 		globalId: '',
 		status: 'draft',
 		isPreviewable: false,
-		onClick: () => {},
 		previewUrl: '',
 	};
 
 	previewPost = event => {
-		const { isPreviewable, previewUrl } = this.props;
+		const { isPreviewable, previewUrl, siteId } = this.props;
 		this.props.bumpStat();
 		if ( ! isPreviewable ) {
+			// The default action for the link is to open the previewUrl with a target of _blank.
+			// This default action is canceled below for previewable sites.
+			// Returning early maintains this behavior for non-previewable sites.
 			return;
 		}
 
+		this.props.setAllSitesPreviewSiteId( siteId );
 		this.props.setPreviewUrl( previewUrl );
 		this.props.setLayoutFocus( 'preview' );
-		this.props.onClick();
 		event.preventDefault();
 	};
 
 	render() {
-		const { translate, status, previewUrl } = this.props;
+		const { translate, status, previewUrl, isPreviewable } = this.props;
 		if ( ! previewUrl ) {
 			return null;
 		}
@@ -69,12 +68,11 @@ class PostActionsEllipsisMenuView extends Component {
 				icon="visible"
 				target="_blank"
 				rel="noopener noreferrer"
+				isExternalLink={ ! isPreviewable }
 			>
-				{ includes( [ 'publish', 'private' ], status ) ? (
-					translate( 'View', { context: 'verb' } )
-				) : (
-					translate( 'Preview', { context: 'verb' } )
-				) }
+				{ includes( [ 'publish', 'private' ], status )
+					? translate( 'View', { context: 'verb' } )
+					: translate( 'Preview', { context: 'verb' } ) }
 			</PopoverMenuItem>
 		);
 	}
@@ -87,21 +85,23 @@ const mapStateToProps = ( state, { globalId } ) => {
 	}
 
 	return {
+		siteId: post.site_ID,
 		status: post.status,
+		type: post.type,
 		isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
 		previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID ),
-		type: getPostType( state, post.site_ID, post.type ),
 	};
 };
 
-const mapDispatchToProps = { setPreviewUrl, setLayoutFocus, bumpAnalyticsStat };
+const mapDispatchToProps = {
+	setAllSitesPreviewSiteId,
+	setPreviewUrl,
+	setLayoutFocus,
+	bumpAnalyticsStat,
+};
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator(
-		stateProps.type.name,
-		'view',
-		dispatchProps.bumpAnalyticsStat
-	);
+	const bumpStat = bumpStatGenerator( stateProps.type, 'view', dispatchProps.bumpAnalyticsStat );
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
 };
 

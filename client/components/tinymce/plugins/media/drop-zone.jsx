@@ -1,19 +1,18 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { noop } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import observe from 'lib/mixins/data-observe';
 import PostActions from 'lib/posts/actions';
 import MediaDropZone from 'my-sites/media-library/drop-zone';
 import MediaActions from 'lib/media/actions';
@@ -21,31 +20,23 @@ import MediaUtils from 'lib/media/utils';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaValidationStore from 'lib/media/validation-store';
 import markup from 'post-editor/media-modal/markup';
+import { getSelectedSite } from 'state/ui/selectors';
 
-export default createReactClass( {
-	displayName: 'TinyMCEDropZone',
-
-	mixins: [ observe( 'sites' ) ],
-
-	propTypes: {
+class TinyMCEDropZone extends React.Component {
+	static propTypes = {
 		editor: PropTypes.object,
-		sites: PropTypes.object,
 		onInsertMedia: PropTypes.func,
 		onRenderModal: PropTypes.func,
-	},
+	};
 
-	getInitialState() {
-		return {
-			isDragging: false,
-		};
-	},
+	static defaultProps = {
+		onInsertMedia: noop,
+		onRenderModal: noop,
+	};
 
-	getDefaultProps() {
-		return {
-			onInsertMedia: noop,
-			onRenderModal: noop,
-		};
-	},
+	state = {
+		isDragging: false,
+	};
 
 	componentDidMount() {
 		const { editor } = this.props;
@@ -53,7 +44,7 @@ export default createReactClass( {
 		window.addEventListener( 'dragleave', this.stopDragging );
 		editor.dom.bind( editor.getWin(), 'dragleave', this.stopDragging );
 		editor.dom.bind( editor.getWin(), 'dragover', this.fakeDragEnterIfNecessary );
-	},
+	}
 
 	componentWillUnmount() {
 		const { editor } = this.props;
@@ -61,9 +52,9 @@ export default createReactClass( {
 		window.removeEventListener( 'dragleave', this.stopDragging );
 		editor.dom.unbind( editor.getWin(), 'dragleave', this.stopDragging );
 		editor.dom.unbind( editor.getWin(), 'dragover', this.fakeDragEnterIfNecessary );
-	},
+	}
 
-	redirectEditorDragEvent( event ) {
+	redirectEditorDragEvent = event => {
 		// When an item is dragged over the iframe container, we need to copy
 		// and dispatch the event to the parent window. We use the CustomEvent
 		// constructor rather than MouseEvent because MouseEvent may lose some
@@ -74,9 +65,9 @@ export default createReactClass( {
 		this.setState( {
 			isDragging: true,
 		} );
-	},
+	};
 
-	fakeDragEnterIfNecessary( event ) {
+	fakeDragEnterIfNecessary = event => {
 		// It was found that Chrome only triggered the `dragenter` event on
 		// every odd drag over the iframe element. The logic here ensures that
 		// if the more frequent `dragover` event occurs while not aware of a
@@ -90,17 +81,16 @@ export default createReactClass( {
 				type: 'dragenter',
 			} )
 		);
-	},
+	};
 
-	stopDragging() {
+	stopDragging = () => {
 		this.setState( {
 			isDragging: false,
 		} );
-	},
+	};
 
-	insertMedia() {
-		const { sites, onInsertMedia, onRenderModal } = this.props;
-		const site = sites.getSelectedSite();
+	insertMedia = () => {
+		const { site, onInsertMedia, onRenderModal } = this.props;
 
 		if ( ! site ) {
 			return;
@@ -127,11 +117,10 @@ export default createReactClass( {
 		}
 
 		analytics.mc.bumpStat( 'editor_upload_via', 'editor_drop' );
-	},
+	};
 
 	render() {
-		const { sites } = this.props;
-		const site = sites.getSelectedSite();
+		const { site } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -145,5 +134,9 @@ export default createReactClass( {
 				onAddMedia={ this.insertMedia }
 			/>
 		);
-	},
-} );
+	}
+}
+
+export default connect( state => ( {
+	site: getSelectedSite( state ),
+} ) )( TinyMCEDropZone );

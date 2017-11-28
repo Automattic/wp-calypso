@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { connect } from 'react-redux';
@@ -26,6 +26,7 @@ const ruleWhiteList = [
 	'expiringDomainsCannotManage',
 	'wrongNSMappedDomains',
 	'pendingGappsTosAcceptanceDomains',
+	'transferStatus',
 ];
 
 const CurrentSiteDomainWarnings = ( { domains, isJetpack, selectedSite } ) => {

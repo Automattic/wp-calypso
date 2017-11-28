@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { get, find, isEqual, isObject } from 'lodash';
@@ -33,7 +33,7 @@ export function getProductEdits( state, productId, siteId = getSelectedSiteId( s
 }
 
 /**
- * Gets a product with local edits overlayed on top of fetched data.
+ * Gets a product with local edits overlaid on top of fetched data.
  *
  * @param {Object} state Global state tree
  * @param {any} productId The id of the product (or { placeholder: # } )
@@ -83,7 +83,7 @@ export function getCurrentlyEditingProduct( state, siteId = getSelectedSiteId( s
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Number} Current product list page (defaul: 1)
  */
-export function getProductListCurrentPage( state, siteId = getSelectedSiteId( state ) ) {
+export function getProductsCurrentPage( state, siteId = getSelectedSiteId( state ) ) {
 	return get(
 		state,
 		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'currentPage' ],
@@ -92,27 +92,18 @@ export function getProductListCurrentPage( state, siteId = getSelectedSiteId( st
 }
 
 /**
- * Gets an array of products for the current page being viewed.
+ * Gets the current products list search term being viewed (if exists).
  *
  * @param {Object} state Global state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array|false} Array of products or false if products are not available.
+ * @return {String} Current product list search term (defaul: '')
  */
-export function getProductListProducts( state, siteId = getSelectedSiteId( state ) ) {
-	const products = get(
+export function getProductsCurrentSearch( state, siteId = getSelectedSiteId( state ) ) {
+	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ],
-		{}
+		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'currentSearch' ],
+		''
 	);
-	const productIds = get(
-		state,
-		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'productIds' ],
-		[]
-	);
-	if ( productIds.length ) {
-		return productIds.map( id => find( products, p => isEqual( id, p.id ) ) );
-	}
-	return false;
 }
 
 /**
@@ -122,7 +113,7 @@ export function getProductListProducts( state, siteId = getSelectedSiteId( state
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {number|null} Requested product list page
  */
-export function getProductListRequestedPage( state, siteId = getSelectedSiteId( state ) ) {
+export function getProductsRequestedPage( state, siteId = getSelectedSiteId( state ) ) {
 	return get(
 		state,
 		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'requestedPage' ],
@@ -131,55 +122,16 @@ export function getProductListRequestedPage( state, siteId = getSelectedSiteId( 
 }
 
 /**
- * Gets the current product search page being viewed.
+ * Gets the requested/loading search term for the products list.
  *
  * @param {Object} state Global state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} Current product search page (default: 1)
+ * @return {String|null} Requested product list term
  */
-export function getProductSearchCurrentPage( state, siteId = getSelectedSiteId( state ) ) {
+export function getProductsRequestedSearch( state, siteId = getSelectedSiteId( state ) ) {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'currentPage' ],
-		1
-	);
-}
-
-/**
- * Gets an array of products for the current search page being viewed.
- *
- * @param {Object} state Global state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array|false} Array of products or false if products are not available.
- */
-export function getProductSearchResults( state, siteId = getSelectedSiteId( state ) ) {
-	const products = get(
-		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ],
-		{}
-	);
-	const productIds = get(
-		state,
-		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'productIds' ],
-		[]
-	);
-	if ( productIds.length ) {
-		return productIds.map( id => find( products, p => isEqual( id, p.id ) ) );
-	}
-	return false;
-}
-
-/**
- * Gets the requested page for products search.
- *
- * @param {Object} state Global state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {number|null} Requested product search page
- */
-export function getProductSearchRequestedPage( state, siteId = getSelectedSiteId( state ) ) {
-	return get(
-		state,
-		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'search', 'requestedPage' ],
+		[ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'list', 'requestedSearch' ],
 		null
 	);
 }

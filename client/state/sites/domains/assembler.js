@@ -1,10 +1,10 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
-import { getDomainType } from 'lib/domains/utils';
+import { getDomainType, getTransferStatus } from 'lib/domains/utils';
 import { assembleGoogleAppsSubscription } from 'lib/domains/assembler';
 
 export const createSiteDomainObject = domain => {
@@ -42,6 +42,7 @@ export const createSiteDomainObject = domain => {
 		subscriptionId: domain.subscription_id,
 		transferLockOnWhoisUpdateOptional: Boolean( domain.transfer_lock_on_whois_update_optional ),
 		type: getDomainType( domain ),
+		transferStatus: getTransferStatus( domain ),
 		whoisUpdateUnmodifiableFields: domain.whois_update_unmodifiable_fields,
 	};
 };

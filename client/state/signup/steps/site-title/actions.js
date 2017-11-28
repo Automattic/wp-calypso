@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { SIGNUP_STEPS_SITE_TITLE_SET } from 'state/action-types';

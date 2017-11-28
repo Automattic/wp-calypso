@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import { assign, filter, findIndex, findLastIndex, forEach, last, map, defer } from 'lodash';

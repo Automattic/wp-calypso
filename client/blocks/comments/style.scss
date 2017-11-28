@@ -8,6 +8,11 @@
 	.segmented-control {
 		margin: 20px;
 	}
+
+	.comments__conversation-follow-button {
+		float: right;
+		margin-top: 4px;
+	}
 }
 
 // Comment Counter
@@ -52,6 +57,7 @@
 
 			white-space: pre-wrap;
 			word-wrap: break-word;
+			word-break: break-word;
 		}
 
 		textarea {
@@ -408,6 +414,10 @@ a.comments__comment-username {
 		margin: 8px 0 16px;
 		padding: 8px 16px;
 	}
+
+	pre {
+		white-space: pre-wrap;
+	}
 }
 
 // Actions for Individual Comments
@@ -566,4 +576,11 @@ a.comments__comment-username {
 
 .comments__comment-actions-read-more-icon {
 	fill: $blue-medium;
+}
+
+// Hide certain elements in excerpt comments
+.comments__comment-content-wrapper.is-excerpt {
+	blockquote {
+		display: none;
+	}
 }

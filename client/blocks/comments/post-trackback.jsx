@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -12,7 +12,7 @@ import { get } from 'lodash';
 /***
  * Internal dependencies
  */
-import PostTime from 'reader/post-time';
+import TimeSince from 'components/time-since';
 
 function unescape( str ) {
 	return str.replace( /&#(\d+);/g, ( match, entity ) => String.fromCharCode( entity ) );
@@ -49,7 +49,7 @@ export default class PostTrackback extends React.Component {
 
 					<div className="comments__comment-timestamp">
 						<a href={ comment.URL }>
-							<PostTime date={ comment.date } />
+							<TimeSince date={ comment.date } />
 						</a>
 					</div>
 				</div>

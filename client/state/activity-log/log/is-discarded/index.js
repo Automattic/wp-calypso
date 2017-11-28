@@ -19,7 +19,7 @@ import { memoize } from 'lodash';
  * @param {Number} ts timestamp in 's' or 'ms'
  * @returns {Number} timestamp in 'ms'
  */
-const ms = ts =>
+export const ms = ts =>
 	ts < 946702800000 // Jan 1, 2001 @ 00:00:00
 		? ts * 1000 // convert s -> ms
 		: ts;
@@ -71,9 +71,8 @@ export const makeIsDiscarded = ( rewinds, viewFrom ) => {
 	return isDiscarded;
 };
 
-export const rewriteStream = ( events, viewFrom = Date.now() ) => {
-	const rewinds = getRewinds( events ).filter( ( [ rp ] ) => rp <= viewFrom );
-	const isDiscarded = makeIsDiscarded( rewinds, viewFrom );
+export const rewriteStream = ( events, rewinds, viewFrom = Date.now() ) => {
+	const isDiscarded = makeIsDiscarded( rewinds.filter( ( [ rp ] ) => rp <= viewFrom ), viewFrom );
 
 	return events.map( event => ( {
 		...event,

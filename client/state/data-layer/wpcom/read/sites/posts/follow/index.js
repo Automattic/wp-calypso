@@ -17,13 +17,15 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
+import { getReaderConversationFollowStatus } from 'state/selectors';
 
-export function requestConversationFollow( { dispatch }, action ) {
+export function requestConversationFollow( { dispatch, getState }, action ) {
 	const actionWithRevert = merge( {}, action, {
 		meta: {
-			// @todo once we've added convo follow to Redux state, use selector to get previous state
-			// hardcoded for the moment to support tests
-			previousState: 'M',
+			previousState: getReaderConversationFollowStatus( getState(), {
+				siteId: action.payload.siteId,
+				postId: action.payload.postId,
+			} ),
 		},
 	} );
 	dispatch(

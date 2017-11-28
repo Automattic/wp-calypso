@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import ReactDom from 'react-dom';
@@ -15,10 +15,6 @@ import analytics from 'lib/analytics';
 
 export function concatTitle( ...parts ) {
 	return parts.join( ' › ' );
-}
-
-export function renderPage( context, component ) {
-	renderWithReduxStore( component, document.getElementById( 'primary' ), context.store );
 }
 
 export function recordPageView( path, ...title ) {

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -74,7 +74,7 @@ class StatsDownloadCsv extends Component {
 		return (
 			<Button compact onClick={ this.downloadCsv } disabled={ disabled } borderless={ borderless }>
 				{ siteId &&
-				statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
+					statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				<Gridicon icon="cloud-download" />{' '}
 				{ translate( 'Download data as CSV', {
 					context: 'Action shown in stats to download data as csv.',

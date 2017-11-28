@@ -4,6 +4,32 @@
 
 Code modification scripts, also known as codemods, are transformation scripts that can simultaneously modify multiple files with precision and reliability. Codemods were popularized by [Facebook's engineering team](https://medium.com/@cpojer/effective-javascript-codemods-5a6686bb46fb) and depends greatly on Facebook's [jscodeshift](https://github.com/facebook/jscodeshift) library, which wraps over a library named [recast](https://github.com/benjamn/recast) (author of which is associated with the [Meteor](https://www.meteor.com/) project).
 
+## How to write codemods
+
+Place your codemod under `src` folder:
+```bash
+touch ./bin/codemods/src/your-transformation-name.js
+```
+
+Here's a stub to begin with:
+```js
+const config = require( './config' );
+
+export default function transformer( file, api ) {
+	const j = api.jscodeshift;
+	const root = j( file.source );
+
+	// Modify file's AST (Abstract Syntax Tree) structure here
+
+	return root.toSource( config.recastOptions );
+}
+```
+
+A nifty tool to explore AST structures is [AST explorer](https://astexplorer.net/).
+You can choose "recast" as a parser and "jscodeshift" from "Transform" menu.
+
+For more, check [an awesome list of jscodeshift resources and tips](https://github.com/sejoker/awesome-jscodeshift).
+
 ## How to run our codemods
 
 It's easy! Our codemod script uses the following CLI:
@@ -42,6 +68,25 @@ If you're developing your own transformations, it may be useful to know you can 
 ```bash
 ./node_modules/.bin/jscodeshift -t transformation.js [target files]
 ```
+
+## How to debug codemods
+
+If you are a codemod author, you may want to debug your codemod using the Chrome debugger. Then
+run the codemod script with a `--debugger` parameter:
+```bash
+npm run codemod -- --debugger my-transform client/target.js
+```
+This will run `jscodeshift` in a Node process with activated debugger server and will break on the
+first statement. That allows you to connect with Chrome and run the codemod script. (internally,
+the `--inspect-brk` command line option is passed to Node)
+
+`jscodeshift` will be run in a mode where it doesn't spawn child worker processes, but will execute
+everything in one Node process -- the one that's being debugged. (internally, the `--run-in-band`
+command line option is passed to `jscodeshift`)
+
+You can now connect to the running Node process from Chrome by opening the `chrome:inspect` page and
+selecting your local Node process from the list. Refer to the
+[official Node debugging guide](https://nodejs.org/en/docs/inspector/) if you run into any trouble.
 
 ## List of available transformations
 
@@ -92,6 +137,10 @@ If you're developing your own transformations, it may be useful to know you can 
 
 - rename-combine-reducers
 	- This transformation converts combineReducersWithPersistence imports to use combineReducers from 'state/utils'
+
+- single-tree-rendering
+	- Instead of rendering two distinct React element trees to the `#primary` and `#secondary` <div>s,
+	use a single `Layout` component tree that includes both, and render it to `#layout`.
 
 - sort-imports
 	- This transformation adds import comment blocks and sorts them as necessary.

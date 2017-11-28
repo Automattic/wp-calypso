@@ -15,7 +15,7 @@ import {
 	muteConversation,
 	updateConversationFollowStatus,
 } from 'state/reader/conversations/actions';
-import { CONVERSATION_FOLLOW_STATUS_FOLLOWING } from 'state/reader/conversations/follow-status';
+import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
 
 describe( 'conversation-mute', () => {
 	describe( 'requestConversationMute', () => {
@@ -24,10 +24,21 @@ describe( 'conversation-mute', () => {
 			const action = muteConversation( { siteId: 123, postId: 456 } );
 			const actionWithRevert = merge( {}, action, {
 				meta: {
-					previousState: CONVERSATION_FOLLOW_STATUS_FOLLOWING,
+					previousState: CONVERSATION_FOLLOW_STATUS.following,
 				},
 			} );
-			requestConversationMute( { dispatch }, action );
+			const getState = () => {
+				return {
+					reader: {
+						conversations: {
+							items: {
+								'123-456': 'F',
+							},
+						},
+					},
+				};
+			};
+			requestConversationMute( { dispatch, getState }, action );
 			expect( dispatch ).toHaveBeenCalledWith(
 				http(
 					{
@@ -49,14 +60,14 @@ describe( 'conversation-mute', () => {
 				{ dispatch },
 				{
 					payload: { siteId: 123, postId: 456 },
-					meta: { previousState: CONVERSATION_FOLLOW_STATUS_FOLLOWING },
+					meta: { previousState: CONVERSATION_FOLLOW_STATUS.following },
 				},
 				{ success: true }
 			);
 			expect( dispatch ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					notice: expect.objectContaining( {
-						status: 'is-success',
+						status: 'is-plain',
 					} ),
 				} )
 			);
@@ -68,7 +79,7 @@ describe( 'conversation-mute', () => {
 				{ dispatch },
 				{
 					payload: { siteId: 123, postId: 456 },
-					meta: { previousState: CONVERSATION_FOLLOW_STATUS_FOLLOWING },
+					meta: { previousState: CONVERSATION_FOLLOW_STATUS.following },
 				},
 				{
 					success: false,
@@ -86,7 +97,7 @@ describe( 'conversation-mute', () => {
 					updateConversationFollowStatus( {
 						siteId: 123,
 						postId: 456,
-						followStatus: CONVERSATION_FOLLOW_STATUS_FOLLOWING,
+						followStatus: CONVERSATION_FOLLOW_STATUS.following,
 					} )
 				)
 			);

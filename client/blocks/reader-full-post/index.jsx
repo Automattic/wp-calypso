@@ -24,12 +24,7 @@ import { fetchPost } from 'lib/feed-post-store/actions';
 import ReaderFullPostHeader from './header';
 import AuthorCompactProfile from 'blocks/author-compact-profile';
 import LikeButton from 'reader/like-button';
-import {
-	isDiscoverPost,
-	isDiscoverSitePick,
-	getSourceFollowUrl,
-	getSiteUrl,
-} from 'reader/discover/helper';
+import { isDiscoverPost, isDiscoverSitePick } from 'reader/discover/helper';
 import DiscoverSiteAttribution from 'reader/discover/site-attribution';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
@@ -70,6 +65,8 @@ import { getLastStore } from 'reader/controller-helper';
 import { showSelectedPost } from 'reader/utils';
 import Emojify from 'components/emojify';
 import config from 'config';
+import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
+import { READER_FULL_POST } from 'reader/follow-button/follow-sources';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
@@ -321,8 +318,8 @@ export class FullPostView extends React.Component {
 				) }
 				{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
 				{ post &&
-				! post.is_external &&
-				post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
+					! post.is_external &&
+					post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
 				<ReaderFullPostBack onBackClick={ this.handleBack } />
 				<div className="reader-full-post__visit-site-container">
 					<ExternalLink
@@ -340,20 +337,20 @@ export class FullPostView extends React.Component {
 					<div className="reader-full-post__sidebar">
 						{ isLoading && <AuthorCompactProfile author={ null } /> }
 						{ ! isLoading &&
-						post.author && (
-							<AuthorCompactProfile
-								author={ post.author }
-								siteIcon={ get( site, 'icon.img' ) }
-								feedIcon={ get( feed, 'image' ) }
-								siteName={ siteName }
-								siteUrl={ post.site_URL }
-								feedUrl={ get( feed, 'feed_URL' ) }
-								followCount={ site && site.subscribers_count }
-								feedId={ +post.feed_ID }
-								siteId={ +post.site_ID }
-								post={ post }
-							/>
-						) }
+							post.author && (
+								<AuthorCompactProfile
+									author={ post.author }
+									siteIcon={ get( site, 'icon.img' ) }
+									feedIcon={ get( feed, 'image' ) }
+									siteName={ siteName }
+									siteUrl={ post.site_URL }
+									feedUrl={ get( feed, 'feed_URL' ) }
+									followCount={ site && site.subscribers_count }
+									feedId={ +post.feed_ID }
+									siteId={ +post.site_ID }
+									post={ post }
+								/>
+							) }
 						{ shouldShowComments( post ) && (
 							<CommentButton
 								key="comment-button"
@@ -376,7 +373,9 @@ export class FullPostView extends React.Component {
 							<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
 							{ post.featured_image &&
-							! isFeaturedImageInContent( post ) && <FeaturedImage src={ post.featured_image } /> }
+								! isFeaturedImageInContent( post ) && (
+									<FeaturedImage src={ post.featured_image } />
+								) }
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
 							{ post.use_excerpt ? (
 								<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
@@ -392,16 +391,10 @@ export class FullPostView extends React.Component {
 							) }
 
 							{ post.use_excerpt &&
-							! isDiscoverPost( post ) && (
-								<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
-							) }
-							{ isDiscoverSitePick( post ) && (
-								<DiscoverSiteAttribution
-									attribution={ post.discover_metadata.attribution }
-									siteUrl={ getSiteUrl( post ) }
-									followUrl={ getSourceFollowUrl( post ) }
-								/>
-							) }
+								! isDiscoverPost( post ) && (
+									<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
+								) }
+							{ isDiscoverSitePick( post ) && <DiscoverSiteAttribution post={ post } /> }
 							{ isDailyPostChallengeOrPrompt( post ) && (
 								<DailyPostButton post={ post } site={ site } />
 							) }
@@ -439,7 +432,7 @@ export class FullPostView extends React.Component {
 							) }
 
 							<div className="reader-full-post__comments-wrapper" ref="commentsWrapper">
-								{ shouldShowComments( post ) ? (
+								{ shouldShowComments( post ) && (
 									<Comments
 										showNestingReplyArrow={ config.isEnabled( 'reader/nesting-arrow' ) }
 										ref="commentsList"
@@ -449,8 +442,11 @@ export class FullPostView extends React.Component {
 										startingCommentId={ startingCommentId }
 										commentCount={ commentCount }
 										maxDepth={ 1 }
+										commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+										showConversationFollowButton={ true }
+										followSource={ READER_FULL_POST }
 									/>
-								) : null }
+								) }
 							</div>
 
 							{ showRelatedPosts && (
@@ -504,7 +500,6 @@ export default class FullPostFluxContainer extends React.Component {
 		blogId: PropTypes.string,
 		postId: PropTypes.string.isRequired,
 		onClose: PropTypes.func.isRequired,
-		onPostNotFound: PropTypes.func.isRequired,
 		referral: PropTypes.object,
 	};
 

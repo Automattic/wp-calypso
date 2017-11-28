@@ -52,14 +52,14 @@ jest.mock( 'lib/abtest/active-tests', () => ( {
 		defaultVariation: 'hide',
 		localeTargets: [ 'fr' ],
 	},
-	mockedTestIlCountryCodeTarget: {
+	mockedTestIlInCountryCodeTargets: {
 		datestamp: '20160627',
 		variations: {
 			hide: 50,
 			show: 50,
 		},
 		defaultVariation: 'hide',
-		countryCodeTarget: 'IL',
+		countryCodeTargets: [ 'IL', 'IN' ],
 	},
 	mockedTestAllowExisting: {
 		datestamp: '20160627',
@@ -226,7 +226,7 @@ describe( 'abtest', () => {
 					expect( setSpy ).to.have.been.calledOnce;
 				} );
 			} );
-			describe( 'IL countryCodeTarget only', () => {
+			describe( 'IL/IN countryCodeTargets only', () => {
 				beforeEach( () => {
 					getUserStub.mockReturnValue( {
 						localeSlug: 'en',
@@ -235,22 +235,27 @@ describe( 'abtest', () => {
 				} );
 
 				test( 'should return default and skip store.set for new users with no GeoLocation value', () => {
-					abtest( 'mockedTestIlCountryCodeTarget', null );
+					abtest( 'mockedTestIlInCountryCodeTargets', null );
 					expect( setSpy ).not.to.have.been.called;
 				} );
 				test( 'should throw error if countryCodeTarget is set but geoLocation is not passed', () => {
-					expect( () => abtest( 'mockedTestIlCountryCodeTarget' ) ).to.throw(
-						'Test config has geoTarget, but no geoLocation passed to abtest function'
+					expect( () => abtest( 'mockedTestIlInCountryCodeTargets' ) ).to.throw(
+						'Test config has countryCodeTargets, but no geoLocation passed to abtest function'
 					);
 				} );
 				test( 'should return default and skip store.set for new users not from Israel', () => {
 					const geoLocation = 'US';
-					expect( abtest( 'mockedTestIlCountryCodeTarget', geoLocation ) ).to.equal( 'hide' );
+					expect( abtest( 'mockedTestIlInCountryCodeTargets', geoLocation ) ).to.equal( 'hide' );
 					expect( setSpy ).not.to.have.been.called;
 				} );
 				test( 'should call store.set for new users with from Israel', () => {
 					const geoLocation = 'IL';
-					abtest( 'mockedTestIlCountryCodeTarget', geoLocation );
+					abtest( 'mockedTestIlInCountryCodeTargets', geoLocation );
+					expect( setSpy ).to.have.been.calledOnce;
+				} );
+				test( 'should call store.set for new users with from India', () => {
+					const geoLocation = 'IN';
+					abtest( 'mockedTestIlInCountryCodeTargets', geoLocation );
 					expect( setSpy ).to.have.been.calledOnce;
 				} );
 			} );

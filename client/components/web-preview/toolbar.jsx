@@ -1,13 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { partial } from 'lodash';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ import Button from 'components/button';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import ClipboardButtonInput from 'components/clipboard-button-input';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 
@@ -52,6 +54,15 @@ class PreviewToolbar extends Component {
 		showSEO: true,
 	};
 
+	handleEditorWebPreviewExternalClick = () => {
+		this.props.recordTracksEvent( 'calypso_editor_preview_toolbar_external_click' );
+	};
+
+	handleEditorWebPreviewClose = () => {
+		this.props.recordTracksEvent( 'calypso_editor_preview_close_click' );
+		this.props.onClose();
+	};
+
 	constructor( props ) {
 		super();
 
@@ -69,7 +80,6 @@ class PreviewToolbar extends Component {
 			editUrl,
 			externalUrl,
 			isModalWindow,
-			onClose,
 			onEdit,
 			previewUrl,
 			setDeviceViewport,
@@ -93,7 +103,7 @@ class PreviewToolbar extends Component {
 						aria-label={ translate( 'Close preview' ) }
 						className="web-preview__close"
 						data-tip-target="web-preview__close"
-						onClick={ onClose }
+						onClick={ this.handleEditorWebPreviewClose }
 					>
 						<Gridicon icon={ isModalWindow ? 'cross' : 'arrow-left' } />
 					</Button>
@@ -138,6 +148,7 @@ class PreviewToolbar extends Component {
 							href={ externalUrl || previewUrl }
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ this.handleEditorWebPreviewExternalClick }
 						>
 							<Gridicon icon="external" />
 						</Button>
@@ -149,4 +160,6 @@ class PreviewToolbar extends Component {
 	}
 }
 
-export default localize( PreviewToolbar );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( PreviewToolbar ) );

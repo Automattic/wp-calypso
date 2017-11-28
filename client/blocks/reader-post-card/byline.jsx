@@ -11,7 +11,7 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import ReaderAvatar from 'blocks/reader-avatar';
-import PostTime from 'reader/post-time';
+import TimeSince from 'components/time-since';
 import { getSiteName } from 'reader/get-helpers';
 import {
 	recordAction,
@@ -134,19 +134,19 @@ class PostByline extends React.Component {
 					) }
 					<div className="reader-post-card__timestamp-and-tag">
 						{ post.date &&
-						post.URL && (
-							<span className="reader-post-card__timestamp">
-								<a
-									className="reader-post-card__timestamp-link"
-									onClick={ this.recordDateClick }
-									href={ post.URL }
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<PostTime date={ post.date } />
-								</a>
-							</span>
-						) }
+							post.URL && (
+								<span className="reader-post-card__timestamp">
+									<a
+										className="reader-post-card__timestamp-link"
+										onClick={ this.recordDateClick }
+										href={ post.URL }
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										<TimeSince date={ post.date } />
+									</a>
+								</span>
+							) }
 						{ tags.length > 0 && (
 							<span className="reader-post-card__tags">
 								<Gridicon icon="tag" />

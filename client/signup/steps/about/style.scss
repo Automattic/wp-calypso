@@ -1,0 +1,71 @@
+.about__wrapper {
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+.about__checkboxes {
+	border: 1px solid lighten( $gray, 20% );
+	border-radius: 3px;
+}
+
+.about__checkbox-option {
+	border-top: 1px solid lighten( $gray, 20% );
+	color: darken( $gray, 20% );
+	display: block;
+	font-weight: normal;
+	margin: 0;
+	padding: 15px;
+
+	&:first-child {
+		border-top: 0;
+	}
+
+	&:hover {
+		cursor: pointer;
+		background: $gray-light;
+	}
+}
+
+.about__checkbox {
+	margin-right: 10px;
+}
+
+.about__checkbox-label {
+	display: inline-block;
+	line-height: 1.2em;
+}
+
+.about__segmented-control-wrapper {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.about__segmented-control {
+	flex-grow: 1;
+}
+
+.about__segment-label {
+	color: darken( $gray, 20% );
+
+	&:hover {
+		cursor: pointer;
+	}
+}
+
+.about__min-label {
+	padding-right: 15px;
+}
+
+.about__max-label {
+	padding-left: 15px;
+}
+
+.about__submit-wrapper {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.about__last-fieldset {
+	margin-bottom: 0;
+}

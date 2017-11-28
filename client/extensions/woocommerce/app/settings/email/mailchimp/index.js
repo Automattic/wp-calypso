@@ -13,12 +13,12 @@ import React from 'react';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingForSites } from 'state/plugins/installed/selectors';
-import { mailChimpSettings, isRequestingSettings } from 'woocommerce/state/sites/settings/email/selectors';
+import { mailChimpSettings, isRequestingSettings } from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import MailChimpGettingStarted from './getting-started';
 import MailChimpSetup from './setup-mailchimp';
 import MailChimpDashboard from './mailchimp_dashboard';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import QueryMailChimpSettings from 'woocommerce/state/sites/settings/email/querySettings';
+import QueryMailChimpSettings from 'woocommerce/state/sites/settings/mailchimp/querySettings';
 
 class MailChimp extends React.Component {
 

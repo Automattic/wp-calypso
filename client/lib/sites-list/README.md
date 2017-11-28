@@ -32,10 +32,6 @@ This folder also contains some further site-related modules:
 
 Provides Flux actions for deleting sites, disconnecting sites, and clearing site notices.
 
-#### delete-site-store.js
-
-Flux store holding the last deleted site. Works with the `delete` actions in `actions.js.`
-
 #### log-store.js
 
 Flux store providing the site-related messages for `notices.js`. Works with the actions in `actions.js.`

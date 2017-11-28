@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -159,7 +159,7 @@ class StatsModule extends Component {
 		return (
 			<div>
 				{ siteId &&
-				statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
+					statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				{ ! isAllTime && (
 					<SectionHeader
 						className={ headerClass }
@@ -180,18 +180,18 @@ class StatsModule extends Component {
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					<StatsList moduleName={ path } data={ data } />
 					{ this.props.showSummaryLink &&
-					displaySummaryLink && <StatsModuleExpand href={ summaryLink } /> }
+						displaySummaryLink && <StatsModuleExpand href={ summaryLink } /> }
 					{ summary &&
-					'countryviews' === path && (
-						<UpgradeNudge
-							title={ translate( 'Add Google Analytics' ) }
-							message={ translate(
-								'Upgrade to a Business Plan for Google Analytics integration.'
-							) }
-							event="googleAnalytics-stats-countries"
-							feature="google-analytics"
-						/>
-					) }
+						'countryviews' === path && (
+							<UpgradeNudge
+								title={ translate( 'Add Google Analytics' ) }
+								message={ translate(
+									'Upgrade to a Business Plan for Google Analytics integration.'
+								) }
+								event="googleAnalytics-stats-countries"
+								feature="google-analytics"
+							/>
+						) }
 				</Card>
 				{ isAllTime && (
 					<div className="stats-module__footer-actions">

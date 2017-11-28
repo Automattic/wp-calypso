@@ -30,24 +30,41 @@ describe( 'TransactionIdForm', () => {
 		test( 'continue button should be disabled if transaction id is blank', () => {
 			const wrapper = mount( <TransactionIdFormComponent className="test__test" /> );
 
-			wrapper.find( '.transaction-id-form__transaction-id-input' ).node.value = '';
-			wrapper.find( '.transaction-id-form__transaction-id-input' ).simulate( 'change' );
-			expect( wrapper.find( '.transaction-id-form__transaction-id-input' ).prop( 'disabled' ) ).to
-				.not.be.ok;
-			expect( wrapper.find( '.transaction-id-form__continue-button' ).prop( 'disabled' ) ).to.be.ok;
+			wrapper
+				.find( '.form-text-input.transaction-id-form__transaction-id-input' )
+				.simulate( 'change' );
+			expect(
+				wrapper
+					.find( '.transaction-id-form__transaction-id-input' )
+					.first()
+					.prop( 'disabled' )
+			).to.not.be.ok;
+			expect(
+				wrapper
+					.find( '.transaction-id-form__continue-button' )
+					.first()
+					.prop( 'disabled' )
+			).to.be.ok;
 		} );
 
 		test( 'should be disabled when continue button clicked', () => {
 			const wrapper = mount( <TransactionIdFormComponent className="test__test" /> );
+			wrapper.setState( { transactionId: 1 } );
 
-			wrapper.find( '.transaction-id-form__transaction-id-input' ).node.value = 'test';
-			wrapper.find( '.transaction-id-form__transaction-id-input' ).simulate( 'change' );
-			wrapper.find( '.transaction-id-form__continue-button' ).simulate( 'click' );
-
+			wrapper.find( 'button.transaction-id-form__continue-button' ).simulate( 'click' );
 			expect( wrapper ).to.have.state( 'isSubmitting' ).to.be.true;
-			expect( wrapper.find( '.transaction-id-form__transaction-id-input' ).prop( 'disabled' ) ).to
-				.be.ok;
-			expect( wrapper.find( '.transaction-id-form__continue-button' ).prop( 'disabled' ) ).to.be.ok;
+			expect(
+				wrapper
+					.find( '.transaction-id-form__transaction-id-input' )
+					.first()
+					.prop( 'disabled' )
+			).to.be.ok;
+			expect(
+				wrapper
+					.find( '.transaction-id-form__continue-button' )
+					.first()
+					.prop( 'disabled' )
+			).to.be.ok;
 		} );
 	} );
 } );

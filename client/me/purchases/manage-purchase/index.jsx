@@ -1,7 +1,7 @@
+/** @format */
+
 /**
- * External Dependencies
- *
- * @format
+ * External dependencies
  */
 
 import classNames from 'classnames';
@@ -59,6 +59,7 @@ import {
 	isDomainProduct,
 	isDomainRegistration,
 	isDomainMapping,
+	isDomainTransfer,
 	isTheme,
 } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
@@ -88,7 +89,7 @@ class ManagePurchase extends Component {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		selectedPurchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool, PropTypes.undefined ] ),
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	};
 
 	componentWillMount() {
@@ -288,7 +289,7 @@ class ManagePurchase extends Component {
 			);
 		}
 
-		if ( isDomainProduct( purchase ) ) {
+		if ( isDomainProduct( purchase ) || isDomainTransfer( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
 					<Gridicon icon="domains" size={ 54 } />
@@ -325,6 +326,11 @@ class ManagePurchase extends Component {
 						domain: selectedSite.domain,
 					},
 				}
+			);
+		} else if ( isDomainTransfer( purchase ) ) {
+			description = translate(
+				'Transfers an existing domain from another provider to WordPress.com, ' +
+					'helping you manage your site and domain in one place.'
 			);
 		}
 
@@ -439,13 +445,15 @@ class ManagePurchase extends Component {
 				) }
 				<Main className={ classes }>
 					<HeaderCake onClick={ goToList }>{ titles.managePurchase }</HeaderCake>
-					<PurchaseNotice
-						isDataLoading={ isDataLoading( this.props ) }
-						handleRenew={ this.handleRenew }
-						selectedSite={ selectedSite }
-						selectedPurchase={ selectedPurchase }
-						editCardDetailsPath={ editCardDetailsPath }
-					/>
+					{
+						<PurchaseNotice
+							isDataLoading={ isDataLoading( this.props ) }
+							handleRenew={ this.handleRenew }
+							selectedSite={ selectedSite }
+							selectedPurchase={ selectedPurchase }
+							editCardDetailsPath={ editCardDetailsPath }
+						/>
+					}
 					{ this.renderPurchaseDetail() }
 				</Main>
 			</span>

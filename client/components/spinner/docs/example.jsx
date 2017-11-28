@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -12,7 +12,7 @@ import React from 'react';
 import Spinner from 'components/spinner';
 
 export default class extends React.PureComponent {
-    static displayName = 'Spinner';
+	static displayName = 'Spinner';
 
 	render() {
 		return (

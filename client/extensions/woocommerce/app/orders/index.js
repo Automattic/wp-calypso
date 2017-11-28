@@ -29,7 +29,7 @@ function Orders( { className, params, site, translate } ) {
 	}
 
 	return (
-		<Main className={ className }>
+		<Main className={ className } wideLayout>
 			<ActionHeader breadcrumbs={ <span>{ translate( 'Orders' ) }</span> }>
 				{ addButton }
 			</ActionHeader>

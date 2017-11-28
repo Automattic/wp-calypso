@@ -1,15 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
-import { get, find } from 'lodash';
+import { get, find, flatten, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSerializedProductsQuery } from './utils';
 
 export const getProduct = ( state, productId, siteId = getSelectedSiteId( state ) ) => {
 	const allProducts = get( state, [
@@ -25,27 +26,50 @@ export const getProduct = ( state, productId, siteId = getSelectedSiteId( state 
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array}  The entire list of products for this site
+ */
+export const getAllProducts = ( state, siteId = getSelectedSiteId( state ) ) => {
+	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'products' ], [] );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array}  The entire list of products for this site with variations inline as "products"
+ */
+export const getAllProductsWithVariations = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const products = get( state, `extensions.woocommerce.sites[${ siteId }].products.products`, [] );
+	const variations = get(
+		state,
+		`extensions.woocommerce.sites[${ siteId }].productVariations`,
+		{}
+	);
+	// Flatten variations from their productId mapping down into a single array
+	const variationsList = flatten(
+		map( variations, ( items, productId ) => {
+			return items.map( item => ( { ...item, productId: Number( productId ) } ) );
+		} )
+	);
+
+	return [ ...products, ...variationsList ];
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
  * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the products list for a requested page has been successfully loaded from the server
  */
-export const areProductsLoaded = (
-	state,
-	params = { page: 1, per_page: 10 },
-	siteId = getSelectedSiteId( state )
-) => {
-	const key = JSON.stringify( params );
-	const isLoadingKey = get( state, [
-		'extensions',
-		'woocommerce',
-		'sites',
-		siteId,
-		'products',
-		'isLoading',
-		key,
-	] );
+export const areProductsLoaded = ( state, params = {}, siteId = getSelectedSiteId( state ) ) => {
+	const key = getSerializedProductsQuery( params );
+	const isLoading = get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'queries', key, 'isLoading' ],
+		null
+	);
 	// Strict check because it could also be undefined.
-	return false === isLoadingKey;
+	return false === isLoading;
 };
 
 /**
@@ -54,125 +78,72 @@ export const areProductsLoaded = (
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the products list for a request page is currently being retrieved from the server
  */
-export const areProductsLoading = (
-	state,
-	params = { page: 1, per_page: 10 },
-	siteId = getSelectedSiteId( state )
-) => {
-	const key = JSON.stringify( params );
-	const isLoadingKey = get( state, [
-		'extensions',
-		'woocommerce',
-		'sites',
-		siteId,
-		'products',
-		'isLoading',
-		key,
-	] );
+export const areProductsLoading = ( state, params = {}, siteId = getSelectedSiteId( state ) ) => {
+	const key = getSerializedProductsQuery( params );
+	const isLoading = get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'queries', key, 'isLoading' ],
+		null
+	);
 	// Strict check because it could also be undefined.
-	return true === isLoadingKey;
+	return true === isLoading;
 };
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Object} [params] Query used to fetch products. Can contain page, search, etc. If not provided,
+ *                          defaults to first page, all products
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {array|false} List of products, or false if there was an error
+ */
+export const getProducts = ( state, params = {}, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! areProductsLoaded( state, params, siteId ) ) {
+		return [];
+	}
+	const key = getSerializedProductsQuery( params );
+	const products = get( state, `extensions.woocommerce.sites[${ siteId }].products.products`, [] );
+	const productIdsOnPage = get(
+		state,
+		`extensions.woocommerce.sites[${ siteId }].products.queries[${ key }].ids`,
+		[]
+	);
+
+	if ( productIdsOnPage.length ) {
+		return productIdsOnPage.map( id => find( products, { id } ) );
+	}
+	return false;
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Number} Total number of pages of products available on a site, or 0 if not loaded yet.
  */
-export const getTotalProductsPages = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const getTotalProductsPages = (
+	state,
+	params = {},
+	siteId = getSelectedSiteId( state )
+) => {
+	const key = getSerializedProductsQuery( params );
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'totalPages' ],
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'queries', key, 'totalPages' ],
 		0
 	);
 };
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Number} Total number of products available on a site, or 0 if not loaded yet.
  */
-export const getTotalProducts = ( state, siteId = getSelectedSiteId( state ) ) => {
+export const getTotalProducts = ( state, params = {}, siteId = getSelectedSiteId( state ) ) => {
+	const key = getSerializedProductsQuery( params );
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'totalProducts' ],
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'queries', key, 'totalProducts' ],
 		0
-	);
-};
-
-/**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the products search results have been successfully loaded from the server
- */
-export const areProductSearchResultsLoaded = (
-	state,
-	params = { page: 1, per_page: 10 },
-	siteId = getSelectedSiteId( state )
-) => {
-	const key = JSON.stringify( params );
-	const isLoadingKey = get( state, [
-		'extensions',
-		'woocommerce',
-		'sites',
-		siteId,
-		'products',
-		'search',
-		'isLoading',
-		key,
-	] );
-	// Strict check because it could also be undefined.
-	return false === isLoadingKey;
-};
-
-/**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [params] Params given to API request. Defaults to { page: 1, per_page: 10 }
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether the product search results are currently being retrieved from the server
- */
-export const areProductSearchResultsLoading = (
-	state,
-	params = { page: 1, per_page: 10 },
-	siteId = getSelectedSiteId( state )
-) => {
-	const key = JSON.stringify( params );
-	const isLoadingKey = get( state, [
-		'extensions',
-		'woocommerce',
-		'sites',
-		siteId,
-		'products',
-		'search',
-		'isLoading',
-		key,
-	] );
-	// Strict check because it could also be undefined.
-	return true === isLoadingKey;
-};
-
-/**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Number} Total number of products available for a search, or 0 if not loaded yet.
- */
-export const getTotalProductSearchResults = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get(
-		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'search', 'totalProducts' ],
-		0
-	);
-};
-
-/**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {string|null} Query for a search or null if no search is active.
- */
-export const getProductSearchQuery = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get(
-		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'products', 'search', 'query' ],
-		null
 	);
 };

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -91,16 +91,16 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 			<SidebarNavigation />
 			<CurrentTheme siteId={ siteId } />
 			{ ! requestingSitePlans &&
-			! hasUnlimitedPremiumThemes && (
-				<Banner
-					plan={ PLAN_JETPACK_PREMIUM }
-					title={ translate( 'Access all our premium themes with our Professional plan!' ) }
-					description={ translate(
-						'Get advanced customization, more storage space, and video support along with all your new themes.'
-					) }
-					event="themes_plans_free_personal_premium"
-				/>
-			) }
+				! hasUnlimitedPremiumThemes && (
+					<Banner
+						plan={ PLAN_JETPACK_PREMIUM }
+						title={ translate( 'Access all our premium themes with our Professional plan!' ) }
+						description={ translate(
+							'Get advanced customization, more storage space, and video support along with all your new themes.'
+						) }
+						event="themes_plans_free_personal_premium"
+					/>
+				) }
 			<ThemeShowcase
 				{ ...props }
 				siteId={ siteId }

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -57,7 +57,12 @@ import { activateModule } from 'state/jetpack/modules/actions';
 import { isBusiness, isEnterprise, isJetpackBusiness } from 'lib/products-values';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
-import { FEATURE_ADVANCED_SEO, PLAN_BUSINESS } from 'lib/plans/constants';
+import {
+	FEATURE_ADVANCED_SEO,
+	FEATURE_SEO_PREVIEW_TOOLS,
+	PLAN_BUSINESS,
+	PLAN_JETPACK_BUSINESS,
+} from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -313,8 +318,8 @@ export class SeoForm extends React.Component {
 		const jetpackUpdateUrl = getJetpackPluginUrl( slug );
 
 		const nudgeTitle = siteIsJetpack
-			? translate( 'Enable SEO Tools features by upgrading to Jetpack Professional' )
-			: translate( 'Enable SEO Tools features by upgrading to the Business Plan' );
+			? translate( 'Enable SEO Tools by upgrading to Jetpack Professional' )
+			: translate( 'Enable SEO Tools by upgrading to the Business plan' );
 
 		const seoSubmitButton = (
 			<Button
@@ -341,26 +346,25 @@ export class SeoForm extends React.Component {
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
 				{ ( isSitePrivate || isSiteHidden ) &&
-				hasBusinessPlan( site.plan ) && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={
-							isSitePrivate ? (
-								translate(
-									"SEO settings aren't recognized by search engines while your site is Private."
-								)
-							) : (
-								translate(
-									"SEO settings aren't recognized by search engines while your site is Hidden."
-								)
-							)
-						}
-					>
-						<NoticeAction href={ generalTabUrl }>{ translate( 'Privacy Settings' ) }</NoticeAction>
-					</Notice>
-				) }
-
+					hasBusinessPlan( site.plan ) && (
+						<Notice
+							status="is-warning"
+							showDismiss={ false }
+							text={
+								isSitePrivate
+									? translate(
+											"SEO settings aren't recognized by search engines while your site is Private."
+										)
+									: translate(
+											"SEO settings aren't recognized by search engines while your site is Hidden."
+										)
+							}
+						>
+							<NoticeAction href={ generalTabUrl }>
+								{ translate( 'Privacy Settings' ) }
+							</NoticeAction>
+						</Notice>
+					) }
 				{ conflictedSeoPlugin && (
 					<Notice
 						status="is-warning"
@@ -375,7 +379,6 @@ export class SeoForm extends React.Component {
 						</NoticeAction>
 					</Notice>
 				) }
-
 				{ isJetpackUnsupported && (
 					<Notice
 						status="is-warning"
@@ -385,108 +388,108 @@ export class SeoForm extends React.Component {
 						<NoticeAction href={ jetpackUpdateUrl }>{ translate( 'Update Now' ) }</NoticeAction>
 					</Notice>
 				) }
-
 				{ siteIsJetpack &&
-				hasBusinessPlan( site.plan ) &&
-				isSeoToolsActive === false && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ translate( 'SEO Tools module is disabled in Jetpack.' ) }
-					>
-						<NoticeAction onClick={ activateSeoTools }>{ translate( 'Enable' ) }</NoticeAction>
-					</Notice>
-				) }
+					hasBusinessPlan( site.plan ) &&
+					isSeoToolsActive === false && (
+						<Notice
+							status="is-warning"
+							showDismiss={ false }
+							text={ translate( 'SEO Tools module is disabled in Jetpack.' ) }
+						>
+							<NoticeAction onClick={ activateSeoTools }>{ translate( 'Enable' ) }</NoticeAction>
+						</Notice>
+					) }
 
-				{ ! this.props.hasAdvancedSEOFeature && (
-					<Banner
-						description={ translate(
-							'Adds tools to optimize your site for search engines and social media sharing.'
-						) }
-						event={ 'calypso_seo_settings_upgrade_nudge' }
-						feature={ FEATURE_ADVANCED_SEO }
-						plan={ PLAN_BUSINESS }
-						title={ nudgeTitle }
-					/>
-				) }
-
+				{ ! this.props.hasSeoPreviewFeature &&
+					! this.props.hasAdvancedSEOFeature && (
+						<Banner
+							description={ translate(
+								'Get tools to optimize your site for improved performance in search engine results.'
+							) }
+							event={ 'calypso_seo_settings_upgrade_nudge' }
+							feature={ siteIsJetpack ? FEATURE_SEO_PREVIEW_TOOLS : FEATURE_ADVANCED_SEO }
+							plan={ siteIsJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS }
+							title={ nudgeTitle }
+						/>
+					) }
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
 					{ showAdvancedSeo &&
-					! conflictedSeoPlugin && (
-						<div>
-							<SectionHeader label={ translate( 'Page Title Structure' ) }>
-								{ seoSubmitButton }
-							</SectionHeader>
-							<Card compact className="seo-settings__page-title-header">
-								<img
-									className="seo-settings__page-title-header-image"
-									src="/calypso/images/seo/page-title.svg"
-								/>
-								<p className="seo-settings__page-title-header-text">
-									{ translate(
-										'You can set the structure of page titles for different sections of your site. ' +
-											'Doing this will change the way your site title is displayed in search engines, ' +
-											'social media sites, and browser tabs.'
-									) }
-								</p>
-							</Card>
-							<Card>
-								<MetaTitleEditor
-									disabled={ isFetchingSite || isSeoDisabled }
-									onChange={ this.updateTitleFormats }
-									titleFormats={ this.state.seoTitleFormats }
-								/>
-							</Card>
-						</div>
-					) }
+						! conflictedSeoPlugin && (
+							<div>
+								<SectionHeader label={ translate( 'Page Title Structure' ) }>
+									{ seoSubmitButton }
+								</SectionHeader>
+								<Card compact className="seo-settings__page-title-header">
+									<img
+										className="seo-settings__page-title-header-image"
+										src="/calypso/images/seo/page-title.svg"
+									/>
+									<p className="seo-settings__page-title-header-text">
+										{ translate(
+											'You can set the structure of page titles for different sections of your site. ' +
+												'Doing this will change the way your site title is displayed in search engines, ' +
+												'social media sites, and browser tabs.'
+										) }
+									</p>
+								</Card>
+								<Card>
+									<MetaTitleEditor
+										disabled={ isFetchingSite || isSeoDisabled }
+										onChange={ this.updateTitleFormats }
+										titleFormats={ this.state.seoTitleFormats }
+									/>
+								</Card>
+							</div>
+						) }
 
 					{ ! conflictedSeoPlugin &&
-					( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) && (
-						<div>
-							<SectionHeader label={ translate( 'Website Meta' ) }>
-								{ seoSubmitButton }
-							</SectionHeader>
-							<Card>
-								<p>
-									{ translate(
-										'Craft a description of your Website up to 160 characters that will be used in ' +
-											'search engine results for your front page, and when your website is shared ' +
-											'on social media sites.'
-									) }
-								</p>
-								<FormLabel htmlFor="advanced_seo_front_page_description">
-									{ translate( 'Front Page Meta Description' ) }
-								</FormLabel>
-								<CountedTextarea
-									name="advanced_seo_front_page_description"
-									type="text"
-									id="advanced_seo_front_page_description"
-									value={ frontPageMetaDescription || '' }
-									disabled={ isSeoDisabled }
-									maxLength="300"
-									acceptableLength={ 159 }
-									onChange={ this.handleMetaChange }
-									className="seo-settings__front-page-description"
-								/>
-								{ hasHtmlTagError && (
-									<FormInputValidation
-										isError={ true }
-										text={ translate( 'HTML tags are not allowed.' ) }
+						( showAdvancedSeo || ( ! siteIsJetpack && showWebsiteMeta ) ) && (
+							<div>
+								<SectionHeader label={ translate( 'Website Meta' ) }>
+									{ seoSubmitButton }
+								</SectionHeader>
+								<Card>
+									<p>
+										{ translate(
+											'Craft a description of your Website up to 160 characters that will be used in ' +
+												'search engine results for your front page, and when your website is shared ' +
+												'on social media sites.'
+										) }
+									</p>
+									<FormLabel htmlFor="advanced_seo_front_page_description">
+										{ translate( 'Front Page Meta Description' ) }
+									</FormLabel>
+									<CountedTextarea
+										name="advanced_seo_front_page_description"
+										type="text"
+										id="advanced_seo_front_page_description"
+										value={ frontPageMetaDescription || '' }
+										disabled={ isSeoDisabled }
+										maxLength="300"
+										acceptableLength={ 159 }
+										onChange={ this.handleMetaChange }
+										className="seo-settings__front-page-description"
 									/>
-								) }
-								<FormSettingExplanation>
-									<Button className="seo-settings__preview-button" onClick={ this.showPreview }>
-										{ translate( 'Show Previews' ) }
-									</Button>
-									<span className="seo-settings__preview-explanation">
-										{ translate( 'See how this will look on ' + 'Google, Facebook, and Twitter.' ) }
-									</span>
-								</FormSettingExplanation>
-							</Card>
-						</div>
-					) }
+									{ hasHtmlTagError && (
+										<FormInputValidation
+											isError={ true }
+											text={ translate( 'HTML tags are not allowed.' ) }
+										/>
+									) }
+									<FormSettingExplanation>
+										<Button className="seo-settings__preview-button" onClick={ this.showPreview }>
+											{ translate( 'Show Previews' ) }
+										</Button>
+										<span className="seo-settings__preview-explanation">
+											{ translate(
+												'See how this will look on ' + 'Google, Facebook, and Twitter.'
+											) }
+										</span>
+									</FormSettingExplanation>
+								</Card>
+							</div>
+						) }
 				</form>
-
 				<WebPreview
 					showPreview={ showPreview }
 					onClose={ this.hidePreview }
@@ -526,6 +529,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		isSitePrivate: isPrivateSite( state, siteId ),
 		activePlugins: getPlugins( state, [ siteId ], 'active' ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
+		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),
 	};

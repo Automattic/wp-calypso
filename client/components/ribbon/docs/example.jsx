@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -13,7 +13,7 @@ import Ribbon from '../index';
 import Card from 'components/card';
 
 export default class extends React.PureComponent {
-    static displayName = 'Ribbon';
+	static displayName = 'Ribbon';
 
 	render() {
 		return (

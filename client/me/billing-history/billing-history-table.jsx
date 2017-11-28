@@ -1,33 +1,41 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import TransactionsTable from './transactions-table';
-import eventRecorder from 'me/event-recorder';
 import purchasesPaths from 'me/purchases/paths';
+import TransactionsTable from './transactions-table';
 import { isSendingBillingReceiptEmail } from 'state/selectors';
-import { sendBillingReceiptEmail } from 'state/billing-transactions/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'state/billing-transactions/actions';
 
-const BillingHistoryTable = createReactClass( {
-	displayName: 'BillingHistoryTable',
-	mixins: [ eventRecorder ],
+class BillingHistoryTable extends React.Component {
+	recordClickEvent = eventAction => {
+		this.props.recordGoogleEvent( 'Me', eventAction );
+	};
 
-	emailReceipt( receiptId, event ) {
-		event.preventDefault();
-		this.props.sendBillingReceiptEmail( receiptId );
-	},
+	handleReceiptLinkClick = () => {
+		return this.recordClickEvent( 'View Receipt in Billing History' );
+	};
 
-	renderEmailAction( receiptId ) {
+	getEmailReceiptLinkClickHandler = receiptId => {
+		const { sendBillingReceiptEmail } = this.props;
+
+		return event => {
+			event.preventDefault();
+			this.recordClickEvent( 'Email Receipt in Billing History' );
+			sendBillingReceiptEmail( receiptId );
+		};
+	};
+
+	renderEmailAction = receiptId => {
 		const { translate } = this.props;
 
 		if ( this.props.sendingBillingReceiptEmail( receiptId ) ) {
@@ -35,19 +43,13 @@ const BillingHistoryTable = createReactClass( {
 		}
 
 		return (
-			<a
-				href="#"
-				onClick={ this.recordClickEvent(
-					'Email Receipt in Billing History',
-					this.emailReceipt.bind( this, receiptId )
-				) }
-			>
+			<a href="#" onClick={ this.getEmailReceiptLinkClickHandler( receiptId ) }>
 				{ translate( 'Email Receipt' ) }
 			</a>
 		);
-	},
+	};
 
-	renderTransaction( transaction ) {
+	renderTransaction = transaction => {
 		const { translate } = this.props;
 
 		return (
@@ -55,14 +57,14 @@ const BillingHistoryTable = createReactClass( {
 				<a
 					className="billing-history__view-receipt"
 					href={ purchasesPaths.billingHistoryReceipt( transaction.id ) }
-					onClick={ this.recordClickEvent( 'View Receipt in Billing History' ) }
+					onClick={ this.handleReceiptLinkClick }
 				>
 					{ translate( 'View Receipt' ) }
 				</a>
 				{ this.renderEmailAction( transaction.id ) }
 			</div>
 		);
-	},
+	};
 
 	render() {
 		const { translate } = this.props;
@@ -85,8 +87,8 @@ const BillingHistoryTable = createReactClass( {
 				transactionRenderer={ this.renderTransaction }
 			/>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => {
@@ -98,5 +100,8 @@ export default connect(
 			sendingBillingReceiptEmail,
 		};
 	},
-	{ sendBillingReceiptEmail }
+	{
+		recordGoogleEvent,
+		sendBillingReceiptEmail: sendBillingReceiptEmailAction,
+	}
 )( localize( BillingHistoryTable ) );

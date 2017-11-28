@@ -32,6 +32,33 @@ sudo launchctl limit maxfiles 65536
 
 This command will temporarily (until your next system reboot) change the maximum number of files you're allowed to set with commands like `ulimit`. After running this command, try running the `ulimit` command again.
 
+### ENOSPC - max number of user watches exceeded
+
+Examples of this error message can look like:
+
+`webpack building...`
+
+`63% building modules 458/517 modules 59 active .../auth-code-request-store/constants.jsError: watch` 
+`client/state/data-layer/wpcom/read/site/post-email-subscriptions/new/test ENOSPC`
+
+
+Build system observes files for modification using inotify. By default on some systems the inotify limit is set below to what is actually needed to run Calypso. For example on some Ubuntu distributions it is set to 8192. When this limit is excided the build crashes. 
+
+##### Solution
+
+Solution is provided for Ubuntu. For other distributions please check how to change inotify limit in that distribution documentation.
+
+To observe number of inotify limit:
+```
+$ cat /proc/sys/fs/inotify/max_user_watches
+```
+
+To permanently change inotify limit ( Ubuntu and similar only ):
+```
+$ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+$ sudo sysctl -p
+```
+
 ### Run as administrator
 Sometimes, usually during the first build, you can see a message similar to `Please try running again as an administrator`. 
 Just run

@@ -1,10 +1,14 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import config from 'config';
+import AboutStepComponent from 'signup/steps/about';
+import CredsConfirmComponent from 'signup/steps/creds-confirm';
+import CredsCompleteComponent from 'signup/steps/creds-complete';
+import CredsPermissionComponent from 'signup/steps/creds-permission';
 import DesignTypeComponent from 'signup/steps/design-type';
 import DesignTypeWithStoreComponent from 'signup/steps/design-type-with-store';
 import DesignTypeWithAtomicStoreComponent from 'signup/steps/design-type-with-atomic-store';
@@ -23,9 +27,13 @@ import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
 import PlansAtomicStoreComponent from 'signup/steps/plans-atomic-store';
 
 export default {
+	about: AboutStepComponent,
+	'creds-confirm': CredsConfirmComponent,
+	'creds-complete': CredsCompleteComponent,
+	'creds-permission': CredsPermissionComponent,
 	'design-type': DesignTypeComponent,
 	'design-type-with-store': DesignTypeWithStoreComponent,
-	'design-type-with-atomic-store': DesignTypeWithAtomicStoreComponent,
+	'design-type-with-store-nux': DesignTypeWithAtomicStoreComponent,
 	domains: DomainsStepComponent,
 	'domain-only': DomainsStepComponent,
 	'domains-theme-preselected': DomainsStepComponent,
@@ -33,7 +41,7 @@ export default {
 	'get-dot-blog-plans': GetDotBlogPlansStepComponent,
 	'get-dot-blog-themes': ThemeSelectionComponent,
 	plans: PlansStepComponent,
-	'plans-atomic-store': PlansAtomicStoreComponent,
+	'plans-store-nux': PlansAtomicStoreComponent,
 	'plans-site-selected': PlansStepWithoutFreePlan,
 	site: SiteComponent,
 	'rebrand-cities-welcome': RebrandCitiesWelcomeComponent,

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -164,11 +164,9 @@ class Security2faBackupCodesPrompt extends React.Component {
 						analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Backup Codes Verify Button' );
 					} }
 				>
-					{ this.state.submittingCode ? (
-						this.props.translate( 'Verifying…' )
-					) : (
-						this.props.translate( 'Verify' )
-					) }
+					{ this.state.submittingCode
+						? this.props.translate( 'Verifying…' )
+						: this.props.translate( 'Verify' ) }
 				</FormButton>
 			</form>
 		);

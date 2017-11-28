@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { property, sortBy } from 'lodash';
@@ -179,6 +179,7 @@ const Layout = createReactClass( {
 						notices={ notices.list }
 						forcePinned={ 'post' === this.props.section.name }
 					/>
+
 					<div id="primary" className="layout__primary">
 						{ this.props.primary }
 					</div>
@@ -192,7 +193,7 @@ const Layout = createReactClass( {
 				/>
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) &&
-				this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
+					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }

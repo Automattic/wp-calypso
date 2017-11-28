@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -25,10 +25,10 @@ import { isSavingSiteSettings } from 'state/site-settings/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
 import { receiveMedia, deleteMedia } from 'state/media/actions';
-import { isJetpackSite, getCustomizerUrl, getSiteAdminUrl } from 'state/sites/selectors';
+import { getCustomizerUrl, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import InfoPopover from 'components/info-popover';
@@ -101,7 +101,7 @@ class SiteIconSetting extends Component {
 	}
 
 	uploadSiteIcon( blob, fileName ) {
-		const { siteId, translate, siteIconId } = this.props;
+		const { siteId, translate, siteIconId, site } = this.props;
 
 		// Upload media using a manually generated ID so that we can continue
 		// to reference it within this function
@@ -154,7 +154,7 @@ class SiteIconSetting extends Component {
 
 		MediaStore.on( 'change', checkUploadComplete );
 
-		MediaActions.add( siteId, {
+		MediaActions.add( site, {
 			ID: transientMediaId,
 			fileContents: blob,
 			fileName,
@@ -358,6 +358,7 @@ export default connect(
 			generalOptionsUrl: getSiteAdminUrl( state, siteId, 'options-general.php' ),
 			crop: getImageEditorCrop( state ),
 			transform: getImageEditorTransform( state ),
+			site: getSelectedSite( state ),
 		};
 	},
 	{

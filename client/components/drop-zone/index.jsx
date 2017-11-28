@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import ReactDom from 'react-dom';
@@ -196,6 +196,10 @@ export class DropZone extends React.Component {
 
 		this.resetDragState();
 
+		// Regardless of whether or not files are dropped in the zone,
+		// prevent the browser default action, which navigates to the file.
+		event.preventDefault();
+
 		if (
 			! this.props.fullScreen &&
 			! ReactDom.findDOMNode( this.refs.zone ).contains( event.target )
@@ -214,7 +218,6 @@ export class DropZone extends React.Component {
 		}
 
 		event.stopPropagation();
-		event.preventDefault();
 	};
 
 	renderContent = () => {

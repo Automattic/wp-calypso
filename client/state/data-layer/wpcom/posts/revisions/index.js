@@ -1,15 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
-import { flow, forEach, get, map, mapKeys, mapValues, omit, pick } from 'lodash';
+import { flow, map, mapKeys, mapValues, omit, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { countDiffWords, diffWords } from 'lib/text-utils';
 import { POST_REVISIONS_REQUEST } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -76,13 +75,6 @@ export const receiveError = ( { dispatch }, { siteId, postId }, rawError ) =>
  */
 export const receiveSuccess = ( { dispatch }, { siteId, postId }, revisions ) => {
 	const normalizedRevisions = map( revisions, normalizeRevision );
-
-	forEach( normalizedRevisions, ( revision, index ) => {
-		revision.changes = countDiffWords(
-			diffWords( get( normalizedRevisions, [ index + 1, 'content' ], '' ), revision.content )
-		);
-	} );
-
 	dispatch( receivePostRevisionsSuccess( siteId, postId ) );
 	dispatch( receivePostRevisions( siteId, postId, normalizedRevisions ) );
 };

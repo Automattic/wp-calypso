@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { includes, startsWith } from 'lodash';
@@ -16,7 +16,9 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import { getSavedVariations } from 'lib/abtest'; // used by error logger
-import { initialize as initializeHappychat } from 'state/happychat/connection/actions';
+import { initConnection as initHappychatConnection } from 'state/happychat/connection/actions';
+import { getHappychatAuth } from 'state/happychat/utils';
+import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
 import analytics from 'lib/analytics';
 import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import route from 'lib/route';
@@ -213,7 +215,10 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		asyncRequire( 'lib/olark', olark => olark.initialize( reduxStore.dispatch ) );
 	}
 
-	reduxStore.dispatch( initializeHappychat() );
+	const state = reduxStore.getState();
+	if ( wasHappychatRecentlyActive( state ) ) {
+		reduxStore.dispatch( initHappychatConnection( getHappychatAuth( state )() ) );
+	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 		require( 'lib/keyboard-shortcuts/global' )();

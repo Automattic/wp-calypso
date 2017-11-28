@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -102,11 +102,9 @@ class JetpackSyncPanel extends React.Component {
 		} else if ( syncRequestError ) {
 			errorNotice = (
 				<Notice isCompact status="is-error" className="jetpack-sync-panel__error-notice">
-					{ syncRequestError.message ? (
-						syncRequestError.message
-					) : (
-						translate( 'There was an error scheduling a full sync.' )
-					) }
+					{ syncRequestError.message
+						? syncRequestError.message
+						: translate( 'There was an error scheduling a full sync.' ) }
 					{ // We show a Try again action for a generic error on the assumption
 					// that the error was a network issue.
 					//

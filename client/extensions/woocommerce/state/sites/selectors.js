@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { getCurrentUserSiteCount } from 'state/current-user/selectors';

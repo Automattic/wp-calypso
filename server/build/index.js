@@ -1,6 +1,8 @@
+/** @format */
 /**
  * Module dependencies
  */
+
 var path = require( 'path' ),
 	spawn = require( 'child_process' ).spawn,
 	debug = require( 'debug' )( 'build' );
@@ -13,7 +15,6 @@ var path = require( 'path' ),
  * @public
  */
 function setup() {
-
 	var build = null,
 		errors = '',
 		rootdir = path.resolve( __dirname, '..', '..' );
@@ -23,7 +24,7 @@ function setup() {
 		build = spawn( 'npm', [ 'run', 'build-css' ], {
 			shell: true,
 			cwd: rootdir,
-			stdio: [ 'ignore', 'pipe', 'pipe']
+			stdio: [ 'ignore', 'pipe', 'pipe' ],
 		} );
 		errors = '';
 		build.once( 'exit', onexit );
@@ -47,8 +48,7 @@ function setup() {
 		errors += stderr.toString( 'utf8' );
 	}
 
-	return function ( req, res, next ) {
-
+	return function( req, res, next ) {
 		if ( ! build ) {
 			spawnMake();
 		}

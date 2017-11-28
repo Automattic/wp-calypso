@@ -138,11 +138,9 @@ class CancelPrivacyProtection extends Component {
 
 		return (
 			<strong>
-				{ isRefundable( purchase ) ? (
-					this.props.translate( 'You will receive a refund when the upgrade is cancelled.' )
-				) : (
-					this.props.translate( 'You will not receive a refund when the upgrade is cancelled.' )
-				) }
+				{ isRefundable( purchase )
+					? this.props.translate( 'You will receive a refund when the upgrade is cancelled.' )
+					: this.props.translate( 'You will not receive a refund when the upgrade is cancelled.' ) }
 			</strong>
 		);
 	};
@@ -154,11 +152,9 @@ class CancelPrivacyProtection extends Component {
 				className="cancel-privacy-protection__cancel-button"
 				disabled={ this.state.disabled }
 			>
-				{ this.state.cancelling ? (
-					this.props.translate( 'Processing…' )
-				) : (
-					this.props.translate( 'Cancel Privacy Protection' )
-				) }
+				{ this.state.cancelling
+					? this.props.translate( 'Processing…' )
+					: this.props.translate( 'Cancel Privacy Protection' ) }
 			</Button>
 		);
 	};

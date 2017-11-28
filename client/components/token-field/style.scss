@@ -146,8 +146,6 @@ input[type="text"].token-field__input {
 .token-field__remove-token {
 	cursor: pointer;
 	border-radius: 0 4px 4px 0;
-	padding: 0 6px;
-	font-size: 10px;
 	color: lighten( $gray, 20% );
 
 	&:hover {

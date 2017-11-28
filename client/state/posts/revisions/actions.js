@@ -1,14 +1,16 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
-
 import {
+	POST_REVISIONS_DIALOG_OPEN,
+	POST_REVISIONS_DIALOG_CLOSE,
 	POST_REVISIONS_RECEIVE,
 	POST_REVISIONS_REQUEST,
 	POST_REVISIONS_REQUEST_FAILURE,
 	POST_REVISIONS_REQUEST_SUCCESS,
+	POST_REVISIONS_SELECT,
 } from 'state/action-types';
 
 /**
@@ -70,4 +72,17 @@ export const receivePostRevisions = ( siteId, postId, revisions ) => ( {
 	siteId,
 	postId,
 	revisions,
+} );
+
+export const selectPostRevision = revisionId => ( {
+	type: POST_REVISIONS_SELECT,
+	revisionId,
+} );
+
+export const closePostRevisionsDialog = () => ( {
+	type: POST_REVISIONS_DIALOG_CLOSE,
+} );
+
+export const openPostRevisionsDialog = () => ( {
+	type: POST_REVISIONS_DIALOG_OPEN,
 } );

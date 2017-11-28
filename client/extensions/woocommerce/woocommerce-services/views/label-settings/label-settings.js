@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -18,6 +18,7 @@ import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
+import { getOrigin } from 'woocommerce/lib/nav-utils';
 
 class ShippingLabels extends Component {
 	componentWillMount() {
@@ -123,7 +124,7 @@ class ShippingLabels extends Component {
 			<div>
 				<p className="label-settings__credit-card-description">{ description }</p>
 				{ paymentMethods.map( renderPaymentMethod ) }
-				<Button href="/me/billing" target="_blank" compact>
+				<Button href={ getOrigin() + '/me/purchases/add-credit-card' } target="_blank" compact>
 					{ buttonLabel }
 				</Button>
 			</div>

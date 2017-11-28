@@ -45,6 +45,7 @@ As Promotions only exist in memory state on the client at this point, the defini
 The `appliesTo` object for a promotion is a complex object which describes what all the promotion can be applied to. At this point, exluded products or categories are not supported.
 
 #### Example: all products.
+
 ```js
 {
 	appliesTo: {
@@ -79,6 +80,18 @@ The `appliesTo` object for a promotion is a complex object which describes what 
 
 In order to compile the sorted list of promotions, it's necessary to fetch all products and coupons because they cannot be fetched and paginated by end date. In the future, when API support is better, it may be possible to paginate this list.
 
+### `createPromotion( siteId: number, promotion: object, successAction: function, failureAction: function )
+
+This creates a promotion, which actually translates to either a coupon create or a product update, depending on the type of promotion.
+
+### `updatePromotion( siteId: number, promotion: object, successAction: function, failureAction: function )
+
+This updates a promotion, which actually translates to either a coupon update or a product update, depending on the type of promotion.
+
+### `deletePromotion( siteId: number, promotion: object )
+
+This deletes a promotion, which actually translates to either a coupon delete or a product update, depending on the type of promotion.
+
 
 ## Reducer
 
@@ -102,9 +115,17 @@ There are several helper functions to handle the complexity of promotion objects
 
 Creates a promotion object from a product which is on sale.
 
+### `createProductUpdateFromPromotion( promotion: object )`
+
+Creates an object containing product update data fields derived from a promotion.
+
 ### `createPromotionFromCoupon( coupon: object )`
 
 Creates a promotion object from a coupon.
+
+### `createCouponUpdateFromPromotion( promotion: object )`
+
+Creates an object containing coupon update data fields derived from a promotion.
 
 ### `isCategoryExplicitlySelected( promotion: object, category: object )`
 

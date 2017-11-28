@@ -20,7 +20,7 @@ describe( 'Navbar', () => {
 	];
 
 	test( 'should render a navbar given a list of options', () => {
-		const wrapper = shallow( <Navbar options={ options } /> );
+		const wrapper = shallow( <Navbar options={ options } />, { disableLifecycleMethods: true } );
 
 		const items = wrapper.find( Item );
 
@@ -37,7 +37,9 @@ describe( 'Navbar', () => {
 	} );
 
 	test( 'should higlight currently selected option', () => {
-		const wrapper = shallow( <Navbar selected={ options[ 1 ] } options={ options } /> );
+		const wrapper = shallow( <Navbar selected={ options[ 1 ] } options={ options } />, {
+			disableLifecycleMethods: true,
+		} );
 
 		const items = wrapper.find( Item );
 

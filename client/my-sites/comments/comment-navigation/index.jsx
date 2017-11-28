@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -38,6 +38,11 @@ const bulkActions = {
 	trash: [ 'approve', 'spam', 'delete' ],
 	all: [ 'approve', 'unapprove', 'spam', 'trash' ],
 };
+
+if ( ! isEnabled( 'comments/management/m3-design' ) ) {
+	bulkActions.approved.push( 'approve' );
+	bulkActions.unapproved.push( 'unapprove' );
+}
 
 export class CommentNavigation extends Component {
 	static defaultProps = {
@@ -82,10 +87,15 @@ export class CommentNavigation extends Component {
 		return navItems;
 	};
 
-	getStatusPath = status =>
-		'unapproved' !== status
-			? `/comments/${ status }/${ this.props.siteFragment }`
-			: `/comments/pending/${ this.props.siteFragment }`;
+	getStatusPath = status => {
+		const { postId } = this.props;
+
+		const appendPostId = !! postId ? `/${ postId }` : '';
+
+		return 'unapproved' !== status
+			? `/comments/${ status }/${ this.props.siteFragment }${ appendPostId }`
+			: `/comments/pending/${ this.props.siteFragment }${ appendPostId }`;
+	};
 
 	statusHasAction = action => includes( bulkActions[ this.props.status ], action );
 
@@ -101,6 +111,7 @@ export class CommentNavigation extends Component {
 		const {
 			doSearch,
 			hasSearch,
+			hasComments,
 			isBulkEdit,
 			isCommentsTreeSupported,
 			isSelectedAll,
@@ -178,9 +189,9 @@ export class CommentNavigation extends Component {
 						</ButtonGroup>
 					</CommentNavigationTab>
 					<CommentNavigationTab className="comment-navigation__close-bulk">
-						<a onClick={ toggleBulkEdit }>
+						<Button borderless onClick={ toggleBulkEdit } tabIndex="0">
 							<Gridicon icon="cross" />
-						</a>
+						</Button>
 					</CommentNavigationTab>
 				</SectionNav>
 			);
@@ -203,30 +214,33 @@ export class CommentNavigation extends Component {
 
 				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
 					{ isEnabled( 'comments/management/sorting' ) &&
-					isCommentsTreeSupported && (
-						<SegmentedControl compact className="comment-navigation__sort-buttons">
-							<ControlItem
-								onClick={ setSortOrder( NEWEST_FIRST ) }
-								selected={ sortOrder === NEWEST_FIRST }
-							>
-								{ translate( 'Newest', {
-									comment: 'Chronological order for sorting the comments list.',
-								} ) }
-							</ControlItem>
-							<ControlItem
-								onClick={ setSortOrder( OLDEST_FIRST ) }
-								selected={ sortOrder === OLDEST_FIRST }
-							>
-								{ translate( 'Oldest', {
-									comment: 'Chronological order for sorting the comments list.',
-								} ) }
-							</ControlItem>
-						</SegmentedControl>
-					) }
+						isCommentsTreeSupported &&
+						hasComments && (
+							<SegmentedControl compact className="comment-navigation__sort-buttons">
+								<ControlItem
+									onClick={ setSortOrder( NEWEST_FIRST ) }
+									selected={ sortOrder === NEWEST_FIRST }
+								>
+									{ translate( 'Newest', {
+										comment: 'Chronological order for sorting the comments list.',
+									} ) }
+								</ControlItem>
+								<ControlItem
+									onClick={ setSortOrder( OLDEST_FIRST ) }
+									selected={ sortOrder === OLDEST_FIRST }
+								>
+									{ translate( 'Oldest', {
+										comment: 'Chronological order for sorting the comments list.',
+									} ) }
+								</ControlItem>
+							</SegmentedControl>
+						) }
 
-					<Button compact onClick={ toggleBulkEdit }>
-						{ translate( 'Bulk Edit' ) }
-					</Button>
+					{ hasComments && (
+						<Button compact onClick={ toggleBulkEdit }>
+							{ translate( 'Bulk Edit' ) }
+						</Button>
+					) }
 				</CommentNavigationTab>
 
 				{ hasSearch && (
@@ -252,6 +266,7 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 
 	return {
 		visibleComments,
+		hasComments: visibleComments.length > 0,
 		isCommentsTreeSupported:
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 	};

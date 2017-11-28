@@ -16,7 +16,7 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
 import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
-import { fetchOrder } from 'woocommerce/state/sites/orders/actions';
+import { fetchOrder, updateOrder } from 'woocommerce/state/sites/orders/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
@@ -30,7 +30,8 @@ import Main from 'components/main';
 import OrderCustomer from './order-customer';
 import OrderDetails from './order-details';
 import OrderActivityLog from './order-activity-log';
-import { updateOrder } from 'woocommerce/state/sites/orders/actions';
+import { ProtectFormGuard } from 'lib/protect-form';
+import { recordTrack } from 'woocommerce/lib/analytics';
 
 class Order extends Component {
 	componentDidMount() {
@@ -43,19 +44,20 @@ class Order extends Component {
 	}
 
 	componentWillReceiveProps( newProps ) {
-		if ( newProps.orderId !== this.props.orderId || newProps.siteId !== this.props.siteId ) {
+		const { orderId: oldOrderId, siteId: oldSiteId } = this.props;
+		const { orderId: newOrderId, siteId: newSiteId } = newProps;
+		if ( newOrderId !== oldOrderId || newSiteId !== oldSiteId ) {
 			// New order or site should clear any pending edits
-			this.props.clearOrderEdits( this.props.siteId );
+			this.props.clearOrderEdits( oldSiteId );
 			// And fetch the new order's info
-			this.props.fetchOrder( newProps.siteId, newProps.orderId );
-			this.props.fetchNotes( newProps.siteId, newProps.orderId );
-		} else if (
-			newProps.order &&
-			this.props.order &&
-			newProps.order.status !== this.props.order.status
-		) {
-			// A status change should force a notes refresh
-			this.props.fetchNotes( newProps.siteId, newProps.orderId, true );
+			this.props.fetchOrder( newSiteId, newOrderId );
+			this.props.fetchNotes( newSiteId, newOrderId );
+			return;
+		}
+
+		if ( this.props.isEditing && ! newProps.isEditing ) {
+			// Leaving edit state should re-fetch notes
+			this.props.fetchNotes( newSiteId, newOrderId, true );
 		}
 	}
 
@@ -67,6 +69,7 @@ class Order extends Component {
 	// Put this order into the editing state
 	toggleEditing = () => {
 		const { siteId, orderId } = this.props;
+		recordTrack( 'calypso_woocommerce_order_edit_start' );
 		if ( siteId ) {
 			this.props.editOrder( siteId, { id: orderId } );
 		}
@@ -75,12 +78,14 @@ class Order extends Component {
 	// Clear this order's edits, takes it out of edit state
 	cancelEditing = () => {
 		const { siteId } = this.props;
+		recordTrack( 'calypso_woocommerce_order_edit_cancel' );
 		this.props.clearOrderEdits( siteId );
 	};
 
 	// Saves changes to the remote site via API
 	saveOrder = () => {
 		const { siteId, order } = this.props;
+		recordTrack( 'calypso_woocommerce_order_edit_save' );
 		this.props.updateOrder( siteId, order );
 	};
 
@@ -129,13 +134,14 @@ class Order extends Component {
 		}
 
 		return (
-			<Main className={ className }>
+			<Main className={ className } wideLayout>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
 					{ config.isEnabled( 'woocommerce/extension-orders-edit' ) && button }
 				</ActionHeader>
 
 				<div className="order__container">
 					<LabelsSetupNotice />
+					{ isEditing && <ProtectFormGuard isChanged={ hasOrderEdits } /> }
 					<OrderDetails orderId={ orderId } />
 					<OrderActivityLog orderId={ orderId } siteId={ site.ID } />
 					<OrderCustomer orderId={ orderId } />

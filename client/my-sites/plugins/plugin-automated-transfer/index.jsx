@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -158,14 +158,14 @@ class PluginAutomatedTransfer extends Component {
 					text={ this.getNoticeText() }
 				>
 					{ ! transferComplete &&
-					CONFLICTS === transferState && (
-						<NoticeAction href="#">
-							{ translate( 'View Conflicts', {
-								comment:
-									'Conflicts arose during an Automated Transfer started by a plugin install.',
-							} ) }
-						</NoticeAction>
-					) }
+						CONFLICTS === transferState && (
+							<NoticeAction href="#">
+								{ translate( 'View Conflicts', {
+									comment:
+										'Conflicts arose during an Automated Transfer started by a plugin install.',
+								} ) }
+							</NoticeAction>
+						) }
 				</Notice>
 				{ this.state.transferComplete && <WpAdminAutoLogin site={ this.props.site } /> }
 			</div>

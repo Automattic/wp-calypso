@@ -5,11 +5,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { invoke } from 'lodash';
+import { includes, invoke } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
@@ -23,14 +24,18 @@ import {
 import { abtest } from 'lib/abtest';
 import SignupActions from 'lib/signup/actions';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
-import SignupDependencyStore from 'lib/signup/dependency-store';
-import SignupProgressStore from 'lib/signup/progress-store';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
+import QueryGeo from 'components/data/query-geo';
+import { getGeoCountryShort } from 'state/geo/selectors';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import { getThemeForDesignType } from 'signup/utils';
 
 class DesignTypeWithAtomicStoreStep extends Component {
-	state = { showStore: false };
+	state = {
+		showStore: false,
+		pendingStoreClick: false,
+	};
 	setPressableStore = ref => ( this.pressableStore = ref );
 
 	getChoices() {
@@ -90,13 +95,26 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	};
 
 	handleNextStep = designType => {
+		if ( designType === DESIGN_TYPE_STORE && ! this.props.countryCode ) {
+			// if we don't know the country code, we can't proceed. Continue after the code arrives
+			this.setState( { pendingStoreClick: true } );
+			return;
+		}
+
+		this.setState( { pendingStoreClick: false } );
+
+		const themeSlugWithRepo = getThemeForDesignType( designType );
+
 		this.props.setDesignType( designType );
 
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
+		const isCountryAllowed =
+			includes( [ 'US', 'CA' ], this.props.countryCode ) || config( 'env' ) === 'development';
+
 		if (
-			abtest( 'signupPressableStoreFlow' ) === 'pressable' &&
-			designType === DESIGN_TYPE_STORE
+			designType === DESIGN_TYPE_STORE &&
+			( abtest( 'signupAtomicStoreVsPressable' ) === 'pressable' || ! isCountryAllowed )
 		) {
 			this.scrollUp();
 
@@ -111,12 +129,20 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
 			designType,
+			themeSlugWithRepo,
 		} );
 
-		this.props.goToNextStep();
+		// If the user chooses `store` as design type, redirect to the `store-nux` flow.
+		// For other choices, continue with the current flow.
+		const nextFlowName = designType === DESIGN_TYPE_STORE ? 'store-nux' : this.props.flowName;
+		this.props.goToNextStep( nextFlowName );
 	};
 
 	renderChoice = choice => {
+		const buttonClassName = classNames( 'button design-type-with-atomic-store__cta is-compact', {
+			'is-busy': choice.type === DESIGN_TYPE_STORE && this.state.pendingStoreClick,
+		} );
+
 		return (
 			<Card className="design-type-with-atomic-store__choice" key={ choice.type }>
 				<a
@@ -126,9 +152,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 				>
 					<div className="design-type-with-atomic-store__image">{ choice.image }</div>
 					<div className="design-type-with-atomic-store__choice-copy">
-						<span className="button is-compact design-type-with-atomic-store__cta">
-							{ choice.label }
-						</span>
+						<span className={ buttonClassName }>{ choice.label }</span>
 						<p className="design-type-with-atomic-store__choice-description">
 							{ choice.description }
 						</p>
@@ -139,7 +163,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	};
 
 	renderChoices() {
-		const { translate } = this.props;
+		const { countryCode, translate } = this.props;
 		const disclaimerText = translate(
 			'Not sure? Pick the closest option. You can always change your settings later.'
 		); // eslint-disable-line max-len
@@ -154,6 +178,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 		return (
 			<div className="design-type-with-atomic-store__substep-wrapper">
+				{ this.state.pendingStoreClick && ! countryCode && <QueryGeo /> }
 				<div className={ storeWrapperClassName }>
 					<PressableStoreStep
 						{ ...this.props }
@@ -190,13 +215,11 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		return translate( 'What kind of site do you need? Choose an option below:' );
 	}
 
-	componentWillMount() {
-		if ( this.props.signupDependencyStore.themeSlugWithRepo ) {
-			SignupDependencyStore.reset();
-		}
-
-		if ( this.props.signupProgress ) {
-			SignupProgressStore.reset();
+	componentDidUpdate( prevProps ) {
+		// If geoip data arrived, check if there is a pending click on a "store" choice and
+		// process it -- all data are available now to proceed.
+		if ( this.state.pendingStoreClick && ! prevProps.countryCode && this.props.countryCode ) {
+			this.handleNextStep( DESIGN_TYPE_STORE );
 		}
 	}
 
@@ -222,11 +245,9 @@ class DesignTypeWithAtomicStoreStep extends Component {
 }
 
 export default connect(
-	state => {
-		return {
-			signupDependencyStore: getSignupDependencyStore( state ),
-		};
-	},
+	state => ( {
+		countryCode: getCurrentUserCountryCode( state ) || getGeoCountryShort( state ),
+	} ),
 	{
 		recordTracksEvent,
 		setDesignType,

@@ -45,16 +45,19 @@ function handleDeserialize( state ) {
 }
 
 function handleRequestFailure( state, action ) {
+	// 410 means site moved. site used to be wpcom but is no longer
+	if ( action.error && action.error.statusCode !== 410 ) {
+		return state;
+	}
+
 	// new object proceeds current state to prevent new errors from overwriting existing values
-	return assign(
-		{
-			[ action.payload.ID ]: {
-				ID: action.payload.ID,
-				is_error: true,
-			},
+	return assign( {}, state, {
+		[ action.payload.ID ]: {
+			ID: action.payload.ID,
+			is_error: true,
+			error: action.error,
 		},
-		state
-	);
+	} );
 }
 
 function adaptSite( attributes ) {

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -312,25 +312,25 @@ class Media extends Component {
 					</Dialog>
 				) }
 				{ site &&
-				site.ID && (
-					<MediaLibrarySelectedData siteId={ site.ID }>
-						<MediaLibrary
-							{ ...this.props }
-							className="media__main-section"
-							onFilterChange={ this.onFilterChange }
-							site={ site }
-							single={ false }
-							filter={ this.props.filter }
-							source={ this.state.source }
-							onEditItem={ this.openDetailsModalForASingleImage }
-							onViewDetails={ this.openDetailsModalForAllSelected }
-							onDeleteItem={ this.handleDeleteMediaEvent }
-							onSourceChange={ this.handleSourceChange }
-							modal={ false }
-							containerWidth={ this.state.containerWidth }
-						/>
-					</MediaLibrarySelectedData>
-				) }
+					site.ID && (
+						<MediaLibrarySelectedData siteId={ site.ID }>
+							<MediaLibrary
+								{ ...this.props }
+								className="media__main-section"
+								onFilterChange={ this.onFilterChange }
+								site={ site }
+								single={ false }
+								filter={ this.props.filter }
+								source={ this.state.source }
+								onEditItem={ this.openDetailsModalForASingleImage }
+								onViewDetails={ this.openDetailsModalForAllSelected }
+								onDeleteItem={ this.handleDeleteMediaEvent }
+								onSourceChange={ this.handleSourceChange }
+								modal={ false }
+								containerWidth={ this.state.containerWidth }
+							/>
+						</MediaLibrarySelectedData>
+					) }
 			</div>
 		);
 	}

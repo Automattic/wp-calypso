@@ -1,6 +1,8 @@
+/** @format */
 /**
  * External dependencies
  */
+
 const kebabCase = require( 'lodash' ).kebabCase;
 
 module.exports = ( { types: t } ) => {
@@ -16,7 +18,7 @@ module.exports = ( { types: t } ) => {
 			// Hoist using the parent JSXAttribute's scope, since the scopes
 			// from AST parse stage are not valid for replacement expression
 			path.hoist( this.scope );
-		}
+		},
 	};
 
 	return {
@@ -44,14 +46,25 @@ module.exports = ( { types: t } ) => {
 				// Replace prop string with function which, when invoked, calls
 				// asyncRequire. The asyncRequire call is transformed by the
 				// CallExpression visitor in this plugin
-				path.replaceWith( t.jSXAttribute( name, t.jSXExpressionContainer(
-					t.functionExpression( null, [ t.identifier( 'callback' ) ], t.blockStatement( [
-						t.expressionStatement( t.callExpression( t.identifier( 'asyncRequire' ), [
-							value,
-							t.identifier( 'callback' )
-						] ) )
-					] ) )
-				) ) );
+				path.replaceWith(
+					t.jSXAttribute(
+						name,
+						t.jSXExpressionContainer(
+							t.functionExpression(
+								null,
+								[ t.identifier( 'callback' ) ],
+								t.blockStatement( [
+									t.expressionStatement(
+										t.callExpression( t.identifier( 'asyncRequire' ), [
+											value,
+											t.identifier( 'callback' ),
+										] )
+									),
+								] )
+							)
+						)
+					)
+				);
 
 				// Traverse replacement attribute to hoist function expression
 				path.traverse( asyncAttributeVisitor, { scope: path.scope } );
@@ -97,19 +110,24 @@ module.exports = ( { types: t } ) => {
 
 					// Transform to asynchronous require.ensure
 					path.replaceWith(
-						t.callExpression( t.memberExpression( t.identifier( 'require' ), t.identifier( 'ensure' ) ), [
-							argument,
-							t.functionExpression( null, [ t.identifier( 'require' ) ], t.blockStatement( [
-								t.expressionStatement( requireCall )
-							] ) ),
-							t.stringLiteral( chunkName )
-						] )
+						t.callExpression(
+							t.memberExpression( t.identifier( 'require' ), t.identifier( 'ensure' ) ),
+							[
+								argument,
+								t.functionExpression(
+									null,
+									[ t.identifier( 'require' ) ],
+									t.blockStatement( [ t.expressionStatement( requireCall ) ] )
+								),
+								t.stringLiteral( chunkName ),
+							]
+						)
 					);
 				} else {
 					// Transform to synchronous require
 					path.replaceWith( requireCall );
 				}
-			}
-		}
+			},
+		},
 	};
 };

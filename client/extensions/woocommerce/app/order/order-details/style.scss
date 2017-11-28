@@ -37,6 +37,10 @@
 
 	.order-details__item-delete {
 		width: 1.5em;
+
+		.gridicons-trash {
+			color: $alert-red;
+		}
 	}
 }
 
@@ -65,7 +69,6 @@
 		}
 	}
 }
-
 
 // Duplicating `.table` for increased specificity
 .order-details__totals.table.table {

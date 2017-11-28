@@ -1,13 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { moment, translate } from 'i18n-calypso';
-import { clone, filter, findIndex, noop } from 'lodash';
+import { clone, filter, findIndex, min, noop } from 'lodash';
 import ReactDom from 'react-dom';
 import React from 'react';
 
@@ -158,16 +158,15 @@ export class MediaLibraryList extends React.Component {
 		const itemDate = new Date( date );
 		const currentDate = new Date();
 
-		if ( itemDate.getYear() === currentDate.getYear() ) {
-			return moment( date ).format( 'MMM DD' );
+		if ( itemDate.getFullYear() === currentDate.getFullYear() ) {
+			return moment( date ).format( 'MMM D' );
 		}
 
-		return moment( date ).format( 'MMM DD, YYYY' );
+		return moment( date ).format( 'MMM D, YYYY' );
 	};
 
-	getItemGroup = item => {
-		return item.date.slice( 0, 10 );
-	};
+	getItemGroup = item =>
+		min( [ item.date.slice( 0, 10 ), moment( new Date() ).format( 'YYYY-MM-DD' ) ] );
 
 	renderItem = item => {
 		var index = findIndex( this.props.media, { ID: item.ID } ),

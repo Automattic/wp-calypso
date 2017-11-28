@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -94,7 +94,9 @@ export class Notice extends Component {
 
 		return (
 			<div className={ classes }>
-				<Gridicon className="notice__icon" icon={ icon || this.getIcon() } size={ 24 } />
+				<span className="notice__icon-wrapper">
+					<Gridicon className="notice__icon" icon={ icon || this.getIcon() } size={ 24 } />
+				</span>
 				<span className="notice__content">
 					<span className="notice__text">{ text ? text : children }</span>
 				</span>

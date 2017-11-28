@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -95,22 +95,20 @@ class DeleteUser extends React.PureComponent {
 		accept(
 			<div>
 				<p>
-					{ this.props.user && this.props.user.name ? (
-						translate(
-							'If you remove %(username)s, that user will no longer be able to access this site, ' +
-								'but any content that was created by %(username)s will remain on the site.',
-							{
-								args: {
-									username: this.props.user.name,
-								},
-							}
-						)
-					) : (
-						translate(
-							'If you remove this user, he or she will no longer be able to access this site, ' +
-								'but any content that was created by this user will remain on the site.'
-						)
-					) }
+					{ this.props.user && this.props.user.name
+						? translate(
+								'If you remove %(username)s, that user will no longer be able to access this site, ' +
+									'but any content that was created by %(username)s will remain on the site.',
+								{
+									args: {
+										username: this.props.user.name,
+									},
+								}
+							)
+						: translate(
+								'If you remove this user, he or she will no longer be able to access this site, ' +
+									'but any content that was created by this user will remain on the site.'
+							) }
 				</p>
 				<p>{ translate( 'Would you still like to remove this user?' ) }</p>
 			</div>,
@@ -199,22 +197,20 @@ class DeleteUser extends React.PureComponent {
 					<FormSectionHeading>{ this.getDeleteText() }</FormSectionHeading>
 
 					<p className="delete-user__explanation">
-						{ this.props.user.name ? (
-							translate(
-								'You have the option of reassigning all content created by ' +
-									'%(username)s, or deleting the content entirely.',
-								{
-									args: {
-										username: this.props.user.name,
-									},
-								}
-							)
-						) : (
-							translate(
-								'You have the option of reassigning all content created by ' +
-									'this user, or deleting the content entirely.'
-							)
-						) }
+						{ this.props.user.name
+							? translate(
+									'You have the option of reassigning all content created by ' +
+										'%(username)s, or deleting the content entirely.',
+									{
+										args: {
+											username: this.props.user.name,
+										},
+									}
+								)
+							: translate(
+									'You have the option of reassigning all content created by ' +
+										'this user, or deleting the content entirely.'
+								) }
 					</p>
 
 					<FormFieldset>
@@ -238,15 +234,13 @@ class DeleteUser extends React.PureComponent {
 							/>
 
 							<span>
-								{ this.props.user.name ? (
-									translate( 'Delete all content created by %(username)s', {
-										args: {
-											username: this.props.user.name ? this.props.user.name : '',
-										},
-									} )
-								) : (
-									translate( 'Delete all content created by this user' )
-								) }
+								{ this.props.user.name
+									? translate( 'Delete all content created by %(username)s', {
+											args: {
+												username: this.props.user.name ? this.props.user.name : '',
+											},
+										} )
+									: translate( 'Delete all content created by this user' ) }
 							</span>
 						</FormLabel>
 					</FormFieldset>

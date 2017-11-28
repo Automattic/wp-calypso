@@ -222,7 +222,7 @@ class ThemeSheet extends React.Component {
 	};
 
 	renderScreenshot = () => {
-		const { demo_uri, retired, isWpcomTheme } = this.props;
+		const { demo_uri, retired, isActive, isWpcomTheme } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
 		const img = screenshotFull && (
 			<img className="theme__sheet-img" src={ screenshotFull + '?w=680' } />
@@ -231,7 +231,7 @@ class ThemeSheet extends React.Component {
 		if ( demo_uri && ! retired ) {
 			return (
 				<div className="theme__sheet-screenshot is-active" onClick={ this.previewAction }>
-					{ this.renderPreviewButton() }
+					{ isActive ? null : this.renderPreviewButton() }
 					{ img }
 				</div>
 			);
@@ -453,7 +453,10 @@ class ThemeSheet extends React.Component {
 
 	getDefaultOptionLabel = () => {
 		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased } = this.props;
-		if ( isLoggedIn && ! isActive ) {
+		if ( isActive ) {
+			// Customize size
+			return i18n.translate( 'Customize site' );
+		} else if ( isLoggedIn ) {
 			if ( isPremium && ! isPurchased ) {
 				// purchase
 				return i18n.translate( 'Pick this design' );
@@ -513,12 +516,14 @@ class ThemeSheet extends React.Component {
 		const { getUrl } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
+		const { isActive } = this.props;
 
 		return (
 			<Button
 				className="theme__sheet-primary-button"
 				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }
+				primary={ isActive }
 			>
 				{ this.isLoaded() ? label : placeholder }
 				{ this.props.isWpcomTheme && this.renderPrice() }

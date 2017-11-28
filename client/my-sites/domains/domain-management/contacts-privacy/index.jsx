@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -45,7 +45,7 @@ class ContactsPrivacy extends React.PureComponent {
 		return (
 			<Main className="domain-management-contacts-privacy">
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
-					{ translate( 'Contacts and Privacy' ) }
+					{ privacyAvailable ? translate( 'Contacts and Privacy' ) : translate( 'Contacts' ) }
 				</Header>
 
 				<VerticalNav>
@@ -69,16 +69,16 @@ class ContactsPrivacy extends React.PureComponent {
 					</VerticalNavItem>
 
 					{ ! hasPrivacyProtection &&
-					privacyAvailable && (
-						<VerticalNavItem
-							path={ paths.domainManagementPrivacyProtection(
-								this.props.selectedSite.slug,
-								this.props.selectedDomainName
-							) }
-						>
-							{ translate( 'Privacy Protection' ) }
-						</VerticalNavItem>
-					) }
+						privacyAvailable && (
+							<VerticalNavItem
+								path={ paths.domainManagementPrivacyProtection(
+									this.props.selectedSite.slug,
+									this.props.selectedDomainName
+								) }
+							>
+								{ translate( 'Privacy Protection' ) }
+							</VerticalNavItem>
+						) }
 				</VerticalNav>
 			</Main>
 		);

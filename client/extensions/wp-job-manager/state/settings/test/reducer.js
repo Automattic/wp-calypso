@@ -9,189 +9,96 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { withSchemaValidation } from 'state/utils';
 import {
 	WP_JOB_MANAGER_FETCH_ERROR,
 	WP_JOB_MANAGER_FETCH_SETTINGS,
 	WP_JOB_MANAGER_UPDATE_SETTINGS,
 } from '../../action-types';
-import reducer, { fetching, items } from '../reducer';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import reducer, { fetching, items as unvalidatedItems } from '../reducer';
+
+const items = withSchemaValidation( unvalidatedItems.schema, unvalidatedItems );
 
 describe( 'reducer', () => {
-	const primarySiteId = 123456;
-	const secondarySiteId = 456789;
-
-	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'fetching', 'items' ] );
+	test( 'should initialize to an empty object', () => {
+		expect( reducer( undefined, { type: '@@UNKNOWN_ACTION' } ) ).to.eql( {} );
 	} );
 
 	describe( 'fetching()', () => {
-		const previousState = deepFreeze( {
-			[ primarySiteId ]: true,
-		} );
+		test( 'should default to false', () => {
+			const state = fetching( undefined, { type: '@@UNKNOWN_ACTION' } );
 
-		test( 'should default to an empty object', () => {
-			const state = fetching( undefined, {} );
-
-			expect( state ).to.deep.equal( {} );
+			expect( state ).to.eql( false );
 		} );
 
 		test( 'should set state to true if settings are being fetched', () => {
-			const state = fetching( undefined, {
-				type: WP_JOB_MANAGER_FETCH_SETTINGS,
-				siteId: primarySiteId,
-			} );
+			const state = fetching( undefined, { type: WP_JOB_MANAGER_FETCH_SETTINGS } );
 
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: true,
-			} );
-		} );
-
-		test( 'should accumulate fetching values', () => {
-			const state = fetching( previousState, {
-				type: WP_JOB_MANAGER_FETCH_SETTINGS,
-				siteId: secondarySiteId,
-			} );
-
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: true,
-				[ secondarySiteId ]: true,
-			} );
+			expect( state ).to.eql( true );
 		} );
 
 		test( 'should set state to false if updating settings', () => {
-			const state = fetching( previousState, {
-				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
-				siteId: primarySiteId,
-			} );
+			const state = fetching( undefined, { type: WP_JOB_MANAGER_UPDATE_SETTINGS } );
 
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: false,
-			} );
+			expect( state ).to.eql( false );
 		} );
 
 		test( 'should set state to false if settings could not be fetched', () => {
-			const state = fetching( previousState, {
-				type: WP_JOB_MANAGER_FETCH_ERROR,
-				siteId: primarySiteId,
-			} );
+			const state = fetching( undefined, { type: WP_JOB_MANAGER_FETCH_ERROR } );
 
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: false,
-			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = fetching( previousState, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.deep.equal( {} );
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = fetching( previousState, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.deep.equal( {} );
+			expect( state ).to.eql( false );
 		} );
 	} );
 
 	describe( 'items()', () => {
-		const primarySettings = { job_manager_hide_filled_positions: true };
-		const secondarySettings = { job_manager_hide_filled_positions: false };
-		const previousState = deepFreeze( {
-			[ primarySiteId ]: primarySettings,
-		} );
+		const data = { listings: { hideFilledPositions: true } };
 
 		test( 'should default to an empty object', () => {
-			const state = items( undefined, {} );
+			const state = items( undefined, { type: '@@UNKNOWN_ACTION' } );
 
 			expect( state ).to.deep.equal( {} );
 		} );
 
-		test( 'should index settings by site ID', () => {
-			const state = items( undefined, {
-				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
-				siteId: primarySiteId,
-				data: primarySettings,
-			} );
+		test( 'should return settings if settings are being updated', () => {
+			const state = items( undefined, { type: WP_JOB_MANAGER_UPDATE_SETTINGS, data } );
 
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: primarySettings,
-			} );
+			expect( state ).to.deep.equal( data );
 		} );
 
-		test( 'should accumulate settings', () => {
-			const state = items( previousState, {
-				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
-				siteId: secondarySiteId,
-				data: secondarySettings,
-			} );
+		test( 'should return an empty object if settings are not being updated', () => {
+			const state = items( undefined, { type: '@@UNKNOWN_ACTION', data } );
 
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: primarySettings,
-				[ secondarySiteId ]: secondarySettings,
-			} );
-		} );
-
-		test( 'should override previous settings of same site ID', () => {
-			const state = items( previousState, {
-				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
-				siteId: primarySiteId,
-				data: secondarySettings,
-			} );
-
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: secondarySettings,
-			} );
-		} );
-
-		test( 'should accumulate new settings and overwrite existing ones for the same site ID', () => {
-			const newSettings = {
-				job_manager_hide_expired: false,
-				job_manager_hide_filled_positions: true,
-			};
-			const state = items( previousState, {
-				type: WP_JOB_MANAGER_UPDATE_SETTINGS,
-				siteId: primarySiteId,
-				data: newSettings,
-			} );
-
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: newSettings,
-			} );
+			expect( state ).to.deep.equal( {} );
 		} );
 
 		test( 'should persist state', () => {
-			const state = items( previousState, {
-				type: SERIALIZE,
+			const original = deepFreeze( {
+				job_manager_per_page: 20,
+				job_manager_hide_filled_positions: true,
+				job_manager_hide_expired: true,
 			} );
-
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: primarySettings,
-			} );
+			const state = items( original, { type: SERIALIZE } );
+			expect( state ).to.deep.equal( original );
 		} );
 
-		test( 'should load valid persisted state', () => {
-			const state = items( previousState, {
-				type: DESERIALIZE,
+		test( 'should restore valid persisted state', () => {
+			const original = deepFreeze( {
+				job_manager_per_page: 20,
+				job_manager_hide_filled_positions: true,
+				job_manager_hide_expired: true,
 			} );
-
-			expect( state ).to.deep.equal( {
-				[ primarySiteId ]: primarySettings,
-			} );
+			const state = items( original, { type: DESERIALIZE } );
+			expect( state ).to.deep.equal( original );
 		} );
 
-		test( 'should not load invalid persisted state', () => {
-			const previousInvalidState = deepFreeze( {
-				[ primarySiteId ]: 2,
+		test( 'should not restore invalid persisted state', () => {
+			const original = deepFreeze( {
+				job_manager_per_page: 'this should be an integer',
+				job_manager_hide_filled_positions: true,
+				job_manager_hide_expired: true,
 			} );
-			const state = items( previousInvalidState, {
-				type: DESERIALIZE,
-			} );
-
+			const state = items( original, { type: DESERIALIZE } );
 			expect( state ).to.deep.equal( {} );
 		} );
 	} );

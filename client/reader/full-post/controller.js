@@ -3,34 +3,17 @@
  * External Dependencies
  */
 import React from 'react';
-import i18n from 'i18n-calypso';
 import page from 'page';
 import { defer } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import FeedError from 'reader/feed-error';
-import { setPageTitle, trackPageLoad } from 'reader/controller-helper';
+import { trackPageLoad } from 'reader/controller-helper';
 import AsyncLoad from 'components/async-load';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
-
-function renderPostNotFound() {
-	const sidebarAndPageTitle = i18n.translate( 'Post not found' );
-
-	setPageTitle( context, sidebarAndPageTitle );
-
-	renderWithReduxStore(
-		<FeedError
-			sidebarTitle={ sidebarAndPageTitle }
-			message={ i18n.translate( 'Post Not Found' ) }
-		/>,
-		document.getElementById( 'primary' ),
-		context.store
-	);
-}
 
 const scrollTopIfNoHash = () =>
 	defer( () => {
@@ -61,7 +44,6 @@ export function blogPost( context ) {
 			onClose={ function() {
 				page.back( context.lastRoute || '/' );
 			} }
-			onPostNotFound={ renderPostNotFound }
 		/>,
 		document.getElementById( 'primary' ),
 		context.store
@@ -88,7 +70,6 @@ export function feedPost( context ) {
 			postId={ postId }
 			onClose={ closer }
 			referralStream={ context.lastRoute }
-			onPostNotFound={ renderPostNotFound }
 		/>,
 		document.getElementById( 'primary' ),
 		context.store

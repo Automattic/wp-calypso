@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { omit } from 'lodash';
+import { omit, repeat } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,14 +25,38 @@ describe( 'validateContactDetails', () => {
 		email: 'test@example.com',
 		phone: '+1.2506382995',
 		extra: {
+			registrantType: 'individual',
 			sirenSiret: '123456789',
 			registrantVatId: 'FRXX123456789',
 			trademarkNumber: '123456789',
 		},
 	};
 
+	function contactWithExtraProperty( property, value ) {
+		return Object.assign( {}, contactDetails, {
+			extra: {
+				...contactDetails.extra,
+				[ property ]: value,
+			},
+		} );
+	}
+
 	test( 'should accept valid example data (sanity check)', () => {
 		expect( validateContactDetails( contactDetails ) ).to.eql( {} );
+	} );
+
+	test( 'should handle missing extra', () => {
+		const testDetails = omit( contactDetails, 'extra' );
+
+		expect( validateContactDetails( testDetails ) ).to.have.property( 'extra' );
+	} );
+
+	test( 'should handle null extra', () => {
+		const testDetails = Object.assign( {}, contactDetails, {
+			extra: null,
+		} );
+
+		expect( validateContactDetails( testDetails ) ).to.have.property( 'extra' );
 	} );
 
 	// validateContactDetails data
@@ -49,10 +73,81 @@ describe( 'validateContactDetails', () => {
 		[ '33445848600019' ],
 	];
 
+	describe( 'organization', () => {
+		describe( 'with registrantType: organization', () => {
+			const organizationDetails = Object.assign( {}, contactDetails, {
+				extra: { registrantType: 'organization' },
+			} );
+
+			test( 'should accept an organization', () => {
+				expect( validateContactDetails( organizationDetails ) ).to.eql( {} );
+			} );
+
+			test( 'should not be missing', () => {
+				const testDetails = omit( organizationDetails, 'organization' );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.have.property( 'organization' );
+			} );
+
+			test( 'should not be empty', () => {
+				const testDetails = Object.assign( {}, organizationDetails, { organization: '' } );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.have.property( 'organization' );
+			} );
+
+			test( 'should reject long strings', () => {
+				const testDetails = Object.assign( {}, organizationDetails, {
+					organization: repeat( '0123456789', 11 ),
+				} );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.have.property( 'organization' );
+			} );
+
+			test( 'should reject invalid characters', () => {
+				const testDetails = Object.assign( {}, organizationDetails, {
+					organization: 'No bangs, please!',
+				} );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.have.property( 'organization' );
+			} );
+		} );
+
+		describe( 'with registrantType: individual', () => {
+			const individualDetails = Object.assign( {}, contactDetails, {
+				extra: { registrantType: 'individual' },
+			} );
+
+			test( 'should accept missing organization', () => {
+				const testDetails = omit( individualDetails, 'organization' );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.eql( {} );
+			} );
+
+			test( 'should accept null organization', () => {
+				const testDetails = Object.assign( {}, individualDetails, { organization: '' } );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.eql( {} );
+			} );
+
+			test( 'should accept empty organization', () => {
+				const testDetails = Object.assign( {}, individualDetails, { organization: '' } );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.eql( {} );
+			} );
+		} );
+	} );
+
 	describe( 'SIREN/SIRET', () => {
 		test( 'should accept all real SIRET examples', () => {
 			realSiretNumbers.forEach( ( [ sirenSiret ] ) => {
-				const testDetails = Object.assign( {}, contactDetails, { extra: { sirenSiret } } );
+				const testDetails = contactWithExtraProperty( 'sirenSiret', sirenSiret );
 
 				const result = validateContactDetails( testDetails );
 				expect( result, `expected to accept '${ sirenSiret }'` ).to.eql( {} );
@@ -78,7 +173,7 @@ describe( 'validateContactDetails', () => {
 		} );
 
 		test( 'should accept an empty value', () => {
-			const testDetails = Object.assign( {}, contactDetails, { extra: { sirenSiret: '' } } );
+			const testDetails = contactWithExtraProperty( 'sirenSiret', '' );
 
 			const result = validateContactDetails( testDetails );
 			expect( result ).to.eql( {} );
@@ -142,7 +237,7 @@ describe( 'validateContactDetails', () => {
 			];
 
 			vatPatterns.forEach( ( [ registrantVatId ] ) => {
-				const testDetails = Object.assign( {}, contactDetails, { extra: { registrantVatId } } );
+				const testDetails = contactWithExtraProperty( 'registrantVatId', registrantVatId );
 
 				const result = validateContactDetails( testDetails );
 				expect( result, `expected to accept '${ registrantVatId }'` ).to.eql( {} );
@@ -161,7 +256,7 @@ describe( 'validateContactDetails', () => {
 		} );
 
 		test( 'should accept an empty value', () => {
-			const testDetails = Object.assign( {}, contactDetails, { extra: { registrantVatId: '' } } );
+			const testDetails = contactWithExtraProperty( 'registrantVatId', '' );
 
 			const result = validateContactDetails( testDetails );
 			expect( result ).to.eql( {} );
@@ -184,7 +279,7 @@ describe( 'validateContactDetails', () => {
 
 		test( 'should accept all good trademark examples', () => {
 			goodTrademarkNumbers.forEach( ( [ trademarkNumber ] ) => {
-				const testDetails = Object.assign( {}, contactDetails, { extra: { trademarkNumber } } );
+				const testDetails = contactWithExtraProperty( 'trademarkNumber', trademarkNumber );
 
 				const result = validateContactDetails( testDetails );
 				expect( result, `expected to accept '${ trademarkNumber }'` ).to.eql( {} );
@@ -203,7 +298,7 @@ describe( 'validateContactDetails', () => {
 		} );
 
 		test( 'should accept an empty value', () => {
-			const testDetails = Object.assign( {}, contactDetails, { extra: { trademarkNumber: '' } } );
+			const testDetails = contactWithExtraProperty( 'trademarkNumber', '' );
 
 			const result = validateContactDetails( testDetails );
 			expect( result ).to.eql( {} );

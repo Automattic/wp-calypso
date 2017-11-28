@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -121,11 +121,9 @@ const ApplicationPasswords = createReactClass( {
 							disabled={ this.state.submittingForm || '' === this.state.applicationName }
 							onClick={ this.recordClickEvent( 'Generate New Application Password Button' ) }
 						>
-							{ this.state.submittingForm ? (
-								this.props.translate( 'Generating Password…' )
-							) : (
-								this.props.translate( 'Generate Password' )
-							) }
+							{ this.state.submittingForm
+								? this.props.translate( 'Generating Password…' )
+								: this.props.translate( 'Generate Password' ) }
 						</FormButton>
 						{ this.props.appPasswordsData.get().length ? (
 							<FormButton

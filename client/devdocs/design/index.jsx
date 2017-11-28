@@ -29,6 +29,7 @@ import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
 import Buttons from 'components/button/docs/example';
 import Cards from 'components/card/docs/example';
+import Checklist from 'components/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 import Collection from 'devdocs/design/search-collection';
@@ -79,6 +80,7 @@ import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import Suggestions from 'components/suggestions/docs/example';
+import TimeSince from 'components/time-since/docs/example';
 import Timezone from 'components/timezone/docs/example';
 import TokenFields from 'components/token-field/docs/example';
 import Tooltip from 'components/tooltip/docs/example';
@@ -133,6 +135,7 @@ class DesignAssets extends React.Component {
 					<ButtonGroups />
 					<Buttons componentUsageStats={ componentsUsageStats.button } />
 					<Cards />
+					<Checklist />
 					<ClipboardButtonInput />
 					<ClipboardButtons />
 					<Count />
@@ -182,6 +185,7 @@ class DesignAssets extends React.Component {
 					<SpinnerButton searchKeywords="loading input submit" />
 					<SpinnerLine searchKeywords="loading" />
 					<Suggestions />
+					<TimeSince />
 					<Timezone />
 					<TokenFields />
 					<Tooltip />

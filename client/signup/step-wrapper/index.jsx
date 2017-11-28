@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -19,6 +19,9 @@ class StepWrapper extends Component {
 	static propTypes = {
 		shouldHideNavButtons: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
+		hideFormattedHeader: PropTypes.bool,
+		hideBack: PropTypes.bool,
+		hideSkip: PropTypes.bool,
 	};
 
 	renderBack() {
@@ -34,6 +37,7 @@ class StepWrapper extends Component {
 				stepSectionName={ this.props.stepSectionName }
 				backUrl={ this.props.backUrl }
 				signupProgress={ this.props.signupProgress }
+				labelText={ this.props.backLabelText }
 			/>
 		);
 	}
@@ -47,6 +51,7 @@ class StepWrapper extends Component {
 					defaultDependencies={ this.props.defaultDependencies }
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
+					labelText={ this.props.skipLabelText }
 				/>
 			);
 		}
@@ -81,23 +86,25 @@ class StepWrapper extends Component {
 	}
 
 	render() {
-		const { stepContent, headerButton } = this.props;
+		const { stepContent, headerButton, hideFormattedHeader, hideBack, hideSkip } = this.props;
 		const classes = classNames( 'step-wrapper', {
 			'is-wide-layout': this.props.isWideLayout,
 		} );
 
 		return (
 			<div className={ classes }>
-				<FormattedHeader headerText={ this.headerText() } subHeaderText={ this.subHeaderText() }>
-					{ headerButton }
-				</FormattedHeader>
+				{ ! hideFormattedHeader && (
+					<FormattedHeader headerText={ this.headerText() } subHeaderText={ this.subHeaderText() }>
+						{ headerButton }
+					</FormattedHeader>
+				) }
 
 				<div className="step-wrapper__content is-animated-content">
 					{ stepContent }
 
 					<div className="step-wrapper__buttons">
-						{ this.renderBack() }
-						{ this.renderSkip() }
+						{ ! hideBack && this.renderBack() }
+						{ ! hideSkip && this.renderSkip() }
 					</div>
 				</div>
 			</div>

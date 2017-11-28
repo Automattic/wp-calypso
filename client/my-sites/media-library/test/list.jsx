@@ -76,7 +76,7 @@ describe( 'MediaLibraryList item selection', () => {
 					/>
 				</MediaLibrarySelectedData>
 			);
-			mediaList = wrapper.find( MediaList ).get( 0 );
+			mediaList = wrapper.find( MediaList ).instance();
 		} );
 
 		test( 'allows selecting single items', () => {
@@ -160,7 +160,7 @@ describe( 'MediaLibraryList item selection', () => {
 					/>
 				</MediaLibrarySelectedData>
 			);
-			mediaList = wrapper.find( MediaList ).get( 0 );
+			mediaList = wrapper.find( MediaList ).instance();
 		} );
 
 		test( 'allows selecting a single item', () => {
@@ -199,7 +199,7 @@ describe( 'MediaLibraryList item selection', () => {
 				/>
 			)
 				.find( MediaList )
-				.get( 0 );
+				.instance();
 		};
 
 		beforeAll( () => {

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -15,10 +15,10 @@ import { pickBy, map } from 'lodash';
 import config from 'config';
 import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
-import { recordClickEvent } from 'me/event-recorder';
+import ProfileLinksAddWordPressSite from './site';
 import { getPublicSites } from 'state/selectors';
 import { getSite } from 'state/sites/selectors';
-import ProfileLinksAddWordPressSite from './site';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const addProfileLinks = ( inputs, userProfileLinks, callback ) => ( dispatch, getState ) => {
 	const links = pickBy(
@@ -48,6 +48,29 @@ class ProfileLinksAddWordPress extends Component {
 		const updates = {};
 		updates[ event.target.name ] = event.target.checked;
 		this.setState( updates );
+	};
+
+	recordClickEvent = action => {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	};
+
+	getClickHandler = action => {
+		return () => this.recordClickEvent( action );
+	};
+
+	handleCancelButtonClick = event => {
+		this.recordClickEvent( 'Cancel Add WordPress Sites Button' );
+		this.onCancel( event );
+	};
+
+	handleJetpackLinkClick = event => {
+		this.recordClickEvent( 'Jetpack Link in Profile Links' );
+		this.onJetpackMe( event );
+	};
+
+	handleCreateSiteButtonClick = event => {
+		this.recordClickEvent( 'Create Sites Button in Profile Links' );
+		this.onCreateSite( event );
 	};
 
 	onSelect = ( event, inputName ) => {
@@ -164,14 +187,14 @@ class ProfileLinksAddWordPress extends Component {
 				{ this.possiblyRenderError() }
 				<FormButton
 					disabled={ 0 === checkedCount ? true : false }
-					onClick={ recordClickEvent( 'Add WordPress Sites Button' ) }
+					onClick={ this.getClickHandler( 'Add WordPress Sites Button' ) }
 				>
 					{ translate( 'Add Site', 'Add Sites', { count: checkedCount } ) }
 				</FormButton>
 				<FormButton
 					className="profile-links-add-wordpress__cancel"
 					isPrimary={ false }
-					onClick={ recordClickEvent( 'Cancel Add WordPress Sites Button', this.onCancel ) }
+					onClick={ this.handleCancelButtonClick }
 				>
 					{ translate( 'Cancel' ) }
 				</FormButton>
@@ -195,25 +218,20 @@ class ProfileLinksAddWordPress extends Component {
 									<a
 										href="#"
 										className="profile-links-add-wordpress__jetpack-link"
-										onClick={ recordClickEvent(
-											'Jetpack Link in Profile Links',
-											this.onJetpackMe
-										) }
+										onClick={ this.handleJetpackLinkClick }
 									/>
 								),
 							},
 						}
 					) }
 				</p>
-				<FormButton
-					onClick={ recordClickEvent( 'Create Sites Button in Profile Links', this.onCreateSite ) }
-				>
+				<FormButton onClick={ this.handleCreateSiteButtonClick }>
 					{ translate( 'Create Site' ) }
 				</FormButton>
 				<FormButton
 					className="profile-links-add-wordpress__cancel"
 					isPrimary={ false }
-					onClick={ recordClickEvent( 'Cancel Add WordPress Sites Button', this.onCancel ) }
+					onClick={ this.handleCancelButtonClick }
 				>
 					{ translate( 'Cancel' ) }
 				</FormButton>
@@ -224,11 +242,9 @@ class ProfileLinksAddWordPress extends Component {
 	render() {
 		return (
 			<div>
-				{ 0 === this.props.publicSites.length ? (
-					this.renderInvitationForm()
-				) : (
-					this.renderAddableSitesForm()
-				) }
+				{ 0 === this.props.publicSites.length
+					? this.renderInvitationForm()
+					: this.renderAddableSitesForm() }
 			</div>
 		);
 	}
@@ -240,5 +256,6 @@ export default connect(
 	} ),
 	{
 		addProfileLinks,
+		recordGoogleEvent,
 	}
 )( localize( ProfileLinksAddWordPress ) );

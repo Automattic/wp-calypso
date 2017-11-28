@@ -79,6 +79,7 @@
 				},
 				"summary": { "type": "string" },
 				"target": { "type": "object" },
+				"target_ts": { "type": "number" },
 				"totalItems": {
 					"min": 0,
 					"type": "integer"},

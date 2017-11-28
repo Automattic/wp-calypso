@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -62,7 +62,7 @@ class PostsMain extends React.Component {
 				<SidebarNavigation />
 				<div className="posts__primary">
 					<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
-					<PostTypeBulkEditBar />
+					{ siteId && <PostTypeBulkEditBar /> }
 					<PostListWrapper { ...this.props } />
 				</div>
 			</Main>

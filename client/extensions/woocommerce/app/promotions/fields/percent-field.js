@@ -10,15 +10,8 @@ import PropTypes from 'prop-types';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormField from './form-field';
 
-const PercentField = ( {
-	fieldName,
-	labelText,
-	explanationText,
-	placeholderText,
-	isRequired,
-	value,
-	edit,
-} ) => {
+const PercentField = ( props ) => {
+	const { fieldName, explanationText, placeholderText, value, edit } = props;
 	const renderedValue = ( 'undefined' !== typeof value ? value : '' );
 
 	const onChange = ( e ) => {
@@ -29,14 +22,9 @@ const PercentField = ( {
 	};
 
 	return (
-		<FormField
-			fieldName={ fieldName }
-			labelText={ labelText }
-			explanationText={ explanationText }
-			isRequired={ isRequired }
-		>
+		<FormField { ...props } >
 			<FormTextInputWithAffixes
-				htmlFor={ fieldName + '-label' }
+				id={ fieldName + '-label' }
 				aria-describedby={ explanationText && fieldName + '-description' }
 				type="number"
 				min="0"
@@ -52,13 +40,10 @@ const PercentField = ( {
 
 PercentField.PropTypes = {
 	fieldName: PropTypes.string.isRequired,
-	labelText: PropTypes.string.isRequired,
 	explanationText: PropTypes.string,
 	placeholderText: PropTypes.string,
-	isRequired: PropTypes.bool,
 	value: PropTypes.number,
 	edit: PropTypes.func.isRequired,
 };
 
 export default PercentField;
-

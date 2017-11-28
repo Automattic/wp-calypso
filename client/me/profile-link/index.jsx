@@ -1,44 +1,50 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
-import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import safeProtocolUrl from 'lib/safe-protocol-url';
-import eventRecorder from 'me/event-recorder';
-import { withoutHttp } from 'lib/url';
 import Button from 'components/button';
+import safeProtocolUrl from 'lib/safe-protocol-url';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { withoutHttp } from 'lib/url';
 
-export default createReactClass( {
-	displayName: 'ProfileLink',
+class ProfileLink extends React.Component {
+	static defaultProps = {
+		imageSize: 100,
+		title: '',
+		url: '',
+		slug: '',
+		isPlaceholder: false,
+	};
 
-	mixins: [ eventRecorder ],
-
-	getDefaultProps() {
-		return {
-			imageSize: 100,
-			title: '',
-			url: '',
-			slug: '',
-			isPlaceholder: false,
-		};
-	},
-
-	propTypes: {
+	static propTypes = {
 		imageSize: PropTypes.number,
 		title: PropTypes.string.isRequired,
 		url: PropTypes.string.isRequired,
 		slug: PropTypes.string.isRequired,
-	},
+	};
+
+	recordClickEvent = action => {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	};
+
+	getClickHandler = action => {
+		return () => this.recordClickEvent( action );
+	};
+
+	handleRemoveButtonClick = () => {
+		this.recordClickEvent( 'Remove Link Next to Site' );
+		this.props.onRemoveLink();
+	};
 
 	renderRemove() {
 		return (
@@ -46,12 +52,12 @@ export default createReactClass( {
 				borderless
 				icon
 				className="profile-link__remove"
-				onClick={ this.recordClickEvent( 'Remove Link Next to Site', this.props.onRemoveLink ) }
+				onClick={ this.handleRemoveButtonClick }
 			>
 				<Gridicon icon="cross" />
 			</Button>
 		);
-	},
+	}
 
 	render() {
 		const classes = classNames( {
@@ -76,7 +82,7 @@ export default createReactClass( {
 						className="profile-link__image-link"
 						target="_blank"
 						rel="noopener noreferrer"
-						onClick={ this.recordClickEvent( 'Profile Links Site Images Link' ) }
+						onClick={ this.getClickHandler( 'Profile Links Site Images Link' ) }
 					>
 						<img className="profile-link__image" src={ imageSrc } />
 					</a>
@@ -85,7 +91,7 @@ export default createReactClass( {
 					href={ linkHref }
 					target="_blank"
 					rel="noopener noreferrer"
-					onClick={ this.recordClickEvent( 'Profile Links Site Link' ) }
+					onClick={ this.getClickHandler( 'Profile Links Site Link' ) }
 				>
 					<span className="profile-link__title">{ this.props.title }</span>
 					<span className="profile-link__url">{ withoutHttp( this.props.url ) }</span>
@@ -94,5 +100,9 @@ export default createReactClass( {
 				{ this.props.isPlaceholder ? null : this.renderRemove() }
 			</li>
 		);
-	},
-} );
+	}
+}
+
+export default connect( null, {
+	recordGoogleEvent,
+} )( ProfileLink );

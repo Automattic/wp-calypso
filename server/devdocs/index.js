@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -38,10 +39,8 @@ Prism.languages.es6 = Prism.languages.javascript;
 marked.setOptions( {
 	highlight: function( code, language ) {
 		const syntax = Prism.languages[ language ];
-		return syntax
-			? Prism.highlight( code, syntax )
-			: code;
-	}
+		return syntax ? Prism.highlight( code, syntax ) : code;
+	},
 } );
 
 /**
@@ -52,14 +51,14 @@ marked.setOptions( {
  * @returns {array} The results from the query
  */
 function queryDocs( query ) {
-	return docsIndex.search( query ).map( ( result ) => {
+	return docsIndex.search( query ).map( result => {
 		const doc = documents[ result.ref ],
 			snippet = makeSnippet( doc, query );
 
 		return {
 			path: doc.path,
 			title: doc.title,
-			snippet: snippet
+			snippet: snippet,
 		};
 	} );
 }
@@ -70,21 +69,21 @@ function queryDocs( query ) {
  * @returns {array} The results from the docs
  */
 function listDocs( filePaths ) {
-	return filePaths.map( ( path ) => {
-		const doc = find( documents, ( entry ) => entry.path === path );
+	return filePaths.map( path => {
+		const doc = find( documents, entry => entry.path === path );
 
 		if ( doc ) {
 			return {
 				path: path,
 				title: doc.title,
-				snippet: defaultSnippet( doc )
+				snippet: defaultSnippet( doc ),
 			};
 		}
 
 		return {
 			path: path,
 			title: 'Not found: ' + path,
-			snippet: ''
+			snippet: '',
 		};
 	} );
 }
@@ -99,8 +98,7 @@ function listDocs( filePaths ) {
  */
 function makeSnippet( doc, query ) {
 	// generate a regex of the form /[^a-zA-Z](term1|term2)/ for the query "term1 term2"
-	const termRegexMatchers = lunr.tokenizer( query )
-		.map( ( term ) => escapeRegexString( term ) );
+	const termRegexMatchers = lunr.tokenizer( query ).map( term => escapeRegexString( term ) );
 	const termRegexString = '[^a-zA-Z](' + termRegexMatchers.join( '|' ) + ')';
 	const termRegex = new RegExp( termRegexString, 'gi' );
 	const snippets = [];
@@ -112,12 +110,12 @@ function makeSnippet( doc, query ) {
 		const matchStr = match[ 1 ],
 			index = match.index + 1,
 			before = doc.body.substring( index - SNIPPET_PAD_LENGTH, index ),
-			after = doc.body.substring( index + matchStr.length, index + matchStr.length + SNIPPET_PAD_LENGTH );
+			after = doc.body.substring(
+				index + matchStr.length,
+				index + matchStr.length + SNIPPET_PAD_LENGTH
+			);
 
-		snippets.push( before +
-			'<mark>' + matchStr + '</mark>' +
-			after
-		);
+		snippets.push( before + '<mark>' + matchStr + '</mark>' + after );
 	}
 
 	if ( snippets.length ) {
@@ -159,9 +157,9 @@ function defaultSnippet( doc ) {
  */
 function reduceComponentsUsageStats( modulesWithDependences ) {
 	return Object.keys( modulesWithDependences )
-		.filter( ( moduleName ) =>
-			moduleName.indexOf( 'components/' ) === 0 &&
-				moduleName.indexOf( '/docs' ) === -1
+		.filter(
+			moduleName =>
+				moduleName.indexOf( 'components/' ) === 0 && moduleName.indexOf( '/docs' ) === -1
 		)
 		.reduce( ( target, moduleName ) => {
 			const name = moduleName.replace( 'components/', '' );
@@ -188,11 +186,9 @@ module.exports = function() {
 		const query = request.query.q;
 
 		if ( ! query ) {
-			response
-				.status( 400 )
-				.json( {
-					message: 'Missing required "q" parameter'
-				} );
+			response.status( 400 ).json( {
+				message: 'Missing required "q" parameter',
+			} );
 			return;
 		}
 
@@ -204,11 +200,9 @@ module.exports = function() {
 		const files = request.query.files;
 
 		if ( ! files ) {
-			response
-				.status( 400 )
-				.json( {
-					message: 'Missing required "files" parameter'
-				} );
+			response.status( 400 ).json( {
+				message: 'Missing required "files" parameter',
+			} );
 			return;
 		}
 
@@ -237,9 +231,7 @@ module.exports = function() {
 		}
 
 		if ( ! path || path.substring( 0, root.length + 1 ) !== root + fspath.sep ) {
-			response
-				.status( 404 )
-				.send( 'File does not exist' );
+			response.status( 404 ).send( 'File does not exist' );
 			return;
 		}
 

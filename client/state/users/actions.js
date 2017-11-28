@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { USER_RECEIVE, USERS_REQUEST } from 'state/action-types';

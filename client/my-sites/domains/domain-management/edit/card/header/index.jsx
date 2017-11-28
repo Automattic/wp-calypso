@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -18,8 +18,8 @@ import SectionHeader from 'components/section-header';
 class Header extends React.Component {
 	static propTypes = {
 		domain: PropTypes.object.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-		settingPrimaryDomain: PropTypes.bool.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		settingPrimaryDomain: PropTypes.bool,
 	};
 
 	render() {
@@ -35,13 +35,13 @@ class Header extends React.Component {
 				<DomainTransferFlag domain={ domain } />
 
 				{ this.props.selectedSite &&
-				! this.props.selectedSite.jetpack && (
-					<PrimaryDomainButton
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						settingPrimaryDomain={ this.props.settingPrimaryDomain }
-					/>
-				) }
+					! this.props.selectedSite.jetpack && (
+						<PrimaryDomainButton
+							domain={ domain }
+							selectedSite={ this.props.selectedSite }
+							settingPrimaryDomain={ this.props.settingPrimaryDomain }
+						/>
+					) }
 			</SectionHeader>
 		);
 	}

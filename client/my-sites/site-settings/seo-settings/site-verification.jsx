@@ -1,12 +1,11 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
 import notices from 'notices';
-import { Set } from 'immutable';
 import { connect } from 'react-redux';
 import { get, includes, isString, omit, partial, pickBy } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -48,7 +47,7 @@ class SiteVerification extends Component {
 
 	state = {
 		...this.stateForSite( this.props.site ),
-		dirtyFields: Set(),
+		dirtyFields: new Set(),
 		invalidatedSiteObject: this.props.site,
 	};
 
@@ -75,7 +74,7 @@ class SiteVerification extends Component {
 			this.refreshSite();
 			this.setState( {
 				isSubmittingForm: false,
-				dirtyFields: Set(),
+				dirtyFields: new Set(),
 			} );
 		}
 
@@ -91,7 +90,7 @@ class SiteVerification extends Component {
 				{
 					...this.stateForSite( nextSite ),
 					invalidatedSiteObject: nextSite,
-					dirtyFields: Set(),
+					dirtyFields: new Set(),
 				},
 				this.refreshSite
 			);
@@ -102,7 +101,7 @@ class SiteVerification extends Component {
 		};
 
 		// Don't update state for fields the user has edited
-		nextState = omit( nextState, dirtyFields.toArray() );
+		nextState = omit( nextState, [ ...dirtyFields ] );
 
 		this.setState( {
 			...nextState,
@@ -167,8 +166,6 @@ class SiteVerification extends Component {
 
 	handleVerificationCodeChange( serviceCode ) {
 		return event => {
-			const { dirtyFields } = this.state;
-
 			if ( ! this.state.hasOwnProperty( serviceCode ) ) {
 				return;
 			}
@@ -182,11 +179,14 @@ class SiteVerification extends Component {
 				return;
 			}
 
+			const dirtyFields = new Set( this.state.dirtyFields );
+			dirtyFields.add( serviceCode );
+
 			this.setState( {
 				invalidCodes: [],
 				showPasteError: false,
 				[ serviceCode ]: event.target.value,
-				dirtyFields: dirtyFields.add( serviceCode ),
+				dirtyFields,
 			} );
 		};
 	}
@@ -204,11 +204,9 @@ class SiteVerification extends Component {
 			<FormInputValidation
 				isError={ true }
 				text={
-					isPasteError ? (
-						translate( 'Verification code should be copied and pasted into this field.' )
-					) : (
-						translate( 'Invalid site verification tag.' )
-					)
+					isPasteError
+						? translate( 'Verification code should be copied and pasted into this field.' )
+						: translate( 'Invalid site verification tag.' )
 				}
 			/>
 		);
@@ -304,17 +302,17 @@ class SiteVerification extends Component {
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				{ siteIsJetpack &&
-				isVerificationToolsActive === false && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ translate( 'Site Verification Services are disabled in Jetpack.' ) }
-					>
-						<NoticeAction onClick={ this.activateVerificationServices }>
-							{ translate( 'Enable' ) }
-						</NoticeAction>
-					</Notice>
-				) }
+					isVerificationToolsActive === false && (
+						<Notice
+							status="is-warning"
+							showDismiss={ false }
+							text={ translate( 'Site Verification Services are disabled in Jetpack.' ) }
+						>
+							<NoticeAction onClick={ this.activateVerificationServices }>
+								{ translate( 'Enable' ) }
+							</NoticeAction>
+						</Notice>
+					) }
 
 				<SectionHeader label={ translate( 'Site Verification Services' ) }>
 					<Button

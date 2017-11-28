@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import classNames from 'classnames';
@@ -23,7 +23,13 @@ import {
 	purchaseType,
 	showCreditCardExpiringWarning,
 } from 'lib/purchases';
-import { isDomainProduct, isGoogleApps, isPlan, isTheme } from 'lib/products-values';
+import {
+	isDomainProduct,
+	isDomainTransfer,
+	isGoogleApps,
+	isPlan,
+	isTheme,
+} from 'lib/products-values';
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'gridicons';
@@ -145,7 +151,7 @@ class PurchaseItem extends Component {
 		}
 
 		let icon;
-		if ( isDomainProduct( purchase ) ) {
+		if ( isDomainProduct( purchase ) || isDomainTransfer( purchase ) ) {
 			icon = 'domains';
 		} else if ( isTheme( purchase ) ) {
 			icon = 'themes';

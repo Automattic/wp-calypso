@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import keyMirror from 'key-mirror';
@@ -38,12 +38,14 @@ const domainAvailability = {
 	FORBIDDEN: 'forbidden_domain',
 	FORBIDDEN_SUBDOMAIN: 'forbidden_subdomain',
 	EMPTY_QUERY: 'empty_query',
+	INVALID_QUERY: 'invalid_query',
 	INVALID: 'invalid_domain',
 	INVALID_TLD: 'invalid_tld',
 	RESTRICTED: 'restricted_domain',
 	BLACKLISTED: 'blacklisted_domain',
 	MAPPED: 'mapped_domain',
 	RECENTLY_UNMAPPED: 'recently_mapped',
+	UNKOWN_ACTIVE: 'unknown_active_domain_with_wpcom',
 };
 
 const dnsTemplates = {
@@ -63,6 +65,7 @@ const dnsTemplates = {
 
 const domainProductSlugs = {
 	TRANSFER_IN: 'domain_transfer',
+	TRANSFER_IN_PRIVACY: 'domain_transfer_privacy',
 };
 
 export default {

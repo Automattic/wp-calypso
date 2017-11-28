@@ -1,57 +1,47 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { createReducer } from 'state/utils';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { DEFAULT_QUERY } from 'woocommerce/state/sites/products/utils';
 import {
-	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
 	WOOCOMMERCE_PRODUCTS_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
 export default createReducer( null, {
-	[ WOOCOMMERCE_PRODUCT_DELETE_SUCCESS ]: productsDeleteSuccess,
 	[ WOOCOMMERCE_PRODUCTS_REQUEST ]: productsRequest,
 	[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: productsRequestSuccess,
 } );
 
-export function productsRequestSuccess( state, action ) {
-	const prevState = state || {};
-	const { params, products } = action;
-	const page = params.page || null;
-	const productIds = products.map( p => {
-		return p.id;
-	} );
+export function productsRequestSuccess( state = {}, action ) {
+	// If not set in the action, default to the defaults
+	const page = get( action, 'params.page', DEFAULT_QUERY.page );
+	const search = get( action, 'params.search', DEFAULT_QUERY.search );
+
 	return {
-		...prevState,
+		...state,
 		currentPage: page,
-		productIds,
+		currentSearch: search,
 		requestedPage: null,
+		requestedSearch: null,
 	};
 }
 
-export function productsRequest( state, action ) {
-	const prevState = state || {};
-	const { params } = action;
-	const page = params.page || null;
+export function productsRequest( state = {}, action ) {
+	const page = get( action, 'params.page', null );
+	const search = get( action, 'params.search', null );
+
 	return {
-		...prevState,
+		...state,
 		requestedPage: page,
-	};
-}
-
-export function productsDeleteSuccess( state, action ) {
-	const prevState = state || {};
-	const prevProductIds = prevState.productIds || [];
-	const newProductIds = prevProductIds.filter( id => id !== action.data.id );
-	return {
-		...prevState,
-		productIds: newProductIds,
+		requestedSearch: search,
 	};
 }

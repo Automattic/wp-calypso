@@ -1,14 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { each, find, get, map, orderBy, size, slice, uniq } from 'lodash';
+import { each, filter, find, get, map, orderBy, size, slice, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
@@ -27,7 +27,8 @@ import { removeNotice, successNotice } from 'state/notices/actions';
 import Comment from 'my-sites/comments/comment';
 import CommentDetail from 'blocks/comment-detail';
 import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
-import CommentNavigation from '../comment-navigation';
+import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
+import CommentNavigation from 'my-sites/comments/comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
@@ -189,7 +190,7 @@ export class CommentList extends Component {
 	};
 
 	setBulkStatus = status => () => {
-		const { recordBulkAction, status: listStatus } = this.props;
+		const { postId, recordBulkAction, status: listStatus } = this.props;
 		const { selectedComments } = this.state;
 
 		this.props.removeNotice( 'comment-notice-bulk' );
@@ -212,7 +213,7 @@ export class CommentList extends Component {
 			} );
 		} );
 
-		recordBulkAction( status, selectedComments.length, listStatus );
+		recordBulkAction( status, selectedComments.length, listStatus, !! postId ? 'post' : 'site' );
 
 		this.showBulkNotice( status );
 
@@ -234,10 +235,12 @@ export class CommentList extends Component {
 			this.setState( { lastUndo: null } );
 		}
 
-		if ( doPersist ) {
-			this.updatePersistedComments( commentId, isUndo );
-		} else {
-			this.removeFromPersistedComments( commentId );
+		if ( ! isEnabled( 'comments/management/m3-design' ) ) {
+			if ( doPersist ) {
+				this.updatePersistedComments( commentId, isUndo );
+			} else {
+				this.removeFromPersistedComments( commentId );
+			}
 		}
 
 		this.props.removeNotice( `comment-notice-${ commentId }` );
@@ -393,6 +396,8 @@ export class CommentList extends Component {
 
 	toggleSelectAll = selectedComments => this.setState( { selectedComments } );
 
+	updateLastUndo = commentId => this.setState( { lastUndo: commentId } );
+
 	updatePersistedComments = ( commentId, isUndo ) => {
 		if ( isUndo ) {
 			this.removeFromPersistedComments( commentId );
@@ -407,7 +412,9 @@ export class CommentList extends Component {
 		const {
 			isCommentsTreeSupported,
 			isLoading,
+			isPostView,
 			page,
+			postId,
 			siteBlacklist,
 			siteId,
 			siteFragment,
@@ -440,10 +447,13 @@ export class CommentList extends Component {
 				) }
 				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
 
+				{ isPostView && <CommentListHeader postId={ postId } /> }
+
 				<CommentNavigation
 					commentsPage={ commentsPage }
 					isBulkEdit={ isBulkEdit }
 					isSelectedAll={ this.isSelectedAll() }
+					postId={ postId }
 					selectedCount={ size( selectedComments ) }
 					setBulkStatus={ this.setBulkStatus }
 					setSortOrder={ this.setSortOrder }
@@ -467,17 +477,19 @@ export class CommentList extends Component {
 								commentId={ commentId }
 								key={ `comment-${ siteId }-${ commentId }` }
 								isBulkMode={ isBulkEdit }
+								isPostView={ isPostView }
 								isSelected={ this.isCommentSelected( commentId ) }
 								refreshCommentData={
 									isCommentsTreeSupported &&
 									! this.hasCommentJustMovedBackToCurrentStatus( commentId )
 								}
 								toggleSelected={ this.toggleCommentSelected }
+								updateLastUndo={ this.updateLastUndo }
 							/>
 						) ) }
 
 					{ isEnabled( 'comments/management/m3-design' ) &&
-					showPlaceholder && <Comment commentId={ 0 } key="comment-detail-placeholder" /> }
+						showPlaceholder && <Comment commentId={ 0 } key="comment-detail-placeholder" /> }
 
 					{ ! isEnabled( 'comments/management/m3-design' ) &&
 						map( commentsPage, commentId => (
@@ -502,7 +514,7 @@ export class CommentList extends Component {
 						) ) }
 
 					{ ! isEnabled( 'comments/management/m3-design' ) &&
-					showPlaceholder && <CommentDetailPlaceholder key="comment-detail-placeholder" /> }
+						showPlaceholder && <CommentDetailPlaceholder key="comment-detail-placeholder" /> }
 
 					{ showEmptyContent && (
 						<EmptyContent
@@ -516,28 +528,34 @@ export class CommentList extends Component {
 				</ReactCSSTransitionGroup>
 
 				{ ! showPlaceholder &&
-				! showEmptyContent && (
-					<Pagination
-						key="comment-list-pagination"
-						page={ validPage }
-						pageClick={ this.changePage }
-						perPage={ COMMENTS_PER_PAGE }
-						total={ commentsCount }
-					/>
-				) }
+					! showEmptyContent && (
+						<Pagination
+							key="comment-list-pagination"
+							page={ validPage }
+							pageClick={ this.changePage }
+							perPage={ COMMENTS_PER_PAGE }
+							total={ commentsCount }
+						/>
+					) }
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { siteId, status } ) => {
-	const comments = map( getSiteCommentsTree( state, siteId, status ), 'commentId' );
+const mapStateToProps = ( state, { postId, siteId, status } ) => {
+	const siteCommentsTree = getSiteCommentsTree( state, siteId, status );
+	const isPostView = !! postId;
+	const comments = isPostView
+		? map( filter( siteCommentsTree, { postId } ), 'commentId' )
+		: map( siteCommentsTree, 'commentId' );
+
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,
 		isCommentsTreeSupported:
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' ),
 		isLoading,
+		isPostView,
 		siteBlacklist: getSiteSetting( state, siteId, 'blacklist_keys' ),
 		siteId,
 	};

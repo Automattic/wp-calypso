@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -124,11 +124,11 @@ class ThemesSiteSelectorModal extends React.Component {
 						mainAction={ this.trackAndCallAction }
 						mainActionLabel={ selectedOption.label }
 						getMainUrl={
-							selectedOption.getUrl ? (
-								function( siteId ) {
-									return selectedOption.getUrl( selectedThemeId, siteId );
-								}
-							) : null
+							selectedOption.getUrl
+								? function( siteId ) {
+										return selectedOption.getUrl( selectedThemeId, siteId );
+									}
+								: null
 						}
 					>
 						<Theme isActionable={ false } theme={ theme } />

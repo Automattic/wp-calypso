@@ -109,7 +109,7 @@ export const Login = createReactClass( {
 								<FormTextInput
 									name="login"
 									disabled={ requires2fa || inProgress }
-									placeholder={ translate( 'Username or email address' ) }
+									placeholder={ translate( 'Email address or username' ) }
 									onFocus={ this.recordFocusEvent( 'Username or email address' ) }
 									value={ this.state.login }
 									onChange={ this.handleChange }

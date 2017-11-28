@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -21,9 +21,7 @@ import * as ShortcodesActions from 'lib/shortcodes/actions';
 import ShortcodeData from './data';
 import ShortcodeFrame from './frame';
 
-export default class extends React.Component {
-	static displayName = 'Shortcode';
-
+export default class Shortcode extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		children: PropTypes.string.isRequired,

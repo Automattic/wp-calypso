@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -29,18 +29,19 @@ import notices from 'notices';
 import analytics from 'lib/analytics';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import getHappychatUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import {
 	isTicketSupportEligible,
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
 } from 'state/help/ticket/selectors';
-import HappychatConnection from 'components/happychat/connection';
+import HappychatConnection from 'components/happychat/connection-connected';
 import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import {
-	sendChatMessage as sendHappychatMessage,
+	sendMessage as sendHappychatMessage,
 	sendUserInfo,
 } from 'state/happychat/connection/actions';
 import { openChat as openHappychat } from 'state/happychat/ui/actions';
@@ -62,7 +63,6 @@ import {
 } from 'state/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
-import { PLAN_BUSINESS, PLAN_PERSONAL, PLAN_PREMIUM } from 'lib/plans/constants';
 
 /**
  * Module variables
@@ -76,8 +76,10 @@ const SUPPORT_LIVECHAT = 'SUPPORT_LIVECHAT';
 const SUPPORT_TICKET = 'SUPPORT_TICKET';
 const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
-const startShowingGM17ClosureNoticeAt = i18n.moment( 'Mon, 4 Sep 2017 07:00:00 +0000' );
-const stopShowingGM17ClosureNoticeAt = i18n.moment( 'Tue, 19 Sep 2017 07:00:00 +0000' );
+const startShowingThanksgiving2017ClosureNoticeAt = i18n.moment(
+	'Thu, 23 Nov 2017 00:00:00 +0000'
+);
+const stopShowingThanksgiving2017ClosureNoticeAt = i18n.moment( 'Fri, 24 Nov 2017 00:00:00 +0000' );
 
 class HelpContact extends React.Component {
 	state = {
@@ -144,7 +146,7 @@ class HelpContact extends React.Component {
 		this.props.openHappychat();
 		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
 
-		this.props.sendUserInfo( howCanWeHelp, howYouFeel, site );
+		this.props.sendUserInfo( this.props.getUserInfo( { howCanWeHelp, howYouFeel, site } ) );
 		this.props.sendHappychatMessage( message, { includeInSummary: true } );
 
 		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
@@ -623,7 +625,7 @@ class HelpContact extends React.Component {
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView = () => {
-		const { confirmation, olark } = this.state;
+		const { confirmation } = this.state;
 		const { translate, selectedSitePlanSlug } = this.props;
 
 		if ( confirmation ) {
@@ -683,23 +685,14 @@ class HelpContact extends React.Component {
 
 		const currentDate = Date.now();
 
-		// Customers sent to Directly and Forum are not affected by the GM closures
-		const isUserAffectedByGM17Closure =
+		// Customers sent to Directly and Forum are not affected by the Thanksgiving closures
+		const isUserAffectedByThanksgiving2017Closure =
 			supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
-		// Paid users will still have ticket support through the GM
-		const doesUserHavePaidPlan =
-			[ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS ].indexOf( selectedSitePlanSlug ) >= 0;
 
 		const shouldShowClosureNotice =
-			isUserAffectedByGM17Closure &&
-			currentDate > startShowingGM17ClosureNoticeAt &&
-			currentDate < stopShowingGM17ClosureNoticeAt;
-
-		// When support is closed for the GM, the contact form should hide for non-paid plans that are affected by the closure.
-		// This leaves the form open for paid plans and users who are sent to Directly/Forums for support.
-		// Note: this hides the form for Jetpack plans as well, which has been noted as acceptable for the GM.
-		const shouldHideContactForm =
-			olark.isSupportClosed && isUserAffectedByGM17Closure && ! doesUserHavePaidPlan;
+			isUserAffectedByThanksgiving2017Closure &&
+			currentDate > startShowingThanksgiving2017ClosureNoticeAt &&
+			currentDate < stopShowingThanksgiving2017ClosureNoticeAt;
 
 		return (
 			<div>
@@ -714,7 +707,7 @@ class HelpContact extends React.Component {
 						showDismiss={ false }
 					/>
 				) }
-				{ ! shouldHideContactForm && <HelpContactForm { ...contactFormProps } /> }
+				<HelpContactForm { ...contactFormProps } />
 			</div>
 		);
 	};
@@ -731,7 +724,7 @@ class HelpContact extends React.Component {
 				>
 					{ this.getView() }
 				</Card>
-				<HappychatConnection />
+				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				<QueryOlark />
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
@@ -747,6 +740,7 @@ export default connect(
 		return {
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
+			getUserInfo: getHappychatUserInfo( state ),
 			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
 			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
@@ -758,6 +752,7 @@ export default connect(
 			ticketSupportEligible: isTicketSupportEligible( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
+			shouldStartHappychatConnection: ! isRequestingSites( state ) && helpSelectedSiteId,
 			isRequestingSites: isRequestingSites( state ),
 			isSelectedHelpSiteOnPaidPlan: isCurrentPlanPaid( state, helpSelectedSiteId ),
 			selectedSitePlanSlug: selectedSitePlan && selectedSitePlan.product_slug,

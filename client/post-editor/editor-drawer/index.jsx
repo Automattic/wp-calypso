@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -85,8 +85,6 @@ class EditorDrawer extends Component {
 		onSave: PropTypes.func,
 		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
-		setNestedSidebar: PropTypes.func,
-		selectRevision: PropTypes.func,
 	};
 
 	onExcerptChange( event ) {
@@ -276,7 +274,7 @@ class EditorDrawer extends Component {
 			return;
 		}
 
-		return <EditorMoreOptionsCopyPost type={ type } />;
+		return <EditorMoreOptionsCopyPost />;
 	}
 
 	renderMoreOptions() {
@@ -318,24 +316,22 @@ class EditorDrawer extends Component {
 		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
 		const postDate = get( this.props.post, 'date', null );
 		const postStatus = get( this.props.post, 'status', null );
-		const { translate } = this.props;
+		const { translate, type } = this.props;
 
 		return (
 			<Accordion title={ translate( 'Status' ) } e2eTitle="status">
 				<EditPostStatus
 					savedPost={ this.props.savedPost }
 					postDate={ postDate }
-					type={ this.props.type }
 					onSave={ this.props.onSave }
 					onTrashingPost={ this.props.onTrashingPost }
 					onPrivatePublish={ this.props.onPrivatePublish }
 					setPostDate={ this.props.setPostDate }
 					site={ this.props.site }
 					status={ postStatus }
+					type={ type }
 					isPostPrivate={ this.props.isPostPrivate }
 					confirmationSidebarStatus={ this.props.confirmationSidebarStatus }
-					setNestedSidebar={ this.props.setNestedSidebar }
-					selectRevision={ this.props.selectRevision }
 				/>
 			</Accordion>
 		);
@@ -377,6 +373,7 @@ const enhance = flow(
 				isJetpack: isJetpackSite( state, siteId ),
 				isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 				jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
+				type,
 				typeObject: getPostType( state, siteId, type ),
 			};
 		},

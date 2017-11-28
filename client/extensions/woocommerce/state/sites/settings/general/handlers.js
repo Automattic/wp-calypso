@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { areSettingsGeneralLoaded } from 'woocommerce/state/sites/settings/general/selectors';

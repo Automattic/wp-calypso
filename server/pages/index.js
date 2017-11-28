@@ -9,7 +9,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, pick, forEach, intersection } from 'lodash';
+import { get, forEach, intersection } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,11 +18,10 @@ import config from 'config';
 import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import sectionsModule from '../../client/sections';
-import { serverRouter, getCacheKey } from 'isomorphic-routing';
+import { serverRouter } from 'isomorphic-routing';
 import { serverRender, serverRenderError } from 'render';
-import stateCache from 'state-cache';
-import { createReduxStore, reducer } from 'state';
-import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
+import { createReduxStore } from 'state';
+import { LOCALE_SET } from 'state/action-types';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 
@@ -37,6 +36,7 @@ const staticFiles = [
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
 	{ path: 'style-rtl.css' },
+	{ path: 'style-debug-rtl.css' },
 ];
 
 const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
@@ -49,20 +49,13 @@ const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
 
 // List of browser languages to show pride styling for.
 // Add a '*' element to show the styling for all visitors.
-const prideLanguages = [ 'en-au' ];
+const prideLanguages = [];
 
 // List of geolocated locations to show pride styling for.
 // Geolocation may not be 100% accurate.
-const prideLocations = [ 'au' ];
+const prideLocations = [];
 
 const sections = sectionsModule.get();
-
-// TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
-function getInitialServerState( serializedServerState ) {
-	// Bootstrapped state from a server-render
-	const serverState = reducer( serializedServerState, { type: DESERIALIZE } );
-	return pick( serverState, Object.keys( serializedServerState ) );
-}
 
 const ASSETS_PATH = path.join( __dirname, '../', 'bundler', 'assets.json' );
 const getAssets = ( () => {
@@ -86,8 +79,7 @@ function generateStaticUrls() {
 	const assets = getAssets();
 
 	forEach( assets, ( asset, name ) => {
-		urls[ name ] =
-			config( 'env' ) === 'development' ? asset.js : asset.js.replace( '.js', '.min.js' );
+		urls[ name ] = asset.js;
 	} );
 
 	return urls;
@@ -141,17 +133,10 @@ function getAcceptedLanguagesFromHeader( header ) {
 }
 
 function getDefaultContext( request ) {
-	let initialServerState = {};
 	const bodyClasses = [];
-	const cacheKey = getCacheKey( request );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
-	let sectionCss, sectionCssRtl;
-
-	if ( cacheKey ) {
-		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
-		initialServerState = getInitialServerState( serializeCachedServerState );
-	}
+	let sectionCss;
 
 	// Note: The x-geoip-country-code header should *not* be considered 100% accurate.
 	// It should only be used for guestimating the visitor's location.
@@ -166,9 +151,10 @@ function getDefaultContext( request ) {
 	}
 
 	if ( request.context && request.context.sectionCss ) {
-		const urls = utils.getCssUrls( request.context.sectionCss );
-		sectionCss = urls.ltr;
-		sectionCssRtl = urls.rtl;
+		sectionCss = {
+			id: request.context.sectionCss,
+			urls: utils.getCssUrls( request.context.sectionCss ),
+		};
 	}
 
 	const shouldUseSingleCDN =
@@ -189,7 +175,7 @@ function getDefaultContext( request ) {
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
-		store: createReduxStore( initialServerState ),
+		store: createReduxStore( {} ),
 		shouldUsePreconnect: config.isEnabled( 'try/preconnect' ) && !! request.query.enablePreconnect,
 		shouldUsePreconnectGoogle:
 			config.isEnabled( 'try/preconnect' ) && !! request.query.enablePreconnectGoogle,
@@ -204,7 +190,6 @@ function getDefaultContext( request ) {
 		shouldUseSingleCDN,
 		bodyClasses,
 		sectionCss,
-		sectionCssRtl,
 	} );
 
 	context.app = {
@@ -368,7 +353,7 @@ function setUpRoute( req, res, next ) {
 }
 
 function render404( request, response ) {
-	response.status( 404 ).render( '404.jade', {
+	response.status( 404 ).render( '404', {
 		urls: generateStaticUrls(),
 	} );
 }
@@ -521,7 +506,7 @@ module.exports = function() {
 			? primaryBlogUrl + '/wp-admin'
 			: 'https://dashboard.wordpress.com/wp-admin/';
 
-		res.render( 'browsehappy.jade', {
+		res.render( 'browsehappy', {
 			...req.context,
 			dashboardUrl,
 		} );

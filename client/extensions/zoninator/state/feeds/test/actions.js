@@ -10,10 +10,11 @@ import { expect } from 'chai';
  */
 import {
 	ZONINATOR_REQUEST_FEED,
+	ZONINATOR_REQUEST_FEED_ERROR,
 	ZONINATOR_SAVE_FEED,
 	ZONINATOR_UPDATE_FEED,
 } from '../../action-types';
-import { requestFeed, saveFeed, updateFeed } from '../actions';
+import { requestFeed, requestFeedError, saveFeed, updateFeed } from '../actions';
 
 describe( 'actions', () => {
 	const siteId = 1234;
@@ -27,6 +28,18 @@ describe( 'actions', () => {
 
 			expect( action ).to.deep.equal( {
 				type: ZONINATOR_REQUEST_FEED,
+				siteId,
+				zoneId,
+			} );
+		} );
+	} );
+
+	describe( 'requestFeedError()', () => {
+		it( 'should return an action object', () => {
+			const action = requestFeedError( siteId, zoneId );
+
+			expect( action ).to.deep.equal( {
+				type: ZONINATOR_REQUEST_FEED_ERROR,
 				siteId,
 				zoneId,
 			} );

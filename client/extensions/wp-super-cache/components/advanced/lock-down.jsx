@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -82,17 +82,15 @@ const LockDown = ( {
 							isCompact
 							status={ cache_lock_down ? 'is-warning' : 'is-info' }
 							text={
-								cache_lock_down ? (
-									translate(
-										'WordPress is locked down. Super Cache static files will not be deleted ' +
-											'when new comments are made.'
-									)
-								) : (
-									translate(
-										'WordPress is not locked down. New comments will refresh Super Cache ' +
-											'static files as normal.'
-									)
-								)
+								cache_lock_down
+									? translate(
+											'WordPress is locked down. Super Cache static files will not be deleted ' +
+												'when new comments are made.'
+										)
+									: translate(
+											'WordPress is not locked down. New comments will refresh Super Cache ' +
+												'static files as normal.'
+										)
 							}
 						/>
 					</div>

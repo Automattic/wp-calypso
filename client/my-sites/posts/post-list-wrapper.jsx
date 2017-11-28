@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -12,6 +12,7 @@ import React from 'react';
 import PostList from './post-list';
 import PostTypeList from 'my-sites/post-type-list';
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import { mapPostStatus } from 'lib/route/path';
 
 class PostListWrapper extends React.Component {
@@ -28,7 +29,7 @@ class PostListWrapper extends React.Component {
 			status: mapPostStatus( this.props.statusSlug ),
 			author: this.props.author,
 			search: this.props.search,
-			number: 40,
+			number: 20, // max supported by /me/posts endpoint for all-sites mode
 		};
 
 		if ( this.props.category ) {
@@ -41,24 +42,16 @@ class PostListWrapper extends React.Component {
 			query.meta = 'counts';
 		}
 
-		return (
-			<PostTypeList
-				query={ query }
-				largeTitles={ true }
-				wrapTitles={ true }
-				scrollContainer={ document.body }
-			/>
-		);
+		return <PostTypeList query={ query } scrollContainer={ document.body } />;
 	}
 
 	render() {
 		return (
 			<div>
-				{ config.isEnabled( 'posts/post-type-list' ) ? (
-					this.renderPostTypeList()
-				) : (
-					this.renderPostList()
-				) }
+				{ config.isEnabled( 'posts/post-type-list' ) &&
+				abtest( 'condensedPostList' ) === 'condensedPosts'
+					? this.renderPostTypeList()
+					: this.renderPostList() }
 			</div>
 		);
 	}

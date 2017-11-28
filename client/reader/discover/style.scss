@@ -1,33 +1,30 @@
 .is-reader-page .discover-attribution {
+	align-items: flex-start;
+	display: flex;
+	color: $gray;
 	font-size: 13px;
 	font-family: $sans;
-	text-transform: lowercase;
-	color: $gray;
-	position: relative;
-	margin-top: 13px;
 	margin-bottom: 8px;
+	margin-top: 13px;
+	position: relative;
+	text-transform: lowercase;
 
 	&.is-site {
 		margin-top: 15px;
 	}
 
-	.gridicons-arrow-right {
-		height: 12px;
-		width: 12px;
-		fill: $white;
-		background: $gray;
-		padding: 4px;
-		border-radius: 100%;
+	.discover-attribution__site-title {
+		flex-shrink: 0;
+		line-height: 1.6;
+		max-height: 13px * 1.6;
+		overflow: hidden;
 		position: relative;
-			top: 6px;
-		margin-right: 6px;
-
+		max-width: calc( 100% - 95px );
 	}
 
 	.gravatar {
 		background: $gray-light;
 		position: relative;
-			top: 6px;
 		margin: 1px 6px 1px 0;
 	}
 
@@ -46,24 +43,28 @@
 		margin-right: 6px;
 	}
 
-	.noticon {
-		font-size: 20px;
-		height: 20px;
-		background-color: lighten( $gray, 20% );
-		color: $white;
+	.site-icon {
 		margin-right: 6px;
+		background: lighten( $gray, 20% );
+
+		.gridicon {
+			color: $white;
+		}
+	}
+
+	.site-icon:not(.is-blank) {
+		background: inherit;
 	}
 
 	.follow-button {
-		position: static;
-		border: none;
-		padding: 0;
-		vertical-align: text-bottom;
-		color: lighten( $gray, 10% );
-		font-size: 13px;
-		line-height: 16px;
 		background: transparent;
+		border: 0;
+		color: lighten( $gray, 10% );
 		float: none;
+		font-size: 13px;
+		padding: 0;
+		position: relative;
+			top: -1px;
 
 		&.is-following {
 			color: $alert-green;

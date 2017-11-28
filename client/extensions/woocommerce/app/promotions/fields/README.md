@@ -33,6 +33,10 @@ Translated text to be shown below the field children.
 
 If true, show a "Required" annotation next to the label.
 
+### `isEnableable` (optional)
+
+If true, show a checkbox next to the label that will enable and disable this field.
+
 ### `fieldName` (required)
 
 The name of the promotion field.
@@ -40,6 +44,10 @@ The name of the promotion field.
 ### `placeholderText` (optional)
 
 The placeholder text to display within the input before anything is entered.
+
+### `defaultValue` (optional)
+
+The default value to be used upon initialization or when enabled if `isEnableable`.
 
 ### `value` (optional)
 

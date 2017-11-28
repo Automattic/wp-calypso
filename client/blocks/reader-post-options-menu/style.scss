@@ -22,8 +22,12 @@
 }
 
 .reader-post-options-menu__popover {
+	.popover__menu {
+		min-width: 212px;
+	}
 
-	.popover__menu .follow-button {
+	.popover__menu .follow-button,
+	.popover__menu .conversation-follow-button {
 		color: $blue-medium;
 		padding: 9px 16px;
 
@@ -46,13 +50,15 @@
 				fill: $white;
 			}
 
-			.follow-button__label {
+			.follow-button__label,
+			.conversation-follow-button__label {
 				color: $white;
 			}
 		}
 	}
 
-	.follow-button__label {
+	.follow-button__label,
+	.conversation-follow-button__label {
 		display: inline-block;
 		margin-left: 26px;
 	}

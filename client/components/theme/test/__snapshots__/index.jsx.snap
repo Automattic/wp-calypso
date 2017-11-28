@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Theme rendering with default display buttonContents should match snapshot 1`] = `
+<Card
+  className="theme is-actionable"
+  highlight={false}
+  tagName="div"
+>
+  <div
+    className="theme__content"
+  >
+    <a
+      className="theme__active-focus"
+      onClick={[Function]}
+    >
+      <span />
+    </a>
+    <a>
+      <img
+        className="theme__img"
+        id={null}
+        onClick={[Function]}
+        src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
+        srcSet="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
+      />
+    </a>
+    <div
+      className="theme__info"
+    >
+      <h2
+        className="theme__info-title"
+      >
+        Twenty Seventeen
+      </h2>
+      <span
+        className="theme__badge-price theme__badge-price-upgrade"
+      />
+      <ThemeMoreButton
+        active={false}
+        onMoreButtonClick={[Function]}
+        options={
+          Object {
+            "dummyAction": Object {
+              "action": [Function],
+              "label": "Dummy action",
+            },
+          }
+        }
+        themeId="twentyseventeen"
+      />
+    </div>
+  </div>
+</Card>
+`;

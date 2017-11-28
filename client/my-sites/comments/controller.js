@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { renderWithReduxStore } from 'lib/react-helpers';
 import React from 'react';
 import page from 'page';
 import { each, isNaN, startsWith } from 'lodash';
@@ -10,8 +9,11 @@ import { each, isNaN, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import CommentsManagement from './main';
+import { isEnabled } from 'config';
+import { renderWithReduxStore } from 'lib/react-helpers';
 import route, { addQueryArgs } from 'lib/route';
+import CommentsManagement from './main';
+import CommentView from 'my-sites/comment/main';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 
@@ -22,6 +24,23 @@ const sanitizeInt = number => {
 	return ! isNaN( integer ) && integer > 0 ? integer : false;
 };
 
+const sanitizeQueryAction = action => {
+	if ( ! action ) {
+		return null;
+	}
+
+	const validActions = {
+		approve: 'approved',
+		unapprove: 'unapproved',
+		trash: 'trash',
+		spam: 'spam',
+		delete: 'delete',
+	};
+	return validActions.hasOwnProperty( action.toLowerCase() )
+		? validActions[ action.toLowerCase() ]
+		: null;
+};
+
 const changePage = path => pageNumber => {
 	if ( window ) {
 		window.scrollTo( 0, 0 );
@@ -29,7 +48,8 @@ const changePage = path => pageNumber => {
 	return page( addQueryArgs( { page: pageNumber }, path ) );
 };
 
-export const siteComments = ( { params, path, query, store } ) => {
+export const siteComments = context => {
+	const { params, path, query } = context;
 	const siteFragment = route.getSiteFragment( path );
 
 	if ( ! siteFragment ) {
@@ -45,18 +65,18 @@ export const siteComments = ( { params, path, query, store } ) => {
 
 	renderWithReduxStore(
 		<CommentsManagement
-			basePath={ path }
 			changePage={ changePage( path ) }
 			page={ pageNumber }
 			siteFragment={ siteFragment }
 			status={ status }
 		/>,
 		'primary',
-		store
+		context.store
 	);
 };
 
-export const postComments = ( { params, path, query, store } ) => {
+export const postComments = context => {
+	const { params, path, query } = context;
 	const siteFragment = route.getSiteFragment( path );
 
 	if ( ! siteFragment ) {
@@ -77,7 +97,6 @@ export const postComments = ( { params, path, query, store } ) => {
 
 	renderWithReduxStore(
 		<CommentsManagement
-			basePath={ path }
 			changePage={ changePage( path ) }
 			page={ pageNumber }
 			postId={ postId }
@@ -85,24 +104,27 @@ export const postComments = ( { params, path, query, store } ) => {
 			status={ status }
 		/>,
 		'primary',
-		store
+		context.store
 	);
 };
 
-export const comment = ( { params, path, store } ) => {
+export const comment = context => {
+	const { params, path, query } = context;
 	const siteFragment = route.getSiteFragment( path );
 	const commentId = sanitizeInt( params.comment );
 
-	if ( ! commentId ) {
+	if ( ! commentId || ! isEnabled( 'comments/management/m3-design' ) ) {
 		return siteFragment
 			? page.redirect( `/comments/all/${ siteFragment }` )
 			: page.redirect( '/comments/all' );
 	}
 
+	const action = sanitizeQueryAction( query.action );
+
 	renderWithReduxStore(
-		<CommentsManagement basePath={ path } commentId={ commentId } siteFragment={ siteFragment } />,
+		<CommentView { ...{ action, commentId, siteFragment } } />,
 		'primary',
-		store
+		context.store
 	);
 };
 

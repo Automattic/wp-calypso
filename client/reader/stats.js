@@ -166,20 +166,7 @@ export const recordTracksRailcarInteract = partial(
 );
 
 export function recordTrackForPost( eventName, post = {}, additionalProps = {}, options ) {
-	recordTrack(
-		eventName,
-		assign(
-			{
-				blog_id: ! post.is_external && post.site_ID > 0 ? post.site_ID : undefined,
-				post_id: ! post.is_external && post.ID > 0 ? post.ID : undefined,
-				feed_id: post.feed_ID > 0 ? post.feed_ID : undefined,
-				feed_item_id: post.feed_item_ID > 0 ? post.feed_item_ID : undefined,
-				is_jetpack: post.is_jetpack,
-			},
-			additionalProps
-		),
-		options
-	);
+	recordTrack( eventName, assign( getTracksPropertiesForPost( post ), additionalProps ), options );
 	if ( post.railcar && tracksRailcarEventWhitelist.has( eventName ) ) {
 		// check for overrides for the railcar
 		recordTracksRailcarInteract(
@@ -190,6 +177,16 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {}, 
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
 		console.warn( 'Consider whitelisting reader track', eventName ); //eslint-disable-line no-console
 	}
+}
+
+export function getTracksPropertiesForPost( post = {} ) {
+	return {
+		blog_id: ! post.is_external && post.site_ID > 0 ? post.site_ID : undefined,
+		post_id: ! post.is_external && post.ID > 0 ? post.ID : undefined,
+		feed_id: post.feed_ID > 0 ? post.feed_ID : undefined,
+		feed_item_id: post.feed_item_ID > 0 ? post.feed_item_ID : undefined,
+		is_jetpack: post.is_jetpack,
+	};
 }
 
 export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {

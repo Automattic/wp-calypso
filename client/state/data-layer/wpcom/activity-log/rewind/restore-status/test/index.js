@@ -9,7 +9,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { receiveRestoreProgress } from '../';
+import { fromApi, updateProgress } from '../';
 import { updateRewindRestoreProgress } from 'state/activity-log/actions';
 
 const siteId = 77203074;
@@ -31,7 +31,7 @@ const FINISHED_RESPONSE = deepFreeze( {
 describe( 'receiveRestoreProgress', () => {
 	test( 'should dispatch updateRewindRestoreProgress', () => {
 		const dispatch = sinon.spy();
-		receiveRestoreProgress( { dispatch }, { siteId, timestamp, restoreId }, FINISHED_RESPONSE );
+		updateProgress( { dispatch }, { siteId, timestamp, restoreId }, fromApi( FINISHED_RESPONSE ) );
 		const expectedAction = updateRewindRestoreProgress( siteId, timestamp, restoreId, {
 			errorCode: '',
 			failureReason: '',
@@ -39,7 +39,6 @@ describe( 'receiveRestoreProgress', () => {
 			percent: 100,
 			status: 'finished',
 		} );
-		expectedAction.freshness = sinon.match.number;
 		expect( dispatch ).to.have.been.calledWith( expectedAction );
 	} );
 } );

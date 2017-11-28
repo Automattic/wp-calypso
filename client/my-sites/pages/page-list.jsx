@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -18,6 +18,7 @@ import { flowRight } from 'lodash';
 import ListEnd from 'components/list-end';
 import QueryPosts from 'components/data/query-posts';
 import Page from './page';
+import { preload } from 'sections-preload';
 import infiniteScroll from 'lib/mixins/infinite-scroll';
 import EmptyContent from 'components/empty-content';
 import NoResults from 'my-sites/no-results';
@@ -32,6 +33,10 @@ import {
 	isSitePostsLastPageForQuery,
 } from 'state/posts/selectors';
 import { getSite } from 'state/sites/selectors';
+
+function preloadEditor() {
+	preload( 'post-editor' );
+}
 
 export default class PageList extends Component {
 	static propTypes = {
@@ -98,6 +103,7 @@ const Pages = createReactClass( {
 		siteId: PropTypes.any,
 		hasSites: PropTypes.bool.isRequired,
 		trackScrollPage: PropTypes.func.isRequired,
+		query: PropTypes.object,
 	},
 
 	getDefaultProps() {
@@ -156,7 +162,8 @@ const Pages = createReactClass( {
 	},
 
 	getNoContentMessage() {
-		const { search, translate } = this.props;
+		const { query = {}, translate, site, siteId } = this.props;
+		const { search, status = 'published' } = query;
 
 		if ( search ) {
 			return (
@@ -171,13 +178,12 @@ const Pages = createReactClass( {
 			);
 		}
 
-		const { site, siteId, status = 'published' } = this.props;
 		const sitePart = ( site && site.slug ) || siteId;
-		const newPageLink = this.props.siteId ? '/page/' + sitePart : '/page';
+		const newPageLink = siteId ? '/page/' + sitePart : '/page';
 		let attributes;
 
 		switch ( status ) {
-			case 'drafts':
+			case 'draft,pending':
 				attributes = {
 					title: translate( "You don't have any drafts." ),
 					line: translate( 'Would you like to create one?' ),
@@ -185,7 +191,7 @@ const Pages = createReactClass( {
 					actionURL: newPageLink,
 				};
 				break;
-			case 'scheduled':
+			case 'future':
 				attributes = {
 					title: translate( "You don't have any scheduled pages yet." ),
 					line: translate( 'Would you like to create one?' ),
@@ -193,7 +199,7 @@ const Pages = createReactClass( {
 					actionURL: newPageLink,
 				};
 				break;
-			case 'trashed':
+			case 'trash':
 				attributes = {
 					title: translate( "You don't have any pages in your trash folder." ),
 					line: translate( 'Everything you write is solid gold.' ),
@@ -217,6 +223,7 @@ const Pages = createReactClass( {
 				line={ attributes.line }
 				action={ attributes.action }
 				actionURL={ attributes.actionURL }
+				actionHoverCallback={ preloadEditor }
 				illustration={ attributes.illustration }
 				illustrationWidth={ attributes.illustrationWidth }
 			/>
@@ -313,7 +320,9 @@ const Pages = createReactClass( {
 		}
 
 		const blogPostsPage = site &&
-		status === 'published' && <BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />;
+			status === 'published' && (
+				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+			);
 
 		return (
 			<div id="pages" className="pages__page-list">

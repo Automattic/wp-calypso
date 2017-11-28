@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import ReactDom from 'react-dom';
@@ -17,7 +17,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import SiteListFactory from 'lib/sites-list';
 import PostActions from 'lib/posts/actions';
 import PostEditStore from 'lib/posts/post-edit-store';
 import * as MediaConstants from 'lib/media/constants';
@@ -40,9 +39,8 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 /**
  * Module variables
  */
-const REGEXP_IMG = /<img\s[^>]*\/?>/gi,
-	SIZE_ORDER = [ 'thumbnail', 'medium', 'large', 'full' ],
-	sites = SiteListFactory();
+const REGEXP_IMG = /<img\s[^>]*\/?>/gi;
+const SIZE_ORDER = [ 'thumbnail', 'medium', 'large', 'full' ];
 
 let lastDirtyImage = null,
 	numOfImagesToUpdate = null;
@@ -125,7 +123,6 @@ function mediaButton( editor ) {
 		renderWithReduxStore(
 			<TinyMCEDropZone
 				editor={ editor }
-				sites={ sites }
 				onInsertMedia={ insertMedia }
 				onRenderModal={ renderModal }
 			/>,

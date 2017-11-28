@@ -1,18 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { cartItems } from 'lib/cart-values';
@@ -35,7 +33,6 @@ export class TransferDomain extends Component {
 		selectedSite: PropTypes.object,
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
-		translate: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -71,7 +68,21 @@ export class TransferDomain extends Component {
 
 		this.setState( { errorMessage: null } );
 
-		upgradesActions.addItem( cartItems.domainTransfer( { domain } ) );
+		const transferItems = [];
+
+		transferItems.push(
+			cartItems.domainTransfer( {
+				domain,
+			} )
+		);
+
+		transferItems.push(
+			cartItems.domainTransferPrivacy( {
+				domain,
+			} )
+		);
+
+		upgradesActions.addItems( transferItems );
 
 		page( '/checkout/' + selectedSiteSlug );
 	};
@@ -91,29 +102,20 @@ export class TransferDomain extends Component {
 	}
 
 	render() {
-		const {
-			cart,
-			domainsWithPlansOnly,
-			initialQuery,
-			productsList,
-			selectedSite,
-			translate,
-		} = this.props;
+		const { cart, domainsWithPlansOnly, initialQuery, productsList, selectedSite } = this.props;
 
 		const { errorMessage } = this.state;
 
 		return (
 			<span>
 				<QueryProductsList />
-
-				<HeaderCake onClick={ this.goBack }>{ translate( 'Use My Own Domain' ) }</HeaderCake>
-
 				{ errorMessage && <Notice status="is-error" text={ errorMessage } /> }
 
 				<TransferDomainStep
 					basePath={ this.props.basePath }
 					cart={ cart }
 					domainsWithPlansOnly={ domainsWithPlansOnly }
+					goBack={ this.goBack }
 					initialQuery={ initialQuery }
 					products={ productsList }
 					selectedSite={ selectedSite }
@@ -133,4 +135,4 @@ export default connect( state => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
 	productsList: getProductsList( state ),
-} ) )( localize( TransferDomain ) );
+} ) )( TransferDomain );

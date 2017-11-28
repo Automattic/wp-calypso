@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -41,27 +41,23 @@ import QuerySettingsGeneral from 'woocommerce/components/query-settings-general'
 class TaxesRates extends Component {
 	static propTypes = {
 		onEnabledChange: PropTypes.func.isRequired,
-		site: PropTypes.shape( {
-			slug: PropTypes.string,
-		} ),
+		siteId: PropTypes.number.isRequired,
+	};
+
+	maybeFetchRates = props => {
+		const { address, loadedSettingsGeneral, loadedTaxRates, siteId } = props;
+
+		if ( loadedSettingsGeneral && ! loadedTaxRates ) {
+			this.props.fetchTaxRates( siteId, address );
+		}
 	};
 
 	componentDidMount = () => {
-		const { address, loadedSettingsGeneral, loadedTaxRates, site } = this.props;
-
-		if ( site && site.ID ) {
-			if ( loadedSettingsGeneral && ! loadedTaxRates ) {
-				this.props.fetchTaxRates( site.ID, address );
-			}
-		}
+		this.maybeFetchRates( this.props );
 	};
 
 	componentWillReceiveProps = nextProps => {
-		if ( nextProps.loadedSettingsGeneral ) {
-			if ( ! nextProps.loadedTaxRates ) {
-				this.props.fetchTaxRates( nextProps.site.ID, nextProps.address );
-			}
-		}
+		this.maybeFetchRates( nextProps );
 	};
 
 	renderInfo = () => {
@@ -263,8 +259,8 @@ class TaxesRates extends Component {
 		return (
 			<div className="taxes__taxes-taxjar-notice">
 				{ translate(
-					'Sales tax calculations are provided by a third party: TaxJar. By enabling this option, ' +
-						'TaxJar will have access to some of your data.'
+					'Sales tax calculations are provided by WooCommerce Services. When this option is enabled, ' +
+						'WooCommerce Services will share some of your data with a third party.'
 				) }
 				<ExternalLink
 					icon
@@ -280,7 +276,7 @@ class TaxesRates extends Component {
 
 	render = () => {
 		const {
-			site,
+			siteId,
 			loadedSettingsGeneral,
 			loadedTaxRates,
 			onEnabledChange,
@@ -289,7 +285,7 @@ class TaxesRates extends Component {
 		} = this.props;
 
 		if ( ! loadedSettingsGeneral ) {
-			return <QuerySettingsGeneral siteId={ site && site.ID } />;
+			return <QuerySettingsGeneral siteId={ siteId } />;
 		}
 
 		if ( ! loadedTaxRates ) {
@@ -317,15 +313,11 @@ class TaxesRates extends Component {
 }
 
 function mapStateToProps( state, ownProps ) {
-	let siteId = undefined;
-	if ( ownProps.site ) {
-		siteId = ownProps.site.ID;
-	}
-	const address = getStoreLocation( state, siteId );
-	const loadedSettingsGeneral = areSettingsGeneralLoaded( state, siteId );
-	const areTaxesEnabled = areTaxCalculationsEnabled( state, siteId );
-	const loadedTaxRates = areTaxRatesLoaded( state, siteId );
-	const taxRates = getTaxRates( state, siteId );
+	const address = getStoreLocation( state, ownProps.siteId );
+	const loadedSettingsGeneral = areSettingsGeneralLoaded( state, ownProps.siteId );
+	const areTaxesEnabled = areTaxCalculationsEnabled( state, ownProps.siteId );
+	const loadedTaxRates = areTaxRatesLoaded( state, ownProps.siteId );
+	const taxRates = getTaxRates( state, ownProps.siteId );
 
 	return {
 		address,

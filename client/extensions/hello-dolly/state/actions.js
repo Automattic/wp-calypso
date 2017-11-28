@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * Internal dependencies
- *
- * @format
  */
 
 import { HELLO_DOLLY_NEXT_LYRIC } from './action-types';

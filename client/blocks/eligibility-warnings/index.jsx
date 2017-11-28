@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -61,40 +61,36 @@ export const EligibilityWarnings = ( {
 				eventProperties={ { context } }
 			/>
 			{ ! hasBusinessPlan &&
-			! isJetpack && (
-				<Banner
-					description={ translate(
-						'Also get unlimited themes, advanced customization, no ads, live chat support, and more.'
-					) }
-					feature={ 'plugins' === context ? FEATURE_UPLOAD_PLUGINS : FEATURE_UPLOAD_THEMES }
-					event={
-						'plugins' === context ? (
-							'calypso-plugin-eligibility-upgrade-nudge'
-						) : (
-							'calypso-theme-eligibility-upgrade-nudge'
-						)
-					}
-					plan={ PLAN_BUSINESS }
-					title={ translate( 'Business plan required' ) }
-				/>
-			) }
+				! isJetpack && (
+					<Banner
+						description={ translate(
+							'Also get unlimited themes, advanced customization, no ads, live chat support, and more.'
+						) }
+						feature={ 'plugins' === context ? FEATURE_UPLOAD_PLUGINS : FEATURE_UPLOAD_THEMES }
+						event={
+							'plugins' === context
+								? 'calypso-plugin-eligibility-upgrade-nudge'
+								: 'calypso-theme-eligibility-upgrade-nudge'
+						}
+						plan={ PLAN_BUSINESS }
+						title={ translate( 'Business plan required' ) }
+					/>
+				) }
 			{ hasBusinessPlan &&
-			! isJetpack &&
-			includes( bannerHolds, 'NOT_USING_CUSTOM_DOMAIN' ) && (
-				<Banner
-					className="eligibility-warnings__banner"
-					description={
-						'plugins' === context ? (
-							translate( 'To install this plugin, add a free custom domain.' )
-						) : (
-							translate( 'To upload themes, add a free custom domain.' )
-						)
-					}
-					href={ `/domains/manage/${ siteSlug }` }
-					icon="domains"
-					title={ translate( 'Custom domain required' ) }
-				/>
-			) }
+				! isJetpack &&
+				includes( bannerHolds, 'NOT_USING_CUSTOM_DOMAIN' ) && (
+					<Banner
+						className="eligibility-warnings__banner"
+						description={
+							'plugins' === context
+								? translate( 'To install this plugin, add a free custom domain.' )
+								: translate( 'To upload themes, add a free custom domain.' )
+						}
+						href={ `/domains/manage/${ siteSlug }` }
+						icon="domains"
+						title={ translate( 'Custom domain required' ) }
+					/>
+				) }
 
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
 				<HoldList holds={ listHolds } isPlaceholder={ isPlaceholder } siteSlug={ siteSlug } />
@@ -102,15 +98,15 @@ export const EligibilityWarnings = ( {
 			{ warnings.length > 0 && <WarningList warnings={ warnings } /> }
 
 			{ isEligible &&
-			0 === listHolds.length &&
-			0 === warnings.length && (
-				<Card className="eligibility-warnings__no-conflicts">
-					<Gridicon icon="thumbs-up" size={ 24 } />
-					<span>
-						{ translate( 'This site is eligible to install plugins and upload themes.' ) }
-					</span>
-				</Card>
-			) }
+				0 === listHolds.length &&
+				0 === warnings.length && (
+					<Card className="eligibility-warnings__no-conflicts">
+						<Gridicon icon="thumbs-up" size={ 24 } />
+						<span>
+							{ translate( 'This site is eligible to install plugins and upload themes.' ) }
+						</span>
+					</Card>
+				) }
 
 			<Card className="eligibility-warnings__confirm-box">
 				<div className="eligibility-warnings__confirm-text">

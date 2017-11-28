@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -164,7 +164,7 @@ class ListItem extends React.PureComponent {
 				return translate( 'Site Redirect' );
 
 			case domainTypes.TRANSFER:
-				return translate( 'Transfer' );
+				return translate( 'Incoming Domain Transfer' );
 
 			case domainTypes.WPCOM:
 				return translate( 'Included with Site' );

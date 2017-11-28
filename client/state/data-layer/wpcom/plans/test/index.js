@@ -1,11 +1,4 @@
 /** @format */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
 /**
  * Internal dependencies
  */
@@ -21,49 +14,40 @@ import { WPCOM_RESPONSE } from 'state/plans/test/fixture';
 describe( 'wpcom-api', () => {
 	describe( 'plans request', () => {
 		describe( '#requestPlans', () => {
-			test( 'should dispatch HTTP request to plans endpoint', () => {
+			test( 'should return HTTP request to plans endpoint', () => {
 				const action = { type: 'DUMMY' };
-				const dispatch = spy();
 
-				requestPlans( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
-					http( {
-						apiVersion: '1.4',
-						method: 'GET',
-						path: '/plans',
-						onSuccess: action,
-						onFailure: action,
-					} )
+				expect( requestPlans( action ) ).toEqual(
+					http(
+						{
+							apiVersion: '1.4',
+							method: 'GET',
+							path: '/plans',
+						},
+						action
+					)
 				);
 			} );
 		} );
 
 		describe( '#receivePlans', () => {
-			test( 'should dispatch plan updates', () => {
+			test( 'should return plan updates', () => {
 				const plans = WPCOM_RESPONSE;
 				const action = plansReceiveAction( plans );
-				const dispatch = spy();
 
-				receivePlans( { dispatch }, action, plans );
-
-				expect( dispatch ).to.have.been.calledTwice;
-				expect( dispatch ).to.have.been.calledWith( plansRequestSuccessAction() );
-				expect( dispatch ).to.have.been.calledWith( plansReceiveAction( plans ) );
+				expect( receivePlans( action, plans ) ).toEqual( [
+					plansRequestSuccessAction(),
+					plansReceiveAction( plans ),
+				] );
 			} );
 		} );
 
 		describe( '#receiveError', () => {
-			test( 'should dispatch error', () => {
+			test( 'should return error', () => {
 				const error = 'could not find plans';
 				const action = plansRequestFailureAction( error );
-				const dispatch = spy();
 
-				receiveError( { dispatch }, action, error );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( plansRequestFailureAction( error ) );
+				expect( receiveError( action, error ) ).toEqual( plansRequestFailureAction( error ) );
 			} );
 		} );
 	} );

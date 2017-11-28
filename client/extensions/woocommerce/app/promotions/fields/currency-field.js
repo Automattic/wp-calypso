@@ -7,45 +7,24 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import PriceInput from 'woocommerce/components/price-input';
 import FormField from './form-field';
 
-const CurrencyField = ( {
-	fieldName,
-	labelText,
-	explanationText,
-	placeholderText,
-	isRequired,
-	value,
-	edit,
-	currency,
-} ) => {
-	const renderedValue = ( 'undefined' !== typeof value ? value : '' );
+const CurrencyField = ( props ) => {
+	const { fieldName, explanationText, placeholderText, value, edit, currency } = props;
+	const renderedValue = ( 'undefined' !== typeof value && null !== value ? value : '' );
 
 	const onChange = ( e ) => {
 		const newValue = e.target.value;
-		if ( 0 === newValue.length ) {
-			edit( fieldName, '' );
-			return;
-		}
-
-		const numberValue = Number( newValue );
-		if ( 0 <= Number( newValue ) ) {
-			const formattedValue = getCurrencyFormatDecimal( numberValue, currency );
-			edit( fieldName, formattedValue );
-		}
+		edit( fieldName, String( newValue ) );
 	};
 
 	return (
-		<FormField
-			fieldName={ fieldName }
-			labelText={ labelText }
-			explanationText={ explanationText }
-			isRequired={ isRequired }
-		>
+		<FormField { ...props } >
 			<PriceInput
-				htmlFor={ fieldName + '-label' }
+				noWrap
+				size="4"
+				id={ fieldName + '-label' }
 				aria-describedby={ explanationText && fieldName + '-description' }
 				currency={ currency }
 				value={ renderedValue }
@@ -58,14 +37,11 @@ const CurrencyField = ( {
 
 CurrencyField.PropTypes = {
 	fieldName: PropTypes.string.isRequired,
-	labelText: PropTypes.string.isRequired,
 	explanationText: PropTypes.string,
 	placeholderText: PropTypes.string,
-	isRequired: PropTypes.bool,
 	value: PropTypes.number,
 	edit: PropTypes.func.isRequired,
 	currency: PropTypes.string.isRequired,
 };
 
 export default CurrencyField;
-

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -54,11 +54,15 @@ export const CommentDetailActions = ( {
 	return (
 		<CommentDetailActionsContainer { ...{ compact } }>
 			{ hasAction( commentStatus, 'reply' ) &&
-			compact && (
-				<Button compact={ compact } className="comment-detail__action-edit" onClick={ toggleReply }>
-					<Gridicon icon="reply" />
-				</Button>
-			) }
+				compact && (
+					<Button
+						compact={ compact }
+						className="comment-detail__action-edit"
+						onClick={ toggleReply }
+					>
+						<Gridicon icon="reply" />
+					</Button>
+				) }
 
 			{ hasAction( commentStatus, 'like' ) && (
 				<Button
@@ -89,16 +93,16 @@ export const CommentDetailActions = ( {
 			) }
 
 			{ hasAction( commentStatus, 'edit' ) &&
-			! compact && (
-				<Button
-					{ ...{ borderless: ! compact, compact } }
-					className="comment-detail__action-edit"
-					onClick={ toggleEditMode }
-				>
-					<Gridicon icon="pencil" />
-					{ compact || <span>{ translate( 'Edit' ) }</span> }
-				</Button>
-			) }
+				! compact && (
+					<Button
+						{ ...{ borderless: ! compact, compact } }
+						className="comment-detail__action-edit"
+						onClick={ toggleEditMode }
+					>
+						<Gridicon icon="pencil" />
+						{ compact || <span>{ translate( 'Edit' ) }</span> }
+					</Button>
+				) }
 
 			{ hasAction( commentStatus, 'spam' ) && (
 				<Button

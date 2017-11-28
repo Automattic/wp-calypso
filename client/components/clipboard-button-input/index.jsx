@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import { localize } from 'i18n-calypso';
 import { withoutHttp } from 'lib/url';
 import ClipboardButton from 'components/forms/clipboard-button';
 import FormTextInput from 'components/forms/form-text-input';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ClipboardButtonInputExport extends React.Component {
 	constructor( props ) {
@@ -54,6 +56,7 @@ class ClipboardButtonInputExport extends React.Component {
 				isCopied: false,
 			} );
 		}, 4000 );
+		this.props.recordTracksEvent( 'calypso_editor_clipboard_url_button_click' );
 	};
 
 	render() {
@@ -63,7 +66,15 @@ class ClipboardButtonInputExport extends React.Component {
 		return (
 			<span className={ classes }>
 				<FormTextInput
-					{ ...omit( this.props, 'className', 'hideHttp', 'moment', 'numberFormat', 'translate' ) }
+					{ ...omit(
+						this.props,
+						'className',
+						'hideHttp',
+						'moment',
+						'numberFormat',
+						'translate',
+						'recordTracksEvent'
+					) }
 					value={ hideHttp ? withoutHttp( value ) : value }
 					type="text"
 					selectOnFocus
@@ -75,15 +86,15 @@ class ClipboardButtonInputExport extends React.Component {
 					disabled={ disabled }
 					compact
 				>
-					{ this.state.isCopied ? (
-						translate( 'Copied!' )
-					) : (
-						translate( 'Copy', { context: 'verb' } )
-					) }
+					{ this.state.isCopied
+						? translate( 'Copied!' )
+						: translate( 'Copy', { context: 'verb' } ) }
 				</ClipboardButton>
 			</span>
 		);
 	}
 }
 
-export default localize( ClipboardButtonInputExport );
+export default connect( null, {
+	recordTracksEvent,
+} )( localize( ClipboardButtonInputExport ) );

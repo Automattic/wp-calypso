@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -84,11 +84,9 @@ class DebugTab extends Component {
 						<div className="wp-super-cache__debug-fieldsets">
 							<FormFieldset>
 								<FormLabel htmlFor="debugLog">
-									{ wp_super_cache_debug ? (
-										translate( 'Currently logging to:' )
-									) : (
-										translate( 'Last logged to:' )
-									) }
+									{ wp_super_cache_debug
+										? translate( 'Currently logging to:' )
+										: translate( 'Last logged to:' ) }
 								</FormLabel>
 								<FormTextInput disabled id="debugLog" value={ cache_path + wp_cache_debug_log } />
 								<Button

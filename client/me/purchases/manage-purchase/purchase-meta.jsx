@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import PropTypes from 'prop-types';
@@ -28,7 +28,7 @@ import {
 	paymentLogoType,
 } from 'lib/purchases';
 import { isMonthly } from 'lib/plans/constants';
-import { isDomainRegistration } from 'lib/products-values';
+import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
@@ -51,7 +51,7 @@ class PurchaseMeta extends Component {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ).isRequired,
 		selectedPurchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool, PropTypes.undefined ] ),
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	};
 
 	static defaultProps = {
@@ -67,7 +67,7 @@ class PurchaseMeta extends Component {
 		const period =
 			productSlug && isMonthly( productSlug ) ? translate( 'month' ) : translate( 'year' );
 
-		if ( isOneTimePurchase( purchase ) ) {
+		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 			return translate(
 				'%(currencySymbol)s%(amount)f %(currencyCode)s {{period}}(one-time){{/period}}',
 				{
@@ -216,7 +216,7 @@ class PurchaseMeta extends Component {
 		const purchase = getPurchase( this.props );
 		const { translate } = this.props;
 
-		if ( isOneTimePurchase( purchase ) ) {
+		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 			return null;
 		}
 
@@ -288,6 +288,20 @@ class PurchaseMeta extends Component {
 		);
 	}
 
+	renderExpiration() {
+		const purchase = getPurchase( this.props );
+		if ( isDomainTransfer( purchase ) ) {
+			return null;
+		}
+
+		return (
+			<li>
+				<em className="manage-purchase__detail-label">{ this.renderRenewsOrExpiresOnLabel() }</em>
+				<span className="manage-purchase__detail">{ this.renderRenewsOrExpiresOn() }</span>
+			</li>
+		);
+	}
+
 	renderPlaceholder() {
 		return (
 			<ul className="manage-purchase__meta">
@@ -316,12 +330,7 @@ class PurchaseMeta extends Component {
 						<em className="manage-purchase__detail-label">{ translate( 'Price' ) }</em>
 						<span className="manage-purchase__detail">{ this.renderPrice() }</span>
 					</li>
-					<li>
-						<em className="manage-purchase__detail-label">
-							{ this.renderRenewsOrExpiresOnLabel() }
-						</em>
-						<span className="manage-purchase__detail">{ this.renderRenewsOrExpiresOn() }</span>
-					</li>
+					{ this.renderExpiration() }
 					{ this.renderPaymentDetails() }
 				</ul>
 				{ this.renderContactSupportToRenewMessage() }

@@ -1,23 +1,21 @@
+/** @format */
 /**
  * Module dependencies
  */
+
 const fs = require( 'fs' ),
 	path = require( 'path' ),
 	spawn = require( 'child_process' ).spawn,
 	debug = require( 'debug' )( 'calypso:bundler:css-hot-reload' ),
 	chalk = require( 'chalk' ),
-	chokidar = require('chokidar'),
-	md5File = require('md5-file');
+	chokidar = require( 'chokidar' ),
+	md5File = require( 'md5-file' );
 
 /**
  * Initialize server CSS hot-reloading logic
  */
 function setup( io ) {
-
-	const SCSS_PATHS = [
-		path.join( '.', 'assets', 'stylesheets' ),
-		path.join( '.', 'client' ),
-	];
+	const SCSS_PATHS = [ path.join( '.', 'assets', 'stylesheets' ), path.join( '.', 'client' ) ];
 	const ROOT_DIR = path.resolve( __dirname, '..', '..' );
 	const PUBLIC_DIR = path.join( ROOT_DIR, 'public' );
 
@@ -33,14 +31,13 @@ function setup( io ) {
 			return;
 		}
 
-		io.of( '/css-hot-reload' ).emit( 'css-hot-reload',
-			{ status: 'building' } );
+		io.of( '/css-hot-reload' ).emit( 'css-hot-reload', { status: 'building' } );
 
 		debug( 'spawning %o', 'npm run build-css' );
 		cssMake = spawn( 'npm', [ 'run', 'build-css' ], {
 			shell: true,
 			cwd: ROOT_DIR,
-			stdio: [ 'ignore', 'pipe', 'pipe' ]
+			stdio: [ 'ignore', 'pipe', 'pipe' ],
 		} );
 
 		errors = '';
@@ -81,18 +78,19 @@ function setup( io ) {
 			changedFiles = updateChangedCssFiles();
 			if ( 0 !== changedFiles.length ) {
 				debug( chalk.green( 'css reload' ) );
-				io.of( '/css-hot-reload' ).emit( 'css-hot-reload',
-					{ status: 'reload', changedFiles: changedFiles } );
+				io
+					.of( '/css-hot-reload' )
+					.emit( 'css-hot-reload', { status: 'reload', changedFiles: changedFiles } );
 			} else {
 				debug( chalk.green( 'css up to date' ) );
-				io.of( '/css-hot-reload' ).emit( 'css-hot-reload',
-					{ status: 'up-to-date' } );
+				io.of( '/css-hot-reload' ).emit( 'css-hot-reload', { status: 'up-to-date' } );
 			}
 		} else {
 			// 'make build-css' failed
 			debug( chalk.red( 'css build failed' ) );
-			io.of( '/css-hot-reload' ).emit( 'css-hot-reload',
-				{ status: 'build-failed', error: errors } );
+			io
+				.of( '/css-hot-reload' )
+				.emit( 'css-hot-reload', { status: 'build-failed', error: errors } );
 		}
 	}
 
@@ -101,8 +99,10 @@ function setup( io ) {
 	 * in a list.
 	 */
 	function updateChangedCssFiles() {
-		var hash, filePath, changedFiles = [];
-		for( filePath in publicCssFiles ) {
+		var hash,
+			filePath,
+			changedFiles = [];
+		for ( filePath in publicCssFiles ) {
 			hash = md5File.sync( filePath );
 			if ( hash !== publicCssFiles[ filePath ] ) {
 				publicCssFiles[ filePath ] = hash;
@@ -117,7 +117,13 @@ function setup( io ) {
 
 	fs.readdirSync( PUBLIC_DIR ).forEach( function( file ) {
 		if ( '.css' === file.slice( -4 ) ) {
-			var fullPath = path.join( PUBLIC_DIR, file );
+			const fullPath = path.join( PUBLIC_DIR, file );
+			publicCssFiles[ fullPath ] = md5File.sync( fullPath );
+		}
+	} );
+	fs.readdirSync( path.join( PUBLIC_DIR, 'sections' ) ).forEach( function( file ) {
+		if ( '.css' === file.slice( -4 ) ) {
+			const fullPath = path.join( PUBLIC_DIR, 'sections', file );
 			publicCssFiles[ fullPath ] = md5File.sync( fullPath );
 		}
 	} );
@@ -127,7 +133,7 @@ function setup( io ) {
 	var watcher = chokidar.watch( SCSS_PATHS, {
 		ignored: /^.*\.(js[x]?|md|json|unison\.tmp)$/,
 		usePolling: false,
-		persistent: true
+		persistent: true,
 	} );
 
 	// The add/addDir events are fired during initialization generating an
@@ -138,7 +144,6 @@ function setup( io ) {
 			spawnMake();
 		}
 	} );
-
 }
 
 /**

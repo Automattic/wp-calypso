@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React, { Component } from 'react';
@@ -81,15 +81,15 @@ class SiteSettingsFormWriting extends Component {
 				className="site-settings__general-settings"
 			>
 				{ this.props.isJetpackSite &&
-				this.props.jetpackMasterbarSupported && (
-					<div>
-						{ this.renderSectionHeader( translate( 'WordPress.com toolbar' ), false ) }
-						<Masterbar
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-						/>
-					</div>
-				) }
+					this.props.jetpackMasterbarSupported && (
+						<div>
+							{ this.renderSectionHeader( translate( 'WordPress.com toolbar' ), false ) }
+							<Masterbar
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+							/>
+						</div>
+					) }
 
 				{ config.isEnabled( 'manage/site-settings/categories' ) && (
 					<div className="site-settings__taxonomies">
@@ -113,19 +113,19 @@ class SiteSettingsFormWriting extends Component {
 					updateFields={ updateFields }
 				/>
 				{ this.props.isJetpackSite &&
-				this.props.jetpackSettingsUISupported && (
-					<div>
-						{ this.renderSectionHeader( translate( 'Media' ) ) }
-						<MediaSettings
-							siteId={ this.props.siteId }
-							handleAutosavingToggle={ handleAutosavingToggle }
-							onChangeField={ onChangeField }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							fields={ fields }
-						/>
-					</div>
-				) }
+					this.props.jetpackSettingsUISupported && (
+						<div>
+							{ this.renderSectionHeader( translate( 'Media' ) ) }
+							<MediaSettings
+								siteId={ this.props.siteId }
+								handleAutosavingToggle={ handleAutosavingToggle }
+								onChangeField={ onChangeField }
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								fields={ fields }
+							/>
+						</div>
+					) }
 
 				{ this.renderSectionHeader( translate( 'Content types' ) ) }
 
@@ -138,44 +138,44 @@ class SiteSettingsFormWriting extends Component {
 				/>
 
 				{ this.props.isJetpackSite &&
-				this.props.jetpackSettingsUISupported && (
-					<div>
-						<QueryJetpackModules siteId={ this.props.siteId } />
+					this.props.jetpackSettingsUISupported && (
+						<div>
+							<QueryJetpackModules siteId={ this.props.siteId } />
 
-						<ThemeEnhancements
-							onSubmitForm={ this.props.handleSubmitForm }
-							handleAutosavingToggle={ handleAutosavingToggle }
-							handleAutosavingRadio={ handleAutosavingRadio }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							fields={ fields }
-						/>
-
-						{ config.isEnabled( 'press-this' ) && (
-							<PublishingTools
+							<ThemeEnhancements
 								onSubmitForm={ this.props.handleSubmitForm }
+								handleAutosavingToggle={ handleAutosavingToggle }
+								handleAutosavingRadio={ handleAutosavingRadio }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
 							/>
-						) }
-					</div>
-				) }
+
+							{ config.isEnabled( 'press-this' ) && (
+								<PublishingTools
+									onSubmitForm={ this.props.handleSubmitForm }
+									isSavingSettings={ isSavingSettings }
+									isRequestingSettings={ isRequestingSettings }
+									fields={ fields }
+								/>
+							) }
+						</div>
+					) }
 
 				{ config.isEnabled( 'press-this' ) &&
-				! this.isMobile() &&
-				! ( this.props.isJetpackSite || this.props.jetpackSettingsUISupported ) && (
-					<div>
-						{ this.renderSectionHeader(
-							translate( 'Press This', {
-								context: 'name of browser bookmarklet tool',
-							} ),
-							false
-						) }
+					! this.isMobile() &&
+					! ( this.props.isJetpackSite || this.props.jetpackSettingsUISupported ) && (
+						<div>
+							{ this.renderSectionHeader(
+								translate( 'Press This', {
+									context: 'name of browser bookmarklet tool',
+								} ),
+								false
+							) }
 
-						<PressThis />
-					</div>
-				) }
+							<PressThis />
+						</div>
+					) }
 			</form>
 		);
 	}

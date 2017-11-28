@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { isEmpty, trim } from 'lodash';
@@ -92,7 +92,9 @@ class EmailProvider extends Component {
 							placeholder={ placeholder }
 						/>
 						{ token &&
-						! isDataValid && <FormInputValidation text={ translate( 'Invalid Token' ) } isError /> }
+							! isDataValid && (
+								<FormInputValidation text={ translate( 'Invalid Token' ) } isError />
+							) }
 					</FormFieldset>
 
 					<FormFooter>

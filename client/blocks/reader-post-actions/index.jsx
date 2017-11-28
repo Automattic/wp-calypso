@@ -65,17 +65,17 @@ const ReaderPostActions = props => {
 				</li>
 			) }
 			{ showEdit &&
-			site &&
-			userCan( 'edit_post', post ) && (
-				<li className="reader-post-actions__item">
-					<PostEditButton
-						post={ post }
-						site={ site }
-						onClick={ onEditClick }
-						iconSize={ iconSize }
-					/>
-				</li>
-			) }
+				site &&
+				userCan( 'edit_post', post ) && (
+					<li className="reader-post-actions__item">
+						<PostEditButton
+							post={ post }
+							site={ site }
+							onClick={ onEditClick }
+							iconSize={ iconSize }
+						/>
+					</li>
+				) }
 			{ shouldShowShare( post ) && (
 				<li className="reader-post-actions__item">
 					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />

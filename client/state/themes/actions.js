@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { filter, map, property, delay, endsWith } from 'lodash';
@@ -11,6 +11,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { isExternal } from 'lib/url';
 import wpcom from 'lib/wp';
 import wporg from 'lib/wporg';
 import {
@@ -550,6 +551,11 @@ export function installAndTryAndCustomizeTheme( themeId, siteId ) {
  */
 export function tryAndCustomizeTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
+		const url = getThemeCustomizeUrl( getState(), themeId, siteId );
+		if ( isExternal( url ) ) {
+			window.location.href = url;
+			return;
+		}
 		page( getThemeCustomizeUrl( getState(), themeId, siteId ) );
 	};
 }

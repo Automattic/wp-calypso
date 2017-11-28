@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 import { drop, isEmpty, join, find, split, values } from 'lodash';
 

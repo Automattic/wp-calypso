@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -178,7 +178,7 @@ class ProductCreate extends React.Component {
 		const saveEnabled = isValid && ! isBusy;
 
 		return (
-			<Main className={ className }>
+			<Main className={ className } wideLayout>
 				<ProductHeader
 					site={ site }
 					product={ product }

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { compact, get, head, isEqual, sortBy, toPairs, unionWith } from 'lodash';

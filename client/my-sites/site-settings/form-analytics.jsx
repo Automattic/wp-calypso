@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 import config from 'config';
 import React, { Component } from 'react';
@@ -123,37 +123,41 @@ class GoogleAnalyticsForm extends Component {
 			siteIsJetpack &&
 			siteSupportsIPAnonymization;
 
+		const nudgeTitle = siteIsJetpack
+			? translate( 'Enable Google Analytics by upgrading to Jetpack Professional' )
+			: translate( 'Enable Google Analytics by upgrading to the Business plan' );
+
 		return (
 			<form id="site-settings" onSubmit={ handleSubmitForm }>
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				{ isJetpackUnsupported &&
-				! showUpgradeNudge && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ translate( 'Google Analytics require a newer version of Jetpack.' ) }
-					>
-						<NoticeAction href={ `/plugins/jetpack/${ siteSlug }` }>
-							{ translate( 'Update Now' ) }
-						</NoticeAction>
-					</Notice>
-				) }
+					! showUpgradeNudge && (
+						<Notice
+							status="is-warning"
+							showDismiss={ false }
+							text={ translate( 'Google Analytics require a newer version of Jetpack.' ) }
+						>
+							<NoticeAction href={ `/plugins/jetpack/${ siteSlug }` }>
+								{ translate( 'Update Now' ) }
+							</NoticeAction>
+						</Notice>
+					) }
 
 				{ siteIsJetpack &&
-				jetpackModuleActive === false &&
-				! isJetpackUnsupported &&
-				! showUpgradeNudge && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ translate( 'The Google Analytics module is disabled in Jetpack.' ) }
-					>
-						<NoticeAction onClick={ activateGoogleAnalytics }>
-							{ translate( 'Enable' ) }
-						</NoticeAction>
-					</Notice>
-				) }
+					jetpackModuleActive === false &&
+					! isJetpackUnsupported &&
+					! showUpgradeNudge && (
+						<Notice
+							status="is-warning"
+							showDismiss={ false }
+							text={ translate( 'The Google Analytics module is disabled in Jetpack.' ) }
+						>
+							<NoticeAction onClick={ activateGoogleAnalytics }>
+								{ translate( 'Enable' ) }
+							</NoticeAction>
+						</Notice>
+					) }
 
 				<SectionHeader label={ translate( 'Google Analytics' ) }>
 					{ ! showUpgradeNudge && (
@@ -170,21 +174,13 @@ class GoogleAnalyticsForm extends Component {
 
 				{ showUpgradeNudge ? (
 					<Banner
-						description={
-							siteIsJetpack ? (
-								translate(
-									'Upgrade to the Professional Plan and include your own analytics tracking ID.'
-								)
-							) : (
-								translate(
-									'Upgrade to the Business Plan and include your own analytics tracking ID.'
-								)
-							)
-						}
+						description={ translate(
+							"Add your unique tracking ID to monitor your site's performance in Google Analytics."
+						) }
 						event={ 'google_analytics_settings' }
 						feature={ FEATURE_GOOGLE_ANALYTICS }
 						plan={ PLAN_BUSINESS }
-						title={ translate( 'Add Google Analytics' ) }
+						title={ nudgeTitle }
 					/>
 				) : (
 					<Card className="analytics-settings site-settings__analytics-settings">

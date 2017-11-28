@@ -36,4 +36,23 @@
 			width: 16px;
 		}
 	}
+
+	&.is-ideal {
+		background-image: url( '/calypso/images/upgrades/ideal.svg' );
+		height: 30px;
+	}
+
+	&.is-giropay {
+		background-image: url( '/calypso/images/upgrades/giropay.svg' );
+		background-size: 60px auto;
+		width: 60px;
+		height: 20px;
+	}
+
+	&.is-bancontact {
+		background-image: url( '/calypso/images/upgrades/bancontact.svg' );
+		height: 20px;
+		background-size: 100px auto;
+		width: 100px;
+	}
 }

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import React from 'react';
@@ -49,12 +49,14 @@ export function setSection( section ) {
 	};
 }
 
-export function loadSectionCSS( context, next ) {
+function loadSectionCSS( context, next ) {
 	const section = getSection( context.store.getState() );
 
-	if ( section.cssUrls && typeof document !== 'undefined' ) {
-		const cssUrl = isRTL( context.store.getState() ) ? section.cssUrls.rtl : section.cssUrls.ltr;
-		switchCSS( 'section-css', cssUrl, next );
+	if ( section.css && typeof document !== 'undefined' ) {
+		const url = isRTL( context.store.getState() ) ? section.css.urls.rtl : section.css.urls.ltr;
+
+		switchCSS( 'section-css-' + section.css.id, url, next );
+
 		return;
 	}
 

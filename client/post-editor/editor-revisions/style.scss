@@ -1,4 +1,22 @@
-.editor-revisions {
+/** @format */
+.editor-revisions__dialog {
+	display: flex;
+	padding: 0;
+}
+
+.editor-revisions__wrapper {
+	display: flex;
+	width: 90vw;
+	height: calc(90vh - 73px);
+
+	@include breakpoint( '<660px' ) {
+		flex-direction: column-reverse;
+		width: 100vw;
+		height: calc(100vh - 73px);
+	}
+}
+
+.editor-revisions__wpadmin-link {
 	color: $gray-text;
 	cursor: pointer;
 	display: block;
@@ -13,5 +31,17 @@
 		margin-left: -2px;
 		margin-right: 8px;
 		vertical-align: bottom;
+	}
+}
+
+body.showing-post-revisions-dialog {
+	// Prevent scrolling the editor contents below the dialog
+	overflow-y: hidden;
+
+	.dialog.card {
+		@include breakpoint( '<660px' ) {
+			max-width: 100%;
+			max-height: 100%;
+		}
 	}
 }

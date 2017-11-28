@@ -1,17 +1,17 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Site from 'blocks/site';
-import { recordCheckboxEvent } from 'me/event-recorder';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class ProfileLinksAddWordPressSite extends Component {
 	static propTypes = {
@@ -29,6 +29,13 @@ class ProfileLinksAddWordPressSite extends Component {
 		this.props.onSelect( event, this.getInputName() );
 	};
 
+	getCheckboxEventHandler = checkboxName => event => {
+		const action = 'Clicked ' + checkboxName + ' checkbox';
+		const value = event.target.checked ? 1 : 0;
+
+		this.props.recordGoogleEvent( 'Me', action, 'checked', value );
+	};
+
 	getInputName() {
 		return `site-${ this.props.site.ID }`;
 	}
@@ -40,7 +47,7 @@ class ProfileLinksAddWordPressSite extends Component {
 			<li
 				key={ site.ID }
 				className="profile-links-add-wordpress__item"
-				onClick={ recordCheckboxEvent( 'Add WordPress Site' ) }
+				onClick={ this.getCheckboxEventHandler( 'Add WordPress Site' ) }
 			>
 				<input
 					className="profile-links-add-wordpress__checkbox"
@@ -55,4 +62,6 @@ class ProfileLinksAddWordPressSite extends Component {
 	}
 }
 
-export default ProfileLinksAddWordPressSite;
+export default connect( null, {
+	recordGoogleEvent,
+} )( ProfileLinksAddWordPressSite );

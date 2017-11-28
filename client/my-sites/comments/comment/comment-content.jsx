@@ -13,25 +13,28 @@ import { get, noop } from 'lodash';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
 import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
+import Emojify from 'components/emojify';
+import QueryComment from 'components/data/query-comment';
+import { isEnabled } from 'config';
 import { stripHTML, decodeEntities } from 'lib/formatting';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { getParentComment, getSiteComment } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 export class CommentContent extends Component {
 	static propTypes = {
 		commentId: PropTypes.number,
-		isExpanded: PropTypes.bool,
+		isBulkMode: PropTypes.bool,
+		isPostView: PropTypes.bool,
 	};
 
 	trackDeepReaderLinkClick = () =>
 		this.props.isJetpack ? noop : this.props.recordReaderCommentOpened();
 
 	renderInReplyTo = () => {
-		const { commentUrl, isExpanded, parentCommentContent, translate } = this.props;
+		const { isBulkMode, parentCommentContent, parentCommentUrl, translate } = this.props;
 
 		if ( ! parentCommentContent ) {
 			return null;
@@ -39,9 +42,13 @@ export class CommentContent extends Component {
 
 		return (
 			<div className="comment__in-reply-to">
-				{ ! isExpanded && <Gridicon icon="reply" size={ 18 } /> }
+				{ isBulkMode && <Gridicon icon="reply" size={ 18 } /> }
 				<span>{ translate( 'In reply to:' ) }</span>
-				<a href={ commentUrl } onClick={ this.trackDeepReaderLinkClick }>
+				<a
+					href={ parentCommentUrl }
+					onClick={ this.trackDeepReaderLinkClick }
+					tabIndex={ isBulkMode ? -1 : 0 }
+				>
 					<Emojify>{ parentCommentContent }</Emojify>
 				</a>
 			</div>
@@ -49,10 +56,25 @@ export class CommentContent extends Component {
 	};
 
 	render() {
-		const { commentContent, commentId, commentStatus, isExpanded, translate } = this.props;
+		const {
+			commentContent,
+			commentId,
+			commentIsPending,
+			isBulkMode,
+			isParentCommentLoaded,
+			isPostView,
+			parentCommentContent,
+			parentCommentId,
+			siteId,
+			translate,
+		} = this.props;
 		return (
 			<div className="comment__content">
-				{ ! isExpanded && (
+				{ ! isParentCommentLoaded && (
+					<QueryComment commentId={ parentCommentId } siteId={ siteId } forceWpcom />
+				) }
+
+				{ isBulkMode && (
 					<div className="comment__content-preview">
 						{ this.renderInReplyTo() }
 
@@ -62,21 +84,24 @@ export class CommentContent extends Component {
 					</div>
 				) }
 
-				{ isExpanded && (
+				{ ! isBulkMode && (
 					<div className="comment__content-full">
-						<div className="comment__content-info">
-							<CommentPostLink { ...{ commentId } } />
+						{ ( commentIsPending || parentCommentContent || ! isPostView ) && (
+							<div className="comment__content-info">
+								{ commentIsPending && (
+									<div className="comment__status-label">{ translate( 'Pending' ) }</div>
+								) }
 
-							{ 'unapproved' === commentStatus && (
-								<div className="comment__status-label">{ translate( 'Pending' ) }</div>
-							) }
-						</div>
+								{ ! isPostView && <CommentPostLink { ...{ commentId, isBulkMode } } /> }
 
-						{ this.renderInReplyTo() }
+								{ this.renderInReplyTo() }
+							</div>
+						) }
 
 						<AutoDirection>
 							<Emojify>
 								<div
+									className="comment__content-body"
 									dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
 								/>
 							</Emojify>
@@ -90,25 +115,35 @@ export class CommentContent extends Component {
 
 const mapStateToProps = ( state, { commentId } ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const isJetpack = isJetpackSite( state, siteId );
 
 	const comment = getSiteComment( state, siteId, commentId );
 	const postId = get( comment, 'post.ID' );
 
-	const commentUrl = isJetpack
-		? get( comment, 'URL' )
-		: `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }`;
-
 	const parentComment = getParentComment( state, siteId, postId, commentId );
+	const parentCommentId = get( comment, 'parent.ID', 0 );
 	const parentCommentContent = decodeEntities( stripHTML( get( parentComment, 'content' ) ) );
+
+	let parentCommentUrl;
+	if ( isEnabled( 'comments/management/comment-view' ) ) {
+		parentCommentUrl = `/comment/${ siteSlug }/${ parentCommentId }`;
+	} else if ( isJetpack ) {
+		parentCommentUrl = get( parentComment, 'URL' );
+	} else {
+		parentCommentUrl = `/read/blogs/${ siteId }/posts/${ postId }#comment-${ parentCommentId }`;
+	}
 
 	return {
 		commentContent: get( comment, 'content' ),
-		commentStatus: get( comment, 'status' ),
-		commentUrl,
+		commentIsPending: 'unapproved' === get( comment, 'status' ),
 		isJetpack,
+		isParentCommentLoaded: ! parentCommentId || !! parentCommentContent,
 		parentCommentContent,
+		parentCommentId,
+		parentCommentUrl,
 		postId,
+		siteId,
 	};
 };
 

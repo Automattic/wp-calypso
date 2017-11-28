@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { assign, clone, find, get, isEmpty, map, omit } from 'lodash';

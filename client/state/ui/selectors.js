@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { includes, get } from 'lodash';
@@ -124,14 +124,6 @@ export function isSectionIsomorphic( state ) {
  */
 export function isPreviewShowing( state ) {
 	return get( state.ui, 'isPreviewShowing', false );
-}
-
-export function getInitialQueryArguments( state ) {
-	return state.ui.queryArguments.initial;
-}
-
-export function getCurrentQueryArguments( state ) {
-	return state.ui.queryArguments.current;
 }
 
 export function hasSidebar( state ) {

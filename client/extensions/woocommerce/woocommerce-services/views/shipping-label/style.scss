@@ -40,21 +40,21 @@
 			margin-right: 2px;
 		}
 	}
-	
+
 	.shipping-label__item-detail {
 		margin-bottom: 6px;
-		
+
 		a {
 			vertical-align: text-top;
-		}			
+		}
 	}
 
 	.shipping-label__item-actions {
 		margin-bottom: 0;
-		
+
 		a {
 			margin-top: 10px;
-		}			
+		}
 	}
 
 	.shipping-label__purchase-error {
@@ -93,12 +93,7 @@
 }
 
 .error-notice {
-	margin: -24px -24px 24px -24px;
 	width: inherit;
-
-	.notice__icon {
-		display: none;
-	}
 }
 
 .shipping-label__loading-spinner {

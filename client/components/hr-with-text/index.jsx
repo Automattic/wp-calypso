@@ -1,10 +1,7 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import PropTypes from 'prop-types';
 import React from 'react';
 
 const HrWithText = ( { children } ) => (
@@ -12,9 +9,5 @@ const HrWithText = ( { children } ) => (
 		<div>{ children }</div>
 	</div>
 );
-
-HrWithText.propTypes = {
-	children: PropTypes.node,
-};
 
 export default HrWithText;

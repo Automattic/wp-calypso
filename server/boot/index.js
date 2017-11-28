@@ -1,6 +1,8 @@
+/** @format */
 /**
  * Module dependencies
  */
+
 const path = require( 'path' ),
 	build = require( 'build' ),
 	config = require( 'config' ),
@@ -23,7 +25,7 @@ function setup() {
 	app.enable( 'trust proxy' );
 
 	// template engine
-	app.set( 'view engine', 'jade' );
+	app.set( 'view engine', 'pug' );
 
 	app.use( cookieParser() );
 	app.use( userAgent.express() );
@@ -52,8 +54,12 @@ function setup() {
 					next();
 				} );
 			} else {
-				console.info( chalk.red( '\nYou need to set `wordpress_logged_in_cookie` in secrets.json' +
-					' for wpcom-user-bootstrap to work in development.' ) );
+				console.info(
+					chalk.red(
+						'\nYou need to set `wordpress_logged_in_cookie` in secrets.json' +
+							' for wpcom-user-bootstrap to work in development.'
+					)
+				);
 			}
 		}
 	} else {
@@ -65,13 +71,23 @@ function setup() {
 	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', 'public' ) ) );
 
 	// service-worker needs to be served from root to avoid scope issues
-	app.use( '/service-worker.js',
-		express.static( path.resolve( __dirname, '..', '..', 'client', 'lib', 'service-worker', 'service-worker.js' ) ) );
+	app.use(
+		'/service-worker.js',
+		express.static(
+			path.resolve( __dirname, '..', '..', 'client', 'lib', 'service-worker', 'service-worker.js' )
+		)
+	);
 
 	// loaded when we detect stats blockers - see lib/analytics/index.js
 	app.get( '/nostats.js', function( request, response ) {
 		const analytics = require( '../lib/analytics' );
-		analytics.tracks.recordEvent( 'calypso_stats_blocked', {}, request );
+		analytics.tracks.recordEvent(
+			'calypso_stats_blocked',
+			{
+				do_not_track: request.headers.dnt,
+			},
+			request
+		);
 		response.setHeader( 'content-type', 'application/javascript' );
 		response.end( "console.log('Stats are disabled');" );
 	} );
@@ -87,7 +103,10 @@ function setup() {
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		app.use( '/desktop', express.static( path.resolve( __dirname, '..', '..', '..', 'public_desktop' ) ) );
+		app.use(
+			'/desktop',
+			express.static( path.resolve( __dirname, '..', '..', '..', 'public_desktop' ) )
+		);
 	}
 
 	app.use( require( 'api' )() );

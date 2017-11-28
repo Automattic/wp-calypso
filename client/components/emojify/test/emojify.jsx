@@ -13,26 +13,31 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Emojify from '..';
 
 describe( 'Emojify', () => {
 	describe( 'component rendering', () => {
+		const twemojiUrl = config( 'twemoji_cdn_url' );
 		test( 'wraps a string in a div', () => {
-			const wrapper = shallow( <Emojify>Foo</Emojify> );
-			expect( wrapper.find( 'div' ).node.ref ).to.equal( 'emojified' );
+			const wrapper = shallow( <Emojify>Foo</Emojify>, {
+				disableLifecycleMethods: true,
+			} );
+			expect( wrapper.html() ).to.equal( '<div class="emojify">Foo</div>' );
 		} );
 
 		test( 'wraps a block in a div', () => {
 			const wrapper = shallow(
 				<Emojify>
 					<p>Bar</p>
-				</Emojify>
+				</Emojify>,
+				{ disableLifecycleMethods: true }
 			);
-			expect( wrapper.find( 'div' ).node.ref ).to.equal( 'emojified' );
+			expect( wrapper.html() ).to.equal( '<div class="emojify"><p>Bar</p></div>' );
 		} );
 
 		test( 'replaces emoji in a string', () => {
-			const wrapper = mount( <Emojify>🙂</Emojify> );
+			const wrapper = mount( <Emojify twemojiUrl={ twemojiUrl }>🙂</Emojify> );
 
 			expect( wrapper.html() ).to.equal(
 				'<div class="emojify"><img draggable="false" class="emojify__emoji" alt="🙂" ' +
@@ -42,7 +47,7 @@ describe( 'Emojify', () => {
 
 		test( 'replaces emoji in a block', () => {
 			const wrapper = mount(
-				<Emojify>
+				<Emojify twemojiUrl={ twemojiUrl }>
 					<p>🧔🏻</p>
 				</Emojify>
 			);
@@ -54,8 +59,10 @@ describe( 'Emojify', () => {
 		} );
 
 		test( 'maintains custom props', () => {
-			const wrapper = shallow( <Emojify alt="bar">השנה היא 2017.</Emojify> );
-			expect( wrapper.node.props.alt ).to.equal( 'bar' );
+			const wrapper = shallow( <Emojify alt="bar">השנה היא 2017.</Emojify>, {
+				disableLifecycleMethods: true,
+			} );
+			expect( wrapper.getElement().props.alt ).to.equal( 'bar' );
 		} );
 	} );
 } );

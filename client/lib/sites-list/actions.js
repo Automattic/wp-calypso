@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import debugFactory from 'debug';
@@ -55,10 +55,6 @@ const SitesListActions = {
 			type: 'RECEIVE_DELETED_SITE',
 			site,
 		} );
-	},
-
-	clearDeleteSiteStore() {
-		Dispatcher.handleViewAction( { type: 'CLEAR_DELETED_SITE' } );
 	},
 };
 

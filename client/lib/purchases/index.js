@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { find, includes } from 'lodash';
@@ -76,7 +76,10 @@ function hasPaymentMethod( purchase ) {
 	return (
 		isPaidWithPaypal( purchase ) ||
 		isPaidWithCreditCard( purchase ) ||
-		isPaidWithPayPalDirect( purchase )
+		isPaidWithPayPalDirect( purchase ) ||
+		isPaidWithIdeal( purchase ) ||
+		isPaidWithGiropay( purchase ) ||
+		isPaidWithBancontact( purchase )
 	);
 }
 
@@ -134,6 +137,18 @@ function isOneTimePurchase( purchase ) {
 
 function isPaidWithPaypal( purchase ) {
 	return 'paypal' === purchase.payment.type;
+}
+
+function isPaidWithIdeal( purchase ) {
+	return 'iDEAL' === purchase.payment.type;
+}
+
+function isPaidWithGiropay( purchase ) {
+	return 'Giropay' === purchase.payment.type;
+}
+
+function isPaidWithBancontact( purchase ) {
+	return 'Bancontact' === purchase.payment.type;
 }
 
 function isPendingTransfer( purchase ) {
@@ -241,6 +256,18 @@ function paymentLogoType( purchase ) {
 
 	if ( isPaidWithPaypal( purchase ) ) {
 		return 'paypal';
+	}
+
+	if ( isPaidWithIdeal( purchase ) ) {
+		return 'ideal';
+	}
+
+	if ( isPaidWithGiropay( purchase ) ) {
+		return 'giropay';
+	}
+
+	if ( isPaidWithBancontact( purchase ) ) {
+		return 'bancontact';
 	}
 
 	if ( isPaidWithPayPalDirect( purchase ) ) {

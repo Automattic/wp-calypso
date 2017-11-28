@@ -53,7 +53,6 @@ describe( 'reducer', () => {
 			'isRequestingTwoFactorAuth',
 			'magicLogin',
 			'redirectTo',
-			'rememberMe',
 			'requestError',
 			'requestNotice',
 			'requestSuccess',
@@ -170,22 +169,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.true;
-		} );
-
-		test( 'should not persist state', () => {
-			const state = isRequesting( true, {
-				type: SERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = isRequesting( true, {
-				type: DESERIALIZE,
-			} );
-
-			expect( state ).to.be.false;
 		} );
 	} );
 
@@ -508,7 +491,6 @@ describe( 'reducer', () => {
 			const state = twoFactorAuth( null, {
 				type: LOGIN_REQUEST_SUCCESS,
 				data,
-				rememberMe: true,
 			} );
 
 			expect( state ).to.eql( { ...data } );
@@ -531,7 +513,6 @@ describe( 'reducer', () => {
 			const state = twoFactorAuth( null, {
 				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
 				data,
-				rememberMe: true,
 			} );
 
 			expect( state ).to.eql( { ...data } );

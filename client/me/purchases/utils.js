@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import page from 'page';
 
 /**
@@ -18,6 +17,7 @@ import {
 	isOneTimePurchase,
 	isPaidWithCreditCard,
 } from 'lib/purchases';
+import { isDomainTransfer } from 'lib/products-values';
 
 // TODO: Remove these property-masking functions in favor of accessing the props directly
 function getPurchase( props ) {
@@ -81,7 +81,10 @@ function canEditPaymentDetails( purchase ) {
 		return false;
 	}
 	return (
-		! isExpired( purchase ) && ! isOneTimePurchase( purchase ) && ! isIncludedWithPlan( purchase )
+		! isExpired( purchase ) &&
+		! isOneTimePurchase( purchase ) &&
+		! isIncludedWithPlan( purchase ) &&
+		! isDomainTransfer( purchase )
 	);
 }
 

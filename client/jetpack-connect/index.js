@@ -8,13 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from './controller';
-import sitesController from 'my-sites/controller';
-
-const redirectToStoreWithInterval = context => {
-	const interval =
-		context && context.params && context.params.interval ? context.params.interval : '';
-	page.redirect( `/jetpack/connect/store/${ interval }` );
-};
+import { siteSelection } from 'my-sites/controller';
 
 export default function() {
 	page(
@@ -30,8 +24,6 @@ export default function() {
 
 	page( '/jetpack/connect', controller.connect );
 
-	page( '/jetpack/connect/choose/:site', controller.plansPreSelection );
-
 	page(
 		'/jetpack/connect/authorize/:localeOrInterval?',
 		controller.redirectWithoutLocaleifLoggedIn,
@@ -46,14 +38,11 @@ export default function() {
 		controller.authorizeForm
 	);
 
-	page( '/jetpack/connect/store', controller.plansLanding );
-	page( '/jetpack/connect/store/:interval', controller.plansLanding );
+	page( '/jetpack/connect/store/:interval(yearly|monthly)?', controller.plansLanding );
 
-	page( '/jetpack/connect/vaultpress', '/jetpack/connect/store' );
-	page( '/jetpack/connect/vaultpress/:interval', redirectToStoreWithInterval );
-
-	page( '/jetpack/connect/akismet', '/jetpack/connect/store' );
-	page( '/jetpack/connect/akismet/:interval', redirectToStoreWithInterval );
+	page( '/jetpack/connect/:from(akismet|vaultpress)/:interval(yearly|monthly)?', ( { params } ) =>
+		page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
+	);
 
 	page(
 		'/jetpack/connect/:locale?',
@@ -61,13 +50,8 @@ export default function() {
 		controller.connect
 	);
 
-	page( '/jetpack/connect/plans/:site', sitesController.siteSelection, controller.plansSelection );
-
-	page(
-		'/jetpack/connect/plans/:interval/:site',
-		sitesController.siteSelection,
-		controller.plansSelection
-	);
+	page( '/jetpack/connect/plans/:site', siteSelection, controller.plansSelection );
+	page( '/jetpack/connect/plans/:interval/:site', siteSelection, controller.plansSelection );
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso );
 	page( '/jetpack/sso/*', controller.sso );

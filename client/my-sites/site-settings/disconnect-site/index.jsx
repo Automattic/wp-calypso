@@ -49,7 +49,7 @@ const DisconnectSite = ( { reason, siteSlug, translate } ) => {
 				<FormattedHeader
 					headerText={ translate( 'Disconnect Site' ) }
 					subHeaderText={ translate(
-						"We'd love to know why you're disconnecting -- it will help us improve Jetpack."
+						"We'd love to know why you're disconnecting — it will help us improve Jetpack."
 					) }
 				/>
 				<ReasonComponent confirmHref={ confirmHref } />

@@ -1,7 +1,7 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
 
 import { assign } from 'lodash';
@@ -138,12 +138,13 @@ const getFileUploader = () => ( file, siteId ) => {
 	return wpcom.site( siteId ).addMediaFiles( {}, file );
 };
 
-function uploadFiles( uploader, files, siteId ) {
+function uploadFiles( uploader, files, site ) {
 	// We offset the current time when generating a fake date for the transient
 	// media so that the first uploaded media doesn't suddenly become newest in
 	// the set once it finishes uploading. This duration is pretty arbitrary,
 	// but one would hope that it would never take this long to upload an item.
 	const baseTime = Date.now() + ONE_YEAR_IN_MILLISECONDS;
+	const siteId = site.ID;
 
 	return files.reduce( ( lastUpload, file, i ) => {
 		// Assign a date such that the first item will be the oldest at the
@@ -161,6 +162,7 @@ function uploadFiles( uploader, files, siteId ) {
 			type: 'CREATE_MEDIA_ITEM',
 			siteId: siteId,
 			data: transientMedia,
+			site,
 		} );
 
 		// Abort upload if file fails to pass validation.
@@ -193,11 +195,11 @@ function uploadFiles( uploader, files, siteId ) {
 	}, Promise.resolve() );
 }
 
-MediaActions.addExternal = function( siteId, files, service ) {
-	return uploadFiles( getExternalUploader( service ), files, siteId );
+MediaActions.addExternal = function( site, files, service ) {
+	return uploadFiles( getExternalUploader( service ), files, site );
 };
 
-MediaActions.add = function( siteId, files ) {
+MediaActions.add = function( site, files ) {
 	if ( files instanceof window.FileList ) {
 		files = [ ...files ];
 	}
@@ -206,7 +208,7 @@ MediaActions.add = function( siteId, files ) {
 		files = [ files ];
 	}
 
-	return uploadFiles( getFileUploader(), files, siteId );
+	return uploadFiles( getFileUploader(), files, site );
 };
 
 MediaActions.edit = function( siteId, item ) {
