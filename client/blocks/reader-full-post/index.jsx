@@ -66,6 +66,7 @@ import { showSelectedPost } from 'reader/utils';
 import Emojify from 'components/emojify';
 import config from 'config';
 import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
+import { READER_FULL_POST } from 'reader/follow-button/follow-sources';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
@@ -443,6 +444,7 @@ export class FullPostView extends React.Component {
 										maxDepth={ 1 }
 										commentsFilterDisplay={ COMMENTS_FILTER_ALL }
 										showConversationFollowButton={ true }
+										followSource={ READER_FULL_POST }
 									/>
 								) }
 							</div>

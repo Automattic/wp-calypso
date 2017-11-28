@@ -59,6 +59,7 @@ class PostCommentList extends React.Component {
 		showNestingReplyArrow: PropTypes.bool,
 		showConversationFollowButton: PropTypes.bool,
 		commentsFilter: PropTypes.string,
+		followSource: PropTypes.string,
 
 		// To display comments with a different status but not fetch them
 		// e.g. Reader full post view showing unapproved comments made to a moderated site
@@ -358,6 +359,7 @@ class PostCommentList extends React.Component {
 			commentsTree,
 			showFilters,
 			commentCount,
+			followSource,
 		} = this.props;
 		const {
 			haveEarlierCommentsToFetch,
@@ -398,6 +400,8 @@ class PostCommentList extends React.Component {
 						className="comments__conversation-follow-button"
 						siteId={ siteId }
 						postId={ postId }
+						post={ this.props.post }
+						followSource={ followSource }
 					/>
 				) }
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (

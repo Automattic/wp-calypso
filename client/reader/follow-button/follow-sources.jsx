@@ -10,5 +10,7 @@ export const READER_FEED_SEARCH = 'reader-feed-search-result';
 export const READER_FOLLOWING_MANAGE_URL_INPUT = 'reader-following-manage-url-input';
 export const READER_FOLLOWING_MANAGE_SEARCH_RESULT = 'reader-following-manage-search-result';
 export const READER_FOLLOWING_MANAGE_RECOMMENDATION = 'reader-following-manage-recommendation';
+export const READER_FULL_POST = 'reader-full-post';
+export const READER_POST_OPTIONS_MENU = 'reader-post-options-menu';
 export const TAG_PAGE = 'reader-tag-page';
 export const DISCOVER_POST = 'reader-discover-post';
