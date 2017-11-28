@@ -12,12 +12,28 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import ExternalLink from 'components/external-link';
 import FormLegend from 'components/forms/form-legend';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 class FormAnalyticsStores extends Component {
 	handleToggleChange = name => () => {
 		this.props.handleToggleChange( name );
+	};
+
+	renderExplanation = setting => {
+		const link = setting.link ? (
+			<ExternalLink icon href={ setting.link.url } target="_blank" rel="noopener noreferrer">
+				{ setting.link.label }
+			</ExternalLink>
+		) : null;
+
+		return (
+			<FormSettingExplanation>
+				{ setting.explanation }
+				{ link }
+			</FormSettingExplanation>
+		);
 	};
 
 	renderSettings = ( settings, disableAll, isChild = false ) => {
@@ -41,9 +57,7 @@ class FormAnalyticsStores extends Component {
 							>
 								{ setting.label }
 							</CompactFormToggle>
-							{ setting.explanation && (
-								<FormSettingExplanation>{ setting.explanation }</FormSettingExplanation>
-							) }
+							{ setting.explanation && this.renderExplanation( setting ) }
 							{ setting.children &&
 								this.renderSettings( setting.children, disableAll || ! checked, true ) }
 						</div>
@@ -78,6 +92,10 @@ class FormAnalyticsStores extends Component {
 				explanation: translate(
 					'Before enabling, turn on enhanced eCommerce in your Google Analytics dashboard.'
 				),
+				link: {
+					label: translate( 'Learn how' ),
+					url: 'https://support.google.com/analytics/answer/6032539',
+				},
 				children: [
 					{
 						key: 'enh_ec_track_remove_from_cart',
