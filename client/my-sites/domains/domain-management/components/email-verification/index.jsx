@@ -21,6 +21,7 @@ class EmailVerificationCard extends React.Component {
 	static propTypes = {
 		changeEmailHref: PropTypes.string,
 		contactEmail: PropTypes.string.isRequired,
+		headerText: PropTypes.string,
 		verificationExplanation: PropTypes.array.isRequired,
 		resendVerification: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -115,7 +116,7 @@ class EmailVerificationCard extends React.Component {
 		return (
 			<Card highlight="warning" className="email-verification">
 				<div className="email-verification__explanation">
-					<h1 className="email-verification__heading">Important: Verify Your Email Address</h1>
+					<h1 className="email-verification__heading">{ this.props.headerText }</h1>
 					{ this.props.verificationExplanation }
 				</div>
 				{ this.renderStatus() }
