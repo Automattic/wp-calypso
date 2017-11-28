@@ -165,7 +165,7 @@ class ConnectedApplicationItem extends React.Component {
 		);
 	}
 
-	header() {
+	renderHeader() {
 		return (
 			<div className="connected-application-item__header">
 				<ConnectedApplicationIcon image={ this.props.connection.icon } />
@@ -174,7 +174,7 @@ class ConnectedApplicationItem extends React.Component {
 		);
 	}
 
-	summary() {
+	renderSummary() {
 		return (
 			<div>
 				{ this.props.isPlaceholder ? (
@@ -198,9 +198,9 @@ class ConnectedApplicationItem extends React.Component {
 
 		return (
 			<FoldableCard
-				header={ this.header() }
-				summary={ this.summary() }
-				expandedSummary={ this.summary() }
+				header={ this.renderHeader() }
+				summary={ this.renderSummary() }
+				expandedSummary={ this.renderSummary() }
 				clickableHeader
 				compact
 				className={ classes }
