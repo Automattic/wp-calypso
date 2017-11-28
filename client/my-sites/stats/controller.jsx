@@ -203,6 +203,7 @@ export default {
 					{ ...props }
 				/>
 			);
+			next();
 		}
 	},
 
@@ -285,6 +286,7 @@ export default {
 					{ ...siteComponentChildren }
 				/>
 			);
+			next();
 		}
 	},
 
@@ -385,6 +387,7 @@ export default {
 					{ ...props }
 				/>
 			);
+			next();
 		}
 	},
 
