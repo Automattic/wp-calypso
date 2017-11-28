@@ -30,10 +30,10 @@ import { editPromotion, clearPromotionEdits } from 'woocommerce/state/ui/promoti
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
+import { areProductsLoading, getAllProducts } from 'woocommerce/state/sites/products/selectors';
 import {
 	getPromotionEdits,
 	getPromotionWithLocalEdits,
-	getPromotionableProducts,
 } from 'woocommerce/state/selectors/promotions';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
@@ -247,7 +247,8 @@ function mapStateToProps( state, ownProps ) {
 	const currency = currencySettings ? currencySettings.value : null;
 	const promotionId = ownProps.params.promotion;
 	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
-	const products = getPromotionableProducts( state, site.ID );
+	const productsLoading = areProductsLoading( state, site.ID );
+	const products = productsLoading ? null : getAllProducts( state, site.ID );
 	const productCategories = getProductCategories( state, {}, site.ID );
 	const edits = getPromotionEdits( state, promotionId, site.ID );
 	const hasEdits = Boolean( edits );

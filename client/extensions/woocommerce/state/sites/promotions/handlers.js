@@ -5,6 +5,7 @@
  */
 
 import debugFactory from 'debug';
+import { isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,14 +17,15 @@ import {
 	updateCoupon,
 	deleteCoupon,
 } from 'woocommerce/state/sites/coupons/actions';
-import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import { updateProduct } from 'woocommerce/state/sites/products/actions';
+import { fetchProducts, updateProduct } from 'woocommerce/state/sites/products/actions';
+import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
 import {
-	WOOCOMMERCE_PROMOTION_CREATE,
-	WOOCOMMERCE_PROMOTION_UPDATE,
-	WOOCOMMERCE_PROMOTION_DELETE,
-	WOOCOMMERCE_PROMOTIONS_REQUEST,
 	WOOCOMMERCE_COUPONS_UPDATED,
+	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
+	WOOCOMMERCE_PROMOTION_CREATE,
+	WOOCOMMERCE_PROMOTION_DELETE,
+	WOOCOMMERCE_PROMOTION_UPDATE,
+	WOOCOMMERCE_PROMOTIONS_REQUEST,
 } from 'woocommerce/state/action-types';
 
 const debug = debugFactory( 'woocommerce:promotions' );
@@ -33,11 +35,12 @@ const debug = debugFactory( 'woocommerce:promotions' );
 const itemsPerPage = 30;
 
 export default {
-	[ WOOCOMMERCE_PROMOTION_CREATE ]: [ promotionCreate ],
-	[ WOOCOMMERCE_PROMOTION_UPDATE ]: [ promotionUpdate ],
-	[ WOOCOMMERCE_PROMOTION_DELETE ]: [ promotionDelete ],
-	[ WOOCOMMERCE_PROMOTIONS_REQUEST ]: [ promotionsRequest ],
 	[ WOOCOMMERCE_COUPONS_UPDATED ]: [ couponsUpdated ],
+	[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: [ productsReceived ],
+	[ WOOCOMMERCE_PROMOTION_CREATE ]: [ promotionCreate ],
+	[ WOOCOMMERCE_PROMOTION_DELETE ]: [ promotionDelete ],
+	[ WOOCOMMERCE_PROMOTION_UPDATE ]: [ promotionUpdate ],
+	[ WOOCOMMERCE_PROMOTIONS_REQUEST ]: [ promotionsRequest ],
 };
 
 export function promotionsRequest( { dispatch }, action ) {
@@ -61,6 +64,19 @@ export function promotionsRequest( { dispatch }, action ) {
 
 	// Fetch all coupons as well.
 	dispatch( fetchCoupons( siteId, { offset: 0, per_page: perPage } ) );
+}
+
+export function productsReceived( { dispatch }, action ) {
+	const { siteId, params, products } = action;
+
+	// For each variable product, fetch its variations, too.
+	if ( isUndefined( params.offset ) && products ) {
+		products.forEach( product => {
+			if ( product.variations && product.variations.length > 0 ) {
+				dispatch( fetchProductVariations( siteId, product.id ) );
+			}
+		} );
+	}
 }
 
 export function couponsUpdated( { dispatch }, action ) {

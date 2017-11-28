@@ -1,9 +1,13 @@
 /** @format */
 
+// TODO: whenever it's possible, change to rely on the stored data under
+// products and coupons instead of accumulating duplicate state here.
+// It would be best to do this after further updates to the data layer.
+
 /**
  * External dependencies
  */
-import { fill, findIndex } from 'lodash';
+import { fill, find, findIndex } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +18,7 @@ import {
 	WOOCOMMERCE_COUPON_UPDATED,
 	WOOCOMMERCE_COUPONS_UPDATED,
 	WOOCOMMERCE_PRODUCT_UPDATED,
+	WOOCOMMERCE_PRODUCT_VARIATION_UPDATED,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import { createPromotionFromProduct, createPromotionFromCoupon } from './helpers';
@@ -21,6 +26,7 @@ import { createPromotionFromProduct, createPromotionFromCoupon } from './helpers
 const initialState = {
 	coupons: null,
 	products: null,
+	productVariations: null,
 	promotions: null,
 };
 
@@ -29,6 +35,7 @@ export default createReducer( initialState, {
 	[ WOOCOMMERCE_COUPON_UPDATED ]: couponUpdated,
 	[ WOOCOMMERCE_COUPONS_UPDATED ]: couponsUpdated,
 	[ WOOCOMMERCE_PRODUCT_UPDATED ]: productUpdated,
+	[ WOOCOMMERCE_PRODUCT_VARIATION_UPDATED ]: productVariationUpdated,
 	[ WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS ]: productsRequestSuccess,
 } );
 
@@ -39,7 +46,7 @@ function couponDeleted( state, action ) {
 	const newCoupons = coupons.filter( coupon => couponId !== coupon.id );
 
 	if ( newCoupons.length !== coupons.length ) {
-		const promotions = calculatePromotions( newCoupons, state.products );
+		const promotions = calculatePromotions( newCoupons, state.products, state.productVariations );
 
 		return { ...state, coupons: newCoupons, promotions };
 	}
@@ -54,7 +61,7 @@ function couponUpdated( state, action ) {
 	if ( -1 < index ) {
 		const newCoupons = [ ...coupons ];
 		newCoupons[ index ] = coupon;
-		const promotions = calculatePromotions( newCoupons, state.products );
+		const promotions = calculatePromotions( newCoupons, state.products, state.productVariations );
 
 		return { ...state, coupons: newCoupons, promotions };
 	}
@@ -79,7 +86,7 @@ function couponsUpdated( state, action ) {
 			newCoupons[ params.offset + i ] = action.coupons[ i ];
 		}
 
-		const promotions = calculatePromotions( newCoupons, state.products );
+		const promotions = calculatePromotions( newCoupons, state.products, state.productVariations );
 		return { ...state, coupons: newCoupons, promotions };
 	}
 
@@ -94,11 +101,31 @@ function productUpdated( state, action ) {
 	if ( -1 < index ) {
 		const newProducts = [ ...products ];
 		newProducts[ index ] = product;
-		const promotions = calculatePromotions( state.coupons, newProducts );
+		const promotions = calculatePromotions( state.coupons, newProducts, state.productVariations );
 
 		return { ...state, products: newProducts, promotions };
 	}
 	return state;
+}
+
+// TODO: Update this for performance if needed. As-is, it will cause frequent recalculations.
+function productVariationUpdated( state, action ) {
+	const { data: productVariation, productId } = action;
+	const productVariations = state.productVariations || [];
+	const index = findIndex( productVariations, { id: productVariation.id } );
+
+	const newProductVariation = { ...productVariation, productId };
+	const newProductVariations = [ ...productVariations ];
+
+	if ( -1 < index ) {
+		newProductVariations[ index ] = newProductVariation;
+	} else {
+		newProductVariations.push( newProductVariation );
+	}
+
+	const promotions = calculatePromotions( state.coupons, state.products, newProductVariations );
+
+	return { ...state, productVariations: newProductVariations, promotions };
 }
 
 function productsRequestSuccess( state, action ) {
@@ -119,22 +146,31 @@ function productsRequestSuccess( state, action ) {
 			newProducts[ params.offset + i ] = action.products[ i ];
 		}
 
-		const promotions = calculatePromotions( state.coupons, newProducts );
+		const promotions = calculatePromotions( state.coupons, newProducts, state.productVariations );
 		return { ...state, products: newProducts, promotions };
 	}
 
 	return state;
 }
 
-function calculatePromotions( coupons, products ) {
+function calculatePromotions( coupons, products, productVariations ) {
 	// Only calculate if coupons and products are all loaded.
 	if ( coupons && products && -1 === coupons.indexOf( null ) && -1 === products.indexOf( null ) ) {
 		const saleProducts = products.filter( product => '' !== product.sale_price );
+		const saleVariations = ( productVariations || [] ).filter(
+			variation => '' !== variation.sale_price
+		);
 
 		const productPromotions = saleProducts.map( createPromotionFromProduct );
+		const variationPromotions = saleVariations.map( variation => {
+			const product = find( products, { id: variation.productId } );
+			return createPromotionFromProduct( { ...variation, name: product.name } );
+		} );
 		const couponPromotions = coupons.map( createPromotionFromCoupon );
 
-		const promotions = [ ...productPromotions, ...couponPromotions ].sort( comparePromotions );
+		const promotions = [ ...productPromotions, ...variationPromotions, ...couponPromotions ].sort(
+			comparePromotions
+		);
 
 		return promotions;
 	}

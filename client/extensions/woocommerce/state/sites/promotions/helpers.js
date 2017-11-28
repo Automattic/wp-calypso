@@ -8,17 +8,30 @@ export function createPromotionFromProduct( product ) {
 	const startDate = product.date_on_sale_from || undefined;
 	const endDate = product.date_on_sale_to || undefined;
 	const productId = product.id;
+	const parentId = product.productId;
 
 	return {
 		id: 'p' + product.id,
-		name: product.name,
+		name: createProductName( product ),
 		type: 'product_sale',
 		appliesTo: { productIds: [ product.id ] },
 		salePrice,
 		startDate,
 		endDate,
 		productId,
+		parentId,
 	};
+}
+
+function createProductName( product ) {
+	if ( product.productId ) {
+		// It's a variation, append the options.
+		const options = product.attributes.map( attr => attr.option ).join( ', ' );
+		return product.name + ' (' + options + ')';
+	}
+
+	// Just a normal product.
+	return product.name;
 }
 
 export function createProductUpdateFromPromotion( promotion ) {
