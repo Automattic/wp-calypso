@@ -45,6 +45,7 @@ const domainAvailability = {
 	BLACKLISTED: 'blacklisted_domain',
 	MAPPED: 'mapped_domain',
 	RECENTLY_UNMAPPED: 'recently_mapped',
+	TRANSFER_PENDING: 'transfer_pending',
 	UNKOWN_ACTIVE: 'unknown_active_domain_with_wpcom',
 };
 

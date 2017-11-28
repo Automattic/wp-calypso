@@ -140,6 +140,16 @@ function getAvailabilityNotice( domain, error ) {
 			);
 			break;
 
+		case domainAvailability.TRANSFER_PENDING:
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is already connected to a WordPress.com site.',
+				{
+					args: { domain },
+					components: { strong: <strong /> },
+				}
+			);
+			break;
+
 		default:
 			message = translate(
 				'Sorry, there was a problem processing your request. Please try again in a few minutes.'
