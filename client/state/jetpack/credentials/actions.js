@@ -27,5 +27,5 @@ export const autoConfigCredentials = ( siteId ) => ( {
 export const deleteCredentials = ( siteId, role ) => ( {
 	type: JETPACK_CREDENTIALS_DELETE,
 	siteId,
-	role
+	role,
 } );
