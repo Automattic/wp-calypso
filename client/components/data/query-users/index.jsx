@@ -40,10 +40,10 @@ class QueryUsers extends Component {
 
 	request() {
 		const { siteId, userIds, currentUserId } = this.props;
+		// Ensure that we only request the authors whose information we're lacking, not the current user.
+		const requestIds = userIds.filter( id => id !== currentUserId );
 		// Only request users if a list of user Ids is provided. Otherwise, all users would be requested incl. the current user.
-		if ( userIds.length ) {
-			// Ensure that we only request the authors whose information we're lacking, not the current user.
-			const requestIds = userIds.filter( id => id !== currentUserId );
+		if ( requestIds.length ) {
 			this.props.requestUsers( siteId, requestIds );
 		}
 	}
