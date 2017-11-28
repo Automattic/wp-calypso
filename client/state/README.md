@@ -108,19 +108,15 @@ We are provided the opportunity to make straightforward tests without complicate
 #### Example
 
 ```js
-function age( state = 0, action ) {
-	if ( GROW === action.type ) {
-		return state + 1 
-	}
-	return state;
-}
+const age = ( state = 0, action ) =>
+	GROW === action.type
+		? state + 1 
+		: state;
 
-function title( state = 'grunt', action ) {
-	if ( PROMOTION === action.type ) {
-		return action.title
-	}
-	return state;
-}
+const title = ( state = 'grunt', action ) =>
+	PROMOTION === action.type
+		? action.title
+		: state;
 
 const userReducer = combineReducers( {
     age,
@@ -201,12 +197,10 @@ conditionally loads the persisted state if it's shape is valid.
 #### Example
 
 ```js
-function ageReducer( state = 0, action ) {
-	if ( GROW === action.type ) {
-		return state + 1;
-	}
-	return state;
-}
+const ageReducer = ( state = 0, action ) =>
+	GROW === action.type
+		? state + 1
+		: state;
 
 const schema = { type: 'number', minimum: 0 }
 
