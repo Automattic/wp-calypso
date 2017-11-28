@@ -275,10 +275,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				if ( isJetpackMinimumVersion( state, siteId, '5.4-beta3' ) ) {
 					jetpackSiteSettingsAPIVersion = '1.3';
 				}
-				if ( isJetpackMinimumVersion( state, siteId, '5.5' ) ) {
-					// TODO - update to correct version (5.6-beta?) when https://github.com/Automattic/jetpack/pull/8182 and
-					// https://github.com/Automattic/jetpack/pull/8198 and
-					// https://github.com/Automattic/jetpack/pull/8218 land
+				if ( isJetpackMinimumVersion( state, siteId, '5.6-alpha' ) ) {
 					jetpackSiteSettingsAPIVersion = '1.4';
 				}
 			}
