@@ -18,6 +18,11 @@ import {
 	receivePostRevisionsFailure,
 } from 'state/posts/revisions/actions';
 
+const KNOWN_POST_TYPES = {
+	post: 'posts',
+	page: 'pages',
+};
+
 /**
  * Normalize a WP REST API Post Revisions resource for consumption in Calypso
  *
@@ -87,7 +92,7 @@ export const receiveSuccess = ( { dispatch }, { siteId, postId }, revisions ) =>
  */
 export const fetchPostRevisions = ( { dispatch }, action ) => {
 	const { siteId, postId, postType } = action;
-	const resourceName = postType === 'page' ? 'pages' : 'posts';
+	const resourceName = KNOWN_POST_TYPES[ postType ] ? KNOWN_POST_TYPES[ postType ] : postType;
 	dispatch(
 		http(
 			{
