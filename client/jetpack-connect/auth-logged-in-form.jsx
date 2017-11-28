@@ -79,7 +79,6 @@ class LoggedInForm extends Component {
 				already_authorized: PropTypes.bool,
 				jp_version: PropTypes.string.isRequired,
 				new_user_started_connection: PropTypes.bool,
-				site: PropTypes.string.isRequired,
 			} ).isRequired,
 			siteReceived: PropTypes.bool,
 		} ).isRequired,
@@ -94,6 +93,7 @@ class LoggedInForm extends Component {
 		isFetchingSites: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectAfterAuth: PropTypes.string,
+		remoteSiteUrl: PropTypes.string,
 		retryAuth: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -126,7 +126,7 @@ class LoggedInForm extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { goBackToWpAdmin, redirectAfterAuth, retryAuth } = nextProps;
+		const { goBackToWpAdmin, redirectAfterAuth, remoteSiteUrl, retryAuth } = nextProps;
 		const {
 			siteReceived,
 			queryObject,
@@ -152,14 +152,14 @@ class LoggedInForm extends Component {
 			! this.retryingAuth &&
 			! nextProps.hasXmlrpcError &&
 			! nextProps.hasExpiredSecretError &&
-			queryObject.site
+			remoteSiteUrl
 		) {
 			// Expired secret errors, and XMLRPC errors will be resolved in `handleResolve`.
 			// Any other type of error, we will immediately and automatically retry the request as many times
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return retryAuth( queryObject.site, attempts + 1 );
+			return retryAuth( remoteSiteUrl, attempts + 1 );
 		}
 	}
 
@@ -202,7 +202,7 @@ class LoggedInForm extends Component {
 	};
 
 	handleResolve = () => {
-		const { goToXmlrpcErrorFallbackUrl, recordTracksEvent } = this.props;
+		const { goToXmlrpcErrorFallbackUrl, recordTracksEvent, remoteSiteUrl } = this.props;
 		const { queryObject, authorizationCode } = this.props.authorizationData;
 		const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 		this.retryingAuth = false;
@@ -210,7 +210,7 @@ class LoggedInForm extends Component {
 			// In this case, we need to re-issue the secret.
 			// We do this by redirecting to Jetpack client, which will automatically redirect back here.
 			recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
-			externalRedirect( queryObject.site + authUrl );
+			externalRedirect( remoteSiteUrl + authUrl );
 			return;
 		}
 		// Otherwise, we assume the site is having trouble receive XMLRPC requests.
@@ -308,6 +308,7 @@ class LoggedInForm extends Component {
 	}
 
 	renderNotices() {
+		const { remoteSiteUrl } = this.props;
 		const {
 			authorizeError,
 			queryObject,
@@ -354,7 +355,7 @@ class LoggedInForm extends Component {
 			return <JetpackConnectNotices noticeType="alreadyConnected" />;
 		}
 		if ( this.props.hasExpiredSecretError ) {
-			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ queryObject.site } />;
+			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ remoteSiteUrl } />;
 		}
 		if ( this.props.hasXmlrpcError ) {
 			return this.renderXmlrpcFeedback();
@@ -583,6 +584,7 @@ export default connect(
 			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
 			isFetchingSites: isRequestingSites( state ),
 			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
+			remoteSiteUrl,
 			siteSlug,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
