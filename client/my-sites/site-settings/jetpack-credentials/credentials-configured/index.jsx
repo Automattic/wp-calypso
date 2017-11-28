@@ -72,6 +72,7 @@ class CredentialsConfigured extends Component {
 							className="credentials-configured__revoke-button"
 							borderless={ true }
 							onClick={ this.handleRevoke }
+							scary={ true }
 						>
 							<Gridicon
 								className="credentials-configured__revoke-icon"
