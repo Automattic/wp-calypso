@@ -25,8 +25,9 @@ import {
 	getCredentialsAutoConfigStatus
 } from 'state/selectors';
 import {
-	updateCredentials as updateCredentialsAction,
-	autoConfigCredentials as autoConfigCredentialsAction
+	updateCredentials,
+	autoConfigCredentials,
+	deleteCredentials,
 } from 'state/jetpack/credentials/actions';
 
 class Backups extends Component {
@@ -103,7 +104,8 @@ export default connect(
 			siteId,
 		};
 	}, {
-		autoConfigCredentials: autoConfigCredentialsAction,
-		updateCredentials: updateCredentialsAction,
+		autoConfigCredentials,
+		updateCredentials,
+		deleteCredentials,
 	}
 )( localize( Backups ) );

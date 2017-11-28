@@ -29,3 +29,19 @@
 	color: $gray;
 	font-size: 1.3rem;
 }
+
+.credentials-configured__revoke-actions {
+	text-align: right;
+}
+
+.credentials-configured__revoke-button.is-borderless {
+	color: $alert-red;
+	margin-right: 2rem;
+	position: relative;
+	top: -5px;
+}
+
+.credentials-configured__revoke-icon {
+	color: $alert-red;
+	margin-right: .5rem;
+}

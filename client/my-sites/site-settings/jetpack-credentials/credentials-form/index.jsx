@@ -69,6 +69,8 @@ export class CredentialsForm extends Component {
 			: this.setState( { formErrors: errors } );
 	};
 
+	handleDelete = () => this.props.deleteCredentials( this.props.siteId, this.props.role );
+
 	togglePrivateKeyField = () =>
 		this.setState( { showPrivateKeyField: ! this.state.showPrivateKeyField } );
 
