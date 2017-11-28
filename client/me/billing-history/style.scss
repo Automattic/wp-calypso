@@ -108,6 +108,9 @@
 }
 
 .billing-history__service-name {
+	hyphens: auto;
+	overflow-wrap: break-word;
+
 	strong {
 		font-weight: normal;
 	}
