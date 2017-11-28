@@ -95,7 +95,56 @@ class AboutStep extends Component {
 		} );
 	};
 
-	handleKeyDown = event => {
+	handleSuggestionKeyDown = event => {
+		if ( this.suggestionsRef.props.suggestions.length > 0 ) {
+			const fieldName = event.target.name;
+			let suggestionPosition = this.suggestionsRef.state.suggestionPosition;
+
+			switch ( event.key ) {
+				case 'ArrowRight':
+					this.updateFieldFromSuggestion(
+						this.getSuggestionLabel( suggestionPosition ),
+						fieldName
+					);
+
+					break;
+				case 'ArrowUp':
+					if ( suggestionPosition === 0 ) {
+						suggestionPosition = this.suggestionsRef.props.suggestions.length;
+					}
+
+					this.updateFieldFromSuggestion(
+						this.getSuggestionLabel( suggestionPosition - 1 ),
+						fieldName
+					);
+
+					break;
+				case 'ArrowDown':
+					suggestionPosition++;
+
+					if ( suggestionPosition === this.suggestionsRef.props.suggestions.length ) {
+						suggestionPosition = 0;
+					}
+
+					this.updateFieldFromSuggestion(
+						this.getSuggestionLabel( suggestionPosition ),
+						fieldName
+					);
+
+					break;
+				case 'Tab':
+					this.updateFieldFromSuggestion(
+						this.getSuggestionLabel( suggestionPosition ),
+						fieldName
+					);
+
+					break;
+				case 'Enter':
+					event.preventDefault();
+					break;
+			}
+		}
+
 		this.suggestionsRef.handleKeyEvent( event );
 	};
 
@@ -113,6 +162,19 @@ class AboutStep extends Component {
 		return hints
 			.filter( hint => this.state.query && hint.match( new RegExp( this.state.query, 'i' ) ) )
 			.map( hint => ( { label: hint } ) );
+	}
+
+	getSuggestionLabel( suggestionPosition ) {
+		return this.suggestionsRef.props.suggestions[ suggestionPosition ].label;
+	}
+
+	updateFieldFromSuggestion( term, field ) {
+		this.setState( { siteTopicValue: term } );
+
+		this.formStateController.handleFieldChange( {
+			name: field,
+			value: term,
+		} );
 	}
 
 	handleChangeEvent = event => {
@@ -136,6 +198,14 @@ class AboutStep extends Component {
 			name: event.target.name,
 			value: valuesArray.join( ',' ),
 		} );
+	};
+
+	handleCheckboxKeyDown = event => {
+		if ( event.key === 'Enter' ) {
+			event.preventDefault();
+			event.target.checked = ! event.target.checked;
+			this.checkBoxHandleChange( event );
+		}
 	};
 
 	isCheckBoxChecked( goal ) {
@@ -243,6 +313,7 @@ class AboutStep extends Component {
 						defaultChecked={ this.isCheckBoxChecked( 'share' ) }
 						value="share"
 						className="about__checkbox"
+						onKeyDown={ this.handleCheckboxKeyDown }
 					/>
 					<span className="about__checkbox-label">
 						Share ideas, experiences, updates, reviews, stories, videos, or photos
@@ -257,6 +328,7 @@ class AboutStep extends Component {
 						defaultChecked={ this.isCheckBoxChecked( 'promote' ) }
 						value="promote"
 						className="about__checkbox"
+						onKeyDown={ this.handleCheckboxKeyDown }
 					/>
 					<span className="about__checkbox-label">
 						Promote your business, skills, organization, or events
@@ -271,6 +343,7 @@ class AboutStep extends Component {
 						defaultChecked={ this.isCheckBoxChecked( 'educate' ) }
 						value="educate"
 						className="about__checkbox"
+						onKeyDown={ this.handleCheckboxKeyDown }
 					/>
 					<span className="about__checkbox-label">Offer education, training, or mentoring</span>
 				</FormLabel>
@@ -283,6 +356,7 @@ class AboutStep extends Component {
 						defaultChecked={ this.isCheckBoxChecked( 'sell' ) }
 						value="sell"
 						className="about__checkbox"
+						onKeyDown={ this.handleCheckboxKeyDown }
 					/>
 					<span className="about__checkbox-label">Sell products or collect payments</span>
 				</FormLabel>
@@ -295,6 +369,7 @@ class AboutStep extends Component {
 						defaultChecked={ this.isCheckBoxChecked( 'showcase' ) }
 						value="showcase"
 						className="about__checkbox"
+						onKeyDown={ this.handleCheckboxKeyDown }
 					/>
 					<span className="about__checkbox-label">Showcase your portfolio</span>
 				</FormLabel>
@@ -392,7 +467,7 @@ class AboutStep extends Component {
 								value={ this.state.siteTopicValue }
 								onChange={ this.handleSuggestionChangeEvent }
 								onBlur={ this.hideSuggestions }
-								onKeyDown={ this.handleKeyDown }
+								onKeyDown={ this.handleSuggestionKeyDown }
 								autoComplete="off"
 							/>
 							<Suggestions
