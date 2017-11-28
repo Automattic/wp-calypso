@@ -26,6 +26,7 @@ import {
 	isRenewable,
 	showCreditCardExpiringWarning,
 } from 'lib/purchases';
+import { isDomainTransfer } from 'lib/products-values';
 import { getPurchase, getSelectedSite } from '../utils';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -230,6 +231,10 @@ class PurchaseNotice extends Component {
 
 	render() {
 		if ( this.props.isDataLoading ) {
+			return null;
+		}
+
+		if ( isDomainTransfer( getPurchase( this.props ) ) ) {
 			return null;
 		}
 
