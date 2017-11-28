@@ -48,6 +48,8 @@ export default function() {
 		handlers: [
 			...getCommonHandlers( { noSitePath: paths.domainManagementEmail() } ),
 			domainManagementController.domainManagementEmail,
+			makeLayout,
+			clientRender,
 		],
 	} );
 
@@ -56,7 +58,12 @@ export default function() {
 			paths.domainManagementAddGoogleApps( ':site', ':domain' ),
 			paths.domainManagementAddGoogleApps( ':site' ),
 		],
-		handlers: [ ...getCommonHandlers(), domainManagementController.domainManagementAddGoogleApps ],
+		handlers: [
+			...getCommonHandlers(),
+			domainManagementController.domainManagementAddGoogleApps,
+			makeLayout,
+			clientRender,
+		],
 	} );
 
 	page(
@@ -154,7 +161,12 @@ export default function() {
 			paths.domainManagementEdit( ':site', ':domain' ),
 			paths.domainManagementTransferIn( ':site', ':domain' ),
 		],
-		handlers: [ ...getCommonHandlers(), domainManagementController.domainManagementEdit ],
+		handlers: [
+			...getCommonHandlers(),
+			domainManagementController.domainManagementEdit,
+			makeLayout,
+			clientRender,
+		],
 	} );
 
 	page(
