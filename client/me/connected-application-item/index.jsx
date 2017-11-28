@@ -8,8 +8,6 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:connected-application-item' );
 import classNames from 'classnames';
 
 /**
@@ -23,14 +21,6 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 
 const ConnectedApplicationItem = createReactClass( {
 	displayName: 'ConnectedApplicationItem',
-
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
-
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component is unmounting.' );
-	},
 
 	getInitialState: function() {
 		return {
