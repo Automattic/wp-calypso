@@ -142,10 +142,19 @@ function getAvailabilityNotice( domain, error ) {
 
 		case domainAvailability.TRANSFER_PENDING:
 			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already connected to a WordPress.com site.',
+				"{{strong}}%(domain)s{{/strong}} is pending transfer and can't be connected to WordPress.com right now. " +
+					'{{a}}Learn more{{/a}}.',
 				{
 					args: { domain },
-					components: { strong: <strong /> },
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+								rel="noopener noreferrer"
+							/>
+						),
+					},
 				}
 			);
 			break;
