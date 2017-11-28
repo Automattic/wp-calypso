@@ -57,7 +57,12 @@ import { activateModule } from 'state/jetpack/modules/actions';
 import { isBusiness, isEnterprise, isJetpackBusiness } from 'lib/products-values';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
-import { FEATURE_SEO_PREVIEW_TOOLS, PLAN_BUSINESS } from 'lib/plans/constants';
+import {
+	FEATURE_ADVANCED_SEO,
+	FEATURE_SEO_PREVIEW_TOOLS,
+	PLAN_BUSINESS,
+	PLAN_JETPACK_BUSINESS,
+} from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -360,7 +365,6 @@ export class SeoForm extends React.Component {
 							</NoticeAction>
 						</Notice>
 					) }
-
 				{ conflictedSeoPlugin && (
 					<Notice
 						status="is-warning"
@@ -375,7 +379,6 @@ export class SeoForm extends React.Component {
 						</NoticeAction>
 					</Notice>
 				) }
-
 				{ isJetpackUnsupported && (
 					<Notice
 						status="is-warning"
@@ -385,7 +388,6 @@ export class SeoForm extends React.Component {
 						<NoticeAction href={ jetpackUpdateUrl }>{ translate( 'Update Now' ) }</NoticeAction>
 					</Notice>
 				) }
-
 				{ siteIsJetpack &&
 					hasBusinessPlan( site.plan ) &&
 					isSeoToolsActive === false && (
@@ -398,18 +400,18 @@ export class SeoForm extends React.Component {
 						</Notice>
 					) }
 
-				{ ! this.props.hasSeoPreviewFeature && (
-					<Banner
-						description={ translate(
-							'Get tools to optimize your site for improved performance in search engine results.'
-						) }
-						event={ 'calypso_seo_settings_upgrade_nudge' }
-						feature={ FEATURE_SEO_PREVIEW_TOOLS }
-						plan={ PLAN_BUSINESS }
-						title={ nudgeTitle }
-					/>
-				) }
-
+				{ ! this.props.hasSeoPreviewFeature &&
+					! this.props.hasAdvancedSEOFeature && (
+						<Banner
+							description={ translate(
+								'Get tools to optimize your site for improved performance in search engine results.'
+							) }
+							event={ 'calypso_seo_settings_upgrade_nudge' }
+							feature={ siteIsJetpack ? FEATURE_SEO_PREVIEW_TOOLS : FEATURE_ADVANCED_SEO }
+							plan={ siteIsJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS }
+							title={ nudgeTitle }
+						/>
+					) }
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
 					{ showAdvancedSeo &&
 						! conflictedSeoPlugin && (
@@ -488,7 +490,6 @@ export class SeoForm extends React.Component {
 							</div>
 						) }
 				</form>
-
 				<WebPreview
 					showPreview={ showPreview }
 					onClose={ this.hidePreview }
@@ -527,6 +528,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
 		activePlugins: getPlugins( state, [ siteId ], 'active' ),
+		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),
