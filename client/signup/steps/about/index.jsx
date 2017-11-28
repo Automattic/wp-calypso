@@ -23,6 +23,7 @@ import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { setUserExperience } from 'state/signup/steps/user-experience/actions';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getThemeForSiteGoals, getSiteTypeForSiteGoals } from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
@@ -159,13 +160,14 @@ class AboutStep extends Component {
 		const { goToNextStep, stepName, translate } = this.props;
 
 		//Defaults
-		const themeRepo = 'pub/radcliffe-2',
-			designType = 'blog';
-		let siteTitleValue = 'Site Title';
+		let themeRepo = 'pub/radcliffe-2',
+			designType = 'blog',
+			siteTitleValue = 'Site Title';
 
 		//Inputs
 		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 		const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
+		const siteGoalsArray = siteGoalsInput.split( ',' );
 		const userExperienceInput = this.state.userExperience;
 		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
 
@@ -179,9 +181,6 @@ class AboutStep extends Component {
 			} );
 		}
 
-		//Site Goals
-		this.props.setSiteGoals( siteGoalsInput );
-
 		//Site Topic
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
 			field: 'Site topic',
@@ -194,6 +193,19 @@ class AboutStep extends Component {
 			siteType: designType,
 		} );
 
+		//Site Goals
+		this.props.setSiteGoals( siteGoalsInput );
+		themeRepo = getThemeForSiteGoals( siteGoalsInput );
+		designType = getSiteTypeForSiteGoals( siteGoalsInput );
+
+		for ( let i = 0; i < siteGoalsArray.length; i++ ) {
+			this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
+				field: 'Site goals',
+				value: siteGoalsArray[ i ],
+			} );
+		}
+
+		//SET SITETYPE
 		this.props.setDesignType( designType );
 
 		//User Experience
