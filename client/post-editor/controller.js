@@ -25,7 +25,7 @@ import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import PostEditor from './post-editor';
 import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { editPost } from 'state/posts/actions';
 import wpcom from 'lib/wp';
@@ -210,7 +210,6 @@ export default {
 		const postToCopyId = context.query.copy;
 
 		function startEditing( siteId ) {
-			const site = getSelectedSite( context.store.getState() );
 			const isCopy = context.query.copy ? true : false;
 			context.store.dispatch( startEditingPost( siteId, isCopy ? null : postID, postType ) );
 
@@ -238,7 +237,7 @@ export default {
 				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			} else if ( postID ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				actions.startEditingExisting( site, postID );
+				actions.startEditingExisting( siteId, postID );
 				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
 			} else {
 				const postOptions = { type: postType };
@@ -254,7 +253,7 @@ export default {
 				}
 
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				actions.startEditingNew( site, postOptions );
+				actions.startEditingNew( siteId, postOptions );
 				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			}
 		}
