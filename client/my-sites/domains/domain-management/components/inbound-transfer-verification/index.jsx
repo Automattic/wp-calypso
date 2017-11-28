@@ -12,6 +12,7 @@ import { isEmpty } from 'lodash';
  */
 import EmailVerificationCard from 'my-sites/domains/domain-management/components/email-verification';
 import { checkInboundTransferStatus, resendInboundTransferEmail } from 'lib/domains';
+import support from 'lib/url/support';
 
 class InboundTransferEmailVerificationCard extends React.Component {
 	static propTypes = {
@@ -60,19 +61,28 @@ class InboundTransferEmailVerificationCard extends React.Component {
 		return (
 			<EmailVerificationCard
 				contactEmail={ contactEmail }
+				headerText={
+					translate(
+						'Important: Confirm the transfer to proceed.'
+					)
+				}
 				verificationExplanation={ translate(
-					'We need to check your contact information to make sure you can be reached. Please verify your ' +
-						'details using the email we sent you to begin transferring the domain to WordPress.com. ' +
+					'We sent an email to confirm the transfer of {{strong}}%(domain)s{{/strong}}. ' +
+					'Open the email, click the link, and enter your domain authorization code to start the process. ' +
+					'Please confirm in 5 days or the transfer will be canceled. ' +
 						'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 					{
+						args: {
+							domain: selectedDomainName,
+						},
 						components: {
 							learnMoreLink: (
 								<a
-									href="http://support.wordpress.com"
-									target="_blank"
+									href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 									rel="noopener noreferrer"
 								/>
 							),
+							strong: <strong />,
 						},
 					}
 				) }

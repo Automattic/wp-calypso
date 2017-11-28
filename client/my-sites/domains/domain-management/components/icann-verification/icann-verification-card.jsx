@@ -56,7 +56,7 @@ class IcannVerificationCard extends React.Component {
 	}
 
 	render() {
-		const { contactDetails, selectedDomainName, selectedSiteSlug } = this.props;
+		const { contactDetails, selectedDomainName, selectedSiteSlug, translate } = this.props;
 		const changeEmailHref = domainManagementEditContactInfo( selectedSiteSlug, selectedDomainName );
 		const verificationExplanation = this.getExplanation();
 
@@ -68,6 +68,7 @@ class IcannVerificationCard extends React.Component {
 			<EmailVerificationCard
 				changeEmailHref={ changeEmailHref }
 				contactEmail={ contactDetails.email }
+				headerText={ translate( 'Important: Verify Your Email Address' ) }
 				verificationExplanation={ verificationExplanation }
 				resendVerification={ upgradesActions.resendIcannVerification }
 				selectedDomainName={ selectedDomainName }

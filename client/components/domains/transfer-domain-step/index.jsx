@@ -129,7 +129,9 @@ class TransferDomainStep extends React.Component {
 								'Transfer your domain from your current provider to WordPress.com so ' +
 									'you can manage your domain and site in the same place. {{a}}Learn More{{/a}}',
 								{
-									components: { a: <a href="#" /> },
+									components: {
+										a: <a href={ support.INCOMING_DOMAIN_TRANSFER } rel="noopener noreferrer" />,
+									},
 								}
 							) }
 						</div>
