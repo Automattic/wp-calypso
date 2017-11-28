@@ -112,7 +112,7 @@ const waitForAllPromises = ( promises ) => {
  *
  * @returns {String} erroneous step name or null
  */
-const getNextErroneousStep = ( form, errors, currentStepIndex = 0 ) => {
+const getFirstErroneousStep = ( form, errors, currentStepIndex = 0 ) => {
 	if ( currentStepIndex >= FORM_STEPS.length ) {
 		return null;
 	}
@@ -136,14 +136,14 @@ const getNextErroneousStep = ( form, errors, currentStepIndex = 0 ) => {
 				return 'rates';
 			}
 	}
-	return getNextErroneousStep( form, errors, currentStepIndex + 1 );
+	return getFirstErroneousStep( form, errors, currentStepIndex + 1 );
 };
 
 const expandFirstErroneousStep = ( orderId, siteId, dispatch, getState ) => {
 	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
 	const form = shippingLabel.form;
 
-	const step = getNextErroneousStep( form, getFormErrors( getState(), orderId, siteId ) );
+	const step = getFirstErroneousStep( form, getFormErrors( getState(), orderId, siteId ) );
 	if ( step && ! form[ step ].expanded ) {
 		dispatch( toggleStep( orderId, siteId, step ) );
 	}
