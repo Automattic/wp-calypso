@@ -54,12 +54,11 @@ function determinePostType( context ) {
 	return context.params.type;
 }
 
-function renderEditor( context, next ) {
+function renderEditor( context ) {
 	context.primary = React.createElement( PostEditor, {
 		user: user,
 		userUtils: userUtils,
 	} );
-	next();
 }
 
 function maybeRedirect( context ) {
@@ -196,7 +195,7 @@ function startEditingPostCopy( site, postToCopyId, context ) {
 }
 
 export default {
-	post: function( context ) {
+	post: function( context, next ) {
 		const postType = determinePostType( context );
 		const postID = getPostID( context );
 		const postToCopyId = context.query.copy;
@@ -280,6 +279,8 @@ export default {
 		}
 
 		renderEditor( context );
+
+		next();
 	},
 
 	exitPost: function( context, next ) {
