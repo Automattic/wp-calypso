@@ -29,3 +29,13 @@
 	color: $gray;
 	font-size: 1.3rem;
 }
+
+.credentials-configured__delete_button_wrap {
+	text-align: right;
+}
+
+.credentials-configured__delete_button,
+.credentials-configured__delete_button:hover {
+	color: $alert-red;
+	cursor: pointer;
+}

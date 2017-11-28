@@ -32,6 +32,8 @@ class CredentialsConfigured extends Component {
 		return '';
 	};
 
+	handleDelete = () => this.props.deleteCredentials( this.props.siteId, 'main' );
+
 	render() {
 		const {
 			isPressable,
@@ -61,6 +63,14 @@ class CredentialsConfigured extends Component {
 								'automatically configured and your site is connected. ' +
 								'Backups and restores should work seamlessly.'
 						) }
+					</div>
+					<div className="credentials-configured__delete">
+						<a
+							onClick={ this.handleDelete }
+							className="credentials-configured__delete_button"
+						>
+							{ translate( 'Revoke' ) }
+						</a>
 					</div>
 				</CompactCard>
 			);
