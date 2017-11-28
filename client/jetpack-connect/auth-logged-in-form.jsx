@@ -64,7 +64,7 @@ import config from 'config';
 const MAX_AUTH_ATTEMPTS = 3;
 const PLANS_PAGE = '/jetpack/connect/plans/';
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
-const PRESSABLE_CLIENT_ID = 49640;
+const PRESSABLE_PARTNER_ID = 49640;
 
 class LoggedInForm extends Component {
 	static propTypes = {
@@ -206,7 +206,7 @@ class LoggedInForm extends Component {
 		// If the redirect flag is set, then we conditionally redirect the Pressable client to
 		// a credential approval screen. Otherwise, we need to redirect all other partners back
 		// to wp-admin.
-		return partnerRedirectFlag ? partnerId && PRESSABLE_CLIENT_ID !== partnerId : partnerId;
+		return partnerRedirectFlag ? partnerId && PRESSABLE_PARTNER_ID !== partnerId : partnerId;
 	}
 
 	handleClickDisclaimer = () => {
