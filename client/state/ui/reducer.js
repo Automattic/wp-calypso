@@ -11,21 +11,21 @@ import {
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
-import editor from './editor/reducer';
+import actionLog from './action-log/reducer';
 import dropZone from './drop-zone/reducer';
+import editor from './editor/reducer';
 import guidedTour from './guided-tours/reducer';
-import reader from './reader/reducer';
+import language from './language/reducer';
+import layoutFocus from './layout-focus/reducer';
+import mediaModal from './media-modal/reducer';
+import npsSurveyNotice from './nps-survey-notice/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
 import olark from './olark/reducer';
-import actionLog from './action-log/reducer';
-import layoutFocus from './layout-focus/reducer';
-import preview from './preview/reducer';
-import mediaModal from './media-modal/reducer';
-import themeSetup from './theme-setup/reducers';
-import language from './language/reducer';
-import npsSurveyNotice from './nps-survey-notice/reducer';
 import postTypeList from './post-type-list/reducer';
+import preview from './preview/reducer';
+import reader from './reader/reducer';
 import route from './route/reducer';
+import themeSetup from './theme-setup/reducers';
 
 /**
  * Tracks the currently selected site ID.
@@ -91,28 +91,28 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 };
 
 const reducer = combineReducers( {
-	section,
-	isLoading,
-	layoutFocus,
-	hasSidebar,
-	isPreviewShowing,
-	route,
-	selectedSiteId,
-	siteSelectionInitialized,
+	actionLog,
 	dropZone,
-	guidedTour,
 	editor,
-	reader,
+	guidedTour,
+	hasSidebar,
+	isLoading,
+	isNotificationsOpen,
+	isPreviewShowing,
+	language,
+	layoutFocus,
+	mediaModal,
+	npsSurveyNotice,
 	oauth2Clients,
 	olark,
-	preview,
-	actionLog,
-	language,
-	mediaModal,
-	themeSetup,
-	npsSurveyNotice,
-	isNotificationsOpen,
 	postTypeList,
+	preview,
+	reader,
+	route,
+	section,
+	selectedSiteId,
+	siteSelectionInitialized,
+	themeSetup,
 } );
 
 export default reducer;
