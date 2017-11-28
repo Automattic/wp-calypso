@@ -8,7 +8,6 @@ import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import i18n from 'i18n-calypso';
 import page from 'page';
-import { Provider as ReduxProvider } from 'react-redux';
 import qs from 'querystring';
 import { isWebUri as isValidUrl } from 'valid-url';
 import { map, pick, reduce, startsWith } from 'lodash';
@@ -56,14 +55,10 @@ function determinePostType( context ) {
 }
 
 function renderEditor( context, next ) {
-	context.primary = React.createElement(
-		ReduxProvider,
-		{ store: context.store },
-		React.createElement( PostEditor, {
-			user: user,
-			userUtils: userUtils,
-		} )
-	);
+	context.primary = React.createElement( PostEditor, {
+		user: user,
+		userUtils: userUtils,
+	} );
 	next();
 }
 
