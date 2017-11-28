@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { every, fill, find, first, flatten, includes, isEqual, map, noop, pick } from 'lodash';
+import { every, fill, find, first, flatten, includes, isEqual, map, noop, omit, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -170,7 +170,7 @@ export const clearAvailableRates = ( orderId, siteId ) => {
 const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 	const state = getState();
 	const errors = getFormErrors( state, orderId, siteId );
-	if ( hasNonEmptyLeaves( errors ) ) {
+	if ( hasNonEmptyLeaves( omit( errors, 'rates' ) ) ) {
 		expandFirstErroneousStep( orderId, siteId, dispatch, getState );
 		return;
 	}
