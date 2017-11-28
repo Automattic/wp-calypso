@@ -5,6 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import createReactClass from 'create-react-class';
@@ -13,14 +14,14 @@ import Gridicon from 'gridicons';
 // Internal dependencies
 import Button from 'components/button';
 import observe from 'lib/mixins/data-observe';
-import eventRecorder from 'me/event-recorder';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const AddProfileLinksButtons = createReactClass( {
 	displayName: 'AddProfileLinksButtons',
 
-	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
+	mixins: [ observe( 'userProfileLinks' ) ],
 
 	propTypes: {
 		showingForm: PropTypes.bool,
@@ -39,6 +40,20 @@ const AddProfileLinksButtons = createReactClass( {
 		};
 	},
 
+	recordClickEvent( action ) {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	},
+
+	handleAddWordPressSiteButtonClick() {
+		this.recordClickEvent( 'Add a WordPress Site Button' );
+		this.props.onShowAddWordPress();
+	},
+
+	handleOtherSiteButtonClick() {
+		this.recordClickEvent( 'Add Other Site Button' );
+		this.props.onShowAddOther();
+	},
+
 	render() {
 		return (
 			<div>
@@ -48,17 +63,10 @@ const AddProfileLinksButtons = createReactClass( {
 					position={ this.state.popoverPosition }
 					context={ this.refs && this.refs.popoverMenuButton }
 				>
-					<PopoverMenuItem
-						onClick={ this.recordClickEvent(
-							'Add a WordPress Site Button',
-							this.props.onShowAddWordPress
-						) }
-					>
+					<PopoverMenuItem onClick={ this.handleAddWordPressSiteButtonClick }>
 						{ this.props.translate( 'Add WordPress Site' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem
-						onClick={ this.recordClickEvent( 'Add Other Site Button', this.props.onShowAddOther ) }
-					>
+					<PopoverMenuItem onClick={ this.handleOtherSiteButtonClick }>
 						{ this.props.translate( 'Add URL' ) }
 					</PopoverMenuItem>
 				</PopoverMenu>
@@ -77,4 +85,6 @@ const AddProfileLinksButtons = createReactClass( {
 	},
 } );
 
-export default localize( AddProfileLinksButtons );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( AddProfileLinksButtons ) );
