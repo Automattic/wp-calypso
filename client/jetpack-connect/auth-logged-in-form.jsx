@@ -197,8 +197,7 @@ class LoggedInForm extends Component {
 		return startsWith( get( props, [ 'authorizationData', 'queryObject', 'from' ] ), 'jpo' );
 	}
 
-	shouldRedirectJetpackStart( props ) {
-		const partnerId = parseInt( get( props, 'partnerId' ), 10 );
+	shouldRedirectJetpackStart( { partnerId } ) {
 		const partnerRedirectFlag = config.isEnabled(
 			'jetpack/connect-redirect-pressable-credential-approval'
 		);
@@ -500,7 +499,7 @@ class LoggedInForm extends Component {
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
 			config.isEnabled( 'jetpack/connect-redirect-pressable-credential-approval' ) &&
-			PRESSABLE_CLIENT_ID === parseInt( partnerId, 10 )
+			PRESSABLE_PARTNER_ID === partnerId
 		) {
 			return `/start/pressable-nux?blogid=${ siteId }`;
 		}
