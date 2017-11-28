@@ -2,10 +2,11 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import { get, endsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,16 +15,14 @@ import { translate } from 'i18n-calypso';
 import FollowButton from 'reader/follow-button';
 import { getLinkProps } from './helper';
 import { recordFollowToggle, recordSiteClick } from './stats';
+import { getSiteUrl, getSourceFollowUrl, getSourceData } from 'reader/discover/helper';
+import SiteIcon from 'blocks/site-icon';
+import { getSite } from 'state/reader/sites/selectors';
+import QueryReaderSite from 'components/data/query-reader-site';
 
 class DiscoverSiteAttribution extends React.Component {
 	static propTypes = {
-		attribution: PropTypes.shape( {
-			blog_name: PropTypes.string.isRequired,
-			blog_url: PropTypes.string.isRequired,
-			avatar_url: PropTypes.string,
-		} ).isRequired,
-		siteUrl: PropTypes.string.isRequired,
-		followUrl: PropTypes.string.isRequired,
+		post: PropTypes.object.isRequired,
 	};
 
 	onSiteClick = () => recordSiteClick( this.props.siteUrl );
@@ -31,16 +30,24 @@ class DiscoverSiteAttribution extends React.Component {
 	onFollowToggle = isFollowing => recordFollowToggle( isFollowing, this.props.siteUrl );
 
 	render() {
-		const attribution = this.props.attribution;
-		const classes = classNames( 'discover-attribution is-site', {
-			'is-missing-avatar': ! attribution.avatar_url,
-		} );
-		const siteLinkProps = getLinkProps( this.props.siteUrl );
+		const { post, site } = this.props;
+		const attribution = get( post, 'discover_metadata.attribution' );
+		const siteUrl = getSiteUrl( post );
+		const followUrl = getSourceFollowUrl( post );
+		const { blogId: siteId } = getSourceData( post );
+		const siteLinkProps = getLinkProps( siteUrl );
 		const siteClasses = classNames( 'discover-attribution__blog ignore-click' );
 
+		let avatarUrl = attribution.avatar_url;
+		// Drop default avatar
+		if ( endsWith( avatarUrl, 'defaultavatar.png' ) ) {
+			avatarUrl = null;
+		}
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className={ classes }>
-				{ attribution.avatar_url ? (
+			<div className="discover-attribution is-site">
+				{ avatarUrl && (
 					<img
 						className="gravatar"
 						src={ encodeURI( attribution.avatar_url ) }
@@ -48,29 +55,35 @@ class DiscoverSiteAttribution extends React.Component {
 						width="20"
 						height="20"
 					/>
-				) : (
-					<Gridicon icon="globe" size={ 18 } />
 				) }
-				<span>
+				{ ! avatarUrl && siteId && ! site && <QueryReaderSite siteId={ siteId } /> }
+				{ ! avatarUrl && <SiteIcon site={ site } size={ 20 } /> }
+				<span className="discover-attribution__site-title">
 					<a
 						{ ...siteLinkProps }
 						className={ siteClasses }
-						href={ encodeURI( this.props.siteUrl ) }
+						href={ encodeURI( siteUrl ) }
 						onClick={ this.onSiteClick }
 					>
 						{ translate( 'visit' ) } <em>{ attribution.blog_name }</em>
 					</a>
 				</span>
-				{ !! this.props.followUrl ? (
+				{ followUrl && (
 					<FollowButton
-						siteUrl={ this.props.followUrl }
+						siteUrl={ followUrl }
 						iconSize={ 20 }
 						onFollowToggle={ this.onFollowToggle }
 					/>
-				) : null }
+				) }
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
-export default DiscoverSiteAttribution;
+export default connect( ( state, ownProps ) => {
+	const { blogId: siteId } = getSourceData( ownProps.post );
+	return {
+		site: getSite( state, siteId ),
+	};
+} )( DiscoverSiteAttribution );

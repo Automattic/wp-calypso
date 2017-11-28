@@ -24,12 +24,7 @@ import { fetchPost } from 'lib/feed-post-store/actions';
 import ReaderFullPostHeader from './header';
 import AuthorCompactProfile from 'blocks/author-compact-profile';
 import LikeButton from 'reader/like-button';
-import {
-	isDiscoverPost,
-	isDiscoverSitePick,
-	getSourceFollowUrl,
-	getSiteUrl,
-} from 'reader/discover/helper';
+import { isDiscoverPost, isDiscoverSitePick } from 'reader/discover/helper';
 import DiscoverSiteAttribution from 'reader/discover/site-attribution';
 import DailyPostButton from 'blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
@@ -398,13 +393,7 @@ export class FullPostView extends React.Component {
 								! isDiscoverPost( post ) && (
 									<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
 								) }
-							{ isDiscoverSitePick( post ) && (
-								<DiscoverSiteAttribution
-									attribution={ post.discover_metadata.attribution }
-									siteUrl={ getSiteUrl( post ) }
-									followUrl={ getSourceFollowUrl( post ) }
-								/>
-							) }
+							{ isDiscoverSitePick( post ) && <DiscoverSiteAttribution post={ post } /> }
 							{ isDailyPostChallengeOrPrompt( post ) && (
 								<DailyPostButton post={ post } site={ site } />
 							) }
