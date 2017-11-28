@@ -7,3 +7,4 @@ export const labelStatus = ( orderId, labelId ) => `connect/label/${ orderId }/$
 export const labelRefund = ( orderId, labelId ) => `connect/label/${ orderId }/${ labelId }/refund`;
 export const labelsPrint = () => 'connect/label/print';
 export const addressNormalization = () => 'connect/normalize-address';
+export const settingsForm = ( ...args ) => 'connect/' + args.filter().join( '/' );
