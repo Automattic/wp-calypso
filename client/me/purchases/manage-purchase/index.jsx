@@ -427,7 +427,6 @@ class ManagePurchase extends Component {
 		}
 		const { selectedSite, selectedSiteId, selectedPurchase, isPurchaseTheme } = this.props;
 		const classes = 'manage-purchase';
-		const purchase = getPurchase( this.props );
 
 		let editCardDetailsPath = false;
 		if (
@@ -446,7 +445,7 @@ class ManagePurchase extends Component {
 				) }
 				<Main className={ classes }>
 					<HeaderCake onClick={ goToList }>{ titles.managePurchase }</HeaderCake>
-					{ ! isDomainTransfer( purchase ) && (
+					{
 						<PurchaseNotice
 							isDataLoading={ isDataLoading( this.props ) }
 							handleRenew={ this.handleRenew }
@@ -454,7 +453,7 @@ class ManagePurchase extends Component {
 							selectedPurchase={ selectedPurchase }
 							editCardDetailsPath={ editCardDetailsPath }
 						/>
-					) }
+					}
 					{ this.renderPurchaseDetail() }
 				</Main>
 			</span>
