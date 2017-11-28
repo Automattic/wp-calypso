@@ -8,12 +8,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flow, get, once } from 'lodash';
+import { flow, once } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSite } from 'state/sites/selectors';
 import UpdateTemplate from './update-template';
 import PostActions from 'lib/posts/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -49,15 +48,7 @@ const getStrings = once( translate => ( {
 	},
 } ) );
 
-const enhance = flow(
-	localize,
-	connect(
-		( state, props ) => ( {
-			site: getSite( state, get( props, 'post.site_ID' ) ),
-		} ),
-		{ recordGoogleEvent }
-	)
-);
+const enhance = flow( localize, connect( null, { recordGoogleEvent } ) );
 
 const updatePostStatus = WrappedComponent =>
 	enhance(
@@ -104,7 +95,6 @@ const updatePostStatus = WrappedComponent =>
 			};
 
 			updatePostStatus = status => {
-				const { site } = this.props;
 				const post = this.props.post || this.props.page;
 				let previousStatus = null;
 
@@ -135,7 +125,7 @@ const updatePostStatus = WrappedComponent =>
 
 						if ( typeof window === 'object' && window.confirm( strings[ type ].deleteWarning ) ) {
 							// eslint-disable-line no-alert
-							PostActions.trash( site, post, setNewStatus );
+							PostActions.trash( post, setNewStatus );
 						} else {
 							this.resetState();
 						}
@@ -148,7 +138,7 @@ const updatePostStatus = WrappedComponent =>
 							updated: true,
 						} );
 						previousStatus = post.status;
-						PostActions.trash( site, post, setNewStatus );
+						PostActions.trash( post, setNewStatus );
 						return;
 
 					case 'restore':
@@ -158,7 +148,7 @@ const updatePostStatus = WrappedComponent =>
 							updated: true,
 						} );
 						previousStatus = 'trash';
-						PostActions.restore( site, post, setNewStatus );
+						PostActions.restore( post, setNewStatus );
 						return;
 
 					default:
@@ -167,7 +157,7 @@ const updatePostStatus = WrappedComponent =>
 							updatedStatus: 'updating',
 							updated: true,
 						} );
-						PostActions.update( site, post, { status }, ( error, resultPost ) => {
+						PostActions.update( post, { status }, ( error, resultPost ) => {
 							if ( ! setNewStatus( error, resultPost ) ) {
 								return;
 							}
