@@ -23,6 +23,7 @@ module.exports = function( authCookieValue, callback ) {
 
 		if ( typeof API_KEY !== 'string' ) {
 			callback( new Error( 'Unable to boostrap user because of invalid API key in secrets.json' ) );
+			return;
 		}
 
 		hmac = crypto.createHmac( 'md5', API_KEY );

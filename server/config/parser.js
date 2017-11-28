@@ -58,6 +58,15 @@ module.exports = function( configPath, defaultOpts ) {
 		} );
 	}
 
+	if (
+		! ( secretsPath === realSecretsPath ) &&
+		data.features &&
+		data.features[ 'wpcom-user-bootstrap' ]
+	) {
+		console.error( 'Disabling server-side user-bootstrapping because of a missing secrets.json' );
+		data.features[ 'wpcom-user-bootstrap' ] = false;
+	}
+
 	const serverData = assign( {}, data, getDataFromFile( secretsPath ) );
 	const clientData = assign( {}, data );
 
