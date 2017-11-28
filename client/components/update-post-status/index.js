@@ -53,7 +53,7 @@ const enhance = flow(
 	localize,
 	connect(
 		( state, props ) => ( {
-			site: getSite( state, get( props, 'post.site_ID' ) ),
+			site: getSite( state, get( props, [ props.page ? 'page' : 'post', 'site_ID' ] ) ),
 		} ),
 		{ recordGoogleEvent }
 	)
