@@ -197,14 +197,19 @@ export class LoggedInForm extends Component {
 		return startsWith( from, 'jpo' );
 	}
 
+	/**
+	 * Check whether this a valid authorized SSO request
+	 *
+	 * @param  {?string} props.from            Where is the request from
+	 * @param  {?number} props.queryDataSiteId Remote site ID
+	 * @return {boolean}                       True if it's a valid SSO request otherwise false
+	 */
 	isSso( { from, queryDataSiteId } = this.props ) {
 		const cookies = cookie.parse( document.cookie );
-		return (
-			'sso' === from &&
-			cookies.jetpack_sso_approved &&
-			queryDataSiteId &&
-			queryDataSiteId === cookies.jetpack_sso_approved
-		);
+		const jetpack_sso_approved = cookies.jetpack_sso_approved
+			? parseInt( cookies.jetpack_sso_approved, 10 )
+			: null;
+		return 'sso' === from && !! queryDataSiteId && queryDataSiteId === jetpack_sso_approved;
 	}
 
 	isWoo( { from } = this.props ) {
