@@ -261,7 +261,7 @@ function setUpLoggedInRoute( req, res, next ) {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
 
-	const context = getDefaultContext( req );
+	const context = ( req.context = getDefaultContext( req ) );
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		const user = require( 'user-bootstrap' );
@@ -302,9 +302,9 @@ function setUpLoggedInRoute( req, res, next ) {
 						errorMessage = error.message;
 					}
 
-					console.log( 'API Error: ' + errorMessage );
+					console.error( 'API Error: ' + errorMessage );
 
-					next( error );
+					next();
 				}
 
 				return;
@@ -347,8 +347,6 @@ function setUpLoggedInRoute( req, res, next ) {
 					return;
 				}
 			}
-
-			req.context = context;
 
 			next();
 		} );
