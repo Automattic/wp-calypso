@@ -304,7 +304,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 					console.error( 'API Error: ' + errorMessage );
 
-					next();
+					next( error );
 				}
 
 				return;
