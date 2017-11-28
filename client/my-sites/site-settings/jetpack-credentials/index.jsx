@@ -106,6 +106,6 @@ export default connect(
 	}, {
 		autoConfigCredentials,
 		updateCredentials,
-		deleteCredentials
+		deleteCredentials,
 	}
 )( localize( Backups ) );
