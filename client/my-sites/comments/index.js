@@ -46,10 +46,10 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
-	page( '/comments/*', siteSelection, redirect, makeLayout, clientRender );
-	page( '/comments', siteSelection, redirect, makeLayout, clientRender );
-	page( '/comment/*', siteSelection, redirect, makeLayout, clientRender );
-	page( '/comment', siteSelection, redirect, makeLayout, clientRender );
+	page( '/comments/*', siteSelection, redirect );
+	page( '/comments', siteSelection, redirect );
+	page( '/comment/*', siteSelection, redirect );
+	page( '/comment', siteSelection, redirect );
 
 	// Leaving Comment Management
 	page.exit( '/comments/*', clearCommentNotices );
