@@ -208,7 +208,8 @@
 		text-align: center;
 	}
 
-	.wp-login__main.main, .magic-login.main {
+	.wp-login__main.main,
+	.magic-login.main {
 		max-width: 778px;
 	}
 
@@ -307,15 +308,5 @@
 	// Signup styles
 	.signup__step {
 		background: linear-gradient( to bottom, #e6e6e6, transparent );
-	}
-
-	.signup-processing__content:after {
-		background-image: url( '/calypso/images/woo/ninja-joy.svg' );
-		content: '';
-		height: 100px;
-		left: 50%;
-		position: absolute;
-		top: 33px;
-		width: 69px;
 	}
 }
