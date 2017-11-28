@@ -10,8 +10,8 @@ import { expect } from 'chai';
 import getPostRevisionChanges from '../get-post-revision-changes';
 
 describe( 'getPostRevisionChanges', () => {
-	const x20k = 'x'.repeat( 20000 );
-	const x19921 = 'x'.repeat( 19921 );
+	const x50k = 'x'.repeat( 50000 );
+	const x49921 = 'x'.repeat( 49921 );
 
 	const outOfOrderState = {
 		posts: {
@@ -60,7 +60,7 @@ describe( 'getPostRevisionChanges', () => {
 								author: 2,
 								date: '2017-11-14T12:13:12Z',
 								content: 'This revision has a really long title',
-								title: x20k,
+								title: x50k,
 							},
 							18: {
 								id: 19,
@@ -73,7 +73,7 @@ describe( 'getPostRevisionChanges', () => {
 								id: 19,
 								author: 2,
 								date: '2017-11-14T12:13:14Z',
-								content: x20k,
+								content: x50k,
 								title: 'This revision has really long content',
 							},
 							20: {
@@ -87,8 +87,8 @@ describe( 'getPostRevisionChanges', () => {
 								id: 21,
 								author: 2,
 								date: '2017-11-15T14:16:12Z',
-								content: x19921,
-								title: 'This revision has total length of 19961',
+								content: x49921,
+								title: 'This revision has total length of 49961',
 							},
 						},
 					},
@@ -199,7 +199,7 @@ describe( 'getPostRevisionChanges', () => {
 				{
 					count: 1,
 					added: true,
-					value: x19921,
+					value: x49921,
 				},
 			],
 			summary: { added: 4, removed: 4 },
@@ -215,7 +215,7 @@ describe( 'getPostRevisionChanges', () => {
 				{ count: 1, added: true, value: 'of' },
 				{ count: 1, value: ' ' },
 				{ count: 1, removed: true, value: 'title' },
-				{ count: 1, added: true, value: '19961' },
+				{ count: 1, added: true, value: '49961' },
 			],
 		} );
 	} );
