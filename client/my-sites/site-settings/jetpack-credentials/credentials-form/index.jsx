@@ -18,6 +18,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextArea from 'components/forms/form-textarea';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
+import Gridicon from 'gridicons';
 
 export class CredentialsForm extends Component {
 	state = {
@@ -208,6 +209,17 @@ export class CredentialsForm extends Component {
 							className="credentials-form__cancel-button"
 						>
 							{ translate( 'Cancel' ) }
+						</Button>
+					) }
+					{ this.props.showDeleteButton && (
+						<Button
+							borderless={ true }
+							disabled={ formIsSubmitting }
+							onClick={ this.handleDelete }
+							className="credentials-form__delete-button"
+						>
+							<Gridicon icon="trash" size={ 18 } />
+							{ translate( 'Delete' ) }
 						</Button>
 					) }
 				</FormFieldset>

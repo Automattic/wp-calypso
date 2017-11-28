@@ -72,6 +72,7 @@ class CredentialsConfigured extends Component {
 							className="credentials-configured__revoke-button"
 							borderless={ true }
 							onClick={ this.handleRevoke }
+							scary={ true }
 						>
 							<Gridicon
 								className="credentials-configured__revoke-icon"
@@ -90,7 +91,7 @@ class CredentialsConfigured extends Component {
 
 		if ( isPressable ) {
 			return (
-				<CompactCard className="credentials-configured" onClick={ this.toggleRevoking }>
+				<CompactCard className="credentials-configured" onClick={ this.toggleRevoking } href="#">
 					<Gridicon
 						icon="checkmark-circle"
 						size={ 48 }
