@@ -85,6 +85,7 @@
 .editor-revisions-list__button {
 	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
 	border-right: 1px solid darken($sidebar-bg-color, 5%);
+	border-radius: 0;
 	color: $gray-dark;
 	cursor: pointer;
 	text-align: left;
