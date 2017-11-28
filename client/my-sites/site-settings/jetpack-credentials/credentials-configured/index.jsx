@@ -65,10 +65,7 @@ class CredentialsConfigured extends Component {
 						) }
 					</div>
 					<div className="credentials-configured__delete">
-						<a
-							onClick={ this.handleDelete }
-							className="credentials-configured__delete_button"
-						>
+						<a onClick={ this.handleDelete } className="credentials-configured__delete-button">
 							{ translate( 'Revoke' ) }
 						</a>
 					</div>

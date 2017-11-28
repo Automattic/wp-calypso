@@ -30,12 +30,12 @@
 	font-size: 1.3rem;
 }
 
-.credentials-configured__delete_button_wrap {
+.credentials-configured__delete {
 	text-align: right;
 }
 
-.credentials-configured__delete_button,
-.credentials-configured__delete_button:hover {
+.credentials-configured__delete-button,
+.credentials-configured__delete-button:hover {
 	color: $alert-red;
 	cursor: pointer;
 }
