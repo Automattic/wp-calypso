@@ -79,11 +79,3 @@ export const jetpackAuthAttemptsSchema = {
 		},
 	},
 };
-
-export const jetpackConnectSelectedPlansSchema = {
-	type: 'object',
-	additionalProperties: false,
-	patternProperties: {
-		'^.+$': { type: [ 'string', 'null' ] },
-	},
-};

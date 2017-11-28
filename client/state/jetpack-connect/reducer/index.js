@@ -4,7 +4,6 @@
  */
 import jetpackAuthAttempts from './jetpack-auth-attempts';
 import jetpackConnectAuthorize from './jetpack-connect-authorize';
-import jetpackConnectSelectedPlans from './jetpack-connect-selected-plans';
 import jetpackConnectSessions from './jetpack-connect-sessions';
 import jetpackConnectSite from './jetpack-connect-site';
 import jetpackSSO from './jetpack-sso';
@@ -15,6 +14,5 @@ export default combineReducers( {
 	jetpackSSO,
 	jetpackConnectAuthorize,
 	jetpackConnectSessions,
-	jetpackConnectSelectedPlans,
 	jetpackAuthAttempts,
 } );

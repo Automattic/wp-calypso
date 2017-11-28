@@ -253,7 +253,6 @@ export const DEFAULT_PROPS = {
 	redirectingToWpAdmin: false,
 	selectedSite: SELECTED_SITE,
 	selectedSiteSlug: SITE_SLUG,
-	selectPlanInAdvance: noop,
 	siteSlug: PLANS_SLUG,
 	transaction: TRANSACTION,
 	translate: identity,

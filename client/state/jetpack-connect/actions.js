@@ -33,7 +33,6 @@ import {
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	JETPACK_CONNECT_RETRY_AUTH,
-	JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -52,6 +51,7 @@ import addQueryArgs from 'lib/route/add-query-args';
 import { externalRedirect } from 'lib/route/path';
 import { urlToSlug } from 'lib/url';
 import { JPC_PLANS_PAGE } from './constants';
+import { clearPlan } from 'jetpack-connect/persistence-utils';
 
 /**
  *  Local variables;
@@ -543,17 +543,9 @@ export default {
 				} );
 		};
 	},
-	selectPlanInAdvance( planSlug, site ) {
-		return dispatch => {
-			dispatch( {
-				type: JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
-				plan: planSlug,
-				site: site,
-			} );
-		};
-	},
 	completeFlow( site ) {
 		return dispatch => {
+			clearPlan();
 			dispatch( {
 				type: JETPACK_CONNECT_COMPLETE_FLOW,
 				site,
