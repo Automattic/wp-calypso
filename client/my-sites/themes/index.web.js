@@ -7,7 +7,7 @@
 import config from 'config';
 import userFactory from 'lib/user';
 import { makeLayout } from 'controller';
-import { makeNavigation, siteSelection, makeSites } from 'my-sites/controller';
+import { navigation, siteSelection, makeSites } from 'my-sites/controller';
 import { loggedIn, loggedOut, upload, fetchThemeFilters } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
 
@@ -23,7 +23,7 @@ export default function( router ) {
 		if ( isLoggedIn ) {
 			if ( config.isEnabled( 'manage/themes/upload' ) ) {
 				router( '/themes/upload', makeSites, makeLayout );
-				router( '/themes/upload/:site_id?', siteSelection, upload, makeNavigation, makeLayout );
+				router( '/themes/upload/:site_id?', siteSelection, upload, navigation, makeLayout );
 			}
 			const loggedInRoutes = [
 				`/themes/:tier(free|premium)?/:site_id(${ siteId })?`,
@@ -38,7 +38,7 @@ export default function( router ) {
 				validateFilters,
 				siteSelection,
 				loggedIn,
-				makeNavigation,
+				navigation,
 				makeLayout
 			);
 		} else {

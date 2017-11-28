@@ -426,11 +426,6 @@ export function jetpackModuleActive( moduleId, redirect ) {
 	};
 }
 
-export function makeNavigation( context, next ) {
-	context.secondary = createNavigation( context );
-	next();
-}
-
 export function navigation( context, next ) {
 	// Render the My Sites navigation in #secondary
 	context.secondary = createNavigation( context );
