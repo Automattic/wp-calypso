@@ -8,6 +8,7 @@ import { forEach, isEmpty, isNumber, omit, omitBy } from 'lodash';
  * Internal dependencies
  */
 import { getCurrencyFormatDecimal, getCurrencyFormatString } from 'woocommerce/lib/currency';
+import { getOrderStatusGroup } from 'woocommerce/lib/order-status';
 
 export const DEFAULT_QUERY = {
 	page: 1,
@@ -24,6 +25,9 @@ export const DEFAULT_QUERY = {
  * @return {Object}       Normalized orders query
  */
 export function getNormalizedOrdersQuery( query ) {
+	if ( query.status ) {
+		query.status = getOrderStatusGroup( query.status );
+	}
 	return omitBy( query, ( value, key ) => DEFAULT_QUERY[ key ] === value );
 }
 
