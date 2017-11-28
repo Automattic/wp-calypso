@@ -4,17 +4,17 @@
  * External dependencies
  */
 import React from 'react';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import ConnectedApplicationIcon from 'me/connected-application-icon';
-import safeProtocolUrl from 'lib/safe-protocol-url';
 import Button from 'components/button';
+import ConnectedApplicationIcon from 'me/connected-application-icon';
 import FoldableCard from 'components/foldable-card';
+import safeProtocolUrl from 'lib/safe-protocol-url';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class ConnectedApplicationItem extends React.Component {
