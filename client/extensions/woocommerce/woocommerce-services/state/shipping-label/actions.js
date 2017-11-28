@@ -183,6 +183,7 @@ const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 	} = formState;
 
 	return getRates( orderId, siteId, dispatch, origin.values, destination.values, map( packages.selected, convertToApiPackage ) )
+		.then( () => expandFirstErroneousStep( orderId, siteId, dispatch, getState ) )
 		.catch( ( error ) => {
 			console.error( error );
 			dispatch( NoticeActions.errorNotice( error.toString() ) );
