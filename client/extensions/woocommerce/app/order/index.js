@@ -13,7 +13,6 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import analytics from 'lib/analytics';
 import Button from 'components/button';
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
 import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
@@ -32,6 +31,7 @@ import OrderCustomer from './order-customer';
 import OrderDetails from './order-details';
 import OrderActivityLog from './order-activity-log';
 import { ProtectFormGuard } from 'lib/protect-form';
+import { recordTrack } from 'woocommerce/lib/analytics';
 
 class Order extends Component {
 	componentDidMount() {
@@ -69,7 +69,7 @@ class Order extends Component {
 	// Put this order into the editing state
 	toggleEditing = () => {
 		const { siteId, orderId } = this.props;
-		analytics.tracks.recordEvent( 'calypso_woocommerce_order_edit_start' );
+		recordTrack( 'calypso_woocommerce_order_edit_start' );
 		if ( siteId ) {
 			this.props.editOrder( siteId, { id: orderId } );
 		}
@@ -78,14 +78,14 @@ class Order extends Component {
 	// Clear this order's edits, takes it out of edit state
 	cancelEditing = () => {
 		const { siteId } = this.props;
-		analytics.tracks.recordEvent( 'calypso_woocommerce_order_edit_cancel' );
+		recordTrack( 'calypso_woocommerce_order_edit_cancel' );
 		this.props.clearOrderEdits( siteId );
 	};
 
 	// Saves changes to the remote site via API
 	saveOrder = () => {
 		const { siteId, order } = this.props;
-		analytics.tracks.recordEvent( 'calypso_woocommerce_order_edit_save' );
+		recordTrack( 'calypso_woocommerce_order_edit_save' );
 		this.props.updateOrder( siteId, order );
 	};
 
