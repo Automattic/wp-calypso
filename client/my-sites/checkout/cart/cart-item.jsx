@@ -15,6 +15,7 @@ import { canRemoveFromCart, cartItems } from 'lib/cart-values';
 import {
 	isCredits,
 	isDomainProduct,
+	isDomainTransferProduct,
 	isGoogleApps,
 	isTheme,
 	isMonthly,
@@ -50,7 +51,11 @@ export class CartItem extends React.Component {
 			return this.getFreeTrialPrice();
 		}
 
-		if ( cartItems.hasDomainCredit( cart ) && isDomainProduct( cartItem ) && cartItem.cost === 0 ) {
+		if (
+			cartItems.hasDomainCredit( cart ) &&
+			( isDomainProduct( cartItem ) || isDomainTransferProduct( cartItem ) ) &&
+			cartItem.cost === 0
+		) {
 			return this.getDomainPlanPrice( cartItem );
 		}
 
