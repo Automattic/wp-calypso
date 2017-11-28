@@ -67,7 +67,7 @@ class InboundTransferEmailVerificationCard extends React.Component {
 					)
 				}
 				verificationExplanation={ translate(
-					'We sent an email to confirm the transfer of %(domain)s. ' +
+					'We sent an email to confirm the transfer of {{strong}}%(domain)s{{/strong}}. ' +
 					'Open the email, click the link, and enter your domain authorization code to start the process. ' +
 					'Please confirm in 5 days or the transfer will be canceled. ' +
 						'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
@@ -78,10 +78,11 @@ class InboundTransferEmailVerificationCard extends React.Component {
 						components: {
 							learnMoreLink: (
 								<a
-									href={ support.INCOMING_DOMAIN_TRANSFER_STATUS_AND_FAILED_TRANSFERS }
+									href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 									rel="noopener noreferrer"
 								/>
 							),
+							strong: <strong />,
 						},
 					}
 				) }
