@@ -3,9 +3,7 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -19,40 +17,35 @@ import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-const ConnectedApplicationItem = createReactClass( {
-	displayName: 'ConnectedApplicationItem',
+class ConnectedApplicationItem extends React.Component {
+	static defaultProps = {
+		isPlaceholder: false,
+	};
 
-	getInitialState: function() {
-		return {
-			showDetail: false,
-		};
-	},
+	state = {
+		showDetail: false,
+	};
 
-	getDefaultProps: function() {
-		return {
-			isPlaceholder: false,
-		};
-	},
-
-	recordClickEvent( action, label = null ) {
+	recordClickEvent = ( action, label = null ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action, label );
-	},
+	};
 
-	getClickHandler( action ) {
+	getClickHandler = action => {
 		return () => this.recordClickEvent( action );
-	},
+	};
 
-	disconnect: function( event ) {
+	disconnect = event => {
 		if ( this.props.isPlaceholder ) {
 			return;
 		}
+
 		const { connection: { title, ID } } = this.props;
 		event.stopPropagation();
 		this.recordClickEvent( 'Disconnect Connected Application Link', title );
 		this.props.revoke( ID );
-	},
+	};
 
-	renderAccessScopeBadge: function() {
+	renderAccessScopeBadge() {
 		const { connection: { scope, site } } = this.props;
 		var meta = '';
 
@@ -71,9 +64,9 @@ const ConnectedApplicationItem = createReactClass( {
 		if ( meta.length ) {
 			return <span className="connected-application-item__meta">{ meta }</span>;
 		}
-	},
+	}
 
-	renderScopeMessage: function() {
+	renderScopeMessage() {
 		const { connection: { scope, site } } = this.props;
 		var message;
 		if ( ! this.props.connection ) {
@@ -124,9 +117,9 @@ const ConnectedApplicationItem = createReactClass( {
 				<p className="connected-application-item__connection-detail-description">{ message }</p>
 			</div>
 		);
-	},
+	}
 
-	renderDetail: function() {
+	renderDetail() {
 		const { connection: { URL, authorized, permissions } } = this.props;
 		if ( this.props.isPlaceholder ) {
 			return;
@@ -170,18 +163,18 @@ const ConnectedApplicationItem = createReactClass( {
 				</ul>
 			</div>
 		);
-	},
+	}
 
-	header: function() {
+	header() {
 		return (
 			<div className="connected-application-item__header">
 				<ConnectedApplicationIcon image={ this.props.connection.icon } />
 				<h3>{ this.props.connection.title }</h3>
 			</div>
 		);
-	},
+	}
 
-	summary: function() {
+	summary() {
 		return (
 			<div>
 				{ this.props.isPlaceholder ? (
@@ -195,9 +188,9 @@ const ConnectedApplicationItem = createReactClass( {
 				) }
 			</div>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
 		let classes = classNames( {
 			'connected-application-item': true,
 			'is-placeholder': this.props.isPlaceholder,
@@ -215,8 +208,8 @@ const ConnectedApplicationItem = createReactClass( {
 				{ this.renderDetail() }
 			</FoldableCard>
 		);
-	},
-} );
+	}
+}
 
 export default connect( null, {
 	recordGoogleEvent,
