@@ -419,24 +419,6 @@ export default function transformer( file, api ) {
 		}
 	}
 
-	// Replace `navigation` with `makeNavigation` in:
-	// `import { navigation } from 'my-sites/controller'`
-	const importMySitesController = root
-		.find( j.ImportDeclaration, {
-			source: {
-				value: 'my-sites/controller',
-			},
-		} )
-		.filter( p => p.value.specifiers.some( n => n.local.name === 'navigation' ) )
-		.replaceWith( p => {
-			p.value.specifiers = p.value.specifiers.map( specifier => {
-				return specifier.local.name === 'navigation'
-					? j.importSpecifier( j.identifier( 'makeNavigation' ) )
-					: specifier;
-			} );
-			return p.value;
-		} );
-
 	// Add makeLayout and clientRender middlewares to route definitions
 	const routeDefs = root
 		.find( j.CallExpression, {
@@ -455,14 +437,6 @@ export default function transformer( file, api ) {
 			);
 		} )
 		.forEach( p => {
-			// Replace `navigation` with `makeNavigation` for files which had
-			// `import { navigation } from 'my-sites/controller'`
-			if ( importMySitesController.size() ) {
-				p.value.arguments = p.value.arguments.map( argument => {
-					return argument.name === 'navigation' ? j.identifier( 'makeNavigation' ) : argument;
-				} );
-			}
-
 			p.value.arguments.push( j.identifier( 'makeLayout' ) );
 			p.value.arguments.push( j.identifier( 'clientRender' ) );
 		} );
