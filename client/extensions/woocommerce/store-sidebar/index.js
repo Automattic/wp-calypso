@@ -111,7 +111,11 @@ class StoreSidebar extends Component {
 		const { site, siteSuffix, translate } = this.props;
 		const link = '/store/products' + siteSuffix;
 		const addLink = '/store/product' + siteSuffix;
-		const selected = this.isItemLinkSelected( [ link, addLink ] );
+		const selected = this.isItemLinkSelected( [
+			link,
+			addLink,
+			'/store/products/categories' + siteSuffix,
+		] );
 		const classes = classNames( {
 			products: true,
 			'is-placeholder': ! site,

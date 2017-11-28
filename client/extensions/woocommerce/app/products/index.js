@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
+import config from 'config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { trim } from 'lodash';
@@ -26,10 +27,14 @@ import {
 	areProductsLoading,
 } from 'woocommerce/state/sites/products/selectors';
 import Main from 'components/main';
+import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'components/section-nav/item';
 import ProductsList from './products-list';
 import ProductsListSearchResults from './products-list-search-results';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SearchCard from 'components/search-card';
+import SectionNav from 'components/section-nav';
+import Search from 'components/search';
 
 class Products extends Component {
 	static propTypes = {
@@ -81,31 +86,43 @@ class Products extends Component {
 		this.props.fetchProducts( site.ID, { search: query } );
 	};
 
-	render() {
-		const {
-			className,
-			site,
-			translate,
-			productsLoading,
-			productsLoaded,
-			totalProducts,
-		} = this.props;
-		const classes = classNames( 'products__list', className );
+	// TODO When this launches, we can reduce this to just the `SectionNav` code.
+	renderSearchCardOrSectionNav() {
+		const { site, translate, productsLoading, productsLoaded, totalProducts } = this.props;
 
-		let productsDisplay;
-		if ( trim( this.state.query ) === '' ) {
-			productsDisplay = <ProductsList onSwitchPage={ this.switchPage } />;
-		} else {
-			productsDisplay = <ProductsListSearchResults onSwitchPage={ this.switchPage } />;
+		if ( config.isEnabled( 'woocommerce/extension-product-categories' ) ) {
+			const productsLabel = translate( 'Products' );
+
+			return (
+				<SectionNav>
+					<NavTabs label={ productsLabel } selectedText={ productsLabel }>
+						<NavItem path={ getLink( '/store/products/:site/', site ) } selected>
+							{ productsLabel }
+						</NavItem>
+						<NavItem path={ getLink( '/store/products/categories/:site/', site ) }>
+							{ translate( 'Categories' ) }
+						</NavItem>
+					</NavTabs>
+
+					<Search
+						pinned
+						fitsContainer
+						onSearch={ this.onSearch }
+						placeholder={ translate( 'Search products…' ) }
+						delaySearch
+						delayTimeout={ 400 }
+					/>
+				</SectionNav>
+			);
 		}
 
-		let searchCard = null;
+		let output = null;
 		// Show the search card if we actually have products, or during the loading process as part of the placeholder UI
 		if (
 			( productsLoaded === true && totalProducts > 0 ) ||
 			( ! site || productsLoading === true )
 		) {
-			searchCard = (
+			output = (
 				<SearchCard
 					onSearch={ this.onSearch }
 					delaySearch
@@ -116,6 +133,20 @@ class Products extends Component {
 			);
 		}
 
+		return output;
+	}
+
+	render() {
+		const { className, site, translate } = this.props;
+		const classes = classNames( 'products__list', className );
+
+		let productsDisplay;
+		if ( trim( this.state.query ) === '' ) {
+			productsDisplay = <ProductsList onSwitchPage={ this.switchPage } />;
+		} else {
+			productsDisplay = <ProductsListSearchResults onSwitchPage={ this.switchPage } />;
+		}
+
 		return (
 			<Main className={ classes } wideLayout>
 				<SidebarNavigation />
@@ -124,7 +155,7 @@ class Products extends Component {
 						{ translate( 'Add a product' ) }
 					</Button>
 				</ActionHeader>
-				{ searchCard }
+				{ this.renderSearchCardOrSectionNav() }
 				{ productsDisplay }
 			</Main>
 		);
