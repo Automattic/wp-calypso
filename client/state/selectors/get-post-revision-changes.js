@@ -58,7 +58,9 @@ const getPostRevisionChanges = createSelector(
 			title,
 		};
 	},
-	state => [ state.posts.revisions.revisions ]
+	( state, siteId, postId, revisionId ) => [
+		get( state, [ 'posts.revisions.revisions', siteId, postId, revisionId ] ),
+	]
 );
 
 export default getPostRevisionChanges;
