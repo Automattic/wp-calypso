@@ -28,6 +28,6 @@ export default function() {
 	);
 
 	// redirect legacy urls
-	page( '/settings/analytics/:site_id?', redirectToTrafficSection, makeLayout, clientRender );
-	page( '/settings/seo/:site_id?', redirectToTrafficSection, makeLayout, clientRender );
+	page( '/settings/analytics/:site_id?', redirectToTrafficSection );
+	page( '/settings/seo/:site_id?', redirectToTrafficSection );
 }
