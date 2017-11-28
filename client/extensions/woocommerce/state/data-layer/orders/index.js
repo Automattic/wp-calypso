@@ -37,7 +37,7 @@ export function receivedOrders( { dispatch }, action, { data } ) {
 
 export function apiError( { dispatch }, action, error ) {
 	debug( 'API Error: ', error );
-	dispatch( failOrders( action.siteId, action.params ) );
+	dispatch( failOrders( action.siteId, action.params, error ) );
 
 	if ( action.failureAction ) {
 		dispatch( action.failureAction );
