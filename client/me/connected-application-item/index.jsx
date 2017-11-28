@@ -6,6 +6,7 @@
 
 import React from 'react';
 import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:connected-application-item' );
@@ -14,17 +15,14 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import eventRecorder from 'me/event-recorder';
 import ConnectedApplicationIcon from 'me/connected-application-icon';
 import safeProtocolUrl from 'lib/safe-protocol-url';
-import analytics from 'lib/analytics';
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const ConnectedApplicationItem = createReactClass( {
 	displayName: 'ConnectedApplicationItem',
-
-	mixins: [ eventRecorder ],
 
 	componentDidMount: function() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
@@ -46,13 +44,21 @@ const ConnectedApplicationItem = createReactClass( {
 		};
 	},
 
+	recordClickEvent( action, label = null ) {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action, label );
+	},
+
+	getClickHandler( action ) {
+		return () => this.recordClickEvent( action );
+	},
+
 	disconnect: function( event ) {
 		if ( this.props.isPlaceholder ) {
 			return;
 		}
 		const { connection: { title, ID } } = this.props;
 		event.stopPropagation();
-		analytics.ga.recordEvent( 'Me', 'Clicked on Disconnect Connected Application Link', title );
+		this.recordClickEvent( 'Disconnect Connected Application Link', title );
 		this.props.revoke( ID );
 	},
 
@@ -103,7 +109,7 @@ const ConnectedApplicationItem = createReactClass( {
 								target="_blank"
 								rel="noopener noreferrer"
 								href={ safeProtocolUrl( this.props.connection.site.site_URL ) }
-								onClick={ this.recordClickEvent( 'Connected Application Scope Blog Link' ) }
+								onClick={ this.getClickHandler( 'Connected Application Scope Blog Link' ) }
 							/>
 						),
 					},
@@ -142,7 +148,7 @@ const ConnectedApplicationItem = createReactClass( {
 				<p>
 					<a
 						href={ safeProtocolUrl( URL ) }
-						onClick={ this.recordClickEvent( 'Connected Application Website Link' ) }
+						onClick={ this.getClickHandler( 'Connected Application Website Link' ) }
 						target="_blank"
 						rel="noopener noreferrer"
 					>
@@ -222,4 +228,6 @@ const ConnectedApplicationItem = createReactClass( {
 	},
 } );
 
-export default localize( ConnectedApplicationItem );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( ConnectedApplicationItem ) );
