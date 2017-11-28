@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { every, fill, find, first, flatten, includes, isEqual, map, noop, omit, pick } from 'lodash';
+import { every, fill, find, first, flatten, includes, isEqual, map, noop, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tr
 import normalizeAddress from './normalize-address';
 import getRates from './get-rates';
 import { getPrintURL } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
-import { getShippingLabel, getFormErrors, shouldFulfillOrder, shouldEmailDetails } from './selectors';
+import { getFirstErroneousStep, getShippingLabel, getFormErrors, shouldFulfillOrder, shouldEmailDetails } from './selectors';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import { updateOrder } from 'woocommerce/state/sites/orders/actions';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
@@ -102,39 +102,12 @@ const waitForAllPromises = ( promises ) => {
 	return Promise.all( promises.map( ( p ) => p.catch( ( e ) => e ) ) );
 };
 
-/**
- * Checks the form for errors and returns a step with an error in it or null
- * @param {Object} form the form
- * @param {Object} errors error tree
- * @param {Number} currentStepIndex (optional) index of the step where the check should start, defaults to 0
- *
- * @returns {String} erroneous step name or null
- */
-const getFirstErroneousStep = ( form, errors ) => {
-	if ( ! form.origin.isNormalized || ! isEqual( form.origin.values, form.origin.normalized ) ) {
-		return 'origin';
-	}
-
-	if ( ! form.destination.isNormalized || ! isEqual( form.destination.values, form.destination.normalized ) ) {
-		return 'destination';
-	}
-
-	if ( hasNonEmptyLeaves( errors.packages ) ) {
-		return 'packages';
-	}
-
-	if ( hasNonEmptyLeaves( errors.rates ) ) {
-		return 'rates';
-	}
-
-	return null;
-};
-
 const expandFirstErroneousStep = ( orderId, siteId, dispatch, getState ) => {
-	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
+	const state = getState();
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	const form = shippingLabel.form;
 
-	const step = getFirstErroneousStep( form, getFormErrors( getState(), orderId, siteId ) );
+	const step = getFirstErroneousStep( state, orderId, siteId );
 	if ( step && ! form[ step ].expanded ) {
 		dispatch( toggleStep( orderId, siteId, step ) );
 	}
@@ -169,8 +142,8 @@ export const clearAvailableRates = ( orderId, siteId ) => {
  */
 const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 	const state = getState();
-	const errors = getFormErrors( state, orderId, siteId );
-	if ( hasNonEmptyLeaves( omit( errors, 'rates' ) ) ) {
+	const erroneousStep = getFirstErroneousStep( state, orderId, siteId );
+	if ( erroneousStep && 'rates' !== erroneousStep ) {
 		expandFirstErroneousStep( orderId, siteId, dispatch, getState );
 		return;
 	}

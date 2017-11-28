@@ -57,7 +57,7 @@ const getNormalizationStatus = ( { normalizationInProgress, errors, isNormalized
 	if ( normalizationInProgress ) {
 		return { isProgress: true };
 	}
-	if ( hasNonEmptyLeaves( errors ) || ( isNormalized && ! normalized ) ) {
+	if ( hasNonEmptyLeaves( errors ) || ( isNormalized && ! normalized ) || ! isNormalized ) {
 		return { isError: true };
 	}
 	if ( isNormalized ) {
