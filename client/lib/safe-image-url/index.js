@@ -33,8 +33,11 @@ const REGEXP_A8C_HOST = /^([-a-zA-Z0-9_]+\.)*(gravatar\.com|wordpress\.com|wp\.c
  * this, we check the host of the URL against a whitelist, and run the image
  * through photon if the host name does not match.
  *
+ * NOTE: This function will return `null` for external URLs with query strings,
+ * because Photon itself does not support this!
+ *
  * @param  {string} url The URL to secure
- * @return {string}     The secured URL, or null if we couldn't make it safe
+ * @return {?string}    The secured URL, or `null` if we couldn't make it safe
  */
 export default function safeImageUrl( url ) {
 	if ( typeof url !== 'string' ) {
