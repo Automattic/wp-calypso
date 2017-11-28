@@ -36,16 +36,16 @@ export default {
 		next();
 	},
 
-	people( context ) {
-		renderPeopleList( context );
+	people( context, next ) {
+		renderPeopleList( context, next );
 	},
 
-	invitePeople( context ) {
-		renderInvitePeople( context );
+	invitePeople( context, next ) {
+		renderInvitePeople( context, next );
 	},
 
-	person( context ) {
-		renderSingleTeamMember( context );
+	person( context, next ) {
+		renderSingleTeamMember( context, next );
 	},
 };
 
