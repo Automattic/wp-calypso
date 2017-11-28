@@ -30,12 +30,18 @@
 	font-size: 1.3rem;
 }
 
-.credentials-configured__delete {
+.credentials-configured__revoke-actions {
 	text-align: right;
 }
 
-.credentials-configured__delete-button,
-.credentials-configured__delete-button:hover {
+.credentials-configured__revoke-button.is-borderless {
 	color: $alert-red;
-	cursor: pointer;
+	margin-right: 2rem;
+	position: relative;
+	top: -5px;
+}
+
+.credentials-configured__revoke-icon {
+	color: $alert-red;
+	margin-right: .5rem;
 }
