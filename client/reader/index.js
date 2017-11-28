@@ -52,9 +52,9 @@ export default function() {
 		page( '/read/feed', '/' );
 
 		// Feed stream
-		page( '/read/*', preloadReaderBundle, initAbTests, makeLayout, clientRender );
-		page( '/read/blog/feed/:feed_id', legacyRedirects, makeLayout, clientRender );
-		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects, makeLayout, clientRender );
+		page( '/read/*', preloadReaderBundle, initAbTests );
+		page( '/read/blog/feed/:feed_id', legacyRedirects );
+		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page(
 			'/read/feeds/:feed_id',
 			updateLastRoute,
@@ -67,8 +67,8 @@ export default function() {
 		);
 
 		// Blog stream
-		page( '/read/blog/id/:blog_id', legacyRedirects, makeLayout, clientRender );
-		page( '/read/blogs/:blog_id/posts', incompleteUrlRedirects, makeLayout, clientRender );
+		page( '/read/blog/id/:blog_id', legacyRedirects );
+		page( '/read/blogs/:blog_id/posts', incompleteUrlRedirects );
 		page(
 			'/read/blogs/:blog_id',
 			updateLastRoute,
@@ -80,8 +80,8 @@ export default function() {
 		);
 
 		// Old full post view
-		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects, makeLayout, clientRender );
-		page( '/read/post/id/:blog_id/:post_id', legacyRedirects, makeLayout, clientRender );
+		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );
+		page( '/read/post/id/:blog_id/:post_id', legacyRedirects );
 	}
 
 	// Automattic Employee Posts
