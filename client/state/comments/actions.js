@@ -76,6 +76,7 @@ export function requestPostComments( {
 	postId,
 	status = 'approved',
 	direction = 'before',
+	type = 'comments',
 } ) {
 	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
 		status = 'approved';
@@ -90,6 +91,7 @@ export function requestPostComments( {
 			order: direction === 'before' ? 'DESC' : 'ASC',
 			number: NUMBER_OF_COMMENTS_PER_FETCH,
 			status,
+			type,
 		},
 	};
 }
