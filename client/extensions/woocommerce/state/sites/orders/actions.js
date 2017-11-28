@@ -3,9 +3,7 @@
 /**
  * External dependencies
  */
-
-import qs from 'querystring';
-import { omitBy } from 'lodash';
+import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -15,18 +13,11 @@ import {
 	removeTemporaryIds,
 	transformOrderForApi,
 } from './utils';
-import { areOrdersLoaded, areOrdersLoading, isOrderLoaded, isOrderLoading } from './selectors';
+import { isOrderLoaded, isOrderLoading } from './selectors';
+import { getOrderStatusGroup } from 'woocommerce/lib/order-status';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
 import { setError } from '../status/wc-api/actions';
-import {
-	ORDER_UNPAID,
-	ORDER_UNFULFILLED,
-	ORDER_COMPLETED,
-	statusWaitingPayment,
-	statusWaitingFulfillment,
-	statusFinished,
-} from 'woocommerce/lib/order-status';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 import {
@@ -41,57 +32,39 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export const fetchOrders = ( siteId, requestedQuery = {} ) => ( dispatch, getState ) => {
-	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
-	}
-
+export const fetchOrders = ( siteId, requestedQuery = {} ) => {
 	const query = { ...DEFAULT_QUERY, ...requestedQuery };
-	const normalizedQuery = getNormalizedOrdersQuery( requestedQuery );
-	if ( areOrdersLoaded( state, query, siteId ) || areOrdersLoading( state, query, siteId ) ) {
-		return;
-	}
+	// Convert URL status to status group
+	query.status = getOrderStatusGroup( query.status );
 
-	const fetchAction = {
+	return {
 		type: WOOCOMMERCE_ORDERS_REQUEST,
 		siteId,
-		query: normalizedQuery,
+		query,
 	};
-	dispatch( fetchAction );
+};
 
-	// Convert URL status to status group
-	if ( ORDER_UNPAID === query.status ) {
-		query.status = statusWaitingPayment.join( ',' );
-	} else if ( ORDER_UNFULFILLED === query.status ) {
-		query.status = statusWaitingFulfillment.join( ',' );
-	} else if ( ORDER_COMPLETED === query.status ) {
-		query.status = statusFinished.join( ',' );
+export const failOrders = ( siteId, query = {}, error = false ) => {
+	return {
+		type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
+		siteId,
+		query: getNormalizedOrdersQuery( query ),
+		error,
+	};
+};
+
+export const updateOrders = ( siteId, query = {}, orders = [], total = 0 ) => {
+	// This passed through the API layer successfully, but failed at the remote site.
+	if ( ! isArray( orders ) ) {
+		return failOrders( siteId, query, orders );
 	}
-
-	const queryString = qs.stringify( omitBy( query, val => '' === val ) );
-	return request( siteId )
-		.getWithHeaders( 'orders?' + queryString )
-		.then( response => {
-			const { headers, data } = response;
-			const total = headers[ 'X-WP-Total' ];
-			dispatch( {
-				type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
-				siteId,
-				query: normalizedQuery,
-				total,
-				orders: data,
-			} );
-		} )
-		.catch( error => {
-			dispatch( setError( siteId, fetchAction, error ) );
-			dispatch( {
-				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
-				siteId,
-				query: normalizedQuery,
-				error,
-			} );
-		} );
+	return {
+		type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
+		siteId,
+		query: getNormalizedOrdersQuery( query ),
+		total,
+		orders,
+	};
 };
 
 export const fetchOrder = ( siteId, orderId, refresh = false ) => ( dispatch, getState ) => {

@@ -10,7 +10,7 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { fetchOrder, fetchOrders, updateOrder } from '../actions';
+import { fetchOrder, updateOrders, failOrders, fetchOrders, updateOrder } from '../actions';
 import order from './fixtures/order';
 import orders from './fixtures/orders';
 import useNock from 'test/helpers/use-nock';
@@ -30,98 +30,39 @@ describe( 'actions', () => {
 	describe( '#fetchOrders()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( {
-					path: '/wc/v3/orders&page=1&per_page=50&status=any&_envelope&_method=get',
-					json: true,
-				} )
-				.reply( 200, {
-					data: {
-						body: orders,
-						headers: { 'X-WP-TotalPages': 3, 'X-WP-Total': 30 },
-						status: 200,
-					},
-				} )
-				.get( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
-				.query( {
-					path: '/wc/v3/orders&page=invalid&per_page=50&status=any&_envelope&_method=get',
-					json: true,
-				} )
-				.reply( 404, {
-					data: {
-						message: 'Invalid parameter(s): page',
-						error: 'rest_invalid_param',
-						status: 400,
-					},
-				} );
-		} );
-
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
-			const dispatch = spy();
-			fetchOrders( siteId, { page: 1, status: 'any' } )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+		test( 'should return an action', () => {
+			const action = fetchOrders( siteId, { page: 1, status: 'any' } );
+			expect( action ).to.eql( {
 				type: WOOCOMMERCE_ORDERS_REQUEST,
 				siteId,
-				query: {},
-			} );
-		} );
-
-		test( 'should dispatch a success action with orders list when request completes', () => {
-			const getState = () => ( {} );
-			const dispatch = spy();
-			const response = fetchOrders( siteId, { page: 1 } )( dispatch, getState );
-
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
-					type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
-					siteId,
-					query: {},
-					total: 30,
-					orders,
-				} );
-			} );
-		} );
-
-		test( 'should dispatch a failure action with the error when a the request fails', () => {
-			const getState = () => ( {} );
-			const dispatch = spy();
-			const response = fetchOrders( 234, { page: 'invalid' } )( dispatch, getState );
-
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWithMatch( {
-					type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
-					siteId: 234,
-				} );
-			} );
-		} );
-
-		test( 'should not dispatch if orders are already loading for this site', () => {
-			const getState = () => ( {
-				extensions: {
-					woocommerce: {
-						sites: {
-							123: {
-								orders: {
-									isLoading: {},
-									isQueryLoading: {
-										'{}': true,
-									},
-									items: {},
-									queries: {},
-									total: {},
-								},
-							},
-						},
-					},
+				query: {
+					per_page: 50,
+					search: '',
+					page: 1,
+					status: 'any',
 				},
 			} );
-			const dispatch = spy();
-			fetchOrders( 123, { page: 1 } )( dispatch, getState );
-			expect( dispatch ).to.have.not.been.called;
+		} );
+
+		test( 'should return a success action with orders list when request completes', () => {
+			const action = updateOrders( siteId, { page: 1 }, orders, 30 );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
+				siteId,
+				query: {},
+				total: 30,
+				orders,
+			} );
+		} );
+
+		test( 'should return a failure action with the error when a the request fails', () => {
+			const action = failOrders( 234, { page: 1 } );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
+				siteId: 234,
+				query: {},
+				error: false,
+			} );
 		} );
 	} );
 
