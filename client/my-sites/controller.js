@@ -452,8 +452,13 @@ export function jetPackWarning( context, next ) {
 	}
 }
 
+/**
+ * Middleware that adds the site selector screen to the layout.
+ *
+ * @param {object} context -- Middleware context
+ * @param {function} next -- Call next middleware in chain
+ */
 export function sites( context, next ) {
-	const { dispatch } = getStore( context );
 	if ( context.query.verified === '1' ) {
 		notices.success(
 			i18n.translate(
@@ -461,28 +466,7 @@ export function sites( context, next ) {
 			)
 		);
 	}
-	/**
-	 * Sites is rendered on #primary but it doesn't expect a sidebar to exist
-	 */
-	removeSidebar( context );
-	dispatch( setLayoutFocus( 'content' ) );
 
-	context.primary = createSitesComponent( context );
-	next();
-}
-
-/**
- * Middleware that adds the site selector screen to the layout
- * without rendering the layout. For use with isomorphic routing
- * @see {@link https://github.com/Automattic/wp-calypso/blob/master/docs/isomorphic-routing.md }
- *
- * To show the site selector screen using traditional multi-tree
- * layout, use the sites() middleware above.
- *
- * @param {object} context -- Middleware context
- * @param {function} next -- Call next middleware in chain
- */
-export function makeSites( context, next ) {
 	context.store.dispatch( setLayoutFocus( 'content' ) );
 	context.store.dispatch(
 		setSection( {
