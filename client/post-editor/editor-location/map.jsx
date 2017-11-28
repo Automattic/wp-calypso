@@ -62,10 +62,11 @@ export default class extends React.Component {
 	}
 
 	componentDidUpdate() {
-		if ( this.map && this.props.coordinates ) {
+		const { coordinates } = this.props;
+		if ( this.map && coordinates.length > 1 ) {
 			this.setMarker( {
-				lat: this.props.coordinates[ 0 ],
-				lng: this.props.coordinates[ 1 ],
+				lat: coordinates[ 0 ],
+				lng: coordinates[ 1 ],
 			} );
 		}
 	}
