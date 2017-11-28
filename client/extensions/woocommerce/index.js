@@ -175,46 +175,49 @@ const getStorePages = () => {
 };
 
 function addStorePage( storePage, storeNavigation ) {
-	page( storePage.path, siteSelection, storeNavigation, function( context, next ) {
-		const component = React.createElement( storePage.container, { params: context.params } );
-		const appProps =
-			( storePage.documentTitle && { documentTitle: storePage.documentTitle } ) || {};
+	page(
+		storePage.path,
+		siteSelection,
+		storeNavigation,
+		( context, next ) => {
+			const component = React.createElement( storePage.container, { params: context.params } );
+			const appProps =
+				( storePage.documentTitle && { documentTitle: storePage.documentTitle } ) || {};
 
-		let analyticsPath = storePage.path;
-		const { filter } = context.params;
-		if ( filter ) {
-			analyticsPath = analyticsPath.replace( ':filter', filter );
-		}
+			let analyticsPath = storePage.path;
+			const { filter } = context.params;
+			if ( filter ) {
+				analyticsPath = analyticsPath.replace( ':filter', filter );
+			}
 
-		let analyticsPageTitle = 'Store';
-		if ( storePage.documentTitle ) {
-			analyticsPageTitle += ` > ${ storePage.documentTitle }`;
-		} else {
-			analyticsPageTitle += ' > Dashboard';
-		}
+			let analyticsPageTitle = 'Store';
+			if ( storePage.documentTitle ) {
+				analyticsPageTitle += ` > ${ storePage.documentTitle }`;
+			} else {
+				analyticsPageTitle += ' > Dashboard';
+			}
 
-		analytics.pageView.record( analyticsPath, analyticsPageTitle );
+			analytics.pageView.record( analyticsPath, analyticsPageTitle );
 
-		context.primary = React.createElement( App, appProps, component );
-		next();
-	} );
+			context.primary = React.createElement( App, appProps, component );
+			next();
+		},
+		makeLayout,
+		clientRender
+	);
 }
 
 function createStoreNavigation( context, next, storePage ) {
-	renderWithReduxStore(
-		React.createElement( StoreSidebar, {
-			path: context.path,
-			page: storePage,
-		} ),
-		document.getElementById( 'secondary' ),
-		context.store
-	);
+	context.secondary = React.createElement( StoreSidebar, {
+		path: context.path,
+		page: storePage,
+	} );
 
 	next();
 }
 
 function notFoundError( context, next ) {
-	context.content = React.createElement( EmptyContent, {
+	context.primary = React.createElement( EmptyContent, {
 		className: 'content-404',
 		illustration: '/calypso/images/illustrations/illustration-404.svg',
 		title: translate( 'Uh oh. Page not found.' ),
