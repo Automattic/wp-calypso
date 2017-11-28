@@ -140,6 +140,25 @@ function getAvailabilityNotice( domain, error ) {
 			);
 			break;
 
+		case domainAvailability.TRANSFER_PENDING:
+			message = translate(
+				"{{strong}}%(domain)s{{/strong}} is pending transfer and can't be connected to WordPress.com right now. " +
+					'{{a}}Learn more{{/a}}.',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				}
+			);
+			break;
+
 		default:
 			message = translate(
 				'Sorry, there was a problem processing your request. Please try again in a few minutes.'
