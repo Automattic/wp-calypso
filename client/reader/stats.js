@@ -8,8 +8,9 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import { mc, ga, tracks } from 'lib/analytics';
+import analytics from 'lib/analytics';
 
+const { mc, ga, tracks } = analytics;
 const debug = debugFactory( 'calypso:reader:stats' );
 
 export function recordAction( action ) {

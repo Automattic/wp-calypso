@@ -16,7 +16,7 @@ import emitter from 'lib/mixins/emitter';
 import { runFastRules, runSlowRules } from 'state/reader/posts/normalization-rules';
 import { action as FeedPostActionType } from './constants';
 import { action as FeedStreamActionType } from 'lib/feed-stream-store/constants';
-import { mc } from 'lib/analytics';
+import analytics from 'lib/analytics';
 import { pageViewForPost } from 'reader/stats';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
@@ -28,8 +28,8 @@ import { reduxDispatch } from 'lib/redux-bridge';
  */
 const debug = debugModule( 'calypso:feed-post-store' );
 
-let _posts = {},
-	_postsForBlogs = {};
+let _posts = {};
+let _postsForBlogs = {};
 
 function blogKey( postKey ) {
 	return postKey.blogId + '-' + postKey.postId;
@@ -322,7 +322,10 @@ function markPostSeen( post, site ) {
 		if ( site && site.ID ) {
 			if ( site.is_private || ! isAdmin ) {
 				pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
-				mc.bumpStat( 'reader_pageviews', site.is_private ? 'private_view' : 'public_view' );
+				analytics.mc.bumpStat(
+					'reader_pageviews',
+					site.is_private ? 'private_view' : 'public_view'
+				);
 			}
 		}
 	}
