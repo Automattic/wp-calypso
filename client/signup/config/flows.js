@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
-
+import { abtest } from 'lib/abtest';
 const user = userFactory();
 
 function getCheckoutUrl( dependencies ) {
@@ -334,6 +334,10 @@ function replaceStepInFlow( flow, oldStepName, newStepName ) {
 function filterDesignTypeInFlow( flowName, flow ) {
 	if ( ! flow ) {
 		return;
+	}
+
+	if ( abtest( 'signupSiteSegmentStep' ) === 'variant' ) {
+		return replaceStepInFlow( flow, 'design-type', 'about' );
 	}
 
 	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
