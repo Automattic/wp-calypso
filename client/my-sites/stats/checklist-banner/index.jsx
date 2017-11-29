@@ -10,17 +10,24 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { countBy, find, noop } from 'lodash';
 import Gridicon from 'gridicons';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
+import localStorageHelper from 'store';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gauge from 'components/gauge';
 import ProgressBar from 'components/progress-bar';
+import ShareButton from 'components/share-button';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { getSiteChecklist } from 'state/selectors';
-import { onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
+import { getSiteSlug } from 'state/sites/selectors';
+import { onboardingTasks, urlForTask } from 'my-sites/checklist/onboardingChecklist';
+import { recordTracksEvent } from 'state/analytics/actions';
+
+const storageKey = 'onboarding-checklist-banner-closed';
 
 export class ChecklistBanner extends Component {
 	static propTypes = {
@@ -33,29 +40,38 @@ export class ChecklistBanner extends Component {
 		completed: PropTypes.number,
 		total: PropTypes.number,
 		siteId: PropTypes.number,
-		slug: PropTypes.string,
-		onClick: PropTypes.func,
-		onClose: PropTypes.func,
+		siteSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
 		task: null,
 		onClick: noop,
-		onClose: noop,
 		completed: 0,
 		total: 1,
 	};
 
+	state = {
+		closed: !! localStorageHelper.get( storageKey ),
+	};
+
 	handleClick = () => {
-		this.props.onClick( this.task.id );
+		const { task, siteSlug } = this.props;
+		const url = urlForTask( task.id, siteSlug );
+
+		if ( url ) {
+			page( url );
+		}
 	};
 
 	handleClose = () => {
-		this.props.onClose();
+		this.setState( { closed: true } );
+		localStorageHelper.set( storageKey, true );
+
+		this.props.track( 'calypso_checklist_banner_close' );
 	};
 
-	getTask() {
-		const { completed, total, translate } = this.props;
+	getNextTask() {
+		const { completed, siteSlug, total, translate } = this.props;
 
 		if ( completed === total ) {
 			return {
@@ -65,7 +81,7 @@ export class ChecklistBanner extends Component {
 					'We did it! You have completed {{a}}all the tasks{{/a}} on our checklist.',
 					{
 						components: {
-							a: <a href={ `/checklist/${ this.props.slug }` } />,
+							a: <a href={ `/checklist/${ siteSlug }` } />,
 						},
 					}
 				),
@@ -77,7 +93,32 @@ export class ChecklistBanner extends Component {
 	}
 
 	renderShareButtons() {
-		return <div className="checklist-banner__actions">Share buttons will be here!</div>;
+		const { siteSlug, translate } = this.props;
+		const socialMedia = [
+			'wordpress',
+			'facebook',
+			'twitter',
+			'google-plus',
+			'linkedin',
+			'tumblr',
+			'pinterest',
+		];
+
+		return (
+			<div className="checklist-banner__actions">
+				{ socialMedia.map( medium => (
+					<ShareButton
+						key={ medium }
+						url={ `https://${ siteSlug }` }
+						title={ translate(
+							'Delighted to announce my new website is live today — please take a look.'
+						) }
+						siteSlug={ siteSlug }
+						service={ medium }
+					/>
+				) ) }
+			</div>
+		);
 	}
 
 	renderTaskButton() {
@@ -86,7 +127,7 @@ export class ChecklistBanner extends Component {
 				<Button onClick={ this.handleClick } className="checklist-banner__button" primary>
 					{ this.props.translate( 'Do it' ) }
 				</Button>
-				<a href={ `/checklist/${ this.props.slug }` } className="checklist-banner__link">
+				<a href={ `/checklist/${ this.props.siteSlug }` } className="checklist-banner__link">
 					{ this.props.translate( 'View your checklist' ) }
 				</a>
 			</div>
@@ -95,8 +136,12 @@ export class ChecklistBanner extends Component {
 
 	render() {
 		const { completed, total, translate, siteId } = this.props;
-		const task = this.getTask();
+		const task = this.getNextTask();
 		const percentage = ( completed / Math.max( total, 1 ) * 100 ).toFixed( 1 );
+
+		if ( this.state.closed ) {
+			return null;
+		}
 
 		if ( ! task ) {
 			return siteId && <QuerySiteChecklist siteId={ siteId } />;
@@ -140,15 +185,21 @@ export class ChecklistBanner extends Component {
 	}
 }
 
-export default connect( ( state, props ) => {
-	const siteChecklist = getSiteChecklist( state, props.siteId );
+const mapStateToProps = ( state, { siteId } ) => {
+	const siteChecklist = getSiteChecklist( state, siteId );
 	const tasks = siteChecklist && siteChecklist.tasks && onboardingTasks( siteChecklist.tasks );
 	const task = find( tasks, [ 'completed', false ] );
 	const { true: completed } = countBy( tasks, 'completed' );
+	const siteSlug = getSiteSlug( state, siteId );
 
 	return {
 		task,
 		completed,
 		total: tasks && tasks.length,
+		siteSlug,
 	};
-} )( localize( ChecklistBanner ) );
+};
+
+const mapDispatchToProps = { track: recordTracksEvent };
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ChecklistBanner ) );

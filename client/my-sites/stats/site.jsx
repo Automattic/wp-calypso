@@ -131,7 +131,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					<ChecklistBanner siteId={ siteId } slug={ slug } />
+					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
 					<ChartTabs
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
