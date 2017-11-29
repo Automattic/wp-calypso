@@ -52,7 +52,6 @@ describe( 'actions', () => {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
 					status: 'trash',
-					type: 'comments',
 				},
 				direction: 'before',
 			} );
@@ -70,7 +69,6 @@ describe( 'actions', () => {
 					order: 'DESC',
 					number: NUMBER_OF_COMMENTS_PER_FETCH,
 					status: 'approved',
-					type: 'comments',
 				},
 			} );
 		} );
