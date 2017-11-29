@@ -5,7 +5,7 @@
 	margin-bottom: 0;
 	transition: 0.3s box-shadow;
 	position: fixed;
-	top: 47px;
+	top: 0;
 	left: 0;
 	right: 0;
 	z-index: z-index( 'root', '.editor-ground-control' );
@@ -94,7 +94,7 @@
 }
 
 .editor-ground-control__action-buttons .button.is-borderless svg {
-	top: 7px;
+	top: 4px;
 }
 
 .editor-ground-control__preview-button {
@@ -103,15 +103,18 @@
 }
 
 .editor-ground-control__toggle-sidebar {
-	margin-right: 8px;
-	border-radius: 0;
+	margin: 3px 8px 3px 0;
+	height: 40px;
+	line-height: 1;
 }
 
-.focus-sidebar .editor-ground-control__toggle-sidebar:hover,
+.focus-sidebar .editor-ground-control__toggle-sidebar:hover {
+	background: #efefef;
+}
 .focus-sidebar .editor-ground-control__toggle-sidebar:focus,
 .focus-sidebar .editor-ground-control__toggle-sidebar {
-	color: $blue-medium;
-	box-shadow: inset 0 -3px $blue-medium;
+	color: $white;
+	background: #333;
 }
 
 .editor-ground-control__toggle-sidebar.button.is-borderless,
@@ -239,9 +242,14 @@
 
 .editor-ground-control__back.button.is-borderless {
 	border-right: 1px solid lighten( $gray, 25% );
-	padding: 6px 10px;
+	padding: 6px 20px;
 	height: 46px;
 	border-radius: 0;
+	color: $blue-medium;
+
+	&:hover {
+		color: $blue-light;
+	}
 
 	.gridicon {
 		top: 4px;

@@ -21,7 +21,6 @@ import siteUtils from 'lib/site/utils';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
-import EditorPostType from 'post-editor/editor-post-type';
 import HistoryButton from 'post-editor/editor-ground-control/history-button';
 
 export class EditorGroundControl extends PureComponent {
@@ -123,10 +122,6 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	getPreviewLabel() {
-		if ( postUtils.isPublished( this.props.savedPost ) && this.props.site.jetpack ) {
-			return this.props.translate( 'View' );
-		}
-
 		return this.props.translate( 'Preview' );
 	}
 
@@ -253,24 +248,18 @@ export class EditorGroundControl extends PureComponent {
 			<div className="editor-ground-control__action-buttons">
 				<Button
 					borderless
+					className="editor-ground-control__toggle-sidebar"
+					onClick={ this.props.toggleSidebar }
+				>
+					<Gridicon icon="cog" />
+				</Button>
+				<Button
 					className="editor-ground-control__preview-button"
 					disabled={ ! this.isPreviewEnabled() }
 					onClick={ this.onPreviewButtonClick }
 					tabIndex={ 4 }
 				>
-					<Gridicon icon="visible" />{' '}
 					<span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
-				</Button>
-				<Button
-					borderless
-					className="editor-ground-control__toggle-sidebar"
-					onClick={ this.props.toggleSidebar }
-				>
-					<Gridicon icon="cog" />
-					<span className="editor-ground-control__button-label">
-						{' '}
-						<EditorPostType isSettings />
-					</span>
 				</Button>
 				<div className="editor-ground-control__publish-button">
 					<EditorPublishButton
@@ -309,9 +298,9 @@ export class EditorGroundControl extends PureComponent {
 					className="editor-ground-control__back"
 					href={ '' }
 					onClick={ this.onBackButtonClick }
-					aria-label={ translate( 'Go back' ) }
+					aria-label={ translate( 'Done' ) }
 				>
-					<Gridicon icon="arrow-left" />
+					{ translate( 'Done' ) }
 				</Button>
 				<Site
 					compact
