@@ -160,8 +160,8 @@ class CancelPurchaseButton extends Component {
 		} else {
 			buttonsArr =
 				this.state.surveyStep === INITIAL_STEP
-					? [ buttons.cancel, buttons.next ]
-					: [ buttons.cancel, buttons.prev, buttons.next ];
+					? [ buttons.close, buttons.next ]
+					: [ buttons.close, buttons.prev, buttons.next ];
 		}
 
 		return (
