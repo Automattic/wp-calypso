@@ -17,25 +17,29 @@ export default class ShareButtonExample extends PureComponent {
 	render() {
 		return (
 			<div>
-				{ keys( services ).map( service => (
-					<ShareButton
-						key={ service }
-						size={ 48 }
-						url="https://wordpress.com"
-						title="Share your thoughts and ideas on WordPress.com"
-						service={ service }
-					/>
-				) ) }
-				{ keys( services ).map( service => (
-					<ShareButton
-						key={ service }
-						size={ 48 }
-						url="https://wordpress.com"
-						title="Share your thoughts and ideas on WordPress.com"
-						service={ service }
-						color={ false }
-					/>
-				) ) }
+				<div>
+					{ keys( services ).map( service => (
+						<ShareButton
+							key={ service }
+							size={ 48 }
+							url="https://wordpress.com"
+							title="Share your thoughts and ideas on WordPress.com"
+							service={ service }
+						/>
+					) ) }
+				</div>
+				<div>
+					{ keys( services ).map( service => (
+						<ShareButton
+							key={ service }
+							size={ 48 }
+							url="https://wordpress.com"
+							title="Share your thoughts and ideas on WordPress.com"
+							service={ service }
+							color={ false }
+						/>
+					) ) }
+				</div>
 			</div>
 		);
 	}
