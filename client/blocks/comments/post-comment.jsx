@@ -25,7 +25,7 @@ import CommentEditForm from './comment-edit-form';
 import { PLACEHOLDER_STATE } from 'state/comments/constants';
 import { decodeEntities } from 'lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
-import PostTrackback from './post-trackback.jsx';
+import PostTrackback from './post-trackback';
 import CommentActions from './comment-actions';
 import Emojify from 'components/emojify';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
@@ -65,6 +65,7 @@ class PostComment extends React.PureComponent {
 		maxDepth: PropTypes.number,
 		showNestingReplyArrow: PropTypes.bool,
 		showReadMoreInActions: PropTypes.bool,
+		hidePingbacksAndTrackbacks: PropTypes.bool,
 
 		/**
 		 * If commentsToShow is not provided then it is assumed that all child comments should be displayed.
@@ -93,6 +94,7 @@ class PostComment extends React.PureComponent {
 		onCommentSubmit: noop,
 		showNestingReplyArrow: false,
 		showReadMoreInActions: false,
+		hidePingbacksAndTrackbacks: false,
 	};
 
 	state = {
@@ -329,12 +331,13 @@ class PostComment extends React.PureComponent {
 			commentsToShow,
 			overflowY,
 			showReadMoreInActions,
+			hidePingbacksAndTrackbacks,
 		} = this.props;
 
 		const comment = get( commentsTree, [ commentId, 'data' ] );
 		const isPingbackOrTrackback = comment.type === 'trackback' || comment.type === 'pingback';
 
-		if ( ! comment || ( this.props.hidePingbacksAndTrackbacks && isPingbackOrTrackback ) ) {
+		if ( ! comment || ( hidePingbacksAndTrackbacks && isPingbackOrTrackback ) ) {
 			return null;
 		} else if ( commentsToShow && ! commentsToShow[ commentId ] ) {
 			// this comment should be hidden so just render children
