@@ -162,7 +162,7 @@ export class CredentialsForm extends Component {
 					<FormTextInput
 						name="abspath"
 						id="wordpress-path"
-						placeholder={ translate( '/public_html/wordpress-site/' ) }
+						placeholder="/public_html/wordpress-site/"
 						value={ get( this.state.form, 'abspath', '' ) }
 						onChange={ this.handleFieldChange }
 						disabled={ formIsSubmitting }
