@@ -64,20 +64,16 @@ const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&p
 const remoteActivatePath = '/wp-admin/plugins.php';
 
 export function confirmJetpackInstallStatus( status ) {
-	return dispatch => {
-		dispatch( {
-			type: JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
-			status: status,
-		} );
+	return {
+		type: JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
+		status: status,
 	};
 }
 
 export function dismissUrl( url ) {
-	return dispatch => {
-		dispatch( {
-			type: JETPACK_CONNECT_DISMISS_URL_STATUS,
-			url: url,
-		} );
+	return {
+		type: JETPACK_CONNECT_DISMISS_URL_STATUS,
+		url: url,
 	};
 }
 
