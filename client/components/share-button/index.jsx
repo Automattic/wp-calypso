@@ -42,8 +42,6 @@ export default class ShareButton extends PureComponent {
 	}
 
 	handleClick = () => {
-		this.props.onClick();
-
 		if ( typeof window === 'undefined' ) {
 			return;
 		}
@@ -54,6 +52,8 @@ export default class ShareButton extends PureComponent {
 			services[ this.props.service ].windowArg || 'width=550,height=420,resizeable,scrollbars'
 		);
 		win.focus();
+
+		this.props.onClick();
 	};
 
 	render() {
