@@ -13,6 +13,7 @@ import {
 	some,
 	defer,
 	uniqBy,
+	startsWith,
 } from 'lodash';
 import moment from 'moment';
 import debugFactory from 'debug';
@@ -27,7 +28,9 @@ import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
 import { setLastStoreId } from 'reader/controller-helper';
 import * as stats from 'reader/stats';
+import * as reduxBridge from 'lib/redux-bridge';
 import { keyToString, keysAreEqual } from './post-key';
+import { getCommentById } from 'state/comments/selectors';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
@@ -417,6 +420,12 @@ export default class FeedStream {
 	}
 
 	filterNewPosts( posts ) {
+		// filter out posts whose only comments are ones we already have
+		console.error( posts );
+		if ( startsWith( this.id, 'conversations' ) ) {
+			console.error( posts );
+			// posts = filter( posts, post => !! getCommentById( reduxBridge.getState(), { siteId: post.site_ID, commentId:  })
+		}
 		const postById = this.postById;
 		posts = filter( posts, post => {
 			return ! postById.has( keyToString( this.keyMaker( post ) ) );
@@ -429,7 +438,6 @@ export default class FeedStream {
 		if ( id !== this.id ) {
 			return;
 		}
-
 		debug( 'receiving page in %s', this.id );
 
 		this._isFetchingNextPage = false;
@@ -457,6 +465,7 @@ export default class FeedStream {
 			return;
 		}
 
+		console.error( id, data, 'hiiiiii', posts );
 		const postKeys = this.filterNewPosts( posts );
 
 		if ( postKeys.length ) {
