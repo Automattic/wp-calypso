@@ -4,7 +4,9 @@
  * External dependencies
  */
 
-import validator from 'is-my-json-valid';
+import Ajv from 'ajv';
+import draft04 from 'ajv/lib/refs/json-schema-draft-04.json';
+
 import {
 	flow,
 	get,
@@ -19,15 +21,18 @@ import {
 } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 import LRU from 'lru-cache';
-
 /**
  * Internal dependencies
  */
 import { DESERIALIZE, SERIALIZE } from './action-types';
 import warn from 'lib/warn';
 
+const ajv = new Ajv( { verbose: true, validateSchema: false } );
+ajv.addMetaSchema( draft04 );
+
 export function isValidStateWithSchema( state, schema ) {
-	const validate = validator( schema );
+	// I wonder if the Ajv instance caches the schemas
+	const validate = ajv.compile( schema );
 	const valid = validate( state );
 	if ( ! valid ) {
 		warn( 'state validation failed for state:', state, 'with reason:', validate.errors );

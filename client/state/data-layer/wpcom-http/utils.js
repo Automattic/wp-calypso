@@ -4,8 +4,9 @@
  * External dependencies
  */
 import deterministicStringify from 'json-stable-stringify';
-import schemaValidator from 'is-my-json-valid';
-import { get, identity, merge, noop } from 'lodash';
+import Ajv from 'ajv';
+import draft04 from 'ajv/lib/refs/json-schema-draft-04.json';
+import { cloneDeep, get, identity, merge, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -68,21 +69,36 @@ export class TransformerError extends Error {
 }
 
 export const makeParser = ( schema, schemaOptions = {}, transformer = identity ) => {
-	const options = Object.assign( { verbose: true }, schemaOptions );
-	const validator = schemaValidator( schema, options );
+	const options = Object.assign(
+		{
+			verbose: true,
+			meta: draft04,
+		},
+		// I think this is the equivalent to the IMVJ.filter but:
+		// 1) it's not tested
+		// 2) it looks like it's deep
+		// 3) that deepClone means it's a new object whether or not it changed.
+		//
+		// see: https://github.com/epoberezkin/ajv#options-to-modify-validated-data
+		{ removeAdditional: true },
+		schemaOptions
+	);
+	const validator = new Ajv( options ).compile( schema );
 
 	// filter out unwanted properties even though we may have let them slip past validation
 	// note: this property does not nest deeply into the data structure, that is, properties
 	// of a property that aren't in the schema could still come through since only the top
 	// level of properties are pruned
-	const filter = schemaValidator.filter( { ...schema, additionalProperties: false } );
+	// const filter = schemaValidator.filter( { ...schema, additionalProperties: false } );
 
 	const validate = data => {
-		if ( ! validator( data ) ) {
+		// ajv mutates data with the `removeAdditional` option enabled
+		const localData = cloneDeep( data );
+		if ( ! validator( localData ) ) {
 			throw new SchemaError( validator.errors );
 		}
 
-		return filter( data );
+		return localData;
 	};
 
 	const transform = data => {

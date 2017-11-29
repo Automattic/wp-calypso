@@ -5,9 +5,12 @@
  */
 
 import { memoize, omitBy, reduce, some, trim } from 'lodash';
-import validator from 'is-my-json-valid';
+import Ajv from 'ajv';
+import draft04 from 'ajv/lib/refs/json-schema-draft-04.json';
+const ajv = new Ajv( { messages: false, extendRefs: true, verbose: true, allErrors: true } );
+ajv.addMetaSchema( draft04 );
 
-const memoizedValidator = memoize( schema => validator( schema, { greedy: true } ) );
+const memoizedValidator = memoize( schema => ajv.compile( schema ) );
 
 const processErrors = errors => {
 	return reduce(

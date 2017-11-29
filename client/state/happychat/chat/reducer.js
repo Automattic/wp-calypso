@@ -6,7 +6,10 @@
  * External dependencies
  */
 import { concat, filter, find, map, get, sortBy, takeRight } from 'lodash';
-import validator from 'is-my-json-valid';
+import Ajv from 'ajv';
+import draft04 from 'ajv/lib/refs/json-schema-draft-04.json';
+const validator = new Ajv();
+validator.addMetaSchema( draft04 );
 
 /**
  * Internal dependencies
@@ -91,7 +94,7 @@ const timelineEvent = ( state = {}, action ) => {
 	return state;
 };
 
-const validateTimeline = validator( timelineSchema );
+const validateTimeline = validator.compile( timelineSchema );
 const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.timestamp, 10 ) );
 
 /**
