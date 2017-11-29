@@ -95,47 +95,27 @@
 	display: flex;
 }
 
-.web-preview__close.button,
-a.web-preview__external.button {
-	color: $gray;
-	padding: 6px 10px;
-
-	cursor: pointer;
-
+.web-preview__close.button {
+	border-right: 1px solid lighten( $gray, 25% );
+	padding: 6px 32px;
+	color: $blue-wordpress;
 	border-radius: 0;
 
 	&:hover {
-		color: $gray-dark;
-	}
-}
-
-.web-preview__close.button {
-	border-right: 1px solid lighten( $gray, 25% );
-
-	.gridicon {
-		top: 4px;
+		color: $blue-medium;
 	}
 }
 
 a.web-preview__external.button {
-	.gridicon {
-		top: 6px;
-	}
+	margin: 3px 8px;
+	min-width: 120px;
+	text-align: center;
 }
 
 .web-preview__edit.button {
-	color: $gray;
-	border: none;
-	padding: 6px 12px;
-
-	&:visited {
-		color: $gray;
-	}
-
-	&:hover {
-		color: $gray-dark;
-	}
-
+	margin: 3px 0;
+	min-width: 100px;
+	text-align: center;
 }
 
 .web-preview__toolbar-actions {

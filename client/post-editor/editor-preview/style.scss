@@ -22,13 +22,3 @@
 		visibility: visible;
     }
 }
-
-.editor-preview .web-preview__close.button,
-.editor-preview a.web-preview__external.button,
-.editor-preview .web-preview__edit.button {
-	color: $gray-text-min;
-
-	&:hover {
-		color: $gray-dark;
-	}
-}

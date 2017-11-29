@@ -105,7 +105,7 @@ class PreviewToolbar extends Component {
 						data-tip-target="web-preview__close"
 						onClick={ this.handleEditorWebPreviewClose }
 					>
-						{ isModalWindow ? <Gridicon icon="cross" /> : translate( 'Done' ) }
+						{ translate( 'Close' ) }
 					</Button>
 				) }
 				{ showDeviceSwitcher && (
@@ -146,10 +146,11 @@ class PreviewToolbar extends Component {
 							primary
 							className="web-preview__external"
 							href={ externalUrl || previewUrl }
+							target={ isModalWindow ? '_blank' : null }
 							rel="noopener noreferrer"
 							onClick={ this.handleEditorWebPreviewExternalClick }
 						>
-							{ translate( 'Visit' ) }
+							{ translate( 'Visit Site' ) }
 						</Button>
 					) }
 					<div className="web-preview__toolbar-tray">{ this.props.children }</div>

@@ -37,6 +37,7 @@
 	border-right: none;
 	box-sizing: border-box;
 	position: fixed;
+	top: 0;
 	left: auto;
 	right: -$sidebar-width-max;
 	z-index: z-index('root', '.editor-confirmation-sidebar__sidebar');
@@ -64,7 +65,7 @@
 			height: auto;
 			width: 100%;
 			position: fixed;
-			top: 47px;
+			top: 0;
 			right: auto;
 			left: 0;
 			transform: none;
@@ -97,7 +98,8 @@
 	border-color: darken($alert-green, 20%);
 	color: $white;
 
-	padding: 7px 22px;
+	padding: 7px 24px;
+	min-width: 120px;
 	margin: 4px 0 4px 12px;
 
 	&:hover,

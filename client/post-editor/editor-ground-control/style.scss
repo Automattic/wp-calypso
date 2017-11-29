@@ -100,21 +100,34 @@
 .editor-ground-control__preview-button {
 	display: block;
 	flex-grow: 1;
+	padding: 7px 16px;
+	min-width: 100px;
 }
 
 .editor-ground-control__toggle-sidebar {
 	margin: 3px 8px 3px 0;
-	height: 40px;
+	height: 38px;
 	line-height: 1;
+	transition: all 0.15s ease-in-out;
+}
+.editor-ground-control__toggle-sidebar svg {
+	transition: transform 0.3s ease-in-out;
 }
 
-.focus-sidebar .editor-ground-control__toggle-sidebar:hover {
-	background: #efefef;
+.editor-ground-control__toggle-sidebar:hover,
+.editor-ground-control__toggle-sidebar:focus {
+	background: $gray-light;
 }
+
+.focus-sidebar .editor-ground-control__toggle-sidebar:hover,
 .focus-sidebar .editor-ground-control__toggle-sidebar:focus,
 .focus-sidebar .editor-ground-control__toggle-sidebar {
 	color: $white;
-	background: #333;
+	background: $gray-dark;
+}
+
+.focus-sidebar .editor-ground-control__toggle-sidebar svg {
+	transform: rotate( 45deg );
 }
 
 .editor-ground-control__toggle-sidebar.button.is-borderless,
@@ -125,7 +138,8 @@
 .editor-ground-control__publish-button {
 	flex-grow: 1;
 	display: flex;
-	margin: 0 12px;
+	margin: 0 8px;
+	min-width: 120px;
 
 	@include breakpoint( "<480px" ) {
 		margin: 0;
@@ -133,14 +147,9 @@
 }
 
 .editor-ground-control .editor-publish-button {
-	border-radius: 4px 0 0 4px;
-	flex-grow: 1;
-	padding: 5px 14px 7px;
-}
-
-.editor-ground-control .editor-publish-button {
 	border-radius: 4px;
 	padding: 7px 16px;
+	flex-grow: 1;
 
 	@include breakpoint( "<480px" ) {
 		padding: 7px 10px;
@@ -242,13 +251,13 @@
 
 .editor-ground-control__back.button.is-borderless {
 	border-right: 1px solid lighten( $gray, 25% );
-	padding: 6px 20px;
+	padding: 6px 32px;
 	height: 46px;
 	border-radius: 0;
-	color: $blue-medium;
+	color: $blue-wordpress;
 
 	&:hover {
-		color: $blue-light;
+		color: $blue-medium;
 	}
 
 	.gridicon {

@@ -298,9 +298,9 @@ export class EditorGroundControl extends PureComponent {
 					className="editor-ground-control__back"
 					href={ '' }
 					onClick={ this.onBackButtonClick }
-					aria-label={ translate( 'Done' ) }
+					aria-label={ translate( 'Close' ) }
 				>
-					{ translate( 'Done' ) }
+					{ translate( 'Close' ) }
 				</Button>
 				<Site
 					compact
