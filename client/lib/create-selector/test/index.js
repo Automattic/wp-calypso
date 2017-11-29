@@ -311,6 +311,52 @@ describe( 'index', () => {
 		} );
 	} );
 
+	describe( 'when "cachePerKey" argument is "true"', () => {
+		test( 'should clear cache when dependants do not match, but only per key', () => {
+			const memoizedSelector = createSelector(
+				( state, x, y, z ) => state[ x ][ y ][ z ],
+				state => state.a.b,
+				( state, ...args ) => args.join(),
+				true
+			);
+			const state = {
+				a: {
+					b: {
+						c: 'cc',
+						d: 'dd',
+					},
+				},
+			};
+
+			memoizedSelector( state, 'a', 'b', 'c' );
+
+			expect( memoizedSelector.memoizedSelector.cache.get( 'a,b,c' ) ).to.eql( 'cc' );
+			expect( memoizedSelector.memoizedSelector.cache.has( 'a,b,d' ) ).to.be.false;
+
+			memoizedSelector( state, 'a', 'b', 'd' );
+
+			expect( memoizedSelector.memoizedSelector.cache.get( 'a,b,c' ) ).to.eql( 'cc' );
+			expect( memoizedSelector.memoizedSelector.cache.get( 'a,b,d' ) ).to.eql( 'dd' );
+
+			// Modifying the dependant value
+			state.a.b = {
+				c: 'ccc',
+				d: 'ddd',
+				e: 'eee',
+			};
+
+			memoizedSelector( state, 'a', 'b', 'c' );
+
+			expect( memoizedSelector.memoizedSelector.cache.get( 'a,b,c' ) ).to.eql( 'ccc' );
+			expect( memoizedSelector.memoizedSelector.cache.get( 'a,b,d' ) ).to.eql( 'dd' );
+
+			memoizedSelector( state, 'a', 'b', 'd' );
+
+			expect( memoizedSelector.memoizedSelector.cache.get( 'a,b,c' ) ).to.eql( 'ccc' );
+			expect( memoizedSelector.memoizedSelector.cache.get( 'a,b,d' ) ).to.eql( 'ddd' );
+		} );
+	} );
+
 	test( 'should call dependant state getter with arguments', () => {
 		const getDeps = sinon.spy();
 		const memoizedSelector = createSelector( () => null, getDeps );

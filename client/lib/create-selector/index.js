@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { memoize } from 'lodash';
 import shallowEqual from 'react-pure-render/shallowEqual';
 
@@ -88,15 +86,17 @@ const makeSelectorFromArray = dependants => ( state, ...args ) =>
  *                                             state, or an array of dependent
  *                                             state selectors
  * @param  {Function}            getCacheKey   Function generating cache key
+ * @param  {Boolean}             cachePerKey   Flag whether caching should happen per key
  * @return {Function}                          Memoized selector
  */
 export default function createSelector(
 	selector,
 	getDependants = DEFAULT_GET_DEPENDANTS,
-	getCacheKey = DEFAULT_GET_CACHE_KEY
+	getCacheKey = DEFAULT_GET_CACHE_KEY,
+	cachePerKey
 ) {
 	const memoizedSelector = memoize( selector, getCacheKey );
-	let lastDependants;
+	let lastDependants = cachePerKey ? {} : null;
 
 	if ( Array.isArray( getDependants ) ) {
 		getDependants = makeSelectorFromArray( getDependants );
@@ -106,16 +106,29 @@ export default function createSelector(
 		function( state, ...args ) {
 			warnAgainstComplexArguments( ...args );
 
+			const cacheKey = getCacheKey( state, ...args );
 			let currentDependants = getDependants( state, ...args );
+
 			if ( ! Array.isArray( currentDependants ) ) {
 				currentDependants = [ currentDependants ];
 			}
 
-			if ( lastDependants && ! shallowEqual( currentDependants, lastDependants ) ) {
-				memoizedSelector.cache.clear();
-			}
+			if ( cachePerKey ) {
+				if (
+					lastDependants[ cacheKey ] &&
+					! shallowEqual( currentDependants, lastDependants[ cacheKey ] )
+				) {
+					memoizedSelector.cache.delete( cacheKey );
+				}
 
-			lastDependants = currentDependants;
+				lastDependants[ cacheKey ] = currentDependants;
+			} else {
+				if ( lastDependants && ! shallowEqual( currentDependants, lastDependants ) ) {
+					memoizedSelector.cache.clear();
+				}
+
+				lastDependants = currentDependants;
+			}
 
 			return memoizedSelector( state, ...args );
 		},
