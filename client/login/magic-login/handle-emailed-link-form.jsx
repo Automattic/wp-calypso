@@ -44,7 +44,6 @@ class HandleEmailedLinkForm extends React.Component {
 		clientId: PropTypes.string,
 		emailAddress: PropTypes.string.isRequired,
 		token: PropTypes.string.isRequired,
-		tokenTime: PropTypes.string.isRequired,
 
 		// Connected props
 		authError: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
@@ -68,8 +67,7 @@ class HandleEmailedLinkForm extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		if ( isEmpty( props.emailAddress ) || isEmpty( props.token ) || isEmpty( props.tokenTime ) ) {
-			// Required props are really required :)
+		if ( isEmpty( props.emailAddress ) || isEmpty( props.token ) ) {
 			this.props.showMagicLoginLinkExpiredPage();
 		}
 	}
@@ -81,11 +79,7 @@ class HandleEmailedLinkForm extends React.Component {
 			hasSubmitted: true,
 		} );
 
-		this.props.fetchMagicLoginAuthenticate(
-			this.props.emailAddress,
-			this.props.token,
-			this.props.tokenTime
-		);
+		this.props.fetchMagicLoginAuthenticate( this.props.token );
 	};
 
 	// Lifted from `blocks/login`
