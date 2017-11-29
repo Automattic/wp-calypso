@@ -35,13 +35,10 @@ describe( 'actions', () => {
 
 	describe( '#confirmJetpackInstallStatus()', () => {
 		test( 'should dispatch confirm status action when called', () => {
-			const spy = jest.fn();
 			const { confirmJetpackInstallStatus } = actions;
 			const jetpackStatus = true;
 
-			confirmJetpackInstallStatus( jetpackStatus )( spy );
-
-			expect( spy ).toHaveBeenCalledWith( {
+			expect( confirmJetpackInstallStatus( jetpackStatus ) ).toEqual( {
 				type: JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 				status: jetpackStatus,
 			} );
@@ -50,13 +47,10 @@ describe( 'actions', () => {
 
 	describe( '#dismissUrl()', () => {
 		test( 'should dispatch dismiss url status action when called', () => {
-			const spy = jest.fn();
 			const { dismissUrl } = actions;
 			const url = 'http://example.com';
 
-			dismissUrl( url )( spy );
-
-			expect( spy ).toHaveBeenCalledWith( {
+			expect( dismissUrl( url ) ).toEqual( {
 				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
 				url: url,
 			} );
