@@ -17,6 +17,8 @@ import {
 	isMultiSelectEnabled,
 	getSelectedPostsCount,
 } from 'state/ui/post-type-list/selectors';
+import { toggleMultiSelect } from 'state/ui/post-type-list/actions';
+import Gridicon from 'gridicons';
 
 class PostTypeBulkEditBar extends React.Component {
 	onEdit() {
@@ -36,6 +38,7 @@ class PostTypeBulkEditBar extends React.Component {
 			multiSelectEnabled,
 			selectedPostsCount,
 			translate,
+			toggleMultiSelect: onMultiSelectClick,
 		} = this.props;
 
 		if ( ! multiSelectEnabled ) {
@@ -59,6 +62,13 @@ class PostTypeBulkEditBar extends React.Component {
 				>
 					{ translate( 'Delete' ) }
 				</Button>
+				<Button
+					className="post-type-list__bulk-edit-bar-close"
+					borderless
+					onClick={ onMultiSelectClick }
+				>
+					<Gridicon icon="cross" />
+				</Button>
 			</Card>
 		);
 	}
@@ -70,5 +80,5 @@ export default connect(
 			multiSelectEnabled: isMultiSelectEnabled( state ),
 			selectedPostsCount: getSelectedPostsCount( state ),
 		};
-	}
+	}, { toggleMultiSelect }
 )( localize( PostTypeBulkEditBar ) );
