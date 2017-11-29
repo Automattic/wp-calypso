@@ -7,7 +7,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
-import { capitalize, includes, some } from 'lodash';
+import { capitalize, some } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -29,8 +29,6 @@ import { hasJetpackSites, getSelectedOrAllSitesWithPlugins } from 'state/selecto
 /**
  * Module variables
  */
-const allowedCategoryNames = [ 'new', 'popular', 'featured' ];
-
 let lastPluginsListVisited, lastPluginsQuerystring;
 
 function renderSinglePlugin( context, siteUrl ) {
@@ -111,20 +109,10 @@ function renderPluginList( context, basePath ) {
 	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 }
 
-// The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route. In that case,
-// the `:plugin` param is actually the side ID or category.
-function getCategoryForPluginsBrowser( context ) {
-	if ( context.params.plugin && includes( allowedCategoryNames, context.params.plugin ) ) {
-		return context.params.plugin;
-	}
-
-	return context.params.category;
-}
-
 function renderPluginsBrowser( context ) {
 	const searchTerm = context.query.s;
 	const site = getSelectedSite( context.store.getState() );
-	const category = getCategoryForPluginsBrowser( context );
+	const { category } = context.params;
 
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
 	lastPluginsQuerystring = context.querystring;
@@ -186,7 +174,7 @@ function renderProvisionPlugins( context ) {
 }
 
 const controller = {
-	plugins( context, next ) {
+	pluginList( context, next ) {
 		const { pluginFilter: filter = 'all' } = context.params;
 		const siteUrl = route.getSiteFragment( context.path );
 		const basePath = route.sectionify( context.path ).replace( '/' + filter, '' );
@@ -208,22 +196,19 @@ const controller = {
 		renderSinglePlugin( context, siteUrl );
 	},
 
-	// If the "plugin" part of the route is actually a site or a valid category, render the
-	// plugin browser for that site or category. Otherwise, fall through to the next hander,
-	// which is most likely the `plugin()`.
-	maybeBrowsePlugins( context, next ) {
+	// The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route.
+	// If the "plugin" part of the route is actually a site,
+	// render the plugin browser for that site. Otherwise render plugin.
+	browsePluginsOrPlugin( context ) {
 		const siteUrl = route.getSiteFragment( context.path );
 		const { plugin } = context.params;
 
-		if (
-			plugin &&
-			( ( siteUrl && plugin === siteUrl.toString() ) || includes( allowedCategoryNames, plugin ) )
-		) {
+		if ( plugin && siteUrl && plugin === siteUrl.toString() ) {
 			controller.browsePlugins( context );
 			return;
 		}
 
-		next();
+		controller.plugin( context );
 	},
 
 	browsePlugins( context ) {
