@@ -27,22 +27,24 @@ class FreeCartPaymentBox extends React.Component {
 		return (
 			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
-					<h6>
-						{ cart.has_bundle_credit
-							? this.props.translate( 'You have a free domain credit!' )
-							: this.props.translate( "Woohoo! You don't owe us anything!" ) }
-					</h6>
+					<div className="checkout__payment-box-section-content">
+						<h6>
+							{ cart.has_bundle_credit
+								? this.props.translate( 'You have a free domain credit!' )
+								: this.props.translate( "Woohoo! You don't owe us anything!" ) }
+						</h6>
 
-					<span>
-						{ cart.has_bundle_credit
-							? this.props.translate(
-									'You get one free domain with your subscription to %(productName)s. Time to celebrate!',
-									{ args: { productName: this.getProductName() } }
-								)
-							: this.props.translate(
-									'Just complete checkout to add these upgrades to your site.'
-								) }
-					</span>
+						<span>
+							{ cart.has_bundle_credit
+								? this.props.translate(
+										'You get one free domain with your subscription to %(productName)s. Time to celebrate!',
+										{ args: { productName: this.getProductName() } }
+									)
+								: this.props.translate(
+										'Just complete checkout to add these upgrades to your site.'
+									) }
+						</span>
+					</div>
 				</div>
 
 				<TermsOfService />

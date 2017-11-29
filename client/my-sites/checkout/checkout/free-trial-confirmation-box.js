@@ -21,17 +21,20 @@ class FreeTrialConfirmationBox extends React.Component {
 		return (
 			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
-					<h6>
-						{ this.props.translate( 'Get started with %(productName)s', {
-							args: { productName: this.getProductName() },
-						} ) }
-					</h6>
+					<div className="checkout__payment-box-section-content">
+						<h6>
+							{ this.props.translate( 'Get started with %(productName)s', {
+								args: { productName: this.getProductName() },
+							} ) }
+						</h6>
 
-					<span>
-						{ this.props.translate(
-							'Enjoy your free trial with no strings attached: your site will simply revert to the free plan when the period is over.'
-						) }
-					</span>
+						<span>
+							{ this.props.translate(
+								'Enjoy your free trial with no strings attached: your site will simply revert to the ' +
+									'free plan when the period is over.'
+							) }
+						</span>
+					</div>
 				</div>
 
 				<TermsOfService />
