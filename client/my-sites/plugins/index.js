@@ -104,8 +104,7 @@ export default function() {
 			'/plugins/:plugin/:site_id?',
 			siteSelection,
 			navigation,
-			pluginsController.maybeBrowsePlugins,
-			pluginsController.plugin,
+			pluginsController.browsePluginsOrPlugin,
 			makeLayout,
 			clientRender
 		);
