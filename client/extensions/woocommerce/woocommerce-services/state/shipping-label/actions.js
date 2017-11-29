@@ -604,34 +604,6 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 
 	dispatch( purchaseLabelResponse( orderId, siteId, labels, false ) );
 
-	if ( shouldFulfillOrder( getState(), orderId, siteId ) ) {
-		dispatch( updateOrder( siteId, {
-			id: orderId,
-			status: 'completed',
-		} ) );
-	}
-
-	if ( shouldEmailDetails( getState(), orderId, siteId ) ) {
-		const trackingNumbers = labels.map( ( label ) => label.tracking );
-		const carrierId = first( labels ).carrier_id;
-		const carrierName = 'usps' === carrierId ? translate( 'USPS' ) : translate( 'an unknown carrier' );
-
-		const note = {
-			note: translate(
-				'Your order consisting of %(packageNum)d package has been shipped with %(carrierName)s. ' +
-					'The tracking number is %(trackingNumbers)s.',
-				'Your order consisting of %(packageNum)d packages has been shipped with %(carrierName)s. ' +
-					'The tracking numbers are %(trackingNumbers)s.',
-				{
-					args: { packageNum: trackingNumbers.length, carrierName, trackingNumbers: trackingNumbers.join( ', ' ) },
-					count: trackingNumbers.length,
-				}
-			),
-			customer_note: true,
-		};
-		dispatch( createNote( siteId, orderId, note ) );
-	}
-
 	const labelsToPrint = labels.map( ( label, index ) => ( {
 		caption: translate( 'PACKAGE %(num)d (OF %(total)d)', {
 			args: {
@@ -643,6 +615,7 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 	} ) );
 	const state = getShippingLabel( getState(), orderId, siteId );
 	const printUrl = getPrintURL( siteId, state.paperSize, labelsToPrint );
+	let hasError = false;
 
 	api.get( siteId, printUrl )
 		.then( ( fileData ) => {
@@ -664,10 +637,47 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 					.catch( ( err ) => {
 						console.error( err );
 						dispatch( NoticeActions.errorNotice( err.toString() ) );
+						hasError = true;
 					} )
 					.then( () => {
 						dispatch( exitPrintingFlow( orderId, siteId, true ) );
 						dispatch( clearAvailableRates( orderId, siteId ) );
+
+						if ( hasError ) {
+							return;
+						}
+
+						if ( shouldEmailDetails( getState(), orderId, siteId ) ) {
+							const trackingNumbers = labels.map( ( label ) => label.tracking );
+							const carrierId = first( labels ).carrier_id;
+							const carrierName = 'usps' === carrierId ? translate( 'USPS' ) : translate( 'an unknown carrier' );
+
+							const note = {
+								note: translate(
+									'Your order consisting of %(packageNum)d package has been shipped with %(carrierName)s. ' +
+										'The tracking number is %(trackingNumbers)s.',
+									'Your order consisting of %(packageNum)d packages has been shipped with %(carrierName)s. ' +
+										'The tracking numbers are %(trackingNumbers)s.',
+									{
+										args: {
+											packageNum: trackingNumbers.length,
+											carrierName,
+											trackingNumbers: trackingNumbers.join( ', ' ),
+										},
+										count: trackingNumbers.length,
+									}
+								),
+								customer_note: true,
+							};
+							dispatch( createNote( siteId, orderId, note ) );
+						}
+
+						if ( shouldFulfillOrder( getState(), orderId, siteId ) ) {
+							dispatch( updateOrder( siteId, {
+								id: orderId,
+								status: 'completed',
+							} ) );
+						}
 					} );
 			}
 		} );
