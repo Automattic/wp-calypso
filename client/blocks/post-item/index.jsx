@@ -141,7 +141,10 @@ class PostItem extends React.Component {
 						</div>
 						<h1 className="post-item__title">
 							{ ! externalPostLink && (
-								<a href={ isPlaceholder ? null : postUrl } className="post-item__title-link">
+								<a
+									href={ isPlaceholder || multiSelectEnabled ? null : postUrl }
+									className="post-item__title-link"
+								>
 									{ title || translate( 'Untitled' ) }
 								</a>
 							) }
@@ -149,7 +152,7 @@ class PostItem extends React.Component {
 								externalPostLink && (
 									<ExternalLink
 										icon={ true }
-										href={ postUrl }
+										href={ multiSelectEnabled ? null : postUrl }
 										target="_blank"
 										className="post-item__title-link"
 									>
