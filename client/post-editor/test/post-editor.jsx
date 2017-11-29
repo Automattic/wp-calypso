@@ -6,6 +6,7 @@
 /**
  * External dependencies
  */
+import { shallow } from 'enzyme';
 import { expect } from 'chai';
 import React from 'react';
 import { renderIntoDocument } from 'react-dom/test-utils';
@@ -61,6 +62,9 @@ describe( 'PostEditor', () => {
 		markSaved: () => {},
 		markChanged: () => {},
 		setLayoutFocus: () => {},
+		setNextLayoutFocus: () => {},
+		setNestedSidebar: () => {},
+		preferences: {},
 	};
 
 	useSandbox( newSandbox => ( sandbox = newSandbox ) );
@@ -71,7 +75,7 @@ describe( 'PostEditor', () => {
 
 	describe( 'onEditedPostChange', () => {
 		test( 'should clear content when store state transitions to isNew()', () => {
-			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
+			const tree = renderIntoDocument( <PostEditor { ...defaultProps } /> );
 
 			const stub = sandbox.stub( PostEditStore, 'isNew' );
 			stub.returns( true );
@@ -82,7 +86,7 @@ describe( 'PostEditor', () => {
 		} );
 
 		test( 'should not clear content when store state already isNew()', () => {
-			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
+			const tree = renderIntoDocument( <PostEditor { ...defaultProps } /> );
 
 			const stub = sandbox.stub( PostEditStore, 'isNew' );
 			stub.returns( true );
@@ -93,7 +97,7 @@ describe( 'PostEditor', () => {
 		} );
 
 		test( 'should clear content when loading', () => {
-			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
+			const tree = renderIntoDocument( <PostEditor { ...defaultProps } /> );
 
 			const stub = sandbox.stub( PostEditStore, 'isLoading' );
 			stub.returns( true );
@@ -103,7 +107,7 @@ describe( 'PostEditor', () => {
 		} );
 
 		test( 'should set content after load', () => {
-			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
+			const tree = renderIntoDocument( <PostEditor { ...defaultProps } /> );
 
 			const content = 'loaded post';
 			const stub = sandbox.stub( PostEditStore, 'get' );
@@ -117,7 +121,7 @@ describe( 'PostEditor', () => {
 		} );
 
 		test( 'a normal content change should not clear content', () => {
-			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
+			const tree = renderIntoDocument( <PostEditor { ...defaultProps } /> );
 
 			const content = 'new content';
 			const stub = sandbox.stub( PostEditStore, 'get' );
@@ -132,7 +136,7 @@ describe( 'PostEditor', () => {
 		} );
 
 		test( 'is a copy and it should set the copied content', () => {
-			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
+			const tree = renderIntoDocument( <PostEditor { ...defaultProps } /> );
 
 			const content = 'copied content';
 			tree.setState( {
@@ -150,7 +154,7 @@ describe( 'PostEditor', () => {
 		} );
 
 		test( 'should not set the copied content more than once', () => {
-			const tree = renderIntoDocument( <PostEditor preferences={ {} } { ...defaultProps } /> );
+			const tree = renderIntoDocument( <PostEditor { ...defaultProps } /> );
 
 			const content = 'copied content';
 			tree.setState( {
@@ -165,6 +169,28 @@ describe( 'PostEditor', () => {
 			tree.onEditedPostChange();
 
 			expect( tree.editor.setEditorContent ).to.not.have.been.called;
+		} );
+	} );
+
+	describe( '#onEditorContentChange()', () => {
+		test( 'triggers a pending raw content and autosave, canceled on save', () => {
+			const wrapper = shallow( <PostEditor { ...defaultProps } /> );
+
+			wrapper.instance().debouncedAutosave = sandbox.stub();
+			wrapper.instance().debouncedAutosave.cancel = sandbox.stub();
+			wrapper.instance().throttledAutosave = sandbox.stub();
+			wrapper.instance().throttledAutosave.cancel = sandbox.stub();
+			wrapper.instance().debouncedSaveRawContent = sandbox.stub();
+
+			wrapper.instance().onEditorContentChange();
+
+			expect( wrapper.instance().debouncedAutosave ).to.have.been.called;
+			expect( wrapper.instance().debouncedSaveRawContent ).to.have.been.called;
+
+			wrapper.setState( { isSaving: true } );
+
+			expect( wrapper.instance().debouncedAutosave.cancel ).to.have.been.called;
+			expect( wrapper.instance().throttledAutosave.cancel ).to.have.been.called;
 		} );
 	} );
 } );
