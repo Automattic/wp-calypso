@@ -76,7 +76,7 @@ describe( 'handlers', () => {
 				data: { status: 404 },
 				message: 'No route was found matching the URL and request method',
 			};
-			const action = updateOrders( 123, {}, response, 2 );
+			const action = updateOrders( 123, {}, response );
 			const data = {
 				status: 404,
 				body: response,
@@ -88,6 +88,8 @@ describe( 'handlers', () => {
 				match( {
 					type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 					siteId: 123,
+					query: {},
+					error: response,
 				} )
 			);
 		} );
