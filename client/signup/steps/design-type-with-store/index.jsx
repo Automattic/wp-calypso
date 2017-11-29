@@ -19,7 +19,6 @@ import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PressableStoreStep from './pressable-store';
 import { BlogImage, PageImage, GridImage, StoreImage } from '../design-type-with-store/type-images';
-import { abtest } from 'lib/abtest';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 
 import { getThemeForDesignType } from 'signup/utils';
@@ -177,10 +176,6 @@ class DesignTypeWithStoreStep extends Component {
 
 		if ( this.state.showStore ) {
 			return translate( 'Create your WordPress Store' );
-		}
-
-		if ( abtest( 'signupSurveyStep' ) === 'showSurveyStep' ) {
-			return "We're excited to hear more about your project.";
 		}
 
 		return translate( 'Hello! Let’s create your new site.' );
