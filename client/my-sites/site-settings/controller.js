@@ -21,6 +21,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteSettingsMain from 'my-sites/site-settings/main';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
+import TransferSiteToUser from './transfer-site-to-user';
 import ManageConnection from './manage-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -100,6 +101,10 @@ const controller = {
 			context,
 			<AsyncLoad require="my-sites/guided-transfer" hostSlug={ context.params.host_slug } />
 		);
+	},
+
+	transferSiteToUser( context ) {
+		renderPage( context, <TransferSiteToUser /> );
 	},
 
 	deleteSite( context ) {

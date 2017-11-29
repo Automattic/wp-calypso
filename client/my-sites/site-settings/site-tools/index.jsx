@@ -54,6 +54,7 @@ class SiteTools extends Component {
 			showChangeAddress,
 			showDeleteContent,
 			showDeleteSite,
+			showTransferSiteToUser,
 			showThemeSetup,
 			showManageConnection,
 		} = this.props;
@@ -61,6 +62,7 @@ class SiteTools extends Component {
 		const changeAddressLink = `/domains/manage/${ siteSlug }`;
 		const themeSetupLink = `/settings/theme-setup/${ siteSlug }`;
 		const startOverLink = `/settings/start-over/${ siteSlug }`;
+		const transferSiteToUserLink = `/settings/transfer-to-user/${ siteSlug }`;
 		const deleteSiteLink = `/settings/delete-site/${ siteSlug }`;
 		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }`;
 
@@ -72,6 +74,8 @@ class SiteTools extends Component {
 			"Keep your site's address and current theme, but remove all posts, " +
 				'pages, and media so you can start fresh.'
 		);
+		const transferSiteToUser = translate( 'Transfer your site' );
+		const transferSiteToUserText = 'Transfer your site to another user.';
 		const deleteSite = translate( 'Delete your site permanently' );
 		const deleteSiteText = translate(
 			"Delete all your posts, pages, media, and data, and give up your site's address."
@@ -120,6 +124,13 @@ class SiteTools extends Component {
 						onClick={ this.trackStartOver }
 						title={ startOver }
 						description={ startOverText }
+					/>
+				) }
+				{ showTransferSiteToUser && (
+					<SiteToolsLink
+						href={ transferSiteToUserLink }
+						title={ transferSiteToUser }
+						description={ transferSiteToUserText }
 					/>
 				) }
 				{ showDeleteSite && (
@@ -196,6 +207,7 @@ export default connect( state => {
 		showChangeAddress: ! isJetpack && ! isVip,
 		showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
 		showDeleteContent: ! isJetpack && ! isVip,
+		showTransferSiteToUser: ! isJetpack && ! isVip,
 		showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 		showManageConnection: isJetpack && ! isAtomic,
 	};
