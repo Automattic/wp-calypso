@@ -1079,5 +1079,5 @@ export const siteSupportsGoogleAnalyticsBasicEcommerceTracking = ( state, siteId
  * @return {?Boolean}     Whether site supports the settings.
  */
 export const siteSupportsGoogleAnalyticsEnhancedEcommerceTracking = ( state, siteId ) => {
-	return isJetpackMinimumVersion( state, siteId, '5.6-alpha' );
+	return isJetpackMinimumVersion( state, siteId, '5.6-beta2' );
 };
