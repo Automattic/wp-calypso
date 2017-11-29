@@ -13,17 +13,32 @@ import {
 	failOrders,
 	fetchOrder,
 	fetchOrders,
+	saveOrder,
+	saveOrderError,
+	saveOrderSuccess,
 	_updateOrder,
 	updateOrders,
 } from 'woocommerce/state/sites/orders/actions';
-import { apiError, receivedOrder, receivedOrders, requestOrder, requestOrders } from '../';
+import {
+	apiError,
+	receivedOrder,
+	receivedOrders,
+	requestOrder,
+	requestOrders,
+	onOrderSaveFailure,
+	onOrderSaveSuccess,
+	sendOrder,
+} from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
+	WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
+	WOOCOMMERCE_ORDER_UPDATE_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
+import { NOTICE_CREATE } from 'state/action-types';
 
 describe( 'handlers', () => {
 	describe( '#requestOrders', () => {
@@ -202,6 +217,104 @@ describe( 'handlers', () => {
 					type: WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 					siteId: 123,
 					orderId: 42,
+				} )
+			);
+		} );
+	} );
+
+	describe( '#sendOrder', () => {
+		test( 'should dispatch a post action', () => {
+			const dispatch = spy();
+			const order = {
+				id: 1,
+				status: 'completed',
+				total: '50.00',
+			};
+			const action = saveOrder( 123, order );
+			sendOrder( { dispatch }, action );
+
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith(
+				http(
+					{
+						method: 'POST',
+						path: '/jetpack-blogs/123/rest-api/',
+						apiVersion: '1.1',
+						body: {
+							json: true,
+							path: '/wc/v3/orders/1&_method=POST',
+							body: JSON.stringify( { status: 'completed', total: '50.00' } ),
+						},
+						query: {
+							json: true,
+						},
+					},
+					action
+				)
+			);
+		} );
+	} );
+
+	describe( '#onOrderSaveSuccess', () => {
+		test( 'should dispatch a success action on a good response', () => {
+			const dispatch = spy();
+			const order = { id: 42, total: '50.00' };
+			const action = saveOrderSuccess( 123, 42, order );
+
+			onOrderSaveSuccess( { dispatch }, action, { data: order } );
+
+			expect( dispatch ).to.have.been.calledWithMatch(
+				match( {
+					type: WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
+					siteId: 123,
+					orderId: 42,
+					order,
+				} )
+			);
+		} );
+
+		test( 'should dispatch a failure action on a bad response', () => {
+			const dispatch = spy();
+			const response = {
+				code: 'rest_no_route',
+				data: { status: 404 },
+				message: 'No route was found matching the URL and request method',
+			};
+			const action = saveOrderSuccess( 123, 42, response );
+
+			onOrderSaveSuccess( { dispatch }, action, { data: response } );
+			expect( dispatch ).to.have.been.calledWithMatch(
+				match( {
+					type: WOOCOMMERCE_ORDER_UPDATE_FAILURE,
+					siteId: 123,
+					orderId: 42,
+					error: response,
+				} )
+			);
+		} );
+	} );
+	describe( '#onOrderSaveFailure', () => {
+		test( 'should dispatch a failure action on a failed orders save', () => {
+			const dispatch = spy();
+			const response = {
+				code: 'rest_no_route',
+				data: { status: 404 },
+				message: 'No route was found matching the URL and request method',
+			};
+			const action = saveOrderError( 123, 1, response );
+
+			onOrderSaveFailure( { dispatch }, action, response );
+			expect( dispatch ).to.have.been.calledWithMatch(
+				match( {
+					type: NOTICE_CREATE,
+				} )
+			);
+			expect( dispatch ).to.have.been.calledWithMatch(
+				match( {
+					type: WOOCOMMERCE_ORDER_UPDATE_FAILURE,
+					siteId: 123,
+					orderId: 1,
+					error: response,
 				} )
 			);
 		} );
