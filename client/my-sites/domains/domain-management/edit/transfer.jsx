@@ -75,6 +75,7 @@ class Transfer extends React.PureComponent {
 						duration: 5000,
 					}
 				);
+				this.toggleRestartState();
 			}
 		} );
 	};
