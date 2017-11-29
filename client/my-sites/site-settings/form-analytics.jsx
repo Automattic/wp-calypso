@@ -34,6 +34,7 @@ import {
 	isJetpackSite,
 	siteSupportsGoogleAnalyticsIPAnonymization,
 	siteSupportsGoogleAnalyticsBasicEcommerceTracking,
+	siteSupportsGoogleAnalyticsEnhancedEcommerceTracking,
 } from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -100,6 +101,7 @@ class GoogleAnalyticsForm extends Component {
 			siteIsJetpack,
 			siteSlug,
 			siteSupportsBasicEcommerceTracking,
+			siteSupportsEnhancedEcommerceTracking,
 			siteSupportsIPAnonymization,
 			translate,
 			uniqueEventTracker,
@@ -122,6 +124,10 @@ class GoogleAnalyticsForm extends Component {
 			config.isEnabled( 'jetpack/google-analytics-anonymize-ip' ) &&
 			siteIsJetpack &&
 			siteSupportsIPAnonymization;
+		const showEnhancedAnalyticsForStores =
+			config.isEnabled( 'jetpack/google-analytics-for-stores-enhanced' ) &&
+			siteIsJetpack &&
+			siteSupportsEnhancedEcommerceTracking;
 
 		const nudgeTitle = siteIsJetpack
 			? translate( 'Enable Google Analytics by upgrading to Jetpack Professional' )
@@ -228,6 +234,14 @@ class GoogleAnalyticsForm extends Component {
 										'Enabling this option is mandatory in certain countries due to national ' +
 											'privacy laws.'
 									) }
+									<ExternalLink
+										icon
+										href="https://support.google.com/analytics/answer/2763052"
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{ translate( 'Learn more' ) }
+									</ExternalLink>
 								</FormSettingExplanation>
 							</fieldset>
 						) }
@@ -235,6 +249,7 @@ class GoogleAnalyticsForm extends Component {
 							<FormAnalyticsStores
 								fields={ fields }
 								handleToggleChange={ this.handleToggleChange }
+								showEnhanced={ showEnhancedAnalyticsForStores }
 							/>
 						) }
 						<p>
@@ -290,6 +305,10 @@ const mapStateToProps = state => {
 		state,
 		siteId
 	);
+	const siteSupportsEnhancedEcommerceTracking = siteSupportsGoogleAnalyticsEnhancedEcommerceTracking(
+		state,
+		siteId
+	);
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled =
 		site &&
@@ -308,6 +327,7 @@ const mapStateToProps = state => {
 		jetpackVersionSupportsModule,
 		sitePlugins,
 		siteSupportsBasicEcommerceTracking,
+		siteSupportsEnhancedEcommerceTracking,
 		siteSupportsIPAnonymization,
 	};
 };
