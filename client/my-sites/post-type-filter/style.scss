@@ -8,9 +8,12 @@
 
 	@include breakpoint( "<480px" ) {
 		position: absolute;
-		top: 0;
+		top: 8px;
 		right: 50px;
-		height: 46px;
 		padding: 12px 8px 10px;
+
+		& .post-type-filter__multi-select-button-text {
+			display: none;
+		}
 	}
 }
