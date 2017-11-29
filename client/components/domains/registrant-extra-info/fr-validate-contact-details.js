@@ -16,7 +16,7 @@ import validationSchema from './fr-schema';
 
 const debug = debugFactory( 'calypso:components:domains:registrant-extra-info:validation' );
 
-const ajv = new Ajv( { messages: false, extendRefs: true, verbose: true } );
+const ajv = new Ajv( { messages: false, extendRefs: true, verbose: true, allErrors: true } );
 ajv.addMetaSchema( draft04 );
 const validate = ajv.compile( validationSchema );
 

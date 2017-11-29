@@ -114,6 +114,16 @@ describe( 'validateContactDetails', () => {
 				const result = validateContactDetails( testDetails );
 				expect( result ).to.have.property( 'organization' );
 			} );
+
+			test( 'should report multiple problems', () => {
+				const testDetails = Object.assign( {}, organizationDetails, {
+					organization: 'No' + repeat( '!!!!!!!!!', 11 ),
+				} );
+
+				const result = validateContactDetails( testDetails );
+				expect( result ).to.have.property( 'organization' )
+					.with.members( [ 'not', 'maxLength' ] );
+			} );
 		} );
 
 		describe( 'with registrantType: individual', () => {
