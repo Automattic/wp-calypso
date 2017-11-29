@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { flowRight, includes } from 'lodash';
+import { concat, flowRight, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import JetpackConnectNotices from './jetpack-connect-notices';
@@ -49,7 +50,7 @@ class JetpackConnectMain extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
 		path: PropTypes.string,
-		type: PropTypes.oneOf( [ 'install', 'pro', 'premium', 'personal', false ] ),
+		type: PropTypes.oneOf( concat( FLOW_TYPES, false ) ),
 		url: PropTypes.string,
 	};
 
@@ -314,12 +315,7 @@ class JetpackConnectMain extends Component {
 	}
 
 	isInstall() {
-		/*
-		 * FIXME: `return ! this.props.type` should be sufficient
-		 * I'm avoiding significantly changing this implementation
-		 * until propTypes have been around for a while.
-		 */
-		return includes( [ 'install', 'pro', 'premium', 'personal' ], this.props.type );
+		return includes( FLOW_TYPES, this.props.type );
 	}
 
 	getInstructionsData( status ) {

@@ -12,7 +12,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { clearPlan, retrievePlan } from './persistence-utils';
+import {
+	clearPlan,
+	isCalypsoStartedConnection,
+	retrieveFlowType,
+	retrievePlan,
+} from './persistence-utils';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -38,7 +43,6 @@ import {
 	isRtl,
 	isSiteAutomatedTransfer,
 } from 'state/selectors';
-import { getFlowType, isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
 import { mc } from 'lib/analytics';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 
@@ -246,9 +250,9 @@ export default connect(
 	state => {
 		const user = getCurrentUser( state );
 		const selectedSite = getSelectedSite( state );
-		const selectedSiteSlug = selectedSite ? selectedSite.slug : '*';
+		const selectedSiteSlug = selectedSite ? selectedSite.slug : '';
 
-		const flowType = getFlowType( state, selectedSiteSlug );
+		const flowType = retrieveFlowType();
 		const preSelectedPlan = retrievePlan();
 		const selectedPlanSlug = getPlanSlug( flowType, preSelectedPlan );
 		const selectedPlan = getPlanBySlug( state, selectedPlanSlug );
@@ -264,7 +268,7 @@ export default connect(
 			canPurchasePlans: selectedSite
 				? canCurrentUser( state, selectedSite.ID, 'manage_options' )
 				: true,
-			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSiteSlug ),
+			calypsoStartedConnection: isCalypsoStartedConnection( selectedSiteSlug ),
 			isRtlLayout: isRtl( state ),
 			hasPlan: selectedSite ? isCurrentPlanPaid( state, selectedSite.ID ) : null,
 			notJetpack: ! ( selectedSite && isJetpackSite( state, selectedSite.ID ) ),

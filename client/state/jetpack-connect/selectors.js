@@ -11,7 +11,6 @@ import { get, includes } from 'lodash';
 import { AUTH_ATTEMPS_TTL } from './constants';
 import { getSiteByUrl } from 'state/sites/selectors';
 import { isStale } from './utils';
-import { urlToSlug } from 'lib/url';
 
 const getJetpackSiteByUrl = ( state, url ) => {
 	const site = getSiteByUrl( state, url );
@@ -52,41 +51,13 @@ const isRemoteSiteOnSitesList = state => {
 	return !! getJetpackSiteByUrl( state, remoteUrl );
 };
 
-const getSessions = state => {
-	return get( state, [ 'jetpackConnect', 'jetpackConnectSessions' ] );
-};
-
 const getSSO = state => {
 	return get( state, [ 'jetpackConnect', 'jetpackSSO' ] );
-};
-
-const isCalypsoStartedConnection = function( state, siteSlug ) {
-	if ( ! siteSlug ) {
-		return false;
-	}
-	const site = urlToSlug( siteSlug );
-	const sessions = getSessions( state );
-
-	if ( sessions[ site ] && sessions[ site ].timestamp ) {
-		return ! isStale( sessions[ site ].timestamp );
-	}
-
-	return false;
 };
 
 const isRedirectingToWpAdmin = function( state ) {
 	const authorizationData = getAuthorizationData( state );
 	return !! authorizationData.isRedirectingToWpAdmin;
-};
-
-const getFlowType = function( state, siteSlug ) {
-	const sessions = getSessions( state );
-	siteSlug = urlToSlug( siteSlug );
-
-	if ( siteSlug && sessions[ siteSlug ] ) {
-		return sessions[ siteSlug ].flowType;
-	}
-	return false;
 };
 
 const getAuthAttempts = ( state, slug ) => {
@@ -153,12 +124,9 @@ export default {
 	getAuthorizationData,
 	getAuthorizationRemoteQueryData,
 	getAuthorizationRemoteSite,
-	getSessions,
 	getSSO,
-	isCalypsoStartedConnection,
 	isRedirectingToWpAdmin,
 	isRemoteSiteOnSitesList,
-	getFlowType,
 	getJetpackSiteByUrl,
 	hasXmlrpcError,
 	hasExpiredSecretError,

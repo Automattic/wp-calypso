@@ -39,6 +39,7 @@ import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
+import { isCalypsoStartedConnection } from './persistence-utils';
 import {
 	authorize as authorizeAction,
 	goBackToWpAdmin as goBackToWpAdminAction,
@@ -53,7 +54,6 @@ import {
 	getUserAlreadyConnected,
 	hasExpiredSecretError as hasExpiredSecretErrorSelector,
 	hasXmlrpcError as hasXmlrpcErrorSelector,
-	isCalypsoStartedConnection,
 	isRemoteSiteOnSitesList,
 } from 'state/jetpack-connect/selectors';
 
@@ -577,7 +577,7 @@ export default connect(
 		return {
 			authAttempts: getAuthAttempts( state, siteSlug ),
 			authorizationData: getAuthorizationData( state ),
-			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl ),
+			calypsoStartedConnection: isCalypsoStartedConnection( remoteSiteUrl ),
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
