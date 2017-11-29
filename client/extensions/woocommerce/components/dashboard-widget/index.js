@@ -34,6 +34,7 @@ class DashboardWidget extends Component {
 
 	onSettingsPanelClose = () => {
 		this.setState( { showDialog: false } );
+		this.props.onSettingsClose();
 	};
 
 	setSettingsToggle = c => {
@@ -45,8 +46,11 @@ class DashboardWidget extends Component {
 	};
 
 	toggleSettingsPanel = () => {
-		this.props.onSettingsClose();
-		this.setState( { showDialog: ! this.state.showDialog } );
+		const { showDialog } = this.state;
+		if ( showDialog ) {
+			this.props.onSettingsClose();
+		}
+		this.setState( { showDialog: ! showDialog } );
 	};
 
 	render() {
@@ -92,7 +96,7 @@ class DashboardWidget extends Component {
 					isVisible={ showTooltip }
 				>
 					{ translate( 'Settings', {
-						context: 'Tooltip shown to toggle settings panel in dashboard',
+						comment: 'Tooltip shown to toggle settings panel in dashboard',
 					} ) }
 				</Tooltip>
 				{ hasSettingsPanel && (
