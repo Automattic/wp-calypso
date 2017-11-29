@@ -266,11 +266,30 @@ input[type=radio].domain-management-list-item__radio {
 
 	.edit__transfer-text-fail {
 		font-size: 18px;
-		font-weight: bold;
+		font-weight: 500;
 	}
 
-	.edit__transfer-button-margin {
-		margin-left: 15px;
+	.edit__transfer-button-fail {
+		display: block;
+		margin: 10px 0;
+		text-align: center;
+		width: 100%;
+
+		&.is-busy:disabled {
+			border-color: lighten( $gray, 20% );
+			color: darken( $gray, 20% );
+		}
+
+		@include breakpoint( '>480px' ) {
+			display: inline-block;
+			width: auto;
+		}
+	}
+
+	@include breakpoint( '>480px' ) {
+		.edit__transfer-button-fail-margin {
+			margin-left: 15px;
+		}
 	}
 }
 
