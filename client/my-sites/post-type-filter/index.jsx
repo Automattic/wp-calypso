@@ -7,7 +7,6 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { compact, find, includes, reduce } from 'lodash';
@@ -122,18 +121,14 @@ const PostTypeFilter = createReactClass( {
 			return null;
 		}
 
-		const {
-			translate,
-			isMultiSelectEnabled: isMultiSelectButtonEnabled,
-			toggleMultiSelect: onMultiSelectClick,
-		} = this.props;
-
-		const classes = classnames( 'post-type-filter__multi-select-button', {
-			'is-enabled': isMultiSelectButtonEnabled,
-		} );
+		const { translate, toggleMultiSelect: onMultiSelectClick } = this.props;
 
 		return (
-			<Button className={ classes } compact onClick={ onMultiSelectClick }>
+			<Button
+				className="post-type-filter__multi-select-button"
+				compact
+				onClick={ onMultiSelectClick }
+			>
 				<Gridicon icon="list-checkmark" />
 				<span className="post-type-filter__multi-select-button-text">
 					{ translate( 'Bulk Edit' ) }
@@ -143,9 +138,20 @@ const PostTypeFilter = createReactClass( {
 	},
 
 	render() {
-		const { authorToggleHidden, jetpack, query, siteId, statusSlug } = this.props;
+		const {
+			authorToggleHidden,
+			jetpack,
+			query,
+			siteId,
+			statusSlug,
+			isMultiSelectEnabled: isMultiSelectButtonEnabled,
+		} = this.props;
 
 		if ( ! query ) {
+			return null;
+		}
+
+		if ( isMultiSelectButtonEnabled ) {
 			return null;
 		}
 
