@@ -27,8 +27,12 @@
 .disconnect-site__survey {
 	.form-text-input {
 		height: 2em;
-		margin-left: 10px;
-		width: 20em;
+		margin-left: 18px;
+		width: 32em;
+
+		@include breakpoint( '<480px' ) {
+			max-width: 11em;
+		}
 	}
 }
 

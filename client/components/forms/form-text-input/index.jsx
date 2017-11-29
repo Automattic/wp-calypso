@@ -15,6 +15,7 @@ export default class FormTextInput extends PureComponent {
 		isValid: PropTypes.bool,
 		selectOnFocus: PropTypes.bool,
 		className: PropTypes.string,
+		placeholder: PropTypes.string,
 	};
 
 	constructor() {
@@ -34,7 +35,7 @@ export default class FormTextInput extends PureComponent {
 	}
 
 	render() {
-		const { inputRef } = this.props;
+		const { inputRef, placeholder } = this.props;
 		const props = omit( this.props, 'isError', 'isValid', 'selectOnFocus', 'inputRef' );
 
 		const classes = classNames( 'form-text-input', this.props.className, {
@@ -49,6 +50,7 @@ export default class FormTextInput extends PureComponent {
 				ref={ inputRef || 'textField' }
 				className={ classes }
 				onClick={ this.selectOnFocus }
+				placeholder={ placeholder }
 			/>
 		);
 	}
