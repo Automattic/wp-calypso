@@ -106,6 +106,7 @@ class PostItem extends React.Component {
 			globalId,
 			isAllSitesModeSelected,
 			translate,
+			multiSelectEnabled,
 		} = this.props;
 
 		const title = post ? post.title : null;
@@ -162,7 +163,7 @@ class PostItem extends React.Component {
 						</div>
 					</div>
 					<PostTypeListPostThumbnail globalId={ globalId } />
-					<PostActionsEllipsisMenu globalId={ globalId } />
+					{ ! multiSelectEnabled && <PostActionsEllipsisMenu globalId={ globalId } /> }
 				</div>
 				{ expandedContent }
 			</div>
