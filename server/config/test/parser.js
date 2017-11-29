@@ -66,4 +66,17 @@ describe( 'parser', () => {
 
 		expect( data ).toHaveProperty( 'features.disabledFeature2', true );
 	} );
+
+	test( 'should explicitly set user-bootstrapping to false if there are no real secrets', () => {
+		require( 'fs' ).__setEmptySecrets();
+		const errorSpy = jest.fn();
+		global.console = { error: errorSpy };
+
+		parser = require( 'config/parser' );
+		const { serverData, clientData } = parser( '/valid-path' );
+
+		expect( serverData.features[ 'wpcom-user-bootstrap' ] ).toBe( false );
+		expect( clientData.features[ 'wpcom-user-bootstrap' ] ).toBe( false );
+		expect( errorSpy ).toHaveBeenCalledTimes( 1 );
+	} );
 } );

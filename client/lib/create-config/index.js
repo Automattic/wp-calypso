@@ -1,10 +1,10 @@
 /**
  * Returns configuration value for given key
- * 
+ *
  * If the requested key isn't defined in the configuration
  * data then this will report the failure with either an
  * error or a console warning.
- * 
+ *
  * When in the 'development' NODE_ENV it will raise an error
  * to crash execution early. However, because many modules
  * call this function in the module-global scope a failure
@@ -13,9 +13,9 @@
  * unwanted behaviors. Therefore if the NODE_ENV is not
  * 'development' we will return `undefined` and log a message
  * to the console instead of halting the execution thread.
- * 
+ *
  * The config files are loaded in sequence: _shared.json, {env}.json, {env}.local.json
- * 
+ *
  *
  * @format
  * @see server/config/parser.js

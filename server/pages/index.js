@@ -246,7 +246,7 @@ function setUpLoggedInRoute( req, res, next ) {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
 
-	const context = getDefaultContext( req );
+	req.context = getDefaultContext( req );
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		const user = require( 'user-bootstrap' );
@@ -287,7 +287,7 @@ function setUpLoggedInRoute( req, res, next ) {
 						errorMessage = error.message;
 					}
 
-					console.log( 'API Error: ' + errorMessage );
+					console.error( 'API Error: ' + errorMessage );
 
 					next( error );
 				}
@@ -298,11 +298,11 @@ function setUpLoggedInRoute( req, res, next ) {
 			const end = new Date().getTime() - start;
 
 			debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
-			context.user = data;
+			req.context.user = data;
 
 			if ( data.localeSlug ) {
-				context.lang = data.localeSlug;
-				context.store.dispatch( {
+				req.context.lang = data.localeSlug;
+				req.context.store.dispatch( {
 					type: LOCALE_SET,
 					localeSlug: data.localeSlug,
 				} );
@@ -313,7 +313,7 @@ function setUpLoggedInRoute( req, res, next ) {
 				if ( searchParam ) {
 					res.redirect(
 						'https://' +
-							context.lang +
+							req.context.lang +
 							'.search.wordpress.com/?q=' +
 							encodeURIComponent( searchParam )
 					);
@@ -333,12 +333,9 @@ function setUpLoggedInRoute( req, res, next ) {
 				}
 			}
 
-			req.context = context;
-
 			next();
 		} );
 	} else {
-		req.context = context;
 		next();
 	}
 }

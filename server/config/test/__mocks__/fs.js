@@ -23,6 +23,19 @@ function setValidSecrets() {
 	};
 }
 
+function setEmptySecrets() {
+	mockFiles = {
+		'empty-secrets.json': toJSON( {
+			secret: 'fromempty',
+		} ),
+		'_shared.json': toJSON( {
+			features: {
+				'wpcom-user-bootstrap': true,
+			},
+		} ),
+	};
+}
+
 function setValidEnvFiles() {
 	mockFiles = {
 		'_shared.json': toJSON( {
@@ -56,6 +69,7 @@ function readFileSync( file ) {
 }
 
 fs.__setValidSecrets = setValidSecrets;
+fs.__setEmptySecrets = setEmptySecrets;
 fs.__setValidEnvFiles = setValidEnvFiles;
 fs.existsSync = existsSync;
 fs.readFileSync = readFileSync;
