@@ -316,7 +316,7 @@ describe( 'index', () => {
 			const memoizedSelector = createSelector(
 				( state, x, y, z ) => state[ x ][ y ][ z ],
 				state => state.a.b,
-				( state, ...args ) => args.join(),
+				null,
 				true
 			);
 			const state = {

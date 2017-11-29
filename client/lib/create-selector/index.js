@@ -89,12 +89,10 @@ const makeSelectorFromArray = dependants => ( state, ...args ) =>
  * @param  {Boolean}             cachePerKey   Flag whether caching should happen per key
  * @return {Function}                          Memoized selector
  */
-export default function createSelector(
-	selector,
-	getDependants = DEFAULT_GET_DEPENDANTS,
-	getCacheKey = DEFAULT_GET_CACHE_KEY,
-	cachePerKey
-) {
+export default function createSelector( selector, getDependants, getCacheKey, cachePerKey ) {
+	getDependants = getDependants || DEFAULT_GET_DEPENDANTS;
+	getCacheKey = getCacheKey || DEFAULT_GET_CACHE_KEY;
+
 	const memoizedSelector = memoize( selector, getCacheKey );
 	let lastDependants = cachePerKey ? {} : null;
 
