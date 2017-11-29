@@ -457,36 +457,31 @@
 	// -----------------------------------
 	.credits-payment-box {
 		.payment-box-section {
+			align-items: center;
 			box-sizing: border-box;
-			min-height: 91px;
-			padding: 20px 20px 20px 80px;
-			position: relative;
 			display: flex;
-			flex-direction: column;
-			justify-content: center;
+			min-height: 91px;
+			padding: 20px 20px 20px 0;
 
 			&::before {
 				color: $blue-medium;
-				left: 10px;
-				position: absolute;
+				margin: 0 10px;
 				@include noticon( '\f205', 60px );
 				@include breakpoint( '>660px' ) {
-					left: 20px;
+					margin: 0 20px;
 				}
 			}
 
-			> h6 {
-				color: $blue-medium;
-				font-size: 18px;
-			}
+			.checkout__payment-box-section-content {
+				> h6 {
+					color: $blue-medium;
+					font-size: 18px;
+				}
 
-			> span {
-				color: darken( $gray, 10% );
-				font-size: 15px;
-			}
-
-			@include breakpoint( '>660px' ) {
-				padding-left: 100px;
+				> span {
+					color: darken( $gray, 10% );
+					font-size: 15px;
+				}
 			}
 		}
 	}

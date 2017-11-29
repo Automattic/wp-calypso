@@ -33,22 +33,24 @@ class CreditsPaymentBox extends React.Component {
 		return (
 			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
-					<h6>{ this.props.translate( 'WordPress.com Credits' ) }</h6>
+					<div className="checkout__payment-box-section-content">
+						<h6>{ this.props.translate( 'WordPress.com Credits' ) }</h6>
 
-					<span>
-						{ this.props.translate(
-							'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
-							{
-								args: {
-									credits: cart.credits,
-									currency: cart.currency,
-								},
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</span>
+						<span>
+							{ this.props.translate(
+								'You have {{strong}}%(credits)s %(currency)s in Credits{{/strong}} available.',
+								{
+									args: {
+										credits: cart.credits,
+										currency: cart.currency,
+									},
+									components: {
+										strong: <strong />,
+									},
+								}
+							) }
+						</span>
+					</div>
 				</div>
 
 				<TermsOfService />
