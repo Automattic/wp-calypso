@@ -101,14 +101,9 @@ describe( 'handlers', () => {
 				data: { status: 404 },
 				message: 'No route was found matching the URL and request method',
 			};
-			const action = failOrders( 123, {}, response, 2 );
-			const data = {
-				status: 404,
-				body: response,
-				headers: [],
-			};
+			const action = { failureAction: failOrders( 123, {}, response ) };
 
-			apiError( { dispatch }, action, { data } );
+			apiError( { dispatch }, action, { data: response } );
 			expect( dispatch ).to.have.been.calledWithMatch(
 				match( {
 					type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,

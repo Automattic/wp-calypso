@@ -23,6 +23,7 @@ export default {
 export function requestOrders( { dispatch }, action ) {
 	const { siteId, query } = action;
 	const queryString = qs.stringify( omitBy( query, val => '' === val ) );
+	action.failureAction = failOrders( siteId, query );
 
 	dispatch( request( siteId, action ).getWithHeaders( `orders?${ queryString }` ) );
 }
@@ -37,9 +38,8 @@ export function receivedOrders( { dispatch }, action, { data } ) {
 
 export function apiError( { dispatch }, action, error ) {
 	debug( 'API Error: ', error );
-	dispatch( failOrders( action.siteId, action.params, error ) );
 
 	if ( action.failureAction ) {
-		dispatch( action.failureAction );
+		dispatch( { ...action.failureAction, error } );
 	}
 }
