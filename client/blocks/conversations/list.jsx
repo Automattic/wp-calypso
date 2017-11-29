@@ -211,8 +211,17 @@ export class ConversationCommentList extends React.Component {
 		}
 
 		const commentsToShow = this.getCommentsToShow();
-		const showCaterpillar =
-			enableCaterpillar && size( commentsToShow ) < post.discussion.comment_count;
+		const isDoneLoadingComments =
+			! this.props.commentsFetchingStatus.haveEarlierCommentsToFetch &&
+			! this.props.commentsFetchingStatus.haveLaterCommentsToFetch;
+
+		// if you have finished loading comments, then lets use the comments we have as the final comment count
+		// if we are still loading comments, then assume what the server initially told us is right
+		const commentCount = isDoneLoadingComments
+			? filter( commentsTree, comment => get( comment, 'data.type' ) === 'comment' ).length // filter out pingbacks/trackbacks
+			: post.discussion.comment_count;
+
+		const showCaterpillar = enableCaterpillar && size( commentsToShow ) < commentCount;
 
 		return (
 			<div className="conversations__comment-list">
@@ -221,7 +230,7 @@ export class ConversationCommentList extends React.Component {
 						<ConversationCaterpillar
 							blogId={ post.site_ID }
 							postId={ post.ID }
-							commentCount={ post.discussion.comment_count }
+							commentCount={ commentCount }
 							commentsToShow={ commentsToShow }
 						/>
 					) }
@@ -229,6 +238,7 @@ export class ConversationCommentList extends React.Component {
 						return (
 							<PostComment
 								showNestingReplyArrow
+								hidePingbacksAndTrackbacks
 								enableCaterpillar={ enableCaterpillar }
 								post={ post }
 								commentsTree={ commentsTree }
