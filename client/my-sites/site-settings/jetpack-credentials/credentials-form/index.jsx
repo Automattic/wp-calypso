@@ -117,7 +117,7 @@ export class CredentialsForm extends Component {
 						<FormTextInput
 							name="port"
 							id="server-port"
-							placeholder={ translate( '22' ) }
+							placeholder="22"
 							value={ get( this.state.form, 'port', '' ) }
 							onChange={ this.handleFieldChange }
 							disabled={ formIsSubmitting }
