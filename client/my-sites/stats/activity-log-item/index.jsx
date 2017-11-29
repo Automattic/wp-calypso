@@ -96,10 +96,12 @@ class ActivityLogItem extends Component {
 				<ActivityActor
 					{ ...pick( log, [ 'actorAvatarUrl', 'actorName', 'actorRole', 'actorType' ] ) }
 				/>
-				<div className="activity-log-item__description">
-					{ ! activityDescription && activityTitle }
-					{ activityDescription &&
-						activityDescription.map( ( part, key ) => {
+				{ ! activityDescription && (
+					<div className="activity-log-item__title">{ activityTitle }</div>
+				) }
+				{ activityDescription && (
+					<div className="activity-log-item__description">
+						{ activityDescription.map( ( part, key ) => {
 							if ( 'string' === typeof part ) {
 								return part;
 							}
@@ -158,11 +160,11 @@ class ActivityLogItem extends Component {
 									return applySiteOffset( moment.utc( part.time ) ).format( part.format );
 
 								default:
-									return null;
+									return children;
 							}
 						} ) }
-					{ /*<div className="activity-log-item__event">{ eventName }</div>*/ }
-				</div>
+					</div>
+				) }
 			</div>
 		);
 	}
