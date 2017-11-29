@@ -164,7 +164,8 @@
 		}
 	}
 
-	.login__form {
+	.login__form,
+	.magic-login {
 		.button {
 			float: none;
 			margin: 0;
@@ -202,11 +203,13 @@
 	}
 
 	.login__form-action,
-	.login__social-buttons {
+	.login__social-buttons,
+	.magic-login__form-action {
 		text-align: center;
 	}
 
-	.wp-login__main.main {
+	.wp-login__main.main,
+	.magic-login.main {
 		max-width: 778px;
 	}
 
@@ -221,6 +224,7 @@
 	}
 
 	.wp-login__container,
+	.magic-login,
 	.step-wrapper {
 		background: #fff;
 		border: 1px solid #d3d3d3;
@@ -304,15 +308,5 @@
 	// Signup styles
 	.signup__step {
 		background: linear-gradient( to bottom, #e6e6e6, transparent );
-	}
-
-	.signup-processing__content:after {
-		background-image: url( '/calypso/images/woo/ninja-joy.svg' );
-		content: '';
-		height: 100px;
-		left: 50%;
-		position: absolute;
-		top: 33px;
-		width: 69px;
 	}
 }
