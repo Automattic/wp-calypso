@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
  */
 import DisconnectSurvey from './disconnect-survey';
 import MissingFeature from './missing-feature';
-import AnotherReason from './another-reason';
 import TooDifficult from './too-difficult';
 import TooExpensive from './too-expensive';
 import Troubleshoot from './troubleshoot';
@@ -28,7 +27,6 @@ export const reasonComponents = {
 	'missing-feature': MissingFeature,
 	'too-difficult': TooDifficult,
 	'too-expensive': TooExpensive,
-	other: AnotherReason,
 };
 
 const DisconnectSite = ( { reason, siteSlug, translate } ) => {
