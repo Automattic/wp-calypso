@@ -412,7 +412,7 @@
       "integrity": "sha1-a8vQOKM3xwYn5/zkQ4+lgYjwk3s=",
       "requires": {
         "browserslist": "1.3.6",
-        "caniuse-db": "1.0.30000772",
+        "caniuse-db": "1.0.30000775",
         "normalize-range": "0.1.2",
         "num2fraction": "1.2.2",
         "postcss": "5.2.18",
@@ -1282,7 +1282,7 @@
           "version": "2.9.1",
           "integrity": "sha512-3n3nPdbUqn3nWmsy4PeSQthz2ja1ndpoXta+dwFFNhveGjMg6FXpWYe12vsTpNoXJbzx3j7GZXdtoVIdvh3JbA==",
           "requires": {
-            "caniuse-lite": "1.0.30000772",
+            "caniuse-lite": "1.0.30000775",
             "electron-to-chromium": "1.3.27"
           }
         },
@@ -1776,7 +1776,7 @@
       "version": "1.3.6",
       "integrity": "sha1-lS/0jVZGPTtTj4XvL46t39KEsTM=",
       "requires": {
-        "caniuse-db": "1.0.30000772"
+        "caniuse-db": "1.0.30000775"
       }
     },
     "bser": {
@@ -1893,12 +1893,12 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000772",
-      "integrity": "sha1-UarokXaChureSj2DGep21qAbUSs="
+      "version": "1.0.30000775",
+      "integrity": "sha1-BLzN0CFO3yW5f2GglmCfetaQQzM="
     },
     "caniuse-lite": {
-      "version": "1.0.30000772",
-      "integrity": "sha1-eBKWIsq/7Xrx/zi2SraApqCGVCA="
+      "version": "1.0.30000775",
+      "integrity": "sha1-dNJ/7dxH88hM+8sTDDCSo168LeI="
     },
     "cardinal": {
       "version": "1.0.0",
@@ -3166,7 +3166,7 @@
       "dev": true,
       "requires": {
         "browserslist": "1.3.6",
-        "caniuse-db": "1.0.30000772",
+        "caniuse-db": "1.0.30000775",
         "css-rule-stream": "1.1.0",
         "duplexer2": "0.0.2",
         "jsonfilter": "1.1.2",
@@ -6429,7 +6429,7 @@
         "lodash.flatten": "4.4.0",
         "lru": "3.1.0",
         "moment-timezone": "0.5.11",
-        "react": "16.0.0",
+        "react": "16.2.0",
         "xgettext-js": "1.0.0"
       },
       "dependencies": {
@@ -6582,9 +6582,9 @@
       "version": "1.1.1",
       "integrity": "sha1-aZ//RdFSXpjHzntxWVkdmStd1t8=",
       "requires": {
-        "react": "16.0.0",
+        "react": "16.2.0",
         "react-addons-create-fragment": "15.6.2",
-        "react-dom": "16.0.0"
+        "react-dom": "16.2.0"
       }
     },
     "interpret": {
@@ -10063,8 +10063,8 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "2.0.0",
-      "integrity": "sha1-0opi89pfZikasFERVyyBFs+4uH8="
+      "version": "2.1.1",
+      "integrity": "sha512-9u7vkFFjETxgrt2ja8D9OzVm+MZiJYlUOTlHyBj+tZ8GeMYbga56eCtSq9PN6yURvaKfRlq7mIpC/tWskHmmFA=="
     },
     "npm-path": {
       "version": "1.1.0",
@@ -11037,7 +11037,7 @@
         "globby": "6.1.0",
         "graphql": "0.10.1",
         "ignore": "3.3.5",
-        "jest-docblock": "21.3.0-beta.10",
+        "jest-docblock": "21.3.0-beta.11",
         "jest-validate": "21.1.0",
         "leven": "2.1.0",
         "mem": "1.1.0",
@@ -11142,8 +11142,8 @@
           "dev": true
         },
         "jest-docblock": {
-          "version": "21.3.0-beta.10",
-          "integrity": "sha512-1qwBNlCSiI+SnB2+vkFoQ7Hal1sJR/9XF28nAHDVrSfLYbMWLs1d+ED2TmQNulsQRB9/Fyx0nOZmx1tTX+sWNA==",
+          "version": "21.3.0-beta.11",
+          "integrity": "sha512-sxSwZUm7JyCO8dverup5g/OKJhjYRrBdgEdezIO1qAmMGWuza7ewovpfDmxp+JLvlm0i2WRFKUQNNIMGmPGTVg==",
           "dev": true,
           "requires": {
             "detect-newline": "2.1.0"
@@ -11592,8 +11592,8 @@
       }
     },
     "react": {
-      "version": "16.0.0",
-      "integrity": "sha1-zn348ZQbA28Cssyp29DLHw6FXi0=",
+      "version": "16.2.0",
+      "integrity": "sha512-ZmIomM7EE1DvPEnSFAHZn9Vs9zJl5A9H7el0EGTE6ZbW9FKe/14IYAlPbC8iH25YarEQxZL+E8VW7Mi7kfQrDQ==",
       "requires": {
         "fbjs": "0.8.16",
         "loose-envify": "1.3.1",
@@ -12187,8 +12187,8 @@
       }
     },
     "react-dom": {
-      "version": "16.0.0",
-      "integrity": "sha1-nMMHnD3NcNTG4BuEqrKn40wwP1g=",
+      "version": "16.2.0",
+      "integrity": "sha512-zpGAdwHVn9K0091d+hr+R0qrjoJ84cIBFL2uU60KvWBPfZ7LPSrfqviTxGHWN0sjPZb2hxWzMexwrvJdKePvjg==",
       "requires": {
         "fbjs": "0.8.16",
         "loose-envify": "1.3.1",
