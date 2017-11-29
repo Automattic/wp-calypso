@@ -24,10 +24,10 @@
 	height: 116px;
 	box-shadow: 0 1px 0 0 lighten( $gray, 20% ),
 		0 1px 0 lighten( $gray, 40% );
+}
 
-	p {
-		margin: 0;
-	}
+.privacy-policy-banner__dialog-header-text h1 {
+	margin: 0;
 }
 
 .privacy-policy-banner__dialog-header-image {
