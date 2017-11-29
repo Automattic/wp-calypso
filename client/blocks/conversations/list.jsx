@@ -229,6 +229,7 @@ export class ConversationCommentList extends React.Component {
 						return (
 							<PostComment
 								showNestingReplyArrow
+								hidePingbacksAndTrackbacks
 								enableCaterpillar={ enableCaterpillar }
 								post={ post }
 								commentsTree={ commentsTree }
