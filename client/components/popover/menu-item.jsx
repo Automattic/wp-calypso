@@ -52,7 +52,8 @@ export default class PopoverMenuItem extends Component {
 			'focusOnHover',
 			'isSelected',
 			'isExternalLink',
-			'className'
+			'className',
+			'itemComponent'
 		);
 		const classes = classnames( 'popover__menu-item', className, {
 			'is-selected': isSelected,
