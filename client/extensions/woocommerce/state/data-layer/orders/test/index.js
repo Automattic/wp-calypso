@@ -8,10 +8,19 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { fetchOrders, updateOrders, failOrders } from 'woocommerce/state/sites/orders/actions';
-import { apiError, requestOrders, receivedOrders } from '../';
+import {
+	failOrder,
+	failOrders,
+	fetchOrder,
+	fetchOrders,
+	_updateOrder,
+	updateOrders,
+} from 'woocommerce/state/sites/orders/actions';
+import { apiError, receivedOrder, receivedOrders, requestOrder, requestOrders } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
+	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
+	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
@@ -111,6 +120,88 @@ describe( 'handlers', () => {
 					type: WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 					siteId: 123,
 					query: {},
+				} )
+			);
+		} );
+
+		test( 'apiError should dispatch a failure action on a failed single order request', () => {
+			const dispatch = spy();
+			const response = {
+				code: 'rest_no_route',
+				data: { status: 404 },
+				message: 'No route was found matching the URL and request method',
+			};
+			const action = { failureAction: failOrder( 123, 42 ) };
+
+			apiError( { dispatch }, action, { data: response } );
+			expect( dispatch ).to.have.been.calledWithMatch(
+				match( {
+					type: WOOCOMMERCE_ORDER_REQUEST_FAILURE,
+					siteId: 123,
+					orderId: 42,
+				} )
+			);
+		} );
+	} );
+
+	describe( '#requestOrder', () => {
+		test( 'should dispatch a get action', () => {
+			const dispatch = spy();
+			const action = fetchOrder( 123, 42 );
+			requestOrder( { dispatch }, action );
+
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith(
+				http(
+					{
+						method: 'GET',
+						path: '/jetpack-blogs/123/rest-api/',
+						apiVersion: '1.1',
+						body: null,
+						query: {
+							json: true,
+							path: '/wc/v3/orders/42&_method=GET',
+						},
+					},
+					action
+				)
+			);
+		} );
+	} );
+
+	describe( '#receivedOrder', () => {
+		test( 'should dispatch a success action on a good response', () => {
+			const dispatch = spy();
+			const order = { id: 42, total: '50.00' };
+			const action = _updateOrder( 123, 42, order );
+
+			receivedOrder( { dispatch }, action, { data: order } );
+
+			expect( dispatch ).to.have.been.calledWithMatch(
+				match( {
+					type: WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
+					siteId: 123,
+					orderId: 42,
+					order,
+				} )
+			);
+		} );
+
+		test( 'should dispatch a failure action on a bad response', () => {
+			const dispatch = spy();
+			const response = {
+				code: 'rest_no_route',
+				data: { status: 404 },
+				message: 'No route was found matching the URL and request method',
+			};
+			const action = _updateOrder( 123, 42, response );
+
+			receivedOrder( { dispatch }, action, { data: response } );
+			expect( dispatch ).to.have.been.calledWithMatch(
+				match( {
+					type: WOOCOMMERCE_ORDER_REQUEST_FAILURE,
+					siteId: 123,
+					orderId: 42,
 				} )
 			);
 		} );

@@ -13,7 +13,6 @@ import {
 	removeTemporaryIds,
 	transformOrderForApi,
 } from './utils';
-import { isOrderLoaded, isOrderLoading } from './selectors';
 import { getOrderStatusGroup } from 'woocommerce/lib/order-status';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from '../request';
@@ -67,45 +66,34 @@ export const updateOrders = ( siteId, query = {}, orders = [], total = 0 ) => {
 	};
 };
 
-export const fetchOrder = ( siteId, orderId, refresh = false ) => ( dispatch, getState ) => {
-	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
-	}
-	if ( isOrderLoading( state, orderId, siteId ) ) {
-		return;
-	}
-	// Bail if the order is loaded, and we don't want to force a refresh
-	if ( ! refresh && isOrderLoaded( state, orderId, siteId ) ) {
-		return;
-	}
-
-	const fetchAction = {
+export const fetchOrder = ( siteId, orderId ) => {
+	return {
 		type: WOOCOMMERCE_ORDER_REQUEST,
 		siteId,
 		orderId,
 	};
-	dispatch( fetchAction );
+};
 
-	return request( siteId )
-		.get( `orders/${ orderId }` )
-		.then( order => {
-			dispatch( {
-				type: WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
-				siteId,
-				orderId,
-				order,
-			} );
-		} )
-		.catch( error => {
-			dispatch( setError( siteId, fetchAction, error ) );
-			dispatch( {
-				type: WOOCOMMERCE_ORDER_REQUEST_FAILURE,
-				siteId,
-				orderId,
-				error,
-			} );
-		} );
+export const failOrder = ( siteId, orderId, error = false ) => {
+	return {
+		type: WOOCOMMERCE_ORDER_REQUEST_FAILURE,
+		siteId,
+		orderId,
+		error,
+	};
+};
+
+export const _updateOrder = ( siteId, orderId, order ) => {
+	// This passed through the API layer successfully, but failed at the remote site.
+	if ( 'undefined' === typeof order.id ) {
+		return failOrder( siteId, orderId, order );
+	}
+	return {
+		type: WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
+		siteId,
+		orderId,
+		order,
+	};
 };
 
 export const updateOrder = ( siteId, { id: orderId, ...order } ) => ( dispatch, getState ) => {
