@@ -24,7 +24,8 @@
 						}
 					},
 					"organization": { "$ref": "#/definitions/empty" }
-				}
+				},
+				"formField": "organization"
 			}
 		}
 	},

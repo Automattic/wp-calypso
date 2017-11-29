@@ -16,11 +16,20 @@ import validationSchema from './fr-schema';
 
 const debug = debugFactory( 'calypso:components:domains:registrant-extra-info:validation' );
 
-const ajv = new Ajv( { messages: false } );
+const ajv = new Ajv( { messages: false, extendRefs: true, verbose: true } );
 ajv.addMetaSchema( draft04 );
 const validate = ajv.compile( validationSchema );
 
 const schemaPathFilterRegex = /anyOf\/\d+/;
+
+export function inferFormField( { keyword, params, dataPath } ) {
+	const possiblePathAddition =
+		keyword === 'required' && params && params.missingProperty
+			? `.${ params.missingProperty }`
+			: '';
+
+	return ( dataPath + possiblePathAddition ).slice( 1 );
+}
 
 /*
  * @returns errors by field, like: { 'extra.field: name, errors: [ string ] }
@@ -28,21 +37,23 @@ const schemaPathFilterRegex = /anyOf\/\d+/;
 export default function validateContactDetails( contactDetails ) {
 	// Populate validate.errors
 	const valid = validate( contactDetails );
-	valid && debug( validate.errors );
+	valid || debug( validate.errors );
 
 	return reduce(
 		validate.errors,
-		( accumulatedErrors, { dataPath, keyword, schemaPath } ) => {
+		( accumulatedErrors, validationError ) => {
 			// Drop '.' prefix
-			const path = dataPath.slice( 1 );
+			const { keyword, schemaPath, schema } = validationError;
 
 			if ( schemaPathFilterRegex.test( schemaPath ) ) {
 				return accumulatedErrors;
 			}
 
+			const formFieldPath = schema.formField || inferFormField( validationError );
+
 			const appendThisMessage = before => [ ...( before || [] ), keyword ];
 
-			return update( accumulatedErrors, path, appendThisMessage );
+			return update( accumulatedErrors, formFieldPath, appendThisMessage );
 		},
 		{}
 	);

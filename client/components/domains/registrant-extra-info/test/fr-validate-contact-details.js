@@ -246,8 +246,7 @@ describe( 'validateContactDetails', () => {
 
 		test( 'should reject SIRET for VAT', () => {
 			realSiretNumbers.forEach( ( [ registrantVatId ] ) => {
-				const testDetails = Object.assign( {}, contactDetails, { extra: { registrantVatId } } );
-
+				const testDetails = contactWithExtraProperty( 'registrantVatId', registrantVatId );
 				const result = validateContactDetails( testDetails );
 				expect( result, `expected to reject '${ registrantVatId }'` )
 					.to.have.property( 'extra' )
@@ -288,7 +287,7 @@ describe( 'validateContactDetails', () => {
 
 		test( 'should reject our bad SIRET examples', () => {
 			badTrademarkNumbers.forEach( ( [ trademarkNumber ] ) => {
-				const testDetails = Object.assign( {}, contactDetails, { extra: { trademarkNumber } } );
+				const testDetails = contactWithExtraProperty( 'trademarkNumber', trademarkNumber );
 
 				const result = validateContactDetails( testDetails );
 				expect( result, `expected to reject '${ trademarkNumber }'` )
