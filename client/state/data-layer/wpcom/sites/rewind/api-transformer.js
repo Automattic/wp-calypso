@@ -27,7 +27,7 @@ export const transformApi = data =>
 	Object.assign(
 		{
 			state: data.state,
-			lastUpdated: new Date( data.last_updated ),
+			lastUpdated: new Date( data.last_updated * 1000 ),
 		},
 		data.credentials && { credentials: data.credentials.map( transformCredential ) },
 		data.downloads && { downloads: data.downloads.map( transformDownload ) },
