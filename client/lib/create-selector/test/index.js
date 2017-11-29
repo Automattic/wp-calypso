@@ -1,4 +1,5 @@
 /** @format */
+/* eslint-disable no-console */
 /**
  * External dependencies
  */
@@ -74,20 +75,43 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledOnce;
 	} );
 
-	test( 'should warn against complex arguments in development mode', () => {
-		const state = { posts: {} };
+	describe( 'warning against complex arguments in development mode', () => {
+		test( 'should warn against objects being passed', () => {
+			const state = { posts: {} };
 
-		getSitePosts( state, 1 );
-		getSitePosts( state, '' );
-		getSitePosts( state, 'foo' );
-		getSitePosts( state, true );
-		getSitePosts( state, null );
-		getSitePosts( state, undefined );
-		getSitePosts( state, {} );
-		getSitePosts( state, [] );
-		getSitePosts( state, 1, [] );
+			getSitePosts( state, {} );
 
-		expect( console.warn ).to.have.been.calledThrice;
+			expect( console.warn ).to.have.been.calledOnce;
+		} );
+
+		test( 'should warn against arrays being passed', () => {
+			const state = { posts: {} };
+
+			getSitePosts( state, [] );
+
+			expect( console.warn ).to.have.been.calledOnce;
+		} );
+
+		test( 'should warn against arrays being passed amoungst mixed arguments', () => {
+			const state = { posts: {} };
+
+			getSitePosts( state, 1, [] );
+
+			expect( console.warn ).to.have.been.calledOnce;
+		} );
+
+		test( 'should not warn against numbers, bools, nils or strings being passed', () => {
+			const state = { posts: {} };
+
+			getSitePosts( state, 1 );
+			getSitePosts( state, '' );
+			getSitePosts( state, 'foo' );
+			getSitePosts( state, true );
+			getSitePosts( state, null );
+			getSitePosts( state, undefined );
+
+			expect( console.warn ).not.to.have.been.called;
+		} );
 	} );
 
 	test( 'should return the expected value of differing arguments', () => {
