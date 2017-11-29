@@ -25,12 +25,14 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class ChecklistShow extends PureComponent {
 	onAction = id => {
-		const { siteSlug, track } = this.props;
+		const { siteSlug, siteChecklist, track } = this.props;
 		const url = urlForTask( id, siteSlug );
-		if ( url ) {
+		if ( url && siteChecklist && siteChecklist.tasks ) {
+			const status = siteChecklist.tasks[ id ] ? 'complete' : 'incomplete';
 			track( 'calypso_checklist_task_start', {
 				checklist_name: 'new_blog',
 				step_name: id,
+				status,
 			} );
 
 			page( url );
