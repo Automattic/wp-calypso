@@ -75,6 +75,7 @@ import SectionHeader from 'components/section-header/docs/example';
 import SectionNav from 'components/section-nav/docs/example';
 import SegmentedControl from 'components/segmented-control/docs/example';
 import SelectDropdown from 'components/select-dropdown/docs/example';
+import ShareButton from 'components/share-button/docs/example';
 import SocialLogos from 'social-logos/example';
 import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
@@ -180,6 +181,7 @@ class DesignAssets extends React.Component {
 					<SectionNav />
 					<SegmentedControl />
 					<SelectDropdown searchKeywords="menu" />
+					<ShareButton />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" />
 					<SpinnerButton searchKeywords="loading input submit" />
