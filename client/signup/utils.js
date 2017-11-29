@@ -153,7 +153,7 @@ function getThemeForSiteGoals( siteGoals ) {
 	}
 
 	if ( siteGoalsValue.indexOf( 'promote' ) !== -1 ) {
-		return 'pub/radcliffe-2';
+		return 'pub/dara';
 	}
 
 	if ( siteGoalsValue.indexOf( 'educate' ) !== -1 ) {
