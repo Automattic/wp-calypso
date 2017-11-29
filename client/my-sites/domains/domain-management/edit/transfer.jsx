@@ -27,6 +27,10 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import { cancelPurchase as cancelPurchaseLink } from 'me/purchases/paths';
 
 class Transfer extends React.PureComponent {
+	state = {
+		isRestartingTransfer: false,
+	};
+
 	render() {
 		const { domain } = this.props;
 		let content = this.getDomainDetailsCard();
@@ -56,6 +60,7 @@ class Transfer extends React.PureComponent {
 
 	restartTransfer = () => {
 		const { domain, selectedSite, translate } = this.props;
+		this.toggleRestartState();
 
 		restartInboundTransfer( selectedSite.ID, domain.name, ( error, result ) => {
 			if ( result ) {
@@ -74,8 +79,13 @@ class Transfer extends React.PureComponent {
 		} );
 	};
 
+	toggleRestartState() {
+		this.setState( { isRestartingTransfer: ! this.state.isRestartingTransfer } );
+	}
+
 	getCancelledContent() {
 		const { domain, translate } = this.props;
+		const { isRestartingTransfer } = this.state;
 
 		return (
 			<Card>
@@ -98,8 +108,15 @@ class Transfer extends React.PureComponent {
 					</p>
 				</div>
 				<div>
-					<Button className="edit__transfer-button-fail" onClick={ this.restartTransfer }>
-						{ this.props.translate( 'Start Transfer Again' ) }
+					<Button
+						className="edit__transfer-button-fail"
+						onClick={ this.restartTransfer }
+						busy={ isRestartingTransfer }
+						disabled={ isRestartingTransfer }
+					>
+						{ isRestartingTransfer
+							? translate( 'Restarting Transfer…' )
+							: translate( 'Start Transfer Again' ) }
 					</Button>
 					<Button
 						className="edit__transfer-button-fail edit__transfer-button-fail-margin"

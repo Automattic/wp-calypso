@@ -275,6 +275,11 @@ input[type=radio].domain-management-list-item__radio {
 		text-align: center;
 		width: 100%;
 
+		&.is-busy:disabled {
+			border-color: lighten( $gray, 20% );
+			color: darken( $gray, 20% );
+		}
+
 		@include breakpoint( '>480px' ) {
 			display: inline-block;
 			width: auto;
