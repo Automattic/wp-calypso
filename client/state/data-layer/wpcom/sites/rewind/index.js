@@ -1,17 +1,11 @@
 /** @format */
 /**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
-
-/**
  * Internal dependencies
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx, makeParser } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
 import { transformApi } from './api-transformer';
 import { rewind } from './schema';
 
@@ -41,8 +35,6 @@ export default mergeHandlers( downloads, {
 		dispatchRequestEx( {
 			fetch: fetchRewindState,
 			onSuccess: updateRewindState,
-			onError: () =>
-				errorNotice( translate( 'Failed to fetch Rewind information, please contact support.' ) ),
 			fromApi: makeParser( rewind, {}, transformApi ),
 		} ),
 	],

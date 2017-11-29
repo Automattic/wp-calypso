@@ -77,6 +77,7 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 	// level of properties are pruned
 	const filter = schemaValidator.filter(
 		Object.assign(
+			{},
 			schema,
 			schema.type && schema.type === 'object' && { additionalProperties: false }
 		)

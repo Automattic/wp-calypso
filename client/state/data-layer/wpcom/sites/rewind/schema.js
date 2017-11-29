@@ -27,7 +27,7 @@ export const download = {
 export const restore = {
 	type: 'object',
 	properties: {
-		status: { type: 'string', enum: [ 'inactive', 'queued', 'running' ] },
+		status: { type: 'string', enum: [ 'finished', 'inactive', 'queued', 'running' ] },
 		percent: { type: 'integer' },
 	},
 	required: [ 'status' ],

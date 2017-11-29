@@ -15,6 +15,12 @@ export class QueryRewindState extends Component {
 		this.request();
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.siteId !== this.props.siteId ) {
+			this.request();
+		}
+	}
+
 	request() {
 		const { requestState, siteId } = this.props;
 
