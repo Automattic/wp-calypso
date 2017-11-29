@@ -301,6 +301,16 @@ describe( 'index', () => {
 			.true;
 	} );
 
+	describe( 'when no custom cache key generating function is given', () => {
+		test( 'should to create a default key by joining args', () => {
+			const memoizedSelector = createSelector( selector );
+
+			memoizedSelector( {}, 'a', 'b', 'c', 1, 2, 3 );
+
+			expect( memoizedSelector.memoizedSelector.cache.has( 'a,b,c,1,2,3' ) ).to.be.true;
+		} );
+	} );
+
 	test( 'should call dependant state getter with arguments', () => {
 		const getDeps = sinon.spy();
 		const memoizedSelector = createSelector( () => null, getDeps );
