@@ -53,8 +53,7 @@ class StoreSidebar extends Component {
 		const oldSiteId = site ? site.ID : null;
 
 		if ( newSiteId && oldSiteId !== newSiteId ) {
-			newProps.siteId = newSiteId;
-			this.fetchData( newProps );
+			this.fetchData( { ...newProps, siteId: newSiteId } );
 		}
 	};
 
