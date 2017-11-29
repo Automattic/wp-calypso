@@ -31,7 +31,7 @@ RUN        true \
            && rm -rf /root/.npm \
            && true
 
-# Build a "files" layer
+# Build a "source" layer
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
