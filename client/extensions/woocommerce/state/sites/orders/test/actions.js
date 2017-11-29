@@ -16,7 +16,7 @@ import {
 	saveOrder,
 	saveOrderError,
 	saveOrderSuccess,
-	_updateOrder,
+	updateOrder,
 	updateOrders,
 } from '../actions';
 import order from './fixtures/order';
@@ -87,7 +87,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should return a success action with orders list when request completes', () => {
-			const action = _updateOrder( siteId, orderId, order );
+			const action = updateOrder( siteId, orderId, order );
 			expect( action ).to.eql( {
 				type: WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
 				siteId: '123',

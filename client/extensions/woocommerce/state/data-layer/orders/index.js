@@ -15,7 +15,7 @@ import {
 	failOrders,
 	saveOrderError,
 	saveOrderSuccess,
-	_updateOrder,
+	updateOrder,
 	updateOrders,
 } from 'woocommerce/state/sites/orders/actions';
 import request from 'woocommerce/state/sites/http-request';
@@ -70,7 +70,7 @@ export function requestOrder( { dispatch }, action ) {
 
 export function receivedOrder( { dispatch }, action, { data } ) {
 	const { siteId, orderId } = action;
-	dispatch( _updateOrder( siteId, orderId, data ) );
+	dispatch( updateOrder( siteId, orderId, data ) );
 }
 
 export function sendOrder( { dispatch }, action ) {

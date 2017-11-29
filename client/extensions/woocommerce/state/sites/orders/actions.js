@@ -78,7 +78,7 @@ export const failOrder = ( siteId, orderId, error = false ) => {
 	};
 };
 
-export const _updateOrder = ( siteId, orderId, order ) => {
+export const updateOrder = ( siteId, orderId, order ) => {
 	// This passed through the API layer successfully, but failed at the remote site.
 	if ( 'undefined' === typeof order.id ) {
 		return failOrder( siteId, orderId, order );

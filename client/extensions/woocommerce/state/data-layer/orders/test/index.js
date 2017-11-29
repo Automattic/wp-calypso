@@ -16,7 +16,7 @@ import {
 	saveOrder,
 	saveOrderError,
 	saveOrderSuccess,
-	_updateOrder,
+	updateOrder,
 	updateOrders,
 } from 'woocommerce/state/sites/orders/actions';
 import {
@@ -188,7 +188,7 @@ describe( 'handlers', () => {
 		test( 'should dispatch a success action on a good response', () => {
 			const dispatch = spy();
 			const order = { id: 42, total: '50.00' };
-			const action = _updateOrder( 123, 42, order );
+			const action = updateOrder( 123, 42, order );
 
 			receivedOrder( { dispatch }, action, { data: order } );
 
@@ -209,7 +209,7 @@ describe( 'handlers', () => {
 				data: { status: 404 },
 				message: 'No route was found matching the URL and request method',
 			};
-			const action = _updateOrder( 123, 42, response );
+			const action = updateOrder( 123, 42, response );
 
 			receivedOrder( { dispatch }, action, { data: response } );
 			expect( dispatch ).to.have.been.calledWithMatch(
