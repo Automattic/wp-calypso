@@ -21,11 +21,20 @@ import { getSiteChecklist } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { onboardingTasks, urlForTask } from '../onboardingChecklist';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ChecklistShow extends PureComponent {
 	onAction = id => {
-		const url = urlForTask( id, this.props.siteSlug );
-		if ( url ) {
+		const { siteSlug, siteChecklist, track } = this.props;
+		const url = urlForTask( id, siteSlug );
+		if ( url && siteChecklist && siteChecklist.tasks ) {
+			const status = siteChecklist.tasks[ id ] ? 'complete' : 'incomplete';
+			track( 'calypso_checklist_task_start', {
+				checklist_name: 'new_blog',
+				step_name: id,
+				status,
+			} );
+
 			page( url );
 		}
 	};
@@ -60,6 +69,6 @@ const mapStateToProps = state => {
 	const siteSlug = getSiteSlug( state, siteId );
 	return { siteId, siteSlug, siteChecklist };
 };
-const mapDispatchToProps = null;
+const mapDispatchToProps = { track: recordTracksEvent };
 
 export default connect( mapStateToProps, mapDispatchToProps )( ChecklistShow );
