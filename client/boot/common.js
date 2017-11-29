@@ -21,7 +21,6 @@ import { setCurrentUserId, setCurrentUserFlags } from 'state/current-user/action
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import touchDetect from 'lib/touch-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
-import { isDefaultLocale } from 'lib/i18n-utils';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
 const debug = debugFactory( 'calypso' );
@@ -55,6 +54,15 @@ const setupContextMiddleware = reduxStore => {
 		}
 
 		context.store = reduxStore;
+
+		// client version of the isomorphic method for redirecting to another page
+		context.redirect = ( httpCode, newUrl = null ) => {
+			if ( isNaN( httpCode ) && ! newUrl ) {
+				newUrl = httpCode;
+			}
+
+			return page.replace( newUrl, context.state, false, false );
+		};
 
 		// Break routing and do full load for logout link in /me
 		if ( context.pathname === '/wp-login.php' ) {
@@ -135,13 +143,11 @@ export const locales = ( currentUser, reduxStore ) => {
 		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
 	}
 
-	const currentLocaleSlug = getCurrentLocaleSlug( reduxStore.getState() );
-
 	// Use current user's locale if it was not bootstrapped
 	if (
+		! getCurrentLocaleSlug( reduxStore.getState() ) &&
 		! config.isEnabled( 'wpcom-user-bootstrap' ) &&
-		currentUser.get() &&
-		isDefaultLocale( currentLocaleSlug )
+		currentUser.get()
 	) {
 		switchUserLocale( currentUser, reduxStore );
 	}

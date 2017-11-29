@@ -24,6 +24,7 @@ import { createReduxStore } from 'state';
 import { LOCALE_SET } from 'state/action-types';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
+import { receiveUser } from 'state/users/actions';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -299,6 +300,9 @@ function setUpLoggedInRoute( req, res, next ) {
 
 			debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
 			req.context.user = data;
+
+			// Setting user in the state is safe as long as we don't cache it
+			req.context.store.dispatch( receiveUser( data ) );
 
 			if ( data.localeSlug ) {
 				req.context.lang = data.localeSlug;
