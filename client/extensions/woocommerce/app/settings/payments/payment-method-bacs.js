@@ -54,14 +54,14 @@ class PaymentMethodBACS extends Component {
 
 	constructor( props ) {
 		super( props );
-
+		const { iban, bic } = this.getAccountData( props );
 		this.state = {
-			showInternational: false,
+			showInternational: ( iban && iban.length ) || ( bic && bic.length ),
 		};
 	}
 
-	getAccountData = () => {
-		const { method: { settings } } = this.props;
+	getAccountData = props => {
+		const { method: { settings } } = props || this.props;
 		const accountData = get( settings, [ 'accounts', 'value' ] );
 
 		return accountData.length
