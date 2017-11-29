@@ -10,7 +10,7 @@ const wordpress = {
 };
 
 const facebook = {
-	url: `https://www.facebook.com/sharer.php?u=<URL>&p[tilte]=<TITLE>app_id=${ config(
+	url: `https://www.facebook.com/sharer.php?u=<URL>&p[title]=<TITLE>app_id=${ config(
 		'facebook_api_key'
 	) }`,
 	windowArg: 'width=626,height=436,resizeable,scrollbars',
