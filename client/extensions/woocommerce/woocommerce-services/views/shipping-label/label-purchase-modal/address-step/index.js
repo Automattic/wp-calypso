@@ -38,6 +38,9 @@ const renderSummary = ( {
 	if ( hasNonEmptyLeaves( errors ) || ( isNormalized && ! normalized ) ) {
 		return translate( 'Invalid address' );
 	}
+	if ( ! isNormalized ) {
+		return translate( "You've edited the address, please revalidate it for accurate rates" );
+	}
 	const { countriesData } = storeOptions;
 	const { city, postcode, state, country } = ( normalized && selectNormalized ) ? normalized : values;
 	// Summary format: "city, state  postcode [, country]"

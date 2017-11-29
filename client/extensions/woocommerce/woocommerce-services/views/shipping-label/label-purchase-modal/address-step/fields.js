@@ -71,17 +71,6 @@ const AddressFields = ( props ) => {
 	const getPhoneNumber = ( value ) => getPlainPhoneNumber( value, getValue( 'country' ) );
 	const updatePhoneValue = ( value ) => props.updateAddressValue( orderId, siteId, group, 'phone', getPhoneNumber( value ) );
 	const submitAddressForNormalizationHandler = () => props.submitAddressForNormalization( orderId, siteId, group );
-	const getAddressError = () => {
-		if ( fieldErrors.address ) {
-			return fieldErrors.address;
-		}
-
-		if ( ! isNormalized ) {
-			return translate( 'Address needs to be validated' );
-		}
-
-		return null;
-	};
 
 	return (
 		<div>
@@ -113,7 +102,7 @@ const AddressFields = ( props ) => {
 				value={ getValue( 'address' ) }
 				updateValue={ updateValue( 'address' ) }
 				className="address-step__address-1"
-				error={ getAddressError() } />
+				error={ fieldErrors.address } />
 			<TextField
 				id={ getId( 'address_2' ) }
 				value={ getValue( 'address_2' ) }
@@ -155,7 +144,7 @@ const AddressFields = ( props ) => {
 			<StepConfirmationButton
 				disabled={ hasNonEmptyLeaves( errors ) || normalizationInProgress }
 				onClick={ submitAddressForNormalizationHandler } >
-					{ translate( 'Use this address' ) }
+					{ translate( 'Validate address' ) }
 			</StepConfirmationButton>
 		</div>
 	);
