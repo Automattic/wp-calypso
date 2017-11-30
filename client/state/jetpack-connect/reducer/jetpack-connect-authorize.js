@@ -66,14 +66,13 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 			} );
 
 		case JETPACK_CONNECT_QUERY_SET:
-			const queryObject = Object.assign( {}, action.queryObject );
 			const shouldAutoAuthorize = includes(
 				[ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ],
-				queryObject.from
+				action.queryObject.from
 			);
 			return Object.assign(
 				{
-					queryObject: {},
+					queryObject: action.queryObject,
 					isAuthorizing: false,
 					authorizeSuccess: false,
 					authorizeError: false,
@@ -81,7 +80,6 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 					userAlreadyConnected: false,
 					autoAuthorize: false,
 				},
-				{ queryObject },
 				shouldAutoAuthorize && { autoAuthorize: true }
 			);
 
