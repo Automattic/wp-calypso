@@ -40,19 +40,6 @@ const PlanFeaturesActions = ( {
 	recordTracksEvent: trackTracksEvent,
 	translate,
 } ) => {
-	const decodeSelectedPlan = () => {
-		if ( selectedPlan === 'jetpack_business' ) {
-			selectedPlan = 'Professional';
-		}
-		if ( selectedPlan === 'jetpack_premium' ) {
-			selectedPlan = 'Premium';
-		}
-		if ( selectedPlan === 'jetpack_personal' ) {
-			selectedPlan = 'Personal';
-		}
-	};
-	decodeSelectedPlan();
-
 	let upgradeButton;
 	const classes = selectedPlan
 		? classNames(
