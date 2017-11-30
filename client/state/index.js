@@ -77,7 +77,7 @@ import themes from './themes/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import userDevices from './user-devices/reducer';
-import userProfileLinks from './user-profile-links/reducer';
+import userProfileLinks from './profile-links/reducer';
 import userSettings from './user-settings/reducer';
 import wordads from './wordads/reducer';
 import config from 'config';

@@ -23,7 +23,7 @@ import {
 	deleteUserProfileLinkError,
 	deleteUserProfileLinkSuccess,
 	receiveUserProfileLinks,
-} from 'state/user-profile-links/actions';
+} from 'state/profile-links/actions';
 
 /**
  * Dispatches a request to fetch profile links of the current user

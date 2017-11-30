@@ -23,7 +23,7 @@ import {
 	deleteUserProfileLinkError,
 	deleteUserProfileLinkSuccess,
 	receiveUserProfileLinks,
-} from 'state/user-profile-links/actions';
+} from 'state/profile-links/actions';
 import { USER_PROFILE_LINKS_RECEIVE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
