@@ -149,10 +149,10 @@ MediaListStore.isItemMatchingQuery = function( siteId, item ) {
 		matches = item.title && -1 !== item.title.toLowerCase().indexOf( query.search.toLowerCase() );
 	}
 
-	if ( query.source === 'google_photos' && matches ) {
+	if ( !! query.source && matches ) {
 		// On uploading external images, the stores will receive the CREATE_MEDIA_ITEM  event
 		// and will update the list of media including the new one, but we don't want this new media
-		// to be shown in the google photos list - hence the filtering.
+		// to be shown in the external source's list - hence the filtering.
 		//
 		// One use case where this happened was:
 		//
