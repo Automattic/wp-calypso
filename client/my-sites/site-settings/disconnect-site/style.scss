@@ -24,6 +24,17 @@
 	}
 }
 
+.disconnect-site__survey-other-option {
+	align-items: center;
+	display: flex;
+	white-space: nowrap;
+
+	.form-text-input {
+		line-height: 1em;
+		margin-left: 8px;
+	}
+}
+
 .disconnect-site__navigation-links {
 	text-align: center;
 }
