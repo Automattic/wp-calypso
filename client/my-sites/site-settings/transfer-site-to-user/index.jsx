@@ -19,6 +19,27 @@ import TransferSiteToUserWarning from './warning';
 class TransferSiteToUser extends React.Component {
 	constructor( props ) {
 		super( props );
+		this.state = {
+			warningAcknowledged: false,
+		};
+
+		this.renderBody = this.renderBody.bind( this );
+		this.renderWarning = this.renderWarning.bind( this );
+		this.acknowlegeWarning = this.acknowlegeWarning.bind( this );
+	}
+
+	renderBody() {
+		if ( ! this.state.warningAcknowledged ) {
+			return this.renderWarning();
+		}
+	}
+
+	renderWarning() {
+		return <TransferSiteToUserWarning onAcknowledged={ this.acknowlegeWarning } />;
+	}
+
+	acknowlegeWarning() {
+		this.setState( { warningAcknowledged: true } );
 	}
 
 	render() {
@@ -29,7 +50,7 @@ class TransferSiteToUser extends React.Component {
 				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
 					<h1>{ translate( 'Transfer Your Site' ) }</h1>
 				</HeaderCake>
-				<TransferSiteToUserWarning />
+				{ this.renderBody() }
 			</Main>
 		);
 	}
