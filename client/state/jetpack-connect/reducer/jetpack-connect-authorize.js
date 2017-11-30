@@ -29,7 +29,7 @@ import { JETPACK_CONNECT_AUTHORIZE_TTL } from '../constants';
 export default function jetpackConnectAuthorize( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_AUTHORIZE:
-			return Object.assign( {}, omit( state, 'userData', 'bearerToken' ), {
+			return Object.assign( omit( state, 'userData', 'bearerToken' ), {
 				isAuthorizing: true,
 				authorizeSuccess: false,
 				authorizeError: false,
