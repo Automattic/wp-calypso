@@ -30,69 +30,69 @@ different group.
 	"settings": {
 		"email": [
 			{
+				group_id: 'email',
 				id: 'woocommerce_email_from_name',
 				value: '',
-				group_id: 'email',
 			},
 			{
+				group_id: 'email',
 				id: 'woocommerce_email_from_address',
 				value: '',
-				group_id: 'email',
 			},
 			{
+				group_id: 'email_new_order',
 				id: 'enabled',
 				value: 'yes',
-				group_id: 'email_new_order',
 			},
 			{
+				group_id: 'email_new_order',
 				id: 'recipient',
 				value: 'admin_1@test.com',
-				group_id: 'email_new_order',
 			},
 			{
+				group_id: 'email_cancelled_order',
 				id: 'enabled',
 				value: 'yes',
-				group_id: 'email_cancelled_order',
 			},
 			{
+				group_id: 'email_cancelled_order',
 				id: 'recipient',
 				value: '',
-				group_id: 'email_cancelled_order',
 			},
 			{
+				group_id: 'email_failed_order',
 				id: 'enabled',
 				value: 'yes',
-				group_id: 'email_failed_order',
 			},
 			{
+				group_id: 'email_failed_order',
 				id: 'recipient',
 				value: '',
-				group_id: 'email_failed_order',
 			},
 			{
-				id: 'enabled',
-				value: 'yes',
 				group_id: 'email_customer_on_hold_order',
-			},
-			{
 				id: 'enabled',
 				value: 'yes',
+			},
+			{
 				group_id: 'email_customer_processing_order',
-			},
-			{
 				id: 'enabled',
 				value: 'yes',
+			},
+			{
 				group_id: 'email_customer_completed_order',
-			},
-			{
 				id: 'enabled',
 				value: 'yes',
+			},
+			{
 				group_id: 'email_customer_refunded_order',
-			},
-			{
 				id: 'enabled',
 				value: 'yes',
+			},
+			{
 				group_id: 'email_customer_new_account',
+				id: 'enabled',
+				value: 'yes',
 			},
 		];
 	}, { … } ],
