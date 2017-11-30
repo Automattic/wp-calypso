@@ -31,7 +31,6 @@ class PrivacyPolicyDialog extends Component {
 				<div className="privacy-policy-banner__dialog-header">
 					<div className="privacy-policy-banner__dialog-header-text">
 						<h1>{ this.props.title }</h1>
-						<p><em>version: { this.props.version }</em></p>
 					</div>
 				</div>
 

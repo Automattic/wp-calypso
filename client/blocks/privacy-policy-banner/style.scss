@@ -21,13 +21,13 @@
 	margin: -24px -24px 0;
 	padding: 0 24px;
 	background-color: #fbfcfd;
-	height: 116px;
+	height: 80px;
 	box-shadow: 0 1px 0 0 lighten( $gray, 20% ),
 		0 1px 0 lighten( $gray, 40% );
+}
 
-	p {
-		margin: 0;
-	}
+.dialog__content .privacy-policy-banner__dialog-header-text h1 {
+	margin: 0;
 }
 
 .privacy-policy-banner__dialog-header-image {

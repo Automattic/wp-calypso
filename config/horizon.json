@@ -89,6 +89,7 @@
 		"publicize-preview": true,
 		"press-this": true,
 		"preview-layout": true,
+		"privacy-policy": true,
 		"reader": true,
 		"reader/conversations": false,
 		"reader/following-intro": true,
