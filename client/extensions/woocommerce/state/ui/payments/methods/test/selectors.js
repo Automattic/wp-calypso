@@ -87,6 +87,23 @@ describe( 'selectors', () => {
 			] );
 		} );
 
+		test( 'when title is edited, the base title attribute and settings value should both be updated', () => {
+			siteState.paymentMethods = [
+				{ id: 1, title: 'chicken', settings: { title: { value: 'chicken' } } },
+				{ id: 2, title: 'ribs', settings: { title: { value: 'ribs' } } },
+			];
+			uiState.methods = {
+				creates: [],
+				updates: [ { id: 2, title: { value: 'yummy ribs' } } ],
+				deletes: [],
+				currentlyEditingId: null,
+			};
+			expect( getPaymentMethodsWithEdits( state ) ).to.deep.equal( [
+				{ id: 1, title: 'chicken', settings: { title: { value: 'chicken' } } },
+				{ id: 2, title: 'yummy ribs', settings: { title: { value: 'yummy ribs' } } },
+			] );
+		} );
+
 		test( 'should apply the enabled "edits" changes to the method list', () => {
 			siteState.paymentMethods = [
 				{ id: 1, enabled: false, settings: { name: { value: 'Method1' } } },

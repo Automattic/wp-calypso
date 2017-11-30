@@ -76,6 +76,11 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
 				method.description = update[ updateKey ].value;
 				return;
 			}
+			if ( 'title' === updateKey ) {
+				// Edits to title need to update base title attribute
+				// and settings value too, thus no return here.
+				method.title = update[ updateKey ].value;
+			}
 			method.settings[ updateKey ] = {
 				...method.settings[ updateKey ],
 				value: update[ updateKey ].value,
