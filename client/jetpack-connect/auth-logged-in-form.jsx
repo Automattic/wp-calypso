@@ -174,12 +174,7 @@ export class LoggedInForm extends Component {
 		const { goBackToWpAdmin, redirectAfterAuth } = this.props;
 		const { from } = this.props;
 
-		if (
-			this.isSso() ||
-			this.isWoo() ||
-			this.isFromJpo() ||
-			this.shouldRedirectJetpackStart( this.props )
-		) {
+		if ( this.isSso() || this.isWoo() || this.isFromJpo() || this.shouldRedirectJetpackStart() ) {
 			debug(
 				'Going back to WP Admin.',
 				'Connection initiated via: ',
@@ -216,7 +211,7 @@ export class LoggedInForm extends Component {
 		return includes( [ 'woocommerce-setup-wizard', 'woocommerce-services' ], from );
 	}
 
-	shouldRedirectJetpackStart( { partnerId } ) {
+	shouldRedirectJetpackStart( { partnerId } = this.props ) {
 		const partnerRedirectFlag = config.isEnabled(
 			'jetpack/connect-redirect-pressable-credential-approval'
 		);
