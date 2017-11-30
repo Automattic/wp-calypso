@@ -17,9 +17,9 @@ import {
 } from '../';
 import {
 	WOOCOMMERCE_API_REQUEST,
-	WOOCOMMERCE_ERROR_SET,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
@@ -32,6 +32,7 @@ describe( 'handlers', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 				siteId,
+				query: {},
 			};
 			handleProductCategoriesRequest( { dispatch }, action );
 			expect( dispatch ).to.have.been.calledWith(
@@ -40,7 +41,7 @@ describe( 'handlers', () => {
 					method: 'GET',
 					path: `/jetpack-blogs/${ siteId }/rest-api/`,
 					query: {
-						path: '/wc/v3/products/categories&_method=GET',
+						path: '/wc/v3/products/categories&page=1&per_page=10&_envelope&_method=GET',
 						json: true,
 						apiVersion: '1.1',
 					},
@@ -56,7 +57,7 @@ describe( 'handlers', () => {
 				dispatch: spy(),
 			};
 
-			const response = [
+			const cats = [
 				{
 					id: 10,
 					name: 'Tops',
@@ -66,36 +67,84 @@ describe( 'handlers', () => {
 				},
 			];
 
+			const response = {
+				data: {
+					body: cats,
+					status: 200,
+					headers: {
+						'X-WP-Total': 1,
+					},
+				},
+			};
+
 			const action = {
 				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 				siteId,
+				query: {},
 			};
-			handleProductCategoriesSuccess( store, action, { data: response } );
+			handleProductCategoriesSuccess( store, action, response );
 
 			expect( store.dispatch ).calledWith( {
 				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 				siteId,
-				data: response,
+				data: cats,
+				total: 1,
+				query: {},
 			} );
+		} );
+		test( 'should dispatch with an error if the envelope response is not 200', () => {
+			const siteId = '123';
+			const store = {
+				dispatch: spy(),
+			};
+
+			const response = {
+				data: {
+					body: {
+						message: 'No route was found matching the URL and request method',
+						code: 'rest_no_route',
+					},
+					status: 404,
+				},
+			};
+
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
+				siteId,
+				query: {},
+			};
+			handleProductCategoriesSuccess( store, action, response );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
+					siteId,
+				} )
+			);
 		} );
 		test( 'should dispatch with an error if the response is not valid', () => {
 			const siteId = '123';
 			const store = {
 				dispatch: spy(),
 			};
-			const response = [ { bogus: 'test' } ];
+
+			const response = {
+				data: {
+					body: [ { bogus: 'test' } ],
+					status: 200,
+				},
+			};
 
 			const action = {
 				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 				siteId,
 			};
-			handleProductCategoriesSuccess( store, action, { data: response } );
+			handleProductCategoriesSuccess( store, action, response );
 
 			expect( store.dispatch ).to.have.been.calledWith(
 				match( {
-					type: WOOCOMMERCE_ERROR_SET,
+					type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
 					siteId,
-					originalAction: action,
 				} )
 			);
 		} );
@@ -116,9 +165,8 @@ describe( 'handlers', () => {
 
 			expect( store.dispatch ).to.have.been.calledWith(
 				match( {
-					type: WOOCOMMERCE_ERROR_SET,
+					type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
 					siteId,
-					originalAction: action,
 				} )
 			);
 		} );

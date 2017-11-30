@@ -3,17 +3,20 @@
 /**
  * Internal dependencies
  */
+import { getNormalizedProductCategoriesQuery } from './utils';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
 } from 'woocommerce/state/action-types';
 
-export function fetchProductCategories( siteId ) {
+export function fetchProductCategories( siteId, query = {} ) {
+	const normalizedQuery = getNormalizedProductCategoriesQuery( query );
 	return dispatch => {
 		const getAction = {
 			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 			siteId,
+			query: normalizedQuery,
 		};
 
 		dispatch( getAction );

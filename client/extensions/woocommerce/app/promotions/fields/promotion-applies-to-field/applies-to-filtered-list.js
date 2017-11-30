@@ -292,7 +292,7 @@ function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = ( site ? site.ID : null );
 	const products = getPromotionableProducts( state, siteId );
-	const productCategories = getProductCategories( state, siteId );
+	const productCategories = getProductCategories( state, {}, siteId );
 
 	// TODO: This is temporary until we can support variable products.
 	const nonVariableProducts = products && products.filter(

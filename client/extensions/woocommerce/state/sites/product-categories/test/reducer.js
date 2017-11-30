@@ -4,6 +4,8 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
+import { keyBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,110 +14,285 @@ import { productCategoryUpdated } from '../actions';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
-import { LOADING } from 'woocommerce/state/constants';
+import { isQueryLoading, isQueryError, items, queries, total } from '../reducer';
 import reducer from 'woocommerce/state/sites/reducer';
 
+const cats = [
+	{
+		id: 10,
+		name: 'Tops',
+		slug: 'tops',
+		description: '',
+		display: 'default',
+	},
+];
+
+const anotherCat = {
+	id: 11,
+	name: 'Test',
+	slug: 'test',
+	description: '',
+	display: 'default',
+};
+
 describe( 'reducer', () => {
-	test( 'should mark the product category tree as "loading"', () => {
-		const siteId = 123;
-		const action = {
-			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
-			siteId,
-		};
+	describe( 'isQueryLoading', () => {
+		test( 'should have no change by default', () => {
+			const newState = isQueryLoading( undefined, {} );
+			expect( newState ).to.eql( {} );
+		} );
 
-		const newState = reducer( {}, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].productCategories ).to.eql( LOADING );
-	} );
+		test( 'should store the currently loading page', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
+				siteId: 123,
+				query: {
+					page: 1,
+				},
+			};
+			const newState = isQueryLoading( undefined, action );
+			expect( newState ).to.eql( { '{}': true } );
+		} );
 
-	test( 'should store data from the action', () => {
-		const siteId = 123;
-		const state = {
-			[ siteId ]: {
-				paymentMethods: {},
-				productCategories: 'LOADING',
-				settings: { general: {} },
-				shippingZones: {},
-				products: {},
-			},
-		};
-		const categories = [
-			{ id: 1, name: 'cat1', slug: 'cat-1' },
-			{ id: 2, name: 'cat2', slug: 'cat-2' },
-		];
-		const action = {
-			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
-			data: categories,
-			siteId,
-		};
+		test( 'should show that request has loaded on success', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+				siteId: 123,
+				query: {
+					page: 1,
+				},
+				total: 2,
+				data: [],
+			};
+			const newState = isQueryLoading( { '{}': true }, action );
+			expect( newState ).to.eql( { '{}': false } );
+		} );
 
-		const newState = reducer( state, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].productCategories ).to.eql( categories );
-	} );
+		test( 'should show that request has loaded on failure', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
+				siteId: 123,
+				error: 'test',
+				query: {},
+			};
+			const newState = isQueryLoading( { '{}': true }, action );
+			expect( newState ).to.eql( { '{}': false } );
+		} );
 
-	test( 'should not affect other state trees', () => {
-		const siteId = 123;
-		const state = {
-			[ siteId ]: {
-				paymentMethods: {},
-				productCategories: 'LOADING',
-				settings: { general: {}, products: {}, stripeConnectAccount: {}, tax: {} },
-				shippingZones: {},
-				products: {},
-			},
-		};
-		const action = {
-			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
-			data: [],
-			siteId,
-		};
+		test( 'should not update state for another site ID', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+				siteId: 546,
+				query: {
+					page: 1,
+				},
+				total: 2,
+				data: cats,
+			};
 
-		const newState = reducer( state, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].productCategories ).to.eql( [] );
-		expect( newState[ siteId ].settings ).to.eql( {
-			general: {},
-			products: {},
-			stripeConnectAccount: {},
-			tax: {},
-			mailchimp: {
-				settings: {},
-				settingsRequest: false,
-				settingsRequestError: false,
-				syncStatus: {},
-				syncStatusRequest: false,
-				syncStatusRequestError: false,
-				resyncRequest: false,
-				resyncRequestError: false,
-				apiKeySubmit: false,
-				apiKeySubmitError: false,
-				storeInfoSubmit: false,
-				storeInfoSubmitError: false,
-				listsRequest: false,
-				listsRequestError: false,
-				newsletterSettingsSubmit: false,
-				newsletterSettingsSubmitError: false,
-				saveSettings: false,
-			},
+			const newState = reducer(
+				{
+					546: {
+						productCategories: {
+							isQueryLoading: {
+								'{}': true,
+							},
+						},
+					},
+					123: {
+						productCategories: {
+							isQueryLoading: {
+								'{}': true,
+							},
+						},
+					},
+				},
+				action
+			);
+			expect( newState[ 546 ].productCategories.isQueryLoading ).to.eql( { '{}': false } );
+			expect( newState[ 123 ].productCategories.isQueryLoading ).to.eql( { '{}': true } );
 		} );
 	} );
 
-	test( 'should store data from an updated action', () => {
-		const siteId = 123;
-		const state = {
-			[ siteId ]: {
-				productCategories: 'LOADING',
-			},
-		};
+	describe( 'isQueryError', () => {
+		test( 'should have no change by default', () => {
+			const newState = isQueryError( undefined, {} );
+			expect( newState ).to.eql( {} );
+		} );
 
-		const category1 = { id: 1, name: 'Cat 1', slug: 'cat-1' };
-		const action = productCategoryUpdated( siteId, category1 );
+		test( 'should do nothing on success', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+				siteId: 123,
+				query: {
+					page: 1,
+				},
+				total: 2,
+				dat: cats,
+			};
+			const newState = isQueryError( undefined, action );
+			expect( newState ).to.eql( {} );
+		} );
 
-		const newState = reducer( state, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].productCategories ).to.exist;
-		expect( newState[ siteId ].productCategories[ 0 ] ).to.equal( category1 );
+		test( 'should show that request has errored on failure', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
+				siteId: 123,
+				query: {
+					page: 1,
+				},
+				error: 'error',
+			};
+			const newState = isQueryError( undefined, action );
+			expect( newState ).to.eql( { '{}': true } );
+		} );
+	} );
+
+	describe( 'items', () => {
+		test( 'should have no change by default', () => {
+			const newState = items( undefined, {} );
+			expect( newState ).to.eql( {} );
+		} );
+
+		test( 'should store the categories in state', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+				siteId: 123,
+				query: {
+					page: 1,
+				},
+				total: 3,
+				data: cats,
+			};
+			const newState = items( undefined, action );
+			const catsById = keyBy( cats, 'id' );
+			expect( newState ).to.eql( catsById );
+		} );
+
+		test( 'should add additional categories onto the existing category list', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+				siteId: 123,
+				query: {
+					page: 2,
+				},
+				total: 2,
+				data: [ anotherCat ],
+			};
+			const originalState = deepFreeze( keyBy( cats, 'id' ) );
+			const newState = items( originalState, action );
+			expect( newState ).to.eql( { ...originalState, 11: anotherCat } );
+		} );
+
+		test( 'should do nothing on a failure', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
+				siteId: 123,
+				query: {
+					page: 1,
+				},
+				error: '',
+			};
+			const originalState = deepFreeze( keyBy( cats, 'id' ) );
+			const newState = items( originalState, action );
+			expect( newState ).to.eql( originalState );
+		} );
+
+		test( 'should store data from an updated action', () => {
+			const siteId = 123;
+			const category1 = { id: 11, name: 'Cat Updated', slug: 'cat-updated' };
+			const action = productCategoryUpdated( siteId, category1 );
+			const originalState = deepFreeze( keyBy( cats, 'id' ) );
+			const newState = items( originalState, action );
+			expect( originalState[ 10 ].name ).to.eql( 'Tops' );
+			expect( newState[ 10 ].name ).to.eql( 'Tops' );
+			expect( newState[ 11 ].name ).to.eql( 'Cat Updated' );
+		} );
+	} );
+
+	describe( 'queries', () => {
+		test( 'should have no change by default', () => {
+			const newState = queries( undefined, {} );
+			expect( newState ).to.eql( {} );
+		} );
+
+		test( 'should store the IDs for the requested query', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+				siteId: 123,
+				query: {
+					page: 1,
+				},
+				total: 1,
+				data: cats,
+			};
+			const newState = queries( undefined, action );
+			expect( newState ).to.eql( { '{}': [ 10 ] } );
+		} );
+
+		test( 'should add the next page of categories as a second list', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+				siteId: 123,
+				query: {
+					page: 2,
+				},
+				total: 2,
+				data: [ anotherCat ],
+			};
+			const originalState = deepFreeze( { '{}': [ 10 ] } );
+			const newState = queries( originalState, action );
+			expect( newState ).to.eql( { ...originalState, '{"page":2}': [ 11 ] } );
+		} );
+
+		test( 'should do nothing on a failure', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
+				siteId: 123,
+				query: {
+					page: 1,
+				},
+				error: '',
+			};
+			const originalState = deepFreeze( { '{}': [ 10 ] } );
+			const newState = queries( originalState, action );
+			expect( newState ).to.eql( originalState );
+		} );
+	} );
+	describe( 'total', () => {
+		test( 'should have no change by default', () => {
+			const newState = total( undefined, {} );
+			expect( newState ).to.eql( 0 );
+		} );
+
+		test( 'should store the total number of categories when a request loads', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+				siteId: 123,
+				query: {
+					page: 1,
+				},
+				total: 2,
+				data: cats,
+			};
+			const newState = total( undefined, action );
+			expect( newState ).to.eql( { '{}': 2 } );
+		} );
+
+		test( 'should do nothing on a failure', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
+				siteId: 123,
+				query: {
+					page: 1,
+				},
+				error: '',
+			};
+			const originalState = deepFreeze( { '{}': 2 } );
+			const newState = total( originalState, action );
+			expect( newState ).to.eql( originalState );
+		} );
 	} );
 } );

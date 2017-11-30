@@ -1,6 +1,12 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { omitBy } from 'lodash';
+import qs from 'querystring';
+
+/**
  * Internal dependencies
  */
 
@@ -12,8 +18,10 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { DEFAULT_QUERY } from 'woocommerce/state/sites/product-categories/utils';
 import request from 'woocommerce/state/sites/http-request';
 
 // @TODO Move these handlers to product-categories/handlers.js
@@ -47,27 +55,54 @@ export function handleProductCategoryCreate( store, action ) {
 }
 
 export function handleProductCategoriesRequest( { dispatch }, action ) {
-	const { siteId } = action;
-	dispatch( request( siteId, action ).get( 'products/categories' ) );
+	const { siteId, query } = action;
+	const requestQuery = { ...DEFAULT_QUERY, ...query };
+	const queryString = qs.stringify( omitBy( requestQuery, val => '' === val ) );
+
+	dispatch( request( siteId, action ).getWithHeaders( `products/categories?${ queryString }` ) );
 }
 
 export function handleProductCategoriesSuccess( { dispatch }, action, { data } ) {
-	const { siteId } = action;
+	const { siteId, query } = action;
+	const { headers, body, status } = data;
 
-	if ( ! isValidCategoriesArray( data ) ) {
-		dispatch( setError( siteId, action, { message: 'Invalid Categories Array', data } ) );
+	// handleProductCategoriesRequest uses &_envelope
+	// ( https://developer.wordpress.org/rest-api/using-the-rest-api/global-parameters/#_envelope )
+	// so that we can get the X-WP-Total header back from the end-site. This means we will always get a 200
+	// status back, and the real status of the request will be stored in the response. This checks the real status.
+	if ( status !== 200 || ! isValidCategoriesArray( body ) ) {
+		dispatch( {
+			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
+			siteId,
+			error: 'Invalid Categories Array',
+			query,
+		} );
+		dispatch( setError( siteId, action, { message: 'Invalid Categories Array', body } ) );
 		return;
 	}
+
+	const total = headers[ 'X-WP-Total' ];
 
 	dispatch( {
 		type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 		siteId,
-		data,
+		data: body,
+		total,
+		query,
 	} );
 }
 
 export function handleProductCategoriesError( { dispatch }, action, error ) {
-	dispatch( setError( action.siteId, action, error ) );
+	const { siteId, query } = action;
+
+	dispatch( {
+		type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
+		siteId,
+		error,
+		query,
+	} );
+
+	dispatch( setError( siteId, action, error ) );
 }
 
 function isValidCategoriesArray( categories ) {
