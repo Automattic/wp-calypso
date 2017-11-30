@@ -112,6 +112,8 @@ export class LoginForm extends Component {
 		}
 
 		if ( this.props.hasAccountTypeLoaded && ! nextProps.hasAccountTypeLoaded ) {
+			this.setState( { password: '' } );
+
 			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		}
 
