@@ -108,7 +108,6 @@
 		"signup/atomic-store-flow": true,
 		"signup/wpcc": true,
 		"simple-payments": true,
-		"standalone-site-preview": true,
 		"support-user": true,
 		"sync-handler": true,
 		"ui/first-view": true,
