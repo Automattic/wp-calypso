@@ -1,8 +1,9 @@
+/** @format */
 .activity-log-item {
 	display: flex;
 	position: relative;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin-left: 8px;
 	}
 
@@ -21,13 +22,13 @@
 			margin-bottom: 24px;
 
 			.foldable-card__expand .gridicon {
-				transform: rotate( 180deg );
+				transform: rotate(180deg);
 			}
 		}
 	}
 
 	.foldable-card__header {
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			padding: 12px;
 		}
 
@@ -44,19 +45,19 @@
 	&.is-discarded {
 		margin-left: 80px;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			margin-left: 60px;
 		}
 
 		&:before {
 			content: '';
 			position: absolute;
-				top: 0;
-				left: 33px;
+			top: 0;
+			left: 33px;
 			height: 100%;
-			border-left: 2px dotted lighten( $gray, 20% );
+			border-left: 2px dotted lighten($gray, 20%);
 
-			@include breakpoint( "<480px" ) {
+			@include breakpoint( '<480px' ) {
 				left: 22px;
 			}
 		}
@@ -77,7 +78,7 @@
 	padding: 4px 0 6px;
 	z-index: 1;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin: -2px 8px 0 0px;
 	}
 }
@@ -88,7 +89,7 @@
 	text-transform: uppercase;
 	white-space: nowrap;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		letter-spacing: -1px;
 	}
 }
@@ -102,7 +103,7 @@
 	padding: 12px;
 	margin-top: 2px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding: 10px;
 	}
 
@@ -124,7 +125,7 @@
 	.is-discarded & {
 		color: $gray-text;
 		background: none;
-		border: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+		border: 1px solid transparentize(lighten($gray, 20%), 0.5);
 	}
 }
 
@@ -132,12 +133,12 @@
 	.foldable-card__content {
 		padding: 16px;
 		font-size: 14px;
-		color: darken( $gray, 20% );
+		color: darken($gray, 20%);
 	}
 
 	.is-discarded & {
 		background: none;
-		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 );
+		box-shadow: 0 0 0 1px transparentize(lighten($gray, 20%), 0.5);
 	}
 }
 
@@ -146,7 +147,7 @@
 	flex-wrap: wrap;
 	margin-right: 32px;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		flex-direction: column;
 		align-items: flex-start;
 	}
@@ -163,9 +164,9 @@
 		width: 40px;
 		height: 40px;
 		margin-right: 16px;
-		fill: darken( $gray, 10% );
+		fill: darken($gray, 10%);
 
-		@include breakpoint( "<960px" ) {
+		@include breakpoint( '<960px' ) {
 			width: 32px;
 			height: 32px;
 			margin-right: 8px;
@@ -180,7 +181,7 @@
 
 	.jetpack-logo {
 		.is-discarded & {
-			opacity: .75;
+			opacity: 0.75;
 		}
 	}
 }
@@ -188,7 +189,7 @@
 .activity-log-item__actor-name {
 	font-size: 14px;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		margin-top: 2px;
 		line-height: 1;
 	}
@@ -205,7 +206,11 @@
 	font-size: 14px;
 	word-break: break-word;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		margin-top: 8px;
 	}
+}
+
+.activity-log-item__description {
+	font-size: 14px;
 }
