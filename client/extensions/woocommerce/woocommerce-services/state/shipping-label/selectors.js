@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, get, isEmpty, map, mapValues, sum } from 'lodash';
+import { find, get, isEmpty, isEqual, map, mapValues, sum } from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -209,14 +209,52 @@ export const getFormErrors = createSelector(
 	]
 );
 
+/**
+ * Checks the form for errors and returns a step with an error in it or null
+ * @param {Object} state global state tree
+ * @param {Object} orderId order Id
+ * @param {Object} siteId site Id
+ *
+ * @returns {String} erroneous step name or null
+ */
+export const getFirstErroneousStep = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const form = getForm( state, orderId, siteId );
+	if ( ! form ) {
+		return null;
+	}
+
+	const errors = getFormErrors( state, orderId, siteId );
+
+	if ( ! form.origin.isNormalized ||
+		! isEqual( form.origin.values, form.origin.normalized ) ||
+		hasNonEmptyLeaves( errors.origin ) ) {
+		return 'origin';
+	}
+
+	if ( ! form.destination.isNormalized ||
+		! isEqual( form.destination.values, form.destination.normalized ) ||
+		hasNonEmptyLeaves( errors.destination ) ) {
+		return 'destination';
+	}
+
+	if ( hasNonEmptyLeaves( errors.packages ) ) {
+		return 'packages';
+	}
+
+	if ( hasNonEmptyLeaves( errors.rates ) ) {
+		return 'rates';
+	}
+
+	return null;
+};
+
 export const canPurchase = createSelector(
 	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-		const errors = getFormErrors( state, orderId, siteId );
 		const form = getForm( state, orderId, siteId );
 
 		return (
 			! isEmpty( form ) &&
-			! hasNonEmptyLeaves( errors ) &&
+			! getFirstErroneousStep( state, orderId, siteId ) &&
 			! form.origin.normalizationInProgress &&
 			! form.destination.normalizationInProgress &&
 			! form.rates.retrievalInProgress &&
@@ -224,8 +262,8 @@ export const canPurchase = createSelector(
 		);
 	},
 	( state, orderId, siteId = getSelectedSiteId( state ) ) => [
-		getFormErrors( state, orderId, siteId ),
 		getForm( state, orderId, siteId ),
+		getFirstErroneousStep( state, orderId, siteId ),
 	]
 );
 
