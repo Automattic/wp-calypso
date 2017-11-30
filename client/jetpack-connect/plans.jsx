@@ -51,8 +51,6 @@ const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
 const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
-	static defaultProps = { siteSlug: '*' };
-
 	static propTypes = {
 		// Connected props
 		isAutomatedTransfer: PropTypes.bool, // null indicates unknown

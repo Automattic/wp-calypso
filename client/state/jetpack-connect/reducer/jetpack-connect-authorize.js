@@ -48,6 +48,7 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 				isRedirectingToWpAdmin: false,
 				autoAuthorize: false,
 			} );
+
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
 			if ( isEmpty( action.error ) && action.data ) {
 				const { plans_url } = action.data;
@@ -65,8 +66,10 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 				authorizeSuccess: false,
 				autoAuthorize: false,
 			} );
+
 		case JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE:
 			return Object.assign( {}, state, { authorizationCode: action.data.code } );
+
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST:
 			const updateQueryObject = omit( state.queryObject, '_wp_nonce', 'secret', 'scope' );
 			return Object.assign( {}, omit( state, 'queryObject' ), {
@@ -74,19 +77,20 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 				isAuthorizing: false,
 				queryObject: updateQueryObject,
 			} );
+
 		case JETPACK_CONNECT_QUERY_SET:
 			const queryObject = Object.assign( {}, action.queryObject );
 			const shouldAutoAuthorize = includes(
 				[ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ],
 				queryObject.from
 			);
-			const additionalQueryArgs = shouldAutoAuthorize ? { autoAuthorize: true } : {};
 			return Object.assign(
 				{},
 				buildDefaultAuthorizeState(),
 				{ queryObject },
-				additionalQueryArgs
+				shouldAutoAuthorize && { autoAuthorize: true }
 			);
+
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
 			return Object.assign( {}, state, {
 				isAuthorizing: true,
@@ -94,6 +98,7 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 				authorizeError: false,
 				autoAuthorize: true,
 			} );
+
 		case JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE:
 			if ( ! isEmpty( action.error ) ) {
 				return Object.assign( {}, state, {
@@ -111,28 +116,37 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 				userData: action.userData,
 				bearerToken: action.data.bearer_token,
 			} );
+
 		case SITE_REQUEST_FAILURE:
 			if (
 				state.queryObject &&
 				state.queryObject.client_id &&
-				parseInt( state.queryObject.client_id ) === action.siteId
+				parseInt( state.queryObject.client_id, 10 ) === action.siteId
 			) {
 				return Object.assign( {}, state, { clientNotResponding: true } );
 			}
 			return state;
+
 		case JETPACK_CONNECT_USER_ALREADY_CONNECTED:
 			return Object.assign( {}, state, { userAlreadyConnected: true } );
+
 		case JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
+
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
+
 		case JETPACK_CONNECT_COMPLETE_FLOW:
 			return {};
+
 		case DESERIALIZE:
 			return ! isStale( state.timestamp, JETPACK_CONNECT_AUTHORIZE_TTL ) ? state : {};
+
 		case SERIALIZE:
 			return state;
 	}
+
 	return state;
 }
+
 jetpackConnectAuthorize.hasCustomPersistence = true;
