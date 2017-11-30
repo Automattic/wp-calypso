@@ -6,7 +6,7 @@
 
 import React from 'react';
 import request from 'superagent';
-import { get, omit } from 'lodash';
+import { get, omit, defer } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -14,6 +14,10 @@ import { translate } from 'i18n-calypso';
  */
 import config from 'config';
 import {
+	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
+	LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
+	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
+	LOGIN_AUTH_ACCOUNT_TYPE_RESET,
 	LOGIN_FORM_UPDATE,
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
@@ -47,6 +51,7 @@ import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'state/login/selectors
 import { getCurrentUser } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 function getSMSMessageFromResponse( response ) {
 	const phoneNumber = get( response, 'body.data.phone_number' );
@@ -572,3 +577,58 @@ export const logoutUser = redirectTo => ( dispatch, getState ) => {
 			return Promise.reject( error );
 		} );
 };
+
+/**
+ * Retrieves the type of authentication of the account of the specified user.
+ *
+ * @param {String} usernameOrEmail - id of the user
+ * @return {Function} an action thunk
+ */
+export const getAuthAccountType = usernameOrEmail => dispatch => {
+	dispatch(
+		recordTracksEvent( 'calypso_login_block_login_form_get_auth_type' )
+	);
+
+	dispatch( {
+		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
+		usernameOrEmail,
+	} );
+
+	if ( usernameOrEmail === '' ) {
+		const error = {
+			code: 'empty_username',
+			message: translate( 'Please enter a username or email address.' ),
+			field: 'usernameOrEmail',
+		};
+
+		dispatch(
+			recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_failure', {
+				error_code: error.code,
+				error_message: error.message,
+			} )
+		);
+
+		defer( () => {
+			dispatch( {
+				type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
+				error,
+			} );
+		} );
+
+		return;
+	}
+
+	dispatch( {
+		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
+		usernameOrEmail,
+	} );
+};
+
+/**
+ * Resets the type of authentication of the account of the current user.
+ *
+ * @return {Object} an action that can be dispatched
+ */
+export const resetAuthAccountType = () => ( {
+	type: LOGIN_AUTH_ACCOUNT_TYPE_RESET,
+} );

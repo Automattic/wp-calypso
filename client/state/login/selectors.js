@@ -172,6 +172,16 @@ export const isFormDisabled = state => {
 	return get( state, 'login.isFormDisabled', false );
 };
 
+/**
+ * Retrieves the authentication account type.
+ *
+ * @param  {Object}   state  Global state tree
+ * @returns {?String}        Authentication account type (e.g. 'regular', 'passwordless' ...)
+ */
+export const getAuthAccountType = state => {
+	return get( state, 'login.authAccountType', null );
+};
+
 /***
  * Tells us if we're in a process of creating a social account
  *

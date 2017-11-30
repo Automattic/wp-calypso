@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import { omit } from 'lodash';
 
 export default class FacebookIcon extends PureComponent {
-	static PropTypes = {
+	static propTypes = {
 		isDisabled: PropTypes.bool,
 	};
 

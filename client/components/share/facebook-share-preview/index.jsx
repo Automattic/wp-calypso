@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
 export class FacebookSharePreview extends PureComponent {
-	static PropTypes = {
+	static propTypes = {
 		articleUrl: PropTypes.string,
 		externalProfilePicture: PropTypes.string,
 		externalProfileUrl: PropTypes.string,
