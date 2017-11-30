@@ -8,7 +8,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	USER_PROFILE_LINKS_ADD,
@@ -155,12 +155,24 @@ export const handleDeleteError = ( { dispatch }, { linkSlug }, error ) =>
 
 export default {
 	[ USER_PROFILE_LINKS_REQUEST ]: [
-		dispatchRequest( requestUserProfileLinks, handleRequestSuccess, noop ),
+		dispatchRequestEx( {
+			fetch: requestUserProfileLinks,
+			onSuccess: handleRequestSuccess,
+			onError: noop,
+		} ),
 	],
 	[ USER_PROFILE_LINKS_ADD ]: [
-		dispatchRequest( addUserProfileLinks, handleAddSuccess, handleAddError ),
+		dispatchRequestEx( {
+			fetch: addUserProfileLinks,
+			onSuccess: handleAddSuccess,
+			onError: handleAddError,
+		} ),
 	],
 	[ USER_PROFILE_LINKS_DELETE ]: [
-		dispatchRequest( deleteUserProfileLink, handleDeleteSuccess, handleDeleteError ),
+		dispatchRequestEx( {
+			fetch: deleteUserProfileLink,
+			onSuccess: handleDeleteSuccess,
+			onError: handleDeleteError,
+		} ),
 	],
 };
