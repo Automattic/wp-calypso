@@ -22,14 +22,10 @@ class LocaleSuggestions extends Component {
 		path: PropTypes.string.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			dismissed: false,
-			locales: LocaleSuggestionStore.get(),
-		};
-	}
+	state = {
+		dismissed: false,
+		locales: null,
+	};
 
 	componentWillMount() {
 		if ( this.props.locale ) {
@@ -39,6 +35,8 @@ class LocaleSuggestions extends Component {
 
 	componentDidMount() {
 		LocaleSuggestionStore.on( 'change', this.updateLocales );
+
+		this.updateLocales();
 	}
 
 	componentWillUnmount() {
