@@ -95,6 +95,8 @@ export class LoggedInForm extends Component {
 		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
+		partnerId: PropTypes.number,
+		queryDataSiteId: PropTypes.number,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectAfterAuth: PropTypes.string,
 		remoteSiteUrl: PropTypes.string,
