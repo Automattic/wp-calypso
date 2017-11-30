@@ -150,7 +150,7 @@ export class LoginForm extends Component {
 	isFullView() {
 		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
-		return socialAccountIsLinking || ! hasAccountTypeLoaded || isRegularAccount( accountType );
+		return socialAccountIsLinking || hasAccountTypeLoaded && isRegularAccount( accountType );
 	}
 
 	isPasswordView() {
