@@ -126,6 +126,7 @@
 		"notifications/link-to-reader": true,
 		"oauth": false,
 		"olark": true,
+		"onboarding-checklist": true,
 		"perfmon": false,
 		"persist-redux": true,
 		"plans/personal-plan": true,

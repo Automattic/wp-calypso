@@ -19,6 +19,7 @@ const tasks = {
 		completedTitle: 'You updated your About page',
 		completedButtonText: 'Change',
 		url: '/pages/$siteSlug',
+		image: '/calypso/images/stats/tasks/about.svg',
 	},
 	avatar_uploaded: {
 		title: 'Upload your profile picture',
@@ -28,6 +29,7 @@ const tasks = {
 		completedTitle: 'You uploaded an avatar',
 		completedButtonText: 'Change',
 		url: '/me',
+		image: '/calypso/images/stats/tasks/upload-profile-picture.svg',
 	},
 	blogname_set: {
 		title: 'Personalize your site',
@@ -36,6 +38,7 @@ const tasks = {
 		completedTitle: 'You updated your site title',
 		completedButtonText: 'Edit',
 		url: '/settings/general/$siteSlug',
+		image: '/calypso/images/stats/tasks/personalize-your-site.svg',
 	},
 	blogdescription_set: {
 		title: 'Create a tagline',
@@ -44,6 +47,7 @@ const tasks = {
 		completedTitle: 'You created a tagline',
 		completedButtonText: 'Change',
 		url: '/settings/general/$siteSlug',
+		image: '/calypso/images/stats/tasks/create-tagline.svg',
 	},
 	contact_page_updated: {
 		title: 'Personalize your Contact page',
@@ -52,6 +56,7 @@ const tasks = {
 		completedTitle: 'You updated your Contact page',
 		completedButtonText: 'Edit',
 		url: '/pages/$siteSlug',
+		image: '/calypso/images/stats/tasks/contact.svg',
 	},
 	custom_domain_registered: {
 		title: 'Register a custom domain',
@@ -61,12 +66,14 @@ const tasks = {
 		completedTitle: 'You registered a custom domain',
 		completedButtonText: 'Add email',
 		url: '/domains/add/$siteSlug',
+		image: '/calypso/images/stats/tasks/domains.svg',
 	},
 	domain_selected: {
 		title: 'Pick a website address',
 		description: 'Choose an address so people can find you on the internet.',
 		completedTitle: 'You picked a website address',
 		completed: true,
+		image: '/calypso/images/stats/tasks/domains.svg',
 	},
 	post_published: {
 		title: 'Publish your first blog post',
@@ -75,6 +82,7 @@ const tasks = {
 		completedTitle: 'You published your first blog post',
 		completedButtonText: 'Edit',
 		url: '/posts/$siteSlug',
+		image: '/calypso/images/stats/tasks/first-post.svg',
 	},
 	site_created: {
 		title: 'Create your site',
@@ -89,6 +97,7 @@ const tasks = {
 		completedTitle: 'You uploaded a site icon',
 		completedButtonText: 'Change',
 		url: '/settings/general/$siteSlug',
+		image: '/calypso/images/stats/tasks/upload-icon.svg',
 	},
 	social_links_set: {
 		title: 'Display links to your social accounts',
@@ -97,6 +106,7 @@ const tasks = {
 		completedTitle: 'You added your social accounts.',
 		completedButtonText: 'Change',
 		url: '/customize/$siteSlug',
+		image: '/calypso/images/stats/tasks/social-links.svg',
 	},
 };
 
