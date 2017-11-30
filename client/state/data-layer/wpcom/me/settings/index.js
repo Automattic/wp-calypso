@@ -9,10 +9,12 @@ import { isEmpty, keys, merge, noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import profileLinks from './profile-links';
 import { decodeEntities } from 'lib/formatting';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { getUnsavedUserSettings } from 'state/selectors';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { mergeHandlers } from 'state/action-watchers/utils';
 import { updateUserSettings, clearUnsavedUserSettings } from 'state/user-settings/actions';
 import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'state/action-types';
 
@@ -90,9 +92,12 @@ export const finishUserSettingsSave = ( { dispatch }, { settingsOverride }, data
 	require( 'lib/user' )().fetch();
 };
 
-export default {
-	[ USER_SETTINGS_REQUEST ]: [
-		dispatchRequest( requestUserSettings, storeFetchedUserSettings, noop ),
-	],
-	[ USER_SETTINGS_SAVE ]: [ dispatchRequest( saveUserSettings, finishUserSettingsSave, noop ) ],
-};
+export default mergeHandlers(
+	{
+		[ USER_SETTINGS_REQUEST ]: [
+			dispatchRequest( requestUserSettings, storeFetchedUserSettings, noop ),
+		],
+		[ USER_SETTINGS_SAVE ]: [ dispatchRequest( saveUserSettings, finishUserSettingsSave, noop ) ],
+	},
+	profileLinks
+);
