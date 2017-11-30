@@ -123,15 +123,16 @@ class PlansFeaturesMain extends Component {
 		return (
 			<div className="plans-features-main__group" data-e2e-plans="wpcom">
 				<PlanFeatures
-					plans={ plans }
-					onUpgradeClick={ onUpgradeClick }
+					basePlansPath={ basePlansPath }
+					displayJetpackPlans={ displayJetpackPlans }
+					domainName={ domainName }
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
-					basePlansPath={ basePlansPath }
+					onUpgradeClick={ onUpgradeClick }
+					plans={ plans }
+					selectedPlan={ selectedPlan }
 					selectedFeature={ selectedFeature }
 					site={ site }
-					domainName={ domainName }
-					displayJetpackPlans={ displayJetpackPlans }
 				/>
 			</div>
 		);

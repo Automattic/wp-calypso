@@ -41,6 +41,7 @@ const PlanFeaturesActions = ( {
 	translate,
 } ) => {
 	let upgradeButton;
+
 	const classes = selectedPlan
 		? classNames(
 				'plan-features__actions-button',
