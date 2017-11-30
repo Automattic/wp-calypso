@@ -66,6 +66,7 @@ class DisconnectSurvey extends PureComponent {
 					{ translate( "Troubleshooting — I'll be reconnecting afterwards." ) }
 				</CompactCard>
 				<CompactCard
+					className="disconnect-site__survey-other-option"
 					href={ addQueryArgs( { reason: 'other', text: this.state.otherReason }, confirmHref ) }
 					onClick={ this.interceptOtherReasonClick }
 				>

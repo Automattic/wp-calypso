@@ -24,15 +24,14 @@
 	}
 }
 
-.disconnect-site__survey {
-	.form-text-input {
-		height: 2em;
-		margin-left: 18px;
-		width: 32em;
+.disconnect-site__survey-other-option {
+	align-items: center;
+	display: flex;
+	white-space: nowrap;
 
-		@include breakpoint( '<480px' ) {
-			max-width: 11em;
-		}
+	.form-text-input {
+		line-height: 1em;
+		margin-left: 8px;
 	}
 }
 
