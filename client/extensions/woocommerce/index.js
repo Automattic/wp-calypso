@@ -176,11 +176,7 @@ const getStorePages = () => {
 
 function addStorePage( storePage, storeNavigation ) {
 	page( storePage.path, siteSelection, storeNavigation, function( context ) {
-		// Temporary change
-		const component = React.createElement( storePage.container, {
-			params: context.params,
-			query: context.query,
-		} );
+		const component = React.createElement( storePage.container, { params: context.params } );
 		const appProps =
 			( storePage.documentTitle && { documentTitle: storePage.documentTitle } ) || {};
 

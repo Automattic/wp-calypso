@@ -45,8 +45,6 @@ import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup-tasks-view';
 import MailChimp from 'woocommerce/app/settings/email/mailchimp/index.js';
-// This is temporary and will be removed
-import TestDashboard from './test-dashboard';
 
 class Dashboard extends Component {
 	static propTypes = {
@@ -165,11 +163,6 @@ class Dashboard extends Component {
 
 		if ( loading || ! selectedSite ) {
 			return <Placeholder />;
-		}
-
-		// This is temporary
-		if ( ! loading && this.props.query && this.props.query.test ) {
-			return <TestDashboard />;
 		}
 
 		let manageView = <ManageOrdersView site={ selectedSite } />;
