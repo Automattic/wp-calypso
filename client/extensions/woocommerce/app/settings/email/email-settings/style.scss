@@ -1,28 +1,45 @@
 
-.components__notification-component-title {
-	width: 50%;
-}
+.email-settings__container{
 
-.components__notification-component-input.list-item-field {
-	padding-left: 0px;
-	padding-right: 0px;
-	flex-shrink: 1;
-	width: 40%;
-}
+	.components__notification-component-title {
+		width: 50%;
+	}
 
-.components__notification-component-toggle {
-	width: 80px;
-}
+	.components__notification-component-input {
+		padding-left: 0px;
+		padding-right: 0px;
+		flex-shrink: 1;
+		width: 40%;
+	}
 
-.components__notification-component-toggle-label.list-item-field {
-	width: 80px;
-	padding-left: 6px;
-}
+	.components__notification-component-toggle {
+		width: 80px;
+	}
 
-.components__notification-component-item.list-item {
-	flex-wrap: nowrap;
-}
+	.components__notification-component-toggle-label {
+		width: 80px;
+		padding-left: 6px;
+	}
 
-.components__notification-origin {
-	width: 75%;
+	.list-header {
+		background: lighten( $gray, 35% );
+	}
+
+	.list-header + .list-item {
+		border-top: 0;
+	}
+
+	.components__notification-component-item {
+		flex-wrap: nowrap;
+		align-items: center;
+		border-top: 1px solid $border-ultra-light-gray;
+	}
+
+	.components__notification-origin {
+		width: 100%;
+		input {
+			width: 75%;
+		}
+	}
+
 }

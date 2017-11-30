@@ -28,7 +28,7 @@ const fromName =
 	{
 		field: 'woocommerce_email_from_address',
 		title: translate( 'From name' ),
-		subtitle: translate( 'Emails will appear in recipients inpboxses \'from\' this name.' ),
+		subtitle: translate( 'Emails will appear in recipients inboxes \'from\' this name.' ),
 	};
 const fromAddress =
 	{
@@ -79,16 +79,12 @@ const customerNotifications = [
 	},
 	{
 		field: 'email_customer_new_account',
-		title: translate( 'Refunded order' ),
-		subtitle: translate( 'Sent when an order is marked \'payment refunded\'.' ),
+		title: translate( 'New account' ),
+		subtitle: translate( 'Sent when customers sign up via checkout or account page.' ),
 	},
 ];
 
 class Settings extends React.Component {
-
-	constructor( props ) {
-		super( props );
-	}
 
 	fetchSettings = ( props ) => {
 		const { siteId, fetchSettings } = props;
