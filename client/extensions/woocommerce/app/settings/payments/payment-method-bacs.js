@@ -62,7 +62,7 @@ class PaymentMethodBACS extends Component {
 
 	getAccountData = props => {
 		const { method: { settings } } = props || this.props;
-		const accountData = get( settings, [ 'accounts', 'value' ] );
+		const accountData = get( settings, [ 'accounts', 'value' ], [] );
 
 		return accountData.length
 			? accountData[ 0 ]
