@@ -454,5 +454,14 @@ $autobar-height: 20px;
 }
 
 .is-section-post-editor .masterbar {
-	display: none;
+	animation: 0.4s ease-out 0s 1 forwards masterbar__editor-hide;
+}
+
+@keyframes masterbar__editor-hide {
+	0% {
+		transform: translateY(0);
+	}
+	100% {
+		transform: translateY(-100%);
+	}
 }
