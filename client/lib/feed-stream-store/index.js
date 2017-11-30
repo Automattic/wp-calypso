@@ -75,7 +75,7 @@ function conversationsPager( params ) {
 function filterConversationsPosts( posts ) {
 	// turn the new ones into post keys
 	const newPosts = map( posts, this.keyMaker );
-	return filter( newPosts, post => {
+	const filteredNewPosts = filter( newPosts, post => {
 		// only keep things that we don't have or things that have new comments
 		if ( ! this.postById.has( keyToString( post ) ) ) {
 			return true; // new new
@@ -91,6 +91,17 @@ function filterConversationsPosts( posts ) {
 		}
 		return true;
 	} );
+
+	return filteredNewPosts;
+
+	// @todo: partition posts into those with new comments that only the user has commented on, and others
+	// maybe use lodash partion?
+}
+
+// Works similarly to acceptUpdates() in FeedStream
+// - takes postKeys array
+function acceptNewPostsWithoutNotification() {
+	// @todo
 }
 
 function addMetaToNextPageFetch( params ) {
@@ -351,6 +362,7 @@ export default function feedStoreFactory( storeId ) {
 		} );
 		// monkey patching is the best patching
 		store.filterNewPosts = filterConversationsPosts;
+		store.acceptNewPostsWithoutNotification = acceptNewPostsWithoutNotification;
 	} else if ( storeId === 'conversations-a8c' ) {
 		store = new FeedStream( {
 			id: storeId,
@@ -364,6 +376,7 @@ export default function feedStoreFactory( storeId ) {
 
 		// monkey patching is the best patching
 		store.filterNewPosts = filterConversationsPosts;
+		store.acceptNewPostsWithoutNotification = acceptNewPostsWithoutNotification;
 	} else if ( storeId === 'a8c' ) {
 		store = new FeedStream( {
 			id: storeId,
