@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -12,9 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CountrySelect, Input } from 'my-sites/domains/components/form';
-import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
-
-const countriesList = countriesListForDomainRegistrations();
+import { forDomainRegistrations as countriesList } from 'lib/countries-list';
 
 export class GAppsFieldset extends Component {
 	static propTypes = {

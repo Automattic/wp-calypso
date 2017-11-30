@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -24,7 +22,7 @@ import storeTransactions from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import TransactionStepsMixin from './transaction-steps-mixin';
 import upgradesActions from 'lib/upgrades/actions';
-import countriesList from 'lib/countries-list';
+import { forPayments as countriesListForPayments } from 'lib/countries-list';
 import debugFactory from 'debug';
 import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart-values';
 import Notice from 'components/notice';
@@ -35,7 +33,6 @@ import PaymentBox from './payment-box';
  * Module variables
  */
 const { hasFreeTrial } = cartItems;
-const countriesListForPayments = countriesList.forPayments();
 const debug = debugFactory( 'calypso:checkout:payment' );
 
 const SecurePaymentForm = createReactClass( {

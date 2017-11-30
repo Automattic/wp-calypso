@@ -8,13 +8,19 @@ The `countries-list` module provides access to localized list of countries as re
 The list of supported countries for domain registrations can be retrieved with:
 
 ```js
-var countriesList = require( 'lib/countries-list' ).forDomainRegistrations();
+import { forDomainRegistrations as countriesList } from 'lib/countries-list';
 ```
 
 The list of supported countries for payments can be retrieved with:
 
 ```js
-var countriesList = require( 'lib/countries-list' ).forPayments();
+import { forPayments as countriesList } from 'lib/countries-list';
+```
+
+The list of supported countries for SMS can be retrieved with:
+
+```js
+import { forSms as countriesList } from 'lib/countries-list';
 ```
 
 ## Methods
