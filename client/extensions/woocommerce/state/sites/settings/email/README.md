@@ -11,7 +11,15 @@ Pull email settings from the remote site. Does not run if the settings are loadi
 
 ## Reducer
 
-This is saved on a per-site basis, either as "LOADING" (when requesting settings), or a list of settings as returned from the site's `settings_email_groups` API. Woocommerce options API organizes options in groups (`group_id`). In each group variosu settings are organized by their id ( `id` ). Settings object has different fields that describe the object. Because we are only interested in `value` the `settings_email_groups` endpoint reponse has only `group_id` `id` and `value`. This can make things confusing a bit because naming is not very consisten across various options. The top level element for each option is `group_id` and that value is different for each object in response array. Each group can have have the same `id` like for example `enabled` or `recipient` but as mentioned before it is for different group. 
+This is saved on a per-site basis, either as "LOADING" (when requesting settings), or a list of settings
+as returned from the site's `settings_email_groups` API. WooCommerce options API organizes options in
+groups (`group_id`). In each group various settings are organized by their id ( `id` ). Settings object
+has different fields that describe the object. Because we are only interested in `value` the
+`settings_email_groups` endpoint reponse has only `group_id` `id` and `value`. This can make things
+confusing a bit because naming is not very consistent across various options. The top level element for
+each option is `group_id` and that value is different for each object in response array. Each group can
+have have the same `id` like for example `enabled` or `recipient` but as mentioned before it is for
+different group. 
 
 ```j
 {
