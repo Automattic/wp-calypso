@@ -4,46 +4,16 @@
 }
 
 .post-type-filter__multi-select-button {
-	display: block;
-	height: 50px;
+	background-color: $gray-light;
 
-	&.button.is-borderless { // for specificity
-		color: $blue-wordpress;
+	@include breakpoint( "<480px" ) {
+		position: absolute;
+		top: 8px;
+		right: 50px;
+		padding: 12px 8px 10px;
 
-		&:hover {
-			color: $link-highlight;
+		& .post-type-filter__multi-select-button-text {
+			display: none;
 		}
-
-		// Vertical padding is 26px (height - gridicon height - border)
-		// Bottom padding should be 2px less due to border
-		padding: 14px 8px 12px;
-
-		border-bottom: 2px solid transparent;
-		border-radius: 0;
-
-		&.is-enabled {
-			border-bottom-color: $gray-dark;
-			color: $gray-dark;
-		}
-
-		& .gridicon {
-			// TODO why is this necessary?
-			top: 2px;
-			padding-right: 4px;
-		}
-
-		@include breakpoint( "<480px" ) {
-			position: absolute;
-			top: 0;
-			right: 50px;
-			height: 46px;
-			padding: 12px 8px 10px;
-		}
-	}
-
-	// TODO why is this necessary?
-	& .post-type-filter__multi-select-button-text {
-		vertical-align: top;
-		line-height: 24px;
 	}
 }
