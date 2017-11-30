@@ -101,7 +101,7 @@ class DashboardWidget extends Component {
 				</Tooltip>
 				{ hasSettingsPanel && (
 					<Popover
-						className="dashboard-widget__settings-popover"
+						className="woocommerce dashboard-widget__settings-popover"
 						context={ this.settingsToggle }
 						isVisible={ showDialog }
 						onClose={ this.onSettingsPanelClose }
