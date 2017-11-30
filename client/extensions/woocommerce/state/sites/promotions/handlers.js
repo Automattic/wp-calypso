@@ -5,7 +5,7 @@
  */
 
 import debugFactory from 'debug';
-import { isUndefined } from 'lodash';
+import { isNumber, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,10 @@ import {
 	deleteCoupon,
 } from 'woocommerce/state/sites/coupons/actions';
 import { fetchProducts, updateProduct } from 'woocommerce/state/sites/products/actions';
-import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
+import {
+	fetchProductVariations,
+	updateProductVariation,
+} from 'woocommerce/state/sites/product-variations/actions';
 import {
 	WOOCOMMERCE_COUPONS_UPDATED,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
@@ -101,8 +104,7 @@ export function promotionCreate( { dispatch }, action ) {
 
 	switch ( promotion.type ) {
 		case 'product_sale':
-			const product = createProductUpdateFromPromotion( promotion );
-			dispatch( updateProduct( siteId, product, action.successAction, action.failureAction ) );
+			updateProductSale( dispatch, siteId, promotion, action.successAction, action.failureAction );
 			break;
 		case 'fixed_cart':
 		case 'fixed_product':
@@ -119,12 +121,7 @@ export function promotionUpdate( { dispatch }, action ) {
 
 	switch ( promotion.type ) {
 		case 'product_sale':
-			const product = createProductUpdateFromPromotion( promotion );
-			if ( product.id !== promotion.productId ) {
-				// This product sale is changing product, so remove it from the previous one.
-				dispatch( clearProductSale( siteId, promotion.productId, null, action.failureAction ) );
-			}
-			dispatch( updateProduct( siteId, product, action.successAction, action.failureAction ) );
+			updateProductSale( dispatch, siteId, promotion, action.successAction, action.failureAction );
 			break;
 		case 'fixed_cart':
 		case 'fixed_product':
@@ -141,9 +138,7 @@ export function promotionDelete( { dispatch }, action ) {
 
 	switch ( promotion.type ) {
 		case 'product_sale':
-			dispatch(
-				clearProductSale( siteId, promotion.productId, action.successAction, action.failureAction )
-			);
+			clearProductSale( dispatch, siteId, promotion, action.successAction, action.failureAction );
 			break;
 		case 'fixed_cart':
 		case 'fixed_product':
@@ -156,13 +151,34 @@ export function promotionDelete( { dispatch }, action ) {
 	}
 }
 
-function clearProductSale( siteId, productId, successAction, failureAction ) {
-	const productUpdateData = {
+function updateProductSale( dispatch, siteId, promotion, successAction, failureAction ) {
+	const { parentId } = promotion;
+	const data = createProductUpdateFromPromotion( promotion );
+
+	if ( data.id !== promotion.productId && isNumber( promotion.productId ) ) {
+		clearProductSale( dispatch, siteId, promotion, null, failureAction );
+	}
+
+	if ( parentId ) {
+		dispatch( updateProductVariation( siteId, parentId, data, successAction, failureAction ) );
+	} else {
+		dispatch( updateProduct( siteId, data, successAction, failureAction ) );
+	}
+}
+
+function clearProductSale( dispatch, siteId, promotion, successAction, failureAction ) {
+	const { parentId, productId } = promotion;
+
+	const data = {
 		id: productId,
 		sale_price: '',
 		date_on_sale_from: null,
 		date_on_sale_to: null,
 	};
 
-	return updateProduct( siteId, productUpdateData, successAction, failureAction );
+	if ( parentId ) {
+		dispatch( updateProductVariation( siteId, productId, data, successAction, failureAction ) );
+	} else {
+		dispatch( updateProduct( siteId, data, successAction, failureAction ) );
+	}
 }

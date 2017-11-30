@@ -104,9 +104,10 @@ class PromotionAppliesToField extends React.Component {
 		this.initializeValue( appliesToType );
 	};
 
-	onProductIdChange = ( productId ) => {
+	onProductIdChange = ( productId, parentId ) => {
 		const { edit } = this.props;
 		edit( 'appliesTo', { productIds: [ productId ] } );
+		edit( 'parentId', parentId );
 	};
 
 	onProductIdsChange = ( productIds ) => {

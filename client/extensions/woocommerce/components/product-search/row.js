@@ -123,7 +123,8 @@ class ProductSearchRow extends Component {
 			} );
 			const variationId = get( matchingVariations, '[0].id', false );
 			if ( variationId && ! this.isSelected( variationId ) ) {
-				this.props.onChange( variationId );
+				const { product } = this.props;
+				this.props.onChange( variationId, product.id );
 			}
 			if ( typeof callback === 'function' ) {
 				callback();
