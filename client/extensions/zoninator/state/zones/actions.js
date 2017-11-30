@@ -57,14 +57,16 @@ export const updateZone = ( siteId, zoneId, data ) => ( {
 /**
  * Returns an action object to indicate that a new zone should be created.
  *
- * @param  {Number} siteId Site ID
- * @param  {String} form   Form name
- * @param  {Object} data   Zone details
- * @return {Object}        Action object
+ * @param  {Number} siteId   Site ID
+ * @param  {String} siteSlug Site slug
+ * @param  {String} form     Form name
+ * @param  {Object} data     Zone details
+ * @return {Object}          Action object
  */
-export const addZone = ( siteId, form, data ) => ( {
+export const addZone = ( siteId, siteSlug, form, data ) => ( {
 	type: ZONINATOR_ADD_ZONE,
 	siteId,
+	siteSlug,
 	form,
 	data,
 } );
@@ -88,8 +90,14 @@ export const saveZone = ( siteId, zoneId, form, data ) => ( {
 
 /**
  * Returns an action object to indicate that a zone should be deleted.
- * @param  {Number} siteId Site ID
- * @param  {Number} zoneId Zone ID
- * @return {Object}        Action object
+ * @param  {Number} siteId   Site ID
+ * @param  {String} siteSlug Site slug
+ * @param  {Number} zoneId   Zone ID
+ * @return {Object}          Action object
  */
-export const deleteZone = ( siteId, zoneId ) => ( { type: ZONINATOR_DELETE_ZONE, siteId, zoneId } );
+export const deleteZone = ( siteId, siteSlug, zoneId ) => ( {
+	type: ZONINATOR_DELETE_ZONE,
+	siteId,
+	siteSlug,
+	zoneId,
+} );

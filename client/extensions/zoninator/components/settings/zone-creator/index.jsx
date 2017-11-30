@@ -27,7 +27,7 @@ class ZoneCreator extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
-	save = ( form, data ) => this.props.addZone( this.props.siteId, form, data );
+	save = ( form, data ) => this.props.addZone( this.props.siteId, this.props.siteSlug, form, data );
 
 	render() {
 		const { siteSlug, translate } = this.props;

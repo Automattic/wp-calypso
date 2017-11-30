@@ -29,6 +29,7 @@ import {
 
 describe( 'actions', () => {
 	const siteId = 123456;
+	const siteSlug = 'test.dev';
 	const zones = {
 		1: {
 			id: 1,
@@ -91,13 +92,14 @@ describe( 'actions', () => {
 
 	describe( '#addZone()', () => {
 		test( 'should return an action object', () => {
-			const action = addZone( siteId, 'form', zones[ 1 ] );
+			const action = addZone( siteId, siteSlug, 'form', zones[ 1 ] );
 
 			expect( action ).to.deep.equal( {
 				type: ZONINATOR_ADD_ZONE,
 				data: zones[ 1 ],
 				form: 'form',
 				siteId,
+				siteSlug,
 			} );
 		} );
 	} );
@@ -118,12 +120,13 @@ describe( 'actions', () => {
 
 	describe( '#deleteZone', () => {
 		test( 'should return an action object', () => {
-			const action = deleteZone( siteId, zones[ 1 ].id );
+			const action = deleteZone( siteId, siteSlug, zones[ 1 ].id );
 
 			expect( action ).to.deep.equal( {
 				type: ZONINATOR_DELETE_ZONE,
 				zoneId: 1,
 				siteId,
+				siteSlug,
 			} );
 		} );
 	} );
