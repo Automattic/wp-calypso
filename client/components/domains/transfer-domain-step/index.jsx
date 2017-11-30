@@ -115,6 +115,7 @@ class TransferDomainStep extends React.Component {
 			? this.props.products.domain_map.cost_display
 			: null;
 		const { translate } = this.props;
+		const { searchQuery } = this.state;
 
 		return (
 			<div>
@@ -141,7 +142,7 @@ class TransferDomainStep extends React.Component {
 						<FormTextInputWithAffixes
 							prefix="http://"
 							type="text"
-							value={ this.state.searchQuery }
+							value={ searchQuery }
 							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
@@ -150,7 +151,7 @@ class TransferDomainStep extends React.Component {
 						/>
 					</div>
 					<button
-						disabled={ this.state.searchQuery.length === 0 }
+						disabled={ ! getTld( searchQuery ) }
 						className="transfer-domain-step__go button is-primary"
 						onClick={ this.recordGoButtonClick }
 					>
