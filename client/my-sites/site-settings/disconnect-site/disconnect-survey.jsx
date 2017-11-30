@@ -74,7 +74,7 @@ class DisconnectSurvey extends PureComponent {
 						onBlur={ this.setOtherReasonFocus( false ) }
 						onChange={ this.setOtherReason }
 						onFocus={ this.setOtherReasonFocus( true ) }
-						placeholder={ 'e.g. errors, no need, ...' }
+						placeholder={ translate( 'share your experience…' ) }
 						value={ this.state.otherReason }
 					/>
 				</CompactCard>
