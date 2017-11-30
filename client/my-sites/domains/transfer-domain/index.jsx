@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import TransferDomainStep from 'components/domains/transfer-domain-step';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { DOMAINS_WITH_PLANS_ONLY, TRANSFER_IN } from 'state/current-user/constants';
 import { cartItems } from 'lib/cart-values';
 import upgradesActions from 'lib/upgrades/actions';
 import Notice from 'components/notice';
@@ -88,6 +88,9 @@ export class TransferDomain extends Component {
 	};
 
 	componentWillMount() {
+		if ( ! this.props.transferInAllowed ) {
+			page.redirect( '/domains/add/mapping/' + this.props.selectedSiteSlug );
+		}
 		this.checkSiteIsUpgradeable( this.props );
 	}
 
@@ -102,9 +105,20 @@ export class TransferDomain extends Component {
 	}
 
 	render() {
-		const { cart, domainsWithPlansOnly, initialQuery, productsList, selectedSite } = this.props;
+		const {
+			cart,
+			domainsWithPlansOnly,
+			initialQuery,
+			productsList,
+			selectedSite,
+			transferInAllowed,
+		} = this.props;
 
 		const { errorMessage } = this.state;
+
+		if ( ! transferInAllowed ) {
+			return null;
+		}
 
 		return (
 			<span>
@@ -135,4 +149,5 @@ export default connect( state => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
 	productsList: getProductsList( state ),
+	transferInAllowed: currentUserHasFlag( state, TRANSFER_IN ),
 } ) )( TransferDomain );
