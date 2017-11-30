@@ -5,11 +5,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import addQueryArgs from 'lib/route/add-query-args';
+import cookie from 'cookie';
 import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
-import { get, startsWith } from 'lodash';
+import { includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,6 +19,7 @@ import { localize } from 'i18n-calypso';
 import AuthFormHeader from './auth-form-header';
 import Button from 'components/button';
 import Card from 'components/card';
+import config from 'config';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
@@ -34,7 +36,6 @@ import userUtilities from 'lib/user/utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getJetpackConnectRedirectAfterAuth, getJetpackConnectPartnerId } from 'state/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -56,7 +57,11 @@ import {
 	hasXmlrpcError as hasXmlrpcErrorSelector,
 	isRemoteSiteOnSitesList,
 } from 'state/jetpack-connect/selectors';
-import config from 'config';
+import {
+	getJetpackConnectFrom,
+	getJetpackConnectPartnerId,
+	getJetpackConnectRedirectAfterAuth,
+} from 'state/selectors';
 
 /**
  * Constants
@@ -66,11 +71,8 @@ const PLANS_PAGE = '/jetpack/connect/plans/';
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 const PRESSABLE_PARTNER_ID = 49640;
 
-class LoggedInForm extends Component {
+export class LoggedInForm extends Component {
 	static propTypes = {
-		isSSO: PropTypes.bool,
-		isWoo: PropTypes.bool,
-
 		// Connected props
 		authAttempts: PropTypes.number.isRequired,
 		authorizationData: PropTypes.shape( {
@@ -79,13 +81,13 @@ class LoggedInForm extends Component {
 			isRedirectingToWpAdmin: PropTypes.bool,
 			queryObject: PropTypes.shape( {
 				already_authorized: PropTypes.bool,
-				jp_version: PropTypes.string.isRequired,
 				new_user_started_connection: PropTypes.bool,
 			} ).isRequired,
 			siteReceived: PropTypes.bool,
 		} ).isRequired,
 		authorize: PropTypes.func.isRequired,
 		calypsoStartedConnection: PropTypes.bool,
+		from: PropTypes.string,
 		goBackToWpAdmin: PropTypes.func.isRequired,
 		goToXmlrpcErrorFallbackUrl: PropTypes.func.isRequired,
 		hasExpiredSecretError: PropTypes.bool,
@@ -93,6 +95,8 @@ class LoggedInForm extends Component {
 		isAlreadyOnSitesList: PropTypes.bool,
 		isFetchingAuthorizationSite: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
+		partnerId: PropTypes.number,
+		queryDataSiteId: PropTypes.number,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectAfterAuth: PropTypes.string,
 		remoteSiteUrl: PropTypes.string,
@@ -120,7 +124,7 @@ class LoggedInForm extends Component {
 
 		// isSSO is a separate case from the rest since we have already validated
 		// it in authorize-form.jsx. Therefore, if it's set, just authorize and redirect.
-		if ( this.props.isSSO || doAutoAuthorize ) {
+		if ( this.isSso() || doAutoAuthorize ) {
 			debug( 'Authorizing automatically on component mount' );
 			this.setState( { haveAuthorized: true } );
 			return authorize( queryObject );
@@ -137,11 +141,9 @@ class LoggedInForm extends Component {
 			authorizeError,
 		} = nextProps.authorizationData;
 
-		// For SSO, WooCommerce Services, and JPO users, do not display plans page
-		// Instead, redirect back to admin as soon as we're connected
 		if (
-			nextProps.isSSO ||
-			nextProps.isWoo ||
+			this.isSso( nextProps ) ||
+			this.isWoo( nextProps ) ||
 			this.isFromJpo( nextProps ) ||
 			this.shouldRedirectJetpackStart( nextProps )
 		) {
@@ -172,20 +174,15 @@ class LoggedInForm extends Component {
 
 	redirect() {
 		const { goBackToWpAdmin, redirectAfterAuth } = this.props;
-		const { queryObject } = this.props.authorizationData;
+		const { from } = this.props;
 
-		if (
-			this.props.isSSO ||
-			this.props.isWoo ||
-			this.isFromJpo( this.props ) ||
-			this.shouldRedirectJetpackStart( this.props )
-		) {
+		if ( this.isSso() || this.isWoo() || this.isFromJpo() || this.shouldRedirectJetpackStart() ) {
 			debug(
 				'Going back to WP Admin.',
 				'Connection initiated via: ',
-				queryObject.from,
+				from,
 				'SSO found:',
-				this.props.isSSO
+				this.isSso()
 			);
 			goBackToWpAdmin( redirectAfterAuth );
 		} else {
@@ -193,11 +190,30 @@ class LoggedInForm extends Component {
 		}
 	}
 
-	isFromJpo( props ) {
-		return startsWith( get( props, [ 'authorizationData', 'queryObject', 'from' ] ), 'jpo' );
+	isFromJpo( { from } = this.props ) {
+		return startsWith( from, 'jpo' );
 	}
 
-	shouldRedirectJetpackStart( { partnerId } ) {
+	/**
+	 * Check whether this a valid authorized SSO request
+	 *
+	 * @param  {?string} props.from            Where is the request from
+	 * @param  {?number} props.queryDataSiteId Remote site ID
+	 * @return {boolean}                       True if it's a valid SSO request otherwise false
+	 */
+	isSso( { from, queryDataSiteId } = this.props ) {
+		const cookies = cookie.parse( document.cookie );
+		const jetpack_sso_approved = cookies.jetpack_sso_approved
+			? parseInt( cookies.jetpack_sso_approved, 10 )
+			: null;
+		return 'sso' === from && !! queryDataSiteId && queryDataSiteId === jetpack_sso_approved;
+	}
+
+	isWoo( { from } = this.props ) {
+		return includes( [ 'woocommerce-setup-wizard', 'woocommerce-services' ], from );
+	}
+
+	shouldRedirectJetpackStart( { partnerId } = this.props ) {
 		const partnerRedirectFlag = config.isEnabled(
 			'jetpack/connect-redirect-pressable-credential-approval'
 		);
@@ -611,18 +627,20 @@ export default connect(
 			authAttempts: getAuthAttempts( state, siteSlug ),
 			authorizationData: getAuthorizationData( state ),
 			calypsoStartedConnection: isCalypsoStartedConnection( remoteSiteUrl ),
+			from: getJetpackConnectFrom( state ),
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			isFetchingAuthorizationSite: isRequestingSite( state, siteId ),
 			isFetchingSites: isRequestingSites( state ),
+			partnerId: getJetpackConnectPartnerId( state ),
+			queryDataSiteId: siteId,
 			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 			remoteSiteUrl,
 			siteId,
 			siteSlug,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
-			partnerId: getJetpackConnectPartnerId( state ),
 		};
 	},
 	{

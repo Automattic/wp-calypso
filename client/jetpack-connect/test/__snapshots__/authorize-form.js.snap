@@ -7,10 +7,7 @@ exports[`AuthorizeForm should render LoggedInForm when logged in 1`] = `
   <div
     className="jetpack-connect__authorize-form"
   >
-    <Connect(Localized(LoggedInForm))
-      isSSO={false}
-      isWoo={false}
-    />
+    <Connect(Localized(LoggedInForm)) />
   </div>
 </JetpackConnectMainWrapper>
 `;

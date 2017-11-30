@@ -49,6 +49,7 @@ export getCurrentUserRegisterDate from './get-current-user-register-date';
 export getImageEditorIsGreaterThanMinimumDimensions from './get-image-editor-is-greater-than-minimum-dimensions';
 export getImageEditorOriginalAspectRatio from './get-image-editor-original-aspect-ratio';
 export getInitialQueryArguments from './get-initial-query-arguments';
+export getJetpackConnectFrom from './get-jetpack-connect-from';
 export getJetpackConnectionStatus from './get-jetpack-connection-status';
 export getJetpackConnectPartnerId from './get-jetpack-connect-partner-id';
 export getJetpackConnectRedirectAfterAuth from './get-jetpack-connect-redirect-after-auth';
