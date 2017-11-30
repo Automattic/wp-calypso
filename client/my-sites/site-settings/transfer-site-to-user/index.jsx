@@ -10,9 +10,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import TransferSiteToUserWarning from './warning';
 
 class TransferSiteToUser extends React.Component {
 	constructor( props ) {
@@ -20,11 +22,23 @@ class TransferSiteToUser extends React.Component {
 	}
 
 	render() {
-		return <Main className="transfer-site-to-user" />;
+		const { siteSlug, translate } = this.props;
+
+		return (
+			<Main className="transfer-site-to-user">
+				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
+					<h1>{ translate( 'Transfer Your Site' ) }</h1>
+				</HeaderCake>
+				<TransferSiteToUserWarning />
+			</Main>
+		);
 	}
 }
 
-export default connect( state => ( { currentUser: getCurrentUser( state ) } ), {
-	successNotice,
-	errorNotice,
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		siteSlug: getSiteSlug( state, siteId ),
+	};
 } )( localize( TransferSiteToUser ) );
