@@ -210,7 +210,7 @@ export class LoggedInForm extends Component {
 	}
 
 	isWoo( { from } = this.props ) {
-		return includes( [ 'woocommerce-setup-wizard', 'woocommerce-services' ], from );
+		return includes( [ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ], from );
 	}
 
 	shouldRedirectJetpackStart( { partnerId } = this.props ) {
