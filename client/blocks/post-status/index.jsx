@@ -31,11 +31,11 @@ export function PostStatus( { translate, post, showAll, showIcon = true } ) {
 		text = translate( 'Pending Review' );
 		classModifier = 'is-pending';
 		icon = 'aside';
-	} else if ( 'future' === status ) {
+	} else if ( showAll && 'future' === status ) {
 		text = translate( 'Scheduled' );
 		classModifier = 'is-scheduled';
 		icon = 'calendar';
-	} else if ( 'trash' === status ) {
+	} else if ( showAll && 'trash' === status ) {
 		text = translate( 'Trashed' );
 		classModifier = 'is-trash';
 		icon = 'trash';

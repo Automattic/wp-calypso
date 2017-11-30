@@ -25,3 +25,23 @@ function MyPost() {
 </table>
 
 The global ID of the post. If omitted or the associated post cannot be found in global state, the component returns null.
+
+### `showAll`
+
+<table>
+	<tr><th>Type</th><td>Bool</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td>false</td></tr>
+</table>
+
+If true, statuses will be shown for scheduled, trashed, drafted, and published posts.
+
+### `showIcon`
+
+<table>
+	<tr><th>Type</th><td>Bool</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td>true</td></tr>
+</table>
+
+If false, an icon will not be displayed along with the status text.
