@@ -3,60 +3,49 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import createReactClass from 'create-react-class';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:connected-application-item' );
 import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import eventRecorder from 'me/event-recorder';
-import ConnectedApplicationIcon from 'me/connected-application-icon';
-import safeProtocolUrl from 'lib/safe-protocol-url';
-import analytics from 'lib/analytics';
 import Button from 'components/button';
+import ConnectedApplicationIcon from 'me/connected-application-icon';
 import FoldableCard from 'components/foldable-card';
+import safeProtocolUrl from 'lib/safe-protocol-url';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-const ConnectedApplicationItem = createReactClass( {
-	displayName: 'ConnectedApplicationItem',
+class ConnectedApplicationItem extends React.Component {
+	static defaultProps = {
+		isPlaceholder: false,
+	};
 
-	mixins: [ eventRecorder ],
+	state = {
+		showDetail: false,
+	};
 
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+	recordClickEvent = ( action, label = null ) => {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action, label );
+	};
 
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component is unmounting.' );
-	},
+	getClickHandler = action => {
+		return () => this.recordClickEvent( action );
+	};
 
-	getInitialState: function() {
-		return {
-			showDetail: false,
-		};
-	},
-
-	getDefaultProps: function() {
-		return {
-			isPlaceholder: false,
-		};
-	},
-
-	disconnect: function( event ) {
+	disconnect = event => {
 		if ( this.props.isPlaceholder ) {
 			return;
 		}
+
 		const { connection: { title, ID } } = this.props;
 		event.stopPropagation();
-		analytics.ga.recordEvent( 'Me', 'Clicked on Disconnect Connected Application Link', title );
+		this.recordClickEvent( 'Disconnect Connected Application Link', title );
 		this.props.revoke( ID );
-	},
+	};
 
-	renderAccessScopeBadge: function() {
+	renderAccessScopeBadge() {
 		const { connection: { scope, site } } = this.props;
 		var meta = '';
 
@@ -75,9 +64,9 @@ const ConnectedApplicationItem = createReactClass( {
 		if ( meta.length ) {
 			return <span className="connected-application-item__meta">{ meta }</span>;
 		}
-	},
+	}
 
-	renderScopeMessage: function() {
+	renderScopeMessage() {
 		const { connection: { scope, site } } = this.props;
 		var message;
 		if ( ! this.props.connection ) {
@@ -103,7 +92,7 @@ const ConnectedApplicationItem = createReactClass( {
 								target="_blank"
 								rel="noopener noreferrer"
 								href={ safeProtocolUrl( this.props.connection.site.site_URL ) }
-								onClick={ this.recordClickEvent( 'Connected Application Scope Blog Link' ) }
+								onClick={ this.getClickHandler( 'Connected Application Scope Blog Link' ) }
 							/>
 						),
 					},
@@ -128,9 +117,9 @@ const ConnectedApplicationItem = createReactClass( {
 				<p className="connected-application-item__connection-detail-description">{ message }</p>
 			</div>
 		);
-	},
+	}
 
-	renderDetail: function() {
+	renderDetail() {
 		const { connection: { URL, authorized, permissions } } = this.props;
 		if ( this.props.isPlaceholder ) {
 			return;
@@ -142,7 +131,7 @@ const ConnectedApplicationItem = createReactClass( {
 				<p>
 					<a
 						href={ safeProtocolUrl( URL ) }
-						onClick={ this.recordClickEvent( 'Connected Application Website Link' ) }
+						onClick={ this.getClickHandler( 'Connected Application Website Link' ) }
 						target="_blank"
 						rel="noopener noreferrer"
 					>
@@ -174,18 +163,18 @@ const ConnectedApplicationItem = createReactClass( {
 				</ul>
 			</div>
 		);
-	},
+	}
 
-	header: function() {
+	renderHeader() {
 		return (
 			<div className="connected-application-item__header">
 				<ConnectedApplicationIcon image={ this.props.connection.icon } />
 				<h3>{ this.props.connection.title }</h3>
 			</div>
 		);
-	},
+	}
 
-	summary: function() {
+	renderSummary() {
 		return (
 			<div>
 				{ this.props.isPlaceholder ? (
@@ -199,9 +188,9 @@ const ConnectedApplicationItem = createReactClass( {
 				) }
 			</div>
 		);
-	},
+	}
 
-	render: function() {
+	render() {
 		let classes = classNames( {
 			'connected-application-item': true,
 			'is-placeholder': this.props.isPlaceholder,
@@ -209,9 +198,9 @@ const ConnectedApplicationItem = createReactClass( {
 
 		return (
 			<FoldableCard
-				header={ this.header() }
-				summary={ this.summary() }
-				expandedSummary={ this.summary() }
+				header={ this.renderHeader() }
+				summary={ this.renderSummary() }
+				expandedSummary={ this.renderSummary() }
 				clickableHeader
 				compact
 				className={ classes }
@@ -219,7 +208,9 @@ const ConnectedApplicationItem = createReactClass( {
 				{ this.renderDetail() }
 			</FoldableCard>
 		);
-	},
-} );
+	}
+}
 
-export default localize( ConnectedApplicationItem );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( ConnectedApplicationItem ) );
