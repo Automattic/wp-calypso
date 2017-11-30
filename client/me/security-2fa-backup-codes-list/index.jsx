@@ -267,7 +267,7 @@ class Security2faBackupCodesList extends React.Component {
 				<p className="security-2fa-backup-codes-list__warning">
 					<Gridicon icon="notice" />
 					{ this.props.translate(
-						'Without access to the app, your phone, or a backup code, you will lose access to your account.'
+						'Without access to the authenticator tool, your phone, or a backup code, you will lose access to your account.'
 					) }
 				</p>
 
