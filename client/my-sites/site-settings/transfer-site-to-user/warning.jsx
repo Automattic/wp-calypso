@@ -20,7 +20,7 @@ import Button from 'components/button';
 import support from 'lib/url/support';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteDomain } from 'state/sites/selectors';
-import getUserSetting from 'state/selectors/get-user-setting';
+import userSettings from 'lib/user-settings';
 
 const TransferSiteToUserWarning = ( { translate, selectedSiteDomain, currentUserEmail } ) => {
 	const transOpts = {
@@ -71,9 +71,9 @@ const TransferSiteToUserWarning = ( { translate, selectedSiteDomain, currentUser
 				</p>
 			</ActionPanelBody>
 			<ActionPanelFooter>
-				<Button href={ support.EMPTY_SITE }>
+				<Button href={ support.EMPTY_SITE } className="transfer-site-to-user__continue is-scary">
 					{ translate( 'Continue' ) }
-					<Gridicon icon="external" size={ 48 } />
+					<Gridicon icon="chevron-right" size={ 48 } />
 				</Button>
 			</ActionPanelFooter>
 		</ActionPanel>
@@ -85,6 +85,6 @@ export default connect( state => {
 
 	return {
 		selectedSiteDomain: getSiteDomain( state, siteId ),
-		currentUserEmail: getUserSetting( state, 'user_email' ),
+		currentUserEmail: userSettings.getSetting( 'user_email' ),
 	};
 } )( localize( TransferSiteToUserWarning ) );
