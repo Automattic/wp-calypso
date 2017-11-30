@@ -26,18 +26,6 @@ import {
 import { isStale } from '../utils';
 import { JETPACK_CONNECT_AUTHORIZE_TTL } from '../constants';
 
-function buildDefaultAuthorizeState() {
-	return {
-		queryObject: {},
-		isAuthorizing: false,
-		authorizeSuccess: false,
-		authorizeError: false,
-		timestamp: Date.now(),
-		userAlreadyConnected: false,
-		autoAuthorize: false,
-	};
-}
-
 export default function jetpackConnectAuthorize( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_AUTHORIZE:
@@ -86,7 +74,15 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 			);
 			return Object.assign(
 				{},
-				buildDefaultAuthorizeState(),
+				{
+					queryObject: {},
+					isAuthorizing: false,
+					authorizeSuccess: false,
+					authorizeError: false,
+					timestamp: Date.now(),
+					userAlreadyConnected: false,
+					autoAuthorize: false,
+				},
 				{ queryObject },
 				shouldAutoAuthorize && { autoAuthorize: true }
 			);
