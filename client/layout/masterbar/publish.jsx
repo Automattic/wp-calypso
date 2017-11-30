@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { recordTracksEvent } from 'state/analytics/actions';
 import MasterbarItem from './item';
 import SitesPopover from 'components/sites-popover';
 import paths from 'lib/paths';
@@ -55,6 +56,10 @@ class MasterbarItemNew extends React.Component {
 		}
 	};
 
+	onSiteSelect = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_publish_write_clicked', {} );
+	};
+
 	getPopoverPosition = () => {
 		if ( viewport.isMobile() ) {
 			return 'bottom';
@@ -90,6 +95,7 @@ class MasterbarItemNew extends React.Component {
 						visible={ this.state.isShowingPopover }
 						context={ this.state.postButtonContext }
 						onClose={ this.toggleSitesPopover.bind( this, false ) }
+						onSiteSelect={ this.onSiteSelect }
 						groups={ true }
 						position={ this.getPopoverPosition() }
 					/>
@@ -101,5 +107,8 @@ class MasterbarItemNew extends React.Component {
 }
 
 export default connect( state => {
-	return { selectedSite: getSelectedSite( state ) };
+	return {
+		selectedSite: getSelectedSite( state ),
+		recordTracksEvent,
+	};
 } )( MasterbarItemNew );

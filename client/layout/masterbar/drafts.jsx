@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import Popover from 'components/popover';
 import Count from 'components/count';
@@ -50,6 +51,11 @@ class MasterbarDrafts extends Component {
 
 	closeDrafts = () => {
 		this.setState( { showDrafts: false } );
+	};
+
+	draftClicked = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_publish_draft_clicked', {} );
+		this.closeDrafts();
 	};
 
 	render() {
@@ -116,7 +122,7 @@ class MasterbarDrafts extends Component {
 				post={ draft }
 				siteId={ site && site.ID }
 				showAuthor={ site && ! site.single_user_site && ! this.props.userId }
-				onTitleClick={ this.closeDrafts }
+				onTitleClick={ this.draftClicked }
 			/>
 		);
 	}
@@ -142,5 +148,6 @@ export default connect( state => {
 		draftsQuery: draftsQuery,
 		draftCount: myPostCounts && myPostCounts.draft,
 		selectedSite: site,
+		recordTracksEvent,
 	};
 } )( localize( MasterbarDrafts ) );
