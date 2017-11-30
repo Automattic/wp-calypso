@@ -37,6 +37,7 @@ import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import help from './help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
+import jetpackOnboarding from './jetpack-onboarding/reducer';
 import jetpack from './jetpack/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import jitm from './jitm/reducer';
@@ -113,6 +114,7 @@ const reducers = {
 	happychat,
 	help,
 	jetpackConnect,
+	jetpackOnboarding,
 	jetpack,
 	jetpackSync,
 	jitm,
