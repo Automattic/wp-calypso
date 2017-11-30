@@ -85,11 +85,11 @@ class PlansLanding extends Component {
 	};
 
 	render() {
-		const { basePlansPath, interval, requestingSites, site } = this.props;
+		const { basePlansPath, interval, requestingSites, site, url } = this.props;
 
 		// We're redirecting in componentDidMount if the site is already connected
 		// so don't bother rendering any markup if this is the case
-		if ( site || requestingSites ) {
+		if ( url && ( site || requestingSites ) ) {
 			return null;
 		}
 
