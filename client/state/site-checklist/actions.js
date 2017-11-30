@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { SITE_CHECKLIST_REQUEST } from 'state/action-types';
+import { SITE_CHECKLIST_REQUEST, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
 
 /**
  * Action creator function: SITE_CHECKLIST_REQUEST
@@ -15,4 +15,17 @@ import { SITE_CHECKLIST_REQUEST } from 'state/action-types';
 export const requestSiteChecklist = siteId => ( {
 	type: SITE_CHECKLIST_REQUEST,
 	siteId,
+} );
+
+/**
+ * Action creator function: SITE_CHECKLIST_TASK_UPDATE
+ *
+ * @param {String} siteId for the checklist
+ * @param {String} taskId for the task
+ * @return {Object} action object
+ */
+export const requestSiteChecklistTaskUpdate = ( siteId, taskId ) => ( {
+	type: SITE_CHECKLIST_TASK_UPDATE,
+	siteId,
+	taskId,
 } );
