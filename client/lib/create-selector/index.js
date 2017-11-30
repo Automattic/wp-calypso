@@ -6,40 +6,36 @@
 import { castArray, isObject, forEach, fill } from 'lodash';
 
 /**
- * A map that starts out Weak and if a primitive value is ever added to it
- * then it converts into a strong map.
+ * A map that is Weak with objects but Strong with primitives
  */
 export class LazyWeakMap {
-	map = new WeakMap();
-	isWeak = true;
+	weakMap = new WeakMap();
+	map = new Map();
+
+	mapForKey = key => ( isObject( key ) ? this.weakMap : this.map );
 
 	clear() {
-		if ( this.isWeak ) {
-			this.map = new WeakMap();
-		} else {
-			this.map.clear();
-		}
+		this.weakMap = new WeakMap();
+		this.map.clear();
 		return this;
 	}
 
 	set( k, v ) {
-		if ( this.isWeak && ! isObject( k ) ) {
-			this.isWeak = false;
-			const oldMap = this.map;
-			this.map = new Map( oldMap.entries );
-		}
-		this.map.set( k, v );
+		this.mapForKey( k ).set( k, v );
 		return this;
 	}
 
 	delete( k ) {
-		return this.map.delete( k );
+		this.mapForKey( k ).delete( k );
+		return this;
 	}
+
 	get( k ) {
-		return this.map.get( k );
+		return this.mapForKey( k ).get( k );
 	}
+
 	has( k ) {
-		return this.map.has( k );
+		return this.mapForKey( k ).has( k );
 	}
 }
 
