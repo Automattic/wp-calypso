@@ -23,6 +23,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 	static propTypes = {
 		domain: PropTypes.string,
 		setValid: PropTypes.func,
+		supportsPrivacy: PropTypes.bool,
 	};
 
 	state = {
@@ -44,7 +45,9 @@ class TransferDomainPrecheck extends React.PureComponent {
 	}
 
 	onClick = () => {
-		this.props.setValid( this.props.domain );
+		const { domain, supportsPrivacy } = this.props;
+
+		this.props.setValid( domain, supportsPrivacy );
 	};
 
 	refreshStatus = ( proceedToNextStep = true ) => {

@@ -60,6 +60,7 @@ class TransferDomainStep extends React.Component {
 		return {
 			searchQuery: this.props.initialQuery || '',
 			domain: null,
+			supportsPrivacy: false,
 		};
 	}
 
@@ -189,13 +190,14 @@ class TransferDomainStep extends React.Component {
 			<TransferDomainPrecheck
 				domain={ this.state.domain }
 				setValid={ this.props.onTransferDomain }
+				supportsPrivacy={ this.state.supportsPrivacy }
 			/>
 		);
 	}
 
 	goBack = () => {
 		if ( this.state.domain ) {
-			this.setState( { domain: null } );
+			this.setState( { domain: null, supportsPrivacy: false } );
 		} else {
 			this.props.goBack();
 		}
@@ -287,7 +289,10 @@ class TransferDomainStep extends React.Component {
 				case domainAvailability.MAPPED:
 				case domainAvailability.UNKNOWN:
 					if ( get( result, 'transferrable', error ) === true ) {
-						this.setState( { domain } );
+						this.setState( {
+							domain,
+							supportsPrivacy: get( result, 'supports_privacy', false ),
+						} );
 						return;
 					}
 

@@ -63,7 +63,7 @@ export class TransferDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	handleTransferDomain = domain => {
+	handleTransferDomain = ( domain, supportsPrivacy ) => {
 		const { selectedSiteSlug } = this.props;
 
 		this.setState( { errorMessage: null } );
@@ -73,14 +73,17 @@ export class TransferDomain extends Component {
 		transferItems.push(
 			cartItems.domainTransfer( {
 				domain,
+				extra: { privacy_available: supportsPrivacy },
 			} )
 		);
 
-		transferItems.push(
-			cartItems.domainTransferPrivacy( {
-				domain,
-			} )
-		);
+		if ( supportsPrivacy ) {
+			transferItems.push(
+				cartItems.domainTransferPrivacy( {
+					domain,
+				} )
+			);
+		}
 
 		upgradesActions.addItems( transferItems );
 
