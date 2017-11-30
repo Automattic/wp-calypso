@@ -73,7 +73,7 @@ export class MediaLibraryDataSource extends Component {
 			{
 				value: 'google_photos',
 				label: translate( 'Photos from Your Google library' ),
-				icon: <img src="/calypso/images/sharing/google-photos-logo.svg" width="24" height="24" />,
+				icon: <Gridicon icon="image" size={ 24 } />,
 			},
 		];
 		const currentSelected = find( sources, item => item.value === source );
