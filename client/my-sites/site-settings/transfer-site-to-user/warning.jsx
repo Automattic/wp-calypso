@@ -45,23 +45,21 @@ class TransferSiteToUserWarning extends PureComponent {
 					<ActionPanelTitle>{ translate( 'Transfer Your Site' ) }</ActionPanelTitle>
 					<p>
 						{ translate(
-							'Transferring a site cannot be undone. ' +
-								'Please read the following actions that will ' +
+							'Transferring a site cannot be undone. Please read the following actions that will ' +
 								'take place when you transfer this blog:'
 						) }
 					</p>
 					<ul>
-						<li>{ translate( 'You will be removed as owner of ' + '%(domain)s', transOpts ) }</li>
+						<li>{ translate( 'You will be removed as owner of %(domain)s', transOpts ) }</li>
 						<li>
 							{ translate(
-								'You will not be able to access ' + '%(domain)s unless allowed by the new owner',
+								'You will not be able to access %(domain)s unless allowed by the new owner',
 								transOpts
 							) }
 						</li>
 						<li>
 							{ translate(
-								'Your posts on %(domain)s ' +
-									'will be transferred to the new owner and ' +
+								'Your posts on %(domain)s will be transferred to the new owner and ' +
 									'will no longer be authored by your account.',
 								transOpts
 							) }
@@ -69,15 +67,12 @@ class TransferSiteToUserWarning extends PureComponent {
 					</ul>
 					<p>
 						{ translate(
-							'Note that you will be sent a ' +
-								'confirmation email to %(email)s before ' +
+							'Note that you will be sent a confirmation email to %(email)s before ' +
 								'the above actions are performed.',
 							transOpts
 						) }
 					</p>
-					<p>
-						{ translate( 'Please make sure this is what you want ' + 'to do before continuing!' ) }
-					</p>
+					<p>{ translate( 'Please make sure this is what you want to do before continuing!' ) }</p>
 				</ActionPanelBody>
 				<ActionPanelFooter>
 					<Button
