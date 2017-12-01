@@ -113,7 +113,7 @@ class LikeButton extends PureComponent {
 				{
 					href,
 					className: classNames( containerClasses ),
-					onClick: ! isLink && this.toggleLiked,
+					onClick: ! isLink ? this.toggleLiked : null,
 				},
 				isNull
 			),
