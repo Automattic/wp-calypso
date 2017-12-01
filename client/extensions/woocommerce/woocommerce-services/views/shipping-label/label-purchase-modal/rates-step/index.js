@@ -112,7 +112,6 @@ const RatesStep = ( props ) => {
 				selectedRates={ values }
 				availableRates={ available }
 				updateRate={ updateRateHandler }
-				currencySymbol={ currencySymbol }
 				errors={ errors } />
 		</StepContainer>
 	);

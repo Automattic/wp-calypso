@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, get, isEmpty, isEqual, isFinite, map, mapValues, some, sum } from 'lodash';
+import { find, get, isEmpty, isEqual, isFinite, map, mapValues, reduce, some, sum } from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -101,6 +101,34 @@ export const getRatesTotal = createSelector(
 		return [ form && form.rates ];
 	}
 );
+
+export const getPriceBreakdown = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const form = getForm( state, orderId, siteId );
+	if ( ! form ) {
+		return null;
+	}
+
+	const { values: selectedRates, available: availableRates } = form.rates;
+	const summary = reduce( selectedRates, ( result, selectedServiceId, packageId ) => {
+		const packageRates = get( availableRates, [ packageId, 'rates' ], false );
+		if ( ! packageRates || ! packageRates.length || ! isFinite( packageRates[ 0 ].retail_rate ) ) {
+			return [];
+		}
+
+		const foundRate = find( packageRates, [ 'service_id', selectedServiceId ] );
+		if ( foundRate ) {
+			result.push( {
+				title: foundRate.title,
+				retailRate: foundRate.retail_rate,
+				rate: foundRate.rate,
+			} );
+		}
+
+		return result;
+	}, [] );
+
+	return summary.length ? summary : null;
+};
 
 const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized, ignoreValidation }, countriesData ) => {
 	if ( isNormalized && ! normalized ) {
