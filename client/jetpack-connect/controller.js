@@ -17,7 +17,7 @@ import i18nUtils from 'lib/i18n-utils';
 import JetpackConnect from './main';
 import JetpackConnectAuthorizeForm from './authorize-form';
 import JetpackNewSite from './jetpack-new-site/index';
-import jetpackSSOForm from './sso';
+import JetpackSsoForm from './sso';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
 import route from 'lib/route';
@@ -173,7 +173,7 @@ export function sso( context, next ) {
 
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-	context.primary = React.createElement( jetpackSSOForm, {
+	context.primary = React.createElement( JetpackSsoForm, {
 		path: context.path,
 		locale: context.params.locale,
 		userModule: userModule,
