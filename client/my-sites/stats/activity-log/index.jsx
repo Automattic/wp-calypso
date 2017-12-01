@@ -448,9 +448,9 @@ class ActivityLog extends Component {
 			return null;
 		}
 
-		const { rewindStatusError, translate } = this.props;
+		const { isRewindActive, rewindStatusError, translate } = this.props;
 
-		if ( rewindStatusError ) {
+		if ( isRewindActive && rewindStatusError ) {
 			return (
 				<ActivityLogBanner status="error" icon={ null }>
 					{ translate( 'Rewind error: %s', { args: rewindStatusError.message } ) }
