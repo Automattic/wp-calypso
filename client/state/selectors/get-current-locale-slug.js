@@ -16,8 +16,9 @@ import createSelector from 'lib/create-selector';
  * @param {Object} state - global redux state
  * @return {String} current state value
  */
-const getCurrentLocaleSlug = createSelector( state =>
-	get( state, 'ui.language.localeSlug', null )
+const getCurrentLocaleSlug = createSelector(
+	state => get( state, 'ui.language.localeSlug', null ),
+	state => state.ui.language
 );
 
 export default getCurrentLocaleSlug;
