@@ -28,14 +28,5 @@
 				}
 			}
 		]
-	],
-	"env": {
-		"test": {
-			"plugins": [
-				[ "transform-builtin-extend", {
-					"globals": [ "Error" ]
-				} ],
-			]
-		}
-	}
+	]
 }
