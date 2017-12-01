@@ -218,7 +218,8 @@ class Security2faEnable extends React.Component {
 			<div className="security-2fa-enable__time-code-block">
 				<p className="security-2fa-enable__time-instruction">
 					{ this.props.translate(
-						'Enter this time code into your authenticator app. {{toggleMethodLink}}Prefer to scan the code?{{/toggleMethodLink}}',
+						'Enter this time code into your authenticator app. {{toggleMethodLink}}Prefer to ' +
+							'scan the code?{{/toggleMethodLink}}',
 						{
 							components: {
 								toggleMethodLink: this.getToggleLink(),
