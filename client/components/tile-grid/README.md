@@ -17,6 +17,7 @@ Component used to display a clickable tile with an image, call to action and des
 
 #### Props
 
+* `buttonClassName`: Add your own class to the tile button.
 * `buttonLabel`: Text of the button.
 * `className`: Add your own class to the tile.
 * `description`: Description text.

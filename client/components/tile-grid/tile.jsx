@@ -15,6 +15,7 @@ import Card from 'components/card';
 
 export default class extends React.PureComponent {
 	static propTypes = {
+		buttonClassName: PropTypes.string,
 		buttonLabel: PropTypes.string,
 		className: PropTypes.string,
 		description: PropTypes.string,
@@ -24,7 +25,15 @@ export default class extends React.PureComponent {
 	};
 
 	render() {
-		const { buttonLabel, className, description, href, image, onClick } = this.props;
+		const {
+			buttonClassName,
+			buttonLabel,
+			className,
+			description,
+			href,
+			image,
+			onClick,
+		} = this.props;
 		const isClickable = href || onClick;
 		const TileElement = isClickable ? 'a' : 'span';
 		const tileClassName = classNames(
@@ -45,7 +54,7 @@ export default class extends React.PureComponent {
 					) }
 					<div className="tile-grid__item-copy">
 						{ buttonLabel && (
-							<Button className="tile-grid__cta" compact>
+							<Button className={ classNames( 'tile-grid__cta', buttonClassName ) } compact>
 								{ buttonLabel }
 							</Button>
 						) }
