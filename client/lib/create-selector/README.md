@@ -10,6 +10,7 @@ This module exports a single function which creates a memoized state selector fo
 - A function which calculates the cached result given a state object and any number of variable arguments necessary to calculate the result
 - A function or array of functions which return array of dependent state, given the state and the same arguments as the selector
 - _(Optional)_ A function to customize the cache key used by the inner memoized function
+- _(Optional)_ A boolean flag to indicate whether or not the caching should bust per individual key (false by default)
 
 For example, we might consider that our state contains post objects, each of which are assigned to a particular site. Retrieving an array of posts for a specific site would require us to filter over all of the known posts. While this would normally be an expensive operation, we can use `createSelector` to create a memoized function:
 
@@ -50,15 +51,15 @@ Do note that the internal memoized function calculates its cache key by a simple
 
 ### How can I express that my new selector depends on state from multiple selectors?
 
-Let's assume your new selector depends on the state selectors `foo`, `bar`, and `baz`. You could then state that like so:
+Let's assume your new selector depends on the state selectors `getFoo`, `getBar`, and `getBaz`. You could then state that like so:
 
 ```js
 createSelector(
-    state => foo( state ) && bar( state ),
+    state => getFoo( state ) && getBar( state ),
     state => [
-        foo( state ),
-        bar( state ),
-        baz( state ),
+        getFoo( state ),
+        getBar( state ),
+        getBaz( state ),
     ]
 );
 ```
@@ -67,9 +68,49 @@ Since this is a reoccurring pattern, there is a shorthand for this situation. Yo
 
 ```js
 createSelector(
-    state => foo( state ) && bar( state ),
+    state => getFoo( state ) && getBar( state ),
     [ foo, bar, baz ]
 );
+```
+
+### What's the difference between caching per selector or caching per key?
+
+Recall that when a number of arguments are passed to the memoized selector a cache key is generated from those arguments.
+Those cache keys are used to store the selected values against.
+
+Normally, when the dependants of that selector change we invalidate the cache for all uses of that selector, regardless of the cache keys.
+
+Take this hypthetical case for example:
+```js
+const someExpensiveMemoizedSelector = createSelector(
+    someExpensiveSelector,
+    // here, we're expressing that the selector depends on a particular post in state.
+    [ ( state, postId ) => getPost( state, postId ) ]
+);
+
+someExpensiveMemoizedSelector( state, '1234' );
+
+// Calling someExpensiveMemoizedSelector with a different Id 
+// would clear all previously cached values for someExpensiveMemoizedSelector
+someExpensiveMemoizedSelector( state, '1235' );
+```
+
+By setting the `cachePerKey` flag to true, the values will be stored in the same way, but will be invalidated on a per key basis.
+Subsequent calls to `someExpensiveMemoizedSelector` will only invalidate if the post matching the `postId` changes.
+
+```js
+const someExpensiveMemoizedSelector = createSelector(
+    someExpensiveSelector,
+    // here, we're expressing that the selector depends on a particular post in state.
+    [ ( state, postId ) => getPost( state, postId ) ],
+    null,
+    true // cachePerKey
+);
+
+someExpensiveMemoizedSelector( state, '1234' );
+
+// Calling someExpensiveMemoizedSelector with a different Id no longer clears the entire cache.
+someExpensiveMemoizedSelector( state, '1235' );
 ```
 
 ### How can I access the internal cache?
