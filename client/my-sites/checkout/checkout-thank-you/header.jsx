@@ -192,6 +192,7 @@ class CheckoutThankYouHeader extends PureComponent {
 
 		if (
 			! hasFailedPurchases &&
+			primaryPurchase &&
 			isPlan( primaryPurchase ) &&
 			selectedSite &&
 			! selectedSite.jetpack
@@ -215,7 +216,7 @@ class CheckoutThankYouHeader extends PureComponent {
 		let svg = 'thank-you.svg';
 		if ( hasFailedPurchases ) {
 			svg = 'items-failed.svg';
-		} else if ( isDomainTransfer( primaryPurchase ) ) {
+		} else if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
 			svg = 'check-emails-desktop.svg';
 		}
 

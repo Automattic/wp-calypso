@@ -441,12 +441,14 @@ class CheckoutThankYou extends React.Component {
 					hasFailedPurchases={ hasFailedPurchases }
 				/>
 
-				<CheckoutThankYouFeaturesHeader
-					isDataLoaded={ this.isDataLoaded() }
-					isGenericReceipt={ this.isGenericReceipt() }
-					purchases={ purchases }
-					hasFailedPurchases={ hasFailedPurchases }
-				/>
+				{ primaryPurchase && (
+					<CheckoutThankYouFeaturesHeader
+						isDataLoaded={ this.isDataLoaded() }
+						isGenericReceipt={ this.isGenericReceipt() }
+						purchases={ purchases }
+						hasFailedPurchases={ hasFailedPurchases }
+					/>
+				) }
 
 				{ ComponentClass && (
 					<div className="checkout-thank-you__purchase-details-list">
