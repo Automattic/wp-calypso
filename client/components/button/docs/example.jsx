@@ -58,20 +58,20 @@ class Buttons extends React.PureComponent {
 				<Card>
 					<div className="docs__design-button-row">
 						<Button>Button</Button>
-						<Button icon>
+						<Button>
 							<Gridicon icon="heart" /> Icon button
 						</Button>
-						<Button icon>
+						<Button>
 							<Gridicon icon="plugins" />
 						</Button>
 						<Button disabled>Disabled button</Button>
 					</div>
 					<div className="docs__design-button-row">
 						<Button scary>Scary button</Button>
-						<Button scary icon>
+						<Button scary>
 							<Gridicon icon="globe" /> Scary icon button
 						</Button>
-						<Button scary icon>
+						<Button scary>
 							<Gridicon icon="pencil" />
 						</Button>
 						<Button scary disabled>
@@ -80,10 +80,10 @@ class Buttons extends React.PureComponent {
 					</div>
 					<div className="docs__design-button-row">
 						<Button primary>Primary button</Button>
-						<Button primary icon>
+						<Button primary>
 							<Gridicon icon="camera" /> Primary icon button
 						</Button>
-						<Button primary icon>
+						<Button primary>
 							<Gridicon icon="time" />
 						</Button>
 						<Button primary disabled>
@@ -94,10 +94,10 @@ class Buttons extends React.PureComponent {
 						<Button primary scary>
 							Primary scary button
 						</Button>
-						<Button primary scary icon>
+						<Button primary scary>
 							<Gridicon icon="user-circle" /> Primary scary icon button
 						</Button>
-						<Button primary scary icon>
+						<Button primary scary>
 							<Gridicon icon="cart" />
 						</Button>
 						<Button primary scary disabled>
@@ -140,10 +140,10 @@ class Buttons extends React.PureComponent {
 					</div>
 					<div className="docs__design-button-row">
 						<Button busy>Busy button</Button>
-						<Button primary busy icon>
+						<Button primary busy>
 							<Gridicon icon="camera" /> Primary icon button
 						</Button>
-						<Button primary busy icon>
+						<Button primary busy>
 							<Gridicon icon="time" />
 						</Button>
 						<Button primary busy>
@@ -157,10 +157,10 @@ class Buttons extends React.PureComponent {
 				<Card>
 					<div className="docs__design-button-row">
 						<Button compact>Compact button</Button>
-						<Button compact icon>
+						<Button compact>
 							<Gridicon icon="heart" /> Compact icon button
 						</Button>
-						<Button compact icon>
+						<Button compact>
 							<Gridicon icon="plugins" />
 						</Button>
 						<Button compact disabled>
@@ -171,10 +171,10 @@ class Buttons extends React.PureComponent {
 						<Button compact scary>
 							Compact scary button
 						</Button>
-						<Button compact scary icon>
+						<Button compact scary>
 							<Gridicon icon="globe" /> Compact scary icon button
 						</Button>
-						<Button compact scary icon>
+						<Button compact scary>
 							<Gridicon icon="pencil" />
 						</Button>
 						<Button compact scary disabled>
@@ -185,10 +185,10 @@ class Buttons extends React.PureComponent {
 						<Button compact primary>
 							Compact primary button
 						</Button>
-						<Button compact primary icon>
+						<Button compact primary>
 							<Gridicon icon="camera" /> Compact primary icon button
 						</Button>
-						<Button compact primary icon>
+						<Button compact primary>
 							<Gridicon icon="time" />
 						</Button>
 						<Button compact primary disabled>
@@ -199,10 +199,10 @@ class Buttons extends React.PureComponent {
 						<Button compact primary scary>
 							Compact primary scary button
 						</Button>
-						<Button compact primary scary icon>
+						<Button compact primary scary>
 							<Gridicon icon="user-circle" /> Compact primary scary icon button
 						</Button>
-						<Button compact primary scary icon>
+						<Button compact primary scary>
 							<Gridicon icon="cart" />
 						</Button>
 						<Button compact primary scary disabled>
@@ -247,10 +247,10 @@ class Buttons extends React.PureComponent {
 						<Button compact busy>
 							Busy button
 						</Button>
-						<Button compact primary busy icon>
+						<Button compact primary busy>
 							<Gridicon icon="camera" /> Primary icon button
 						</Button>
-						<Button compact primary busy icon>
+						<Button compact primary busy>
 							<Gridicon icon="time" />
 						</Button>
 						<Button compact primary busy>
