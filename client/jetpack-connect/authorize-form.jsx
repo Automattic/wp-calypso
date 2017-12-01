@@ -27,8 +27,6 @@ class JetpackConnectAuthorizeForm extends Component {
 		authorizationRemoteQueryData: PropTypes.shape( {
 			_ui: PropTypes.string,
 			_ut: PropTypes.string,
-			client_id: PropTypes.string,
-			from: PropTypes.string,
 		} ).isRequired,
 		isLoggedIn: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
