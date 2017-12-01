@@ -20,5 +20,11 @@ export default function isRtl( state ) {
 		return null;
 	}
 
-	return Boolean( getLanguage( localeSlug ).rtl );
+	const language = getLanguage( localeSlug );
+
+	if ( ! language ) {
+		return null;
+	}
+
+	return Boolean( language.rtl );
 }
