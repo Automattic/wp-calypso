@@ -6,9 +6,8 @@
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { isEmpty, pick } from 'lodash';
+import { pick } from 'lodash';
 import debugFactory from 'debug';
-import qs from 'qs';
 
 /**
  * Internal dependencies
@@ -23,9 +22,10 @@ import {
 } from 'state/document-head/selectors';
 import isRTL from 'state/selectors/is-rtl';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import { createReduxStore, reducer } from 'state';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { reducer } from 'state';
+import { SERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';
+import { getCacheKey } from 'isomorphic-routing';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
@@ -42,70 +42,25 @@ function bumpStat( group, name ) {
 	}
 }
 
-export function getCacheKey( context ) {
-	const pathname = context.pathname;
-	const isIsomorphic = isSectionIsomorphic( context.store.getState() );
-
-	if ( ! isIsomorphic ) {
-		return JSON.stringify( context.layout );
-	}
-
-	if ( isEmpty( context.query ) || isEmpty( context.cacheQueryKeys ) ) {
-		return pathname;
-	}
-
-	const cachedQueryParams = pick( context.query, context.cacheQueryKeys );
-
-	if ( isEmpty( cachedQueryParams ) ) {
-		return pathname;
-	}
-
-	return (
-		pathname + '?' + qs.stringify( cachedQueryParams, { sort: ( a, b ) => a.localeCompare( b ) } )
-	);
-}
-
 /**
 * Render and cache supplied React element to a markup string.
 * Cache is keyed by stringified element by default.
 *
-* @param {object} context - React element to be rendered to html
+* @param {object} element - React element to be rendered to html
 * @param {string} key - (optional) custom key
+* @return {string} The rendered Layout
 */
-export function renderLayout( context ) {
+export function render( element, key = JSON.stringify( element ) ) {
 	try {
 		const startTime = Date.now();
-		const isIsomorphic = isSectionIsomorphic( context.store.getState() );
-		const key = getCacheKey( context );
-
 		debug( 'cache access for key', key );
 
 		let renderedLayout = markupCache.get( key );
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
-			renderedLayout = ReactDomServer.renderToString( context.layout );
+			renderedLayout = ReactDomServer.renderToString( element );
 			markupCache.set( key, renderedLayout );
-
-			// save the state of the store with the same key as the layout
-			if ( context.store ) {
-				let reduxSubtrees = [ 'documentHead' ];
-
-				if ( isIsomorphic ) {
-					reduxSubtrees = reduxSubtrees.concat( [ 'ui', 'themes' ] );
-				}
-
-				// Send state to client
-				context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
-				const serverState = reducer( context.initialReduxState, { type: SERIALIZE } );
-				stateCache.set( key, serverState );
-			}
-		} else {
-			const serializedServerState = stateCache.get( key );
-			if ( serializedServerState ) {
-				context.initialReduxState = reducer( serializedServerState, { type: DESERIALIZE } );
-				context.store = createReduxStore( context.initialReduxState );
-			}
 		}
 		const rtsTimeMs = Date.now() - startTime;
 		debug( 'Server render time (ms)', rtsTimeMs );
@@ -115,16 +70,25 @@ export function renderLayout( context ) {
 			bumpStat( 'calypso-ssr', 'over-100ms-rendertostring' );
 		}
 
-		context.renderedLayout = renderedLayout;
+		return renderedLayout;
 	} catch ( ex ) {
 		if ( config( 'env' ) === 'development' ) {
 			throw ex;
 		}
 	}
+	//todo: render an error?
 }
 
 export function serverRender( req, res ) {
 	const context = req.context;
+	let title,
+		metas = [],
+		links = [],
+		cacheKey = false;
+
+	if ( isSectionIsomorphic( context.store.getState() ) && ! context.user ) {
+		cacheKey = getCacheKey( context );
+	}
 
 	if ( ! isDefaultLocale( context.lang ) ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
@@ -134,18 +98,40 @@ export function serverRender( req, res ) {
 		config.isEnabled( 'server-side-rendering' ) &&
 		context.layout &&
 		! context.user &&
+		cacheKey &&
 		isDefaultLocale( context.lang )
 	) {
-		renderLayout( context );
+		context.renderedLayout = render( context.layout, req.error ? req.error.message : cacheKey );
 	}
 
-	const title = getDocumentHeadFormattedTitle( context.store.getState() );
-	const metas = getDocumentHeadMeta( context.store.getState() );
-	const links = getDocumentHeadLink( context.store.getState() );
+	if ( context.store ) {
+		title = getDocumentHeadFormattedTitle( context.store.getState() );
+		metas = getDocumentHeadMeta( context.store.getState() );
+		links = getDocumentHeadLink( context.store.getState() );
 
-	context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
-	const isLocaleRTL = isRTL( context.store.getState() );
-	context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
+		const cacheableReduxSubtrees = [ 'documentHead' ];
+		let reduxSubtrees;
+
+		if ( isSectionIsomorphic( context.store.getState() ) ) {
+			reduxSubtrees = cacheableReduxSubtrees.concat( [ 'ui', 'themes' ] );
+		} else {
+			reduxSubtrees = cacheableReduxSubtrees;
+		}
+
+		// Send state to client
+		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
+
+		// And cache on the server, too.
+		if ( cacheKey ) {
+			const cacheableInitialState = pick( context.store.getState(), cacheableReduxSubtrees );
+			const serverState = reducer( cacheableInitialState, { type: SERIALIZE } );
+			stateCache.set( cacheKey, serverState );
+		}
+
+		context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
+		const isLocaleRTL = isRTL( context.store.getState() );
+		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
+	}
 
 	context.head = { title, metas, links };
 	context.config = config.ssrConfig;
@@ -165,16 +151,6 @@ export function serverRenderError( err, req, res, next ) {
 		req.error = err;
 		res.status( err.status || 500 );
 		res.render( '500', req.context );
-		return;
-	}
-
-	next();
-}
-
-export function serverRenderIfCached( req, res, next ) {
-	const context = req.context;
-	if ( markupCache.get( getCacheKey( context ) ) ) {
-		serverRender( req, res );
 		return;
 	}
 

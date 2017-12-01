@@ -1,8 +1,15 @@
 /** @format */
 /**
+ * External dependencies
+ */
+
+import { isEmpty, pick } from 'lodash';
+import qs from 'qs';
+
+/**
  * Internal dependencies
  */
-import { serverRender, serverRenderIfCached } from 'render';
+import { serverRender } from 'render';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 
@@ -28,7 +35,6 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 			expressApp.get(
 				route,
 				setUpRoute,
-				serverRenderIfCached,
 				combineMiddlewares(
 					setSectionMiddlewareFactory( section ),
 					setRouteMiddleware,
@@ -86,4 +92,17 @@ function applyMiddlewares( context, expressNext, ...middlewares ) {
 
 function compose( ...functions ) {
 	return functions.reduceRight( ( composed, f ) => () => f( composed ), () => {} );
+}
+
+export function getCacheKey( context ) {
+	if ( isEmpty( context.query ) || isEmpty( context.cacheQueryKeys ) ) {
+		return context.pathname;
+	}
+
+	const cachedQueryParams = pick( context.query, context.cacheQueryKeys );
+	return (
+		context.pathname +
+		'?' +
+		qs.stringify( cachedQueryParams, { sort: ( a, b ) => a.localCompare( b ) } )
+	);
 }
