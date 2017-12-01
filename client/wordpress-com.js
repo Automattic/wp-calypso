@@ -242,6 +242,12 @@ const sections = [
 		module: 'mailing-lists',
 		enableLoggedOut: true,
 	},
+	{
+		name: 'iframe',
+		paths: [ '/iframe' ],
+		module: 'iframe',
+		enableLoggedOut: true,
+	},
 ];
 
 sections.push( {
