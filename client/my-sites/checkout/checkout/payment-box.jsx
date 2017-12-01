@@ -20,7 +20,7 @@ import SectionHeader from 'components/section-header';
 import analytics from 'lib/analytics';
 import cartValues from 'lib/cart-values';
 
-class PaymentBox extends PureComponent {
+export class PaymentBox extends PureComponent {
 	constructor() {
 		super();
 		this.handlePaymentMethodChange = this.handlePaymentMethodChange.bind( this );
@@ -143,13 +143,17 @@ class PaymentBox extends PureComponent {
 				} )
 			: translate( 'Loading…' );
 
+		const paymentMethods = this.getPaymentMethods();
+
 		return (
 			<div className="checkout__payment-box-container" key={ this.props.currentPage }>
 				{ this.props.title ? <SectionHeader label={ this.props.title } /> : null }
 
-				<SectionNav selectedText={ titleText }>
-					<NavTabs>{ this.getPaymentMethods() }</NavTabs>
-				</SectionNav>
+				{ paymentMethods && (
+					<SectionNav selectedText={ titleText }>
+						<NavTabs>{ paymentMethods }</NavTabs>
+					</SectionNav>
+				) }
 
 				<Card className={ cardClass }>
 					<div className="checkout__box-padding">
