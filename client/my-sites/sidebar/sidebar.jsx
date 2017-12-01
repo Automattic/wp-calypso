@@ -381,10 +381,7 @@ export class MySitesSidebar extends Component {
 		const storeLink = '/store' + siteSuffix;
 
 		const isJetpackOrAtomicSite =
-			isJetpack &&
-			canUserManageOptions &&
-			( config.isEnabled( 'woocommerce/store-on-non-atomic-sites' ) ||
-				this.props.isSiteAutomatedTransfer );
+			isJetpack && canUserManageOptions && this.props.isSiteAutomatedTransfer;
 
 		if (
 			! isJetpackOrAtomicSite &&
