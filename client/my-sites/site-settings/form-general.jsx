@@ -459,7 +459,7 @@ const connectComponent = connect(
 		return {
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
-			supportsHolidaySnowOption: siteIsJetpack && isJetpackMinimumVersion( state, siteId, '4.0' ),
+			supportsHolidaySnowOption: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.0' ),
 		};
 	},
 	null,
