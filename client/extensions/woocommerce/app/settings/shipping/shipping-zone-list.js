@@ -30,18 +30,18 @@ import { getShippingZones } from 'woocommerce/state/ui/shipping/zones/selectors'
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { areShippingZonesLocationsValid } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
-import { createAddDefaultShippingZoneActionList } from 'woocommerce/state/ui/shipping/zones/actions';
+import { createAddDefultShippingZoneActionList } from 'woocommerce/state/ui/shipping/zones/actions';
 
 class ShippingZoneList extends Component {
 	componentWillMount() {
 		if ( this.props.loaded ) {
-			this.props.actions.createAddDefaultShippingZoneActionList();
+			this.props.actions.createAddDefultShippingZoneActionList();
 		}
 	}
 
 	componentWillReceiveProps( { loaded } ) {
 		if ( ! this.props.loaded && loaded && ! this.props.savingZones ) {
-			this.props.actions.createAddDefaultShippingZoneActionList();
+			this.props.actions.createAddDefultShippingZoneActionList();
 		}
 	}
 
@@ -141,7 +141,7 @@ export default connect(
 	dispatch => ( {
 		actions: bindActionCreators(
 			{
-				createAddDefaultShippingZoneActionList,
+				createAddDefultShippingZoneActionList,
 			},
 			dispatch
 		),

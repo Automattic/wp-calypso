@@ -7,30 +7,24 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
-import debugFactory from 'debug';
-const debug = debugFactory( 'allendav' );
 
 /**
  * Internal dependencies
  */
 import config from 'config';
 import Button from 'components/button';
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
-import { createWcsShippingSaveActionList } from 'woocommerce/woocommerce-services/state/actions';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import getSaveSettingsActionListSteps from 'woocommerce/state/data-layer/ui/woocommerce-services/reducer';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { ProtectFormGuard } from 'lib/protect-form';
+import { createWcsShippingSaveActionList } from 'woocommerce/woocommerce-services/state/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { getActionList } from 'woocommerce/state/action-list/selectors';
 
 class ShippingSettingsSaveButton extends Component {
 	componentDidMount = () => {
@@ -88,50 +82,38 @@ class ShippingSettingsSaveButton extends Component {
 	};
 
 	render() {
-		const { hasEdits, finishedInitialSetup, isSaving, loading, site, translate } = this.props;
+		const { translate, loading, site, finishedInitialSetup, isSaving } = this.props;
 		const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
 
 		if ( loading || ! site ) {
 			return null;
 		}
 
-		if ( finishedInitialSetup && ! wcsEnabled ) {
-			return null;
-		}
-
-		const clickHandler = finishedInitialSetup ? this.save : this.redirect;
-		let label = translate( 'Save' );
-		if ( ! finishedInitialSetup ) {
-			label = wcsEnabled ? translate( 'Save and finish' ) : translate( "I'm Finished" );
-		}
-
-		return (
-			<div>
-				<Button onClick={ clickHandler } primary busy={ isSaving } disabled={ isSaving }>
-					{ label }
+		if ( finishedInitialSetup ) {
+			return wcsEnabled ? (
+				<Button onClick={ this.save } primary busy={ isSaving } disabled={ isSaving }>
+					{ translate( 'Save' ) }
 				</Button>
-				<ProtectFormGuard isChanged={ hasEdits } />
-			</div>
+			) : null;
+		}
+		const label = wcsEnabled ? translate( 'Save and finish' ) : translate( "I'm Finished" );
+		return (
+			<Button onClick={ this.redirect } primary busy={ isSaving } disabled={ isSaving }>
+				{ label }
+			</Button>
 		);
 	}
 }
 
 function mapStateToProps( state ) {
-	const foo = getSaveSettingsActionListSteps( state );
-	debug( 'getSaveSettingsActionListSteps=', foo );
-	// TODO FIX ALLENDAV MON NOV 27 - LOOKS LIKE CANCELLING A PACKAGE FAILS TO REMOVE THE ACTIONS FROM THE UI EDIT LIST
-	// SAME THING FOR CHANGING THE LABEL SIZE AND THEN CHANGING IT BACK
-
 	const site = getSelectedSiteWithFallback( state );
-	const hasEdits = ! isEmpty( getSaveSettingsActionListSteps( state ) );
 	const loading = areSetupChoicesLoading( state );
 	const finishedInitialSetup = getFinishedInitialSetup( state );
 	return {
-		hasEdits,
-		finishedInitialSetup,
-		isSaving: Boolean( getActionList( state ) ),
-		loading,
 		site,
+		finishedInitialSetup,
+		loading,
+		isSaving: Boolean( getActionList( state ) ),
 	};
 }
 
