@@ -2,7 +2,7 @@
 /**
  * External dependencis
  */
-import { includes, isEmpty, omit } from 'lodash';
+import { get, includes, isEmpty, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -68,11 +68,11 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_QUERY_SET:
 			const shouldAutoAuthorize = includes(
 				[ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ],
-				action.queryObject.from
+				get( action, [ 'queryObject', 'from' ] )
 			);
 			return Object.assign(
 				{
-					queryObject: action.queryObject,
+					queryObject: action.queryObject || {},
 					isAuthorizing: false,
 					authorizeSuccess: false,
 					authorizeError: false,
@@ -106,15 +106,11 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 				authorizeError: false,
 				autoAuthorize: true,
 				userData: action.userData,
-				bearerToken: action.data.bearer_token,
+				bearerToken: get( action, [ 'data', 'bearer_token' ] ),
 			} );
 
 		case SITE_REQUEST_FAILURE:
-			if (
-				state.queryObject &&
-				state.queryObject.client_id &&
-				parseInt( state.queryObject.client_id, 10 ) === action.siteId
-			) {
+			if ( parseInt( get( state, [ 'queryObject', 'client_id' ], 0 ), 10 ) === action.siteId ) {
 				return Object.assign( {}, state, { clientNotResponding: true } );
 			}
 			return state;
