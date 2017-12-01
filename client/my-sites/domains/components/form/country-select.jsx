@@ -76,6 +76,7 @@ export default React.createClass( {
 
 					<FormSelect
 						name={ this.props.name }
+						id={ this.props.name }
 						value={ value }
 						disabled={ this.props.disabled }
 						ref="input"
