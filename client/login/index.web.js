@@ -1,18 +1,11 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { map } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import config from 'config';
-import { login, magicLogin, magicLoginUse, redirectDefaultLocale } from './controller';
+import { lang, login, magicLogin, magicLoginUse, redirectDefaultLocale } from './controller';
 import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
-
-export const lang = `:lang(${ map( config( 'languages' ), 'langSlug' ).join( '|' ) })?`;
 
 export default router => {
 	if ( config.isEnabled( 'login/magic-login' ) ) {

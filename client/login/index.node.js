@@ -5,7 +5,8 @@
  */
 
 import config from 'config';
-import webRouter, { lang } from './index.web';
+import webRouter from './index.web';
+import { lang } from './controller';
 import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
 
 export default router => {
