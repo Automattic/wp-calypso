@@ -18,6 +18,7 @@ const ConversationCommentListExample = () => {
 	return (
 		<div className="design-assets__group">
 			<ConversationCommentList
+				commentsFetchingStatus={ {} }
 				commentsTree={ commentsTree }
 				blogId={ 123 }
 				postId={ 12 }
