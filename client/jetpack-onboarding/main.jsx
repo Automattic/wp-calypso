@@ -41,7 +41,14 @@ class JetpackOnboardingMain extends React.Component {
 
 export default connect( () => {
 	// Note: here we can select which steps to display, based on user's input
-	const steps = compact( [ STEPS.SITE_TITLE, STEPS.SITE_TYPE ] );
+	const steps = compact( [
+		STEPS.SITE_TITLE,
+		STEPS.SITE_TYPE,
+		STEPS.HOMEPAGE,
+		STEPS.CONTACT_FORM,
+		STEPS.WOOCOMMERCE,
+		STEPS.SUMMARY,
+	] );
 
 	return {
 		steps,
