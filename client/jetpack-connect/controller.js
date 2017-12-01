@@ -35,7 +35,7 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
-import { retrievePlan, storePlan } from './persistence-utils';
+import { storePlan } from './persistence-utils';
 
 /**
  * Module variables
@@ -129,9 +129,7 @@ export default {
 		debug( 'entered connect flow with params %o', params );
 
 		const planSlug = getPlanSlugFromFlowType( type, interval );
-		if ( planSlug && ! retrievePlan() ) {
-			storePlan( planSlug );
-		}
+		planSlug && storePlan( planSlug );
 
 		analytics.pageView.record( pathname, analyticsPageTitle );
 
