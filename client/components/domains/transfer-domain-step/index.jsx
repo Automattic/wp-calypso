@@ -132,7 +132,13 @@ class TransferDomainStep extends React.Component {
 									'you can manage your domain and site in the same place. {{a}}Learn More{{/a}}',
 								{
 									components: {
-										a: <a href={ support.INCOMING_DOMAIN_TRANSFER } rel="noopener noreferrer" />,
+										a: (
+											<a
+												href={ support.INCOMING_DOMAIN_TRANSFER }
+												rel="noopener noreferrer"
+												target="_blank"
+											/>
+										),
 									},
 								}
 							) }
@@ -176,6 +182,7 @@ class TransferDomainStep extends React.Component {
 							className="transfer-domain-step__map-help"
 							href={ support.MAP_EXISTING_DOMAIN }
 							rel="noopener noreferrer"
+							target="_blank"
 						>
 							<Gridicon icon="help" size={ 18 } />
 						</a>

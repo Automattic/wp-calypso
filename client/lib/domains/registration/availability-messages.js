@@ -152,6 +152,7 @@ function getAvailabilityNotice( domain, error ) {
 							<a
 								href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 								rel="noopener noreferrer"
+								target="_blank"
 							/>
 						),
 					},

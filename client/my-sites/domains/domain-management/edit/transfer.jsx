@@ -101,7 +101,13 @@ class Transfer extends React.PureComponent {
 							{
 								components: {
 									strong: <strong />,
-									a: <a href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED } />,
+									a: (
+										<a
+											href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED }
+											rel="noopener noreferrer"
+											target="_blank"
+										/>
+									),
 								},
 								args: { domain: domain.name },
 							}
