@@ -8,6 +8,7 @@ import React from 'react';
 import { parse as parseUrl } from 'url';
 import page from 'page';
 import qs from 'qs';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,6 +39,11 @@ const enhanceContextWithLogin = context => {
 };
 
 export default {
+	// Defining this here so it can be used by both ./index.node.js and ./index.web.js
+	// We cannot export it from either of those (to import it from the other) because of
+	// the way that `server/bundler/loader` expects only a default export and nothing else.
+	lang: `:lang(${ map( config( 'languages' ), 'langSlug' ).join( '|' ) })?`,
+
 	login( context, next ) {
 		const { query: { client_id, redirect_to } } = context;
 
@@ -97,11 +103,7 @@ export default {
 		const { client_id, email, token } = previousQuery;
 
 		context.primary = (
-			<HandleEmailedLinkForm
-				clientId={ client_id }
-				emailAddress={ email }
-				token={ token }
-			/>
+			<HandleEmailedLinkForm clientId={ client_id } emailAddress={ email } token={ token } />
 		);
 
 		next();
