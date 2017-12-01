@@ -22,7 +22,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteDomain } from 'state/sites/selectors';
 import userSettings from 'lib/user-settings';
 
-class TransferSiteToUserWarning extends PureComponent {
+class SiteTransferWarning extends PureComponent {
 	static propTypes = {
 		selectedSiteDomain: PropTypes.string,
 		currentUserEmail: PropTypes.string,
@@ -46,7 +46,7 @@ class TransferSiteToUserWarning extends PureComponent {
 					<p>
 						{ translate(
 							'Transferring a site cannot be undone. Please read the following actions that will ' +
-								'take place when you transfer this blog:'
+								'take place when you transfer this site:'
 						) }
 					</p>
 					<ul>
@@ -95,4 +95,4 @@ export default connect( state => {
 		selectedSiteDomain: getSiteDomain( state, siteId ),
 		currentUserEmail: userSettings.getSetting( 'user_email' ),
 	};
-} )( localize( TransferSiteToUserWarning ) );
+} )( localize( SiteTransferWarning ) );
