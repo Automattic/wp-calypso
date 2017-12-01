@@ -18,10 +18,12 @@ import JetpackConnect from './main';
 import JetpackConnectAuthorizeForm from './authorize-form';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSsoForm from './sso';
+import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
 import route from 'lib/route';
 import userFactory from 'lib/user';
+import { getAuthorizationRemoteQueryData } from 'state/jetpack-connect/selectors';
 import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
@@ -83,6 +85,24 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 
 	return get( planSlugs, [ interval, type ], '' );
 };
+
+export function maybeNoDirectAccess( context, next ) {
+	if ( typeof getAuthorizationRemoteQueryData( context.store.getState() ) === 'undefined' ) {
+		const analyticsBasePath = 'jetpack/connect/authorize';
+		const analyticsPageTitle = 'Jetpack Authorize';
+
+		removeSidebar( context );
+
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
+		return renderWithReduxStore(
+			<NoDirectAccessError />,
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	}
+	return next();
+}
 
 export function redirectWithoutLocaleifLoggedIn( context, next ) {
 	if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
