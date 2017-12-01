@@ -17,6 +17,7 @@
     "> 1%"
   ],
   "dependencies": {
+    "ajv": "5.4.0",
     "assets-webpack-plugin": "3.5.1",
     "async": "0.9.0",
     "autoprefixer": "6.3.5",
@@ -88,7 +89,6 @@
     "immutable": "3.7.6",
     "imports-loader": "0.6.5",
     "inherits": "2.0.1",
-    "is-my-json-valid": "2.13.1",
     "jquery": "1.11.3",
     "json-loader": "0.5.4",
     "json-stable-stringify": "1.0.1",
