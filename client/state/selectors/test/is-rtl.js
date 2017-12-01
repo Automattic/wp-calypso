@@ -12,7 +12,7 @@ import { isRtl } from '../';
 
 describe( 'isRtl()', () => {
 	test( 'should return null if the value is not known', () => {
-		const result = isRtl( {} );
+		const result = isRtl( { ui: { language: {} } } );
 
 		expect( result ).to.be.null;
 	} );
