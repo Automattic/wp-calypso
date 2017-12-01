@@ -16,7 +16,7 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
-import { isQueryLoading, isQueryError, items, queries, total } from '../reducer';
+import { isQueryLoading, isQueryError, items, queries, total, totalPages } from '../reducer';
 import reducer from 'woocommerce/state/sites/reducer';
 
 const cats = [
@@ -64,6 +64,7 @@ describe( 'reducer', () => {
 					page: 1,
 				},
 				total: 2,
+				totalPages: 1,
 				data: [],
 			};
 			const newState = isQueryLoading( { '{}': true }, action );
@@ -89,6 +90,7 @@ describe( 'reducer', () => {
 					page: 1,
 				},
 				total: 2,
+				totalPages: 1,
 				data: cats,
 			};
 
@@ -130,6 +132,7 @@ describe( 'reducer', () => {
 					page: 1,
 				},
 				total: 2,
+				totalPages: 1,
 				dat: cats,
 			};
 			const newState = isQueryError( undefined, action );
@@ -164,6 +167,7 @@ describe( 'reducer', () => {
 					page: 1,
 				},
 				total: 3,
+				totalPages: 1,
 				data: cats,
 			};
 			const newState = items( undefined, action );
@@ -179,6 +183,7 @@ describe( 'reducer', () => {
 					page: 2,
 				},
 				total: 2,
+				totalPages: 2,
 				data: [ anotherCat ],
 			};
 			const originalState = deepFreeze( keyBy( cats, 'id' ) );
@@ -226,6 +231,7 @@ describe( 'reducer', () => {
 					page: 1,
 				},
 				total: 1,
+				totalPages: 1,
 				data: cats,
 			};
 			const newState = queries( undefined, action );
@@ -240,6 +246,7 @@ describe( 'reducer', () => {
 					page: 2,
 				},
 				total: 2,
+				totalPages: 2,
 				data: [ anotherCat ],
 			};
 			const originalState = deepFreeze( { '{}': [ 10 ] } );
@@ -275,6 +282,7 @@ describe( 'reducer', () => {
 					page: 1,
 				},
 				total: 2,
+				totalPages: 1,
 				data: cats,
 			};
 			const newState = total( undefined, action );
@@ -292,6 +300,41 @@ describe( 'reducer', () => {
 			};
 			const originalState = deepFreeze( { '{}': 2 } );
 			const newState = total( originalState, action );
+			expect( newState ).to.eql( originalState );
+		} );
+	} );
+	describe( 'totalPages', () => {
+		test( 'should have no change by default', () => {
+			const newState = totalPages( undefined, {} );
+			expect( newState ).to.eql( 0 );
+		} );
+
+		test( 'should store the total number of pages when a request loads', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
+				siteId: 123,
+				query: {
+					page: 1,
+				},
+				total: 2,
+				totalPages: 1,
+				data: cats,
+			};
+			const newState = totalPages( undefined, action );
+			expect( newState ).to.eql( { '{}': 1 } );
+		} );
+
+		test( 'should do nothing on a failure', () => {
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
+				siteId: 123,
+				query: {
+					page: 1,
+				},
+				error: '',
+			};
+			const originalState = deepFreeze( { '{}': 2 } );
+			const newState = totalPages( originalState, action );
 			expect( newState ).to.eql( originalState );
 		} );
 	} );

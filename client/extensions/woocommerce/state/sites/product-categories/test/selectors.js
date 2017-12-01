@@ -14,6 +14,9 @@ import {
 	areProductCategoriesLoaded,
 	areProductCategoriesLoading,
 	getTotalProductCategories,
+	getProductCategoriesLastPage,
+	areProductCategoriesLoadingIgnoringPage,
+	getProductCategoriesIgnoringPage,
 } from '../selectors';
 
 const preInitializedState = {
@@ -33,6 +36,17 @@ const loadingState = {
 						},
 					},
 				},
+				345: {
+					productCategories: {
+						isQueryLoading: {
+							'{}': false,
+							'{"page":2}': true,
+						},
+						totalPages: {
+							'{}': 2,
+						},
+					},
+				},
 			},
 		},
 	},
@@ -44,6 +58,9 @@ const loadedState = {
 			sites: {
 				123: {
 					productCategories: {
+						isQueryLoading: {
+							'{}': false,
+						},
 						items: {
 							1: { id: 1, name: 'cat1', slug: 'cat-1' },
 							2: { id: 2, name: 'cat2', slug: 'cat-2' },
@@ -54,18 +71,31 @@ const loadedState = {
 						total: {
 							'{}': 2,
 						},
+						totalPages: {
+							'{}': 1,
+						},
 					},
 				},
 				345: {
 					productCategories: {
+						isQueryLoading: {
+							'{}': false,
+							'{"page":2}': false,
+						},
 						items: {
 							3: { id: 3, name: 'cat3', slug: 'cat-3' },
 							4: { id: 4, name: 'cat4', slug: 'cat-4' },
+							5: { id: 5, name: 'cat5', slug: 'cat-5' },
+							6: { id: 6, name: 'cat6', slug: 'cat-6' },
 						},
 						queries: {
 							'{}': [ 3, 4 ],
+							'{"page":2}': [ 5, 6 ],
 						},
 						total: {
+							'{}': 4,
+						},
+						totalPages: {
 							'{}': 2,
 						},
 					},
@@ -192,6 +222,65 @@ describe( 'selectors', () => {
 
 		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getTotalProductCategories( loadedStateWithUi ) ).to.eql( 2 );
+		} );
+	} );
+
+	describe( '#getProductCategoriesLastPage', () => {
+		test( 'should be null (default) when woocommerce state is not available.', () => {
+			expect( getProductCategoriesLastPage( preInitializedState, {}, 123 ) ).to.eql( null );
+		} );
+
+		test( 'should be null (default) when categories are loading.', () => {
+			expect( getProductCategoriesLastPage( loadingState, {}, 123 ) ).to.eql( null );
+		} );
+
+		test( 'should be 2, the set total, if the categories are loaded.', () => {
+			expect( getProductCategoriesLastPage( loadedState, {}, 345 ) ).to.eql( 2 );
+		} );
+
+		test( 'should be null (default) when categories are loaded only for a different site.', () => {
+			expect( getProductCategoriesLastPage( loadedState, {}, 456 ) ).to.eql( null );
+		} );
+	} );
+
+	describe( '#areProductCategoriesLoadingIgnoringPage', () => {
+		test( 'should be false when state is not available.', () => {
+			expect( areProductCategoriesLoadingIgnoringPage( preInitializedState, {}, 123 ) ).to.be.false;
+		} );
+
+		test( 'should be true when categories are currently being fetched.', () => {
+			expect( areProductCategoriesLoadingIgnoringPage( loadingState, {}, 345 ) ).to.be.true;
+		} );
+
+		test( 'should be false when categories are loaded.', () => {
+			expect( areProductCategoriesLoadingIgnoringPage( loadedState, {}, 123 ) ).to.be.false;
+		} );
+
+		test( 'should be false when categories are loaded only for a different site.', () => {
+			expect( areProductCategoriesLoadingIgnoringPage( loadedState, {}, 456 ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#getProductCategoriesIgnoringPage()', () => {
+		test( 'should return an empty array if data is not available.', () => {
+			expect( getProductCategoriesIgnoringPage( preInitializedState, {}, 123 ) ).to.eql( [] );
+		} );
+
+		test( 'should return an empty array if data is still loading.', () => {
+			expect( getProductCategoriesIgnoringPage( loadingState, {}, 324 ) ).to.eql( [] );
+		} );
+
+		test( 'should gET ALL product categories from specified site', () => {
+			expect( getProductCategoriesIgnoringPage( loadedState, {}, 123 ) ).to.eql( [
+				{ id: 1, name: 'cat1', slug: 'cat-1' },
+				{ id: 2, name: 'cat2', slug: 'cat-2' },
+			] );
+			expect( getProductCategoriesIgnoringPage( loadedState, {}, 345 ) ).to.eql( [
+				{ id: 3, name: 'cat3', slug: 'cat-3' },
+				{ id: 4, name: 'cat4', slug: 'cat-4' },
+				{ id: 5, name: 'cat5', slug: 'cat-5' },
+				{ id: 6, name: 'cat6', slug: 'cat-6' },
+			] );
 		} );
 	} );
 } );

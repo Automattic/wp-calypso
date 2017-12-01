@@ -12,7 +12,7 @@ An optional query can be provided. See https://woocommerce.github.io/woocommerce
 
 ## Reducer
 
-Product categories are saved on a per-site basis. All categories are collected in `items`, and there is a query => ID mapping in `queries`. `isQueryLoading` indicates which queries are being requested. `isQueryError` indicates if a query returned an error. `total` tracks the total number of categories, mapped by queries.
+Product categories are saved on a per-site basis. All categories are collected in `items`, and there is a query => ID mapping in `queries`. `isQueryLoading` indicates which queries are being requested. `isQueryError` indicates if a query returned an error. `total` tracks the total number of categories, mapped by queries. `totalPages` returns the total number of results pages for a query.
 
 ```js
 {
@@ -49,6 +49,9 @@ Product categories are saved on a per-site basis. All categories are collected i
 		"total": {
 			'{}': 10,
 		}
+		"totalPages": {
+			'{}': 2,
+		}
 	}
 }
 ```
@@ -74,3 +77,15 @@ Gets a requested product category object from the current state, or null if not 
 ### `getTotalProductCategories( state, query: object, siteId: number )`
 
 Gets the total number of product categories available on a site for a query. Optional `siteId`, will default to the currently selected site.
+
+### `getProductCategoriesLastPage( state, query: object, siteId: number )`
+
+Returns the last page number of results for a query. Optional `siteId`, will default to the currently selected site.
+
+### `areProductCategoriesLoadingIgnoringPage( state, query: object, siteId: number )`
+
+Similar to `areProductCategoriesLoading`, this selector returns if a given request is being loaded for a query, ignoring the page parameter -- meaning this will return if there is a pending request for a certain query on any page of results. Optional `siteId`, will default to the currently selected site.
+
+### `getProductCategoriesIgnoringPage( state, query: object, siteId: number )`
+
+Similar to `getProductCategories`, this selector returns all results from a particular query, across all loaded pages. Optional `siteId`, will default to the currently selected site.

@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get, isArray, omit } from 'lodash';
+import { get, isArray, omit, range } from 'lodash';
 
 /**
  * Internal dependencies
@@ -141,3 +141,103 @@ export function getProductCategory(
 		null
 	);
 }
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Object} [query] Query used to fetch product categories. If not provided, API defaults are used.
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Number|Null} Total number of pages available for a query, or null if not loaded yet.
+ */
+export const getProductCategoriesLastPage = (
+	state,
+	query = {},
+	siteId = getSelectedSiteId( state )
+) => {
+	const serializedQuery = getSerializedProductCategoriesQuery( omit( query, 'page' ) );
+	return get(
+		state,
+		[
+			'extensions',
+			'woocommerce',
+			'sites',
+			siteId,
+			'productCategories',
+			'totalPages',
+			serializedQuery,
+		],
+		null
+	);
+};
+
+/**
+ * Returns true if currently requesting product categories for a query, excluding all known
+ * queried pages, or false otherwise.
+ *
+ * @param {Object} state Whole Redux state tree
+ * @param {Object} [query] Query used to fetch product categories. If not provided, API defaults are used.
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Boolean}       Returns true if currently requesting product categories for a query, excluding all known queried pages.
+ */
+export function areProductCategoriesLoadingIgnoringPage( state, query, siteId ) {
+	const lastPage = getProductCategoriesLastPage( state, query, siteId );
+	if ( null === lastPage ) {
+		return false;
+	}
+
+	return range( 1, lastPage + 1 ).some( page => {
+		const catQuery = { ...query, page };
+		return areProductCategoriesLoading( state, catQuery, siteId );
+	} );
+}
+
+/**
+ * Gets all product categories from API data for a query, ignoring pages.
+ *
+ * @param {Object} rootState Global state tree
+ * @param {Object} [query] Query used to fetch product categories. If not provided, API defaults are used.
+ * @param {Number} [siteId] wpcom site id, if not provided, uses the selected site id.
+ * @return {Array} List of product categories
+ */
+export const getProductCategoriesIgnoringPage = (
+	rootState,
+	query = {},
+	siteId = getSelectedSiteId( rootState )
+) => {
+	const lastPage = getProductCategoriesLastPage( rootState, query, siteId );
+	if ( null === lastPage ) {
+		return [];
+	}
+
+	const cats = get(
+		rootState,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'productCategories', 'items' ],
+		{}
+	);
+
+	const result = [];
+
+	range( 1, lastPage + 1 ).some( page => {
+		const catQuery = { ...query, page };
+		const serializedQuery = getSerializedProductCategoriesQuery( catQuery );
+
+		const idsForQuery = get(
+			rootState,
+			[
+				'extensions',
+				'woocommerce',
+				'sites',
+				siteId,
+				'productCategories',
+				'queries',
+				serializedQuery,
+			],
+			[]
+		);
+
+		if ( idsForQuery.length ) {
+			idsForQuery.forEach( id => result.push( cats[ id ] ) );
+		}
+	} );
+
+	return result;
+};

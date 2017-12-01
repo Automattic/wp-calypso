@@ -111,10 +111,27 @@ export function total( state = {}, action ) {
 	return state;
 }
 
+/**
+ * Tracks the total number of pages for the current query.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function totalPages( state = 0, action ) {
+	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS === action.type && action.data ) {
+		const query = getSerializedProductCategoriesQuery( omit( action.query, 'page' ) );
+		return Object.assign( {}, state, { [ query ]: action.totalPages } );
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	isQueryLoading,
 	isQueryError,
 	items,
 	queries,
 	total,
+	totalPages,
 } );

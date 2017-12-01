@@ -82,12 +82,14 @@ export function handleProductCategoriesSuccess( { dispatch }, action, { data } )
 	}
 
 	const total = headers[ 'X-WP-Total' ];
+	const totalPages = headers[ 'X-WP-TotalPages' ];
 
 	dispatch( {
 		type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 		siteId,
 		data: body,
 		total,
+		totalPages,
 		query,
 	} );
 }
