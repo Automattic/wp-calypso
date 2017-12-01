@@ -198,7 +198,7 @@ class Security2faEnable extends React.Component {
 			<div className="security-2fa-enable__qr-code-block">
 				<p className="security-2fa-enable__qr-instruction">
 					{ this.props.translate(
-						"Scan this QR code with your 2FA app. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}",
+						"Scan this QR code with your authenticator app. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}",
 						{
 							components: {
 								toggleMethodLink: this.getToggleLink(),
