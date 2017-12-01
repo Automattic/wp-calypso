@@ -12,11 +12,13 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import WPLogin from './wp-login';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 
 const enhanceContextWithLogin = context => {
 	const { path, params: { flow, twoFactorAuthType, socialService } } = context;
@@ -103,5 +105,29 @@ export default {
 		);
 
 		next();
+	},
+
+	redirectDefaultLocale( context, next ) {
+		// only redirect `/log-in/en` to `/log-in`
+		if ( context.pathname !== '/log-in/en' ) {
+			return next();
+		}
+
+		// Do not redirect if user bootrapping is disabled
+		if (
+			! getCurrentUser( context.store.getState() ) &&
+			! config.isEnabled( 'wpcom-user-bootstrap' )
+		) {
+			return next();
+		}
+
+		// Do not redirect if user is logged in and the locale is different than english
+		// so we force the page to display in english
+		const currentUserLocale = getCurrentUserLocale( context.store.getState() );
+		if ( currentUserLocale && currentUserLocale !== 'en' ) {
+			return next();
+		}
+
+		context.redirect( '/log-in' );
 	},
 };

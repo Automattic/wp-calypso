@@ -124,9 +124,7 @@ class Login extends Component {
 		// user data is persisted in localstorage at `lib/user/user` line 157
 		// therefor we need to reset it before we redirect, otherwise we'll get
 		// mixed data from old and new user
-		user.clear();
-
-		window.location.href = url;
+		user.clear( () => ( window.location.href = url ) );
 	};
 
 	renderHeader() {

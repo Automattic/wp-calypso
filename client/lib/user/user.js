@@ -237,6 +237,8 @@ User.prototype.clear = function( onClear ) {
 	store.clear();
 	if ( config.isEnabled( 'persist-redux' ) ) {
 		localforage.clear( onClear );
+	} else if ( onClear ) {
+		onClear();
 	}
 };
 

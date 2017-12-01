@@ -1,8 +1,8 @@
 /** @format */
+
 /**
  * External dependencies
  */
-
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
@@ -143,8 +143,9 @@ export function serverRender( req, res ) {
 	const metas = getDocumentHeadMeta( context.store.getState() );
 	const links = getDocumentHeadLink( context.store.getState() );
 
-	context.isRTL = isRTL( context.store.getState() );
-	context.lang = getCurrentLocaleSlug( context.store.getState() );
+	context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
+	const isLocaleRTL = isRTL( context.store.getState() );
+	context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 
 	context.head = { title, metas, links };
 	context.config = config.ssrConfig;

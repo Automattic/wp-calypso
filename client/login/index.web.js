@@ -5,7 +5,7 @@
  */
 
 import config from 'config';
-import { login, magicLogin, magicLoginUse } from './controller';
+import { login, magicLogin, magicLoginUse, redirectDefaultLocale } from './controller';
 import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
 
 export default router => {
@@ -16,7 +16,6 @@ export default router => {
 	}
 
 	if ( config.isEnabled( 'login/wp-login' ) ) {
-		router( '/log-in/en', '/log-in' );
 		router(
 			[
 				'/log-in/:twoFactorAuthType(authenticator|backup|sms|push)/:lang?',
@@ -24,6 +23,7 @@ export default router => {
 				'/log-in/:socialService(google)/callback/:lang?',
 				'/log-in/:lang?',
 			],
+			redirectDefaultLocale,
 			setUpLocale,
 			login,
 			makeLayout

@@ -21,43 +21,50 @@ function languageFileUrl( localeSlug ) {
 	return `${ protocol }widgets.wp.com/languages/calypso/${ localeSlug }.json`;
 }
 
+function setLocaleInDOM( localeSlug, isRTL ) {
+	if ( typeof document !== 'undefined' ) {
+		document.documentElement.lang = localeSlug;
+		document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+
+		const directionFlag = isRTL ? '-rtl' : '';
+		const debugFlag = process.env.NODE_ENV === 'development' ? '-debug' : '';
+		const cssUrl = window.app.staticUrls[ `style${ debugFlag }${ directionFlag }.css` ];
+
+		switchCSS( 'main-css', cssUrl );
+	}
+}
+
 export default function switchLocale( localeSlug ) {
 	if ( localeSlug === i18n.getLocaleSlug() ) {
 		return;
 	}
 
-	if ( isDefaultLocale( localeSlug ) ) {
-		i18n.configure( { defaultLocaleSlug: localeSlug } );
-		return;
-	}
-
 	const language = getLanguage( localeSlug );
+
 	if ( ! language ) {
 		return;
 	}
 
-	// Note: i18n is a singleton that will be shared between all server requests!
-	request.get( languageFileUrl( localeSlug ) ).end( function( error, response ) {
-		if ( error ) {
-			debug(
-				'Encountered an error loading locale file for ' + localeSlug + '. Falling back to English.'
-			);
-			return;
-		}
+	if ( isDefaultLocale( localeSlug ) ) {
+		i18n.configure( { defaultLocaleSlug: localeSlug } );
+		setLocaleInDOM( localeSlug, !! language.rtl );
+	} else {
+		// Note: i18n is a singleton that will be shared between all server requests!
+		request.get( languageFileUrl( localeSlug ) ).end( function( error, response ) {
+			if ( error ) {
+				debug(
+					'Encountered an error loading locale file for ' +
+						localeSlug +
+						'. Falling back to English.'
+				);
+				return;
+			}
 
-		i18n.setLocale( response.body );
+			i18n.setLocale( response.body );
 
-		if ( typeof document !== 'undefined' ) {
-			document.documentElement.lang = localeSlug;
-			document.documentElement.dir = language.rtl ? 'rtl' : 'ltr';
-
-			const directionFlag = language.rtl ? '-rtl' : '';
-			const debugFlag = process.env.NODE_ENV === 'development' ? '-debug' : '';
-			const cssUrl = window.app.staticUrls[ `style${ debugFlag }${ directionFlag }.css` ];
-
-			switchCSS( 'main-css', cssUrl );
-		}
-	} );
+			setLocaleInDOM( localeSlug, !! language.rtl );
+		} );
+	}
 }
 
 const bundles = {};

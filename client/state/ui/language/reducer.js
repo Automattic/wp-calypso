@@ -17,7 +17,7 @@ import { localeSlugSchema } from './schema';
  *
  */
 export const localeSlug = createReducer(
-	'en',
+	false,
 	{
 		[ LOCALE_SET ]: ( state, action ) => action.localeSlug,
 	},
