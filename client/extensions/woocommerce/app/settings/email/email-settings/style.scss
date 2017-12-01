@@ -5,6 +5,10 @@
 		width: 50%;
 	}
 
+	.components__notification-component-title-long {
+		width: 80%;
+	}
+
 	.components__notification-component-input {
 		padding-left: 0px;
 		padding-right: 0px;
@@ -13,6 +17,7 @@
 	}
 
 	.components__notification-component-toggle {
+		height: 58px;
 		width: 80px;
 	}
 
@@ -40,6 +45,18 @@
 		input {
 			width: 75%;
 		}
+	}
+
+	.components__is-placeholder {
+		@include placeholder();
+		padding: 0px;
+		margin: 0px 0px 4px 0px;
+		pointer-events: none;
+		background: $white;
+		animation: loading-fade 1.6s ease-in-out infinite;
+		background-color: lighten( $gray, 25% );
+		color: transparent;
+		cursor: default;
 	}
 
 }

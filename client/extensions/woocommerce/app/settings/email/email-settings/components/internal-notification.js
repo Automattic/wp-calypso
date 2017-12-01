@@ -21,24 +21,22 @@ const InternalNotification = ( { item, recipient, checked, onToggle, onChange, i
 				? <FormLabel>
 					{ item.title }
 				</FormLabel>
-				: <p className="components__notification-placeholder-title" />
+				: <p className="components__is-placeholder" />
 			}
 			{ ! isPlaceholder
 				? <FormSettingExplanation>
 					{ item.subtitle }
 				</FormSettingExplanation>
-				: <p className="components__notification-placeholder-title" />
+				: <p className="components__is-placeholder" />
 			}
 		</ListItemField>
 		<ListItemField className="components__notification-component-input" >
-			{ ! isPlaceholder
-				? <FormTextInput
+				<FormTextInput
+					className={ isPlaceholder ? 'components__is-placeholder' : null }
 					name={ item.field }
 					onChange={ onChange }
 					value={ recipient }
 				/>
-				: <p className="components__notification-placeholder-input" />
-			}
 		</ListItemField>
 		<ListItemField className="components__notification-component-toggle">
 			{ ! isPlaceholder
@@ -47,7 +45,7 @@ const InternalNotification = ( { item, recipient, checked, onToggle, onChange, i
 					onChange={ onToggle }
 					id={ item.field }
 				/>
-				: <p className="components__notification-placeholder-toggle" />
+				: <p className="components__is-placeholder" />
 			}
 		</ListItemField>
 	</ListItem>

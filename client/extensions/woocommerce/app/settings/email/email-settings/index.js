@@ -24,18 +24,18 @@ import List from 'woocommerce/components/list/list';
 import ListHeader from 'woocommerce/components/list/list-header';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 
-const fromName =
+const originNotifications = [
 	{
 		field: 'woocommerce_email_from_address',
 		title: translate( 'From name' ),
 		subtitle: translate( 'Emails will appear in recipients inboxes \'from\' this name.' ),
-	};
-const fromAddress =
+	},
 	{
 		field: 'woocommerce_email_from_name',
 		title: translate( 'From address' ),
 		subtitle: translate( 'If recipients reply to store emails they will be sent to this address.' ),
-	};
+	},
+];
 
 const internalNotifications = [
 	{
@@ -109,25 +109,36 @@ class Settings extends React.Component {
 		undefined;
 	}
 
+	renderOriginNotification = ( item, index ) => {
+		const { settings, loaded, loading } = this.props;
+		return <NotificationsOrigin
+			key={ index }
+			item={ item }
+			isPlaceholder={ loading }
+			recipient={ loaded ? settings.email[ item.field ] : '' }
+			onChange={ this.recipientsChange }
+		/>;
+	}
+
 	renderInternalNotification = ( item, index ) => {
-		const { settings, loaded } = this.props;
+		const { settings, loaded, loading } = this.props;
 		return <InternalNotification
 			key={ index }
 			item={ item }
 			checked={ 'yes' === ( loaded && settings[ item.field ].enabled ) }
 			recipient={ loaded ? settings[ item.field ].recipient : '' }
-			isPlaceholder={ ! loaded }
+			isPlaceholder={ loading }
 			onToggle={ this.notificationsToggle }
 			onChange={ this.recipientsChange }
 		/>;
 	}
 
 	renderCustomerNotification = ( item, index ) => {
-		const { settings, loaded } = this.props;
+		const { settings, loaded, loading } = this.props;
 		return <CustomerNotification
 			key={ index }
 			item={ item }
-			isPlaceholder={ ! loaded }
+			isPlaceholder={ loading }
 			checked={ 'yes' === ( loaded && settings[ item.field ].enabled ) }
 			onToggle={ this.notificationsToggle }
 		/>;
@@ -135,26 +146,13 @@ class Settings extends React.Component {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
-		const { loaded, settings } = this.props;
-
 		return (
 			<div className="email-settings__container">
+				<ExtendedHeader
+					label={ translate( 'Origin' ) }
+				/>
 				<List>
-					<ExtendedHeader
-						label={ translate( 'Origin' ) }
-					/>
-					<NotificationsOrigin
-						item={ fromName }
-						isPlaceholder={ ! loaded }
-						recipient={ loaded ? settings.email[ fromName.field ] : '' }
-						onChange={ this.recipientsChange }
-					/>
-					<NotificationsOrigin
-						item={ fromAddress }
-						isPlaceholder={ ! loaded }
-						recipient={ loaded ? settings.email[ fromAddress.field ] : '' }
-						onChange={ this.recipientsChange }
-					/>
+					{ originNotifications.map( this.renderOriginNotification ) }
 				</List>
 				<div>
 					<ExtendedHeader

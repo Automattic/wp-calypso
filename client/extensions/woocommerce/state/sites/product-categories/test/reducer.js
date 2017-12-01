@@ -274,7 +274,6 @@ describe( 'reducer', () => {
 			expect( newState ).to.eql( {} );
 		} );
 
-<<<<<<< HEAD
 		test( 'should store the total number of categories when a request loads', () => {
 			const action = {
 				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
@@ -302,53 +301,6 @@ describe( 'reducer', () => {
 			const originalState = deepFreeze( { '{}': 2 } );
 			const newState = total( originalState, action );
 			expect( newState ).to.eql( originalState );
-=======
-	test( 'should not affect other state trees', () => {
-		const siteId = 123;
-		const state = {
-			[ siteId ]: {
-				paymentMethods: {},
-				productCategories: 'LOADING',
-				settings: { general: {}, products: {}, stripeConnectAccount: {}, tax: {} },
-				shippingZones: {},
-				products: {},
-			},
-		};
-		const action = {
-			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
-			data: [],
-			siteId,
-		};
-
-		const newState = reducer( state, action );
-		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].productCategories ).to.eql( [] );
-		expect( newState[ siteId ].settings ).to.eql( {
-			general: {},
-			products: {},
-			stripeConnectAccount: {},
-			tax: {},
-			mailchimp: {
-				settings: {},
-				settingsRequest: false,
-				settingsRequestError: false,
-				syncStatus: {},
-				syncStatusRequest: false,
-				syncStatusRequestError: false,
-				resyncRequest: false,
-				resyncRequestError: false,
-				apiKeySubmit: false,
-				apiKeySubmitError: false,
-				storeInfoSubmit: false,
-				storeInfoSubmitError: false,
-				listsRequest: false,
-				listsRequestError: false,
-				newsletterSettingsSubmit: false,
-				newsletterSettingsSubmitError: false,
-				saveSettings: false,
-			},
-			email: null,
->>>>>>> Fix tests.
 		} );
 	} );
 	describe( 'totalPages', () => {

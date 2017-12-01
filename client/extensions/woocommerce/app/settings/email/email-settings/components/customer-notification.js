@@ -15,18 +15,18 @@ import ListItemField from 'woocommerce/components/list/list-item-field';
 
 const CustomerNotification = ( { item, checked, onToggle, isPlaceholder } ) => (
 	<ListItem className="components__notification-component-item">
-		<ListItemField>
+		<ListItemField className="components__notification-component-title-long">
 			{ ! isPlaceholder
 				? <FormLabel>
 					{ item.title }
 				</FormLabel>
-				: <p className="components__notification-placeholder-title" />
+				: <p className="components__is-placeholder" />
 			}
 			{ ! isPlaceholder
 				? <FormSettingExplanation>
 					{ item.subtitle }
 				</FormSettingExplanation>
-				: <p className="components__notification-placeholder-title" />
+				: <p className="components__is-placeholder" />
 			}
 		</ListItemField>
 		<ListItemField className="components__notification-component-toggle">
@@ -36,7 +36,7 @@ const CustomerNotification = ( { item, checked, onToggle, isPlaceholder } ) => (
 					onChange={ onToggle }
 					id={ item.field }
 				/>
-				: <p className="components__notification-placeholder-toggle" />
+				: <p className="components__is-placeholder" />
 			}
 		</ListItemField>
 	</ListItem>
