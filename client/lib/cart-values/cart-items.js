@@ -19,8 +19,6 @@ import {
 	merge,
 	reject,
 	some,
-	trimStart,
-	tail,
 	uniq,
 } from 'lodash';
 
@@ -52,6 +50,7 @@ import {
 } from 'lib/products-values';
 import sortProducts from 'lib/products-values/sort';
 import { PLAN_PERSONAL } from 'lib/plans/constants';
+import { getTld } from 'lib/domains';
 import { domainProductSlugs } from 'lib/domains/constants';
 
 import {
@@ -255,25 +254,21 @@ export function hasDomainCredit( cart ) {
  * @returns {Boolean} - Whether or not the cart contains a domain with that TLD
  */
 export function hasTld( cart, tld ) {
-	return some( getDomainRegistrations( cart ), function( cartItem ) {
-		return getDomainRegistrationTld( cartItem ) === '.' + tld;
+	return some( concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) ), function(
+		cartItem
+	) {
+		return getTld( cartItem.meta ) === tld;
 	} );
 }
 
 export function getTlds( cart ) {
 	return uniq(
-		map( getDomainRegistrations( cart ), function( cartItem ) {
-			return trimStart( getDomainRegistrationTld( cartItem ), '.' );
+		map( concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) ), function(
+			cartItem
+		) {
+			return getTld( cartItem.meta );
 		} )
 	);
-}
-
-export function getDomainRegistrationTld( cartItem ) {
-	if ( ! isDomainRegistration( cartItem ) ) {
-		throw new Error( 'This function only works on domain registration cart ' + 'items.' );
-	}
-
-	return '.' + tail( cartItem.meta.split( '.' ) ).join( '.' );
 }
 
 /**
@@ -968,7 +963,6 @@ export default {
 	getDomainPriceRule,
 	getDomainRegistrations,
 	getDomainRegistrationsWithoutPrivacy,
-	getDomainRegistrationTld,
 	getDomainTransfers,
 	getDomainTransfersWithoutPrivacy,
 	getGoogleApps,

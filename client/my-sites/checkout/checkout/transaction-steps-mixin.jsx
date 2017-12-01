@@ -15,6 +15,7 @@ const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:transaction-step
  */
 import analytics from 'lib/analytics';
 import adTracking from 'lib/analytics/ad-tracking';
+import { getTld } from 'lib/domains';
 import { cartItems } from 'lib/cart-values';
 import { displayError, clear } from 'lib/upgrades/notices';
 import upgradesActions from 'lib/upgrades/actions';
@@ -130,7 +131,7 @@ const TransactionStepsMixin = {
 
 		cartItems.getDomainRegistrations( cart ).forEach( function( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_domain_registration', {
-				domain_tld: cartItems.getDomainRegistrationTld( cartItem ),
+				domain_tld: getTld( cartItem.meta ),
 				success: success,
 			} );
 		} );
