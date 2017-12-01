@@ -7,6 +7,7 @@
 import update from 'immutability-helper';
 import {
 	assign,
+	concat,
 	every,
 	filter,
 	find,
@@ -321,8 +322,11 @@ export function hasDomainRegistration( cart ) {
 	return some( getAll( cart ), isDomainRegistration );
 }
 
-export function hasOnlyDomainRegistrationsWithPrivacySupport( cart ) {
-	return every( getDomainRegistrations( cart ), privacyAvailable );
+export function hasOnlyDomainProductsWithPrivacySupport( cart ) {
+	return every(
+		concat( getDomainTransfers( cart ), getDomainRegistrations( cart ) ),
+		privacyAvailable
+	);
 }
 
 export function hasDomainMapping( cart ) {
@@ -984,7 +988,7 @@ export default {
 	hasDomainInCart,
 	hasDomainMapping,
 	hasDomainRegistration,
-	hasOnlyDomainRegistrationsWithPrivacySupport,
+	hasOnlyDomainProductsWithPrivacySupport,
 	hasFreeTrial,
 	hasGoogleApps,
 	hasOnlyFreeTrial,
