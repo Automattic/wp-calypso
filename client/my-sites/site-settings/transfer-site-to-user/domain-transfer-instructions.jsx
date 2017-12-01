@@ -24,6 +24,7 @@ import { getSiteDomain } from 'state/sites/selectors';
 class DomainTransferInstructions extends PureComponent {
 	static propTypes = {
 		selectedSiteDomain: PropTypes.string,
+		onCancel: PropTypes.func,
 		translate: PropTypes.func,
 	};
 
@@ -37,7 +38,10 @@ class DomainTransferInstructions extends PureComponent {
 					<p>{ translate( 'You must transfer your domain first!' ) }</p>
 				</ActionPanelBody>
 				<ActionPanelFooter>
-					<Button className="transfer-site-to-user__cancel is-scary">
+					<Button
+						onClick={ this.props.onCancel }
+						className="transfer-site-to-user__cancel is-scary"
+					>
 						<Gridicon icon="cross" size={ 48 } />
 						{ translate( 'Cancel' ) }
 					</Button>

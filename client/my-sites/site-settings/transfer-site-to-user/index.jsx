@@ -34,7 +34,7 @@ class TransferSiteToUser extends React.Component {
 
 		this.renderBody = this.renderBody.bind( this );
 		this.renderSiteTransferWarning = this.renderSiteTransferWarning.bind( this );
-		this.acknowlegeWarning = this.acknowlegeWarning.bind( this );
+		this.toggleWarning = this.toggleWarning.bind( this );
 		this.renderDomainTransferInstructions = this.renderDomainTransferInstructions.bind( this );
 	}
 
@@ -48,15 +48,17 @@ class TransferSiteToUser extends React.Component {
 	}
 
 	renderSiteTransferWarning() {
-		return <SiteTransferWarning onAcknowledged={ this.acknowlegeWarning } />;
+		return <SiteTransferWarning onAcknowledged={ this.toggleWarning } />;
 	}
 
-	acknowlegeWarning() {
-		this.setState( { warningAcknowledged: true } );
+	toggleWarning() {
+		this.setState( {
+			warningAcknowledged: ! this.state.warningAcknowledged,
+		} );
 	}
 
 	renderDomainTransferInstructions() {
-		return <DomainTransferInstructions />;
+		return <DomainTransferInstructions onCancel={ this.toggleWarning } />;
 	}
 
 	render() {
