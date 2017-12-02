@@ -126,11 +126,14 @@ $autobar-height: 20px;
 	padding: 0 0 0 8px;
 
 	.masterbar__wpcom-logo {
+		display: none;
+	}
+
+	.masterbar__wpcom-wordmark {
+		display: block;
 		height: 24px;
-		width: 164px;
-		position: relative;
-			top: 6px;
-			left: -4px;
+		width: 140px;
+		margin: 0 10px 0 5px;
 	}
 
 	@include breakpoint( "<480px" ) {
@@ -143,6 +146,18 @@ $autobar-height: 20px;
 			margin: 0 auto;
 			width: 30px;
 			overflow: hidden;
+		}
+
+		.masterbar__wpcom-logo {
+			display: block;
+			height: 24px;
+			width: 164px;
+			position: relative;
+			left: -4px;
+		}
+
+		.masterbar__wpcom-wordmark {
+			display: none;
 		}
 	}
 
@@ -159,6 +174,10 @@ $autobar-height: 20px;
 
 	.masterbar__item-content {
 		display: block;
+
+		@include breakpoint( ">480px" ) {
+			transform: translateY( 1px ); /*Align with logo*/
+		}
 	}
 
 	&:hover,
