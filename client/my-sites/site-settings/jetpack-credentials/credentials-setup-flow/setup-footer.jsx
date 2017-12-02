@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import Popover from 'components/popover';
+import HappychatButton from 'components/happychat/button';
 
 class SetupFooter extends Component {
 	componentWillMount() {
@@ -34,6 +35,12 @@ class SetupFooter extends Component {
 					<Gridicon icon="help" size={ 18 } className="credentials-setup-flow__footer-popover-icon" />
 					{ translate( 'Why do I need this?' ) }
 				</a>
+				<HappychatButton className="credentials-setup-flow__happychat-button" >
+					<Gridicon icon="chat" />
+					<span className="credentials-setup-flow__happychat-button-text">
+						{ translate( 'Get help' ) }
+					</span>
+				</HappychatButton>
 				<Popover
 					context={ this.popoverLink }
 					isVisible={ this.state.showPopover }
