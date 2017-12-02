@@ -103,7 +103,7 @@ export class CredentialsForm extends Component {
 						<FormTextInput
 							name="host"
 							id="host-address"
-							placeholder={ translate( 'yoursite.com' ) }
+							placeholder={ translate( 'YourGroovyDomain.com' ) }
 							value={ get( this.state.form, 'host', '' ) }
 							onChange={ this.handleFieldChange }
 							disabled={ formIsSubmitting }
