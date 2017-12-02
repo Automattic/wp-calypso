@@ -8,7 +8,7 @@
 import update from 'immutability-helper';
 import { every, reject } from 'lodash';
 
-const WPCOM_DEFAULTS = [ 'ns1.wordpress.com', 'ns2.wordpress.com' ];
+const WPCOM_DEFAULTS = [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ];
 
 function isWpcomDefaults( nameservers ) {
 	if ( nameservers.length === 0 ) {
