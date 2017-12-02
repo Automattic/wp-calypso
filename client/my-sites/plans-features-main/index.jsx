@@ -345,15 +345,20 @@ class PlansFeaturesMain extends Component {
 		);
 	}
 
+	constructPath( plansUrl, intervalType ) {
+		const { selectedFeature, selectedPlan, site } = this.props;
+		const path = addQueryArgs(
+			{
+				feature: selectedFeature,
+				plan: selectedPlan,
+			},
+			plansLink( plansUrl, site, intervalType )
+		);
+		return path;
+	}
+
 	getIntervalTypeToggle() {
-		const {
-			basePlansPath,
-			intervalType,
-			selectedFeature,
-			selectedPlan,
-			site,
-			translate,
-		} = this.props;
+		const { basePlansPath, intervalType, translate } = this.props;
 		const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle' );
 
 		let plansUrl = '/plans';
@@ -366,26 +371,14 @@ class PlansFeaturesMain extends Component {
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
 				<SegmentedControlItem
 					selected={ intervalType === 'monthly' }
-					path={ addQueryArgs(
-						{
-							feature: selectedFeature,
-							plan: selectedPlan,
-						},
-						plansLink( plansUrl, site, 'monthly' )
-					) }
+					path={ this.constructPath( plansUrl, 'monthly' ) }
 				>
 					{ translate( 'Monthly billing' ) }
 				</SegmentedControlItem>
 
 				<SegmentedControlItem
 					selected={ intervalType === 'yearly' }
-					path={ addQueryArgs(
-						{
-							feature: selectedFeature,
-							plan: selectedPlan,
-						},
-						plansLink( plansUrl, site, 'yearly' )
-					) }
+					path={ this.constructPath( plansUrl, 'yearly' ) }
 				>
 					{ translate( 'Yearly billing' ) }
 				</SegmentedControlItem>
