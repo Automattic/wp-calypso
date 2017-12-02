@@ -11,17 +11,6 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import config from 'config';
 import pluginsController from './controller';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-
-const ifSimpleSiteThenRedirectTo = path => ( context, next ) => {
-	const site = getSelectedSite( context.store.getState() );
-
-	if ( site && ! site.jetpack ) {
-		page.redirect( `${ path }/${ site.slug }` );
-	}
-
-	next();
-};
 
 export default function() {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
@@ -67,18 +56,17 @@ export default function() {
 			'/plugins/manage/:site?',
 			siteSelection,
 			navigation,
-			ifSimpleSiteThenRedirectTo( '/plugins' ),
-			pluginsController.plugins,
-			sites
+			pluginsController.redirectSimpleSitesToPluginBrowser,
+			pluginsController.plugins
 		);
 
 		page(
 			'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
 			siteSelection,
 			navigation,
+			pluginsController.redirectSimpleSitesToPluginBrowser,
 			pluginsController.jetpackCanUpdate,
-			pluginsController.plugins,
-			sites
+			pluginsController.plugins
 		);
 
 		page(
