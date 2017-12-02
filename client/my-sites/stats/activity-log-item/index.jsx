@@ -16,6 +16,7 @@ import ActivityActor from './activity-actor';
 import ActivityIcon from './activity-icon';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FoldableCard from 'components/foldable-card';
+import FormattedBlock from 'components/notes-formatted-block';
 import PopoverMenuItem from 'components/popover/menu-item';
 
 const stopPropagation = event => event.stopPropagation();
@@ -64,31 +65,8 @@ class ActivityLogItem extends Component {
 
 	handleClickBackup = () => this.props.requestDialog( this.props.log.activityId, 'item', 'backup' );
 
-	//
-	// TODO: Descriptions are temporarily disabled and this method is not called.
-	// Rich descriptions will be added after designs have been prepared for all types of activity.
-	//
-	renderDescription() {
-		const { log, moment, translate, applySiteOffset } = this.props;
-		const { activityName, activityTs } = log;
-
-		return (
-			<div>
-				<div>
-					{ translate( 'An event "%(eventName)s" occurred at %(date)s', {
-						args: {
-							date: applySiteOffset( moment.utc( activityTs ) ).format( 'LLL' ),
-							eventName: activityName,
-						},
-					} ) }
-				</div>
-				<div className="activity-log-item__id">ID { activityTs }</div>
-			</div>
-		);
-	}
-
 	renderHeader() {
-		const { applySiteOffset, log, moment } = this.props;
+		const { log } = this.props;
 		const { activityDescription, activityTitle } = log;
 
 		return (
@@ -101,68 +79,9 @@ class ActivityLogItem extends Component {
 				) }
 				{ activityDescription && (
 					<div className="activity-log-item__description">
-						{ activityDescription.map( ( part, key ) => {
-							if ( 'string' === typeof part ) {
-								return part;
-							}
-
-							const { siteId, children, commentId, name, postId, type } = part;
-
-							switch ( type ) {
-								case 'comment':
-									return (
-										<a
-											key={ key }
-											href={ `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` }
-										>
-											{ children }
-										</a>
-									);
-
-								case 'filepath':
-									return (
-										<div>
-											<code>{ children }</code>
-										</div>
-									);
-
-								case 'person':
-									return (
-										<a key={ key } href={ `/people/edit/${ siteId }/${ name }` }>
-											<strong>{ children }</strong>
-										</a>
-									);
-
-								case 'plugin':
-									return (
-										<a key={ key } href={ `/plugins/${ name }/${ siteId }` }>
-											{ children }
-										</a>
-									);
-
-								case 'post':
-									return (
-										<a key={ key } href={ `/read/blogs/${ siteId }/posts/${ postId }` }>
-											<em>{ children }</em>
-										</a>
-									);
-
-								case 'theme':
-									return (
-										<a key={ key } href={ part.url } target="_blank" rel="noopener noreferrer">
-											<strong>
-												<em>{ children }</em>
-											</strong>
-										</a>
-									);
-
-								case 'time':
-									return applySiteOffset( moment.utc( part.time ) ).format( part.format );
-
-								default:
-									return children;
-							}
-						} ) }
+						{ activityDescription.map( ( part, key ) => (
+							<FormattedBlock key={ key } content={ part } />
+						) ) }
 					</div>
 				) }
 			</div>
@@ -204,18 +123,8 @@ class ActivityLogItem extends Component {
 		);
 	}
 
-	renderTime() {
-		const { moment, log, applySiteOffset } = this.props;
-
-		return (
-			<div className="activity-log-item__time">
-				{ applySiteOffset( moment.utc( log.activityTs ) ).format( 'LT' ) }
-			</div>
-		);
-	}
-
 	render() {
-		const { className, log } = this.props;
+		const { applySiteOffset, className, log, moment } = this.props;
 		const { activityIcon, activityIsDiscarded, activityStatus } = log;
 
 		const classes = classNames( 'activity-log-item', className, {
@@ -225,7 +134,9 @@ class ActivityLogItem extends Component {
 		return (
 			<div className={ classes }>
 				<div className="activity-log-item__type">
-					{ this.renderTime() }
+					<div className="activity-log-item__time">
+						{ applySiteOffset( moment.utc( log.activityTs ) ).format( 'LT' ) }
+					</div>
 					<ActivityIcon activityIcon={ activityIcon } activityStatus={ activityStatus } />
 				</div>
 				<FoldableCard
