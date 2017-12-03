@@ -60,8 +60,12 @@ that can trigger the opening and closing of the InfoPopover then you need to pas
 
 ```js
 handleAction( event ) {
-	this.refs && this.refs.infoPop._onClick( event );
+	this.infoPopoverRef.handleClick( event );
 },
+
+setInfoPopoverRef = c => {
+	this.infoPopoverRef = c;
+};
 
 render() {
 	return (
@@ -69,7 +73,7 @@ render() {
 			<label onClick={ this.handleAction } ref="moreInfoLabel">More Info</label>
 			<InfoPopover
 				position="bottom left"
-				ref="infoPop"
+				ref="{ this.setInfoPopoverRef }"
 				className="more-info"
 				gaEventCategory="Reader"
 				popoverName="More info in the reader"
