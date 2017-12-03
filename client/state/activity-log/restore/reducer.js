@@ -44,6 +44,7 @@ export const restoreProgress = keyedReducer(
 			[ REWIND_RESTORE ]: startProgress,
 			[ REWIND_RESTORE_DISMISS_PROGRESS ]: stubNull,
 			[ REWIND_RESTORE_UPDATE_PROGRESS ]: updateProgress,
+			[ REWIND_RESTORE_DISMISS ]: stubNull,
 		}
 	)
 );
