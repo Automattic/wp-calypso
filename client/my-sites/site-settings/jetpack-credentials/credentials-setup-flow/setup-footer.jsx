@@ -12,7 +12,7 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import Popover from 'components/popover';
 import HappychatButton from 'components/happychat/button';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class SetupFooter extends Component {
 	componentWillMount() {
@@ -63,7 +63,5 @@ class SetupFooter extends Component {
 }
 
 export default connect( null, {
-	happychatEvent: withAnalytics(
-		recordTracksEvent( 'rewind_credentials_get_help', {} )
-	),
+	happychatEvent: () => recordTracksEvent( 'rewind_credentials_get_help', {} ),
 } )( localize( SetupFooter ) );
