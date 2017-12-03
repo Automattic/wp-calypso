@@ -47,7 +47,7 @@ const PlanFeaturesActions = ( {
 				'plan-features__actions-button',
 				{
 					'is-current': current,
-					'is-primary': planName === selectedPlan,
+					'is-primary': planType === selectedPlan,
 				},
 				className
 			)

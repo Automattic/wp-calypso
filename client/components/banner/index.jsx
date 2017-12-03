@@ -68,35 +68,12 @@ class Banner extends Component {
 	getHref() {
 		const { feature, plan, siteSlug } = this.props;
 
-		const baseUrl = `/plans/${ siteSlug }`;
-		let selectedPlan = 'Personal';
-		switch ( plan ) {
-			case 'jetpack_business':
-				selectedPlan = 'Professional';
-				break;
-			case 'jetpack_premium':
-				selectedPlan = 'Premium';
-				break;
-			case 'jetpack_personal':
-				selectedPlan = 'Personal';
-				break;
-			case 'business-bundle':
-				selectedPlan = 'Business';
-				break;
-			case 'value_bundle':
-				selectedPlan = 'Premium';
-				break;
-			case 'personal_bundle':
-				selectedPlan = 'Personal';
-				break;
-		}
-
 		const href = addQueryArgs(
 			{
-				feature: feature,
-				plan: selectedPlan,
+				feature,
+				plan,
 			},
-			baseUrl
+			`/plans/${ siteSlug }`
 		);
 
 		return href;
