@@ -34,6 +34,7 @@ export class EditorNotice extends Component {
 		status: PropTypes.string,
 		onDismissClick: PropTypes.func,
 		error: PropTypes.object,
+		postUrl: PropTypes.string,
 	};
 
 	handlePillExternalClick = () => {
@@ -370,6 +371,7 @@ export default connect(
 			site: getSelectedSite( state ),
 			type: post.type,
 			typeObject: getPostType( state, siteId, post.type ),
+			postUrl: post.URL || null,
 		};
 	},
 	{
