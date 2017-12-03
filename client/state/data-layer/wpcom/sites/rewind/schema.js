@@ -56,7 +56,7 @@ export const inactive = {
 			pattern: '^inactive$',
 		},
 		credentials: {
-			type: 'array',
+			type: [ 'array', null ],
 			items: credential,
 		},
 		last_updated: { type: 'integer' },
@@ -84,11 +84,11 @@ export const active = {
 			pattern: '^active$',
 		},
 		credentials: {
-			type: 'array',
+			type: [ 'array', null ],
 			items: credential,
 		},
 		downloads: {
-			type: 'array',
+			type: [ 'array', null ],
 			items: download,
 		},
 		rewinds: { type: 'array', items: restore },

@@ -4,6 +4,7 @@
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx, makeParser } from 'state/data-layer/wpcom-http/utils';
 import { transformApi } from './api-transformer';
@@ -30,14 +31,23 @@ const updateRewindState = ( { siteId }, data ) => ( {
 	data,
 } );
 
-const setUnknownState = ( { siteId } ) => ( {
-	type: REWIND_STATE_UPDATE,
-	siteId,
-	data: {
-		state: 'unknown',
-		lastUpdated: new Date(),
-	},
-} );
+const setUnknownState = ( { siteId }, { schemaErrors } ) => {
+	if ( schemaErrors ) {
+		return withAnalytics(
+			recordTracksEvent( 'rewind_state_parse_error', {
+				schemaErrors: JSON.stringify( schemaErrors, null, 2 ),
+			} ),
+			{
+				type: REWIND_STATE_UPDATE,
+				siteId,
+				data: {
+					state: 'unknown',
+					lastUpdated: new Date(),
+				},
+			}
+		);
+	}
+};
 
 export default mergeHandlers( downloads, {
 	[ REWIND_STATE_REQUEST ]: [
