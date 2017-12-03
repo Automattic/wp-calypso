@@ -63,6 +63,10 @@
 	color: $blue-wordpress;
 }
 
+.credentials-setup-flow__happychat-button.is-borderless:hover {
+	color: $link-highlight;
+}
+
 .credentials-setup-flow__happychat-button-text {
 	margin-left: 6px;
 }
