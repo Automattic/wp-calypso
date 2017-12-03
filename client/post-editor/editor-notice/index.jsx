@@ -69,7 +69,7 @@ export class EditorNotice extends Component {
 
 	getText( key ) {
 		/* eslint-disable max-len */
-		const { translate, type, typeObject, site } = this.props;
+		const { translate, type, typeObject, site, postUrl } = this.props;
 		const typeLabel = typeObject && typeObject.labels.singular_name;
 
 		switch ( key ) {
@@ -325,21 +325,12 @@ export class EditorNotice extends Component {
 					} );
 				}
 
-				return translate( 'Post updated on {{siteLink/}}!', {
+				return translate( 'Post updated. {{postLink}}Visit post{{/postLink}}.', {
 					components: {
-						siteLink: (
-							<a
-								href={ site.URL }
-								target="_blank"
-								rel="noopener noreferrer"
-								onClick={ this.handlePillExternalClick }
-							>
-								{ site.title }
-							</a>
-						),
+						postLink: <a href={ postUrl } onClick={ this.handlePillExternalClick } />,
 					},
 					comment:
-						'Editor: Message displayed when a post is updated, with a link to the site it was updated on.',
+						'Editor: Message displayed when a post is updated, with a link to the updated post.',
 				} );
 		}
 		/* eslint-enable max-len */
