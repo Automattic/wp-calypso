@@ -1033,7 +1033,7 @@ export const PostEditor = createReactClass( {
 
 			window.scrollTo( 0, 0 );
 
-			if ( this.props.isSitePreviewable && isNotPrivateOrIsConfirmed ) {
+			if ( this.props.isSitePreviewable && isNotPrivateOrIsConfirmed && 'published' === message ) {
 				this.setState( { isPostPublishPreview: true } );
 				this.iframePreview();
 			}
