@@ -27,7 +27,16 @@ const fetchRewindState = action =>
 const updateRewindState = ( { siteId }, data ) => ( {
 	type: REWIND_STATE_UPDATE,
 	siteId,
-	...data,
+	data,
+} );
+
+const setUnknownState = ( { siteId } ) => ( {
+	type: REWIND_STATE_UPDATE,
+	siteId,
+	data: {
+		state: 'unknown',
+		lastUpdated: new Date(),
+	},
 } );
 
 export default mergeHandlers( downloads, {
@@ -35,6 +44,7 @@ export default mergeHandlers( downloads, {
 		dispatchRequestEx( {
 			fetch: fetchRewindState,
 			onSuccess: updateRewindState,
+			onError: setUnknownState,
 			fromApi: makeParser( rewind, {}, transformApi ),
 		} ),
 	],
