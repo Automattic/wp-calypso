@@ -12,7 +12,7 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import Popover from 'components/popover';
 import HappychatButton from 'components/happychat/button';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 class SetupFooter extends Component {
 	componentWillMount() {
@@ -22,8 +22,6 @@ class SetupFooter extends Component {
 	togglePopover = () => this.setState( { showPopover: ! this.state.showPopover } );
 
 	storePopoverLink = ref => this.popoverLink = ref;
-
-	happychatEvent = () => this.props.recordTracksEvent( 'rewind_credentials_get_help', {} );
 
 	render() {
 		const { translate } = this.props;
@@ -40,7 +38,7 @@ class SetupFooter extends Component {
 				</a>
 				<HappychatButton
 					className="credentials-setup-flow__happychat-button"
-					onClick={ this.happychatEvent }
+					onClick={ this.props.happychatEvent }
 				>
 					<Gridicon icon="chat" />
 					<span className="credentials-setup-flow__happychat-button-text">
@@ -65,5 +63,7 @@ class SetupFooter extends Component {
 }
 
 export default connect( null, {
-	recordTracksEvent,
+	happychatEvent: withAnalytics(
+		recordTracksEvent( 'rewind_credentials_get_help', {} )
+	),
 } )( localize( SetupFooter ) );
