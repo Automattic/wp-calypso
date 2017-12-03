@@ -286,43 +286,27 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page updated on {{siteLink/}}! {{a}}Add another page{{/a}}', {
+					return translate( 'Page updated. {{postLink}}Visit page{{/postLink}}.', {
 						components: {
-							siteLink: (
-								<a
-									href={ site.URL }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ this.handlePillExternalClick }
-								>
-									{ site.title }
-								</a>
-							),
-							a: <a href={ `/page/${ site.slug }` } />,
+							postLink: <a href={ postUrl } onClick={ this.handlePillExternalClick } />,
 						},
 						comment:
-							'Editor: Message displayed when a page is updated, with a link to the site it was updated on.',
+							'Editor: Message displayed when a page is updated, with a link to the updated page.',
 					} );
 				}
 
 				if ( 'post' !== type && typeLabel ) {
-					return translate( '%(typeLabel)s updated on {{siteLink/}}!', {
-						args: { typeLabel },
-						components: {
-							siteLink: (
-								<a
-									href={ site.URL }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ this.handlePillExternalClick }
-								>
-									{ site.title }
-								</a>
-							),
-						},
-						comment:
-							'Editor: Message displayed when a post of a custom type is updated, with a link to the site it was updated on.',
-					} );
+					return translate(
+						'%(typeLabel)s updated. {{postLink}}Visit %(typeLabel)s{{/postLink}}.',
+						{
+							args: { typeLabel },
+							components: {
+								postLink: <a href={ postUrl } onClick={ this.handlePillExternalClick } />,
+							},
+							comment:
+								'Editor: Message displayed when a post of a custom type is updated, with a link to the updated post.',
+						}
+					);
 				}
 
 				return translate( 'Post updated. {{postLink}}Visit post{{/postLink}}.', {
