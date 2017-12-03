@@ -2,13 +2,14 @@
 /**
  * External dependencies
  */
-import { PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
 import { activityLogRequest as activityLogRequestAction } from 'state/activity-log/actions';
 
 class QueryActivityLog extends PureComponent {
@@ -28,25 +29,23 @@ class QueryActivityLog extends PureComponent {
 	};
 
 	componentWillMount() {
-		this.request( this.props );
+		this.request();
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		this.request( nextProps );
+	componentDidUpdate() {
+		this.request();
 	}
 
-	request( { dateEnd, dateStart, number, siteId } ) {
+	request = () => {
+		const { dateEnd, dateStart, number, siteId } = this.props;
+
 		if ( siteId ) {
-			this.props.activityLogRequest( siteId, {
-				dateEnd,
-				dateStart,
-				number,
-			} );
+			this.props.activityLogRequest( siteId, { dateEnd, dateStart, number } );
 		}
-	}
+	};
 
 	render() {
-		return null;
+		return <Interval onTick={ this.request } period={ EVERY_TEN_SECONDS } />;
 	}
 }
 
