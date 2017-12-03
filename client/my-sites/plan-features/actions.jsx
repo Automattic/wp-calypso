@@ -42,23 +42,16 @@ const PlanFeaturesActions = ( {
 } ) => {
 	let upgradeButton;
 
-	const classes = selectedPlan
-		? classNames(
-				'plan-features__actions-button',
-				{
-					'is-current': current,
-					'is-primary': planType === selectedPlan,
-				},
-				className
-			)
-		: classNames(
-				'plan-features__actions-button',
-				{
-					'is-current': current,
-					'is-primary': ( primaryUpgrade && ! isPlaceholder ) || isPopular,
-				},
-				className
-			);
+	const classes = classNames(
+		'plan-features__actions-button',
+		{
+			'is-current': current,
+			'is-primary': selectedPlan
+				? planType === selectedPlan
+				: ( primaryUpgrade && ! isPlaceholder ) || isPopular,
+		},
+		className
+	);
 
 	if ( current && ! isInSignup ) {
 		upgradeButton = (
