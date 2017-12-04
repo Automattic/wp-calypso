@@ -33,6 +33,7 @@ export getAccountRecoveryValidationKey from './get-account-recovery-validation-k
 export getActiveReplyCommentId from './get-active-reply-comment-id';
 export getActivityLog from './get-activity-log';
 export getActivityLogs from './get-activity-logs';
+export getAllPostsUrl from './get-all-posts-url';
 export getBillingTransactions from './get-billing-transactions';
 export getBlockedSites from './get-blocked-sites';
 export getBlogStickers from './get-blog-stickers';
