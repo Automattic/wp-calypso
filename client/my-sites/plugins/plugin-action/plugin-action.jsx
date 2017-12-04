@@ -18,8 +18,12 @@ class PluginAction extends React.Component {
 		if ( ! this.props.disabledInfo ) {
 			this.props.action();
 		} else {
-			this.refs.infoPopover._onClick( event );
+			this.infoPopoverRef.handleClick( event );
 		}
+	};
+
+	setInfoPopoverRef = c => {
+		this.infoPopoverRef = c;
 	};
 
 	renderLabel = () => {
@@ -47,7 +51,7 @@ class PluginAction extends React.Component {
 				position="bottom left"
 				popoverName={ 'Plugin Action Disabled' + this.props.label }
 				gaEventCategory="Plugins"
-				ref="infoPopover"
+				ref={ this.setInfoPopoverRef }
 				ignoreContext={ this.refs && this.refs.disabledInfoLabel }
 			>
 				{ this.props.disabledInfo }

@@ -85,7 +85,11 @@ export class PluginInstallButton extends Component {
 	};
 
 	togglePopover = event => {
-		this.refs.infoPopover._onClick( event );
+		this.infoPopoverRef.handleClick( event );
+	};
+
+	setInfoPopoverRef = c => {
+		this.infoPopoverRef = c;
 	};
 
 	getDisabledInfo() {
@@ -169,7 +173,7 @@ export class PluginInstallButton extends Component {
 					position="bottom left"
 					popoverName={ 'Plugin Action Disabled Install' }
 					gaEventCategory="Plugins"
-					ref="infoPopover"
+					ref={ this.setInfoPopoverRef }
 					ignoreContext={ this.refs && this.refs.disabledInfoLabel }
 				>
 					<div>
@@ -228,7 +232,7 @@ export class PluginInstallButton extends Component {
 							position="bottom left"
 							popoverName={ 'Plugin Action Disabled Install' }
 							gaEventCategory="Plugins"
-							ref="infoPopover"
+							ref={ this.setInfoPopoverRef }
 							ignoreContext={ this.refs && this.refs.disabledInfoLabel }
 						>
 							{ this.getDisabledInfo() }
