@@ -292,11 +292,14 @@ class AboutStep extends Component {
 			{
 				processingMessage: translate( 'Collecting your information' ),
 				stepName: stepName,
-				themeRepo,
-				siteTitleValue,
 			},
 			[],
-			{ themeSlugWithRepo: themeRepo, siteTitle: siteTitleValue }
+			{
+				themeSlugWithRepo: themeRepo,
+				siteTitle: siteTitleValue,
+				designType: designType,
+				surveyQuestion: siteTopicInput,
+			}
 		);
 
 		goToNextStep();
