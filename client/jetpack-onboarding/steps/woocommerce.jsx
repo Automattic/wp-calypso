@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import FormattedHeader from 'components/formatted-header';
 
-class JetpackOnboardingWoocommerceStep extends React.Component {
+class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 	render() {
 		const { translate } = this.props;
 		const headerText = translate( 'Are you looking to sell online?' );

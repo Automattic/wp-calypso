@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import FormattedHeader from 'components/formatted-header';
 
-class JetpackOnboardingSummaryStep extends React.Component {
+class JetpackOnboardingSummaryStep extends React.PureComponent {
 	render() {
 		const { translate } = this.props;
 		const headerText = translate( 'Congratulations! Your site is on its way.' );

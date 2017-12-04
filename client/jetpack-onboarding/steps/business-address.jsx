@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import FormattedHeader from 'components/formatted-header';
 
-class JetpackOnboardingBusinessAddressStep extends React.Component {
+class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	render() {
 		const { translate } = this.props;
 		const headerText = translate( 'Add a business address.' );

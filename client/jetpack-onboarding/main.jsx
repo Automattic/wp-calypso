@@ -16,7 +16,7 @@ import {
 	JETPACK_ONBOARDING_STEPS as STEPS,
 } from './constants';
 
-class JetpackOnboardingMain extends React.Component {
+class JetpackOnboardingMain extends React.PureComponent {
 	static propTypes = {
 		stepName: PropTypes.string,
 	};
