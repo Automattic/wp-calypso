@@ -5,7 +5,7 @@
 /**
  *  External Dependencies
  */
-import { forEach, get, filter, isEqual } from 'lodash';
+import { forEach, get, filter } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -100,22 +100,12 @@ export function receivePage( id, error, data ) {
 			}
 
 			if ( post.comments ) {
-				const reduxState = getReduxState();
-				const commentsInRedux = filter( post.comments, commentId => {
-					return !! getCommentById( {
-						state: reduxState,
-						siteId: post.blogId,
-						commentId,
-					} );
-				} );
-
 				// Send conversations over to Redux
 				reduxDispatch( {
 					type: COMMENTS_RECEIVE,
 					siteId: post.site_ID,
 					postId: post.ID,
 					comments: post.comments,
-					hasNewToReduxComments: ! isEqual( post.comments, commentsInRedux ),
 				} );
 			}
 		} );
@@ -131,17 +121,39 @@ export function receivePage( id, error, data ) {
 
 export function receiveUpdates( id, error, data ) {
 	if ( ! error && data && data.posts ) {
+		const reduxState = getReduxState();
+
 		forEach( data.posts, post => {
 			if ( post.comments ) {
-				// conversations!
-				reduxDispatch( {
-					type: COMMENTS_RECEIVE,
-					siteId: post.site_ID,
-					postId: post.ID,
-					comments: post.comments,
+				const commentsNotInRedux = filter( post.comments, comment => {
+					const c = getCommentById( {
+						state: reduxState,
+						siteId: post.site_ID,
+						commentId: comment.ID,
+					} );
+					return ! c;
 				} );
+
+				if ( commentsNotInRedux.length > 0 ) {
+					// conversations!
+					reduxDispatch( {
+						type: COMMENTS_RECEIVE,
+						siteId: post.site_ID,
+						postId: post.ID,
+						comments: commentsNotInRedux,
+					} );
+				}
+				post.comments = commentsNotInRedux;
 			}
 		} );
+
+		const posts = filter(
+			data.posts,
+			// include posts that have no comments node (non conversations) and those that have a comments node and at least one new comment
+			post => ! post.comments || ( post.comments && post.comments.length > 0 )
+		);
+
+		data.posts = posts;
 	}
 
 	Dispatcher.handleServerAction( {

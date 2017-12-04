@@ -75,7 +75,7 @@ function conversationsPager( params ) {
 function filterConversationsPosts( posts ) {
 	// turn the new ones into post keys
 	const newPosts = map( posts, this.keyMaker );
-	const filteredNewPosts = filter( newPosts, post => {
+	return filter( newPosts, post => {
 		// only keep things that we don't have or things that have new comments
 		if ( ! this.postById.has( keyToString( post ) ) ) {
 			return true; // new new
@@ -93,8 +93,6 @@ function filterConversationsPosts( posts ) {
 
 		return true;
 	} );
-
-	return filteredNewPosts;
 }
 
 function addMetaToNextPageFetch( params ) {
