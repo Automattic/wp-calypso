@@ -604,7 +604,7 @@ class ActivityLog extends Component {
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ 'awaiting_credentials' === rewindState.state && <ActivityLogCredentialsNotice /> }
+				{ 'awaitingCredentials' === rewindState.state && <ActivityLogCredentialsNotice /> }
 				{ this.renderErrorMessage() }
 				{ hasFirstBackup && this.renderMonthNavigation() }
 				{ this.renderActionProgress() }

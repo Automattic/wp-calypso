@@ -1,5 +1,10 @@
 /** @format */
 
+/**
+ * External dependencies
+ */
+import { camelCase } from 'lodash';
+
 const transformCredential = data =>
 	Object.assign(
 		{
@@ -26,7 +31,7 @@ const transformRestore = data =>
 export const transformApi = data =>
 	Object.assign(
 		{
-			state: data.state,
+			state: camelCase( data.state ),
 			lastUpdated: new Date( data.last_updated * 1000 ),
 		},
 		data.credentials && { credentials: data.credentials.map( transformCredential ) },
