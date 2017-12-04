@@ -47,7 +47,7 @@ const PlanFeaturesActions = ( {
 		{
 			'is-current': current,
 			'is-primary': selectedPlan
-				? planType === selectedPlan
+				? planType === selectedPlan || planType === selectedPlan.concat( '_monthly' )
 				: ( primaryUpgrade && ! isPlaceholder ) || isPopular,
 		},
 		className
