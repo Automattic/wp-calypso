@@ -43,21 +43,18 @@ export const getDateSortedPostComments = createSelector(
 	state => [ state.comments.items ]
 );
 
-export const getCommentById = createSelector(
-	( { state, commentId, siteId } ) => {
-		if ( get( state, 'comments.errors', {} )[ `${ siteId }-${ commentId }` ] ) {
-			return state.comments.errors[ `${ siteId }-${ commentId }` ];
-		}
+export const getCommentById = ( { state, commentId, siteId } ) => {
+	if ( get( state, 'comments.errors', {} )[ `${ siteId }-${ commentId }` ] ) {
+		return state.comments.errors[ `${ siteId }-${ commentId }` ];
+	}
 
-		const commentsForSite = flatMap(
-			filter( state.comments && state.comments.items, ( comment, key ) => {
-				return deconstructStateKey( key ).siteId === siteId;
-			} )
-		);
-		return find( commentsForSite, comment => commentId === comment.ID );
-	},
-	( { state } ) => [ state.comments.items, state.comments.errors ]
-);
+	const commentsForSite = flatMap(
+		filter( state.comments && state.comments.items, ( comment, key ) => {
+			return deconstructStateKey( key ).siteId === siteId;
+		} )
+	);
+	return find( commentsForSite, comment => commentId === comment.ID );
+};
 
 export const getCommentErrors = state => {
 	return state.comments.errors;
