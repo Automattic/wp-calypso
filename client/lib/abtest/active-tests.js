@@ -100,16 +100,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	domainsCheckoutLocalizedAddresses: {
-		datestamp: '20171025',
-		variations: {
-			showLocalizedAddressFormats: 50,
-			showDefaultAddressFormat: 50,
-		},
-		defaultVariation: 'showDefaultAddressFormat',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	buttonsColorOnPostSignup: {
 		datestamp: '20171108',
 		variations: {
