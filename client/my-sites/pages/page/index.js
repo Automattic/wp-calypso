@@ -21,7 +21,7 @@ import Gridicon from 'gridicons';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SiteIcon from 'blocks/site-icon';
-import helpers from '../helpers';
+import { editLinkForPage, statsLinkForPage } from '../helpers';
 import utils from 'lib/posts/utils';
 import classNames from 'classnames';
 import MenuSeparator from 'components/popover/menu-separator';
@@ -133,7 +133,7 @@ class Page extends Component {
 		// This is technically if you can edit the current page, not the parent.
 		// Capabilities are not exposed on the parent page.
 		const parentHref = utils.userCan( 'edit_post', this.props.page )
-			? helpers.editLinkForPage( page.parent, site )
+			? editLinkForPage( page.parent, site )
 			: page.parent.URL;
 		const parentLink = <a href={ parentHref }>{ parentTitle }</a>;
 
@@ -256,7 +256,7 @@ class Page extends Component {
 
 	statsPage = () => {
 		this.props.recordStatsPage();
-		pageRouter( helpers.statsLinkForPage( this.props.page, this.props.site ) );
+		pageRouter( statsLinkForPage( this.props.page, this.props.site ) );
 	};
 
 	getStatsItem() {
@@ -274,7 +274,7 @@ class Page extends Component {
 
 	editPage = () => {
 		this.props.recordEditPage();
-		pageRouter( helpers.editLinkForPage( this.props.page, this.props.site ) );
+		pageRouter( editLinkForPage( this.props.page, this.props.site ) );
 	};
 
 	getPageStatusInfo() {
@@ -403,7 +403,7 @@ class Page extends Component {
 				<div className="page__main">
 					<a
 						className="page__title"
-						href={ canEdit ? helpers.editLinkForPage( page, site ) : page.URL }
+						href={ canEdit ? editLinkForPage( page, site ) : page.URL }
 						title={
 							canEdit
 								? translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } )
