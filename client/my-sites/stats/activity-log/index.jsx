@@ -63,7 +63,7 @@ import {
 	isRewindActive as isRewindActiveSelector,
 	getRequestedBackup,
 	getBackupProgress,
-	hasMainCredentials,
+	getRewindState,
 } from 'state/selectors';
 
 /**
@@ -492,7 +492,6 @@ class ActivityLog extends Component {
 		const {
 			canViewActivityLog,
 			hasFirstBackup,
-			hasMainCredentials, // eslint-disable-line no-shadow
 			isPressable,
 			isRewindActive,
 			logRequestQuery,
@@ -503,6 +502,7 @@ class ActivityLog extends Component {
 			requestedRestoreActivityId,
 			requestedBackup,
 			requestedBackupId,
+			rewindState,
 			siteId,
 			slug,
 			translate,
@@ -604,7 +604,7 @@ class ActivityLog extends Component {
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ isRewindActive && ! hasMainCredentials && <ActivityLogCredentialsNotice /> }
+				{ 'awaiting_credentials' === rewindState.state && <ActivityLogCredentialsNotice /> }
 				{ this.renderErrorMessage() }
 				{ hasFirstBackup && this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
@@ -710,7 +710,6 @@ export default connect(
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
 			hasFirstBackup: ! isEmpty( getRewindStartDate( state, siteId ) ),
-			hasMainCredentials: hasMainCredentials( state, siteId ),
 			isRewindActive: isRewindActiveSelector( state, siteId ),
 			logRequestQuery,
 			logs: getActivityLogs(
@@ -725,6 +724,7 @@ export default connect(
 			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
 			requestData: { logs: getRequest( state, activityLogRequest( siteId, logRequestQuery ) ) },
+			rewindState: getRewindState( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
