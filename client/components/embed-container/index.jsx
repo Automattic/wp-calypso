@@ -84,7 +84,9 @@ function loadAndRun( scriptUrl, callback ) {
 function embedInstagram( domNode ) {
 	debug( 'processing instagram for', domNode );
 	if ( typeof instgrm !== 'undefined' ) {
-		global.instgrm.Embeds.process();
+		try {
+			global.instgrm.Embeds.process();
+		} catch ( e ) {}
 		return;
 	}
 
@@ -98,7 +100,9 @@ function embedTwitter( domNode ) {
 	debug( 'processing twitter for', domNode );
 
 	if ( typeof twttr !== 'undefined' ) {
-		global.twttr.widgets.load( domNode );
+		try {
+			global.twttr.widgets.load( domNode );
+		} catch ( e ) {}
 		return;
 	}
 
