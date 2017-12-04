@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
 /**
@@ -26,6 +26,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 export class EditorNotice extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
+		moment: PropTypes.func,
 		siteId: PropTypes.number,
 		site: PropTypes.object,
 		type: PropTypes.string,
@@ -70,7 +71,7 @@ export class EditorNotice extends Component {
 
 	getText( key ) {
 		/* eslint-disable max-len */
-		const { translate, type, typeObject, site, postUrl, postDate } = this.props;
+		const { translate, type, typeObject, site, postUrl, postDate, moment } = this.props;
 		const formattedPostDate = moment( postDate ).format( 'lll' );
 		const typeLabel = typeObject && typeObject.labels.singular_name;
 
