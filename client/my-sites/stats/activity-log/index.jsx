@@ -9,7 +9,7 @@ import config from 'config';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { first, get, groupBy, includes, isEmpty, isNull, last, range } from 'lodash';
+import { first, get, groupBy, includes, isEmpty, isNull, last, range, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -173,7 +173,7 @@ const daysInMonth = ( moment, startMoment, today ) => {
 };
 
 const logsByDay = ( moment, logs, startMoment, applyOffset ) => {
-	const dayGroups = groupBy( logs, log =>
+	const dayGroups = groupBy( sortBy( logs, [ 'activityDate' ] ).reverse(), log =>
 		applyOffset( moment.utc( log.activityTs ) )
 			.endOf( 'day' )
 			.valueOf()
