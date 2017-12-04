@@ -102,7 +102,7 @@ describe( 'utils', () => {
 			);
 		} );
 
-		test( 'shoule correctly handle paths with query string', () => {
+		test( 'should correctly handle paths with query string', () => {
 			assert.equal( getLocaleFromPath( '/start/es?query=string' ), 'es' );
 		} );
 	} );
