@@ -148,10 +148,13 @@ describe( '#jetpackConnectAuthorize()', () => {
 		} );
 
 		expect( state ).toMatchObject( {
-			queryObject: {},
-			isAuthorizing: false,
-			authorizeSuccess: false,
 			authorizeError: false,
+			authorizeSuccess: false,
+			autoAuthorize: false,
+			isAuthorizing: false,
+			queryObject: {},
+			timestamp: expect.any( Number ),
+			userAlreadyConnected: false,
 		} );
 	} );
 
