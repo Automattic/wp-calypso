@@ -109,8 +109,12 @@ export const getPriceBreakdown = ( state, orderId, siteId = getSelectedSiteId( s
 	}
 
 	const { values: selectedRates, available: availableRates } = form.rates;
-	const summary = reduce( selectedRates, ( result, selectedServiceId, packageId ) => {
+	let fee = 0;
+	let discount = 0;
+	let total = 0;
+	const prices = reduce( selectedRates, ( result, selectedServiceId, packageId ) => {
 		const packageRates = get( availableRates, [ packageId, 'rates' ], false );
+		//if retail_rate is not set, then the selector should return null
 		if ( ! packageRates || ! packageRates.length || ! isFinite( packageRates[ 0 ].retail_rate ) ) {
 			return [];
 		}
@@ -120,14 +124,23 @@ export const getPriceBreakdown = ( state, orderId, siteId = getSelectedSiteId( s
 			result.push( {
 				title: foundRate.title,
 				retailRate: foundRate.retail_rate,
-				rate: foundRate.rate,
 			} );
+
+			const rateFee = foundRate.wcs_fee || 0;
+			discount += foundRate.retail_rate - foundRate.rate;
+			fee += rateFee;
+			total += foundRate.rate + rateFee;
 		}
 
 		return result;
 	}, [] );
 
-	return summary.length ? summary : null;
+	return prices.length ? {
+		prices,
+		discount: discount,
+		fee,
+		total: total,
+	} : null;
 };
 
 const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized, ignoreValidation }, countriesData ) => {
