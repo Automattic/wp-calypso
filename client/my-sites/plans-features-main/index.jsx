@@ -347,14 +347,13 @@ class PlansFeaturesMain extends Component {
 
 	constructPath( plansUrl, intervalType ) {
 		const { selectedFeature, selectedPlan, site } = this.props;
-		const path = addQueryArgs(
+		return addQueryArgs(
 			{
 				feature: selectedFeature,
 				plan: selectedPlan,
 			},
 			plansLink( plansUrl, site, intervalType )
 		);
-		return path;
 	}
 
 	getIntervalTypeToggle() {
