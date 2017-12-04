@@ -14,8 +14,6 @@ import FeedStreamCache from './feed-stream-cache';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
 import { keyToString, keysAreEqual } from './post-key';
-import * as reduxBridge from 'lib/redux-bridge';
-import { getCommentById } from 'state/comments/selectors';
 
 const wpcomUndoc = wpcom.undocumented();
 
@@ -90,21 +88,6 @@ function filterConversationsPosts( posts ) {
 
 		// .comments are arrays of comment IDs
 		if ( isEqual( existingPost.comments, post.comments ) ) {
-			return false;
-		}
-
-		// Discard posts for which we have all the comments in Redux already.
-		// This means that comments from the current user won't trigger an update pill.
-		const reduxState = reduxBridge.getState();
-		const commentsInRedux = filter( post.comments, commentId => {
-			return !! getCommentById( {
-				state: reduxState,
-				siteId: post.blogId,
-				commentId,
-			} );
-		} );
-
-		if ( isEqual( post.comments, commentsInRedux ) ) {
 			return false;
 		}
 

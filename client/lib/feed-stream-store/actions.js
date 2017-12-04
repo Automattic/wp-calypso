@@ -1,10 +1,11 @@
 /**
- *  External Dependencies
- *
  * @format
  */
 
-import { forEach, get } from 'lodash';
+/**
+ *  External Dependencies
+ */
+import { forEach, get, filter, isEqual } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -14,8 +15,9 @@ import { action as ActionType } from './constants';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
 import feedPostListCache from './feed-stream-cache';
 import wpcom from 'lib/wp';
-import { reduxDispatch } from 'lib/redux-bridge';
+import { reduxDispatch, getState as getReduxState } from 'lib/redux-bridge';
 import { COMMENTS_RECEIVE } from 'state/action-types';
+import { getCommentById } from 'state/comments/selectors';
 
 function getNextPageParams( store ) {
 	const params = {
@@ -96,13 +98,24 @@ export function receivePage( id, error, data ) {
 					postId: post.ID,
 				} );
 			}
+
 			if ( post.comments ) {
-				// conversations!
+				const reduxState = getReduxState();
+				const commentsInRedux = filter( post.comments, commentId => {
+					return !! getCommentById( {
+						state: reduxState,
+						siteId: post.blogId,
+						commentId,
+					} );
+				} );
+
+				// Send conversations over to Redux
 				reduxDispatch( {
 					type: COMMENTS_RECEIVE,
 					siteId: post.site_ID,
 					postId: post.ID,
 					comments: post.comments,
+					hasNewToReduxComments: ! isEqual( post.comments, commentsInRedux ),
 				} );
 			}
 		} );
