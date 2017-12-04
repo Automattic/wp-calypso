@@ -19,11 +19,6 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
 
-const happyChatBackupTracking = () =>
-	recordTracksEvent( 'calypso_activitylog_error_banner_backup' );
-const happyChatRestoreTracking = () =>
-	recordTracksEvent( 'calypso_activitylog_error_banner_restore' );
-
 class ErrorBanner extends PureComponent {
 	static propTypes = {
 		errorCode: PropTypes.string.isRequired,
@@ -134,6 +129,6 @@ class ErrorBanner extends PureComponent {
 
 export default connect( null, {
 	dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
-	trackHappyChatBackup: happyChatBackupTracking,
-	trackHappyChatRestore: happyChatRestoreTracking,
+	trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_error_banner_backup' ),
+	trackHappyChatRestore: () => recordTracksEvent( 'calypso_activitylog_error_banner_restore' ),
 } )( localize( ErrorBanner ) );
