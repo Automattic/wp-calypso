@@ -1,13 +1,9 @@
-.plugin-activate-toggle .plugin-action__children {
-	float: none;
-}
-
 .plugin-activate-toggle__disabled,
 .plugin-activate-toggle__link {
+	display: inline-flex;
+	flex-direction: row-reverse;
 	font-size: 12px;
 	line-height: 16px;
-	margin-right: 8px;
-	vertical-align: top;
 }
 
 .plugin-activate-toggle__link:hover,
@@ -16,13 +12,25 @@
 }
 
 .plugin-activate-toggle__disabled {
+	color: lighten( $gray, 10% );
+}
+
+.plugin-activate-toggle__disabled .plugin-activate-toggle__icon {
 	color: lighten( $gray, 30% );
+}
+
+.plugin-activate-toggle__label {
+	margin-left: 0px;
+	margin-right: 8px;
+}
+
+.plugin-activate-toggle__link {
+	cursor: pointer;
 }
 
 .plugin-activate-toggle__link a {
 	color: currentcolor;
 	line-height: 16px;
-	vertical-align: top;
 }
 
 .plugin-activate-toggle__link .plugin-activate-toggle__icon {
@@ -30,13 +38,10 @@
 }
 
 .plugin-activate-toggle__icon {
-	display: inline-block;
-	vertical-align: inherit;
-	float: right;
-	height: 16px;
-	width: 24px;
-}
+	flex: none;
+	margin: -1px 3px;
 
-.plugin-activate-toggle__icon .gridicons-cog {
-	transform: translate(3px, -1px);
+	.gridicon {
+		display: block;
+	}
 }

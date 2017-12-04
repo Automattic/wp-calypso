@@ -40,10 +40,14 @@
 		.plugin-item__count,
 		.plugin-item__actions {
 			align-self: flex-start;
-			flex-direction: row;
+			flex-direction: column;
 			margin-top: -6px;
 			padding-top: 0;
 			text-align: left;
+		}
+
+		.plugin-item__count {
+			flex-direction: row;
 		}
 	}
 }

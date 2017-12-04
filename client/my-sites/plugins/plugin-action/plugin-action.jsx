@@ -18,78 +18,84 @@ class PluginAction extends React.Component {
 		if ( ! this.props.disabledInfo ) {
 			this.props.action();
 		} else {
-			this.refs.infoPopover._onClick( event );
+			this.infoPopover.handleClick( event );
 		}
 	};
 
-	renderLabel = () => {
-		if ( this.props.label ) {
-			return (
-				<label
-					className="plugin-action__label"
-					ref="disabledInfoLabel"
-					onClick={ this.handleAction }
-					htmlFor={ this.props.htmlFor }
-					key="renderDisabledInfoLabel"
-				>
-					{ this.props.label }
-				</label>
-			);
-		}
-		return null;
+	disabledInfoLabelRef = ref => {
+		this.disabledInfoLabel = ref;
 	};
 
-	renderDisabledInfo = () => {
-		return [
+	renderLabel() {
+		if ( ! this.props.label ) {
+			return null;
+		}
+
+		return (
+			<span
+				className="plugin-action__label"
+				ref={ this.disabledInfoLabelRef }
+				onClick={ this.handleAction }
+			>
+				{ this.props.label }
+				{ this.renderDisabledInfo() }
+			</span>
+		);
+	}
+
+	infoPopoverRef = ref => {
+		this.infoPopover = ref;
+	};
+
+	renderDisabledInfo() {
+		if ( ! this.props.disabledInfo ) {
+			return null;
+		}
+
+		return (
 			<InfoPopover
-				key="renderDisabledInfoPopOver"
 				className="plugin-action__disabled-info"
 				position="bottom left"
 				popoverName={ 'Plugin Action Disabled' + this.props.label }
 				gaEventCategory="Plugins"
-				ref="infoPopover"
-				ignoreContext={ this.refs && this.refs.disabledInfoLabel }
+				ref={ this.infoPopoverRef }
+				ignoreContext={ this.disabledInfoLabel }
 			>
 				{ this.props.disabledInfo }
-			</InfoPopover>,
-			this.renderLabel(),
-		];
-	};
+			</InfoPopover>
+		);
+	}
 
-	renderToggle = () => {
+	renderToggle() {
 		return (
 			<CompactToggle
 				onChange={ this.props.action }
 				checked={ this.props.status }
 				toggling={ this.props.inProgress }
-				disabled={ this.props.disabled }
+				disabled={ this.props.disabled || !! this.props.disabledInfo }
 				id={ this.props.htmlFor }
 			>
 				{ this.renderLabel() }
 			</CompactToggle>
 		);
-	};
+	}
 
-	renderChildren = () => {
+	renderChildren() {
 		return (
-			<div>
-				<span className="plugin-action__children">{ this.props.children }</span>
+			<span className="plugin-action__children">
+				{ this.props.children }
 				{ this.renderLabel() }
-			</div>
+			</span>
 		);
-	};
+	}
 
-	renderInner = () => {
-		if ( this.props.disabledInfo ) {
-			return this.renderDisabledInfo();
-		}
-
+	renderInner() {
 		if ( 0 < React.Children.count( this.props.children ) ) {
 			return this.renderChildren();
 		}
 
 		return this.renderToggle();
-	};
+	}
 
 	render() {
 		const additionalClasses = {

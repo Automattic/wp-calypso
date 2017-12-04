@@ -62,7 +62,7 @@ describe( 'PluginAction', () => {
 				children = wrapper.find( '.plugin-action__children' );
 
 			expect( children.length ).to.equal( 1 );
-			expect( children.props().children.type ).to.equal( 'span' );
+			expect( children.props().children[ 0 ].type ).to.equal( 'span' );
 		} );
 
 		test( 'should render a plugin action label', () => {

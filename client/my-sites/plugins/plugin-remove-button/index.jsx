@@ -25,7 +25,9 @@ class PluginRemoveButton extends React.Component {
 	removeAction = () => {
 		accept(
 			this.props.translate(
-				'Are you sure you want to remove {{strong}}%(pluginName)s{{/strong}} from %(siteName)s? {{br /}} {{em}}This will deactivate the plugin and delete all associated files and data.{{/em}}',
+				'Are you sure you want to remove {{strong}}%(pluginName)s{{/strong}} from' +
+					' %(siteName)s? {{br /}} {{em}}This will deactivate the plugin and delete all' +
+					' associated files and data.{{/em}}',
 				{
 					components: {
 						em: <em />,
@@ -125,6 +127,7 @@ class PluginRemoveButton extends React.Component {
 					<li key={ 'reason-i' + i + '-' + this.props.site.ID }>{ reason }</li>
 				) );
 				html.push(
+					/* eslint-disable wpcalypso/jsx-classname-namespace */
 					<ul className="plugin-action__disabled-info-list" key="reason-shell-list">
 						{ list }
 					</ul>
@@ -141,11 +144,7 @@ class PluginRemoveButton extends React.Component {
 			html.push(
 				<ExternalLink
 					key="external-link"
-					onClick={ analytics.ga.recordEvent.bind(
-						this,
-						'Plugins',
-						'Clicked How do I fix diabled plugin removal.'
-					) }
+					onClick={ this.handleHowDoIFixThisButtonClick }
 					href="https://jetpack.me/support/site-management/#file-update-disabled"
 				>
 					{ this.props.translate( 'How do I fix this?' ) }
@@ -157,12 +156,17 @@ class PluginRemoveButton extends React.Component {
 		return null;
 	};
 
+	handleHowDoIFixThisButtonClick = () => {
+		analytics.ga.recordEvent( 'Plugins', 'Clicked How do I fix disabled plugin removal.' );
+	};
+
 	renderButton = () => {
 		const inProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, [
 			'REMOVE_PLUGIN',
 		] );
-		const getDisabledInfo = this.getDisabledInfo();
-		const label = getDisabledInfo
+		const disabledInfo = this.getDisabledInfo();
+		const disabled = !! disabledInfo;
+		const label = disabled
 			? this.props.translate( 'Removal Disabled', {
 					context:
 						'this goes next to an icon that displays if site is in a state where it can\'t modify has "Removal Disabled" ',
@@ -177,15 +181,19 @@ class PluginRemoveButton extends React.Component {
 				</span>
 			);
 		}
+
+		const handleClick = disabled ? null : this.removeAction;
+
 		return (
 			<PluginAction
 				label={ label }
 				htmlFor={ 'remove-plugin-' + this.props.site.ID }
 				action={ this.removeAction }
-				disabledInfo={ getDisabledInfo }
+				disabled={ disabled }
+				disabledInfo={ disabledInfo }
 				className="plugin-remove-button__remove-link"
 			>
-				<a onClick={ this.removeAction } className="plugin-remove-button__remove-icon">
+				<a onClick={ handleClick } className="plugin-remove-button__remove-icon">
 					<Gridicon icon="trash" size={ 18 } />
 				</a>
 			</PluginAction>
