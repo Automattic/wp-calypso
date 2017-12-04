@@ -20,8 +20,6 @@ import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
-import { requestSiteSettings } from 'state/site-settings/actions';
 import { isJetpackSite, getSiteSlug, getSiteOption } from 'state/sites/selectors';
 import versionCompare from 'lib/version-compare';
 
@@ -29,14 +27,6 @@ const analyticsPageTitle = 'Sharing';
 
 export const layout = context => {
 	const { contentComponent, path, store } = context;
-	const state = store.getState();
-
-	const siteId = getSelectedSiteId( state );
-	const siteSettings = getSiteSettings( state, siteId );
-
-	if ( siteId && ! siteSettings && canCurrentUser( state, siteId, 'manage_options' ) ) {
-		store.dispatch( requestSiteSettings( siteId ) );
-	}
 
 	renderWithReduxStore(
 		createElement( Sharing, { contentComponent, path } ),
