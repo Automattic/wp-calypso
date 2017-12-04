@@ -107,11 +107,13 @@ class Plans extends Component {
 		const { redirectAfterAuth } = props;
 		if ( redirectAfterAuth ) {
 			props.goBackToWpAdmin( redirectAfterAuth );
+			this.redirecting = true;
+			this.props.completeFlow();
 		} else if ( props.selectedSite ) {
 			this.props.goBackToWpAdmin( props.selectedSite.URL + JETPACK_ADMIN_PATH );
+			this.redirecting = true;
+			this.props.completeFlow();
 		}
-		this.redirecting = true;
-		this.props.completeFlow();
 	}
 
 	redirect( path ) {
