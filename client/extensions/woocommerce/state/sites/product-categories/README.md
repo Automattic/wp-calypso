@@ -28,14 +28,14 @@ Product categories are saved on a per-site basis. All categories are collected i
 		// Keyed by ID
 		"items": {
 			1: {
-				"id": 1
-				"name": "Watercolor"
-				"slug": "watercolor"
-				"parent": 0
-				"description": ""
-				"display": "default"
-				"image": []
-				"menu_order": 0
+				"id": 1,
+				"name": "Watercolor",
+				"slug": "watercolor",
+				"parent": 0,
+				"description": "",
+				"display": "default",
+				"image": [],
+				"menu_order": 0,
 				"count": 2
 			},
 			// ...

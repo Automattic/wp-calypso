@@ -18,7 +18,11 @@ import { getSerializedProductCategoriesQuery } from './utils';
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether product categories have been successfully loaded from the server
  */
-export const areProductCategoriesLoaded = ( state, query, siteId = getSelectedSiteId( state ) ) => {
+export const areProductCategoriesLoaded = (
+	state,
+	query = {},
+	siteId = getSelectedSiteId( state )
+) => {
 	const serializedQuery = getSerializedProductCategoriesQuery( query );
 	const cats = get(
 		state,
@@ -100,7 +104,7 @@ export const getProductCategories = (
 	if ( idsForQuery.length ) {
 		return idsForQuery.map( id => cats[ id ] );
 	}
-	return false;
+	return [];
 };
 
 /**
