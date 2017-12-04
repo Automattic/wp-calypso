@@ -39,6 +39,7 @@ describe( 'restoreProgress', () => {
 			percent: 0,
 			status: 'queued',
 			timestamp: TIMESTAMP,
+			rewindId: '',
 		} );
 	} );
 
