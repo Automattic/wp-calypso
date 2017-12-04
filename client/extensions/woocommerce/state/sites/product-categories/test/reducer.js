@@ -264,7 +264,7 @@ describe( 'reducer', () => {
 	describe( 'total', () => {
 		test( 'should have no change by default', () => {
 			const newState = total( undefined, {} );
-			expect( newState ).to.eql( 0 );
+			expect( newState ).to.eql( {} );
 		} );
 
 		test( 'should store the total number of categories when a request loads', () => {
