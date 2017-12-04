@@ -215,7 +215,7 @@ class ActivityLog extends Component {
 				// 'success',
 				// 'success-with-errors',
 			] ).isRequired,
-			timestamp: PropTypes.string.isRequired,
+			rewindId: PropTypes.string.isRequired,
 		} ),
 		backupProgress: PropTypes.object,
 		changePeriod: PropTypes.func,
@@ -375,7 +375,15 @@ class ActivityLog extends Component {
 	 * @returns {object}                 Card showing progress.
 	 */
 	getProgressBanner( siteId, actionProgress, action ) {
-		const { percent, progress, restoreId, downloadId, status, timestamp } = actionProgress;
+		const {
+			percent,
+			progress,
+			restoreId,
+			downloadId,
+			status,
+			timestamp,
+			rewindId,
+		} = actionProgress;
 		return (
 			<ProgressBanner
 				key={ `progress-${ restoreId || downloadId }` }
@@ -385,7 +393,7 @@ class ActivityLog extends Component {
 				downloadId={ downloadId }
 				siteId={ siteId }
 				status={ status }
-				timestamp={ timestamp }
+				timestamp={ timestamp || rewindId }
 				action={ action }
 			/>
 		);
@@ -410,7 +418,7 @@ class ActivityLog extends Component {
 			downloadId,
 			rewindId,
 		} = progress;
-		const { requestedRestoreActivityId } = this.props;
+		const requestedRestoreActivityId = this.props.requestedRestoreActivityId || rewindId;
 		return (
 			<div key={ `end-banner-${ restoreId || downloadId }` }>
 				<QueryActivityLog siteId={ siteId } />
@@ -419,7 +427,6 @@ class ActivityLog extends Component {
 						key={ `error-${ restoreId || downloadId }` }
 						errorCode={ errorCode || backupError }
 						downloadId={ downloadId }
-						rewindId={ rewindId }
 						requestedRestoreActivityId={ requestedRestoreActivityId }
 						failureReason={ failureReason }
 						createBackup={ this.props.createBackup }
@@ -434,7 +441,7 @@ class ActivityLog extends Component {
 						key={ `success-${ restoreId || downloadId }` }
 						applySiteOffset={ this.applySiteOffset }
 						siteId={ siteId }
-						timestamp={ timestamp }
+						timestamp={ rewindId }
 						downloadId={ downloadId }
 						backupUrl={ url }
 						downloadCount={ downloadCount }

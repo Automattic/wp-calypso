@@ -21,11 +21,12 @@ const startProgress = ( state, { timestamp } ) => ( {
 	percent: 0,
 	status: 'queued',
 	timestamp,
+	rewindId: '',
 } );
 
 const updateProgress = (
 	state,
-	{ errorCode, failureReason, message, percent, restoreId, status, timestamp }
+	{ errorCode, failureReason, message, percent, restoreId, status, timestamp, rewindId }
 ) => ( {
 	errorCode,
 	failureReason,
@@ -34,6 +35,7 @@ const updateProgress = (
 	restoreId,
 	status,
 	timestamp,
+	rewindId,
 } );
 
 export const restoreProgress = keyedReducer(

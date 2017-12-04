@@ -61,6 +61,7 @@ export const fromApi = ( {
 		message = '',
 		percent = 0,
 		status = '',
+		rewind_id = '',
 	} = {},
 } ) => ( {
 	errorCode: error_code,
@@ -68,6 +69,7 @@ export const fromApi = ( {
 	message,
 	percent: +percent,
 	status,
+	rewindId: rewind_id,
 } );
 
 export const updateProgress = ( { dispatch }, { siteId, restoreId, timestamp }, data ) =>

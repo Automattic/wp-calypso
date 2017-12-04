@@ -25,6 +25,7 @@ const FINISHED_RESPONSE = deepFreeze( {
 		message: '',
 		percent: 100,
 		status: 'finished',
+		rewindId: '',
 	},
 } );
 
@@ -38,6 +39,7 @@ describe( 'receiveRestoreProgress', () => {
 			message: '',
 			percent: 100,
 			status: 'finished',
+			rewindId: '',
 		} );
 		expect( dispatch ).to.have.been.calledWith( expectedAction );
 	} );
