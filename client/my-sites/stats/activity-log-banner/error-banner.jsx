@@ -119,11 +119,11 @@ class ErrorBanner extends PureComponent {
 					{ translate( 'Try again' ) }
 				</Button>
 				<HappychatButton
-					className="activity-log-confirm-dialog__more-info-link"
+					className="activity-log-banner__error-happychat activity-log-confirm-dialog__more-info-link"
 					onClick={ isUndefined( downloadId ) ? trackHappyChatRestore : trackHappyChatBackup }
 				>
 					<Gridicon icon="chat" />
-					<span className="activity-log-confirm-dialog__more-info-link-text">
+					<span className="activity-log-banner__error-happychat-text activity-log-confirm-dialog__more-info-link-text">
 						{ translate( 'Get help' ) }
 					</span>
 				</HappychatButton>
