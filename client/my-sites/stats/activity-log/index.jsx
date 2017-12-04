@@ -375,7 +375,15 @@ class ActivityLog extends Component {
 	 * @returns {object}                 Card showing progress.
 	 */
 	getProgressBanner( siteId, actionProgress, action ) {
-		const { percent, progress, restoreId, downloadId, status, timestamp } = actionProgress;
+		const {
+			percent,
+			progress,
+			restoreId,
+			downloadId,
+			status,
+			timestamp,
+			rewindId,
+		} = actionProgress;
 		return (
 			<ProgressBanner
 				key={ `progress-${ restoreId || downloadId }` }
@@ -385,7 +393,7 @@ class ActivityLog extends Component {
 				downloadId={ downloadId }
 				siteId={ siteId }
 				status={ status }
-				timestamp={ timestamp }
+				timestamp={ timestamp || rewindId }
 				action={ action }
 			/>
 		);
