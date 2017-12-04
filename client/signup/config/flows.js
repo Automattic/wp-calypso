@@ -336,7 +336,7 @@ function filterDesignTypeInFlow( flowName, flow ) {
 		return;
 	}
 
-	if ( abtest( 'signupSiteSegmentStep' ) === 'variant' ) {
+	if ( includes( flow.steps, 'design-type' ) && abtest( 'signupSiteSegmentStep' ) === 'variant' ) {
 		return replaceStepInFlow( flow, 'design-type', 'about' );
 	}
 

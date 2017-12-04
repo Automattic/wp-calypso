@@ -109,7 +109,7 @@ export default {
 
 	about: {
 		stepName: 'about',
-		providesDependencies: [ 'themeSlugWithRepo', 'siteTitle' ],
+		providesDependencies: [ 'designType', 'themeSlugWithRepo', 'siteTitle', 'surveyQuestion' ],
 	},
 
 	user: {
