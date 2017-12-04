@@ -5,7 +5,8 @@
 import React from 'react';
 import Debug from 'debug';
 import page from 'page';
-import { get, isEmpty } from 'lodash';
+import validator from 'is-my-json-valid';
+import { get } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -23,7 +24,7 @@ import Plans from './plans';
 import PlansLanding from './plans-landing';
 import route from 'lib/route';
 import userFactory from 'lib/user';
-import { getAuthorizationRemoteQueryData } from 'state/jetpack-connect/selectors';
+import { authorizeQueryDataSchema } from './schema';
 import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
@@ -86,22 +87,38 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 	return get( planSlugs, [ interval, type ], '' );
 };
 
-export function maybeNoDirectAccess( context, next ) {
-	if ( typeof getAuthorizationRemoteQueryData( context.store.getState() ) === 'undefined' ) {
-		const analyticsBasePath = 'jetpack/connect/authorize';
-		const analyticsPageTitle = 'Jetpack Authorize';
+export function parseQueryOrFail( context, next ) {
+	const { query, store } = context;
+
+	const validateQueryObject = validator( authorizeQueryDataSchema );
+	const validQueryObject = validateQueryObject( query );
+
+	if ( validQueryObject ) {
+		debug( 'set initial query object', query );
+		store.dispatch( {
+			type: JETPACK_CONNECT_QUERY_SET,
+			query,
+		} );
+
+		//
+		// Prunes ?query=string
+		// Previous multi-step first saves query, then `page.redirect`s
+		// without query, falling through to other route handler
+		//
+		// Not really compatible with this approach :/
+		//
+		// page.redirect( context.pathname );
 
 		removeSidebar( context );
 
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+		const analyticsBasePath = 'jetpack/connect/authorize';
+		const analyticsPageTitle = 'Jetpack Authorize';
 
-		return renderWithReduxStore(
-			<NoDirectAccessError />,
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+	} else {
+		context.primary = <NoDirectAccessError />;
 	}
-	return next();
+	next();
 }
 
 export function redirectWithoutLocaleifLoggedIn( context, next ) {
@@ -109,19 +126,6 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 		const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
 		debug( 'redirectWithoutLocaleifLoggedIn to %s', urlWithoutLocale );
 		return page.redirect( urlWithoutLocale );
-	}
-
-	next();
-}
-
-export function saveQueryObject( context, next ) {
-	if ( ! isEmpty( context.query ) && context.query.redirect_uri ) {
-		debug( 'set initial query object', context.query );
-		context.store.dispatch( {
-			type: JETPACK_CONNECT_QUERY_SET,
-			queryObject: context.query,
-		} );
-		page.redirect( context.pathname );
 	}
 
 	next();
