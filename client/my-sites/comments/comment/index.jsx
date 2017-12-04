@@ -113,7 +113,7 @@ export class Comment extends Component {
 		return (
 			<Card
 				className={ classes }
-				onClick={ isBulkMode ? this.toggleSelected : false }
+				onClick={ isBulkMode ? this.toggleSelected : undefined }
 				onKeyDown={ this.keyDownHandler }
 				ref={ this.storeCardRef }
 			>
