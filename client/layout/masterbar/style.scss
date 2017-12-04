@@ -75,7 +75,7 @@ $autobar-height: 20px;
 	padding: 0 15px;
 	text-decoration: none;
 	cursor: default;
-	transition: all 150ms ease-in;
+	transition: all 0.2s ease-in-out;
 
 	&:visited {
 		color: var( --masterbar-color );
@@ -453,9 +453,10 @@ $autobar-height: 20px;
 	}
 }
 
+// Editor Transition
 .masterbar {
 	opacity: 1;
-	transition: opacity 0.2s ease-out;
+	transition: opacity 0.3s ease-in-out;
 }
 .is-section-post-editor .masterbar {
 	opacity: 0;

@@ -79,17 +79,17 @@
 	margin-left: auto;
 	align-items: center;
 	display: flex;
-	flex-wrap: wrap;
+	//flex-wrap: wrap;
 	padding: 0 12px;
 	line-height: 32px;
 }
 
 .editor-ground-control__action-buttons .button.is-borderless {
-	padding: 0 12px;
+	padding: 0 8px;
 	line-height: 46px;
 
-	@include breakpoint( "<480px" ) {
-		padding: 0 4px;
+	@include breakpoint( ">660px" ) {
+		padding: 0 12px;
 	}
 }
 
@@ -100,8 +100,12 @@
 .editor-ground-control__preview-button {
 	display: block;
 	flex-grow: 1;
-	padding: 7px 16px;
-	min-width: 100px;
+	padding: 7px 12px;
+
+	@include breakpoint( ">660px" ) {
+		min-width: 100px;
+		padding: 7px 16px;
+	}
 }
 
 .editor-ground-control__toggle-sidebar {
@@ -110,6 +114,7 @@
 	line-height: 1;
 	transition: all 0.15s ease-in-out;
 }
+
 .editor-ground-control__toggle-sidebar svg {
 	transition: transform 0.3s ease-in-out;
 }
@@ -138,21 +143,17 @@
 .editor-ground-control__publish-button {
 	flex-grow: 1;
 	display: flex;
-	margin: 0 8px;
-	min-width: 120px;
-
-	@include breakpoint( "<480px" ) {
-		margin: 0;
-	}
 }
 
 .editor-ground-control .editor-publish-button {
 	border-radius: 4px;
-	padding: 7px 16px;
-	flex-grow: 1;
+	padding: 7px 12px;
+	margin: 0 0 0 8px;
 
-	@include breakpoint( "<480px" ) {
-		padding: 7px 10px;
+	@include breakpoint( ">660px" ) {
+		min-width: 120px;
+		padding: 7px 16px;
+		margin: 0 8px;
 	}
 }
 
@@ -251,10 +252,15 @@
 
 .editor-ground-control__back.button.is-borderless {
 	border-right: 1px solid lighten( $gray, 25% );
-	padding: 6px 32px;
+	padding: 6px 16px;
+	min-width: 80px;
 	height: 46px;
 	border-radius: 0;
 	color: $blue-wordpress;
+
+	@include breakpoint( ">960px" ) {
+		padding: 6px 32px;
+	}
 
 	&:hover {
 		color: $blue-medium;
@@ -266,10 +272,6 @@
 }
 
 .editor-ground-control__button-label {
-	@include breakpoint( "<960px" ) {
-		display: none;
-	}
-
 	.post-status {
 		display: none;
 	}
