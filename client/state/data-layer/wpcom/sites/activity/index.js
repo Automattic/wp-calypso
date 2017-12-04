@@ -2,18 +2,104 @@
 /**
  * External dependencies
  */
-import { omitBy } from 'lodash';
+import { get, merge, omitBy } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import fromApi from './from-api';
-import { ACTIVITY_LOG_REQUEST } from 'state/action-types';
-import { activityLogUpdate } from 'state/activity-log/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { ACTIVITY_LOG_REQUEST, ACTIVITY_LOG_WATCH } from 'state/action-types';
+import { activityLogRequest, activityLogUpdate } from 'state/activity-log/actions';
+import { dispatchRequestEx, getData, getError } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getSiteGmtOffset } from 'state/selectors';
+
+const POLL_INTERVAL = 10000;
+const pollingSites = new Map();
+
+export const togglePolling = ( { dispatch, getState }, { isWatching, siteId } ) => {
+	if ( isWatching ) {
+		const newestDate = Date.now();
+		pollingSites.set( siteId, { newestDate } );
+
+		// kick off the first polling
+		dispatch(
+			merge(
+				activityLogRequest( siteId, {
+					dateStart: newestDate - getSiteGmtOffset( getState(), siteId ) * 3600 * 1000,
+					number: 100,
+				} ),
+				{
+					meta: {
+						dataLayer: {
+							isWatching: true,
+						},
+					},
+				}
+			)
+		);
+	} else {
+		pollingSites.delete( siteId );
+	}
+};
+
+export const continuePolling = ( { dispatch }, action ) => {
+	if ( ! get( action, 'meta.dataLayer.isWatching' ) ) {
+		return;
+	}
+
+	const { siteId } = action;
+
+	const error = getError( action );
+	if ( undefined !== error ) {
+		pollingSites.delete( siteId );
+
+		dispatch( recordTracksEvent( 'calypso_activity_log_polling_fail', { siteId } ) );
+		return;
+	}
+
+	const rawData = getData( action );
+	if ( undefined !== rawData ) {
+		const prevState = pollingSites.get( siteId );
+
+		if ( ! prevState ) {
+			return;
+		}
+
+		const data = fromApi( rawData );
+
+		const newestDate = data.reduce(
+			( newest, { activityTs } ) => Math.max( newest, activityTs ),
+			prevState.newestDate
+		);
+
+		// no need to send out a new request if we're waiting on one
+		if ( prevState.timer ) {
+			pollingSites.set( siteId, { ...prevState, newestDate } );
+			return;
+		}
+
+		const timer = setTimeout( () => {
+			pollingSites.set( siteId, { ...pollingSites.get( siteId ), timer: null } );
+			dispatch(
+				merge(
+					activityLogRequest( siteId, {
+						dateStart: newestDate,
+						number: 100,
+					} ),
+					{
+						meta: { dataLayer: { isWatching: true } },
+					}
+				)
+			);
+		}, POLL_INTERVAL );
+
+		pollingSites.set( siteId, { ...prevState, newestDate, timer } );
+	}
+};
 
 export const handleActivityLogRequest = action => {
 	const { params = {}, siteId } = action;
@@ -53,5 +139,7 @@ export default {
 			onError: receiveActivityLogError,
 			fromApi,
 		} ),
+		continuePolling,
 	],
+	[ ACTIVITY_LOG_WATCH ]: [ togglePolling ],
 };
