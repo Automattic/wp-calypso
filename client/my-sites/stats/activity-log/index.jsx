@@ -441,7 +441,7 @@ class ActivityLog extends Component {
 						key={ `success-${ restoreId || downloadId }` }
 						applySiteOffset={ this.applySiteOffset }
 						siteId={ siteId }
-						timestamp={ timestamp }
+						timestamp={ rewindId }
 						downloadId={ downloadId }
 						backupUrl={ url }
 						downloadCount={ downloadCount }
