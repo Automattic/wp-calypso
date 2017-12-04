@@ -37,17 +37,18 @@ const dispatchChecklistRequest = dispatchRequestEx( {
 	onError: noop,
 } );
 
-export const updateChecklistTask = ( { siteId, taskId } ) =>
+export const updateChecklistTask = action =>
 	http(
 		{
-			path: `/sites/${ siteId }/checklist`,
+			path: `/sites/${ action.siteId }/checklist`,
 			method: 'POST',
 			apiNamespace: 'rest/v1',
 			query: {
 				http_envelope: 1,
 			},
-			body: { taskId },
-		}
+			body: { taskId: action.taskId },
+		},
+		action
 	);
 
 const dispatchChecklistTaskUpdate = dispatchRequestEx( {
