@@ -125,6 +125,12 @@
 		}
 	}
 
+	.plugin-activate-toggle__link {
+		@include breakpoint( '<480px' ) {
+			justify-content: space-between;
+		}
+	}
+
 	.form-toggle__label-content {
 		@include breakpoint( '<480px' ) {
 			margin-left: 0;
