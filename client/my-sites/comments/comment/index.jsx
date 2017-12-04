@@ -29,6 +29,7 @@ export class Comment extends Component {
 		postId: PropTypes.number,
 		commentId: PropTypes.number,
 		isBulkMode: PropTypes.bool,
+		isCommentsTreeSupported: PropTypes.bool,
 		isPostView: PropTypes.bool,
 		isSelected: PropTypes.bool,
 		refreshCommentData: PropTypes.bool,
@@ -147,7 +148,7 @@ export class Comment extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { commentId } ) => {
+const mapStateToProps = ( state, { commentId, isCommentsTreeSupported } ) => {
 	const siteId = getSelectedSiteId( state );
 	const comment = getSiteComment( state, siteId, commentId );
 	const commentStatus = get( comment, 'status' );
@@ -157,6 +158,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		commentIsPending: 'unapproved' === commentStatus,
 		isLoading: isUndefined( comment ),
 		minimumComment: getMinimumComment( comment ),
+		refreshCommentData: isCommentsTreeSupported && isUndefined( comment ),
 	};
 };
 
