@@ -32,6 +32,7 @@ import PostTime from 'blocks/post-time';
 import PostStatus from 'blocks/post-status';
 import PostShare from 'blocks/post-share';
 import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
+import PostActionCounts from 'my-sites/post-type-list/post-action-counts';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
 import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
@@ -161,8 +162,11 @@ class PostItem extends React.Component {
 								) }
 						</h1>
 						<div className="post-item__meta">
-							<PostTime globalId={ globalId } />
-							<PostStatus globalId={ globalId } />
+							<span className="post-item__meta-time-status">
+								<PostTime globalId={ globalId } />
+								<PostStatus globalId={ globalId } />
+							</span>
+							<PostActionCounts globalId={ globalId } />
 						</div>
 					</div>
 					<PostTypeListPostThumbnail globalId={ globalId } />
