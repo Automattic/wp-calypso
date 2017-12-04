@@ -12,11 +12,12 @@ import { get, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
-import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
+import Tooltip from 'components/tooltip';
+import { isEnabled } from 'config';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 import { getSiteComment } from 'state/selectors';
@@ -29,7 +30,14 @@ export class CommentAuthor extends Component {
 		isPostView: PropTypes.bool,
 	};
 
-	shouldComponentUpdate = nextProps => ! isEqual( this.props, nextProps );
+	state = {
+		isLinkTooltipVisible: false,
+	};
+
+	shouldComponentUpdate = ( nextProps, nextState ) =>
+		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
+
+	storeLinkIndicatorRef = icon => ( this.hasLinkIndicator = icon );
 
 	commentHasLink = () => {
 		if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
@@ -41,6 +49,10 @@ export class CommentAuthor extends Component {
 
 		return false;
 	};
+
+	hideLinkTooltip = () => this.setState( { isLinkTooltipVisible: false } );
+
+	showLinkTooltip = () => this.setState( { isLinkTooltipVisible: true } );
 
 	render() {
 		const {
@@ -57,6 +69,7 @@ export class CommentAuthor extends Component {
 			moment,
 			translate,
 		} = this.props;
+		const { isLinkTooltipVisible } = this.state;
 
 		const formattedDate = moment( commentDate ).format( 'll LT' );
 
@@ -79,7 +92,20 @@ export class CommentAuthor extends Component {
 				<div className="comment__author-info">
 					<div className="comment__author-info-element">
 						{ this.commentHasLink() && (
-							<Gridicon icon="link" size={ 18 } className="comment__author-has-link" />
+							<span
+								onMouseEnter={ this.showLinkTooltip }
+								onMouseLeave={ this.hideLinkTooltip }
+								ref={ this.storeLinkIndicatorRef }
+							>
+								<Gridicon icon="link" className="comment__author-has-link" size={ 18 } />
+								<Tooltip
+									context={ this.hasLinkIndicator }
+									isVisible={ isLinkTooltipVisible }
+									showOnMobile
+								>
+									{ translate( 'This comment contains links.' ) }
+								</Tooltip>
+							</span>
 						) }
 						<strong className="comment__author-name">
 							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
