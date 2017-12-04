@@ -40,16 +40,17 @@ import SegmentedControlItem from 'components/segmented-control/item';
 class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
 		const {
-			site,
-			intervalType,
-			onUpgradeClick,
-			hideFreePlan,
-			isInSignup,
-			isLandingPage,
 			basePlansPath,
-			selectedFeature,
 			displayJetpackPlans,
 			domainName,
+			hideFreePlan,
+			intervalType,
+			isInSignup,
+			isLandingPage,
+			onUpgradeClick,
+			selectedFeature,
+			selectedPlan,
+			site,
 		} = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
@@ -66,15 +67,16 @@ class PlansFeaturesMain extends Component {
 			return (
 				<div className="plans-features-main__group" data-e2e-plans="jetpack">
 					<PlanFeatures
-						plans={ jetpackPlans }
-						selectedFeature={ selectedFeature }
-						onUpgradeClick={ onUpgradeClick }
+						basePlansPath={ basePlansPath }
+						displayJetpackPlans={ displayJetpackPlans }
+						domainName={ domainName }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
-						basePlansPath={ basePlansPath }
+						onUpgradeClick={ onUpgradeClick }
+						plans={ jetpackPlans }
+						selectedFeature={ selectedFeature }
+						selectedPlan={ selectedPlan }
 						site={ site }
-						domainName={ domainName }
-						displayJetpackPlans={ displayJetpackPlans }
 					/>
 				</div>
 			);
@@ -93,15 +95,16 @@ class PlansFeaturesMain extends Component {
 			return (
 				<div className="plans-features-main__group" data-e2e-plans="jetpack">
 					<PlanFeatures
-						plans={ jetpackPlans }
-						selectedFeature={ selectedFeature }
-						onUpgradeClick={ onUpgradeClick }
+						basePlansPath={ basePlansPath }
+						displayJetpackPlans={ displayJetpackPlans }
+						domainName={ domainName }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
-						basePlansPath={ basePlansPath }
+						onUpgradeClick={ onUpgradeClick }
+						plans={ jetpackPlans }
+						selectedFeature={ selectedFeature }
+						selectedPlan={ selectedPlan }
 						site={ site }
-						domainName={ domainName }
-						displayJetpackPlans={ displayJetpackPlans }
 					/>
 				</div>
 			);
@@ -120,15 +123,16 @@ class PlansFeaturesMain extends Component {
 		return (
 			<div className="plans-features-main__group" data-e2e-plans="wpcom">
 				<PlanFeatures
-					plans={ plans }
-					onUpgradeClick={ onUpgradeClick }
+					basePlansPath={ basePlansPath }
+					displayJetpackPlans={ displayJetpackPlans }
+					domainName={ domainName }
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
-					basePlansPath={ basePlansPath }
+					onUpgradeClick={ onUpgradeClick }
+					plans={ plans }
+					selectedPlan={ selectedPlan }
 					selectedFeature={ selectedFeature }
 					site={ site }
-					domainName={ domainName }
-					displayJetpackPlans={ displayJetpackPlans }
 				/>
 			</div>
 		);
@@ -391,22 +395,23 @@ class PlansFeaturesMain extends Component {
 }
 
 PlansFeaturesMain.propTypes = {
-	site: PropTypes.object,
+	basePlansPath: PropTypes.string,
+	displayJetpackPlans: PropTypes.bool.isRequired,
+	hideFreePlan: PropTypes.bool,
+	intervalType: PropTypes.string,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
-	basePlansPath: PropTypes.string,
-	intervalType: PropTypes.string,
 	onUpgradeClick: PropTypes.func,
-	hideFreePlan: PropTypes.bool,
-	showFAQ: PropTypes.bool,
 	selectedFeature: PropTypes.string,
-	displayJetpackPlans: PropTypes.bool.isRequired,
+	selectedPlan: PropTypes.string,
+	showFAQ: PropTypes.bool,
+	site: PropTypes.object,
 };
 
 PlansFeaturesMain.defaultProps = {
 	basePlansPath: null,
-	intervalType: 'yearly',
 	hideFreePlan: false,
+	intervalType: 'yearly',
 	site: {},
 	showFAQ: true,
 };

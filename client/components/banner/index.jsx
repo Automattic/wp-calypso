@@ -25,6 +25,7 @@ import {
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 } from 'lib/plans/constants';
+import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { getValidFeatureKeys } from 'lib/plans';
@@ -65,13 +66,20 @@ class Banner extends Component {
 	};
 
 	getHref() {
-		const { href, feature, siteSlug } = this.props;
+		const { feature, href, plan, siteSlug } = this.props;
 
 		if ( ! href && siteSlug ) {
-			if ( feature ) {
-				return `/plans/${ siteSlug }?feature=${ feature }`;
+			const baseUrl = `/plans/${ siteSlug }`;
+			if ( feature || plan ) {
+				return addQueryArgs(
+					{
+						feature,
+						plan,
+					},
+					baseUrl
+				);
 			}
-			return `/plans/${ siteSlug }`;
+			return baseUrl;
 		}
 		return href;
 	}

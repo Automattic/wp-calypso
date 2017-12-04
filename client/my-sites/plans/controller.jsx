@@ -26,6 +26,7 @@ export default {
 					intervalType={ context.params.intervalType }
 					destinationType={ context.params.destinationType }
 					selectedFeature={ context.query.feature }
+					selectedPlan={ context.query.plan }
 				/>
 			</CheckoutData>,
 			document.getElementById( 'primary' ),

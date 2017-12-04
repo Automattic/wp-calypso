@@ -98,11 +98,12 @@ class Plans extends React.Component {
 						/>
 
 						<PlansFeaturesMain
-							site={ selectedSite }
-							intervalType={ this.props.intervalType }
-							hideFreePlan={ true }
-							selectedFeature={ this.props.selectedFeature }
 							displayJetpackPlans={ displayJetpackPlans }
+							hideFreePlan={ true }
+							intervalType={ this.props.intervalType }
+							selectedFeature={ this.props.selectedFeature }
+							selectedPlan={ this.props.selectedPlan }
+							site={ selectedSite }
 						/>
 					</div>
 				</Main>
