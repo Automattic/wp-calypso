@@ -193,7 +193,7 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page scheduled for %(formattedPostDate)s.', {
+					return translate( 'Page scheduled for %(formattedPostDate)s!', {
 						args: { formattedPostDate },
 						comment:
 							'Editor: Message displayed when a page is scheduled, with the scheduled date and time.',
@@ -201,14 +201,14 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'post' !== type && typeLabel ) {
-					return translate( '%(typeLabel)s scheduled for %(formattedPostDate)s.', {
+					return translate( '%(typeLabel)s scheduled for %(formattedPostDate)s!', {
 						args: { typeLabel, formattedPostDate },
 						comment:
 							'Editor: Message displayed when a post of a custom type is scheduled, with the scheduled date and time.',
 					} );
 				}
 
-				return translate( 'Post scheduled for %(formattedPostDate)s.', {
+				return translate( 'Post scheduled for %(formattedPostDate)s!', {
 					args: { formattedPostDate },
 					comment:
 						'Editor: Message displayed when a post is scheduled, with the scheduled date and time.',
@@ -253,7 +253,7 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page updated. {{postLink}}Visit page{{/postLink}}.', {
+					return translate( 'Page updated! {{postLink}}Visit page{{/postLink}}.', {
 						components: {
 							postLink: <a href={ postUrl } onClick={ this.handlePillExternalClick } />,
 						},
@@ -264,7 +264,7 @@ export class EditorNotice extends Component {
 
 				if ( 'post' !== type && typeLabel ) {
 					return translate(
-						'%(typeLabel)s updated. {{postLink}}Visit %(typeLabel)s{{/postLink}}.',
+						'%(typeLabel)s updated! {{postLink}}Visit %(typeLabel)s{{/postLink}}.',
 						{
 							args: { typeLabel },
 							components: {
@@ -276,7 +276,7 @@ export class EditorNotice extends Component {
 					);
 				}
 
-				return translate( 'Post updated. {{postLink}}Visit post{{/postLink}}.', {
+				return translate( 'Post updated! {{postLink}}Visit post{{/postLink}}.', {
 					components: {
 						postLink: <a href={ postUrl } onClick={ this.handlePillExternalClick } />,
 					},
