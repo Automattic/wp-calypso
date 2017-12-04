@@ -35,14 +35,9 @@ import FormTextInputWithAction from 'components/forms/form-text-input-with-actio
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormToggle from 'components/forms/form-toggle';
 import PhoneInput from 'components/phone-input';
-
-/**
- * Internal dependencies
- */
-import { forSms } from 'lib/countries-list';
+import { forSms as countriesList } from 'lib/countries-list';
 import { CURRENCIES } from 'lib/format-currency/currencies';
 
-const countriesList = forSms();
 const currencyList = entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
 const visualCurrencyList = entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
 	code,

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import inherits from 'inherits';
 import store from 'store';
@@ -165,18 +163,6 @@ SmsCountriesList.prototype.requestFromEndpoint = function( fn ) {
 	return wpcom.getSmsSupportedCountries( fn );
 };
 
-const domainRegistrationCountriesList = new DomainRegistrationCountriesList();
-const paymentCountriesList = new PaymentCountriesList();
-const smsCountriesList = new SmsCountriesList();
-
-export default {
-	forDomainRegistrations: function() {
-		return domainRegistrationCountriesList;
-	},
-	forPayments: function() {
-		return paymentCountriesList;
-	},
-	forSms: function() {
-		return smsCountriesList;
-	},
-};
+export const forDomainRegistrations = new DomainRegistrationCountriesList();
+export const forPayments = new PaymentCountriesList();
+export const forSms = new SmsCountriesList();

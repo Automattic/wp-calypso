@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -38,7 +36,7 @@ import { CountrySelect, Input, HiddenInput } from 'my-sites/domains/components/f
 import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
 import { cartItems } from 'lib/cart-values';
-import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
+import { forDomainRegistrations as countriesList } from 'lib/countries-list';
 import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
 import {
@@ -64,8 +62,7 @@ import notices from 'notices';
 import support from 'lib/url/support';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
-const wpcom = wp.undocumented(),
-	countriesList = countriesListForDomainRegistrations();
+const wpcom = wp.undocumented();
 
 export class DomainDetailsForm extends PureComponent {
 	constructor( props, context ) {

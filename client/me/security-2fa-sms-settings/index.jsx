@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -23,10 +21,9 @@ import Security2faProgress from 'me/security-2fa-progress';
 import analytics from 'lib/analytics';
 import observe from 'lib/mixins/data-observe';
 import { protectForm } from 'lib/protect-form';
-import { forSms } from 'lib/countries-list';
+import { forSms as countriesList } from 'lib/countries-list';
 
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
-const countriesList = forSms();
 
 const Security2faSMSSettings = createReactClass( {
 	displayName: 'Security2faSMSSettings',

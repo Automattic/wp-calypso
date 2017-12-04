@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -16,11 +14,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormPhoneInput from 'components/forms/form-phone-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Buttons from './buttons';
-
-/**
- * Internal dependencies
- */
-var countriesList = require( 'lib/countries-list' ).forSms();
+import { forSms as countriesList } from 'lib/countries-list';
 
 class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 	static displayName = 'SecurityAccountRecoveryRecoveryPhoneEdit';
@@ -42,11 +36,7 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 	};
 
 	render() {
-		var validation = null,
-			havePhone = ! isEmpty( this.props.storedPhone );
-		if ( this.state.validation ) {
-			validation = <FormInputValidation isError text={ this.state.validation } />;
-		}
+		const havePhone = ! isEmpty( this.props.storedPhone );
 
 		return (
 			<div>
@@ -60,7 +50,9 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 						} }
 						onChange={ this.onChange }
 					/>
-					{ validation }
+					{ this.state.validation && (
+						<FormInputValidation isError text={ this.state.validation } />
+					) }
 				</FormFieldset>
 
 				<Buttons
@@ -106,7 +98,7 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 	};
 
 	onSave = () => {
-		var phoneNumber = this.state.phoneNumber;
+		const phoneNumber = this.state.phoneNumber;
 
 		if ( ! phoneNumber.isValid ) {
 			this.setState( {

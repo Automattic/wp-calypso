@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -17,7 +15,7 @@ import { camelCase, forOwn, kebabCase, mapKeys, values } from 'lodash';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import CreditCardFormFields from 'components/credit-card-form-fields';
-import CountriesList from 'lib/countries-list';
+import { forPayments as countriesList } from 'lib/countries-list';
 import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
 import notices from 'notices';
@@ -26,7 +24,6 @@ import ValidationErrorList from 'notices/validation-error-list';
 import wpcomFactory from 'lib/wp';
 import support from 'lib/url/support';
 
-const countriesList = CountriesList.forPayments();
 const wpcom = wpcomFactory.undocumented();
 
 const CreditCardForm = createReactClass( {

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { deburr, endsWith, get, includes, isEqual, keys, omit, pick, snakeCase } from 'lodash';
@@ -24,7 +22,7 @@ import FormInput from 'my-sites/domains/components/form/input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import ValidationErrorList from 'notices/validation-error-list';
-import countriesListBuilder from 'lib/countries-list';
+import { forDomainRegistrations as countriesList } from 'lib/countries-list';
 import formState from 'lib/form-state';
 import notices from 'notices';
 import paths from 'my-sites/domains/paths';
@@ -37,7 +35,6 @@ import DesignatedAgentNotice from 'my-sites/domains/domain-management/components
 import Dialog from 'components/dialog';
 import { getCurrentUser } from 'state/current-user/selectors';
 
-const countriesList = countriesListBuilder.forDomainRegistrations();
 const wpcom = wp.undocumented();
 
 class EditContactInfoFormCard extends React.Component {
