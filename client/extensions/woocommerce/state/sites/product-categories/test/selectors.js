@@ -252,6 +252,11 @@ describe( 'selectors', () => {
 			expect( areProductCategoriesLoadingIgnoringPage( loadingState, {}, 345 ) ).to.be.true;
 		} );
 
+		test( 'should be true when categories are currently being fetched, and passed a page parameter.', () => {
+			expect( areProductCategoriesLoadingIgnoringPage( loadingState, { page: 1 }, 345 ) ).to.be
+				.true;
+		} );
+
 		test( 'should be false when categories are loaded.', () => {
 			expect( areProductCategoriesLoadingIgnoringPage( loadedState, {}, 123 ) ).to.be.false;
 		} );
@@ -270,12 +275,18 @@ describe( 'selectors', () => {
 			expect( getProductCategoriesIgnoringPage( loadingState, {}, 324 ) ).to.eql( [] );
 		} );
 
-		test( 'should gET ALL product categories from specified site', () => {
+		test( 'should get all product categories from specified site', () => {
 			expect( getProductCategoriesIgnoringPage( loadedState, {}, 123 ) ).to.eql( [
 				{ id: 1, name: 'cat1', slug: 'cat-1' },
 				{ id: 2, name: 'cat2', slug: 'cat-2' },
 			] );
 			expect( getProductCategoriesIgnoringPage( loadedState, {}, 345 ) ).to.eql( [
+				{ id: 3, name: 'cat3', slug: 'cat-3' },
+				{ id: 4, name: 'cat4', slug: 'cat-4' },
+				{ id: 5, name: 'cat5', slug: 'cat-5' },
+				{ id: 6, name: 'cat6', slug: 'cat-6' },
+			] );
+			expect( getProductCategoriesIgnoringPage( loadedState, { page: 1 }, 345 ) ).to.eql( [
 				{ id: 3, name: 'cat3', slug: 'cat-3' },
 				{ id: 4, name: 'cat4', slug: 'cat-4' },
 				{ id: 5, name: 'cat5', slug: 'cat-5' },

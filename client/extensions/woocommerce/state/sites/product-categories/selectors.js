@@ -178,7 +178,11 @@ export const getProductCategoriesLastPage = (
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Boolean}       Returns true if currently requesting product categories for a query, excluding all known queried pages.
  */
-export function areProductCategoriesLoadingIgnoringPage( state, query, siteId ) {
+export function areProductCategoriesLoadingIgnoringPage(
+	state,
+	query = {},
+	siteId = getSelectedSiteId( state )
+) {
 	const lastPage = getProductCategoriesLastPage( state, query, siteId );
 	if ( null === lastPage ) {
 		return false;

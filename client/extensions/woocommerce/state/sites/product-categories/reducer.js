@@ -118,7 +118,7 @@ export function total( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function totalPages( state = 0, action ) {
+export function totalPages( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS === action.type && action.data ) {
 		const query = getSerializedProductCategoriesQuery( omit( action.query, 'page' ) );
 		return Object.assign( {}, state, { [ query ]: action.totalPages } );

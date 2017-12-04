@@ -306,7 +306,7 @@ describe( 'reducer', () => {
 	describe( 'totalPages', () => {
 		test( 'should have no change by default', () => {
 			const newState = totalPages( undefined, {} );
-			expect( newState ).to.eql( 0 );
+			expect( newState ).to.eql( {} );
 		} );
 
 		test( 'should store the total number of pages when a request loads', () => {
