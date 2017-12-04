@@ -158,6 +158,13 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
+		name: 'onboarding',
+		paths: [ '/onboarding' ],
+		module: 'onboarding',
+		secondary: false,
+		enableLoggedOut: true,
+	},
+	{
 		name: 'signup',
 		paths: [ '/start' ],
 		module: 'signup',
