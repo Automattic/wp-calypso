@@ -18,18 +18,15 @@ import { sectionify } from 'lib/route';
 import Sharing from './main';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
-import sites from 'lib/sites-list';
-import utils from 'lib/site/utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
+import { isJetpackSite, getSiteSlug, getSiteOption } from 'state/sites/selectors';
+import versionCompare from 'lib/version-compare';
 
 const analyticsPageTitle = 'Sharing';
 
 export const layout = context => {
-	const site = sites().getSelectedSite();
 	const { contentComponent, path, store } = context;
-
-	if ( site && ! site.settings && utils.userCan( 'manage_options', site ) ) {
-		site.fetchSettings();
-	}
 
 	renderWithReduxStore(
 		createElement( Sharing, { contentComponent, path } ),
@@ -39,21 +36,33 @@ export const layout = context => {
 };
 
 export const connections = ( context, next ) => {
-	const site = sites().getSelectedSite();
-	const basePath = sectionify( context.path );
-	const baseAnalyticsPath = site ? basePath + '/:site' : basePath;
+	const { store, path } = context;
+	const state = store.getState();
 
-	if ( site && ! utils.userCan( 'publish_posts', site ) ) {
+	const siteId = getSelectedSiteId( state );
+
+	const basePath = sectionify( path );
+	const baseAnalyticsPath = siteId ? basePath + '/:site' : basePath;
+
+	if ( siteId && ! canCurrentUser( state, siteId, 'publish_posts' ) ) {
 		notices.error(
 			translate( 'You are not authorized to manage sharing settings for this site.' )
 		);
 	}
 
-	if ( site && site.jetpack && ! site.isModuleActive( 'publicize' ) ) {
+	if (
+		siteId &&
+		isJetpackSite( state, siteId ) &&
+		! isJetpackModuleActive( state, siteId, 'publicize' )
+	) {
+		const siteSlug = getSiteSlug( state, siteId );
+
 		// Redirect to sharing buttons if Jetpack Publicize module is not
 		// active, but ShareDaddy is active
 		page.redirect(
-			site.isModuleActive( 'sharedaddy' ) ? '/sharing/buttons/' + sites.selected : '/stats'
+			isJetpackModuleActive( state, siteId, 'sharedaddy' )
+				? `/sharing/buttons/${ siteSlug }`
+				: '/stats'
 		);
 	} else {
 		pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > Connections' );
@@ -65,22 +74,29 @@ export const connections = ( context, next ) => {
 };
 
 export const buttons = ( context, next ) => {
-	const site = sites().getSelectedSite();
-	const basePath = sectionify( context.path );
-	const baseAnalyticsPath = site ? basePath + '/:site' : basePath;
+	const { store, path } = context;
+	const state = store.getState();
+
+	const siteId = getSelectedSiteId( state );
+
+	const basePath = sectionify( path );
+	const baseAnalyticsPath = siteId ? basePath + '/:site' : basePath;
 
 	pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > Sharing Buttons' );
 
-	if ( site && ! utils.userCan( 'manage_options', site ) ) {
+	if ( siteId && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
 		notices.error(
 			translate( 'You are not authorized to manage sharing settings for this site.' )
 		);
 	}
 
+	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+
 	if (
-		site &&
-		site.jetpack &&
-		( ! site.isModuleActive( 'sharedaddy' ) || site.versionCompare( '3.4-dev', '<' ) )
+		siteId &&
+		isJetpackSite( state, siteId ) &&
+		( ! isJetpackModuleActive( state, siteId, 'sharedaddy' ) ||
+			versionCompare( siteJetpackVersion, '3.4-dev', '<' ) )
 	) {
 		notices.error(
 			translate(
