@@ -12,23 +12,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	clearPlan,
-	isCalypsoStartedConnection,
-	retrieveFlowType,
-	retrievePlan,
-} from './persistence-utils';
+import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import PlansGrid from './plans-grid';
 import PlansSkipButton from './plans-skip-button';
-import {
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_BUSINESS,
-} from 'lib/plans/constants';
+import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { addItem } from 'lib/upgrades/actions';
@@ -226,25 +216,13 @@ class Plans extends Component {
 
 export { Plans as PlansTestComponent };
 
-const getPlanSlug = ( flowType, planSlug ) => {
-	const flowTypeToSlug = {
-		personal: PLAN_JETPACK_PERSONAL,
-		premium: PLAN_JETPACK_PREMIUM,
-		pro: PLAN_JETPACK_BUSINESS,
-	};
-
-	return flowTypeToSlug[ flowType ] || planSlug;
-};
-
 export default connect(
 	state => {
 		const user = getCurrentUser( state );
 		const selectedSite = getSelectedSite( state );
 		const selectedSiteSlug = selectedSite ? selectedSite.slug : '';
 
-		const flowType = retrieveFlowType();
-		const preSelectedPlan = retrievePlan();
-		const selectedPlanSlug = getPlanSlug( flowType, preSelectedPlan );
+		const selectedPlanSlug = retrievePlan();
 		const selectedPlan = getPlanBySlug( state, selectedPlanSlug );
 
 		return {

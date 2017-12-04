@@ -27,6 +27,15 @@ import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
+import {
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+} from 'lib/plans/constants';
+import { storePlan } from './persistence-utils';
 
 /**
  * Module variables
@@ -66,6 +75,23 @@ const jetpackNewSiteSelector = context => {
 	);
 };
 
+const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
+	const planSlugs = {
+		yearly: {
+			personal: PLAN_JETPACK_PERSONAL,
+			premium: PLAN_JETPACK_PREMIUM,
+			pro: PLAN_JETPACK_BUSINESS,
+		},
+		monthly: {
+			personal: PLAN_JETPACK_PERSONAL_MONTHLY,
+			premium: PLAN_JETPACK_PREMIUM_MONTHLY,
+			pro: PLAN_JETPACK_BUSINESS_MONTHLY,
+		},
+	};
+
+	return get( planSlugs, [ interval, type ], '' );
+};
+
 export default {
 	redirectWithoutLocaleifLoggedIn( context, next ) {
 		if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
@@ -97,10 +123,13 @@ export default {
 
 	connect( context ) {
 		const { path, pathname, params } = context;
-		const { type = false } = params;
+		const { type = false, interval } = params;
 		const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
 
 		debug( 'entered connect flow with params %o', params );
+
+		const planSlug = getPlanSlugFromFlowType( type, interval );
+		planSlug && storePlan( planSlug );
 
 		analytics.pageView.record( pathname, analyticsPageTitle );
 
@@ -111,7 +140,7 @@ export default {
 		renderWithReduxStore(
 			React.createElement( JetpackConnect, {
 				context,
-				locale: context.params.locale,
+				locale: params.locale,
 				path,
 				type,
 				url: context.query.url,

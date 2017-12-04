@@ -146,7 +146,7 @@ class JetpackConnectMain extends Component {
 	}
 
 	checkUrl( url ) {
-		return this.props.checkUrl( url, !! this.props.getJetpackSiteByUrl( url ), this.props.type );
+		return this.props.checkUrl( url, !! this.props.getJetpackSiteByUrl( url ) );
 	}
 
 	handleUrlSubmit = () => {
