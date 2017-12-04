@@ -56,7 +56,8 @@ export const ShippingRates = ( {
 		const formError = errors.form && errors.form[ pckgId ];
 
 		packageRates.forEach( ( rateObject ) => {
-			valuesMap[ rateObject.service_id ] = rateObject.title + ' (' + formatCurrency( rateObject.rate, 'USD' ) + ')';
+			valuesMap[ rateObject.service_id ] =
+				rateObject.title + ' (' + formatCurrency( rateObject.rate + ( rateObject.wcs_fee || 0 ), 'USD' ) + ')';
 		} );
 
 		const onRateUpdate = ( value ) => updateRate( pckgId, value );

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, get, isEmpty, isEqual, isFinite, map, mapValues, reduce, some, sum } from 'lodash';
+import { find, get, isEmpty, isEqual, isFinite, mapValues, some } from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -74,54 +74,35 @@ export const getForm = ( state, orderId, siteId = getSelectedSiteId( state ) ) =
 	return shippingLabel && shippingLabel.form;
 };
 
-export const getRatesTotal = createSelector(
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-		const form = getForm( state, orderId, siteId );
-		if ( ! form ) {
-			return 0;
-		}
-
-		const { values: selectedRates, available: availableRates } = form.rates;
-
-		const ratesCost = map( selectedRates, ( rateId, boxId ) => {
-			const packageRates = get( availableRates, [ boxId, 'rates' ], false );
-
-			if ( packageRates ) {
-				const foundRate = find( packageRates, [ 'service_id', rateId ] );
-
-				return foundRate ? foundRate.rate : 0;
-			}
-			return 0;
-		} );
-
-		return Number( sum( ratesCost ) ).toFixed( 2 );
-	},
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-		const form = getForm( state, orderId, siteId );
-		return [ form && form.rates ];
-	}
-);
-
-export const getPriceBreakdown = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+/**
+ * Returns a breakdown of the total price for selected labels in form of { prices, discount, fee, total }
+ * @param {Object} state global state tree
+ * @param {Number} orderId order Id
+ * @param {Number} siteId site Id
+ *
+ * @returns {Object} price breakdown
+ */
+export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const form = getForm( state, orderId, siteId );
 	if ( ! form ) {
 		return null;
 	}
 
 	const { values: selectedRates, available: availableRates } = form.rates;
+	const prices = [];
 	let fee = 0;
 	let discount = 0;
 	let total = 0;
-	const prices = reduce( selectedRates, ( result, selectedServiceId, packageId ) => {
+	for ( const packageId in selectedRates ) {
 		const packageRates = get( availableRates, [ packageId, 'rates' ], false );
-		//if retail_rate is not set, then the selector should return null
+		//if retail_rate is not set on any rate, then the selector should return null
 		if ( ! packageRates || ! packageRates.length || ! isFinite( packageRates[ 0 ].retail_rate ) ) {
-			return [];
+			return null;
 		}
 
-		const foundRate = find( packageRates, [ 'service_id', selectedServiceId ] );
+		const foundRate = find( packageRates, [ 'service_id', selectedRates[ packageId ] ] );
 		if ( foundRate ) {
-			result.push( {
+			prices.push( {
 				title: foundRate.title,
 				retailRate: foundRate.retail_rate,
 			} );
@@ -131,9 +112,7 @@ export const getPriceBreakdown = ( state, orderId, siteId = getSelectedSiteId( s
 			fee += rateFee;
 			total += foundRate.rate + rateFee;
 		}
-
-		return result;
-	}, [] );
+	}
 
 	return prices.length ? {
 		prices,

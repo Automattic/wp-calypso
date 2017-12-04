@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import formatCurrency from 'lib/format-currency';
 import {
-	getPriceBreakdown,
+	getTotalPriceBreakdown,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const PriceSummary = ( { priceBreakdown, translate } ) => {
@@ -50,7 +50,7 @@ PriceSummary.propTypes = {
 };
 
 export default connect( ( state, { orderId, siteId } ) => {
-	const priceBreakdown = getPriceBreakdown( state, orderId, siteId );
+	const priceBreakdown = getTotalPriceBreakdown( state, orderId, siteId );
 	return {
 		priceBreakdown,
 	};

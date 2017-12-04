@@ -19,7 +19,7 @@ import {
 	getShippingLabel,
 	isLoaded,
 	getFormErrors,
-	getRatesTotal,
+	getTotalPriceBreakdown,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
@@ -133,12 +133,13 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	const storeOptions = loaded ? shippingLabel.storeOptions : {};
+	const priceBreakdown = getTotalPriceBreakdown( state, orderId, siteId );
 	return {
 		...shippingLabel.form.rates,
 		form: shippingLabel.form,
 		currencySymbol: storeOptions.currency_symbol,
 		errors: loaded && getFormErrors( state, orderId, siteId ).rates,
-		ratesTotal: getRatesTotal( state, orderId, siteId ),
+		ratesTotal: priceBreakdown ? priceBreakdown.total : 0,
 		allPackages: getAllPackageDefinitions( state, siteId ),
 	};
 };

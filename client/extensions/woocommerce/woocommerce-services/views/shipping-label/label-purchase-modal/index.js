@@ -22,7 +22,7 @@ import { confirmPrintLabel, purchaseLabel, exitPrintingFlow } from 'woocommerce/
 import {
 	getShippingLabel,
 	isLoaded,
-	getRatesTotal,
+	getTotalPriceBreakdown,
 	getFormErrors,
 	canPurchase,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
@@ -140,6 +140,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	const storeOptions = loaded ? shippingLabel.storeOptions : {};
+	const priceBreakdown = getTotalPriceBreakdown( state, orderId, siteId );
 	return {
 		loaded,
 		form: loaded && shippingLabel.form,
@@ -148,7 +149,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 		currency_symbol: storeOptions.currency_symbol,
 		errors: loaded && getFormErrors( state, orderId, siteId ),
 		canPurchase: loaded && canPurchase( state, orderId, siteId ),
-		ratesTotal: getRatesTotal( state, orderId, siteId )
+		ratesTotal: priceBreakdown ? priceBreakdown.total : 0,
 	};
 };
 
