@@ -20,6 +20,12 @@ export const FormattedBlock = ( { content = {} } ) => {
 	) );
 
 	switch ( type ) {
+		case 'a':
+			return <a href={ content.url }>{ descent }</a>;
+
+		case 'b':
+			return <strong>{ descent }</strong>;
+
 		case 'comment':
 			return (
 				<a href={ `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` }>
@@ -33,6 +39,9 @@ export const FormattedBlock = ( { content = {} } ) => {
 					<code>{ descent }</code>
 				</div>
 			);
+
+		case 'i':
+			return <em>{ descent }</em>;
 
 		case 'person':
 			return (
@@ -50,6 +59,9 @@ export const FormattedBlock = ( { content = {} } ) => {
 					<em>{ descent }</em>
 				</a>
 			);
+
+		case 'pre':
+			return <pre>{ descent }</pre>;
 
 		case 'theme':
 			return (
