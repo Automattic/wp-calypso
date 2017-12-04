@@ -27,7 +27,6 @@ class ErrorBanner extends PureComponent {
 		requestedRestoreActivityId: PropTypes.number,
 		createBackup: PropTypes.func,
 		rewindRestore: PropTypes.func,
-		rewindId: PropTypes.number,
 
 		// connect
 		dismissRewindRestoreProgress: PropTypes.func.isRequired,
@@ -50,10 +49,9 @@ class ErrorBanner extends PureComponent {
 			requestedRestoreActivityId,
 			rewindRestore,
 			createBackup,
-			rewindId,
 		} = this.props;
-		if ( requestedRestoreActivityId || rewindId ) {
-			rewindRestore( siteId, rewindId ? rewindId : requestedRestoreActivityId );
+		if ( requestedRestoreActivityId ) {
+			rewindRestore( siteId, requestedRestoreActivityId );
 		} else if ( downloadId ) {
 			createBackup( siteId, downloadId );
 		}

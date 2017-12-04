@@ -410,7 +410,7 @@ class ActivityLog extends Component {
 			downloadId,
 			rewindId,
 		} = progress;
-		const { requestedRestoreActivityId } = this.props;
+		const requestedRestoreActivityId = this.props.requestedRestoreActivityId || rewindId;
 		return (
 			<div key={ `end-banner-${ restoreId || downloadId }` }>
 				<QueryActivityLog siteId={ siteId } />
@@ -419,7 +419,6 @@ class ActivityLog extends Component {
 						key={ `error-${ restoreId || downloadId }` }
 						errorCode={ errorCode || backupError }
 						downloadId={ downloadId }
-						rewindId={ rewindId }
 						requestedRestoreActivityId={ requestedRestoreActivityId }
 						failureReason={ failureReason }
 						createBackup={ this.props.createBackup }
