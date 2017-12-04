@@ -89,7 +89,7 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 		},
 	};
 
-	return planSlugs[ interval ][ type ] || '';
+	return get( planSlugs, [ interval, type ], '' );
 };
 
 export default {
