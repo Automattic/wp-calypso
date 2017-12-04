@@ -454,49 +454,14 @@ $autobar-height: 20px;
 }
 
 .masterbar {
-	transform: translateY( 0 );
-	transition: transform 0.6s linear;
-	transition-delay: 0.25s;
+	opacity: 1;
+	transition: opacity 0.2s ease-out;
 }
 .is-section-post-editor .masterbar {
-	transform: translateY( -100% );
-}
-
-// Transition in Editor
-// This should go somewhere else -shaun
-.post-editor,
-.post-editor__content {
 	opacity: 0;
-}
+	pointer-events: none;
 
-.is-section-post-editor .post-editor {
-	animation: 0.3s linear 0.25s 1 forwards editor-entrance;
-	//animation-delay: 1s;
-}
-
-.is-section-post-editor .post-editor__content {
-	animation: 0.3s linear 0.5s 1 forwards content-entrance;
-	//animation-delay: 2s;
-}
-
-@keyframes editor-entrance {
-	0% {
-		opacity: 0;
-		top: 40px;
-	}
-	100% {
-		opacity: 1;
-		top: 0;
-	}
-}
-
-@keyframes content-entrance {
-	0% {
-		opacity: 0;
-		//transform: translateY( 50px );
-	}
-	100% {
-		opacity: 1;
-		//transform: translateY( 0 );
+	.masterbar__item {
+		transform: translateY( -48px );
 	}
 }
