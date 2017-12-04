@@ -50,9 +50,10 @@ class ErrorBanner extends PureComponent {
 			requestedRestoreActivityId,
 			rewindRestore,
 			createBackup,
+			rewindId,
 		} = this.props;
-		if ( requestedRestoreActivityId ) {
-			rewindRestore( siteId, requestedRestoreActivityId );
+		if ( requestedRestoreActivityId || rewindId ) {
+			rewindRestore( siteId, rewindId ? rewindId : requestedRestoreActivityId );
 		} else if ( downloadId ) {
 			createBackup( siteId, downloadId );
 		}
