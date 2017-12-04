@@ -7,7 +7,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { compact, flatMap, get, isEmpty, zip } from 'lodash';
@@ -16,7 +15,6 @@ import { compact, flatMap, get, isEmpty, zip } from 'lodash';
  * Internal dependencies
  */
 import ActivityLogItem from '../activity-log-item';
-import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getActivityLog, getRequestedRewind, getRewindEvents } from 'state/selectors';
@@ -126,35 +124,6 @@ class ActivityLogDay extends Component {
 		hasConfirmDialog ? this.closeDayAndDialogs : this.closeDayOnly;
 
 	/**
-	 * Return a button to rewind to this point.
-	 *
-	 * @param {string} type Whether the button will be a primary or not.
-	 * @returns { object } Button to display.
-	 */
-	renderRewindButton( type = '' ) {
-		const { disableRestore, hideRestore, isToday } = this.props;
-
-		if ( hideRestore || isToday ) {
-			return null;
-		}
-
-		return (
-			<Button
-				className="activity-log-day__rewind-button"
-				compact
-				disabled={ disableRestore || ! this.props.isRewindActive || this.state.rewindHere }
-				onClick={ this.handleClickRestore }
-				primary={ 'primary' === type }
-			>
-				<Gridicon icon="history" size={ 18 } />{' '}
-				{ this.props.translate( 'Rewind {{span}}to this day{{/span}}', {
-					components: { span: <span className="activity-log-day__rewind-button-extra-text" /> },
-				} ) }
-			</Button>
-		);
-	}
-
-	/**
 	 * Return a heading that serves as parent for many events.
 	 *
 	 * @returns { object } Heading to display with date and number of events
@@ -215,7 +184,6 @@ class ActivityLogDay extends Component {
 				( tsEndOfSiteDay <= activityTs && activityTs < tsEndOfSiteDay + DAY_IN_MILLISECONDS )
 		);
 
-		const rewindButton = this.renderRewindButton( hasConfirmDialog ? '' : 'primary' );
 		const events = classifyEvents( rewriteStream( logs, rewindEvents, isDiscardedPerspective ), {
 			backupId: requestedBackupId,
 			rewindId: requestedRestoreActivityId,
@@ -241,8 +209,6 @@ class ActivityLogDay extends Component {
 				} ) }
 				clickableHeader={ true }
 				expanded={ isToday || dayExpanded }
-				expandedSummary={ rewindButton }
-				summary={ rewindButton }
 				header={ this.renderEventsHeading() }
 				onOpen={ this.handleOpenDay }
 				onClose={ this.handleCloseDay( hasConfirmDialog ) }
