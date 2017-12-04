@@ -32,11 +32,11 @@ const DateField = ( props ) => {
 	);
 };
 
-DateField.PropTypes = {
-	fieldName: PropTypes.string.isRequired,
+DateField.propTypes = {
+	fieldName: PropTypes.string,
 	explanationText: PropTypes.string,
 	value: PropTypes.number,
-	edit: PropTypes.func.isRequired,
+	edit: PropTypes.func,
 };
 
 export default localize( DateField );

@@ -77,7 +77,7 @@ const ShippingZoneName = ( {
 	);
 };
 
-ShippingZoneName.PropTypes = {
+ShippingZoneName.propTypes = {
 	siteId: PropTypes.number,
 };
 

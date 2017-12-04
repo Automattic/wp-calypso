@@ -35,13 +35,13 @@ const CurrencyField = ( props ) => {
 	);
 };
 
-CurrencyField.PropTypes = {
-	fieldName: PropTypes.string.isRequired,
+CurrencyField.propTypes = {
+	fieldName: PropTypes.string,
 	explanationText: PropTypes.string,
 	placeholderText: PropTypes.string,
 	value: PropTypes.number,
-	edit: PropTypes.func.isRequired,
-	currency: PropTypes.string.isRequired,
+	edit: PropTypes.func,
+	currency: PropTypes.string,
 };
 
 export default CurrencyField;
