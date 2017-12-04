@@ -169,29 +169,34 @@ export default {
 		);
 	},
 
-	plansLanding( context ) {
-		const analyticsPageTitle = 'Plans';
-		const basePath = route.sectionify( context.path );
-		const analyticsBasePath = basePath + '/:site';
+	plansLanding( context, next ) {
+		try {
+			const analyticsPageTitle = 'Plans';
+			const basePath = route.sectionify( context.path );
+			const analyticsBasePath = basePath + '/:site';
 
-		removeSidebar( context );
+			context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
 
-		context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
+			if ( ! context.isServerSide ) {
+				analytics.tracks.recordEvent( 'calypso_plans_view' );
+				analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+			}
 
-		analytics.tracks.recordEvent( 'calypso_plans_view' );
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		renderWithReduxStore(
-			<PlansLanding
-				context={ context }
-				destinationType={ context.params.destinationType }
-				interval={ context.params.interval }
-				basePlansPath={ '/jetpack/connect/store' }
-				url={ context.query.site }
-			/>,
-			document.getElementById( 'primary' ),
-			context.store
-		);
+			context.primary = (
+				<PlansLanding
+					context={ context }
+					destinationType={ context.params.destinationType }
+					interval={ context.params.interval }
+					basePlansPath={ '/jetpack/connect/store' }
+					url={ context.query.site }
+				/>
+			);
+		} catch ( err ) {
+			debug( 'Render error', err );
+			delete context.primary;
+			delete context.secondary;
+		}
+		return next();
 	},
 
 	plansSelection( context ) {

@@ -154,8 +154,9 @@ const sections = [
 		name: 'jetpack-connect',
 		paths: [ '/jetpack' ],
 		module: 'jetpack-connect',
-		secondary: false,
 		enableLoggedOut: true,
+		isomorphic: true,
+		secondary: false,
 	},
 	{
 		name: 'signup',
