@@ -82,3 +82,10 @@
 		$bar-color 72%
 	);
 }
+
+// HappyChat button in error banner
+.button.is-primary + .activity-log-confirm-dialog__more-info-link {
+	margin-left: 16px;
+	display: inline-block;
+	vertical-align: text-top;
+}

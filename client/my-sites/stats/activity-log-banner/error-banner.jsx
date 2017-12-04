@@ -13,7 +13,10 @@ import { isUndefined } from 'lodash';
  */
 import ActivityLogBanner from './index';
 import Button from 'components/button';
+import HappychatButton from 'components/happychat/button';
+import Gridicon from 'gridicons';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
 
 class ErrorBanner extends PureComponent {
@@ -64,7 +67,15 @@ class ErrorBanner extends PureComponent {
 			: this.props.closeDialog( 'backup' );
 
 	render() {
-		const { errorCode, failureReason, timestamp, translate, downloadId } = this.props;
+		const {
+			errorCode,
+			failureReason,
+			timestamp,
+			translate,
+			downloadId,
+			trackHappyChatBackup,
+			trackHappyChatRestore,
+		} = this.props;
 		const strings = isUndefined( downloadId )
 			? {
 					title: translate( 'Problem restoring your site' ),
@@ -102,10 +113,15 @@ class ErrorBanner extends PureComponent {
 				<Button primary onClick={ this.handleClickRestart }>
 					{ translate( 'Try again' ) }
 				</Button>
-				{ '  ' }
-				<Button href="https://help.vaultpress.com/restore-tips-troubleshooting-steps/">
-					{ translate( 'Get help' ) }
-				</Button>
+				<HappychatButton
+					className="activity-log-banner__error-happychat activity-log-confirm-dialog__more-info-link"
+					onClick={ isUndefined( downloadId ) ? trackHappyChatRestore : trackHappyChatBackup }
+				>
+					<Gridicon icon="chat" />
+					<span className="activity-log-banner__error-happychat-text activity-log-confirm-dialog__more-info-link-text">
+						{ translate( 'Get help' ) }
+					</span>
+				</HappychatButton>
 			</ActivityLogBanner>
 		);
 	}
@@ -113,4 +129,6 @@ class ErrorBanner extends PureComponent {
 
 export default connect( null, {
 	dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
+	trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_error_banner_backup' ),
+	trackHappyChatRestore: () => recordTracksEvent( 'calypso_activitylog_error_banner_restore' ),
 } )( localize( ErrorBanner ) );
