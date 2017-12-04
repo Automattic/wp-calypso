@@ -27,8 +27,8 @@ class PostActionCounts extends PureComponent {
 		return (
 			<li>
 				{ translate(
-					'%(count)s comment',
-					'%(count)s comments',
+					'%(count)s Comment',
+					'%(count)s Comments',
 					{
 						count,
 						args: { count: numberFormat( count ) },
@@ -44,8 +44,8 @@ class PostActionCounts extends PureComponent {
 		return (
 			<li>
 				{ translate(
-					'%(count)s like',
-					'%(count)s likes',
+					'%(count)s Like',
+					'%(count)s Likes',
 					{
 						count,
 						args: { count: numberFormat( count ) },
@@ -61,8 +61,8 @@ class PostActionCounts extends PureComponent {
 		return (
 			<li>
 				{ translate(
-					'%(count)s view',
-					'%(count)s views',
+					'%(count)s View',
+					'%(count)s Views',
 					{
 						count,
 						args: { count: numberFormat( count ) },
