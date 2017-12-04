@@ -215,7 +215,7 @@ class ActivityLog extends Component {
 				// 'success',
 				// 'success-with-errors',
 			] ).isRequired,
-			timestamp: PropTypes.string,
+			rewindId: PropTypes.string.isRequired,
 		} ),
 		backupProgress: PropTypes.object,
 		changePeriod: PropTypes.func,

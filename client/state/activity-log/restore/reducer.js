@@ -21,7 +21,7 @@ const startProgress = ( state, { timestamp } ) => ( {
 	percent: 0,
 	status: 'queued',
 	timestamp,
-	rewindId: -Infinity,
+	rewindId: '',
 } );
 
 const updateProgress = (

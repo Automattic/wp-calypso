@@ -13,7 +13,7 @@ export const restoreProgressSchema = {
 				restoreId: { type: 'integer' },
 				status: { type: 'string' },
 				timestamp: { type: 'integer' },
-				rewindId: { type: 'number' },
+				rewindId: { type: 'string' },
 			},
 		},
 	},

@@ -24,7 +24,7 @@ class ErrorBanner extends PureComponent {
 		siteId: PropTypes.number.isRequired,
 		timestamp: PropTypes.string,
 		downloadId: PropTypes.number,
-		requestedRestoreActivityId: PropTypes.number,
+		requestedRestoreActivityId: PropTypes.string,
 		createBackup: PropTypes.func,
 		rewindRestore: PropTypes.func,
 
