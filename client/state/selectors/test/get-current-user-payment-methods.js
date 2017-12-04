@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getCurrentUserPaymentMethods } from '../';
+import { getCurrentUserPaymentMethods } from 'state/selectors';
 
 describe( 'getCurrentUserPaymentMethods()', () => {
 	const enLangUsCountryState = {

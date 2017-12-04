@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getConciergeShifts } from '../';
+import { getConciergeShifts } from 'state/selectors';
 
 describe( 'getConciergeShifts()', () => {
 	test( 'should be defaulted to null.', () => {

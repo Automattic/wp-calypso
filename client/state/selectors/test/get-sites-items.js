@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSitesItems } from '../';
+import { getSitesItems } from 'state/selectors';
 
 describe( 'getSitesItems()', () => {
 	test( 'should return site items if sites exist', () => {

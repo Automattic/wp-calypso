@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isSiteUpgradeable } from '../';
+import { isSiteUpgradeable } from 'state/selectors';
 
 describe( 'isSiteUpgradeable()', () => {
 	test( 'should return null if no siteId is given', () => {

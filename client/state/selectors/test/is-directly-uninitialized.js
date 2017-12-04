@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isDirectlyUninitialized } from '../';
+import { isDirectlyUninitialized } from 'state/selectors';
 import {
 	STATUS_ERROR,
 	STATUS_INITIALIZING,

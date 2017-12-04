@@ -9,7 +9,7 @@ import { fromPairs, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getTimezonesByContinent, getTimezonesLabel } from 'state/selectors/';
+import { getTimezonesByContinent, getTimezonesLabel } from 'state/selectors';
 
 /**
  * Return the timezones by continent data

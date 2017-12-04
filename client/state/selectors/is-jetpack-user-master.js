@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getJetpackUserConnection } from './';
+import { getJetpackUserConnection } from 'state/selectors';
 
 /**
  * Returns true if the Jetpack site current user is the master user who owns the connection. False otherwise.

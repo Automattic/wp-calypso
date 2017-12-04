@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { getActiveReplyCommentId } from '../';
+import { getActiveReplyCommentId } from 'state/selectors';
 
 describe( 'getActiveReplyCommentId()', () => {
 	test( 'should return the active reply comment ID for a known site and post', () => {

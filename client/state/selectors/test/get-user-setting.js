@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getUserSetting } from '../';
+import { getUserSetting } from 'state/selectors';
 
 describe( 'getUserSetting()', () => {
 	test( 'should return null if neither server nor local unsaved settings contain the key', () => {

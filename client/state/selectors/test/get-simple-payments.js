@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSimplePayments } from '../';
+import { getSimplePayments } from 'state/selectors';
 
 const simplePayment1 = {
 	ID: 1,

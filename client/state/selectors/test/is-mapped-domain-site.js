@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isMappedDomainSite } from '../';
+import { isMappedDomainSite } from 'state/selectors';
 
 describe( '#isMappedDomainSite()', () => {
 	const siteId = 77203074;

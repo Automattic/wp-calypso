@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { hasUserAskedADirectlyQuestion } from '../';
+import { hasUserAskedADirectlyQuestion } from 'state/selectors';
 
 describe( 'hasUserAskedADirectlyQuestion()', () => {
 	const questionData = deepFreeze( {

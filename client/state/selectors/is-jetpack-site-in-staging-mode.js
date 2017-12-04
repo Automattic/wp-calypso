@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getJetpackConnectionStatus } from './';
+import { getJetpackConnectionStatus } from 'state/selectors';
 
 /**
  * Returns true if we the Jetpack site is in staging mode. False otherwise.

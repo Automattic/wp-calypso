@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getJetpackModulesRequiringConnection } from '../';
+import { getJetpackModulesRequiringConnection } from 'state/selectors';
 
 describe( 'getJetpackModulesRequiringConnection()', () => {
 	test( 'should return null if the site has never been fetched', () => {

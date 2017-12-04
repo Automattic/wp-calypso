@@ -10,4 +10,9 @@ When adding a new selector to this directory, make note of the following details
 - Each new selector exists in its own file, named with [kebab case](https://en.wikipedia.org/wiki/Kebab_case) (dash-delimited lowercase)
 - There should be no more than a single default exported function per selector file
 - Tests for each selector should exist in the [`test/` subdirectory](./test) with matching file name of the selector
-- Your selector must be exported from [`index.js`](./index.js) to enable named importing from the base `state/selectors` directory
+
+To import specific selectors, use the exact path, which leverages the Babel "transform-imports" plugin to transform the import to its individual file:
+
+```javascript
+import { getSite } from 'state/selectors';
+```

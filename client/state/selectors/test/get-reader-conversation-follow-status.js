@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getReaderConversationFollowStatus } from '../';
+import { getReaderConversationFollowStatus } from 'state/selectors';
 
 describe( 'getReaderConversationFollowStatus()', () => {
 	test( 'should return F for a known followed post', () => {

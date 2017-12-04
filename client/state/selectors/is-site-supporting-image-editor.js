@@ -5,7 +5,7 @@
  */
 
 import { isJetpackModuleActive } from 'state/sites/selectors';
-import { isPrivateSite } from './';
+import { isPrivateSite } from 'state/selectors';
 
 /**
  * Returns false only if the site is known to not support editing images, or

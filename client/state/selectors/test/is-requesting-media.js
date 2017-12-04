@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingMedia } from '../';
+import { isRequestingMedia } from 'state/selectors';
 import MediaQueryManager from 'lib/query-manager/media';
 
 describe( 'isRequestingMedia()', () => {

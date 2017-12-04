@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getRawOffsets } from '../';
+import { getRawOffsets } from 'state/selectors';
 
 describe( 'getRawOffsets()', () => {
 	test( "should return null if `timezones` aren't synced", () => {

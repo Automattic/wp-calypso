@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getAccountRecoveryResetUserData } from '../';
+import { getAccountRecoveryResetUserData } from 'state/selectors';
 
 describe( 'getAccountRecoveryResetUserData()', () => {
 	test( 'should return the userData substate tree.', () => {

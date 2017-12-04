@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingPostLikes } from '../';
+import { isRequestingPostLikes } from 'state/selectors';
 
 describe( 'isRequestingPostLikes()', () => {
 	test( 'should return false if the site has never been fetched', () => {

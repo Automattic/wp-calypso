@@ -10,7 +10,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getRawSite } from 'state/sites/selectors';
-import { getSiteIconId, getMediaUrl } from './';
+import { getSiteIconId, getMediaUrl } from 'state/selectors';
 
 /**
  * Returns a URL to the site's current site icon, or null if no icon exists or

@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getNetworkSites } from '../';
+import { getNetworkSites } from 'state/selectors';
 import { userState } from './fixtures/user-state';
 
 describe( 'getNetworkSites()', () => {

@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { isPluginActive } from '../';
+import { isPluginActive } from 'state/selectors';
 
 const helloDolly = {
 	id: 'hello-dolly/hello',

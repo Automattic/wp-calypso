@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isJetpackSiteInDevelopmentMode } from '../';
+import { isJetpackSiteInDevelopmentMode } from 'state/selectors';
 import { items as ITEMS_FIXTURE } from './fixtures/jetpack-connection';
 
 describe( 'isJetpackSiteInDevelopmentMode()', () => {

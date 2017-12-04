@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isJetpackModuleActive } from '../';
+import { isJetpackModuleActive } from 'state/selectors';
 import { modules as MODULES_FIXTURE } from './fixtures/jetpack-modules';
 
 describe( 'isJetpackModuleActive()', () => {

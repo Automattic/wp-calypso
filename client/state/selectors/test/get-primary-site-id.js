@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getPrimarySiteId } from '../';
+import { getPrimarySiteId } from 'state/selectors';
 
 describe( 'getPrimarySiteId()', () => {
 	test( 'should return null if there is no current user', () => {

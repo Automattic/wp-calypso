@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isWordpressUpdateSuccessful } from '../';
+import { isWordpressUpdateSuccessful } from 'state/selectors';
 
 describe( 'isWordpressUpdateSuccessful()', () => {
 	const siteId = 2916284;

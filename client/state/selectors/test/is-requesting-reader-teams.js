@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingReaderTeams } from '../';
+import { isRequestingReaderTeams } from 'state/selectors';
 
 describe( 'isRequestingReaderTeams()', () => {
 	test( 'should return false if not requesting teams', () => {

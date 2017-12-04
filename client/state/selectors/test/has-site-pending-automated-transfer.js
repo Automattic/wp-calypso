@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { hasSitePendingAutomatedTransfer } from '../';
+import { hasSitePendingAutomatedTransfer } from 'state/selectors';
 
 describe( 'hasSitePendingAutomatedTransfer()', () => {
 	test( 'should return null if the specified site was not found in the state', () => {

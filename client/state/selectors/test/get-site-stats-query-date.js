@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSiteStatsQueryDate } from '../';
+import { getSiteStatsQueryDate } from 'state/selectors';
 
 describe( 'getSiteStatsQueryDate()', () => {
 	test( 'should return undefined if no request exists', () => {

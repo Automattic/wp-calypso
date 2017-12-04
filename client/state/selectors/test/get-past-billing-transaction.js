@@ -9,7 +9,7 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPastBillingTransaction } from '../';
+import { getPastBillingTransaction } from 'state/selectors';
 
 describe( 'getPastBillingTransaction()', () => {
 	const state = {

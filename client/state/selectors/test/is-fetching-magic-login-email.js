@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isFetchingMagicLoginEmail } from '../';
+import { isFetchingMagicLoginEmail } from 'state/selectors';
 
 describe( 'isFetchingMagicLoginEmail()', () => {
 	test( 'should return false if there is no fetching information yet', () => {

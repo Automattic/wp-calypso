@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { isFollowingReaderConversation } from '../';
+import { isFollowingReaderConversation } from 'state/selectors';
 
 describe( 'isFollowingReaderConversation()', () => {
 	test( 'should return true for a known followed post', () => {

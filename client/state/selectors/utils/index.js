@@ -10,7 +10,7 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPublicizeConnection } from 'state/selectors/';
+import { getPublicizeConnection } from 'state/selectors';
 
 /**
  * Propagate publicize-connections with the share actions

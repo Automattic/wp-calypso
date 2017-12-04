@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isFetchingJetpackModules } from '../';
+import { isFetchingJetpackModules } from 'state/selectors';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-modules';
 
 describe( 'isFetchingJetpackModules()', () => {

@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { canCurrentUserManagePlugins } from '../';
+import { canCurrentUserManagePlugins } from 'state/selectors';
 
 describe( 'canCurrentUserManagePlugins()', () => {
 	test( 'should return false if no capabilities information exist in state', () => {

@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getTimezones } from '../';
+import { getTimezones } from 'state/selectors';
 
 describe( 'getTimezones()', () => {
 	test( "should return [] if `timezones` aren't synced", () => {
