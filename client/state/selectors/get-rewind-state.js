@@ -14,5 +14,7 @@ import { get } from 'lodash';
  * @return {Object} Rewind state object
  */
 export default function getRewindState( state, siteId ) {
-	return get( state.rewind, siteId, {} );
+	return get( state.rewind, siteId, {
+		state: 'uninitialized',
+	} );
 }
