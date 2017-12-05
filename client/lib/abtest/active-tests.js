@@ -127,4 +127,12 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
+	signupSiteSegmentStep: {
+		datestamp: '20170329',
+		variations: {
+			control: 50,
+			variant: 50,
+		},
+		defaultVariation: 'control',
+	},
 };
