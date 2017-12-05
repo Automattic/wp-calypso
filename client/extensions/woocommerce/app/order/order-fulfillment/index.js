@@ -26,7 +26,7 @@ import { isOrderFinished } from 'woocommerce/lib/order-status';
 import LabelPurchaseDialog from 'woocommerce/woocommerce-services/views/shipping-label/label-purchase-modal';
 import Notice from 'components/notice';
 import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
-import { updateOrder } from 'woocommerce/state/sites/orders/actions';
+import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	getLabels,
@@ -87,7 +87,7 @@ class OrderFulfillment extends Component {
 			return;
 		}
 
-		this.props.updateOrder( site.ID, {
+		this.props.saveOrder( site.ID, {
 			id: order.id,
 			status: 'completed',
 		} );
@@ -265,5 +265,5 @@ export default connect(
 			hasLabelsPaymentMethod,
 		};
 	},
-	dispatch => bindActionCreators( { createNote, updateOrder, openPrintingFlow }, dispatch )
+	dispatch => bindActionCreators( { createNote, saveOrder, openPrintingFlow }, dispatch )
 )( localize( OrderFulfillment ) );

@@ -4,8 +4,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { omit } from 'lodash';
-import { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -15,13 +13,14 @@ import {
 	failOrders,
 	fetchOrder,
 	fetchOrders,
-	_updateOrder,
+	saveOrder,
+	saveOrderError,
+	saveOrderSuccess,
 	updateOrder,
 	updateOrders,
 } from '../actions';
 import order from './fixtures/order';
 import orders from './fixtures/orders';
-import useNock from 'test/helpers/use-nock';
 import {
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
@@ -88,7 +87,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should return a success action with orders list when request completes', () => {
-			const action = _updateOrder( siteId, orderId, order );
+			const action = updateOrder( siteId, orderId, order );
 			expect( action ).to.eql( {
 				type: WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
 				siteId: '123',
@@ -109,74 +108,39 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#updateOrder()', () => {
-		const siteId = '123';
+		const siteId = 123;
 		const updatedOrder = {
 			id: 40,
 			status: 'completed',
 		};
 
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( {
-					path: '/wc/v3/orders/40&_method=post',
-					json: true,
-					body: omit( updatedOrder, 'id' ),
-				} )
-				.reply( 200, {
-					data: order,
-				} )
-				.post( '/rest/v1.1/jetpack-blogs/234/rest-api/' )
-				.query( {
-					path: '/wc/v3/orders/invalid&_method=post',
-					json: true,
-					body: omit( updatedOrder, 'id' ),
-				} )
-				.reply( 404, {
-					data: {
-						message: 'No route was found matching the URL and request method',
-						error: 'rest_no_route',
-					},
-				} );
-		} );
-
 		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
-			const dispatch = spy();
-			updateOrder( siteId, updatedOrder )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+			const action = saveOrder( siteId, updatedOrder );
+			expect( action ).to.eql( {
 				type: WOOCOMMERCE_ORDER_UPDATE,
-				siteId,
+				siteId: 123,
 				orderId: 40,
+				order: { status: 'completed' },
 			} );
 		} );
 
 		test( 'should dispatch a success action with the order when request completes', () => {
-			const getState = () => ( {} );
-			const dispatch = spy();
-			const response = updateOrder( siteId, updatedOrder )( dispatch, getState );
-
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
-					type: WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
-					siteId,
-					orderId: 40,
-					order,
-				} );
+			const action = saveOrderSuccess( siteId, 40, updatedOrder );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
+				siteId: 123,
+				orderId: 40,
+				order: { id: 40, status: 'completed' },
 			} );
 		} );
 
 		test( 'should dispatch a failure action with the error when a the request fails', () => {
-			const getState = () => ( {} );
-			const dispatch = spy();
-			const response = updateOrder( 234, { id: 'invalid' } )( dispatch, getState );
-
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWithMatch( {
-					type: WOOCOMMERCE_ORDER_UPDATE_FAILURE,
-					siteId: 234,
-				} );
+			const action = saveOrderError( 234, 1, 'Error object' );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_ORDER_UPDATE_FAILURE,
+				siteId: 234,
+				orderId: 1,
+				error: 'Error object',
 			} );
 		} );
 	} );

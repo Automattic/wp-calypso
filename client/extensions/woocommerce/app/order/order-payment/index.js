@@ -17,7 +17,7 @@ import formatCurrency from 'lib/format-currency';
 import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import { isOrderFailed, isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import RefundDialog from './dialog';
-import { updateOrder } from 'woocommerce/state/sites/orders/actions';
+import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 
 class OrderPaymentCard extends Component {
 	static propTypes = {
@@ -31,7 +31,7 @@ class OrderPaymentCard extends Component {
 		} ),
 		siteId: PropTypes.number.isRequired,
 		translate: PropTypes.func.isRequired,
-		updateOrder: PropTypes.func.isRequired,
+		saveOrder: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -93,7 +93,7 @@ class OrderPaymentCard extends Component {
 
 	markAsPaid = () => {
 		const { order, siteId } = this.props;
-		this.props.updateOrder( siteId, { ...order, status: 'processing' } );
+		this.props.saveOrder( siteId, { ...order, status: 'processing' } );
 	};
 
 	toggleDialog = () => {
@@ -127,6 +127,6 @@ class OrderPaymentCard extends Component {
 	}
 }
 
-export default connect( null, dispatch => bindActionCreators( { updateOrder }, dispatch ) )(
+export default connect( null, dispatch => bindActionCreators( { saveOrder }, dispatch ) )(
 	localize( OrderPaymentCard )
 );

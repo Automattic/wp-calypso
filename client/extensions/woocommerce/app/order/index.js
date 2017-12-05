@@ -16,7 +16,7 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
 import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
-import { fetchOrder, updateOrder } from 'woocommerce/state/sites/orders/actions';
+import { fetchOrder, saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
@@ -82,7 +82,7 @@ class Order extends Component {
 	// Saves changes to the remote site via API
 	saveOrder = () => {
 		const { siteId, order } = this.props;
-		this.props.updateOrder( siteId, order );
+		this.props.saveOrder( siteId, order );
 	};
 
 	render() {
@@ -169,7 +169,7 @@ export default connect(
 	},
 	dispatch =>
 		bindActionCreators(
-			{ clearOrderEdits, editOrder, fetchNotes, fetchOrder, updateOrder },
+			{ clearOrderEdits, editOrder, fetchNotes, fetchOrder, saveOrder },
 			dispatch
 		)
 )( localize( Order ) );
