@@ -47,10 +47,12 @@ class SetupFooter extends Component {
 	}
 }
 
-export default connect( state => {
-	return {
-		happychatAvailable: isHappychatAvailable( state ),
-	};
-}, {
-	happychatEvent: () => recordTracksEvent( 'rewind_credentials_get_help', {} ),
-} )( localize( SetupFooter ) );
+const mapStateToProps = state => ( {
+	isHappychatAvailable: isHappychatAvailable( state ),
+} );
+
+const mapDispatchToProps = () => ( {
+	happychatEvent: () => recordTracksEvent( 'rewind_credentials_get_help' ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupFooter ) );
