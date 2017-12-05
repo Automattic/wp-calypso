@@ -28,7 +28,6 @@ import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
 import LoggedOutForm from 'components/logged-out-form';
 import Notice from 'components/notice';
 import { localize } from 'i18n-calypso';
@@ -142,11 +141,6 @@ class RequestLoginEmailForm extends React.Component {
 							type="text"
 							onChange={ this.onUsernameOrEmailFieldChange }
 						/>
-
-						{ requestError &&
-							requestError.field === 'usernameOrEmail' && (
-								<FormInputValidation isError text={ requestError.message } />
-							) }
 
 						<div className="magic-login__form-action">
 							<FormButton primary disabled={ ! submitEnabled }>
