@@ -597,8 +597,8 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
-				{ isRewindActive && <QueryRewindState siteId={ siteId } /> }
-				{ isRewindActive && <QueryRewindStatus siteId={ siteId } /> }
+				<QueryRewindStatus siteId={ siteId } />
+				<QueryRewindState siteId={ siteId } />
 				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
 				{ siteId && isRewindActive && <QueryRewindBackupStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
