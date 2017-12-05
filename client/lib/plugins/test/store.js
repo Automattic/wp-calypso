@@ -20,7 +20,7 @@ import Dispatcher from 'dispatcher';
 import PluginsStore from 'lib/plugins/store';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
-jest.mock( 'lib/sites-list', () => require( './mocks/sites-list' ) );
+jest.mock( 'lib/redux-bridge', () => require( './mocks/redux-bridge' ) );
 jest.mock( 'lib/analytics', () => ( {} ) );
 
 describe( 'Plugins Store', () => {
