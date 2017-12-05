@@ -28,6 +28,8 @@ import PollerPool from 'lib/data-poller';
 import { setLastStoreId } from 'reader/controller-helper';
 import * as stats from 'reader/stats';
 import { keyToString, keysAreEqual } from './post-key';
+import { reduxDispatch } from 'lib/redux-bridge';
+import { COMMENTS_RECEIVE } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
@@ -522,6 +524,20 @@ export default class FeedStream {
 				to: this.pendingDateAfter,
 			} );
 		}
+		forEach( this.pendingPostKeys, postKey => {
+			// TODO: make this actually dispatch the right comments instead of
+			// ids to the comments
+			if ( postKey.comments ) {
+				// conversations!
+				console.error( 'acceptUpdates', postKey );
+				reduxDispatch( {
+					type: COMMENTS_RECEIVE,
+					siteId: postKey.blogId,
+					postId: postKey.postId,
+					comments: postKey.comments,
+				} );
+			}
+		} );
 
 		this.postKeys = uniqBy( this.pendingPostKeys.concat( this.postKeys ), postKey =>
 			keyToString( postKey )

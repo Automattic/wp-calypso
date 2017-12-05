@@ -33,14 +33,16 @@ class UpdateNotice extends React.PureComponent {
 		let { count } = this.props;
 		const { pendingPostKeys } = this.props;
 
+		// ugly hack for conversations to hide the pill if none of the comments
+		// are actually new
 		if ( isConversations ) {
 			let newComments = 0;
-			forEach( pendingPostKeys, post => {
-				if ( post.comments ) {
-					const commentsToKeep = filter( post.comments, commentId => {
+			forEach( pendingPostKeys, postKey => {
+				if ( postKey.comments ) {
+					const commentsToKeep = filter( postKey.comments, commentId => {
 						const c = getCommentById( {
 							state: this.props.state,
-							siteId: post.blogId,
+							siteId: postKey.blogId,
 							commentId: commentId,
 						} );
 						return ! c;
@@ -56,6 +58,7 @@ class UpdateNotice extends React.PureComponent {
 			}
 			count = newComments;
 		}
+
 		const counterClasses = classnames( {
 			'reader-update-notice': true,
 			'is-active': this.props.count > 0,
