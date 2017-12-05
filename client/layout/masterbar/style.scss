@@ -462,7 +462,8 @@ $autobar-height: 20px;
 	opacity: 0;
 	pointer-events: none;
 
-	.masterbar__item {
+	.masterbar__item,
+	.masterbar__toggle-drafts {
 		transform: translateY( -48px );
 	}
 }
