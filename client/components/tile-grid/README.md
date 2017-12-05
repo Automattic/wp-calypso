@@ -6,7 +6,6 @@ Component used to declare an area for displaying Tiles — it's the main wrapper
 #### Props
 
 * `className`: Add your own class to the grid.
-* `isHidden`: Whether the entire grid should be hidden. Default is `false`.
 
 ----------
 

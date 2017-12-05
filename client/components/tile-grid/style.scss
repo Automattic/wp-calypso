@@ -9,12 +9,6 @@
 	filter: blur( 0 );
 	transform: translateZ( 0 ) translateX( 0 );
 	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
-
-	&.is-hidden {
-		pointer-events: none;
-		transform: translateZ( 0 ) translateX( -25% );
-		opacity: 0;
-	}
 }
 
 .tile-grid__item {

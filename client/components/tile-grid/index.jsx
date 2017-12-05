@@ -10,22 +10,11 @@ import classNames from 'classnames';
 export default class extends React.PureComponent {
 	static propTypes = {
 		className: PropTypes.string,
-		isHidden: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		isHidden: false,
 	};
 
 	render() {
-		const { children, className, isHidden } = this.props;
-		const gridClassName = classNames(
-			'tile-grid',
-			{
-				'is-hidden': isHidden,
-			},
-			className
-		);
+		const { children, className } = this.props;
+		const gridClassName = classNames( 'tile-grid', className );
 
 		return <div className={ gridClassName }>{ children }</div>;
 	}
