@@ -49,7 +49,6 @@ class ActivityLogDay extends Component {
 		applySiteOffset: PropTypes.func.isRequired,
 		disableRestore: PropTypes.bool.isRequired,
 		disableBackup: PropTypes.bool.isRequired,
-		hideRestore: PropTypes.bool,
 		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
 		requestedRestoreActivityId: PropTypes.string,
@@ -161,7 +160,7 @@ class ActivityLogDay extends Component {
 			applySiteOffset,
 			disableRestore,
 			disableBackup,
-			hideRestore,
+			isRewindActive,
 			isDiscardedPerspective,
 			isToday,
 			logs,
@@ -195,7 +194,7 @@ class ActivityLogDay extends Component {
 				applySiteOffset={ applySiteOffset }
 				disableRestore={ disableRestore }
 				disableBackup={ disableBackup }
-				hideRestore={ hideRestore }
+				hideRestore={ ! isRewindActive }
 				log={ log }
 				requestDialog={ requestDialog }
 				siteId={ siteId }
