@@ -316,37 +316,6 @@ SitesList.prototype.propagateChange = function() {
 };
 
 /**
- * Return the list of virtual sites of a multisite
- *
- * @api public
- */
-SitesList.prototype.getNetworkSites = function( multisite ) {
-	return this.get().filter( function( site ) {
-		return (
-			site.jetpack &&
-			site.visible &&
-			( this.isConnectedSecondaryNetworkSite( site ) || site.isMainNetworkSite() ) &&
-			multisite.options.unmapped_url === site.options.main_network_site
-		);
-	}, this );
-};
-
-SitesList.prototype.isConnectedSecondaryNetworkSite = function( siteCandidate ) {
-	let isConnected = false,
-		sites = this.get();
-
-	if ( siteCandidate.jetpack && siteCandidate.isSecondaryNetworkSite() ) {
-		sites.forEach( function( site ) {
-			if ( siteCandidate.options.main_network_site === site.options.unmapped_url ) {
-				isConnected = true;
-			}
-		} );
-	}
-
-	return isConnected;
-};
-
-/**
  * Return currently selected sites or site
  *
  * @api public
