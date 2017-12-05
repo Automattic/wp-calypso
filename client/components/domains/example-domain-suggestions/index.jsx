@@ -13,6 +13,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getDesignType } from 'state/signup/steps/design-type/selectors';
+import { DESIGN_TYPE_STORE } from 'signup/constants';
 
 class DomainSuggestionsExample extends React.Component {
 	static propTypes = {
@@ -20,7 +22,9 @@ class DomainSuggestionsExample extends React.Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, siteDesignType } = this.props;
+
+		const showDomainMappingOption = siteDesignType !== DESIGN_TYPE_STORE;
 
 		/* eslint-disable max-len */
 		return (
@@ -30,11 +34,13 @@ class DomainSuggestionsExample extends React.Component {
 						'A domain name is what people type into their browser to visit your site.'
 					) }
 				</p>
-				<p className="example-domain-suggestions__mapping-information">
-					<a onClick={ this.props.recordClick } href={ this.props.mapDomainUrl }>
-						{ translate( 'Already own a domain?' ) }
-					</a>
-				</p>
+				{ showDomainMappingOption && (
+					<p className="example-domain-suggestions__mapping-information">
+						<a onClick={ this.props.recordClick } href={ this.props.mapDomainUrl }>
+							{ translate( 'Already own a domain?' ) }
+						</a>
+					</p>
+				) }
 				<div className="example-domain-suggestions__browser">
 					<svg width="295" height="102" viewBox="0 0 295 102" xmlns="http://www.w3.org/2000/svg">
 						<title>Example Browser</title>
@@ -67,6 +73,11 @@ class DomainSuggestionsExample extends React.Component {
 const recordClick = () =>
 	recordTracksEvent( 'calypso_example_domain_suggestions_mapping_link_click' );
 
-export default connect( null, {
-	recordClick,
-} )( localize( DomainSuggestionsExample ) );
+export default connect(
+	state => ( {
+		siteDesignType: getDesignType( state ),
+	} ),
+	{
+		recordClick,
+	}
+)( localize( DomainSuggestionsExample ) );
