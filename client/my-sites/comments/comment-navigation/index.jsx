@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { get, includes, isUndefined, map } from 'lodash';
+import { get, includes, isEqual, isUndefined, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -51,6 +51,8 @@ export class CommentNavigation extends Component {
 		status: 'unapproved',
 		sortOrder: NEWEST_FIRST,
 	};
+
+	shouldComponentUpdate = nextProps => ! isEqual( this.props, nextProps );
 
 	bulkDeletePermanently = () => {
 		const { setBulkStatus, translate } = this.props;

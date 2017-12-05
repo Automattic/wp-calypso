@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { each, filter, find, get, map, orderBy, size, slice, uniq } from 'lodash';
+import { each, filter, find, get, isEqual, map, orderBy, size, slice, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
@@ -86,6 +86,9 @@ export class CommentList extends Component {
 			} );
 		}
 	}
+
+	shouldComponentUpdate = ( nextProps, nextState ) =>
+		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
 
 	changePage = page => {
 		const { recordChangePage, changePage } = this.props;
