@@ -5,30 +5,27 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop, debounce } from 'lodash';
-import classnames from 'classnames';
 
 /**
  * Internal Dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
-import cssSafeUrl from 'lib/css-safe-url';
+import PostPhotoImage from './photo-image';
 
 class PostPhoto extends React.Component {
 	state = {
 		cardWidth: 800,
 	};
 
-	handleClick = event => {
-		if ( this.props.isExpanded ) {
-			this.props.onClick( event );
-			return;
-		}
+	// handleClick = event => {
+	// 	if ( this.props.isExpanded ) {
+	// 		this.props.onClick( event );
+	// 		return;
+	// 	}
 
-		event.preventDefault();
-		const { post, site, postKey } = this.props;
-		this.props.expandCard( { post, site, postKey } );
-	};
+	// 	event.preventDefault();
+	// 	const { post, site, postKey } = this.props;
+	// 	this.props.expandCard( { post, site, postKey } );
+	// };
 
 	getViewportHeight = () =>
 		Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
@@ -64,67 +61,19 @@ class PostPhoto extends React.Component {
 		window.removeEventListener( 'resize', this.resizeListener );
 	}
 
-	renderFeaturedImage() {
-		const { post, title, onClick } = this.props;
-		const imageUrl = post.canonical_media.src;
-		const imageSize = {
-			height: post.canonical_media.height,
-			width: post.canonical_media.width,
-		};
-
-		const featuredImageStyle = {
-			backgroundImage: 'url(' + cssSafeUrl( imageUrl ) + ')',
-			backgroundSize: this.state.isExpanded ? 'contain' : 'cover',
-			backgroundRepeat: 'no-repeat',
-			backgroundPosition: 'center',
-		};
-
-		let newWidth, newHeight;
-		if ( this.props.isExpanded ) {
-			const cardWidth = this.state.cardWidth;
-			const { width: naturalWidth, height: naturalHeight } = imageSize;
-
-			newHeight = Math.min( naturalHeight / naturalWidth * cardWidth, this.getMaxPhotoHeight() );
-			newWidth = naturalWidth / naturalHeight * newHeight;
-			featuredImageStyle.height = newHeight;
-			featuredImageStyle.width = newWidth;
-		}
-
-		const classes = classnames( {
-			'reader-post-card__photo': true,
-			'is-expanded': this.props.isExpanded,
-		} );
-
-		// force to non-breaking space if `title` is empty so that the title h1 doesn't collapse and
-		// complicate things
-		const linkTitle = title || '\xa0';
-		const divStyle = this.props.isExpanded
-			? { height: newHeight, width: newWidth, margin: '0 auto' }
-			: {};
-
-		return (
-			<div style={ divStyle }>
-				<a className={ classes } href={ post.URL } style={ featuredImageStyle } onClick={ onClick }>
-					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } } />
-				</a>
-				<AutoDirection>
-					<h1 className="reader-post-card__title">
-						<a className="reader-post-card__title-link" href={ post.URL } onClick={ onClick }>
-							<Emojify>{ linkTitle }</Emojify>
-						</a>
-					</h1>
-				</AutoDirection>
-			</div>
-		);
-	}
-
 	render() {
-		const { post, children } = this.props;
-		const featuredImage = !! post.canonical_media.src ? this.renderFeaturedImage() : null;
+		const { post, title, isExpanded, onClick, children } = this.props;
 
 		return (
 			<div className="reader-post-card__post">
-				{ featuredImage }
+				{ !! post.canonical_media.src && (
+					<PostPhotoImage
+						post={ post }
+						title={ title }
+						isExpanded={ isExpanded }
+						onClick={ onClick }
+					/>
+				) }
 				<div className="reader-post-card__post-details">{ children }</div>
 			</div>
 		);
