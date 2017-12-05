@@ -179,15 +179,13 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const isStepFinished = currentStep > step;
 
 		const heading = translate( 'Verify we can get in touch.' );
-		const message = translate(
-			"We'll send an email to {{strong}}%(email)s{{/strong}} to start the transfer process. Make sure " +
-				"you have access to that address. Don't recognize it? Then you have privacy protection enabled. " +
-				"You'll need to log in to your current domain provider and {{a}}turn it off{{/a}} before we start. " +
-				"Don't worry, you can re-enable it once the transfer is done.",
+		let message = translate(
+			"We'll send an important email to start the transfer process. Log in to your current domain provider " +
+				"to check your domain's contact information. Make sure you have access to the email address and " +
+				'privacy protection is turned off. {{a}}Here’s how to do that{{/a}}. ' +
+				'Don’t worry, you can re-enable it once the transfer is done.',
 			{
-				args: { email },
 				components: {
-					strong: <strong className="transfer-domain-step__admin-email" />,
 					a: (
 						<a
 							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
@@ -198,7 +196,31 @@ class TransferDomainPrecheck extends React.PureComponent {
 				},
 			}
 		);
-		const buttonText = translate( 'I can access this email address' );
+		let buttonText = translate( 'I can access the email address' );
+
+		if ( email ) {
+			message = translate(
+				"We'll send an email to {{strong}}%(email)s{{/strong}} to start the transfer process. Make sure " +
+					"you have access to that address. Don't recognize it? Then you have privacy protection enabled. " +
+					"You'll need to log in to your current domain provider and {{a}}turn it off{{/a}} before we start. " +
+					"Don't worry, you can re-enable it once the transfer is done.",
+				{
+					args: { email },
+					components: {
+						strong: <strong className="transfer-domain-step__admin-email" />,
+						a: (
+							<a
+								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
+								rel="noopener noreferrer"
+								target="_blank"
+							/>
+						),
+					},
+				}
+			);
+
+			buttonText = translate( 'I can access this email address' );
+		}
 
 		const statusClasses = loading
 			? 'transfer-domain-step__lock-status transfer-domain-step__checking'
