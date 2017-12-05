@@ -545,7 +545,7 @@ class ActivityLog extends Component {
 				}
 				onClose={ this.dismissRestore }
 				onConfirm={ this.confirmRestore }
-				supportLink="https://jetpack.com/support/rewind-specific-day-event"
+				supportLink="https://jetpack.com/support/how-to-rewind"
 				title={ translate( 'Rewind Site' ) }
 			>
 				{ translate(
