@@ -47,11 +47,7 @@ class TinyMCEDropZone extends React.Component {
 	}
 
 	componentWillUnmount() {
-		const { editor } = this.props;
-		editor.dom.unbind( editor.getWin(), 'dragenter', this.redirectEditorDragEvent );
 		window.removeEventListener( 'dragleave', this.stopDragging );
-		editor.dom.unbind( editor.getWin(), 'dragleave', this.stopDragging );
-		editor.dom.unbind( editor.getWin(), 'dragover', this.fakeDragEnterIfNecessary );
 	}
 
 	redirectEditorDragEvent = event => {
