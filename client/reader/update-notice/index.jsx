@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { noop, filter, forEach, get } from 'lodash';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -15,11 +15,13 @@ import Gridicon from 'gridicons';
  */
 import DocumentHead from 'components/data/document-head';
 import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
+import { getCommentById } from 'state/comments/selectors';
 
 class UpdateNotice extends React.PureComponent {
 	static propTypes = {
 		count: PropTypes.number.isRequired,
 		onClick: PropTypes.func,
+		pendingPostKeys: PropTypes.array,
 		// connected props
 		cappedUnreadCount: PropTypes.string,
 	};
@@ -27,6 +29,33 @@ class UpdateNotice extends React.PureComponent {
 	static defaultProps = { onClick: noop };
 
 	render() {
+		const isConversations = get( this.props, [ 'pendingPostKeys', 0, 'comments' ] );
+		let { count } = this.props;
+		const { pendingPostKeys } = this.props;
+
+		if ( isConversations ) {
+			let newComments = 0;
+			forEach( pendingPostKeys, post => {
+				if ( post.comments ) {
+					const commentsToKeep = filter( post.comments, commentId => {
+						const c = getCommentById( {
+							state: this.props.state,
+							siteId: post.blogId,
+							commentId: commentId,
+						} );
+						return ! c;
+					} );
+
+					if ( commentsToKeep.length > 0 ) {
+						newComments += commentsToKeep.length;
+					}
+				}
+			} );
+			if ( newComments === 0 ) {
+				return null;
+			}
+			count = newComments;
+		}
 		const counterClasses = classnames( {
 			'reader-update-notice': true,
 			'is-active': this.props.count > 0,
@@ -34,11 +63,11 @@ class UpdateNotice extends React.PureComponent {
 
 		return (
 			<div className={ counterClasses } onClick={ this.handleClick }>
-				<DocumentHead unreadCount={ this.props.count } />
+				<DocumentHead unreadCount={ count } />
 				<Gridicon icon="arrow-up" size={ 18 } />
 				{ this.props.translate( '%s new post', '%s new posts', {
 					args: [ this.props.cappedUnreadCount ],
-					count: this.props.count,
+					count,
 				} ) }
 			</div>
 		);
@@ -52,4 +81,5 @@ class UpdateNotice extends React.PureComponent {
 
 export default connect( state => ( {
 	cappedUnreadCount: getDocumentHeadCappedUnreadCount( state ),
+	state,
 } ) )( localize( UpdateNotice ) );

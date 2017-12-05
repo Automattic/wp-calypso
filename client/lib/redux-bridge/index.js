@@ -14,10 +14,3 @@ export function reduxDispatch( ...args ) {
 	}
 	reduxStore.dispatch( ...args );
 }
-
-export function getState() {
-	if ( reduxStore ) {
-		return reduxStore.getState();
-	}
-	return undefined;
-}

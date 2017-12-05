@@ -1,11 +1,10 @@
 /**
+ *  External Dependencies
+ *
  * @format
  */
 
-/**
- *  External Dependencies
- */
-import { forEach, get, filter } from 'lodash';
+import { forEach, get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -15,10 +14,8 @@ import { action as ActionType } from './constants';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
 import feedPostListCache from './feed-stream-cache';
 import wpcom from 'lib/wp';
-import { reduxDispatch, getState as getReduxState } from 'lib/redux-bridge';
+import { reduxDispatch } from 'lib/redux-bridge';
 import { COMMENTS_RECEIVE } from 'state/action-types';
-import { getCommentById } from 'state/comments/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
 
 function getNextPageParams( store ) {
 	const params = {
@@ -99,9 +96,8 @@ export function receivePage( id, error, data ) {
 					postId: post.ID,
 				} );
 			}
-
 			if ( post.comments ) {
-				// Send conversations over to Redux
+				// conversations!
 				reduxDispatch( {
 					type: COMMENTS_RECEIVE,
 					siteId: post.site_ID,
@@ -122,40 +118,17 @@ export function receivePage( id, error, data ) {
 
 export function receiveUpdates( id, error, data ) {
 	if ( ! error && data && data.posts ) {
-		const reduxState = getReduxState();
-		const currentUserId = getCurrentUserId( reduxState );
-
 		forEach( data.posts, post => {
 			if ( post.comments ) {
-				const commentsToKeep = filter( post.comments, comment => {
-					const c = getCommentById( {
-						state: reduxState,
-						siteId: post.site_ID,
-						commentId: comment.ID,
-					} );
-					return ! c || c.author.ID !== currentUserId;
+				// conversations!
+				reduxDispatch( {
+					type: COMMENTS_RECEIVE,
+					siteId: post.site_ID,
+					postId: post.ID,
+					comments: post.comments,
 				} );
-
-				if ( commentsToKeep.length > 0 ) {
-					// conversations!
-					reduxDispatch( {
-						type: COMMENTS_RECEIVE,
-						siteId: post.site_ID,
-						postId: post.ID,
-						comments: commentsToKeep,
-					} );
-				}
-				post.comments = commentsToKeep;
 			}
 		} );
-
-		const posts = filter(
-			data.posts,
-			// include posts that have no comments node (non conversations) and those that have a comments node and at least one new comment
-			post => ! post.comments || ( post.comments && post.comments.length > 0 )
-		);
-
-		data.posts = posts;
 	}
 
 	Dispatcher.handleServerAction( {
