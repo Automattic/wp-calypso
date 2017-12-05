@@ -110,7 +110,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ( {
 	siteSelected: () => {
-		dispatch( recordTracksEvent( 'calypso_masterbar_publish_button_write_clicked' ) );
+		dispatch( recordTracksEvent( 'calypso_masterbar_write_button_clicked' ) );
 	},
 } );
 

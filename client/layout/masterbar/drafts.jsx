@@ -153,7 +153,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ( {
 	recordDraftSelected: () => {
-		dispatch( recordTracksEvent( 'calypso_masterbar_publish_button_draft_selected' ) );
+		dispatch( recordTracksEvent( 'calypso_masterbar_draft_selected' ) );
 	},
 } );
 
