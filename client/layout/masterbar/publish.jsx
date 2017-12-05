@@ -56,10 +56,6 @@ class MasterbarItemNew extends React.Component {
 		}
 	};
 
-	onSiteSelect = () => {
-		this.props.recordTracksEvent( 'calypso_masterbar_publish_write_clicked', {} );
-	};
-
 	getPopoverPosition = () => {
 		if ( viewport.isMobile() ) {
 			return 'bottom';
@@ -95,7 +91,7 @@ class MasterbarItemNew extends React.Component {
 						visible={ this.state.isShowingPopover }
 						context={ this.state.postButtonContext }
 						onClose={ this.toggleSitesPopover.bind( this, false ) }
-						onSiteSelect={ this.onSiteSelect }
+						onSiteSelect={ this.props.siteSelected }
 						groups={ true }
 						position={ this.getPopoverPosition() }
 					/>
@@ -106,9 +102,16 @@ class MasterbarItemNew extends React.Component {
 	}
 }
 
-export default connect( state => {
+const mapStateToProps = state => {
 	return {
 		selectedSite: getSelectedSite( state ),
-		recordTracksEvent,
 	};
-} )( MasterbarItemNew );
+};
+
+const mapDispatchToProps = dispatch => ( {
+	siteSelected: () => {
+		dispatch( recordTracksEvent( 'calypso_masterbar_publish_button_write_clicked' ) );
+	},
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNew );

@@ -54,7 +54,7 @@ class MasterbarDrafts extends Component {
 	};
 
 	draftClicked = () => {
-		this.props.recordTracksEvent( 'calypso_masterbar_publish_draft_clicked', {} );
+		this.props.recordDraftSelected();
 		this.closeDrafts();
 	};
 
@@ -128,7 +128,7 @@ class MasterbarDrafts extends Component {
 	}
 }
 
-export default connect( state => {
+const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const userId = getCurrentUserId( state );
 	const site = getSelectedSite( state );
@@ -148,6 +148,13 @@ export default connect( state => {
 		draftsQuery: draftsQuery,
 		draftCount: myPostCounts && myPostCounts.draft,
 		selectedSite: site,
-		recordTracksEvent,
 	};
-} )( localize( MasterbarDrafts ) );
+};
+
+const mapDispatchToProps = dispatch => ( {
+	recordDraftSelected: () => {
+		dispatch( recordTracksEvent( 'calypso_masterbar_publish_button_draft_selected' ) );
+	},
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( MasterbarDrafts ) );
