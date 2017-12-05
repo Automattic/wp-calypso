@@ -17,6 +17,10 @@ export const privacyPolicySchema = {
 			id: {
 				type: 'string',
 			},
+			effective_date: {
+				type: 'string',
+				description: 'Effective date of the document.',
+			},
 			modified: {
 				type: 'string',
 				description: 'Modification date of the document.',
