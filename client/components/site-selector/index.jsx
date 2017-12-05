@@ -32,7 +32,6 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
 import SiteSelectorAddSite from './add-site';
 import searchSites from 'components/search-sites';
-import { isPluginActive } from 'state/selectors';
 
 const ALL_SITES = 'ALL_SITES';
 
@@ -463,7 +462,7 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 		}
 
 		if ( path.match( /^\/store\/stats\// ) ) {
-			const isStore = site.jetpack && isPluginActive( state, site.ID, 'woocommerce' );
+			const isStore = site.jetpack && site.options && site.options.woocommerce_is_active;
 			if ( ! isStore ) {
 				path = '/stats/day';
 			}
