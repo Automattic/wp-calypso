@@ -4,6 +4,7 @@
 import request from 'woocommerce/state/sites/request';
 import { setError } from '../../status/wc-api/actions';
 import {
+	WOOCOMMERCE_EMAIL_SETTINGS_CHANGE,
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
@@ -36,4 +37,12 @@ export const fetchEmailSettings = siteId => ( dispatch, getState ) => {
 		.catch( err => {
 			dispatch( setError( siteId, getAction, err ) );
 		} );
+};
+
+export const emailSettingChange = ( siteId, setting ) => ( dispatch ) => {
+	dispatch( {
+		type: WOOCOMMERCE_EMAIL_SETTINGS_CHANGE,
+		siteId,
+		setting,
+	} );
 };

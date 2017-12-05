@@ -16,28 +16,38 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
-const NotificationsOrigin = ( { item, recipient, onChange, isPlaceholder } ) => (
-	<ListItem>
-		<ListItemField className="components__notification-origin">
-			{ ! isPlaceholder ? (
-				<FormLabel>{ item.title }</FormLabel>
-			) : (
-				<p className="components__is-placeholder" />
-			) }
-			<FormTextInput
-				className={ isPlaceholder ? 'components__is-placeholder' : null }
-				name={ item.field }
-				onChange={ onChange }
-				value={ recipient }
-			/>
-			{ ! isPlaceholder ? (
-				<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
-			) : (
-				<p className="components__is-placeholder" />
-			) }
-		</ListItemField>
-	</ListItem>
-);
+const NotificationsOrigin = ( { item, recipient, onChange, isPlaceholder } ) => {
+	const change = ( { target: { value } } ) => {
+		onChange( {
+			setting: item.field,
+			option: item.option,
+			value,
+		} );
+	};
+
+	return (
+		<ListItem>
+			<ListItemField className="components__notification-origin">
+				{ ! isPlaceholder ? (
+					<FormLabel>{ item.title }</FormLabel>
+				) : (
+					<p className="components__is-placeholder" />
+				) }
+				<FormTextInput
+					className={ isPlaceholder ? 'components__is-placeholder' : null }
+					name={ item.field }
+					onChange={ change }
+					value={ recipient }
+				/>
+				{ ! isPlaceholder ? (
+					<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
+				) : (
+					<p className="components__is-placeholder" />
+				) }
+			</ListItemField>
+		</ListItem>
+	);
+};
 
 NotificationsOrigin.propTypes = {
 	recipient: PropTypes.string,

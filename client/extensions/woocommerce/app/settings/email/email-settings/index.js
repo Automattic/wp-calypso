@@ -13,7 +13,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchEmailSettings } from 'woocommerce/state/sites/settings/email/actions';
+import {
+	fetchEmailSettings,
+	emailSettingChange,
+} from 'woocommerce/state/sites/settings/email/actions';
 import {
 	getEmailSettings,
 	areEmailSettingsLoading,
@@ -29,12 +32,14 @@ import ListItemField from 'woocommerce/components/list/list-item-field';
 
 const originNotifications = [
 	{
-		field: 'woocommerce_email_from_address',
+		field: 'email',
+		option: 'woocommerce_email_from_address',
 		title: translate( 'From name' ),
 		subtitle: translate( "Emails will appear in recipients inboxes 'from' this name." ),
 	},
 	{
-		field: 'woocommerce_email_from_name',
+		field: 'email',
+		option: 'woocommerce_email_from_name',
 		title: translate( 'From address' ),
 		subtitle: translate( 'If recipients reply to store emails they will be sent to this address.' ),
 	},
@@ -107,12 +112,15 @@ class Settings extends React.Component {
 		}
 	};
 
-	notificationsToggle = () => {
-		undefined;
+	onSave = () => {
+		const { siteId, submitEmailSettings: submit } = this.props;
+		const message = {};
+		submit( siteId, message );
 	};
 
-	recipientsChange = () => {
-		undefined;
+	onChange = event => {
+		const { onChange, siteId } = this.props;
+		onChange( siteId, event );
 	};
 
 	renderOriginNotification = ( item, index ) => {
@@ -122,8 +130,8 @@ class Settings extends React.Component {
 				key={ index }
 				item={ item }
 				isPlaceholder={ loading }
-				recipient={ loaded ? settings.email[ item.field ] : '' }
-				onChange={ this.recipientsChange }
+				recipient={ loaded ? settings[ item.field ][ item.option ] : '' }
+				onChange={ this.onChange }
 			/>
 		);
 	};
@@ -137,8 +145,7 @@ class Settings extends React.Component {
 				checked={ 'yes' === ( loaded && settings[ item.field ].enabled ) }
 				recipient={ loaded ? settings[ item.field ].recipient : '' }
 				isPlaceholder={ loading }
-				onToggle={ this.notificationsToggle }
-				onChange={ this.recipientsChange }
+				onChange={ this.onChange }
 			/>
 		);
 	};
@@ -151,7 +158,7 @@ class Settings extends React.Component {
 				item={ item }
 				isPlaceholder={ loading }
 				checked={ 'yes' === ( loaded && settings[ item.field ].enabled ) }
-				onToggle={ this.notificationsToggle }
+				onChange={ this.onChange }
 			/>
 		);
 	};
@@ -207,6 +214,7 @@ class Settings extends React.Component {
 Settings.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	fetchSettings: PropTypes.func.isRequired,
+	onChange: PropTypes.func.isRequired,
 	settings: PropTypes.object,
 	loading: PropTypes.bool,
 };
@@ -224,6 +232,7 @@ function mapStateToProps( state, props ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			onChange: emailSettingChange,
 			fetchSettings: fetchEmailSettings,
 		},
 		dispatch
