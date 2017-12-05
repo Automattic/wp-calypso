@@ -60,7 +60,7 @@ class Backups extends Component {
 				<QueryJetpackCredentials siteId={ this.props.siteId } />
 				{ isRewindActive && (
 					<CompactCard className="jetpack-credentials__header">
-						<span>{ translate( 'Backups and restores' ) }</span>
+						<span>{ translate( 'Backups and security scans' ) }</span>
 							{ hasMainCredentials && (
 								<span className="jetpack-credentials__connected">
 									<Gridicon icon="checkmark" size={ 18 } className="jetpack-credentials__connected-checkmark" />
