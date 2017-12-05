@@ -40,8 +40,7 @@ export class CredentialsForm extends Component {
 		},
 	};
 
-	handleFieldChange = event => {
-		const { name, value } = event.target;
+	handleFieldChange = ( { target: { name, value } } ) => {
 		const changedProtocol = 'protocol' === name;
 		const defaultPort = 'ftp' === value ? 21 : 22;
 
