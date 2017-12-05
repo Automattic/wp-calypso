@@ -25,4 +25,5 @@ export default combineTours( {
 	gdocsIntegrationTour: GDocsIntegrationTour,
 	simplePaymentsTour: SimplePaymentsTour,
 	simplePaymentsEndOfYearGuide: SimplePaymentsEndOfYearGuide,
+	siteTitle: SiteTitleTour,
 } );
