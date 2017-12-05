@@ -546,7 +546,7 @@ class ActivityLog extends Component {
 				}
 				onClose={ this.dismissRestore }
 				onConfirm={ this.confirmRestore }
-				supportLink="https://help.vaultpress.com/one-click-restore/"
+				supportLink="https://jetpack.com/support/rewind-specific-day-event"
 				title={ translate( 'Rewind Site' ) }
 			>
 				{ translate(
@@ -573,7 +573,7 @@ class ActivityLog extends Component {
 				confirmTitle={ translate( 'Create download' ) }
 				onClose={ this.dismissBackup }
 				onConfirm={ this.confirmDownload }
-				supportLink="https://help.vaultpress.com/one-click-restore/"
+				supportLink="https://jetpack.com/support/backups"
 				title={ translate( 'Create downloadable backup' ) }
 				type={ 'backup' }
 				icon={ 'cloud-download' }
