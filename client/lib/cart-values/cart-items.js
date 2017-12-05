@@ -238,6 +238,19 @@ export function hasPlan( cart ) {
 	return cart && some( getAll( cart ), isPlan );
 }
 
+/**
+ * Does the cart contain only bundled domains and transfers
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @return {Boolean} true if there are only bundled domains and transfers
+ */
+export function hasOnlyBundledDomainProducts( cart ) {
+	return (
+		cart &&
+		every( [ ...getDomainRegistrations( cart ), ...getDomainTransfers( cart ) ], 'is_bundled' )
+	);
+}
+
 export function hasPremiumPlan( cart ) {
 	return some( getAll( cart ), isPremium );
 }
@@ -995,6 +1008,7 @@ export default {
 	hasOnlyProductsOf,
 	hasOnlyRenewalItems,
 	hasPlan,
+	hasOnlyBundledDomainProducts,
 	hasPremiumPlan,
 	hasProduct,
 	hasRenewableSubscription,
