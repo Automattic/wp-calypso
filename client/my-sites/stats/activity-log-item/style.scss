@@ -146,17 +146,28 @@
 	display: flex;
 	flex-wrap: wrap;
 	margin-right: 32px;
+	padding-left: 56px;
+	align-items: center;
 
 	@include breakpoint( '<960px' ) {
 		flex-direction: column;
 		align-items: flex-start;
+		padding-left: 40px;
 	}
 }
 
 .activity-log-item__actor {
 	display: flex;
 	flex-shrink: 0;
+	min-width: 180px;
+	max-width: 50%;
 	margin-right: 32px;
+	margin-left: -40px;
+	align-items: center;
+
+	@include breakpoint( '>960px' ) {
+		margin-left: -56px;
+	}
 
 	.gravatar,
 	.jetpack-logo {
@@ -213,4 +224,8 @@
 
 .activity-log-item__description {
 	font-size: 14px;
+
+	@include breakpoint( '<960px' ) {
+		margin-top: 4px;
+	}
 }
