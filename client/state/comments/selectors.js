@@ -23,7 +23,7 @@ import {
  */
 import createSelector from 'lib/create-selector';
 import { fetchStatusInitialState } from './reducer';
-import { getStateKey, deconstructStateKey } from './utils';
+import { getStateKey, deconstructStateKey, getErrorKey } from './utils';
 
 /***
  * Gets comment items for post
@@ -44,8 +44,9 @@ export const getDateSortedPostComments = createSelector(
 );
 
 export const getCommentById = ( { state, commentId, siteId } ) => {
-	if ( get( state, 'comments.errors', {} )[ `${ siteId }-${ commentId }` ] ) {
-		return state.comments.errors[ `${ siteId }-${ commentId }` ];
+	const errorKey = getErrorKey( siteId, commentId );
+	if ( get( state, 'comments.errors', {} )[ errorKey ] ) {
+		return state.comments.errors[ errorKey ];
 	}
 
 	const commentsForSite = flatMap(
