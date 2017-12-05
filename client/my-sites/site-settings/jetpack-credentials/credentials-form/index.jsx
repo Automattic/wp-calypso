@@ -47,13 +47,7 @@ export class CredentialsForm extends Component {
 		};
 
 		if ( 'protocol' === event.target.name ) {
-			switch ( event.target.value ) {
-				case 'ftp':
-					newForm.port = 21;
-					break;
-				default:
-					newForm.port = 22;
-			}
+			newForm.port = 'ftp' === event.target.value ? 21 : 22;
 		}
 
 		this.setState( {
