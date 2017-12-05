@@ -37,7 +37,7 @@ const tasks = {
 		duration: '1 min',
 		completedTitle: 'You updated your site title',
 		completedButtonText: 'Edit',
-		url: '/settings/general/$siteSlug',
+		url: '/checklist/$siteSlug?tour=siteTitle',
 		image: '/calypso/images/stats/tasks/personalize-your-site.svg',
 	},
 	blogdescription_set: {
