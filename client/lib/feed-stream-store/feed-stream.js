@@ -33,6 +33,8 @@ import { COMMENTS_RECEIVE } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
+const postKeyToString = postKey => `${ postKey.blogId }-${ postKey.postId }`;
+
 export default class FeedStream {
 	constructor( spec ) {
 		if ( ! spec ) {
@@ -57,6 +59,7 @@ export default class FeedStream {
 			id: spec.id,
 			postKeys: [], // an array of keys, as determined by the key maker,
 			pendingPostKeys: [],
+			pendingComments: new Map(),
 			postById: new Set(),
 			errors: [],
 			fetcher: spec.fetcher,
@@ -497,6 +500,14 @@ export default class FeedStream {
 				this.emitChange();
 			}
 		}
+
+		// if conversations, then tuck away the comments into pending comments
+		if ( data && data.posts && data.posts[ 0 ] && data.posts[ 0 ].comments ) {
+			forEach( data.posts, post => {
+				const postKey = { blogId: post.site_ID, postId: post.ID };
+				this.pendingComments.set( postKeyToString( postKey ), post.comments );
+			} );
+		}
 	}
 
 	acceptUpdates() {
@@ -524,18 +535,22 @@ export default class FeedStream {
 				to: this.pendingDateAfter,
 			} );
 		}
-		forEach( this.pendingPostKeys, postKey => {
-			// conversations!
-			if ( postKey.comments ) {
-				const post = FeedPostStore.get( postKey );
+
+		// if conversations, then unleash the tucked away comments to redux
+		if ( !! get( this.pendingPostKeys, '0.comments' ) ) {
+			forEach( this.pendingPostKeys, postKey => {
+				const key = postKeyToString( postKey );
+				const comments = this.pendingComments.get( key );
+				this.pendingComments.delete( key );
+
 				reduxDispatch( {
 					type: COMMENTS_RECEIVE,
 					siteId: postKey.blogId,
 					postId: postKey.postId,
-					comments: post.comments,
+					comments,
 				} );
-			}
-		} );
+			} );
+		}
 
 		this.postKeys = uniqBy( this.pendingPostKeys.concat( this.postKeys ), postKey =>
 			keyToString( postKey )
