@@ -14,18 +14,15 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Intervals from './intervals';
 import FollowersCount from 'blocks/followers-count';
-import { isPluginActive, isSiteAutomatedTransfer } from 'state/selectors';
+import { isSiteAutomatedTransfer, isSiteStore } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
-import { getJetpackSites } from 'state/selectors';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 
 class StatsNavigation extends Component {
 	static propTypes = {
 		interval: PropTypes.oneOf( intervalConstants.map( i => i.value ) ),
 		isJetpack: PropTypes.bool,
 		isStore: PropTypes.bool,
-		jetPackSites: PropTypes.array,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
@@ -44,14 +41,13 @@ class StatsNavigation extends Component {
 	};
 
 	render() {
-		const { isJetpack, slug, selectedItem, interval, jetPackSites } = this.props;
+		const { slug, selectedItem, interval } = this.props;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
 		return (
 			<div className="stats-navigation">
 				<SectionNav selectedText={ label }>
-					{ isJetpack && <QueryJetpackPlugins siteIds={ jetPackSites.map( site => site.ID ) } /> }
 					<NavTabs label={ 'Stats' } selectedText={ label }>
 						{ Object.keys( navItems )
 							.filter( this.isValidItem )
@@ -78,12 +74,10 @@ class StatsNavigation extends Component {
 }
 
 export default connect( ( state, { siteId } ) => {
-	const isJetpack = isJetpackSite( state, siteId );
 	return {
-		isJetpack,
-		jetPackSites: getJetpackSites( state ),
+		isJetpack: isJetpackSite( state, siteId ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ),
-		isStore: isJetpack && isPluginActive( state, siteId, 'woocommerce' ),
+		isStore: isSiteStore( state, siteId ),
 		siteId,
 	};
 } )( StatsNavigation );
