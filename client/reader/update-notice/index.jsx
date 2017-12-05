@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { noop, filter, get, flatMap } from 'lodash';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -15,11 +15,13 @@ import Gridicon from 'gridicons';
  */
 import DocumentHead from 'components/data/document-head';
 import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
+import { getCommentById } from 'state/comments/selectors';
 
 class UpdateNotice extends React.PureComponent {
 	static propTypes = {
 		count: PropTypes.number.isRequired,
 		onClick: PropTypes.func,
+		pendingPostKeys: PropTypes.array,
 		// connected props
 		cappedUnreadCount: PropTypes.string,
 	};
@@ -27,6 +29,8 @@ class UpdateNotice extends React.PureComponent {
 	static defaultProps = { onClick: noop };
 
 	render() {
+		const { count } = this.props;
+
 		const counterClasses = classnames( {
 			'reader-update-notice': true,
 			'is-active': this.props.count > 0,
@@ -34,11 +38,11 @@ class UpdateNotice extends React.PureComponent {
 
 		return (
 			<div className={ counterClasses } onClick={ this.handleClick }>
-				<DocumentHead unreadCount={ this.props.count } />
+				<DocumentHead unreadCount={ count } />
 				<Gridicon icon="arrow-up" size={ 18 } />
 				{ this.props.translate( '%s new post', '%s new posts', {
 					args: [ this.props.cappedUnreadCount ],
-					count: this.props.count,
+					count,
 				} ) }
 			</div>
 		);
@@ -50,6 +54,30 @@ class UpdateNotice extends React.PureComponent {
 	};
 }
 
-export default connect( state => ( {
-	cappedUnreadCount: getDocumentHeadCappedUnreadCount( state ),
-} ) )( localize( UpdateNotice ) );
+const countNewComments = ( state, postKeys ) => {
+	const newComments = flatMap( postKeys, postKey => {
+		return filter( postKey.comments, commentId => {
+			return ! getCommentById( {
+				state,
+				siteId: postKey.blogId,
+				commentId: commentId,
+			} );
+		} );
+	} );
+	return newComments.length;
+};
+
+const mapStateToProps = ( state, ownProps ) => {
+	// ugly hack for convos
+	const isConversations = !! get( ownProps.pendingPostKeys, [ 0, 'comments' ] );
+	const count = isConversations
+		? countNewComments( state, ownProps.pendingPostKeys )
+		: ownProps.count;
+
+	return {
+		cappedUnreadCount: getDocumentHeadCappedUnreadCount( state ),
+		count,
+	};
+};
+
+export default connect( mapStateToProps )( localize( UpdateNotice ) );
