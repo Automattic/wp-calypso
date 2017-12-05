@@ -17,6 +17,7 @@ import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
@@ -134,6 +135,9 @@ class PaymentMethodBACS extends Component {
 						onChange={ this.onEditAccountHandler }
 						value={ accountData.account_name }
 					/>
+					<FormSettingExplanation>
+						{ translate( 'This is for your reference' ) }
+					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container">
 					<FormLabel>{ translate( 'Bank Name' ) }</FormLabel>
@@ -166,7 +170,7 @@ class PaymentMethodBACS extends Component {
 							checked={ showInternational }
 							onChange={ this.updateInternationalVisibility }
 						/>
-						{ translate( 'Edit International Account Options' ) }
+						{ translate( 'I want to offer BACS payment as an option to international customers' ) }
 					</FormLabel>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container is-international-option">
@@ -176,6 +180,9 @@ class PaymentMethodBACS extends Component {
 						onChange={ this.onEditAccountHandler }
 						value={ accountData.iban }
 					/>
+					<FormSettingExplanation>
+						{ translate( 'You can obtain your IBAN number from your bank' ) }
+					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset className="payments__method-edit-field-container is-international-option">
 					<FormLabel>{ translate( 'BIC / Swift' ) }</FormLabel>
