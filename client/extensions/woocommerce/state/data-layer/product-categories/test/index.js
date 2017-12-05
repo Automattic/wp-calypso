@@ -73,6 +73,7 @@ describe( 'handlers', () => {
 					status: 200,
 					headers: {
 						'X-WP-Total': 1,
+						'X-WP-TotalPages': 1,
 					},
 				},
 			};
@@ -89,6 +90,7 @@ describe( 'handlers', () => {
 				siteId,
 				data: cats,
 				total: 1,
+				totalPages: 1,
 				query: {},
 			} );
 		} );
