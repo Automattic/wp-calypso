@@ -32,6 +32,7 @@ import {
 	getMagicLoginRequestedAuthSuccessfully,
 	isFetchingMagicLoginAuth,
 } from 'state/selectors';
+import { getRedirectTo } from 'state/login/selectors';
 import { getTwoFactorNotificationSent, isTwoFactorEnabled } from 'state/login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -43,6 +44,7 @@ class HandleEmailedLinkForm extends React.Component {
 		// Passed props
 		clientId: PropTypes.string,
 		emailAddress: PropTypes.string.isRequired,
+		redirectTo: PropTypes.string,
 		token: PropTypes.string.isRequired,
 
 		// Connected props
@@ -51,6 +53,7 @@ class HandleEmailedLinkForm extends React.Component {
 		isAuthenticated: PropTypes.bool,
 		isExpired: PropTypes.bool,
 		isFetching: PropTypes.bool,
+		redirectToFromServer: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
 
@@ -79,7 +82,7 @@ class HandleEmailedLinkForm extends React.Component {
 			hasSubmitted: true,
 		} );
 
-		this.props.fetchMagicLoginAuthenticate( this.props.token );
+		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectTo );
 	};
 
 	// Lifted from `blocks/login`
@@ -96,6 +99,7 @@ class HandleEmailedLinkForm extends React.Component {
 						'none',
 						'authenticator'
 					),
+					redirectTo: this.props.redirectTo,
 				} )
 			);
 		}
@@ -104,7 +108,7 @@ class HandleEmailedLinkForm extends React.Component {
 	// Lifted from `blocks/login`
 	// @TODO move to `state/login/actions` & use both places
 	rebootAfterLogin = () => {
-		const { redirectTo } = this.props;
+		const { redirectToFromServer } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_login_success', {
 			two_factor_enabled: this.props.twoFactorEnabled,
@@ -112,7 +116,7 @@ class HandleEmailedLinkForm extends React.Component {
 		} );
 
 		// Redirects to / if no redirect url is available
-		const url = redirectTo ? redirectTo : window.location.origin;
+		const url = redirectToFromServer ? redirectToFromServer : window.location.origin;
 
 		// user data is persisted in localstorage at `lib/user/user` line 157
 		// therefore we need to reset it before we redirect, otherwise we'll get
@@ -194,6 +198,7 @@ class HandleEmailedLinkForm extends React.Component {
 
 const mapState = state => {
 	return {
+		redirectToFromServer: getRedirectTo( state ),
 		authError: getMagicLoginRequestAuthError( state ),
 		currentUser: getCurrentUser( state ),
 		isAuthenticated: getMagicLoginRequestedAuthSuccessfully( state ),

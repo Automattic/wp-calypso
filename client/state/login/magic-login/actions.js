@@ -84,7 +84,7 @@ export const fetchMagicLoginRequestEmail = email => dispatch => {
 };
 
 // @TODO should this move to `/state/data-layer`..?
-export const fetchMagicLoginAuthenticate = token => dispatch => {
+export const fetchMagicLoginAuthenticate = ( token, redirect_to = null ) => dispatch => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
 
 	request
@@ -98,6 +98,7 @@ export const fetchMagicLoginAuthenticate = token => dispatch => {
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 			token,
+			redirect_to,
 		} )
 		.then( response => {
 			dispatch( {

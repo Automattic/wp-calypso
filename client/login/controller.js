@@ -100,10 +100,15 @@ export default {
 
 		const previousQuery = context.state || {};
 
-		const { client_id, email, token } = previousQuery;
+		const { client_id, email, token, redirect_to } = previousQuery;
 
 		context.primary = (
-			<HandleEmailedLinkForm clientId={ client_id } emailAddress={ email } token={ token } />
+			<HandleEmailedLinkForm
+				clientId={ client_id }
+				emailAddress={ email }
+				token={ token }
+				redirectTo={ redirect_to }
+			/>
 		);
 
 		next();
