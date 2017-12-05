@@ -173,6 +173,16 @@ If your change was functional, ie. changing functionality or flows etc. eg. addi
 ]
 ```
 
-This makes sure that all e2e test users are in the specified group so that behaviour remains the same and consistent across all e2e test runs.
+This makes sure that all e2e test users are in the specified group so that behaviour remains the same and consistent across all e2e test runs. Ideally you should aim to put the e2e tests in the most common (>50%) group, or in the default (existing) behaviour.
 
 *Note:* You should add this change to the e2e tests _before_ merging your wp-calypso change - it doesn't matter if the A/B test doesn't exist in wp-calypso yet when merging the e2e test change.
+
+## Changing a known A/B test
+
+If you're making an update to an A/B test - changing the date for example, you should update the e2e tests in the same way as above to reflect the new date.
+
+## Removing a known A/B test
+
+When you're A/B test is complete and removed from `wp-calypso` you should also remove it from the e2e test config. This doesn't have to happen _immediately_ (it doesn't matter to override an A/B test that doesn't exist) but you should do it as soon as possible to keep things neat and tidy.
+
+If your A/B test was successful and ***you're making permanent functional changes***, you should make permanent updates to the e2e tests to take into account these new functional changes. Speak to Flow Patrol if you need help.
