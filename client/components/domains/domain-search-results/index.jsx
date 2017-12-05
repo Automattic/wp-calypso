@@ -223,7 +223,6 @@ class DomainSearchResults extends React.Component {
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						isSignupStep={ this.props.isSignupStep }
 						cart={ this.props.cart }
-						show={ this.props.siteDesignType }
 					/>
 				);
 
