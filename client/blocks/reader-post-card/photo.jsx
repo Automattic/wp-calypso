@@ -65,7 +65,7 @@ class PostPhoto extends React.Component {
 	}
 
 	renderFeaturedImage() {
-		const { post, title } = this.props;
+		const { post, title, onClick } = this.props;
 		const imageUrl = post.canonical_media.src;
 		const imageSize = {
 			height: post.canonical_media.height,
@@ -95,7 +95,8 @@ class PostPhoto extends React.Component {
 			'is-expanded': this.props.isExpanded,
 		} );
 
-		// force to non-breaking space if `title` is empty so that the title h1 doesn't collapse and complicate things
+		// force to non-breaking space if `title` is empty so that the title h1 doesn't collapse and
+		// complicate things
 		const linkTitle = title || '\xa0';
 		const divStyle = this.props.isExpanded
 			? { height: newHeight, width: newWidth, margin: '0 auto' }
@@ -103,21 +104,12 @@ class PostPhoto extends React.Component {
 
 		return (
 			<div style={ divStyle }>
-				<a
-					className={ classes }
-					href={ post.URL }
-					style={ featuredImageStyle }
-					onClick={ this.handleClick }
-				>
+				<a className={ classes } href={ post.URL } style={ featuredImageStyle } onClick={ onClick }>
 					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } } />
 				</a>
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
-						<a
-							className="reader-post-card__title-link"
-							href={ post.URL }
-							onClick={ this.props.onClick }
-						>
+						<a className="reader-post-card__title-link" href={ post.URL } onClick={ onClick }>
 							<Emojify>{ linkTitle }</Emojify>
 						</a>
 					</h1>
