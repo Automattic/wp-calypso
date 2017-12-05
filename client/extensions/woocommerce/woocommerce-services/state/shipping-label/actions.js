@@ -18,7 +18,7 @@ import getRates from './get-rates';
 import { getPrintURL } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import { getFirstErroneousStep, getShippingLabel, getFormErrors, shouldFulfillOrder, shouldEmailDetails } from './selectors';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
-import { updateOrder } from 'woocommerce/state/sites/orders/actions';
+import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
 import {
@@ -591,7 +591,7 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 						}
 
 						if ( shouldFulfillOrder( getState(), orderId, siteId ) ) {
-							dispatch( updateOrder( siteId, {
+							dispatch( saveOrder( siteId, {
 								id: orderId,
 								status: 'completed',
 							} ) );
