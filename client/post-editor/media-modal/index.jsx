@@ -160,9 +160,9 @@ export class EditorMediaModal extends Component {
 				search: undefined,
 			},
 			() => {
-				// Copy the selected item from the external source. Note we pass the actual media data as we need this to generate
-				// transient placeholders. This is done after the state changes so our transients and external items appear
-				// in the WordPress library that we've just switched to
+				// Reset the query so that we're adding the new media items to the correct
+				// list, with no external source.
+				MediaActions.setQuery( site.ID, {} );
 				MediaActions.addExternal( site, selectedMedia, originalSource );
 			}
 		);
