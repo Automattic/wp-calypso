@@ -98,11 +98,7 @@ class CredentialsConfigured extends Component {
 						className="credentials-configured__header-gridicon"
 					/>
 					<div className="credentials-configured__header-configured-text">
-						{ translate(
-							"You're all set! Your credentials have been " +
-								'automatically configured and your site is connected. ' +
-								'Backups and restores should work seamlessly.'
-						) }
+						{ translate( 'Backups and security scans are configured and active.' ) }
 					</div>
 				</CompactCard>
 			);
