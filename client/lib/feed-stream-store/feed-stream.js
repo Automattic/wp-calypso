@@ -561,6 +561,7 @@ export default class FeedStream {
 			this.selectedIndex = -1;
 		}
 		this.pendingPostKeys = [];
+		this.pendingComments.clear();
 		this.pendingDateAfter = null;
 		this.emitChange();
 	}
