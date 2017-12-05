@@ -24,7 +24,7 @@ export default class HeaderCake extends Component {
 			actionIcon,
 			actionHref,
 			actionOnClick,
-			showActionTextOnMobile,
+			alwaysShowActionText,
 		} = this.props;
 		const classes = classNames( 'header-cake', this.props.className, {
 			'is-compact': this.props.isCompact,
@@ -44,7 +44,7 @@ export default class HeaderCake extends Component {
 						href={ actionHref || backHref }
 						onClick={ actionOnClick }
 						icon={ actionIcon }
-						showTextOnMobile={ showActionTextOnMobile }
+						alwaysShowActionText={ alwaysShowActionText }
 						spacer={ ! actionOnClick }
 					/>
 				) }
@@ -65,10 +65,10 @@ HeaderCake.propTypes = {
 	actionHref: PropTypes.string,
 	actionIcon: PropTypes.string,
 	actionOnClick: PropTypes.func,
-	showActionTextOnMobile: PropTypes.bool,
+	alwaysShowActionText: PropTypes.bool,
 };
 
 HeaderCake.defaultProps = {
 	isCompact: false,
-	showActionTextOnMobile: false,
+	alwaysShowActionText: false,
 };

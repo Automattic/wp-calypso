@@ -30,14 +30,14 @@ class HeaderCakeBack extends Component {
 		href: PropTypes.string,
 		onClick: PropTypes.func,
 		text: PropTypes.string,
-		showTextOnMobile: PropTypes.bool,
 		spacer: PropTypes.bool,
+		alwaysShowActionText: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		disabled: false,
-		showTextOnMobile: false,
 		spacer: false,
+		alwaysShowActionText: false,
 	};
 
 	state = {
@@ -61,7 +61,7 @@ class HeaderCakeBack extends Component {
 
 	hideText( text ) {
 		if (
-			! this.props.showTextOnMobile &&
+			! this.props.alwaysShowActionText &&
 			( ( this.state.windowWidth <= HIDE_BACK_CRITERIA.windowWidth &&
 				text.length >= HIDE_BACK_CRITERIA.characterLength ) ||
 				this.state.windowWidth <= 300 )
