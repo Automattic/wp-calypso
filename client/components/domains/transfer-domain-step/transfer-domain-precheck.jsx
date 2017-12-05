@@ -182,8 +182,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 		let message = translate(
 			"We'll send an important email to start the transfer process. Log in to your current domain provider " +
 				"to check your domain's contact information. Make sure you have access to the email address and " +
-				'privacy protection is turned off. {{a}}Here’s how to do that{{/a}}. ' +
-				'Don’t worry, you can re-enable it once the transfer is done.',
+				"privacy protection is turned off. {{a}}Here's how to do that{{/a}}. " +
+				"Don't worry, you can re-enable it once the transfer is done.",
 			{
 				components: {
 					a: (
