@@ -525,16 +525,14 @@ export default class FeedStream {
 			} );
 		}
 		forEach( this.pendingPostKeys, postKey => {
-			// TODO: make this actually dispatch the right comments instead of
-			// ids to the comments
+			// conversations!
 			if ( postKey.comments ) {
-				// conversations!
-				console.error( 'acceptUpdates', postKey );
+				const post = FeedPostStore.get( postKey );
 				reduxDispatch( {
 					type: COMMENTS_RECEIVE,
-					siteId: postKey.blogId,
-					postId: postKey.postId,
-					comments: postKey.comments,
+					siteId: post.site_ID,
+					postId: post.ID,
+					comments: post.comments,
 				} );
 			}
 		} );
