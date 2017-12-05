@@ -28,6 +28,7 @@ import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
+import FormInputValidation from 'components/forms/form-input-validation';
 import LoggedOutForm from 'components/logged-out-form';
 import Notice from 'components/notice';
 import { localize } from 'i18n-calypso';
@@ -47,9 +48,9 @@ class RequestLoginEmailForm extends React.Component {
 		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
 	};
 
-	onEmailAddressFieldChange = event => {
+	onUsernameOrEmailFieldChange = event => {
 		this.setState( {
-			emailAddress: event.target.value,
+			usernameOrEmail: event.target.value,
 		} );
 
 		if ( this.props.requestError ) {
@@ -63,15 +64,15 @@ class RequestLoginEmailForm extends React.Component {
 
 	onSubmit = event => {
 		event.preventDefault();
-		const emailAddress = this.getEmailAddressFromState();
-		if ( ! emailAddress.length ) {
+		const usernameOrEmail = this.getUsernameOrEmailFromState();
+		if ( ! usernameOrEmail.length ) {
 			return;
 		}
-		this.props.fetchMagicLoginRequestEmail( emailAddress );
+		this.props.fetchMagicLoginRequestEmail( usernameOrEmail );
 	};
 
-	getEmailAddressFromState() {
-		return get( this, 'state.emailAddress', '' );
+	getUsernameOrEmailFromState() {
+		return get( this, 'state.usernameOrEmail', '' );
 	}
 
 	render() {
@@ -84,13 +85,15 @@ class RequestLoginEmailForm extends React.Component {
 			translate,
 		} = this.props;
 
-		const emailAddress = this.getEmailAddressFromState();
+		const usernameOrEmail = this.getUsernameOrEmailFromState();
 
 		if ( showCheckYourEmail ) {
+			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
 			return <EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />;
 		}
 
-		const submitEnabled = emailAddress.length && ! isFetching && ! emailRequested && ! requestError;
+		const submitEnabled =
+			usernameOrEmail.length && ! isFetching && ! emailRequested && ! requestError;
 
 		const errorText =
 			typeof requestError === 'string' && requestError.length
@@ -127,7 +130,7 @@ class RequestLoginEmailForm extends React.Component {
 								'with your account to log in instantly without your password.'
 						) }
 					</p>
-					<label htmlFor="emailAddress" className="magic-login__form-label">
+					<label htmlFor="usernameOrEmail" className="magic-login__form-label">
 						{ this.props.translate( 'Email Address' ) }
 					</label>
 					<FormFieldset className="magic-login__email-fields">
@@ -135,10 +138,15 @@ class RequestLoginEmailForm extends React.Component {
 							autoCapitalize="off"
 							autoFocus="true"
 							disabled={ isFetching || emailRequested }
-							name="emailAddress"
-							type="email"
-							onChange={ this.onEmailAddressFieldChange }
+							name="usernameOrEmail"
+							type="text"
+							onChange={ this.onUsernameOrEmailFieldChange }
 						/>
+
+						{ requestError &&
+							requestError.field === 'usernameOrEmail' && (
+								<FormInputValidation isError text={ requestError.message } />
+							) }
 
 						<div className="magic-login__form-action">
 							<FormButton primary disabled={ ! submitEnabled }>
