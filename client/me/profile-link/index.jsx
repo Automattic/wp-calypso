@@ -48,12 +48,7 @@ class ProfileLink extends React.Component {
 
 	renderRemove() {
 		return (
-			<Button
-				borderless
-				icon
-				className="profile-link__remove"
-				onClick={ this.handleRemoveButtonClick }
-			>
+			<Button borderless className="profile-link__remove" onClick={ this.handleRemoveButtonClick }>
 				<Gridicon icon="cross" />
 			</Button>
 		);
