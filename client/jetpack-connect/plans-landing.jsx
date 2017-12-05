@@ -13,6 +13,7 @@ import page from 'page';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
+import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import PlansGrid from './plans-grid';
 import PlansSkipButton from './plans-skip-button';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -67,7 +68,7 @@ class PlansLanding extends Component {
 			plan: cartItem ? cartItem.product_slug : 'free',
 		} );
 
-		storePlan( cartItem ? cartItem.product_slug : 'free' );
+		storePlan( cartItem ? cartItem.product_slug : PLAN_JETPACK_FREE );
 
 		setTimeout( () => {
 			page.redirect( redirectUrl );

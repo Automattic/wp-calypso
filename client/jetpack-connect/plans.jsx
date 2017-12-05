@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
+import { isCalypsoStartedConnection, retrievePlan, storePlan } from './persistence-utils';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -68,8 +68,8 @@ class Plans extends Component {
 		if ( props.isAutomatedTransfer ) {
 			this.props.goBackToWpAdmin( props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
-		if ( props.selectedPlanSlug ) {
-			this.autoselectPlan( props );
+		if ( props.selectedPlan ) {
+			this.selectPlan( props.selectedPlan );
 		}
 		if ( props.hasPlan || props.notJetpack ) {
 			this.redirect( CALYPSO_PLANS_PAGE );
@@ -85,8 +85,7 @@ class Plans extends Component {
 
 	handleSkipButtonClick = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
-
-		this.selectFreeJetpackPlan();
+		storePlan( PLAN_JETPACK_FREE );
 	};
 
 	handleHelpButtonClick = () => {
@@ -112,49 +111,23 @@ class Plans extends Component {
 		this.props.completeFlow();
 	}
 
-	autoselectPlan( props ) {
-		const { selectedPlan, selectedPlanSlug } = props;
-
-		if ( selectedPlanSlug === PLAN_JETPACK_FREE || selectedPlanSlug === 'free' ) {
-			this.selectFreeJetpackPlan();
-			return;
-		}
-		if ( selectedPlan ) {
-			this.selectPlan( selectedPlan );
-			return;
-		}
-	}
-
-	selectFreeJetpackPlan() {
-		clearPlan();
-		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
-			user: this.props.userId,
-		} );
-		mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_free' );
-
-		if ( this.props.calypsoStartedConnection ) {
-			this.redirect( CALYPSO_REDIRECTION_PAGE );
-		} else {
-			this.redirectToWpAdmin( this.props );
-		}
-	}
-
 	selectPlan = cartItem => {
-		clearPlan();
-
-		if ( ! cartItem || cartItem.product_slug === PLAN_JETPACK_FREE ) {
-			return this.selectFreeJetpackPlan();
-		}
-
 		if ( cartItem.product_slug === get( this.props, 'selectedSite.plan.product_slug', null ) ) {
 			return this.redirect( CALYPSO_PLANS_PAGE );
 		}
 
-		this.props.recordTracksEvent( 'calypso_jpc_plans_submit', {
-			user: this.props.userId,
-			product_slug: cartItem.product_slug,
-		} );
-		mc.bumpStat( 'calypso_jpc_plan_selection', cartItem.product_slug );
+		if ( ! cartItem || cartItem.product_slug === PLAN_JETPACK_FREE ) {
+			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
+				user: this.props.userId,
+			} );
+			mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_free' );
+		} else {
+			this.props.recordTracksEvent( 'calypso_jpc_plans_submit', {
+				user: this.props.userId,
+				product_slug: cartItem.product_slug,
+			} );
+			mc.bumpStat( 'calypso_jpc_plan_selection', cartItem.product_slug );
+		}
 
 		addItem( cartItem );
 		this.props.completeFlow();
