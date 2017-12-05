@@ -248,7 +248,7 @@ function mapStateToProps( state, ownProps ) {
 	const promotionId = ownProps.params.promotion;
 	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
 	const products = getPromotionableProducts( state, site.ID );
-	const productCategories = getProductCategories( state, site.ID );
+	const productCategories = getProductCategories( state, {}, site.ID );
 	const edits = getPromotionEdits( state, promotionId, site.ID );
 	const hasEdits = Boolean( edits );
 

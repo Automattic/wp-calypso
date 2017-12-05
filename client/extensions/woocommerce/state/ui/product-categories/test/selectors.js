@@ -32,11 +32,16 @@ describe( 'selectors', () => {
 				woocommerce: {
 					sites: {
 						[ siteId ]: {
-							productCategories: [
-								{ id: 1, name: 'cat 1', slug: 'cat-1' },
-								{ id: 2, name: 'cat 2', slug: 'cat-2' },
-								{ id: 3, name: 'cat 3', slug: 'cat-3' },
-							],
+							productCategories: {
+								items: {
+									1: { id: 1, name: 'cat 1', slug: 'cat-1' },
+									2: { id: 2, name: 'cat 2', slug: 'cat-2' },
+									3: { id: 3, name: 'cat 3', slug: 'cat-3' },
+								},
+								queries: {
+									'{}': [ 1, 2, 3 ],
+								},
+							},
 						},
 					},
 					ui: {
