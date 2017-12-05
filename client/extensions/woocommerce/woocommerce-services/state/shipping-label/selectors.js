@@ -122,7 +122,7 @@ const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized,
 		};
 	}
 	const { phone, postcode, state, country } = ( isNormalized && selectNormalized ) ? normalized : values;
-	const requiredFields = [ 'name', 'phone', 'address', 'city', 'postcode', 'country' ];
+	const requiredFields = [ 'name', 'address', 'city', 'postcode', 'country' ];
 	const errors = {};
 	requiredFields.forEach( ( field ) => {
 		if ( ! values[ field ] ) {
@@ -131,7 +131,7 @@ const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized,
 	} );
 
 	if ( countriesData[ country ] ) {
-		if ( ! isValidPhone( phone, country ) ) {
+		if ( phone && ! isValidPhone( phone, country ) ) {
 			errors.phone = translate( 'Invalid phone number for %(country)s', { args: { country: countriesData[ country ].name } } );
 		}
 
