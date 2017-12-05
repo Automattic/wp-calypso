@@ -259,7 +259,7 @@ const controller = {
 		}
 
 		//  None of the other sites are Jetpack sites
-		if ( ! hasJetpackSites( context.store.getState() ) ) {
+		if ( ! site && ! hasJetpackSites( context.store.getState() ) ) {
 			page.redirect( '/plugins' );
 			return;
 		}
