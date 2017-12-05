@@ -22,7 +22,7 @@ Component used to display a clickable tile with an image, call to action, and de
 * `description`: Description text.
 * `href`: URL that the item leads to upon click.
 * `image`: URL of the image.
-* `onClick`: Function, executed when the user clicks the tile,
+* `onClick`: Function, executed when the user clicks the tile.
 
 ----------
 
