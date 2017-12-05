@@ -42,6 +42,11 @@
 .privacy-policy-banner__dialog-body {
 	overflow-y: auto;
 	height: 320px;
-	padding-top: 10px;
-	padding-bottom: 10px;
+	padding-top: 24px;
+}
+
+.privacy-policy-banner__dialog-body h3,
+.privacy-policy-banner__dialog-body h4 {
+	font-weight: bold;
+	margin: 1.5em 0;
 }
