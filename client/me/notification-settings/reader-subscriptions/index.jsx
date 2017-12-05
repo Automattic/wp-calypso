@@ -6,6 +6,7 @@
 
 import React from 'react';
 import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 
@@ -28,13 +29,30 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import observe from 'lib/mixins/data-observe';
-import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const NotificationSubscriptions = createReactClass( {
 	displayName: 'NotificationSubscriptions',
 
-	mixins: [ formBase, observe( 'userSettings' ), eventRecorder ],
+	mixins: [ formBase, observe( 'userSettings' ) ],
+
+	handleClickEvent( action ) {
+		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	},
+
+	handleFocusEvent( action ) {
+		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
+	},
+
+	handleCheckboxEvent( action ) {
+		return event => {
+			const eventAction = 'Clicked ' + action + ' checkbox';
+			const optionValue = event.target.checked ? 1 : 0;
+
+			this.props.recordGoogleEvent( 'Me', eventAction, 'checked', optionValue );
+		};
+	},
 
 	getDeliveryHourLabel( hour ) {
 		return this.props.translate( '%(fromHour)s - %(toHour)s', {
@@ -79,7 +97,7 @@ const NotificationSubscriptions = createReactClass( {
 										readerLink: (
 											<a
 												href="/following/edit"
-												onClick={ this.recordClickEvent( 'Edit Subscriptions in Reader Link' ) }
+												onClick={ this.handleClickEvent( 'Edit Subscriptions in Reader Link' ) }
 											/>
 										),
 									},
@@ -96,7 +114,7 @@ const NotificationSubscriptions = createReactClass( {
 								id="subscription_delivery_email_default"
 								name="subscription_delivery_email_default"
 								onChange={ this.updateSetting }
-								onFocus={ this.recordFocusEvent( 'Default Email Delivery' ) }
+								onFocus={ this.handleFocusEvent( 'Default Email Delivery' ) }
 								value={ this.getSetting( 'subscription_delivery_email_default' ) }
 							>
 								<option value="never">{ this.props.translate( 'Never send email' ) }</option>
@@ -117,7 +135,7 @@ const NotificationSubscriptions = createReactClass( {
 									id="subscription_delivery_jabber_default"
 									name="subscription_delivery_jabber_default"
 									onChange={ this.toggleSetting }
-									onClick={ this.recordCheckboxEvent( 'Notification Delivery by Jabber' ) }
+									onClick={ this.handleCheckboxEvent( 'Notification Delivery by Jabber' ) }
 								/>
 								<span>
 									{ this.props.translate( 'Default delivery via Jabber instant message' ) }
@@ -134,7 +152,7 @@ const NotificationSubscriptions = createReactClass( {
 								id="subscription_delivery_mail_option"
 								name="subscription_delivery_mail_option"
 								onChange={ this.updateSetting }
-								onFocus={ this.recordFocusEvent( 'Email Delivery Format' ) }
+								onFocus={ this.handleFocusEvent( 'Email Delivery Format' ) }
 								value={ this.getSetting( 'subscription_delivery_mail_option' ) }
 							>
 								<option value="html">{ this.props.translate( 'HTML' ) }</option>
@@ -152,7 +170,7 @@ const NotificationSubscriptions = createReactClass( {
 								id="subscription_delivery_day"
 								name="subscription_delivery_day"
 								onChange={ this.updateSetting }
-								onFocus={ this.recordFocusEvent( 'Email Delivery Window Day' ) }
+								onFocus={ this.handleFocusEvent( 'Email Delivery Window Day' ) }
 								value={ this.getSetting( 'subscription_delivery_day' ) }
 							>
 								<option value="0">{ this.props.translate( 'Sunday' ) }</option>
@@ -169,7 +187,7 @@ const NotificationSubscriptions = createReactClass( {
 								id="subscription_delivery_hour"
 								name="subscription_delivery_hour"
 								onChange={ this.updateSetting }
-								onFocus={ this.recordFocusEvent( 'Email Delivery Window Time' ) }
+								onFocus={ this.handleFocusEvent( 'Email Delivery Window Time' ) }
 								value={ this.getSetting( 'subscription_delivery_hour' ) }
 							>
 								<option value="0">{ this.getDeliveryHourLabel( 0 ) }</option>
@@ -202,7 +220,7 @@ const NotificationSubscriptions = createReactClass( {
 									id="subscription_delivery_email_blocked"
 									name="subscription_delivery_email_blocked"
 									onChange={ this.toggleSetting }
-									onClick={ this.recordCheckboxEvent( 'Block All Notification Emails' ) }
+									onClick={ this.handleCheckboxEvent( 'Block All Notification Emails' ) }
 								/>
 								<span>
 									{ this.props.translate(
@@ -215,7 +233,7 @@ const NotificationSubscriptions = createReactClass( {
 						<FormButton
 							isSubmitting={ this.state.submittingForm }
 							disabled={ this.getDisabledState() }
-							onClick={ this.recordClickEvent( 'Save Notification Settings Button' ) }
+							onClick={ this.handleClickEvent( 'Save Notification Settings Button' ) }
 						>
 							{ this.state.submittingForm
 								? this.props.translate( 'Saving…' )
@@ -228,4 +246,6 @@ const NotificationSubscriptions = createReactClass( {
 	},
 } );
 
-export default flowRight( localize, protectForm )( NotificationSubscriptions );
+const connectComponent = connect( null, { recordGoogleEvent } );
+
+export default flowRight( connectComponent, localize, protectForm )( NotificationSubscriptions );
