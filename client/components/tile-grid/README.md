@@ -12,7 +12,7 @@ Component used to declare an area for displaying Tiles — it's the main wrapper
 Tile (jsx)
 ==========
 
-Component used to display a clickable tile with an image, call to action and description.
+Component used to display a clickable tile with an image, call to action, and description.
 
 #### Props
 
