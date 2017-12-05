@@ -683,7 +683,9 @@ class ActivityLog extends Component {
 											backupConfirmDialog={ backupConfirmDialog }
 											disableRestore={ disableRestore }
 											disableBackup={ disableBackup }
-											hideRestore={ ! rewindEnabledByConfig || ! isPressable }
+											hideRestore={
+												! rewindEnabledByConfig || ! isPressable || 'active' !== rewindState.state
+											}
 											isRewindActive={ isRewindActive }
 											logs={ events }
 											requestDialog={ this.handleRequestDialog }
