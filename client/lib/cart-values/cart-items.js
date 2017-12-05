@@ -36,6 +36,7 @@ import {
 	isDomainRedemption,
 	isDomainRegistration,
 	isDomainTransfer,
+	isBundled,
 	isFreeTrial,
 	isFreeWordPressComDomain,
 	isGoogleApps,
@@ -246,8 +247,7 @@ export function hasPlan( cart ) {
  */
 export function hasOnlyBundledDomainProducts( cart ) {
 	return (
-		cart &&
-		every( [ ...getDomainRegistrations( cart ), ...getDomainTransfers( cart ) ], 'is_bundled' )
+		cart && every( [ ...getDomainRegistrations( cart ), ...getDomainTransfers( cart ) ], isBundled )
 	);
 }
 

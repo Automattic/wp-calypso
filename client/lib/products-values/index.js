@@ -263,6 +263,13 @@ export function isDomainTransferPrivacy( product ) {
 	return product.product_slug === domainProductSlugs.TRANSFER_IN_PRIVACY;
 }
 
+export function isBundled( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return !! product.is_bundled;
+}
+
 export function isCredits( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -406,6 +413,7 @@ export default {
 	isDomainTransfer,
 	isDomainTransferPrivacy,
 	isDomainTransferProduct,
+	isBundled,
 	isDotComPlan,
 	isEnterprise,
 	isFreeJetpackPlan,
