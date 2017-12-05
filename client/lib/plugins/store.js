@@ -3,28 +3,24 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
-import { assign, isArray, sortBy, uniq, compact, values, find } from 'lodash';
+import { assign, clone, isArray, sortBy, values, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
-/* eslint-disable no-restricted-imports */
-import sitesListFactory from 'lib/sites-list';
-const sitesList = sitesListFactory();
 /* eslint-enable no-restricted-imports */
 import PluginsActions from 'lib/plugins/actions';
 import versionCompare from 'lib/version-compare';
 import PluginUtils from 'lib/plugins/utils';
-import JetpackSite from 'lib/site/jetpack';
-import Site from 'lib/site';
-import { reduxDispatch } from 'lib/redux-bridge';
+import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
+import { getNetworkSites } from 'state/selectors';
+import { getSite } from 'state/sites/selectors';
 import { sitePluginUpdated } from 'state/sites/updates/actions';
+
+const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 
 /*
  * Constants
@@ -63,7 +59,7 @@ var _fetching = {},
 	};
 
 function refreshNetworkSites( site ) {
-	var networkSites = sitesList.getNetworkSites( site );
+	const networkSites = getNetworkSites( reduxGetState(), site.ID );
 	if ( networkSites ) {
 		networkSites.forEach( PluginsActions.fetchSitePlugins );
 	}
@@ -226,20 +222,13 @@ const PluginsStore = {
 			return null;
 		}
 
-		pluginSites = uniq(
-			compact(
-				plugin.sites.map( function( site ) {
-					// we create a copy of the site to avoid any possible modification down the line affecting the main list
-					let pluginSite = site.jetpack
-						? new JetpackSite( sitesList.getSite( site.ID ) )
-						: new Site( sitesList.getSite( site.ID ) );
-					pluginSite.plugin = site.plugin;
-					if ( site.visible ) {
-						return pluginSite;
-					}
-				} )
-			)
-		);
+		pluginSites = plugin.sites.filter( site => site.visible ).map( site => {
+			// clone the site object before adding a new property. Don't modify the return value of getSite
+			const pluginSite = clone( getSite( reduxGetState(), site.ID ) );
+			pluginSite.plugin = site.plugin;
+			return pluginSite;
+		} );
+
 		return pluginSites.sort( function( first, second ) {
 			return first.title.toLowerCase() > second.title.toLowerCase() ? 1 : -1;
 		} );
