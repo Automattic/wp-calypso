@@ -27,6 +27,8 @@ import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { TRANSFER_IN } from 'state/current-user/constants';
+import { getDesignType } from 'state/signup/steps/design-type/selectors';
+import { DESIGN_TYPE_STORE } from 'signup/constants';
 
 class DomainSearchResults extends React.Component {
 	static propTypes = {
@@ -212,7 +214,7 @@ class DomainSearchResults extends React.Component {
 				);
 			}, this );
 
-			if ( this.props.offerUnavailableOption ) {
+			if ( this.props.offerUnavailableOption && this.props.siteDesignType !== DESIGN_TYPE_STORE ) {
 				unavailableOffer = (
 					<DomainMappingSuggestion
 						onButtonClick={ this.props.onClickMapping }
@@ -221,6 +223,7 @@ class DomainSearchResults extends React.Component {
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						isSignupStep={ this.props.isSignupStep }
 						cart={ this.props.cart }
+						show={ this.props.siteDesignType }
 					/>
 				);
 
@@ -257,6 +260,7 @@ const mapStateToProps = state => {
 	return {
 		isSiteOnPaidPlan: isSiteOnPaidPlan( state, selectedSiteId ),
 		transferInAllowed: currentUserHasFlag( state, TRANSFER_IN ),
+		siteDesignType: getDesignType( state ),
 	};
 };
 
