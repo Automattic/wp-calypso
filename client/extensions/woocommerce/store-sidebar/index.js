@@ -42,38 +42,32 @@ class StoreSidebar extends Component {
 		const { productsLoaded, site } = this.props;
 
 		if ( site && site.ID ) {
-			this.props.fetchSetupChoices( site.ID );
-			this.props.fetchOrders( site.ID );
-
-			// TODO This check can be removed when we launch reviews.
-			if ( config.isEnabled( 'woocommerce/extension-reviews' ) ) {
-				this.props.fetchReviews( site.ID, { status: 'pending' } );
-			}
-
-			if ( ! productsLoaded ) {
-				this.props.fetchProducts( site.ID, { page: 1 } );
-			}
+			this.fetchData( { siteId: site.ID, productsLoaded } );
 		}
 	};
 
 	componentWillReceiveProps = newProps => {
-		const { productsLoaded, site } = this.props;
+		const { site } = this.props;
 
 		const newSiteId = newProps.site ? newProps.site.ID : null;
 		const oldSiteId = site ? site.ID : null;
 
 		if ( newSiteId && oldSiteId !== newSiteId ) {
-			this.props.fetchSetupChoices( newSiteId );
-			this.props.fetchOrders( newSiteId );
+			this.fetchData( { ...newProps, siteId: newSiteId } );
+		}
+	};
 
-			// TODO This check can be removed when we launch reviews.
-			if ( config.isEnabled( 'woocommerce/extension-reviews' ) ) {
-				this.props.fetchReviews( newSiteId, { status: 'pending' } );
-			}
+	fetchData = ( { siteId, productsLoaded } ) => {
+		this.props.fetchSetupChoices( siteId );
+		this.props.fetchOrders( siteId );
 
-			if ( ! productsLoaded ) {
-				this.props.fetchProducts( newSiteId, { page: 1 } );
-			}
+		// TODO This check can be removed when we launch reviews.
+		if ( config.isEnabled( 'woocommerce/extension-reviews' ) ) {
+			this.props.fetchReviews( siteId, { status: 'pending' } );
+		}
+
+		if ( ! productsLoaded ) {
+			this.props.fetchProducts( siteId, { page: 1 } );
 		}
 	};
 

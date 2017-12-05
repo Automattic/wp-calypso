@@ -57,14 +57,10 @@ class ManageOrdersView extends Component {
 	};
 
 	componentDidMount() {
-		const { site } = this.props;
+		const { ordersLoaded, site } = this.props;
 
 		if ( site && site.ID ) {
-			this.props.fetchOrders( site.ID );
-			// TODO This check can be removed when we launch reviews.
-			if ( config.isEnabled( 'woocommerce/extension-reviews' ) ) {
-				this.props.fetchReviews( site.ID, { status: 'pending' } );
-			}
+			this.fetchData( { siteId: site.ID, ordersLoaded } );
 		}
 	}
 
@@ -74,13 +70,19 @@ class ManageOrdersView extends Component {
 		const oldSiteId = site ? site.ID : null;
 
 		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchOrders( newSiteId );
-			// TODO This check can be removed when we launch reviews.
-			if ( config.isEnabled( 'woocommerce/extension-reviews' ) ) {
-				this.props.fetchReviews( newSiteId, { status: 'pending' } );
-			}
+			this.fetchData( { ...newProps, siteId: newSiteId } );
 		}
 	}
+
+	fetchData = ( { siteId, ordersLoaded } ) => {
+		if ( ! ordersLoaded ) {
+			this.props.fetchOrders( siteId );
+		}
+		// TODO This check can be removed when we launch reviews.
+		if ( config.isEnabled( 'woocommerce/extension-reviews' ) ) {
+			this.props.fetchReviews( siteId, { status: 'pending' } );
+		}
+	};
 
 	possiblyRenderProcessOrdersWidget = () => {
 		const { site, orders, ordersRevenue, currency } = this.props;
