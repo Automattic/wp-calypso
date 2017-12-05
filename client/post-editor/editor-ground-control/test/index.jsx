@@ -43,12 +43,16 @@ const MOCK_SITE = {
 
 describe( 'EditorGroundControl', () => {
 	describe( '#getPreviewLabel()', () => {
-		test( 'should return View if the site is a Jetpack site and the post is published', () => {
+		test( 'should return Preview if the site is a Jetpack site and the post is published', () => {
+			// getPreviewLabel should always return "Preview" since it's the label for the Preview button
+			// (as opposed to directly visiting your site outside of Calypso)
+			// previously, this test checked for two different possible labels
+			// now leaving this here to ensure that it returns "Preview" in different situations
 			var tree = shallow(
 				<EditorGroundControl savedPost={ { status: 'publish' } } site={ { jetpack: true } } />
 			).instance();
 
-			expect( tree.getPreviewLabel() ).to.equal( 'View' );
+			expect( tree.getPreviewLabel() ).to.equal( 'Preview' );
 		} );
 
 		test( 'should return Preview if the post was not originally published', () => {
