@@ -19,7 +19,6 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
 import { getJetpackSites } from 'state/selectors';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import config from 'config';
 
 class StatsNavigation extends Component {
 	static propTypes = {
@@ -36,7 +35,7 @@ class StatsNavigation extends Component {
 		const { isStore, isAtomic, isJetpack } = this.props;
 		switch ( item ) {
 			case 'activity':
-				return config.isEnabled( 'jetpack/activity-log' ) && isJetpack && ! isAtomic;
+				return isJetpack && ! isAtomic;
 			case 'store':
 				return isStore;
 			default:

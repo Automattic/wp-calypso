@@ -12,9 +12,8 @@ import statsController from './controller';
 import config from 'config';
 
 export default function() {
-	if ( config.isEnabled( 'jetpack/activity-log' ) ) {
-		page( '/stats/activity/:site_id', siteSelection, navigation, statsController.activityLog );
-	}
+	page( '/stats/activity/:site_id', siteSelection, navigation, statsController.activityLog );
+
 	if ( config.isEnabled( 'manage/stats' ) ) {
 		// Stat Overview Page
 		page( '/stats', siteSelection, navigation, statsController.overview );
