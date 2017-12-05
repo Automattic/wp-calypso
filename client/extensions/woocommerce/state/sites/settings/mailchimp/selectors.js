@@ -206,7 +206,7 @@ export const isRequestingResync = ( state, siteId ) => {
  * @param  {Number}  siteId Site ID
  * @return {Boolean}        Whether user requested save action.
  */
-export const isSavingSettings = ( state, siteId ) => {
+export const isSavingMailChimpSettings = ( state, siteId ) => {
 	const path = [ ...basePath( siteId ), 'saveSettings' ];
 
 	return get( state, path, false );

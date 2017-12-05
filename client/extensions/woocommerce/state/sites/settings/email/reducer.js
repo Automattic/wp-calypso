@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { setWith } from 'lodash';
+import { omit, setWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +12,9 @@ import {
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
 	WOOCOMMERCE_EMAIL_SETTINGS_CHANGE,
+	WOOCOMMERCE_EMAIL_SETTINGS_SAVE_SETTINGS,
+	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS,
+	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_FAILURE,
 } from 'woocommerce/state/action-types';
 
 export default createReducer( null, {
@@ -36,4 +39,21 @@ export default createReducer( null, {
 		settings[ setting.setting ][ setting.option ] = setting.value;
 		return settings;
 	},
+
+	[ WOOCOMMERCE_EMAIL_SETTINGS_SAVE_SETTINGS ]: ( state ) => {
+		const settings = Object.assign( {}, state );
+		settings.save = true;
+		return settings;
+	},
+
+	[ WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS ]: ( state ) => {
+		const settings = Object.assign( {}, omit( state, 'save' ) );
+		return settings;
+	},
+
+	[ WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_FAILURE ]: ( state ) => {
+		const settings = Object.assign( {}, omit( state, 'save' ) );
+		return settings;
+	},
+
 } );

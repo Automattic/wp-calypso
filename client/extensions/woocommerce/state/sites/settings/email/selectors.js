@@ -38,3 +38,18 @@ export const areEmailSettingsLoaded = ( state, siteId = getSelectedSiteId( state
 export const areEmailSettingsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return LOADING === getEmailSettings( state, siteId );
 };
+
+/**
+ * Returns true if user requested save action in Email Settings.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean}        Whether user requested save action.
+ */
+export const isSavingEmailSettings = ( state, siteId = getSelectedSiteId( state ) ) => {
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'email', 'save' ],
+		false
+	);
+};
