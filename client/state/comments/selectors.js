@@ -50,7 +50,7 @@ export const getCommentById = ( { state, commentId, siteId } ) => {
 	}
 
 	const commentsForSite = flatMap(
-		filter( state.comments && state.comments.items, ( comment, key ) => {
+		filter( get( state, 'comments.items', [] ), ( comment, key ) => {
 			return deconstructStateKey( key ).siteId === siteId;
 		} )
 	);

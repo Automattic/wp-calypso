@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { noop, filter, forEach, get } from 'lodash';
+import { noop, filter, get, flatMap } from 'lodash';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -29,35 +29,7 @@ class UpdateNotice extends React.PureComponent {
 	static defaultProps = { onClick: noop };
 
 	render() {
-		const isConversations = get( this.props, [ 'pendingPostKeys', 0, 'comments' ] );
-		let { count } = this.props;
-		const { pendingPostKeys } = this.props;
-
-		// ugly hack for conversations to hide the pill if none of the comments
-		// are actually new
-		if ( isConversations ) {
-			let newComments = 0;
-			forEach( pendingPostKeys, postKey => {
-				if ( postKey.comments ) {
-					const commentsToKeep = filter( postKey.comments, commentId => {
-						const c = getCommentById( {
-							state: this.props.state,
-							siteId: postKey.blogId,
-							commentId: commentId,
-						} );
-						return ! c;
-					} );
-
-					if ( commentsToKeep.length > 0 ) {
-						newComments += commentsToKeep.length;
-					}
-				}
-			} );
-			if ( newComments === 0 ) {
-				return null;
-			}
-			count = newComments;
-		}
+		const { count } = this.props;
 
 		const counterClasses = classnames( {
 			'reader-update-notice': true,
@@ -82,7 +54,30 @@ class UpdateNotice extends React.PureComponent {
 	};
 }
 
-export default connect( state => ( {
-	cappedUnreadCount: getDocumentHeadCappedUnreadCount( state ),
-	state,
-} ) )( localize( UpdateNotice ) );
+const countNewComments = ( state, postKeys ) => {
+	const newComments = flatMap( postKeys, postKey => {
+		return filter( postKey.comments, commentId => {
+			return ! getCommentById( {
+				state,
+				siteId: postKey.blogId,
+				commentId: commentId,
+			} );
+		} );
+	} );
+	return newComments.length;
+};
+
+const mapStateToProps = ( state, ownProps ) => {
+	// ugly hack for convos
+	const isConversations = !! get( ownProps.pendingPostKeys, [ 0, 'comments' ] );
+	const count = isConversations
+		? countNewComments( state, ownProps.pendingPostKeys )
+		: ownProps.count;
+
+	return {
+		cappedUnreadCount: getDocumentHeadCappedUnreadCount( state ),
+		count,
+	};
+};
+
+export default connect( mapStateToProps )( localize( UpdateNotice ) );

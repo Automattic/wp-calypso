@@ -530,8 +530,8 @@ export default class FeedStream {
 				const post = FeedPostStore.get( postKey );
 				reduxDispatch( {
 					type: COMMENTS_RECEIVE,
-					siteId: post.site_ID,
-					postId: post.ID,
+					siteId: postKey.blogId,
+					postId: postKey.postId,
 					comments: post.comments,
 				} );
 			}
