@@ -82,7 +82,7 @@ export const fetchMagicLoginRequestEmail = email => dispatch => {
 };
 
 // @TODO should this move to `/state/data-layer`..?
-export const fetchMagicLoginAuthenticate = ( token ) => dispatch => {
+export const fetchMagicLoginAuthenticate = token => dispatch => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
 
 	request

@@ -124,7 +124,8 @@ export class LoginForm extends Component {
 		if ( ! this.props.hasAccountTypeLoaded && isPasswordlessAccount( nextProps.accountType ) ) {
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link' );
 
-			this.props.fetchMagicLoginRequestEmail( this.state.usernameOrEmail )
+			this.props
+				.fetchMagicLoginRequestEmail( this.state.usernameOrEmail )
 				.then( () => {
 					this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_success' );
 				} )
@@ -150,7 +151,7 @@ export class LoginForm extends Component {
 	isFullView() {
 		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
-		return socialAccountIsLinking || hasAccountTypeLoaded && isRegularAccount( accountType );
+		return socialAccountIsLinking || ( hasAccountTypeLoaded && isRegularAccount( accountType ) );
 	}
 
 	isPasswordView() {
@@ -179,7 +180,8 @@ export class LoginForm extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
-		this.props.loginUser( usernameOrEmail, password, redirectTo )
+		this.props
+			.loginUser( usernameOrEmail, password, redirectTo )
 			.then( () => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 
@@ -282,17 +284,16 @@ export class LoginForm extends Component {
 
 						<label htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
-									<a href="#" className="login__form-change-username" onClick={ this.resetView }>
-										<Gridicon icon="arrow-left" size={ 18 } />
+								<a href="#" className="login__form-change-username" onClick={ this.resetView }>
+									<Gridicon icon="arrow-left" size={ 18 } />
 
-										{ includes( this.state.usernameOrEmail, '@' )
-											? this.props.translate( 'Change Email Address' )
-											: this.props.translate( 'Change Username' )
-										}
-									</a>
-								)
-								: this.props.translate( 'Email Address or Username' )
-							}
+									{ includes( this.state.usernameOrEmail, '@' )
+										? this.props.translate( 'Change Email Address' )
+										: this.props.translate( 'Change Username' ) }
+								</a>
+							) : (
+								this.props.translate( 'Email Address or Username' )
+							) }
 						</label>
 
 						<FormTextInput
@@ -313,12 +314,12 @@ export class LoginForm extends Component {
 								<FormInputValidation isError text={ requestError.message } />
 							) }
 
-						<div className={ classNames( 'login__form-password', {
-							'is-hidden': this.isUsernameOrEmailView(),
-						} ) }>
-							<label htmlFor="password">
-								{ this.props.translate( 'Password' ) }
-							</label>
+						<div
+							className={ classNames( 'login__form-password', {
+								'is-hidden': this.isUsernameOrEmailView(),
+							} ) }
+						>
+							<label htmlFor="password">{ this.props.translate( 'Password' ) }</label>
 
 							<FormPasswordInput
 								autoCapitalize="off"

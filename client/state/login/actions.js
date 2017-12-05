@@ -585,9 +585,7 @@ export const logoutUser = redirectTo => ( dispatch, getState ) => {
  * @return {Function} an action thunk
  */
 export const getAuthAccountType = usernameOrEmail => dispatch => {
-	dispatch(
-		recordTracksEvent( 'calypso_login_block_login_form_get_auth_type' )
-	);
+	dispatch( recordTracksEvent( 'calypso_login_block_login_form_get_auth_type' ) );
 
 	dispatch( {
 		type: LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
