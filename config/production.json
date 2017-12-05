@@ -35,8 +35,6 @@
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
-		"jetpack/activity-log": true,
-		"jetpack/activity-log/rewind": true,
 		"jetpack/api-cache": false,
 		"jetpack/connect-redirect-pressable-credential-approval": false,
 		"jetpack/google-analytics-anonymize-ip": true,
