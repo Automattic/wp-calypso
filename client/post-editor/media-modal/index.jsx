@@ -161,11 +161,7 @@ export class EditorMediaModal extends Component {
 			},
 			() => {
 				// Reset the query so that we're adding the new media items to the correct
-				// list, with no external source. Previously, this would have been done
-				// for us as React would push the updated source to all child components
-				// before executing this callback, but in React 16 that behaviour changed,
-				// so we need to do this in the callback to ensure that things show up
-				// where they're supposed to.
+				// list, with no external source.
 				MediaActions.setQuery( site.ID, {} );
 				MediaActions.addExternal( site, selectedMedia, originalSource );
 			}
