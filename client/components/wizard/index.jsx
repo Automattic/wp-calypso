@@ -80,7 +80,10 @@ class Wizard extends Component {
 					<ProgressIndicator stepNumber={ stepIndex } totalSteps={ totalSteps } />
 				) }
 
-				{ component }
+				{ React.cloneElement( component, {
+					getBackUrl: this.getBackUrl,
+					getForwardUrl: this.getForwardUrl,
+				} ) }
 
 				{ ! hideNavigation &&
 					totalSteps > 1 && (
