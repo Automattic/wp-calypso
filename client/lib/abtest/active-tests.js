@@ -109,4 +109,22 @@ export default {
 		},
 		defaultVariation: 'control',
 	},
+	checklistThankYouForFreeUser: {
+		datestamp: '20171204',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
+	checklistThankYouForPaidUser: {
+		datestamp: '20171204',
+		variations: {
+			show: 50,
+			hide: 50,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
 };

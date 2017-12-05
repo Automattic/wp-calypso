@@ -53,7 +53,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
 import upgradesActions from 'lib/upgrades/actions';
-import { getContactDetailsCache } from 'state/selectors';
+import { getContactDetailsCache, isEligibleForCheckoutToChecklist } from 'state/selectors';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import { isValidFeatureKey, getUpgradePlanSlugFromPath } from 'lib/plans';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
@@ -271,7 +271,7 @@ const Checkout = createReactClass( {
 		return flatten( Object.values( purchases ) );
 	},
 
-	getCheckoutCompleteRedirectPath: function() {
+	getCheckoutCompleteRedirectPath() {
 		let renewalItem;
 		const { cart, selectedSiteSlug, transaction: { step: { data: receipt } } } = this.props;
 
@@ -299,6 +299,13 @@ const Checkout = createReactClass( {
 
 		if ( ! selectedSiteSlug ) {
 			return '/checkout/thank-you/features';
+		}
+
+		if (
+			this.props.isEligibleForCheckoutToChecklist &&
+			'show' === abtest( 'checklistThankYouForPaidUser' )
+		) {
+			return `/checklist/thank-you/${ selectedSiteSlug }/${ receiptId }`;
 		}
 
 		if ( abtest( 'gsuiteUpsell' ) === 'show' ) {
@@ -523,7 +530,7 @@ const Checkout = createReactClass( {
 } );
 
 export default connect(
-	state => {
+	( state, props ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {
@@ -535,6 +542,11 @@ export default connect(
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			contactDetails: getContactDetailsCache( state ),
 			userCountryCode: getCurrentUserCountryCode( state ),
+			isEligibleForCheckoutToChecklist: isEligibleForCheckoutToChecklist(
+				state,
+				selectedSiteId,
+				props.cart
+			),
 		};
 	},
 	{
