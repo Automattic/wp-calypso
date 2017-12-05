@@ -36,10 +36,6 @@
 		}
 	}
 
-	&.is-clickable {
-		cursor: pointer;
-	}
-
 	&:active {
 		.tile-grid__cta {
 			color: $blue-dark;
@@ -60,7 +56,7 @@
 		}
 	}
 
-	&:last-of-type {
+	&:last-child {
 		margin-bottom: 20px;
 		border: 1px solid lighten( $gray, 20% );
 		border-bottom-right-radius: 6px;
@@ -72,35 +68,17 @@
 		}
 	}
 
+	&.is-card-link {
+		padding-right: 0;
+	}
+
 	a, svg {
 		display: block;
 		width: 100%; // Safari fix
 	}
-}
 
-.tile-grid__item-link {
-	padding-right: 40px;
-	display: block;
-	box-sizing: border-box;
-
-	&:after {
-		content: '';
-		display: block;
-		width: 8px; //Match the size of the cta copy
-		height: 8px; //Match the size of the cta copy
-		position: absolute;
-		top: 20px;
-		right: 15px;
-		border-top: 2px solid lighten( $gray, 20% );
-		border-right: 2px solid lighten( $gray, 20% );
-		transform: rotate(45deg);
-	}
-
-	@include breakpoint( ">480px" ) {
-		padding-right: 0;
-		&:after {
-			display: none;
-		}
+	.card__link-indicator {
+		display: none;
 	}
 }
 

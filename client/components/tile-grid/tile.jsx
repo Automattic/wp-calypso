@@ -34,33 +34,23 @@ export default class extends React.PureComponent {
 			image,
 			onClick,
 		} = this.props;
-		const isClickable = href || onClick;
-		const TileElement = isClickable ? 'a' : 'span';
-		const tileClassName = classNames(
-			'tile-grid__item',
-			{
-				'is-clickable': isClickable,
-			},
-			className
-		);
+		const tileClassName = classNames( 'tile-grid__item', className );
 
 		return (
-			<Card className={ tileClassName }>
-				<TileElement className="tile-grid__item-link" href={ href } onClick={ onClick }>
-					{ image && (
-						<div className="tile-grid__image">
-							<img src={ image } />
-						</div>
-					) }
-					<div className="tile-grid__item-copy">
-						{ buttonLabel && (
-							<Button className={ classNames( 'tile-grid__cta', buttonClassName ) } compact>
-								{ buttonLabel }
-							</Button>
-						) }
-						{ description && <p className="tile-grid__item-description">{ description }</p> }
+			<Card className={ tileClassName } href={ href } onClick={ onClick }>
+				{ image && (
+					<div className="tile-grid__image">
+						<img src={ image } />
 					</div>
-				</TileElement>
+				) }
+				<div className="tile-grid__item-copy">
+					{ buttonLabel && (
+						<Button className={ classNames( 'tile-grid__cta', buttonClassName ) } compact>
+							{ buttonLabel }
+						</Button>
+					) }
+					{ description && <p className="tile-grid__item-description">{ description }</p> }
+				</div>
 			</Card>
 		);
 	}
