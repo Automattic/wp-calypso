@@ -50,8 +50,8 @@ const i18nUtils = {
 	 * @return {string|undefined} The locale slug if present or undefined
 	 */
 	getLocaleFromPath: function( path ) {
-		const parts = getPathParts( path );
-		const locale = parts.pop();
+		const urlParts = parse( path );
+		const locale = getPathParts( urlParts.pathname ).pop();
 
 		return 'undefined' === typeof i18nUtils.getLanguage( locale ) ? undefined : locale;
 	},

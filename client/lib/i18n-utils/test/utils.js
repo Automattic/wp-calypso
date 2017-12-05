@@ -101,6 +101,10 @@ describe( 'utils', () => {
 				'es'
 			);
 		} );
+
+		test( 'should correctly handle paths with query string', () => {
+			assert.equal( getLocaleFromPath( '/start/es?query=string' ), 'es' );
+		} );
 	} );
 
 	describe( '#getLanguage', () => {
