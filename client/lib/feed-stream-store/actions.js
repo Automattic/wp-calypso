@@ -16,6 +16,7 @@ import feedPostListCache from './feed-stream-cache';
 import wpcom from 'lib/wp';
 import { reduxDispatch } from 'lib/redux-bridge';
 import { COMMENTS_RECEIVE } from 'state/action-types';
+import FeedPostStore from 'lib/feed-post-store';
 
 function getNextPageParams( store ) {
 	const params = {
@@ -117,6 +118,20 @@ export function receivePage( id, error, data ) {
 }
 
 export function receiveUpdates( id, error, data ) {
+	// if conversations, then update the comments on the post
+	if ( data.posts && data.posts[ 0 ] && data.posts[ 0 ].comments ) {
+		forEach( data.posts, post => {
+			const postKey = { blogId: post.site_ID, postId: post.ID };
+			FeedPostStoreActions.receivePost(
+				null,
+				{
+					...FeedPostStore.get( postKey ),
+					...post,
+				},
+				postKey
+			);
+		} );
+	}
 	Dispatcher.handleServerAction( {
 		type: ActionType.RECEIVE_UPDATES,
 		id,
