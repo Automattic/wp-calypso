@@ -120,13 +120,18 @@ class TransferDomainStep extends React.Component {
 				{ this.notice() }
 				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="transfer-domain-step__domain-description">
+						<img
+							className="transfer-domain-step__illustration"
+							src={ '/calypso/images/illustrations/migrating-host-diy.svg' }
+						/>
 						<div className="transfer-domain-step__domain-heading">
 							{ translate( 'Manage your domain and site together on WordPress.com.' ) }
 						</div>
 						<div>
 							{ translate(
 								'Move your domain from your current provider to WordPress.com so you can update settings ' +
-									'renew your domain, and more right in your dashboard. {{a}}Learn More{{/a}}',
+									"renew your domain, and more right in your dashboard. We'll renew it for another year " +
+									'when the transfer is successful. {{a}}Learn More{{/a}}',
 								{
 									components: {
 										a: (
