@@ -20,7 +20,7 @@ class ReaderPostOptionsMenuBlogStickers extends React.Component {
 	};
 
 	render() {
-		const blogStickersOffered = [ 'dont-recommend', 'broken-in-reader' ];
+		const blogStickersOffered = [ 'dont-recommend', 'broken-in-reader', 'a8c-test-blog' ];
 		const { blogId, stickers } = this.props;
 
 		return (
