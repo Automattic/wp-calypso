@@ -41,17 +41,18 @@ export class CredentialsForm extends Component {
 	};
 
 	handleFieldChange = event => {
-		const newForm = {
-			...this.state.form,
-			[ event.target.name ]: event.target.value,
-		};
+		const { name, value } = event.target;
+		const changedProtocol = 'protocol' === name;
+		const defaultPort = 'ftp' === value ? 21 : 22;
 
-		if ( 'protocol' === event.target.name ) {
-			newForm.port = 'ftp' === event.target.value ? 21 : 22;
-		}
+		const form = Object.assign(
+			this.state.form,
+			{ [ name ]: value },
+			changedProtocol && { port: defaultPort }
+		);
 
 		this.setState( {
-			form: newForm,
+			form,
 			formErrors: { ...this.state.formErrors, [ event.target.name ]: false },
 		} );
 	};
