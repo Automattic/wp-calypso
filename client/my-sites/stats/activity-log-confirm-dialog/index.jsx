@@ -53,17 +53,14 @@ const ActivityLogConfirmDialog = ( {
 					<Button
 						borderless={ true }
 						className="activity-log-confirm-dialog__more-info-link"
-						href="https://help.vaultpress.com/one-click-restore/"
+						href={ supportLink }
 					>
 						<Gridicon icon="notice" />
 						<span className="activity-log-confirm-dialog__more-info-link-text">
 							{ translate( 'More info' ) }
 						</span>
 					</Button>
-					<HappychatButton
-						className="activity-log-confirm-dialog__more-info-link"
-						href={ supportLink }
-					>
+					<HappychatButton className="activity-log-confirm-dialog__more-info-link">
 						<Gridicon icon="chat" />
 						<span className="activity-log-confirm-dialog__more-info-link-text">
 							{ translate( 'Any Questions?' ) }
