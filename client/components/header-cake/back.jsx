@@ -27,16 +27,16 @@ const HIDE_BACK_CRITERIA = {
 
 class HeaderCakeBack extends Component {
 	static propTypes = {
-		href: PropTypes.string,
 		onClick: PropTypes.func,
+		href: PropTypes.string,
 		text: PropTypes.string,
 		spacer: PropTypes.bool,
 		alwaysShowActionText: PropTypes.bool,
 	};
 
 	static defaultProps = {
-		disabled: false,
 		spacer: false,
+		disabled: false,
 		alwaysShowActionText: false,
 	};
 
