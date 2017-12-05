@@ -63,6 +63,11 @@ class PreviewToolbar extends Component {
 		this.props.onClose();
 	};
 
+	handleEditorWebPreviewEdit = () => {
+		this.props.recordTracksEvent( 'calypso_editor_preview_edit_click' );
+		this.props.onEdit();
+	};
+
 	constructor( props ) {
 		super();
 
@@ -80,7 +85,6 @@ class PreviewToolbar extends Component {
 			editUrl,
 			externalUrl,
 			isModalWindow,
-			onEdit,
 			previewUrl,
 			setDeviceViewport,
 			showClose,
@@ -137,7 +141,7 @@ class PreviewToolbar extends Component {
 				) }
 				<div className="web-preview__toolbar-actions">
 					{ showEdit && (
-						<Button className="web-preview__edit" href={ editUrl } onClick={ onEdit }>
+						<Button className="web-preview__edit" href={ editUrl } onClick={ this.handleEditorWebPreviewEdit }>
 							{ translate( 'Edit' ) }
 						</Button>
 					) }
