@@ -130,6 +130,12 @@
 }
 
 .activity-log-item__card {
+	min-width: 0;
+
+	.foldable-card__main {
+		min-width: 0;
+	}
+
 	.foldable-card__content {
 		padding: 16px;
 		font-size: 14px;
@@ -148,6 +154,7 @@
 	margin-right: 32px;
 	padding-left: 56px;
 	align-items: center;
+	min-width: 0;
 
 	@include breakpoint( '<960px' ) {
 		flex-direction: column;
@@ -160,7 +167,7 @@
 	display: flex;
 	flex-shrink: 0;
 	min-width: 180px;
-	max-width: 50%;
+	max-width: 100%;
 	margin-right: 32px;
 	margin-left: -40px;
 	align-items: center;
@@ -197,8 +204,14 @@
 	}
 }
 
+.activity-log-item__actor-info {
+	min-width: 0;
+}
+
 .activity-log-item__actor-name {
 	font-size: 14px;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
 
 	@include breakpoint( '<960px' ) {
 		margin-top: 2px;
