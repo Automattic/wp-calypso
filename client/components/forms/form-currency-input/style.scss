@@ -18,6 +18,15 @@
 	&:hover .form-currency-input__select-icon {
 		color: darken( $gray, 20% );
 	}
+
+	.button {
+		margin: -8px -14px;
+		padding: 8px 14px;
+
+		.gridicon {
+			margin-top: 0;
+		}
+	}
 }
 
 .form-currency-input__select {

@@ -333,6 +333,7 @@ class OrderDetailsTable extends Component {
 					<OrderTotalRow
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
+						initialValue={ order.shipping_total }
 						value={ getOrderShippingTotal( order ) }
 						taxValue={ getOrderShippingTax( order ) }
 						showTax={ showTax }

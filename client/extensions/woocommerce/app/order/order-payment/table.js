@@ -211,6 +211,7 @@ class OrderRefundTable extends Component {
 					<PriceInput
 						id={ inputId }
 						currency={ order.currency }
+						max={ get( order, `fee_lines[${ i }].total` ) }
 						value={ value }
 						onChange={ this.onChange( 'fee', i ) }
 						onBlur={ this.formatInput( `fees[${ i }]` ) }
@@ -287,6 +288,7 @@ class OrderRefundTable extends Component {
 						isEditable
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
+						initialValue={ order.shipping_total }
 						value={ this.state.shippingTotal }
 						name="shipping_total"
 						onChange={ this.onChange( 'shipping_total' ) }

@@ -125,6 +125,15 @@
 	}
 
 	&.is-editing {
+		.order-details__totals-value {
+			// Increase width for PriceInput
+			width: 13em;
+		}
+
+		.form-text-input-with-affixes {
+			max-width: 13em;
+		}
+
 		.order-details__totals-tax {
 			color: $gray-text-min;
 			font-style: italic;

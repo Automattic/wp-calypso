@@ -38,7 +38,7 @@ class OrderTotalRow extends Component {
 	};
 
 	renderEditable = () => {
-		const { className, currency, label, onBlur, onChange, value } = this.props;
+		const { className, currency, initialValue, label, onBlur, onChange, value } = this.props;
 		let name = this.props.name;
 		if ( ! name ) {
 			name = snakeCase( label );
@@ -57,6 +57,7 @@ class OrderTotalRow extends Component {
 						currency={ currency }
 						onBlur={ onBlur }
 						onChange={ onChange }
+						max={ initialValue }
 						value={ total }
 					/>
 				</TableItem>
