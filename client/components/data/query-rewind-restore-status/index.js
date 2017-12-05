@@ -18,6 +18,19 @@ class QueryRewindRestoreStatus extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
+	componentWillMount() {
+		// We want to run this only once: when the page is loaded. In such case, there is not known restore Id.
+		// If there's a restore Id here it means this was mounted during an action requesting progress for a
+		// specific restore Id, so we will do nothing here,since it will be handled by the <Interval /> below.
+		if ( ! this.props.restoreId ) {
+			const { siteId } = this.props;
+
+			if ( siteId ) {
+				this.props.getRewindRestoreProgress( siteId );
+			}
+		}
+	}
+
 	query = () => {
 		const { restoreId, siteId } = this.props;
 		if ( siteId && restoreId ) {
