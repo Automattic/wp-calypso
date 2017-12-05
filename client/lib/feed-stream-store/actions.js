@@ -18,6 +18,7 @@ import wpcom from 'lib/wp';
 import { reduxDispatch, getState as getReduxState } from 'lib/redux-bridge';
 import { COMMENTS_RECEIVE } from 'state/action-types';
 import { getCommentById } from 'state/comments/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 function getNextPageParams( store ) {
 	const params = {
@@ -122,28 +123,29 @@ export function receivePage( id, error, data ) {
 export function receiveUpdates( id, error, data ) {
 	if ( ! error && data && data.posts ) {
 		const reduxState = getReduxState();
+		const currentUserId = getCurrentUserId( reduxState );
 
 		forEach( data.posts, post => {
 			if ( post.comments ) {
-				const commentsNotInRedux = filter( post.comments, comment => {
+				const commentsToKeep = filter( post.comments, comment => {
 					const c = getCommentById( {
 						state: reduxState,
 						siteId: post.site_ID,
 						commentId: comment.ID,
 					} );
-					return ! c;
+					return ! c || c.author.ID !== currentUserId;
 				} );
 
-				if ( commentsNotInRedux.length > 0 ) {
+				if ( commentsToKeep.length > 0 ) {
 					// conversations!
 					reduxDispatch( {
 						type: COMMENTS_RECEIVE,
 						siteId: post.site_ID,
 						postId: post.ID,
-						comments: commentsNotInRedux,
+						comments: commentsToKeep,
 					} );
 				}
-				post.comments = commentsNotInRedux;
+				post.comments = commentsToKeep;
 			}
 		} );
 
