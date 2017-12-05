@@ -128,7 +128,7 @@ class PromotionCreate extends React.Component {
 
 		const getSuccessNotice = () => {
 			return successNotice(
-				translate( '%(promotion)s promotion successfully created.', {
+				translate( 'Promotion successfully created.', {
 					args: { promotion: promotion.name },
 				} ),
 				{

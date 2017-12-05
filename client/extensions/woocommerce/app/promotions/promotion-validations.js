@@ -16,7 +16,8 @@ import { isEmpty, isUndefined } from 'lodash';
  * @return { string } Returns a validation error, or undefined if none.
  */
 export function validateCouponCode( fieldName, promotion, currency, showEmpty ) {
-	if ( showEmpty && isEmpty( promotion.couponCode.trim() ) ) {
+	const couponCode = promotion.couponCode || '';
+	if ( showEmpty && isEmpty( couponCode.trim() ) ) {
 		return translate( 'Enter a coupon code so your customers can access this promotion.' );
 	}
 }
