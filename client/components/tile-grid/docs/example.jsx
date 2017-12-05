@@ -4,7 +4,6 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +24,7 @@ class TileGridExample extends PureComponent {
 					buttonLabel={ 'Start with a blog' }
 					description={ 'To share your ideas, stories, and photographs with your followers.' }
 					image={ '/calypso/images/illustrations/type-blog.svg' }
-					onClick={ noop }
+					onClick={ () => console.log( 'Clicked on the Blog tile' ) }
 				/>
 				<Tile
 					buttonLabel={ 'Start with a website' }
@@ -33,7 +32,6 @@ class TileGridExample extends PureComponent {
 						'To promote your business, organization, or brand and connect with your audience.'
 					}
 					image={ '/calypso/images/illustrations/type-website.svg' }
-					onClick={ noop }
 				/>
 				<Tile
 					buttonLabel={ 'Start with a portfolio' }
