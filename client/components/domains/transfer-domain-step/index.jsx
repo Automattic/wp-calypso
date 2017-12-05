@@ -112,9 +112,6 @@ class TransferDomainStep extends React.Component {
 	};
 
 	addTransfer() {
-		const cost = this.props.products.domain_map
-			? this.props.products.domain_map.cost_display
-			: null;
 		const { translate } = this.props;
 		const { searchQuery } = this.state;
 
@@ -128,8 +125,8 @@ class TransferDomainStep extends React.Component {
 						</div>
 						<div>
 							{ translate(
-								'Transfer your domain from your current provider to WordPress.com so ' +
-									'you can manage your domain and site in the same place. {{a}}Learn More{{/a}}',
+								'Move your domain from your current provider to WordPress.com so you can update settings ' +
+									'renew your domain, and more right in your dashboard. {{a}}Learn More{{/a}}',
 								{
 									components: {
 										a: (
@@ -172,9 +169,9 @@ class TransferDomainStep extends React.Component {
 					<p>
 						{ translate(
 							'Leave the domain at your current provider and {{a}}manually connect it{{/a}} to ' +
-								'your WordPress.com site for %(cost)s.',
+								"your WordPress.com site. You'll still need to continue paying your current " +
+								'provider to renew and manage any domain settings.',
 							{
-								args: { cost },
 								components: { a: <a href="#" onClick={ this.goToMapDomainStep } /> },
 							}
 						) }

@@ -38,7 +38,7 @@ class DomainTransferSuggestion extends React.Component {
 						} ) }
 					</h3>
 					<p>
-						{ translate( "Transfer or map it to use it as your site's address.", {
+						{ translate( "You can use it as your site's address.", {
 							context: 'Upgrades: Register domain description',
 							comment: 'Explains how you could use an existing domain name with your site.',
 						} ) }
