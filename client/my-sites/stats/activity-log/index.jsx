@@ -683,9 +683,7 @@ class ActivityLog extends Component {
 											backupConfirmDialog={ backupConfirmDialog }
 											disableRestore={ disableRestore }
 											disableBackup={ disableBackup }
-											hideRestore={
-												! rewindEnabledByConfig || ! isPressable || 'active' !== rewindState.state
-											}
+											hideRestore={ ! rewindEnabledByConfig || ! isPressable }
 											isRewindActive={ isRewindActive }
 											logs={ events }
 											requestDialog={ this.handleRequestDialog }
@@ -693,6 +691,7 @@ class ActivityLog extends Component {
 											siteId={ siteId }
 											tsEndOfSiteDay={ start.valueOf() }
 											isToday={ isToday }
+											rewindState={ rewindState }
 										/>
 									);
 							}

@@ -59,6 +59,7 @@ class ActivityLogDay extends Component {
 		backupConfirmDialog: PropTypes.element,
 		siteId: PropTypes.number,
 		tsEndOfSiteDay: PropTypes.number.isRequired,
+		rewindState: PropTypes.object,
 
 		// Connected props
 		isToday: PropTypes.bool.isRequired,
@@ -173,6 +174,7 @@ class ActivityLogDay extends Component {
 			backupConfirmDialog,
 			siteId,
 			tsEndOfSiteDay,
+			rewindState,
 		} = this.props;
 
 		const rewindHere = this.state.rewindHere;
@@ -193,7 +195,7 @@ class ActivityLogDay extends Component {
 			<ActivityLogItem
 				className={ hasBreak ? 'is-before-dialog' : '' }
 				applySiteOffset={ applySiteOffset }
-				disableRestore={ disableRestore }
+				disableRestore={ disableRestore || 'active' !== rewindState.state }
 				disableBackup={ disableBackup }
 				hideRestore={ hideRestore }
 				log={ log }
