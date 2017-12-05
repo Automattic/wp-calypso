@@ -30,7 +30,7 @@ import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
 import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
 import { getReaderAliasedFollowFeedUrl } from 'state/selectors';
-import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-button/follow-sources';
+import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-sources';
 import FollowButton from 'reader/follow-button';
 
 const WIDE_DISPLAY_CUTOFF = 660;

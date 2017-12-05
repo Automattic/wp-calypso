@@ -18,7 +18,7 @@ import {
 } from 'reader/controller-helper';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
-import { TAG_PAGE } from 'reader/follow-button/follow-sources';
+import { TAG_PAGE } from 'reader/follow-sources';
 
 const analyticsPageTitle = 'Reader';
 

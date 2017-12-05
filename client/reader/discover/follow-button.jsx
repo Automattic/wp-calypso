@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import FollowButton from 'reader/follow-button';
 import { recordFollowToggle } from './stats';
-import { DISCOVER_POST } from 'reader/follow-button/follow-sources';
+import { DISCOVER_POST } from 'reader/follow-sources';
 
 class DiscoverFollowButton extends React.Component {
 	static propTypes = {

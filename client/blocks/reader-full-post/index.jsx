@@ -66,7 +66,7 @@ import { showSelectedPost } from 'reader/utils';
 import Emojify from 'components/emojify';
 import config from 'config';
 import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
-import { READER_FULL_POST } from 'reader/follow-button/follow-sources';
+import { READER_FULL_POST } from 'reader/follow-sources';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
