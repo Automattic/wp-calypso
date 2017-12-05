@@ -5,7 +5,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import config from 'config';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -37,11 +36,11 @@ import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
-import { activityLogRequest } from 'state/activity-log/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
+	activityLogRequest,
 	rewindRequestDismiss,
 	rewindRequestRestore,
 	rewindRestore,
@@ -65,11 +64,6 @@ import {
 	getBackupProgress,
 	getRewindState,
 } from 'state/selectors';
-
-/**
- * Module constants
- */
-const rewindEnabledByConfig = config.isEnabled( 'jetpack/activity-log/rewind' );
 
 const flushEmptyDays = days => [
 	days.length === 1 ? 'empty-day' : 'empty-range',
@@ -452,11 +446,13 @@ class ActivityLog extends Component {
 	}
 
 	renderErrorMessage() {
-		if ( ! rewindEnabledByConfig ) {
+		const { isRewindActive } = this.props;
+
+		if ( ! isRewindActive ) {
 			return null;
 		}
 
-		const { isRewindActive, rewindStatusError, translate } = this.props;
+		const { rewindStatusError, translate } = this.props;
 
 		if ( isRewindActive && rewindStatusError ) {
 			return (
@@ -601,8 +597,8 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
-				{ rewindEnabledByConfig && <QueryRewindState siteId={ siteId } /> }
-				{ rewindEnabledByConfig && <QueryRewindStatus siteId={ siteId } /> }
+				{ isRewindActive && <QueryRewindState siteId={ siteId } /> }
+				{ isRewindActive && <QueryRewindStatus siteId={ siteId } /> }
 				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
 				{ siteId && isRewindActive && <QueryRewindBackupStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
