@@ -522,10 +522,9 @@ class ActivityLog extends Component {
 			);
 		}
 
-		const disableRestore = includes(
-			[ 'queued', 'running' ],
-			get( this.props, [ 'restoreProgress', 'status' ] )
-		);
+		const disableRestore =
+			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
+			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
 		const restoreConfirmDialog = requestedRestoreActivity && (
@@ -541,7 +540,7 @@ class ActivityLog extends Component {
 				}
 				onClose={ this.dismissRestore }
 				onConfirm={ this.confirmRestore }
-				supportLink="https://jetpack.com/support/rewind-specific-day-event"
+				supportLink="https://jetpack.com/support/how-to-rewind"
 				title={ translate( 'Rewind Site' ) }
 			>
 				{ translate(

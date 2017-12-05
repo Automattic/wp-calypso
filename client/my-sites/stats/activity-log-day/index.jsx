@@ -161,14 +161,12 @@ class ActivityLogDay extends Component {
 			disableRestore,
 			disableBackup,
 			isRewindActive,
-			isDiscardedPerspective,
 			isToday,
 			logs,
 			requestedRestoreActivityId,
 			requestedBackupId,
 			requestDialog,
 			restoreConfirmDialog,
-			rewindEvents,
 			backupConfirmDialog,
 			siteId,
 			tsEndOfSiteDay,
@@ -183,7 +181,7 @@ class ActivityLogDay extends Component {
 				( tsEndOfSiteDay <= activityTs && activityTs < tsEndOfSiteDay + DAY_IN_MILLISECONDS )
 		);
 
-		const events = classifyEvents( rewriteStream( logs, rewindEvents, isDiscardedPerspective ), {
+		const events = classifyEvents( logs, {
 			backupId: requestedBackupId,
 			rewindId: requestedRestoreActivityId,
 		} );
@@ -236,16 +234,16 @@ class ActivityLogDay extends Component {
 
 export default localize(
 	connect(
-		( state, { siteId } ) => {
+		( state, { logs, siteId } ) => {
 			const requestedRewind = getRequestedRewind( state, siteId );
+			const rewindEvents = getRewindEvents( state, siteId );
 			const isDiscardedPerspective = requestedRewind
 				? new Date( ms( getActivityLog( state, siteId, requestedRewind ).activityTs ) )
 				: undefined;
 
 			return {
-				isDiscardedPerspective,
+				logs: rewriteStream( logs, rewindEvents, isDiscardedPerspective ),
 				requestedRewind,
-				rewindEvents: getRewindEvents( state, siteId ),
 			};
 		},
 		( dispatch, { logs, tsEndOfSiteDay, moment } ) => ( {

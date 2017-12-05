@@ -28,8 +28,12 @@ import PollerPool from 'lib/data-poller';
 import { setLastStoreId } from 'reader/controller-helper';
 import * as stats from 'reader/stats';
 import { keyToString, keysAreEqual } from './post-key';
+import { reduxDispatch } from 'lib/redux-bridge';
+import { COMMENTS_RECEIVE } from 'state/action-types';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
+
+const postKeyToString = postKey => `${ postKey.blogId }-${ postKey.postId }`;
 
 export default class FeedStream {
 	constructor( spec ) {
@@ -55,6 +59,7 @@ export default class FeedStream {
 			id: spec.id,
 			postKeys: [], // an array of keys, as determined by the key maker,
 			pendingPostKeys: [],
+			pendingComments: new Map(),
 			postById: new Set(),
 			errors: [],
 			fetcher: spec.fetcher,
@@ -151,6 +156,10 @@ export default class FeedStream {
 
 	getUpdateCount() {
 		return this.pendingPostKeys.length;
+	}
+
+	getPendingPostKeys() {
+		return this.pendingPostKeys;
 	}
 
 	getSelectedPostKey() {
@@ -491,6 +500,14 @@ export default class FeedStream {
 				this.emitChange();
 			}
 		}
+
+		// if conversations, then tuck away the comments into pending comments
+		if ( data && data.posts && data.posts[ 0 ] && data.posts[ 0 ].comments ) {
+			forEach( data.posts, post => {
+				const postKey = { blogId: post.site_ID, postId: post.ID };
+				this.pendingComments.set( postKeyToString( postKey ), post.comments );
+			} );
+		}
 	}
 
 	acceptUpdates() {
@@ -519,6 +536,22 @@ export default class FeedStream {
 			} );
 		}
 
+		// if conversations, then unleash the tucked away comments to redux
+		if ( !! get( this.pendingPostKeys, '0.comments' ) ) {
+			forEach( this.pendingPostKeys, postKey => {
+				const key = postKeyToString( postKey );
+				const comments = this.pendingComments.get( key );
+				this.pendingComments.delete( key );
+
+				reduxDispatch( {
+					type: COMMENTS_RECEIVE,
+					siteId: postKey.blogId,
+					postId: postKey.postId,
+					comments,
+				} );
+			} );
+		}
+
 		this.postKeys = uniqBy( this.pendingPostKeys.concat( this.postKeys ), postKey =>
 			keyToString( postKey )
 		);
@@ -528,6 +561,7 @@ export default class FeedStream {
 			this.selectedIndex = -1;
 		}
 		this.pendingPostKeys = [];
+		this.pendingComments.clear();
 		this.pendingDateAfter = null;
 		this.emitChange();
 	}
