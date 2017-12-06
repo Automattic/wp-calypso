@@ -116,6 +116,11 @@ class DomainSearchResults extends React.Component {
 				);
 			}
 
+			// Domain Mapping not supported for Store NUX yet.
+			if ( this.props.siteDesignType === DESIGN_TYPE_STORE ) {
+				offer = null;
+			}
+
 			const domainUnavailableMessage =
 				lastDomainStatus === UNKNOWN
 					? translate( '{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com.', {
@@ -129,6 +134,7 @@ class DomainSearchResults extends React.Component {
 
 			if ( this.props.offerUnavailableOption ) {
 				if (
+					this.props.siteDesignType !== DESIGN_TYPE_STORE &&
 					this.props.transferInAllowed &&
 					! this.props.isSignupStep &&
 					lastDomainIsTransferrable &&
