@@ -234,7 +234,7 @@ export class MediaLibraryList extends React.Component {
 	};
 
 	sourceIsUngrouped( source ) {
-		const ungroupedSources = [];
+		const ungroupedSources = [ 'pexels' ];
 		return -1 !== ungroupedSources.indexOf( source );
 	}
 
