@@ -68,6 +68,7 @@
 
 .post-editor__site {
 	display:  flex;
+	margin-bottom: 16px;
 	background: lighten( $gray, 30% );
 
 	@include breakpoint( ">660px" ) {
