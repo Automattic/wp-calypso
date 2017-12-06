@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { first } from 'lodash';
+import { first, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,6 +36,11 @@ import {
 	areLabelsEnabled,
 	getSelectedPaymentMethodId,
 } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import {
+	getStoreLocation,
+	areSettingsGeneralLoaded,
+} from 'woocommerce/state/sites/settings/general/selectors';
 
 const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
 
@@ -135,17 +140,32 @@ class OrderFulfillment extends Component {
 		}
 	};
 
+	shouldShowLabels() {
+		const { labelsLoaded, labelsEnabled, order, storeAddress, hasLabelsPaymentMethod } = this.props;
+
+		if ( ! wcsEnabled ) {
+			return false;
+		}
+
+		if ( ! storeAddress || ! includes( [ 'US', 'PR' ], storeAddress.country ) ) {
+			return false;
+		}
+
+		const { shipping } = order;
+		if ( ! includes( [ 'US', 'PR' ], shipping.country ) ) {
+			return false;
+		}
+
+		if ( 'US' === shipping.country && includes( [ 'AA', 'AE', 'AP' ], shipping.state ) ) {
+			return false;
+		}
+
+		return labelsLoaded && labelsEnabled && hasLabelsPaymentMethod;
+	}
+
 	renderFulfillmentAction() {
-		const {
-			labelsLoaded,
-			labelsEnabled,
-			order,
-			site,
-			translate,
-			hasLabelsPaymentMethod,
-		} = this.props;
+		const { labelsLoaded, order, site, translate } = this.props;
 		const orderFinished = isOrderFinished( order.status );
-		const showLabels = wcsEnabled && labelsLoaded && labelsEnabled && hasLabelsPaymentMethod;
 		const labelsLoading = wcsEnabled && ! labelsLoaded;
 
 		if ( orderFinished ) {
@@ -157,7 +177,7 @@ class OrderFulfillment extends Component {
 			return <Button className={ buttonClassName }>{ translate( 'Fulfill' ) }</Button>;
 		}
 
-		if ( ! showLabels ) {
+		if ( ! this.shouldShowLabels() ) {
 			return (
 				<Button primary onClick={ this.toggleDialog }>
 					{ translate( 'Fulfill' ) }
@@ -245,6 +265,7 @@ class OrderFulfillment extends Component {
 						) }
 					</form>
 				</Dialog>
+				<QuerySettingsGeneral siteId={ site.ID } />
 				{ wcsEnabled && <QueryLabels orderId={ order.id } siteId={ site.ID } /> }
 				{ wcsEnabled && <LabelPurchaseDialog orderId={ order.id } siteId={ site.ID } /> }
 			</div>
@@ -254,15 +275,20 @@ class OrderFulfillment extends Component {
 
 export default connect(
 	( state, { order, site } ) => {
-		const labelsLoaded = wcsEnabled && Boolean( areLabelsFullyLoaded( state, order.id, site.ID ) );
+		const labelsLoaded =
+			wcsEnabled &&
+			Boolean( areLabelsFullyLoaded( state, order.id, site.ID ) ) &&
+			areSettingsGeneralLoaded( state );
 		const hasLabelsPaymentMethod =
 			wcsEnabled && labelsLoaded && getSelectedPaymentMethodId( state, site.ID );
+		const storeAddress = labelsLoaded && getStoreLocation( state );
 
 		return {
 			labelsLoaded,
 			labelsEnabled: areLabelsEnabled( state, site.ID ),
 			labels: getLabels( state, order.id, site.ID ),
 			hasLabelsPaymentMethod,
+			storeAddress,
 		};
 	},
 	dispatch => bindActionCreators( { createNote, saveOrder, openPrintingFlow }, dispatch )
