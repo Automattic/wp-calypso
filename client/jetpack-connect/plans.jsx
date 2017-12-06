@@ -37,7 +37,7 @@ import { mc } from 'lib/analytics';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
-const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
+const CALYPSO_PLANS_PAGE = '/plans/';
 const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
