@@ -13,7 +13,7 @@ import { flow, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostRevisionChanges } from 'state/selectors';
+//import { getPostRevisionChanges } from 'state/selectors';
 import { selectPostRevision } from 'state/posts/revisions/actions';
 import { isSingleUserSite } from 'state/sites/selectors';
 import TimeSince from 'components/time-since';
@@ -112,7 +112,7 @@ export default flow(
 	connect(
 		( state, { postId, revision, siteId } ) => ( {
 			isMultiUserSite: ! isSingleUserSite( state, siteId ),
-			revisionChanges: getPostRevisionChanges( state, siteId, postId, revision.id ),
+			//			revisionChanges: getPostRevisionChanges( state, siteId, postId, revision.id ),
 		} ),
 		{ selectPostRevision }
 	)

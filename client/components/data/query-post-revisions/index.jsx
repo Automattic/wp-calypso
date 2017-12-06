@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { requestPostRevisions } from 'state/posts/revisions/actions';
-import { getEditedPostValue } from 'state/posts/selectors';
 
 class QueryPostRevisions extends Component {
 	componentWillMount() {
@@ -28,7 +27,8 @@ class QueryPostRevisions extends Component {
 	}
 
 	request() {
-		this.props.requestPostRevisions( this.props.siteId, this.props.postId, this.props.postType );
+		const { comparisons, postId, siteId } = this.props;
+		this.props.requestPostRevisions( siteId, postId, comparisons );
 	}
 
 	render() {
@@ -37,19 +37,12 @@ class QueryPostRevisions extends Component {
 }
 
 QueryPostRevisions.propTypes = {
+	comparisons: PropTypes.array,
 	postId: PropTypes.number,
 	siteId: PropTypes.number,
-
-	// connected to state
-	postType: PropTypes.string,
 
 	// connected to dispatch
 	requestPostRevisions: PropTypes.func,
 };
 
-export default connect(
-	( state, { postId, siteId } ) => ( {
-		postType: getEditedPostValue( state, siteId, postId, 'type' ),
-	} ),
-	{ requestPostRevisions }
-)( QueryPostRevisions );
+export default connect( null, { requestPostRevisions } )( QueryPostRevisions );

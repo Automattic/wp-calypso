@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { keyBy, merge } from 'lodash';
+import { filter, isEmpty, isInteger, keyBy, merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +20,46 @@ import {
 	POST_REVISIONS_DIALOG_OPEN,
 	SELECTED_SITE_SET,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
+import { revisionsDiffSchema } from './schemas.js';
+
+// `0`s are cool. `-1`s? not so much
+const isNonNegativeInteger = t => isInteger( t ) && t >= 0;
+
+export const diffs = createReducer(
+	{},
+	{
+		[ POST_REVISIONS_RECEIVE ]: ( state, { diffs: diffsFromServer, siteId } ) => {
+			if ( ! isNonNegativeInteger( siteId ) ) {
+				return state;
+			}
+			const filteredDiffs = filter(
+				diffsFromServer,
+				d =>
+					isNonNegativeInteger( d.from_revision_id ) &&
+					isNonNegativeInteger( d.to_revision_id ) &&
+					! isEmpty( d.diff )
+			);
+			const keyedDiffs = keyBy(
+				filteredDiffs,
+				d => `${ d.from_revision_id }:${ d.to_revision_id }`
+			);
+
+			if ( isEmpty( keyedDiffs ) ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					...keyedDiffs,
+				},
+			};
+		},
+	},
+	revisionsDiffSchema
+);
 
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -32,21 +71,6 @@ export function requesting( state = {}, action ) {
 					[ action.postId ]: action.type === POST_REVISIONS_REQUEST,
 				},
 			} );
-	}
-
-	return state;
-}
-
-export function revisions( state = {}, action ) {
-	if ( action.type === POST_REVISIONS_RECEIVE ) {
-		const { siteId, postId } = action;
-		return {
-			...state,
-			[ siteId ]: {
-				...state[ siteId ],
-				[ postId ]: keyBy( action.revisions, 'id' ),
-			},
-		};
 	}
 
 	return state;
@@ -78,8 +102,8 @@ export function ui( state = {}, action ) {
 }
 
 export default combineReducers( {
+	diffs,
 	requesting,
-	revisions,
 	selection,
 	ui,
 } );
