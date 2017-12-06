@@ -3,9 +3,41 @@
 /**
  * External dependencies
  */
+import { castArray, isObject, forEach, fill } from 'lodash';
 
-import { memoize } from 'lodash';
-import shallowEqual from 'react-pure-render/shallowEqual';
+/**
+ * A map that is Weak with objects but Strong with primitives
+ */
+export class LazyWeakMap {
+	weakMap = new WeakMap();
+	map = new Map();
+
+	mapForKey = key => ( isObject( key ) ? this.weakMap : this.map );
+
+	clear() {
+		this.weakMap = new WeakMap();
+		this.map.clear();
+		return this;
+	}
+
+	set( k, v ) {
+		this.mapForKey( k ).set( k, v );
+		return this;
+	}
+
+	delete( k ) {
+		this.mapForKey( k ).delete( k );
+		return this;
+	}
+
+	get( k ) {
+		return this.mapForKey( k ).get( k );
+	}
+
+	has( k ) {
+		return this.mapForKey( k ).has( k );
+	}
+}
 
 /**
  * Constants
@@ -88,28 +120,62 @@ export default function createSelector(
 	getDependants = DEFAULT_GET_DEPENDANTS,
 	getCacheKey = DEFAULT_GET_CACHE_KEY
 ) {
-	const memoizedSelector = memoize( selector, getCacheKey );
-	let lastDependants;
+	const memo = new LazyWeakMap();
 
 	if ( Array.isArray( getDependants ) ) {
 		getDependants = makeSelectorFromArray( getDependants );
 	}
 
-	return Object.assign(
-		function( state, ...args ) {
-			let currentDependants = getDependants( state, ...args );
-			if ( ! Array.isArray( currentDependants ) ) {
-				currentDependants = [ currentDependants ];
+	const memoizedSelector = function( state, ...args ) {
+		const cacheKey = getCacheKey( state, ...args );
+		const currentDependants = castArray( getDependants( state, ...args ) );
+
+		// create a map of maps based on dependents in order to cache selector results.
+		// ideally each map is a WeakMap but we fallback to a regular Map if a key woul be a non-object
+		// the reason this charade is beneficial over standard memoization techniques is that now we can
+		// garbage collect any values that are based on outdated dependents so the memory usage
+		// should never balloon
+		let currMemo = memo;
+		forEach( currentDependants, dependent => {
+			if ( ! currMemo.has( dependent ) ) {
+				currMemo.set( dependent, new LazyWeakMap() );
 			}
+			currMemo = currMemo.get( dependent );
+		} );
 
-			if ( lastDependants && ! shallowEqual( currentDependants, lastDependants ) ) {
-				memoizedSelector.cache.clear();
-			}
+		if ( ! currMemo.has( cacheKey ) ) {
+			// call the selector with all of the dependents as args so it can use the fruits of
+			// the cpu cycles used during dependent calculation
+			const emptySelectorArgs = fill(
+				new Array( Math.max( arity( selector ) - args.length, 0 ) ),
+				undefined
+			);
+			currMemo.set(
+				cacheKey,
+				selector( state, ...[ ...args, ...emptySelectorArgs, ...currentDependants ] )
+			);
+		}
 
-			lastDependants = currentDependants;
+		return currMemo.get( cacheKey );
+	};
 
-			return memoizedSelector( state, ...args );
-		},
-		{ memoizedSelector }
-	);
+	memoizedSelector.cache = memo;
+	return memoizedSelector;
+}
+
+export function arity( fn ) {
+	const arityRegex = /arguments\[(\d+)\]/g;
+
+	const namedParametersCount = fn.length;
+	const fnString = fn.toString();
+	let maxParamAccessed = 0;
+
+	let match = arityRegex.exec( fnString );
+	while ( match ) {
+		if ( match ) {
+			maxParamAccessed = Math.max( maxParamAccessed, match[ 1 ] + 1 );
+		}
+		match = arityRegex.exec( fnString );
+	}
+	return Math.max( namedParametersCount, maxParamAccessed );
 }

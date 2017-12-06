@@ -9,7 +9,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import createSelector from '../';
+import createSelector, { LazyWeakMap } from '../';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'index', () => {
@@ -27,11 +27,11 @@ describe( 'index', () => {
 	} );
 
 	beforeEach( () => {
-		getSitePosts.memoizedSelector.cache.clear();
+		getSitePosts.cache.clear();
 	} );
 
-	test( 'should expose its memoized function', () => {
-		expect( getSitePosts.memoizedSelector ).to.be.a( 'function' );
+	test( 'should expose its cache', () => {
+		expect( getSitePosts.cache instanceof LazyWeakMap ).ok;
 	} );
 
 	test( 'should create a function which returns the expected value when called', () => {
@@ -87,7 +87,9 @@ describe( 'index', () => {
 		getSitePosts( state, [] );
 		getSitePosts( state, 1, [] );
 
+		/* eslint-disable no-console */
 		expect( console.warn ).to.have.been.calledThrice;
+		/* eslint-enable no-console */
 	} );
 
 	test( 'should return the expected value of differing arguments', () => {
@@ -123,6 +125,19 @@ describe( 'index', () => {
 		expect( selector ).to.have.been.calledTwice;
 	} );
 
+	test( 'should pass the value of the dependent as the last argument to the selector', () => {
+		const post1 = { global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64' };
+		const currentState = {
+			posts: {
+				[ post1.global_ID ]: post1,
+			},
+		};
+		const spy = sinon.spy();
+		const memoizedSelector = createSelector( spy, ( state, postId ) => state.posts[ postId ] );
+		memoizedSelector( currentState, post1.global_ID );
+		expect( spy ).calledWithExactly( currentState, post1.global_ID, post1 );
+	} );
+
 	test( 'should bust the cache when watched state changes', () => {
 		const currentState = {
 			posts: {
@@ -143,7 +158,7 @@ describe( 'index', () => {
 					ID: 841,
 					site_ID: 2916284,
 					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-					title: 'Hello World',
+					title: 'Hello Next World',
 				},
 				'6c831c187ffef321eb43a67761a525a3': {
 					ID: 413,
@@ -159,10 +174,52 @@ describe( 'index', () => {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Hello World',
+				title: 'Hello Next World',
 			},
 		] );
 		expect( selector ).to.have.been.calledTwice;
+	} );
+
+	test( 'should keep the cache on a per-key basis', () => {
+		const getPostByIdWithDataSpy = sinon.spy( ( state, postId ) => {
+			return {
+				...state.posts[ postId ],
+				withData: true,
+			};
+		} );
+		const getPostByIdWithData = createSelector(
+			getPostByIdWithDataSpy,
+			( state, postId ) => state.posts[ postId ]
+		);
+
+		const post1 = { global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64' };
+		const post2 = { global_ID: '6c831c187ffef321eb43a67761a525a3' };
+
+		const prevState = {
+			posts: {
+				[ post1.global_ID ]: post1,
+			},
+		};
+
+		getPostByIdWithData( prevState, post1.global_ID );
+
+		const nextState = {
+			posts: {
+				[ post1.global_ID ]: post1,
+				[ post2.global_ID ]: post2,
+			},
+		};
+
+		expect( getPostByIdWithData( nextState, post1.global_ID ) ).to.eql( {
+			...post1,
+			withData: true,
+		} );
+		expect( getPostByIdWithData( nextState, post2.global_ID ) ).to.eql( {
+			...post2,
+			withData: true,
+		} );
+		getPostByIdWithData( nextState, post1.global_ID );
+		expect( getPostByIdWithDataSpy ).to.have.been.calledTwice;
 	} );
 
 	test( 'should accept an array of dependent state values', () => {
@@ -271,9 +328,10 @@ describe( 'index', () => {
 			( state, siteId ) => `CUSTOM${ siteId }`
 		);
 
-		getSitePostsWithCustomGetCacheKey( { posts: {} }, 2916284 );
+		const state = { posts: {} };
+		getSitePostsWithCustomGetCacheKey( state, 2916284 );
 
-		expect( getSitePostsWithCustomGetCacheKey.memoizedSelector.cache.has( 'CUSTOM2916284' ) ).to.be
+		expect( getSitePostsWithCustomGetCacheKey.cache.get( state.posts ).has( 'CUSTOM2916284' ) )
 			.true;
 	} );
 

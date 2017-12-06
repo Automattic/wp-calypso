@@ -19,7 +19,7 @@ import {
 
 describe( 'selectors', () => {
 	beforeEach( () => {
-		getDocumentHeadFormattedTitle.memoizedSelector.cache.clear();
+		getDocumentHeadFormattedTitle.cache.clear();
 	} );
 
 	describe( '#getDocumentHeadTitle()', () => {

@@ -12,7 +12,7 @@ import { getSiteSlugsForUpcomingTransactions } from 'state/selectors';
 
 describe( 'getSiteSlugsForUpcomingTransactions()', () => {
 	beforeEach( () => {
-		getSiteSlugsForUpcomingTransactions.memoizedSelector.cache.clear();
+		getSiteSlugsForUpcomingTransactions.cache.clear();
 	} );
 
 	test( 'should return slugs for sites with transactions only', () => {

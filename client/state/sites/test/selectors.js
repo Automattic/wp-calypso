@@ -73,8 +73,8 @@ describe( 'selectors', () => {
 
 	beforeEach( () => {
 		getSite.clearCache();
-		getSiteCollisions.memoizedSelector.cache.clear();
-		getSiteBySlug.memoizedSelector.cache.clear();
+		getSiteCollisions.cache.clear();
+		getSiteBySlug.cache.clear();
 	} );
 
 	describe( '#getRawSite()', () => {
