@@ -126,7 +126,6 @@ a.web-preview__external.button {
 .web-preview__toolbar-actions {
 	margin-left: auto;
 	display: flex;
-	flex-wrap: wrap;
 	justify-content: flex-end;
 
 	@include breakpoint( ">960px" ) {
