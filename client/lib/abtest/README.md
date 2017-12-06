@@ -185,4 +185,4 @@ If you're making an update to an A/B test - changing the date for example, you s
 
 When you're A/B test is complete and removed from `wp-calypso` you should also remove it from the e2e test config. This doesn't have to happen _immediately_ (it doesn't matter to override an A/B test that doesn't exist) but you should do it as soon as possible to keep things neat and tidy.
 
-If your A/B test was successful and ***you're making permanent functional changes***, you should make permanent updates to the e2e tests to take into account these new functional changes. Speak to Flow Patrol if you need help.
+If your A/B test was successful and ***you're making permanent functional changes***, you should make permanent updates to the e2e tests to take into account these new functional changes. Speak to Flow Patrol if you need help. 
