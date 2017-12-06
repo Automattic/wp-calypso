@@ -206,6 +206,10 @@
 			top: 13px;
 			background: $alert-green;
 			border-color: $alert-green;
+
+			&:hover {
+				cursor: default;
+			}
 		}
 
 		.checklist__task-title {
