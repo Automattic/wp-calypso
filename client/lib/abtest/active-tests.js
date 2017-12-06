@@ -138,8 +138,8 @@ export default {
 	alisterIsAmazing: {
 		datestamp: '20171205',
 		variations: {
-			yes: 85,
-			no: 15,
+			yes: 90,
+			no: 10,
 		},
 		defaultVariation: 'yes',
 	},
