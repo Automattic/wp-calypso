@@ -151,9 +151,9 @@ $autobar-height: 20px;
 		.masterbar__wpcom-logo {
 			display: block;
 			height: 24px;
-			width: 164px;
-			position: relative;
-			left: -4px;
+			width: 24px;
+			margin-left: 5px;
+			fill: $white;
 		}
 
 		.masterbar__wpcom-wordmark {
@@ -176,7 +176,7 @@ $autobar-height: 20px;
 		display: block;
 
 		@include breakpoint( ">480px" ) {
-			transform: translateY( 2px ); /*Align with logo*/
+			margin-top: 3px; /*Align with logo*/
 		}
 	}
 
