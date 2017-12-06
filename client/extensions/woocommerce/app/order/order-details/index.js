@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { isObject } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -27,7 +28,10 @@ import SectionHeader from 'components/section-header';
 
 class OrderDetails extends Component {
 	static propTypes = {
-		orderId: PropTypes.number.isRequired,
+		orderId: PropTypes.oneOfType( [
+			PropTypes.number, // A number indicates an existing order
+			PropTypes.shape( { id: PropTypes.string } ), // Placeholders have format { id: 'order_1' }
+		] ).isRequired,
 	};
 
 	constructor( props ) {
@@ -92,7 +96,7 @@ class OrderDetails extends Component {
 			<div className="order-details">
 				<SectionHeader
 					label={ translate( 'Order %(orderId)s Details', {
-						args: { orderId: `#${ order.id }` },
+						args: { orderId: isObject( order.id ) ? '' : `#${ order.id }` },
 					} ) }
 				>
 					<span>{ this.renderStatus() }</span>

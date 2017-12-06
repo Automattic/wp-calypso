@@ -32,18 +32,29 @@ import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
 // @todo Update this to use our store countries list
 import { forPayments as countriesList } from 'lib/countries-list';
 
+const defaultAddress = {
+	street: '',
+	street2: '',
+	city: '',
+	postcode: '',
+	email: '',
+	first_name: '',
+	last_name: '',
+	phone: '',
+};
+
 class CustomerAddressDialog extends Component {
 	static propTypes = {
 		address: PropTypes.shape( {
-			address_1: PropTypes.string.isRequired,
+			address_1: PropTypes.string,
 			address_2: PropTypes.string,
-			city: PropTypes.string.isRequired,
+			city: PropTypes.string,
 			state: PropTypes.string,
-			country: PropTypes.string.isRequired,
+			country: PropTypes.string,
 			postcode: PropTypes.string,
 			email: PropTypes.string,
-			first_name: PropTypes.string.isRequired,
-			last_name: PropTypes.string.isRequired,
+			first_name: PropTypes.string,
+			last_name: PropTypes.string,
 			phone: PropTypes.string,
 		} ),
 		closeDialog: PropTypes.func,
@@ -53,18 +64,7 @@ class CustomerAddressDialog extends Component {
 	};
 
 	static defaultProps = {
-		address: {
-			street: '',
-			street2: '',
-			city: '',
-			state: 'AL',
-			country: 'US',
-			postcode: '',
-			email: '',
-			first_name: '',
-			last_name: '',
-			phone: '',
-		},
+		address: defaultAddress,
 		closeDialog: noop,
 		isBilling: false,
 		isVisible: false,
@@ -95,13 +95,13 @@ class CustomerAddressDialog extends Component {
 	}
 
 	initializeState = () => {
-		const { address = {}, defaultCountry, defaultState } = this.props;
-		if ( ! address.country ) {
-			address.country = defaultCountry;
-		}
-		if ( ! address.state ) {
-			address.state = defaultState;
-		}
+		const { defaultCountry, defaultState } = this.props;
+		const address = {
+			...defaultAddress,
+			country: defaultCountry,
+			state: defaultState,
+			...this.props.address,
+		};
 		this.setState( {
 			address,
 			phoneCountry: address.country || defaultCountry,
