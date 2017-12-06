@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getRatesErrors } from '../selectors';
+import { getRatesErrors, getCountriesData } from '../selectors';
 
 describe( '#getRatesErrors', () => {
 	// when there are selected rates
@@ -284,6 +284,51 @@ describe( '#getRatesErrors', () => {
 					box_2: 'Please choose a rate',
 				} );
 			} );
+		} );
+	} );
+} );
+
+describe( 'Shipping label selectors', () => {
+	const siteId = 1;
+	const orderId = 1;
+	const getFullState = ( labelsState ) => (
+		{
+			extensions: {
+				woocommerce: {
+					woocommerceServices: {
+						[ siteId ]: {
+							shippingLabel: {
+								[ orderId ]: labelsState,
+							},
+						},
+					},
+				},
+			},
+		}
+	);
+
+	it( 'getCountriesData - returns null if labels not loaded', () => {
+		const state = getFullState( { loaded: false } );
+		const result = getCountriesData( state, orderId, siteId );
+		expect( result ).to.eql( null );
+	} );
+
+	it( 'getCountriesData - returns the countries data if they exist', () => {
+		const state = getFullState( {
+			loaded: true,
+			storeOptions: {
+				countriesData: {
+					US: {
+						CA: 'California',
+					},
+				},
+			},
+		} );
+		const result = getCountriesData( state, orderId, siteId );
+		expect( result ).to.eql( {
+			US: {
+				CA: 'California',
+			},
 		} );
 	} );
 } );
