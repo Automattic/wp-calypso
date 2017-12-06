@@ -9,6 +9,7 @@ import { get, isObject, merge } from 'lodash';
 /**
  * Internal dependencies
  */
+import { getCurrencyFormatString } from 'woocommerce/lib/currency';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -52,6 +53,57 @@ export const getOrdersCurrentSearch = ( state, siteId = getSelectedSiteId( state
 };
 
 /**
+ * Get a default order "frame", so we have values for components.
+ * @return {Object} The local edits made to the current order
+ */
+const getDefaultEmptyOrder = () => {
+	const currency = 'USD';
+
+	return {
+		status: 'pending',
+		currency: currency,
+		discount_total: getCurrencyFormatString( 0, currency ),
+		discount_tax: getCurrencyFormatString( 0, currency ),
+		shipping_total: getCurrencyFormatString( 0, currency ),
+		shipping_tax: getCurrencyFormatString( 0, currency ),
+		cart_tax: getCurrencyFormatString( 0, currency ),
+		total: getCurrencyFormatString( 0, currency ),
+		total_tax: getCurrencyFormatString( 0, currency ),
+		prices_include_tax: false,
+		billing: {
+			first_name: '',
+			last_name: '',
+			email: '',
+			phone: '',
+			address_1: '',
+			address_2: '',
+			city: '',
+			state: '',
+			country: '',
+			postcode: '',
+		},
+		shipping: {
+			first_name: '',
+			last_name: '',
+			address_1: '',
+			address_2: '',
+			city: '',
+			state: '',
+			country: '',
+			postcode: '',
+		},
+		// payment_method: '',
+		// payment_method_title: '',
+		line_items: [],
+		tax_lines: [],
+		shipping_lines: [],
+		fee_lines: [],
+		coupon_lines: [],
+		refunds: [],
+	};
+};
+
+/**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} The local edits made to the current order
@@ -75,7 +127,8 @@ export const getOrderWithEdits = ( state, siteId = getSelectedSiteId( state ) ) 
 
 	// If there is no existing order, the edits are returned as the entire order.
 	if ( isObject( orderId ) ) {
-		return { ...orderEdits, id: orderId };
+		const emptyOrder = getDefaultEmptyOrder();
+		return { ...emptyOrder, ...orderEdits, id: orderId };
 	}
 
 	const order = getOrder( state, orderId, siteId );
