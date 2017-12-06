@@ -94,9 +94,7 @@ export default class extends React.Component {
 	render() {
 		const mapRef = el => ( this.mapRef = el );
 		return (
-			<div>
-				<div ref={ mapRef } style={ { maxWidth: 400, height: 300 } } />
-			</div>
+			<div ref={ mapRef } style={ { maxWidth: 400, height: 300 } } />
 		);
 	}
 }
