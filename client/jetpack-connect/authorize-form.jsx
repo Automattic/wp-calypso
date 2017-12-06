@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getAuthorizationRemoteQueryData } from 'state/jetpack-connect/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 import MainWrapper from './main-wrapper';
@@ -19,10 +18,10 @@ import LoggedOutForm from './auth-logged-out-form';
 
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {
-		authorizationRemoteQueryData: PropTypes.shape( {
-			_ui: PropTypes.string,
-			_ut: PropTypes.string,
-		} ).isRequired,
+		authTracksUi: PropTypes.string,
+		authTracksUt: PropTypes.string,
+
+		// Connected props
 		isLoggedIn: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		setTracksAnonymousUserId: PropTypes.func.isRequired,
@@ -30,13 +29,9 @@ class JetpackConnectAuthorizeForm extends Component {
 
 	componentWillMount() {
 		// set anonymous ID for cross-system analytics
-		const { authorizationRemoteQueryData } = this.props;
-		if (
-			authorizationRemoteQueryData &&
-			authorizationRemoteQueryData._ui &&
-			'anon' === authorizationRemoteQueryData._ut
-		) {
-			this.props.setTracksAnonymousUserId( authorizationRemoteQueryData._ui );
+		const { authTracksUi, authTracksUt } = this.props;
+		if ( 'anon' === authTracksUt && authTracksUi ) {
+			this.props.setTracksAnonymousUserId( authTracksUi );
 		}
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
 	}
@@ -47,9 +42,31 @@ class JetpackConnectAuthorizeForm extends Component {
 
 	renderForm() {
 		return this.props.isLoggedIn ? (
-			<LoggedInForm />
+			<LoggedInForm
+				authAlreadyAuthorized={ this.props.authAlreadyAuthorized }
+				authBlogname={ this.props.authBlogname }
+				authClientId={ this.props.authClientId }
+				authFrom={ this.props.authFrom }
+				authHomeUrl={ this.props.authHomeUrl }
+				authJpVersion={ this.props.authJpVersion }
+				authNewUserStartedConnection={ this.props.authNewUserStartedConnection }
+				authNonce={ this.props.authNonce }
+				authPartnerId={ this.props.authPartnerId }
+				authRedirectAfterAuth={ this.props.authRedirectAfterAuth }
+				authRedirectUri={ this.props.authRedirectUri }
+				authScope={ this.props.authScope }
+				authSecret={ this.props.authSecret }
+				authSite={ this.props.authSite }
+				authSiteIcon={ this.props.authSiteIcon }
+				authSiteUrl={ this.props.authSiteUrl }
+				authState={ this.props.authState }
+			/>
 		) : (
-			<LoggedOutForm local={ this.props.locale } path={ this.props.path } />
+			<LoggedOutForm
+				local={ this.props.locale }
+				path={ this.props.path }
+				authUserEmail={ this.props.authUserEmail }
+			/>
 		);
 	}
 
@@ -66,7 +83,6 @@ export { JetpackConnectAuthorizeForm as JetpackConnectAuthorizeFormTestComponent
 
 export default connect(
 	state => ( {
-		authorizationRemoteQueryData: getAuthorizationRemoteQueryData( state ),
 		isLoggedIn: !! getCurrentUserId( state ),
 	} ),
 	{

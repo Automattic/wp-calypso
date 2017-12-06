@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import addQueryArgs from 'lib/route/add-query-args';
 import AuthFormHeader from './auth-form-header';
 import config from 'config';
 import HelpButton from './help-button';
@@ -30,16 +29,16 @@ const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedOutForm extends Component {
 	static propTypes = {
-		authorizationData: PropTypes.shape( {
-			bearerToken: PropTypes.string,
-			isAuthorizing: PropTypes.bool,
-			queryObject: PropTypes.object.isRequired,
-			userData: PropTypes.object,
-		} ).isRequired,
+		authUserEmail: PropTypes.string,
 		locale: PropTypes.string,
 		path: PropTypes.string,
 
 		// Connected props
+		authorizationData: PropTypes.shape( {
+			bearerToken: PropTypes.string,
+			isAuthorizing: PropTypes.bool,
+			userData: PropTypes.object,
+		} ).isRequired,
 		createAccount: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -50,8 +49,7 @@ class LoggedOutForm extends Component {
 	}
 
 	getRedirectAfterLoginUrl() {
-		const { queryObject } = this.props.authorizationData;
-		return addQueryArgs( queryObject, window.location.href );
+		return window.location.href;
 	}
 
 	handleSubmitSignup = ( form, userData ) => {
@@ -64,13 +62,13 @@ class LoggedOutForm extends Component {
 	};
 
 	renderLoginUser() {
-		const { userData, bearerToken, queryObject } = this.props.authorizationData;
+		const { userData, bearerToken } = this.props.authorizationData;
 
 		return (
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
-				emailAddress={ queryObject.user_email }
+				emailAddress={ this.props.authUserEmail }
 				redirectTo={ this.getRedirectAfterLoginUrl() }
 			/>
 		);
@@ -84,7 +82,7 @@ class LoggedOutForm extends Component {
 
 	renderFooterLink() {
 		const redirectTo = this.getRedirectAfterLoginUrl();
-		const emailAddress = this.props.authorizationData.queryObject.user_email;
+		const emailAddress = this.props.authUserEmail;
 
 		return (
 			<LoggedOutFormLinks>
@@ -103,7 +101,7 @@ class LoggedOutForm extends Component {
 	}
 
 	render() {
-		const { isAuthorizing, userData, queryObject } = this.props.authorizationData;
+		const { isAuthorizing, userData } = this.props.authorizationData;
 
 		return (
 			<div>
@@ -116,7 +114,7 @@ class LoggedOutForm extends Component {
 					submitForm={ this.handleSubmitSignup }
 					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
 					footerLink={ this.renderFooterLink() }
-					email={ queryObject.user_email }
+					email={ this.props.authUserEmail }
 					suggestedUsername={ get( userData, 'username', '' ) }
 				/>
 				{ userData && this.renderLoginUser() }

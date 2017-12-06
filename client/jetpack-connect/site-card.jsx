@@ -16,29 +16,27 @@ import { decodeEntities } from 'lib/formatting';
 
 class SiteCard extends Component {
 	static propTypes = {
-		queryObject: PropTypes.shape( {
-			site_icon: PropTypes.string,
-			blogname: PropTypes.string.isRequired,
-			home_url: PropTypes.string.isRequired,
-			site_url: PropTypes.string.isRequired,
-		} ).isRequired,
+		authBlogname: PropTypes.string.isRequired,
+		authHomeUrl: PropTypes.string.isRequired,
+		authSiteIcon: PropTypes.string,
+		authSiteUrl: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { site_icon, blogname, home_url, site_url } = this.props.queryObject;
-		const safeIconUrl = site_icon ? safeImageUrl( site_icon ) : false;
+		const { authBlogname, authHomeUrl, authSiteIcon, authSiteUrl } = this.props;
+		const safeIconUrl = authSiteIcon ? safeImageUrl( authSiteIcon ) : false;
 		const siteIcon = safeIconUrl ? { img: safeIconUrl } : false;
-		const url = decodeEntities( home_url );
+		const url = decodeEntities( authHomeUrl );
 		const parsedUrl = urlModule.parse( url );
 		const path = parsedUrl.path === '/' ? '' : parsedUrl.path;
 		const site = {
 			ID: null,
 			url: url,
-			admin_url: decodeEntities( site_url + '/wp-admin' ),
+			admin_url: decodeEntities( authSiteUrl + '/wp-admin' ),
 			domain: parsedUrl.host + path,
 			icon: siteIcon,
 			is_vip: false,
-			title: decodeEntities( blogname ),
+			title: decodeEntities( authBlogname ),
 		};
 
 		return (

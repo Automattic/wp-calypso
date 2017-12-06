@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +14,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import FormattedHeader from 'components/formatted-header';
 import SiteCard from './site-card';
 import versionCompare from 'lib/version-compare';
-import { getJetpackConnectJetpackVersion, getJetpackConnectPartnerId } from 'state/selectors';
 
 class AuthFormHeader extends Component {
 	getState() {
@@ -37,9 +35,9 @@ class AuthFormHeader extends Component {
 	}
 
 	getPartnerSlug() {
-		const { partnerId } = this.props;
+		const { authPartnerId } = this.props;
 
-		switch ( partnerId ) {
+		switch ( authPartnerId ) {
 			case 51945:
 			case 51946:
 				return 'dreamhost';
@@ -120,12 +118,19 @@ class AuthFormHeader extends Component {
 	}
 
 	getSiteCard() {
-		const { jetpackVersion } = this.props;
-		if ( ! versionCompare( jetpackVersion, '4.0.3', '>' ) ) {
+		const { authJpVersion } = this.props;
+		if ( ! versionCompare( authJpVersion, '4.0.3', '>' ) ) {
 			return null;
 		}
 
-		return <SiteCard queryObject={ get( this.props, [ 'authorize', 'queryObject' ], {} ) } />;
+		return (
+			<SiteCard
+				authBlogname={ this.props.authBlogname }
+				authHomeUrl={ this.props.authHomeUrl }
+				authSiteIcon={ this.props.authSiteIcon }
+				authSiteUrl={ this.props.authSiteUrl }
+			/>
+		);
 	}
 
 	render() {
@@ -145,8 +150,6 @@ class AuthFormHeader extends Component {
 export default connect( state => {
 	return {
 		authorize: getAuthorizationData( state ),
-		jetpackVersion: getJetpackConnectJetpackVersion( state ),
-		partnerId: getJetpackConnectPartnerId( state ),
 		user: getCurrentUser( state ),
 	};
 } )( localize( AuthFormHeader ) );
