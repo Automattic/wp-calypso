@@ -22,7 +22,7 @@ import {
 	domainManagementPrivacyProtection,
 } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
-import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
+import { findPrivacyServiceWhois } from 'lib/domains/whois/utils';
 
 class ContactsPrivacy extends React.PureComponent {
 	static propTypes = {
@@ -42,7 +42,7 @@ class ContactsPrivacy extends React.PureComponent {
 		const { hasPrivacyProtection, privateDomain, privacyAvailable, currentUserCanManage } = domain;
 		const contactInformation = privateDomain
 			? findPrivacyServiceWhois( this.props.whois.data )
-			: findRegistrantWhois( this.props.whois.data );
+			: this.props.whois.registrantContactDetails;
 
 		return (
 			<Main className="contacts-privacy">
