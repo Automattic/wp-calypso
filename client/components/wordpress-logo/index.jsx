@@ -12,16 +12,18 @@ export default class WordPressLogo extends PureComponent {
 
 	static defaultProps = {
 		size: 72,
+		className: 'wordpress-logo',
 	};
 
 	static propTypes = {
 		size: PropTypes.number,
+		className: PropTypes.string,
 	};
 
 	render() {
 		return (
 			<svg
-				className="wordpress-logo"
+				className={ this.props.className }
 				height={ this.props.size }
 				width={ this.props.size }
 				viewBox="0 0 72 72"
