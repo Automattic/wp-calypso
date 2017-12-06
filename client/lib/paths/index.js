@@ -6,6 +6,8 @@
 
 import { login } from './login';
 
+export { login };
+
 function editorPathFromSite( site ) {
 	let path = '',
 		siteSlug;
