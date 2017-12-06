@@ -15,6 +15,7 @@ import { get } from 'lodash';
 import QueryPostStats from 'components/data/query-post-stats';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { getPostStat } from 'state/stats/posts/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 class PostActionCounts extends PureComponent {
 	static propTypes = {
@@ -22,18 +23,20 @@ class PostActionCounts extends PureComponent {
 	};
 
 	renderCommentCount() {
-		const { commentCount: count, numberFormat, translate } = this.props;
+		const { commentCount: count, numberFormat, postId, siteSlug, translate } = this.props;
 
 		return (
 			<li>
-				{ translate(
-					'%(count)s Comment',
-					'%(count)s Comments',
-					{
-						count,
-						args: { count: numberFormat( count ) },
-					}
-				) }
+				<a href={ `/comments/all/${ siteSlug }/${ postId }` }>
+					{ translate(
+						'%(count)s Comment',
+						'%(count)s Comments',
+						{
+							count,
+							args: { count: numberFormat( count ) },
+						}
+					) }
+				</a>
 			</li>
 		);
 	}
@@ -96,6 +99,7 @@ export default connect( ( state, { globalId } ) => {
 		likeCount: get( post, 'like_count', null ),
 		postId,
 		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
 		viewCount: getPostStat( state, siteId, postId, 'views' ),
 	};
 } )( localize( PostActionCounts ) );
