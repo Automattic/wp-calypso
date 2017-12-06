@@ -151,7 +151,7 @@ const Account = createReactClass( {
 		const { translate } = this.props;
 		const userLocale = this.getUserSetting( 'language' );
 		const showTranslator = userLocale && userLocale !== 'en';
-		if ( showTranslator ) {
+		if ( config.isEnabled( 'community-translator' ) && showTranslator ) {
 			return (
 				<FormFieldset>
 					<FormLegend>{ translate( 'Community Translator' ) }</FormLegend>
