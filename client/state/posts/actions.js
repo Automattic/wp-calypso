@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import debugFactory from 'debug';
 import { isNumber, toArray } from 'lodash';
 
 /**
@@ -33,6 +33,12 @@ import {
 } from 'state/action-types';
 
 /**
+ * Module constants
+ */
+const debug = debugFactory( 'calypso:posts:actions' );
+const mc = global.document && global.document.documentElement && require( 'lib/analytics' ).mc;
+
+/**
  * Returns an action object to be used in signalling that a post object has
  * been received.
  *
@@ -60,11 +66,39 @@ export function receivePosts( posts ) {
 /**
  * Triggers a network request to fetch posts for the specified site and query.
  *
- * @param  {?Number}  siteId Site ID
+ * @param  {Number}   siteId Site ID
  * @param  {String}   query  Post query
  * @return {Function}        Action thunk
  */
 export function requestSitePosts( siteId, query = {} ) {
+	if ( ! siteId ) {
+		debug( 'requestSitePosts called without siteId', { siteId, query } );
+		mc && mc.bumpStat( 'calypso_missing_site_id', 'requestSitePosts' );
+		return null;
+	}
+
+	return requestPosts( siteId, query );
+}
+
+/**
+ * Returns a function which, when invoked, triggers a network request to fetch
+ * posts across all of the current user's sites for the specified query.
+ *
+ * @param  {String}   query Post query
+ * @return {Function}       Action thunk
+ */
+export function requestAllSitesPosts( query = {} ) {
+	return requestPosts( null, query );
+}
+
+/**
+ * Triggers a network request to fetch posts for the specified site and query.
+ *
+ * @param  {?Number}  siteId Site ID
+ * @param  {String}   query  Post query
+ * @return {Function}        Action thunk
+ */
+function requestPosts( siteId, query = {} ) {
 	return dispatch => {
 		dispatch( {
 			type: POSTS_REQUEST,
@@ -142,17 +176,6 @@ export function requestSitePost( siteId, postId ) {
 				} );
 			} );
 	};
-}
-
-/**
- * Returns a function which, when invoked, triggers a network request to fetch
- * posts across all of the current user's sites for the specified query.
- *
- * @param  {String}   query Post query
- * @return {Function}       Action thunk
- */
-export function requestPosts( query = {} ) {
-	return requestSitePosts( null, query );
 }
 
 /**

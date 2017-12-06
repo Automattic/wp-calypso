@@ -14,51 +14,55 @@ export const itemsSchema = {
 	additionalProperties: false,
 };
 
-export const queriesSchema = {
+const queryManagerSchema = {
 	type: 'object',
-	patternProperties: {
-		// Site ID
-		'^\\d+$': {
+	properties: {
+		data: {
 			type: 'object',
+			required: [ 'items', 'queries' ],
 			properties: {
-				data: {
+				items: {
 					type: 'object',
-					required: [ 'items', 'queries' ],
-					properties: {
-						items: {
+				},
+				queries: {
+					patternProperties: {
+						// Query key pairs
+						'^\\[.*\\]$': {
 							type: 'object',
-						},
-						queries: {
-							patternProperties: {
-								// Query key pairs
-								'^\\[.*\\]$': {
-									type: 'object',
-									required: [ 'itemKeys' ],
-									properties: {
-										itemKeys: {
-											type: 'array',
-										},
-										found: {
-											type: 'number',
-										},
-									},
+							required: [ 'itemKeys' ],
+							properties: {
+								itemKeys: {
+									type: 'array',
+								},
+								found: {
+									type: 'number',
 								},
 							},
-							additionalProperties: false,
 						},
 					},
+					additionalProperties: false,
 				},
-				options: {
-					type: 'object',
-					required: [ 'itemKey' ],
-					properties: {
-						itemKey: {
-							type: 'string',
-						},
-					},
+			},
+		},
+		options: {
+			type: 'object',
+			required: [ 'itemKey' ],
+			properties: {
+				itemKey: {
+					type: 'string',
 				},
 			},
 		},
 	},
+};
+
+export const queriesSchema = {
+	type: 'object',
+	patternProperties: {
+		// Site ID
+		'^\\d+$': queryManagerSchema,
+	},
 	additionalProperties: false,
 };
+
+export const allSitesQueriesSchema = queryManagerSchema;

@@ -89,7 +89,11 @@ export function getEditorNewPostPath( state, siteId, type = 'post' ) {
  * @return {String}             Editor URL path
  */
 export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
-	const type = get( getEditedPost( state, siteId, postId ), 'type', defaultType );
+	if ( ! siteId ) {
+		return '/post';
+	}
+	const editedPost = getEditedPost( state, siteId, postId );
+	const type = get( editedPost, 'type', defaultType );
 	let path = getEditorNewPostPath( state, siteId, type );
 
 	if ( postId ) {

@@ -18,7 +18,7 @@ import Button from 'components/button';
 import config from 'config';
 import ExternalLink from 'components/external-link';
 import FormTextInput from 'components/forms/form-text-input';
-import { getSitePostsForQueryIgnoringPage } from 'state/posts/selectors';
+import { getPostsForQueryIgnoringPage } from 'state/posts/selectors';
 import humanDate from 'lib/human-date';
 import MultiCheckbox from 'components/forms/multi-checkbox';
 import QueryPosts from 'components/data/query-posts';
@@ -202,6 +202,6 @@ export default connect( ( state, ownProps ) => {
 	const siteId = ownProps.siteId ? ownProps.siteId : ReadingWidget.defaultProps.siteId;
 	const query = ownProps.query ? ownProps.query : ReadingWidget.defaultProps.query;
 	return {
-		posts: getSitePostsForQueryIgnoringPage( state, siteId, query ),
+		posts: getPostsForQueryIgnoringPage( state, siteId, query ),
 	};
 } )( localize( ReadingWidget ) );

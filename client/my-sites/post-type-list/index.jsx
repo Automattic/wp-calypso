@@ -18,10 +18,10 @@ import QueryPosts from 'components/data/query-posts';
 import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
-	isRequestingSitePostsForQueryIgnoringPage,
-	getSitePostsForQueryIgnoringPage,
-	getSitePostsFoundForQuery,
-	getSitePostsLastPageForQuery,
+	isRequestingPostsForQueryIgnoringPage,
+	getPostsForQueryIgnoringPage,
+	getPostsFoundForQuery,
+	getPostsLastPageForQuery,
 } from 'state/posts/selectors';
 import ListEnd from 'components/list-end';
 import PostItem from 'blocks/post-item';
@@ -244,15 +244,15 @@ class PostTypeList extends Component {
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 
-	const totalPageCount = getSitePostsLastPageForQuery( state, siteId, ownProps.query );
+	const totalPageCount = getPostsLastPageForQuery( state, siteId, ownProps.query );
 	const lastPageToRequest =
 		siteId === null ? Math.min( MAX_ALL_SITES_PAGES, totalPageCount ) : totalPageCount;
 
 	return {
 		siteId,
-		posts: getSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
-		isRequestingPosts: isRequestingSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
-		totalPostCount: getSitePostsFoundForQuery( state, siteId, ownProps.query ),
+		posts: getPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
+		isRequestingPosts: isRequestingPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
+		totalPostCount: getPostsFoundForQuery( state, siteId, ownProps.query ),
 		totalPageCount,
 		lastPageToRequest,
 	};

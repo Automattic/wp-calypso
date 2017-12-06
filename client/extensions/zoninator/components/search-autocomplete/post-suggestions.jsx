@@ -14,7 +14,7 @@ import { find, map } from 'lodash';
  */
 import QueryPosts from 'components/data/query-posts';
 import Suggestions from 'components/suggestions';
-import { getSitePostsForQuery } from 'state/posts/selectors';
+import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 class PostSuggestions extends PureComponent {
@@ -60,7 +60,7 @@ const mapStateToProps = ( state, { exclude, search } ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		posts: getSitePostsForQuery( state, siteId, { search, exclude } ) || [],
+		posts: getPostsForQuery( state, siteId, { search, exclude } ) || [],
 		siteId,
 	};
 };

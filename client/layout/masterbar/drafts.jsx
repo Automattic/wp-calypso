@@ -18,8 +18,8 @@ import Count from 'components/count';
 import { getMyPostCounts } from 'state/posts/counts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
-	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePostsForQuery,
+	getPostsForQueryIgnoringPage,
+	isRequestingPostsForQuery,
 } from 'state/posts/selectors';
 import Draft from 'my-sites/draft';
 import QueryPosts from 'components/data/query-posts';
@@ -137,8 +137,8 @@ export default connect( state => {
 	const myPostCounts = getMyPostCounts( state, siteId, 'post' );
 
 	return {
-		drafts: getSitePostsForQueryIgnoringPage( state, siteId, draftsQuery ),
-		loadingDrafts: isRequestingSitePostsForQuery( state, siteId, draftsQuery ),
+		drafts: getPostsForQueryIgnoringPage( state, siteId, draftsQuery ),
+		loadingDrafts: isRequestingPostsForQuery( state, siteId, draftsQuery ),
 		draftsQuery: draftsQuery,
 		draftCount: myPostCounts && myPostCounts.draft,
 		selectedSite: site,

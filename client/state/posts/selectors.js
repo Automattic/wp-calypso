@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import debugFactory from 'debug';
 import { filter, find, has, get, includes, isEqual, omit, some } from 'lodash';
 import createSelector from 'lib/create-selector';
 import moment from 'moment-timezone';
@@ -24,6 +24,27 @@ import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import addQueryArgs from 'lib/route/add-query-args';
+
+/**
+ * Module constants
+ */
+const debug = debugFactory( 'calypso:posts:selectors' );
+const mc = global.document && global.document.documentElement && require( 'lib/analytics' ).mc;
+
+/**
+ * Returns the PostsQueryManager from the state tree for a given site ID (or
+ * for queries related to all sites at once).
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
+ * @return {Object}         Posts query manager
+ */
+function getQueryManager( state, siteId ) {
+	if ( ! siteId ) {
+		return state.posts.allSitesQueries;
+	}
+	return state.posts.queries[ siteId ] || null;
+}
 
 /**
  * Returns a post object by its global ID.
@@ -69,6 +90,12 @@ export const getNormalizedPost = createSelector(
  * @return {Array}         Site posts
  */
 export const getSitePosts = createSelector( ( state, siteId ) => {
+	if ( ! siteId ) {
+		debug( 'getSitePosts called without siteId', { siteId } );
+		mc.bumpStat( 'calypso_missing_site_id', 'getSitePosts' );
+		return null;
+	}
+
 	const manager = state.posts.queries[ siteId ];
 	if ( ! manager ) {
 		return [];
@@ -86,6 +113,12 @@ export const getSitePosts = createSelector( ( state, siteId ) => {
  * @return {?Object}        Post object
  */
 export const getSitePost = createSelector( ( state, siteId, postId ) => {
+	if ( ! siteId ) {
+		debug( 'getSitePost called without siteId', { siteId, postId } );
+		mc && mc.bumpStat( 'calypso_missing_site_id', 'getSitePost' );
+		return null;
+	}
+
 	const manager = state.posts.queries[ siteId ];
 	if ( ! manager ) {
 		return null;
@@ -99,13 +132,13 @@ export const getSitePost = createSelector( ( state, siteId, postId ) => {
  * posts have been received.
  *
  * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
  * @param  {Object}  query  Post query object
  * @return {?Array}         Posts for the post query
  */
-export const getSitePostsForQuery = createSelector(
+export const getPostsForQuery = createSelector(
 	( state, siteId, query ) => {
-		const manager = state.posts.queries[ siteId ];
+		const manager = getQueryManager( state, siteId );
 		if ( ! manager ) {
 			return null;
 		}
@@ -120,13 +153,18 @@ export const getSitePostsForQuery = createSelector(
 		// request's `found` value) but the items haven't been received. While
 		// we could impose this on the developer to accommodate, instead we
 		// simply return null when any `undefined` entries exist in the set.
+		//
+		// TODO this is known to be incorrect behavior in some cases, because
+		// the WP.com API skips unreadable posts entirely instead of including
+		// them in the results.  See the 'handles items missing from the first
+		// and last pages' test case for PaginatedQueryManager.
 		if ( includes( posts, undefined ) ) {
 			return null;
 		}
 
 		return posts.map( normalizePostForDisplay );
 	},
-	state => state.posts.queries,
+	state => [ state.posts.queries, state.posts.allSitesQueries ],
 	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
 );
 
@@ -135,30 +173,31 @@ export const getSitePostsForQuery = createSelector(
  * otherwise.
  *
  * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
  * @param  {Object}  query  Post query object
  * @return {Boolean}        Whether posts are being requested
  */
-export function isRequestingSitePostsForQuery( state, siteId, query ) {
+export function isRequestingPostsForQuery( state, siteId, query ) {
 	const serializedQuery = getSerializedPostsQuery( query, siteId );
 	return !! state.posts.queryRequests[ serializedQuery ];
 }
 
 /**
  * Returns the total number of items reported to be found for the given query,
- * or null if the total number of queryable posts if unknown.
+ * or null if the total number of queryable posts is unknown.
  *
  * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
  * @param  {Object}  query  Post query object
  * @return {?Number}        Total number of found items
  */
-export function getSitePostsFoundForQuery( state, siteId, query ) {
-	if ( ! state.posts.queries[ siteId ] ) {
+export function getPostsFoundForQuery( state, siteId, query ) {
+	const manager = getQueryManager( state, siteId );
+	if ( ! manager ) {
 		return null;
 	}
 
-	return state.posts.queries[ siteId ].getFound( query );
+	return manager.getFound( query );
 }
 
 /**
@@ -166,16 +205,17 @@ export function getSitePostsFoundForQuery( state, siteId, query ) {
  * total number of queryable posts if unknown.
  *
  * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
  * @param  {Object}  query  Post query object
  * @return {?Number}        Last posts page
  */
-export function getSitePostsLastPageForQuery( state, siteId, query ) {
-	if ( ! state.posts.queries[ siteId ] ) {
+export function getPostsLastPageForQuery( state, siteId, query ) {
+	const manager = getQueryManager( state, siteId );
+	if ( ! manager ) {
 		return null;
 	}
 
-	const pages = state.posts.queries[ siteId ].getNumberOfPages( query );
+	const pages = manager.getNumberOfPages( query );
 	if ( null === pages ) {
 		return null;
 	}
@@ -188,12 +228,12 @@ export function getSitePostsLastPageForQuery( state, siteId, query ) {
  * null if the total number of queryable posts if unknown.
  *
  * @param  {Object}   state  Global state tree
- * @param  {Number}   siteId Site ID
+ * @param  {?Number}  siteId Site ID, or `null` for all-sites queries
  * @param  {Object}   query  Post query object
  * @return {?Boolean}        Whether last posts page has been reached
  */
-export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
-	const lastPage = getSitePostsLastPageForQuery( state, siteId, query );
+export function isPostsLastPageForQuery( state, siteId, query = {} ) {
+	const lastPage = getPostsLastPageForQuery( state, siteId, query );
 	if ( null === lastPage ) {
 		return lastPage;
 	}
@@ -206,25 +246,25 @@ export function isSitePostsLastPageForQuery( state, siteId, query = {} ) {
  * known queried pages, or null if the posts for the query are not known.
  *
  * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
  * @param  {Object}  query  Post query object
  * @return {?Array}         Posts for the post query
  */
-export const getSitePostsForQueryIgnoringPage = createSelector(
+export const getPostsForQueryIgnoringPage = createSelector(
 	( state, siteId, query ) => {
-		const posts = state.posts.queries[ siteId ];
-		if ( ! posts ) {
+		const manager = getQueryManager( state, siteId );
+		if ( ! manager ) {
 			return null;
 		}
 
-		const itemsIgnoringPage = posts.getItemsIgnoringPage( query );
+		const itemsIgnoringPage = manager.getItemsIgnoringPage( query );
 		if ( ! itemsIgnoringPage ) {
 			return null;
 		}
 
 		return itemsIgnoringPage.map( normalizePostForDisplay );
 	},
-	state => state.posts.queries,
+	state => [ state.posts.queries, state.posts.allSitesQueries ],
 	( state, siteId, query ) => getSerializedPostsQueryWithoutPage( query, siteId )
 );
 
@@ -233,11 +273,11 @@ export const getSitePostsForQueryIgnoringPage = createSelector(
  * of page, or false otherwise.
  *
  * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
+ * @param  {?Number} siteId Site ID, or `null` for all-sites queries
  * @param  {Object}  query  Post query object
  * @return {Boolean}        Whether posts are being requested
  */
-export const isRequestingSitePostsForQueryIgnoringPage = createSelector(
+export const isRequestingPostsForQueryIgnoringPage = createSelector(
 	( state, siteId, query ) => {
 		const normalizedQueryWithoutPage = omit( getNormalizedPostsQuery( query ), 'page' );
 		return some( state.posts.queryRequests, ( isRequesting, serializedQuery ) => {
@@ -272,6 +312,12 @@ export const isRequestingSitePostsForQueryIgnoringPage = createSelector(
  * @return {Boolean}        Whether request is in progress
  */
 export function isRequestingSitePost( state, siteId, postId ) {
+	if ( ! siteId ) {
+		debug( 'isRequestingSitePost called without siteId', { siteId, postId } );
+		mc && mc.bumpStat( 'calypso_missing_site_id', 'isRequestingSitePost' );
+		return null;
+	}
+
 	if ( ! state.posts.siteRequests[ siteId ] ) {
 		return false;
 	}

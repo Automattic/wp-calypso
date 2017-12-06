@@ -26,9 +26,9 @@ import ListEnd from 'components/list-end';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { hasInitializedSites } from 'state/selectors';
 import {
-	getSitePostsForQueryIgnoringPage,
-	isRequestingSitePostsForQuery,
-	isSitePostsLastPageForQuery,
+	getPostsForQueryIgnoringPage,
+	isRequestingPostsForQuery,
+	isPostsLastPageForQuery,
 } from 'state/posts/selectors';
 
 const debug = debugFactory( 'calypso:my-sites:posts' );
@@ -347,9 +347,9 @@ const Posts = localize(
 
 const mapState = ( state, { query, siteId } ) => ( {
 	hasSites: hasInitializedSites( state ),
-	loading: isRequestingSitePostsForQuery( state, siteId, query ),
-	lastPage: !! isSitePostsLastPageForQuery( state, siteId, query ),
-	posts: getSitePostsForQueryIgnoringPage( state, siteId, query ) || [],
+	loading: isRequestingPostsForQuery( state, siteId, query ),
+	lastPage: !! isPostsLastPageForQuery( state, siteId, query ),
+	posts: getPostsForQueryIgnoringPage( state, siteId, query ) || [],
 } );
 
 const ConnectedPosts = connect( mapState )( Posts );
