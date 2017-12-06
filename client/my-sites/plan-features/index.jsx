@@ -122,6 +122,7 @@ class PlanFeatures extends Component {
 			isLandingPage,
 			site,
 			basePlansPath,
+			selectedPlan,
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -189,6 +190,7 @@ class PlanFeatures extends Component {
 						isPopular={ popular }
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
+						selectedPlan={ selectedPlan }
 					/>
 					<FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
 						{ this.renderMobileFeatures( features ) }
