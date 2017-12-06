@@ -35,12 +35,12 @@ const CheckboxField = ( props ) => {
 	);
 };
 
-CheckboxField.PropTypes = {
-	fieldName: PropTypes.string.isRequired,
+CheckboxField.propTypes = {
+	fieldName: PropTypes.string,
 	explanationText: PropTypes.string,
 	placeholderText: PropTypes.string,
 	value: PropTypes.bool,
-	edit: PropTypes.func.isRequired,
+	edit: PropTypes.func,
 };
 
 export default CheckboxField;

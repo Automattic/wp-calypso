@@ -43,14 +43,14 @@ const NumberField = ( props ) => {
 	);
 };
 
-NumberField.PropTypes = {
-	fieldName: PropTypes.string.isRequired,
+NumberField.propTypes = {
+	fieldName: PropTypes.string,
 	explanationText: PropTypes.string,
 	placeholderText: PropTypes.string,
 	value: PropTypes.number,
 	minValue: PropTypes.number,
 	maxValue: PropTypes.number,
-	edit: PropTypes.func.isRequired,
+	edit: PropTypes.func,
 };
 
 export default NumberField;

@@ -32,12 +32,12 @@ const TextField = ( props ) => {
 	);
 };
 
-TextField.PropTypes = {
-	fieldName: PropTypes.string.isRequired,
+TextField.propTypes = {
+	fieldName: PropTypes.string,
 	explanationText: PropTypes.string,
 	placeholderText: PropTypes.string,
 	value: PropTypes.number,
-	edit: PropTypes.func.isRequired,
+	edit: PropTypes.func,
 };
 
 export default TextField;
