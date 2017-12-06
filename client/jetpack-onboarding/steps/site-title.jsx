@@ -46,16 +46,22 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 				<Card>
 					<form>
 						<FormFieldset>
-							<FormLabel>{ translate( 'Site Title' ) }</FormLabel>
-							<FormTextInput onChange={ this.setTitle } value={ this.state.title } />
-
-							<FormLabel>{ translate( 'Site Description' ) }</FormLabel>
-							<FormTextarea onChange={ this.setDescription } value={ this.state.description } />
-
-							<Button href={ this.props.getForwardUrl() } primary>
-								{ translate( 'Next Step' ) }
-							</Button>
+							<FormLabel htmlFor="title">{ translate( 'Site Title' ) }</FormLabel>
+							<FormTextInput id="title" onChange={ this.setTitle } value={ this.state.title } />
 						</FormFieldset>
+
+						<FormFieldset>
+							<FormLabel htmlFor="description">{ translate( 'Site Description' ) }</FormLabel>
+							<FormTextarea
+								id="description"
+								onChange={ this.setDescription }
+								value={ this.state.description }
+							/>
+						</FormFieldset>
+
+						<Button href={ this.props.getForwardUrl() } primary>
+							{ translate( 'Next Step' ) }
+						</Button>
 					</form>
 				</Card>
 			</Main>
