@@ -5,6 +5,7 @@
  */
 import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,12 +18,20 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import { saveSiteSettings } from 'state/site-settings/actions';
+import { getSiteSettings } from 'state/site-settings/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
-	state = {
-		description: '',
-		title: '',
-	};
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			description: props.siteSettings.blogname,
+			title: props.siteSettings.blogdescription,
+		};
+	}
 
 	setDescription = event => {
 		this.setState( { description: event.target.value } );
@@ -33,7 +42,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { siteId, translate } = this.props;
 		const headerText = translate( "Let's get started." );
 		const subHeaderText = translate(
 			'First up, what would you like to name your site and have as its public description?'
@@ -41,6 +50,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 
 		return (
 			<Fragment>
+				<QuerySiteSettings siteId={ siteId } />
 				<DocumentHead title={ translate( 'Site Title ‹ Jetpack Onboarding' ) } />
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
@@ -75,4 +85,14 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	}
 }
 
-export default localize( JetpackOnboardingSiteTitleStep );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			siteId,
+			siteSettings: getSiteSettings( state, siteId ),
+		};
+	},
+	{ saveSiteSettings }
+)( localize( JetpackOnboardingSiteTitleStep ) );
