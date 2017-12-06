@@ -19,6 +19,7 @@ import CommentEdit from 'my-sites/comments/comment/comment-edit';
 import CommentHeader from 'my-sites/comments/comment/comment-header';
 import CommentReply from 'my-sites/comments/comment/comment-reply';
 import QueryComment from 'components/data/query-comment';
+import scrollTo from 'lib/scroll-to';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -38,13 +39,38 @@ export class Comment extends Component {
 	};
 
 	state = {
+		hasScrolled: false,
 		isEditMode: false,
 		isReplyVisible: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
 		const { isBulkMode: wasBulkMode } = this.props;
-		const { isBulkMode } = nextProps;
+		const { commentId, isBulkMode, isLoading } = nextProps;
+		const { hasScrolled } = this.state;
+
+		if (
+			! hasScrolled &&
+			! isLoading &&
+			!! window &&
+			`#comment-${ commentId }` === window.location.hash
+		) {
+			const commentNode = ReactDom.findDOMNode( this.commentCard );
+			const commentOffsetTop = commentNode.offsetTop - 56;
+			window.requestAnimationFrame( () =>
+				scrollTo( {
+					x: 0,
+					y: commentOffsetTop,
+					duration: 300,
+					onComplete: () => {
+						if ( commentOffsetTop !== window.scrollY ) {
+							window.scrollTo( 0, commentOffsetTop );
+						}
+						this.setState( { hasScrolled: true } );
+					},
+				} )
+			);
+		}
 
 		this.setState( ( { isEditMode, isReplyVisible } ) => ( {
 			isEditMode: wasBulkMode !== isBulkMode ? false : isEditMode,
@@ -115,6 +141,7 @@ export class Comment extends Component {
 		return (
 			<Card
 				className={ classes }
+				id={ `comment-${ commentId }` }
 				onClick={ isBulkMode ? this.toggleSelected : undefined }
 				onKeyDown={ this.keyDownHandler }
 				ref={ this.storeCardRef }

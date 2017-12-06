@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import page from 'page';
 import { get } from 'lodash';
 
 /**
@@ -24,10 +25,18 @@ export class CommentPostLink extends PureComponent {
 		isBulkMode: PropTypes.bool,
 	};
 
-	handleClick = () => {
+	handleClick = event => {
+		event.preventDefault();
+
+		const { commentId, postId, siteSlug, status } = this.props;
+
 		if ( window ) {
 			window.scrollTo( 0, 0 );
 		}
+
+		window.history.replaceState( null, null, `#comment-${ commentId }` );
+
+		page( `/comments/${ status }/${ siteSlug }/${ postId }` );
 	};
 
 	render() {
