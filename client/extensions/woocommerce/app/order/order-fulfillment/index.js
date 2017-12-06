@@ -143,6 +143,10 @@ class OrderFulfillment extends Component {
 
 	isAddressValidForLabels( address ) {
 		const { labelCountriesData } = this.props;
+		if ( ! labelCountriesData ) {
+			return false;
+		}
+
 		const countryData = labelCountriesData[ address.country ];
 
 		//country not supported
