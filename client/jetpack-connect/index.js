@@ -44,14 +44,15 @@ export default function() {
 		page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
 	);
 
+	page( '/jetpack/connect/plans', '/jetpack/connect/store' );
+	page( '/jetpack/connect/plans/:site', siteSelection, controller.plansSelection );
+	page( '/jetpack/connect/plans/:interval/:site', siteSelection, controller.plansSelection );
+
 	page(
 		'/jetpack/connect/:locale?',
 		controller.redirectWithoutLocaleifLoggedIn,
 		controller.connect
 	);
-
-	page( '/jetpack/connect/plans/:site', siteSelection, controller.plansSelection );
-	page( '/jetpack/connect/plans/:interval/:site', siteSelection, controller.plansSelection );
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso );
 	page( '/jetpack/sso/*', controller.sso );
