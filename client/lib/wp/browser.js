@@ -56,8 +56,10 @@ if ( config.isEnabled( 'support-user' ) ) {
 	wpcom = wpcomSupport( wpcom );
 }
 
-// expose wpcom global var only in development
-if ( 'development' === config( 'env' ) ) {
+if ( 'development' === process.env.NODE_ENV ) {
+	require( './offline-library' ).makeOffline( wpcom );
+
+	// expose wpcom global var only in development
 	const wpcomPKG = require( 'wpcom/package' );
 	window.wpcom = wpcom;
 	window.wpcom.__version = wpcomPKG.version;
