@@ -270,3 +270,12 @@ export const canPurchase = createSelector(
 export const areLabelsFullyLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return isLoaded( state, orderId, siteId ) && areSettingsLoaded( state, siteId ) && arePackagesLoaded( state, siteId );
 };
+
+export const getCountriesData = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! isLoaded( state, orderId, siteId ) ) {
+		return null;
+	}
+
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	return shippingLabel.storeOptions.countriesData;
+};

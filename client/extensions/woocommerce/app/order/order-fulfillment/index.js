@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { first, includes } from 'lodash';
+import { first } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +31,7 @@ import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shippin
 import {
 	getLabels,
 	areLabelsFullyLoaded,
+	getCountriesData,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import {
 	areLabelsEnabled,
@@ -140,27 +141,39 @@ class OrderFulfillment extends Component {
 		}
 	};
 
-	shouldShowLabels() {
-		const { labelsLoaded, labelsEnabled, order, storeAddress, hasLabelsPaymentMethod } = this.props;
+	isAddressValidForLabels( address ) {
+		const { labelCountriesData } = this.props;
+		const countryData = labelCountriesData[ address.country ];
 
-		if ( ! wcsEnabled ) {
+		//country not supported
+		if ( ! countryData ) {
 			return false;
 		}
 
-		if ( ! storeAddress || ! includes( [ 'US', 'PR' ], storeAddress.country ) ) {
+		//supported country doesn't have a states data
+		if ( ! countryData.states ) {
+			return true;
+		}
+
+		//check if the address state is supported
+		return Boolean( countryData.states[ address.state ] );
+	}
+
+	shouldShowLabels() {
+		const { labelsLoaded, labelsEnabled, order, storeAddress, hasLabelsPaymentMethod } = this.props;
+
+		if ( ! wcsEnabled || ! labelsLoaded ) {
 			return false;
 		}
 
 		const { shipping } = order;
-		if ( ! includes( [ 'US', 'PR' ], shipping.country ) ) {
-			return false;
-		}
 
-		if ( 'US' === shipping.country && includes( [ 'AA', 'AE', 'AP' ], shipping.state ) ) {
-			return false;
-		}
-
-		return labelsLoaded && labelsEnabled && hasLabelsPaymentMethod;
+		return (
+			labelsEnabled &&
+			hasLabelsPaymentMethod &&
+			this.isAddressValidForLabels( storeAddress ) &&
+			this.isAddressValidForLabels( shipping )
+		);
 	}
 
 	renderFulfillmentAction() {
@@ -282,6 +295,7 @@ export default connect(
 		const hasLabelsPaymentMethod =
 			wcsEnabled && labelsLoaded && getSelectedPaymentMethodId( state, site.ID );
 		const storeAddress = labelsLoaded && getStoreLocation( state );
+		const labelCountriesData = getCountriesData( state, order.id, site.ID );
 
 		return {
 			labelsLoaded,
@@ -289,6 +303,7 @@ export default connect(
 			labels: getLabels( state, order.id, site.ID ),
 			hasLabelsPaymentMethod,
 			storeAddress,
+			labelCountriesData,
 		};
 	},
 	dispatch => bindActionCreators( { createNote, saveOrder, openPrintingFlow }, dispatch )
