@@ -135,4 +135,12 @@ export default {
 		},
 		defaultVariation: 'control',
 	},
+	alisterIsAmazing: {
+		datestamp: '20171205',
+		variations: {
+			yes: 80,
+			no: 20,
+		},
+		defaultVariation: 'yes',
+	},
 };
