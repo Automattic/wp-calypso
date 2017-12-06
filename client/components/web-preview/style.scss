@@ -97,9 +97,14 @@
 
 .web-preview__close.button {
 	border-right: 1px solid lighten( $gray, 25% );
-	padding: 6px 32px;
+	padding: 6px 16px;
+	min-width: 80px;
 	color: $blue-wordpress;
 	border-radius: 0;
+
+	@include breakpoint( ">960px" ) {
+		padding: 6px 32px;
+	}
 
 	&:hover {
 		color: $blue-medium;
