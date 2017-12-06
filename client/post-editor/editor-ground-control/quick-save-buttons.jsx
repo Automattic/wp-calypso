@@ -15,6 +15,20 @@ import { isEnabled } from 'config';
 import HistoryButton from 'post-editor/editor-ground-control/history-button';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 
+export const isSaveAvailableFn = ( {
+	isSaving = false,
+	isSaveBlocked = false,
+	isDirty = false,
+	hasContent = false,
+	post = null,
+} ) =>
+	! isSaving &&
+	! isSaveBlocked &&
+	isDirty &&
+	hasContent &&
+	!! post &&
+	! postUtils.isPublished( post );
+
 const QuickSaveButtons = ( {
 	isSaving,
 	isSaveBlocked,
@@ -35,13 +49,13 @@ const QuickSaveButtons = ( {
 		recordStat( 'save_draft_clicked' );
 	};
 
-	const isSaveAvailable =
-		! isSaving &&
-		! isSaveBlocked &&
-		isDirty &&
-		hasContent &&
-		!! post &&
-		! postUtils.isPublished( post );
+	const isSaveAvailable = isSaveAvailableFn( {
+		isSaving,
+		isSaveBlocked,
+		isDirty,
+		hasContent,
+		post,
+	} );
 
 	const showingStatusLabel = isSaving || ( post && post.ID && ! postUtils.isPublished( post ) );
 	const showingSaveStatus = isSaveAvailable || showingStatusLabel;
@@ -95,6 +109,14 @@ QuickSaveButtons.propTypes = {
 
 	// localize
 	translate: PropTypes.func,
+};
+
+QuickSaveButtons.defaultProps = {
+	hasContent: false,
+	isDirty: false,
+	isSaveBlocked: false,
+	isSaving: false,
+	post: null,
 };
 
 export default localize( QuickSaveButtons );

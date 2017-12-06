@@ -14,6 +14,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { EditorGroundControl } from '../';
+import { isSaveAvailableFn } from '../quick-save-buttons';
 
 jest.mock( 'blocks/site', () => require( 'components/empty-component' ) );
 jest.mock( 'components/card', () => require( 'components/empty-component' ) );
@@ -68,50 +69,6 @@ describe( 'EditorGroundControl', () => {
 		} );
 	} );
 
-	describe( '#isSaveAvailable()', () => {
-		test( 'should return false if form is saving', () => {
-			var tree = shallow( <EditorGroundControl isSaving /> ).instance();
-
-			expect( tree.isSaveAvailable() ).to.be.false;
-		} );
-
-		test( 'should return false if saving is blocked', () => {
-			var tree = shallow( <EditorGroundControl isSaveBlocked /> ).instance();
-
-			expect( tree.isSaveAvailable() ).to.be.false;
-		} );
-
-		test( 'should return false if post does not exist', () => {
-			var tree = shallow(
-				<EditorGroundControl isSaving={ false } hasContent isDirty />
-			).instance();
-
-			expect( tree.isSaveAvailable() ).to.be.false;
-		} );
-
-		test( 'should return true if dirty and post has content and post is not published', () => {
-			var tree = shallow(
-				<EditorGroundControl isSaving={ false } post={ {} } hasContent isDirty />
-			).instance();
-
-			expect( tree.isSaveAvailable() ).to.be.true;
-		} );
-
-		test( 'should return false if dirty, but post has no content', () => {
-			var tree = shallow( <EditorGroundControl isSaving={ false } isDirty /> ).instance();
-
-			expect( tree.isSaveAvailable() ).to.be.false;
-		} );
-
-		test( 'should return false if dirty and post is published', () => {
-			var tree = shallow(
-				<EditorGroundControl isSaving={ false } post={ { status: 'publish' } } isDirty />
-			).instance();
-
-			expect( tree.isSaveAvailable() ).to.be.false;
-		} );
-	} );
-
 	describe( '#isPreviewEnabled()', () => {
 		test( 'should return true if post is not empty', () => {
 			var tree = shallow( <EditorGroundControl post={ {} } isNew hasContent isDirty /> ).instance();
@@ -141,6 +98,37 @@ describe( 'EditorGroundControl', () => {
 			var tree = shallow( <EditorGroundControl post={ {} } hasContent={ false } /> ).instance();
 
 			expect( tree.isPreviewEnabled() ).to.be.false;
+		} );
+	} );
+} );
+
+describe( 'QuickSaveButtons', () => {
+	describe( '#isSaveAvailableFn()', () => {
+		test( 'should return false if form is saving', () => {
+			expect( isSaveAvailableFn( { isSaving: true } ) ).to.be.false;
+		} );
+
+		test( 'should return false if saving is blocked', () => {
+			expect( isSaveAvailableFn( { isSaveBlocked: true } ) ).to.be.false;
+		} );
+
+		test( 'should return false if post does not exist', () => {
+			expect( isSaveAvailableFn( { isSaving: false, hasContent: true, isDirty: true } ) ).to.be
+				.false;
+		} );
+
+		test( 'should return true if dirty and post has content and post is not published', () => {
+			expect( isSaveAvailableFn( { isSaving: false, post: {}, hasContent: true, isDirty: true } ) )
+				.to.be.true;
+		} );
+
+		test( 'should return false if dirty, but post has no content', () => {
+			expect( isSaveAvailableFn( { isSaving: false, isDirty: true } ) ).to.be.false;
+		} );
+
+		test( 'should return false if dirty and post is published', () => {
+			expect( isSaveAvailableFn( { isSaving: false, post: { status: 'publish' }, isDirty: true } ) )
+				.to.be.false;
 		} );
 	} );
 } );
