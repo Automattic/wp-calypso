@@ -19,9 +19,10 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/a
 import { getSiteComments } from 'state/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 export const CommentListHeader = ( {
+	onBack,
 	postDate,
 	postId,
 	postTitle,
@@ -29,7 +30,6 @@ export const CommentListHeader = ( {
 	recordReaderArticleOpened,
 	site,
 	siteId,
-	siteSlug,
 	translate,
 } ) => {
 	const formattedDate = postDate
@@ -47,8 +47,8 @@ export const CommentListHeader = ( {
 				actionIcon="visible"
 				actionOnClick={ recordReaderArticleOpened }
 				actionText={ translate( 'View Post' ) }
-				backHref={ `/comments/all/${ siteSlug }` }
 				alwaysShowActionText
+				onClick={ onBack }
 			>
 				<div className="comment-list__header-title">
 					{ translate( 'Comments on {{span}}%(postTitle)s{{/span}}', {
@@ -65,7 +65,6 @@ export const CommentListHeader = ( {
 const mapStateToProps = ( state, { postId } ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
 	const post = getSitePost( state, siteId, postId );
 	const postDate = get( post, 'date' );
 	const postTitle = decodeEntities(
@@ -83,7 +82,6 @@ const mapStateToProps = ( state, { postId } ) => {
 		postUrl: isJetpack ? get( post, 'URL' ) : `/read/blogs/${ siteId }/posts/${ postId }`,
 		site,
 		siteId,
-		siteSlug,
 	};
 };
 

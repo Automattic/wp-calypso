@@ -51,6 +51,7 @@ export class CommentList extends Component {
 		comments: PropTypes.array,
 		deleteComment: PropTypes.func,
 		likeComment: PropTypes.func,
+		onBack: PropTypes.func,
 		recordBulkAction: PropTypes.func,
 		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
@@ -416,6 +417,7 @@ export class CommentList extends Component {
 			isCommentsTreeSupported,
 			isLoading,
 			isPostView,
+			onBack,
 			page,
 			postId,
 			siteBlacklist,
@@ -450,7 +452,7 @@ export class CommentList extends Component {
 				) }
 				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
 
-				{ isPostView && <CommentListHeader postId={ postId } /> }
+				{ isPostView && <CommentListHeader onBack={ onBack } postId={ postId } /> }
 
 				<CommentNavigation
 					commentsPage={ commentsPage }

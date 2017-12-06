@@ -48,6 +48,10 @@ const changePage = path => pageNumber => {
 	return page( addQueryArgs( { page: pageNumber }, path ) );
 };
 
+const handleBackButton = ( context, siteFragment ) => () => {
+	page.back( context.lastRoute || `/comments/all/${ siteFragment }` );
+};
+
 export const siteComments = context => {
 	const { params, path, query } = context;
 	const siteFragment = route.getSiteFragment( path );
@@ -92,6 +96,7 @@ export const postComments = context => {
 	renderWithReduxStore(
 		<CommentsManagement
 			changePage={ changePage( path ) }
+			onBack={ handleBackButton( context, siteFragment ) }
 			page={ pageNumber }
 			postId={ postId }
 			siteFragment={ siteFragment }

@@ -30,6 +30,7 @@ import { infoNotice } from 'state/notices/actions';
 export class CommentsManagement extends Component {
 	static propTypes = {
 		comments: PropTypes.array,
+		onBack: PropTypes.func,
 		page: PropTypes.number,
 		postId: PropTypes.number,
 		showPermissionError: PropTypes.bool,
@@ -54,9 +55,10 @@ export class CommentsManagement extends Component {
 	render() {
 		const {
 			changePage,
-			showJetpackUpdateScreen,
+			onBack,
 			page,
 			postId,
+			showJetpackUpdateScreen,
 			showPermissionError,
 			siteId,
 			siteFragment,
@@ -97,6 +99,7 @@ export class CommentsManagement extends Component {
 					! showPermissionError && (
 						<CommentList
 							changePage={ changePage }
+							onBack={ onBack }
 							order={ 'desc' }
 							page={ page }
 							postId={ postId }
