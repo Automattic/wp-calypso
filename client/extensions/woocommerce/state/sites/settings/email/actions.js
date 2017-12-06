@@ -1,4 +1,12 @@
 /**
+ * External dependencies
+ *
+ * @format
+ */
+
+import { forEach, reduce, omit } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import request from 'woocommerce/state/sites/request';
@@ -8,6 +16,9 @@ import {
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
 	WOOCOMMERCE_EMAIL_SETTINGS_SAVE_SETTINGS,
+	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT,
+	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS,
+	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_FAILURE,
 } from 'woocommerce/state/action-types';
 import { areEmailSettingsLoaded, areEmailSettingsLoading } from './selectors';
 
@@ -40,7 +51,7 @@ export const fetchEmailSettings = siteId => ( dispatch, getState ) => {
 		} );
 };
 
-export const emailSettingChange = ( siteId, setting ) => ( dispatch ) => {
+export const emailSettingChange = ( siteId, setting ) => dispatch => {
 	dispatch( {
 		type: WOOCOMMERCE_EMAIL_SETTINGS_CHANGE,
 		siteId,
@@ -57,7 +68,7 @@ export const emailSettingChange = ( siteId, setting ) => ( dispatch ) => {
  * @param  {Object}        newsLetter  MailChimp newsletter settings object
  * @return {Function}                  Action thunk
  */
-export const emailSettingsSaveSettings = ( siteId ) => ( dispatch ) => {
+export const emailSettingsSaveSettings = siteId => dispatch => {
 	if ( null == siteId ) {
 		return;
 	}
@@ -66,4 +77,53 @@ export const emailSettingsSaveSettings = ( siteId ) => ( dispatch ) => {
 		type: WOOCOMMERCE_EMAIL_SETTINGS_SAVE_SETTINGS,
 		siteId,
 	} );
+};
+
+const settingsSubmit = siteId => ( {
+	type: WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT,
+	siteId,
+} );
+
+const settingsSubmitSuccess = ( siteId, settings ) => ( {
+	type: WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS,
+	siteId,
+	settings,
+} );
+
+const settingsSubmitFailure = ( siteId, { error } ) => ( {
+	type: WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_FAILURE,
+	siteId,
+	error,
+} );
+
+export const emailSettingsSubmitSettings = ( siteId, settings ) => dispatch => {
+	if ( null == siteId ) {
+		return;
+	}
+
+	dispatch( settingsSubmit( siteId ) );
+
+	const update = reduce(
+		omit( settings, [ 'save', 'isSaving', 'error' ] ),
+		( result, options, group_id ) => {
+			forEach( options, ( value, id ) => {
+				result.push( {
+					group_id,
+					id,
+					value,
+				} );
+			} );
+			return result;
+		},
+		[]
+	);
+
+	return request( siteId )
+		.post( 'settings/batch', { update } )
+		.then( data => {
+			dispatch( settingsSubmitSuccess( siteId, data ) );
+		} )
+		.catch( error => {
+			dispatch( settingsSubmitFailure( siteId, error ) );
+		} );
 };

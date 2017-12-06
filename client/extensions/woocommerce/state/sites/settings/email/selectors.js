@@ -39,6 +39,16 @@ export const areEmailSettingsLoading = ( state, siteId = getSelectedSiteId( stat
 	return LOADING === getEmailSettings( state, siteId );
 };
 
+const getField = ( field, defaultValue ) => {
+	return ( state, siteId = getSelectedSiteId( state ) ) => {
+		return get(
+			state,
+			[ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'email', field ],
+			defaultValue
+		);
+	};
+};
+
 /**
  * Returns true if user requested save action in Email Settings.
  *
@@ -46,10 +56,22 @@ export const areEmailSettingsLoading = ( state, siteId = getSelectedSiteId( stat
  * @param  {Number}  siteId Site ID
  * @return {Boolean}        Whether user requested save action.
  */
-export const isSavingEmailSettings = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get(
-		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'email', 'save' ],
-		false
-	);
-};
+export const emailSettingsSaveRequest = getField( 'save', false );
+
+/**
+ * Returns true if email settings are being saved.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean}        Whether user requested save action.
+ */
+export const isSavingEmailSettings = getField( 'isSaving', false );
+
+/**
+ * Returns true if email settings are being saved.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean}        Whether user requested save action.
+ */
+export const emailSettingsSubmitSettingsError = getField( 'error', false );

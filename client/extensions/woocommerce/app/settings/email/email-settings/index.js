@@ -16,12 +16,17 @@ import { connect } from 'react-redux';
 import {
 	fetchEmailSettings,
 	emailSettingChange,
+	emailSettingsSubmitSettings,
 } from 'woocommerce/state/sites/settings/email/actions';
 import {
 	getEmailSettings,
 	areEmailSettingsLoading,
 	areEmailSettingsLoaded,
+	emailSettingsSaveRequest,
+	isSavingEmailSettings,
+	emailSettingsSubmitSettingsError,
 } from 'woocommerce/state/sites/settings/email/selectors';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import CustomerNotification from './components/customer-notification';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import InternalNotification from './components/internal-notification';
@@ -106,17 +111,27 @@ class Settings extends React.Component {
 		this.fetchSettings( this.props );
 	};
 
-	componentWillReceiveProps = newProps => {
-		if ( newProps.siteId !== this.props.siteId ) {
-			this.fetchSettings( newProps );
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.siteId !== this.props.siteId ) {
+			this.fetchSettings( nextProps );
 		}
-	};
 
-	onSave = () => {
-		const { siteId, submitEmailSettings: submit } = this.props;
-		const message = {};
-		submit( siteId, message );
-	};
+		// Save settings request
+		if ( ! this.props.saveSettingsRequest && nextProps.saveSettingsRequest ) {
+			nextProps.loaded && nextProps.submit( nextProps.siteId, nextProps.settings );
+		}
+
+		// Settings save request finished.
+		if ( ! nextProps.isSaving && this.props.isSaving ) {
+			if ( nextProps.submitError ) {
+				nextProps.errorNotice(
+					translate( 'There was a problem saving the email settings. Please try again.' )
+				);
+			} else {
+				nextProps.successNotice( translate( 'Email settings saved.' ), { duration: 4000 } );
+			}
+		}
+	}
 
 	onChange = event => {
 		const { onChange, siteId } = this.props;
@@ -226,6 +241,9 @@ function mapStateToProps( state, props ) {
 			: {},
 		loading: areEmailSettingsLoading( state, props.siteId ),
 		loaded: areEmailSettingsLoaded( state, props.siteId ),
+		saveSettingsRequest: emailSettingsSaveRequest( state, props.siteId ),
+		isSaving: isSavingEmailSettings( state, props.siteId ),
+		submitError: emailSettingsSubmitSettingsError( state, props.siteId ),
 	};
 }
 
@@ -234,6 +252,9 @@ function mapDispatchToProps( dispatch ) {
 		{
 			onChange: emailSettingChange,
 			fetchSettings: fetchEmailSettings,
+			submit: emailSettingsSubmitSettings,
+			errorNotice,
+			successNotice,
 		},
 		dispatch
 	);
