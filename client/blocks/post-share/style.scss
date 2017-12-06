@@ -283,6 +283,10 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	}
 }
 
+.post-share__actions-list-upgrade-nudge.has-call-to-action .banner__action {
+	margin-right: 0;
+}
+
 .post-share .post-share__footer-nav {
 	margin: 0;
 	box-shadow: none;
