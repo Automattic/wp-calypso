@@ -25,8 +25,8 @@ function getDisplayedTimeFromPost( moment, post ) {
 	const { status, modified, date } = post;
 	const time = moment( includes( [ 'draft', 'pending' ], status ) ? modified : date );
 	if ( time.isBefore( moment().subtract( 7, 'days' ) ) ) {
-		// Like "August 30, 2017 4:46 PM" in English locale
-		return time.format( 'LLL' );
+		// Like "Mar 15, 2013 6:23 PM" in English locale
+		return time.format( 'lll' );
 	}
 
 	// Like "3 days ago" in English locale

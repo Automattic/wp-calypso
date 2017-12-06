@@ -32,7 +32,7 @@ describe( 'PostTime', () => {
 		const wrapper = shallow( <PostTime post={ post } moment={ moment } /> );
 
 		const text = wrapper.text();
-		expect( text ).to.equal( moment( post.modified ).format( 'LLL' ) );
+		expect( text ).to.equal( moment( post.modified ).format( 'lll' ) );
 	} );
 
 	test( 'should use the modified date if the post status is pending', () => {
@@ -45,7 +45,7 @@ describe( 'PostTime', () => {
 		const wrapper = shallow( <PostTime post={ post } moment={ moment } /> );
 
 		const text = wrapper.text();
-		expect( text ).to.equal( moment( post.modified ).format( 'LLL' ) );
+		expect( text ).to.equal( moment( post.modified ).format( 'lll' ) );
 	} );
 
 	test( 'should use the actual date if the post status is not pending/draft', () => {
@@ -58,7 +58,7 @@ describe( 'PostTime', () => {
 		const wrapper = shallow( <PostTime post={ post } moment={ moment } /> );
 
 		const text = wrapper.text();
-		expect( text ).to.equal( moment( post.date ).format( 'LLL' ) );
+		expect( text ).to.equal( moment( post.date ).format( 'lll' ) );
 	} );
 
 	test( 'should use a human-readable approximation for recent dates', () => {
