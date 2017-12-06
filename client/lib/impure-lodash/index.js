@@ -9,9 +9,3 @@ import {
 	isPlainObject, // may need to inject behaviors based on browser/non-browser
 	uniqueId, // depends on previous calls
 } from 'lodash';
-
-export default {
-	debounce,
-	isPlainObject,
-	uniqueId,
-};
