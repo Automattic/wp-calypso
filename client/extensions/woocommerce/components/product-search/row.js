@@ -191,7 +191,7 @@ class ProductSearchRow extends Component {
 		if ( isVariableProduct( product ) ) {
 			return (
 				<span>
-					<span>{ nameWithPrice }</span>
+					<span>{ product.name }</span>
 					<Button compact onClick={ this.toggleCustomizeForm }>
 						{ translate( 'Select variations' ) }
 					</Button>
