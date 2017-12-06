@@ -42,35 +42,39 @@ class PostActionCounts extends PureComponent {
 	}
 
 	renderLikeCount() {
-		const { likeCount: count, numberFormat, translate } = this.props;
+		const { likeCount: count, numberFormat, postId, siteSlug, translate } = this.props;
 
 		return (
 			<li>
-				{ translate(
-					'%(count)s Like',
-					'%(count)s Likes',
-					{
-						count,
-						args: { count: numberFormat( count ) },
-					}
-				) }
+				<a href={ `/stats/post/${ postId }/${ siteSlug }` }>
+					{ translate(
+						'%(count)s Like',
+						'%(count)s Likes',
+						{
+							count,
+							args: { count: numberFormat( count ) },
+						}
+					) }
+				</a>
 			</li>
 		);
 	}
 
 	renderViewCount() {
-		const { viewCount: count, numberFormat, translate } = this.props;
+		const { viewCount: count, numberFormat, postId, siteSlug, translate } = this.props;
 
 		return (
 			<li>
-				{ translate(
-					'%(count)s View',
-					'%(count)s Views',
-					{
-						count,
-						args: { count: numberFormat( count ) },
-					}
-				) }
+				<a href={ `/stats/post/${ postId }/${ siteSlug }` }>
+					{ translate(
+						'%(count)s View',
+						'%(count)s Views',
+						{
+							count,
+							args: { count: numberFormat( count ) },
+						}
+					) }
+				</a>
 			</li>
 		);
 	}
