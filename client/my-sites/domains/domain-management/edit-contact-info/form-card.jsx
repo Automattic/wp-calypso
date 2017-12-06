@@ -43,6 +43,11 @@ class EditContactInfoFormCard extends React.Component {
 		selectedDomain: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		currentUser: PropTypes.object.isRequired,
+		needsUpdate: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		needsUpdate: false,
 	};
 
 	constructor( props ) {

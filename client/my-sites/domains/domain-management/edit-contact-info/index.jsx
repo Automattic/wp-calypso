@@ -22,7 +22,6 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
 import paths from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
-import { findRegistrantWhois } from 'lib/domains/whois/utils';
 import SectionHeader from 'components/section-header';
 import { registrar as registrarNames } from 'lib/domains/constants';
 
@@ -40,7 +39,7 @@ class EditContactInfo extends React.Component {
 		}
 
 		return (
-			<Main className="domain-management-edit-contact-info">
+			<Main className="edit-contact-info">
 				<Header
 					onClick={ this.goToContactsPrivacy }
 					selectedDomainName={ this.props.selectedDomainName }
@@ -76,7 +75,7 @@ class EditContactInfo extends React.Component {
 			<div>
 				<SectionHeader label={ this.props.translate( 'Edit Contact Info' ) } />
 				<EditContactInfoFormCard
-					contactInformation={ findRegistrantWhois( this.props.whois.data ) }
+					contactInformation={ this.props.whois.registrantContactDetails }
 					selectedDomain={ getSelectedDomain( this.props ) }
 					selectedSite={ this.props.selectedSite }
 				/>
