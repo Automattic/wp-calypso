@@ -16,15 +16,18 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { recordGoogleEvent as recordGoogleEventAction } from 'state/analytics/actions';
+import { isRtl as isRtlSelector } from 'state/selectors';
 
 class StatsPeriodNavigation extends PureComponent {
 	static propTypes = {
 		onPeriodChange: PropTypes.func,
 		hidePreviousArrow: PropTypes.bool,
+		isRtl: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		hidePreviousArrow: false,
+		isRtl: false,
 	};
 
 	handleClickNext = () => {
@@ -49,7 +52,7 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	render() {
-		const { children, date, moment, period, url, hidePreviousArrow } = this.props;
+		const { children, date, moment, period, url, hidePreviousArrow, isRtl } = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
 		const previousDay = moment( date )
@@ -69,7 +72,7 @@ class StatsPeriodNavigation extends PureComponent {
 						href={ `${ url }?startDate=${ previousDay }` }
 						onClick={ this.handleClickPrevious }
 					>
-						<Gridicon icon="arrow-left" size={ 18 } />
+						<Gridicon icon={ isRtl ? 'arrow-right' : 'arrow-left' } size={ 18 } />
 					</a>
 				}
 				<div className="stats-period-navigation__children">{ children }</div>
@@ -79,7 +82,7 @@ class StatsPeriodNavigation extends PureComponent {
 						href={ `${ url }?startDate=${ nextDay }` }
 						onClick={ this.handleClickNext }
 					>
-						<Gridicon icon="arrow-right" size={ 18 } />
+						<Gridicon icon={ isRtl ? 'arrow-left' : 'arrow-right' } size={ 18 } />
 					</a>
 				) }
 				{ isToday && (
@@ -92,6 +95,11 @@ class StatsPeriodNavigation extends PureComponent {
 	}
 }
 
-const connectComponent = connect( null, { recordGoogleEvent: recordGoogleEventAction } );
+const connectComponent = connect(
+	state => ( {
+		isRtl: isRtlSelector( state ),
+	} ),
+	{ recordGoogleEvent: recordGoogleEventAction }
+);
 
 export default flowRight( connectComponent, localize )( StatsPeriodNavigation );
