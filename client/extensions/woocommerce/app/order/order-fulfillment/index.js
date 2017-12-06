@@ -166,7 +166,7 @@ class OrderFulfillment extends Component {
 	shouldShowLabels() {
 		const { labelsLoaded, labelsEnabled, order, storeAddress, hasLabelsPaymentMethod } = this.props;
 
-		if ( ! wcsEnabled || ! labelsLoaded ) {
+		if ( ! labelsLoaded ) {
 			return false;
 		}
 
