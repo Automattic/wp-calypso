@@ -31,7 +31,7 @@ import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 
 // External media sources that do not need a user to connect them
 // should be listed here.
-const noConnectionNeeded = [];
+const noConnectionNeeded = [ 'pexels' ];
 
 const isConnected = props =>
 	noConnectionNeeded.indexOf( props.source ) !== -1 ||
