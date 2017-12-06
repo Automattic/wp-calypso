@@ -73,11 +73,14 @@ export const addReducers = function( reducersToAdd, name = 'root' ) {
 		};
 	} );
 
-	reducersToSet.forEach( ( { key, reducer } ) => {
-		reducers[ key ] = getDeserializeReducer( reducer );
-	} );
+	if ( dispatch ) {
+		// Store has initialized, we will need to deserialize the part.
+		reducersToSet.forEach( ( { key, reducer } ) => {
+			reducers[ key ] = getDeserializeReducer( reducer );
+		} );
 
-	dispatch( { type: DESERIALIZE_PART } );
+		dispatch( { type: DESERIALIZE_PART } );
+	}
 
 	reducersToSet.forEach( ( { key, reducer } ) => {
 		reducers[ key ] = reducer;
