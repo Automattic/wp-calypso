@@ -19,7 +19,7 @@ function getSectionsModule( sections ) {
 			"\trestoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
 			"\tpreloadHub = require( 'sections-preload' ).hub,",
 			"\tswitchCSS = require( 'lib/i18n-utils/switch-locale' ).switchCSS,",
-			"\tloadExtensionReducer = require( 'state/extensions/reducer' ).loadExtensionReducer;",
+			"\taddReducers = require( 'state/reducer-registry' ).addReducers;",
 			'\n',
 			'var _loadedSections = {};\n',
 		].join( '\n' );
@@ -67,7 +67,7 @@ function getSectionsModule( sections ) {
 		"var config = require( 'config' ),",
 		"\tpage = require( 'page' ),",
 		"\tcontroller = require( 'controller' ),",
-		"\tloadExtensionReducer = require( 'state/extensions/reducer' ).loadExtensionReducer;\n",
+		"\taddReducers = require( 'state/reducer-registry' ).addReducers;\n",
 	].join( '\n' );
 
 	sectionLoaders = getRequires( sections );
@@ -100,6 +100,7 @@ function splitTemplate( path, section ) {
 		sectionString = JSON.stringify( section ),
 		sectionNameString = JSON.stringify( section.name ),
 		moduleString = JSON.stringify( section.module ),
+		reducerNamespaceString = JSON.stringify( section.reducerNamespace ),
 		reducerStoreKeyString = JSON.stringify( camelCase( section.name ) ),
 		reducerPathString = JSON.stringify( section.module + '/state/reducer' ),
 		envIdString = JSON.stringify( section.envId );
@@ -124,12 +125,14 @@ function splitTemplate( path, section ) {
 		'		controller.setSection( ' + sectionString + ' )( context );',
 		'		if ( ! _loadedSections[ ' + moduleString + ' ] ) {',
 		'			require( ' + moduleString + ' )( controller.clientRouter );',
-		section.asyncLoadReducer
-			? 'loadExtensionReducer( context.store, ' +
+		section.reducerNamespace
+			? '	addReducers( {' +
 				reducerStoreKeyString +
-				', require( ' +
+				': require( ' +
 				reducerPathString +
-				' ) );'
+				' ) }, ' +
+				reducerNamespaceString +
+				' );'
 			: '',
 		'			_loadedSections[ ' + moduleString + ' ] = true;',
 		'		}',
