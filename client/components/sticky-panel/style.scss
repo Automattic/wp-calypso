@@ -1,3 +1,9 @@
+.sticky-panel {
+	// Force a new block formatting context to prevent margin collapsing. It's needed for
+	// correct measurement of `.sticky_panel__content` height and setting the spacer height.
+	overflow: hidden;
+}
+
 .sticky-panel__content {
 	position: relative;
 }
