@@ -232,7 +232,7 @@ export class SignupProcessingScreen extends Component {
 					{ translate( "Looks like your new online home doesn't have its own domain name." ) }
 				</p>
 				<Button
-					primary={ true }
+					primary
 					disabled={ ! this.props.loginHandler }
 					className="signup-pricessing__upgrade-button"
 					onClick={ this.handleClickUpgradeButton }
