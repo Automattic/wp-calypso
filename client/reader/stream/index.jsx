@@ -143,6 +143,7 @@ class ReaderStream extends React.Component {
 			posts,
 			recs,
 			updateCount: store.getUpdateCount(),
+			pendingPostKeys: store.getPendingPostKeys(),
 			selectedPostKey: store.getSelectedPostKey(),
 			isFetchingNextPage: store.isFetchingNextPage && store.isFetchingNextPage(),
 			isLastPage: store.isLastPage(),
@@ -484,7 +485,11 @@ class ReaderStream extends React.Component {
 						</MobileBackToSidebar>
 					) }
 
-				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />
+				<UpdateNotice
+					count={ this.state.updateCount }
+					onClick={ this.showUpdates }
+					pendingPostKeys={ this.state.pendingPostKeys }
+				/>
 				{ this.props.children }
 				{ showingStream && this.state.posts.length ? this.props.intro : null }
 				{ body }

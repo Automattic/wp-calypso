@@ -15,7 +15,6 @@ import debugFactory from 'debug';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreviewCustomizations } from 'state/preview/selectors';
 import { updateCustomizations } from 'state/preview/actions';
-import { requestSitePosts } from 'state/posts/actions';
 
 const debug = debugFactory( 'calypso:design-tool-data' );
 
@@ -30,7 +29,6 @@ export default function designTool( Component ) {
 			selectedSiteId: PropTypes.number,
 			selectedSite: PropTypes.object,
 			allPages: PropTypes.array,
-			requestSitePosts: PropTypes.func.isRequired,
 		};
 
 		static defaultProps = {
@@ -101,5 +99,5 @@ export default function designTool( Component ) {
 		};
 	}
 
-	return connect( mapStateToProps, { updateCustomizations, requestSitePosts } )( DesignToolData );
+	return connect( mapStateToProps, { updateCustomizations } )( DesignToolData );
 }

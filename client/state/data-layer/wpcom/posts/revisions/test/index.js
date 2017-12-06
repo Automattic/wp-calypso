@@ -139,6 +139,28 @@ describe( '#fetchPostRevisions', () => {
 			)
 		);
 	} );
+
+	test( 'should dispatch HTTP request to corresponding revisions endpoint for other post types', () => {
+		const action = requestPostRevisions( 12345678, 10, 'jetpack-portfolio' );
+		const dispatch = sinon.spy();
+
+		fetchPostRevisions( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					method: 'GET',
+					path: '/sites/12345678/jetpack-portfolio/10/revisions',
+					query: {
+						apiNamespace: 'wp/v2',
+						context: 'edit',
+					},
+				},
+				action
+			)
+		);
+	} );
 } );
 
 describe( '#receiveSuccess', () => {

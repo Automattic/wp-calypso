@@ -55,7 +55,7 @@ export default class extends React.PureComponent {
 					icon="cross-small"
 					size={ 24 }
 					className="token-field__remove-token"
-					onClick={ ! this.props.disabled && this._onClickRemove }
+					onClick={ ! this.props.disabled ? this._onClickRemove : null }
 				/>
 				{ tooltip && (
 					<Tooltip

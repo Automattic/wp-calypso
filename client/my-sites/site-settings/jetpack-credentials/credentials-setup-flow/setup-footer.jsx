@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -9,46 +10,49 @@ import { localize } from 'i18n-calypso';
  */
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
-import Popover from 'components/popover';
+import HappychatButton from 'components/happychat/button';
+import { recordTracksEvent } from 'state/analytics/actions';
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 
 class SetupFooter extends Component {
 	componentWillMount() {
 		this.setState( { showPopover: false } );
 	}
 
-	togglePopover = () => this.setState( { showPopover: ! this.state.showPopover } );
-
-	storePopoverLink = ref => this.popoverLink = ref;
-
 	render() {
-		const { translate } = this.props;
+		const { happychatAvailable, translate } = this.props;
 
 		return (
-
 			<CompactCard className="credentials-setup-flow__footer">
-				<a
-					onClick={ this.togglePopover }
-					ref={ this.storePopoverLink }
-					className="credentials-setup-flow__footer-popover-link"
-				>
-					<Gridicon icon="help" size={ 18 } className="credentials-setup-flow__footer-popover-icon" />
-					{ translate( 'Why do I need this?' ) }
-				</a>
-				<Popover
-					context={ this.popoverLink }
-					isVisible={ this.state.showPopover }
-					onClose={ this.togglePopover }
-					className="credentials-setup-flow__footer-popover"
-					position="top"
-				>
-					{ translate(
-						'These credentials are used to perform automatic actions ' +
-						'on your server including backups and restores.'
-					) }
-				</Popover>
+				{ happychatAvailable
+					? <HappychatButton
+						className="credentials-setup-flow__happychat-button"
+						onClick={ this.props.happychatEvent }
+					>
+						<Gridicon icon="chat" />
+						<span className="credentials-setup-flow__happychat-button-text">
+							{ translate( 'Get help' ) }
+						</span>
+					</HappychatButton>
+					: <a href="/help/contact" className="credentials-setup-flow__help-button">
+						<Gridicon icon="help" />
+						<span className="credentials-setup-flow__help-button-text">
+							{ translate( 'Get help' ) }
+						</span>
+					</a>
+				}
+
 			</CompactCard>
 		);
 	}
 }
 
-export default localize( SetupFooter );
+const mapStateToProps = state => ( {
+	isHappychatAvailable: isHappychatAvailable( state ),
+} );
+
+const mapDispatchToProps = () => ( {
+	happychatEvent: () => recordTracksEvent( 'rewind_credentials_get_help' ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupFooter ) );

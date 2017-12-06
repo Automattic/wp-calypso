@@ -63,6 +63,24 @@ export function getOrderStatusList() {
 }
 
 /**
+ * Return a list of statuses from a given calypso label "group"
+ *
+ * @param {String} status Calypso version of status label
+ * @return {String} A comma-separated list of WC core statuses matching this group
+ */
+export function getOrderStatusGroup( status ) {
+	// Convert URL status to status group
+	if ( ORDER_UNPAID === status ) {
+		return statusWaitingPayment.join( ',' );
+	} else if ( ORDER_UNFULFILLED === status ) {
+		return statusWaitingFulfillment.join( ',' );
+	} else if ( ORDER_COMPLETED === status ) {
+		return statusFinished.join( ',' );
+	}
+	return status;
+}
+
+/**
  * Checks if this status (from an order) is in the "waiting for payment" group
  *
  * @param {String} status Order status

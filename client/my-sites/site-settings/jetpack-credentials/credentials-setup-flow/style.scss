@@ -55,3 +55,24 @@
 	top: 3px;
 	left: -6px;
 }
+
+.credentials-setup-flow__happychat-button.is-borderless {
+	padding: 0;
+	margin-left: 2rem;
+	margin-top: -4px;
+	color: $blue-wordpress;
+}
+
+.credentials-setup-flow__happychat-button.is-borderless:hover {
+	color: $link-highlight;
+}
+
+.credentials-setup-flow__happychat-button-text {
+	margin-left: 6px;
+}
+
+.credentials-setup-flow__help-button-text {
+	position: relative;
+	top: -6px;
+	left: 6px;
+}

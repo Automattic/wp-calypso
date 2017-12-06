@@ -32,7 +32,10 @@ const ProductFormCategoriesCard = ( {
 	const handleChange = categoryNames => {
 		const newCategories = compact(
 			categoryNames.map( name => {
-				const category = find( productCategories, { name: escape( name ) } );
+				const escapedCategoryName = escape( name );
+				const category = find( productCategories, cat => {
+					return escape( cat.name ) === escapedCategoryName;
+				} );
 
 				if ( ! category ) {
 					// Add a new product category to the creates list.

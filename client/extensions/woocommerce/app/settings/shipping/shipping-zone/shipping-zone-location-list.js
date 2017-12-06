@@ -152,7 +152,7 @@ const ShippingZoneLocationList = ( {
 	);
 };
 
-ShippingZoneLocationList.PropTypes = {
+ShippingZoneLocationList.propTypes = {
 	siteId: PropTypes.number,
 };
 

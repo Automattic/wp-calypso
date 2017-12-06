@@ -19,6 +19,20 @@
 			}
 		}
 	}
+
+	.is-international-option {
+		display: none;
+	}
+
+	&.show-international-options {
+		.is-international-option {
+			display: block;
+		}
+	}
+}
+
+.payments__edit-international-options-checkbox {
+	margin-right: 8px;
 }
 
 .payments__address-currency-container {

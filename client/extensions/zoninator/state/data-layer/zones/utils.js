@@ -1,7 +1,11 @@
-/** @format */
+/**
+ * External dependencies
+ */
+import { unescape } from 'lodash';
+
 export const fromApi = ( { description, name, slug, term_id } ) => ( {
-	description,
+	description: unescape( description ),
 	id: term_id,
-	name,
+	name: unescape( name ),
 	slug,
 } );

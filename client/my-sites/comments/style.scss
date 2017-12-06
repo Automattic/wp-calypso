@@ -93,6 +93,14 @@
 	white-space: nowrap;
 }
 
+@include breakpoint( '<480px' ) {
+	.comment-list__header .header-cake__back.button.is-borderless.is-compact .gridicons-visible {
+		display: block;
+		margin: 0 auto;
+		top: 0;
+	}
+}
+
 .comment-list .pagination {
 	margin-top: 16px;
 }

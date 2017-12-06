@@ -23,6 +23,7 @@ describe( 'actions', () => {
 			expect( dispatch ).to.have.been.calledWith( {
 				type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 				siteId,
+				query: {},
 			} );
 		} );
 	} );

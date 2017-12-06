@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import shallowEqual from 'react-pure-render/shallowEqual';
 import { connect } from 'react-redux';
@@ -14,8 +12,15 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import { isRequestingSitePostsForQuery, isRequestingSitePost } from 'state/posts/selectors';
-import { requestSitePosts, requestSitePost } from 'state/posts/actions';
+import {
+	isRequestingPostsForQuery,
+	isRequestingSitePost,
+} from 'state/posts/selectors';
+import {
+	requestSitePosts,
+	requestSitePost,
+	requestAllSitesPosts,
+} from 'state/posts/actions';
 
 /**
  * Module variables
@@ -40,16 +45,22 @@ class QueryPosts extends Component {
 	}
 
 	request( props ) {
-		const single = !! props.postId;
+		const singleSite = !! props.siteId;
+		const singlePost = !! props.postId;
 
-		if ( ! single && ! props.requestingPosts ) {
-			log( 'Request post list for site %d using query %o', props.siteId, props.query );
-			props.requestSitePosts( props.siteId, props.query );
-		}
+		if ( singleSite ) {
+			if ( ! singlePost && ! props.requestingPosts ) {
+				log( 'Request post list for site %d using query %o', props.siteId, props.query );
+				props.requestSitePosts( props.siteId, props.query );
+			}
 
-		if ( single && ! props.requestingPost ) {
-			log( 'Request single post for site %d post %d', props.siteId, props.postId );
-			props.requestSitePost( props.siteId, props.postId );
+			if ( singlePost && ! props.requestingPost ) {
+				log( 'Request single post for site %d post %d', props.siteId, props.postId );
+				props.requestSitePost( props.siteId, props.postId );
+			}
+		} else if ( ! props.requestingPosts ) {
+			log( 'Request post list for all sites using query %o', props.query );
+			props.requestAllSitesPosts( props.query );
 		}
 	}
 
@@ -58,30 +69,19 @@ class QueryPosts extends Component {
 	}
 }
 
-QueryPosts.propTypes = {
-	siteId: PropTypes.number,
-	postId: PropTypes.number,
-	query: PropTypes.object,
-	requestingPosts: PropTypes.bool,
-	requestSitePosts: PropTypes.func,
-};
-
-QueryPosts.defaultProps = {
-	requestSitePosts: () => {},
-};
-
 export default connect(
 	( state, ownProps ) => {
 		const { siteId, postId, query } = ownProps;
 		return {
-			requestingPost: isRequestingSitePost( state, siteId, postId ),
-			requestingPosts: isRequestingSitePostsForQuery( state, siteId, query ),
+			requestingPost: siteId && postId && isRequestingSitePost( state, siteId, postId ),
+			requestingPosts: isRequestingPostsForQuery( state, siteId, query ),
 		};
 	},
 	dispatch => {
 		return bindActionCreators(
 			{
 				requestSitePosts,
+				requestAllSitesPosts,
 				requestSitePost,
 			},
 			dispatch

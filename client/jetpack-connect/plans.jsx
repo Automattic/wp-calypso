@@ -37,7 +37,7 @@ import { mc } from 'lib/analytics';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
-const CALYPSO_PLANS_PAGE = '/plans/my-plan/';
+const CALYPSO_PLANS_PAGE = '/plans/';
 const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
@@ -68,8 +68,8 @@ class Plans extends Component {
 		if ( props.isAutomatedTransfer ) {
 			this.props.goBackToWpAdmin( props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
-		if ( props.selectedPlanSlug ) {
-			this.autoselectPlan( props );
+		if ( props.selectedPlan ) {
+			this.selectPlan( props.selectedPlan );
 		}
 		if ( props.hasPlan || props.notJetpack ) {
 			this.redirect( CALYPSO_PLANS_PAGE );
@@ -110,19 +110,6 @@ class Plans extends Component {
 		page.redirect( path + this.props.selectedSiteSlug );
 		this.redirecting = true;
 		this.props.completeFlow();
-	}
-
-	autoselectPlan( props ) {
-		const { selectedPlan, selectedPlanSlug } = props;
-
-		if ( selectedPlanSlug === PLAN_JETPACK_FREE || selectedPlanSlug === 'free' ) {
-			this.selectFreeJetpackPlan();
-			return;
-		}
-		if ( selectedPlan ) {
-			this.selectPlan( selectedPlan );
-			return;
-		}
 	}
 
 	selectFreeJetpackPlan() {

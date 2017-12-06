@@ -39,7 +39,6 @@
 		"guided-tours/theme-sheet-welcome": true,
 		"help": true,
 		"help/courses": true,
-		"jetpack/activity-log": true,
 		"jetpack/api-cache": true,
 		"jetpack/happychat": true,
 		"jetpack/google-analytics-anonymize-ip": true,

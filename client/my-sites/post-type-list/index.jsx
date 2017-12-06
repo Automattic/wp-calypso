@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { isEqual, range, throttle } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,15 +18,16 @@ import QueryPosts from 'components/data/query-posts';
 import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
-	isRequestingSitePostsForQueryIgnoringPage,
-	getSitePostsForQueryIgnoringPage,
-	getSitePostsFoundForQuery,
-	getSitePostsLastPageForQuery,
+	isRequestingPostsForQueryIgnoringPage,
+	getPostsForQueryIgnoringPage,
+	getPostsFoundForQuery,
+	getPostsLastPageForQuery,
 } from 'state/posts/selectors';
 import ListEnd from 'components/list-end';
 import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 /**
  * Constants
@@ -199,12 +201,19 @@ class PostTypeList extends Component {
 	}
 
 	render() {
-		const { query, siteId, posts, isRequestingPosts } = this.props;
+		const { query, siteId, isRequestingPosts, translate } = this.props;
 		const { maxRequestedPage } = this.state;
-		const isLoadedAndEmpty = query && posts && ! posts.length && ! isRequestingPosts;
+		const posts = this.props.posts || [];
+		const isLoadedAndEmpty = query && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
 		} );
+		const showUpgradeNudge =
+			siteId &&
+			posts.length > 10 &&
+			query &&
+			( query.type === 'post' || ! query.type ) &&
+			query.status === 'publish,private';
 
 		return (
 			<div className={ classes }>
@@ -212,7 +221,16 @@ class PostTypeList extends Component {
 					range( 1, maxRequestedPage + 1 ).map( page => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
-				{ posts && posts.map( this.renderPost ) }
+				{ posts.slice( 0, 10 ).map( this.renderPost ) }
+				{ showUpgradeNudge && (
+					<UpgradeNudge
+						title={ translate( 'No Ads with WordPress.com Premium' ) }
+						message={ translate( 'Prevent ads from showing on your site.' ) }
+						feature="no-adverts"
+						event="published_posts_no_ads"
+					/>
+				) }
+				{ posts.slice( 10 ).map( this.renderPost ) }
 				{ isLoadedAndEmpty && (
 					<PostTypeListEmptyContent type={ query.type } status={ query.status } />
 				) }
@@ -226,16 +244,16 @@ class PostTypeList extends Component {
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 
-	const totalPageCount = getSitePostsLastPageForQuery( state, siteId, ownProps.query );
+	const totalPageCount = getPostsLastPageForQuery( state, siteId, ownProps.query );
 	const lastPageToRequest =
 		siteId === null ? Math.min( MAX_ALL_SITES_PAGES, totalPageCount ) : totalPageCount;
 
 	return {
 		siteId,
-		posts: getSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
-		isRequestingPosts: isRequestingSitePostsForQueryIgnoringPage( state, siteId, ownProps.query ),
-		totalPostCount: getSitePostsFoundForQuery( state, siteId, ownProps.query ),
+		posts: getPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
+		isRequestingPosts: isRequestingPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
+		totalPostCount: getPostsFoundForQuery( state, siteId, ownProps.query ),
 		totalPageCount,
 		lastPageToRequest,
 	};
-} )( PostTypeList );
+} )( localize( PostTypeList ) );

@@ -73,7 +73,7 @@ const PromotionFormTypeCard = ( {
 	);
 };
 
-PromotionFormTypeCard.PropTypes = {
+PromotionFormTypeCard.propTypes = {
 	siteId: PropTypes.number,
 	promotion: PropTypes.shape( {
 		id: PropTypes.isRequired,

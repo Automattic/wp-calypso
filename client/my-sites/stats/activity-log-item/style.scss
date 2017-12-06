@@ -130,6 +130,12 @@
 }
 
 .activity-log-item__card {
+	min-width: 0;
+
+	.foldable-card__main {
+		min-width: 0;
+	}
+
 	.foldable-card__content {
 		padding: 16px;
 		font-size: 14px;
@@ -146,17 +152,29 @@
 	display: flex;
 	flex-wrap: wrap;
 	margin-right: 32px;
+	padding-left: 56px;
+	align-items: center;
+	min-width: 0;
 
 	@include breakpoint( '<960px' ) {
 		flex-direction: column;
 		align-items: flex-start;
+		padding-left: 40px;
 	}
 }
 
 .activity-log-item__actor {
 	display: flex;
 	flex-shrink: 0;
+	min-width: 180px;
+	max-width: 100%;
 	margin-right: 32px;
+	margin-left: -40px;
+	align-items: center;
+
+	@include breakpoint( '>960px' ) {
+		margin-left: -56px;
+	}
 
 	.gravatar,
 	.jetpack-logo {
@@ -186,8 +204,14 @@
 	}
 }
 
+.activity-log-item__actor-info {
+	min-width: 0;
+}
+
 .activity-log-item__actor-name {
 	font-size: 14px;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
 
 	@include breakpoint( '<960px' ) {
 		margin-top: 2px;
@@ -213,4 +237,8 @@
 
 .activity-log-item__description {
 	font-size: 14px;
+
+	@include breakpoint( '<960px' ) {
+		margin-top: 4px;
+	}
 }

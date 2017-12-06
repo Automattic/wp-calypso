@@ -77,8 +77,8 @@ const FormField = ( {
 	);
 };
 
-FormField.PropTypes = {
-	fieldName: PropTypes.string.isRequired,
+FormField.propTypes = {
+	fieldName: PropTypes.string,
 	labelText: PropTypes.string,
 	explanationText: PropTypes.string,
 	isRequired: PropTypes.bool,

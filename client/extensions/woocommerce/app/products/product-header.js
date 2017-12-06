@@ -37,7 +37,7 @@ function renderViewButton( product, translate ) {
 function renderTrashButton( onTrash, product, isBusy, translate ) {
 	return (
 		onTrash && (
-			<Button borderless scary onClick={ onTrash }>
+			<Button borderless scary onClick={ onTrash ? onTrash : undefined }>
 				<Gridicon icon="trash" />
 				<span>{ translate( 'Delete' ) } </span>
 			</Button>
@@ -54,7 +54,12 @@ function renderSaveButton( onSave, product, isBusy, translate ) {
 
 	return (
 		saveExists && (
-			<Button primary onClick={ onSave } disabled={ saveDisabled } busy={ isBusy }>
+			<Button
+				primary
+				onClick={ onSave ? onSave : undefined }
+				disabled={ saveDisabled }
+				busy={ isBusy }
+			>
 				{ saveLabel }
 			</Button>
 		)

@@ -22,7 +22,6 @@ export const hints = [
 	'Allergies',
 	'Animals',
 	'Animation',
-	'Animation',
 	'Anime',
 	'Antiques',
 	'Anxiety',

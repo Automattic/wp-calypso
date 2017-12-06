@@ -29,6 +29,7 @@ import FormLabel from 'components/forms/form-label';
 import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils';
 import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
+import PaymentMethodBACS from './payment-method-bacs';
 import PaymentMethodEditDialog from './payment-method-edit-dialog';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 import PaymentMethodPaypal from './payment-method-paypal';
@@ -144,6 +145,18 @@ class PaymentMethodItem extends Component {
 				/>
 			);
 		}
+
+		if ( method.id === 'bacs' ) {
+			return (
+				<PaymentMethodBACS
+					method={ currentlyEditingMethod }
+					onCancel={ this.onCancel }
+					onEditField={ this.onEditField }
+					onDone={ this.onDone }
+				/>
+			);
+		}
+
 		return (
 			<PaymentMethodEditDialog
 				method={ currentlyEditingMethod }

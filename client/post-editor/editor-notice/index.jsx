@@ -26,6 +26,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 export class EditorNotice extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
+		moment: PropTypes.func,
 		siteId: PropTypes.number,
 		site: PropTypes.object,
 		type: PropTypes.string,
@@ -34,6 +35,8 @@ export class EditorNotice extends Component {
 		status: PropTypes.string,
 		onDismissClick: PropTypes.func,
 		error: PropTypes.object,
+		postUrl: PropTypes.string,
+		postDate: PropTypes.string,
 	};
 
 	handlePillExternalClick = () => {
@@ -68,7 +71,8 @@ export class EditorNotice extends Component {
 
 	getText( key ) {
 		/* eslint-disable max-len */
-		const { translate, type, typeObject, site } = this.props;
+		const { translate, type, typeObject, site, postUrl, postDate, moment } = this.props;
+		const formattedPostDate = moment( postDate ).format( 'lll' );
 		const typeLabel = typeObject && typeObject.labels.singular_name;
 
 		switch ( key ) {
@@ -190,60 +194,25 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page scheduled on {{siteLink/}}! {{a}}Add another page{{/a}}', {
-						components: {
-							siteLink: (
-								<a
-									href={ site.URL }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ this.handlePillExternalClick }
-								>
-									{ site.title }
-								</a>
-							),
-							a: <a href={ `/page/${ site.slug }` } />,
-						},
+					return translate( 'Page scheduled for %(formattedPostDate)s!', {
+						args: { formattedPostDate },
 						comment:
-							'Editor: Message displayed when a page is scheduled, with a link to the site it was scheduled on.',
+							'Editor: Message displayed when a page is scheduled, with the scheduled date and time.',
 					} );
 				}
 
 				if ( 'post' !== type && typeLabel ) {
-					return translate( '%(typeLabel)s scheduled on {{siteLink/}}!', {
-						args: { typeLabel },
-						components: {
-							siteLink: (
-								<a
-									href={ site.URL }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ this.handlePillExternalClick }
-								>
-									{ site.title }
-								</a>
-							),
-						},
+					return translate( '%(typeLabel)s scheduled for %(formattedPostDate)s!', {
+						args: { typeLabel, formattedPostDate },
 						comment:
-							'Editor: Message displayed when a post of a custom type is scheduled, with a link to the site it was scheduled on.',
+							'Editor: Message displayed when a post of a custom type is scheduled, with the scheduled date and time.',
 					} );
 				}
 
-				return translate( 'Post scheduled on {{siteLink/}}!', {
-					components: {
-						siteLink: (
-							<a
-								href={ site.URL }
-								target="_blank"
-								rel="noopener noreferrer"
-								onClick={ this.handlePillExternalClick }
-							>
-								{ site.title }
-							</a>
-						),
-					},
+				return translate( 'Post scheduled for %(formattedPostDate)s!', {
+					args: { formattedPostDate },
 					comment:
-						'Editor: Message displayed when a post is scheduled, with a link to the site it was scheduled on.',
+						'Editor: Message displayed when a post is scheduled, with the scheduled date and time.',
 				} );
 
 			case 'publishedPrivately':
@@ -285,60 +254,35 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page updated on {{siteLink/}}! {{a}}Add another page{{/a}}', {
+					return translate( 'Page updated! {{postLink}}Visit page{{/postLink}}.', {
 						components: {
-							siteLink: (
-								<a
-									href={ site.URL }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ this.handlePillExternalClick }
-								>
-									{ site.title }
-								</a>
-							),
-							a: <a href={ `/page/${ site.slug }` } />,
+							postLink: <a href={ postUrl } onClick={ this.handlePillExternalClick } />,
 						},
 						comment:
-							'Editor: Message displayed when a page is updated, with a link to the site it was updated on.',
+							'Editor: Message displayed when a page is updated, with a link to the updated page.',
 					} );
 				}
 
 				if ( 'post' !== type && typeLabel ) {
-					return translate( '%(typeLabel)s updated on {{siteLink/}}!', {
-						args: { typeLabel },
-						components: {
-							siteLink: (
-								<a
-									href={ site.URL }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ this.handlePillExternalClick }
-								>
-									{ site.title }
-								</a>
-							),
-						},
-						comment:
-							'Editor: Message displayed when a post of a custom type is updated, with a link to the site it was updated on.',
-					} );
+					return translate(
+						'%(typeLabel)s updated! {{postLink}}Visit %(typeLabel)s{{/postLink}}.',
+						{
+							args: { typeLabel },
+							components: {
+								postLink: <a href={ postUrl } onClick={ this.handlePillExternalClick } />,
+							},
+							comment:
+								'Editor: Message displayed when a post of a custom type is updated, with a link to the updated post.',
+						}
+					);
 				}
 
-				return translate( 'Post updated on {{siteLink/}}!', {
+				return translate( 'Post updated! {{postLink}}Visit post{{/postLink}}.', {
 					components: {
-						siteLink: (
-							<a
-								href={ site.URL }
-								target="_blank"
-								rel="noopener noreferrer"
-								onClick={ this.handlePillExternalClick }
-							>
-								{ site.title }
-							</a>
-						),
+						postLink: <a href={ postUrl } onClick={ this.handlePillExternalClick } />,
 					},
 					comment:
-						'Editor: Message displayed when a post is updated, with a link to the site it was updated on.',
+						'Editor: Message displayed when a post is updated, with a link to the updated post.',
 				} );
 		}
 		/* eslint-enable max-len */
@@ -370,6 +314,8 @@ export default connect(
 			site: getSelectedSite( state ),
 			type: post.type,
 			typeObject: getPostType( state, siteId, post.type ),
+			postUrl: post.URL || null,
+			postDate: post.date || null,
 		};
 	},
 	{

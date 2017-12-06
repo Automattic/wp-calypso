@@ -49,7 +49,6 @@ class ActivityLogDay extends Component {
 		applySiteOffset: PropTypes.func.isRequired,
 		disableRestore: PropTypes.bool.isRequired,
 		disableBackup: PropTypes.bool.isRequired,
-		hideRestore: PropTypes.bool,
 		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
 		requestedRestoreActivityId: PropTypes.string,
@@ -161,15 +160,13 @@ class ActivityLogDay extends Component {
 			applySiteOffset,
 			disableRestore,
 			disableBackup,
-			hideRestore,
-			isDiscardedPerspective,
+			isRewindActive,
 			isToday,
 			logs,
 			requestedRestoreActivityId,
 			requestedBackupId,
 			requestDialog,
 			restoreConfirmDialog,
-			rewindEvents,
 			backupConfirmDialog,
 			siteId,
 			tsEndOfSiteDay,
@@ -184,7 +181,7 @@ class ActivityLogDay extends Component {
 				( tsEndOfSiteDay <= activityTs && activityTs < tsEndOfSiteDay + DAY_IN_MILLISECONDS )
 		);
 
-		const events = classifyEvents( rewriteStream( logs, rewindEvents, isDiscardedPerspective ), {
+		const events = classifyEvents( logs, {
 			backupId: requestedBackupId,
 			rewindId: requestedRestoreActivityId,
 		} );
@@ -195,7 +192,7 @@ class ActivityLogDay extends Component {
 				applySiteOffset={ applySiteOffset }
 				disableRestore={ disableRestore }
 				disableBackup={ disableBackup }
-				hideRestore={ hideRestore }
+				hideRestore={ ! isRewindActive }
 				log={ log }
 				requestDialog={ requestDialog }
 				siteId={ siteId }
@@ -237,16 +234,16 @@ class ActivityLogDay extends Component {
 
 export default localize(
 	connect(
-		( state, { siteId } ) => {
+		( state, { logs, siteId } ) => {
 			const requestedRewind = getRequestedRewind( state, siteId );
+			const rewindEvents = getRewindEvents( state, siteId );
 			const isDiscardedPerspective = requestedRewind
 				? new Date( ms( getActivityLog( state, siteId, requestedRewind ).activityTs ) )
 				: undefined;
 
 			return {
-				isDiscardedPerspective,
+				logs: rewriteStream( logs, rewindEvents, isDiscardedPerspective ),
 				requestedRewind,
-				rewindEvents: getRewindEvents( state, siteId ),
 			};
 		},
 		( dispatch, { logs, tsEndOfSiteDay, moment } ) => ( {

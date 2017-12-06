@@ -141,20 +141,22 @@ class ProductUpdate extends React.Component {
 	};
 
 	onSave = () => {
-		const { product, translate } = this.props;
-
-		const successAction = successNotice(
-			translate( '%(product)s successfully updated.', {
-				args: { product: product.name },
-			} ),
-			{
-				duration: 8000,
-				button: translate( 'View' ),
-				onClick: () => {
-					window.open( product.permalink );
-				},
-			}
-		);
+		const { product, translate, site, fetchProductCategories: fetch } = this.props;
+		const successAction = () => {
+			fetch( site.ID );
+			return successNotice(
+				translate( '%(product)s successfully updated.', {
+					args: { product: product.name },
+				} ),
+				{
+					duration: 8000,
+					button: translate( 'View' ),
+					onClick: () => {
+						window.open( product.permalink );
+					},
+				}
+			);
+		};
 
 		const failureAction = errorNotice(
 			translate( 'There was a problem saving %(product)s. Please try again.', {

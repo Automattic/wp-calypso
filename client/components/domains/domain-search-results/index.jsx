@@ -27,6 +27,8 @@ import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { TRANSFER_IN } from 'state/current-user/constants';
+import { getDesignType } from 'state/signup/steps/design-type/selectors';
+import { DESIGN_TYPE_STORE } from 'signup/constants';
 
 class DomainSearchResults extends React.Component {
 	static propTypes = {
@@ -114,6 +116,11 @@ class DomainSearchResults extends React.Component {
 				);
 			}
 
+			// Domain Mapping not supported for Store NUX yet.
+			if ( this.props.siteDesignType === DESIGN_TYPE_STORE ) {
+				offer = null;
+			}
+
 			const domainUnavailableMessage =
 				lastDomainStatus === UNKNOWN
 					? translate( '{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com.', {
@@ -127,6 +134,7 @@ class DomainSearchResults extends React.Component {
 
 			if ( this.props.offerUnavailableOption ) {
 				if (
+					this.props.siteDesignType !== DESIGN_TYPE_STORE &&
 					this.props.transferInAllowed &&
 					! this.props.isSignupStep &&
 					lastDomainIsTransferrable &&
@@ -212,7 +220,7 @@ class DomainSearchResults extends React.Component {
 				);
 			}, this );
 
-			if ( this.props.offerUnavailableOption ) {
+			if ( this.props.offerUnavailableOption && this.props.siteDesignType !== DESIGN_TYPE_STORE ) {
 				unavailableOffer = (
 					<DomainMappingSuggestion
 						onButtonClick={ this.props.onClickMapping }
@@ -257,6 +265,7 @@ const mapStateToProps = state => {
 	return {
 		isSiteOnPaidPlan: isSiteOnPaidPlan( state, selectedSiteId ),
 		transferInAllowed: currentUserHasFlag( state, TRANSFER_IN ),
+		siteDesignType: getDesignType( state ),
 	};
 };
 

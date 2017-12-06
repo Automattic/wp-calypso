@@ -23,7 +23,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import PageDropdown from './page-dropdown';
 import QueryPosts from 'components/data/query-posts';
 import SectionHeader from 'components/section-header';
-import { isRequestingSitePostsForQuery } from 'state/posts/selectors';
+import { isRequestingPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const form = 'extensions.wpJobManager.pages';
@@ -120,7 +120,7 @@ const connectComponent = connect( state => {
 
 	return {
 		dirty: isDirty( form ),
-		isFetchingPages: isRequestingSitePostsForQuery( state, siteId, query ),
+		isFetchingPages: isRequestingPostsForQuery( state, siteId, query ),
 		siteId,
 	};
 } );

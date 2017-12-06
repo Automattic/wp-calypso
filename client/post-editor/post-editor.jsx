@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import tinyMce from 'tinymce/tinymce';
 import { v4 as uuid } from 'uuid';
-import { parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -43,7 +42,6 @@ import {
 	getEditorPostId,
 	getEditorPath,
 	isConfirmationSidebarEnabled,
-	isEditorOnlyRouteInHistory,
 } from 'state/ui/editor/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
@@ -67,7 +65,7 @@ import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isWithinBreakpoint } from 'lib/viewport';
-import { isSitePreviewable, getSiteDomain } from 'state/sites/selectors';
+import { isSitePreviewable } from 'state/sites/selectors';
 import { removep } from 'lib/formatting';
 
 export const PostEditor = createReactClass( {
@@ -1019,21 +1017,9 @@ export const PostEditor = createReactClass( {
 				message,
 			};
 
-			const referrer = get( window, 'document.referrer', '' );
-			const referrerDomain = parseUrl( referrer ).hostname;
-			const shouldReturnToSite =
-				'updated' === message &&
-				this.props.isEditorOnlyRouteInHistory &&
-				referrerDomain === this.props.selectedSiteDomain;
-
-			if ( shouldReturnToSite ) {
-				window.location.href = this.getExternalUrl();
-				return;
-			}
-
 			window.scrollTo( 0, 0 );
 
-			if ( this.props.isSitePreviewable && isNotPrivateOrIsConfirmed ) {
+			if ( this.props.isSitePreviewable && isNotPrivateOrIsConfirmed && 'published' === message ) {
 				this.setState( { isPostPublishPreview: true } );
 				this.iframePreview();
 			}
@@ -1346,7 +1332,6 @@ const enhance = flow(
 				postId,
 				type,
 				selectedSite: getSelectedSite( state ),
-				selectedSiteDomain: getSiteDomain( state, siteId ),
 				editorModePreference: getPreference( state, 'editor-mode' ),
 				editorSidebarPreference: getPreference( state, 'editor-sidebar' ) || 'open',
 				editPath: getEditorPath( state, siteId, postId ),
@@ -1356,7 +1341,6 @@ const enhance = flow(
 				layoutFocus: getCurrentLayoutFocus( state ),
 				hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 				isSitePreviewable: isSitePreviewable( state, siteId ),
-				isEditorOnlyRouteInHistory: isEditorOnlyRouteInHistory( state ),
 				isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
 			};
 		},

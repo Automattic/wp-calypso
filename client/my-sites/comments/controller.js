@@ -58,10 +58,7 @@ export const siteComments = context => {
 
 	const status = mapPendingStatusToUnapproved( params.status );
 
-	const pageNumber = sanitizeInt( query.page );
-	if ( ! pageNumber ) {
-		return changePage( path )( 1 );
-	}
+	const pageNumber = sanitizeInt( query.page ) || 1;
 
 	renderWithReduxStore(
 		<CommentsManagement
@@ -90,10 +87,7 @@ export const postComments = context => {
 		return page.redirect( `/comments/${ params.status }/${ siteFragment }` );
 	}
 
-	const pageNumber = sanitizeInt( query.page );
-	if ( ! pageNumber ) {
-		return changePage( path )( 1 );
-	}
+	const pageNumber = sanitizeInt( query.page ) || 1;
 
 	renderWithReduxStore(
 		<CommentsManagement
@@ -120,9 +114,11 @@ export const comment = context => {
 	}
 
 	const action = sanitizeQueryAction( query.action );
+	const redirectToPostView = postId => () =>
+		page.redirect( `/comments/all/${ siteFragment }/${ postId }` );
 
 	renderWithReduxStore(
-		<CommentView { ...{ action, commentId, siteFragment } } />,
+		<CommentView { ...{ action, commentId, siteFragment, redirectToPostView } } />,
 		'primary',
 		context.store
 	);

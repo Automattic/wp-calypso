@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -64,14 +63,12 @@ const SiteSettingsSecurity = ( { rewindActive, site, siteId, siteIsJetpack, tran
 
 	return (
 		<Main className="settings-security__main site-settings">
-			{ config.isEnabled( 'jetpack/activity-log/rewind' ) && (
-				<QueryRewindStatus siteId={ siteId } />
-			) }
+			<QueryRewindStatus siteId={ siteId } />
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<SiteSettingsNavigation site={ site } section="security" />
-			{ config.isEnabled( 'jetpack/credentials' ) && rewindActive && <Backups /> }
+			{ rewindActive && <Backups /> }
 			<JetpackMonitor />
 			<FormSecurity />
 		</Main>

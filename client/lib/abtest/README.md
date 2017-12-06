@@ -129,3 +129,60 @@ By default, users are only included in the test if their locale is set to Englis
 In cases where the user is ineligible, the `abtest` function will return the value for `defaultVariation` value that you specify in the config file. This value should be one of the variations contained in `variations`.
 
 No `calypso_abtest_start` Tracks event is triggered for these users so they don't impact the results of the test.
+
+## Updating our end-to-end tests to avoid inconsistencies with A/B tests
+
+Our WordPress.com end-to-end (e2e) tests need to know which A/B test group to use otherwise this can lead to non-deterministic and inconsistent behaviour and test results.
+
+### Updating known A/B tests and overrides in the e2e tests
+
+Every time you add a new A/B test to Calypso you must update the [e2e tests repository](https://github.com/Automattic/wp-e2e-tests/) with that A/B test and optionally set an override of behaviour.
+
+For example, if you were adding:
+
+In `active-tests.js`:
+
+```js
+module.exports = {
+	freeTrialButtonWording: {
+		datestamp: '20150216',
+		variations: {
+			startFreeTrial: 50,
+			beginYourFreeTrial: 50
+		},
+		defaultVariation: 'startFreeTrial'
+	}
+};
+```
+
+If your change was purely cosmetic, ie. it doesn't change functionality eg. a text label or colour, you would need to update [config/default.json](https://github.com/Automattic/wp-e2e-tests/blob/master/config/default.json) to include:
+
+```js
+"knownABTestKeys": [
+   "freeTrialButtonWording"
+ ]
+```
+
+This lets our e2e tests know this A/B test exists, but doesn't set or overide any of the behaviour, so e2e test users will be assigned to groups in the same way as anyone else.
+
+If your change was functional, ie. changing functionality or flows etc. eg. adding a new signup step, you would _also_ need to add an override to the same file:
+
+```js
+"overrideABTests": [
+  [ "freeTrialButtonWording_201502160", "startFreeTrial" ]
+]
+```
+
+This makes sure that all e2e test users are in the specified group so that behaviour remains the same and consistent across all e2e test runs. Ideally you should aim to put the e2e tests in the most common (>50%) group, or in the default (existing) behaviour.
+
+*Note:* You should add this change to the e2e tests _before_ merging your wp-calypso change - it doesn't matter if the A/B test doesn't exist in wp-calypso yet when merging the e2e test change.
+
+### Changing a known A/B test
+
+If you're making an update to an A/B test - changing the date for example, you should update the e2e tests in the same way as above to reflect the new date.
+
+### Removing a known A/B test
+
+When you're A/B test is complete and removed from `wp-calypso` you should also remove it from the e2e test config. This doesn't have to happen _immediately_ (it doesn't matter to override an A/B test that doesn't exist) but you should do it as soon as possible to keep things neat and tidy.
+
+If your A/B test was successful and ***you're making permanent functional changes***, you should make permanent updates to the e2e tests to take into account these new functional changes. Speak to Flow Patrol if you need help.

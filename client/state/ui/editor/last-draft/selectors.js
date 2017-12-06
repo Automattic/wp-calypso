@@ -16,6 +16,9 @@ import { getEditedPost } from 'state/posts/selectors';
 export function getEditorLastDraftPost( state ) {
 	const siteId = getEditorLastDraftSiteId( state );
 	const postId = getEditorLastDraftPostId( state );
+	if ( ! siteId || ! postId ) {
+		return null;
+	}
 	return getEditedPost( state, siteId, postId );
 }
 

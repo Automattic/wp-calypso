@@ -4,7 +4,7 @@
  */
 import { expect as chaiExpect } from 'chai';
 import { shallow } from 'enzyme';
-import { translate } from 'i18n-calypso';
+import { translate, moment } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -15,7 +15,7 @@ import Notice from 'components/notice';
 
 describe( 'EditorNotice', () => {
 	test( 'should not render a notice if no message is specified', () => {
-		const wrapper = shallow( <EditorNotice /> );
+		const wrapper = shallow( <EditorNotice moment={ moment } /> );
 
 		chaiExpect( wrapper ).to.not.have.descendants( Notice );
 	} );
@@ -24,6 +24,7 @@ describe( 'EditorNotice', () => {
 		const wrapper = shallow(
 			<EditorNotice
 				translate={ translate }
+				moment={ moment }
 				status="is-error"
 				message="publishFailure"
 				error={ new Error( 'NO_CONTENT' ) }
@@ -43,6 +44,7 @@ describe( 'EditorNotice', () => {
 		const wrapper = shallow(
 			<EditorNotice
 				translate={ translate }
+				moment={ moment }
 				type="post"
 				status="is-error"
 				message="publishFailure"
@@ -64,6 +66,7 @@ describe( 'EditorNotice', () => {
 		const wrapper = shallow(
 			<EditorNotice
 				translate={ translate }
+				moment={ moment }
 				message="published"
 				status="is-success"
 				type="page"
@@ -85,6 +88,7 @@ describe( 'EditorNotice', () => {
 		const wrapper = shallow(
 			<EditorNotice
 				translate={ translate }
+				moment={ moment }
 				type="jetpack-portfolio"
 				typeObject={ {
 					labels: {

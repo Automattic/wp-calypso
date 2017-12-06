@@ -5,7 +5,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import config from 'config';
 import scrollTo from 'lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -37,11 +36,11 @@ import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
-import { activityLogRequest } from 'state/activity-log/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
+	activityLogRequest,
 	rewindRequestDismiss,
 	rewindRequestRestore,
 	rewindRestore,
@@ -63,13 +62,8 @@ import {
 	isRewindActive as isRewindActiveSelector,
 	getRequestedBackup,
 	getBackupProgress,
-	hasMainCredentials,
+	getRewindState,
 } from 'state/selectors';
-
-/**
- * Module constants
- */
-const rewindEnabledByConfig = config.isEnabled( 'jetpack/activity-log/rewind' );
 
 const flushEmptyDays = days => [
 	days.length === 1 ? 'empty-day' : 'empty-range',
@@ -452,11 +446,13 @@ class ActivityLog extends Component {
 	}
 
 	renderErrorMessage() {
-		if ( ! rewindEnabledByConfig ) {
+		const { isRewindActive } = this.props;
+
+		if ( ! isRewindActive ) {
 			return null;
 		}
 
-		const { isRewindActive, rewindStatusError, translate } = this.props;
+		const { rewindStatusError, translate } = this.props;
 
 		if ( isRewindActive && rewindStatusError ) {
 			return (
@@ -499,8 +495,6 @@ class ActivityLog extends Component {
 		const {
 			canViewActivityLog,
 			hasFirstBackup,
-			hasMainCredentials, // eslint-disable-line no-shadow
-			isPressable,
 			isRewindActive,
 			logRequestQuery,
 			logs,
@@ -510,6 +504,7 @@ class ActivityLog extends Component {
 			requestedRestoreActivityId,
 			requestedBackup,
 			requestedBackupId,
+			rewindState,
 			siteId,
 			slug,
 			translate,
@@ -527,10 +522,9 @@ class ActivityLog extends Component {
 			);
 		}
 
-		const disableRestore = includes(
-			[ 'queued', 'running' ],
-			get( this.props, [ 'restoreProgress', 'status' ] )
-		);
+		const disableRestore =
+			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
+			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
 		const restoreConfirmDialog = requestedRestoreActivity && (
@@ -546,7 +540,7 @@ class ActivityLog extends Component {
 				}
 				onClose={ this.dismissRestore }
 				onConfirm={ this.confirmRestore }
-				supportLink="https://help.vaultpress.com/one-click-restore/"
+				supportLink="https://jetpack.com/support/how-to-rewind"
 				title={ translate( 'Rewind Site' ) }
 			>
 				{ translate(
@@ -573,7 +567,7 @@ class ActivityLog extends Component {
 				confirmTitle={ translate( 'Create download' ) }
 				onClose={ this.dismissBackup }
 				onConfirm={ this.confirmDownload }
-				supportLink="https://help.vaultpress.com/one-click-restore/"
+				supportLink="https://jetpack.com/support/backups"
 				title={ translate( 'Create downloadable backup' ) }
 				type={ 'backup' }
 				icon={ 'cloud-download' }
@@ -602,8 +596,8 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
-				{ rewindEnabledByConfig && <QueryRewindState siteId={ siteId } /> }
-				{ rewindEnabledByConfig && <QueryRewindStatus siteId={ siteId } /> }
+				<QueryRewindStatus siteId={ siteId } />
+				<QueryRewindState siteId={ siteId } />
 				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
 				{ siteId && isRewindActive && <QueryRewindBackupStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
@@ -611,7 +605,7 @@ class ActivityLog extends Component {
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ isRewindActive && ! hasMainCredentials && <ActivityLogCredentialsNotice /> }
+				{ 'awaitingCredentials' === rewindState.state && <ActivityLogCredentialsNotice /> }
 				{ this.renderErrorMessage() }
 				{ hasFirstBackup && this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
@@ -683,7 +677,6 @@ class ActivityLog extends Component {
 											backupConfirmDialog={ backupConfirmDialog }
 											disableRestore={ disableRestore }
 											disableBackup={ disableBackup }
-											hideRestore={ ! rewindEnabledByConfig || ! isPressable }
 											isRewindActive={ isRewindActive }
 											logs={ events }
 											requestDialog={ this.handleRequestDialog }
@@ -717,7 +710,6 @@ export default connect(
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
 			hasFirstBackup: ! isEmpty( getRewindStartDate( state, siteId ) ),
-			hasMainCredentials: hasMainCredentials( state, siteId ),
 			isRewindActive: isRewindActiveSelector( state, siteId ),
 			logRequestQuery,
 			logs: getActivityLogs(
@@ -732,6 +724,7 @@ export default connect(
 			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
 			requestData: { logs: getRequest( state, activityLogRequest( siteId, logRequestQuery ) ) },
+			rewindState: getRewindState( state, siteId ),
 			rewindStatusError: getRewindStatusError( state, siteId ),
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),

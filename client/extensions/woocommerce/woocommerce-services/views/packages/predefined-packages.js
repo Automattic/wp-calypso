@@ -106,7 +106,7 @@ const PredefinedPackages = ( {
 	return <div>{ renderContent() }</div>;
 };
 
-PredefinedPackages.PropTypes = {
+PredefinedPackages.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	toggleAll: PropTypes.func.isRequired,
 	togglePackage: PropTypes.func.isRequired,

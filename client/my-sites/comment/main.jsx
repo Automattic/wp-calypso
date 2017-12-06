@@ -17,6 +17,7 @@ import DocumentHead from 'components/data/document-head';
 import ModerateComment from 'components/data/moderate-comment';
 import Comment from 'my-sites/comments/comment';
 import CommentPermalink from 'my-sites/comment/comment-permalink';
+import CommentDeleteWarning from 'my-sites/comment/comment-delete-warning';
 import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { preventWidows } from 'lib/formatting';
@@ -30,11 +31,20 @@ export class CommentView extends Component {
 		commentId: PropTypes.number.isRequired,
 		action: PropTypes.string,
 		canModerateComments: PropTypes.bool.isRequired,
+		redirectToPostView: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
-		const { siteId, postId, commentId, action, canModerateComments, translate } = this.props;
+		const {
+			siteId,
+			postId,
+			commentId,
+			action,
+			canModerateComments,
+			redirectToPostView,
+			translate,
+		} = this.props;
 
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -42,7 +52,12 @@ export class CommentView extends Component {
 				<PageViewTracker path="/comment/:site" title="Comments" />
 				<DocumentHead title={ translate( 'Comment' ) } />
 				{ canModerateComments && (
-					<ModerateComment { ...{ siteId, postId, commentId, newStatus: action } } />
+					<ModerateComment
+						{ ...{ siteId, postId, commentId, newStatus: action, redirectToPostView } }
+					/>
+				) }
+				{ 'delete' === action && (
+					<CommentDeleteWarning { ...{ siteId, postId, commentId, redirectToPostView } } />
 				) }
 				<CommentListHeader { ...{ postId } } />
 				{ ! canModerateComments && (
@@ -56,7 +71,13 @@ export class CommentView extends Component {
 						illustration="/calypso/images/illustrations/illustration-500.svg"
 					/>
 				) }
-				{ canModerateComments && <Comment commentId={ commentId } refreshCommentData={ true } /> }
+				{ canModerateComments && (
+					<Comment
+						commentId={ commentId }
+						refreshCommentData={ true }
+						redirect={ redirectToPostView }
+					/>
+				) }
 				{ canModerateComments && <CommentPermalink { ...{ siteId, commentId } } /> }
 			</Main>
 		);
@@ -64,7 +85,7 @@ export class CommentView extends Component {
 }
 
 const mapStateToProps = ( state, ownProps ) => {
-	const { commentId, siteFragment } = ownProps;
+	const { commentId, redirectToPostView, siteFragment } = ownProps;
 
 	const siteId = getSiteId( state, siteFragment );
 	const comment = getSiteComment( state, siteId, commentId );
@@ -76,6 +97,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		siteId,
 		postId,
 		canModerateComments,
+		redirectToPostView: redirectToPostView( postId ),
 	};
 };
 

@@ -1044,7 +1044,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_FREE_THEMES ]: {
 		getSlug: () => FEATURE_FREE_THEMES,
-		getTitle: () => i18n.translate( 'Hundreds of Free Themes' ),
+		getTitle: () => i18n.translate( '100+ Free Themes' ),
 		getDescription: () =>
 			i18n.translate(
 				'Access to a wide range of professional theme templates ' +

@@ -48,6 +48,7 @@ export const CommentListHeader = ( {
 				actionOnClick={ recordReaderArticleOpened }
 				actionText={ translate( 'View Post' ) }
 				backHref={ `/comments/all/${ siteSlug }` }
+				alwaysShowActionText
 			>
 				<div className="comment-list__header-title">
 					{ translate( 'Comments on {{span}}%(postTitle)s{{/span}}', {

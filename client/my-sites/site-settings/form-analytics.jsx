@@ -38,7 +38,11 @@ import {
 } from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { FEATURE_GOOGLE_ANALYTICS, PLAN_BUSINESS } from 'lib/plans/constants';
+import {
+	FEATURE_GOOGLE_ANALYTICS,
+	PLAN_BUSINESS,
+	PLAN_JETPACK_BUSINESS,
+} from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
@@ -185,7 +189,7 @@ class GoogleAnalyticsForm extends Component {
 						) }
 						event={ 'google_analytics_settings' }
 						feature={ FEATURE_GOOGLE_ANALYTICS }
-						plan={ PLAN_BUSINESS }
+						plan={ siteIsJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS }
 						title={ nudgeTitle }
 					/>
 				) : (

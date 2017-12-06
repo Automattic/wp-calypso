@@ -33,8 +33,8 @@ export default class ShareButton extends PureComponent {
 	getUrl() {
 		const template = services[ this.props.service ].url;
 		const args = {
-			URL: this.props.url,
-			TITLE: this.props.title,
+			URL: encodeURIComponent( this.props.url ),
+			TITLE: encodeURIComponent( this.props.title ),
 			SITE_SLUG: this.props.siteSlug,
 		};
 

@@ -86,9 +86,11 @@ function filterConversationsPosts( posts ) {
 			return true;
 		}
 
+		// .comments are arrays of comment IDs
 		if ( isEqual( existingPost.comments, post.comments ) ) {
 			return false;
 		}
+
 		return true;
 	} );
 }

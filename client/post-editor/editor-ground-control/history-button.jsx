@@ -24,7 +24,7 @@ const HistoryButton = ( { loadRevision, postId, siteId, openDialog, translate } 
 	</div>
 );
 
-HistoryButton.PropTypes = {
+HistoryButton.propTypes = {
 	loadRevision: PropTypes.func.isRequired,
 
 	// connected to dispatch

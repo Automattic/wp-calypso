@@ -80,7 +80,11 @@ class FormClickToEditInput extends Component {
 					autoFocus
 					className="form-click-to-edit-input__input"
 				/>
-				<Button borderless onClick={ this.editEnd } aria-label={ this.props.updateAriaLabel }>
+				<Button
+					borderless
+					onClick={ this.editEnd ? this.editEnd : undefined }
+					aria-label={ this.props.updateAriaLabel }
+				>
 					<Gridicon icon="checkmark" />
 				</Button>
 			</span>
@@ -95,12 +99,19 @@ class FormClickToEditInput extends Component {
 		} );
 		return (
 			<span className={ classes }>
-				<span className="form-click-to-edit-input__text" onClick={ ! disabled && this.editStart }>
+				<span
+					className="form-click-to-edit-input__text"
+					onClick={ ! disabled && this.editStart ? this.editStart : undefined }
+				>
 					{ value || placeholder }
 				</span>
 
 				{ ! disabled && (
-					<Button borderless onClick={ this.editStart } aria-label={ editAriaLabel }>
+					<Button
+						borderless
+						onClick={ this.editStart ? this.ediStart : undefined }
+						aria-label={ editAriaLabel }
+					>
 						<Gridicon icon="pencil" />
 					</Button>
 				) }

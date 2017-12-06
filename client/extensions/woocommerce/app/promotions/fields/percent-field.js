@@ -38,12 +38,12 @@ const PercentField = ( props ) => {
 	);
 };
 
-PercentField.PropTypes = {
-	fieldName: PropTypes.string.isRequired,
+PercentField.propTypes = {
+	fieldName: PropTypes.string,
 	explanationText: PropTypes.string,
 	placeholderText: PropTypes.string,
 	value: PropTypes.number,
-	edit: PropTypes.func.isRequired,
+	edit: PropTypes.func,
 };
 
 export default PercentField;

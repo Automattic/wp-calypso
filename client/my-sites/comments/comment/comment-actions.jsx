@@ -45,6 +45,7 @@ export class CommentActions extends Component {
 		toggleEditMode: PropTypes.func,
 		toggleReply: PropTypes.func,
 		updateLastUndo: PropTypes.func,
+		redirect: PropTypes.func,
 	};
 
 	static defaultProps = {

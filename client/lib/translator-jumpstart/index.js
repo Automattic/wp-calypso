@@ -51,6 +51,10 @@ var injectUrl,
  */
 const communityTranslatorJumpstart = {
 	isEnabled() {
+		if ( ! config.isEnabled( 'community-translator' ) ) {
+			return false;
+		}
+
 		const currentUser = user.get();
 
 		if ( ! currentUser || 'en' === currentUser.localeSlug || ! currentUser.localeSlug ) {
