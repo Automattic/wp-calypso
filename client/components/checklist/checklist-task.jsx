@@ -92,7 +92,7 @@ export class ChecklistTask extends PureComponent {
 					<ScreenReaderText>
 						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
 					</ScreenReaderText>
-					{ completed && <Gridicon icon="checkmark" size={ 18 } /> }
+					{ <Gridicon icon="checkmark" size={ 18 } /> }
 				</span>
 			</Card>
 		);
