@@ -14,7 +14,7 @@ import Poller from './poller';
 
 const _pollers = {};
 
-export function add(dataStore, fetcher, options) {
+export function add( dataStore, fetcher, options ) {
 	var poller = new Poller( dataStore, fetcher, options );
 	if ( poller.id === 0 ) {
 		initActivityDetection();
@@ -25,7 +25,7 @@ export function add(dataStore, fetcher, options) {
 	return poller;
 }
 
-export function remove(poller) {
+export function remove( poller ) {
 	if ( typeof poller !== 'object' && _pollers[ poller ] ) {
 		poller = _pollers[ poller ];
 	}

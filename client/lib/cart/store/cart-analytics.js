@@ -13,7 +13,7 @@ import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
 import { recordAddToCart } from 'lib/analytics/ad-tracking';
 
-export function recordEvents(previousCart, nextCart) {
+export function recordEvents( previousCart, nextCart ) {
 	const previousItems = cartItems.getAll( previousCart ),
 		nextItems = cartItems.getAll( nextCart );
 
@@ -21,7 +21,7 @@ export function recordEvents(previousCart, nextCart) {
 	each( difference( previousItems, nextItems ), recordRemoveEvent );
 }
 
-export function removeNestedProperties(cartItem) {
+export function removeNestedProperties( cartItem ) {
 	return omit( cartItem, [ 'extra' ] );
 }
 

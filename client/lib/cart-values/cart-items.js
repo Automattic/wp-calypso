@@ -551,11 +551,11 @@ export function domainTransferPrivacy( properties ) {
  * @param {Object} cart - cart as `CartValue` object
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
-export function getGoogleApps(cart) {
+export function getGoogleApps( cart ) {
 	return filter( getAll( cart ), isGoogleApps );
 }
 
-export function googleApps(properties) {
+export function googleApps( properties ) {
 	const productSlug = properties.product_slug || 'gapps',
 		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
 

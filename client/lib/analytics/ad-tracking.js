@@ -484,7 +484,7 @@ function retarget() {
  * @param {Object} properties - The custom event attributes.
  * @returns {void}
  */
-export function trackCustomFacebookConversionEvent(name, properties) {
+export function trackCustomFacebookConversionEvent( name, properties ) {
 	window.fbw && window.fbq( 'trackCustom', name, properties );
 }
 
@@ -494,7 +494,7 @@ export function trackCustomFacebookConversionEvent(name, properties) {
  * @param {Object} properties - The custom event attributes.
  * @returns {void}
  */
-export function trackCustomAdWordsRemarketingEvent(properties) {
+export function trackCustomAdWordsRemarketingEvent( properties ) {
 	window.google_trackConversion &&
 		window.google_trackConversion( {
 			google_conversion_id: ADWORDS_CONVERSION_ID,
@@ -522,7 +522,7 @@ export function retargetViewPlans() {
  * @param {Object} cartItem - The item added to the cart
  * @returns {void}
  */
-export function recordAddToCart(cartItem) {
+export function recordAddToCart( cartItem ) {
 	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
@@ -552,7 +552,7 @@ export function recordAddToCart(cartItem) {
  *
  * @param {Object} cart - cart as `CartValue` object
  */
-export function recordViewCheckout(cart) {
+export function recordViewCheckout( cart ) {
 	if ( isCriteoEnabled ) {
 		recordViewCheckoutInCriteo( cart );
 	}
@@ -565,7 +565,7 @@ export function recordViewCheckout(cart) {
  * @param {Number} orderId - the order id
  * @returns {void}
  */
-export function recordOrder(cart, orderId) {
+export function recordOrder( cart, orderId ) {
 	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
@@ -888,7 +888,7 @@ function recordSignupCompletionInFloodlight() {
  * @param {String} urlPath - The URL path
  * @returns {void}
  */
-export function recordPageViewInFloodlight(urlPath) {
+export function recordPageViewInFloodlight( urlPath ) {
 	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
 		return;
 	}
@@ -1239,9 +1239,9 @@ export function recordSignupCompletion() {
 }
 
 export const retarget = function( context, next ) {
-    const nextFunction = typeof next === 'function' ? next : noop;
+	const nextFunction = typeof next === 'function' ? next : noop;
 
-    retarget();
+	retarget();
 
-    nextFunction();
+	nextFunction();
 };

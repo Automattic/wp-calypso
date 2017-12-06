@@ -36,7 +36,7 @@ const wpcom = wp.undocumented();
  * @param {object} domainDetails - Optional domain registration details if the shopping cart contains a domain registration product
  *   transaction.
  */
-export function submit(params) {
+export function submit( params ) {
 	return new TransactionFlow( params );
 }
 
@@ -242,7 +242,7 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 	}
 }
 
-export function createCardToken(requestType, cardDetails, callback) {
+export function createCardToken( requestType, cardDetails, callback ) {
 	return createPaygateToken( requestType, cardDetails, callback );
 }
 
@@ -258,18 +258,18 @@ function getPaygateParameters( cardDetails ) {
 	};
 }
 
-export function hasDomainDetails(transaction) {
+export function hasDomainDetails( transaction ) {
 	return ! isEmpty( transaction.domainDetails );
 }
 
-export function newCardPayment(newCardDetails) {
+export function newCardPayment( newCardDetails ) {
 	return {
 		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
 		newCardDetails: newCardDetails || {},
 	};
 }
 
-export function storedCardPayment(storedCard) {
+export function storedCardPayment( storedCard ) {
 	return {
 		paymentMethod: 'WPCOM_Billing_MoneyPress_Stored',
 		storedCard: storedCard,

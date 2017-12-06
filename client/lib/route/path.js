@@ -23,7 +23,7 @@ const statsLocationsByTab = {
 	insights: '/stats/insights/',
 };
 
-export function getSiteFragment(path) {
+export function getSiteFragment( path ) {
 	const basePath = path.split( '?' )[ 0 ];
 	const pieces = basePath.split( '/' );
 
@@ -50,7 +50,7 @@ export function getSiteFragment(path) {
 	return false;
 }
 
-export function addSiteFragment(path, site) {
+export function addSiteFragment( path, site ) {
 	const pieces = sectionify( path ).split( '/' );
 
 	if ( includes( [ 'post', 'page', 'edit' ], pieces[ 1 ] ) ) {
@@ -66,7 +66,7 @@ export function addSiteFragment(path, site) {
 	return pieces.join( '/' );
 }
 
-export function sectionifyWithRoutes(path, routes) {
+export function sectionifyWithRoutes( path, routes ) {
 	const routeParams = {};
 	if ( ! routes || ! Array.isArray( routes ) ) {
 		return {
@@ -89,7 +89,7 @@ export function sectionifyWithRoutes(path, routes) {
 	};
 }
 
-export function sectionify(path, siteFragment) {
+export function sectionify( path, siteFragment ) {
 	let basePath = path.split( '?' )[ 0 ];
 
 	// Sometimes the caller knows better than `getSiteFragment` what the `siteFragment` is.
@@ -106,7 +106,7 @@ export function sectionify(path, siteFragment) {
 	return untrailingslashit( basePath );
 }
 
-export function getStatsDefaultSitePage(slug) {
+export function getStatsDefaultSitePage( slug ) {
 	const path = '/stats/day/';
 
 	if ( slug ) {
@@ -116,7 +116,7 @@ export function getStatsDefaultSitePage(slug) {
 	return untrailingslashit( path );
 }
 
-export function getStatsPathForTab(tab, siteIdOrSlug) {
+export function getStatsPathForTab( tab, siteIdOrSlug ) {
 	if ( ! tab ) {
 		return getStatsDefaultSitePage( siteIdOrSlug );
 	}
@@ -144,7 +144,7 @@ export function getStatsPathForTab(tab, siteIdOrSlug) {
  * @param  {string} status  Status param from route
  * @return {string}         mapped status value
  */
-export function mapPostStatus(status) {
+export function mapPostStatus( status ) {
 	switch ( status ) {
 		// Drafts
 		case 'drafts':
@@ -160,6 +160,6 @@ export function mapPostStatus(status) {
 	}
 }
 
-export function externalRedirect(url) {
+export function externalRedirect( url ) {
 	window.location = url;
 }

@@ -11,30 +11,30 @@ export function billingHistory() {
 	return purchasesRoot() + '/billing';
 }
 
-export function billingHistoryReceipt(receiptId = ':receiptId') {
+export function billingHistoryReceipt( receiptId = ':receiptId' ) {
 	return billingHistory() + `/${ receiptId }`;
 }
 
-export function managePurchase(siteName = ':site', purchaseId = ':purchaseId') {
+export function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
 	return purchasesRoot() + `/${ siteName }/${ purchaseId }`;
 }
 
-export function cancelPurchase(siteName, purchaseId) {
+export function cancelPurchase( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/cancel';
 }
 
-export function confirmCancelDomain(siteName, purchaseId) {
+export function confirmCancelDomain( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/confirm-cancel-domain';
 }
 
-export function cancelPrivacyProtection(siteName, purchaseId) {
+export function cancelPrivacyProtection( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/cancel-privacy-protection';
 }
 
-export function addCardDetails(siteName, purchaseId) {
+export function addCardDetails( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/payment/add';
 }
 
-export function editCardDetails(siteName, purchaseId, cardId = ':cardId') {
+export function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
 	return managePurchase( siteName, purchaseId ) + `/payment/edit/${ cardId }`;
 }

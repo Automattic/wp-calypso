@@ -27,11 +27,11 @@ import productsValues from 'lib/products-values';
  * @param {Object} [attributes] Additional attributes for the cart (optional)
  * @returns {cart} [emptyCart] The new empty cart created
  */
-export function emptyCart(siteId, attributes) {
+export function emptyCart( siteId, attributes ) {
 	return Object.assign( { blog_id: siteId, products: [] }, attributes );
 }
 
-export function applyCoupon(coupon) {
+export function applyCoupon( coupon ) {
 	return function( cart ) {
 		return update( cart, {
 			coupon: { $set: coupon },
@@ -40,7 +40,7 @@ export function applyCoupon(coupon) {
 	};
 }
 
-export function canRemoveFromCart(cart, cartItem) {
+export function canRemoveFromCart( cart, cartItem ) {
 	if ( productsValues.isCredits( cartItem ) ) {
 		return false;
 	}
@@ -62,7 +62,7 @@ export function canRemoveFromCart(cart, cartItem) {
  * @param {cartValue} [nextCartValue] - the new cart value
  * @returns {array} [nextCartMessages] - an array of messages about the state of the cart
  */
-export function getNewMessages(previousCartValue, nextCartValue) {
+export function getNewMessages( previousCartValue, nextCartValue ) {
 	var previousDate, nextDate, hasNewServerData, nextCartMessages;
 	previousCartValue = previousCartValue || {};
 	nextCartValue = nextCartValue || {};
@@ -84,7 +84,7 @@ export function getNewMessages(previousCartValue, nextCartValue) {
 	return hasNewServerData ? nextCartMessages : [];
 }
 
-export function isPaidForFullyInCredits(cart) {
+export function isPaidForFullyInCredits( cart ) {
 	return (
 		! cartItems.hasFreeTrial( cart ) &&
 		! cartItems.hasProduct( cart, 'wordpress-com-credits' ) &&
@@ -93,11 +93,11 @@ export function isPaidForFullyInCredits(cart) {
 	);
 }
 
-export function isFree(cart) {
+export function isFree( cart ) {
 	return cart.total_cost === 0 && ! cartItems.hasFreeTrial( cart );
 }
 
-export function fillInAllCartItemAttributes(cart, products) {
+export function fillInAllCartItemAttributes( cart, products ) {
 	return update( cart, {
 		products: {
 			$apply: function( items ) {
@@ -109,7 +109,7 @@ export function fillInAllCartItemAttributes(cart, products) {
 	} );
 }
 
-export function fillInSingleCartItemAttributes(cartItem, products) {
+export function fillInSingleCartItemAttributes( cartItem, products ) {
 	var product = products[ cartItem.product_slug ],
 		attributes = productsValues.whitelistAttributes( product );
 
@@ -126,7 +126,7 @@ export function fillInSingleCartItemAttributes(cartItem, products) {
  * @param {Object} cart - cart as `CartValue` object
  * @returns {string} the refund policy type
  */
-export function getRefundPolicy(cart) {
+export function getRefundPolicy( cart ) {
 	if ( cartItems.hasDomainRegistration( cart ) && cartItems.hasPlan( cart ) ) {
 		return 'planWithDomainRefund';
 	}
@@ -138,7 +138,7 @@ export function getRefundPolicy(cart) {
 	return 'genericRefund';
 }
 
-export function isPaymentMethodEnabled(cart, method) {
+export function isPaymentMethodEnabled( cart, method ) {
 	switch ( method ) {
 		case 'credit-card':
 			return isCreditCardPaymentsEnabled( cart );
@@ -155,18 +155,18 @@ export function isPaymentMethodEnabled(cart, method) {
 	}
 }
 
-export function isCreditCardPaymentsEnabled(cart) {
+export function isCreditCardPaymentsEnabled( cart ) {
 	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_MoneyPress_Paygate' ) >= 0;
 }
 
-export function isPayPalExpressEnabled(cart) {
+export function isPayPalExpressEnabled( cart ) {
 	return (
 		config.isEnabled( 'upgrades/paypal' ) &&
 		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_PayPal_Express' ) >= 0
 	);
 }
 
-export function isNetherlandsIdealEnabled(cart) {
+export function isNetherlandsIdealEnabled( cart ) {
 	return (
 		config.isEnabled( 'upgrades/netherlands-ideal' ) &&
 		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Ideal' ) >= 0 &&

@@ -1,3 +1,4 @@
+/** @format */
 export const UNCLASSIFIED = 0;
 export const PHOTO_ONLY = 1;
 export const LARGE_BANNER = 2;
