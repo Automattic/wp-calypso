@@ -176,7 +176,7 @@ $autobar-height: 20px;
 		display: block;
 
 		@include breakpoint( ">480px" ) {
-			transform: translateY( 1px ); /*Align with logo*/
+			transform: translateY( 2px ); /*Align with logo*/
 		}
 	}
 
