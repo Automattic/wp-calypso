@@ -159,9 +159,6 @@ export function queryRequests( state = {}, action ) {
 export const queries = ( () => {
 	function applyToManager( state, siteId, method, createDefault, ...args ) {
 		if ( ! siteId ) {
-			// TODO remove me after testing and before merge
-			// eslint-disable-next-line no-console
-			console.warn( 'applyToManager called without siteId' );
 			return state;
 		}
 

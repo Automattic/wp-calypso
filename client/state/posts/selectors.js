@@ -85,9 +85,6 @@ export const getNormalizedPost = createSelector(
  */
 export const getSitePosts = createSelector( ( state, siteId ) => {
 	if ( ! siteId ) {
-		// TODO remove me after testing and before merge
-		// eslint-disable-next-line no-console
-		console.warn( 'getSitePosts called without siteId' );
 		return null;
 	}
 
@@ -109,9 +106,6 @@ export const getSitePosts = createSelector( ( state, siteId ) => {
  */
 export const getSitePost = createSelector( ( state, siteId, postId ) => {
 	if ( ! siteId ) {
-		// TODO remove me after testing and before merge
-		// eslint-disable-next-line no-console
-		console.warn( 'getSitePost called without siteId' );
 		return null;
 	}
 
@@ -309,9 +303,6 @@ export const isRequestingPostsForQueryIgnoringPage = createSelector(
  */
 export function isRequestingSitePost( state, siteId, postId ) {
 	if ( ! siteId ) {
-		// TODO remove me after testing and before merge
-		// eslint-disable-next-line no-console
-		console.warn( 'isRequestingSitePost called without siteId' );
 		return null;
 	}
 
