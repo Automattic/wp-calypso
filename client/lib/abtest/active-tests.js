@@ -63,15 +63,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	jetpackHidePlanIconsForAllDevices: {
-		datestamp: '20171122',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'show',
-		allowExistingUsers: true,
-	},
 	skipThemesSelectionModal: {
 		datestamp: '20170904',
 		variations: {
