@@ -39,7 +39,7 @@ CurrencyField.propTypes = {
 	fieldName: PropTypes.string,
 	explanationText: PropTypes.string,
 	placeholderText: PropTypes.string,
-	value: PropTypes.number,
+	value: PropTypes.string,
 	edit: PropTypes.func,
 	currency: PropTypes.string,
 };
