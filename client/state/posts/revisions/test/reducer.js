@@ -9,8 +9,9 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { requesting, revisions, selection, ui } from '../reducer';
+import reducer, { diffs, requesting, selection, ui } from '../reducer';
 import {
+	DESERIALIZE,
 	POST_EDIT,
 	POST_REVISIONS_DIALOG_CLOSE,
 	POST_REVISIONS_DIALOG_OPEN,
@@ -20,16 +21,140 @@ import {
 	POST_REVISIONS_REQUEST_SUCCESS,
 	POST_REVISIONS_SELECT,
 	SELECTED_SITE_SET,
+	SERIALIZE,
 } from 'state/action-types';
+
+const TEST_SITE_ID = 999999;
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
-			'revisions',
-			'selection',
-			'ui',
-		] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'diffs', 'requesting', 'selection', 'ui' ] );
+	} );
+
+	describe( '#diffs', () => {
+		test( 'should default to an empty object', () => {
+			const state = diffs( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+
+		const validState = deepFreeze( {
+			[ TEST_SITE_ID ]: {
+				'100:109': {
+					diff: {
+						todo: 'fix this shape',
+					},
+					from_revision_id: 100,
+					to_revision_id: 109,
+				},
+				'110:111': {
+					diff: {
+						todo: 'fix this shape',
+					},
+					from_revision_id: 110,
+					to_revision_id: 111,
+				},
+			},
+		} );
+
+		test( 'should persist state', () => {
+			const state = diffs( validState, { type: SERIALIZE } );
+			expect( state ).to.eql( validState );
+		} );
+
+		test( 'should load valid persisted state', () => {
+			const state = diffs( validState, { type: DESERIALIZE } );
+			expect( state ).to.eql( validState );
+		} );
+
+		test( 'should not load invalid persisted state', () => {
+			const invalidState = deepFreeze( {
+				stuff: {
+					things: {},
+				},
+			} );
+
+			const state = diffs( invalidState, { type: DESERIALIZE } );
+			expect( state ).to.eql( {} );
+		} );
+
+		test( 'should merge valid diff data to the same siteId', () => {
+			const state = diffs( validState, {
+				type: POST_REVISIONS_RECEIVE,
+				siteId: TEST_SITE_ID,
+				diffs: [
+					{
+						diff: {
+							todo: 'fix this shape',
+						},
+						from_revision_id: 120,
+						to_revision_id: 121,
+					},
+				],
+			} );
+
+			expect( state ).to.eql( {
+				[ TEST_SITE_ID ]: {
+					...state[ TEST_SITE_ID ],
+					...{
+						'120:121': {
+							diff: {
+								todo: 'fix this shape',
+							},
+							from_revision_id: 120,
+							to_revision_id: 121,
+						},
+					},
+				},
+			} );
+		} );
+
+		test( 'should merge valid diff data to differing siteIds', () => {
+			const state = diffs( validState, {
+				type: POST_REVISIONS_RECEIVE,
+				siteId: 12399999,
+				diffs: [
+					{
+						diff: {
+							todo: 'fix this shape',
+						},
+						from_revision_id: 88,
+						to_revision_id: 89,
+					},
+				],
+			} );
+
+			expect( state ).to.eql( {
+				...validState,
+				12399999: {
+					...{
+						'88:89': {
+							diff: {
+								todo: 'fix this shape',
+							},
+							from_revision_id: 88,
+							to_revision_id: 89,
+						},
+					},
+				},
+			} );
+		} );
+
+		test( 'should not merge diff data without a siteId', () => {
+			const state = diffs( validState, {
+				type: POST_REVISIONS_RECEIVE,
+				diffs: [
+					{
+						diff: {
+							todo: 'fix this shape',
+						},
+						from_revision_id: 88,
+						to_revision_id: 89,
+					},
+				],
+			} );
+
+			expect( state ).to.eql( validState );
+		} );
 	} );
 
 	describe( '#requesting', () => {
@@ -137,128 +262,6 @@ describe( 'reducer', () => {
 				12345678: {
 					50: true,
 					10: true,
-				},
-			} );
-		} );
-	} );
-
-	describe( '#revisions', () => {
-		test( 'should default to an empty object', () => {
-			const state = revisions( undefined, {} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		test( 'should support multiple sites', () => {
-			const state = revisions(
-				deepFreeze( {
-					12345678: {
-						50: {
-							51: {
-								id: 51,
-							},
-						},
-					},
-				} ),
-				{
-					type: POST_REVISIONS_RECEIVE,
-					siteId: 87654321,
-					postId: 10,
-					revisions: [
-						{
-							id: 11,
-						},
-					],
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: {
-						51: {
-							id: 51,
-						},
-					},
-				},
-				87654321: {
-					10: {
-						11: {
-							id: 11,
-						},
-					},
-				},
-			} );
-		} );
-
-		test( 'should support multiple posts', () => {
-			const state = revisions(
-				deepFreeze( {
-					12345678: {
-						50: {
-							51: {
-								id: 51,
-							},
-						},
-					},
-				} ),
-				{
-					type: POST_REVISIONS_RECEIVE,
-					siteId: 12345678,
-					postId: 10,
-					revisions: [
-						{
-							id: 11,
-						},
-					],
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: {
-						51: {
-							id: 51,
-						},
-					},
-					10: {
-						11: {
-							id: 11,
-						},
-					},
-				},
-			} );
-		} );
-
-		test( 'should discard previous revisions for the same post', () => {
-			const state = revisions(
-				deepFreeze( {
-					12345678: {
-						10: {
-							51: {
-								id: 51,
-							},
-						},
-					},
-				} ),
-				{
-					type: POST_REVISIONS_RECEIVE,
-					siteId: 12345678,
-					postId: 10,
-					revisions: [
-						{
-							id: 52,
-						},
-					],
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					10: {
-						52: {
-							id: 52,
-						},
-					},
 				},
 			} );
 		} );

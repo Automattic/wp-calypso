@@ -16,7 +16,11 @@ import { findIndex, get, head, isEmpty, map } from 'lodash';
 import EditorRevisionsListHeader from './header';
 import EditorRevisionsListItem from './item';
 import { selectPostRevision } from 'state/posts/revisions/actions';
-import { getPostRevision, getPostRevisionsSelectedRevisionId } from 'state/selectors';
+import {
+	getPostRevision,
+	getPostRevisionsDiff,
+	getPostRevisionsSelectedRevisionId,
+} from 'state/selectors';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 class EditorRevisionsList extends PureComponent {
@@ -66,6 +70,7 @@ class EditorRevisionsList extends PureComponent {
 	}
 
 	componentDidUpdate() {
+		// @TODO -- maybe short-circuit this if selection doesn't change...?
 		this.scrollToSelectedItem();
 	}
 

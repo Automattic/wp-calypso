@@ -14,7 +14,7 @@ import { get, has } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostRevision, getPostRevisionChanges } from 'state/selectors';
+import { getPostRevision, getPostRevisionsDiff } from 'state/selectors';
 import EditorDiffChanges from './changes';
 
 class EditorDiffViewer extends PureComponent {
@@ -49,25 +49,17 @@ class EditorDiffViewer extends PureComponent {
 	}
 
 	render() {
-		const { revision, revisionChanges } = this.props;
+		const { revisionChanges } = this.props;
 		const classes = classNames( 'editor-diff-viewer', {
-			'is-loading': ! ( revisionChanges.tooLong || has( revisionChanges, 'title[0].value' ) ),
+			'is-loading': ! has( revisionChanges, 'title[0].value' ),
 		} );
 		return (
 			<div className={ classes }>
 				<h1 className="editor-diff-viewer__title">
-					{ revisionChanges.tooLong ? (
-						revision.title
-					) : (
-						<EditorDiffChanges changes={ revisionChanges.title } />
-					) }
+					<EditorDiffChanges changes={ revisionChanges.title } />
 				</h1>
 				<pre className="editor-diff-viewer__content">
-					{ revisionChanges.tooLong ? (
-						revision.content
-					) : (
-						<EditorDiffChanges changes={ revisionChanges.content } />
-					) }
+					<EditorDiffChanges changes={ revisionChanges.content } />
 				</pre>
 			</div>
 		);
@@ -76,5 +68,5 @@ class EditorDiffViewer extends PureComponent {
 
 export default connect( ( state, { siteId, postId, selectedRevisionId } ) => ( {
 	revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
-	revisionChanges: getPostRevisionChanges( state, siteId, postId, selectedRevisionId ),
+	diff: getPostRevisionsDiff( state, siteId, postId, selectedRevisionId ),
 } ) )( EditorDiffViewer );
