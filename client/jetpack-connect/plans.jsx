@@ -71,7 +71,7 @@ class Plans extends Component {
 		if ( this.props.selectedPlan ) {
 			this.selectPlan( this.props.selectedPlan );
 		}
-		if ( this.props.hasPlan || this.props.notJetpack ) {
+		if ( this.props.hasPlan === true || this.props.notJetpack === true ) {
 			this.redirect( CALYPSO_PLANS_PAGE );
 		}
 		if ( ! this.props.canPurchasePlans ) {
@@ -164,7 +164,7 @@ class Plans extends Component {
 		if (
 			this.redirecting ||
 			selectedPlanSlug ||
-			notJetpack ||
+			false !== notJetpack ||
 			! canPurchasePlans ||
 			false !== hasPlan ||
 			false !== isAutomatedTransfer
@@ -226,7 +226,7 @@ export default connect(
 			calypsoStartedConnection: isCalypsoStartedConnection( selectedSiteSlug ),
 			isRtlLayout: isRtl( state ),
 			hasPlan: selectedSite ? isCurrentPlanPaid( state, selectedSite.ID ) : null,
-			notJetpack: ! ( selectedSite && isJetpackSite( state, selectedSite.ID ) ),
+			notJetpack: selectedSite ? ! isJetpackSite( state, selectedSite.ID ) : null,
 		};
 	},
 	{
