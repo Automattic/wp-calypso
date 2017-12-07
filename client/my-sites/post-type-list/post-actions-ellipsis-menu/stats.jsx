@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
-import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
+import { bumpStat as bumpAnalyticsStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
 import { getPost } from 'state/posts/selectors';
@@ -65,10 +65,15 @@ const mapStateToProps = ( state, { globalId } ) => {
 	};
 };
 
-const mapDispatchToProps = { bumpAnalyticsStat };
+const mapDispatchToProps = { bumpAnalyticsStat, recordTracksEvent };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const bumpStat = bumpStatGenerator( stateProps.type, 'stats', dispatchProps.bumpAnalyticsStat );
+	const bumpStat = bumpStatGenerator(
+		stateProps.type,
+		'stats',
+		dispatchProps.bumpAnalyticsStat,
+		dispatchProps.recordTracksEvent
+	);
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { bumpStat } );
 };
 
