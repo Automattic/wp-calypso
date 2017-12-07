@@ -179,15 +179,16 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const isStepFinished = currentStep > step;
 
 		const heading = translate( 'Verify we can get in touch.' );
-		const message = translate(
-			"We'll send an email to {{strong}}%(email)s{{/strong}} to start the transfer process. Make sure " +
-				"you have access to that address. Don't recognize it? Then you have privacy protection enabled. " +
-				"You'll need to log in to your current domain provider and {{a}}turn it off{{/a}} before we start. " +
-				"Don't worry, you can re-enable it once the transfer is done.",
+		let message = translate(
+			"Make sure you have access to the email address on your domain's contact information with privacy " +
+				"protection turned off. We couldn't get the email address on file and we need to send an important " +
+				'email to start the transfer process.' +
+				'{{br/}}{{br/}}' +
+				'Log in to your current domain provider to check your contact information and make sure privacy ' +
+				"is disabled. {{a}}Here's how to do that{{/a}}. Don't worry, you can turn it on once the transfer is done.",
 			{
-				args: { email },
 				components: {
-					strong: <strong className="transfer-domain-step__admin-email" />,
+					br: <br />,
 					a: (
 						<a
 							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
@@ -198,7 +199,34 @@ class TransferDomainPrecheck extends React.PureComponent {
 				},
 			}
 		);
-		const buttonText = translate( 'I can access this email address' );
+		let buttonText = translate( 'I can access the email address' );
+
+		if ( email ) {
+			message = translate(
+				"Make sure you have access to the email address on your domain's contact information with privacy " +
+					"protection turned off. We'll send an email to {{strong}}%(email)s{{/strong}} to start the " +
+					"transfer process. Don't recognize that address? Then you might have privacy protection enabled." +
+					'{{br/}}{{br/}}' +
+					'Log in to your current domain provider to check your contact information and make sure privacy ' +
+					"is disabled. {{a}}Here's how to do that{{/a}}. Don't worry, you can turn it on once the transfer is done.",
+				{
+					args: { email },
+					components: {
+						strong: <strong className="transfer-domain-step__admin-email" />,
+						br: <br />,
+						a: (
+							<a
+								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
+								rel="noopener noreferrer"
+								target="_blank"
+							/>
+						),
+					},
+				}
+			);
+
+			buttonText = translate( 'I can access this email address' );
+		}
 
 		const statusClasses = loading
 			? 'transfer-domain-step__lock-status transfer-domain-step__checking'
