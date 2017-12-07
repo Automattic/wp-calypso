@@ -14,8 +14,8 @@ import { get, has } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostRevision, getPostRevisionsDiff } from 'state/selectors';
-import EditorDiffChanges from './changes';
+import { getPostRevision } from 'state/selectors';
+//import EditorDiffChanges from './changes';
 
 class EditorDiffViewer extends PureComponent {
 	static propTypes = {
@@ -24,10 +24,11 @@ class EditorDiffViewer extends PureComponent {
 		siteId: PropTypes.number.isRequired,
 
 		// connected
-		revisionChanges: PropTypes.shape( {
+		diff: PropTypes.object,
+		/*		revisionChanges: PropTypes.shape( {
 			title: PropTypes.array,
 			content: PropTypes.array,
-		} ).isRequired,
+		} ).isRequired,*/
 	};
 
 	scrollToFirstChangeOrTop = () => {
@@ -49,17 +50,22 @@ class EditorDiffViewer extends PureComponent {
 	}
 
 	render() {
-		const { revisionChanges } = this.props;
+		const { diff } = this.props;
 		const classes = classNames( 'editor-diff-viewer', {
-			'is-loading': ! has( revisionChanges, 'title[0].value' ),
+			'is-loading': ! has( diff, 'post_content[0].final' ),
 		} );
+
+		// @TODO make the following & EditorDiffChanges "work"
+
 		return (
 			<div className={ classes }>
 				<h1 className="editor-diff-viewer__title">
-					<EditorDiffChanges changes={ revisionChanges.title } />
+					{ // <EditorDiffChanges changes={ revisionChanges.title } />
+					get( diff, 'post_title[0].final', [] ) }
 				</h1>
 				<pre className="editor-diff-viewer__content">
-					<EditorDiffChanges changes={ revisionChanges.content } />
+					{ // <EditorDiffChanges changes={ revisionChanges.content } />
+					get( diff, 'post_content[0].final', [] ) }
 				</pre>
 			</div>
 		);
@@ -68,5 +74,4 @@ class EditorDiffViewer extends PureComponent {
 
 export default connect( ( state, { siteId, postId, selectedRevisionId } ) => ( {
 	revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
-	diff: getPostRevisionsDiff( state, siteId, postId, selectedRevisionId ),
 } ) )( EditorDiffViewer );

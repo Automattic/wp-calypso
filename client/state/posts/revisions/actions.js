@@ -64,13 +64,14 @@ export const receivePostRevisionsFailure = ( siteId, postId, error ) => ( {
 /**
  * Action creator function: POST_REVISIONS_RECEIVE
  *
- * @param {String} siteId of the revisions
- * @param {Object} diffs list of diffs including `from_revision_id`, `to_revision_id`, & `diff` props
+ * @param {Object} response diffs, postId, revisions, siteId,
  * @return {Object} action object
  */
-export const receivePostRevisions = ( siteId, diffs ) => ( {
+export const receivePostRevisions = ( { diffs, postId, revisions, siteId } ) => ( {
 	type: POST_REVISIONS_RECEIVE,
 	diffs,
+	postId,
+	revisions,
 	siteId,
 } );
 

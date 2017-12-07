@@ -35,9 +35,9 @@ export const receiveError = ( { dispatch }, { siteId, postId }, rawError ) =>
  * @param {Object} response from the server
  * @param {Object} response.diffs raw data containing a set of diffs for the site & post
  */
-export const receiveSuccess = ( { dispatch }, { siteId, postId }, { diffs } ) => {
+export const receiveSuccess = ( { dispatch }, { siteId, postId }, response ) => {
 	dispatch( receivePostRevisionsSuccess( siteId, postId ) );
-	dispatch( receivePostRevisions( siteId, diffs ) );
+	dispatch( receivePostRevisions( { siteId, postId, ...response } ) );
 };
 
 /**

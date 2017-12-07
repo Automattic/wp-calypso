@@ -13,7 +13,9 @@ import createSelector from 'lib/create-selector';
 
 const getPostRevisionsAuthorsId = createSelector(
 	( state, siteId, postId ) =>
-		uniq( map( get( state.posts.revisions.revisions, [ siteId, postId ], {} ), 'author' ) ),
+		uniq(
+			map( get( state.posts.revisions.diff, [ siteId, postId, 'revisions' ], {} ), 'post_author' )
+		),
 	state => [ state.posts.revisions.revisions ]
 );
 
