@@ -17,7 +17,7 @@ import { getProfileLinks } from 'state/selectors';
  *
  * @param {Object}   state      Global state tree
  * @param {String}   siteDomain Site domain
- * @return {Boolean}            True if the site is in the user's profile links, false otherwise.
+ * @return {?Boolean}           True if the site is in the user's profile links, false otherwise.
  */
 export default createSelector(
 	( state, siteDomain ) => {
