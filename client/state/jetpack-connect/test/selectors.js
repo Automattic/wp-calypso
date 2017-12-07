@@ -9,7 +9,6 @@ import {
 	getAuthorizationRemoteSite,
 	getConnectingSite,
 	getJetpackSiteByUrl,
-	getSiteIdFromQueryObject,
 	getSSO,
 	getUserAlreadyConnected,
 	hasExpiredSecretError,
@@ -522,41 +521,6 @@ describe( 'selectors', () => {
 			};
 
 			expect( getAuthAttempts( state, 'sitetest.com' ) ).toBe( 2 );
-		} );
-	} );
-
-	describe( '#getSiteIdFromQueryObject()', () => {
-		test( 'should return an integer', () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectAuthorize: {
-						queryObject: {
-							client_id: '123',
-						},
-					},
-				},
-			};
-			expect( getSiteIdFromQueryObject( state ) ).toBe( 123 );
-		} );
-
-		test( 'should return null if there is no query object', () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectAuthorize: {},
-				},
-			};
-			expect( getSiteIdFromQueryObject( state ) ).toBeNull();
-		} );
-
-		test( 'should return null if there is no client id', () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectAuthorize: {
-						queryObject: {},
-					},
-				},
-			};
-			expect( getSiteIdFromQueryObject( state ) ).toBeNull();
 		} );
 	} );
 

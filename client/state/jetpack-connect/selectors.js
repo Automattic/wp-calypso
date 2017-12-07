@@ -111,14 +111,6 @@ const hasExpiredSecretError = function( state ) {
 	);
 };
 
-const getSiteIdFromQueryObject = function( state ) {
-	const queryObject = getAuthorizationRemoteQueryData( state );
-	if ( queryObject && queryObject.client_id ) {
-		return parseInt( queryObject.client_id, 10 );
-	}
-	return null;
-};
-
 export default {
 	getConnectingSite,
 	getAuthorizationData,
@@ -131,6 +123,5 @@ export default {
 	hasXmlrpcError,
 	hasExpiredSecretError,
 	getAuthAttempts,
-	getSiteIdFromQueryObject,
 	getUserAlreadyConnected,
 };
