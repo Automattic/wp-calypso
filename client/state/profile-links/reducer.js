@@ -20,7 +20,7 @@ import {
 	USER_PROFILE_LINKS_RESET_ERRORS,
 } from 'state/action-types';
 
-export const items = createReducer( [], {
+export const items = createReducer( null, {
 	[ USER_PROFILE_LINKS_RECEIVE ]: ( state, { profileLinks } ) => profileLinks,
 	[ USER_PROFILE_LINKS_DELETE_SUCCESS ]: ( state, { linkSlug } ) =>
 		reject( state, { link_slug: linkSlug } ),
