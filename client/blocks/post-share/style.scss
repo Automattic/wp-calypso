@@ -62,6 +62,11 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	padding: 0 16px 16px;
 	@include breakpoint( ">480px" ) {
 		padding: 0 24px 16px;
+
+		//TODO Clean-up after PostTypeList is used for /posts/
+		.post-type-list & {
+			padding: 0 16px 16px;
+		}
 	}
 }
 
@@ -75,6 +80,11 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	margin: 0 16px 16px;
 	@include breakpoint( ">480px" ) {
 		margin: 0 24px 16px;
+
+		//TODO Clean-up after PostTypeList is used for /posts/
+		.post-type-list & {
+			margin: 0 16px 16px;
+		}
 	}
 
 	.post-share__share-button {
@@ -111,9 +121,19 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	margin: 0 16px 16px;
 	@include breakpoint( ">480px" ) {
 		margin: 0 24px 16px;
+
+		//TODO Clean-up after PostTypeList is used for /posts/
+		.post-type-list & {
+			margin: 0 16px 16px;
+		}
 	}
 	@include breakpoint( ">960px" ) {
 		margin: 0 24px 16px 0;
+
+		//TODO Clean-up after PostTypeList is used for /posts/
+		.post-type-list & {
+			margin: 0 16px 16px 0;
+		}
 	}
 }
 
@@ -265,6 +285,11 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	@include breakpoint( ">480px" ) {
 		margin-right: 24px;
 		margin-left: 24px;
+
+		//TODO Clean-up after PostTypeList is used for /posts/
+		.post-type-list & {
+			margin: 6 24px 0;
+		}
 	}
 }
 
@@ -281,6 +306,10 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	.post-share__share-button {
 		margin-left: 0px;
 	}
+}
+
+.post-share__actions-list-upgrade-nudge.has-call-to-action .banner__action {
+	margin-right: 0;
 }
 
 .post-share .post-share__footer-nav {
@@ -306,6 +335,11 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	@include breakpoint( ">480px" ) {
 		margin-bottom: 1px;
 		padding: 16px 24px;
+
+		//TODO Clean-up after PostTypeList is used for /posts/
+		.post-type-list & {
+			padding: 16px;
+		}
 	}
 
 	&::after {
