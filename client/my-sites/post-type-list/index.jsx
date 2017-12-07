@@ -33,9 +33,6 @@ import UpgradeNudge from 'my-sites/upgrade-nudge';
 /**
  * Constants
  */
-// When this many pixels or less are below the viewport, begin loading the next
-// page of items.
-const LOAD_NEXT_PAGE_THRESHOLD_PIXELS = 400;
 // The maximum number of pages of results that can be displayed in "All My
 // Sites" (API endpoint limitation).
 const MAX_ALL_SITES_PAGES = 10;
@@ -154,11 +151,14 @@ class PostTypeList extends Component {
 		const scrollTop = this.getScrollTop();
 		const { scrollHeight, clientHeight } = scrollContainer;
 		const pixelsBelowViewport = scrollHeight - scrollTop - clientHeight;
+		// When the currently loaded list has this many pixels or less
+		// remaining below the viewport, begin loading the next page of items.
+		const thresholdPixels = Math.max( clientHeight, 400 );
 		if (
 			typeof scrollTop !== 'number' ||
 			typeof scrollHeight !== 'number' ||
 			typeof clientHeight !== 'number' ||
-			pixelsBelowViewport > LOAD_NEXT_PAGE_THRESHOLD_PIXELS
+			pixelsBelowViewport > thresholdPixels
 		) {
 			return;
 		}
