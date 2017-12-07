@@ -46,7 +46,6 @@ export default function() {
 			page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
 	);
 
-	page( '/jetpack/connect/plans/:site', siteSelection, controller.plansSelection );
 	page(
 		'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',
 		siteSelection,
