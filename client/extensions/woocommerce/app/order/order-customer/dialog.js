@@ -145,12 +145,13 @@ class CustomerAddressDialog extends Component {
 		}
 		this.setState( prevState => {
 			const { address } = prevState;
-			const newState = { ...address, [ name ]: value };
-			// If country changed, we should also reset the state
+			const newState = { address: { ...address, [ name ]: value } };
+			// If country changed, we should also reset the state & phoneCountry
 			if ( 'country' === name ) {
-				newState.state = '';
+				newState.address.state = '';
+				newState.phoneCountry = value;
 			}
-			return { address: newState };
+			return newState;
 		} );
 	};
 
