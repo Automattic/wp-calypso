@@ -5,7 +5,7 @@
 	margin-bottom: 0;
 	transition: 0.3s box-shadow;
 	position: fixed;
-	top: 47px;
+	top: 0;
 	left: 0;
 	right: 0;
 	z-index: z-index( 'root', '.editor-ground-control' );
@@ -58,8 +58,25 @@
 	border-left: 1px solid lighten( $gray, 25% );
 	display: flex;
 
+	// Hide the ground-control save buttons on mobile
 	@include breakpoint( "<660px" ) {
-		border-left: none;
+		display: none;
+	}
+}
+
+// Inline save buttons for mobile
+.post-editor__site .editor-ground-control__quick-save {
+	border-left: none;
+	display: none;
+
+	.editor-ground-control__save,
+	.editor-ground-control__save-status {
+		display: block;
+		padding: 12px 16px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		display: block;
 	}
 }
 
@@ -79,39 +96,59 @@
 	margin-left: auto;
 	align-items: center;
 	display: flex;
-	flex-wrap: wrap;
 	padding: 0 12px;
 	line-height: 32px;
 }
 
 .editor-ground-control__action-buttons .button.is-borderless {
-	padding: 0 12px;
+	padding: 0 8px;
 	line-height: 46px;
 
-	@include breakpoint( "<480px" ) {
-		padding: 0 4px;
+	@include breakpoint( ">660px" ) {
+		padding: 0 12px;
 	}
 }
 
 .editor-ground-control__action-buttons .button.is-borderless svg {
-	top: 7px;
+	top: 4px;
 }
 
 .editor-ground-control__preview-button {
 	display: block;
 	flex-grow: 1;
+	padding: 7px 12px;
+
+	@include breakpoint( ">660px" ) {
+		min-width: 100px;
+		padding: 7px 16px;
+	}
 }
 
 .editor-ground-control__toggle-sidebar {
-	margin-right: 8px;
-	border-radius: 0;
+	margin: 3px 8px 3px 0;
+	height: 38px;
+	line-height: 1;
+	transition: all 0.15s ease-in-out;
+}
+
+.editor-ground-control__toggle-sidebar svg {
+	transition: transform 0.3s ease-in-out;
+}
+
+.editor-ground-control__toggle-sidebar:hover,
+.editor-ground-control__toggle-sidebar:focus {
+	background: $gray-light;
 }
 
 .focus-sidebar .editor-ground-control__toggle-sidebar:hover,
 .focus-sidebar .editor-ground-control__toggle-sidebar:focus,
 .focus-sidebar .editor-ground-control__toggle-sidebar {
-	color: $blue-medium;
-	box-shadow: inset 0 -3px $blue-medium;
+	color: $white;
+	background: $gray-dark;
+}
+
+.focus-sidebar .editor-ground-control__toggle-sidebar svg {
+	transform: rotate( 45deg );
 }
 
 .editor-ground-control__toggle-sidebar.button.is-borderless,
@@ -122,25 +159,17 @@
 .editor-ground-control__publish-button {
 	flex-grow: 1;
 	display: flex;
-	margin: 0 12px;
-
-	@include breakpoint( "<480px" ) {
-		margin: 0;
-	}
-}
-
-.editor-ground-control .editor-publish-button {
-	border-radius: 4px 0 0 4px;
-	flex-grow: 1;
-	padding: 5px 14px 7px;
 }
 
 .editor-ground-control .editor-publish-button {
 	border-radius: 4px;
-	padding: 7px 16px;
+	padding: 7px 12px;
+	margin: 0 0 0 8px;
 
-	@include breakpoint( "<480px" ) {
-		padding: 7px 10px;
+	@include breakpoint( ">660px" ) {
+		min-width: 120px;
+		padding: 7px 16px;
+		margin: 0 8px;
 	}
 }
 
@@ -179,10 +208,6 @@
 }
 
 .editor-ground-control__email-verification-notice {
-	@include breakpoint( "<660px" ) {
-		display: none;
-	}
-
 	font-size: 13px;
 	padding: 8px 8px 8px 40px;
 	background: white;
@@ -193,7 +218,7 @@
 	fill: $blue-wordpress;
 	position: absolute;
 	z-index: 1;
-	right: 4px;
+	right: 16px;
 	top: 40px;
 	border-radius: 2px;
 	box-shadow: 0 1px 4px rgba($gray-dark, 0.2);;
@@ -239,9 +264,19 @@
 
 .editor-ground-control__back.button.is-borderless {
 	border-right: 1px solid lighten( $gray, 25% );
-	padding: 6px 10px;
+	padding: 6px 16px;
+	min-width: 80px;
 	height: 46px;
 	border-radius: 0;
+	color: $blue-wordpress;
+
+	@include breakpoint( ">960px" ) {
+		padding: 6px 32px;
+	}
+
+	&:hover {
+		color: $blue-medium;
+	}
 
 	.gridicon {
 		top: 4px;
@@ -249,10 +284,6 @@
 }
 
 .editor-ground-control__button-label {
-	@include breakpoint( "<960px" ) {
-		display: none;
-	}
-
 	.post-status {
 		display: none;
 	}

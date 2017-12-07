@@ -4,7 +4,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { get, identity, noop } from 'lodash';
+import { identity, noop } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n, { localize } from 'i18n-calypso';
@@ -13,16 +13,14 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import Card from 'components/card';
 import Site from 'blocks/site';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEvent } from 'lib/posts/stats';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
-import EditorPostType from 'post-editor/editor-post-type';
-import HistoryButton from 'post-editor/editor-ground-control/history-button';
+import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 
 export class EditorGroundControl extends PureComponent {
 	static propTypes = {
@@ -123,10 +121,6 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	getPreviewLabel() {
-		if ( postUtils.isPublished( this.props.savedPost ) && this.props.site.jetpack ) {
-			return this.props.translate( 'View' );
-		}
-
 		return this.props.translate( 'Preview' );
 	}
 
@@ -154,17 +148,6 @@ export class EditorGroundControl extends PureComponent {
 		return isSaving || ( post && post.ID && ! postUtils.isPublished( post ) );
 	}
 
-	isSaveAvailable() {
-		return (
-			! this.props.isSaving &&
-			! this.props.isSaveBlocked &&
-			this.props.isDirty &&
-			this.props.hasContent &&
-			!! this.props.post &&
-			! postUtils.isPublished( this.props.post )
-		);
-	}
-
 	isPreviewEnabled() {
 		return (
 			this.props.hasContent &&
@@ -181,15 +164,6 @@ export class EditorGroundControl extends PureComponent {
 		this.setState( { showAdvanceStatus: ! this.state.showAdvanceStatus } );
 	};
 
-	onSaveButtonClick = () => {
-		this.props.onSave();
-		const eventLabel = postUtils.isPage( this.props.page )
-			? 'Clicked Save Page Button'
-			: 'Clicked Save Post Button';
-		recordEvent( eventLabel );
-		recordStat( 'save_draft_clicked' );
-	};
-
 	onPreviewButtonClick = event => {
 		if ( this.isPreviewEnabled() ) {
 			this.props.onPreview( event );
@@ -200,50 +174,6 @@ export class EditorGroundControl extends PureComponent {
 		}
 	};
 
-	renderGroundControlQuickSaveButtons() {
-		const { isSaving, loadRevision, post, translate } = this.props;
-
-		const isSaveAvailable = this.isSaveAvailable();
-		const showingStatusLabel = this.shouldShowStatusLabel();
-		const showingSaveStatus = isSaveAvailable || showingStatusLabel;
-		const hasRevisions =
-			isEnabled( 'post-editor/revisions' ) &&
-			postUtils.deviceSupportsRevisions() &&
-			get( post, 'revisions.length' );
-
-		if ( ! ( showingSaveStatus || hasRevisions ) ) {
-			return;
-		}
-
-		return (
-			<div className="editor-ground-control__quick-save">
-				{ hasRevisions && <HistoryButton loadRevision={ loadRevision } /> }
-				{ showingSaveStatus && (
-					<div className="editor-ground-control__status">
-						{ isSaveAvailable && (
-							<button
-								className="editor-ground-control__save button is-link"
-								onClick={ this.onSaveButtonClick }
-								tabIndex={ 3 }
-							>
-								{ translate( 'Save' ) }
-							</button>
-						) }
-						{ ! isSaveAvailable &&
-							showingStatusLabel && (
-								<span
-									className="editor-ground-control__save-status"
-									data-e2e-status={ isSaving ? 'Saving…' : 'Saved' }
-								>
-									{ isSaving ? translate( 'Saving…' ) : translate( 'Saved' ) }
-								</span>
-							) }
-					</div>
-				) }
-			</div>
-		);
-	}
-
 	renderGroundControlActionButtons() {
 		if ( this.props.confirmationSidebarStatus === 'open' ) {
 			return;
@@ -253,24 +183,18 @@ export class EditorGroundControl extends PureComponent {
 			<div className="editor-ground-control__action-buttons">
 				<Button
 					borderless
+					className="editor-ground-control__toggle-sidebar"
+					onClick={ this.props.toggleSidebar }
+				>
+					<Gridicon icon="cog" />
+				</Button>
+				<Button
 					className="editor-ground-control__preview-button"
 					disabled={ ! this.isPreviewEnabled() }
 					onClick={ this.onPreviewButtonClick }
 					tabIndex={ 4 }
 				>
-					<Gridicon icon="visible" />{' '}
 					<span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
-				</Button>
-				<Button
-					borderless
-					className="editor-ground-control__toggle-sidebar"
-					onClick={ this.props.toggleSidebar }
-				>
-					<Gridicon icon="cog" />
-					<span className="editor-ground-control__button-label">
-						{' '}
-						<EditorPostType isSettings />
-					</span>
 				</Button>
 				<div className="editor-ground-control__publish-button">
 					<EditorPublishButton
@@ -300,7 +224,16 @@ export class EditorGroundControl extends PureComponent {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const {
+			isSaving,
+			isSaveBlocked,
+			isDirty,
+			hasContent,
+			loadRevision,
+			post,
+			onSave,
+			translate,
+		} = this.props;
 
 		return (
 			<Card className="editor-ground-control">
@@ -309,9 +242,9 @@ export class EditorGroundControl extends PureComponent {
 					className="editor-ground-control__back"
 					href={ '' }
 					onClick={ this.onBackButtonClick }
-					aria-label={ translate( 'Go back' ) }
+					aria-label={ translate( 'Close' ) }
 				>
-					<Gridicon icon="arrow-left" />
+					{ translate( 'Close' ) }
 				</Button>
 				<Site
 					compact
@@ -336,7 +269,15 @@ export class EditorGroundControl extends PureComponent {
 						</span>
 					</div>
 				) }
-				{ this.renderGroundControlQuickSaveButtons() }
+				<QuickSaveButtons
+					isSaving={ isSaving }
+					isSaveBlocked={ isSaveBlocked }
+					isDirty={ isDirty }
+					hasContent={ hasContent }
+					loadRevision={ loadRevision }
+					post={ post }
+					onSave={ onSave }
+				/>
 				{ this.renderGroundControlActionButtons() }
 			</Card>
 		);

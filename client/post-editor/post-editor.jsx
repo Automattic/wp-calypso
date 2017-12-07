@@ -67,6 +67,7 @@ import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
 import { removep } from 'lib/formatting';
+import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 
 export const PostEditor = createReactClass( {
 	displayName: 'PostEditor',
@@ -349,7 +350,20 @@ export const PostEditor = createReactClass( {
 									homeLink={ true }
 									externalLink={ true }
 								/>
-								<StatusLabel post={ this.state.savedPost } />
+								{ ( this.state.isDirty || this.props.dirty ) && (
+									<QuickSaveButtons
+										isSaving={ this.state.isSaving }
+										isSaveBlocked={ this.isSaveBlocked() }
+										isDirty={ this.state.isDirty || this.props.dirty }
+										hasContent={ this.state.hasContent }
+										loadRevision={ this.loadRevision }
+										post={ this.state.post }
+										onSave={ this.onSave }
+									/>
+								) }
+								{ ! ( this.state.isDirty || this.props.dirty ) && (
+									<StatusLabel post={ this.state.savedPost } />
+								) }
 							</div>
 							<div className="post-editor__inner-content">
 								<FeaturedImage

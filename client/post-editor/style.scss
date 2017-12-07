@@ -34,7 +34,6 @@
 
 .post-editor__inner {
 	position: relative;
-	top: 47px;
 	padding-bottom: 47px;
 }
 
@@ -69,6 +68,7 @@
 
 .post-editor__site {
 	display:  flex;
+	margin-bottom: 16px;
 	background: lighten( $gray, 30% );
 
 	@include breakpoint( ">660px" ) {
