@@ -143,7 +143,6 @@
 		"reader": true,
 		"reader/conversations": true,
 		"reader/following-intro": true,
-		"reader/following-manage-refresh": true,
 		"reader/full-errors": true,
 		"reader/list-management": false,
 		"reader/nesting-arrow": true,
