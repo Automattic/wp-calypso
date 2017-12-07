@@ -17,10 +17,21 @@ import { getNormalizedPost } from 'state/posts/selectors';
 import { getPostStat } from 'state/stats/posts/selectors';
 import { canCurrentUser } from 'state/selectors';
 import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class PostActionCounts extends PureComponent {
 	static propTypes = {
 		globalId: PropTypes.string,
+	};
+
+	onActionClick = ( action ) => () => {
+		const { recordTracksEvent: record, type } = this.props;
+
+		record( 'calypso_post_list_action_click', {
+			action,
+			postType: type,
+			context: 'action_counts',
+		} );
 	};
 
 	renderCommentCount() {
@@ -32,7 +43,7 @@ class PostActionCounts extends PureComponent {
 
 		return (
 			<li>
-				<a href={ `/comments/all/${ siteSlug }/${ postId }` }>
+				<a href={ `/comments/all/${ siteSlug }/${ postId }` } onClick={ this.onActionClick( 'comments' ) } >
 					{ translate(
 						'%(count)s Comment',
 						'%(count)s Comments',
@@ -55,7 +66,7 @@ class PostActionCounts extends PureComponent {
 
 		return (
 			<li>
-				<a href={ `/stats/post/${ postId }/${ siteSlug }` }>
+				<a href={ `/stats/post/${ postId }/${ siteSlug }` } onClick={ this.onActionClick( 'likes' ) } >
 					{ translate(
 						'%(count)s Like',
 						'%(count)s Likes',
@@ -78,7 +89,7 @@ class PostActionCounts extends PureComponent {
 
 		return (
 			<li>
-				<a href={ `/stats/post/${ postId }/${ siteSlug }` }>
+				<a href={ `/stats/post/${ postId }/${ siteSlug }` } onClick={ this.onActionClick( 'stats' ) } >
 					{ translate(
 						'%(count)s View',
 						'%(count)s Views',
@@ -132,6 +143,7 @@ export default connect( ( state, { globalId } ) => {
 		showViews,
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		type: get( post, 'type', 'unknown' ),
 		viewCount: getPostStat( state, siteId, postId, 'views' ),
 	};
-} )( localize( PostActionCounts ) );
+}, { recordTracksEvent } )( localize( PostActionCounts ) );
