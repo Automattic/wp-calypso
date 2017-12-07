@@ -14,8 +14,8 @@ import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
+import FormTextInput from 'components/forms/form-text-input';
 import Main from 'components/main';
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
