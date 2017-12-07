@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import addQueryArgs from 'lib/route/add-query-args';
-import cookie from 'cookie';
 import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
@@ -36,11 +35,11 @@ import userUtilities from 'lib/user/utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { isCalypsoStartedConnection, isSsoApproved } from './persistence-utils';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
-import { isCalypsoStartedConnection } from './persistence-utils';
 import {
 	authorize as authorizeAction,
 	goBackToWpAdmin as goBackToWpAdminAction,
@@ -202,11 +201,7 @@ export class LoggedInForm extends Component {
 	 * @return {boolean}                       True if it's a valid SSO request otherwise false
 	 */
 	isSso( { from, queryDataSiteId } = this.props ) {
-		const cookies = cookie.parse( document.cookie );
-		const jetpack_sso_approved = cookies.jetpack_sso_approved
-			? parseInt( cookies.jetpack_sso_approved, 10 )
-			: null;
-		return 'sso' === from && !! queryDataSiteId && queryDataSiteId === jetpack_sso_approved;
+		return 'sso' === from && isSsoApproved( queryDataSiteId );
 	}
 
 	isWoo( { from } = this.props ) {

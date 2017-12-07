@@ -43,3 +43,16 @@ export const isCalypsoStartedConnection = siteSlug => {
 	const cookies = cookie.parse( document.cookie );
 	return cookies.jetpack_connect_session_url === urlToSlug( siteSlug );
 };
+
+export const persistSsoApproved = siteId => {
+	const options = {
+		maxAge: 300,
+		path: '/',
+	};
+	document.cookie = cookie.serialize( 'jetpack_sso_approved', siteId, options );
+};
+
+export const isSsoApproved = siteId => {
+	const cookies = cookie.parse( document.cookie );
+	return siteId === parseInt( cookies.jetpack_sso_approved, 10 );
+};
