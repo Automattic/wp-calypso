@@ -38,15 +38,16 @@ import ListItemField from 'woocommerce/components/list/list-item-field';
 const originNotifications = [
 	{
 		field: 'email',
-		option: 'woocommerce_email_from_address',
+		option: 'woocommerce_email_from_name',
 		title: translate( 'From name' ),
 		subtitle: translate( "Emails will appear in recipients inboxes 'from' this name." ),
 	},
 	{
 		field: 'email',
-		option: 'woocommerce_email_from_name',
+		option: 'woocommerce_email_from_address',
 		title: translate( 'From address' ),
 		subtitle: translate( 'If recipients reply to store emails they will be sent to this address.' ),
+		checkEmail: true,
 	},
 ];
 
@@ -147,6 +148,7 @@ class Settings extends React.Component {
 				isPlaceholder={ loading }
 				recipient={ loaded ? settings[ item.field ][ item.option ] : '' }
 				onChange={ this.onChange }
+				checkEmail={ item.checkEmail }
 			/>
 		);
 	};
