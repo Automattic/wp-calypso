@@ -117,6 +117,28 @@
 		border-radius: 16px;
 		background: $white;
 		cursor: pointer;
+
+		.gridicons-checkmark {
+			display: none;
+			fill: $white;
+			position: absolute;
+			top: -1px;
+			left: 1px;
+		}
+
+		&:hover {
+			background: $alert-green;
+			border-color: $alert-green;
+
+			.gridicons-checkmark {
+				display: block;
+			}
+		}
+
+		&:active {
+			background: $blue-medium;
+			border-color: $blue-medium;
+		}
 	}
 
 	&-primary {
@@ -184,6 +206,10 @@
 			top: 13px;
 			background: $alert-green;
 			border-color: $alert-green;
+
+			&:hover {
+				cursor: default;
+			}
 		}
 
 		.checklist__task-title {
@@ -191,17 +217,14 @@
 			font-size: 14px;
 		}
 
+		.gridicons-checkmark {
+			display: block;
+		}
+
 		.checklist__task-description,
 		.checklist__task-duration,
 		.checklist__task-secondary {
 			display: none;
-		}
-
-		.gridicons-checkmark {
-			position: absolute;
-			top: -1px;
-			left: 1px;
-			fill: $white;
 		}
 	}
 
