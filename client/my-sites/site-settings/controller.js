@@ -50,6 +50,11 @@ function canDeleteSite( state, siteId ) {
 	return true;
 }
 
+function canTransferSite( state, siteId ) {
+	// Use same capability logic as per site deletion
+	return canDeleteSite( state, siteId );
+}
+
 function renderPage( context, component ) {
 	renderWithReduxStore( component, document.getElementById( 'primary' ), context.store );
 }
@@ -59,13 +64,13 @@ const controller = {
 		page.redirect( '/settings/general' );
 	},
 
-	redirectIfCantDeleteSite( context ) {
+	redirectIfCantPerformAction( context, canPerformAction ) {
 		const state = context.store.getState();
 		const dispatch = context.store.dispatch;
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
 
-		if ( siteId && ! canDeleteSite( state, siteId ) ) {
+		if ( siteId && ! canPerformAction( state, siteId ) ) {
 			return page.redirect( '/settings/general/' + siteSlug );
 		}
 
@@ -76,7 +81,7 @@ const controller = {
 					const updatedState = context.store.getState();
 					const updatedSiteId = getSelectedSiteId( updatedState );
 					const updatedSiteSlug = getSelectedSiteSlug( updatedState );
-					if ( ! canDeleteSite( updatedState, updatedSiteId ) ) {
+					if ( ! canPerformAction( updatedState, updatedSiteId ) ) {
 						return page.redirect( '/settings/general/' + updatedSiteSlug );
 					}
 				},
@@ -104,14 +109,14 @@ const controller = {
 	},
 
 	transferSiteToUser( context ) {
+		const redirectIfCantTransferSite = controller.redirectIfCantPerformAction;
+		redirectIfCantTransferSite( context, canTransferSite );
 		renderPage( context, <TransferSiteToUser /> );
 	},
 
 	deleteSite( context ) {
-		const redirectIfCantDeleteSite = controller.redirectIfCantDeleteSite;
-
-		redirectIfCantDeleteSite( context );
-
+		const redirectIfCantDeleteSite = controller.redirectIfCantPerformAction;
+		redirectIfCantDeleteSite( context, canDeleteSite );
 		renderPage( context, <DeleteSite path={ context.path } /> );
 	},
 
@@ -129,10 +134,8 @@ const controller = {
 	},
 
 	startOver( context ) {
-		const redirectIfCantDeleteSite = controller.redirectIfCantDeleteSite;
-
-		redirectIfCantDeleteSite( context );
-
+		const redirectIfCantDeleteSite = controller.redirectIfCantPerformAction;
+		redirectIfCantDeleteSite( context, canDeleteSite );
 		renderPage( context, <StartOver path={ context.path } /> );
 	},
 

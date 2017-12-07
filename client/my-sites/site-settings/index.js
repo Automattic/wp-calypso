@@ -42,6 +42,7 @@ export default function() {
 			'/settings/transfer-to-user/:site_id',
 			siteSelection,
 			navigation,
+			settingsController.setScroll,
 			controller.transferSiteToUser
 		);
 	}
