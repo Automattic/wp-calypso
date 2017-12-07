@@ -24,7 +24,7 @@ import {
 } from 'woocommerce/state/ui/orders/selectors';
 import { isOrderUpdating } from 'woocommerce/state/sites/orders/selectors';
 import Main from 'components/main';
-import OrderCustomer from './order-customer';
+import OrderCustomerCreate from './order-customer/create';
 import OrderDetails from './order-details';
 import { ProtectFormGuard } from 'lib/protect-form';
 
@@ -82,7 +82,7 @@ class Order extends Component {
 				<div className="order__container">
 					<ProtectFormGuard isChanged={ hasOrderEdits } />
 					<OrderDetails orderId={ orderId } />
-					<OrderCustomer orderId={ orderId } />
+					<OrderCustomerCreate orderId={ orderId } />
 				</div>
 			</Main>
 		);
