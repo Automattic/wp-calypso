@@ -66,21 +66,18 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 			} );
 
 		case JETPACK_CONNECT_QUERY_SET:
-			const shouldAutoAuthorize = includes(
+			const autoAuthorize = includes(
 				[ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ],
 				get( action, [ 'queryObject', 'from' ] )
 			);
-			return Object.assign(
-				{
-					isAuthorizing: false,
-					authorizeSuccess: false,
-					authorizeError: false,
-					timestamp: Date.now(),
-					userAlreadyConnected: false,
-					autoAuthorize: false,
-				},
-				shouldAutoAuthorize && { autoAuthorize: true }
-			);
+			return {
+				authorizeError: false,
+				authorizeSuccess: false,
+				autoAuthorize,
+				isAuthorizing: false,
+				timestamp: Date.now(),
+				userAlreadyConnected: false,
+			};
 
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
 			return Object.assign( {}, state, {
