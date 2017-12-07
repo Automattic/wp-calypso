@@ -8,7 +8,19 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { each, filter, find, get, isEqual, map, orderBy, size, slice, uniq } from 'lodash';
+import {
+	difference,
+	each,
+	filter,
+	find,
+	get,
+	isEqual,
+	map,
+	orderBy,
+	size,
+	slice,
+	uniq,
+} from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
@@ -63,25 +75,33 @@ export class CommentList extends Component {
 	};
 
 	state = {
+		hasScrolledToComment: false,
 		isBulkEdit: false,
 		// TODO: replace with [] when adding back Bulk Actions
 		lastUndo: null,
+		loadedComments: [],
 		persistedComments: [],
 		selectedComments: [],
 		sortOrder: NEWEST_FIRST,
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		const { siteId, status, changePage } = this.props;
+		const { changePage, isPostView, siteId, status } = this.props;
 		const totalPages = this.getTotalPages();
 		if ( ! this.isRequestedPageValid() && totalPages > 1 ) {
 			return changePage( totalPages );
 		}
 
-		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
+		if (
+			siteId !== nextProps.siteId ||
+			status !== nextProps.status ||
+			isPostView !== nextProps.isPostView
+		) {
 			this.setState( {
+				hasScrolledToComment: false,
 				isBulkEdit: false,
 				lastUndo: null,
+				loadedComments: [],
 				persistedComments: [],
 				selectedComments: [],
 			} );
@@ -96,7 +116,7 @@ export class CommentList extends Component {
 
 		recordChangePage( page, this.getTotalPages() );
 
-		this.setState( { selectedComments: [] } );
+		this.setState( { hasScrolledToComment: false, loadedComments: [], selectedComments: [] } );
 
 		changePage( page );
 	};
@@ -154,6 +174,13 @@ export class CommentList extends Component {
 
 	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
 
+	isLoadedAll = () => {
+		const { page } = this.props;
+		const { loadedComments } = this.state;
+		const commentsPage = this.getCommentsPage( this.getComments(), page );
+		return !! loadedComments.length && 0 === difference( commentsPage, loadedComments ).length;
+	};
+
 	isRequestedPageValid = () => this.getTotalPages() >= this.props.page;
 
 	isSelectedAll = () => {
@@ -162,6 +189,13 @@ export class CommentList extends Component {
 		const visibleComments = this.getCommentsPage( this.getComments(), page );
 		return selectedComments.length && selectedComments.length === visibleComments.length;
 	};
+
+	onCommentLoad = commentId =>
+		this.setState( ( { loadedComments } ) => ( {
+			loadedComments: uniq( [ ...loadedComments, commentId ] ),
+		} ) );
+
+	onScrollToComment = () => this.setState( { hasScrolledToComment: true } );
 
 	removeFromPersistedComments = commentId =>
 		this.setState( ( { persistedComments } ) => ( {
@@ -425,7 +459,7 @@ export class CommentList extends Component {
 			siteFragment,
 			status,
 		} = this.props;
-		const { isBulkEdit, selectedComments } = this.state;
+		const { hasScrolledToComment, isBulkEdit, selectedComments } = this.state;
 
 		const validPage = this.isRequestedPageValid() ? page : 1;
 
@@ -480,10 +514,14 @@ export class CommentList extends Component {
 						map( commentsPage, commentId => (
 							<Comment
 								commentId={ commentId }
+								hasScrolledToComment={ hasScrolledToComment }
 								key={ `comment-${ siteId }-${ commentId }` }
 								isBulkMode={ isBulkEdit }
+								isLoadedAll={ this.isLoadedAll() }
 								isPostView={ isPostView }
 								isSelected={ this.isCommentSelected( commentId ) }
+								onCommentLoad={ this.onCommentLoad }
+								onScrollToComment={ this.onScrollToComment }
 								refreshCommentData={
 									isCommentsTreeSupported &&
 									! this.hasCommentJustMovedBackToCurrentStatus( commentId )

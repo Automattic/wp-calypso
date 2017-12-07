@@ -17,6 +17,8 @@ import CommentView from 'my-sites/comment/main';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 
+let lastRoute = null;
+
 const mapPendingStatusToUnapproved = status => ( 'pending' === status ? 'unapproved' : status );
 
 const sanitizeInt = number => {
@@ -48,8 +50,15 @@ const changePage = path => pageNumber => {
 	return page( addQueryArgs( { page: pageNumber }, path ) );
 };
 
-const handleBackButton = ( context, siteFragment ) => () => {
+const handleBackButton = ( context, siteFragment ) => () =>
 	page.back( context.lastRoute || `/comments/all/${ siteFragment }` );
+
+export const updateLastRoute = ( context, next ) => {
+	if ( lastRoute ) {
+		context.lastRoute = lastRoute;
+	}
+	lastRoute = context.canonicalPath;
+	next();
 };
 
 export const siteComments = context => {

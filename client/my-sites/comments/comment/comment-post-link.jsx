@@ -34,7 +34,13 @@ export class CommentPostLink extends PureComponent {
 			window.scrollTo( 0, 0 );
 		}
 
-		window.history.replaceState( null, null, `#comment-${ commentId }` );
+		window.history.replaceState(
+			{
+				...window.history.state,
+				path: window.history.state.path.replace( /[#].*/, `#comment-${ commentId }` ),
+			},
+			null
+		);
 
 		page( `/comments/${ status }/${ siteSlug }/${ postId }` );
 	};

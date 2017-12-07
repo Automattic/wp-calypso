@@ -29,9 +29,13 @@ export class Comment extends Component {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 		commentId: PropTypes.number,
+		hasScrolledToComment: PropTypes.bool,
 		isBulkMode: PropTypes.bool,
+		isLoadedAll: PropTypes.bool,
 		isPostView: PropTypes.bool,
 		isSelected: PropTypes.bool,
+		onCommentLoad: PropTypes.func,
+		onScrollToComment: PropTypes.func,
 		redirect: PropTypes.func,
 		refreshCommentData: PropTypes.bool,
 		toggleSelected: PropTypes.func,
@@ -39,19 +43,29 @@ export class Comment extends Component {
 	};
 
 	state = {
-		hasScrolled: false,
 		isEditMode: false,
 		isReplyVisible: false,
 	};
 
 	componentWillReceiveProps( nextProps ) {
 		const { isBulkMode: wasBulkMode } = this.props;
-		const { commentId, isBulkMode, isLoading } = nextProps;
-		const { hasScrolled } = this.state;
+		const {
+			commentId,
+			hasScrolledToComment,
+			isBulkMode,
+			isLoadedAll,
+			isLoading,
+			onCommentLoad,
+			onScrollToComment,
+		} = nextProps;
+
+		if ( ! isLoading ) {
+			onCommentLoad( commentId );
+		}
 
 		if (
-			! hasScrolled &&
-			! isLoading &&
+			! hasScrolledToComment &&
+			isLoadedAll &&
 			!! window &&
 			`#comment-${ commentId }` === window.location.hash
 		) {
@@ -61,12 +75,12 @@ export class Comment extends Component {
 				scrollTo( {
 					x: 0,
 					y: commentOffsetTop,
-					duration: 300,
+					duration: 1,
 					onComplete: () => {
 						if ( commentOffsetTop !== window.scrollY ) {
 							window.scrollTo( 0, commentOffsetTop );
 						}
-						this.setState( { hasScrolled: true } );
+						onScrollToComment();
 					},
 				} )
 			);
