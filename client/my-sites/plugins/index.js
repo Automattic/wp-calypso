@@ -61,15 +61,26 @@ export default function() {
 			page( '/plugins/upload/:site_id', siteSelection, navigation, pluginsController.upload );
 		}
 
-		page( '/plugins', siteSelection, navigation, pluginsController.browsePlugins );
+		page(
+			'/plugins/:category(featured|new|popular)?',
+			siteSelection,
+			navigation,
+			pluginsController.browsePlugins
+		);
+
+		page(
+			'/plugins/:category(featured|new|popular)/:site',
+			siteSelection,
+			navigation,
+			pluginsController.browsePlugins
+		);
 
 		page(
 			'/plugins/manage/:site?',
 			siteSelection,
 			navigation,
 			ifSimpleSiteThenRedirectTo( '/plugins' ),
-			pluginsController.plugins,
-			sites
+			pluginsController.pluginList
 		);
 
 		page(
@@ -77,16 +88,14 @@ export default function() {
 			siteSelection,
 			navigation,
 			pluginsController.jetpackCanUpdate,
-			pluginsController.plugins,
-			sites
+			pluginsController.pluginList
 		);
 
 		page(
 			'/plugins/:plugin/:site_id?',
 			siteSelection,
 			navigation,
-			pluginsController.maybeBrowsePlugins,
-			pluginsController.plugin
+			pluginsController.browsePluginsOrPlugin
 		);
 
 		page(
