@@ -68,7 +68,7 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_QUERY_SET:
 			const autoAuthorize = includes(
 				[ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ],
-				get( action, [ 'queryObject', 'from' ] )
+				action.from
 			);
 			return {
 				authorizeError: false,
