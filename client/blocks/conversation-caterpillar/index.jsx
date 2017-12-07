@@ -121,8 +121,8 @@ class ConversationCaterpillarComponent extends React.Component {
 					className="conversation-caterpillar__count"
 					onClick={ this.handleTickle }
 					title={ translate(
-						'View %(count)s more comments for this post',
 						'View %(count)s more comment for this post',
+						'View %(count)s more comments for this post',
 						{
 							count: +commentCount,
 							args: {
