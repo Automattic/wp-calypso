@@ -186,15 +186,9 @@ function renderProvisionPlugins( context ) {
 }
 
 const controller = {
-	plugins( context, next ) {
+	plugins( context ) {
 		const { pluginFilter: filter = 'all' } = context.params;
-		const siteUrl = route.getSiteFragment( context.path );
 		const basePath = route.sectionify( context.path ).replace( '/' + filter, '' );
-
-		// bail if no site is selected and the user has no Jetpack sites.
-		if ( ! siteUrl && ! hasJetpackSites( context.store.getState() ) ) {
-			return next();
-		}
 
 		context.params.pluginFilter = filter;
 		notices.clearNotices( 'notices' );
@@ -252,6 +246,24 @@ const controller = {
 				return;
 			}
 		}
+		next();
+	},
+
+	redirectSimpleSitesToPluginBrowser( context, next ) {
+		const site = getSelectedSite( context.store.getState() );
+
+		// Selected site is not a Jetpack site
+		if ( site && ! site.jetpack ) {
+			page.redirect( `/plugins/${ site.slug }` );
+			return;
+		}
+
+		//  None of the other sites are Jetpack sites
+		if ( ! site && ! hasJetpackSites( context.store.getState() ) ) {
+			page.redirect( '/plugins' );
+			return;
+		}
+
 		next();
 	},
 
