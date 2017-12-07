@@ -23,7 +23,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 
 		return (
 			<Main>
-				<DocumentHead title={ translate( 'Jetpack Onboarding' ) } />
+				<DocumentHead title={ translate( 'Site Type ‹ Jetpack Onboarding' ) } />
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
