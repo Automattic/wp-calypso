@@ -44,5 +44,4 @@ class NoDirectAccessError extends Component {
 	}
 }
 
-//authorizationRemoteQueryData: getAuthorizationRemoteQueryData( state ),
 export default connect( null, { recordTracksEvent } )( localize( NoDirectAccessError ) );
