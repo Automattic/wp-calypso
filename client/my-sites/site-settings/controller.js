@@ -21,6 +21,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteSettingsMain from 'my-sites/site-settings/main';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
+import TransferSiteToUser from './transfer-site-to-user';
 import ManageConnection from './manage-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -49,6 +50,11 @@ function canDeleteSite( state, siteId ) {
 	return true;
 }
 
+function canTransferSite( state, siteId ) {
+	// Use same capability logic as per site deletion
+	return canDeleteSite( state, siteId );
+}
+
 function renderPage( context, component ) {
 	renderWithReduxStore( component, document.getElementById( 'primary' ), context.store );
 }
@@ -58,13 +64,13 @@ const controller = {
 		page.redirect( '/settings/general' );
 	},
 
-	redirectIfCantDeleteSite( context ) {
+	redirectIfCantPerformAction( context, canPerformAction ) {
 		const state = context.store.getState();
 		const dispatch = context.store.dispatch;
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
 
-		if ( siteId && ! canDeleteSite( state, siteId ) ) {
+		if ( siteId && ! canPerformAction( state, siteId ) ) {
 			return page.redirect( '/settings/general/' + siteSlug );
 		}
 
@@ -75,7 +81,7 @@ const controller = {
 					const updatedState = context.store.getState();
 					const updatedSiteId = getSelectedSiteId( updatedState );
 					const updatedSiteSlug = getSelectedSiteSlug( updatedState );
-					if ( ! canDeleteSite( updatedState, updatedSiteId ) ) {
+					if ( ! canPerformAction( updatedState, updatedSiteId ) ) {
 						return page.redirect( '/settings/general/' + updatedSiteSlug );
 					}
 				},
@@ -102,11 +108,15 @@ const controller = {
 		);
 	},
 
+	transferSiteToUser( context ) {
+		const redirectIfCantTransferSite = controller.redirectIfCantPerformAction;
+		redirectIfCantTransferSite( context, canTransferSite );
+		renderPage( context, <TransferSiteToUser /> );
+	},
+
 	deleteSite( context ) {
-		const redirectIfCantDeleteSite = controller.redirectIfCantDeleteSite;
-
-		redirectIfCantDeleteSite( context );
-
+		const redirectIfCantDeleteSite = controller.redirectIfCantPerformAction;
+		redirectIfCantDeleteSite( context, canDeleteSite );
 		renderPage( context, <DeleteSite path={ context.path } /> );
 	},
 
@@ -124,10 +134,8 @@ const controller = {
 	},
 
 	startOver( context ) {
-		const redirectIfCantDeleteSite = controller.redirectIfCantDeleteSite;
-
-		redirectIfCantDeleteSite( context );
-
+		const redirectIfCantDeleteSite = controller.redirectIfCantPerformAction;
+		redirectIfCantDeleteSite( context, canDeleteSite );
 		renderPage( context, <StartOver path={ context.path } /> );
 	},
 

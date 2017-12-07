@@ -37,6 +37,16 @@ export default function() {
 
 	page( '/settings/export/:site_id', siteSelection, navigation, controller.exportSite );
 
+	if ( config.isEnabled( 'manage/site-settings/transfer-to-user' ) ) {
+		page(
+			'/settings/transfer-to-user/:site_id',
+			siteSelection,
+			navigation,
+			settingsController.setScroll,
+			controller.transferSiteToUser
+		);
+	}
+
 	page(
 		'/settings/delete-site/:site_id',
 		siteSelection,
@@ -69,6 +79,7 @@ export default function() {
 		settingsController.setScroll,
 		controller.startOver
 	);
+
 	page(
 		'/settings/theme-setup/:site_id',
 		siteSelection,
