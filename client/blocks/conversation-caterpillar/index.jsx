@@ -121,8 +121,8 @@ class ConversationCaterpillarComponent extends React.Component {
 					className="conversation-caterpillar__count"
 					onClick={ this.handleTickle }
 					title={ translate(
-						'View %(count)s more comment for this post',
-						'View %(count)s more comments for this post',
+						'View %(count)s comment for this post',
+						'View %(count)s comments for this post',
 						{
 							count: +commentCount,
 							args: {
@@ -133,7 +133,7 @@ class ConversationCaterpillarComponent extends React.Component {
 				>
 					{ commentCount > 1 &&
 						uniqueAuthorsCount > 1 &&
-						translate( '%(count)d more comments from %(commenterName)s and others', {
+						translate( '%(count)d comments from %(commenterName)s and others', {
 							args: {
 								commenterName: lastAuthorName,
 								count: commentCount,
@@ -141,14 +141,14 @@ class ConversationCaterpillarComponent extends React.Component {
 						} ) }
 					{ commentCount > 1 &&
 						uniqueAuthorsCount === 1 &&
-						translate( '%(count)d more comments from %(commenterName)s', {
+						translate( '%(count)d comments from %(commenterName)s', {
 							args: {
 								commenterName: lastAuthorName,
 								count: commentCount,
 							},
 						} ) }
 					{ commentCount === 1 &&
-						translate( '1 more comment from %(commenterName)s', {
+						translate( '1 comment from %(commenterName)s', {
 							args: {
 								commenterName: lastAuthorName,
 							},
