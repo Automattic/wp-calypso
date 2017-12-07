@@ -81,6 +81,7 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 a.post-item__title-link,
 a.post-item__title-link:visited {
 	color: $gray-dark;
+	display: block;
 
 	&:hover {
 		color: darken( $gray, 20% );
@@ -93,6 +94,7 @@ a.post-item__title-link:visited {
 
 	.post-item__panel.is-placeholder & {
 		@include placeholder;
+		display: inline-block;
 	}
 }
 
