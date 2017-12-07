@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Main from 'components/main';
 import Wizard from 'components/wizard';
 import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
@@ -29,12 +30,14 @@ class JetpackOnboardingMain extends React.PureComponent {
 		const { stepName, steps } = this.props;
 
 		return (
-			<Wizard
-				basePath="/jetpack/onboarding"
-				components={ COMPONENTS }
-				steps={ steps }
-				stepName={ stepName }
-			/>
+			<Main className="jetpack-onboarding">
+				<Wizard
+					basePath="/jetpack/onboarding"
+					components={ COMPONENTS }
+					steps={ steps }
+					stepName={ stepName }
+				/>
+			</Main>
 		);
 	}
 }
