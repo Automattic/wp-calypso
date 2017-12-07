@@ -249,6 +249,7 @@ export const DEFAULT_PROPS = {
 	isRequestingPlans: false,
 	isRtlLayout: false,
 	jetpackConnectAuthorize: {},
+	notJetpack: false,
 	recordTracksEvent: noop,
 	redirectingToWpAdmin: false,
 	selectedSite: SELECTED_SITE,
