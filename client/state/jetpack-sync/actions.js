@@ -25,60 +25,58 @@ import {
  */
 const debug = debugModule( 'calypso:state:jetpack-sync:actions' );
 
-export default {
-	getSyncStatus( siteId ) {
-		return dispatch => {
-			debug( 'Getting sync status for: ' + siteId );
-			dispatch( {
-				type: JETPACK_SYNC_STATUS_REQUEST,
-				siteId,
-			} );
+export const getSyncStatus = function( siteId ) {
+	return dispatch => {
+		debug( 'Getting sync status for: ' + siteId );
+		dispatch( {
+			type: JETPACK_SYNC_STATUS_REQUEST,
+			siteId,
+		} );
 
-			return wpcom
-				.undocumented()
-				.getJetpackSyncStatus( siteId )
-				.then( data => {
-					dispatch( {
-						type: JETPACK_SYNC_STATUS_SUCCESS,
-						siteId,
-						data,
-					} );
-				} )
-				.catch( error => {
-					dispatch( {
-						type: JETPACK_SYNC_STATUS_ERROR,
-						siteId,
-						error: pick( error, [ 'error', 'status', 'message' ] ),
-					} );
+		return wpcom
+			.undocumented()
+			.getJetpackSyncStatus( siteId )
+			.then( data => {
+				dispatch( {
+					type: JETPACK_SYNC_STATUS_SUCCESS,
+					siteId,
+					data,
 				} );
-		};
-	},
-
-	scheduleJetpackFullysync( siteId ) {
-		return dispatch => {
-			debug( 'Requesting full sync for: ' + siteId );
-			dispatch( {
-				type: JETPACK_SYNC_START_REQUEST,
-				siteId,
-			} );
-
-			return wpcom
-				.undocumented()
-				.scheduleJetpackFullysync( siteId )
-				.then( data => {
-					dispatch( {
-						type: JETPACK_SYNC_START_SUCCESS,
-						siteId,
-						data,
-					} );
-				} )
-				.catch( error => {
-					dispatch( {
-						type: JETPACK_SYNC_START_ERROR,
-						siteId,
-						error: pick( error, [ 'error', 'status', 'message' ] ),
-					} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: JETPACK_SYNC_STATUS_ERROR,
+					siteId,
+					error: pick( error, [ 'error', 'status', 'message' ] ),
 				} );
-		};
-	},
+			} );
+	};
+};
+
+export const scheduleJetpackFullysync = function( siteId ) {
+	return dispatch => {
+		debug( 'Requesting full sync for: ' + siteId );
+		dispatch( {
+			type: JETPACK_SYNC_START_REQUEST,
+			siteId,
+		} );
+
+		return wpcom
+			.undocumented()
+			.scheduleJetpackFullysync( siteId )
+			.then( data => {
+				dispatch( {
+					type: JETPACK_SYNC_START_SUCCESS,
+					siteId,
+					data,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: JETPACK_SYNC_START_ERROR,
+					siteId,
+					error: pick( error, [ 'error', 'status', 'message' ] ),
+				} );
+			} );
+	};
 };

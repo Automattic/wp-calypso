@@ -6,15 +6,15 @@
 
 import { filter, startsWith } from 'lodash';
 
-function domainManagementRoot() {
+export function domainManagementRoot() {
 	return '/domains/manage';
 }
 
-function domainManagementList( siteName ) {
+export function domainManagementList( siteName ) {
 	return domainManagementRoot() + '/' + siteName;
 }
 
-function domainManagementEdit( siteName, domainName, slug ) {
+export function domainManagementEdit( siteName, domainName, slug ) {
 	slug = slug || 'edit';
 
 	// Encodes only real domain names and not parameter placeholders
@@ -27,7 +27,7 @@ function domainManagementEdit( siteName, domainName, slug ) {
 	return domainManagementRoot() + '/' + domainName + '/' + slug + '/' + siteName;
 }
 
-function domainManagementAddGoogleApps( siteName, domainName ) {
+export function domainManagementAddGoogleApps( siteName, domainName ) {
 	let path;
 
 	if ( domainName ) {
@@ -39,15 +39,15 @@ function domainManagementAddGoogleApps( siteName, domainName ) {
 	return path;
 }
 
-function domainManagementContactsPrivacy( siteName, domainName ) {
+export function domainManagementContactsPrivacy( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'contacts-privacy' );
 }
 
-function domainManagementEditContactInfo( siteName, domainName ) {
+export function domainManagementEditContactInfo( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'edit-contact-info' );
 }
 
-function domainManagementEmail( siteName, domainName ) {
+export function domainManagementEmail( siteName, domainName ) {
 	let path;
 
 	if ( domainName ) {
@@ -61,31 +61,31 @@ function domainManagementEmail( siteName, domainName ) {
 	return path;
 }
 
-function domainManagementEmailForwarding( siteName, domainName ) {
+export function domainManagementEmailForwarding( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'email-forwarding' );
 }
 
-function domainManagementNameServers( siteName, domainName ) {
+export function domainManagementNameServers( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'name-servers' );
 }
 
-function domainManagementDns( siteName, domainName ) {
+export function domainManagementDns( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'dns' );
 }
 
-function domainManagementPrivacyProtection( siteName, domainName ) {
+export function domainManagementPrivacyProtection( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'privacy-protection' );
 }
 
-function domainManagementRedirectSettings( siteName, domainName ) {
+export function domainManagementRedirectSettings( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'redirect-settings' );
 }
 
-function domainManagementPrimaryDomain( siteName, domainName ) {
+export function domainManagementPrimaryDomain( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'primary-domain' );
 }
 
-function domainManagementTransfer( siteName, domainName, transferType = '' ) {
+export function domainManagementTransfer( siteName, domainName, transferType = '' ) {
 	return domainManagementEdit(
 		siteName,
 		domainName,
@@ -93,47 +93,25 @@ function domainManagementTransfer( siteName, domainName, transferType = '' ) {
 	);
 }
 
-function domainManagementTransferIn( siteName, domainName ) {
+export function domainManagementTransferIn( siteName, domainName ) {
 	return domainManagementTransfer( siteName, domainName, 'in' );
 }
 
-function domainManagementTransferOut( siteName, domainName ) {
+export function domainManagementTransferOut( siteName, domainName ) {
 	return domainManagementTransfer( siteName, domainName, 'out' );
 }
 
-function domainManagementTransferToAnotherUser( siteName, domainName ) {
+export function domainManagementTransferToAnotherUser( siteName, domainName ) {
 	return domainManagementTransfer( siteName, domainName, 'other-user' );
 }
 
-function domainManagementTransferToOtherSite( siteName, domainName ) {
+export function domainManagementTransferToOtherSite( siteName, domainName ) {
 	return domainManagementTransfer( siteName, domainName, 'other-site' );
 }
 
-function getSectionName( pathname ) {
+export function getSectionName( pathname ) {
 	const regExp = new RegExp( '^' + domainManagementRoot() + '/[^/]+/([^/]+)', 'g' );
 	const matches = regExp.exec( pathname );
 
 	return matches ? matches[ 1 ] : null;
 }
-
-export default {
-	domainManagementAddGoogleApps,
-	domainManagementContactsPrivacy,
-	domainManagementDns,
-	domainManagementEdit,
-	domainManagementEditContactInfo,
-	domainManagementEmail,
-	domainManagementEmailForwarding,
-	domainManagementList,
-	domainManagementNameServers,
-	domainManagementPrimaryDomain,
-	domainManagementPrivacyProtection,
-	domainManagementRedirectSettings,
-	domainManagementRoot,
-	domainManagementTransfer,
-	domainManagementTransferIn,
-	domainManagementTransferOut,
-	domainManagementTransferToAnotherUser,
-	domainManagementTransferToOtherSite,
-	getSectionName,
-};

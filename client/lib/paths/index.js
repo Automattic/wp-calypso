@@ -6,6 +6,8 @@
 
 import { login } from './login';
 
+export { login };
+
 function editorPathFromSite( site ) {
 	let path = '',
 		siteSlug;
@@ -26,7 +28,7 @@ function editorPathFromSite( site ) {
  * @param  {object|string} site Site object or site slug
  * @return {string}      URL to post editor
  */
-function newPost( site ) {
+export function newPost( site ) {
 	const sitePath = editorPathFromSite( site );
 	return '/post' + sitePath;
 }
@@ -37,7 +39,7 @@ function newPost( site ) {
  * @param  {object|string} site Site object or site slug
  * @return {string}      URL to page editor
  */
-function newPage( site ) {
+export function newPage( site ) {
 	const sitePath = editorPathFromSite( site );
 	return '/page' + sitePath;
 }
@@ -48,7 +50,7 @@ function newPage( site ) {
  * @param  {object} site Site object
  * @return {string}      URL to manage Publicize connections
  */
-function publicizeConnections( site ) {
+export function publicizeConnections( site ) {
 	let url = '/sharing';
 
 	if ( site ) {
@@ -65,7 +67,7 @@ function publicizeConnections( site ) {
  * @param  {string} module	Optional module name to link to
  * @return {string}      	URL to manage Jetpack modules
  */
-function jetpackModules( site, module ) {
+export function jetpackModules( site, module ) {
 	let url = '';
 	if ( ! site.jetpack ) {
 		return url;
@@ -78,11 +80,3 @@ function jetpackModules( site, module ) {
 
 	return url;
 }
-
-export default {
-	jetpackModules,
-	login,
-	newPost,
-	newPage,
-	publicizeConnections,
-};

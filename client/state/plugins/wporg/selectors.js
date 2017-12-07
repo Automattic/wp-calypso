@@ -1,12 +1,12 @@
 /** @format */
-const getPlugin = function( state, pluginSlug ) {
+export const getPlugin = function( state, pluginSlug ) {
 	if ( ! state || ! state[ pluginSlug ] ) {
 		return null;
 	}
 	return Object.assign( {}, state[ pluginSlug ] );
 };
 
-const isFetching = function( state, pluginSlug ) {
+export const isFetching = function( state, pluginSlug ) {
 	// if the `isFetching` attribute doesn't exist yet,
 	// we assume we are still launching the fetch action, so it's true
 	if ( typeof state[ pluginSlug ] === 'undefined' ) {
@@ -15,7 +15,7 @@ const isFetching = function( state, pluginSlug ) {
 	return state[ pluginSlug ];
 };
 
-const isFetched = function( state, pluginSlug ) {
+export const isFetched = function( state, pluginSlug ) {
 	const plugin = getPlugin( state, pluginSlug );
 	// if the plugin or the `isFetching` attribute doesn't exist yet,
 	// we assume we are still launching the fetch action, so it's true
@@ -24,5 +24,3 @@ const isFetched = function( state, pluginSlug ) {
 	}
 	return !! plugin.fetched;
 };
-
-export default { getPlugin, isFetching, isFetched };

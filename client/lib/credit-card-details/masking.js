@@ -66,7 +66,7 @@ fieldMasks.cvv = {
 	unmask: identity,
 };
 
-function maskField( fieldName, previousValue, nextValue ) {
+export function maskField( fieldName, previousValue, nextValue ) {
 	var fieldMask = fieldMasks[ fieldName ];
 	if ( ! fieldMask ) {
 		return nextValue;
@@ -75,7 +75,7 @@ function maskField( fieldName, previousValue, nextValue ) {
 	return fieldMask.mask( previousValue, nextValue );
 }
 
-function unmaskField( fieldName, previousValue, nextValue ) {
+export function unmaskField( fieldName, previousValue, nextValue ) {
 	var fieldMask = fieldMasks[ fieldName ];
 	if ( ! fieldMask ) {
 		return nextValue;
@@ -83,8 +83,3 @@ function unmaskField( fieldName, previousValue, nextValue ) {
 
 	return fieldMask.unmask( fieldMask.mask( previousValue, nextValue ) );
 }
-
-export default {
-	maskField: maskField,
-	unmaskField: unmaskField,
-};

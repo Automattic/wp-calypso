@@ -33,7 +33,7 @@ import { requestSites } from 'state/sites/actions';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
-function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
+export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
 	const { cartItem, designType, domainItem, siteUrl, themeSlugWithRepo } = dependencies;
 
@@ -96,7 +96,7 @@ function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	}
 }
 
-function createSiteWithCart(
+export function createSiteWithCart(
 	callback,
 	dependencies,
 	{
@@ -218,7 +218,7 @@ function fetchReduxSite( siteSlug, { dispatch, getState }, callback ) {
 	);
 }
 
-function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
+export function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
 	async.parallel(
 		[
 			callback => {
@@ -236,7 +236,7 @@ function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
 	);
 }
 
-function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
+export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		defer( callback );
 
@@ -261,7 +261,7 @@ function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
  * @param {string} username The username to get suggestions for.
  * @param {object} reduxState The Redux state object
  */
-function getUsernameSuggestion( username, reduxState ) {
+export function getUsernameSuggestion( username, reduxState ) {
 	const fields = {
 		givesuggestions: 1,
 		username: username,
@@ -312,133 +312,121 @@ function getUsernameSuggestion( username, reduxState ) {
 	} );
 }
 
-export default {
-	createSiteOrDomain,
+export const addPlanToCart = function( callback, { siteId }, { cartItem, privacyItem } ) {
+	if ( isEmpty( cartItem ) ) {
+		// the user selected the free plan
+		defer( callback );
 
-	createSiteWithCart,
+		return;
+	}
 
-	addPlanToCart( callback, { siteId }, { cartItem, privacyItem } ) {
-		if ( isEmpty( cartItem ) ) {
-			// the user selected the free plan
-			defer( callback );
+	const newCartItems = [ cartItem, privacyItem ].filter( item => item );
 
-			return;
-		}
+	SignupCart.addToCart( siteId, newCartItems, error =>
+		callback( error, { cartItem, privacyItem } )
+	);
+};
 
-		const newCartItems = [ cartItem, privacyItem ].filter( item => item );
+export const createAccount = function(
+	callback,
+	dependencies,
+	{ userData, flowName, queryArgs, service, access_token, id_token, oauth2Signup },
+	reduxStore
+) {
+	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
+	const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
 
-		SignupCart.addToCart( siteId, newCartItems, error =>
-			callback( error, { cartItem, privacyItem } )
-		);
-	},
+	if ( service ) {
+		// We're creating a new social account
+		wpcom.undocumented().usersSocialNew( {
+			service,
+			access_token,
+			id_token,
+			signup_flow_name: flowName,
+		},
+		( error, response ) => {
+			const errors =
+				error && error.error
+					? [ { error: error.error, message: error.message, email: get( error, 'data.email' ) } ]
+					: undefined;
 
-	createAccount(
-		callback,
-		dependencies,
-		{ userData, flowName, queryArgs, service, access_token, id_token, oauth2Signup },
-		reduxStore
-	) {
-		const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
-		const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
-
-		if ( service ) {
-			// We're creating a new social account
-			wpcom.undocumented().usersSocialNew( {
-				service,
-				access_token,
-				id_token,
-				signup_flow_name: flowName,
-			},
-			( error, response ) => {
-				const errors =
-					error && error.error
-						? [ { error: error.error, message: error.message, email: get( error, 'data.email' ) } ]
-						: undefined;
-
-				if ( errors ) {
-					callback( errors );
-				} else {
-					callback( undefined, response );
-				}
-			} );
-		} else {
-			wpcom.undocumented().usersNew( assign(
-				{},
-				userData,
-				{
-					ab_test_variations: getSavedVariations(),
-					validate: false,
-					signup_flow_name: flowName,
-					nux_q_site_type: surveySiteType,
-					nux_q_question_primary: surveyVertical,
-					// url sent in the confirmation email
-					jetpack_redirect: queryArgs.jetpack_redirect,
-				},
-				oauth2Signup
-					? {
-							oauth2_client_id: queryArgs.oauth2_client_id,
-							// url of the WordPress.com authorize page for this OAuth2 client
-							// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
-							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
-						}
-					: null
-			),
-			( error, response ) => {
-				const errors =
-						error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
-					bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
-
-				if ( ! errors ) {
-					// Fire after a new user registers.
-					analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
-					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
-				}
-
-				const providedDependencies = assign( {}, { username: userData.username }, bearerToken );
-
-				if ( oauth2Signup ) {
-					assign( providedDependencies, {
-						oauth2_client_id: queryArgs.oauth2_client_id,
-						oauth2_redirect: queryArgs.oauth2_redirect,
-					} );
-				}
-
-				callback( errors, providedDependencies );
-			} );
-		}
-	},
-
-	createSite( callback, { themeSlugWithRepo }, { site } ) {
-		var data = {
-			blog_name: site,
-			blog_title: '',
-			options: { theme: themeSlugWithRepo },
-			validate: false,
-		};
-
-		wpcom.undocumented().sitesNew( data, function( errors, response ) {
-			let providedDependencies, siteSlug;
-
-			if ( response && response.blog_details ) {
-				const parsedBlogURL = parseURL( response.blog_details.url );
-				siteSlug = parsedBlogURL.hostname;
-
-				providedDependencies = { siteSlug };
-			}
-
-			if ( user.get() && isEmpty( errors ) ) {
-				fetchSitesAndUser( siteSlug, () => {
-					callback( undefined, providedDependencies );
-				} );
+			if ( errors ) {
+				callback( errors );
 			} else {
-				callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
+				callback( undefined, response );
 			}
 		} );
-	},
+	} else {
+		wpcom.undocumented().usersNew( assign(
+			{},
+			userData,
+			{
+				ab_test_variations: getSavedVariations(),
+				validate: false,
+				signup_flow_name: flowName,
+				nux_q_site_type: surveySiteType,
+				nux_q_question_primary: surveyVertical,
+				// url sent in the confirmation email
+				jetpack_redirect: queryArgs.jetpack_redirect,
+			},
+			oauth2Signup
+				? {
+						oauth2_client_id: queryArgs.oauth2_client_id,
+						// url of the WordPress.com authorize page for this OAuth2 client
+						// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
+						oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
+					}
+				: null
+		),
+		( error, response ) => {
+			const errors =
+					error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
+				bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
 
-	fetchSitesAndUser: fetchSitesAndUser,
+			if ( ! errors ) {
+				// Fire after a new user registers.
+				analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
+				analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+			}
 
-	setThemeOnSite: setThemeOnSite,
+			const providedDependencies = assign( {}, { username: userData.username }, bearerToken );
 
-	getUsernameSuggestion: getUsernameSuggestion,
+			if ( oauth2Signup ) {
+				assign( providedDependencies, {
+					oauth2_client_id: queryArgs.oauth2_client_id,
+					oauth2_redirect: queryArgs.oauth2_redirect,
+				} );
+			}
+
+			callback( errors, providedDependencies );
+		} );
+	}
+};
+
+export const createSite = function( callback, { themeSlugWithRepo }, { site } ) {
+	var data = {
+		blog_name: site,
+		blog_title: '',
+		options: { theme: themeSlugWithRepo },
+		validate: false,
+	};
+
+	wpcom.undocumented().sitesNew( data, function( errors, response ) {
+		let providedDependencies, siteSlug;
+
+		if ( response && response.blog_details ) {
+			const parsedBlogURL = parseURL( response.blog_details.url );
+			siteSlug = parsedBlogURL.hostname;
+
+			providedDependencies = { siteSlug };
+		}
+
+		if ( user.get() && isEmpty( errors ) ) {
+			fetchSitesAndUser( siteSlug, () => {
+				callback( undefined, providedDependencies );
+			} );
+		} else {
+			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
+		}
+	} );
 };

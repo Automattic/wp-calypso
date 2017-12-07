@@ -7,9 +7,7 @@
 import masking from './masking';
 import validation from './validation';
 
-export default {
-	getCreditCardType: validation.getCreditCardType,
-	maskField: masking.maskField,
-	unmaskField: masking.unmaskField,
-	validateCardDetails: validation.validateCardDetails,
-};
+export const getCreditCardType = validation.getCreditCardType;
+export const maskField = masking.maskField;
+export const unmaskField = masking.unmaskField;
+export const validateCardDetails = validation.validateCardDetails;
