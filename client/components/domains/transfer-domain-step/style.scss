@@ -68,6 +68,12 @@
 .transfer-domain-step__domain-description {
 	font-size: 16px;
 	margin-bottom: 20px;
+
+	.transfer-domain-step__illustration {
+		display: block;
+		margin: 0 auto 20px;
+		max-width: 250px;
+	}
 }
 
 .transfer-domain-step__go {
@@ -78,7 +84,7 @@
 .transfer-domain-step__domain-heading {
 	font-size: 18px;
 	font-weight: 500;
-	margin-bottom: 10px;
+	margin-bottom: 5px;
 }
 
 .transfer-domain-step__add-domain {

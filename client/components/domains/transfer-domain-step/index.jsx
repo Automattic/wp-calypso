@@ -112,9 +112,6 @@ class TransferDomainStep extends React.Component {
 	};
 
 	addTransfer() {
-		const cost = this.props.products.domain_map
-			? this.props.products.domain_map.cost_display
-			: null;
 		const { translate } = this.props;
 		const { searchQuery } = this.state;
 
@@ -123,13 +120,18 @@ class TransferDomainStep extends React.Component {
 				{ this.notice() }
 				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="transfer-domain-step__domain-description">
+						<img
+							className="transfer-domain-step__illustration"
+							src={ '/calypso/images/illustrations/migrating-host-diy.svg' }
+						/>
 						<div className="transfer-domain-step__domain-heading">
 							{ translate( 'Manage your domain and site together on WordPress.com.' ) }
 						</div>
 						<div>
 							{ translate(
-								'Transfer your domain from your current provider to WordPress.com so ' +
-									'you can manage your domain and site in the same place. {{a}}Learn More{{/a}}',
+								'Move your domain from your current provider to WordPress.com so you can update settings, ' +
+									"renew your domain, and more right in your dashboard. We'll renew it for another year " +
+									'when the transfer is successful. {{a}}Learn More{{/a}}',
 								{
 									components: {
 										a: (
@@ -172,9 +174,9 @@ class TransferDomainStep extends React.Component {
 					<p>
 						{ translate(
 							'Leave the domain at your current provider and {{a}}manually connect it{{/a}} to ' +
-								'your WordPress.com site for %(cost)s.',
+								"your WordPress.com site. You'll still need to continue paying your current " +
+								'provider to renew and manage any domain settings.',
 							{
-								args: { cost },
 								components: { a: <a href="#" onClick={ this.goToMapDomainStep } /> },
 							}
 						) }
