@@ -29,8 +29,10 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 
 				<TileGrid>
 					<Tile
-						buttonLabel={ 'Add a contact form' }
-						description={ 'Not sure? You can skip this step and add a contact form later.' }
+						buttonLabel={ translate( 'Add a contact form' ) }
+						description={ translate(
+							'Not sure? You can skip this step and add a contact form later.'
+						) }
 						image={ '/calypso/images/illustrations/contact-us.svg' }
 					/>
 				</TileGrid>
