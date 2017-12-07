@@ -44,9 +44,7 @@ export const receiveSuccess = ( { dispatch }, action, data ) => {
 		},
 	} );
 
-	dispatch(
-		recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_success' )
-	);
+	dispatch( recordTracksEvent( 'calypso_login_block_login_form_get_auth_type_success' ) );
 };
 
 export const receiveError = ( { dispatch }, action, error ) => {
@@ -72,7 +70,7 @@ export const receiveError = ( { dispatch }, action, error ) => {
 const getAuthAccountTypeRequest = dispatchRequest(
 	getAuthAccountType,
 	receiveSuccess,
-	receiveError,
+	receiveError
 );
 
 export default {

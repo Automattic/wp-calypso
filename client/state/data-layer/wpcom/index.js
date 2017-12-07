@@ -46,7 +46,7 @@ export const handlers = mergeHandlers(
 	timezones,
 	users,
 	usersAuthOptions,
-	videos,
+	videos
 );
 
 export default handlers;
