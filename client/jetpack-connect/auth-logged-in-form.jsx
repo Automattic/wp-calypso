@@ -4,7 +4,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import addQueryArgs from 'lib/route/add-query-args';
 import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
@@ -15,6 +14,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import addQueryArgs from 'lib/route/add-query-args';
 import AuthFormHeader from './auth-form-header';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -505,7 +505,7 @@ export class LoggedInForm extends Component {
 	}
 
 	getRedirectionTarget() {
-		const { partnerId, siteId, siteSlug } = this.props;
+		const { partnerId, redirectAfterAuth, siteId, siteSlug } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
@@ -515,7 +515,7 @@ export class LoggedInForm extends Component {
 			return `/start/pressable-nux?blogid=${ siteId }`;
 		}
 
-		return PLANS_PAGE + siteSlug;
+		return addQueryArgs( { redirectAfterAuth }, PLANS_PAGE + siteSlug );
 	}
 
 	renderFooterLinks() {

@@ -238,10 +238,11 @@ export function plansSelection( context ) {
 	renderWithReduxStore(
 		<CheckoutData>
 			<Plans
+				basePlansPath={ '/jetpack/connect/plans' }
 				context={ context }
 				destinationType={ context.params.destinationType }
-				basePlansPath={ '/jetpack/connect/plans' }
 				interval={ context.params.interval }
+				redirectAfterAuth={ context.query.redirectAfterAuth }
 			/>
 		</CheckoutData>,
 		document.getElementById( 'primary' ),
