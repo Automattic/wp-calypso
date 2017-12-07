@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { defer, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,6 +47,12 @@ class RequestLoginEmailForm extends React.Component {
 		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
 	};
 
+	componentWillReceiveProps( nextProps ) {
+		if ( ! this.props.requestError && nextProps.requestError ) {
+			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+		}
+	}
+
 	onUsernameOrEmailFieldChange = event => {
 		this.setState( {
 			usernameOrEmail: event.target.value,
@@ -55,6 +61,10 @@ class RequestLoginEmailForm extends React.Component {
 		if ( this.props.requestError ) {
 			this.props.hideMagicLoginRequestNotice();
 		}
+	};
+
+	saveUsernameOrEmailRef = input => {
+		this.usernameOrEmail = input;
 	};
 
 	onNoticeDismiss = () => {
@@ -139,6 +149,7 @@ class RequestLoginEmailForm extends React.Component {
 							disabled={ isFetching || emailRequested }
 							name="usernameOrEmail"
 							type="text"
+							ref={ this.saveUsernameOrEmailRef }
 							onChange={ this.onUsernameOrEmailFieldChange }
 						/>
 
