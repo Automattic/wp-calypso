@@ -29,13 +29,15 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 
 				<TileGrid>
 					<Tile
-						buttonLabel={ 'Recent news or updates' }
-						description={ 'We can pull the latest information into your homepage for you.' }
+						buttonLabel={ translate( 'Recent news or updates' ) }
+						description={ translate(
+							'We can pull the latest information into your homepage for you.'
+						) }
 						image={ '/calypso/images/illustrations/homepage-news.svg' }
 					/>
 					<Tile
-						buttonLabel={ 'A static welcome page' }
-						description={ 'Have your homepage stay the same as time goes on.' }
+						buttonLabel={ translate( 'A static welcome page' ) }
+						description={ translate( 'Have your homepage stay the same as time goes on.' ) }
 						image={ '/calypso/images/illustrations/homepage-static.svg' }
 					/>
 				</TileGrid>
