@@ -42,10 +42,10 @@
 		justify-content: center;
 		margin-left: 24px;
 		padding: 10px 0;
+		width: 100%;
 	}
 
 	.conversations__intro-copy-hidden {
-
 		@include breakpoint( "<660px" ) {
 			display: none;
 			visibility: hidden;
