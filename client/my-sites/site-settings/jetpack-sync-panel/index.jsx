@@ -83,7 +83,7 @@ class JetpackSyncPanel extends React.Component {
 		if ( syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD ) {
 			const adminUrl = get( this.props, 'site.options.admin_url' );
 			errorNotice = (
-				<Notice isCompact status="is-error" className="jetpack-sync-panel__error-notice">
+				<Notice isCompact status="is-error">
 					{ translate( '%(site)s is unresponsive.', {
 						args: {
 							site: get( this.props, 'site.name' ),
@@ -101,7 +101,7 @@ class JetpackSyncPanel extends React.Component {
 			);
 		} else if ( syncRequestError ) {
 			errorNotice = (
-				<Notice isCompact status="is-error" className="jetpack-sync-panel__error-notice">
+				<Notice isCompact status="is-error">
 					{ syncRequestError.message
 						? syncRequestError.message
 						: translate( 'There was an error scheduling a full sync.' ) }
@@ -148,11 +148,7 @@ class JetpackSyncPanel extends React.Component {
 			return null;
 		}
 
-		return (
-			<Notice isCompact className="jetpack-sync-panel__status-notice">
-				{ text }
-			</Notice>
-		);
+		return <div className="jetpack-sync-panel__status-notice">{ text }</div>;
 	};
 
 	renderProgressBar = () => {
@@ -170,12 +166,7 @@ class JetpackSyncPanel extends React.Component {
 				<div className="jetpack-sync-panel__action">
 					{ translate(
 						'Jetpack Sync keeps your WordPress.com dashboard up to date. ' +
-							'Data is sent from your site to the WordPress.com dashboard regularly to provide a faster experience. ',
-						{
-							components: {
-								strong: <strong />,
-							},
-						}
+							'Data is sent from your site to the WordPress.com dashboard regularly to provide a faster experience. '
 					) }
 
 					{ ! this.shouldDisableSync() &&
