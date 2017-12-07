@@ -40,6 +40,7 @@ extensions.forEach( extension => {
 			outFile: outFile,
 			includePaths: [ path.resolve( __dirname, '..', 'client' ) ],
 			sourceMap: true,
+			outputStyle: 'compressed',
 		},
 		( error, result ) => {
 			if ( error ) {
