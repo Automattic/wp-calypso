@@ -72,7 +72,6 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 			);
 			return Object.assign(
 				{
-					queryObject: action.queryObject || {},
 					isAuthorizing: false,
 					authorizeSuccess: false,
 					authorizeError: false,
