@@ -46,6 +46,13 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 		this.setState( { title: event.target.value } );
 	};
 
+	submit = () => {
+		this.props.saveSiteSettings( this.props.siteId, {
+			blogname: this.state.title,
+			blogdescription: this.state.description,
+		} );
+	};
+
 	render() {
 		const { isRequesting, siteId, translate } = this.props;
 		const headerText = translate( "Let's get started." );
@@ -82,7 +89,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 							/>
 						</FormFieldset>
 
-						<Button href={ this.props.getForwardUrl() } primary>
+						<Button href={ this.props.getForwardUrl() } onClick={ this.submit } primary>
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>
