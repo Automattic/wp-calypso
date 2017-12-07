@@ -13,6 +13,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { recordTracksEvent } from 'state/analytics/actions';
 import Masterbar from './masterbar';
 import Item from './item';
 import Publish from './publish';
@@ -42,11 +43,17 @@ class MasterbarLoggedIn extends React.Component {
 	};
 
 	clickMySites = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
 		this.props.setNextLayoutFocus( 'sidebar' );
 	};
 
 	clickReader = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_reader_clicked' );
 		this.props.setNextLayoutFocus( 'content' );
+	};
+
+	clickMe = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
 	};
 
 	isActive = section => {
@@ -112,6 +119,7 @@ class MasterbarLoggedIn extends React.Component {
 					tipTarget="me"
 					url="/me"
 					icon="user-circle"
+					onClick={ this.clickMe }
 					isActive={ this.isActive( 'me' ) }
 					className="masterbar__item-me"
 					tooltip={ translate( 'Update your profile, personal settings, and more', {
@@ -167,5 +175,5 @@ export default connect(
 			domainOnlySite,
 		};
 	},
-	{ setNextLayoutFocus }
+	{ setNextLayoutFocus, recordTracksEvent }
 )( localize( MasterbarLoggedIn ) );
