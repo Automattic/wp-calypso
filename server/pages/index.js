@@ -267,7 +267,7 @@ function setUpLoggedInRoute( req, res, next ) {
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		const user = require( 'user-bootstrap' );
 
-		const geoCountry = req.get[ 'x-geoip-country-code' ] || '';
+		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
 		redirectUrl = login( {
