@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -41,6 +42,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 
 		return (
 			<Main>
+				<DocumentHead title={ translate( 'Site Title ‹ Jetpack Onboarding' ) } />
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<Card>
