@@ -254,21 +254,15 @@ export function hasDomainCredit( cart ) {
  * @returns {Boolean} - Whether or not the cart contains a domain with that TLD
  */
 export function hasTld( cart, tld ) {
-	return some( concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) ), function(
-		cartItem
-	) {
-		return getTld( cartItem.meta ) === tld;
-	} );
+	const domains = concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) );
+
+	return some( domains, cartItem => getTld( cartItem.meta ) === tld );
 }
 
 export function getTlds( cart ) {
-	return uniq(
-		map( concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) ), function(
-			cartItem
-		) {
-			return getTld( cartItem.meta );
-		} )
-	);
+	const domains = concat( getDomainRegistrations( cart ), getDomainTransfers( cart ) );
+
+	return uniq( map( domains, cartItem => getTld( cartItem.meta ) ) );
 }
 
 /**
