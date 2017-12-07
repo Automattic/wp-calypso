@@ -68,7 +68,24 @@ describe( 'Plans', () => {
 			selectedSite: { ...SELECTED_SITE, plan: SITE_PLAN_PRO },
 		} );
 
-		expect( redirect.mock.calls.length ).toBe( 1 );
+		expect( redirect.mock.calls ).toHaveLength( 1 );
+
+		wrapper.unmount();
+	} );
+
+	test( 'should redirect if notJetpack', () => {
+		const wrapper = mount(
+			<Plans { ...DEFAULT_PROPS } hasPlan={ null } selectedSite={ null } notJetpack={ null } />
+		);
+
+		const redirect = ( wrapper.instance().redirect = jest.fn() );
+
+		wrapper.setProps( {
+			notJetpack: true,
+			selectedSite: { ...SELECTED_SITE, plan: SITE_PLAN_PRO },
+		} );
+
+		expect( redirect.mock.calls ).toHaveLength( 1 );
 
 		wrapper.unmount();
 	} );
@@ -90,7 +107,7 @@ describe( 'Plans', () => {
 			/>
 		);
 
-		expect( goBackToWpAdmin.mock.calls.length ).toBe( 1 );
+		expect( goBackToWpAdmin.mock.calls ).toHaveLength( 1 );
 
 		wrapper.unmount();
 	} );
