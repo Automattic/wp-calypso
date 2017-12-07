@@ -21,7 +21,6 @@ import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {
-		diff: PropTypes.object,
 		postId: PropTypes.number,
 		siteId: PropTypes.number,
 		revisions: PropTypes.array.isRequired,

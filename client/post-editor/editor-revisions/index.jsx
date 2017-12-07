@@ -53,9 +53,9 @@ class EditorRevisions extends Component {
 					siteId={ siteId }
 				/>
 				<EditorRevisionsList
-					diff={ diff }
 					postId={ postId }
 					revisions={ revisions }
+					selectedRevisionId={ selectedRevisionId }
 					siteId={ siteId }
 					nextRevisionId={ nextRevisionId }
 					prevRevisionId={ prevRevisionId }
