@@ -14,6 +14,9 @@
  */
 
 const fs = require( 'fs' );
+const path = require( 'path' );
+const os = require( 'os' );
+const spawnSync = require( 'child_process' ).spawnSync;
 
 if ( process.argv.length < 3 ) {
 	process.exit( 1 );
@@ -22,16 +25,12 @@ if ( process.argv.length < 3 ) {
 const target = process.argv[ 2 ];
 const extensions = process.argv.slice( 3 );
 
-const deleteFolderRecursive = ( path ) => {
-	fs.readdirSync( path ).forEach( ( file ) => {
-		const curPath = path + '/' + file;
-		if( fs.lstatSync( curPath ).isDirectory() ) {
-			deleteFolderRecursive( curPath );
-		} else {
-			fs.unlinkSync( curPath );
-		}
-	} );
-	fs.rmdirSync( path );
+const deleteFolderRecursive = ( dir ) => {
+	if ( 'win32' === os.platform() ) {
+		spawnSync( 'rd', [ '/S', '/Q', path.normalize( dir ) ], { shell: true } );
+	} else {
+		spawnSync( 'rm', [ '-rf', dir ] );
+	}
 };
 
 const deleteFiles = ( path, extensions ) => {
