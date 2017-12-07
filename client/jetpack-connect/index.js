@@ -40,8 +40,16 @@ export default function() {
 
 	page( '/jetpack/connect/store/:interval(yearly|monthly)?', controller.plansLanding );
 
-	page( '/jetpack/connect/:from(akismet|vaultpress)/:interval(yearly|monthly)?', ( { params } ) =>
-		page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
+	page(
+		'/jetpack/connect/:_(akismet|plans|vaultpress)/:interval(yearly|monthly)?',
+		( { params } ) =>
+			page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
+	);
+
+	page(
+		'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',
+		siteSelection,
+		controller.plansSelection
 	);
 
 	page(
@@ -49,9 +57,6 @@ export default function() {
 		controller.redirectWithoutLocaleifLoggedIn,
 		controller.connect
 	);
-
-	page( '/jetpack/connect/plans/:site', siteSelection, controller.plansSelection );
-	page( '/jetpack/connect/plans/:interval/:site', siteSelection, controller.plansSelection );
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso );
 	page( '/jetpack/sso/*', controller.sso );
