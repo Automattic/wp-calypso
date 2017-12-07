@@ -13,6 +13,7 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
 import PostActionsEllipsisMenuEdit from './edit';
 import PostActionsEllipsisMenuStats from './stats';
+import PostActionsEllipsisMenuComments from './comments';
 import PostActionsEllipsisMenuPublish from './publish';
 import PostActionsEllipsisMenuShare from './share';
 import PostActionsEllipsisMenuTrash from './trash';
@@ -28,6 +29,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 			<PostActionsEllipsisMenuEdit key="edit" />,
 			<PostActionsEllipsisMenuView key="view" />,
 			<PostActionsEllipsisMenuStats key="stats" />,
+			<PostActionsEllipsisMenuComments key="comments" />,
 			<PostActionsEllipsisMenuPublish key="publish" />,
 			<PostActionsEllipsisMenuShare key="share" />,
 			<PostActionsEllipsisMenuRestore key="restore" />,
