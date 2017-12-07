@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -40,7 +40,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 		);
 
 		return (
-			<div>
+			<Fragment>
 				<DocumentHead title={ translate( 'Site Title ‹ Jetpack Onboarding' ) } />
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
@@ -65,7 +65,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 						</Button>
 					</form>
 				</Card>
-			</div>
+			</Fragment>
 		);
 	}
 }

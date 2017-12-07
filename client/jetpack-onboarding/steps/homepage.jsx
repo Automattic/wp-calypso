@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -21,7 +21,7 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 		const subHeaderText = translate( 'What should visitors see on your homepage?' );
 
 		return (
-			<div>
+			<Fragment>
 				<DocumentHead title={ translate( 'Homepage ‹ Jetpack Onboarding' ) } />
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
@@ -40,7 +40,7 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 						image={ '/calypso/images/illustrations/homepage-static.svg' }
 					/>
 				</TileGrid>
-			</div>
+			</Fragment>
 		);
 	}
 }
