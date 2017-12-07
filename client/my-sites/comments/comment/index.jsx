@@ -71,19 +71,17 @@ export class Comment extends Component {
 		) {
 			const commentNode = ReactDom.findDOMNode( this.commentCard );
 			const commentOffsetTop = commentNode.offsetTop - 56;
-			window.requestAnimationFrame( () =>
-				scrollTo( {
-					x: 0,
-					y: commentOffsetTop,
-					duration: 1,
-					onComplete: () => {
-						if ( commentOffsetTop !== window.scrollY ) {
-							window.scrollTo( 0, commentOffsetTop );
-						}
-						onScrollToComment();
-					},
-				} )
-			);
+			scrollTo( {
+				x: 0,
+				y: commentOffsetTop,
+				duration: 1,
+				onComplete: () => {
+					if ( commentOffsetTop !== window.scrollY ) {
+						window.scrollTo( 0, commentOffsetTop );
+					}
+					onScrollToComment();
+				},
+			} );
 		}
 
 		this.setState( ( { isEditMode, isReplyVisible } ) => ( {

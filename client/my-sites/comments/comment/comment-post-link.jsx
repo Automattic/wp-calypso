@@ -26,21 +26,21 @@ export class CommentPostLink extends PureComponent {
 	};
 
 	handleClick = event => {
+		if ( ! window ) {
+			return;
+		}
 		event.preventDefault();
+		window.scrollTo( 0, 0 );
 
 		const { commentId, postId, siteSlug, status } = this.props;
+		const path = get( window, 'history.state.path' );
 
-		if ( window ) {
-			window.scrollTo( 0, 0 );
-		}
+		const newPath =
+			-1 !== path.indexOf( '#' )
+				? path.replace( /[#].*/, `#comment-${ commentId }` )
+				: `${ path }#comment-${ commentId }`;
 
-		window.history.replaceState(
-			{
-				...window.history.state,
-				path: window.history.state.path.replace( /[#].*/, `#comment-${ commentId }` ),
-			},
-			null
-		);
+		window.history.replaceState( { ...window.history.state, path: newPath }, null );
 
 		page( `/comments/${ status }/${ siteSlug }/${ postId }` );
 	};
