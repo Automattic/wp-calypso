@@ -48,9 +48,7 @@ class EditorDrawerWell extends Component {
 						className="editor-drawer-well__placeholder"
 					>
 						{ icon && <Gridicon icon={ icon } className="editor-drawer-well__icon" /> }
-						<span className="editor-drawer-well__button button is-secondary is-compact">
-							{ label }
-						</span>
+						<span className="editor-drawer-well__button button is-compact">{ label }</span>
 					</button>
 				) }
 				{ this.props.customDropZone }

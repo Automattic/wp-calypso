@@ -214,7 +214,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 						</span>
 					</p>
 					<button
-						className="editor-sharing__jetpack-modules-button button is-secondary"
+						className="editor-sharing__jetpack-modules-button button"
 						onClick={ this.jetpackModulePopup }
 					>
 						{ this.props.translate( 'View Module Settings' ) }
