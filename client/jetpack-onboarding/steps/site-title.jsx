@@ -20,17 +20,22 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { saveSiteSettings } from 'state/site-settings/actions';
-import { getSiteSettings } from 'state/site-settings/selectors';
+import { getSiteSettings, isRequestingSiteSettings } from 'state/site-settings/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
-	constructor( props ) {
-		super( props );
+	state = {
+		description: '',
+		title: '',
+	};
 
-		this.state = {
-			description: props.siteSettings.blogname,
-			title: props.siteSettings.blogdescription,
-		};
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isRequesting && ! nextProps.isRequesting ) {
+			this.setState( {
+				title: nextProps.siteSettings.blogname,
+				description: nextProps.siteSettings.blogdescription,
+			} );
+		}
 	}
 
 	setDescription = event => {
@@ -42,7 +47,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	};
 
 	render() {
-		const { siteId, translate } = this.props;
+		const { isRequesting, siteId, translate } = this.props;
 		const headerText = translate( "Let's get started." );
 		const subHeaderText = translate(
 			'First up, what would you like to name your site and have as its public description?'
@@ -59,16 +64,18 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 						<FormFieldset>
 							<FormLabel htmlFor="title">{ translate( 'Site Title' ) }</FormLabel>
 							<FormTextInput
+								autoFocus
+								disabled={ isRequesting }
 								id="title"
 								onChange={ this.setTitle }
 								value={ this.state.title }
-								autoFocus
 							/>
 						</FormFieldset>
 
 						<FormFieldset>
 							<FormLabel htmlFor="description">{ translate( 'Site Description' ) }</FormLabel>
 							<FormTextarea
+								disabled={ isRequesting }
 								id="description"
 								onChange={ this.setDescription }
 								value={ this.state.description }
@@ -90,6 +97,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			isRequesting: isRequestingSiteSettings( state, siteId ),
 			siteId,
 			siteSettings: getSiteSettings( state, siteId ),
 		};
