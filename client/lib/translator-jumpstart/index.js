@@ -6,6 +6,7 @@
 
 import debugModule from 'debug';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import i18n from 'i18n-calypso';
 import { find } from 'lodash';
 
@@ -51,10 +52,6 @@ var injectUrl,
  */
 const communityTranslatorJumpstart = {
 	isEnabled() {
-		if ( ! config.isEnabled( 'community-translator' ) ) {
-			return false;
-		}
-
 		const currentUser = user.get();
 
 		if ( ! currentUser || 'en' === currentUser.localeSlug || ! currentUser.localeSlug ) {
@@ -76,6 +73,7 @@ const communityTranslatorJumpstart = {
 
 		return true;
 	},
+
 	isActivated() {
 		return _shouldWrapTranslations;
 	},
@@ -110,13 +108,18 @@ const communityTranslatorJumpstart = {
 		}
 
 		// React.DOM.data returns a frozen object, therefore we make a copy so that we can modify it below
-		const dataElement = Object.assign( {}, React.DOM.data( props, displayedTranslationFromPage ) );
+		// const dataElement = Object.assign( {}, React.DOM.data( props, displayedTranslationFromPage ) );
 
-		// now we can override the toString function which would otherwise return [object Object]
+		const dataElement = <data { ...props }> { displayedTranslationFromPage } </data>;
+
+		// eslint-disable-next-line
+		// console.log( dataElement );
+
+/*		// now we can override the toString function which would otherwise return [object Object]
 		dataElement.toString = () => displayedTranslationFromPage;
 
 		// freeze the object again to certify the same behavior as the original ReactElement object
-		Object.freeze( dataElement );
+		Object.freeze( dataElement );*/
 
 		return dataElement;
 	},
