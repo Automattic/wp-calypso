@@ -12,9 +12,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEqual, pick } from 'lodash';
 
-import debugFactory from 'debug';
-const debug = debugFactory( 'allendav' );
-
 /**
  * Internal dependencies
  */
@@ -48,7 +45,6 @@ const boundSettingsKeys = [ 'pricesIncludeTaxes', 'shippingIsTaxable', 'taxesEna
 class SettingsTaxesWooCommerceServices extends Component {
 	constructor( props ) {
 		super( props );
-		debug( 'in constructor this.boundSettingsKeys=', boundSettingsKeys );
 		const initialSettings = pick( props, boundSettingsKeys );
 		this.state = {
 			isSaving: false,
@@ -83,10 +79,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 			this.props.fetchTaxSettings( newSiteId );
 		}
 
-		debug( 'in componentWillReceiveProps, newProps=', newProps );
-
 		const initialSettings = pick( newProps, boundSettingsKeys );
-		debug( 'in componentWillReceiveProps, initialSettings=', initialSettings );
 		this.setState( {
 			initialSettings,
 			boundSettings: initialSettings,
@@ -94,7 +87,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 	};
 
 	hasEdits = () => {
-		return isEqual( this.state.initialSettings, this.state.boundSettings );
+		return ! isEqual( this.state.initialSettings, this.state.boundSettings );
 	};
 
 	onEnabledChange = () => {
@@ -118,7 +111,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		this.setState( { isSaving: true } );
 
 		const onSuccess = () => {
-			this.setState( { initialSettings: this.state.boundSettings } );
+			this.setState( { initialSettings: this.state.boundSettings, isSaving: false } );
 			if ( onSuccessExtra ) {
 				onSuccessExtra();
 			}
@@ -195,8 +188,6 @@ class SettingsTaxesWooCommerceServices extends Component {
 
 	render = () => {
 		const { className, loaded, siteId, siteSlug, translate } = this.props;
-
-		debug( 'state=', this.state );
 
 		const breadcrumbs = [
 			<a href={ getLink( '/store/settings/:site/', { slug: siteSlug } ) }>
