@@ -91,6 +91,7 @@
 		"nps-survey/dev-trigger": true,
 		"nps-survey/notice": true,
 		"olark": true,
+		"onboarding-checklist": false,
 		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,

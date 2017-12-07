@@ -74,6 +74,7 @@
 		"me/trophies": false,
 		"oauth": true,
 		"olark": true,
+		"onboarding-checklist": false,
 		"persist-redux": true,
 		"plans/personal-plan": true,
 		"post-editor/author-selector": true,
