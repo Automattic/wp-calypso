@@ -24,6 +24,10 @@ import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+// Adjust the comment card `offsetTop` to avoid being covered by the masterbar.
+// 56px = 48px (masterbar height) + 8px (comment card vertical margin)
+const COMMENT_SCROLL_TOP_MARGIN = 56;
+
 export class Comment extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
@@ -70,7 +74,7 @@ export class Comment extends Component {
 			`#comment-${ commentId }` === window.location.hash
 		) {
 			const commentNode = ReactDom.findDOMNode( this.commentCard );
-			const commentOffsetTop = commentNode.offsetTop - 56;
+			const commentOffsetTop = commentNode.offsetTop - COMMENT_SCROLL_TOP_MARGIN;
 			scrollTo( {
 				x: 0,
 				y: commentOffsetTop,
