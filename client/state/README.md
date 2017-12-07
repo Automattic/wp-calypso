@@ -192,7 +192,7 @@ hexNumbers.hasCustomPersistence = true;
 
 ### withSchemaValidation( schema, reducer )
 This helper takes in both a schema and a reducer and then produces a new reducer that
-conditionally loads the persisted state if it's shape is valid.
+conditionally loads the persisted state if its shape is valid.
 
 #### Example
 
@@ -214,5 +214,5 @@ age( 23, { type: DESERIALIZE } ) === 23
 ### combineReducers( reducersObject )
 A wrapper around Redux's `combineReducers()` which shares an identical function signature.
 The only addition is that each reducer is wrapped with `withSchemaValidation` which will perform
-validation on `DESERIALIZE` actions if a schema is present. It returns initialState on
+validation on `DESERIALIZE` actions if a schema is present. It returns `initialState` on
 both `SERIALIZE` and `DESERIALIZE` if a schema is not present.
