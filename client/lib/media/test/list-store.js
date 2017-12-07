@@ -171,6 +171,25 @@ describe( 'MediaListStore', () => {
 			expect( MediaListStore.getAllIds( DUMMY_SITE_ID ) ).to.eql( [ 20, 10 ] );
 		} );
 
+		test( 'should not sort media if the source is marked as not having a date', () => {
+			const media = [
+				DUMMY_MEDIA_OBJECT,
+				assign( {}, DUMMY_MEDIA_OBJECT, { ID: 20, date: '2015-06-19T11:36:09-04:00' } ),
+			];
+			const query = { number: 2, source: 'pexels' };
+
+			MediaStore.get.restore();
+			dispatchSetQuery( { query } );
+
+			sandbox.stub( MediaStore, 'get', function( siteId, postId ) {
+				return find( media, { ID: postId } );
+			} );
+
+			dispatchReceiveMediaItems( { data: { media: media }, query } );
+
+			expect( MediaListStore.getAllIds( DUMMY_SITE_ID ) ).to.eql( [ 10, 20 ] );
+		} );
+
 		test( 'should return undefined for a fetching site', () => {
 			dispatchFetchMedia();
 

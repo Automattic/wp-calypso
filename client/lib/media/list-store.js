@@ -127,7 +127,7 @@ function isQuerySame( siteId, query ) {
 }
 
 function sourceHasDate( source ) {
-	const sourcesWithoutDate = [];
+	const sourcesWithoutDate = [ 'pexels' ];
 	return -1 === sourcesWithoutDate.indexOf( source );
 }
 
