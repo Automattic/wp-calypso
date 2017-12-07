@@ -44,14 +44,14 @@ export const http = (
 	},
 	action = null
 ) => {
-	const version = apiNamespace ? { apiNamespace } : { apiVersion };
-
 	return {
 		type: WPCOM_HTTP_REQUEST,
 		body,
 		method,
 		path,
-		query: { ...query, ...version },
+		apiVersion,
+		apiNamespace,
+		query,
 		formData,
 		onSuccess: onSuccess || action,
 		onFailure: onFailure || action,

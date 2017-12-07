@@ -52,8 +52,10 @@ const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCa
  * @param {Object<String, *>} query GET query string
  * @returns {String} unique key up to duplicate request descriptions
  */
-export const buildKey = ( { path, apiNamespace, apiVersion, query } ) =>
-	JSON.stringify( [ path, apiNamespace, apiVersion, sortBy( toPairs( query ), head ) ] );
+export const buildKey = ( { path, apiNamespace, apiVersion, query } ) => {
+	const queryKey = typeof query === 'string' ? query : sortBy( toPairs( query ), head );
+	return JSON.stringify( [ path, apiNamespace, apiVersion, queryKey ] );
+};
 
 /**
  * Joins a responder action into a unique list of responder actions
