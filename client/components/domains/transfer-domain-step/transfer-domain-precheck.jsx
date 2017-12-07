@@ -62,6 +62,11 @@ class TransferDomainPrecheck extends React.PureComponent {
 				this.showNextStep();
 			}
 
+			// Reset steps if domain became locked again
+			if ( ! result.unlocked ) {
+				this.resetSteps();
+			}
+
 			this.setState( {
 				email: result.admin_email,
 				privacy: result.privacy,
@@ -73,6 +78,12 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 	refreshStatusOnly = () => {
 		this.refreshStatus( false );
+	};
+
+	resetSteps = () => {
+		if ( this.state.currentStep !== 1 ) {
+			this.setState( { currentStep: 1 } );
+		}
 	};
 
 	showNextStep = () => {
