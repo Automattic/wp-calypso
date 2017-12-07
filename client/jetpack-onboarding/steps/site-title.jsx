@@ -17,7 +17,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
-import Main from 'components/main';
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	state = {
@@ -41,11 +40,11 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 		);
 
 		return (
-			<Main>
+			<div>
 				<DocumentHead title={ translate( 'Site Title ‹ Jetpack Onboarding' ) } />
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
-				<Card>
+				<Card className="steps__form">
 					<form>
 						<FormFieldset>
 							<FormLabel htmlFor="title">{ translate( 'Site Title' ) }</FormLabel>
@@ -66,7 +65,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 						</Button>
 					</form>
 				</Card>
-			</Main>
+			</div>
 		);
 	}
 }
