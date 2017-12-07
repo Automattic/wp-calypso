@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  */
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
-import Main from 'components/main';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
 
@@ -22,7 +21,7 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 		const subHeaderText = translate( 'What should visitors see on your homepage?' );
 
 		return (
-			<Main>
+			<div>
 				<DocumentHead title={ translate( 'Homepage ‹ Jetpack Onboarding' ) } />
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
@@ -41,7 +40,7 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 						image={ '/calypso/images/illustrations/homepage-static.svg' }
 					/>
 				</TileGrid>
-			</Main>
+			</div>
 		);
 	}
 }

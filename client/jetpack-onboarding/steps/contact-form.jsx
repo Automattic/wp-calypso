@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  */
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
-import Main from 'components/main';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
 
@@ -22,7 +21,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 		const subHeaderText = translate( 'Would you like to get started with a Contact Us page?' );
 
 		return (
-			<Main>
+			<div>
 				<DocumentHead title={ translate( 'Contact Form ‹ Jetpack Onboarding' ) } />
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
@@ -36,7 +35,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 						image={ '/calypso/images/illustrations/contact-us.svg' }
 					/>
 				</TileGrid>
-			</Main>
+			</div>
 		);
 	}
 }
