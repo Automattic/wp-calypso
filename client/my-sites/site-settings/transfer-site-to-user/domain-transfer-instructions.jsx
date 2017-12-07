@@ -46,7 +46,7 @@ class DomainTransferInstructions extends PureComponent {
 						{ translate( 'Cancel' ) }
 					</Button>
 					<Button className="transfer-site-to-user__continue">
-						{ translate( 'Transfer Your Domain' ) }
+						{ translate( 'Transfer Domain' ) }
 						<Gridicon icon="chevron-right" size={ 48 } />
 					</Button>
 				</ActionPanelFooter>
