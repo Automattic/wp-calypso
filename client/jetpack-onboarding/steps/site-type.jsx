@@ -29,17 +29,17 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 
 				<TileGrid>
 					<Tile
-						buttonLabel={ 'Personal site' }
-						description={
+						buttonLabel={ translate( 'Personal site' ) }
+						description={ translate(
 							'To share your ideas, stories, photographs, or creative projects with your followers.'
-						}
+						) }
 						image={ '/calypso/images/illustrations/type-personal.svg' }
 					/>
 					<Tile
-						buttonLabel={ 'Business site' }
-						description={
+						buttonLabel={ translate( 'Business site' ) }
+						description={ translate(
 							'To promote your business, organization, or brand, sell products or services, or connect with your audience.'
-						}
+						) }
 						image={ '/calypso/images/illustrations/type-business.svg' }
 					/>
 				</TileGrid>
