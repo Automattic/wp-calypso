@@ -18,10 +18,10 @@ const getPostRevision = createSelector(
 			normalizerName,
 			hydrateRevision(
 				state,
-				get( state.posts.revisions.revisions, [ siteId, postId, revisionId ], null )
+				get( state.posts.revisions.diffs, [ siteId, postId, 'revisions', revisionId ], null )
 			)
 		),
-	state => [ state.posts.revisions.revisions, state.users.items ]
+	state => [ state.posts.revisions.diffs ]
 );
 
 export default getPostRevision;

@@ -15,13 +15,13 @@ import { hydrateRevision, normalizeRevision } from 'state/selectors/utils/revisi
 const getPostRevisions = createSelector(
 	( state, siteId, postId, normalizerName = null ) =>
 		orderBy(
-			map( get( state.posts.revisions.revisions, [ siteId, postId ], {} ), revision =>
+			map( get( state.posts.revisions.diffs, [ siteId, postId, 'revisions' ], {} ), revision =>
 				normalizeRevision( normalizerName, hydrateRevision( state, revision ) )
 			),
 			'date',
 			'desc'
 		),
-	state => [ state.posts.revisions.revisions, state.users.items ]
+	state => [ state.posts.revisions.diffs ]
 );
 
 export default getPostRevisions;

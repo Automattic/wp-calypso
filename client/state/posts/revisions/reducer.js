@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { filter, isEmpty, isInteger, keyBy, merge } from 'lodash';
+import { filter, get, isEmpty, isInteger, keyBy, merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,7 +29,10 @@ const isNonNegativeInteger = t => isInteger( t ) && t >= 0;
 export const diffs = createReducer(
 	{},
 	{
-		[ POST_REVISIONS_RECEIVE ]: ( state, { diffs: diffsFromServer, siteId } ) => {
+		[ POST_REVISIONS_RECEIVE ]: (
+			state,
+			{ diffs: diffsFromServer, postId, revisions, siteId }
+		) => {
 			if ( ! isNonNegativeInteger( siteId ) ) {
 				return state;
 			}
@@ -49,11 +52,18 @@ export const diffs = createReducer(
 				return state;
 			}
 
+			const sitePost = get( state, [ siteId, postId ], {} );
+			// @TODO support merging a unique set
+			sitePost.revisions = revisions;
+
 			return {
 				...state,
 				[ siteId ]: {
 					...state[ siteId ],
-					...keyedDiffs,
+					[ postId ]: {
+						...sitePost,
+						...keyedDiffs,
+					},
 				},
 			};
 		},

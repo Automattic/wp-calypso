@@ -13,7 +13,6 @@ import { flow, get } from 'lodash';
 /**
  * Internal dependencies
  */
-//import { getPostRevisionChanges } from 'state/selectors';
 import { selectPostRevision } from 'state/posts/revisions/actions';
 import { isSingleUserSite } from 'state/sites/selectors';
 import TimeSince from 'components/time-since';
@@ -110,9 +109,8 @@ EditorRevisionsListItem.propTypes = {
 export default flow(
 	localize,
 	connect(
-		( state, { postId, revision, siteId } ) => ( {
+		( state, { siteId } ) => ( {
 			isMultiUserSite: ! isSingleUserSite( state, siteId ),
-			//			revisionChanges: getPostRevisionChanges( state, siteId, postId, revision.id ),
 		} ),
 		{ selectPostRevision }
 	)
