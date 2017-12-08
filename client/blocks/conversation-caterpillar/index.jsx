@@ -87,6 +87,7 @@ class ConversationCaterpillarComponent extends React.Component {
 			filter( uniqueAuthors, 'avatar_URL' ),
 			MAX_GRAVATARS_TO_DISPLAY
 		);
+		const uniqueAuthorsCount = size( uniqueAuthors );
 		const displayedAuthorsCount = size( displayedAuthors );
 		const lastAuthorName = get( last( displayedAuthors ), 'name' );
 		const gravatarSmallScreenThreshold = MAX_GRAVATARS_TO_DISPLAY / 2;
@@ -119,33 +120,39 @@ class ConversationCaterpillarComponent extends React.Component {
 				<button
 					className="conversation-caterpillar__count"
 					onClick={ this.handleTickle }
-					title={
-						commentCount > 1
-							? translate( 'View comments from %(commenterName)s and %(count)d more', {
-									args: {
-										commenterName: lastAuthorName,
-										count: commentCount - 1,
-									},
-								} )
-							: translate( 'View comment from %(commenterName)s', {
-									args: {
-										commenterName: lastAuthorName,
-									},
-								} )
-					}
+					title={ translate(
+						'View %(count)s comment for this post',
+						'View %(count)s comments for this post',
+						{
+							count: +commentCount,
+							args: {
+								count: commentCount,
+							},
+						}
+					) }
 				>
-					{ commentCount > 1
-						? translate( '%(commenterName)s and %(count)d more', {
-								args: {
-									commenterName: lastAuthorName,
-									count: commentCount - 1,
-								},
-							} )
-						: translate( '%(commenterName)s commented', {
-								args: {
-									commenterName: lastAuthorName,
-								},
-							} ) }
+					{ commentCount > 1 &&
+						uniqueAuthorsCount > 1 &&
+						translate( '%(count)d comments from %(commenterName)s and others', {
+							args: {
+								commenterName: lastAuthorName,
+								count: commentCount,
+							},
+						} ) }
+					{ commentCount > 1 &&
+						uniqueAuthorsCount === 1 &&
+						translate( '%(count)d comments from %(commenterName)s', {
+							args: {
+								commenterName: lastAuthorName,
+								count: commentCount,
+							},
+						} ) }
+					{ commentCount === 1 &&
+						translate( '1 comment from %(commenterName)s', {
+							args: {
+								commenterName: lastAuthorName,
+							},
+						} ) }
 				</button>
 			</div>
 		);
