@@ -5,7 +5,6 @@
  */
 
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -18,21 +17,17 @@ import Gridicon from 'gridicons';
 import { errorNotice } from 'state/notices/actions';
 import Button from 'components/button';
 
-const ApplicationPasswordsItem = createReactClass( {
-	displayName: 'ApplicationPasswordsItem',
+class ApplicationPasswordsItem extends React.Component {
+	state = {
+		removingPassword: false,
+	};
 
-	getInitialState: function() {
-		return {
-			removingPassword: false,
-		};
-	},
-
-	handleRemovePasswordButtonClick() {
+	handleRemovePasswordButtonClick = () => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Remove Application Password Button' );
 		this.removeApplicationPassword();
-	},
+	};
 
-	removeApplicationPassword: function() {
+	removeApplicationPassword() {
 		this.setState( { removingPassword: true } );
 
 		this.props.appPasswordsData.revoke(
@@ -48,9 +43,9 @@ const ApplicationPasswordsItem = createReactClass( {
 				}
 			}.bind( this )
 		);
-	},
+	}
 
-	render: function() {
+	render() {
 		var password = this.props.password;
 		return (
 			<li className="application-password-item__password" key={ password.ID }>
@@ -71,8 +66,8 @@ const ApplicationPasswordsItem = createReactClass( {
 				</Button>
 			</li>
 		);
-	},
-} );
+	}
+}
 
 export default connect( null, dispatch =>
 	bindActionCreators( { errorNotice, recordGoogleEvent }, dispatch )
