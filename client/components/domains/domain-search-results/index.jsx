@@ -242,7 +242,10 @@ class DomainSearchResults extends React.Component {
 
 				if ( this.props.transferInAllowed && ! this.props.isSignupStep ) {
 					unavailableOffer = (
-						<DomainTransferSuggestion onButtonClick={ this.props.onClickTransfer } />
+						<DomainTransferSuggestion
+							onButtonClick={ this.props.onClickTransfer }
+							tracksButtonClickSource="search-suggestions-bottom"
+						/>
 					);
 				}
 			}

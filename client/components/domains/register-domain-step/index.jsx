@@ -635,7 +635,7 @@ class RegisterDomainStep extends React.Component {
 				domainUnavailableSuggestion = (
 					<DomainTransferSuggestion
 						onButtonClick={ this.goToTransferDomainStep }
-						tracksButtonClickSource="default-card"
+						tracksButtonClickSource="initial-suggestions-bottom"
 					/>
 				);
 			}
@@ -699,7 +699,7 @@ class RegisterDomainStep extends React.Component {
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
 				onClickTransfer={ this.goToTransferDomainStep }
-				tracksButtonClickSource="search-result-card"
+				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
