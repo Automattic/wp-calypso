@@ -357,6 +357,14 @@
 	}
 }
 
+.button[disabled].is-borderless.comment__action.is-approved {
+	color: lighten($gray, 30%);
+}
+
+.button[disabled].is-borderless.comment__action:hover {
+	color: lighten($gray, 30%);
+}
+
 // Comment Reply Block
 
 .comment__reply {
