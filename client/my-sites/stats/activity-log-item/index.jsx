@@ -100,7 +100,7 @@ class ActivityLogItem extends Component {
 			log: { activityIsRewindable, activityName },
 		} = this.props;
 
-		if ( 'rewind__error' === activityName ) {
+		if ( 'rewind__error' === activityName || 'rewind__backup_error' === activityName ) {
 			return (
 				<EllipsisMenu onClick={ stopPropagation } position="bottom right">
 					<PopoverMenuItem icon="help" href="https://jetpack.com/support/activity-log/">
