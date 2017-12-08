@@ -19,7 +19,12 @@ import Dispatcher from 'dispatcher';
 
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
-
+const sampleSite = {
+	ID: 123,
+	jetpack: false,
+	slug: 'example.wordpress.com',
+	URL: 'https://example.wordpress.com',
+};
 describe( 'actions', () => {
 	let sandbox;
 
@@ -176,7 +181,7 @@ describe( 'actions', () => {
 			const spy = sandbox.spy();
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( false );
 
-			PostActions.saveEdited( null, {}, spy );
+			PostActions.saveEdited( sampleSite, null, {}, spy );
 
 			defer( () => {
 				expect( spy ).to.have.been.calledOnce;
@@ -192,7 +197,7 @@ describe( 'actions', () => {
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( true );
 			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( {} );
 
-			PostActions.saveEdited( null, {}, spy );
+			PostActions.saveEdited( sampleSite, null, {}, spy );
 
 			defer( () => {
 				expect( spy ).to.have.been.calledOnce;
@@ -224,7 +229,7 @@ describe( 'actions', () => {
 			};
 			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( changedAttributes );
 
-			PostActions.saveEdited( null, {}, ( error, data ) => {
+			PostActions.saveEdited( sampleSite, null, {}, ( error, data ) => {
 				const normalizedAttributes = {
 					ID: 777,
 					site_ID: 123,
