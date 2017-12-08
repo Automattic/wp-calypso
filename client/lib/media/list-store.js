@@ -126,6 +126,11 @@ function isQuerySame( siteId, query ) {
 	);
 }
 
+function sourceHasDate( source ) {
+	const sourcesWithoutDate = [ 'pexels' ];
+	return -1 === sourcesWithoutDate.indexOf( source );
+}
+
 MediaListStore.isItemMatchingQuery = function( siteId, item ) {
 	var query, matches;
 
@@ -291,7 +296,13 @@ MediaListStore.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 
 			receivePage( action.siteId, action.data.media );
-			sortItemsByDate( action.siteId );
+			// either, no query (so no external source), or there is a query and the source has date data
+			if (
+				action.query === undefined ||
+				( action.query !== undefined && sourceHasDate( action.query.source ) )
+			) {
+				sortItemsByDate( action.siteId );
+			}
 			MediaListStore.emit( 'change' );
 			break;
 

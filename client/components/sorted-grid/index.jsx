@@ -45,15 +45,20 @@ class SortedGrid extends PureComponent {
 	renderLabels( row ) {
 		return (
 			<div key={ `header_${ row.id }` } className="sorted-grid__header">
-				{ map( row.groups, ( count, group ) => (
-					<Label
-						key={ `group_${ group }` }
-						text={ this.props.getGroupLabel( group ) }
-						itemsCount={ count }
-						itemsPerRow={ this.props.itemsPerRow }
-						lastInRow={ last( keys( row.groups ) ) === group }
-					/>
-				) ) }
+				{ map( row.groups, ( count, group ) => {
+					const labelText = this.props.getGroupLabel( group );
+					return (
+						'' !== labelText && (
+							<Label
+								key={ `group_${ group }` }
+								text={ this.props.getGroupLabel( group ) }
+								itemsCount={ count }
+								itemsPerRow={ this.props.itemsPerRow }
+								lastInRow={ last( keys( row.groups ) ) === group }
+							/>
+						)
+					);
+				} ) }
 			</div>
 		);
 	}

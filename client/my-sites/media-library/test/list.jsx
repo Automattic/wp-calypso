@@ -184,6 +184,33 @@ describe( 'MediaLibraryList item selection', () => {
 		} );
 	} );
 
+	describe( 'ungrouped sources', () => {
+		const getList = ( media, source ) => {
+			return mount(
+				<MediaList
+					filterRequiresUpgrade={ false }
+					site={ { ID: DUMMY_SITE_ID } }
+					media={ media }
+					mediaScale={ 0.24 }
+					source={ source }
+					single
+				/>
+			)
+				.find( MediaList )
+				.instance();
+		};
+
+		test( 'should have no group label for an ungrouped source', () => {
+			const grid = getList( fixtures.media, 'pexels' ).render();
+			expect( grid.props.getGroupLabel() ).to.equal( '' );
+		} );
+
+		test( 'should use the source name as the item group for an ungrouped source', () => {
+			const grid = getList( fixtures.media, 'pexels' ).render();
+			expect( grid.props.getItemGroup() ).to.equal( 'pexels' );
+		} );
+	} );
+
 	describe( 'google photos', () => {
 		let largeLibrary = [];
 
