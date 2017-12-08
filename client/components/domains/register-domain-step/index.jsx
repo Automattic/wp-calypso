@@ -633,7 +633,10 @@ class RegisterDomainStep extends React.Component {
 
 			if ( this.props.transferInAllowed && ! this.props.isSignupStep ) {
 				domainUnavailableSuggestion = (
-					<DomainTransferSuggestion onButtonClick={ this.goToTransferDomainStep } />
+					<DomainTransferSuggestion
+						onButtonClick={ this.goToTransferDomainStep }
+						tracksButtonClickSource="default-card"
+					/>
 				);
 			}
 		}
@@ -696,6 +699,7 @@ class RegisterDomainStep extends React.Component {
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
 				onClickTransfer={ this.goToTransferDomainStep }
+				tracksButtonClickSource="search-result-card"
 				suggestions={ suggestions }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
@@ -752,7 +756,9 @@ class RegisterDomainStep extends React.Component {
 	goToTransferDomainStep = event => {
 		event.preventDefault();
 
-		this.props.recordTransferDomainButtonClick( this.props.analyticsSection );
+		const source = event.target.dataset.tracksButtonClickSource;
+
+		this.props.recordTransferDomainButtonClick( this.props.analyticsSection, source );
 
 		page( this.getTransferDomainUrl() );
 	};
@@ -776,10 +782,10 @@ const recordMapDomainButtonClick = section =>
 		recordTracksEvent( 'calypso_domain_search_results_mapping_button_click', { section } )
 	);
 
-const recordTransferDomainButtonClick = section =>
+const recordTransferDomainButtonClick = ( section, source ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Clicked "Use a Domain I own" Button' ),
-		recordTracksEvent( 'calypso_domain_search_results_transfer_button_click', { section } )
+		recordTracksEvent( 'calypso_domain_search_results_transfer_button_click', { section, source } )
 	);
 
 const recordSearchFormSubmit = ( searchBoxValue, section, timeDiffFromLastSearch, count, vendor ) =>

@@ -54,6 +54,7 @@ class DomainSuggestion extends React.Component {
 				<Button
 					borderless
 					onClick={ this.props.onButtonClick }
+					data-tracks-button-click-source={ this.props.tracksButtonClickSource }
 					className="domain-suggestion__action"
 				>
 					{ this.props.buttonContent }

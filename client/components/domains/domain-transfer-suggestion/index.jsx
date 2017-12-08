@@ -28,6 +28,7 @@ class DomainTransferSuggestion extends React.Component {
 				extraClasses="is-visible domain-transfer-suggestion"
 				buttonContent={ buttonContent }
 				onButtonClick={ this.props.onButtonClick }
+				tracksButtonClickSource={ this.props.tracksButtonClickSource }
 				hidePrice={ true }
 			>
 				<div className="domain-transfer-suggestion__domain-description">
