@@ -41,7 +41,8 @@ class ApplicationPasswordsItem extends React.Component {
 	}
 
 	render() {
-		var password = this.props.password;
+		const password = this.props.password;
+
 		return (
 			<li className="application-password-item__password" key={ password.ID }>
 				<div className="application-password-item__details">
