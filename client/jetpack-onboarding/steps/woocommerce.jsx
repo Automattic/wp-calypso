@@ -3,12 +3,13 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import FormattedHeader from 'components/formatted-header';
 
 class JetpackOnboardingWoocommerceStep extends React.PureComponent {
@@ -19,7 +20,16 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 			"We'll set you up with WooCommerce for all of your online selling needs."
 		);
 
-		return <FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />;
+		return (
+			<Fragment>
+				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
+
+				<div className="steps__button-group">
+					<Button primary>{ translate( 'Yes, I am' ) }</Button>
+					<Button>{ translate( 'Not right now' ) }</Button>
+				</div>
+			</Fragment>
+		);
 	}
 }
 
