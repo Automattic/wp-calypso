@@ -25,7 +25,8 @@ import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import PostEditor from './post-editor';
 import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { editPost } from 'state/posts/actions';
 import wpcom from 'lib/wp';
@@ -210,7 +211,7 @@ export default {
 		const postToCopyId = context.query.copy;
 
 		function startEditing( siteId ) {
-			const site = getSelectedSite( context.store.getState() );
+			const site = getSite( context.store.getState(), siteId );
 			const isCopy = context.query.copy ? true : false;
 			context.store.dispatch( startEditingPost( siteId, isCopy ? null : postID, postType ) );
 
