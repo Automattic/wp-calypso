@@ -113,11 +113,22 @@
 }
 
 .checklist-banner__close {
-	position: absolute;
-	top: 8px;
-	right: 16px;
+	display: none;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint( '>660px' ) {
+		display: block;
+		position: absolute;
+		top: -5px;
+		right: 5px;
+	}
+}
+
+.checklist-banner__close-mobile {
+	display: inline-block;
+	margin-top: -13px; /* line up with baseline of copy */
+	margin-left: 5px;
+
+	@include breakpoint( '>660px' ) {
 		display: none;
 	}
 }

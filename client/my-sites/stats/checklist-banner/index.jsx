@@ -164,6 +164,16 @@ export class ChecklistBanner extends Component {
 					<span className="checklist-banner__progress-title">{ translate( 'Site setup' ) }</span>
 					<span className="checklist-banner__progress-desc">
 						{ translate( '%(percentage)s%% completed', { args: { percentage } } ) }
+
+						{ completed === total && (
+							<Button
+								borderless
+								className="checklist-banner__close-mobile"
+								onClick={ this.handleClose }
+							>
+								<Gridicon size={ 24 } icon="cross" color="#87a6bc" />
+							</Button>
+						) }
 					</span>
 					<ProgressBar value={ completed } total={ total } color="#47b766" />
 				</div>
