@@ -26,6 +26,7 @@ import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import PostCommentFormRoot from 'blocks/comments/form-root';
 import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
 import { getErrorKey } from 'state/comments/utils';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 /**
  * ConversationsCommentList is the component that represents all of the comments for a conversations-stream
@@ -276,12 +277,12 @@ export class ConversationCommentList extends React.Component {
 const ConnectedConversationCommentList = connect(
 	( state, ownProps ) => {
 		const { site_ID: siteId, ID: postId, discussion } = ownProps.post;
-
+		const authorId = getCurrentUserId( state );
 		return {
 			siteId,
 			postId,
 			sortedComments: getDateSortedPostComments( state, siteId, postId ),
-			commentsTree: getPostCommentsTree( state, siteId, postId, 'all' ),
+			commentsTree: getPostCommentsTree( state, siteId, postId, 'all', authorId ),
 			commentsFetchingStatus:
 				commentsFetchingStatus( state, siteId, postId, discussion.comment_count ) || {},
 			expansions: getExpansionsForPost( state, siteId, postId ),

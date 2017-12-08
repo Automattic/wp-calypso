@@ -27,6 +27,7 @@ import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 /**
  * PostCommentList, as the name would suggest, displays a list of comments for a post.
@@ -478,29 +479,33 @@ class PostCommentList extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		commentsTree: getPostCommentsTree(
-			state,
-			ownProps.post.site_ID,
-			ownProps.post.ID,
-			ownProps.commentsFilterDisplay ? ownProps.commentsFilterDisplay : ownProps.commentsFilter
-		),
-		commentsFetchingStatus: commentsFetchingStatus(
-			state,
-			ownProps.post.site_ID,
-			ownProps.post.ID,
-			ownProps.commentCount
-		),
-		initialComment: getCommentById( {
-			state,
-			siteId: ownProps.post.site_ID,
-			commentId: ownProps.startingCommentId,
-		} ),
-		activeReplyCommentId: getActiveReplyCommentId( {
-			state,
-			siteId: ownProps.post.site_ID,
-			postId: ownProps.post.ID,
-		} ),
-	} ),
+	( state, ownProps ) => {
+		const authorId = getCurrentUserId( state );
+		return {
+			commentsTree: getPostCommentsTree(
+				state,
+				ownProps.post.site_ID,
+				ownProps.post.ID,
+				ownProps.commentsFilterDisplay ? ownProps.commentsFilterDisplay : ownProps.commentsFilter,
+				authorId
+			),
+			commentsFetchingStatus: commentsFetchingStatus(
+				state,
+				ownProps.post.site_ID,
+				ownProps.post.ID,
+				ownProps.commentCount
+			),
+			initialComment: getCommentById( {
+				state,
+				siteId: ownProps.post.site_ID,
+				commentId: ownProps.startingCommentId,
+			} ),
+			activeReplyCommentId: getActiveReplyCommentId( {
+				state,
+				siteId: ownProps.post.site_ID,
+				postId: ownProps.post.ID,
+			} ),
+		};
+	},
 	{ requestPostComments, requestComment, setActiveReply }
 )( PostCommentList );

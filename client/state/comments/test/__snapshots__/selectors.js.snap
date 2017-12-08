@@ -1,5 +1,63 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`selectors #getPostCommentsTree filters other pending posts 1`] = `
+Object {
+  "1": Object {
+    "children": Array [
+      3,
+    ],
+    "data": Object {
+      "ID": 1,
+      "author": Object {
+        "ID": 1,
+      },
+      "date": "2016-01-31T10:07:18-08:00",
+      "i_like": true,
+      "like_count": 5,
+      "parent": false,
+      "status": "unapproved",
+    },
+  },
+  "3": Object {
+    "children": Array [],
+    "data": Object {
+      "ID": 3,
+      "author": Object {
+        "ID": 1,
+      },
+      "contiguous": true,
+      "date": "2017-01-31T10:07:18-08:00",
+      "i_like": false,
+      "like_count": 0,
+      "parent": Object {
+        "ID": 1,
+      },
+      "status": "approved",
+    },
+  },
+  "4": Object {
+    "children": Array [],
+    "data": Object {
+      "ID": 4,
+      "author": Object {
+        "ID": 1,
+      },
+      "contiguous": true,
+      "date": "2015-01-29T10:07:18-08:00",
+      "i_like": false,
+      "like_count": 0,
+      "parent": Object {
+        "ID": 2,
+      },
+      "status": "approved",
+    },
+  },
+  "children": Array [
+    1,
+  ],
+}
+`;
+
 exports[`selectors #getPostCommentsTree should return the tree structure 1`] = `
 Object {
   "1": Object {
@@ -8,10 +66,14 @@ Object {
     ],
     "data": Object {
       "ID": 1,
+      "author": Object {
+        "ID": 1,
+      },
       "date": "2016-01-31T10:07:18-08:00",
       "i_like": true,
       "like_count": 5,
       "parent": false,
+      "status": "unapproved",
     },
   },
   "2": Object {
@@ -20,16 +82,23 @@ Object {
     ],
     "data": Object {
       "ID": 2,
+      "author": Object {
+        "ID": 2,
+      },
       "date": "2016-01-29T10:07:18-08:00",
       "i_like": false,
       "like_count": 456,
       "parent": false,
+      "status": "unapproved",
     },
   },
   "3": Object {
     "children": Array [],
     "data": Object {
       "ID": 3,
+      "author": Object {
+        "ID": 1,
+      },
       "contiguous": true,
       "date": "2017-01-31T10:07:18-08:00",
       "i_like": false,
@@ -37,12 +106,16 @@ Object {
       "parent": Object {
         "ID": 1,
       },
+      "status": "approved",
     },
   },
   "4": Object {
     "children": Array [],
     "data": Object {
       "ID": 4,
+      "author": Object {
+        "ID": 1,
+      },
       "contiguous": true,
       "date": "2015-01-29T10:07:18-08:00",
       "i_like": false,
@@ -50,6 +123,7 @@ Object {
       "parent": Object {
         "ID": 2,
       },
+      "status": "approved",
     },
   },
   "children": Array [
