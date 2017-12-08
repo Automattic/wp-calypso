@@ -28,19 +28,16 @@ class ApplicationPasswordsItem extends React.Component {
 	removeApplicationPassword() {
 		this.setState( { removingPassword: true } );
 
-		this.props.appPasswordsData.revoke(
-			parseInt( this.props.password.ID, 10 ),
-			function( error ) {
-				if ( error && 'unknown_application_password' !== error.error ) {
-					this.setState( { removingPassword: false } );
-					this.props.errorNotice(
-						this.props.translate(
-							'The application password was not successfully deleted. Please try again.'
-						)
-					);
-				}
-			}.bind( this )
-		);
+		this.props.appPasswordsData.revoke( parseInt( this.props.password.ID, 10 ), error => {
+			if ( error && 'unknown_application_password' !== error.error ) {
+				this.setState( { removingPassword: false } );
+				this.props.errorNotice(
+					this.props.translate(
+						'The application password was not successfully deleted. Please try again.'
+					)
+				);
+			}
+		} );
 	}
 
 	render() {
