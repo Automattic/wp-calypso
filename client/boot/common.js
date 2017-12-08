@@ -61,7 +61,7 @@ const setupContextMiddleware = reduxStore => {
 				newUrl = httpCode;
 			}
 
-			return page.replace( newUrl, context.state, false, false );
+			return page.redirect( newUrl );
 		};
 
 		// Break routing and do full load for logout link in /me
