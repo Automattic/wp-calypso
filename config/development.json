@@ -59,6 +59,7 @@
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,
 		"external-media": true,
+		"external-free-photo-library": true,
 		"guided-tours/design-showcase-welcome": true,
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,

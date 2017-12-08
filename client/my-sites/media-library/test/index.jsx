@@ -48,27 +48,33 @@ describe( 'MediaLibrary', () => {
 		test( 'is issued when component mounted and viewing an external source', () => {
 			getItem( 'google_photos' );
 
-			expect( requestStub ).to.have.been.calledOnce;
+			expect( requestStub.callCount ).to.equal( 1 );
 		} );
 
 		test( 'is not issued when component mounted and viewing wordpress', () => {
 			getItem( '' );
 
-			expect( requestStub ).to.have.not.been.notCalled;
+			expect( requestStub.callCount ).to.equal( 0 );
 		} );
 
 		test( 'is issued when component source changes and now viewing an external source', () => {
 			const library = getItem( '' );
 
 			library.setProps( { source: 'google_photos' } );
-			expect( requestStub ).to.have.been.calledOnce;
+			expect( requestStub.callCount ).to.equal( 1 );
 		} );
 
 		test( 'is not issued when component source changes and not viewing an external source', () => {
 			const library = getItem( '' );
 
 			library.setProps( { source: '' } );
-			expect( requestStub ).to.have.not.been.notCalled;
+			expect( requestStub.callCount ).to.equal( 0 );
+		} );
+
+		test( 'is not issued when the external source does not need user connection', () => {
+			getItem( 'pexels' );
+
+			expect( requestStub.callCount ).to.equal( 0 );
 		} );
 	} );
 } );
