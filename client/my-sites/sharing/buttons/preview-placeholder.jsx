@@ -5,8 +5,8 @@
  */
 
 import React from 'react';
-
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -32,7 +32,10 @@ class SharingButtonsPreviewPlaceholder extends React.Component {
 
 					<div className="sharing-buttons-preview__reblog-like">
 						<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__like">
-							<span className="noticon noticon-like" />
+							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+							{ /* 16 is used in the preview to match the buttons on the frontend of the website. */ }
+							<Gridicon icon="star" size={ 16 } />
+							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							{ this.props.translate( 'Like' ) }
 						</a>
 						<div className="sharing-buttons-preview__fake-user">

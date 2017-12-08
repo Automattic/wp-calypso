@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -210,7 +211,9 @@ export class CartItem extends React.Component {
 		if ( canRemoveFromCart( this.props.cart, this.props.cartItem ) ) {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
-				<button className="remove-item noticon noticon-close" onClick={ this.removeFromCart } />
+				<button className="remove-item" onClick={ this.removeFromCart }>
+					<Gridicon icon="cross-small" />
+				</button>
 			);
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
