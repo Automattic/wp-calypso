@@ -50,7 +50,7 @@ class Plans extends Component {
 	redirecting = false;
 
 	componentDidMount() {
-		this.maybeRedirect( this.props );
+		this.maybeRedirect();
 		if ( ! this.redirecting ) {
 			this.props.recordTracksEvent( 'calypso_jpc_plans_view', {
 				user: this.props.userId,
@@ -71,14 +71,14 @@ class Plans extends Component {
 		if ( this.props.selectedPlan ) {
 			this.selectPlan( this.props.selectedPlan );
 		}
-		if ( this.props.hasPlan === true || this.props.notJetpack === true ) {
+		if ( this.props.hasPlan || this.props.notJetpack ) {
 			this.redirect( CALYPSO_PLANS_PAGE );
 		}
 		if ( ! this.props.canPurchasePlans ) {
 			if ( this.props.isCalypsoStartedConnection ) {
 				this.redirect( CALYPSO_REDIRECTION_PAGE );
 			} else {
-				this.redirectToWpAdmin( this.props );
+				this.redirectToWpAdmin();
 			}
 		}
 	}
@@ -122,7 +122,7 @@ class Plans extends Component {
 		if ( this.props.calypsoStartedConnection ) {
 			this.redirect( CALYPSO_REDIRECTION_PAGE );
 		} else {
-			this.redirectToWpAdmin( this.props );
+			this.redirectToWpAdmin();
 		}
 	}
 
