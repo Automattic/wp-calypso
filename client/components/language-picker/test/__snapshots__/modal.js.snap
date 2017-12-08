@@ -1,0 +1,128 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LanguagePickerModal should render 1`] = `
+<Dialog
+  additionalClassNames="language-picker__modal"
+  buttons={
+    Array [
+      Object {
+        "action": "cancel",
+        "label": "Cancel",
+      },
+      Object {
+        "action": "confirm",
+        "isPrimary": true,
+        "label": "Select Language",
+        "onClick": [Function],
+      },
+    ]
+  }
+  isVisible={true}
+  leaveTimeout={200}
+  onClose={[Function]}
+  onClosed={[Function]}
+>
+  <SectionNav
+    allowDropdown={true}
+    onMobileNavPanelOpen={[Function]}
+    selectedText="Popular languages"
+  >
+    <NavTabs
+      hasSiblingControls={false}
+    >
+      <NavItem
+        key="popular"
+        onClick={[Function]}
+        selected={true}
+      >
+        Popular languages
+      </NavItem>
+      <NavItem
+        onClick={[Function]}
+        selected={false}
+      >
+        All languages
+      </NavItem>
+    </NavTabs>
+    <Search
+      autoFocus={false}
+      compact={false}
+      delaySearch={false}
+      delayTimeout={300}
+      disableAutocorrect={false}
+      disabled={false}
+      fitsContainer={true}
+      hideClose={false}
+      hideOpenIcon={false}
+      isOpen={false}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onSearch={[Function]}
+      onSearchChange={[Function]}
+      onSearchClose={[Function]}
+      onSearchOpen={[Function]}
+      pinned={true}
+      placeholder="Search languages…"
+      searching={false}
+    />
+  </SectionNav>
+  <div
+    className="language-picker__modal-list"
+  >
+    <div
+      className="language-picker__modal-item"
+      key="en"
+      onClick={[Function]}
+    >
+      <span
+        className="language-picker__modal-text is-selected"
+      >
+        English
+      </span>
+    </div>
+    <div
+      className="language-picker__modal-item"
+      key="it"
+      onClick={[Function]}
+    >
+      <span
+        className="language-picker__modal-text"
+      >
+        Italiano
+      </span>
+    </div>
+  </div>
+  <div
+    className="language-picker__modal-suggested"
+  >
+    <div
+      className="language-picker__modal-suggested-inner"
+    >
+      <div
+        className="language-picker__modal-suggested-label"
+      >
+        Suggested languages:
+      </div>
+      <div
+        className="language-picker__modal-suggested-list"
+      >
+        <div
+          className="language-picker__modal-suggested-list-inner"
+        >
+          <div
+            className="language-picker__modal-item"
+            key="en"
+            onClick={[Function]}
+          >
+            <span
+              className="language-picker__modal-text is-selected"
+            >
+              English
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Dialog>
+`;

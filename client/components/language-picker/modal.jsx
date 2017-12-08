@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { includes, map, noop, partial } from 'lodash';
+import { find, includes, map, noop, partial, startsWith, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,15 +19,20 @@ import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 import Search from 'components/search';
 
-class LanguagePickerModal extends PureComponent {
+export class LanguagePickerModal extends PureComponent {
 	static propTypes = {
 		onSelected: PropTypes.func,
 		onClose: PropTypes.func,
+		isVisible: PropTypes.bool,
+		languages: PropTypes.array.isRequired,
+		selected: PropTypes.string,
 	};
 
 	static defaultProps = {
 		onSelected: noop,
 		onClose: noop,
+		isVisible: false,
+		selected: 'en',
 	};
 
 	constructor( props ) {
@@ -37,6 +42,7 @@ class LanguagePickerModal extends PureComponent {
 			filter: 'popular',
 			search: false,
 			selectedLanguageSlug: this.props.selected,
+			suggestedLanguages: this.getSuggestedLanguages(),
 		};
 	}
 
@@ -44,6 +50,12 @@ class LanguagePickerModal extends PureComponent {
 		if ( nextProps.selected !== this.state.selectedLanguageSlug ) {
 			this.setState( {
 				selectedLanguageSlug: nextProps.selected,
+			} );
+		}
+
+		if ( nextProps.languages !== this.props.languages ) {
+			this.setState( {
+				suggestedLanguages: this.getSuggestedLanguages(),
 			} );
 		}
 	}
@@ -78,6 +90,31 @@ class LanguagePickerModal extends PureComponent {
 			default:
 				return languages;
 		}
+	}
+
+	getSuggestedLanguages() {
+		if ( ! ( typeof navigator === 'object' && 'languages' in navigator ) ) {
+			return null;
+		}
+
+		const { languages } = this.props;
+		const suggestedLanguages = [];
+
+		for ( const langSlug of navigator.languages ) {
+			// Find the language first by its full code (e.g. en-US), and when it fails
+			// try only the base code (en). Don't add duplicates.
+			const lcLangSlug = langSlug.toLowerCase();
+			let language = find( languages, lang => lang.langSlug === lcLangSlug );
+
+			if ( ! language ) {
+				language = find( languages, lang => startsWith( lcLangSlug, lang.langSlug + '-' ) );
+			}
+			if ( language && ! includes( suggestedLanguages, language ) ) {
+				suggestedLanguages.push( language );
+			}
+		}
+
+		return suggestedLanguages;
 	}
 
 	handleSearch = search => {
@@ -140,12 +177,33 @@ class LanguagePickerModal extends PureComponent {
 		);
 	};
 
+	renderSuggestedLanguages() {
+		const { suggestedLanguages } = this.state;
+
+		if ( isEmpty( suggestedLanguages ) ) {
+			return null;
+		}
+
+		return (
+			<div className="language-picker__modal-suggested">
+				<div className="language-picker__modal-suggested-inner">
+					<div className="language-picker__modal-suggested-label">
+						{ this.props.translate( 'Suggested languages:' ) }
+					</div>
+					<div className="language-picker__modal-suggested-list">
+						<div className="language-picker__modal-suggested-list-inner">
+							{ map( suggestedLanguages, this.renderLanguageItem ) }
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	render() {
 		const { isVisible, translate } = this.props;
 
 		if ( ! isVisible ) {
-			// Render nothing at all if the modal is not visible
-			// <Dialog isVisible={ false }> still renders a lot of useless elements
 			return null;
 		}
 
@@ -179,6 +237,7 @@ class LanguagePickerModal extends PureComponent {
 					/>
 				</SectionNav>
 				{ this.renderLanguageList() }
+				{ this.renderSuggestedLanguages() }
 			</Dialog>
 		);
 	}
