@@ -19,8 +19,8 @@ import { validateFilters, validateVertical } from './validate-filters';
 export default function( router ) {
 	if ( config.isEnabled( 'manage/themes' ) ) {
 		// Redirect interim showcase route to permanent one
-		router( [ '/design', '/design/*' ], ( { originalUrl, res } ) => {
-			res.redirect( 301, '/themes' + originalUrl.slice( '/design'.length ) );
+		router( [ '/design', '/design/*' ], ( { originalUrl, redirect } ) => {
+			redirect( 301, '/themes' + originalUrl.slice( '/design'.length ) );
 		} );
 
 		const showcaseRoutes = [
