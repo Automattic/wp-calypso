@@ -1,4 +1,4 @@
-export function bumpStatGenerator( type, name, bumpStat ) {
+export function bumpStatGenerator( type, name, bumpStat, recordTracksEvent = null ) {
 	return () => {
 		let group;
 		if ( ! type ) {
@@ -9,5 +9,12 @@ export function bumpStatGenerator( type, name, bumpStat ) {
 			group = 'calypso_' + type + '_actions';
 		}
 		bumpStat( group, name );
+		if ( recordTracksEvent ) {
+			recordTracksEvent( 'calypso_post_list_action_click', {
+				action: name,
+				postType: type,
+				context: 'ellipsis_menu',
+			} );
+		}
 	};
 }

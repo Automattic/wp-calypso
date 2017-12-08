@@ -20,3 +20,14 @@
 		}
 	}
 }
+
+.post-action-counts li a,
+.post-action-counts li a:active,
+.post-action-counts li a:visited
+ {
+	color: $gray-text-min;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}

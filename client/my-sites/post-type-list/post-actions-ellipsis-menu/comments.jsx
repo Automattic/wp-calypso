@@ -4,7 +4,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -14,54 +14,44 @@ import { localize } from 'i18n-calypso';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { bumpStat as bumpAnalyticsStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
+import { getNormalizedPost } from 'state/posts/selectors';
 import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
-import { getPost } from 'state/posts/selectors';
 
-function PostActionsEllipsisMenuStats( {
-	translate,
-	siteSlug,
-	postId,
-	status,
-	isStatsActive,
-	bumpStat,
-} ) {
-	if ( ! isStatsActive || 'publish' !== status ) {
-		return null;
+class PostActionsEllipsisMenuComments extends PureComponent {
+	static propTypes = {
+		globalId: PropTypes.string,
+	};
+
+	render() {
+		const { bumpStat, isModuleActive, postId, siteSlug, status, translate } = this.props;
+
+		if ( ! isModuleActive || 'publish' !== status ) {
+			return null;
+		}
+
+		return (
+			<PopoverMenuItem
+				href={ `/comments/all/${ siteSlug }/${ postId }` }
+				icon="comment"
+				onClick={ bumpStat }
+			>
+				{ translate( 'Comments', { context: 'noun' } ) }
+			</PopoverMenuItem>
+		);
 	}
-
-	return (
-		<PopoverMenuItem
-			href={ `/stats/post/${ postId }/${ siteSlug }` }
-			onClick={ bumpStat }
-			icon="stats-alt"
-		>
-			{ translate( 'Stats' ) }
-		</PopoverMenuItem>
-	);
 }
 
-PostActionsEllipsisMenuStats.propTypes = {
-	globalId: PropTypes.string,
-	translate: PropTypes.func.isRequired,
-	siteSlug: PropTypes.string,
-	postId: PropTypes.number,
-	status: PropTypes.string,
-	isStatsActive: PropTypes.bool,
-	bumpStat: PropTypes.func,
-};
-
 const mapStateToProps = ( state, { globalId } ) => {
-	const post = getPost( state, globalId );
-	if ( ! post ) {
-		return {};
-	}
+	const post = getNormalizedPost( state, globalId );
+	const postId = post && post.ID;
+	const siteId = post && post.site_ID;
 
 	return {
-		siteSlug: getSiteSlug( state, post.site_ID ),
-		postId: post.ID,
+		isModuleActive: false !== isJetpackModuleActive( state, post.site_ID, 'comments' ),
+		postId,
+		siteSlug: getSiteSlug( state, siteId ),
 		status: post.status,
 		type: post.type,
-		isStatsActive: false !== isJetpackModuleActive( state, post.site_ID, 'stats' ),
 	};
 };
 
@@ -70,7 +60,7 @@ const mapDispatchToProps = { bumpAnalyticsStat, recordTracksEvent };
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const bumpStat = bumpStatGenerator(
 		stateProps.type,
-		'stats',
+		'comments',
 		dispatchProps.bumpAnalyticsStat,
 		dispatchProps.recordTracksEvent
 	);
@@ -78,5 +68,5 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 };
 
 export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
-	localize( PostActionsEllipsisMenuStats )
+	localize( PostActionsEllipsisMenuComments )
 );
