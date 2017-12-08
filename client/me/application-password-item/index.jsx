@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import Gridicon from 'gridicons';
@@ -69,6 +68,7 @@ class ApplicationPasswordsItem extends React.Component {
 	}
 }
 
-export default connect( null, dispatch =>
-	bindActionCreators( { errorNotice, recordGoogleEvent }, dispatch )
-)( localize( ApplicationPasswordsItem ) );
+export default connect( null, {
+	errorNotice,
+	recordGoogleEvent,
+} )( localize( ApplicationPasswordsItem ) );
