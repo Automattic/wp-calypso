@@ -35,8 +35,17 @@ describe( 'reducer', () => {
 	];
 
 	describe( 'items', () => {
-		test( 'should default to an empty array', () => {
+		test( 'should default to null', () => {
 			const state = items( undefined, {} );
+			expect( state ).toBeNull();
+		} );
+
+		test( 'should set profile links to empty array when user has no profile links', () => {
+			const state = items( undefined, {
+				type: USER_PROFILE_LINKS_RECEIVE,
+				profileLinks: [],
+			} );
+
 			expect( state ).toEqual( [] );
 		} );
 
