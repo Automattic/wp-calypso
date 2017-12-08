@@ -333,8 +333,8 @@ class TransferDomainStep extends React.Component {
 
 const recordMapDomainButtonClick = section =>
 	composeAnalytics(
-		recordGoogleEvent( 'Domain Search', 'Clicked "Map it" Button' ),
-		recordTracksEvent( 'calypso_domain_search_results_mapping_button_click', { section } )
+		recordGoogleEvent( 'Transfer Domain', 'Clicked "Map it" Button' ),
+		recordTracksEvent( 'calypso_transfer_domain_mapping_button_click', { section } )
 	);
 
 export default connect(
