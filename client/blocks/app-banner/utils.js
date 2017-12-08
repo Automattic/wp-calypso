@@ -13,7 +13,7 @@ export const READER = 'reader';
 export const STATS = 'stats';
 export const ALLOWED_SECTIONS = [ EDITOR, NOTES, READER, STATS ];
 export const ONE_WEEK_IN_MILLISECONDS = 604800000;
-export const ONE_MONTH_IN_MILLISECONDS = 2419200000;
+export const ONE_MONTH_IN_MILLISECONDS = 2419200000; // 28 days
 
 export function getAppBannerData( translate, sectionName ) {
 	switch ( sectionName ) {
