@@ -11,19 +11,17 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:application-password-item' );
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { recordGoogleEvent } from 'state/analytics/actions';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import eventRecorder from 'me/event-recorder';
 import { errorNotice } from 'state/notices/actions';
 import Button from 'components/button';
 
 const ApplicationPasswordsItem = createReactClass( {
 	displayName: 'ApplicationPasswordsItem',
-
-	mixins: [ eventRecorder ],
 
 	componentDidMount: function() {
 		debug( this.displayName + ' React component is mounted.' );
@@ -37,6 +35,11 @@ const ApplicationPasswordsItem = createReactClass( {
 		return {
 			removingPassword: false,
 		};
+	},
+
+	handleRemovePasswordButtonClick() {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Remove Application Password Button' );
+		this.removeApplicationPassword();
 	},
 
 	removeApplicationPassword: function() {
@@ -72,10 +75,7 @@ const ApplicationPasswordsItem = createReactClass( {
 				<Button
 					borderless
 					className="application-password-item__revoke"
-					onClick={ this.recordClickEvent(
-						'Remove Application Password Button',
-						this.removeApplicationPassword
-					) }
+					onClick={ this.handleRemovePasswordButtonClick }
 				>
 					<Gridicon icon="cross" />
 				</Button>
@@ -84,6 +84,6 @@ const ApplicationPasswordsItem = createReactClass( {
 	},
 } );
 
-export default connect( null, dispatch => bindActionCreators( { errorNotice }, dispatch ) )(
-	localize( ApplicationPasswordsItem )
-);
+export default connect( null, dispatch =>
+	bindActionCreators( { errorNotice, recordGoogleEvent }, dispatch )
+)( localize( ApplicationPasswordsItem ) );
