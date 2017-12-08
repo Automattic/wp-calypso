@@ -94,12 +94,6 @@ MediaActions.fetchNextPage = function( siteId ) {
 	if ( ! query.source ) {
 		wpcom.site( siteId ).mediaList( query, mediaReceived );
 	} else {
-		if ( 'pexels' === query.source ) {
-			// Pexels limits the number of API calls per month, and if we had the default
-			// limit of 20 media items, it takes at least 2 API calls to fill the first page
-			// with results. This saves us some of those API calls.
-			query.number = 40;
-		}
 		wpcom.undocumented().externalMediaList( query, mediaReceived );
 	}
 };
