@@ -113,11 +113,23 @@ class MediaLibraryExternalHeader extends React.Component {
 		);
 	}
 
+	renderPexelsAttribution() {
+		const { translate } = this.props;
+		const attribution = translate( 'Free photos provided by {{a}}Pexels{{/a}}', {
+			components: {
+				a: <a href="http://www.pexels.com/" rel="noopener noreferrer" target="_blank" />,
+			},
+		} );
+		return <span className="media-library__pexels-attribution">{ attribution }</span>;
+	}
+
 	renderCard() {
 		const { onMediaScaleChange, translate, canCopy, hasRefreshButton } = this.props;
 
 		return (
 			<Card className="media-library__header">
+				{ 'pexels' === source && this.renderPexelsAttribution() }
+
 				{ hasRefreshButton && (
 					<Button compact disabled={ this.state.fetching } onClick={ this.handleClick }>
 						<Gridicon icon="refresh" size={ 24 } />

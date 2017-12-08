@@ -44,6 +44,19 @@ if ( config.isEnabled( 'external-media' ) ) {
 		),
 		cmd: 'googleAddMedia',
 	} );
+	if ( config.isEnabled( 'external-free-photo-library' ) ) {
+		menuItems.push( {
+			name: 'insert_from_pexels',
+			item: (
+				<GridiconButton
+					icon="add-image"
+					label={ i18n.translate( 'Free photo library' ) }
+					e2e="stock-media-pexels"
+				/>
+			),
+			cmd: 'pexelsAddMedia',
+		} );
+	}
 }
 
 menuItems.push( {
