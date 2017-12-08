@@ -12,7 +12,14 @@ import { connect } from 'react-redux';
  */
 import analytics from 'lib/analytics';
 import { canRemoveFromCart, cartItems } from 'lib/cart-values';
-import { isCredits, isGoogleApps, isTheme, isMonthly, isPlan } from 'lib/products-values';
+import {
+	isCredits,
+	isGoogleApps,
+	isTheme,
+	isMonthly,
+	isPlan,
+	isBundled,
+} from 'lib/products-values';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as upgradesActions from 'lib/upgrades/actions';
@@ -43,7 +50,7 @@ export class CartItem extends React.Component {
 			return this.getFreeTrialPrice();
 		}
 
-		if ( cartItem.is_bundled && cartItem.cost === 0 ) {
+		if ( isBundled( cartItem ) && cartItem.cost === 0 ) {
 			return this.getDomainPlanPrice( cartItem );
 		}
 
