@@ -7,8 +7,6 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:application-password-item' );
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -22,14 +20,6 @@ import Button from 'components/button';
 
 const ApplicationPasswordsItem = createReactClass( {
 	displayName: 'ApplicationPasswordsItem',
-
-	componentDidMount: function() {
-		debug( this.displayName + ' React component is mounted.' );
-	},
-
-	componentWillUnmount: function() {
-		debug( this.displayName + ' React component is unmounting.' );
-	},
 
 	getInitialState: function() {
 		return {
