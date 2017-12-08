@@ -103,15 +103,18 @@ class ActivityLogItem extends Component {
 		if ( 'rewind__error' === activityName ) {
 			return (
 				<EllipsisMenu onClick={ stopPropagation } position="bottom right">
-					<PopoverMenuItem icon="help" href="http://jetpack.com/support/activity-log/">
+					<PopoverMenuItem icon="help" href="https://jetpack.com/support/activity-log/">
 						{ translate( 'Learn more' ) }
 					</PopoverMenuItem>
-					{ this.props.isChatActive &&
-						this.props.isChatAvailable && (
-							<PopoverMenuItem icon="chat" onClick={ this.props.openChat }>
-								{ translate( 'Get help' ) }
-							</PopoverMenuItem>
-						) }
+					{ this.props.isChatActive && this.props.isChatAvailable ? (
+						<PopoverMenuItem icon="chat" onClick={ this.props.openChat }>
+							{ translate( 'Get help' ) }
+						</PopoverMenuItem>
+					) : (
+						<PopoverMenuItem icon="chat" href="https://wordpress.com/me/contact">
+							{ translate( 'Get help' ) }
+						</PopoverMenuItem>
+					) }
 				</EllipsisMenu>
 			);
 		}
