@@ -18,6 +18,9 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import FoldableCard from 'components/foldable-card';
 import FormattedBlock from 'components/notes-formatted-block';
 import PopoverMenuItem from 'components/popover/menu-item';
+import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import { openChat } from 'state/happychat/ui/actions';
 
 const stopPropagation = event => event.stopPropagation();
 
@@ -94,33 +97,49 @@ class ActivityLogItem extends Component {
 			disableBackup,
 			hideRestore,
 			translate,
-			log: { activityIsRewindable },
+			log: { activityIsRewindable, activityName },
 		} = this.props;
 
-		if ( hideRestore || ! activityIsRewindable ) {
-			return null;
+		if ( 'rewind__error' === activityName ) {
+			return (
+				<EllipsisMenu onClick={ stopPropagation } position="bottom right">
+					<PopoverMenuItem icon="help" href="http://jetpack.com/support/activity-log/">
+						{ translate( 'Learn more' ) }
+					</PopoverMenuItem>
+					{ this.props.isChatActive &&
+						this.props.isChatAvailable && (
+							<PopoverMenuItem icon="chat" onClick={ this.props.openChat }>
+								{ translate( 'Get help' ) }
+							</PopoverMenuItem>
+						) }
+				</EllipsisMenu>
+			);
 		}
 
-		return (
-			<div className="activity-log-item__action">
-				<EllipsisMenu onClick={ stopPropagation } position="bottom right">
-					<PopoverMenuItem
-						disabled={ disableRestore }
-						icon="history"
-						onClick={ this.handleClickRestore }
-					>
-						{ translate( 'Rewind to this point' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem
-						disabled={ disableBackup }
-						icon="cloud-download"
-						onClick={ this.handleClickBackup }
-					>
-						{ translate( 'Download backup' ) }
-					</PopoverMenuItem>
-				</EllipsisMenu>
-			</div>
-		);
+		if ( activityIsRewindable && ! hideRestore ) {
+			return (
+				<div className="activity-log-item__action">
+					<EllipsisMenu onClick={ stopPropagation } position="bottom right">
+						<PopoverMenuItem
+							disabled={ disableRestore }
+							icon="history"
+							onClick={ this.handleClickRestore }
+						>
+							{ translate( 'Rewind to this point' ) }
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							disabled={ disableBackup }
+							icon="cloud-download"
+							onClick={ this.handleClickBackup }
+						>
+							{ translate( 'Download backup' ) }
+						</PopoverMenuItem>
+					</EllipsisMenu>
+				</div>
+			);
+		}
+
+		return null;
 	}
 
 	render() {
@@ -150,4 +169,12 @@ class ActivityLogItem extends Component {
 	}
 }
 
-export default connect()( localize( ActivityLogItem ) );
+export default connect(
+	state => ( {
+		isChatAvailable: isHappychatAvailable( state ),
+		isChatActive: hasActiveHappychatSession( state ),
+	} ),
+	{
+		openChat,
+	}
+)( localize( ActivityLogItem ) );
