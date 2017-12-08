@@ -15,7 +15,7 @@ import { createReducer, withSchemaValidation } from 'state/utils';
  * Module variables
  */
 const registeredReducers = Object.create( null );
-let dispatch;
+let defaultStoreDispatch;
 
 /**
  * Pleaseholder reducer keeps undeserialized data in the in-memory state tree
@@ -25,11 +25,11 @@ let dispatch;
  */
 const placeholderReducer = createReducer( null, {
 	[ SERIALIZE ]: state => {
-		return state._undeserialized;
+		return state._initialState;
 	},
 	[ DESERIALIZE ]: state => {
 		return {
-			_undeserialized: state,
+			_initialState: state,
 		};
 	},
 } );
@@ -43,10 +43,10 @@ const placeholderReducer = createReducer( null, {
 function getDeserializeReducer( reducer ) {
 	return createReducer( null, {
 		[ SERIALIZE ]: state => {
-			return state._undeserialized;
+			return state._initialState;
 		},
 		[ DESERIALIZE_PART ]: state => {
-			const initialState = state == null ? undefined : state._undeserialized;
+			const initialState = state == null ? undefined : state._initialState;
 			return reducer( initialState, { type: DESERIALIZE } );
 		},
 	} );
@@ -56,9 +56,14 @@ function getDeserializeReducer( reducer ) {
  * Add reducers into a combined reducer returned by combineReducersAndAddLater.
  * @param {object} reducersToAdd - object containing the additional reducers to merge
  * @param {string} name - Unique name to identify the reducer collection
+ * @param {object} registry - Registry to use, default to module variable
+ * @param {object} dispatch - Redux store.dispatch() method to call, default to module variable
  */
-export const addReducers = function( reducersToAdd, name = 'root' ) {
-	const reducers = registeredReducers[ name ];
+export const addReducers = function( reducersToAdd, name = 'root', registry = registeredReducers, dispatch = defaultStoreDispatch ) {
+	const reducers = registry[ name ];
+	if ( ! reducers ) {
+		throw new Error( `Reducer registry name ${ name } does not exist.` );
+	}
 	const keys = Object.keys( reducersToAdd ).filter( key => ! reducers[ key ] );
 	if ( ! keys.length ) {
 		return;
@@ -98,14 +103,15 @@ export const addReducers = function( reducersToAdd, name = 'root' ) {
  *
  * @param {object} initialReducers - object containing the reducers to merge
  * @param {string} name - Unique name to identify this reducer collection
+ * @param {object} registry - Registry to use, default to module variable
  * @returns {function} - Returns the combined reducer function
  */
-export const combineReducersAndAddLater = function( initialReducers, name = 'root' ) {
-	if ( registeredReducers[ name ] ) {
+export const combineReducersAndAddLater = function( initialReducers, name = 'root', registry = registeredReducers ) {
+	if ( registry[ name ] ) {
 		throw new Error( `Duplicate reducer registry name ${ name }.` );
 	}
 
-	const reducers = ( registeredReducers[ name ] = reduce(
+	const reducers = ( registry[ name ] = reduce(
 		initialReducers,
 		( validated, next, key ) => {
 			const { schema, hasCustomPersistence } = next;
@@ -138,7 +144,7 @@ export const combineReducersAndAddLater = function( initialReducers, name = 'roo
 export const reducerRegistryEnhancer = next => ( reducer, initialState ) => {
 	const store = next( reducer, initialState );
 
-	dispatch = action => {
+	defaultStoreDispatch = action => {
 		return store.dispatch( action );
 	};
 
