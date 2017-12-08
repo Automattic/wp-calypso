@@ -213,11 +213,11 @@ class ActivityLog extends Component {
 		} ),
 		backupProgress: PropTypes.object,
 		changePeriod: PropTypes.func,
-		requestedRestoreActivity: PropTypes.shape( {
+		requestedRestore: PropTypes.shape( {
 			rewindId: PropTypes.string.isRequired,
 			activityTs: PropTypes.number.isRequired,
 		} ),
-		requestedRestoreActivityId: PropTypes.string,
+		requestedRestoreId: PropTypes.string,
 		rewindRequestDismiss: PropTypes.func.isRequired,
 		rewindRequestRestore: PropTypes.func.isRequired,
 		rewindRestore: PropTypes.func.isRequired,
@@ -301,7 +301,7 @@ class ActivityLog extends Component {
 	};
 
 	confirmRestore = () => {
-		const { requestedRestoreActivity: { rewindId }, siteId } = this.props;
+		const { requestedRestore: { rewindId }, siteId } = this.props;
 
 		this.props.rewindRestore( siteId, rewindId );
 		scrollTo( { x: 0, y: 0, duration: 250 } );
@@ -412,7 +412,7 @@ class ActivityLog extends Component {
 			downloadId,
 			rewindId,
 		} = progress;
-		const requestedRestoreActivityId = this.props.requestedRestoreActivityId || rewindId;
+		const requestedRestoreId = this.props.requestedRestoreId || rewindId;
 		return (
 			<div key={ `end-banner-${ restoreId || downloadId }` }>
 				<QueryActivityLog siteId={ siteId } />
@@ -421,7 +421,7 @@ class ActivityLog extends Component {
 						key={ `error-${ restoreId || downloadId }` }
 						errorCode={ errorCode || backupError }
 						downloadId={ downloadId }
-						requestedRestoreActivityId={ requestedRestoreActivityId }
+						requestedRestoreId={ requestedRestoreId }
 						failureReason={ failureReason }
 						createBackup={ this.props.createBackup }
 						rewindRestore={ this.props.rewindRestore }
@@ -500,8 +500,8 @@ class ActivityLog extends Component {
 			logs,
 			moment,
 			requestData,
-			requestedRestoreActivity,
-			requestedRestoreActivityId,
+			requestedRestore,
+			requestedRestoreId,
 			requestedBackup,
 			requestedBackupId,
 			rewindState,
@@ -527,7 +527,7 @@ class ActivityLog extends Component {
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
-		const restoreConfirmDialog = requestedRestoreActivity && (
+		const restoreConfirmDialog = requestedRestore && (
 			<ActivityLogConfirmDialog
 				key="activity-rewind-dialog"
 				confirmTitle={ translate( 'Confirm Rewind' ) }
@@ -550,9 +550,9 @@ class ActivityLog extends Component {
 						components: {
 							time: (
 								<b>
-									{ this.applySiteOffset(
-										moment.utc( requestedRestoreActivity.activityTs )
-									).format( 'LLL' ) }
+									{ this.applySiteOffset( moment.utc( requestedRestore.activityTs ) ).format(
+										'LLL'
+									) }
 								</b>
 							),
 						},
@@ -671,7 +671,7 @@ class ActivityLog extends Component {
 										<ActivityLogDay
 											key={ start.format() }
 											applySiteOffset={ this.applySiteOffset }
-											requestedRestoreActivityId={ requestedRestoreActivityId }
+											requestedRestoreId={ requestedRestoreId }
 											requestedBackupId={ requestedBackupId }
 											restoreConfirmDialog={ restoreConfirmDialog }
 											backupConfirmDialog={ backupConfirmDialog }
@@ -702,7 +702,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const gmtOffset = getSiteGmtOffset( state, siteId );
 		const timezone = getSiteTimezoneValue( state, siteId );
-		const requestedRestoreActivityId = getRequestedRewind( state, siteId );
+		const requestedRestoreId = getRequestedRewind( state, siteId );
 		const requestedBackupId = getRequestedBackup( state, siteId );
 		const logRequestQuery = getActivityLogQuery( { gmtOffset, startDate, timezone } );
 
@@ -717,8 +717,8 @@ export default connect(
 				siteId,
 				getActivityLogQuery( { gmtOffset, startDate, timezone } )
 			),
-			requestedRestoreActivity: getActivityLog( state, siteId, requestedRestoreActivityId ),
-			requestedRestoreActivityId,
+			requestedRestore: getActivityLog( state, siteId, requestedRestoreId ),
+			requestedRestoreId,
 			requestedBackup: getActivityLog( state, siteId, requestedBackupId ),
 			requestedBackupId,
 			restoreProgress: getRestoreProgress( state, siteId ),

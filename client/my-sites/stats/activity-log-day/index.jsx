@@ -17,7 +17,7 @@ import { compact, flatMap, get, isEmpty, zip } from 'lodash';
 import ActivityLogItem from '../activity-log-item';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getActivityLog, getRequestedRewind, getRewindEvents } from 'state/selectors';
+import { getActivityLog, getRewindEvents } from 'state/selectors';
 import { ms, rewriteStream } from 'state/activity-log/log/is-discarded';
 
 /**
@@ -51,7 +51,8 @@ class ActivityLogDay extends Component {
 		disableBackup: PropTypes.bool.isRequired,
 		isRewindActive: PropTypes.bool,
 		logs: PropTypes.array.isRequired,
-		requestedRestoreActivityId: PropTypes.string,
+		requestedRestoreId: PropTypes.string,
+		requestedBackupId: PropTypes.string,
 		requestDialog: PropTypes.func.isRequired,
 		closeDialog: PropTypes.func.isRequired,
 		restoreConfirmDialog: PropTypes.element,
@@ -62,7 +63,6 @@ class ActivityLogDay extends Component {
 		// Connected props
 		isToday: PropTypes.bool.isRequired,
 		trackOpenDay: PropTypes.func.isRequired,
-		requestedRewind: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -78,7 +78,7 @@ class ActivityLogDay extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		// if Rewind dialog is being displayed and it's then canceled or a different Rewind button is clicked
-		if ( this.state.rewindHere && this.props.requestedRewind !== nextProps.requestedRewind ) {
+		if ( this.state.rewindHere && this.props.requestedRestoreId !== nextProps.requestedRestoreId ) {
 			this.setState( {
 				rewindHere: false,
 			} );
@@ -163,7 +163,7 @@ class ActivityLogDay extends Component {
 			isRewindActive,
 			isToday,
 			logs,
-			requestedRestoreActivityId,
+			requestedRestoreId,
 			requestedBackupId,
 			requestDialog,
 			restoreConfirmDialog,
@@ -174,7 +174,7 @@ class ActivityLogDay extends Component {
 
 		const rewindHere = this.state.rewindHere;
 		const dayExpanded = this.state.dayExpanded ? true : rewindHere;
-		const requestedActionId = requestedRestoreActivityId || requestedBackupId;
+		const requestedActionId = requestedRestoreId || requestedBackupId;
 		const hasConfirmDialog = logs.some(
 			( { activityId, activityTs } ) =>
 				activityId === requestedActionId &&
@@ -183,7 +183,7 @@ class ActivityLogDay extends Component {
 
 		const events = classifyEvents( logs, {
 			backupId: requestedBackupId,
-			rewindId: requestedRestoreActivityId,
+			rewindId: requestedRestoreId,
 		} );
 
 		const LogItem = ( { log, hasBreak } ) => (
@@ -234,16 +234,15 @@ class ActivityLogDay extends Component {
 
 export default localize(
 	connect(
-		( state, { logs, siteId } ) => {
-			const requestedRewind = getRequestedRewind( state, siteId );
+		( state, { logs, siteId, requestedRestoreId } ) => {
 			const rewindEvents = getRewindEvents( state, siteId );
-			const isDiscardedPerspective = requestedRewind
-				? new Date( ms( getActivityLog( state, siteId, requestedRewind ).activityTs ) )
+			const isDiscardedPerspective = requestedRestoreId
+				? new Date( ms( getActivityLog( state, siteId, requestedRestoreId ).activityTs ) )
 				: undefined;
 
 			return {
 				logs: rewriteStream( logs, rewindEvents, isDiscardedPerspective ),
-				requestedRewind,
+				requestedRestoreId,
 			};
 		},
 		( dispatch, { logs, tsEndOfSiteDay, moment } ) => ( {
