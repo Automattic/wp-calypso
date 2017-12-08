@@ -357,21 +357,6 @@ $autobar-height: 20px;
 	}
 }
 
-.masterbar__recent-drafts.popover {
-	width: 280px;
-
-	.popover__inner {
-		overflow-y: auto;
-		text-align: left;
-		max-height: 70vh;
-
-		.async-load {
-			margin: 16px;
-			width: auto;
-		}
-	}
-}
-
 .masterbar__publish {
 	display: flex;
 
@@ -425,23 +410,19 @@ $autobar-height: 20px;
 			color: $white;
 		}
 	}
-
 }
 
-.masterbar__see-all-drafts {
-	display: block;
-	text-align: center;
-	margin: 4px 0;
+.masterbar__recent-drafts.popover {
+	width: 310px;
 
-	.count {
-		margin-left: 8px;
-	}
-}
+	.popover__inner {
+		text-align: left;
+		padding-top: 46px;
 
-.masterbar__recent-drafts {
-	// Trashing seems busted
-	.draft__actions {
-		display: none;
+		.async-load {
+			margin: 16px;
+			width: auto;
+		}
 	}
 }
 
@@ -456,14 +437,18 @@ $autobar-height: 20px;
 // Editor Transition
 .masterbar {
 	opacity: 1;
-	transition: opacity 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
 }
-.is-section-post-editor .masterbar {
-	opacity: 0;
-	pointer-events: none;
 
-	.masterbar__item,
+.is-section-post-editor .masterbar {
+	//opacity: 0;
+	//pointer-events: none;
+	transform: translateY( -48px );
+
+	.masterbar__item {
+		
+	}
 	.masterbar__toggle-drafts {
-		transform: translateY( -48px );
+		transform: translateY( 48px ) translateX( -180px );
 	}
 }

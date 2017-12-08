@@ -18,10 +18,8 @@ import Popover from 'components/popover';
 import Count from 'components/count';
 import { getMyPostCounts } from 'state/posts/counts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getPostsForQueryIgnoringPage,
-	isRequestingPostsForQuery,
-} from 'state/posts/selectors';
+import { getPostsForQueryIgnoringPage, isRequestingPostsForQuery } from 'state/posts/selectors';
+import paths from 'lib/paths';
 import Draft from 'my-sites/draft';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostCounts from 'components/data/query-post-counts';
@@ -89,21 +87,38 @@ class MasterbarDrafts extends Component {
 					className="masterbar__recent-drafts"
 				>
 					<QueryPosts siteId={ selectedSite.ID } query={ this.props.draftsQuery } />
-					<Site compact site={ selectedSite } />
-					{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
-					{ isLoading && <Draft isPlaceholder /> }
-					{ this.props.draftCount > 6 && (
+
+					<div className="recent-drafts__heading">
+						<h3>{ translate( 'Recent Drafts' ) }</h3>
+
+						<Button
+							compact
+							className="recent-drafts__add-new"
+							href={ paths.newPost( selectedSite ) }
+							onClick={ this.closeDrafts }
+						>
+							{ translate( 'New Draft' ) }
+						</Button>
+					</div>
+
+					<div className="recent-drafts__list">
+						<Site compact site={ selectedSite } />
+
+						{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
+
+						{ isLoading && <Draft isPlaceholder /> }
+
 						<Button
 							compact
 							borderless
-							className="masterbar__see-all-drafts"
+							className="recent-drafts__see-all"
 							href={ `/posts/drafts/${ selectedSite.slug }` }
 							onClick={ this.closeDrafts }
 						>
-							{ translate( 'See all drafts' ) }
+							{ translate( 'See All' ) }
 							{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
 						</Button>
-					) }
+					</div>
 				</Popover>
 			</div>
 		);
@@ -135,7 +150,7 @@ const mapStateToProps = state => {
 	const draftsQuery = {
 		type: 'post',
 		status: 'draft',
-		number: 10,
+		number: 5,
 		order_by: 'modified',
 		author: site && ! site.jetpack && ! site.single_user_site ? userId : null,
 	};
