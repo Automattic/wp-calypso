@@ -102,15 +102,22 @@ export const getPostOldestCommentDate = createSelector( ( state, siteId, postId 
  * @param {Number} siteId site identification
  * @param {Number} postId site identification
  * @param {String} status String representing the comment status to show. Defaults to 'approved'.
+ * @param {Number} authorId - when specified we only return pending comments that match this id
  * @return {Object} comments tree, and in addition a children array
  */
 export const getPostCommentsTree = createSelector(
-	( state, siteId, postId, status = 'approved' ) => {
+	( state, siteId, postId, status = 'approved', authorId ) => {
 		const allItems = getPostCommentItems( state, siteId, postId );
-		const items =
-			status !== 'all'
-				? filter( allItems, item => item.isPlaceholder || item.status === status )
-				: allItems;
+		const items = filter( allItems, item => {
+			//only return pending comments that match the comment author
+			if ( authorId && item.status === 'unapproved' && get( item, 'author.ID' ) !== authorId ) {
+				return false;
+			}
+			if ( status !== 'all' ) {
+				return item.isPlaceholder || item.status === status;
+			}
+			return true;
+		} );
 
 		// separate out root comments from comments that have parents
 		const [ roots, children ] = partition( items, item => item.parent === false );
