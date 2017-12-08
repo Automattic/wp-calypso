@@ -439,6 +439,15 @@ function mediaButton( editor ) {
 		} );
 	} );
 
+	editor.addCommand( 'pexelsAddMedia', () => {
+		initMediaModal();
+
+		renderModal( {
+			visible: true,
+			source: 'pexels',
+		} );
+	} );
+
 	editor.addButton( 'wpcom_add_media', {
 		classes: 'btn wpcom-icon-button media',
 		cmd: 'wpcomAddMedia',
