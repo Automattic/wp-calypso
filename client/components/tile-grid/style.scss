@@ -70,6 +70,10 @@
 
 	&.is-card-link {
 		padding-right: 0;
+
+		@include breakpoint( "<480px" ) {
+			padding-right: 40px;
+		}
 	}
 
 	a, svg {
@@ -90,6 +94,7 @@
 			border-top: 2px solid lighten( $gray, 20% );
 			border-right: 2px solid lighten( $gray, 20% );
 			transform: rotate(45deg);
+			color: #fff;
 		}
 	}
 }
