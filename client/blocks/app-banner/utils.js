@@ -13,7 +13,7 @@ export const READER = 'reader';
 export const STATS = 'stats';
 export const ALLOWED_SECTIONS = [ EDITOR, NOTES, READER, STATS ];
 export const ONE_WEEK_IN_MILLISECONDS = 604800000;
-export const ONE_YEAR_IN_MILLISECONDS = 31540000000;
+export const ONE_MONTH_IN_MILLISECONDS = 2419200000;
 
 export function getAppBannerData( translate, sectionName ) {
 	switch ( sectionName ) {
@@ -64,14 +64,14 @@ export function getCurrentSection( currentSection, isNotesOpen ) {
 export function getNewDismissTimes( dismissedSection, currentDismissTimes ) {
 	const currentTime = Date.now();
 	const aWeekFromNow = currentTime + ONE_WEEK_IN_MILLISECONDS;
-	const aYearFromNow = currentTime + ONE_YEAR_IN_MILLISECONDS;
+	const aMonthFromNow = currentTime + ONE_MONTH_IN_MILLISECONDS;
 
 	return reduce(
 		ALLOWED_SECTIONS,
 		( result, section ) => {
 			if ( section === dismissedSection ) {
 				// Dismiss selected section for a year.
-				result[ section ] = aYearFromNow;
+				result[ section ] = aMonthFromNow;
 			} else {
 				// Dismiss all other sections for a week, but make sure that we preserve previous dismiss time
 				// if it was longer than that (e.g. if other section was also dismissed for a year).
