@@ -34,32 +34,48 @@ describe( 'reducer', () => {
 				id: 'woocommerce_email_from_name',
 				value: '',
 				group_id: 'email',
+				default: 'me',
 			},
 			{
 				id: 'woocommerce_email_from_address',
 				value: 'test@test.com',
 				group_id: 'email',
+				default: 'd@e.f',
 			},
 			{
 				id: 'enabled',
 				value: 'yes',
 				group_id: 'email_new_order',
+				default: 'yes',
 			},
 			{
 				id: 'recipient',
 				value: 'admin_1@test.com',
 				group_id: 'email_new_order',
+				default: 'x@y.x, o@p.r',
 			},
 		];
 
 		const expectedResult = {
 			email: {
-				woocommerce_email_from_name: '',
-				woocommerce_email_from_address: 'test@test.com',
+				woocommerce_email_from_name: {
+					value: '',
+					default: 'me',
+				},
+				woocommerce_email_from_address: {
+					value: 'test@test.com',
+					default: 'd@e.f',
+				},
 			},
 			email_new_order: {
-				enabled: 'yes',
-				recipient: 'admin_1@test.com',
+				enabled: {
+					value: 'yes',
+					default: 'yes',
+				},
+				recipient: {
+					value: 'admin_1@test.com',
+					default: 'x@y.x, o@p.r',
+				},
 			},
 		};
 
