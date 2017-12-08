@@ -47,6 +47,17 @@ const domainAvailability = {
 	RECENTLY_UNMAPPED: 'recently_mapped',
 	TRANSFER_PENDING: 'transfer_pending',
 	UNKOWN_ACTIVE: 'unknown_active_domain_with_wpcom',
+	REGISTERED_SAME_SITE: 'registered_on_same_site',
+	REGISTERED_OTHER_SITE_SAME_USER: 'registered_on_other_site_same_user',
+	MAPPED_OR_REGISTERED: 'mapped_or_registered',
+	MAPPED_SAME_SITE_TRANSFERRABLE: 'mapped_to_same_site_transferrable',
+	MAPPED_SAME_SITE_NOT_TRANSFERRABLE: 'mapped_to_same_site_not_transferrable',
+	MAPPED_OTHER_SITE_SAME_USER_TRANSFERRABLE: 'mapped_to_other_site_same_user_transferrable',
+	MAPPED_OTHER_SITE_SAME_USER_NOT_TRANSFERRABLE: 'mapped_to_other_site_same_user_not_transferrable',
+	TRANSFER_IN_PROGRESS_SAME_USER: 'transfer_in_progress_same_user',
+	TRANSFER_IN_PROGRESS: 'transfer_in_progress',
+	NOT_AVAILABLE: 'not_available',
+	TLD_NOT_SUPPORTED: 'tld_not_supported',
 };
 
 const dnsTemplates = {

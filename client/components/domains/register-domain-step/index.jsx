@@ -11,6 +11,7 @@ import {
 	compact,
 	find,
 	flatten,
+	get,
 	includes,
 	isEmpty,
 	noop,
@@ -39,7 +40,7 @@ import DomainTransferSuggestion from 'components/domains/domain-transfer-suggest
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
 import {
@@ -47,7 +48,6 @@ import {
 	getDomainsSuggestionsError,
 } from 'state/domains/suggestions/selectors';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { currentUserHasFlag } from 'state/current-user/selectors';
 import { TRANSFER_IN } from 'state/current-user/constants';
 
 const domains = wpcom.domains();
@@ -392,32 +392,36 @@ class RegisterDomainStep extends React.Component {
 						return callback();
 					}
 
-					checkDomainAvailability( domain, ( error, result ) => {
-						const timeDiff = Date.now() - timestamp;
-						const status = result && result.status ? result.status : error;
-						const { AVAILABLE, UNKNOWN } = domainAvailability;
-						const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
+					checkDomainAvailability(
+						{ domainName: domain, blogId: this.props.selectedSite.ID },
+						( error, result ) => {
+							const timeDiff = Date.now() - timestamp;
+							const status = get( result, 'status', error );
 
-						this.setState( {
-							lastDomainStatus: status,
-							lastDomainIsTransferrable: !! result.transferrable,
-						} );
-						if ( isDomainAvailable ) {
-							this.setState( { notice: null } );
-						} else {
-							this.showValidationErrorMessage( domain, status );
+							const { AVAILABLE, UNKNOWN } = domainAvailability;
+							const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
+
+							this.setState( {
+								lastDomainStatus: status,
+								lastDomainIsTransferrable: !! result.transferrable,
+							} );
+							if ( isDomainAvailable ) {
+								this.setState( { notice: null } );
+							} else {
+								this.showValidationErrorMessage( domain, status );
+							}
+
+							this.props.recordDomainAvailabilityReceive(
+								domain,
+								status,
+								timeDiff,
+								this.props.analyticsSection
+							);
+
+							this.props.onDomainsAvailabilityChange( true );
+							callback( null, isDomainAvailable ? result : null );
 						}
-
-						this.props.recordDomainAvailabilityReceive(
-							domain,
-							status,
-							timeDiff,
-							this.props.analyticsSection
-						);
-
-						this.props.onDomainsAvailabilityChange( true );
-						callback( null, isDomainAvailable ? result : null );
-					} );
+					);
 				},
 				callback => {
 					const suggestionQuantity = this.props.includeWordPressDotCom
@@ -765,7 +769,11 @@ class RegisterDomainStep extends React.Component {
 		) {
 			return;
 		}
-		const { message, severity } = getAvailabilityNotice( domain, error );
+		const { message, severity } = getAvailabilityNotice(
+			domain,
+			error,
+			this.props.selectedSite.domain
+		);
 		this.setState( { notice: message, noticeSeverity: severity } );
 	}
 }

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { noop, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -190,8 +190,8 @@ class MapDomainStep extends React.Component {
 		this.props.recordFormSubmitInMapDomain( this.state.searchQuery );
 		this.setState( { suggestion: null, notice: null } );
 
-		checkDomainAvailability( domain, ( error, result ) => {
-			const status = result && result.status ? result.status : error;
+		checkDomainAvailability( { domainName: domain }, ( error, result ) => {
+			const status = get( result, 'mappable', error );
 			switch ( status ) {
 				case domainAvailability.MAPPABLE:
 				case domainAvailability.UNKNOWN:

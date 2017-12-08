@@ -288,12 +288,13 @@ class TransferDomainStep extends React.Component {
 		this.props.recordFormSubmitInMapDomain( this.state.searchQuery );
 		this.setState( { suggestion: null, notice: null } );
 
-		checkDomainAvailability( domain, ( error, result ) => {
+		checkDomainAvailability( { domainName: domain }, ( error, result ) => {
 			const status = get( result, 'status', error );
 			switch ( status ) {
 				case domainAvailability.AVAILABLE:
 					this.setState( { suggestion: result } );
 					return;
+				case domainAvailability.TLD_NOT_SUPPORTED:
 				case domainAvailability.MAPPABLE:
 				case domainAvailability.MAPPED:
 				case domainAvailability.UNKNOWN:

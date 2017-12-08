@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { translate } from 'i18n-calypso';
 
@@ -14,13 +13,143 @@ import { getTld } from 'lib/domains';
 import support from 'lib/url/support';
 import { domainAvailability } from 'lib/domains/constants';
 
-function getAvailabilityNotice( domain, error ) {
+function getAvailabilityNotice( domain, error, site ) {
 	let message,
 		severity = 'error';
 
 	const tld = getTld( domain );
 
 	switch ( error ) {
+		case domainAvailability.MAPPED_OR_REGISTERED:
+			message = translate(
+				"{{strong}}%(domain)s{{/strong}} is already connected to someone else's WordPress.com site.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+			break;
+		case domainAvailability.REGISTERED_SAME_SITE:
+			message = translate( '{{strong}}%(domain)s{{/strong}} is already registered on this site.', {
+				args: { domain },
+				components: {
+					strong: <strong />,
+				},
+			} );
+			break;
+		case domainAvailability.REGISTERED_OTHER_SITE_SAME_USER:
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to move it to this site? ' +
+					'{{a}}Yes, move it to this site.{{/a}}',
+				{
+					args: { domain, site },
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								rel="noopener noreferrer"
+								href={ `/domains/manage/${ domain }/transfer/other-site/${ domain }` }
+							/>
+						),
+					},
+				}
+			);
+			break;
+		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER_TRANSFERRABLE:
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s. Do you want to move it to this site? ' +
+					'{{a}}Yes, move it to this site.{{/a}}',
+				{
+					args: { domain, site },
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								rel="noopener noreferrer"
+								href={ `/domains/manage/${ domain }/transfer/other-site/${ domain }` }
+							/>
+						),
+					},
+				}
+			);
+			break;
+		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER_NOT_TRANSFERRABLE:
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s. If you want to connect it to this site ' +
+					'instead, we will be happy to help you do that. {{a}}Contact us.{{/a}}',
+				{
+					args: { domain, site },
+					components: {
+						strong: <strong />,
+						a: <a target="_blank" rel="noopener noreferrer" href={ support.CALYPSO_CONTACT } />,
+					},
+				}
+			);
+			break;
+		case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is already connected to this site, but registered somewhere else. Do you want to move ' +
+					'it from your current domain provider to WorcPress.com so you can manage the domain and the site ' +
+					'together? {{a}}Yes, transfer it to WordPress.com.{{/a}}',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								rel="noopener noreferrer"
+								href={ `/domains/manage/${ domain }/transfer/other-site/${ domain }` }
+							/>
+						),
+					},
+				}
+			);
+			break;
+		case domainAvailability.MAPPED_SAME_SITE_NOT_TRANSFERRABLE:
+			message = translate( '{{strong}}%(domain)s{{/strong}} is already connected to this site.', {
+				args: { domain },
+			} );
+			break;
+		case domainAvailability.TRANSFER_IN_PROGRESS_SAME_USER:
+			message = translate(
+				'{{strong}}%(domain)s{{/strong}} is pending transfer. {{a}}Check the transfer status{{/a}} to learn more.',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href={ `/domains/manage/${ domain }/transfer/in/${ site }` }
+							/>
+						),
+					},
+				}
+			);
+			break;
+		case domainAvailability.TRANSFER_IN_PROGRESS:
+			message = translate(
+				"{{strong}}%(domain)s{{/strong}} is pending transfer and can't be conected to WordPress.com right now. " +
+					'{{a}}Learn More.{{/a}}',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+							/>
+						),
+					},
+				}
+			);
+			break;
+		case domainAvailability.TLD_NOT_SUPPORTED:
 		case domainAvailability.NOT_REGISTRABLE:
 			if ( tld ) {
 				message = translate(
