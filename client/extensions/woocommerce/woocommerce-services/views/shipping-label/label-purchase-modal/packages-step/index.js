@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
+import { find, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,8 +39,6 @@ const PackagesStep = ( props ) => {
 	const packageIds = Object.keys( selected );
 	const itemsCount = packageIds.reduce( ( result, pId ) => ( result + selected[ pId ].items.length ), 0 );
 	const totalWeight = packageIds.reduce( ( result, pId ) => ( result + selected[ pId ].weight ), 0 );
-	const isValidWeight = packageIds.reduce( ( result, pId ) => ( result && 0 < selected[ pId ].weight ), true );
-	const isValidPackageType = packageIds.reduce( ( result, pId ) => ( result && 'not_selected' !== selected[ pId ].box_id ), true );
 	const isValidPackages = 0 < packageIds.length;
 
 	const getContainerState = () => {
@@ -50,17 +49,11 @@ const PackagesStep = ( props ) => {
 			};
 		}
 
-		if ( ! isValidPackageType ) {
+		const errorPackage = find( errors, ( pckg ) => ( ! isEmpty( pckg ) ) );
+		if ( errorPackage ) {
 			return {
 				isError: true,
-				summary: translate( 'Please select a package type' ),
-			};
-		}
-
-		if ( ! isValidWeight ) {
-			return {
-				isError: true,
-				summary: translate( 'Weight not entered' ),
+				summary: errorPackage[ Object.keys( errorPackage )[ 0 ] ],
 			};
 		}
 
