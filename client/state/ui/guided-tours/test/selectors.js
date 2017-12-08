@@ -47,10 +47,8 @@ describe( 'selectors', () => {
 						path: '/stats',
 					},
 				],
-				route: {
-					query: {
-						initial: {},
-					},
+				queryArguments: {
+					initial: {},
 				},
 				section: {
 					name: 'stats',
@@ -70,11 +68,9 @@ describe( 'selectors', () => {
 			...withEligibleFirstView,
 			ui: {
 				...withEligibleFirstView.ui,
-				route: {
-					query: {
-						initial: {
-							tour: 'main',
-						},
+				queryArguments: {
+					initial: {
+						tour: 'main',
 					},
 				},
 			},
@@ -203,10 +199,8 @@ describe( 'selectors', () => {
 					shouldShow: false,
 					guidedTour: false,
 					actionLog: [],
-					route: {
-						query: {
-							initial: {},
-						},
+					queryArguments: {
+						initial: {},
 					},
 				},
 				preferences: {
@@ -229,10 +223,8 @@ describe( 'selectors', () => {
 		} ) => ( {
 			ui: {
 				actionLog,
-				route: {
-					query: {
-						initial: queryArguments,
-					},
+				queryArguments: {
+					initial: queryArguments,
 				},
 			},
 			preferences: {

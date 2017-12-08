@@ -22,8 +22,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'state/action-types';
-import { getSectionName } from 'state/ui/selectors';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
+import { getInitialQueryArguments, getSectionName } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';

@@ -98,10 +98,8 @@ describe( 'selectors', () => {
 							path: '/devdocs',
 						},
 					],
-					route: {
-						query: {
-							initial: {},
-						},
+					queryArguments: {
+						initial: {},
 					},
 				},
 			} );
@@ -118,10 +116,8 @@ describe( 'selectors', () => {
 							path: '/stats',
 						},
 					],
-					route: {
-						query: {
-							initial: {},
-						},
+					queryArguments: {
+						initial: {},
 					},
 				},
 			} );
@@ -185,7 +181,7 @@ describe( 'selectors', () => {
 						},
 						ui: {
 							actionLog: actions,
-							route: { query: queryArguments },
+							queryArguments,
 						},
 					},
 					config
@@ -208,7 +204,7 @@ describe( 'selectors', () => {
 					},
 					ui: {
 						actionLog: actions,
-						route: { query: queryArguments },
+						queryArguments,
 					},
 				},
 				config
@@ -236,7 +232,7 @@ describe( 'selectors', () => {
 					},
 					ui: {
 						actionLog: actions,
-						route: { query: queryArguments },
+						queryArguments,
 					},
 				},
 				config
@@ -263,7 +259,7 @@ describe( 'selectors', () => {
 								path: '/devdocs',
 							},
 						],
-						route: { query: queryArguments },
+						queryArguments,
 					},
 				},
 				{ name: 'devdocs', paths: [ '/devdocs' ], enabled: false }
@@ -285,7 +281,7 @@ describe( 'selectors', () => {
 					},
 					ui: {
 						actionLog: actions,
-						route: { query: queryArguments },
+						queryArguments,
 					},
 				},
 				config
