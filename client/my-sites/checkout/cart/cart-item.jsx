@@ -14,12 +14,11 @@ import analytics from 'lib/analytics';
 import { canRemoveFromCart, cartItems } from 'lib/cart-values';
 import {
 	isCredits,
-	isDomainProduct,
-	isDomainTransferProduct,
 	isGoogleApps,
 	isTheme,
 	isMonthly,
 	isPlan,
+	isBundled,
 } from 'lib/products-values';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
@@ -41,7 +40,7 @@ export class CartItem extends React.Component {
 	};
 
 	price() {
-		const { cart, cartItem, translate } = this.props;
+		const { cartItem, translate } = this.props;
 
 		if ( typeof cartItem.cost === 'undefined' ) {
 			return translate( 'Loading price' );
@@ -51,11 +50,7 @@ export class CartItem extends React.Component {
 			return this.getFreeTrialPrice();
 		}
 
-		if (
-			cartItems.hasDomainCredit( cart ) &&
-			( isDomainProduct( cartItem ) || isDomainTransferProduct( cartItem ) ) &&
-			cartItem.cost === 0
-		) {
+		if ( isBundled( cartItem ) && cartItem.cost === 0 ) {
 			return this.getDomainPlanPrice( cartItem );
 		}
 
