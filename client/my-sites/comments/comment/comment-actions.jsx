@@ -39,6 +39,7 @@ const commentActions = {
 
 export class CommentActions extends Component {
 	static propTypes = {
+		canModerateComment: PropTypes.bool,
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 		commentId: PropTypes.number,
@@ -156,6 +157,7 @@ export class CommentActions extends Component {
 
 	render() {
 		const {
+			canModerateComment,
 			commentIsApproved,
 			commentIsLiked,
 			toggleEditMode,
@@ -173,6 +175,7 @@ export class CommentActions extends Component {
 						} ) }
 						onClick={ this.toggleApproved }
 						tabIndex="0"
+						disabled={ ! canModerateComment }
 					>
 						<Gridicon icon={ commentIsApproved ? 'checkmark-circle' : 'checkmark' } />
 						<span>{ commentIsApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
@@ -185,6 +188,7 @@ export class CommentActions extends Component {
 						className="comment__action comment__action-spam"
 						onClick={ this.setSpam }
 						tabIndex="0"
+						disabled={ ! canModerateComment }
 					>
 						<Gridicon icon="spam" />
 						<span>{ translate( 'Spam' ) }</span>
@@ -197,6 +201,7 @@ export class CommentActions extends Component {
 						className="comment__action comment__action-trash"
 						onClick={ this.setTrash }
 						tabIndex="0"
+						disabled={ ! canModerateComment }
 					>
 						<Gridicon icon="trash" />
 						<span>{ translate( 'Trash' ) }</span>
@@ -209,6 +214,7 @@ export class CommentActions extends Component {
 						className="comment__action comment__action-delete"
 						onClick={ this.delete }
 						tabIndex="0"
+						disabled={ ! canModerateComment }
 					>
 						<Gridicon icon="trash" />
 						<span>{ translate( 'Delete Permanently' ) }</span>
@@ -235,6 +241,7 @@ export class CommentActions extends Component {
 						className="comment__action comment__action-pencil"
 						onClick={ toggleEditMode }
 						tabIndex="0"
+						disabled={ ! canModerateComment }
 					>
 						<Gridicon icon="pencil" />
 						<span>{ translate( 'Edit' ) }</span>
@@ -262,6 +269,7 @@ const mapStateToProps = ( state, { siteId, commentId } ) => {
 	const commentStatus = get( comment, 'status' );
 
 	return {
+		canModerateComment: get( comment, 'post.can_manage_comments', false ),
 		commentIsApproved: 'approved' === commentStatus,
 		commentIsLiked: get( comment, 'i_like' ),
 		commentStatus,

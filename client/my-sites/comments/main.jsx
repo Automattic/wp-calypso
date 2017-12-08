@@ -113,7 +113,7 @@ export class CommentsManagement extends Component {
 const mapStateToProps = ( state, { siteFragment } ) => {
 	const siteId = getSiteId( state, siteFragment );
 	const isJetpack = isJetpackSite( state, siteId );
-	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' );
+	const canModerateComments = canCurrentUser( state, siteId, 'edit_posts' );
 	const showJetpackUpdateScreen =
 		isJetpack &&
 		! isJetpackMinimumVersion( state, siteId, '5.5' ) &&
