@@ -29,10 +29,19 @@ import {
 } from 'state/sharing/keyring/selectors';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 
+// External media sources that do not need a user to connect them
+// should be listed here.
+const noConnectionNeeded = [ 'pexels' ];
+
 const isConnected = props =>
-	props.source === '' || some( props.connectedServices, item => item.service === props.source );
+	noConnectionNeeded.indexOf( props.source ) !== -1 ||
+	props.source === '' ||
+	some( props.connectedServices, item => item.service === props.source );
 const needsKeyring = props =>
-	! props.isRequesting && props.source !== '' && props.connectedServices.length === 0;
+	noConnectionNeeded.indexOf( props.source ) === -1 &&
+	! props.isRequesting &&
+	props.source !== '' &&
+	props.connectedServices.length === 0;
 
 class MediaLibrary extends Component {
 	static propTypes = {
