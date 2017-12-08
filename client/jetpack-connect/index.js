@@ -9,6 +9,7 @@ import page from 'page';
  */
 import userFactory from 'lib/user';
 import * as controller from './controller';
+import { login } from 'lib/paths';
 import { siteSelection } from 'my-sites/controller';
 
 export default function() {
@@ -52,7 +53,7 @@ export default function() {
 
 	if ( isLoggedOut ) {
 		page( '/jetpack/connect/plans/:interval(yearly|monthly)?/:site', ( { path } ) =>
-			page.redirect( `/log-in?redirect_to=${ path }` )
+			page.redirect( login( { isNative: true, redirectTo: path } ) )
 		);
 	}
 
