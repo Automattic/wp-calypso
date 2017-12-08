@@ -101,7 +101,7 @@ exports[`LanguagePickerModal should render 1`] = `
       <div
         className="language-picker__modal-suggested-label"
       >
-        Suggested languages: 
+        Suggested languages:
       </div>
       <div
         className="language-picker__modal-suggested-list"

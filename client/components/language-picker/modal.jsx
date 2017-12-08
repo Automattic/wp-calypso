@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { find, includes, map, noop, partial, startsWith } from 'lodash';
+import { find, includes, map, noop, partial, startsWith, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -104,7 +104,7 @@ export class LanguagePickerModal extends PureComponent {
 			// Find the language first by its full code (e.g. en-US), and when it fails
 			// try only the base code (en). Don't add duplicates.
 			const lcLangSlug = langSlug.toLowerCase();
-			let language = find( languages, lang => ( lang.langSlug === lcLangSlug ) );
+			let language = find( languages, lang => lang.langSlug === lcLangSlug );
 
 			if ( ! language ) {
 				language = find( languages, lang => startsWith( lcLangSlug, lang.langSlug + '-' ) );
@@ -117,7 +117,7 @@ export class LanguagePickerModal extends PureComponent {
 		return suggestedLanguages;
 	}
 
-	handleSearch = ( search ) => {
+	handleSearch = search => {
 		this.setState( { search } );
 	};
 
@@ -179,7 +179,8 @@ export class LanguagePickerModal extends PureComponent {
 
 	renderSuggestedLanguages() {
 		const { suggestedLanguages } = this.state;
-		if ( ! suggestedLanguages ) {
+
+		if ( isEmpty( suggestedLanguages ) ) {
 			return null;
 		}
 
@@ -187,7 +188,7 @@ export class LanguagePickerModal extends PureComponent {
 			<div className="language-picker__modal-suggested">
 				<div className="language-picker__modal-suggested-inner">
 					<div className="language-picker__modal-suggested-label">
-						{ this.props.translate( 'Suggested languages: ' ) }
+						{ this.props.translate( 'Suggested languages:' ) }
 					</div>
 					<div className="language-picker__modal-suggested-list">
 						<div className="language-picker__modal-suggested-list-inner">
