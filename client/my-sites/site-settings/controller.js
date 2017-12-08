@@ -47,16 +47,12 @@ function canDeleteSite( state, siteId ) {
 	return true;
 }
 
-function renderPage( context, component ) {
-	context.primary = component;
-}
-
 const controller = {
 	redirectToGeneral() {
 		page.redirect( '/settings/general' );
 	},
 
-	redirectIfCantDeleteSite( context ) {
+	redirectIfCantDeleteSite( context, next ) {
 		const state = context.store.getState();
 		const dispatch = context.store.dispatch;
 		const siteId = getSelectedSiteId( state );
@@ -79,55 +75,56 @@ const controller = {
 				},
 			} );
 		}
+		next();
 	},
 
-	general( context ) {
-		renderPage( context, <SiteSettingsMain /> );
+	general( context, next ) {
+		context.primary = <SiteSettingsMain />;
+		next();
 	},
 
-	importSite( context ) {
-		renderPage( context, <AsyncLoad require="my-sites/site-settings/section-import" /> );
+	importSite( context, next ) {
+		context.primary = <AsyncLoad require="my-sites/site-settings/section-import" />;
+		next();
 	},
 
-	exportSite( context ) {
-		renderPage( context, <AsyncLoad require="my-sites/site-settings/section-export" /> );
+	exportSite( context, next ) {
+		context.primary = <AsyncLoad require="my-sites/site-settings/section-export" />;
+		next();
 	},
 
-	guidedTransfer( context ) {
-		renderPage(
-			context,
+	guidedTransfer( context, next ) {
+		context.primary = (
 			<AsyncLoad require="my-sites/guided-transfer" hostSlug={ context.params.host_slug } />
 		);
+		next();
 	},
 
-	deleteSite( context ) {
-		const redirectIfCantDeleteSite = controller.redirectIfCantDeleteSite;
+	deleteSite( context, next ) {
+		context.primary = <DeleteSite path={ context.path } />;
 
-		redirectIfCantDeleteSite( context );
-
-		renderPage( context, <DeleteSite path={ context.path } /> );
+		next();
 	},
 
-	disconnectSite( context ) {
+	disconnectSite( context, next ) {
 		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-		renderPage( context, <DisconnectSite reason={ context.params.reason } /> );
+		context.primary = <DisconnectSite reason={ context.params.reason } />;
+		next();
 	},
 
-	disconnectSiteConfirm( context ) {
+	disconnectSiteConfirm( context, next ) {
 		const { reason, text } = context.query;
 		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-		renderPage( context, <ConfirmDisconnection reason={ reason } text={ text } /> );
+		context.primary = <ConfirmDisconnection reason={ reason } text={ text } />;
+		next();
 	},
 
-	startOver( context ) {
-		const redirectIfCantDeleteSite = controller.redirectIfCantDeleteSite;
-
-		redirectIfCantDeleteSite( context );
-
-		renderPage( context, <StartOver path={ context.path } /> );
+	startOver( context, next ) {
+		context.primary = <StartOver path={ context.path } />;
+		next();
 	},
 
-	themeSetup( context ) {
+	themeSetup( context, next ) {
 		const site = getSelectedSite( context.store.getState() );
 		if ( site && site.jetpack ) {
 			return page.redirect( '/settings/general/' + site.slug );
@@ -137,11 +134,13 @@ const controller = {
 			return page.redirect( '/settings/general/' + site.slug );
 		}
 
-		renderPage( context, <ThemeSetup /> );
+		context.primary = <ThemeSetup />;
+		next();
 	},
 
-	manageConnection( context ) {
-		renderPage( context, <ManageConnection /> );
+	manageConnection( context, next ) {
+		context.primary = <ManageConnection />;
+		next();
 	},
 
 	legacyRedirects( context, next ) {

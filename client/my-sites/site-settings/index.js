@@ -15,7 +15,7 @@ import { reasonComponents as reasons } from './disconnect-site';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( '/settings', siteSelection, controller.redirectToGeneral, makeLayout, clientRender );
+	page( '/settings', siteSelection, controller.redirectToGeneral );
 	page(
 		'/settings/general/:site_id',
 		siteSelection,
@@ -61,6 +61,7 @@ export default function() {
 		siteSelection,
 		navigation,
 		settingsController.setScroll,
+		controller.redirectIfCantDeleteSite,
 		controller.deleteSite,
 		makeLayout,
 		clientRender
@@ -97,6 +98,7 @@ export default function() {
 		siteSelection,
 		navigation,
 		settingsController.setScroll,
+		controller.redirectIfCantDeleteSite,
 		controller.startOver,
 		makeLayout,
 		clientRender
