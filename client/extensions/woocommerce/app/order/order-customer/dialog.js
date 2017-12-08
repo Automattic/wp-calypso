@@ -4,6 +4,8 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import emailValidator from 'email-validator';
 import { get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -12,8 +14,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AddressView from 'woocommerce/components/address-view';
+import {
+	areSettingsGeneralLoaded,
+	getStoreLocation,
+} from 'woocommerce/state/sites/settings/general/selectors';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
@@ -70,6 +77,16 @@ class CustomerAddressDialog extends Component {
 		this.initializeState();
 	}
 
+	componentWillMount() {
+		this.fetchData( this.props );
+	}
+
+	componentWillReceiveProps( newProps ) {
+		if ( newProps.siteId !== this.props.siteId ) {
+			this.fetchData( newProps );
+		}
+	}
+
 	componentDidUpdate( prevProps ) {
 		// Modal was just opened
 		if ( this.props.isVisible && ! prevProps.isVisible ) {
@@ -78,12 +95,27 @@ class CustomerAddressDialog extends Component {
 	}
 
 	initializeState = () => {
-		const { address = {} } = this.props;
+		const { address = {}, defaultCountry, defaultState } = this.props;
+		if ( ! address.country ) {
+			address.country = defaultCountry;
+		}
+		if ( ! address.state ) {
+			address.state = defaultState;
+		}
 		this.setState( {
 			address,
-			phoneCountry: address.country || 'US',
+			phoneCountry: address.country || defaultCountry,
 			emailValidMessage: false,
 		} );
+	};
+
+	fetchData = ( { siteId, areSettingsLoaded } ) => {
+		if ( ! siteId ) {
+			return;
+		}
+		if ( ! areSettingsLoaded ) {
+			this.props.fetchSettingsGeneral( siteId );
+		}
 	};
 
 	updateAddress = () => {
@@ -113,12 +145,13 @@ class CustomerAddressDialog extends Component {
 		}
 		this.setState( prevState => {
 			const { address } = prevState;
-			const newState = { ...address, [ name ]: value };
-			// If country changed, we should also reset the state
+			const newState = { address: { ...address, [ name ]: value } };
+			// If country changed, we should also reset the state & phoneCountry
 			if ( 'country' === name ) {
-				newState.state = '';
+				newState.address.state = '';
+				newState.phoneCountry = value;
 			}
-			return { address: newState };
+			return newState;
 		} );
 	};
 
@@ -242,4 +275,16 @@ class CustomerAddressDialog extends Component {
 	}
 }
 
-export default localize( CustomerAddressDialog );
+export default connect(
+	state => {
+		const address = getStoreLocation( state );
+		const areSettingsLoaded = areSettingsGeneralLoaded( state );
+
+		return {
+			areSettingsLoaded,
+			defaultCountry: address.country,
+			defaultState: address.state,
+		};
+	},
+	dispatch => bindActionCreators( { fetchSettingsGeneral }, dispatch )
+)( localize( CustomerAddressDialog ) );

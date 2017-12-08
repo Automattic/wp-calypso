@@ -125,6 +125,7 @@ export default connect(
 
 		return {
 			areSettingsLoaded,
+			country,
 			isLoaded,
 			locationsList,
 			siteId,

@@ -4,10 +4,10 @@
  * External dependencies
  */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { find, isEmpty, trim } from 'lodash';
+import { every, find, isEmpty, trim } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 
@@ -190,22 +190,45 @@ class AddressView extends Component {
 		);
 	};
 
-	renderStatic = () => {
-		const { name, street, street2, city, state, postcode, country } = this.props.address;
+	renderStreetAddress = ( { street, street2 } ) => {
+		if ( ! street && ! street2 ) {
+			return null;
+		}
+		return (
+			<Fragment>
+				<p>{ street }</p>
+				{ street2 && <p>{ street2 }</p> }
+			</Fragment>
+		);
+	};
 
+	renderCityAddress = ( { city, state, postcode } ) => {
+		if ( ! city && ! state && ! postcode ) {
+			return null;
+		}
+		return (
+			<p>
+				{ city && <span className="address-view__city">{ city }, </span> }
+				{ state && <span className="address-view__state">{ state } &nbsp;</span> }
+				{ postcode && <span className="address-view__postcode">{ postcode }</span> }
+			</p>
+		);
+	};
+
+	renderStatic = () => {
+		if ( every( this.props.address, isEmpty ) ) {
+			return null;
+		}
+
+		const { name, country } = this.props.address;
 		const countryData = find( getCountries(), { code: country } );
 
 		return (
 			<div className="address-view__fields-static">
-				<p className="address-view__address-name">{ name }</p>
-				<p>{ street }</p>
-				{ street2 && <p>{ street2 }</p> }
-				<p>
-					{ city && <span className="address-view__city">{ city }</span> }
-					, { state && <span className="address-view__state">{ state }</span> }
-					&nbsp; { postcode && <span className="address-view__postcode">{ postcode }</span> }
-				</p>
-				<p>{ countryData ? countryData.name : country }</p>
+				{ name && <p className="address-view__address-name">{ name }</p> }
+				{ this.renderStreetAddress( this.props.address ) }
+				{ this.renderCityAddress( this.props.address ) }
+				{ country && <p>{ countryData ? countryData.name : country }</p> }
 			</div>
 		);
 	};
