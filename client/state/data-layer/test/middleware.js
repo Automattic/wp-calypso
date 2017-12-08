@@ -9,7 +9,12 @@ import { spy, stub } from 'sinon';
 /**
  * Internal dependencies
  */
-import { addHandlers, removeHandlers, configureMiddleware } from '../extensions-middleware';
+import {
+	addCoreHandlers,
+	addExtensionHandlers,
+	removeExtensionHandlers,
+	configureMiddleware,
+} from '../middleware';
 import { bypassDataLayer } from '../utils';
 
 describe( 'Calypso Extensions Data Layer Middleware', () => {
@@ -33,7 +38,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		const action = { type: 'UNSUPPORTED_ACTION' };
 
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', {}, config );
+		addExtensionHandlers( 'my-extension', {}, config );
 
 		config.middleware( store )( next )( action );
 
@@ -48,7 +53,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		};
 
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		addExtensionHandlers( 'my-extension', handlers, config );
 		const action = bypassDataLayer( { type: 'ADD' } );
 
 		config.middleware( store )( next )( action );
@@ -64,7 +69,23 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		};
 
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		addExtensionHandlers( 'my-extension', handlers, config );
+		const action = { type: 'ADD', meta: { semigroup: true } };
+
+		config.middleware( store )( next )( action );
+
+		expect( next ).to.have.been.calledOnce;
+		expect( adder ).to.have.been.calledWith( store, action );
+	} );
+
+	test( 'should pass along non-local actions with non data-layer meta, with core handler', () => {
+		const adder = spy();
+		const handlers = {
+			[ 'ADD' ]: [ adder ],
+		};
+
+		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
+		addCoreHandlers( handlers, config );
 		const action = { type: 'ADD', meta: { semigroup: true } };
 
 		config.middleware( store )( next )( action );
@@ -80,7 +101,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		};
 
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		addExtensionHandlers( 'my-extension', handlers, config );
 		const action = { type: 'ADD', meta: { dataLayer: { groupoid: 42 } } };
 
 		config.middleware( store )( next )( action );
@@ -97,7 +118,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		};
 
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		addExtensionHandlers( 'my-extension', handlers, config );
 		const action = { type: 'ADD' };
 
 		config.middleware( store )( next )( action );
@@ -114,7 +135,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		};
 
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		addExtensionHandlers( 'my-extension', handlers, config );
 		const action = { type: 'ADD' };
 
 		config.middleware( store )( next )( action );
@@ -133,7 +154,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		};
 
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		addExtensionHandlers( 'my-extension', handlers, config );
 		const action = { type: 'MATHS' };
 
 		config.middleware( store )( next )( action );
@@ -155,8 +176,31 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		};
 
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'adder-extension', adderHandlers, config );
-		addHandlers( 'doubler-extension', doublerHandlers, config );
+		addExtensionHandlers( 'adder-extension', adderHandlers, config );
+		addExtensionHandlers( 'doubler-extension', doublerHandlers, config );
+		const action = { type: 'MATHS' };
+
+		config.middleware( store )( next )( action );
+
+		expect( adder ).to.have.been.calledWith( store, action );
+		expect( doubler ).to.have.been.calledWith( store, action );
+	} );
+
+	test( 'should call all given core handlers', () => {
+		const adder = spy();
+		const doubler = spy();
+
+		const adderHandlers = {
+			[ 'MATHS' ]: [ adder ],
+		};
+
+		const doublerHandlers = {
+			[ 'MATHS' ]: [ doubler ],
+		};
+
+		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
+		addCoreHandlers( adderHandlers, config );
+		addCoreHandlers( doublerHandlers, config );
 		const action = { type: 'MATHS' };
 
 		config.middleware( store )( next )( action );
@@ -173,13 +217,13 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		};
 
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', handlers, config );
+		addExtensionHandlers( 'my-extension', handlers, config );
 		const action = { type: 'MATHS' };
 
 		config.middleware( store )( next )( action );
 		expect( adder ).to.have.been.calledWith( store, action );
 
-		removeHandlers( 'my-extension', config );
+		removeExtensionHandlers( 'my-extension', config );
 
 		adder.reset();
 		config.middleware( store )( next )( action );
@@ -204,8 +248,8 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		const otherAction = { type: 'OTHER' };
 
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'adder-extension', adderHandlers, config );
-		addHandlers( 'doubler-extension', doublerHandlers, config );
+		addExtensionHandlers( 'adder-extension', adderHandlers, config );
+		addExtensionHandlers( 'doubler-extension', doublerHandlers, config );
 
 		config.middleware( store )( next )( mathsAction );
 		config.middleware( store )( next )( otherAction );
@@ -213,7 +257,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		expect( doubler ).to.have.been.calledWith( store, mathsAction );
 		expect( other ).to.have.been.calledWith( store, otherAction );
 
-		removeHandlers( 'adder-extension', config );
+		removeExtensionHandlers( 'adder-extension', config );
 
 		config.middleware( store )( next )( mathsAction );
 		config.middleware( store )( next )( otherAction );
@@ -224,17 +268,17 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 
 	test( 'should return false when trying to add handlers for the same extension twice.', () => {
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', {}, config );
+		addExtensionHandlers( 'my-extension', {}, config );
 
-		expect( addHandlers( 'my-extension', {}, config ) ).to.eql( false );
+		expect( addExtensionHandlers( 'my-extension', {}, config ) ).to.eql( false );
 	} );
 
 	test( 'should return false when trying to remove handlers for the same extension twice.', () => {
 		const config = configureMiddleware( Object.create( null ), Object.create( null ) );
-		addHandlers( 'my-extension', {}, config );
+		addExtensionHandlers( 'my-extension', {}, config );
 
-		expect( removeHandlers( 'my-extension', config ) ).to.eql( true );
-		expect( removeHandlers( 'my-extension', config ) ).to.eql( false );
+		expect( removeExtensionHandlers( 'my-extension', config ) ).to.eql( true );
+		expect( removeExtensionHandlers( 'my-extension', config ) ).to.eql( false );
 	} );
 
 	test( 'should create a new middleware and handleAction function each time it is reconfigured.', () => {
@@ -242,7 +286,7 @@ describe( 'Calypso Extensions Data Layer Middleware', () => {
 		const middleware1 = config.middleware;
 		const handleAction1 = config.handleAction;
 
-		addHandlers( 'my-extension', {}, config );
+		addExtensionHandlers( 'my-extension', {}, config );
 		const middleware2 = config.middleware;
 		const handleAction2 = config.handleAction;
 
