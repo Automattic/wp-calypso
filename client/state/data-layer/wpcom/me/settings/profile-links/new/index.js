@@ -17,23 +17,20 @@ import {
 /**
  * Dispatches a request to add profile links for the current user
  *
- * @param   {Function} dispatch Redux dispatcher
- * @param   {Object}   action   Redux action
+ * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
  */
-export const addUserProfileLinks = ( { dispatch }, action ) =>
-	dispatch(
-		http(
-			{
-				apiVersion: '1.2',
-				method: 'POST',
-				path: '/me/settings/profile-links/new',
-				body: {
-					links: action.profileLinks,
-				},
+export const addUserProfileLinks = action =>
+	http(
+		{
+			apiVersion: '1.2',
+			method: 'POST',
+			path: '/me/settings/profile-links/new',
+			body: {
+				links: action.profileLinks,
 			},
-			action
-		)
+		},
+		action
 	);
 
 /**
@@ -42,35 +39,33 @@ export const addUserProfileLinks = ( { dispatch }, action ) =>
  * - duplicate links
  * - malformed links
  *
- * @param   {Function} dispatch Redux dispatcher
- * @param   {Object}   action   Redux action
- * @param   {Array}    data     Response from the endpoint
+ * @param   {Object} action Redux action
+ * @param   {Array}  data   Response from the endpoint
  * @returns {Object} Dispatched user profile links add action
  */
-export const handleAddSuccess = ( { dispatch }, action, data ) => {
-	dispatch( addUserProfileLinksSuccess( data.profile_links ) );
+export const handleAddSuccess = ( action, data ) => {
+	const actions = [ addUserProfileLinksSuccess( action.profileLinks ) ];
 
 	if ( data.duplicate ) {
-		return dispatch( addUserProfileLinksDuplicate( data.duplicate ) );
+		actions.push( addUserProfileLinksDuplicate( data.duplicate ) );
+	} else if ( data.malformed ) {
+		actions.push( addUserProfileLinksMalformed( data.malformed ) );
+	} else {
+		actions.push( receiveUserProfileLinks( data.profile_links ) );
 	}
 
-	if ( data.malformed ) {
-		return dispatch( addUserProfileLinksMalformed( data.malformed ) );
-	}
-
-	return dispatch( receiveUserProfileLinks( data.profile_links ) );
+	return actions;
 };
 
 /**
  * Dispatches a user profile links add error action when the request failed.
  *
- * @param   {Function} dispatch Redux dispatcher
- * @param   {Object}   action   Redux action
- * @param   {Object}   error    Error returned
+ * @param   {Object} action Redux action
+ * @param   {Object} error  Error returned
  * @returns {Object} Dispatched user profile links add error action
  */
-export const handleAddError = ( { dispatch }, { profileLinks }, error ) =>
-	dispatch( addUserProfileLinksError( profileLinks, error ) );
+export const handleAddError = ( { profileLinks }, error ) =>
+	addUserProfileLinksError( profileLinks, error );
 
 export default {
 	[ USER_PROFILE_LINKS_ADD ]: [

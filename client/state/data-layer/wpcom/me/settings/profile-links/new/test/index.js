@@ -32,14 +32,11 @@ const error = {
 };
 
 describe( 'addUserProfileLinks()', () => {
-	test( 'should dispatch a POST HTTP request to the users new profile links endpoint', () => {
-		const dispatch = jest.fn();
+	test( 'should return an action for POST HTTP request to the users new profile links endpoint', () => {
 		const action = addUserProfileLinksAction( profileLinks );
+		const testAction = addUserProfileLinks( action );
 
-		addUserProfileLinks( { dispatch }, action );
-
-		expect( dispatch ).toHaveBeenCalledTimes( 1 );
-		expect( dispatch ).toHaveBeenCalledWith(
+		expect( testAction ).toEqual(
 			http(
 				{
 					apiVersion: '1.2',
@@ -56,53 +53,48 @@ describe( 'addUserProfileLinks()', () => {
 } );
 
 describe( 'handleAddSuccess()', () => {
-	test( 'should dispatch user profile links add success and receive actions', () => {
-		const dispatch = jest.fn();
+	const successAction = addUserProfileLinksSuccess( profileLinks );
+
+	test( 'should return user profile links add success and receive actions', () => {
 		const data = { profile_links: profileLinks };
+		const actions = handleAddSuccess( successAction, data );
 
-		handleAddSuccess( { dispatch }, null, data );
-
-		expect( dispatch ).toHaveBeenCalledTimes( 2 );
-		expect( dispatch ).toHaveBeenCalledWith( addUserProfileLinksSuccess( profileLinks ) );
-		expect( dispatch ).toHaveBeenCalledWith( receiveUserProfileLinks( profileLinks ) );
+		expect( actions ).toHaveLength( 2 );
+		expect( actions[ 0 ] ).toEqual( successAction );
+		expect( actions[ 1 ] ).toEqual( receiveUserProfileLinks( profileLinks ) );
 	} );
 
-	test( 'should dispatch user profile links add success and duplicate actions', () => {
-		const dispatch = jest.fn();
+	test( 'should return user profile links add success and duplicate actions', () => {
 		const data = {
 			profile_links: [ profileLinks[ 0 ] ],
 			duplicate: [ profileLinks[ 1 ] ],
 		};
+		const duplicateAction = addUserProfileLinksDuplicate( data.duplicate );
+		const actions = handleAddSuccess( { profileLinks }, data );
 
-		handleAddSuccess( { dispatch }, null, data );
-
-		expect( dispatch ).toHaveBeenCalledTimes( 2 );
-		expect( dispatch ).toHaveBeenCalledWith( addUserProfileLinksSuccess( data.profile_links ) );
-		expect( dispatch ).toHaveBeenCalledWith( addUserProfileLinksDuplicate( data.duplicate ) );
+		expect( actions ).toHaveLength( 2 );
+		expect( actions[ 0 ] ).toEqual( successAction );
+		expect( actions[ 1 ] ).toEqual( duplicateAction );
 	} );
 
-	test( 'should dispatch user profile links add success and malformed actions', () => {
-		const dispatch = jest.fn();
+	test( 'should return user profile links add success and malformed actions', () => {
 		const data = {
 			profile_links: [ profileLinks[ 0 ] ],
 			malformed: [ profileLinks[ 1 ] ],
 		};
+		const malformedAction = addUserProfileLinksMalformed( data.malformed );
+		const actions = handleAddSuccess( { profileLinks }, data );
 
-		handleAddSuccess( { dispatch }, null, data );
-
-		expect( dispatch ).toHaveBeenCalledTimes( 2 );
-		expect( dispatch ).toHaveBeenCalledWith( addUserProfileLinksSuccess( data.profile_links ) );
-		expect( dispatch ).toHaveBeenCalledWith( addUserProfileLinksMalformed( data.malformed ) );
+		expect( actions ).toHaveLength( 2 );
+		expect( actions[ 0 ] ).toEqual( successAction );
+		expect( actions[ 1 ] ).toEqual( malformedAction );
 	} );
 } );
 
 describe( 'handleAddError()', () => {
-	test( 'should dispatch user profile links add error action', () => {
-		const dispatch = jest.fn();
+	test( 'should return a user profile links add error action', () => {
+		const action = handleAddError( { profileLinks }, error );
 
-		handleAddError( { dispatch }, { profileLinks }, error );
-
-		expect( dispatch ).toHaveBeenCalledTimes( 1 );
-		expect( dispatch ).toHaveBeenCalledWith( addUserProfileLinksError( profileLinks, error ) );
+		expect( action ).toEqual( addUserProfileLinksError( profileLinks, error ) );
 	} );
 } );

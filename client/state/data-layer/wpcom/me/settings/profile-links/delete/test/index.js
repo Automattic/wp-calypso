@@ -11,21 +11,18 @@ import {
 } from 'state/profile-links/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
+const linkSlug = 'https-wordpress-com';
 const error = {
 	status: 403,
 	message: 'An active access token must be used to query information about the current user.',
 };
 
 describe( 'deleteUserProfileLink()', () => {
-	test( 'should dispatch a POST HTTP request to the delete user profile link endpoint', () => {
-		const dispatch = jest.fn();
-		const linkSlug = 'https-wordpress-com';
+	test( 'should return an action for POST HTTP request to the delete user profile link endpoint', () => {
 		const action = deleteUserProfileLinkAction( linkSlug );
+		const testAction = deleteUserProfileLink( action );
 
-		deleteUserProfileLink( { dispatch }, action );
-
-		expect( dispatch ).toHaveBeenCalledTimes( 1 );
-		expect( dispatch ).toHaveBeenCalledWith(
+		expect( testAction ).toEqual(
 			http(
 				{
 					apiVersion: '1.1',
@@ -39,25 +36,17 @@ describe( 'deleteUserProfileLink()', () => {
 } );
 
 describe( 'handleDeleteSuccess()', () => {
-	test( 'should dispatch user profile links delete success action', () => {
-		const dispatch = jest.fn();
-		const linkSlug = 'https-wordpress-com';
+	test( 'should return a user profile links delete success action', () => {
+		const action = handleDeleteSuccess( { linkSlug } );
 
-		handleDeleteSuccess( { dispatch }, { linkSlug } );
-
-		expect( dispatch ).toHaveBeenCalledTimes( 1 );
-		expect( dispatch ).toHaveBeenCalledWith( deleteUserProfileLinkSuccess( linkSlug ) );
+		expect( action ).toEqual( deleteUserProfileLinkSuccess( linkSlug ) );
 	} );
 } );
 
 describe( 'handleDeleteError()', () => {
-	test( 'should dispatch user profile links add error action', () => {
-		const dispatch = jest.fn();
-		const linkSlug = 'https-wordpress-com';
+	test( 'should return a user profile links add error action', () => {
+		const action = handleDeleteError( { linkSlug }, error );
 
-		handleDeleteError( { dispatch }, { linkSlug }, error );
-
-		expect( dispatch ).toHaveBeenCalledTimes( 1 );
-		expect( dispatch ).toHaveBeenCalledWith( deleteUserProfileLinkError( linkSlug, error ) );
+		expect( action ).toEqual( deleteUserProfileLinkError( linkSlug, error ) );
 	} );
 } );
