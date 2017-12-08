@@ -80,6 +80,7 @@ export class EditorMediaModal extends Component {
 		setView: PropTypes.func,
 		resetView: PropTypes.func,
 		postId: PropTypes.number,
+		disableLargeImageSources: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -94,6 +95,7 @@ export class EditorMediaModal extends Component {
 		view: ModalViews.LIST,
 		imageEditorProps: {},
 		deleteMedia: () => {},
+		disableLargeImageSources: false,
 	};
 
 	constructor( props ) {
@@ -587,6 +589,7 @@ export class EditorMediaModal extends Component {
 						onViewDetails={ this.props.onViewDetails }
 						mediaLibrarySelectedItems={ this.props.mediaLibrarySelectedItems }
 						postId={ this.props.postId }
+						disableLargeImageSources={ this.props.disableLargeImageSources }
 						scrollable
 					/>
 				);

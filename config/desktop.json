@@ -32,7 +32,7 @@
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,
 		"external-media": true,
-		"external-free-photo-library": true,
+		"external-media/free-photo-library": true,
 		"fluid-width": true,
 		"help": true,
 		"help/courses": true,

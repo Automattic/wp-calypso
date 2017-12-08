@@ -516,7 +516,7 @@ export class EditorHtmlToolbar extends Component {
 					</div>
 				) }
 
-				{ config.isEnabled( 'external-free-photo-library' ) && (
+				{ config.isEnabled( 'external-media/free-photo-library' ) && (
 					<div
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openPexelsModal }

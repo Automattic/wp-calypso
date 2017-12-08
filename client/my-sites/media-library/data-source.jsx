@@ -83,7 +83,7 @@ export class MediaLibraryDataSource extends Component {
 				icon: <Gridicon icon="image" size={ 24 } />,
 			},
 		];
-		if ( config.isEnabled( 'external-free-photo-library' ) ) {
+		if ( config.isEnabled( 'external-media/free-photo-library' ) ) {
 			sources.push( {
 				value: 'pexels',
 				label: translate( 'Free photo library' ),

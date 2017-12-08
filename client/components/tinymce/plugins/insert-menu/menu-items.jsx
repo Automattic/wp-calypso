@@ -44,7 +44,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 		),
 		cmd: 'googleAddMedia',
 	} );
-	if ( config.isEnabled( 'external-free-photo-library' ) ) {
+	if ( config.isEnabled( 'external-media/free-photo-library' ) ) {
 		menuItems.push( {
 			name: 'insert_from_pexels',
 			item: (
