@@ -70,11 +70,11 @@ export function getNewDismissTimes( dismissedSection, currentDismissTimes ) {
 		ALLOWED_SECTIONS,
 		( result, section ) => {
 			if ( section === dismissedSection ) {
-				// Dismiss selected section for a year.
+				// Dismiss selected section for a month.
 				result[ section ] = aMonthFromNow;
 			} else {
 				// Dismiss all other sections for a week, but make sure that we preserve previous dismiss time
-				// if it was longer than that (e.g. if other section was also dismissed for a year).
+				// if it was longer than that (e.g. if other section was also dismissed for a month).
 				result[ section ] =
 					get( currentDismissTimes, section, -Infinity ) > aWeekFromNow
 						? get( currentDismissTimes, section )
