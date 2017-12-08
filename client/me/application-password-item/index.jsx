@@ -3,18 +3,17 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { recordGoogleEvent } from 'state/analytics/actions';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { errorNotice } from 'state/notices/actions';
 import Button from 'components/button';
+import { errorNotice } from 'state/notices/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 class ApplicationPasswordsItem extends React.Component {
 	state = {
