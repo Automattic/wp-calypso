@@ -20,9 +20,27 @@ const state = {
 					i_like: false,
 					contiguous: true,
 					like_count: 0,
+					status: 'approved',
+					author: { ID: 1 },
 				},
-				{ ID: 1, parent: false, date: '2016-01-31T10:07:18-08:00', i_like: true, like_count: 5 },
-				{ ID: 2, parent: false, date: '2016-01-29T10:07:18-08:00', i_like: false, like_count: 456 },
+				{
+					ID: 1,
+					parent: false,
+					date: '2016-01-31T10:07:18-08:00',
+					i_like: true,
+					like_count: 5,
+					status: 'unapproved',
+					author: { ID: 1 },
+				},
+				{
+					ID: 2,
+					parent: false,
+					date: '2016-01-29T10:07:18-08:00',
+					i_like: false,
+					like_count: 456,
+					status: 'unapproved',
+					author: { ID: 2 },
+				},
 				{
 					ID: 4,
 					parent: { ID: 2 },
@@ -30,6 +48,8 @@ const state = {
 					i_like: false,
 					contiguous: true,
 					like_count: 0,
+					status: 'approved',
+					author: { ID: 1 },
 				},
 			],
 		},
@@ -133,6 +153,11 @@ describe( 'selectors', () => {
 	describe( '#getPostCommentsTree', () => {
 		test( 'should return the tree structure', () => {
 			const tree = getPostCommentsTree( state, 1, 1, 'all' );
+			expect( tree ).toMatchSnapshot();
+		} );
+
+		test( 'filters other pending posts', () => {
+			const tree = getPostCommentsTree( state, 1, 1, 'all', 1 );
 			expect( tree ).toMatchSnapshot();
 		} );
 
