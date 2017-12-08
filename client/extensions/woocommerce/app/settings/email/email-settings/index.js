@@ -146,7 +146,8 @@ class Settings extends React.Component {
 				key={ index }
 				item={ item }
 				isPlaceholder={ loading }
-				recipient={ loaded ? settings[ item.field ][ item.option ] : '' }
+				recipient={ loaded ? settings[ item.field ][ item.option ].value : '' }
+				placeholder={ loaded ? settings[ item.field ][ item.option ].default : '' }
 				onChange={ this.onChange }
 				checkEmail={ item.checkEmail }
 			/>
@@ -159,8 +160,9 @@ class Settings extends React.Component {
 			<InternalNotification
 				key={ index }
 				item={ item }
-				checked={ 'yes' === ( loaded && settings[ item.field ].enabled ) }
-				recipient={ loaded ? settings[ item.field ].recipient : '' }
+				checked={ 'yes' === ( loaded && settings[ item.field ].enabled.value ) }
+				recipient={ loaded ? settings[ item.field ].recipient.value : '' }
+				placeholder={ loaded ? settings[ item.field ].recipient.default : '' }
 				isPlaceholder={ loading }
 				onChange={ this.onChange }
 			/>
@@ -174,7 +176,7 @@ class Settings extends React.Component {
 				key={ index }
 				item={ item }
 				isPlaceholder={ loading }
-				checked={ 'yes' === ( loaded && settings[ item.field ].enabled ) }
+				checked={ 'yes' === ( loaded && settings[ item.field ].enabled.value ) }
 				onChange={ this.onChange }
 			/>
 		);

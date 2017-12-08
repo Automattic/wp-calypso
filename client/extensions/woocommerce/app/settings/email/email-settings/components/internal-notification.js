@@ -19,7 +19,14 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextValidation from 'components/forms/form-input-validation';
 import { checkEmails } from './helpers';
 
-const InternalNotification = ( { item, recipient, checked, onChange, isPlaceholder } ) => {
+const InternalNotification = ( {
+	item,
+	recipient,
+	checked,
+	onChange,
+	isPlaceholder,
+	placeholder,
+} ) => {
 	//Add field name to returned value
 	const toggle = value => {
 		onChange( {
@@ -61,6 +68,7 @@ const InternalNotification = ( { item, recipient, checked, onChange, isPlacehold
 					name={ item.field }
 					onChange={ change }
 					value={ recipient }
+					placeholder={ placeholder }
 				/>
 				{ emailValidationError && (
 					<FormTextValidation isError={ true } text={ checkedEmails.messages[ 0 ].msg } />

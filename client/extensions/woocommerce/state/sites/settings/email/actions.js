@@ -106,11 +106,11 @@ export const emailSettingsSubmitSettings = ( siteId, settings ) => dispatch => {
 	const update = reduce(
 		omit( settings, [ 'save', 'isSaving', 'error' ] ),
 		( result, options, group_id ) => {
-			forEach( options, ( value, id ) => {
+			forEach( options, ( option, id ) => {
 				result.push( {
 					group_id,
 					id,
-					value,
+					value: option.value,
 				} );
 			} );
 			return result;

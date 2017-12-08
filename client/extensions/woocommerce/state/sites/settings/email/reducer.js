@@ -26,7 +26,15 @@ export default createReducer( null, {
 	[ WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS ]: ( state, { data } ) => {
 		const options = {};
 		data.forEach( function( option ) {
-			setWith( options, [ option.group_id, option.id ], option.value, Object );
+			setWith(
+				options,
+				[ option.group_id, option.id ],
+				{
+					value: option.value,
+					default: option.default, // deafualt_value -> default is a reserved word
+				},
+				Object,
+			);
 		} );
 		return options;
 	},
@@ -37,7 +45,7 @@ export default createReducer( null, {
 		}
 
 		const settings = Object.assign( {}, state );
-		settings[ setting.setting ][ setting.option ] = setting.value;
+		settings[ setting.setting ][ setting.option ].value = setting.value;
 		return settings;
 	},
 
