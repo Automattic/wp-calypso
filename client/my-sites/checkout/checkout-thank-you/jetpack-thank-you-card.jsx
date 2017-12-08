@@ -567,7 +567,7 @@ class JetpackThankYouCard extends Component {
 						} ) }
 						href={ buttonUrl }
 					>
-						{ translate( 'Configure your plan' ) }
+						{ translate( 'Explore your plan' ) }
 					</a>
 					{ this.renderLiveChatButton() }
 				</div>
