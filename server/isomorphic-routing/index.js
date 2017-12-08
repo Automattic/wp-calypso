@@ -74,6 +74,7 @@ function getEnhancedContext( req, res ) {
 		protocol: req.protocol,
 		host: req.headers.host,
 		redirect: res.redirect.bind( res ),
+		res,
 	} );
 }
 
