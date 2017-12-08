@@ -30,7 +30,7 @@ import { getReaderTeams } from 'state/selectors';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
-import { READER_POST_OPTIONS_MENU } from 'reader/follow-button/follow-sources';
+import { READER_POST_OPTIONS_MENU } from 'reader/follow-sources';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {

@@ -20,7 +20,7 @@ import RecommendedPosts from './recommended-posts';
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
 import PostBlocked from 'blocks/reader-post-card/blocked';
 import Post from './post';
-import { IN_STREAM_RECOMMENDATION } from 'reader/follow-button/follow-sources';
+import { IN_STREAM_RECOMMENDATION } from 'reader/follow-sources';
 import CombinedCard from 'blocks/reader-combined-card';
 import fluxPostAdapter from 'lib/reader-post-flux-adapter';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';

@@ -37,7 +37,7 @@ import FollowButton from 'reader/follow-button';
 import {
 	READER_FOLLOWING_MANAGE_URL_INPUT,
 	READER_FOLLOWING_MANAGE_RECOMMENDATION,
-} from 'reader/follow-button/follow-sources';
+} from 'reader/follow-sources';
 import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
 import { getReaderFollowsCount } from 'state/selectors';
 import { recordTrack, recordAction } from 'reader/stats';
