@@ -56,7 +56,7 @@ export const getOrdersCurrentSearch = ( state, siteId = getSelectedSiteId( state
  * Get a default order "frame", so we have values for components.
  * @return {Object} The local edits made to the current order
  */
-const getDefaultEmptyOrder = () => {
+export const getDefaultEmptyOrder = () => {
 	const currency = 'USD';
 
 	return {
@@ -72,8 +72,6 @@ const getDefaultEmptyOrder = () => {
 		prices_include_tax: false,
 		billing: {},
 		shipping: {},
-		// payment_method: '',
-		// payment_method_title: '',
 		line_items: [],
 		tax_lines: [],
 		shipping_lines: [],
