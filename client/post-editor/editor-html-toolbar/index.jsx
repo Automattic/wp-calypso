@@ -506,7 +506,7 @@ export class EditorHtmlToolbar extends Component {
 					<span data-e2e-insert-type="media">{ translate( 'Media' ) }</span>
 				</div>
 
-				{ config.isEnabled( 'external-media' ) && (
+				{ config.isEnabled( 'external-media/google-photos' ) && (
 					<div
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openGoogleModal }
