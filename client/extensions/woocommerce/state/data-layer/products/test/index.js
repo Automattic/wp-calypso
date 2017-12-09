@@ -6,6 +6,8 @@
 import { expect } from 'chai';
 import { spy, match } from 'sinon';
 
+jest.mock( 'lib/warn', () => () => {} );
+
 /**
  * Internal dependencies
  */
