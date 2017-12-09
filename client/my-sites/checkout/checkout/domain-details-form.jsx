@@ -256,6 +256,10 @@ export class DomainDetailsForm extends PureComponent {
 			value,
 		} );
 
+		if ( ! countries[ countryCode ] ) {
+			return;
+		}
+
 		this.setState( {
 			phoneCountryCode: countryCode,
 		} );
