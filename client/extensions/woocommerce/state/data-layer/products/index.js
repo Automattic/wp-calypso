@@ -3,7 +3,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { omitBy } from 'lodash';
+import { isUndefined, mapValues, omitBy } from 'lodash';
 import qs from 'querystring';
 import warn from 'lib/warn';
 
@@ -100,8 +100,17 @@ export function handleProductUpdate( { dispatch }, action ) {
 		return;
 	}
 
+	const data = mapValues( product, value => {
+		// JSON doesn't allow undefined,
+		// so change it to empty string for properties to be removed.
+		if ( isUndefined( value ) ) {
+			return '';
+		}
+		return value;
+	} );
+
 	const updatedSuccessAction = updatedAction( siteId, action, successAction, product );
-	dispatch( put( siteId, 'products/' + product.id, product, updatedSuccessAction, failureAction ) );
+	dispatch( put( siteId, 'products/' + product.id, data, updatedSuccessAction, failureAction ) );
 }
 
 export function handleProductRequest( { dispatch }, action ) {
