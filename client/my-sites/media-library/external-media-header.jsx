@@ -124,11 +124,11 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 
 	renderCard() {
-		const { onMediaScaleChange, translate, canCopy, hasRefreshButton } = this.props;
+		const { onMediaScaleChange, translate, canCopy, hasRefreshButton, hasAttribution } = this.props;
 
 		return (
 			<Card className="media-library__header">
-				{ 'pexels' === source && this.renderPexelsAttribution() }
+				{ hasAttribution && this.renderPexelsAttribution() }
 
 				{ hasRefreshButton && (
 					<Button compact disabled={ this.state.fetching } onClick={ this.handleClick }>
