@@ -91,8 +91,8 @@ class ProductSearch extends Component {
 		this.props.onChange( newValue );
 	};
 
-	onProductRadio = productId => {
-		this.props.onChange( productId );
+	onProductRadio = ( productId, parentId ) => {
+		this.props.onChange( productId, parentId );
 	};
 
 	renderSearch = () => {

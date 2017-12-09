@@ -24,10 +24,10 @@ import { fetchPromotions, createPromotion } from 'woocommerce/state/sites/promot
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
+import { areProductsLoading, getAllProducts } from 'woocommerce/state/sites/products/selectors';
 import {
 	getCurrentlyEditingPromotionId,
 	getPromotionEdits,
-	getPromotionableProducts,
 	getPromotionWithLocalEdits,
 } from 'woocommerce/state/selectors/promotions';
 import PromotionHeader from './promotion-header';
@@ -210,7 +210,8 @@ function mapStateToProps( state ) {
 	const promotionId = getCurrentlyEditingPromotionId( state, site.ID );
 	const promotion = promotionId ? getPromotionWithLocalEdits( state, promotionId, site.ID ) : null;
 	const hasEdits = Boolean( getPromotionEdits( state, promotionId, site.ID ) );
-	const products = getPromotionableProducts( state, site.ID );
+	const productsLoading = areProductsLoading( state, site.ID );
+	const products = productsLoading ? null : getAllProducts( state, site.ID );
 	const productCategories = getProductCategories( state, {}, site.ID );
 
 	return {

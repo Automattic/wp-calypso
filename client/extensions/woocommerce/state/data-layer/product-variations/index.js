@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-
-import { isNumber } from 'lodash';
+import { isNumber, isUndefined, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -91,8 +90,17 @@ export function handleProductVariationUpdate( store, action ) {
 		dispatchWithProps( dispatch, getState, successAction, props );
 	};
 
+	const data = mapValues( variation, value => {
+		// JSON doesn't allow undefined,
+		// so change it to empty string for properties to be removed.
+		if ( isUndefined( value ) ) {
+			return '';
+		}
+		return value;
+	} );
+
 	const endpoint = 'products/' + productId + '/variations/' + variation.id;
-	store.dispatch( put( siteId, endpoint, variation, updatedAction, failureAction ) );
+	store.dispatch( put( siteId, endpoint, data, updatedAction, failureAction ) );
 }
 
 export function handleProductVariationDelete( store, action ) {

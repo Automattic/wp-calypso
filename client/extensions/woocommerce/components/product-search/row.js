@@ -123,7 +123,8 @@ class ProductSearchRow extends Component {
 			} );
 			const variationId = get( matchingVariations, '[0].id', false );
 			if ( variationId && ! this.isSelected( variationId ) ) {
-				this.props.onChange( variationId );
+				const { product } = this.props;
+				this.props.onChange( variationId, product.id );
 			}
 			if ( typeof callback === 'function' ) {
 				callback();
@@ -191,7 +192,7 @@ class ProductSearchRow extends Component {
 		if ( isVariableProduct( product ) ) {
 			return (
 				<span>
-					<span>{ nameWithPrice }</span>
+					<span>{ product.name }</span>
 					<Button compact onClick={ this.toggleCustomizeForm }>
 						{ translate( 'Select variations' ) }
 					</Button>
