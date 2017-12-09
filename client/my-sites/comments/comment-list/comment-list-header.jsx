@@ -16,10 +16,14 @@ import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { gmtOffset, timezone } from 'lib/site/utils';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { getSiteComments } from 'state/selectors';
+import { getSiteComments, hasNavigated } from 'state/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+
+function goBack() {
+	window.history.back();
+}
 
 export const CommentListHeader = ( {
 	postDate,
@@ -30,6 +34,7 @@ export const CommentListHeader = ( {
 	site,
 	siteId,
 	siteSlug,
+	navigated,
 	translate,
 } ) => {
 	const formattedDate = postDate
@@ -37,6 +42,9 @@ export const CommentListHeader = ( {
 		: '';
 
 	const title = postTitle.trim() || translate( 'Untitled' );
+
+	const shouldUseHistoryBack = window.history.length > 1 && navigated;
+	const backHref = ! shouldUseHistoryBack ? `/comments/all/${ siteSlug }` : null;
 
 	return (
 		<div className="comment-list__header">
@@ -47,7 +55,8 @@ export const CommentListHeader = ( {
 				actionIcon="visible"
 				actionOnClick={ recordReaderArticleOpened }
 				actionText={ translate( 'View Post' ) }
-				backHref={ `/comments/all/${ siteSlug }` }
+				onClick={ shouldUseHistoryBack && goBack }
+				backHref={ backHref }
 				alwaysShowActionText
 			>
 				<div className="comment-list__header-title">
@@ -76,6 +85,7 @@ const mapStateToProps = ( state, { postId } ) => {
 		)
 	);
 	const isJetpack = isJetpackSite( state, siteId );
+	const navigated = hasNavigated( state );
 
 	return {
 		postDate,
@@ -84,6 +94,7 @@ const mapStateToProps = ( state, { postId } ) => {
 		site,
 		siteId,
 		siteSlug,
+		navigated,
 	};
 };
 
