@@ -292,7 +292,7 @@ export class LoginForm extends Component {
 										: this.props.translate( 'Change Username' ) }
 								</a>
 							) : (
-								this.props.translate( 'Email Address or Username' )
+								this.props.translate( 'Email Address' )
 							) }
 						</label>
 
