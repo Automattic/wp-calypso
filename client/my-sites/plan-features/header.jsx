@@ -51,13 +51,15 @@ class PlanFeaturesHeader extends Component {
 	}
 
 	renderPlansHeader() {
-		const { planType, popular, newPlan, title, translate } = this.props;
+		const { planType, popular, selectedPlan, newPlan, title, translate } = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
+
 		return (
 			<header className={ headerClasses } onClick={ this.props.onClick }>
-				{ popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
-				{ newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
+				{ planType === selectedPlan && <Ribbon>{ translate( 'Suggested' ) }</Ribbon> }
+				{ popular && ! selectedPlan && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
+				{ newPlan && ! selectedPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
 				{ this.isPlanCurrent() && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon> }
 				<div className="plan-features__header-figure">
 					<PlanIcon plan={ planType } />
@@ -75,12 +77,12 @@ class PlanFeaturesHeader extends Component {
 		const { planType, popular, newPlan, title, audience, translate } = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
+
 		return (
 			<div className="plan-features__header-wrapper">
 				<header className={ headerClasses } onClick={ this.props.onClick }>
-					{ popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
 					{ newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
-
+					{ popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
 					<div className="plan-features__header-text">
 						<h4 className="plan-features__header-title">{ title }</h4>
 						{ audience }

@@ -214,6 +214,7 @@ class PlanFeatures extends Component {
 			isInSignup,
 			siteType,
 			displayJetpackPlans,
+			selectedPlan,
 		} = this.props;
 
 		return map( planProperties, properties => {
@@ -272,6 +273,7 @@ class PlanFeatures extends Component {
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						isInSignup={ isInSignup }
+						selectedPlan={ selectedPlan }
 					/>
 				</td>
 			);
