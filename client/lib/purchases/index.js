@@ -11,7 +11,13 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isJetpackPlan, isDomainRegistration, isPlan, isTheme } from 'lib/products-values';
+import {
+	isJetpackPlan,
+	isDomainRegistration,
+	isDomainTransfer,
+	isPlan,
+	isTheme,
+} from 'lib/products-values';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;
@@ -184,7 +190,24 @@ function isRemovable( purchase ) {
 		return false;
 	}
 
-	return isExpiring( purchase ) || isExpired( purchase );
+	return (
+		isExpiring( purchase ) ||
+		isExpired( purchase ) ||
+		( isDomainTransfer( purchase ) &&
+			! isRefundable( purchase ) &&
+			isPurchaseCancelable( purchase ) )
+	);
+}
+
+/**
+ * Returns the purchase cancelable flag, as opposed to the super weird isCancelable function which
+ * manually checks all kinds of stuff
+ *
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @return {boolean} true if the purchase has cancelable flag, false otherwise
+ */
+function isPurchaseCancelable( purchase ) {
+	return purchase.isCancelable;
 }
 
 /**
