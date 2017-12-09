@@ -35,7 +35,7 @@ const DateField = ( props ) => {
 DateField.propTypes = {
 	fieldName: PropTypes.string,
 	explanationText: PropTypes.string,
-	value: PropTypes.number,
+	value: PropTypes.string,
 	edit: PropTypes.func,
 };
 

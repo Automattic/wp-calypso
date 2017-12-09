@@ -4,6 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { concat } from 'lodash';
 
 /**
  * Internal dependencies
@@ -104,14 +105,13 @@ class PromotionAppliesToField extends React.Component {
 		this.initializeValue( appliesToType );
 	};
 
-	onProductIdChange = ( productId ) => {
+	onProductIdsChange = ( productIds, parentId ) => {
 		const { edit } = this.props;
-		edit( 'appliesTo', { productIds: [ productId ] } );
-	};
 
-	onProductIdsChange = ( productIds ) => {
-		const { edit } = this.props;
-		edit( 'appliesTo', { productIds } );
+		edit( 'appliesTo', { productIds: concat( [], productIds ) } );
+		if ( parentId ) {
+			edit( 'parentId', parentId );
+		}
 	};
 
 	renderProducts = ( appliesTo, singular ) => {
@@ -120,7 +120,7 @@ class PromotionAppliesToField extends React.Component {
 		return (
 			<ProductSearch
 				value={ productIds }
-				onChange={ ( singular ? this.onProductIdChange : this.onProductIdsChange ) }
+				onChange={ this.onProductIdsChange }
 				singular={ singular }
 			/>
 		);
