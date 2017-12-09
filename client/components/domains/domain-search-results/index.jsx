@@ -68,7 +68,7 @@ class DomainSearchResults extends React.Component {
 			'domain-search-results__domain-not-available': ! availableDomain,
 		} );
 		const suggestions = this.props.suggestions || [];
-		const { MAPPABLE, MAPPED, UNKNOWN } = domainAvailability;
+		const { MAPPABLE, MAPPED, TRANSFERRABLE, UNKNOWN } = domainAvailability;
 
 		let availabilityElement, domainSuggestionElement, offer;
 
@@ -94,7 +94,7 @@ class DomainSearchResults extends React.Component {
 			);
 		} else if (
 			suggestions.length !== 0 &&
-			includes( [ MAPPABLE, MAPPED, UNKNOWN ], lastDomainStatus ) &&
+			includes( [ TRANSFERRABLE, MAPPABLE, MAPPED, UNKNOWN ], lastDomainStatus ) &&
 			this.props.products.domain_map
 		) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
@@ -131,32 +131,33 @@ class DomainSearchResults extends React.Component {
 							args: { domain },
 							components: { strong: <strong /> },
 						} );
-
 			if ( this.props.offerUnavailableOption ) {
 				if (
 					this.props.siteDesignType !== DESIGN_TYPE_STORE &&
 					this.props.transferInAllowed &&
 					! this.props.isSignupStep &&
 					lastDomainIsTransferrable &&
-					includes( [ MAPPABLE, MAPPED ], lastDomainStatus )
+					includes( [ TRANSFERRABLE, MAPPABLE ], lastDomainStatus )
 				) {
-					availabilityElement = (
-						<Card className="domain-search-results__transfer-card" highlight="info">
-							<div className="domain-search-results__transfer-card-copy">
-								<div>{ domainUnavailableMessage }</div>
-								<p>
-									{ translate(
-										'If you already own this domain you can use it for your WordPress.com site.'
-									) }
-								</p>
-							</div>
-							<div className="domain-search-results__transfer-card-link">
-								{ translate( '{{a}}Yes, I own this domain{{/a}}', {
-									components: { a: <a href="#" onClick={ this.props.onClickTransfer } /> },
-								} ) }
-							</div>
-						</Card>
-					);
+					if ( TRANSFERRABLE === lastDomainStatus ) {
+						availabilityElement = (
+							<Card className="domain-search-results__transfer-card" highlight="info">
+								<div className="domain-search-results__transfer-card-copy">
+									<div>{ domainUnavailableMessage }</div>
+									<p>
+										{ translate(
+											'If you already own this domain you can use it for your WordPress.com site.'
+										) }
+									</p>
+								</div>
+								<div className="domain-search-results__transfer-card-link">
+									{ translate( '{{a}}Yes, I own this domain{{/a}}', {
+										components: { a: <a href="#" onClick={ this.props.onClickTransfer } /> },
+									} ) }
+								</div>
+							</Card>
+						);
+					}
 				} else if ( lastDomainStatus !== MAPPED ) {
 					availabilityElement = (
 						<Notice status="is-warning" showDismiss={ false }>

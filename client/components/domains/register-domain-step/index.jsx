@@ -398,12 +398,13 @@ class RegisterDomainStep extends React.Component {
 							const timeDiff = Date.now() - timestamp;
 							const status = get( result, 'status', error );
 
-							const { AVAILABLE, UNKNOWN } = domainAvailability;
+							const { AVAILABLE, TRANSFERRABLE, UNKNOWN } = domainAvailability;
 							const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
+							const isDomainTransferrable = includes( [ TRANSFERRABLE ], status );
 
 							this.setState( {
 								lastDomainStatus: status,
-								lastDomainIsTransferrable: !! result.transferrable,
+								lastDomainIsTransferrable: isDomainTransferrable,
 							} );
 							if ( isDomainAvailable ) {
 								this.setState( { notice: null } );
@@ -762,9 +763,10 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	showValidationErrorMessage( domain, error ) {
+		const { MAPPED, TRANSFERRABLE } = domainAvailability;
 		if (
 			this.props.transferInAllowed &&
-			includes( [ domainAvailability.MAPPED ], error ) &&
+			includes( [ MAPPED, TRANSFERRABLE ], error ) &&
 			this.state.lastDomainIsTransferrable
 		) {
 			return;

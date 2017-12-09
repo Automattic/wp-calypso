@@ -112,7 +112,7 @@ function getAvailabilityNotice( domain, error, site ) {
 				args: { domain },
 			} );
 			break;
-		case domainAvailability.TRANSFER_IN_PROGRESS_SAME_USER:
+		case domainAvailability.TRANSFER_PENDING_SAME_USER:
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is pending transfer. {{a}}Check the transfer status{{/a}} to learn more.',
 				{
@@ -130,7 +130,7 @@ function getAvailabilityNotice( domain, error, site ) {
 				}
 			);
 			break;
-		case domainAvailability.TRANSFER_IN_PROGRESS:
+		case domainAvailability.TRANSFER_PENDING:
 			message = translate(
 				"{{strong}}%(domain)s{{/strong}} is pending transfer and can't be conected to WordPress.com right now. " +
 					'{{a}}Learn More.{{/a}}',
@@ -266,26 +266,6 @@ function getAvailabilityNotice( domain, error, site ) {
 		case domainAvailability.INVALID_QUERY:
 			message = translate(
 				'Your search term can only contain alphanumeric characters, spaces, dots, or hyphens.'
-			);
-			break;
-
-		case domainAvailability.TRANSFER_PENDING:
-			message = translate(
-				"{{strong}}%(domain)s{{/strong}} is pending transfer and can't be connected to WordPress.com right now. " +
-					'{{a}}Learn more{{/a}}.',
-				{
-					args: { domain },
-					components: {
-						strong: <strong />,
-						a: (
-							<a
-								href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
-								rel="noopener noreferrer"
-								target="_blank"
-							/>
-						),
-					},
-				}
 			);
 			break;
 
