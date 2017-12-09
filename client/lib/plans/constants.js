@@ -769,7 +769,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
 		getSlug: () => FEATURE_FREE_THEMES_SIGNUP,
-		getTitle: () => i18n.translate( 'Hundreds of free themes' ),
+		getTitle: () => i18n.translate( '100+ Free Themes' ),
 	},
 
 	[ FEATURE_WP_SUBDOMAIN_SIGNUP ]: {
