@@ -5,6 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
@@ -15,6 +16,7 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import { recordTracksEvent } from 'state/analytics/actions';
 import FormattedHeader from 'components/formatted-header';
 import { checkInboundTransferStatus } from 'lib/domains';
 import support from 'lib/url/support';
@@ -46,6 +48,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 	onClick = () => {
 		const { domain, supportsPrivacy } = this.props;
+
+		this.props.recordContinueButtonClick( domain );
 
 		this.props.setValid( domain, supportsPrivacy );
 	};
@@ -87,6 +91,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 	};
 
 	showNextStep = () => {
+		this.props.recordNextStep( this.props.domain, this.state.currentStep + 1 );
 		this.setState( { currentStep: this.state.currentStep + 1 } );
 	};
 
@@ -346,4 +351,13 @@ class TransferDomainPrecheck extends React.PureComponent {
 	}
 }
 
-export default localize( TransferDomainPrecheck );
+const recordNextStep = ( domain_name, show_step ) =>
+	recordTracksEvent( 'calypso_transfer_domain_precheck_step_change', { domain_name, show_step } );
+
+const recordContinueButtonClick = domain_name =>
+	recordTracksEvent( 'calypso_transfer_domain_precheck_continue_click', { domain_name } );
+
+export default connect( null, {
+	recordNextStep,
+	recordContinueButtonClick,
+} )( localize( TransferDomainPrecheck ) );
