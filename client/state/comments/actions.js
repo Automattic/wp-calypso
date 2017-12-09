@@ -4,21 +4,22 @@
  */
 import { isEnabled } from 'config';
 import {
+	COMMENT_COUNTS_REQUEST,
+	COMMENT_REQUEST,
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
 	COMMENTS_EDIT,
-	COMMENTS_LIST_REQUEST,
-	COMMENTS_REQUEST,
 	COMMENTS_LIKE,
-	COMMENTS_UNLIKE,
-	COMMENTS_REPLY_WRITE,
-	COMMENTS_WRITE,
-	COMMENT_REQUEST,
-	COMMENTS_TREE_SITE_REQUEST,
-	READER_EXPAND_COMMENTS,
-	COMMENTS_SET_ACTIVE_REPLY,
+	COMMENTS_LIST_REQUEST,
 	COMMENTS_RECEIVE,
 	COMMENTS_RECEIVE_ERROR,
+	COMMENTS_REPLY_WRITE,
+	COMMENTS_REQUEST,
+	COMMENTS_SET_ACTIVE_REPLY,
+	COMMENTS_TREE_SITE_REQUEST,
+	COMMENTS_UNLIKE,
+	COMMENTS_WRITE,
+	READER_EXPAND_COMMENTS,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
@@ -119,6 +120,18 @@ export const requestCommentsList = query => ( {
  */
 export const requestCommentsTreeForSite = query => ( {
 	type: COMMENTS_TREE_SITE_REQUEST,
+	query,
+} );
+
+/**
+ * Creates an action that requests comment counts for a given site.
+ * @param {Object} query API call parameters
+ * @param {Number} query.siteId Site identifier
+ * @param {String} query.status Status filter
+ * @returns {Object} Action that requests a comment tree
+ */
+export const requestCommentCounts = query => ( {
+	type: COMMENT_COUNTS_REQUEST,
 	query,
 } );
 
