@@ -118,7 +118,7 @@ class MediaLibraryExternalHeader extends React.Component {
 		const attribution = translate( 'Free photos {{span}}provided{{/span}} by {{a}}Pexels{{/a}}', {
 			components: {
 				a: <a href="https://www.pexels.com/" rel="noopener noreferrer" target="_blank" />,
-				span: <span className="mobile-hide" />,
+				span: <span className="media-library__mobile-hide" />,
 			},
 		} );
 		return <span className="media-library__pexels-attribution">{ attribution }</span>;

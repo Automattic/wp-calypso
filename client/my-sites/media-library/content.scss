@@ -34,7 +34,7 @@
 	display: inline-block;
 	margin-right: 1em;
 
-	.mobile-hide {
+	.media-library__mobile-hide {
 		@include breakpoint( "<480px" ) {
 			display: none; // shorten the sentence for smaller screens
 		}
