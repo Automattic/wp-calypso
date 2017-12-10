@@ -43,20 +43,22 @@ class MeSidebar extends React.Component {
 
 		// If user is using en locale, redirect to app promo page on sign out
 		const isEnLocale = currentUser && currentUser.localeSlug === 'en';
-		let redirect = null;
+
+		let redirectTo = null;
+
 		if ( isEnLocale && ! config.isEnabled( 'desktop' ) ) {
-			redirect = '/?apppromo';
+			redirectTo = '/?apppromo';
 		}
 
 		if ( config.isEnabled( 'login/wp-login' ) ) {
-			this.props.logoutUser( redirect ).then(
+			this.props.logoutUser( redirectTo ).then(
 				( { redirect_to } ) => user.clear( () => ( location.href = redirect_to || '/' ) ),
 				// The logout endpoint might fail if the nonce has expired.
 				// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
-				() => userUtilities.logout( redirect )
+				() => userUtilities.logout( redirectTo )
 			);
 		} else {
-			userUtilities.logout( redirect );
+			userUtilities.logout( redirectTo );
 		}
 
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Sidebar Sign Out Link' );
