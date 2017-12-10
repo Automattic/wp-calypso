@@ -22,16 +22,14 @@ function languageFileUrl( localeSlug ) {
 }
 
 function setLocaleInDOM( localeSlug, isRTL ) {
-	if ( typeof document !== 'undefined' ) {
-		document.documentElement.lang = localeSlug;
-		document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+	document.documentElement.lang = localeSlug;
+	document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
 
-		const directionFlag = isRTL ? '-rtl' : '';
-		const debugFlag = process.env.NODE_ENV === 'development' ? '-debug' : '';
-		const cssUrl = window.app.staticUrls[ `style${ debugFlag }${ directionFlag }.css` ];
+	const directionFlag = isRTL ? '-rtl' : '';
+	const debugFlag = process.env.NODE_ENV === 'development' ? '-debug' : '';
+	const cssUrl = window.app.staticUrls[ `style${ debugFlag }${ directionFlag }.css` ];
 
-		switchCSS( 'main-css', cssUrl );
-	}
+	switchCSS( 'main-css', cssUrl );
 }
 
 export default function switchLocale( localeSlug ) {
@@ -45,11 +43,16 @@ export default function switchLocale( localeSlug ) {
 		return;
 	}
 
+	// Note: i18n is a singleton that will be shared between all server requests!
+	// Disable switching locale on the server
+	if ( typeof document === 'undefined' ) {
+		return;
+	}
+
 	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
 		setLocaleInDOM( localeSlug, !! language.rtl );
 	} else {
-		// Note: i18n is a singleton that will be shared between all server requests!
 		request.get( languageFileUrl( localeSlug ) ).end( function( error, response ) {
 			if ( error ) {
 				debug(
