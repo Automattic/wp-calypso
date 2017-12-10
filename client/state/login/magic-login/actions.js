@@ -68,6 +68,7 @@ export const fetchMagicLoginRequestEmail = email => dispatch => {
 		} )
 		.then( () => {
 			dispatch( { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS } );
+
 			dispatch( {
 				type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 				email,
@@ -84,7 +85,7 @@ export const fetchMagicLoginRequestEmail = email => dispatch => {
 };
 
 // @TODO should this move to `/state/data-layer`..?
-export const fetchMagicLoginAuthenticate = ( token, redirect_to = null ) => dispatch => {
+export const fetchMagicLoginAuthenticate = ( token, redirectTo = null ) => dispatch => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
 
 	request
@@ -98,19 +99,21 @@ export const fetchMagicLoginAuthenticate = ( token, redirect_to = null ) => disp
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 			token,
-			redirect_to,
+			redirect_to: redirectTo,
 		} )
 		.then( response => {
 			dispatch( {
 				type: LOGIN_REQUEST_SUCCESS,
 				data: get( response, 'body.data' ),
 			} );
+
 			dispatch( {
 				type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
 			} );
 		} )
 		.catch( error => {
 			const { status } = error;
+
 			dispatch( {
 				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
 				error: status,
