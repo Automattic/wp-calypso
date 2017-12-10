@@ -20,7 +20,8 @@ import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { recordPageView } from 'state/analytics/actions';
 
-const nativeLoginUrl = login( { isNative: true } );
+const nativeLoginUrl = login( { isNative: true, twoFactorAuthType: 'link' } );
+
 const lostPasswordURL = addQueryArgs(
 	{
 		action: 'lostpassword',
@@ -36,12 +37,15 @@ class EmailedLoginLinkExpired extends React.Component {
 
 	onClickTryAgainLink = event => {
 		event.preventDefault();
+
 		this.props.hideMagicLoginRequestForm();
+
 		page( nativeLoginUrl );
 	};
 
 	render() {
 		const { translate } = this.props;
+
 		this.props.recordPageView( '/log-in/link/use', 'Login > Link > Expired' );
 
 		return (
