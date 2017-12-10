@@ -146,10 +146,13 @@ class MediaSettings extends Component {
 		return (
 			! isVideoPressAvailable && (
 				<Banner
+					description={ translate(
+						'Get high-speed video hosting without ads, watermarks, or throttling.'
+					) }
 					event={ 'jetpack_video_settings' }
 					feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM }
 					plan={ PLAN_JETPACK_PREMIUM }
-					title={ translate( 'Host fast, high-quality, ad-free video.' ) }
+					title={ translate( 'Enable video hosting by upgrading to Jetpack Premium' ) }
 				/>
 			)
 		);
