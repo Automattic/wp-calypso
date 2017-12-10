@@ -58,6 +58,12 @@ export const hideMagicLoginRequestNotice = () => {
 	};
 };
 
+/**
+ * Sends an email with a magic link to the specified email address.
+ *
+ * @param  {String}   email Email address of the user
+ * @return {Function}       A thunk that can be dispatched
+ */
 export const fetchMagicLoginRequestEmail = email => dispatch => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH } );
 
@@ -84,7 +90,13 @@ export const fetchMagicLoginRequestEmail = email => dispatch => {
 		} );
 };
 
-// @TODO should this move to `/state/data-layer`..?
+/**
+ * Logs a user in from a token included in a magic link.
+ *
+ * @param  {String}   token      Security token
+ * @param  {String}   redirectTo Url to redirect the user to upon successful login
+ * @return {Function}            A thunk that can be dispatched
+ */
 export const fetchMagicLoginAuthenticate = ( token, redirectTo = null ) => dispatch => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
 
