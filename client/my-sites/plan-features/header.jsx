@@ -51,7 +51,7 @@ class PlanFeaturesHeader extends Component {
 	}
 
 	renderPlansHeader() {
-		const { planType, popular, selectedPlan, newPlan, title, translate } = this.props;
+		const { newPlan, planType, popular, selectedPlan, title, translate } = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
