@@ -24,6 +24,7 @@ import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import {
 	PLAN_JETPACK_PREMIUM,
+	FEATURE_VIDEO_CDN_LIMITED,
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
@@ -150,7 +151,7 @@ class MediaSettings extends Component {
 						'Get high-speed video hosting without ads, watermarks, or throttling.'
 					) }
 					event={ 'jetpack_video_settings' }
-					feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM }
+					feature={ FEATURE_VIDEO_CDN_LIMITED }
 					plan={ PLAN_JETPACK_PREMIUM }
 					title={ translate( 'Enable video hosting by upgrading to Jetpack Premium' ) }
 				/>
