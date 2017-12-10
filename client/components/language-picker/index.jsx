@@ -15,7 +15,7 @@ import { find, noop } from 'lodash';
  */
 import LanguagePickerModal from './modal';
 
-class LanguagePicker extends PureComponent {
+export class LanguagePicker extends PureComponent {
 	static propTypes = {
 		languages: PropTypes.array.isRequired,
 		valueKey: PropTypes.string,
