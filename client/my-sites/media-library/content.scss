@@ -33,4 +33,10 @@
 .media-library__pexels-attribution {
 	display: inline-block;
 	margin-right: 1em;
+
+	.mobile-hide {
+		@include breakpoint( "<480px" ) {
+			display: none; // shorten the sentence for smaller screens
+		}
+	}
 }
