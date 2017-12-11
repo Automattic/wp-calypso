@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import cookie from 'cookie';
 import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import React, { Component } from 'react';
@@ -38,6 +37,7 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import { decodeEntities } from 'lib/formatting';
 import { getSSO } from 'state/jetpack-connect/selectors';
 import { login } from 'lib/paths';
+import { persistSsoApproved } from './persistence-utils';
 import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
 
 /*
@@ -76,11 +76,8 @@ class JetpackSsoForm extends Component {
 
 		const { siteId, ssoNonce } = this.props;
 		const siteUrl = get( this.props, 'blogDetails.URL' );
-		const cookieOptions = {
-			maxAge: 300,
-			path: '/',
-		};
-		document.cookie = cookie.serialize( 'jetpack_sso_approved', siteId, cookieOptions );
+
+		persistSsoApproved( siteId );
 
 		debug( 'Approving sso' );
 		this.props.authorizeSSO( siteId, ssoNonce, siteUrl );
