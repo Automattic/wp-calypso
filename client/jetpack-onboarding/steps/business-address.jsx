@@ -59,6 +59,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 									id={ field }
 									onChange={ this.getChangeHandler( field ) }
 									value={ this.state[ field ] }
+									autoFocus={ field === 'name' }
 								/>
 							</FormFieldset>
 						) ) }
