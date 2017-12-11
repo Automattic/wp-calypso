@@ -7,6 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import { noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -17,8 +18,19 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import Card from 'components/card';
 import ScreenReaderText from 'components/screen-reader-text';
+import { createNotice } from 'state/notices/actions';
+import notices from 'notices';
 
 export class ChecklistTask extends PureComponent {
+	constructor() {
+		super( ...arguments );
+
+		this.state = {
+			useState: true,
+			completed: this.props.completed,
+		};
+	}
+
 	static propTypes = {
 		id: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
@@ -40,7 +52,18 @@ export class ChecklistTask extends PureComponent {
 	};
 
 	handleToggle = () => {
-		this.props.onToggle( this.props.id );
+		if ( ! this.props.completed || ! this.state.completed ) {
+			this.setState( { completed: true } );
+
+			const message = `You completed a task.`;
+			if ( this.state.useState ) {
+				this.props.createNotice( `is-success`, message );
+			} else {
+				notices[ success ]( message );
+			}
+
+			this.props.onToggle( this.props.id );
+		}
 	};
 
 	render() {
@@ -53,18 +76,20 @@ export class ChecklistTask extends PureComponent {
 			title,
 			translate,
 		} = this.props;
-		const hasActionlink = completed && completedButtonText;
+		const hasActionlink = ( completed || this.state.completed ) && completedButtonText;
 
 		return (
 			<Card
 				compact
 				className={ classNames( 'checklist__task', {
-					'is-completed': completed,
+					'is-completed': completed || this.state.completed,
 					'has-actionlink': hasActionlink,
 				} ) }
 			>
 				<div className="checklist__task-primary">
-					<h5 className="checklist__task-title">{ ( completed && completedTitle ) || title }</h5>
+					<h5 className="checklist__task-title">
+						{ ( ( completed || this.state.completed ) && completedTitle ) || title }
+					</h5>
 					<p className="checklist__task-description">{ description }</p>
 					{ duration && (
 						<small className="checklist__task-duration">
@@ -87,10 +112,12 @@ export class ChecklistTask extends PureComponent {
 					onClick={ this.handleToggle }
 					tabIndex="0"
 					role="button"
-					aria-pressed={ completed ? 'true' : 'false' }
+					aria-pressed={ completed || this.state.completed ? 'true' : 'false' }
 				>
 					<ScreenReaderText>
-						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
+						{ completed || this.state.completed
+							? translate( 'Mark as uncompleted' )
+							: translate( 'Mark as completed' ) }
 					</ScreenReaderText>
 					{ <Gridicon icon="checkmark" size={ 18 } /> }
 				</span>
@@ -99,4 +126,4 @@ export class ChecklistTask extends PureComponent {
 	}
 }
 
-export default localize( ChecklistTask );
+export default connect( null, { createNotice } )( localize( ChecklistTask ) );
