@@ -59,7 +59,7 @@ describe( 'getNetworkSites()', () => {
 		expect( getNetworkSites( state, 1 ) ).to.be.null;
 	} );
 
-	test( 'should return an empty array if no secondary sites exist', () => {
+	test( 'should return only the main site if no secondary sites exist', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -78,7 +78,11 @@ describe( 'getNetworkSites()', () => {
 				},
 			},
 		};
-		expect( getNetworkSites( state, 1 ) ).to.be.an( 'array' ).that.is.empty;
+		const networkSites = getNetworkSites( state, 1 );
+		expect( networkSites )
+			.to.be.an( 'array' )
+			.that.has.lengthOf( 1 );
+		expect( networkSites[ 0 ].ID ).to.eql( 1 );
 	} );
 
 	test( 'should return an array with secondary sites if they exist', () => {
@@ -117,7 +121,11 @@ describe( 'getNetworkSites()', () => {
 			},
 		};
 		const networkSites = getNetworkSites( state, 1 );
-		expect( networkSites[ 0 ].ID ).to.eql( 2 );
-		expect( networkSites[ 1 ].ID ).to.eql( 3 );
+		expect( networkSites )
+			.to.be.an( 'array' )
+			.that.has.lengthOf( 3 );
+		expect( networkSites[ 0 ].ID ).to.eql( 1 );
+		expect( networkSites[ 1 ].ID ).to.eql( 2 );
+		expect( networkSites[ 2 ].ID ).to.eql( 3 );
 	} );
 } );
