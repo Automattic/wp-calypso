@@ -33,6 +33,10 @@ export function nextGuidedTourStep( { tour, stepName } ) {
 	};
 }
 
+export function requestGuidedTour( tour ) {
+	return nextGuidedTourStep( { tour, stepName: 'init' } );
+}
+
 // TODO(mcsf): come up with a much better (read: safer) solution
 //
 // The way we persist which tours have been seen by the user is subject to

@@ -37,8 +37,8 @@ const tasks = {
 		duration: '1 min',
 		completedTitle: 'You updated your site title',
 		completedButtonText: 'Edit',
-		url: '/checklist/$siteSlug?tour=siteTitle',
 		image: '/calypso/images/stats/tasks/personalize-your-site.svg',
+		tour: 'siteTitle',
 	},
 	blogdescription_set: {
 		title: 'Create a tagline',
@@ -128,6 +128,13 @@ export const urlForTask = ( id, siteSlug ) => {
 	const task = tasks[ id ];
 	if ( task && task.url ) {
 		return task.url.replace( '$siteSlug', siteSlug );
+	}
+};
+
+export const tourForTask = id => {
+	const task = tasks[ id ];
+	if ( task ) {
+		return task.tour;
 	}
 };
 
