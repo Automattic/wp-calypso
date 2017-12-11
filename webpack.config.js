@@ -9,7 +9,6 @@
  */
 const _ = require( 'lodash' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
-const DashboardPlugin = require( 'webpack-dashboard/plugin' );
 const fs = require( 'fs' );
 const HappyPack = require( 'happypack' );
 const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
@@ -247,11 +246,6 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 			cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ),
 		} )
 	);
-}
-
-if ( process.env.DASHBOARD ) {
-	// dashboard wants to be first
-	webpackConfig.plugins.unshift( new DashboardPlugin() );
 }
 
 if ( ! isDevelopment ) {
