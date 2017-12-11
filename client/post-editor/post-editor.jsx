@@ -262,9 +262,9 @@ export const PostEditor = createReactClass( {
 	loadRevision: function( revision ) {
 		this.setState( { selectedRevisionId: null } );
 		this.restoreRevision( {
-			content: revision.content,
-			excerpt: revision.excerpt,
-			title: revision.title,
+			content: revision.post_content,
+			excerpt: revision.post_excerpt,
+			title: revision.post_title,
 		} );
 		if ( isWithinBreakpoint( '<660px' ) ) {
 			this.props.setLayoutFocus( 'content' );
