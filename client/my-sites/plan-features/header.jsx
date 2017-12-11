@@ -14,10 +14,12 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  **/
 import { localize } from 'i18n-calypso';
+import formatCurrency from 'lib/format-currency';
 import InfoPopover from 'components/info-popover';
-import { isMobile } from 'lib/viewport';
-import Ribbon from 'components/ribbon';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PlanPrice from 'my-sites/plan-price';
+import Ribbon from 'components/ribbon';
+import PlanIcon from 'components/plans/plan-icon';
 import {
 	PLAN_FREE,
 	PLAN_PREMIUM,
@@ -32,11 +34,10 @@ import {
 	PLAN_PERSONAL,
 	getPlanClass,
 } from 'lib/plans/constants';
-import PlanIcon from 'components/plans/plan-icon';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import formatCurrency from 'lib/format-currency';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isMobile } from 'lib/viewport';
+import { planLevelsMatch } from 'lib/plans/index';
 
 class PlanFeaturesHeader extends Component {
 	render() {
@@ -57,7 +58,9 @@ class PlanFeaturesHeader extends Component {
 
 		return (
 			<header className={ headerClasses } onClick={ this.props.onClick }>
-				{ planType === selectedPlan && <Ribbon>{ translate( 'Suggested' ) }</Ribbon> }
+				{ planLevelsMatch( selectedPlan, planType ) && (
+					<Ribbon>{ translate( 'Suggested' ) }</Ribbon>
+				) }
 				{ popular && ! selectedPlan && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
 				{ newPlan && ! selectedPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
 				{ this.isPlanCurrent() && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon> }
