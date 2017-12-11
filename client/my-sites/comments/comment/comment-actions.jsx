@@ -229,6 +229,7 @@ export class CommentActions extends Component {
 						} ) }
 						onClick={ this.toggleLike }
 						tabIndex="0"
+						disabled={ ! canModerateComment && ! commentIsApproved }
 					>
 						<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
 						<span>{ commentIsLiked ? translate( 'Liked' ) : translate( 'Like' ) }</span>
@@ -254,6 +255,7 @@ export class CommentActions extends Component {
 						className="comment__action comment__action-reply"
 						onClick={ toggleReply }
 						tabIndex="0"
+						disabled={ ! canModerateComment && ! commentIsApproved }
 					>
 						<Gridicon icon="reply" />
 						<span>{ translate( 'Reply' ) }</span>
@@ -269,7 +271,7 @@ const mapStateToProps = ( state, { siteId, commentId } ) => {
 	const commentStatus = get( comment, 'status' );
 
 	return {
-		canModerateComment: get( comment, 'post.can_manage_comments', false ),
+		canModerateComment: get( comment, 'can_moderate', false ),
 		commentIsApproved: 'approved' === commentStatus,
 		commentIsLiked: get( comment, 'i_like' ),
 		commentStatus,
