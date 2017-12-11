@@ -23,6 +23,11 @@ export class MediaLibraryDataSource extends Component {
 	static propTypes = {
 		source: PropTypes.string.isRequired,
 		onSourceChange: PropTypes.func.isRequired,
+		disabledSources: PropTypes.array,
+	};
+
+	static defaultProps = {
+		disabledSources: [],
 	};
 
 	constructor( props ) {
@@ -54,12 +59,14 @@ export class MediaLibraryDataSource extends Component {
 	}
 
 	renderMenuItems( sources ) {
-		return sources.map( item => (
-			<PopoverMenuItem action={ item.value } key={ item.value } onClick={ this.changeSource }>
-				{ item.icon }
-				{ item.label }
-			</PopoverMenuItem>
-		) );
+		return sources
+			.filter( item => -1 === this.props.disabledSources.indexOf( item.value ) )
+			.map( item => (
+				<PopoverMenuItem action={ item.value } key={ item.value } onClick={ this.changeSource }>
+					{ item.icon }
+					{ item.label }
+				</PopoverMenuItem>
+			) );
 	}
 
 	render() {
