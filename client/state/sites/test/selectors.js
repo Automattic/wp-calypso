@@ -168,11 +168,11 @@ describe( 'selectors', () => {
 				is_previewable: true,
 				jetpack: true,
 				hasMinimumJetpackVersion: true,
-				canAutoupdateFiles: false,
-				canUpdateFiles: false,
+				canAutoupdateFiles: true,
+				canUpdateFiles: true,
 				canManage: true,
 				isMainNetworkSite: false,
-				isSecondaryNetworkSite: true,
+				isSecondaryNetworkSite: false,
 				isSiteUpgradeable: null,
 				options: {
 					jetpack_version: jetpackMinVersion,
@@ -3354,23 +3354,7 @@ describe( 'selectors', () => {
 			expect( isMainNetwork ).to.equal( null );
 		} );
 
-		test( 'it should return `false` for multi-network sites', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						is_multi_network: true,
-					},
-				},
-			} );
-
-			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
-			expect( isMainNetwork ).to.equal( false );
-		} );
-
-		test( 'it should return `true` for non multisite site', () => {
+		test( 'it should return `false` for non multisite site', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
@@ -3381,7 +3365,7 @@ describe( 'selectors', () => {
 			} );
 
 			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
-			expect( isMainNetwork ).to.equal( true );
+			expect( isMainNetwork ).to.equal( false );
 		} );
 
 		test( 'it should return `false` for multisite sites without unmapped url', () => {
