@@ -20,6 +20,7 @@
 
 	@include breakpoint( "<480px" ) {
 		box-shadow: none; //inherited from .card, remove for mobile only
+		width: 100%;
 	}
 
 	@include breakpoint( ">480px" ) {
