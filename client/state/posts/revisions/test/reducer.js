@@ -25,6 +25,7 @@ import {
 } from 'state/action-types';
 
 const TEST_SITE_ID = 999999;
+const TEST_POST_ID = 1776;
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
@@ -39,19 +40,21 @@ describe( 'reducer', () => {
 
 		const validState = deepFreeze( {
 			[ TEST_SITE_ID ]: {
-				'100:109': {
-					diff: {
-						todo: 'fix this shape',
+				[ TEST_POST_ID ]: {
+					'100:109': {
+						diff: {
+							todo: 'fix this shape',
+						},
+						from_revision_id: 100,
+						to_revision_id: 109,
 					},
-					from_revision_id: 100,
-					to_revision_id: 109,
-				},
-				'110:111': {
-					diff: {
-						todo: 'fix this shape',
+					'110:111': {
+						diff: {
+							todo: 'fix this shape',
+						},
+						from_revision_id: 110,
+						to_revision_id: 111,
 					},
-					from_revision_id: 110,
-					to_revision_id: 111,
 				},
 			},
 		} );
@@ -75,68 +78,6 @@ describe( 'reducer', () => {
 
 			const state = diffs( invalidState, { type: DESERIALIZE } );
 			expect( state ).to.eql( {} );
-		} );
-
-		test( 'should merge valid diff data to the same siteId', () => {
-			const state = diffs( validState, {
-				type: POST_REVISIONS_RECEIVE,
-				siteId: TEST_SITE_ID,
-				diffs: [
-					{
-						diff: {
-							todo: 'fix this shape',
-						},
-						from_revision_id: 120,
-						to_revision_id: 121,
-					},
-				],
-			} );
-
-			expect( state ).to.eql( {
-				[ TEST_SITE_ID ]: {
-					...state[ TEST_SITE_ID ],
-					...{
-						'120:121': {
-							diff: {
-								todo: 'fix this shape',
-							},
-							from_revision_id: 120,
-							to_revision_id: 121,
-						},
-					},
-				},
-			} );
-		} );
-
-		test( 'should merge valid diff data to differing siteIds', () => {
-			const state = diffs( validState, {
-				type: POST_REVISIONS_RECEIVE,
-				siteId: 12399999,
-				diffs: [
-					{
-						diff: {
-							todo: 'fix this shape',
-						},
-						from_revision_id: 88,
-						to_revision_id: 89,
-					},
-				],
-			} );
-
-			expect( state ).to.eql( {
-				...validState,
-				12399999: {
-					...{
-						'88:89': {
-							diff: {
-								todo: 'fix this shape',
-							},
-							from_revision_id: 88,
-							to_revision_id: 89,
-						},
-					},
-				},
-			} );
 		} );
 
 		test( 'should not merge diff data without a siteId', () => {

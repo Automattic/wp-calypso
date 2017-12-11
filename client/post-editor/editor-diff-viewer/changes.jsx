@@ -25,17 +25,6 @@ const renderChange = ( change, changeIndex, splitLines ) => {
 				</span>
 			);
 		}
-		case 'change': {
-			return (
-				<span className="editor-diff-viewer__changes" key={ changeIndex }>
-					{ map( change.inline, ( changeList, inlineIndex ) =>
-						map( changeList, ( inlineChanges, inlineIndex1 ) =>
-							renderChange( inlineChanges, `${ changeIndex }:${ inlineIndex }:${ inlineIndex1 }` )
-						)
-					) }
-				</span>
-			);
-		}
 		case 'copy': {
 			const content = change.final || change.value;
 			return (

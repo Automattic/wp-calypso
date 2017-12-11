@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { head, isEmpty, map } from 'lodash';
+import { get, head, isEmpty, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,7 @@ import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {
+		comparisons: PropTypes.object,
 		postId: PropTypes.number,
 		siteId: PropTypes.number,
 		revisions: PropTypes.array.isRequired,
@@ -107,16 +108,10 @@ class EditorRevisionsList extends PureComponent {
 	};
 
 	render() {
-		const { postId, revisions, selectedRevisionId, siteId } = this.props;
+		const { comparisons, postId, revisions, selectedRevisionId, siteId } = this.props;
 		const classes = classNames( 'editor-revisions-list', {
 			'is-loading': isEmpty( revisions ),
 		} );
-
-		// @TODO build these out of the provided `diff` prop
-		const revisionChanges = {
-			added: 0,
-			removed: 0,
-		};
 
 		return (
 			<div className={ classes }>
@@ -127,6 +122,7 @@ class EditorRevisionsList extends PureComponent {
 							const itemClasses = classNames( 'editor-revisions-list__revision', {
 								'is-selected': revision.id === selectedRevisionId,
 							} );
+							const revisionChanges = get( comparisons, [ revision.id, 'diff', 'totals' ], {} );
 							return (
 								<li className={ itemClasses } key={ revision.id }>
 									<EditorRevisionsListItem
@@ -146,8 +142,11 @@ class EditorRevisionsList extends PureComponent {
 }
 
 export default connect(
-	( state, { selectedRevisionId } ) => {
+	( state, { comparisons, selectedRevisionId } ) => {
+		const { nextRevisionId, prevRevisionId } = get( comparisons, [ selectedRevisionId ], {} );
 		return {
+			nextRevisionId,
+			prevRevisionId,
 			selectedRevision: getPostRevision( state, selectedRevisionId ),
 		};
 	},
