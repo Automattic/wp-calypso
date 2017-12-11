@@ -654,7 +654,7 @@ export function canJetpackSiteUpdateFiles( state, siteId ) {
 		return false;
 	}
 
-	if ( ! isJetpackSiteMainNetworkSite( state, siteId ) ) {
+	if ( isJetpackSiteSecondaryNetworkSite( state, siteId ) ) {
 		return false;
 	}
 
@@ -778,16 +778,6 @@ export function isJetpackSiteMainNetworkSite( state, siteId ) {
 		return null;
 	}
 
-	const isMultiNetwork = getSiteOption( state, siteId, 'is_multi_network' );
-
-	if ( isMultiNetwork ) {
-		return false;
-	}
-
-	if ( site.is_multisite === false ) {
-		return true;
-	}
-
 	if ( ! site.is_multisite ) {
 		return false;
 	}
@@ -818,14 +808,16 @@ export function isJetpackSiteSecondaryNetworkSite( state, siteId ) {
 		return null;
 	}
 
-	const isMultiNetwork = getSiteOption( state, siteId, 'is_multi_network' );
-
-	if ( site.is_multisite === false || isMultiNetwork === false ) {
+	if ( ! site.is_multisite ) {
 		return false;
 	}
 
 	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' ),
 		mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
+
+	if ( ! unmappedUrl || ! mainNetworkSite ) {
+		return false;
+	}
 
 	// Compare unmapped_url with the main_network_site to see if is not the main network site.
 	return withoutHttp( unmappedUrl ) !== withoutHttp( mainNetworkSite );
