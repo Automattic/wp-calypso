@@ -47,12 +47,12 @@ export const receiveSuccess = ( { dispatch }, { siteId, postId }, response ) => 
  * @param {Object} action Redux action
  */
 export const fetchPostRevisionsDiffs = ( { dispatch }, action ) => {
-	const { siteId, postId, comparisons } = action;
+	const { siteId, postId, postType, comparisons } = action;
 	dispatch(
 		http(
 			{
 				apiVersion: '1.1',
-				path: `/sites/${ siteId }/posts/${ postId }/diffs`,
+				path: `/sites/${ siteId }/${ postType }/${ postId }/diffs`,
 				method: 'GET',
 				query: { comparisons },
 			},

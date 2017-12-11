@@ -18,6 +18,7 @@ import {
  *
  * @param {String} siteId of the revisions
  * @param {String} postId of the revisions
+ * @param {String} postType of the parent post
  * @param {String} [comparisons=[]] list of revision objects to compare in format:
  * 					[
  * 						{ from_revision_id: 6, to_revision_id: 8 },
@@ -26,10 +27,11 @@ import {
  * 					Optional. If not provided, the API will return a set of sequential diffs
  * @return {Object} action object
  */
-export const requestPostRevisions = ( siteId, postId, comparisons = [] ) => ( {
+export const requestPostRevisions = ( siteId, postId, postType = 'posts', comparisons = [] ) => ( {
 	type: POST_REVISIONS_REQUEST,
 	comparisons,
 	postId,
+	postType,
 	siteId,
 } );
 
