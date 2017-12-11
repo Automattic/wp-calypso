@@ -91,6 +91,7 @@ class AllSites extends Component {
 	}
 }
 
-export default connect( state => ( {
-	sites: getSites( state ),
-} ) )( localize( AllSites ) );
+export default connect( ( state, props ) => {
+	const { sites = getSites( state ) } = props;
+	return { sites };
+} )( localize( AllSites ) );
