@@ -66,7 +66,11 @@ export function validateSalePrice( fieldName, promotion, currency, showEmpty ) {
  */
 export function isEndDateBeforeStartDate( startDateString, endDateString ) {
 	const startDate = startDateString ? new Date( startDateString ) : new Date();
-	const endDate = endDateString ? new Date( endDateString ) : new Date();
+	const endDate = endDateString ? new Date( endDateString ) : null;
+
+	if ( ! endDate ) {
+		return false;
+	}
 
 	// Clear the times, we only care about days.
 	startDate.setHours( 0, 0, 0, 0 );
@@ -87,14 +91,13 @@ export function validateStartEndDate( fieldName, promotion ) {
 	if ( isEndDateBeforeStartDate( promotion.startDate, promotion.endDate ) ) {
 		switch ( fieldName ) {
 			case 'startDate':
-				return (
-					! isUndefined( promotion.startDate ) &&
-					translate( 'Start date cannot be after end date.' )
-				);
+				return ! isUndefined( promotion.startDate )
+					? translate( 'Start date cannot be after end date.' )
+					: null;
 			case 'endDate':
-				return (
-					! isUndefined( promotion.endDate ) && translate( 'End date cannot be before start date.' )
-				);
+				return ! isUndefined( promotion.endDate )
+					? translate( 'End date cannot be before start date.' )
+					: null;
 		}
 	}
 }
