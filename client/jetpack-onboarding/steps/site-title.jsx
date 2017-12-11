@@ -48,7 +48,12 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 					<form>
 						<FormFieldset>
 							<FormLabel htmlFor="title">{ translate( 'Site Title' ) }</FormLabel>
-							<FormTextInput id="title" onChange={ this.setTitle } value={ this.state.title } />
+							<FormTextInput
+								id="title"
+								onChange={ this.setTitle }
+								value={ this.state.title }
+								autoFocus
+							/>
 						</FormFieldset>
 
 						<FormFieldset>
