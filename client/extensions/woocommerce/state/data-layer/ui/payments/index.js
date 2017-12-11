@@ -11,7 +11,7 @@ import { isEmpty } from 'lodash';
  */
 import { WOOCOMMERCE_PAYMENT_ACTION_LIST_CREATE } from 'woocommerce/state/action-types';
 import { actionListStepNext, actionListClear } from 'woocommerce/state/action-list/actions';
-import { getSaveSettingsActionListSteps } from './reducer';
+import getSaveSettingsActionListSteps from './reducer';
 
 export default {
 	[ WOOCOMMERCE_PAYMENT_ACTION_LIST_CREATE ]: [
