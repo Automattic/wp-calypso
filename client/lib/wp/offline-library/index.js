@@ -35,7 +35,7 @@ const saveRequests = requests => {
 
 export const makeOffline = wpcom => {
 	const location = window.location;
-	const primingRequested = /[&?]wpcom_prime_cache=1/.test( location );
+	const primingRequested = /[&?]wpcom_priming=1/.test( location );
 	const offlineRequested = /[&?]wpcom_offline=1/.test( location );
 
 	if ( ! primingRequested && ! offlineRequested ) {
@@ -45,8 +45,12 @@ export const makeOffline = wpcom => {
 	// eslint-disable-next-line no-console
 	primingRequested && console.log( 'Priming wpcom request cache' );
 
-	// eslint-disable-next-line no-console
-	offlineRequested && console.log( 'Delivering wpcom requests from cache' );
+	offlineRequested &&
+		// eslint-disable-next-line no-console
+		console.log(
+			'Delivering wpcom requests from cache\n' +
+				'Run `saveRequests()` in the developer console to save cache file.'
+		);
 
 	const request = wpcom.request.bind( wpcom );
 	const requests = new Map();
