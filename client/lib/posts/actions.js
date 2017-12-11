@@ -107,7 +107,6 @@ PostActions = {
 
 		args = {
 			type: 'DRAFT_NEW_POST',
-			siteId: site.ID,
 			postType: options.type || 'post',
 			title: options.title,
 			content: options.content,

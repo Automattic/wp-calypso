@@ -14,9 +14,6 @@ import { includes, memoize } from 'lodash';
  */
 import postNormalizer from 'lib/post-normalizer';
 /* eslint-disable no-restricted-imports */
-import sitesFactory from 'lib/sites-list';
-const sites = sitesFactory();
-/* eslint-enable no-restricted-imports */
 import { getFeaturedImageId } from './utils-ssr-ready';
 
 var utils = {
@@ -43,8 +40,8 @@ var utils = {
 		return `${ basePath }/${ post.type }/${ site.slug }/${ post.ID }`;
 	},
 
-	getPreviewURL: function( post ) {
-		var parsed, site, previewUrl;
+	getPreviewURL: function( site, post ) {
+		let parsed, previewUrl;
 
 		if ( ! post || ! post.URL || post.status === 'trash' ) {
 			return '';
@@ -62,7 +59,6 @@ var utils = {
 		}
 
 		if ( post.site_ID ) {
-			site = sites.getSite( post.site_ID );
 			if ( ! ( site && site.options ) ) {
 				// site info is still loading, just use what we already have until it does
 				return previewUrl;

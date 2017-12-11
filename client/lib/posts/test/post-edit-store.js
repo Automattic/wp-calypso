@@ -55,7 +55,9 @@ describe( 'post-edit-store', () => {
 		dispatcherCallback( {
 			action: {
 				type: 'DRAFT_NEW_POST',
-				siteId: siteId,
+				site: {
+					ID: siteId,
+				},
 			},
 		} );
 
@@ -155,7 +157,9 @@ describe( 'post-edit-store', () => {
 		dispatcherCallback( {
 			action: {
 				type: 'DRAFT_NEW_POST',
-				siteId: 1234,
+				site: {
+					ID: 1234,
+				},
 			},
 		} );
 
@@ -190,7 +194,9 @@ describe( 'post-edit-store', () => {
 		dispatcherCallback( {
 			action: {
 				type: 'DRAFT_NEW_POST',
-				siteId: siteId,
+				site: {
+					ID: siteId,
+				},
 			},
 		} );
 
@@ -225,7 +231,9 @@ describe( 'post-edit-store', () => {
 		dispatcherCallback( {
 			action: {
 				type: 'DRAFT_NEW_POST',
-				siteId: siteId,
+				site: {
+					ID: siteId,
+				},
 			},
 		} );
 		dispatcherCallback( {
@@ -301,7 +309,9 @@ describe( 'post-edit-store', () => {
 		dispatcherCallback( {
 			action: {
 				type: 'DRAFT_NEW_POST',
-				siteId: siteId,
+				site: {
+					ID: siteId,
+				},
 			},
 		} );
 
@@ -417,7 +427,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -428,7 +440,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -450,7 +464,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -499,7 +515,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -510,7 +528,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -528,7 +548,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -546,7 +568,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -566,7 +590,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -577,7 +603,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -596,7 +624,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -615,7 +645,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -634,7 +666,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -653,7 +687,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -672,7 +708,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -691,7 +729,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -710,7 +750,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -728,7 +770,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
@@ -762,7 +806,9 @@ describe( 'post-edit-store', () => {
 			dispatcherCallback( {
 				action: {
 					type: 'DRAFT_NEW_POST',
-					siteId: 1,
+					site: {
+						ID: 1,
+					},
 				},
 			} );
 
