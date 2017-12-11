@@ -109,6 +109,15 @@ function domainManagementTransferToOtherSite( siteName, domainName ) {
 	return domainManagementTransfer( siteName, domainName, 'other-site' );
 }
 
+function domainTransferIn( siteName, domain ) {
+	let path = `/domains/add/transfer/${ siteName }`;
+	if ( domain ) {
+		path += `?initialQuery=${ domain }`;
+	}
+
+	return path;
+}
+
 function getSectionName( pathname ) {
 	const regExp = new RegExp( '^' + domainManagementRoot() + '/[^/]+/([^/]+)', 'g' );
 	const matches = regExp.exec( pathname );
@@ -135,5 +144,6 @@ export default {
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
+	domainTransferIn,
 	getSectionName,
 };

@@ -228,7 +228,7 @@ export default function() {
 		);
 
 		page(
-			'/domains/add/transfer/:domain',
+			paths.domainTransferIn( ':domain' ),
 			siteSelection,
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add/transfer' ),

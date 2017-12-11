@@ -413,7 +413,11 @@ class RegisterDomainStep extends React.Component {
 							if ( isDomainAvailable ) {
 								this.setState( { notice: null } );
 							} else {
-								this.showValidationErrorMessage( domain, status );
+								this.showValidationErrorMessage(
+									domain,
+									status,
+									get( result, 'other_site_domain', null )
+								);
 							}
 
 							this.props.recordDomainAvailabilityReceive(
@@ -766,7 +770,7 @@ class RegisterDomainStep extends React.Component {
 		page( this.getTransferDomainUrl() );
 	};
 
-	showValidationErrorMessage( domain, error ) {
+	showValidationErrorMessage( domain, error, site ) {
 		const { MAPPED, TRANSFERRABLE } = domainAvailability;
 		if (
 			this.props.transferInAllowed &&
@@ -775,11 +779,12 @@ class RegisterDomainStep extends React.Component {
 		) {
 			return;
 		}
-		const { message, severity } = getAvailabilityNotice(
-			domain,
-			error,
-			this.props.selectedSite.domain
-		);
+
+		if ( ! site ) {
+			site = this.props.selectedSite.domain;
+		}
+
+		const { message, severity } = getAvailabilityNotice( domain, error, site );
 		this.setState( { notice: message, noticeSeverity: severity } );
 	}
 }

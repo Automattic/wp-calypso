@@ -295,6 +295,7 @@ class TransferDomainStep extends React.Component {
 					this.setState( { suggestion: result } );
 					return;
 				case domainAvailability.TRANSFERRABLE:
+				case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
 					this.setState( {
 						domain,
 						supportsPrivacy: get( result, 'supports_privacy', false ),

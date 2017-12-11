@@ -12,6 +12,7 @@ import { translate } from 'i18n-calypso';
 import { getTld } from 'lib/domains';
 import support from 'lib/url/support';
 import { domainAvailability } from 'lib/domains/constants';
+import paths from 'my-sites/domains/paths';
 
 function getAvailabilityNotice( domain, error, site ) {
 	let message,
@@ -50,30 +51,31 @@ function getAvailabilityNotice( domain, error, site ) {
 						a: (
 							<a
 								rel="noopener noreferrer"
-								href={ `/domains/manage/${ domain }/transfer/other-site/${ domain }` }
+								href={ paths.domainManagementTransferToOtherSite( site, domain ) }
 							/>
 						),
 					},
 				}
 			);
 			break;
-		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER_TRANSFERRABLE:
+		case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
 			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s. Do you want to move it to this site? ' +
-					'{{a}}Yes, move it to this site.{{/a}}',
+				'{{strong}}%(domain)s{{/strong}} is already connected to this site, but registered somewhere else. Do you want to move ' +
+					'it from your current domain provider to WorcPress.com so you can manage the domain and the site ' +
+					'together? {{a}}Yes, transfer it to WordPress.com.{{/a}}',
 				{
-					args: { domain, site },
+					args: { domain },
 					components: {
 						strong: <strong />,
-						a: (
-							<a
-								rel="noopener noreferrer"
-								href={ `/domains/manage/${ domain }/transfer/other-site/${ domain }` }
-							/>
-						),
+						a: <a rel="noopener noreferrer" href={ paths.domainTransferIn( site, domain ) } />,
 					},
 				}
 			);
+			break;
+		case domainAvailability.MAPPED_SAME_SITE_NOT_TRANSFERRABLE:
+			message = translate( '{{strong}}%(domain)s{{/strong}} is already connected to this site.', {
+				args: { domain },
+			} );
 			break;
 		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER:
 			message = translate(
@@ -88,11 +90,6 @@ function getAvailabilityNotice( domain, error, site ) {
 				}
 			);
 			break;
-		case domainAvailability.MAPPED_SAME_SITE_NOT_TRANSFERRABLE:
-			message = translate( '{{strong}}%(domain)s{{/strong}} is already connected to this site.', {
-				args: { domain },
-			} );
-			break;
 		case domainAvailability.TRANSFER_PENDING_SAME_USER:
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is pending transfer. {{a}}Check the transfer status{{/a}} to learn more.',
@@ -104,7 +101,7 @@ function getAvailabilityNotice( domain, error, site ) {
 							<a
 								target="_blank"
 								rel="noopener noreferrer"
-								href={ `/domains/manage/${ domain }/transfer/in/${ site }` }
+								href={ paths.domainManagementTransferIn( site, domain ) }
 							/>
 						),
 					},
