@@ -115,6 +115,7 @@ export const queries = createReducer(
 		},
 	}
 );
+queries.hasCustomPersistence = true;
 
 export default combineReducers( {
 	queries,

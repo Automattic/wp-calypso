@@ -310,6 +310,7 @@ export const queries = ( () => {
 		}
 	);
 } )();
+queries.hasCustomPersistence = true;
 
 /**
  * Returns the updated post query state for queries of all sites at once after

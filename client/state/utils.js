@@ -195,28 +195,10 @@ export function extendAction( action, data ) {
  * @return {Function}                Reducer function
  */
 export function createReducer( initialState = null, customHandlers = {}, schema = null ) {
-	// Define default handlers for serialization actions. If no schema is
-	// provided, always return the initial state. Otherwise, allow for
-	// serialization and validate on deserialize.
-	let defaultHandlers;
-	if ( schema ) {
-		defaultHandlers = {
-			[ SERIALIZE ]: state => state,
-			[ DESERIALIZE ]: state => {
-				if ( isValidStateWithSchema( state, schema ) ) {
-					return state;
-				}
-
-				warn( 'state validation failed - check schema used for:', customHandlers );
-
-				return initialState;
-			},
-		};
-	} else {
-		defaultHandlers = {
-			[ SERIALIZE ]: () => initialState,
-			[ DESERIALIZE ]: () => initialState,
-		};
+	const defaultHandlers = {};
+	if ( ! schema ) {
+		defaultHandlers[ SERIALIZE ] = () => initialState;
+		defaultHandlers[ DESERIALIZE ] = () => initialState;
 	}
 
 	const handlers = {
@@ -241,7 +223,7 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 		};
 	}
 
-	const reducer = ( state = initialState, action ) => {
+	let reducer = ( state = initialState, action ) => {
 		const { type } = action;
 
 		if ( 'production' !== process.env.NODE_ENV && 'type' in action && ! type ) {
@@ -259,7 +241,9 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 	};
 
 	//used to propagate actions properly when combined in combineReducersWithPersistence
-	reducer.hasCustomPersistence = true;
+	if ( schema ) {
+		reducer = withSchemaValidation( schema, reducer );
+	}
 
 	return reducer;
 }
@@ -309,7 +293,7 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  * @returns {function} wrapped reducer handling validation on DESERIALIZE and
  * returns initial state if no schema is provided on SERIALIZE and DESERIALIZE.
  */
-export const withSchemaValidation = ( schema, reducer ) => {
+export function withSchemaValidation( schema, reducer ) {
 	const wrappedReducer = ( state, action ) => {
 		if ( SERIALIZE === action.type ) {
 			return schema ? reducer( state, action ) : reducer( undefined, { type: '@@calypso/INIT' } );
@@ -331,7 +315,7 @@ export const withSchemaValidation = ( schema, reducer ) => {
 	wrappedReducer.hasCustomPersistence = true;
 
 	return wrappedReducer;
-};
+}
 
 /**
  * Returns a single reducing function that ensures that persistence is opt-in.

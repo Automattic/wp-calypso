@@ -12,17 +12,15 @@ import {
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
 	READER_SITE_UPDATE,
-	DESERIALIZE,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, createReducer, withSchemaValidation } from 'state/utils';
 import { readerSitesSchema } from './schema';
 import { withoutHttp } from 'lib/url';
 import { decodeEntities } from 'lib/formatting';
 
 const actionMap = {
 	[ SERIALIZE ]: handleSerialize,
-	[ DESERIALIZE ]: handleDeserialize,
 	[ READER_SITE_REQUEST_SUCCESS ]: handleRequestSuccess,
 	[ READER_SITE_REQUEST_FAILURE ]: handleRequestFailure,
 	[ READER_SITE_UPDATE ]: handleSiteUpdate,
@@ -35,13 +33,6 @@ function defaultHandler( state ) {
 function handleSerialize( state ) {
 	// remove errors from the serialized state
 	return omitBy( state, 'is_error' );
-}
-
-function handleDeserialize( state ) {
-	if ( isValidStateWithSchema( state, readerSitesSchema ) ) {
-		return state;
-	}
-	return {};
 }
 
 function handleRequestFailure( state, action ) {
@@ -102,11 +93,10 @@ function handleSiteUpdate( state, action ) {
 	return assign( {}, state, keyBy( sites, 'ID' ) );
 }
 
-export function items( state = {}, action ) {
+export const items = withSchemaValidation( readerSitesSchema, ( state = {}, action ) => {
 	const handler = actionMap[ action.type ] || defaultHandler;
 	return handler( state, action );
-}
-items.hasCustomPersistence = true;
+} );
 
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {
