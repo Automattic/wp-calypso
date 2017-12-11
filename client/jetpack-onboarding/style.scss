@@ -13,6 +13,17 @@
 		}
 	}
 
+	.steps__summary {
+		.button {
+			position: relative;
+			left: 43%;
+
+			@include breakpoint( '<480px' ) {
+				left: 34%;
+			}
+		}
+	}
+
 	.steps__button-group {
 		text-align: center;
 
