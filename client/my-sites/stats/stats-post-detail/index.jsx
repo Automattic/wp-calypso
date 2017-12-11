@@ -33,6 +33,7 @@ import Button from 'components/button';
 import WebPreview from 'components/web-preview';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'state/posts/selectors';
+import { hasNavigated } from 'state/selectors';
 
 class StatsPostDetail extends Component {
 	static propTypes = {
@@ -48,6 +49,7 @@ class StatsPostDetail extends Component {
 		siteSlug: PropTypes.string,
 		showViewLink: PropTypes.bool,
 		previewUrl: PropTypes.string,
+		hasNavigated: PropTypes.bool,
 	};
 
 	state = {
@@ -55,10 +57,13 @@ class StatsPostDetail extends Component {
 	};
 
 	goBack = () => {
-		const pathParts = this.props.path.split( '/' );
-		const defaultBack = '/stats/' + pathParts[ pathParts.length - 1 ];
+		if ( window.history.length > 1 && this.props.hasNavigated ) {
+			window.history.back();
+			return;
+		}
 
-		page( this.props.context.prevPath || defaultBack );
+		const pathParts = this.props.path.split( '/' );
+		page( '/stats/' + pathParts[ pathParts.length - 1 ] );
 	};
 
 	componentDidMount() {
@@ -201,6 +206,7 @@ const connectComponent = connect( ( state, { postId } ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		showViewLink: ! isJetpack && isPreviewable,
 		previewUrl: getPostPreviewUrl( state, siteId, postId ),
+		hasNavigated: hasNavigated( state ),
 		siteId,
 	};
 } );
