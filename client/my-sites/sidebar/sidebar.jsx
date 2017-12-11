@@ -30,7 +30,6 @@ import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import StatsSparkline from 'blocks/stats-sparkline';
-import JetpackLogo from 'components/jetpack-logo';
 import { isPlan, isFreeTrial, isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -345,7 +344,9 @@ export class MySitesSidebar extends Component {
 		return (
 			<li className={ this.itemLinkClass( [ '/plans' ], linkClass ) }>
 				<a onClick={ this.trackUpgradeClick } href={ planLink }>
-					<JetpackLogo size={ 24 } />
+					<svg class="sidebar__jetpack-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+						<path d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M11,14H6l5-10V14z M13,20V10h5L13,20z" />
+					</svg>
 					<span className="menu-link-text">
 						{ this.props.translate( 'Plan', { context: 'noun' } ) }
 					</span>
