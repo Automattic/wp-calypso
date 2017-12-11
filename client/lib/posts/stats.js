@@ -20,7 +20,7 @@ import utils from 'lib/posts/utils';
  */
 const debug = debugModule( 'calypso:posts:stats' );
 
-function recordUsageStats( action, postType, site ) {
+function recordUsageStats( site, action, postType ) {
 	let source;
 
 	analytics.mc.bumpStat( 'editor_usage', action );
@@ -43,7 +43,7 @@ export function recordEvent( action, label, value ) {
 	analytics.ga.recordEvent( 'Editor', action, label, value );
 }
 
-export function recordSaveEvent( context, site ) {
+export function recordSaveEvent( site, context ) {
 	const post = PostEditStore.get();
 	const savedPost = PostEditStore.getSavedPost();
 
@@ -84,7 +84,7 @@ export function recordSaveEvent( context, site ) {
 	}
 
 	if ( usageAction ) {
-		recordUsageStats( usageAction, post.type, site );
+		recordUsageStats( site, usageAction, post.type );
 	}
 
 	// if this action has an mc stat name, record it
