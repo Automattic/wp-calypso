@@ -14,10 +14,12 @@ import PropTypes from 'prop-types';
 import contextTypes from '../context-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import Button from 'components/button';
 
 class SiteLink extends Component {
 	static propTypes = {
 		href: PropTypes.string,
+		isButton: PropTypes.boolean,
 	};
 
 	static contextTypes = contextTypes;
@@ -29,11 +31,19 @@ class SiteLink extends Component {
 	};
 
 	render() {
-		const { children, href, siteSlug } = this.props;
+		const { children, href, siteSlug, isButton } = this.props;
 		const siteHref = href.replace( ':site', siteSlug );
 
+		if ( isButton ) {
+			return (
+				<Button primary onClick={ this.onClick } href={ siteHref }>
+					{ children }
+				</Button>
+			);
+		}
+
 		return (
-			<a onClick={ this.onClick } href={ siteHref }>
+			<a onClick={ this.onClick } href={ siteHref } className="config-elements__text-link">
 				{ children }
 			</a>
 		);
