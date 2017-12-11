@@ -149,7 +149,6 @@ function getAvailabilityNotice( domain, error, site ) {
 				}
 			);
 			break;
-		case domainAvailability.TLD_NOT_SUPPORTED:
 		case domainAvailability.NOT_REGISTRABLE:
 			if ( tld ) {
 				message = translate(

@@ -294,18 +294,13 @@ class TransferDomainStep extends React.Component {
 				case domainAvailability.AVAILABLE:
 					this.setState( { suggestion: result } );
 					return;
+				case domainAvailability.TRANSFERRABLE:
+					this.setState( {
+						domain,
+						supportsPrivacy: get( result, 'supports_privacy', false ),
+					} );
+					return;
 				case domainAvailability.TLD_NOT_SUPPORTED:
-				case domainAvailability.MAPPABLE:
-				case domainAvailability.MAPPED:
-				case domainAvailability.UNKNOWN:
-					if ( get( result, 'transferrable', error ) === true ) {
-						this.setState( {
-							domain,
-							supportsPrivacy: get( result, 'supports_privacy', false ),
-						} );
-						return;
-					}
-
 					const tld = getTld( domain );
 
 					this.setState( {

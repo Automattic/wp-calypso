@@ -396,11 +396,15 @@ class RegisterDomainStep extends React.Component {
 						{ domainName: domain, blogId: this.props.selectedSite.ID },
 						( error, result ) => {
 							const timeDiff = Date.now() - timestamp;
-							const status = get( result, 'status', error );
+							let status = get( result, 'status', error );
 
-							const { AVAILABLE, TRANSFERRABLE, UNKNOWN } = domainAvailability;
+							const { AVAILABLE, TRANSFERRABLE, TLD_NOT_SUPPORTED, UNKNOWN } = domainAvailability;
 							const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
-							const isDomainTransferrable = includes( [ TRANSFERRABLE ], status );
+							const isDomainTransferrable = TRANSFERRABLE === status;
+
+							if ( TLD_NOT_SUPPORTED === TLD_NOT_SUPPORTED ) {
+								status = get( result, 'mappable', error );
+							}
 
 							this.setState( {
 								lastDomainStatus: status,
