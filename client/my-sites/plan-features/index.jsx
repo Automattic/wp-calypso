@@ -115,14 +115,14 @@ class PlanFeatures extends Component {
 
 	renderMobileView() {
 		const {
+			basePlansPath,
 			canPurchase,
-			translate,
-			planProperties,
 			isInSignup,
 			isLandingPage,
-			site,
-			basePlansPath,
+			planProperties,
 			selectedPlan,
+			site,
+			translate,
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -174,22 +174,23 @@ class PlanFeatures extends Component {
 						basePlansPath={ basePlansPath }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						isInSignup={ isInSignup }
+						selectedPlan={ selectedPlan }
 					/>
 					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
 					<PlanFeaturesActions
+						available={ available }
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
-						primaryUpgrade={ primaryUpgrade }
-						available={ available }
-						onUpgradeClick={ onUpgradeClick }
 						freePlan={ isFreePlan( planName ) }
-						isPlaceholder={ isPlaceholder }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
+						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
+						onUpgradeClick={ onUpgradeClick }
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
+						primaryUpgrade={ primaryUpgrade }
 						selectedPlan={ selectedPlan }
 					/>
 					<FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
@@ -208,12 +209,13 @@ class PlanFeatures extends Component {
 
 	renderPlanHeaders() {
 		const {
-			planProperties,
-			site,
 			basePlansPath,
-			isInSignup,
-			siteType,
 			displayJetpackPlans,
+			isInSignup,
+			planProperties,
+			selectedPlan,
+			site,
+			siteType,
 		} = this.props;
 
 		return map( planProperties, properties => {
@@ -256,22 +258,23 @@ class PlanFeatures extends Component {
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesHeader
+						audience={ audience }
+						basePlansPath={ basePlansPath }
+						billingTimeFrame={ billingTimeFrame }
 						current={ current }
 						currencyCode={ currencyCode }
-						popular={ popular }
-						newPlan={ newPlan }
-						title={ planConstantObj.getTitle() }
-						audience={ audience }
-						planType={ planName }
-						rawPrice={ rawPrice }
 						discountPrice={ discountPrice }
-						billingTimeFrame={ billingTimeFrame }
-						isPlaceholder={ isPlaceholder }
-						site={ site }
 						hideMonthly={ hideMonthly }
-						basePlansPath={ basePlansPath }
-						relatedMonthlyPlan={ relatedMonthlyPlan }
 						isInSignup={ isInSignup }
+						isPlaceholder={ isPlaceholder }
+						newPlan={ newPlan }
+						planType={ planName }
+						popular={ popular }
+						rawPrice={ rawPrice }
+						relatedMonthlyPlan={ relatedMonthlyPlan }
+						site={ site }
+						selectedPlan={ selectedPlan }
+						title={ planConstantObj.getTitle() }
 					/>
 				</td>
 			);
@@ -329,20 +332,20 @@ class PlanFeatures extends Component {
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
+						available={ available }
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
-						available={ available }
-						primaryUpgrade={ primaryUpgrade }
-						planName={ planConstantObj.getTitle() }
-						onUpgradeClick={ onUpgradeClick }
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						manageHref={ `/plans/my-plan/${ site.slug }` }
+						onUpgradeClick={ onUpgradeClick }
+						planName={ planConstantObj.getTitle() }
 						planType={ planName }
+						primaryUpgrade={ primaryUpgrade }
 						selectedPlan={ selectedPlan }
 					/>
 				</td>
