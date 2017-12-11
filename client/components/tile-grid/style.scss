@@ -89,8 +89,9 @@
 			width: 8px; //Match the size of the cta copy
 			height: 8px; //Match the size of the cta copy
 			position: absolute;
-			top: 20px;
+			top: 50%;
 			right: 15px;
+			margin-top: -6px;
 			border-top: 2px solid lighten( $gray, 20% );
 			border-right: 2px solid lighten( $gray, 20% );
 			transform: rotate(45deg);
