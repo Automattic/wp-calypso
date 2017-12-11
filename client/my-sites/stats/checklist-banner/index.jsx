@@ -94,15 +94,7 @@ export class ChecklistBanner extends Component {
 
 	renderShareButtons() {
 		const { siteSlug, translate } = this.props;
-		const socialMedia = [
-			'wordpress',
-			'facebook',
-			'twitter',
-			'google-plus',
-			'linkedin',
-			'tumblr',
-			'pinterest',
-		];
+		const socialMedia = [ 'facebook', 'twitter', 'linkedin', 'google-plus', 'pinterest' ];
 
 		return (
 			<div className="checklist-banner__actions">
