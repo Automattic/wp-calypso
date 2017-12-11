@@ -23,8 +23,8 @@ import {
 import { combineReducers, createReducer } from 'state/utils';
 import { revisionsDiffSchema } from './schemas.js';
 
-// `0`s are cool. `-1`s? not so much
 const isNonNegativeInteger = t => isInteger( t ) && t >= 0;
+const isPositiveInteger = t => isInteger( t ) && t > 0;
 
 export const diffs = createReducer(
 	{},
@@ -33,7 +33,7 @@ export const diffs = createReducer(
 			state,
 			{ diffs: diffsFromServer, postId, revisions, siteId }
 		) => {
-			if ( ! isNonNegativeInteger( siteId ) ) {
+			if ( ! isPositiveInteger( siteId ) ) {
 				return state;
 			}
 			const filteredDiffs = filter(
