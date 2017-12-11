@@ -32,6 +32,7 @@ import {
 	getLabels,
 	areLabelsFullyLoaded,
 	getCountriesData,
+	isLabelDataFetchError,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import {
 	areLabelsEnabled,
@@ -181,7 +182,7 @@ class OrderFulfillment extends Component {
 	}
 
 	renderFulfillmentAction() {
-		const { labelsLoaded, order, site, translate } = this.props;
+		const { labelsLoaded, labelsError, order, site, translate } = this.props;
 		const orderFinished = isOrderFinished( order.status );
 		const labelsLoading = wcsEnabled && ! labelsLoaded;
 
@@ -189,7 +190,7 @@ class OrderFulfillment extends Component {
 			return null;
 		}
 
-		if ( labelsLoading ) {
+		if ( ! labelsError && labelsLoading ) {
 			const buttonClassName = 'is-placeholder';
 			return <Button className={ buttonClassName }>{ translate( 'Fulfill' ) }</Button>;
 		}
@@ -303,6 +304,7 @@ export default connect(
 
 		return {
 			labelsLoaded,
+			labelsError: isLabelDataFetchError( state, order.id, site.ID ),
 			labelsEnabled: areLabelsEnabled( state, site.ID ),
 			labels: getLabels( state, order.id, site.ID ),
 			hasLabelsPaymentMethod,

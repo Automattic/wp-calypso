@@ -10,8 +10,11 @@ import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import { isValidPhone } from 'woocommerce/woocommerce-services/lib/utils/phone-format';
-import { areSettingsLoaded } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
-import { isLoaded as arePackagesLoaded } from 'woocommerce/woocommerce-services/state/packages/selectors';
+import { areSettingsLoaded, areSettingsErrored } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
+import {
+	isLoaded as arePackagesLoaded,
+	isFetchError as arePackagesErrored,
+} from 'woocommerce/woocommerce-services/state/packages/selectors';
 
 export const getShippingLabel = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingLabel', orderId ], null );
@@ -280,6 +283,10 @@ export const canPurchase = createSelector(
 
 export const areLabelsFullyLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return isLoaded( state, orderId, siteId ) && areSettingsLoaded( state, siteId ) && arePackagesLoaded( state, siteId );
+};
+
+export const isLabelDataFetchError = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	return isError( state, orderId, siteId ) || areSettingsErrored( state, siteId ) || arePackagesErrored( state, siteId );
 };
 
 export const getCountriesData = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
