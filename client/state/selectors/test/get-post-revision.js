@@ -17,16 +17,19 @@ describe( 'getPostRevision', () => {
 				{
 					posts: {
 						revisions: {
-							revisions: {},
+							diffs: {
+								12345678: {
+									10: {
+										revisions: {},
+									},
+								},
+							},
 						},
-					},
-					users: {
-						items: {},
 					},
 				},
 				12345678,
 				10,
-				10
+				7979
 			)
 		).to.be.null;
 	} );
@@ -37,54 +40,18 @@ describe( 'getPostRevision', () => {
 				{
 					posts: {
 						revisions: {
-							revisions: {
+							diffs: {
 								12345678: {
 									10: {
-										11: {
-											id: 11,
-											title: 'Badman <img onerror= />',
+										revisions: {
+											11: {
+												id: 11,
+												post_author: 9090,
+												post_title: 'Badman <img onerror= />',
+											},
 										},
 									},
 								},
-							},
-						},
-					},
-					users: {
-						items: {},
-					},
-				},
-				12345678,
-				10,
-				11
-			)
-		).to.eql( {
-			id: 11,
-			title: 'Badman <img onerror= />',
-		} );
-	} );
-
-	test( 'should hydrate the revision with more author information if it can be found in the state', () => {
-		expect(
-			getPostRevision(
-				{
-					posts: {
-						revisions: {
-							revisions: {
-								12345678: {
-									10: {
-										11: {
-											id: 11,
-											author: 1,
-										},
-									},
-								},
-							},
-						},
-					},
-					users: {
-						items: {
-							1: {
-								name: 'Alice Bob',
 							},
 						},
 					},
@@ -95,74 +62,8 @@ describe( 'getPostRevision', () => {
 			)
 		).to.eql( {
 			id: 11,
-			author: {
-				name: 'Alice Bob',
-			},
-		} );
-	} );
-
-	test( "should preserve a revision author ID if it can't find more information about the author", () => {
-		expect(
-			getPostRevision(
-				{
-					posts: {
-						revisions: {
-							revisions: {
-								12345678: {
-									10: {
-										11: {
-											id: 11,
-											author: 1,
-										},
-									},
-								},
-							},
-						},
-					},
-					users: {
-						items: {},
-					},
-				},
-				12345678,
-				10,
-				11
-			)
-		).to.eql( {
-			id: 11,
-			author: 1,
-		} );
-	} );
-
-	test( 'should normalize the revision', () => {
-		expect(
-			getPostRevision(
-				{
-					posts: {
-						revisions: {
-							revisions: {
-								12345678: {
-									10: {
-										11: {
-											id: 11,
-											title: '&acute;',
-										},
-									},
-								},
-							},
-						},
-					},
-					users: {
-						items: {},
-					},
-				},
-				12345678,
-				10,
-				11,
-				'editing'
-			)
-		).to.eql( {
-			id: 11,
-			title: '´',
+			post_author: 9090,
+			post_title: 'Badman <img onerror= />',
 		} );
 	} );
 } );
