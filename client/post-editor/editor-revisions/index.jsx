@@ -25,7 +25,7 @@ import QueryPostRevisions from 'components/data/query-post-revisions';
 import QueryUsers from 'components/data/query-users';
 
 class EditorRevisions extends Component {
-	render = () => {
+	render() {
 		const {
 			authorsIds,
 			comparisons,
@@ -59,7 +59,7 @@ class EditorRevisions extends Component {
 				/>
 			</div>
 		);
-	};
+	}
 }
 
 EditorRevisions.propTypes = {
