@@ -130,9 +130,9 @@ function getPressThisContent( query ) {
 // - (Flux) startEditingNew: to set the editor content;
 // - (Redux) editPost: to set every other attribute (in particular, to update the Category Selector, terms can only be set via Redux);
 // - (Flux) edit: to reliably show the updated post attributes before (auto)saving.
-function startEditingPostCopy( siteId, postToCopyId, context ) {
+function startEditingPostCopy( site, postToCopyId, context ) {
 	wpcom
-		.site( siteId )
+		.site( site.ID )
 		.post( postToCopyId )
 		.get( { context: 'edit' } )
 		.then( postToCopy => {
@@ -166,12 +166,12 @@ function startEditingPostCopy( siteId, postToCopyId, context ) {
 				title: postAttributes.title,
 			};
 
-			actions.startEditingNew( siteId, {
+			actions.startEditingNew( site, {
 				content: postToCopy.content,
 				title: postToCopy.title,
 				type: postToCopy.type,
 			} );
-			context.store.dispatch( editPost( siteId, null, reduxPostAttributes ) );
+			context.store.dispatch( editPost( site.ID, null, reduxPostAttributes ) );
 			actions.edit( postAttributes );
 
 			/**
@@ -235,7 +235,7 @@ export default {
 			// so kick it off here to minimize time spent waiting for it to load
 			// in the view components
 			if ( postToCopyId ) {
-				startEditingPostCopy( siteId, postToCopyId, context );
+				startEditingPostCopy( site, postToCopyId, context );
 				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			} else if ( postID ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified

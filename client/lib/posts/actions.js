@@ -344,7 +344,7 @@ PostActions = {
 			type: 'EDIT_POST_SAVE',
 		} );
 
-		postHandle = wpcom.site( site.ID ).post( post.ID );
+		postHandle = wpcom.site( post.site_ID ).post( post.ID );
 		query = {
 			context: 'edit',
 			apiVersion: '1.2',
