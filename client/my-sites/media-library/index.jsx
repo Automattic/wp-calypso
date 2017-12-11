@@ -62,6 +62,7 @@ class MediaLibrary extends Component {
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
 		postId: PropTypes.number,
+		disableLargeImageSources: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -70,6 +71,7 @@ class MediaLibrary extends Component {
 		onScaleChange: () => {},
 		scrollable: false,
 		source: '',
+		disableLargeImageSources: false,
 	};
 
 	componentWillMount() {
@@ -206,6 +208,7 @@ class MediaLibrary extends Component {
 					onSearch={ this.doSearch }
 					isConnected={ isConnected( this.props ) }
 					post={ !! this.props.postId }
+					disableLargeImageSources={ this.props.disableLargeImageSources }
 				/>
 				{ content }
 			</div>

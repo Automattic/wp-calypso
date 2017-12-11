@@ -20,6 +20,11 @@ import PlanStorage from 'blocks/plan-storage';
 import FilterItem from './filter-item';
 import DataSource from './data-source';
 
+// These source supply very large images, and there are instances such as
+// the site icon editor, where we want to disable them because the editor
+// can't handle the large images.
+const largeImageSources = [ 'pexels' ];
+
 export class MediaLibraryFilterBar extends Component {
 	static propTypes = {
 		basePath: PropTypes.string,
@@ -34,6 +39,7 @@ export class MediaLibraryFilterBar extends Component {
 		translate: PropTypes.func,
 		post: PropTypes.bool,
 		isConnected: PropTypes.bool,
+		disableLargeImageSources: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -46,6 +52,7 @@ export class MediaLibraryFilterBar extends Component {
 		source: '',
 		post: false,
 		isConnected: true,
+		disableLargeImageSources: false,
 	};
 
 	getSearchPlaceholderText() {
@@ -167,7 +174,11 @@ export class MediaLibraryFilterBar extends Component {
 		// Dropdown is disabled when viewing any external data source
 		return (
 			<div className="media-library__filter-bar">
-				<DataSource source={ this.props.source } onSourceChange={ this.props.onSourceChange } />
+				<DataSource
+					source={ this.props.source }
+					onSourceChange={ this.props.onSourceChange }
+					disabledSources={ this.props.disableLargeImageSources ? largeImageSources : [] }
+				/>
 
 				<SectionNav
 					selectedText={ this.getFilterLabel( this.props.filter ) }
