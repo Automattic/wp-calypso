@@ -5,9 +5,11 @@
 }
 
 .editor-revisions__wrapper {
+	box-sizing: border-box;
 	display: flex;
 	width: 90vw;
 	height: calc(90vh - 73px);
+	overflow-y: hidden;
 
 	@include breakpoint( '<660px' ) {
 		flex-direction: column-reverse;
