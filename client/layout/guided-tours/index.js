@@ -18,8 +18,7 @@ import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { getLastAction } from 'state/ui/action-log/selectors';
-import { getSectionName, isSectionLoading } from 'state/ui/selectors';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
+import { getInitialQueryArguments, getSectionName, isSectionLoading } from 'state/ui/selectors';
 import {
 	nextGuidedTourStep,
 	quitGuidedTour,

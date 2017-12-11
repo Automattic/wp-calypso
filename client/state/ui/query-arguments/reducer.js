@@ -19,21 +19,16 @@ const timestamped = query => ( {
 
 const isEqualQuery = ( a, b ) => isEqual( omit( a, '_timestamp' ), omit( b, '_timestamp' ) );
 
-const initial = createReducer(
-	false,
-	{
-		[ ROUTE_SET ]: ( state, { query } ) => ( state === false ? timestamped( query ) : state ),
-	},
-	{ type: [ 'boolean', 'object' ] }
-);
+const initial = createReducer( false, {
+	[ ROUTE_SET ]: ( state, { query } ) => ( state === false ? timestamped( query ) : state ),
+} );
 
 const current = createReducer(
 	{},
 	{
 		[ ROUTE_SET ]: ( state, { query } ) =>
 			! isEqualQuery( state, query ) ? timestamped( query ) : state,
-	},
-	{ type: 'object' }
+	}
 );
 
 export default combineReducers( {
