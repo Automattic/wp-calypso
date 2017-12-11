@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get } from 'lodash';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,23 +14,23 @@ import { isMainSiteOf } from 'state/selectors';
 import { getSite, isJetpackSiteMainNetworkSite } from 'state/sites/selectors';
 
 /**
- * Returns the secondary sites of a given site
- * Returns null if main site is not found or if the site is not a main site
+ * Returns the member sites (main or secondary) of given network site
+ * Returns null if main site is not found or if the site is not a main site of a network
  *
- * @param  {Object}  state     Global state tree
- * @param  {Number}  siteId    The ID of the main site for which we're retrieving the secondary sites
- * @return {?Array}            Array of secondary sites
+ * @param  {Object}  state       Global state tree
+ * @param  {Number}  mainSiteId  The ID of the main site for which we're retrieving the network sites
+ * @return {?Array}              Array of network sites (the main one and the secondary ones)
  */
 export default createSelector(
-	( state, siteId ) => {
-		const isMainNetworkSite = isJetpackSiteMainNetworkSite( state, siteId );
-		if ( ! isMainNetworkSite ) {
+	( state, mainSiteId ) => {
+		if ( ! isJetpackSiteMainNetworkSite( state, mainSiteId ) ) {
 			return null;
 		}
-		const siteIds = Object.keys( get( state, 'sites.items', {} ) );
-		return siteIds
-			.filter( secondarySiteId => isMainSiteOf( state, siteId, secondarySiteId ) )
-			.map( secondarySiteId => getSite( state, secondarySiteId ) );
+
+		return filter(
+			state.sites.items,
+			site => mainSiteId === site.ID || isMainSiteOf( state, mainSiteId, site.ID )
+		).map( site => getSite( state, site.ID ) );
 	},
 	state => [ state.sites.items, state.currentUser.capabilities ]
 );
