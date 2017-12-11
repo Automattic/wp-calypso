@@ -14,6 +14,7 @@ import { flow, get } from 'lodash';
  * Internal dependencies
  */
 import { selectPostRevision } from 'state/posts/revisions/actions';
+import { getUser } from 'state/users/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
 import TimeSince from 'components/time-since';
 
@@ -23,8 +24,7 @@ class EditorRevisionsListItem extends PureComponent {
 	};
 
 	render() {
-		const { revision, revisionChanges, isMultiUserSite, translate } = this.props;
-		const authorName = get( revision, 'author.display_name' );
+		const { authorName, revision, revisionChanges, isMultiUserSite, translate } = this.props;
 		const added = get( revisionChanges, 'add', 0 );
 		const removed = get( revisionChanges, 'del', 0 );
 		const titles = {
@@ -93,11 +93,12 @@ class EditorRevisionsListItem extends PureComponent {
 EditorRevisionsListItem.propTypes = {
 	postId: PropTypes.number,
 	revision: PropTypes.object.isRequired,
+	revisionChanges: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 
 	// connected to state
+	authorName: PropTypes.string,
 	isMultiUserSite: PropTypes.bool.isRequired,
-	revisionChanges: PropTypes.object.isRequired,
 
 	// connected to dispatcher
 	selectPostRevision: PropTypes.func.isRequired,
@@ -109,7 +110,8 @@ EditorRevisionsListItem.propTypes = {
 export default flow(
 	localize,
 	connect(
-		( state, { siteId } ) => ( {
+		( state, { revision, siteId } ) => ( {
+			authorName: get( getUser( state, get( revision, 'post_author' ) ), 'display_name', '' ),
 			isMultiUserSite: ! isSingleUserSite( state, siteId ),
 		} ),
 		{ selectPostRevision }

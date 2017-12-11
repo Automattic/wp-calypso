@@ -44,7 +44,7 @@ describe( 'getPostRevisionsAuthorsId', () => {
 									10: {
 										revisions: {
 											11: {
-												post_author: 123,
+												post_author: '123',
 											},
 										},
 									},
