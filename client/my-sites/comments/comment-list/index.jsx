@@ -480,12 +480,9 @@ export class CommentList extends Component {
 								commentId={ commentId }
 								key={ `comment-${ siteId }-${ commentId }` }
 								isBulkMode={ isBulkEdit }
+								isCommentsTreeSupported={ isCommentsTreeSupported }
 								isPostView={ isPostView }
 								isSelected={ this.isCommentSelected( commentId ) }
-								refreshCommentData={
-									isCommentsTreeSupported &&
-									! this.hasCommentJustMovedBackToCurrentStatus( commentId )
-								}
 								toggleSelected={ this.toggleCommentSelected }
 								updateLastUndo={ this.updateLastUndo }
 							/>
