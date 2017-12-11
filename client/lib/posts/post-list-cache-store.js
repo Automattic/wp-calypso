@@ -58,7 +58,7 @@ function set( list ) {
 	}
 }
 
-function markDirty( post, oldStatus, site ) {
+function markDirty( site, post, oldStatus ) {
 	const affectedSites = [ site.slug, site.ID, false ];
 	const affectedStatuses = [ post.status, oldStatus ];
 	let listStatuses, key, entry, list;
@@ -133,7 +133,7 @@ PostsListCache.dispatchToken = Dispatcher.register( function( payload ) {
 		case 'RECEIVE_UPDATED_POST':
 		case 'RECEIVE_POST_BEING_EDITED':
 			if ( action.post ) {
-				markDirty( action.post, action.original ? action.original.status : null, action.site );
+				markDirty( action.site, action.post, action.original ? action.original.status : null );
 				set( PostListStore.get() );
 			}
 			break;
