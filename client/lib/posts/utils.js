@@ -40,7 +40,7 @@ var utils = {
 		return `${ basePath }/${ post.type }/${ site.slug }/${ post.ID }`;
 	},
 
-	getPreviewURL: function( post, site ) {
+	getPreviewURL: function( site, post ) {
 		let parsed, previewUrl;
 
 		if ( ! post || ! post.URL || post.status === 'trash' ) {

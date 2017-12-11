@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, filter, isEqual, pickBy, without, omit } from 'lodash';
+import { assign, filter, get, isEqual, pickBy, without, omit } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:posts:post-edit-store' );
 import emitter from 'lib/mixins/emitter';
@@ -70,24 +70,24 @@ function getPageTemplate( post ) {
 	return post.page_template;
 }
 
-function startEditing( post, site ) {
+function startEditing( site, post ) {
 	resetState();
 	post = normalize( post );
 	if ( post.title ) {
 		post.title = decodeEntities( post.title );
 	}
-	_previewUrl = utils.getPreviewURL( post, site );
+	_previewUrl = utils.getPreviewURL( site, post );
 	_savedPost = Object.freeze( post );
 	_post = _savedPost;
 	_isLoading = false;
 }
 
-function updatePost( post, site ) {
+function updatePost( site, post ) {
 	post = normalize( post );
 	if ( post.title ) {
 		post.title = decodeEntities( post.title );
 	}
-	_previewUrl = utils.getPreviewURL( post, site );
+	_previewUrl = utils.getPreviewURL( site, post );
 	_savedPost = Object.freeze( post );
 	_post = _savedPost;
 	_isNew = false;
@@ -99,19 +99,19 @@ function updatePost( post, site ) {
 	} );
 }
 
-function initializeNewPost( siteId, options, site ) {
+function initializeNewPost( site, options ) {
 	var args;
 	options = options || {};
 
 	args = {
-		site_ID: siteId,
+		site_ID: get( site, 'ID' ),
 		status: 'draft',
 		type: options.postType || 'post',
 		content: options.content || '',
 		title: options.title || '',
 	};
 
-	startEditing( args, site );
+	startEditing( site, args );
 	_isNew = true;
 }
 
@@ -216,11 +216,11 @@ function dispatcherCallback( payload ) {
 			break;
 
 		case 'DRAFT_NEW_POST':
-			initializeNewPost( action.siteId, {
+			initializeNewPost( action.site, {
 				postType: action.postType,
 				title: action.title,
 				content: action.content,
-			}, action.site );
+			} );
 			PostEditStore.emit( 'change' );
 			break;
 
@@ -240,7 +240,7 @@ function dispatcherCallback( payload ) {
 			if ( action.error ) {
 				setLoadingError( action.error );
 			} else {
-				startEditing( action.post, action.site );
+				startEditing( action.site, action.post );
 			}
 			PostEditStore.emit( 'change' );
 			break;
@@ -265,7 +265,7 @@ function dispatcherCallback( payload ) {
 		case 'RECEIVE_UPDATED_POST':
 			if ( ! action.error ) {
 				if ( _post && action.post.ID === _post.ID ) {
-					updatePost( action.post, action.site );
+					updatePost( action.site, action.post );
 					PostEditStore.emit( 'change' );
 				}
 			}
@@ -275,7 +275,7 @@ function dispatcherCallback( payload ) {
 
 		case 'RECEIVE_POST_BEING_EDITED':
 			if ( ! action.error ) {
-				updatePost( action.post, action.site );
+				updatePost( action.site, action.post );
 				if ( typeof action.rawContent === 'string' ) {
 					_initialRawContent = action.rawContent;
 				}
@@ -294,8 +294,8 @@ function dispatcherCallback( payload ) {
 			_isAutosaving = false;
 			if ( ! action.error ) {
 				_previewUrl = utils.getPreviewURL(
-					assign( { preview_URL: action.autosave.preview_URL }, _savedPost ),
-					action.site
+					action.site,
+					assign( { preview_URL: action.autosave.preview_URL }, _savedPost )
 				);
 			}
 			PostEditStore.emit( 'change' );

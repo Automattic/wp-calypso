@@ -471,7 +471,7 @@ const mapState = ( state, props ) => {
 		isFrontPage: isFrontPage( state, pageSiteId, props.page.ID ),
 		isPostsPage: isPostsPage( state, pageSiteId, props.page.ID ),
 		isPreviewable,
-		previewURL: getPreviewURL( props.page ),
+		previewURL: getPreviewURL( site, props.page ),
 		site,
 		siteSlugOrId,
 	};

@@ -120,7 +120,7 @@ class Draft extends Component {
 	};
 
 	previewPost = () => {
-		window.open( utils.getPreviewURL( this.props.post ) );
+		window.open( utils.getPreviewURL( this.props.site, this.props.post ) );
 	};
 
 	publishPost = () => {
