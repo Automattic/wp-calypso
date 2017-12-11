@@ -32,7 +32,7 @@
 
 .media-library__pexels-attribution {
 	display: inline-block;
-	margin-right: 1em;
+	margin-right: 5em;
 
 	.media-library__mobile-hide {
 		@include breakpoint( "<480px" ) {
