@@ -252,7 +252,6 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 }
 
 if ( shouldMinify ) {
-	webpackConfig.devtool = 'cheap-module-source-map';
 	webpackConfig.plugins.push(
 		new UglifyJsPlugin( {
 			cache: true,
