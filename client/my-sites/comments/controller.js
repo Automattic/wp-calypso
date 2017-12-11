@@ -17,6 +17,8 @@ import CommentView from 'my-sites/comment/main';
 import { removeNotice } from 'state/notices/actions';
 import { getNotices } from 'state/notices/selectors';
 
+let lastRoute = null;
+
 const mapPendingStatusToUnapproved = status => ( 'pending' === status ? 'unapproved' : status );
 
 const sanitizeInt = number => {
@@ -46,6 +48,17 @@ const changePage = path => pageNumber => {
 		window.scrollTo( 0, 0 );
 	}
 	return page( addQueryArgs( { page: pageNumber }, path ) );
+};
+
+const handleBackButton = ( context, siteFragment ) => () =>
+	page.back( context.lastRoute || `/comments/all/${ siteFragment }` );
+
+export const updateLastRoute = ( context, next ) => {
+	if ( lastRoute ) {
+		context.lastRoute = lastRoute;
+	}
+	lastRoute = context.canonicalPath;
+	next();
 };
 
 export const siteComments = context => {
@@ -92,6 +105,7 @@ export const postComments = context => {
 	renderWithReduxStore(
 		<CommentsManagement
 			changePage={ changePage( path ) }
+			onBack={ handleBackButton( context, siteFragment ) }
 			page={ pageNumber }
 			postId={ postId }
 			siteFragment={ siteFragment }
@@ -118,7 +132,10 @@ export const comment = context => {
 		page.redirect( `/comments/all/${ siteFragment }/${ postId }` );
 
 	renderWithReduxStore(
-		<CommentView { ...{ action, commentId, siteFragment, redirectToPostView } } />,
+		<CommentView
+			{ ...{ action, commentId, siteFragment, redirectToPostView } }
+			onBack={ handleBackButton( context, siteFragment ) }
+		/>,
 		'primary',
 		context.store
 	);

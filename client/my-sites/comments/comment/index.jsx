@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import ReactDom from 'react-dom';
-import { get, isEqual, isUndefined } from 'lodash';
+import { get, isEqual, isUndefined, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,22 +19,35 @@ import CommentEdit from 'my-sites/comments/comment/comment-edit';
 import CommentHeader from 'my-sites/comments/comment/comment-header';
 import CommentReply from 'my-sites/comments/comment/comment-reply';
 import QueryComment from 'components/data/query-comment';
+import scrollTo from 'lib/scroll-to';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+
+// Adjust the comment card `offsetTop` to avoid being covered by the masterbar.
+// 56px = 48px (masterbar height) + 8px (comment card vertical margin)
+const COMMENT_SCROLL_TOP_MARGIN = 56;
 
 export class Comment extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 		commentId: PropTypes.number,
+		hasScrolledToComment: PropTypes.bool,
 		isBulkMode: PropTypes.bool,
+		isLoadedAll: PropTypes.bool,
 		isPostView: PropTypes.bool,
 		isSelected: PropTypes.bool,
+		onCommentLoad: PropTypes.func,
+		onScrollToComment: PropTypes.func,
 		redirect: PropTypes.func,
 		refreshCommentData: PropTypes.bool,
 		toggleSelected: PropTypes.func,
 		updateLastUndo: PropTypes.func,
+	};
+
+	static defaultProps = {
+		onCommentLoad: noop,
 	};
 
 	state = {
@@ -44,7 +57,40 @@ export class Comment extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		const { isBulkMode: wasBulkMode } = this.props;
-		const { isBulkMode } = nextProps;
+		const {
+			commentId,
+			hasScrolledToComment,
+			isBulkMode,
+			isLoadedAll,
+			isLoading,
+			onCommentLoad,
+			onScrollToComment,
+		} = nextProps;
+
+		if ( ! isLoading ) {
+			onCommentLoad( commentId );
+		}
+
+		if (
+			! hasScrolledToComment &&
+			isLoadedAll &&
+			!! window &&
+			`#comment-${ commentId }` === window.location.hash
+		) {
+			const commentNode = ReactDom.findDOMNode( this.commentCard );
+			const commentOffsetTop = commentNode.offsetTop - COMMENT_SCROLL_TOP_MARGIN;
+			scrollTo( {
+				x: 0,
+				y: commentOffsetTop,
+				duration: 1,
+				onComplete: () => {
+					if ( commentOffsetTop !== window.scrollY ) {
+						window.scrollTo( 0, commentOffsetTop );
+					}
+					onScrollToComment();
+				},
+			} );
+		}
 
 		this.setState( ( { isEditMode, isReplyVisible } ) => ( {
 			isEditMode: wasBulkMode !== isBulkMode ? false : isEditMode,
@@ -115,6 +161,7 @@ export class Comment extends Component {
 		return (
 			<Card
 				className={ classes }
+				id={ `comment-${ commentId }` }
 				onClick={ isBulkMode ? this.toggleSelected : undefined }
 				onKeyDown={ this.keyDownHandler }
 				ref={ this.storeCardRef }

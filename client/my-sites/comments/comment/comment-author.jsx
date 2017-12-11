@@ -12,16 +12,16 @@ import { get, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
+import CommentLink from 'my-sites/comments/comment/comment-link';
 import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
 import Tooltip from 'components/tooltip';
-import { isEnabled } from 'config';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 import { getSiteComment } from 'state/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class CommentAuthor extends Component {
 	static propTypes = {
@@ -59,25 +59,14 @@ export class CommentAuthor extends Component {
 			authorAvatarUrl,
 			authorDisplayName,
 			authorUrl,
-			commentDate,
 			commentId,
 			commentType,
-			commentUrl,
 			gravatarUser,
 			isBulkMode,
 			isPostView,
-			moment,
 			translate,
 		} = this.props;
 		const { isLinkTooltipVisible } = this.state;
-
-		const formattedDate = moment( commentDate ).format( 'll LT' );
-
-		const relativeDate = moment()
-			.subtract( 1, 'month' )
-			.isBefore( commentDate )
-			? moment( commentDate ).fromNow()
-			: moment( commentDate ).format( 'll' );
 
 		return (
 			<div className="comment__author">
@@ -115,19 +104,7 @@ export class CommentAuthor extends Component {
 
 					<div className="comment__author-info-element">
 						<span className="comment__date">
-							{ isEnabled( 'comments/management/comment-view' ) ? (
-								<a href={ commentUrl } tabIndex={ isBulkMode ? -1 : 0 } title={ formattedDate }>
-									{ relativeDate }
-								</a>
-							) : (
-								<ExternalLink
-									href={ commentUrl }
-									tabIndex={ isBulkMode ? -1 : 0 }
-									title={ formattedDate }
-								>
-									{ relativeDate }
-								</ExternalLink>
-							) }
+							<CommentLink { ...{ commentId, isBulkMode } } />
 						</span>
 						{ authorUrl && (
 							<span className="comment__author-url">
@@ -146,7 +123,6 @@ export class CommentAuthor extends Component {
 
 const mapStateToProps = ( state, { commentId } ) => {
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
 	const comment = getSiteComment( state, siteId, commentId );
 	const authorAvatarUrl = get( comment, 'author.avatar_URL' );
 	const authorDisplayName = decodeEntities( get( comment, 'author.name' ) );
@@ -157,11 +133,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		authorDisplayName,
 		authorUrl: get( comment, 'author.URL', '' ),
 		commentContent: get( comment, 'content' ),
-		commentDate: get( comment, 'date' ),
 		commentType: get( comment, 'type', 'comment' ),
-		commentUrl: isEnabled( 'comments/management/comment-view' )
-			? `/comment/${ siteSlug }/${ commentId }`
-			: get( comment, 'URL' ),
 		gravatarUser,
 	};
 };
