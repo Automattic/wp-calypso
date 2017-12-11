@@ -20,7 +20,7 @@ function getAvailabilityNotice( domain, error, site ) {
 	const tld = getTld( domain );
 
 	switch ( error ) {
-		case domainAvailability.MAPPED_OR_REGISTERED:
+		case domainAvailability.REGISTERED:
 			message = translate(
 				"{{strong}}%(domain)s{{/strong}} is already connected to someone else's WordPress.com site.",
 				{

@@ -40,7 +40,6 @@ const domainAvailability = {
 	MAINTENANCE: 'tld_in_maintenance',
 	MAPPABLE: 'mappable',
 	MAPPED: 'mapped_domain',
-	MAPPED_OR_REGISTERED: 'mapped_or_registered',
 	MAPPED_OTHER_SITE_SAME_USER_NOT_TRANSFERRABLE: 'mapped_to_other_site_same_user_not_transferrable',
 	MAPPED_OTHER_SITE_SAME_USER_TRANSFERRABLE: 'mapped_to_other_site_same_user_transferrable',
 	MAPPED_SAME_SITE_NOT_TRANSFERRABLE: 'mapped_to_same_site_not_transferrable',
