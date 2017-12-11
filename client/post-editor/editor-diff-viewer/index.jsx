@@ -22,13 +22,10 @@ class EditorDiffViewer extends PureComponent {
 		postId: PropTypes.number.isRequired,
 		selectedRevisionId: PropTypes.number,
 		siteId: PropTypes.number.isRequired,
-
-		// connected
 		diff: PropTypes.shape( {
-			inline: PropTypes.array,
-			orig: PropTypes.array,
-			op: PropTypes.string,
-			final: PropTypes.array,
+			post_content: PropTypes.array,
+			post_title: PropTypes.array,
+			totals: PropTypes.object,
 		} ).isRequired,
 	};
 

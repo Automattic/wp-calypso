@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, findIndex, get } from 'lodash';
+import { flow, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,11 +28,10 @@ class EditorRevisions extends Component {
 	render = () => {
 		const {
 			authorsIds,
-			diff,
-			nextRevisionId,
+			comparisons,
 			postId,
-			prevRevisionId,
 			revisions,
+			selectedDiff,
 			selectedRevisionId,
 			siteId,
 		} = this.props;
@@ -46,19 +45,17 @@ class EditorRevisions extends Component {
 				/>
 				<QueryUsers siteId={ siteId } userIds={ authorsIds } />
 				<EditorDiffViewer
-					diff={ diff }
+					diff={ selectedDiff }
 					postId={ postId }
-					prevRevisionId={ prevRevisionId }
 					selectedRevisionId={ selectedRevisionId }
 					siteId={ siteId }
 				/>
 				<EditorRevisionsList
+					comparisons={ comparisons }
 					postId={ postId }
 					revisions={ revisions }
 					selectedRevisionId={ selectedRevisionId }
 					siteId={ siteId }
-					nextRevisionId={ nextRevisionId }
-					prevRevisionId={ prevRevisionId }
 				/>
 			</div>
 		);
@@ -68,11 +65,10 @@ class EditorRevisions extends Component {
 EditorRevisions.propTypes = {
 	// connected
 	authorsIds: PropTypes.array.isRequired,
-	diff: PropTypes.object,
-	nextRevisionId: PropTypes.number,
+	comparisons: PropTypes.object,
 	postId: PropTypes.number.isRequired,
-	prevRevisionId: PropTypes.number,
 	revisions: PropTypes.array.isRequired,
+	selectedDiff: PropTypes.object,
 	selectedRevisionId: PropTypes.number,
 	siteId: PropTypes.number.isRequired,
 
@@ -88,17 +84,29 @@ export default flow(
 
 		const revisions = getPostRevisions( state, siteId, postId, 'display' );
 		const selectedRevisionId = getPostRevisionsSelectedRevisionId( state );
-		const selectedIdIndex = findIndex( revisions, { id: selectedRevisionId } );
-		const nextRevisionId = selectedRevisionId && get( revisions, [ selectedIdIndex - 1, 'id' ] );
-		const prevRevisionId = selectedRevisionId && get( revisions, [ selectedIdIndex + 1, 'id' ] );
+
+		// @TODO move comparisons to a cached selector
+		const comparisons = {};
+		for ( let i = 0; i < revisions.length; i++ ) {
+			const revisionId = get( revisions, [ i, 'id' ], 0 );
+			const nextRevisionId = revisionId && get( revisions, [ i - 1, 'id' ] );
+			const prevRevisionId = revisionId && get( revisions, [ i + 1, 'id' ] );
+
+			comparisons[ revisionId ] = {
+				diff: getPostRevisionsDiff( state, siteId, postId, prevRevisionId, revisionId ),
+				nextRevisionId,
+				prevRevisionId,
+			};
+		}
+
+		const selectedDiff = get( comparisons, [ selectedRevisionId, 'diff' ], {} );
 
 		return {
 			authorsIds: getPostRevisionsAuthorsId( state, siteId, postId ),
-			diff: getPostRevisionsDiff( state, siteId, postId, prevRevisionId, selectedRevisionId ),
-			nextRevisionId,
+			comparisons,
 			postId,
-			prevRevisionId,
 			revisions,
+			selectedDiff,
 			selectedRevisionId,
 			siteId,
 		};
