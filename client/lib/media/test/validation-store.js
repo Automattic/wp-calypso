@@ -6,14 +6,9 @@ import { expect } from 'chai';
 import { assign } from 'lodash';
 import sinon from 'sinon';
 
-jest.mock( 'lib/sites-list', () => () => ( {
-	getSite: () => ( {
-		options: {
-			allowed_file_types: [ 'gif', 'pdf', 'avi' ],
-			max_upload_size: 1024,
-		},
-	} ),
-} ) );
+/**
+ * Internal dependencies
+ */
 import { site } from './fixtures/site';
 
 /**
