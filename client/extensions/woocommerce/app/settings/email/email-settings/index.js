@@ -6,6 +6,7 @@
 
 import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -140,14 +141,14 @@ class Settings extends React.Component {
 	};
 
 	renderOriginNotification = ( item, index ) => {
-		const { settings, loaded, loading } = this.props;
+		const { settings, loading } = this.props;
 		return (
 			<NotificationsOrigin
 				key={ index }
 				item={ item }
 				isPlaceholder={ loading }
-				recipient={ loaded ? settings[ item.field ][ item.option ].value : '' }
-				placeholder={ loaded ? settings[ item.field ][ item.option ].default : '' }
+				recipient={ get( settings, [ item.field, item.option, 'value' ], '' ) }
+				placeholder={ get( settings, [ item.field, item.option, 'default' ], '' ) }
 				onChange={ this.onChange }
 				checkEmail={ item.checkEmail }
 			/>
@@ -155,14 +156,14 @@ class Settings extends React.Component {
 	};
 
 	renderInternalNotification = ( item, index ) => {
-		const { settings, loaded, loading } = this.props;
+		const { settings, loading } = this.props;
 		return (
 			<InternalNotification
 				key={ index }
 				item={ item }
-				checked={ 'yes' === ( loaded && settings[ item.field ].enabled.value ) }
-				recipient={ loaded ? settings[ item.field ].recipient.value : '' }
-				placeholder={ loaded ? settings[ item.field ].recipient.default : '' }
+				checked={ 'yes' === get( settings, [ item.field, 'enabled', 'value' ], '' ) }
+				recipient={ get( settings, [ item.field, 'recipient', 'value' ], '' ) }
+				placeholder={ get( settings, [ item.field, 'recipient', 'default' ], '' ) }
 				isPlaceholder={ loading }
 				onChange={ this.onChange }
 			/>
@@ -170,13 +171,13 @@ class Settings extends React.Component {
 	};
 
 	renderCustomerNotification = ( item, index ) => {
-		const { settings, loaded, loading } = this.props;
+		const { settings, loading } = this.props;
 		return (
 			<CustomerNotification
 				key={ index }
 				item={ item }
 				isPlaceholder={ loading }
-				checked={ 'yes' === ( loaded && settings[ item.field ].enabled.value ) }
+				checked={ 'yes' === get( settings, [ item.field, 'enabled', 'value' ], '' ) }
 				onChange={ this.onChange }
 			/>
 		);

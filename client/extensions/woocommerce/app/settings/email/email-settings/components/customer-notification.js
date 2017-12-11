@@ -23,7 +23,7 @@ const CustomerNotification = ( { item, checked, onChange, isPlaceholder } ) => {
 	const toggle = value => {
 		onChange( {
 			setting: item.field,
-			field: 'enabled',
+			option: 'enabled',
 			value: value ? 'yes' : 'no',
 		} );
 	};

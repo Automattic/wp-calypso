@@ -48,19 +48,16 @@ const InternalNotification = ( {
 
 	const checkedEmails = checkEmails( recipient );
 	const emailValidationError = checkedEmails.error;
+	const placeholderComponent = <p className="components__is-placeholder" />;
 
 	return (
 		<ListItem className="components__notification-component-item">
 			<ListItemField className="components__notification-component-title">
-				{ ! isPlaceholder ? (
-					<FormLabel>{ item.title }</FormLabel>
-				) : (
-					<p className="components__is-placeholder" />
-				) }
+				{ ! isPlaceholder ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
 				{ ! isPlaceholder ? (
 					<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
 				) : (
-					<p className="components__is-placeholder" />
+					placeholderComponent
 				) }
 			</ListItemField>
 			<ListItemField className="components__notification-component-input">
@@ -80,7 +77,7 @@ const InternalNotification = ( {
 				{ ! isPlaceholder ? (
 					<CompactFormToggle checked={ checked } onChange={ toggle } id={ item.field } />
 				) : (
-					<p className="components__is-placeholder" />
+					placeholderComponent
 				) }
 			</ListItemField>
 		</ListItem>
