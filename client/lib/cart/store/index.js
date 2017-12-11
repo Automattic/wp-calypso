@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { assign, flow, flowRight, partialRight } from 'lodash';
 
 /**
@@ -13,7 +11,7 @@ import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
 import emitter from 'lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
 import PollerPool from 'lib/data-poller';
-import cartAnalytics from './cart-analytics';
+import { recordEvents } from './cart-analytics';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import Dispatcher from 'dispatcher';
@@ -22,13 +20,13 @@ import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
 
-var _cartKey = null,
-	_synchronizer = null,
-	_poller = null;
+let _cartKey = null;
+let _synchronizer = null;
+let _poller = null;
 
-var CartStore = {
+const CartStore = {
 	get: function() {
-		var value = hasLoadedFromServer() ? _synchronizer.getLatestValue() : {};
+		const value = hasLoadedFromServer() ? _synchronizer.getLatestValue() : {};
 
 		return assign( {}, value, {
 			hasLoadedFromServer: hasLoadedFromServer(),
@@ -73,18 +71,16 @@ function emitChange() {
 }
 
 function update( changeFunction ) {
-	var wrappedFunction, previousCart, nextCart;
-
-	wrappedFunction = flowRight(
+	const wrappedFunction = flowRight(
 		partialRight( fillInAllCartItemAttributes, productsList.get() ),
 		changeFunction
 	);
 
-	previousCart = CartStore.get();
-	nextCart = wrappedFunction( previousCart );
+	const previousCart = CartStore.get();
+	const nextCart = wrappedFunction( previousCart );
 
 	_synchronizer.update( wrappedFunction );
-	cartAnalytics.recordEvents( previousCart, nextCart );
+	recordEvents( previousCart, nextCart );
 }
 
 function disable() {
