@@ -75,7 +75,7 @@ function getAvailabilityNotice( domain, error, site ) {
 				}
 			);
 			break;
-		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER_NOT_TRANSFERRABLE:
+		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER:
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is already connected to your site %(site)s. If you want to connect it to this site ' +
 					'instead, we will be happy to help you do that. {{a}}Contact us.{{/a}}',
@@ -84,25 +84,6 @@ function getAvailabilityNotice( domain, error, site ) {
 					components: {
 						strong: <strong />,
 						a: <a target="_blank" rel="noopener noreferrer" href={ support.CALYPSO_CONTACT } />,
-					},
-				}
-			);
-			break;
-		case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
-			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already connected to this site, but registered somewhere else. Do you want to move ' +
-					'it from your current domain provider to WorcPress.com so you can manage the domain and the site ' +
-					'together? {{a}}Yes, transfer it to WordPress.com.{{/a}}',
-				{
-					args: { domain },
-					components: {
-						strong: <strong />,
-						a: (
-							<a
-								rel="noopener noreferrer"
-								href={ `/domains/manage/${ domain }/transfer/other-site/${ domain }` }
-							/>
-						),
 					},
 				}
 			);
