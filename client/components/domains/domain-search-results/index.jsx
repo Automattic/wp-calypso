@@ -68,13 +68,7 @@ class DomainSearchResults extends React.Component {
 			'domain-search-results__domain-not-available': ! availableDomain,
 		} );
 		const suggestions = this.props.suggestions || [];
-		const {
-			MAPPABLE,
-			MAPPED,
-			MAPPED_SAME_SITE_TRANSFERRABLE,
-			TRANSFERRABLE,
-			UNKNOWN,
-		} = domainAvailability;
+		const { MAPPABLE, MAPPED, TRANSFERRABLE, UNKNOWN } = domainAvailability;
 
 		let availabilityElement, domainSuggestionElement, offer;
 
@@ -144,25 +138,23 @@ class DomainSearchResults extends React.Component {
 					! this.props.isSignupStep &&
 					lastDomainIsTransferrable
 				) {
-					if ( includes( [ TRANSFERRABLE, MAPPED_SAME_SITE_TRANSFERRABLE ], lastDomainStatus ) ) {
-						availabilityElement = (
-							<Card className="domain-search-results__transfer-card" highlight="info">
-								<div className="domain-search-results__transfer-card-copy">
-									<div>{ domainUnavailableMessage }</div>
-									<p>
-										{ translate(
-											'If you already own this domain you can use it for your WordPress.com site.'
-										) }
-									</p>
-								</div>
-								<div className="domain-search-results__transfer-card-link">
-									{ translate( '{{a}}Yes, I own this domain{{/a}}', {
-										components: { a: <a href="#" onClick={ this.props.onClickTransfer } /> },
-									} ) }
-								</div>
-							</Card>
-						);
-					}
+					availabilityElement = (
+						<Card className="domain-search-results__transfer-card" highlight="info">
+							<div className="domain-search-results__transfer-card-copy">
+								<div>{ domainUnavailableMessage }</div>
+								<p>
+									{ translate(
+										'If you already own this domain you can use it for your WordPress.com site.'
+									) }
+								</p>
+							</div>
+							<div className="domain-search-results__transfer-card-link">
+								{ translate( '{{a}}Yes, I own this domain{{/a}}', {
+									components: { a: <a href="#" onClick={ this.props.onClickTransfer } /> },
+								} ) }
+							</div>
+						</Card>
+					);
 				} else if ( lastDomainStatus !== MAPPED ) {
 					availabilityElement = (
 						<Notice status="is-warning" showDismiss={ false }>
