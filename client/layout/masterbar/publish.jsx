@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { recordTracksEvent } from 'state/analytics/actions';
 import MasterbarItem from './item';
 import SitesPopover from 'components/sites-popover';
 import paths from 'lib/paths';
@@ -90,6 +91,7 @@ class MasterbarItemNew extends React.Component {
 						visible={ this.state.isShowingPopover }
 						context={ this.state.postButtonContext }
 						onClose={ this.toggleSitesPopover.bind( this, false ) }
+						onSiteSelect={ this.props.siteSelected }
 						groups={ true }
 						position={ this.getPopoverPosition() }
 					/>
@@ -100,6 +102,16 @@ class MasterbarItemNew extends React.Component {
 	}
 }
 
-export default connect( state => {
-	return { selectedSite: getSelectedSite( state ) };
-} )( MasterbarItemNew );
+const mapStateToProps = state => {
+	return {
+		selectedSite: getSelectedSite( state ),
+	};
+};
+
+const mapDispatchToProps = dispatch => ( {
+	siteSelected: () => {
+		dispatch( recordTracksEvent( 'calypso_masterbar_write_button_clicked' ) );
+	},
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNew );
