@@ -45,27 +45,30 @@ export const SiteTitleTour = makeTour(
 			</ButtonRow>
 		</Step>
 
-		<Step name="click-save" target="settings-site-profile-save" arrow="top-right" placement="below">
+		<Step name="click-save" target="settings-site-profile-save" arrow="top-left" placement="below">
 			<Continue target="settings-site-profile-save" step="finish" click>
 				{ translate(
-					'Almost done - every time you make a change, it needs to be saved. ' +
+					'Almost done — every time you make a change, it needs to be saved. ' +
 						"Let's save your changes and then see what's next on our list."
 				) }
 			</Continue>
 		</Step>
 
-		<Step name="finish" placement="center">
-			<p>
-				<Gridicon icon="checkmark" /> { translate( 'Good job, looks great!' ) }
-			</p>
+		<Step name="finish" placement="right">
+			<h1 className="tours__title">
+				<span className="tours__completed-icon-wrapper">
+					<Gridicon icon="checkmark" className="tours__completed-icon" />
+				</span>
+				{ translate( 'Good job, looks great!' ) }
+			</h1>
 			<p>
 				{ translate(
 					"Your changes have been saved. Let's move on and see what's next on our checklist."
 				) }
 			</p>
-			<ButtonRow>
-				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
-			</ButtonRow>
+			<SiteLink isButton="true" href={ '/checklist/:site' }>
+				{ translate( 'Return to the checklist' ) }
+			</SiteLink>
 		</Step>
 	</Tour>
 );
