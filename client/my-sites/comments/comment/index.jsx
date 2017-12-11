@@ -12,12 +12,14 @@ import { get, isEqual, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Card from 'components/card';
 import CommentActions from 'my-sites/comments/comment/comment-actions';
 import CommentContent from 'my-sites/comments/comment/comment-content';
 import CommentEdit from 'my-sites/comments/comment/comment-edit';
 import CommentHeader from 'my-sites/comments/comment/comment-header';
 import CommentReply from 'my-sites/comments/comment/comment-reply';
+import CommentRepliesList from 'my-sites/comments/comment-replies-list';
 import QueryComment from 'components/data/query-comment';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
@@ -144,6 +146,11 @@ export class Comment extends Component {
 				{ isEditMode && (
 					<CommentEdit { ...{ commentId } } toggleEditMode={ this.toggleEditMode } />
 				) }
+
+				{ isPostView &&
+					isEnabled( 'comments/management/threaded-view' ) && (
+						<CommentRepliesList { ...{ siteId, commentParentId: commentId } } />
+					) }
 			</Card>
 		);
 	}

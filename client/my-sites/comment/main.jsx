@@ -14,6 +14,7 @@ import { get } from 'lodash';
 import Main from 'components/main';
 import EmptyContent from 'components/empty-content';
 import DocumentHead from 'components/data/document-head';
+import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import ModerateComment from 'components/data/moderate-comment';
 import Comment from 'my-sites/comments/comment';
 import CommentPermalink from 'my-sites/comment/comment-permalink';
@@ -50,6 +51,7 @@ export class CommentView extends Component {
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<Main className="comments" wideLayout>
 				<PageViewTracker path="/comment/:site" title="Comments" />
+				<QuerySiteCommentsTree siteId={ siteId } status={ 'all' } />
 				<DocumentHead title={ translate( 'Comment' ) } />
 				{ canModerateComments && (
 					<ModerateComment
@@ -76,6 +78,7 @@ export class CommentView extends Component {
 						commentId={ commentId }
 						refreshCommentData={ true }
 						redirect={ redirectToPostView }
+						isPostView={ true }
 					/>
 				) }
 				{ canModerateComments && <CommentPermalink { ...{ siteId, commentId } } /> }
