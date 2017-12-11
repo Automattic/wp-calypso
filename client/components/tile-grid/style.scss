@@ -142,11 +142,11 @@
 
 	@include breakpoint( "<480px" ) {
 		background: none;
-		font-size: 1.1em;
+		font-size: 16px;
+		line-height: 18px;
 		border: 0;
 		padding: 0;
 		text-transform: none;
 		margin: 0;
-		line-height: 1.1em;
 	}
 }
