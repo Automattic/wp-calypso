@@ -301,6 +301,8 @@ class MediaLibraryContent extends React.Component {
 					onSourceChange={ this.props.onSourceChange }
 					selectedItems={ this.props.selectedItems }
 					sticky={ ! this.props.scrollable }
+					hasAttribution={ 'pexels' === this.props.source }
+					hasRefreshButton={ 'pexels' !== this.props.source }
 				/>
 			);
 		}
