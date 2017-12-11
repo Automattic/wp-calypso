@@ -132,7 +132,10 @@ export const comment = context => {
 		page.redirect( `/comments/all/${ siteFragment }/${ postId }` );
 
 	renderWithReduxStore(
-		<CommentView { ...{ action, commentId, siteFragment, redirectToPostView } } />,
+		<CommentView
+			{ ...{ action, commentId, siteFragment, redirectToPostView } }
+			onBack={ handleBackButton( context, siteFragment ) }
+		/>,
 		'primary',
 		context.store
 	);

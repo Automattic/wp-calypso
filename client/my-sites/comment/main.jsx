@@ -31,6 +31,7 @@ export class CommentView extends Component {
 		commentId: PropTypes.number.isRequired,
 		action: PropTypes.string,
 		canModerateComments: PropTypes.bool.isRequired,
+		onBack: PropTypes.func,
 		redirectToPostView: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -42,6 +43,7 @@ export class CommentView extends Component {
 			commentId,
 			action,
 			canModerateComments,
+			onBack,
 			redirectToPostView,
 			translate,
 		} = this.props;
@@ -59,7 +61,7 @@ export class CommentView extends Component {
 				{ 'delete' === action && (
 					<CommentDeleteWarning { ...{ siteId, postId, commentId, redirectToPostView } } />
 				) }
-				<CommentListHeader { ...{ postId } } />
+				<CommentListHeader { ...{ onBack, postId } } />
 				{ ! canModerateComments && (
 					<EmptyContent
 						title={ preventWidows(

@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import ReactDom from 'react-dom';
-import { get, isEqual, isUndefined } from 'lodash';
+import { get, isEqual, isUndefined, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,6 +44,10 @@ export class Comment extends Component {
 		refreshCommentData: PropTypes.bool,
 		toggleSelected: PropTypes.func,
 		updateLastUndo: PropTypes.func,
+	};
+
+	static defaultProps = {
+		onCommentLoad: noop,
 	};
 
 	state = {

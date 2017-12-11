@@ -63,8 +63,8 @@ export class CommentPostLink extends PureComponent {
 				<Gridicon icon={ isBulkMode ? 'chevron-right' : 'posts' } size={ 18 } />
 
 				<a
-					onClick={ this.handleClick }
 					href={ `/comments/${ status }/${ siteSlug }/${ postId }` }
+					onClick={ this.handleClick }
 					tabIndex={ isBulkMode ? -1 : 0 }
 				>
 					{ postTitle.trim() || translate( 'Untitled' ) }
