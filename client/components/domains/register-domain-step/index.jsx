@@ -402,7 +402,7 @@ class RegisterDomainStep extends React.Component {
 							const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
 							const isDomainTransferrable = TRANSFERRABLE === status;
 
-							if ( TLD_NOT_SUPPORTED === TLD_NOT_SUPPORTED ) {
+							if ( TLD_NOT_SUPPORTED === status ) {
 								status = get( result, 'mappable', error );
 							}
 
