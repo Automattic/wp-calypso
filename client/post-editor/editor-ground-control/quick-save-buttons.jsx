@@ -60,10 +60,7 @@ const QuickSaveButtons = ( {
 	const showingStatusLabel = isSaving || ( post && post.ID && ! postUtils.isPublished( post ) );
 	const showingSaveStatus = isSaveAvailable || showingStatusLabel;
 	const hasRevisions =
-		showRevisions &&
-		isEnabled( 'post-editor/revisions' ) &&
-		postUtils.deviceSupportsRevisions() &&
-		get( post, 'revisions.length' );
+		showRevisions && isEnabled( 'post-editor/revisions' ) && get( post, 'revisions.length' );
 
 	if ( ! ( showingSaveStatus || hasRevisions ) ) {
 		return null;
