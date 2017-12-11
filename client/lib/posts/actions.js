@@ -353,7 +353,7 @@ PostActions = {
 		}
 
 		if ( ! options || options.recordSaveEvent !== false ) {
-			recordSaveEvent( context, site ); // do this before changing status from 'future'
+			recordSaveEvent( site, context ); // do this before changing status from 'future'
 		}
 
 		if (
