@@ -18,6 +18,7 @@ import Button from 'components/button';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPlanClass, isMonthly } from 'lib/plans/constants';
+import { planLevelsMatch } from 'lib/plans/index';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const PlanFeaturesActions = ( {
@@ -47,7 +48,7 @@ const PlanFeaturesActions = ( {
 		{
 			'is-current': current,
 			'is-primary': selectedPlan
-				? planType === selectedPlan
+				? planLevelsMatch( selectedPlan, planType )
 				: ( primaryUpgrade && ! isPlaceholder ) || isPopular,
 		},
 		className

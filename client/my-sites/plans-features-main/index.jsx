@@ -27,6 +27,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 } from 'lib/plans/constants';
+import { addQueryArgs } from 'lib/url';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import FAQ from 'components/faq';
@@ -344,11 +345,23 @@ class PlansFeaturesMain extends Component {
 		);
 	}
 
+	constructPath( plansUrl, intervalType ) {
+		const { selectedFeature, selectedPlan, site } = this.props;
+		return addQueryArgs(
+			{
+				feature: selectedFeature,
+				plan: selectedPlan,
+			},
+			plansLink( plansUrl, site, intervalType )
+		);
+	}
+
 	getIntervalTypeToggle() {
-		const { translate, intervalType, site, basePlansPath } = this.props;
+		const { basePlansPath, intervalType, translate } = this.props;
 		const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle' );
 
 		let plansUrl = '/plans';
+
 		if ( basePlansPath ) {
 			plansUrl = basePlansPath;
 		}
@@ -357,14 +370,14 @@ class PlansFeaturesMain extends Component {
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
 				<SegmentedControlItem
 					selected={ intervalType === 'monthly' }
-					path={ plansLink( plansUrl, site, 'monthly' ) }
+					path={ this.constructPath( plansUrl, 'monthly' ) }
 				>
 					{ translate( 'Monthly billing' ) }
 				</SegmentedControlItem>
 
 				<SegmentedControlItem
 					selected={ intervalType === 'yearly' }
-					path={ plansLink( plansUrl, site, 'yearly' ) }
+					path={ this.constructPath( plansUrl, 'yearly' ) }
 				>
 					{ translate( 'Yearly billing' ) }
 				</SegmentedControlItem>
