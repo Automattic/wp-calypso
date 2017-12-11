@@ -21,12 +21,12 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	state = {
 		city: '',
 		name: '',
-		stateLoc: '',
+		stateName: '',
 		street: '',
 		zip: '',
 	};
 
-	setInput = field => event => {
+	getChangeHandler = field => event => {
 		this.setState( { [ field ]: event.target.value } );
 	};
 
@@ -37,30 +37,14 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 			'Enter your business address to have a map added to your website.'
 		);
 
-		const fields = [
-			[ 'city', 'City' ],
-			[ 'name', 'Business Name' ],
-			[ 'stateLoc', 'State' ],
-			[ 'street', 'Street Address' ],
-			[ 'zip', 'ZIP Code' ],
-		];
-		const formFields = fields.map( ( [ field, fieldText ] ) => {
-			return (
-				<FormFieldset key={ field }>
-					<FormLabel htmlFor={ field }>
-						{ translate( ' %(title)s ', {
-							textOnly: true,
-							args: { title: fieldText },
-						} ) }
-					</FormLabel>
-					<FormTextInput
-						id={ field }
-						onChange={ this.setInput( field ) }
-						value={ this.state.field }
-					/>
-				</FormFieldset>
-			);
-		} );
+		const fields = {
+			name: translate( 'Business Name' ),
+			street: translate( 'Street Address' ),
+			city: translate( 'City' ),
+			stateName: translate( 'State' ),
+			zip: translate( 'ZIP Code' ),
+		};
+
 		return (
 			<Fragment>
 				<DocumentHead title={ translate( 'Business Address ‹ Jetpack Onboarding' ) } />
@@ -68,7 +52,16 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 
 				<Card className="steps__form">
 					<form>
-						{ formFields }
+						{ Object.keys( fields ).map( field => (
+							<FormFieldset key={ field }>
+								<FormLabel htmlFor={ field }>{ fields[ field ] }</FormLabel>
+								<FormTextInput
+									id={ field }
+									onChange={ this.getChangeHandler( field ) }
+									value={ this.state[ field ] }
+								/>
+							</FormFieldset>
+						) ) }
 						<Button href={ this.props.getForwardUrl() } primary>
 							{ translate( 'Next Step' ) }
 						</Button>
