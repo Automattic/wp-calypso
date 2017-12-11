@@ -7,6 +7,7 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { overEvery as and } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -16,7 +17,7 @@ import {
 	Continue,
 	makeTour,
 	Next,
-	Quit,
+	SiteLink,
 	Step,
 	Tour,
 } from 'layout/guided-tours/config-elements';
@@ -26,40 +27,44 @@ export const SiteTitleTour = makeTour(
 	<Tour
 		name="siteTitle"
 		version="20171205"
-		path="/stats"
+		path="/checklist"
 		when={ and( canUserEditSettingsOfSelectedSite ) }
 	>
 		<Step name="init" target="site-title-input" arrow="top-left" placement="below">
 			<p>
 				{ translate(
-					'You can change the site title here. A good title can help others find your site.'
+					"Update the {{b}}Site Title{{/b}} field with a descriptive name to let your visitors know which site they're visiting.",
+					{
+						components: { b: <strong /> },
+					}
 				) }
 			</p>
 			<ButtonRow>
-				<Next step="click-save">{ translate( 'Looks Good!' ) }</Next>
-				<Quit>{ translate( 'Cancel' ) }</Quit>
+				<Next step="click-save">{ translate( 'All done, continue' ) }</Next>
+				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 			</ButtonRow>
 		</Step>
 
 		<Step name="click-save" target="settings-site-profile-save" arrow="top-right" placement="below">
 			<Continue target="settings-site-profile-save" step="finish" click>
-				{ translate( "Don't forget to save your changes." ) }
+				{ translate(
+					'Almost done - every time you make a change, it needs to be saved. ' +
+						"Let's save your changes and then see what's next on our list."
+				) }
 			</Continue>
 		</Step>
 
 		<Step name="finish" placement="center">
 			<p>
+				<Gridicon icon="checkmark" /> { translate( 'Good job, looks great!' ) }
+			</p>
+			<p>
 				{ translate(
-					"{{strong}}That's it!{{/strong}} Your visitors can now easily identify your website by its title.",
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
+					"Your changes have been saved. Let's move on and see what's next on our checklist."
 				) }
 			</p>
 			<ButtonRow>
-				<Quit primary>{ translate( "We're all done!" ) }</Quit>
+				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 			</ButtonRow>
 		</Step>
 	</Tour>
