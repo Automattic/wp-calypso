@@ -12,7 +12,7 @@ import {
 	hasMailChimpConnection,
 	isApiKeyCorrect,
 	isRequestingSettings,
-	isSavingSettings,
+	isSavingMailChimpSettings,
 	isSubmittingApiKey,
 	isSubmittingStoreInfo,
 	mailChimpSettings,
@@ -237,15 +237,15 @@ describe( 'selectors', () => {
 
 	describe( '#isSavingSettings', () => {
 		test( 'should be false when woocommerce state is not available.', () => {
-			expect( isSavingSettings( {}, 123 ) ).to.be.false;
+			expect( isSavingMailChimpSettings( {}, 123 ) ).to.be.false;
 		} );
 
 		test( 'should be true when user reqested Save action.', () => {
-			expect( isSavingSettings( mailChimpSaveSettings, 123 ) ).to.be.true;
+			expect( isSavingMailChimpSettings( mailChimpSaveSettings, 123 ) ).to.be.true;
 		} );
 
 		test( 'should be false when user has not requested Save action', () => {
-			expect( isSavingSettings( emailState, 123 ) ).to.be.false;
+			expect( isSavingMailChimpSettings( emailState, 123 ) ).to.be.false;
 		} );
 	} );
 
