@@ -31,7 +31,7 @@ const calypsoEnv = config( 'env_id' );
 const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv === 'development';
 const shouldMinify = process.env.hasOwnProperty( 'MINIFY_JS' )
-	? process.env.MINIFY_JS
+	? process.env.MINIFY_JS === 'true'
 	: ! isDevelopment;
 
 /**
