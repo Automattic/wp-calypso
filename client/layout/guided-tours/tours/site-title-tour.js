@@ -7,7 +7,6 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { overEvery as and } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -22,34 +21,15 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 import { canUserEditSettingsOfSelectedSite } from 'state/ui/guided-tours/contexts';
-import { isDesktop } from 'lib/viewport';
 
 export const SiteTitleTour = makeTour(
 	<Tour
 		name="siteTitle"
 		version="20171205"
 		path="/stats"
-		when={ and( isDesktop, canUserEditSettingsOfSelectedSite ) }
+		when={ and( canUserEditSettingsOfSelectedSite ) }
 	>
-		<Step
-			name="init"
-			target="settings"
-			arrow="left-top"
-			placement="beside"
-			scrollContainer=".sidebar__region"
-			shouldScrollTo
-		>
-			<Continue target="settings" step="site-title-input" click>
-				{ translate( 'Click {{strong}}{{icon/}} Settings{{/strong}} to get started.', {
-					components: {
-						icon: <Gridicon icon="cog" />,
-						strong: <strong />,
-					},
-				} ) }
-			</Continue>
-		</Step>
-
-		<Step name="site-title-input" target="site-title-input" arrow="top-left" placement="below">
+		<Step name="init" target="site-title-input" arrow="top-left" placement="below">
 			<p>
 				{ translate(
 					'You can change the site title here. A good title can help others find your site.'
