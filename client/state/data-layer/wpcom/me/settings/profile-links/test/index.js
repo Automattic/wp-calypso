@@ -21,13 +21,10 @@ const profileLinks = [
 ];
 
 describe( 'requestUserProfileLinks()', () => {
-	test( 'should dispatch HTTP request to fetch the users profile links endpoint', () => {
-		const dispatch = jest.fn();
+	test( 'should return an action for HTTP request to fetch the users profile links endpoint', () => {
+		const action = requestUserProfileLinks();
 
-		requestUserProfileLinks( { dispatch } );
-
-		expect( dispatch ).toHaveBeenCalledTimes( 1 );
-		expect( dispatch ).toHaveBeenCalledWith(
+		expect( action ).toEqual(
 			http( {
 				apiVersion: '1.1',
 				method: 'GET',
@@ -38,13 +35,10 @@ describe( 'requestUserProfileLinks()', () => {
 } );
 
 describe( 'handleRequestSuccess()', () => {
-	test( 'should dispatch user profile links receive action', () => {
-		const dispatch = jest.fn();
+	test( 'should return a user profile links receive action', () => {
+		const action = handleRequestSuccess( null, { profile_links: profileLinks } );
 
-		handleRequestSuccess( { dispatch }, null, { profile_links: profileLinks } );
-
-		expect( dispatch ).toHaveBeenCalledTimes( 1 );
-		expect( dispatch ).toHaveBeenCalledWith( {
+		expect( action ).toEqual( {
 			type: USER_PROFILE_LINKS_RECEIVE,
 			profileLinks,
 		} );
