@@ -38,7 +38,7 @@ export function validateFilters( context, next ) {
 			sortedValidFilters ? `/filter/${ sortedValidFilters }` : ''
 		);
 		if ( context.isServerSide ) {
-			return context.res.redirect( newPath );
+			return context.redirect( newPath );
 		}
 		return page.redirect( newPath );
 	}

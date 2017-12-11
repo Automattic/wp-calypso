@@ -33,10 +33,10 @@ const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri }
 */
 export const makeLayout = makeLayoutMiddleware( ReduxWrappedLoggedOutLayout );
 
-export function redirectLoggedIn( { isLoggedIn, res }, next ) {
+export function redirectLoggedIn( { isLoggedIn, redirect }, next ) {
 	// TODO: Make it work also for development env
 	if ( isLoggedIn ) {
-		res.redirect( '/' );
+		redirect( '/' );
 		return;
 	}
 

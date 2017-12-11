@@ -130,6 +130,6 @@ export default {
 			return next();
 		}
 
-		context.redirect( '/log-in' );
+		context.redirect( '/log-in' + ( context.querystring ? '?' + context.querystring : '' ) );
 	},
 };

@@ -127,26 +127,26 @@ export function fetchThemeFilters( context, next ) {
 
 // Legacy (Atlas-based Theme Showcase v4) route redirects
 
-export function redirectSearchAndType( { res, params: { site, search, tier } } ) {
+export function redirectSearchAndType( { redirect, params: { site, search, tier } } ) {
 	const target = '/themes/' + compact( [ tier, site ] ).join( '/' ); // tier before site!
 	if ( search ) {
-		res.redirect( `${ target }?s=${ search }` );
+		redirect( `${ target }?s=${ search }` );
 	} else {
-		res.redirect( target );
+		redirect( target );
 	}
 }
 
-export function redirectFilterAndType( { res, params: { site, filter, tier } } ) {
+export function redirectFilterAndType( { redirect, params: { site, filter, tier } } ) {
 	let parts;
 	if ( filter ) {
 		parts = [ tier, 'filter', filter, site ];
 	} else {
 		parts = [ tier, site ];
 	}
-	res.redirect( '/themes/' + compact( parts ).join( '/' ) );
+	redirect( '/themes/' + compact( parts ).join( '/' ) );
 }
 
-export function redirectToThemeDetails( { res, params: { site, theme, section } }, next ) {
+export function redirectToThemeDetails( { redirect, params: { site, theme, section } }, next ) {
 	// Make sure we aren't matching a site -- e.g. /themes/example.wordpress.com or /themes/1234567
 	if ( includes( theme, '.' ) || isFinite( theme ) ) {
 		return next();
@@ -155,5 +155,5 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 	if ( section === 'support' ) {
 		redirectedSection = 'setup';
 	}
-	res.redirect( '/theme/' + compact( [ theme, redirectedSection, site ] ).join( '/' ) );
+	redirect( '/theme/' + compact( [ theme, redirectedSection, site ] ).join( '/' ) );
 }
