@@ -176,12 +176,9 @@ export class EditorMediaModal extends Component {
 		if ( hasSearch ) {
 			// For unsorted external sources based on a search, when inserting a single image, there's a visual glitch
 			// where one of the items in the list cycles through other items. This seems to happen when receiving
-			// the new image, and the media store is updating pointers. There's an initial glitch when it updates
-			// pointers using a transient image, then another when it switches to the actual uploaded image.
-			// However, we can't change that, or loading a list of images and copying multiple external images
-			// stops working, so instead, we switch back to no source and no search before we upload the new image
-			// so that the glitch is hidden. The glitch is _purely_ visual, and all images, transient or otherwise
-			// are correctly dealt with.
+			// the new image, and the media store is updating pointers. We switch back to no source and no search
+			// before we upload the new image so that the glitch is hidden. The glitch is _purely_ visual, and all
+			// images, transient or otherwise are correctly dealt with.
 			this.setState( {
 				search: '',
 			} );
