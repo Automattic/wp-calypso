@@ -16,7 +16,7 @@ import FormattedHeader from 'components/formatted-header';
 import Checklist from 'components/checklist';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
-import { requestSiteChecklistTaskUpdate } from 'state/site-checklist/actions';
+import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteChecklist } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
