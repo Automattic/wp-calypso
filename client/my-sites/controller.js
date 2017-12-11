@@ -7,7 +7,7 @@
 import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { uniq, some, startsWith } from 'lodash';
+import { noop, some, startsWith, uniq } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -58,6 +58,7 @@ import {
 import SitesComponent from 'my-sites/sites';
 import { isATEnabled } from 'lib/automated-transfer';
 import { warningNotice } from 'state/notices/actions';
+import { makeLayout, render as clientRender } from 'controller';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -106,16 +107,18 @@ function removeSidebar( context ) {
 	);
 }
 
-function renderEmptySites( context, next ) {
+function renderEmptySites( context ) {
 	const NoSitesMessage = require( 'components/empty-content/no-sites-message' );
 
 	removeSidebar( context );
 
 	context.primary = React.createElement( NoSitesMessage );
-	next();
+
+	makeLayout( context, noop );
+	clientRender( context );
 }
 
-function renderNoVisibleSites( context, next ) {
+function renderNoVisibleSites( context ) {
 	const EmptyContentComponent = require( 'components/empty-content' );
 	const currentUser = user.get();
 	const hiddenSites = currentUser.site_count - currentUser.visible_site_count;
@@ -146,7 +149,9 @@ function renderNoVisibleSites( context, next ) {
 		secondaryAction: i18n.translate( 'Create New Site' ),
 		secondaryActionURL: `${ signup_url }?ref=calypso-nosites`,
 	} );
-	next();
+
+	makeLayout( context, noop );
+	clientRender( context );
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
@@ -155,6 +160,9 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	reactContext.primary = <DomainOnly siteId={ selectedSite.ID } hasNotice={ false } />;
 
 	reactContext.secondary = createNavigation( reactContext );
+
+	makeLayout( reactContext, noop );
+	clientRender( reactContext );
 }
 
 function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
