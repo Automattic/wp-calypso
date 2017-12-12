@@ -21,6 +21,23 @@ const JetpackLogo = ( { size, full } ) => {
 		);
 	}
 
+	if ( 24 === size ) {
+		return (
+		<svg
+			className="jetpack-logo"
+			height={ size }
+			width={ size }
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+		>
+			{
+				// eslint-disable-next-line max-len
+				<path d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M11,14H6l5-10V14z M13,20V10h5L13,20z" />
+			}
+		</svg>
+	);
+	}
+
 	return (
 		<svg
 			className="jetpack-logo"
