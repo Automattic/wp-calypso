@@ -31,5 +31,5 @@ export default createSelector(
 			return siteDomain === profileLink.value.replace( /^.*:\/\//, '' );
 		} );
 	},
-	state => [ state.profileLinks.items ]
+	[ getProfileLinks ]
 );
