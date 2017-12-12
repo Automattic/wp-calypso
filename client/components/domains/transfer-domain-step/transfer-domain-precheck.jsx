@@ -77,8 +77,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 				privacy: result.privacy,
 				unlocked: result.unlocked,
 				loading: false,
-				registrar: result.registrar,
-				registrarIanaId: result.registrar_iana_id,
+				losingRegistrar: result.registrar,
+				losingRegistrarIanaId: result.registrar_iana_id,
 			} );
 		} );
 	};
@@ -357,11 +357,11 @@ class TransferDomainPrecheck extends React.PureComponent {
 const recordNextStep = ( domain_name, show_step ) =>
 	recordTracksEvent( 'calypso_transfer_domain_precheck_step_change', { domain_name, show_step } );
 
-const recordContinueButtonClick = ( domain_name, registrar, registrarIanaId ) =>
+const recordContinueButtonClick = ( domain_name, losing_registrar, losing_registrar_iana_id ) =>
 	recordTracksEvent( 'calypso_transfer_domain_precheck_continue_click', {
 		domain_name,
-		registrar,
-		registrarIanaId,
+		losing_registrar,
+		losing_registrar_iana_id,
 	} );
 
 export default connect( null, {
