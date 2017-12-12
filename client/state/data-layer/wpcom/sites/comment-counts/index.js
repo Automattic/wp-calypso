@@ -10,14 +10,14 @@
 /**
  * Internal dependencies
  */
-import { COMMENT_COUNTS_REQUEST } from 'state/action-types';
+import { COMMENT_COUNTS_REQUEST, COMMENT_COUNTS_UPDATE } from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { mapValues } from 'lodash';
 
 export const fetchCommentCounts = action => {
-	const { siteId } = action.query;
-	const postId = action.query.postId || null;
+	const { siteId, postId } = action;
 
 	return http(
 		{
@@ -32,14 +32,40 @@ export const fetchCommentCounts = action => {
 	);
 };
 
-const treeHandlers = {
+export const updateCommentCounts = ( action, response ) => {
+	const intResponse = mapValues( response, value => parseInt( value ) );
+	const {
+		all,
+		approved,
+		pending,
+		post_trashed: postTrashed,
+		spam,
+		total_comments: totalComments,
+		trash,
+	} = intResponse;
+	const { siteId, postId } = action;
+	return {
+		type: COMMENT_COUNTS_UPDATE,
+		siteId,
+		postId,
+		all,
+		approved,
+		pending,
+		postTrashed,
+		spam,
+		totalComments,
+		trash,
+	};
+};
+
+const countHandlers = {
 	[ COMMENT_COUNTS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: fetchCommentCounts,
-			onSuccess: () => {},
+			onSuccess: updateCommentCounts,
 			onError: () => {},
 		} ),
 	],
 };
 
-export default mergeHandlers( treeHandlers );
+export default mergeHandlers( countHandlers );
