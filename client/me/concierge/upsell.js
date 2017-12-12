@@ -14,9 +14,8 @@ import CompactCard from 'components/card/compact';
 import PrimaryHeader from './primary-header';
 import Site from 'blocks/site';
 
-class InfoStep extends Component {
+class Upsell extends Component {
 	static propTypes = {
-		onComplete: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 	};
 
@@ -28,14 +27,14 @@ class InfoStep extends Component {
 					<Site siteId={ this.props.site.ID } />
 				</CompactCard>
 				<CompactCard>
-					<p>
-						<em>TODO: Add form questions here</em>
-					</p>
-					<Button onClick={ this.props.onComplete }>Continue to calendar</Button>
+					<p>Only sites on a Business Plan are eligible for a concierge site setup chat.</p>
+					<Button href={ `/plans/${ this.props.site.slug }` } primary>
+						Upgrade to Business
+					</Button>
 				</CompactCard>
 			</div>
 		);
 	}
 }
 
-export default InfoStep;
+export default Upsell;

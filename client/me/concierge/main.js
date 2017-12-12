@@ -25,6 +25,7 @@ import ConfirmationStep from './confirmation-step';
 import InfoStep from './info-step';
 import Main from 'components/main';
 import Skeleton from './skeleton';
+import Upsell from './upsell';
 import QueryConciergeShifts from 'components/data/query-concierge-shifts';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -61,14 +62,14 @@ class ConciergeMain extends Component {
 		}
 
 		if ( site.plan.product_slug !== PLAN_BUSINESS ) {
-			return <div>TODO: Show a better message for non-business sites</div>;
+			return <Upsell site={ site } />;
 		}
 
 		// We have shift data and this is a business site — show the signup steps
 		return (
 			<CurrentStep
 				shifts={ shifts }
-				siteId={ site.ID }
+				site={ site }
 				onComplete={ this.goToNextStep }
 				onBack={ this.goToPreviousStep }
 			/>
