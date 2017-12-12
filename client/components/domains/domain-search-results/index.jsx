@@ -152,7 +152,15 @@ class DomainSearchResults extends React.Component {
 							</div>
 							<div className="domain-search-results__transfer-card-link">
 								{ translate( '{{a}}Yes, I own this domain{{/a}}', {
-									components: { a: <a href="#" onClick={ this.props.onClickTransfer } /> },
+									components: {
+										a: (
+											<a
+												href="#"
+												onClick={ this.props.onClickTransfer }
+												data-tracks-button-click-source={ this.props.tracksButtonClickSource }
+											/>
+										),
+									},
 								} ) }
 							</div>
 						</Card>
@@ -234,7 +242,10 @@ class DomainSearchResults extends React.Component {
 
 				if ( this.props.transferInAllowed && ! this.props.isSignupStep ) {
 					unavailableOffer = (
-						<DomainTransferSuggestion onButtonClick={ this.props.onClickTransfer } />
+						<DomainTransferSuggestion
+							onButtonClick={ this.props.onClickTransfer }
+							tracksButtonClickSource="search-suggestions-bottom"
+						/>
 					);
 				}
 			}

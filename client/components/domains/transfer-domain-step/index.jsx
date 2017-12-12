@@ -20,12 +20,6 @@ import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import { getCurrentUser } from 'state/current-user/selectors';
-import {
-	recordAddDomainButtonClickInMapDomain,
-	recordFormSubmitInMapDomain,
-	recordInputFocusInMapDomain,
-	recordGoButtonClickInMapDomain,
-} from 'state/domains/actions';
 import Notice from 'components/notice';
 import Card from 'components/card';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -258,7 +252,7 @@ class TransferDomainStep extends React.Component {
 	}
 
 	registerSuggestedDomain = () => {
-		this.props.recordAddDomainButtonClickInMapDomain(
+		this.props.recordAddDomainButtonClickInTransferDomain(
 			this.state.suggestion.domain_name,
 			this.props.analyticsSection
 		);
@@ -267,11 +261,11 @@ class TransferDomainStep extends React.Component {
 	};
 
 	recordInputFocus = () => {
-		this.props.recordInputFocusInMapDomain( this.state.searchQuery );
+		this.props.recordInputFocusInTransferDomain( this.state.searchQuery );
 	};
 
 	recordGoButtonClick = () => {
-		this.props.recordGoButtonClickInMapDomain(
+		this.props.recordGoButtonClickInTransferDomain(
 			this.state.searchQuery,
 			this.props.analyticsSection
 		);
@@ -285,7 +279,7 @@ class TransferDomainStep extends React.Component {
 		event.preventDefault();
 
 		const domain = getFixedDomainSearch( this.state.searchQuery );
-		this.props.recordFormSubmitInMapDomain( this.state.searchQuery );
+		this.props.recordFormSubmitInTransferDomain( this.state.searchQuery );
 		this.setState( { suggestion: null, notice: null } );
 
 		checkDomainAvailability( domain, ( error, result ) => {
@@ -331,10 +325,25 @@ class TransferDomainStep extends React.Component {
 	};
 }
 
+const recordAddDomainButtonClickInTransferDomain = ( domain_name, section ) =>
+	recordTracksEvent( 'calypso_transfer_domain_add_suggested_domain_click', {
+		domain_name,
+		section,
+	} );
+
+const recordFormSubmitInTransferDomain = domain_name =>
+	recordTracksEvent( 'calypso_transfer_domain_form_submit', { domain_name } );
+
+const recordInputFocusInTransferDomain = domain_name =>
+	recordTracksEvent( 'calypso_transfer_domain_input_focus', { domain_name } );
+
+const recordGoButtonClickInTransferDomain = ( domain_name, section ) =>
+	recordTracksEvent( 'calypso_transfer_domain_go_click', { domain_name, section } );
+
 const recordMapDomainButtonClick = section =>
 	composeAnalytics(
-		recordGoogleEvent( 'Domain Search', 'Clicked "Map it" Button' ),
-		recordTracksEvent( 'calypso_domain_search_results_mapping_button_click', { section } )
+		recordGoogleEvent( 'Transfer Domain', 'Clicked "Map it" Button' ),
+		recordTracksEvent( 'calypso_transfer_domain_mapping_button_click', { section } )
 	);
 
 export default connect(
@@ -343,10 +352,10 @@ export default connect(
 		selectedSite: getSelectedSite( state ),
 	} ),
 	{
-		recordAddDomainButtonClickInMapDomain,
-		recordFormSubmitInMapDomain,
-		recordInputFocusInMapDomain,
-		recordGoButtonClickInMapDomain,
+		recordAddDomainButtonClickInTransferDomain,
+		recordFormSubmitInTransferDomain,
+		recordInputFocusInTransferDomain,
+		recordGoButtonClickInTransferDomain,
 		recordMapDomainButtonClick,
 	}
 )( localize( TransferDomainStep ) );
