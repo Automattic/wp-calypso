@@ -25,8 +25,6 @@ import {
 } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
 import Comment from 'my-sites/comments/comment';
-import CommentDetail from 'blocks/comment-detail';
-import CommentDetailPlaceholder from 'blocks/comment-detail/comment-detail-placeholder';
 import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
 import CommentNavigation from 'my-sites/comments/comment-navigation';
 import EmptyContent from 'components/empty-content';
@@ -34,7 +32,7 @@ import Pagination from 'components/pagination';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { getSiteCommentsTree, getSiteSetting, isCommentsTreeInitialized } from 'state/selectors';
+import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -53,7 +51,6 @@ export class CommentList extends Component {
 		likeComment: PropTypes.func,
 		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
-		siteBlacklist: PropTypes.string,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
@@ -358,7 +355,6 @@ export class CommentList extends Component {
 			isPostView,
 			page,
 			postId,
-			siteBlacklist,
 			siteId,
 			siteFragment,
 			status,
@@ -501,7 +497,6 @@ const mapStateToProps = ( state, { postId, siteId, status } ) => {
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' ),
 		isLoading,
 		isPostView,
-		siteBlacklist: getSiteSetting( state, siteId, 'blacklist_keys' ),
 		siteId,
 	};
 };
