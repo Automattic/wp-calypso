@@ -9,7 +9,6 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:store-transactions' );
 import { Readable } from 'stream';
 import inherits from 'inherits';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -24,6 +23,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from './step-types';
 import wp from 'lib/wp';
+import { isEbanx } from 'lib/credit-card-details/ebanx';
 
 const wpcom = wp.undocumented();
 
@@ -247,6 +247,7 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 }
 
 function createEbanxToken( requestType, cardDetails, callback ) {
+	debug( 'creating token with ebanx' );
 	wpcom.ebanxConfiguration(
 		{
 			request_type: requestType,
@@ -286,7 +287,7 @@ function createEbanxToken( requestType, cardDetails, callback ) {
 }
 
 function createCardToken( requestType, cardDetails, callback ) {
-	if ( 'BR' === cardDetails.country && config.isEnabled( 'upgrades/ebanx' ) ) {
+	if ( isEbanx( cardDetails.country )	) {
 		return createEbanxToken( requestType, cardDetails, callback );
 	}
 
