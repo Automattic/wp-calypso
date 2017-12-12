@@ -9,13 +9,9 @@ const JetpackLogo = ( { size, full } ) => {
 	if ( full === true ) {
 		/* eslint-disable max-len */
 		return (
-			<svg
-				height={ size }
-				className="jetpack-logo"
-				xmlns="http://www.w3.org/2000/svg"
-				viewBox="0 0 118 32"
-			>
+			<svg height={ size } className="jetpack-logo" viewBox="0 0 118 32">
 				<title>Jetpack</title>
+				<image xlinkHref="https://viralsweep.com/blog/wp-content/uploads/2015/02/unsplash.jpg" />
 				<path
 					className="jetpack-logo__icon"
 					d="M16,0C7.2,0,0,7.2,0,16s7.2,16,16,16s16-7.2,16-16S24.8,0,16,0z M15,19H7l8-16V19z M17,29V13h8L17,29z"
@@ -28,26 +24,14 @@ const JetpackLogo = ( { size, full } ) => {
 
 	if ( 24 === size ) {
 		return (
-			<svg
-				className="jetpack-logo"
-				height={ size }
-				width={ size }
-				xmlns="http://www.w3.org/2000/svg"
-				viewBox="0 0 24 24"
-			>
+			<svg className="jetpack-logo" height={ size } width={ size } viewBox="0 0 24 24">
 				<path d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M11,14H6l5-10V14z M13,20V10h5L13,20z" />
 			</svg>
 		);
 	}
 
 	return (
-		<svg
-			className="jetpack-logo"
-			height={ size }
-			width={ size }
-			xmlns="http://www.w3.org/2000/svg"
-			viewBox="0 0 32 32"
-		>
+		<svg className="jetpack-logo" height={ size } width={ size } viewBox="0 0 32 32">
 			{
 				// eslint-disable-next-line max-len
 				<path d="M16,0C7.2,0,0,7.2,0,16s7.2,16,16,16c8.8,0,16-7.2,16-16S24.8,0,16,0z M15.2,18.7h-8l8-15.5V18.7z M16.8,28.8 V13.3h8L16.8,28.8z" />
