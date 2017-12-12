@@ -2,10 +2,11 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { every, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,25 +17,18 @@ import Button from 'components/button';
 import Card from 'components/card';
 import CustomerAddressDialog from './dialog';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
-import { isCurrentlyEditingOrder, getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
-import { isOrderFinished } from 'woocommerce/lib/order-status';
 import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
-import { getOrder } from 'woocommerce/state/sites/orders/selectors';
+import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import SectionHeader from 'components/section-header';
 
 class OrderCustomerInfo extends Component {
 	static propTypes = {
 		editOrder: PropTypes.func.isRequired,
-		isEditing: PropTypes.bool,
 		orderId: PropTypes.oneOfType( [
 			PropTypes.number, // A number indicates an existing order
 			PropTypes.shape( { id: PropTypes.string } ), // Placeholders have format { id: 'order_1' }
 		] ).isRequired,
-		order: PropTypes.shape( {
-			billing: PropTypes.object.isRequired,
-			shipping: PropTypes.object.isRequired,
-		} ),
 		siteId: PropTypes.number.isRequired,
 	};
 
@@ -82,83 +76,104 @@ class OrderCustomerInfo extends Component {
 		];
 	};
 
+	renderBilling = ( address = {} ) => {
+		const { translate } = this.props;
+		if ( every( address, isEmpty ) ) {
+			return (
+				<Button
+					className="order-customer__add-link"
+					onClick={ this.toggleDialog( 'billing' ) }
+					primary
+				>
+					{ translate( 'Add Billing Address' ) }
+				</Button>
+			);
+		}
+		return (
+			<Fragment>
+				<h4>{ translate( 'Address' ) }</h4>
+				<div className="order-customer__billing-address">
+					<p>{ `${ address.first_name } ${ address.last_name }` }</p>
+					<AddressView address={ getAddressViewFormat( address ) } />
+				</div>
+
+				<h4>{ translate( 'Email' ) }</h4>
+				<p>{ address.email }</p>
+
+				<h4>{ translate( 'Phone' ) }</h4>
+				<div className="order-customer__billing-phone">{ address.phone }</div>
+				<Button className="order-customer__add-link" onClick={ this.toggleDialog( 'billing' ) }>
+					{ translate( 'Edit Address' ) }
+				</Button>
+			</Fragment>
+		);
+	};
+
+	renderShipping = ( address = {} ) => {
+		const { translate } = this.props;
+		if ( every( address, isEmpty ) ) {
+			return (
+				<Button
+					className="order-customer__add-link"
+					onClick={ this.toggleDialog( 'shipping' ) }
+					primary
+				>
+					{ translate( 'Add Shipping Address' ) }
+				</Button>
+			);
+		}
+		return (
+			<Fragment>
+				<h4>{ translate( 'Address' ) }</h4>
+				<div className="order-customer__shipping-address">
+					<p>{ `${ address.first_name } ${ address.last_name }` }</p>
+					<AddressView address={ getAddressViewFormat( address ) } />
+				</div>
+				<Button className="order-customer__add-link" onClick={ this.toggleDialog( 'shipping' ) }>
+					{ translate( 'Edit Address' ) }
+				</Button>
+			</Fragment>
+		);
+	};
+
 	render() {
-		const { isEditing, order, translate } = this.props;
-		if ( ! order ) {
+		const { orderId, order = {}, translate } = this.props;
+		if ( ! orderId ) {
 			return null;
 		}
 
-		const { billing, shipping } = order;
-		const isEditable = isEditing && ! isOrderFinished( order.status );
-
 		return (
-			<div className="order-customer">
+			<div className="order-customer__create order-customer">
 				<SectionHeader label={ translate( 'Customer Information' ) } />
 				<Card>
 					<div className="order-customer__container">
 						<div className="order-customer__billing">
 							<h3 className="order-customer__billing-details">
 								{ translate( 'Billing Details' ) }
-								{ isEditable ? (
-									<Button
-										compact
-										className="order-customer__edit-link"
-										onClick={ this.toggleDialog( 'billing' ) }
-										borderless
-									>
-										{ translate( 'Edit' ) }
-									</Button>
-								) : null }
 							</h3>
-							<h4>{ translate( 'Address' ) }</h4>
-							<div className="order-customer__billing-address">
-								<p>{ `${ billing.first_name } ${ billing.last_name }` }</p>
-								<AddressView address={ getAddressViewFormat( billing ) } />
-							</div>
-
-							<h4>{ translate( 'Email' ) }</h4>
-							<p>{ billing.email }</p>
-
-							<h4>{ translate( 'Phone' ) }</h4>
-							<span>{ billing.phone }</span>
+							{ this.renderBilling( order.billing ) }
 						</div>
 
 						<div className="order-customer__shipping">
 							<h3 className="order-customer__shipping-details">
 								{ translate( 'Shipping Details' ) }
-								{ isEditable ? (
-									<Button
-										compact
-										className="order-customer__edit-link"
-										onClick={ this.toggleDialog( 'shipping' ) }
-										borderless
-									>
-										{ translate( 'Edit' ) }
-									</Button>
-								) : null }
 							</h3>
-							<h4>{ translate( 'Address' ) }</h4>
-							<div className="order-customer__shipping-address">
-								<p>{ `${ shipping.first_name } ${ shipping.last_name }` }</p>
-								<AddressView address={ getAddressViewFormat( shipping ) } />
-							</div>
+							{ this.renderShipping( order.shipping ) }
 						</div>
 					</div>
 				</Card>
-				{ isEditing && this.renderDialogs() }
+				{ this.renderDialogs() }
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state, props ) => {
+	state => {
 		const siteId = getSelectedSiteId( state );
-		const isEditing = isCurrentlyEditingOrder( state );
-		const order = isEditing ? getOrderWithEdits( state ) : getOrder( state, props.orderId );
+		const order = getOrderWithEdits( state );
 
 		return {
-			isEditing,
 			order,
 			siteId,
 		};

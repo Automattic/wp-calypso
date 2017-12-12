@@ -20,7 +20,7 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import installActionHandlers from './state/data-layer';
 import Order from './app/order';
-import OrderCreate from './app/order/order-create';
+import OrderCreate from './app/order/create';
 import Orders from './app/orders';
 import ProductCategories from './app/product-categories';
 import Products from './app/products';
