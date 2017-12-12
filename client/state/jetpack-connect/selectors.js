@@ -28,14 +28,6 @@ const getAuthorizationData = state => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectAuthorize' ] );
 };
 
-const getAuthorizationRemoteQueryData = state => {
-	return get( getAuthorizationData( state ), 'queryObject' );
-};
-
-const getAuthorizationRemoteSite = state => {
-	return get( getAuthorizationRemoteQueryData( state ), 'site' );
-};
-
 const isRemoteSiteOnSitesList = ( state, remoteUrl ) => {
 	const authorizationData = getAuthorizationData( state );
 
@@ -113,8 +105,6 @@ const hasExpiredSecretError = function( state ) {
 export default {
 	getConnectingSite,
 	getAuthorizationData,
-	getAuthorizationRemoteQueryData,
-	getAuthorizationRemoteSite,
 	getSSO,
 	isRedirectingToWpAdmin,
 	isRemoteSiteOnSitesList,

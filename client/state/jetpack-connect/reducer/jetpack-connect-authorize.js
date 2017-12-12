@@ -62,7 +62,6 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, {
 				siteReceived: true,
 				isAuthorizing: false,
-				queryObject: omit( state.queryObject, '_wp_nonce', 'secret', 'scope' ),
 			} );
 
 		case JETPACK_CONNECT_QUERY_SET:
