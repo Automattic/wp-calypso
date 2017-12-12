@@ -80,6 +80,11 @@
 			margin-right: 76px;
 		}
 	}
+
+	&.is-selected {
+		border-left: 10px solid $blue-medium;
+		background: $gray-light;
+	}
 }
 
 .draft__title {

@@ -397,6 +397,7 @@ $autobar-height: 20px;
 
 .masterbar__recent-drafts.popover {
 	width: 310px;
+	max-width: calc(100vw - 20px );
 
 	.popover__inner {
 		text-align: left;
