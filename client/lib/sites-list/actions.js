@@ -20,14 +20,6 @@ const SitesListActions = {
 			logs,
 		} );
 	},
-	// A way to remove a Disconnected Site from the old list store
-	disconnectedSite( site ) {
-		Dispatcher.handleViewAction( {
-			type: 'DISCONNECT_SITE',
-			site,
-		} );
-	},
-
 	deleteSite( site, onComplete ) {
 		Dispatcher.handleViewAction( {
 			type: 'DELETE_SITE',

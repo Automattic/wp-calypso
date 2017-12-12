@@ -18,7 +18,6 @@ export default function() {
 		_sites.dispatchToken = Dispatcher.register( function( payload ) {
 			const action = payload.action;
 			switch ( action.type ) {
-				case 'DISCONNECT_SITE':
 				case 'RECEIVE_DELETED_SITE':
 					_sites.removeSite( action.site );
 					break;
