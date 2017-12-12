@@ -58,17 +58,18 @@ export const getOrdersCurrentSearch = ( state, siteId = getSelectedSiteId( state
  */
 export const getDefaultEmptyOrder = () => {
 	const currency = 'USD';
+	const zero = getCurrencyFormatString( 0, currency );
 
 	return {
 		status: 'pending',
 		currency: currency,
-		discount_total: getCurrencyFormatString( 0, currency ),
-		discount_tax: getCurrencyFormatString( 0, currency ),
-		shipping_total: getCurrencyFormatString( 0, currency ),
-		shipping_tax: getCurrencyFormatString( 0, currency ),
-		cart_tax: getCurrencyFormatString( 0, currency ),
-		total: getCurrencyFormatString( 0, currency ),
-		total_tax: getCurrencyFormatString( 0, currency ),
+		discount_total: zero,
+		discount_tax: zero,
+		shipping_total: zero,
+		shipping_tax: zero,
+		cart_tax: zero,
+		total: zero,
+		total_tax: zero,
 		prices_include_tax: false,
 		billing: {},
 		shipping: {},
