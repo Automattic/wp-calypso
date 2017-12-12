@@ -429,31 +429,6 @@ export class CommentList extends Component {
 					{ isEnabled( 'comments/management/m3-design' ) &&
 						showPlaceholder && <Comment commentId={ 0 } key="comment-detail-placeholder" /> }
 
-					{ ! isEnabled( 'comments/management/m3-design' ) &&
-						map( commentsPage, commentId => (
-							<CommentDetail
-								commentId={ commentId }
-								commentIsSelected={ this.isCommentSelected( commentId ) }
-								deleteCommentPermanently={ this.deleteCommentPermanently }
-								editComment={ this.editComment }
-								isBulkEdit={ isBulkMode }
-								key={ `comment-${ siteId }-${ commentId }` }
-								refreshCommentData={
-									isCommentsTreeSupported &&
-									! this.hasCommentJustMovedBackToCurrentStatus( commentId )
-								}
-								replyComment={ this.replyComment }
-								setCommentStatus={ this.setCommentStatus }
-								siteBlacklist={ siteBlacklist }
-								siteId={ siteId }
-								toggleCommentLike={ this.toggleCommentLike }
-								toggleCommentSelected={ this.toggleCommentSelected }
-							/>
-						) ) }
-
-					{ ! isEnabled( 'comments/management/m3-design' ) &&
-						showPlaceholder && <CommentDetailPlaceholder key="comment-detail-placeholder" /> }
-
 					{ showEmptyContent && (
 						<EmptyContent
 							illustration="/calypso/images/comments/illustration_comments_gray.svg"
