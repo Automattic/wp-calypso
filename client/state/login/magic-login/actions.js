@@ -61,16 +61,18 @@ export const hideMagicLoginRequestNotice = () => {
 /**
  * Sends an email with a magic link to the specified email address.
  *
- * @param  {String}   email Email address of the user
- * @return {Function}       A thunk that can be dispatched
+ * @param  {String}   email      Email address of the user
+ * @param  {String}   redirectTo Url to redirect the user to upon successful login
+ * @return {Function}            A thunk that can be dispatched
  */
-export const fetchMagicLoginRequestEmail = email => dispatch => {
+export const fetchMagicLoginRequestEmail = ( email, redirectTo ) => dispatch => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH } );
 
 	return wpcom
 		.undocumented()
 		.requestMagicLoginEmail( {
 			email,
+			redirect_to: redirectTo,
 		} )
 		.then( () => {
 			dispatch( { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS } );
@@ -97,7 +99,7 @@ export const fetchMagicLoginRequestEmail = email => dispatch => {
  * @param  {String}   redirectTo Url to redirect the user to upon successful login
  * @return {Function}            A thunk that can be dispatched
  */
-export const fetchMagicLoginAuthenticate = ( token, redirectTo = null ) => dispatch => {
+export const fetchMagicLoginAuthenticate = ( token, redirectTo ) => dispatch => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
 
 	request

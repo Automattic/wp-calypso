@@ -27,13 +27,13 @@ import {
 	showMagicLoginLinkExpiredPage,
 } from 'state/login/magic-login/actions';
 import {
+	getInitialQueryArguments,
 	getMagicLoginCurrentView,
 	getMagicLoginRequestAuthError,
 	getMagicLoginRequestedAuthSuccessfully,
 	isFetchingMagicLoginAuth,
 } from 'state/selectors';
-import { getRedirectTo } from 'state/login/selectors';
-import { getTwoFactorNotificationSent, isTwoFactorEnabled } from 'state/login/selectors';
+import { getRedirectTo, getTwoFactorNotificationSent, isTwoFactorEnabled } from 'state/login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
@@ -44,7 +44,6 @@ class HandleEmailedLinkForm extends React.Component {
 		// Passed props
 		clientId: PropTypes.string,
 		emailAddress: PropTypes.string.isRequired,
-		redirectTo: PropTypes.string,
 		token: PropTypes.string.isRequired,
 
 		// Connected props
@@ -53,6 +52,7 @@ class HandleEmailedLinkForm extends React.Component {
 		isAuthenticated: PropTypes.bool,
 		isExpired: PropTypes.bool,
 		isFetching: PropTypes.bool,
+		redirectToFromQuery: PropTypes.string,
 		redirectToFromServer: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
@@ -82,24 +82,26 @@ class HandleEmailedLinkForm extends React.Component {
 			hasSubmitted: true,
 		} );
 
-		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectTo );
+		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectToFromQuery );
 	};
 
 	// Lifted from `blocks/login`
 	// @TODO move to `state/login/actions` & use both places
 	handleValidToken = () => {
-		if ( ! this.props.twoFactorEnabled ) {
+		const { redirectToFromServer, twoFactorEnabled, twoFactorNotificationSent } = this.props;
+
+		if ( ! twoFactorEnabled ) {
 			this.rebootAfterLogin();
 		} else {
 			page(
 				login( {
 					isNative: true,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: this.props.twoFactorNotificationSent.replace(
+					twoFactorAuthType: twoFactorNotificationSent.replace(
 						'none',
 						'authenticator'
 					),
-					redirectTo: this.props.redirectTo,
+					redirectTo: redirectToFromServer,
 				} )
 			);
 		}
@@ -108,10 +110,10 @@ class HandleEmailedLinkForm extends React.Component {
 	// Lifted from `blocks/login`
 	// @TODO move to `state/login/actions` & use both places
 	rebootAfterLogin = () => {
-		const { redirectToFromServer } = this.props;
+		const { redirectToFromServer, twoFactorEnabled } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_login_success', {
-			two_factor_enabled: this.props.twoFactorEnabled,
+			two_factor_enabled: twoFactorEnabled,
 			magic_login: 1,
 		} );
 
@@ -198,6 +200,7 @@ class HandleEmailedLinkForm extends React.Component {
 
 const mapState = state => {
 	return {
+		redirectToFromQuery: getInitialQueryArguments( state ).redirect_to,
 		redirectToFromServer: getRedirectTo( state ),
 		authError: getMagicLoginRequestAuthError( state ),
 		currentUser: getCurrentUser( state ),

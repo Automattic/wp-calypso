@@ -125,7 +125,7 @@ export class LoginForm extends Component {
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link' );
 
 			this.props
-				.fetchMagicLoginRequestEmail( this.state.usernameOrEmail )
+				.fetchMagicLoginRequestEmail( this.state.usernameOrEmail, nextProps.redirectTo )
 				.then( () => {
 					this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_success' );
 				} )
