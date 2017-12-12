@@ -534,15 +534,17 @@ Undocumented.prototype._sendRequest = function( originalParams, fn ) {
  * Determine whether a domain name is available for registration
  *
  * @param {string} domain - The domain name to check.
+ * @param {int} blogId - Optional blogId to determine if domain is used on another site.
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
  * @api public
  */
-Undocumented.prototype.isDomainAvailable = function( domain, fn ) {
+Undocumented.prototype.isDomainAvailable = function( domain, blogId, fn ) {
 	return this.wpcom.req.get(
 		`/domains/${ encodeURIComponent( domain ) }/is-available`,
 		{
-			apiVersion: '1.2',
+			blog_id: blogId,
+			apiVersion: '1.3',
 		},
 		fn
 	);

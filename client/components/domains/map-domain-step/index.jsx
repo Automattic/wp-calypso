@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { includes, noop, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +20,7 @@ import { getAvailabilityNotice } from 'lib/domains/registration/availability-mes
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainProductPrice from 'components/domains/domain-product-price';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import {
 	recordAddDomainButtonClickInMapDomain,
 	recordFormSubmitInMapDomain,
@@ -190,30 +191,39 @@ class MapDomainStep extends React.Component {
 		this.props.recordFormSubmitInMapDomain( this.state.searchQuery );
 		this.setState( { suggestion: null, notice: null } );
 
-		checkDomainAvailability( domain, ( error, result ) => {
-			const status = result && result.status ? result.status : error;
-			switch ( status ) {
-				case domainAvailability.MAPPABLE:
-				case domainAvailability.UNKNOWN:
-					this.props.onMapDomain( domain );
-					return;
+		checkDomainAvailability(
+			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+			( error, result ) => {
+				const mappableStatus = get( result, 'mappable', error );
+				const status = get( result, 'status', error );
+				const { AVAILABLE, MAPPABLE, NOT_REGISTRABLE, UNKNOWN } = domainAvailability;
 
-				case domainAvailability.AVAILABLE:
+				if ( status === AVAILABLE ) {
 					this.setState( { suggestion: result } );
 					return;
+				}
 
-				default:
-					const { message, severity } = getAvailabilityNotice( domain, status );
-					this.setState( { notice: message, noticeSeverity: severity } );
+				if ( status !== NOT_REGISTRABLE && includes( [ MAPPABLE, UNKNOWN ], mappableStatus ) ) {
+					this.props.onMapDomain( domain );
 					return;
+				}
+
+				let site = get( result, 'other_site_domain', null );
+				if ( ! site ) {
+					site = get( this.props, 'selectedSite.slug', null );
+				}
+
+				const { message, severity } = getAvailabilityNotice( domain, status, site );
+				this.setState( { notice: message, noticeSeverity: severity } );
 			}
-		} );
+		);
 	};
 }
 
 export default connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
+		selectedSite: getSelectedSite( state ),
 	} ),
 	{
 		recordAddDomainButtonClickInMapDomain,
