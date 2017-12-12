@@ -149,7 +149,7 @@ class TransferDomainStep extends React.Component {
 							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
-							onClick={ this.recordInputFocus }
+							onFocus={ this.recordInputFocus }
 							autoFocus
 						/>
 					</div>
