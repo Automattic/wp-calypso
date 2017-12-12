@@ -342,13 +342,12 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	changeStatus: ( postId, commentId, status, analytics = { alsoUnlike: false, isUndo: false } ) =>
+	changeStatus: ( postId, commentId, status, analytics = { alsoUnlike: false } ) =>
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
 					recordTracksEvent( 'calypso_comment_management_change_status', {
 						also_unlike: analytics.alsoUnlike,
-						is_undo: analytics.isUndo,
 						previous_status: analytics.previousStatus,
 						status,
 					} ),
