@@ -156,7 +156,7 @@ const CreditCardForm = createReactClass( {
 
 			if ( this.props.saveStoredCard ) {
 				this.props
-					.saveStoredCard( gatewayData.token )
+					.saveStoredCard( gatewayData )
 					.then( () => {
 						notices.success( this.props.translate( 'Card added successfully' ), {
 							persistent: true,
