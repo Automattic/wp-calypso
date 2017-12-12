@@ -13,10 +13,13 @@ export default function JetpackLogoExample() {
 	return (
 		<div>
 			<div>
-				<JetpackLogo full size={ 24 } />
+				<JetpackLogo full size={ 24 } /> size = 24
 			</div>
 			<div>
-				<JetpackLogo size={ 40 } />
+				<JetpackLogo size={ 32 } /> size = 32
+			</div>
+			<div>
+				<JetpackLogo size={ 40 } /> size = 40
 			</div>
 		</div>
 	);
