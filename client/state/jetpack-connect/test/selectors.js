@@ -5,8 +5,6 @@
 import {
 	getAuthAttempts,
 	getAuthorizationData,
-	getAuthorizationRemoteQueryData,
-	getAuthorizationRemoteSite,
 	getConnectingSite,
 	getJetpackSiteByUrl,
 	getSSO,
@@ -83,72 +81,35 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getAuthorizationRemoteQueryData()', () => {
-		test( 'should return undefined if user has not started the authorization flow', () => {
-			const state = {
-				jetpackConnect: {},
-			};
-
-			expect( getAuthorizationRemoteQueryData( state ) ).toBeUndefined();
-		} );
-
-		test( 'should return the current authorization query object if there is such', () => {
-			const queryObject = {
-				_wp_nonce: 'nonce',
-				client_id: '12345678',
-				redirect_uri: 'https://wordpress.com/',
-				scope: 'auth',
-				secret: '1234abcd',
-				state: 12345678,
-			};
-			const state = {
-				jetpackConnect: {
-					jetpackConnectAuthorize: {
-						queryObject,
-					},
-				},
-			};
-
-			expect( getAuthorizationRemoteQueryData( state ) ).toEqual( queryObject );
-		} );
-	} );
-
 	describe( '#isRemoteSiteOnSitesList()', () => {
 		test( 'should return false if user has not started the authorization flow', () => {
 			const state = {
-				jetpackConnect: {},
+				jetpackConnect: {
+					jetpackConnectAuthorize: {},
+				},
+				sites: { items: {} },
 			};
 
-			expect( isRemoteSiteOnSitesList( state ) ).toBe( false );
+			expect( isRemoteSiteOnSitesList( state, 'https://wordpress.com' ) ).toBe( false );
 		} );
 
 		test( 'should return true if the site is in the sites list', () => {
 			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {},
+				},
 				sites: {
 					items: {
 						12345678: {
 							ID: 12345678,
 							jetpack: true,
-							URL: 'https://wordpress.com/',
-						},
-					},
-				},
-				jetpackConnect: {
-					jetpackConnectAuthorize: {
-						queryObject: {
-							_wp_nonce: 'nonce',
-							client_id: '12345678',
-							redirect_uri: 'https://wordpress.com/',
-							scope: 'auth',
-							secret: '1234abcd',
-							state: 12345678,
-							site: 'https://wordpress.com/',
+							URL: 'https://wordpress.com',
 						},
 					},
 				},
 			};
 
-			expect( isRemoteSiteOnSitesList( state ) ).toBe( true );
+			expect( isRemoteSiteOnSitesList( state, 'https://wordpress.com' ) ).toBe( true );
 		} );
 
 		test( 'should return false if the site is in the sites list, but is not responding', () => {
@@ -158,53 +119,18 @@ describe( 'selectors', () => {
 						12345678: {
 							ID: 12345678,
 							jetpack: true,
-							URL: 'https://wordpress.com/',
+							URL: 'https://wordpress.com',
 						},
 					},
 				},
 				jetpackConnect: {
 					jetpackConnectAuthorize: {
-						queryObject: {
-							client_id: '12345678',
-						},
 						clientNotResponding: true,
 					},
 				},
 			};
 
-			expect( isRemoteSiteOnSitesList( state ) ).toBe( false );
-		} );
-	} );
-
-	describe( '#getAuthorizationRemoteSite()', () => {
-		test( 'should return undefined if user has not started the authorization flow', () => {
-			const state = {
-				jetpackConnect: {},
-			};
-
-			expect( getAuthorizationRemoteSite( state ) ).toBeUndefined();
-		} );
-
-		test( 'should return the current authorization url if there is such', () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectAuthorize: {
-						queryObject: {
-							_wp_nonce: 'nonce',
-							client_id: '12345678',
-							redirect_uri: 'https://wordpress.com/',
-							scope: 'auth',
-							secret: '1234abcd',
-							state: 12345678,
-							site: 'https://wordpress.com/',
-						},
-					},
-				},
-			};
-
-			expect( getAuthorizationRemoteSite( state ) ).toEqual(
-				state.jetpackConnect.jetpackConnectAuthorize.queryObject.site
-			);
+			expect( isRemoteSiteOnSitesList( state, 'https://wordpress.com' ) ).toBe( false );
 		} );
 	} );
 
