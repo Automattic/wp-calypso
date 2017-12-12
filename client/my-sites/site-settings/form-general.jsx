@@ -322,7 +322,7 @@ class SiteSettingsFormGeneral extends Component {
 		} = this.props;
 
 		const today = moment(),
-			lastDay = moment( { year: 2017, month: 6, day: 12 } );
+			lastDay = moment( { year: 2017, month: 12, day: 14 } );
 
 		if ( today.isAfter( lastDay, 'day' ) ) {
 			return null;
