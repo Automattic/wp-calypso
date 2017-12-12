@@ -16,7 +16,6 @@ import page from 'page';
 import wpcom from 'lib/wp';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { receiveDeletedSite, receiveSite } from 'state/sites/actions';
-import Dispatcher from 'dispatcher';
 import {
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
@@ -446,10 +445,6 @@ export function authorize( queryObject ) {
 					sites: data.sites,
 				} );
 				dispatch( {
-					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-					data: data,
-				} );
-				Dispatcher.handleViewAction( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 					data: data,
 				} );
