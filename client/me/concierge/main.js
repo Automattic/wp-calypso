@@ -27,6 +27,7 @@ import Main from 'components/main';
 import Skeleton from './skeleton';
 import QueryConciergeShifts from 'components/data/query-concierge-shifts';
 import { getConciergeShifts } from 'state/selectors';
+import { WPCOM_CONCIERGE_SCHEDULE_ID } from './constants';
 
 const STEP_COMPONENTS = [ InfoStep, CalendarStep, ConfirmationStep ];
 
@@ -52,11 +53,10 @@ class ConciergeMain extends Component {
 		const { shifts } = this.props;
 
 		// TODO:
-		// 1. pass in the real scheduleId for WP.com concierge schedule.
-		// 2. render the shifts for real.
+		// render the shifts for real.
 		return (
 			<Main>
-				<QueryConciergeShifts scheduleId={ 123 } />
+				<QueryConciergeShifts scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID } />
 				{ shifts ? (
 					<CurrentStep
 						shifts={ shifts }
