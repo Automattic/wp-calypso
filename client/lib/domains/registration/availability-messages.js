@@ -75,6 +75,9 @@ function getAvailabilityNotice( domain, error, site ) {
 		case domainAvailability.MAPPED_SAME_SITE_NOT_TRANSFERRABLE:
 			message = translate( '{{strong}}%(domain)s{{/strong}} is already connected to this site.', {
 				args: { domain },
+				components: {
+					strong: <strong />,
+				},
 			} );
 			break;
 		case domainAvailability.MAPPED_OTHER_SITE_SAME_USER:
