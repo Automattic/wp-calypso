@@ -108,9 +108,11 @@ export class CommentNavigation extends Component {
 
 	setBulkStatus = newStatus => () => {
 		const {
-			deletePermanently,
 			changeStatus,
+			deletePermanently,
+			recordBulkAction,
 			selectedComments,
+			status: queryStatus,
 			toggleBulkEdit,
 			unlike,
 		} = this.props;
@@ -125,6 +127,12 @@ export class CommentNavigation extends Component {
 			if ( alsoUnlike ) {
 				unlike( postId, commentId );
 			}
+			recordBulkAction(
+				newStatus,
+				selectedComments.length,
+				queryStatus,
+				!! postId ? 'post' : 'site'
+			);
 			this.showBulkNotice( newStatus );
 			toggleBulkEdit();
 		} );
@@ -356,6 +364,18 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 					bumpStat( 'calypso_comment_management', 'comment_deleted' )
 				),
 				deleteComment( siteId, postId, commentId, { showSuccessNotice: true } )
+			)
+		),
+	recordBulkAction: ( action, count, fromList, view = 'site' ) =>
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_comment_management_bulk_action', {
+					action,
+					count,
+					from_list: fromList,
+					view,
+				} ),
+				bumpStat( 'calypso_comment_management', 'bulk_action' )
 			)
 		),
 	recordChangeFilter: status =>
