@@ -36,9 +36,8 @@ const getAuthorizationRemoteSite = state => {
 	return get( getAuthorizationRemoteQueryData( state ), 'site' );
 };
 
-const isRemoteSiteOnSitesList = state => {
-	const remoteUrl = getAuthorizationRemoteSite( state ),
-		authorizationData = getAuthorizationData( state );
+const isRemoteSiteOnSitesList = ( state, remoteUrl ) => {
+	const authorizationData = getAuthorizationData( state );
 
 	if ( ! remoteUrl ) {
 		return false;

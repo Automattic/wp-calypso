@@ -656,7 +656,7 @@ export default connect(
 			calypsoStartedConnection: isCalypsoStartedConnection( ownProps.authSite ),
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
-			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
+			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state, ownProps.authSite ),
 			isFetchingAuthorizationSite: isRequestingSite( state, ownProps.authClientId ),
 			isFetchingSites: isRequestingSites( state ),
 			siteSlug,
