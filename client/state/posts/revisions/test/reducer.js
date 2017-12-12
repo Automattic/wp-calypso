@@ -11,7 +11,6 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { diffs, requesting, selection, ui } from '../reducer';
 import {
-	DESERIALIZE,
 	POST_EDIT,
 	POST_REVISIONS_DIALOG_CLOSE,
 	POST_REVISIONS_DIALOG_OPEN,
@@ -21,7 +20,6 @@ import {
 	POST_REVISIONS_REQUEST_SUCCESS,
 	POST_REVISIONS_SELECT,
 	SELECTED_SITE_SET,
-	SERIALIZE,
 } from 'state/action-types';
 
 const TEST_SITE_ID = 999999;
@@ -57,27 +55,6 @@ describe( 'reducer', () => {
 					},
 				},
 			},
-		} );
-
-		test( 'should persist state', () => {
-			const state = diffs( validState, { type: SERIALIZE } );
-			expect( state ).to.eql( validState );
-		} );
-
-		test( 'should load valid persisted state', () => {
-			const state = diffs( validState, { type: DESERIALIZE } );
-			expect( state ).to.eql( validState );
-		} );
-
-		test( 'should not load invalid persisted state', () => {
-			const invalidState = deepFreeze( {
-				stuff: {
-					things: {},
-				},
-			} );
-
-			const state = diffs( invalidState, { type: DESERIALIZE } );
-			expect( state ).to.eql( {} );
 		} );
 
 		test( 'should not merge diff data without a siteId', () => {

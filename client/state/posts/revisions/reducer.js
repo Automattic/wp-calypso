@@ -20,50 +20,44 @@ import {
 	POST_REVISIONS_DIALOG_OPEN,
 	SELECTED_SITE_SET,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
-import { revisionsDiffSchema } from './schemas.js';
+import { combineReducers } from 'state/utils';
 
 const isNonNegativeInteger = t => isInteger( t ) && t >= 0;
 const isPositiveInteger = t => isInteger( t ) && t > 0;
 
-export const diffs = createReducer(
-	{},
-	{
-		[ POST_REVISIONS_RECEIVE ]: (
-			state,
-			{ diffs: diffsFromServer, postId, revisions, siteId }
-		) => {
-			if ( ! isPositiveInteger( siteId ) ) {
-				return state;
-			}
-			const filteredDiffs = filter(
-				diffsFromServer,
-				d => isNonNegativeInteger( d.from ) && isNonNegativeInteger( d.to ) && ! isEmpty( d.diff )
-			);
-			const keyedDiffs = keyBy( filteredDiffs, d => `${ d.from }:${ d.to }` );
+export function diffs( state = {}, action ) {
+	const { diffs: diffsFromServer, postId, revisions, siteId, type } = action;
+	if ( type !== POST_REVISIONS_RECEIVE ) {
+		return state;
+	}
+	if ( ! isPositiveInteger( siteId ) ) {
+		return state;
+	}
+	const filteredDiffs = filter(
+		diffsFromServer,
+		d => isNonNegativeInteger( d.from ) && isNonNegativeInteger( d.to ) && ! isEmpty( d.diff )
+	);
+	const keyedDiffs = keyBy( filteredDiffs, d => `${ d.from }:${ d.to }` );
 
-			if ( isEmpty( keyedDiffs ) ) {
-				return state;
-			}
+	if ( isEmpty( keyedDiffs ) ) {
+		return state;
+	}
 
-			const sitePost = get( state, [ siteId, postId ], {} );
-			// @TODO support merging a unique set
-			sitePost.revisions = revisions;
+	const sitePost = get( state, [ siteId, postId ], {} );
+	// @TODO support merging a unique set
+	sitePost.revisions = revisions;
 
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: {
-						...sitePost,
-						...keyedDiffs,
-					},
-				},
-			};
+	return {
+		...state,
+		[ siteId ]: {
+			...state[ siteId ],
+			[ postId ]: {
+				...sitePost,
+				...keyedDiffs,
+			},
 		},
-	},
-	revisionsDiffSchema
-);
+	};
+}
 
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
