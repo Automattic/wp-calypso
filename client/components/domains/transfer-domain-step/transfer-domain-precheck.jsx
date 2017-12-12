@@ -48,9 +48,9 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 	onClick = () => {
 		const { domain, supportsPrivacy } = this.props;
-		const { registrar, registrarIanaId } = this.state;
+		const { losingRegistrar, losingRegistrarIanaId } = this.state;
 
-		this.props.recordContinueButtonClick( domain, registrar, registrarIanaId );
+		this.props.recordContinueButtonClick( domain, losingRegistrar, losingRegistrarIanaId );
 
 		this.props.setValid( domain, supportsPrivacy );
 	};
