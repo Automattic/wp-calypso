@@ -9,9 +9,18 @@
 		width: 80%;
 	}
 
+	.components__notification-component-title,
+	.components__notification-component-title-long {
+		.form-setting-explanation {
+			margin-top: 0;
+		}
+
+		.form-label {
+			margin-bottom: 0;
+		}
+	}
+
 	.components__notification-component-input {
-		padding-left: 0px;
-		padding-right: 0px;
 		flex-shrink: 1;
 		width: 40%;
 	}
@@ -21,9 +30,14 @@
 		width: 80px;
 	}
 
-	.components__notification-component-toggle-label {
-		width: 80px;
-		padding-left: 6px;
+	.components__notification-component-toggle-label,
+	.components__notification-component-toggle {
+		width: 100px;
+		text-align: center;
+	}
+
+	.form-toggle__label .form-toggle__label-content {
+		margin-left: 0;
 	}
 
 	.list-header {
@@ -42,9 +56,6 @@
 
 	.components__notification-origin {
 		width: 100%;
-		input {
-			width: 75%;
-		}
 	}
 
 	.components__is-placeholder {
