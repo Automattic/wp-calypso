@@ -310,6 +310,73 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	netNeutralityOption() {
+		const {
+			fields,
+			isRequestingSettings,
+			translate,
+			handleToggle,
+			moment,
+			handleSubmitForm,
+			isSavingSettings,
+		} = this.props;
+
+		const today = moment(),
+			lastDay = moment( { year: 2017, month: 11, day: 14 } );
+
+		if ( today.isAfter( lastDay, 'day' ) ) {
+			return null;
+		}
+
+		return (
+			<div>
+				<SectionHeader label={ translate( 'Net Neutrality' ) }>
+					<Button
+						compact={ true }
+						onClick={ handleSubmitForm }
+						primary={ true }
+						type="submit"
+						disabled={ isRequestingSettings || isSavingSettings }
+					>
+						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+					</Button>
+				</SectionHeader>
+				<Card>
+					<FormFieldset>
+						<CompactFormToggle
+							checked={ !! fields.net_neutrality }
+							disabled={ isRequestingSettings }
+							onChange={ handleToggle( 'net_neutrality' ) }
+						>
+							{ translate(
+								'The FCC wants to repeal Net Neutrality. Without Net Neutrality, ' +
+									'big cable and telecom companies can divide the internet into fast ' +
+									'and slow lanes. What would the Internet look like without net neutrality? ' +
+									'Find out by enabling this banner on your site: it shows your support ' +
+									'for real net neutrality rules by displaying a message on the bottom ' +
+									'of your site and "slowing down" some of your posts. ' +
+									'{{netNeutralityLink}}Learn more about Net Neutrality{{/netNeutralityLink}}',
+								{
+									components: {
+										netNeutralityLink: (
+											<a
+												target="_blank"
+												rel="noopener noreferrer"
+												href={
+													'https://en.blog.wordpress.com/2017/07/11/join-us-in-the-fight-for-net-neutrality/'
+												}
+											/>
+										),
+									},
+								}
+							) }
+						</CompactFormToggle>
+					</FormFieldset>
+				</Card>
+			</div>
+		);
+	}
+
 	Timezone() {
 		const { fields, isRequestingSettings, siteIsJetpack, translate } = this.props;
 		if ( siteIsJetpack ) {
@@ -354,6 +421,8 @@ class SiteSettingsFormGeneral extends Component {
 		return (
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
+
+				{ ! siteIsJetpack && this.netNeutralityOption() }
 
 				<SectionHeader label={ translate( 'Site Profile' ) }>
 					<Button
@@ -476,6 +545,7 @@ const getFormSettings = settings => {
 		blog_public: '',
 		admin_url: '',
 		holidaysnow: false,
+		net_neutrality: false,
 	};
 
 	if ( ! settings ) {
@@ -491,6 +561,8 @@ const getFormSettings = settings => {
 		timezone_string: settings.timezone_string,
 
 		holidaysnow: !! settings.holidaysnow,
+
+		net_neutrality: settings.net_neutrality,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
