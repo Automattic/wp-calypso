@@ -88,7 +88,7 @@ function getAvailabilityNotice( domain, error, site ) {
 					args: { domain, site },
 					components: {
 						strong: <strong />,
-						a: <a target="_blank" rel="noopener noreferrer" href={ support.CALYPSO_CONTACT } />,
+						a: <a rel="noopener noreferrer" href={ support.CALYPSO_CONTACT } />,
 					},
 				}
 			);
@@ -120,7 +120,6 @@ function getAvailabilityNotice( domain, error, site ) {
 						strong: <strong />,
 						a: (
 							<a
-								target="_blank"
 								rel="noopener noreferrer"
 								href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 							/>
@@ -138,9 +137,7 @@ function getAvailabilityNotice( domain, error, site ) {
 						args: { tld },
 						components: {
 							strong: <strong />,
-							a: (
-								<a target="_blank" rel="noopener noreferrer" href={ support.MAP_EXISTING_DOMAIN } />
-							),
+							a: <a rel="noopener noreferrer" href={ support.MAP_EXISTING_DOMAIN } />,
 						},
 					}
 				);
@@ -182,7 +179,6 @@ function getAvailabilityNotice( domain, error, site ) {
 							strong: <strong />,
 							a1: (
 								<a
-									target="_blank"
 									rel="noopener noreferrer"
 									href="http://wordpressfoundation.org/trademark-policy/"
 								/>
