@@ -7,7 +7,7 @@ You can install Calypso directly on your machine by following the next steps, or
 1.	Check that you have all prerequisites (Git, Node, NPM). See [below](install.md#prerequisites) for more details. Pay close attention to software versions.
 2.	Clone this repository locally.
 3.	Add `127.0.0.1 calypso.localhost` to your local `hosts` file.
-4.	Execute `npm start` or `npm run dashboard` (for a more visually-oriented interface) from the root directory of the repository.
+4.	Execute `npm start` from the root directory of the repository.
 5.	Open [`calypso.localhost:3000`](http://calypso.localhost:3000/) in your browser.
 
 ## Prerequisites
