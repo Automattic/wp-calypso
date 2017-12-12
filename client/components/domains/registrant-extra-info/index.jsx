@@ -11,12 +11,14 @@ import { keys, filter } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import fr from './fr-form';
 import ca from './ca-form';
+import fr from './fr-form';
+import uk from './uk-form';
 
 const tldSpecificForms = {
 	ca,
 	fr,
+	uk,
 };
 
 const enabledTldForms = filter( keys( tldSpecificForms ), tld =>
