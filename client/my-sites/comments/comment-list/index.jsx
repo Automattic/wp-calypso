@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, get, isEqual, map, orderBy, slice, uniq } from 'lodash';
+import { filter, find, get, isEqual, map, orderBy, slice } from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
@@ -60,7 +60,6 @@ export class CommentList extends Component {
 	state = {
 		isBulkMode: false,
 		lastUndo: null,
-		persistedComments: [],
 		selectedComments: [],
 		sortOrder: NEWEST_FIRST,
 	};
@@ -76,7 +75,6 @@ export class CommentList extends Component {
 			this.setState( {
 				isBulkMode: false,
 				lastUndo: null,
-				persistedComments: [],
 				selectedComments: [],
 			} );
 		}
@@ -108,11 +106,7 @@ export class CommentList extends Component {
 		}
 	};
 
-	getComments = () => {
-		const comments = uniq( [ ...this.state.persistedComments, ...this.props.comments ] );
-
-		return orderBy( comments, null, this.state.sortOrder );
-	};
+	getComments = () => orderBy( this.props.comments, null, this.state.sortOrder );
 
 	getCommentsPage = ( comments, page ) => {
 		const startingIndex = ( page - 1 ) * COMMENTS_PER_PAGE;
@@ -137,14 +131,9 @@ export class CommentList extends Component {
 		);
 	};
 
-	getTotalPages = () =>
-		Math.ceil(
-			( this.props.comments.length + this.state.persistedComments.length ) / COMMENTS_PER_PAGE
-		);
+	getTotalPages = () => Math.ceil( this.props.comments.length / COMMENTS_PER_PAGE );
 
 	hasCommentJustMovedBackToCurrentStatus = commentId => this.state.lastUndo === commentId;
-
-	isCommentPersisted = commentId => -1 !== this.state.persistedComments.indexOf( commentId );
 
 	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
 
@@ -156,11 +145,6 @@ export class CommentList extends Component {
 		const visibleComments = this.getCommentsPage( this.getComments(), page );
 		return selectedComments.length && selectedComments.length === visibleComments.length;
 	};
-
-	removeFromPersistedComments = commentId =>
-		this.setState( ( { persistedComments } ) => ( {
-			persistedComments: persistedComments.filter( c => c !== commentId ),
-		} ) );
 
 	replyComment = ( commentText, parentComment ) => {
 		const { translate } = this.props;
@@ -180,20 +164,16 @@ export class CommentList extends Component {
 		};
 
 		if ( alsoApprove ) {
-			this.setCommentStatus( parentComment, 'approved', { doPersist: true, showNotice: false } );
+			this.setCommentStatus( parentComment, 'approved', { showNotice: false } );
 		}
 
 		this.props.successNotice( noticeMessage, noticeOptions );
 		this.props.replyComment( commentText, postId, parentCommentId, { alsoApprove } );
 	};
 
-	setCommentStatus = (
-		comment,
-		status,
-		options = { isUndo: false, doPersist: false, showNotice: true }
-	) => {
+	setCommentStatus = ( comment, status, options = { isUndo: false, showNotice: true } ) => {
 		const { commentId, postId, isLiked, status: previousStatus } = comment;
-		const { isUndo, doPersist, showNotice } = options;
+		const { isUndo, showNotice } = options;
 		const alsoUnlikeComment = isLiked && 'approved' !== status;
 
 		if ( isUndo ) {
@@ -202,18 +182,10 @@ export class CommentList extends Component {
 			this.setState( { lastUndo: null } );
 		}
 
-		if ( ! isEnabled( 'comments/management/m3-design' ) ) {
-			if ( doPersist ) {
-				this.updatePersistedComments( commentId, isUndo );
-			} else {
-				this.removeFromPersistedComments( commentId );
-			}
-		}
-
 		this.props.removeNotice( `comment-notice-${ commentId }` );
 
 		if ( showNotice ) {
-			this.showNotice( comment, status, { doPersist } );
+			this.showNotice( comment, status );
 		}
 
 		this.props.changeCommentStatus( commentId, postId, status, {
@@ -254,7 +226,7 @@ export class CommentList extends Component {
 		this.props.successNotice( message, noticeOptions );
 	};
 
-	showNotice = ( comment, newStatus, options = { doPersist: false } ) => {
+	showNotice = ( comment, newStatus ) => {
 		const { translate } = this.props;
 		const { commentId, isLiked: previousIsLiked, postId, status: previousStatus } = comment;
 
@@ -284,7 +256,6 @@ export class CommentList extends Component {
 				};
 				this.setCommentStatus( updatedComment, previousStatus, {
 					isUndo: true,
-					doPersist: options.doPersist,
 					showNotice: false,
 				} );
 				if ( previousIsLiked ) {
@@ -316,8 +287,7 @@ export class CommentList extends Component {
 
 		if ( alsoApprove ) {
 			this.props.removeNotice( `comment-notice-${ commentId }` );
-			this.setCommentStatus( comment, 'approved', { doPersist: true, showNotice: true } );
-			this.updatePersistedComments( commentId );
+			this.setCommentStatus( comment, 'approved', { showNotice: true } );
 		}
 	};
 
@@ -337,16 +307,6 @@ export class CommentList extends Component {
 	toggleSelectAll = selectedComments => this.setState( { selectedComments } );
 
 	updateLastUndo = commentId => this.setState( { lastUndo: commentId } );
-
-	updatePersistedComments = ( commentId, isUndo ) => {
-		if ( isUndo ) {
-			this.removeFromPersistedComments( commentId );
-		} else if ( ! this.isCommentPersisted( commentId ) ) {
-			this.setState( ( { persistedComments } ) => ( {
-				persistedComments: persistedComments.concat( commentId ),
-			} ) );
-		}
-	};
 
 	render() {
 		const {
