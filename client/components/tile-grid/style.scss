@@ -20,6 +20,7 @@
 
 	@include breakpoint( "<480px" ) {
 		box-shadow: none; //inherited from .card, remove for mobile only
+		width: 100%;
 	}
 
 	@include breakpoint( ">480px" ) {
@@ -70,6 +71,10 @@
 
 	&.is-card-link {
 		padding-right: 0;
+
+		@include breakpoint( "<480px" ) {
+			padding-right: 40px;
+		}
 	}
 
 	a, svg {
@@ -85,11 +90,13 @@
 			width: 8px; //Match the size of the cta copy
 			height: 8px; //Match the size of the cta copy
 			position: absolute;
-			top: 20px;
+			top: 50%;
 			right: 15px;
+			margin-top: -6px;
 			border-top: 2px solid lighten( $gray, 20% );
 			border-right: 2px solid lighten( $gray, 20% );
 			transform: rotate(45deg);
+			color: #fff;
 		}
 	}
 }
@@ -137,11 +144,12 @@
 
 	@include breakpoint( "<480px" ) {
 		background: none;
-		font-size: 1.1em;
+		text-align: left;
+		font-size: 16px;
+		line-height: 1.2;
 		border: 0;
 		padding: 0;
 		text-transform: none;
 		margin: 0;
-		line-height: 1.1em;
 	}
 }
