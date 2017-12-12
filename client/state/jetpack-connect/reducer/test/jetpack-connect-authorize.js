@@ -112,18 +112,11 @@ describe( '#jetpackConnectAuthorize()', () => {
 		expect( state ).toEqual( { authorizationCode: code } );
 	} );
 
-	test( 'should set siteReceived to true and omit some query object properties when received site list', () => {
+	test( 'should set siteReceived to true when received site list', () => {
 		const state = jetpackConnectAuthorize(
 			{
-				queryObject: {
-					_wp_nonce: 'testnonce',
-					client_id: 'example.com',
-					redirect_uri: 'https://example.com/',
-					scope: 'auth',
-					secret: 'abcd1234',
-					site: 'https://example.com/',
-					state: 1234567890,
-				},
+				siteReceived: false,
+				isAuthorizing: true,
 			},
 			{
 				type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
@@ -133,12 +126,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 		expect( state ).toMatchObject( {
 			siteReceived: true,
 			isAuthorizing: false,
-			queryObject: {
-				client_id: 'example.com',
-				redirect_uri: 'https://example.com/',
-				site: 'https://example.com/',
-				state: 1234567890,
-			},
 		} );
 	} );
 
@@ -252,29 +239,18 @@ describe( '#jetpackConnectAuthorize()', () => {
 		expect( state ).toEqual( originalState );
 	} );
 
-	test( 'should return the given state when a site request fails and no query object is set', () => {
-		const originalState = { isAuthorizing: false };
+	test( 'should persist state when a site request to a different client fails', () => {
+		const originalState = { authClientId: 123, clientNotResponding: false };
 		const state = jetpackConnectAuthorize( originalState, {
 			type: SITE_REQUEST_FAILURE,
-			siteId: 123,
+			siteId: 456,
 		} );
 		expect( state ).toEqual( originalState );
 	} );
 
-	test( 'should persist state when a site request to a different client fails', () => {
-		const state = jetpackConnectAuthorize(
-			{ queryObject: { client_id: '123' } },
-			{ type: SITE_REQUEST_FAILURE, siteId: 456 }
-		);
-		expect( state ).toEqual( { queryObject: { client_id: '123' } } );
-	} );
-
 	test( 'should persist state', () => {
 		const originalState = deepFreeze( {
-			queryObject: {
-				client_id: 'example.com',
-				redirect_uri: 'https://example.com/',
-			},
+			authClientId: 1234,
 			timestamp: Date.now(),
 		} );
 		const state = jetpackConnectAuthorize( originalState, {
@@ -286,10 +262,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 
 	test( 'should load valid persisted state', () => {
 		const originalState = deepFreeze( {
-			queryObject: {
-				client_id: 'example.com',
-				redirect_uri: 'https://example.com/',
-			},
+			authClientId: 1234,
 			timestamp: Date.now(),
 		} );
 		const state = jetpackConnectAuthorize( originalState, {
@@ -301,10 +274,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 
 	test( 'should not load stale state', () => {
 		const originalState = deepFreeze( {
-			queryObject: {
-				client_id: 'example.com',
-				redirect_uri: 'https://example.com/',
-			},
+			authClientId: 1234,
 			timestamp: 1,
 		} );
 		const state = jetpackConnectAuthorize( originalState, {
