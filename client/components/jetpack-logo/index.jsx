@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-const JetpackLogo = ( { size, full } ) => {
+const JetpackLogo = ( { size = 32, full } ) => {
 	if ( full === true ) {
 		/* eslint-disable max-len */
 		return (
