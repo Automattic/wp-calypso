@@ -19,7 +19,10 @@ import { login } from 'lib/paths';
 import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
 import { getMagicLoginCurrentView } from 'state/selectors';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import { recordPageView, recordTracksEvent } from 'state/analytics/actions';
+import {
+	recordTracksEventWithClientId as recordTracksEvent,
+	recordPageViewWithClientId as recordPageView,
+} from 'state/analytics/actions';
 import Main from 'components/main';
 import RequestLoginEmailForm from './request-login-email-form';
 import GlobalNotices from 'components/global-notices';

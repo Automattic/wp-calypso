@@ -22,7 +22,7 @@ import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import { loginUserWithTwoFactorVerificationCode } from 'state/login/actions';
 import { getTwoFactorAuthRequestError } from 'state/login/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { sendSmsCode, formUpdate } from 'state/login/actions';
 import TwoFactorActions from './two-factor-actions';
 
