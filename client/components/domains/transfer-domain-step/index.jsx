@@ -288,43 +288,46 @@ class TransferDomainStep extends React.Component {
 		this.props.recordFormSubmitInMapDomain( this.state.searchQuery );
 		this.setState( { suggestion: null, notice: null } );
 
-		checkDomainAvailability( { domainName: domain }, ( error, result ) => {
-			const status = get( result, 'status', error );
-			switch ( status ) {
-				case domainAvailability.AVAILABLE:
-					this.setState( { suggestion: result } );
-					return;
-				case domainAvailability.TRANSFERRABLE:
-				case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
-					this.setState( {
-						domain,
-						supportsPrivacy: get( result, 'supports_privacy', false ),
-					} );
-					return;
-				case domainAvailability.TLD_NOT_SUPPORTED:
-					const tld = getTld( domain );
+		checkDomainAvailability(
+			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+			( error, result ) => {
+				const status = get( result, 'status', error );
+				switch ( status ) {
+					case domainAvailability.AVAILABLE:
+						this.setState( { suggestion: result } );
+						return;
+					case domainAvailability.TRANSFERRABLE:
+					case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
+						this.setState( {
+							domain,
+							supportsPrivacy: get( result, 'supports_privacy', false ),
+						} );
+						return;
+					case domainAvailability.TLD_NOT_SUPPORTED:
+						const tld = getTld( domain );
 
-					this.setState( {
-						notice: this.props.translate(
-							"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
-								'but you can {{a}}map it{{/a}} instead.',
-							{
-								args: { tld },
-								components: {
-									strong: <strong />,
-									a: <a href="#" onClick={ this.goToMapDomainStep } />,
-								},
-							}
-						),
-						noticeSeverity: 'info',
-					} );
-					return;
-				default:
-					const { message, severity } = getAvailabilityNotice( domain, status );
-					this.setState( { notice: message, noticeSeverity: severity } );
-					return;
+						this.setState( {
+							notice: this.props.translate(
+								"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
+									'but you can {{a}}map it{{/a}} instead.',
+								{
+									args: { tld },
+									components: {
+										strong: <strong />,
+										a: <a href="#" onClick={ this.goToMapDomainStep } />,
+									},
+								}
+							),
+							noticeSeverity: 'info',
+						} );
+						return;
+					default:
+						const { message, severity } = getAvailabilityNotice( domain, status );
+						this.setState( { notice: message, noticeSeverity: severity } );
+						return;
+				}
 			}
-		} );
+		);
 	};
 }
 

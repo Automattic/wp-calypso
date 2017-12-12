@@ -20,6 +20,7 @@ import { getAvailabilityNotice } from 'lib/domains/registration/availability-mes
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainProductPrice from 'components/domains/domain-product-price';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import {
 	recordAddDomainButtonClickInMapDomain,
 	recordFormSubmitInMapDomain,
@@ -190,30 +191,34 @@ class MapDomainStep extends React.Component {
 		this.props.recordFormSubmitInMapDomain( this.state.searchQuery );
 		this.setState( { suggestion: null, notice: null } );
 
-		checkDomainAvailability( { domainName: domain }, ( error, result ) => {
-			const mappableStatus = get( result, 'mappable', error );
-			const status = get( result, 'status', error );
-			const { AVAILABLE, MAPPABLE, NOT_REGISTRABLE, UNKNOWN } = domainAvailability;
+		checkDomainAvailability(
+			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+			( error, result ) => {
+				const mappableStatus = get( result, 'mappable', error );
+				const status = get( result, 'status', error );
+				const { AVAILABLE, MAPPABLE, NOT_REGISTRABLE, UNKNOWN } = domainAvailability;
 
-			if ( status === AVAILABLE ) {
-				this.setState( { suggestion: result } );
-				return;
+				if ( status === AVAILABLE ) {
+					this.setState( { suggestion: result } );
+					return;
+				}
+
+				if ( status !== NOT_REGISTRABLE && includes( [ MAPPABLE, UNKNOWN ], mappableStatus ) ) {
+					this.props.onMapDomain( domain );
+					return;
+				}
+
+				const { message, severity } = getAvailabilityNotice( domain, status );
+				this.setState( { notice: message, noticeSeverity: severity } );
 			}
-
-			if ( status !== NOT_REGISTRABLE && includes( [ MAPPABLE, UNKNOWN ], mappableStatus ) ) {
-				this.props.onMapDomain( domain );
-				return;
-			}
-
-			const { message, severity } = getAvailabilityNotice( domain, status );
-			this.setState( { notice: message, noticeSeverity: severity } );
-		} );
+		);
 	};
 }
 
 export default connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
+		selectedSite: getSelectedSite( state ),
 	} ),
 	{
 		recordAddDomainButtonClickInMapDomain,
