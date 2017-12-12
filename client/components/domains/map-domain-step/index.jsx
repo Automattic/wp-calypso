@@ -191,17 +191,19 @@ class MapDomainStep extends React.Component {
 		this.setState( { suggestion: null, notice: null } );
 
 		checkDomainAvailability( { domainName: domain }, ( error, result ) => {
-			const status = get( result, 'mappable', error );
-			switch ( status ) {
+			const mappableStatus = get( result, 'mappable', error );
+			const status = get( result, 'status', error );
+
+			if ( status === domainAvailability.AVAILABLE ) {
+				this.setState( { suggestion: result } );
+				return;
+			}
+
+			switch ( mappableStatus ) {
 				case domainAvailability.MAPPABLE:
 				case domainAvailability.UNKNOWN:
 					this.props.onMapDomain( domain );
 					return;
-
-				case domainAvailability.AVAILABLE:
-					this.setState( { suggestion: result } );
-					return;
-
 				default:
 					const { message, severity } = getAvailabilityNotice( domain, status );
 					this.setState( { notice: message, noticeSeverity: severity } );
