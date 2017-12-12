@@ -147,7 +147,8 @@ export function authorizeForm( context, next ) {
 		// FIXME
 		context.store.dispatch( {
 			type: JETPACK_CONNECT_QUERY_SET,
-			from: query.from,
+			from: transformedQuery.authFrom,
+			authClientId: transformedQuery.authClientId,
 		} );
 
 		let interval = context.params.interval;

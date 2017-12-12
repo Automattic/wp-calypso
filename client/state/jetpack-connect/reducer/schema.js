@@ -61,6 +61,7 @@ export const jetpackConnectAuthorizeSchema = {
 				},
 				timestamp: { type: 'number' },
 				siteReceived: { type: 'boolean' },
+				authClientId: { type: 'integer' },
 			},
 			additionalProperties: false,
 		},
