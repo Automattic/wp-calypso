@@ -4,7 +4,6 @@
  * Internal dependencies
  */
 
-import { action as InvitesActionTypes } from 'lib/invites/constants';
 import SitesList from './list';
 import PollerPool from 'lib/data-poller';
 import Dispatcher from 'dispatcher';
@@ -21,11 +20,6 @@ export default function() {
 				case 'DISCONNECT_SITE':
 				case 'RECEIVE_DELETED_SITE':
 					_sites.removeSite( action.site );
-					break;
-				case InvitesActionTypes.RECEIVE_INVITE_ACCEPTED_SUCCESS:
-					if ( [ 'follower', 'viewer' ].indexOf( action.invite.role ) === -1 ) {
-						_sites.sync( action.data );
-					}
 					break;
 				case 'FETCH_SITES':
 					_sites.fetch(); // refetch the sites from .com

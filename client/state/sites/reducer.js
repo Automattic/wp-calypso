@@ -4,7 +4,18 @@
  * External dependencies
  */
 
-import { pick, omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';
+import {
+	pick,
+	omit,
+	merge,
+	get,
+	includes,
+	reduce,
+	isEqual,
+	stubFalse,
+	stubTrue,
+	find,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,6 +51,7 @@ import {
 	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { action as InvitesActionTypes } from 'lib/invites/constants';
 import { sitesSchema } from './schema';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
@@ -213,6 +225,32 @@ export function items( state = {}, action ) {
 			}
 
 			return state;
+		}
+
+		case InvitesActionTypes.RECEIVE_INVITE_ACCEPTED_SUCCESS: {
+			const { invite, data } = action;
+
+			if ( ! invite || ! data || ! data.sites ) {
+				return state;
+			}
+
+			if ( invite.role === 'follower' || invite.role === 'viewer' ) {
+				return state;
+			}
+
+			const siteId = get( invite, 'site.ID', null );
+
+			if ( ! siteId || state[ siteId ] ) {
+				return state;
+			}
+
+			const site = find( data.sites, receivedSite => receivedSite.ID === siteId );
+			const transformedSite = pick( site, VALID_SITE_KEYS );
+
+			return {
+				...state,
+				[ siteId ]: transformedSite,
+			};
 		}
 	}
 

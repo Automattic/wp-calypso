@@ -103,7 +103,7 @@ export function acceptInvite( invite, callback ) {
 			invite,
 		} );
 		wpcom.undocumented().acceptInvite( invite, ( error, data ) => {
-			Dispatcher.handleViewAction( {
+			dispatch( {
 				type: error
 					? ActionTypes.RECEIVE_INVITE_ACCEPTED_ERROR
 					: ActionTypes.RECEIVE_INVITE_ACCEPTED_SUCCESS,
