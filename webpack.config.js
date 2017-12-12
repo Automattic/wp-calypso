@@ -30,6 +30,9 @@ const config = require( './server/config' );
 const calypsoEnv = config( 'env_id' );
 const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv === 'development';
+const shouldMinify = process.env.hasOwnProperty( 'MINIFY_JS' )
+	? process.env.MINIFY_JS === 'true'
+	: ! isDevelopment;
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -248,8 +251,7 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 	);
 }
 
-if ( ! isDevelopment ) {
-	webpackConfig.devtool = 'cheap-module-source-map';
+if ( shouldMinify ) {
 	webpackConfig.plugins.push(
 		new UglifyJsPlugin( {
 			cache: true,
