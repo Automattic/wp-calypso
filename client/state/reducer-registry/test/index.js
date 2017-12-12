@@ -164,7 +164,7 @@ describe( 'reducer-registry', () => {
 			} );
 		} );
 
-		test( 'nested reducers work on load, with combineReducers', () => {
+		test( 'nested reducers work on load when nesting a combineReducers reducer', () => {
 			const registry = Object.create( null );
 			reducers = combineReducers( {
 				age,
@@ -179,6 +179,34 @@ describe( 'reducer-registry', () => {
 				'root',
 				registry
 			);
+			const valid = nested( { person: { age: 22, date: 224 } }, load );
+			expect( valid ).to.eql( {
+				person: { age: 22, height: 160, date: new Date( 224 ) },
+				count: 1,
+			} );
+
+			const invalid = nested( { person: { age: -5, height: 100, date: -5 } }, load );
+			expect( invalid ).to.eql( {
+				person: { age: 0, height: 160, date: new Date( 0 ) },
+				count: 1,
+			} );
+		} );
+
+		test( 'nested reducers work on load when being nested', () => {
+			const registry = Object.create( null );
+			reducers = combineReducersAndAddLater(
+				{
+					age,
+					height,
+					date,
+				},
+				'person',
+				registry
+			);
+			const nested = combineReducers( {
+				person: reducers,
+				count,
+			} );
 			const valid = nested( { person: { age: 22, date: 224 } }, load );
 			expect( valid ).to.eql( {
 				person: { age: 22, height: 160, date: new Date( 224 ) },
@@ -218,7 +246,7 @@ describe( 'reducer-registry', () => {
 			expect( invalid ).to.eql( { person: { age: -5, height: 160, date: -500 }, count: 1 } );
 		} );
 
-		test( 'nested reducers work on persist, with combineReducers', () => {
+		test( 'nested reducers work on persist when nesting a combineReducers reducer', () => {
 			const registry = Object.create( null );
 			reducers = combineReducers( {
 				age,
@@ -233,6 +261,28 @@ describe( 'reducer-registry', () => {
 				'root',
 				registry
 			);
+			const valid = nested( { person: { age: 22, date: new Date( 224 ) } }, write );
+			expect( valid ).to.eql( { person: { age: 22, height: 160, date: 224 }, count: 1 } );
+
+			const invalid = nested( { person: { age: -5, height: 100, date: new Date( -500 ) } }, write );
+			expect( invalid ).to.eql( { person: { age: -5, height: 160, date: -500 }, count: 1 } );
+		} );
+
+		test( 'nested reducers work on persist when being nested', () => {
+			const registry = Object.create( null );
+			reducers = combineReducersAndAddLater(
+				{
+					age,
+					height,
+					date,
+				},
+				'person',
+				registry
+			);
+			const nested = combineReducers( {
+				person: reducers,
+				count,
+			} );
 			const valid = nested( { person: { age: 22, date: new Date( 224 ) } }, write );
 			expect( valid ).to.eql( { person: { age: 22, height: 160, date: 224 }, count: 1 } );
 
@@ -282,7 +332,7 @@ describe( 'reducer-registry', () => {
 			} );
 		} );
 
-		test( 'deeply nested reducers work on load, with combineReducers', () => {
+		test( 'deeply nested reducers work on load when nesting a combineReducers reducer', () => {
 			const registry = Object.create( null );
 			reducers = combineReducers( {
 				age,
@@ -300,6 +350,44 @@ describe( 'reducer-registry', () => {
 				'root',
 				registry
 			);
+			const valid = veryNested( { bob: { person: { age: 22, date: 224 } }, count: 122 }, load );
+			expect( valid ).to.eql( {
+				bob: { person: { age: 22, height: 160, date: new Date( 224 ) } },
+				count: 1,
+			} );
+
+			const invalid = veryNested(
+				{ bob: { person: { age: -5, height: 22, date: -500 } }, count: 123 },
+				load
+			);
+			expect( invalid ).to.eql( {
+				bob: { person: { age: 0, height: 160, date: new Date( 0 ) } },
+				count: 1,
+			} );
+		} );
+
+		test( 'deeply nested reducers work on load when being nested', () => {
+			const registry = Object.create( null );
+			reducers = combineReducersAndAddLater(
+				{
+					age,
+					height,
+					date,
+				},
+				'person',
+				registry
+			);
+			const nested = combineReducersAndAddLater(
+				{
+					person: reducers,
+				},
+				'nested',
+				registry
+			);
+			const veryNested = combineReducers( {
+				bob: nested,
+				count,
+			} );
 			const valid = veryNested( { bob: { person: { age: 22, date: 224 } }, count: 122 }, load );
 			expect( valid ).to.eql( {
 				bob: { person: { age: 22, height: 160, date: new Date( 224 ) } },
@@ -355,7 +443,7 @@ describe( 'reducer-registry', () => {
 			expect( invalid ).to.eql( { bob: { person: { age: -5, height: 160, date: -5 } }, count: 1 } );
 		} );
 
-		test( 'deeply nested reducers work on persist, with combineReducers', () => {
+		test( 'deeply nested reducers work on persist when nesting a combineReducers reducer', () => {
 			const registry = Object.create( null );
 			reducers = combineReducers( {
 				age,
@@ -373,6 +461,41 @@ describe( 'reducer-registry', () => {
 				'root',
 				registry
 			);
+			const valid = veryNested(
+				{ bob: { person: { age: 22, date: new Date( 234 ) } }, count: 122 },
+				write
+			);
+			expect( valid ).to.eql( { bob: { person: { age: 22, height: 160, date: 234 } }, count: 1 } );
+
+			const invalid = veryNested(
+				{ bob: { person: { age: -5, height: 22, date: new Date( -5 ) } }, count: 123 },
+				write
+			);
+			expect( invalid ).to.eql( { bob: { person: { age: -5, height: 160, date: -5 } }, count: 1 } );
+		} );
+
+		test( 'deeply nested reducers work on persist when being nested', () => {
+			const registry = Object.create( null );
+			reducers = combineReducersAndAddLater(
+				{
+					age,
+					height,
+					date,
+				},
+				'person',
+				registry
+			);
+			const nested = combineReducersAndAddLater(
+				{
+					person: reducers,
+				},
+				'nested',
+				registry
+			);
+			const veryNested = combineReducers( {
+				bob: nested,
+				count,
+			} );
 			const valid = veryNested(
 				{ bob: { person: { age: 22, date: new Date( 234 ) } }, count: 122 },
 				write
@@ -421,7 +544,7 @@ describe( 'reducer-registry', () => {
 			expect( invalid ).to.eql( { bob: { person: { height: 160, date: -5 } }, count: 1 } );
 		} );
 
-		test( 'deeply nested reducers work with reducer with a custom handler, with combineReducers', () => {
+		test( 'deeply nested reducers work with reducer with a custom handler when nesting a combineReducers reducer', () => {
 			const registry = Object.create( null );
 			reducers = combineReducers( {
 				height,
@@ -438,6 +561,37 @@ describe( 'reducer-registry', () => {
 				'root',
 				registry
 			);
+			const valid = veryNested( { bob: { person: { date: new Date( 234 ) } }, count: 122 }, write );
+			expect( valid ).to.eql( { bob: { person: { height: 160, date: 234 } }, count: 1 } );
+
+			const invalid = veryNested(
+				{ bob: { person: { height: 22, date: new Date( -5 ) } }, count: 123 },
+				write
+			);
+			expect( invalid ).to.eql( { bob: { person: { height: 160, date: -5 } }, count: 1 } );
+		} );
+
+		test( 'deeply nested reducers work with reducer with a custom handler when being nested', () => {
+			const registry = Object.create( null );
+			reducers = combineReducersAndAddLater(
+				{
+					height,
+					date,
+				},
+				'person',
+				registry
+			);
+			const nested = combineReducersAndAddLater(
+				{
+					person: reducers,
+				},
+				'nested',
+				registry
+			);
+			const veryNested = combineReducers( {
+				bob: nested,
+				count,
+			} );
 			const valid = veryNested( { bob: { person: { date: new Date( 234 ) } }, count: 122 }, write );
 			expect( valid ).to.eql( { bob: { person: { height: 160, date: 234 } }, count: 1 } );
 
