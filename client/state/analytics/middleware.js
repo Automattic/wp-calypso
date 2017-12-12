@@ -33,7 +33,7 @@ const eventServices = {
 
 const pageViewServices = {
 	ga: ( { url, title } ) => analytics.ga.recordPageView( url, title ),
-	default: ( { url, title } ) => analytics.pageView.record( url, title ),
+	default: ( { url, title, ...params } ) => analytics.pageView.record( url, title, params ),
 };
 
 const loadTrackingTool = ( trackingTool, state ) => {
