@@ -26,7 +26,7 @@ import InfoStep from './info-step';
 import Main from 'components/main';
 import Skeleton from './skeleton';
 import QueryConciergeShifts from 'components/data/query-concierge-shifts';
-import { getConciergeShifts } from 'state/selectors';
+import { getConciergeAppointmentsByDate } from 'state/selectors';
 import { WPCOM_CONCIERGE_SCHEDULE_ID } from './constants';
 
 const STEP_COMPONENTS = [ InfoStep, CalendarStep, ConfirmationStep ];
@@ -50,16 +50,16 @@ class ConciergeMain extends Component {
 
 	render() {
 		const CurrentStep = STEP_COMPONENTS[ this.state.currentStep ];
-		const { shifts } = this.props;
+		const { availableAppointments } = this.props;
 
 		// TODO:
 		// render the shifts for real.
 		return (
 			<Main>
 				<QueryConciergeShifts scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID } />
-				{ shifts ? (
+				{ availableAppointments ? (
 					<CurrentStep
-						shifts={ shifts }
+						availableAppointments={ availableAppointments }
 						onComplete={ this.goToNextStep }
 						onBack={ this.goToPreviousStep }
 					/>
@@ -73,7 +73,7 @@ class ConciergeMain extends Component {
 
 export default connect(
 	state => ( {
-		shifts: getConciergeShifts( state ),
+		availableAppointments: getConciergeAppointmentsByDate( state ),
 	} ),
-	{ getConciergeShifts }
+	{ getConciergeAppointmentsByDate }
 )( ConciergeMain );
