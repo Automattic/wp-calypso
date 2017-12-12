@@ -767,12 +767,8 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	showValidationErrorMessage( domain, error, site ) {
-		const { MAPPED, TRANSFERRABLE } = domainAvailability;
-		if (
-			this.props.transferInAllowed &&
-			includes( [ MAPPED, TRANSFERRABLE ], error ) &&
-			this.state.lastDomainIsTransferrable
-		) {
+		const { TRANSFERRABLE } = domainAvailability;
+		if ( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) {
 			return;
 		}
 
