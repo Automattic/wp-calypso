@@ -342,7 +342,11 @@ class TransferDomainStep extends React.Component {
 							return;
 						}
 					default:
-						const { message, severity } = getAvailabilityNotice( domain, status );
+						const { message, severity } = getAvailabilityNotice(
+							domain,
+							status,
+							get( result, 'other_site_domain', null )
+						);
 						this.setState( { notice: message, noticeSeverity: severity } );
 						return;
 				}
