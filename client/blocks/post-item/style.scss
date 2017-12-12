@@ -100,7 +100,6 @@ a.post-item__title-link:visited {
 
 .post-item__meta {
 	font-size: 12px;
-	line-height: 14px;
 	color: $gray-text-min;
 }
 
@@ -108,7 +107,6 @@ a.post-item__title-link:visited {
 .post-item__meta .post-status,
 .post-item__meta .post-status__text {
 	margin-bottom: 0;
-	vertical-align: top;
 }
 
 .post-item__meta .post-status {
@@ -118,7 +116,6 @@ a.post-item__title-link:visited {
 .post-item__meta .post-status__icon {
 	width: 14px;
 	height: 14px;
-	margin-top: -3px;
 	margin-right: 2px;
 }
 
