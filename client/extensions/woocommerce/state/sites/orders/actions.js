@@ -91,13 +91,15 @@ export const updateOrder = ( siteId, orderId, order ) => {
 	};
 };
 
-export const saveOrder = ( siteId, { id: orderId, ...order } ) => {
+export const saveOrder = ( siteId, { id: orderId, ...order }, onSuccess, onFailure ) => {
 	order = transformOrderForApi( removeTemporaryIds( order ) );
 	return {
 		type: WOOCOMMERCE_ORDER_UPDATE,
 		siteId,
 		orderId,
 		order,
+		onFailure,
+		onSuccess,
 	};
 };
 
