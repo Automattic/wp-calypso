@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { each, filter, find, get, isEqual, map, orderBy, slice, uniq } from 'lodash';
+import { filter, find, get, isEqual, map, orderBy, slice, uniq } from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
@@ -51,7 +51,6 @@ export class CommentList extends Component {
 		comments: PropTypes.array,
 		deleteComment: PropTypes.func,
 		likeComment: PropTypes.func,
-		recordBulkAction: PropTypes.func,
 		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
 		siteBlacklist: PropTypes.string,
@@ -62,8 +61,7 @@ export class CommentList extends Component {
 	};
 
 	state = {
-		isBulkEdit: false,
-		// TODO: replace with [] when adding back Bulk Actions
+		isBulkMode: false,
 		lastUndo: null,
 		persistedComments: [],
 		selectedComments: [],
@@ -79,7 +77,7 @@ export class CommentList extends Component {
 
 		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
 			this.setState( {
-				isBulkEdit: false,
+				isBulkMode: false,
 				lastUndo: null,
 				persistedComments: [],
 				selectedComments: [],
@@ -192,37 +190,6 @@ export class CommentList extends Component {
 		this.props.replyComment( commentText, postId, parentCommentId, { alsoApprove } );
 	};
 
-	setBulkStatus = status => () => {
-		const { postId, recordBulkAction, status: listStatus } = this.props;
-		const { selectedComments } = this.state;
-
-		this.props.removeNotice( 'comment-notice-bulk' );
-
-		// Only persist comments if they toggle between approved and unapproved
-		const doPersist =
-			( 'approved' === listStatus && 'unapproved' === status ) ||
-			( 'unapproved' === listStatus && 'approved' === status );
-
-		each( selectedComments, comment => {
-			if ( 'delete' === status ) {
-				this.props.deleteComment( comment.commentId, comment.postId, { showSuccessNotice: false } );
-				return;
-			}
-
-			this.setCommentStatus( comment, status, {
-				isUndo: false,
-				doPersist,
-				showNotice: false,
-			} );
-		} );
-
-		recordBulkAction( status, selectedComments.length, listStatus, !! postId ? 'post' : 'site' );
-
-		this.showBulkNotice( status );
-
-		this.setState( { isBulkEdit: false, selectedComments: [] } );
-	};
-
 	setCommentStatus = (
 		comment,
 		status,
@@ -290,33 +257,6 @@ export class CommentList extends Component {
 		this.props.successNotice( message, noticeOptions );
 	};
 
-	showBulkNotice = newStatus => {
-		const { translate } = this.props;
-
-		const message = get(
-			{
-				approved: translate( 'All selected comments approved.' ),
-				unapproved: translate( 'All selected comments unapproved.' ),
-				spam: translate( 'All selected comments marked as spam.' ),
-				trash: translate( 'All selected comments moved to trash.' ),
-				delete: translate( 'All selected comments deleted permanently.' ),
-			},
-			newStatus
-		);
-
-		if ( ! message ) {
-			return;
-		}
-
-		const noticeOptions = {
-			duration: 5000,
-			id: 'comment-notice-bulk',
-			isPersistent: true,
-		};
-
-		this.props.successNotice( message, noticeOptions );
-	};
-
 	showNotice = ( comment, newStatus, options = { doPersist: false } ) => {
 		const { translate } = this.props;
 		const { commentId, isLiked: previousIsLiked, postId, status: previousStatus } = comment;
@@ -361,8 +301,8 @@ export class CommentList extends Component {
 		this.props.successNotice( message, noticeOptions );
 	};
 
-	toggleBulkEdit = () => {
-		this.setState( ( { isBulkEdit } ) => ( { isBulkEdit: ! isBulkEdit, selectedComments: [] } ) );
+	toggleBulkMode = () => {
+		this.setState( ( { isBulkMode } ) => ( { isBulkMode: ! isBulkMode, selectedComments: [] } ) );
 	};
 
 	toggleCommentLike = comment => {
@@ -423,7 +363,7 @@ export class CommentList extends Component {
 			siteFragment,
 			status,
 		} = this.props;
-		const { isBulkEdit, selectedComments } = this.state;
+		const { isBulkMode, selectedComments } = this.state;
 
 		const validPage = this.isRequestedPageValid() ? page : 1;
 
@@ -454,17 +394,16 @@ export class CommentList extends Component {
 
 				<CommentNavigation
 					commentsPage={ commentsPage }
-					isBulkEdit={ isBulkEdit }
+					isBulkMode={ isBulkMode }
 					isSelectedAll={ this.isSelectedAll() }
 					postId={ postId }
 					selectedComments={ selectedComments }
-					setBulkStatus={ this.setBulkStatus }
 					setSortOrder={ this.setSortOrder }
 					sortOrder={ this.state.sortOrder }
 					siteId={ siteId }
 					siteFragment={ siteFragment }
 					status={ status }
-					toggleBulkEdit={ this.toggleBulkEdit }
+					toggleBulkMode={ this.toggleBulkMode }
 					toggleSelectAll={ this.toggleSelectAll }
 				/>
 
@@ -479,7 +418,7 @@ export class CommentList extends Component {
 							<Comment
 								commentId={ commentId }
 								key={ `comment-${ siteId }-${ commentId }` }
-								isBulkMode={ isBulkEdit }
+								isBulkMode={ isBulkMode }
 								isPostView={ isPostView }
 								isSelected={ this.isCommentSelected( commentId ) }
 								refreshCommentData={
@@ -501,7 +440,7 @@ export class CommentList extends Component {
 								commentIsSelected={ this.isCommentSelected( commentId ) }
 								deleteCommentPermanently={ this.deleteCommentPermanently }
 								editComment={ this.editComment }
-								isBulkEdit={ isBulkEdit }
+								isBulkEdit={ isBulkMode }
 								key={ `comment-${ siteId }-${ commentId }` }
 								refreshCommentData={
 									isCommentsTreeSupported &&
@@ -623,19 +562,6 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 					bumpStat( 'calypso_comment_management', 'comment_liked' )
 				),
 				likeComment( siteId, postId, commentId )
-			)
-		),
-
-	recordBulkAction: ( action, count, fromList, view = 'site' ) =>
-		dispatch(
-			composeAnalytics(
-				recordTracksEvent( 'calypso_comment_management_bulk_action', {
-					action,
-					count,
-					from_list: fromList,
-					view,
-				} ),
-				bumpStat( 'calypso_comment_management', 'bulk_action' )
 			)
 		),
 

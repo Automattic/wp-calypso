@@ -110,10 +110,11 @@ export class CommentNavigation extends Component {
 		const {
 			changeStatus,
 			deletePermanently,
+			postId: isPostView,
 			recordBulkAction,
 			selectedComments,
 			status: queryStatus,
-			toggleBulkEdit,
+			toggleBulkMode,
 			unlike,
 		} = this.props;
 		this.props.removeNotice( 'comment-notice' );
@@ -127,15 +128,15 @@ export class CommentNavigation extends Component {
 			if ( alsoUnlike ) {
 				unlike( postId, commentId );
 			}
-			recordBulkAction(
-				newStatus,
-				selectedComments.length,
-				queryStatus,
-				!! postId ? 'post' : 'site'
-			);
-			this.showBulkNotice( newStatus );
-			toggleBulkEdit();
 		} );
+		recordBulkAction(
+			newStatus,
+			selectedComments.length,
+			queryStatus,
+			!! isPostView ? 'post' : 'site'
+		);
+		this.showBulkNotice( newStatus );
+		toggleBulkMode();
 	};
 
 	showBulkNotice = newStatus => {
@@ -179,7 +180,7 @@ export class CommentNavigation extends Component {
 			doSearch,
 			hasSearch,
 			hasComments,
-			isBulkEdit,
+			isBulkMode,
 			isCommentsTreeSupported,
 			isSelectedAll,
 			query,
@@ -187,14 +188,14 @@ export class CommentNavigation extends Component {
 			setSortOrder,
 			sortOrder,
 			status: queryStatus,
-			toggleBulkEdit,
+			toggleBulkMode,
 			translate,
 		} = this.props;
 
 		const navItems = this.getNavItems();
 		const selectedCount = selectedComments.length;
 
-		if ( isBulkEdit ) {
+		if ( isBulkMode ) {
 			return (
 				<SectionNav className="comment-navigation is-bulk-edit">
 					<CommentNavigationTab className="comment-navigation__bulk-count">
@@ -256,7 +257,7 @@ export class CommentNavigation extends Component {
 						</ButtonGroup>
 					</CommentNavigationTab>
 					<CommentNavigationTab className="comment-navigation__close-bulk">
-						<Button borderless onClick={ toggleBulkEdit } tabIndex="0">
+						<Button borderless onClick={ toggleBulkMode } tabIndex="0">
 							<Gridicon icon="cross" />
 						</Button>
 					</CommentNavigationTab>
@@ -304,7 +305,7 @@ export class CommentNavigation extends Component {
 						) }
 
 					{ hasComments && (
-						<Button compact onClick={ toggleBulkEdit }>
+						<Button compact onClick={ toggleBulkMode }>
 							{ translate( 'Bulk Edit' ) }
 						</Button>
 					) }
