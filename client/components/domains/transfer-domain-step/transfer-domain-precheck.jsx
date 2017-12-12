@@ -48,8 +48,9 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 	onClick = () => {
 		const { domain, supportsPrivacy } = this.props;
+		const { registrar, registrarIanaId } = this.state;
 
-		this.props.recordContinueButtonClick( domain );
+		this.props.recordContinueButtonClick( domain, registrar, registrarIanaId );
 
 		this.props.setValid( domain, supportsPrivacy );
 	};
@@ -76,6 +77,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 				privacy: result.privacy,
 				unlocked: result.unlocked,
 				loading: false,
+				registrar: result.registrar,
+				registrarIanaId: result.registrar_iana_id,
 			} );
 		} );
 	};
@@ -354,8 +357,12 @@ class TransferDomainPrecheck extends React.PureComponent {
 const recordNextStep = ( domain_name, show_step ) =>
 	recordTracksEvent( 'calypso_transfer_domain_precheck_step_change', { domain_name, show_step } );
 
-const recordContinueButtonClick = domain_name =>
-	recordTracksEvent( 'calypso_transfer_domain_precheck_continue_click', { domain_name } );
+const recordContinueButtonClick = ( domain_name, registrar, registrarIanaId ) =>
+	recordTracksEvent( 'calypso_transfer_domain_precheck_continue_click', {
+		domain_name,
+		registrar,
+		registrarIanaId,
+	} );
 
 export default connect( null, {
 	recordNextStep,
