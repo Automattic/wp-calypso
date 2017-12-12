@@ -247,9 +247,7 @@ export class EditorGroundControl extends PureComponent {
 					compact
 					site={ this.props.site }
 					onSelect={ this.props.recordSiteButtonClick }
-					indicator={ false }
-					homeLink={ true }
-					externalLink={ true }
+					indicator={ true }
 				/>
 				{ this.state.needsVerification &&
 					<div

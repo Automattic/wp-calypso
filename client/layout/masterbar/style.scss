@@ -393,23 +393,6 @@ $autobar-height: 20px;
 			color: $blue-wordpress;
 		}
 	}
-
-	.is-group-editor & {
-		background: var( --masterbar-toggle-drafts-editor-background );
-		border-left: 1px solid var( --masterbar-toggle-drafts-editor-border-color );
-
-		.count {
-			color: $gray-light;
-		}
-	}
-
-	.is-group-editor &:hover {
-		background: var( --masterbar-toggle-drafts-editor-hover-background );
-
-		.count {
-			color: $white;
-		}
-	}
 }
 
 .masterbar__recent-drafts.popover {
@@ -441,14 +424,11 @@ $autobar-height: 20px;
 }
 
 .is-section-post-editor .masterbar {
-	//opacity: 0;
-	//pointer-events: none;
-	transform: translateY( -48px );
+	opacity: 0;
+	pointer-events: none;
 
-	.masterbar__item {
-		
-	}
+	.masterbar__item,
 	.masterbar__toggle-drafts {
-		transform: translateY( 48px ) translateX( -180px );
+		transform: translateY( -48px );
 	}
 }

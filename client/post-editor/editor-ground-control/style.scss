@@ -41,6 +41,10 @@
 	width: auto;
 }
 
+.editor-ground-control .editor__toggle-drafts {
+	margin-right: 16px;
+}
+
 .editor-ground-control__separator {
 	margin: 0 -16px;
 	background: lighten( $gray, 30 );

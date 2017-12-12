@@ -16,7 +16,6 @@ import { flow, noop } from 'lodash';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Gravatar from 'components/gravatar';
 import Gridicon from 'gridicons';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -186,10 +185,6 @@ class Draft extends Component {
 			<CompactCard className={ classes } key={ 'draft-' + post.ID }>
 				{ this.showStatusChange() }
 				<h3 className="draft__title">
-					{ post.status === 'pending' && (
-						<span className="draft__pending-label">{ this.props.translate( 'Pending' ) }</span>
-					) }
-					{ this.props.showAuthor && <Gravatar user={ post.author } size={ 22 } /> }
 					<a href={ editPostURL } onClick={ this.props.onTitleClick }>
 						{ title }
 					</a>
