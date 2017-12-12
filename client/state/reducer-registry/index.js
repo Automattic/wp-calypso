@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { reduce, uniq } from 'lodash';
+import { get, reduce, uniq } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,10 +18,12 @@ const registeredReducers = Object.create( null );
 let defaultStoreDispatch;
 
 /**
- * Pleaseholder reducer keeps undeserialized data in the in-memory state tree
- * so that we could keep the serialized data persistent before loading the actual
- * reducers and its schema, and allow the state to be deserialized when they are
- * loaded (see below.)
+ * Placeholder reducer keeps serialized initial state in the in-memory state tree.
+ * When the actual reducers and its schema loads, we will pass the initial state
+ * to the reducer and allow the state to be deserialized (see below.)
+ *
+ * It also handles the SERIALIZE action type by return the saved initial state,
+ * so we could keep the initial state data persistent.
  */
 const placeholderReducer = createReducer( null, {
 	[ SERIALIZE ]: state => {
@@ -35,18 +37,18 @@ const placeholderReducer = createReducer( null, {
 } );
 
 /**
- * This method returns a reducer that respond to DESERIALIZE_PART action type,
+ * Returns a reducer that respond to DESERIALIZE_PART action type,
  * so that we could deserialize the state with the newly loaded reducer.
  * @param  {Function} reducer The newly loaded reducer
  * @return {Function}         Reducer that responds to DESERIALIZE_PART action type.
  */
-function getDeserializeReducer( reducer ) {
+function createDeserializeReducer( reducer ) {
 	return createReducer( null, {
 		[ SERIALIZE ]: state => {
 			return state._initialState;
 		},
 		[ DESERIALIZE_PART ]: state => {
-			const initialState = state == null ? undefined : state._initialState;
+			const initialState = get( state, '_initialState', undefined );
 			return reducer( initialState, { type: DESERIALIZE } );
 		},
 	} );
@@ -59,7 +61,12 @@ function getDeserializeReducer( reducer ) {
  * @param {object} registry - Registry to use, default to module variable
  * @param {object} dispatch - Redux store.dispatch() method to call, default to module variable
  */
-export const addReducers = function( reducersToAdd, name = 'root', registry = registeredReducers, dispatch = defaultStoreDispatch ) {
+export const addReducers = function(
+	reducersToAdd,
+	name = 'root',
+	registry = registeredReducers,
+	dispatch = defaultStoreDispatch
+) {
 	const reducers = registry[ name ];
 	if ( ! reducers ) {
 		throw new Error( `Reducer registry name ${ name } does not exist.` );
@@ -81,7 +88,7 @@ export const addReducers = function( reducersToAdd, name = 'root', registry = re
 	if ( dispatch ) {
 		// Store has initialized, we will need to deserialize the part.
 		reducersToSet.forEach( ( { key, reducer } ) => {
-			reducers[ key ] = getDeserializeReducer( reducer );
+			reducers[ key ] = createDeserializeReducer( reducer );
 		} );
 
 		dispatch( { type: DESERIALIZE_PART } );
@@ -106,7 +113,11 @@ export const addReducers = function( reducersToAdd, name = 'root', registry = re
  * @param {object} registry - Registry to use, default to module variable
  * @returns {function} - Returns the combined reducer function
  */
-export const combineReducersAndAddLater = function( initialReducers, name = 'root', registry = registeredReducers ) {
+export const combineReducersAndAddLater = function(
+	initialReducers,
+	name = 'root',
+	registry = registeredReducers
+) {
 	if ( registry[ name ] ) {
 		throw new Error( `Duplicate reducer registry name ${ name }.` );
 	}
