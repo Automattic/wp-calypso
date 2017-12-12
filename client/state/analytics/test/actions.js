@@ -3,13 +3,23 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { flowRight } from 'lodash';
+import { flowRight, set } from 'lodash';
 import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { composeAnalytics, withAnalytics, bumpStat, setTracksAnonymousUserId } from '../actions.js';
+import {
+	composeAnalytics,
+	withAnalytics,
+	bumpStat,
+	setTracksAnonymousUserId,
+	recordTracksEvent,
+	recordTracksEventWithClientId,
+	recordPageView,
+	recordPageViewWithClientId,
+} from '../actions.js';
+
 import {
 	ANALYTICS_MULTI_TRACK,
 	ANALYTICS_STAT_BUMP,
@@ -89,6 +99,54 @@ describe( 'middleware', () => {
 			];
 			expect( tracksAction.type ).to.equal( ANALYTICS_TRACKS_ANONID_SET );
 			expect( tracksAction.meta.analytics ).to.deep.equal( expected );
+		} );
+	} );
+
+	describe( 'withClientId', () => {
+		test( 'should create track event with client id', () => {
+			const props = [
+				'calypso_login_success',
+				{
+					hello: 'world',
+				},
+			];
+			const tracksEvent = recordTracksEvent( ...props );
+			const thunk = recordTracksEventWithClientId( ...props );
+			const clientId = 123;
+
+			thunk(
+				event => {
+					set( tracksEvent, 'meta.analytics[0].payload.client_id', clientId );
+
+					expect( event ).to.eql( tracksEvent );
+				},
+				() => ( {
+					ui: { oauth2Clients: { currentClientId: clientId } },
+				} )
+			);
+		} );
+
+		test( 'should create page view event with client id', () => {
+			const props = [
+				'calypso_login_success',
+				{
+					hello: 'world',
+				},
+			];
+			const clientId = 123;
+			const pageViewEvent = recordPageView( ...props );
+			const thunk = recordPageViewWithClientId( ...props );
+
+			thunk(
+				event => {
+					set( pageViewEvent, 'meta.analytics[0].payload.client_id', clientId );
+
+					expect( event ).to.eql( pageViewEvent );
+				},
+				() => ( {
+					ui: { oauth2Clients: { currentClientId: clientId } },
+				} )
+			);
 		} );
 	} );
 } );
