@@ -94,7 +94,8 @@ export default {
 		 * It unclutters the address bar & will keep tokens out of tracking pixels.
 		 */
 		if ( context.querystring ) {
-			page.replace( '/log-in/link/use', context.query );
+			page.replace( context.pathname, context.query );
+
 			return;
 		}
 
