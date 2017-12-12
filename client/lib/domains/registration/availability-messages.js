@@ -23,7 +23,7 @@ function getAvailabilityNotice( domain, error, site ) {
 	switch ( error ) {
 		case domainAvailability.REGISTERED:
 			message = translate(
-				"{{strong}}%(domain)s{{/strong}} is already connected to someone else's WordPress.com site.",
+				'{{strong}}%(domain)s{{/strong}} is already connected to a WordPress.com site.',
 				{
 					args: { domain },
 					components: {
