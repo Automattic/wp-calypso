@@ -34,10 +34,6 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
 import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
-// KILL IT WITH FIRE
-import sitesFactory from 'lib/sites-list';
-const sites = sitesFactory();
-
 const debug = debugFactory( 'calypso:state:middleware' );
 
 /**
@@ -101,20 +97,6 @@ const removeSelectedSitesChangeListener = ( dispatch, action ) => {
  * providing an alternative to `sites.once()`.
  */
 let sitesListeners = [];
-
-/**
- * Sets the selected site id for SitesList
- *
- * @param {function} dispatch - redux dispatch function
- * @param {number} siteId     - the selected site id
- */
-const updateSelectedSiteIdForSitesList = ( dispatch, { siteId } ) => {
-	if ( siteId ) {
-		sites.select( siteId );
-	} else {
-		sites.selectAll();
-	}
-};
 
 /**
  * Sets the selectedSite and siteCount for lib/analytics. This is used to
@@ -224,7 +206,6 @@ const handler = ( dispatch, action, getState ) => {
 
 		case SELECTED_SITE_SET:
 			//let this fall through
-			updateSelectedSiteIdForSitesList( dispatch, action );
 			updateSelectedSiteForCart( dispatch, action );
 			updateSelectedSiteIdForSubscribers( dispatch, action );
 
