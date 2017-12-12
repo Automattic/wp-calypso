@@ -33,6 +33,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 		privacy: false,
 		email: '',
 		loading: true,
+		losingRegistrar: '',
+		losingRegistrarIanaId: '',
 		currentStep: 1,
 	};
 
