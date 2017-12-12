@@ -17,9 +17,6 @@ export default function() {
 		_sites.dispatchToken = Dispatcher.register( function( payload ) {
 			const action = payload.action;
 			switch ( action.type ) {
-				case 'RECEIVE_DELETED_SITE':
-					_sites.removeSite( action.site );
-					break;
 				case 'FETCH_SITES':
 					_sites.fetch(); // refetch the sites from .com
 					break;

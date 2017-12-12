@@ -36,7 +36,6 @@ import Main from 'components/main';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
-import { receiveDeletedSite as receiveDeletedSiteDeprecated } from 'lib/sites-list/actions';
 import { receiveDeletedSite } from 'state/sites/actions';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import SelectDropdown from 'components/select-dropdown';
@@ -125,11 +124,6 @@ class ConfirmCancelDomain extends React.Component {
 			const { isDomainOnlySite, translate, selectedSite } = this.props;
 
 			if ( isDomainOnlySite ) {
-				// Removing the domain from a domain-only site results
-				// in the site being deleted entirely. We need to call
-				// `receiveDeletedSiteDeprecated` here because the site
-				// exists in `sites-list` as well as the global store.
-				receiveDeletedSiteDeprecated( selectedSite );
 				this.props.receiveDeletedSite( selectedSite.ID );
 				this.props.setAllSitesSelected();
 			}

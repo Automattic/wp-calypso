@@ -23,9 +23,6 @@ export default function() {
 User.dispatchToken = Dispatcher.register( function( payload ) {
 	var action = payload.action;
 	switch ( action.type ) {
-		case 'RECEIVE_DELETED_SITE':
-			_user.decrementSiteCount();
-			break;
 		case InvitesActionTypes.INVITE_ACCEPTED:
 			if ( [ 'follower', 'viewer' ].indexOf( action.invite.role ) === -1 ) {
 				_user.incrementSiteCount();
