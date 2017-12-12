@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { includes, invoke } from 'lodash';
@@ -157,29 +157,33 @@ class DesignTypeWithAtomicStoreStep extends Component {
 			'Not sure? Pick the closest option. You can always change your settings later.'
 		); // eslint-disable-line max-len
 
+		const storeWrapperClassName = classNames( 'design-type-with-store__store-wrapper', {
+			'is-hidden': ! this.state.showStore,
+		} );
+
+		const designTypeListClassName = classNames( 'design-type-with-store__list', {
+			'is-hidden': this.state.showStore,
+		} );
+
 		return (
 			<div className="design-type-with-atomic-store__substep-wrapper design-type-with-store__substep-wrapper">
 				{ this.state.pendingStoreClick && ! countryCode && <QueryGeo /> }
+				<div className={ storeWrapperClassName }>
+					<PressableStoreStep
+						{ ...this.props }
+						onBackClick={ this.handleStoreBackClick }
+						setRef={ this.setPressableStore }
+					/>
+				</div>
+				<div className={ designTypeListClassName }>
+					<TileGrid className="design-type-with-atomic-store__list">
+						{ this.getChoices().map( this.renderChoice ) }
+					</TileGrid>
 
-				{ this.state.showStore ? (
-					<div className="design-type-with-atomic-store__store-wrapper design-type-with-store__store-wrapper">
-						<PressableStoreStep
-							{ ...this.props }
-							onBackClick={ this.handleStoreBackClick }
-							setRef={ this.setPressableStore }
-						/>
-					</div>
-				) : (
-					<Fragment>
-						<TileGrid className="design-type-with-atomic-store__list">
-							{ this.getChoices().map( this.renderChoice ) }
-						</TileGrid>
-
-						<p className="design-type-with-store__disclaimer design-type-with-atomic-store__disclaimer">
-							{ disclaimerText }
-						</p>
-					</Fragment>
-				) }
+					<p className="design-type-with-store__disclaimer design-type-with-atomic-store__disclaimer">
+						{ disclaimerText }
+					</p>
+				</div>
 			</div>
 		);
 	}
