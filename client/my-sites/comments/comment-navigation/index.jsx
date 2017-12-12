@@ -47,7 +47,7 @@ if ( ! isEnabled( 'comments/management/m3-design' ) ) {
 export class CommentNavigation extends Component {
 	static defaultProps = {
 		isSelectedAll: false,
-		selectedCount: 0,
+		selectedComments: [],
 		status: 'unapproved',
 		sortOrder: NEWEST_FIRST,
 	};
@@ -118,7 +118,7 @@ export class CommentNavigation extends Component {
 			isCommentsTreeSupported,
 			isSelectedAll,
 			query,
-			selectedCount,
+			selectedComments,
 			setBulkStatus,
 			setSortOrder,
 			sortOrder,
@@ -128,6 +128,7 @@ export class CommentNavigation extends Component {
 		} = this.props;
 
 		const navItems = this.getNavItems();
+		const selectedCount = selectedComments.length;
 
 		if ( isBulkEdit ) {
 			return (
