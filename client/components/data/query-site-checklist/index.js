@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSiteChecklist } from 'state/site-checklist/actions';
+import { requestSiteChecklist } from 'state/checklist/actions';
 
 class QuerySiteChecklist extends Component {
 	static propTypes = {

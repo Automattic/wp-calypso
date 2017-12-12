@@ -16,13 +16,14 @@ import FormattedHeader from 'components/formatted-header';
 import Checklist from 'components/checklist';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
-import { requestSiteChecklistTaskUpdate } from 'state/site-checklist/actions';
+import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteChecklist } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { onboardingTasks, urlForTask } from '../onboardingChecklist';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { createNotice } from 'state/notices/actions';
 
 class ChecklistShow extends PureComponent {
 	onAction = id => {
@@ -41,9 +42,10 @@ class ChecklistShow extends PureComponent {
 	};
 
 	onToggle = taskId => {
-		const { siteId, siteChecklist, update } = this.props;
+		const { notify, siteId, siteChecklist, update } = this.props;
 
 		if ( siteChecklist && siteChecklist.tasks && ! siteChecklist.tasks[ taskId ] ) {
+			notify( 'is-success', 'You completed a task!' );
 			update( siteId, taskId );
 		}
 	};
@@ -81,6 +83,10 @@ const mapStateToProps = state => {
 	const siteSlug = getSiteSlug( state, siteId );
 	return { siteId, siteSlug, siteChecklist };
 };
-const mapDispatchToProps = { track: recordTracksEvent, update: requestSiteChecklistTaskUpdate };
+const mapDispatchToProps = {
+	track: recordTracksEvent,
+	notify: createNotice,
+	update: requestSiteChecklistTaskUpdate,
+};
 
 export default connect( mapStateToProps, mapDispatchToProps )( ChecklistShow );
