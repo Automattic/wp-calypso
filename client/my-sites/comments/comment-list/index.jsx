@@ -20,7 +20,6 @@ import CommentListHeader from 'my-sites/comments/comment-list/comment-list-heade
 import CommentNavigation from 'my-sites/comments/comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
-import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -171,8 +170,6 @@ export class CommentList extends Component {
 		return (
 			<div className="comment-list">
 				<QuerySiteSettings siteId={ siteId } />
-
-				<QuerySiteCommentCounts siteId={ siteId } />
 
 				{ ! isCommentsTreeSupported && (
 					<QuerySiteCommentsList
