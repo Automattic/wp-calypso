@@ -21,16 +21,16 @@ import {
 const successfulPostRevisionsDiffsResponse = {
 	diffs: [
 		{
-			from_revision_id: 5,
-			to_revision_id: 6,
+			from: 5,
+			to: 6,
 			diff: {
 				post_content: [ { op: 'add', value: 'Things and ' }, { op: 'copy', value: 'stuff' } ],
 				post_title: [ { op: 'copy', value: 'A REALLY big fan of yours' } ],
 			},
 		},
 		{
-			from_revision_id: 4,
-			to_revision_id: 5,
+			from: 4,
+			to: 5,
 			diff: {
 				post_content: [ { op: 'copy', value: 'stuff' } ],
 				post_title: [

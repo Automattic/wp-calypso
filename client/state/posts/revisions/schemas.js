@@ -24,10 +24,10 @@ export const revisionsDiffSchema = {
 								diff: {
 									type: 'object',
 								},
-								from_revision_id: {
+								from: {
 									type: 'integer',
 								},
-								to_revision_id: {
+								to: {
 									type: 'integer',
 								},
 							},

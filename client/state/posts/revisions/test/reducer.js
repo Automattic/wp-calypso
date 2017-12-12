@@ -45,15 +45,15 @@ describe( 'reducer', () => {
 						diff: {
 							todo: 'fix this shape',
 						},
-						from_revision_id: 100,
-						to_revision_id: 109,
+						from: 100,
+						to: 109,
 					},
 					'110:111': {
 						diff: {
 							todo: 'fix this shape',
 						},
-						from_revision_id: 110,
-						to_revision_id: 111,
+						from: 110,
+						to: 111,
 					},
 				},
 			},
@@ -88,8 +88,8 @@ describe( 'reducer', () => {
 						diff: {
 							todo: 'fix this shape',
 						},
-						from_revision_id: 88,
-						to_revision_id: 89,
+						from: 88,
+						to: 89,
 					},
 				],
 			} );
