@@ -116,7 +116,7 @@ describe( 'middleware', () => {
 
 			thunk(
 				event => {
-					set( tracksEvent, 'meta.analytics[0].payload.client_id', clientId );
+					set( tracksEvent, 'meta.analytics[0].payload.properties.client_id', clientId );
 
 					expect( event ).to.eql( tracksEvent );
 				},

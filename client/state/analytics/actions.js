@@ -132,7 +132,13 @@ const withClientId = actionCreator => ( ...args ) => ( dispatch, getState ) => {
 	const clientId = getCurrentOAuth2ClientId( getState() );
 
 	if ( clientId ) {
-		set( action, 'meta.analytics[0].payload.client_id', clientId );
+		set(
+			action,
+			action.type === ANALYTICS_EVENT_RECORD
+				? 'meta.analytics[0].payload.properties.client_id'
+				: 'meta.analytics[0].payload.client_id',
+			clientId
+		);
 	}
 
 	return dispatch( action );
