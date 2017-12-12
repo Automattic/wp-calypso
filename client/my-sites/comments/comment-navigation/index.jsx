@@ -381,11 +381,9 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		),
 	recordChangeFilter: status =>
 		dispatch(
-			withAnalytics(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_change_filter', { status } ),
-					bumpStat( 'calypso_comment_management', 'change_filter_to_' + status )
-				)
+			composeAnalytics(
+				recordTracksEvent( 'calypso_comment_management_change_filter', { status } ),
+				bumpStat( 'calypso_comment_management', 'change_filter_to_' + status )
 			)
 		),
 	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
