@@ -118,9 +118,6 @@ export const isStoreNoticeEnabled = ( state, siteId = getSelectedSiteId( state )
 	if ( ! noticeEnabled ) {
 		return false;
 	}
-	if ( ! ( 'value' in noticeEnabled ) ) {
-		return false;
-	}
 	return 'yes' === noticeEnabled.value;
 };
 
@@ -130,8 +127,5 @@ export const getStoreNotice = ( state, siteId = getSelectedSiteId( state ) ) => 
 	if ( ! notice ) {
 		return null;
 	}
-	if ( ! ( 'value' in notice ) ) {
-		return null;
-	}
-	return notice.value;
+	return notice.value || null;
 };
