@@ -15,8 +15,8 @@ describe( 'LoggedOutForm', () => {
 		test( 'returns true for valid SSO', () => {
 			document.cookie = `jetpack_sso_approved=${ queryDataSiteId };`;
 			const props = {
-				from: 'sso',
-				queryDataSiteId,
+				authFrom: 'sso',
+				authClientId: queryDataSiteId,
 			};
 			expect( isSso( props ) ).toBe( true );
 		} );
@@ -24,8 +24,8 @@ describe( 'LoggedOutForm', () => {
 		test( 'returns false with bad from', () => {
 			document.cookie = `jetpack_sso_approved=${ queryDataSiteId };`;
 			const props = {
-				from: 'elsewhere',
-				queryDataSiteId,
+				authFrom: 'elsewhere',
+				authClientId: queryDataSiteId,
 			};
 			expect( isSso( props ) ).toBe( false );
 		} );
@@ -34,7 +34,7 @@ describe( 'LoggedOutForm', () => {
 			document.cookie = 'jetpack_sso_approved=;';
 			const props = {
 				from: 'sso',
-				queryDataSiteId,
+				authClientId: queryDataSiteId,
 			};
 			expect( isSso( props ) ).toBe( false );
 		} );
@@ -43,7 +43,7 @@ describe( 'LoggedOutForm', () => {
 			document.cookie = 'jetpack_sso_approved=;';
 			const props = {
 				from: 'sso',
-				queryDataSiteId: null,
+				authClientId: null,
 			};
 			expect( isSso( props ) ).toBe( false );
 		} );
