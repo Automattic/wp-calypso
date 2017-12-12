@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { includes, invoke } from 'lodash';
@@ -170,14 +170,16 @@ class DesignTypeWithAtomicStoreStep extends Component {
 						/>
 					</div>
 				) : (
-					<TileGrid className="design-type-with-atomic-store__list">
-						{ this.getChoices().map( this.renderChoice ) }
-					</TileGrid>
-				) }
+					<Fragment>
+						<TileGrid className="design-type-with-atomic-store__list">
+							{ this.getChoices().map( this.renderChoice ) }
+						</TileGrid>
 
-				<p className="design-type-with-store__disclaimer design-type-with-atomic-store__disclaimer">
-					{ disclaimerText }
-				</p>
+						<p className="design-type-with-store__disclaimer design-type-with-atomic-store__disclaimer">
+							{ disclaimerText }
+						</p>
+					</Fragment>
+				) }
 			</div>
 		);
 	}
