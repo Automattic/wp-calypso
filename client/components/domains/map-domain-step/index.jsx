@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop, get } from 'lodash';
+import { includes, noop, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -193,22 +193,20 @@ class MapDomainStep extends React.Component {
 		checkDomainAvailability( { domainName: domain }, ( error, result ) => {
 			const mappableStatus = get( result, 'mappable', error );
 			const status = get( result, 'status', error );
+			const { AVAILABLE, MAPPABLE, NOT_REGISTRABLE, UNKNOWN } = domainAvailability;
 
-			if ( status === domainAvailability.AVAILABLE ) {
+			if ( status === AVAILABLE ) {
 				this.setState( { suggestion: result } );
 				return;
 			}
 
-			switch ( mappableStatus ) {
-				case domainAvailability.MAPPABLE:
-				case domainAvailability.UNKNOWN:
-					this.props.onMapDomain( domain );
-					return;
-				default:
-					const { message, severity } = getAvailabilityNotice( domain, status );
-					this.setState( { notice: message, noticeSeverity: severity } );
-					return;
+			if ( status !== NOT_REGISTRABLE && includes( [ MAPPABLE, UNKNOWN ], mappableStatus ) ) {
+				this.props.onMapDomain( domain );
+				return;
 			}
+
+			const { message, severity } = getAvailabilityNotice( domain, status );
+			this.setState( { notice: message, noticeSeverity: severity } );
 		} );
 	};
 }

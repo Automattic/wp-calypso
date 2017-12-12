@@ -396,7 +396,7 @@ class RegisterDomainStep extends React.Component {
 						{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
 						( error, result ) => {
 							const timeDiff = Date.now() - timestamp;
-							let status = get( result, 'status', error );
+							const status = get( result, 'status', error );
 
 							const { AVAILABLE, TRANSFERRABLE, UNKNOWN } = domainAvailability;
 							const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
