@@ -12,6 +12,9 @@
 import { isEbanx, isValidCPF } from '../ebanx';
 import { isEnabled } from 'config';
 
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => 'ebanx',
+} ) );
 jest.mock( 'config', () => {
 	const config = () => 'development';
 

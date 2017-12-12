@@ -9,6 +9,10 @@ import assert from 'assert';
  */
 import { getCreditCardType } from '../';
 
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => '',
+} ) );
+
 function getRandomInt( min, max ) {
 	return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
 }
