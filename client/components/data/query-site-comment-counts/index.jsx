@@ -23,8 +23,10 @@ export class QuerySiteCommentCounts extends PureComponent {
 		this.request();
 	}
 
-	componentDidUpdate() {
-		this.request();
+	componentDidUpdate( prevProps ) {
+		if ( this.props.siteId !== prevProps.siteId || this.props.postId !== prevProps.postId ) {
+			this.request();
+		}
 	}
 
 	request() {
