@@ -61,5 +61,9 @@ actionLog.filter( 'COMMENTS_LIKE' )
 // note that action types will benefit from
 // auto-complete in the console
 actionLog.filter( actionTypes.COMMENTS_LIKE )
+
+// pass a regex to filter matching action types
+actionLog.filter( /^USER/ )
+actionLog.filter( /receive|request$/i )
 ```
 
