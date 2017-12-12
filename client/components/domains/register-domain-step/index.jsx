@@ -393,7 +393,7 @@ class RegisterDomainStep extends React.Component {
 					}
 
 					checkDomainAvailability(
-						{ domainName: domain, blogId: this.props.selectedSite.ID },
+						{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
 						( error, result ) => {
 							const timeDiff = Date.now() - timestamp;
 							let status = get( result, 'status', error );
@@ -403,7 +403,7 @@ class RegisterDomainStep extends React.Component {
 							const isDomainTransferrable = TRANSFERRABLE === status;
 
 							if ( TLD_NOT_SUPPORTED === status ) {
-								status = get( result, 'mappable', error );
+								//status = get( result, 'mappable', error );
 							}
 
 							this.setState( {
@@ -781,7 +781,7 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( ! site ) {
-			site = this.props.selectedSite.domain;
+			site = get( this.props, 'selectedSite.ID', null );
 		}
 
 		const { message, severity } = getAvailabilityNotice( domain, error, site );

@@ -61,7 +61,7 @@ function getAvailabilityNotice( domain, error, site ) {
 		case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is already connected to this site, but registered somewhere else. Do you want to move ' +
-					'it from your current domain provider to WorcPress.com so you can manage the domain and the site ' +
+					'it from your current domain provider to WordPress.com so you can manage the domain and the site ' +
 					'together? {{a}}Yes, transfer it to WordPress.com.{{/a}}',
 				{
 					args: { domain },
@@ -102,7 +102,6 @@ function getAvailabilityNotice( domain, error, site ) {
 						strong: <strong />,
 						a: (
 							<a
-								target="_blank"
 								rel="noopener noreferrer"
 								href={ paths.domainManagementTransferIn( site, domain ) }
 							/>
@@ -165,6 +164,7 @@ function getAvailabilityNotice( domain, error, site ) {
 		case domainAvailability.MAPPABLE:
 		case domainAvailability.AVAILABLE:
 		case domainAvailability.PURCHASES_DISABLED:
+		case domainAvailability.TLD_NOT_SUPPORTED:
 		case domainAvailability.UNKNOWN:
 			// unavailable domains are displayed in the search results, not as a notice OR
 			// domain registrations are closed, in which case it is handled in parent
