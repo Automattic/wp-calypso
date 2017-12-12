@@ -1,19 +1,35 @@
 /**
  * External dependencies
  */
+import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import {
+	fetchEmailSettings,
+} from 'woocommerce/state/sites/settings/email/actions';
 
 class Settings extends React.Component {
 
-	constructor( props ) {
-		super( props );
+	componentDidMount = () => {
+		const { siteId, fetchEmailSettings: fetch } = this.props;
+		siteId && fetch( siteId );
+	};
+
+	componentWillReceiveProps = newProps => {
+		if ( newProps.siteId === this.props.siteId ) {
+			return;
+		}
+
+		const { siteId, fetchEmailSettings: fetch } = newProps;
+		siteId && fetch( siteId );
 	}
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		return (
@@ -28,4 +44,13 @@ Settings.propTypes = {
 	siteId: PropTypes.number.isRequired,
 };
 
-export default localize( Settings );
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			fetchEmailSettings,
+		},
+		dispatch
+	);
+}
+
+export default connect( null, mapDispatchToProps )( localize( Settings ) );
