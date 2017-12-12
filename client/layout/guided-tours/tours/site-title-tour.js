@@ -27,7 +27,7 @@ export const SiteTitleTour = makeTour(
 	<Tour
 		name="siteTitle"
 		version="20171205"
-		path="/checklist"
+		path="/non-existent-route"
 		when={ and( canUserEditSettingsOfSelectedSite ) }
 	>
 		<Step name="init" target="site-title-input" arrow="top-left" placement="below">
