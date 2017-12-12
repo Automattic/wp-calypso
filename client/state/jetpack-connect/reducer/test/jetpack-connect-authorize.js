@@ -142,36 +142,19 @@ describe( '#jetpackConnectAuthorize()', () => {
 		} );
 	} );
 
-	test( 'should use default authorize state when setting an empty connect query', () => {
+	test( 'should populate state with provided values', () => {
+		const authClientId = 12345;
 		const state = jetpackConnectAuthorize( undefined, {
 			type: JETPACK_CONNECT_QUERY_SET,
+			authClientId,
 		} );
 
 		expect( state ).toMatchObject( {
+			authClientId,
 			authorizeError: false,
 			authorizeSuccess: false,
-			autoAuthorize: false,
 			isAuthorizing: false,
-			queryObject: {},
 			timestamp: expect.any( Number ),
-			userAlreadyConnected: false,
-		} );
-	} );
-
-	test( 'should use new query object over default authorize state when setting a connect query', () => {
-		const queryObject = {
-			redirect_uri: 'https://example.wordpress.com',
-		};
-		const state = jetpackConnectAuthorize( undefined, {
-			type: JETPACK_CONNECT_QUERY_SET,
-			queryObject,
-		} );
-
-		expect( state ).toMatchObject( {
-			queryObject: queryObject,
-			isAuthorizing: false,
-			authorizeSuccess: false,
-			authorizeError: false,
 		} );
 	} );
 
@@ -245,14 +228,14 @@ describe( '#jetpackConnectAuthorize()', () => {
 
 	test( 'should set clientNotResponding when a site request to current client fails', () => {
 		const state = jetpackConnectAuthorize(
-			{ queryObject: { client_id: '123' } },
+			{ authClientId: 123 },
 			{ type: SITE_REQUEST_FAILURE, siteId: 123 }
 		);
 		expect( state ).toMatchObject( { clientNotResponding: true } );
 	} );
 
 	test( 'should return the given state when a site request fails on a different site', () => {
-		const originalState = { queryObject: { client_id: '123' } };
+		const originalState = { authClientId: 123 };
 		const state = jetpackConnectAuthorize( originalState, {
 			type: SITE_REQUEST_FAILURE,
 			siteId: 234,
@@ -260,8 +243,8 @@ describe( '#jetpackConnectAuthorize()', () => {
 		expect( state ).toEqual( originalState );
 	} );
 
-	test( 'should return the given state when a site request fails and no client id is set', () => {
-		const originalState = { queryObject: { jetpack_version: '4.0' } };
+	test( "should return the given state when a site request fails and siteId doesn't match", () => {
+		const originalState = { authClientId: undefined };
 		const state = jetpackConnectAuthorize( originalState, {
 			type: SITE_REQUEST_FAILURE,
 			siteId: 123,
@@ -341,9 +324,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 	test( 'should not auto-authorize non-Woo users', () => {
 		const state = jetpackConnectAuthorize( undefined, {
 			type: JETPACK_CONNECT_QUERY_SET,
-			queryObject: {
-				from: 'somewhere-else',
-			},
+			from: 'somewhere-else',
 		} );
 		expect( state.autoAuthorize ).toEqual( false );
 	} );
@@ -351,17 +332,13 @@ describe( '#jetpackConnectAuthorize()', () => {
 	test( 'should auto-authorize Woo users', () => {
 		const stateFromWooCommerceServicesPlugin = jetpackConnectAuthorize( undefined, {
 			type: JETPACK_CONNECT_QUERY_SET,
-			queryObject: {
-				from: 'woocommerce-services-auto-authorize',
-			},
+			from: 'woocommerce-services-auto-authorize',
 		} );
 		expect( stateFromWooCommerceServicesPlugin.autoAuthorize ).toEqual( true );
 
 		const stateFromWooCommerceWizard = jetpackConnectAuthorize( undefined, {
 			type: JETPACK_CONNECT_QUERY_SET,
-			queryObject: {
-				from: 'woocommerce-setup-wizard',
-			},
+			from: 'woocommerce-setup-wizard',
 		} );
 		expect( stateFromWooCommerceWizard.autoAuthorize ).toEqual( true );
 	} );
