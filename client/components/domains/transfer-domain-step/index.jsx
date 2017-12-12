@@ -327,7 +327,7 @@ class TransferDomainStep extends React.Component {
 						if ( domainAvailability.MAPPABLE === mappableStatus ) {
 							this.setState( {
 								notice: this.props.translate(
-									"{{strong}}%(domain)s{{/strong}} is a subdomain and can't be transferred. " +
+									"{{strong}}%(domain)s{{/strong}} can't be transferred. " +
 										'You can {{a}}manually connect it{{/a}} if you still want to use it for your site.',
 									{
 										args: { domain },
