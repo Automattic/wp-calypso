@@ -14,15 +14,28 @@ import { spy } from 'sinon';
  */
 import Dialog from 'components/dialog';
 import FormTextInput from 'components/forms/form-text-input';
-import { EmbedDialog } from '../dialog';
+
+const testSiteId = 5089392;
 
 describe( 'EmbedDialog', () => {
+	let EmbedDialog;
+	beforeAll( () => {
+		jest.mock( 'lib/wp', () => ( {
+			undocumented: () => ( {
+				site: () => ( {
+					embeds: () => {},
+				} ),
+			} ),
+		} ) );
+
+		EmbedDialog = require( '../dialog' ).EmbedDialog;
+	} );
 	test( 'should render', () => {
 		const url = 'https://www.youtube.com/watch?v=JkOIhs2mHpc';
 		const wrapper = shallow(
 			<EmbedDialog
 				embedUrl={ url }
-				siteId={ 5089392 }
+				siteId={ testSiteId }
 				onCancel={ noop }
 				onUpdate={ noop }
 				translate={ identity }
@@ -41,7 +54,7 @@ describe( 'EmbedDialog', () => {
 		const wrapper = shallow(
 			<EmbedDialog
 				embedUrl={ originalUrl }
-				siteId={ 5089392 }
+				siteId={ testSiteId }
 				onCancel={ noop }
 				onUpdate={ noop }
 				translate={ identity }
@@ -72,7 +85,7 @@ describe( 'EmbedDialog', () => {
 		const wrapper = shallow(
 			<EmbedDialog
 				embedUrl={ originalUrl }
-				siteId={ 5089392 }
+				siteId={ testSiteId }
 				onCancel={ noop }
 				onUpdate={ onUpdate }
 				translate={ identity }
@@ -99,7 +112,7 @@ describe( 'EmbedDialog', () => {
 		const wrapper = shallow(
 			<EmbedDialog
 				embedUrl={ originalUrl }
-				siteId={ 5089392 }
+				siteId={ testSiteId }
 				onCancel={ noopSpy }
 				onUpdate={ onUpdate }
 				translate={ identity }
@@ -112,5 +125,89 @@ describe( 'EmbedDialog', () => {
 		wrapper.find( Dialog ).simulate( 'cancel' );
 		assert.isTrue( noopSpy.called );
 		assert.strictEqual( currentUrl, originalUrl );
+	} );
+
+	describe( 'EmbedDialog parseEmbedEndpointResult', () => {
+		let wrapper, instance;
+		const url = 'https://www.youtube.com/watch?v=JkOIhs2mHpc';
+
+		beforeEach( () => {
+			wrapper = shallow(
+				<EmbedDialog
+					embedUrl={ url }
+					siteId={ testSiteId }
+					onCancel={ noop }
+					onUpdate={ noop }
+					translate={ identity }
+				/>
+			);
+
+			instance = wrapper.instance();
+		} );
+
+		test( 'should parse valid API result', () => {
+			instance.state.previewMarkup = {};
+
+			instance.parseEmbedEndpointResult( url )( null, { result: 123 } );
+
+			assert.isUndefined( wrapper.state().previewMarkup[ url ].isError );
+			assert.strictEqual( 123, wrapper.state().previewMarkup[ url ].result );
+		} );
+
+		test( 'should parse API error', () => {
+			instance.state.previewMarkup = {};
+
+			instance.parseEmbedEndpointResult( url )(
+				{ error: 'invalid_embed_url', message: 'The embed_url parameter must be a valid URL.' },
+				null
+			);
+
+			assert.isTrue( wrapper.state().previewMarkup[ url ].isError );
+			assert.strictEqual(
+				'invalid_embed_url',
+				wrapper.state().previewMarkup[ url ].renderMarkup.error
+			);
+		} );
+
+		test( 'should parse API error - no error message', () => {
+			instance.state.previewMarkup = {};
+
+			instance.parseEmbedEndpointResult( url )( { error: 'invalid_embed_url' }, null );
+
+			assert.isTrue( wrapper.state().previewMarkup[ url ].isError );
+			assert.strictEqual(
+				'invalid_embed_url',
+				wrapper.state().previewMarkup[ url ].renderMarkup.error
+			);
+			assert.strictEqual(
+				'Unknown error',
+				wrapper.state().previewMarkup[ url ].renderMarkup.message
+			);
+		} );
+
+		test( 'should parse API layer error', () => {
+			instance.state.previewMarkup = {};
+
+			instance.parseEmbedEndpointResult( url )(
+				null,
+				{ error: 'custom_error', message: 'Custom error' },
+				null
+			);
+
+			assert.isTrue( wrapper.state().previewMarkup[ url ].isError );
+			assert.strictEqual( 'custom_error', wrapper.state().previewMarkup[ url ].renderMarkup );
+		} );
+
+		test( 'should parse transport error', () => {
+			instance.state.previewMarkup = {};
+
+			instance.parseEmbedEndpointResult( url )( null, null, { status: 0 } );
+
+			assert.isTrue( wrapper.state().previewMarkup[ url ].isError );
+			assert.strictEqual(
+				'communication_error',
+				wrapper.state().previewMarkup[ url ].renderMarkup.error
+			);
+		} );
 	} );
 } );

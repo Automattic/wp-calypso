@@ -106,6 +106,38 @@ export class EmbedDialog extends React.Component {
 		return !! this.state.previewMarkup[ url ];
 	};
 
+	parseEmbedEndpointResult = url => ( error, data, headers ) => {
+		let cachedMarkup;
+
+		if ( data && data.result ) {
+			cachedMarkup = data;
+		} else {
+			if ( headers && headers.status === 0 ) {
+				error = {
+					error: 'communication_error',
+					message: this.props.translate( 'Connection issue. Please reload the page and try again' ),
+				};
+			} else if ( error && ! error.message ) {
+				error.message = this.props.translate( 'Unknown error' );
+			} else if ( data && data.error ) {
+				error = data.error;
+			}
+
+			cachedMarkup = {
+				renderMarkup: error,
+				isError: true,
+			};
+		}
+
+		this.setState( {
+			isLoading: false,
+			previewMarkup: {
+				...this.state.previewMarkup,
+				[ url ]: cachedMarkup,
+			},
+		} );
+	};
+
 	fetchEmbedPreviewMarkup = url => {
 		// Use cached data if it's available
 		if ( this.isURLInCache( url ) || url.trim() === '' ) {
@@ -117,32 +149,7 @@ export class EmbedDialog extends React.Component {
 		wpcom
 			.undocumented()
 			.site( this.props.siteId )
-			.embeds( { embed_url: url }, ( error, data ) => {
-				let cachedMarkup;
-
-				if ( data && data.result ) {
-					cachedMarkup = data;
-					// todo need to do more to check that data.result is valid before using it?
-				} else {
-					cachedMarkup = {
-						renderMarkup: error,
-						isError: true,
-					};
-
-					// todo handle errors
-					// xhr errors in `error` var
-					// and also application layer errors in `data.error` or however wpcom.js signals a error to the caller
-					// add unit tests for those. mock the xhr
-				}
-
-				this.setState( {
-					isLoading: false,
-					previewMarkup: {
-						...this.state.previewMarkup,
-						[ url ]: cachedMarkup,
-					},
-				} );
-			} );
+			.embeds( { embed_url: url }, this.parseEmbedEndpointResult( url ) );
 	};
 
 	onChangeEmbedUrl = event => {
@@ -307,19 +314,19 @@ export class EmbedDialog extends React.Component {
 					) }
 
 					{ ! this.state.isLoading &&
-					cachedMarkup &&
-					! isError && (
-						<div ref={ this.handleViewRef } className={ previewBlockClassNames }>
-							<ResizableIframe
-								ref={ this.handleIframeRef }
-								onResize={ this.props.onResize }
-								onLoad={ this.iframeOnLoad }
-								frameBorder="0"
-								seamless
-								width="100%"
-							/>
-						</div>
-					) }
+						cachedMarkup &&
+						! isError && (
+							<div ref={ this.handleViewRef } className={ previewBlockClassNames }>
+								<ResizableIframe
+									ref={ this.handleIframeRef }
+									onResize={ this.props.onResize }
+									onLoad={ this.iframeOnLoad }
+									frameBorder="0"
+									seamless
+									width="100%"
+								/>
+							</div>
+						) }
 				</div>
 			</Dialog>
 		);
