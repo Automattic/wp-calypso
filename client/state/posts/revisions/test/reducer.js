@@ -22,8 +22,8 @@ import {
 	SELECTED_SITE_SET,
 } from 'state/action-types';
 
-const TEST_SITE_ID = 999999;
-const TEST_POST_ID = 1776;
+const TEST_SITE_ID = 138211384;
+const TEST_POST_ID = 165;
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
@@ -39,19 +39,79 @@ describe( 'reducer', () => {
 		const validState = deepFreeze( {
 			[ TEST_SITE_ID ]: {
 				[ TEST_POST_ID ]: {
-					'100:109': {
-						diff: {
-							todo: 'fix this shape',
+					revisions: {
+						168: {
+							post_date_gmt: '2017-12-12 18:24:37Z',
+							post_modified_gmt: '2017-12-12 18:24:37Z',
+							post_author: '20416304',
+							id: 168,
+							post_content: 'This is a super cool test!\nOh rly? Ya rly',
+							post_excerpt: '',
+							post_title: 'Yet Another Awesome Test Post!',
 						},
-						from: 100,
-						to: 109,
+						167: {
+							post_date_gmt: '2017-12-12 18:24:28Z',
+							post_modified_gmt: '2017-12-12 18:24:28Z',
+							post_author: '20416304',
+							id: 167,
+							post_content: 'This is a super cool test!\nOh rly? Ya rly',
+							post_excerpt: '',
+							post_title: 'Yet Another Test Post',
+						},
+						166: {
+							post_date_gmt: '2017-12-12 18:24:18Z',
+							post_modified_gmt: '2017-12-12 18:24:18Z',
+							post_author: '20416304',
+							id: 166,
+							post_content: 'This is a super cool test!',
+							post_excerpt: '',
+							post_title: 'Yet Another Test Post',
+						},
 					},
-					'110:111': {
+
+					'0:166': {
+						from: 0,
+						to: 166,
 						diff: {
-							todo: 'fix this shape',
+							post_title: [
+								{ op: 'del', value: '' },
+								{ op: 'add', value: 'Yet Another Test Post' },
+								{ op: 'copy', value: '\n' },
+							],
+							post_content: [
+								{ op: 'add', value: 'This is a super cool test!' },
+								{ op: 'copy', value: '\n' },
+							],
+							totals: { del: 0, add: 10 },
 						},
-						from: 110,
-						to: 111,
+					},
+					'167:168': {
+						from: 167,
+						to: 168,
+						diff: {
+							post_title: [
+								{ op: 'copy', value: 'Yet Another' },
+								{ op: 'add', value: ' Awesome' },
+								{ op: 'copy', value: ' Test Post' },
+								{ op: 'add', value: '!' },
+								{ op: 'copy', value: '\n' },
+							],
+							post_content: [ { op: 'copy', value: 'This is a super cool test!\nOh rly? Ya rly' } ],
+							totals: { add: 1 },
+						},
+					},
+					'166:167': {
+						from: 166,
+						to: 167,
+						diff: {
+							post_title: [ { op: 'copy', value: 'Yet Another Test Post' } ],
+							post_content: [
+								{ op: 'copy', value: 'This is a super cool test!\n' },
+								{ op: 'add', value: 'Oh rly? Ya rly' },
+								{ op: 'copy', value: '\n' },
+							],
+							totals: { add: 4 },
+						},
 					},
 				},
 			},
@@ -72,6 +132,155 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( validState );
+		} );
+
+		test( 'should merge diff & revisions', () => {
+			const state = diffs( validState, {
+				type: POST_REVISIONS_RECEIVE,
+				siteId: TEST_SITE_ID,
+				postId: TEST_POST_ID,
+				diffs: {
+					'168:169': {
+						from: 168,
+						to: 169,
+						diff: {
+							post_title: [ { op: 'copy', value: 'Yet Another Awesome Test Post!' } ],
+							post_content: [
+								{ op: 'copy', value: 'This is a super ' },
+								{ op: 'add', value: 'duper ' },
+								{ op: 'copy', value: 'cool test!\nOh rly? Ya rly' },
+							],
+							totals: { add: 1 },
+						},
+					},
+				},
+				revisions: {
+					169: {
+						post_date_gmt: '2017-12-14 18:24:37Z',
+						post_modified_gmt: '2017-12-14 18:24:37Z',
+						post_author: '20416304',
+						id: 169,
+						post_content: 'This is a super duper cool test!\nOh rly? Ya rly',
+						post_excerpt: '',
+						post_title: 'Yet Another Awesome Test Post!',
+					},
+					168: {
+						post_date_gmt: '2017-12-12 18:24:37Z',
+						post_modified_gmt: '2017-12-12 18:24:37Z',
+						post_author: '20416304',
+						id: 168,
+						post_content: 'This is a super cool test!\nOh rly? Ya rly',
+						post_excerpt: '',
+						post_title: 'Yet Another Awesome Test Post!',
+					},
+				},
+			} );
+
+			expect( state ).to.eql( {
+				[ TEST_SITE_ID ]: {
+					[ TEST_POST_ID ]: {
+						revisions: {
+							169: {
+								post_date_gmt: '2017-12-14 18:24:37Z',
+								post_modified_gmt: '2017-12-14 18:24:37Z',
+								post_author: '20416304',
+								id: 169,
+								post_content: 'This is a super duper cool test!\nOh rly? Ya rly',
+								post_excerpt: '',
+								post_title: 'Yet Another Awesome Test Post!',
+							},
+							168: {
+								post_date_gmt: '2017-12-12 18:24:37Z',
+								post_modified_gmt: '2017-12-12 18:24:37Z',
+								post_author: '20416304',
+								id: 168,
+								post_content: 'This is a super cool test!\nOh rly? Ya rly',
+								post_excerpt: '',
+								post_title: 'Yet Another Awesome Test Post!',
+							},
+							167: {
+								post_date_gmt: '2017-12-12 18:24:28Z',
+								post_modified_gmt: '2017-12-12 18:24:28Z',
+								post_author: '20416304',
+								id: 167,
+								post_content: 'This is a super cool test!\nOh rly? Ya rly',
+								post_excerpt: '',
+								post_title: 'Yet Another Test Post',
+							},
+							166: {
+								post_date_gmt: '2017-12-12 18:24:18Z',
+								post_modified_gmt: '2017-12-12 18:24:18Z',
+								post_author: '20416304',
+								id: 166,
+								post_content: 'This is a super cool test!',
+								post_excerpt: '',
+								post_title: 'Yet Another Test Post',
+							},
+						},
+
+						'168:169': {
+							from: 168,
+							to: 169,
+							diff: {
+								post_title: [ { op: 'copy', value: 'Yet Another Awesome Test Post!' } ],
+								post_content: [
+									{ op: 'copy', value: 'This is a super ' },
+									{ op: 'add', value: 'duper ' },
+									{ op: 'copy', value: 'cool test!\nOh rly? Ya rly' },
+								],
+								totals: { add: 1 },
+							},
+						},
+
+						'167:168': {
+							from: 167,
+							to: 168,
+							diff: {
+								post_title: [
+									{ op: 'copy', value: 'Yet Another' },
+									{ op: 'add', value: ' Awesome' },
+									{ op: 'copy', value: ' Test Post' },
+									{ op: 'add', value: '!' },
+									{ op: 'copy', value: '\n' },
+								],
+								post_content: [
+									{ op: 'copy', value: 'This is a super cool test!\nOh rly? Ya rly' },
+								],
+								totals: { add: 1 },
+							},
+						},
+						'166:167': {
+							from: 166,
+							to: 167,
+							diff: {
+								post_title: [ { op: 'copy', value: 'Yet Another Test Post' } ],
+								post_content: [
+									{ op: 'copy', value: 'This is a super cool test!\n' },
+									{ op: 'add', value: 'Oh rly? Ya rly' },
+									{ op: 'copy', value: '\n' },
+								],
+								totals: { add: 4 },
+							},
+						},
+						'0:166': {
+							from: 0,
+							to: 166,
+							diff: {
+								post_title: [
+									{ op: 'del', value: '' },
+									{ op: 'add', value: 'Yet Another Test Post' },
+									{ op: 'copy', value: '\n' },
+								],
+								post_content: [
+									{ op: 'add', value: 'This is a super cool test!' },
+									{ op: 'copy', value: '\n' },
+								],
+								totals: { del: 0, add: 10 },
+							},
+						},
+					},
+				},
+			} );
 		} );
 	} );
 

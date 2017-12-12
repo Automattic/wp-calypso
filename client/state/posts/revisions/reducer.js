@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { filter, get, isEmpty, isInteger, keyBy, merge } from 'lodash';
+import { filter, get, isEmpty, isInteger, keyBy, merge, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,38 +22,56 @@ import {
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
-const isNonNegativeInteger = t => isInteger( t ) && t >= 0;
-const isPositiveInteger = t => isInteger( t ) && t > 0;
-
-export function diffs( state = {}, action ) {
-	const { diffs: diffsFromServer, postId, revisions, siteId, type } = action;
+export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, siteId, type } ) {
 	if ( type !== POST_REVISIONS_RECEIVE ) {
 		return state;
 	}
-	if ( ! isPositiveInteger( siteId ) ) {
-		return state;
-	}
-	const filteredDiffs = filter(
-		diffsFromServer,
-		d => isNonNegativeInteger( d.from ) && isNonNegativeInteger( d.to ) && ! isEmpty( d.diff )
-	);
-	const keyedDiffs = keyBy( filteredDiffs, d => `${ d.from }:${ d.to }` );
-
-	if ( isEmpty( keyedDiffs ) ) {
+	if ( ! isInteger( siteId ) || siteId <= 0 ) {
 		return state;
 	}
 
-	const sitePost = get( state, [ siteId, postId ], {} );
-	// @TODO support merging a unique set
-	sitePost.revisions = revisions;
+	const sitePostState = get( state, [ siteId, postId ], {} );
+	const mergedRevisions = {
+		...get( sitePostState, 'revisions', {} ),
+		...revisions,
+	};
+
+	const filteredDiffs = filter( diffsFromServer, ( { diff, from, to } ) => {
+		if ( ! isInteger( from ) || from < 0 ) {
+			// `from` can be zero
+			return false;
+		}
+		if ( ! isInteger( to ) || to < 1 ) {
+			// `to` cannot be zero
+			return false;
+		}
+
+		// Ensure fresh revisions were provided for `from` and `to` in the payload
+		if ( from !== 0 && isEmpty( mergedRevisions[ from ] ) ) {
+			// if `from` is `0`, there won't be a revision to validate
+			return false;
+		}
+		if ( isEmpty( mergedRevisions[ to ] ) ) {
+			return false;
+		}
+
+		return ! isEmpty( diff );
+	} );
+
+	if ( isEmpty( filteredDiffs ) ) {
+		return state;
+	}
 
 	return {
 		...state,
 		[ siteId ]: {
 			...state[ siteId ],
 			[ postId ]: {
-				...sitePost,
-				...keyedDiffs,
+				...{
+					...omit( sitePostState, 'revisions' ),
+					...keyBy( filteredDiffs, d => `${ d.from }:${ d.to }` ),
+				},
+				revisions: mergedRevisions,
 			},
 		},
 	};
