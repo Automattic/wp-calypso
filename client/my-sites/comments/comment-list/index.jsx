@@ -362,7 +362,7 @@ export class CommentList extends Component {
 	};
 
 	toggleBulkEdit = () => {
-		this.setState( ( { isBulkEdit } ) => ( { isBulkEdit: ! isBulkEdit } ) );
+		this.setState( ( { isBulkEdit } ) => ( { isBulkEdit: ! isBulkEdit, selectedComments: [] } ) );
 	};
 
 	toggleCommentLike = comment => {
