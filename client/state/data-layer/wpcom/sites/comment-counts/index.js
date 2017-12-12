@@ -13,29 +13,33 @@
 import { COMMENT_COUNTS_REQUEST } from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 
-export const fetchCommentCounts = ( { dispatch }, action ) => {
+export const fetchCommentCounts = action => {
 	const { siteId } = action.query;
 	const postId = action.query.postId || null;
 
-	dispatch(
-		http(
-			{
-				method: 'GET',
-				path: `/sites/${ siteId }/comment-counts`,
-				apiVersion: '1.0',
-				query: {
-					postId,
-				},
+	return http(
+		{
+			method: 'GET',
+			path: `/sites/${ siteId }/comment-counts`,
+			apiVersion: '1.0',
+			query: {
+				postId,
 			},
-			action
-		)
+		},
+		action
 	);
 };
 
 const treeHandlers = {
-	[ COMMENT_COUNTS_REQUEST ]: [ dispatchRequest( fetchCommentCounts ) ],
+	[ COMMENT_COUNTS_REQUEST ]: [
+		dispatchRequestEx( {
+			fetch: fetchCommentCounts,
+			onSuccess: () => {},
+			onError: () => {},
+		} ),
+	],
 };
 
 export default mergeHandlers( treeHandlers );
