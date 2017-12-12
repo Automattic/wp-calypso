@@ -773,7 +773,7 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( ! site ) {
-			site = get( this.props, 'selectedSite.ID', null );
+			site = get( this.props, 'selectedSite.slug', null );
 		}
 
 		const { message, severity } = getAvailabilityNotice( domain, error, site );

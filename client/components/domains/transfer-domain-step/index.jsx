@@ -344,7 +344,7 @@ class TransferDomainStep extends React.Component {
 					default:
 						let site = get( result, 'other_site_domain', null );
 						if ( ! site ) {
-							site = get( this.props, 'selectedSite.ID', null );
+							site = get( this.props, 'selectedSite.slug', null );
 						}
 
 						const { message, severity } = getAvailabilityNotice( domain, status, site );
