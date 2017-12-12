@@ -1,5 +1,10 @@
 /** @format */
 
+.concierge__site-block .site__content {
+	// Override the site block's padding to use the containing card's padding instead
+	padding: 0;
+}
+
 .concierge__calendar-card.is-expanded {
 	background: lighten($gray, 36%);
 }

@@ -12,18 +12,20 @@ import PropTypes from 'prop-types';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import PrimaryHeader from './primary-header';
+import Site from 'blocks/site';
 
 class InfoStep extends Component {
 	static propTypes = {
 		onComplete: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
 	};
 
 	render() {
 		return (
 			<div>
 				<PrimaryHeader />
-				<CompactCard>
-					Here is the first step where the customer gives us their information
+				<CompactCard className="concierge__site-block">
+					<Site siteId={ this.props.siteId } />
 				</CompactCard>
 				<CompactCard>
 					<Button onClick={ this.props.onComplete }>Continue to calendar</Button>
