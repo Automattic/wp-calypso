@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Module constants
@@ -24,7 +25,7 @@ const svgLogo24 = (
 	</svg>
 );
 
-const JetpackLogo = ( { size = 32, full } ) => {
+const JetpackLogo = ( { full = false, size = 32 } ) => {
 	if ( full === true ) {
 		return (
 			<svg height={ size } className="jetpack-logo" viewBox="0 0 118 32">
@@ -48,4 +49,10 @@ const JetpackLogo = ( { size = 32, full } ) => {
 		</svg>
 	);
 };
+
+JetpackLogo.propTypes = {
+	full: PropTypes.bool,
+	size: PropTypes.number,
+};
+
 export default JetpackLogo;
