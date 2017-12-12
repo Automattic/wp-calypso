@@ -13,8 +13,10 @@ import debugFactory from 'debug';
 import config from 'config';
 import {
 	ANALYTICS_SUPER_PROPS_UPDATE,
+	JETPACK_DISCONNECT_RECEIVE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	SELECTED_SITE_SET,
+	SITE_DELETE_RECEIVE,
 	SITE_RECEIVE,
 	SITES_RECEIVE,
 	SITES_UPDATE,
@@ -24,6 +26,7 @@ import {
 } from 'state/action-types';
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
+import userFactory from 'lib/user';
 import {
 	isNotificationsOpen,
 	hasSitePendingAutomatedTransfer,
@@ -35,6 +38,7 @@ import keyboardShortcuts from 'lib/keyboard-shortcuts';
 import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
 const debug = debugFactory( 'calypso:state:middleware' );
+const user = userFactory();
 
 /**
  * Module variables
@@ -236,6 +240,11 @@ const handler = ( dispatch, action, getState ) => {
 			return;
 		case SELECTED_SITE_UNSUBSCRIBE:
 			removeSelectedSitesChangeListener( dispatch, action );
+			return;
+
+		case SITE_DELETE_RECEIVE:
+		case JETPACK_DISCONNECT_RECEIVE:
+			user.decrementSiteCount();
 			return;
 	}
 };
