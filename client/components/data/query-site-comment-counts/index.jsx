@@ -33,7 +33,7 @@ export class QuerySiteCommentCounts extends PureComponent {
 		if ( ! this.props.siteId ) {
 			return;
 		}
-		this.props.requestCommentCounts( { ...this.props } );
+		this.props.requestCommentCounts( this.props.siteId, this.props.postId );
 	}
 
 	render() {

@@ -125,14 +125,14 @@ export const requestCommentsTreeForSite = query => ( {
 
 /**
  * Creates an action that requests comment counts for a given site.
- * @param {Object} query API call parameters
- * @param {Number} query.siteId Site identifier
- * @param {String} query.status Status filter
- * @returns {Object} Action that requests a comment tree
+ * @param {Number} siteId Site identifier
+ * @param {Number} [postId] Post identifier
+ * @returns {Object} Action that requests comment counts by site.
  */
-export const requestCommentCounts = query => ( {
+export const requestCommentCounts = ( siteId, postId ) => ( {
 	type: COMMENT_COUNTS_REQUEST,
-	query,
+	siteId,
+	postId,
 } );
 
 /**
