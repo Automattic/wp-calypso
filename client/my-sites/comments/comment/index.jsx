@@ -20,7 +20,6 @@ import CommentEdit from 'my-sites/comments/comment/comment-edit';
 import CommentHeader from 'my-sites/comments/comment/comment-header';
 import CommentReply from 'my-sites/comments/comment/comment-reply';
 import CommentRepliesList from 'my-sites/comments/comment-replies-list';
-import QueryComment from 'components/data/query-comment';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -106,7 +105,6 @@ export class Comment extends Component {
 			isPostView,
 			isSelected,
 			redirect,
-			refreshCommentData,
 			updateLastUndo,
 		} = this.props;
 		const { isEditMode, isReplyVisible } = this.state;
@@ -126,11 +124,7 @@ export class Comment extends Component {
 				onKeyDown={ this.keyDownHandler }
 				ref={ this.storeCardRef }
 			>
-				{ refreshCommentData && (
-					<QueryComment commentId={ commentId } siteId={ siteId } forceWpcom />
-				) }
-
-				{ ( ! isEditMode || isLoading ) && (
+				{ ! isEditMode && (
 					<div className="comment__detail">
 						<CommentHeader { ...{ commentId, isBulkMode, isEditMode, isPostView, isSelected } } />
 
