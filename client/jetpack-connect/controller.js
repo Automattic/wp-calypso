@@ -143,8 +143,14 @@ export function authorizeForm( context, next ) {
 		const transformedQuery = authQueryTransformer( query );
 
 		// No longer setting/persisting query
-		// However, from is required for some reducer logic :(
+		//
 		// FIXME
+		//
+		// However, from and authClientId are required for some reducer logic :(
+		//
+		// Hopefully when actions move to data-layer, this will become clearer and
+		// we won't need to store authClientId in state
+		//
 		context.store.dispatch( {
 			type: JETPACK_CONNECT_QUERY_SET,
 			from: transformedQuery.authFrom,
