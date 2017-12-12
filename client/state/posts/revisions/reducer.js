@@ -38,15 +38,9 @@ export const diffs = createReducer(
 			}
 			const filteredDiffs = filter(
 				diffsFromServer,
-				d =>
-					isNonNegativeInteger( d.from_revision_id ) &&
-					isNonNegativeInteger( d.to_revision_id ) &&
-					! isEmpty( d.diff )
+				d => isNonNegativeInteger( d.from ) && isNonNegativeInteger( d.to ) && ! isEmpty( d.diff )
 			);
-			const keyedDiffs = keyBy(
-				filteredDiffs,
-				d => `${ d.from_revision_id }:${ d.to_revision_id }`
-			);
+			const keyedDiffs = keyBy( filteredDiffs, d => `${ d.from }:${ d.to }` );
 
 			if ( isEmpty( keyedDiffs ) ) {
 				return state;

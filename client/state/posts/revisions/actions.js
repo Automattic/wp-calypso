@@ -21,8 +21,8 @@ import {
  * @param {String} postType of the parent post
  * @param {String} [comparisons=[]] list of revision objects to compare in format:
  * 					[
- * 						{ from_revision_id: 6, to_revision_id: 8 },
- * 						{ from_revision_id: 4, to_revision_id: 5 },
+ * 						{ from: 6, to: 8 },
+ * 						{ from: 4, to: 5 },
  * 					]
  * 					Optional. If not provided, the API will return a set of sequential diffs
  * @return {Object} action object
