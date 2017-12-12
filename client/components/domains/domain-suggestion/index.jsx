@@ -44,6 +44,7 @@ class DomainSuggestion extends React.Component {
 			<div
 				className={ classes }
 				onClick={ this.props.onButtonClick }
+				data-tracks-button-click-source={ this.props.tracksButtonClickSource }
 				role="button"
 				data-e2e-domain={ this.props.domain }
 			>
@@ -51,12 +52,7 @@ class DomainSuggestion extends React.Component {
 					{ children }
 					{ ! hidePrice && <DomainProductPrice rule={ priceRule } price={ price } /> }
 				</div>
-				<Button
-					borderless
-					onClick={ this.props.onButtonClick }
-					data-tracks-button-click-source={ this.props.tracksButtonClickSource }
-					className="domain-suggestion__action"
-				>
+				<Button borderless className="domain-suggestion__action">
 					{ this.props.buttonContent }
 				</Button>
 				<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />

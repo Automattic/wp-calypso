@@ -756,7 +756,7 @@ class RegisterDomainStep extends React.Component {
 	goToTransferDomainStep = event => {
 		event.preventDefault();
 
-		const source = event.target.dataset.tracksButtonClickSource;
+		const source = event.currentTarget.dataset.tracksButtonClickSource;
 
 		this.props.recordTransferDomainButtonClick( this.props.analyticsSection, source );
 
