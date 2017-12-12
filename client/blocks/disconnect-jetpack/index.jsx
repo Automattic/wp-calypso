@@ -21,12 +21,10 @@ import {
 	recordTracksEvent as recordTracksEventAction,
 } from 'state/analytics/actions';
 import { disconnect } from 'state/jetpack/connection/actions';
-import { disconnectedSite as disconnectedSiteDeprecated } from 'lib/sites-list/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
-import { getSitePlanSlug } from 'state/sites/selectors';
 import { getPlanClass } from 'lib/plans/constants';
-import { getSite, getSiteSlug, getSiteTitle } from 'state/sites/selectors';
+import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'state/sites/selectors';
 
 class DisconnectJetpack extends PureComponent {
 	static propTypes = {
@@ -39,7 +37,6 @@ class DisconnectJetpack extends PureComponent {
 		stayConnectedHref: PropTypes.string,
 		// Connected props
 		plan: PropTypes.string,
-		site: PropTypes.object,
 		siteSlug: PropTypes.string,
 		siteTitle: PropTypes.string,
 		setAllSitesSelected: PropTypes.func,
@@ -157,7 +154,6 @@ class DisconnectJetpack extends PureComponent {
 	disconnectJetpack = () => {
 		const {
 			onDisconnectClick,
-			site,
 			siteId,
 			siteTitle,
 			translate,
@@ -185,11 +181,6 @@ class DisconnectJetpack extends PureComponent {
 
 		disconnectSite( siteId ).then(
 			() => {
-				// Removing the domain from a domain-only site results
-				// in the site being deleted entirely. We need to call
-				// `disconnectedSiteDeprecated` here because the site
-				// exists in `sites-list` as well as the global store.
-				disconnectedSiteDeprecated( site );
 				this.props.setAllSitesSelected();
 				removeInfoNotice( notice.noticeId );
 				showSuccessNotice(
@@ -280,7 +271,6 @@ export default connect(
 
 		return {
 			plan: planClass,
-			site: getSite( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 			siteTitle: getSiteTitle( state, siteId ),
 		};
