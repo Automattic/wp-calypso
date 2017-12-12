@@ -111,3 +111,27 @@ export const areTaxCalculationsEnabled = ( state, siteId = getSelectedSiteId( st
 	}
 	return 'yes' === taxesEnabled.value;
 };
+
+export const isStoreNoticeEnabled = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const generalSettings = getRawGeneralSettings( state, siteId );
+	const noticeEnabled = find( generalSettings, { id: 'woocommerce_demo_store' } );
+	if ( ! noticeEnabled ) {
+		return false;
+	}
+	if ( ! ( 'value' in noticeEnabled ) ) {
+		return false;
+	}
+	return 'yes' === noticeEnabled.value;
+};
+
+export const getStoreNotice = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const generalSettings = getRawGeneralSettings( state, siteId );
+	const notice = find( generalSettings, { id: 'woocommerce_demo_store_notice' } );
+	if ( ! notice ) {
+		return null;
+	}
+	if ( ! ( 'value' in notice ) ) {
+		return null;
+	}
+	return notice.value;
+};

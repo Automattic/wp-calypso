@@ -12,7 +12,7 @@ import {
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-const doInitialSetupSuccess = ( siteId, data ) => {
+const settingsBatchRequestSuccess = ( siteId, data ) => {
 	return {
 		type: WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 		siteId,
@@ -119,7 +119,7 @@ export const doInitialSetup = (
 	return request( siteId )
 		.post( 'settings/batch', { update } )
 		.then( data => {
-			dispatch( doInitialSetupSuccess( siteId, data ) );
+			dispatch( settingsBatchRequestSuccess( siteId, data ) );
 			if ( successAction ) {
 				dispatch( successAction( data ) );
 			}
@@ -130,14 +130,6 @@ export const doInitialSetup = (
 				dispatch( failureAction( err ) );
 			}
 		} );
-};
-
-const setAddressSuccess = ( siteId, data ) => {
-	return {
-		type: WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
-		siteId,
-		data,
-	};
 };
 
 export const setAddress = (
@@ -196,7 +188,54 @@ export const setAddress = (
 	return request( siteId )
 		.post( 'settings/batch', { update } )
 		.then( data => {
-			dispatch( setAddressSuccess( siteId, data ) );
+			dispatch( settingsBatchRequestSuccess( siteId, data ) );
+			if ( successAction ) {
+				dispatch( successAction( data ) );
+			}
+		} )
+		.catch( err => {
+			dispatch( setError( siteId, updateAction, err ) );
+			if ( failureAction ) {
+				dispatch( failureAction( err ) );
+			}
+		} );
+};
+
+export const updateStoreNoticeSettings = (
+	siteId,
+	enabled,
+	notice,
+	successAction,
+	failureAction
+) => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	const updateAction = {
+		type: WOOCOMMERCE_SETTINGS_BATCH_REQUEST,
+		siteId,
+	};
+
+	dispatch( updateAction );
+
+	const update = [
+		{
+			group_id: 'general',
+			id: 'woocommerce_demo_store',
+			value: enabled ? 'yes' : 'no',
+		},
+		{
+			group_id: 'general',
+			id: 'woocommerce_demo_store_notice',
+			value: notice,
+		},
+	];
+
+	return request( siteId )
+		.post( 'settings/batch', { update } )
+		.then( data => {
+			dispatch( settingsBatchRequestSuccess( siteId, data ) );
 			if ( successAction ) {
 				dispatch( successAction( data ) );
 			}
