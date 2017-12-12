@@ -157,6 +157,8 @@ class ManageMenu extends PureComponent {
 		let preload;
 		if ( includes( [ 'post', 'page' ], menuItem.name ) ) {
 			preload = 'posts-pages';
+		} else if ( 'comments' === menuItem.name ) {
+			preload = 'comments';
 		} else {
 			preload = 'posts-custom';
 		}

@@ -408,6 +408,7 @@ sections.push( {
 	module: 'my-sites/comments',
 	group: 'sites',
 	secondary: true,
+	css: 'comments',
 } );
 
 sections.push( {
