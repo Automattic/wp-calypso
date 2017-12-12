@@ -409,25 +409,23 @@ export class CommentList extends Component {
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-list__transition"
 				>
-					{ isEnabled( 'comments/management/m3-design' ) &&
-						map( commentsPage, commentId => (
-							<Comment
-								commentId={ commentId }
-								key={ `comment-${ siteId }-${ commentId }` }
-								isBulkMode={ isBulkMode }
-								isPostView={ isPostView }
-								isSelected={ this.isCommentSelected( commentId ) }
-								refreshCommentData={
-									isCommentsTreeSupported &&
-									! this.hasCommentJustMovedBackToCurrentStatus( commentId )
-								}
-								toggleSelected={ this.toggleCommentSelected }
-								updateLastUndo={ this.updateLastUndo }
-							/>
-						) ) }
+					{ map( commentsPage, commentId => (
+						<Comment
+							commentId={ commentId }
+							key={ `comment-${ siteId }-${ commentId }` }
+							isBulkMode={ isBulkMode }
+							isPostView={ isPostView }
+							isSelected={ this.isCommentSelected( commentId ) }
+							refreshCommentData={
+								isCommentsTreeSupported &&
+								! this.hasCommentJustMovedBackToCurrentStatus( commentId )
+							}
+							toggleSelected={ this.toggleCommentSelected }
+							updateLastUndo={ this.updateLastUndo }
+						/>
+					) ) }
 
-					{ isEnabled( 'comments/management/m3-design' ) &&
-						showPlaceholder && <Comment commentId={ 0 } key="comment-detail-placeholder" /> }
+					{ showPlaceholder && <Comment commentId={ 0 } key="comment-detail-placeholder" /> }
 
 					{ showEmptyContent && (
 						<EmptyContent
