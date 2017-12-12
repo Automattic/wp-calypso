@@ -223,7 +223,7 @@ describe( 'handlers', () => {
 	} );
 
 	describe( '#sendOrder', () => {
-		test( 'should dispatch a post action', () => {
+		test( 'should dispatch a post action to this order ID', () => {
 			const dispatch = spy();
 			const order = {
 				id: 1,
@@ -244,6 +244,37 @@ describe( 'handlers', () => {
 							json: true,
 							path: '/wc/v3/orders/1&_method=POST',
 							body: JSON.stringify( { status: 'completed', total: '50.00' } ),
+						},
+						query: {
+							json: true,
+						},
+					},
+					action
+				)
+			);
+		} );
+
+		test( 'should dispatch a post action to the generic orders endpoint', () => {
+			const dispatch = spy();
+			const order = {
+				id: { placeholder: 'order_id' },
+				status: 'processing',
+				total: '25.00',
+			};
+			const action = saveOrder( 123, order );
+			sendOrder( { dispatch }, action );
+
+			expect( dispatch ).to.have.been.calledOnce;
+			expect( dispatch ).to.have.been.calledWith(
+				http(
+					{
+						method: 'POST',
+						path: '/jetpack-blogs/123/rest-api/',
+						apiVersion: '1.1',
+						body: {
+							json: true,
+							path: '/wc/v3/orders&_method=POST',
+							body: JSON.stringify( { status: 'processing', total: '25.00' } ),
 						},
 						query: {
 							json: true,

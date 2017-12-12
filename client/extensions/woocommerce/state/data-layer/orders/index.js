@@ -3,7 +3,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { omitBy } from 'lodash';
+import { isNumber, omitBy } from 'lodash';
 import qs from 'querystring';
 
 /**
@@ -75,7 +75,11 @@ export function receivedOrder( { dispatch }, action, { data } ) {
 
 export function sendOrder( { dispatch }, action ) {
 	const { siteId, orderId, order } = action;
-	dispatch( request( siteId, action ).post( `orders/${ orderId }`, order ) );
+	if ( isNumber( orderId ) ) {
+		dispatch( request( siteId, action ).post( `orders/${ orderId }`, order ) );
+	} else {
+		dispatch( request( siteId, action ).post( 'orders', order ) );
+	}
 }
 
 export function onOrderSaveSuccess( { dispatch }, action, { data } ) {
