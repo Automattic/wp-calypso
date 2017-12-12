@@ -18,7 +18,7 @@ import {
 } from 'state/login/magic-login/actions';
 import {
 	isFetchingMagicLoginEmail,
-	getCurrentQueryArguments,
+	getInitialQueryArguments,
 	getMagicLoginCurrentView,
 	getMagicLoginRequestEmailError,
 	getMagicLoginRequestedEmailSuccessfully,
@@ -187,7 +187,7 @@ const mapState = state => {
 	return {
 		currentUser: getCurrentUser( state ),
 		isFetching: isFetchingMagicLoginEmail( state ),
-		redirectTo: getCurrentQueryArguments( state ).redirect_to,
+		redirectTo: getInitialQueryArguments( state ).redirect_to,
 		requestError: getMagicLoginRequestEmailError( state ),
 		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),
