@@ -88,7 +88,7 @@ class RequestLoginEmailForm extends React.Component {
 			} )
 			.catch( error => {
 				this.props.recordTracksEvent( 'calypso_login_email_link_failure', {
-					error_code: error.code,
+					error_code: error.error,
 					error_message: error.message,
 				} );
 			} );
