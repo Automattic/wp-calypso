@@ -129,15 +129,31 @@ TransactionFlow.prototype._paymentHandlers = {
 
 		this._createCardToken(
 			function( gatewayData ) {
-				const { name, country, 'postal-code': zip } = newCardDetails;
+				const { name, country, 'postal-code': zip, document, city, state } = newCardDetails;
 
-				this._submitWithPayment( {
+				let paymentData = {
 					payment_method: gatewayData.paymentMethod,
 					payment_key: gatewayData.token,
 					name,
 					zip,
 					country,
-				} );
+				};
+
+				if ( isEbanx( country ) ) {
+					const ebanxPaymentData = {
+						state,
+						city,
+						address_1: newCardDetails[ 'address-1' ],
+						address_2: newCardDetails[ 'address-2' ],
+						street_number: newCardDetails[ 'street-number' ],
+						phone_number: newCardDetails[ 'phone-number' ],
+						document,
+					};
+
+					paymentData = { ...paymentData, ...ebanxPaymentData };
+				}
+
+				this._submitWithPayment( paymentData );
 			}.bind( this )
 		);
 	},
@@ -287,7 +303,7 @@ function createEbanxToken( requestType, cardDetails, callback ) {
 }
 
 function createCardToken( requestType, cardDetails, callback ) {
-	if ( isEbanx( cardDetails.country )	) {
+	if ( isEbanx( cardDetails.country ) ) {
 		return createEbanxToken( requestType, cardDetails, callback );
 	}
 
