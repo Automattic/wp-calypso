@@ -26,7 +26,7 @@ class OrderAddItems extends Component {
 		const { translate } = this.props;
 		return (
 			<div className="order-details__actions">
-				<Button borderless onClick={ this.toggleDialog( 'product' ) }>
+				<Button primary onClick={ this.toggleDialog( 'product' ) }>
 					<Gridicon icon="plus-small" />
 					{ translate( 'Add Product' ) }
 				</Button>

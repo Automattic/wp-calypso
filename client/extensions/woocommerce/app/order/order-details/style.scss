@@ -59,14 +59,9 @@
 		margin-left: 24px;
 	}
 
-	.button {
-		color: $blue-medium;
-
-		&:hover,
-		&:focus,
-		&:active {
-			color: $link-highlight;
-		}
+	// Fix alignment with neighboring primary button
+	.button.is-borderless {
+		padding-top: 3px;
 	}
 }
 
