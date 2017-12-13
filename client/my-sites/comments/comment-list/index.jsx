@@ -23,6 +23,7 @@ import Pagination from 'components/pagination';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
+import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
 import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
@@ -170,7 +171,7 @@ export class CommentList extends Component {
 		return (
 			<div className="comment-list">
 				<QuerySiteSettings siteId={ siteId } />
-
+				<QuerySiteCommentCounts siteId={ siteId } postId={ postId } />
 				{ ! isCommentsTreeSupported && (
 					<QuerySiteCommentsList
 						number={ 100 }

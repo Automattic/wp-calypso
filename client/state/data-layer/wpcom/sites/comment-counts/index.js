@@ -8,7 +8,7 @@ import { mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import { COMMENT_COUNTS_REQUEST, COMMENT_COUNTS_UPDATE } from 'state/action-types';
+import { COMMENT_COUNTS_REQUEST } from 'state/action-types';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { updateCommentCounts as updateCounts } from 'state/comments/actions';
