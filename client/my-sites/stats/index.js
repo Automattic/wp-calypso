@@ -189,7 +189,6 @@ export default function() {
 		page(
 			'/stats/(.*)',
 			siteSelection,
-			navigation,
 			statsController.redirectToDefaultSitePage,
 			sites,
 			makeLayout,
