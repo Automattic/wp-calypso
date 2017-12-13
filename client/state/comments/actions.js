@@ -5,6 +5,7 @@
 import { isEnabled } from 'config';
 import {
 	COMMENT_COUNTS_REQUEST,
+	COMMENT_COUNTS_UPDATE,
 	COMMENT_REQUEST,
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
@@ -298,3 +299,41 @@ export const setActiveReply = ( { siteId, postId, commentId } ) => ( {
 		commentId,
 	},
 } );
+
+/***
+ * Creates an action that updates comment counts in the comments management section.
+ * @param {Number} siteId Site identifier
+ * @param {Number} postId Post identifier
+ * @param {Number} all filter counts
+ * @param {Number} approved filter counts
+ * @param {Number} pending filter counts
+ * @param {Number} postTrashed filter counts
+ * @param {Number} spam filter counts
+ * @param {Number} totalComments filter counts
+ * @param {Number} trash filter counts
+ * @returns {Object} Action to update comment counts
+ */
+export const updateCommentCounts = ( {
+	siteId,
+	postId,
+	all,
+	approved,
+	pending,
+	postTrashed,
+	spam,
+	totalComments,
+	trash,
+} ) => {
+	return {
+		type: COMMENT_COUNTS_UPDATE,
+		siteId,
+		postId,
+		all,
+		approved,
+		pending,
+		postTrashed,
+		spam,
+		totalComments,
+		trash,
+	};
+};

@@ -28,15 +28,15 @@ import {
 	receiveComments,
 	receiveCommentsError as receiveCommentErrorAction,
 	requestComment as requestCommentAction,
+	updateCommentCounts,
 } from 'state/comments/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, status } = action;
-	const previousStatus = get(
-		getSiteComment( getState(), action.siteId, action.commentId ),
-		'status'
-	);
+	const state = getState();
+	const previousStatus = get( getSiteComment( state, action.siteId, action.commentId ), 'status' );
+	// const counts = getSiteCommentCounts( siteId, )
 
 	dispatch(
 		http(
@@ -53,6 +53,12 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 				previousStatus,
 			}
 		)
+	);
+
+	dispatch(
+		updateCommentCounts( {
+			siteId,
+		} )
 	);
 };
 
