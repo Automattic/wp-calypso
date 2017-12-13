@@ -13,6 +13,7 @@ import domainManagementController from './domain-management/controller';
 import SiftScience from 'lib/siftscience';
 import config from 'config';
 import paths from './paths';
+import { makeLayout, render as clientRender } from 'controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( path => page( path, ...handlers ) );
@@ -37,7 +38,7 @@ function getCommonHandlers(
 export default function() {
 	SiftScience.recordUser();
 
-	page( paths.domainManagementEmail(), siteSelection, sites );
+	page( paths.domainManagementEmail(), siteSelection, sites, makeLayout, clientRender );
 
 	registerMultiPage( {
 		paths: [
@@ -47,6 +48,8 @@ export default function() {
 		handlers: [
 			...getCommonHandlers( { noSitePath: paths.domainManagementEmail() } ),
 			domainManagementController.domainManagementEmail,
+			makeLayout,
+			clientRender,
 		],
 	} );
 
@@ -55,75 +58,102 @@ export default function() {
 			paths.domainManagementAddGoogleApps( ':site', ':domain' ),
 			paths.domainManagementAddGoogleApps( ':site' ),
 		],
-		handlers: [ ...getCommonHandlers(), domainManagementController.domainManagementAddGoogleApps ],
+		handlers: [
+			...getCommonHandlers(),
+			domainManagementController.domainManagementAddGoogleApps,
+			makeLayout,
+			clientRender,
+		],
 	} );
 
 	page(
 		paths.domainManagementEmailForwarding( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementEmailForwarding
+		domainManagementController.domainManagementEmailForwarding,
+		makeLayout,
+		clientRender
 	);
 
 	page(
 		paths.domainManagementRedirectSettings( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementRedirectSettings
+		domainManagementController.domainManagementRedirectSettings,
+		makeLayout,
+		clientRender
 	);
 
 	page(
 		paths.domainManagementContactsPrivacy( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementContactsPrivacy
+		domainManagementController.domainManagementContactsPrivacy,
+		makeLayout,
+		clientRender
 	);
 
 	page(
 		paths.domainManagementEditContactInfo( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementEditContactInfo
+		domainManagementController.domainManagementEditContactInfo,
+		makeLayout,
+		clientRender
 	);
 
 	page(
 		paths.domainManagementDns( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementDns
+		domainManagementController.domainManagementDns,
+		makeLayout,
+		clientRender
 	);
 
 	page(
 		paths.domainManagementNameServers( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementNameServers
+		domainManagementController.domainManagementNameServers,
+		makeLayout,
+		clientRender
 	);
 
 	page(
 		paths.domainManagementTransfer( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementTransfer
+		domainManagementController.domainManagementTransfer,
+		makeLayout,
+		clientRender
 	);
 
 	page(
 		paths.domainManagementTransferOut( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementTransferOut
+		domainManagementController.domainManagementTransferOut,
+		makeLayout,
+		clientRender
 	);
 
 	page(
 		paths.domainManagementTransferToAnotherUser( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementTransferToOtherUser
+		domainManagementController.domainManagementTransferToOtherUser,
+		makeLayout,
+		clientRender
 	);
 
 	page(
 		paths.domainManagementTransferToOtherSite( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementTransferToOtherSite
+		domainManagementController.domainManagementTransferToOtherSite,
+		makeLayout,
+		clientRender
 	);
 
-	page( paths.domainManagementRoot(), siteSelection, sites );
+	page( paths.domainManagementRoot(), siteSelection, sites, makeLayout, clientRender );
 
 	page(
 		paths.domainManagementList( ':site' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementList
+		domainManagementController.domainManagementList,
+		makeLayout,
+		clientRender
 	);
 
 	registerMultiPage( {
@@ -131,19 +161,28 @@ export default function() {
 			paths.domainManagementEdit( ':site', ':domain' ),
 			paths.domainManagementTransferIn( ':site', ':domain' ),
 		],
-		handlers: [ ...getCommonHandlers(), domainManagementController.domainManagementEdit ],
+		handlers: [
+			...getCommonHandlers(),
+			domainManagementController.domainManagementEdit,
+			makeLayout,
+			clientRender,
+		],
 	} );
 
 	page(
 		paths.domainManagementPrivacyProtection( ':site', ':domain' ),
 		...getCommonHandlers( { warnIfJetpack: false } ),
-		domainManagementController.domainManagementPrivacyProtection
+		domainManagementController.domainManagementPrivacyProtection,
+		makeLayout,
+		clientRender
 	);
 
 	page(
 		paths.domainManagementPrimaryDomain( ':site', ':domain' ),
 		...getCommonHandlers(),
-		domainManagementController.domainManagementPrimaryDomain
+		domainManagementController.domainManagementPrimaryDomain,
+		makeLayout,
+		clientRender
 	);
 
 	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
@@ -153,7 +192,9 @@ export default function() {
 			domainsController.domainsAddHeader,
 			domainsController.redirectToAddMappingIfVipSite(),
 			jetPackWarning,
-			sites
+			sites,
+			makeLayout,
+			clientRender
 		);
 
 		page(
@@ -161,7 +202,9 @@ export default function() {
 			siteSelection,
 			domainsController.domainsAddHeader,
 			jetPackWarning,
-			sites
+			sites,
+			makeLayout,
+			clientRender
 		);
 
 		page(
@@ -169,7 +212,9 @@ export default function() {
 			siteSelection,
 			domainsController.domainsAddHeader,
 			jetPackWarning,
-			sites
+			sites,
+			makeLayout,
+			clientRender
 		);
 
 		page(
@@ -177,7 +222,9 @@ export default function() {
 			siteSelection,
 			domainsController.domainsAddRedirectHeader,
 			jetPackWarning,
-			sites
+			sites,
+			makeLayout,
+			clientRender
 		);
 
 		page(
@@ -187,7 +234,9 @@ export default function() {
 			domainsController.redirectIfNoSite( '/domains/add' ),
 			domainsController.redirectToAddMappingIfVipSite(),
 			jetPackWarning,
-			domainsController.domainSearch
+			domainsController.domainSearch,
+			makeLayout,
+			clientRender
 		);
 
 		page(
@@ -197,7 +246,9 @@ export default function() {
 			domainsController.redirectIfNoSite( '/domains/add' ),
 			domainsController.redirectToAddMappingIfVipSite(),
 			jetPackWarning,
-			domainsController.domainSearch
+			domainsController.domainSearch,
+			makeLayout,
+			clientRender
 		);
 
 		page(
@@ -206,7 +257,9 @@ export default function() {
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add' ),
 			jetPackWarning,
-			domainsController.googleAppsWithRegistration
+			domainsController.googleAppsWithRegistration,
+			makeLayout,
+			clientRender
 		);
 
 		page(
@@ -215,7 +268,9 @@ export default function() {
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add/mapping' ),
 			jetPackWarning,
-			domainsController.mapDomain
+			domainsController.mapDomain,
+			makeLayout,
+			clientRender
 		);
 
 		page(
@@ -224,7 +279,9 @@ export default function() {
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add/site-redirect' ),
 			jetPackWarning,
-			domainsController.siteRedirect
+			domainsController.siteRedirect,
+			makeLayout,
+			clientRender
 		);
 
 		page(
@@ -233,17 +290,21 @@ export default function() {
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add/transfer' ),
 			jetPackWarning,
-			domainsController.transferDomain
+			domainsController.transferDomain,
+			makeLayout,
+			clientRender
 		);
 	}
 
-	page( '/domains', siteSelection, sites );
+	page( '/domains', siteSelection, sites, makeLayout, clientRender );
 
 	page(
 		'/domains/:site',
 		siteSelection,
 		navigation,
 		jetPackWarning,
-		domainManagementController.domainManagementIndex
+		domainManagementController.domainManagementIndex,
+		makeLayout,
+		clientRender
 	);
 }

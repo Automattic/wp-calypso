@@ -6,7 +6,6 @@
 
 import page from 'page';
 import React from 'react';
-import ReactDom from 'react-dom';
 
 /**
  * Internal Dependencies
@@ -17,7 +16,6 @@ import DeleteSite from './delete-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import DisconnectSite from './disconnect-site';
 import purchasesPaths from 'me/purchases/paths';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteSettingsMain from 'my-sites/site-settings/main';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
@@ -49,16 +47,12 @@ function canDeleteSite( state, siteId ) {
 	return true;
 }
 
-function renderPage( context, component ) {
-	renderWithReduxStore( component, document.getElementById( 'primary' ), context.store );
-}
-
 const controller = {
 	redirectToGeneral() {
 		page.redirect( '/settings/general' );
 	},
 
-	redirectIfCantDeleteSite( context ) {
+	redirectIfCantDeleteSite( context, next ) {
 		const state = context.store.getState();
 		const dispatch = context.store.dispatch;
 		const siteId = getSelectedSiteId( state );
@@ -81,57 +75,56 @@ const controller = {
 				},
 			} );
 		}
+		next();
 	},
 
-	general( context ) {
-		renderPage( context, <SiteSettingsMain /> );
+	general( context, next ) {
+		context.primary = <SiteSettingsMain />;
+		next();
 	},
 
-	importSite( context ) {
-		renderPage( context, <AsyncLoad require="my-sites/site-settings/section-import" /> );
+	importSite( context, next ) {
+		context.primary = <AsyncLoad require="my-sites/site-settings/section-import" />;
+		next();
 	},
 
-	exportSite( context ) {
-		renderPage( context, <AsyncLoad require="my-sites/site-settings/section-export" /> );
+	exportSite( context, next ) {
+		context.primary = <AsyncLoad require="my-sites/site-settings/section-export" />;
+		next();
 	},
 
-	guidedTransfer( context ) {
-		renderPage(
-			context,
+	guidedTransfer( context, next ) {
+		context.primary = (
 			<AsyncLoad require="my-sites/guided-transfer" hostSlug={ context.params.host_slug } />
 		);
+		next();
 	},
 
-	deleteSite( context ) {
-		const redirectIfCantDeleteSite = controller.redirectIfCantDeleteSite;
+	deleteSite( context, next ) {
+		context.primary = <DeleteSite path={ context.path } />;
 
-		redirectIfCantDeleteSite( context );
-
-		renderPage( context, <DeleteSite path={ context.path } /> );
+		next();
 	},
 
-	disconnectSite( context ) {
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	disconnectSite( context, next ) {
 		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-		renderPage( context, <DisconnectSite reason={ context.params.reason } /> );
+		context.primary = <DisconnectSite reason={ context.params.reason } />;
+		next();
 	},
 
-	disconnectSiteConfirm( context ) {
+	disconnectSiteConfirm( context, next ) {
 		const { reason, text } = context.query;
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-		renderPage( context, <ConfirmDisconnection reason={ reason } text={ text } /> );
+		context.primary = <ConfirmDisconnection reason={ reason } text={ text } />;
+		next();
 	},
 
-	startOver( context ) {
-		const redirectIfCantDeleteSite = controller.redirectIfCantDeleteSite;
-
-		redirectIfCantDeleteSite( context );
-
-		renderPage( context, <StartOver path={ context.path } /> );
+	startOver( context, next ) {
+		context.primary = <StartOver path={ context.path } />;
+		next();
 	},
 
-	themeSetup( context ) {
+	themeSetup( context, next ) {
 		const site = getSelectedSite( context.store.getState() );
 		if ( site && site.jetpack ) {
 			return page.redirect( '/settings/general/' + site.slug );
@@ -141,11 +134,13 @@ const controller = {
 			return page.redirect( '/settings/general/' + site.slug );
 		}
 
-		renderPage( context, <ThemeSetup /> );
+		context.primary = <ThemeSetup />;
+		next();
 	},
 
-	manageConnection( context ) {
-		renderPage( context, <ManageConnection /> );
+	manageConnection( context, next ) {
+		context.primary = <ManageConnection />;
+		next();
 	},
 
 	legacyRedirects( context, next ) {

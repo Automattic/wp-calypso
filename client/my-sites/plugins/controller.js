@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
 import { capitalize, includes, some } from 'lodash';
@@ -21,7 +20,6 @@ import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { setSection } from 'state/ui/actions';
 import { getSelectedSite, getSection } from 'state/ui/selectors';
 import { hasJetpackSites, getSelectedOrAllSitesWithPlugins } from 'state/selectors';
@@ -57,17 +55,13 @@ function renderSinglePlugin( context, siteUrl ) {
 	}
 
 	// Render single plugin component
-	renderWithReduxStore(
-		React.createElement( PluginComponent, {
-			path: context.path,
-			prevQuerystring: lastPluginsQuerystring,
-			prevPath,
-			pluginSlug,
-			siteUrl,
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( PluginComponent, {
+		path: context.path,
+		prevQuerystring: lastPluginsQuerystring,
+		prevPath,
+		pluginSlug,
+		siteUrl,
+	} );
 }
 
 function getPathWithoutSiteSlug( context, site ) {
@@ -85,16 +79,12 @@ function renderPluginList( context, basePath ) {
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
 	lastPluginsQuerystring = context.querystring;
 
-	renderWithReduxStore(
-		React.createElement( PluginListComponent, {
-			path: basePath,
-			context,
-			filter: context.params.pluginFilter,
-			search,
-		} ),
-		'primary',
-		context.store
-	);
+	context.primary = React.createElement( PluginListComponent, {
+		path: basePath,
+		context,
+		filter: context.params.pluginFilter,
+		search,
+	} );
 
 	if ( search ) {
 		analytics.ga.recordEvent( 'Plugins', 'Search', 'Search term', search );
@@ -137,15 +127,11 @@ function renderPluginsBrowser( context ) {
 
 	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-	renderWithReduxStore(
-		React.createElement( PluginBrowser, {
-			path: context.path,
-			category,
-			search: searchTerm,
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( PluginBrowser, {
+		path: context.path,
+		category,
+		search: searchTerm,
+	} );
 }
 
 function renderPluginWarnings( context ) {
@@ -153,14 +139,10 @@ function renderPluginWarnings( context ) {
 	const site = getSelectedSite( state );
 	const pluginSlug = decodeURIComponent( context.params.plugin );
 
-	renderWithReduxStore(
-		React.createElement( PluginEligibility, {
-			siteSlug: site.slug,
-			pluginSlug,
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( PluginEligibility, {
+		siteSlug: site.slug,
+		pluginSlug,
+	} );
 }
 
 function renderProvisionPlugins( context ) {
@@ -168,7 +150,6 @@ function renderProvisionPlugins( context ) {
 	const section = getSection( state );
 	const site = getSelectedSite( state );
 	context.store.dispatch( setSection( Object.assign( {}, section, { secondary: false } ) ) );
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	let baseAnalyticsPath = 'plugins/setup';
 	if ( site ) {
 		baseAnalyticsPath += '/:site';
@@ -176,36 +157,34 @@ function renderProvisionPlugins( context ) {
 
 	analytics.pageView.record( baseAnalyticsPath, 'Jetpack Plugins Setup' );
 
-	renderWithReduxStore(
-		React.createElement( PlanSetup, {
-			whitelist: context.query.only || false,
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( PlanSetup, {
+		whitelist: context.query.only || false,
+	} );
 }
 
 const controller = {
-	plugins( context ) {
+	plugins( context, next ) {
 		const { pluginFilter: filter = 'all' } = context.params;
 		const basePath = route.sectionify( context.path ).replace( '/' + filter, '' );
 
 		context.params.pluginFilter = filter;
 		notices.clearNotices( 'notices' );
 		renderPluginList( context, basePath );
+		next();
 	},
 
-	plugin( context ) {
+	plugin( context, next ) {
 		const siteUrl = route.getSiteFragment( context.path );
 
 		notices.clearNotices( 'notices' );
 		renderSinglePlugin( context, siteUrl );
+		next();
 	},
 
-	// If the "plugin" part of the route is actually a site or a valid category, render the
-	// plugin browser for that site or category. Otherwise, fall through to the next hander,
-	// which is most likely the `plugin()`.
-	maybeBrowsePlugins( context, next ) {
+	// The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route.
+	// If the "plugin" part of the route is actually a site,
+	// render the plugin browser for that site. Otherwise render plugin.
+	browsePluginsOrPlugin( context, next ) {
 		const siteUrl = route.getSiteFragment( context.path );
 		const { plugin } = context.params;
 
@@ -213,19 +192,21 @@ const controller = {
 			plugin &&
 			( ( siteUrl && plugin === siteUrl.toString() ) || includes( allowedCategoryNames, plugin ) )
 		) {
-			controller.browsePlugins( context );
+			controller.browsePlugins( context, next );
 			return;
 		}
 
+		controller.plugin( context, next );
+	},
+
+	browsePlugins( context, next ) {
+		renderPluginsBrowser( context );
 		next();
 	},
 
-	browsePlugins( context ) {
-		renderPluginsBrowser( context );
-	},
-
-	upload( context ) {
-		renderWithReduxStore( <PluginUpload />, document.getElementById( 'primary' ), context.store );
+	upload( context, next ) {
+		context.primary = <PluginUpload />;
+		next();
 	},
 
 	jetpackCanUpdate( context, next ) {
@@ -267,12 +248,14 @@ const controller = {
 		next();
 	},
 
-	setupPlugins( context ) {
+	setupPlugins( context, next ) {
 		renderProvisionPlugins( context );
+		next();
 	},
 
-	eligibility( context ) {
+	eligibility( context, next ) {
 		renderPluginWarnings( context );
+		next();
 	},
 
 	resetHistory() {

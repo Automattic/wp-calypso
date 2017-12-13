@@ -17,13 +17,12 @@ import {
 import RecommendedPostsStream from 'reader/recommendations/posts';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
 const exported = {
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
-	recommendedPosts( context ) {
+	recommendedPosts( context, next ) {
 		const basePath = route.sectionify( context.path );
 
 		let fullAnalyticsPageTitle = '';
@@ -65,23 +64,20 @@ const exported = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		renderWithReduxStore(
-			React.createElement( RecommendedPostsStream, {
-				key: 'recommendations_posts',
-				postsStore: RecommendedPostsStore,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					ANALYTICS_PAGE_TITLE,
-					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-				showBack: userHasHistory( context ),
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( RecommendedPostsStream, {
+			key: 'recommendations_posts',
+			postsStore: RecommendedPostsStore,
+			trackScrollPage: trackScrollPage.bind(
+				null,
+				basePath,
+				fullAnalyticsPageTitle,
+				ANALYTICS_PAGE_TITLE,
+				mcKey
+			),
+			onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+			showBack: userHasHistory( context ),
+		} );
+		next();
 	},
 };
 

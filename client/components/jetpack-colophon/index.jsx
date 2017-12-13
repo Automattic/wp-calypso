@@ -17,7 +17,7 @@ const JetpackColophon = ( { className, translate } ) => {
 			<span className="jetpack-colophon__power">
 				{ translate( 'Powered by {{jetpackLogo /}}', {
 					components: {
-						jetpackLogo: <JetpackLogo size={ 24 } full />,
+						jetpackLogo: <JetpackLogo size={ 32 } full />,
 					},
 				} ) }
 			</span>

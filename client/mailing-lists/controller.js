@@ -12,10 +12,9 @@ import { setSection } from 'state/ui/actions';
  * Internal Dependencies
  */
 import MainComponent from './main';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 export default {
-	unsubscribe( context ) {
+	unsubscribe( context, next ) {
 		// We don't need the sidebar here.
 		context.store.dispatch(
 			setSection(
@@ -26,15 +25,12 @@ export default {
 			)
 		);
 
-		renderWithReduxStore(
-			React.createElement( MainComponent, {
-				email: context.query.email,
-				category: context.query.category,
-				hmac: context.query.hmac,
-				context: omit( context.query, [ 'email', 'category', 'hmac' ] ),
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( MainComponent, {
+			email: context.query.email,
+			category: context.query.category,
+			hmac: context.query.hmac,
+			context: omit( context.query, [ 'email', 'category', 'hmac' ] ),
+		} );
+		next();
 	},
 };

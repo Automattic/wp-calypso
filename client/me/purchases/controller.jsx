@@ -22,7 +22,7 @@ import NoSitesMessage from 'components/empty-content/no-sites-message';
 import paths from './paths';
 import PurchasesHeader from './purchases-list/header';
 import PurchasesList from './purchases-list';
-import { concatTitle, recordPageView, renderWithReduxStore } from 'lib/react-helpers';
+import { concatTitle, recordPageView } from 'lib/react-helpers';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 import titles from './titles';
 import userFactory from 'lib/user';
@@ -36,100 +36,88 @@ function setTitle( context, ...title ) {
 }
 
 export default {
-	addCardDetails( context ) {
+	addCardDetails( context, next ) {
 		setTitle( context, titles.addCardDetails );
 
 		recordPurchasesPageView( paths.addCardDetails(), 'Add Card Details' );
 
-		renderWithReduxStore(
-			<AddCardDetails purchaseId={ parseInt( context.params.purchaseId, 10 ) } />,
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = <AddCardDetails purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
+		next();
 	},
 
-	addCreditCard( context ) {
+	addCreditCard( context, next ) {
 		recordPurchasesPageView( paths.addCreditCard(), 'Add Credit Card' );
 
-		renderWithReduxStore( <AddCreditCard />, document.getElementById( 'primary' ), context.store );
+		context.primary = <AddCreditCard />;
+		next();
 	},
 
-	cancelPrivacyProtection( context ) {
+	cancelPrivacyProtection( context, next ) {
 		setTitle( context, titles.cancelPrivacyProtection );
 
 		recordPurchasesPageView( paths.cancelPrivacyProtection(), 'Cancel Privacy Protection' );
 
-		renderWithReduxStore(
-			<CancelPrivacyProtection purchaseId={ parseInt( context.params.purchaseId, 10 ) } />,
-			document.getElementById( 'primary' ),
-			context.store
+		context.primary = (
+			<CancelPrivacyProtection purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
 		);
+		next();
 	},
 
-	cancelPurchase( context ) {
+	cancelPurchase( context, next ) {
 		setTitle( context, titles.cancelPurchase );
 
 		recordPurchasesPageView( paths.cancelPurchase(), 'Cancel Purchase' );
 
-		renderWithReduxStore(
-			<CancelPurchase purchaseId={ parseInt( context.params.purchaseId, 10 ) } />,
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = <CancelPurchase purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
+		next();
 	},
 
-	confirmCancelDomain( context ) {
+	confirmCancelDomain( context, next ) {
 		setTitle( context, titles.confirmCancelDomain );
 
 		recordPurchasesPageView( paths.confirmCancelDomain(), 'Confirm Cancel Domain' );
 
-		renderWithReduxStore(
-			<ConfirmCancelDomain purchaseId={ parseInt( context.params.purchaseId, 10 ) } />,
-			document.getElementById( 'primary' ),
-			context.store
+		context.primary = (
+			<ConfirmCancelDomain purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
 		);
+		next();
 	},
 
-	editCardDetails( context ) {
+	editCardDetails( context, next ) {
 		setTitle( context, titles.editCardDetails );
 
 		recordPurchasesPageView( paths.editCardDetails(), 'Edit Card Details' );
 
-		renderWithReduxStore(
+		context.primary = (
 			<EditCardDetails
 				cardId={ context.params.cardId }
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			/>,
-			document.getElementById( 'primary' ),
-			context.store
+			/>
 		);
+		next();
 	},
 
-	list( context ) {
+	list( context, next ) {
 		setTitle( context );
 
 		recordPurchasesPageView( paths.purchasesRoot() );
 
-		renderWithReduxStore(
-			<PurchasesList noticeType={ context.params.noticeType } />,
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = <PurchasesList noticeType={ context.params.noticeType } />;
+		next();
 	},
 
-	managePurchase( context ) {
+	managePurchase( context, next ) {
 		setTitle( context, titles.managePurchase );
 
 		recordPurchasesPageView( paths.managePurchase(), 'Manage Purchase' );
 
-		renderWithReduxStore(
+		context.primary = (
 			<ManagePurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				destinationType={ context.params.destinationType }
-			/>,
-			document.getElementById( 'primary' ),
-			context.store
+			/>
 		);
+		next();
 	},
 
 	noSitesMessage( context, next ) {
@@ -141,13 +129,11 @@ export default {
 
 		recordPurchasesPageView( context.path, 'No Sites' );
 
-		renderWithReduxStore(
+		context.primary = (
 			<Main>
 				<PurchasesHeader section={ 'purchases' } />
 				<NoSitesMessage />
-			</Main>,
-			document.getElementById( 'primary' ),
-			context.store
+			</Main>
 		);
 	},
 };

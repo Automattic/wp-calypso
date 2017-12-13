@@ -20,7 +20,6 @@ import EmailForwardingData from 'components/data/domain-management/email-forward
 import NameserversData from 'components/data/domain-management/nameservers';
 import paths from 'my-sites/domains/paths';
 import ProductsList from 'lib/products-list';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -31,21 +30,20 @@ import { decodeURIComponentIfValid } from 'lib/url';
 const productsList = new ProductsList();
 
 export default {
-	domainManagementList( pageContext ) {
+	domainManagementList( pageContext, next ) {
 		analytics.pageView.record( paths.domainManagementList( ':site' ), 'Domain Management' );
 
-		renderWithReduxStore(
+		pageContext.primary = (
 			<DomainManagementData
 				component={ DomainManagement.List }
 				context={ pageContext }
 				productsList={ productsList }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 
-	domainManagementEdit( pageContext ) {
+	domainManagementEdit( pageContext, next ) {
 		analytics.pageView.record(
 			paths.domainManagementEdit( ':site', ':domain' ),
 			'Domain Management › Edit'
@@ -54,148 +52,139 @@ export default {
 		const isTransfer = includes( pageContext.path, '/transfer/in/' );
 		const component = isTransfer ? DomainManagement.TransferIn : DomainManagement.Edit;
 
-		renderWithReduxStore(
+		pageContext.primary = (
 			<DomainManagementData
 				component={ component }
 				context={ pageContext }
 				productsList={ productsList }
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 
-	domainManagementPrimaryDomain: function( pageContext ) {
+	domainManagementPrimaryDomain: function( pageContext, next ) {
 		analytics.pageView.record(
 			paths.domainManagementPrimaryDomain( ':site', ':domain' ),
 			'Domain Management › Set Primary Domain'
 		);
 
-		renderWithReduxStore(
-			<DomainManagement.PrimaryDomain selectedDomainName={ pageContext.params.domain } />,
-			document.getElementById( 'primary' ),
-			pageContext.store
+		pageContext.primary = (
+			<DomainManagement.PrimaryDomain selectedDomainName={ pageContext.params.domain } />
 		);
+		next();
 	},
 
-	domainManagementContactsPrivacy( pageContext ) {
+	domainManagementContactsPrivacy( pageContext, next ) {
 		analytics.pageView.record(
 			paths.domainManagementContactsPrivacy( ':site', ':domain' ),
 			'Domain Management › Contacts and Privacy'
 		);
 
-		renderWithReduxStore(
+		pageContext.primary = (
 			<WhoisData
 				component={ DomainManagement.ContactsPrivacy }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 
-	domainManagementEditContactInfo( pageContext ) {
+	domainManagementEditContactInfo( pageContext, next ) {
 		analytics.pageView.record(
 			paths.domainManagementEditContactInfo( ':site', ':domain' ),
 			'Domain Management › Contacts and Privacy › Edit Contact Info'
 		);
 
-		renderWithReduxStore(
+		pageContext.primary = (
 			<WhoisData
 				component={ DomainManagement.EditContactInfo }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 
-	domainManagementEmail( pageContext ) {
+	domainManagementEmail( pageContext, next ) {
 		analytics.pageView.record(
 			paths.domainManagementEmail( ':site', pageContext.params.domain ? ':domain' : undefined ),
 			'Domain Management › Email'
 		);
 
-		renderWithReduxStore(
+		pageContext.primary = (
 			<EmailData
 				component={ DomainManagement.Email }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 				context={ pageContext }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 
-	domainManagementEmailForwarding( pageContext ) {
+	domainManagementEmailForwarding( pageContext, next ) {
 		analytics.pageView.record(
 			paths.domainManagementEmailForwarding( ':site', ':domain' ),
 			'Domain Management › Email › Email Forwarding'
 		);
 
-		renderWithReduxStore(
+		pageContext.primary = (
 			<EmailForwardingData
 				component={ DomainManagement.EmailForwarding }
 				selectedDomainName={ pageContext.params.domain }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 
-	domainManagementDns( pageContext ) {
+	domainManagementDns( pageContext, next ) {
 		analytics.pageView.record(
 			paths.domainManagementDns( ':site', ':domain' ),
 			'Domain Management › Name Servers and DNS › DNS Records'
 		);
 
-		renderWithReduxStore(
+		pageContext.primary = (
 			<DnsData
 				component={ DomainManagement.Dns }
 				selectedDomainName={ pageContext.params.domain }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
-	domainManagementNameServers( pageContext ) {
+	domainManagementNameServers( pageContext, next ) {
 		analytics.pageView.record(
 			paths.domainManagementNameServers( ':site', ':domain' ),
 			'Domain Management › Name Servers and DNS'
 		);
 
-		renderWithReduxStore(
+		pageContext.primary = (
 			<NameserversData
 				component={ DomainManagement.NameServers }
 				selectedDomainName={ pageContext.params.domain }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 
-	domainManagementPrivacyProtection( pageContext ) {
+	domainManagementPrivacyProtection( pageContext, next ) {
 		analytics.pageView.record(
 			paths.domainManagementPrivacyProtection( ':site', ':domain' ),
 			'Domain Management › Contacts and Privacy › Privacy Protection'
 		);
 
-		renderWithReduxStore(
+		pageContext.primary = (
 			<WhoisData
 				component={ DomainManagement.PrivacyProtection }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 
-	domainManagementAddGoogleApps( pageContext ) {
+	domainManagementAddGoogleApps( pageContext, next ) {
 		analytics.pageView.record(
 			paths.domainManagementAddGoogleApps(
 				':site',
@@ -204,32 +193,30 @@ export default {
 			'Domain Management › Add Google Apps'
 		);
 
-		renderWithReduxStore(
+		pageContext.primary = (
 			<DomainManagementData
 				component={ DomainManagement.AddGoogleApps }
 				context={ pageContext }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 
-	domainManagementRedirectSettings( pageContext ) {
+	domainManagementRedirectSettings( pageContext, next ) {
 		analytics.pageView.record(
 			paths.domainManagementRedirectSettings( ':site', ':domain' ),
 			'Domain Management › Redirect Settings'
 		);
 
-		renderWithReduxStore(
+		pageContext.primary = (
 			<SiteRedirectData
 				component={ DomainManagement.SiteRedirect }
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 
 	domainManagementIndex( pageContext ) {
@@ -239,18 +226,17 @@ export default {
 		page.redirect( '/domains/manage' + ( siteSlug ? `/${ siteSlug }` : '' ) );
 	},
 
-	domainManagementTransfer( pageContext ) {
-		renderWithReduxStore(
+	domainManagementTransfer( pageContext, next ) {
+		pageContext.primary = (
 			<TransferData
 				component={ DomainManagement.Transfer }
 				selectedDomainName={ pageContext.params.domain }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 
-	domainManagementTransferToOtherSite( pageContext ) {
+	domainManagementTransferToOtherSite( pageContext, next ) {
 		const state = pageContext.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
@@ -260,17 +246,16 @@ export default {
 			return;
 		}
 
-		renderWithReduxStore(
+		pageContext.primary = (
 			<TransferData
 				component={ DomainManagement.TransferToOtherSite }
 				selectedDomainName={ pageContext.params.domain }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 
-	domainManagementTransferToOtherUser( pageContext ) {
+	domainManagementTransferToOtherUser( pageContext, next ) {
 		const state = pageContext.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
@@ -280,24 +265,22 @@ export default {
 			return;
 		}
 
-		renderWithReduxStore(
+		pageContext.primary = (
 			<TransferData
 				component={ DomainManagement.TransferToOtherUser }
 				selectedDomainName={ pageContext.params.domain }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 
-	domainManagementTransferOut( pageContext ) {
-		renderWithReduxStore(
+	domainManagementTransferOut( pageContext, next ) {
+		pageContext.primary = (
 			<TransferData
 				component={ DomainManagement.TransferOut }
 				selectedDomainName={ pageContext.params.domain }
-			/>,
-			document.getElementById( 'primary' ),
-			pageContext.store
+			/>
 		);
+		next();
 	},
 };

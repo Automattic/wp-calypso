@@ -47,14 +47,10 @@ import {
 } from 'state/action-types';
 import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'state/login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
-import {
-	getErrorFromHTTPError,
-	getErrorFromWPCOMError,
-	getSMSMessageFromResponse,
-} from './utils';
+import { getErrorFromHTTPError, getErrorFromWPCOMError, getSMSMessageFromResponse } from './utils';
 import wpcom from 'lib/wp';
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Attempt to login a user.

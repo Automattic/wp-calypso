@@ -18,7 +18,7 @@ import { noop } from 'lodash';
 import GoogleIcon from 'components/social-icons/google';
 import Popover from 'components/popover';
 import { preventWidows } from 'lib/formatting';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { isFormDisabled } from 'state/login/selectors';
 
 class GoogleLoginButton extends Component {

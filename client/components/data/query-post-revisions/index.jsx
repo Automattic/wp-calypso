@@ -28,7 +28,8 @@ class QueryPostRevisions extends Component {
 	}
 
 	request() {
-		this.props.requestPostRevisions( this.props.siteId, this.props.postId, this.props.postType );
+		const { comparisons, postId, postType, siteId } = this.props;
+		this.props.requestPostRevisions( siteId, postId, postType, comparisons );
 	}
 
 	render() {
@@ -37,6 +38,7 @@ class QueryPostRevisions extends Component {
 }
 
 QueryPostRevisions.propTypes = {
+	comparisons: PropTypes.array,
 	postId: PropTypes.number,
 	siteId: PropTypes.number,
 

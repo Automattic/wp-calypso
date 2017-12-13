@@ -78,6 +78,8 @@ export const fetchMagicLoginRequestEmail = email => dispatch => {
 				type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
 				error: error.message,
 			} );
+
+			return Promise.reject( error );
 		} );
 };
 

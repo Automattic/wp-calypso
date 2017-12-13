@@ -99,15 +99,23 @@ class SiteSelector extends Component {
 
 	scrollToHighlightedSite() {
 		const selectorElement = ReactDom.findDOMNode( this.refs.selector );
-		if ( selectorElement ) {
-			const highlightedSiteElement = ReactDom.findDOMNode( this.refs.highlightedSite );
-			if ( highlightedSiteElement ) {
-				scrollIntoView( highlightedSiteElement, selectorElement, {
-					onlyScrollIfNeeded: true,
-				} );
-			} else {
-				selectorElement.scrollTop = 0;
-			}
+
+		if ( ! selectorElement ) {
+			return;
+		}
+
+		if ( ! this.highlightedSiteRef ) {
+			selectorElement.scrollTop = 0;
+
+			return;
+		}
+
+		const highlightedSiteElement = ReactDom.findDOMNode( this.highlightedSiteRef );
+
+		if ( highlightedSiteElement ) {
+			scrollIntoView( highlightedSiteElement, selectorElement, {
+				onlyScrollIfNeeded: true,
+			} );
 		}
 	}
 
@@ -293,11 +301,20 @@ class SiteSelector extends Component {
 		return siteElements;
 	}
 
+	setHighlightedSiteRef = isHighlighted => component => {
+		if ( isHighlighted && component ) {
+			this.highlightedSiteRef = component;
+		} else if ( isHighlighted ) {
+			this.highlightedSiteRef = null;
+		}
+	};
+
 	renderAllSites() {
 		if ( this.props.showAllSites && ! this.props.sitesFound && this.props.allSitesPath ) {
 			this.visibleSites.push( ALL_SITES );
 
 			const isHighlighted = this.isHighlighted( ALL_SITES );
+
 			return (
 				<AllSites
 					key="selector-all-sites"
@@ -306,7 +323,7 @@ class SiteSelector extends Component {
 					onMouseEnter={ this.onAllSitesHover }
 					isHighlighted={ isHighlighted }
 					isSelected={ this.isSelected( ALL_SITES ) }
-					ref={ isHighlighted ? 'highlightedSite' : null }
+					ref={ this.setHighlightedSiteRef( isHighlighted ) }
 				/>
 			);
 		}
@@ -320,6 +337,7 @@ class SiteSelector extends Component {
 		this.visibleSites.push( site.ID );
 
 		const isHighlighted = this.isHighlighted( site.ID );
+
 		return (
 			<Site
 				site={ site }
@@ -329,7 +347,7 @@ class SiteSelector extends Component {
 				onMouseEnter={ this.onSiteHover }
 				isHighlighted={ isHighlighted }
 				isSelected={ this.isSelected( site ) }
-				ref={ isHighlighted ? 'highlightedSite' : null }
+				ref={ this.setHighlightedSiteRef( isHighlighted ) }
 			/>
 		);
 	}

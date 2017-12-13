@@ -23,20 +23,19 @@ import Spinner from 'components/spinner';
 import Gridicon from 'gridicons';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 import analytics from 'lib/analytics';
-import JetpackSite from 'lib/site/jetpack';
 import support from 'lib/url/support';
 import utils from 'lib/site/utils';
 import HappyChatButton from 'components/happychat/button';
 
 // Redux actions & selectors
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import {
-	getRawSite,
+	getSite,
 	getSiteAdminUrl,
-	isJetpackSite,
 	isJetpackSiteMainNetworkSite,
 	isJetpackSiteMultiSite,
 	isRequestingSites,
+	getJetpackSiteRemoteManagementUrl,
 } from 'state/sites/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
@@ -66,17 +65,15 @@ import {
 	FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURES_LIST,
-	getPlanClass,
-} from 'lib/plans/constants';
-import { getPlan } from 'lib/plans';
-import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
+	getPlanClass,
 } from 'lib/plans/constants';
+import { getPlan } from 'lib/plans';
 
 const vpFeatures = {
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: true,
@@ -158,7 +155,7 @@ class JetpackThankYouCard extends Component {
 		if (
 			! site ||
 			! site.jetpack ||
-			! site.canManage() ||
+			! site.canManage ||
 			! this.allPluginsHaveWporgData() ||
 			this.props.isInstalling
 		) {
@@ -198,7 +195,7 @@ class JetpackThankYouCard extends Component {
 			! site ||
 			! site.jetpack ||
 			! site.canUpdateFiles ||
-			! site.canManage() ||
+			! site.canManage ||
 			this.props.isFinished
 		) {
 			return;
@@ -303,7 +300,7 @@ class JetpackThankYouCard extends Component {
 				: this.getFeaturesWithStatus().map( this.renderFeature );
 		const features = <ul className="checkout-thank-you__jetpack-features">{ mappedFeatures }</ul>;
 
-		if ( selectedSite && ! selectedSite.canManage() ) {
+		if ( selectedSite && ! selectedSite.canManage ) {
 			return <FeatureExample>{ features }</FeatureExample>;
 		}
 
@@ -415,12 +412,13 @@ class JetpackThankYouCard extends Component {
 	}
 
 	renderManageNotice() {
-		const { translate, selectedSite } = this.props;
-		const manageUrl = selectedSite.getRemoteManagementURL() + '&section=plugins-setup';
+		const { translate, selectedSite, remoteManagementUrl } = this.props;
 
-		if ( ! selectedSite || selectedSite.canManage() ) {
+		if ( ! selectedSite || selectedSite.canManage ) {
 			return null;
 		}
+
+		const manageUrl = remoteManagementUrl + '&section=plugins-setup';
 
 		return (
 			<Notice
@@ -634,7 +632,6 @@ class JetpackThankYouCard extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
-		const site = getSelectedSite( state );
 		const whitelist = ownProps.whitelist || false;
 		let plan = getCurrentPlan( state, siteId );
 		let planSlug;
@@ -646,8 +643,6 @@ export default connect(
 		const planFeatures = plan && plan.getFeatures ? plan.getFeatures() : false;
 
 		// We need to pass the raw redux site to JetpackSite() in order to properly build the site.
-		const selectedSite =
-			site && isJetpackSite( state, siteId ) ? JetpackSite( getRawSite( state, siteId ) ) : site;
 		return {
 			wporg: state.plugins.wporg.items,
 			isSiteMultiSite: isJetpackSiteMultiSite( state, siteId ),
@@ -659,10 +654,11 @@ export default connect(
 			plugins: getPluginsForSite( state, siteId, whitelist ),
 			activePlugin: getActivePlugin( state, siteId, whitelist ),
 			nextPlugin: getNextPlugin( state, siteId, whitelist ),
-			selectedSite: selectedSite,
+			selectedSite: getSite( state, siteId ),
 			isRequestingSites: isRequestingSites( state ),
 			siteId,
 			jetpackAdminPageUrl: getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack' ),
+			remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId ),
 			planFeatures,
 			planClass,
 			planSlug,

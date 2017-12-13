@@ -5,7 +5,6 @@
  */
 
 import i18n from 'i18n-calypso';
-import ReactDom from 'react-dom';
 import React from 'react';
 import { isEmpty } from 'lodash';
 import page, { Route } from 'page';
@@ -19,7 +18,6 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import productsFactory from 'lib/products-list';
 import upgradesActions from 'lib/upgrades/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GsuiteNudge from 'my-sites/checkout/gsuite-nudge';
@@ -37,7 +35,7 @@ const checkoutRoutes = [
 ];
 
 export default {
-	checkout: function( context ) {
+	checkout: function( context, next ) {
 		const Checkout = require( './checkout' ),
 			CheckoutData = require( 'components/data/checkout' ),
 			CartData = require( 'components/data/cart' ),
@@ -58,7 +56,7 @@ export default {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-		renderWithReduxStore(
+		context.primary = (
 			<CheckoutData>
 				<Checkout
 					product={ product }
@@ -67,21 +65,18 @@ export default {
 					selectedFeature={ selectedFeature }
 					couponCode={ context.query.code }
 				/>
-			</CheckoutData>,
-			document.getElementById( 'primary' ),
-			context.store
+			</CheckoutData>
 		);
 
-		renderWithReduxStore(
+		context.secondary = (
 			<CartData>
 				<SecondaryCart selectedSite={ selectedSite } />
-			</CartData>,
-			document.getElementById( 'secondary' ),
-			context.store
+			</CartData>
 		);
+		next();
 	},
 
-	sitelessCheckout: function( context ) {
+	sitelessCheckout: function( context, next ) {
 		const Checkout = require( './checkout' ),
 			CheckoutData = require( 'components/data/checkout' ),
 			CartData = require( 'components/data/cart' ),
@@ -92,24 +87,21 @@ export default {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-		renderWithReduxStore(
+		context.primary = (
 			<CheckoutData>
 				<Checkout reduxStore={ context.store } productsList={ productsList } />
-			</CheckoutData>,
-			document.getElementById( 'primary' ),
-			context.store
+			</CheckoutData>
 		);
 
-		renderWithReduxStore(
+		context.secondary = (
 			<CartData>
 				<SecondaryCart />
-			</CartData>,
-			document.getElementById( 'secondary' ),
-			context.store
+			</CartData>
 		);
+		next();
 	},
 
-	checkoutThankYou: function( context ) {
+	checkoutThankYou: function( context, next ) {
 		const CheckoutThankYouComponent = require( './checkout-thank-you' ),
 			{ routePath, routeParams } = route.sectionifyWithRoutes( context.path, checkoutRoutes ),
 			receiptId = Number( context.params.receiptId ),
@@ -125,7 +117,7 @@ export default {
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );
 
-		renderWithReduxStore(
+		context.primary = (
 			<CheckoutThankYouComponent
 				productsList={ productsList }
 				receiptId={ receiptId }
@@ -133,15 +125,13 @@ export default {
 				domainOnlySiteFlow={ isEmpty( context.params.site ) }
 				selectedFeature={ context.params.feature }
 				selectedSite={ selectedSite }
-			/>,
-			document.getElementById( 'primary' ),
-			context.store
+			/>
 		);
 
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		next();
 	},
 
-	gsuiteNudge( context ) {
+	gsuiteNudge( context, next ) {
 		const { domain, site, receiptId } = context.params;
 		context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
 
@@ -167,7 +157,7 @@ export default {
 			page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
 		};
 
-		renderWithReduxStore(
+		context.primary = (
 			<GsuiteNudge
 				domain={ domain }
 				productsList={ productsList }
@@ -175,11 +165,9 @@ export default {
 				selectedSiteId={ selectedSite.ID }
 				onAddGoogleApps={ handleAddGoogleApps }
 				onClickSkip={ handleClickSkip }
-			/>,
-			document.getElementById( 'primary' ),
-			context.store
+			/>
 		);
 
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		next();
 	},
 };

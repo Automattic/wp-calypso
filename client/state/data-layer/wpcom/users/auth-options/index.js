@@ -16,7 +16,7 @@ import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
 } from 'state/action-types';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 export const getAuthAccountType = ( { dispatch }, action ) => {
 	const { usernameOrEmail } = action;

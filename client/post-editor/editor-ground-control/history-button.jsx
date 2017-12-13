@@ -43,7 +43,7 @@ HistoryButton.propTypes = {
 	// connected to dispatch
 	openPostRevisionsDialog: PropTypes.func.isRequired,
 	recordTracksEvent: PropTypes.func.isRequired,
-
+  
 	// localize
 	translate: PropTypes.func,
 };

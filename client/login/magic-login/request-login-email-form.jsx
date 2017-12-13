@@ -23,6 +23,7 @@ import {
 	getMagicLoginRequestedEmailSuccessfully,
 } from 'state/selectors';
 import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
 import FormButton from 'components/forms/form-button';
@@ -77,7 +78,20 @@ class RequestLoginEmailForm extends React.Component {
 		if ( ! usernameOrEmail.length ) {
 			return;
 		}
-		this.props.fetchMagicLoginRequestEmail( usernameOrEmail );
+
+		this.props.recordTracksEvent( 'calypso_login_email_link_submit' );
+
+		this.props
+			.fetchMagicLoginRequestEmail( usernameOrEmail )
+			.then( () => {
+				this.props.recordTracksEvent( 'calypso_login_email_link_success' );
+			} )
+			.catch( error => {
+				this.props.recordTracksEvent( 'calypso_login_email_link_failure', {
+					error_code: error.error,
+					error_message: error.message,
+				} );
+			} );
 	};
 
 	getUsernameOrEmailFromState() {
@@ -178,6 +192,7 @@ const mapState = state => {
 const mapDispatch = {
 	fetchMagicLoginRequestEmail,
 	hideMagicLoginRequestNotice,
+	recordTracksEvent,
 };
 
 export default connect( mapState, mapDispatch )( localize( RequestLoginEmailForm ) );
