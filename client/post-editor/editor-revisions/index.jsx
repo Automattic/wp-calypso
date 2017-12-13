@@ -14,7 +14,7 @@ import { flow, get } from 'lodash';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import {
 	getPostRevisions,
-	getPostRevisionsDiff,
+	getPostRevisionsComparisons,
 	getPostRevisionsAuthorsId,
 	getPostRevisionsSelectedRevisionId,
 } from 'state/selectors';
@@ -82,23 +82,9 @@ export default flow(
 		const postId = getEditorPostId( state );
 		const siteId = getSelectedSiteId( state );
 
-		const revisions = getPostRevisions( state, siteId, postId, 'display' );
+		const revisions = getPostRevisions( state, siteId, postId );
 		const selectedRevisionId = getPostRevisionsSelectedRevisionId( state );
-
-		// @TODO move comparisons to a cached selector
-		const comparisons = {};
-		for ( let i = 0; i < revisions.length; i++ ) {
-			const revisionId = get( revisions, [ i, 'id' ], 0 );
-			const nextRevisionId = revisionId && get( revisions, [ i - 1, 'id' ] );
-			const prevRevisionId = revisionId && get( revisions, [ i + 1, 'id' ] );
-
-			comparisons[ revisionId ] = {
-				diff: getPostRevisionsDiff( state, siteId, postId, prevRevisionId, revisionId ),
-				nextRevisionId,
-				prevRevisionId,
-			};
-		}
-
+		const comparisons = getPostRevisionsComparisons( state, siteId, postId );
 		const selectedDiff = get( comparisons, [ selectedRevisionId, 'diff' ], {} );
 
 		return {

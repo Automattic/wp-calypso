@@ -17,11 +17,9 @@ describe( 'getPostRevisions', () => {
 				{
 					posts: {
 						revisions: {
-							diffs: {
-								12345678: {
-									10: {
-										revisions: {},
-									},
+							12345678: {
+								10: {
+									revisions: {},
 								},
 							},
 						},
@@ -33,7 +31,7 @@ describe( 'getPostRevisions', () => {
 		).to.eql( [] );
 	} );
 
-	test( 'should return an array of post revisions', () => {
+	test( 'should return a sorted array of revisions', () => {
 		expect(
 			getPostRevisions(
 				{
@@ -42,15 +40,26 @@ describe( 'getPostRevisions', () => {
 							diffs: {
 								12345678: {
 									10: {
-										revisions: [
-											{
-												'11:12': {
-													id: 11,
-													post_author: 99499,
-													post_title: 'Badman <img onerror= />',
-												},
+										revisions: {
+											168: {
+												post_date_gmt: '2017-12-12 18:24:37Z',
+												post_modified_gmt: '2017-12-12 18:24:37Z',
+												post_author: '20416304',
+												id: 168,
+												post_content: 'This is a super cool test!\nOh rly? Ya rly',
+												post_excerpt: '',
+												post_title: 'Yet Another Awesome Test Post!',
 											},
-										],
+											169: {
+												post_date_gmt: '2017-12-14 18:24:37Z',
+												post_modified_gmt: '2017-12-14 18:24:37Z',
+												post_author: '20416304',
+												id: 169,
+												post_content: 'This is a super duper cool test!\nOh rly? Ya rly',
+												post_excerpt: '',
+												post_title: 'Yet Another Awesome Test Post!',
+											},
+										},
 									},
 								},
 							},
@@ -65,11 +74,22 @@ describe( 'getPostRevisions', () => {
 			)
 		).to.eql( [
 			{
-				'11:12': {
-					id: 11,
-					post_author: 99499,
-					post_title: 'Badman <img onerror= />',
-				},
+				post_date_gmt: '2017-12-14 18:24:37Z',
+				post_modified_gmt: '2017-12-14 18:24:37Z',
+				post_author: '20416304',
+				id: 169,
+				post_content: 'This is a super duper cool test!\nOh rly? Ya rly',
+				post_excerpt: '',
+				post_title: 'Yet Another Awesome Test Post!',
+			},
+			{
+				post_date_gmt: '2017-12-12 18:24:37Z',
+				post_modified_gmt: '2017-12-12 18:24:37Z',
+				post_author: '20416304',
+				id: 168,
+				post_content: 'This is a super cool test!\nOh rly? Ya rly',
+				post_excerpt: '',
+				post_title: 'Yet Another Awesome Test Post!',
 			},
 		] );
 	} );
