@@ -109,7 +109,7 @@ class TagStream extends React.Component {
 			} );
 		}
 
-		if ( ! tag ) {
+		if ( ! tag || tag.error ) {
 			return (
 				<React.Fragment>
 					<QueryReaderFollowedTags />
@@ -118,9 +118,7 @@ class TagStream extends React.Component {
 					<TagStreamHeader
 						title={ title }
 						imageSearchString={ imageSearchString }
-						showFollow={ !! ( tag && tag.id ) }
-						following={ this.isSubscribed() }
-						onFollowToggle={ this.toggleFollowing }
+						showFollow={ false }
 						showBack={ this.props.showBack }
 					/>
 					<EmptyContent />

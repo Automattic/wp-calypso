@@ -56,9 +56,10 @@ export function receiveTagsSuccess( store, action, apiResponse ) {
 export function receiveTagsError( store, action, error ) {
 	// if tag does not exist, refreshing page wont help
 	if ( get( getHeaders( action ), 'status' ) === 404 ) {
+		const slug = action.payload.slug;
 		store.dispatch(
 			receiveTags( {
-				payload: [ { id: action.payload.slug, error: true } ],
+				payload: [ { id: slug, slug, error: true } ],
 			} )
 		);
 		return;

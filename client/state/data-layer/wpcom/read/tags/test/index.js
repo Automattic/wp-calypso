@@ -157,7 +157,7 @@ describe( 'wpcom-api', () => {
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWithMatch(
 					receiveTagsAction( {
-						payload: [ { id: slug, error: true } ],
+						payload: [ { id: slug, slug, error: true } ],
 					} )
 				);
 			} );
