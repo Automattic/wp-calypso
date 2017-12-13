@@ -5,7 +5,7 @@
  */
 import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
-
+import { map } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -30,20 +30,26 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		this.setState( { [ field ]: event.target.value } );
 	};
 
-	render() {
-		const { translate } = this.props;
-		const headerText = translate( 'Add a business address.' );
-		const subHeaderText = translate(
-			'Enter your business address to have a map added to your website.'
-		);
+	fields = this.getFields();
 
-		const fields = {
+	getFields() {
+		const { translate } = this.props;
+
+		return {
 			name: translate( 'Business Name' ),
 			street: translate( 'Street Address' ),
 			city: translate( 'City' ),
 			stateName: translate( 'State' ),
 			zip: translate( 'ZIP Code' ),
 		};
+	}
+
+	render() {
+		const { translate } = this.props;
+		const headerText = translate( 'Add a business address.' );
+		const subHeaderText = translate(
+			'Enter your business address to have a map added to your website.'
+		);
 
 		return (
 			<Fragment>
@@ -52,14 +58,14 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 
 				<Card className="steps__form">
 					<form>
-						{ Object.keys( fields ).map( field => (
-							<FormFieldset key={ field }>
-								<FormLabel htmlFor={ field }>{ fields[ field ] }</FormLabel>
+						{ map( this.fields, ( fieldLabel, fieldName ) => (
+							<FormFieldset key={ fieldName }>
+								<FormLabel htmlFor={ fieldName }>{ fieldLabel }</FormLabel>
 								<FormTextInput
-									id={ field }
-									onChange={ this.getChangeHandler( field ) }
-									value={ this.state[ field ] }
-									autoFocus={ field === 'name' }
+									id={ fieldName }
+									onChange={ this.getChangeHandler( fieldName ) }
+									value={ this.state[ fieldName ] }
+									autoFocus={ fieldName === 'name' }
 								/>
 							</FormFieldset>
 						) ) }
