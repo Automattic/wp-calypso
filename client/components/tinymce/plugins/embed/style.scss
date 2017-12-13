@@ -58,8 +58,6 @@
 			.embed__preview {
 				height: 100%;
 				width: 100%;
-				/* todo rem instead? */
-				/* todo mockup calls for #f4f6f8, but have to reuse an existing color variable instead of creating new one? */
 
 				&.isLoading {
 					visibility: hidden;
@@ -71,8 +69,7 @@
 	}
 
 	.dialog__action-buttons {
-		border-top: none; /* When there is no preview, this border looks bad. When there is a preview, it's not needed because of .embed__preview's background. */
-		/* todo maybe remove ^ if add a error message or default thing when there isn't a preview */
+		border-top: none;
 	}
 
 	.dialog__action-buttons:before {
