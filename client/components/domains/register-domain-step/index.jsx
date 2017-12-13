@@ -145,8 +145,6 @@ class RegisterDomainStep extends React.Component {
 		onSave: noop,
 		onAddMapping: noop,
 		onAddDomain: noop,
-		includeDotBlogSubdomain: true,
-		surveyVertical: 'a8c.12',
 	};
 
 	constructor( props ) {
