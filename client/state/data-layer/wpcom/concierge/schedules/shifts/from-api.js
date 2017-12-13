@@ -8,8 +8,9 @@ import responseSchema from './schema';
 
 export const transformShift = shift => ( {
 	id: shift.id,
-	beginTimestamp: shift.begin_timestamp,
-	endTimestamp: shift.end_timestamp,
+	// Concert Unix seconds-based timestamps to JS milliseconds-based timestamps
+	beginTimestamp: shift.begin_timestamp * 1000,
+	endTimestamp: shift.end_timestamp * 1000,
 } );
 
 export const transform = response => response.map( transformShift );

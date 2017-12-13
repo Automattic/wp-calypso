@@ -28,9 +28,14 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 class CalendarCard extends Component {
 	static propTypes = {
+		appointments: PropTypes.arrayOf(
+			PropTypes.shape( {
+				beginTimestamp: PropTypes.number.isRequired,
+				id: PropTypes.string.isRequired,
+			} )
+		).isRequired,
 		date: PropTypes.number.isRequired,
 		onSubmit: PropTypes.func.isRequired,
-		times: PropTypes.arrayOf( PropTypes.number ).isRequired,
 	};
 
 	/**
@@ -69,15 +74,15 @@ class CalendarCard extends Component {
 	};
 
 	render() {
-		const { times, translate } = this.props;
+		const { appointments, translate } = this.props;
 
 		return (
 			<FoldableCard
 				className="concierge__calendar-card"
-				clickableHeader={ ! isEmpty( times ) }
+				clickableHeader={ ! isEmpty( appointments ) }
 				compact
-				disabled={ isEmpty( times ) }
-				summary={ isEmpty( times ) ? translate( 'No sessions available' ) : null }
+				disabled={ isEmpty( appointments ) }
+				summary={ isEmpty( appointments ) ? translate( 'No sessions available' ) : null }
 				header={ this.renderHeader() }
 			>
 				<FormFieldset>
@@ -85,9 +90,9 @@ class CalendarCard extends Component {
 						{ translate( 'Choose a starting time' ) }
 					</FormLabel>
 					<FormSelect id="concierge-start-time">
-						{ times.map( time => (
-							<option value={ time } key={ time }>
-								{ moment( time ).format( 'h:mma z' ) }
+						{ appointments.map( ( { beginTimestamp, id } ) => (
+							<option value={ id } key={ id }>
+								{ moment( beginTimestamp ).format( 'h:mma z' ) }
 							</option>
 						) ) }
 					</FormSelect>
