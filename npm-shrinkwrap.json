@@ -5888,8 +5888,8 @@
       }
     },
     "gridicons": {
-      "version": "2.1.0",
-      "integrity": "sha1-NIVyLWaJ4Mqu62a2ys8VuXJsKSk=",
+      "version": "2.1.1",
+      "integrity": "sha1-dGETKidgO6i80L3mtDUZdo3MCNs=",
       "requires": {
         "prop-types": "15.5.10"
       }
