@@ -110,20 +110,23 @@ describe( 'middleware', () => {
 					hello: 'world',
 				},
 			];
+
 			const tracksEvent = recordTracksEvent( ...props );
 			const thunk = recordTracksEventWithClientId( ...props );
+
+			let dispatchedEvent;
+			const dispatch = ( createdAction ) => dispatchedEvent = createdAction;
+
 			const clientId = 123;
+			const getState = () => ( {
+				ui: { oauth2Clients: { currentClientId: clientId } },
+			} );
 
-			thunk(
-				event => {
-					set( tracksEvent, 'meta.analytics[0].payload.properties.client_id', clientId );
+			thunk( dispatch, getState );
 
-					expect( event ).to.eql( tracksEvent );
-				},
-				() => ( {
-					ui: { oauth2Clients: { currentClientId: clientId } },
-				} )
-			);
+			tracksEvent.meta.analytics[ 0 ].payload.properties.client_id = clientId;
+
+			expect( dispatchedEvent ).to.eql( tracksEvent );
 		} );
 
 		test( 'should create page view event with client id', () => {
@@ -133,20 +136,23 @@ describe( 'middleware', () => {
 					hello: 'world',
 				},
 			];
-			const clientId = 123;
+
 			const pageViewEvent = recordPageView( ...props );
 			const thunk = recordPageViewWithClientId( ...props );
 
-			thunk(
-				event => {
-					set( pageViewEvent, 'meta.analytics[0].payload.client_id', clientId );
+			let dispatchedEvent;
+			const dispatch = ( createdAction ) => dispatchedEvent = createdAction;
 
-					expect( event ).to.eql( pageViewEvent );
-				},
-				() => ( {
-					ui: { oauth2Clients: { currentClientId: clientId } },
-				} )
-			);
+			const clientId = 123;
+			const getState = () => ( {
+				ui: { oauth2Clients: { currentClientId: clientId } },
+			} );
+
+			thunk( dispatch, getState );
+
+			pageViewEvent.meta.analytics[ 0 ].payload.client_id = clientId;
+
+			expect( dispatchedEvent ).to.eql( pageViewEvent );
 		} );
 	} );
 } );
