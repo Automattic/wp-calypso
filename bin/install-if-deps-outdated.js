@@ -31,7 +31,7 @@ if ( needsInstall() ) {
 	if ( installResult ) {
 		process.exit( installResult );
 	}
-	fs.utimesSync( 'node_modules', Date.now(), Date.now() );
+	fs.utimesSync( 'node_modules', new Date(), new Date() );
 
 	// Cleanup old Githooks (remove in a few months from June 2017)
 	const path = require( 'path' );
