@@ -242,7 +242,7 @@ export function plansSelection( context ) {
 				context={ context }
 				destinationType={ context.params.destinationType }
 				interval={ context.params.interval }
-				redirectAfterAuth={ context.query.redirectAfterAuth }
+				queryRedirect={ context.query.redirect }
 			/>
 		</CheckoutData>,
 		document.getElementById( 'primary' ),

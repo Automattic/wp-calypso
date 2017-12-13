@@ -37,7 +37,7 @@ const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
 	static propTypes = {
-		redirectAfterAuth: PropTypes.string,
+		queryRedirect: PropTypes.string,
 
 		// Connected props
 		isAutomatedTransfer: PropTypes.bool, // null indicates unknown
@@ -91,9 +91,9 @@ class Plans extends Component {
 	};
 
 	redirectToWpAdmin() {
-		const { redirectAfterAuth } = this.props;
-		if ( redirectAfterAuth ) {
-			this.props.goBackToWpAdmin( redirectAfterAuth );
+		const { queryRedirect } = this.props;
+		if ( queryRedirect ) {
+			this.props.goBackToWpAdmin( queryRedirect );
 			this.redirecting = true;
 			this.props.completeFlow();
 		} else if ( this.props.selectedSite ) {

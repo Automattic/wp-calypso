@@ -515,7 +515,7 @@ export class LoggedInForm extends Component {
 			return `/start/pressable-nux?blogid=${ siteId }`;
 		}
 
-		return addQueryArgs( { redirectAfterAuth }, PLANS_PAGE + siteSlug );
+		return addQueryArgs( { redirect: redirectAfterAuth }, PLANS_PAGE + siteSlug );
 	}
 
 	renderFooterLinks() {
