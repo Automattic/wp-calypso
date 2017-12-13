@@ -55,12 +55,12 @@ class Order extends Component {
 		const { site, siteId, order, translate } = this.props;
 		const onSuccess = ( dispatch, orderId ) => {
 			dispatch(
-				successNotice( translate( 'Order saved.' ), { duration: 5000, displayOnNextPage: true } )
+				successNotice( translate( 'Order created.' ), { duration: 5000, displayOnNextPage: true } )
 			);
 			page.redirect( getLink( `/store/order/:site/${ orderId }`, site ) );
 		};
 		const onFailure = dispatch => {
-			dispatch( errorNotice( translate( 'Unable to save order.' ), { duration: 5000 } ) );
+			dispatch( errorNotice( translate( 'Unable to create order.' ), { duration: 5000 } ) );
 		};
 
 		this.props.saveOrder( siteId, order, onSuccess, onFailure );
