@@ -10,7 +10,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getAuthorizationData, isRemoteSiteOnSitesList } from 'state/jetpack-connect/selectors';
+import { getAuthorizationData } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import FormattedHeader from 'components/formatted-header';
 import SiteCard from './site-card';
@@ -125,12 +125,7 @@ class AuthFormHeader extends Component {
 			return null;
 		}
 
-		return (
-			<SiteCard
-				queryObject={ get( this.props, [ 'authorize', 'queryObject' ], {} ) }
-				isAlreadyOnSitesList={ !! this.props.isAlreadyOnSitesList }
-			/>
-		);
+		return <SiteCard queryObject={ get( this.props, [ 'authorize', 'queryObject' ], {} ) } />;
 	}
 
 	render() {
@@ -150,7 +145,6 @@ class AuthFormHeader extends Component {
 export default connect( state => {
 	return {
 		authorize: getAuthorizationData( state ),
-		isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 		jetpackVersion: getJetpackConnectJetpackVersion( state ),
 		partnerId: getJetpackConnectPartnerId( state ),
 		user: getCurrentUser( state ),
