@@ -16,11 +16,6 @@
  */
 
 /**
- * External dependencies
- */
-import { matchesProperty } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import * as actionTypes from 'state/action-types';
@@ -31,14 +26,23 @@ const state = {
 	historySize: 100,
 };
 
+const queryToPredicate = query => {
+	if ( query instanceof RegExp ) {
+		return ( { type } ) => query.test( type );
+	}
+	if ( 'string' === typeof query ) {
+		return ( { type } ) => type === query;
+	}
+	if ( 'function' === typeof query ) {
+		return query;
+	}
+
+	throw new TypeError( 'provide string or RegExp matching `action.type` or a predicate function' );
+};
+
 const actionLog = {
 	clear: () => ( state.actionHistory = [] ),
-	filter: typeTest =>
-		state.actionHistory.filter(
-			typeTest instanceof RegExp
-				? ( { type } ) => typeTest.test( type )
-				: matchesProperty( 'type', typeTest )
-		),
+	filter: query => state.actionHistory.filter( queryToPredicate( query ) ),
 	setSize: size => ( state.historySize = size ),
 	start: () => ( state.shouldRecordActions = true ),
 	stop: () => ( state.shouldRecordActions = false ),
