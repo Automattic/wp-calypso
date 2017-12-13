@@ -16,6 +16,7 @@ import { localize } from 'i18n-calypso';
 import { canCurrentUser } from 'state/selectors';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isSiteAutomatedTransfer, hasSitePendingAutomatedTransfer } from 'state/selectors';
 import route from 'lib/route';
@@ -84,6 +85,7 @@ class App extends Component {
 		return (
 			<div className={ className }>
 				<DocumentHead title={ documentTitle } />
+				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				{ children }
 			</div>
 		);

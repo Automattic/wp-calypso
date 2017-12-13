@@ -12,7 +12,7 @@ import {
 	isActivityLogLoading,
 	getActivityLogEvents,
 } from '../selectors';
-import config from 'config';
+import * as plugins from 'woocommerce/state/selectors/plugins';
 
 const getState = ( notesState, labelsState ) => ( {
 	extensions: {
@@ -186,6 +186,15 @@ const loadedState = getState( notesLoadedSubtree, labelsLoadedSubtree );
 const loadedStateWithUi = { ...loadedState, ui: { selectedSiteId: 123 } };
 
 describe( 'selectors', () => {
+	let wcsEnabledStub;
+	beforeEach( () => {
+		wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( true );
+	} );
+
+	afterEach( () => {
+		wcsEnabledStub.restore();
+	} );
+
 	describe( '#isActivityLogLoaded', () => {
 		it( 'should be false when notes are currently being fetched for this order.', () => {
 			expect( isActivityLogLoaded( notesAndLabelsLoadingState, 45, 123 ) ).to.be.false;
@@ -196,10 +205,11 @@ describe( 'selectors', () => {
 			expect( isActivityLogLoaded( labelsLoadingState, 45, 123 ) ).to.be.falsy;
 		} );
 
-		it( 'should be true when notes are loaded and the WooCommerce Services extension is disabled.', sinon.test( function() {
-			this.stub( config, 'isEnabled' ).withArgs( 'woocommerce/extension-wcservices' ).returns( false );
+		it( 'should be true when notes are loaded and the WooCommerce Services extension is disabled.', () => {
+			wcsEnabledStub.restore();
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
 			expect( isActivityLogLoaded( labelsLoadingState, 45, 123 ) ).to.be.true;
-		} ) );
+		} );
 
 		it( 'should be true when notes and labels are loaded for this order.', () => {
 			expect( isActivityLogLoaded( loadedState, 45, 123 ) ).to.be.true;
@@ -225,10 +235,11 @@ describe( 'selectors', () => {
 			expect( isActivityLogLoaded( getState( notesLoadingSubtree, labelsErrorSubtree ), 45, 123 ) ).to.be.false;
 		} );
 
-		it( 'should be true if WCS is disabled, and notes were loaded', sinon.test( function() {
-			this.stub( config, 'isEnabled' ).withArgs( 'woocommerce/extension-wcservices' ).returns( false );
+		it( 'should be true if WCS is disabled, and notes were loaded', () => {
+			wcsEnabledStub.restore();
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
 			expect( isActivityLogLoaded( getState( notesLoadedSubtree, labelsLoadingState ), 45, 123 ) ).to.be.true;
-		} ) );
+		} );
 	} );
 
 	describe( '#isActivityLogLoading', () => {
@@ -241,10 +252,11 @@ describe( 'selectors', () => {
 			expect( isActivityLogLoading( labelsLoadingState, 45, 123 ) ).to.be.true;
 		} );
 
-		it( 'should be false when notes are loaded and the WooCommerce Services extension is disabled.', sinon.test( function() {
-			this.stub( config, 'isEnabled' ).withArgs( 'woocommerce/extension-wcservices' ).returns( false );
+		it( 'should be false when notes are loaded and the WooCommerce Services extension is disabled.', () => {
+			wcsEnabledStub.restore();
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
 			expect( isActivityLogLoading( labelsLoadingState, 45, 123 ) ).to.be.false;
-		} ) );
+		} );
 
 		it( 'should be false when notes and labels are loaded for this order.', () => {
 			expect( isActivityLogLoading( loadedState, 45, 123 ) ).to.be.false;
@@ -281,8 +293,9 @@ describe( 'selectors', () => {
 			expect( getActivityLogEvents( getState( emptyNotesSubtree, labelsLoadingSubtree ), 45, 123 ) ).to.be.empty;
 		} );
 
-		it( 'should return just the notes when notes are loaded and the Services extension is disabled.', sinon.test( function() {
-			this.stub( config, 'isEnabled' ).withArgs( 'woocommerce/extension-wcservices' ).returns( false );
+		it( 'should return just the notes when notes are loaded and the Services extension is disabled.', () => {
+			wcsEnabledStub.restore();
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
 			expect( getActivityLogEvents( loadedState, 45, 123 ) ).to.deep.equal( [
 				{
 					key: 1,
@@ -297,7 +310,7 @@ describe( 'selectors', () => {
 					content: 'Something customer-facing',
 				},
 			] );
-		} ) );
+		} );
 
 		it( 'should return a list of events if everything is loaded.', () => {
 			expect( getActivityLogEvents( loadedState, 45, 123 ) ).to.deep.equal( [

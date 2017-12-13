@@ -13,7 +13,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import Button from 'components/button';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import {
@@ -25,6 +24,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { createWcsShippingSaveActionList } from 'woocommerce/woocommerce-services/state/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
+import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 
 class ShippingSettingsSaveButton extends Component {
 	componentDidMount = () => {
@@ -47,11 +47,10 @@ class ShippingSettingsSaveButton extends Component {
 	};
 
 	save = () => {
-		if ( ! config.isEnabled( 'woocommerce/extension-wcservices' ) ) {
+		const { translate, wcsEnabled } = this.props;
+		if ( ! wcsEnabled ) {
 			return;
 		}
-
-		const { translate } = this.props;
 
 		const successAction = successNotice( translate( 'Shipping settings saved' ), {
 			duration: 4000,
@@ -82,8 +81,7 @@ class ShippingSettingsSaveButton extends Component {
 	};
 
 	render() {
-		const { translate, loading, site, finishedInitialSetup, isSaving } = this.props;
-		const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
+		const { wcsEnabled, translate, loading, site, finishedInitialSetup, isSaving } = this.props;
 
 		if ( loading || ! site ) {
 			return null;
@@ -107,10 +105,12 @@ class ShippingSettingsSaveButton extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
+	const wcsEnabled = isWcsEnabled( state, site.ID );
 	const loading = areSetupChoicesLoading( state );
 	const finishedInitialSetup = getFinishedInitialSetup( state );
 	return {
 		site,
+		wcsEnabled,
 		finishedInitialSetup,
 		loading,
 		isSaving: Boolean( getActionList( state ) ),

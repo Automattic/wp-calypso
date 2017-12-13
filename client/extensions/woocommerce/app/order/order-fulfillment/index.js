@@ -16,7 +16,6 @@ import { first } from 'lodash';
  */
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import Button from 'components/button';
-import config from 'config';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -43,8 +42,7 @@ import {
 	getStoreLocation,
 	areSettingsGeneralLoaded,
 } from 'woocommerce/state/sites/settings/general/selectors';
-
-const wcsEnabled = config.isEnabled( 'woocommerce/extension-wcservices' );
+import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 
 class OrderFulfillment extends Component {
 	static propTypes = {
@@ -182,7 +180,7 @@ class OrderFulfillment extends Component {
 	}
 
 	renderFulfillmentAction() {
-		const { labelsLoaded, labelsError, order, site, translate } = this.props;
+		const { wcsEnabled, labelsLoaded, labelsError, order, site, translate } = this.props;
 		const orderFinished = isOrderFinished( order.status );
 		const labelsLoading = wcsEnabled && ! labelsLoaded;
 
@@ -222,7 +220,7 @@ class OrderFulfillment extends Component {
 	}
 
 	render() {
-		const { order, site, translate } = this.props;
+		const { wcsEnabled, order, site, translate } = this.props;
 		const { errorMessage, showDialog, trackingNumber } = this.state;
 		const dialogClass = 'woocommerce order-fulfillment'; // eslint/css specificity hack
 		if ( ! order ) {
@@ -293,6 +291,7 @@ class OrderFulfillment extends Component {
 
 export default connect(
 	( state, { order, site } ) => {
+		const wcsEnabled = isWcsEnabled( state, site.ID );
 		const labelsLoaded =
 			wcsEnabled &&
 			Boolean( areLabelsFullyLoaded( state, order.id, site.ID ) ) &&
@@ -303,6 +302,7 @@ export default connect(
 		const labelCountriesData = getCountriesData( state, order.id, site.ID );
 
 		return {
+			wcsEnabled,
 			labelsLoaded,
 			labelsError: isLabelDataFetchError( state, order.id, site.ID ),
 			labelsEnabled: areLabelsEnabled( state, site.ID ),

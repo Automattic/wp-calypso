@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { areOrderNotesLoaded, areOrderNotesLoading, getOrderNotes } from '../notes/selectors';
 import {
@@ -10,6 +9,7 @@ import {
 	isFetching as areShippingLabelsLoading,
 	getLabels,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import * as plugins from 'woocommerce/state/selectors/plugins';
 
 /*
  * Enum with the types of events that can be displayed in the Order Activity Log
@@ -58,7 +58,7 @@ export const isActivityLogLoaded = ( state, orderId, siteId = getSelectedSiteId(
 		return false;
 	}
 
-	if ( ! config.isEnabled( 'woocommerce/extension-wcservices' ) || areShippingLabelsErrored( state, orderId, siteId ) ) {
+	if ( ! plugins.isWcsEnabled( state, siteId ) || areShippingLabelsErrored( state, orderId, siteId ) ) {
 		return true;
 	}
 
@@ -77,7 +77,7 @@ export const isActivityLogLoading = ( state, orderId, siteId = getSelectedSiteId
 		return true;
 	}
 
-	if ( ! config.isEnabled( 'woocommerce/extension-wcservices' ) || areShippingLabelsErrored( state, orderId, siteId ) ) {
+	if ( ! plugins.isWcsEnabled( state, siteId ) || areShippingLabelsErrored( state, orderId, siteId ) ) {
 		return false;
 	}
 
@@ -101,7 +101,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 		content: note.note,
 	} ) );
 
-	if ( config.isEnabled( 'woocommerce/extension-wcservices' ) ) {
+	if ( plugins.isWcsEnabled( state, siteId ) ) {
 		getLabels( state, orderId, siteId ).forEach( ( label, index, allLabels ) => {
 			const labelIndex = allLabels.length - 1 - index;
 			if ( label.refund ) {
