@@ -136,6 +136,9 @@ export const combineReducersAndAddLater = function(
 
 	const reducer = function( state = {}, action ) {
 		const keys = uniq( Object.keys( reducers ).concat( Object.keys( state ) ) );
+		// This mirrors the original Redux implementation
+		// https://github.com/reactjs/redux/blob/87071fd4ab71acc4fdd8b3db37d2d7ff08b724a3/src/combineReducers.js#L165-L179
+		// and keeps the for loop (instead of replacing it with forEach) for speed.
 		let hasChanged = false;
 		const nextState = {};
 		for ( let i = 0; i < keys.length; i++ ) {
