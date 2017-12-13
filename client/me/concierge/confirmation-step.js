@@ -26,7 +26,7 @@ class ConfirmationStep extends Component {
 				<FormattedHeader
 					headerText={ translate( 'Your Concierge session is booked!' ) }
 					subHeaderText={ translate(
-						'We will send you an email with information on how to get prepared'
+						'We will send you an email with information on how to get prepared.'
 					) }
 				/>
 
