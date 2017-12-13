@@ -92,7 +92,7 @@ class InfoStep extends Component {
 							onSelect={ this.setFieldValue }
 						/>
 						<FormSettingExplanation>
-							{ translate( 'Choose a city in your timezone' ) }
+							{ translate( 'Choose a city in your timezone.' ) }
 						</FormSettingExplanation>
 					</FormFieldset>
 
