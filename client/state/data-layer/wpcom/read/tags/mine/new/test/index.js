@@ -2,10 +2,8 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import freeze from 'deep-freeze';
 import { find } from 'lodash';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -40,23 +38,14 @@ export const successfulFollowResponse = freeze( {
 	],
 } );
 
-const unsuccessfulResponse = freeze( {
-	...successfulFollowResponse,
-	subscribed: false,
-} );
-
 const slug = 'chicken';
 
 describe( 'follow tag request', () => {
 	describe( '#requestFollow', () => {
 		test( 'should dispatch HTTP request to tag endpoint', () => {
 			const action = requestFollowAction( slug );
-			const dispatch = sinon.spy();
 
-			requestFollowTag( { dispatch }, action );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
+			expect( requestFollowTag( action ) ).toEqual(
 				http( {
 					apiVersion: '1.1',
 					method: 'POST',
@@ -69,11 +58,8 @@ describe( 'follow tag request', () => {
 	} );
 
 	describe( '#receiveFollowSuccess', () => {
-		test( 'should dispatch the followed tag with isFollowing=true', () => {
+		test( 'should return the followed tag with isFollowing=true', () => {
 			const action = requestFollowAction( slug );
-			const dispatch = sinon.spy();
-
-			receiveFollowTag( { dispatch }, action, successfulFollowResponse );
 
 			const followedTagId = successfulFollowResponse.added_tag;
 			const followedTag = find( successfulFollowResponse.tags, { ID: followedTagId } );
@@ -82,35 +68,20 @@ describe( 'follow tag request', () => {
 				isFollowing: true,
 			};
 
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
+			expect( receiveFollowTag( action, [ normalizedFollowedTag ] ) ).toMatchObject(
 				receiveTagsAction( {
 					payload: [ normalizedFollowedTag ],
 				} )
 			);
-		} );
-
-		test( 'if api reports error then create an error notice', () => {
-			const action = requestFollowAction( slug );
-			const dispatch = sinon.spy();
-
-			receiveFollowTag( { dispatch }, action, unsuccessfulResponse );
-			expect( dispatch ).to.have.been.calledWithMatch( {
-				type: NOTICE_CREATE,
-			} );
 		} );
 	} );
 
 	describe( '#receiveError', () => {
 		test( 'should dispatch an error notice', () => {
 			const action = requestFollowAction( slug );
-			const dispatch = sinon.spy();
 			const error = 'could not find tag';
 
-			receiveError( { dispatch }, action, error );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWithMatch( {
+			expect( receiveError( action, error ) ).toMatchObject( {
 				type: NOTICE_CREATE,
 			} );
 		} );

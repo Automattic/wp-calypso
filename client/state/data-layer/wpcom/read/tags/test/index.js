@@ -2,10 +2,8 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import { map } from 'lodash';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -55,12 +53,8 @@ describe( 'wpcom-api', () => {
 		describe( '#requestTags', () => {
 			test( 'single tag: should dispatch HTTP request to tag endpoint', () => {
 				const action = requestTagsAction( slug );
-				const dispatch = sinon.spy();
 
-				requestTags( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( requestTags( action ) ).toMatchObject(
 					http( {
 						apiVersion: '1.2',
 						method: 'GET',
@@ -73,12 +67,8 @@ describe( 'wpcom-api', () => {
 
 			test( 'multiple tags: should dispatch HTTP request to tags endpoint', () => {
 				const action = requestTagsAction();
-				const dispatch = sinon.spy();
 
-				requestTags( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( requestTags( action ) ).toMatchObject(
 					http( {
 						apiVersion: '1.2',
 						method: 'GET',
@@ -93,12 +83,10 @@ describe( 'wpcom-api', () => {
 		describe( '#receiveTagsResponse', () => {
 			test( 'single tag: should normalize + dispatch', () => {
 				const action = requestTagsAction( slug );
-				const dispatch = sinon.spy();
 
-				receiveTagsSuccess( { dispatch }, action, successfulSingleTagResponse );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect(
+					receiveTagsSuccess( action, fromApi( successfulSingleTagResponse ) )
+				).toMatchObject(
 					receiveTagsAction( {
 						payload: fromApi( successfulSingleTagResponse ),
 						resetFollowingData: false,
@@ -108,17 +96,15 @@ describe( 'wpcom-api', () => {
 
 			test( 'multiple tags: should dispatch the tags', () => {
 				const action = requestTagsAction();
-				const dispatch = sinon.spy();
-
-				receiveTagsSuccess( { dispatch }, action, successfulFollowedTagsResponse );
 
 				const transformedResponse = map( fromApi( successfulFollowedTagsResponse ), tag => ( {
 					...tag,
 					isFollowing: true,
 				} ) );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect(
+					receiveTagsSuccess( action, fromApi( successfulFollowedTagsResponse ) )
+				).toMatchObject(
 					receiveTagsAction( {
 						payload: transformedResponse,
 						resetFollowingData: true,
@@ -128,15 +114,11 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#receiveTagsError', () => {
-			test( 'should dispatch an error notice', () => {
+			test( 'should return an error notice', () => {
 				const action = requestTagsAction( slug );
-				const dispatch = sinon.spy();
 				const error = 'could not find tag(s)';
 
-				receiveTagsError( { dispatch }, action, error );
-
-				expect( dispatch ).to.have.been.calledTwice;
-				expect( dispatch ).to.have.been.calledWithMatch( {
+				expect( receiveTagsError( action, error )[ 0 ] ).toMatchObject( {
 					type: NOTICE_CREATE,
 				} );
 			} );
@@ -150,12 +132,9 @@ describe( 'wpcom-api', () => {
 						},
 					},
 				};
-				const dispatch = sinon.spy();
 				const error = 'could not find tag(s)';
-				receiveTagsError( { dispatch }, action, error );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWithMatch(
+				expect( receiveTagsError( action, error ) ).toMatchObject(
 					receiveTagsAction( {
 						payload: [ { id: slug, slug, error: true } ],
 					} )
