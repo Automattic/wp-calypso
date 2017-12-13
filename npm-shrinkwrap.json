@@ -48,8 +48,8 @@
       }
     },
     "@types/node": {
-      "version": "8.0.58",
-      "integrity": "sha512-V746iUU7eHNdzQipoACuguDlVhC7IHK8CES1jSkuFt352wwA84BCWPXaGekBd7R5XdNK5ReHONDVKxlL9IreAw==",
+      "version": "8.5.0",
+      "integrity": "sha512-9FmMtKisAgPekOGYeaXoB6QYDSX8MhLZurlpPoVupVj5Pl5ewNfv1yZrUs84B0XK7s1G/Vay10oXBbM1akSfTA==",
       "dev": true
     },
     "JSONStream": {
@@ -425,7 +425,7 @@
       "integrity": "sha1-a8vQOKM3xwYn5/zkQ4+lgYjwk3s=",
       "requires": {
         "browserslist": "1.3.6",
-        "caniuse-db": "1.0.30000782",
+        "caniuse-db": "1.0.30000783",
         "normalize-range": "0.1.2",
         "num2fraction": "1.2.2",
         "postcss": "5.2.18",
@@ -1295,7 +1295,7 @@
           "version": "2.10.0",
           "integrity": "sha512-WyvzSLsuAVPOjbljXnyeWl14Ae+ukAT8MUuagKVzIDvwBxl4UAwD1xqtyQs2eWYPGUKMeC3Ol62goqYuKqTTcw==",
           "requires": {
-            "caniuse-lite": "1.0.30000782",
+            "caniuse-lite": "1.0.30000783",
             "electron-to-chromium": "1.3.28"
           }
         },
@@ -1786,7 +1786,7 @@
       "version": "1.3.6",
       "integrity": "sha1-lS/0jVZGPTtTj4XvL46t39KEsTM=",
       "requires": {
-        "caniuse-db": "1.0.30000782"
+        "caniuse-db": "1.0.30000783"
       }
     },
     "bser": {
@@ -1903,12 +1903,12 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000782",
-      "integrity": "sha1-2IFbzhV4w1Cs7REyUHMBIF4Pq1M="
+      "version": "1.0.30000783",
+      "integrity": "sha1-FrMNRyZqT1FcxprgMWtnDJYDzb4="
     },
     "caniuse-lite": {
-      "version": "1.0.30000782",
-      "integrity": "sha1-W4K4w4XyU0h0XEccpRMgr7G38lQ="
+      "version": "1.0.30000783",
+      "integrity": "sha1-m1SZ+xtQPSNF0SqmuGEoUvQnb/0="
     },
     "cardinal": {
       "version": "1.0.0",
@@ -3176,7 +3176,7 @@
       "dev": true,
       "requires": {
         "browserslist": "1.3.6",
-        "caniuse-db": "1.0.30000782",
+        "caniuse-db": "1.0.30000783",
         "css-rule-stream": "1.1.0",
         "duplexer2": "0.0.2",
         "jsonfilter": "1.1.2",
@@ -3928,7 +3928,7 @@
         "imurmurhash": "0.1.4",
         "inquirer": "0.12.0",
         "is-my-json-valid": "2.13.1",
-        "is-resolvable": "1.0.0",
+        "is-resolvable": "1.0.1",
         "js-yaml": "3.10.0",
         "json-stable-stringify": "1.0.1",
         "levn": "0.3.0",
@@ -5888,8 +5888,8 @@
       }
     },
     "gridicons": {
-      "version": "2.1.0",
-      "integrity": "sha1-NIVyLWaJ4Mqu62a2ys8VuXJsKSk=",
+      "version": "2.1.1",
+      "integrity": "sha1-dGETKidgO6i80L3mtDUZdo3MCNs=",
       "requires": {
         "prop-types": "15.5.10"
       }
@@ -6761,12 +6761,9 @@
       "dev": true
     },
     "is-resolvable": {
-      "version": "1.0.0",
-      "integrity": "sha1-jfV8YeouPFAUCNEA+wE8+NbgzGI=",
-      "dev": true,
-      "requires": {
-        "tryit": "1.0.3"
-      }
+      "version": "1.0.1",
+      "integrity": "sha512-y5CXYbzvB3jTnWAZH1Nl7ykUWb6T3BcTs56HUruwBf8MhF56n1HWqhDWnVFo8GHrUPDgvUUNVhrc2U8W7iqz5g==",
+      "dev": true
     },
     "is-stream": {
       "version": "1.1.0",
@@ -10487,7 +10484,7 @@
       "integrity": "sha512-rgO9Zg5LLLkfJF9E6CCmXlSE4UVceloys8JrFqCcHloC3usd/kJCyPDwH2SOlzix2j3xaP9sUX3e8+kvkuleAA==",
       "dev": true,
       "requires": {
-        "@types/node": "8.0.58"
+        "@types/node": "8.5.0"
       }
     },
     "parsejson": {
@@ -11709,7 +11706,7 @@
             "imurmurhash": "0.1.4",
             "inquirer": "0.12.0",
             "is-my-json-valid": "2.13.1",
-            "is-resolvable": "1.0.0",
+            "is-resolvable": "1.0.1",
             "js-yaml": "3.10.0",
             "json-stable-stringify": "1.0.1",
             "levn": "0.3.0",
@@ -14341,11 +14338,6 @@
     "try-resolve": {
       "version": "1.0.1",
       "integrity": "sha1-z95vq9ctY+V5fPqrhzq76OcA6RI=",
-      "dev": true
-    },
-    "tryit": {
-      "version": "1.0.3",
-      "integrity": "sha1-OTvnMKlEb9Hq1tpZoBQwjzbCics=",
       "dev": true
     },
     "tryor": {
