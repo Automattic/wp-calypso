@@ -28,7 +28,7 @@ HistoryButton.propTypes = {
 	loadRevision: PropTypes.func.isRequired,
 
 	// connected to dispatch
-	openPostRevisionsDialog: PropTypes.func.isRequired,
+	openDialog: PropTypes.func.isRequired,
 
 	// localize
 	translate: PropTypes.func,

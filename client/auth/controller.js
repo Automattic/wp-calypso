@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import ReactDom from 'react-dom';
 import React from 'react';
 import { startsWith } from 'lodash';
 import page from 'page';
@@ -24,16 +23,17 @@ import Main from 'components/main';
 import PulsingDot from 'components/pulsing-dot';
 
 export default {
-	oauthLogin: function() {
+	oauthLogin: function( context, next ) {
 		if ( config.isEnabled( 'oauth' ) ) {
 			if ( OAuthToken.getToken() ) {
 				page( '/' );
 			} else {
-				ReactDom.render( <OAuthLogin />, document.getElementById( 'primary' ) );
+				context.primary = <OAuthLogin />;
 			}
 		} else {
 			page( '/' );
 		}
+		next();
 	},
 
 	checkToken: function( context, next ) {
@@ -60,7 +60,7 @@ export default {
 
 	// This controller renders the API authentication screen
 	// for granting the app access to the user data using oauth
-	authorize: function() {
+	authorize: function( context, next ) {
 		let authUrl;
 
 		if ( config( 'oauth_client_id' ) ) {
@@ -78,16 +78,14 @@ export default {
 			authUrl = wpoauth.urlToConnect( { scope: 'global', blog_id: 0 } );
 		}
 
-		ReactDom.render(
-			React.createElement( ConnectComponent, {
-				authUrl: authUrl,
-			} ),
-			document.getElementById( 'primary' )
-		);
+		context.primary = React.createElement( ConnectComponent, {
+			authUrl: authUrl,
+		} );
+		next();
 	},
 
 	// Retrieve token from local storage
-	getToken: function( context ) {
+	getToken: function( context, next ) {
 		if ( context.hash && context.hash.access_token ) {
 			store.set( 'wpcom_token', context.hash.access_token );
 			wpcom.loadToken( context.hash.access_token );
@@ -98,12 +96,11 @@ export default {
 		}
 
 		// Extract this into a component...
-		ReactDom.render(
+		context.primary = (
 			<Main className="auth">
 				<p className="auth__welcome">Loading user...</p>
 				<PulsingDot active />
-			</Main>,
-			document.getElementById( 'primary' )
+			</Main>
 		);
 
 		// Fetch user and redirect to /sites on success.
@@ -117,5 +114,6 @@ export default {
 				window.location = '/';
 			}
 		} );
+		next();
 	},
 };

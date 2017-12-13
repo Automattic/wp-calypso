@@ -17,7 +17,6 @@ import {
 	trackUpdatesLoaded,
 	trackScrollPage,
 } from 'reader/controller-helper';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
 import { SEARCH_TYPES } from 'reader/search-stream/search-stream-header';
 
@@ -33,7 +32,7 @@ function replaceSearchUrl( newValue, sort ) {
 }
 
 const exported = {
-	search: function( context ) {
+	search: function( context, next ) {
 		const basePath = '/read/search',
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
 			mcKey = 'search';
@@ -70,7 +69,7 @@ const exported = {
 			replaceSearchUrl( searchSlug, newSort !== 'relevance' ? newSort : undefined );
 		}
 
-		renderWithReduxStore(
+		context.primary = (
 			<AsyncLoad
 				require="reader/search-stream"
 				key="search"
@@ -90,10 +89,9 @@ const exported = {
 				onQueryChange={ reportQueryChange }
 				onSortChange={ reportSortChange }
 				searchType={ show }
-			/>,
-			document.getElementById( 'primary' ),
-			context.store
+			/>
 		);
+		next();
 	},
 };
 

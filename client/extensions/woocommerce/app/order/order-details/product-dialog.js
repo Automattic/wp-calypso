@@ -67,7 +67,10 @@ class OrderProductDialog extends Component {
 		isVisible: PropTypes.bool.isRequired,
 		editOrder: PropTypes.func.isRequired,
 		order: PropTypes.shape( {
-			id: PropTypes.number.isRequired,
+			id: PropTypes.oneOfType( [
+				PropTypes.number, // A number indicates an existing order
+				PropTypes.shape( { id: PropTypes.string } ), // Placeholders have format { id: 'order_1' }
+			] ).isRequired,
 		} ),
 		siteId: PropTypes.number.isRequired,
 		translate: PropTypes.func.isRequired,

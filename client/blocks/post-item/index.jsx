@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { isEnabled } from 'config';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -118,11 +117,8 @@ class PostItem extends React.Component {
 			'is-placeholder': isPlaceholder,
 		} );
 
-		const arePostsCondensed =
-			isEnabled( 'posts/post-type-list' ) && abtest( 'condensedPostList' ) === 'condensedPosts';
-
+		const arePostsCondensed = isEnabled( 'posts/post-type-list' );
 		const isSiteInfoVisible = arePostsCondensed && isAllSitesModeSelected;
-
 		const isAuthorVisible = arePostsCondensed && this.hasMultipleUsers() && post && post.author;
 
 		const expandedContent = this.renderExpandedContent();

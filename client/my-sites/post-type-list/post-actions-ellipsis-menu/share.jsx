@@ -17,7 +17,6 @@ import { bumpStatGenerator } from './utils';
 import { getPost } from 'state/posts/selectors';
 import { toggleSharePanel } from 'state/ui/post-type-list/actions';
 import { isPublicizeEnabled } from 'state/selectors';
-import { abtest } from 'lib/abtest';
 import config from 'config';
 
 class PostActionsEllipsisMenuShare extends Component {
@@ -47,7 +46,6 @@ class PostActionsEllipsisMenuShare extends Component {
 		const { translate, status, type, isPublicizeEnabled: isPublicizeEnabledForSite } = this.props;
 		if (
 			! config.isEnabled( 'posts/post-type-list' ) ||
-			'condensedPosts' !== abtest( 'condensedPostList' ) ||
 			'publish' !== status ||
 			! isPublicizeEnabledForSite ||
 			'post' !== type

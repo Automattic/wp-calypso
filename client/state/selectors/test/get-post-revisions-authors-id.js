@@ -17,7 +17,13 @@ describe( 'getPostRevisionsAuthorsId', () => {
 				{
 					posts: {
 						revisions: {
-							revisions: {},
+							diffs: {
+								12345678: {
+									10: {
+										revisions: {},
+									},
+								},
+							},
 						},
 					},
 				},
@@ -33,11 +39,13 @@ describe( 'getPostRevisionsAuthorsId', () => {
 				{
 					posts: {
 						revisions: {
-							revisions: {
+							diffs: {
 								12345678: {
 									10: {
-										11: {
-											author: 123,
+										revisions: {
+											11: {
+												post_author: '123',
+											},
 										},
 									},
 								},

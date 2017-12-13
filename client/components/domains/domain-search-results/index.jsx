@@ -68,7 +68,7 @@ class DomainSearchResults extends React.Component {
 			'domain-search-results__domain-not-available': ! availableDomain,
 		} );
 		const suggestions = this.props.suggestions || [];
-		const { MAPPABLE, MAPPED, UNKNOWN } = domainAvailability;
+		const { MAPPABLE, MAPPED, TLD_NOT_SUPPORTED, TRANSFERRABLE, UNKNOWN } = domainAvailability;
 
 		let availabilityElement, domainSuggestionElement, offer;
 
@@ -94,7 +94,10 @@ class DomainSearchResults extends React.Component {
 			);
 		} else if (
 			suggestions.length !== 0 &&
-			includes( [ MAPPABLE, MAPPED, UNKNOWN ], lastDomainStatus ) &&
+			includes(
+				[ TRANSFERRABLE, MAPPABLE, MAPPED, TLD_NOT_SUPPORTED, UNKNOWN ],
+				lastDomainStatus
+			) &&
 			this.props.products.domain_map
 		) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
@@ -121,24 +124,21 @@ class DomainSearchResults extends React.Component {
 				offer = null;
 			}
 
-			const domainUnavailableMessage =
-				lastDomainStatus === UNKNOWN
-					? translate( '{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com.', {
-							args: { tld: getTld( domain ) },
-							components: { strong: <strong /> },
-						} )
-					: translate( '{{strong}}%(domain)s{{/strong}} is taken.', {
-							args: { domain },
-							components: { strong: <strong /> },
-						} );
-
+			const domainUnavailableMessage = includes( [ TLD_NOT_SUPPORTED, UNKNOWN ], lastDomainStatus )
+				? translate( '{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com.', {
+						args: { tld: getTld( domain ) },
+						components: { strong: <strong /> },
+					} )
+				: translate( '{{strong}}%(domain)s{{/strong}} is taken.', {
+						args: { domain },
+						components: { strong: <strong /> },
+					} );
 			if ( this.props.offerUnavailableOption ) {
 				if (
 					this.props.siteDesignType !== DESIGN_TYPE_STORE &&
 					this.props.transferInAllowed &&
 					! this.props.isSignupStep &&
-					lastDomainIsTransferrable &&
-					includes( [ MAPPABLE, MAPPED ], lastDomainStatus )
+					lastDomainIsTransferrable
 				) {
 					availabilityElement = (
 						<Card className="domain-search-results__transfer-card" highlight="info">

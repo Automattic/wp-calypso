@@ -1,4 +1,4 @@
-FROM       node:8.9.1
+FROM       node:8.9.3
 LABEL maintainer="Automattic"
 
 WORKDIR    /calypso

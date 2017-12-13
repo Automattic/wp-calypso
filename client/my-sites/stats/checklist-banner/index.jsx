@@ -129,7 +129,7 @@ export class ChecklistBanner extends Component {
 	render() {
 		const { completed, total, translate, siteId } = this.props;
 		const task = this.getNextTask();
-		const percentage = ( completed / Math.max( total, 1 ) * 100 ).toFixed( 1 );
+		const percentage = Math.round( completed / total * 100 );
 
 		if ( this.state.closed ) {
 			return null;

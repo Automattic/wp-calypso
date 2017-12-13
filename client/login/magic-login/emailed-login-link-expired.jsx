@@ -18,7 +18,7 @@ import addQueryArgs from 'lib/route/add-query-args';
 import EmptyContent from 'components/empty-content';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import { recordPageView } from 'state/analytics/actions';
+import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
 
 const nativeLoginUrl = login( { isNative: true, twoFactorAuthType: 'link' } );
 

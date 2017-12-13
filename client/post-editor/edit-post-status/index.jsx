@@ -151,7 +151,7 @@ export class EditPostStatus extends Component {
 						<Gridicon icon="undo" size={ 18 } /> { translate( 'Revert to draft' ) }
 					</Button>
 				) }
-				{ ! ( isEnabled( 'post-editor/revisions' ) && postUtils.deviceSupportsRevisions() ) && (
+				{ ! isEnabled( 'post-editor/revisions' ) && (
 					<EditorRevisionsLegacyLink
 						adminUrl={ adminUrl }
 						revisionsFromPostObj={ get( this.props, 'post.revisions' ) }

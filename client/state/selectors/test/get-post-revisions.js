@@ -17,11 +17,12 @@ describe( 'getPostRevisions', () => {
 				{
 					posts: {
 						revisions: {
-							revisions: {},
+							12345678: {
+								10: {
+									revisions: {},
+								},
+							},
 						},
-					},
-					users: {
-						items: {},
 					},
 				},
 				12345678,
@@ -30,18 +31,34 @@ describe( 'getPostRevisions', () => {
 		).to.eql( [] );
 	} );
 
-	test( 'should return an array of post revisions', () => {
+	test( 'should return a sorted array of revisions', () => {
 		expect(
 			getPostRevisions(
 				{
 					posts: {
 						revisions: {
-							revisions: {
+							diffs: {
 								12345678: {
 									10: {
-										11: {
-											id: 11,
-											title: 'Badman <img onerror= />',
+										revisions: {
+											168: {
+												post_date_gmt: '2017-12-12 18:24:37Z',
+												post_modified_gmt: '2017-12-12 18:24:37Z',
+												post_author: '20416304',
+												id: 168,
+												post_content: 'This is a super cool test!\nOh rly? Ya rly',
+												post_excerpt: '',
+												post_title: 'Yet Another Awesome Test Post!',
+											},
+											169: {
+												post_date_gmt: '2017-12-14 18:24:37Z',
+												post_modified_gmt: '2017-12-14 18:24:37Z',
+												post_author: '20416304',
+												id: 169,
+												post_content: 'This is a super duper cool test!\nOh rly? Ya rly',
+												post_excerpt: '',
+												post_title: 'Yet Another Awesome Test Post!',
+											},
 										},
 									},
 								},
@@ -57,184 +74,22 @@ describe( 'getPostRevisions', () => {
 			)
 		).to.eql( [
 			{
-				id: 11,
-				title: 'Badman <img onerror= />',
-			},
-		] );
-	} );
-
-	test( 'should hydrate all revisions with more author information if found', () => {
-		expect(
-			getPostRevisions(
-				{
-					posts: {
-						revisions: {
-							revisions: {
-								12345678: {
-									10: {
-										11: {
-											id: 11,
-											author: 1,
-										},
-										12: {
-											id: 12,
-											author: 2,
-										},
-									},
-								},
-							},
-						},
-					},
-					users: {
-						items: {
-							1: {
-								name: 'Alice Bob',
-							},
-							2: {
-								name: 'Carol Dan',
-							},
-						},
-					},
-				},
-				12345678,
-				10
-			)
-		).to.eql( [
-			{
-				id: 11,
-				author: {
-					name: 'Alice Bob',
-				},
+				post_date_gmt: '2017-12-14 18:24:37Z',
+				post_modified_gmt: '2017-12-14 18:24:37Z',
+				post_author: '20416304',
+				id: 169,
+				post_content: 'This is a super duper cool test!\nOh rly? Ya rly',
+				post_excerpt: '',
+				post_title: 'Yet Another Awesome Test Post!',
 			},
 			{
-				id: 12,
-				author: {
-					name: 'Carol Dan',
-				},
-			},
-		] );
-	} );
-
-	test( 'should preserve all revisions author ID if not found', () => {
-		expect(
-			getPostRevisions(
-				{
-					posts: {
-						revisions: {
-							revisions: {
-								12345678: {
-									10: {
-										11: {
-											id: 11,
-											author: 1,
-										},
-										12: {
-											id: 12,
-											author: 2,
-										},
-									},
-								},
-							},
-						},
-					},
-					users: {
-						items: {},
-					},
-				},
-				12345678,
-				10
-			)
-		).to.eql( [
-			{
-				id: 11,
-				author: 1,
-			},
-			{
-				id: 12,
-				author: 2,
-			},
-		] );
-	} );
-
-	test( 'should normalize all revisions', () => {
-		expect(
-			getPostRevisions(
-				{
-					posts: {
-						revisions: {
-							revisions: {
-								12345678: {
-									10: {
-										11: {
-											id: 11,
-											title: '&acute;',
-										},
-										12: {
-											id: 12,
-											title: '&grave;',
-										},
-									},
-								},
-							},
-						},
-					},
-					users: {
-						items: {},
-					},
-				},
-				12345678,
-				10,
-				'editing'
-			)
-		).to.eql( [
-			{
-				id: 11,
-				title: '´',
-			},
-			{
-				id: 12,
-				title: '`',
-			},
-		] );
-	} );
-
-	test( 'should order revisions by date (recent first)', () => {
-		expect(
-			getPostRevisions(
-				{
-					posts: {
-						revisions: {
-							revisions: {
-								12345678: {
-									10: {
-										12: {
-											id: 12,
-											date: '2017-07-07T12:44:00Z',
-										},
-										11: {
-											id: 11,
-											date: '2017-07-06T12:44:00Z',
-										},
-									},
-								},
-							},
-						},
-					},
-					users: {
-						items: {},
-					},
-				},
-				12345678,
-				10
-			)
-		).to.eql( [
-			{
-				id: 12,
-				date: '2017-07-07T12:44:00Z',
-			},
-			{
-				id: 11,
-				date: '2017-07-06T12:44:00Z',
+				post_date_gmt: '2017-12-12 18:24:37Z',
+				post_modified_gmt: '2017-12-12 18:24:37Z',
+				post_author: '20416304',
+				id: 168,
+				post_content: 'This is a super cool test!\nOh rly? Ya rly',
+				post_excerpt: '',
+				post_title: 'Yet Another Awesome Test Post!',
 			},
 		] );
 	} );

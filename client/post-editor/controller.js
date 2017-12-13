@@ -4,12 +4,10 @@
  * External dependencies
  */
 
-import ReactDom from 'react-dom';
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import i18n from 'i18n-calypso';
 import page from 'page';
-import { Provider as ReduxProvider } from 'react-redux';
 import qs from 'querystring';
 import { isWebUri as isValidUrl } from 'valid-url';
 import { map, pick, reduce, startsWith } from 'lodash';
@@ -57,18 +55,10 @@ function determinePostType( context ) {
 }
 
 function renderEditor( context ) {
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	ReactDom.render(
-		React.createElement(
-			ReduxProvider,
-			{ store: context.store },
-			React.createElement( PostEditor, {
-				user: user,
-				userUtils: userUtils,
-			} )
-		),
-		document.getElementById( 'primary' )
-	);
+	context.primary = React.createElement( PostEditor, {
+		user: user,
+		userUtils: userUtils,
+	} );
 }
 
 function maybeRedirect( context ) {
@@ -205,7 +195,7 @@ function startEditingPostCopy( site, postToCopyId, context ) {
 }
 
 export default {
-	post: function( context ) {
+	post: function( context, next ) {
 		const postType = determinePostType( context );
 		const postID = getPostID( context );
 		const postToCopyId = context.query.copy;
@@ -289,6 +279,8 @@ export default {
 		}
 
 		renderEditor( context );
+
+		next();
 	},
 
 	exitPost: function( context, next ) {

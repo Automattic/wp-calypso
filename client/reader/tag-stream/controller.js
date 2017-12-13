@@ -16,13 +16,12 @@ import {
 	trackUpdatesLoaded,
 	trackScrollPage,
 } from 'reader/controller-helper';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
 import { TAG_PAGE } from 'reader/follow-sources';
 
 const analyticsPageTitle = 'Reader';
 
-export const tagListing = context => {
+export const tagListing = ( context, next ) => {
 	const basePath = '/tag/:slug';
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Tag > ' + context.params.tag;
 	const tagSlug = trim( context.params.tag )
@@ -40,7 +39,7 @@ export const tagListing = context => {
 		tag: tagSlug,
 	} );
 
-	renderWithReduxStore(
+	context.primary = (
 		<AsyncLoad
 			require="reader/tag-stream/main"
 			key={ 'tag-' + encodedTag }
@@ -59,8 +58,7 @@ export const tagListing = context => {
 			showBack={ !! context.lastRoute }
 			showPrimaryFollowButtonOnCards={ true }
 			followSource={ TAG_PAGE }
-		/>,
-		document.getElementById( 'primary' ),
-		context.store
+		/>
 	);
+	next();
 };

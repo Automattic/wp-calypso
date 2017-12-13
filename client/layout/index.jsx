@@ -148,7 +148,6 @@ const Layout = createReactClass( {
 				`focus-${ this.props.currentLayoutFocus }`,
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
-				{ 'wp-singletree-layout': !! this.props.primary },
 				{ 'has-chat': this.props.chatIsOpen }
 			),
 			loadingClass = classnames( {

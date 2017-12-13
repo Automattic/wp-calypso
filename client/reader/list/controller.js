@@ -15,13 +15,12 @@ import {
 	trackUpdatesLoaded,
 	trackScrollPage,
 } from 'reader/controller-helper';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
 const exported = {
-	listListing( context ) {
+	listListing( context, next ) {
 		const basePath = '/read/list/:owner/:slug',
 			fullAnalyticsPageTitle =
 				analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list,
@@ -36,7 +35,7 @@ const exported = {
 			list_slug: context.params.list,
 		} );
 
-		renderWithReduxStore(
+		context.primary = (
 			<AsyncLoad
 				require="reader/list-stream"
 				key={ 'tag-' + context.params.user + '-' + context.params.list }
@@ -52,10 +51,9 @@ const exported = {
 					mcKey
 				) }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-			/>,
-			document.getElementById( 'primary' ),
-			context.store
+			/>
 		);
+		next();
 	},
 };
 

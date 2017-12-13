@@ -34,7 +34,7 @@ import {
 } from 'state/selectors';
 import { getTwoFactorNotificationSent, isTwoFactorEnabled } from 'state/login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 const user = userFactory();
 

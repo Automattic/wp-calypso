@@ -21,7 +21,7 @@ import {
 	getCreatedSocialAccountBearerToken,
 	isSocialAccountCreating,
 } from 'state/login/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { InfoNotice } from 'blocks/global-notice';
 import { login } from 'lib/paths';

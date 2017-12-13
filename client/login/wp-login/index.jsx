@@ -23,7 +23,7 @@ import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import Main from 'components/main';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoginBlock from 'blocks/login';
-import { recordPageView } from 'state/analytics/actions';
+import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 import PrivateSite from './private-site';

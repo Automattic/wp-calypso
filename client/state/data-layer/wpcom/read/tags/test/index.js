@@ -140,6 +140,27 @@ describe( 'wpcom-api', () => {
 					type: NOTICE_CREATE,
 				} );
 			} );
+
+			test( 'should not dispatch error notice if the error is a 404', () => {
+				const action = {
+					...requestTagsAction( slug ),
+					meta: {
+						dataLayer: {
+							headers: { status: 404 },
+						},
+					},
+				};
+				const dispatch = sinon.spy();
+				const error = 'could not find tag(s)';
+				receiveTagsError( { dispatch }, action, error );
+
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWithMatch(
+					receiveTagsAction( {
+						payload: [ { id: slug, slug, error: true } ],
+					} )
+				);
+			} );
 		} );
 	} );
 } );

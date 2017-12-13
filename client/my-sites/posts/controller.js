@@ -18,14 +18,13 @@ import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import trackScrollPage from 'lib/track-scroll-page';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { areAllSitesSingleUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 
 export default {
-	posts: function( context ) {
+	posts: function( context, next ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 
@@ -83,23 +82,15 @@ export default {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		renderWithReduxStore(
-			React.createElement( Posts, {
-				context,
-				author,
-				statusSlug,
-				search,
-				category,
-				tag,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					baseAnalyticsPath,
-					analyticsPageTitle,
-					'Posts'
-				),
-			} ),
-			'primary',
-			context.store
-		);
+		context.primary = React.createElement( Posts, {
+			context,
+			author,
+			statusSlug,
+			search,
+			category,
+			tag,
+			trackScrollPage: trackScrollPage.bind( null, baseAnalyticsPath, analyticsPageTitle, 'Posts' ),
+		} );
+		next();
 	},
 };

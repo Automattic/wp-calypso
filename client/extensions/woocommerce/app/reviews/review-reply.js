@@ -140,7 +140,7 @@ class ReviewReply extends Component {
 					className="reviews__reply-content"
 					dangerouslySetInnerHTML={ { __html: content } } //eslint-disable-line react/no-danger
 					// Sets the rendered comment HTML correctly for display.
-					// Also used for comments in `comment-detail/comment-detail-comment.jsx`
+					// Also used for comments in `comments/comment/comment-content.jsx`
 				/>
 			</div>
 		);

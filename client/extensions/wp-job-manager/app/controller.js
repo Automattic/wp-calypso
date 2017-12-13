@@ -13,11 +13,10 @@ import { get } from 'lodash';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import { getSiteFragment, sectionify } from 'lib/route';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import Settings from '../components/settings';
 import SetupWizard from '../components/setup';
 
-export const renderTab = ( component, tab = '' ) => context => {
+export const renderTab = ( component, tab = '' ) => ( context, next ) => {
 	const siteId = getSiteFragment( context.path );
 	const basePath = sectionify( context.path );
 	let baseAnalyticsPath;
@@ -38,19 +37,13 @@ export const renderTab = ( component, tab = '' ) => context => {
 
 	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-	renderWithReduxStore(
-		<Settings tab={ tab }>{ React.createElement( component ) }</Settings>,
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = <Settings tab={ tab }>{ React.createElement( component ) }</Settings>;
+	next();
 };
 
-export const renderSetupWizard = context => {
+export const renderSetupWizard = ( context, next ) => {
 	const stepName = get( context, [ 'params', 'stepName' ] );
 
-	renderWithReduxStore(
-		<SetupWizard stepName={ stepName } />,
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = <SetupWizard stepName={ stepName } />;
+	next();
 };

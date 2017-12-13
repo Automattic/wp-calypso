@@ -19,7 +19,6 @@ import route from 'lib/route';
 import Main from 'components/main';
 import upgradesActions from 'lib/upgrades/actions';
 import productsFactory from 'lib/products-list';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -45,7 +44,7 @@ const domainsAddRedirectHeader = ( context, next ) => {
 	next();
 };
 
-const domainSearch = context => {
+const domainSearch = ( context, next ) => {
 	const CartData = require( 'components/data/cart' );
 	const DomainSearch = require( './domain-search' );
 	const basePath = route.sectionify( context.path );
@@ -57,75 +56,71 @@ const domainSearch = context => {
 		window.scrollTo( 0, 0 );
 	}
 
-	renderWithReduxStore(
+	context.primary = (
 		<Main>
 			<DocumentHead title={ translate( 'Domain Search' ) } />
 			<CartData>
 				<DomainSearch basePath={ basePath } context={ context } />
 			</CartData>
-		</Main>,
-		document.getElementById( 'primary' ),
-		context.store
+		</Main>
 	);
+	next();
 };
 
-const siteRedirect = context => {
+const siteRedirect = ( context, next ) => {
 	const CartData = require( 'components/data/cart' );
 	const SiteRedirect = require( './domain-search/site-redirect' );
 	const basePath = route.sectionify( context.path );
 
 	analytics.pageView.record( basePath, 'Domain Search > Site Redirect' );
 
-	renderWithReduxStore(
+	context.primary = (
 		<Main>
 			<DocumentHead title={ translate( 'Redirect a Site' ) } />
 			<CartData>
 				<SiteRedirect />
 			</CartData>
-		</Main>,
-		document.getElementById( 'primary' ),
-		context.store
+		</Main>
 	);
+	next();
 };
 
-const mapDomain = context => {
+const mapDomain = ( context, next ) => {
 	const CartData = require( 'components/data/cart' );
 	const MapDomain = require( 'my-sites/domains/map-domain' ).default;
 	const basePath = route.sectionify( context.path );
 
 	analytics.pageView.record( basePath, 'Domain Search > Domain Mapping' );
-	renderWithReduxStore(
+	context.primary = (
 		<Main>
 			<DocumentHead title={ translate( 'Map a Domain' ) } />
 
 			<CartData>
 				<MapDomain initialQuery={ context.query.initialQuery } />
 			</CartData>
-		</Main>,
-		document.getElementById( 'primary' ),
-		context.store
+		</Main>
 	);
+	next();
 };
 
-const transferDomain = context => {
+const transferDomain = ( context, next ) => {
 	const CartData = require( 'components/data/cart' );
 	const TransferDomain = require( 'my-sites/domains/transfer-domain' ).default;
 	const basePath = route.sectionify( context.path );
 
 	analytics.pageView.record( basePath, 'Domain Search > Domain Transfer' );
-	renderWithReduxStore(
+	context.primary = (
 		<Main>
 			<DocumentHead title={ translate( 'Transfer a Domain' ) } />
 			<CartData>
 				<TransferDomain basePath={ basePath } initialQuery={ context.query.initialQuery } />
 			</CartData>
-		</Main>,
-		document.getElementById( 'primary' ),
-		context.store
+		</Main>
 	);
+	next();
 };
 
-const googleAppsWithRegistration = context => {
+const googleAppsWithRegistration = ( context, next ) => {
 	const CartData = require( 'components/data/cart' );
 	const GoogleApps = require( 'components/upgrades/google-apps' );
 
@@ -150,7 +145,7 @@ const googleAppsWithRegistration = context => {
 		'Domain Search > Domain Registration > Google Apps'
 	);
 
-	renderWithReduxStore(
+	context.primary = (
 		<Main>
 			<DocumentHead
 				title={ translate( 'Register %(domain)s', {
@@ -166,10 +161,9 @@ const googleAppsWithRegistration = context => {
 					onClickSkip={ handleClickSkip }
 				/>
 			</CartData>
-		</Main>,
-		document.getElementById( 'primary' ),
-		context.store
+		</Main>
 	);
+	next();
 };
 
 const redirectIfNoSite = redirectTo => {

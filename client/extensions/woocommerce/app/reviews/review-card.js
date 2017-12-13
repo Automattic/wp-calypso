@@ -155,7 +155,7 @@ class ReviewCard extends Component {
 							<div
 								className="reviews__content"
 								dangerouslySetInnerHTML={ { __html: review.review } } //eslint-disable-line react/no-danger
-								// Also used in `comment-detail/comment-detail-comment.jsx` to set the rendered content correctly
+								// Also used in `comments/comment/comment-content.jsx` to set the rendered content correctly
 							/>
 						</Emojify>
 					</AutoDirection>

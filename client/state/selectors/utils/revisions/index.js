@@ -51,7 +51,7 @@ const NORMALIZER_MAPPING = {
 };
 
 const injectAuthor = state => revision => {
-	const author = get( state.users.items, revision.author );
+	const author = get( state.users.items, revision.post_author );
 	return author ? { ...revision, author } : revision;
 };
 

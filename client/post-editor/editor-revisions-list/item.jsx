@@ -13,8 +13,8 @@ import { flow, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostRevisionChanges } from 'state/selectors';
 import { selectPostRevision } from 'state/posts/revisions/actions';
+import { getUser } from 'state/users/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
 import TimeSince from 'components/time-since';
 
@@ -24,10 +24,9 @@ class EditorRevisionsListItem extends PureComponent {
 	};
 
 	render() {
-		const { revision, revisionChanges, isMultiUserSite, translate } = this.props;
-		const authorName = get( revision, 'author.display_name' );
-		const added = get( revisionChanges, 'summary.added' );
-		const removed = get( revisionChanges, 'summary.removed' );
+		const { authorName, revision, revisionChanges, isMultiUserSite, translate } = this.props;
+		const added = get( revisionChanges, 'add', 0 );
+		const removed = get( revisionChanges, 'del', 0 );
 		const titles = {
 			added:
 				added &&
@@ -50,7 +49,7 @@ class EditorRevisionsListItem extends PureComponent {
 				type="button"
 			>
 				<span className="editor-revisions-list__date">
-					<TimeSince date={ revision.date } dateFormat="lll" />
+					<TimeSince date={ get( revision, 'post_modified_gmt' ) } dateFormat="lll" />
 				</span>
 
 				{ authorName &&
@@ -94,11 +93,12 @@ class EditorRevisionsListItem extends PureComponent {
 EditorRevisionsListItem.propTypes = {
 	postId: PropTypes.number,
 	revision: PropTypes.object.isRequired,
+	revisionChanges: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 
 	// connected to state
+	authorName: PropTypes.string,
 	isMultiUserSite: PropTypes.bool.isRequired,
-	revisionChanges: PropTypes.object.isRequired,
 
 	// connected to dispatcher
 	selectPostRevision: PropTypes.func.isRequired,
@@ -110,9 +110,9 @@ EditorRevisionsListItem.propTypes = {
 export default flow(
 	localize,
 	connect(
-		( state, { postId, revision, siteId } ) => ( {
+		( state, { revision, siteId } ) => ( {
+			authorName: get( getUser( state, get( revision, 'post_author' ) ), 'display_name', '' ),
 			isMultiUserSite: ! isSingleUserSite( state, siteId ),
-			revisionChanges: getPostRevisionChanges( state, siteId, postId, revision.id ),
 		} ),
 		{ selectPostRevision }
 	)

@@ -4,13 +4,12 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { cloneDeep, map } from 'lodash';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { fetchPostRevisions, normalizeRevision, receiveSuccess, receiveError } from '../';
+import { fetchPostRevisionsDiffs, receiveSuccess, receiveError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	receivePostRevisions,
@@ -19,98 +18,76 @@ import {
 	requestPostRevisions,
 } from 'state/posts/revisions/actions';
 
-const successfulPostRevisionsResponse = [
-	{
-		author: 1,
-		date: '2017-04-20T12:14:40',
-		date_gmt: '2017-04-20T12:14:40',
-		id: 11,
-		modified: '2017-04-21T12:14:50',
-		modified_gmt: '2017-04-21T12:14:50',
-		parent: 10,
-		title: {
-			raw: 'Sed nobis ab earum',
+const successfulPostRevisionsDiffsResponse = {
+	diffs: [
+		{
+			from: 5,
+			to: 6,
+			diff: {
+				post_content: [ { op: 'add', value: 'Things and ' }, { op: 'copy', value: 'stuff' } ],
+				post_title: [ { op: 'copy', value: 'A REALLY big fan of yours' } ],
+			},
 		},
-		content: {
-			raw: '<p>Lorem ipsum</p>',
+		{
+			from: 4,
+			to: 5,
+			diff: {
+				post_content: [ { op: 'copy', value: 'stuff' } ],
+				post_title: [
+					{ op: 'copy', value: 'A ' },
+					{ op: 'add', value: 'REALLY ' },
+					{ op: 'copy', value: 'big fan of yours' },
+				],
+			},
 		},
-		excerpt: {
-			raw: '',
+	],
+	revisions: [
+		{
+			id: 6,
+			post_author: '99999',
+			post_content: 'Things and stuff',
+			post_date_gmt: '2017-11-29 23:13:43Z',
+			post_excerpt: '',
+			post_modified_gmt: '2017-11-29 23:13:43Z',
+			post_title: 'A REALLY big fan of yours! :)',
 		},
-	},
-];
+		{
+			id: 5,
+			post_author: '99999',
+			post_content: 'stuff',
+			post_date_gmt: '2017-11-29 21:12:41Z',
+			post_excerpt: '',
+			post_modified_gmt: '2017-11-29 21:12:41Z',
+			post_title: 'A REALLY big fan of yours! :)',
+		},
+		{
+			id: 4,
+			post_author: '99999',
+			post_content: 'stuff',
+			post_date_gmt: '2017-11-28 22:12:42Z',
+			post_excerpt: '',
+			post_modified_gmt: '2017-11-28 22:12:42Z',
+			post_title: 'A big fan of yours! :)',
+		},
+	],
+};
 
-const normalizedPostRevisions = [
-	{
-		author: 1,
-		date: '2017-04-20T12:14:40Z',
-		id: 11,
-		modified: '2017-04-21T12:14:50Z',
-		parent: 10,
-		title: 'Sed nobis ab earum',
-		content: '<p>Lorem ipsum</p>',
-		excerpt: '',
-	},
-];
-
-describe( '#normalizeRevision', () => {
-	test( 'should keep UTC dates formatted with a timezone marker (`Z`)', () => {
-		expect(
-			normalizeRevision( {
-				date: '2017-04-20T12:14:40',
-				date_gmt: '2017-04-20T12:14:40',
-				modified: '2017-04-20T12:14:50',
-				modified_gmt: '2017-04-20T12:14:50',
-			} )
-		).to.eql( {
-			date: '2017-04-20T12:14:40Z',
-			modified: '2017-04-20T12:14:50Z',
-		} );
-	} );
-
-	test( 'should only keep the raw version of `title`, `content` and `excerpt`', () => {
-		expect(
-			normalizeRevision( {
-				title: {
-					raw: 'Sed nobis ab earum',
-				},
-				content: {
-					raw: '<p>Lorem ipsum</p>',
-				},
-				excerpt: {
-					raw: '',
-				},
-			} )
-		).to.eql( {
-			title: 'Sed nobis ab earum',
-			content: '<p>Lorem ipsum</p>',
-			excerpt: '',
-		} );
-	} );
-
-	test( 'should not have any additional property', () => {
-		expect( map( successfulPostRevisionsResponse, normalizeRevision ) ).to.eql(
-			normalizedPostRevisions
-		);
-	} );
-} );
-
-describe( '#fetchPostRevisions', () => {
-	test( 'should dispatch HTTP request to post revisions endpoint', () => {
-		const action = requestPostRevisions( 12345678, 10 );
+describe( '#fetchPostRevisionsDiffs', () => {
+	test( 'should dispatch HTTP request to post revisions diffs endpoint', () => {
+		const action = requestPostRevisions( 12345678, 10, 'post' );
 		const dispatch = sinon.spy();
 
-		fetchPostRevisions( { dispatch }, action );
+		fetchPostRevisionsDiffs( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
 			http(
 				{
+					apiVersion: '1.1',
 					method: 'GET',
-					path: '/sites/12345678/posts/10/revisions',
+					path: '/sites/12345678/post/10/diffs',
 					query: {
-						apiNamespace: 'wp/v2',
-						context: 'edit',
+						comparisons: [],
 					},
 				},
 				action
@@ -118,21 +95,21 @@ describe( '#fetchPostRevisions', () => {
 		);
 	} );
 
-	test( 'should dispatch HTTP request to page revisions endpoint', () => {
+	test( 'should dispatch HTTP request to page diffs endpoint for pages', () => {
 		const action = requestPostRevisions( 12345678, 10, 'page' );
 		const dispatch = sinon.spy();
 
-		fetchPostRevisions( { dispatch }, action );
+		fetchPostRevisionsDiffs( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
 			http(
 				{
+					apiVersion: '1.1',
 					method: 'GET',
-					path: '/sites/12345678/pages/10/revisions',
+					path: '/sites/12345678/page/10/diffs',
 					query: {
-						apiNamespace: 'wp/v2',
-						context: 'edit',
+						comparisons: [],
 					},
 				},
 				action
@@ -140,21 +117,21 @@ describe( '#fetchPostRevisions', () => {
 		);
 	} );
 
-	test( 'should dispatch HTTP request to corresponding revisions endpoint for other post types', () => {
+	test( 'should dispatch HTTP request to post diffs endpoint for other post types', () => {
 		const action = requestPostRevisions( 12345678, 10, 'jetpack-portfolio' );
 		const dispatch = sinon.spy();
 
-		fetchPostRevisions( { dispatch }, action );
+		fetchPostRevisionsDiffs( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledOnce;
 		expect( dispatch ).to.have.been.calledWith(
 			http(
 				{
+					apiVersion: '1.1',
 					method: 'GET',
-					path: '/sites/12345678/jetpack-portfolio/10/revisions',
+					path: '/sites/12345678/jetpack-portfolio/10/diffs',
 					query: {
-						apiNamespace: 'wp/v2',
-						context: 'edit',
+						comparisons: [],
 					},
 				},
 				action
@@ -164,18 +141,20 @@ describe( '#fetchPostRevisions', () => {
 } );
 
 describe( '#receiveSuccess', () => {
-	test( 'should normalize the revisions and dispatch `receivePostRevisions` and `receivePostRevisionsSuccess`', () => {
-		const action = requestPostRevisions( 12345678, 10 );
+	test( 'should dispatch `receivePostRevisions` and `receivePostRevisionsSuccess`', () => {
+		const action = requestPostRevisions( 12345678, 10, 'post' );
 		const dispatch = sinon.spy();
 
-		receiveSuccess( { dispatch }, action, successfulPostRevisionsResponse );
-
-		const expectedRevisions = cloneDeep( normalizedPostRevisions );
+		receiveSuccess( { dispatch }, action, successfulPostRevisionsDiffsResponse );
 
 		expect( dispatch ).to.have.callCount( 2 );
 		expect( dispatch ).to.have.been.calledWith( receivePostRevisionsSuccess( 12345678, 10 ) );
 		expect( dispatch ).to.have.been.calledWith(
-			receivePostRevisions( 12345678, 10, expectedRevisions )
+			receivePostRevisions( {
+				siteId: 12345678,
+				postId: 10,
+				...successfulPostRevisionsDiffsResponse,
+			} )
 		);
 	} );
 } );

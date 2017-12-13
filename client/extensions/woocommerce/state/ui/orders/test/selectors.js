@@ -10,6 +10,7 @@ import { expect } from 'chai';
  */
 import {
 	getCurrentlyEditingOrderId,
+	getDefaultEmptyOrder,
 	getOrdersCurrentPage,
 	getOrdersCurrentSearch,
 	getOrderEdits,
@@ -116,7 +117,9 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return just the changes for new orders', () => {
+			const defaultOrder = getDefaultEmptyOrder();
 			expect( getOrderWithEdits( state, 345 ) ).to.eql( {
+				...defaultOrder,
 				billing: { email: 'test@example.com' },
 				id: { placeholder: 'order_1' },
 			} );

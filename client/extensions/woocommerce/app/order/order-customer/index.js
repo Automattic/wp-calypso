@@ -27,7 +27,10 @@ class OrderCustomerInfo extends Component {
 	static propTypes = {
 		editOrder: PropTypes.func.isRequired,
 		isEditing: PropTypes.bool,
-		orderId: PropTypes.number.isRequired,
+		orderId: PropTypes.oneOfType( [
+			PropTypes.number, // A number indicates an existing order
+			PropTypes.shape( { id: PropTypes.string } ), // Placeholders have format { id: 'order_1' }
+		] ).isRequired,
 		order: PropTypes.shape( {
 			billing: PropTypes.object.isRequired,
 			shipping: PropTypes.object.isRequired,

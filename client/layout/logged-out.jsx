@@ -34,7 +34,6 @@ const LayoutLoggedOut = ( { oauth2Client, primary, section, redirectUri, useOAut
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
 		'has-no-sidebar': ! hasSidebar( section ),
-		'wp-singletree-layout': !! primary,
 	};
 
 	let masterbar = null;

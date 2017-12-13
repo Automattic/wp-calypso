@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import ReactDom from 'react-dom';
 import React from 'react';
 import store from 'store';
 import page from 'page';
@@ -18,7 +17,6 @@ import i18n from 'i18n-calypso';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import InviteAccept from 'my-sites/invites/invite-accept';
 import { setSection } from 'state/ui/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
 import _user from 'lib/user';
@@ -48,10 +46,9 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 	next();
 }
 
-export function acceptInvite( context ) {
+export function acceptInvite( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
 	const acceptedInvite = store.get( 'invite_accepted' );
@@ -80,16 +77,13 @@ export function acceptInvite( context ) {
 		return;
 	}
 
-	renderWithReduxStore(
-		React.createElement( InviteAccept, {
-			siteId: context.params.site_id,
-			inviteKey: context.params.invitation_key,
-			activationKey: context.params.activation_key,
-			authKey: context.params.auth_key,
-			locale: getLocale( context.params ),
-			path: context.path,
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( InviteAccept, {
+		siteId: context.params.site_id,
+		inviteKey: context.params.invitation_key,
+		activationKey: context.params.activation_key,
+		authKey: context.params.auth_key,
+		locale: getLocale( context.params ),
+		path: context.path,
+	} );
+	next();
 }

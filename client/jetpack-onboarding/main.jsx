@@ -36,6 +36,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 					components={ COMPONENTS }
 					steps={ steps }
 					stepName={ stepName }
+					hideNavigation={ stepName === STEPS.SUMMARY }
 				/>
 			</Main>
 		);

@@ -34,13 +34,14 @@ function canAddGoogleApps( domainName ) {
 	return ! ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase );
 }
 
-function checkDomainAvailability( domainName, onComplete ) {
+function checkDomainAvailability( params, onComplete ) {
+	const { domainName, blogId } = params;
 	if ( ! domainName ) {
 		onComplete( null, { status: domainAvailability.EMPTY_QUERY } );
 		return;
 	}
 
-	wpcom.undocumented().isDomainAvailable( domainName, function( serverError, result ) {
+	wpcom.undocumented().isDomainAvailable( domainName, blogId, function( serverError, result ) {
 		if ( serverError ) {
 			onComplete( serverError.error );
 			return;

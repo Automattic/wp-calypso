@@ -109,7 +109,7 @@ class ManageMenu extends PureComponent {
 				label: this.props.translate( 'Comments' ),
 				capability: 'edit_posts',
 				queryable: true,
-				config: 'comments/management',
+				config: 'manage/comments',
 				link: '/comments',
 				paths: [ '/comment', '/comments' ],
 				wpAdminLink: 'edit-comments.php',
@@ -157,6 +157,8 @@ class ManageMenu extends PureComponent {
 		let preload;
 		if ( includes( [ 'post', 'page' ], menuItem.name ) ) {
 			preload = 'posts-pages';
+		} else if ( 'comments' === menuItem.name ) {
+			preload = 'comments';
 		} else {
 			preload = 'posts-custom';
 		}

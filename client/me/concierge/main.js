@@ -25,9 +25,14 @@ import ConfirmationStep from './confirmation-step';
 import InfoStep from './info-step';
 import Main from 'components/main';
 import Skeleton from './skeleton';
+import Upsell from './upsell';
 import QueryConciergeShifts from 'components/data/query-concierge-shifts';
+import QuerySites from 'components/data/query-sites';
+import QuerySitePlans from 'components/data/query-site-plans';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { getConciergeShifts } from 'state/selectors';
 import { WPCOM_CONCIERGE_SCHEDULE_ID } from './constants';
+import { getSite } from 'state/sites/selectors';
 
 const STEP_COMPONENTS = [ InfoStep, CalendarStep, ConfirmationStep ];
 
@@ -48,32 +53,49 @@ class ConciergeMain extends Component {
 		this.setState( { currentStep: this.state.currentStep + 1 } );
 	};
 
-	render() {
+	getDisplayComponent = () => {
+		const { shifts, site } = this.props;
 		const CurrentStep = STEP_COMPONENTS[ this.state.currentStep ];
-		const { shifts } = this.props;
+
+		if ( ! shifts || ! site || ! site.plan ) {
+			return <Skeleton />;
+		}
+
+		if ( site.plan.product_slug !== PLAN_BUSINESS ) {
+			return <Upsell site={ site } />;
+		}
+
+		// We have shift data and this is a business site — show the signup steps
+		return (
+			<CurrentStep
+				shifts={ shifts }
+				site={ site }
+				onComplete={ this.goToNextStep }
+				onBack={ this.goToPreviousStep }
+			/>
+		);
+	};
+
+	render() {
+		const { site } = this.props;
 
 		// TODO:
 		// render the shifts for real.
 		return (
 			<Main>
 				<QueryConciergeShifts scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID } />
-				{ shifts ? (
-					<CurrentStep
-						shifts={ shifts }
-						onComplete={ this.goToNextStep }
-						onBack={ this.goToPreviousStep }
-					/>
-				) : (
-					<Skeleton />
-				) }
+				<QuerySites />
+				{ site && <QuerySitePlans siteId={ site.ID } /> }
+				{ this.getDisplayComponent() }
 			</Main>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
+	( state, props ) => ( {
 		shifts: getConciergeShifts( state ),
+		site: getSite( state, props.siteSlug ),
 	} ),
 	{ getConciergeShifts }
 )( ConciergeMain );

@@ -11,10 +11,9 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 import { getSiteFragment, sectionify } from 'lib/route';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import Settings from '../components/settings';
 
-export const renderTab = component => context => {
+export const renderTab = component => ( context, next ) => {
 	const siteId = getSiteFragment( context.path );
 	const zoneId = parseInt( context.params.zone, 10 ) || 0;
 
@@ -40,9 +39,6 @@ export const renderTab = component => context => {
 
 	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-	renderWithReduxStore(
-		<Settings>{ React.createElement( component, { zoneId } ) }</Settings>,
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = <Settings>{ React.createElement( component, { zoneId } ) }</Settings>;
+	next();
 };
