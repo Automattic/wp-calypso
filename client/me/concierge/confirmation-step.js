@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 
 class ConfirmationStep extends Component {
 	render() {
-		const { translate } = this.props;
+		const { site, translate } = this.props;
 		return (
 			<Card>
 				<img
@@ -30,8 +30,11 @@ class ConfirmationStep extends Component {
 					) }
 				/>
 
-				<Button className="concierge__confirmation-button" primary={ true } href="/stats">
-					{' '}
+				<Button
+					className="concierge__confirmation-button"
+					primary={ true }
+					href={ `/stats/day/${ site.slug }` }
+				>
 					{ translate( 'Return to your dashboard' ) }
 				</Button>
 			</Card>
