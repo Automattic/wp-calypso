@@ -109,7 +109,7 @@ class TagStream extends React.Component {
 			} );
 		}
 
-		if ( ! tag || tag.error ) {
+		if ( tag && tag.error ) {
 			return (
 				<React.Fragment>
 					<QueryReaderFollowedTags />
