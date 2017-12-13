@@ -16,6 +16,7 @@ import {
 	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT,
 	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS,
 	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_FAILURE,
+	WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE,
 } from 'woocommerce/state/action-types';
 
 export default createReducer( null, {
@@ -62,7 +63,7 @@ export default createReducer( null, {
 	},
 
 	[ WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS ]: ( state ) => {
-		const settings = Object.assign( {}, omit( state, [ 'isSaving', 'error' ] ) );
+		const settings = Object.assign( {}, omit( state, [ 'isSaving', 'error', 'invalidValue' ] ) );
 		return settings;
 	},
 
@@ -72,4 +73,9 @@ export default createReducer( null, {
 		return settings;
 	},
 
+	[ WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE ]: ( state, reason ) => {
+		const settings = Object.assign( {}, omit( state, [ 'save', 'isSaving' ] ) );
+		settings.invalidValue = reason;
+		return settings;
+	},
 } );

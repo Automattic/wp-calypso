@@ -3,7 +3,11 @@
  */
 import { translate } from 'i18n-calypso';
 import emailValidator from 'email-validator';
-import { map, matches, reject, some } from 'lodash';
+import { map, matches, reject, some, omit, pick, every, has } from 'lodash';
+
+export const checkEmail = ( email ) => {
+	return emailValidator.validate( email );
+};
 
 const verifySegment = ( segment ) => {
 	const segmentItems = segment.match( /\S+/g ) || [];
@@ -26,7 +30,7 @@ const verifySegment = ( segment ) => {
 	}
 
 	//Check if email is valid, we use segmentItems[0] because it is already nicely trimmed
-	const emailValid = emailValidator.validate( segmentItems[ 0 ] );
+	const emailValid = checkEmail( segmentItems[ 0 ] );
 	if ( ! emailValid ) {
 		return {
 			error: true,
@@ -66,4 +70,33 @@ export const checkEmails = ( value ) => {
 
 	//All good
 	return { error: false };
+};
+
+export const validateSettings = ( settings ) => {
+	let areSettingsValid = false;
+	const email = pick( settings, 'email' );
+	areSettingsValid = checkEmail( email.email.woocommerce_email_from_address.value ||
+		email.email.woocommerce_email_from_address.default );
+
+	if ( ! areSettingsValid ) {
+		return false;
+	}
+
+	const settingsNoEmail = omit( settings, 'email' );
+
+	areSettingsValid = every( settingsNoEmail, ( setting ) => {
+		if ( has( setting, 'recipient' ) ) {
+			const value = setting.recipient.value;
+			const def = setting.recipient.default;
+			const check = checkEmail( value || def );
+			return check;
+		}
+		return true;
+	} );
+
+	if ( ! areSettingsValid ) {
+		return false;
+	}
+
+	return true;
 };

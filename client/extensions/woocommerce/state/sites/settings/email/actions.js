@@ -19,6 +19,7 @@ import {
 	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT,
 	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS,
 	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_FAILURE,
+	WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE,
 } from 'woocommerce/state/action-types';
 import { areEmailSettingsLoaded, areEmailSettingsLoading } from './selectors';
 
@@ -125,4 +126,12 @@ export const emailSettingsSubmitSettings = ( siteId, settings ) => dispatch => {
 		.catch( error => {
 			dispatch( settingsSubmitFailure( siteId, error ) );
 		} );
+};
+
+export const emailSettingsInvalidValue = ( siteId, reason ) => dispatch => {
+	return dispatch( {
+		type: WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE,
+		siteId,
+		reason,
+	} );
 };
