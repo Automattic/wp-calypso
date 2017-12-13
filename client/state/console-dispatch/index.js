@@ -26,7 +26,7 @@ const state = {
 	historySize: 100,
 };
 
-const queryToPredicate = query => {
+export const queryToPredicate = query => {
 	if ( query instanceof RegExp ) {
 		return ( { type } ) => query.test( type );
 	}
