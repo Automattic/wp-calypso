@@ -1,0 +1,30 @@
+.browser-frame {
+	background-color: $white;
+	border: 1px solid $gray;
+	border-radius: 8px;
+	overflow: hidden;
+
+	.browser-frame__title-bar {
+		align-items: center;
+		background-color: $gray;
+		display: flex;
+		flex-direction: row;
+		height: 32px;
+		width: 100%;
+
+		.browser-frame__title-bar-button {
+			background-color: $white;
+			border-radius: 4px;
+			border: 1px solid $white;
+			height: 8px;
+			margin-left: 8px;
+			overflow: hidden;
+			width: 8px;
+		}
+	}
+
+	.browser-frame__document {
+		height: 180px;
+		width: 100%;
+	}
+}

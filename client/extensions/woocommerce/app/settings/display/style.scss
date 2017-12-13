@@ -1,0 +1,62 @@
+.display__notice {
+	.display__notice-card {
+		.display__notice-enabled-container {
+			margin-bottom: 18px;
+
+			&.placeholder {
+				height: 36px;
+				width: 60%;
+				@include placeholder();
+			}
+		}
+
+		.display__notice-wysiwyg {
+			display: flex;
+			flex-direction: column;
+
+			@include breakpoint( ">960px" ) {
+				flex-direction: row;
+			}
+
+			h4 {
+				font-weight: 600;
+				margin-bottom: 8px;
+			}
+
+			.display__notice-editor-container {
+				flex-basis: 60%;
+
+				&.placeholder {
+					height: 144px;
+					@include placeholder();
+				}
+			}
+
+			.display__notice-preview-container {
+				flex-basis: 40%;
+				margin-left: 0;
+				margin-top: 18px;
+				min-width: 0;
+
+				@include breakpoint( ">960px" ) {
+					margin-left: 18px;
+					margin-top: 0;
+				}
+
+				.display__notice-preview-notice {
+					background-color: $blue-dark;
+					color: $white;
+					overflow: hidden;
+					padding: 8px;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+				}
+
+				&.placeholder {
+					height: 144px;
+					@include placeholder();
+				}
+			}
+		}
+	}
+}

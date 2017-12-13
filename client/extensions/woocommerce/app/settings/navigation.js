@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import NavItem from 'components/section-nav/item';
@@ -41,6 +42,14 @@ export const SettingsNavigation = ( { site, activeSection, translate } ) => {
 			title: translate( 'Email' ),
 		},
 	];
+
+	if ( config.isEnabled( 'woocommerce/extension-settings-display' ) ) {
+		items.push( {
+			id: 'display',
+			path: '/store/settings/display/:site',
+			title: translate( 'Display' ),
+		} );
+	}
 
 	const section = find( items, { id: activeSection } );
 	return (
