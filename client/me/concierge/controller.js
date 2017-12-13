@@ -11,7 +11,7 @@ import React from 'react';
 import ConciergeMain from './main';
 
 const concierge = ( context, next ) => {
-	context.primary = React.createElement( ConciergeMain, {} );
+	context.primary = React.createElement( ConciergeMain, { siteSlug: context.params.siteSlug } );
 	next();
 };
 

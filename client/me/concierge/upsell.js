@@ -5,6 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,13 +15,13 @@ import CompactCard from 'components/card/compact';
 import PrimaryHeader from './primary-header';
 import Site from 'blocks/site';
 
-class InfoStep extends Component {
+class Upsell extends Component {
 	static propTypes = {
-		onComplete: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 	};
 
 	render() {
+		const { translate } = this.props;
 		return (
 			<div>
 				<PrimaryHeader />
@@ -29,13 +30,15 @@ class InfoStep extends Component {
 				</CompactCard>
 				<CompactCard>
 					<p>
-						<em>TODO: Add form questions here</em>
+						{ translate( 'Only sites on a Business Plan are eligible for a site setup chat.' ) }
 					</p>
-					<Button onClick={ this.props.onComplete }>Continue to calendar</Button>
+					<Button href={ `/plans/${ this.props.site.slug }` } primary>
+						{ translate( 'Upgrade to Business' ) }
+					</Button>
 				</CompactCard>
 			</div>
 		);
 	}
 }
 
-export default InfoStep;
+export default localize( Upsell );
