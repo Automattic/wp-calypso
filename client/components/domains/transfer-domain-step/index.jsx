@@ -297,6 +297,7 @@ class TransferDomainStep extends React.Component {
 							supportsPrivacy: get( result, 'supports_privacy', false ),
 						} );
 						return;
+					case domainAvailability.MAPPABLE:
 					case domainAvailability.TLD_NOT_SUPPORTED:
 						const tld = getTld( domain );
 
