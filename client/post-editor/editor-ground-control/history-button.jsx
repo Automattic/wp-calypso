@@ -12,12 +12,20 @@ import { flow } from 'lodash';
  * Internal dependencies
  */
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
-
+import { recordTracksEvent } from 'state/analytics/actions';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
+
+const onHistoryButtonClick = openDialog => {
+	recordTracksEvent( 'calypso_editor_history_button_click' );
+	openDialog();
+};
 
 const HistoryButton = ( { loadRevision, postId, siteId, openDialog, translate } ) => (
 	<div className="editor-ground-control__history">
-		<button className="editor-ground-control__history-button button is-link" onClick={ openDialog }>
+		<button
+			className="editor-ground-control__history-button button is-link"
+			onClick={ onHistoryButtonClick( openDialog ) }
+		>
 			{ translate( 'History' ) }
 		</button>
 		<EditorRevisionsDialog loadRevision={ loadRevision } postId={ postId } siteId={ siteId } />
