@@ -41,7 +41,12 @@ export const ChecklistSiteIconTour = makeTour(
 			</ButtonRow>
 		</Step>
 
-		<Step name="choose-image" placement="center">
+		<Step
+			name="choose-image"
+			target="media-library-upload-more"
+			placement="beside"
+			arrow="left-top"
+		>
 			<p>
 				{ translate( 'Pick or drag a file from your computer to add it to your media library.' ) }
 			</p>
