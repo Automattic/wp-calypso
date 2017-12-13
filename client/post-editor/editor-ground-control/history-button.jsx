@@ -16,7 +16,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 
 const onHistoryButtonClick = openDialog => {
-	recordTracksEvent( 'calypso_editor_history_button_click' );
+	this.props.recordTracksEvent( 'calypso_editor_history_button_click' );
 	openDialog();
 };
 
@@ -46,5 +46,6 @@ export default flow(
 	localize,
 	connect( null, {
 		openDialog: openPostRevisionsDialog,
+		recordTracksEvent,
 	} )
 )( HistoryButton );
