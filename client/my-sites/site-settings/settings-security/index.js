@@ -10,6 +10,7 @@ import page from 'page';
 import controller from './controller';
 import settingsController from 'my-sites/site-settings/settings-controller';
 import { navigation, siteSelection } from 'my-sites/controller';
+import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	page(
@@ -18,6 +19,8 @@ export default function() {
 		navigation,
 		settingsController.setScroll,
 		settingsController.siteSettings,
-		controller.security
+		controller.security,
+		makeLayout,
+		clientRender
 	);
 }

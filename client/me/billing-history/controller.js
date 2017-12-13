@@ -6,32 +6,21 @@
 
 import React from 'react';
 
-/**
- * Internal dependencies
- */
-import { renderWithReduxStore } from 'lib/react-helpers';
-
 export default {
-	billingHistory( context ) {
+	billingHistory( context, next ) {
 		const BillingHistoryComponent = require( './main' );
 
-		renderWithReduxStore(
-			React.createElement( BillingHistoryComponent ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( BillingHistoryComponent );
+		next();
 	},
 
-	transaction( context ) {
+	transaction( context, next ) {
 		const Receipt = require( './receipt' );
 		const receiptId = context.params.receiptId;
 
 		if ( receiptId ) {
-			renderWithReduxStore(
-				React.createElement( Receipt, { transactionId: receiptId } ),
-				document.getElementById( 'primary' ),
-				context.store
-			);
+			context.primary = React.createElement( Receipt, { transactionId: receiptId } );
 		}
+		next();
 	},
 };

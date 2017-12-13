@@ -11,10 +11,16 @@ import { values } from 'lodash';
  */
 import { onboarding } from './controller';
 import { JETPACK_ONBOARDING_STEPS } from './constants';
+import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	if ( isEnabled( 'jetpack/onboarding' ) ) {
 		const validStepNames = values( JETPACK_ONBOARDING_STEPS );
-		page( `/jetpack/onboarding/:stepName(${ validStepNames.join( '|' ) })?`, onboarding );
+		page(
+			`/jetpack/onboarding/:stepName(${ validStepNames.join( '|' ) })?`,
+			onboarding,
+			makeLayout,
+			clientRender
+		);
 	}
 }

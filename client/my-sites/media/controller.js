@@ -13,11 +13,10 @@ import i18n from 'i18n-calypso';
 import route from 'lib/route';
 import analytics from 'lib/analytics';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { getSelectedSite } from 'state/ui/selectors';
 
 export default {
-	media: function( context ) {
+	media: function( context, next ) {
 		var MediaComponent = require( 'my-sites/media/main' ),
 			filter = context.params.filter,
 			search = context.query.s,
@@ -37,14 +36,11 @@ export default {
 		context.store.dispatch( setTitle( i18n.translate( 'Media', { textOnly: true } ) ) );
 
 		// Render
-		renderWithReduxStore(
-			React.createElement( MediaComponent, {
-				selectedSite,
-				filter: filter,
-				search: search,
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( MediaComponent, {
+			selectedSite,
+			filter: filter,
+			search: search,
+		} );
+		next();
 	},
 };

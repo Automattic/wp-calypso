@@ -5,10 +5,9 @@
  */
 
 import page from 'page';
-import ReactDom from 'react-dom';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { uniq, some, startsWith } from 'lodash';
+import { noop, some, startsWith, uniq } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -32,7 +31,6 @@ import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import {
 	getPrimaryDomainBySiteId,
 	getPrimarySiteId,
@@ -60,6 +58,7 @@ import {
 import SitesComponent from 'my-sites/sites';
 import { isATEnabled } from 'lib/automated-transfer';
 import { warningNotice } from 'state/notices/actions';
+import { makeLayout, render as clientRender } from 'controller';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -106,7 +105,6 @@ function removeSidebar( context ) {
 			secondary: false,
 		} )
 	);
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 }
 
 function renderEmptySites( context ) {
@@ -114,11 +112,10 @@ function renderEmptySites( context ) {
 
 	removeSidebar( context );
 
-	renderWithReduxStore(
-		React.createElement( NoSitesMessage ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( NoSitesMessage );
+
+	makeLayout( context, noop );
+	clientRender( context );
 }
 
 function renderNoVisibleSites( context ) {
@@ -129,50 +126,43 @@ function renderNoVisibleSites( context ) {
 
 	removeSidebar( context );
 
-	renderWithReduxStore(
-		React.createElement( EmptyContentComponent, {
-			title: i18n.translate(
-				'You have %(hidden)d hidden WordPress site.',
-				'You have %(hidden)d hidden WordPress sites.',
-				{
-					count: hiddenSites,
-					args: { hidden: hiddenSites },
-				}
-			),
+	context.primary = React.createElement( EmptyContentComponent, {
+		title: i18n.translate(
+			'You have %(hidden)d hidden WordPress site.',
+			'You have %(hidden)d hidden WordPress sites.',
+			{
+				count: hiddenSites,
+				args: { hidden: hiddenSites },
+			}
+		),
 
-			line: i18n.translate(
-				'To manage it here, set it to visible.',
-				'To manage them here, set them to visible.',
-				{
-					count: hiddenSites,
-				}
-			),
+		line: i18n.translate(
+			'To manage it here, set it to visible.',
+			'To manage them here, set them to visible.',
+			{
+				count: hiddenSites,
+			}
+		),
 
-			action: i18n.translate( 'Change Visibility' ),
-			actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
-			secondaryAction: i18n.translate( 'Create New Site' ),
-			secondaryActionURL: `${ signup_url }?ref=calypso-nosites`,
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+		action: i18n.translate( 'Change Visibility' ),
+		actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
+		secondaryAction: i18n.translate( 'Create New Site' ),
+		secondaryActionURL: `${ signup_url }?ref=calypso-nosites`,
+	} );
+
+	makeLayout( context, noop );
+	clientRender( context );
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	const DomainOnly = require( 'my-sites/domains/domain-management/list/domain-only' );
-	const { store: reduxStore } = reactContext;
 
-	renderWithReduxStore(
-		<DomainOnly siteId={ selectedSite.ID } hasNotice={ false } />,
-		document.getElementById( 'primary' ),
-		reduxStore
-	);
+	reactContext.primary = <DomainOnly siteId={ selectedSite.ID } hasNotice={ false } />;
 
-	renderWithReduxStore(
-		createNavigation( reactContext ),
-		document.getElementById( 'secondary' ),
-		reduxStore
-	);
+	reactContext.secondary = createNavigation( reactContext );
+
+	makeLayout( reactContext, noop );
+	clientRender( reactContext );
 }
 
 function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
@@ -444,18 +434,9 @@ export function jetpackModuleActive( moduleId, redirect ) {
 	};
 }
 
-export function makeNavigation( context, next ) {
-	context.secondary = createNavigation( context );
-	next();
-}
-
 export function navigation( context, next ) {
 	// Render the My Sites navigation in #secondary
-	renderWithReduxStore(
-		createNavigation( context ),
-		document.getElementById( 'secondary' ),
-		context.store
-	);
+	context.secondary = createNavigation( context );
 	next();
 }
 
@@ -467,12 +448,10 @@ export function jetPackWarning( context, next ) {
 	const selectedSite = getSelectedSite( getState() );
 
 	if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
-		renderWithReduxStore(
+		context.primary = (
 			<Main>
 				<JetpackManageErrorPage template="noDomainsOnJetpack" siteId={ selectedSite.ID } />
-			</Main>,
-			document.getElementById( 'primary' ),
-			context.store
+			</Main>
 		);
 
 		analytics.pageView.record( basePath, '> No Domains On Jetpack' );
@@ -481,8 +460,13 @@ export function jetPackWarning( context, next ) {
 	}
 }
 
-export function sites( context ) {
-	const { dispatch } = getStore( context );
+/**
+ * Middleware that adds the site selector screen to the layout.
+ *
+ * @param {object} context -- Middleware context
+ * @param {function} next -- Call next middleware in chain
+ */
+export function sites( context, next ) {
 	if ( context.query.verified === '1' ) {
 		notices.success(
 			i18n.translate(
@@ -490,31 +474,7 @@ export function sites( context ) {
 			)
 		);
 	}
-	/**
-	 * Sites is rendered on #primary but it doesn't expect a sidebar to exist
-	 */
-	removeSidebar( context );
-	dispatch( setLayoutFocus( 'content' ) );
 
-	renderWithReduxStore(
-		createSitesComponent( context ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
-}
-
-/**
- * Middleware that adds the site selector screen to the layout
- * without rendering the layout. For use with isomorphic routing
- * @see {@link https://github.com/Automattic/wp-calypso/blob/master/docs/isomorphic-routing.md }
- *
- * To show the site selector screen using traditional multi-tree
- * layout, use the sites() middleware above.
- *
- * @param {object} context -- Middleware context
- * @param {function} next -- Call next middleware in chain
- */
-export function makeSites( context, next ) {
 	context.store.dispatch( setLayoutFocus( 'content' ) );
 	context.store.dispatch(
 		setSection( {

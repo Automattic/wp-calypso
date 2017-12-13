@@ -10,7 +10,6 @@ import { moment, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { renderWithReduxStore } from 'lib/react-helpers';
 import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
@@ -28,7 +27,7 @@ function isValidParameters( context ) {
 	);
 }
 
-export default function StatsController( context ) {
+export default function StatsController( context, next ) {
 	if ( ! context.params.site || context.params.site === 'null' ) {
 		page.redirect( '/stats/day/' );
 	}
@@ -93,5 +92,6 @@ export default function StatsController( context ) {
 				{ ...props }
 			/>
 		);
-	renderWithReduxStore( asyncComponent, document.getElementById( 'primary' ), context.store );
+	context.primary = asyncComponent;
+	next();
 }

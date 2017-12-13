@@ -10,6 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from './controller';
+import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	page(
@@ -17,6 +18,8 @@ export default function() {
 		controller.saveInitialContext,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,
-		controller.start
+		controller.start,
+		makeLayout,
+		clientRender
 	);
 }
