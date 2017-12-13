@@ -38,7 +38,7 @@ describe( '#getSiteUrl', () => {
 		expect( siteUrl ).eql( postWithSiteUrl.site_URL );
 	} );
 
-	test( 'should return false if cannot find a reasonable url', () => {
+	test( 'should return undefined if cannot find a reasonable url', () => {
 		const noArg = getSiteUrl();
 		expect( noArg ).not.ok;
 
