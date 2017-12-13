@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { forEach, isEmpty, isNumber, omit, omitBy } from 'lodash';
+import { forEach, isEmpty, isFinite, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -57,7 +57,7 @@ export function removeTemporaryIds( order ) {
 	for ( const type of [ 'line_items', 'fee_lines', 'coupon_lines', 'shipping_lines' ] ) {
 		if ( order[ type ] ) {
 			newOrder[ type ] = order[ type ].map( item => {
-				if ( ! isNumber( item.id ) ) {
+				if ( ! isFinite( item.id ) ) {
 					return omit( item, 'id' );
 				}
 				return item;
@@ -85,7 +85,7 @@ export function transformOrderForApi( order ) {
 		'total_tax',
 	];
 	forEach( totalsAndTaxes, key => {
-		if ( isNumber( order[ key ] ) || order[ key ] ) {
+		if ( isFinite( order[ key ] ) || order[ key ] ) {
 			order[ key ] = getCurrencyFormatString( order[ key ], order.currency );
 		}
 	} );
@@ -93,22 +93,22 @@ export function transformOrderForApi( order ) {
 	const transformOrderData = ( data, strings = [], prices = [], integers = [], floats = [] ) => {
 		return data.map( line => {
 			forEach( strings, key => {
-				if ( isNumber( line[ key ] ) || line[ key ] ) {
+				if ( isFinite( line[ key ] ) || line[ key ] ) {
 					line[ key ] = line[ key ].toString();
 				}
 			} );
 			forEach( prices, key => {
-				if ( isNumber( line[ key ] ) || line[ key ] ) {
+				if ( isFinite( line[ key ] ) || line[ key ] ) {
 					line[ key ] = getCurrencyFormatString( line[ key ], order.currency );
 				}
 			} );
 			forEach( integers, key => {
-				if ( isNumber( line[ key ] ) || line[ key ] ) {
+				if ( isFinite( line[ key ] ) || line[ key ] ) {
 					line[ key ] = parseInt( line[ key ] );
 				}
 			} );
 			forEach( floats, key => {
-				if ( isNumber( line[ key ] ) || line[ key ] ) {
+				if ( isFinite( line[ key ] ) || line[ key ] ) {
 					line[ key ] = getCurrencyFormatDecimal( line[ key ], order.currency );
 				}
 			} );

@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { isNumber, keyBy, omit } from 'lodash';
+import { isFinite, keyBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -78,7 +78,7 @@ export function isQueryLoading( state = {}, action ) {
  * @return {Object}        Updated state
  */
 export function isUpdating( state = {}, action ) {
-	const orderId = isNumber( action.orderId ) ? action.orderId : JSON.stringify( action.orderId );
+	const orderId = isFinite( action.orderId ) ? action.orderId : JSON.stringify( action.orderId );
 	switch ( action.type ) {
 		case WOOCOMMERCE_ORDER_UPDATE:
 		case WOOCOMMERCE_ORDER_UPDATE_SUCCESS:
