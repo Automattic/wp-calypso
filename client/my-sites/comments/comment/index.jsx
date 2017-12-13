@@ -40,17 +40,21 @@ export class Comment extends Component {
 		updateLastUndo: PropTypes.func,
 	};
 
-	state = {
-		isEditMode: false,
-		isReplyVisible: false,
-	};
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			isEditMode: props.isEditMode,
+			isReplyVisible: false,
+		};
+	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { isBulkMode: wasBulkMode, isEditMode: forceEditMode } = this.props;
+		const { isBulkMode: wasBulkMode } = this.props;
 		const { isBulkMode } = nextProps;
 
 		this.setState( ( { isEditMode, isReplyVisible } ) => ( {
-			isEditMode: forceEditMode || ( wasBulkMode !== isBulkMode ? false : isEditMode ),
+			isEditMode: wasBulkMode !== isBulkMode ? false : isEditMode,
 			isReplyVisible: wasBulkMode !== isBulkMode ? false : isReplyVisible,
 		} ) );
 	}
@@ -126,7 +130,7 @@ export class Comment extends Component {
 					<QueryComment commentId={ commentId } siteId={ siteId } forceWpcom />
 				) }
 
-				{ ! isEditMode && (
+				{ ( ! isEditMode || isLoading ) && (
 					<div className="comment__detail">
 						<CommentHeader { ...{ commentId, isBulkMode, isEditMode, isPostView, isSelected } } />
 
@@ -144,9 +148,10 @@ export class Comment extends Component {
 					</div>
 				) }
 
-				{ isEditMode && (
-					<CommentEdit { ...{ commentId } } toggleEditMode={ this.toggleEditMode } />
-				) }
+				{ isEditMode &&
+					! isLoading && (
+						<CommentEdit { ...{ commentId } } toggleEditMode={ this.toggleEditMode } />
+					) }
 
 				{ isPostView &&
 					isEnabled( 'comments/management/threaded-view' ) && (
