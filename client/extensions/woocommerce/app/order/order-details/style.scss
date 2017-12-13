@@ -84,6 +84,11 @@
 
 	.order-details__total-refund {
 		color: $alert-red;
+
+		td,
+		th {
+			border-top: 1px solid lighten($gray, 30%);
+		}
 	}
 
 	.order-details__total-full .order-details__totals-label,
@@ -100,6 +105,17 @@
 		.order-details__totals-tax,
 		.order-details__totals-value {
 			width: 8em;
+		}
+	}
+
+	&.has-refund {
+		.order-details__total-full .order-details__totals-label,
+		.order-details__total-full .order-details__totals-value {
+			font-weight: 400;
+		}
+		.order-details__total-remaining .order-details__totals-label,
+		.order-details__total-remaining .order-details__totals-value {
+			font-weight: 600;
 		}
 	}
 

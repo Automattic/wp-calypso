@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
@@ -129,7 +129,7 @@ class OrderDetailsTable extends Component {
 	formatShippingValue = () => {
 		const { order } = this.props;
 		const shippingLine = order.shipping_lines[ 0 ];
-		const total = getCurrencyFormatDecimal( shippingLine.total );
+		const total = getCurrencyFormatDecimal( shippingLine.total, order.currency );
 		this.props.onChange( { shipping_lines: [ { ...shippingLine, total } ] } );
 	};
 
@@ -261,6 +261,35 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
+	renderRefundTotals = () => {
+		const { isEditing, order, translate } = this.props;
+		const refundValue = getOrderRefundTotal( order );
+		if ( isEditing || ! refundValue ) {
+			return null;
+		}
+		const showTax = this.shouldShowTax();
+		const totalValue = getCurrencyFormatDecimal( order.total, order.currency ) + refundValue;
+
+		return (
+			<Fragment>
+				<OrderTotalRow
+					className="order-details__total-refund"
+					currency={ order.currency }
+					label={ translate( 'Refunded' ) }
+					value={ refundValue }
+					showTax={ showTax }
+				/>
+				<OrderTotalRow
+					className="order-details__total-remaining"
+					currency={ order.currency }
+					label={ translate( 'Remaining total' ) }
+					value={ totalValue }
+					showTax={ showTax }
+				/>
+			</Fragment>
+		);
+	};
+
 	render() {
 		const { isEditing, order, translate } = this.props;
 		if ( ! order ) {
@@ -268,6 +297,10 @@ class OrderDetailsTable extends Component {
 		}
 
 		const showTax = this.shouldShowTax();
+		const refundValue = getOrderRefundTotal( order );
+		const totalTaxValue = getOrderTotalTax( order );
+		const totalValue = isEditing ? getOrderTotal( order ) + totalTaxValue : order.total;
+
 		const tableClasses = classnames( {
 			'order-details__table': true,
 			'hide-taxes': ! showTax,
@@ -277,11 +310,9 @@ class OrderDetailsTable extends Component {
 		const totalsClasses = classnames( {
 			'order-details__totals': true,
 			'has-taxes': showTax,
+			'has-refund': !! refundValue,
 			'is-editing': isEditing,
 		} );
-		const refundValue = getOrderRefundTotal( order );
-		const totalTaxValue = getOrderTotalTax( order );
-		const totalValue = isEditing ? getOrderTotal( order ) + totalTaxValue : order.total;
 
 		return (
 			<div>
@@ -317,15 +348,7 @@ class OrderDetailsTable extends Component {
 						taxValue={ totalTaxValue }
 						showTax={ showTax }
 					/>
-					{ !! refundValue && (
-						<OrderTotalRow
-							className="order-details__total-refund"
-							currency={ order.currency }
-							label={ translate( 'Refunded' ) }
-							value={ refundValue }
-							showTax={ showTax }
-						/>
-					) }
+					{ this.renderRefundTotals() }
 				</Table>
 				{ isEditing && this.renderTaxWarning() }
 			</div>
