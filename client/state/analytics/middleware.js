@@ -31,11 +31,13 @@ const eventServices = {
 	adwords: ( { properties } ) => trackCustomAdWordsRemarketingEvent( properties ),
 };
 
-const PAGE_VIEW_PARAMS = [ 'client_id' ];
+// Whitelists specific parameters to avoid polluting page view events
+const PAGE_VIEW_SERVICES_ALLOWED_PARAMS = [ 'client_id' ];
+
 const pageViewServices = {
 	ga: ( { url, title } ) => analytics.ga.recordPageView( url, title ),
 	default: ( { url, title, ...params } ) =>
-		analytics.pageView.record( url, title, pick( params, PAGE_VIEW_PARAMS ) ),
+		analytics.pageView.record( url, title, pick( params, PAGE_VIEW_SERVICES_ALLOWED_PARAMS ) ),
 };
 
 const loadTrackingTool = ( trackingTool, state ) => {
