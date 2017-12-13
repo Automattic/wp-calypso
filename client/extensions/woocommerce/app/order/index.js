@@ -128,7 +128,7 @@ class Order extends Component {
 				primary
 				onClick={ this.saveOrder }
 				busy={ isSaving }
-				disabled={ ! hasOrderEdits }
+				disabled={ ! hasOrderEdits || isSaving }
 			>
 				{ translate( 'Save Order' ) }
 			</Button>,
