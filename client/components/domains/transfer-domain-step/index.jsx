@@ -28,6 +28,7 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import TransferDomainPrecheck from './transfer-domain-precheck';
 import support from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
+import Button from 'components/button';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -54,6 +55,7 @@ class TransferDomainStep extends React.Component {
 		return {
 			searchQuery: this.props.initialQuery || '',
 			domain: null,
+			submitting: false,
 			supportsPrivacy: false,
 		};
 	}
@@ -107,7 +109,7 @@ class TransferDomainStep extends React.Component {
 
 	addTransfer() {
 		const { translate } = this.props;
-		const { searchQuery } = this.state;
+		const { searchQuery, submitting } = this.state;
 
 		return (
 			<div>
@@ -153,13 +155,14 @@ class TransferDomainStep extends React.Component {
 							autoFocus
 						/>
 					</div>
-					<button
-						disabled={ ! getTld( searchQuery ) }
+					<Button
+						disabled={ ! getTld( searchQuery ) || submitting }
+						busy={ submitting }
 						className="transfer-domain-step__go button is-primary"
-						onClick={ this.recordGoButtonClick }
+						onClick={ this.handleFormSubmit }
 					>
 						{ translate( 'Transfer to WordPress.com' ) }
-					</button>
+					</Button>
 					{ this.domainRegistrationUpsell() }
 				</form>
 
@@ -264,13 +267,6 @@ class TransferDomainStep extends React.Component {
 		this.props.recordInputFocusInTransferDomain( this.state.searchQuery );
 	};
 
-	recordGoButtonClick = () => {
-		this.props.recordGoButtonClickInTransferDomain(
-			this.state.searchQuery,
-			this.props.analyticsSection
-		);
-	};
-
 	setSearchQuery = event => {
 		this.setState( { searchQuery: event.target.value } );
 	};
@@ -280,7 +276,12 @@ class TransferDomainStep extends React.Component {
 
 		const domain = getFixedDomainSearch( this.state.searchQuery );
 		this.props.recordFormSubmitInTransferDomain( this.state.searchQuery );
-		this.setState( { suggestion: null, notice: null } );
+		this.setState( { suggestion: null, notice: null, submitting: true } );
+
+		this.props.recordGoButtonClickInTransferDomain(
+			this.state.searchQuery,
+			this.props.analyticsSection
+		);
 
 		checkDomainAvailability(
 			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
@@ -289,14 +290,14 @@ class TransferDomainStep extends React.Component {
 				switch ( status ) {
 					case domainAvailability.AVAILABLE:
 						this.setState( { suggestion: result } );
-						return;
+						break;
 					case domainAvailability.TRANSFERRABLE:
 					case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
 						this.setState( {
 							domain,
 							supportsPrivacy: get( result, 'supports_privacy', false ),
 						} );
-						return;
+						break;
 					case domainAvailability.MAPPABLE:
 					case domainAvailability.TLD_NOT_SUPPORTED:
 						const tld = getTld( domain );
@@ -315,7 +316,7 @@ class TransferDomainStep extends React.Component {
 							),
 							noticeSeverity: 'info',
 						} );
-						return;
+						break;
 					case domainAvailability.UNKNOWN:
 						const mappableStatus = get( result, 'mappable', error );
 
@@ -334,7 +335,7 @@ class TransferDomainStep extends React.Component {
 								),
 								noticeSeverity: 'info',
 							} );
-							return;
+							break;
 						}
 					default:
 						let site = get( result, 'other_site_domain', null );
@@ -344,8 +345,9 @@ class TransferDomainStep extends React.Component {
 
 						const { message, severity } = getAvailabilityNotice( domain, status, site );
 						this.setState( { notice: message, noticeSeverity: severity } );
-						return;
 				}
+
+				this.setState( { submitting: false } );
 			}
 		);
 	};
