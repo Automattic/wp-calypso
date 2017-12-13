@@ -40,10 +40,9 @@ import PostLifecycle from './post-lifecycle';
 import { showSelectedPost } from 'reader/utils';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
 import { getReaderFollows } from 'state/selectors';
-import { keysAreEqual } from 'lib/feed-stream-store/post-key';
+import { keysAreEqual, keyToString, keyForPost } from 'lib/feed-stream-store/post-key';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { combineCards, injectRecommendations, RECS_PER_BLOCK } from './utils';
-import { keyToString, keyForPost } from 'lib/feed-stream-store/post-key';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;

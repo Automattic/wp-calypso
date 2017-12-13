@@ -109,6 +109,25 @@ class TagStream extends React.Component {
 			} );
 		}
 
+		if ( ! tag ) {
+			return (
+				<React.Fragment>
+					<QueryReaderFollowedTags />
+					<QueryReaderTag tag={ this.props.decodedTagSlug } />
+					{ this.props.showBack && <HeaderBack /> }
+					<TagStreamHeader
+						title={ title }
+						imageSearchString={ imageSearchString }
+						showFollow={ !! ( tag && tag.id ) }
+						following={ this.isSubscribed() }
+						onFollowToggle={ this.toggleFollowing }
+						showBack={ this.props.showBack }
+					/>
+					<EmptyContent />
+				</React.Fragment>
+			);
+		}
+
 		return (
 			<Stream
 				{ ...this.props }
