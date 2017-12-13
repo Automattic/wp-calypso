@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,6 +43,7 @@ export class CommentView extends Component {
 			commentId,
 			action,
 			canModerateComments,
+			isLoading,
 			redirectToPostView,
 			translate,
 		} = this.props;
@@ -79,6 +80,7 @@ export class CommentView extends Component {
 						refreshCommentData={ true }
 						redirect={ redirectToPostView }
 						isPostView={ true }
+						isEditMode={ canModerateComments && 'edit' === action && ! isLoading }
 					/>
 				) }
 				{ canModerateComments && <CommentPermalink { ...{ siteId, commentId } } /> }
@@ -100,6 +102,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		siteId,
 		postId,
 		canModerateComments,
+		isLoading: isUndefined( comment ),
 		redirectToPostView: redirectToPostView( postId ),
 	};
 };
