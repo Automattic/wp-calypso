@@ -49,6 +49,7 @@ const tasks = {
 		completedButtonText: 'Change',
 		url: '/settings/general/$siteSlug',
 		image: '/calypso/images/stats/tasks/create-tagline.svg',
+		tour: 'checklistSiteTagline',
 	},
 	contact_page_updated: {
 		title: 'Personalize your Contact page',
