@@ -74,9 +74,6 @@ class ActivityLogItem extends Component {
 				<ActivityActor
 					{ ...pick( log, [ 'actorAvatarUrl', 'actorName', 'actorRole', 'actorType' ] ) }
 				/>
-				{ ! activityDescription && (
-					<div className="activity-log-item__title">{ activityTitle }</div>
-				) }
 				{ activityDescription && (
 					<div className="activity-log-item__description">
 						{ activityDescription.map( ( part, key ) => (
@@ -84,6 +81,7 @@ class ActivityLogItem extends Component {
 						) ) }
 					</div>
 				) }
+				{ activityTitle && <div className="activity-log-item__title">{ activityTitle }</div> }
 			</div>
 		);
 	}
