@@ -22,6 +22,7 @@ import {
  * Internal dependencies
  */
 import {
+	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_EDIT,
 	COMMENTS_RECEIVE,
@@ -362,7 +363,26 @@ export const activeReplies = createReducer(
 	}
 );
 
+export const counts = ( state = {}, action ) => {
+	const { type, ...actionData } = action;
+	if ( COMMENT_COUNTS_UPDATE === type ) {
+		const { siteId, postId, ...commentCounts } = actionData;
+		if ( ! siteId ) {
+			return state;
+		}
+		const keyName = siteId && postId ? postId : 'site';
+		const siteCounts = {
+			[ siteId ]: Object.assign( {}, state[ siteId ] || {}, {
+				[ keyName ]: commentCounts,
+			} ),
+		};
+		return Object.assign( {}, state, siteCounts );
+	}
+	return state;
+};
+
 export default combineReducers( {
+	counts,
 	items,
 	fetchStatus,
 	errors,
