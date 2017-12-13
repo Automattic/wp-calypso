@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { partial } from 'lodash';
+import { noop, partial } from 'lodash';
 import React from 'react';
 
 /**
@@ -26,6 +26,7 @@ import { concatTitle, recordPageView } from 'lib/react-helpers';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 import titles from './titles';
 import userFactory from 'lib/user';
+import { makeLayout, render as clientRender } from 'controller';
 
 const recordPurchasesPageView = partial( recordPageView, partial.placeholder, 'Purchases' );
 const user = userFactory();
@@ -135,5 +136,8 @@ export default {
 				<NoSitesMessage />
 			</Main>
 		);
+
+		makeLayout( context, noop );
+		clientRender( context );
 	},
 };

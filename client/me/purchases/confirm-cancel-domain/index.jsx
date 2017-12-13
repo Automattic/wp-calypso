@@ -268,9 +268,6 @@ class ConfirmCancelDomain extends React.Component {
 		}
 
 		const purchase = getPurchase( this.props );
-		if ( ! purchase ) {
-			return null;
-		}
 		const domain = getDomainName( purchase );
 		const selectedReason = this.state.selectedReason;
 
