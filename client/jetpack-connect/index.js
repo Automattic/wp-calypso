@@ -7,10 +7,15 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import userFactory from 'lib/user';
 import * as controller from './controller';
+import { login } from 'lib/paths';
 import { siteSelection } from 'my-sites/controller';
 
 export default function() {
+	const user = userFactory();
+	const isLoggedOut = ! user.get();
+
 	page(
 		'/jetpack/connect/:type(personal|premium|pro)/:interval(yearly|monthly)?',
 		controller.connect
@@ -45,6 +50,12 @@ export default function() {
 		( { params } ) =>
 			page.redirect( `/jetpack/connect/store${ params.interval ? '/' + params.interval : '' }` )
 	);
+
+	if ( isLoggedOut ) {
+		page( '/jetpack/connect/plans/:interval(yearly|monthly)?/:site', ( { path } ) =>
+			page.redirect( login( { isNative: true, redirectTo: path } ) )
+		);
+	}
 
 	page(
 		'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',
