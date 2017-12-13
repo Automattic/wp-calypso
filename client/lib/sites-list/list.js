@@ -197,12 +197,7 @@ SitesList.prototype.update = function( sites ) {
 
 			// Update existing Site object
 			siteObj = sitesMap[ site.ID ];
-
-			//Assign old URL because new url is broken because the site response caches domains
-			//and we have trouble getting over it.
-			if ( site.options.is_automated_transfer && site.URL.match( '.wordpress.com' ) ) {
-				return siteObj;
-			}
+			result = siteObj.set( site );
 
 			// When we set a new front page, we clear out SitesList. On accounts with a large
 			// number of sites, the resulting fetch can take time resulting in incorrect data
@@ -210,16 +205,6 @@ SitesList.prototype.update = function( sites ) {
 			// of a mismatch. See #13143.
 			if ( siteObj.options.page_on_front !== site.options.page_on_front ) {
 				return siteObj;
-			}
-
-			if ( site.options.is_automated_transfer && ! siteObj.jetpack && site.jetpack ) {
-				//We have a site that was not jetpack and now is.
-				siteObj.off( 'change', this.propagateChange );
-				siteObj = this.createSiteObject( site );
-				siteObj.on( 'change', this.propagateChange );
-				changed = true;
-			} else {
-				result = siteObj.set( site );
 			}
 
 			if ( result ) {
