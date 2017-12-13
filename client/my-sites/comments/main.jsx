@@ -4,7 +4,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import config from 'config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -114,10 +113,7 @@ const mapStateToProps = ( state, { siteFragment } ) => {
 	const siteId = getSiteId( state, siteFragment );
 	const isJetpack = isJetpackSite( state, siteId );
 	const canModerateComments = canCurrentUser( state, siteId, 'edit_posts' );
-	const showJetpackUpdateScreen =
-		isJetpack &&
-		! isJetpackMinimumVersion( state, siteId, '5.5' ) &&
-		config.isEnabled( 'comments/management/jetpack-5.5' );
+	const showJetpackUpdateScreen = isJetpack && ! isJetpackMinimumVersion( state, siteId, '5.5' );
 
 	const sitePlugins = getPlugins( state, [ siteId ] );
 	const jetpackPlugin = find( sitePlugins, { slug: 'jetpack' } );
