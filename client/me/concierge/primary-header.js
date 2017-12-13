@@ -15,6 +15,10 @@ class PrimaryHeader extends Component {
 	render() {
 		return (
 			<Card>
+				<img
+					className="concierge__info-illustration"
+					src={ '/calypso/images/illustrations/illustration-start.svg' }
+				/>
 				<FormattedHeader
 					headerText="WordPress.com Business Site Setup"
 					subHeaderText="In this 30 minute session we'll help you get started with your site."

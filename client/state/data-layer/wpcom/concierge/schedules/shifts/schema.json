@@ -8,7 +8,7 @@
 			"end_timestamp"
 		],
 		"properties": {
-			"id": { "type": "string" },
+			"id": { "type": "integer" },
 			"begin_timestamp": { "type": "integer" },
 			"end_timestamp": { "type": "integer" }
 		}
