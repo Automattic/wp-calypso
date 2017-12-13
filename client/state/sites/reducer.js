@@ -4,18 +4,7 @@
  * External dependencies
  */
 
-import {
-	pick,
-	omit,
-	merge,
-	get,
-	includes,
-	reduce,
-	isEqual,
-	stubFalse,
-	stubTrue,
-	find,
-} from 'lodash';
+import { pick, omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';
 
 /**
  * Internal dependencies
@@ -238,19 +227,19 @@ export function items( state = {}, action ) {
 				return state;
 			}
 
-			const siteId = get( invite, 'site.ID', null );
+			return reduce(
+				data.sites,
+				( memo, site ) => {
+					if ( memo === state ) {
+						memo = { ...state };
+					}
 
-			if ( ! siteId || state[ siteId ] ) {
-				return state;
-			}
+					memo[ site.ID ] = pick( site, VALID_SITE_KEYS );
 
-			const site = find( data.sites, receivedSite => receivedSite.ID === siteId );
-			const transformedSite = pick( site, VALID_SITE_KEYS );
-
-			return {
-				...state,
-				[ siteId ]: transformedSite,
-			};
+					return memo;
+				},
+				state
+			);
 		}
 	}
 
