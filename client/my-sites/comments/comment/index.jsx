@@ -30,6 +30,7 @@ export class Comment extends Component {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 		commentId: PropTypes.number,
+		isEditMode: PropTypes.bool,
 		isBulkMode: PropTypes.bool,
 		isPostView: PropTypes.bool,
 		isSelected: PropTypes.bool,
@@ -45,11 +46,11 @@ export class Comment extends Component {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		const { isBulkMode: wasBulkMode } = this.props;
+		const { isBulkMode: wasBulkMode, isEditMode: forceEditMode } = this.props;
 		const { isBulkMode } = nextProps;
 
 		this.setState( ( { isEditMode, isReplyVisible } ) => ( {
-			isEditMode: wasBulkMode !== isBulkMode ? false : isEditMode,
+			isEditMode: forceEditMode || ( wasBulkMode !== isBulkMode ? false : isEditMode ),
 			isReplyVisible: wasBulkMode !== isBulkMode ? false : isReplyVisible,
 		} ) );
 	}
