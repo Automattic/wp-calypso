@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { map } from 'lodash';
+import { map, get } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -13,7 +13,7 @@ import { receiveTags } from 'state/reader/tags/items/actions';
 import requestFollowHandler from 'state/data-layer/wpcom/read/tags/mine/new';
 import requestUnfollowHandler from 'state/data-layer/wpcom/read/tags/mine/delete';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'state/notices/actions';
@@ -36,7 +36,7 @@ export function requestTags( store, action ) {
 export function receiveTagsSuccess( store, action, apiResponse ) {
 	let tags = fromApi( apiResponse );
 	if ( ! apiResponse || ( ! apiResponse.tag && ! apiResponse.tags ) ) {
-		receiveTagsError( store, action );
+		receiveTagsError( store, action, apiResponse );
 		return;
 	}
 
@@ -54,6 +54,17 @@ export function receiveTagsSuccess( store, action, apiResponse ) {
 }
 
 export function receiveTagsError( store, action, error ) {
+	// if tag does not exist, refreshing page wont help
+	if ( get( getHeaders( action ), 'status' ) === 404 ) {
+		const slug = action.payload.slug;
+		store.dispatch(
+			receiveTags( {
+				payload: [ { id: slug, slug, error: true } ],
+			} )
+		);
+		return;
+	}
+
 	const errorText =
 		action.payload && action.payload.slug
 			? translate( 'Could not load tag, try refreshing the page' )

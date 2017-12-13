@@ -4,7 +4,7 @@
  */
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
+import { identity, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -35,6 +35,10 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	followTag = tag => {
+		if ( startsWith( tag, '#' ) ) {
+			tag = tag.substring( 1 );
+		}
+
 		this.props.followTag( decodeURIComponent( tag ) );
 		recordAction( 'followed_topic' );
 		recordGaEvent( 'Clicked Follow Topic', tag );
