@@ -110,6 +110,8 @@ export default {
 			stepName = utils.getStepName( context.params ),
 			stepSectionName = utils.getStepSectionName( context.params );
 
+		const { query } = initialContext;
+
 		analytics.pageView.record(
 			basePath,
 			basePageTitle + ' > Start > ' + flowName + ' > ' + stepName
@@ -122,6 +124,8 @@ export default {
 			initialContext,
 			locale: utils.getLocale( context.params ),
 			flowName: flowName,
+			queryObject: query,
+			refParameter: query && query.ref,
 			stepName: stepName,
 			stepSectionName: stepSectionName,
 		} );
