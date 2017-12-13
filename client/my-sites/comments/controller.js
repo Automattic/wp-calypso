@@ -29,11 +29,13 @@ const sanitizeQueryAction = action => {
 
 	const validActions = {
 		approve: 'approved',
+		edit: 'edit',
 		unapprove: 'unapproved',
 		trash: 'trash',
 		spam: 'spam',
 		delete: 'delete',
 	};
+
 	return validActions.hasOwnProperty( action.toLowerCase() )
 		? validActions[ action.toLowerCase() ]
 		: null;
