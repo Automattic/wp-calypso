@@ -92,7 +92,9 @@ export class EmbedDialog extends React.Component {
 	componentDidUpdate = ( prevProps, prevState ) => {
 		// New URL typed, fetch it from the API
 		if ( this.state.embedUrl !== prevState.embedUrl ) {
-			this.setState( { isLoading: true } );
+			if ( ! this.isURLInCache( this.state.embedUrl ) ) {
+				this.setState( { isLoading: true } );
+			}
 			this.debouncedFetchEmbedPreviewMarkup( this.state.embedUrl );
 		}
 

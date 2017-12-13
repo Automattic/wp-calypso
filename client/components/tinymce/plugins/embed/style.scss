@@ -30,7 +30,7 @@
 			display: flex;
 			overflow-y: auto;
 			position: relative;
-			min-height: 150px;
+			min-height:50px;
 
 			.embed__status {
 				padding: 24px;
@@ -64,12 +64,6 @@
 				&.isLoading {
 					visibility: hidden;
 				}
-				/* todo
-				- the embed should take up 100% width of the container, but that'll distort it's aspect ratio?
-					 need to make the modal 640px wide instead? will that work for all embeds, or just youtube?
-				- make margin/padding around embed and other places match the ones around the title, so everything is visually consistent
-				- videopress embeds are smaller than youtube, leaving undesired space. need them to be 100% width too. are there other services to test as well? vimeo, etc
-				*/
 			}
 
 
