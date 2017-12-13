@@ -17,9 +17,7 @@ import classNames from 'classnames';
 import AllSitesIcon from 'my-sites/all-sites-icon';
 import Count from 'components/count';
 import { getSites } from 'state/selectors';
-import userLib from 'lib/user';
-
-const user = userLib();
+import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
 
 class AllSites extends Component {
 	static defaultProps = {
@@ -49,8 +47,7 @@ class AllSites extends Component {
 	};
 
 	renderSiteCount() {
-		const count = this.props.count || user.get().visible_site_count;
-		return <Count count={ count } />;
+		return <Count count={ this.props.count } />;
 	}
 
 	render() {
@@ -92,6 +89,7 @@ class AllSites extends Component {
 }
 
 export default connect( ( state, props ) => {
-	const { sites = getSites( state ) } = props;
-	return { sites };
+	// If sites or count are not specified as props, fetch the default values from Redux
+	const { sites = getSites( state ), count = getCurrentUserVisibleSiteCount( state ) } = props;
+	return { sites, count };
 } )( localize( AllSites ) );

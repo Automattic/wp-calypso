@@ -79,6 +79,21 @@ export function getCurrentUserSiteCount( state ) {
 }
 
 /**
+ * Returns the number of visible sites for the current user.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {?Number}        Current user visible site count
+ */
+export function getCurrentUserVisibleSiteCount( state ) {
+	const user = getCurrentUser( state );
+	if ( ! user ) {
+		return null;
+	}
+
+	return user.visible_site_count || 0;
+}
+
+/**
  * Returns the currency code for the current user.
  *
  * @param  {Object}  state  Global state tree
