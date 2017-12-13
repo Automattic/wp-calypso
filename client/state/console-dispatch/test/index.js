@@ -14,7 +14,7 @@ describe( 'consoleDispatcher', () => {
 		} );
 
 		test( 'should transform string to arg.type predicate function', () => {
-			const predicate = queryToPredicate( /^MATCH_ME$/ );
+			const predicate = queryToPredicate( 'MATCH_ME' );
 			expect( predicate( { type: 'MATCH_ME' } ) ).toBe( true );
 			expect( predicate( { type: 'DONT_MATCH_ME' } ) ).toBe( false );
 		} );
