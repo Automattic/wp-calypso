@@ -323,7 +323,24 @@ describe( 'handlers', () => {
 				} )
 			);
 		} );
+
+		test( 'should call the onSuccess callback for a successful orders save', () => {
+			const dispatch = spy();
+			const order = { id: 42, total: '50.00' };
+			const action = saveOrderSuccess( 123, 42, order );
+			action.onSuccess = localDispatch => {
+				localDispatch( { type: NOTICE_CREATE, notice: {} } );
+			};
+
+			onOrderSaveSuccess( { dispatch }, action, { data: order } );
+			expect( dispatch ).to.have.been.calledWithMatch(
+				match( {
+					type: NOTICE_CREATE,
+				} )
+			);
+		} );
 	} );
+
 	describe( '#onOrderSaveFailure', () => {
 		test( 'should dispatch a failure action on a failed orders save', () => {
 			const dispatch = spy();
@@ -337,15 +354,30 @@ describe( 'handlers', () => {
 			onOrderSaveFailure( { dispatch }, action, response );
 			expect( dispatch ).to.have.been.calledWithMatch(
 				match( {
-					type: NOTICE_CREATE,
-				} )
-			);
-			expect( dispatch ).to.have.been.calledWithMatch(
-				match( {
 					type: WOOCOMMERCE_ORDER_UPDATE_FAILURE,
 					siteId: 123,
 					orderId: 1,
 					error: response,
+				} )
+			);
+		} );
+
+		test( 'should call the onFailure callback for a failed orders save', () => {
+			const dispatch = spy();
+			const response = {
+				code: 'rest_no_route',
+				data: { status: 404 },
+				message: 'No route was found matching the URL and request method',
+			};
+			const action = saveOrderError( 123, 1, response );
+			action.onFailure = localDispatch => {
+				localDispatch( { type: NOTICE_CREATE, notice: {} } );
+			};
+
+			onOrderSaveFailure( { dispatch }, action, response );
+			expect( dispatch ).to.have.been.calledWithMatch(
+				match( {
+					type: NOTICE_CREATE,
 				} )
 			);
 		} );

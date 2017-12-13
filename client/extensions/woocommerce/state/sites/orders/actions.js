@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { isArray } from 'lodash';
+import { isArray, noop } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -91,7 +91,12 @@ export const updateOrder = ( siteId, orderId, order ) => {
 	};
 };
 
-export const saveOrder = ( siteId, { id: orderId, ...order }, onSuccess, onFailure ) => {
+export const saveOrder = (
+	siteId,
+	{ id: orderId, ...order },
+	onSuccess = noop,
+	onFailure = noop
+) => {
 	order = transformOrderForApi( removeTemporaryIds( order ) );
 	return {
 		type: WOOCOMMERCE_ORDER_UPDATE,

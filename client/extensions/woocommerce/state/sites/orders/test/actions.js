@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -115,12 +116,14 @@ describe( 'actions', () => {
 		};
 
 		test( 'should dispatch an action', () => {
-			const action = saveOrder( siteId, updatedOrder );
+			const action = saveOrder( siteId, updatedOrder, noop, noop );
 			expect( action ).to.eql( {
 				type: WOOCOMMERCE_ORDER_UPDATE,
 				siteId: 123,
 				orderId: 40,
 				order: { status: 'completed' },
+				onFailure: noop,
+				onSuccess: noop,
 			} );
 		} );
 
@@ -153,12 +156,14 @@ describe( 'actions', () => {
 		};
 
 		test( 'should dispatch an action', () => {
-			const action = saveOrder( siteId, newOrder );
+			const action = saveOrder( siteId, newOrder, noop, noop );
 			expect( action ).to.eql( {
 				type: WOOCOMMERCE_ORDER_UPDATE,
 				siteId: 123,
 				orderId: { placeholder: 'order_1' },
 				order: { status: 'processing' },
+				onFailure: noop,
+				onSuccess: noop,
 			} );
 		} );
 
