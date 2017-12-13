@@ -92,7 +92,7 @@ class JetpackNewSite extends Component {
 							</div>
 						</Card>
 						<Card className="jetpack-new-site__jetpack-site">
-							<JetpackLogo />
+							<JetpackLogo size={ 72 } />
 							<h3 className="jetpack-new-site__card-title">
 								{ this.props.translate( 'Add an existing WordPress site with Jetpack' ) }
 							</h3>
