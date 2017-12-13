@@ -27,7 +27,7 @@ export const consoleDispatcher = next => ( ...args ) => {
 
 		Object.defineProperty( window, 'state', {
 			enumerable: true,
-			get: () => store.getState(),
+			get: store.getState,
 		} );
 	}
 
