@@ -15,7 +15,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import CommentButton from 'blocks/comment-button';
@@ -49,7 +48,6 @@ const PostActions = ( {
 	showLikes,
 	showStats,
 	siteSlug,
-	toggleComments,
 	trackRelativeTimeStatusOnClick,
 	trackTotalViewsOnClick,
 } ) => {
@@ -69,25 +67,14 @@ const PostActions = ( {
 			{ ! isDraft &&
 				showComments && (
 					<li className="post-actions__item">
-						{ config.isEnabled( 'comments/management/post-view' ) ? (
-							<CommentButton
-								key="comment-button"
-								post={ post }
-								showLabel={ false }
-								commentCount={ post.discussion.comment_count }
-								tagName="a"
-								href={ `/comments/all/${ siteSlug }/${ post.ID }` }
-							/>
-						) : (
-							<CommentButton
-								key="comment-button"
-								post={ post }
-								showLabel={ false }
-								commentCount={ post.discussion.comment_count }
-								onClick={ toggleComments }
-								tagName="div"
-							/>
-						) }
+						<CommentButton
+							key="comment-button"
+							post={ post }
+							showLabel={ false }
+							commentCount={ post.discussion.comment_count }
+							tagName="a"
+							href={ `/comments/all/${ siteSlug }/${ post.ID }` }
+						/>
 					</li>
 				) }
 			{ ! isDraft &&
@@ -115,7 +102,6 @@ PostActions.propTypes = {
 	className: PropTypes.string,
 	post: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
-	toggleComments: PropTypes.func.isRequired,
 	trackRelativeTimeStatusOnClick: PropTypes.func,
 	trackTotalViewsOnClick: PropTypes.func,
 };

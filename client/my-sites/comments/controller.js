@@ -9,7 +9,6 @@ import { each, isNaN, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route, { addQueryArgs } from 'lib/route';
 import CommentsManagement from './main';
@@ -107,7 +106,7 @@ export const comment = context => {
 	const siteFragment = route.getSiteFragment( path );
 	const commentId = sanitizeInt( params.comment );
 
-	if ( ! commentId || ! isEnabled( 'comments/management/m3-design' ) ) {
+	if ( ! commentId ) {
 		return siteFragment
 			? page.redirect( `/comments/all/${ siteFragment }` )
 			: page.redirect( '/comments/all' );

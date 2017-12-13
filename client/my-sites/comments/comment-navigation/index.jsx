@@ -26,7 +26,6 @@ import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import SegmentedControl from 'components/segmented-control';
 import UrlSearch from 'lib/url-search';
-import { isEnabled } from 'config';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -45,11 +44,6 @@ const bulkActions = {
 	trash: [ 'approve', 'spam', 'delete' ],
 	all: [ 'approve', 'unapprove', 'spam', 'trash' ],
 };
-
-if ( ! isEnabled( 'comments/management/m3-design' ) ) {
-	bulkActions.approved.push( 'approve' );
-	bulkActions.unapproved.push( 'unapprove' );
-}
 
 export class CommentNavigation extends Component {
 	static defaultProps = {
@@ -281,8 +275,7 @@ export class CommentNavigation extends Component {
 				</NavTabs>
 
 				<CommentNavigationTab className="comment-navigation__actions comment-navigation__open-bulk">
-					{ isEnabled( 'comments/management/sorting' ) &&
-						isCommentsTreeSupported &&
+					{ isCommentsTreeSupported &&
 						hasComments && (
 							<SegmentedControl compact className="comment-navigation__sort-buttons">
 								<ControlItem

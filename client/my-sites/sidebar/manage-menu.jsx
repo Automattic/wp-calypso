@@ -109,7 +109,7 @@ class ManageMenu extends PureComponent {
 				label: this.props.translate( 'Comments' ),
 				capability: 'edit_posts',
 				queryable: true,
-				config: 'comments/management',
+				config: 'manage/comments',
 				link: '/comments',
 				paths: [ '/comment', '/comments' ],
 				wpAdminLink: 'edit-comments.php',
