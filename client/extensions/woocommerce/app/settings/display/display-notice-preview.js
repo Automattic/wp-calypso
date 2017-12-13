@@ -33,7 +33,7 @@ const SettingsDisplayNoticePreview = ( { translate, value } ) => {
 				</div>
 			</BrowserFrame>
 			<p className="display__notice-preview-caveat">
-				{ translate( 'Caveat: Styling dependent on theme' ) }
+				{ translate( 'Note: Overall look may vary based on theme.' ) }
 			</p>
 		</div>
 	);

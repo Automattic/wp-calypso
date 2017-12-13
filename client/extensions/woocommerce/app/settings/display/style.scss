@@ -39,7 +39,7 @@
 				min-width: 0;
 
 				@include breakpoint( ">960px" ) {
-					margin-left: 18px;
+					margin-left: 32px;
 					margin-top: 0;
 				}
 
@@ -60,7 +60,7 @@
 						flex-basis: 30%;
 
 						div {
-							background-color: $gray;
+							background-color: $gray-light;
 							height: 320px;
 							margin: 16px;
 						}
@@ -70,7 +70,7 @@
 						flex-basis: 70%;
 
 						div {
-							background-color: $gray;
+							background-color: $gray-light;
 							height: 320px;
 							margin: 16px 16px 16px 0;
 						}
