@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import page from 'page';
-import { get } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -92,8 +92,9 @@ class Edit extends React.Component {
 
 	renderDetails = ( domain, Details ) => {
 		const { MAINTENANCE } = registrarNames;
+		const { REGISTERED, TRANSFER } = domainTypes;
 
-		if ( domain.type === domainTypes.REGISTERED && domain.registrar === MAINTENANCE ) {
+		if ( includes( [ REGISTERED, TRANSFER ], domain.type ) && domain.registrar === MAINTENANCE ) {
 			return <MaintenanceCard { ...this.props } />;
 		}
 
