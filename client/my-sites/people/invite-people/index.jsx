@@ -317,6 +317,8 @@ class InvitePeople extends React.Component {
 								tokenizeOnSpace
 								autoCapitalize="none"
 								autoComplete="off"
+								autoCorrect="off"
+								spellCheck="false"
 								maxLength={ 10 }
 								value={ this.getTokensWithStatus() }
 								onChange={ this.onTokensChange }
