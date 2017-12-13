@@ -4,7 +4,7 @@
  * @format
  */
 
-import { has, invoke } from 'lodash';
+import { has, invoke, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,9 +31,13 @@ const eventServices = {
 	adwords: ( { properties } ) => trackCustomAdWordsRemarketingEvent( properties ),
 };
 
+// Whitelists specific parameters to avoid polluting page view events
+const PAGE_VIEW_SERVICES_ALLOWED_PARAMS = [ 'client_id' ];
+
 const pageViewServices = {
 	ga: ( { url, title } ) => analytics.ga.recordPageView( url, title ),
-	default: ( { url, title } ) => analytics.pageView.record( url, title ),
+	default: ( { url, title, ...params } ) =>
+		analytics.pageView.record( url, title, pick( params, PAGE_VIEW_SERVICES_ALLOWED_PARAMS ) ),
 };
 
 const loadTrackingTool = ( trackingTool, state ) => {

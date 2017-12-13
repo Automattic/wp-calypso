@@ -34,7 +34,7 @@ import {
 } from 'state/login/actions';
 import { login } from 'lib/paths';
 import { preventWidows } from 'lib/formatting';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import {
 	getAuthAccountType as getAuthAccountTypeSelector,
 	getRequestError,

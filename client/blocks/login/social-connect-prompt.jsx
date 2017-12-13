@@ -22,7 +22,7 @@ import {
 	getRedirectTo,
 } from 'state/login/selectors';
 import { connectSocialUser } from 'state/login/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 class SocialConnectPrompt extends Component {
 	static propTypes = {

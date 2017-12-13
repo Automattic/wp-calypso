@@ -9,7 +9,17 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { composeAnalytics, withAnalytics, bumpStat, setTracksAnonymousUserId } from '../actions.js';
+import {
+	composeAnalytics,
+	withAnalytics,
+	bumpStat,
+	setTracksAnonymousUserId,
+	recordTracksEvent,
+	recordTracksEventWithClientId,
+	recordPageView,
+	recordPageViewWithClientId,
+} from '../actions.js';
+
 import {
 	ANALYTICS_MULTI_TRACK,
 	ANALYTICS_STAT_BUMP,
@@ -89,6 +99,60 @@ describe( 'middleware', () => {
 			];
 			expect( tracksAction.type ).to.equal( ANALYTICS_TRACKS_ANONID_SET );
 			expect( tracksAction.meta.analytics ).to.deep.equal( expected );
+		} );
+	} );
+
+	describe( 'withClientId', () => {
+		test( 'should create track event with client id', () => {
+			const props = [
+				'calypso_login_success',
+				{
+					hello: 'world',
+				},
+			];
+
+			const tracksEvent = recordTracksEvent( ...props );
+			const thunk = recordTracksEventWithClientId( ...props );
+
+			let dispatchedEvent;
+			const dispatch = ( createdAction ) => dispatchedEvent = createdAction;
+
+			const clientId = 123;
+			const getState = () => ( {
+				ui: { oauth2Clients: { currentClientId: clientId } },
+			} );
+
+			thunk( dispatch, getState );
+
+			tracksEvent.meta.analytics[ 0 ].payload.properties.client_id = clientId;
+
+			expect( dispatchedEvent ).to.eql( tracksEvent );
+		} );
+
+		test( 'should create page view event with client id', () => {
+			const props = [
+				'calypso_login_success',
+				{
+					hello: 'world',
+				},
+			];
+
+			const pageViewEvent = recordPageView( ...props );
+			const thunk = recordPageViewWithClientId( ...props );
+
+			let dispatchedEvent;
+			const dispatch = ( createdAction ) => dispatchedEvent = createdAction;
+
+			const clientId = 123;
+			const getState = () => ( {
+				ui: { oauth2Clients: { currentClientId: clientId } },
+			} );
+
+			thunk( dispatch, getState );
+
+			pageViewEvent.meta.analytics[ 0 ].payload.client_id = clientId;
+
+			expect( dispatchedEvent ).to.eql( pageViewEvent );
 		} );
 	} );
 } );
