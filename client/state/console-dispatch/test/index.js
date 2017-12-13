@@ -26,10 +26,9 @@ describe( 'consoleDispatcher', () => {
 		} );
 
 		test( 'should throw an Error if unrecognized query is provided', () => {
-			const makeQueryToPredicateThunk = ( ...args ) => () => queryToPredicate( ...args );
-			expect( makeQueryToPredicateThunk() ).toThrow( TypeError );
-			expect( makeQueryToPredicateThunk( 1 ) ).toThrow( TypeError );
-			expect( makeQueryToPredicateThunk( {} ) ).toThrow( TypeError );
+			expect( () => queryToPredicate() ).toThrow( TypeError );
+			expect( () => queryToPredicate( 1 ) ).toThrow( TypeError );
+			expect( () => queryToPredicate( {} ) ).toThrow( TypeError );
 		} );
 	} );
 } );
