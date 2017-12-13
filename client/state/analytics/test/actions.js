@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { flowRight, set } from 'lodash';
+import { flowRight } from 'lodash';
 import { spy } from 'sinon';
 
 /**
