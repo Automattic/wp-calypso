@@ -131,7 +131,7 @@ export class LoginForm extends Component {
 				} )
 				.catch( error => {
 					this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_failure', {
-						error_code: error.code,
+						error_code: error.error,
 						error_message: error.message,
 					} );
 				} );
