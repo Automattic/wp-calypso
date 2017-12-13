@@ -16,10 +16,13 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 
 class HistoryButton extends PureComponent {
-	onClick = () => this.props.recordTracksEvent( 'calypso_editor_history_button_click' );
+	onClick = () => {
+		this.props.recordTracksEvent( 'calypso_editor_history_button_click' );
+		this.props.openDialog();
+	};
 
 	render() {
-		const { loadRevision, postId, siteId, openDialog, translate } = this.props;
+		const { loadRevision, postId, siteId, translate } = this.props;
 		return (
 			<div className="editor-ground-control__history">
 				<button
