@@ -24,31 +24,12 @@ User.dispatchToken = Dispatcher.register( function( payload ) {
 	var action = payload.action;
 	switch ( action.type ) {
 		case 'RECEIVE_DELETED_SITE':
-			decrementSiteCount();
-			_user.fetch();
+			_user.decrementSiteCount();
 			break;
 		case InvitesActionTypes.INVITE_ACCEPTED:
 			if ( [ 'follower', 'viewer' ].indexOf( action.invite.role ) === -1 ) {
-				incrementSiteCount();
+				_user.incrementSiteCount();
 			}
 			break;
 	}
 } );
-
-function decrementSiteCount() {
-	var data = _user.get(),
-		attributes = {
-			visible_site_count: data.visible_site_count - 1,
-			site_count: data.site_count - 1,
-		};
-	_user.set( attributes );
-}
-
-function incrementSiteCount() {
-	const data = _user.get(),
-		attributes = {
-			visible_site_count: data.visible_site_count + 1,
-			site_count: data.site_count + 1,
-		};
-	_user.set( attributes );
-}
