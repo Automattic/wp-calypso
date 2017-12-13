@@ -14,7 +14,7 @@ import { get, has } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostRevision, getPostRevisionChanges } from 'state/selectors';
+import { getPostRevision } from 'state/selectors';
 import EditorDiffChanges from './changes';
 
 class EditorDiffViewer extends PureComponent {
@@ -22,11 +22,10 @@ class EditorDiffViewer extends PureComponent {
 		postId: PropTypes.number.isRequired,
 		selectedRevisionId: PropTypes.number,
 		siteId: PropTypes.number.isRequired,
-
-		// connected
-		revisionChanges: PropTypes.shape( {
-			title: PropTypes.array,
-			content: PropTypes.array,
+		diff: PropTypes.shape( {
+			post_content: PropTypes.array,
+			post_title: PropTypes.array,
+			totals: PropTypes.object,
 		} ).isRequired,
 	};
 
@@ -49,25 +48,18 @@ class EditorDiffViewer extends PureComponent {
 	}
 
 	render() {
-		const { revision, revisionChanges } = this.props;
+		const { diff } = this.props;
 		const classes = classNames( 'editor-diff-viewer', {
-			'is-loading': ! ( revisionChanges.tooLong || has( revisionChanges, 'title[0].value' ) ),
+			'is-loading': ! has( diff, 'post_content' ) && ! has( diff, 'post_title' ),
 		} );
+
 		return (
 			<div className={ classes }>
 				<h1 className="editor-diff-viewer__title">
-					{ revisionChanges.tooLong ? (
-						revision.title
-					) : (
-						<EditorDiffChanges changes={ revisionChanges.title } />
-					) }
+					<EditorDiffChanges changes={ diff.post_title } />
 				</h1>
 				<pre className="editor-diff-viewer__content">
-					{ revisionChanges.tooLong ? (
-						revision.content
-					) : (
-						<EditorDiffChanges changes={ revisionChanges.content } />
-					) }
+					<EditorDiffChanges changes={ diff.post_content } splitLines />
 				</pre>
 			</div>
 		);
@@ -76,5 +68,4 @@ class EditorDiffViewer extends PureComponent {
 
 export default connect( ( state, { siteId, postId, selectedRevisionId } ) => ( {
 	revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
-	revisionChanges: getPostRevisionChanges( state, siteId, postId, selectedRevisionId ),
 } ) )( EditorDiffViewer );

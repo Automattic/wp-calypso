@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { findIndex, get, head, isEmpty, map } from 'lodash';
+import { get, head, isEmpty, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,11 +16,12 @@ import { findIndex, get, head, isEmpty, map } from 'lodash';
 import EditorRevisionsListHeader from './header';
 import EditorRevisionsListItem from './item';
 import { selectPostRevision } from 'state/posts/revisions/actions';
-import { getPostRevision, getPostRevisionsSelectedRevisionId } from 'state/selectors';
+import { getPostRevision } from 'state/selectors';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {
+		comparisons: PropTypes.object,
 		postId: PropTypes.number,
 		siteId: PropTypes.number,
 		revisions: PropTypes.array.isRequired,
@@ -66,6 +67,7 @@ class EditorRevisionsList extends PureComponent {
 	}
 
 	componentDidUpdate() {
+		// @TODO -- maybe short-circuit this if selection doesn't change...?
 		this.scrollToSelectedItem();
 	}
 
@@ -106,7 +108,7 @@ class EditorRevisionsList extends PureComponent {
 	};
 
 	render() {
-		const { postId, revisions, selectedRevisionId, siteId } = this.props;
+		const { comparisons, postId, revisions, selectedRevisionId, siteId } = this.props;
 		const classes = classNames( 'editor-revisions-list', {
 			'is-loading': isEmpty( revisions ),
 		} );
@@ -120,11 +122,13 @@ class EditorRevisionsList extends PureComponent {
 							const itemClasses = classNames( 'editor-revisions-list__revision', {
 								'is-selected': revision.id === selectedRevisionId,
 							} );
+							const revisionChanges = get( comparisons, [ revision.id, 'diff', 'totals' ], {} );
 							return (
 								<li className={ itemClasses } key={ revision.id }>
 									<EditorRevisionsListItem
 										postId={ postId }
 										revision={ revision }
+										revisionChanges={ revisionChanges }
 										siteId={ siteId }
 									/>
 								</li>
@@ -138,17 +142,12 @@ class EditorRevisionsList extends PureComponent {
 }
 
 export default connect(
-	( state, { revisions } ) => {
-		const selectedRevisionId = getPostRevisionsSelectedRevisionId( state );
-		const selectedIdIndex = findIndex( revisions, { id: selectedRevisionId } );
-		const nextRevisionId = selectedRevisionId && get( revisions, [ selectedIdIndex - 1, 'id' ] );
-		const prevRevisionId = selectedRevisionId && get( revisions, [ selectedIdIndex + 1, 'id' ] );
-
+	( state, { comparisons, selectedRevisionId } ) => {
+		const { nextRevisionId, prevRevisionId } = get( comparisons, [ selectedRevisionId ], {} );
 		return {
-			selectedRevision: getPostRevision( state, selectedRevisionId ),
 			nextRevisionId,
 			prevRevisionId,
-			selectedRevisionId,
+			selectedRevision: getPostRevision( state, selectedRevisionId ),
 		};
 	},
 	{ selectPostRevision }

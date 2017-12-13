@@ -18,11 +18,18 @@ import {
  *
  * @param {String} siteId of the revisions
  * @param {String} postId of the revisions
- * @param {String} [postType='post'] post type of the revisions
+ * @param {String} postType of the parent post
+ * @param {String} [comparisons=[]] list of revision objects to compare in format:
+ * 					[
+ * 						{ from: 6, to: 8 },
+ * 						{ from: 4, to: 5 },
+ * 					]
+ * 					Optional. If not provided, the API will return a set of sequential diffs
  * @return {Object} action object
  */
-export const requestPostRevisions = ( siteId, postId, postType = 'post' ) => ( {
+export const requestPostRevisions = ( siteId, postId, postType = 'posts', comparisons = [] ) => ( {
 	type: POST_REVISIONS_REQUEST,
+	comparisons,
 	postId,
 	postType,
 	siteId,
@@ -59,19 +66,15 @@ export const receivePostRevisionsFailure = ( siteId, postId, error ) => ( {
 /**
  * Action creator function: POST_REVISIONS_RECEIVE
  *
- * @param {String} siteId of the revisions
- * @param {String} postId of the revisions
- * @param {Object} revisions already normalized
+ * @param {Object} response diffs, postId, revisions, siteId,
  * @return {Object} action object
  */
-export const receivePostRevisions = ( siteId, postId, revisions ) => ( {
-	// NOTE: We expect all revisions to be on the same post, thus highly
-	// coupling it to how the WP-API returns revisions, instead of being able
-	// to "receive" large (possibly unrelated) batch of revisions.
+export const receivePostRevisions = ( { diffs, postId, revisions, siteId } ) => ( {
 	type: POST_REVISIONS_RECEIVE,
-	siteId,
+	diffs,
 	postId,
 	revisions,
+	siteId,
 } );
 
 export const selectPostRevision = revisionId => ( {

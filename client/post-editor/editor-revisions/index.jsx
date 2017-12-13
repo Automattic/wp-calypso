@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow } from 'lodash';
+import { flow, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import { flow } from 'lodash';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import {
 	getPostRevisions,
+	getPostRevisionsComparisons,
 	getPostRevisionsAuthorsId,
 	getPostRevisionsSelectedRevisionId,
 } from 'state/selectors';
@@ -24,8 +25,16 @@ import QueryPostRevisions from 'components/data/query-post-revisions';
 import QueryUsers from 'components/data/query-users';
 
 class EditorRevisions extends Component {
-	render = () => {
-		const { authorsIds, postId, revisions, selectedRevisionId, siteId } = this.props;
+	render() {
+		const {
+			authorsIds,
+			comparisons,
+			postId,
+			revisions,
+			selectedDiff,
+			selectedRevisionId,
+			siteId,
+		} = this.props;
 
 		return (
 			<div className="editor-revisions__wrapper">
@@ -36,21 +45,30 @@ class EditorRevisions extends Component {
 				/>
 				<QueryUsers siteId={ siteId } userIds={ authorsIds } />
 				<EditorDiffViewer
+					diff={ selectedDiff }
 					postId={ postId }
 					selectedRevisionId={ selectedRevisionId }
 					siteId={ siteId }
 				/>
-				<EditorRevisionsList postId={ postId } revisions={ revisions } siteId={ siteId } />
+				<EditorRevisionsList
+					comparisons={ comparisons }
+					postId={ postId }
+					revisions={ revisions }
+					selectedRevisionId={ selectedRevisionId }
+					siteId={ siteId }
+				/>
 			</div>
 		);
-	};
+	}
 }
 
 EditorRevisions.propTypes = {
 	// connected
 	authorsIds: PropTypes.array.isRequired,
+	comparisons: PropTypes.object,
 	postId: PropTypes.number.isRequired,
 	revisions: PropTypes.array.isRequired,
+	selectedDiff: PropTypes.object,
 	selectedRevisionId: PropTypes.number,
 	siteId: PropTypes.number.isRequired,
 
@@ -63,11 +81,19 @@ export default flow(
 	connect( state => {
 		const postId = getEditorPostId( state );
 		const siteId = getSelectedSiteId( state );
+
+		const revisions = getPostRevisions( state, siteId, postId );
+		const selectedRevisionId = getPostRevisionsSelectedRevisionId( state );
+		const comparisons = getPostRevisionsComparisons( state, siteId, postId );
+		const selectedDiff = get( comparisons, [ selectedRevisionId, 'diff' ], {} );
+
 		return {
 			authorsIds: getPostRevisionsAuthorsId( state, siteId, postId ),
+			comparisons,
 			postId,
-			revisions: getPostRevisions( state, siteId, postId, 'display' ),
-			selectedRevisionId: getPostRevisionsSelectedRevisionId( state ),
+			revisions,
+			selectedDiff,
+			selectedRevisionId,
 			siteId,
 		};
 	} )
