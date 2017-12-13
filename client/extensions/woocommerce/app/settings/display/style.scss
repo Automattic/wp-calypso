@@ -27,7 +27,7 @@
 				flex-basis: 60%;
 
 				&.placeholder {
-					height: 144px;
+					height: 322px;
 					@include placeholder();
 				}
 			}
@@ -52,8 +52,39 @@
 					white-space: nowrap;
 				}
 
+				.display__notice-preview-content {
+					display: flex;
+					overflow-y: hidden;
+
+					.display__notice-preview-content-primary {
+						flex-basis: 30%;
+
+						div {
+							background-color: $gray;
+							height: 320px;
+							margin: 16px;
+						}
+					}
+
+					.display__notice-preview-content-secondary {
+						flex-basis: 70%;
+
+						div {
+							background-color: $gray;
+							height: 320px;
+							margin: 16px 16px 16px 0;
+						}
+					}
+				}
+
+				.display__notice-preview-caveat {
+					color: $gray;
+					font-style: italic;
+					margin-top: 8px;
+				}
+
 				&.placeholder {
-					height: 144px;
+					height: 275px;
 					@include placeholder();
 				}
 			}

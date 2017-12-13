@@ -22,15 +22,19 @@ import SettingsDisplayHeader from './display-header';
 class SettingsDisplay extends Component {
 	static propTypes = {
 		className: PropTypes.string,
+		site: PropTypes.shape( {
+			slug: PropTypes.string,
+		} ),
 		siteId: PropTypes.number,
+		translate: PropTypes.func,
 	};
 
 	render = () => {
-		const { className, siteId } = this.props;
+		const { className, site, siteId } = this.props;
 
 		return (
 			<Main className={ classNames( 'settings-display', className ) } wideLayout>
-				<SettingsDisplayHeader siteId={ siteId } />
+				<SettingsDisplayHeader site={ site } />
 				<SettingsDisplayNotice siteId={ siteId } />
 			</Main>
 		);

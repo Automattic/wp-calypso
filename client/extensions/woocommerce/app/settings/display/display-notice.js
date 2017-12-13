@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -24,9 +23,24 @@ import QuerySettingsGeneral from 'woocommerce/components/query-settings-general'
 import SettingsDisplayNoticePreview from './display-notice-preview';
 
 class SettingsDisplayNotice extends Component {
+	constructor( props ) {
+		super( props );
+
+		// TODO - hook up to woocommerce_demo_store (boolean) and woocommerce_demo_store_notice (string) from redux
+		this.state = {
+			storeNoticeEnabled: true,
+			storeNotice: 'Buy a <a href="#">whoosit</a> today &ndash; you are going to love it.',
+		};
+	}
+
 	static propTypes = {
 		settingsGeneralLoaded: PropTypes.bool,
 		siteId: PropTypes.number.isRequired,
+		translate: PropTypes.func,
+	};
+
+	onContentsChange = storeNotice => {
+		this.setState( { storeNotice } );
 	};
 
 	renderPlaceholder = () => {
@@ -41,13 +55,30 @@ class SettingsDisplayNotice extends Component {
 		);
 	};
 
+	possiblyRenderWYSIWYG = () => {
+		const { translate } = this.props;
+		const { storeNoticeEnabled, storeNotice } = this.state;
+
+		if ( ! storeNoticeEnabled ) {
+			return null;
+		}
+
+		return (
+			<div className="display__notice-wysiwyg">
+				<div className="display__notice-editor-container">
+					<h4>{ translate( 'Store notice content' ) }</h4>
+					<CompactTinyMCE initialValue={ storeNotice } onContentsChange={ this.onContentsChange } />
+				</div>
+				<div className="display__notice-preview-container">
+					<SettingsDisplayNoticePreview value={ storeNotice } />
+				</div>
+			</div>
+		);
+	};
+
 	renderForm = () => {
 		const { translate } = this.props;
-
-		// TODO - hook up to woocommerce_demo_store (boolean) and woocommerce_demo_store_notice (string) in state
-		const storeNoticeEnabled = true;
-		const storeNotice =
-			'This is a demo store for testing purposes only &ndash; no orders shall be fulfilled.';
+		const { storeNoticeEnabled } = this.state;
 
 		return (
 			<div>
@@ -61,16 +92,7 @@ class SettingsDisplayNotice extends Component {
 						<span>{ translate( 'Display the store notice' ) }</span>
 					</FormLabel>
 				</FormFieldset>
-				<div className="display__notice-wysiwyg">
-					<div className="display__notice-editor-container">
-						<h4>{ translate( 'Store notice content' ) }</h4>
-						<CompactTinyMCE initialValue={ storeNotice } onContentsChange={ noop } />
-					</div>
-					<div className="display__notice-preview-container">
-						<h4>{ translate( 'Preview' ) }</h4>
-						<SettingsDisplayNoticePreview value={ storeNotice } />
-					</div>
-				</div>
+				{ this.possiblyRenderWYSIWYG() }
 			</div>
 		);
 	};
