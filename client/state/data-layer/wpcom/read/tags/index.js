@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { map } from 'lodash';
+import { map, get } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -55,7 +55,7 @@ export function receiveTagsSuccess( store, action, apiResponse ) {
 
 export function receiveTagsError( store, action, error ) {
 	// if tag does not exist, refreshing page wont help
-	if ( getHeaders( action ).status === 404 ) {
+	if ( get( getHeaders( action ), 'status' ) === 404 ) {
 		store.dispatch(
 			receiveTags( {
 				payload: [ { id: action.payload.slug, error: true } ],
