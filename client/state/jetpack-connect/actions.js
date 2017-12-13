@@ -378,6 +378,11 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 				}
 			} )
 			.catch( error => {
+				dispatch(
+					recordTracksEvent( 'calypso_jpc_siterequest_failure', {
+						error: error,
+					} )
+				);
 				dispatch( {
 					type: SITE_REQUEST_FAILURE,
 					siteId,
