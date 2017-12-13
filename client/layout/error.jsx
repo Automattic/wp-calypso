@@ -7,7 +7,6 @@
 import debug from 'debug';
 import { localize } from 'i18n-calypso';
 import { assign } from 'lodash';
-import ReactDom from 'react-dom';
 import React from 'react';
 import url from 'url';
 import qs from 'querystring';
@@ -46,8 +45,8 @@ export function retry( chunkName ) {
 	}
 }
 
-export function show( chunkName ) {
+export function show( context, chunkName ) {
 	log( 'Chunk %s could not be loaded', chunkName );
 	analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
-	ReactDom.render( <LoadingErrorMessage />, document.getElementById( 'primary' ) );
+	context.primary = <LoadingErrorMessage />;
 }

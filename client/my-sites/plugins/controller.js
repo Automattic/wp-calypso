@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import ReactDom from 'react-dom';
 import React from 'react';
 import page from 'page';
 import { capitalize, includes, some } from 'lodash';
@@ -21,7 +20,6 @@ import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { setSection } from 'state/ui/actions';
 import { getSelectedSite, getSection } from 'state/ui/selectors';
 import { hasJetpackSites, getSelectedOrAllSitesWithPlugins } from 'state/selectors';
@@ -57,17 +55,13 @@ function renderSinglePlugin( context, siteUrl ) {
 	}
 
 	// Render single plugin component
-	renderWithReduxStore(
-		React.createElement( PluginComponent, {
-			path: context.path,
-			prevQuerystring: lastPluginsQuerystring,
-			prevPath,
-			pluginSlug,
-			siteUrl,
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( PluginComponent, {
+		path: context.path,
+		prevQuerystring: lastPluginsQuerystring,
+		prevPath,
+		pluginSlug,
+		siteUrl,
+	} );
 }
 
 function getPathWithoutSiteSlug( context, site ) {
@@ -85,16 +79,12 @@ function renderPluginList( context, basePath ) {
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
 	lastPluginsQuerystring = context.querystring;
 
-	renderWithReduxStore(
-		React.createElement( PluginListComponent, {
-			path: basePath,
-			context,
-			filter: context.params.pluginFilter,
-			search,
-		} ),
-		'primary',
-		context.store
-	);
+	context.primary = React.createElement( PluginListComponent, {
+		path: basePath,
+		context,
+		filter: context.params.pluginFilter,
+		search,
+	} );
 
 	if ( search ) {
 		analytics.ga.recordEvent( 'Plugins', 'Search', 'Search term', search );
@@ -121,7 +111,7 @@ function getCategoryForPluginsBrowser( context ) {
 	return context.params.category;
 }
 
-function renderPluginsBrowser( context ) {
+function renderPluginsBrowser( context, next ) {
 	const searchTerm = context.query.s;
 	const site = getSelectedSite( context.store.getState() );
 	const category = getCategoryForPluginsBrowser( context );
@@ -137,38 +127,31 @@ function renderPluginsBrowser( context ) {
 
 	analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-	renderWithReduxStore(
-		React.createElement( PluginBrowser, {
-			path: context.path,
-			category,
-			search: searchTerm,
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( PluginBrowser, {
+		path: context.path,
+		category,
+		search: searchTerm,
+	} );
+	next();
 }
 
-function renderPluginWarnings( context ) {
+function renderPluginWarnings( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 	const pluginSlug = decodeURIComponent( context.params.plugin );
 
-	renderWithReduxStore(
-		React.createElement( PluginEligibility, {
-			siteSlug: site.slug,
-			pluginSlug,
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( PluginEligibility, {
+		siteSlug: site.slug,
+		pluginSlug,
+	} );
+	next();
 }
 
-function renderProvisionPlugins( context ) {
+function renderProvisionPlugins( context, next ) {
 	const state = context.store.getState();
 	const section = getSection( state );
 	const site = getSelectedSite( state );
 	context.store.dispatch( setSection( Object.assign( {}, section, { secondary: false } ) ) );
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	let baseAnalyticsPath = 'plugins/setup';
 	if ( site ) {
 		baseAnalyticsPath += '/:site';
@@ -176,13 +159,10 @@ function renderProvisionPlugins( context ) {
 
 	analytics.pageView.record( baseAnalyticsPath, 'Jetpack Plugins Setup' );
 
-	renderWithReduxStore(
-		React.createElement( PlanSetup, {
-			whitelist: context.query.only || false,
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( PlanSetup, {
+		whitelist: context.query.only || false,
+	} );
+	next();
 }
 
 const controller = {
@@ -224,8 +204,9 @@ const controller = {
 		renderPluginsBrowser( context );
 	},
 
-	upload( context ) {
-		renderWithReduxStore( <PluginUpload />, document.getElementById( 'primary' ), context.store );
+	upload( context, next ) {
+		context.primary = <PluginUpload />;
+		next();
 	},
 
 	jetpackCanUpdate( context, next ) {

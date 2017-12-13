@@ -6,7 +6,6 @@
 
 import page from 'page';
 import React from 'react';
-import ReactDom from 'react-dom';
 
 /**
  * Internal Dependencies
@@ -17,7 +16,6 @@ import DeleteSite from './delete-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import DisconnectSite from './disconnect-site';
 import purchasesPaths from 'me/purchases/paths';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteSettingsMain from 'my-sites/site-settings/main';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
@@ -50,7 +48,7 @@ function canDeleteSite( state, siteId ) {
 }
 
 function renderPage( context, component ) {
-	renderWithReduxStore( component, document.getElementById( 'primary' ), context.store );
+	context.primary = component;
 }
 
 const controller = {
@@ -111,14 +109,12 @@ const controller = {
 	},
 
 	disconnectSite( context ) {
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 		renderPage( context, <DisconnectSite reason={ context.params.reason } /> );
 	},
 
 	disconnectSiteConfirm( context ) {
 		const { reason, text } = context.query;
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 		renderPage( context, <ConfirmDisconnection reason={ reason } text={ text } /> );
 	},

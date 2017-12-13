@@ -9,7 +9,6 @@ import { each, isNaN, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { renderWithReduxStore } from 'lib/react-helpers';
 import route, { addQueryArgs } from 'lib/route';
 import CommentsManagement from './main';
 import CommentView from 'my-sites/comment/main';
@@ -47,7 +46,7 @@ const changePage = path => pageNumber => {
 	return page( addQueryArgs( { page: pageNumber }, path ) );
 };
 
-export const siteComments = context => {
+export const siteComments = ( context, next ) => {
 	const { params, path, query } = context;
 	const siteFragment = route.getSiteFragment( path );
 
@@ -59,19 +58,18 @@ export const siteComments = context => {
 
 	const pageNumber = sanitizeInt( query.page ) || 1;
 
-	renderWithReduxStore(
+	context.primary = (
 		<CommentsManagement
 			changePage={ changePage( path ) }
 			page={ pageNumber }
 			siteFragment={ siteFragment }
 			status={ status }
-		/>,
-		'primary',
-		context.store
+		/>
 	);
+	next();
 };
 
-export const postComments = context => {
+export const postComments = ( context, next ) => {
 	const { params, path, query } = context;
 	const siteFragment = route.getSiteFragment( path );
 
@@ -88,20 +86,19 @@ export const postComments = context => {
 
 	const pageNumber = sanitizeInt( query.page ) || 1;
 
-	renderWithReduxStore(
+	context.primary = (
 		<CommentsManagement
 			changePage={ changePage( path ) }
 			page={ pageNumber }
 			postId={ postId }
 			siteFragment={ siteFragment }
 			status={ status }
-		/>,
-		'primary',
-		context.store
+		/>
 	);
+	next();
 };
 
-export const comment = context => {
+export const comment = ( context, next ) => {
 	const { params, path, query } = context;
 	const siteFragment = route.getSiteFragment( path );
 	const commentId = sanitizeInt( params.comment );
@@ -116,11 +113,8 @@ export const comment = context => {
 	const redirectToPostView = postId => () =>
 		page.redirect( `/comments/all/${ siteFragment }/${ postId }` );
 
-	renderWithReduxStore(
-		<CommentView { ...{ action, commentId, siteFragment, redirectToPostView } } />,
-		'primary',
-		context.store
-	);
+	context.primary = <CommentView { ...{ action, commentId, siteFragment, redirectToPostView } } />;
+	next();
 };
 
 export const redirect = ( { path } ) => {

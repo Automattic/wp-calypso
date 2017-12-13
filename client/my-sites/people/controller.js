@@ -19,7 +19,6 @@ import titlecase from 'to-title-case';
 import PeopleLogStore from 'lib/people/log-store';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import InvitePeople from './invite-people';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -59,48 +58,39 @@ function redirectToTeam( context ) {
 	page.redirect( '/people/team' );
 }
 
-function renderPeopleList( context ) {
+function renderPeopleList( context, next ) {
 	const filter = context.params.filter;
 
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'People', { textOnly: true } ) ) );
 
-	renderWithReduxStore(
-		React.createElement( PeopleList, {
-			peopleLog: PeopleLogStore,
-			filter: filter,
-			search: context.query.s,
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( PeopleList, {
+		peopleLog: PeopleLogStore,
+		filter: filter,
+		search: context.query.s,
+	} );
 	analytics.pageView.record( 'people/' + filter + '/:site', 'People > ' + titlecase( filter ) );
+	next();
 }
 
-function renderInvitePeople( context ) {
+function renderInvitePeople( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
 	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-	renderWithReduxStore(
-		React.createElement( InvitePeople, {
-			site: site,
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( InvitePeople, {
+		site: site,
+	} );
+	next();
 }
 
-function renderSingleTeamMember( context ) {
+function renderSingleTeamMember( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'View Team Member', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-	renderWithReduxStore(
-		React.createElement( EditTeamMember, {
-			userLogin: context.params.user_login,
-			prevPath: context.prevPath,
-		} ),
-		document.getElementById( 'primary' ),
-		context.store
-	);
+	context.primary = React.createElement( EditTeamMember, {
+		userLogin: context.params.user_login,
+		prevPath: context.prevPath,
+	} );
+	next();
 }

@@ -9,7 +9,17 @@ import page from 'page';
  */
 import { likes } from './controller';
 import { preloadReaderBundle, initAbTests, updateLastRoute, sidebar } from 'reader/controller';
+import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( '/activities/likes', preloadReaderBundle, initAbTests, updateLastRoute, sidebar, likes );
+	page(
+		'/activities/likes',
+		preloadReaderBundle,
+		initAbTests,
+		updateLastRoute,
+		sidebar,
+		likes,
+		makeLayout,
+		clientRender
+	);
 }

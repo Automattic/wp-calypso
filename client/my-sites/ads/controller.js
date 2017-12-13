@@ -17,7 +17,6 @@ import titlecase from 'to-title-case';
 import { canAccessWordads } from 'lib/ads/utils';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { userCan } from 'lib/site/utils';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import Ads from 'my-sites/ads/main';
@@ -49,7 +48,7 @@ export default {
 		return;
 	},
 
-	layout: function( context ) {
+	layout: function( context, next ) {
 		const site = getSelectedSite( context.store.getState() );
 		const pathSuffix = site ? '/' + site.slug : '';
 		const layoutTitle = _getLayoutTitle( context );
@@ -73,13 +72,10 @@ export default {
 			window.scrollTo( 0, 0 );
 		}
 
-		renderWithReduxStore(
-			React.createElement( Ads, {
-				section: context.params.section,
-				path: context.path,
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( Ads, {
+			section: context.params.section,
+			path: context.path,
+		} );
+		next();
 	},
 };

@@ -16,12 +16,11 @@ import {
 	trackScrollPage,
 } from 'reader/controller-helper';
 import LikedPostsStream from 'reader/liked-stream/main';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
 const exported = {
-	likes( context ) {
+	likes( context, next ) {
 		const basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > My Likes',
 			likedPostsStore = feedStreamFactory( 'likes' ),
@@ -31,22 +30,19 @@ const exported = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		renderWithReduxStore(
-			React.createElement( LikedPostsStream, {
-				key: 'liked',
-				postsStore: likedPostsStore,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					basePath,
-					fullAnalyticsPageTitle,
-					analyticsPageTitle,
-					mcKey
-				),
-				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( LikedPostsStream, {
+			key: 'liked',
+			postsStore: likedPostsStore,
+			trackScrollPage: trackScrollPage.bind(
+				null,
+				basePath,
+				fullAnalyticsPageTitle,
+				analyticsPageTitle,
+				mcKey
+			),
+			onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+		} );
+		next();
 	},
 };
 

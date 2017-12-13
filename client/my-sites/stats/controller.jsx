@@ -16,7 +16,6 @@ import route from 'lib/route';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 import { savePreference } from 'state/preferences/actions';
 import { getSite, isJetpackSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -124,7 +123,7 @@ export default {
 		}
 	},
 
-	insights: function( context ) {
+	insights: function( context, next ) {
 		const FollowList = require( 'lib/follow-list' );
 		let siteId = context.params.site_id;
 		const basePath = route.sectionify( context.path );
@@ -139,15 +138,14 @@ export default {
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
 		const props = { followList };
-		renderWithReduxStore(
+		context.primary = (
 			<AsyncLoad
 				require="my-sites/stats/stats-insights"
 				placeholder={ <StatsPagePlaceholder /> }
 				{ ...props }
-			/>,
-			document.getElementById( 'primary' ),
-			context.store
+			/>
 		);
+		next();
 	},
 
 	overview: function( context, next ) {
@@ -198,14 +196,12 @@ export default {
 				period: activeFilter.period,
 				path: context.pathname,
 			};
-			renderWithReduxStore(
+			context.primary = (
 				<AsyncLoad
 					placeholder={ <StatsPagePlaceholder /> }
 					require="my-sites/stats/overview"
 					{ ...props }
-				/>,
-				document.getElementById( 'primary' ),
-				context.store
+				/>
 			);
 		}
 	},
@@ -282,14 +278,12 @@ export default {
 				period,
 			};
 
-			renderWithReduxStore(
+			context.primary = (
 				<AsyncLoad
 					placeholder={ <StatsPagePlaceholder /> }
 					require="my-sites/stats/site"
 					{ ...siteComponentChildren }
-				/>,
-				document.getElementById( 'primary' ),
-				context.store
+				/>
 			);
 		}
 	},
@@ -384,19 +378,17 @@ export default {
 				period,
 				...extraProps,
 			};
-			renderWithReduxStore(
+			context.primary = (
 				<AsyncLoad
 					placeholder={ <StatsPagePlaceholder /> }
 					require="my-sites/stats/summary"
 					{ ...props }
-				/>,
-				document.getElementById( 'primary' ),
-				context.store
+				/>
 			);
 		}
 	},
 
-	post: function( context ) {
+	post: function( context, next ) {
 		let siteId = context.params.site_id;
 		const postId = parseInt( context.params.post_id, 10 );
 		const pathParts = context.path.split( '/' );
@@ -418,19 +410,18 @@ export default {
 				postId,
 				context,
 			};
-			renderWithReduxStore(
+			context.primary = (
 				<AsyncLoad
 					placeholder={ <StatsPagePlaceholder /> }
 					require="my-sites/stats/stats-post-detail"
 					{ ...props }
-				/>,
-				document.getElementById( 'primary' ),
-				context.store
+				/>
 			);
 		}
+		next();
 	},
 
-	follows: function( context ) {
+	follows: function( context, next ) {
 		let siteId = context.params.site_id;
 		const FollowList = require( 'lib/follow-list' );
 		let pageNum = context.params.page_num;
@@ -466,19 +457,18 @@ export default {
 				siteId,
 				followList,
 			};
-			renderWithReduxStore(
+			context.primary = (
 				<AsyncLoad
 					placeholder={ <StatsPagePlaceholder /> }
 					require="my-sites/stats/comment-follows"
 					{ ...props }
-				/>,
-				document.getElementById( 'primary' ),
-				context.store
+				/>
 			);
 		}
+		next();
 	},
 
-	activityLog: function( context ) {
+	activityLog: function( context, next ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
@@ -497,15 +487,14 @@ export default {
 				context,
 				startDate,
 			};
-			renderWithReduxStore(
+			context.primary = (
 				<AsyncLoad
 					placeholder={ <StatsPagePlaceholder /> }
 					require="my-sites/stats/activity-log"
 					{ ...props }
-				/>,
-				document.getElementById( 'primary' ),
-				context.store
+				/>
 			);
 		}
+		next();
 	},
 };

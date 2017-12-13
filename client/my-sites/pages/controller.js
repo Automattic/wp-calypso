@@ -15,10 +15,9 @@ import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import trackScrollPage from 'lib/track-scroll-page';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 const controller = {
-	pages: function( context ) {
+	pages: function( context, next ) {
 		var Pages = require( 'my-sites/pages/main' ),
 			siteID = route.getSiteFragment( context.path ),
 			status = context.params.status,
@@ -45,21 +44,13 @@ const controller = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		renderWithReduxStore(
-			React.createElement( Pages, {
-				siteID: siteID,
-				status: status,
-				search: search,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					baseAnalyticsPath,
-					analyticsPageTitle,
-					'Pages'
-				),
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+		context.primary = React.createElement( Pages, {
+			siteID: siteID,
+			status: status,
+			search: search,
+			trackScrollPage: trackScrollPage.bind( null, baseAnalyticsPath, analyticsPageTitle, 'Pages' ),
+		} );
+		next();
 	},
 };
 

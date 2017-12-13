@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import ReactDom from 'react-dom';
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import i18n from 'i18n-calypso';
@@ -56,19 +55,16 @@ function determinePostType( context ) {
 	return context.params.type;
 }
 
-function renderEditor( context ) {
-	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-	ReactDom.render(
-		React.createElement(
-			ReduxProvider,
-			{ store: context.store },
-			React.createElement( PostEditor, {
-				user: user,
-				userUtils: userUtils,
-			} )
-		),
-		document.getElementById( 'primary' )
+function renderEditor( context, next ) {
+	context.primary = React.createElement(
+		ReduxProvider,
+		{ store: context.store },
+		React.createElement( PostEditor, {
+			user: user,
+			userUtils: userUtils,
+		} )
 	);
+	next();
 }
 
 function maybeRedirect( context ) {
