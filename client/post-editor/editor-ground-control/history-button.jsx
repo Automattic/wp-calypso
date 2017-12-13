@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -15,28 +15,31 @@ import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 
-const onHistoryButtonClick = openDialog => {
-	this.props.recordTracksEvent( 'calypso_editor_history_button_click' );
-	openDialog();
-};
+class HistoryButton extends PureComponent {
+	onClick = () => this.props.recordTracksEvent( 'calypso_editor_history_button_click' );
 
-const HistoryButton = ( { loadRevision, postId, siteId, openDialog, translate } ) => (
-	<div className="editor-ground-control__history">
-		<button
-			className="editor-ground-control__history-button button is-link"
-			onClick={ onHistoryButtonClick( openDialog ) }
-		>
-			{ translate( 'History' ) }
-		</button>
-		<EditorRevisionsDialog loadRevision={ loadRevision } postId={ postId } siteId={ siteId } />
-	</div>
-);
+	render() {
+		const { loadRevision, postId, siteId, openDialog, translate } = this.props;
+		return (
+			<div className="editor-ground-control__history">
+				<button
+					className="editor-ground-control__history-button button is-link"
+					onClick={ this.onClick }
+				>
+					{ translate( 'History' ) }
+				</button>
+				<EditorRevisionsDialog loadRevision={ loadRevision } postId={ postId } siteId={ siteId } />
+			</div>
+		);
+	}
+}
 
 HistoryButton.propTypes = {
 	loadRevision: PropTypes.func.isRequired,
 
 	// connected to dispatch
 	openPostRevisionsDialog: PropTypes.func.isRequired,
+	recordTracksEvent: PropTypes.func.isRequired,
 
 	// localize
 	translate: PropTypes.func,
