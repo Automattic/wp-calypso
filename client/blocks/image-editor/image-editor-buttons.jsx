@@ -68,6 +68,7 @@ class ImageEditorButtons extends Component {
 					primary
 					onClick={ onDone }
 					data-e2e-button="done"
+					data-tip-target="image-editor-button-done"
 				>
 					{ doneButtonText || translate( ' Done ' ) }
 				</Button>

@@ -99,6 +99,7 @@ const tasks = {
 		completedButtonText: 'Change',
 		url: '/settings/general/$siteSlug',
 		image: '/calypso/images/stats/tasks/upload-icon.svg',
+		tour: 'checklistSiteIcon',
 	},
 	social_links_set: {
 		title: 'Display links to your social accounts',
