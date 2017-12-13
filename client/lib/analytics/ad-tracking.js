@@ -38,6 +38,7 @@ const isCriteoEnabled = true;
 const isQuantcastEnabled = true;
 const isTwitterEnabled = true;
 const isAolEnabled = true;
+const isExperianEnabled = true;
 const isLinkedinEnabled = true;
 let isYandexEnabled = true;
 const isOutbrainEnabled = true;
@@ -73,6 +74,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	PANDORA_CONVERSION_PIXEL_URL =
 		'https://data.adxcel-ec2.com/pixel/' +
 		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
+	EXPERIAN_CONVERSION_PIXEL_URL =
+		'https://d.turn.com/r/dd/id/L21rdC84MTYvY2lkLzE3NDc0MzIzNDgvdC8yL2NhdC8zMjE4NzUwOQ',
 	YAHOO_TRACKING_SCRIPT_URL = 'https://s.yimg.com/wi/ytc.js',
 	TWITTER_TRACKING_SCRIPT_URL = 'https://static.ads-twitter.com/uwt.js',
 	DCM_FLOODLIGHT_IFRAME_URL = 'https://6355556.fls.doubleclick.net/activityi',
@@ -576,6 +579,7 @@ function recordOrder( cart, orderId ) {
 	// Purchase tracking happens in one of three ways:
 
 	// 1. Fire one tracking event that includes details about the entire order
+
 	recordOrderInAtlas( cart, orderId );
 	recordOrderInCriteo( cart, orderId );
 	recordOrderInFloodlight( cart, orderId );
@@ -584,6 +588,7 @@ function recordOrder( cart, orderId ) {
 	recordOrderInGoogleAnalytics( cart, orderId );
 
 	// 2. Fire a tracking event for each product purchased
+
 	cart.products.forEach( product => {
 		recordProduct( product, orderId );
 	} );
@@ -592,6 +597,12 @@ function recordOrder( cart, orderId ) {
 	window.ga( 'ecommerce:send' );
 
 	// 3. Fire a single tracking event without any details about what was purchased
+
+	// Experian / One 2 One Media
+	if ( isExperianEnabled ) {
+		new Image().src = EXPERIAN_CONVERSION_PIXEL_URL;
+	}
+
 	if ( isAolEnabled ) {
 		new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
 	}
