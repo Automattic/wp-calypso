@@ -20,6 +20,8 @@ import SiteIcon from 'blocks/site-icon';
 import BlogStickers from 'blocks/blog-stickers';
 import ReaderFeedHeaderSiteBadge from './badge';
 import ReaderEmailSettings from 'blocks/reader-email-settings';
+import ReaderSiteNotificationSettings from 'blocks/reader-site-notification-settings';
+import config from 'config';
 import userSettings from 'lib/user-settings';
 import { isFollowing } from 'state/selectors';
 
@@ -50,11 +52,18 @@ class FeedHeader extends Component {
 		const siteTitle = getSiteName( { feed, site } );
 		const siteUrl = getSiteUrl( { feed, site } );
 		const isEmailBlocked = userSettings.getSetting( 'subscription_delivery_email_blocked' );
+		const siteId = site && site.ID;
 
 		const classes = classnames( 'reader-feed-header', {
 			'is-placeholder': ! site && ! feed,
 			'has-back-button': showBack,
 		} );
+
+		const notificationSettings = config.isEnabled( 'reader/new-post-notifications' ) ? (
+			<ReaderSiteNotificationSettings siteId={ siteId } />
+		) : (
+			<ReaderEmailSettings siteId={ siteId } />
+		);
 
 		return (
 			<div className={ classes }>
@@ -79,9 +88,7 @@ class FeedHeader extends Component {
 						{ site &&
 							following &&
 							! isEmailBlocked && (
-								<div className="reader-feed-header__email-settings">
-									<ReaderEmailSettings siteId={ site.ID } />
-								</div>
+								<div className="reader-feed-header__email-settings">{ notificationSettings }</div>
 							) }
 					</div>
 				</div>
