@@ -10,7 +10,13 @@ import wpcom from 'lib/wp';
 /**
  * Internal dependencies
  */
-import * as ActionTypes from 'state/action-types';
+import {
+	PREVIEW_MARKUP_RECEIVE,
+	PREVIEW_CUSTOMIZATIONS_CLEAR,
+	PREVIEW_CUSTOMIZATIONS_UPDATE,
+	PREVIEW_CUSTOMIZATIONS_UNDO,
+	PREVIEW_CUSTOMIZATIONS_SAVED,
+} from 'state/action-types';
 import * as customizationSaveFunctions from './save-functions';
 
 const debug = debugFactory( 'calypso:preview-actions' );
@@ -39,23 +45,23 @@ export function fetchPreviewMarkup( site, slug, customizations ) {
 }
 
 export function gotMarkup( siteId, markup ) {
-	return { type: ActionTypes.PREVIEW_MARKUP_RECEIVE, markup, siteId };
+	return { type: PREVIEW_MARKUP_RECEIVE, markup, siteId };
 }
 
 export function clearCustomizations( siteId ) {
-	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_CLEAR, siteId };
+	return { type: PREVIEW_CUSTOMIZATIONS_CLEAR, siteId };
 }
 
 export function updateCustomizations( siteId, customizations ) {
-	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_UPDATE, customizations, siteId };
+	return { type: PREVIEW_CUSTOMIZATIONS_UPDATE, customizations, siteId };
 }
 
 export function undoCustomization( siteId ) {
-	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_UNDO, siteId };
+	return { type: PREVIEW_CUSTOMIZATIONS_UNDO, siteId };
 }
 
 export function customizationsSaved( siteId ) {
-	return { type: ActionTypes.PREVIEW_CUSTOMIZATIONS_SAVED, siteId };
+	return { type: PREVIEW_CUSTOMIZATIONS_SAVED, siteId };
 }
 
 export function saveCustomizations() {
