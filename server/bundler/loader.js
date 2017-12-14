@@ -1,6 +1,7 @@
 /** @format */
 const config = require( 'config' ),
-	utils = require( './utils' );
+	utils = require( './utils' ),
+	camelCase = require( 'lodash' ).camelCase;
 
 function getSectionsModule( sections ) {
 	let sectionLoaders = '';
@@ -17,7 +18,8 @@ function getSectionsModule( sections ) {
 			"\tcontroller = require( 'controller' ),",
 			"\trestoreLastSession = require( 'lib/restore-last-path' ).restoreLastSession,",
 			"\tpreloadHub = require( 'sections-preload' ).hub,",
-			"\tswitchCSS = require( 'lib/i18n-utils/switch-locale' ).switchCSS;",
+			"\tswitchCSS = require( 'lib/i18n-utils/switch-locale' ).switchCSS,",
+			"\taddReducers = require( 'state/reducer-registry' ).addReducers;",
 			'\n',
 			'var _loadedSections = {};\n',
 		].join( '\n' );
@@ -64,7 +66,8 @@ function getSectionsModule( sections ) {
 	const dependencies = [
 		"var config = require( 'config' ),",
 		"\tpage = require( 'page' ),",
-		"\tcontroller = require( 'controller' );\n",
+		"\tcontroller = require( 'controller' ),",
+		"\taddReducers = require( 'state/reducer-registry' ).addReducers;\n",
 	].join( '\n' );
 
 	sectionLoaders = getRequires( sections );
@@ -97,6 +100,9 @@ function splitTemplate( path, section ) {
 		sectionString = JSON.stringify( section ),
 		sectionNameString = JSON.stringify( section.name ),
 		moduleString = JSON.stringify( section.module ),
+		reducerNamespaceString = JSON.stringify( section.reducerNamespace ),
+		reducerStoreKeyString = JSON.stringify( camelCase( section.name ) ),
+		reducerPathString = JSON.stringify( section.module + '/state/reducer' ),
 		envIdString = JSON.stringify( section.envId );
 
 	const result = [
@@ -119,6 +125,15 @@ function splitTemplate( path, section ) {
 		'		controller.setSection( ' + sectionString + ' )( context );',
 		'		if ( ! _loadedSections[ ' + moduleString + ' ] ) {',
 		'			require( ' + moduleString + ' )( controller.clientRouter );',
+		section.reducerNamespace
+			? '	addReducers( {' +
+				reducerStoreKeyString +
+				': require( ' +
+				reducerPathString +
+				' ) }, ' +
+				reducerNamespaceString +
+				' );'
+			: '',
 		'			_loadedSections[ ' + moduleString + ' ] = true;',
 		'		}',
 		'		context.store.dispatch( activateNextLayoutFocus() );',

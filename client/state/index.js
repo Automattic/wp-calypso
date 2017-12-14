@@ -12,11 +12,11 @@ import { reducer as form } from 'redux-form';
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
+import { combineReducersAndAddLater, reducerRegistryEnhancer } from './reducer-registry';
 import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
 import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
-import extensionsModule from 'extensions';
 import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
 import automatedTransfer from './automated-transfer/reducer';
@@ -85,9 +85,7 @@ import config from 'config';
 /**
  * Module variables
  */
-
-// Consolidate the extension reducers under 'extensions' for namespacing.
-const extensions = combineReducers( extensionsModule.reducers() );
+const extensions = combineReducersAndAddLater( {}, 'extensions' );
 
 const reducers = {
 	analyticsTracking,
@@ -200,6 +198,7 @@ export function createReduxStore( initialState = {} ) {
 
 	const enhancers = [
 		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
+		isBrowser && reducerRegistryEnhancer,
 		applyMiddleware( ...middlewares ),
 		isBrowser && window.devToolsExtension && window.devToolsExtension(),
 	].filter( Boolean );

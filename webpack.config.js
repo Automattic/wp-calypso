@@ -101,11 +101,6 @@ const webpackConfig = {
 				loader: [ 'happypack/loader' ],
 			},
 			{
-				test: /extensions[\/\\]index/,
-				exclude: path.join( __dirname, 'node_modules' ),
-				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
-			},
-			{
 				test: /sections.js$/,
 				exclude: path.join( __dirname, 'node_modules' ),
 				loader: path.join( __dirname, 'server', 'bundler', 'loader' ),
