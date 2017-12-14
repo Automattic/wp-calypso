@@ -30,6 +30,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
 import { decodeEntities } from 'lib/formatting';
@@ -599,6 +600,10 @@ export class LoggedInForm extends Component {
 	render() {
 		return (
 			<div className="jetpack-connect__logged-in-form">
+				<QueryUserConnection
+					siteId={ this.props.siteId }
+					siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
+				/>
 				<AuthFormHeader />
 				<Card>
 					<Gravatar user={ this.props.user } size={ 64 } />
