@@ -13,49 +13,48 @@ import CalendarCard from './calendar-card';
 import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 
-const generateMockData = () => {
-	// This is a temporary function to simulate the data that will be gathered from Redux.
-	// It's hard-coded to show some of the UI, e.g. what it looks like on a day with no
-	// available times.
-	const today = moment().startOf( 'day' );
-	const tomorrow = moment( today ).add( 1, 'day' );
-	const nextDay = moment( today ).add( 2, 'days' );
+const NUMBER_OF_DAYS_TO_SHOW = 7;
 
-	return [
-		{
-			date: today.valueOf(),
-			times: [
-				today.set( { hour: 9, minute: 30 } ).valueOf(),
-				today.set( { hour: 10, minute: 15 } ).valueOf(),
-				today.set( { hour: 21, minute: 0 } ).valueOf(),
-			],
-		},
-		{
-			date: tomorrow.valueOf(),
-			times: [],
-		},
-		{
-			date: nextDay.valueOf(),
-			times: [
-				nextDay.set( { hour: 7, minute: 0 } ).valueOf(),
-				nextDay.set( { hour: 7, minute: 45 } ).valueOf(),
-				nextDay.set( { hour: 8, minute: 0 } ).valueOf(),
-				nextDay.set( { hour: 13, minute: 15 } ).valueOf(),
-			],
-		},
-	];
+const groupAvailableTimesByDate = availableTimes => {
+	const dates = {};
+
+	// Stub an object of { date: X, times: [] } for each day we care about
+	for ( let x = 0; x < NUMBER_OF_DAYS_TO_SHOW; x++ ) {
+		const startOfDay = moment()
+			.startOf( 'day' )
+			.add( x, 'days' )
+			.valueOf();
+		dates[ startOfDay ] = { date: startOfDay, times: [] };
+	}
+
+	// Go through all available times and bundle them into each date object
+	availableTimes.forEach( ( { beginTimestamp } ) => {
+		const startOfDay = moment( beginTimestamp )
+			.startOf( 'day' )
+			.valueOf();
+		if ( dates.hasOwnProperty( startOfDay ) ) {
+			dates[ startOfDay ].times.push( beginTimestamp );
+		}
+	} );
+
+	// Convert the dates object into an array sorted by date and return it
+	return Object.keys( dates )
+		.sort()
+		.map( date => dates[ date ] );
 };
 
 class CalendarStep extends Component {
 	static propTypes = {
+		availableTimes: PropTypes.arrayOf(
+			PropTypes.shape( { beginTimestamp: PropTypes.number.isRequired } )
+		).isRequired,
 		onBack: PropTypes.func.isRequired,
 		onComplete: PropTypes.func.isRequired,
 	};
 
 	render() {
-		const { translate } = this.props;
-		// TODO: Replace mock data with data from Redux
-		const availability = generateMockData();
+		const { availableTimes, translate } = this.props;
+		const availability = groupAvailableTimesByDate( availableTimes );
 
 		return (
 			<div>

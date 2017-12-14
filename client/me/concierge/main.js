@@ -54,10 +54,10 @@ class ConciergeMain extends Component {
 	};
 
 	getDisplayComponent = () => {
-		const { shifts, site } = this.props;
+		const { availableTimes, site } = this.props;
 		const CurrentStep = STEP_COMPONENTS[ this.state.currentStep ];
 
-		if ( ! shifts || ! site || ! site.plan ) {
+		if ( ! availableTimes || ! site || ! site.plan ) {
 			return <Skeleton />;
 		}
 
@@ -68,7 +68,7 @@ class ConciergeMain extends Component {
 		// We have shift data and this is a business site — show the signup steps
 		return (
 			<CurrentStep
-				shifts={ shifts }
+				availableTimes={ availableTimes }
 				site={ site }
 				onComplete={ this.goToNextStep }
 				onBack={ this.goToPreviousStep }
@@ -94,7 +94,7 @@ class ConciergeMain extends Component {
 
 export default connect(
 	( state, props ) => ( {
-		shifts: getConciergeShifts( state ),
+		availableTimes: getConciergeShifts( state ),
 		site: getSite( state, props.siteSlug ),
 	} ),
 	{ getConciergeShifts }
