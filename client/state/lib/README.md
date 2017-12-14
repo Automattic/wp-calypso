@@ -65,10 +65,6 @@ import library from 'lib/example'
 case SELECTED_SITE_SET:
 case SITE_RECEIVE:
 case SITES_RECEIVE:
-case SITES_UPDATE:
-	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	library.setSelectedSite( selectedSite );
 ```
 
 

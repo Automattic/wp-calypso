@@ -15,7 +15,6 @@ import {
 	SITE_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
-	SITES_UPDATE,
 	PLANS_RECEIVE,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
@@ -80,15 +79,10 @@ export function capabilities( state = {}, action ) {
 	switch ( action.type ) {
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
-		case SITES_UPDATE:
 			const sites = action.site ? [ action.site ] : action.sites;
 			return reduce(
 				sites,
 				( memo, site ) => {
-					if ( SITES_UPDATE === action.type && ! memo[ site.ID ] ) {
-						return memo;
-					}
-
 					if ( ! site.capabilities || isEqual( site.capabilities, memo[ site.ID ] ) ) {
 						return memo;
 					}

@@ -13,7 +13,6 @@ import reducer, { items, requesting, wordpressUpdateStatus, errors } from '../re
 import {
 	SITE_RECEIVE,
 	SITES_RECEIVE,
-	SITES_UPDATE,
 	SITE_UPDATES_RECEIVE,
 	SITE_UPDATES_REQUEST,
 	SITE_UPDATES_REQUEST_SUCCESS,
@@ -205,61 +204,6 @@ describe( 'reducer', () => {
 		test( 'should not store updates if missing when receiving sites', () => {
 			const state = items( undefined, {
 				type: SITES_RECEIVE,
-				sites: [ { ID: 2916284 } ],
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		test( 'should store all updates when updating sites', () => {
-			const state = items( undefined, {
-				type: SITES_UPDATE,
-				sites: [
-					{ ID: 2916284, updates: exampleUpdates },
-					{ ID: 77203074, updates: exampleUpdates },
-				],
-			} );
-
-			expect( state ).to.eql( {
-				2916284: exampleUpdates,
-				77203074: exampleUpdates,
-			} );
-		} );
-
-		test( 'should accumulate updates when updating sites', () => {
-			const original = deepFreeze( {
-				2916284: exampleUpdates,
-			} );
-			const state = items( original, {
-				type: SITES_UPDATE,
-				sites: [ { ID: 77203074, updates: exampleUpdates } ],
-			} );
-
-			expect( state ).to.eql( {
-				2916284: exampleUpdates,
-				77203074: exampleUpdates,
-			} );
-		} );
-
-		test( 'should overwrite updates when updating sites', () => {
-			const original = deepFreeze( {
-				2916284: exampleUpdates,
-				77203074: exampleUpdates,
-			} );
-			const state = items( original, {
-				type: SITES_UPDATE,
-				sites: [ { ID: 2916284, updates: someOtherUpdates } ],
-			} );
-
-			expect( state ).to.eql( {
-				2916284: someOtherUpdates,
-				77203074: exampleUpdates,
-			} );
-		} );
-
-		test( 'should not store updates if missing when updating sites', () => {
-			const state = items( undefined, {
-				type: SITES_UPDATE,
 				sites: [ { ID: 2916284 } ],
 			} );
 

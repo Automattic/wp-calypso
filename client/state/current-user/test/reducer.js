@@ -18,7 +18,6 @@ import {
 	SITE_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
-	SITES_UPDATE,
 } from 'state/action-types';
 import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -292,48 +291,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.equal( original );
-		} );
-
-		test( 'should not return same state on sites updated if site not tracked', () => {
-			const original = deepFreeze( {} );
-			const state = capabilities( original, {
-				type: SITES_UPDATE,
-				sites: [
-					{
-						ID: 2916284,
-						capabilities: {
-							manage_options: true,
-						},
-					},
-				],
-			} );
-
-			expect( state ).to.equal( original );
-		} );
-
-		test( 'should update capabilities when sites updated if site tracked', () => {
-			const original = deepFreeze( {
-				2916284: {
-					manage_options: false,
-				},
-			} );
-			const state = capabilities( original, {
-				type: SITES_UPDATE,
-				sites: [
-					{
-						ID: 2916284,
-						capabilities: {
-							manage_options: true,
-						},
-					},
-				],
-			} );
-
-			expect( state ).to.eql( {
-				2916284: {
-					manage_options: true,
-				},
-			} );
 		} );
 
 		test( 'should persist state', () => {

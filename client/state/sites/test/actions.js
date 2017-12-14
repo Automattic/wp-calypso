@@ -13,7 +13,6 @@ import {
 	receiveDeletedSite,
 	receiveSite,
 	receiveSites,
-	receiveSiteUpdates,
 	requestSites,
 	requestSite,
 } from '../actions';
@@ -29,7 +28,6 @@ import {
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
-	SITES_UPDATE,
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -64,19 +62,6 @@ describe( 'actions', () => {
 			const action = receiveSites( sites );
 			expect( action ).to.eql( {
 				type: SITES_RECEIVE,
-				sites,
-			} );
-		} );
-	} );
-
-	describe( 'receiveSiteUpdates()', () => {
-		test( 'should return an action object', () => {
-			const sites = [ { ID: 2916284, name: 'WordPress.com Example Blog' } ];
-
-			const action = receiveSiteUpdates( sites );
-
-			expect( action ).to.eql( {
-				type: SITES_UPDATE,
 				sites,
 			} );
 		} );
