@@ -109,7 +109,11 @@ class ReaderSiteNotificationSettings extends Component {
 				>
 					<div className="reader-site-notification-settings__popout-toggle">
 						{ translate( 'New post notifications' ) }
-						<FormToggle onChange={ noop } checked={ false } />
+						<FormToggle
+							onChange={ noop }
+							checked={ false }
+							wrapperClassName="reader-site-notification-settings__popout-form-toggle"
+						/>
 						<p className="reader-site-notification-settings__popout-hint">
 							{ translate( 'Receive web and mobile notifications for new posts from this site' ) }
 						</p>
