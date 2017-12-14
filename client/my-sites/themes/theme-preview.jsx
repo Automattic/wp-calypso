@@ -84,7 +84,7 @@ class ThemePreview extends React.Component {
 
 		return (
 			<Button primary onClick={ this.onPrimaryButtonClick } href={ buttonHref }>
-				{ primaryOption.extendedLabel }
+				{ primaryOption.label }
 			</Button>
 		);
 	};
@@ -97,7 +97,7 @@ class ThemePreview extends React.Component {
 		const buttonHref = secondaryButton.getUrl ? secondaryButton.getUrl( this.props.themeId ) : null;
 		return (
 			<Button onClick={ this.onSecondaryButtonClick } href={ buttonHref }>
-				{ secondaryButton.extendedLabel }
+				{ secondaryButton.label }
 			</Button>
 		);
 	};
@@ -115,7 +115,7 @@ class ThemePreview extends React.Component {
 				{ this.props.demoUrl && (
 					<WebPreview
 						showPreview={ true }
-						showExternal={ true }
+						showExternal={ false }
 						showSEO={ false }
 						onClose={ this.props.hideThemePreview }
 						previewUrl={ this.props.demoUrl + '?demo=true&iframe=true&theme_preview=true' }
