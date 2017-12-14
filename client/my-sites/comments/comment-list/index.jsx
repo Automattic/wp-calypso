@@ -24,7 +24,11 @@ import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
-import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
+import {
+	getSiteCommentCounts,
+	getSiteCommentsTree,
+	isCommentsTreeInitialized,
+} from 'state/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
@@ -146,6 +150,7 @@ export class CommentList extends Component {
 
 	render() {
 		const {
+			counts,
 			isCommentsTreeSupported,
 			isLoading,
 			isPostView,
@@ -186,6 +191,7 @@ export class CommentList extends Component {
 
 				<CommentNavigation
 					commentsPage={ commentsPage }
+					counts={ counts }
 					isBulkMode={ isBulkMode }
 					isSelectedAll={ this.isSelectedAll() }
 					postId={ postId }
@@ -260,6 +266,7 @@ const mapStateToProps = ( state, { postId, siteId, status } ) => {
 		: map( siteCommentsTree, 'commentId' );
 
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
+	const counts = getSiteCommentCounts( state, siteId, postId );
 	return {
 		comments,
 		isCommentsTreeSupported:
@@ -267,6 +274,7 @@ const mapStateToProps = ( state, { postId, siteId, status } ) => {
 		isLoading,
 		isPostView,
 		siteId,
+		counts,
 	};
 };
 
