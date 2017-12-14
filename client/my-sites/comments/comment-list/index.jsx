@@ -23,7 +23,12 @@ import Pagination from 'components/pagination';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
+import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
+import {
+	getSiteCommentCounts,
+	getSiteCommentsTree,
+	isCommentsTreeInitialized,
+} from 'state/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
@@ -31,6 +36,7 @@ import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
 export class CommentList extends Component {
 	static propTypes = {
 		changePage: PropTypes.func,
+		commentCounts: PropTypes.number,
 		comments: PropTypes.array,
 		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
@@ -143,8 +149,14 @@ export class CommentList extends Component {
 
 	updateLastUndo = commentId => this.setState( { lastUndo: commentId } );
 
+	getCommentsCount = ( commentCounts, status ) => {
+		const validatedStatus = 'unapproved' === status ? 'pending' : status;
+		return commentCounts ? commentCounts[ validatedStatus ] : null;
+	};
+
 	render() {
 		const {
+			commentCounts,
 			isCommentsTreeSupported,
 			isLoading,
 			isPostView,
@@ -159,7 +171,7 @@ export class CommentList extends Component {
 		const validPage = this.isRequestedPageValid() ? page : 1;
 
 		const comments = this.getComments();
-		const commentsCount = comments.length;
+		const commentsCount = this.getCommentsCount( commentCounts, status );
 		const commentsPage = this.getCommentsPage( comments, validPage );
 
 		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
@@ -170,7 +182,7 @@ export class CommentList extends Component {
 		return (
 			<div className="comment-list">
 				<QuerySiteSettings siteId={ siteId } />
-
+				<QuerySiteCommentCounts siteId={ siteId } postId={ postId } />
 				{ ! isCommentsTreeSupported && (
 					<QuerySiteCommentsList
 						number={ 100 }
@@ -257,9 +269,11 @@ const mapStateToProps = ( state, { postId, siteId, status } ) => {
 	const comments = isPostView
 		? map( filter( siteCommentsTree, { postId } ), 'commentId' )
 		: map( siteCommentsTree, 'commentId' );
+	const commentCounts = getSiteCommentCounts( state, siteId, postId );
 
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
+		commentCounts,
 		comments,
 		isCommentsTreeSupported:
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' ),
