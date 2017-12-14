@@ -24,7 +24,13 @@ import {
 
 export const ChecklistAboutPageTour = makeTour(
 	<Tour name="checklistAboutPage" version="20171205" path="/non-existent-route" when={ noop }>
-		<Step name="init" placement="right">
+		<Step
+			name="init"
+			placement="right"
+			style={ {
+				animationDelay: '0.7s',
+			} }
+		>
 			<p>
 				{ translate(
 					'The About Page is often the most visited page on a site. ' +
