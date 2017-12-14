@@ -104,8 +104,8 @@ export default {
 	signupSiteSegmentStep: {
 		datestamp: '20170329',
 		variations: {
-			control: 50,
-			variant: 50,
+			control: 0,
+			variant: 100,
 		},
 		defaultVariation: 'control',
 	},
