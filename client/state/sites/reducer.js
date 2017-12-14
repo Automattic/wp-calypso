@@ -230,15 +230,11 @@ export function items( state = {}, action ) {
 			return reduce(
 				data.sites,
 				( memo, site ) => {
-					if ( memo === state ) {
-						memo = { ...state };
-					}
-
 					memo[ site.ID ] = pick( site, VALID_SITE_KEYS );
 
 					return memo;
 				},
-				state
+				{}
 			);
 		}
 	}
