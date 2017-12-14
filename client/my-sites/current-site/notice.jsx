@@ -13,6 +13,7 @@ import { localize, moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import SidebarBanner from './sidebar-banner';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import paths from 'my-sites/domains/paths';
@@ -99,21 +100,19 @@ class SiteNotice extends React.Component {
 		const { translate } = this.props;
 
 		return (
-			<Notice
-				isCompact
-				status="is-success"
+			<SidebarBanner
 				icon="info-outline"
 				text={ translate( 'Free domain with a plan' ) }
-				className="current-site__notice-upsell"
-			>
-				<NoticeAction
-					onClick={ this.props.clickFreeToPaidPlanNotice }
-					href={ `/plans/my-plan/${ this.props.site.slug }` }
 				>
-					{ translate( 'Upgrade' ) }
-					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
-				</NoticeAction>
-			</Notice>
+				<a
+					onClick={ this.props.clickFreeToPaidPlanNotice }
+					href={ `/plans/my-plan/${ this.props.site.slug }` }>
+					<span>
+						{ translate( 'Upgrade' ) }
+						<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+					</span>
+				</a>
+			</SidebarBanner>
 		);
 	}
 
