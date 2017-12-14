@@ -9,7 +9,6 @@ import moment from 'moment';
 import page from 'page';
 import i18n, { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -18,10 +17,11 @@ import Card from 'components/card';
 import Site from 'blocks/site';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
+import { recordEvent } from 'lib/posts/stats';
+import analytics from 'lib/analytics';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
-import { composeAnalytics, recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 
 export class EditorGroundControl extends PureComponent {
 	static propTypes = {
@@ -171,13 +171,11 @@ export class EditorGroundControl extends PureComponent {
 			const eventLabel = postUtils.isPage( this.props.page )
 				? 'Clicked Preview Page Button'
 				: 'Clicked Preview Post Button';
-			const tracksName = postUtils.isPage( this.props.page )
+			const eventTracksLabel = postUtils.isPage( this.props.page )
 				? 'calypso_editor_page_preview_button_click'
 				: 'calypso_editor_post_preview_button_click';
-			composeAnalytics(
-				this.props.recordTracksEvent( tracksName ),
-				this.props.recordGoogleEvent( 'Editor', eventLabel )
-			);
+			recordEvent( eventLabel );
+			analytics.tracks.recordEvent( eventTracksLabel );
 		}
 	};
 
@@ -227,12 +225,18 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	onBackButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_editor_back_button_click' );
+		const eventTracksLabel = postUtils.isPage( this.props.page )
+			? 'calypso_editor_page_back_button_click'
+			: 'calypso_editor_post_back_button_click';
+		analytics.tracks.recordEvent( eventTracksLabel );
 		page.back( this.props.allPostsUrl );
 	};
 
 	onSiteButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_editor_site_button_click' );
+		const eventTracksLabel = postUtils.isPage( this.props.page )
+			? 'calypso_editor_page_preview_button_click'
+			: 'calypso_editor_post_preview_button_click';
+		analytics.tracks.recordEvent( eventTracksLabel );
 	};
 
 	render() {
@@ -297,7 +301,4 @@ export class EditorGroundControl extends PureComponent {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-	recordGoogleEvent,
-} )( localize( EditorGroundControl ) );
+export default localize( EditorGroundControl );
