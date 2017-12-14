@@ -134,6 +134,10 @@ a.config-elements__text-link,
 	&:hover {
 		text-decoration: none;
 	}
+
+	&:visited {
+		color: $white;
+	}
 }
 
 
