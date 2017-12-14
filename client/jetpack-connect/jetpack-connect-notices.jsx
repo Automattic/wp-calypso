@@ -21,9 +21,7 @@ class JetpackConnectNotices extends Component {
 			'isDotCom',
 			'jetpackIsValid',
 			'notActiveJetpack',
-
-			// notConnectedJetpack is expected, but no notice is shown.
-			'notConnectedJetpack',
+			'notConnectedJetpack', // notConnectedJetpack is expected, but no notice is shown.
 			'notExists',
 			'notJetpack',
 			'notWordPress',
@@ -31,6 +29,7 @@ class JetpackConnectNotices extends Component {
 			'retryAuth',
 			'retryingAuth',
 			'secretExpired',
+			'userIsAlreadyConnectedToSite',
 			'wordpress.com',
 		] ).isRequired,
 		translate: PropTypes.func.isRequired,
