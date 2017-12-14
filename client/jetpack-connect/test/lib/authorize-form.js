@@ -14,26 +14,28 @@ export const SITE_SLUG = 'an.example.site';
 export const USER_ID = 1239876546;
 
 export const JETPACK_CONNECT_AUTHORIZE_LOGGED_OUT = deepFreeze( {
-	authBlogname: 'Example Blog',
-	authClientId: CLIENT_ID,
-	authFrom: 'banner-44-slide-1-dashboard',
-	authHomeUrl: `http://${ SITE_SLUG }`,
-	authJpVersion: '5.4',
-	authNonce: 'fooBarNonce',
 	authorizeError: false,
 	authorizeSuccess: false,
-	authRedirectAfterAuth: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack`,
-	// eslint-disable-next-line max-len
-	authRedirectUri: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2F${ SITE_SLUG }%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack`,
-	authScope: 'administrator:fooBarBaz',
-	authSecret: 'fooBarSecret',
-	authSite: `http://${ SITE_SLUG }`,
-	authSiteIcon: '',
-	authSiteUrl: `http://${ SITE_SLUG }`,
-	authState: '2',
-	authTracksUi: 'jetpack:fooBarBaz',
-	authTracksUt: 'anon',
-	authUserEmail: `email@${ SITE_SLUG }`,
+	authQuery: {
+		blogname: 'Example Blog',
+		clientId: CLIENT_ID,
+		from: 'banner-44-slide-1-dashboard',
+		homeUrl: `http://${ SITE_SLUG }`,
+		jpVersion: '5.4',
+		nonce: 'fooBarNonce',
+		redirectAfterAuth: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack`,
+		// eslint-disable-next-line max-len
+		redirectUri: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2F${ SITE_SLUG }%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack`,
+		scope: 'administrator:fooBarBaz',
+		secret: 'fooBarSecret',
+		site: `http://${ SITE_SLUG }`,
+		siteIcon: '',
+		siteUrl: `http://${ SITE_SLUG }`,
+		state: '2',
+		tracksUi: 'jetpack:fooBarBaz',
+		tracksUt: 'anon',
+		userEmail: `email@${ SITE_SLUG }`,
+	},
 	clientNotResponding: true,
 	isAuthorizing: false,
 	timestamp: 1509368045859,
@@ -41,34 +43,58 @@ export const JETPACK_CONNECT_AUTHORIZE_LOGGED_OUT = deepFreeze( {
 } );
 
 export const JETPACK_CONNECT_AUTHORIZE_LOGGED_IN = deepFreeze( {
-	authBlogname: 'Example Blog',
-	authClientId: CLIENT_ID,
-	authFrom: 'banner-44-slide-1-dashboard',
-	authHomeUrl: `http://${ SITE_SLUG }`,
-	authJpVersion: '5.4',
-	authNewUserStartedConnection: '2',
-	authNonce: 'fooBarNonce',
 	authorizeError: false,
 	authorizeSuccess: false,
-	authRedirectAfterAuth: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack`,
-	// eslint-disable-next-line max-len
-	authRedirectUri: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2F${ SITE_SLUG }%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack`,
-	authScope: 'administrator:fooBarBaz',
-	authSecret: 'fooBarSecret',
-	authSite: `http://${ SITE_SLUG }`,
-	authSiteIcon: '',
-	authSiteUrl: `http://${ SITE_SLUG }`,
-	authTracksUi: '' + USER_ID,
-	authTracksUt: 'wpcom:user_id',
-	authUserEmail: `email@${ SITE_SLUG }`,
 	clientNotResponding: true,
 	isAuthorizing: false,
 	timestamp: 1509368045859,
 	userAlreadyConnected: false,
 } );
 
+export const JETPACK_CONNECT_AUTH_QUERY_LOGGED_IN = deepFreeze( {
+	blogname: 'Example Blog',
+	clientId: CLIENT_ID,
+	from: 'banner-44-slide-1-dashboard',
+	homeUrl: `http://${ SITE_SLUG }`,
+	jpVersion: '5.4',
+	newUserStartedConnection: '2',
+	nonce: 'fooBarNonce',
+	redirectAfterAuth: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack`,
+	// eslint-disable-next-line max-len
+	redirectUri: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2F${ SITE_SLUG }%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack`,
+	scope: 'administrator:fooBarBaz',
+	secret: 'fooBarSecret',
+	site: `http://${ SITE_SLUG }`,
+	siteIcon: '',
+	siteUrl: `http://${ SITE_SLUG }`,
+	tracksUi: '' + USER_ID,
+	tracksUt: 'wpcom:user_id',
+	userEmail: `email@${ SITE_SLUG }`,
+} );
+
+export const JETPACK_CONNECT_AUTH_QUERY_LOGGED_OUT = deepFreeze( {
+	blogname: 'Example Blog',
+	clientId: CLIENT_ID,
+	from: 'banner-44-slide-1-dashboard',
+	homeUrl: `http://${ SITE_SLUG }`,
+	jpVersion: '5.4',
+	newUserStartedConnection: '2',
+	nonce: 'fooBarNonce',
+	redirectAfterAuth: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack`,
+	// eslint-disable-next-line max-len
+	redirectUri: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2F${ SITE_SLUG }%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack`,
+	scope: 'administrator:fooBarBaz',
+	secret: 'fooBarSecret',
+	site: `http://${ SITE_SLUG }`,
+	siteIcon: '',
+	siteUrl: `http://${ SITE_SLUG }`,
+	tracksUi: '' + USER_ID,
+	tracksUt: 'wpcom:user_id',
+	userEmail: `email@${ SITE_SLUG }`,
+} );
+
 export const LOGGED_OUT_PROPS = deepFreeze( {
-	authorizationRemoteQueryData: JETPACK_CONNECT_AUTHORIZE_LOGGED_OUT.queryObject,
+	authQuery: JETPACK_CONNECT_AUTH_QUERY_LOGGED_OUT,
 	isLoggedIn: false,
 	path: '/jetpack/connect/authorize',
 	recordTracksEvent: noop,
@@ -76,7 +102,7 @@ export const LOGGED_OUT_PROPS = deepFreeze( {
 } );
 
 export const LOGGED_IN_PROPS = deepFreeze( {
-	authorizationRemoteQueryData: JETPACK_CONNECT_AUTHORIZE_LOGGED_IN.queryObject,
+	authQuery: JETPACK_CONNECT_AUTH_QUERY_LOGGED_IN,
 	isLoggedIn: true,
 	path: '/jetpack/connect/authorize',
 	recordTracksEvent: noop,
