@@ -14,8 +14,8 @@ import Gridicon from 'gridicons';
  */
 import {
 	ButtonRow,
+	Continue,
 	makeTour,
-	Next,
 	SiteLink,
 	Step,
 	Tour,
@@ -31,11 +31,25 @@ export const ChecklistUserAvatarTour = makeTour(
 				) }
 			</p>
 			<ButtonRow>
-				<Next step="finish">{ translate( 'All done, continue' ) }</Next>
+				<Continue target="edit-gravatar" step="click-done" click hidden />
 				<SiteLink isButton={ false } href="/checklist/:site">
 					{ translate( 'Return to the checklist' ) }
 				</SiteLink>
 			</ButtonRow>
+		</Step>
+
+		<Step
+			name="click-done"
+			target="image-editor-button-done"
+			arrow="bottom-center"
+			placement="above"
+		>
+			<Continue target="image_editor_button_done" step="finish" click>
+				{ translate(
+					"Let's make sure it looks right before you press {{b}}Change My Photo{{/b}} to save your changes.",
+					{ components: { b: <strong /> } }
+				) }
+			</Continue>
 		</Step>
 
 		<Step name="finish" placement="right">
