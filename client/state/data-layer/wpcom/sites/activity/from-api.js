@@ -36,7 +36,7 @@ export function transformer( apiResponse ) {
  * contain links to resources referenced in the explanation
  *
  * @param {Object} item from API response
- * @returns {?Object} parsed notifications-formatted block
+ * @returns {Object|undefined} parsed notifications-formatted block
  */
 const getDescription = item => {
 	// first generation had all of description in summary as string
@@ -68,7 +68,7 @@ const getDescription = item => {
  * e.g. "Post published" "Theme updated" "Plugin installed" etc…
  *
  * @param {Object} item from API response
- * @returns {?String} activity title
+ * @returns {String|undefined} activity title
  */
 const getTitle = item => {
 	// third generation provided title
