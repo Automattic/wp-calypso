@@ -33,7 +33,7 @@ function PostStatusExample( { queries, primarySiteId, primarySiteUrl, globalIdBy
 						<h3>{ label }</h3>
 						{ primarySiteId && <QueryPosts siteId={ primarySiteId } query={ query } /> }
 						{ ! globalIdByQueryLabel[ label ] && <em>No matching post found</em> }
-						<PostStatus globalId={ globalIdByQueryLabel[ label ] } />
+						<PostStatus globalId={ globalIdByQueryLabel[ label ] } showAll />
 					</p>
 				);
 			} ) }
