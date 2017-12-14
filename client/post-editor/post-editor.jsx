@@ -261,7 +261,6 @@ export const PostEditor = createReactClass( {
 	},
 
 	loadRevision: function( revision ) {
-		this.setState( { selectedRevisionId: null } );
 		this.restoreRevision( {
 			content: revision.post_content,
 			excerpt: revision.post_excerpt,
@@ -331,7 +330,6 @@ export const PostEditor = createReactClass( {
 						toggleSidebar={ this.toggleSidebar }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						allPostsUrl={ this.getAllPostsUrl() }
-						selectedRevisionId={ this.state.selectedRevisionId }
 						isSidebarOpened={ this.props.layoutFocus === 'sidebar' }
 					/>
 					<div className="post-editor__content">
