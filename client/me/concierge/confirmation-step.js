@@ -11,20 +11,35 @@ import React, { Component } from 'react';
 import Button from 'components/button';
 import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
+import { localize } from 'i18n-calypso';
 
 class ConfirmationStep extends Component {
 	render() {
-		// TODO: Send Button back to site's dashboard
+		const { site, translate } = this.props;
 		return (
 			<Card>
-				<FormattedHeader
-					headerText="Your Concierge session is booked!"
-					subHeaderText="We will send you an email with information on how to get prepared"
+				<img
+					className="concierge__confirmation-illustration"
+					src={ '/calypso/images/illustrations/support.svg' }
 				/>
-				<Button href="/">Back to your dashboard</Button>
+
+				<FormattedHeader
+					headerText={ translate( 'Your Concierge session is booked!' ) }
+					subHeaderText={ translate(
+						'We will send you an email with information on how to get prepared.'
+					) }
+				/>
+
+				<Button
+					className="concierge__confirmation-button"
+					primary={ true }
+					href={ `/stats/day/${ site.slug }` }
+				>
+					{ translate( 'Return to your dashboard' ) }
+				</Button>
 			</Card>
 		);
 	}
 }
 
-export default ConfirmationStep;
+export default localize( ConfirmationStep );

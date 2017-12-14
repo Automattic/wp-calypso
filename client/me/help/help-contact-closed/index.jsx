@@ -7,31 +7,30 @@
 import React from 'react';
 import i18n, { localize } from 'i18n-calypso';
 
+const christmas2017ClosureStartsAt = i18n.moment( 'Sun, 24 Dec 2017 00:00:00 +0000' );
+
 /**
  * Internal dependencies
  */
 import FormSectionHeading from 'components/forms/form-section-heading';
 
-// In the translated dates 7am UTC is 12am/midnight PT
-const closedStartDate = i18n.moment( 'Thu, 23 Nov 2017 00:00:00 +0000' );
-const closedEndDate = i18n.moment( 'Fri, 24 Nov 2017 00:00:00 +0000' );
-
 const HelpContactClosed = ( { translate } ) => {
 	return (
 		<div className="help-contact-closed">
-			<FormSectionHeading>{ translate( 'Limited Support on Thanksgiving' ) }</FormSectionHeading>
+			<FormSectionHeading>{ translate( 'Limited Support over Christmas' ) }</FormSectionHeading>
 			<div>
 				<p>
-					{ translate(
-						'Live chat support will be closed for the Thanksgiving holiday on %(closed_start_date)s. ' +
-							'Email support will be open during that time, and we will reopen live chat on %(closed_end_date)s.',
-						{
-							args: {
-								closed_start_date: closedStartDate.format( 'dddd, MMMM D' ),
-								closed_end_date: closedEndDate.format( 'dddd, MMMM D' ),
-							},
-						}
-					) }
+					{ i18n.moment() < christmas2017ClosureStartsAt
+						? translate(
+								'Live chat will be closed on Sunday, December 24th and Monday, December 25th for the Christmas holiday. ' +
+									'If you need to get in touch with us, you’ll be able to submit a support request from this page and ' +
+									'we will get to it as fast as we can. Live chat will reopen on December 26th. Thank you!'
+							)
+						: translate(
+								'Live chat is closed today for for the Christmas holiday. If you need to get in touch with us, ' +
+									'you can submit a support request below and we will get to it as fast as we can. Live chat will ' +
+									'reopen at 00:00 UTC on December 26. Thank you!'
+							) }
 				</p>
 			</div>
 			<hr />

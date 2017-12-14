@@ -148,6 +148,27 @@ describe( 'reducer', () => {
 			const newState = isUpdating( { 45: true }, action );
 			expect( newState ).to.eql( { 45: false } );
 		} );
+
+		test( 'should store that a new order is being created', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_UPDATE,
+				siteId: 123,
+				orderId: { placeholder: 'order_2' },
+			};
+			const newState = isUpdating( undefined, action );
+			expect( newState ).to.eql( { '{"placeholder":"order_2"}': true } );
+		} );
+
+		test( 'should show that a new order is created after success', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
+				siteId: 123,
+				orderId: { placeholder: 'order_2' },
+				order,
+			};
+			const newState = isUpdating( { '{"placeholder":"order_2"}': true }, action );
+			expect( newState ).to.eql( { '{"placeholder":"order_2"}': false } );
+		} );
 	} );
 
 	describe( 'items', () => {

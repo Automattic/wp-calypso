@@ -24,6 +24,10 @@ export const getSiteUrl = ( { feed, site, post } = {} ) => {
 	const feedUrl = !! feed && ( feed.URL || feed.feed_URL );
 	const postUrl = !! post && post.site_URL;
 
+	if ( ! siteUrl && ! feedUrl && ! postUrl ) {
+		return undefined;
+	}
+
 	return siteUrl || feedUrl || postUrl;
 };
 

@@ -27,12 +27,7 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import {
-	canCurrentUser,
-	getJetpackConnectRedirectAfterAuth,
-	isRtl,
-	isSiteAutomatedTransfer,
-} from 'state/selectors';
+import { canCurrentUser, isRtl, isSiteAutomatedTransfer } from 'state/selectors';
 import { mc } from 'lib/analytics';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 
@@ -42,6 +37,8 @@ const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
 	static propTypes = {
+		queryRedirect: PropTypes.string,
+
 		// Connected props
 		isAutomatedTransfer: PropTypes.bool, // null indicates unknown
 		hasPlan: PropTypes.bool, // null indicates unknown
@@ -94,9 +91,9 @@ class Plans extends Component {
 	};
 
 	redirectToWpAdmin() {
-		const { redirectAfterAuth } = this.props;
-		if ( redirectAfterAuth ) {
-			this.props.goBackToWpAdmin( redirectAfterAuth );
+		const { queryRedirect } = this.props;
+		if ( queryRedirect ) {
+			this.props.goBackToWpAdmin( queryRedirect );
 			this.redirecting = true;
 			this.props.completeFlow();
 		} else if ( this.props.selectedSite ) {
@@ -218,7 +215,6 @@ export default connect(
 			selectedPlan,
 			selectedPlanSlug,
 			isAutomatedTransfer: selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : null,
-			redirectAfterAuth: getJetpackConnectRedirectAfterAuth( state ),
 			userId: user ? user.ID : null,
 			canPurchasePlans: selectedSite
 				? canCurrentUser( state, selectedSite.ID, 'manage_options' )

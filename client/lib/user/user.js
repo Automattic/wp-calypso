@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { isEqual } from 'lodash';
+import { entries, isEqual } from 'lodash';
 import store from 'store';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:user' );
@@ -254,24 +254,44 @@ User.prototype.sendVerificationEmail = function( fn ) {
 };
 
 User.prototype.set = function( attributes ) {
-	var changed = false,
-		computedAttributes = userUtils.getComputedAttributes( attributes );
+	let changed = false;
 
-	attributes = Object.assign( {}, attributes, computedAttributes );
-
-	for ( var prop in attributes ) {
-		if ( attributes.hasOwnProperty( prop ) && ! isEqual( attributes[ prop ], this.data[ prop ] ) ) {
-			this.data[ prop ] = attributes[ prop ];
+	for ( const [ attrName, attrValue ] of entries( attributes ) ) {
+		if ( ! isEqual( attrValue, this.data[ attrName ] ) ) {
+			this.data[ attrName ] = attrValue;
 			changed = true;
 		}
 	}
 
 	if ( changed ) {
-		this.emit( 'change' );
+		Object.assign( this.data, userUtils.getComputedAttributes( this.data ) );
 		store.set( 'wpcom_user', this.data );
+		this.emit( 'change' );
 	}
 
 	return changed;
+};
+
+User.prototype.decrementSiteCount = function() {
+	const user = this.get();
+	if ( user ) {
+		this.set( {
+			visible_site_count: user.visible_site_count - 1,
+			site_count: user.site_count - 1,
+		} );
+	}
+	this.fetch();
+};
+
+User.prototype.incrementSiteCount = function() {
+	const user = this.get();
+	if ( user ) {
+		return this.set( {
+			visible_site_count: user.visible_site_count + 1,
+			site_count: user.site_count + 1,
+		} );
+	}
+	this.fetch();
 };
 
 /**

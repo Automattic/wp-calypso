@@ -32,7 +32,7 @@ class PostActionsEllipsisMenuComments extends PureComponent {
 		return (
 			<PopoverMenuItem
 				href={ `/comments/all/${ siteSlug }/${ postId }` }
-				icon="comment"
+				icon="chat"
 				onClick={ bumpStat }
 			>
 				{ translate( 'Comments', { context: 'noun' } ) }

@@ -9,16 +9,15 @@ import fromApi, { transformShift } from '../from-api';
 describe( 'transformShift()', () => {
 	test( 'should pick out expected fields and make the keys camelCase.', () => {
 		const mockShift = {
-			id: 'some-id',
 			begin_timestamp: 100,
 			end_timestamp: 200,
 			not_going_to_take_this: 'should ignore this one',
 		};
 
+		// Note: We're ensuring that the timestamps are converted from Unix seconds to JS milliseconds
 		expect( transformShift( mockShift ) ).toEqual( {
-			id: mockShift.id,
-			beginTimestamp: mockShift.begin_timestamp,
-			endTimestamp: mockShift.end_timestamp,
+			beginTimestamp: mockShift.begin_timestamp * 1000,
+			endTimestamp: mockShift.end_timestamp * 1000,
 		} );
 	} );
 } );
@@ -27,13 +26,11 @@ describe( 'fromApi()', () => {
 	test( 'should validate and transform the data successfully.', () => {
 		const validResponse = [
 			{
-				id: 'shift-id-1',
 				begin_timestamp: 100,
 				end_timestamp: 200,
 				description: 'shift 1',
 			},
 			{
-				id: 'shift-id-2',
 				begin_timestamp: 300,
 				end_timestamp: 400,
 				description: 'shift 2',
@@ -42,14 +39,12 @@ describe( 'fromApi()', () => {
 
 		const expectedResult = [
 			{
-				id: validResponse[ 0 ].id,
-				beginTimestamp: validResponse[ 0 ].begin_timestamp,
-				endTimestamp: validResponse[ 0 ].end_timestamp,
+				beginTimestamp: validResponse[ 0 ].begin_timestamp * 1000,
+				endTimestamp: validResponse[ 0 ].end_timestamp * 1000,
 			},
 			{
-				id: validResponse[ 1 ].id,
-				beginTimestamp: validResponse[ 1 ].begin_timestamp,
-				endTimestamp: validResponse[ 1 ].end_timestamp,
+				beginTimestamp: validResponse[ 1 ].begin_timestamp * 1000,
+				endTimestamp: validResponse[ 1 ].end_timestamp * 1000,
 			},
 		];
 		expect( fromApi( validResponse ) ).toEqual( expectedResult );
@@ -59,7 +54,6 @@ describe( 'fromApi()', () => {
 		const invalidateCall = () => {
 			const invalidFieldTypes = [
 				{
-					id: 'xxx',
 					begin_timestamp: 'haha',
 					end_timestamp: 200,
 				},
@@ -75,7 +69,6 @@ describe( 'fromApi()', () => {
 		const invalidateMissingBeginTimestamp = () => {
 			const invalidResponse = [
 				{
-					id: 'just-an-id',
 					end_timestamp: 400,
 				},
 			];
@@ -90,9 +83,7 @@ describe( 'fromApi()', () => {
 		const invalidateMissingEndTimestamp = () => {
 			const invalidResponse = [
 				{
-					id: 'just-an-id',
 					begin_timestamp: 333,
-					schedule_id: 999,
 				},
 			];
 
@@ -100,20 +91,5 @@ describe( 'fromApi()', () => {
 		};
 
 		expect( invalidateMissingEndTimestamp ).toThrowError( SchemaError );
-	} );
-
-	test( 'should invalidate missing id.', () => {
-		const invalidateMissingScheduleId = () => {
-			const invalidResponse = [
-				{
-					begin_timestamp: 333,
-					end_timestamp: 400,
-				},
-			];
-
-			fromApi( invalidResponse );
-		};
-
-		expect( invalidateMissingScheduleId ).toThrowError( SchemaError );
 	} );
 } );

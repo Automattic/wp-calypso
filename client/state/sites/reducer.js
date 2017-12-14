@@ -36,7 +36,6 @@ import {
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
-	SITES_UPDATE,
 	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
@@ -70,7 +69,6 @@ export function items( state = {}, action ) {
 
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
-		case SITES_UPDATE:
 			// Normalize incoming site(s) to array
 			const sites = action.site ? [ action.site ] : action.sites;
 
@@ -81,15 +79,6 @@ export function items( state = {}, action ) {
 			return reduce(
 				sites,
 				( memo, site ) => {
-					// If we're not already tracking the site upon an update, don't
-					// merge into state (we only currently maintain sites which
-					// have at one point been selected in state)
-					//
-					// TODO: Consider dropping condition once sites-list abolished
-					if ( SITES_UPDATE === action.type && ! memo[ site.ID ] ) {
-						return memo;
-					}
-
 					// Bypass if site object hasn't change
 					const transformedSite = pick( site, VALID_SITE_KEYS );
 					if ( isEqual( memo[ site.ID ], transformedSite ) ) {

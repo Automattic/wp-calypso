@@ -3,12 +3,10 @@
 	"items": {
 		"type": "object",
 		"required": [
-			"id",
 			"begin_timestamp",
 			"end_timestamp"
 		],
 		"properties": {
-			"id": { "type": "string" },
 			"begin_timestamp": { "type": "integer" },
 			"end_timestamp": { "type": "integer" }
 		}

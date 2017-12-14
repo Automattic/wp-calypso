@@ -23,7 +23,6 @@ import {
 	SITES_REQUEST,
 	SITES_REQUEST_SUCCESS,
 	SITES_REQUEST_FAILURE,
-	SITES_UPDATE,
 } from 'state/action-types';
 
 /**
@@ -66,20 +65,6 @@ export function receiveSite( site ) {
 export function receiveSites( sites ) {
 	return {
 		type: SITES_RECEIVE,
-		sites,
-	};
-}
-
-/**
- * Returns an action object to be used in signalling that sites objects have
- * been updated.
- *
- * @param  {Object[]} sites Sites updated
- * @return {Object}         Action object
- */
-export function receiveSiteUpdates( sites ) {
-	return {
-		type: SITES_UPDATE,
 		sites,
 	};
 }

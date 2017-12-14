@@ -17,7 +17,7 @@ import { action as ActionTypes } from 'lib/invites/constants';
 import analytics from 'lib/analytics';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { acceptedNotice } from 'my-sites/invites/utils';
-import { requestSites } from 'state/sites/actions';
+import { requestSites, receiveSites } from 'state/sites/actions';
 
 /**
  * Module variables
@@ -103,7 +103,7 @@ export function acceptInvite( invite, callback ) {
 			invite,
 		} );
 		wpcom.undocumented().acceptInvite( invite, ( error, data ) => {
-			Dispatcher.handleViewAction( {
+			dispatch( {
 				type: error
 					? ActionTypes.RECEIVE_INVITE_ACCEPTED_ERROR
 					: ActionTypes.RECEIVE_INVITE_ACCEPTED_SUCCESS,
@@ -119,9 +119,14 @@ export function acceptInvite( invite, callback ) {
 					error: error.error,
 				} );
 			} else {
+				if ( invite.role !== 'follower' && invite.role !== 'viewer' ) {
+					dispatch( receiveSites( data.sites ) );
+				}
+
 				if ( ! get( invite, 'site.is_vip' ) ) {
 					dispatch( successNotice( ...acceptedNotice( invite ) ) );
 				}
+
 				analytics.tracks.recordEvent( 'calypso_invite_accepted' );
 			}
 			dispatch( requestSites() );

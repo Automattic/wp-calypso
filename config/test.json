@@ -90,6 +90,7 @@
 		"reader/following-intro": true,
 		"reader/full-errors": true,
 		"reader/list-management": false,
+		"reader/new-post-notifications": true,
 		"republicize": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,

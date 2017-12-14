@@ -65,7 +65,6 @@ import library from 'lib/example'
 case SELECTED_SITE_SET:
 case SITE_RECEIVE:
 case SITES_RECEIVE:
-case SITES_UPDATE:
 	const state = getState();
 	const selectedSite = getSelectedSite( state );
 	library.setSelectedSite( selectedSite );
@@ -110,4 +109,3 @@ function sitesReceived() {
 ```
 
 As soon as sites are received the function is called. There is no need to do an unsubscribe operation because the listener function is called just one time.
-The most probable case where the need to use this approach may arise is when removing usages of SitesList.once().

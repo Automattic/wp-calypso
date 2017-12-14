@@ -38,8 +38,6 @@ class HistoryButton extends PureComponent {
 }
 
 HistoryButton.propTypes = {
-	loadRevision: PropTypes.func.isRequired,
-
 	// connected to dispatch
 	openPostRevisionsDialog: PropTypes.func.isRequired,
 	recordTracksEvent: PropTypes.func.isRequired,

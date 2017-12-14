@@ -24,6 +24,7 @@ import {
 	getReaderRecommendedSitesPagingOffset,
 	getBlockedSites,
 	getReaderAliasedFollowFeedUrl,
+	getReaderFollowsCount,
 } from 'state/selectors';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import QueryReaderRecommendedSites from 'components/data/query-reader-recommended-sites';
@@ -32,14 +33,12 @@ import FollowingManageSubscriptions from './subscriptions';
 import FollowingManageSearchFeedsResults from './feed-search-results';
 import FollowingManageEmptyContent from './empty';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
-import { addQueryArgs } from 'lib/url';
 import FollowButton from 'reader/follow-button';
 import {
 	READER_FOLLOWING_MANAGE_URL_INPUT,
 	READER_FOLLOWING_MANAGE_RECOMMENDATION,
 } from 'reader/follow-sources';
-import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
-import { getReaderFollowsCount } from 'state/selectors';
+import { resemblesUrl, withoutHttp, addSchemeIfMissing, addQueryArgs } from 'lib/url';
 import { recordTrack, recordAction } from 'reader/stats';
 import { SORT_BY_RELEVANCE } from 'state/reader/feed-searches/actions';
 
@@ -238,13 +237,12 @@ class FollowingManage extends Component {
 						</div>
 					) }
 				</div>
-				{ hasFollows &&
-					! sitesQuery && (
-						<RecommendedSites
-							sites={ take( filteredRecommendedSites, 2 ) }
-							followSource={ READER_FOLLOWING_MANAGE_RECOMMENDATION }
-						/>
-					) }
+				{ ! sitesQuery && (
+					<RecommendedSites
+						sites={ take( filteredRecommendedSites, 2 ) }
+						followSource={ READER_FOLLOWING_MANAGE_RECOMMENDATION }
+					/>
+				) }
 				{ !! sitesQuery &&
 					! isFollowByUrlWithNoSearchResults && (
 						<FollowingManageSearchFeedsResults

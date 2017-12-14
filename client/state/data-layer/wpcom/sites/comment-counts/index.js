@@ -3,9 +3,7 @@
 /**
  * External dependencies
  */
-
-// import { translate } from 'i18n-calypso';
-// import { flatMap, flatten, isArray, map } from 'lodash';
+import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +12,6 @@ import { COMMENT_COUNTS_REQUEST, COMMENT_COUNTS_UPDATE } from 'state/action-type
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
-import { mapValues } from 'lodash';
 
 export const fetchCommentCounts = action => {
 	const { siteId, postId } = action;
@@ -25,7 +22,7 @@ export const fetchCommentCounts = action => {
 			path: `/sites/${ siteId }/comment-counts`,
 			apiVersion: '1.0',
 			query: {
-				postId,
+				post_id: postId,
 			},
 		},
 		action

@@ -28,7 +28,6 @@ import wpcomLib from 'lib/wp';
 import notices from 'notices';
 import analytics from 'lib/analytics';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import getHappychatUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import {
@@ -49,6 +48,7 @@ import {
 	getCurrentUser,
 	getCurrentUserLocale,
 	getCurrentUserSiteCount,
+	isCurrentUserEmailVerified,
 } from 'state/current-user/selectors';
 import {
 	askQuestion as askDirectlyQuestion,
@@ -76,10 +76,8 @@ const SUPPORT_LIVECHAT = 'SUPPORT_LIVECHAT';
 const SUPPORT_TICKET = 'SUPPORT_TICKET';
 const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
-const startShowingThanksgiving2017ClosureNoticeAt = i18n.moment(
-	'Thu, 23 Nov 2017 00:00:00 +0000'
-);
-const stopShowingThanksgiving2017ClosureNoticeAt = i18n.moment( 'Fri, 24 Nov 2017 00:00:00 +0000' );
+const startShowingChristmas2017ClosureNoticeAt = i18n.moment( 'Sun, 17 Dec 2017 00:00:00 +0000' );
+const stopShowingChristmas2017ClosureNoticeAt = i18n.moment( 'Tue, 26 Dec 2017 00:00:00 +0000' );
 
 class HelpContact extends React.Component {
 	state = {
@@ -685,14 +683,14 @@ class HelpContact extends React.Component {
 
 		const currentDate = Date.now();
 
-		// Customers sent to Directly and Forum are not affected by the Thanksgiving closures
-		const isUserAffectedByThanksgiving2017Closure =
+		// Customers sent to Directly and Forum are not affected by the Christmas closures
+		const isUserAffectedByChristmas2017Closure =
 			supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
 		const shouldShowClosureNotice =
-			isUserAffectedByThanksgiving2017Closure &&
-			currentDate > startShowingThanksgiving2017ClosureNoticeAt &&
-			currentDate < stopShowingThanksgiving2017ClosureNoticeAt;
+			isUserAffectedByChristmas2017Closure &&
+			currentDate > startShowingChristmas2017ClosureNoticeAt &&
+			currentDate < stopShowingChristmas2017ClosureNoticeAt;
 
 		return (
 			<div>

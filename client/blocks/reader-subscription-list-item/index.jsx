@@ -14,7 +14,9 @@ import moment from 'moment';
 import ReaderAvatar from 'blocks/reader-avatar';
 import FollowButton from 'reader/follow-button';
 import { getStreamUrl } from 'reader/route';
-import EmailSettings from 'blocks/reader-email-settings';
+import ReaderEmailSettings from 'blocks/reader-email-settings';
+import ReaderSiteNotificationSettings from 'blocks/reader-site-notification-settings';
+import config from 'config';
 import {
 	getSiteName,
 	getSiteDescription,
@@ -43,7 +45,7 @@ function ReaderSubscriptionListItem( {
 	className = '',
 	translate,
 	followSource,
-	showEmailSettings,
+	showEmailSettings, // @todo rename to showNotificationSettings
 	showLastUpdatedDate,
 	isFollowing,
 	railcar,
@@ -82,6 +84,12 @@ function ReaderSubscriptionListItem( {
 	const recordAuthorClick = () => recordEvent( 'calypso_reader_author_link_clicked' );
 	const recordSiteUrlClick = () => recordEvent( 'calypso_reader_site_url_clicked' );
 	const recordAvatarClick = () => recordEvent( 'calypso_reader_avatar_clicked' );
+
+	const notificationSettings = config.isEnabled( 'reader/new-post-notifications' ) ? (
+		<ReaderSiteNotificationSettings siteId={ siteId } />
+	) : (
+		<ReaderEmailSettings siteId={ siteId } />
+	);
 
 	return (
 		<div
@@ -159,7 +167,7 @@ function ReaderSubscriptionListItem( {
 					siteId={ siteId }
 					railcar={ railcar }
 				/>
-				{ isFollowing && showEmailSettings && <EmailSettings siteId={ siteId } /> }
+				{ isFollowing && showEmailSettings && notificationSettings }
 			</div>
 		</div>
 	);

@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -107,7 +108,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#updateOrder()', () => {
+	describe( '#saveOrder()', () => {
 		const siteId = 123;
 		const updatedOrder = {
 			id: 40,
@@ -115,12 +116,14 @@ describe( 'actions', () => {
 		};
 
 		test( 'should dispatch an action', () => {
-			const action = saveOrder( siteId, updatedOrder );
+			const action = saveOrder( siteId, updatedOrder, noop, noop );
 			expect( action ).to.eql( {
 				type: WOOCOMMERCE_ORDER_UPDATE,
 				siteId: 123,
 				orderId: 40,
 				order: { status: 'completed' },
+				onFailure: noop,
+				onSuccess: noop,
 			} );
 		} );
 
@@ -141,6 +144,37 @@ describe( 'actions', () => {
 				siteId: 234,
 				orderId: 1,
 				error: 'Error object',
+			} );
+		} );
+	} );
+
+	describe( '#saveOrder() - new order', () => {
+		const siteId = 123;
+		const newOrder = {
+			id: { placeholder: 'order_1' },
+			status: 'processing',
+		};
+
+		test( 'should dispatch an action', () => {
+			const action = saveOrder( siteId, newOrder, noop, noop );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_ORDER_UPDATE,
+				siteId: 123,
+				orderId: { placeholder: 'order_1' },
+				order: { status: 'processing' },
+				onFailure: noop,
+				onSuccess: noop,
+			} );
+		} );
+
+		test( 'should dispatch a success action with the order when request completes', () => {
+			const updatedOrder = { ...newOrder, id: 42 };
+			const action = saveOrderSuccess( siteId, { placeholder: 'order_1' }, updatedOrder );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
+				siteId: 123,
+				orderId: { placeholder: 'order_1' },
+				order: { id: 42, status: 'processing' },
 			} );
 		} );
 	} );

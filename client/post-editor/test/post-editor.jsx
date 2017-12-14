@@ -48,6 +48,7 @@ jest.mock( 'post-editor/invalid-url-dialog', () => require( 'components/empty-co
 jest.mock( 'post-editor/restore-post-dialog', () => require( 'components/empty-component' ) );
 jest.mock( 'post-editor/editor-sidebar', () => require( 'components/empty-component' ) );
 jest.mock( 'post-editor/editor-status-label', () => require( 'components/empty-component' ) );
+jest.mock( 'post-editor/editor-revisions/dialog', () => require( 'components/empty-component' ) );
 jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
 jest.mock( 'tinymce/tinymce', () => require( 'components/empty-component' ) );
 // TODO: REDUX - add proper tests when whole post-editor is reduxified

@@ -16,7 +16,6 @@ import { get, head, isEmpty, map } from 'lodash';
 import EditorRevisionsListHeader from './header';
 import EditorRevisionsListItem from './item';
 import { selectPostRevision } from 'state/posts/revisions/actions';
-import { getPostRevision } from 'state/selectors';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 class EditorRevisionsList extends PureComponent {
@@ -28,10 +27,7 @@ class EditorRevisionsList extends PureComponent {
 		selectedRevisionId: PropTypes.number,
 	};
 
-	trySelectingInterval = null;
-
 	selectRevision = revisionId => {
-		clearInterval( this.trySelectingInterval );
 		this.props.selectPostRevision( revisionId );
 	};
 
@@ -55,20 +51,22 @@ class EditorRevisionsList extends PureComponent {
 		KeyboardShortcuts.on( 'move-selection-down', this.selectPreviousRevision );
 
 		if ( ! this.props.selectedRevisionId ) {
-			this.trySelectingInterval = setInterval( this.trySelectingFirstRevision, 500 );
+			this.trySelectingFirstRevision();
 		}
 	}
 
 	componentWillUnmount() {
 		KeyboardShortcuts.off( 'move-selection-up', this.selectNextRevision );
 		KeyboardShortcuts.off( 'move-selection-down', this.selectPreviousRevision );
-
-		clearInterval( this.trySelectingInterval );
 	}
 
-	componentDidUpdate() {
-		// @TODO -- maybe short-circuit this if selection doesn't change...?
-		this.scrollToSelectedItem();
+	componentDidUpdate( prevProps ) {
+		if ( ! this.props.selectedRevisionId ) {
+			this.trySelectingFirstRevision();
+		}
+		if ( this.props.selectedRevisionId !== prevProps.selectedRevisionId ) {
+			this.scrollToSelectedItem();
+		}
 	}
 
 	scrollToSelectedItem() {
@@ -147,7 +145,6 @@ export default connect(
 		return {
 			nextRevisionId,
 			prevRevisionId,
-			selectedRevision: getPostRevision( state, selectedRevisionId ),
 		};
 	},
 	{ selectPostRevision }

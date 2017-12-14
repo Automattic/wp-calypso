@@ -39,7 +39,6 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 import FormSectionHeading from 'components/forms/form-section-heading';
 import userFactory from 'lib/user';
 import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
-import { receiveDeletedSite as receiveDeletedSiteDeprecated } from 'lib/sites-list/actions';
 import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -204,11 +203,6 @@ class RemovePurchase extends Component {
 			} else {
 				if ( isDomainRegistration( purchase ) ) {
 					if ( isDomainOnlySite ) {
-						// Removing the domain from a domain-only site results
-						// in the site being deleted entirely. We need to call
-						// `receiveDeletedSiteDeprecated` here because the site
-						// exists in `sites-list` as well as the global store.
-						receiveDeletedSiteDeprecated( selectedSite );
 						this.props.receiveDeletedSite( selectedSite.ID );
 						this.props.setAllSitesSelected();
 					}
