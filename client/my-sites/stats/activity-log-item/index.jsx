@@ -76,9 +76,12 @@ class ActivityLogItem extends Component {
 				/>
 				{ activityDescription && (
 					<div className="activity-log-item__description">
-						{ activityDescription.map( ( part, key ) => (
-							<FormattedBlock key={ key } content={ part } />
-						) ) }
+						<div className="activity-log-item__description-summary">
+							{ activityDescription.map( ( part, key ) => (
+								<FormattedBlock key={ key } content={ part } />
+							) ) }
+						</div>
+						<div className="activity-log-item__description-format">Plugin updated</div>
 					</div>
 				) }
 				{ activityTitle && <div className="activity-log-item__title">{ activityTitle }</div> }
