@@ -46,9 +46,8 @@ class Transfer extends React.PureComponent {
 			noCancelNotice = (
 				<Notice status={ 'is-info' } showDismiss={ false }>
 					{ translate(
-						"The current state of the transfer doesn't allow cancelling. " +
-							'If you still want to cancel the transfer, ' +
-							'you would have to do it through the losing registrar controlling panel.'
+						'This transfer has been started is waiting authorization from your current provider. ' +
+							'If you need to cancel the transfer, please contact them for assistance.'
 					) }
 				</Notice>
 			);
