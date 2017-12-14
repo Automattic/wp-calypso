@@ -99,16 +99,16 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 	next();
 }
 
-export function maybeOnboard( context, next ) {
-	if ( ! isEmpty( context.query ) && context.query.onboarding ) {
-		const siteId = context.query.client_id;
+export function maybeOnboard( { query, store }, next ) {
+	if ( ! isEmpty( query ) && query.onboarding ) {
+		const siteId = query.client_id;
 		const credentials = {
-			token: context.query.onboarding,
-			siteUrl: context.query.site_url,
-			userEmail: context.query.user_email,
+			token: query.onboarding,
+			siteUrl: query.site_url,
+			userEmail: query.user_email,
 		};
 
-		context.store.dispatch( receiveJetpackOnboardingCredentials( siteId, credentials ) );
+		store.dispatch( receiveJetpackOnboardingCredentials( siteId, credentials ) );
 
 		return page.redirect( '/jetpack/onboarding' );
 	}
