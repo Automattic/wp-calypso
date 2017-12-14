@@ -12,232 +12,189 @@ import {
 	isActivityLogLoading,
 	getActivityLogEvents,
 } from '../selectors';
-import config from 'config';
+import * as plugins from 'woocommerce/state/selectors/plugins';
 
-const notesAndLabelsLoadingState = {
+const getState = ( notesState, labelsState ) => ( {
 	extensions: {
 		woocommerce: {
 			sites: {
 				123: {
 					orders: {
-						notes: {
-							isLoading: {
-								45: true,
-							},
-							isSaving: {
-								45: true,
-							},
-							items: {},
-							orders: {},
-						}
+						notes: notesState,
 					},
 				},
 			},
 			woocommerceServices: {
 				123: {
 					shippingLabel: {
-						45: {
-							isFetching: true,
-						}
-					}
-				}
-			}
-		},
-	},
-};
-
-const notesLoadingState = {
-	extensions: {
-		woocommerce: {
-			sites: {
-				123: {
-					orders: {
-						notes: {
-							isLoading: {
-								45: true,
-							},
-							isSaving: {
-								45: true,
-							},
-							items: {},
-							orders: {},
-						}
+						45: labelsState,
 					},
 				},
 			},
-			woocommerceServices: {
-				123: {
-					shippingLabel: {
-						45: {
-							isFetching: false,
-							loaded: true,
-							labels: [],
-						}
-					}
-				}
-			}
 		},
+	},
+} );
+
+const notesLoadingSubtree = {
+	isLoading: {
+		45: true,
+	},
+	isSaving: {
+		45: true,
+	},
+	items: {},
+	orders: {},
+};
+
+const notesLoadedSubtree = {
+	isLoading: {
+		45: false,
+	},
+	isSaving: {
+		45: false,
+	},
+	items: {
+		1: {
+			id: 1,
+			date_created_gmt: 'Mon Sep 18 2017 09:37:51',
+			note: 'Something internal',
+			customer_note: false,
+		},
+		2: {
+			id: 2,
+			date_created_gmt: 'Mon Sep 18 2017 10:37:51',
+			note: 'Something customer-facing',
+			customer_note: true,
+		},
+	},
+	orders: {
+		45: [ 1, 2 ],
 	},
 };
 
-const labelsLoadingState = {
-	extensions: {
-		woocommerce: {
-			sites: {
-				123: {
-					orders: {
-						notes: {
-							isLoading: {
-								45: false,
-							},
-							isSaving: {
-								45: false,
-							},
-							items: {},
-							orders: {
-								45: [],
-							},
-						}
-					},
-				},
+const emptyNotesSubtree = {
+	isLoading: {
+		45: false,
+	},
+	isSaving: {
+		45: false,
+	},
+	items: {},
+	orders: {
+		45: [],
+	},
+};
+
+const labelsLoadingSubtree = {
+	isFetching: true,
+};
+
+const labelsLoadedSubtree = {
+	isFetching: false,
+	loaded: true,
+	labels: [
+		{
+			label_id: 4,
+			refundable_amount: 10,
+			rate: 10,
+			currency: 'CAD',
+			created_date: 4000000,
+			used_date: null,
+			expiry_date: 4500000,
+			product_names: [ 'poutine' ],
+			package_name: 'box',
+			tracking: '12345',
+			carrier_id: 'canada_post',
+			service_name: 'Xpress',
+			refund: {
+				status: 'rejected',
+				request_date: 4100000,
+				refund_date: 4200000,
 			},
-			woocommerceServices: {
-				123: {
-					shippingLabel: {
-						45: {
-							isFetching: true,
-						}
-					}
-				}
-			}
 		},
-	},
-};
-
-const loadedState = {
-	extensions: {
-		woocommerce: {
-			sites: {
-				123: {
-					orders: {
-						notes: {
-							isLoading: {
-								45: false,
-							},
-							isSaving: {
-								45: false,
-							},
-							items: {
-								1: {
-									id: 1,
-									date_created_gmt: 'Mon Sep 18 2017 09:37:51',
-									note: 'Something internal',
-									customer_note: false,
-								},
-								2: {
-									id: 2,
-									date_created_gmt: 'Mon Sep 18 2017 10:37:51',
-									note: 'Something customer-facing',
-									customer_note: true,
-								},
-							},
-							orders: {
-								45: [ 1, 2 ],
-							},
-						}
-					},
-				},
+		{
+			label_id: 3,
+			refundable_amount: 7,
+			rate: 7,
+			currency: 'USD',
+			created_date: 3000000,
+			used_date: null,
+			expiry_date: null,
+			product_names: [ 'Autograph' ],
+			package_name: 'Small Envelope',
+			tracking: '12345',
+			carrier_id: 'usps',
+			service_name: 'First Class',
+			refund: {
+				status: 'complete',
+				request_date: 3100000,
+				refund_date: 3200000,
+				amount: '6.95',
 			},
-			woocommerceServices: {
-				123: {
-					shippingLabel: {
-						45: {
-							isFetching: false,
-							loaded: true,
-							labels: [
-								{
-									label_id: 4,
-									refundable_amount: 10,
-									rate: 10,
-									currency: 'CAD',
-									created_date: 4000000,
-									used_date: null,
-									expiry_date: 4500000,
-									product_names: [ 'poutine' ],
-									package_name: 'box',
-									tracking: '12345',
-									carrier_id: 'canada_post',
-									service_name: 'Xpress',
-									refund: {
-										status: 'rejected',
-										request_date: 4100000,
-										refund_date: 4200000,
-									},
-								},
-								{
-									label_id: 3,
-									refundable_amount: 7,
-									rate: 7,
-									currency: 'USD',
-									created_date: 3000000,
-									used_date: null,
-									expiry_date: null,
-									product_names: [ 'Autograph' ],
-									package_name: 'Small Envelope',
-									tracking: '12345',
-									carrier_id: 'usps',
-									service_name: 'First Class',
-									refund: {
-										status: 'complete',
-										request_date: 3100000,
-										refund_date: 3200000,
-										amount: '6.95',
-									},
-								},
-								{
-									label_id: 2,
-									refundable_amount: 7,
-									rate: 7,
-									currency: 'CAD',
-									created_date: 2000000,
-									used_date: null,
-									expiry_date: 2500000,
-									product_names: [ 'blender' ],
-									package_name: 'regular box',
-									tracking: '12345',
-									carrier_id: 'canada_post',
-									service_name: 'Xpress',
-									refund: {
-										status: 'pending',
-										request_date: 2100000,
-									},
-								},
-								{
-									label_id: 1,
-									refundable_amount: 4.5,
-									rate: 5,
-									currency: 'USD',
-									created_date: 1000000,
-									used_date: 1100000,
-									expiry_date: 1500000,
-									product_names: [ 'bee', 'bee' ],
-									package_name: 'bee box',
-									tracking: '12345',
-									carrier_id: 'usps',
-									service_name: 'First Class',
-								},
-							],
-						}
-					}
-				}
-			}
 		},
-	},
+		{
+			label_id: 2,
+			refundable_amount: 7,
+			rate: 7,
+			currency: 'CAD',
+			created_date: 2000000,
+			used_date: null,
+			expiry_date: 2500000,
+			product_names: [ 'blender' ],
+			package_name: 'regular box',
+			tracking: '12345',
+			carrier_id: 'canada_post',
+			service_name: 'Xpress',
+			refund: {
+				status: 'pending',
+				request_date: 2100000,
+			},
+		},
+		{
+			label_id: 1,
+			refundable_amount: 4.5,
+			rate: 5,
+			currency: 'USD',
+			created_date: 1000000,
+			used_date: 1100000,
+			expiry_date: 1500000,
+			product_names: [ 'bee', 'bee' ],
+			package_name: 'bee box',
+			tracking: '12345',
+			carrier_id: 'usps',
+			service_name: 'First Class',
+		},
+	],
 };
 
+const emptyLabelsSubtree = {
+	isFetching: false,
+	loaded: true,
+	labels: [],
+};
+
+const labelsErrorSubtree = {
+	isFetching: false,
+	loaded: false,
+	error: true,
+};
+
+const notesAndLabelsLoadingState = getState( notesLoadingSubtree, labelsLoadingSubtree );
+const notesLoadingState = getState( notesLoadingSubtree, labelsLoadedSubtree );
+const labelsLoadingState = getState( notesLoadedSubtree, labelsLoadingSubtree );
+const loadedState = getState( notesLoadedSubtree, labelsLoadedSubtree );
 const loadedStateWithUi = { ...loadedState, ui: { selectedSiteId: 123 } };
 
 describe( 'selectors', () => {
+	let wcsEnabledStub;
+	beforeEach( () => {
+		wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( true );
+	} );
+
+	afterEach( () => {
+		wcsEnabledStub.restore();
+	} );
+
 	describe( '#isActivityLogLoaded', () => {
 		it( 'should be false when notes are currently being fetched for this order.', () => {
 			expect( isActivityLogLoaded( notesAndLabelsLoadingState, 45, 123 ) ).to.be.false;
@@ -248,10 +205,11 @@ describe( 'selectors', () => {
 			expect( isActivityLogLoaded( labelsLoadingState, 45, 123 ) ).to.be.falsy;
 		} );
 
-		it( 'should be true when notes are loaded and the WooCommerce Services extension is disabled.', sinon.test( function() {
-			this.stub( config, 'isEnabled' ).withArgs( 'woocommerce/extension-wcservices' ).returns( false );
+		it( 'should be true when notes are loaded and the WooCommerce Services extension is disabled.', () => {
+			wcsEnabledStub.restore();
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
 			expect( isActivityLogLoaded( labelsLoadingState, 45, 123 ) ).to.be.true;
-		} ) );
+		} );
 
 		it( 'should be true when notes and labels are loaded for this order.', () => {
 			expect( isActivityLogLoaded( loadedState, 45, 123 ) ).to.be.true;
@@ -268,6 +226,20 @@ describe( 'selectors', () => {
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( isActivityLogLoaded( loadedStateWithUi, 45 ) ).to.be.true;
 		} );
+
+		it( 'should be true if labels fetch errors out, but notes were loaded', () => {
+			expect( isActivityLogLoaded( getState( notesLoadedSubtree, labelsErrorSubtree ), 45, 123 ) ).to.be.true;
+		} );
+
+		it( 'should be false if labels fetch errors out, and notes were not loaded', () => {
+			expect( isActivityLogLoaded( getState( notesLoadingSubtree, labelsErrorSubtree ), 45, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be true if WCS is disabled, and notes were loaded', () => {
+			wcsEnabledStub.restore();
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+			expect( isActivityLogLoaded( getState( notesLoadedSubtree, labelsLoadingState ), 45, 123 ) ).to.be.true;
+		} );
 	} );
 
 	describe( '#isActivityLogLoading', () => {
@@ -280,10 +252,11 @@ describe( 'selectors', () => {
 			expect( isActivityLogLoading( labelsLoadingState, 45, 123 ) ).to.be.true;
 		} );
 
-		it( 'should be false when notes are loaded and the WooCommerce Services extension is disabled.', sinon.test( function() {
-			this.stub( config, 'isEnabled' ).withArgs( 'woocommerce/extension-wcservices' ).returns( false );
+		it( 'should be false when notes are loaded and the WooCommerce Services extension is disabled.', () => {
+			wcsEnabledStub.restore();
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
 			expect( isActivityLogLoading( labelsLoadingState, 45, 123 ) ).to.be.false;
-		} ) );
+		} );
 
 		it( 'should be false when notes and labels are loaded for this order.', () => {
 			expect( isActivityLogLoading( loadedState, 45, 123 ) ).to.be.false;
@@ -300,20 +273,29 @@ describe( 'selectors', () => {
 		it( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( isActivityLogLoading( loadedStateWithUi, 45 ) ).to.be.false;
 		} );
+
+		it( 'should be false when notes are loaded and labels errored out', () => {
+			expect( isActivityLogLoading( getState( notesLoadedSubtree, labelsErrorSubtree ), 45, 123 ) ).to.be.false;
+		} );
+
+		it( 'should be true when notes are loading and labels errored out', () => {
+			expect( isActivityLogLoading( getState( notesLoadingSubtree, labelsErrorSubtree ), 45, 123 ) ).to.be.true;
+		} );
 	} );
 
 	describe( '#getActivityLogEvents', () => {
 		it( 'should be empty when notes are currently being fetched for this order.', () => {
 			expect( getActivityLogEvents( notesAndLabelsLoadingState, 45, 123 ) ).to.be.empty;
-			expect( getActivityLogEvents( notesLoadingState, 45, 123 ) ).to.be.empty;
+			expect( getActivityLogEvents( getState( notesLoadingSubtree, emptyLabelsSubtree ), 45, 123 ) ).to.be.empty;
 		} );
 
 		it( 'should be empty when notes are loaded but labels are not.', () => {
-			expect( getActivityLogEvents( labelsLoadingState, 45, 123 ) ).to.be.empty;
+			expect( getActivityLogEvents( getState( emptyNotesSubtree, labelsLoadingSubtree ), 45, 123 ) ).to.be.empty;
 		} );
 
-		it( 'should return just the notes when notes are loaded and the Services extension is disabled.', sinon.test( function() {
-			this.stub( config, 'isEnabled' ).withArgs( 'woocommerce/extension-wcservices' ).returns( false );
+		it( 'should return just the notes when notes are loaded and the Services extension is disabled.', () => {
+			wcsEnabledStub.restore();
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
 			expect( getActivityLogEvents( loadedState, 45, 123 ) ).to.deep.equal( [
 				{
 					key: 1,
@@ -328,7 +310,7 @@ describe( 'selectors', () => {
 					content: 'Something customer-facing',
 				},
 			] );
-		} ) );
+		} );
 
 		it( 'should return a list of events if everything is loaded.', () => {
 			expect( getActivityLogEvents( loadedState, 45, 123 ) ).to.deep.equal( [
