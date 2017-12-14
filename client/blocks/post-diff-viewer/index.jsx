@@ -19,7 +19,6 @@ class PostDiffViewer extends PureComponent {
 		diff: PropTypes.shape( {
 			content: PropTypes.array,
 			title: PropTypes.array,
-			totals: PropTypes.object,
 		} ).isRequired,
 	};
 

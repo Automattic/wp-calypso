@@ -52,6 +52,7 @@ import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
 import RelatedPostCardv2 from 'blocks/reader-related-card-v2/docs/example';
 import PlanPrice from 'my-sites/plan-price/docs/example';
+import PostDiffViewer from 'blocks/post-diff-viewer/docs/example';
 import PostShare from 'blocks/post-share/docs/example';
 import PlanThankYouCard from 'blocks/plan-thank-you-card/docs/example';
 import DismissibleCard from 'blocks/dismissible-card/docs/example';
@@ -143,6 +144,7 @@ export default class AppComponents extends React.Component {
 					<FeatureComparison />
 					<DomainTip />
 					<RelatedPostCardv2 />
+					<PostDiffViewer />
 					<PostItem />
 					<PostStatus />
 					<PostTime />
