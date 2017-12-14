@@ -247,6 +247,10 @@ class ManagePurchase extends Component {
 				text = translate( 'Cancel and Refund' );
 			}
 		} else {
+			if ( isDomainTransfer( purchase ) ) {
+				return null;
+			}
+
 			if ( isDomainRegistration( purchase ) ) {
 				text = translate( 'Cancel Domain' );
 			}
