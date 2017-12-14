@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get } from 'lodash';
+import { flow, get, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +19,7 @@ import {
 	getPostRevisionsSelectedRevisionId,
 } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import EditorDiffViewer from 'post-editor/editor-diff-viewer';
+import PostDiffViewer from 'blocks/post-diff-viewer';
 import EditorRevisionsList from 'post-editor/editor-revisions-list';
 import QueryPostRevisions from 'components/data/query-post-revisions';
 import QueryUsers from 'components/data/query-users';
@@ -44,7 +44,7 @@ class EditorRevisions extends Component {
 					selectedRevisionId={ selectedRevisionId }
 				/>
 				<QueryUsers siteId={ siteId } userIds={ authorsIds } />
-				<EditorDiffViewer
+				<PostDiffViewer
 					diff={ selectedDiff }
 					postId={ postId }
 					selectedRevisionId={ selectedRevisionId }
@@ -92,7 +92,11 @@ export default flow(
 			comparisons,
 			postId,
 			revisions,
-			selectedDiff,
+			selectedDiff: {
+				...omit( selectedDiff, [ 'post_content', 'post_title' ] ),
+				content: selectedDiff.post_content,
+				title: selectedDiff.post_title,
+			},
 			selectedRevisionId,
 			siteId,
 		};

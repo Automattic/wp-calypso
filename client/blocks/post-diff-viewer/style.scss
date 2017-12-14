@@ -1,12 +1,12 @@
 /** @format */
-.editor-diff-viewer {
+.post-diff-viewer {
 	flex: 1;
 	margin: 0;
 	padding: 24px 32px 32px 32px;
 	box-sizing: border-box;
 	overflow-y: auto;
 
-	.editor-diff-viewer__title {
+	.post-diff-viewer__title {
 		font-family: $serif;
 		font-size: 32px;
 		color: $gray-dark;
@@ -17,14 +17,14 @@
 	}
 }
 
-.editor-diff-viewer.is-loading .editor-diff-viewer__title {
+.post-diff-viewer.is-loading .post-diff-viewer__title {
 	display: inline-block;
 	width: 50%;
 	height: 38px;
 	@include placeholder(23%);
 }
 
-.editor-diff-viewer__content {
+.post-diff-viewer__content {
 	font-family: $serif;
 	font-size: 15px;
 	white-space: pre-wrap;
@@ -34,7 +34,7 @@
 	overflow-y: hidden;
 }
 
-.editor-diff-viewer.is-loading .editor-diff-viewer__content {
+.post-diff-viewer.is-loading .post-diff-viewer__content {
 	&:before,
 	&:after {
 		content: '';

@@ -3,28 +3,22 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { get, has } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getPostRevision } from 'state/selectors';
 import TextDiff from 'components/text-diff';
 
-class EditorDiffViewer extends PureComponent {
+class PostDiffViewer extends PureComponent {
 	static propTypes = {
-		postId: PropTypes.number.isRequired,
-		selectedRevisionId: PropTypes.number,
-		siteId: PropTypes.number.isRequired,
 		diff: PropTypes.shape( {
-			post_content: PropTypes.array,
-			post_title: PropTypes.array,
+			content: PropTypes.array,
+			title: PropTypes.array,
 			totals: PropTypes.object,
 		} ).isRequired,
 	};
@@ -32,7 +26,7 @@ class EditorDiffViewer extends PureComponent {
 	scrollToFirstChangeOrTop = () => {
 		const thisNode = ReactDom.findDOMNode( this );
 		const diffNode = thisNode.querySelector(
-			'.editor-diff-viewer__additions, .editor-diff-viewer__deletions'
+			'.post-diff-viewer__additions, .post-diff-viewer__deletions'
 		);
 		const thisNodeHeight = get( thisNode, 'offsetHeight', 0 );
 		const offset = Math.max( 0, get( diffNode, 'offsetTop', 0 ) - thisNodeHeight / 2 );
@@ -49,23 +43,21 @@ class EditorDiffViewer extends PureComponent {
 
 	render() {
 		const { diff } = this.props;
-		const classes = classNames( 'editor-diff-viewer', {
-			'is-loading': ! has( diff, 'post_content' ) && ! has( diff, 'post_title' ),
+		const classes = classNames( 'post-diff-viewer', {
+			'is-loading': ! has( diff, 'content' ) && ! has( diff, 'title' ),
 		} );
 
 		return (
 			<div className={ classes }>
-				<h1 className="editor-diff-viewer__title">
-					<TextDiff changes={ diff.post_title } />
+				<h1 className="post-diff-viewer__title">
+					<TextDiff changes={ diff.title } />
 				</h1>
-				<pre className="editor-diff-viewer__content">
-					<TextDiff changes={ diff.post_content } splitLines />
+				<pre className="post-diff-viewer__content">
+					<TextDiff changes={ diff.content } splitLines />
 				</pre>
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, { siteId, postId, selectedRevisionId } ) => ( {
-	revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
-} ) )( EditorDiffViewer );
+export default PostDiffViewer;
