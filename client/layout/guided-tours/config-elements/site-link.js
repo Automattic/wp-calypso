@@ -19,7 +19,11 @@ import Button from 'components/button';
 class SiteLink extends Component {
 	static propTypes = {
 		href: PropTypes.string,
-		isButton: PropTypes.boolean,
+		isButton: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		isButton: false,
 	};
 
 	static contextTypes = contextTypes;
