@@ -31,5 +31,5 @@ if ( needsInstall() ) {
 	if ( installResult ) {
 		process.exit( installResult );
 	}
-	fs.utimesSync( 'node_modules', Date.now(), Date.now() );
+	fs.utimesSync( 'node_modules', new Date(), new Date() );
 }
