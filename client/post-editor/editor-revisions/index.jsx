@@ -19,12 +19,17 @@ import {
 	getPostRevisionsSelectedRevisionId,
 } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import EditorDiffViewer from 'post-editor/editor-diff-viewer';
 import EditorRevisionsList from 'post-editor/editor-revisions-list';
 import QueryPostRevisions from 'components/data/query-post-revisions';
 import QueryUsers from 'components/data/query-users';
 
 class EditorRevisions extends Component {
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_editor_post_revisions_open' );
+	}
+
 	render() {
 		const {
 			authorsIds,
@@ -63,7 +68,7 @@ class EditorRevisions extends Component {
 }
 
 EditorRevisions.propTypes = {
-	// connected
+	// connected to state
 	authorsIds: PropTypes.array.isRequired,
 	comparisons: PropTypes.object,
 	postId: PropTypes.number.isRequired,
@@ -72,29 +77,35 @@ EditorRevisions.propTypes = {
 	selectedRevisionId: PropTypes.number,
 	siteId: PropTypes.number.isRequired,
 
+	// connected to dispatch
+	recordTracksEvent: PropTypes.func.isRequired,
+
 	// localize
 	translate: PropTypes.func.isRequired,
 };
 
 export default flow(
 	localize,
-	connect( state => {
-		const postId = getEditorPostId( state );
-		const siteId = getSelectedSiteId( state );
+	connect(
+		state => {
+			const postId = getEditorPostId( state );
+			const siteId = getSelectedSiteId( state );
 
-		const revisions = getPostRevisions( state, siteId, postId );
-		const selectedRevisionId = getPostRevisionsSelectedRevisionId( state );
-		const comparisons = getPostRevisionsComparisons( state, siteId, postId );
-		const selectedDiff = get( comparisons, [ selectedRevisionId, 'diff' ], {} );
+			const revisions = getPostRevisions( state, siteId, postId );
+			const selectedRevisionId = getPostRevisionsSelectedRevisionId( state );
+			const comparisons = getPostRevisionsComparisons( state, siteId, postId );
+			const selectedDiff = get( comparisons, [ selectedRevisionId, 'diff' ], {} );
 
-		return {
-			authorsIds: getPostRevisionsAuthorsId( state, siteId, postId ),
-			comparisons,
-			postId,
-			revisions,
-			selectedDiff,
-			selectedRevisionId,
-			siteId,
-		};
-	} )
+			return {
+				authorsIds: getPostRevisionsAuthorsId( state, siteId, postId ),
+				comparisons,
+				postId,
+				revisions,
+				selectedDiff,
+				selectedRevisionId,
+				siteId,
+			};
+		},
+		{ recordTracksEvent }
+	)
 )( EditorRevisions );
