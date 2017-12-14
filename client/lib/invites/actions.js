@@ -119,13 +119,14 @@ export function acceptInvite( invite, callback ) {
 					error: error.error,
 				} );
 			} else {
+				if ( invite.role !== 'follower' && invite.role !== 'viewer' ) {
+					dispatch( receiveSites( data.sites ) );
+				}
+
 				if ( ! get( invite, 'site.is_vip' ) ) {
 					dispatch( successNotice( ...acceptedNotice( invite ) ) );
-
-					if ( invite.role !== 'follower' && invite.role !== 'viewer' ) {
-						dispatch( receiveSites( data.sites ) );
-					}
 				}
+
 				analytics.tracks.recordEvent( 'calypso_invite_accepted' );
 			}
 			dispatch( requestSites() );
