@@ -39,17 +39,11 @@ class Transfer extends React.PureComponent {
 			content = this.getCancelledContent();
 		}
 
-		const path = cancelPurchaseLink( this.props.selectedSite.slug, domain.subscriptionId );
-
 		return (
 			<div className="edit__domain-details-card">
 				<Header domain={ domain } />
 				{ content }
-				<VerticalNav>
-					<VerticalNavItem path={ path }>
-						{ this.props.translate( 'Cancel Transfer' ) }
-					</VerticalNavItem>
-				</VerticalNav>
+				{ this.getCancelTransferContent() }
 			</div>
 		);
 	}
@@ -151,6 +145,31 @@ class Transfer extends React.PureComponent {
 					siteSlug={ selectedSite.slug }
 					onClick={ this.handlePaymentSettingsClick }
 				/>
+			</Card>
+		);
+	}
+
+	getCancelTransferContent() {
+		const { domain, selectedSite, translate } = this.props;
+
+		if ( domain.transferStatus !== transferStatus.PENDING_REGISTRY ) {
+			return (
+				<VerticalNav>
+					<VerticalNavItem path={ cancelPurchaseLink( selectedSite.slug, domain.subscriptionId ) }>
+						{ translate( 'Cancel Transfer' ) }
+					</VerticalNavItem>
+				</VerticalNav>
+			);
+		}
+
+		const noCancelMessage = translate(
+			"The current state of the transfer doesn't allow cancelling. If you still want to cancel the transfer, " +
+				'you would have to do it through the losing registrar controlling panel.'
+		);
+
+		return (
+			<Card>
+				<div>{ noCancelMessage }</div>
 			</Card>
 		);
 	}
