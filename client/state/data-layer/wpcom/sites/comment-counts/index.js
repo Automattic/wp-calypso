@@ -25,7 +25,7 @@ export const fetchCommentCounts = action => {
 			path: `/sites/${ siteId }/comment-counts`,
 			apiVersion: '1.0',
 			query: {
-				postId,
+				post_id: postId,
 			},
 		},
 		action
