@@ -162,6 +162,7 @@ class EditorFeaturedImage extends Component {
 						onClick={ this.showMediaModal }
 						borderless
 						compact
+						data-tip-target="editor-featured-image-current-image"
 					>
 						{ this.renderCurrentImage() }
 						<Gridicon icon="pencil" className="editor-featured-image__edit-icon" />

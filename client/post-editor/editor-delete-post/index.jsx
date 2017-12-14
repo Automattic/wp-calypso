@@ -93,7 +93,6 @@ class EditorDeletePost extends React.Component {
 					borderless
 					className={ classes }
 					onClick={ this.onSendToTrash }
-					data-tip-target="editor-delete-post"
 					aria-label={ label }
 				>
 					<Gridicon icon="trash" size={ 18 } />

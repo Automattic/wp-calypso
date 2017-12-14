@@ -14,6 +14,7 @@ import Gridicon from 'gridicons';
  */
 import {
 	ButtonRow,
+	Continue,
 	makeTour,
 	Next,
 	SiteLink,
@@ -48,19 +49,52 @@ export const ChecklistAboutPageTour = makeTour(
 
 		<Step
 			name="featured-images"
-			target="accordion-item-featured-image"
-			arrow="right-top"
-			placement="beside"
+			target="editor-featured-image-current-image"
+			arrow="top-left"
+			placement="below"
 		>
-			<p>
+			<Continue target="editor-featured-image-current-image" step="choose-image" click>
+				<p>
+					{ translate(
+						'Featured images are a great way to add more personality to your pages. ' +
+							"Let's add something a little more relevant to your About page text."
+					) }
+				</p>
+				<p>
+					{ translate( 'Press the {{b}}Pencil Icon{{/b}} so we can change the existing image.', {
+						components: { b: <strong /> },
+					} ) }
+				</p>
+			</Continue>
+		</Step>
+
+		<Step
+			name="choose-image"
+			target="media-library-upload-more"
+			placement="beside"
+			arrow="left-top"
+		>
+			<p>{ translate( 'Either pick an image below or add a new one from your computer.' ) }</p>
+			<Next step="click-set-featured-image">{ translate( 'All done, continue' ) }</Next>
+		</Step>
+
+		<Step name="click-set-featured-image" target="confirm" arrow="right-top" placement="beside">
+			<Continue target="confirm" step="click-update" click>
 				{ translate(
-					'Featured images are a great way to add more personality to your pages. ' +
-						"Let's add something a little more relevant to your About page text."
+					'We’re all set, press {{b}}Set Feauted Image{{/b}} to add this image to your page.',
+					{
+						components: { b: <strong /> },
+					}
 				) }
-			</p>
-			<p>
-				{ translate( 'Press the X button so we can remove the existing image and add a new one.' ) }
-			</p>
+			</Continue>
+		</Step>
+
+		<Step name="click-update" target="editor-publish-button" arrow="right-top" placement="beside">
+			<Continue target="editor-publish-button" step="finish" click>
+				{ translate( 'Almost done, press the {{b}}Update{{/b}} button to save your changes.', {
+					components: { b: <strong /> },
+				} ) }
+			</Continue>
 		</Step>
 
 		<Step name="finish" placement="right">
@@ -72,7 +106,8 @@ export const ChecklistAboutPageTour = makeTour(
 			</h1>
 			<p>
 				{ translate(
-					"Your changes have been saved. Let's move on and see what's next on our checklist."
+					'The updates to your About page are being saved. When the page is done saving, let’s move on and' +
+						' see what’s next on our checklist.'
 				) }
 			</p>
 			<SiteLink isButton="true" href={ '/checklist/:site' }>

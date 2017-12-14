@@ -92,6 +92,7 @@ class DialogBase extends Component {
 				data-tip-target={ `dialog-base-action-${ button.action }` }
 				onClick={ clickHandler }
 				disabled={ !! button.disabled }
+				data-tip-target={ button.action }
 			>
 				<span className={ this.props.baseClassName + '__button-label' }>{ button.label }</span>
 			</button>
