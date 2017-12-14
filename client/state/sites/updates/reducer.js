@@ -13,7 +13,6 @@ import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import {
 	SITE_RECEIVE,
 	SITES_RECEIVE,
-	SITES_UPDATE,
 	SITE_UPDATES_RECEIVE,
 	SITE_UPDATES_REQUEST,
 	SITE_UPDATES_REQUEST_SUCCESS,
@@ -47,7 +46,6 @@ export const items = createReducer(
 		} ),
 		[ SITE_RECEIVE ]: ( state, { site } ) => receiveUpdatesForSites( state, [ site ] ),
 		[ SITES_RECEIVE ]: ( state, { sites } ) => receiveUpdatesForSites( state, sites ),
-		[ SITES_UPDATE ]: ( state, { sites } ) => receiveUpdatesForSites( state, sites ),
 		[ SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
 			if ( ! state[ siteId ] ) {
 				return state;

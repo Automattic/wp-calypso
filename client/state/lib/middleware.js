@@ -19,7 +19,6 @@ import {
 	SITE_DELETE_RECEIVE,
 	SITE_RECEIVE,
 	SITES_RECEIVE,
-	SITES_UPDATE,
 	SITES_ONCE_CHANGED,
 	SELECTED_SITE_SUBSCRIBE,
 	SELECTED_SITE_UNSUBSCRIBE,
@@ -215,7 +214,6 @@ const handler = ( dispatch, action, getState ) => {
 
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
-		case SITES_UPDATE:
 			// Wait a tick for the reducer to update the state tree
 			setTimeout( () => {
 				if ( action.type === SITES_RECEIVE ) {
