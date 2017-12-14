@@ -20,9 +20,9 @@ const renderChange = ( change, changeIndex, splitLines ) => {
 	const content = orig || final || value;
 
 	const classnames = classNames( {
-		'editor-diff-viewer__additions': op === 'add',
-		'editor-diff-viewer__context': op === 'copy',
-		'editor-diff-viewer__deletions': op === 'del',
+		'text-diff__additions': op === 'add',
+		'text-diff__context': op === 'copy',
+		'text-diff__deletions': op === 'del',
 	} );
 
 	return (
