@@ -68,6 +68,7 @@ import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
 import { removep } from 'lib/formatting';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
+import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 
 export const PostEditor = createReactClass( {
 	displayName: 'PostEditor',
@@ -306,6 +307,7 @@ export const PostEditor = createReactClass( {
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
+				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
 				<div className="post-editor__inner">
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }

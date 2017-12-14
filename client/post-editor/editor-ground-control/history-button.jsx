@@ -13,20 +13,15 @@ import { flow } from 'lodash';
  */
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 
-import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
-
-const HistoryButton = ( { loadRevision, postId, siteId, openDialog, translate } ) => (
+const HistoryButton = ( { openDialog, translate } ) => (
 	<div className="editor-ground-control__history">
 		<button className="editor-ground-control__history-button button is-link" onClick={ openDialog }>
 			{ translate( 'History' ) }
 		</button>
-		<EditorRevisionsDialog loadRevision={ loadRevision } postId={ postId } siteId={ siteId } />
 	</div>
 );
 
 HistoryButton.propTypes = {
-	loadRevision: PropTypes.func.isRequired,
-
 	// connected to dispatch
 	openDialog: PropTypes.func.isRequired,
 
