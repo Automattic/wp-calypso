@@ -36,8 +36,8 @@ import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
 export class CommentList extends Component {
 	static propTypes = {
 		changePage: PropTypes.func,
-		commentCounts: PropTypes.number,
 		comments: PropTypes.array,
+		commentsCount: PropTypes.number,
 		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
 		siteId: PropTypes.number,
@@ -149,14 +149,9 @@ export class CommentList extends Component {
 
 	updateLastUndo = commentId => this.setState( { lastUndo: commentId } );
 
-	getCommentsCount = ( commentCounts, status ) => {
-		const validatedStatus = 'unapproved' === status ? 'pending' : status;
-		return commentCounts ? commentCounts[ validatedStatus ] : null;
-	};
-
 	render() {
 		const {
-			commentCounts,
+			commentsCount,
 			isCommentsTreeSupported,
 			isLoading,
 			isPostView,
@@ -171,7 +166,6 @@ export class CommentList extends Component {
 		const validPage = this.isRequestedPageValid() ? page : 1;
 
 		const comments = this.getComments();
-		const commentsCount = this.getCommentsCount( commentCounts, status );
 		const commentsPage = this.getCommentsPage( comments, validPage );
 
 		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
@@ -270,10 +264,12 @@ const mapStateToProps = ( state, { postId, siteId, status } ) => {
 		? map( filter( siteCommentsTree, { postId } ), 'commentId' )
 		: map( siteCommentsTree, 'commentId' );
 	const commentCounts = getSiteCommentCounts( state, siteId, postId );
+	const validatedStatus = 'unapproved' === status ? 'pending' : status;
+	const commentsCount = commentCounts ? commentCounts[ validatedStatus ] : null;
 
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
-		commentCounts,
+		commentsCount,
 		comments,
 		isCommentsTreeSupported:
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' ),
