@@ -223,10 +223,11 @@ export function plansSelection( context, next ) {
 	context.primary = (
 		<CheckoutData>
 			<Plans
+				basePlansPath={ '/jetpack/connect/plans' }
 				context={ context }
 				destinationType={ context.params.destinationType }
-				basePlansPath={ '/jetpack/connect/plans' }
 				interval={ context.params.interval }
+				queryRedirect={ context.query.redirect }
 			/>
 		</CheckoutData>
 	);
