@@ -50,9 +50,7 @@ export const ChecklistSiteIconTour = makeTour(
 			<p>
 				{ translate( 'Pick or drag a file from your computer to add it to your media library.' ) }
 			</p>
-			<ButtonRow>
-				<Next step="click-continue" />
-			</ButtonRow>
+			<Next step="click-continue">{ translate( 'All done, continue' ) }</Next>
 		</Step>
 
 		<Step
