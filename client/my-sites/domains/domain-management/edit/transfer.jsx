@@ -25,6 +25,7 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { cancelPurchase as cancelPurchaseLink } from 'me/purchases/paths';
+import { Notice } from 'components/notice';
 
 class Transfer extends React.PureComponent {
 	state = {
@@ -32,18 +33,41 @@ class Transfer extends React.PureComponent {
 	};
 
 	render() {
-		const { domain } = this.props;
+		const { domain, selectedSite, translate } = this.props;
 		let content = this.getDomainDetailsCard();
 
 		if ( domain.transferStatus === transferStatus.CANCELLED ) {
 			content = this.getCancelledContent();
 		}
 
+		let noCancelNotice;
+		let cancelNavItem;
+		if ( domain.transferStatus === transferStatus.PENDING_REGISTRY ) {
+			noCancelNotice = (
+				<Notice status={ 'is-info' } showDismiss={ false }>
+					{ translate(
+						"The current state of the transfer doesn't allow cancelling. " +
+							'If you still want to cancel the transfer, ' +
+							'you would have to do it through the losing registrar controlling panel.'
+					) }
+				</Notice>
+			);
+		} else {
+			cancelNavItem = (
+				<VerticalNav>
+					<VerticalNavItem path={ cancelPurchaseLink( selectedSite.slug, domain.subscriptionId ) }>
+						{ translate( 'Cancel Transfer' ) }
+					</VerticalNavItem>
+				</VerticalNav>
+			);
+		}
+
 		return (
 			<div className="edit__domain-details-card">
+				{ noCancelNotice }
 				<Header domain={ domain } />
 				{ content }
-				{ this.getCancelTransferContent() }
+				{ cancelNavItem }
 			</div>
 		);
 	}
@@ -145,31 +169,6 @@ class Transfer extends React.PureComponent {
 					siteSlug={ selectedSite.slug }
 					onClick={ this.handlePaymentSettingsClick }
 				/>
-			</Card>
-		);
-	}
-
-	getCancelTransferContent() {
-		const { domain, selectedSite, translate } = this.props;
-
-		if ( domain.transferStatus !== transferStatus.PENDING_REGISTRY ) {
-			return (
-				<VerticalNav>
-					<VerticalNavItem path={ cancelPurchaseLink( selectedSite.slug, domain.subscriptionId ) }>
-						{ translate( 'Cancel Transfer' ) }
-					</VerticalNavItem>
-				</VerticalNav>
-			);
-		}
-
-		const noCancelMessage = translate(
-			"The current state of the transfer doesn't allow cancelling. If you still want to cancel the transfer, " +
-				'you would have to do it through the losing registrar controlling panel.'
-		);
-
-		return (
-			<Card>
-				<div>{ noCancelMessage }</div>
 			</Card>
 		);
 	}
