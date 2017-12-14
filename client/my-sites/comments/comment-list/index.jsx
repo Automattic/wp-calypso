@@ -20,9 +20,14 @@ import CommentListHeader from 'my-sites/comments/comment-list/comment-list-heade
 import CommentNavigation from 'my-sites/comments/comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
+import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
+import {
+	getSiteCommentCounts,
+	getSiteCommentsTree,
+	isCommentsTreeInitialized,
+} from 'state/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
 
@@ -30,6 +35,7 @@ export class CommentList extends Component {
 	static propTypes = {
 		changePage: PropTypes.func,
 		comments: PropTypes.array,
+		commentsCount: PropTypes.number,
 		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
 		siteId: PropTypes.number,
@@ -140,13 +146,21 @@ export class CommentList extends Component {
 	updateLastUndo = commentId => this.setState( { lastUndo: commentId } );
 
 	render() {
-		const { isLoading, isPostView, page, postId, siteId, siteFragment, status } = this.props;
+		const {
+			commentsCount,
+			isLoading,
+			isPostView,
+			page,
+			postId,
+			siteId,
+			siteFragment,
+			status,
+		} = this.props;
 		const { isBulkMode, selectedComments } = this.state;
 
 		const validPage = this.isRequestedPageValid() ? page : 1;
 
 		const comments = this.getComments();
-		const commentsCount = comments.length;
 		const commentsPage = this.getCommentsPage( comments, validPage );
 
 		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
@@ -157,6 +171,7 @@ export class CommentList extends Component {
 		return (
 			<div className="comment-list">
 				<QuerySiteSettings siteId={ siteId } />
+				<QuerySiteCommentCounts siteId={ siteId } postId={ postId } />
 				<QuerySiteCommentsList
 					number={ 100 }
 					offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
@@ -236,10 +251,14 @@ const mapStateToProps = ( state, { postId, siteId, status } ) => {
 	const comments = isPostView
 		? map( filter( siteCommentsTree, { postId } ), 'commentId' )
 		: map( siteCommentsTree, 'commentId' );
+	const commentCounts = getSiteCommentCounts( state, siteId, postId );
+	const validatedStatus = 'unapproved' === status ? 'pending' : status;
+	const commentsCount = commentCounts ? commentCounts[ validatedStatus ] : null;
 
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,
+		commentsCount,
 		isLoading,
 		isPostView,
 		siteId,
