@@ -14,6 +14,25 @@
 		z-index: 1; // Put the list above the action-buttons:before overlay gradient. -shaun
 		flex-basis: 230px;
 	}
+
+	@include breakpoint( '<660px' ) {
+		&:after {
+			$editor-revisions-list-fade-height: 20px;
+			content: '';
+			position: absolute;
+			bottom: -$editor-revisions-list-fade-height;
+			right: 0;
+			left: 0;
+			height: $editor-revisions-list-fade-height;
+			background: linear-gradient(
+				to bottom,
+				rgba(255, 255, 255, 1) 0%,
+				rgba(255, 255, 255, 1) 25%,
+				rgba(255, 255, 255, 0.85) 50%,
+				rgba(255, 255, 255, 0) 100%
+			);
+		}
+	}
 }
 
 .editor-revisions-list__header {
