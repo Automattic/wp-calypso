@@ -171,26 +171,7 @@ export function authorizeForm( context, next ) {
 				path={ context.path }
 				interval={ interval }
 				locale={ locale }
-				authAlreadyAuthorized={ transformedQuery.authAlreadyAuthorized }
-				authBlogname={ transformedQuery.authBlogname }
-				authClientId={ transformedQuery.authClientId }
-				authFrom={ transformedQuery.authFrom }
-				authHomeUrl={ transformedQuery.authHomeUrl }
-				authJpVersion={ transformedQuery.authJpVersion }
-				authNewUserStartedConnection={ transformedQuery.authNewUserStartedConnection }
-				authNonce={ transformedQuery.authNonce }
-				authPartnerId={ transformedQuery.authPartnerId }
-				authRedirectAfterAuth={ transformedQuery.authRedirectAfterAuth }
-				authRedirectUri={ transformedQuery.authRedirectUri }
-				authScope={ transformedQuery.authScope }
-				authSecret={ transformedQuery.authSecret }
-				authSite={ transformedQuery.authSite }
-				authSiteIcon={ transformedQuery.authSiteIcon }
-				authSiteUrl={ transformedQuery.authSiteUrl }
-				authState={ transformedQuery.authState }
-				authTracksUi={ transformedQuery.authTracksUi }
-				authTracksUt={ transformedQuery.authTracksUt }
-				authUserEmail={ transformedQuery.authUserEmail }
+				authQuery={ transformedQuery }
 			/>
 		);
 	} else {

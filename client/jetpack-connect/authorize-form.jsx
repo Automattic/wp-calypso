@@ -10,16 +10,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
-import MainWrapper from './main-wrapper';
 import LoggedInForm from './auth-logged-in-form';
 import LoggedOutForm from './auth-logged-out-form';
+import MainWrapper from './main-wrapper';
+import { authQueryPropTypes } from './utils';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
 
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {
-		authTracksUi: PropTypes.string,
-		authTracksUt: PropTypes.string,
+		authQuery: authQueryPropTypes.isRequired,
 
 		// Connected props
 		isLoggedIn: PropTypes.bool.isRequired,
@@ -29,9 +29,9 @@ class JetpackConnectAuthorizeForm extends Component {
 
 	componentWillMount() {
 		// set anonymous ID for cross-system analytics
-		const { authTracksUi, authTracksUt } = this.props;
-		if ( 'anon' === authTracksUt && authTracksUi ) {
-			this.props.setTracksAnonymousUserId( authTracksUi );
+		const { tracksUi, tracksUt } = this.props.authQuery;
+		if ( 'anon' === tracksUt && tracksUi ) {
+			this.props.setTracksAnonymousUserId( tracksUi );
 		}
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
 	}
@@ -42,30 +42,12 @@ class JetpackConnectAuthorizeForm extends Component {
 
 	renderForm() {
 		return this.props.isLoggedIn ? (
-			<LoggedInForm
-				authAlreadyAuthorized={ this.props.authAlreadyAuthorized }
-				authBlogname={ this.props.authBlogname }
-				authClientId={ this.props.authClientId }
-				authFrom={ this.props.authFrom }
-				authHomeUrl={ this.props.authHomeUrl }
-				authJpVersion={ this.props.authJpVersion }
-				authNewUserStartedConnection={ this.props.authNewUserStartedConnection }
-				authNonce={ this.props.authNonce }
-				authPartnerId={ this.props.authPartnerId }
-				authRedirectAfterAuth={ this.props.authRedirectAfterAuth }
-				authRedirectUri={ this.props.authRedirectUri }
-				authScope={ this.props.authScope }
-				authSecret={ this.props.authSecret }
-				authSite={ this.props.authSite }
-				authSiteIcon={ this.props.authSiteIcon }
-				authSiteUrl={ this.props.authSiteUrl }
-				authState={ this.props.authState }
-			/>
+			<LoggedInForm authQuery={ this.props.authQuery } />
 		) : (
 			<LoggedOutForm
 				local={ this.props.locale }
 				path={ this.props.path }
-				authUserEmail={ this.props.authUserEmail }
+				authQuery={ this.props.authQuery }
 			/>
 		);
 	}

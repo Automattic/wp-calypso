@@ -29,7 +29,7 @@ const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedOutForm extends Component {
 	static propTypes = {
-		authUserEmail: PropTypes.string,
+		authQuery: PropTypes.object.isRequired,
 		locale: PropTypes.string,
 		path: PropTypes.string,
 
@@ -68,7 +68,7 @@ class LoggedOutForm extends Component {
 			<WpcomLoginForm
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
-				emailAddress={ this.props.authUserEmail }
+				emailAddress={ this.props.authQuery.userEmail }
 				redirectTo={ this.getRedirectAfterLoginUrl() }
 			/>
 		);
@@ -106,7 +106,7 @@ class LoggedOutForm extends Component {
 		return (
 			<div>
 				{ this.renderLocaleSuggestions() }
-				<AuthFormHeader />
+				<AuthFormHeader authQuery={ this.props.authQuery } />
 				<SignupForm
 					redirectToAfterLoginUrl={ this.getRedirectAfterLoginUrl() }
 					disabled={ isAuthorizing }
@@ -114,7 +114,7 @@ class LoggedOutForm extends Component {
 					submitForm={ this.handleSubmitSignup }
 					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
 					footerLink={ this.renderFooterLink() }
-					email={ this.props.authUserEmail }
+					email={ this.props.authQuery.userEmail }
 					suggestedUsername={ get( userData, 'username', '' ) }
 				/>
 				{ userData && this.renderLoginUser() }

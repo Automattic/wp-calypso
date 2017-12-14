@@ -3,19 +3,22 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getAuthorizationData } from 'state/jetpack-connect/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
 import FormattedHeader from 'components/formatted-header';
 import SiteCard from './site-card';
 import versionCompare from 'lib/version-compare';
+import { getAuthorizationData } from 'state/jetpack-connect/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 class AuthFormHeader extends Component {
+	static propTypes = { authQuery: PropTypes.object.isRequired };
+
 	getState() {
 		const { user, authorize } = this.props;
 
@@ -35,9 +38,9 @@ class AuthFormHeader extends Component {
 	}
 
 	getPartnerSlug() {
-		const { authPartnerId } = this.props;
+		const { partnerId } = this.props.authQuery;
 
-		switch ( authPartnerId ) {
+		switch ( partnerId ) {
 			case 51945:
 			case 51946:
 				return 'dreamhost';
@@ -118,19 +121,12 @@ class AuthFormHeader extends Component {
 	}
 
 	getSiteCard() {
-		const { authJpVersion } = this.props;
-		if ( ! versionCompare( authJpVersion, '4.0.3', '>' ) ) {
+		const { jpVersion } = this.props.authQuery;
+		if ( ! versionCompare( jpVersion, '4.0.3', '>' ) ) {
 			return null;
 		}
 
-		return (
-			<SiteCard
-				authBlogname={ this.props.authBlogname }
-				authHomeUrl={ this.props.authHomeUrl }
-				authSiteIcon={ this.props.authSiteIcon }
-				authSiteUrl={ this.props.authSiteUrl }
-			/>
-		);
+		return <SiteCard authQuery={ this.props.authQuery } />;
 	}
 
 	render() {
