@@ -429,15 +429,16 @@ class RegisterDomainStep extends React.Component {
 					);
 				},
 				callback => {
-					const suggestionQuantity = this.props.includeWordPressDotCom
-						? SUGGESTION_QUANTITY - 1
-						: SUGGESTION_QUANTITY;
+					const suggestionQuantity =
+						this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain
+							? SUGGESTION_QUANTITY - 1
+							: SUGGESTION_QUANTITY;
 
 					const query = {
 						query: domain,
 						quantity: suggestionQuantity,
 						include_wordpressdotcom: false,
-						include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
+						include_dotblogsubdomain: false,
 						tld_weight_overrides: this.getTldWeightOverrides(),
 						vendor: searchVendor,
 						vertical: this.props.surveyVertical,
@@ -534,12 +535,14 @@ class RegisterDomainStep extends React.Component {
 			}
 		);
 
-		if ( this.props.includeWordPressDotCom ) {
+		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
+			const includeWordPressDotCom =
+				this.props.surveyVertical && this.props.includeDotBlogSubdomain ? false : true;
 			const subdomainQuery = {
 				query: domain,
 				quantity: 1,
-				include_wordpressdotcom: true,
-				include_dotblogsubdomain: false,
+				include_wordpressdotcom: includeWordPressDotCom,
+				include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 				tld_weight_overrides: null,
 				vendor: 'wpcom',
 				vertical: this.props.surveyVertical,
@@ -671,7 +674,7 @@ class RegisterDomainStep extends React.Component {
 
 		let suggestions = reject( this.state.searchResults, matchesSearchedDomain );
 
-		if ( this.props.includeWordPressDotCom ) {
+		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
 				suggestions.unshift( { is_placeholder: true } );
 			} else if ( this.state.subdomainSearchResults && this.state.subdomainSearchResults.length ) {
