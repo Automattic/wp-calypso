@@ -68,6 +68,7 @@ import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
 import { removep } from 'lib/formatting';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
+import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 
 export const PostEditor = createReactClass( {
 	displayName: 'PostEditor',
@@ -260,7 +261,6 @@ export const PostEditor = createReactClass( {
 	},
 
 	loadRevision: function( revision ) {
-		this.setState( { selectedRevisionId: null } );
 		this.restoreRevision( {
 			content: revision.post_content,
 			excerpt: revision.post_excerpt,
@@ -306,6 +306,7 @@ export const PostEditor = createReactClass( {
 				<EditorDocumentHead />
 				<EditorPostTypeUnsupported />
 				<EditorForbidden />
+				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
 				<div className="post-editor__inner">
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }
@@ -329,7 +330,6 @@ export const PostEditor = createReactClass( {
 						toggleSidebar={ this.toggleSidebar }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						allPostsUrl={ this.getAllPostsUrl() }
-						selectedRevisionId={ this.state.selectedRevisionId }
 						isSidebarOpened={ this.props.layoutFocus === 'sidebar' }
 					/>
 					<div className="post-editor__content">
