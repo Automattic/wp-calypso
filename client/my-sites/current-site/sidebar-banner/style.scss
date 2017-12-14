@@ -20,12 +20,12 @@
 
 	a {
 		transition: all 200ms ease-out;
-		padding: 6px 5px 2px;
+		padding: 6px 8px 2px 5px;
 		color: $white;
 		text-transform: uppercase;
 	}
 
 	a:hover {
-		background: transparentize( $white, 0.9 );
+		text-decoration: underline;
 	}
 }
