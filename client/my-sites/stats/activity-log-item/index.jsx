@@ -38,7 +38,7 @@ class ActivityLogItem extends Component {
 			activityId: PropTypes.string.isRequired,
 			activityName: PropTypes.string.isRequired,
 			activityStatus: PropTypes.string,
-			activityTitle: PropTypes.string.isRequired,
+			activityTitle: PropTypes.string,
 			activityTs: PropTypes.number.isRequired,
 
 			// Actor
