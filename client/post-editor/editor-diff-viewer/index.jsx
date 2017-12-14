@@ -15,7 +15,7 @@ import { get, has } from 'lodash';
  * Internal dependencies
  */
 import { getPostRevision } from 'state/selectors';
-import EditorDiffChanges from './changes';
+import TextDiff from 'components/text-diff';
 
 class EditorDiffViewer extends PureComponent {
 	static propTypes = {
@@ -56,10 +56,10 @@ class EditorDiffViewer extends PureComponent {
 		return (
 			<div className={ classes }>
 				<h1 className="editor-diff-viewer__title">
-					<EditorDiffChanges changes={ diff.post_title } />
+					<TextDiff changes={ diff.post_title } />
 				</h1>
 				<pre className="editor-diff-viewer__content">
-					<EditorDiffChanges changes={ diff.post_content } splitLines />
+					<TextDiff changes={ diff.post_content } splitLines />
 				</pre>
 			</div>
 		);
