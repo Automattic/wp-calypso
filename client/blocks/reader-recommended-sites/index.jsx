@@ -42,7 +42,8 @@ export class RecommendedSites extends React.PureComponent {
 
 	render() {
 		const { followSource } = this.props;
-		const sites = ! isEmpty( this.props.sites ) ? this.props.sites : [ {}, {} ];
+		const placeholders = [ {}, {} ];
+		const sites = isEmpty( this.props.sites ) ? placeholders : this.props.sites;
 
 		function recordRecommendationRender( index ) {
 			return function( railcar ) {
