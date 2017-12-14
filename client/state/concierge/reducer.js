@@ -5,9 +5,9 @@
  */
 import { combineReducers } from 'state/utils';
 import shifts from './shifts/reducer';
-import info from './info/reducer';
+import signupForm from './signupForm/reducer';
 
 export default combineReducers( {
 	shifts,
-	info,
+	signupForm,
 } );

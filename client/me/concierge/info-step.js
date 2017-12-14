@@ -21,60 +21,55 @@ import Timezone from 'components/timezone';
 import PrimaryHeader from './primary-header';
 import Site from 'blocks/site';
 import { localize } from 'i18n-calypso';
-import { updateConciergeInfo } from 'state/concierge/info/actions';
-import { getConciergeInfo } from 'state/selectors';
+import { updateConciergeSignupForm } from 'state/concierge/signupForm/actions';
+import { getConciergeSignupForm, getSiteTimezoneValue } from 'state/selectors';
 
 class InfoStep extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			timezone: moment.tz.guess(),
-			message: '',
-		};
-
-		// use them settings from redux if we have
-		if ( props.info ) {
-			this.state.timezone = props.info.timezone;
-			this.state.message = props.info.message;
-		}
-	}
-
 	static propTypes = {
-		info: PropTypes.object,
+		signupForm: PropTypes.object,
 		onComplete: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 	};
 
-	setFieldValue = attribute => {
-		let name, value;
-		if ( attribute.target ) {
-			// handle textarea or other inputs
-			name = attribute.target.name;
-			value = attribute.target.value;
-		} else {
-			// handle timezone selector
-			name = 'timezone';
-			value = attribute;
-		}
-		this.setState( { [ name ]: value } );
+	setTimezone = timezone => {
+		this.props.updateConciergeSignupForm( { ...this.props.signupForm, timezone } );
+	};
+
+	setFieldValue = ( { target } ) => {
+		this.props.updateConciergeSignupForm( {
+			...this.props.signupForm,
+			[ target.name ]: target.value,
+		} );
 	};
 
 	canSubmitForm = () => {
-		const { message } = this.state;
-		if ( ! message ) {
+		const { signupForm } = this.props;
+		if ( ! signupForm.message ) {
 			return false;
 		}
-		return !! message.trim();
-	};
-
-	submitForm = () => {
-		this.props.updateConciergeInfo( this.props.site.ID, this.state );
-		this.props.onComplete();
+		return !! signupForm.message.trim();
 	};
 
 	render() {
-		const { translate } = this.props;
+		let message;
+		let timezone;
+		const { signupForm, timezoneValue, translate } = this.props;
+
+		if ( ! signupForm ) {
+			message = '';
+
+			if ( timezoneValue && timezoneValue.length ) {
+				// use site timezone
+				timezone = timezoneValue;
+			} else {
+				// guess customer timezone
+				timezone = moment.tz.guess();
+			}
+		} else {
+			// use saved values
+			message = signupForm.message || '';
+			timezone = signupForm.timezone || moment.tz.guess();
+		}
 
 		return (
 			<div>
@@ -86,11 +81,7 @@ class InfoStep extends Component {
 				<CompactCard>
 					<FormFieldset>
 						<FormLabel>{ translate( "What's your timezone?" ) }</FormLabel>
-						<Timezone
-							name="timezone"
-							selectedZone={ this.state.timezone }
-							onSelect={ this.setFieldValue }
-						/>
+						<Timezone name="timezone" onSelect={ this.setTimezone } selectedZone={ timezone } />
 						<FormSettingExplanation>
 							{ translate( 'Choose a city in your timezone.' ) }
 						</FormSettingExplanation>
@@ -104,7 +95,7 @@ class InfoStep extends Component {
 							placeholder={ translate( 'Please be descriptive' ) }
 							name="message"
 							onChange={ this.setFieldValue }
-							value={ this.state.message }
+							value={ message }
 						/>
 					</FormFieldset>
 
@@ -112,7 +103,7 @@ class InfoStep extends Component {
 						disabled={ ! this.canSubmitForm() }
 						isPrimary={ true }
 						type="button"
-						onClick={ this.submitForm }
+						onClick={ this.props.onComplete }
 					>
 						{ translate( 'Continue to calendar' ) }
 					</FormButton>
@@ -124,9 +115,10 @@ class InfoStep extends Component {
 
 export default connect(
 	( state, props ) => ( {
-		info: getConciergeInfo( state, props.site.ID ),
+		signupForm: getConciergeSignupForm( state ),
+		timezoneValue: getSiteTimezoneValue( state, props.site.ID ),
 	} ),
 	{
-		updateConciergeInfo,
+		updateConciergeSignupForm,
 	}
 )( localize( InfoStep ) );
