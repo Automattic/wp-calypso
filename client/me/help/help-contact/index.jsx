@@ -28,7 +28,6 @@ import wpcomLib from 'lib/wp';
 import notices from 'notices';
 import analytics from 'lib/analytics';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import getHappychatUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import {
@@ -49,6 +48,7 @@ import {
 	getCurrentUser,
 	getCurrentUserLocale,
 	getCurrentUserSiteCount,
+	isCurrentUserEmailVerified,
 } from 'state/current-user/selectors';
 import {
 	askQuestion as askDirectlyQuestion,
