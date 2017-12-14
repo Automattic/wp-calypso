@@ -40,6 +40,7 @@ import {
 	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { action as InvitesActionTypes } from 'lib/invites/constants';
 import { sitesSchema } from './schema';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
@@ -213,6 +214,28 @@ export function items( state = {}, action ) {
 			}
 
 			return state;
+		}
+
+		case InvitesActionTypes.RECEIVE_INVITE_ACCEPTED_SUCCESS: {
+			const { invite, data } = action;
+
+			if ( ! invite || ! data || ! data.sites ) {
+				return state;
+			}
+
+			if ( invite.role === 'follower' || invite.role === 'viewer' ) {
+				return state;
+			}
+
+			return reduce(
+				data.sites,
+				( memo, site ) => {
+					memo[ site.ID ] = pick( site, VALID_SITE_KEYS );
+
+					return memo;
+				},
+				{}
+			);
 		}
 	}
 
