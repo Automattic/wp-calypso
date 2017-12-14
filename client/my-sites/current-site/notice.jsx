@@ -104,6 +104,7 @@ class SiteNotice extends React.Component {
 				status="is-success"
 				icon="info-outline"
 				text={ translate( 'Free domain with a plan' ) }
+				className="current-site__notice-upsell"
 			>
 				<NoticeAction
 					onClick={ this.props.clickFreeToPaidPlanNotice }

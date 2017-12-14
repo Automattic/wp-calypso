@@ -58,6 +58,7 @@ export class DomainToPaidPlanNotice extends Component {
 				status="is-success"
 				showDismiss={ false }
 				text={ translate( 'Upgrade your site and save.' ) }
+				className="current-site__notice-upsell"
 			>
 				<NoticeAction onClick={ this.onClick } href={ actionLink }>
 					{ translate( 'Go' ) }
