@@ -14,9 +14,10 @@ describe( 'transformShift()', () => {
 			not_going_to_take_this: 'should ignore this one',
 		};
 
+		// Note: We're ensuring that the timestamps are converted from Unix seconds to JS milliseconds
 		expect( transformShift( mockShift ) ).toEqual( {
-			beginTimestamp: mockShift.begin_timestamp,
-			endTimestamp: mockShift.end_timestamp,
+			beginTimestamp: mockShift.begin_timestamp * 1000,
+			endTimestamp: mockShift.end_timestamp * 1000,
 		} );
 	} );
 } );
@@ -38,12 +39,12 @@ describe( 'fromApi()', () => {
 
 		const expectedResult = [
 			{
-				beginTimestamp: validResponse[ 0 ].begin_timestamp,
-				endTimestamp: validResponse[ 0 ].end_timestamp,
+				beginTimestamp: validResponse[ 0 ].begin_timestamp * 1000,
+				endTimestamp: validResponse[ 0 ].end_timestamp * 1000,
 			},
 			{
-				beginTimestamp: validResponse[ 1 ].begin_timestamp,
-				endTimestamp: validResponse[ 1 ].end_timestamp,
+				beginTimestamp: validResponse[ 1 ].begin_timestamp * 1000,
+				endTimestamp: validResponse[ 1 ].end_timestamp * 1000,
 			},
 		];
 		expect( fromApi( validResponse ) ).toEqual( expectedResult );
