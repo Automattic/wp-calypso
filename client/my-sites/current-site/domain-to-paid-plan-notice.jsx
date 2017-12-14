@@ -54,12 +54,13 @@ export class DomainToPaidPlanNotice extends Component {
 			<SidebarBanner
 				icon="info-outline"
 				text={ translate( 'Upgrade your site and save.' ) }
-					/>
 				>
 				<a
 					onClick={ this.onClick }
 					href={ actionLink }>
 					<span>
+						{ translate( 'Go' ) }
+						<TrackComponentView eventName={ impressionEventName } eventProperties={ eventProperties } />
 					</span>
 				</a>
 			</SidebarBanner>
