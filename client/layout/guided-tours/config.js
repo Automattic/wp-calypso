@@ -15,11 +15,13 @@ import { SimplePaymentsEndOfYearGuide } from 'layout/guided-tours/tours/simple-p
 import { ChecklistSiteIconTour } from 'layout/guided-tours/tours/checklist-site-icon-tour';
 import { ChecklistSiteTaglineTour } from 'layout/guided-tours/tours/checklist-site-tagline-tour';
 import { ChecklistSiteTitleTour } from 'layout/guided-tours/tours/checklist-site-title-tour';
+import { ChecklistUserAvatarTour } from 'layout/guided-tours/tours/checklist-user-avatar-tour';
 
 export default combineTours( {
 	checklistSiteIcon: ChecklistSiteIconTour,
 	checklistSiteTagline: ChecklistSiteTaglineTour,
 	checklistSiteTitle: ChecklistSiteTitleTour,
+	checklistUserAvatar: ChecklistUserAvatarTour,
 	main: MainTour,
 	editorBasicsTour: EditorBasicsTour,
 	mediaBasicsTour: MediaBasicsTour,

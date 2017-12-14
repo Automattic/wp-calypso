@@ -30,6 +30,7 @@ const tasks = {
 		completedButtonText: 'Change',
 		url: '/me',
 		image: '/calypso/images/stats/tasks/upload-profile-picture.svg',
+		tour: 'checklistUserAvatar',
 	},
 	blogname_set: {
 		title: 'Personalize your site',
