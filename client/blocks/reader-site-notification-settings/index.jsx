@@ -156,6 +156,10 @@ class ReaderSiteNotificationSettings extends Component {
 }
 
 const mapStateToProps = ( state, ownProps ) => {
+	if ( ! ownProps.siteId ) {
+		return {};
+	}
+
 	const follow = find( getReaderFollows( state ), { blog_ID: ownProps.siteId } );
 	const deliveryMethods = get( follow, [ 'delivery_methods', 'email' ], {} );
 	const { send_posts, post_delivery_frequency, send_comments } = deliveryMethods;
