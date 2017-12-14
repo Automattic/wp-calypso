@@ -89,6 +89,7 @@
 		"reader/conversations": false,
 		"reader/following-intro": true,
 		"reader/nesting-arrow": true,
+		"reader/new-post-notifications": false,
 		"reader/related-posts": true,
 		"reader/search": true,
 		"resume-editing": true,
