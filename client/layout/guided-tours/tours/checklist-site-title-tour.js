@@ -24,7 +24,15 @@ import {
 
 export const ChecklistSiteTitleTour = makeTour(
 	<Tour name="checklistSiteTitle" version="20171205" path="/non-existent-route" when={ noop }>
-		<Step name="init" target="site-title-input" arrow="top-left" placement="below">
+		<Step
+			name="init"
+			target="site-title-input"
+			arrow="top-left"
+			placement="below"
+			style={ {
+				animationDelay: '0.7s',
+			} }
+		>
 			<p>
 				{ translate(
 					"Update the {{b}}Site Title{{/b}} field with a descriptive name to let your visitors know which site they're visiting.",
