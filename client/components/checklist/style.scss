@@ -163,17 +163,11 @@
 		color: $blue-wordpress;
 		font-weight: 400;
 		font-size: 16px;
-		text-align: left;
-		padding: 0;
+	}
 
-		&.is-borderless {
-			color: $blue-wordpress;
-		}
-
-		&:hover {
-			cursor: pointer;
-			color: $gray-dark;
-		}
+	&-title-link:hover {
+		cursor: pointer;
+		color: $gray-dark;
 	}
 
 	&-description {
