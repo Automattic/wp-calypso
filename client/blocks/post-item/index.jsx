@@ -25,6 +25,7 @@ import {
 	isPostSelected,
 } from 'state/ui/post-type-list/selectors';
 import { hideSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
+import { bumpStat } from 'state/analytics/actions';
 import ExternalLink from 'components/external-link';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import PostTime from 'blocks/post-time';
@@ -39,6 +40,10 @@ import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 class PostItem extends React.Component {
 	hideCurrentSharePanel = () => {
 		this.props.hideSharePanel( this.props.globalId );
+	};
+
+	clickHandler = clickTarget => () => {
+		this.props.bumpStat( 'calypso_post_item_click', clickTarget );
 	};
 
 	toggleCurrentPostSelection = event => {
@@ -136,7 +141,7 @@ class PostItem extends React.Component {
 							{ isSiteInfoVisible && <PostTypeSiteInfo globalId={ globalId } /> }
 							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
 						</div>
-						<h1 className="post-item__title">
+						<h1 className="post-item__title" onClick={ this.clickHandler( 'title' ) }>
 							{ ! externalPostLink && (
 								<a
 									href={ isPlaceholder || multiSelectEnabled ? null : postUrl }
@@ -165,7 +170,10 @@ class PostItem extends React.Component {
 							<PostActionCounts globalId={ globalId } />
 						</div>
 					</div>
-					<PostTypeListPostThumbnail globalId={ globalId } />
+					<PostTypeListPostThumbnail
+						globalId={ globalId }
+						onClick={ this.clickHandler( 'image' ) }
+					/>
 					{ ! multiSelectEnabled && <PostActionsEllipsisMenu globalId={ globalId } /> }
 				</div>
 				{ expandedContent }
@@ -216,6 +224,7 @@ export default connect(
 		};
 	},
 	{
+		bumpStat,
 		hideSharePanel,
 		togglePostSelection,
 	}
