@@ -12,11 +12,11 @@ export const fetch = action => {
 	return request( siteId, action ).get( `customers?search=${ searchTerm }&per_page=50` );
 };
 
-export const onSuccess = ( { siteId, searchTerm }, data ) =>
+export const onSuccess = ( { siteId, searchTerm }, { data } ) =>
 	customersReceive( siteId, searchTerm, data );
 
-export const onError = ( { siteId, searchTerm }, data ) =>
-	customersFailure( siteId, searchTerm, data );
+export const onError = ( { siteId, searchTerm }, error ) =>
+	customersFailure( siteId, searchTerm, error );
 
 export default {
 	[ WOOCOMMERCE_CUSTOMERS_REQUEST ]: [ dispatchRequestEx( { fetch, onSuccess, onError } ) ],
