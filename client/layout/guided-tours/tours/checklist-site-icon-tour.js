@@ -24,7 +24,15 @@ import {
 
 export const ChecklistSiteIconTour = makeTour(
 	<Tour name="checklistSiteIcon" version="20171205" path="/non-existent-route" when={ noop }>
-		<Step name="init" target="settings-site-icon-change" arrow="top-left" placement="below">
+		<Step
+			name="init"
+			target="settings-site-icon-change"
+			arrow="top-left"
+			placement="below"
+			style={ {
+				animationDelay: '0.7s',
+			} }
+		>
 			<p>
 				{ translate(
 					'Press {{b}}Change{{/b}} to upload an image or icon that helps people identify your site in the browser.',
