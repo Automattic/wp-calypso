@@ -12,9 +12,10 @@ import { SimplePaymentsTour } from 'layout/guided-tours/tours/simple-payments-to
 import { EditorBasicsTour } from 'layout/guided-tours/tours/editor-basics-tour';
 import { MediaBasicsTour } from 'layout/guided-tours/tours/media-basics-tour';
 import { SimplePaymentsEndOfYearGuide } from 'layout/guided-tours/tours/simple-payments-end-of-year-guide';
-import { SiteTitleTour } from 'layout/guided-tours/tours/site-title-tour';
+import { ChecklistSiteTitleTour } from 'layout/guided-tours/tours/checklist-site-title-tour';
 
 export default combineTours( {
+	checklistSiteTitle: ChecklistSiteTitleTour,
 	main: MainTour,
 	editorBasicsTour: EditorBasicsTour,
 	mediaBasicsTour: MediaBasicsTour,
@@ -22,5 +23,4 @@ export default combineTours( {
 	gdocsIntegrationTour: GDocsIntegrationTour,
 	simplePaymentsTour: SimplePaymentsTour,
 	simplePaymentsEndOfYearGuide: SimplePaymentsEndOfYearGuide,
-	siteTitle: SiteTitleTour,
 } );

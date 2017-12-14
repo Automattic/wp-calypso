@@ -39,7 +39,7 @@ const tasks = {
 		completedButtonText: 'Edit',
 		url: '/settings/general/$siteSlug',
 		image: '/calypso/images/stats/tasks/personalize-your-site.svg',
-		tour: 'siteTitle',
+		tour: 'checklistSiteTitle',
 	},
 	blogdescription_set: {
 		title: 'Create a tagline',
