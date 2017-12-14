@@ -27,6 +27,7 @@ import userFactory from 'lib/user';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
 import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
+import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import { storePlan } from './persistence-utils';
@@ -93,6 +94,23 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 		const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
 		debug( 'redirectWithoutLocaleifLoggedIn to %s', urlWithoutLocale );
 		return page.redirect( urlWithoutLocale );
+	}
+
+	next();
+}
+
+export function maybeOnboard( context, next ) {
+	if ( ! isEmpty( context.query ) && context.query.onboarding ) {
+		const siteId = context.query.client_id;
+		const credentials = {
+			token: context.query.onboarding,
+			siteUrl: context.query.site_url,
+			userEmail: context.query.user_email,
+		};
+
+		context.store.dispatch( receiveJetpackOnboardingCredentials( siteId, credentials ) );
+
+		return page.redirect( '/jetpack/onboarding' );
 	}
 
 	next();
