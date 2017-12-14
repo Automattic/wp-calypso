@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -15,7 +15,7 @@ import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 
-class HistoryButton extends PureComponent {
+class HistoryButton extends Component {
 	onClick = () => {
 		this.props.recordTracksEvent( 'calypso_editor_history_button_click' );
 		this.props.openDialog();
