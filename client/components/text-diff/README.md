@@ -1,5 +1,7 @@
 # TextDiff
 
+<img width="183" alt="textdiff-example" src="https://user-images.githubusercontent.com/4335450/33998736-5a0a274c-e0e0-11e7-97a2-bb0b8cc4c77b.png">
+
 TextDiff is a component useful for visualizing changes (diffs) to bodies of text.
 
 ## Usage
