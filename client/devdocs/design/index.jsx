@@ -81,6 +81,7 @@ import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import Suggestions from 'components/suggestions/docs/example';
+import TextDiff from 'components/text-diff/docs/example';
 import TileGrid from 'components/tile-grid/docs/example';
 import TimeSince from 'components/time-since/docs/example';
 import Timezone from 'components/timezone/docs/example';
@@ -189,6 +190,7 @@ class DesignAssets extends React.Component {
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
 					<Suggestions />
+					<TextDiff />
 					<TileGrid />
 					<TimeSince />
 					<Timezone readmeFilePath="timezone" />
