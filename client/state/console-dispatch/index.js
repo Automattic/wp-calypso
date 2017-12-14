@@ -1,24 +1,19 @@
 /**
  * Console dispatcher Redux store enhancer
- * 
+ *
  * Inject into the `createStore` enhancer chain in order
  * to provide access to the store directly from the console.
- * 
+ *
  * Will only attach if the `window` variable is available
  * globally. If not it will simply be an empty link in the
  * chain, passing straight through.
- * 
+ *
  * A few helpers have also been attached to the window in
  * order to make debugging and interacting easier. Please
  * see the README for more information.
  *
  * @format
  */
-
-/**
- * External dependencies
- */
-import { matchesProperty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,9 +26,23 @@ const state = {
 	historySize: 100,
 };
 
+export const queryToPredicate = query => {
+	if ( query instanceof RegExp ) {
+		return ( { type } ) => query.test( type );
+	}
+	if ( 'string' === typeof query ) {
+		return ( { type } ) => type === query;
+	}
+	if ( 'function' === typeof query ) {
+		return query;
+	}
+
+	throw new TypeError( 'provide string or RegExp matching `action.type` or a predicate function' );
+};
+
 const actionLog = {
 	clear: () => ( state.actionHistory = [] ),
-	filter: type => state.actionHistory.filter( matchesProperty( 'type', type ) ),
+	filter: query => state.actionHistory.filter( queryToPredicate( query ) ),
 	setSize: size => ( state.historySize = size ),
 	start: () => ( state.shouldRecordActions = true ),
 	stop: () => ( state.shouldRecordActions = false ),
