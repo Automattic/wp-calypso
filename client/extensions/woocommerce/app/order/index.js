@@ -15,6 +15,7 @@ import React, { Component } from 'react';
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
 import { fetchOrder, saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -84,9 +85,16 @@ class Order extends Component {
 
 	// Saves changes to the remote site via API
 	saveOrder = () => {
-		const { siteId, order } = this.props;
+		const { siteId, order, translate } = this.props;
+		const onSuccess = dispatch => {
+			dispatch( successNotice( translate( 'Order saved.' ), { duration: 5000 } ) );
+		};
+		const onFailure = dispatch => {
+			dispatch( errorNotice( translate( 'Unable to save order.' ), { duration: 5000 } ) );
+		};
+
 		recordTrack( 'calypso_woocommerce_order_edit_save' );
-		this.props.saveOrder( siteId, order );
+		this.props.saveOrder( siteId, order, onSuccess, onFailure );
 	};
 
 	render() {
@@ -120,7 +128,7 @@ class Order extends Component {
 				primary
 				onClick={ this.saveOrder }
 				busy={ isSaving }
-				disabled={ ! hasOrderEdits }
+				disabled={ ! hasOrderEdits || isSaving }
 			>
 				{ translate( 'Save Order' ) }
 			</Button>,

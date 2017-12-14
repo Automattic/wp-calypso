@@ -3,7 +3,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { omitBy } from 'lodash';
+import { isFinite, omitBy } from 'lodash';
 import qs from 'querystring';
 
 /**
@@ -19,8 +19,6 @@ import {
 	updateOrders,
 } from 'woocommerce/state/sites/orders/actions';
 import request from 'woocommerce/state/sites/http-request';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { translate } from 'i18n-calypso';
 import {
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_UPDATE,
@@ -75,18 +73,27 @@ export function receivedOrder( { dispatch }, action, { data } ) {
 
 export function sendOrder( { dispatch }, action ) {
 	const { siteId, orderId, order } = action;
-	dispatch( request( siteId, action ).post( `orders/${ orderId }`, order ) );
+	if ( isFinite( orderId ) ) {
+		dispatch( request( siteId, action ).post( `orders/${ orderId }`, order ) );
+	} else {
+		dispatch( request( siteId, action ).post( 'orders', order ) );
+	}
 }
 
 export function onOrderSaveSuccess( { dispatch }, action, { data } ) {
 	const { siteId, orderId } = action;
-	dispatch( successNotice( translate( 'Order saved.' ), { duration: 5000 } ) );
+	// Make sure we have a success function, and a new order ID
+	if ( 'function' === typeof action.onSuccess && 'undefined' !== typeof data.id ) {
+		action.onSuccess( dispatch, data.id );
+	}
 	dispatch( saveOrderSuccess( siteId, orderId, data ) );
 }
 
 export function onOrderSaveFailure( { dispatch }, action, error ) {
 	const { siteId, orderId } = action;
+	if ( 'function' === typeof action.onFailure ) {
+		action.onFailure( dispatch );
+	}
 	debug( 'API Error: ', error );
-	dispatch( errorNotice( translate( 'Unable to save order.' ), { duration: 5000 } ) );
 	dispatch( saveOrderError( siteId, orderId, error ) );
 }

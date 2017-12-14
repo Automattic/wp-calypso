@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get, filter, omit, sumBy } from 'lodash';
+import { filter, get, isFinite, omit, sumBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -101,6 +101,9 @@ export const isOrderLoading = ( state, orderId, siteId = getSelectedSiteId( stat
  * @return {boolean} Whether this order is currently being updated on the server
  */
 export const isOrderUpdating = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! isFinite( orderId ) ) {
+		orderId = JSON.stringify( orderId );
+	}
 	const isUpdating = get( state, [
 		'extensions',
 		'woocommerce',

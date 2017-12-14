@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
@@ -50,8 +52,18 @@ class Order extends Component {
 
 	// Saves changes to the remote site via API
 	saveOrder = () => {
-		const { siteId, order } = this.props;
-		this.props.saveOrder( siteId, order );
+		const { site, siteId, order, translate } = this.props;
+		const onSuccess = ( dispatch, orderId ) => {
+			dispatch(
+				successNotice( translate( 'Order created.' ), { duration: 5000, displayOnNextPage: true } )
+			);
+			page.redirect( getLink( `/store/order/:site/${ orderId }`, site ) );
+		};
+		const onFailure = dispatch => {
+			dispatch( errorNotice( translate( 'Unable to create order.' ), { duration: 5000 } ) );
+		};
+
+		this.props.saveOrder( siteId, order, onSuccess, onFailure );
 	};
 
 	render() {
@@ -73,7 +85,7 @@ class Order extends Component {
 						primary
 						onClick={ this.saveOrder }
 						busy={ isSaving }
-						disabled={ ! hasOrderEdits }
+						disabled={ ! hasOrderEdits || isSaving }
 					>
 						{ translate( 'Save Order' ) }
 					</Button>
