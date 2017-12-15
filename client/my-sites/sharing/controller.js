@@ -18,8 +18,13 @@ import Sharing from './main';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
-import { isJetpackSite, getSiteSlug, getSiteOption } from 'state/sites/selectors';
+import { canCurrentUser } from 'state/selectors';
+import {
+	isJetpackSite,
+	isJetpackModuleActive,
+	getSiteSlug,
+	getSiteOption,
+} from 'state/sites/selectors';
 import versionCompare from 'lib/version-compare';
 
 const analyticsPageTitle = 'Sharing';
