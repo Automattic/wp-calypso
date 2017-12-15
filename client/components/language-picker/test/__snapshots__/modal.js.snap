@@ -22,26 +22,49 @@ exports[`LanguagePickerModal should render 1`] = `
   onClose={[Function]}
   onClosed={[Function]}
 >
+  <Connect(QueryGeo) />
   <SectionNav
     allowDropdown={true}
     onMobileNavPanelOpen={[Function]}
-    selectedText="Popular languages"
+    selectedText="Asia-Pacific"
   >
     <NavTabs
       hasSiblingControls={false}
     >
       <NavItem
-        key="popular"
-        onClick={[Function]}
-        selected={true}
-      >
-        Popular languages
-      </NavItem>
-      <NavItem
+        key="africa-middle-east"
         onClick={[Function]}
         selected={false}
       >
-        All languages
+        Africa and Middle East
+      </NavItem>
+      <NavItem
+        key="americas"
+        onClick={[Function]}
+        selected={false}
+      >
+        Americas
+      </NavItem>
+      <NavItem
+        key="asia-pacific"
+        onClick={[Function]}
+        selected={true}
+      >
+        Asia-Pacific
+      </NavItem>
+      <NavItem
+        key="eastern-europe"
+        onClick={[Function]}
+        selected={false}
+      >
+        Eastern Europe
+      </NavItem>
+      <NavItem
+        key="western-europe"
+        onClick={[Function]}
+        selected={false}
+      >
+        Western Europe
       </NavItem>
     </NavTabs>
     <Search

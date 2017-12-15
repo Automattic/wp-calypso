@@ -18,6 +18,7 @@ import {
 	LOCALIZED_LANGUAGE_NAMES_DATA_DE,
 	LOCALIZED_LANGUAGE_NAMES_DATA_IT,
 } from 'state/i18n/language-names/test/fixture';
+import { TERRITORIES, DEFAULT_TERRITORY } from '../constants';
 
 describe( 'LanguagePickerModal', () => {
 	const defaultProps = {
@@ -54,6 +55,7 @@ describe( 'LanguagePickerModal', () => {
 		],
 		selected: 'en',
 		translate: identity,
+		countryCode: '',
 		loadLanguageNames: noop,
 		localizedLanguageNames: LOCALIZED_LANGUAGE_NAMES_DATA_DE,
 	};
@@ -300,6 +302,28 @@ describe( 'LanguagePickerModal', () => {
 				expect( wrapper.instance().getSuggestedLanguages() ).toEqual(
 					item.expectedSuggestedLanguages
 				);
+			} );
+		} );
+
+		describe( 'language territories', () => {
+			test( 'should set default territory filter when geolocation country code not available', () => {
+				const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+				expect( wrapper.state().filter ).toEqual( DEFAULT_TERRITORY );
+			} );
+
+			test( 'should load correct territory when geolocation country code available', () => {
+				const wrapper = shallow( <LanguagePickerModal { ...defaultProps } countryCode="AE" /> );
+				expect( wrapper.state().filter ).toEqual( TERRITORIES[ 0 ].id );
+			} );
+
+			test( 'should switch country lists when user clicks a territory tab', () => {
+				const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+				expect( wrapper.state().filter ).toEqual( DEFAULT_TERRITORY );
+				wrapper
+					.find( 'NavItem' )
+					.at( 0 )
+					.simulate( 'click' );
+				expect( wrapper.state().filter ).toEqual( TERRITORIES[ 0 ].id );
 			} );
 		} );
 	} );

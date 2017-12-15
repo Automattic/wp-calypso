@@ -35,6 +35,7 @@ import SectionNavTabItem from 'components/section-nav/item';
 import Search from 'components/search';
 import { getLocalizedLanguageNames } from 'state/selectors';
 import { getTerritoryFromCountry, getTerritoryById } from './utils';
+import { TERRITORIES } from './constants';
 
 export class LanguagePickerModal extends PureComponent {
 	static propTypes = {
@@ -44,6 +45,7 @@ export class LanguagePickerModal extends PureComponent {
 		isVisible: PropTypes.bool,
 		languages: PropTypes.array.isRequired,
 		selected: PropTypes.string,
+		countryCode: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -52,6 +54,7 @@ export class LanguagePickerModal extends PureComponent {
 		localizedLanguageNames: {},
 		isVisible: false,
 		selected: 'en',
+		countryCode: '',
 	};
 
 	constructor( props ) {
@@ -59,8 +62,6 @@ export class LanguagePickerModal extends PureComponent {
 
 		this.state = {
 			filter: getTerritoryFromCountry( this.props.countryCode ),
-			// reset to false after tab change initiated by user click. Until then,
-			// we can change the default tab, e.g., after geolocation data arrives async.
 			showingDefaultFilter: true,
 			search: false,
 			selectedLanguageSlug: this.props.selected,
@@ -100,6 +101,7 @@ export class LanguagePickerModal extends PureComponent {
 
 	getFilterLabel( filter ) {
 		const territory = getTerritoryById( filter );
+
 		if ( ! territory ) {
 			return undefined;
 		}

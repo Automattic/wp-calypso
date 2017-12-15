@@ -7,7 +7,7 @@
  * External dependencies
  */
 import { find, includes } from 'lodash';
-import { TERRITORIES, DEFAULT_TERRITORY } from '../constants';
+import { TERRITORIES, DEFAULT_TERRITORY } from './constants';
 
 /**
  * Returns territory slug from constant: TERRITORIES
