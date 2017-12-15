@@ -48,10 +48,6 @@ class LoggedOutForm extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
 	}
 
-	getRedirectAfterLoginUrl() {
-		return window.location.href;
-	}
-
 	handleSubmitSignup = ( form, userData ) => {
 		debug( 'submiting new account', form, userData );
 		this.props.createAccount( userData );
@@ -69,7 +65,7 @@ class LoggedOutForm extends Component {
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
 				emailAddress={ this.props.authQuery.userEmail }
-				redirectTo={ this.getRedirectAfterLoginUrl() }
+				redirectTo={ window.location.href }
 			/>
 		);
 	}
@@ -81,7 +77,6 @@ class LoggedOutForm extends Component {
 	}
 
 	renderFooterLink() {
-		const redirectTo = this.getRedirectAfterLoginUrl();
 		const emailAddress = this.props.authQuery.userEmail;
 
 		return (
@@ -89,7 +84,7 @@ class LoggedOutForm extends Component {
 				<LoggedOutFormLinkItem
 					href={ login( {
 						isNative: config.isEnabled( 'login/native-login-links' ),
-						redirectTo,
+						redirectTo: window.location.href,
 						emailAddress,
 					} ) }
 				>
@@ -108,7 +103,7 @@ class LoggedOutForm extends Component {
 				{ this.renderLocaleSuggestions() }
 				<AuthFormHeader authQuery={ this.props.authQuery } />
 				<SignupForm
-					redirectToAfterLoginUrl={ this.getRedirectAfterLoginUrl() }
+					redirectToAfterLoginUrl={ window.location.href }
 					disabled={ isAuthorizing }
 					submitting={ isAuthorizing }
 					submitForm={ this.handleSubmitSignup }
