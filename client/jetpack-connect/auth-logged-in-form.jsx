@@ -183,6 +183,7 @@ export class LoggedInForm extends Component {
 		const { alreadyAuthorized, newUserStartedConnection } = this.props.authQuery;
 		return (
 			this.isSso() ||
+			this.isWoo() ||
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
 				( this.props.calypsoStartedConnection || newUserStartedConnection || autoAuthorize ) )
