@@ -18,12 +18,12 @@ export function authQueryTransformer( queryObject ) {
 
 		// Optional
 		// TODO: verify
+		authApproved: !! queryObject.auth_approved,
 		alreadyAuthorized: !! queryObject.already_authorized,
 		blogname: queryObject.blogname || null,
 		from: queryObject.from || null,
 		homeUrl: queryObject.home_url || null,
 		jpVersion: queryObject.jp_version || null,
-		newUserStartedConnection: !! queryObject.new_user_started_connection,
 		partnerId: parseInt( queryObject.partner_id, 10 ) || null,
 		redirectAfterAuth: queryObject.redirect_after_auth || null,
 		siteIcon: queryObject.site_icon || null,
@@ -35,13 +35,13 @@ export function authQueryTransformer( queryObject ) {
 }
 
 export const authQueryPropTypes = PropTypes.shape( {
+	authApproved: PropTypes.bool,
 	alreadyAuthorized: PropTypes.bool,
 	blogname: PropTypes.string,
 	clientId: PropTypes.number.isRequired,
 	from: PropTypes.string,
 	homeUrl: PropTypes.string,
 	jpVersion: PropTypes.string,
-	newUserStartedConnection: PropTypes.bool,
 	nonce: PropTypes.string.isRequired,
 	partnerId: PropTypes.number,
 	redirectAfterAuth: PropTypes.string,

@@ -104,10 +104,7 @@ class LoggedOutForm extends Component {
 				{ this.renderLocaleSuggestions() }
 				<AuthFormHeader authQuery={ this.props.authQuery } />
 				<SignupForm
-					redirectToAfterLoginUrl={ addQueryArgs(
-						{ new_user_started_connection: '' },
-						window.location.href
-					) }
+					redirectToAfterLoginUrl={ addQueryArgs( { auth_approved: '' }, window.location.href ) }
 					disabled={ isAuthorizing }
 					submitting={ isAuthorizing }
 					submitForm={ this.handleSubmitSignup }
