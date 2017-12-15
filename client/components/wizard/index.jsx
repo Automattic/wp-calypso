@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { get, indexOf } from 'lodash';
+import { compact, get, indexOf } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,7 +46,7 @@ class Wizard extends Component {
 			return;
 		}
 
-		return `${ basePath }/${ previousStepName }`;
+		return compact( [ basePath, previousStepName ] ).join( '/' );
 	};
 
 	getForwardUrl = () => {
@@ -63,7 +63,7 @@ class Wizard extends Component {
 			return;
 		}
 
-		return `${ basePath }/${ nextStepName }`;
+		return compact( [ basePath, nextStepName ] ).join( '/' );
 	};
 
 	render() {
