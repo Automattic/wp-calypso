@@ -16,6 +16,7 @@ import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
 } from './constants';
+import { getJetpackOnboardingSiteSlug } from 'state/selectors';
 
 class JetpackOnboardingMain extends React.PureComponent {
 	static propTypes = {
@@ -27,12 +28,13 @@ class JetpackOnboardingMain extends React.PureComponent {
 	};
 
 	render() {
-		const { stepName, steps } = this.props;
+		const { siteSlug, stepName, steps } = this.props;
 
 		return (
 			<Main className="jetpack-onboarding">
 				<Wizard
 					basePath="/jetpack/onboarding"
+					baseSuffix={ siteSlug }
 					components={ COMPONENTS }
 					steps={ steps }
 					stepName={ stepName }
@@ -43,7 +45,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 	}
 }
 
-export default connect( () => {
+export default connect( state => {
 	// Note: here we can select which steps to display, based on user's input
 	const steps = compact( [
 		STEPS.SITE_TITLE,
@@ -56,6 +58,7 @@ export default connect( () => {
 	] );
 
 	return {
+		siteSlug: getJetpackOnboardingSiteSlug( state ),
 		steps,
 	};
 } )( JetpackOnboardingMain );
