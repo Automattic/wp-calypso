@@ -34,7 +34,6 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 				authorizeSuccess: false,
 				authorizeError: false,
 				isRedirectingToWpAdmin: false,
-				autoAuthorize: false,
 			} );
 
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
@@ -43,7 +42,6 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 				return Object.assign( {}, state, {
 					authorizeError: false,
 					authorizeSuccess: true,
-					autoAuthorize: false,
 					plansUrl: plans_url,
 					siteReceived: false,
 				} );
@@ -52,7 +50,6 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 				isAuthorizing: false,
 				authorizeError: action.error,
 				authorizeSuccess: false,
-				autoAuthorize: false,
 			} );
 
 		case JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE:
@@ -68,7 +65,6 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 			return {
 				authorizeError: false,
 				authorizeSuccess: false,
-				autoAuthorize: false,
 				isAuthorizing: false,
 				timestamp: Date.now(),
 				userAlreadyConnected: false,
@@ -80,7 +76,6 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 				isAuthorizing: true,
 				authorizeSuccess: false,
 				authorizeError: false,
-				autoAuthorize: true,
 			} );
 
 		case JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE:
@@ -89,14 +84,12 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 					isAuthorizing: false,
 					authorizeSuccess: false,
 					authorizeError: true,
-					autoAuthorize: false,
 				} );
 			}
 			return Object.assign( {}, state, {
 				isAuthorizing: true,
 				authorizeSuccess: false,
 				authorizeError: false,
-				autoAuthorize: true,
 				userData: action.userData,
 				bearerToken: get( action, [ 'data', 'bearer_token' ] ),
 			} );

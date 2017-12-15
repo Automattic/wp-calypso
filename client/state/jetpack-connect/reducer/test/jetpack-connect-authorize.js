@@ -45,7 +45,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 			authorizeSuccess: false,
 			authorizeError: false,
 			isRedirectingToWpAdmin: false,
-			autoAuthorize: false,
 		} );
 	} );
 
@@ -79,7 +78,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 		expect( state ).toMatchObject( {
 			authorizeError: false,
 			authorizeSuccess: true,
-			autoAuthorize: false,
 			plansUrl: data.plans_url,
 			siteReceived: false,
 		} );
@@ -96,7 +94,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 			isAuthorizing: false,
 			authorizeError: error,
 			authorizeSuccess: false,
-			autoAuthorize: false,
 		} );
 	} );
 
@@ -145,7 +142,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 		} );
 	} );
 
-	test( 'should set isAuthorizing and autoAuthorize to true when initiating an account creation', () => {
+	test( 'should set isAuthorizing to true when initiating an account creation', () => {
 		const state = jetpackConnectAuthorize( undefined, {
 			type: JETPACK_CONNECT_CREATE_ACCOUNT,
 		} );
@@ -154,7 +151,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 			isAuthorizing: true,
 			authorizeSuccess: false,
 			authorizeError: false,
-			autoAuthorize: true,
 		} );
 	} );
 
@@ -176,7 +172,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 			isAuthorizing: true,
 			authorizeSuccess: false,
 			authorizeError: false,
-			autoAuthorize: true,
 			userData: userData,
 			bearerToken: bearer_token,
 		} );
@@ -192,7 +187,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 		expect( state ).toEqual( {
 			authorizeError: true,
 			authorizeSuccess: false,
-			autoAuthorize: false,
 			isAuthorizing: false,
 		} );
 	} );
@@ -282,12 +276,5 @@ describe( '#jetpackConnectAuthorize()', () => {
 		} );
 
 		expect( state ).toEqual( {} );
-	} );
-
-	test( 'should not auto-authorize by default', () => {
-		const state = jetpackConnectAuthorize( undefined, {
-			type: JETPACK_CONNECT_QUERY_SET,
-		} );
-		expect( state.autoAuthorize ).toEqual( false );
 	} );
 } );

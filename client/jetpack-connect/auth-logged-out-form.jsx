@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import addQueryArgs from 'lib/route/add-query-args';
 import AuthFormHeader from './auth-form-header';
 import config from 'config';
 import HelpButton from './help-button';
@@ -103,7 +104,10 @@ class LoggedOutForm extends Component {
 				{ this.renderLocaleSuggestions() }
 				<AuthFormHeader authQuery={ this.props.authQuery } />
 				<SignupForm
-					redirectToAfterLoginUrl={ window.location.href }
+					redirectToAfterLoginUrl={ addQueryArgs(
+						{ new_user_started_connection: '' },
+						window.location.href
+					) }
 					disabled={ isAuthorizing }
 					submitting={ isAuthorizing }
 					submitForm={ this.handleSubmitSignup }
