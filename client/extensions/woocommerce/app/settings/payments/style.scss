@@ -1,9 +1,6 @@
 &.payments__dialog {
-	max-width: 660px;
-
-	.dialog__content {
-		height: 100%;
-		overflow-y: scroll;
+	@include breakpoint( ">660px" ) {
+		width: 660px;
 	}
 
 	.dialog__action-buttons {
