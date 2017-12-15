@@ -8,8 +8,17 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import reducer, { isNotificationsOpen, selectedSiteId, siteSelectionInitialized } from '../reducer';
-import { SELECTED_SITE_SET, NOTIFICATIONS_PANEL_TOGGLE } from 'state/action-types';
+import reducer, {
+	isNotificationsOpen,
+	jetpackOnboardingSiteId,
+	selectedSiteId,
+	siteSelectionInitialized,
+} from '../reducer';
+import {
+	JETPACK_ONBOARDING_SITE_SET,
+	SELECTED_SITE_SET,
+	NOTIFICATIONS_PANEL_TOGGLE,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
@@ -22,6 +31,7 @@ describe( 'reducer', () => {
 			'isLoading',
 			'isNotificationsOpen',
 			'isPreviewShowing',
+			'jetpackOnboardingSiteId',
 			'layoutFocus',
 			'language',
 			'mediaModal',
@@ -118,6 +128,32 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.true;
+		} );
+	} );
+
+	describe( '#jetpackOnboardingSiteId()', () => {
+		test( 'should default to null', () => {
+			const state = jetpackOnboardingSiteId( undefined, {} );
+
+			expect( state ).to.be.null;
+		} );
+
+		test( 'should set the Jetpack onboarding site ID', () => {
+			const state = jetpackOnboardingSiteId( null, {
+				type: JETPACK_ONBOARDING_SITE_SET,
+				siteId: 2916284,
+			} );
+
+			expect( state ).to.equal( 2916284 );
+		} );
+
+		test( 'should set to null if siteId is undefined', () => {
+			const state = jetpackOnboardingSiteId( null, {
+				type: JETPACK_ONBOARDING_SITE_SET,
+				siteId: undefined,
+			} );
+
+			expect( state ).to.be.null;
 		} );
 	} );
 } );

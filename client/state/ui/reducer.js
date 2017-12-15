@@ -5,6 +5,7 @@
  */
 
 import {
+	JETPACK_ONBOARDING_SITE_SET,
 	SELECTED_SITE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
@@ -90,6 +91,17 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 	return state;
 };
 
+/**
+ * Tracks the currently selected Jetpack Onboarding site ID.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const jetpackOnboardingSiteId = createReducer( null, {
+	[ JETPACK_ONBOARDING_SITE_SET ]: ( state, { siteId } ) => siteId || null,
+} );
+
 const reducer = combineReducers( {
 	actionLog,
 	dropZone,
@@ -99,6 +111,7 @@ const reducer = combineReducers( {
 	isLoading,
 	isNotificationsOpen,
 	isPreviewShowing,
+	jetpackOnboardingSiteId,
 	language,
 	layoutFocus,
 	mediaModal,
