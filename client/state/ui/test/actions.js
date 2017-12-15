@@ -11,6 +11,7 @@ import { expect } from 'chai';
 import {
 	navigate,
 	setAllSitesSelected,
+	setJetpackOnboardingSiteId,
 	setPreviewShowing,
 	setRoute,
 	setSection,
@@ -18,6 +19,7 @@ import {
 	toggleNotificationsPanel,
 } from '../actions';
 import {
+	JETPACK_ONBOARDING_SITE_SET,
 	NAVIGATE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	PREVIEW_IS_SHOWING,
@@ -144,6 +146,18 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: NAVIGATE,
 				path,
+			} );
+		} );
+	} );
+
+	describe( 'setJetpackOnboardingSiteId()', () => {
+		test( 'should return an action object with the siteId set', () => {
+			const siteId = 2916284;
+			const action = setJetpackOnboardingSiteId( siteId );
+
+			expect( action ).to.eql( {
+				type: JETPACK_ONBOARDING_SITE_SET,
+				siteId,
 			} );
 		} );
 	} );

@@ -5,6 +5,7 @@
  */
 
 import {
+	JETPACK_ONBOARDING_SITE_SET,
 	SELECTED_SITE_SET,
 	ROUTE_SET,
 	SECTION_SET,
@@ -89,3 +90,17 @@ export const toggleNotificationsPanel = () => {
  * @return {Object}      Action object
  */
 export const navigate = path => ( { type: NAVIGATE, path } );
+
+/**
+ * Returns an action object to be used in signalling that a site has
+ * been set as the one that is currently used in the Jetpack Onboarding flow.
+ *
+ * @param  {Number} siteId Site ID
+ * @return {Object}        Action object
+ */
+export function setJetpackOnboardingSiteId( siteId ) {
+	return {
+		type: JETPACK_ONBOARDING_SITE_SET,
+		siteId,
+	};
+}
