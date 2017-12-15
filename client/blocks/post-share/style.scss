@@ -32,6 +32,10 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	}
 }
 
+.post-share__connections {
+	margin: 16px 0 0;
+}
+
 .post-share__main {
 	display: flex;
 	flex-direction: column-reverse;
