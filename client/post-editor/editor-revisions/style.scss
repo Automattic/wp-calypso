@@ -16,6 +16,24 @@
 		width: 100vw;
 		height: calc(100vh - 73px);
 	}
+
+	@include breakpoint( '>660px' ) {
+		&:before {
+			content: '';
+			position: absolute;
+			top: 0;
+			right: 0;
+			left: 0;
+			height: 25px;
+			background: linear-gradient(
+				to bottom,
+				rgba(255, 255, 255, 1) 0%,
+				rgba(255, 255, 255, 1) 25%,
+				rgba(255, 255, 255, 0.85) 50%,
+				rgba(255, 255, 255, 0) 100%
+			);
+		}
+	}
 }
 
 .editor-revisions__wpadmin-link {
