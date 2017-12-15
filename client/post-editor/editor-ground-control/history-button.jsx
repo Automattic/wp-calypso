@@ -46,4 +46,4 @@ const mapDispatchToProps = dispatch => ( {
 		),
 } );
 
-export default connect( mapDispatchToProps )( localize( HistoryButton ) );
+export default connect( null, mapDispatchToProps )( localize( HistoryButton ) );
