@@ -94,12 +94,11 @@ export class EmbedDialog extends React.Component {
 		if ( this.state.embedUrl !== prevState.embedUrl ) {
 			if ( ! this.isURLInCache( this.state.embedUrl ) ) {
 				this.setState( { isLoading: true } );
+				this.debouncedFetchEmbedPreviewMarkup( this.state.embedUrl );
+				return;
 			}
-			this.debouncedFetchEmbedPreviewMarkup( this.state.embedUrl );
-		}
 
-		// Loading has finished, update the iFrame HTML
-		if ( this.state.isLoading === false && this.state.isLoading !== prevState.isLoading ) {
+			// Update the iframe HTML
 			this.setHtml();
 		}
 	};
