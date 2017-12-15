@@ -13,6 +13,7 @@ import { isEmpty } from 'lodash';
 import EmailVerificationCard from 'my-sites/domains/domain-management/components/email-verification';
 import { checkInboundTransferStatus, resendInboundTransferEmail } from 'lib/domains';
 import support from 'lib/url/support';
+import Card from 'components/card';
 
 class InboundTransferEmailVerificationCard extends React.Component {
 	static propTypes = {
@@ -23,6 +24,7 @@ class InboundTransferEmailVerificationCard extends React.Component {
 	state = {
 		email: '',
 		loading: true,
+		manualWhois: false,
 	};
 
 	componentWillMount() {
@@ -45,6 +47,7 @@ class InboundTransferEmailVerificationCard extends React.Component {
 
 			this.setState( {
 				contactEmail: result.admin_email,
+				manualWhois: result.manual_whois,
 				loading: false,
 			} );
 		} );
@@ -52,10 +55,29 @@ class InboundTransferEmailVerificationCard extends React.Component {
 
 	render() {
 		const { selectedDomainName, selectedSiteSlug, translate } = this.props;
-		const { loading, contactEmail } = this.state;
+		const { loading, manualWhois, contactEmail } = this.state;
 
 		if ( loading ) {
 			return null;
+		}
+
+		if ( manualWhois || ! contactEmail ) {
+			return (
+				<Card highlight="warning">
+					<div>
+						<h1 className="inbound-transfer-verification__heading">
+							{ translate(
+								'The authorization email is still waiting to be sent.'
+							) }
+						</h1>
+						{ translate(
+							'The contact address for this domain wasn\'t immediately available. ' +
+							'We will keep checking and send the email to initiate the transfer once we have the ' +
+							'correct address. This could take up to 24 hours. We appreciate your patience.'
+						) }
+					</div>
+				</Card>
+			);
 		}
 
 		return (
