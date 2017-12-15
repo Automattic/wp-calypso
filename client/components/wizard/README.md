@@ -99,3 +99,7 @@ An array of strings denoting each of the steps in the wizard.
 </table>
 
 The name of the current step (one of the values in `steps`).
+
+### Additional props
+
+Any additional props will be passed to each individual step component.
