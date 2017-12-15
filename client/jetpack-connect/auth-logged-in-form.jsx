@@ -94,7 +94,6 @@ export class LoggedInForm extends Component {
 	};
 
 	retryingAuth = false;
-	state = { haveAuthorized: false };
 
 	componentWillMount() {
 		const { recordTracksEvent } = this.props;
@@ -102,7 +101,6 @@ export class LoggedInForm extends Component {
 
 		if ( this.shouldAutoAuthorize() ) {
 			debug( 'Authorizing automatically on component mount' );
-			this.setState( { haveAuthorized: true } );
 			return this.authorize();
 		}
 	}
