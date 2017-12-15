@@ -23,20 +23,40 @@ import replies from './replies';
 import likes from './likes';
 import { errorNotice, removeNotice } from 'state/notices/actions';
 import { getRawSite } from 'state/sites/selectors';
-import { getSiteComment } from 'state/selectors';
+import { getCurrentRoute, getSiteComment, getSiteCommentCounts } from 'state/selectors';
 import {
 	receiveComments,
 	receiveCommentsError as receiveCommentErrorAction,
 	requestComment as requestCommentAction,
+	updateCommentCounts,
 } from 'state/comments/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
+function createCommentCounts( counts, previousStatus, status, modifier = 1 ) {
+	const countStatus = status === 'unapproved' ? 'pending' : status;
+	const prevCountStatus = previousStatus === 'unapproved' ? 'pending' : previousStatus;
+
+	const newCounts = {
+		...counts,
+		[ prevCountStatus ]: counts[ prevCountStatus ] - modifier,
+		[ countStatus ]: counts[ countStatus ] + modifier,
+	};
+	return { ...newCounts, all: newCounts.pending + newCounts.approved };
+}
+
+const postIdRegex = /^\/comments\/[a-z]+\/.+\/(\d+$)/;
+
+function getPostIdForCommentCounts( state ) {
+	const [ route, postString ] = postIdRegex.exec( getCurrentRoute( state ) ) || [];
+	return route ? parseInt( postString, 10 ) : null;
+}
+
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, status } = action;
-	const previousStatus = get(
-		getSiteComment( getState(), action.siteId, action.commentId ),
-		'status'
-	);
+	const state = getState();
+	const previousStatus = get( getSiteComment( state, action.siteId, action.commentId ), 'status' );
+	const postId = getPostIdForCommentCounts( state );
+	const counts = getSiteCommentCounts( state, siteId, postId );
 
 	dispatch(
 		http(
@@ -54,13 +74,28 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 			}
 		)
 	);
+
+	dispatch(
+		updateCommentCounts(
+			Object.assign(
+				{
+					siteId,
+					postId,
+				},
+				createCommentCounts( counts, previousStatus, status, 1 )
+			)
+		)
+	);
 };
 
 export const removeCommentStatusErrorNotice = ( { dispatch }, { commentId } ) =>
 	dispatch( removeNotice( `comment-notice-error-${ commentId }` ) );
 
-const announceStatusChangeFailure = ( { dispatch }, action ) => {
-	const { commentId, status, previousStatus } = action;
+const announceStatusChangeFailure = ( { dispatch, getState }, action ) => {
+	const { siteId, commentId, status, previousStatus } = action;
+	const state = getState();
+	const counts = getSiteCommentCounts( state, siteId );
+	const postId = getPostIdForCommentCounts( state );
 
 	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
 
@@ -69,6 +104,18 @@ const announceStatusChangeFailure = ( { dispatch }, action ) => {
 			...omit( action, [ 'meta' ] ),
 			status: previousStatus,
 		} )
+	);
+
+	dispatch(
+		updateCommentCounts(
+			Object.assign(
+				{
+					siteId,
+					postId,
+				},
+				createCommentCounts( counts, previousStatus, status, -1 )
+			)
+		)
 	);
 
 	const errorMessage = {
