@@ -173,7 +173,7 @@ export class CommentList extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySiteCommentCounts siteId={ siteId } postId={ postId } />
 				<QuerySiteCommentsList
-					number={ 100 }
+					number={ COMMENTS_PER_PAGE }
 					offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
 					siteId={ siteId }
 					status={ status }
