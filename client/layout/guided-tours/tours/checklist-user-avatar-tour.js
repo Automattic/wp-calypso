@@ -23,7 +23,15 @@ import {
 
 export const ChecklistUserAvatarTour = makeTour(
 	<Tour name="checklistUserAvatar" version="20171205" path="/non-existent-route" when={ noop }>
-		<Step name="init" target="edit-gravatar" placement="beside" arrow="left-top">
+		<Step
+			name="init"
+			target="edit-gravatar"
+			placement="beside"
+			arrow="left-top"
+			style={ {
+				animationDelay: '0.7s',
+			} }
+		>
 			<p>
 				{ translate(
 					'Personalize your posts and comments with your Avatar. ' +
