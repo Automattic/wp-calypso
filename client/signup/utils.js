@@ -170,8 +170,12 @@ function getThemeForSiteGoals( siteGoals ) {
 function getSiteTypeForSiteGoals( siteGoals ) {
 	const siteGoalsValue = siteGoals.split( ',' );
 
-	if ( siteGoalsValue.indexOf( 'sell' ) !== -1 ) {
+	if ( siteGoals === 'sell' ) {
 		return 'store';
+	}
+
+	if ( siteGoalsValue.indexOf( 'sell' ) !== -1 ) {
+		return 'page';
 	}
 
 	if ( siteGoalsValue.indexOf( 'promote' ) !== -1 ) {

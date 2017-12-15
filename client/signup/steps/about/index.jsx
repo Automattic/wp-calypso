@@ -7,11 +7,12 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { includes, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import formState from 'lib/form-state';
@@ -29,6 +30,9 @@ import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
 import userFactory from 'lib/user';
 const user = userFactory();
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import { getGeoCountryShort } from 'state/geo/selectors';
+import { DESIGN_TYPE_STORE } from 'signup/constants';
 
 //Form components
 import Card from 'components/card';
@@ -302,7 +306,15 @@ class AboutStep extends Component {
 			}
 		);
 
-		goToNextStep();
+		// If the user chooses `store` as design type, redirect to the `store-nux` flow.
+		// For other choices, continue with the current flow.
+		const isCountryAllowed =
+			includes( [ 'US', 'CA' ], this.props.countryCode ) || config( 'env' ) === 'development';
+		const nextFlowName =
+			designType === DESIGN_TYPE_STORE && isCountryAllowed
+				? 'segmented-store-nux'
+				: this.props.flowName;
+		goToNextStep( nextFlowName );
 	};
 
 	renderGoalCheckboxes() {
@@ -523,6 +535,7 @@ export default connect(
 		siteGoals: getSiteGoals( state ),
 		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
+		countryCode: getCurrentUserCountryCode( state ) || getGeoCountryShort( state ),
 	} ),
 	{ setSiteTitle, setDesignType, setSiteGoals, setSurvey, setUserExperience, recordTracksEvent }
 )( localize( AboutStep ) );
