@@ -546,7 +546,16 @@ class PostShare extends Component {
 				<div className={ classes }>
 					<div className="post-share__head">
 						<h4 className="post-share__title">
-							<span>{ translate( 'Share this post' ) }</span>
+							<span>
+								{ translate(
+									'Share on your connected social media accounts using ' + '{{a}}Publicize{{/a}}.',
+									{
+										components: {
+											a: <a href={ `/sharing/${ siteSlug }` } />,
+										},
+									}
+								) }
+							</span>
 							{ showClose && (
 								<Button
 									borderless
