@@ -85,8 +85,8 @@ export default {
 	gsuiteUpsell: {
 		datestamp: '20171025',
 		variations: {
-			show: 50,
-			hide: 50,
+			show: 0,
+			hide: 100,
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
