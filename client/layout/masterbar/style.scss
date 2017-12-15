@@ -131,9 +131,9 @@ $autobar-height: 20px;
 
 	.masterbar__wpcom-wordmark {
 		display: block;
-		height: 24px;
-		width: 140px;
-		margin: 0 10px 0 5px;
+		width: 144px;
+		height: 15px;
+		margin: 0 5px;
 	}
 
 	@include breakpoint( "<480px" ) {
