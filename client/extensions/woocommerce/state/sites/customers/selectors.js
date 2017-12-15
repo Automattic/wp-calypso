@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get } from 'lodash';
+import { filter, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -53,7 +53,7 @@ export const isCustomerSearchLoading = (
  * @param {Object} state Whole Redux state tree
  * @param {String} searchTerm Search term to check
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {array} List of order notes
+ * @return {array} List of customer results matching term
  */
 export const getCustomerSearchResults = (
 	state,
@@ -70,7 +70,7 @@ export const getCustomerSearchResults = (
 		`extensions.woocommerce.sites[${ siteId }].customers.queries[${ searchTerm }]`,
 		[]
 	);
-	return customerIdsForTerm.map( id => customers[ id ] );
+	return filter( customerIdsForTerm.map( id => customers[ id ] || false ) );
 };
 
 /**

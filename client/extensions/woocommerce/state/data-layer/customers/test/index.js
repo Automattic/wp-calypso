@@ -3,7 +3,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-// import { spy, match } from 'sinon';
 
 /**
  * Internal dependencies
