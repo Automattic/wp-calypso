@@ -24,9 +24,9 @@ const tasks = {
 	avatar_uploaded: {
 		title: 'Upload your profile picture',
 		description:
-			'Who’s the person behind the site? Personalize your posts and comments with a custom avatar.',
+			'Who’s the person behind the site? Personalize your posts and comments with a custom profile picture.',
 		duration: '2 mins',
-		completedTitle: 'You uploaded an avatar',
+		completedTitle: 'You uploaded a profile picture',
 		completedButtonText: 'Change',
 		url: '/me',
 		image: '/calypso/images/stats/tasks/upload-profile-picture.svg',
