@@ -16,7 +16,7 @@
 
 		.web-preview__content {
 			opacity: 1;
-			transform: translateY( 0 ) scale( 1 );
+			transform: translateY( 0 );
 		}
 	}
 
@@ -44,7 +44,7 @@
 	background: $gray-light;
 	border-radius: 4px 4px 0 0;
 	position: absolute;
-		top: 24px;
+		top: 0;
 		left: 0;
 		right: 0;
 		bottom: 0;
@@ -52,38 +52,13 @@
 	opacity: 0;
 	transform: translateY( 80vh );
 	transition: transform 0.2s ease-out,
-		opacity 0.1s ease-in-out,
-		max-width 0.2s ease-out;
+		opacity 0.1s ease-in-out;
 
-	.is-computer & {
-		max-width: 1200px;
-		@include breakpoint( ">960px" ) {
-			left: 24px;
-			right: 24px;
-			width: calc( 100% - 46px ); /* IE11 fix */
-		}
-	}
-
-	.is-tablet & {
-		max-width: 783px;
-	}
-
-	.is-phone & {
-		max-width: 460px;
-	}
-
-	.is-seo & {
-		max-width: 865px;
-	}
-}
-
-.web-preview.is-computer .web-preview__content,
-.web-preview.is-tablet .web-preview__content,
-.web-preview.is-phone .web-preview__content {
-	@include breakpoint( "<960px" ) {
-		top: 0;
-		width: 100%;
-		border-radius: 0;
+	@include breakpoint( ">960px" ) {
+		top: 24px;
+		left: 24px;
+		right: 24px;
+		width: calc( 100% - 46px ); /* IE11 fix */
 	}
 }
 
@@ -224,15 +199,29 @@ a.web-preview__external.button {
 .web-preview__frame {
 	display: block;
 	width: 100%;
+	max-width: 100%;
 	height: 100%;
 	opacity: 0;
-	transition: opacity 0.2s ease-in-out;
+	transition: opacity 0.2s ease-in-out,
+		max-width 0.2s ease-out;
 	margin: 0 auto;
 	pointer-events: none;
 
 	.is-loaded & {
 		opacity: 1;
 		pointer-events: all;
+	}
+
+	.is-tablet & {
+		max-width: 783px;
+	}
+
+	.is-phone & {
+		max-width: 460px;
+	}
+
+	.is-seo & {
+		max-width: 865px;
 	}
 }
 
