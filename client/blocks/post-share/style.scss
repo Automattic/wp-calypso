@@ -20,13 +20,6 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 .post-share__title {
 	display: flex;
 
-	font-size: 15px;
-	margin: 16px 0 4px;
-
-	@include breakpoint( ">660px" ) {
-		font-size: 18px;
-	}
-
 	span {
 		flex: 1;
 	}
@@ -62,13 +55,13 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 		border-bottom-width: 0;
 	}
 
-	padding: 0 16px 16px;
+	padding: 16px;
 	@include breakpoint( ">480px" ) {
-		padding: 0 24px 16px;
+		padding: 16px 24px 16px;
 
 		//TODO Clean-up after PostTypeList is used for /posts/
 		.post-type-list & {
-			padding: 0 16px 16px;
+			padding: 16px;
 		}
 	}
 }

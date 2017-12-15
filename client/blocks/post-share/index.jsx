@@ -545,7 +545,7 @@ class PostShare extends Component {
 
 				<div className={ classes }>
 					<div className="post-share__head">
-						<h4 className="post-share__title">
+						<div className="post-share__title">
 							<span>
 								{ translate(
 									'Share on your connected social media accounts using ' + '{{a}}Publicize{{/a}}.',
@@ -567,7 +567,7 @@ class PostShare extends Component {
 									<Gridicon icon="cross" />
 								</Button>
 							) }
-						</h4>
+						</div>
 					</div>
 					{ ! hasFetchedConnections && <div className="post-share__placeholder" /> }
 					{ this.renderRequestSharingNotice() }
