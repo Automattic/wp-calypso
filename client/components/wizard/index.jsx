@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { get, indexOf } from 'lodash';
+import { compact, get, indexOf } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +18,7 @@ class Wizard extends Component {
 	static propTypes = {
 		backText: PropTypes.string,
 		basePath: PropTypes.string,
+		baseSuffix: PropTypes.string,
 		components: PropTypes.objectOf( PropTypes.element ).isRequired,
 		forwardText: PropTypes.string,
 		hideNavigation: PropTypes.bool,
@@ -27,6 +28,7 @@ class Wizard extends Component {
 
 	static defaultProps = {
 		basePath: '',
+		baseSuffix: '',
 		hideNavigation: false,
 	};
 
@@ -39,18 +41,18 @@ class Wizard extends Component {
 			return;
 		}
 
-		const { basePath, steps } = this.props;
+		const { basePath, baseSuffix, steps } = this.props;
 		const previousStepName = steps[ stepIndex - 1 ];
 
 		if ( ! previousStepName ) {
 			return;
 		}
 
-		return `${ basePath }/${ previousStepName }`;
+		return compact( [ basePath, previousStepName, baseSuffix ] ).join( '/' );
 	};
 
 	getForwardUrl = () => {
-		const { basePath, steps } = this.props;
+		const { basePath, baseSuffix, steps } = this.props;
 		const stepIndex = this.getStepIndex();
 
 		if ( stepIndex === -1 || stepIndex === steps.length - 1 ) {
@@ -63,7 +65,7 @@ class Wizard extends Component {
 			return;
 		}
 
-		return `${ basePath }/${ nextStepName }`;
+		return compact( [ basePath, nextStepName, baseSuffix ] ).join( '/' );
 	};
 
 	render() {
