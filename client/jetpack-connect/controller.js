@@ -6,7 +6,7 @@ import React from 'react';
 import Debug from 'debug';
 import page from 'page';
 import validator from 'is-my-json-valid';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -27,6 +27,7 @@ import userFactory from 'lib/user';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
 import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
+import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import { storePlan } from './persistence-utils';
@@ -93,6 +94,23 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 		const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
 		debug( 'redirectWithoutLocaleifLoggedIn to %s', urlWithoutLocale );
 		return page.redirect( urlWithoutLocale );
+	}
+
+	next();
+}
+
+export function maybeOnboard( { query, store }, next ) {
+	if ( ! isEmpty( query ) && query.onboarding ) {
+		const siteId = query.client_id;
+		const credentials = {
+			token: query.onboarding,
+			siteUrl: query.site_url,
+			userEmail: query.user_email,
+		};
+
+		store.dispatch( receiveJetpackOnboardingCredentials( siteId, credentials ) );
+
+		return page.redirect( '/jetpack/onboarding' );
 	}
 
 	next();
