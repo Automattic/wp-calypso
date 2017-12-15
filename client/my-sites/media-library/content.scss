@@ -51,12 +51,12 @@
 	}
 }
 
+// Scoot the "copy to media library" over to the right, so it doesn't float awkwardly in the middle.
 @include breakpoint( ">960px" ) {
 	.media__main-section .media-library__pexels-attribution {
-		margin-right: 0.25em;
-	}
-
-	.media__main-section .media-library__header.card {
-		justify-content: space-between;
+		order: 2;
+		margin-right: 0;
+		text-align: right;
+		width: calc(88% - 220px);
 	}
 }
