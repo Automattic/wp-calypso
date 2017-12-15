@@ -17,6 +17,9 @@ const removeSidebar = context => {
 export const onboarding = ( context, next ) => {
 	removeSidebar( context );
 
-	context.primary = <JetpackOnboardingMain stepName={ context.params.stepName } />;
+	// We validate siteSlug inside the component
+	context.primary = (
+		<JetpackOnboardingMain siteSlug={ context.params.site } stepName={ context.params.stepName } />
+	);
 	next();
 };
