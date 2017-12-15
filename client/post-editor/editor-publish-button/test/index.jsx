@@ -130,6 +130,7 @@ describe( 'EditorPublishButton', () => {
 						savedPost={ { status: 'future', date: lastMonth } }
 						post={ { title: 'change', status: 'future', date: lastMonth } }
 						site={ MOCK_SITE }
+						canUserPublishPosts={ true }
 					/>
 				).instance();
 
@@ -142,6 +143,7 @@ describe( 'EditorPublishButton', () => {
 					translate={ identity }
 					savedPost={ { status: 'draft' } }
 					site={ MOCK_SITE }
+					canUserPublishPosts={ true }
 				/>
 			).instance();
 
@@ -260,6 +262,7 @@ describe( 'EditorPublishButton', () => {
 						post={ { status: 'draft' } }
 						site={ MOCK_SITE }
 						onPublish={ onPublish }
+						canUserPublishPosts={ true }
 					/>
 				).instance();
 
@@ -279,6 +282,7 @@ describe( 'EditorPublishButton', () => {
 						post={ { title: 'change', status: 'draft', date: nextMonth } }
 						onPublish={ onPublish }
 						site={ MOCK_SITE }
+						canUserPublishPosts={ true }
 					/>
 				).instance();
 
@@ -298,6 +302,7 @@ describe( 'EditorPublishButton', () => {
 						post={ { title: 'change', status: 'future', date: nextMonth } }
 						onPublish={ onPublish }
 						site={ MOCK_SITE }
+						canUserPublishPosts={ true }
 					/>
 				).instance();
 
@@ -317,6 +322,7 @@ describe( 'EditorPublishButton', () => {
 						post={ { title: 'change', status: 'future', date: lastMonth } }
 						onPublish={ onPublish }
 						site={ MOCK_SITE }
+						canUserPublishPosts={ true }
 					/>
 				).instance();
 
