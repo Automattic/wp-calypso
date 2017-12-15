@@ -8,15 +8,15 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { isArray, isEmpty, map, partialRight } from 'lodash';
 
-const addLinesToChanges = changes => {
-	if ( ! isArray( changes ) || isEmpty( changes ) ) {
-		return changes;
+const addLinesToOperations = operations => {
+	if ( ! isArray( operations ) || isEmpty( operations ) ) {
+		return operations;
 	}
-	return changes.join( '\n\n' );
+	return operations.join( '\n\n' );
 };
 
-const renderChange = ( change, changeIndex, splitLines ) => {
-	const { orig, final, value, op } = change;
+const renderOperation = ( operation, operationIndex, splitLines ) => {
+	const { orig, final, value, op } = operation;
 	const content = orig || final || value;
 
 	const classnames = classNames( {
@@ -26,19 +26,19 @@ const renderChange = ( change, changeIndex, splitLines ) => {
 	} );
 
 	return (
-		<span className={ classnames } key={ changeIndex }>
-			{ splitLines ? addLinesToChanges( content ) : content }
+		<span className={ classnames } key={ operationIndex }>
+			{ splitLines ? addLinesToOperations( content ) : content }
 		</span>
 	);
 };
 
-const renderSplitLineChange = partialRight( renderChange, true );
+const renderSplitLineOperations = partialRight( renderOperation, true );
 
-const DiffChanges = ( { changes, splitLines } ) =>
-	map( changes, splitLines ? renderSplitLineChange : renderChange );
+const TextDiff = ( { operations, splitLines } ) =>
+	map( operations, splitLines ? renderSplitLineOperations : renderOperation );
 
-DiffChanges.propTypes = {
-	changes: PropTypes.arrayOf(
+TextDiff.propTypes = {
+	operations: PropTypes.arrayOf(
 		PropTypes.shape( {
 			op: PropTypes.oneOf( [ 'add', 'copy', 'del' ] ),
 			value: PropTypes.string.isRequired,
@@ -47,4 +47,4 @@ DiffChanges.propTypes = {
 	splitLines: PropTypes.bool,
 };
 
-export default DiffChanges;
+export default TextDiff;

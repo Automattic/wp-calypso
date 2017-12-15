@@ -56,10 +56,10 @@ class EditorDiffViewer extends PureComponent {
 		return (
 			<div className={ classes }>
 				<h1 className="editor-diff-viewer__title">
-					<TextDiff changes={ diff.post_title } />
+					<TextDiff operations={ diff.post_title } />
 				</h1>
 				<pre className="editor-diff-viewer__content">
-					<TextDiff changes={ diff.post_content } splitLines />
+					<TextDiff operations={ diff.post_content } splitLines />
 				</pre>
 			</div>
 		);
