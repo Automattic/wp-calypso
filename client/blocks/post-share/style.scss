@@ -58,7 +58,6 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 }
 
 .post-share__head {
-	border-bottom: 1px solid transparentize( lighten( $gray, 20% ), .5 );
 	.post-share__wrapper.is-placeholder & {
 		border-bottom-width: 0;
 	}
