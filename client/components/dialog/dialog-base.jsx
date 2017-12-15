@@ -89,6 +89,7 @@ class DialogBase extends Component {
 				key={ button.action }
 				className={ classes }
 				data-e2e-button={ button.action }
+				data-tip-target={ `dialog-base-action-${ button.action }` }
 				onClick={ clickHandler }
 				disabled={ !! button.disabled }
 			>

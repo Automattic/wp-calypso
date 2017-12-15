@@ -95,6 +95,7 @@ class MediaLibraryHeader extends React.Component {
 					ref={ this.setMoreOptionsContext }
 					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }
 					className="button media-library__upload-more"
+					data-tip-target="media-library-upload-more"
 				>
 					<span className="screen-reader-text">{ this.props.translate( 'More Options' ) }</span>
 					<Gridicon icon="chevron-down" size={ 20 } />
