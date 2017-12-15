@@ -8,7 +8,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { debounce, filter, first, get, has, last, map, partial, throttle } from 'lodash';
+import { debounce, filter, first, flow, get, has, last, map, partial, throttle } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import TextDiff from 'components/text-diff';
 // import EditorDiffChanges from './changes';
 import Button from 'components/button';
 import scrollTo from 'lib/scroll-to';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const getCenterOffset = node => get( node, 'offsetTop', 0 ) + get( node, 'offsetHeight', 0 ) / 2;
 
@@ -31,6 +33,12 @@ class EditorDiffViewer extends PureComponent {
 			post_title: PropTypes.array,
 			totals: PropTypes.object,
 		} ).isRequired,
+
+		// connected to dispatch
+		recordTracksEvent: PropTypes.func.isRequired,
+
+		// localize
+		translate: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -131,10 +139,16 @@ class EditorDiffViewer extends PureComponent {
 
 	scrollAbove = () => {
 		this.centerScrollingOnOffset( last( this.changesAboveViewport ) );
+		this.props.recordTracksEvent( 'calypso_editor_post_revisions_scroll_hint_used', {
+			direction: 'above',
+		} );
 	};
 
 	scrollBelow = () => {
 		this.centerScrollingOnOffset( first( this.changesBelowViewport ) );
+		this.props.recordTracksEvent( 'calypso_editor_post_revisions_scroll_hint_used', {
+			direction: 'below',
+		} );
 	};
 
 	render() {
@@ -155,6 +169,9 @@ class EditorDiffViewer extends PureComponent {
 			offset => offset > bottomBoundary
 		);
 
+		const countAbove = this.changesAboveViewport.length;
+		const countBelow = this.changesBelowViewport.length;
+
 		return (
 			<div className={ classes }>
 				<div className="editor-diff-viewer__scrollable" ref={ this.handleScrollableRef }>
@@ -165,14 +182,28 @@ class EditorDiffViewer extends PureComponent {
 						<TextDiff operations={ diff.post_content } splitLines />
 					</pre>
 				</div>
-				{ this.changesAboveViewport.length > 0 && (
+				{ countAbove > 0 && (
 					<Button className="editor-diff-viewer__hint-above" onClick={ this.scrollAbove }>
-						{ this.changesAboveViewport.length } changes above
+						{ this.props.translate(
+							'%(numberOfChanges)d change above',
+							'%(numberOfChanges)d changes above',
+							{
+								args: { numberOfChanges: countAbove },
+								count: countAbove,
+							}
+						) }
 					</Button>
 				) }
-				{ this.changesBelowViewport.length > 0 && (
+				{ countBelow > 0 && (
 					<Button className="editor-diff-viewer__hint-below" onClick={ this.scrollBelow }>
-						{ this.changesBelowViewport.length } changes below
+						{ this.props.translate(
+							'%(numberOfChanges)d change below',
+							'%(numberOfChanges)d changes below',
+							{
+								args: { numberOfChanges: countBelow },
+								count: countBelow,
+							}
+						) }
 					</Button>
 				) }
 			</div>
@@ -180,6 +211,12 @@ class EditorDiffViewer extends PureComponent {
 	}
 }
 
-export default connect( ( state, { siteId, postId, selectedRevisionId } ) => ( {
-	revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
-} ) )( EditorDiffViewer );
+export default flow(
+	localize,
+	connect(
+		( state, { siteId, postId, selectedRevisionId } ) => ( {
+			revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
+		} ),
+		{ recordTracksEvent }
+	)
+)( EditorDiffViewer );
