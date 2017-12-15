@@ -6,7 +6,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { flow } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,26 +32,18 @@ class HistoryButton extends Component {
 }
 
 HistoryButton.propTypes = {
-	// connected to dispatch
-	openPostRevisionsDialog: PropTypes.func.isRequired,
-	recordTracksEvent: PropTypes.func.isRequired,
-
 	// localize
 	translate: PropTypes.func,
 };
 
-const selectHistory = () => dispatch => {
-	dispatch(
-		withAnalytics(
-			recordTracksEvent( 'calypso_editor_history_button_click' ),
-			openPostRevisionsDialog()
-		)
-	);
-};
+const mapDispatchToProps = dispatch => ( {
+	selectHistory: () =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_editor_history_button_click' ),
+				openPostRevisionsDialog()
+			)
+		),
+} );
 
-export default flow(
-	localize,
-	connect( null, {
-		selectHistory,
-	} )
-)( HistoryButton );
+export default connect( mapDispatchToProps )( localize( HistoryButton ) );
