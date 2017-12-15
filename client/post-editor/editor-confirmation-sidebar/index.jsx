@@ -27,6 +27,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import { isEditedPostPrivate, isPrivateEditedPostPasswordValid } from 'state/posts/selectors';
+import { canCurrentUser } from 'state/selectors';
 
 class EditorConfirmationSidebar extends React.Component {
 	static propTypes = {
@@ -71,7 +72,8 @@ class EditorConfirmationSidebar extends React.Component {
 		const publishButtonStatus = getPublishButtonStatus(
 			this.props.site,
 			this.props.post,
-			this.props.savedPost
+			this.props.savedPost,
+			this.props.canUserPublishPosts
 		);
 		const buttonLabel = this.getPublishButtonLabel( publishButtonStatus );
 		const enabled = ! this.props.isPrivatePost || this.props.isPrivatePostPasswordValid;
@@ -134,7 +136,8 @@ class EditorConfirmationSidebar extends React.Component {
 		const publishButtonStatus = getPublishButtonStatus(
 			this.props.site,
 			this.props.post,
-			this.props.savedPost
+			this.props.savedPost,
+			this.props.canUserPublishPosts
 		);
 		const buttonLabel = this.getBusyButtonLabel( publishButtonStatus );
 
@@ -226,6 +229,7 @@ export default connect(
 		const post = getEditedPost( state, siteId, postId );
 		const isPrivatePost = isEditedPostPrivate( state, siteId, postId );
 		const isPrivatePostPasswordValid = isPrivateEditedPostPasswordValid( state, siteId, postId );
+		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
 
 		return {
 			siteId,
@@ -233,6 +237,7 @@ export default connect(
 			post,
 			isPrivatePost,
 			isPrivatePostPasswordValid,
+			canUserPublishPosts,
 		};
 	},
 	{ editPost }

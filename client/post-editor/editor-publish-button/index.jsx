@@ -13,14 +13,14 @@ import { connect } from 'react-redux';
  */
 import { recordEvent } from 'lib/posts/stats';
 import postUtils from 'lib/posts/utils';
-import siteUtils from 'lib/site/utils';
 import Button from 'components/button';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { isEditedPostPrivate, isPrivateEditedPostPasswordValid } from 'state/posts/selectors';
+import { canCurrentUser } from 'state/selectors';
 
-export const getPublishButtonStatus = ( site, post, savedPost ) => {
+export const getPublishButtonStatus = ( site, post, savedPost, canUserPublishPosts ) => {
 	if (
 		( postUtils.isPublished( savedPost ) &&
 			! postUtils.isBackDatedPublished( savedPost ) &&
@@ -34,7 +34,7 @@ export const getPublishButtonStatus = ( site, post, savedPost ) => {
 		return 'schedule';
 	}
 
-	if ( siteUtils.userCan( 'publish_posts', site ) ) {
+	if ( canUserPublishPosts ) {
 		return 'publish';
 	}
 
@@ -86,7 +86,8 @@ export class EditorPublishButton extends Component {
 		const buttonState = getPublishButtonStatus(
 			this.props.site,
 			this.props.post,
-			this.props.savedPost
+			this.props.savedPost,
+			this.props.canUserPublishPosts
 		);
 		const eventString = postUtils.isPage( this.props.post )
 			? pageEvents[ buttonState ]
@@ -96,7 +97,12 @@ export class EditorPublishButton extends Component {
 	}
 
 	getButtonLabel() {
-		switch ( getPublishButtonStatus( this.props.site, this.props.post, this.props.savedPost ) ) {
+		switch ( getPublishButtonStatus(
+			this.props.site,
+			this.props.post,
+			this.props.savedPost,
+			this.props.canUserPublishPosts
+		) ) {
 			case 'update':
 				return this.props.translate( 'Update' );
 			case 'schedule':
@@ -136,7 +142,7 @@ export class EditorPublishButton extends Component {
 			return this.props.onSave();
 		}
 
-		if ( siteUtils.userCan( 'publish_posts', this.props.site ) ) {
+		if ( this.props.canUserPublishPosts ) {
 			return this.props.onPublish();
 		}
 
@@ -175,9 +181,11 @@ export default connect( state => {
 	const postId = getEditorPostId( state );
 	const privatePost = isEditedPostPrivate( state, siteId, postId );
 	const privatePostPasswordValid = isPrivateEditedPostPasswordValid( state, siteId, postId );
+	const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
 
 	return {
 		privatePost,
 		privatePostPasswordValid,
+		canUserPublishPosts,
 	};
 } )( localize( EditorPublishButton ) );
