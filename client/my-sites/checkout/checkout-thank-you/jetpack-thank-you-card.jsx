@@ -567,7 +567,7 @@ class JetpackThankYouCard extends Component {
 						} ) }
 						href={ buttonUrl }
 					>
-						{ translate( 'Visit your site' ) }
+						{ translate( 'Explore your plan' ) }
 					</a>
 					{ this.renderLiveChatButton() }
 				</div>
@@ -657,7 +657,7 @@ export default connect(
 			selectedSite: getSite( state, siteId ),
 			isRequestingSites: isRequestingSites( state ),
 			siteId,
-			jetpackAdminPageUrl: getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack' ),
+			jetpackAdminPageUrl: getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack#/plans' ),
 			remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId ),
 			planFeatures,
 			planClass,
