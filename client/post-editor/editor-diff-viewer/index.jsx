@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, has, map, filter, first, last, debounce, partial } from 'lodash';
+import { debounce, filter, first, get, has, last, map, partial, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -56,6 +56,12 @@ class EditorDiffViewer extends PureComponent {
 		this.tryScrollingToFirstChangeOrTop();
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.selectedRevisionId !== this.props.selectedRevisionId ) {
+			this.setState( { changeOffsets: [] } );
+		}
+	}
+
 	lastScolledRevisionId = null;
 
 	tryScrollingToFirstChangeOrTop = () => {
@@ -88,7 +94,7 @@ class EditorDiffViewer extends PureComponent {
 		);
 	};
 
-	debouncedRecomputeChanges = debounce( partial( this.recomputeChanges, null ), 1000 );
+	debouncedRecomputeChanges = debounce( partial( this.recomputeChanges, null ), 500 );
 
 	centerScrollingOnOffset = ( offset, animated = true ) => {
 		const nextScrollTop = Math.max( 0, offset - this.state.viewportHeight / 2 );
@@ -111,12 +117,15 @@ class EditorDiffViewer extends PureComponent {
 		} );
 	};
 
-	handleScrollableNode = node => {
-		this.node = node;
-		if ( this.node ) {
-			this.node.addEventListener( 'scroll', this.handleScroll );
+	throttledScrollHandler = throttle( this.handleScroll, 100 );
+
+	handleScrollableRef = node => {
+		if ( node ) {
+			this.node = node;
+			this.node.addEventListener( 'scroll', this.throttledScrollHandler );
 		} else {
-			this.node.removeEventListener( 'scroll', this.handleScroll );
+			this.node.removeEventListener( 'scroll', this.throttledScrollHandler );
+			this.node = null;
 		}
 	};
 
@@ -148,7 +157,7 @@ class EditorDiffViewer extends PureComponent {
 
 		return (
 			<div className={ classes }>
-				<div className="editor-diff-viewer__scrollable" ref={ this.handleScrollableNode }>
+				<div className="editor-diff-viewer__scrollable" ref={ this.handleScrollableRef }>
 					<h1 className="editor-diff-viewer__title">
 						<TextDiff operations={ diff.post_title } />
 					</h1>
