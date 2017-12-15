@@ -54,6 +54,7 @@ class ModerateComment extends Component {
 			! commentId ||
 			! newStatus ||
 			newStatus === currentStatus ||
+			'edit' === newStatus ||
 			'delete' === newStatus
 		) {
 			return;

@@ -79,6 +79,7 @@ export class CommentView extends Component {
 						refreshCommentData={ true }
 						redirect={ redirectToPostView }
 						isPostView={ true }
+						isEditMode={ canModerateComments && 'edit' === action }
 					/>
 				) }
 				{ canModerateComments && <CommentPermalink { ...{ siteId, commentId } } /> }
