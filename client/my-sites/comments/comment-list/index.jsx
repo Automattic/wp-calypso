@@ -104,7 +104,7 @@ export class CommentList extends Component {
 		);
 	};
 
-	getTotalPages = () => Math.ceil( this.props.comments.length / COMMENTS_PER_PAGE );
+	getTotalPages = () => Math.ceil( this.props.commentsCount / COMMENTS_PER_PAGE );
 
 	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
 
