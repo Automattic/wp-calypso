@@ -121,9 +121,9 @@ class ThemeSelectionStep extends Component {
 	};
 }
 
-export default connect( state => ( {
+export default connect( ( state, props ) => ( {
 	chosenSurveyVertical: getSurveyVertical( state ),
 	currentUser: getCurrentUser( state ),
-	designType: getDesignType( state ),
+	designType: props.designType || getDesignType( state ),
 	dependencyStore: getSignupDependencyStore( state ),
 } ) )( localize( ThemeSelectionStep ) );
