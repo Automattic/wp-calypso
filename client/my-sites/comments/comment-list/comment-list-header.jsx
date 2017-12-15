@@ -26,6 +26,7 @@ function goBack() {
 }
 
 export const CommentListHeader = ( {
+	commentId,
 	postDate,
 	postId,
 	postTitle,
@@ -60,10 +61,15 @@ export const CommentListHeader = ( {
 				alwaysShowActionText
 			>
 				<div className="comment-list__header-title">
-					{ translate( 'Comments on {{span}}%(postTitle)s{{/span}}', {
-						args: { postTitle: title },
-						components: { span: <span className="comment-list__header-post-title" /> },
-					} ) }
+					{ translate(
+						'Comment on {{span}}%(postTitle)s{{/span}}',
+						'Comments on {{span}}%(postTitle)s{{/span}}',
+						{
+							count: commentId ? 1 : 2,
+							args: { postTitle: title },
+							components: { span: <span className="comment-list__header-post-title" /> },
+						}
+					) }
 				</div>
 				<div className="comment-list__header-date">{ formattedDate }</div>
 			</HeaderCake>

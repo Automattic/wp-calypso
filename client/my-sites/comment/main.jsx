@@ -61,7 +61,7 @@ export class CommentView extends Component {
 				{ 'delete' === action && (
 					<CommentDeleteWarning { ...{ siteId, postId, commentId, redirectToPostView } } />
 				) }
-				<CommentListHeader { ...{ postId } } />
+				<CommentListHeader { ...{ postId, commentId } } />
 				{ ! canModerateComments && (
 					<EmptyContent
 						title={ preventWidows(
