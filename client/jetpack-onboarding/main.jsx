@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { compact } from 'lodash';
+import { compact, findKey } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -16,6 +16,7 @@ import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
 } from './constants';
+import { urlToSlug } from 'lib/url';
 
 class JetpackOnboardingMain extends React.PureComponent {
 	static propTypes = {
@@ -26,13 +27,16 @@ class JetpackOnboardingMain extends React.PureComponent {
 		stepName: STEPS.SITE_TITLE,
 	};
 
+	// TODO: Add lifecycle methods to redirect if no siteId
+
 	render() {
-		const { stepName, steps } = this.props;
+		const { siteSlug, stepName, steps } = this.props;
 
 		return (
 			<Main className="jetpack-onboarding">
 				<Wizard
 					basePath="/jetpack/onboarding"
+					baseSuffix={ siteSlug }
 					components={ COMPONENTS }
 					steps={ steps }
 					stepName={ stepName }
@@ -43,7 +47,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 	}
 }
 
-export default connect( () => {
+export default connect( ( state, { siteSlug } ) => {
 	// Note: here we can select which steps to display, based on user's input
 	const steps = compact( [
 		STEPS.SITE_TITLE,
@@ -55,7 +59,14 @@ export default connect( () => {
 		STEPS.SUMMARY,
 	] );
 
+	// TODO: Make into selector
+	const siteId = findKey( state.jetpackOnboarding.credentials, ( { siteUrl } ) => {
+		return siteSlug === urlToSlug( siteUrl );
+	} );
+
 	return {
+		siteId,
+		siteSlug,
 		steps,
 	};
 } )( JetpackOnboardingMain );

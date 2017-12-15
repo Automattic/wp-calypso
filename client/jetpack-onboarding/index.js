@@ -10,7 +10,7 @@ import { values } from 'lodash';
  * Internal dependencies
  */
 import { JETPACK_ONBOARDING_STEPS } from './constants';
-import { onboarding, siteSelection } from './controller';
+import { onboarding } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
@@ -18,7 +18,6 @@ export default function() {
 		const validStepNames = values( JETPACK_ONBOARDING_STEPS );
 		page(
 			`/jetpack/onboarding/:stepName(${ validStepNames.join( '|' ) })?/:site`,
-			siteSelection,
 			onboarding,
 			makeLayout,
 			clientRender
