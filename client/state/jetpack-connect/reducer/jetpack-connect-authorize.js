@@ -62,26 +62,22 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, {
 				siteReceived: true,
 				isAuthorizing: false,
-				queryObject: omit( state.queryObject, '_wp_nonce', 'secret', 'scope' ),
 			} );
 
 		case JETPACK_CONNECT_QUERY_SET:
-			const shouldAutoAuthorize = includes(
+			const autoAuthorize = includes(
 				[ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ],
-				get( action, [ 'queryObject', 'from' ] )
+				action.from
 			);
-			return Object.assign(
-				{
-					queryObject: action.queryObject || {},
-					isAuthorizing: false,
-					authorizeSuccess: false,
-					authorizeError: false,
-					timestamp: Date.now(),
-					userAlreadyConnected: false,
-					autoAuthorize: false,
-				},
-				shouldAutoAuthorize && { autoAuthorize: true }
-			);
+			return {
+				authorizeError: false,
+				authorizeSuccess: false,
+				autoAuthorize,
+				isAuthorizing: false,
+				timestamp: Date.now(),
+				userAlreadyConnected: false,
+				clientId: action.clientId,
+			};
 
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
 			return Object.assign( {}, state, {
@@ -110,7 +106,7 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 			} );
 
 		case SITE_REQUEST_FAILURE:
-			if ( parseInt( get( state, [ 'queryObject', 'client_id' ], 0 ), 10 ) === action.siteId ) {
+			if ( state.clientId === action.siteId ) {
 				return Object.assign( {}, state, { clientNotResponding: true } );
 			}
 			return state;

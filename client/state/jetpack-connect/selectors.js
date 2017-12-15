@@ -28,17 +28,8 @@ const getAuthorizationData = state => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectAuthorize' ] );
 };
 
-const getAuthorizationRemoteQueryData = state => {
-	return get( getAuthorizationData( state ), 'queryObject' );
-};
-
-const getAuthorizationRemoteSite = state => {
-	return get( getAuthorizationRemoteQueryData( state ), 'site' );
-};
-
-const isRemoteSiteOnSitesList = state => {
-	const remoteUrl = getAuthorizationRemoteSite( state ),
-		authorizationData = getAuthorizationData( state );
+const isRemoteSiteOnSitesList = ( state, remoteUrl ) => {
+	const authorizationData = getAuthorizationData( state );
 
 	if ( ! remoteUrl ) {
 		return false;
@@ -111,19 +102,9 @@ const hasExpiredSecretError = function( state ) {
 	);
 };
 
-const getSiteIdFromQueryObject = function( state ) {
-	const queryObject = getAuthorizationRemoteQueryData( state );
-	if ( queryObject && queryObject.client_id ) {
-		return parseInt( queryObject.client_id, 10 );
-	}
-	return null;
-};
-
 export default {
 	getConnectingSite,
 	getAuthorizationData,
-	getAuthorizationRemoteQueryData,
-	getAuthorizationRemoteSite,
 	getSSO,
 	isRedirectingToWpAdmin,
 	isRemoteSiteOnSitesList,
@@ -131,6 +112,5 @@ export default {
 	hasXmlrpcError,
 	hasExpiredSecretError,
 	getAuthAttempts,
-	getSiteIdFromQueryObject,
 	getUserAlreadyConnected,
 };

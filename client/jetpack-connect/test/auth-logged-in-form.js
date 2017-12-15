@@ -7,7 +7,7 @@
  */
 import { LoggedInForm } from '../auth-logged-in-form';
 
-describe( 'LoggedOutForm', () => {
+describe( 'LoggedInForm', () => {
 	describe( 'isSso', () => {
 		const isSso = new LoggedInForm().isSso;
 		const queryDataSiteId = 12349876;
@@ -15,8 +15,10 @@ describe( 'LoggedOutForm', () => {
 		test( 'returns true for valid SSO', () => {
 			document.cookie = `jetpack_sso_approved=${ queryDataSiteId };`;
 			const props = {
-				from: 'sso',
-				queryDataSiteId,
+				authQuery: {
+					from: 'sso',
+					clientId: queryDataSiteId,
+				},
 			};
 			expect( isSso( props ) ).toBe( true );
 		} );
@@ -24,8 +26,10 @@ describe( 'LoggedOutForm', () => {
 		test( 'returns false with bad from', () => {
 			document.cookie = `jetpack_sso_approved=${ queryDataSiteId };`;
 			const props = {
-				from: 'elsewhere',
-				queryDataSiteId,
+				authQuery: {
+					from: 'elsewhere',
+					clientId: queryDataSiteId,
+				},
 			};
 			expect( isSso( props ) ).toBe( false );
 		} );
@@ -33,8 +37,10 @@ describe( 'LoggedOutForm', () => {
 		test( 'returns false without approved cookie', () => {
 			document.cookie = 'jetpack_sso_approved=;';
 			const props = {
-				from: 'sso',
-				queryDataSiteId,
+				authQuery: {
+					from: 'sso',
+					clientId: queryDataSiteId,
+				},
 			};
 			expect( isSso( props ) ).toBe( false );
 		} );
@@ -42,8 +48,10 @@ describe( 'LoggedOutForm', () => {
 		test( 'returns false with no cookie or queryDataSiteId', () => {
 			document.cookie = 'jetpack_sso_approved=;';
 			const props = {
-				from: 'sso',
-				queryDataSiteId: null,
+				authQuery: {
+					from: 'sso',
+					clientId: null,
+				},
 			};
 			expect( isSso( props ) ).toBe( false );
 		} );

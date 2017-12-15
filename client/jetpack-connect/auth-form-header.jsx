@@ -3,21 +3,22 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getAuthorizationData } from 'state/jetpack-connect/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
 import FormattedHeader from 'components/formatted-header';
 import SiteCard from './site-card';
 import versionCompare from 'lib/version-compare';
-import { getJetpackConnectJetpackVersion, getJetpackConnectPartnerId } from 'state/selectors';
+import { getAuthorizationData } from 'state/jetpack-connect/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 class AuthFormHeader extends Component {
+	static propTypes = { authQuery: PropTypes.object.isRequired };
+
 	getState() {
 		const { user, authorize } = this.props;
 
@@ -37,7 +38,7 @@ class AuthFormHeader extends Component {
 	}
 
 	getPartnerSlug() {
-		const { partnerId } = this.props;
+		const { partnerId } = this.props.authQuery;
 
 		switch ( partnerId ) {
 			case 51945:
@@ -120,12 +121,12 @@ class AuthFormHeader extends Component {
 	}
 
 	getSiteCard() {
-		const { jetpackVersion } = this.props;
-		if ( ! versionCompare( jetpackVersion, '4.0.3', '>' ) ) {
+		const { jpVersion } = this.props.authQuery;
+		if ( ! versionCompare( jpVersion, '4.0.3', '>' ) ) {
 			return null;
 		}
 
-		return <SiteCard queryObject={ get( this.props, [ 'authorize', 'queryObject' ], {} ) } />;
+		return <SiteCard authQuery={ this.props.authQuery } />;
 	}
 
 	render() {
@@ -145,8 +146,6 @@ class AuthFormHeader extends Component {
 export default connect( state => {
 	return {
 		authorize: getAuthorizationData( state ),
-		jetpackVersion: getJetpackConnectJetpackVersion( state ),
-		partnerId: getJetpackConnectPartnerId( state ),
 		user: getCurrentUser( state ),
 	};
 } )( localize( AuthFormHeader ) );

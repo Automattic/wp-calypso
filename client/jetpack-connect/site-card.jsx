@@ -15,30 +15,23 @@ import safeImageUrl from 'lib/safe-image-url';
 import { decodeEntities } from 'lib/formatting';
 
 class SiteCard extends Component {
-	static propTypes = {
-		queryObject: PropTypes.shape( {
-			site_icon: PropTypes.string,
-			blogname: PropTypes.string.isRequired,
-			home_url: PropTypes.string.isRequired,
-			site_url: PropTypes.string.isRequired,
-		} ).isRequired,
-	};
+	static propTypes = { authQuery: PropTypes.object.isRequired };
 
 	render() {
-		const { site_icon, blogname, home_url, site_url } = this.props.queryObject;
-		const safeIconUrl = site_icon ? safeImageUrl( site_icon ) : false;
-		const siteIcon = safeIconUrl ? { img: safeIconUrl } : false;
-		const url = decodeEntities( home_url );
+		const { blogname, homeUrl, siteIcon, siteUrl } = this.props.authQuery;
+		const safeIconUrl = siteIcon ? safeImageUrl( siteIcon ) : false;
+		const icon = safeIconUrl ? { img: safeIconUrl } : false;
+		const url = decodeEntities( homeUrl );
 		const parsedUrl = urlModule.parse( url );
 		const path = parsedUrl.path === '/' ? '' : parsedUrl.path;
 		const site = {
-			ID: null,
-			url: url,
-			admin_url: decodeEntities( site_url + '/wp-admin' ),
+			admin_url: decodeEntities( siteUrl + '/wp-admin' ),
 			domain: parsedUrl.host + path,
-			icon: siteIcon,
+			icon,
+			ID: null,
 			is_vip: false,
 			title: decodeEntities( blogname ),
+			url: url,
 		};
 
 		return (
