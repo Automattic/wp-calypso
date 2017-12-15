@@ -58,6 +58,14 @@ class LoggedOutForm extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
+	/**
+	 * Log in the new user
+	 *
+	 * After an account is created, `authorizationData.userData` is populated
+	 * and we render this component to log the new user in.
+	 *
+	 * @return {Object} React element for render.
+	 */
 	renderLoginUser() {
 		const { userData, bearerToken } = this.props.authorizationData;
 
@@ -66,7 +74,7 @@ class LoggedOutForm extends Component {
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
 				emailAddress={ this.props.authQuery.userEmail }
-				redirectTo={ window.location.href }
+				redirectTo={ addQueryArgs( { auth_approved: true }, window.location.href ) }
 			/>
 		);
 	}
@@ -104,7 +112,7 @@ class LoggedOutForm extends Component {
 				{ this.renderLocaleSuggestions() }
 				<AuthFormHeader authQuery={ this.props.authQuery } />
 				<SignupForm
-					redirectToAfterLoginUrl={ addQueryArgs( { auth_approved: '' }, window.location.href ) }
+					redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
 					disabled={ isAuthorizing }
 					submitting={ isAuthorizing }
 					submitForm={ this.handleSubmitSignup }

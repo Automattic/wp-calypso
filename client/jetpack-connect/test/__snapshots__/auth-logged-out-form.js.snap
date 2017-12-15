@@ -40,7 +40,7 @@ exports[`LoggedOutForm should render 1`] = `
         />
       </LoggedOutFormLinks>
     }
-    redirectToAfterLoginUrl="https://example.com/?auth_approved="
+    redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
     submitButtonText="Sign Up and Connect Jetpack"
     submitForm={[Function]}
     submitting={false}
@@ -93,7 +93,7 @@ exports[`LoggedOutForm should render with locale suggestions 1`] = `
         />
       </LoggedOutFormLinks>
     }
-    redirectToAfterLoginUrl="https://example.com/?auth_approved="
+    redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
     submitButtonText="Sign Up and Connect Jetpack"
     submitForm={[Function]}
     submitting={false}
