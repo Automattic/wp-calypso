@@ -38,6 +38,10 @@
 	padding: 0 16px 0 8px;
 	color: #fff;
 	font-size: 13px;
+
+	@include breakpoint( '<660px' ) {
+		display: none;
+	}
 }
 
 .editor-diff-viewer__hint-above {

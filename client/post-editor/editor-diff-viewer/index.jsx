@@ -169,7 +169,7 @@ class EditorDiffViewer extends PureComponent {
 			offset => offset > bottomBoundary
 		);
 
-		const showHints = this.state.viewportHeight > 600;
+		const showHints = this.state.viewportHeight > 470;
 		const countAbove = this.changesAboveViewport.length;
 		const countBelow = this.changesBelowViewport.length;
 
