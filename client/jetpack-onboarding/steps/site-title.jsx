@@ -21,7 +21,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { getSiteSettings, isRequestingSiteSettings } from 'state/site-settings/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	state = {
@@ -100,14 +99,9 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 }
 
 export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-
-		return {
-			isRequesting: isRequestingSiteSettings( state, siteId ),
-			siteId,
-			siteSettings: getSiteSettings( state, siteId ),
-		};
-	},
+	( state, { siteId } ) => ( {
+		isRequesting: isRequestingSiteSettings( state, siteId ),
+		siteSettings: getSiteSettings( state, siteId ),
+	} ),
 	{ saveSiteSettings }
 )( localize( JetpackOnboardingSiteTitleStep ) );
