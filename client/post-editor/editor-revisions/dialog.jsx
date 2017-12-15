@@ -61,10 +61,6 @@ class PostRevisionsDialog extends PureComponent {
 		}
 	}
 
-	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_editor_post_revisions_open' );
-	}
-
 	onLoadClick = () => {
 		const { loadRevision, revision, closeDialog } = this.props;
 		loadRevision( revision );
