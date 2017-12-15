@@ -32,7 +32,7 @@ export const jetpackConnectAuthorizeSchema = {
 				plansUrl: { type: 'string' },
 				timestamp: { type: 'number' },
 				siteReceived: { type: 'boolean' },
-				authClientId: { type: 'integer' },
+				clientId: { type: 'integer' },
 			},
 			additionalProperties: false,
 		},

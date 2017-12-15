@@ -76,7 +76,7 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 				isAuthorizing: false,
 				timestamp: Date.now(),
 				userAlreadyConnected: false,
-				authClientId: action.authClientId,
+				clientId: action.clientId,
 			};
 
 		case JETPACK_CONNECT_CREATE_ACCOUNT:
@@ -106,7 +106,7 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 			} );
 
 		case SITE_REQUEST_FAILURE:
-			if ( state.authClientId === action.siteId ) {
+			if ( state.clientId === action.siteId ) {
 				return Object.assign( {}, state, { clientNotResponding: true } );
 			}
 			return state;

@@ -130,14 +130,14 @@ describe( '#jetpackConnectAuthorize()', () => {
 	} );
 
 	test( 'should populate state with provided values', () => {
-		const authClientId = 12345;
+		const clientId = 12345;
 		const state = jetpackConnectAuthorize( undefined, {
 			type: JETPACK_CONNECT_QUERY_SET,
-			authClientId,
+			clientId,
 		} );
 
 		expect( state ).toMatchObject( {
-			authClientId,
+			clientId,
 			authorizeError: false,
 			authorizeSuccess: false,
 			isAuthorizing: false,
@@ -215,14 +215,14 @@ describe( '#jetpackConnectAuthorize()', () => {
 
 	test( 'should set clientNotResponding when a site request to current client fails', () => {
 		const state = jetpackConnectAuthorize(
-			{ authClientId: 123 },
+			{ clientId: 123 },
 			{ type: SITE_REQUEST_FAILURE, siteId: 123 }
 		);
 		expect( state ).toMatchObject( { clientNotResponding: true } );
 	} );
 
 	test( 'should return the given state when a site request fails on a different site', () => {
-		const originalState = { authClientId: 123 };
+		const originalState = { clientId: 123 };
 		const state = jetpackConnectAuthorize( originalState, {
 			type: SITE_REQUEST_FAILURE,
 			siteId: 234,
@@ -231,7 +231,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 	} );
 
 	test( "should return the given state when a site request fails and siteId doesn't match", () => {
-		const originalState = { authClientId: undefined };
+		const originalState = { clientId: undefined };
 		const state = jetpackConnectAuthorize( originalState, {
 			type: SITE_REQUEST_FAILURE,
 			siteId: 123,
@@ -240,7 +240,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 	} );
 
 	test( 'should persist state when a site request to a different client fails', () => {
-		const originalState = { authClientId: 123, clientNotResponding: false };
+		const originalState = { clientId: 123, clientNotResponding: false };
 		const state = jetpackConnectAuthorize( originalState, {
 			type: SITE_REQUEST_FAILURE,
 			siteId: 456,
@@ -250,7 +250,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 
 	test( 'should persist state', () => {
 		const originalState = deepFreeze( {
-			authClientId: 1234,
+			clientId: 1234,
 			timestamp: Date.now(),
 		} );
 		const state = jetpackConnectAuthorize( originalState, {
@@ -262,7 +262,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 
 	test( 'should load valid persisted state', () => {
 		const originalState = deepFreeze( {
-			authClientId: 1234,
+			clientId: 1234,
 			timestamp: Date.now(),
 		} );
 		const state = jetpackConnectAuthorize( originalState, {
@@ -274,7 +274,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 
 	test( 'should not load stale state', () => {
 		const originalState = deepFreeze( {
-			authClientId: 1234,
+			clientId: 1234,
 			timestamp: 1,
 		} );
 		const state = jetpackConnectAuthorize( originalState, {

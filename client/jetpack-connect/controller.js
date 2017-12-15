@@ -146,15 +146,15 @@ export function authorizeForm( context, next ) {
 		//
 		// FIXME
 		//
-		// However, from and authClientId are required for some reducer logic :(
+		// However, from and clientId are required for some reducer logic :(
 		//
 		// Hopefully when actions move to data-layer, this will become clearer and
-		// we won't need to store authClientId in state
+		// we won't need to store clientId in state
 		//
 		context.store.dispatch( {
 			type: JETPACK_CONNECT_QUERY_SET,
-			from: transformedQuery.authFrom,
-			authClientId: transformedQuery.authClientId,
+			from: transformedQuery.from,
+			clientId: transformedQuery.clientId,
 		} );
 
 		let interval = context.params.interval;

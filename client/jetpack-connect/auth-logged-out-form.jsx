@@ -82,7 +82,7 @@ class LoggedOutForm extends Component {
 
 	renderFooterLink() {
 		const redirectTo = this.getRedirectAfterLoginUrl();
-		const emailAddress = this.props.authUserEmail;
+		const emailAddress = this.props.authQuery.userEmail;
 
 		return (
 			<LoggedOutFormLinks>
