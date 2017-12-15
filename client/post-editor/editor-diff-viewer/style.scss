@@ -1,10 +1,17 @@
 /** @format */
 .editor-diff-viewer {
+	box-sizing: border-box;
+	overflow-y: hidden;
 	flex: 1;
 	margin: 0;
-	padding: 24px 32px 32px 32px;
-	box-sizing: border-box;
-	overflow-y: auto;
+	position: relative;
+
+	.editor-diff-viewer__scrollable {
+		padding: 24px 32px 32px 32px;
+		height: 100%;
+		overflow-y: auto;
+		box-sizing: border-box;
+	}
 
 	.editor-diff-viewer__title {
 		font-family: $serif;
@@ -15,6 +22,20 @@
 		height: auto;
 		line-height: 1.425;
 	}
+}
+
+.editor-diff-viewer__hint-above,
+.editor-diff-viewer__hint-below {
+	position: absolute;
+	right: 20px;
+}
+
+.editor-diff-viewer__hint-above {
+	top: 20px;
+}
+
+.editor-diff-viewer__hint-below {
+	bottom: 20px;
 }
 
 .editor-diff-viewer.is-loading .editor-diff-viewer__title {
