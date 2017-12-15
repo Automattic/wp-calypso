@@ -31,6 +31,7 @@ import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/ac
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import { storePlan } from './persistence-utils';
+import { urlToSlug } from 'lib/url';
 import {
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PERSONAL,
@@ -101,7 +102,8 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 
 export function maybeOnboard( { query, store }, next ) {
 	if ( ! isEmpty( query ) && query.onboarding ) {
-		const siteId = query.client_id;
+		const siteId = parseInt( query.client_id, 10 );
+		const siteSlug = urlToSlug( query.site_url );
 		const credentials = {
 			token: query.onboarding,
 			siteUrl: query.site_url,
@@ -110,7 +112,7 @@ export function maybeOnboard( { query, store }, next ) {
 
 		store.dispatch( receiveJetpackOnboardingCredentials( siteId, credentials ) );
 
-		return page.redirect( '/jetpack/onboarding' );
+		return page.redirect( '/jetpack/onboarding/' + siteSlug );
 	}
 
 	next();
