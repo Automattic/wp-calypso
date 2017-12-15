@@ -11,7 +11,7 @@ exports[`AuthorizeForm should render LoggedInForm when logged in 1`] = `
       authQuery={
         Object {
           "blogname": "Example Blog",
-          "clientId": "98765",
+          "clientId": 98765,
           "from": "banner-44-slide-1-dashboard",
           "homeUrl": "http://an.example.site",
           "jpVersion": "5.4",
@@ -45,7 +45,7 @@ exports[`AuthorizeForm should render LoggedOutForm when logged out 1`] = `
       authQuery={
         Object {
           "blogname": "Example Blog",
-          "clientId": "98765",
+          "clientId": 98765,
           "from": "banner-44-slide-1-dashboard",
           "homeUrl": "http://an.example.site",
           "jpVersion": "5.4",

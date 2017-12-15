@@ -8,7 +8,7 @@ import { noop } from 'lodash';
 /**
  * Test fixtures
  */
-export const CLIENT_ID = '98765';
+export const CLIENT_ID = 98765;
 export const SITE_ID = 1234567;
 export const SITE_SLUG = 'an.example.site';
 export const USER_ID = 1239876546;
