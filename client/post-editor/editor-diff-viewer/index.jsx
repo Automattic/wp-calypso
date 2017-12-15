@@ -169,6 +169,7 @@ class EditorDiffViewer extends PureComponent {
 			offset => offset > bottomBoundary
 		);
 
+		const showHints = this.state.viewportHeight > 600;
 		const countAbove = this.changesAboveViewport.length;
 		const countBelow = this.changesBelowViewport.length;
 
@@ -182,30 +183,32 @@ class EditorDiffViewer extends PureComponent {
 						<TextDiff operations={ diff.post_content } splitLines />
 					</pre>
 				</div>
-				{ countAbove > 0 && (
-					<Button className="editor-diff-viewer__hint-above" onClick={ this.scrollAbove }>
-						{ this.props.translate(
-							'%(numberOfChanges)d change above',
-							'%(numberOfChanges)d changes above',
-							{
-								args: { numberOfChanges: countAbove },
-								count: countAbove,
-							}
-						) }
-					</Button>
-				) }
-				{ countBelow > 0 && (
-					<Button className="editor-diff-viewer__hint-below" onClick={ this.scrollBelow }>
-						{ this.props.translate(
-							'%(numberOfChanges)d change below',
-							'%(numberOfChanges)d changes below',
-							{
-								args: { numberOfChanges: countBelow },
-								count: countBelow,
-							}
-						) }
-					</Button>
-				) }
+				{ showHints &&
+					countAbove > 0 && (
+						<Button className="editor-diff-viewer__hint-above" onClick={ this.scrollAbove }>
+							{ this.props.translate(
+								'%(numberOfChanges)d change above',
+								'%(numberOfChanges)d changes above',
+								{
+									args: { numberOfChanges: countAbove },
+									count: countAbove,
+								}
+							) }
+						</Button>
+					) }
+				{ showHints &&
+					countBelow > 0 && (
+						<Button className="editor-diff-viewer__hint-below" onClick={ this.scrollBelow }>
+							{ this.props.translate(
+								'%(numberOfChanges)d change below',
+								'%(numberOfChanges)d changes below',
+								{
+									args: { numberOfChanges: countBelow },
+									count: countBelow,
+								}
+							) }
+						</Button>
+					) }
 			</div>
 		);
 	}
