@@ -6,7 +6,7 @@ import React from 'react';
 import Debug from 'debug';
 import page from 'page';
 import validator from 'is-my-json-valid';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
