@@ -4,8 +4,9 @@
  * @format
  */
 
-import React, { PureComponent } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { find } from 'lodash';
 import page from 'page';
 
 /**
@@ -16,6 +17,7 @@ import FormattedHeader from 'components/formatted-header';
 import Checklist from 'components/checklist';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
+import ShareButton from 'components/share-button';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteChecklist } from 'state/selectors';
@@ -60,6 +62,44 @@ class ChecklistShow extends PureComponent {
 		}
 	};
 
+	renderHeader( completed ) {
+		const shareTo = [ 'facebook', 'twitter', 'linkedin', 'google-plus', 'pinterest' ];
+
+		if ( ! completed ) {
+			return (
+				<FormattedHeader
+					headerText="Welcome back!"
+					subHeaderText="Let’s get your site ready for its debut with a few quick setup steps."
+				/>
+			);
+		}
+
+		return (
+			<Fragment>
+				<img
+					src="/calypso/images/signup/confetti.svg"
+					aria-hidden="true"
+					className="checklist-show__confetti"
+				/>
+				<FormattedHeader
+					headerText="Conguratulations!"
+					subHeaderText="You have completed all your tasks. Now let's tell people about it. Share your site."
+				/>
+				<div className="checklist-show__share">
+					{ shareTo.map( option => (
+						<ShareButton
+							key={ option }
+							url={ `https://${ this.props.siteSlug }` }
+							title="Delighted to announce my new website is live today - please take a look."
+							siteSlug={ this.props.siteSlug }
+							service={ option }
+						/>
+					) ) }
+				</div>
+			</Fragment>
+		);
+	}
+
 	render() {
 		const { siteId, siteChecklist } = this.props;
 		let tasks = null;
@@ -68,14 +108,13 @@ class ChecklistShow extends PureComponent {
 			tasks = onboardingTasks( siteChecklist.tasks );
 		}
 
+		const completed = tasks && ! find( tasks, { completed: false } );
+
 		return (
-			<Main>
+			<Main className="checklist-show">
 				<DocumentHead title="Site Checklist" />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				<FormattedHeader
-					headerText="Welcome back!"
-					subHeaderText="Let’s get your site ready for its debut with a few quick setup steps."
-				/>
+				{ this.renderHeader( completed ) }
 				<Checklist
 					isLoading={ ! tasks }
 					tasks={ tasks }
