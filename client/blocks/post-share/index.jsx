@@ -568,17 +568,6 @@ class PostShare extends Component {
 								</Button>
 							) }
 						</h4>
-						<div className="post-share__subtitle">
-							{ translate(
-								'Share your post on all of your connected social media accounts using ' +
-									'{{a}}Publicize{{/a}}.',
-								{
-									components: {
-										a: <a href={ `/sharing/${ siteSlug }` } />,
-									},
-								}
-							) }
-						</div>
 					</div>
 					{ ! hasFetchedConnections && <div className="post-share__placeholder" /> }
 					{ this.renderRequestSharingNotice() }
