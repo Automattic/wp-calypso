@@ -10,7 +10,7 @@ import React from 'react';
 import TextDiff from 'components/text-diff';
 
 export default function TextDiffExample() {
-	const changes = [
+	const operations = [
 		{
 			op: 'del',
 			value: 'Old Title.',
@@ -23,7 +23,7 @@ export default function TextDiffExample() {
 
 	return (
 		<h2>
-			<TextDiff changes={ changes } />
+			<TextDiff operations={ operations } />
 		</h2>
 	);
 }
