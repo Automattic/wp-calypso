@@ -55,7 +55,7 @@ export const CommentListHeader = ( {
 				actionIcon="visible"
 				actionOnClick={ recordReaderArticleOpened }
 				actionText={ translate( 'View Post' ) }
-				onClick={ shouldUseHistoryBack && goBack }
+				onClick={ shouldUseHistoryBack ? goBack : undefined }
 				backHref={ backHref }
 				alwaysShowActionText
 			>
