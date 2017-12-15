@@ -10,13 +10,13 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { debounce, filter, first, flow, get, has, last, map, partial, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import { getPostRevision } from 'state/selectors';
 import TextDiff from 'components/text-diff';
-// import EditorDiffChanges from './changes';
 import Button from 'components/button';
 import scrollTo from 'lib/scroll-to';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -185,29 +185,23 @@ class EditorDiffViewer extends PureComponent {
 				</div>
 				{ showHints &&
 					countAbove > 0 && (
-						<Button className="editor-diff-viewer__hint-above" onClick={ this.scrollAbove }>
-							{ this.props.translate(
-								'%(numberOfChanges)d change above',
-								'%(numberOfChanges)d changes above',
-								{
-									args: { numberOfChanges: countAbove },
-									count: countAbove,
-								}
-							) }
-						</Button>
+						<div className="editor-diff-viewer__hint-above" onClick={ this.scrollAbove }>
+							<Gridicon className="editor-diff-viewer__hint-icon" size={ 18 } icon="arrow-up" />
+							{ this.props.translate( '%(numberOfChanges)d change', '%(numberOfChanges)d changes', {
+								args: { numberOfChanges: countAbove },
+								count: countAbove,
+							} ) }
+						</div>
 					) }
 				{ showHints &&
 					countBelow > 0 && (
-						<Button className="editor-diff-viewer__hint-below" onClick={ this.scrollBelow }>
-							{ this.props.translate(
-								'%(numberOfChanges)d change below',
-								'%(numberOfChanges)d changes below',
-								{
-									args: { numberOfChanges: countBelow },
-									count: countBelow,
-								}
-							) }
-						</Button>
+						<div className="editor-diff-viewer__hint-below" onClick={ this.scrollBelow }>
+							<Gridicon className="editor-diff-viewer__hint-icon" size={ 18 } icon="arrow-down" />
+							{ this.props.translate( '%(numberOfChanges)d change', '%(numberOfChanges)d changes', {
+								args: { numberOfChanges: countBelow },
+								count: countBelow,
+							} ) }
+						</div>
 					) }
 			</div>
 		);
