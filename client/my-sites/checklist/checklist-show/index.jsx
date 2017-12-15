@@ -21,23 +21,33 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteChecklist } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { onboardingTasks, urlForTask } from '../onboardingChecklist';
+import { onboardingTasks, tourForTask, urlForTask } from '../onboardingChecklist';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { createNotice } from 'state/notices/actions';
+import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 
 class ChecklistShow extends PureComponent {
 	onAction = id => {
-		const { siteSlug, siteChecklist, track } = this.props;
+		const { requestTour, siteSlug, siteChecklist, track } = this.props;
+
+		const tour = tourForTask( id );
 		const url = urlForTask( id, siteSlug );
-		if ( url && siteChecklist && siteChecklist.tasks ) {
+
+		if ( siteChecklist && siteChecklist.tasks && ( url || tour ) ) {
 			const status = siteChecklist.tasks[ id ] ? 'complete' : 'incomplete';
+
 			track( 'calypso_checklist_task_start', {
 				checklist_name: 'new_blog',
 				step_name: id,
 				status,
 			} );
 
-			page( url );
+			if ( url ) {
+				page( url );
+			}
+			if ( tour ) {
+				requestTour( tour );
+			}
 		}
 	};
 
@@ -83,9 +93,11 @@ const mapStateToProps = state => {
 	const siteSlug = getSiteSlug( state, siteId );
 	return { siteId, siteSlug, siteChecklist };
 };
+
 const mapDispatchToProps = {
 	track: recordTracksEvent,
 	notify: createNotice,
+	requestTour: requestGuidedTour,
 	update: requestSiteChecklistTaskUpdate,
 };
 

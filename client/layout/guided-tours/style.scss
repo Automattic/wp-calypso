@@ -41,6 +41,29 @@
 		position: relative;
 		top: 3px;
 	}
+
+	.tours__title {
+		font-size: 140%;
+	    font-weight: 300;
+	    display: flex;
+	    align-items: center;
+	    color: $white;
+	    margin-bottom: 10px;
+	}
+
+	.tours__completed-icon-wrapper {
+		background: $alert-green;
+		border-radius: 100%;
+		display: inline-block;
+		margin-right: 10px;
+		width: 25px;
+		height: 25px;
+	}
+
+	.tours__completed-icon {
+		margin-top: -10px;
+		margin-left: 2px;
+	}
 }
 
 .card.guided-tours__step-first {
@@ -85,6 +108,9 @@
 }
 
 .guided-tours__choice-button-row {
+	display: flex;
+	align-items: center;
+
 	.button {
 		width: 48%;
 	}
@@ -100,6 +126,20 @@
 		border: none;
 	}
 }
+
+a.config-elements__text-link,
+.config-elements__text-link {
+	color: $white;
+
+	&:hover {
+		text-decoration: none;
+	}
+
+	&:visited {
+		color: $white;
+	}
+}
+
 
 .guided-tours__single-button-row {
 	.button {
@@ -117,7 +157,7 @@
 	color: lighten( $gray, 10 );
 	margin-bottom: 0;
 	font-style: italic;
-	line-height: 24px;
+	line-height: 1.3em;
 	min-height: 24px;
 
 	.external-link {
