@@ -24,7 +24,15 @@ import {
 
 export const ChecklistSiteTaglineTour = makeTour(
 	<Tour name="checklistSiteTagline" version="20171205" path="/non-existent-route" when={ noop }>
-		<Step name="init" target="site-tagline-input" arrow="top-left" placement="below">
+		<Step
+			name="init"
+			target="site-tagline-input"
+			arrow="top-left"
+			placement="below"
+			style={ {
+				animationDelay: '0.7s',
+			} }
+		>
 			<p>
 				{ translate(
 					'First impressions last - a tagline tells visitors what your site is all about without ' +
