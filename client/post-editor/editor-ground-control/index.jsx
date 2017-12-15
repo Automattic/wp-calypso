@@ -174,10 +174,7 @@ export class EditorGroundControl extends PureComponent {
 			const tracksLabel = postUtils.isPage( this.props.page )
 				? 'calypso_editor_page_preview_button_click'
 				: 'calypso_editor_post_preview_button_click';
-			composeAnalytics(
-				this.props.recordTracksEvent( tracksLabel ),
-				this.props.recordGoogleEvent( 'Editor', googleLabel )
-			);
+			this.props.recordPreviewButtonClick( tracksLabel, googleLabel );
 		}
 	};
 
@@ -227,12 +224,8 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	onBackButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_editor_back_button_click' );
+		this.props.recordBackButtonClick();
 		page.back( this.props.allPostsUrl );
-	};
-
-	onSiteButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_editor_site_button_click' );
 	};
 
 	render() {
@@ -261,7 +254,7 @@ export class EditorGroundControl extends PureComponent {
 				<Site
 					compact
 					site={ this.props.site }
-					onSelect={ this.onSiteButtonClick }
+					onSelect={ this.props.recordSiteButtonClick }
 					indicator={ false }
 					homeLink={ true }
 					externalLink={ true }
@@ -297,7 +290,16 @@ export class EditorGroundControl extends PureComponent {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-	recordGoogleEvent,
-} )( localize( EditorGroundControl ) );
+const mapDispatchToProps = dispatch => ( {
+	recordPreviewButtonClick: ( tracksLabel, googleLabel ) =>
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( tracksLabel ),
+				recordGoogleEvent( 'Editor', googleLabel )
+			)
+		),
+	recordSiteButtonClick: () => dispatch( recordTracksEvent( 'calypso_editor_site_button_click' ) ),
+	recordBackButtonClick: () => dispatch( recordTracksEvent( 'calypso_editor_back_button_click' ) ),
+} );
+
+export default connect( null, mapDispatchToProps )( localize( EditorGroundControl ) );
