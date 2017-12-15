@@ -30,7 +30,8 @@ export const tldsWithAdditionalDetailsForms = enabledTldForms;
 export default class DomainDetailsForm extends PureComponent {
 	render() {
 		const { tld, ...props } = this.props;
-		const TldSpecificForm = tldSpecificForms[ tld ];
+		const topLevelOfTld = tld.substring( tld.lastIndexOf( '.' ) + 1 );
+		const TldSpecificForm = tldSpecificForms[ topLevelOfTld ];
 
 		if ( ! TldSpecificForm ) {
 			throw new Error( 'unrecognized tld in extra info form:', tld );
