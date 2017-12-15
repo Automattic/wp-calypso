@@ -1,0 +1,76 @@
+[
+	{
+		"id": 2,
+		"email": "lane@example.test",
+		"first_name": "Lane",
+		"last_name": "Chase",
+		"role": "customer",
+		"username": "chase6xe",
+		"billing": {
+			"first_name": "Lane",
+			"last_name": "Chase",
+			"company": "",
+			"address_1": "6502 State Line Road",
+			"address_2": "",
+			"city": "Wilkesboro",
+			"state": "NC",
+			"postcode": "28697",
+			"country": "US",
+			"email": "lanechase6xe@teleosaurs.xyz",
+			"phone": "(336) 382-9958"
+		},
+		"shipping": {
+			"first_name": "Lane",
+			"last_name": "Chase",
+			"company": "",
+			"address_1": "6502 State Line Road",
+			"address_2": "",
+			"city": "Wilkesboro",
+			"state": "NC",
+			"postcode": "28697",
+			"country": "US"
+		},
+		"is_paying_customer": false,
+		"orders_count": 1,
+		"total_spent": "35.00",
+		"avatar_url": "https://secure.gravatar.com/avatar/73e3b9fc3ec36a8797c2073c211d0db7?s=96&d=identicon&r=g",
+		"meta_data": []
+	},
+	{
+		"id": 3,
+		"email": "rollins@example.local",
+		"first_name": "Francheska",
+		"last_name": "Rollins",
+		"role": "customer",
+		"username": "rollins",
+		"billing": {
+			"first_name": "Francheska",
+			"last_name": "Rollins",
+			"company": "",
+			"address_1": "9918 52nd Drive",
+			"address_2": "",
+			"city": "Miami Beach",
+			"state": "FL",
+			"postcode": "33139",
+			"country": "US",
+			"email": "rollins@example.local",
+			"phone": "(305) 351-2321"
+		},
+		"shipping": {
+			"first_name": "Francheska",
+			"last_name": "Rollins",
+			"company": "",
+			"address_1": "9918 52nd Drive",
+			"address_2": "",
+			"city": "Miami Beach",
+			"state": "FL",
+			"postcode": "33139",
+			"country": "US"
+		},
+		"is_paying_customer": false,
+		"orders_count": 1,
+		"total_spent": "0.00",
+		"avatar_url": "https://secure.gravatar.com/avatar/d48da794f0304ada0b6e9ba6f015597d?s=96&d=identicon&r=g",
+		"meta_data": []
+	}
+]
