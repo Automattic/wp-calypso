@@ -127,7 +127,7 @@ class StoreAddress extends Component {
 				<div>
 					{ showLabel && <FormLabel>{ translate( 'Store location' ) }</FormLabel> }
 					<AddressView address={ this.state.address } />
-					<Button borderless onClick={ this.onShowDialog }>
+					<Button compact onClick={ this.onShowDialog }>
 						{ translate( 'Edit address' ) }
 					</Button>
 				</div>
