@@ -3,6 +3,12 @@
 		width: 660px;
 	}
 
+	.dialog__content {
+		.form-fieldset:last-child {
+			margin-bottom: 0;
+		}
+	}
+
 	.dialog__action-buttons {
 		overflow: visible;
 
