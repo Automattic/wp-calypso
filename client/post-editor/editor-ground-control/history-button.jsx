@@ -12,9 +12,8 @@ import { localize } from 'i18n-calypso';
  */
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 
-const HistoryButton = ( { loadRevision, postId, siteId, translate, selectHistory } ) => (
+const HistoryButton = ( { translate, selectHistory } ) => (
 	<div className="editor-ground-control__history">
 		<button
 			className="editor-ground-control__history-button button is-link"
@@ -22,7 +21,6 @@ const HistoryButton = ( { loadRevision, postId, siteId, translate, selectHistory
 		>
 			{ translate( 'History' ) }
 		</button>
-		<EditorRevisionsDialog loadRevision={ loadRevision } postId={ postId } siteId={ siteId } />
 	</div>
 );
 
