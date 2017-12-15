@@ -168,13 +168,7 @@ export class EditorGroundControl extends PureComponent {
 	onPreviewButtonClick = event => {
 		if ( this.isPreviewEnabled() ) {
 			this.props.onPreview( event );
-			const googleLabel = postUtils.isPage( this.props.page )
-				? 'Clicked Preview Page Button'
-				: 'Clicked Preview Post Button';
-			const tracksLabel = postUtils.isPage( this.props.page )
-				? 'calypso_editor_page_preview_button_click'
-				: 'calypso_editor_post_preview_button_click';
-			this.props.recordPreviewButtonClick( tracksLabel, googleLabel );
+			this.props.recordPreviewButtonClick();
 		}
 	};
 
@@ -291,11 +285,18 @@ export class EditorGroundControl extends PureComponent {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	recordPreviewButtonClick: ( tracksLabel, googleLabel ) =>
+	recordPreviewButtonClick: () =>
 		dispatch(
 			composeAnalytics(
-				recordTracksEvent( tracksLabel ),
-				recordGoogleEvent( 'Editor', googleLabel )
+				recordTracksEvent(
+					`calypso_editor_${ postUtils.isPage( page ) ? 'page' : 'post' }_preview_button_click`
+				),
+				recordGoogleEvent(
+					'Editor',
+					`Clicked Preview ${ postUtils.isPage( page ) ? 'Page' : 'Post' } Button`,
+					`Editor Preview ${ postUtils.isPage( page ) ? 'Page' : 'Post' } Button Clicked`,
+					`editor${ postUtils.isPage( page ) ? 'Page' : 'Post' }ButtonClicked`
+				)
 			)
 		),
 	recordSiteButtonClick: () => dispatch( recordTracksEvent( 'calypso_editor_site_button_click' ) ),
