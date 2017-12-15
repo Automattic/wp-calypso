@@ -110,7 +110,7 @@ export const emailSettingsSubmitSettings = ( siteId, settings ) => dispatch => {
 				result.push( {
 					group_id,
 					id,
-					value: option.value,
+					value: option.value || option.default,
 				} );
 			} );
 			return result;

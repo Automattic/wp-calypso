@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { omit, setWith } from 'lodash';
+import { filter, omit, isEmpty, setWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,6 @@ import {
 	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_FAILURE,
 	WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE,
 } from 'woocommerce/state/action-types';
-
 export default createReducer( null, {
 	[ WOOCOMMERCE_EMAIL_SETTINGS_REQUEST ]: () => {
 		return LOADING;
@@ -26,13 +25,21 @@ export default createReducer( null, {
 
 	[ WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS ]: ( state, { data } ) => {
 		const options = {};
+		const fromAddress = filter( data, {
+			group_id: 'email',
+			id: 'woocommerce_email_from_address',
+		} );
+		const defaultEmail = isEmpty( fromAddress ) ? '' : fromAddress[ 0 ].default;
 		data.forEach( function( option ) {
+			const def = ( option.id === 'recipient' )
+				? ( option.default || defaultEmail )
+				: option.default;
 			setWith(
 				options,
 				[ option.group_id, option.id ],
 				{
 					value: option.value,
-					default: option.default, // deafualt_value -> default is a reserved word
+					default: def,
 				},
 				Object,
 			);
