@@ -25,6 +25,7 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { cancelPurchase as cancelPurchaseLink } from 'me/purchases/paths';
+import { Notice } from 'components/notice';
 
 class Transfer extends React.PureComponent {
 	state = {
@@ -32,24 +33,40 @@ class Transfer extends React.PureComponent {
 	};
 
 	render() {
-		const { domain } = this.props;
+		const { domain, selectedSite, translate } = this.props;
 		let content = this.getDomainDetailsCard();
 
 		if ( domain.transferStatus === transferStatus.CANCELLED ) {
 			content = this.getCancelledContent();
 		}
 
-		const path = cancelPurchaseLink( this.props.selectedSite.slug, domain.subscriptionId );
+		let noCancelNotice;
+		let cancelNavItem;
+		if ( domain.transferStatus === transferStatus.PENDING_REGISTRY ) {
+			noCancelNotice = (
+				<Notice status={ 'is-info' } showDismiss={ false }>
+					{ translate(
+						'This transfer has been started is waiting authorization from your current provider. ' +
+							'If you need to cancel the transfer, please contact them for assistance.'
+					) }
+				</Notice>
+			);
+		} else {
+			cancelNavItem = (
+				<VerticalNav>
+					<VerticalNavItem path={ cancelPurchaseLink( selectedSite.slug, domain.subscriptionId ) }>
+						{ translate( 'Cancel Transfer' ) }
+					</VerticalNavItem>
+				</VerticalNav>
+			);
+		}
 
 		return (
 			<div className="edit__domain-details-card">
+				{ noCancelNotice }
 				<Header domain={ domain } />
 				{ content }
-				<VerticalNav>
-					<VerticalNavItem path={ path }>
-						{ this.props.translate( 'Cancel Transfer' ) }
-					</VerticalNavItem>
-				</VerticalNav>
+				{ cancelNavItem }
 			</div>
 		);
 	}
