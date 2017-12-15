@@ -94,7 +94,7 @@ class ShippingSettingsSaveButton extends Component {
 				</Button>
 			) : null;
 		}
-		const label = wcsEnabled ? translate( 'Save and finish' ) : translate( "I'm Finished" );
+		const label = wcsEnabled ? translate( 'Save & finish' ) : translate( "I'm Finished" );
 		return (
 			<Button onClick={ this.redirect } primary busy={ isSaving } disabled={ isSaving }>
 				{ label }
