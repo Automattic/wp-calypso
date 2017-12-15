@@ -65,8 +65,6 @@ import ConnectionsList, { NoConnectionsNotice } from './connections-list';
 import ActionsList from './publicize-actions-list';
 import CalendarButton from 'blocks/calendar-button';
 import EventsTooltip from 'components/date-picker/events-tooltip';
-import SectionHeader from 'components/section-header';
-import Tooltip from 'components/tooltip';
 import analytics from 'lib/analytics';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { sectionify } from 'lib/route/path';
@@ -447,31 +445,6 @@ class PostShare extends Component {
 
 		return (
 			<div className="post-share__services">
-				<SectionHeader
-					className="post-share__services-header"
-					label={ translate( 'Connected accounts' ) }
-				>
-					<Button
-						compact
-						href={ '/sharing/' + siteId }
-						className="post-share__add-button"
-						onMouseEnter={ this.showAddTooltip }
-						onMouseLeave={ this.hideAddTooltip }
-						ref="addAccountButton"
-						aria-label={ translate( 'Add account' ) }
-					>
-						<Gridicon icon="plus-small" size={ 18 } />
-						<Gridicon icon="user" size={ 18 } />
-						<Tooltip
-							isVisible={ this.state.showAccountTooltip }
-							context={ this.refs && this.refs.addAccountButton }
-							position="bottom"
-						>
-							{ translate( 'Add account' ) }
-						</Tooltip>
-					</Button>
-				</SectionHeader>
-
 				<ConnectionsList
 					{ ...{
 						connections,
