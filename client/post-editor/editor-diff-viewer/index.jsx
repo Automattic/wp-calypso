@@ -39,6 +39,23 @@ class EditorDiffViewer extends PureComponent {
 		viewportHeight: 0,
 	};
 
+	componentDidMount() {
+		this.tryScrollingToFirstChangeOrTop();
+		if ( typeof window !== 'undefined' ) {
+			window.addEventListener( 'resize', this.debouncedRecomputeChanges );
+		}
+	}
+
+	componentWillUnmount() {
+		if ( typeof window !== 'undefined' ) {
+			window.removeEventListener( 'resize', this.debouncedRecomputeChanges );
+		}
+	}
+
+	componentDidUpdate() {
+		this.tryScrollingToFirstChangeOrTop();
+	}
+
 	lastScolledRevisionId = null;
 
 	tryScrollingToFirstChangeOrTop = () => {
@@ -94,17 +111,6 @@ class EditorDiffViewer extends PureComponent {
 		} );
 	};
 
-	componentDidMount() {
-		this.tryScrollingToFirstChangeOrTop();
-		if ( typeof window !== undefined ) {
-			window.addEventListener( 'resize', this.debouncedRecomputeChanges );
-		}
-	}
-
-	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.debouncedRecomputeChanges );
-	}
-
 	handleScrollableNode = node => {
 		this.node = node;
 		if ( this.node ) {
@@ -113,10 +119,6 @@ class EditorDiffViewer extends PureComponent {
 			this.node.removeEventListener( 'scroll', this.handleScroll );
 		}
 	};
-
-	componentDidUpdate() {
-		this.tryScrollingToFirstChangeOrTop();
-	}
 
 	scrollAbove = () => {
 		this.centerScrollingOnOffset( last( this.changesAboveViewport ) );
@@ -134,7 +136,7 @@ class EditorDiffViewer extends PureComponent {
 
 		const bottomBoundary = this.state.scrollTop + this.state.viewportHeight;
 
-		// saving to this to we can access if from `scrollAbove` and `scrollBelow`
+		// saving to `this` so we can access if from `scrollAbove` and `scrollBelow`
 		this.changesAboveViewport = filter(
 			this.state.changeOffsets,
 			offset => offset < this.state.scrollTop
