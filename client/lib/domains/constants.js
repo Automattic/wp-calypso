@@ -34,6 +34,7 @@ const domainAvailability = {
 	EMPTY_QUERY: 'empty_query',
 	FORBIDDEN: 'forbidden_domain',
 	FORBIDDEN_SUBDOMAIN: 'forbidden_subdomain',
+	INITIAL_REGISTRATION_PERIOD_MAPPABLE: 'initial_registration_period_mappable',
 	INVALID: 'invalid_domain',
 	INVALID_QUERY: 'invalid_query',
 	INVALID_TLD: 'invalid_tld',
