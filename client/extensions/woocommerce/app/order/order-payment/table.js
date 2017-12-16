@@ -21,7 +21,7 @@ import {
 	getOrderShippingTax,
 	getOrderTotalTax,
 } from 'woocommerce/lib/order-values';
-import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
+import { getOrderFeeCost, getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import OrderTotalRow from '../order-details/row-total';
 import PriceInput from 'woocommerce/components/price-input';
 import ScreenReaderText from 'components/screen-reader-text';
@@ -190,6 +190,7 @@ class OrderRefundTable extends Component {
 		const { order, translate } = this.props;
 		const value = this.state.fees[ i ];
 		const inputId = `fee_line-${ item.id }`;
+		const initialValue = getOrderFeeCost( order, item.id ) + getOrderFeeTax( order, item.id );
 		return (
 			<TableRow key={ i } className="order-payment__items order-details__items">
 				<TableItem
@@ -211,7 +212,7 @@ class OrderRefundTable extends Component {
 					<PriceInput
 						id={ inputId }
 						currency={ order.currency }
-						max={ get( order, `fee_lines[${ i }].total` ) }
+						max={ getCurrencyFormatDecimal( initialValue, order.currency ) }
 						value={ value }
 						onChange={ this.onChange( 'fee', i ) }
 						onBlur={ this.formatInput( `fees[${ i }]` ) }
