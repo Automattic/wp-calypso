@@ -322,6 +322,7 @@ describe( 'reducer', () => {
 					avatar_URL: 'https://gravatar.com/whatever',
 					URL: 'https://example.com/',
 					login: 'chicken',
+					nice_name: 'A Former Egg',
 					some_other_property: 'aaaaa',
 				},
 			];
@@ -346,6 +347,7 @@ describe( 'reducer', () => {
 								avatar_URL: 'https://gravatar.com/whatever',
 								URL: 'https://example.com/',
 								login: 'chicken',
+								nice_name: 'A Former Egg',
 							},
 						],
 						found: 2,
