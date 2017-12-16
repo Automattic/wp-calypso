@@ -20,7 +20,6 @@ import Button from 'components/button';
 import Dialog from 'components/dialog';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
 import formatCurrency from 'lib/format-currency';
-import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
@@ -33,7 +32,6 @@ import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Notice from 'components/notice';
 import OrderRefundTable from './table';
-import PriceInput from 'woocommerce/components/price-input';
 import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
 
 class RefundDialog extends Component {
@@ -205,11 +203,10 @@ class RefundDialog extends Component {
 		const { refundNote } = this.state;
 		const dialogClass = 'woocommerce'; // eslint/css specificity hack
 
-		let refundTotal = formatCurrency( 0, order.currency );
+		let refundTotal = getCurrencyFormatDecimal( 0, order.currency );
 		if ( this.state.refundTotal ) {
-			refundTotal = formatCurrency( this.state.refundTotal, order.currency );
+			refundTotal = getCurrencyFormatDecimal( this.state.refundTotal, order.currency );
 		}
-		refundTotal = refundTotal.replace( /[^0-9.,]/g, '' );
 
 		const errorMessage = this.isRefundInvalid( refundTotal );
 		const refundDisabled = isPaymentLoading || !! errorMessage;
@@ -245,23 +242,18 @@ class RefundDialog extends Component {
 						<FormTextarea onChange={ this.updateNote } name="refund_note" value={ refundNote } />
 					</FormLabel>
 
-					<FormFieldset className="order-payment__details">
-						<FormLabel className="order-payment__amount">
+					<div className="order-payment__details">
+						<div className="order-payment__amount">
 							<span className="order-payment__amount-label">
 								{ translate( 'Total refund amount' ) }
 							</span>
-							<div className="order-payment__amount-value">
-								<PriceInput
-									name="refund_total"
-									readOnly
-									currency={ order.currency }
-									value={ refundTotal }
-								/>
-							</div>
-						</FormLabel>
+							<span className="order-payment__amount-value">
+								{ formatCurrency( refundTotal, order.currency ) }
+							</span>
+						</div>
 
 						{ this.renderCreditCard() }
-					</FormFieldset>
+					</div>
 				</form>
 			</Dialog>
 		);
