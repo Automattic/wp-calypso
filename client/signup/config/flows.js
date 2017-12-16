@@ -336,7 +336,11 @@ function filterDesignTypeInFlow( flowName, flow ) {
 		return;
 	}
 
-	if ( includes( flow.steps, 'design-type' ) && abtest( 'signupSiteSegmentStep' ) === 'variant' ) {
+	if (
+		includes( flow.steps, 'design-type' ) &&
+		abtest( 'signupSiteSegmentStep' ) === 'variant' &&
+		flowName !== 'subdomain'
+	) {
 		return replaceStepInFlow( flow, 'design-type', 'about' );
 	}
 
