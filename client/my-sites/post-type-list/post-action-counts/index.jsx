@@ -1,5 +1,3 @@
-/* @format */
-
 /**
  * External dependencies
  */
@@ -18,6 +16,10 @@ import { getPostStat } from 'state/stats/posts/selectors';
 import { canCurrentUser } from 'state/selectors';
 import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { hideActiveLikesPopover, toggleLikesPopover } from 'state/ui/post-type-list/actions';
+import { isLikesPopoverOpen } from 'state/ui/post-type-list/selectors';
+import Popover from 'components/popover';
+import PostLikes from 'blocks/post-likes';
 
 class PostActionCounts extends PureComponent {
 	static propTypes = {
@@ -32,6 +34,21 @@ class PostActionCounts extends PureComponent {
 			postType: type,
 			context: 'action_counts',
 		} );
+	};
+
+	onLikesClick = ( event ) => {
+		this.onActionClick( 'likes' )();
+		event.preventDefault();
+
+		this.props.toggleLikesPopover( this.props.globalId );
+	};
+
+	closeLikesPopover = () => {
+		this.props.hideActiveLikesPopover();
+	};
+
+	setLikesPopoverContext = ( element ) => {
+		this.likesPopoverContext = element;
 	};
 
 	renderCommentCount() {
@@ -58,15 +75,24 @@ class PostActionCounts extends PureComponent {
 	}
 
 	renderLikeCount() {
-		const { likeCount: count, numberFormat, postId, showLikes, siteSlug, translate } = this.props;
+		const {
+			likeCount: count,
+			numberFormat,
+			siteId,
+			postId,
+			showLikes,
+			siteSlug,
+			translate,
+			isCurrentLikesPopoverOpen,
+		} = this.props;
 
 		if ( count < 1 || ! showLikes ) {
 			return null;
 		}
 
 		return (
-			<li>
-				<a href={ `/stats/post/${ postId }/${ siteSlug }` } onClick={ this.onActionClick( 'likes' ) } >
+			<li ref={ this.setLikesPopoverContext }>
+				<a href={ `/stats/post/${ postId }/${ siteSlug }` } onClick={ this.onLikesClick }>
 					{ translate(
 						'%(count)s Like',
 						'%(count)s Likes',
@@ -76,6 +102,15 @@ class PostActionCounts extends PureComponent {
 						}
 					) }
 				</a>
+				{ isCurrentLikesPopoverOpen && (
+					<Popover
+						isVisible={ true }
+						context={ this.likesPopoverContext }
+						onClose={ this.closeLikesPopover }
+					>
+						<PostLikes siteId={ siteId } postId={ postId } />
+					</Popover>
+				) }
 			</li>
 		);
 	}
@@ -145,5 +180,10 @@ export default connect( ( state, { globalId } ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		type: get( post, 'type', 'unknown' ),
 		viewCount: getPostStat( state, siteId, postId, 'views' ),
+		isCurrentLikesPopoverOpen: isLikesPopoverOpen( state, globalId ),
 	};
-}, { recordTracksEvent } )( localize( PostActionCounts ) );
+}, {
+	hideActiveLikesPopover,
+	toggleLikesPopover,
+	recordTracksEvent,
+} )( localize( PostActionCounts ) );
