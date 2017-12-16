@@ -80,24 +80,21 @@ export class SitesDropdown extends PureComponent {
 
 	render() {
 		return (
-			<div className={ classNames(
-				'sites-dropdown',
-				{ 'is-open': this.state.open },
-				{ 'has-multiple-sites': this.props.hasMultipleSites }
-				) }>
+			<div
+				className={ classNames(
+					'sites-dropdown',
+					{ 'is-open': this.state.open },
+					{ 'has-multiple-sites': this.props.hasMultipleSites }
+				) }
+			>
 				<div className="sites-dropdown__wrapper">
-					<div
-						className="sites-dropdown__selected"
-						onClick={ this.toggleOpen } >
-						{
-							this.props.isPlaceholder
-							? <SitePlaceholder />
-							: <Site siteId={ this.state.selectedSiteId } indicator={ false } />
-						}
-						{
-							this.props.hasMultipleSites &&
-							<Gridicon icon="chevron-down" />
-						}
+					<div className="sites-dropdown__selected" onClick={ this.toggleOpen }>
+						{ this.props.isPlaceholder ? (
+							<SitePlaceholder />
+						) : (
+							<Site siteId={ this.state.selectedSiteId } indicator={ false } />
+						) }
+						{ this.props.hasMultipleSites && <Gridicon icon="chevron-down" /> }
 					</div>
 					{ this.props.hasMultipleSites && this.state.open &&
 						<SiteSelector
@@ -115,9 +112,7 @@ export class SitesDropdown extends PureComponent {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		primarySiteId: getPrimarySiteId( state ),
-		hasMultipleSites: get( getCurrentUser( state ), 'site_count', 1 ) > 1,
-	} )
-)( SitesDropdown );
+export default connect( state => ( {
+	primarySiteId: getPrimarySiteId( state ),
+	hasMultipleSites: get( getCurrentUser( state ), 'site_count', 1 ) > 1,
+} ) )( SitesDropdown );
