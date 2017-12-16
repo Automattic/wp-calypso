@@ -10,6 +10,8 @@ import { without } from 'lodash';
  * Internal dependencies
  */
 import {
+	POST_TYPE_LIST_LIKES_POPOVER_HIDE,
+	POST_TYPE_LIST_LIKES_POPOVER_TOGGLE,
 	POST_TYPE_LIST_MULTI_SELECTION_MODE_TOGGLE,
 	POST_TYPE_LIST_SELECTION_TOGGLE,
 	POST_TYPE_LIST_SHARE_PANEL_HIDE,
@@ -19,6 +21,7 @@ import {
 
 const initialState = {
 	activeSharePanels: [],
+	postIdWithActiveLikesPopover: null,
 	isMultiSelectEnabled: false,
 	selectedPosts: [],
 };
@@ -49,6 +52,24 @@ export const postTypeList = ( state = initialState, action ) => {
 				...state,
 				isMultiSelectEnabled: false,
 				selectedPosts: [],
+			};
+
+		case POST_TYPE_LIST_LIKES_POPOVER_HIDE:
+			return {
+				...state,
+				postIdWithActiveLikesPopover: null,
+			};
+
+		case POST_TYPE_LIST_LIKES_POPOVER_TOGGLE:
+			if ( state.postIdWithActiveLikesPopover === action.postGlobalId ) {
+				return {
+					...state,
+					postIdWithActiveLikesPopover: null,
+				};
+			}
+			return {
+				...state,
+				postIdWithActiveLikesPopover: action.postGlobalId,
 			};
 
 		case POST_TYPE_LIST_SHARE_PANEL_HIDE:
