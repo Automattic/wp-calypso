@@ -35,6 +35,6 @@ describe( 'DomainToPaidPlanNotice', () => {
 
 	test( 'should render component when site information is available and the site is eligible', () => {
 		const wrapper = shallow( <DomainToPaidPlanNotice site={ site } eligible /> );
-		expect( wrapper.type().displayName ).to.equal( 'Localized(Notice)' );
+		expect( wrapper.type().displayName ).to.equal( 'Localized(SidebarBanner)' );
 	} );
 } );

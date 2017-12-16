@@ -11,11 +11,16 @@
 	.sidebar-banner__icon-wrapper {
 		flex: 0 0 auto;
 		padding: 5px 5px 2px;
+
+		svg {
+			width: 18px;
+			height: 18px;
+		}
 	}
 
 	.sidebar-banner__content {
 		width: 100%;
-		padding: 6px 5px 2px;
+		padding: 6px 5px 5px;
 	}
 
 	a {

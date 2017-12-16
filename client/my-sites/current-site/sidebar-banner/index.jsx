@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
@@ -35,7 +34,7 @@ export class SidebarBanner extends Component {
 		return (
 			<div className={ classes }>
 				<span className="sidebar-banner__icon-wrapper">
-					<Gridicon className="sidebar-banner__icon" icon={ icon } size={ 18 } />
+					<Gridicon className="sidebar-banner__icon" icon={ icon } size={ 24 } />
 				</span>
 				<span className="sidebar-banner__content">
 					<span className="sidebar-banner__text">{ text ? text : children }</span>
