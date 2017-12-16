@@ -51,7 +51,7 @@ class PriceInput extends Component {
 			this.props.onChange( {
 				target: {
 					name,
-					value: initialValue,
+					value: initialValue.toString(),
 				},
 			} );
 		} );
