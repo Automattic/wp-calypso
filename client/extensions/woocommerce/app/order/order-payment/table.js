@@ -212,7 +212,7 @@ class OrderRefundTable extends Component {
 					<PriceInput
 						id={ inputId }
 						currency={ order.currency }
-						max={ getCurrencyFormatDecimal( initialValue, order.currency ) }
+						initialValue={ getCurrencyFormatDecimal( initialValue, order.currency ) }
 						value={ value }
 						onChange={ this.onChange( 'fee', i ) }
 						onBlur={ this.formatInput( `fees[${ i }]` ) }

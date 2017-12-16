@@ -27,7 +27,7 @@ class PriceInput extends Component {
 		currencySetting: PropTypes.shape( {
 			value: PropTypes.string,
 		} ),
-		max: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
+		initialValue: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
 		name: PropTypes.string,
 		value: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
 	};
@@ -44,37 +44,37 @@ class PriceInput extends Component {
 		this.setState( { value } );
 	}
 
-	resetToMax = () => {
-		const { max, name = '' } = this.props;
-		this.setState( { value: this.props.max }, () => {
+	resetToInitial = () => {
+		const { initialValue, name = '' } = this.props;
+		this.setState( { value: initialValue }, () => {
 			// All uses of onChange expect and event object of this shape
 			this.props.onChange( {
 				target: {
 					name,
-					value: max,
+					value: initialValue,
 				},
 			} );
 		} );
 	};
 
 	render() {
-		const { currency, currencySetting, max, siteId, value } = this.props;
+		const { currency, currencySetting, initialValue, siteId, value } = this.props;
 		const props = {
 			...omit( this.props, [
 				'currency',
 				'currencySetting',
 				'dispatch',
-				'max',
+				'initialValue',
 				'siteId',
 				'value',
 			] ),
 		};
 		const displayCurrency = ! currency && currencySetting ? currencySetting.value : currency;
 		const currencyObject = getCurrencyObject( value, displayCurrency );
-		let maxButton;
-		if ( max ) {
-			maxButton = (
-				<Button onClick={ this.resetToMax } compact borderless>
+		let resetButton;
+		if ( initialValue ) {
+			resetButton = (
+				<Button onClick={ this.resetToInitial } compact borderless>
 					<Gridicon icon="undo" />
 				</Button>
 			);
@@ -85,7 +85,7 @@ class PriceInput extends Component {
 				{ currencyObject ? (
 					<FormCurrencyInput
 						currencySymbolPrefix={ currencyObject.symbol }
-						currencySymbolSuffix={ maxButton }
+						currencySymbolSuffix={ resetButton }
 						value={ this.state.value }
 						{ ...props }
 					/>

@@ -57,7 +57,7 @@ class OrderTotalRow extends Component {
 						currency={ currency }
 						onBlur={ onBlur }
 						onChange={ onChange }
-						max={ initialValue }
+						initialValue={ initialValue }
 						value={ total }
 					/>
 				</TableItem>
