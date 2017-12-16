@@ -21,6 +21,7 @@ describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'activeSharePanels',
+			'postIdWithActiveLikesPopover',
 			'isMultiSelectEnabled',
 			'selectedPosts',
 		] );
