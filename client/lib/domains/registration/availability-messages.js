@@ -144,6 +144,23 @@ function getAvailabilityNotice( domain, error, site ) {
 				severity = 'info';
 			}
 			break;
+		case domainAvailability.INITIAL_REGISTRATION_PERIOD_MAPPABLE:
+			if ( tld ) {
+				message = translate(
+					'This domain is still in the 60-day initial registration period and cannot yet be transferred. ' +
+						'You can either wait until the domain has been registered for 60 days or you can {{a}}map it ' +
+						'to WordPress.com{{/a}} to use it with your site right now.',
+					{
+						args: { tld },
+						components: {
+							strong: <strong />,
+							a: <a rel="noopener noreferrer" href={ paths.domainMapping( site, domain ) } />,
+						},
+					}
+				);
+				severity = 'info';
+			}
+			break;
 		case domainAvailability.MAINTENANCE:
 			if ( tld ) {
 				message = translate(
