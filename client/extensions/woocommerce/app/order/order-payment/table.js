@@ -266,6 +266,10 @@ class OrderRefundTable extends Component {
 			'has-refund': !! refundValue,
 			'is-refund-modal': true,
 		} );
+		const initialShippingValue = getCurrencyFormatDecimal(
+			parseFloat( order.shipping_total ) + getOrderShippingTax( order ),
+			order.currency
+		);
 
 		return (
 			<div>
@@ -289,7 +293,7 @@ class OrderRefundTable extends Component {
 						isEditable
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
-						initialValue={ order.shipping_total }
+						initialValue={ initialShippingValue }
 						value={ this.state.shippingTotal }
 						name="shipping_total"
 						onChange={ this.onChange( 'shipping_total' ) }
