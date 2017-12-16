@@ -18,7 +18,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import SettingsNavigation from '../navigation';
 import ShippingSettingsSaveButton from './save-button';
 
-const ShippingHeader = ( { translate, site } ) => {
+const ShippingHeader = ( { onSaveSuccess, translate, site } ) => {
 	const breadcrumbs = [
 		<a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a>,
 		<span>{ translate( 'Shipping' ) }</span>,
@@ -26,7 +26,7 @@ const ShippingHeader = ( { translate, site } ) => {
 	return (
 		<div>
 			<ActionHeader breadcrumbs={ breadcrumbs }>
-				<ShippingSettingsSaveButton />
+				<ShippingSettingsSaveButton onSaveSuccess={ onSaveSuccess } />
 			</ActionHeader>
 			<SettingsNavigation activeSection="shipping" />
 		</div>
@@ -34,6 +34,7 @@ const ShippingHeader = ( { translate, site } ) => {
 };
 
 ShippingHeader.propTypes = {
+	onSaveSuccess: PropTypes.func.isRequired,
 	site: PropTypes.shape( {
 		slug: PropTypes.string,
 	} ),
