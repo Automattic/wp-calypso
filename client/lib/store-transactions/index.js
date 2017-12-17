@@ -201,14 +201,15 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 };
 
 function createPaygateToken( requestType, cardDetails, callback ) {
+	debug( 'creating token with Paygate' );
 	wpcom.paygateConfiguration(
 		{
 			request_type: requestType,
 			country: cardDetails.country,
 		},
-		function( error, configuration ) {
-			if ( error ) {
-				callback( error );
+		function( configError, configuration ) {
+			if ( configError ) {
+				callback( configError );
 				return;
 			}
 
