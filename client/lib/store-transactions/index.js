@@ -290,7 +290,7 @@ function createEbanxToken( requestType, cardDetails, callback ) {
 
 	function createTokenCallback( ebanxResponse ) {
 		if ( ebanxResponse.data.hasOwnProperty( 'status' ) ) {
-			ebanxResponse.data.payment_method = 'WPCOM_Billing_Ebanx';
+			ebanxResponse.data.paymentMethod = 'WPCOM_Billing_Ebanx';
 			callback( null, ebanxResponse.data );
 		} else {
 			const errorMessage =
