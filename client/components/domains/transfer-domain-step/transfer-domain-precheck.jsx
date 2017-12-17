@@ -36,6 +36,9 @@ class TransferDomainPrecheck extends React.PureComponent {
 		loading: true,
 		losingRegistrar: '',
 		losingRegistrarIanaId: '',
+		inInitialRegistrationPeriod: true,
+		creationDate: '',
+		transferEligibleDate: '',
 		currentStep: 1,
 	};
 
@@ -58,20 +61,43 @@ class TransferDomainPrecheck extends React.PureComponent {
 		this.props.setValid( domain, supportsPrivacy );
 	};
 
-	refreshStatus = ( proceedToNextStep = true ) => {
+	refreshStatus = () => {
 		this.setState( { loading: true } );
 
 		checkInboundTransferStatus( this.props.domain, ( error, result ) => {
+			const { currentStep } = this.state;
+			let stepToCheck = currentStep;
+
 			if ( ! isEmpty( error ) ) {
 				return;
 			}
 
-			if ( proceedToNextStep && result.unlocked ) {
-				this.showNextStep();
+			if ( 1 === stepToCheck ) {
+				if ( ! result.in_initial_registration_period ) {
+					stepToCheck++;
+				} else {
+					this.showStep( 1 );
+				}
+			}
+
+			if ( 2 === stepToCheck ) {
+				if ( result.unlocked ) {
+					stepToCheck++;
+				} else {
+					this.showStep( 2 );
+				}
+			}
+
+			if ( 3 === stepToCheck ) {
+				this.showStep( 3 );
+			}
+
+			if ( 4 === stepToCheck ) {
+				this.showStep( 4 );
 			}
 
 			// Reset steps if domain became locked again
-			if ( ! result.unlocked ) {
+			if ( ! result.unlocked && this.state.currentStep > 2 ) {
 				this.resetSteps();
 			}
 
@@ -82,18 +108,22 @@ class TransferDomainPrecheck extends React.PureComponent {
 				loading: false,
 				losingRegistrar: result.registrar,
 				losingRegistrarIanaId: result.registrar_iana_id,
+				inInitialRegistrationPeriod: result.in_initial_registration_period,
+				creationDate: result.creation_date,
+				transferEligibleDate: result.transfer_eligible_date,
 			} );
 		} );
 	};
 
-	refreshStatusOnly = () => {
-		this.refreshStatus( false );
+	resetSteps = () => {
+		if ( this.state.currentStep !== 2 ) {
+			this.setState( { currentStep: 2 } );
+		}
 	};
 
-	resetSteps = () => {
-		if ( this.state.currentStep !== 1 ) {
-			this.setState( { currentStep: 1 } );
-		}
+	showStep = step => {
+		this.props.recordNextStep( this.props.domain, step );
+		this.setState( { currentStep: step } );
 	};
 
 	showNextStep = () => {
@@ -121,31 +151,94 @@ class TransferDomainPrecheck extends React.PureComponent {
 							<strong>{ heading }</strong>
 							{ isStepFinished && stepStatus }
 						</div>
-						{ isAtCurrentStep && (
-							<div>
-								<div className="transfer-domain-step__section-message">{ message }</div>
-								<div className="transfer-domain-step__section-action">
-									<Button
-										compact
-										onClick={ unlocked ? this.showNextStep : this.refreshStatus }
-										busy={ loading }
-									>
-										{ buttonText }
-									</Button>
-									{ stepStatus }
+						{ isAtCurrentStep &&
+							message && (
+								<div>
+									<div className="transfer-domain-step__section-message">{ message }</div>
+									{ buttonText && (
+										<div className="transfer-domain-step__section-action">
+											<Button
+												compact
+												onClick={ unlocked ? this.showNextStep : this.refreshStatus }
+												busy={ loading }
+											>
+												{ buttonText }
+											</Button>
+											{ stepStatus }
+										</div>
+									) }
 								</div>
-							</div>
-						) }
+							) }
 					</div>
 				</div>
 			</Card>
 		);
 	}
 
+	getInitialRegistrationPeriodMessage() {
+		const { translate } = this.props;
+		const {
+			creationDate,
+			currentStep,
+			inInitialRegistrationPeriod,
+			loading,
+			transferEligibleDate,
+		} = this.state;
+		const step = 1;
+		const isStepFinished = currentStep > step;
+
+		let heading = inInitialRegistrationPeriod
+			? translate( 'Domain was registered less than 60 days ago.' )
+			: translate( 'Domain is old enough to transfer.' );
+		let message = inInitialRegistrationPeriod
+			? translate(
+					'Your domain was registered on %(creationDate)s. Domains that were registered less than 60 days ago are not ' +
+						'eligible for transfer. You can either wait until %(transferEligibleDate)s to transfer your domain or you ' +
+						'can make your domain work with WordPress.com now by {{mappingLink}}mapping it{{/mappingLink}}.',
+					{
+						args: {
+							creationDate,
+							transferEligibleDate,
+						},
+						components: {
+							mappingLink: <a href="" rel="noopener noreferrer" target="_blank" />,
+							supportLink: <a href="" rel="noopener noreferrer" target="_blank" />,
+						},
+					}
+				)
+			: null;
+
+		let classes = inInitialRegistrationPeriod
+			? 'transfer-domain-step__lock-status transfer-domain-step__locked'
+			: 'transfer-domain-step__lock-status transfer-domain-step__unlocked';
+
+		let icon = inInitialRegistrationPeriod ? 'cross' : 'checkmark';
+		let statusText = inInitialRegistrationPeriod
+			? translate( 'Registered less than 60 days ago' )
+			: translate( 'Registered more than 60 days ago' );
+
+		if ( loading && ! isStepFinished ) {
+			classes = 'transfer-domain-step__lock-status transfer-domain-step__checking';
+			heading = 'Domain registration date check.';
+			icon = 'sync';
+			statusText = 'Checking...';
+			message = null;
+		}
+
+		const status = (
+			<div className={ classes }>
+				<Gridicon icon={ icon } size={ 12 } />
+				<span>{ statusText }</span>
+			</div>
+		);
+
+		return this.getSection( heading, message, null, step, status );
+	}
+
 	getStatusMessage() {
 		const { translate } = this.props;
 		const { currentStep, unlocked, loading } = this.state;
-		const step = 1;
+		const step = 2;
 		const isStepFinished = currentStep > step;
 
 		const heading = unlocked
@@ -197,7 +290,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 	getPrivacyMessage() {
 		const { translate } = this.props;
 		const { currentStep, email, loading } = this.state;
-		const step = 2;
+		const step = 3;
 		const isStepFinished = currentStep > step;
 
 		const heading = translate( 'Verify we can get in touch.' );
@@ -265,7 +358,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const statusText = loading ? translate( 'Checking…' ) : translate( 'Refresh email address' );
 
 		const stepStatus = ! isStepFinished && (
-			<a className={ statusClasses } onClick={ this.refreshStatusOnly }>
+			<a className={ statusClasses } onClick={ this.refreshStatus }>
 				<Gridicon icon={ statusIcon } size={ 12 } />
 				<span>{ statusText }</span>
 			</a>
@@ -297,7 +390,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		);
 		const buttonText = translate( 'I have my authorization code' );
 
-		return this.getSection( heading, message, buttonText, 3 );
+		return this.getSection( heading, message, buttonText, 4 );
 	}
 
 	getHeader() {
@@ -329,6 +422,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		return (
 			<div className="transfer-domain-step__precheck">
 				{ this.getHeader() }
+				{ this.getInitialRegistrationPeriodMessage() }
 				{ this.getStatusMessage() }
 				{ this.getPrivacyMessage() }
 				{ this.getEppMessage() }
@@ -353,7 +447,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 						</p>
 					</div>
 					<Button
-						disabled={ ! unlocked || currentStep < 4 }
+						disabled={ ! unlocked || currentStep < 5 }
 						onClick={ this.onClick }
 						primary={ true }
 					>
