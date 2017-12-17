@@ -125,13 +125,13 @@ class ShippingLabels extends Component {
 				this.setState( { expanded: true } );
 			};
 
-			const { card_type: selectedType, card_digits: selectedDigits } = find( paymentMethods, {
-				payment_method_id: selectedPaymentMethod,
-			} );
-
 			let summary;
 
 			if ( selectedPaymentMethod ) {
+				const { card_type: selectedType, card_digits: selectedDigits } = find( paymentMethods, {
+					payment_method_id: selectedPaymentMethod,
+				} );
+
 				summary = translate(
 					"We'll charge the credit card on your " +
 						'account (%(card)s) to pay for the labels you print',
