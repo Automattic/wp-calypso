@@ -165,6 +165,13 @@ function isRedeemable( purchase ) {
 	return purchase.isRedeemable;
 }
 
+function cardProcessorSupportsUpdates( purchase ) {
+	return (
+		isPaidWithCreditCard( purchase ) &&
+		purchase.payment.creditCard.processor !== 'WPCOM_Billing_Ebanx'
+	);
+}
+
 /**
  * Checks if a purchase can be canceled and refunded.
  * Purchases usually can be refunded up to 30 days after purchase.
@@ -356,5 +363,6 @@ export {
 	isSubscription,
 	paymentLogoType,
 	purchaseType,
+	cardProcessorSupportsUpdates,
 	showCreditCardExpiringWarning,
 };

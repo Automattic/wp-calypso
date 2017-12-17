@@ -66,6 +66,7 @@ function createPurchaseObject( purchase ) {
 			creditCard: {
 				id: Number( purchase.payment_card_id ),
 				type: purchase.payment_card_type,
+				processor: purchase.payment_card_processor,
 				number: Number( purchase.payment_details ),
 				expiryDate: purchase.payment_expiry,
 				expiryMoment: purchase.payment_expiry
