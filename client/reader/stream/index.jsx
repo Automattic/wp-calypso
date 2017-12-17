@@ -92,7 +92,7 @@ class ReaderStream extends React.Component {
 		transformStreamItems: PropTypes.func,
 		isMain: PropTypes.bool,
 		intro: PropTypes.object,
-		forcePlaceholders: PropTypes.boolean,
+		forcePlaceholders: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -450,7 +450,7 @@ class ReaderStream extends React.Component {
 
 	render() {
 		const { forcePlaceholders, postsStore: store } = this.props;
-		let { items, isFetchingPage } = this.state;
+		let { items, isFetchingNextPage } = this.state;
 
 		const hasNoPosts =
 			store.isLastPage() && ( ! this.state.posts || this.state.posts.length === 0 );
@@ -459,7 +459,7 @@ class ReaderStream extends React.Component {
 		// trick an infinite list to showing placeholders
 		if ( forcePlaceholders ) {
 			items = [];
-			isFetchingPage = true;
+			isFetchingNextPage = true;
 		}
 
 		if ( hasNoPosts || store.hasRecentError( 'invalid_tag' ) ) {
@@ -475,7 +475,7 @@ class ReaderStream extends React.Component {
 					className="reader__content"
 					items={ items }
 					lastPage={ this.state.isLastPage }
-					fetchingNextPage={ isFetchingPage }
+					fetchingNextPage={ isFetchingNextPage }
 					guessedItemHeight={ GUESSED_POST_HEIGHT }
 					fetchNextPage={ this.fetchNextPage }
 					getItemRef={ this.getPostRef }
