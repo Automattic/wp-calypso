@@ -321,8 +321,9 @@ class SiteSettingsFormGeneral extends Component {
 			isSavingSettings,
 		} = this.props;
 
-		const today = moment(),
-			lastDay = moment( { year: 2017, month: 11, day: 14 } );
+		const today = moment();
+		// Days and years are 1-indexed, and other things are 0-indexed; i.e. December is month 11.
+		const lastDay = moment( { year: 2017, month: 11, day: 31 } );
 
 		if ( today.isAfter( lastDay, 'day' ) ) {
 			return null;
