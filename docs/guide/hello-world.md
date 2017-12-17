@@ -53,15 +53,11 @@ touch client/my-sites/hello-world/controller.js
 There you'll write your controller with a function called `helloWorld`:
 
 ```javascript
-/**
- * External Dependencies
- */
-import React from 'react';
-
 const Controller = {
-	helloWorld() {
+	helloWorld( context, next ) {
 		console.log( 'Hello, world?' );
-	}
+		next();
+	},
 };
 
 export default Controller;
@@ -87,15 +83,30 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection } from 'my-sites/controller';
-import helloWorldController from './controller';
+import { helloWorld } from './controller';
 
 export default () => {
-	page( '/hello-world/:domain?', siteSelection, navigation, helloWorldController.helloWorld );
+	page(
+		'/hello-world/:domain?',
+		siteSelection,
+		navigation,
+		helloWorld,
+		makeLayout,
+		clientRender
+	);
 };
 ```
 
-`page()` will set up the route `/hello-world` and run some functions when it's matched. The `:domain?` is because we want to support site specific pages for our hello-world route. We are passing the `siteSelection` function from the main "My Sites" controller, which handles the site selection process. Next, we are passing the `navigation` function, also from the main "My Sites" controller, which renders the sidebar navigation. The last function is our newly created controller handler.
+* `page()` will set up the route `/hello-world` and run some functions when it's matched.
+* The `:domain?` is because we want to support site specific pages for our hello-world route.
+* Each function is invoked with `context` and `next` arguments.
+* We are passing the `siteSelection` function from the main "My Sites" controller, which handles the site selection process.
+* Next, we are passing the `navigation` function, also from the main "My Sites" controller, which inserts the sidebar navigation into `context.secondary`.
+* `helloWorld` is our newly created controller handler.
+* `makeLayout` creates `Layout` element which contains elements from `context.primary` and `context.secondary`.
+* `clientRender` renders `Layout` element into DOM.
 
 ### 5. Register section
 
@@ -187,12 +198,12 @@ Then add some styles for our `HelloWorld` component:
 
 ```scss
 .hello-world {
-  background-color: #fafafa;
+	background-color: #fafafa;
 }
 
 .hello-world__title {
-  color: #37a000;
-  font-size: 3rem;
+	color: #37a000;
+	font-size: 3rem;
 }
 ```
 
@@ -221,14 +232,13 @@ That's it. Please check out the [CSS/Sass Coding Guidelines](../coding-guideline
 ### 3. Hook up controller
 
 Time to hook this up with our controller function. Open `/hello-world/controller.js`.
-Import ReactDom, React and your new component at the top of the file:
+Import React and your new component at the top of the file:
 
 ```javascript
 /**
  * External dependencies
  */
 import React from 'react';
-import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
@@ -239,18 +249,15 @@ import HelloWorld from 'my-sites/hello-world/main';
 Then remove the `console.log` call and enter the following instead:
 
 ```jsx
-helloWorld() {
-	// Render hello world...
-	ReactDom.render(
-		<HelloWorld />, // Your component
-		document.getElementById( 'primary' ) // Element to render to
-	);
-}
+helloWorld( context, next ) {
+	context.primary = <HelloWorld />;
+	next();
+},
 ```
 
-In the `Main` constant we are getting our main jsx file for our section. We then instruct ReactDom to render `Main` in `#primary`, an element that is already on the DOM.
+In the `Main` constant we are getting our main jsx file for our section. We then place `HelloWorld` element in `context.primary` property, which will be eventually get placed in DOM inside `#primary` div element in `Layout` element.
 
-(If you want to see where `#primary` is created open `client/layout/index.jsx`.)
+(If you want to see where `context.primary` is used open `client/layout/index.jsx`.)
 
 ### Ok, ready?
 
