@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { clone, get, setWith } from 'lodash';
@@ -220,6 +220,35 @@ class OrderRefundTable extends Component {
 		);
 	};
 
+	renderRefundTotals = () => {
+		const { isEditing, order, translate } = this.props;
+		const refundValue = getOrderRefundTotal( order );
+		if ( isEditing || ! refundValue ) {
+			return null;
+		}
+		const showTax = this.shouldShowTax();
+		const totalValue = getCurrencyFormatDecimal( order.total, order.currency ) + refundValue;
+
+		return (
+			<Fragment>
+				<OrderTotalRow
+					className="order-payment__total-refund order-details__total-refund"
+					currency={ order.currency }
+					label={ translate( 'Refunded' ) }
+					value={ refundValue }
+					showTax={ showTax }
+				/>
+				<OrderTotalRow
+					className="order-payment__total-remaining order-details__total-remaining"
+					currency={ order.currency }
+					label={ translate( 'Remaining total' ) }
+					value={ totalValue }
+					showTax={ showTax }
+				/>
+			</Fragment>
+		);
+	};
+
 	render() {
 		const { order, translate } = this.props;
 		if ( ! order ) {
@@ -227,13 +256,14 @@ class OrderRefundTable extends Component {
 		}
 
 		const showTax = this.shouldShowTax();
+		const refundValue = getOrderRefundTotal( order );
 		const totalsClasses = classnames( {
 			'order-payment__totals': true,
 			'order-details__totals': true,
 			'has-taxes': showTax,
+			'has-refund': !! refundValue,
 			'is-refund-modal': true,
 		} );
-		const refundValue = getOrderRefundTotal( order );
 
 		return (
 			<div>
@@ -270,15 +300,7 @@ class OrderRefundTable extends Component {
 						taxValue={ getOrderTotalTax( order ) }
 						showTax={ showTax }
 					/>
-					{ !! refundValue && (
-						<OrderTotalRow
-							className="order-payment__total-refund order-details__total-refund"
-							currency={ order.currency }
-							label={ translate( 'Refunded' ) }
-							value={ refundValue }
-							showTax={ showTax }
-						/>
-					) }
+					{ this.renderRefundTotals() }
 				</Table>
 			</div>
 		);
