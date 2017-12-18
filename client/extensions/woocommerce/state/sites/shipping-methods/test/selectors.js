@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -15,8 +16,18 @@ import {
 	getShippingMethodNameMap,
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
+import * as plugins from 'woocommerce/state/selectors/plugins';
 
 describe( 'selectors', () => {
+	let wcsEnabledStub;
+	beforeEach( () => {
+		wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+	} );
+
+	afterEach( () => {
+		wcsEnabledStub.restore();
+	} );
+
 	describe( 'shipping methods loading state', () => {
 		test( 'when woocommerce state is not available.', () => {
 			const state = {
