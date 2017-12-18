@@ -26,6 +26,8 @@ import {
 	getOrdersCurrentPage,
 	getOrdersCurrentSearch,
 } from 'woocommerce/state/ui/orders/selectors';
+import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
+import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import humanDate from 'lib/human-date';
 import { ORDER_UNPAID, ORDER_UNFULFILLED, ORDER_COMPLETED } from 'woocommerce/lib/order-status';
@@ -130,6 +132,10 @@ class Orders extends Component {
 
 	renderOrderItem = ( order, i ) => {
 		const { site } = this.props;
+		const total = formatCurrency( order.total, order.currency );
+		const refundValue = getOrderRefundTotal( order );
+		const remainingTotal = getCurrencyFormatDecimal( order.total, order.currency ) + refundValue;
+
 		return (
 			<TableRow
 				className={ 'orders__status-' + order.status }
@@ -149,7 +155,14 @@ class Orders extends Component {
 					<OrderStatus order={ order } />
 				</TableItem>
 				<TableItem className="orders__table-total">
-					{ formatCurrency( order.total, order.currency ) || order.total }
+					{ refundValue ? (
+						<span>
+							<span className="orders__table-old-total">{ total }</span>{' '}
+							{ formatCurrency( remainingTotal, order.currency ) }
+						</span>
+					) : (
+						total
+					) }
 				</TableItem>
 			</TableRow>
 		);

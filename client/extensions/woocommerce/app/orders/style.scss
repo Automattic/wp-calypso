@@ -51,3 +51,8 @@
 .orders__table-total {
 	text-align: right;
 }
+
+.orders__table-old-total {
+	text-decoration: line-through;
+	color: $gray-text-min;
+}
