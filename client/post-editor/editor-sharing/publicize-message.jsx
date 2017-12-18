@@ -25,6 +25,7 @@ class PublicizeMessage extends Component {
 		preview: PropTypes.string,
 		acceptableLength: PropTypes.number,
 		requireCount: PropTypes.bool,
+		displayMessageHeading: PropTypes.bool,
 		onChange: PropTypes.func,
 	};
 
@@ -33,6 +34,7 @@ class PublicizeMessage extends Component {
 		message: '',
 		acceptableLength: 140,
 		requireCount: false,
+		displayMessageHeading: true,
 	};
 
 	onChange = event => {
@@ -100,11 +102,13 @@ class PublicizeMessage extends Component {
 	render() {
 		return (
 			<div className="editor-sharing__publicize-message">
-				<h5 className="editor-sharing__message-heading">
-					{ this.props.translate( 'Customize the message', {
-						context: 'Post editor sharing message heading',
-					} ) }
-				</h5>
+				{ this.props.displayMessageHeading && (
+					<h5 className="editor-sharing__message-heading">
+						{ this.props.translate( 'Customize the message', {
+							context: 'Post editor sharing message heading',
+						} ) }
+					</h5>
+				) }
 				<TrackInputChanges onNewValue={ this.recordStats }>
 					{ this.renderTextarea() }
 				</TrackInputChanges>
