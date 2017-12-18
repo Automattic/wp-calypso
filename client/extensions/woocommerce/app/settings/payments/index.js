@@ -101,7 +101,6 @@ class SettingsPayments extends Component {
 		this.props.createPaymentSettingsActionList( successAction, failureAction );
 	};
 
-<<<<<<< HEAD
 	renderPaymentSection = ( { description, label, methodType } ) => (
 		<div className="payments__type-container" key={ methodType }>
 			<ExtendedHeader label={ label } description={ description } />
