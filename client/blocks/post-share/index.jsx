@@ -225,6 +225,7 @@ class PostShare extends Component {
 				disabled={ this.isDisabled() }
 				message={ this.state.message }
 				requireCount={ requireCount }
+				displayMessageHeading={ false }
 				onChange={ this.setMessage }
 				acceptableLength={ acceptableLength }
 			/>
