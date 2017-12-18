@@ -6,7 +6,8 @@ import stringify from 'json-stable-stringify';
 
 const readCache = () => {
 	try {
-		return require( '../../../../cached-requests.json' );
+		// load from the project root
+		return require( 'cached-requests.json' );
 	} catch ( e ) {
 		return {};
 	}
@@ -34,16 +35,17 @@ const saveRequests = requests => {
 };
 
 export const makeOffline = wpcom => {
-	const location = window.location;
-	const primingRequested = /[&?]wpcom_priming=1/.test( location );
-	const offlineRequested = /[&?]wpcom_offline=1/.test( location );
+	// search part includes the leading `?`
+	const queryParams = new URLSearchParams( window.location.search.substring( 1 ) );
+	const offlineRequested = queryParams.has( 'wpcom_offline' );
+	const primingRequested = queryParams.has( 'wpcom_priming' );
 
-	if ( ! primingRequested && ! offlineRequested ) {
+	if ( ! offlineRequested && ! primingRequested ) {
 		return wpcom;
 	}
 
 	// eslint-disable-next-line no-console
-	primingRequested && console.log( 'Priming wpcom request cache' );
+	! offlineRequested && primingRequested && console.log( 'Priming wpcom request cache' );
 
 	offlineRequested &&
 		// eslint-disable-next-line no-console
@@ -71,20 +73,36 @@ export const makeOffline = wpcom => {
 
 				if ( undefined === callback ) {
 					if ( undefined === stored ) {
-						return Promise.reject( new Error( 'Network inaccessible' ) );
+						// eslint-disable-next-line no-console
+						console.error(
+							`WPCOM Offline: Request made for uncached request to ${ params.path }\n` +
+								'See client/lib/wp/offline-library/README.md for priming instructions.'
+						);
+
+						return Promise.reject(
+							new Error( 'Network disconnected and request for path not cached.' )
+						);
 					}
 
 					return undefined === stored[ 0 ] || null === stored[ 0 ]
-						? Promise.reject( stored[ 0 ] )
-						: Promise.resolve( ...stored.slice( 1 ) );
+						? Promise.reject( stored[ 0 ] ) // first arg is error
+						: Promise.resolve( ...stored.slice( 1 ) ); // skip error in success handler
 				}
 
 				if ( undefined === stored ) {
-					callback( new Error( 'Network inaccessible' ) );
+					// eslint-disable-next-line no-console
+					console.error(
+						`WPCOM Offline: Request made for uncached request to ${ params.path }\n` +
+							'See client/lib/wp/offline-library/README.md for priming instructions.'
+					);
+
+					callback( new Error( 'Network disconnected and request for path not cached.' ) );
 				} else {
 					callback( ...stored );
 				}
 
+				// make sure we still return an XHR
+				// this is the expected behavior of wpcom.js requestk
 				return new XMLHttpRequest();
 			}
 
