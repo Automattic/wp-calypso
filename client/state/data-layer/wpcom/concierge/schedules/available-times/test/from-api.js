@@ -14,11 +14,7 @@ describe( 'fromApi()', () => {
 			1483268400, // unix timestamp of 2017-01-01 11:00:00 UTC
 		];
 
-		const expectedResult = [
-			new Date( '2017-01-01 10:00:00 UTC' ),
-			new Date( '2017-01-01 10:30:00 UTC' ),
-			new Date( '2017-01-01 11:00:00 UTC' ),
-		];
+		const expectedResult = [ 1483264800000, 1483266600000, 1483268400000 ];
 
 		expect( fromApi( validResponse ) ).toEqual( expectedResult );
 	} );
