@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
@@ -23,6 +24,7 @@ import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import getSaveSettingsActionListSteps from 'woocommerce/state/data-layer/ui/payments/reducer';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	hasOAuthParamsInLocation,
@@ -30,6 +32,7 @@ import {
 } from './stripe/payment-method-stripe-utils';
 import { openPaymentMethodForEdit } from 'woocommerce/state/ui/payments/methods/actions';
 import Main from 'components/main';
+import { ProtectFormGuard } from 'lib/protect-form';
 import SettingsPaymentsLocationCurrency from './payments-location-currency';
 import SettingsNavigation from '../navigation';
 import SettingsPaymentsOffline from './payments-offline';
@@ -93,7 +96,7 @@ class SettingsPayments extends Component {
 	};
 
 	render() {
-		const { isSaving, site, translate, className, finishedInitialSetup } = this.props;
+		const { hasEdits, isSaving, site, translate, className, finishedInitialSetup } = this.props;
 
 		const breadcrumbs = [
 			<a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a>,
@@ -113,6 +116,7 @@ class SettingsPayments extends Component {
 				<SettingsPaymentsOnSite />
 				<SettingsPaymentsOffSite />
 				<SettingsPaymentsOffline />
+				<ProtectFormGuard isChanged={ hasEdits } />
 			</Main>
 		);
 	}
@@ -121,10 +125,12 @@ class SettingsPayments extends Component {
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const finishedInitialSetup = getFinishedInitialSetup( state );
+	const hasEdits = ! isEmpty( getSaveSettingsActionListSteps( state ) );
 	return {
+		finishedInitialSetup,
+		hasEdits,
 		isSaving: Boolean( getActionList( state ) ),
 		site,
-		finishedInitialSetup,
 	};
 }
 
