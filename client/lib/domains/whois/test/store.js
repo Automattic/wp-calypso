@@ -11,7 +11,6 @@ import { expect } from 'chai';
 import WhoisStore from './../store';
 import Dispatcher from 'dispatcher';
 import { action as ActionTypes } from 'lib/upgrades/constants';
-import { whoisType } from '../constants';
 
 describe( 'store', () => {
 	const DOMAIN_NAME = 'domain.name';
@@ -62,12 +61,9 @@ describe( 'store', () => {
 	} );
 
 	test( 'should return contact data when fetching domain data completed', () => {
-		const data = [
-			{
-				org: 'My Company, LLC',
-				type: whoisType.REGISTRANT,
-			},
-		];
+		const data = {
+			org: 'My Company, LLC',
+		};
 
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.WHOIS_FETCH_COMPLETED,
@@ -77,7 +73,6 @@ describe( 'store', () => {
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			data,
-			registrantContactDetails: data[ 0 ],
 			hasLoadedFromServer: true,
 			isFetching: false,
 			needsUpdate: false,
@@ -85,18 +80,12 @@ describe( 'store', () => {
 	} );
 
 	test( 'should return latest whois data when domain data received twice', () => {
-		const data = [
-			{
+		const data = {
 				org: 'My First Company, LLC',
-				type: whoisType.REGISTRANT,
 			},
-		];
-		const anotherData = [
-			{
+			anotherData = {
 				org: 'My Second Company, LLC',
-				type: whoisType.REGISTRANT,
-			},
-		];
+			};
 
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.WHOIS_FETCH_COMPLETED,
@@ -110,25 +99,16 @@ describe( 'store', () => {
 		} );
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).data ).to.be.equal( anotherData );
-		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).registrantContactDetails ).to.be.equal(
-			anotherData[ 0 ]
-		);
 	} );
 
 	test( 'should contain whois data for given domain equal to received from server action', () => {
-		const ANOTHER_DOMAIN_NAME = 'another-domain.name';
-		const data = [
-			{
+		const ANOTHER_DOMAIN_NAME = 'another-domain.name',
+			data = {
 				org: 'My First Company, LLC',
-				type: whoisType.REGISTRANT,
 			},
-		];
-		const anotherData = [
-			{
+			anotherData = {
 				org: 'My Second Company, LLC',
-				type: whoisType.REGISTRANT,
-			},
-		];
+			};
 
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.WHOIS_FETCH_COMPLETED,
@@ -142,28 +122,15 @@ describe( 'store', () => {
 		} );
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).data ).to.be.equal( data );
-		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).registrantContactDetails ).to.be.equal(
-			data[ 0 ]
-		);
 		expect( WhoisStore.getByDomainName( ANOTHER_DOMAIN_NAME ).data ).to.equal( anotherData );
-		expect( WhoisStore.getByDomainName( ANOTHER_DOMAIN_NAME ).registrantContactDetails ).to.equal(
-			anotherData[ 0 ]
-		);
 	} );
 
-	test( 'should return enabled needsUpdate flag and new registrantContactDetails when domain WHOIS update completed', () => {
-		const registrantContactDetails = {
-			Willie: 'Nelson',
-		};
+	test( 'should return enabled needsUpdate flag when domain WHOIS update completed', () => {
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.WHOIS_UPDATE_COMPLETED,
 			domainName: DOMAIN_NAME,
-			registrantContactDetails,
 		} );
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).needsUpdate ).to.be.true;
-		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).registrantContactDetails ).to.be.eql(
-			registrantContactDetails
-		);
 	} );
 } );
