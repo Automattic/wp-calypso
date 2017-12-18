@@ -102,7 +102,7 @@ describe( 'announceSaveFailure()', () => {
 			expect.objectContaining( {
 				notice: expect.objectContaining( {
 					status: 'is-error',
-					text: 'An unexpected problem occurred. Please try again.',
+					text: 'An unexpected error occurred. Please try again later.',
 				} ),
 			} )
 		);
