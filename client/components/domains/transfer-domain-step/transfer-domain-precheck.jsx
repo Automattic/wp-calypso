@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -30,16 +30,21 @@ class TransferDomainPrecheck extends React.PureComponent {
 	};
 
 	state = {
-		unlocked: false,
-		privacy: false,
+		creationDate: '',
+		currentStep: 1,
+		days_transfer_locked: 60,
 		email: '',
+		expiryDate: '',
+		expiryDateNew: '',
+		expiryDateOk: true,
+		inInitialRegistrationPeriod: true,
 		loading: true,
 		losingRegistrar: '',
 		losingRegistrarIanaId: '',
-		inInitialRegistrationPeriod: true,
-		creationDate: '',
+		privacy: false,
+		termMaximumInYears: 10,
 		transferEligibleDate: '',
-		currentStep: 1,
+		unlocked: false,
 	};
 
 	componentWillMount() {
@@ -102,15 +107,20 @@ class TransferDomainPrecheck extends React.PureComponent {
 			}
 
 			this.setState( {
+				creationDate: result.creation_date,
+				daysTransferLocked: result.days_transfer_locked,
 				email: result.admin_email,
-				privacy: result.privacy,
-				unlocked: result.unlocked,
+				expiryDate: result.registry_expiry_date,
+				expiryDateNew: result.new_expiry_date,
+				expiryDateOk: result.new_expiry_date_ok,
+				inInitialRegistrationPeriod: result.in_initial_registration_period,
 				loading: false,
 				losingRegistrar: result.registrar,
 				losingRegistrarIanaId: result.registrar_iana_id,
-				inInitialRegistrationPeriod: result.in_initial_registration_period,
-				creationDate: result.creation_date,
+				privacy: result.privacy,
+				termMaximumInYears: result.term_maximum_in_years,
 				transferEligibleDate: result.transfer_eligible_date,
+				unlocked: result.unlocked,
 			} );
 		} );
 	};
@@ -175,51 +185,77 @@ class TransferDomainPrecheck extends React.PureComponent {
 		);
 	}
 
-	getInitialRegistrationPeriodMessage() {
+	getRegistrationPeriodMessage() {
 		const { translate } = this.props;
 		const {
 			creationDate,
 			currentStep,
+			daysTransferLocked,
+			expiryDate,
+			expiryDateNew,
+			expiryDateOk,
 			inInitialRegistrationPeriod,
 			loading,
+			termMaximumInYears,
 			transferEligibleDate,
 		} = this.state;
 		const step = 1;
 		const isStepFinished = currentStep > step;
+		const dateFormat = translate( 'MMM D, YYYY', {
+			comment:
+				'Short month, day and year, like "Dec 5, 2017". This is a moment.js formatted string, ' +
+				'see http://momentjs.com/docs/#/displaying/format/',
+		} );
 
-		let heading = inInitialRegistrationPeriod
-			? translate( 'Domain was registered less than 60 days ago.' )
-			: translate( 'Domain is old enough to transfer.' );
-		let message = inInitialRegistrationPeriod
-			? translate(
-					'Your domain was registered on %(creationDate)s. Domains that were registered less than 60 days ago are not ' +
-						'eligible for transfer. You can either wait until %(transferEligibleDate)s to transfer your domain or you ' +
-						'can make your domain work with WordPress.com now by {{mappingLink}}mapping it{{/mappingLink}}.',
-					{
-						args: {
-							creationDate,
-							transferEligibleDate,
-						},
-						components: {
-							mappingLink: <a href="" rel="noopener noreferrer" target="_blank" />,
-							supportLink: <a href="" rel="noopener noreferrer" target="_blank" />,
-						},
-					}
-				)
-			: null;
+		let heading = translate( 'Domain registration period check.' );
+		let message = null;
+		let classes = 'transfer-domain-step__lock-status transfer-domain-step__unlocked';
+		let statusText = translate( 'Domain registration period is ok.' );
+		let icon = 'checkmark';
 
-		let classes = inInitialRegistrationPeriod
-			? 'transfer-domain-step__lock-status transfer-domain-step__locked'
-			: 'transfer-domain-step__lock-status transfer-domain-step__unlocked';
-
-		let icon = inInitialRegistrationPeriod ? 'cross' : 'checkmark';
-		let statusText = inInitialRegistrationPeriod
-			? translate( 'Registered less than 60 days ago' )
-			: translate( 'Registered more than 60 days ago' );
+		if ( ! expiryDateOk ) {
+			heading = translate( 'Domain registration exceeds maximum term.' );
+			message = translate(
+				'Transferring this domain to WordPress.com would extend the current expiration date from %(expiryDate)s to ' +
+					'%(expiryDateNew)s. This exceeds the maximum registration term of %(termMaximumInYears)d years. You can ' +
+					'still make your domain work with WordPress.com by {{a}}mapping it{{/a}}.',
+				{
+					args: {
+						termMaximumInYears: termMaximumInYears,
+						expiryDate: moment( expiryDate ).format( dateFormat ),
+						expiryDateNew: moment( expiryDateNew ).format( dateFormat ),
+					},
+					components: {
+						a: <a href="" rel="noopener noreferrer" target="_blank" />,
+					},
+				}
+			);
+			classes = 'transfer-domain-step__lock-status transfer-domain-step__locked';
+			icon = 'cross';
+		} else if ( inInitialRegistrationPeriod ) {
+			heading = translate( 'Domain was registered less than 60 days ago.' );
+			message = translate(
+				'Your domain was registered on %(creationDate)s. Your domain must be registered for at least %(daysTransferLocked)d ' +
+					'days before it is eligible for transfer. You can either wait until %(transferEligibleDate)s to transfer your ' +
+					'domain or you can make your domain work with WordPress.com now by {{a}}mapping it{{/a}}.',
+				{
+					args: {
+						creationDate: moment( creationDate ).format( dateFormat ),
+						daysTransferLocked: daysTransferLocked,
+						transferEligibleDate: moment( transferEligibleDate ).format( dateFormat ),
+					},
+					components: {
+						a: <a href="" rel="noopener noreferrer" target="_blank" />,
+					},
+				}
+			);
+			classes = 'transfer-domain-step__lock-status transfer-domain-step__locked';
+			icon = 'cross';
+		}
 
 		if ( loading && ! isStepFinished ) {
 			classes = 'transfer-domain-step__lock-status transfer-domain-step__checking';
-			heading = 'Domain registration date check.';
+			heading = 'Domain registration period check.';
 			icon = 'sync';
 			statusText = 'Checking...';
 			message = null;
@@ -422,7 +458,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		return (
 			<div className="transfer-domain-step__precheck">
 				{ this.getHeader() }
-				{ this.getInitialRegistrationPeriodMessage() }
+				{ this.getRegistrationPeriodMessage() }
 				{ this.getStatusMessage() }
 				{ this.getPrivacyMessage() }
 				{ this.getEppMessage() }
