@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -73,6 +74,14 @@ class PostItem extends React.Component {
 
 	hasMultipleUsers() {
 		return this.inAllSitesModeWithMultipleUsers() || this.inSingleSiteModeWithMultipleUsers();
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { hasExpandedContent } = this.props;
+
+		if ( ! prevProps.hasExpandedContent && hasExpandedContent ) {
+			ReactDom.findDOMNode( this ).scrollIntoView( false );
+		}
 	}
 
 	renderSelectionCheckbox() {
