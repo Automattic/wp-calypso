@@ -118,44 +118,49 @@ class JetpackConnectMain extends Component {
 
 	dismissUrl = () => this.props.dismissUrl( this.state.currentUrl );
 
-	goToPlans( url ) {
-		this.redirecting = true;
+	makeSafeRedirectionFunction( func ) {
+		return url => {
+			if ( ! this.redirecting ) {
+				this.redirecting = true;
+				func( url );
+			}
+		};
+	}
+
+	goToPlans = this.makeSafeRedirectionFunction( function goToPlans( url ) {
 		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
 			url: url,
 			type: 'plans_selection',
 		} );
 
 		page.redirect( `/jetpack/connect/plans/${ urlToSlug( url ) }` );
-	}
+	} );
 
-	goToRemoteAuth( url ) {
-		this.redirecting = true;
+	goToRemoteAuth = this.makeSafeRedirectionFunction( function goToRemoteAuth( url ) {
 		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
 			url: url,
 			type: 'remote_auth',
 		} );
 		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + remoteAuthPath ) );
-	}
+	} );
 
-	goToPluginInstall( url ) {
-		this.redirecting = true;
+	goToPluginInstall = this.makeSafeRedirectionFunction( function goToPluginInstall( url ) {
 		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
 			url: url,
 			type: 'plugin_install',
 		} );
 
 		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + remoteInstallPath ) );
-	}
+	} );
 
-	goToPluginActivation( url ) {
-		this.redirecting = true;
+	goToPluginActivation = this.makeSafeRedirectionFunction( function goToPluginActivation( url ) {
 		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
 			url: url,
 			type: 'plugin_activation',
 		} );
 
 		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + remoteActivatePath ) );
-	}
+	} );
 
 	isCurrentUrlFetched() {
 		return (
