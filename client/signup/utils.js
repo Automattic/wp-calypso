@@ -170,6 +170,7 @@ function getThemeForSiteGoals( siteGoals ) {
 function getSiteTypeForSiteGoals( siteGoals ) {
 	const siteGoalsValue = siteGoals.split( ',' );
 
+	//Identify stores for the store signup flow
 	if ( siteGoals === 'sell' ) {
 		return 'store';
 	}
