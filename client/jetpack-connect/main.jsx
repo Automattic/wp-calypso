@@ -12,8 +12,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import addQueryArgs from 'lib/route/add-query-args';
 import Button from 'components/button';
 import Card from 'components/card';
+import config from 'config';
 import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
@@ -23,28 +25,28 @@ import LocaleSuggestions from 'components/locale-suggestions';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
+import page from 'page';
 import SiteUrlInput from './site-url-input';
 import untrailingslashit from 'lib/route/untrailingslashit';
 import versionCompare from 'lib/version-compare';
+import { externalRedirect } from 'lib/route/path';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retrievePlan } from './persistence-utils';
-import {
-	checkUrl,
-	confirmJetpackInstallStatus,
-	dismissUrl,
-	goToPlans,
-	goToPluginActivation,
-	goToPluginInstall,
-	goToRemoteAuth,
-} from 'state/jetpack-connect/actions';
+import { urlToSlug } from 'lib/url';
+import { checkUrl, confirmJetpackInstallStatus, dismissUrl } from 'state/jetpack-connect/actions';
 
 /**
  * Constants
  */
 const MINIMUM_JETPACK_VERSION = '3.9.6';
+const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
+const remoteActivatePath = '/wp-admin/plugins.php';
+const calypsoEnv = config( 'env_id' );
+const remoteAuthPath =
+	'/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
 
 class JetpackConnectMain extends Component {
 	static propTypes = {
@@ -54,6 +56,9 @@ class JetpackConnectMain extends Component {
 		url: PropTypes.string,
 	};
 
+	redirecting = false;
+
+	/* eslint-disable indent */
 	state = this.props.url
 		? {
 				currentUrl: this.cleanUrl( this.props.url ),
@@ -65,6 +70,7 @@ class JetpackConnectMain extends Component {
 				shownUrl: '',
 				waitingForSites: false,
 			};
+	/* eslint-enable indent */
 
 	componentWillMount() {
 		if ( this.props.url ) {
@@ -95,12 +101,12 @@ class JetpackConnectMain extends Component {
 		if (
 			this.getStatus() === 'notConnectedJetpack' &&
 			this.isCurrentUrlFetched() &&
-			! this.props.jetpackConnectSite.isRedirecting
+			! this.redirecting
 		) {
-			return this.props.goToRemoteAuth( this.state.currentUrl );
+			return this.goToRemoteAuth( this.state.currentUrl );
 		}
-		if ( this.getStatus() === 'alreadyOwned' && ! this.props.jetpackConnectSite.isRedirecting ) {
-			return this.props.goToPlans( this.state.currentUrl );
+		if ( this.getStatus() === 'alreadyOwned' && ! this.redirecting ) {
+			return this.goToPlans( this.state.currentUrl );
 		}
 
 		if ( this.state.waitingForSites && ! this.props.isRequestingSites ) {
@@ -111,6 +117,45 @@ class JetpackConnectMain extends Component {
 	}
 
 	dismissUrl = () => this.props.dismissUrl( this.state.currentUrl );
+
+	goToPlans( url ) {
+		this.redirecting = true;
+		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
+			url: url,
+			type: 'plans_selection',
+		} );
+
+		page.redirect( `/jetpack/connect/plans/${ urlToSlug( url ) }` );
+	}
+
+	goToRemoteAuth( url ) {
+		this.redirecting = true;
+		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
+			url: url,
+			type: 'remote_auth',
+		} );
+		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + remoteAuthPath ) );
+	}
+
+	goToPluginInstall( url ) {
+		this.redirecting = true;
+		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
+			url: url,
+			type: 'plugin_install',
+		} );
+
+		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + remoteInstallPath ) );
+	}
+
+	goToPluginActivation( url ) {
+		this.redirecting = true;
+		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
+			url: url,
+			type: 'plugin_activation',
+		} );
+
+		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + remoteActivatePath ) );
+	}
 
 	isCurrentUrlFetched() {
 		return (
@@ -166,7 +211,7 @@ class JetpackConnectMain extends Component {
 			type: 'install_jetpack',
 		} );
 
-		this.props.goToPluginInstall( this.state.currentUrl );
+		this.goToPluginInstall( this.state.currentUrl );
 	};
 
 	activateJetpack = () => {
@@ -174,7 +219,7 @@ class JetpackConnectMain extends Component {
 			jetpack_funnel: this.state.currentUrl,
 			type: 'activate_jetpack',
 		} );
-		this.props.goToPluginActivation( this.state.currentUrl );
+		this.goToPluginActivation( this.state.currentUrl );
 	};
 
 	checkProperty( propName ) {
@@ -188,11 +233,7 @@ class JetpackConnectMain extends Component {
 	}
 
 	isRedirecting() {
-		return (
-			this.props.jetpackConnectSite &&
-			this.props.jetpackConnectSite.isRedirecting &&
-			this.isCurrentUrlFetched()
-		);
+		return this.props.jetpackConnectSite && this.redirecting && this.isCurrentUrlFetched();
 	}
 
 	getStatus() {
@@ -503,10 +544,6 @@ const connectComponent = connect(
 		checkUrl,
 		confirmJetpackInstallStatus,
 		dismissUrl,
-		goToPlans,
-		goToPluginActivation,
-		goToPluginInstall,
-		goToRemoteAuth,
 		recordTracksEvent,
 	}
 );
