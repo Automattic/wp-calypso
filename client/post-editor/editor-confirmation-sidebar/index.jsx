@@ -27,7 +27,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import { isEditedPostPrivate, isPrivateEditedPostPasswordValid } from 'state/posts/selectors';
-import { canCurrentUser } from 'state/selectors';
+import { canCurrentUser, isPrivateSite as isPrivateSiteSelector } from 'state/selectors';
 
 class EditorConfirmationSidebar extends React.Component {
 	static propTypes = {
@@ -40,7 +40,6 @@ class EditorConfirmationSidebar extends React.Component {
 		isPrivatePostPasswordValid: PropTypes.bool,
 		setPostDate: PropTypes.func,
 		setStatus: PropTypes.func,
-		site: PropTypes.object,
 		status: PropTypes.string,
 	};
 
@@ -65,7 +64,7 @@ class EditorConfirmationSidebar extends React.Component {
 	}
 
 	renderPublishButton() {
-		if ( ! this.props.site || ! this.props.post || ! this.props.savedPost ) {
+		if ( ! this.props.siteId || ! this.props.post || ! this.props.savedPost ) {
 			return;
 		}
 
@@ -104,9 +103,8 @@ class EditorConfirmationSidebar extends React.Component {
 			return;
 		}
 
-		const { password, type } = this.props.post || {};
+		const { password, type, isPrivateSite } = this.props.post || {};
 		const status = get( this.props.post, 'status', 'draft' );
-		const isPrivateSite = get( this.props, 'site.is_private' );
 		const savedStatus = get( this.props, 'savedPost.status' );
 		const savedPassword = get( this.props, 'savedPost.password' );
 		const props = {
@@ -227,6 +225,7 @@ export default connect(
 		const post = getEditedPost( state, siteId, postId );
 		const isPrivatePost = isEditedPostPrivate( state, siteId, postId );
 		const isPrivatePostPasswordValid = isPrivateEditedPostPasswordValid( state, siteId, postId );
+		const isPrivateSite = isPrivateSiteSelector( state, siteId );
 		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
 
 		return {
@@ -234,6 +233,7 @@ export default connect(
 			postId,
 			post,
 			isPrivatePost,
+			isPrivateSite,
 			isPrivatePostPasswordValid,
 			canUserPublishPosts,
 		};

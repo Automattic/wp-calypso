@@ -157,10 +157,6 @@ export class EditorGroundControl extends PureComponent {
 		);
 	}
 
-	canPublishPost() {
-		return this.props.canUserPublishPosts;
-	}
-
 	toggleAdvancedStatus = () => {
 		this.setState( { showAdvanceStatus: ! this.state.showAdvanceStatus } );
 	};
