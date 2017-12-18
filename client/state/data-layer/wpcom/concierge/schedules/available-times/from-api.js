@@ -6,7 +6,7 @@
 import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import responseSchema from './schema';
 
-export const convertToDate = timestampInSeconds => new Date( timestampInSeconds * 1000 );
+export const convertToDate = timestampInSeconds => timestampInSeconds * 1000;
 
 export const transform = response => response.map( convertToDate );
 
