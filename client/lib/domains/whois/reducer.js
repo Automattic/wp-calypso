@@ -10,6 +10,7 @@ import update from 'immutability-helper';
  * Internal dependencies
  */
 import { action as ActionTypes } from 'lib/upgrades/constants';
+import { findRegistrantWhois } from 'lib/domains/whois/utils';
 
 const initialDomainState = {
 	data: null,
@@ -55,6 +56,7 @@ function reducer( state, payload ) {
 		case ActionTypes.WHOIS_FETCH_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				data: action.data,
+				registrantContactDetails: findRegistrantWhois( action.data ),
 				hasLoadedFromServer: true,
 				isFetching: false,
 				needsUpdate: false,
@@ -63,6 +65,10 @@ function reducer( state, payload ) {
 		case ActionTypes.WHOIS_UPDATE_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				needsUpdate: true,
+				registrantContactDetails: {
+					...state.registrantContactDetails,
+					...action.registrantContactDetails,
+				},
 			} );
 			break;
 	}
