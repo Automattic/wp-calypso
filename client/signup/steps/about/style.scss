@@ -14,6 +14,9 @@
 .about__form-wrapper {
 	max-width: 500px;
 	margin: 0 auto;
+	filter: blur( 0 );
+	transform: translateZ( 0 ) translateX( 0 );
+	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
 }
 
 .about__wrapper-is-hidden {
