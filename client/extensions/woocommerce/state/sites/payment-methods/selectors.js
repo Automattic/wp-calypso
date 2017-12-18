@@ -29,13 +29,13 @@ export const getPaymentMethods = ( state, siteId = getSelectedSiteId( state ) ) 
  * @return {Object} Object with payment method data, false if no method found
  */
 export const getPaymentMethod = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
-	if ( methodId === 'manual' ) {
+	if ( methodId === 'calypso_manual' ) {
 		return {
-			id: 'manual',
+			id: 'calypso_manual',
 			title: translate( 'Manual Payment' ),
 			description: '', // Not used for this method
 			enabled: true,
-			method_title: 'manual',
+			method_title: 'calypso_manual',
 			methodType: 'offline',
 			method_description: '', // Not used for this method
 			method_supports: [ 'products' ],

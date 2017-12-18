@@ -132,13 +132,13 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		test( 'should return the "fake" paymentMethod "manual" when requested.', () => {
-			expect( getPaymentMethod( loadedState, 'manual', 123 ) ).to.eql( {
-				id: 'manual',
+		test( 'should return the "fake" paymentMethod "calypso_manual" when requested.', () => {
+			expect( getPaymentMethod( loadedState, 'calypso_manual', 123 ) ).to.eql( {
+				id: 'calypso_manual',
 				title: 'Manual Payment',
 				description: '',
 				enabled: true,
-				method_title: 'manual',
+				method_title: 'calypso_manual',
 				methodType: 'offline',
 				method_description: '',
 				method_supports: [ 'products' ],

@@ -74,7 +74,7 @@ export const getDefaultEmptyOrder = () => {
 		prices_include_tax: false,
 		billing: {},
 		shipping: {},
-		payment_method: 'manual',
+		payment_method: 'calypso_manual',
 		payment_method_title: translate( 'Manual Payment' ),
 		line_items: [],
 		tax_lines: [],
