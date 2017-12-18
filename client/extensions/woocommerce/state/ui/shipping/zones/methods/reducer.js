@@ -32,6 +32,8 @@ export const builtInShippingMethods = {
 	flat_rate: flatRate,
 	free_shipping: freeShipping,
 	local_pickup: localPickup,
+	wc_services_usps: () => {},
+	wc_services_canada_post: () => {},
 };
 
 export const initialState = {

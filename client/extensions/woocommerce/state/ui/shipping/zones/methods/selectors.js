@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { find, isEmpty, isNumber, isNil, map, pullAll } from 'lodash';
+import { find, intersection, isEmpty, isNumber, isNil, map, pullAll } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,7 @@ import {
 	getAPIShippingZones,
 	areShippingZonesLoaded,
 } from 'woocommerce/state/sites/shipping-zones/selectors';
+import { getShippingMethods } from 'woocommerce/state/sites/shipping-methods/selectors';
 import { getShippingZoneMethod } from 'woocommerce/state/sites/shipping-zone-methods/selectors';
 import { getShippingZonesEdits, getCurrentlyEditingShippingZone } from '../selectors';
 import { getBucket } from 'woocommerce/state/ui/helpers';
@@ -262,7 +263,10 @@ export const getNewMethodTypeOptions = (
 			: getShippingZoneMethods( state, zoneId, siteId );
 
 	const currentMethodTypes = map( currentMethods, 'methodType' );
-	const allMethods = Object.keys( builtInShippingMethods );
+	const allMethods = intersection(
+		Object.keys( builtInShippingMethods ),
+		map( getShippingMethods( state, siteId ), 'id' )
+	);
 	allMethods.forEach( methodType => {
 		// A user can add as many "Local Pickup" methods as he wants for a given zone
 		if ( 'local_pickup' === methodType || -1 === currentMethodTypes.indexOf( methodType ) ) {
