@@ -32,6 +32,7 @@ const domainAvailability = {
 	AVAILABLE: 'available',
 	BLACKLISTED: 'blacklisted_domain',
 	EMPTY_QUERY: 'empty_query',
+	EMPTY_RESULTS: 'empty_results',
 	FORBIDDEN: 'forbidden_domain',
 	FORBIDDEN_SUBDOMAIN: 'forbidden_subdomain',
 	INVALID: 'invalid_domain',

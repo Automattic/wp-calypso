@@ -207,11 +207,9 @@ class RegisterDomainStep extends React.Component {
 
 		if ( error && error.error ) {
 			//don't modify global state
-			const domainError = new Error();
-			domainError.code = error.error;
 			const queryObject = getQueryObject( nextProps );
 			if ( queryObject ) {
-				this.showValidationErrorMessage( queryObject.query, domainError );
+				this.showValidationErrorMessage( queryObject.query, error.error );
 			}
 		}
 	}
@@ -469,8 +467,7 @@ class RegisterDomainStep extends React.Component {
 							if ( error && error.statusCode === 503 ) {
 								this.props.onDomainsAvailabilityChange( false );
 							} else if ( error && error.error ) {
-								error.code = error.error;
-								this.showValidationErrorMessage( domain, error.code );
+								this.showValidationErrorMessage( domain, error.error );
 							}
 
 							const analyticsResults = [
@@ -577,8 +574,7 @@ class RegisterDomainStep extends React.Component {
 					if ( error && error.statusCode === 503 ) {
 						this.props.onDomainsAvailabilityChange( false );
 					} else if ( error && error.error ) {
-						error.code = error.error;
-						this.showValidationErrorMessage( domain, error );
+						this.showValidationErrorMessage( domain, error.error );
 					}
 
 					const analyticsResults = [
@@ -591,6 +587,11 @@ class RegisterDomainStep extends React.Component {
 						-1,
 						this.props.analyticsSection
 					);
+
+					this.setState( {
+						subdomainSearchResults: [],
+						loadingSubdomainResults: false,
+					} );
 				} );
 		}
 	};
@@ -695,7 +696,7 @@ class RegisterDomainStep extends React.Component {
 				);
 			}
 
-			suggestions = this.props.defaultSuggestions;
+			suggestions = this.props.defaultSuggestions || [];
 		}
 
 		return (
@@ -713,6 +714,7 @@ class RegisterDomainStep extends React.Component {
 				onClickTransfer={ this.goToTransferDomainStep }
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
+				isLoadingSuggestions={ this.state.loadingResults }
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
 				offerUnavailableOption={ this.props.offerUnavailableOption }
