@@ -32,6 +32,12 @@ class MediaLibraryListNoContent extends Component {
 			} );
 		}
 
+		if ( 'pexels' === source ) {
+			return translate( 'Use the search above to find free photos!', {
+				comment: 'Media no results',
+			} );
+		}
+
 		switch ( filter ) {
 			case 'this-post':
 				return translate( 'There are no media items uploaded to this post.', {
@@ -76,7 +82,7 @@ class MediaLibraryListNoContent extends Component {
 					{ this.props.translate( 'Upload Media' ) }
 				</UploadButton>
 			);
-		} else if ( this.props.source ) {
+		} else if ( 'google_photos' === this.props.source ) {
 			line = this.props.translate( 'New photos may take a few minutes to appear.' );
 		}
 
