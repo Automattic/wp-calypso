@@ -1,46 +1,91 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import Tooltip from 'components/tooltip';
 import formatCurrency from 'lib/format-currency';
 import {
 	getTotalPriceBreakdown,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const PriceSummary = ( { priceBreakdown, translate } ) => {
-	if ( ! priceBreakdown ) {
-		return null;
+class PriceSummary extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			tooltipVisible: false,
+		};
 	}
 
-	const renderRow = ( itemName, itemCost, key, isTotal ) => {
+	showTooltip = () => {
+		this.setState( { tooltipVisible: true } );
+	};
+
+	hideTooltip = () => {
+		this.setState( { tooltipVisible: false } );
+	};
+
+	setTooltipContext = tooltipContext => {
+		if ( tooltipContext ) {
+			this.setState( { tooltipContext } );
+		}
+	};
+
+	renderRow = ( itemName, itemCost, key, isTotal, isDiscount ) => {
+		const { translate } = this.props;
 		const className = classNames( 'label-purchase-modal__price-item', {
 			'label-purchase-modal__price-item-total': isTotal,
 		} );
 		return (
 			<div key={ key } className={ className }>
-				<div className="label-purchase-modal__price-item-name">{ itemName }</div>
-				<div>{ formatCurrency( itemCost, 'USD' ) }</div>
+				<div className="label-purchase-modal__price-item-name">
+					{ itemName }
+				</div>
+				{ isDiscount &&
+					<div className="label-purchase-modal__price-item-help">
+						<Gridicon
+							ref={ this.setTooltipContext }
+							icon="help-outline"
+							onMouseEnter={ this.showTooltip }
+							onMouseLeave={ this.hideTooltip }
+							size={ 18 } />
+						<Tooltip
+							className="label-purchase-modal__price-item-tooltip is-dialog-visible"
+							isVisible={ this.state.tooltipVisible }
+							context={ this.state.tooltipContext } >
+						{ translate( 'WooCommerce Services gives you access to USPS ' +
+							'Commercial Pricing, which is discounted over Retail rates.' ) }
+						</Tooltip>
+					</div> }
+				<div className="label-purchase-modal__price-item-amount">{ formatCurrency( itemCost, 'USD' ) }</div>
 			</div>
 		);
 	};
 
-	const { prices, discount, total } = priceBreakdown;
+	render() {
+		const { priceBreakdown, translate } = this.props;
+		if ( ! priceBreakdown ) {
+			return null;
+		}
 
-	return (
-		<Card>
-			{ prices.map( ( service, index ) => renderRow( service.title, service.retailRate, index ) ) }
-			{ 0 < discount ? renderRow( translate( 'Your discount' ), -discount, 'discount' ) : null }
-			{ renderRow( translate( 'Total' ), total, 'total', true ) }
-		</Card>
-	);
+		const { prices, discount, total } = priceBreakdown;
+
+		return (
+			<Card>
+				{ prices.map( ( service, index ) => this.renderRow( service.title, service.retailRate, index ) ) }
+				{ 0 < discount ? this.renderRow( translate( 'Your discount' ), -discount, 'discount', false, true ) : null }
+				{ this.renderRow( translate( 'Total' ), total, 'total', true ) }
+			</Card>
+		);
+	}
 };
 
 PriceSummary.propTypes = {
