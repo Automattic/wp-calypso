@@ -1,20 +1,4 @@
 /** @format */
-export const jetpackConnectSessionsSchema = {
-	type: 'object',
-	additionalProperties: false,
-	patternProperties: {
-		'^.+$': {
-			type: 'object',
-			required: [ 'timestamp' ],
-			properties: {
-				timestamp: { type: 'number' },
-				flowType: { type: 'string' },
-			},
-			additionalProperties: false,
-		},
-	},
-};
-
 export const jetpackConnectAuthorizeSchema = {
 	type: 'object',
 	additionalProperties: false,
