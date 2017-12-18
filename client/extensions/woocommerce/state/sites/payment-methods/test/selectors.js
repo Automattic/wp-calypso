@@ -132,6 +132,19 @@ describe( 'selectors', () => {
 			} );
 		} );
 
+		test( 'should return the "fake" paymentMethod "manual" when requested.', () => {
+			expect( getPaymentMethod( loadedState, 'manual', 123 ) ).to.eql( {
+				id: 'manual',
+				title: 'Manual Payment',
+				description: '',
+				enabled: true,
+				method_title: 'manual',
+				methodType: 'offline',
+				method_description: '',
+				method_supports: [ 'products' ],
+			} );
+		} );
+
 		test( 'should be false when given a loading state tree.', () => {
 			expect( getPaymentMethod( loadingState, 'bacs', 123 ) ).to.be.false;
 		} );
