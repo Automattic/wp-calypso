@@ -91,14 +91,12 @@ class SettingsPayments extends Component {
 		this.props.createPaymentSettingsActionList( successAction, failureAction );
 	};
 
-	renderPaymentSection = paymentSection => {
-		return (
-			<div className="payments__type-container" key={ paymentSection.methodType }>
-				<ExtendedHeader label={ paymentSection.label } description={ paymentSection.description } />
-				<PaymentMethodList methodType={ paymentSection.methodType } />
-			</div>
-		);
-	};
+	renderPaymentSection = ( { description, label, methodType } ) => (
+		<div className="payments__type-container" key={ methodType }>
+			<ExtendedHeader label={ label } description={ description } />
+			<PaymentMethodList methodType={ methodType } />
+		</div>
+	);
 
 	renderPaymentSections = () => {
 		const { translate } = this.props;
