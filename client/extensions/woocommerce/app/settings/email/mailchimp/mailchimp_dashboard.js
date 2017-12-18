@@ -121,9 +121,9 @@ class MailChimpDashboard extends React.Component {
 		const { translate } = nextProps;
 		if ( ( false === nextProps.isSaving ) && this.props.isSaving ) {
 			if ( nextProps.newsletterSettingsSubmitError ) {
-				nextProps.errorNotice( translate( 'There was a problem saving the email settings. Please try again.' ) );
+				nextProps.errorNotice( translate( 'There was a problem saving MailChimp settings. Please try again.' ) );
 			} else {
-				nextProps.successNotice( translate( 'Email settings saved.' ), { duration: 4000 } );
+				nextProps.successNotice( translate( 'MailChimp settings saved.' ), { duration: 4000 } );
 			}
 		}
 		if ( ( false === this.props.saveSettingsRequest ) && nextProps.saveSettingsRequest ) {
