@@ -455,7 +455,7 @@ class PostShare extends Component {
 					onToggle={ this.toggleConnection }
 				/>
 
-				<div className="post-share__connections">
+				<div className="post-share__manage-connections-link">
 					{ translate( '{{a}}Manage connections{{/a}}', {
 						components: {
 							a: <a href={ `/sharing/${ siteId }` } />,
