@@ -142,7 +142,12 @@ export class CommentAuthorMoreInfo extends Component {
 
 					<div className="comment__author-more-info-element">
 						<Gridicon icon="mail" />
-						<div>{ authorEmail || <em>{ translate( 'No email address' ) }</em> }</div>
+						<div>
+							{ !! authorEmail && (
+								<ExternalLink href={ `mailto:${ authorEmail }` }>{ authorEmail }</ExternalLink>
+							) }
+							{ ! authorEmail && <em>{ translate( 'No email address' ) }</em> }
+						</div>
 					</div>
 
 					<div className="comment__author-more-info-element">
