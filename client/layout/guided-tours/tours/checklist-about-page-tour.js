@@ -87,7 +87,7 @@ export const ChecklistAboutPageTour = makeTour(
 		<Step name="click-set-featured-image" target="confirm" arrow="right-top" placement="beside">
 			<Continue target="confirm" step="click-update" click>
 				{ translate(
-					'We’re all set, press {{b}}Set Feauted Image{{/b}} to add this image to your page.',
+					'We’re all set, press {{b}}Set Featured Image{{/b}} to add this image to your page.',
 					{
 						components: { b: <strong /> },
 					}
