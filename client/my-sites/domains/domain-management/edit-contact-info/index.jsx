@@ -40,7 +40,7 @@ class EditContactInfo extends React.Component {
 		}
 
 		return (
-			<Main className="domain-management-edit-contact-info">
+			<Main className="edit-contact-info">
 				<Header
 					onClick={ this.goToContactsPrivacy }
 					selectedDomainName={ this.props.selectedDomainName }

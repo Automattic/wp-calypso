@@ -43,7 +43,7 @@ class ContactsPrivacy extends React.PureComponent {
 			: findRegistrantWhois( this.props.whois.data );
 
 		return (
-			<Main className="domain-management-contacts-privacy">
+			<Main className="contacts-privacy">
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
 					{ privacyAvailable ? translate( 'Contacts and Privacy' ) : translate( 'Contacts' ) }
 				</Header>
