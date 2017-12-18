@@ -43,7 +43,7 @@ class ReadmeViewer extends Component {
 			<div className="docs-example__readme-viewer">
 				<hr className="docs-example__readme-viewer-hr" />
 				<FoldableCard
-					header=""
+					header="README.md"
 					clickableHeader={ true }
 					compact={ true }
 					expanded={ true }
