@@ -3,15 +3,25 @@
 /**
  * External dependencies
  */
-
-import { find, get, isArray } from 'lodash';
+import { translate } from 'i18n-calypso';
+import { filter, find, get, isArray } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 import { LOADING } from 'woocommerce/state/constants';
+
+/*
+ * By default, those methods are called "XXXX (WooCommerce Services)".
+ * We aren't pushing the "WooCommerce Services" brand anywhere in Calypso, so the method names must be changed.
+ */
+const METHOD_NAMES = {
+	wc_services_usps: translate( 'USPS' ),
+	wc_services_canada_post: translate( 'Canada Post' ),
+};
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -20,7 +30,23 @@ import { LOADING } from 'woocommerce/state/constants';
  * if the methods are currently being fetched, or a "falsy" value if that haven't been fetched at all.
  */
 export const getShippingMethods = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'shippingMethods' ] );
+	const allMethods = get( state, [
+		'extensions',
+		'woocommerce',
+		'sites',
+		siteId,
+		'shippingMethods',
+	] );
+	if ( ! isArray( allMethods ) ) {
+		return allMethods;
+	}
+	const availableMethods = isWcsEnabled( state, siteId )
+		? allMethods
+		: filter( allMethods, ( { id } ) => ! id.startsWith( 'wc_services' ) );
+	return availableMethods.map( method => ( {
+		...method,
+		title: METHOD_NAMES[ method.id ] || method.title,
+	} ) );
 };
 
 /**
