@@ -5,11 +5,16 @@
 		"target": "ES6",
 		"baseUrl": ".",
 		"paths": {
-			"*": [ "test/*", "server/*", "client/*" ]
+			"*": [
+				"test/*",
+				"server/*",
+				"client/*"
+			]
 		}
 	},
 	"exclude": [
 		"node_modules",
+		"**/node_modules/*",
 		"public",
 		"build"
 	]
