@@ -1,0 +1,31 @@
+.sidebar-banner {
+	display: flex;
+	background-color: $alert-green;
+	color: $white;
+	font-size: 12px;
+
+	@include breakpoint( "<660px" ) {
+		padding: 0 24px;
+	}
+
+	.sidebar-banner__icon-wrapper {
+		flex: 0 0 auto;
+		padding: 5px 5px 2px;
+	}
+
+	.sidebar-banner__content {
+		width: 100%;
+		padding: 6px 5px 5px;
+	}
+
+	a {
+		transition: all 200ms ease-out;
+		padding: 6px 8px 2px 5px;
+		color: $white;
+		text-transform: uppercase;
+	}
+
+	a:hover {
+		text-decoration: underline;
+	}
+}
