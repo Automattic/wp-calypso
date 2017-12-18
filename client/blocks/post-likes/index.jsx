@@ -45,6 +45,7 @@ export const PostLikes = props => {
 							rel="noopener noreferrer"
 							target="_blank"
 							className="post-likes__item"
+							title={ like.login }
 							onClick={ trackLikeClick }
 						>
 							<Gravatar user={ like } size={ 24 } />
