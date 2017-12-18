@@ -23,7 +23,7 @@ import Card from 'components/card';
 import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
+import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import {
@@ -125,7 +125,7 @@ export class LoginForm extends Component {
 			this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link' );
 
 			this.props
-				.fetchMagicLoginRequestEmail( this.state.usernameOrEmail )
+				.fetchMagicLoginRequestEmail( this.state.usernameOrEmail, nextProps.redirectTo )
 				.then( () => {
 					this.props.recordTracksEvent( 'calypso_login_block_login_form_send_magic_link_success' );
 				} )
@@ -418,12 +418,12 @@ export default connect(
 			isFormDisabled: isFormDisabledSelector( state ),
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
-			redirectTo: getCurrentQueryArguments( state ).redirect_to,
+			redirectTo: getInitialQueryArguments( state ).redirect_to,
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
 			socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
 			socialAccountLinkService: getSocialAccountLinkService( state ),
-			userEmail: getCurrentQueryArguments( state ).email_address,
+			userEmail: getInitialQueryArguments( state ).email_address,
 		};
 	},
 	{

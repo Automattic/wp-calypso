@@ -18,6 +18,7 @@ import {
 } from 'state/login/magic-login/actions';
 import {
 	isFetchingMagicLoginEmail,
+	getInitialQueryArguments,
 	getMagicLoginCurrentView,
 	getMagicLoginRequestEmailError,
 	getMagicLoginRequestedEmailSuccessfully,
@@ -39,6 +40,7 @@ class RequestLoginEmailForm extends React.Component {
 		// mapped to state
 		currentUser: PropTypes.object,
 		isFetching: PropTypes.bool,
+		redirectTo: PropTypes.string,
 		requestError: PropTypes.string,
 		showCheckYourEmail: PropTypes.bool,
 		emailRequested: PropTypes.bool,
@@ -74,7 +76,9 @@ class RequestLoginEmailForm extends React.Component {
 
 	onSubmit = event => {
 		event.preventDefault();
+
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
+
 		if ( ! usernameOrEmail.length ) {
 			return;
 		}
@@ -82,7 +86,7 @@ class RequestLoginEmailForm extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_email_link_submit' );
 
 		this.props
-			.fetchMagicLoginRequestEmail( usernameOrEmail )
+			.fetchMagicLoginRequestEmail( usernameOrEmail, this.props.redirectTo )
 			.then( () => {
 				this.props.recordTracksEvent( 'calypso_login_email_link_success' );
 			} )
@@ -183,6 +187,7 @@ const mapState = state => {
 	return {
 		currentUser: getCurrentUser( state ),
 		isFetching: isFetchingMagicLoginEmail( state ),
+		redirectTo: getInitialQueryArguments( state ).redirect_to,
 		requestError: getMagicLoginRequestEmailError( state ),
 		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),

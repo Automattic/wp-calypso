@@ -58,16 +58,25 @@ export const hideMagicLoginRequestNotice = () => {
 	};
 };
 
-export const fetchMagicLoginRequestEmail = email => dispatch => {
+/**
+ * Sends an email with a magic link to the specified email address.
+ *
+ * @param  {String}   email      Email address of the user
+ * @param  {String}   redirectTo Url to redirect the user to upon successful login
+ * @return {Function}            A thunk that can be dispatched
+ */
+export const fetchMagicLoginRequestEmail = ( email, redirectTo ) => dispatch => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH } );
 
 	return wpcom
 		.undocumented()
 		.requestMagicLoginEmail( {
 			email,
+			redirect_to: redirectTo,
 		} )
 		.then( () => {
 			dispatch( { type: MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS } );
+
 			dispatch( {
 				type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 				email,
@@ -83,8 +92,14 @@ export const fetchMagicLoginRequestEmail = email => dispatch => {
 		} );
 };
 
-// @TODO should this move to `/state/data-layer`..?
-export const fetchMagicLoginAuthenticate = token => dispatch => {
+/**
+ * Logs a user in from a token included in a magic link.
+ *
+ * @param  {String}   token      Security token
+ * @param  {String}   redirectTo Url to redirect the user to upon successful login
+ * @return {Function}            A thunk that can be dispatched
+ */
+export const fetchMagicLoginAuthenticate = ( token, redirectTo ) => dispatch => {
 	dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
 
 	request
@@ -98,18 +113,21 @@ export const fetchMagicLoginAuthenticate = token => dispatch => {
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 			token,
+			redirect_to: redirectTo,
 		} )
 		.then( response => {
 			dispatch( {
 				type: LOGIN_REQUEST_SUCCESS,
 				data: get( response, 'body.data' ),
 			} );
+
 			dispatch( {
 				type: MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
 			} );
 		} )
 		.catch( error => {
 			const { status } = error;
+
 			dispatch( {
 				type: MAGIC_LOGIN_REQUEST_AUTH_ERROR,
 				error: status,
