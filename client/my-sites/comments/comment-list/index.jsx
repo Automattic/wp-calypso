@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, get, isEqual, map, orderBy, slice } from 'lodash';
+import { filter, find, get, isEqual, isNull, map, orderBy, slice } from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
@@ -172,12 +172,14 @@ export class CommentList extends Component {
 			<div className="comment-list">
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySiteCommentCounts siteId={ siteId } postId={ postId } />
-				<QuerySiteCommentsList
-					number={ COMMENTS_PER_PAGE }
-					offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
-					siteId={ siteId }
-					status={ status }
-				/>
+				{ ! isNull( commentsCount ) && (
+					<QuerySiteCommentsList
+						number={ COMMENTS_PER_PAGE }
+						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
+						siteId={ siteId }
+						status={ status }
+					/>
+				) }
 
 				{ isPostView && <CommentListHeader postId={ postId } /> }
 
