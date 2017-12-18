@@ -13,7 +13,7 @@ export const jetpackConnectAuthorizeSchema = {
 				isAuthorizing: { type: 'boolean' },
 				isRedirectingToWpAdmin: { type: 'boolean' },
 				plansUrl: { type: 'string' },
-				timestamp: { type: 'number' },
+				timestamp: { type: 'integer' },
 				siteReceived: { type: 'boolean' },
 				clientId: { type: 'integer' },
 			},
@@ -29,8 +29,8 @@ export const jetpackAuthAttemptsSchema = {
 		'^.+$': {
 			type: 'object',
 			required: [ 'attempt', 'timestamp' ],
-			attempt: { type: 'number' },
-			timestamp: { type: 'number' },
+			attempt: { type: 'integer' },
+			timestamp: { type: 'integer' },
 		},
 	},
 };
