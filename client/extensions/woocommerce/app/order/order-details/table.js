@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { find, findIndex, noop } from 'lodash';
+import { find, findIndex, get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -261,6 +261,50 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
+	renderCoupons = () => {
+		const { order, site, translate } = this.props;
+		const showTax = this.shouldShowTax();
+		const coupons = order.coupon_lines || [];
+
+		const couponMarkup = coupons.map( ( item, i ) => {
+			const meta = find( get( item, 'meta_data', [] ), { key: 'coupon_data' } );
+			// In rare cases this might not exist, so we'll check before showing a link.
+			const id = get( meta, 'value.id', false );
+			return (
+				<span key={ item.id }>
+					{ id ? (
+						<a
+							href={ getLink( `/store/promotion/:site/c${ id }`, site ) }
+							className="order-details__coupon-list-item"
+						>
+							{ item.code }
+						</a>
+					) : (
+						item.code
+					) }
+					{ i !== coupons.length - 1 ? ', ' : '' }
+				</span>
+			);
+		} );
+
+		return (
+			<TableRow className="order-details__coupon-list">
+				<TableItem isRowHeader className="order-details__coupon-list-label">
+					<h3 className="order-details__coupon-list-title">{ translate( 'Coupons' ) }</h3>
+					{ couponMarkup }
+				</TableItem>
+				{ showTax && (
+					<TableItem className="order-details__totals-tax">
+						({ formatCurrency( getOrderDiscountTax( order ), order.currency ) })
+					</TableItem>
+				) }
+				<TableItem className="order-details__totals-value">
+					({ formatCurrency( order.discount_total, order.currency ) })
+				</TableItem>
+			</TableRow>
+		);
+	};
+
 	renderRefundTotals = () => {
 		const { isEditing, order, translate } = this.props;
 		const refundValue = getOrderRefundTotal( order );
@@ -324,13 +368,7 @@ class OrderDetailsTable extends Component {
 				{ isEditing && <OrderAddItems /> }
 
 				<Table className={ totalsClasses } compact>
-					<OrderTotalRow
-						currency={ order.currency }
-						label={ translate( 'Discount' ) }
-						value={ order.discount_total }
-						taxValue={ getOrderDiscountTax( order ) }
-						showTax={ showTax }
-					/>
+					{ this.renderCoupons() }
 					<OrderTotalRow
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
