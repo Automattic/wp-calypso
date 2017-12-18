@@ -50,7 +50,7 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 };
 
 export const announceSaveFailure = ( { dispatch } ) =>
-	dispatch( errorNotice( translate( 'An unexpected problem occurred. Please try again.' ) ) );
+	dispatch( errorNotice( translate( 'An unexpected error occurred. Please try again later.' ) ) );
 
 export default {
 	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
