@@ -8,7 +8,6 @@ import {
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
-	JETPACK_CONNECT_REDIRECT,
 } from 'state/action-types';
 
 describe( '#jetpackConnectSite()', () => {
@@ -99,30 +98,6 @@ describe( '#jetpackConnectSite()', () => {
 			{ url: 'https://automattic.com' },
 			{
 				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
-				url: 'https://example.wordpress.com',
-			}
-		);
-
-		expect( state ).toEqual( { url: 'https://automattic.com' } );
-	} );
-
-	test( 'should schedule a redirect to the url if it is the current one', () => {
-		const state = jetpackConnectSite(
-			{ url: 'https://example.wordpress.com' },
-			{
-				type: JETPACK_CONNECT_REDIRECT,
-				url: 'https://example.wordpress.com',
-			}
-		);
-
-		expect( state ).toMatchObject( { isRedirecting: true } );
-	} );
-
-	test( 'should not schedule a redirect to the url if it is not the current one', () => {
-		const state = jetpackConnectSite(
-			{ url: 'https://automattic.com' },
-			{
-				type: JETPACK_CONNECT_REDIRECT,
 				url: 'https://example.wordpress.com',
 			}
 		);
