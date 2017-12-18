@@ -49,12 +49,20 @@ class OrderPaymentCard extends Component {
 				},
 			} );
 		} else if ( 'on-hold' === order.status || 'pending' === order.status ) {
-			paymentStatus = translate( 'Awaiting payment of %(total)s via %(method)s', {
-				args: {
-					total: formatCurrency( order.total, order.currency ),
-					method: order.payment_method_title,
-				},
-			} );
+			if ( order.payment_method_title ) {
+				paymentStatus = translate( 'Awaiting payment of %(total)s via %(method)s', {
+					args: {
+						total: formatCurrency( order.total, order.currency ),
+						method: order.payment_method_title,
+					},
+				} );
+			} else {
+				paymentStatus = translate( 'Awaiting payment of %(total)s', {
+					args: {
+						total: formatCurrency( order.total, order.currency ),
+					},
+				} );
+			}
 		} else if ( order.refunds.length ) {
 			const refund = getOrderRefundTotal( order );
 			paymentStatus = translate( 'Payment of %(total)s has been partially refunded %(refund)s', {
@@ -69,11 +77,17 @@ class OrderPaymentCard extends Component {
 					total: formatCurrency( order.total, order.currency ),
 				},
 			} );
-		} else {
+		} else if ( order.payment_method_title ) {
 			paymentStatus = translate( 'Payment of %(total)s received via %(method)s', {
 				args: {
 					total: formatCurrency( order.total, order.currency ),
 					method: order.payment_method_title,
+				},
+			} );
+		} else {
+			paymentStatus = translate( 'Payment of %(total)s received', {
+				args: {
+					total: formatCurrency( order.total, order.currency ),
 				},
 			} );
 		}
