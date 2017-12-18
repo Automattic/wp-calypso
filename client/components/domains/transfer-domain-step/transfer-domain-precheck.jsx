@@ -233,7 +233,11 @@ class TransferDomainPrecheck extends React.PureComponent {
 			classes = 'transfer-domain-step__lock-status transfer-domain-step__locked';
 			icon = 'cross';
 		} else if ( inInitialRegistrationPeriod ) {
-			heading = translate( 'Domain was registered less than 60 days ago.' );
+			heading = translate( 'Domain was registered less than %(daysTransferLocked)d days ago.', {
+				args: {
+					daysTransferLocked: daysTransferLocked,
+				},
+			} );
 			message = translate(
 				'Your domain was registered on %(creationDate)s. Your domain must be registered for at least %(daysTransferLocked)d ' +
 					'days before it is eligible for transfer. You can either wait until %(transferEligibleDate)s to transfer your ' +
