@@ -90,7 +90,6 @@ export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSite
 
 	const { values: selectedRates, available: availableRates } = form.rates;
 	const prices = [];
-	let fee = 0;
 	let discount = 0;
 	let total = 0;
 	for ( const packageId in selectedRates ) {
@@ -107,17 +106,14 @@ export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSite
 				retailRate: foundRate.retail_rate,
 			} );
 
-			const rateFee = foundRate.wcs_fee || 0;
 			discount += foundRate.retail_rate - foundRate.rate;
-			fee += rateFee;
-			total += foundRate.rate + rateFee;
+			total += foundRate.rate;
 		}
 	}
 
 	return prices.length ? {
 		prices,
 		discount: discount,
-		fee,
 		total: total,
 	} : null;
 };

@@ -32,12 +32,11 @@ const PriceSummary = ( { priceBreakdown, translate } ) => {
 		);
 	};
 
-	const { prices, fee, discount, total } = priceBreakdown;
+	const { prices, discount, total } = priceBreakdown;
 
 	return (
 		<Card>
 			{ prices.map( ( service, index ) => renderRow( service.title, service.retailRate, index ) ) }
-			{ 0 < fee ? renderRow( translate( 'Labels fee' ), fee, 'fee' ) : null }
 			{ 0 < discount ? renderRow( translate( 'Your discount' ), -discount, 'discount' ) : null }
 			{ renderRow( translate( 'Total' ), total, 'total', true ) }
 		</Card>
