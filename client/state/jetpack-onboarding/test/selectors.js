@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { getUnconnectedSiteIdForSlug } from '../selectors';
+import { getUnconnectedSiteIdBySlug } from '../selectors';
 
-describe( '#getUnconnectedSiteIdForSlug()', () => {
+describe( '#getUnconnectedSiteIdBySlug()', () => {
 	test( 'should return null if we have no credentials for the current site slug', () => {
-		const selected = getUnconnectedSiteIdForSlug( {
+		const selected = getUnconnectedSiteIdBySlug( {
 			jetpackOnboarding: {
 				credentials: {},
 			},
@@ -15,7 +15,7 @@ describe( '#getUnconnectedSiteIdForSlug()', () => {
 	} );
 
 	test( 'should return the site ID of the site', () => {
-		const selected = getUnconnectedSiteIdForSlug( {
+		const selected = getUnconnectedSiteIdBySlug( {
 			jetpackOnboarding: {
 				credentials: {
 					2916284: {
@@ -31,7 +31,7 @@ describe( '#getUnconnectedSiteIdForSlug()', () => {
 	} );
 
 	test( 'should return the site ID of the site for a subdir install', () => {
-		const selected = getUnconnectedSiteIdForSlug( {
+		const selected = getUnconnectedSiteIdBySlug( {
 			jetpackOnboarding: {
 				credentials: {
 					2916284: {

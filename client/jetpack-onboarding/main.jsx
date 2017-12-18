@@ -16,7 +16,7 @@ import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
 } from './constants';
-import { getUnconnectedSiteIdForSlug } from 'state/jetpack-onboarding/selectors';
+import { getUnconnectedSiteIdBySlug } from 'state/jetpack-onboarding/selectors';
 
 class JetpackOnboardingMain extends React.PureComponent {
 	static propTypes = {
@@ -60,7 +60,7 @@ export default connect( ( state, { siteSlug } ) => {
 	] );
 
 	return {
-		siteId: getUnconnectedSiteIdForSlug( state, siteSlug ),
+		siteId: getUnconnectedSiteIdBySlug( state, siteSlug ),
 		siteSlug,
 		steps,
 	};

@@ -9,7 +9,7 @@ import { findKey } from 'lodash';
  */
 import { urlToSlug } from 'lib/url';
 
-export function getUnconnectedSiteIdForSlug( state, siteSlug ) {
+export function getUnconnectedSiteIdBySlug( state, siteSlug ) {
 	const siteId = findKey(
 		state.jetpackOnboarding.credentials,
 		( { siteUrl } ) => siteSlug === urlToSlug( siteUrl )
