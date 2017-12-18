@@ -4,7 +4,7 @@ In this tutorial, we'll create a brief tour that shows a user how "View Site" wo
 
 It's not a comprehensive tutorial, but walks you through many of the different tasks that you'll encounter when developing a tour using Guided Tours.
 
-For more complete technical information, please see the existing tours (linked to [in the README.md](../README.md)), the [API documentation](./API.md), and the [architecture documentation](./ARCHITECTURE.md).
+For more complete technical information, please see the existing tours (linked to [in the README.md](../README.md)), [the examples](./examples/README.md), the [API documentation](./API.md), and the [architecture documentation](./ARCHITECTURE.md).
 
 **PLEASE NOTE:** This tour is merely an example. It is not a real tour that we're showing to users. The step sequence and copy especially didn't go through multiple iterations like we'd normally do with a new tour.
 

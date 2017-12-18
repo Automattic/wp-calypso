@@ -11,7 +11,6 @@ import { GDocsIntegrationTour } from 'layout/guided-tours/tours/gdocs-integratio
 import { SimplePaymentsTour } from 'layout/guided-tours/tours/simple-payments-tour';
 import { EditorBasicsTour } from 'layout/guided-tours/tours/editor-basics-tour';
 import { MediaBasicsTour } from 'layout/guided-tours/tours/media-basics-tour';
-import { SimplePaymentsEndOfYearGuide } from 'layout/guided-tours/tours/simple-payments-end-of-year-guide';
 import { ChecklistSiteIconTour } from 'layout/guided-tours/tours/checklist-site-icon-tour';
 import { ChecklistSiteTaglineTour } from 'layout/guided-tours/tours/checklist-site-tagline-tour';
 import { ChecklistSiteTitleTour } from 'layout/guided-tours/tours/checklist-site-title-tour';
@@ -26,5 +25,4 @@ export default combineTours( {
 	tutorialSitePreview: TutorialSitePreviewTour,
 	gdocsIntegrationTour: GDocsIntegrationTour,
 	simplePaymentsTour: SimplePaymentsTour,
-	simplePaymentsEndOfYearGuide: SimplePaymentsEndOfYearGuide,
 } );

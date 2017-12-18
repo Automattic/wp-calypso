@@ -22,8 +22,30 @@ import {
 	Quit,
 	Link,
 } from 'layout/guided-tours/config-elements';
-import { hasSelectedSitePremiumOrBusinessPlan } from 'state/ui/guided-tours/contexts';
+// import { hasSelectedSitePremiumOrBusinessPlan } from 'state/ui/guided-tours/contexts';
+
 import { isDesktop } from 'lib/viewport';
+
+// NOTE: selector moved here because tour is no longer active and serves as example only
+// to use in a tour, move back to 'state/ui/guided-tours/contexts' (see commented out import above)
+/**
+ * Returns true if the selected site is on the Premium or Business plan
+ *
+ * @param {Object} state Global state tree
+ * @return {Boolean} True if selected site is on the Premium or Business plan, false otherwise.
+ */
+import { includes } from 'lodash';
+import { PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
+import { getSitePlan } from 'state/sites/selectors';
+
+export const hasSelectedSitePremiumOrBusinessPlan = state => {
+	const siteId = getSelectedSiteId( state );
+	const sitePlan = getSitePlan( state, siteId );
+	if ( ! sitePlan ) {
+		return false;
+	}
+	return includes( [ PLAN_PREMIUM, PLAN_BUSINESS ], sitePlan.product_slug );
+};
 
 export const SimplePaymentsEndOfYearGuide = makeTour(
 	<Tour
