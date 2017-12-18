@@ -12,15 +12,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import {
-	ButtonRow,
-	Continue,
-	makeTour,
-	Next,
-	SiteLink,
-	Step,
-	Tour,
-} from 'layout/guided-tours/config-elements';
+import { Continue, makeTour, SiteLink, Step, Tour } from 'layout/guided-tours/config-elements';
 
 export const ChecklistUserAvatarTour = makeTour(
 	<Tour name="checklistUserAvatar" version="20171205" path="/non-existent-route" when={ noop }>
@@ -31,33 +23,19 @@ export const ChecklistUserAvatarTour = makeTour(
 			arrow="left-top"
 			style={ {
 				animationDelay: '0.7s',
+				'z-index': 0,
 			} }
 		>
 			<p>
 				{ translate(
-					'Personalize your posts and comments with your Avatar. ' +
-						'Click on this image to upload a new profile picture.'
+					'Personalize your posts and comments with a profile picture. ' +
+						'Click on this image to upload your new image.'
 				) }
 			</p>
-			<ButtonRow>
-				<Next step="click-done">{ translate( 'All done, continue' ) }</Next>
+			<Continue target="image-editor-button-done" step="finish" click>
 				<SiteLink isButton={ false } href="/checklist/:site">
 					{ translate( 'Return to the checklist' ) }
 				</SiteLink>
-			</ButtonRow>
-		</Step>
-
-		<Step
-			name="click-done"
-			target="image-editor-button-done"
-			arrow="bottom-center"
-			placement="above"
-		>
-			<Continue target="image-editor-button-done" step="finish" click>
-				{ translate(
-					"Let's make sure it looks right before you press {{b}}Change My Photo{{/b}} to save your changes.",
-					{ components: { b: <strong /> } }
-				) }
 			</Continue>
 		</Step>
 
