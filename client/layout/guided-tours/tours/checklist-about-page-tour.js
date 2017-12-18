@@ -66,11 +66,7 @@ export const ChecklistAboutPageTour = makeTour(
 							"Let's add something a little more relevant to your About page text."
 					) }
 				</p>
-				<p>
-					{ translate( 'Press the {{b}}Pencil Icon{{/b}} so we can change the existing image.', {
-						components: { b: <strong /> },
-					} ) }
-				</p>
+				<p>{ translate( 'Press anywhere on this image so we can change it.' ) }</p>
 			</Continue>
 		</Step>
 
@@ -117,8 +113,8 @@ export const ChecklistAboutPageTour = makeTour(
 			</h1>
 			<p>
 				{ translate(
-					'The updates to your About page are being saved. When the page is done saving, let’s move on and' +
-						' see what’s next on our checklist.'
+					'The updates to your About page are being saved. When the page is done saving, let’s' +
+						' return to our checklist and see what’s next.'
 				) }
 			</p>
 			<SiteLink isButton="true" href={ '/checklist/:site' }>
