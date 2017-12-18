@@ -94,24 +94,13 @@ export class LoggedInForm extends Component {
 	};
 
 	retryingAuth = false;
-	state = { haveAuthorized: false };
 
 	componentWillMount() {
 		const { recordTracksEvent } = this.props;
-		const { autoAuthorize } = this.props.authorizationData;
-		const { alreadyAuthorized, newUserStartedConnection } = this.props.authQuery;
 		recordTracksEvent( 'calypso_jpc_auth_view' );
 
-		const doAutoAuthorize =
-			! this.props.isAlreadyOnSitesList &&
-			! alreadyAuthorized &&
-			( this.props.calypsoStartedConnection || newUserStartedConnection || autoAuthorize );
-
-		// isSSO is a separate case from the rest since we have already validated
-		// it in authorize-form.jsx. Therefore, if it's set, just authorize and redirect.
-		if ( this.isSso() || doAutoAuthorize ) {
+		if ( this.shouldAutoAuthorize() ) {
 			debug( 'Authorizing automatically on component mount' );
-			this.setState( { haveAuthorized: true } );
 			return this.authorize();
 		}
 	}
@@ -185,6 +174,18 @@ export class LoggedInForm extends Component {
 		} else {
 			page.redirect( this.getRedirectionTarget() );
 		}
+	}
+
+	shouldAutoAuthorize() {
+		const { autoAuthorize } = this.props.authorizationData;
+		const { alreadyAuthorized, newUserStartedConnection } = this.props.authQuery;
+		return (
+			this.isSso() ||
+			this.isWoo() ||
+			( ! this.props.isAlreadyOnSitesList &&
+				! alreadyAuthorized &&
+				( this.props.calypsoStartedConnection || newUserStartedConnection || autoAuthorize ) )
+		);
 	}
 
 	isFromJpo( props = this.props ) {

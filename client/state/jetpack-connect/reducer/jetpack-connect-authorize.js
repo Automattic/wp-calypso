@@ -2,7 +2,7 @@
 /**
  * External dependencis
  */
-import { get, includes, isEmpty, omit } from 'lodash';
+import { get, isEmpty, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -65,14 +65,10 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 			} );
 
 		case JETPACK_CONNECT_QUERY_SET:
-			const autoAuthorize = includes(
-				[ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ],
-				action.from
-			);
 			return {
 				authorizeError: false,
 				authorizeSuccess: false,
-				autoAuthorize,
+				autoAuthorize: false,
 				isAuthorizing: false,
 				timestamp: Date.now(),
 				userAlreadyConnected: false,

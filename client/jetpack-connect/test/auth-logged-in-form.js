@@ -2,6 +2,14 @@
  * @format
  * @jest-environment jsdom
  */
+
+/**
+ * External dependencies
+ */
+import React from 'react';
+import { shallow } from 'enzyme';
+import { identity, noop } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -23,7 +31,7 @@ describe( 'LoggedInForm', () => {
 			expect( isSso( props ) ).toBe( true );
 		} );
 
-		test( 'returns false with bad from', () => {
+		test( 'returns false with non-sso from', () => {
 			document.cookie = `jetpack_sso_approved=${ queryDataSiteId };`;
 			const props = {
 				authQuery: {
@@ -54,6 +62,60 @@ describe( 'LoggedInForm', () => {
 				},
 			};
 			expect( isSso( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isWoo', () => {
+		const isWoo = new LoggedInForm().isWoo;
+
+		test( 'should return true for woo wizard', () => {
+			const props = { authQuery: { from: 'woocommerce-services-auto-authorize' } };
+			expect( isWoo( props ) ).toBe( true );
+		} );
+
+		test( 'should return true for woo services', () => {
+			const props = { authQuery: { from: 'woocommerce-setup-wizard' } };
+			expect( isWoo( props ) ).toBe( true );
+		} );
+
+		test( 'returns false with non-woo from', () => {
+			const props = { authQuery: { from: 'elsewhere' } };
+			expect( isWoo( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'shouldAutoAuthorize', () => {
+		const renderableComponent = (
+			<LoggedInForm
+				authQuery={ {} }
+				authAttempts={ 0 }
+				authorizationData={ { autoAuthorize: false } }
+				authorize={ noop }
+				goBackToWpAdmin={ noop }
+				goToXmlrpcErrorFallbackUrl={ noop }
+				recordTracksEvent={ noop }
+				retryAuth={ noop }
+				siteSlug={ '' }
+				translate={ identity }
+				user={ {} }
+				userAlreadyConnected={ false }
+			/>
+		);
+
+		test( 'should return true for sso', () => {
+			const component = shallow( renderableComponent );
+			component.instance().isSso = () => true;
+			const result = component.instance().shouldAutoAuthorize();
+
+			expect( result ).toBe( true );
+		} );
+
+		test( 'should return true for woo', () => {
+			const component = shallow( renderableComponent );
+			component.instance().isWoo = () => true;
+			const result = component.instance().shouldAutoAuthorize();
+
+			expect( result ).toBe( true );
 		} );
 	} );
 } );
