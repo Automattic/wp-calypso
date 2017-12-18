@@ -21,10 +21,12 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import FormattedHeader from 'components/formatted-header';
 import { checkInboundTransferStatus } from 'lib/domains';
 import support from 'lib/url/support';
+import paths from 'my-sites/domains/paths';
 
 class TransferDomainPrecheck extends React.PureComponent {
 	static propTypes = {
 		domain: PropTypes.string,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		setValid: PropTypes.func,
 		supportsPrivacy: PropTypes.bool,
 	};
@@ -32,7 +34,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 	state = {
 		creationDate: '',
 		currentStep: 1,
-		days_transfer_locked: 60,
+		daysTransferLocked: 60,
 		email: '',
 		expiryDate: '',
 		expiryDateNew: '',
@@ -186,7 +188,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 	}
 
 	getRegistrationPeriodMessage() {
-		const { translate } = this.props;
+		const { translate, selectedSite, domain } = this.props;
 		const {
 			creationDate,
 			currentStep,
@@ -213,7 +215,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		let statusText = translate( 'Domain registration period is ok.' );
 		let icon = 'checkmark';
 
-		if ( ! expiryDateOk ) {
+		if ( false === expiryDateOk ) {
 			heading = translate( 'Domain registration exceeds maximum term.' );
 			message = translate(
 				'Transferring this domain to WordPress.com would extend the current expiration date from %(expiryDate)s to ' +
@@ -226,13 +228,19 @@ class TransferDomainPrecheck extends React.PureComponent {
 						expiryDateNew: moment( expiryDateNew ).format( dateFormat ),
 					},
 					components: {
-						a: <a href="" rel="noopener noreferrer" target="_blank" />,
+						a: (
+							<a
+								href={ paths.domainMapping( selectedSite.slug, domain ) }
+								rel="noopener noreferrer"
+								target="_blank"
+							/>
+						),
 					},
 				}
 			);
 			classes = 'transfer-domain-step__lock-status transfer-domain-step__locked';
 			icon = 'cross';
-		} else if ( inInitialRegistrationPeriod ) {
+		} else if ( true === inInitialRegistrationPeriod ) {
 			heading = translate( 'Domain was registered less than %(daysTransferLocked)d days ago.', {
 				args: {
 					daysTransferLocked: daysTransferLocked,
@@ -249,7 +257,13 @@ class TransferDomainPrecheck extends React.PureComponent {
 						transferEligibleDate: moment( transferEligibleDate ).format( dateFormat ),
 					},
 					components: {
-						a: <a href="" rel="noopener noreferrer" target="_blank" />,
+						a: (
+							<a
+								href={ paths.domainMapping( selectedSite.slug, domain ) }
+								rel="noopener noreferrer"
+								target="_blank"
+							/>
+						),
 					},
 				}
 			);

@@ -195,6 +195,7 @@ class TransferDomainStep extends React.Component {
 		return (
 			<TransferDomainPrecheck
 				domain={ this.state.domain }
+				selectedSite={ this.props.selectedSite }
 				setValid={ this.props.onTransferDomain }
 				supportsPrivacy={ this.state.supportsPrivacy }
 			/>

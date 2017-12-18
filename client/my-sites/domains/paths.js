@@ -109,6 +109,15 @@ function domainManagementTransferToOtherSite( siteName, domainName ) {
 	return domainManagementTransfer( siteName, domainName, 'other-site' );
 }
 
+function domainMapping( siteName, domain ) {
+	let path = `/domains/add/mapping/${ siteName }`;
+	if ( domain ) {
+		path += `?initialQuery=${ domain }`;
+	}
+
+	return path;
+}
+
 function domainTransferIn( siteName, domain ) {
 	let path = `/domains/add/transfer/${ siteName }`;
 	if ( domain ) {
@@ -144,6 +153,7 @@ export default {
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
+	domainMapping,
 	domainTransferIn,
 	getSectionName,
 };
