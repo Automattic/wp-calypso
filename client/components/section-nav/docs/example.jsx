@@ -77,7 +77,7 @@ class SectionNavigation extends PureComponent {
 		var demoSections = {};
 
 		forEach(
-			omit( this.props, 'isolated', 'uniqueInstance' ),
+			omit( this.props, 'isolated', 'uniqueInstance', 'readmeFilePath' ),
 			function( prop, key ) {
 				demoSections[ key ] = [];
 

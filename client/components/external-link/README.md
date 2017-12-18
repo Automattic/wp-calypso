@@ -20,15 +20,9 @@ React.createClass( {
 ## Props
 The following props can be passed to the External Link component:
 
-### `icon`
-
-<table>
-	<tr><td>Type</td><td>Bool</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-</table>
-
-Set to true if you want to render a nice external Gridicon at the end of link.
-
+| property | type    | required | comment |
+| -------- | ------- | -------- | ------- |
+| `icon`   | Boolean | no       | Set to true if you want to render a nice external Gridicon at the end of link. |
 
 ## Other Props
 Any other props that you pass into the `a` tag will be rendered as expected.

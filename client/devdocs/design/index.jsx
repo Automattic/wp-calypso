@@ -131,70 +131,70 @@ class DesignAssets extends React.Component {
 				) }
 
 				<Collection component={ component } filter={ filter }>
-					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
-					<Banner />
-					<BulkSelect />
-					<ButtonGroups />
-					<Buttons componentUsageStats={ componentsUsageStats.button } />
-					<Cards />
+					<Accordions componentUsageStats={ componentsUsageStats.accordion } readmeFilePath="accordion" />
+					<Banner readmeFilePath="banner" />
+					<BulkSelect readmeFilePath="bulk-select" />
+					<ButtonGroups readmeFilePath="button-group" />
+					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
+					<Cards readmeFilePath="card" />
 					<Checklist />
-					<ClipboardButtonInput />
-					<ClipboardButtons />
-					<Count />
-					<CountedTextareas />
-					<DatePicker />
-					<DropZones searchKeywords="drag" />
-					<EllipsisMenu />
+					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
+					<ClipboardButtons readmeFilePath="forms/clipboard-button" />
+					<Count readmeFilePath="count" />
+					<CountedTextareas readmeFilePath="forms/counted-textarea" />
+					<DatePicker readmeFilePath="date-picker" />
+					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
+					<EllipsisMenu readmeFilePath="ellipsis-menu" />
 					<EmbedDialog />
-					<EmojifyExample />
-					<EmptyContent />
-					<ExternalLink />
-					<FAQ />
-					<FeatureGate />
-					<FilePickers />
-					<FoldableCard />
-					<FormattedHeader />
-					<FormFields searchKeywords="input textbox textarea radio" />
-					<Gauge />
+					<EmojifyExample readmeFilePath="emojify" />
+					<EmptyContent readmeFilePath="empty-content" />
+					<ExternalLink readmeFilePath="external-link" />
+					<FAQ readmeFilePath="faq" />
+					<FeatureGate readmeFilePath="feature-example" />
+					<FilePickers readmeFilePath="file-picker" />
+					<FoldableCard readmeFilePath="foldable-card" />
+					<FormattedHeader readmeFilePath="formatted-header" />
+					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />
+					<Gauge readmeFilePath="gauge" />
 					<GlobalNotices />
-					<Gravatar />
+					<Gravatar readmeFilePath="gravatar" />
 					<Gridicons />
 					<HeaderButton />
-					<Headers />
-					<ImagePreloader />
-					<InfoPopover />
-					<InputChrono />
+					<Headers readmeFilePath="header-cake" />
+					<ImagePreloader readmeFilePath="image-preloader" />
+					<InfoPopover readmeFilePath="info-popover" />
+					<Tooltip readmeFilePath="tooltip" />
+					<InputChrono readmeFilePath="input-chrono" />
 					<JetpackColophonExample />
 					<JetpackLogoExample />
-					<LanguagePicker />
+					<LanguagePicker readmeFilePath="language-picker" />
 					<ListEnd />
 					<Notices />
-					<PaginationExample />
-					<PaymentLogo />
-					<Popovers />
-					<ProgressBar />
-					<Ranges />
-					<Rating />
+					<PaginationExample readmeFilePath="pagination" />
+					<PaymentLogo readmeFilePath="payment-logo" />
+					<Popovers readmeFilePath="popover" />
+					<ProgressBar readmeFilePath="progress-bar" />
+					<Ranges readmeFilePath="forms/range" />
+					<Rating readmeFilePath="rating" />
 					<Ribbon />
 					<ScreenReaderTextExample />
-					<SearchDemo />
-					<SectionHeader />
-					<SectionNav />
-					<SegmentedControl />
-					<SelectDropdown searchKeywords="menu" />
+					<SearchDemo readmeFilePath="search" />
+					<SectionHeader readmeFilePath="section-header" />
+					<SectionNav readmeFilePath="section-nav" />
+					<SegmentedControl readmeFilePath="segmented-control" />
+					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<ShareButton />
 					<SocialLogos />
-					<Spinner searchKeywords="loading" />
-					<SpinnerButton searchKeywords="loading input submit" />
-					<SpinnerLine searchKeywords="loading" />
+					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
+					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
+					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
 					<Suggestions />
 					<TileGrid />
 					<TimeSince />
-					<Timezone />
-					<TokenFields />
-					<Tooltip />
-					<Version />
-					<VerticalMenu />
+					<Timezone readmeFilePath="timezone" />
+					<TokenFields readmeFilePath="token-field" />
+					<VerticalMenu readmeFilePath="vertical-menu" />
+					<Version readmeFilePath="version" />
 					<Wizard />
 				</Collection>
 			</Main>
