@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, get, isEmpty, isEqual, isFinite, mapValues, some } from 'lodash';
+import { find, get, isEmpty, isEqual, isFinite, mapValues, round, some } from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -106,7 +106,7 @@ export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSite
 				retailRate: foundRate.retail_rate,
 			} );
 
-			discount += foundRate.retail_rate - foundRate.rate;
+			discount += round( foundRate.retail_rate - foundRate.rate, 2 );
 			total += foundRate.rate;
 		}
 	}

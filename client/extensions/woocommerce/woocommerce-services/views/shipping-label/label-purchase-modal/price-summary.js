@@ -86,7 +86,7 @@ class PriceSummary extends Component {
 			</Card>
 		);
 	}
-};
+}
 
 PriceSummary.propTypes = {
 	siteId: PropTypes.number.isRequired,
