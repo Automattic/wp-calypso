@@ -102,7 +102,7 @@ export const makeOffline = wpcom => {
 				}
 
 				// make sure we still return an XHR
-				// this is the expected behavior of wpcom.js requestk
+				// this is the expected behavior of wpcom.js request
 				return new XMLHttpRequest();
 			}
 
