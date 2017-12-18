@@ -202,6 +202,8 @@ code, kbd, tt, var {
 abbr, acronym {
 	border-bottom: 1px dotted darken( $gray, 20% );
 	cursor: help;
+	// Prevent double underline in Chrome
+	text-decoration: none;
 }
 mark, ins {
 	background: lighten( $alert-yellow, 23% );
