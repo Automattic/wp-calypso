@@ -32,6 +32,7 @@ export default class InfoTooltip extends Component {
 
 		this.openTooltip = this.openTooltip.bind( this );
 		this.closeTooltip = this.closeTooltip.bind( this );
+		this.anchorRef = null;
 
 		this.state = {
 			showTooltip: false,
@@ -46,12 +47,14 @@ export default class InfoTooltip extends Component {
 		this.setState( { showTooltip: false } );
 	}
 
+	saveAnchorRef = ref => ( this.anchorRef = ref );
+
 	render() {
 		const anchor = this.props.anchor || <Gridicon icon="info-outline" size={ 18 } />;
 
 		return (
 			<span className={ classNames( 'info-tooltip', this.props.className ) } >
-				<span ref="anchor"
+				<span ref={ this.saveAnchorRef }
 					onMouseEnter={ this.openTooltip }
 					onMouseLeave={ this.closeTooltip } >
 					{ anchor }
@@ -62,7 +65,7 @@ export default class InfoTooltip extends Component {
 					showOnMobile
 					onClose={ this.closeTooltip }
 					position={ this.props.position }
-					context={ this.refs && this.refs.anchor }>
+					context={ this.anchorRef }>
 					<div className="info-tooltip__contents"
 						style={ { maxWidth: this.props.maxWidth } } >
 						{ this.props.children }

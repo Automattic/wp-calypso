@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 
@@ -69,7 +70,7 @@ const ShippingServiceGroup = ( props ) => {
 			expandedSummary={ summary }
 			clickableHeader={ true }
 			compact
-			screenReaderText={ __( 'Expand Services' ) }
+			screenReaderText={ translate( 'Expand Services' ) }
 			expanded={ ! isEmpty( errors ) }
 		>
 			<div className="shipping-services__entry shipping-services__entry-header-container">

@@ -11,7 +11,7 @@ import { coerceValue } from '../coerce-values.js';
 describe( '#coerceValue', () => {
 	it( 'Returns null when value is null', () => {
 		const schema = {
-			$ref: '#/definitions/shipping_service'
+			$ref: '#/definitions/shipping_service',
 		};
 		const value = null;
 		const definitions = {
@@ -23,21 +23,21 @@ describe( '#coerceValue', () => {
 					},
 					enabled: {
 						type: 'boolean',
-						'default': false,
+						default: false,
 					},
 					adjustment: {
 						type: 'number',
-						'default': 0,
+						default: 0,
 					},
 					adjustment_type: {
 						type: 'string',
-						'enum': [
+						enum: [
 							'flat',
-							'percentage'
+							'percentage',
 						],
-						'default': 'flat',
-					}
-				}
+						default: 'flat',
+					},
+				},
 			},
 			services: [
 				{
