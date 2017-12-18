@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 /**
@@ -24,6 +25,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		stateName: '',
 		street: '',
 		zip: '',
+		animate: false,
 	};
 
 	getChangeHandler = field => event => {
@@ -44,19 +46,29 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		};
 	}
 
+	transitionScreen() {
+		this.setState = { animate: true };
+	}
+
 	render() {
 		const { translate } = this.props;
+		const { animate } = this.state;
 		const headerText = translate( 'Add a business address.' );
 		const subHeaderText = translate(
 			'Enter your business address to have a map added to your website.'
 		);
+
+		const className = classNames( {
+			steps__form: true,
+			'is-animated': animate === true,
+		} );
 
 		return (
 			<Fragment>
 				<DocumentHead title={ translate( 'Business Address ‹ Jetpack Onboarding' ) } />
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
-				<Card className="steps__form">
+				<Card className={ className }>
 					<form>
 						{ map( this.fields, ( fieldLabel, fieldName ) => (
 							<FormFieldset key={ fieldName }>
@@ -69,7 +81,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 								/>
 							</FormFieldset>
 						) ) }
-						<Button href={ this.props.getForwardUrl() } primary>
+						<Button href={ this.props.getForwardUrl() } onClick={ this.transitionScreen() } primary>
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>
