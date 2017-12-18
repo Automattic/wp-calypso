@@ -127,7 +127,6 @@ export class EditorGroundControl extends PureComponent {
 
 	getVerificationNoticeLabel() {
 		const primaryButtonState = getPublishButtonStatus(
-				this.props.site,
 				this.props.post,
 				this.props.savedPost,
 				this.props.canUserPublishPosts

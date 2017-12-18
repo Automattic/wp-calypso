@@ -20,7 +20,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { isEditedPostPrivate, isPrivateEditedPostPasswordValid } from 'state/posts/selectors';
 import { canCurrentUser } from 'state/selectors';
 
-export const getPublishButtonStatus = ( site, post, savedPost, canUserPublishPosts ) => {
+export const getPublishButtonStatus = ( post, savedPost, canUserPublishPosts ) => {
 	if (
 		( postUtils.isPublished( savedPost ) &&
 			! postUtils.isBackDatedPublished( savedPost ) &&
@@ -47,7 +47,6 @@ export const getPublishButtonStatus = ( site, post, savedPost, canUserPublishPos
 
 export class EditorPublishButton extends Component {
 	static propTypes = {
-		site: PropTypes.object,
 		post: PropTypes.object,
 		savedPost: PropTypes.object,
 		onSave: PropTypes.func,
@@ -84,7 +83,6 @@ export class EditorPublishButton extends Component {
 			publish: 'Clicked Publish Page Button',
 		};
 		const buttonState = getPublishButtonStatus(
-			this.props.site,
 			this.props.post,
 			this.props.savedPost,
 			this.props.canUserPublishPosts
@@ -98,7 +96,6 @@ export class EditorPublishButton extends Component {
 
 	getButtonLabel() {
 		switch ( getPublishButtonStatus(
-			this.props.site,
 			this.props.post,
 			this.props.savedPost,
 			this.props.canUserPublishPosts

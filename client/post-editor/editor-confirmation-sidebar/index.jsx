@@ -70,7 +70,6 @@ class EditorConfirmationSidebar extends React.Component {
 		}
 
 		const publishButtonStatus = getPublishButtonStatus(
-			this.props.site,
 			this.props.post,
 			this.props.savedPost,
 			this.props.canUserPublishPosts
@@ -134,7 +133,6 @@ class EditorConfirmationSidebar extends React.Component {
 		}
 
 		const publishButtonStatus = getPublishButtonStatus(
-			this.props.site,
 			this.props.post,
 			this.props.savedPost,
 			this.props.canUserPublishPosts
