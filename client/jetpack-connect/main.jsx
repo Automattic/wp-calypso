@@ -14,31 +14,31 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { FLOW_TYPES } from 'state/jetpack-connect/constants';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import JetpackConnectNotices from './jetpack-connect-notices';
-import SiteUrlInput from './site-url-input';
-import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
-import JetpackInstallStep from './install-step';
-import versionCompare from 'lib/version-compare';
-import LocaleSuggestions from 'components/locale-suggestions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import MainWrapper from './main-wrapper';
 import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
+import JetpackConnectNotices from './jetpack-connect-notices';
+import JetpackInstallStep from './install-step';
+import LocaleSuggestions from 'components/locale-suggestions';
+import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'components/logged-out-form/links';
+import MainWrapper from './main-wrapper';
+import SiteUrlInput from './site-url-input';
 import untrailingslashit from 'lib/route/untrailingslashit';
+import versionCompare from 'lib/version-compare';
+import { FLOW_TYPES } from 'state/jetpack-connect/constants';
+import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
+import { isRequestingSites } from 'state/sites/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { retrievePlan } from './persistence-utils';
 import {
+	checkUrl,
 	confirmJetpackInstallStatus,
 	dismissUrl,
-	goToRemoteAuth,
-	goToPluginInstall,
 	goToPlans,
 	goToPluginActivation,
-	checkUrl,
+	goToPluginInstall,
+	goToRemoteAuth,
 } from 'state/jetpack-connect/actions';
 
 /**
@@ -495,19 +495,19 @@ class JetpackConnectMain extends Component {
 
 const connectComponent = connect(
 	state => ( {
-		jetpackConnectSite: getConnectingSite( state ),
 		getJetpackSiteByUrl: url => getJetpackSiteByUrl( state, url ),
 		isRequestingSites: isRequestingSites( state ),
+		jetpackConnectSite: getConnectingSite( state ),
 	} ),
 	{
-		confirmJetpackInstallStatus,
-		recordTracksEvent,
 		checkUrl,
+		confirmJetpackInstallStatus,
 		dismissUrl,
-		goToRemoteAuth,
 		goToPlans,
-		goToPluginInstall,
 		goToPluginActivation,
+		goToPluginInstall,
+		goToRemoteAuth,
+		recordTracksEvent,
 	}
 );
 
