@@ -89,7 +89,7 @@ describe( 'LoggedInForm', () => {
 			<LoggedInForm
 				authQuery={ {} }
 				authAttempts={ 0 }
-				authorizationData={ { autoAuthorize: false } }
+				authorizationData={ {} }
 				authorize={ noop }
 				goBackToWpAdmin={ noop }
 				goToXmlrpcErrorFallbackUrl={ noop }
