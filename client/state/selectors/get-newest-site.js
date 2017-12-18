@@ -10,6 +10,7 @@ import { sortBy } from 'lodash';
  */
 import { getSite } from 'state/sites/selectors';
 import createSelector from 'lib/create-selector';
+import { getSitesItems } from 'state/selectors';
 
 /**
  * Get the newest site of the current user
@@ -19,7 +20,7 @@ import createSelector from 'lib/create-selector';
  */
 export default createSelector(
 	state => {
-		const newestSite = sortBy( Object.values( state.sites.items ), 'ID' ).pop();
+		const newestSite = sortBy( Object.values( getSitesItems( state ) ), 'ID' ).pop();
 
 		if ( ! newestSite ) {
 			return null;
@@ -27,5 +28,5 @@ export default createSelector(
 
 		return getSite( state, newestSite.ID );
 	},
-	state => [ state.sites.items, state.currentUser.capabilities ]
+	state => [ getSitesItems( state ), state.currentUser.capabilities ]
 );
