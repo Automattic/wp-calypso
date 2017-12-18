@@ -163,6 +163,7 @@ function getAvailabilityNotice( domain, error, site ) {
 		case domainAvailability.PURCHASES_DISABLED:
 		case domainAvailability.TLD_NOT_SUPPORTED:
 		case domainAvailability.UNKNOWN:
+		case domainAvailability.EMPTY_RESULTS:
 			// unavailable domains are displayed in the search results, not as a notice OR
 			// domain registrations are closed, in which case it is handled in parent
 			message = null;
