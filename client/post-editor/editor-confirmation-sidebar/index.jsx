@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -24,12 +24,15 @@ import EditorConfirmationSidebarHeader from './header';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
 import { getPublishButtonStatus } from 'post-editor/editor-publish-button';
-import { isEditedPostPrivate, isPrivateEditedPostPasswordValid } from 'state/posts/selectors';
+import {
+	isEditedPostPrivate,
+	isPrivateEditedPostPasswordValid,
+	getEditedPost,
+} from 'state/posts/selectors';
 import { canCurrentUser, isPrivateSite as isPrivateSiteSelector } from 'state/selectors';
 
-class EditorConfirmationSidebar extends React.Component {
+class EditorConfirmationSidebar extends Component {
 	static propTypes = {
 		handlePreferenceChange: PropTypes.func,
 		onPrivatePublish: PropTypes.func,
@@ -86,16 +89,16 @@ class EditorConfirmationSidebar extends React.Component {
 	getBusyButtonLabel( publishButtonStatus ) {
 		switch ( publishButtonStatus ) {
 			case 'update':
-				return this.props.translate( 'Updating...' );
+				return this.props.translate( 'Updating…' );
 			case 'schedule':
-				return this.props.translate( 'Scheduling...' );
+				return this.props.translate( 'Scheduling…' );
 			case 'publish':
-				return this.props.translate( 'Publishing...' );
+				return this.props.translate( 'Publishing…' );
 			case 'requestReview':
-				return this.props.translate( 'Submitting for Review...' );
+				return this.props.translate( 'Submitting for Review…' );
 		}
 
-		return this.props.translate( 'Publishing...' );
+		return this.props.translate( 'Publishing…' );
 	}
 
 	renderPrivacyControl() {
