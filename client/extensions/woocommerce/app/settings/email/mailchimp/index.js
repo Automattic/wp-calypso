@@ -10,9 +10,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getPlugins } from 'state/plugins/installed/selectors';
+import { getPlugins, isRequestingForSites } from 'state/plugins/installed/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRequestingForSites } from 'state/plugins/installed/selectors';
 import { mailChimpSettings, isRequestingSettings } from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import MailChimpGettingStarted from './getting-started';
 import MailChimpSetup from './setup-mailchimp';
@@ -26,7 +25,7 @@ class MailChimp extends React.Component {
 		super( props );
 		this.state = {
 			setupWizardStarted: !! props.startWizard,
-			wizardCompleted: false
+			wizardCompleted: false,
 		};
 	}
 
