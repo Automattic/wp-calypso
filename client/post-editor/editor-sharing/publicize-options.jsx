@@ -44,7 +44,6 @@ class EditorSharingPublicizeOptions extends React.Component {
 	};
 
 	connectionPopupMonitor = false;
-	jetpackModulePopupMonitor = false;
 
 	hasConnections = () => {
 		return this.props.connections && this.props.connections.length;
@@ -53,10 +52,6 @@ class EditorSharingPublicizeOptions extends React.Component {
 	componentWillUnmount() {
 		if ( this.connectionPopupMonitor ) {
 			this.connectionPopupMonitor.off( 'close', this.onNewConnectionPopupClosed );
-		}
-
-		if ( this.jetpackModulePopupMonitor ) {
-			this.jetpackModulePopupMonitor.off( 'close', this.onModuleConnectionPopupClosed );
 		}
 	}
 
@@ -85,38 +80,6 @@ class EditorSharingPublicizeOptions extends React.Component {
 		this.newConnectionPopup();
 		recordStat( 'sharing_create_service' );
 		recordEvent( 'Opened Create New Sharing Service Dialog' );
-	};
-
-	jetpackModulePopup = () => {
-		let href;
-
-		if ( ! this.props.site || ! this.props.site.jetpack ) {
-			return;
-		}
-
-		href = paths.jetpackModules( this.props.site, 'publicize' );
-
-		if ( ! this.jetpackModulePopupMonitor ) {
-			this.jetpackModulePopupMonitor = new PopupMonitor();
-		}
-
-		this.jetpackModulePopupMonitor.open( href );
-		this.jetpackModulePopupMonitor.once( 'close', this.onModuleConnectionPopupClosed );
-	};
-
-	onModuleConnectionPopupClosed = () => {
-		if ( ! this.props.site || ! this.props.site.jetpack ) {
-			return;
-		}
-
-		// Refresh the list of connections so that the user is given the latest
-		// possible state.  Also prevents a possible infinite loading state due
-		// to connections previously returning a 400 error
-		this.props.site.once( 'change', () => {
-			if ( this.props.isPublicizeEnabled ) {
-				this.props.requestConnections( this.props.site.ID );
-			}
-		} );
 	};
 
 	renderServices = () => {
@@ -199,26 +162,6 @@ class EditorSharingPublicizeOptions extends React.Component {
 					<p>
 						<span>{ this.props.translate( 'Publicize is disabled on this site.' ) }</span>
 					</p>
-				</div>
-			);
-		}
-
-		if ( this.props.site && this.props.site.jetpack && ! this.props.isPublicizeEnabled ) {
-			return (
-				<div className="editor-sharing__publicize-disabled">
-					<p>
-						<span>
-							{ this.props.translate(
-								'Enable the Publicize module to automatically share new posts to social networks.'
-							) }
-						</span>
-					</p>
-					<button
-						className="editor-sharing__jetpack-modules-button button"
-						onClick={ this.jetpackModulePopup }
-					>
-						{ this.props.translate( 'View Module Settings' ) }
-					</button>
 				</div>
 			);
 		}
