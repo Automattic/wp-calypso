@@ -496,12 +496,12 @@ class PostShare extends Component {
 		return (
 			<div>
 				<div className="post-share__main">
+					{ this.renderConnectionsSection() }
+
 					<div className="post-share__form">
 						{ this.renderMessage() }
 						{ this.renderSharingButtons() }
 					</div>
-
-					{ this.renderConnectionsSection() }
 				</div>
 
 				<ActionsList { ...this.props } />

@@ -120,7 +120,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 
 		//TODO Clean-up after PostTypeList is used for /posts/
 		.post-type-list & {
-			margin: 0 16px 16px;
+			margin: 0 16px 16px 16px;
 		}
 	}
 	@include breakpoint( ">960px" ) {
@@ -128,7 +128,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 
 		//TODO Clean-up after PostTypeList is used for /posts/
 		.post-type-list & {
-			margin: 0 16px 16px 0;
+			margin: 0 16px 16px 16px;
 		}
 	}
 }
