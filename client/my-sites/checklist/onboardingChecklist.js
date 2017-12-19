@@ -111,7 +111,7 @@ const tasks = {
 		duration: '2 mins',
 		completedTitle: 'You added your social accounts.',
 		completedButtonText: 'Change',
-		url: '/customize/$siteSlug',
+		url: '/customize/$siteSlug?guide=social-media',
 		image: '/calypso/images/stats/tasks/social-links.svg',
 	},
 };
