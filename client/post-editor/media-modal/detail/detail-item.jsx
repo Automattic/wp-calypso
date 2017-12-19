@@ -24,13 +24,12 @@ import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
 import Button from 'components/button';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import { userCan } from 'lib/site/utils';
 import versionCompare from 'lib/version-compare';
 import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
-import { isPrivateSite } from 'state/selectors';
+import { isPrivateSite, canCurrentUser } from 'state/selectors';
 
 /**
  * This function return true if the image editor can be
@@ -116,9 +115,9 @@ class EditorMediaModalDetailItem extends Component {
 	}
 
 	renderEditButton() {
-		const { item, onEdit, site, translate } = this.props;
+		const { item, onEdit, translate, canUserUploadFiles } = this.props;
 
-		if ( ! userCan( 'upload_files', site ) ) {
+		if ( ! canUserUploadFiles ) {
 			return null;
 		}
 
@@ -214,9 +213,9 @@ class EditorMediaModalDetailItem extends Component {
 	}
 
 	renderFields() {
-		const { site, item } = this.props;
+		const { site, item, canUserUploadFiles } = this.props;
 
-		if ( ! userCan( 'upload_files', site ) ) {
+		if ( ! canUserUploadFiles ) {
 			return null;
 		}
 
@@ -319,6 +318,7 @@ class EditorMediaModalDetailItem extends Component {
 
 const connectComponent = connect( state => {
 	const siteId = getSelectedSiteId( state );
+	const canUserUploadFiles = canCurrentUser( state, siteId, 'upload_files' );
 
 	return {
 		isJetpack: isJetpackSite( state, siteId ),
@@ -326,6 +326,7 @@ const connectComponent = connect( state => {
 		isVideoPressModuleActive: isJetpackModuleActive( state, siteId, 'videopress' ),
 		isPrivateSite: isPrivateSite( state, siteId ),
 		siteId,
+		canUserUploadFiles,
 	};
 } );
 

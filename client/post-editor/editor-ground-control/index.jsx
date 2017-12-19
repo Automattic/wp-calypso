@@ -4,7 +4,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { identity, noop } from 'lodash';
+import { identity, noop, get } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n, { localize } from 'i18n-calypso';
@@ -17,11 +17,11 @@ import { connect } from 'react-redux';
 import Card from 'components/card';
 import Site from 'blocks/site';
 import postUtils from 'lib/posts/utils';
-import siteUtils from 'lib/site/utils';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import { composeAnalytics, recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
+import { canCurrentUser } from 'state/selectors';
 
 export class EditorGroundControl extends PureComponent {
 	static propTypes = {
@@ -127,9 +127,9 @@ export class EditorGroundControl extends PureComponent {
 
 	getVerificationNoticeLabel() {
 		const primaryButtonState = getPublishButtonStatus(
-				this.props.site,
 				this.props.post,
-				this.props.savedPost
+				this.props.savedPost,
+				this.props.canUserPublishPosts
 			),
 			buttonLabels = {
 				update: i18n.translate( 'To update, check your email and confirm your address.' ),
@@ -155,10 +155,6 @@ export class EditorGroundControl extends PureComponent {
 			! ( this.props.isNew && ! this.props.isDirty ) &&
 			! this.props.isSaveBlocked
 		);
-	}
-
-	canPublishPost() {
-		return siteUtils.userCan( 'publish_posts', this.props.site );
 	}
 
 	toggleAdvancedStatus = () => {
@@ -192,7 +188,9 @@ export class EditorGroundControl extends PureComponent {
 					onClick={ this.onPreviewButtonClick }
 					tabIndex={ 4 }
 				>
-					<span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
+					<span className="editor-ground-control__button-label">
+						{ this.getPreviewLabel() }
+					</span>
 				</Button>
 				<div className="editor-ground-control__publish-button">
 					<EditorPublishButton
@@ -253,7 +251,7 @@ export class EditorGroundControl extends PureComponent {
 					homeLink={ true }
 					externalLink={ true }
 				/>
-				{ this.state.needsVerification && (
+				{ this.state.needsVerification &&
 					<div
 						className="editor-ground-control__email-verification-notice"
 						tabIndex={ 7 }
@@ -267,8 +265,7 @@ export class EditorGroundControl extends PureComponent {
 						<span className="editor-ground-control__email-verification-notice-more">
 							{ translate( 'Learn More' ) }
 						</span>
-					</div>
-				) }
+					</div> }
 				<QuickSaveButtons
 					isSaving={ isSaving }
 					isSaveBlocked={ isSaveBlocked }
@@ -283,6 +280,16 @@ export class EditorGroundControl extends PureComponent {
 		);
 	}
 }
+
+const mapStateToProps = ( state, ownProps ) => {
+	const siteId = get( ownProps, 'site.ID', null );
+
+	const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
+
+	return {
+		canUserPublishPosts,
+	};
+};
 
 const mapDispatchToProps = dispatch => ( {
 	recordPreviewButtonClick: () =>
@@ -303,4 +310,4 @@ const mapDispatchToProps = dispatch => ( {
 	recordBackButtonClick: () => dispatch( recordTracksEvent( 'calypso_editor_back_button_click' ) ),
 } );
 
-export default connect( null, mapDispatchToProps )( localize( EditorGroundControl ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorGroundControl ) );

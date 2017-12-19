@@ -22,7 +22,6 @@ import * as paths from 'lib/paths';
 import PostMetadata from 'lib/post-metadata';
 import PopupMonitor from 'lib/popup-monitor';
 import Button from 'components/button';
-import siteUtils from 'lib/site/utils';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -32,6 +31,7 @@ import { postTypeSupports } from 'state/post-types/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
+import { canCurrentUser } from 'state/selectors';
 
 class EditorSharingPublicizeOptions extends React.Component {
 	static propTypes = {
@@ -154,7 +154,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 
 	renderAddNewButton = () => {
 		// contributors cannot create publicize connections
-		if ( ! siteUtils.userCan( 'publish_posts', this.props.site ) ) {
+		if ( ! this.props.canUserPublishPosts ) {
 			return;
 		}
 
@@ -171,7 +171,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 	renderInfoNotice = () => {
 		// don't show the message if the are no connections
 		// and the user is not allowed to add any
-		if ( ! this.hasConnections() && ! siteUtils.userCan( 'publish_posts', this.props.site ) ) {
+		if ( ! this.hasConnections() && ! this.props.canUserPublishPosts ) {
 			return;
 		}
 
@@ -225,7 +225,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 
 		const classes = classNames( 'editor-sharing__publicize-options', {
 			'has-connections': this.hasConnections(),
-			'has-add-option': siteUtils.userCan( 'publish_posts', this.props.site ),
+			'has-add-option': this.props.canUserPublishPosts,
 		} );
 
 		return (
@@ -249,10 +249,12 @@ export default connect(
 		const isPublicizeEnabled =
 			false !== isJetpackModuleActive( state, siteId, 'publicize' ) &&
 			postTypeSupports( state, siteId, postType, 'publicize' );
+		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
 
 		return {
 			siteId,
 			isPublicizeEnabled,
+			canUserPublishPosts,
 			connections: getSiteUserConnections( state, siteId, userId ),
 		};
 	},
