@@ -34,7 +34,7 @@ const tasks = {
 		tour: 'checklistUserAvatar',
 	},
 	blogname_set: {
-		title: 'Personalize your site',
+		title: 'Give your site a name',
 		description: 'Give your site a descriptive name to entice visitors.',
 		duration: '1 min',
 		completedTitle: 'You updated your site title',
