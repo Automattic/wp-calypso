@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -18,6 +19,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 class PostLikes extends React.PureComponent {
 	static defaultProps = {
 		postType: 'post',
+		showDisplayNames: false,
 	};
 
 	getLikeUrl = like => {
@@ -29,6 +31,8 @@ class PostLikes extends React.PureComponent {
 	}
 
 	renderLike = like => {
+		const { showDisplayNames } = this.props;
+
 		return (
 			<a
 				key={ like.ID }
@@ -40,6 +44,11 @@ class PostLikes extends React.PureComponent {
 				onClick={ this.trackLikeClick }
 			>
 				<Gravatar user={ like } size={ 24 } />
+				{ showDisplayNames && (
+					<span className="post-likes__display-name">
+						{ like.nice_name }
+					</span>
+				) }
 			</a>
 		);
 	}
@@ -67,6 +76,7 @@ class PostLikes extends React.PureComponent {
 			postType,
 			siteId,
 			translate,
+			showDisplayNames,
 		} = this.props;
 
 		let noLikesLabel;
@@ -79,8 +89,10 @@ class PostLikes extends React.PureComponent {
 
 		const isLoading = ! likes;
 
+		const classes = classnames( 'post-likes', { 'has-display-names': showDisplayNames } );
+
 		return (
-			<div className="post-likes">
+			<div className={ classes }>
 				<QueryPostLikes siteId={ siteId } postId={ postId } />
 				{ isLoading && (
 					<span key="placeholder" className="post-likes__count is-loading">

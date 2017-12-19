@@ -8,6 +8,10 @@
 		.gravatar {
 			display: block;
 		}
+
+		.post-likes.has-display-names & {
+			display: block;
+		}
 	}
 
 	.post-likes__count {

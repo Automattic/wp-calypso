@@ -33,6 +33,16 @@ The site ID for which the post likes should be displayed.
 
 The post ID for which the post likes should be displayed.
 
+### `showDisplayNames`
+
+<table>
+	<tr><th>Type</th><td>Boolean</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+</table>
+
+Whether or not to show display names for users who liked the post (and show one
+user per line).  Defaults to `false`.
+
 ## Popover
 
 There is also a version of this component that displays using a `Popover`.  The
