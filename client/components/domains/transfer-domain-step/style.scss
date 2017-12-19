@@ -134,6 +134,11 @@
 		justify-content: space-between;
 	}
 
+	.transfer-domain-step__section-callout {
+		background: $gray-light;
+		margin: 14px 0;
+	}
+
 	&.is-expanded {
 		align-items: flex-start;
 
@@ -191,6 +196,8 @@
 }
 
 .transfer-domain-step__admin-email {
+	display: block;
+	margin-top: 20px;
 	hyphens: auto;
 	overflow-wrap: break-word;
 	word-break: break-word;
