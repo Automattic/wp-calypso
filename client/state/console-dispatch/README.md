@@ -4,7 +4,7 @@
 The console dispatcher is a Redux store enhancer which provides access to the Redux store from the developer console when running in a browser environment.
 This can be used for debugging and interactive design.
 The expected store properties and methods are directly available at the top level.
-Additionally, [`actionTypes`](../../action-types.js) are available at the top level.
+Additionally, [`actionTypes`](/client/state/action-types.js) are available at the top level.
 
 ## Functionality
 
