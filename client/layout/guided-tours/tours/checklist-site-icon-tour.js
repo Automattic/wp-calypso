@@ -82,7 +82,7 @@ export const ChecklistSiteIconTour = makeTour(
 		>
 			<Continue target="image_editor_button_done" step="finish" click>
 				{ translate(
-					"Let's make sure it looks right before you press {{b}}Done{{/b}} to save your changes.",
+					'Let’s make sure it looks right before you press {{b}}Done{{/b}} to save your changes.',
 					{ components: { b: <strong /> } }
 				) }
 			</Continue>
@@ -93,11 +93,11 @@ export const ChecklistSiteIconTour = makeTour(
 				<span className="tours__completed-icon-wrapper">
 					<Gridicon icon="checkmark" className="tours__completed-icon" />
 				</span>
-				{ translate( "Excellent, you're done!" ) }
+				{ translate( 'Excellent, you’re done!' ) }
 			</h1>
 			<p>
 				{ translate(
-					"Your Site Icon has been saved. Let's move on and see what's next on our checklist."
+					'Your Site Icon has been saved. Let’s move on and see what’s next on our checklist.'
 				) }
 			</p>
 			<SiteLink isButton href={ '/checklist/:site' }>

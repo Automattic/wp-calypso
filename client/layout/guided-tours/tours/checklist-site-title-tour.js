@@ -35,7 +35,7 @@ export const ChecklistSiteTitleTour = makeTour(
 		>
 			<p>
 				{ translate(
-					"Update the {{b}}Site Title{{/b}} field with a descriptive name to let your visitors know which site they're visiting.",
+					'Update the {{b}}Site Title{{/b}} field with a descriptive name to let your visitors know which site they’re visiting.',
 					{
 						components: { b: <strong /> },
 					}
@@ -51,7 +51,7 @@ export const ChecklistSiteTitleTour = makeTour(
 			<Continue target="settings-site-profile-save" step="finish" click>
 				{ translate(
 					'Almost done — every time you make a change, it needs to be saved. ' +
-						"Let's save your changes and then see what's next on our list."
+						'Let’s save your changes and then see what’s next on our list.'
 				) }
 			</Continue>
 		</Step>
@@ -65,7 +65,7 @@ export const ChecklistSiteTitleTour = makeTour(
 			</h1>
 			<p>
 				{ translate(
-					"Your changes have been saved. Let's move on and see what's next on our checklist."
+					'Your changes have been saved. Let’s move on and see what’s next on our checklist.'
 				) }
 			</p>
 			<SiteLink isButton="true" href={ '/checklist/:site' }>

@@ -22,8 +22,8 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 
-export const ChecklistAboutPageTour = makeTour(
-	<Tour name="checklistAboutPage" version="20171205" path="/non-existent-route" when={ noop }>
+export const ChecklistPublishPostTour = makeTour(
+	<Tour name="checklistPublishPost" version="20171205" path="/non-existent-route" when={ noop }>
 		<Step
 			name="init"
 			placement="right"
@@ -33,18 +33,27 @@ export const ChecklistAboutPageTour = makeTour(
 		>
 			<p>
 				{ translate(
-					'The About Page is often the most visited page on a site. ' +
-						'You might find that it never feels quite done - that’s OK. ' +
-						'This is the internet and we can update it as many times as we want. ' +
-						'The key is to just get it started.'
+					'It’s time to get your blog rolling with your first post. ' +
+						'Let’s welcome your audience with a brief introduction describing what your blog is about ' +
+						'and how often you intend on posting.'
 				) }
 			</p>
+			<ButtonRow>
+				<Next step="categories-tags">{ translate( 'All done, continue' ) }</Next>
+				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
+			</ButtonRow>
+		</Step>
+
+		<Step
+			name="categories-tags"
+			target="accordion-categories-tags"
+			arrow="right-top"
+			placement="beside"
+		>
 			<p>
 				{ translate(
-					'Let’s start by changing the default text with an introduction. ' +
-						'Here are some questions to help you out: Who are you and where are you based?' +
-						'Why did you start this site? ' +
-						'What can visitors expect to get out of it?'
+					'Categories and Tags not only help organize your content but also bring people to your site via the Reader. ' +
+						'Pick one or two descriptive tags about your post for it to start showing up to other users in the Reader.'
 				) }
 			</p>
 			<ButtonRow>
@@ -59,14 +68,15 @@ export const ChecklistAboutPageTour = makeTour(
 			arrow="top-left"
 			placement="below"
 		>
-			<p>
-				{ translate(
-					'Featured images are a great way to add more personality to your pages. ' +
-						'Let’s add something a little more relevant to your About page text.'
-				) }
-			</p>
-			<p>{ translate( 'Press anywhere on this image so we can change it.' ) }</p>
-			<Continue target="editor-featured-image-current-image" step="choose-image" click hidden />
+			<Continue target="editor-featured-image-current-image" step="choose-image" click>
+				<p>
+					{ translate(
+						'Featured images are a great way to add more personality to your pages. ' +
+							'Let’s add something a little more relevant to your About page text.'
+					) }
+				</p>
+				<p>{ translate( 'Press anywhere on this image so we can change it.' ) }</p>
+			</Continue>
 		</Step>
 
 		<Step
@@ -108,12 +118,12 @@ export const ChecklistAboutPageTour = makeTour(
 				<span className="tours__completed-icon-wrapper">
 					<Gridicon icon="checkmark" className="tours__completed-icon" />
 				</span>
-				{ translate( 'Good job, looks great!' ) }
+				{ translate( 'You did it!' ) }
 			</h1>
 			<p>
 				{ translate(
-					'The updates to your About page are being saved. When the page is done saving, let’s ' +
-						'return to our checklist and see what’s next.'
+					'You published your first blog post. ' +
+						'Let’s move on and see what’s next on our checklist.'
 				) }
 			</p>
 			<SiteLink isButton="true" href={ '/checklist/:site' }>

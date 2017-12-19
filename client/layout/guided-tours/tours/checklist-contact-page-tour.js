@@ -34,8 +34,8 @@ export const ChecklistContactPageTour = makeTour(
 			<p>
 				{ translate(
 					'Your contact page makes it easy for people to reach out and get in touch. ' +
-						'Let’s personalize this page by editing the default text so that people' +
-						' know how and when they can contact you.'
+						'Let’s personalize this page by editing the default text so that people ' +
+						'know how and when they can contact you.'
 				) }
 			</p>
 			<ButtonRow>
@@ -103,8 +103,8 @@ export const ChecklistContactPageTour = makeTour(
 			</h1>
 			<p>
 				{ translate(
-					'The updates to your Contact page are being saved. When the page is done saving, let’s return' +
-						' to our checklist and see what’s next.'
+					'The updates to your Contact page are being saved. When the page is done saving, let’s return ' +
+						'to our checklist and see what’s next.'
 				) }
 			</p>
 			<SiteLink isButton="true" href={ '/checklist/:site' }>
