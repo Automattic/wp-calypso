@@ -24,22 +24,7 @@ React.createClass( {
 
 The following props can be passed to the Spinner component:
 
-### `size`
-
-<table>
-	<tr><td>Type</td><td>Number</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td>20</td></tr>
-</table>
-
-The width and height of the spinner, in pixels.
-
-### `duration`
-
-<table>
-	<tr><td>Type</td><td>Number</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td>3000</td></tr>
-</table>
-
-The duration of a single spin animation, in milliseconds.
+| PROPERTY     | TYPE     | REQUIRED | DEFAULT | DESCRIPTION |
+| ------------ | -------- | -------- | ------- | ----------- |
+| **size**     | *number* | no       | `20`    | The width and height of the spinner, in pixels. |
+| **duration** | *number* | no       | `3000`  | The duration of a single spin animation, in milliseconds. |

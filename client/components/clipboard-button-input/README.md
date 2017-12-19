@@ -22,32 +22,8 @@ export default function MyComponent() {
 
 The following props can be passed to the ClipboardButtonInput component. With the exception of `className`, all props, including those not listed below, will be passed to the child `<input />` element.
 
-### `value`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>""</code></td></tr>
-</table>
-
-The value of the `<input />` element, and the text to be copied when clicking the copy button.
-
-### `disabled`
-
-<table>
-	<tr><td>Type</td><td>Boolean</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>false</code></td></tr>
-</table>
-
-Whether the children `<input />` and `<button />` should be rendered as `disabled`.
-
-### `hideHttp`
-
-<table>
-	<tr><td>Type</td><td>Boolean</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>false</code></td></tr>
-</table>
-
-Allows URLs to be shown without `http://` or `https://` while keeping the scheme in the copyable value.
+| property   | type    | required | default | comment |
+| ---------- | ------- | -------- | ------- | ------- |
+| `value`    | String  | no       | `""`    | The value of the `<input />` element, and the text to be copied when clicking the copy button. |
+| `disabled` | Boolean | no       | `false` | Whether the children `<input />` and `<button />` should be rendered as `disabled`. |
+| `hideHttp` | Boolean | no       | `false` | Allows URLs to be shown without `http://` or `https://` while keeping the scheme in the copyable value. |

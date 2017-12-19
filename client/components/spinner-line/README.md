@@ -21,12 +21,6 @@ export default function MyComponent() {
 
 The following props can be passed to the `<SpinnerLine />` component:
 
-### `className`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>null</code></td></tr>
-</table>
-
-A custom class name to apply to the rendered element, in addition to the base `.spinner-line` class.
+| property    | type   | required | default | comment |
+| ----------- | ------ | -------- | ------- | ------- |
+| `className` | String | no       | `null`  | A custom class name to apply to the rendered element, in addition to the base `.spinner-line` class. |

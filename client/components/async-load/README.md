@@ -19,20 +19,7 @@ See [`babel-plugin-transform-wpcalypso-async` documentation](https://github.com/
 
 The following props can be passed to the AsyncLoad component:
 
-### `require`
-
-<table>
-	<tr><td>Type</td><td>String (Function)</td></tr>
-	<tr><td>Required</td><td>Yes</td></tr>
-</table>
-
-In general usage, this should be passed as a string of the module to be imported. During build, the string prop is [transformed to a function](https://github.com/Automattic/wp-calypso/tree/master/server/bundler/babel/babel-plugin-transform-wpcalypso-async) which is called to require the specified module.
-
-### `placeholder`
-
-<table>
-	<tr><td>Type</td><td>PropTypes.node</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-</table>
-
-A placeholder to be shown while the module is being asynchronously required. If omitted, a default placeholder will be shown. If `null` is provided, then no placeholder is shown.
+| property      | type              | required | comment |
+| ------------- | ----------------- | -------- | ------- |
+| `require`     | String (Function) | yes      | In general usage, this should be passed as a string of the module to be imported. During build, the string prop is [transformed to a function](https://github.com/Automattic/wp-calypso/tree/master/server/bundler/babel/babel-plugin-transform-wpcalypso-async) which is called to require the specified module. |
+| `placeholder` | PropTypes.node    | no       | A placeholder to be shown while the module is being asynchronously required. If omitted, a default placeholder will be shown. If `null` is provided, then no placeholder is shown. |
