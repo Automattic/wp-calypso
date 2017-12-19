@@ -4126,8 +4126,8 @@
       "dev": true
     },
     "eslint-plugin-jest": {
-      "version": "21.5.0",
-      "integrity": "sha512-4fxfe2RcqzU+IVNQL5n4pqibLcUhKKxihYsA510+6kC/FTdGInszDDHgO4ntBzPWu8mcHAvKJLs8o3AQw6eHTg==",
+      "version": "21.2.0",
+      "integrity": "sha512-pe7JWoZiXWHfVCBArxX5o3laRZp24tkBSeIHImJJyX2mDIqzlrXkUGkfbC6tPKER3WbcQ3YxKDMgp8uqt8fjfw==",
       "dev": true
     },
     "eslint-plugin-react": {
