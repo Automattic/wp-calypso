@@ -54,13 +54,11 @@ class EditorSharingPublicizeOptions extends React.Component {
 	}
 
 	newConnectionPopup = () => {
-		let href;
-
 		if ( ! this.props.site ) {
 			return;
 		}
 
-		href = paths.publicizeConnections( this.props.site );
+		const href = paths.publicizeConnections( this.props.site );
 
 		if ( ! this.connectionPopupMonitor ) {
 			this.connectionPopupMonitor = new PopupMonitor();
@@ -143,10 +141,6 @@ class EditorSharingPublicizeOptions extends React.Component {
 				) }
 			</p>
 		);
-	};
-
-	dismissRepublicizeMessage = () => {
-		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
 	};
 
 	render() {
