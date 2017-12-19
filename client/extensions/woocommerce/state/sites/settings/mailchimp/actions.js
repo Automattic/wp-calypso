@@ -4,7 +4,7 @@
  * @format
  */
 
-import { isEmpty } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -182,7 +182,7 @@ const mailchimpNewsletterSettingsSubmitFailure = ( siteId, { error } ) => ( {
 } );
 
 /**
- * Triggers a network request to fetch current MailChimp plugin settngs.
+ * Triggers a network request to fetch current MailChimp plugin settings.
  *
  * @param  {Number|String} siteId        Jetpack site ID
  * @return {Function}                    Action thunk
@@ -254,7 +254,7 @@ export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => dispatch => {
 };
 
 /**
- * Triggers a network request to set MailChimp campaign defualts
+ * Triggers a network request to set MailChimp campaign defaults
  * info in MailChimp plugin settings.
  *
  * @param  {Number|String} siteId           Jetpack site ID
@@ -280,7 +280,7 @@ export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => d
 
 /**
  * Triggers a network request to fetch current mailing list available created for account
- * asociated with api key storred in plugin config..
+ * associated with api key stored in plugin config..
  *
  * @param  {Number|String} siteId        Jetpack site ID
  * @return {Function}                    Action thunk
@@ -304,7 +304,7 @@ export const requestLists = siteId => ( dispatch, getState ) => {
 };
 
 /**
- * Triggers a network request to fetch current MailChimp plugin to maichimp server sync status
+ * Triggers a network request to fetch current MailChimp plugin to MailChimp server sync status
  *
  * @param  {Number|String} siteId        Jetpack site ID
  * @return {Function}                    Action thunk
@@ -377,7 +377,7 @@ export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => dispa
 /**
  * Triggers a internal action that represents request to save settings
  * Components interested in this action will subscribe to store with
- * isSaveSettingsReqested
+ * isSaveSettingsRequested
  *
  * @param  {Number|String} siteId      Jetpack site ID
  * @return {Function}                  Action thunk
@@ -389,7 +389,7 @@ export const mailChimpSaveSettings = siteId => ( dispatch, getState ) => {
 
 	const settings = mailChimpSettings( getState(), siteId );
 
-	const validSettings = ! isEmpty( settings ) && settings.active_tab === 'sync';
+	const validSettings = 'sync' === get( settings, 'active_tab', false );
 	if ( ! validSettings ) {
 		return;
 	}

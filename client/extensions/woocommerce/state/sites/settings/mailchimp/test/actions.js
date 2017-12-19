@@ -347,7 +347,7 @@ describe( 'actions', () => {
 	describe( '#mailChimpSaveSettings()', () => {
 		const siteId = '123';
 
-		test( 'should not dispatch an action if ther are not settings in state', () => {
+		test( 'should not dispatch an action if there are not settings in state', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
 			mailChimpSaveSettings( siteId )( dispatch, getState );
@@ -357,7 +357,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should not dispatch an action if the state does not represent compleated setup', () => {
+		test( 'should not dispatch an action if the state does not represent completed setup', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {
@@ -393,7 +393,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch an action if the state represents compleated setup', () => {
+		test( 'should dispatch an action if the state represents completed setup', () => {
 			const getState = () => ( {
 				extensions: {
 					woocommerce: {
