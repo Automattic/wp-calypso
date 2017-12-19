@@ -63,7 +63,7 @@ export const emailSettingChange = ( siteId, setting ) => dispatch => {
 /**
  * Triggers a internal action that represents request to save settings
  * Components interested in this action will subscribe to store with
- * isSaveSettingsReqested
+ * isSaveSettingsRequested
  *
  * @param  {Number|String} siteId      Jetpack site ID
  * @return {Function}                  Action thunk

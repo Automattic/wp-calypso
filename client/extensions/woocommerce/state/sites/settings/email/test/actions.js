@@ -9,11 +9,20 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { fetchEmailSettings } from '../actions';
+import {
+	fetchEmailSettings,
+	emailSettingChange,
+	emailSettingsSaveSettings,
+	emailSettingsSubmitSettings,
+} from '../actions';
 import useNock from 'test/helpers/use-nock';
 import {
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
+	WOOCOMMERCE_EMAIL_SETTINGS_CHANGE,
+	WOOCOMMERCE_EMAIL_SETTINGS_SAVE_SETTINGS,
+	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT,
+	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS,
 } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
 
@@ -157,6 +166,94 @@ describe( 'actions', () => {
 			const dispatch = spy();
 			fetchEmailSettings( siteId )( dispatch, getState );
 			expect( dispatch ).to.not.have.beenCalled;
+		} );
+	} );
+
+	describe( '#emailSettingChange()', () => {
+		test( 'should dispatch a action with changed setting', () => {
+			const dispatch = spy();
+			const siteId = 123;
+			const setting = { option: true };
+			emailSettingChange( siteId, setting )( dispatch );
+
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_EMAIL_SETTINGS_CHANGE,
+				siteId,
+				setting,
+			} );
+		} );
+	} );
+
+	describe( '#emailSettingsSaveSettings()', () => {
+		test( 'should dispatch a action that will trigger saving settings', () => {
+			const dispatch = spy();
+			const siteId = 123;
+			emailSettingsSaveSettings( siteId )( dispatch );
+
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_EMAIL_SETTINGS_SAVE_SETTINGS,
+				siteId,
+			} );
+		} );
+	} );
+
+	describe( '#emailSettingsSubmitSettings()', () => {
+		const siteId = '123';
+
+		const settings = {
+			email: {
+				woocommerce_email_from_name: {
+					value: 'frtd',
+					default: 'wooooooo',
+				},
+				woocommerce_email_from_address: {
+					value: 'bartosz.budzanowski@automattic.com',
+					default: 'bartosz.budzanowski@automattic.com',
+				},
+			},
+		};
+
+		const update = [
+			{
+				id: 'woocommerce_email_from_name',
+				value: 'frtd',
+				group_id: 'email',
+			},
+			{
+				id: 'woocommerce_email_from_address',
+				value: 'test@test.com',
+				group_id: 'email',
+			},
+		];
+
+		const data = { update };
+
+		useNock( nock => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
+				.query( { path: '/wc/v3/settings_batch&_method=post', json: true } )
+				.reply( 200, { data } );
+		} );
+
+		test( 'should dispatch an request action', () => {
+			const dispatch = spy();
+			emailSettingsSubmitSettings( siteId, settings )( dispatch );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT,
+				siteId,
+			} );
+		} );
+
+		test( 'should dispatch an success action', () => {
+			const dispatch = spy();
+			return emailSettingsSubmitSettings( siteId, settings )( dispatch ).then( () => {
+				expect( dispatch ).to.have.been.calledWith( {
+					type: WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS,
+					siteId,
+					settings: data,
+				} );
+			} );
 		} );
 	} );
 } );
