@@ -55,11 +55,11 @@ class PostLikesExample extends React.PureComponent {
 				</Button>
 				{ this.state.showPopover && (
 					<PostLikesPopover
-						context={ this.state.popoverContext }
-						onClose={ this.closePopover }
 						siteId={ 3584907 }
 						postId={ 39687 }
+						context={ this.state.popoverContext }
 						position="bottom"
+						onClose={ this.closePopover }
 					/>
 				) }
 			</div>
