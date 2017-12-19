@@ -12,16 +12,16 @@ import { COMMENTS_QUERY_UPDATE } from 'state/action-types';
 import { combineReducers, keyedReducer } from 'state/utils';
 
 const deepUpdateComments = ( state, comments, { offset, postId, status } ) => {
-	const siteOrPost = postId || 'site';
+	const parent = postId || 'site';
 	const pageNumber = offset / COMMENTS_PER_PAGE + 1;
 	const commentIds = map( comments, 'ID' );
 
-	const parentObject = get( state, postId || 'site', {} );
+	const parentObject = get( state, parent, {} );
 	const statusObject = get( parentObject, status, {} );
 
 	return {
 		...state,
-		[ siteOrPost ]: {
+		[ parent ]: {
 			...parentObject,
 			[ status ]: {
 				...statusObject,
