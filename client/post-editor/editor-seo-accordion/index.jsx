@@ -19,9 +19,9 @@ import AccordionSection from 'components/accordion/section';
 import CountedTextarea from 'components/forms/counted-textarea';
 import PostActions from 'lib/posts/actions';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
-import WebPreview from 'components/web-preview';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import AsyncLoad from 'components/async-load';
 
 class EditorSeoAccordion extends Component {
 	static propTypes = {
@@ -83,7 +83,8 @@ class EditorSeoAccordion extends Component {
 							<Button className="editor-seo-accordion__preview-button" onClick={ this.showPreview }>
 								{ translate( 'Preview' ) }
 							</Button>
-							<WebPreview
+							<AsyncLoad
+								require="components/web-preview"
 								showPreview={ showPreview }
 								onClose={ this.hidePreview }
 								showDeviceSwitcher={ false }

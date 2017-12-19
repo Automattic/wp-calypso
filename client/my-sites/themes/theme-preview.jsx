@@ -27,7 +27,7 @@ import {
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { hideThemePreview } from 'state/themes/actions';
-import WebPreview from 'components/web-preview';
+import AsyncLoad from 'components/async-load';
 
 class ThemePreview extends React.Component {
 	static displayName = 'ThemePreview';
@@ -113,7 +113,8 @@ class ThemePreview extends React.Component {
 			<div>
 				{ this.props.isJetpack && <QueryTheme themeId={ themeId } siteId="wporg" /> }
 				{ this.props.demoUrl && (
-					<WebPreview
+					<AsyncLoad
+						require="components/web-preview"
 						showPreview={ true }
 						showExternal={ false }
 						showSEO={ false }
@@ -124,7 +125,7 @@ class ThemePreview extends React.Component {
 						{ showActionIndicator && <PulsingDot active={ true } /> }
 						{ ! showActionIndicator && this.renderSecondaryButton() }
 						{ ! showActionIndicator && this.renderPrimaryButton() }
-					</WebPreview>
+					</AsyncLoad>
 				) }
 			</div>
 		);

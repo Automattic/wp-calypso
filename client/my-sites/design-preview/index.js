@@ -32,10 +32,11 @@ import DesignMenu from 'blocks/design-menu';
 import { getSiteFragment } from 'lib/route/path';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import AsyncLoad from 'components/async-load';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
-export default function designPreview( WebPreview ) {
+export default function designPreview() {
 	class DesignPreview extends React.Component {
 		constructor( props ) {
 			super( props );
@@ -167,7 +168,8 @@ export default function designPreview( WebPreview ) {
 			return (
 				<div>
 					<DesignMenu isVisible={ this.props.showPreview } />
-					<WebPreview
+					<AsyncLoad
+						require="components/web-preview"
 						className={ this.props.className }
 						showPreview={ this.props.showPreview }
 						showExternal={ false }
@@ -183,7 +185,7 @@ export default function designPreview( WebPreview ) {
 								{ this.props.translate( 'EDIT' ) }
 							</span>
 						</button>
-					</WebPreview>
+					</AsyncLoad>
 				</div>
 			);
 		}
