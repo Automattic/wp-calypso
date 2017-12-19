@@ -33,3 +33,18 @@
 	margin: 24px 12px;
 	text-align: center;
 }
+
+.wizard__transition-enter {
+	animation: fadeIn 0.3s ease 0.5s;
+	animation-fill-mode: backwards;
+}
+
+.wizard__transition-leave {
+  opacity: 1;
+  transition: opacity 1s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
