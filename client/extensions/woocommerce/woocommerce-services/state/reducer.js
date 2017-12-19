@@ -12,6 +12,7 @@ import { combineReducers, keyedReducer } from 'state/utils';
 import labelSettings from './label-settings/reducer';
 import packages from './packages/reducer';
 import shippingLabel from './shipping-label/reducer';
+import shippingSchemas from './shipping-schemas/reducer';
 
 export default keyedReducer(
 	'siteId',
@@ -19,5 +20,6 @@ export default keyedReducer(
 		labelSettings,
 		packages,
 		shippingLabel,
+		shippingSchemas,
 	} )
 );
