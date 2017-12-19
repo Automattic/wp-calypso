@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { omit } from 'lodash';
 import classnames from 'classnames';
 
@@ -12,12 +13,33 @@ import classnames from 'classnames';
  */
 import Popover from 'components/popover';
 import PostLikes from './index';
+import { getPostLikes } from 'state/selectors';
 
-export default function PostLikesPopover( props ) {
-	const { context, siteId, postId, onClose } = props;
+function PostLikesPopover( props ) {
+	const { className, context, siteId, postId, onClose, likes } = props;
 
-	const popoverProps = omit( props, 'className', 'context', 'siteId', 'postId', 'onClose' );
-	const classes = classnames( 'post-likes-popover', props.className );
+	// Whenever our `Popover` content changes size (loading, complete, siteId,
+	// or postId, for example), we need to force the `Popover` to re-render and
+	// re-compute its position.  The `Popover` component is not really designed
+	// for this, so the easiest way is to force it to unmount and remount.
+	// This is achieved by setting a different `key` whenever our data changes.
+	const popoverKey = [
+		'likes',
+		siteId,
+		postId,
+		likes ? likes.length : 'null',
+	].join( '-' );
+
+	const popoverProps = omit(
+		props,
+		'className',
+		'context',
+		'siteId',
+		'postId',
+		'onClose',
+		'likes'
+	);
+	const classes = classnames( 'post-likes-popover', className );
 
 	return (
 		<Popover
@@ -26,8 +48,17 @@ export default function PostLikesPopover( props ) {
 			isVisible={ true }
 			context={ context }
 			onClose={ onClose }
+			key={ popoverKey }
 		>
 			<PostLikes siteId={ siteId } postId={ postId } />
 		</Popover>
 	);
 }
+
+export default connect( ( state, ownProps ) => {
+	const { siteId, postId } = ownProps;
+
+	return {
+		likes: getPostLikes( state, siteId, postId ),
+	};
+} )( PostLikesPopover );
