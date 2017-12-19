@@ -16,6 +16,8 @@ import FormattedHeader from 'components/formatted-header';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	state = {
@@ -54,6 +56,11 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		return (
 			<Fragment>
 				<DocumentHead title={ translate( 'Business Address ‹ Jetpack Onboarding' ) } />
+				<PageViewTracker
+					path={ '/jetpack/onboarding/' + STEPS.BUSINESS_ADDRESS + '/:site' }
+					title="Business Address ‹ Jetpack Onboarding"
+				/>
+
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<Card className="steps__form">

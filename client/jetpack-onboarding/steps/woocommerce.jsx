@@ -11,6 +11,8 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import FormattedHeader from 'components/formatted-header';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 	render() {
@@ -22,6 +24,11 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 
 		return (
 			<Fragment>
+				<PageViewTracker
+					path={ '/jetpack/onboarding/' + STEPS.WOOCOMMERCE + '/:site' }
+					title="WooCommerce ‹ Jetpack Onboarding"
+				/>
+
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<div className="steps__button-group">
