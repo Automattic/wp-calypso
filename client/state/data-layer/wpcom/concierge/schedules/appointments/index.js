@@ -15,10 +15,10 @@ import { errorNotice } from 'state/notices/actions';
 import { CONCIERGE_MAKE_APPOINTMENT_REQUEST } from 'state/action-types';
 
 export const toApi = ( { beginTimestamp, customerId, siteId, meta } ) => ( {
-	begin_timestamp: beginTimestamp,
+	begin_timestamp: beginTimestamp / 1000, // convert to UNIX timestamp.
 	customer_id: customerId,
 	site_id: siteId,
-	meta,
+	meta: JSON.stringify( meta ),
 } );
 
 export const makeAppointment = ( { dispatch }, action ) => {
