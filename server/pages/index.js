@@ -177,7 +177,7 @@ function getDefaultContext( request ) {
 		config.isEnabled( 'try/single-cdn' ) && !! request.query.enableSingleCDN;
 
 	const context = Object.assign( {}, request.context, {
-		compileDebug: config( 'env' ) === 'development' ? true : false,
+		compileDebug: process.env.NODE_ENV === 'development',
 		urls: generateStaticUrls(),
 		user: false,
 		env: calypsoEnv,
@@ -421,7 +421,7 @@ module.exports = function() {
 		res.redirect( redirectUrl );
 	} );
 
-	if ( config( 'env' ) !== 'development' ) {
+	if ( process.env.NODE_ENV !== 'development' ) {
 		app.get( '/discover', function( req, res, next ) {
 			if ( ! req.cookies.wordpress_logged_in ) {
 				res.redirect( config( 'discover_logged_out_redirect_url' ) );
