@@ -24,11 +24,11 @@ class PostLikes extends React.PureComponent {
 
 	getLikeUrl = like => {
 		return like.URL ? like.URL : `https://gravatar.com/${ like.login }`;
-	}
+	};
 
 	trackLikeClick = () => {
 		this.props.recordGoogleEvent( 'Post Likes', 'Clicked on Gravatar' );
-	}
+	};
 
 	renderLike = like => {
 		const { showDisplayNames } = this.props;
@@ -44,14 +44,10 @@ class PostLikes extends React.PureComponent {
 				onClick={ this.trackLikeClick }
 			>
 				<Gravatar user={ like } size={ 24 } />
-				{ showDisplayNames && (
-					<span className="post-likes__display-name">
-						{ like.nice_name }
-					</span>
-				) }
+				{ showDisplayNames && <span className="post-likes__display-name">{ like.nice_name }</span> }
 			</a>
 		);
-	}
+	};
 
 	renderExtraCount() {
 		const { likes, likeCount } = this.props;
