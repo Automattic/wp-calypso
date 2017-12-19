@@ -164,7 +164,7 @@ export const items = createReducer(
 			if ( ! incomingSite || ! incomingSite.is_following ) {
 				return state;
 			}
-			const urlKey = prepareComparableUrl( incomingSite.URL );
+			const urlKey = prepareComparableUrl( incomingSite.feed_URL );
 			const currentFollow = state[ urlKey ];
 			const newFollow = {
 				delivery_methods: get( incomingSite, 'subscription.delivery_methods' ),
