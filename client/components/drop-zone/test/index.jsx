@@ -229,12 +229,13 @@ describe( 'index', () => {
 	} );
 
 	test( 'should not call onFilesDrop if onVerifyValidTransfer returns false', () => {
-		const spyDrop = sandbox.spy(),
-			dropEvent = new window.MouseEvent( 'drop' );
+		const spyDrop = sandbox.spy();
+		const dropEvent = new window.MouseEvent( 'drop' );
 
 		ReactDom.render(
 			React.createElement( DropZone, {
 				...requiredProps,
+				fullScreen: true, // bypass a Node.contains check on the drop event
 				onFilesDrop: spyDrop,
 				onVerifyValidTransfer: function() {
 					return false;
