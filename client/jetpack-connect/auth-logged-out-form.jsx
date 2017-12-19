@@ -1,4 +1,16 @@
 /** @format */
+
+/**
+ * Handle log in and sign up as part of the Jetpack Connect flow
+ *
+ * For user creation, this component relies on redux to store state as a user is created via a
+ * series of actions. Eventually this results in updating the `authorizationData.userData` prop on
+ * this component.
+ *
+ * When this component receives `userData`, it renders a `<WpcomLoginForm />` with the userData,
+ * which handles logging in the new user and redirection.
+ */
+
 /**
  * External dependencies
  */
