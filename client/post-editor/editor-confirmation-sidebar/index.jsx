@@ -102,16 +102,18 @@ class EditorConfirmationSidebar extends Component {
 	}
 
 	renderPrivacyControl() {
-		if ( ! this.props.post ) {
+		const { isPrivateSite, post, onPrivatePublish } = this.props;
+
+		if ( ! post ) {
 			return;
 		}
 
-		const { password, type, isPrivateSite } = this.props.post || {};
-		const status = get( this.props.post, 'status', 'draft' );
+		const { password, type } = post || {};
+		const status = get( post, 'status', 'draft' );
 		const savedStatus = get( this.props, 'savedPost.status' );
 		const savedPassword = get( this.props, 'savedPost.password' );
 		const props = {
-			onPrivatePublish: this.props.onPrivatePublish,
+			onPrivatePublish,
 			isPrivateSite,
 			type,
 			password,
