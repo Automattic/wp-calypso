@@ -9,6 +9,7 @@ import { filter, get } from 'lodash';
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { canCurrentUser } from 'state/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -33,12 +34,16 @@ export function getConnectionsBySiteId( state, siteId ) {
  * @param  {Number} userId User ID to filter
  * @return {Array}         User connections
  */
-export function getSiteUserConnections( state, siteId, userId ) {
-	return filter( state.sharing.publicize.connections, connection => {
-		const { site_ID, shared, keyring_connection_user_ID } = connection;
-		return site_ID === siteId && ( shared || keyring_connection_user_ID === userId );
-	} );
-}
+export const getSiteUserConnections = createSelector(
+	( state, siteId, userId ) =>
+		filter(
+			state.sharing.publicize.connections,
+			connection =>
+				connection.site_ID === siteId &&
+				( connection.shared || connection.keyring_connection_user_ID === userId )
+		),
+	state => [ state.sharing.publicize.connections ]
+);
 
 /**
  * Returns an array of known connections for the given site ID
