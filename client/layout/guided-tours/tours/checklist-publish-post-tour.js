@@ -72,7 +72,7 @@ export const ChecklistPublishPostTour = makeTour(
 				<p>
 					{ translate(
 						'Featured images are a great way to add more personality to your pages. ' +
-							"Let's add something a little more relevant to your About page text."
+							'Let’s add something a little more relevant to your About page text.'
 					) }
 				</p>
 				<p>{ translate( 'Press anywhere on this image so we can change it.' ) }</p>
