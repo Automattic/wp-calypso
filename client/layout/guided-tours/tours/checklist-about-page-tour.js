@@ -42,7 +42,7 @@ export const ChecklistAboutPageTour = makeTour(
 			<p>
 				{ translate(
 					'Let’s start by changing the default text with an introduction. ' +
-						'Here are some questions to help you out: Who are you and where are you based?' +
+						'Here are some questions to help you out: Who are you and where are you based? ' +
 						'Why did you start this site? ' +
 						'What can visitors expect to get out of it?'
 				) }
