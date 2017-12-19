@@ -246,23 +246,28 @@ function getDefaultContext( request ) {
 	return context;
 }
 
-function setUpLoggedOutRoute( req, res, next ) {
-	req.context = getDefaultContext( req );
+function addFramePreventionHeader( req, res ) {
+	if ( req.context.allowFraming ) {
+		return;
+	}
+
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
+}
 
+function setUpLoggedOutRoute( req, res, next ) {
+	req.context = getDefaultContext( req );
+
+	addFramePreventionHeader( req, res );
 	next();
 }
 
 function setUpLoggedInRoute( req, res, next ) {
 	let redirectUrl, protocol, start;
 
-	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
-	} );
-
 	req.context = getDefaultContext( req );
+	addFramePreventionHeader( req, res );
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		const user = require( 'user-bootstrap' );
@@ -479,7 +484,10 @@ module.exports = function() {
 				const pathRegex = utils.pathToRegExp( sectionPath );
 
 				app.get( pathRegex, function( req, res, next ) {
-					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
+					req.context = Object.assign( {}, req.context, {
+						sectionName: section.name,
+						allowFraming: section.allowFraming ? true : false,
+					} );
 
 					if ( config.isEnabled( 'code-splitting' ) ) {
 						req.context.chunk = section.name;
