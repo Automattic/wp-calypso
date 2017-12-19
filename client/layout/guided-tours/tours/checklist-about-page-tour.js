@@ -34,15 +34,15 @@ export const ChecklistAboutPageTour = makeTour(
 			<p>
 				{ translate(
 					'The About Page is often the most visited page on a site. ' +
-						"You might find that it never feels quite done - that's OK. " +
+						'You might find that it never feels quite done - that’s OK. ' +
 						'This is the internet and we can update it as many times as we want. ' +
 						'The key is to just get it started.'
 				) }
 			</p>
 			<p>
 				{ translate(
-					"Let's start by changing the default text with an introduction. " +
-						'Here are some questions to help you out: Who are you and where are you based?' +
+					'Let’s start by changing the default text with an introduction. ' +
+						'Here are some questions to help you out: Who are you and where are you based? ' +
 						'Why did you start this site? ' +
 						'What can visitors expect to get out of it?'
 				) }
@@ -59,15 +59,14 @@ export const ChecklistAboutPageTour = makeTour(
 			arrow="top-left"
 			placement="below"
 		>
-			<Continue target="editor-featured-image-current-image" step="choose-image" click>
-				<p>
-					{ translate(
-						'Featured images are a great way to add more personality to your pages. ' +
-							"Let's add something a little more relevant to your About page text."
-					) }
-				</p>
-				<p>{ translate( 'Press anywhere on this image so we can change it.' ) }</p>
-			</Continue>
+			<p>
+				{ translate(
+					'Featured images are a great way to add more personality to your pages. ' +
+						'Let’s add something a little more relevant to your About page text.'
+				) }
+			</p>
+			<p>{ translate( 'Press anywhere on this image so we can change it.' ) }</p>
+			<Continue target="editor-featured-image-current-image" step="choose-image" click hidden />
 		</Step>
 
 		<Step
@@ -113,8 +112,8 @@ export const ChecklistAboutPageTour = makeTour(
 			</h1>
 			<p>
 				{ translate(
-					'The updates to your About page are being saved. When the page is done saving, let’s' +
-						' return to our checklist and see what’s next.'
+					'The updates to your About page are being saved. When the page is done saving, let’s ' +
+						'return to our checklist and see what’s next.'
 				) }
 			</p>
 			<SiteLink isButton="true" href={ '/checklist/:site' }>

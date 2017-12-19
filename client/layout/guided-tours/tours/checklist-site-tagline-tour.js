@@ -50,7 +50,7 @@ export const ChecklistSiteTaglineTour = makeTour(
 		<Step name="click-save" target="settings-site-profile-save" arrow="top-left" placement="below">
 			<Continue target="settings-site-profile-save" step="finish" click>
 				{ translate(
-					"Almost done — press {{b}}Save Settings{{/b}} to save your changes and then see what's next on our list.",
+					'Almost done — press {{b}}Save Settings{{/b}} to save your changes and then see what’s next on our list.',
 					{ components: { b: <strong /> } }
 				) }
 			</Continue>
@@ -65,7 +65,7 @@ export const ChecklistSiteTaglineTour = makeTour(
 			</h1>
 			<p>
 				{ translate(
-					"Your tagline has been saved! Let's move on and see what's next on our checklist."
+					'Your tagline has been saved! Let’s move on and see what’s next on our checklist.'
 				) }
 			</p>
 			<SiteLink isButton="true" href={ '/checklist/:site' }>
