@@ -7,7 +7,7 @@ import {
 	requestConciergeAvailableTimes,
 	updateConciergeAvailableTimes,
 	requestMakeAppointment,
-	requestMakeAppointmentSuccess,
+	makeAppointmentSuccess,
 } from '../actions';
 
 import {
@@ -58,8 +58,8 @@ describe( 'state/concierge', () => {
 			} );
 		} );
 
-		test( 'requestMakeAppointmentSuccess()', () => {
-			expect( requestMakeAppointmentSuccess() ).toEqual( {
+		test( 'makeAppointmentSuccess()', () => {
+			expect( makeAppointmentSuccess() ).toEqual( {
 				type: CONCIERGE_MAKE_APPOINTMENT_SUCCESS,
 			} );
 		} );

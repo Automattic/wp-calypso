@@ -35,6 +35,6 @@ export const requestMakeAppointment = (
 	meta,
 } );
 
-export const requestMakeAppointmentSuccess = () => ( {
+export const makeAppointmentSuccess = () => ( {
 	type: CONCIERGE_MAKE_APPOINTMENT_SUCCESS,
 } );
