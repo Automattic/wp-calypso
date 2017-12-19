@@ -27,10 +27,10 @@ import {
 	showMagicLoginLinkExpiredPage,
 } from 'state/login/magic-login/actions';
 import {
-	getInitialQueryArguments,
 	getMagicLoginCurrentView,
 	getMagicLoginRequestAuthError,
 	getMagicLoginRequestedAuthSuccessfully,
+	getRedirectToFromQueryArguments,
 	isFetchingMagicLoginAuth,
 } from 'state/selectors';
 import { getRedirectTo, getTwoFactorNotificationSent, isTwoFactorEnabled } from 'state/login/selectors';
@@ -200,7 +200,7 @@ class HandleEmailedLinkForm extends React.Component {
 
 const mapState = state => {
 	return {
-		redirectToFromQuery: getInitialQueryArguments( state ).redirect_to,
+		redirectToFromQuery: getRedirectToFromQueryArguments( state ),
 		redirectToFromServer: getRedirectTo( state ),
 		authError: getMagicLoginRequestAuthError( state ),
 		currentUser: getCurrentUser( state ),

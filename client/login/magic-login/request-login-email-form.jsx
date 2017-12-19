@@ -17,11 +17,11 @@ import {
 	hideMagicLoginRequestNotice,
 } from 'state/login/magic-login/actions';
 import {
-	isFetchingMagicLoginEmail,
-	getInitialQueryArguments,
 	getMagicLoginCurrentView,
 	getMagicLoginRequestEmailError,
 	getMagicLoginRequestedEmailSuccessfully,
+	getRedirectToFromQueryArguments,
+	isFetchingMagicLoginEmail,
 } from 'state/selectors';
 import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -187,7 +187,7 @@ const mapState = state => {
 	return {
 		currentUser: getCurrentUser( state ),
 		isFetching: isFetchingMagicLoginEmail( state ),
-		redirectTo: getInitialQueryArguments( state ).redirect_to,
+		redirectTo: getRedirectToFromQueryArguments( state ),
 		requestError: getMagicLoginRequestEmailError( state ),
 		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),

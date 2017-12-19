@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
+import getRedirectToFromQueryArguments from 'state/selectors/get-redirect-to-from-query-arguments';
 import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
@@ -150,7 +150,7 @@ class SocialLoginForm extends Component {
 
 export default connect(
 	state => ( {
-		redirectTo: getInitialQueryArguments( state ).redirect_to,
+		redirectTo: getRedirectToFromQueryArguments( state ),
 		isSocialAccountCreating: isSocialAccountCreating( state ),
 		bearerToken: getCreatedSocialAccountBearerToken( state ),
 		username: getCreatedSocialAccountUsername( state ),

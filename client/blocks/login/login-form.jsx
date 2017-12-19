@@ -23,7 +23,10 @@ import Card from 'components/card';
 import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
+import {
+	getCurrentQueryArguments,
+	getRedirectToFromQueryArguments,
+} from 'state/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import {
@@ -418,12 +421,12 @@ export default connect(
 			isFormDisabled: isFormDisabledSelector( state ),
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
-			redirectTo: getInitialQueryArguments( state ).redirect_to,
+			redirectTo: getRedirectToFromQueryArguments( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
 			socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
 			socialAccountLinkService: getSocialAccountLinkService( state ),
-			userEmail: getInitialQueryArguments( state ).email_address,
+			userEmail: getCurrentQueryArguments( state ).email_address,
 		};
 	},
 	{
