@@ -10,9 +10,9 @@
 		}
 	}
 
-	.post-likes__placeholder {
+	.post-likes__count {
 		vertical-align: top;
-		margin-top: 6px;
+		margin: 6px 8px 2px 0;
 		line-height: 14px;
 		border-radius: 12px;
 		display: inline-block;
@@ -21,14 +21,17 @@
 		padding: 1px 6px;
 		font-weight: 600;
 		font-size: 11px;
+
+		&.is-loading {
+			border-color: transparent;
+			@include placeholder();
+		}
 	}
 }
 
 .post-likes-popover {
 	.post-likes {
-		min-width: 20px;
 		max-width: 384px;
-		min-height: 20px;
 		max-height: 400px;
 
 		text-align: left;

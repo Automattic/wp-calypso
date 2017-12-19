@@ -35,8 +35,13 @@ export const PostLikes = props => {
 	return (
 		<div className="post-likes">
 			<QueryPostLikes siteId={ siteId } postId={ postId } />
+			{ ! likes &&
+				isRequesting && (
+					<span key="placeholder" className="post-likes__count is-loading">
+						…
+					</span>
+				) }
 			{ likes &&
-				!! likes.length &&
 				likes
 					.map( like => (
 						<a
@@ -53,7 +58,7 @@ export const PostLikes = props => {
 					) )
 					.concat(
 						countLikes > likes.length && (
-							<span key="placeholder" className="post-likes__placeholder">
+							<span key="placeholder" className="post-likes__count">
 								{ `+ ${ countLikes - likes.length }` }
 							</span>
 						)
