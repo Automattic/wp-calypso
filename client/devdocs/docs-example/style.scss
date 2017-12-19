@@ -3,6 +3,12 @@
 	align-items: center;
 }
 
+
+.docs-example__readme-viewer .foldable-card__main {
+	font-size: 14px;
+	color: $gray-text-min;
+}
+
 .docs-example__title {
 	flex: 1;
 }
