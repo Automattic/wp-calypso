@@ -113,9 +113,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	null,
-	null,
-	{ pure: false } // defaults to true, but this component has internal state
-)( localize( EditorSeoAccordion ) );
+export default connect( mapStateToProps )( localize( EditorSeoAccordion ) );

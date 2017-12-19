@@ -362,25 +362,20 @@ EditorDrawer.displayName = 'EditorDrawer';
 
 const enhance = flow(
 	localize,
-	connect(
-		state => {
-			const siteId = getSelectedSiteId( state );
-			const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
+	connect( state => {
+		const siteId = getSelectedSiteId( state );
+		const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
 
-			return {
-				isPermalinkEditable: areSitePermalinksEditable( state, siteId ),
-				canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
-				isJetpack: isJetpackSite( state, siteId ),
-				isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
-				jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
-				type,
-				typeObject: getPostType( state, siteId, type ),
-			};
-		},
-		null,
-		null,
-		{ pure: false }
-	)
+		return {
+			isPermalinkEditable: areSitePermalinksEditable( state, siteId ),
+			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
+			isJetpack: isJetpackSite( state, siteId ),
+			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
+			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
+			type,
+			typeObject: getPostType( state, siteId, type ),
+		};
+	} )
 );
 
 export default enhance( EditorDrawer );

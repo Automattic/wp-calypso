@@ -1372,9 +1372,7 @@ const enhance = flow(
 			recordTracksEvent,
 			closeEditorSidebar,
 			openEditorSidebar,
-		},
-		null,
-		{ pure: false }
+		}
 	)
 );
 
