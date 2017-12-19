@@ -156,16 +156,6 @@ class EditorSharingPublicizeOptions extends React.Component {
 			return null;
 		}
 
-		if ( this.props.site && this.props.site.options.publicize_permanently_disabled ) {
-			return (
-				<div className="editor-sharing__publicize-disabled">
-					<p>
-						<span>{ this.props.translate( 'Publicize is disabled on this site.' ) }</span>
-					</p>
-				</div>
-			);
-		}
-
 		const classes = classNames( 'editor-sharing__publicize-options', {
 			'has-connections': this.hasConnections(),
 			'has-add-option': this.props.canUserPublishPosts,

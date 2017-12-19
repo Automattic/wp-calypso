@@ -58,29 +58,7 @@ function publicizeConnections( site ) {
 	return url;
 }
 
-/**
- * Returns a URL to manage Jetpack modules for a given site.
- *
- * @param  {object} site 	Site object
- * @param  {string} module	Optional module name to link to
- * @return {string}      	URL to manage Jetpack modules
- */
-function jetpackModules( site, module ) {
-	let url = '';
-	if ( ! site.jetpack ) {
-		return url;
-	}
-
-	url = site.options.admin_url + 'admin.php?page=jetpack_modules';
-	if ( module ) {
-		url += '&info=' + module;
-	}
-
-	return url;
-}
-
 export default {
-	jetpackModules,
 	login,
 	newPost,
 	newPage,
