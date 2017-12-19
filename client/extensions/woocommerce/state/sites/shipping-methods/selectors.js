@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { filter, find, get, isArray } from 'lodash';
+import { every, filter, find, get, isArray, some, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,10 @@ import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 import { LOADING } from 'woocommerce/state/constants';
+import {
+	isShippingSchemaLoaded,
+	isShippingSchemaLoading,
+} from 'woocommerce/woocommerce-services/state/shipping-schemas/selectors';
 
 /*
  * By default, those methods are called "XXXX (WooCommerce Services)".
@@ -42,7 +46,7 @@ export const getShippingMethods = ( state, siteId = getSelectedSiteId( state ) )
 	}
 	const availableMethods = isWcsEnabled( state, siteId )
 		? allMethods
-		: filter( allMethods, ( { id } ) => ! id.startsWith( 'wc_services' ) );
+		: filter( allMethods, ( { id } ) => ! startsWith( id, 'wc_services' ) );
 	return availableMethods.map( method => ( {
 		...method,
 		title: METHOD_NAMES[ method.id ] || method.title,
@@ -55,7 +59,13 @@ export const getShippingMethods = ( state, siteId = getSelectedSiteId( state ) )
  * @return {boolean} Whether the shipping methods list has been successfully loaded from the server
  */
 export const areShippingMethodsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isArray( getShippingMethods( state, siteId ) );
+	if ( ! isArray( getShippingMethods( state, siteId ) ) ) {
+		return false;
+	}
+	const wcsMethods = filter( getShippingMethods( state, siteId ), ( { id } ) =>
+		startsWith( id, 'wc_services' )
+	);
+	return every( wcsMethods, ( { id } ) => isShippingSchemaLoaded( state, id, siteId ) );
 };
 
 /**
@@ -64,7 +74,13 @@ export const areShippingMethodsLoaded = ( state, siteId = getSelectedSiteId( sta
  * @return {boolean} Whether the shipping methods list is currently being retrieved from the server
  */
 export const areShippingMethodsLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return LOADING === getShippingMethods( state, siteId );
+	if ( LOADING === getShippingMethods( state, siteId ) ) {
+		return true;
+	}
+	const wcsMethods = filter( getShippingMethods( state, siteId ), ( { id } ) =>
+		startsWith( id, 'wc_services' )
+	);
+	return some( wcsMethods, ( { id } ) => isShippingSchemaLoading( state, id, siteId ) );
 };
 
 /**
