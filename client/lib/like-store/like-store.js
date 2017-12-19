@@ -169,7 +169,7 @@ LikeStore = {
 	},
 };
 
-if ( process.env.NODE_ENV === 'development' ) {
+if ( process.env.NODE_ENV === 'test' ) {
 	assign( LikeStore, {
 		// These bedlumps are for testing.
 		// Ideally, we'd pull these out with envify for prod
