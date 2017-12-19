@@ -32,7 +32,7 @@ export function requestUnfollow( action ) {
 export const fromApi = apiResponse => {
 	if ( apiResponse.subscribed ) {
 		throw new Error(
-			`failed to unsubscribe to tag with reponse: ${ JSON.stringify( apiResponse ) }`
+			`failed to unsubscribe to tag with response: ${ JSON.stringify( apiResponse ) }`
 		);
 	}
 
