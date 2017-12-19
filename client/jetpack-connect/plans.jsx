@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
@@ -175,7 +176,13 @@ class Plans extends Component {
 			false !== hasPlan ||
 			false !== isAutomatedTransfer
 		) {
-			return <QueryPlans />;
+			return (
+				<div>
+					<QueryPlans />
+					<h1 className="jetpack-connect__plans-placeholder-title">Loading...</h1>
+					<Card className="jetpack-connect__plans-placeholder-card" />
+				</div>
+			);
 		}
 
 		const helpButtonLabel = translate( 'Need help?' );
