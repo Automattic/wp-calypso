@@ -30,21 +30,23 @@ describe( 'Plans', () => {
 		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
 	} );
 
-	test( 'should render empty with unknown plan', () => {
+	test( 'should render placeholder with unknown plan', () => {
 		const wrapper = shallow( <Plans { ...DEFAULT_PROPS } hasPlan={ null } /> );
 
+		expect( wrapper ).toMatchSnapshot();
 		expect( wrapper.find( PlansGrid ) ).toHaveLength( 0 );
 		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
 	} );
 
-	test( 'should render empty with unknown Atomic', () => {
+	test( 'should render placeholder with unknown Atomic', () => {
 		const wrapper = shallow( <Plans { ...DEFAULT_PROPS } isAutomatedTransfer={ null } /> );
 
+		expect( wrapper ).toMatchSnapshot();
 		expect( wrapper.find( PlansGrid ) ).toHaveLength( 0 );
 		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
 	} );
 
-	test( 'should render empty with a paid plan', () => {
+	test( 'should render placeholder with a paid plan', () => {
 		const wrapper = shallow(
 			<Plans
 				{ ...DEFAULT_PROPS }

@@ -1,6 +1,52 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Plans should render empty with a paid plan 1`] = `<components--data--query-plans />`;
+exports[`Plans should render placeholder with a paid plan 1`] = `
+<div>
+  <components--data--query-plans />
+  <h1
+    className="jetpack-connect__plans-placeholder-title"
+  >
+    Loading...
+  </h1>
+  <Card
+    className="jetpack-connect__plans-placeholder-card"
+    highlight={false}
+    tagName="div"
+  />
+</div>
+`;
+
+exports[`Plans should render placeholder with unknown Atomic 1`] = `
+<div>
+  <components--data--query-plans />
+  <h1
+    className="jetpack-connect__plans-placeholder-title"
+  >
+    Loading...
+  </h1>
+  <Card
+    className="jetpack-connect__plans-placeholder-card"
+    highlight={false}
+    tagName="div"
+  />
+</div>
+`;
+
+exports[`Plans should render placeholder with unknown plan 1`] = `
+<div>
+  <components--data--query-plans />
+  <h1
+    className="jetpack-connect__plans-placeholder-title"
+  >
+    Loading...
+  </h1>
+  <Card
+    className="jetpack-connect__plans-placeholder-card"
+    highlight={false}
+    tagName="div"
+  />
+</div>
+`;
 
 exports[`Plans should render with no plan (free) 1`] = `
 <div>
