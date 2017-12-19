@@ -12,6 +12,7 @@ import {
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import actionLog from './action-log/reducer';
+import comments from './comments/reducer';
 import dropZone from './drop-zone/reducer';
 import editor from './editor/reducer';
 import guidedTour from './guided-tours/reducer';
@@ -92,6 +93,7 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 
 const reducer = combineReducers( {
 	actionLog,
+	comments,
 	dropZone,
 	editor,
 	guidedTour,
