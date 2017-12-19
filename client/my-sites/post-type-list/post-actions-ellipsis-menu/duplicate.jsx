@@ -16,7 +16,6 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { getPost } from 'state/posts/selectors';
 import { canCurrentUserEditPost } from 'state/selectors';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
-import { isEnabled } from 'config';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 
@@ -30,7 +29,7 @@ function PostActionsEllipsisMenuDuplicate( {
 } ) {
 	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
 
-	if ( ! isEnabled( 'posts/post-type-list' ) || ! canEdit || ! validStatus || 'post' !== type ) {
+	if ( ! canEdit || ! validStatus || 'post' !== type ) {
 		return null;
 	}
 

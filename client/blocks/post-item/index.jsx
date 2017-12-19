@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
@@ -122,9 +121,7 @@ class PostItem extends React.Component {
 			'is-placeholder': isPlaceholder,
 		} );
 
-		const arePostsCondensed = isEnabled( 'posts/post-type-list' );
-		const isSiteInfoVisible = arePostsCondensed && isAllSitesModeSelected;
-		const isAuthorVisible = arePostsCondensed && this.hasMultipleUsers() && post && post.author;
+		const isAuthorVisible = this.hasMultipleUsers() && post && post.author;
 
 		const expandedContent = this.renderExpandedContent();
 
@@ -138,7 +135,7 @@ class PostItem extends React.Component {
 					{ this.renderSelectionCheckbox() }
 					<div className="post-item__detail">
 						<div className="post-item__info">
-							{ isSiteInfoVisible && <PostTypeSiteInfo globalId={ globalId } /> }
+							{ isAllSitesModeSelected && <PostTypeSiteInfo globalId={ globalId } /> }
 							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
 						</div>
 						<h1 className="post-item__title" onClick={ this.clickHandler( 'title' ) }>
