@@ -143,7 +143,7 @@ const CreditCardForm = createReactClass( {
 	saveCreditCard() {
 		const cardDetails = this.getCardDetails();
 
-		this.props.createCardToken( cardDetails, ( gatewayError, cardToken ) => {
+		this.props.createCardToken( cardDetails, ( gatewayError, gatewayData ) => {
 			if ( ! this._mounted ) {
 				return;
 			}
@@ -156,7 +156,7 @@ const CreditCardForm = createReactClass( {
 
 			if ( this.props.saveStoredCard ) {
 				this.props
-					.saveStoredCard( cardToken )
+					.saveStoredCard( gatewayData )
 					.then( () => {
 						notices.success( this.props.translate( 'Card added successfully' ), {
 							persistent: true,
@@ -176,7 +176,11 @@ const CreditCardForm = createReactClass( {
 						}
 					} );
 			} else {
-				const apiParams = this.getParamsForApi( cardDetails, cardToken, this.props.apiParams );
+				const apiParams = this.getParamsForApi(
+					cardDetails,
+					gatewayData.token,
+					this.props.apiParams
+				);
 
 				wpcom.updateCreditCard( apiParams, ( apiError, response ) => {
 					if ( apiError ) {

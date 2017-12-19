@@ -14,12 +14,12 @@ import {
 } from 'state/action-types';
 import wp from 'lib/wp';
 
-export const addStoredCard = cardToken => dispatch => {
+export const addStoredCard = cardData => dispatch => {
 	return new Promise( ( resolve, reject ) => {
 		wp
 			.undocumented()
 			.me()
-			.storedCardAdd( cardToken, ( error, data ) => {
+			.storedCardAdd( cardData.token, ( error, data ) => {
 				error ? reject( error ) : resolve( data );
 			} );
 	} ).then( item => {
