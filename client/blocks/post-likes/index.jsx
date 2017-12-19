@@ -77,7 +77,7 @@ class PostLikes extends React.PureComponent {
 			noLikesLabel = translate( 'There are no likes on this post yet.' );
 		}
 
-		const isLoading = ! likes && isRequesting;
+		const isLoading = ! likes;
 
 		return (
 			<div className="post-likes">
