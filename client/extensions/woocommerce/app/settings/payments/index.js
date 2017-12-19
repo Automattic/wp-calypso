@@ -104,7 +104,7 @@ class SettingsPayments extends Component {
 	renderPaymentSection = ( { description, label, methodType } ) => (
 		<div className="payments__type-container" key={ methodType }>
 			<ExtendedHeader label={ label } description={ description } />
-			<PaymentMethodList methodType={ methodType } />
+			<PaymentMethodList methodType={ methodType } onChange={ this.onChange } />
 		</div>
 	);
 

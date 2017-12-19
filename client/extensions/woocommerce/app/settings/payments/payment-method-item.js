@@ -51,6 +51,7 @@ class PaymentMethodItem extends Component {
 			id: PropTypes.string,
 			informationUrl: PropTypes.string,
 		} ),
+		onChange: PropTypes.func.isRequired,
 		openPaymentMethodForEdit: PropTypes.func.isRequired,
 		site: PropTypes.shape( {
 			title: PropTypes.string,
@@ -76,11 +77,14 @@ class PaymentMethodItem extends Component {
 	};
 
 	onEditField = ( field, value ) => {
+		this.props.onChange();
 		this.props.changePaymentMethodField( this.props.site.ID, field, value );
 	};
 
 	onChangeEnabled = e => {
 		const { method, site } = this.props;
+
+		this.props.onChange();
 
 		const enabled = 'yes' === e.target.value;
 		this.props.changePaymentMethodEnabled( site.ID, method.id, enabled );
@@ -105,6 +109,7 @@ class PaymentMethodItem extends Component {
 		const { method, site } = this.props;
 		this.props.closeEditingPaymentMethod( site.ID, method.id );
 		if ( ! method.enabled ) {
+			this.props.onChange();
 			this.props.changePaymentMethodEnabled( site.ID, method.id, true );
 			analytics.tracks.recordEvent( 'calypso_woocommerce_payment_method_enabled', {
 				payment_method: method.id,
