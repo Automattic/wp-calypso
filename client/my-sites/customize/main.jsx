@@ -27,6 +27,7 @@ import { getCustomizerFocus } from './panels';
 import { getMenusUrl } from 'state/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
+import wpcom from 'lib/wp';
 
 const debug = debugFactory( 'calypso:my-sites:customize' );
 
@@ -185,6 +186,10 @@ class Customize extends React.Component {
 			query.customize_amp = 1;
 		}
 
+		//needed to load the customizer correctly when su'd
+		if ( wpcom.addSupportParams ) {
+			return Qs.stringify( wpcom.addSupportParams( query ) );
+		}
 		return Qs.stringify( query );
 	};
 
