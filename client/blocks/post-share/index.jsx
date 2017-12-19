@@ -103,7 +103,6 @@ class PostShare extends Component {
 		message: PostMetadata.publicizeMessage( this.props.post ) || '',
 		skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
 		showSharingPreview: false,
-		showAccountTooltip: false,
 		scheduledDate: null,
 		showTooltip: false,
 		tooltipContext: null,
@@ -430,10 +429,6 @@ class PostShare extends Component {
 			);
 		}
 	}
-
-	showAddTooltip = () => this.setState( { showAccountTooltip: true } );
-
-	hideAddTooltip = () => this.setState( { showAccountTooltip: false } );
 
 	renderConnectionsSection() {
 		const { hasFetchedConnections, siteId, siteSlug, translate } = this.props;
