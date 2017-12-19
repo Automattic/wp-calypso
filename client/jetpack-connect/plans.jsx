@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Placeholder from './plans-placeholder';
 import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
@@ -168,11 +168,10 @@ class Plans extends Component {
 
 		if ( this.shouldShowPlaceholder() ) {
 			return (
-				<div>
+				<Fragment>
 					<QueryPlans />
-					<h1 className="jetpack-connect__plans-placeholder-title">Loading...</h1>
-					<Card className="jetpack-connect__plans-placeholder-card" />
-				</div>
+					<Placeholder />
+				</Fragment>
 			);
 		}
 

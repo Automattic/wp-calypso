@@ -526,19 +526,14 @@
 	}
 }
 
-.jetpack-connect__plans-placeholder-title {
-	margin: 30px auto 20px;
-	width: 280px;
-	height: 100px;
-	margin-bottom: 40px;
-	@include placeholder();
-}
-
-.jetpack-connect__plans-placeholder-card {
-	width: 960px;
-	height: 400px;
-	box-shadow: none;
-	@include placeholder();
+.jetpack-connect__plans.placeholder {
+	.placeholder-text,
+	.jetpack-connect-plans-placeholder__plans-content {
+		@include placeholder();
+	}
+	.jetpack-connect-plans-placeholder__plans-content {
+		min-height: 400px;
+	}
 }
 
 .jetpack-connect__auth-form-header-image {
