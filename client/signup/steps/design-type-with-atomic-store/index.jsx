@@ -10,7 +10,6 @@ import { includes, invoke } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
@@ -110,7 +109,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
 		const isCountryAllowed =
-			includes( [ 'US', 'CA' ], this.props.countryCode ) || config( 'env' ) === 'development';
+			includes( [ 'US', 'CA' ], this.props.countryCode ) || process.env.NODE_ENV === 'development';
 
 		if (
 			designType === DESIGN_TYPE_STORE &&

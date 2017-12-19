@@ -182,7 +182,7 @@ const flows = {
 	},
 
 	'test-site': {
-		steps: config( 'env' ) === 'development' ? [ 'site', 'user' ] : [ 'user' ],
+		steps: process.env.NODE_ENV === 'development' ? [ 'site', 'user' ] : [ 'user' ],
 		destination: '/',
 		description: 'This flow is used to test the site step.',
 		lastModified: '2015-09-22',
@@ -309,7 +309,7 @@ if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
 	};
 }
 
-if ( config( 'env' ) === 'development' ) {
+if ( process.env.NODE_ENV === 'development' ) {
 	flows[ 'test-plans' ] = {
 		steps: [ 'site', 'plans', 'user' ],
 		destination: getSiteDestination,

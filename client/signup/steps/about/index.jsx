@@ -1,9 +1,7 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -13,7 +11,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import formState from 'lib/form-state';
@@ -311,7 +308,7 @@ class AboutStep extends Component {
 
 		//Store
 		const isCountryAllowed =
-			includes( [ 'US', 'CA' ], this.props.countryCode ) || config( 'env' ) === 'development';
+			includes( [ 'US', 'CA' ], this.props.countryCode ) || process.env.NODE_ENV === 'development';
 		const nextFlowName =
 			designType === DESIGN_TYPE_STORE && isCountryAllowed
 				? 'segmented-store-nux'
