@@ -34,7 +34,7 @@ export const addArrayFieldItem = ( path, item ) => ( {
 	item,
 } );
 
-export const submit = ( schema, silent ) => ( dispatch, getState, { methodId, instanceId, formType } ) => {
+export const submit = ( schema, silent ) => ( dispatch, getState, { methodId, instanceId } ) => {
 	silent = ( true === silent );
 
 	const setIsSaving = ( value ) => dispatch( FormActions.setFormProperty( 'isSaving', value ) );
@@ -84,7 +84,7 @@ export const submit = ( schema, silent ) => ( dispatch, getState, { methodId, in
 	}
 
 	setIsSaving( true );
-	api.post( api.url.settingsForm( formType, methodId, instanceId ), coercedValues )
+	api.post( api.url.serviceSettings( methodId, instanceId ), coercedValues )
 		.then( () => setSuccess( true ) )
 		.catch( ( error ) => {
 			if ( 'validation_failure' === _.get( error, 'data.error' ) && _.get( error, 'data.data.fields' ) ) {

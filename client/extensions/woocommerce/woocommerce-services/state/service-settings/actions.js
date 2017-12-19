@@ -27,9 +27,9 @@ export const setFormProperty = ( field, value ) => {
 	};
 };
 
-export const fetchForm = () => ( dispatch, getState, { methodId, instanceId, formType } ) => {
+export const fetchForm = () => ( dispatch, getState, { methodId, instanceId } ) => {
 	dispatch( setFormProperty( 'isFetching', true ) );
-	return api.get( api.url.settingsForm( formType, methodId, instanceId ) )
+	return api.get( api.url.serviceSettings( methodId, instanceId ) )
 		.then( ( response ) => {
 			dispatch( initForm( response ) );
 		} )
