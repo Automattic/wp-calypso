@@ -40,10 +40,9 @@ class PostLikes extends React.PureComponent {
 				rel="noopener noreferrer"
 				target="_blank"
 				className="post-likes__item"
-				title={ like.login }
 				onClick={ this.trackLikeClick }
 			>
-				<Gravatar user={ like } size={ 24 } />
+				<Gravatar user={ like } alt={ like.login } title={ like.login } size={ 24 } />
 				{ showDisplayNames && <span className="post-likes__display-name">{ like.name }</span> }
 			</a>
 		);
