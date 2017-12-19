@@ -5,7 +5,15 @@
  */
 import { addCalypsoEnvQueryArg } from '../utils';
 
-jest.mock( 'config', () => () => 'mocked-test-env-id' );
+jest.mock( 'config', () => input => {
+	const lookupTable = {
+		env_id: 'mocked-test-env-id',
+	};
+	if ( input in lookupTable ) {
+		return lookupTable[ input ];
+	}
+	throw new Error( 'Unrecognized input to mocked config' );
+} );
 
 describe( 'addCalypsoEnvQueryArg', () => {
 	test( 'should add config env_id as calypso_env', () => {
