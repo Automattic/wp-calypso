@@ -502,6 +502,7 @@ describe( 'reducer', () => {
 				ID: 125,
 				name: 'Postcards from the Reader',
 				URL: 'https://postcardsfromthereader.wordpress.com',
+				feed_URL: 'https://postcardsfromthereader.wordpress.com',
 				is_following: true,
 				subscription: {
 					delivery_methods: {
@@ -523,6 +524,7 @@ describe( 'reducer', () => {
 				is_following: true,
 				blog_ID: 125,
 				URL: 'https://postcardsfromthereader.wordpress.com',
+				feed_URL: 'https://postcardsfromthereader.wordpress.com',
 				delivery_methods: {
 					email: {
 						send_posts: true,
