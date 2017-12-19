@@ -24,7 +24,6 @@ import Draft from 'my-sites/draft';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostCounts from 'components/data/query-post-counts';
 import Button from 'components/button';
-import Site from 'blocks/site';
 import { getCurrentUserId } from 'state/current-user/selectors';
 
 class MasterbarDrafts extends Component {
@@ -103,8 +102,6 @@ class MasterbarDrafts extends Component {
 					</div>
 
 					<div className="recent-drafts__list">
-						<Site compact site={ selectedSite } />
-
 						{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 
 						{ isLoading && <Draft isPlaceholder /> }
