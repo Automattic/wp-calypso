@@ -27,7 +27,12 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { canCurrentUser, isRtl, isSiteAutomatedTransfer } from 'state/selectors';
+import {
+	canCurrentUser,
+	hasInitializedSites,
+	isRtl,
+	isSiteAutomatedTransfer,
+} from 'state/selectors';
 import { mc } from 'lib/analytics';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 
@@ -70,6 +75,10 @@ class Plans extends Component {
 		}
 		if ( this.props.hasPlan || this.props.notJetpack ) {
 			this.redirect( CALYPSO_PLANS_PAGE );
+		}
+		if ( ! this.props.selectedSite && this.props.isSitesInitialized ) {
+			// Invalid site
+			this.redirect( '/jetpack/connect/plans' );
 		}
 		if ( ! this.props.canPurchasePlans ) {
 			if ( this.props.isCalypsoStartedConnection ) {
@@ -223,6 +232,7 @@ export default connect(
 			isRtlLayout: isRtl( state ),
 			hasPlan: selectedSite ? isCurrentPlanPaid( state, selectedSite.ID ) : null,
 			notJetpack: selectedSite ? ! isJetpackSite( state, selectedSite.ID ) : null,
+			isSitesInitialized: hasInitializedSites( state ),
 		};
 	},
 	{
