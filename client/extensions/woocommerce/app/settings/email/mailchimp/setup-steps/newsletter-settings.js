@@ -26,7 +26,7 @@ const NewsletterSettings = ( { storeData = {}, onChange, siteId, isRequesting, t
 			<p>{ translate( 'Finally, choose a mailing list to sync with your store.' ) }</p>
 			<Notice>
 				<p>{ translate(
-					'Choose your list carefully as you wont be able to change it later. ' +
+					'Choose your list carefully as you won\'t be able to change it later. ' +
 					'Create a list in MailChimp if you have not already done so.'
 					) }
 				</p>

@@ -20,7 +20,6 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryMailChimpSettings from 'woocommerce/state/sites/settings/mailchimp/querySettings';
 
 class MailChimp extends React.Component {
-
 	constructor( props ) {
 		super( props );
 		this.state = {
@@ -43,7 +42,7 @@ class MailChimp extends React.Component {
 
 	render() {
 		const { dashboardView, hasMailChimp, isRequestingMailChimpSettings,
-			isRequestingPlugins, siteId, site, settings } = this.props;
+			isRequestingPlugins, onChange, siteId, site, settings } = this.props;
 		const { setupWizardStarted } = this.state;
 		const isRequestingData = ( isRequestingMailChimpSettings || isRequestingPlugins );
 		const mailChimpIsReady = ! isRequestingData &&
@@ -85,6 +84,7 @@ class MailChimp extends React.Component {
 					<MailChimpDashboard
 						siteId={ siteId }
 						wizardCompleted={ this.state.wizardCompleted }
+						onChange={ onChange }
 						onNoticeExit={ this.closeSetupFinishNotice } /> }
 				{ setupWizardStarted &&
 					<MailChimpSetup
@@ -104,6 +104,7 @@ MailChimp.propTypes = {
 	hasMailChimp: PropTypes.bool,
 	isRequestingPlugins: PropTypes.bool,
 	isRequestingMailChimpSettings: PropTypes.bool,
+	onChange: PropTypes.func.isRequired,
 	settings: PropTypes.object,
 	startWizard: PropTypes.bool,
 	dashboardView: PropTypes.bool,
