@@ -3,11 +3,18 @@
 /**
  * Internal dependencies
  */
-import { requestConciergeAvailableTimes, updateConciergeAvailableTimes } from '../actions';
+import {
+	requestConciergeAvailableTimes,
+	updateConciergeAvailableTimes,
+	requestMakeAppointment,
+	makeAppointmentSuccess,
+} from '../actions';
 
 import {
 	CONCIERGE_AVAILABLE_TIMES_REQUEST,
 	CONCIERGE_AVAILABLE_TIMES_UPDATE,
+	CONCIERGE_MAKE_APPOINTMENT_REQUEST,
+	CONCIERGE_MAKE_APPOINTMENT_SUCCESS,
 } from 'state/action-types';
 
 describe( 'state/concierge', () => {
@@ -27,6 +34,33 @@ describe( 'state/concierge', () => {
 			expect( updateConciergeAvailableTimes( availableTimes ) ).toEqual( {
 				type: CONCIERGE_AVAILABLE_TIMES_UPDATE,
 				availableTimes,
+			} );
+		} );
+
+		test( 'requestMakeAppointment()', () => {
+			const scheduleId = 123;
+			const beginTimestamp = Date.parse( '2017-01-05' );
+			const customerId = 9527;
+			const siteId = 119922;
+			const meta = {
+				description: 'hey ya!',
+			};
+
+			expect(
+				requestMakeAppointment( scheduleId, beginTimestamp, customerId, siteId, meta )
+			).toEqual( {
+				type: CONCIERGE_MAKE_APPOINTMENT_REQUEST,
+				scheduleId,
+				beginTimestamp,
+				customerId,
+				siteId,
+				meta,
+			} );
+		} );
+
+		test( 'makeAppointmentSuccess()', () => {
+			expect( makeAppointmentSuccess() ).toEqual( {
+				type: CONCIERGE_MAKE_APPOINTMENT_SUCCESS,
 			} );
 		} );
 	} );
