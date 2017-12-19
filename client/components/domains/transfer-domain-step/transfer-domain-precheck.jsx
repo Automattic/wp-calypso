@@ -226,7 +226,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		);
 		let buttonText = translate( 'I can access the email address' );
 
-		if ( ! email ) {
+		if ( email ) {
 			message = translate(
 				"{{card}}Make sure you can access the email address listed for this domain's owner. " +
 					"We'll send a link to start the process to the following email address: {{strong}}%(email)s{{/strong}}{{/card}}" +
