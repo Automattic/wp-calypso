@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import request from '../../request';
+import request from 'woocommerce/state/sites/request';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE,

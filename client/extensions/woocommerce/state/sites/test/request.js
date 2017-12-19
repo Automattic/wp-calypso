@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import request from '../request';
+import request from 'woocommerce/state/sites/request';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'request', () => {

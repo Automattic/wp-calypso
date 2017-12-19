@@ -5,7 +5,7 @@
  */
 
 import { getSelectedSiteId } from 'state/ui/selectors';
-import request from '../../request';
+import request from 'woocommerce/state/sites/request';
 import { setError } from '../../status/wc-api/actions';
 import {
 	WOOCOMMERCE_TAXES_ENABLED_UPDATE,

@@ -6,7 +6,7 @@
 
 import { areSetupChoicesLoaded, areSetupChoicesLoading } from './selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import request from '../request';
+import request from 'woocommerce/state/sites/request';
 import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
