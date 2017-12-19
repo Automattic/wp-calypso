@@ -153,7 +153,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 			? `/comment/${ siteSlug }/${ commentId }`
 			: get( comment, 'URL' ),
 		gravatarUser,
-		hasLink: get( comment, 'contains_links', false ),
+		hasLink: get( comment, 'has_link', false ),
 	};
 };
 
