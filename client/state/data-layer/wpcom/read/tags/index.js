@@ -31,6 +31,13 @@ export function requestTags( action ) {
 	} );
 }
 
+/*
+ * Returns whether or a tags request action corresponds to a request
+ * for a user's follows. Its sadly derived instead of explicit.
+ * If the payload has an individual slug, then we know it was a request for a specific tag.
+ * If the payload does not have a slug, then we assume it was a request for the set of
+ *   user's followed tags
+ */
 const isFollowedTagsRequest = action => ! get( action, 'payload.slug' );
 
 export function receiveTagsSuccess( action, tags ) {
