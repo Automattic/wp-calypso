@@ -12,6 +12,7 @@ import { get } from 'lodash';
  */
 import HeaderCake from 'components/header-cake';
 import QueryPosts from 'components/data/query-posts';
+import StickyPanel from 'components/sticky-panel';
 import { convertDateToUserLocation } from 'components/post-schedule/utils';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { gmtOffset, timezone } from 'lib/site/utils';
@@ -48,7 +49,7 @@ export const CommentListHeader = ( {
 	const backHref = ! shouldUseHistoryBack ? `/comments/all/${ siteSlug }` : null;
 
 	return (
-		<div className="comment-list__header">
+		<StickyPanel className="comment-list__header">
 			<QueryPosts siteId={ siteId } postId={ postId } />
 
 			<HeaderCake
@@ -73,7 +74,7 @@ export const CommentListHeader = ( {
 				</div>
 				<div className="comment-list__header-date">{ formattedDate }</div>
 			</HeaderCake>
-		</div>
+		</StickyPanel>
 	);
 };
 
