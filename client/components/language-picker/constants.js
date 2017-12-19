@@ -20,8 +20,12 @@
  * `countries` is a list of countries in each region. It's used to map country code
  * retrieved from geolocation service into the name of the tab selected by default.
  */
-export const DEFAULT_TERRITORY = 'asia-pacific';
-export const TERRITORIES = [
+export const DEFAULT_LANGUAGE_GROUP = 'popular';
+export const LANGUAGE_GROUPS = [
+	{
+		id: 'popular',
+		name: translate => translate( 'Popular languages' ),
+	},
 	{
 		id: 'africa-middle-east',
 		name: translate => translate( 'Africa and Middle East' ),

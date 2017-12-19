@@ -18,7 +18,7 @@ import {
 	LOCALIZED_LANGUAGE_NAMES_DATA_DE,
 	LOCALIZED_LANGUAGE_NAMES_DATA_IT,
 } from 'state/i18n/language-names/test/fixture';
-import { TERRITORIES, DEFAULT_TERRITORY } from '../constants';
+import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from '../constants';
 
 describe( 'LanguagePickerModal', () => {
 	const defaultProps = {
@@ -32,12 +32,14 @@ describe( 'LanguagePickerModal', () => {
 				popular: 1,
 				value: 1,
 				wpLocale: 'en_US',
+				territories: [ '019' ],
 			},
 			{
 				langSlug: 'cs',
 				name: 'Čeština',
 				value: 11,
 				wpLocale: 'cs_CZ',
+				territories: [ '151' ],
 			},
 			{
 				langSlug: 'it',
@@ -45,12 +47,14 @@ describe( 'LanguagePickerModal', () => {
 				popular: 8,
 				value: 35,
 				wpLocale: 'it_IT',
+				territories: [ '039' ],
 			},
 			{
 				langSlug: 'en-gb',
 				name: 'English (UK)',
 				value: 482,
 				wpLocale: 'en_GB',
+				territories: [ '154' ],
 			},
 		],
 		selected: 'en',
@@ -306,24 +310,32 @@ describe( 'LanguagePickerModal', () => {
 		} );
 
 		describe( 'language territories', () => {
-			test( 'should set default territory filter when geolocation country code not available', () => {
+			test( 'should set `popular` territory filter when selected language is popular', () => {
 				const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
-				expect( wrapper.state().filter ).toEqual( DEFAULT_TERRITORY );
+				expect( wrapper.state().filter ).toEqual( 'popular' );
 			} );
 
-			test( 'should load correct territory when geolocation country code available', () => {
-				const wrapper = shallow( <LanguagePickerModal { ...defaultProps } countryCode="AE" /> );
-				expect( wrapper.state().filter ).toEqual( TERRITORIES[ 0 ].id );
+			test( 'should load corresponding territory when language is not popular', () => {
+				const notPopularLangSlugProps = Object.assign( {}, defaultProps, {
+					selected: 'cs',
+				} );
+				const wrapper = shallow( <LanguagePickerModal { ...notPopularLangSlugProps } /> );
+				expect( wrapper.state().filter ).toEqual( LANGUAGE_GROUPS[ 4 ].id );
+			} );
+
+			test( 'should should switch country lists when user clicks a territory tab', () => {
+				const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+				expect( wrapper.state().filter ).toEqual( 'popular' );
 			} );
 
 			test( 'should switch country lists when user clicks a territory tab', () => {
 				const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
-				expect( wrapper.state().filter ).toEqual( DEFAULT_TERRITORY );
+				expect( wrapper.state().filter ).toEqual( DEFAULT_LANGUAGE_GROUP );
 				wrapper
 					.find( 'NavItem' )
-					.at( 0 )
+					.at( 1 )
 					.simulate( 'click' );
-				expect( wrapper.state().filter ).toEqual( TERRITORIES[ 0 ].id );
+				expect( wrapper.state().filter ).toEqual( LANGUAGE_GROUPS[ 1 ].id );
 			} );
 		} );
 	} );
