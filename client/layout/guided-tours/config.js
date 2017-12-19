@@ -11,7 +11,6 @@ import { GDocsIntegrationTour } from 'layout/guided-tours/tours/gdocs-integratio
 import { SimplePaymentsTour } from 'layout/guided-tours/tours/simple-payments-tour';
 import { EditorBasicsTour } from 'layout/guided-tours/tours/editor-basics-tour';
 import { MediaBasicsTour } from 'layout/guided-tours/tours/media-basics-tour';
-import { SimplePaymentsEndOfYearGuide } from 'layout/guided-tours/tours/simple-payments-end-of-year-guide';
 import { ChecklistAboutPageTour } from 'layout/guided-tours/tours/checklist-about-page-tour';
 import { ChecklistContactPageTour } from 'layout/guided-tours/tours/checklist-contact-page-tour';
 import { ChecklistSiteIconTour } from 'layout/guided-tours/tours/checklist-site-icon-tour';
