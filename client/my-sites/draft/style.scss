@@ -23,8 +23,14 @@
 .recent-drafts__see-all.button.is-compact {
 	display: block;
 	padding: 8px 16px;
+	border-top: 1px solid lighten( $gray, 20 );
 	background: $gray-light;
 	text-align: center;
+	position: absolute;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	border-radius: 0 0 3px 3px;
 
 	.count {
 		position: relative;
@@ -45,45 +51,53 @@
 .recent-drafts__list {
 	overflow-y: auto;
 	max-height: 70vh;
+	margin-bottom: 35px;
 }
 
 .draft.card {
-	padding: 0;
+	padding: 12px 16px;
 	margin: 0;
-	min-height: 53px;
-	transition: background 0.1s ease-in-out;
+	overflow: hidden;
+	transition: background 0.05s ease-in-out;
+	text-decoration: none;
+	color: $gray-dark;
 
-	a {
-		display: block;
-		color: $gray-dark;
-		text-decoration: none;
+	.card__link-indicator {
+		display: none;
 	}
 
 	&:hover {
 		background: lighten( $gray, 35 );
 
 		.draft__title {
-			a {
-				padding-bottom: 4px;
-			}
-		}
-
-		.draft__excerpt {
-			opacity: 1;
-			height: 60px;
+			color: darken( $gray, 20% );
 		}
 	}
 
 	&.has-image {
-		.draft__title,
+		.draft__title {
+			margin-right: 88px;
+		}
+
 		.draft__excerpt {
-			margin-right: 76px;
+			right: 88px;
 		}
 	}
 
 	&.is-selected {
-		border-left: 10px solid $blue-medium;
+		border-left: 8px solid $blue-wordpress;
 		background: $gray-light;
+	}
+
+	&.is-image-zoomed {
+		min-height: 150px;
+		
+		.draft__featured-image {
+			//position: relative;
+			width: 100%;
+			//max-height: 100px;
+			cursor: zoom-out;
+		}
 	}
 }
 
@@ -92,44 +106,31 @@
 	font-weight: bold;
 	font-size: 15px;
 	line-height: 1.4;
+}
 
-	a {
-		padding: 16px 16px;
-		transition: all 0.15s ease-in-out;
-		transition-delay: 0.75s;
-	}
+.draft__time {
+	font-size: 13px;
+	color: $gray-text-min;
 }
 
 .draft__excerpt {
-	opacity: 0;
-	height: 0;
 	display: block;
 	font-family: $serif;
 	font-size: 14px;
-	overflow: hidden;
-	transition: all 0.15s ease-in-out;
-	transition-delay: 0.75s;
+	position: absolute;
+		top: 8px;
+		right: 16px;
+		left: 16px;
+	user-select: none;
+	opacity: 0;
+	transform: translateY( 60px );
+	transition: all 0.1s ease-in-out;
+}
 
-	a {
-		padding: 0 16px 8px 16px;
-	}
-
-	&::after {
-		//@include long-content-fade( $direction: bottom, $size: 60px );
-		// This is broken for bottom: 
-
-		content: '';
-		display: block;
-		position: absolute;
-		user-select: none;
-		pointer-events: none;
-		background: linear-gradient(to bottom, rgba($gray-light, 0), $gray-light 90%);
-		left: 0px;
-		right: 0px;
-		top: calc(100% - 35px);
-		bottom: 0;
-		width: auto;
-	}
+.draft__empty-text {
+	color: darken( $gray, 20 );
+	font-weight: 400;
+	font-style: italic;
 }
 
 // Not ready for primetime
@@ -141,21 +142,16 @@
 .draft__featured-image {
 	display: block;
 	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-
-	// set image thumbnail
-	width: 75px;
+		top: 8px;
+		right: 8px;
+		bottom: 8px;
+	overflow: hidden;
+	transition: height 0.15s ease-in-out;
+	width: 72px;
+	border-radius: 3px;
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center;
-}
-
-.draft__untitled {
-	color: darken( $gray, 20 );
-	font-weight: 400;
-	font-style: italic;
 }
 
 // Loading placeholder
