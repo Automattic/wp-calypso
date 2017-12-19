@@ -12,7 +12,14 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { Continue, makeTour, SiteLink, Step, Tour } from 'layout/guided-tours/config-elements';
+import {
+	ButtonRow,
+	Continue,
+	makeTour,
+	SiteLink,
+	Step,
+	Tour,
+} from 'layout/guided-tours/config-elements';
 
 export const ChecklistUserAvatarTour = makeTour(
 	<Tour name="checklistUserAvatar" version="20171205" path="/non-existent-route" when={ noop }>
@@ -32,11 +39,12 @@ export const ChecklistUserAvatarTour = makeTour(
 						'Click on this image to upload your new image.'
 				) }
 			</p>
-			<Continue target="image-editor-button-done" step="finish" click>
+			<ButtonRow>
+				<Continue target="edit-gravatar" step="finish" click hidden />
 				<SiteLink isButton={ false } href="/checklist/:site">
 					{ translate( 'Return to the checklist' ) }
 				</SiteLink>
-			</Continue>
+			</ButtonRow>
 		</Step>
 
 		<Step name="finish" placement="right">
