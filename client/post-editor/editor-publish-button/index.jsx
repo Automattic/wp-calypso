@@ -162,6 +162,7 @@ export class EditorPublishButton extends Component {
 				onClick={ this.onClick }
 				disabled={ ! this.isEnabled() }
 				tabIndex={ this.props.tabIndex }
+				data-tip-target="editor-publish-button"
 			>
 				{ this.getButtonLabel() }
 			</Button>

@@ -18,8 +18,9 @@ const tasks = {
 		duration: '10 mins',
 		completedTitle: 'You updated your About page',
 		completedButtonText: 'Change',
-		url: '/pages/$siteSlug',
+		url: '/page/$siteSlug/2',
 		image: '/calypso/images/stats/tasks/about.svg',
+		tour: 'checklistAboutPage',
 	},
 	avatar_uploaded: {
 		title: 'Upload your profile picture',
@@ -58,8 +59,9 @@ const tasks = {
 		duration: '2 mins',
 		completedTitle: 'You updated your Contact page',
 		completedButtonText: 'Edit',
-		url: '/pages/$siteSlug',
+		url: '/page/$siteSlug/3',
 		image: '/calypso/images/stats/tasks/contact.svg',
+		tour: 'checklistContactPage',
 	},
 	custom_domain_registered: {
 		title: 'Register a custom domain',
