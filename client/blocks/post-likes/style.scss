@@ -23,3 +23,15 @@
 		font-size: 11px;
 	}
 }
+
+.post-likes-popover {
+	.post-likes {
+		min-width: 20px;
+		max-width: 384px;
+		min-height: 20px;
+		max-height: 400px;
+
+		text-align: left;
+		padding: 6px 0 6px 8px; // fits with .post-likes__item margin
+	}
+}

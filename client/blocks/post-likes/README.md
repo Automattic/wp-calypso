@@ -32,3 +32,27 @@ The site ID for which the post likes should be displayed.
 </table>
 
 The post ID for which the post likes should be displayed.
+
+## Popover
+
+There is also a version of this component that displays using a `Popover`.  The
+show/hide logic for this popover must be managed externally:  if the popover is
+rendered with a valid `context` prop, it will be shown.
+
+```js
+import PostLikesPopover from 'blocks/post-likes/popover';
+
+export default function SomeComponent() {
+	return (
+		<PostLikesPopover
+			context={ /* Element to render the Popover next to */ }
+			onClose={ /* Callback for Esc keypresses, click-outside */ }
+			position={ 'bottom' /* optional, and/or any other Popover props */ }
+			siteId={ /* Numeric site ID */ }
+			postId={ /* Numeric post ID */ }
+		/>
+	);
+}
+```
+
+See [`docs/example.jsx`](docs/example.jsx) for a full-featured example.

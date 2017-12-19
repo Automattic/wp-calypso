@@ -11,6 +11,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import QueryPostStats from 'components/data/query-post-stats';
+import PostLikesPopover from 'blocks/post-likes/popover';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { getPostStat } from 'state/stats/posts/selectors';
 import { canCurrentUser } from 'state/selectors';
@@ -18,8 +19,6 @@ import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'state/sites/s
 import { recordTracksEvent } from 'state/analytics/actions';
 import { hideActiveLikesPopover, toggleLikesPopover } from 'state/ui/post-type-list/actions';
 import { isLikesPopoverOpen } from 'state/ui/post-type-list/selectors';
-import Popover from 'components/popover';
-import PostLikes from 'blocks/post-likes';
 
 class PostActionCounts extends PureComponent {
 	static propTypes = {
@@ -48,7 +47,7 @@ class PostActionCounts extends PureComponent {
 	};
 
 	setLikesPopoverContext = ( element ) => {
-		this.likesPopoverContext = element;
+		this.setState( { likesPopoverContext: element } );
 	};
 
 	renderCommentCount() {
@@ -103,13 +102,12 @@ class PostActionCounts extends PureComponent {
 					) }
 				</a>
 				{ isCurrentLikesPopoverOpen && (
-					<Popover
-						isVisible={ true }
-						context={ this.likesPopoverContext }
+					<PostLikesPopover
+						siteId={ siteId }
+						postId={ postId }
+						context={ this.state.likesPopoverContext }
 						onClose={ this.closeLikesPopover }
-					>
-						<PostLikes siteId={ siteId } postId={ postId } />
-					</Popover>
+					/>
 				) }
 			</li>
 		);
