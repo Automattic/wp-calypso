@@ -8,15 +8,16 @@ so they can be inspected in the development environment for debugging and intera
 
 ### Action logging
 
-Like the [Redux DevTools](https://github.com/zalmoxisus/redux-devtools-extension), the console dispatcher can also track a history of the actions flowing through the store.
-This can be toggled and the size of the history log can be adjusted.
+Like the [Redux DevTools](https://github.com/zalmoxisus/redux-devtools-extension), the action
+logger can track a history of the actions flowing through the store.  This can be toggled and the
+size of the history log can be adjusted.
 
 The following examples represent commands and code actually run inside the browser console.
-These are not snippets of bundles JavaScript inside of Calypso.
+These are not snippets of bundled JavaScript from Calypso.
 
 ```js
 // start recording actions
-// enabled by default in development
+// enabled by default in the development environment
 actionLog.start()
 
 // stop recording actions
