@@ -30,7 +30,6 @@ export const ChecklistUserAvatarTour = makeTour(
 			arrow="left-top"
 			style={ {
 				animationDelay: '0.7s',
-				'z-index': 0,
 			} }
 		>
 			<p>
