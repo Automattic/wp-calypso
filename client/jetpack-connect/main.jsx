@@ -37,16 +37,17 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { retrievePlan } from './persistence-utils';
 import { urlToSlug } from 'lib/url';
 import { checkUrl, confirmJetpackInstallStatus, dismissUrl } from 'state/jetpack-connect/actions';
+import {
+	MINIMUM_JETPACK_VERSION,
+	REMOTE_PATH_ACTIVATE,
+	REMOTE_PATH_INSTALL,
+	REMOTE_PATH_AUTH,
+} from './constants';
 
 /**
  * Constants
  */
-const MINIMUM_JETPACK_VERSION = '3.9.6';
-const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
-const remoteActivatePath = '/wp-admin/plugins.php';
 const calypsoEnv = config( 'env_id' );
-const remoteAuthPath =
-	'/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
 
 class JetpackConnectMain extends Component {
 	static propTypes = {
@@ -141,7 +142,7 @@ class JetpackConnectMain extends Component {
 			url: url,
 			type: 'remote_auth',
 		} );
-		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + remoteAuthPath ) );
+		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + REMOTE_PATH_AUTH ) );
 	} );
 
 	goToPluginInstall = this.makeSafeRedirectionFunction( function goToPluginInstall( url ) {
@@ -150,7 +151,7 @@ class JetpackConnectMain extends Component {
 			type: 'plugin_install',
 		} );
 
-		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + remoteInstallPath ) );
+		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + REMOTE_PATH_INSTALL ) );
 	} );
 
 	goToPluginActivation = this.makeSafeRedirectionFunction( function goToPluginActivation( url ) {
@@ -159,7 +160,7 @@ class JetpackConnectMain extends Component {
 			type: 'plugin_activation',
 		} );
 
-		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + remoteActivatePath ) );
+		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + REMOTE_PATH_ACTIVATE ) );
 	} );
 
 	isCurrentUrlFetched() {

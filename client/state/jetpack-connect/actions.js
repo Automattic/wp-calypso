@@ -48,14 +48,13 @@ import addQueryArgs from 'lib/route/add-query-args';
 import { externalRedirect } from 'lib/route/path';
 import { urlToSlug } from 'lib/url';
 import { clearPlan, persistSession } from 'jetpack-connect/persistence-utils';
+import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
 
 /**
  *  Local variables;
  */
 const _fetching = {};
 const calypsoEnv = config( 'env_id' );
-const remoteAuthPath =
-	'/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
 
 export function confirmJetpackInstallStatus( status ) {
 	return {
@@ -187,11 +186,11 @@ export function retryAuth( url, attemptNumber ) {
 		externalRedirect(
 			addQueryArgs(
 				{
-					jetpack_connect_url: url + remoteAuthPath,
+					jetpack_connect_url: url + REMOTE_PATH_AUTH,
 					calypso_env: calypsoEnv,
 					auth_type: 'jetpack',
 				},
-				url + remoteAuthPath
+				url + REMOTE_PATH_AUTH
 			)
 		);
 	};
