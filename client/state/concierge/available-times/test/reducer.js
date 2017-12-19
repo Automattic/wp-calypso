@@ -11,9 +11,9 @@ import {
 
 describe( 'concierge/availableTimes/reducer', () => {
 	const mockAvailableTimes = [
-		new Date( '2017-01-01 08:00:00' ),
-		new Date( '2017-01-01 09:00:00' ),
-		new Date( '2017-01-01 10:00:00' ),
+		Date.parse( '2017-01-01 08:00:00' ),
+		Date.parse( '2017-01-01 09:00:00' ),
+		Date.parse( '2017-01-01 10:00:00' ),
 	];
 
 	const requestAction = {
