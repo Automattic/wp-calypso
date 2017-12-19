@@ -496,7 +496,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should accept subscription delivery details from a site request', () => {
+		test( 'should add a new follow from a site request', () => {
 			const original = deepFreeze( {} );
 			const incomingSite = {
 				ID: 125,
@@ -533,6 +533,74 @@ describe( 'reducer', () => {
 					},
 				},
 			} );
+		} );
+
+		test( 'should update an existing follow from a site request', () => {
+			const original = deepFreeze( {
+				is_following: true,
+				blog_ID: 125,
+				URL: 'https://postcardsfromthereader.wordpress.com',
+				feed_URL: 'https://postcardsfromthereader.wordpress.com',
+				delivery_methods: {
+					email: {
+						send_posts: false,
+						send_comments: true,
+					},
+				},
+			} );
+			const incomingSite = {
+				ID: 125,
+				name: 'Postcards from the Reader',
+				URL: 'https://postcardsfromthereader.wordpress.com',
+				feed_URL: 'https://postcardsfromthereader.wordpress.com',
+				is_following: true,
+				subscription: {
+					delivery_methods: {
+						email: {
+							send_posts: true,
+							send_comments: false,
+							post_delivery_frequency: 'weekly',
+						},
+					},
+				},
+			};
+
+			const state = items( original, {
+				type: READER_SITE_REQUEST_SUCCESS,
+				payload: incomingSite,
+			} );
+
+			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).toEqual( {
+				is_following: true,
+				blog_ID: 125,
+				URL: 'https://postcardsfromthereader.wordpress.com',
+				feed_URL: 'https://postcardsfromthereader.wordpress.com',
+				delivery_methods: {
+					email: {
+						send_posts: true,
+						send_comments: false,
+						post_delivery_frequency: 'weekly',
+					},
+				},
+			} );
+		} );
+
+		test( 'should disregard an unfollowed site from a site request', () => {
+			const original = deepFreeze( {} );
+			const incomingSite = {
+				ID: 125,
+				name: 'Postcards from the Reader',
+				URL: 'https://postcardsfromthereader.wordpress.com',
+				feed_URL: 'https://postcardsfromthereader.wordpress.com',
+				is_following: false,
+			};
+
+			const state = items( original, {
+				type: READER_SITE_REQUEST_SUCCESS,
+				payload: incomingSite,
+			} );
+
+			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).toEqual( undefined );
 		} );
 	} );
 
