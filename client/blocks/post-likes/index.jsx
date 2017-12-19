@@ -44,7 +44,7 @@ class PostLikes extends React.PureComponent {
 				onClick={ this.trackLikeClick }
 			>
 				<Gravatar user={ like } size={ 24 } />
-				{ showDisplayNames && <span className="post-likes__display-name">{ like.nice_name }</span> }
+				{ showDisplayNames && <span className="post-likes__display-name">{ like.name }</span> }
 			</a>
 		);
 	};
