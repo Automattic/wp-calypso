@@ -5,12 +5,35 @@
 		display: inline-block;
 		margin: 2px 8px 2px 0;
 		vertical-align: top;
+		text-decoration: none;
 		.gravatar {
 			display: block;
 		}
+	}
 
-		.post-likes.has-display-names & {
+	&.has-display-names {
+		max-height: 340px;
+		overflow-y: auto;
+
+		.post-likes__item {
 			display: block;
+			position: relative;
+			.gravatar {
+				position: absolute;
+			}
+		}
+
+		.post-likes__display-name {
+			display: block;
+			line-height: 26px;
+			padding-left: 31px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.post-likes__count:not( .is-loading ) {
+			margin: 2px 0 4px 31px;
 		}
 	}
 
@@ -37,6 +60,11 @@
 	.post-likes {
 		max-width: 384px;
 		max-height: 400px;
+
+		&.has-display-names {
+			max-height: 340px;
+			max-width: 250px;
+		}
 
 		text-align: left;
 		padding: 6px 0 6px 8px; // fits with .post-likes__item margin

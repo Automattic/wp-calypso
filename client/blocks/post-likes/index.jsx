@@ -49,15 +49,25 @@ class PostLikes extends React.PureComponent {
 	};
 
 	renderExtraCount() {
-		const { likes, likeCount } = this.props;
+		const { likes, likeCount, showDisplayNames, translate } = this.props;
 
 		if ( ! likes || likeCount <= likes.length ) {
 			return null;
 		}
 
+		let message;
+		if ( showDisplayNames ) {
+			message = translate( '+ %(likeCount)d more', '+ %(likeCount)d more', {
+				count: likeCount,
+				args: { likeCount },
+			} );
+		} else {
+			message = '+ ' + ( likeCount - likes.length );
+		}
+
 		return (
 			<span key="placeholder" className="post-likes__count">
-				{ `+ ${ likeCount - likes.length }` }
+				{ message }
 			</span>
 		);
 	}
