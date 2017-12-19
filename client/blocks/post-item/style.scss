@@ -27,6 +27,10 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 		border: $expanded-post-item-border;
 		outline: $expanded-post-item-outline;
 	}
+
+	&:hover {
+		background: red;
+	}
 }
 
 .post-item__panel {

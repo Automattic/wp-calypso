@@ -22,11 +22,15 @@ function PostTypeListPostThumbnail( { onClick, thumbnail } ) {
 		'has-image': !! thumbnail,
 	} );
 
+	let style = {
+		backgroundImage: 'url(' + resizeImageUrl( safeImageUrl( thumbnail ), { h: 80 } ) + ')',
+	};
+
 	return (
-		<div className={ classes }>
+		<div className={ classes } style={ style }>
 			{ thumbnail && (
 				<img
-					src={ resizeImageUrl( safeImageUrl( thumbnail ), { h: 80 } ) }
+					src={ resizeImageUrl( safeImageUrl( thumbnail ), { h: 300 } ) }
 					className="post-type-list__post-thumbnail"
 					onClick={ onClick }
 				/>
