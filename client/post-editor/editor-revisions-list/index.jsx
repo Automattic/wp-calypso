@@ -91,8 +91,9 @@ class EditorRevisionsList extends PureComponent {
 		const targetWhenAbove = selectedTop - listTop;
 		const targetWhenBelow = Math.abs( scrollerHeight - ( selectedBottom - listTop ) );
 
-		isAboveBounds && scrollerNode.scrollTo( 0, targetWhenAbove );
-		isBelowBounds && scrollerNode.scrollTo( 0, targetWhenBelow );
+		if ( isAboveBounds || isBelowBounds ) {
+			scrollerNode.scrollTop = isAboveBounds ? targetWhenAbove : targetWhenBelow;
+		}
 	}
 
 	selectNextRevision = () => {
