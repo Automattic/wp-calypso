@@ -40,7 +40,7 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 		}
 
 		const exampleName = getComponentName( example );
-		const exampleLink = `./${ section }/${ camelCaseToSlug( exampleName ) }`;
+		const exampleLink = `/devdocs/${ section }/${ camelCaseToSlug( exampleName ) }`;
 
 		showCounter++;
 
