@@ -49,3 +49,5 @@ test-results*.xml
 /calypso-strings.pot
 cover.html
 .test.log
+
+cached-requests.json
