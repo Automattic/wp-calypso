@@ -130,8 +130,8 @@ export class CommentNavigation extends Component {
 			if ( alsoUnlike ) {
 				unlike( postId, commentId );
 			}
-			refreshPage( commentsListQuery );
 		} );
+		refreshPage( commentsListQuery );
 		recordBulkAction(
 			newStatus,
 			selectedComments.length,
