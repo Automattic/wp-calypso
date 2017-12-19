@@ -155,27 +155,18 @@ class Plans extends Component {
 		this.redirect( '/checkout/' );
 	};
 
-	render() {
-		const {
-			canPurchasePlans,
-			hasPlan,
-			interval,
-			isAutomatedTransfer,
-			isRtlLayout,
-			notJetpack,
-			selectedPlanSlug,
-			selectedSite,
-			translate,
-		} = this.props;
+	shouldShowPlaceholder = () =>
+		this.redirecting ||
+		this.props.selectedPlanSlug ||
+		false !== this.props.notJetpack ||
+		! this.props.canPurchasePlans ||
+		false !== this.props.hasPlan ||
+		false !== this.props.isAutomatedTransfer;
 
-		if (
-			this.redirecting ||
-			selectedPlanSlug ||
-			false !== notJetpack ||
-			! canPurchasePlans ||
-			false !== hasPlan ||
-			false !== isAutomatedTransfer
-		) {
+	render() {
+		const { interval, isRtlLayout, selectedSite, translate } = this.props;
+
+		if ( this.shouldShowPlaceholder() ) {
 			return (
 				<div>
 					<QueryPlans />
