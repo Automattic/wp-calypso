@@ -12,10 +12,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import addQueryArgs from 'lib/route/add-query-args';
 import Button from 'components/button';
 import Card from 'components/card';
-import config from 'config';
 import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
@@ -29,6 +27,8 @@ import page from 'page';
 import SiteUrlInput from './site-url-input';
 import untrailingslashit from 'lib/route/untrailingslashit';
 import versionCompare from 'lib/version-compare';
+import { addCalypsoEnvQueryArg } from './utils';
+import { checkUrl, confirmJetpackInstallStatus, dismissUrl } from 'state/jetpack-connect/actions';
 import { externalRedirect } from 'lib/route/path';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
@@ -36,18 +36,12 @@ import { isRequestingSites } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retrievePlan } from './persistence-utils';
 import { urlToSlug } from 'lib/url';
-import { checkUrl, confirmJetpackInstallStatus, dismissUrl } from 'state/jetpack-connect/actions';
 import {
 	MINIMUM_JETPACK_VERSION,
 	REMOTE_PATH_ACTIVATE,
 	REMOTE_PATH_INSTALL,
 	REMOTE_PATH_AUTH,
 } from './constants';
-
-/**
- * Constants
- */
-const calypsoEnv = config( 'env_id' );
 
 class JetpackConnectMain extends Component {
 	static propTypes = {
@@ -142,7 +136,7 @@ class JetpackConnectMain extends Component {
 			url: url,
 			type: 'remote_auth',
 		} );
-		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + REMOTE_PATH_AUTH ) );
+		externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH ) );
 	} );
 
 	goToPluginInstall = this.makeSafeRedirectionFunction( function goToPluginInstall( url ) {
@@ -151,7 +145,7 @@ class JetpackConnectMain extends Component {
 			type: 'plugin_install',
 		} );
 
-		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + REMOTE_PATH_INSTALL ) );
+		externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_INSTALL ) );
 	} );
 
 	goToPluginActivation = this.makeSafeRedirectionFunction( function goToPluginActivation( url ) {
@@ -160,7 +154,7 @@ class JetpackConnectMain extends Component {
 			type: 'plugin_activation',
 		} );
 
-		externalRedirect( addQueryArgs( { calypso_env: calypsoEnv }, url + REMOTE_PATH_ACTIVATE ) );
+		externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_ACTIVATE ) );
 	} );
 
 	isCurrentUrlFetched() {
