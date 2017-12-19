@@ -99,9 +99,9 @@ class PostItem extends React.Component {
 	}
 
 	renderExpandedContent() {
-		const { post, isCurrentSharePanelOpen } = this.props;
+		const { post, hasExpandedContent } = this.props;
 
-		if ( ! post || ! isCurrentSharePanelOpen ) {
+		if ( ! post || ! hasExpandedContent ) {
 			return null;
 		}
 
@@ -125,6 +125,7 @@ class PostItem extends React.Component {
 			isAllSitesModeSelected,
 			translate,
 			multiSelectEnabled,
+			hasExpandedContent,
 		} = this.props;
 
 		const title = post ? post.title : null;
@@ -137,10 +138,8 @@ class PostItem extends React.Component {
 
 		const isAuthorVisible = this.hasMultipleUsers() && post && post.author;
 
-		const expandedContent = this.renderExpandedContent();
-
 		const rootClasses = classnames( 'post-item', {
-			'is-expanded': !! expandedContent,
+			'is-expanded': !! hasExpandedContent,
 		} );
 
 		return (
@@ -187,7 +186,7 @@ class PostItem extends React.Component {
 					/>
 					{ ! multiSelectEnabled && <PostActionsEllipsisMenu globalId={ globalId } /> }
 				</div>
-				{ expandedContent }
+				{ hasExpandedContent && this.renderExpandedContent() }
 			</div>
 		);
 	}
@@ -205,7 +204,6 @@ PostItem.propTypes = {
 	singleUserQuery: PropTypes.bool,
 	className: PropTypes.string,
 	compact: PropTypes.bool,
-	isCurrentSharePanelOpen: PropTypes.bool,
 	hideSharePanel: PropTypes.func,
 	hasExpandedContent: PropTypes.bool,
 };
@@ -223,8 +221,7 @@ export default connect(
 		const externalPostLink = false === canCurrentUserEditPost( state, globalId );
 		const postUrl = externalPostLink ? post.URL : getEditorPath( state, siteId, post.ID );
 
-		const isCurrentSharePanelOpen = isSharePanelOpen( state, globalId );
-		const hasExpandedContent = isCurrentSharePanelOpen || false;
+		const hasExpandedContent = isSharePanelOpen( state, globalId ) || false;
 
 		return {
 			post,
@@ -233,7 +230,6 @@ export default connect(
 			isAllSitesModeSelected: getSelectedSiteId( state ) === null,
 			allSitesSingleUser: areAllSitesSingleUser( state ),
 			singleUserSite: isSingleUserSite( state, siteId ),
-			isCurrentSharePanelOpen,
 			hasExpandedContent,
 			isCurrentPostSelected: isPostSelected( state, globalId ),
 			multiSelectEnabled: isMultiSelectEnabled( state ),
