@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { get, isDate, startsWith, pickBy, map } from 'lodash';
+import { get, isDate, isEmpty, startsWith, pickBy, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,7 @@ import {
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_DELETE,
 } from 'state/action-types';
+import { requestCommentsList } from 'state/comments/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
@@ -213,7 +214,7 @@ export const deleteComment = ( { dispatch, getState }, action ) => {
 	);
 };
 
-export const announceDeleteSuccess = ( { dispatch }, { options } ) => {
+export const announceDeleteSuccess = ( { dispatch }, { options, query } ) => {
 	const showSuccessNotice = get( options, 'showSuccessNotice', false );
 	if ( ! showSuccessNotice ) {
 		return;
@@ -226,6 +227,10 @@ export const announceDeleteSuccess = ( { dispatch }, { options } ) => {
 			isPersistent: true,
 		} )
 	);
+
+	if ( ! isEmpty( query ) ) {
+		dispatch( requestCommentsList( query ) );
+	}
 };
 
 export const announceDeleteFailure = ( { dispatch }, action ) => {
