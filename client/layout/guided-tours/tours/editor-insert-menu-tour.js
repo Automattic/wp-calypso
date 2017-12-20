@@ -30,6 +30,8 @@ class RepositioningStep extends Step {
 	}
 }
 
+const AddMediaButtonLabel = translate( 'Add Media' );
+
 export const EditorInsertMenuTour = makeTour(
 	<Tour
 		name="editorInsertMenu"
@@ -49,15 +51,13 @@ export const EditorInsertMenuTour = makeTour(
 			} }
 		>
 			<p>
-				{ translate( '{{strong}}Add Media{{/strong}} has moved to a new button.', {
-					components: { strong: <strong /> },
-					comment: 'Title of the Guided Tour for the Editor Insert Menu button.',
+				{ translate( '{{AddMediaButton/}} has moved to a new button.', {
+					components: { AddMediaButton: <strong>{ AddMediaButtonLabel }</strong> },
 				} ) }
 			</p>
 			<p>
 				{ translate( 'Click {{icon/}} to add media and other kinds of content.', {
 					components: { icon: <Gridicon icon="chevron-down" /> },
-					comment: 'Refers to the Insert Content button and dropdown in the post editor.',
 				} ) }
 			</p>
 			<ButtonRow>

@@ -33,6 +33,12 @@ import { isDesktop } from 'lib/viewport';
 
 const TWO_DAYS_IN_MILLISECONDS = 2 * 1000 * 3600 * 24;
 
+const SettingsButtonLabel = translate( '{{icon/}} Settings', {
+	components: {
+		icon: <Gridicon icon="cog" />,
+	},
+} );
+
 export const SiteTitleTour = makeTour(
 	<Tour
 		name="siteTitle"
@@ -73,10 +79,9 @@ export const SiteTitleTour = makeTour(
 			shouldScrollTo
 		>
 			<Continue target="settings" step="site-title-input" click>
-				{ translate( 'Click {{strong}}{{icon/}} Settings{{/strong}} to continue.', {
+				{ translate( 'Click {{SettingsButton/}} to continue.', {
 					components: {
-						icon: <Gridicon icon="cog" />,
-						strong: <strong />,
+						SettingsButton: <strong>{ SettingsButtonLabel }</strong>,
 					},
 				} ) }
 			</Continue>

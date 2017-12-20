@@ -22,6 +22,9 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 
+const SiteTagLineButtonLabel = translate( 'Site Tagline' );
+const SaveSettingsButtonLabel = translate( 'Save Settings' );
+
 export const ChecklistSiteTaglineTour = makeTour(
 	<Tour name="checklistSiteTagline" version="20171205" path="/non-existent-route" when={ noop }>
 		<Step
@@ -37,8 +40,8 @@ export const ChecklistSiteTaglineTour = makeTour(
 				{ translate(
 					'First impressions last - a tagline tells visitors what your site is all about without ' +
 						'having to read all your content. Enter a short descriptive phrase about your site into ' +
-						'the {{b}}Site Tagline{{/b}} field.',
-					{ components: { b: <strong /> } }
+						'the {{SiteTaglineButton/}} field.',
+					{ components: { SiteTaglineButton: <strong>{ SiteTagLineButtonLabel }</strong> } }
 				) }
 			</p>
 			<ButtonRow>
@@ -51,8 +54,8 @@ export const ChecklistSiteTaglineTour = makeTour(
 		<Step name="click-save" target="settings-site-profile-save" arrow="top-left" placement="below">
 			<Continue target="settings-site-profile-save" step="finish" click>
 				{ translate(
-					'Almost done — press {{b}}Save Settings{{/b}} to save your changes and then see what’s next on our list.',
-					{ components: { b: <strong /> } }
+					'Almost done — press {{SaveSettingsButton/}} to save your changes and then see what’s next on our list.',
+					{ components: { SaveSettingsButton: <strong>{ SaveSettingsButtonLabel }</strong> } }
 				) }
 			</Continue>
 		</Step>

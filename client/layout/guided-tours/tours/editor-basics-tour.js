@@ -24,6 +24,8 @@ import {
 import { isNewUser } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
 
+const PublishButtonLabel = translate( 'Publish' );
+
 export const EditorBasicsTour = makeTour(
 	<Tour
 		name="editorBasicsTour"
@@ -116,10 +118,10 @@ export const EditorBasicsTour = makeTour(
 			<p>
 				{ translate(
 					'Your changes are saved automatically. ' +
-						'Click {{strong}}Publish{{/strong}} to share your work with the world!',
+						'Click {{PublishButton/}} to share your work with the world!',
 					{
 						components: {
-							strong: <strong />,
+							PublishButton: <strong>{ PublishButtonLabel }</strong>,
 						},
 					}
 				) }
