@@ -42,9 +42,17 @@ export const togglePolling = ( { dispatch, getState }, { isWatching, siteId } ) 
 			)
 		);
 	} else {
-		pollingSites.delete( siteId );
+		removePolling( siteId );
 	}
 };
+
+function removePolling( siteId ) {
+	const state = pollingSites.get( siteId );
+	if ( state.timer ) {
+		clearTimeout( state.timer );
+	}
+	pollingSites.delete( siteId );
+}
 
 export const continuePolling = ( { dispatch }, action ) => {
 	if ( ! get( action, 'meta.dataLayer.isWatching' ) ) {
@@ -55,7 +63,7 @@ export const continuePolling = ( { dispatch }, action ) => {
 
 	const error = getError( action );
 	if ( undefined !== error ) {
-		pollingSites.delete( siteId );
+		removePolling( siteId );
 
 		dispatch( recordTracksEvent( 'calypso_activity_log_polling_fail', { siteId } ) );
 		return;
