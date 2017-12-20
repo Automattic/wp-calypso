@@ -27,6 +27,7 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
+import SubSidebar from 'layout/sidebar/sub-sidebar';
 import StatsSparkline from 'blocks/stats-sparkline';
 import JetpackLogo from 'components/jetpack-logo';
 import { isPlan, isFreeTrial, isPersonal, isPremium, isBusiness } from 'lib/products-values';
@@ -69,6 +70,13 @@ export class MySitesSidebar extends Component {
 		isJetpack: PropTypes.bool,
 		isSiteAutomatedTransfer: PropTypes.bool,
 	};
+
+	constructor( props ) {
+		super( props );
+		this.state = {
+			currentSubSidebar: null,
+		};
+	}
 
 	componentDidMount() {
 		debug( 'The sidebar React component is mounted.' );
@@ -464,8 +472,7 @@ export class MySitesSidebar extends Component {
 			<SidebarItem
 				label={ this.props.translate( 'People' ) }
 				className={ this.itemLinkClass( '/people', 'users' ) }
-				link={ usersLink }
-				onNavigate={ this.onNavigate }
+				onNavigate={ this.loadSubSidebar( 'people' ) }
 				icon="user"
 				preloadSectionName="people"
 			>
@@ -474,9 +481,15 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	loadSubSidebar( sectionName ) {
+		return () => {
+			console.log( 'Sidebar.loadSubSidebar', sectionName );
+			this.setState( { currentSubSidebar: sectionName } );
+		};
+	}
+
 	siteSettings() {
 		const { site, canUserManageOptions } = this.props;
-		const siteSettingsLink = '/settings/general' + this.props.siteSuffix;
 
 		if ( site && ! canUserManageOptions ) {
 			return null;
@@ -490,12 +503,13 @@ export class MySitesSidebar extends Component {
 			<SidebarItem
 				label={ this.props.translate( 'Settings' ) }
 				className={ this.itemLinkClass( '/settings', 'settings' ) }
-				link={ siteSettingsLink }
-				onNavigate={ this.onNavigate }
+				onNavigate={ this.loadSubSidebar( 'settings' ) }
 				icon="cog"
 				preloadSectionName="settings"
 				tipTarget="settings"
-			/>
+			>
+				<Gridicon className="sidebar__chevron-right" icon="chevron-right" />
+			</SidebarItem>
 		);
 	}
 
@@ -648,13 +662,46 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	subSidebarItems() {
+		// a database of subsidebar items used for prototyping
+		const siteSettingsLink = section => {
+			return '/settings/' + section + this.props.siteSuffix;
+		};
+		const peopleLink = section => {
+			return '/people/' + section + this.props.siteSuffix;
+		};
+		const siteSuffix = this.props.siteSuffix;
+
+		const allItems = {
+			settings: [
+				{ label: 'General', link: siteSettingsLink( 'general' ), icon: 'cog' },
+				{ label: 'Writing', link: siteSettingsLink( 'writing' ), icon: 'cog' },
+				{ label: 'Discussion', link: siteSettingsLink( 'discussion' ), icon: 'cog' },
+			],
+			people: [
+				{ label: 'Team', link: peopleLink( 'team' ), icon: 'cog' },
+				{ label: 'Followers', link: peopleLink( 'followers' ), icon: 'cog' },
+				{ label: 'Email Subscribers', link: peopleLink( 'email-followers' ), icon: 'cog' },
+			],
+		};
+
+		return allItems[ this.state.currentSubSidebar ] || null;
+	}
+
 	render() {
+		const isSubSidebarShowing = !! this.state.currentSubSidebar;
 		return (
-			<Sidebar>
+			<Sidebar className={ isSubSidebarShowing ? 'sub-sidebar-showing' : '' }>
 				<SidebarRegion>
 					<CurrentSite allSitesPath={ this.props.allSitesPath } />
 					{ this.renderSidebarMenus() }
 				</SidebarRegion>
+				<SubSidebar
+					items={ this.subSidebarItems.bind( this ) }
+					resetSubSidebar={ this.loadSubSidebar( null ) }
+				>
+					something
+				</SubSidebar>
 				<SidebarFooter>{ this.addNewSite() }</SidebarFooter>
 			</Sidebar>
 		);
