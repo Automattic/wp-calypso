@@ -8,7 +8,7 @@ export const jetpackConnectAuthorizeSchema = {
 		},
 		{
 			type: 'object',
-			additionalProperties: false,
+			additionalProperties: true,
 			required: [ 'timestamp' ],
 			properties: {
 				authorizationCode: { type: 'string' },
