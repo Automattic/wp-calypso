@@ -21,7 +21,9 @@ class SubSidebar extends React.Component {
 		console.log( 'items:', items );
 
 		if ( !items ) {
-			return null;
+			return(
+				<SidebarMenu className="sidebar__sub-sidebar" />
+			);
 		}
 
 		const listItems = items.map( ( item ) =>
@@ -33,8 +35,8 @@ class SubSidebar extends React.Component {
 			/>
 		);
 		return(
-			<SidebarMenu>
-				<ul className={ classNames( 'sidebar__sub-sidebar', this.props.className ) }>
+			<SidebarMenu className="sidebar__sub-sidebar">
+				<ul className={ classNames( 'sub-sidebar__list', this.props.className ) }>
 				<SidebarItem
 					label="← Back"
 					key="back"

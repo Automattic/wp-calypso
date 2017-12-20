@@ -440,6 +440,8 @@ form.sidebar__button input {
 
 .sidebar__region {
 	flex-shrink: 0;
+	transition: all 0.1s ease-in-out;
+	
 	@include breakpoint( ">660px" ) {
 		display: flex;
 		flex-direction: column;
@@ -487,3 +489,24 @@ form.sidebar__button input {
 		fill: $blue-medium;
 	}
 }
+
+.sidebar li.sidebar__sub-sidebar {
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	transform: translateX( 100% );
+	transition: all 0.1s ease-in-out;
+}
+
+.sidebar.sub-sidebar-showing {
+	.sidebar__region {
+		transform: translateX( -100% );
+	}
+
+	li.sidebar__sub-sidebar {
+		transform: translateX( 0 );
+	}
+}
+

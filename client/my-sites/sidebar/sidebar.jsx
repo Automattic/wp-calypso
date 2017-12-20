@@ -674,14 +674,14 @@ export class MySitesSidebar extends Component {
 
 		const allItems = {
 			settings: [
-				{ label: 'General', link: siteSettingsLink( 'general' ), icon: 'cog' },
-				{ label: 'Writing', link: siteSettingsLink( 'writing' ), icon: 'cog' },
-				{ label: 'Discussion', link: siteSettingsLink( 'discussion' ), icon: 'cog' },
+				{ label: 'General', link: siteSettingsLink( 'general' ), icon: 'briefcase' },
+				{ label: 'Writing', link: siteSettingsLink( 'writing' ), icon: 'pencil' },
+				{ label: 'Discussion', link: siteSettingsLink( 'discussion' ), icon: 'chat' },
 			],
 			people: [
-				{ label: 'Team', link: peopleLink( 'team' ), icon: 'cog' },
-				{ label: 'Followers', link: peopleLink( 'followers' ), icon: 'cog' },
-				{ label: 'Email Subscribers', link: peopleLink( 'email-followers' ), icon: 'cog' },
+				{ label: 'Team', link: peopleLink( 'team' ), icon: 'user' },
+				{ label: 'Followers', link: peopleLink( 'followers' ), icon: 'reader-following' },
+				{ label: 'Email Subscribers', link: peopleLink( 'email-followers' ), icon: 'mail' },
 			],
 		};
 
@@ -699,9 +699,7 @@ export class MySitesSidebar extends Component {
 				<SubSidebar
 					items={ this.subSidebarItems.bind( this ) }
 					resetSubSidebar={ this.loadSubSidebar( null ) }
-				>
-					something
-				</SubSidebar>
+				/>
 				<SidebarFooter>{ this.addNewSite() }</SidebarFooter>
 			</Sidebar>
 		);
