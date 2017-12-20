@@ -104,6 +104,7 @@ class SiteSelector extends Component {
 			return;
 		}
 
+		// Note: Update CSS selectors if the class names change.
 		const highlightedSiteElem = document.body.querySelector(
 			'.site-selector .site.is-highlighted, .site-selector .all-sites.is-highlighted'
 		);
@@ -364,6 +365,8 @@ class SiteSelector extends Component {
 
 	render() {
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
+
+		// Note: Update CSS selectors in scrollToHighlightedSite() if the class names change.
 		const selectorClass = classNames( 'site-selector', 'sites-list', this.props.className, {
 			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
 			'is-single': this.props.visibleSiteCount === 1,

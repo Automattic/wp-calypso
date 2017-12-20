@@ -61,6 +61,8 @@ class AllSites extends Component {
 			isSelected,
 			showCount,
 		} = this.props;
+
+		// Note: Update CSS selectors in SiteSelector.scrollToHighlightedSite() if the class names change.
 		const allSitesClass = classNames( {
 			'all-sites': true,
 			'is-selected': isSelected,
