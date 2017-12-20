@@ -17,6 +17,7 @@ import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
 import Gravatar from 'components/gravatar';
 import Tooltip from 'components/tooltip';
+import { isEnabled } from 'config';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
 import { getSiteComment } from 'state/selectors';
@@ -104,9 +105,19 @@ export class CommentAuthor extends Component {
 
 					<div className="comment__author-info-element">
 						<span className="comment__date">
-							<a href={ commentUrl } tabIndex={ isBulkMode ? -1 : 0 } title={ formattedDate }>
-								{ relativeDate }
-							</a>
+							{ isEnabled( 'comments/management/comment-view' ) ? (
+								<a href={ commentUrl } tabIndex={ isBulkMode ? -1 : 0 } title={ formattedDate }>
+									{ relativeDate }
+								</a>
+							) : (
+								<ExternalLink
+									href={ commentUrl }
+									tabIndex={ isBulkMode ? -1 : 0 }
+									title={ formattedDate }
+								>
+									{ relativeDate }
+								</ExternalLink>
+							) }
 						</span>
 						{ authorUrl && (
 							<span className="comment__author-url">
@@ -138,7 +149,9 @@ const mapStateToProps = ( state, { commentId } ) => {
 		commentContent: get( comment, 'content' ),
 		commentDate: get( comment, 'date' ),
 		commentType: get( comment, 'type', 'comment' ),
-		commentUrl: `/comment/${ siteSlug }/${ commentId }`,
+		commentUrl: isEnabled( 'comments/management/comment-view' )
+			? `/comment/${ siteSlug }/${ commentId }`
+			: get( comment, 'URL' ),
 		gravatarUser,
 		hasLink: get( comment, 'has_link', false ),
 	};
