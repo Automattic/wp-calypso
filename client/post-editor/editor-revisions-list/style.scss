@@ -222,8 +222,6 @@
 	display: flex;
 	flex: 1;
 	opacity: 0;
-	transition: all 0.1s;
-	transition-delay: 0.1s;
 	transform: translateY(20%);
 }
 
@@ -233,6 +231,8 @@
 	}
 
 	.revisions-counter__notification {
+		transition: all 0.1s;
+		transition-delay: 0.1s;
 		opacity: 1;
 		transform: translateY(0);
 	}
