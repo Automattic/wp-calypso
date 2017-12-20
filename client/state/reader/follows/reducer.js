@@ -161,7 +161,7 @@ export const items = createReducer(
 		},
 		[ READER_SITE_REQUEST_SUCCESS ]: ( state, action ) => {
 			const incomingSite = action.payload;
-			if ( ! incomingSite || ! incomingSite.is_following || ! incomingSite.feed_URL ) {
+			if ( ! incomingSite || ! incomingSite.feed_URL ) {
 				return state;
 			}
 			const urlKey = prepareComparableUrl( incomingSite.feed_URL );

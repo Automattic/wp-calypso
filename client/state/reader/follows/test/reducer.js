@@ -585,24 +585,6 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should disregard an unfollowed site from a site request', () => {
-			const original = deepFreeze( {} );
-			const incomingSite = {
-				ID: 125,
-				name: 'Postcards from the Reader',
-				URL: 'https://postcardsfromthereader.wordpress.com',
-				feed_URL: 'https://postcardsfromthereader.wordpress.com',
-				is_following: false,
-			};
-
-			const state = items( original, {
-				type: READER_SITE_REQUEST_SUCCESS,
-				payload: incomingSite,
-			} );
-
-			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).toEqual( undefined );
-		} );
-
 		test( 'should disregard a site with no feed URL from a site request', () => {
 			const original = deepFreeze( {} );
 			const incomingSite = {
