@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { forEach } from 'lodash';
+import { forEach, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,12 +13,17 @@ import wpcom from 'lib/wp';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import { cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
+import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 
-function addProductsToCart( cart, newCartItems ) {
+function addProductsToCart( cart, newCartItems, reduxStore ) {
+	const initialQueryArguments = getInitialQueryArguments( reduxStore.getState() );
+	const tldLandingPage = get( initialQueryArguments, 'tld_landing_page' );
 	forEach( newCartItems, function( cartItem ) {
-		cartItem.extra = Object.assign( cartItem.extra || {}, {
-			context: 'signup',
-		} );
+		cartItem.extra = Object.assign(
+			cartItem.extra || {},
+			{ context: 'signup' },
+			tldLandingPage && { tld_landing_page: tldLandingPage }
+		);
 		const addFunction = cartItems.add( cartItem );
 
 		cart = fillInAllCartItemAttributes( addFunction( cart ), productsList.get() );
@@ -28,14 +33,14 @@ function addProductsToCart( cart, newCartItems ) {
 }
 
 export default {
-	createCart: function( cartKey, newCartItems, callback ) {
+	createCart: function( cartKey, newCartItems, reduxStore, callback ) {
 		let newCart = {
 			cart_key: cartKey,
 			products: [],
 			temporary: false,
 		};
 
-		newCart = addProductsToCart( newCart, newCartItems );
+		newCart = addProductsToCart( newCart, newCartItems, reduxStore );
 
 		wpcom.undocumented().cart( cartKey, 'POST', newCart, function( postError ) {
 			callback( postError );

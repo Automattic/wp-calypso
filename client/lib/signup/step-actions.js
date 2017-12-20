@@ -53,7 +53,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			);
 		}
 
-		SignupCart.createCart( cartKey, domainChoiceCart, error =>
+		SignupCart.createCart( cartKey, domainChoiceCart, reduxStore, error =>
 			callback( error, providedDependencies )
 		);
 	} else if ( designType === 'existing-site' ) {
@@ -65,6 +65,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		SignupCart.createCart(
 			siteId,
 			omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ),
+			reduxStore,
 			error => {
 				callback( error, providedDependencies );
 				page.redirect( `/checkout/${ siteSlug }` );
