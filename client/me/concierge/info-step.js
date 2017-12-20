@@ -21,7 +21,7 @@ import Timezone from 'components/timezone';
 import PrimaryHeader from './primary-header';
 import Site from 'blocks/site';
 import { localize } from 'i18n-calypso';
-import { updateConciergeSignupForm } from 'state/concierge/signupForm/actions';
+import { updateConciergeSignupForm } from 'state/concierge/actions';
 import { getConciergeSignupForm, getSiteTimezoneValue } from 'state/selectors';
 
 class InfoStep extends Component {
@@ -55,9 +55,16 @@ class InfoStep extends Component {
 		let timezone;
 		const { signupForm, timezoneValue, translate } = this.props;
 
-		if ( ! signupForm ) {
-			message = '';
+		message = '';
+		if ( signupForm.message ) {
+			// use saved values
+			message = signupForm.message;
+		}
 
+		if ( signupForm.timezone ) {
+			// use saved values
+			timezone = signupForm.timezone;
+		} else {
 			if ( timezoneValue && timezoneValue.length ) {
 				// use site timezone
 				timezone = timezoneValue;
@@ -65,10 +72,9 @@ class InfoStep extends Component {
 				// guess customer timezone
 				timezone = moment.tz.guess();
 			}
-		} else {
-			// use saved values
-			message = signupForm.message || '';
-			timezone = signupForm.timezone || moment.tz.guess();
+
+			// populate redux with selected timezone
+			this.setTimezone( timezone );
 		}
 
 		return (
