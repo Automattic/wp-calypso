@@ -14,54 +14,46 @@
 	}
 
 	.steps__summary-columns {
-			display: flex;
-			flex-flow: row wrap;
-			align-items: flex-start;
+	display: flex;
+	justify-content: center;
+	font-size: 14px;
+	margin-top: 30px;
 
-			margin-top: 30px;
-
-			@media ( max-width: 700px ) {
-				margin-top: 0;
-			}
+	@include breakpoint( '<480px' ) {
+		display: block;
+		text-align: center;
 		}
+	}
 
 	.steps__summary-column {
-		flex: 1;
-		justify-content: center;
-		flex-direction: column;
-		text-align: center;
-		margin-bottom: 40px;
-		flex-wrap: wrap;
+		margin: 0 60px 20px;
+
+		@include breakpoint( '<480px' ) {
+			display: inline-block;
+			text-align: left;
+		}
+	}
+
+	.steps__summary-heading {
 		font-weight: bold;
-		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+
+	.steps__summary-entry {
 		margin-bottom: 20px;
 
-		@media ( max-width: 700px ) {
-			flex: 1 100%;
-			margin-bottom: 15px;
+		.gridicon {
+			position: relative;
+			top: 3px;
+			margin-right: 12px;
 		}
 
-		.entry {
-			font-weight: normal;
-			text-align: left;
-			padding-left: 90px;
-
-			@include breakpoint( '<480px' ) {
-				padding-left: 110px;
-			}
-			
-			.completed {
-				color: $gray;
-			}
-
-			.todo {
-				color: $blue-medium;
-			}
+		&.completed {
+			color: $gray;
 		}
 
-		.gridicons-chevron-down {
-			top: -3px;
-			margin-right: 5px;
+		&.todo {
+			color: $blue-medium;
 		}
 	}
 

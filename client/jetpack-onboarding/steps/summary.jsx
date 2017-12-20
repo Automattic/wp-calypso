@@ -19,16 +19,16 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	renderCompleted = () => {
 		const { translate } = this.props;
 		const stepsCompleted = [
-			translate( 'Site title & description' ),
+			translate( 'Site title & Description' ),
 			translate( 'Type of Site' ),
 			translate( 'Type of Homepage' ),
 			translate( 'Contact Us Form' ),
 			translate( 'Jetpack Connection' ),
 		];
 
-		return map( stepsCompleted, ( fieldLabel, fieldName ) => (
-			<div id={ fieldName } className="steps__summary-column entry completed">
-				<Gridicon icon="chevron-down" size={ 12 } />
+		return map( stepsCompleted, ( fieldLabel, fieldIndex ) => (
+			<div key={ fieldIndex } className="steps__summary-entry completed">
+				<Gridicon icon="checkmark" size={ 18 } />
 				{ fieldLabel }
 			</div>
 		) );
@@ -46,8 +46,8 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 		// TODO: adapt when we have more info + it will differ for different steps
 		const siteRedirectHref = '#';
 
-		return map( stepsTodo, ( fieldLabel, fieldName ) => (
-			<div id={ fieldName } className="steps__summary-column entry todo">
+		return map( stepsTodo, ( fieldLabel, fieldIndex ) => (
+			<div key={ fieldIndex } className="steps__summary-entry todo">
 				<a href={ siteRedirectHref }>{ fieldLabel }</a>
 			</div>
 		) );
@@ -67,13 +67,14 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 			<Fragment>
 				<DocumentHead title={ translate( 'Summary ‹ Jetpack Onboarding' ) } />
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
+
 				<div className="steps__summary-columns">
 					<div className="steps__summary-column">
-						{ translate( "Steps you've completed:" ) }
+						<h3 className="steps__summary-heading">{ translate( "Steps you've completed:" ) }</h3>
 						{ this.renderCompleted() }
 					</div>
 					<div className="steps__summary-column">
-						{ translate( 'Continue your site setup:' ) }
+						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
 						{ this.renderTodo() }
 					</div>
 				</div>
