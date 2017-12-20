@@ -7,5 +7,5 @@
  * @return {?Array}        Profile links
  */
 export default function getProfileLinks( state ) {
-	return state.profileLinks.items;
+	return state.userProfileLinks.items;
 }
