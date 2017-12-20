@@ -155,13 +155,16 @@ class Plans extends Component {
 		this.redirect( '/checkout/' );
 	};
 
-	shouldShowPlaceholder = () =>
-		this.redirecting ||
-		this.props.selectedPlanSlug ||
-		false !== this.props.notJetpack ||
-		! this.props.canPurchasePlans ||
-		false !== this.props.hasPlan ||
-		false !== this.props.isAutomatedTransfer;
+	shouldShowPlaceholder() {
+		return (
+			this.redirecting ||
+			this.props.selectedPlanSlug ||
+			false !== this.props.notJetpack ||
+			! this.props.canPurchasePlans ||
+			false !== this.props.hasPlan ||
+			false !== this.props.isAutomatedTransfer
+		);
+	}
 
 	render() {
 		const { interval, isRtlLayout, selectedSite, translate } = this.props;
