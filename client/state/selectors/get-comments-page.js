@@ -10,7 +10,7 @@ import { get } from 'lodash';
  *
  * @param {Object} state Redux state.
  * @param {Number} siteId Site identifier.
- * @param {Object} query Filter parameters
+ * @param {Object} query Filter parameters.
  * @param {Number} query.page Requested page.
  * @param {Number} [query.postId] Post identifier.
  * @param {String} [query.search] Search query.
