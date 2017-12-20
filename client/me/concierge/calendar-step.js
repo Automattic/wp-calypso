@@ -48,6 +48,7 @@ class CalendarStep extends Component {
 		availableTimes: PropTypes.array.isRequired,
 		onBack: PropTypes.func.isRequired,
 		onComplete: PropTypes.func.isRequired,
+		site: PropTypes.object.isRequired,
 	};
 
 	render() {
@@ -64,6 +65,7 @@ class CalendarStep extends Component {
 				</CompactCard>
 				{ availability.map( ( { date, times } ) => (
 					<CalendarCard
+						site={ this.props.site }
 						date={ date }
 						times={ times }
 						onSubmit={ this.props.onComplete }
