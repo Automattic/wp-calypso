@@ -23,12 +23,9 @@ import { getSelectedSite } from 'state/ui/selectors';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 
 class Shipping extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			pristine: true,
-		};
-	}
+	state = {
+		pristine: true,
+	};
 
 	onChange = () => {
 		this.setState( { pristine: false } );

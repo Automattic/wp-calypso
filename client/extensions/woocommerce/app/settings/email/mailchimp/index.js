@@ -104,7 +104,7 @@ MailChimp.propTypes = {
 	hasMailChimp: PropTypes.bool,
 	isRequestingPlugins: PropTypes.bool,
 	isRequestingMailChimpSettings: PropTypes.bool,
-	onChange: PropTypes.func.isRequired,
+	onChange: PropTypes.func,
 	settings: PropTypes.object,
 	startWizard: PropTypes.bool,
 	dashboardView: PropTypes.bool,

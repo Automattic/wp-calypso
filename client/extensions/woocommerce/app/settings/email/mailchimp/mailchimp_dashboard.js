@@ -133,7 +133,9 @@ class MailChimpDashboard extends React.Component {
 
 	onSettingsChange = ( change ) => {
 		this.setState( { settings: Object.assign( {}, this.state.settings, change ) } );
-		this.props.onChange();
+		if ( this.props.onChange ) {
+			this.props.onChange();
+		}
 	}
 
 	onSave = () => {
@@ -202,7 +204,7 @@ MailChimpDashboard.propTypes = {
 		PropTypes.object,
 		PropTypes.bool,
 	] ),
-	onChange: PropTypes.func.isRequired,
+	onChange: PropTypes.func,
 	settings: PropTypes.object.isRequired,
 	errorNotice: PropTypes.func.isRequired,
 	successNotice: PropTypes.func.isRequired,

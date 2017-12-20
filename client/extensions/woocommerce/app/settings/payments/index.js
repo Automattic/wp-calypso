@@ -37,12 +37,9 @@ import SettingsPaymentsLocationCurrency from './payments-location-currency';
 import SettingsNavigation from '../navigation';
 
 class SettingsPayments extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			pristine: true,
-		};
-	}
+	state = {
+		pristine: true,
+	};
 
 	static propTypes = {
 		isSaving: PropTypes.bool,

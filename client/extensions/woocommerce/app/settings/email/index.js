@@ -25,12 +25,9 @@ import { ProtectFormGuard } from 'lib/protect-form';
 import SettingsNavigation from '../navigation';
 
 class SettingsEmail extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			pristine: true,
-		};
-	}
+	state = {
+		pristine: true,
+	};
 
 	static propTypes = {
 		className: PropTypes.string,
