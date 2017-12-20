@@ -352,6 +352,8 @@ class AboutStep extends Component {
 	};
 
 	renderGoalCheckboxes() {
+		const { translate } = this.props;
+
 		return (
 			<div className="about__checkboxes">
 				<FormLabel htmlFor="share" className="about__checkbox-option">
@@ -365,7 +367,9 @@ class AboutStep extends Component {
 						onKeyDown={ this.handleCheckboxKeyDown }
 					/>
 					<span className="about__checkbox-label">
-						Share ideas, experiences, updates, reviews, stories, videos, or photos
+						{ translate(
+							'Share ideas, experiences, updates, reviews, stories, videos, or photos'
+						) }
 					</span>
 				</FormLabel>
 
@@ -380,7 +384,7 @@ class AboutStep extends Component {
 						onKeyDown={ this.handleCheckboxKeyDown }
 					/>
 					<span className="about__checkbox-label">
-						Promote your business, skills, organization, or events
+						{ translate( 'Promote your business, skills, organization, or events' ) }
 					</span>
 				</FormLabel>
 
@@ -394,7 +398,9 @@ class AboutStep extends Component {
 						className="about__checkbox"
 						onKeyDown={ this.handleCheckboxKeyDown }
 					/>
-					<span className="about__checkbox-label">Offer education, training, or mentoring</span>
+					<span className="about__checkbox-label">
+						{ translate( 'Offer education, training, or mentoring' ) }
+					</span>
 				</FormLabel>
 
 				<FormLabel htmlFor="sell" className="about__checkbox-option">
@@ -407,7 +413,9 @@ class AboutStep extends Component {
 						className="about__checkbox"
 						onKeyDown={ this.handleCheckboxKeyDown }
 					/>
-					<span className="about__checkbox-label">Sell products or collect payments</span>
+					<span className="about__checkbox-label">
+						{ translate( 'Sell products or collect payments' ) }
+					</span>
 				</FormLabel>
 
 				<FormLabel htmlFor="showcase" className="about__checkbox-option">
@@ -420,26 +428,28 @@ class AboutStep extends Component {
 						className="about__checkbox"
 						onKeyDown={ this.handleCheckboxKeyDown }
 					/>
-					<span className="about__checkbox-label">Showcase your portfolio</span>
+					<span className="about__checkbox-label">{ translate( 'Showcase your portfolio' ) }</span>
 				</FormLabel>
 			</div>
 		);
 	}
 
 	renderExperienceOptions() {
+		const { translate } = this.props;
+
 		if ( user.get() ) {
 			return null;
 		}
 
 		return (
 			<FormFieldset className="about__last-fieldset">
-				<FormLabel>How comfortable are you with creating a website?</FormLabel>
+				<FormLabel>{ translate( 'How comfortable are you with creating a website?' ) }</FormLabel>
 				<div className="about__segmented-control-wrapper">
 					<span
 						className="about__segment-label about__min-label"
 						onClick={ this.handleSegmentClick( 1 ) }
 					>
-						Beginner
+						{ translate( 'Beginner' ) }
 					</span>
 
 					<SegmentedControl className="is-primary about__segmented-control">
@@ -482,7 +492,7 @@ class AboutStep extends Component {
 						className="about__segment-label about__max-label"
 						onClick={ this.handleSegmentClick( 5 ) }
 					>
-						Expert
+						{ translate( 'Expert' ) }
 					</span>
 				</div>
 			</FormFieldset>
@@ -521,22 +531,24 @@ class AboutStep extends Component {
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
 							<FormFieldset>
-								<FormLabel htmlFor="siteTitle">What would you like to name your site?</FormLabel>
+								<FormLabel htmlFor="siteTitle">
+									{ translate( 'What would you like to name your site?' ) }
+								</FormLabel>
 								<FormTextInput
 									id="siteTitle"
 									name="siteTitle"
-									placeholder="eg: Mel's Diner, Stevie’s Blog, Vail Renovations"
+									placeholder={ translate( "e.g. Mel's Diner, Stevie’s Blog, Vail Renovations" ) }
 									defaultValue={ siteTitle }
 									onChange={ this.handleChangeEvent }
 								/>
 							</FormFieldset>
 
 							<FormFieldset>
-								<FormLabel>What will your site be about?</FormLabel>
+								<FormLabel>{ translate( 'What will your site be about?' ) }</FormLabel>
 								<FormTextInput
 									id="siteTopic"
 									name="siteTopic"
-									placeholder="eg: Fashion, travel, design, plumber, electrician"
+									placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
 									value={ this.state.siteTopicValue }
 									onChange={ this.handleSuggestionChangeEvent }
 									onBlur={ this.hideSuggestions }
@@ -552,7 +564,9 @@ class AboutStep extends Component {
 							</FormFieldset>
 
 							<FormFieldset>
-								<FormLabel>What’s the primary goal you have for your site?</FormLabel>
+								<FormLabel>
+									{ translate( 'What’s the primary goal you have for your site?' ) }
+								</FormLabel>
 								{ this.renderGoalCheckboxes() }
 							</FormFieldset>
 
