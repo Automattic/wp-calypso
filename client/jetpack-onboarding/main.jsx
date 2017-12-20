@@ -30,7 +30,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 	// TODO: Add lifecycle methods to redirect if no siteId
 
 	render() {
-		const { siteSlug, stepName, steps } = this.props;
+		const { siteId, siteSlug, stepName, steps } = this.props;
 
 		return (
 			<Main className="jetpack-onboarding">
@@ -38,6 +38,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 					basePath="/jetpack/onboarding"
 					baseSuffix={ siteSlug }
 					components={ COMPONENTS }
+					siteId={ siteId /* Passed down to individual steps */ }
 					steps={ steps }
 					stepName={ stepName }
 					hideNavigation={ stepName === STEPS.SUMMARY }
