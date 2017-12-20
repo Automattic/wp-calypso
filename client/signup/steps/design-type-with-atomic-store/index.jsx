@@ -176,9 +176,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 					/>
 				</div>
 				<div className={ designTypeListClassName }>
-					<TileGrid className="design-type-with-atomic-store__list">
-						{ this.getChoices().map( this.renderChoice ) }
-					</TileGrid>
+					<TileGrid>{ this.getChoices().map( this.renderChoice ) }</TileGrid>
 
 					<p className="design-type-with-store__disclaimer design-type-with-atomic-store__disclaimer">
 						{ disclaimerText }
