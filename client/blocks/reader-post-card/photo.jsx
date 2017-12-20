@@ -41,10 +41,8 @@ class PostPhoto extends React.Component {
 	}
 
 	toggleCard = () => {
-		const { post, site, postKey, expandCard, isExpanded } = this.props;
-		if ( ! isExpanded ) {
-			expandCard( { post, site, postKey } );
-		}
+		const { post, site, postKey, expandCard, shrinkCard, isExpanded } = this.props;
+		isExpanded ? shrinkCard( { post, postKey } ) : expandCard( { post, site, postKey } );
 	};
 
 	render() {

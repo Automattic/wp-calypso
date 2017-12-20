@@ -128,6 +128,7 @@ class ReaderPostCard extends React.Component {
 			postKey,
 			isExpanded,
 			expandCard,
+			shrinkCard,
 			compact,
 		} = this.props;
 
@@ -221,6 +222,7 @@ class ReaderPostCard extends React.Component {
 					onClick={ this.handleCardClick }
 					isExpanded={ isExpanded }
 					expandCard={ expandCard }
+					shrinkCard={ shrinkCard }
 					postKey={ postKey }
 				>
 					{ discoverFollowButton }
