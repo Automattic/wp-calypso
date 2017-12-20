@@ -10,7 +10,6 @@ export const jetpackConnectAuthorizeSchema = {
 				authorizationCode: { type: 'string ' },
 				authorizeError: { type: 'boolean' },
 				authorizeSuccess: { type: 'boolean' },
-				autoAuthorize: { type: 'boolean' },
 				isAuthorizing: { type: 'boolean' },
 				isRedirectingToWpAdmin: { type: 'boolean' },
 				plansUrl: { type: 'string' },

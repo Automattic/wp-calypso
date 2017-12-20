@@ -177,14 +177,13 @@ export class LoggedInForm extends Component {
 	}
 
 	shouldAutoAuthorize() {
-		const { autoAuthorize } = this.props.authorizationData;
-		const { alreadyAuthorized, newUserStartedConnection } = this.props.authQuery;
+		const { alreadyAuthorized, authApproved } = this.props.authQuery;
 		return (
 			this.isSso() ||
 			this.isWoo() ||
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
-				( this.props.calypsoStartedConnection || newUserStartedConnection || autoAuthorize ) )
+				( this.props.calypsoStartedConnection || authApproved ) )
 		);
 	}
 
