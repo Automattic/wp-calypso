@@ -178,7 +178,7 @@ class Plans extends Component {
 		const helpButtonLabel = translate( 'Need help?' );
 
 		return (
-			<div>
+			<Fragment>
 				<QueryPlans />
 				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				<PlansGrid
@@ -199,7 +199,7 @@ class Plans extends Component {
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</PlansGrid>
-			</div>
+			</Fragment>
 		);
 	}
 }
