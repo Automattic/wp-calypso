@@ -31,6 +31,7 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 		const { getForwardUrl, translate } = this.props;
 		const headerText = translate( "Let's shape your new site." );
 		const subHeaderText = translate( 'What should visitors see on your homepage?' );
+		const forwardUrl = getForwardUrl();
 
 		return (
 			<Fragment>
@@ -45,14 +46,14 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 							'We can pull the latest information into your homepage for you.'
 						) }
 						image={ '/calypso/images/illustrations/homepage-news.svg' }
-						href={ getForwardUrl() }
+						href={ forwardUrl }
 						onClick={ this.handleHomepageSelection( 'posts' ) }
 					/>
 					<Tile
 						buttonLabel={ translate( 'A static welcome page' ) }
 						description={ translate( 'Have your homepage stay the same as time goes on.' ) }
 						image={ '/calypso/images/illustrations/homepage-static.svg' }
-						href={ getForwardUrl() }
+						href={ forwardUrl }
 						onClick={ this.handleHomepageSelection( 'page' ) }
 					/>
 				</TileGrid>
