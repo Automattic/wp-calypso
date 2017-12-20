@@ -8,7 +8,14 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getEmailSettings, areEmailSettingsLoaded, areEmailSettingsLoading } from '../selectors';
+import {
+	getEmailSettings,
+	areEmailSettingsLoaded,
+	areEmailSettingsLoading,
+	emailSettingsSaveRequest,
+	isSavingEmailSettings,
+	emailSettingsSubmitSettingsError,
+} from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const preInitializedState = {
@@ -32,6 +39,48 @@ const loadingState = {
 				123: {
 					settings: {
 						email: LOADING,
+					},
+				},
+			},
+		},
+	},
+};
+
+const saveRequestedState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					settings: {
+						email: { save: true },
+					},
+				},
+			},
+		},
+	},
+};
+
+const currentlySavingState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					settings: {
+						email: { isSaving: true },
+					},
+				},
+			},
+		},
+	},
+};
+
+const submitErrorState = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					settings: {
+						email: { error: 'Something is wrong!' },
 					},
 				},
 			},
@@ -145,6 +194,38 @@ describe( 'selectors', () => {
 
 		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getEmailSettings( loadedStateWithUi ) ).to.eql( data );
+		} );
+	} );
+
+	describe( '#emailSettingsSaveRequest', () => {
+		test( 'should be false when save settings request is not pending', () => {
+			expect( emailSettingsSaveRequest( preInitializedState, 123 ) ).to.be.false;
+		} );
+
+		test( 'should be true when save settings request is pending - triggered by user "Save" button click', () => {
+			expect( emailSettingsSaveRequest( saveRequestedState, 123 ) ).to.be.true;
+		} );
+	} );
+
+	describe( '#isSavingEmailSettings', () => {
+		test( 'should be false when settings are not currently being saved.', () => {
+			expect( isSavingEmailSettings( preInitializedState, 123 ) ).to.be.false;
+		} );
+
+		test( 'should be true when settings are currently being saved.', () => {
+			expect( isSavingEmailSettings( currentlySavingState, 123 ) ).to.be.true;
+		} );
+	} );
+
+	describe( '#emailSettingsSubmitSettingsError', () => {
+		test( 'should be false when no errors are logged.', () => {
+			expect( emailSettingsSubmitSettingsError( preInitializedState, 123 ) ).to.be.false;
+		} );
+
+		test( 'should equal error value when error is logged.', () => {
+			expect( emailSettingsSubmitSettingsError( submitErrorState, 123 ) ).to.eql(
+				'Something is wrong!'
+			);
 		} );
 	} );
 } );
