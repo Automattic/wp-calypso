@@ -145,7 +145,7 @@ export const locales = ( currentUser, reduxStore ) => {
 
 	// Use current user's locale if it was not bootstrapped
 	if (
-		! getCurrentLocaleSlug( reduxStore.getState() ) &&
+		( ! getCurrentLocaleSlug( reduxStore.getState() ) || ! window.i18nLocaleStrings ) &&
 		! config.isEnabled( 'wpcom-user-bootstrap' ) &&
 		currentUser.get()
 	) {
