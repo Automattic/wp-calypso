@@ -65,12 +65,12 @@ class TransferDomainPrecheck extends React.PureComponent {
 				return;
 			}
 
-			if ( proceedToNextStep && result.unlocked ) {
+			if ( proceedToNextStep && ( true === result.unlocked || null === result.unlocked ) ) {
 				this.showNextStep();
 			}
 
 			// Reset steps if domain became locked again
-			if ( ! result.unlocked ) {
+			if ( false === result.unlocked ) {
 				this.resetSteps();
 			}
 
