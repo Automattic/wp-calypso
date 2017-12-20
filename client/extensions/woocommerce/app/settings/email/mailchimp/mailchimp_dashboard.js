@@ -24,9 +24,10 @@ import {
 	isRequestingSettings,
 	isRequestingSyncStatus,
 	isSavingSettings,
+	isSubmittingNewsletterSetting,
+	newsletterSettingsSubmitError,
 	} from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import { submitMailChimpNewsletterSettings, requestResync } from 'woocommerce/state/sites/settings/mailchimp/actions.js';
-import { isSubmittingNewsletterSetting, newsletterSettingsSubmitError } from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import SyncTab from './sync_tab.js';
 
@@ -108,7 +109,6 @@ Settings.propTypes = {
 };
 
 class MailChimpDashboard extends React.Component {
-
 	constructor( props ) {
 		super( props );
 		this.state = {
@@ -133,6 +133,9 @@ class MailChimpDashboard extends React.Component {
 
 	onSettingsChange = ( change ) => {
 		this.setState( { settings: Object.assign( {}, this.state.settings, change ) } );
+		if ( this.props.onChange ) {
+			this.props.onChange();
+		}
 	}
 
 	onSave = () => {
@@ -201,6 +204,7 @@ MailChimpDashboard.propTypes = {
 		PropTypes.object,
 		PropTypes.bool,
 	] ),
+	onChange: PropTypes.func,
 	settings: PropTypes.object.isRequired,
 	errorNotice: PropTypes.func.isRequired,
 	successNotice: PropTypes.func.isRequired,
@@ -223,6 +227,6 @@ export default connect(
 		errorNotice,
 		successNotice,
 		submitMailChimpNewsletterSettings,
-		requestResync
+		requestResync,
 	}
 )( localize( MailChimpDashboard ) );

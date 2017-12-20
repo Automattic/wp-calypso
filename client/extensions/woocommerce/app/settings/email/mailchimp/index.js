@@ -10,9 +10,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getPlugins } from 'state/plugins/installed/selectors';
+import { getPlugins, isRequestingForSites } from 'state/plugins/installed/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRequestingForSites } from 'state/plugins/installed/selectors';
 import { mailChimpSettings, isRequestingSettings } from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import MailChimpGettingStarted from './getting-started';
 import MailChimpSetup from './setup-mailchimp';
@@ -21,12 +20,11 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryMailChimpSettings from 'woocommerce/state/sites/settings/mailchimp/querySettings';
 
 class MailChimp extends React.Component {
-
 	constructor( props ) {
 		super( props );
 		this.state = {
 			setupWizardStarted: !! props.startWizard,
-			wizardCompleted: false
+			wizardCompleted: false,
 		};
 	}
 
@@ -44,7 +42,7 @@ class MailChimp extends React.Component {
 
 	render() {
 		const { dashboardView, hasMailChimp, isRequestingMailChimpSettings,
-			isRequestingPlugins, siteId, site, settings } = this.props;
+			isRequestingPlugins, onChange, siteId, site, settings } = this.props;
 		const { setupWizardStarted } = this.state;
 		const isRequestingData = ( isRequestingMailChimpSettings || isRequestingPlugins );
 		const mailChimpIsReady = ! isRequestingData &&
@@ -86,6 +84,7 @@ class MailChimp extends React.Component {
 					<MailChimpDashboard
 						siteId={ siteId }
 						wizardCompleted={ this.state.wizardCompleted }
+						onChange={ onChange }
 						onNoticeExit={ this.closeSetupFinishNotice } /> }
 				{ setupWizardStarted &&
 					<MailChimpSetup
@@ -105,6 +104,7 @@ MailChimp.propTypes = {
 	hasMailChimp: PropTypes.bool,
 	isRequestingPlugins: PropTypes.bool,
 	isRequestingMailChimpSettings: PropTypes.bool,
+	onChange: PropTypes.func,
 	settings: PropTypes.object,
 	startWizard: PropTypes.bool,
 	dashboardView: PropTypes.bool,

@@ -28,6 +28,7 @@ class SettingsPaymentsMethodList extends Component {
 		isLoading: PropTypes.bool,
 		fetchPaymentMethods: PropTypes.func.isRequired,
 		methodType: PropTypes.string.isRequired,
+		onChange: PropTypes.func.isRequired,
 		paymentMethods: PropTypes.array.isRequired,
 		site: PropTypes.object,
 	};
@@ -52,8 +53,15 @@ class SettingsPaymentsMethodList extends Component {
 	};
 
 	renderMethodItem = method => {
-		const { site } = this.props;
-		return <PaymentMethodItem method={ method } key={ method.title } site={ site } />;
+		const { onChange, site } = this.props;
+		return (
+			<PaymentMethodItem
+				method={ method }
+				key={ method.title }
+				onChange={ onChange }
+				site={ site }
+			/>
+		);
 	};
 
 	showPlaceholder = () => {

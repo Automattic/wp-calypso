@@ -30,12 +30,17 @@ import {
 	hasOAuthCompleteInLocation,
 } from './stripe/payment-method-stripe-utils';
 import { openPaymentMethodForEdit } from 'woocommerce/state/ui/payments/methods/actions';
+import { ProtectFormGuard } from 'lib/protect-form';
 import Main from 'components/main';
 import PaymentMethodList from './payment-method-list';
 import SettingsPaymentsLocationCurrency from './payments-location-currency';
 import SettingsNavigation from '../navigation';
 
 class SettingsPayments extends Component {
+	state = {
+		pristine: true,
+	};
+
 	static propTypes = {
 		isSaving: PropTypes.bool,
 		site: PropTypes.shape( {
@@ -74,6 +79,8 @@ class SettingsPayments extends Component {
 	onSave = () => {
 		const { translate, site, finishedInitialSetup } = this.props;
 		const successAction = () => {
+			this.setState( { pristine: true } );
+
 			if ( ! finishedInitialSetup ) {
 				page.redirect( getLink( '/store/:site', site ) );
 			}
@@ -94,7 +101,7 @@ class SettingsPayments extends Component {
 	renderPaymentSection = ( { description, label, methodType } ) => (
 		<div className="payments__type-container" key={ methodType }>
 			<ExtendedHeader label={ label } description={ description } />
-			<PaymentMethodList methodType={ methodType } />
+			<PaymentMethodList methodType={ methodType } onChange={ this.onChange } />
 		</div>
 	);
 
@@ -128,6 +135,10 @@ class SettingsPayments extends Component {
 		return <div>{ paymentSections.map( this.renderPaymentSection ) }</div>;
 	};
 
+	onChange = () => {
+		this.setState( { pristine: false } );
+	};
+
 	render() {
 		const { isSaving, site, translate, className, finishedInitialSetup } = this.props;
 
@@ -145,8 +156,9 @@ class SettingsPayments extends Component {
 					</Button>
 				</ActionHeader>
 				<SettingsNavigation activeSection="payments" />
-				<SettingsPaymentsLocationCurrency />
+				<SettingsPaymentsLocationCurrency onChange={ this.onChange } />
 				{ this.renderPaymentSections() }
+				<ProtectFormGuard isChanged={ ! this.state.pristine } />
 			</Main>
 		);
 	}

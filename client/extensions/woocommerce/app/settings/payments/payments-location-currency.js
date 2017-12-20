@@ -34,6 +34,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		currency: PropTypes.string,
 		fetchCurrencies: PropTypes.func.isRequired,
 		getCurrencyWithEdits: PropTypes.func.isRequired,
+		onChange: PropTypes.func.isRequired,
 		site: PropTypes.object,
 	};
 
@@ -70,6 +71,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		const { site } = this.props;
 		const newCurrency = e.target.value;
 		this.props.changeCurrency( site.ID, newCurrency );
+		this.props.onChange();
 	};
 
 	render() {
