@@ -522,7 +522,7 @@ export class LoggedInForm extends Component {
 		} = this.props.authorizationData;
 		const { blogname, redirectAfterAuth } = this.props.authQuery;
 		const backToWpAdminLink = (
-			<LoggedOutFormLinkItem icon={ true } href={ redirectAfterAuth }>
+			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
 				<Gridicon size={ 18 } icon="arrow-left" />{' '}
 				{ translate( 'Return to %(sitename)s', {
 					args: { sitename: decodeEntities( blogname ) },
