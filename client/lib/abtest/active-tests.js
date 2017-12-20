@@ -117,4 +117,12 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
+	alisterIsAmazing: {
+		datestamp: '20171205',
+		variations: {
+			yes: 60,
+			no: 40,
+		},
+		defaultVariation: 'yes',
+	},
 };
