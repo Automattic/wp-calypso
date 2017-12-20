@@ -117,3 +117,27 @@
 .label-purchase-modal__step-title {
 	margin: 0 0 0 8px;
 }
+
+.label-purchase-modal__price-item {
+	display: flex;
+	margin-bottom: 8px;
+
+	&.label-purchase-modal__price-item-total {
+		font-weight: bold;
+		margin-bottom: 0;
+	}
+}
+
+.label-purchase-modal__price-item-help {
+	color: lighten( $gray, 10% );
+	cursor: help;
+
+	svg {
+		margin-top: 2px;
+	}
+}
+
+.label-purchase-modal__price-item-amount {
+	flex-grow: 1;
+	text-align: right;
+}
