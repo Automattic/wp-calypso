@@ -203,37 +203,35 @@
 }
 
 .revisions-counter .count {
-	margin: 8px 6px;
-	border-radius: 24px;
-	line-height: 26px;
 	position: absolute;
-	right: 0;
-	transition: all 0.2s;
+	top: 14px;
+	right: 12px;
+	transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	opacity: 1;
 }
 
 .revisions-counter__notification {
-	background: rgba(240, 130, 30, 0.96);
+	position: absolute;
+	top: 10px;
+	right: 12px;
+	background: $orange-jazzy;
+	line-height: 1;
 	border-radius: 24px;
 	color: white;
-	line-height: 26px;
-	padding: 4px 12px;
-	margin: 6px;
-	display: flex;
-	flex: 1;
+	padding: 6px 12px;
 	opacity: 0;
-	transform: translateY(20%);
+	transform: translateX(10px) scale(0.6);
+	transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .revisions-counter__show-notification {
 	.count {
 		opacity: 0;
+		transform: scale(1.4);
 	}
 
 	.revisions-counter__notification {
-		transition: all 0.1s;
-		transition-delay: 0.1s;
 		opacity: 1;
-		transform: translateY(0);
+		transform: translateX(0) scale(1);
 	}
 }
