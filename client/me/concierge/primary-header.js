@@ -10,9 +10,12 @@ import React, { Component } from 'react';
  */
 import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
+import ExternalLink from 'components/external-link';
+import { localize } from 'i18n-calypso';
 
 class PrimaryHeader extends Component {
 	render() {
+		const { translate } = this.props;
 		return (
 			<Card>
 				<img
@@ -20,12 +23,23 @@ class PrimaryHeader extends Component {
 					src={ '/calypso/images/illustrations/illustration-start.svg' }
 				/>
 				<FormattedHeader
-					headerText="WordPress.com Business Site Setup"
-					subHeaderText="In this 30 minute session we'll help you get started with your site."
+					headerText={ translate( 'WordPress.com Business Concierge Session' ) }
+					subHeaderText={ translate(
+						"In this 30 minute session we'll help you get started with your site."
+					) }
 				/>
+				<ExternalLink
+					className="concierge__info-link"
+					icon={ false }
+					href={ 'https://en.support.wordpress.com/concierge-support' }
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					{ translate( 'Learn more' ) }
+				</ExternalLink>
 			</Card>
 		);
 	}
 }
 
-export default PrimaryHeader;
+export default localize( PrimaryHeader );
