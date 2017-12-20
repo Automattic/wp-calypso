@@ -5,7 +5,7 @@
 /**
  * External dependencies
  */
-import { mount, shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import React from 'react';
 
 /**
@@ -15,11 +15,6 @@ import PlansGrid from '../plans-grid';
 import QueryPlans from 'components/data/query-plans';
 import { DEFAULT_PROPS, SELECTED_SITE, SITE_PLAN_PRO } from './lib/plans';
 import { PlansTestComponent as Plans } from '../plans';
-
-jest.mock( 'components/data/query-plans', () => 'components--data--query-plans' );
-jest.mock( 'components/data/query-site-plans', () => 'components--data--query-site-plans' );
-jest.mock( 'jetpack-connect/happychat-button', () => 'jetpack-connect--happychat-button' );
-jest.mock( 'my-sites/plan-features', () => 'my-sites--plan-features' );
 
 describe( 'Plans', () => {
 	test( 'should render with no plan (free)', () => {
@@ -61,7 +56,9 @@ describe( 'Plans', () => {
 	} );
 
 	test( 'should redirect when hasPlan is loaded', () => {
-		const wrapper = mount( <Plans { ...DEFAULT_PROPS } hasPlan={ null } selectedSite={ null } /> );
+		const wrapper = shallow(
+			<Plans { ...DEFAULT_PROPS } hasPlan={ null } selectedSite={ null } />
+		);
 
 		const redirect = ( wrapper.instance().redirect = jest.fn() );
 
@@ -71,12 +68,10 @@ describe( 'Plans', () => {
 		} );
 
 		expect( redirect.mock.calls ).toHaveLength( 1 );
-
-		wrapper.unmount();
 	} );
 
 	test( 'should redirect if notJetpack', () => {
-		const wrapper = mount(
+		const wrapper = shallow(
 			<Plans { ...DEFAULT_PROPS } hasPlan={ null } selectedSite={ null } notJetpack={ null } />
 		);
 
@@ -88,14 +83,12 @@ describe( 'Plans', () => {
 		} );
 
 		expect( redirect.mock.calls ).toHaveLength( 1 );
-
-		wrapper.unmount();
 	} );
 
 	test( 'should redirect if Atomic', () => {
 		const goBackToWpAdmin = jest.fn();
 
-		const wrapper = mount(
+		shallow(
 			<Plans
 				{ ...DEFAULT_PROPS }
 				goBackToWpAdmin={ goBackToWpAdmin }
@@ -110,7 +103,5 @@ describe( 'Plans', () => {
 		);
 
 		expect( goBackToWpAdmin.mock.calls ).toHaveLength( 1 );
-
-		wrapper.unmount();
 	} );
 } );
