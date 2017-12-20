@@ -5,6 +5,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop, debounce } from 'lodash';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -15,29 +17,6 @@ class PostPhoto extends React.Component {
 	state = {
 		cardWidth: 800,
 	};
-
-	// handleClick = event => {
-	// 	if ( this.props.isExpanded ) {
-	// 		this.props.onClick( event );
-	// 		return;
-	// 	}
-
-	// 	event.preventDefault();
-	// 	const { post, site, postKey } = this.props;
-	// 	this.props.expandCard( { post, site, postKey } );
-	// };
-
-	getViewportHeight = () =>
-		Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
-
-	/* We want photos to be able to expand to be essentially full-screen
-	 * We settled on viewport height - 176px because the
-	 *  - masterbar is 47px tall
-	 *  - card header is 74px tall
-	 *  - card footer is 55px tall
-	 * 47 + 74 + 55 = 176
-	 */
-	getMaxPhotoHeight = () => this.getViewportHeight() - 176;
 
 	setCardWidth = () => {
 		if ( this.widthDivRef ) {
@@ -61,17 +40,33 @@ class PostPhoto extends React.Component {
 		window.removeEventListener( 'resize', this.resizeListener );
 	}
 
+	toggleCard = () => {
+		const { post, site, postKey, expandCard, isExpanded } = this.props;
+		if ( ! isExpanded ) {
+			expandCard( { post, site, postKey } );
+		}
+	};
+
 	render() {
-		const { post, title, isExpanded, onClick, children } = this.props;
+		const { post, title, isExpanded, onClick, children, translate } = this.props;
+		const zoomIcon = isExpanded ? 'zoom-out' : 'zoom-in';
 
 		return (
 			<div className="reader-post-card__post">
+				<div className="reader-post-card__photo-expand-controls">
+					<Gridicon
+						icon={ zoomIcon }
+						onClick={ this.toggleCard }
+						title={ isExpanded ? translate( 'Expand photo' ) : translate( 'Shrink photo' ) }
+					/>
+				</div>
 				{ !! post.canonical_media.src && (
 					<PostPhotoImage
 						post={ post }
 						title={ title }
 						isExpanded={ isExpanded }
 						onClick={ onClick }
+						cardWidth={ this.state.cardWidth }
 					/>
 				) }
 				<div className="reader-post-card__post-details">{ children }</div>
@@ -85,10 +80,11 @@ PostPhoto.propTypes = {
 	site: PropTypes.object,
 	title: PropTypes.string,
 	onClick: PropTypes.func,
+	expandCard: PropTypes.func,
 };
 
 PostPhoto.defaultProps = {
 	onClick: noop,
 };
 
-export default PostPhoto;
+export default localize( PostPhoto );

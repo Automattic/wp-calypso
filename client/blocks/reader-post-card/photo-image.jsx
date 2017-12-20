@@ -15,6 +15,18 @@ import Emojify from 'components/emojify';
 import cssSafeUrl from 'lib/css-safe-url';
 
 class PostPhotoImage extends React.Component {
+	getViewportHeight = () =>
+		Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
+
+	/* We want photos to be able to expand to be essentially full-screen
+	 * We settled on viewport height - 176px because the
+	 *  - masterbar is 47px tall
+	 *  - card header is 74px tall
+	 *  - card footer is 55px tall
+	 * 47 + 74 + 55 = 176
+	 */
+	getMaxPhotoHeight = () => this.getViewportHeight() - 176;
+
 	render() {
 		const { post, title, onClick } = this.props;
 		const imageUrl = post.canonical_media.src;
@@ -32,7 +44,7 @@ class PostPhotoImage extends React.Component {
 
 		let newWidth, newHeight;
 		if ( this.props.isExpanded ) {
-			const cardWidth = this.state.cardWidth;
+			const cardWidth = this.props.cardWidth;
 			const { width: naturalWidth, height: naturalHeight } = imageSize;
 
 			newHeight = Math.min( naturalHeight / naturalWidth * cardWidth, this.getMaxPhotoHeight() );
@@ -75,6 +87,7 @@ PostPhotoImage.propTypes = {
 	title: PropTypes.string,
 	onClick: PropTypes.func,
 	isExpanded: PropTypes.bool,
+	cardWidth: PropTypes.number,
 };
 
 PostPhotoImage.defaultProps = {
