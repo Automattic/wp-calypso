@@ -17,7 +17,7 @@ import { DEFAULT_PROPS, SELECTED_SITE, SITE_PLAN_PRO } from './lib/plans';
 import { PlansTestComponent as Plans } from '../plans';
 
 describe( 'Plans', () => {
-	test( 'should render with no plan (free)', () => {
+	test( 'should render plans', () => {
 		const wrapper = shallow( <Plans { ...DEFAULT_PROPS } /> );
 
 		expect( wrapper ).toMatchSnapshot();
@@ -25,34 +25,42 @@ describe( 'Plans', () => {
 		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
 	} );
 
-	test( 'should render placeholder with unknown plan', () => {
-		const wrapper = shallow( <Plans { ...DEFAULT_PROPS } hasPlan={ null } /> );
+	test( 'should render placeholder when shouldShowPlaceholder is true', () => {
+		const wrapper = shallow( <Plans { ...DEFAULT_PROPS } /> );
+		wrapper.instance().shouldShowPlaceholder = jest.fn( () => true );
+
+		// Force rerender with our mocked method
+		wrapper.setProps( DEFAULT_PROPS );
 
 		expect( wrapper ).toMatchSnapshot();
 		expect( wrapper.find( PlansGrid ) ).toHaveLength( 0 );
 		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
 	} );
 
-	test( 'should render placeholder with unknown Atomic', () => {
-		const wrapper = shallow( <Plans { ...DEFAULT_PROPS } isAutomatedTransfer={ null } /> );
+	describe( 'shouldRenderPlaceholder', () => {
+		test( 'should return true with unknown plan', () => {
+			const wrapper = shallow( <Plans { ...DEFAULT_PROPS } hasPlan={ null } /> );
 
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.find( PlansGrid ) ).toHaveLength( 0 );
-		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
-	} );
+			expect( wrapper.instance().shouldShowPlaceholder() ).toBe( true );
+		} );
 
-	test( 'should render placeholder with a paid plan', () => {
-		const wrapper = shallow(
-			<Plans
-				{ ...DEFAULT_PROPS }
-				hasPlan={ true }
-				selectedSite={ { ...SELECTED_SITE, plan: SITE_PLAN_PRO } }
-			/>
-		);
+		test( 'should return true if isAutomatedTransfer is null', () => {
+			const wrapper = shallow( <Plans { ...DEFAULT_PROPS } isAutomatedTransfer={ null } /> );
 
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.find( PlansGrid ) ).toHaveLength( 0 );
-		expect( wrapper.find( QueryPlans ) ).toHaveLength( 1 );
+			expect( wrapper.instance().shouldShowPlaceholder() ).toBe( true );
+		} );
+
+		test( 'should return true with a paid plan', () => {
+			const wrapper = shallow(
+				<Plans
+					{ ...DEFAULT_PROPS }
+					hasPlan={ true }
+					selectedSite={ { ...SELECTED_SITE, plan: SITE_PLAN_PRO } }
+				/>
+			);
+
+			expect( wrapper.instance().shouldShowPlaceholder() ).toBe( true );
+		} );
 	} );
 
 	test( 'should redirect when hasPlan is loaded', () => {
