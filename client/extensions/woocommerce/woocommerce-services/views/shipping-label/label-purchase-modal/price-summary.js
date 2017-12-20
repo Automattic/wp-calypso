@@ -39,8 +39,28 @@ class PriceSummary extends Component {
 		}
 	};
 
-	renderRow = ( itemName, itemCost, key, isTotal, isDiscount ) => {
+	renderDiscountExplanation = () => {
 		const { translate } = this.props;
+		return (
+			<div className="label-purchase-modal__price-item-help">
+				<Gridicon
+					ref={ this.setTooltipContext }
+					icon="help-outline"
+					onMouseEnter={ this.showTooltip }
+					onMouseLeave={ this.hideTooltip }
+					size={ 18 } />
+				<Tooltip
+					className="label-purchase-modal__price-item-tooltip is-dialog-visible"
+					isVisible={ this.state.tooltipVisible }
+					context={ this.state.tooltipContext } >
+				{ translate( 'WooCommerce Services gives you access to USPS ' +
+					'Commercial Pricing, which is discounted over Retail rates.' ) }
+				</Tooltip>
+			</div>
+		);
+	};
+
+	renderRow = ( itemName, itemCost, key, isTotal, isDiscount ) => {
 		const className = classNames( 'label-purchase-modal__price-item', {
 			'label-purchase-modal__price-item-total': isTotal,
 		} );
@@ -49,22 +69,7 @@ class PriceSummary extends Component {
 				<div className="label-purchase-modal__price-item-name">
 					{ itemName }
 				</div>
-				{ isDiscount &&
-					<div className="label-purchase-modal__price-item-help">
-						<Gridicon
-							ref={ this.setTooltipContext }
-							icon="help-outline"
-							onMouseEnter={ this.showTooltip }
-							onMouseLeave={ this.hideTooltip }
-							size={ 18 } />
-						<Tooltip
-							className="label-purchase-modal__price-item-tooltip is-dialog-visible"
-							isVisible={ this.state.tooltipVisible }
-							context={ this.state.tooltipContext } >
-						{ translate( 'WooCommerce Services gives you access to USPS ' +
-							'Commercial Pricing, which is discounted over Retail rates.' ) }
-						</Tooltip>
-					</div> }
+				{ isDiscount && this.renderDiscountExplanation() }
 				<div className="label-purchase-modal__price-item-amount">{ formatCurrency( itemCost, 'USD' ) }</div>
 			</div>
 		);

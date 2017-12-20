@@ -75,7 +75,7 @@ export const getForm = ( state, orderId, siteId = getSelectedSiteId( state ) ) =
 };
 
 /**
- * Returns a breakdown of the total price for selected labels in form of { prices, discount, fee, total }
+ * Returns a breakdown of the total price for selected labels in form of { prices, discount, total }
  * @param {Object} state global state tree
  * @param {Number} orderId order Id
  * @param {Number} siteId site Id
@@ -94,11 +94,6 @@ export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSite
 	let total = 0;
 	for ( const packageId in selectedRates ) {
 		const packageRates = get( availableRates, [ packageId, 'rates' ], false );
-		//if retail_rate is not set on any rate, then the selector should return null
-		if ( ! packageRates || ! packageRates.length || ! isFinite( packageRates[ 0 ].retail_rate ) ) {
-			return null;
-		}
-
 		const foundRate = find( packageRates, [ 'service_id', selectedRates[ packageId ] ] );
 		if ( foundRate ) {
 			prices.push( {

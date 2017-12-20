@@ -18,6 +18,7 @@ import PackagesStep from './packages-step';
 import RatesStep from './rates-step';
 import Sidebar from './sidebar';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import formatCurrency from 'lib/format-currency';
 import { confirmPrintLabel, purchaseLabel, exitPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	getShippingLabel,
@@ -46,14 +47,13 @@ const PurchaseDialog = ( props ) => {
 		const noNativePDFSupport = ( 'addon' === getPDFSupport() );
 
 		if ( props.canPurchase ) {
-			const currencySymbol = props.storeOptions.currency_symbol;
 			const ratesTotal = props.ratesTotal;
 
 			if ( noNativePDFSupport ) {
-				return translate( 'Buy (%(currencySymbol)s%(ratesTotal)s)', { args: { currencySymbol, ratesTotal } } );
+				return translate( 'Buy (%s)', { args: [ formatCurrency( ratesTotal, 'USD' ) ] } );
 			}
 
-			return translate( 'Buy & Print (%(currencySymbol)s%(ratesTotal)s)', { args: { currencySymbol, ratesTotal } } );
+			return translate( 'Buy & Print (%s)', { args: [ formatCurrency( ratesTotal, 'USD' ) ] } );
 		}
 
 		if ( noNativePDFSupport ) {
@@ -78,7 +78,7 @@ const PurchaseDialog = ( props ) => {
 			primary
 			busy={ props.form.isSubmitting }>
 			{ getPurchaseButtonLabel() }
-		</Button> )
+		</Button> ),
 	];
 
 	const onClose = () => props.exitPrintingFlow( props.orderId, props.siteId, false );
