@@ -3,11 +3,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
-import { omit } from 'lodash';
 
 export default class LoggedOutFormLinkItem extends React.Component {
 	static propTypes = { className: PropTypes.string };
@@ -15,7 +13,7 @@ export default class LoggedOutFormLinkItem extends React.Component {
 	render() {
 		return (
 			<a
-				{ ...omit( this.props, 'classNames' ) }
+				{ ...this.props }
 				className={ classnames( 'logged-out-form__link-item', this.props.className ) }
 			>
 				{ this.props.children }
