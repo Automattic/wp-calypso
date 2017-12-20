@@ -181,6 +181,7 @@ export default class Step extends Component {
 			} );
 		}
 
+		debug( 'asdf asdf' );
 		// quit if we have a target but cant find it
 		defer( () => {
 			const { quit } = this.context;

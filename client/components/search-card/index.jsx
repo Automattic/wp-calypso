@@ -29,6 +29,7 @@ class SearchCard extends React.Component {
 		maxLength: PropTypes.number,
 		hideOpenIcon: PropTypes.bool,
 		disableAutocorrect: PropTypes.bool,
+		dataTipTarget: PropTypes.string,
 	};
 
 	render() {
