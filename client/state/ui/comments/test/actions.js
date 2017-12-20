@@ -17,7 +17,7 @@ describe( 'actions', () => {
 			const postId = 1234;
 			const comments = [ { ID: 1 }, { ID: 2 }, { ID: 3 }, { ID: 4 }, { ID: 5 } ];
 			const query = {
-				offset: 0,
+				page: 1,
 				postId: postId,
 				search: 'foo',
 				status: 'all',

@@ -8,7 +8,6 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { COMMENTS_PER_PAGE } from 'my-sites/comments/constants';
 import { COMMENTS_QUERY_UPDATE } from 'state/action-types';
 import { queries } from 'state/ui/comments/reducer';
 
@@ -25,7 +24,7 @@ describe( 'reducer', () => {
 				type: COMMENTS_QUERY_UPDATE,
 				siteId,
 				comments,
-				query: { offset: 0 },
+				query: { page: 1 },
 			} );
 			expect( query ).to.eql( {
 				site: { all: { 1: [ 1, 2, 3, 4, 5 ] } },
@@ -41,7 +40,7 @@ describe( 'reducer', () => {
 				siteId,
 				comments: comments2,
 				query: {
-					offset: 0,
+					page: 1,
 					postId,
 				},
 			} );
@@ -61,7 +60,7 @@ describe( 'reducer', () => {
 				siteId,
 				comments: comments3,
 				query: {
-					offset: COMMENTS_PER_PAGE,
+					page: 2,
 					postId,
 					search: 'foo',
 					status: 'spam',
@@ -88,7 +87,7 @@ describe( 'reducer', () => {
 				type: COMMENTS_QUERY_UPDATE,
 				siteId,
 				comments: comments3,
-				query: { offset: 0 },
+				query: { page: 1 },
 			} );
 			expect( query ).to.eql( {
 				site: { all: { 1: [ 11, 12, 13, 14, 15 ] } },
