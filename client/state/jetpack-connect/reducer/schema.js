@@ -12,7 +12,7 @@ export const jetpackConnectAuthorizeSchema = {
 			required: [ 'timestamp' ],
 			properties: {
 				authorizationCode: { type: 'string' },
-				authorizeError: { type: 'boolean' },
+				authorizeError: { type: [ 'boolean', 'null' ] },
 				authorizeSuccess: { type: 'boolean' },
 				bearerToken: { type: 'string' },
 				clientId: { type: 'integer' },
