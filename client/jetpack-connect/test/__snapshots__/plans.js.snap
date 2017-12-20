@@ -1,11 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Plans should render empty with a paid plan 1`] = `<components--data--query-plans />`;
+exports[`Plans should render placeholder when shouldShowPlaceholder is true 1`] = `
+<React.Fragment>
+  <Connect(QueryPlans) />
+  <PlansPlaceholder />
+</React.Fragment>
+`;
 
-exports[`Plans should render with no plan (free) 1`] = `
-<div>
-  <components--data--query-plans />
-  <components--data--query-site-plans
+exports[`Plans should render plans 1`] = `
+<React.Fragment>
+  <Connect(QueryPlans) />
+  <Connect(QuerySitePlans)
     siteId={1234567}
   />
   <Localized(JetpackPlansGrid)
@@ -147,7 +152,7 @@ exports[`Plans should render with no plan (free) 1`] = `
       onClick={[Function]}
     />
     <LoggedOutFormLinks>
-      <jetpack-connect--happychat-button
+      <Connect(Localized(JetpackConnectHappychatButton))
         eventName="calypso_jpc_plans_chat_initiated"
         label="Need help?"
       >
@@ -155,8 +160,8 @@ exports[`Plans should render with no plan (free) 1`] = `
           label="Need help?"
           onClick={[Function]}
         />
-      </jetpack-connect--happychat-button>
+      </Connect(Localized(JetpackConnectHappychatButton))>
     </LoggedOutFormLinks>
   </Localized(JetpackPlansGrid)>
-</div>
+</React.Fragment>
 `;

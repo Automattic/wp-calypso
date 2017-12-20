@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Placeholder from './plans-placeholder';
 import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
@@ -154,34 +155,33 @@ class Plans extends Component {
 		this.redirect( '/checkout/' );
 	};
 
-	render() {
-		const {
-			canPurchasePlans,
-			hasPlan,
-			interval,
-			isAutomatedTransfer,
-			isRtlLayout,
-			notJetpack,
-			selectedPlanSlug,
-			selectedSite,
-			translate,
-		} = this.props;
-
-		if (
+	shouldShowPlaceholder() {
+		return (
 			this.redirecting ||
-			selectedPlanSlug ||
-			false !== notJetpack ||
-			! canPurchasePlans ||
-			false !== hasPlan ||
-			false !== isAutomatedTransfer
-		) {
-			return <QueryPlans />;
+			this.props.selectedPlanSlug ||
+			false !== this.props.notJetpack ||
+			! this.props.canPurchasePlans ||
+			false !== this.props.hasPlan ||
+			false !== this.props.isAutomatedTransfer
+		);
+	}
+
+	render() {
+		const { interval, isRtlLayout, selectedSite, translate } = this.props;
+
+		if ( this.shouldShowPlaceholder() ) {
+			return (
+				<Fragment>
+					<QueryPlans />
+					<Placeholder />
+				</Fragment>
+			);
 		}
 
 		const helpButtonLabel = translate( 'Need help?' );
 
 		return (
-			<div>
+			<Fragment>
 				<QueryPlans />
 				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				<PlansGrid
@@ -202,7 +202,7 @@ class Plans extends Component {
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</PlansGrid>
-			</div>
+			</Fragment>
 		);
 	}
 }
