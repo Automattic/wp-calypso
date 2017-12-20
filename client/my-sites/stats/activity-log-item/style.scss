@@ -155,6 +155,7 @@
 	padding-left: 56px;
 	align-items: center;
 	min-width: 0;
+	width: 100%;
 
 	@include breakpoint( '<960px' ) {
 		flex-direction: column;
@@ -219,26 +220,19 @@
 	}
 }
 
-.activity-log-item__actor-role {
+.activity-log-item__actor-role,
+.activity-log-item__description-summary {
 	text-transform: capitalize;
 	font-size: 12px;
 	color: $gray-text-min;
 }
 
-.activity-log-item__title {
+.activity-log-item__description {
 	flex: 1 1 50%;
 	font-size: 14px;
 	word-break: break-word;
 
 	@include breakpoint( '<960px' ) {
 		margin-top: 8px;
-	}
-}
-
-.activity-log-item__description {
-	font-size: 14px;
-
-	@include breakpoint( '<960px' ) {
-		margin-top: 4px;
 	}
 }

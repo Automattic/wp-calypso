@@ -76,12 +76,14 @@ class ActivityLogItem extends Component {
 				/>
 				{ activityDescription && (
 					<div className="activity-log-item__description">
-						{ activityDescription.map( ( part, key ) => (
-							<FormattedBlock key={ key } content={ part } />
-						) ) }
+						<div className="activity-log-item__description-content">
+							{ activityDescription.map( ( part, key ) => (
+								<FormattedBlock key={ key } content={ part } />
+							) ) }
+						</div>
+						{ activityTitle && <div className="activity-log-item__description-summary">{ activityTitle }</div> }
 					</div>
 				) }
-				{ activityTitle && <div className="activity-log-item__title">{ activityTitle }</div> }
 			</div>
 		);
 	}
