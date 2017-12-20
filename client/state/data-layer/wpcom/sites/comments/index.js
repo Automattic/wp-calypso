@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { forEach, get, groupBy, omit } from 'lodash';
+import { forEach, get, groupBy, isEmpty, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,9 @@ import {
 	receiveComments,
 	receiveCommentsError as receiveCommentErrorAction,
 	requestComment as requestCommentAction,
+	requestCommentsList,
 } from 'state/comments/actions';
+import { updateCommentsQuery } from 'state/ui/comments/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
@@ -56,8 +58,12 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	);
 };
 
-export const removeCommentStatusErrorNotice = ( { dispatch }, { commentId } ) =>
+const handleChangeCommentStatusSuccess = ( { dispatch }, { commentId, query } ) => {
 	dispatch( removeNotice( `comment-notice-error-${ commentId }` ) );
+	if ( ! isEmpty( query ) ) {
+		dispatch( requestCommentsList( query ) );
+	}
+};
 
 const announceStatusChangeFailure = ( { dispatch }, action ) => {
 	const { commentId, status, previousStatus } = action;
@@ -127,10 +133,14 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 		return;
 	}
 
-	const { siteId, status = 'unapproved', type = 'comment' } = action.query;
+	const { postId, siteId, status = 'unapproved', type = 'comment' } = action.query;
+
+	const path = postId
+		? `/sites/${ siteId }/posts/${ postId }/replies`
+		: `/sites/${ siteId }/comments`;
 
 	const query = {
-		...omit( action.query, [ 'listType', 'siteId' ] ),
+		...omit( action.query, [ 'listType', 'postId', 'siteId' ] ),
 		status,
 		type,
 	};
@@ -139,7 +149,7 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ siteId }/comments`,
+				path,
 				apiVersion: '1.1',
 				query,
 			},
@@ -148,7 +158,11 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 	);
 };
 
-export const addComments = ( { dispatch }, { query: { siteId, status } }, { comments } ) => {
+export const addComments = (
+	{ dispatch },
+	{ query: { offset, postId, siteId, status } },
+	{ comments }
+) => {
 	// Initialize the comments tree to let CommentList know if a tree is actually loaded and empty.
 	// This is needed as a workaround for Jetpack sites populating their comments trees
 	// via `fetchCommentsList` instead of `fetchCommentsTreeForSite`.
@@ -160,16 +174,19 @@ export const addComments = ( { dispatch }, { query: { siteId, status } }, { comm
 			status,
 			tree: [],
 		} );
+		dispatch( updateCommentsQuery( siteId, [], { offset, postId, status } ) );
 		return;
 	}
 
+	dispatch( updateCommentsQuery( siteId, comments, { offset, postId, status } ) );
+
 	const byPost = groupBy( comments, ( { post: { ID } } ) => ID );
 
-	forEach( byPost, ( postComments, postId ) =>
+	forEach( byPost, ( postComments, post ) =>
 		dispatch(
 			receiveComments( {
 				siteId,
-				postId: +postId, // keyBy => object property names are strings
+				postId: +post, // keyBy => object property names are strings
 				comments: postComments,
 			} )
 		)
@@ -250,7 +267,7 @@ export const fetchHandler = {
 	[ COMMENTS_CHANGE_STATUS ]: [
 		dispatchRequest(
 			changeCommentStatus,
-			removeCommentStatusErrorNotice,
+			handleChangeCommentStatusSuccess,
 			announceStatusChangeFailure
 		),
 	],

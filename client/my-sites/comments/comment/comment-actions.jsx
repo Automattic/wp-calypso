@@ -40,6 +40,7 @@ const commentActions = {
 export class CommentActions extends Component {
 	static propTypes = {
 		canModerateComment: PropTypes.bool,
+		commentsListQuery: PropTypes.object,
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 		commentId: PropTypes.number,
@@ -279,7 +280,7 @@ const mapStateToProps = ( state, { siteId, commentId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch, { siteId, postId, commentId } ) => ( {
+const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, commentsListQuery } ) => ( {
 	changeStatus: ( status, analytics = { alsoUnlike: false, isUndo: false } ) =>
 		dispatch(
 			withAnalytics(
@@ -292,7 +293,7 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId } ) => ( {
 					} ),
 					bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
 				),
-				changeCommentStatus( siteId, postId, commentId, status )
+				changeCommentStatus( siteId, postId, commentId, status, commentsListQuery )
 			)
 		),
 	deletePermanently: () =>
@@ -302,7 +303,7 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId } ) => ( {
 					recordTracksEvent( 'calypso_comment_management_delete' ),
 					bumpStat( 'calypso_comment_management', 'comment_deleted' )
 				),
-				deleteComment( siteId, postId, commentId, { showSuccessNotice: true } )
+				deleteComment( siteId, postId, commentId, { showSuccessNotice: true }, commentsListQuery )
 			)
 		),
 	like: ( analytics = { alsoApprove: false } ) =>

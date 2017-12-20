@@ -167,23 +167,27 @@ export class CommentList extends Component {
 
 		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
 
+		const commentsListQuery = {
+			listType: 'site',
+			number: COMMENTS_PER_PAGE,
+			offset: ( validPage - 1 ) * COMMENTS_PER_PAGE,
+			postId,
+			siteId,
+			status,
+			type: 'any',
+		};
+
 		return (
 			<div className="comment-list">
 				<QuerySiteSettings siteId={ siteId } />
 
-				{ ! isCommentsTreeSupported && (
-					<QuerySiteCommentsList
-						number={ 100 }
-						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
-						siteId={ siteId }
-						status={ status }
-					/>
-				) }
+				{ ! isCommentsTreeSupported && <QuerySiteCommentsList { ...commentsListQuery } /> }
 				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
 
 				{ isPostView && <CommentListHeader postId={ postId } /> }
 
 				<CommentNavigation
+					commentsListQuery={ commentsListQuery }
 					commentsPage={ commentsPage }
 					isBulkMode={ isBulkMode }
 					isSelectedAll={ this.isSelectedAll() }
@@ -207,6 +211,7 @@ export class CommentList extends Component {
 					{ map( commentsPage, commentId => (
 						<Comment
 							commentId={ commentId }
+							commentsListQuery={ commentsListQuery }
 							key={ `comment-${ siteId }-${ commentId }` }
 							isBulkMode={ isBulkMode }
 							isPostView={ isPostView }
