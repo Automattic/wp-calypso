@@ -9,6 +9,12 @@
 	.formatted-header {
 		margin-bottom: 16px;
 	}
+
+	&.is-mobile-app-flow {
+		.logged-out-form__links {
+			display: none;
+		}
+	}
 }
 
 .jetpack-connect__main.is-wide {
