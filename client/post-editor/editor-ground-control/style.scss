@@ -41,28 +41,6 @@
 	width: auto;
 }
 
-.editor-ground-control__toggle-drafts {
-	display: none;
-	margin-right: 16px;
-
-	@include breakpoint( '>480px' ) {
-		display: block;
-	}
-
-	@include breakpoint( '480px-660px' ) {
-		margin-left: 16px;
-	}
-}
-
-.editor-ground-control__recent-drafts {
-	width: 310px;
-
-	.popover__inner {
-		text-align: left;
-		padding-top: 46px;
-	}
-}
-
 .editor-ground-control__separator {
 	margin: 0 -16px;
 	background: lighten( $gray, 30 );
