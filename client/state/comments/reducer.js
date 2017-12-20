@@ -44,7 +44,7 @@ import {
 	POST_COMMENT_DISPLAY_TYPES,
 } from './constants';
 import trees from './trees/reducer';
-import { getStateKey, getErrorKey } from './utils';
+import { getStateKey, getErrorKey, commentHasLink } from './utils';
 
 const getCommentDate = ( { date } ) => new Date( date );
 
@@ -117,6 +117,7 @@ export function items( state = {}, action ) {
 			const comments = map( action.comments, _comment => ( {
 				..._comment,
 				contiguous: ! action.commentById,
+				has_link: commentHasLink( _comment.content, _comment.has_link ),
 			} ) );
 			const allComments = unionBy( state[ stateKey ], comments, 'ID' );
 			return {
