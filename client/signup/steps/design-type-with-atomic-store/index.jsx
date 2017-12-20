@@ -12,15 +12,10 @@ import { includes, invoke } from 'lodash';
  */
 import config from 'config';
 import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
+import Tile from 'components/tile-grid/tile';
+import TileGrid from 'components/tile-grid';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	BlogImage,
-	PageImage,
-	GridImage,
-	StoreImage,
-} from '../design-type-with-atomic-store/type-images';
 import { abtest } from 'lib/abtest';
 import SignupActions from 'lib/signup/actions';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
@@ -54,25 +49,25 @@ class DesignTypeWithAtomicStoreStep extends Component {
 				type: 'blog',
 				label: translate( 'Start with a blog' ),
 				description: blogText,
-				image: <BlogImage />,
+				image: '/calypso/images/illustrations/type-blog.svg',
 			},
 			{
 				type: 'page',
 				label: translate( 'Start with a website' ),
 				description: siteText,
-				image: <PageImage />,
+				image: '/calypso/images/illustrations/type-website.svg',
 			},
 			{
 				type: 'grid',
 				label: translate( 'Start with a portfolio' ),
 				description: gridText,
-				image: <GridImage />,
+				image: '/calypso/images/illustrations/type-portfolio.svg',
 			},
 			{
 				type: 'store',
 				label: translate( 'Start with an online store' ),
 				description: storeText,
-				image: <StoreImage />,
+				image: '/calypso/images/illustrations/type-e-commerce.svg',
 			},
 		];
 	}
@@ -139,26 +134,20 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	};
 
 	renderChoice = choice => {
-		const buttonClassName = classNames( 'button design-type-with-atomic-store__cta is-compact', {
+		const buttonClassName = classNames( {
 			'is-busy': choice.type === DESIGN_TYPE_STORE && this.state.pendingStoreClick,
 		} );
 
 		return (
-			<Card className="design-type-with-atomic-store__choice" key={ choice.type }>
-				<a
-					className="design-type-with-atomic-store__choice-link"
-					href="#"
-					onClick={ this.handleChoiceClick( choice.type ) }
-				>
-					<div className="design-type-with-atomic-store__image">{ choice.image }</div>
-					<div className="design-type-with-atomic-store__choice-copy">
-						<span className={ buttonClassName }>{ choice.label }</span>
-						<p className="design-type-with-atomic-store__choice-description">
-							{ choice.description }
-						</p>
-					</div>
-				</a>
-			</Card>
+			<Tile
+				buttonClassName={ buttonClassName }
+				buttonLabel={ choice.label }
+				description={ choice.description }
+				href="#"
+				image={ choice.image }
+				key={ choice.type }
+				onClick={ this.handleChoiceClick( choice.type ) }
+			/>
 		);
 	};
 
@@ -172,12 +161,12 @@ class DesignTypeWithAtomicStoreStep extends Component {
 			'is-hidden': ! this.state.showStore,
 		} );
 
-		const designTypeListClassName = classNames( 'design-type-with-atomic-store__list', {
+		const designTypeListClassName = classNames( 'design-type-with-store__list', {
 			'is-hidden': this.state.showStore,
 		} );
 
 		return (
-			<div className="design-type-with-atomic-store__substep-wrapper">
+			<div className="design-type-with-atomic-store__substep-wrapper design-type-with-store__substep-wrapper">
 				{ this.state.pendingStoreClick && ! countryCode && <QueryGeo /> }
 				<div className={ storeWrapperClassName }>
 					<PressableStoreStep
@@ -187,9 +176,11 @@ class DesignTypeWithAtomicStoreStep extends Component {
 					/>
 				</div>
 				<div className={ designTypeListClassName }>
-					{ this.getChoices().map( this.renderChoice ) }
+					<TileGrid>{ this.getChoices().map( this.renderChoice ) }</TileGrid>
 
-					<p className="design-type-with-atomic-store__disclaimer">{ disclaimerText }</p>
+					<p className="design-type-with-store__disclaimer design-type-with-atomic-store__disclaimer">
+						{ disclaimerText }
+					</p>
 				</div>
 			</div>
 		);
