@@ -17,7 +17,6 @@ import Gridicon from 'gridicons';
  */
 import { getPostRevision } from 'state/selectors';
 import TextDiff from 'components/text-diff';
-import Button from 'components/button';
 import scrollTo from 'lib/scroll-to';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -89,9 +88,7 @@ class EditorDiffViewer extends PureComponent {
 	};
 
 	recomputeChanges = callback => {
-		const diffNodes = this.node.querySelectorAll(
-			'.editor-diff-viewer__additions, .editor-diff-viewer__deletions'
-		);
+		const diffNodes = this.node.querySelectorAll( '.text-diff__additions, .text-diff__deletions' );
 		this.setState(
 			{
 				changeOffsets: map( diffNodes, getCenterOffset ),
