@@ -35,6 +35,7 @@ class CalendarCard extends Component {
 		disabled: PropTypes.bool.isRequired,
 		isDefaultLocale: PropTypes.bool.isRequired,
 		onSubmit: PropTypes.func.isRequired,
+		signupForm: PropTypes.object.isRequired,
 		times: PropTypes.arrayOf( PropTypes.number ).isRequired,
 	};
 
@@ -51,7 +52,9 @@ class CalendarCard extends Component {
 	 */
 	getDayOfWeekString = date => {
 		const { translate } = this.props;
-		const today = moment().startOf( 'day' );
+		const today = moment()
+			.tz( this.props.signupForm.timezone )
+			.startOf( 'day' );
 		const dayOffset = today.diff( date.startOf( 'day' ), 'days' );
 
 		switch ( dayOffset ) {
@@ -65,7 +68,7 @@ class CalendarCard extends Component {
 
 	renderHeader = () => {
 		// The "Header" is that part of the foldable card that you click on to expand it.
-		const date = moment( this.props.date );
+		const date = moment( this.props.date ).tz( this.props.signupForm.timezone );
 
 		return (
 			<div className="concierge__calendar-card-header">
@@ -86,7 +89,7 @@ class CalendarCard extends Component {
 	};
 
 	render() {
-		const { isDefaultLocale, disabled, times, translate } = this.props;
+		const { isDefaultLocale, disabled, signupForm, times, translate } = this.props;
 		const description = isDefaultLocale
 			? translate( 'Sessions are 30 minutes long.' )
 			: translate( 'Sessions are 30 minutes long and in %(defaultLanguage)s.', {
@@ -114,7 +117,9 @@ class CalendarCard extends Component {
 					>
 						{ times.map( time => (
 							<option value={ time } key={ time }>
-								{ moment( time ).format( 'h:mma z' ) }
+								{ moment( time )
+									.tz( signupForm.timezone )
+									.format( 'h:mma z' ) }
 							</option>
 						) ) }
 					</FormSelect>
