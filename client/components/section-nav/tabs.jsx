@@ -43,8 +43,6 @@ class NavTabs extends Component {
 	};
 
 	componentDidMount() {
-		// eslint-disable-next-line
-		console.log( this.props.selectedText );
 		this.setDropdownAfterLayoutFlush();
 		window.addEventListener( 'resize', this.setDropdownDebounced );
 	}
