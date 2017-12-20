@@ -1,25 +1,32 @@
 /** @format */
 export const jetpackConnectAuthorizeSchema = {
-	type: 'object',
-	additionalProperties: false,
-	patternProperties: {
-		'^.+$': {
+	anyOf: [
+		{
 			type: 'object',
+			additionalProperties: false,
+			properties: {},
+		},
+		{
+			type: 'object',
+			additionalProperties: true,
 			required: [ 'timestamp' ],
 			properties: {
-				authorizationCode: { type: 'string ' },
-				authorizeError: { type: 'boolean' },
+				authorizationCode: { type: 'string' },
+				authorizeError: { type: [ 'boolean', 'null' ] },
 				authorizeSuccess: { type: 'boolean' },
+				bearerToken: { type: 'string' },
+				clientId: { type: 'integer' },
+				clientNotResponding: { type: 'boolean' },
 				isAuthorizing: { type: 'boolean' },
 				isRedirectingToWpAdmin: { type: 'boolean' },
 				plansUrl: { type: 'string' },
-				timestamp: { type: 'number' },
 				siteReceived: { type: 'boolean' },
-				clientId: { type: 'integer' },
+				timestamp: { type: 'integer' },
+				userAlreadyConnected: { type: 'boolean' },
+				userData: { type: 'object' },
 			},
-			additionalProperties: false,
 		},
-	},
+	],
 };
 
 export const jetpackAuthAttemptsSchema = {
@@ -29,8 +36,8 @@ export const jetpackAuthAttemptsSchema = {
 		'^.+$': {
 			type: 'object',
 			required: [ 'attempt', 'timestamp' ],
-			attempt: { type: 'number' },
-			timestamp: { type: 'number' },
+			attempt: { type: 'integer' },
+			timestamp: { type: 'integer' },
 		},
 	},
 };
