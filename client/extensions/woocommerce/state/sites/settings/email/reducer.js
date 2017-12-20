@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { filter, omit, isEmpty, setWith } from 'lodash';
 
 /**
@@ -31,9 +34,7 @@ export default createReducer( null, {
 		} );
 		const defaultEmail = isEmpty( fromAddress ) ? '' : fromAddress[ 0 ].default;
 		data.forEach( function( option ) {
-			const def = ( option.id === 'recipient' )
-				? ( option.default || defaultEmail )
-				: option.default;
+			const def = option.id === 'recipient' ? option.default || defaultEmail : option.default;
 			setWith(
 				options,
 				[ option.group_id, option.id ],
@@ -41,7 +42,7 @@ export default createReducer( null, {
 					value: option.value,
 					default: def,
 				},
-				Object,
+				Object
 			);
 		} );
 		return options;
@@ -57,19 +58,19 @@ export default createReducer( null, {
 		return settings;
 	},
 
-	[ WOOCOMMERCE_EMAIL_SETTINGS_SAVE_SETTINGS ]: ( state ) => {
+	[ WOOCOMMERCE_EMAIL_SETTINGS_SAVE_SETTINGS ]: state => {
 		const settings = Object.assign( {}, state );
 		settings.save = true;
 		return settings;
 	},
 
-	[ WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT ]: ( state ) => {
+	[ WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT ]: state => {
 		const settings = Object.assign( {}, omit( state, [ 'save' ] ) );
 		settings.isSaving = true;
 		return settings;
 	},
 
-	[ WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS ]: ( state ) => {
+	[ WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS ]: state => {
 		const settings = Object.assign( {}, omit( state, [ 'isSaving', 'error', 'invalidValue' ] ) );
 		return settings;
 	},
