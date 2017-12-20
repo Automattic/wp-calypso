@@ -6,7 +6,6 @@
 import {
 	bookConciergeAppointment,
 	requestConciergeAvailableTimes,
-	selectConciergeTimeSlot,
 	updateConciergeAvailableTimes,
 	updateConciergeBookingStatus,
 	updateConciergeSignupForm,
@@ -16,7 +15,6 @@ import {
 	CONCIERGE_AVAILABLE_TIMES_REQUEST,
 	CONCIERGE_AVAILABLE_TIMES_UPDATE,
 	CONCIERGE_BOOK_APPOINTMENT,
-	CONCIERGE_SELECT_TIME_SLOT,
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
 } from 'state/action-types';
@@ -48,17 +46,6 @@ describe( 'state/concierge', () => {
 			expect( requestConciergeAvailableTimes( scheduleId ) ).toEqual( {
 				type: CONCIERGE_AVAILABLE_TIMES_REQUEST,
 				scheduleId,
-			} );
-		} );
-
-		test( 'selectConciergeTimeSlot()', () => {
-			const day = 1234567890;
-			const timestamp = 1098765432;
-
-			expect( selectConciergeTimeSlot( day, timestamp ) ).toEqual( {
-				type: CONCIERGE_SELECT_TIME_SLOT,
-				day,
-				timestamp,
 			} );
 		} );
 
