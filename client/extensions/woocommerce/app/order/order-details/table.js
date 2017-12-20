@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { find, findIndex, get, noop } from 'lodash';
+import { find, findIndex, get, identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ import Button from 'components/button';
 import formatCurrency from 'lib/format-currency';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
-import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
+import { getCurrencyFormatDecimal, getCurrencyFormatString } from 'woocommerce/lib/currency';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
 	getOrderDiscountTax,
@@ -37,6 +37,7 @@ import ScreenReaderText from 'components/screen-reader-text';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+import Token from 'components/token-field/token';
 
 class OrderDetailsTable extends Component {
 	static propTypes = {
@@ -133,19 +134,36 @@ class OrderDetailsTable extends Component {
 		this.props.onChange( { shipping_lines: [ { ...shippingLine, total } ] } );
 	};
 
-	onDelete = ( id, type = 'line_items' ) => {
-		return () => {
-			const index = findIndex( this.props.order[ type ], { id } );
-			if ( index >= 0 ) {
-				let newItem;
-				if ( 'line_items' === type ) {
-					newItem = { id, quantity: 0, subtotal: 0 };
-				} else {
-					newItem = { id, name: null, total: 0 };
-				}
-				this.props.onChange( { [ type ]: { [ index ]: newItem } } );
+	onDelete = ( id, type = 'line_items' ) => () => {
+		const index = findIndex( this.props.order[ type ], { id } );
+		if ( index >= 0 ) {
+			let newItem;
+			if ( 'line_items' === type ) {
+				newItem = { id, quantity: 0, subtotal: 0 };
+			} else {
+				newItem = { id, name: null, total: 0 };
 			}
-		};
+			this.props.onChange( { [ type ]: { [ index ]: newItem } } );
+		}
+	};
+
+	removeCoupon = item => () => {
+		const { coupon_lines, currency, discount_tax, discount_total } = this.props.order;
+		const index = findIndex( coupon_lines, { id: item.id } );
+		const getCurrencyDecimal = value => getCurrencyFormatDecimal( value, currency );
+		if ( index >= 0 ) {
+			const newItem = { id: item.id, code: null, discount: 0 };
+			const newDiscountTotal =
+				getCurrencyDecimal( discount_total ) - getCurrencyDecimal( item.discount );
+			const newDiscountTax =
+				getCurrencyDecimal( discount_tax ) - getCurrencyDecimal( item.discount_tax );
+			const orderChanges = {
+				coupon_lines: { [ index ]: newItem },
+				discount_total: getCurrencyFormatString( newDiscountTotal, currency ),
+				discount_tax: getCurrencyFormatString( newDiscountTax, currency ),
+			};
+			this.props.onChange( orderChanges );
+		}
 	};
 
 	renderQuantity = item => {
@@ -262,14 +280,46 @@ class OrderDetailsTable extends Component {
 	};
 
 	renderCoupons = () => {
-		const { order, site, translate } = this.props;
+		const { isEditing, order, site, translate } = this.props;
 		const showTax = this.shouldShowTax();
 		const coupons = order.coupon_lines || [];
-		if ( parseFloat( order.discount_total ) <= 0 && ! order.coupon_lines.length ) {
+		const hasCoupons = parseFloat( order.discount_total ) > 0 || order.coupon_lines.length > 0;
+		if ( ! isEditing && ! hasCoupons ) {
 			return null;
 		}
 
+		if ( isEditing ) {
+			const couponMarkup = coupons.map( item => {
+				if ( ! item.code ) {
+					return null;
+				}
+				return (
+					<Token
+						key={ item.id }
+						value={ item.code }
+						displayTransform={ identity }
+						onClickRemove={ this.removeCoupon( item ) }
+					/>
+				);
+			} );
+
+			return (
+				<TableRow className="order-details__coupon-list">
+					<TableItem className="order-details__coupon-list-label" colSpan={ showTax ? 2 : 1 }>
+						<h3 className="order-details__coupon-list-title">{ translate( 'Coupons' ) }</h3>
+						<div className="order-details__coupon-list-tokens">{ couponMarkup }</div>
+					</TableItem>
+					<TableItem className="order-details__totals-value">
+						({ formatCurrency( order.discount_total, order.currency ) })
+					</TableItem>
+				</TableRow>
+			);
+		}
+
 		const couponMarkup = coupons.map( ( item, i ) => {
+			if ( ! item.code ) {
+				return null;
+			}
 			const meta = find( get( item, 'meta_data', [] ), { key: 'coupon_data' } );
 			// In rare cases this might not exist, so we'll check before showing a link.
 			const id = get( meta, 'value.id', false );

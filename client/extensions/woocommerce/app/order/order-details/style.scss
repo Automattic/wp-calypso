@@ -166,6 +166,10 @@
 			color: $gray-text-min;
 			font-style: italic;
 		}
+
+		.order-details__coupon-list-tokens {
+			display: flex;
+		}
 	}
 }
 
