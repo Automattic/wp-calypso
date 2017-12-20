@@ -30,6 +30,7 @@ class CalendarCard extends Component {
 	static propTypes = {
 		date: PropTypes.number.isRequired,
 		disabled: PropTypes.bool.isRequired,
+		isDefaultLocale: PropTypes.bool.isRequired,
 		onSubmit: PropTypes.func.isRequired,
 		times: PropTypes.arrayOf( PropTypes.number ).isRequired,
 	};
@@ -82,7 +83,10 @@ class CalendarCard extends Component {
 	};
 
 	render() {
-		const { disabled, times, translate } = this.props;
+		const { isDefaultLocale, disabled, times, translate } = this.props;
+		const description = isDefaultLocale
+			? translate( 'Sessions are 30 minutes long.' )
+			: translate( 'Sessions are 30 minutes long and in English.' );
 
 		return (
 			<FoldableCard
@@ -109,9 +113,7 @@ class CalendarCard extends Component {
 							</option>
 						) ) }
 					</FormSelect>
-					<FormSettingExplanation>
-						{ translate( 'Sessions are 30 minutes long.' ) }
-					</FormSettingExplanation>
+					<FormSettingExplanation>{ description }</FormSettingExplanation>
 				</FormFieldset>
 
 				<FormFieldset>
