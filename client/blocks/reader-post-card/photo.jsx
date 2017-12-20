@@ -81,6 +81,7 @@ PostPhoto.propTypes = {
 	title: PropTypes.string,
 	onClick: PropTypes.func,
 	expandCard: PropTypes.func,
+	shrinkCard: PropTypes.func,
 };
 
 PostPhoto.defaultProps = {
