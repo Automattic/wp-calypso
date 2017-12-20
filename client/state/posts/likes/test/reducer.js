@@ -323,6 +323,7 @@ describe( 'reducer', () => {
 					URL: 'https://example.com/',
 					login: 'chicken',
 					name: 'A Former Egg',
+					site_ID: 2,
 					some_other_property: 'aaaaa',
 				},
 			];
@@ -348,6 +349,7 @@ describe( 'reducer', () => {
 								URL: 'https://example.com/',
 								login: 'chicken',
 								name: 'A Former Egg',
+								site_ID: 2,
 							},
 						],
 						found: 2,
