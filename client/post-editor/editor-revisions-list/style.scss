@@ -38,12 +38,13 @@
 .editor-revisions-list__header {
 	$editor-revisions-list-header-height: 46px;
 	$editor-revisions-list-header-font-size: 16px;
-	padding: 0 16px;
 	height: $editor-revisions-list-header-height;
 	line-height: $editor-revisions-list-header-height;
 	color: $gray-text-min;
 	background: $white;
 	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
+	display: flex;
+	flex-direction: row;
 
 	.editor-revisions-list.is-loading & {
 		position: relative;
@@ -193,4 +194,46 @@
 .editor-revisions-list__minor-changes {
 	top: 8px;
 	color: $gray-text-min;
+}
+
+// Revision Counter & New Revisions Notification
+
+.revisions-counter {
+	position: relative;
+}
+
+.revisions-counter .count {
+	margin: 8px 6px;
+	border-radius: 24px;
+	line-height: 26px;
+	position: absolute;
+	right: 0;
+	transition: all 0.2s;
+	opacity: 1;
+}
+
+.revisions-counter__notification {
+	background: rgba(240, 130, 30, 0.96);
+	border-radius: 24px;
+	color: white;
+	line-height: 26px;
+	padding: 4px 12px;
+	margin: 6px;
+	display: flex;
+	flex: 1;
+	opacity: 0;
+	transition: all 0.1s;
+	transition-delay: 0.1s;
+	transform: translateY(20%);
+}
+
+.revisions-counter__show-notification {
+	.count {
+		opacity: 0;
+	}
+
+	.revisions-counter__notification {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }

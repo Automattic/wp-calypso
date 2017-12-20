@@ -77,6 +77,12 @@ export const receivePostRevisions = ( { diffs, postId, revisions, siteId } ) => 
 	siteId,
 } );
 
+export const loadPendingPostRevisions = ( { postId, siteId } ) => ( {
+	type: 'POST_REVISIONS_LOAD_PENDING',
+	postId,
+	siteId,
+} );
+
 export const selectPostRevision = revisionId => ( {
 	type: POST_REVISIONS_SELECT,
 	revisionId,
