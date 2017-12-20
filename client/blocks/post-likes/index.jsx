@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
+import Gridicon from 'gridicons';
 import QueryPostLikes from 'components/data/query-post-likes';
 import { isRequestingPostLikes, getPostLikes, countPostLikes } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -43,7 +44,12 @@ class PostLikes extends React.PureComponent {
 				onClick={ this.trackLikeClick }
 			>
 				<Gravatar user={ like } alt={ like.login } title={ like.login } size={ 24 } />
-				{ showDisplayNames && <span className="post-likes__display-name">{ like.name }</span> }
+				{ showDisplayNames && (
+					<span className="post-likes__display-name">
+						{ like.name }
+						<Gridicon className="post-likes__external-link-icon" icon="external" size={ 12 } />
+					</span>
+				) }
 			</a>
 		);
 	};

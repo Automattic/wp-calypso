@@ -36,6 +36,14 @@
 			text-overflow: ellipsis;
 		}
 
+		.post-likes__external-link-icon {
+			vertical-align: middle;
+			position: relative;
+			top: -1px;
+			color: lighten( $gray, 10% );
+			padding-left: 4px;
+		}
+
 		.post-likes__count:not( .is-loading ) {
 			margin: 12px 16px 12px 32px;
 		}
