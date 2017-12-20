@@ -24,7 +24,7 @@ const deepUpdateComments = ( state, comments, { offset = 0, postId, search, stat
 		...state,
 		[ parent ]: {
 			...parentObject,
-			[ status ]: {
+			[ filter ]: {
 				...filterObject,
 				[ pageNumber ]: commentIds,
 			},
@@ -32,7 +32,7 @@ const deepUpdateComments = ( state, comments, { offset = 0, postId, search, stat
 	};
 };
 
-const queries = ( state = {}, action ) => {
+export const queries = ( state = {}, action ) => {
 	if ( isUndefined( get( action, 'query.offset' ) ) ) {
 		return state;
 	}
