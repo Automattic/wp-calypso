@@ -27,7 +27,7 @@ const HelpContactClosed = ( { translate } ) => {
 									'we will get to it as fast as we can. Live chat will reopen on December 26th. Thank you!'
 							)
 						: translate(
-								'Live chat is closed today for for the Christmas holiday. If you need to get in touch with us, ' +
+								'Live chat is closed today for the Christmas holiday. If you need to get in touch with us, ' +
 									'you can submit a support request below and we will get to it as fast as we can. Live chat will ' +
 									'reopen on December 26. Thank you!'
 							) }
