@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 
 /**
@@ -58,36 +58,35 @@ class PriceInput extends Component {
 	};
 
 	render() {
-		const { currency, currencySetting, initialValue, siteId, value } = this.props;
-		const props = {
-			...omit( this.props, [
-				'currency',
-				'currencySetting',
-				'dispatch',
-				'initialValue',
-				'siteId',
-				'value',
-			] ),
-		};
+		const {
+			currency,
+			currencySetting,
+			initialValue,
+			siteId,
+			translate,
+			value,
+			...props
+		} = this.props;
+
 		const displayCurrency = ! currency && currencySetting ? currencySetting.value : currency;
 		const currencyObject = getCurrencyObject( value, displayCurrency );
 		let resetButton;
 		if ( initialValue ) {
 			resetButton = (
 				<Button onClick={ this.resetToInitial } compact borderless>
-					<Gridicon icon="undo" />
+					{ translate( 'Reset' ) }
 				</Button>
 			);
 		}
 		return (
-			<div>
+			<div className="price-input">
 				<QuerySettingsGeneral siteId={ siteId } />
 				{ currencyObject ? (
 					<FormCurrencyInput
 						currencySymbolPrefix={ currencyObject.symbol }
 						currencySymbolSuffix={ resetButton }
 						value={ this.state.value }
-						{ ...props }
+						{ ...omit( props, [ 'dispatch', 'moment', 'numberFormat' ] ) }
 					/>
 				) : (
 					<FormTextInput value={ this.state.value } { ...omit( props, [ 'noWrap', 'min' ] ) } />
@@ -106,4 +105,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps )( PriceInput );
+export default connect( mapStateToProps )( localize( PriceInput ) );
