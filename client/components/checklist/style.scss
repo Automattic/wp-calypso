@@ -166,6 +166,11 @@
 		font-size: 16px;
 	}
 
+	&-title-link:hover {
+		cursor: pointer;
+		color: $gray-dark;
+	}
+
 	&-description {
 		font-size: 14px;
 	}
