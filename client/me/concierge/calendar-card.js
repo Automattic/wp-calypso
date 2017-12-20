@@ -15,7 +15,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import { localize, moment } from 'i18n-calypso';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -26,25 +25,17 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { bookConciergeAppointment, selectConciergeTimeSlot } from 'state/concierge/actions';
-import {
-	getConciergeSignupForm,
-	getConciergeBookFormSelectedTimeSlots,
-	getConciergeBookFormStatus,
-} from 'state/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import {
-	WPCOM_CONCIERGE_SCHEDULE_ID,
-	CONCIERGE_STATUS_BOOKED,
-	CONCIERGE_STATUS_BOOKING,
-} from './constants';
 
 class CalendarCard extends Component {
 	static propTypes = {
-		site: PropTypes.object.isRequired,
 		date: PropTypes.number.isRequired,
+		disabled: PropTypes.bool.isRequired,
 		onSubmit: PropTypes.func.isRequired,
 		times: PropTypes.arrayOf( PropTypes.number ).isRequired,
+	};
+
+	state = {
+		selectedTime: this.props.times[ 0 ],
 	};
 
 	/**
@@ -83,39 +74,12 @@ class CalendarCard extends Component {
 	};
 
 	onChange = ( { target } ) => {
-		this.props.selectConciergeTimeSlot( this.props.date, target.value );
+		this.setState( { selectedTime: target.value } );
 	};
 
 	submitForm = () => {
-		const { signupForm } = this.props;
-		const timeSlots = this.props.selectedTimeSlots;
-		const meta = {
-			message: signupForm.message,
-			timezone: signupForm.timezone,
-		};
-
-		if ( timeSlots[ this.props.date ] ) {
-			this.props.bookConciergeAppointment(
-				WPCOM_CONCIERGE_SCHEDULE_ID,
-				timeSlots[ this.props.date ],
-				this.props.currentUserId,
-				this.props.site.ID,
-				meta
-			);
-		}
+		this.props.onSubmit( this.state.selectedTime );
 	};
-
-	componentWillMount() {
-		// pre-select first dropdown option
-		this.props.selectConciergeTimeSlot( this.props.date, this.props.times[ 0 ] );
-	}
-
-	componentWillUpdate( nextProps ) {
-		if ( nextProps.bookingStatus === CONCIERGE_STATUS_BOOKED ) {
-			// go to confirmation page if booking was successfull
-			this.props.onSubmit();
-		}
-	}
 
 	render() {
 		const { times, translate } = this.props;
@@ -133,7 +97,12 @@ class CalendarCard extends Component {
 					<FormLabel htmlFor="concierge-start-time">
 						{ translate( 'Choose a starting time' ) }
 					</FormLabel>
-					<FormSelect id="concierge-start-time" onChange={ this.onChange }>
+					<FormSelect
+						id="concierge-start-time"
+						disabled={ this.props.disabled }
+						onChange={ this.onChange }
+						value={ this.state.selectedTime }
+					>
 						{ times.map( time => (
 							<option value={ time } key={ time }>
 								{ moment( time ).format( 'h:mma z' ) }
@@ -146,11 +115,7 @@ class CalendarCard extends Component {
 				</FormFieldset>
 
 				<FormFieldset>
-					<Button
-						disabled={ this.props.bookingStatus === CONCIERGE_STATUS_BOOKING }
-						primary
-						onClick={ this.submitForm }
-					>
+					<Button disabled={ this.props.disabled } primary onClick={ this.submitForm }>
 						{ translate( 'Book this session' ) }
 					</Button>
 				</FormFieldset>
@@ -159,12 +124,4 @@ class CalendarCard extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		signupForm: getConciergeSignupForm( state ),
-		selectedTimeSlots: getConciergeBookFormSelectedTimeSlots( state ),
-		bookingStatus: getConciergeBookFormStatus( state ),
-		currentUserId: getCurrentUserId( state ),
-	} ),
-	{ bookConciergeAppointment, selectConciergeTimeSlot }
-)( localize( CalendarCard ) );
+export default localize( CalendarCard );

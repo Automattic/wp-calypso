@@ -6,12 +6,22 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize, moment } from 'i18n-calypso';
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
 import CalendarCard from './calendar-card';
 import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
+import { getConciergeSignupForm } from 'state/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { bookConciergeAppointment } from 'state/concierge/actions';
+import {
+	CONCIERGE_STATUS_BOOKING,
+	CONCIERGE_STATUS_BOOKED,
+	WPCOM_CONCIERGE_SCHEDULE_ID,
+} from './constants';
 
 const NUMBER_OF_DAYS_TO_SHOW = 7;
 
@@ -51,6 +61,29 @@ class CalendarStep extends Component {
 		site: PropTypes.object.isRequired,
 	};
 
+	onSubmit = timestamp => {
+		const { signupForm } = this.props;
+		const meta = {
+			message: signupForm.message,
+			timezone: signupForm.timezone,
+		};
+
+		this.props.bookConciergeAppointment(
+			WPCOM_CONCIERGE_SCHEDULE_ID,
+			timestamp,
+			this.props.currentUserId,
+			this.props.site.ID,
+			meta
+		);
+	};
+
+	componentWillUpdate( nextProps ) {
+		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
+			// go to confirmation page if booking was successfull
+			this.props.onComplete();
+		}
+	}
+
 	render() {
 		const { availableTimes, translate } = this.props;
 		const availability = groupAvailableTimesByDate( availableTimes );
@@ -67,9 +100,10 @@ class CalendarStep extends Component {
 					<CalendarCard
 						site={ this.props.site }
 						date={ date }
-						times={ times }
-						onSubmit={ this.props.onComplete }
+						disabled={ this.props.signupForm.status === CONCIERGE_STATUS_BOOKING }
 						key={ date }
+						onSubmit={ this.onSubmit }
+						times={ times }
 					/>
 				) ) }
 			</div>
@@ -77,4 +111,10 @@ class CalendarStep extends Component {
 	}
 }
 
-export default localize( CalendarStep );
+export default connect(
+	state => ( {
+		signupForm: getConciergeSignupForm( state ),
+		currentUserId: getCurrentUserId( state ),
+	} ),
+	{ bookConciergeAppointment }
+)( localize( CalendarStep ) );
