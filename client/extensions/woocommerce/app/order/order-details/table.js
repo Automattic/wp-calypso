@@ -265,6 +265,9 @@ class OrderDetailsTable extends Component {
 		const { order, site, translate } = this.props;
 		const showTax = this.shouldShowTax();
 		const coupons = order.coupon_lines || [];
+		if ( parseFloat( order.discount_total ) <= 0 && ! order.coupon_lines.length ) {
+			return null;
+		}
 
 		const couponMarkup = coupons.map( ( item, i ) => {
 			const meta = find( get( item, 'meta_data', [] ), { key: 'coupon_data' } );
