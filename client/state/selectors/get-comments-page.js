@@ -6,29 +6,21 @@
 import { get } from 'lodash';
 
 /**
- * Internal dependencies
- */
-import createSelector from 'lib/create-selector';
-
-/**
- * Returns a list of comment IDs for the requested page.
+ * Returns a list of comment IDs for the requested page and filters.
  *
  * @param {Object} state Redux state.
  * @param {Number} siteId Site identifier.
- * @param {Number} page Requested page.
- * @param {String} status Comments status filter.
- * @param {Number} [postId] Post identifier.
- * @param {String} [search] Search query.
- * @returns {Array} List of comment IDs for the requested page.
+ * @param {Object} query Filter parameters
+ * @param {Number} query.page Requested page.
+ * @param {Number} [query.postId] Post identifier.
+ * @param {String} [query.search] Search query.
+ * @param {String} query.status Comments status.
+ * @returns {Array} List of comment IDs for the requested page and filters.
  */
-export const getCommentsPage = createSelector(
-	( state, siteId, page = 1, status = 'all', postId, search ) => {
-		const parent = postId || 'site';
-		const filter = !! search ? `${ status }?s=${ search }` : status;
-		const siteComments = get( state, [ 'ui', 'comments', 'queries', siteId ] );
-		return get( siteComments, [ parent, filter, page ], [] );
-	},
-	( state, siteId ) => [ get( state, [ 'ui', 'comments', 'queries', siteId ] ) ]
-);
+export const getCommentsPage = ( state, siteId, { page = 1, postId, search, status = 'all' } ) => {
+	const parent = postId || 'site';
+	const filter = !! search ? `${ status }?s=${ search }` : status;
+	return get( state, [ 'ui', 'comments', 'queries', siteId, parent, filter, page ], [] );
+};
 
 export default getCommentsPage;
