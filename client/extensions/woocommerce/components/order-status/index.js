@@ -33,6 +33,9 @@ export class OrderStatus extends Component {
 				}
 				return translate( 'Paid in full' );
 			case 'completed':
+				if ( refunds.length > 0 ) {
+					return translate( 'Partially refunded' );
+				}
 				return translate( 'Paid in full' );
 			case 'cancelled':
 				return translate( 'Cancelled' );
