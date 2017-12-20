@@ -14,6 +14,7 @@ import {
 	emailSettingChange,
 	emailSettingsSaveSettings,
 	emailSettingsSubmitSettings,
+	emailSettingsInvalidValue,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import {
@@ -23,6 +24,7 @@ import {
 	WOOCOMMERCE_EMAIL_SETTINGS_SAVE_SETTINGS,
 	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT,
 	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS,
+	WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE,
 } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
 
@@ -253,6 +255,20 @@ describe( 'actions', () => {
 					siteId,
 					settings: data,
 				} );
+			} );
+		} );
+	} );
+
+	describe( '#emailSettingsInvalidValue()', () => {
+		test( 'should dispatch a action that will inform that settings are not valid', () => {
+			const dispatch = spy();
+			const siteId = 123;
+			emailSettingsInvalidValue( siteId, 'Something is wrong!' )( dispatch );
+
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE,
+				siteId,
+				reason: 'Something is wrong!',
 			} );
 		} );
 	} );

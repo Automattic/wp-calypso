@@ -102,10 +102,6 @@ const customerNotifications = [
 ];
 
 class Settings extends React.Component {
-	constructor( props ) {
-		super( props );
-	}
-
 	fetchSettings = props => {
 		const { siteId, fetchSettings } = props;
 		siteId && fetchSettings( siteId );
@@ -131,13 +127,19 @@ class Settings extends React.Component {
 			const areSettingsValid = validateSettings( settingsClean );
 			if ( nextProps.loaded ) {
 				if ( ! areSettingsValid ) {
-					nextProps.emailSettingsInvalidValue( nextProps.siteId, 'Invalid Values.' );
+					nextProps.emailSettingsInvalidValue(
+						nextProps.siteId,
+						'Email Settings are invalid: please correct.'
+					);
 					nextProps.errorNotice( translate( 'Please correct your Email settings and try again.' ) );
 				} else {
 					nextProps.submit( nextProps.siteId, nextProps.settings );
 				}
 			} else {
-				nextProps.emailSettingsInvalidValue( nextProps.siteId, 'Values not loaded.' );
+				nextProps.emailSettingsInvalidValue(
+					nextProps.siteId,
+					'Email Settings not loaded: please wait.'
+				);
 			}
 		}
 
