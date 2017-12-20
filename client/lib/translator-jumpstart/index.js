@@ -6,7 +6,6 @@
 
 import debugModule from 'debug';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import i18n from 'i18n-calypso';
 import { find } from 'lodash';
 
@@ -107,19 +106,17 @@ const communityTranslatorJumpstart = {
 			props[ 'data-plural' ] = optionsFromPage.plural;
 		}
 
-		// React.DOM.data returns a frozen object, therefore we make a copy so that we can modify it below
-		// const dataElement = Object.assign( {}, React.DOM.data( props, displayedTranslationFromPage ) );
+		// <data> returns a frozen object, therefore we make a copy so that we can modify it below
+		const dataElement = Object.assign(
+			{},
+			<data { ...props }>{ displayedTranslationFromPage }</data>
+		);
 
-		const dataElement = <data { ...props }> { displayedTranslationFromPage } </data>;
-
-		// eslint-disable-next-line
-		// console.log( dataElement );
-
-/*		// now we can override the toString function which would otherwise return [object Object]
+		// now we can override the toString function which would otherwise return [object Object]
 		dataElement.toString = () => displayedTranslationFromPage;
 
 		// freeze the object again to certify the same behavior as the original ReactElement object
-		Object.freeze( dataElement );*/
+		Object.freeze( dataElement );
 
 		return dataElement;
 	},
