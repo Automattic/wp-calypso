@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import { localize, moment } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -25,9 +26,22 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { bookConciergeAppointment, selectConciergeTimeSlot } from 'state/concierge/actions';
+import {
+	getConciergeSignupForm,
+	getConciergeBookFormSelectedTimeSlots,
+	getConciergeBookFormStatus,
+} from 'state/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import {
+	WPCOM_CONCIERGE_SCHEDULE_ID,
+	CONCIERGE_STATUS_BOOKED,
+	CONCIERGE_STATUS_BOOKING,
+} from './constants';
 
 class CalendarCard extends Component {
 	static propTypes = {
+		site: PropTypes.object.isRequired,
 		date: PropTypes.number.isRequired,
 		disabled: PropTypes.bool.isRequired,
 		onSubmit: PropTypes.func.isRequired,
@@ -124,4 +138,12 @@ class CalendarCard extends Component {
 	}
 }
 
-export default localize( CalendarCard );
+export default connect(
+	state => ( {
+		signupForm: getConciergeSignupForm( state ),
+		selectedTimeSlots: getConciergeBookFormSelectedTimeSlots( state ),
+		bookingStatus: getConciergeBookFormStatus( state ),
+		currentUserId: getCurrentUserId( state ),
+	} ),
+	{ bookConciergeAppointment, selectConciergeTimeSlot }
+)( localize( CalendarCard ) );
