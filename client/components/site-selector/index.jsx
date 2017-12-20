@@ -104,19 +104,17 @@ class SiteSelector extends Component {
 			return;
 		}
 
-		if ( ! this.highlightedSiteRef ) {
-			selectorElement.scrollTop = 0;
+		const highlightedSiteElem = document.body.querySelector(
+			'.site-selector .site.is-highlighted, .site-selector .all-sites.is-highlighted'
+		);
 
+		if ( ! highlightedSiteElem ) {
 			return;
 		}
 
-		const highlightedSiteElement = ReactDom.findDOMNode( this.highlightedSiteRef );
-
-		if ( highlightedSiteElement ) {
-			scrollIntoView( highlightedSiteElement, selectorElement, {
-				onlyScrollIfNeeded: true,
-			} );
-		}
+		scrollIntoView( highlightedSiteElem, selectorElement, {
+			onlyScrollIfNeeded: true,
+		} );
 	}
 
 	computeHighlightedSite() {
@@ -301,14 +299,6 @@ class SiteSelector extends Component {
 		return siteElements;
 	}
 
-	setHighlightedSiteRef = isHighlighted => component => {
-		if ( isHighlighted && component ) {
-			this.highlightedSiteRef = component;
-		} else if ( isHighlighted ) {
-			this.highlightedSiteRef = null;
-		}
-	};
-
 	renderAllSites() {
 		if ( this.props.showAllSites && ! this.props.sitesFound && this.props.allSitesPath ) {
 			this.visibleSites.push( ALL_SITES );
@@ -323,7 +313,6 @@ class SiteSelector extends Component {
 					onMouseEnter={ this.onAllSitesHover }
 					isHighlighted={ isHighlighted }
 					isSelected={ this.isSelected( ALL_SITES ) }
-					ref={ this.setHighlightedSiteRef( isHighlighted ) }
 				/>
 			);
 		}
@@ -347,7 +336,6 @@ class SiteSelector extends Component {
 				onMouseEnter={ this.onSiteHover }
 				isHighlighted={ isHighlighted }
 				isSelected={ this.isSelected( site ) }
-				ref={ this.setHighlightedSiteRef( isHighlighted ) }
 			/>
 		);
 	}
