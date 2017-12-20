@@ -81,7 +81,7 @@ class Plans extends Component {
 			this.redirect( '/jetpack/connect/plans' );
 		}
 		if ( ! this.props.canPurchasePlans ) {
-			if ( this.props.isCalypsoStartedConnection ) {
+			if ( this.props.calypsoStartedConnection ) {
 				this.redirect( CALYPSO_REDIRECTION_PAGE );
 			} else {
 				this.redirectToWpAdmin();
