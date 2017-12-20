@@ -9,12 +9,8 @@ import React from 'react';
 import classnames from 'classnames';
 import { omit } from 'lodash';
 
-export default class extends React.Component {
-	static displayName = 'LoggedOutFormLinkItem';
-
-	static propTypes = {
-		className: PropTypes.string,
-	};
+export default class LoggedOutFormLinkItem extends React.Component {
+	static propTypes = { className: PropTypes.string };
 
 	render() {
 		return (
