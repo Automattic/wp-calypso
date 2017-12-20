@@ -90,8 +90,8 @@ class CalendarCard extends Component {
 		const description = isDefaultLocale
 			? translate( 'Sessions are 30 minutes long.' )
 			: translate( 'Sessions are 30 minutes long and in %(defaultLanguage)s.', {
-					args: { defaultLanguage },
-				} );
+				args: { defaultLanguage },
+			} );
 
 		return (
 			<FoldableCard
