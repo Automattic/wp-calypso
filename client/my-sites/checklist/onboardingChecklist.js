@@ -18,7 +18,6 @@ const tasks = {
 		duration: '10 mins',
 		completedTitle: 'You updated your About page',
 		completedButtonText: 'Change',
-		url: '/page/$siteSlug/2',
 		image: '/calypso/images/stats/tasks/about.svg',
 		tour: 'checklistAboutPage',
 	},

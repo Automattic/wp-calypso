@@ -26,11 +26,23 @@ export const ChecklistAboutPageTour = makeTour(
 	<Tour name="checklistAboutPage" version="20171205" path="/non-existent-route" when={ noop }>
 		<Step
 			name="init"
-			placement="right"
+			placement="beside"
+			arrow="left-top"
+			target="side-menu-page"
 			style={ {
 				animationDelay: '0.7s',
 			} }
 		>
+			<p>First we need to navigate to the pages section.</p>
+			<Continue target="side-menu-page" step="choose-page" click hidden />
+		</Step>
+
+		<Step name="choose-page" placement="right">
+			<p>Now we click the title of the About Page (the page we want to edit).</p>
+			<Next step="about-page">Got it!</Next>
+		</Step>
+
+		<Step name="about-page" placement="right">
 			<p>
 				{ translate(
 					'The About Page is often the most visited page on a site. ' +
