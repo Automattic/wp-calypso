@@ -12,6 +12,8 @@ import {
 	WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
+// TODO: Rename setup choices to something like calypso preferences, to match the endpoint
+
 // TODO: Handle error
 
 export default createReducer(
@@ -26,7 +28,7 @@ export default createReducer(
 		},
 
 		[ WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS ]: ( state, { data } ) => {
-			return data;
+			return { ...state, ...data };
 		},
 	}
 );

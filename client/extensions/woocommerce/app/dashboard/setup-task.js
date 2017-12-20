@@ -13,8 +13,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import Button from 'components/button';
+import { recordTrack } from 'woocommerce/lib/analytics';
 
 class SetupTask extends Component {
 	static propTypes = {
@@ -37,7 +37,7 @@ class SetupTask extends Component {
 	};
 
 	track( analyticsProp ) {
-		analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
+		recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 			action: analyticsProp,
 		} );
 	}

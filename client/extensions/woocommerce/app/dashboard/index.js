@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,
@@ -61,7 +60,6 @@ class Dashboard extends Component {
 		siteId: PropTypes.number,
 		mailChimpConfigured: PropTypes.bool,
 		fetchOrders: PropTypes.func,
-		fetchSetupChoices: PropTypes.func,
 		requestSyncStatus: PropTypes.func,
 		setupChoicesLoading: PropTypes.bool,
 	};
@@ -85,7 +83,6 @@ class Dashboard extends Component {
 
 	fetchStoreData = () => {
 		const { siteId, productsLoaded } = this.props;
-		this.props.fetchSetupChoices( siteId );
 		this.props.fetchOrders( siteId );
 		this.props.requestSettings( siteId );
 
@@ -229,7 +226,6 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchOrders,
-			fetchSetupChoices,
 			fetchProducts,
 			requestSettings,
 		},

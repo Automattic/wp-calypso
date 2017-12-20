@@ -23,7 +23,6 @@ import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/pro
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
 import {
-	fetchSetupChoices,
 	setOptedOutOfShippingSetup,
 	setTriedCustomizerDuringInitialSetup,
 	setCheckedTaxSetup,
@@ -54,7 +53,6 @@ class SetupTasks extends Component {
 
 		if ( site && site.ID ) {
 			this.props.fetchPaymentMethods( site.ID );
-			this.props.fetchSetupChoices( site.ID );
 
 			if ( ! areProductsLoaded ) {
 				this.props.fetchProducts( site.ID, { page: 1 } );
@@ -69,7 +67,6 @@ class SetupTasks extends Component {
 		const oldSiteId = ( site && site.ID ) || null;
 
 		if ( newSiteId && oldSiteId !== newSiteId ) {
-			this.props.fetchSetupChoices( newSiteId );
 			if ( ! areProductsLoaded ) {
 				this.props.fetchProducts( newSiteId, { page: 1 } );
 			}
@@ -236,7 +233,6 @@ function mapDispatchToProps( dispatch ) {
 		{
 			fetchPaymentMethods,
 			fetchProducts,
-			fetchSetupChoices,
 			setOptedOutOfShippingSetup,
 			setCheckedTaxSetup,
 			setTriedCustomizerDuringInitialSetup,

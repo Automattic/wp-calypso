@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import {
 	getOptedOutOfShippingSetup,
 	getOptedOutofTaxesSetup,
@@ -26,6 +25,7 @@ import SetupTasks from './setup-tasks';
 import QueryShippingZones from 'woocommerce/components/query-shipping-zones';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import { areAnyShippingMethodsEnabled } from 'woocommerce/state/ui/shipping/zones/selectors';
+import { recordTrack } from 'woocommerce/lib/analytics';
 
 class SetupTasksView extends Component {
 	static propTypes = {
@@ -37,7 +37,7 @@ class SetupTasksView extends Component {
 
 	onFinished = event => {
 		event.preventDefault();
-		analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
+		recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 			action: 'finished',
 		} );
 		this.props.setFinishedInitialSetup( this.props.site.ID, true );

@@ -28,9 +28,8 @@ import {
 import Legend from 'components/chart/legend';
 import Tabs from 'my-sites/stats/stats-tabs';
 import Tab from 'my-sites/stats/stats-tabs/tab';
-import { UNITS } from 'woocommerce/app/store-stats/constants';
-import analytics from 'lib/analytics';
-import { chartTabs as tabs } from 'woocommerce/app/store-stats/constants';
+import { UNITS, chartTabs as tabs } from 'woocommerce/app/store-stats/constants';
+import { recordTrack } from 'woocommerce/lib/analytics';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
@@ -57,7 +56,7 @@ class StoreStatsChart extends Component {
 			selectedTabIndex: tab.index,
 		} );
 
-		analytics.tracks.recordEvent( 'calypso_woocommerce_stats_chart_tab_click', {
+		recordTrack( 'calypso_woocommerce_stats_chart_tab_click', {
 			tab: tabs[ tab.index ].attr,
 		} );
 	};

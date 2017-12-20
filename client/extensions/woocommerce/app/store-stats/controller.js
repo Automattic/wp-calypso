@@ -16,6 +16,7 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getQueryDate } from './utils';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
+import { recordTrack } from 'woocommerce/lib/analytics';
 
 function isValidParameters( context ) {
 	const validParameters = {
@@ -67,7 +68,7 @@ export default function StatsController( context, next ) {
 			break;
 	}
 	if ( tracksEvent ) {
-		analytics.tracks.recordEvent( tracksEvent, {
+		recordTrack( tracksEvent, {
 			unit: props.unit,
 			query_date: props.queryDate,
 			selected_date: props.selectedDate,
