@@ -76,11 +76,23 @@ class PostItem extends React.Component {
 		return this.inAllSitesModeWithMultipleUsers() || this.inSingleSiteModeWithMultipleUsers();
 	}
 
+	maybeScrollIntoView() {
+		const element = ReactDom.findDOMNode( this );
+		const viewportBottom = document.documentElement.clientHeight + window.scrollY;
+		const distanceFromBottom = viewportBottom - element.offsetTop;
+
+		if ( distanceFromBottom < 200 ) {
+			const desiredOffset = window.scrollY + ( 200 - distanceFromBottom );
+
+			window.scrollTo( 0, desiredOffset );
+		}
+	}
+
 	componentDidUpdate( prevProps ) {
 		const { hasExpandedContent } = this.props;
 
 		if ( ! prevProps.hasExpandedContent && hasExpandedContent ) {
-			ReactDom.findDOMNode( this ).scrollIntoView( false );
+			this.maybeScrollIntoView();
 		}
 	}
 
