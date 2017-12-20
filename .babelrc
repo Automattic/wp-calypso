@@ -13,6 +13,7 @@
 		"stage-2"
 	],
 	"plugins": [
+		"./inline-imports.js",
 		"add-module-exports",
 		"syntax-jsx",
 		"transform-export-extensions",

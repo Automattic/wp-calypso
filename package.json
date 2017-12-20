@@ -21,6 +21,7 @@
     "async": "0.9.0",
     "autoprefixer": "6.3.5",
     "autosize": "3.0.15",
+    "babel-cli": "6.26.0",
     "babel-core": "6.25.0",
     "babel-loader": "7.1.1",
     "babel-plugin-add-module-exports": "0.2.1",
