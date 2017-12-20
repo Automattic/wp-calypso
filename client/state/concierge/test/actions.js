@@ -3,40 +3,30 @@
 /**
  * Internal dependencies
  */
-import { requestConciergeShifts, updateConciergeShifts } from '../actions';
+import { requestConciergeAvailableTimes, updateConciergeAvailableTimes } from '../actions';
 
-import { CONCIERGE_SHIFTS_REQUEST, CONCIERGE_SHIFTS_UPDATE } from 'state/action-types';
+import {
+	CONCIERGE_AVAILABLE_TIMES_REQUEST,
+	CONCIERGE_AVAILABLE_TIMES_UPDATE,
+} from 'state/action-types';
 
 describe( 'state/concierge', () => {
 	describe( 'actions', () => {
-		test( 'requestConciergeShifts()', () => {
+		test( 'requestConciergeAvailableTimes()', () => {
 			const scheduleId = 123;
 
-			expect( requestConciergeShifts( scheduleId ) ).toEqual( {
-				type: CONCIERGE_SHIFTS_REQUEST,
+			expect( requestConciergeAvailableTimes( scheduleId ) ).toEqual( {
+				type: CONCIERGE_AVAILABLE_TIMES_REQUEST,
 				scheduleId,
 			} );
 		} );
 
-		test( 'updateConciergeShifts()', () => {
-			const shifts = [
-				{
-					begin_timestamp: 100,
-					end_timestamp: 300,
-					schedule_id: 123,
-					description: 'lovely shift 1',
-				},
-				{
-					begin_timestamp: 200,
-					end_timestamp: 400,
-					schedule_id: 123,
-					description: 'cute shift 2',
-				},
-			];
+		test( 'updateConciergeAvailableTimes()', () => {
+			const availableTimes = [ 111, 222, 333 ];
 
-			expect( updateConciergeShifts( shifts ) ).toEqual( {
-				type: CONCIERGE_SHIFTS_UPDATE,
-				shifts,
+			expect( updateConciergeAvailableTimes( availableTimes ) ).toEqual( {
+				type: CONCIERGE_AVAILABLE_TIMES_UPDATE,
+				availableTimes,
 			} );
 		} );
 	} );
