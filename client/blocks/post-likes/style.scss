@@ -1,3 +1,7 @@
+$post-like-padding: 3px;
+$post-like-width: 24px + $post-like-padding * 2;
+$post-likes-per-popover-row: 12;
+
 .post-likes {
 	font-size: 13px;
 
@@ -5,7 +9,7 @@
 		display: inline-block;
 		vertical-align: top;
 		text-decoration: none;
-		padding: 3px;
+		padding: $post-like-padding;
 
 		.gravatar {
 			display: block;
@@ -21,6 +25,10 @@
 			position: relative;
 			padding: 4px 16px 4px 8px;
 			border-bottom: 1px solid $gray-light;
+
+			&:last-child {
+				border-bottom-width: 0;
+			}
 			
 			.gravatar {
 				position: absolute;
@@ -51,7 +59,7 @@
 
 	.post-likes__count {
 		vertical-align: top;
-		margin: 6px 8px 2px 0;
+		margin: 6px 8px 4px 4px;
 		line-height: 14px;
 		border-radius: 12px;
 		display: inline-block;
@@ -64,21 +72,21 @@
 		&.is-loading {
 			border-color: transparent;
 			@include placeholder();
-			margin: 8px;
+			margin: 5px;
 		}
 	}
 }
 
 .post-likes-popover {
-
 	.post-likes {
-		max-width: 384px;
+		padding: $post-like-padding;
+		max-width: $post-like-width * $post-likes-per-popover-row;
 		max-height: 400px;
 		text-align: left;
 
 		&.has-display-names {
-			max-height: 340px;
 			max-width: 250px;
+			max-height: 340px;
 		}
 	}
 }
