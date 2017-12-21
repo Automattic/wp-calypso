@@ -15,15 +15,15 @@
 /**
  * Internal dependencies
  */
-import * as actionTypes from 'state/action-types';
+// import * as actionTypes from 'state/action-types';
 
 export const consoleDispatcher = next => ( ...args ) => {
 	const store = next( ...args );
 
 	if ( 'undefined' !== typeof window ) {
-		Object.assign( window, store, {
-			actionTypes,
-		} );
+		// Object.assign( window, store, {
+		// 	actionTypes,
+		// } );
 
 		Object.defineProperty( window, 'state', {
 			enumerable: true,

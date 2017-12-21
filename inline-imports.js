@@ -22,15 +22,11 @@ function transformIt( babel ) {
 		name: 'action-type-inliner',
 		visitor: {
 			ImportDeclaration( path, state ) {
-				const filename = state.file.opts.filename;
-
-				if ( ! /client\//.test( filename ) || /state\/selectors.js$/.test( filename ) ) {
-					return path.skip();
-				}
-
 				if ( path.node.source.value !== 'state/action-types' ) {
 					return path.skip();
 				}
+
+				const filename = state.file.opts.filename;
 
 				const myTypes = path.node.specifiers.filter( t.isImportSpecifier ).reduce( ( o, n ) => {
 					o[ n.local.name ] = n.imported.name;
