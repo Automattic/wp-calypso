@@ -17,7 +17,6 @@ import {
 	requestComment,
 	receiveCommentError,
 	receiveCommentSuccess,
-	removeCommentStatusErrorNotice,
 } from '../';
 import { COMMENTS_EDIT } from 'state/action-types';
 import {
@@ -45,7 +44,7 @@ describe( '#addComments', () => {
 	test( 'should dispatch a tree initialization action for no comments', () => {
 		addComments( { dispatch }, { query }, { comments: [] } );
 
-		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch.lastCall ).to.have.been.calledWith( {
 			type: 'COMMENTS_TREE_SITE_ADD',
 			siteId: query.siteId,
@@ -59,7 +58,7 @@ describe( '#addComments', () => {
 
 		addComments( { dispatch }, { query }, { comments } );
 
-		expect( dispatch ).to.have.been.calledOnce;
+		expect( dispatch ).to.have.been.calledTwice;
 		expect( dispatch.lastCall ).to.have.been.calledWith(
 			receiveCommentsAction( {
 				siteId: query.siteId,
@@ -78,7 +77,7 @@ describe( '#addComments', () => {
 
 		addComments( { dispatch }, { query }, { comments } );
 
-		expect( dispatch ).to.have.been.calledTwice;
+		expect( dispatch ).to.have.been.calledThrice;
 
 		expect( dispatch ).to.have.been.calledWithMatch( {
 			postId: 1,
@@ -251,18 +250,6 @@ describe( '#editComment', () => {
 				}
 			)
 		);
-	} );
-} );
-
-describe( '#removeCommentStatusErrorNotice', () => {
-	let dispatch;
-
-	beforeEach( () => ( dispatch = spy() ) );
-
-	test( 'should dispatch a remove notice action', () => {
-		removeCommentStatusErrorNotice( { dispatch }, { commentId: 123 } );
-
-		expect( dispatch ).to.have.been.calledWith( removeNotice( 'comment-notice-error-123' ) );
 	} );
 } );
 

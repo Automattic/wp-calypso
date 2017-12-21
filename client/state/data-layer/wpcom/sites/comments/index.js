@@ -171,13 +171,13 @@ export const addComments = (
 	// via `fetchCommentsList` instead of `fetchCommentsTreeForSite`.
 	// @see https://github.com/Automattic/wp-calypso/pull/16997#discussion_r132161699
 	if ( 0 === comments.length ) {
+		dispatch( updateCommentsQuery( siteId, [], { page, postId, search, status } ) );
 		dispatch( {
 			type: COMMENTS_TREE_SITE_ADD,
 			siteId,
 			status,
 			tree: [],
 		} );
-		dispatch( updateCommentsQuery( siteId, [], { page, postId, search, status } ) );
 		return;
 	}
 
@@ -242,7 +242,7 @@ export const editComment = ( { dispatch, getState }, action ) => {
 };
 
 export const updateComment = ( store, action, data ) => {
-	removeCommentStatusErrorNotice( store, action );
+	store.dispatch( removeNotice( `comment-notice-error-${ action.commentId }` ) );
 	store.dispatch(
 		bypassDataLayer( {
 			...omit( action, [ 'originalComment' ] ),
