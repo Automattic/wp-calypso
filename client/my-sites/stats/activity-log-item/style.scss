@@ -40,6 +40,10 @@
 
 	.foldable-card__secondary {
 		flex-grow: 0;
+
+		.foldable-card__summary-expanded {
+			margin-right: 0;
+		}
 	}
 
 	&.is-discarded {
@@ -234,5 +238,12 @@
 
 	@include breakpoint( '<960px' ) {
 		margin-top: 8px;
+	}
+}
+
+.activity-log-item__action {
+	.split-button {
+		/* 8 x 15 so split button doesn't break */
+		min-width: 128px;
 	}
 }
