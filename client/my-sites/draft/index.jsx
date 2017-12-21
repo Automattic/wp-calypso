@@ -16,14 +16,12 @@ import { flow, noop } from 'lodash';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Gravatar from 'components/gravatar';
 import Gridicon from 'gridicons';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
-import SiteIcon from 'blocks/site-icon';
 import actions from 'lib/posts/actions';
 import photon from 'photon';
 import touchDetect from 'lib/touch-detect';
@@ -31,10 +29,10 @@ import updatePostStatus from 'components/update-post-status';
 import utils from 'lib/posts/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
+import TimeSince from 'components/time-since';
 
 class Draft extends Component {
 	static propTypes = {
-		showAllActions: PropTypes.bool,
 		post: PropTypes.object,
 		isPlaceholder: PropTypes.bool,
 		onTitleClick: PropTypes.func,
@@ -57,14 +55,8 @@ class Draft extends Component {
 	};
 
 	state = {
-		fullImage: false,
 		showPopoverMenu: false,
-		isRestoring: false,
 		hasError: false,
-	};
-
-	toggleImageState = () => {
-		this.setState( { fullImage: ! this.state.fullImage } );
 	};
 
 	trashPost = () => {
@@ -167,59 +159,34 @@ class Draft extends Component {
 		}
 
 		const classes = classnames( 'draft', `is-${ post.format }`, {
-			'has-all-actions': this.props.showAllActions,
 			'has-image': !! image,
-			'is-image-expanded': this.state.fullImage,
-			'is-trashed': this.props.post.status === 'trash' || this.state.isTrashing,
 			'is-placeholder': this.props.isPlaceholder,
-			'is-restoring': this.state.isRestoring,
 			'is-touch': touchDetect.hasTouch(),
 			'is-selected': this.props.selected,
 		} );
 
 		const title = post.title || (
-			<span className="draft__untitled">{ this.props.translate( 'Untitled' ) }</span>
+			<span className="draft__empty-text">{ this.props.translate( 'Untitled' ) }</span>
 		);
 
 		// Render each Post
 		return (
-			<CompactCard className={ classes } key={ 'draft-' + post.ID }>
-				{ this.showStatusChange() }
-				<h3 className="draft__title">
-					{ post.status === 'pending' && (
-						<span className="draft__pending-label">{ this.props.translate( 'Pending' ) }</span>
-					) }
-					{ this.props.showAuthor && <Gravatar user={ post.author } size={ 22 } /> }
-					<a href={ editPostURL } onClick={ this.props.onTitleClick }>
-						{ title }
-					</a>
-				</h3>
-				{ post.excerpt && (
-					<span className="draft__excerpt">
-						<a href={ editPostURL } onClick={ this.props.onTitleClick }>
-							{ post.excerpt }
-						</a>
-					</span>
-				) }
-				{ this.props.selectedSiteId ? this.draftActions() : <SiteIcon site={ site } size={ 32 } /> }
+			<CompactCard
+				className={ classes }
+				key={ 'draft-' + post.ID }
+				href={ editPostURL }
+				onClick={ this.props.onTitleClick }
+			>
+				<h3 className="draft__title">{ title }</h3>
+				<TimeSince className="draft__time" date={ post.modified } />
 				{ image ? this.renderImage( imageUrl ) : null }
-				{ this.props.post.status === 'trash' ? this.restoreButton() : null }
 			</CompactCard>
 		);
 	}
 
 	renderImage( image ) {
-		let style;
-
-		if ( ! this.state.fullImage ) {
-			style = { backgroundImage: 'url(' + image + ')' };
-		}
-
-		return (
-			<div className="draft__featured-image" style={ style } onClick={ this.toggleImageState }>
-				{ this.state.fullImage && <img className="draft__image" src={ image } /> }
-			</div>
-		);
+		const style = { backgroundImage: 'url(' + image + ')' };
+		return <div className="draft__featured-image" style={ style } />;
 	}
 
 	restoreButton() {
