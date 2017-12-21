@@ -12,15 +12,12 @@ import { localize } from 'i18n-calypso';
 
 // Internal dependencies
 import Button from 'components/button';
-import observe from 'lib/mixins/data-observe';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 const AddProfileLinksButtons = createReactClass( {
 	displayName: 'AddProfileLinksButtons',
-
-	mixins: [ observe( 'userProfileLinks' ) ],
 
 	propTypes: {
 		showingForm: PropTypes.bool,

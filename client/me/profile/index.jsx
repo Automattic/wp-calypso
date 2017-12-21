@@ -28,7 +28,6 @@ import ProfileLinks from 'me/profile-links';
 import ReauthRequired from 'me/reauth-required';
 import SectionHeader from 'components/section-header';
 import twoStepAuthorization from 'lib/two-step-authorization';
-import userProfileLinks from 'lib/user-profile-links';
 import { protectForm } from 'lib/protect-form';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
@@ -159,7 +158,7 @@ const Profile = createReactClass( {
 					</p>
 				</Card>
 
-				<ProfileLinks userProfileLinks={ userProfileLinks } />
+				<ProfileLinks />
 			</Main>
 		);
 	},
