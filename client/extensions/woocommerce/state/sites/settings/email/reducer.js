@@ -49,7 +49,7 @@ export default createReducer( null, {
 	},
 
 	[ WOOCOMMERCE_EMAIL_SETTINGS_CHANGE ]: ( state, { setting } ) => {
-		if ( ! setting ) {
+		if ( ! setting && ! setting.setting && ! setting.option ) {
 			return state;
 		}
 
