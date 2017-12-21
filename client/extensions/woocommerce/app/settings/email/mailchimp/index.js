@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import { connect } from 'react-redux';
 import { filter, matches } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -12,7 +15,10 @@ import React from 'react';
  */
 import { getPlugins, isRequestingForSites } from 'state/plugins/installed/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { mailChimpSettings, isRequestingSettings } from 'woocommerce/state/sites/settings/mailchimp/selectors';
+import {
+	mailChimpSettings,
+	isRequestingSettings,
+} from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import MailChimpGettingStarted from './getting-started';
 import MailChimpSetup from './setup-mailchimp';
 import MailChimpDashboard from './mailchimp_dashboard';
@@ -30,40 +36,48 @@ class MailChimp extends React.Component {
 
 	startWizard = () => {
 		this.setState( { setupWizardStarted: true } );
-	}
+	};
 
-	closeWizard = ( status ) => {
+	closeWizard = status => {
 		this.setState( { setupWizardStarted: false, wizardCompleted: 'wizard-completed' === status } );
-	}
+	};
 
 	closeSetupFinishNotice = () => {
 		this.setState( { wizardCompleted: false } );
-	}
+	};
 
 	render() {
-		const { dashboardView, hasMailChimp, isRequestingMailChimpSettings,
-			isRequestingPlugins, onChange, siteId, site, settings } = this.props;
+		const {
+			dashboardView,
+			hasMailChimp,
+			isRequestingMailChimpSettings,
+			isRequestingPlugins,
+			onChange,
+			siteId,
+			site,
+			settings,
+		} = this.props;
 		const { setupWizardStarted } = this.state;
-		const isRequestingData = ( isRequestingMailChimpSettings || isRequestingPlugins );
-		const mailChimpIsReady = ! isRequestingData &&
-			( settings && settings.active_tab === 'sync' );
-		const gettingStarted = ! setupWizardStarted && ! isRequestingData &&
-			( settings && settings.active_tab !== 'sync' );
+		const isRequestingData = isRequestingMailChimpSettings || isRequestingPlugins;
+		const mailChimpIsReady = ! isRequestingData && ( settings && settings.active_tab === 'sync' );
+		const gettingStarted =
+			! setupWizardStarted && ! isRequestingData && ( settings && settings.active_tab !== 'sync' );
 
 		// Special case for store dashboard where we want to only show MailChimpGetingStarted in case
 		// when user has not finished settup. We show nothing in other cases.
 		if ( dashboardView ) {
 			return (
 				<div className="mailchimp">
-					{ ( ! isRequestingMailChimpSettings ) && ( settings && settings.active_tab !== 'sync' ) &&
-						<MailChimpGettingStarted
-							siteId={ siteId }
-							site={ site }
-							isPlaceholder={ isRequestingData }
-							onClick={ this.startWizard }
-							redirectToSettings
-						/>
-					}
+					{ ! isRequestingMailChimpSettings &&
+						( settings && settings.active_tab !== 'sync' ) && (
+							<MailChimpGettingStarted
+								siteId={ siteId }
+								site={ site }
+								isPlaceholder={ isRequestingData }
+								onClick={ this.startWizard }
+								redirectToSettings
+							/>
+						) }
 				</div>
 			);
 		}
@@ -72,28 +86,30 @@ class MailChimp extends React.Component {
 			<div className="mailchimp">
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				<QueryMailChimpSettings siteId={ siteId } />
-				{ ( isRequestingData || gettingStarted ) &&
+				{ ( isRequestingData || gettingStarted ) && (
 					<MailChimpGettingStarted
 						siteId={ siteId }
 						site={ site }
 						isPlaceholder={ isRequestingData }
 						onClick={ this.startWizard }
 					/>
-				}
-				{ mailChimpIsReady &&
+				) }
+				{ mailChimpIsReady && (
 					<MailChimpDashboard
 						siteId={ siteId }
 						wizardCompleted={ this.state.wizardCompleted }
 						onChange={ onChange }
-						onNoticeExit={ this.closeSetupFinishNotice } /> }
-				{ setupWizardStarted &&
+						onNoticeExit={ this.closeSetupFinishNotice }
+					/>
+				) }
+				{ setupWizardStarted && (
 					<MailChimpSetup
-							hasMailChimp={ hasMailChimp }
-							settings={ settings }
-							siteId={ siteId }
-							onClose={ this.closeWizard }
-						/>
-				}
+						hasMailChimp={ hasMailChimp }
+						settings={ settings }
+						siteId={ siteId }
+						onClose={ this.closeWizard }
+					/>
+				) }
 			</div>
 		);
 	}
