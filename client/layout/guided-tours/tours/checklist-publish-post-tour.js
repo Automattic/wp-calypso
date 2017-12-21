@@ -40,9 +40,8 @@ export const ChecklistPublishPostTour = makeTour(
 		>
 			<p>
 				{ translate(
-					'It’s time to get your blog rolling with your first post. ' +
-						'Let’s welcome your audience with a brief introduction describing what your blog is about ' +
-						'and how often you intend on posting.'
+					'It’s time to get your blog rolling with your first post. Let’s replace the default copy ' +
+						'with a brief introduction describing what your blog is about and how often you intend on posting.'
 				) }
 			</p>
 			<ButtonRow>
@@ -60,8 +59,13 @@ export const ChecklistPublishPostTour = makeTour(
 		>
 			<p>
 				{ translate(
-					'Categories and Tags not only help organize your content but also bring people to your site via the Reader. ' +
-						'Pick one or two descriptive tags about your post for it to start showing up to other users in the Reader.'
+					'Categories and Tags not only help organize your content but also bring people to' +
+						' your site via the Reader. Click on the {{b}}Categories and Tags{{/b}} section' +
+						' to expand it and pick one or two descriptive tags about your post for it to' +
+						' start showing up to other users in the Reader.',
+					{
+						components: { b: <strong /> },
+					}
 				) }
 			</p>
 			<ButtonRow>
@@ -80,7 +84,7 @@ export const ChecklistPublishPostTour = makeTour(
 				<p>
 					{ translate(
 						'Featured images are a great way to add more personality to your pages. ' +
-							'Let’s add something a little more relevant to your About page text.'
+							'Let’s add something a little more relevant to your blog post.'
 					) }
 				</p>
 				<p>{ translate( 'Press anywhere on this image so we can change it.' ) }</p>
@@ -105,7 +109,7 @@ export const ChecklistPublishPostTour = makeTour(
 		>
 			<Continue target="dialog-base-action-confirm" step="click-update" click>
 				{ translate(
-					'We’re all set, press {{b}}Set Featured Image{{/b}} to add this image to your page.',
+					'We’re all set, press {{b}}Set Featured Image{{/b}} to add this image to your blog post.',
 					{
 						components: { b: <strong /> },
 					}
