@@ -30,7 +30,6 @@ class MasterbarDrafts extends Component {
 	static propTypes = {
 		user: PropTypes.object,
 		isActive: PropTypes.bool,
-		isEditor: PropTypes.bool,
 		className: PropTypes.string,
 		tooltip: PropTypes.string,
 		selectedSite: PropTypes.object,

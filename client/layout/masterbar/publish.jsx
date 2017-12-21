@@ -96,7 +96,7 @@ class MasterbarItemNew extends React.Component {
 						position={ this.getPopoverPosition() }
 					/>
 				</MasterbarItem>
-				<AsyncLoad require="layout/masterbar/drafts" isEditor={ false } placeholder={ null } />
+				<AsyncLoad require="layout/masterbar/drafts" placeholder={ null } />
 			</div>
 		);
 	}
