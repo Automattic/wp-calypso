@@ -143,8 +143,8 @@ const ProfileLinks = createReactClass( {
 	},
 
 	renderProfileLinks() {
-		const initialized = this.props.profileLinks !== null,
-			countLinks = initialized ? this.props.profileLinks.length : 0;
+		const initialized = this.props.profileLinks !== null;
+		const countLinks = initialized ? this.props.profileLinks.length : 0;
 		let links;
 
 		if ( ! initialized ) {
