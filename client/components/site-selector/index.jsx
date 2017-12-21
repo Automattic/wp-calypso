@@ -98,15 +98,19 @@ class SiteSelector extends Component {
 	}
 
 	scrollToHighlightedSite() {
-		const selectorElement = ReactDom.findDOMNode( this.refs.selector );
+		if ( ! this.siteSelectorRef ) {
+			return;
+		}
+
+		const selectorElement = ReactDom.findDOMNode( this.siteSelectorRef );
 
 		if ( ! selectorElement ) {
 			return;
 		}
 
 		// Note: Update CSS selectors if the class names change.
-		const highlightedSiteElem = document.body.querySelector(
-			'.site-selector .site.is-highlighted, .site-selector .all-sites.is-highlighted'
+		const highlightedSiteElem = selectorElement.querySelector(
+			'.site.is-highlighted, .site-selector .all-sites.is-highlighted'
 		);
 
 		if ( ! highlightedSiteElem ) {
@@ -188,7 +192,11 @@ class SiteSelector extends Component {
 		const handledByHost = this.props.onSiteSelect( siteId );
 		this.props.onClose( event, siteId );
 
-		const node = ReactDom.findDOMNode( this.refs.selector );
+		if ( ! this.siteSelectorRef ) {
+			return;
+		}
+
+		const node = ReactDom.findDOMNode( this.siteSelectorRef );
 		if ( node ) {
 			node.scrollTop = 0;
 		}
@@ -258,6 +266,8 @@ class SiteSelector extends Component {
 	shouldShowGroups() {
 		return this.props.groups;
 	}
+
+	setSiteSelectorRef = component => ( this.siteSelectorRef = component );
 
 	renderSites() {
 		let sites;
@@ -366,7 +376,6 @@ class SiteSelector extends Component {
 	render() {
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 
-		// Note: Update CSS selectors in scrollToHighlightedSite() if the class names change.
 		const selectorClass = classNames( 'site-selector', 'sites-list', this.props.className, {
 			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
 			'is-single': this.props.visibleSiteCount === 1,
@@ -391,7 +400,7 @@ class SiteSelector extends Component {
 					onSearchClose={ this.props.onClose }
 					onKeyDown={ this.onKeyDown }
 				/>
-				<div className="site-selector__sites" ref="selector">
+				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }
 					{ this.renderRecentSites() }
 					{ this.renderSites() }
