@@ -1,8 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- * @format
  */
-
 import { translate } from 'i18n-calypso';
 import emailValidator from 'email-validator';
 import { map, matches, reject, some, omit, pick, every, has } from 'lodash';
