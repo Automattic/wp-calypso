@@ -14,7 +14,7 @@ describe( 'persistence', () => {
 
 		reducer( reducer( initialState, { type: SERIALIZE } ), { type: DESERIALIZE } );
 
-		expect( consoleErrorSpy.mock.calls ).toHaveLength( 0 );
-		expect( consoleWarnSpy.mock.calls ).toHaveLength( 0 );
+		expect( consoleErrorSpy ).not.toHaveBeenCalled();
+		expect( consoleWarnSpy ).not.toHaveBeenCalled();
 	} );
 } );
