@@ -10,6 +10,7 @@ import { localize, moment } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -39,7 +40,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		expiryDate: '',
 		expiryDateNew: '',
 		expiryDateOk: true,
-		inInitialRegistrationPeriod: true,
+		inInitialRegistrationPeriod: false,
 		loading: true,
 		losingRegistrar: '',
 		losingRegistrarIanaId: '',
@@ -68,52 +69,34 @@ class TransferDomainPrecheck extends React.PureComponent {
 		this.props.setValid( domain, supportsPrivacy );
 	};
 
-	refreshStatus = () => {
+	goToMapDomainStep = event => {
+		event.preventDefault();
+		page( paths.domainMapping( this.props.selectedSite.slug, this.props.domain ) );
+	};
+
+	registrationPeriodIsOk = () =>
+		this.state.loading || ( ! this.state.inInitialRegistrationPeriod && this.state.expiryDateOk );
+
+	refreshStatus = ( proceedToNextStep = true ) => {
 		this.setState( { loading: true } );
 
 		checkInboundTransferStatus( this.props.domain, ( error, result ) => {
-			const { currentStep } = this.state;
-			let stepToCheck = currentStep;
-
 			if ( ! isEmpty( error ) ) {
 				return;
 			}
 
-			if ( 1 === stepToCheck ) {
-				if ( ! result.in_initial_registration_period ) {
-					stepToCheck++;
-				} else {
-					this.showStep( 1 );
-				}
-			}
-
-			if ( 2 === stepToCheck ) {
-				if ( result.unlocked ) {
-					stepToCheck++;
-				} else {
-					this.showStep( 2 );
-				}
-			}
-
-			if ( 3 === stepToCheck ) {
-				this.showStep( 3 );
-			}
-
-			if ( 4 === stepToCheck ) {
-				this.showStep( 4 );
+			if ( proceedToNextStep && result.unlocked ) {
+				this.showNextStep();
 			}
 
 			// Reset steps if domain became locked again
-			if ( ! result.unlocked && this.state.currentStep > 2 ) {
+			if ( ! result.unlocked ) {
 				this.resetSteps();
 			}
 
 			this.setState( {
 				creationDate: result.creation_date,
-				daysTransferLocked: result.days_transfer_locked,
 				email: result.admin_email,
-				expiryDate: result.registry_expiry_date,
-				expiryDateNew: result.new_expiry_date,
 				expiryDateOk: result.new_expiry_date_ok,
 				inInitialRegistrationPeriod: result.in_initial_registration_period,
 				loading: false,
@@ -127,15 +110,14 @@ class TransferDomainPrecheck extends React.PureComponent {
 		} );
 	};
 
-	resetSteps = () => {
-		if ( this.state.currentStep !== 2 ) {
-			this.setState( { currentStep: 2 } );
-		}
+	refreshStatusOnly = () => {
+		this.refreshStatus( false );
 	};
 
-	showStep = step => {
-		this.props.recordNextStep( this.props.domain, step );
-		this.setState( { currentStep: step } );
+	resetSteps = () => {
+		if ( this.state.currentStep !== 1 ) {
+			this.setState( { currentStep: 1 } );
+		}
 	};
 
 	showNextStep = () => {
@@ -163,24 +145,21 @@ class TransferDomainPrecheck extends React.PureComponent {
 							<strong>{ heading }</strong>
 							{ isStepFinished && stepStatus }
 						</div>
-						{ isAtCurrentStep &&
-							message && (
-								<div>
-									<div className="transfer-domain-step__section-message">{ message }</div>
-									{ buttonText && (
-										<div className="transfer-domain-step__section-action">
-											<Button
-												compact
-												onClick={ unlocked ? this.showNextStep : this.refreshStatus }
-												busy={ loading }
-											>
-												{ buttonText }
-											</Button>
-											{ stepStatus }
-										</div>
-									) }
+						{ isAtCurrentStep && (
+							<div>
+								<div className="transfer-domain-step__section-message">{ message }</div>
+								<div className="transfer-domain-step__section-action">
+									<Button
+										compact
+										onClick={ unlocked ? this.showNextStep : this.refreshStatus }
+										busy={ loading }
+									>
+										{ buttonText }
+									</Button>
+									{ stepStatus }
 								</div>
-							) }
+							</div>
+						) }
 					</div>
 				</div>
 			</Card>
@@ -188,111 +167,110 @@ class TransferDomainPrecheck extends React.PureComponent {
 	}
 
 	getRegistrationPeriodMessage() {
-		const { translate, selectedSite, domain } = this.props;
+		const { translate, domain } = this.props;
 		const {
 			creationDate,
-			currentStep,
-			daysTransferLocked,
-			expiryDate,
-			expiryDateNew,
 			expiryDateOk,
 			inInitialRegistrationPeriod,
 			loading,
 			termMaximumInYears,
 			transferEligibleDate,
 		} = this.state;
-		const step = 1;
-		const isStepFinished = currentStep > step;
+
 		const dateFormat = translate( 'MMM D, YYYY', {
 			comment:
 				'Short month, day and year, like "Dec 5, 2017". This is a moment.js formatted string, ' +
 				'see http://momentjs.com/docs/#/displaying/format/',
 		} );
 
-		let heading = translate( 'Domain registration period check.' );
-		let message = null;
-		let classes = 'transfer-domain-step__lock-status transfer-domain-step__unlocked';
-		let statusText = translate( 'Domain registration period is ok.' );
-		let icon = 'checkmark';
+		let heading = translate(
+			'{{strong}}%(domain)s{{/strong}} can be transferred %(transferDelayInDays)s.',
+			{
+				args: {
+					domain: domain,
+					transferDelayInDays: moment( transferEligibleDate ).fromNow(),
+				},
+				components: {
+					strong: <strong />,
+				},
+			}
+		);
+
+		let message = translate(
+			"You don't have to wait though. Connect your domain to your site now, without transferring it. " +
+				'{{a}}Learn how{{/a}}.',
+			{
+				components: {
+					a: <a href={ support.MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
+				},
+			}
+		);
+
+		let reason = null;
 
 		if ( false === expiryDateOk ) {
-			heading = translate( 'Domain registration exceeds maximum term.' );
-			message = translate(
-				'Transferring this domain to WordPress.com would extend the current expiration date from %(expiryDate)s to ' +
-					'%(expiryDateNew)s. This exceeds the maximum registration term of %(termMaximumInYears)d years. You can ' +
-					'still make your domain work with WordPress.com by {{a}}mapping it{{/a}}.',
+			reason = translate(
+				'Transferring this domain would extend the registration period beyond the maximum allowed term ' +
+					'of %(termMaximumInYears)d years. It can be transferred starting %(transferEligibleDate)s.',
 				{
 					args: {
 						termMaximumInYears: termMaximumInYears,
-						expiryDate: moment( expiryDate ).format( dateFormat ),
-						expiryDateNew: moment( expiryDateNew ).format( dateFormat ),
-					},
-					components: {
-						a: (
-							<a
-								href={ paths.domainMapping( selectedSite.slug, domain ) }
-								rel="noopener noreferrer"
-								target="_blank"
-							/>
-						),
+						transferEligibleDate: moment( transferEligibleDate ).format( dateFormat ),
 					},
 				}
 			);
-			classes = 'transfer-domain-step__lock-status transfer-domain-step__locked';
-			icon = 'cross';
 		} else if ( true === inInitialRegistrationPeriod ) {
-			heading = translate( 'Domain was registered less than %(daysTransferLocked)d days ago.', {
-				args: {
-					daysTransferLocked: daysTransferLocked,
-				},
-			} );
-			message = translate(
-				'Your domain was registered on %(creationDate)s. Your domain must be registered for at least %(daysTransferLocked)d ' +
-					'days before it is eligible for transfer. You can either wait until %(transferEligibleDate)s to transfer your ' +
-					'domain or you can make your domain work with WordPress.com now by {{a}}mapping it{{/a}}.',
+			reason = translate(
+				'Newly-registered domains are not eligible for transfer. {{strong}}%(domain)s{{/strong}} was registered ' +
+					'%(daysAgoRegistered)s, and can be transferred starting %(transferEligibleDate)s.',
 				{
 					args: {
-						creationDate: moment( creationDate ).format( dateFormat ),
-						daysTransferLocked: daysTransferLocked,
+						domain: domain,
+						daysAgoRegistered: moment( creationDate ).fromNow(),
 						transferEligibleDate: moment( transferEligibleDate ).format( dateFormat ),
 					},
 					components: {
-						a: (
-							<a
-								href={ paths.domainMapping( selectedSite.slug, domain ) }
-								rel="noopener noreferrer"
-								target="_blank"
-							/>
-						),
+						strong: <strong />,
 					},
 				}
 			);
-			classes = 'transfer-domain-step__lock-status transfer-domain-step__locked';
-			icon = 'cross';
 		}
 
-		if ( loading && ! isStepFinished ) {
-			classes = 'transfer-domain-step__lock-status transfer-domain-step__checking';
+		if ( loading ) {
 			heading = 'Domain registration period check.';
-			icon = 'sync';
-			statusText = 'Checking...';
 			message = null;
 		}
 
-		const status = (
-			<div className={ classes }>
-				<Gridicon icon={ icon } size={ 12 } />
-				<span>{ statusText }</span>
-			</div>
+		return (
+			<Card>
+				<div className="transfer-domain-step__section is-expanded">
+					<div className="transfer-domain-step__section-text">
+						<div className="transfer-domain-step__section-heading">
+							<FormattedHeader headerText={ heading } />
+						</div>
+						<div>
+							<div className="transfer-domain-step__section-message">
+								{ message }
+								<br />
+								<br />
+								{ reason }
+							</div>
+							<div className="transfer-domain-step__section-action">
+								<Button compact onClick={ this.goToMapDomainStep } busy={ loading }>
+									{ translate( 'Connect domain without transferring' ) }
+								</Button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</Card>
 		);
-
-		return this.getSection( heading, message, null, step, status );
 	}
 
 	getStatusMessage() {
 		const { translate } = this.props;
 		const { currentStep, unlocked, loading } = this.state;
-		const step = 2;
+		const step = 1;
 		const isStepFinished = currentStep > step;
 
 		const heading = unlocked
@@ -344,7 +322,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 	getPrivacyMessage() {
 		const { translate } = this.props;
 		const { currentStep, email, loading } = this.state;
-		const step = 3;
+		const step = 2;
 		const isStepFinished = currentStep > step;
 
 		const heading = translate( 'Verify we can get in touch.' );
@@ -412,7 +390,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const statusText = loading ? translate( 'Checking…' ) : translate( 'Refresh email address' );
 
 		const stepStatus = ! isStepFinished && (
-			<a className={ statusClasses } onClick={ this.refreshStatus }>
+			<a className={ statusClasses } onClick={ this.refreshStatusOnly }>
 				<Gridicon icon={ statusIcon } size={ 12 } />
 				<span>{ statusText }</span>
 			</a>
@@ -444,7 +422,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		);
 		const buttonText = translate( 'I have my authorization code' );
 
-		return this.getSection( heading, message, buttonText, 4 );
+		return this.getSection( heading, message, buttonText, 3 );
 	}
 
 	getHeader() {
@@ -475,39 +453,43 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 		return (
 			<div className="transfer-domain-step__precheck">
-				{ this.getHeader() }
-				{ this.getRegistrationPeriodMessage() }
-				{ this.getStatusMessage() }
-				{ this.getPrivacyMessage() }
-				{ this.getEppMessage() }
-				<Card className="transfer-domain-step__continue">
-					<div className="transfer-domain-step__continue-text">
-						<p>
-							{ translate(
-								'Note: These changes can take some time to take effect. ' +
-									'Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
-								{
-									components: {
-										a: (
-											<a
-												href={ support.CALYPSO_CONTACT }
-												rel="noopener noreferrer"
-												target="_blank"
-											/>
-										),
-									},
-								}
-							) }
-						</p>
+				{ ! this.registrationPeriodIsOk() && this.getRegistrationPeriodMessage() }
+				{ this.registrationPeriodIsOk() && (
+					<div>
+						{ this.getHeader() }
+						{ this.getStatusMessage() }
+						{ this.getPrivacyMessage() }
+						{ this.getEppMessage() }
+						<Card className="transfer-domain-step__continue">
+							<div className="transfer-domain-step__continue-text">
+								<p>
+									{ translate(
+										'Note: These changes can take some time to take effect. ' +
+											'Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
+										{
+											components: {
+												a: (
+													<a
+														href={ support.CALYPSO_CONTACT }
+														rel="noopener noreferrer"
+														target="_blank"
+													/>
+												),
+											},
+										}
+									) }
+								</p>
+							</div>
+							<Button
+								disabled={ ! unlocked || currentStep < 5 }
+								onClick={ this.onClick }
+								primary={ true }
+							>
+								{ translate( 'Continue' ) }
+							</Button>
+						</Card>
 					</div>
-					<Button
-						disabled={ ! unlocked || currentStep < 5 }
-						onClick={ this.onClick }
-						primary={ true }
-					>
-						{ translate( 'Continue' ) }
-					</Button>
-				</Card>
+				) }
 			</div>
 		);
 	}
