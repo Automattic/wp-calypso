@@ -31,7 +31,9 @@ export class CommentContent extends Component {
 	};
 
 	trackDeepReaderLinkClick = () =>
-		this.props.isJetpack ? noop : this.props.recordReaderCommentOpened();
+		this.props.isJetpack || isEnabled( 'comments/management/comment-view' )
+			? noop
+			: this.props.recordReaderCommentOpened();
 
 	renderInReplyTo = () => {
 		const { isBulkMode, parentCommentContent, parentCommentUrl, translate } = this.props;
