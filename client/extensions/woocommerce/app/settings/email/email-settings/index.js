@@ -205,9 +205,6 @@ class Settings extends React.Component {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
-		const { loading, loaded, settings } = this.props;
-		const waiting = ! loaded || loading;
-
 		return (
 			<div className="email-settings__container">
 				<ExtendedHeader label={ translate( 'Origin' ) } />

@@ -92,8 +92,8 @@ export const validateSettings = settings => {
 		if ( has( setting, 'recipient' ) ) {
 			const value = setting.recipient.value;
 			const def = setting.recipient.default;
-			const check = checkEmail( value || def );
-			return check;
+			const check = checkEmails( value || def );
+			return check.error === false;
 		}
 		return true;
 	} );
