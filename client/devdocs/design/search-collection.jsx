@@ -10,7 +10,11 @@ import React from 'react';
 * Internal dependencies
 */
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
-import { camelCaseToSlug, getComponentName } from 'devdocs/docs-example/util';
+import {
+	camelCaseToSlug,
+	getComponentName,
+} from 'devdocs/docs-example/util';
+import ReadmeViewer from 'devdocs/docs-example/readme-viewer';
 
 const shouldShowInstance = ( example, filter, component ) => {
 	const name = getComponentName( example );
@@ -40,7 +44,7 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 		}
 
 		const exampleName = getComponentName( example );
-		const exampleLink = `./${ section }/${ camelCaseToSlug( exampleName ) }`;
+		const exampleLink = `/devdocs/${ section }/${ camelCaseToSlug( exampleName ) }`;
 
 		showCounter++;
 
@@ -56,6 +60,7 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 		return (
 			<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
 				{ example }
+				{ component && <ReadmeViewer readmeFilePath={ example.props.readmeFilePath } /> }
 			</DocsExampleWrapper>
 		);
 	} );

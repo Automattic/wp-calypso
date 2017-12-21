@@ -36,7 +36,11 @@ import userUtilities from 'lib/user/utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { isCalypsoStartedConnection, isSsoApproved } from './persistence-utils';
+import {
+	isCalypsoStartedConnection,
+	isSsoApproved,
+	retrieveMobileRedirect,
+} from './persistence-utils';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -94,24 +98,13 @@ export class LoggedInForm extends Component {
 	};
 
 	retryingAuth = false;
-	state = { haveAuthorized: false };
 
 	componentWillMount() {
 		const { recordTracksEvent } = this.props;
-		const { autoAuthorize } = this.props.authorizationData;
-		const { alreadyAuthorized, newUserStartedConnection } = this.props.authQuery;
 		recordTracksEvent( 'calypso_jpc_auth_view' );
 
-		const doAutoAuthorize =
-			! this.props.isAlreadyOnSitesList &&
-			! alreadyAuthorized &&
-			( this.props.calypsoStartedConnection || newUserStartedConnection || autoAuthorize );
-
-		// isSSO is a separate case from the rest since we have already validated
-		// it in authorize-form.jsx. Therefore, if it's set, just authorize and redirect.
-		if ( this.isSso() || doAutoAuthorize ) {
+		if ( this.shouldAutoAuthorize() ) {
 			debug( 'Authorizing automatically on component mount' );
-			this.setState( { haveAuthorized: true } );
 			return this.authorize();
 		}
 	}
@@ -170,8 +163,14 @@ export class LoggedInForm extends Component {
 	}
 
 	redirect() {
-		const { goBackToWpAdmin } = this.props;
+		const { isMobileAppFlow, mobileAppRedirect, goBackToWpAdmin } = this.props;
 		const { from, redirectAfterAuth } = this.props.authQuery;
+
+		if ( isMobileAppFlow ) {
+			debug( `Redirecting to mobile app ${ mobileAppRedirect }` );
+			window.location.replace( mobileAppRedirect );
+			return;
+		}
 
 		if ( this.isSso() || this.isWoo() || this.isFromJpo() || this.shouldRedirectJetpackStart() ) {
 			debug(
@@ -185,6 +184,22 @@ export class LoggedInForm extends Component {
 		} else {
 			page.redirect( this.getRedirectionTarget() );
 		}
+	}
+
+	shouldAutoAuthorize() {
+		if ( this.props.isMobileAppFlow ) {
+			return false;
+		}
+
+		const { alreadyAuthorized, authApproved } = this.props.authQuery;
+
+		return (
+			this.isSso() ||
+			this.isWoo() ||
+			( ! this.props.isAlreadyOnSitesList &&
+				! alreadyAuthorized &&
+				( this.props.calypsoStartedConnection || authApproved ) )
+		);
 	}
 
 	isFromJpo( props = this.props ) {
@@ -522,7 +537,7 @@ export class LoggedInForm extends Component {
 		} = this.props.authorizationData;
 		const { blogname, redirectAfterAuth } = this.props.authQuery;
 		const backToWpAdminLink = (
-			<LoggedOutFormLinkItem icon={ true } href={ redirectAfterAuth }>
+			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
 				<Gridicon size={ 18 } icon="arrow-left" />{' '}
 				{ translate( 'Return to %(sitename)s', {
 					args: { sitename: decodeEntities( blogname ) },
@@ -613,6 +628,11 @@ export default connect(
 	( state, { authQuery } ) => {
 		const siteSlug = urlToSlug( authQuery.site );
 
+		// Note: reading from a cookie here rather than redux state,
+		// so any change in value will not execute connect().
+		const mobileAppRedirect = retrieveMobileRedirect();
+		const isMobileAppFlow = !! mobileAppRedirect;
+
 		return {
 			authAttempts: getAuthAttempts( state, siteSlug ),
 			authorizationData: getAuthorizationData( state ),
@@ -622,6 +642,8 @@ export default connect(
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state, authQuery.site ),
 			isFetchingAuthorizationSite: isRequestingSite( state, authQuery.clientId ),
 			isFetchingSites: isRequestingSites( state ),
+			isMobileAppFlow,
+			mobileAppRedirect,
 			siteSlug,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),

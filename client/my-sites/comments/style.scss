@@ -75,6 +75,14 @@
 	}
 }
 
+.comment-list__header {
+	overflow: visible;
+
+	&.is-sticky .header-cake {
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), 0 0 56px rgba(0, 0, 0, 0.075);
+	}
+}
+
 .comment-list__header-title {
 	font-weight: 600;
 	overflow: hidden;

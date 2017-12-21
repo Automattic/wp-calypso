@@ -39,17 +39,6 @@ export class CommentAuthor extends Component {
 
 	storeLinkIndicatorRef = icon => ( this.hasLinkIndicator = icon );
 
-	commentHasLink = () => {
-		if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
-			const parser = new DOMParser();
-			const commentDom = parser.parseFromString( this.props.commentContent, 'text/html' );
-
-			return !! commentDom.getElementsByTagName( 'a' ).length;
-		}
-
-		return false;
-	};
-
 	hideLinkTooltip = () => this.setState( { isLinkTooltipVisible: false } );
 
 	showLinkTooltip = () => this.setState( { isLinkTooltipVisible: true } );
@@ -64,6 +53,7 @@ export class CommentAuthor extends Component {
 			commentType,
 			commentUrl,
 			gravatarUser,
+			hasLink,
 			isBulkMode,
 			isPostView,
 			moment,
@@ -91,7 +81,7 @@ export class CommentAuthor extends Component {
 
 				<div className="comment__author-info">
 					<div className="comment__author-info-element">
-						{ this.commentHasLink() && (
+						{ hasLink && (
 							<span
 								onMouseEnter={ this.showLinkTooltip }
 								onMouseLeave={ this.hideLinkTooltip }
@@ -163,6 +153,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 			? `/comment/${ siteSlug }/${ commentId }`
 			: get( comment, 'URL' ),
 		gravatarUser,
+		hasLink: get( comment, 'has_link', false ),
 	};
 };
 

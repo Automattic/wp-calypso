@@ -19,12 +19,11 @@ describe( '#accept()', () => {
 	} );
 
 	test( 'should render a dialog to the document body', () => {
-		var message = 'Are you sure?',
-			dialog;
+		const message = 'Are you sure?';
 
 		accept( message, function() {} );
 
-		dialog = document.querySelector( '.accept-dialog' );
+		const dialog = document.querySelector( '.accept-dialog' );
 		expect( dialog ).to.be.an.instanceof( window.Element );
 		expect( dialog.textContent ).to.equal( message );
 	} );
@@ -48,15 +47,8 @@ describe( '#accept()', () => {
 	} );
 
 	test( 'should clean up after itself once the prompt is closed', () => {
-		accept( 'Are you sure?', function() {
-			jest.useFakeTimers();
-			process.nextTick( function() {
-				expect( document.querySelector( '.accept-dialog' ) ).to.be.null;
-			} );
-			jest.runAllTimers();
-			jest.useRealTimers();
-		} );
-
+		accept( 'Are you sure?', () => {} );
 		document.querySelector( '.button.is-primary' ).click();
+		expect( document.querySelector( '.accept-dialog' ) ).to.be.null;
 	} );
 } );

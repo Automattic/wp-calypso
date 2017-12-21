@@ -51,14 +51,20 @@ class Packages extends Component {
 
 		let button = null;
 		if ( pckg.is_user_defined ) {
-			const onEdit = () => this.props.editPackage( siteId, pckg );
+			const onEdit = () => {
+				this.props.onChange();
+				this.props.editPackage( siteId, pckg );
+			};
 			button = (
 				<Button compact onClick={ onEdit }>
 					{ translate( 'Edit' ) }
 				</Button>
 			);
 		} else {
-			const onRemove = () => this.props.removePredefinedPackage( siteId, pckg.serviceId, pckg.id );
+			const onRemove = () => {
+				this.props.onChange();
+				this.props.removePredefinedPackage( siteId, pckg.serviceId, pckg.id );
+			};
 			button = (
 				<Button compact onClick={ onRemove }>
 					{ translate( 'Remove' ) }
@@ -87,7 +93,10 @@ class Packages extends Component {
 
 		const packages = isFetching ? [ {}, {}, {} ] : allSelectedPackages;
 
-		const addPackage = () => this.props.addPackage( siteId );
+		const addPackage = () => {
+			this.props.onChange();
+			this.props.addPackage( siteId );
+		};
 
 		return (
 			<div>
@@ -117,6 +126,7 @@ Packages.propTypes = {
 	removePackage: PropTypes.func.isRequired,
 	editPackage: PropTypes.func.isRequired,
 	dismissModal: PropTypes.func.isRequired,
+	onChange: PropTypes.func.isRequired,
 	savePackage: PropTypes.func.isRequired,
 	updatePackagesField: PropTypes.func.isRequired,
 	toggleOuterDimensions: PropTypes.func.isRequired,

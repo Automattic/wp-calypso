@@ -14,6 +14,7 @@ import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-ut
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
+import PriceSummary from './price-summary';
 import {
 	setEmailDetailsOption,
 	setFulfillOrderOption,
@@ -36,6 +37,7 @@ const Sidebar = ( props ) => {
 
 	return (
 		<div className="label-purchase-modal__sidebar">
+			<PriceSummary siteId={ siteId } orderId={ orderId } />
 			<Dropdown
 				id={ 'paper_size' }
 				valuesMap={ getPaperSizes( form.origin.values.country ) }

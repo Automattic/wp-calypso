@@ -1,7 +1,6 @@
 /** @format */
 const activityItemSchema = {
 	type: 'object',
-	additionalProperties: false,
 	required: [
 		'activityDate',
 		'activityGroup',
@@ -9,7 +8,6 @@ const activityItemSchema = {
 		'activityId',
 		'activityIsRewindable',
 		'activityName',
-		'activityTitle',
 		'activityTs',
 		'actorAvatarUrl',
 		'actorName',

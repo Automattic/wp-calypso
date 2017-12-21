@@ -8,7 +8,7 @@ import { noop } from 'lodash';
 /**
  * Test fixtures
  */
-export const CLIENT_ID = '98765';
+export const CLIENT_ID = 98765;
 export const SITE_ID = 1234567;
 export const SITE_SLUG = 'an.example.site';
 export const USER_ID = 1239876546;
@@ -52,12 +52,12 @@ export const JETPACK_CONNECT_AUTHORIZE_LOGGED_IN = deepFreeze( {
 } );
 
 export const JETPACK_CONNECT_AUTH_QUERY_LOGGED_IN = deepFreeze( {
+	authApproved: false,
 	blogname: 'Example Blog',
 	clientId: CLIENT_ID,
 	from: 'banner-44-slide-1-dashboard',
 	homeUrl: `http://${ SITE_SLUG }`,
 	jpVersion: '5.4',
-	newUserStartedConnection: '2',
 	nonce: 'fooBarNonce',
 	redirectAfterAuth: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack`,
 	// eslint-disable-next-line max-len
@@ -73,12 +73,12 @@ export const JETPACK_CONNECT_AUTH_QUERY_LOGGED_IN = deepFreeze( {
 } );
 
 export const JETPACK_CONNECT_AUTH_QUERY_LOGGED_OUT = deepFreeze( {
+	authApproved: false,
 	blogname: 'Example Blog',
 	clientId: CLIENT_ID,
 	from: 'banner-44-slide-1-dashboard',
 	homeUrl: `http://${ SITE_SLUG }`,
 	jpVersion: '5.4',
-	newUserStartedConnection: '2',
 	nonce: 'fooBarNonce',
 	redirectAfterAuth: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack`,
 	// eslint-disable-next-line max-len

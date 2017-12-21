@@ -9,7 +9,7 @@ import { isArray } from 'lodash';
  */
 import { DEFAULT_QUERY, getNormalizedProductsQuery } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import request from '../request';
+import request from 'woocommerce/state/sites/request';
 import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_PRODUCTS_REQUEST,

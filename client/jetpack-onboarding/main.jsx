@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { compact, findKey } from 'lodash';
+import { compact } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -16,7 +16,7 @@ import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
 } from './constants';
-import { urlToSlug } from 'lib/url';
+import { getUnconnectedSiteIdBySlug } from 'state/selectors';
 
 class JetpackOnboardingMain extends React.PureComponent {
 	static propTypes = {
@@ -30,7 +30,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 	// TODO: Add lifecycle methods to redirect if no siteId
 
 	render() {
-		const { siteSlug, stepName, steps } = this.props;
+		const { siteId, siteSlug, stepName, steps } = this.props;
 
 		return (
 			<Main className="jetpack-onboarding">
@@ -38,6 +38,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 					basePath="/jetpack/onboarding"
 					baseSuffix={ siteSlug }
 					components={ COMPONENTS }
+					siteId={ siteId /* Passed down to individual steps */ }
 					steps={ steps }
 					stepName={ stepName }
 					hideNavigation={ stepName === STEPS.SUMMARY }
@@ -59,13 +60,8 @@ export default connect( ( state, { siteSlug } ) => {
 		STEPS.SUMMARY,
 	] );
 
-	// TODO: Make into selector
-	const siteId = findKey( state.jetpackOnboarding.credentials, ( { siteUrl } ) => {
-		return siteSlug === urlToSlug( siteUrl );
-	} );
-
 	return {
-		siteId,
+		siteId: getUnconnectedSiteIdBySlug( state, siteSlug ),
 		siteSlug,
 		steps,
 	};

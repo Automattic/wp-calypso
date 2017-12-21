@@ -5,6 +5,8 @@
  */
 
 import { getSite } from 'state/sites/selectors';
+import { getSitesItems } from 'state/selectors';
+import createSelector from 'lib/create-selector';
 
 /**
  * Get all visible sites
@@ -12,8 +14,10 @@ import { getSite } from 'state/sites/selectors';
  * @param {Object} state  Global state tree
  * @return {Array}        Sites objects
  */
-export default function getVisibleSites( state ) {
-	return Object.values( state.sites.items )
-		.filter( site => site.visible === true )
-		.map( site => getSite( state, site.ID ) );
-}
+export default createSelector(
+	state =>
+		Object.values( getSitesItems( state ) )
+			.filter( site => site.visible === true )
+			.map( site => getSite( state, site.ID ) ),
+	state => [ getSitesItems( state ) ]
+);

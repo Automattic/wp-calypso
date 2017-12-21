@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Placeholder from './plans-placeholder';
 import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
@@ -27,7 +28,12 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { canCurrentUser, isRtl, isSiteAutomatedTransfer } from 'state/selectors';
+import {
+	canCurrentUser,
+	hasInitializedSites,
+	isRtl,
+	isSiteAutomatedTransfer,
+} from 'state/selectors';
 import { mc } from 'lib/analytics';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 
@@ -71,8 +77,12 @@ class Plans extends Component {
 		if ( this.props.hasPlan || this.props.notJetpack ) {
 			this.redirect( CALYPSO_PLANS_PAGE );
 		}
+		if ( ! this.props.selectedSite && this.props.isSitesInitialized ) {
+			// Invalid site
+			this.redirect( '/jetpack/connect/plans' );
+		}
 		if ( ! this.props.canPurchasePlans ) {
-			if ( this.props.isCalypsoStartedConnection ) {
+			if ( this.props.calypsoStartedConnection ) {
 				this.redirect( CALYPSO_REDIRECTION_PAGE );
 			} else {
 				this.redirectToWpAdmin();
@@ -145,34 +155,33 @@ class Plans extends Component {
 		this.redirect( '/checkout/' );
 	};
 
-	render() {
-		const {
-			canPurchasePlans,
-			hasPlan,
-			interval,
-			isAutomatedTransfer,
-			isRtlLayout,
-			notJetpack,
-			selectedPlanSlug,
-			selectedSite,
-			translate,
-		} = this.props;
-
-		if (
+	shouldShowPlaceholder() {
+		return (
 			this.redirecting ||
-			selectedPlanSlug ||
-			false !== notJetpack ||
-			! canPurchasePlans ||
-			false !== hasPlan ||
-			false !== isAutomatedTransfer
-		) {
-			return <QueryPlans />;
+			this.props.selectedPlanSlug ||
+			false !== this.props.notJetpack ||
+			! this.props.canPurchasePlans ||
+			false !== this.props.hasPlan ||
+			false !== this.props.isAutomatedTransfer
+		);
+	}
+
+	render() {
+		const { interval, isRtlLayout, selectedSite, translate } = this.props;
+
+		if ( this.shouldShowPlaceholder() ) {
+			return (
+				<Fragment>
+					<QueryPlans />
+					<Placeholder />
+				</Fragment>
+			);
 		}
 
 		const helpButtonLabel = translate( 'Need help?' );
 
 		return (
-			<div>
+			<Fragment>
 				<QueryPlans />
 				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				<PlansGrid
@@ -193,7 +202,7 @@ class Plans extends Component {
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</PlansGrid>
-			</div>
+			</Fragment>
 		);
 	}
 }
@@ -223,6 +232,7 @@ export default connect(
 			isRtlLayout: isRtl( state ),
 			hasPlan: selectedSite ? isCurrentPlanPaid( state, selectedSite.ID ) : null,
 			notJetpack: selectedSite ? ! isJetpackSite( state, selectedSite.ID ) : null,
+			isSitesInitialized: hasInitializedSites( state ),
 		};
 	},
 	{

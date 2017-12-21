@@ -16,6 +16,7 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import Notice from 'components/notice';
 import { recordTracksEvent } from 'state/analytics/actions';
 import FormattedHeader from 'components/formatted-header';
 import { checkInboundTransferStatus } from 'lib/domains';
@@ -201,14 +202,17 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 		const heading = translate( 'Verify we can get in touch.' );
 		let message = translate(
-			"Make sure you have access to the email address on your domain's contact information with privacy " +
-				"protection turned off. We couldn't get the email address on file and we need to send an important " +
-				'email to start the transfer process.' +
+			"{{notice}}We couldn't get the email address listed for this domain's owner and we " +
+				'need to send an important email to start the process.{{/notice}}' +
+				'{{strong}}Make sure you can access the email address listed for your domain and ' +
+				'privacy protection is disabled.{{/strong}}' +
 				'{{br/}}{{br/}}' +
-				'Log in to your current domain provider to check your contact information and make sure privacy ' +
-				"is disabled. {{a}}Here's how to do that{{/a}}. Don't worry, you can turn it on once the transfer is done.",
+				'Log in to your current domain provider to double check the domain contact email address and ' +
+				"make sure to disable privacy protection. {{a}}Here's how to do that{{/a}}.",
 			{
 				components: {
+					notice: <Notice showDismiss={ false } status="is-warning" />,
+					strong: <strong />,
 					br: <br />,
 					a: (
 						<a
@@ -224,17 +228,22 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 		if ( email ) {
 			message = translate(
-				"Make sure you have access to the email address on your domain's contact information with privacy " +
-					"protection turned off. We'll send an email to {{strong}}%(email)s{{/strong}} to start the " +
-					"transfer process. Don't recognize that address? Then you might have privacy protection enabled." +
-					'{{br/}}{{br/}}' +
-					'Log in to your current domain provider to check your contact information and make sure privacy ' +
-					"is disabled. {{a}}Here's how to do that{{/a}}. Don't worry, you can turn it on once the transfer is done.",
+				"{{card}}Make sure you can access the email address listed for this domain's owner. " +
+					"We'll send a link to start the process to the following email address: {{strong}}%(email)s{{/strong}}{{/card}}" +
+					"Don't recognize that address? You may have privacy protection enabled. It has to be " +
+					'disabled temporarily for the transfer to work. Log in to your current domain provider to ' +
+					"disable privacy protection. {{a}}Here's how to do that{{/a}}.",
 				{
 					args: { email },
 					components: {
+						card: (
+							<Card
+								className="transfer-domain-step__section-callout"
+								compact={ true }
+								highlight="warning"
+							/>
+						),
 						strong: <strong className="transfer-domain-step__admin-email" />,
-						br: <br />,
 						a: (
 							<a
 								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
@@ -246,7 +255,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 				}
 			);
 
-			buttonText = translate( 'I can access this email address' );
+			buttonText = translate( 'I can access the email address listed' );
 		}
 
 		const statusClasses = loading

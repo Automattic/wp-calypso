@@ -5,17 +5,7 @@
  */
 
 import { connect } from 'react-redux';
-import {
-	difference,
-	flatten,
-	filter,
-	find,
-	get,
-	isEmpty,
-	isEqual,
-	reduce,
-	startsWith,
-} from 'lodash';
+import { flatten, filter, find, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -473,19 +463,8 @@ const Checkout = createReactClass( {
 	},
 
 	paymentMethodsAbTestFilter: function() {
-		// Apply AB test to payment methods, for Giropay And Bancontact
-		// Only run this if the user is eligible for one of these payment methods
-		if (
-			-1 === this.props.paymentMethods.indexOf( 'bancontact' ) &&
-			-1 === this.props.paymentMethods.indexOf( 'giropay' )
-		) {
-			return this.props.paymentMethods;
-		}
-
-		// If not in the 'show' variation, remove bancontact and giropay from the current methods
-		if ( abtest( 'showNewPaymentMethods', this.props.userCountryCode ) !== 'show' ) {
-			return difference( this.props.paymentMethods, [ 'bancontact', 'giropay' ] );
-		}
+		// This methods can be used to filter payment methods
+		// For example, for the purpose of AB tests.
 
 		return this.props.paymentMethods;
 	},

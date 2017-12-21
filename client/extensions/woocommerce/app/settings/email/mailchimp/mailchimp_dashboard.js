@@ -24,9 +24,10 @@ import {
 	isRequestingSettings,
 	isRequestingSyncStatus,
 	isSavingSettings,
+	isSubmittingNewsletterSetting,
+	newsletterSettingsSubmitError,
 	} from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import { submitMailChimpNewsletterSettings, requestResync } from 'woocommerce/state/sites/settings/mailchimp/actions.js';
-import { isSubmittingNewsletterSetting, newsletterSettingsSubmitError } from 'woocommerce/state/sites/settings/mailchimp/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import SyncTab from './sync_tab.js';
 
@@ -108,7 +109,6 @@ Settings.propTypes = {
 };
 
 class MailChimpDashboard extends React.Component {
-
 	constructor( props ) {
 		super( props );
 		this.state = {
@@ -121,9 +121,9 @@ class MailChimpDashboard extends React.Component {
 		const { translate } = nextProps;
 		if ( ( false === nextProps.isSaving ) && this.props.isSaving ) {
 			if ( nextProps.newsletterSettingsSubmitError ) {
-				nextProps.errorNotice( translate( 'There was a problem saving the email settings. Please try again.' ) );
+				nextProps.errorNotice( translate( 'There was a problem saving MailChimp settings. Please try again.' ) );
 			} else {
-				nextProps.successNotice( translate( 'Email settings saved.' ), { duration: 4000 } );
+				nextProps.successNotice( translate( 'MailChimp settings saved.' ), { duration: 4000 } );
 			}
 		}
 		if ( ( false === this.props.saveSettingsRequest ) && nextProps.saveSettingsRequest ) {
@@ -133,6 +133,9 @@ class MailChimpDashboard extends React.Component {
 
 	onSettingsChange = ( change ) => {
 		this.setState( { settings: Object.assign( {}, this.state.settings, change ) } );
+		if ( this.props.onChange ) {
+			this.props.onChange();
+		}
 	}
 
 	onSave = () => {
@@ -201,6 +204,7 @@ MailChimpDashboard.propTypes = {
 		PropTypes.object,
 		PropTypes.bool,
 	] ),
+	onChange: PropTypes.func,
 	settings: PropTypes.object.isRequired,
 	errorNotice: PropTypes.func.isRequired,
 	successNotice: PropTypes.func.isRequired,
@@ -223,6 +227,6 @@ export default connect(
 		errorNotice,
 		successNotice,
 		submitMailChimpNewsletterSettings,
-		requestResync
+		requestResync,
 	}
 )( localize( MailChimpDashboard ) );

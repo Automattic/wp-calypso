@@ -33,17 +33,32 @@ export const menuItems = [
 ];
 
 if ( config.isEnabled( 'external-media' ) ) {
-	menuItems.push( {
-		name: 'insert_from_google',
-		item: (
-			<GridiconButton
-				icon="add-image"
-				label={ i18n.translate( 'Media from Google' ) }
-				e2e="google-media"
-			/>
-		),
-		cmd: 'googleAddMedia',
-	} );
+	if ( config.isEnabled( 'external-media/google-photos' ) ) {
+		menuItems.push( {
+			name: 'insert_from_google',
+			item: (
+				<GridiconButton
+					icon="add-image"
+					label={ i18n.translate( 'Media from Google' ) }
+					e2e="google-media"
+				/>
+			),
+			cmd: 'googleAddMedia',
+		} );
+	}
+	if ( config.isEnabled( 'external-media/free-photo-library' ) ) {
+		menuItems.push( {
+			name: 'insert_from_pexels',
+			item: (
+				<GridiconButton
+					icon="add-image"
+					label={ i18n.translate( 'Free photo library' ) }
+					e2e="stock-media-pexels"
+				/>
+			),
+			cmd: 'pexelsAddMedia',
+		} );
+	}
 }
 
 menuItems.push( {

@@ -7,11 +7,13 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { includes, invoke, noop } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import formState from 'lib/form-state';
@@ -29,6 +31,11 @@ import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
 import userFactory from 'lib/user';
 const user = userFactory();
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import { getGeoCountryShort } from 'state/geo/selectors';
+import { DESIGN_TYPE_STORE } from 'signup/constants';
+import PressableStoreStep from '../design-type-with-store/pressable-store';
+import { abtest } from 'lib/abtest';
 
 //Form components
 import Card from 'components/card';
@@ -48,6 +55,8 @@ class AboutStep extends Component {
 			query: '',
 			siteTopicValue: this.props.siteTopic,
 			userExperience: this.props.userExperience,
+			showStore: false,
+			pendingStoreClick: false,
 		};
 	}
 
@@ -75,6 +84,10 @@ class AboutStep extends Component {
 
 	setFormState = state => {
 		this.setState( { form: state } );
+	};
+
+	setPressableStore = ref => {
+		this.pressableStore = ref;
 	};
 
 	setSuggestionsRef = ref => {
@@ -225,6 +238,11 @@ class AboutStep extends Component {
 		}.bind( this );
 	}
 
+	handleStoreBackClick = () => {
+		this.setState( { showStore: false }, this.scrollUp );
+		return;
+	};
+
 	handleSubmit = event => {
 		event.preventDefault();
 		const { goToNextStep, stepName, translate } = this.props;
@@ -277,6 +295,9 @@ class AboutStep extends Component {
 
 		//SET SITETYPE
 		this.props.setDesignType( designType );
+		this.props.recordTracksEvent( 'calypso_triforce_select_design', {
+			category: designType,
+		} );
 
 		//User Experience
 		if ( ! user.get() && userExperienceInput !== '' ) {
@@ -288,6 +309,31 @@ class AboutStep extends Component {
 			} );
 		}
 
+		//Store
+		const isCountryAllowed =
+			includes( [ 'US', 'CA' ], this.props.countryCode ) || config( 'env' ) === 'development';
+		const nextFlowName =
+			designType === DESIGN_TYPE_STORE && isCountryAllowed
+				? 'segmented-store-nux'
+				: this.props.flowName;
+
+		//Pressable
+		if (
+			designType === DESIGN_TYPE_STORE &&
+			( abtest( 'signupAtomicStoreVsPressable' ) === 'pressable' || ! isCountryAllowed )
+		) {
+			this.scrollUp();
+
+			this.setState( {
+				showStore: true,
+			} );
+
+			invoke( this, 'pressableStore.focus' );
+
+			return;
+		}
+
+		//Create site
 		SignupActions.submitSignupStep(
 			{
 				processingMessage: translate( 'Collecting your information' ),
@@ -302,7 +348,7 @@ class AboutStep extends Component {
 			}
 		);
 
-		goToNextStep();
+		goToNextStep( nextFlowName );
 	};
 
 	renderGoalCheckboxes() {
@@ -443,57 +489,82 @@ class AboutStep extends Component {
 		);
 	}
 
+	scrollUp() {
+		// Didn't use setInterval in order to fix delayed scroll
+		while ( window.pageYOffset > 0 ) {
+			window.scrollBy( 0, -10 );
+		}
+	}
+
 	renderContent() {
 		const { translate, siteTitle } = this.props;
 
+		const pressableWrapperClassName = classNames( 'about__pressable-wrapper', {
+			'about__wrapper-is-hidden': ! this.state.showStore,
+		} );
+
+		const aboutFormClassName = classNames( 'about__form-wrapper', {
+			'about__wrapper-is-hidden': this.state.showStore,
+		} );
+
 		return (
 			<div className="about__wrapper">
-				<form onSubmit={ this.handleSubmit }>
-					<Card>
-						<FormFieldset>
-							<FormLabel htmlFor="siteTitle">What would you like to name your site?</FormLabel>
-							<FormTextInput
-								id="siteTitle"
-								name="siteTitle"
-								placeholder="eg: Mel's Diner, Stevie’s Blog, Vail Renovations"
-								defaultValue={ siteTitle }
-								onChange={ this.handleChangeEvent }
-							/>
-						</FormFieldset>
+				<div className={ pressableWrapperClassName }>
+					<PressableStoreStep
+						{ ...this.props }
+						onBackClick={ this.handleStoreBackClick }
+						setRef={ this.setPressableStore }
+					/>
+				</div>
 
-						<FormFieldset>
-							<FormLabel>What will your site be about?</FormLabel>
-							<FormTextInput
-								id="siteTopic"
-								name="siteTopic"
-								placeholder="eg: Fashion, travel, design, plumber, electrician"
-								value={ this.state.siteTopicValue }
-								onChange={ this.handleSuggestionChangeEvent }
-								onBlur={ this.hideSuggestions }
-								onKeyDown={ this.handleSuggestionKeyDown }
-								autoComplete="off"
-							/>
-							<Suggestions
-								ref={ this.setSuggestionsRef }
-								query={ this.state.query }
-								suggestions={ this.getSuggestions() }
-								suggest={ this.handleSuggestionMouseDown }
-							/>
-						</FormFieldset>
+				<div className={ aboutFormClassName }>
+					<form onSubmit={ this.handleSubmit }>
+						<Card>
+							<FormFieldset>
+								<FormLabel htmlFor="siteTitle">What would you like to name your site?</FormLabel>
+								<FormTextInput
+									id="siteTitle"
+									name="siteTitle"
+									placeholder="eg: Mel's Diner, Stevie’s Blog, Vail Renovations"
+									defaultValue={ siteTitle }
+									onChange={ this.handleChangeEvent }
+								/>
+							</FormFieldset>
 
-						<FormFieldset>
-							<FormLabel>What’s the primary goal you have for your site?</FormLabel>
-							{ this.renderGoalCheckboxes() }
-						</FormFieldset>
+							<FormFieldset>
+								<FormLabel>What will your site be about?</FormLabel>
+								<FormTextInput
+									id="siteTopic"
+									name="siteTopic"
+									placeholder="eg: Fashion, travel, design, plumber, electrician"
+									value={ this.state.siteTopicValue }
+									onChange={ this.handleSuggestionChangeEvent }
+									onBlur={ this.hideSuggestions }
+									onKeyDown={ this.handleSuggestionKeyDown }
+									autoComplete="off"
+								/>
+								<Suggestions
+									ref={ this.setSuggestionsRef }
+									query={ this.state.query }
+									suggestions={ this.getSuggestions() }
+									suggest={ this.handleSuggestionMouseDown }
+								/>
+							</FormFieldset>
 
-						{ this.renderExperienceOptions() }
-					</Card>
-					<div className="about__submit-wrapper">
-						<Button primary={ true } type="submit">
-							{ translate( 'Continue' ) }
-						</Button>
-					</div>
-				</form>
+							<FormFieldset>
+								<FormLabel>What’s the primary goal you have for your site?</FormLabel>
+								{ this.renderGoalCheckboxes() }
+							</FormFieldset>
+
+							{ this.renderExperienceOptions() }
+						</Card>
+						<div className="about__submit-wrapper">
+							<Button primary={ true } type="submit">
+								{ translate( 'Continue' ) }
+							</Button>
+						</div>
+					</form>
+				</div>
 			</div>
 		);
 	}
@@ -523,6 +594,7 @@ export default connect(
 		siteGoals: getSiteGoals( state ),
 		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
+		countryCode: getCurrentUserCountryCode( state ) || getGeoCountryShort( state ),
 	} ),
 	{ setSiteTitle, setDesignType, setSiteGoals, setSurvey, setUserExperience, recordTracksEvent }
 )( localize( AboutStep ) );

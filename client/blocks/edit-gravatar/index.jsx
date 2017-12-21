@@ -189,6 +189,7 @@ export class EditGravatar extends Component {
 					{ this.renderImageEditor() }
 					<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
 						<div
+							data-tip-target="edit-gravatar"
 							className={ classnames( 'edit-gravatar__image-container', {
 								'is-uploading': isUploading,
 							} ) }

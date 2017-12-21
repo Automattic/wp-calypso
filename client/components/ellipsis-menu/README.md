@@ -24,64 +24,11 @@ export default function MyComponent( { onMenuItemClick } ) {
 
 ## Props
 
-### `onClick`
-
-<table>
-	<tr><td>Type</td><td>Function</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>noop</code></td></tr>
-</table>
-
-Callback that will be invoked when menu button is clicked.
-Will be passed the click event.
-
-### `onToggle`
-
-<table>
-	<tr><td>Type</td><td>Function</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>noop</code></td></tr>
-</table>
-
-Callback that will be invoked when menu is toggled.
-Will be passed the boolean visibility of the menu.
-
-### `toggleTitle`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>null</code></td></tr>
-</table>
-
-Override for the default "Toggle menu" `title` attribute on the toggle button.
-
-### `position`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>null</code></td></tr>
-</table>
-
-The position at which the menu should be rendered. If omitted, uses the default `position` from [the `<PopoverMenu />` component](../popover-menu).
-
-### `children`
-
-<table>
-	<tr><td>Type</td><td><code>PropTypes.node</code></td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>null</code></td></tr>
-</table>
-
-Menu children to be rendered.
-
-### `disabled`
-
-<table>
-	<tr><td>Type</td><td><code>PropTypes.bool</code></td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>null</code></td></tr>
-</table>
-
-If `true`, then the menu icon will be displayed in light gray and will not be clickable.
+| property      | type           | required | default | comment |
+| ------------- | -------------- | -------- | ------- | -------- |
+| `onClick`     | Function       | no       | noop    | Callback that will be invoked when menu button is clicked. Will be passed the click event. |
+| `onToggle`    | Function       | no       | noop    | Callback that will be invoked when menu is toggled. Will be passed the boolean visibility of the menu. |
+| `toggleTitle` | String         | no       | `null`  | Override for the default "Toggle menu" `title` attribute on the toggle button. |
+| `position`    | String         | no       | `null`  | The position at which the menu should be rendered. If omitted, uses the default `position` from [the `<PopoverMenu />` component](../popover-menu). |
+| `children`    | PropTypes.node | no       | `null`  | Menu children to be rendered. |
+| `disabled`    | PropTypes.bool | no       | `null`  | If `true`, then the menu icon will be displayed in light gray and will not be clickable. |

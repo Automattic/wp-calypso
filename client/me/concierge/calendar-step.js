@@ -28,7 +28,7 @@ const groupAvailableTimesByDate = availableTimes => {
 	}
 
 	// Go through all available times and bundle them into each date object
-	availableTimes.forEach( ( { beginTimestamp } ) => {
+	availableTimes.forEach( beginTimestamp => {
 		const startOfDay = moment( beginTimestamp )
 			.startOf( 'day' )
 			.valueOf();
@@ -45,9 +45,7 @@ const groupAvailableTimesByDate = availableTimes => {
 
 class CalendarStep extends Component {
 	static propTypes = {
-		availableTimes: PropTypes.arrayOf(
-			PropTypes.shape( { beginTimestamp: PropTypes.number.isRequired } )
-		).isRequired,
+		availableTimes: PropTypes.array.isRequired,
 		onBack: PropTypes.func.isRequired,
 		onComplete: PropTypes.func.isRequired,
 	};

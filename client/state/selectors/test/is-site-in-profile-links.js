@@ -16,7 +16,7 @@ describe( 'isSiteInProfileLinks()', () => {
 
 	test( 'should return null if profile links have not been received yet', () => {
 		const state = {
-			profileLinks: {
+			userProfileLinks: {
 				items: null,
 			},
 		};
@@ -26,7 +26,7 @@ describe( 'isSiteInProfileLinks()', () => {
 
 	test( 'should return false if site is not in profile links', () => {
 		const state = {
-			profileLinks: {
+			userProfileLinks: {
 				items: profileLinks,
 			},
 		};
@@ -36,7 +36,7 @@ describe( 'isSiteInProfileLinks()', () => {
 
 	test( 'should return true if site is in profile links', () => {
 		const state = {
-			profileLinks: {
+			userProfileLinks: {
 				items: profileLinks,
 			},
 		};

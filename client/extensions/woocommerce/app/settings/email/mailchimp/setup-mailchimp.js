@@ -33,7 +33,7 @@ import {
 	submitMailChimpApiKey,
 	submitMailChimpStoreInfo,
 	submitMailChimpCampaignDefaults,
-	submitMailChimpNewsletterSettings
+	submitMailChimpNewsletterSettings,
 } from 'woocommerce/state/sites/settings/mailchimp/actions.js';
 
 const LOG_INTO_MAILCHIMP_STEP = 'log_into';
@@ -64,7 +64,6 @@ const campaignDefaultsRequiredFields = [ 'campaign_from_name', 'campaign_from_em
 		'campaign_language', 'campaign_permission_reminder' ];
 
 class MailChimpSetup extends React.Component {
-
 	constructor( props ) {
 		super( props );
 		// make this react to the real phase the execution is.
@@ -116,7 +115,7 @@ class MailChimpSetup extends React.Component {
 		newSettings.campaign_language = settings.campaign_language || settings.store_locale;
 		newSettings.campaign_permission_reminder = settings.campaign_permission_reminder ||
 			translate( 'You were subscribed to the newsletter from %(store_name)s', {
-				args: { store_name: settings.store_name, }
+				args: { store_name: settings.store_name },
 			} );
 		newSettings.admin_email = settings.admin_email || nextProps.currentUserEmail || '';
 		newSettings.store_timezone = settings.store_timezone || nextProps.timezone || 'America/New_York';
@@ -185,7 +184,7 @@ class MailChimpSetup extends React.Component {
 			const validKey = !! this.state.api_key_input;
 			this.setState( {
 				settings_values_missing: ! validKey,
-				input_field_has_changed: false
+				input_field_has_changed: false,
 			} );
 			if ( validKey ) {
 				this.props.submitMailChimpApiKey( siteId, this.state.api_key_input );
@@ -218,7 +217,7 @@ class MailChimpSetup extends React.Component {
 		this.setState( {
 			api_key_input: value,
 			settings_values_missing: false,
-			input_field_has_changed: true
+			input_field_has_changed: true,
 		} );
 	}
 
@@ -270,11 +269,11 @@ class MailChimpSetup extends React.Component {
 			label: NEWSLETTER_SETTINGS_STEP === step ? translate( 'Sync' ) : translate( 'Next' ),
 			onClick: this.next,
 			isPrimary: true,
-			additionalClassNames: isButtonBusy
+			additionalClassNames: isButtonBusy,
 		};
 		const buttons = [
 			{ action: 'cancel', label: translate( 'Cancel' ) },
-			mainButton
+			mainButton,
 		];
 
 		const dialogClass = 'woocommerce mailchimp__setup';
@@ -357,13 +356,13 @@ export default localize( connect(
 			isKeyCorrect,
 			siteTitle: getSiteTitle( state, siteId ),
 			currentUserEmail: getCurrentUserEmail( state ),
-			timezone: getSiteTimezoneValue( state, siteId )
+			timezone: getSiteTimezoneValue( state, siteId ),
 		};
 	},
 	{
 		submitMailChimpApiKey,
 		submitMailChimpStoreInfo,
 		submitMailChimpCampaignDefaults,
-		submitMailChimpNewsletterSettings
+		submitMailChimpNewsletterSettings,
 	}
 )( MailChimpSetup ) );

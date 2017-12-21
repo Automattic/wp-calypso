@@ -300,7 +300,6 @@ export const PostEditor = createReactClass( {
 					savedPost={ this.state.savedPost }
 					setPostDate={ this.setPostDate }
 					setStatus={ this.setConfirmationSidebar }
-					site={ site }
 					status={ this.state.confirmationSidebar }
 				/>
 				<EditorDocumentHead />
@@ -1373,9 +1372,7 @@ const enhance = flow(
 			recordTracksEvent,
 			closeEditorSidebar,
 			openEditorSidebar,
-		},
-		null,
-		{ pure: false }
+		}
 	)
 );
 

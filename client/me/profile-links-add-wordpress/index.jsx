@@ -7,37 +7,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { pickBy, map } from 'lodash';
+import { find, map, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
 import FormButton from 'components/forms/form-button';
-import Notice from 'components/notice';
 import ProfileLinksAddWordPressSite from './site';
-import { getPublicSites } from 'state/selectors';
-import { getSite } from 'state/sites/selectors';
+import { addUserProfileLinks } from 'state/profile-links/actions';
+import { getPublicSites, getSites, isSiteInProfileLinks } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
-
-const addProfileLinks = ( inputs, userProfileLinks, callback ) => ( dispatch, getState ) => {
-	const links = pickBy(
-		inputs,
-		( inputValue, inputName ) => 'site-' === inputName.substr( 0, 5 ) && inputValue
-	);
-	const profileLinks = map( links, ( inputValue, inputName ) =>
-		parseInt( inputName.substr( 5 ), 10 )
-	)
-		.map( siteId => getSite( getState(), siteId ) )
-		.map( site => ( {
-			title: site.name,
-			value: site.URL,
-		} ) );
-
-	if ( profileLinks.length ) {
-		userProfileLinks.addProfileLinks( profileLinks, callback );
-	}
-};
 
 class ProfileLinksAddWordPress extends Component {
 	// an empty initial state is required to keep render and handleCheckedChange
@@ -92,8 +72,26 @@ class ProfileLinksAddWordPress extends Component {
 
 	onAddableSubmit = event => {
 		event.preventDefault();
+		const { sites } = this.props;
 
-		this.props.addProfileLinks( this.state, this.props.userProfileLinks, this.onSubmitResponse );
+		const links = pickBy(
+			this.state,
+			( inputValue, inputName ) => 'site-' === inputName.substr( 0, 5 ) && inputValue
+		);
+
+		const profileLinks = map( links, ( inputValue, inputName ) =>
+			parseInt( inputName.substr( 5 ), 10 )
+		)
+			.map( siteId => find( sites, [ 'ID', siteId ] ) )
+			.map( site => ( {
+				title: site.name,
+				value: site.URL,
+			} ) );
+
+		if ( profileLinks.length ) {
+			this.props.addUserProfileLinks( profileLinks );
+			this.props.onSuccess();
+		}
 	};
 
 	onCancel = event => {
@@ -113,56 +111,10 @@ class ProfileLinksAddWordPress extends Component {
 		this.props.onCancel();
 	};
 
-	onSubmitResponse = ( error, data ) => {
-		const { translate } = this.props;
-		if ( error ) {
-			this.setState( {
-				lastError: translate( 'Unable to add any links right now. Please try again later.' ),
-			} );
-			return;
-		} else if ( data.malformed ) {
-			this.setState( {
-				lastError: translate( 'An unexpected error occurred. Please try again later.' ),
-			} );
-			return;
-		} else if ( data.duplicate ) {
-			// our links are probably out of date, let's initiate a refresh of our parent
-			this.props.userProfileLinks.fetchProfileLinks();
-		}
-
-		this.props.onSuccess();
-	};
-
-	clearLastError = () => {
-		this.setState( {
-			lastError: false,
-		} );
-	};
-
-	possiblyRenderError() {
-		if ( ! this.state.lastError ) {
-			return null;
-		}
-
-		return (
-			<Notice
-				className="profile-links-add-wordpress__error"
-				status="is-error"
-				onDismissClick={ this.clearLastError }
-			>
-				{ this.state.lastError }
-			</Notice>
-		);
-	}
-
 	renderAddableSites() {
-		return this.props.publicSites.map( site => {
+		return this.props.publicSitesNotInProfileLinks.map( site => {
 			const inputName = 'site-' + site.ID;
 			const checkedState = this.state[ inputName ];
-
-			if ( this.props.userProfileLinks.isSiteInProfileLinks( site ) ) {
-				return null;
-			}
 
 			return (
 				<ProfileLinksAddWordPressSite
@@ -184,7 +136,6 @@ class ProfileLinksAddWordPress extends Component {
 			<form className="profile-links-add-wordpress" onSubmit={ this.onAddableSubmit }>
 				<p>{ translate( 'Please select one or more sites to add to your profile.' ) }</p>
 				<ul className="profile-links-add-wordpress__list">{ this.renderAddableSites() }</ul>
-				{ this.possiblyRenderError() }
 				<FormButton
 					disabled={ 0 === checkedCount ? true : false }
 					onClick={ this.getClickHandler( 'Add WordPress Sites Button' ) }
@@ -251,11 +202,21 @@ class ProfileLinksAddWordPress extends Component {
 }
 
 export default connect(
-	state => ( {
-		publicSites: getPublicSites( state ),
-	} ),
+	state => {
+		const publicSites = getPublicSites( state );
+		const publicSitesNotInProfileLinks = publicSites.filter(
+			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+			site => ! isSiteInProfileLinks( state, site.domain )
+		);
+
+		return {
+			publicSites,
+			publicSitesNotInProfileLinks,
+			sites: getSites( state ),
+		};
+	},
 	{
-		addProfileLinks,
+		addUserProfileLinks,
 		recordGoogleEvent,
 	}
 )( localize( ProfileLinksAddWordPress ) );

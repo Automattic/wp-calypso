@@ -96,7 +96,7 @@
 			border-top: 2px solid lighten( $gray, 20% );
 			border-right: 2px solid lighten( $gray, 20% );
 			transform: rotate(45deg);
-			color: #fff;
+			color: $white;
 		}
 	}
 }
@@ -146,7 +146,7 @@
 		background: none;
 		text-align: left;
 		font-size: 16px;
-		line-height: 1.2;
+		line-height: 1.4;
 		border: 0;
 		padding: 0;
 		text-transform: none;

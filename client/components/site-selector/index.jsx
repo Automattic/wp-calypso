@@ -98,25 +98,28 @@ class SiteSelector extends Component {
 	}
 
 	scrollToHighlightedSite() {
-		const selectorElement = ReactDom.findDOMNode( this.refs.selector );
+		if ( ! this.siteSelectorRef ) {
+			return;
+		}
+
+		const selectorElement = ReactDom.findDOMNode( this.siteSelectorRef );
 
 		if ( ! selectorElement ) {
 			return;
 		}
 
-		if ( ! this.highlightedSiteRef ) {
-			selectorElement.scrollTop = 0;
+		// Note: Update CSS selectors if the class names change.
+		const highlightedSiteElem = selectorElement.querySelector(
+			'.site.is-highlighted, .site-selector .all-sites.is-highlighted'
+		);
 
+		if ( ! highlightedSiteElem ) {
 			return;
 		}
 
-		const highlightedSiteElement = ReactDom.findDOMNode( this.highlightedSiteRef );
-
-		if ( highlightedSiteElement ) {
-			scrollIntoView( highlightedSiteElement, selectorElement, {
-				onlyScrollIfNeeded: true,
-			} );
-		}
+		scrollIntoView( highlightedSiteElem, selectorElement, {
+			onlyScrollIfNeeded: true,
+		} );
 	}
 
 	computeHighlightedSite() {
@@ -189,7 +192,11 @@ class SiteSelector extends Component {
 		const handledByHost = this.props.onSiteSelect( siteId );
 		this.props.onClose( event, siteId );
 
-		const node = ReactDom.findDOMNode( this.refs.selector );
+		if ( ! this.siteSelectorRef ) {
+			return;
+		}
+
+		const node = ReactDom.findDOMNode( this.siteSelectorRef );
 		if ( node ) {
 			node.scrollTop = 0;
 		}
@@ -260,6 +267,8 @@ class SiteSelector extends Component {
 		return this.props.groups;
 	}
 
+	setSiteSelectorRef = component => ( this.siteSelectorRef = component );
+
 	renderSites() {
 		let sites;
 
@@ -301,14 +310,6 @@ class SiteSelector extends Component {
 		return siteElements;
 	}
 
-	setHighlightedSiteRef = isHighlighted => component => {
-		if ( isHighlighted && component ) {
-			this.highlightedSiteRef = component;
-		} else if ( isHighlighted ) {
-			this.highlightedSiteRef = null;
-		}
-	};
-
 	renderAllSites() {
 		if ( this.props.showAllSites && ! this.props.sitesFound && this.props.allSitesPath ) {
 			this.visibleSites.push( ALL_SITES );
@@ -323,7 +324,6 @@ class SiteSelector extends Component {
 					onMouseEnter={ this.onAllSitesHover }
 					isHighlighted={ isHighlighted }
 					isSelected={ this.isSelected( ALL_SITES ) }
-					ref={ this.setHighlightedSiteRef( isHighlighted ) }
 				/>
 			);
 		}
@@ -347,7 +347,6 @@ class SiteSelector extends Component {
 				onMouseEnter={ this.onSiteHover }
 				isHighlighted={ isHighlighted }
 				isSelected={ this.isSelected( site ) }
-				ref={ this.setHighlightedSiteRef( isHighlighted ) }
 			/>
 		);
 	}
@@ -376,6 +375,7 @@ class SiteSelector extends Component {
 
 	render() {
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
+
 		const selectorClass = classNames( 'site-selector', 'sites-list', this.props.className, {
 			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
 			'is-single': this.props.visibleSiteCount === 1,
@@ -400,7 +400,7 @@ class SiteSelector extends Component {
 					onSearchClose={ this.props.onClose }
 					onKeyDown={ this.onKeyDown }
 				/>
-				<div className="site-selector__sites" ref="selector">
+				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }
 					{ this.renderRecentSites() }
 					{ this.renderSites() }

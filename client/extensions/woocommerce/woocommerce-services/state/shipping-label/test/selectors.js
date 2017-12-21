@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getRatesErrors, getCountriesData } from '../selectors';
+import { getRatesErrors, getCountriesData, getTotalPriceBreakdown } from '../selectors';
 
 describe( '#getRatesErrors', () => {
 	// when there are selected rates
@@ -330,5 +330,180 @@ describe( 'Shipping label selectors', () => {
 				CA: 'California',
 			},
 		} );
+	} );
+
+	it( 'getTotalPriceBreakdown - returns null if the form is not loaded', () => {
+		const state = getFullState( { loaded: false } );
+		const result = getTotalPriceBreakdown( state, orderId, siteId );
+		expect( result ).to.eql( null );
+	} );
+
+	it( 'getTotalPriceBreakdown - returns null when there are no packages and no rates available', () => {
+		const state = getFullState( {
+			form: {
+				rates: {
+					values: {},
+					available: {},
+				},
+			},
+		} );
+		const result = getTotalPriceBreakdown( state, orderId, siteId );
+		expect( result ).to.eql( null );
+	} );
+
+	it( 'getTotalPriceBreakdown - returns null when there are no rates available', () => {
+		const state = getFullState( {
+			form: {
+				rates: {
+					values: {
+						default_box: '',
+					},
+					available: {},
+				},
+			},
+		} );
+		const result = getTotalPriceBreakdown( state, orderId, siteId );
+		expect( result ).to.eql( null );
+	} );
+
+	it( 'getTotalPriceBreakdown - returns null when there are no rates selected', () => {
+		const state = getFullState( {
+			form: {
+				rates: {
+					values: {
+						default_box: '',
+					},
+					available: {
+						default_box: {
+							rates: [ {
+								carrier_id: 'usps',
+								is_selected: false,
+								rate: 6.61,
+								rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfa',
+								retail_rate: 7.8,
+								service_id: 'Priority',
+								title: 'USPS - Priority Mail',
+							} ],
+						},
+					},
+				},
+			},
+		} );
+		const result = getTotalPriceBreakdown( state, orderId, siteId );
+		expect( result ).to.eql( null );
+	} );
+
+	it( 'getTotalPriceBreakdown - returns a breakdown when a rate is selected', () => {
+		const state = getFullState( {
+			form: {
+				rates: {
+					values: {
+						default_box: 'Priority',
+					},
+					available: {
+						default_box: {
+							rates: [ {
+								carrier_id: 'usps',
+								is_selected: false,
+								rate: 6.61,
+								rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfa',
+								retail_rate: 7.8,
+								service_id: 'Priority',
+								title: 'USPS - Priority Mail',
+							} ],
+						},
+					},
+				},
+			},
+		} );
+		const result = getTotalPriceBreakdown( state, orderId, siteId );
+		expect( result.prices ).to.eql( [ { title: 'USPS - Priority Mail', retailRate: 7.8 } ] );
+		expect( result.discount ).to.eql( 1.19 );
+		expect( result.total ).to.eql( 6.61 );
+	} );
+
+	it( 'getTotalPriceBreakdown - returns a breakdown when one out of many rates is selected', () => {
+		const state = getFullState( {
+			form: {
+				rates: {
+					values: {
+						box1: 'Priority',
+						box2: '',
+					},
+					available: {
+						box1: {
+							rates: [ {
+								carrier_id: 'usps',
+								is_selected: false,
+								rate: 6.61,
+								rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfa',
+								retail_rate: 7.8,
+								service_id: 'Priority',
+								title: 'USPS - Priority Mail',
+							} ],
+						},
+						box2: {
+							rates: [ {
+								carrier_id: 'usps',
+								is_selected: false,
+								rate: 21.18,
+								rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfb',
+								retail_rate: 23.85,
+								service_id: 'Express',
+								title: 'USPS - Express Mail',
+							} ],
+						},
+					},
+				},
+			},
+		} );
+		const result = getTotalPriceBreakdown( state, orderId, siteId );
+		expect( result.prices ).to.eql( [ { title: 'USPS - Priority Mail', retailRate: 7.8 } ] );
+		expect( result.discount ).to.eql( 1.19 );
+		expect( result.total ).to.eql( 6.61 );
+	} );
+
+	it( 'getTotalPriceBreakdown - returns a breakdown when many rates are selected', () => {
+		const state = getFullState( {
+			form: {
+				rates: {
+					values: {
+						box1: 'Priority',
+						box2: 'Express',
+					},
+					available: {
+						box1: {
+							rates: [ {
+								carrier_id: 'usps',
+								is_selected: false,
+								rate: 6.61,
+								rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfa',
+								retail_rate: 7.8,
+								service_id: 'Priority',
+								title: 'USPS - Priority Mail',
+							} ],
+						},
+						box2: {
+							rates: [ {
+								carrier_id: 'usps',
+								is_selected: false,
+								rate: 21.18,
+								rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfb',
+								retail_rate: 23.85,
+								service_id: 'Express',
+								title: 'USPS - Express Mail',
+							} ],
+						},
+					},
+				},
+			},
+		} );
+		const result = getTotalPriceBreakdown( state, orderId, siteId );
+		expect( result.prices ).to.eql( [
+			{ title: 'USPS - Priority Mail', retailRate: 7.8 },
+			{ title: 'USPS - Express Mail', retailRate: 23.85 },
+		] );
+		expect( result.discount ).to.eql( 3.86 );
+		expect( result.total ).to.eql( 27.79 );
 	} );
 } );

@@ -12,6 +12,7 @@ import { reducer as form } from 'redux-form';
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
+import actionLogger from './action-log';
 import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
 import navigationMiddleware from './navigation/middleware';
@@ -203,6 +204,7 @@ export function createReduxStore( initialState = {} ) {
 	const enhancers = [
 		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
 		applyMiddleware( ...middlewares ),
+		isBrowser && window.app && window.app.isDebug && actionLogger,
 		isBrowser && window.devToolsExtension && window.devToolsExtension(),
 	].filter( Boolean );
 

@@ -113,9 +113,12 @@
 		margin-bottom: 17px;
 
 		@include breakpoint( "<480px" ) {
-			margin-bottom: 9px;
 			align-items: normal;
 			padding-top: 6px;
+		}
+		
+		@include breakpoint( "<660px" ) {
+			margin-bottom: 9px;	
 		}
 	}
 }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, get, isEmpty, isEqual, isFinite, map, mapValues, some, sum } from 'lodash';
+import { find, get, isEmpty, isEqual, isFinite, mapValues, round, some } from 'lodash';
 import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -74,33 +74,44 @@ export const getForm = ( state, orderId, siteId = getSelectedSiteId( state ) ) =
 	return shippingLabel && shippingLabel.form;
 };
 
-export const getRatesTotal = createSelector(
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-		const form = getForm( state, orderId, siteId );
-		if ( ! form ) {
-			return 0;
-		}
-
-		const { values: selectedRates, available: availableRates } = form.rates;
-
-		const ratesCost = map( selectedRates, ( rateId, boxId ) => {
-			const packageRates = get( availableRates, [ boxId, 'rates' ], false );
-
-			if ( packageRates ) {
-				const foundRate = find( packageRates, [ 'service_id', rateId ] );
-
-				return foundRate ? foundRate.rate : 0;
-			}
-			return 0;
-		} );
-
-		return Number( sum( ratesCost ) ).toFixed( 2 );
-	},
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-		const form = getForm( state, orderId, siteId );
-		return [ form && form.rates ];
+/**
+ * Returns a breakdown of the total price for selected labels in form of { prices, discount, total }
+ * @param {Object} state global state tree
+ * @param {Number} orderId order Id
+ * @param {Number} siteId site Id
+ *
+ * @returns {Object} price breakdown
+ */
+export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const form = getForm( state, orderId, siteId );
+	if ( ! form ) {
+		return null;
 	}
-);
+
+	const { values: selectedRates, available: availableRates } = form.rates;
+	const prices = [];
+	let discount = 0;
+	let total = 0;
+	for ( const packageId in selectedRates ) {
+		const packageRates = get( availableRates, [ packageId, 'rates' ], false );
+		const foundRate = find( packageRates, [ 'service_id', selectedRates[ packageId ] ] );
+		if ( foundRate ) {
+			prices.push( {
+				title: foundRate.title,
+				retailRate: foundRate.retail_rate,
+			} );
+
+			discount += round( foundRate.retail_rate - foundRate.rate, 2 );
+			total += foundRate.rate;
+		}
+	}
+
+	return prices.length ? {
+		prices,
+		discount: discount,
+		total: total,
+	} : null;
+};
 
 const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized, ignoreValidation }, countriesData ) => {
 	if ( isNormalized && ! normalized ) {

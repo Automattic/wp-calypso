@@ -18,8 +18,9 @@ const tasks = {
 		duration: '10 mins',
 		completedTitle: 'You updated your About page',
 		completedButtonText: 'Change',
-		url: '/pages/$siteSlug',
+		url: '/page/$siteSlug/2',
 		image: '/calypso/images/stats/tasks/about.svg',
+		tour: 'checklistAboutPage',
 	},
 	avatar_uploaded: {
 		title: 'Upload your profile picture',
@@ -30,9 +31,10 @@ const tasks = {
 		completedButtonText: 'Change',
 		url: '/me',
 		image: '/calypso/images/stats/tasks/upload-profile-picture.svg',
+		tour: 'checklistUserAvatar',
 	},
 	blogname_set: {
-		title: 'Personalize your site',
+		title: 'Give your site a name',
 		description: 'Give your site a descriptive name to entice visitors.',
 		duration: '1 min',
 		completedTitle: 'You updated your site title',
@@ -57,8 +59,9 @@ const tasks = {
 		duration: '2 mins',
 		completedTitle: 'You updated your Contact page',
 		completedButtonText: 'Edit',
-		url: '/pages/$siteSlug',
+		url: '/page/$siteSlug/3',
 		image: '/calypso/images/stats/tasks/contact.svg',
+		tour: 'checklistContactPage',
 	},
 	custom_domain_registered: {
 		title: 'Register a custom domain',
@@ -108,7 +111,7 @@ const tasks = {
 		duration: '2 mins',
 		completedTitle: 'You added your social accounts.',
 		completedButtonText: 'Change',
-		url: '/customize/$siteSlug',
+		url: '/customize/$siteSlug?guide=social-media',
 		image: '/calypso/images/stats/tasks/social-links.svg',
 	},
 };

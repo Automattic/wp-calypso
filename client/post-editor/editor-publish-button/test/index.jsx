@@ -41,7 +41,6 @@ describe( 'EditorPublishButton', () => {
 					translate={ identity }
 					savedPost={ { status: 'publish' } }
 					post={ { status: 'publish' } }
-					site={ MOCK_SITE }
 				/>
 			).instance();
 
@@ -54,7 +53,6 @@ describe( 'EditorPublishButton', () => {
 					translate={ identity }
 					savedPost={ { status: 'publish' } }
 					post={ { status: 'draft' } }
-					site={ MOCK_SITE }
 				/>
 			).instance();
 
@@ -69,7 +67,6 @@ describe( 'EditorPublishButton', () => {
 						translate={ identity }
 						savedPost={ { status: 'draft' } }
 						post={ { date: nextMonth } }
-						site={ MOCK_SITE }
 					/>
 				).instance();
 
@@ -99,7 +96,6 @@ describe( 'EditorPublishButton', () => {
 						translate={ identity }
 						savedPost={ { status: 'future', date: nextMonth } }
 						post={ { title: 'change', status: 'future', date: nextMonth } }
-						site={ MOCK_SITE }
 					/>
 				).instance();
 
@@ -114,7 +110,6 @@ describe( 'EditorPublishButton', () => {
 						translate={ identity }
 						savedPost={ { status: 'future', date: nextMonth } }
 						post={ { title: 'change', status: 'draft', date: nextMonth } }
-						site={ MOCK_SITE }
 					/>
 				).instance();
 
@@ -129,7 +124,7 @@ describe( 'EditorPublishButton', () => {
 						translate={ identity }
 						savedPost={ { status: 'future', date: lastMonth } }
 						post={ { title: 'change', status: 'future', date: lastMonth } }
-						site={ MOCK_SITE }
+						canUserPublishPosts
 					/>
 				).instance();
 
@@ -141,7 +136,7 @@ describe( 'EditorPublishButton', () => {
 				<EditorPublishButton
 					translate={ identity }
 					savedPost={ { status: 'draft' } }
-					site={ MOCK_SITE }
+					canUserPublishPosts
 				/>
 			).instance();
 
@@ -150,15 +145,7 @@ describe( 'EditorPublishButton', () => {
 
 		test( 'should return "Submit for Review" if the post is a draft and user can\'t publish', () => {
 			const tree = shallow(
-				<EditorPublishButton
-					translate={ identity }
-					savedPost={ { status: 'draft' } }
-					site={ {
-						capabilities: {
-							publish_posts: false,
-						},
-					} }
-				/>
+				<EditorPublishButton translate={ identity } savedPost={ { status: 'draft' } } />
 			).instance();
 
 			expect( tree.getButtonLabel() ).to.equal( 'Submit for Review' );
@@ -258,8 +245,8 @@ describe( 'EditorPublishButton', () => {
 					<EditorPublishButton
 						translate={ identity }
 						post={ { status: 'draft' } }
-						site={ MOCK_SITE }
 						onPublish={ onPublish }
+						canUserPublishPosts
 					/>
 				).instance();
 
@@ -279,6 +266,7 @@ describe( 'EditorPublishButton', () => {
 						post={ { title: 'change', status: 'draft', date: nextMonth } }
 						onPublish={ onPublish }
 						site={ MOCK_SITE }
+						canUserPublishPosts
 					/>
 				).instance();
 
@@ -297,7 +285,7 @@ describe( 'EditorPublishButton', () => {
 						savedPost={ { status: 'future', date: nextMonth } }
 						post={ { title: 'change', status: 'future', date: nextMonth } }
 						onPublish={ onPublish }
-						site={ MOCK_SITE }
+						canUserPublishPosts
 					/>
 				).instance();
 
@@ -316,7 +304,7 @@ describe( 'EditorPublishButton', () => {
 						savedPost={ { status: 'future', date: lastMonth } }
 						post={ { title: 'change', status: 'future', date: lastMonth } }
 						onPublish={ onPublish }
-						site={ MOCK_SITE }
+						canUserPublishPosts
 					/>
 				).instance();
 
@@ -349,11 +337,6 @@ describe( 'EditorPublishButton', () => {
 						translate={ identity }
 						savedPost={ { status: 'draft' } }
 						onSave={ onSave }
-						site={ {
-							capabilities: {
-								publish_posts: false,
-							},
-						} }
 					/>
 				).instance();
 

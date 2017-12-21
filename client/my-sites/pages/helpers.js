@@ -8,8 +8,16 @@ import { assign, forEach, groupBy, includes, map, reduce, sortBy } from 'lodash'
 const sortByMenuOrder = list => sortBy( list, 'menu_order' );
 const getParentId = page => page.parent && page.parent.ID;
 
-export const editLinkForPage = ( { ID: pageId } = {}, { ID: siteId, slug } = {} ) =>
-	pageId && siteId ? `/page/${ slug }/${ pageId }` : null;
+export const editLinkForPage = ( page, site ) => {
+	if ( ! page || ! site ) {
+		return null;
+	}
+
+	const { ID: pageId } = page;
+	const { ID: siteId, slug } = site;
+
+	return pageId && siteId ? `/page/${ slug }/${ pageId }` : null;
+};
 
 export const statsLinkForPage = ( { ID: pageId } = {}, { ID: siteId, slug } ) =>
 	pageId && siteId ? `/stats/post/${ pageId }/${ slug }` : null;

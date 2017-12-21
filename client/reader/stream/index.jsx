@@ -92,6 +92,7 @@ class ReaderStream extends React.Component {
 		transformStreamItems: PropTypes.func,
 		isMain: PropTypes.bool,
 		intro: PropTypes.object,
+		forcePlaceholders: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -109,6 +110,7 @@ class ReaderStream extends React.Component {
 		isMain: true,
 		useCompactCards: false,
 		intro: null,
+		forcePlaceholders: false,
 	};
 
 	getStateFromStores( props = this.props ) {
@@ -447,9 +449,18 @@ class ReaderStream extends React.Component {
 	};
 
 	render() {
-		const store = this.props.postsStore,
-			hasNoPosts = store.isLastPage() && ( ! this.state.posts || this.state.posts.length === 0 );
+		const { forcePlaceholders, postsStore: store } = this.props;
+		let { items, isFetchingNextPage } = this.state;
+
+		const hasNoPosts =
+			store.isLastPage() && ( ! this.state.posts || this.state.posts.length === 0 );
 		let body, showingStream;
+
+		// trick an infinite list to showing placeholders
+		if ( forcePlaceholders ) {
+			items = [];
+			isFetchingNextPage = true;
+		}
 
 		if ( hasNoPosts || store.hasRecentError( 'invalid_tag' ) ) {
 			body = this.props.emptyContent;
@@ -462,9 +473,9 @@ class ReaderStream extends React.Component {
 				<InfiniteList
 					ref={ c => ( this._list = c ) }
 					className="reader__content"
-					items={ this.state.items }
+					items={ items }
 					lastPage={ this.state.isLastPage }
-					fetchingNextPage={ this.state.isFetchingNextPage }
+					fetchingNextPage={ isFetchingNextPage }
 					guessedItemHeight={ GUESSED_POST_HEIGHT }
 					fetchNextPage={ this.fetchNextPage }
 					getItemRef={ this.getPostRef }

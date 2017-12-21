@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -27,6 +28,10 @@ import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 
 class ShippingSettingsSaveButton extends Component {
+	static propTypes = {
+		onSaveSuccess: PropTypes.func.isRequired,
+	};
+
 	componentDidMount = () => {
 		const { site } = this.props;
 
@@ -46,15 +51,23 @@ class ShippingSettingsSaveButton extends Component {
 		}
 	};
 
+	onSaveSuccess = dispatch => {
+		const { translate } = this.props;
+
+		this.props.onSaveSuccess();
+
+		dispatch(
+			successNotice( translate( 'Shipping settings saved' ), {
+				duration: 4000,
+			} )
+		);
+	};
+
 	save = () => {
 		const { translate, wcsEnabled } = this.props;
 		if ( ! wcsEnabled ) {
 			return;
 		}
-
-		const successAction = successNotice( translate( 'Shipping settings saved' ), {
-			duration: 4000,
-		} );
 
 		const failureAction = errorNotice(
 			translate( 'There was a problem saving the shipping settings. Please try again.' )
@@ -68,7 +81,7 @@ class ShippingSettingsSaveButton extends Component {
 		);
 
 		this.props.createWcsShippingSaveActionList(
-			successAction,
+			this.onSaveSuccess,
 			failureAction,
 			noLabelsPaymentAction
 		);

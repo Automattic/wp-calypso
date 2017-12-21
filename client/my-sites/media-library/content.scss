@@ -29,3 +29,34 @@
 	margin: 0 auto;
 	text-align: center;
 }
+
+.media-library__pexels-attribution {
+	display: inline-block;
+	margin-right: 5em;
+	padding-top: 2px;
+}
+
+// Split attribution to its own line for smaller screens in the main media library.
+// This prevents the "copy to media library" button from overlapping the grid buttons.
+@include breakpoint( "<960px" ) {
+	.media__main-section .media-library__header.card {
+		flex-wrap: wrap;
+	}
+
+	.media__main-section .media-library__pexels-attribution {
+		flex: 0 0 100%;
+		margin-right: 0;
+		padding-top: 6px;
+		order: 1;
+	}
+}
+
+// Scoot the "copy to media library" over to the right, so it doesn't float awkwardly in the middle.
+@include breakpoint( ">960px" ) {
+	.media__main-section .media-library__pexels-attribution {
+		order: 2;
+		margin-right: 0;
+		text-align: right;
+		width: calc(88% - 220px);
+	}
+}

@@ -13,15 +13,15 @@ import { get } from 'lodash';
  * @return {?String}     Error type.
  */
 export default function getProfileLinksErrorType( state ) {
-	if ( get( state, [ 'profileLinks', 'errors', 'duplicate' ], false ) ) {
+	if ( get( state, [ 'userProfileLinks', 'errors', 'duplicate' ], false ) ) {
 		return 'duplicate';
 	}
 
-	if ( get( state, [ 'profileLinks', 'errors', 'malformed' ], false ) ) {
+	if ( get( state, [ 'userProfileLinks', 'errors', 'malformed' ], false ) ) {
 		return 'malformed';
 	}
 
-	if ( get( state, [ 'profileLinks', 'errors', 'error' ], false ) ) {
+	if ( get( state, [ 'userProfileLinks', 'errors', 'error' ], false ) ) {
 		return 'other';
 	}
 

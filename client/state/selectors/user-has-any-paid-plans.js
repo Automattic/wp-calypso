@@ -9,6 +9,7 @@ import { some } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+import { getSitesItems } from 'state/selectors';
 import { isPlan } from 'lib/products-values';
 
 /**
@@ -18,6 +19,6 @@ import { isPlan } from 'lib/products-values';
  * @return {Object}       Site object
  */
 export default createSelector(
-	state => some( state.sites.items, site => isPlan( site.plan ) ),
-	state => [ state.sites.items ]
+	state => some( getSitesItems( state ), site => isPlan( site.plan ) ),
+	state => [ getSitesItems( state ) ]
 );

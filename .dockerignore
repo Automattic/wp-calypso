@@ -5,6 +5,7 @@ Dockerfile
 .vscode
 /.babel-cache
 /build
+/cached-requests.json
 /node_modules
 /public/*.css
 /public/*.css.map

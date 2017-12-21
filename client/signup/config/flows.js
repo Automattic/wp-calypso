@@ -268,6 +268,14 @@ if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
 		description: 'Signup flow for creating an online store with an Atomic site',
 		lastModified: '2017-09-27',
 	};
+
+	flows[ 'segmented-store-nux' ] = {
+		steps: [ 'about', 'themes', 'domains', 'plans-store-nux', 'user' ],
+		destination: getSiteDestination,
+		description:
+			'Signup flow for creating an online store with an Atomic site from the new site segementing step',
+		lastModified: '2017-12-15',
+	};
 }
 
 if ( config.isEnabled( 'signup/wpcc' ) ) {
@@ -336,7 +344,11 @@ function filterDesignTypeInFlow( flowName, flow ) {
 		return;
 	}
 
-	if ( includes( flow.steps, 'design-type' ) && abtest( 'signupSiteSegmentStep' ) === 'variant' ) {
+	if (
+		includes( flow.steps, 'design-type' ) &&
+		abtest( 'signupSiteSegmentStep' ) === 'variant' &&
+		flowName !== 'subdomain'
+	) {
 		return replaceStepInFlow( flow, 'design-type', 'about' );
 	}
 

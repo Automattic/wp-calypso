@@ -5,6 +5,7 @@
  */
 
 import { find, get, isArray } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -28,6 +29,18 @@ export const getPaymentMethods = ( state, siteId = getSelectedSiteId( state ) ) 
  * @return {Object} Object with payment method data, false if no method found
  */
 export const getPaymentMethod = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
+	if ( methodId === 'calypso_manual' ) {
+		return {
+			id: 'calypso_manual',
+			title: translate( 'Manual Payment' ),
+			description: '', // Not used for this method
+			enabled: true,
+			method_title: 'calypso_manual',
+			methodType: 'offline',
+			method_description: '', // Not used for this method
+			method_supports: [ 'products' ],
+		};
+	}
 	const methods = getPaymentMethods( state, siteId );
 	return find( methods, { id: methodId } ) || false;
 };

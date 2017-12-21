@@ -26,11 +26,11 @@ import InfoStep from './info-step';
 import Main from 'components/main';
 import Skeleton from './skeleton';
 import Upsell from './upsell';
-import QueryConciergeShifts from 'components/data/query-concierge-shifts';
+import QueryConciergeAvailableTimes from 'components/data/query-concierge-available-times';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
-import { getConciergeShifts } from 'state/selectors';
+import { getConciergeAvailableTimes } from 'state/selectors';
 import { WPCOM_CONCIERGE_SCHEDULE_ID } from './constants';
 import { getSite } from 'state/sites/selectors';
 
@@ -80,10 +80,10 @@ class ConciergeMain extends Component {
 		const { site } = this.props;
 
 		// TODO:
-		// render the shifts for real.
+		// render the available times for real.
 		return (
 			<Main>
-				<QueryConciergeShifts scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID } />
+				<QueryConciergeAvailableTimes scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID } />
 				<QuerySites />
 				{ site && <QuerySitePlans siteId={ site.ID } /> }
 				{ this.getDisplayComponent() }
@@ -92,10 +92,7 @@ class ConciergeMain extends Component {
 	}
 }
 
-export default connect(
-	( state, props ) => ( {
-		availableTimes: getConciergeShifts( state ),
-		site: getSite( state, props.siteSlug ),
-	} ),
-	{ getConciergeShifts }
-)( ConciergeMain );
+export default connect( ( state, props ) => ( {
+	availableTimes: getConciergeAvailableTimes( state ),
+	site: getSite( state, props.siteSlug ),
+} ) )( ConciergeMain );

@@ -21,7 +21,7 @@ describe( 'getProfileLinks()', () => {
 
 	test( 'should return null if profile links have not been received yet', () => {
 		const state = {
-			profileLinks: {
+			userProfileLinks: {
 				items: null,
 			},
 		};
@@ -30,7 +30,7 @@ describe( 'getProfileLinks()', () => {
 
 	test( 'should return empty array if current user has no profile links', () => {
 		const state = {
-			profileLinks: {
+			userProfileLinks: {
 				items: [],
 			},
 		};
@@ -39,7 +39,7 @@ describe( 'getProfileLinks()', () => {
 
 	test( 'should return the profile links of the current user', () => {
 		const state = {
-			profileLinks: {
+			userProfileLinks: {
 				items: profileLinks,
 			},
 		};

@@ -83,6 +83,12 @@ export const continuePolling = ( { dispatch }, action ) => {
 		}
 
 		const timer = setTimeout( () => {
+			// Since we update the list of sites with pollingSites.set()
+			// We need to check to make sure that the site was not removed.
+			// Otherwise this causes a bug where we poll the site forever.
+			if ( ! pollingSites.get( siteId ) ) {
+				return;
+			}
 			pollingSites.set( siteId, { ...pollingSites.get( siteId ), timer: null } );
 			dispatch(
 				merge(

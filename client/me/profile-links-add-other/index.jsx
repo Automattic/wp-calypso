@@ -13,14 +13,13 @@ import { localize } from 'i18n-calypso';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
-import Notice from 'components/notice';
+import { addUserProfileLinks } from 'state/profile-links/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class ProfileLinksAddOther extends React.Component {
 	state = {
 		title: '',
 		value: '',
-		lastError: false,
 	};
 
 	// As the user types, the component state changes thanks to the LinkedStateMixin.
@@ -86,57 +85,14 @@ class ProfileLinksAddOther extends React.Component {
 			return;
 		}
 
-		this.props.userProfileLinks.addProfileLinks(
-			[
-				{
-					title: this.state.title.trim(),
-					value: this.state.value.trim(),
-				},
-			],
-			this.onSubmitResponse
-		);
+		this.props.addUserProfileLinks( [
+			{
+				title: this.state.title.trim(),
+				value: this.state.value.trim(),
+			},
+		] );
+		this.props.onSuccess();
 	};
-
-	onSubmitResponse = ( error, data ) => {
-		if ( error ) {
-			this.setState( {
-				lastError: this.props.translate( 'Unable to add link right now. Please try again later.' ),
-			} );
-		} else if ( data.duplicate ) {
-			this.setState( {
-				lastError: this.props.translate(
-					'That link is already in your profile links. No changes were made.'
-				),
-			} );
-		} else if ( data.malformed ) {
-			this.setState( {
-				lastError: this.props.translate( 'An unexpected error occurred. Please try again later.' ),
-			} );
-		} else {
-			this.props.onSuccess();
-		}
-	};
-
-	clearLastError = () => {
-		this.setState( {
-			lastError: false,
-		} );
-	};
-
-	possiblyRenderError() {
-		if ( ! this.state.lastError ) {
-			return null;
-		}
-
-		return (
-			<Notice
-				className="profile-links-add-other__error"
-				status="is-error"
-				onDismissClick={ this.clearLastError }
-				text={ this.state.lastError }
-			/>
-		);
-	}
 
 	render() {
 		return (
@@ -146,7 +102,6 @@ class ProfileLinksAddOther extends React.Component {
 						'Please enter the URL and description of the site you want to add to your profile.'
 					) }
 				</p>
-				{ this.possiblyRenderError() }
 				<FormFieldset>
 					<FormTextInput
 						className="profile-links-add-other__value"
@@ -185,5 +140,6 @@ class ProfileLinksAddOther extends React.Component {
 }
 
 export default connect( null, {
+	addUserProfileLinks,
 	recordGoogleEvent,
 } )( localize( ProfileLinksAddOther ) );

@@ -15,7 +15,7 @@ describe( 'getProfileLinksErrorType()', () => {
 
 	test( 'should return null if there are no errors from the last profile links request', () => {
 		const state = {
-			profileLinks: {
+			userProfileLinks: {
 				errors: {},
 			},
 		};
@@ -25,7 +25,7 @@ describe( 'getProfileLinksErrorType()', () => {
 
 	test( 'should return "duplicate" if there are duplicates in the last profile links request', () => {
 		const state = {
-			profileLinks: {
+			userProfileLinks: {
 				errors: {
 					duplicate: profileLinks,
 				},
@@ -37,7 +37,7 @@ describe( 'getProfileLinksErrorType()', () => {
 
 	test( 'should return "malformed" if there are malformed links in the last profile links request', () => {
 		const state = {
-			profileLinks: {
+			userProfileLinks: {
 				errors: {
 					malformed: profileLinks,
 				},
@@ -49,7 +49,7 @@ describe( 'getProfileLinksErrorType()', () => {
 
 	test( 'should return "other" if there is another error in the last profile links request', () => {
 		const state = {
-			profileLinks: {
+			userProfileLinks: {
 				errors: {
 					error: {
 						status: 403,

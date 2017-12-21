@@ -39,9 +39,16 @@ class AccountSettingsRootView extends Component {
 		if ( ! formMeta || ( ! formMeta.isFetching && ! formMeta.can_manage_payments ) ) {
 			return <QueryLabelSettings siteId={ siteId } />;
 		}
-		const setValue = ( key, value ) => this.props.setFormDataValue( siteId, key, value );
-		const onEnabledToggle = () =>
+
+		const setValue = ( key, value ) => {
+			this.props.onChange();
+			this.props.setFormDataValue( siteId, key, value );
+		};
+
+		const onEnabledToggle = () => {
+			this.props.onChange();
 			this.props.setFormDataValue( siteId, 'enabled', ! formData.enabled );
+		};
 
 		const renderContent = () => {
 			if ( ! formData && ! formMeta.isFetching ) {
@@ -91,6 +98,7 @@ class AccountSettingsRootView extends Component {
 }
 
 AccountSettingsRootView.propTypes = {
+	onChange: PropTypes.func.isRequired,
 	submit: PropTypes.func,
 };
 

@@ -127,12 +127,12 @@ TransactionFlow.prototype._paymentHandlers = {
 		debug( 'submitting transaction with new card' );
 
 		this._createCardToken(
-			function( cardToken ) {
+			function( gatewayData ) {
 				const { name, country, 'postal-code': zip } = newCardDetails;
 
 				this._submitWithPayment( {
-					payment_method: 'WPCOM_Billing_MoneyPress_Paygate',
-					payment_key: cardToken,
+					payment_method: gatewayData.paymentMethod,
+					payment_key: gatewayData.token,
 					name,
 					zip,
 					country,
@@ -201,14 +201,15 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 };
 
 function createPaygateToken( requestType, cardDetails, callback ) {
+	debug( 'creating token with Paygate' );
 	wpcom.paygateConfiguration(
 		{
 			request_type: requestType,
 			country: cardDetails.country,
 		},
-		function( error, configuration ) {
-			if ( error ) {
-				callback( error );
+		function( configError, configuration ) {
+			if ( configError ) {
+				callback( configError );
 				return;
 			}
 
@@ -234,7 +235,9 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 			return callback( new Error( 'Paygate Response Error: ' + data.error_msg ) );
 		}
 
-		callback( null, data.token );
+		data.paymentMethod = 'WPCOM_Billing_MoneyPress_Paygate';
+
+		callback( null, data );
 	}
 
 	function onFailure() {

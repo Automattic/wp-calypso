@@ -41,6 +41,7 @@ class DomainSearchResults extends React.Component {
 		selectedSite: PropTypes.object,
 		availableDomain: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		suggestions: PropTypes.array,
+		isLoadingSuggestions: PropTypes.bool.isRequired,
 		placeholderQuantity: PropTypes.number.isRequired,
 		buttonLabel: PropTypes.string,
 		mappingSuggestionLabel: PropTypes.string,
@@ -203,7 +204,7 @@ class DomainSearchResults extends React.Component {
 		let suggestionElements;
 		let unavailableOffer;
 
-		if ( this.props.suggestions.length ) {
+		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
 			suggestionElements = this.props.suggestions.map( function( suggestion, i ) {
 				if ( suggestion.is_placeholder ) {
 					return <DomainSuggestion.Placeholder key={ 'suggestion-' + i } />;

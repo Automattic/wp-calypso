@@ -38,7 +38,7 @@ class ActivityLogItem extends Component {
 			activityId: PropTypes.string.isRequired,
 			activityName: PropTypes.string.isRequired,
 			activityStatus: PropTypes.string,
-			activityTitle: PropTypes.string.isRequired,
+			activityTitle: PropTypes.string,
 			activityTs: PropTypes.number.isRequired,
 
 			// Actor
@@ -74,14 +74,14 @@ class ActivityLogItem extends Component {
 				<ActivityActor
 					{ ...pick( log, [ 'actorAvatarUrl', 'actorName', 'actorRole', 'actorType' ] ) }
 				/>
-				{ ! activityDescription && (
-					<div className="activity-log-item__title">{ activityTitle }</div>
-				) }
 				{ activityDescription && (
 					<div className="activity-log-item__description">
-						{ activityDescription.map( ( part, key ) => (
-							<FormattedBlock key={ key } content={ part } />
-						) ) }
+						<div className="activity-log-item__description-content">
+							{ activityDescription.map( ( part, key ) => (
+								<FormattedBlock key={ key } content={ part } />
+							) ) }
+						</div>
+						{ activityTitle && <div className="activity-log-item__description-summary">{ activityTitle }</div> }
 					</div>
 				) }
 			</div>

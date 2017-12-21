@@ -76,6 +76,7 @@ class Site extends React.Component {
 			return null;
 		}
 
+		// Note: Update CSS selectors in SiteSelector.scrollToHighlightedSite() if the class names change.
 		const siteClass = classnames( {
 			site: true,
 			'is-jetpack': site.jetpack,

@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { compact, get, indexOf } from 'lodash';
+import { compact, get, indexOf, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -69,7 +69,15 @@ class Wizard extends Component {
 	};
 
 	render() {
-		const { backText, components, forwardText, hideNavigation, steps, stepName } = this.props;
+		const {
+			backText,
+			components,
+			forwardText,
+			hideNavigation,
+			steps,
+			stepName,
+			...otherProps
+		} = this.props;
 		const component = get( components, stepName );
 		const stepIndex = this.getStepIndex();
 		const totalSteps = steps.length;
@@ -85,6 +93,7 @@ class Wizard extends Component {
 				{ React.cloneElement( component, {
 					getBackUrl: this.getBackUrl,
 					getForwardUrl: this.getForwardUrl,
+					...omit( otherProps, [ 'basePath', 'baseSuffix' ] ),
 				} ) }
 
 				{ ! hideNavigation &&

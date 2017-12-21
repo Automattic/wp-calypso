@@ -10,7 +10,7 @@ import { filter } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { isMainSiteOf } from 'state/selectors';
+import { isMainSiteOf, getSitesItems } from 'state/selectors';
 import { getSite, isJetpackSiteMainNetworkSite } from 'state/sites/selectors';
 
 /**
@@ -28,9 +28,9 @@ export default createSelector(
 		}
 
 		return filter(
-			state.sites.items,
+			getSitesItems( state ),
 			site => mainSiteId === site.ID || isMainSiteOf( state, mainSiteId, site.ID )
 		).map( site => getSite( state, site.ID ) );
 	},
-	state => [ state.sites.items, state.currentUser.capabilities ]
+	state => [ getSitesItems( state ), state.currentUser.capabilities ]
 );

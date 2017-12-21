@@ -13,23 +13,21 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	background-color: $white;
 
 	& .notice {
-		margin: 0;
+		margin: 0 0 16px 0;
+		border-radius: 0;
 	}
 }
 
 .post-share__title {
 	display: flex;
 
-	font-size: 15px;
-	margin: 16px 0 4px;
-
-	@include breakpoint( ">660px" ) {
-		font-size: 18px;
-	}
-
 	span {
 		flex: 1;
 	}
+}
+
+.post-share__manage-connections-link {
+	margin: 16px 0 0;
 }
 
 .post-share__main {
@@ -54,19 +52,13 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 }
 
 .post-share__head {
-	border-bottom: 1px solid transparentize( lighten( $gray, 20% ), .5 );
 	.post-share__wrapper.is-placeholder & {
 		border-bottom-width: 0;
 	}
 
-	padding: 0 16px 16px;
+	padding: 16px;
 	@include breakpoint( ">480px" ) {
-		padding: 0 24px 16px;
-
-		//TODO Clean-up after PostTypeList is used for /posts/
-		.post-type-list & {
-			padding: 0 16px 16px;
-		}
+		padding: 16px;
 	}
 }
 
@@ -79,12 +71,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	flex: 3 0 0;
 	margin: 0 16px 16px;
 	@include breakpoint( ">480px" ) {
-		margin: 0 24px 16px;
-
-		//TODO Clean-up after PostTypeList is used for /posts/
-		.post-type-list & {
-			margin: 0 16px 16px;
-		}
+		margin: 0 16px 16px;
 	}
 
 	.post-share__share-button {
@@ -119,22 +106,6 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 .post-share__services {
 	flex: 2 1 0;
 	margin: 0 16px 16px;
-	@include breakpoint( ">480px" ) {
-		margin: 0 24px 16px;
-
-		//TODO Clean-up after PostTypeList is used for /posts/
-		.post-type-list & {
-			margin: 0 16px 16px;
-		}
-	}
-	@include breakpoint( ">960px" ) {
-		margin: 0 24px 16px 0;
-
-		//TODO Clean-up after PostTypeList is used for /posts/
-		.post-type-list & {
-			margin: 0 16px 16px 0;
-		}
-	}
 }
 
 .post-share .card.post-share__services-header {
@@ -278,21 +249,6 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	}
 }
 
-.post-share__services-add {
-	text-align: center;
-	margin: 6px 16px 0;
-
-	@include breakpoint( ">480px" ) {
-		margin-right: 24px;
-		margin-left: 24px;
-
-		//TODO Clean-up after PostTypeList is used for /posts/
-		.post-type-list & {
-			margin: 6 24px 0;
-		}
-	}
-}
-
 .post-share__button-actions {
 	display: flex;
 	justify-content: flex-end;
@@ -334,12 +290,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 
 	@include breakpoint( ">480px" ) {
 		margin-bottom: 1px;
-		padding: 16px 24px;
-
-		//TODO Clean-up after PostTypeList is used for /posts/
-		.post-type-list & {
-			padding: 16px;
-		}
+		padding: 16px;
 	}
 
 	&::after {

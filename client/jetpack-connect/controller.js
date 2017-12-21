@@ -14,6 +14,7 @@ import { translate } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import CheckoutData from 'components/data/checkout';
+import config from 'config';
 import i18nUtils from 'lib/i18n-utils';
 import JetpackConnect from './main';
 import JetpackConnectAuthorizeForm from './authorize-form';
@@ -30,7 +31,7 @@ import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
-import { storePlan } from './persistence-utils';
+import { persistMobileRedirect, storePlan } from './persistence-utils';
 import { urlToSlug } from 'lib/url';
 import {
 	PLAN_JETPACK_PREMIUM,
@@ -125,7 +126,7 @@ export function newSite( context, next ) {
 }
 
 export function connect( context, next ) {
-	const { path, pathname, params } = context;
+	const { path, pathname, params, query } = context;
 	const { type = false, interval } = params;
 	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
 
@@ -133,6 +134,10 @@ export function connect( context, next ) {
 
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 	planSlug && storePlan( planSlug );
+
+	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
+		persistMobileRedirect( query.mobile_redirect || '' );
+	}
 
 	analytics.pageView.record( pathname, analyticsPageTitle );
 
@@ -145,7 +150,7 @@ export function connect( context, next ) {
 		locale: params.locale,
 		path,
 		type,
-		url: context.query.url,
+		url: query.url,
 		userModule,
 	} );
 	next();

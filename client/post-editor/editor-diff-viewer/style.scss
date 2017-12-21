@@ -1,10 +1,19 @@
 /** @format */
 .editor-diff-viewer {
+	box-sizing: border-box;
+	overflow-y: hidden;
 	flex: 1;
 	margin: 0;
-	padding: 24px 32px 32px 32px;
-	box-sizing: border-box;
-	overflow-y: auto;
+	position: relative;
+	z-index: 1; // Put the viewer above the action-buttons:before overlay gradient. -shaun
+
+	.editor-diff-viewer__scrollable {
+		padding: 24px 32px 32px 32px;
+		height: 100%;
+		overflow-y: auto;
+		box-sizing: border-box;
+		-webkit-overflow-scrolling: touch;
+	}
 
 	.editor-diff-viewer__title {
 		font-family: $serif;
@@ -15,6 +24,40 @@
 		height: auto;
 		line-height: 1.425;
 	}
+}
+
+.editor-diff-viewer__hint-above,
+.editor-diff-viewer__hint-below {
+	position: absolute;
+	right: 24px;
+	border-radius: 4px;
+	height: 28px;
+	line-height: 27px;
+	background-color: $gray-text-min;
+	cursor: pointer;
+	padding: 0 16px 0 8px;
+	color: #fff;
+	font-size: 13px;
+
+	@include breakpoint( '<660px' ) {
+		display: none;
+	}
+}
+
+.editor-diff-viewer__hint-above {
+	top: 0;
+	border-radius: 0 0 4px 4px;
+}
+
+.editor-diff-viewer__hint-below {
+	bottom: 0;
+	border-radius: 4px 4px 0 0;
+}
+
+.editor-diff-viewer__hint-icon {
+	margin-right: 6px;
+	position: relative;
+	top: 4px;
 }
 
 .editor-diff-viewer.is-loading .editor-diff-viewer__title {
@@ -53,15 +96,4 @@
 		margin-bottom: 36px;
 		box-shadow: 0px 26px 0px 0px lighten($gray, 23%);
 	}
-}
-
-.editor-diff-viewer__additions {
-	background: lighten($blue-wordpress, 58%);
-	border-bottom: 2px solid $blue-wordpress;
-}
-
-.editor-diff-viewer__deletions {
-	background: lighten($alert-red, 38%);
-	border-bottom: 2px solid $alert-red;
-	text-decoration: line-through;
 }

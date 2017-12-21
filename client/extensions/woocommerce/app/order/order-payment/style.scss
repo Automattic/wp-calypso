@@ -29,10 +29,6 @@
 		width: 155px;
 	}
 
-	.order-payment__amount-label {
-		margin-right: 16px;
-	}
-
 	.order-payment__item-total {
 		text-align: right;
 	}
@@ -77,10 +73,16 @@
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		padding-bottom: 16px;
+		justify-content: space-between;
+		padding: 14px;
 		margin-bottom: 16px;
-		border-bottom: 1px solid lighten( $gray, 30% );
-		justify-content: flex-end;
+		background: lighten( $gray, 30% );
+		border: 1px solid lighten( $gray, 15% );
+	}
+
+	.order-payment__amount-value {
+		text-align: right;
+		font-weight: bold;
 	}
 
 	.order-payment__method h3 {

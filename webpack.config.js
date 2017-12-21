@@ -17,6 +17,7 @@ const webpack = require( 'webpack' );
 const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 const AssetsPlugin = require( 'assets-webpack-plugin' );
 const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
+const prism = require( 'prismjs' );
 
 /**
  * Internal dependencies
@@ -121,6 +122,22 @@ const webpackConfig = {
 			{
 				test: /node_modules[\/\\]tinymce/,
 				use: 'imports-loader?this=>window',
+			},
+			{
+				test: /README\.md$/,
+				use: [
+					{ loader: 'html-loader' },
+					{
+						loader: 'markdown-loader',
+						options: {
+							sanitize: true,
+							highlight: function( code, language ) {
+								const syntax = prism.languages[ language ];
+								return syntax ? prism.highlight( code, syntax ) : code;
+							},
+						},
+					},
+				],
 			},
 		],
 	},

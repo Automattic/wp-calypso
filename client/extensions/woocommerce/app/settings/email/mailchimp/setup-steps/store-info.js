@@ -27,7 +27,7 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 	const onTimezoneSelect = ( value ) => {
 		const e = { target: {
 			name: 'store_timezone',
-			value
+			value,
 		} };
 		onChange( e );
 	};

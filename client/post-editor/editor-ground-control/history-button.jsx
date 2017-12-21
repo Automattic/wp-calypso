@@ -6,32 +6,37 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { flow } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
+import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
-const HistoryButton = ( { openDialog, translate } ) => (
+const HistoryButton = ( { translate, selectHistory } ) => (
 	<div className="editor-ground-control__history">
-		<button className="editor-ground-control__history-button button is-link" onClick={ openDialog }>
+		<button
+			className="editor-ground-control__history-button button is-link"
+			onClick={ selectHistory }
+		>
 			{ translate( 'History' ) }
 		</button>
 	</div>
 );
 
 HistoryButton.propTypes = {
-	// connected to dispatch
-	openDialog: PropTypes.func.isRequired,
-
 	// localize
 	translate: PropTypes.func,
 };
 
-export default flow(
-	localize,
-	connect( null, {
-		openDialog: openPostRevisionsDialog,
-	} )
-)( HistoryButton );
+const mapDispatchToProps = dispatch => ( {
+	selectHistory: () =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_editor_history_button_click' ),
+				openPostRevisionsDialog()
+			)
+		),
+} );
+
+export default connect( null, mapDispatchToProps )( localize( HistoryButton ) );

@@ -82,7 +82,7 @@ class ChecklistShow extends PureComponent {
 					className="checklist-show__confetti"
 				/>
 				<FormattedHeader
-					headerText="Conguratulations!"
+					headerText="Congratulations!"
 					subHeaderText="You have completed all your tasks. Now let's tell people about it. Share your site."
 				/>
 				<div className="checklist-show__share">

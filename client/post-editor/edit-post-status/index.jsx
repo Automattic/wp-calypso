@@ -20,7 +20,6 @@ import FormToggle from 'components/forms/form-toggle/compact';
 import EditorRevisionsLegacyLink from 'post-editor/editor-revisions/legacy-link';
 import postUtils from 'lib/posts/utils';
 import InfoPopover from 'components/info-popover';
-import siteUtils from 'lib/site/utils';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -28,6 +27,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import EditorPublishDate from 'post-editor/editor-publish-date';
 import EditorVisibility from 'post-editor/editor-visibility';
+import { canCurrentUser } from 'state/selectors';
 
 export class EditPostStatus extends Component {
 	static propTypes = {
@@ -85,8 +85,8 @@ export class EditPostStatus extends Component {
 	};
 
 	render() {
-		let isSticky, isPublished, isPending, canPublish, isScheduled, isPasswordProtected;
-		const { translate, isPostPrivate } = this.props;
+		let isSticky, isPublished, isPending, isScheduled, isPasswordProtected;
+		const { translate, isPostPrivate, canUserPublishPosts } = this.props;
 
 		if ( this.props.post ) {
 			isPasswordProtected = postUtils.getVisibility( this.props.post ) === 'password';
@@ -94,7 +94,6 @@ export class EditPostStatus extends Component {
 			isPending = postUtils.isPending( this.props.post );
 			isPublished = postUtils.isPublished( this.props.savedPost );
 			isScheduled = this.props.savedPost && this.props.savedPost.status === 'future';
-			canPublish = siteUtils.userCan( 'publish_posts', this.props.site );
 		}
 
 		const adminUrl =
@@ -127,7 +126,7 @@ export class EditPostStatus extends Component {
 					) }
 				{ ! isPublished &&
 					! isScheduled &&
-					canPublish && (
+					canUserPublishPosts && (
 						<label className="edit-post-status__pending-review">
 							<span className="edit-post-status__label-text">
 								{ translate( 'Pending review' ) }
@@ -142,7 +141,7 @@ export class EditPostStatus extends Component {
 							/>
 						</label>
 					) }
-				{ ( isPublished || isScheduled || ( isPending && ! canPublish ) ) && (
+				{ ( isPublished || isScheduled || ( isPending && ! canUserPublishPosts ) ) && (
 					<Button
 						className="edit-post-status__revert-to-draft"
 						onClick={ this.revertToDraft }
@@ -200,11 +199,13 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
+		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
 
 		return {
 			siteId,
 			postId,
 			post,
+			canUserPublishPosts,
 		};
 	},
 	{ editPost }

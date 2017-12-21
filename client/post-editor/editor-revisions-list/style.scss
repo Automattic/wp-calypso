@@ -68,6 +68,7 @@
 	bottom: 0;
 	left: 0;
 	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
 
 	@include breakpoint( '<660px' ) {
 		overflow-y: hidden;
@@ -109,6 +110,7 @@
 	cursor: pointer;
 	text-align: left;
 	padding: 8px 16px;
+	margin: 0;
 	min-height: 73px;
 	width: 60vw;
 

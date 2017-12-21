@@ -19,7 +19,7 @@ export class OrderStatus extends Component {
 
 	getPaymentLabel = () => {
 		const { order, translate } = this.props;
-		const { status, payment_method } = order;
+		const { status, payment_method, refunds = [] } = order;
 		switch ( status ) {
 			case 'pending':
 			case 'on-hold':
@@ -28,8 +28,14 @@ export class OrderStatus extends Component {
 				if ( 'cod' === payment_method ) {
 					return translate( 'Paid on delivery' );
 				}
+				if ( refunds.length > 0 ) {
+					return translate( 'Partially refunded' );
+				}
 				return translate( 'Paid in full' );
 			case 'completed':
+				if ( refunds.length > 0 ) {
+					return translate( 'Partially refunded' );
+				}
 				return translate( 'Paid in full' );
 			case 'cancelled':
 				return translate( 'Cancelled' );

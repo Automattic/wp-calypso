@@ -5,19 +5,18 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { userCan } from 'lib/site/utils';
 import MediaLibraryListItem from 'my-sites/media-library/list-item';
 import EditorMediaModalGalleryCaption from './caption';
 import EditorMediaModalGalleryRemoveButton from './remove-button';
+import { canCurrentUser } from 'state/selectors';
 
-export default class extends React.Component {
-	static displayName = 'EditorMediaModalGalleryEditItem';
-
+class EditorMediaModalGalleryEditItem extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		item: PropTypes.object,
@@ -29,8 +28,8 @@ export default class extends React.Component {
 	};
 
 	renderCaption = () => {
-		const { site, item } = this.props;
-		if ( ! userCan( 'upload_files', site ) ) {
+		const { site, item, canUserUploadFiles } = this.props;
+		if ( ! canUserUploadFiles ) {
 			return;
 		}
 
@@ -51,3 +50,11 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default connect( ( state, { site = {} } ) => {
+	const canUserUploadFiles = canCurrentUser( state, site.ID, 'upload_files' );
+
+	return {
+		canUserUploadFiles,
+	};
+} )( EditorMediaModalGalleryEditItem );

@@ -1,4 +1,16 @@
 /** @format */
+
+/**
+ * Handle log in and sign up as part of the Jetpack Connect flow
+ *
+ * For user creation, this component relies on redux to store state as a user is created via a
+ * series of actions. Eventually this results in updating the `authorizationData.userData` prop on
+ * this component.
+ *
+ * When this component receives `userData`, it renders a `<WpcomLoginForm />` with the userData,
+ * which handles logging in the new user and redirection.
+ */
+
 /**
  * External dependencies
  */
@@ -12,6 +24,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import addQueryArgs from 'lib/route/add-query-args';
 import AuthFormHeader from './auth-form-header';
 import config from 'config';
 import HelpButton from './help-button';
@@ -48,10 +61,6 @@ class LoggedOutForm extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
 	}
 
-	getRedirectAfterLoginUrl() {
-		return window.location.href;
-	}
-
 	handleSubmitSignup = ( form, userData ) => {
 		debug( 'submiting new account', form, userData );
 		this.props.createAccount( userData );
@@ -61,6 +70,14 @@ class LoggedOutForm extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
+	/**
+	 * Log in the new user
+	 *
+	 * After an account is created, `authorizationData.userData` is populated
+	 * and we render this component to log the new user in.
+	 *
+	 * @return {Object} React element for render.
+	 */
 	renderLoginUser() {
 		const { userData, bearerToken } = this.props.authorizationData;
 
@@ -69,7 +86,7 @@ class LoggedOutForm extends Component {
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
 				emailAddress={ this.props.authQuery.userEmail }
-				redirectTo={ this.getRedirectAfterLoginUrl() }
+				redirectTo={ addQueryArgs( { auth_approved: true }, window.location.href ) }
 			/>
 		);
 	}
@@ -81,7 +98,6 @@ class LoggedOutForm extends Component {
 	}
 
 	renderFooterLink() {
-		const redirectTo = this.getRedirectAfterLoginUrl();
 		const emailAddress = this.props.authQuery.userEmail;
 
 		return (
@@ -89,7 +105,7 @@ class LoggedOutForm extends Component {
 				<LoggedOutFormLinkItem
 					href={ login( {
 						isNative: config.isEnabled( 'login/native-login-links' ),
-						redirectTo,
+						redirectTo: window.location.href,
 						emailAddress,
 					} ) }
 				>
@@ -108,7 +124,7 @@ class LoggedOutForm extends Component {
 				{ this.renderLocaleSuggestions() }
 				<AuthFormHeader authQuery={ this.props.authQuery } />
 				<SignupForm
-					redirectToAfterLoginUrl={ this.getRedirectAfterLoginUrl() }
+					redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
 					disabled={ isAuthorizing }
 					submitting={ isAuthorizing }
 					submitForm={ this.handleSubmitSignup }

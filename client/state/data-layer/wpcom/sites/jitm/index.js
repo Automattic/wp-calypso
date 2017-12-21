@@ -15,6 +15,7 @@ import { SECTION_SET, SELECTED_SITE_SET, JITM_DISMISS } from 'state/action-types
 import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import schema from './schema.json';
 import { clearJITM, insertJITM } from 'state/jitm/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Poor man's process manager
@@ -174,8 +175,12 @@ export const handleSiteSelection = ( { getState, dispatch }, action ) => {
  * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @return {undefined} Nothing
  */
-export const receiveJITM = ( { dispatch }, { siteId, site_id, messagePath }, jitms ) =>
+export const receiveJITM = ( { dispatch, getState }, { siteId, site_id, messagePath }, jitms ) => {
+	if ( site_id === undefined && site_id === undefined ) {
+		siteId = getSelectedSiteId( getState() );
+	}
 	dispatch( insertJITM( siteId || site_id, messagePath, jitms ) );
+};
 
 /**
  * Called when a jitm fails for any network related reason

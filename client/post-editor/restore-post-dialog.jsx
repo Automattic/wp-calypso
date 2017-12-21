@@ -26,7 +26,7 @@ class EditorRestorePostDialog extends Component {
 		onRestore: PropTypes.func,
 		isAutosave: PropTypes.bool,
 		postType: PropTypes.string,
-		userCanDeletePost: PropTypes.bool,
+		canUserDeletePost: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -36,10 +36,10 @@ class EditorRestorePostDialog extends Component {
 	};
 
 	restorePost = () => {
-		const { isAutosave, userCanDeletePost, onRestore } = this.props;
+		const { isAutosave, canUserDeletePost, onRestore } = this.props;
 		if ( isAutosave ) {
 			onRestore();
-		} else if ( userCanDeletePost ) {
+		} else if ( canUserDeletePost ) {
 			onRestore( 'draft' );
 		}
 	};
@@ -104,6 +104,6 @@ export default connect( state => {
 
 	return {
 		postType: getEditedPostValue( state, siteId, postId, 'type' ),
-		userCanDeletePost: get( capabilities, 'delete_post' ),
+		canUserDeletePost: get( capabilities, 'delete_post' ),
 	};
 } )( localize( EditorRestorePostDialog ) );

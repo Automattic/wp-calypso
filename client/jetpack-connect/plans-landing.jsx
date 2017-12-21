@@ -4,23 +4,24 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import page from 'page';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import addQueryArgs from 'lib/route/add-query-args';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
-import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
+import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
 import PlansSkipButton from './plans-skip-button';
-import { recordTracksEvent } from 'state/analytics/actions';
+import QueryPlans from 'components/data/query-plans';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
-import QueryPlans from 'components/data/query-plans';
-import addQueryArgs from 'lib/route/add-query-args';
+import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { storePlan } from './persistence-utils';
 
 const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
@@ -91,7 +92,7 @@ class PlansLanding extends Component {
 		// We're redirecting in componentDidMount if the site is already connected
 		// so don't bother rendering any markup if this is the case
 		if ( url && ( site || requestingSites ) ) {
-			return null;
+			return <Placeholder />;
 		}
 
 		return (

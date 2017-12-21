@@ -13,6 +13,7 @@ import FieldError from 'woocommerce/woocommerce-services/components/field-error'
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Notice from 'components/notice';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
+import formatCurrency from 'lib/format-currency';
 
 const renderRateNotice = ( translate ) => {
 	return (
@@ -32,7 +33,6 @@ export const ShippingRates = ( {
 		selectedPackages,
 		allPackages,
 		updateRate,
-		currencySymbol,
 		errors,
 		shouldShowRateNotice,
 		translate,
@@ -56,7 +56,8 @@ export const ShippingRates = ( {
 		const formError = errors.form && errors.form[ pckgId ];
 
 		packageRates.forEach( ( rateObject ) => {
-			valuesMap[ rateObject.service_id ] = rateObject.title + ' (' + currencySymbol + Number( rateObject.rate ).toFixed( 2 ) + ')';
+			valuesMap[ rateObject.service_id ] =
+				rateObject.title + ' (' + formatCurrency( rateObject.rate, 'USD' ) + ')';
 		} );
 
 		const onRateUpdate = ( value ) => updateRate( pckgId, value );
@@ -101,7 +102,6 @@ ShippingRates.propTypes = {
 	selectedPackages: PropTypes.object.isRequired,
 	allPackages: PropTypes.object.isRequired,
 	updateRate: PropTypes.func.isRequired,
-	currencySymbol: PropTypes.string.isRequired,
 	errors: PropTypes.object.isRequired,
 };
 

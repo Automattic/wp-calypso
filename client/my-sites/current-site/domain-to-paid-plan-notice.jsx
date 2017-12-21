@@ -15,8 +15,7 @@ import { endsWith, noop } from 'lodash';
  */
 import { getSelectedSite } from 'state/ui/selectors';
 import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+import SidebarBanner from 'my-sites/current-site/sidebar-banner';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isDomainOnlySite } from 'state/selectors';
@@ -52,22 +51,17 @@ export class DomainToPaidPlanNotice extends Component {
 			: `/plans/my-plan/${ site.slug }`;
 
 		return (
-			<Notice
-				icon="info-outline"
-				isCompact
-				status="is-success"
-				showDismiss={ false }
-				text={ translate( 'Upgrade your site and save.' ) }
-				className="current-site__notice-upsell"
-			>
-				<NoticeAction onClick={ this.onClick } href={ actionLink }>
-					{ translate( 'Go' ) }
-					<TrackComponentView
-						eventName={ impressionEventName }
-						eventProperties={ eventProperties }
-					/>
-				</NoticeAction>
-			</Notice>
+			<SidebarBanner icon="info-outline" text={ translate( 'Upgrade your site and save.' ) }>
+				<a onClick={ this.onClick } href={ actionLink }>
+					<span>
+						{ translate( 'Go' ) }
+						<TrackComponentView
+							eventName={ impressionEventName }
+							eventProperties={ eventProperties }
+						/>
+					</span>
+				</a>
+			</SidebarBanner>
 		);
 	}
 }
