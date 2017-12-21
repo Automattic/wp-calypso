@@ -29,6 +29,7 @@ import {
 	receiveCommentsError as receiveCommentErrorAction,
 	requestComment as requestCommentAction,
 } from 'state/comments/actions';
+import { updateCommentsQuery } from 'state/ui/comments/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
@@ -127,10 +128,14 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 		return;
 	}
 
-	const { siteId, status = 'unapproved', type = 'comment' } = action.query;
+	const { postId, siteId, status = 'unapproved', type = 'comment' } = action.query;
+
+	const path = postId
+		? `/sites/${ siteId }/posts/${ postId }/replies`
+		: `/sites/${ siteId }/comments`;
 
 	const query = {
-		...omit( action.query, [ 'listType', 'siteId' ] ),
+		...omit( action.query, [ 'listType', 'postId', 'siteId' ] ),
 		status,
 		type,
 	};
@@ -139,7 +144,7 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ siteId }/comments`,
+				path,
 				apiVersion: '1.1',
 				query,
 			},
@@ -148,7 +153,11 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 	);
 };
 
-export const addComments = ( { dispatch }, { query: { siteId, status } }, { comments } ) => {
+export const addComments = (
+	{ dispatch },
+	{ query: { page, postId, search, siteId, status } },
+	{ comments }
+) => {
 	// Initialize the comments tree to let CommentList know if a tree is actually loaded and empty.
 	// This is needed as a workaround for Jetpack sites populating their comments trees
 	// via `fetchCommentsList` instead of `fetchCommentsTreeForSite`.
@@ -160,16 +169,19 @@ export const addComments = ( { dispatch }, { query: { siteId, status } }, { comm
 			status,
 			tree: [],
 		} );
+		dispatch( updateCommentsQuery( siteId, [], { page, postId, search, status } ) );
 		return;
 	}
 
+	dispatch( updateCommentsQuery( siteId, comments, { page, postId, search, status } ) );
+
 	const byPost = groupBy( comments, ( { post: { ID } } ) => ID );
 
-	forEach( byPost, ( postComments, postId ) =>
+	forEach( byPost, ( postComments, post ) =>
 		dispatch(
 			receiveComments( {
 				siteId,
-				postId: +postId, // keyBy => object property names are strings
+				postId: parseInt( post, 10 ), // keyBy => object property names are strings
 				comments: postComments,
 			} )
 		)
