@@ -77,7 +77,6 @@ describe( 'store', () => {
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ) ).to.be.eql( {
 			data,
-			registrantContactDetails: data[ 0 ],
 			hasLoadedFromServer: true,
 			isFetching: false,
 			needsUpdate: false,
@@ -110,9 +109,6 @@ describe( 'store', () => {
 		} );
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).data ).to.be.equal( anotherData );
-		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).registrantContactDetails ).to.be.equal(
-			anotherData[ 0 ]
-		);
 	} );
 
 	test( 'should contain whois data for given domain equal to received from server action', () => {
@@ -142,18 +138,14 @@ describe( 'store', () => {
 		} );
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).data ).to.be.equal( data );
-		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).registrantContactDetails ).to.be.equal(
-			data[ 0 ]
-		);
 		expect( WhoisStore.getByDomainName( ANOTHER_DOMAIN_NAME ).data ).to.equal( anotherData );
-		expect( WhoisStore.getByDomainName( ANOTHER_DOMAIN_NAME ).registrantContactDetails ).to.equal(
-			anotherData[ 0 ]
-		);
 	} );
 
-	test( 'should return enabled needsUpdate flag and new registrantContactDetails when domain WHOIS update completed', () => {
+	test( 'should return enabled needsUpdate flag and assign data when domain WHOIS update completed', () => {
 		const registrantContactDetails = {
+			org: 'My Willie Company, LLC',
 			Willie: 'Nelson',
+			type: whoisType.REGISTRANT,
 		};
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.WHOIS_UPDATE_COMPLETED,
@@ -162,8 +154,55 @@ describe( 'store', () => {
 		} );
 
 		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).needsUpdate ).to.be.true;
-		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).registrantContactDetails ).to.be.eql(
-			registrantContactDetails
-		);
+		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).data ).to.be.eql( [
+			{
+				org: 'My Willie Company, LLC',
+				Willie: 'Nelson',
+				type: whoisType.REGISTRANT,
+			},
+		] );
+	} );
+
+	test( 'should return enabled needsUpdate flag and merge data when domain WHOIS update completed', () => {
+		const data = [
+			{
+				org: 'My First Company, LLC',
+				type: whoisType.REGISTRANT,
+			},
+			{
+				org: 'My Second Company, LLC',
+				type: whoisType.PRIVACY_SERVICE,
+			},
+		];
+
+		const registrantContactDetails = {
+			Roy: 'Orbison',
+			type: whoisType.REGISTRANT,
+		};
+
+		Dispatcher.handleServerAction( {
+			type: ActionTypes.WHOIS_FETCH_COMPLETED,
+			domainName: DOMAIN_NAME,
+			data,
+		} );
+
+		Dispatcher.handleServerAction( {
+			type: ActionTypes.WHOIS_UPDATE_COMPLETED,
+			domainName: DOMAIN_NAME,
+			registrantContactDetails,
+		} );
+
+		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).needsUpdate ).to.be.true;
+		expect( WhoisStore.getByDomainName( DOMAIN_NAME ).data ).to.be.eql( [
+			{
+				org: 'My First Company, LLC',
+				Roy: 'Orbison',
+				type: whoisType.REGISTRANT,
+			},
+			{
+				org: 'My Second Company, LLC',
+				type: whoisType.PRIVACY_SERVICE,
+			},
+		] );
 	} );
 } );
