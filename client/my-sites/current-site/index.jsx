@@ -124,7 +124,7 @@ class CurrentSite extends Component {
 
 				{ selectedSite ? (
 					<div>
-						<Site site={ selectedSite } />
+						<Site compact={ true } site={ selectedSite } />
 					</div>
 				) : (
 					<AllSites />

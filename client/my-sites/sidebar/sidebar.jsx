@@ -694,10 +694,8 @@ export class MySitesSidebar extends Component {
 		const isSubSidebarShowing = !! this.state.currentSubSidebar;
 		return (
 			<Sidebar className={ isSubSidebarShowing ? 'sub-sidebar-showing' : '' }>
-				<SidebarRegion>
-					<CurrentSite allSitesPath={ this.props.allSitesPath } />
-					{ this.renderSidebarMenus() }
-				</SidebarRegion>
+				<CurrentSite allSitesPath={ this.props.allSitesPath } />
+				<SidebarRegion>{ this.renderSidebarMenus() }</SidebarRegion>
 				<SubSidebar
 					items={ this.subSidebarItems.bind( this ) }
 					resetSubSidebar={ this.loadSubSidebar( null ) }
