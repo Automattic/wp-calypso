@@ -1,4 +1,4 @@
 /** @format */
 export const localeSlugSchema = {
-	type: 'string',
+	anyOf: [ { type: 'string' }, { enum: [ false ] } ],
 };
