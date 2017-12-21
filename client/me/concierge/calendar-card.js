@@ -99,11 +99,7 @@ class CalendarCard extends Component {
 					</FormLabel>
 					<FormSelect
 						id="concierge-start-time"
-<<<<<<< HEAD
 						disabled={ disabled }
-=======
-						disabled={ this.props.disabled }
->>>>>>> Address feedback
 						onChange={ this.onChange }
 						value={ this.state.selectedTime }
 					>
@@ -119,11 +115,7 @@ class CalendarCard extends Component {
 				</FormFieldset>
 
 				<FormFieldset>
-<<<<<<< HEAD
 					<Button disabled={ disabled } primary onClick={ this.submitForm }>
-=======
-					<Button disabled={ this.props.disabled } primary onClick={ this.submitForm }>
->>>>>>> Address feedback
 						{ translate( 'Book this session' ) }
 					</Button>
 				</FormFieldset>
