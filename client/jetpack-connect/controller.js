@@ -14,6 +14,7 @@ import { translate } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import CheckoutData from 'components/data/checkout';
+import config from 'config';
 import i18nUtils from 'lib/i18n-utils';
 import JetpackConnect from './main';
 import JetpackConnectAuthorizeForm from './authorize-form';
@@ -134,7 +135,9 @@ export function connect( context, next ) {
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 	planSlug && storePlan( planSlug );
 
-	persistMobileRedirect( query.mobile_redirect || '' );
+	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
+		persistMobileRedirect( query.mobile_redirect || '' );
+	}
 
 	analytics.pageView.record( pathname, analyticsPageTitle );
 
