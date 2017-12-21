@@ -88,26 +88,24 @@ class CalendarStep extends Component {
 	}
 
 	render() {
-		const { availableTimes, signupForm, translate } = this.props;
+		const { availableTimes, currentUserLocale, onBack, signupForm, translate } = this.props;
 		const availability = groupAvailableTimesByDate( availableTimes, signupForm.timezone );
 
 		return (
 			<div>
-				<HeaderCake onClick={ this.props.onBack }>
-					{ translate( 'Choose Concierge Session' ) }
-				</HeaderCake>
+				<HeaderCake onClick={ onBack }>{ translate( 'Choose Concierge Session' ) }</HeaderCake>
 				<CompactCard>
 					{ translate( 'Please select a day to have your Concierge session.' ) }
 				</CompactCard>
 				{ availability.map( ( { date, times } ) => (
 					<CalendarCard
 						date={ date }
-						disabled={ this.props.signupForm.status === CONCIERGE_STATUS_BOOKING }
-						isDefaultLocale={ isDefaultLocale( this.props.currentUserLocale ) }
+						disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING }
+						isDefaultLocale={ isDefaultLocale( currentUserLocale ) }
 						key={ date }
 						onSubmit={ this.onSubmit }
-						signupForm={ this.props.signupForm }
 						times={ times }
+						timezone={ signupForm.timezone }
 					/>
 				) ) }
 			</div>
