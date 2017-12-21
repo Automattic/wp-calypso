@@ -34,6 +34,56 @@ jest.mock( 'lib/route/path', () => ( {
 } ) );
 
 describe( 'JetpackConnectMain', () => {
+	describe( 'goToPluginActivation', () => {
+		const component = new JetpackConnectMain( REQUIRED_PROPS );
+
+		beforeEach( () => {
+			component.redirecting = false;
+			component.props.recordTracksEvent.mockReset();
+			externalRedirect.mockReset();
+		} );
+
+		test( 'should fire redirect', () => {
+			component.goToPluginActivation( 'example.com' );
+
+			expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
+			expect( externalRedirect.mock.calls[ 0 ] ).toMatchSnapshot();
+		} );
+
+		test( 'should dispatch analytics', () => {
+			const url = 'example.com';
+			component.goToPluginActivation( url );
+
+			expect( component.props.recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+			expect( component.props.recordTracksEvent.mock.calls[ 0 ] ).toMatchSnapshot();
+		} );
+	} );
+
+	describe( 'goToPluginInstall', () => {
+		const component = new JetpackConnectMain( REQUIRED_PROPS );
+
+		beforeEach( () => {
+			component.redirecting = false;
+			component.props.recordTracksEvent.mockReset();
+			externalRedirect.mockReset();
+		} );
+
+		test( 'should fire redirect', () => {
+			component.goToPluginInstall( 'example.com' );
+
+			expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
+			expect( externalRedirect.mock.calls[ 0 ] ).toMatchSnapshot();
+		} );
+
+		test( 'should dispatch analytics', () => {
+			const url = 'example.com';
+			component.goToPluginInstall( url );
+
+			expect( component.props.recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+			expect( component.props.recordTracksEvent.mock.calls[ 0 ] ).toMatchSnapshot();
+		} );
+	} );
+
 	describe( 'goToRemoteAuth', () => {
 		const component = new JetpackConnectMain( REQUIRED_PROPS );
 
