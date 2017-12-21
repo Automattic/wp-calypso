@@ -11,24 +11,11 @@ import { expect } from 'chai';
 import {
 	getLanguageGroupById,
 	getLanguageGroupFromTerritoryId,
-	getLanguageGroupByLangSlug,
+	getLanguageGroupByCountryCode,
 } from '../utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from '../constants';
 
 describe( 'language picker utils', () => {
-	const languagesMock = [
-		{
-			value: 2,
-			popular: 1,
-			langSlug: 'af',
-			name: 'Afrikaans',
-			wpLocale: 'af',
-			territories: [ '002' ],
-		},
-		{ value: 418, langSlug: 'als', name: 'Alemannisch', wpLocale: '', territories: [ '155' ] },
-		{ value: 456, langSlug: 'ne', name: 'नेपाली', wpLocale: 'ne_NP', territories: [ '034' ] },
-	];
-
 	describe( 'getLanguageGroupById()', () => {
 		test( 'should return expected territory', () => {
 			expect( getLanguageGroupById( 'eastern-europe' ) ).to.eql( LANGUAGE_GROUPS[ 4 ] );
@@ -50,18 +37,21 @@ describe( 'language picker utils', () => {
 		} );
 	} );
 
-	describe( 'getLanguageGroupByLangSlug()', () => {
-		test( 'should return expected language group id for langSlug `als`', () => {
-			expect( getLanguageGroupByLangSlug( 'als', languagesMock ) ).to.eql( 'western-europe' );
+	describe( 'getLanguageGroupByCountryCode()', () => {
+		test( 'should return expected language group id for Australia', () => {
+			expect( getLanguageGroupByCountryCode( 'AU' ) ).to.equal( 'asia-pacific' );
 		} );
-		test( 'should return expected language group id for langSlug `ne`', () => {
-			expect( getLanguageGroupByLangSlug( 'ne', languagesMock ) ).to.eql( 'asia-pacific' );
+		test( 'should return expected language group id for Italy', () => {
+			expect( getLanguageGroupByCountryCode( 'PL' ) ).to.equal( 'eastern-europe' );
 		} );
-		test( 'should return `popular`', () => {
-			expect( getLanguageGroupByLangSlug( 'af', languagesMock, true ) ).to.eql( 'popular' );
+		test( 'should return expected language group id for South Africa', () => {
+			expect( getLanguageGroupByCountryCode( 'SA' ) ).to.equal( 'africa-middle-east' );
 		} );
-		test( 'should not return `popular` if language is not popular', () => {
-			expect( getLanguageGroupByLangSlug( 'als', languagesMock, true ) ).to.eql( 'western-europe' );
+		test( 'should return expected language group id for Mexico', () => {
+			expect( getLanguageGroupByCountryCode( 'MX' ) ).to.equal( 'americas' );
+		} );
+		test( 'should return default language group id', () => {
+			expect( getLanguageGroupByCountryCode( 'OOPS' ) ).to.equal( DEFAULT_LANGUAGE_GROUP );
 		} );
 	} );
 } );

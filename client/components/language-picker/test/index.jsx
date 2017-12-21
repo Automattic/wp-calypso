@@ -1,4 +1,8 @@
-/** @format */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+
 /**
  * External dependencies
  */
@@ -12,10 +16,7 @@ import { identity } from 'lodash';
  */
 import { LanguagePicker } from '../';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
-
 const defaultProps = {
-	translate: identity,
 	languages: [
 		{
 			value: 1,
@@ -31,8 +32,10 @@ const defaultProps = {
 			wpLocale: 'cs_CZ',
 		},
 	],
+	translate: identity,
 	valueKey: 'langSlug',
 	value: 'en',
+	countryCode: 'FR',
 };
 
 describe( 'LanguagePicker', () => {

@@ -43,6 +43,7 @@ export class LanguagePickerModal extends PureComponent {
 		isVisible: PropTypes.bool,
 		languages: PropTypes.array.isRequired,
 		selected: PropTypes.string,
+		countryCode: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -51,13 +52,14 @@ export class LanguagePickerModal extends PureComponent {
 		localizedLanguageNames: {},
 		isVisible: false,
 		selected: 'en',
+		countryCode: '',
 	};
 
 	constructor( props ) {
 		super( props );
 
 		this.state = {
-			filter: getLanguageGroupByLangSlug( props.selected, props.languages, true ),
+			filter: getLanguageGroupByCountryCode( this.props.countryCode ),
 			showingDefaultFilter: true,
 			search: false,
 			selectedLanguageSlug: this.props.selected,
@@ -98,12 +100,12 @@ export class LanguagePickerModal extends PureComponent {
 	getFilterLabel( filter ) {
 		const { translate } = this.props;
 
-		const language_group = getLanguageGroupById( filter );
-		if ( ! language_group ) {
+		const languageGroup = getLanguageGroupById( filter );
+		if ( ! languageGroup ) {
 			return undefined;
 		}
-		// `territory.name` is a lambda that takes the `translate` function
-		return language_group.name( translate );
+		// `languageGroup.name` is a lambda that takes the `translate` function
+		return languageGroup.name( translate );
 	}
 
 	getFilteredLanguages() {
@@ -129,17 +131,19 @@ export class LanguagePickerModal extends PureComponent {
 			} );
 		}
 
-		switch ( filter ) {
-			case 'popular':
-				return languages
-					.filter( language => language.popular )
-					.sort( ( a, b ) => a.popular - b.popular );
-			default:
-				const language_group = getLanguageGroupById( filter );
-				const subTerritories = language_group ? language_group.subTerritories : null;
-				return languages
-					.filter( language => some( language.territories, t => includes( subTerritories, t ) ) )
-					.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+		if ( filter ) {
+			switch ( filter ) {
+				case 'popular':
+					return languages
+						.filter( language => language.popular )
+						.sort( ( a, b ) => a.popular - b.popular );
+				default:
+					const languageGroup = getLanguageGroupById( filter );
+					const subTerritories = languageGroup ? languageGroup.subTerritories : null;
+					return languages
+						.filter( language => some( language.territories, t => includes( subTerritories, t ) ) )
+						.sort( ( a, b ) => a.name.localeCompare( b.name ) );
+			}
 		}
 
 		// By default, show all languages
@@ -190,8 +194,8 @@ export class LanguagePickerModal extends PureComponent {
 	};
 
 	renderTabItems() {
-		return map( LANGUAGE_GROUPS, language_group => {
-			const filter = language_group.id;
+		return map( LANGUAGE_GROUPS, languageGroup => {
+			const filter = languageGroup.id;
 			const selected = this.state.filter === filter;
 
 			const onClick = () =>
