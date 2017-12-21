@@ -12,6 +12,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import { getSectionName } from 'state/ui/selectors';
 import {
 	ButtonRow,
 	Continue,
@@ -22,6 +23,10 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 
+function isPostEditorSection( state ) {
+	return getSectionName( state ) === 'post-editor';
+}
+
 export const ChecklistPublishPostTour = makeTour(
 	<Tour name="checklistPublishPost" version="20171205" path="/non-existent-route" when={ noop }>
 		<Step
@@ -30,6 +35,8 @@ export const ChecklistPublishPostTour = makeTour(
 			style={ {
 				animationDelay: '0.7s',
 			} }
+			when={ isPostEditorSection }
+			canSkip={ false }
 		>
 			<p>
 				{ translate(
@@ -41,6 +48,7 @@ export const ChecklistPublishPostTour = makeTour(
 			<ButtonRow>
 				<Next step="categories-tags">{ translate( 'All done, continue' ) }</Next>
 				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
+				<Continue step="categories-tags" hidden />
 			</ButtonRow>
 		</Step>
 

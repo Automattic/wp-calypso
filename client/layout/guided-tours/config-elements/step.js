@@ -56,6 +56,11 @@ export default class Step extends Component {
 		scrollContainer: PropTypes.string,
 		shouldScrollTo: PropTypes.bool,
 		style: PropTypes.object,
+		canSkip: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		canSkip: true,
 	};
 
 	static contextTypes = contextTypes;
@@ -194,12 +199,12 @@ export default class Step extends Component {
 	}
 
 	skipIfInvalidContext( props, context ) {
-		const { when } = props;
+		const { when, canSkip } = props;
 		const { branching, isValid, next, step, tour, tourVersion } = context;
 
 		this.setAnalyticsTimestamp( context );
 
-		if ( when && ! isValid( when ) ) {
+		if ( when && ! isValid( when ) && canSkip ) {
 			const nextStepName = props.next || anyFrom( branching[ step ] );
 			const skipping = this.shouldSkipAnalytics();
 			next( { tour, tourVersion, step, nextStepName, skipping } );
