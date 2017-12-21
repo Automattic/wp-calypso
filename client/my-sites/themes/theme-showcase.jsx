@@ -12,6 +12,8 @@ import page from 'page';
 import { compact, pickBy } from 'lodash';
 import Gridicon from 'gridicons';
 
+import { ThemesBanner } from './themes-banner';
+
 /**
  * Internal dependencies
  */
@@ -148,6 +150,10 @@ class ThemeShowcase extends React.Component {
 		return config.isEnabled( 'manage/themes/upload' ) && isLoggedIn && ! isMultisite;
 	};
 
+	helloWorld = () => {
+		alert( '=== HELLO WORLD!!! ===' );
+	};
+
 	render() {
 		const {
 			siteId,
@@ -198,6 +204,18 @@ class ThemeShowcase extends React.Component {
 				.sort( ( a, b ) => a.order - b.order )
 		);
 
+		const SampleBanner = () => (
+			<ThemesBanner
+				title={ translate( 'Are you a small business?' ) }
+				description={ translate(
+					"We understand your time contraints, and that's why we created this easy-to-set-up Premium theme called Small Business."
+				) }
+				ctaLabel={ translate( 'Learn about this theme' ) }
+				ctaAction={ this.helloWorld }
+				backgroundImage={ '/calypso/images/themes-banner/banner-bg.jpg' }
+			/>
+		);
+
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<Main className="themes">
@@ -213,6 +231,7 @@ class ThemeShowcase extends React.Component {
 						uri={ this.constructUrl() }
 					/>
 				) }
+				<SampleBanner />
 				<div className="themes__content">
 					<QueryThemeFilters />
 					<ThemesSearchCard

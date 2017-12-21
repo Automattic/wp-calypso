@@ -6,76 +6,48 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cssSafeUrl from 'lib/css-safe-url';
-import { merge } from 'lodash';
 
 export class ThemesBanner extends Component {
 	static propTypes = {
-		items: PropTypes.array.isRequired,
+		title: PropTypes.string.isRequired,
+		description: PropTypes.string.isRequired,
+		ctaLabel: PropTypes.string.isRequired,
+		ctaAction: PropTypes.func,
+		backgroundImage: PropTypes.string,
 	};
 
-	renderBannerItem = ( item, i ) => {
-		const {
-			title,
-			description,
-			buttonLabel,
-			buttonType,
-			buttonAction,
-			backgroundImage,
-			backgroundColor,
-			textColor,
-			textShadowColor,
-		} = item;
-
-		let backgroundStyle = {},
-			textStyle = {};
-
-		if ( backgroundImage ) {
-			const safeCssUrl = cssSafeUrl( backgroundImage );
-			backgroundStyle = merge( backgroundStyle, {
-				backgroundImage: 'url(' + safeCssUrl + ')',
-			} );
-		}
-
-		if ( backgroundColor ) {
-			backgroundStyle = merge( backgroundStyle, { backgroundColor } );
-		}
-
-		if ( textColor ) {
-			textStyle = merge( textStyle, {
-				color: textColor,
-			} );
-		}
-
-		if ( textShadowColor ) {
-			textStyle = merge( textStyle, {
-				textShadow: '0 1px 1px ' + textShadowColor,
-			} );
-		}
-
-		const button = buttonLabel ? (
+	renderButton = ( label, action, primary ) => {
+		return (
 			<button
 				type="button"
-				className={ 'primary' === buttonType ? 'button is-primary' : 'button' }
-				onClick={ buttonAction || null }
+				className={ primary ? 'button is-primary is-compact' : 'button is-compact' }
+				onClick={ action }
 			>
-				{ buttonLabel }
+				{ label }
 			</button>
-		) : null;
-
-		const key = 'themes-banner__item-' + i;
-
-		return (
-			<div className="themes-banner__item" style={ backgroundStyle } key={ key }>
-				<h1 style={ textStyle }>{ title }</h1>
-				<p style={ textStyle }>{ description }</p>
-				{ button }
-			</div>
 		);
 	};
 
+	getBackgroundStyle = img => {
+		if ( img ) {
+			const imgUrl = cssSafeUrl( img );
+			return {
+				backgroundImage: 'url(' + imgUrl + ')',
+			};
+		}
+		return null;
+	};
+
 	render() {
-		const { items } = this.props;
-		const children = items.map( ( item, i ) => this.renderBannerItem( item, i ) );
-		return <div className="themes-banner">{ children }</div>;
+		const { title, description, ctaLabel, ctaAction, backgroundImage } = this.props;
+		const button = this.renderButton( ctaLabel, ctaAction, !! backgroundImage );
+		const backgroundStyle = this.getBackgroundStyle( backgroundImage );
+		return (
+			<div className="themes-banner" style={ backgroundStyle }>
+				<h1>{ title }</h1>
+				<p>{ description }</p>
+				{ button }
+			</div>
+		);
 	}
 }
