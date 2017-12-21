@@ -26,11 +26,26 @@ import LRU from 'lru-cache';
 import { DESERIALIZE, SERIALIZE } from './action-types';
 import warn from 'lib/warn';
 
-export function isValidStateWithSchema( state, schema ) {
+export function isValidStateWithSchema( state, schema, debugInfo ) {
 	const validate = validator( schema );
 	const valid = validate( state );
-	if ( ! valid ) {
-		warn( 'state validation failed for state:', state, 'with reason:', validate.errors );
+	if ( ! valid && process.env.NODE_ENV !== 'production' ) {
+		function prettifyArgument( obj ) {
+			if ( Array.isArray( obj ) && obj.length === 1 ) {
+				return obj[ 0 ];
+			}
+			return obj;
+		}
+		warn(
+			'state validation failed\nfor state:',
+			state,
+			'\nagainst schema:',
+			schema,
+			'\nwith reason:',
+			prettifyArgument( validate.errors ),
+			'\nsource:',
+			prettifyArgument( debugInfo ) || '(none given)'
+		);
 	}
 	return valid;
 }
@@ -203,11 +218,9 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 		defaultHandlers = {
 			[ SERIALIZE ]: state => state,
 			[ DESERIALIZE ]: state => {
-				if ( isValidStateWithSchema( state, schema ) ) {
+				if ( isValidStateWithSchema( state, schema, customHandlers ) ) {
 					return state;
 				}
-
-				warn( 'state validation failed - check schema used for:', customHandlers );
 
 				return initialState;
 			},
