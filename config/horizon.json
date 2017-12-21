@@ -23,7 +23,6 @@
 		"automated-transfer": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
-		"comments/management/comment-view": true,
 		"devdocs": false,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
