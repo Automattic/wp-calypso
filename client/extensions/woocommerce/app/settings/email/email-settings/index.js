@@ -118,14 +118,14 @@ class Settings extends React.Component {
 
 		// Save settings request
 		if ( ! this.props.saveSettingsRequest && nextProps.saveSettingsRequest ) {
-			const settingsClean = omit( nextProps.settings, [
-				'save',
-				'isSaving',
-				'error',
-				'invalidValue',
-			] );
-			const areSettingsValid = validateSettings( settingsClean );
 			if ( nextProps.loaded ) {
+				const settingsClean = omit( nextProps.settings, [
+					'save',
+					'isSaving',
+					'error',
+					'invalidValue',
+				] );
+				const areSettingsValid = validateSettings( settingsClean );
 				if ( ! areSettingsValid ) {
 					nextProps.emailSettingsInvalidValue(
 						nextProps.siteId,
