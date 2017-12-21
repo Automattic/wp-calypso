@@ -36,12 +36,12 @@ describe( 'helpers', () => {
 			} );
 		} );
 		test( 'should return error on invalid email address', () => {
-			expect( checkEmails( 'a@a.com b@b.com' ) ).to.eql( {
+			expect( checkEmails( 'a@a.co!' ) ).to.eql( {
 				error: true,
 				messages: [
 					{
 						error: true,
-						msg: 'a@a.com b@b.com need to be comma separated.',
+						msg: 'a@a.co! is not a valid email address.',
 					},
 				],
 			} );
