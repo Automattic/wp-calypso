@@ -187,11 +187,11 @@ export class LoggedInForm extends Component {
 	}
 
 	shouldAutoAuthorize() {
-		const { alreadyAuthorized, authApproved } = this.props.authQuery;
-
 		if ( this.props.isMobileAppFlow ) {
 			return false;
 		}
+
+		const { alreadyAuthorized, authApproved } = this.props.authQuery;
 
 		return (
 			this.isSso() ||
@@ -628,6 +628,11 @@ export default connect(
 	( state, { authQuery } ) => {
 		const siteSlug = urlToSlug( authQuery.site );
 
+		// Note: reading from a cookie here rather than redux state,
+		// so any change in value will not execute connect().
+		const mobileAppRedirect = retrieveMobileRedirect();
+		const isMobileAppFlow = !! mobileAppRedirect;
+
 		return {
 			authAttempts: getAuthAttempts( state, siteSlug ),
 			authorizationData: getAuthorizationData( state ),
@@ -637,8 +642,8 @@ export default connect(
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state, authQuery.site ),
 			isFetchingAuthorizationSite: isRequestingSite( state, authQuery.clientId ),
 			isFetchingSites: isRequestingSites( state ),
-			isMobileAppFlow: !! retrieveMobileRedirect(),
-			mobileAppRedirect: retrieveMobileRedirect(),
+			isMobileAppFlow,
+			mobileAppRedirect,
 			siteSlug,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
