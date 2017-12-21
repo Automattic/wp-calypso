@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import { localize, moment } from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -25,6 +26,8 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { getLanguage } from 'lib/i18n-utils';
+const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 
 class CalendarCard extends Component {
 	static propTypes = {
@@ -86,7 +89,9 @@ class CalendarCard extends Component {
 		const { isDefaultLocale, disabled, times, translate } = this.props;
 		const description = isDefaultLocale
 			? translate( 'Sessions are 30 minutes long.' )
-			: translate( 'Sessions are 30 minutes long and in English.' );
+			: translate( 'Sessions are 30 minutes long and in %(defaultLanguage)s.', {
+					args: { defaultLanguage },
+				} );
 
 		return (
 			<FoldableCard
