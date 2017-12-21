@@ -34,9 +34,12 @@
 	position: relative;
 	width: 80px;
 	align-self: stretch;
-	overflow: hidden;
-
+	border-radius: 3px;
 	margin: 8px 0 8px 8px;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+
 	.post-item__card.is-mini & {
 		margin: 0;
 	}
@@ -49,16 +52,33 @@
 	.post-item__card.is-placeholder & {
 		@include placeholder;
 	}
+
+	&:hover {
+		.post-type-list__post-thumbnail {
+			opacity: 1;
+			transform: translate( -60%, -60% ) scale( 1 );
+			transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.05s;
+		}
+	}
 }
 
 .post-type-list__post-thumbnail {
+	opacity: 0;
+	pointer-events: none;
 	position: absolute;
 		top: 50%;
 		left: 50%;
-	transform: translate( -50%, -50% );
-	height: 100%;
-	max-height: 80px;
-	max-width: none;
+	transform: translate( -50%, -50% ) scale( 0.3 );
+	max-height: 300px;
+	max-width: 300px;
+	border-radius: 3px;
+	background: $gray;
+	border: 1px solid $white;
+	border-radius: 3px;
+	box-shadow: 0 4px 16px rgba( 0, 0, 0, 0.2 );
+	z-index: z-index( 'root', '.web-preview' );
+	//transform: translateX( 20px ) translateY( -40px ) scale( 0.8 );
+	transition: all 0.075s ease-in-out;
 }
 
 
