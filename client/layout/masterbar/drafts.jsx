@@ -55,6 +55,16 @@ class MasterbarDrafts extends Component {
 		this.closeDrafts();
 	};
 
+	newDraftClicked = () => {
+		this.props.recordNewDraftClicked();
+		this.closeDrafts();
+	};
+
+	seeAllDraftsClicked = () => {
+		this.props.recordSeeAllDraftsClicked();
+		this.closeDrafts();
+	};
+
 	render() {
 		const { selectedSite, draftCount, loadingDrafts, translate } = this.props;
 		const isLoading = draftCount === 0 && loadingDrafts;
@@ -94,7 +104,7 @@ class MasterbarDrafts extends Component {
 							compact
 							className="masterbar__recent-drafts-add-new"
 							href={ paths.newPost( selectedSite ) }
-							onClick={ this.closeDrafts }
+							onClick={ this.newDraftClicked }
 						>
 							{ translate( 'New Draft' ) }
 						</Button>
@@ -110,7 +120,7 @@ class MasterbarDrafts extends Component {
 							borderless
 							className="masterbar__recent-drafts-see-all"
 							href={ `/posts/drafts/${ selectedSite.slug }` }
-							onClick={ this.closeDrafts }
+							onClick={ this.seeAllDraftsClicked }
 						>
 							{ translate( 'See All' ) }
 							{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
@@ -166,6 +176,12 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ( {
 	recordDraftSelected: () => {
 		dispatch( recordTracksEvent( 'calypso_masterbar_draft_selected' ) );
+	},
+	recordNewDraftClicked: () => {
+		dispatch( recordTracksEvent( 'calypso_masterbar_drafts_new_draft_clicked' ) );
+	},
+	recordSeeAllDraftsClicked: () => {
+		dispatch( recordTracksEvent( 'calypso_masterbar_drafts_see_all_drafts_clicked' ) );
 	},
 } );
 
