@@ -7,6 +7,7 @@
  * External dependencies
  */
 import page from 'page';
+import { externalRedirect } from 'lib/route/path';
 import { noop } from 'lodash';
 
 /**
@@ -21,14 +22,43 @@ const REQUIRED_PROPS = {
 	getJetpackSiteByUrl: noop,
 	isRequestingSites: false,
 	jetpackConnectSite: undefined,
-	recordTracksEvent: noop,
+	recordTracksEvent: jest.fn(),
 };
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
 
+jest.mock( 'lib/route/path', () => ( {
+	externalRedirect: jest.fn(),
+} ) );
+
 describe( 'JetpackConnectMain', () => {
+	describe( 'goToRemoteAuth', () => {
+		const component = new JetpackConnectMain( REQUIRED_PROPS );
+
+		beforeEach( () => {
+			component.redirecting = false;
+			component.props.recordTracksEvent.mockReset();
+			externalRedirect.mockReset();
+		} );
+
+		test( 'should fire redirect', () => {
+			component.goToRemoteAuth( 'example.com' );
+
+			expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
+			expect( externalRedirect.mock.calls[ 0 ] ).toMatchSnapshot();
+		} );
+
+		test( 'should dispatch analytics', () => {
+			const url = 'example.com';
+			component.goToRemoteAuth( url );
+
+			expect( component.props.recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+			expect( component.props.recordTracksEvent.mock.calls[ 0 ] ).toMatchSnapshot();
+		} );
+	} );
+
 	describe( 'goToPlans', () => {
 		const component = new JetpackConnectMain( {
 			...REQUIRED_PROPS,
