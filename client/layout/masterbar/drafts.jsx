@@ -58,7 +58,7 @@ class MasterbarDrafts extends Component {
 
 	render() {
 		const { selectedSite, draftCount, loadingDrafts, translate } = this.props;
-		const isLoading = draftCount !== 0 && loadingDrafts;
+		const isLoading = draftCount === 0 && loadingDrafts;
 
 		if ( ! selectedSite ) {
 			return null;
