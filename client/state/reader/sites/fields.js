@@ -1,3 +1,4 @@
+/** @format */
 export const fields = [
 	'ID',
 	'name',
@@ -13,4 +14,5 @@ export const fields = [
 	'prefer_feed',
 	'subscribers_count',
 	'options', // have to include this to get options at all
+	'subscription',
 ];
