@@ -130,7 +130,8 @@ class EditorPreview extends React.Component {
 			<div className={ className }>
 				{ isFullScreen ? (
 					<AsyncLoad
-						require="components/web-preview/content"
+						require="components/web-preview"
+						isContentOnly
 						showPreview={ this.props.showPreview }
 						showEdit={ true }
 						showExternal={ true }

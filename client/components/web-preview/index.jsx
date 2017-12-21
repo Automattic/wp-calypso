@@ -83,7 +83,11 @@ export class WebPreview extends PureComponent {
 		this.setState( { device } );
 	}
 
-	render() {
+	renderContentOnly() {
+		return <WebPreviewContent { ...this.props } />;
+	}
+
+	renderPreviewWithContent() {
 		const className = classNames( this.props.className, 'web-preview', {
 			'is-touch': this._hasTouch,
 			'is-with-sidebar': this.props.hasSidebar,
@@ -109,6 +113,16 @@ export class WebPreview extends PureComponent {
 				</div>
 			</RootChild>
 		);
+	}
+
+	render() {
+		const { isContentOnly } = this.props;
+
+		if ( isContentOnly ) {
+			return this.renderContentOnly();
+		}
+
+		return this.renderPreviewWithContent();
 	}
 }
 
@@ -169,6 +183,7 @@ WebPreview.defaultProps = {
 	onClose: noop,
 	onEdit: noop,
 	hasSidebar: false,
+	isContentOnly: false,
 };
 
 export default connect( null, { recordTracksEvent, setPreviewShowing } )( localize( WebPreview ) );

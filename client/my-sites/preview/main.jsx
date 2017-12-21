@@ -139,7 +139,8 @@ class PreviewMain extends React.Component {
 			<Main className="preview">
 				<DocumentHead title={ translate( 'Your Site' ) } />
 				<AsyncLoad
-					require="components/web-preview/content"
+					require="components/web-preview"
+					isContentOnly
 					onLocationUpdate={ this.updateSiteLocation }
 					showUrl={ !! this.state.externalUrl }
 					showClose={ this.state.showingClose }
