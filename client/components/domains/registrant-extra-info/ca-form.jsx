@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { camelCase, difference, includes, isEmpty, keys, map, pick } from 'lodash';
+import { camelCase, difference, isEmpty, keys, map, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,10 +22,6 @@ import FormSelect from 'components/forms/form-select';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormInputValidation from 'components/forms/form-input-validation';
 import { Input } from 'my-sites/domains/components/form';
-
-// the organization field is optional for individuals
-const individualLegalTypes = [ 'CCT', 'MAJ', 'RES' ];
-const maybeIndividualLegalTypes = [ 'LGR', 'OMK', 'ABO' ];
 
 const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 const defaultValues = {
@@ -136,19 +132,9 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		this.setState( { hasBeenClicked: true } );
 	};
 
-	currentlegalTypeIsAnIndividual() {
-		const { legalType } = this.props.contactDetailsExtra;
-
-		return includes( individualLegalTypes, legalType );
-	}
-
 	renderOrganizationField() {
 		const { translate } = this.props;
-		const { legalType } = this.props.contactDetailsExtra;
-
-		const className = includes( maybeIndividualLegalTypes, legalType )
-			? 'registrant-extra-info__optional'
-			: 'registrant-extra-info';
+		const className = 'registrant-extra-info';
 
 		return (
 			<FormFieldset>
@@ -215,7 +201,12 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 						) : null }
 					</FormLabel>
 				</FormFieldset>
-				{ this.currentlegalTypeIsAnIndividual() || this.renderOrganizationField() }
+				{
+					// We have to validate the organization name for CCO legal
+					// types to avoid OpenSRS rejecting them and causing errors
+					// during payment
+					legalType !== 'CCO' || this.renderOrganizationField()
+				}
 				{ validatingSubmitButton }
 			</form>
 		);
