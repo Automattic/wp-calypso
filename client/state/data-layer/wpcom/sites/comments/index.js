@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { forEach, get, groupBy, omit } from 'lodash';
+import { forEach, get, groupBy, isEmpty, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,6 +28,7 @@ import {
 	receiveComments,
 	receiveCommentsError as receiveCommentErrorAction,
 	requestComment as requestCommentAction,
+	requestCommentsList,
 } from 'state/comments/actions';
 import { updateCommentsQuery } from 'state/ui/comments/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
@@ -57,8 +58,15 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	);
 };
 
-export const removeCommentStatusErrorNotice = ( { dispatch }, { commentId } ) =>
+export const handleChangeCommentStatusSuccess = (
+	{ dispatch },
+	{ commentId, refreshCommentListQuery }
+) => {
 	dispatch( removeNotice( `comment-notice-error-${ commentId }` ) );
+	if ( ! isEmpty( refreshCommentListQuery ) ) {
+		dispatch( requestCommentsList( refreshCommentListQuery ) );
+	}
+};
 
 const announceStatusChangeFailure = ( { dispatch }, action ) => {
 	const { commentId, status, previousStatus } = action;
@@ -262,7 +270,7 @@ export const fetchHandler = {
 	[ COMMENTS_CHANGE_STATUS ]: [
 		dispatchRequest(
 			changeCommentStatus,
-			removeCommentStatusErrorNotice,
+			handleChangeCommentStatusSuccess,
 			announceStatusChangeFailure
 		),
 	],
