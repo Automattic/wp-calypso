@@ -152,6 +152,40 @@ describe( 'utility functions', () => {
 				postId: 1010,
 			} );
 		} );
+
+		test( 'should request a fresh copy of a comments page when the query object is filled', () => {
+			const dispatch = spy();
+			updatePlaceholderComment(
+				{ dispatch },
+				{
+					siteId: 12345678,
+					postId: 1234,
+					parentCommentId: null,
+					placeholderId: 'placeholder-id',
+					refreshCommentListQuery: {
+						listType: 'site',
+						number: 20,
+						page: 1,
+						siteId: 12345678,
+						status: 'all',
+						type: 'any',
+					},
+				},
+				{ ID: 1, content: 'this is the content' }
+			);
+			expect( dispatch ).to.have.callCount( 4 );
+			expect( dispatch.lastCall ).to.have.been.calledWithExactly( {
+				type: 'COMMENTS_LIST_REQUEST',
+				query: {
+					listType: 'site',
+					number: 20,
+					page: 1,
+					siteId: 12345678,
+					status: 'all',
+					type: 'any',
+				},
+			} );
+		} );
 	} );
 
 	describe( '#handleWriteCommentFailure()', () => {

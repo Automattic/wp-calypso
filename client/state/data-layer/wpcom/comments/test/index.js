@@ -8,7 +8,13 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { fetchPostComments, addComments, announceFailure, commentsFromApi } from '../';
+import {
+	fetchPostComments,
+	addComments,
+	announceFailure,
+	commentsFromApi,
+	handleDeleteSuccess,
+} from '../';
 import { COMMENTS_RECEIVE, COMMENTS_COUNT_RECEIVE, NOTICE_CREATE } from 'state/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -184,6 +190,57 @@ describe( 'wpcom-api', () => {
 					notice: {
 						status: 'is-error',
 						text: 'Could not retrieve comments for requested post',
+					},
+				} );
+			} );
+		} );
+
+		describe( '#handleDeleteSuccess', () => {
+			test( 'should not do anything when no options are set', () => {
+				const dispatch = spy();
+				handleDeleteSuccess( { dispatch }, {} );
+				expect( dispatch ).to.not.have.been.called;
+			} );
+
+			test( 'should show a success notice if the related option is set', () => {
+				const dispatch = spy();
+				handleDeleteSuccess( { dispatch }, { options: { showSuccessNotice: true } } );
+				expect( dispatch ).to.have.been.calledOnce;
+				expect( dispatch ).to.have.been.calledWithMatch( {
+					type: NOTICE_CREATE,
+					notice: {
+						status: 'is-success',
+						text: 'Comment deleted permanently.',
+					},
+				} );
+			} );
+
+			test( 'should request a fresh copy of a comments page when the query object is filled', () => {
+				const dispatch = spy();
+				handleDeleteSuccess(
+					{ dispatch },
+					{
+						options: { showSuccessNotice: true },
+						refreshCommentListQuery: {
+							listType: 'site',
+							number: 20,
+							page: 1,
+							siteId: 12345678,
+							status: 'all',
+							type: 'any',
+						},
+					}
+				);
+				expect( dispatch ).to.have.been.calledTwice;
+				expect( dispatch.lastCall ).to.have.been.calledWithExactly( {
+					type: 'COMMENTS_LIST_REQUEST',
+					query: {
+						listType: 'site',
+						number: 20,
+						page: 1,
+						siteId: 12345678,
+						status: 'all',
+						type: 'any',
 					},
 				} );
 			} );
