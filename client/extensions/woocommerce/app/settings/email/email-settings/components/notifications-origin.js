@@ -74,6 +74,9 @@ NotificationsOrigin.propTypes = {
 	recipient: PropTypes.string,
 	item: PropTypes.object,
 	onChange: PropTypes.func.isRequired,
+	placeholder: PropTypes.string,
+	isPlaceholder: PropTypes.bool,
+	checkEmail: PropTypes.bool,
 };
 
 export default localize( NotificationsOrigin );
