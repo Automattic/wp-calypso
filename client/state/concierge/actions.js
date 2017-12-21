@@ -6,7 +6,7 @@
 import {
 	CONCIERGE_AVAILABLE_TIMES_REQUEST,
 	CONCIERGE_AVAILABLE_TIMES_UPDATE,
-	CONCIERGE_BOOK_APPOINTMENT,
+	CONCIERGE_APPOINTMENT_CREATE,
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
 } from 'state/action-types';
@@ -38,7 +38,7 @@ export const bookConciergeAppointment = (
 	siteId,
 	meta
 ) => ( {
-	type: CONCIERGE_BOOK_APPOINTMENT,
+	type: CONCIERGE_APPOINTMENT_CREATE,
 	scheduleId,
 	beginTimestamp,
 	customerId,

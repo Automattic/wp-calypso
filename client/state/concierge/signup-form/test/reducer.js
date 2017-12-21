@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import moment from 'moment-timezone';
+
+/**
  * Internal dependencies
  */
 import signupForm, { timezone, message, status } from '../reducer';
@@ -25,8 +30,8 @@ describe( 'concierge/signupForm/reducer', () => {
 	};
 
 	describe( 'timezone', () => {
-		test( 'should be defaulted as null.', () => {
-			expect( timezone( undefined, {} ) ).toBeNull();
+		test( 'should use the default detected timezone.', () => {
+			expect( timezone( undefined, {} ) ).toEqual( moment.tz.guess() );
 		} );
 
 		test( 'should return the timezone of the update action', () => {
@@ -35,8 +40,8 @@ describe( 'concierge/signupForm/reducer', () => {
 	} );
 
 	describe( 'message', () => {
-		test( 'should be defaulted as null.', () => {
-			expect( message( undefined, {} ) ).toBeNull();
+		test( 'should be defaulted as empty string.', () => {
+			expect( message( undefined, {} ) ).toEqual( '' );
 		} );
 
 		test( 'should return the message of the update action', () => {
@@ -45,7 +50,7 @@ describe( 'concierge/signupForm/reducer', () => {
 	} );
 
 	describe( 'status', () => {
-		test( 'should be defaulted as null.', () => {
+		test( 'should be defaulted as null', () => {
 			expect( status( undefined, {} ) ).toBeNull();
 		} );
 
@@ -57,8 +62,8 @@ describe( 'concierge/signupForm/reducer', () => {
 	describe( 'signupForm', () => {
 		test( 'should combine all defaults as null.', () => {
 			expect( signupForm( undefined, {} ) ).toEqual( {
-				timezone: null,
-				message: null,
+				timezone: moment.tz.guess(),
+				message: '',
 				status: null,
 			} );
 		} );
