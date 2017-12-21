@@ -4,7 +4,7 @@
  * @format
  */
 
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -21,14 +21,40 @@ export class ChecklistHeader extends PureComponent {
 		total: PropTypes.number.isRequired,
 		completed: PropTypes.number.isRequired,
 		hideCompleted: PropTypes.bool,
+		hideToggleButton: PropTypes.bool,
 		onClick: PropTypes.func,
 	};
 
-	render() {
-		const { completed, hideCompleted, total, translate } = this.props;
+	static defaultProps = {
+		hideCompleted: false,
+		hideToggleButton: false,
+	};
+
+	renderToggleButton() {
+		const { hideCompleted, onClick, translate } = this.props;
 		const buttonText = hideCompleted
 			? translate( 'Show completed' )
 			: translate( 'Hide completed' );
+
+		return (
+			<Fragment>
+				<label htmlFor="checklist__header-action" className="checklist__header-summary">
+					{ buttonText }
+				</label>
+				<button
+					id="checklist__header-action"
+					className="checklist__header-action"
+					onClick={ onClick }
+				>
+					<ScreenReaderText>{ buttonText }</ScreenReaderText>
+					<Gridicon icon="chevron-down" />
+				</button>
+			</Fragment>
+		);
+	}
+
+	render() {
+		const { completed, hideToggleButton, total, translate } = this.props;
 
 		return (
 			<Card compact className="checklist__header">
@@ -40,17 +66,7 @@ export class ChecklistHeader extends PureComponent {
 					<ProgressBar compact total={ total } value={ completed } />
 				</div>
 				<div className="checklist__header-secondary">
-					<label htmlFor="checklist__header-action" className="checklist__header-summary">
-						{ buttonText }
-					</label>
-					<button
-						id="checklist__header-action"
-						className="checklist__header-action"
-						onClick={ this.props.onClick }
-					>
-						<ScreenReaderText>{ buttonText }</ScreenReaderText>
-						<Gridicon icon="chevron-down" />
-					</button>
+					{ ! hideToggleButton && this.renderToggleButton() }
 				</div>
 			</Card>
 		);
