@@ -82,7 +82,7 @@ class CalendarCard extends Component {
 	};
 
 	render() {
-		const { times, translate } = this.props;
+		const { disabled, times, translate } = this.props;
 
 		return (
 			<FoldableCard
@@ -99,7 +99,7 @@ class CalendarCard extends Component {
 					</FormLabel>
 					<FormSelect
 						id="concierge-start-time"
-						disabled={ this.props.disabled }
+						disabled={ disabled }
 						onChange={ this.onChange }
 						value={ this.state.selectedTime }
 					>
@@ -115,7 +115,7 @@ class CalendarCard extends Component {
 				</FormFieldset>
 
 				<FormFieldset>
-					<Button disabled={ this.props.disabled } primary onClick={ this.submitForm }>
+					<Button disabled={ disabled } primary onClick={ this.submitForm }>
 						{ translate( 'Book this session' ) }
 					</Button>
 				</FormFieldset>

@@ -98,7 +98,6 @@ class CalendarStep extends Component {
 				</CompactCard>
 				{ availability.map( ( { date, times } ) => (
 					<CalendarCard
-						site={ this.props.site }
 						date={ date }
 						disabled={ this.props.signupForm.status === CONCIERGE_STATUS_BOOKING }
 						key={ date }
