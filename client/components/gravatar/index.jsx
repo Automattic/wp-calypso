@@ -64,7 +64,7 @@ export class Gravatar extends Component {
 	onError = () => this.setState( { failedToLoad: true } );
 
 	render() {
-		const { alt, size, tempImage, user } = this.props;
+		const { alt, title, size, tempImage, user } = this.props;
 
 		if ( ! user ) {
 			return <span className="gravatar is-placeholder" style={ { width: size, height: size } } />;
@@ -81,6 +81,7 @@ export class Gravatar extends Component {
 		return (
 			<img
 				alt={ altText }
+				title={ title }
 				className={ classes }
 				src={ avatarURL }
 				width={ size }

@@ -10,6 +10,8 @@ import { expect } from 'chai';
  */
 import reducer, { postTypeList } from '../reducer';
 import {
+	POST_TYPE_LIST_LIKES_POPOVER_HIDE,
+	POST_TYPE_LIST_LIKES_POPOVER_TOGGLE,
 	POST_TYPE_LIST_MULTI_SELECTION_MODE_TOGGLE,
 	POST_TYPE_LIST_SELECTION_TOGGLE,
 	POST_TYPE_LIST_SHARE_PANEL_HIDE,
@@ -21,6 +23,7 @@ describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'activeSharePanels',
+			'postIdWithActiveLikesPopover',
 			'isMultiSelectEnabled',
 			'selectedPosts',
 		] );
@@ -49,7 +52,7 @@ describe( 'reducer', () => {
 			expect( state.activeSharePanels ).to.be.empty;
 		} );
 
-		test( 'should remove postGlobalId from the state when toggling Share panel visibility when Share panel is currently showing', () => {
+		test( 'should hide an already-visible Share panel when toggling', () => {
 			const postGlobalId = 4;
 			const state = postTypeList(
 				{ activeSharePanels: [ postGlobalId ] },
@@ -62,7 +65,7 @@ describe( 'reducer', () => {
 			expect( state.activeSharePanels ).to.be.empty;
 		} );
 
-		test( 'should add postGlobalId to the state when toggling Share panel visibility when Share panel is currently not showing', () => {
+		test( 'should show a hidden Share panel when toggling', () => {
 			const postGlobalId = 4;
 			const state = postTypeList(
 				{ activeSharePanels: [] },
@@ -75,7 +78,7 @@ describe( 'reducer', () => {
 			expect( state.activeSharePanels ).to.eql( [ postGlobalId ] );
 		} );
 
-		test( 'should remove an existing active Share panel when toggling on a different Share panel', () => {
+		test( 'should only allow one active Share panel at a time', () => {
 			const existingPostGlobalId = 5;
 			const postGlobalId = 4;
 			const state = postTypeList(
@@ -87,6 +90,68 @@ describe( 'reducer', () => {
 			);
 
 			expect( state.activeSharePanels ).to.eql( [ postGlobalId ] );
+		} );
+
+		test( 'should remove postGlobalId from the state when hiding likes popover', () => {
+			const postGlobalId = 4;
+			const state = postTypeList(
+				{ postIdWithActiveLikesPopover: postGlobalId },
+				{
+					type: POST_TYPE_LIST_LIKES_POPOVER_HIDE,
+					postGlobalId: postGlobalId,
+				}
+			);
+
+			expect( state.postIdWithActiveLikesPopover ).to.be.null;
+		} );
+
+		test( 'should not fail when hiding an already hidden likes popover', () => {
+			const state = postTypeList( undefined, {
+				type: POST_TYPE_LIST_LIKES_POPOVER_HIDE,
+				postGlobalId: 4,
+			} );
+
+			expect( state.postIdWithActiveLikesPopover ).to.be.null;
+		} );
+
+		test( 'should hide an already-visible likes popover when toggling', () => {
+			const postGlobalId = 4;
+			const state = postTypeList(
+				{ postIdWithActiveLikesPopover: postGlobalId },
+				{
+					type: POST_TYPE_LIST_LIKES_POPOVER_TOGGLE,
+					postGlobalId: postGlobalId,
+				}
+			);
+
+			expect( state.postIdWithActiveLikesPopover ).to.be.null;
+		} );
+
+		test( 'should show a hidden likes popover when toggling', () => {
+			const postGlobalId = 4;
+			const state = postTypeList(
+				{ postIdWithActiveLikesPopover: null },
+				{
+					type: POST_TYPE_LIST_LIKES_POPOVER_TOGGLE,
+					postGlobalId: postGlobalId,
+				}
+			);
+
+			expect( state.postIdWithActiveLikesPopover ).to.eql( postGlobalId );
+		} );
+
+		test( 'should only allow one active likes popover at a time', () => {
+			const existingPostGlobalId = 5;
+			const postGlobalId = 4;
+			const state = postTypeList(
+				{ postIdWithActiveLikesPopover: existingPostGlobalId },
+				{
+					type: POST_TYPE_LIST_LIKES_POPOVER_TOGGLE,
+					postGlobalId: postGlobalId,
+				}
+			);
+
+			expect( state.postIdWithActiveLikesPopover ).to.eql( postGlobalId );
 		} );
 
 		test( 'should add postGlobalId to the state when toggling selectedPosts with a new globalId', () => {

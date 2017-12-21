@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-
-import { merge } from 'lodash';
+import { merge, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -66,7 +65,11 @@ export const items = createReducer(
 				...state,
 				[ siteId ]: {
 					...state[ siteId ],
-					[ postId ]: { likes, iLike, found },
+					[ postId ]: {
+						likes: likes.map( like => pick( like, 'ID', 'avatar_URL', 'URL', 'login', 'name' ) ),
+						iLike,
+						found,
+					},
 				},
 			};
 		},
