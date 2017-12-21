@@ -8,6 +8,7 @@
 	padding: 0;
 	box-shadow: none;
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+	transition: padding 0.2s ease-in-out;
 
 	&.is-loading {
 		.site-icon {
@@ -24,6 +25,33 @@
 
 			&::before {
 				visibility: hidden;
+			}
+		}
+	}
+
+	&:hover {
+		padding-left: 38px;
+
+		.site__title {
+			transform: translateY( -8px );
+		}
+
+		.current-site__switch-sites {
+			transform: translateX( 0 );
+
+			.gridicon {
+				fill: $blue-medium;
+			}
+
+			.count {
+				opacity: 1;
+			}
+
+			.current-site__switch-sites-label {
+				opacity: 1;
+				//top: 25px;
+				//left: 86px;
+				transform: translate( 0, 0 );
 			}
 		}
 	}
@@ -94,30 +122,50 @@
 }
 
 .current-site__switch-sites {
-	//background: var( --current-site-switch-sites-background );
-	background: $white;
-	//border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 	display: block;
 	box-sizing: border-box;
 	cursor: pointer;
 	position: absolute;
 		top: 0;
+		right: 0;
+		bottom: 0;
 		left: 0;
-	width: 48px;
-	opacity: 0;
-	transition: all 0.2s ease-in-out;
+	transform: translateX( -8px );
+	transition: opacity 0.2s ease-in-out,
+		transform 0.2s ease-in-out;
 
 	.button {
 		text-align: left;
-		padding: 16px;
+		padding: 0 8px;
 		width: 100%;
-		height: 46px;
-		transform: translateX( -20px );
-		transition: all 0.2s ease-in-out;
+		height: 100%;
 	}
 
-	span {
-		display: none;
+
+	.gridicon {
+		fill: $gray-dark;
+	}
+
+	.count {
+		margin-left: -7px;
+		opacity: 0;
+		transition: opacity 0.2s ease-in-out;
+	}
+
+	.current-site__switch-sites-label {
+		//display: none;
+		position: absolute;
+			//top: 19px;
+			//left: 56px;
+			top: 25px;
+			left: 86px;
+		font-weight: 400;
+		font-size: 12px;
+		color: $gray-text-min;
+		opacity: 0;
+		transform: translate( -30px, -5px );
+		transition: transform 0.2s ease-in-out,
+			opacity 0.2s ease-in-out;
 	}
 
 	@include breakpoint( "<660px" ) {
@@ -125,16 +173,9 @@
 	}
 
 	&:hover {
-		opacity: 1;
-		//background-color: lighten( $sidebar-bg-color, 3% );
-
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
 			color: $sidebar-text-color;
-		}
-
-		.button {
-			transform: translateX( 0 );
 		}
 	}
 }

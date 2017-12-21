@@ -21,6 +21,7 @@ import Site from 'blocks/site';
 import Gridicon from 'gridicons';
 import SiteNotice from './notice';
 import CartStore from 'lib/cart/store';
+import Count from 'components/count';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSelectedOrAllSites, getVisibleSites } from 'state/selectors';
@@ -113,15 +114,6 @@ class CurrentSite extends Component {
 
 		return (
 			<Card className="current-site">
-				{ this.props.siteCount > 1 && (
-					<span className="current-site__switch-sites">
-						<Button compact borderless onClick={ this.switchSites }>
-							<Gridicon icon={ rtlOn ? 'arrow-right' : 'arrow-left' } size={ 18 } />
-							{ translate( 'Switch Site' ) }
-						</Button>
-					</span>
-				) }
-
 				{ selectedSite ? (
 					<div>
 						<Site compact={ true } site={ selectedSite } />
@@ -133,6 +125,18 @@ class CurrentSite extends Component {
 				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
 
 				<SiteNotice site={ selectedSite } allSitesPath={ this.props.allSitesPath } />
+
+				{ this.props.siteCount > 1 && (
+					<span className="current-site__switch-sites">
+						<Button compact borderless onClick={ this.switchSites }>
+							<Gridicon icon={ rtlOn ? 'arrow-right' : 'arrow-left' } size={ 18 } />
+							<Count primary count={ this.props.siteCount } />
+							<span className="current-site__switch-sites-label">
+								{ translate( 'Switch Site' ) }
+							</span>
+						</Button>
+					</span>
+				) }
 			</Card>
 		);
 	}
