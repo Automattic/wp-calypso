@@ -13,7 +13,6 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import {
-	ButtonRow,
 	Continue,
 	makeTour,
 	Next,
@@ -30,39 +29,42 @@ export const ChecklistAboutPageTour = makeTour(
 			arrow="left-top"
 			target="side-menu-page"
 			style={ {
-				animationDelay: '0.7s',
+				animationDelay: '0s',
 			} }
 		>
-			<p>First we need to navigate to the pages section.</p>
+			<p>
+				{ translate( 'Click on {{b}}Site Pages{{/b}} to see all the pages on our site.', {
+					components: { b: <strong /> },
+				} ) }
+			</p>
 			<Continue target="side-menu-page" step="choose-page" click hidden />
 		</Step>
 
-		<Step name="choose-page" placement="right">
-			<p>Now we click the title of the About Page (the page we want to edit).</p>
-			<Next step="about-page">Got it!</Next>
+		<Step name="choose-page" target="page-about" arrow="top-left" placement="below">
+			<p>
+				{ translate( 'Click {{b}}About{{/b}} to edit this page.', {
+					components: { b: <strong /> },
+				} ) }
+			</p>
+			<Continue target="page-about" step="about-page" click hidden />
 		</Step>
 
 		<Step name="about-page" placement="right">
 			<p>
 				{ translate(
-					'The About Page is often the most visited page on a site. ' +
-						'You might find that it never feels quite done - that’s OK. ' +
-						'This is the internet and we can update it as many times as we want. ' +
-						'The key is to just get it started.'
+					'The About Page is often the most visited page on a site. You might find ' +
+						'that it never feels quite done - that’s OK. This is the internet and ' +
+						'we can update it as many times as we want. The key is to just get it started.'
 				) }
 			</p>
 			<p>
 				{ translate(
-					'Let’s start by changing the default text with an introduction. ' +
-						'Here are some questions to help you out: Who are you and where are you based? ' +
-						'Why did you start this site? ' +
+					'Let’s change the default text with a new introduction. Here are some questions ' +
+						'to help you out: Who are you and where are you based? Why did you start this site? ' +
 						'What can visitors expect to get out of it?'
 				) }
 			</p>
-			<ButtonRow>
-				<Next step="featured-images">{ translate( 'All done, continue' ) }</Next>
-				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
-			</ButtonRow>
+			<Next step="featured-images">{ translate( 'All done, continue' ) }</Next>
 		</Step>
 
 		<Step
