@@ -141,7 +141,11 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 				<Input
 					className={ className }
 					label={ translate( 'Organization' ) }
-					{ ...this.props.getFieldProps( 'organization' ) }
+					{ ...// getFieldProps() includes all the callbacks we need
+					// to have this organization field behave the same as
+					// the field in the parent, particularly the state and
+					// back end validation
+					this.props.getFieldProps( 'organization' ) }
 				/>
 			</FormFieldset>
 		);
@@ -201,12 +205,10 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 						) : null }
 					</FormLabel>
 				</FormFieldset>
-				{
-					// We have to validate the organization name for CCO legal
-					// types to avoid OpenSRS rejecting them and causing errors
-					// during payment
-					legalType !== 'CCO' || this.renderOrganizationField()
-				}
+				{ // We have to validate the organization name for CCO legal
+				// types to avoid OpenSRS rejecting them and causing errors
+				// during payment
+				legalType !== 'CCO' || this.renderOrganizationField() }
 				{ validatingSubmitButton }
 			</form>
 		);
