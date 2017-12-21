@@ -185,7 +185,7 @@ class Draft extends Component {
 	}
 
 	renderImage( image ) {
-		let style = { backgroundImage: 'url(' + image + ')' };
+		const style = { backgroundImage: 'url(' + image + ')' };
 		return <div className="draft__featured-image" style={ style } />;
 	}
 

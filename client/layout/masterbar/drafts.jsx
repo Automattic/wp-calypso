@@ -88,12 +88,12 @@ class MasterbarDrafts extends Component {
 				>
 					<QueryPosts siteId={ selectedSite.ID } query={ this.props.draftsQuery } />
 
-					<div className="recent-drafts__heading">
+					<div className="masterbar__recent-drafts-heading">
 						<h3>{ translate( 'Recent Drafts' ) }</h3>
 
 						<Button
 							compact
-							className="recent-drafts__add-new"
+							className="masterbar__recent-drafts-add-new"
 							href={ paths.newPost( selectedSite ) }
 							onClick={ this.closeDrafts }
 						>
@@ -101,7 +101,7 @@ class MasterbarDrafts extends Component {
 						</Button>
 					</div>
 
-					<div className="recent-drafts__list">
+					<div className="masterbar__recent-drafts-list">
 						{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 
 						{ isLoading && <Draft isPlaceholder /> }
@@ -109,7 +109,7 @@ class MasterbarDrafts extends Component {
 						<Button
 							compact
 							borderless
-							className="recent-drafts__see-all"
+							className="masterbar__recent-drafts-see-all"
 							href={ `/posts/drafts/${ selectedSite.slug }` }
 							onClick={ this.closeDrafts }
 						>
