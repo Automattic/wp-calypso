@@ -14,6 +14,7 @@ import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
+import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
 import PlansSkipButton from './plans-skip-button';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -91,7 +92,7 @@ class PlansLanding extends Component {
 		// We're redirecting in componentDidMount if the site is already connected
 		// so don't bother rendering any markup if this is the case
 		if ( url && ( site || requestingSites ) ) {
-			return null;
+			return <Placeholder />;
 		}
 
 		return (
