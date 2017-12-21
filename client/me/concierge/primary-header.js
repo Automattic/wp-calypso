@@ -17,18 +17,9 @@ import support from 'lib/url/support';
 class PrimaryHeader extends Component {
 	render() {
 		const { translate } = this.props;
-		return (
-			<Card>
-				<img
-					className="concierge__info-illustration"
-					src={ '/calypso/images/illustrations/illustration-start.svg' }
-				/>
-				<FormattedHeader
-					headerText={ translate( 'WordPress.com Business Concierge Session' ) }
-					subHeaderText={ translate(
-						"In this 30 minute session we'll help you get started with your site."
-					) }
-				/>
+		const subHeaderText = (
+			<div>
+				{ translate( "In this 30 minute session we'll help you get started with your site." ) }
 				<ExternalLink
 					className="concierge__info-link"
 					icon={ false }
@@ -37,6 +28,19 @@ class PrimaryHeader extends Component {
 				>
 					{ translate( 'Learn more' ) }
 				</ExternalLink>
+			</div>
+		);
+
+		return (
+			<Card>
+				<img
+					className="concierge__info-illustration"
+					src={ '/calypso/images/illustrations/illustration-start.svg' }
+				/>
+				<FormattedHeader
+					headerText={ translate( 'WordPress.com Business Concierge Session' ) }
+					subHeaderText={ subHeaderText }
+				/>
 			</Card>
 		);
 	}
