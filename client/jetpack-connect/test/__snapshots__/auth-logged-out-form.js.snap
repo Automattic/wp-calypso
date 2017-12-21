@@ -19,8 +19,6 @@ exports[`LoggedOutForm should render 1`] = `
         "site": "http://an.example.site",
         "siteIcon": "",
         "siteUrl": "http://an.example.site",
-        "tracksUi": "1239876546",
-        "tracksUt": "wpcom:user_id",
         "userEmail": "email@an.example.site",
       }
     }
@@ -72,8 +70,6 @@ exports[`LoggedOutForm should render with locale suggestions 1`] = `
         "site": "http://an.example.site",
         "siteIcon": "",
         "siteUrl": "http://an.example.site",
-        "tracksUi": "1239876546",
-        "tracksUt": "wpcom:user_id",
         "userEmail": "email@an.example.site",
       }
     }

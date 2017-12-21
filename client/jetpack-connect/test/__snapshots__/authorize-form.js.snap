@@ -24,8 +24,6 @@ exports[`AuthorizeForm should render LoggedInForm when logged in 1`] = `
           "site": "http://an.example.site",
           "siteIcon": "",
           "siteUrl": "http://an.example.site",
-          "tracksUi": "1239876546",
-          "tracksUt": "wpcom:user_id",
           "userEmail": "email@an.example.site",
         }
       }
@@ -58,8 +56,6 @@ exports[`AuthorizeForm should render LoggedOutForm when logged out 1`] = `
           "site": "http://an.example.site",
           "siteIcon": "",
           "siteUrl": "http://an.example.site",
-          "tracksUi": "1239876546",
-          "tracksUt": "wpcom:user_id",
           "userEmail": "email@an.example.site",
         }
       }
