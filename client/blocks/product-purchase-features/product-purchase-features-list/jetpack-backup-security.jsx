@@ -20,6 +20,10 @@ const JetpackBackupSecurity = ( { rewindActive, site, siteId, translate } ) => {
 	const securlty_url = rewindActive
 		? '/stats/activity/' + site.slug
 		: 'https://dashboard.vaultpress.com/';
+
+	const button_text = rewindActive
+		? translate( 'Visit Activity Log' )
+		: translate( 'Visit security dashboard' );
 	return (
 		<div className="product-purchase-features-list__item">
 			<QueryRewindStatus siteId={ siteId } />
@@ -29,7 +33,7 @@ const JetpackBackupSecurity = ( { rewindActive, site, siteId, translate } ) => {
 				description={ translate(
 					'Your site is being securely backed up and scanned with real-time sync.'
 				) }
-				buttonText={ translate( 'Visit security dashboard' ) }
+				buttonText={ button_text }
 				href={ securlty_url }
 			/>
 		</div>
