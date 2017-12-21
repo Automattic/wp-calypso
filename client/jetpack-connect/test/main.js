@@ -34,6 +34,29 @@ jest.mock( 'lib/route/path', () => ( {
 } ) );
 
 describe( 'JetpackConnectMain', () => {
+	describe( 'makeSafeRedirectionFunction', () => {
+		const component = new JetpackConnectMain( REQUIRED_PROPS );
+
+		beforeEach( () => {
+			component.redirecting = false;
+		} );
+
+		test( 'should make a function that can calls the wrappe function', () => {
+			const innerFunc = jest.fn();
+			const wrapperFunc = component.makeSafeRedirectionFunction( innerFunc );
+			expect( () => wrapperFunc() ).not.toThrow();
+		} );
+
+		test( 'should protect against multiple calls', () => {
+			const innerFunc = jest.fn();
+			const wrapperFunc = component.makeSafeRedirectionFunction( innerFunc );
+			wrapperFunc();
+			wrapperFunc();
+			wrapperFunc();
+			expect( innerFunc ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
 	describe( 'goToPluginActivation', () => {
 		const component = new JetpackConnectMain( REQUIRED_PROPS );
 
