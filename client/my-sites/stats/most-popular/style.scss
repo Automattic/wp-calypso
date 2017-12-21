@@ -79,7 +79,7 @@
 	@include breakpoint( ">660px" ) {
 		padding: 13px 48px;
 		font-size: inherit;
-		display:inline-flex;
+		display: inline-flex;
 		top: 18px;
 
 		&::before {
