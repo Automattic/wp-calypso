@@ -22,7 +22,7 @@ const JetpackBackupSecurity = ( { rewindActive, site, siteId, translate } ) => {
 		: 'https://dashboard.vaultpress.com/';
 
 	const button_text = rewindActive
-		? translate( 'Visit Activity Log' )
+		? translate( 'View Activity Log' )
 		: translate( 'Visit security dashboard' );
 	return (
 		<div className="product-purchase-features-list__item">
