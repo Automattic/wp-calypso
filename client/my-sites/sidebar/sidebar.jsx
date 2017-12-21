@@ -474,6 +474,7 @@ export class MySitesSidebar extends Component {
 				className={ this.itemLinkClass( '/people', 'users' ) }
 				onNavigate={ this.loadSubSidebar( 'people' ) }
 				icon="user"
+				forceInternalLink={ true }
 				preloadSectionName="people"
 			>
 				<SidebarButton href={ addPeopleLink }>{ this.props.translate( 'Add' ) }</SidebarButton>
@@ -505,6 +506,7 @@ export class MySitesSidebar extends Component {
 				className={ this.itemLinkClass( '/settings', 'settings' ) }
 				onNavigate={ this.loadSubSidebar( 'settings' ) }
 				icon="cog"
+				forceInternalLink={ true }
 				preloadSectionName="settings"
 				tipTarget="settings"
 			>
