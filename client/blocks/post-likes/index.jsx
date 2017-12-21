@@ -55,7 +55,7 @@ class PostLikes extends React.PureComponent {
 	};
 
 	renderExtraCount() {
-		const { likes, likeCount, showDisplayNames, translate } = this.props;
+		const { likes, likeCount, showDisplayNames, translate, numberFormat } = this.props;
 
 		if ( ! likes || likeCount <= likes.length ) {
 			return null;
@@ -65,12 +65,12 @@ class PostLikes extends React.PureComponent {
 
 		let message;
 		if ( showDisplayNames ) {
-			message = translate( '+ %(extraCount)d more', '+ %(extraCount)d more', {
+			message = translate( '+ %(extraCount)s more', '+ %(extraCount)s more', {
 				count: extraCount,
-				args: { extraCount },
+				args: { extraCount: numberFormat( extraCount ) },
 			} );
 		} else {
-			message = '+ ' + extraCount;
+			message = '+ ' + numberFormat( extraCount );
 		}
 
 		return (
