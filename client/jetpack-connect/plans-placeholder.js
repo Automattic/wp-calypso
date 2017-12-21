@@ -27,40 +27,42 @@ const placeholderContent = (
 			<div className="plans-wrapper">
 				<div className="plan-features plan-features--signup">
 					<table className="plan-features__table">
-						<tr className="plan-features__row">
-							{ times( 3, cellKey => (
-								<td className="plan-features__table-item has-border-top" key={ cellKey }>
-									<div className="plan-features__header-wrapper">
-										<header className="plan-features__header">
-											<div className="plan-features__header-text">
-												<h4 className="plan-features__header-title">
-													<span className="placeholder-text">Premium</span>
-												</h4>
-												<span className="placeholder-text">Best for small businesses</span>
-											</div>
-										</header>
-										<div className="plan-features__pricing">
-											<span className="plan-price is-original placeholder-text">$108,00</span>
-											<span className="plan-price placeholder-text">$99,00</span>
-										</div>
-									</div>
-									<div className="plan-features__actions">
-										<div className="plan-features__actions-buttons">
-											<div className="placeholder-text">
-												Upgrade<br />Your Plan
+						<tbody>
+							<tr className="plan-features__row">
+								{ times( 3, cellKey => (
+									<td className="plan-features__table-item has-border-top" key={ cellKey }>
+										<div className="plan-features__header-wrapper">
+											<header className="plan-features__header">
+												<div className="plan-features__header-text">
+													<h4 className="plan-features__header-title">
+														<span className="placeholder-text">Premium</span>
+													</h4>
+													<span className="placeholder-text">Best for small businesses</span>
+												</div>
+											</header>
+											<div className="plan-features__pricing">
+												<span className="plan-price is-original placeholder-text">$108,00</span>
+												<span className="plan-price placeholder-text">$99,00</span>
 											</div>
 										</div>
-									</div>
-									{ times( 5, featureKey => (
-										<div className="plan-features__item" key={ featureKey }>
-											<span className="placeholder-text">
-												Test feature { random( 1, Number.MAX_SAFE_INTEGER ) }
-											</span>
+										<div className="plan-features__actions">
+											<div className="plan-features__actions-buttons">
+												<div className="placeholder-text">
+													Upgrade<br />Your Plan
+												</div>
+											</div>
 										</div>
-									) ) }
-								</td>
-							) ) }
-						</tr>
+										{ times( 5, featureKey => (
+											<div className="plan-features__item" key={ featureKey }>
+												<span className="placeholder-text">
+													Test feature { random( 1, Number.MAX_SAFE_INTEGER ) }
+												</span>
+											</div>
+										) ) }
+									</td>
+								) ) }
+							</tr>
+						</tbody>
 					</table>
 				</div>
 			</div>
