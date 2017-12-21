@@ -90,7 +90,11 @@ export default class extends React.Component {
 			return;
 		}
 
-		return <Spinner className="media-library__list-item-spinner" />;
+		return (
+			<div className="media-library__list-item-spinner">
+				<Spinner />
+			</div>
+		);
 	};
 
 	render() {
