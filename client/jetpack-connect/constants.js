@@ -1,5 +1,6 @@
 /** @format */
 
+export const JPC_PATH_PLANS = '/jetpack/connect/plans';
 export const MINIMUM_JETPACK_VERSION = '3.9.6';
 export const REMOTE_PATH_ACTIVATE = '/wp-admin/plugins.php';
 export const REMOTE_PATH_AUTH = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';

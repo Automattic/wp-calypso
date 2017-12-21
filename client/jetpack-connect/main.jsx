@@ -37,10 +37,11 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { retrievePlan } from './persistence-utils';
 import { urlToSlug } from 'lib/url';
 import {
+	JPC_PATH_PLANS,
 	MINIMUM_JETPACK_VERSION,
 	REMOTE_PATH_ACTIVATE,
-	REMOTE_PATH_INSTALL,
 	REMOTE_PATH_AUTH,
+	REMOTE_PATH_INSTALL,
 } from './constants';
 
 class JetpackConnectMain extends Component {
@@ -128,7 +129,7 @@ class JetpackConnectMain extends Component {
 			type: 'plans_selection',
 		} );
 
-		page.redirect( `/jetpack/connect/plans/${ urlToSlug( url ) }` );
+		page.redirect( `${ JPC_PATH_PLANS }/${ urlToSlug( url ) }` );
 	} );
 
 	goToRemoteAuth = this.makeSafeRedirectionFunction( function goToRemoteAuth( url ) {
