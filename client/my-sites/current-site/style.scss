@@ -94,18 +94,30 @@
 }
 
 .current-site__switch-sites {
-	background: var( --current-site-switch-sites-background );
-	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+	//background: var( --current-site-switch-sites-background );
+	background: $white;
+	//border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 	display: block;
 	box-sizing: border-box;
 	cursor: pointer;
-	position: relative;
+	position: absolute;
+		top: 0;
+		left: 0;
+	width: 48px;
+	opacity: 0;
+	transition: all 0.2s ease-in-out;
 
 	.button {
 		text-align: left;
 		padding: 16px;
 		width: 100%;
 		height: 46px;
+		transform: translateX( -20px );
+		transition: all 0.2s ease-in-out;
+	}
+
+	span {
+		display: none;
 	}
 
 	@include breakpoint( "<660px" ) {
@@ -113,11 +125,16 @@
 	}
 
 	&:hover {
-		background-color: lighten( $sidebar-bg-color, 3% );
+		opacity: 1;
+		//background-color: lighten( $sidebar-bg-color, 3% );
 
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
 			color: $sidebar-text-color;
+		}
+
+		.button {
+			transform: translateX( 0 );
 		}
 	}
 }
