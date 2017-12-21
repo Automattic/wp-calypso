@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { translate } ) => {
+export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
@@ -21,8 +21,8 @@ export default localize( ( { translate } ) => {
 				description={ translate(
 					'Your site is being securely backed up and scanned with real-time sync.'
 				) }
-				buttonText={ translate( 'Visit security dashboard' ) }
-				href="https://dashboard.vaultpress.com/"
+				buttonText={ translate( 'Visit Activity Log' ) }
+				href={ `/stats/activity/${ selectedSite.slug }` }
 			/>
 		</div>
 	);

@@ -143,7 +143,7 @@ class ProductPurchaseFeaturesList extends Component {
 
 		return [
 			<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />,
-			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
+			<JetpackBackupSecurity selectedSite={ selectedSite } key="jetpackBackupSecurity" />,
 			<JetpackAntiSpam key="jetpackAntiSpam" />,
 			<JetpackPublicize key="jetpackPublicize" />,
 			<JetpackVideo key="jetpackVideo" />,
@@ -156,7 +156,7 @@ class ProductPurchaseFeaturesList extends Component {
 		const { selectedSite } = this.props;
 
 		return [
-			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
+			<JetpackBackupSecurity selectedSite={ selectedSite } key="jetpackBackupSecurity" />,
 			<JetpackAntiSpam key="jetpackAntiSpam" />,
 			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
 			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
@@ -173,7 +173,7 @@ class ProductPurchaseFeaturesList extends Component {
 				link="https://calendly.com/jetpack/concierge"
 			/>,
 			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
-			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
+			<JetpackBackupSecurity selectedSite={ selectedSite } key="jetpackBackupSecurity" />,
 			<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />,
 			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
 			<JetpackAntiSpam key="jetpackAntiSpam" />,
