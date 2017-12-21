@@ -44,7 +44,7 @@ import {
 	REMOTE_PATH_INSTALL,
 } from './constants';
 
-class JetpackConnectMain extends Component {
+export class JetpackConnectMain extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
 		path: PropTypes.string,

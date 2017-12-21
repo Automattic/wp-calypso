@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`JetpackConnectMain goToPlans should dispatch analytics 1`] = `
+Array [
+  "calypso_jpc_success_redirect",
+  Object {
+    "type": "plans_selection",
+    "url": "example.com",
+  },
+]
+`;
