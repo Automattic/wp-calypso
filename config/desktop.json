@@ -21,6 +21,7 @@
 		"apple-pay": false,
 		"catch-js-errors": false,
 		"code-splitting": false,
+		"comments/management/comment-view": true,
 		"desktop": true,
 		"desktop-promo": false,
 		"domains/cctlds": true,
