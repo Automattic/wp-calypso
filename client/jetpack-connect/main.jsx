@@ -123,7 +123,7 @@ class JetpackConnectMain extends Component {
 		};
 	}
 
-	goToPlans = this.makeSafeRedirectionFunction( function goToPlans( url ) {
+	goToPlans = this.makeSafeRedirectionFunction( url => {
 		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
 			url: url,
 			type: 'plans_selection',
@@ -132,7 +132,7 @@ class JetpackConnectMain extends Component {
 		page.redirect( `${ JPC_PATH_PLANS }/${ urlToSlug( url ) }` );
 	} );
 
-	goToRemoteAuth = this.makeSafeRedirectionFunction( function goToRemoteAuth( url ) {
+	goToRemoteAuth = this.makeSafeRedirectionFunction( url => {
 		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
 			url: url,
 			type: 'remote_auth',
@@ -140,7 +140,7 @@ class JetpackConnectMain extends Component {
 		externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH ) );
 	} );
 
-	goToPluginInstall = this.makeSafeRedirectionFunction( function goToPluginInstall( url ) {
+	goToPluginInstall = this.makeSafeRedirectionFunction( url => {
 		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
 			url: url,
 			type: 'plugin_install',
@@ -149,7 +149,7 @@ class JetpackConnectMain extends Component {
 		externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_INSTALL ) );
 	} );
 
-	goToPluginActivation = this.makeSafeRedirectionFunction( function goToPluginActivation( url ) {
+	goToPluginActivation = this.makeSafeRedirectionFunction( url => {
 		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
 			url: url,
 			type: 'plugin_activation',
