@@ -1,15 +1,17 @@
 /**
  * External dependencies
+ * @format
  */
+
 import { translate } from 'i18n-calypso';
 import emailValidator from 'email-validator';
 import { map, matches, reject, some, omit, pick, every, has } from 'lodash';
 
-export const checkEmail = ( email ) => {
+export const checkEmail = email => {
 	return emailValidator.validate( email );
 };
 
-const verifySegment = ( segment ) => {
+const verifySegment = segment => {
 	const segmentItems = segment.match( /\S+/g ) || [];
 
 	if ( segmentItems.length === 0 ) {
@@ -44,8 +46,8 @@ const verifySegment = ( segment ) => {
 	return { error: false };
 };
 
-export const checkEmails = ( value ) => {
-	//Empty valeu = no error
+export const checkEmails = value => {
+	//Empty value = no error
 	if ( value === '' ) {
 		return { error: false };
 	}
@@ -72,11 +74,13 @@ export const checkEmails = ( value ) => {
 	return { error: false };
 };
 
-export const validateSettings = ( settings ) => {
+export const validateSettings = settings => {
 	let areSettingsValid = false;
 	const email = pick( settings, 'email' );
-	areSettingsValid = checkEmail( email.email.woocommerce_email_from_address.value ||
-		email.email.woocommerce_email_from_address.default );
+	areSettingsValid = checkEmail(
+		email.email.woocommerce_email_from_address.value ||
+			email.email.woocommerce_email_from_address.default
+	);
 
 	if ( ! areSettingsValid ) {
 		return false;
@@ -84,7 +88,7 @@ export const validateSettings = ( settings ) => {
 
 	const settingsNoEmail = omit( settings, 'email' );
 
-	areSettingsValid = every( settingsNoEmail, ( setting ) => {
+	areSettingsValid = every( settingsNoEmail, setting => {
 		if ( has( setting, 'recipient' ) ) {
 			const value = setting.recipient.value;
 			const def = setting.recipient.default;
