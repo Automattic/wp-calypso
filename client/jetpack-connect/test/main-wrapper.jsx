@@ -1,4 +1,7 @@
-/** @format */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 /**
  * External dependencies
  */
@@ -52,5 +55,18 @@ describe( 'JetpackConnectMainWrapper', () => {
 		const wrapper = shallow( <JetpackConnectMainWrapper isWide /> );
 
 		expect( wrapper.hasClass( 'is-wide' ) ).to.be.true;
+	} );
+
+	test( 'should not contain the is-mobile-app-flow modifier class by default', () => {
+		const wrapper = shallow( <JetpackConnectMainWrapper /> );
+
+		expect( wrapper.hasClass( 'is-mobile-app-flow' ) ).to.be.false;
+	} );
+
+	test( 'should contain the is-mobile-app-flow modifier if cookie is set', () => {
+		document.cookie = 'jetpack_connect_mobile_redirect=some url';
+		const wrapper = shallow( <JetpackConnectMainWrapper isWide /> );
+
+		expect( wrapper.hasClass( 'is-mobile-app-flow' ) ).to.be.true;
 	} );
 } );

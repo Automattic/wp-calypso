@@ -36,7 +36,11 @@ import userUtilities from 'lib/user/utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { isCalypsoStartedConnection, isSsoApproved } from './persistence-utils';
+import {
+	isCalypsoStartedConnection,
+	isSsoApproved,
+	retrieveMobileRedirect,
+} from './persistence-utils';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
@@ -159,8 +163,14 @@ export class LoggedInForm extends Component {
 	}
 
 	redirect() {
-		const { goBackToWpAdmin } = this.props;
+		const { isMobileAppFlow, mobileAppRedirect, goBackToWpAdmin } = this.props;
 		const { from, redirectAfterAuth } = this.props.authQuery;
+
+		if ( isMobileAppFlow ) {
+			debug( `Redirecting to mobile app ${ mobileAppRedirect }` );
+			window.location.replace( mobileAppRedirect );
+			return;
+		}
 
 		if ( this.isSso() || this.isWoo() || this.isFromJpo() || this.shouldRedirectJetpackStart() ) {
 			debug(
@@ -177,7 +187,12 @@ export class LoggedInForm extends Component {
 	}
 
 	shouldAutoAuthorize() {
+		if ( this.props.isMobileAppFlow ) {
+			return false;
+		}
+
 		const { alreadyAuthorized, authApproved } = this.props.authQuery;
+
 		return (
 			this.isSso() ||
 			this.isWoo() ||
@@ -613,6 +628,11 @@ export default connect(
 	( state, { authQuery } ) => {
 		const siteSlug = urlToSlug( authQuery.site );
 
+		// Note: reading from a cookie here rather than redux state,
+		// so any change in value will not execute connect().
+		const mobileAppRedirect = retrieveMobileRedirect();
+		const isMobileAppFlow = !! mobileAppRedirect;
+
 		return {
 			authAttempts: getAuthAttempts( state, siteSlug ),
 			authorizationData: getAuthorizationData( state ),
@@ -622,6 +642,8 @@ export default connect(
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state, authQuery.site ),
 			isFetchingAuthorizationSite: isRequestingSite( state, authQuery.clientId ),
 			isFetchingSites: isRequestingSites( state ),
+			isMobileAppFlow,
+			mobileAppRedirect,
 			siteSlug,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
