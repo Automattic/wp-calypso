@@ -38,14 +38,12 @@ const NotificationsOrigin = ( {
 	const emailValidationError =
 		checkEmail && recipient.length !== 0 && ! emailValidator.validate( recipient );
 
+	const placeholderComponent = <p className="components__is-placeholder" />;
+
 	return (
 		<ListItem>
 			<ListItemField className="components__notification-origin">
-				{ ! isPlaceholder ? (
-					<FormLabel>{ item.title }</FormLabel>
-				) : (
-					<p className="components__is-placeholder" />
-				) }
+				{ ! isPlaceholder ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
 				<FormTextInput
 					className={ isPlaceholder ? 'components__is-placeholder' : null }
 					isError={ emailValidationError }
@@ -65,7 +63,7 @@ const NotificationsOrigin = ( {
 				{ ! isPlaceholder ? (
 					<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
 				) : (
-					<p className="components__is-placeholder" />
+					placeholderComponent
 				) }
 			</ListItemField>
 		</ListItem>
