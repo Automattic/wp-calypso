@@ -1,6 +1,7 @@
 .jetpack-onboarding {
 	.steps__form {
 		max-width: 320px;
+		opacity: 1;
 
 		.form-textarea {
 			resize: vertical;
@@ -10,6 +11,11 @@
 			display: block;
 			text-align: center;
 			width: 100%;
+		}
+
+		.is_animated {
+			opacity: 0;
+			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 	}
 
