@@ -58,7 +58,7 @@ export class DomainToPaidPlanNotice extends Component {
 			? `/start/site-selected/?siteSlug=${ encodeURIComponent(
 					site.slug
 				) }&siteId=${ encodeURIComponent( site.ID ) }`
-			: `/plans/my-plan/${ site.slug }`;
+			: `/plans/${ site.slug }`;
 
 		return (
 			<SidebarBanner icon="info-outline" text={ this.getBannerText() }>
