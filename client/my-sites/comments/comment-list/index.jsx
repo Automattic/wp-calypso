@@ -161,7 +161,7 @@ export class CommentList extends Component {
 			siteFragment,
 			status,
 		} = this.props;
-		const { isBulkMode, selectedComments } = this.state;
+		const { isBulkMode, selectedComments, sortOrder } = this.state;
 
 		let validPage, commentsCount, commentsListQuery, commentsPage;
 		if ( isCommentCountsSupported ) {
@@ -172,6 +172,7 @@ export class CommentList extends Component {
 			commentsListQuery = {
 				listType: 'site',
 				number: COMMENTS_PER_PAGE,
+				order: sortOrder.toUpperCase(),
 				page: validPage,
 				postId,
 				siteId,
