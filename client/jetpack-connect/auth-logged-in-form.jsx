@@ -102,6 +102,7 @@ export class LoggedInForm extends Component {
 
 	componentWillMount() {
 		const { recordTracksEvent } = this.props;
+		recordTracksEvent( 'calypso_jpc_authorize_form_view' );
 		recordTracksEvent( 'calypso_jpc_auth_view' );
 
 		if ( this.shouldAutoAuthorize() ) {

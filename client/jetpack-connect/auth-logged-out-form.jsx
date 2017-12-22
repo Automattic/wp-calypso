@@ -58,6 +58,10 @@ class LoggedOutForm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	componentWillMount() {
+		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
+	}
+
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
 	}

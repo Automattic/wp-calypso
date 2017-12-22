@@ -14,18 +14,12 @@ import LoggedInForm from './auth-logged-in-form';
 import LoggedOutForm from './auth-logged-out-form';
 import MainWrapper from './main-wrapper';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
 
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {
 		// Connected props
 		isLoggedIn: PropTypes.bool.isRequired,
-		recordTracksEvent: PropTypes.func.isRequired,
 	};
-
-	componentWillMount() {
-		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
-	}
 
 	renderForm() {
 		return this.props.isLoggedIn ? (
@@ -50,11 +44,6 @@ class JetpackConnectAuthorizeForm extends Component {
 
 export { JetpackConnectAuthorizeForm as JetpackConnectAuthorizeFormTestComponent };
 
-export default connect(
-	state => ( {
-		isLoggedIn: !! getCurrentUserId( state ),
-	} ),
-	{
-		recordTracksEvent,
-	}
-)( localize( JetpackConnectAuthorizeForm ) );
+export default connect( state => ( {
+	isLoggedIn: !! getCurrentUserId( state ),
+} ) )( localize( JetpackConnectAuthorizeForm ) );
