@@ -281,7 +281,8 @@ const mapStateToProps = ( state, { page, postId, siteId, status } ) => {
 	const isPostView = !! postId;
 
 	const isCommentCountsSupported =
-		! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.6' );
+		isEnabled( 'comments/management/counts' ) &&
+		( ! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.6' ) );
 	const isCommentsTreeSupported =
 		! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' );
 
