@@ -20,6 +20,18 @@ export const JETPACK_ONBOARDING_STEPS = {
 	SUMMARY: 'summary',
 };
 
+export const JETPACK_ONBOARDING_SUMMARY_STEPS = {
+	SITE_TITLE_DESCRIPTION: 'Site Title & Description',
+	SITE_TYPE: 'Type of Site',
+	HOMEPAGE_TYPE: 'Type of Homepage',
+	CONTACT_FORM: 'Contact Us Form',
+	JETPACK_CONNECTION: 'Jetpack Connection',
+	THEME: 'Choose a Theme',
+	SITE_ADDRESS: 'Add a Site Address',
+	STORE: 'Add a Store',
+	BLOG: 'Start a Blog',
+};
+
 export const JETPACK_ONBOARDING_COMPONENTS = {
 	[ JETPACK_ONBOARDING_STEPS.SITE_TITLE ]: <JetpackOnboardingSiteTitleStep />,
 	[ JETPACK_ONBOARDING_STEPS.SITE_TYPE ]: <JetpackOnboardingSiteTypeStep />,
