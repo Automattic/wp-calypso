@@ -169,6 +169,10 @@
 
 		.order-details__coupon-list-tokens {
 			display: flex;
+
+			.token-field__token:first-child {
+				margin-left: 0;
+			}
 		}
 	}
 }
