@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import isEqual from 'lodash/isEqual';
+import { assign, isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +25,8 @@ export class CreditCardFormFields extends React.Component {
 		countriesList: PropTypes.object.isRequired,
 		eventFormName: PropTypes.string.isRequired,
 		isFieldInvalid: PropTypes.func.isRequired,
-		onFieldChange: PropTypes.func.isRequired,
+		onFieldChange: PropTypes.func.isRequired
+		getErrorMessage: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
@@ -44,6 +45,7 @@ export class CreditCardFormFields extends React.Component {
 	}
 
 	createField = ( fieldName, componentClass, props ) => {
+		const errorMessage = ( this.props.getErrorMessage( fieldName ) || [] );
 		return React.createElement(
 			componentClass,
 			Object.assign(
@@ -51,10 +53,12 @@ export class CreditCardFormFields extends React.Component {
 				{
 					additionalClasses: 'credit-card-form-fields__field',
 					eventFormName: this.props.eventFormName,
-					isError: this.props.isFieldInvalid( fieldName ),
+					isError: ! isEmpty( errorMessage ),
+					errorMessage: errorMessage[ 0 ],
 					name: fieldName,
+					onBlur: this.handleFieldChange,
 					onChange: this.handleFieldChange,
-					value: this.getFieldValue( fieldName ) || '',
+					value: this.getFieldValue( fieldName ),
 					autoComplete: 'off',
 				},
 				props
