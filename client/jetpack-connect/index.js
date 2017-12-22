@@ -34,23 +34,43 @@ export default function() {
 
 	page( '/jetpack/connect', controller.connect, makeLayout, clientRender );
 
-	page(
-		'/jetpack/connect/authorize/:localeOrInterval?',
-		controller.maybeOnboard,
-		controller.redirectWithoutLocaleifLoggedIn,
-		controller.authorizeForm,
-		makeLayout,
-		clientRender
-	);
+	if ( isLoggedOut ) {
+		page(
+			'/jetpack/connect/authorize/:localeOrInterval?',
+			controller.maybeOnboard,
+			controller.redirectWithoutLocaleifLoggedIn,
+			controller.authorizeForm,
+			makeLayout,
+			clientRender
+		);
 
-	page(
-		'/jetpack/connect/authorize/:interval/:locale',
-		controller.maybeOnboard,
-		controller.redirectWithoutLocaleifLoggedIn,
-		controller.authorizeForm,
-		makeLayout,
-		clientRender
-	);
+		page(
+			'/jetpack/connect/authorize/:interval/:locale',
+			controller.maybeOnboard,
+			controller.redirectWithoutLocaleifLoggedIn,
+			controller.authorizeForm,
+			makeLayout,
+			clientRender
+		);
+	} else {
+		page(
+			'/jetpack/connect/authorize/:localeOrInterval?',
+			controller.maybeOnboard,
+			controller.redirectWithoutLocaleifLoggedIn,
+			controller.authorizeForm,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/jetpack/connect/authorize/:interval/:locale',
+			controller.maybeOnboard,
+			controller.redirectWithoutLocaleifLoggedIn,
+			controller.authorizeForm,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		'/jetpack/connect/store/:interval(yearly|monthly)?',
