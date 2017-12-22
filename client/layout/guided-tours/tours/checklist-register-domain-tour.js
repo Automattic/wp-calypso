@@ -17,6 +17,7 @@ import {
 	Continue,
 	makeTour,
 	Next,
+	Quit,
 	SiteLink,
 	Step,
 	Tour,
@@ -91,24 +92,45 @@ export const ChecklistRegisterDomainTour = makeTour(
 
 			<Continue
 				target=".checkout__domain-details-form-submit-button"
-				step="checkout-step"
+				step="contact-information-2"
 				click
 				hidden
 			/>
 
 			<ButtonRow>
-				<Next step="checkout-step">{ translate( 'Got it, thanks!' ) }</Next>
+				<Next step="contact-information-2">{ translate( 'Got it, thanks!' ) }</Next>
 				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 			</ButtonRow>
 		</Step>
 
-		<Step name="checkout-step" arrow="bottom-left" placement="above" target=".checkout">
+		<Step
+			name="contact-information-2"
+			arrow="top-right"
+			placement="below"
+			target=".checkout__domain-details-form-submit-button"
+		>
+			<p>{ translate( 'One final step is remaining!' ) }</p>
+
+			<Continue
+				target=".checkout__domain-details-form-submit-button"
+				step="checkout-step"
+				click
+				hidden
+			/>
+		</Step>
+
+		<Step
+			name="checkout-step"
+			arrow="top-right"
+			placement="below"
+			target="g.checkout__secure-payment-content"
+		>
 			<p>{ translate( 'Enter your payment information to complete your purchase.' ) }</p>
 
 			<Continue target=".pay-button__button" step="finish" click hidden />
 
 			<ButtonRow>
-				<Next step="finish">{ translate( 'Got it, thanks!' ) }</Next>
+				<Quit>{ translate( 'Got it, thanks!' ) }</Quit>
 				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 			</ButtonRow>
 		</Step>
@@ -120,12 +142,6 @@ export const ChecklistRegisterDomainTour = makeTour(
 				</span>
 				{ translate( 'Good job, looks great!' ) }
 			</h1>
-			<p>
-				{ translate(
-					'The updates to your About page are being saved. When the page is done saving, let’s' +
-						' return to our checklist and see what’s next.'
-				) }
-			</p>
 			<SiteLink isButton="true" href={ '/checklist/:site' }>
 				{ translate( 'Return to the checklist' ) }
 			</SiteLink>
