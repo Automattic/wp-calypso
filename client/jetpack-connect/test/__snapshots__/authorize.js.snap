@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LoggedInForm renders as expected 1`] = `
+exports[`JetpackAuthorize renders as expected 1`] = `
 <JetpackConnectMainWrapper
   isWide={false}
 >

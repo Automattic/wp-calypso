@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LoggedOutForm should render 1`] = `
+exports[`JetpackSignup should render 1`] = `
 <JetpackConnectMainWrapper
   isWide={false}
 >
@@ -54,7 +54,7 @@ exports[`LoggedOutForm should render 1`] = `
 </JetpackConnectMainWrapper>
 `;
 
-exports[`LoggedOutForm should render with locale suggestions 1`] = `
+exports[`JetpackSignup should render with locale suggestions 1`] = `
 <JetpackConnectMainWrapper
   isWide={false}
 >
