@@ -140,6 +140,7 @@ export function connect( context, next ) {
 		if (
 			some( MOBILE_APP_REDIRECT_URL_WHITELIST, pattern => pattern.test( query.mobile_redirect ) )
 		) {
+			debug( `In mobile app flow with redirect url: ${ query.mobile_redirect }` );
 			persistMobileRedirect( query.mobile_redirect );
 		} else {
 			persistMobileRedirect( '' );
