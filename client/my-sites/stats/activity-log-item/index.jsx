@@ -108,8 +108,9 @@ class ActivityLogItem extends Component {
 					label={ translate( 'Rewind' ) }
 					onClick={ this.handleClickRestore }
 					disableMain={ disableRestore }
+					disabled={ disableRestore && disableBackup }
 					compact
-					primary
+					primary={ ! disableRestore }
 				>
 					<PopoverMenuItem
 						disabled={ disableBackup }
