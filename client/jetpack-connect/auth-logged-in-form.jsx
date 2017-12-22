@@ -33,6 +33,7 @@ import NoticeAction from 'components/notice/notice-action';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
+import { authQueryPropTypes } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -70,7 +71,7 @@ const PRESSABLE_PARTNER_ID = 49640;
 
 export class LoggedInForm extends Component {
 	static propTypes = {
-		authQuery: PropTypes.object.isRequired,
+		authQuery: authQueryPropTypes.isRequired,
 
 		// Connected props
 		authAttempts: PropTypes.number.isRequired,

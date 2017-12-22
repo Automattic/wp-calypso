@@ -13,14 +13,11 @@ import { localize } from 'i18n-calypso';
 import LoggedInForm from './auth-logged-in-form';
 import LoggedOutForm from './auth-logged-out-form';
 import MainWrapper from './main-wrapper';
-import { authQueryPropTypes } from './utils';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {
-		authQuery: authQueryPropTypes.isRequired,
-
 		// Connected props
 		isLoggedIn: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,

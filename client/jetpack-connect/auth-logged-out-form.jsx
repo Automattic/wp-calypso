@@ -33,6 +33,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
+import { authQueryPropTypes } from './utils';
 import { createAccount as createAccountAction } from 'state/jetpack-connect/actions';
 import { getAuthorizationData } from 'state/jetpack-connect/selectors';
 import { login } from 'lib/paths';
@@ -42,7 +43,7 @@ const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 
 class LoggedOutForm extends Component {
 	static propTypes = {
-		authQuery: PropTypes.object.isRequired,
+		authQuery: authQueryPropTypes.isRequired,
 		locale: PropTypes.string,
 		path: PropTypes.string,
 
