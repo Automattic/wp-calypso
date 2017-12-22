@@ -11,6 +11,26 @@ import { expect } from 'chai';
 import formattedVariationName from '../index';
 
 describe( 'formattedVariationName', () => {
+	test( 'returns correctly when passed corrupt attributes data array', () => {
+		const malformedVariant = {
+			id: 100,
+			visible: true,
+			attributes: [ 'foo', null ],
+		};
+
+		const name = formattedVariationName( malformedVariant, 'All Variations' );
+		expect( name ).to.eql( ' - ' );
+	} );
+	test( 'returns default when passed single null variation', () => {
+		const malformedVariant = {
+			id: 100,
+			visible: true,
+			attributes: [ null ],
+		};
+
+		const name = formattedVariationName( malformedVariant, '' );
+		expect( name ).to.eql( '' );
+	} );
 	test( 'returns fallback when passed a variation with no attributes', () => {
 		const variation = {
 			id: 1,
