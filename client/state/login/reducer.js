@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get, isEmpty, omit } from 'lodash';
+import { get, isEmpty, omit, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -65,20 +65,30 @@ export const isRequesting = createReducer( false, {
 	[ SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS ]: () => false,
 } );
 
-export const redirectTo = createReducer( null, {
-	[ LOGIN_REQUEST ]: () => null,
-	[ LOGIN_REQUEST_FAILURE ]: () => null,
-	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
-	[ SOCIAL_LOGIN_REQUEST ]: () => null,
-	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
-	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: () => null,
-	[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: ( state, action ) =>
-		get( action, 'redirect_to', null ),
-	[ LOGOUT_REQUEST ]: () => null,
-	[ LOGOUT_REQUEST_FAILURE ]: () => null,
-	[ LOGOUT_REQUEST_SUCCESS ]: () => ( state, { data } ) => get( data, 'redirect_to', null ),
+export const redirectTo = combineReducers( {
+	original: createReducer( null, {
+		[ ROUTE_SET ]: ( state, { path, query } ) => {
+			if ( startsWith( path, '/log-in' ) ) {
+				return query.redirect_to || state;
+			}
+
+			return state;
+		},
+	} ),
+	sanitized: createReducer( null, {
+		[ LOGIN_REQUEST ]: () => null,
+		[ LOGIN_REQUEST_FAILURE ]: () => null,
+		[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
+		[ SOCIAL_LOGIN_REQUEST ]: () => null,
+		[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
+		[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
+		[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
+		[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: () => null,
+		[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: ( state, action ) => get( action, 'redirect_to', null ),
+		[ LOGOUT_REQUEST ]: () => null,
+		[ LOGOUT_REQUEST_FAILURE ]: () => null,
+		[ LOGOUT_REQUEST_SUCCESS ]: () => ( state, { data } ) => get( data, 'redirect_to', null ),
+	} ),
 } );
 
 export const isFormDisabled = createReducer( null, {

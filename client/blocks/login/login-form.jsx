@@ -23,10 +23,7 @@ import Card from 'components/card';
 import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
-import {
-	getCurrentQueryArguments,
-	getRedirectToFromQueryArguments,
-} from 'state/selectors';
+import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import {
@@ -40,6 +37,7 @@ import { preventWidows } from 'lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import {
 	getAuthAccountType as getAuthAccountTypeSelector,
+	getRedirectToOriginal,
 	getRequestError,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkEmail,
@@ -421,12 +419,12 @@ export default connect(
 			isFormDisabled: isFormDisabledSelector( state ),
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
-			redirectTo: getRedirectToFromQueryArguments( state ),
+			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
 			socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
 			socialAccountLinkService: getSocialAccountLinkService( state ),
-			userEmail: getCurrentQueryArguments( state ).email_address,
+			userEmail: getInitialQueryArguments( state ).email_address,
 		};
 	},
 	{
