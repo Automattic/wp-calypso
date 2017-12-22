@@ -18,7 +18,6 @@ import StateDropdown from 'woocommerce/woocommerce-services/components/state-dro
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
 import AddressSuggestion from './suggestion';
 import { decodeEntities } from 'lib/formatting';
-import { getPlainPhoneNumber, formatPhoneForDisplay } from 'woocommerce/woocommerce-services/lib/utils/phone-format';
 import {
 	selectNormalizedAddress,
 	confirmAddressSuggestion,
@@ -68,8 +67,6 @@ const AddressFields = ( props ) => {
 	const getId = ( fieldName ) => group + '_' + fieldName;
 	const getValue = ( fieldName ) => values[ fieldName ] ? decodeEntities( values[ fieldName ] ) : '';
 	const updateValue = ( fieldName ) => ( newValue ) => props.updateAddressValue( orderId, siteId, group, fieldName, newValue );
-	const getPhoneNumber = ( value ) => getPlainPhoneNumber( value, getValue( 'country' ) );
-	const updatePhoneValue = ( value ) => props.updateAddressValue( orderId, siteId, group, 'phone', getPhoneNumber( value ) );
 	const submitAddressForNormalizationHandler = () => props.submitAddressForNormalization( orderId, siteId, group );
 
 	return (
@@ -91,8 +88,8 @@ const AddressFields = ( props ) => {
 				<TextField
 					id={ getId( 'phone' ) }
 					title={ translate( 'Phone' ) }
-					value={ formatPhoneForDisplay( getValue( 'phone' ), getValue( 'country' ) ) }
-					updateValue={ updatePhoneValue }
+					value={ getValue( 'phone' ) }
+					updateValue={ updateValue( 'phone' ) }
 					className="address-step__phone"
 					error={ fieldErrors.phone } />
 			</div>
