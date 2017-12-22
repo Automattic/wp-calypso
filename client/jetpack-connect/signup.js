@@ -42,7 +42,7 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 
-class LoggedOutForm extends Component {
+export class JetpackSignup extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
 		locale: PropTypes.string,
@@ -147,8 +147,6 @@ class LoggedOutForm extends Component {
 	}
 }
 
-export { LoggedOutForm as LoggedOutFormTestComponent };
-
 export default connect(
 	state => ( {
 		authorizationData: getAuthorizationData( state ),
@@ -157,4 +155,4 @@ export default connect(
 		recordTracksEvent: recordTracksEventAction,
 		createAccount: createAccountAction,
 	}
-)( localize( LoggedOutForm ) );
+)( localize( JetpackSignup ) );

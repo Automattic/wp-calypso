@@ -16,11 +16,11 @@ import analytics from 'lib/analytics';
 import CheckoutData from 'components/data/checkout';
 import config from 'config';
 import i18nUtils from 'lib/i18n-utils';
+import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
+import JetpackSignup from './signup';
 import JetpackSsoForm from './sso';
-import LoggedInForm from './auth-logged-in-form';
-import LoggedOutForm from './auth-logged-out-form';
 import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
@@ -193,7 +193,7 @@ export function signupForm( context, next ) {
 			}
 		}
 		context.primary = (
-			<LoggedOutForm
+			<JetpackSignup
 				path={ context.path }
 				interval={ interval }
 				locale={ locale }
@@ -232,7 +232,7 @@ export function authorizeForm( context, next ) {
 			clientId: transformedQuery.clientId,
 		} );
 
-		context.primary = <LoggedInForm authQuery={ transformedQuery } />;
+		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
 	} else {
 		context.primary = <NoDirectAccessError />;
 	}

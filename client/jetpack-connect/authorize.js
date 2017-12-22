@@ -70,7 +70,7 @@ const PLANS_PAGE = '/jetpack/connect/plans/';
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 const PRESSABLE_PARTNER_ID = 49640;
 
-export class LoggedInForm extends Component {
+export class JetpackAuthorize extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
 
@@ -663,4 +663,4 @@ export default connect(
 		recordTracksEvent: recordTracksEventAction,
 		retryAuth: retryAuthAction,
 	}
-)( localize( LoggedInForm ) );
+)( localize( JetpackAuthorize ) );

@@ -14,7 +14,7 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import { LoggedInForm } from '../auth-logged-in-form';
+import { JetpackAuthorize } from '../authorize';
 
 const CLIENT_ID = 98765;
 const SITE_SLUG = 'an.example.site';
@@ -67,15 +67,15 @@ const DEFAULT_PROPS = deepFreeze( {
 	userAlreadyConnected: false,
 } );
 
-describe( 'LoggedInForm', () => {
+describe( 'JetpackAuthorize', () => {
 	test( 'renders as expected', () => {
-		const wrapper = shallow( <LoggedInForm { ...DEFAULT_PROPS } /> );
+		const wrapper = shallow( <JetpackAuthorize { ...DEFAULT_PROPS } /> );
 
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
 	describe( 'isSso', () => {
-		const isSso = new LoggedInForm().isSso;
+		const isSso = new JetpackAuthorize().isSso;
 		const queryDataSiteId = 12349876;
 
 		test( 'returns true for valid SSO', () => {
@@ -124,7 +124,7 @@ describe( 'LoggedInForm', () => {
 	} );
 
 	describe( 'isWoo', () => {
-		const isWoo = new LoggedInForm().isWoo;
+		const isWoo = new JetpackAuthorize().isWoo;
 
 		test( 'should return true for woo wizard', () => {
 			const props = { authQuery: { from: 'woocommerce-services-auto-authorize' } };
@@ -143,7 +143,7 @@ describe( 'LoggedInForm', () => {
 	} );
 
 	describe( 'shouldAutoAuthorize', () => {
-		const renderableComponent = <LoggedInForm { ...DEFAULT_PROPS } />;
+		const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
 
 		test( 'should return true for sso', () => {
 			const component = shallow( renderableComponent );

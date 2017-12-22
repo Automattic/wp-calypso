@@ -15,7 +15,7 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import LocaleSuggestions from 'components/locale-suggestions';
-import { LoggedOutFormTestComponent as LoggedOutForm } from '../auth-logged-out-form';
+import { JetpackSignup } from '../signup.js';
 
 const CLIENT_ID = 98765;
 const SITE_SLUG = 'an.example.site';
@@ -54,16 +54,16 @@ const DEFAULT_PROPS = deepFreeze( {
 	translate: identity,
 } );
 
-describe( 'LoggedOutForm', () => {
+describe( 'JetpackSignup', () => {
 	test( 'should render', () => {
-		const wrapper = shallow( <LoggedOutForm { ...DEFAULT_PROPS } /> );
+		const wrapper = shallow( <JetpackSignup { ...DEFAULT_PROPS } /> );
 
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
 	test( 'should render with locale suggestions', () => {
 		const wrapper = shallow(
-			<LoggedOutForm
+			<JetpackSignup
 				{ ...DEFAULT_PROPS }
 				authorizationData={ {
 					...DEFAULT_PROPS.authorizationData,
