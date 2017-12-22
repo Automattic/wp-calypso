@@ -139,6 +139,26 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		);
 	}
 
+	/*
+	 * We've already got most of the validation we need from the server, we
+	 * just need to add a check for the empty field.
+	 * We're doing that one rule here because we're handling the organization
+	 * through flux and the legal type through redux, and with this check that
+	 * straddles the boundary, the cleanest approach is to handle it here in the
+	 * component.
+	 */
+	validateOrganizationIsNotEmpty( organizationFieldProps ) {
+		const { translate } = this.props;
+		const requiredFieldError = {
+			isError: true,
+			errorMessage: translate( 'An organization name is required for Canadian corporations' ),
+		};
+
+		return organizationFieldProps.value
+			? organizationFieldProps
+			: Object.assign( {}, organizationFieldProps, requiredFieldError );
+	}
+
 	render() {
 		const { getFieldProps, translate } = this.props;
 		const { legalType, ciraAgreementAccepted } = {
@@ -146,19 +166,20 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 			...this.props.contactDetailsExtra,
 		};
 
+		const rawFieldProps = getFieldProps( 'organization', true );
+
 		// We have to validate the organization name for the CCO legal
 		// type to avoid OpenSRS rejecting them and causing errors during
-		// payment
-		const doesntNeedOrganizationValidation = legalType !== 'CCO';
-		const organizationFieldProps = doesntNeedOrganizationValidation
-			? {}
-			: getFieldProps( 'organization', true );
+		// payments
+		const organizationFieldProps = this.validateOrganizationIsNotEmpty( rawFieldProps );
 
-		const isValid =
-			ciraAgreementAccepted &&
-			( doesntNeedOrganizationValidation || ! organizationFieldProps.isError );
+		const doesntNeedOrganizationField = legalType !== 'CCO';
+		const organizationFieldIsValid =
+			doesntNeedOrganizationField || ! organizationFieldProps.isError;
 
-		const validatingSubmitButton = isValid
+		const formIsValid = ciraAgreementAccepted && organizationFieldIsValid;
+
+		const validatingSubmitButton = formIsValid
 			? this.props.children
 			: React.cloneElement( this.props.children, { disabled: true } );
 
@@ -202,7 +223,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 						) }
 					</FormLabel>
 				</FormFieldset>
-				{ doesntNeedOrganizationValidation || this.renderOrganizationField() }
+				{ doesntNeedOrganizationField || this.renderOrganizationField( organizationFieldProps ) }
 				{ validatingSubmitButton }
 			</form>
 		);
