@@ -60,7 +60,11 @@ export default class Accordion extends Component {
 		} );
 
 		return (
-			<div className={ classes } data-e2e-title={ e2eTitle }>
+			<div
+				className={ classes }
+				data-e2e-title={ e2eTitle }
+				data-tip-target={ `accordion-${ e2eTitle }` }
+			>
 				<header className="accordion__header">
 					<button type="button" onClick={ this.toggleExpanded } className="accordion__toggle">
 						{ icon && <span className="accordion__icon">{ icon }</span> }
