@@ -3,7 +3,6 @@
  * External dependencies
  */
 import deepFreeze from 'deep-freeze';
-import { noop } from 'lodash';
 
 /**
  * Test fixtures
@@ -88,15 +87,11 @@ export const JETPACK_CONNECT_AUTH_QUERY_LOGGED_OUT = deepFreeze( {
 } );
 
 export const LOGGED_OUT_PROPS = deepFreeze( {
-	authQuery: JETPACK_CONNECT_AUTH_QUERY_LOGGED_OUT,
 	isLoggedIn: false,
 	path: '/jetpack/connect/authorize',
-	recordTracksEvent: noop,
 } );
 
 export const LOGGED_IN_PROPS = deepFreeze( {
-	authQuery: JETPACK_CONNECT_AUTH_QUERY_LOGGED_IN,
 	isLoggedIn: true,
 	path: '/jetpack/connect/authorize',
-	recordTracksEvent: noop,
 } );
