@@ -689,7 +689,7 @@ class HelpContact extends React.Component {
 		const isUserAffectedByChristmas2017Closure =
 			supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
-		const isClosureNoticeAvailable =
+		const isClosureNoticeInEffect =
 			currentDate.isBetween(
 				startShowingChristmas2017ClosureNoticeAt,
 				stopShowingChristmas2017ClosureNoticeAt
@@ -699,8 +699,7 @@ class HelpContact extends React.Component {
 				stopShowingNewYear2018ClosureNoticeAt
 			);
 
-		const shouldShowClosureNotice =
-			isUserAffectedByChristmas2017Closure && isClosureNoticeAvailable;
+		const shouldShowClosureNotice = isUserAffectedByChristmas2017Closure && isClosureNoticeInEffect;
 
 		return (
 			<div>
