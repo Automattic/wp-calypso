@@ -156,6 +156,55 @@ export function connect( context, next ) {
 	next();
 }
 
+export function signupForm( context, next ) {
+	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+
+	removeSidebar( context );
+
+	const { query } = context;
+	const validQueryObject = validator( authorizeQueryDataSchema )( query );
+
+	if ( validQueryObject ) {
+		const transformedQuery = authQueryTransformer( query );
+
+		// No longer setting/persisting query
+		//
+		// FIXME
+		//
+		// However, from and clientId are required for some reducer logic :(
+		//
+		// Hopefully when actions move to data-layer, this will become clearer and
+		// we won't need to store clientId in state
+		//
+		context.store.dispatch( {
+			type: JETPACK_CONNECT_QUERY_SET,
+			from: transformedQuery.from,
+			clientId: transformedQuery.clientId,
+		} );
+
+		let interval = context.params.interval;
+		let locale = context.params.locale;
+		if ( context.params.localeOrInterval ) {
+			if ( [ 'monthly', 'yearly' ].indexOf( context.params.localeOrInterval ) >= 0 ) {
+				interval = context.params.localeOrInterval;
+			} else {
+				locale = context.params.localeOrInterval;
+			}
+		}
+		context.primary = (
+			<JetpackConnectAuthorizeForm
+				path={ context.path }
+				interval={ interval }
+				locale={ locale }
+				authQuery={ transformedQuery }
+			/>
+		);
+	} else {
+		context.primary = <NoDirectAccessError />;
+	}
+	next();
+}
+
 export function authorizeForm( context, next ) {
 	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
 

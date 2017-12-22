@@ -38,7 +38,7 @@ export default function() {
 		page(
 			'/jetpack/connect/authorize/:localeOrInterval?',
 			controller.maybeOnboard,
-			controller.authorizeForm,
+			controller.signupForm,
 			makeLayout,
 			clientRender
 		);
@@ -46,7 +46,7 @@ export default function() {
 		page(
 			'/jetpack/connect/authorize/:interval/:locale',
 			controller.maybeOnboard,
-			controller.authorizeForm,
+			controller.signupForm,
 			makeLayout,
 			clientRender
 		);
