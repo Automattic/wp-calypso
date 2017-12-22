@@ -13,6 +13,7 @@ import {
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_WRITE_ERROR,
 } from 'state/action-types';
+import { requestCommentsList } from 'state/comments/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { getSitePost } from 'state/posts/selectors';
@@ -88,7 +89,7 @@ export const dispatchNewCommentRequest = ( dispatch, action, path ) => {
  */
 export const updatePlaceholderComment = (
 	{ dispatch },
-	{ siteId, postId, parentCommentId, placeholderId },
+	{ siteId, postId, parentCommentId, placeholderId, refreshCommentListQuery },
 	comment
 ) => {
 	// remove placeholder from state
@@ -105,6 +106,10 @@ export const updatePlaceholderComment = (
 	} );
 	// increment comments count
 	dispatch( { type: COMMENTS_COUNT_INCREMENT, siteId, postId } );
+
+	if ( !! refreshCommentListQuery ) {
+		dispatch( requestCommentsList( refreshCommentListQuery ) );
+	}
 };
 
 /**

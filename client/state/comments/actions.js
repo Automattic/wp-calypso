@@ -143,19 +143,22 @@ export const requestCommentCounts = ( siteId, postId ) => ( {
  * @param {Number|String} commentId comment or comment placeholder identifier
  * @param {Object} options Action options
  * @param {Boolean} options.showSuccessNotice Announce the delete success with a notice (default: true)
+ * @param {Object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
  * @returns {Object} action that deletes a comment
  */
 export const deleteComment = (
 	siteId,
 	postId,
 	commentId,
-	options = { showSuccessNotice: true }
+	options = { showSuccessNotice: true },
+	refreshCommentListQuery = null
 ) => ( {
 	type: COMMENTS_DELETE,
 	siteId,
 	postId,
 	commentId,
 	options,
+	refreshCommentListQuery,
 } );
 
 /***
@@ -178,14 +181,22 @@ export const writeComment = ( commentText, siteId, postId ) => ( {
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {Number} parentCommentId parent comment identifier
+ * @param {Object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
  * @returns {Function} a thunk that creates a comment for a given post
  */
-export const replyComment = ( commentText, siteId, postId, parentCommentId ) => ( {
+export const replyComment = (
+	commentText,
+	siteId,
+	postId,
+	parentCommentId,
+	refreshCommentListQuery = null
+) => ( {
 	type: COMMENTS_REPLY_WRITE,
 	siteId,
 	postId,
 	parentCommentId,
 	commentText,
+	refreshCommentListQuery,
 } );
 
 /***
@@ -222,14 +233,22 @@ export const unlikeComment = ( siteId, postId, commentId ) => ( {
  * @param {Number} postId Post identifier
  * @param {Number} commentId Comment identifier
  * @param {String} status New status
+ * @param {Object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
  * @returns {Object} Action that changes a comment status
  */
-export const changeCommentStatus = ( siteId, postId, commentId, status ) => ( {
+export const changeCommentStatus = (
+	siteId,
+	postId,
+	commentId,
+	status,
+	refreshCommentListQuery = null
+) => ( {
 	type: COMMENTS_CHANGE_STATUS,
 	siteId,
 	postId,
 	commentId,
 	status,
+	refreshCommentListQuery,
 } );
 
 /**
