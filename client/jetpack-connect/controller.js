@@ -92,10 +92,10 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 	return get( planSlugs, [ interval, type ], '' );
 };
 
-export function redirectWithoutLocaleifLoggedIn( context, next ) {
+export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 	if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
 		const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
-		debug( 'redirectWithoutLocaleifLoggedIn to %s', urlWithoutLocale );
+		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
 		return page.redirect( urlWithoutLocale );
 	}
 

@@ -26,7 +26,7 @@ export default function() {
 
 	page(
 		'/jetpack/connect/:type(install)/:locale?',
-		controller.redirectWithoutLocaleifLoggedIn,
+		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.connect,
 		makeLayout,
 		clientRender
@@ -54,7 +54,7 @@ export default function() {
 		page(
 			'/jetpack/connect/authorize/:localeOrInterval?',
 			controller.maybeOnboard,
-			controller.redirectWithoutLocaleifLoggedIn,
+			controller.redirectWithoutLocaleIfLoggedIn,
 			controller.authorizeForm,
 			makeLayout,
 			clientRender
@@ -63,7 +63,7 @@ export default function() {
 		page(
 			'/jetpack/connect/authorize/:interval/:locale',
 			controller.maybeOnboard,
-			controller.redirectWithoutLocaleifLoggedIn,
+			controller.redirectWithoutLocaleIfLoggedIn,
 			controller.authorizeForm,
 			makeLayout,
 			clientRender
@@ -99,7 +99,7 @@ export default function() {
 
 	page(
 		'/jetpack/connect/:locale?',
-		controller.redirectWithoutLocaleifLoggedIn,
+		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.connect,
 		makeLayout,
 		clientRender
