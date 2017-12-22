@@ -510,3 +510,30 @@ form.sidebar__button input {
 	}
 }
 
+.sidebar__header-card.card {
+	box-sizing: border-box;
+	height: 46px;
+	padding: 8px 8px 8px 46px;
+	position: relative;
+}
+
+.sidebar__header-card__chevron {
+	position: absolute;
+		top: 10px;
+		left: 18px;
+}
+
+.sidebar__header-card__section-title {
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1;
+	margin-bottom: 2px;
+	color: $gray-dark;
+}
+
+.sidebar__header-card__site-title {
+	font-size: 13px;
+	color: $gray-text-min;
+	line-height: 1;
+}
+

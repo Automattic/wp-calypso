@@ -235,16 +235,16 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<SidebarItem
-				label={ this.props.translate( 'Themes' ) }
+				label={ this.props.translate( 'Customize' ) }
 				tipTarget="themes"
 				className={ this.itemLinkClass( '/themes', 'themes' ) }
-				link={ themesLink }
+				link={ this.props.customizeUrl }
 				onNavigate={ this.onNavigate }
-				icon="themes"
-				preloadSectionName="themes"
+				icon="customize"
+				preloadSectionName="customize"
 			>
-				<SidebarButton href={ this.props.customizeUrl } preloadSectionName="customize">
-					{ this.props.translate( 'Customize' ) }
+				<SidebarButton href={ themesLink } preloadSectionName="themes">
+					{ this.props.translate( 'Themes' ) }
 				</SidebarButton>
 			</SidebarItem>
 		);
@@ -476,15 +476,12 @@ export class MySitesSidebar extends Component {
 				icon="user"
 				forceInternalLink={ true }
 				preloadSectionName="people"
-			>
-				<SidebarButton href={ addPeopleLink }>{ this.props.translate( 'Add' ) }</SidebarButton>
-			</SidebarItem>
+			/>
 		);
 	}
 
 	loadSubSidebar( sectionName ) {
 		return () => {
-			console.log( 'Sidebar.loadSubSidebar', sectionName );
 			this.setState( { currentSubSidebar: sectionName } );
 		};
 	}
@@ -639,23 +636,15 @@ export class MySitesSidebar extends Component {
 					</SidebarMenu>
 				) : null }
 
-				{ !! this.themes() ? (
-					<SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Personalize' ) }</SidebarHeading>
-						<ul>{ this.themes() }</ul>
-					</SidebarMenu>
-				) : null }
-
 				{ configuration ? (
 					<SidebarMenu>
 						<SidebarHeading>{ this.props.translate( 'Configure' ) }</SidebarHeading>
 						<ul>
+							{ !! this.themes() ? this.themes() : null }
+							{ this.siteSettings() }
 							{ this.ads() }
-							{ this.sharing() }
 							{ this.users() }
 							{ this.plugins() }
-							{ this.upgrades() }
-							{ this.siteSettings() }
 							{ this.wpAdmin() }
 						</ul>
 					</SidebarMenu>
@@ -677,6 +666,8 @@ export class MySitesSidebar extends Component {
 		const allItems = {
 			settings: [
 				{ label: 'General', link: siteSettingsLink( 'general' ), icon: 'briefcase' },
+				{ label: 'Domains', link: '/domains/manage' + siteSuffix, icon: 'domains' },
+				{ label: 'Sharing', link: '/sharing' + siteSuffix, icon: 'share' },
 				{ label: 'Writing', link: siteSettingsLink( 'writing' ), icon: 'pencil' },
 				{ label: 'Discussion', link: siteSettingsLink( 'discussion' ), icon: 'chat' },
 			],

@@ -10,6 +10,8 @@ import classNames from 'classnames';
  */
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
+import Gridicon from 'gridicons';
+import Card from 'components/card/compact';
 
 class SubSidebar extends React.Component {
 	static propTypes = {
@@ -18,7 +20,6 @@ class SubSidebar extends React.Component {
 
 	render() {
 		const items = this.props.items();
-		console.log( 'items:', items );
 
 		if ( !items ) {
 			return(
@@ -37,11 +38,11 @@ class SubSidebar extends React.Component {
 		return(
 			<SidebarMenu className="sidebar__sub-sidebar">
 				<ul className={ classNames( 'sub-sidebar__list', this.props.className ) }>
-				<SidebarItem
-					label="← Back"
-					key="back"
-					onNavigate={ this.props.resetSubSidebar }
-				/>
+					<Card className="sidebar__header-card" onClick={ this.props.resetSubSidebar }>
+						<Gridicon className="sidebar__header-card__chevron" icon="chevron-left" />
+						<h2 className="sidebar__header-card__section-title">Settings</h2>
+						<h3 className="sidebar__header-card__site-title">Sporadic Thoughts</h3>
+					</Card>
 					{ listItems }
 				</ul>
 			</SidebarMenu>

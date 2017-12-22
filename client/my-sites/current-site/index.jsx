@@ -22,6 +22,7 @@ import Gridicon from 'gridicons';
 import SiteNotice from './notice';
 import CartStore from 'lib/cart/store';
 import Count from 'components/count';
+import classnames from 'classnames';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSelectedOrAllSites, getVisibleSites } from 'state/selectors';
@@ -93,6 +94,8 @@ class CurrentSite extends Component {
 	render() {
 		const { selectedSite, translate, anySiteSelected, rtlOn } = this.props;
 
+		let isMultiSite = this.props.siteCount > 1;
+
 		if ( ! anySiteSelected.length ) {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
@@ -113,7 +116,7 @@ class CurrentSite extends Component {
 		}
 
 		return (
-			<Card className="current-site">
+			<Card className={ classnames( 'current-site', isMultiSite ? 'has-multiple-sites' : null ) }>
 				{ selectedSite ? (
 					<div>
 						<Site compact={ true } site={ selectedSite } />
@@ -126,7 +129,7 @@ class CurrentSite extends Component {
 
 				<SiteNotice site={ selectedSite } allSitesPath={ this.props.allSitesPath } />
 
-				{ this.props.siteCount > 1 && (
+				{ isMultiSite && (
 					<span className="current-site__switch-sites">
 						<Button compact borderless onClick={ this.switchSites }>
 							<Gridicon icon={ rtlOn ? 'arrow-right' : 'arrow-left' } size={ 18 } />
