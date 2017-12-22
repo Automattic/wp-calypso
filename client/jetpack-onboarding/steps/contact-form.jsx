@@ -18,7 +18,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class JetpackOnboardingContactFormStep extends React.PureComponent {
 	clickAddContactForm = () => {
-		this.props.recordTracksEvent( 'calypso_jetpack_onboarding_contact_form_clicked' );
+		this.props.recordTracksEvent( 'calypso_jpo_contact_form_clicked' );
 	};
 
 	render() {
