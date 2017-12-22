@@ -236,6 +236,7 @@ export class CommentList extends Component {
 					{ map( commentsPage, commentId => (
 						<Comment
 							commentId={ commentId }
+							commentsListQuery={ commentsListQuery }
 							key={ `comment-${ siteId }-${ commentId }` }
 							isBulkMode={ isBulkMode }
 							isPostView={ isPostView }
