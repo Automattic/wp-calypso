@@ -6,7 +6,7 @@ import React from 'react';
 import Debug from 'debug';
 import page from 'page';
 import validator from 'is-my-json-valid';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, some } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -28,6 +28,7 @@ import userFactory from 'lib/user';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
 import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
+import { MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
@@ -136,7 +137,14 @@ export function connect( context, next ) {
 	planSlug && storePlan( planSlug );
 
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
-		persistMobileRedirect( query.mobile_redirect || '' );
+		if (
+			some( MOBILE_APP_REDIRECT_URL_WHITELIST, pattern => pattern.test( query.mobile_redirect ) )
+		) {
+			debug( `In mobile app flow with redirect url: ${ query.mobile_redirect }` );
+			persistMobileRedirect( query.mobile_redirect );
+		} else {
+			persistMobileRedirect( '' );
+		}
 	}
 
 	analytics.pageView.record( pathname, analyticsPageTitle );

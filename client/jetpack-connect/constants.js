@@ -6,3 +6,4 @@ export const REMOTE_PATH_ACTIVATE = '/wp-admin/plugins.php';
 export const REMOTE_PATH_AUTH = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 export const REMOTE_PATH_INSTALL =
 	'/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
+export const MOBILE_APP_REDIRECT_URL_WHITELIST = [ /^wordpress:\/\// ];
