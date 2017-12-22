@@ -9,7 +9,6 @@ import page from 'page';
  */
 import { siteSelection, navigation, sites } from 'my-sites/controller';
 import { clearCommentNotices, comment, postComments, redirect, siteComments } from './controller';
-import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
@@ -34,9 +33,7 @@ export default function() {
 	);
 
 	// Comment View
-	if ( config.isEnabled( 'comments/management/comment-view' ) ) {
-		page( '/comment/:site/:comment', siteSelection, navigation, comment, makeLayout, clientRender );
-	}
+	page( '/comment/:site/:comment', siteSelection, navigation, comment, makeLayout, clientRender );
 
 	// Redirect
 	page(
