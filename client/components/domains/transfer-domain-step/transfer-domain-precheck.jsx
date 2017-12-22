@@ -184,11 +184,11 @@ class TransferDomainPrecheck extends React.PureComponent {
 		} );
 
 		let heading = translate(
-			'{{strong}}%(domain)s{{/strong}} can be transferred %(transferDelayInDays)s.',
+			'{{strong}}%(domain)s{{/strong}} can be transferred in %(transferDelayInDays)s days.',
 			{
 				args: {
 					domain: domain,
-					transferDelayInDays: moment( transferEligibleDate ).fromNow(),
+					transferDelayInDays: moment( transferEligibleDate ).diff( moment(), 'days' ),
 				},
 				components: {
 					strong: <strong />,
@@ -222,11 +222,11 @@ class TransferDomainPrecheck extends React.PureComponent {
 		} else if ( true === inInitialRegistrationPeriod ) {
 			reason = translate(
 				'Newly-registered domains are not eligible for transfer. {{strong}}%(domain)s{{/strong}} was registered ' +
-					'%(daysAgoRegistered)s, and can be transferred starting %(transferEligibleDate)s.',
+					'%(daysAgoRegistered)s days ago, and can be transferred starting %(transferEligibleDate)s.',
 				{
 					args: {
 						domain: domain,
-						daysAgoRegistered: moment( creationDate ).fromNow(),
+						daysAgoRegistered: moment().diff( moment( creationDate ), 'days' ),
 						transferEligibleDate: moment( transferEligibleDate ).format( dateFormat ),
 					},
 					components: {
