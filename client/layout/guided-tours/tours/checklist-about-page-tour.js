@@ -48,6 +48,12 @@ export const ChecklistAboutPageTour = makeTour(
 				) }
 			</p>
 			<ButtonRow>
+				<Continue
+					target="editor-featured-image-current-image"
+					step="featured-images"
+					click
+					hidden
+				/>
 				<Next step="featured-images">{ translate( 'All done, continue' ) }</Next>
 				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 			</ButtonRow>
