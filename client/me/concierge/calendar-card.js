@@ -39,9 +39,38 @@ class CalendarCard extends Component {
 		timezone: PropTypes.string.isRequired,
 	};
 
-	state = {
-		selectedTime: this.props.times[ 0 ],
-	};
+	constructor( props ) {
+		super( props );
+
+		// To find the best default time for the time picker, we're going to pick the time that's
+		// closest to the current time of day. To do this first we find out how many seconds it's
+		// been since midnight on the current real world day...
+		const timeSinceMidnight = moment().diff( moment().startOf( 'day' ) );
+		// Then we'll use that to find the same time of day on the Card's given date...
+		const currentTimeOnGivenDate = moment( this.props.date )
+			.startOf( 'day' )
+			.add( timeSinceMidnight );
+
+		// Then we'll use a reducer to find the timestamp that's closest (before or after) to the
+		// current time on the given date.
+		const closestTimestamp = this.props.times.reduce(
+			( closestTime, newTime ) => {
+				// On each iteration, return the time that's closer to the current time on the given date
+				const closestTimeOffset = Math.abs( closestTime - currentTimeOnGivenDate );
+				const newTimeOffset = Math.abs( newTime - currentTimeOnGivenDate );
+				if ( newTimeOffset < closestTimeOffset ) {
+					return newTime;
+				}
+				return closestTime;
+			},
+			// Seed the reducer with the first timestamp for a sensible default
+			this.props.times[ 0 ]
+		);
+
+		this.state = {
+			selectedTime: closestTimestamp,
+		};
+	}
 
 	withTimezone = dateTime => moment( dateTime ).tz( this.props.timezone );
 
