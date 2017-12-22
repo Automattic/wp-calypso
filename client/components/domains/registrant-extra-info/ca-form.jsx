@@ -115,7 +115,6 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 
 		if ( target.type === 'checkbox' ) {
 			value = target.checked;
-			this.registerClick();
 		}
 
 		this.props.updateContactDetailsCache( {
@@ -123,16 +122,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		} );
 	};
 
-	handleInvalidSubmit = event => {
-		event.preventDefault();
-		this.registerClick();
-	};
-
-	registerClick = () => {
-		this.setState( { hasBeenClicked: true } );
-	};
-
-	renderOrganizationField() {
+	renderOrganizationField( organizationFieldProps ) {
 		const { translate } = this.props;
 		const className = 'registrant-extra-info';
 
@@ -141,29 +131,39 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 				<Input
 					className={ className }
 					label={ translate( 'Organization' ) }
-					{ ...// getFieldProps() includes all the callbacks we need
-					// to have this organization field behave the same as
-					// the field in the parent, particularly the state and
-					// back end validation
-					this.props.getFieldProps( 'organization' ) }
+					{ ...// These props includes all the callbacks we need to
+					// have this organization field behave the same as
+					// the field in the parent, particularly around the
+					// formState and back end validation
+					organizationFieldProps }
 				/>
 			</FormFieldset>
 		);
 	}
 
 	render() {
-		const { translate } = this.props;
-		const { legalTypeOptions, hasBeenClicked } = this.state;
+		const { getFieldProps, translate } = this.props;
+		const { legalTypeOptions } = this.state;
 		const { legalType, ciraAgreementAccepted } = {
 			...defaultValues,
 			...this.props.contactDetailsExtra,
 		};
 
-		const validatingSubmitButton = ciraAgreementAccepted
-			? this.props.children
-			: React.cloneElement( this.props.children, { onClick: this.handleInvalidSubmit } );
+		// We have to validate the organization name for the CCO legal
+		// type to avoid OpenSRS rejecting them and causing errors during
+		// payment
+		const doesntNeedOrganizationValidation = legalType !== 'CCO';
+		const organizationFieldProps = doesntNeedOrganizationValidation
+			? {}
+			: getFieldProps( 'organization', true );
 
-		const showValidationError = hasBeenClicked && ! ciraAgreementAccepted;
+		const isValid =
+			ciraAgreementAccepted &&
+			( doesntNeedOrganizationValidation || ! organizationFieldProps.isError );
+
+		const validatingSubmitButton = isValid
+			? this.props.children
+			: React.cloneElement( this.props.children, { disabled: true } );
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -200,15 +200,12 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 								},
 							} ) }
 						</span>
-						{ showValidationError ? (
+						{ ciraAgreementAccepted ? (
 							<FormInputValidation text={ translate( 'Required' ) } isError={ true } />
 						) : null }
 					</FormLabel>
 				</FormFieldset>
-				{ // We have to validate the organization name for CCO legal
-				// types to avoid OpenSRS rejecting them and causing errors
-				// during payment
-				legalType !== 'CCO' || this.renderOrganizationField() }
+				{ doesntNeedOrganizationValidation || this.renderOrganizationField() }
 				{ validatingSubmitButton }
 			</form>
 		);
