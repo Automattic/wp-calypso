@@ -1,11 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-import sinon from 'sinon';
-
-/**
  * Internal dependencies
  */
 import { requestUnfollow, receiveUnfollowTag, receiveError, fromApi } from '../';
@@ -37,23 +31,14 @@ const successfulUnfollowResponse = {
 	],
 };
 
-const unsuccessfulResponse = {
-	...successfulUnfollowResponse,
-	subscribed: true,
-};
-
 const slug = 'chicken';
 
 describe( 'unfollow tag request', () => {
 	describe( '#requestUnfollow', () => {
-		test( 'should dispatch HTTP request to unfollow tag endpoint', () => {
+		test( 'should return an HTTP request to the unfollow tag endpoint', () => {
 			const action = requestUnfollowAction( slug );
-			const dispatch = sinon.spy();
 
-			requestUnfollow( { dispatch }, action );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
+			expect( requestUnfollow( action ) ).toMatchObject(
 				http( {
 					apiVersion: '1.1',
 					method: 'POST',
@@ -66,43 +51,23 @@ describe( 'unfollow tag request', () => {
 	} );
 
 	describe( '#receiveUnfollowSuccess', () => {
-		test( 'should dispatch the id of the unfollowed tag', () => {
+		test( 'should return the id of the unfollowed tag', () => {
 			const action = requestUnfollowAction( slug );
-			const dispatch = sinon.spy();
 
-			receiveUnfollowTag( { dispatch }, action, successfulUnfollowResponse );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
+			expect( receiveUnfollowTag( action, fromApi( successfulUnfollowResponse ) ) ).toMatchObject(
 				receiveUnfollowAction( {
 					payload: successfulUnfollowResponse.removed_tag,
 				} )
 			);
-		} );
-
-		test( 'if api reports error then should create an error notice', () => {
-			const action = requestUnfollowAction( slug );
-			const dispatch = sinon.spy();
-
-			receiveUnfollowTag( { dispatch }, action, unsuccessfulResponse );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWithMatch( {
-				type: NOTICE_CREATE,
-			} );
 		} );
 	} );
 
 	describe( '#receiveError', () => {
 		test( 'should dispatch an error notice', () => {
 			const action = requestUnfollowAction( slug );
-			const dispatch = sinon.spy();
 			const error = 'could not find tag';
 
-			receiveError( { dispatch }, action, error );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWithMatch( {
+			expect( receiveError( action, error ) ).toMatchObject( {
 				type: NOTICE_CREATE,
 			} );
 		} );
@@ -113,7 +78,7 @@ describe( 'unfollow tag request', () => {
 			const apiResponse = successfulUnfollowResponse;
 			const normalized = fromApi( apiResponse );
 
-			expect( normalized ).to.eql( apiResponse.removed_tag );
+			expect( normalized ).toEqual( apiResponse.removed_tag );
 		} );
 	} );
 } );

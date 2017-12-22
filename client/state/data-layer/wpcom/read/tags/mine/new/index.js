@@ -10,43 +10,38 @@ import { find } from 'lodash';
 import { READER_FOLLOW_TAG_REQUEST } from 'state/action-types';
 import { receiveTags as receiveTagsAction } from 'state/reader/tags/items/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { fromApi as transformTagFromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 
-export function requestFollowTag( store, action ) {
-	store.dispatch(
-		http( {
-			path: `/read/tags/${ action.payload.slug }/mine/new`,
-			method: 'POST',
-			apiVersion: '1.1',
-			onSuccess: action,
-			onFailure: action,
-		} )
-	);
+export function requestFollowTag( action ) {
+	return http( {
+		path: `/read/tags/${ action.payload.slug }/mine/new`,
+		method: 'POST',
+		apiVersion: '1.1',
+		onSuccess: action,
+		onFailure: action,
+	} );
 }
 
-export function receiveFollowTag( store, action, apiResponse ) {
-	if ( apiResponse.subscribed === false ) {
-		receiveError( store, action );
-		return;
+function fromApi( response ) {
+	if ( response.subscribed === false ) {
+		throw new Error( `following tag failed with response: ${ JSON.stringify( response ) }` );
 	}
 
-	const normalizedTags = fromApi( apiResponse );
-	const followedTag = {
-		...find( normalizedTags, { id: apiResponse.added_tag } ),
-		isFollowing: true,
-	};
+	const addedTag = find( response.tags, { ID: response.added_tag } );
 
-	store.dispatch(
-		receiveTagsAction( {
-			payload: [ followedTag ],
-		} )
-	);
+	return transformTagFromApi( { tag: addedTag } ).map( tag => ( { ...tag, isFollowing: true } ) );
 }
 
-export function receiveError( store, action, error ) {
+export function receiveFollowTag( action, addedTag ) {
+	return receiveTagsAction( {
+		payload: addedTag,
+	} );
+}
+
+export function receiveError( action, error ) {
 	// exit early and do nothing if the error is that the user is already following the tag
 	if ( error && error.error === 'already_subscribed' ) {
 		return;
@@ -56,14 +51,20 @@ export function receiveError( store, action, error ) {
 		args: { tag: action.payload.slug },
 	} );
 
-	store.dispatch( errorNotice( errorText ) );
 	if ( process.env.NODE_ENV === 'development' ) {
 		console.error( errorText, error ); // eslint-disable-line no-console
 	}
+
+	return errorNotice( errorText );
 }
 
 export default {
 	[ READER_FOLLOW_TAG_REQUEST ]: [
-		dispatchRequest( requestFollowTag, receiveFollowTag, receiveError ),
+		dispatchRequestEx( {
+			fetch: requestFollowTag,
+			onSuccess: receiveFollowTag,
+			onError: receiveError,
+			fromApi,
+		} ),
 	],
 };
