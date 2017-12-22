@@ -18,7 +18,7 @@ import page from 'page';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import {
-	getRedirectTo,
+	getRedirectToSanitized,
 	getRequestNotice,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
@@ -275,7 +275,7 @@ class Login extends Component {
 
 export default connect(
 	state => ( {
-		redirectTo: getRedirectTo( state ),
+		redirectTo: getRedirectToSanitized( state ),
 		requestNotice: getRequestNotice( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),

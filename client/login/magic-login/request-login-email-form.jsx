@@ -17,15 +17,14 @@ import {
 	hideMagicLoginRequestNotice,
 } from 'state/login/magic-login/actions';
 import {
-	isFetchingMagicLoginEmail,
-	getInitialQueryArguments,
 	getMagicLoginCurrentView,
 	getMagicLoginRequestEmailError,
 	getMagicLoginRequestedEmailSuccessfully,
+	isFetchingMagicLoginEmail,
 } from 'state/selectors';
+import { getRedirectToOriginal } from 'state/login/selectors';
 import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-
 import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -187,7 +186,7 @@ const mapState = state => {
 	return {
 		currentUser: getCurrentUser( state ),
 		isFetching: isFetchingMagicLoginEmail( state ),
-		redirectTo: getInitialQueryArguments( state ).redirect_to,
+		redirectTo: getRedirectToOriginal( state ),
 		requestError: getMagicLoginRequestEmailError( state ),
 		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),

@@ -37,6 +37,7 @@ import { preventWidows } from 'lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import {
 	getAuthAccountType as getAuthAccountTypeSelector,
+	getRedirectToOriginal,
 	getRequestError,
 	getSocialAccountIsLinking,
 	getSocialAccountLinkEmail,
@@ -418,7 +419,7 @@ export default connect(
 			isFormDisabled: isFormDisabledSelector( state ),
 			isLoggedIn: Boolean( getCurrentUserId( state ) ),
 			oauth2Client: getCurrentOAuth2Client( state ),
-			redirectTo: getInitialQueryArguments( state ).redirect_to,
+			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
 			socialAccountLinkEmail: getSocialAccountLinkEmail( state ),

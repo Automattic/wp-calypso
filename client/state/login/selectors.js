@@ -153,13 +153,26 @@ export const getRequestNotice = state => {
 };
 
 /***
- * Retrieves the redirect url that was passed when logging in.
+ * Retrieves the last redirect url provided in the query parameters of any login page. This url must be sanitized by the
+ * API before being used to avoid open redirection attacks.
+ *
+ * @param  {Object}   state  Global state tree
+ * @return {?String}         Url to redirect the user to upon successful login
+ * @see getRedirectToSanitized for the sanitized version
+ */
+export const getRedirectToOriginal = state => {
+	return get( state, 'login.redirectTo.original', null );
+};
+
+/***
+ * Retrieves the last redirect url provided in the query parameters of any login page that was sanitized by the API
+ * during the authentication process.
  *
  * @param  {Object}   state  Global state tree
  * @return {?String}         Url to redirect the user to upon successful login
  */
-export const getRedirectTo = state => {
-	return get( state, 'login.redirectTo', null );
+export const getRedirectToSanitized = state => {
+	return get( state, 'login.redirectTo.sanitized', null );
 };
 
 /***

@@ -19,7 +19,7 @@ import Card from 'components/card';
 import {
 	getSocialAccountLinkAuthInfo,
 	getSocialAccountLinkService,
-	getRedirectTo,
+	getRedirectToSanitized,
 } from 'state/login/selectors';
 import { connectSocialUser } from 'state/login/actions';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -130,7 +130,7 @@ export default connect(
 	state => ( {
 		linkingSocialAuthInfo: getSocialAccountLinkAuthInfo( state ),
 		linkingSocialService: getSocialAccountLinkService( state ),
-		redirectTo: getRedirectTo( state ),
+		redirectTo: getRedirectToSanitized( state ),
 	} ),
 	{
 		connectSocialUser,
