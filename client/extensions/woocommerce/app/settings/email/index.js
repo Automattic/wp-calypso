@@ -54,8 +54,11 @@ class SettingsEmail extends Component {
 			emailSettingsSaveSettings: saveSettings,
 		} = this.props;
 		this.setState( { pristine: true } );
-		saveSettings( site.ID );
 		saveMailChimp( site.ID );
+
+		if ( config.isEnabled( 'woocommerce/extension-settings-email-generic' ) ) {
+			saveSettings( site.ID );
+		}
 	};
 
 	render = () => {
