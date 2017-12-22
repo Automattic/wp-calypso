@@ -44,9 +44,7 @@
 	}
 
 	.form-select {
-		@include breakpoint( ">960px" ) {
-			max-width: 200px;
-		}
+		width: 100%;
 	}
 }
 
