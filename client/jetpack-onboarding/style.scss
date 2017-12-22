@@ -13,6 +13,50 @@
 		}
 	}
 
+	.steps__summary-columns {
+	display: flex;
+	justify-content: center;
+	font-size: 14px;
+	margin-top: 30px;
+
+	@include breakpoint( '<480px' ) {
+		display: block;
+		text-align: center;
+		}
+	}
+
+	.steps__summary-column {
+		margin: 0 60px 20px;
+
+		@include breakpoint( '<480px' ) {
+			display: inline-block;
+			text-align: left;
+		}
+	}
+
+	.steps__summary-heading {
+		font-weight: bold;
+		margin-bottom: 20px;
+	}
+
+	.steps__summary-entry {
+		margin-bottom: 20px;
+
+		.gridicon {
+			position: relative;
+			top: 3px;
+			margin-right: 12px;
+		}
+
+		&.completed {
+			color: $gray;
+		}
+
+		&.todo {
+			color: $blue-medium;
+		}
+	}
+
 	.steps__button-group {
 		text-align: center;
 
