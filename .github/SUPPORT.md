@@ -9,8 +9,8 @@ tracker](https://github.com/Automattic/wp-calypso/issues).
 
 ## Developer Blog
 
-Check out the [Wordpress.com developer
-blog](https://developer.wordpress.com/blog/) for technical news.
+Check out the [WordPress.com Developer
+Resources Blog](https://developer.wordpress.com/blog/) for technical news.
 
 ## Support
 
@@ -18,7 +18,7 @@ If you are a developer who needs help with *WordPress.com APIs and related
 tools*, please [contact us](https://developer.wordpress.com/contact/).
 
 If you need help with your *WordPress.com site or account*, please [contact our
-happiness engineers](https://support.wordpress.com/contact/).
+Happiness Engineers](https://support.wordpress.com/contact/).
 
 ## Twitter
 
