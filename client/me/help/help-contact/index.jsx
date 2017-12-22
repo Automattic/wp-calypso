@@ -78,6 +78,8 @@ const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
 const startShowingChristmas2017ClosureNoticeAt = i18n.moment( 'Sun, 17 Dec 2017 00:00:00 +0000' );
 const stopShowingChristmas2017ClosureNoticeAt = i18n.moment( 'Tue, 26 Dec 2017 00:00:00 +0000' );
+const startShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Fri, 29 Dec 2017 00:00:00 +0000' );
+const stopShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Tue, 2 Jan 2018 00:00:00 +0000' );
 
 class HelpContact extends React.Component {
 	state = {
@@ -681,16 +683,23 @@ class HelpContact extends React.Component {
 			this.getContactFormPropsVariation( supportVariation )
 		);
 
-		const currentDate = Date.now();
+		const currentDate = i18n.moment();
 
 		// Customers sent to Directly and Forum are not affected by the Christmas closures
 		const isUserAffectedByChristmas2017Closure =
 			supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
-		const shouldShowClosureNotice =
-			isUserAffectedByChristmas2017Closure &&
-			currentDate > startShowingChristmas2017ClosureNoticeAt &&
-			currentDate < stopShowingChristmas2017ClosureNoticeAt;
+		const isClosureNoticeInEffect =
+			currentDate.isBetween(
+				startShowingChristmas2017ClosureNoticeAt,
+				stopShowingChristmas2017ClosureNoticeAt
+			) ||
+			currentDate.isBetween(
+				startShowingNewYear2018ClosureNoticeAt,
+				stopShowingNewYear2018ClosureNoticeAt
+			);
+
+		const shouldShowClosureNotice = isUserAffectedByChristmas2017Closure && isClosureNoticeInEffect;
 
 		return (
 			<div>
