@@ -80,11 +80,8 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 			</option>
 		) );
 
-		this.state = {
-			legalTypes,
-			legalTypeOptions,
-			uncheckedCiraAgreementFlag: false,
-		};
+		this.legalTypes = legalTypes;
+		this.legalTypeOptions = legalTypeOptions;
 	}
 
 	componentWillMount() {
@@ -143,7 +140,6 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 
 	render() {
 		const { getFieldProps, translate } = this.props;
-		const { legalTypeOptions } = this.state;
 		const { legalType, ciraAgreementAccepted } = {
 			...defaultValues,
 			...this.props.contactDetailsExtra,
@@ -182,7 +178,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 						className="registrant-extra-info__form-legal-type"
 						onChange={ this.handleChangeEvent }
 					>
-						{ legalTypeOptions }
+						{ this.legalTypeOptions }
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
@@ -200,9 +196,9 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 								},
 							} ) }
 						</span>
-						{ ciraAgreementAccepted ? (
+						{ ciraAgreementAccepted || (
 							<FormInputValidation text={ translate( 'Required' ) } isError={ true } />
-						) : null }
+						) }
 					</FormLabel>
 				</FormFieldset>
 				{ doesntNeedOrganizationValidation || this.renderOrganizationField() }
