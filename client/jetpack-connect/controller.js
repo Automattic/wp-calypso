@@ -17,9 +17,10 @@ import CheckoutData from 'components/data/checkout';
 import config from 'config';
 import i18nUtils from 'lib/i18n-utils';
 import JetpackConnect from './main';
-import JetpackConnectAuthorizeForm from './authorize-form';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSsoForm from './sso';
+import LoggedInForm from './auth-logged-in-form';
+import LoggedOutForm from './auth-logged-out-form';
 import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
@@ -192,7 +193,7 @@ export function signupForm( context, next ) {
 			}
 		}
 		context.primary = (
-			<JetpackConnectAuthorizeForm
+			<LoggedOutForm
 				path={ context.path }
 				interval={ interval }
 				locale={ locale }
@@ -231,23 +232,7 @@ export function authorizeForm( context, next ) {
 			clientId: transformedQuery.clientId,
 		} );
 
-		let interval = context.params.interval;
-		let locale = context.params.locale;
-		if ( context.params.localeOrInterval ) {
-			if ( [ 'monthly', 'yearly' ].indexOf( context.params.localeOrInterval ) >= 0 ) {
-				interval = context.params.localeOrInterval;
-			} else {
-				locale = context.params.localeOrInterval;
-			}
-		}
-		context.primary = (
-			<JetpackConnectAuthorizeForm
-				path={ context.path }
-				interval={ interval }
-				locale={ locale }
-				authQuery={ transformedQuery }
-			/>
-		);
+		context.primary = <LoggedInForm authQuery={ transformedQuery } />;
 	} else {
 		context.primary = <NoDirectAccessError />;
 	}
