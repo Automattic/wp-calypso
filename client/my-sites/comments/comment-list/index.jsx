@@ -213,6 +213,7 @@ export class CommentList extends Component {
 				{ isPostView && <CommentListHeader postId={ postId } /> }
 
 				<CommentNavigation
+					commentsListQuery={ commentsListQuery }
 					commentsPage={ commentsPage }
 					isBulkMode={ isBulkMode }
 					isSelectedAll={ this.isSelectedAll() }

@@ -32,7 +32,12 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
-import { changeCommentStatus, deleteComment, unlikeComment } from 'state/comments/actions';
+import {
+	changeCommentStatus,
+	deleteComment,
+	requestCommentsList,
+	unlikeComment,
+} from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteComment } from 'state/selectors';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
@@ -103,9 +108,11 @@ export class CommentNavigation extends Component {
 	setBulkStatus = newStatus => () => {
 		const {
 			changeStatus,
+			commentsListQuery,
 			deletePermanently,
 			postId: isPostView,
 			recordBulkAction,
+			refreshPage,
 			selectedComments,
 			status: queryStatus,
 			toggleBulkMode,
@@ -123,6 +130,7 @@ export class CommentNavigation extends Component {
 				unlike( postId, commentId );
 			}
 		} );
+		refreshPage( commentsListQuery );
 		recordBulkAction(
 			newStatus,
 			selectedComments.length,
@@ -379,6 +387,7 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 			)
 		),
 	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
+	refreshPage: query => dispatch( requestCommentsList( query ) ),
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 	unlike: ( postId, commentId ) =>
 		dispatch(
