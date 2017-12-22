@@ -16,6 +16,7 @@ import {
 	ButtonRow,
 	Continue,
 	makeTour,
+	Next,
 	SiteLink,
 	Step,
 	Tour,
@@ -39,11 +40,25 @@ export const ChecklistUserAvatarTour = makeTour(
 				) }
 			</p>
 			<ButtonRow>
-				<Continue target="edit-gravatar" step="finish" click hidden />
+				<Continue target="edit-gravatar" step="image-notice" click hidden />
 				<SiteLink isButton={ false } href="/checklist/:site">
 					{ translate( 'Return to the checklist' ) }
 				</SiteLink>
 			</ButtonRow>
+		</Step>
+
+		<Step name="image-notice" placement="right">
+			<p>{ translate( "Let's make sure it looks right before we proceed." ) }</p>
+			<Next step="crop-image">{ translate( 'Looks good, continue' ) }</Next>
+		</Step>
+
+		<Step name="crop-image" placement="right">
+			<p>
+				{ translate( 'Alright! Press {{b}}Change My Photo{{/b}} to save your changes.', {
+					components: { b: <strong /> },
+				} ) }
+			</p>
+			<Continue target="image-editor-button-done" step="finish" click hidden />
 		</Step>
 
 		<Step name="finish" placement="right">
