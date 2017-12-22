@@ -218,9 +218,11 @@
 			}
 		}
 
-		.checklist__task-title {
+		.checklist__task-title,
+		.checklist__task-title-link {
 			color: $gray;
 			font-size: 14px;
+			cursor: default;
 		}
 
 		.gridicons-checkmark {
