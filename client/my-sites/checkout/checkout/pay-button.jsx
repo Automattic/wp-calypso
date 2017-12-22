@@ -150,6 +150,7 @@ class PayButton extends React.Component {
 					type="submit"
 					className="button is-primary button-pay pay-button__button"
 					disabled={ buttonState.disabled }
+					data-tip-target="pay-button"
 				>
 					{ buttonState.text }
 				</button>
