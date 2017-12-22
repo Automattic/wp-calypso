@@ -97,7 +97,7 @@ describe( 'actions', () => {
 				postId: POST_ID,
 				parentCommentId: 1,
 				commentText: 'comment text',
-				refreshCommentListQuery: {},
+				refreshCommentListQuery: null,
 			} );
 		} );
 	} );

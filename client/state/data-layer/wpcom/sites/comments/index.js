@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { forEach, get, groupBy, isEmpty, omit } from 'lodash';
+import { forEach, get, groupBy, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -63,7 +63,7 @@ export const handleChangeCommentStatusSuccess = (
 	{ commentId, refreshCommentListQuery }
 ) => {
 	dispatch( removeNotice( `comment-notice-error-${ commentId }` ) );
-	if ( ! isEmpty( refreshCommentListQuery ) ) {
+	if ( !! refreshCommentListQuery ) {
 		dispatch( requestCommentsList( refreshCommentListQuery ) );
 	}
 };

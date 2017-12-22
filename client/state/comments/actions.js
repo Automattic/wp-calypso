@@ -151,7 +151,7 @@ export const deleteComment = (
 	postId,
 	commentId,
 	options = { showSuccessNotice: true },
-	refreshCommentListQuery = {}
+	refreshCommentListQuery = null
 ) => ( {
 	type: COMMENTS_DELETE,
 	siteId,
@@ -189,7 +189,7 @@ export const replyComment = (
 	siteId,
 	postId,
 	parentCommentId,
-	refreshCommentListQuery = {}
+	refreshCommentListQuery = null
 ) => ( {
 	type: COMMENTS_REPLY_WRITE,
 	siteId,
@@ -241,7 +241,7 @@ export const changeCommentStatus = (
 	postId,
 	commentId,
 	status,
-	refreshCommentListQuery = {}
+	refreshCommentListQuery = null
 ) => ( {
 	type: COMMENTS_CHANGE_STATUS,
 	siteId,

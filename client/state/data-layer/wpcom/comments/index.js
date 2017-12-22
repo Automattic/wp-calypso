@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { get, isDate, isEmpty, startsWith, pickBy, map } from 'lodash';
+import { get, isDate, startsWith, pickBy, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -226,7 +226,7 @@ export const handleDeleteSuccess = ( { dispatch }, { options, refreshCommentList
 		);
 	}
 
-	if ( ! isEmpty( refreshCommentListQuery ) ) {
+	if ( !! refreshCommentListQuery ) {
 		dispatch( requestCommentsList( refreshCommentListQuery ) );
 	}
 };

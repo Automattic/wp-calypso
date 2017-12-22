@@ -3,7 +3,6 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -108,7 +107,7 @@ export const updatePlaceholderComment = (
 	// increment comments count
 	dispatch( { type: COMMENTS_COUNT_INCREMENT, siteId, postId } );
 
-	if ( ! isEmpty( refreshCommentListQuery ) ) {
+	if ( !! refreshCommentListQuery ) {
 		dispatch( requestCommentsList( refreshCommentListQuery ) );
 	}
 };
