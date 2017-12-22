@@ -19,7 +19,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	renderCompleted = () => {
 		const { translate } = this.props;
 		const stepsCompleted = [
-			translate( 'Site title & Description' ),
+			translate( 'Site Title & Description' ),
 			translate( 'Type of Site' ),
 			translate( 'Type of Homepage' ),
 			translate( 'Contact Us Form' ),
