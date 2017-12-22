@@ -70,7 +70,7 @@ class PostLikesExample extends React.PureComponent {
 				{ this.state.showPopover && (
 					<PostLikesPopover
 						siteId={ 3584907 }
-						postId={ 39717 }
+						postId={ 39687 }
 						showDisplayNames={ this.state.showDisplayNames }
 						context={ this.state.popoverContext }
 						position="bottom"
