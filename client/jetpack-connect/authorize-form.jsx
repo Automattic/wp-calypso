@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
  */
 import LoggedInForm from './auth-logged-in-form';
 import LoggedOutForm from './auth-logged-out-form';
-import MainWrapper from './main-wrapper';
 import { getCurrentUserId } from 'state/current-user/selectors';
 
 class JetpackConnectAuthorizeForm extends Component {
@@ -21,7 +20,7 @@ class JetpackConnectAuthorizeForm extends Component {
 		isLoggedIn: PropTypes.bool.isRequired,
 	};
 
-	renderForm() {
+	render() {
 		return this.props.isLoggedIn ? (
 			<LoggedInForm authQuery={ this.props.authQuery } />
 		) : (
@@ -30,14 +29,6 @@ class JetpackConnectAuthorizeForm extends Component {
 				path={ this.props.path }
 				authQuery={ this.props.authQuery }
 			/>
-		);
-	}
-
-	render() {
-		return (
-			<MainWrapper>
-				<div className="jetpack-connect__authorize-form">{ this.renderForm() }</div>
-			</MainWrapper>
 		);
 	}
 }

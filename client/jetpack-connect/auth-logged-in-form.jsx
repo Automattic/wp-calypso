@@ -28,6 +28,7 @@ import JetpackConnectNotices from './jetpack-connect-notices';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
+import MainWrapper from './main-wrapper';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryUserConnection from 'components/data/query-user-connection';
@@ -608,20 +609,24 @@ export class LoggedInForm extends Component {
 
 	render() {
 		return (
-			<div className="jetpack-connect__logged-in-form">
-				<QueryUserConnection
-					siteId={ this.props.authQuery.clientId }
-					siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
-				/>
-				<AuthFormHeader authQuery={ this.props.authQuery } />
-				<Card>
-					<Gravatar user={ this.props.user } size={ 64 } />
-					<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
-					{ this.renderNotices() }
-					{ this.renderStateAction() }
-				</Card>
-				{ this.renderFooterLinks() }
-			</div>
+			<MainWrapper>
+				<div className="jetpack-connect__authorize-form">
+					<div className="jetpack-connect__logged-in-form">
+						<QueryUserConnection
+							siteId={ this.props.authQuery.clientId }
+							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
+						/>
+						<AuthFormHeader authQuery={ this.props.authQuery } />
+						<Card>
+							<Gravatar user={ this.props.user } size={ 64 } />
+							<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
+							{ this.renderNotices() }
+							{ this.renderStateAction() }
+						</Card>
+						{ this.renderFooterLinks() }
+					</div>
+				</div>
+			</MainWrapper>
 		);
 	}
 }

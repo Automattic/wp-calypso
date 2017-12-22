@@ -31,6 +31,7 @@ import HelpButton from './help-button';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
+import MainWrapper from './main-wrapper';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { authQueryPropTypes } from './utils';
@@ -125,21 +126,23 @@ class LoggedOutForm extends Component {
 		const { isAuthorizing, userData } = this.props.authorizationData;
 
 		return (
-			<div>
-				{ this.renderLocaleSuggestions() }
-				<AuthFormHeader authQuery={ this.props.authQuery } />
-				<SignupForm
-					redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
-					disabled={ isAuthorizing }
-					submitting={ isAuthorizing }
-					submitForm={ this.handleSubmitSignup }
-					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
-					footerLink={ this.renderFooterLink() }
-					email={ this.props.authQuery.userEmail }
-					suggestedUsername={ get( userData, 'username', '' ) }
-				/>
-				{ userData && this.renderLoginUser() }
-			</div>
+			<MainWrapper>
+				<div className="jetpack-connect__authorize-form">
+					{ this.renderLocaleSuggestions() }
+					<AuthFormHeader authQuery={ this.props.authQuery } />
+					<SignupForm
+						redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
+						disabled={ isAuthorizing }
+						submitting={ isAuthorizing }
+						submitForm={ this.handleSubmitSignup }
+						submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
+						footerLink={ this.renderFooterLink() }
+						email={ this.props.authQuery.userEmail }
+						suggestedUsername={ get( userData, 'username', '' ) }
+					/>
+					{ userData && this.renderLoginUser() }
+				</div>
+			</MainWrapper>
 		);
 	}
 }
