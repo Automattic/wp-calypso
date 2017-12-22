@@ -336,6 +336,7 @@ export class DomainDetailsForm extends PureComponent {
 				className="checkout__domain-details-form-submit-button"
 				onClick={ this.handleSubmitButtonClick }
 				disabled={ ! this.getCountryCode() }
+				data-tip-target="domain-details-submit"
 			>
 				{ continueText }
 			</FormButton>

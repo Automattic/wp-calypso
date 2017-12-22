@@ -47,6 +47,7 @@ class DomainSuggestion extends React.Component {
 				data-tracks-button-click-source={ this.props.tracksButtonClickSource }
 				role="button"
 				data-e2e-domain={ this.props.domain }
+				data-tip-target="domain-suggestion"
 			>
 				<div className="domain-suggestion__content">
 					{ children }

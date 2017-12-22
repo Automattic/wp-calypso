@@ -148,7 +148,12 @@ class GoogleAppsDialog extends React.Component {
 
 		if ( abtest( 'multiDomainRegistrationV1' ) === 'singlePurchaseFlow' ) {
 			return (
-				<a className="google-apps-dialog__cancel-link" href="#" onClick={ this.handleFormCheckout }>
+				<a
+					className="google-apps-dialog__cancel-link"
+					href="#"
+					onClick={ this.handleFormCheckout }
+					data-tip-target="gsuite-cancel"
+				>
 					{ translate( 'No thanks, I don’t need email or I’ll use another provider.' ) }
 				</a>
 			);
@@ -182,6 +187,7 @@ class GoogleAppsDialog extends React.Component {
 					className="google-apps-dialog__continue-button button is-primary"
 					type="submit"
 					onClick={ continueButtonHandler }
+					data-tip-target="gsuite-continue"
 				>
 					{ continueButtonText }
 				</button>

@@ -60,6 +60,7 @@ class GoogleAppsUsersForm extends React.Component {
 						onChange={ this.updateInputField }
 						onBlur={ onBlur }
 						onClick={ this.recordInputFocusEmail }
+						data-tip-target="gsuite-email-input"
 					/>
 					{ emailError ? <FormInputValidation text={ emailError } isError={ true } /> : null }
 				</FormFieldset>
