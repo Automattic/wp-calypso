@@ -92,7 +92,6 @@ export const LOGGED_OUT_PROPS = deepFreeze( {
 	isLoggedIn: false,
 	path: '/jetpack/connect/authorize',
 	recordTracksEvent: noop,
-	setTracksAnonymousUserId: noop,
 } );
 
 export const LOGGED_IN_PROPS = deepFreeze( {
@@ -100,5 +99,4 @@ export const LOGGED_IN_PROPS = deepFreeze( {
 	isLoggedIn: true,
 	path: '/jetpack/connect/authorize',
 	recordTracksEvent: noop,
-	setTracksAnonymousUserId: noop,
 } );
