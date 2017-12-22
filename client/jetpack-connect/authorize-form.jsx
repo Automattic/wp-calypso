@@ -15,7 +15,7 @@ import LoggedOutForm from './auth-logged-out-form';
 import MainWrapper from './main-wrapper';
 import { authQueryPropTypes } from './utils';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { recordTracksEvent, setTracksAnonymousUserId } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class JetpackConnectAuthorizeForm extends Component {
 	static propTypes = {
@@ -24,15 +24,9 @@ class JetpackConnectAuthorizeForm extends Component {
 		// Connected props
 		isLoggedIn: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
-		setTracksAnonymousUserId: PropTypes.func.isRequired,
 	};
 
 	componentWillMount() {
-		// set anonymous ID for cross-system analytics
-		const { tracksUi, tracksUt } = this.props.authQuery;
-		if ( 'anon' === tracksUt && tracksUi ) {
-			this.props.setTracksAnonymousUserId( tracksUi );
-		}
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
 	}
 
@@ -69,6 +63,5 @@ export default connect(
 	} ),
 	{
 		recordTracksEvent,
-		setTracksAnonymousUserId,
 	}
 )( localize( JetpackConnectAuthorizeForm ) );

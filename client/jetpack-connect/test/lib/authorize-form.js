@@ -32,8 +32,6 @@ export const JETPACK_CONNECT_AUTHORIZE_LOGGED_OUT = deepFreeze( {
 		siteIcon: '',
 		siteUrl: `http://${ SITE_SLUG }`,
 		state: '2',
-		tracksUi: 'jetpack:fooBarBaz',
-		tracksUt: 'anon',
 		userEmail: `email@${ SITE_SLUG }`,
 	},
 	clientNotResponding: true,
@@ -67,8 +65,6 @@ export const JETPACK_CONNECT_AUTH_QUERY_LOGGED_IN = deepFreeze( {
 	site: `http://${ SITE_SLUG }`,
 	siteIcon: '',
 	siteUrl: `http://${ SITE_SLUG }`,
-	tracksUi: '' + USER_ID,
-	tracksUt: 'wpcom:user_id',
 	userEmail: `email@${ SITE_SLUG }`,
 } );
 
@@ -88,8 +84,6 @@ export const JETPACK_CONNECT_AUTH_QUERY_LOGGED_OUT = deepFreeze( {
 	site: `http://${ SITE_SLUG }`,
 	siteIcon: '',
 	siteUrl: `http://${ SITE_SLUG }`,
-	tracksUi: '' + USER_ID,
-	tracksUt: 'wpcom:user_id',
 	userEmail: `email@${ SITE_SLUG }`,
 } );
 
@@ -98,7 +92,6 @@ export const LOGGED_OUT_PROPS = deepFreeze( {
 	isLoggedIn: false,
 	path: '/jetpack/connect/authorize',
 	recordTracksEvent: noop,
-	setTracksAnonymousUserId: noop,
 } );
 
 export const LOGGED_IN_PROPS = deepFreeze( {
@@ -106,5 +99,4 @@ export const LOGGED_IN_PROPS = deepFreeze( {
 	isLoggedIn: true,
 	path: '/jetpack/connect/authorize',
 	recordTracksEvent: noop,
-	setTracksAnonymousUserId: noop,
 } );
