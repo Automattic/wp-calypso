@@ -24,6 +24,7 @@ exports[`LoggedOutForm should render 1`] = `
           "site": "http://an.example.site",
           "siteIcon": "",
           "siteUrl": "http://an.example.site",
+          "state": "1",
           "userEmail": "email@an.example.site",
         }
       }
@@ -81,6 +82,7 @@ exports[`LoggedOutForm should render with locale suggestions 1`] = `
           "site": "http://an.example.site",
           "siteIcon": "",
           "siteUrl": "http://an.example.site",
+          "state": "1",
           "userEmail": "email@an.example.site",
         }
       }

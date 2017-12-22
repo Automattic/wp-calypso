@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`AuthorizeForm should render LoggedInForm when logged in 1`] = `<Connect(Localized(LoggedInForm)) />`;
-
-exports[`AuthorizeForm should render LoggedOutForm when logged out 1`] = `
-<Connect(Localized(LoggedOutForm))
-  path="/jetpack/connect/authorize"
-/>
-`;

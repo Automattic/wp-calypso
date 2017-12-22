@@ -2,34 +2,61 @@
  * @format
  * @jest-environment jsdom
  */
+
 /**
  * External dependencies
  */
-import { shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
+import deepFreeze from 'deep-freeze';
 import React from 'react';
+import { identity, noop } from 'lodash';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
 import LocaleSuggestions from 'components/locale-suggestions';
-import {
-	JETPACK_CONNECT_AUTHORIZE_LOGGED_OUT,
-	JETPACK_CONNECT_AUTH_QUERY_LOGGED_OUT,
-} from './lib/authorize-form';
 import { LoggedOutFormTestComponent as LoggedOutForm } from '../auth-logged-out-form';
+
+const CLIENT_ID = 98765;
+const SITE_SLUG = 'an.example.site';
+const DEFAULT_PROPS = deepFreeze( {
+	authorizationData: {
+		authorizeError: false,
+		authorizeSuccess: false,
+		clientId: CLIENT_ID,
+		clientNotResponding: true,
+		isAuthorizing: false,
+		timestamp: 1509368045859,
+		userAlreadyConnected: false,
+	},
+	authQuery: {
+		authApproved: false,
+		blogname: 'Example Blog',
+		clientId: CLIENT_ID,
+		from: 'banner-44-slide-1-dashboard',
+		homeUrl: `http://${ SITE_SLUG }`,
+		jpVersion: '5.4',
+		nonce: 'fooBarNonce',
+		redirectAfterAuth: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack`,
+		// eslint-disable-next-line max-len
+		redirectUri: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2F${ SITE_SLUG }%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack`,
+		scope: 'administrator:fooBarBaz',
+		secret: 'fooBarSecret',
+		site: `http://${ SITE_SLUG }`,
+		siteIcon: '',
+		siteUrl: `http://${ SITE_SLUG }`,
+		state: '1',
+		userEmail: `email@${ SITE_SLUG }`,
+	},
+	createAccount: noop,
+	path: '/jetpack/connect/authorize',
+	recordTracksEvent: noop,
+	translate: identity,
+} );
 
 describe( 'LoggedOutForm', () => {
 	test( 'should render', () => {
-		const wrapper = shallow(
-			<LoggedOutForm
-				authorizationData={ JETPACK_CONNECT_AUTHORIZE_LOGGED_OUT }
-				authQuery={ JETPACK_CONNECT_AUTH_QUERY_LOGGED_OUT }
-				createAccount={ noop }
-				recordTracksEvent={ noop }
-				translate={ identity }
-			/>
-		);
+		const wrapper = shallow( <LoggedOutForm { ...DEFAULT_PROPS } /> );
 
 		expect( wrapper ).toMatchSnapshot();
 	} );
@@ -37,16 +64,13 @@ describe( 'LoggedOutForm', () => {
 	test( 'should render with locale suggestions', () => {
 		const wrapper = shallow(
 			<LoggedOutForm
+				{ ...DEFAULT_PROPS }
 				authorizationData={ {
-					...JETPACK_CONNECT_AUTHORIZE_LOGGED_OUT,
+					...DEFAULT_PROPS.authorizationData,
 					locale: 'es',
 				} }
-				authQuery={ JETPACK_CONNECT_AUTH_QUERY_LOGGED_OUT }
-				createAccount={ noop }
 				locale="es"
 				path="/jetpack/connect/authorize/es"
-				recordTracksEvent={ noop }
-				translate={ identity }
 			/>
 		);
 
