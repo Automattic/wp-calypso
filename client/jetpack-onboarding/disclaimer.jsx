@@ -1,0 +1,22 @@
+/** @format */
+
+/**
+ * External dependencies
+ */
+import React from 'react';
+import { localize } from 'i18n-calypso';
+
+const JetpackOnboardingDisclaimer = ( { translate } ) => (
+	<p className="jetpack-onboarding__disclaimer">
+		{ translate(
+			'By continuing, you agree to our {{link}}fascinating terms and conditions{{/link}}.',
+			{
+				components: {
+					link: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+				},
+			}
+		) }
+	</p>
+);
+
+export default localize( JetpackOnboardingDisclaimer );
