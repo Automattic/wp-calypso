@@ -41,7 +41,7 @@ export const ChecklistRegisterDomainTour = makeTour(
 			<Continue target=".domain-suggestion" step="email-step" click hidden />
 			<Continue target=".domain-search-results" step="email-step" click hidden />
 			<ButtonRow>
-				<Next step="email-step">{ translate( 'Got it, thanks.' ) }</Next>
+				<Next step="email-step">{ translate( 'Got it, thanks!' ) }</Next>
 				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 			</ButtonRow>
 		</Step>
@@ -76,7 +76,7 @@ export const ChecklistRegisterDomainTour = makeTour(
 				hidden
 			/>
 			<ButtonRow>
-				<Next step="contact-information">{ translate( 'Got it, thanks.' ) }</Next>
+				<Next step="contact-information">{ translate( 'Got it, thanks!' ) }</Next>
 				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 			</ButtonRow>
 		</Step>
@@ -97,7 +97,7 @@ export const ChecklistRegisterDomainTour = makeTour(
 			/>
 
 			<ButtonRow>
-				<Next step="checkout-step">{ translate( 'Got it, thanks.' ) }</Next>
+				<Next step="checkout-step">{ translate( 'Got it, thanks!' ) }</Next>
 				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 			</ButtonRow>
 		</Step>
@@ -108,7 +108,7 @@ export const ChecklistRegisterDomainTour = makeTour(
 			<Continue target=".pay-button__button" step="finish" click hidden />
 
 			<ButtonRow>
-				<Next step="finish">{ translate( 'Got it, thanks.' ) }</Next>
+				<Next step="finish">{ translate( 'Got it, thanks!' ) }</Next>
 				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 			</ButtonRow>
 		</Step>
