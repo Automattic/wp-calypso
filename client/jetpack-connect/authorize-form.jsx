@@ -30,10 +30,6 @@ class JetpackConnectAuthorizeForm extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
 	}
 
-	handleClickHelp = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
-	};
-
 	renderForm() {
 		return this.props.isLoggedIn ? (
 			<LoggedInForm authQuery={ this.props.authQuery } />
