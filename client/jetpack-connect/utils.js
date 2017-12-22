@@ -3,6 +3,8 @@
 /**
  * External dependencies
  */
+import addQueryArgs from 'lib/route/add-query-args';
+import config from 'config';
 import PropTypes from 'prop-types';
 
 export function authQueryTransformer( queryObject ) {
@@ -56,3 +58,7 @@ export const authQueryPropTypes = PropTypes.shape( {
 	tracksUt: PropTypes.string,
 	userEmail: PropTypes.string,
 } );
+
+export function addCalypsoEnvQueryArg( url ) {
+	return addQueryArgs( { calypso_env: config( 'env_id' ) }, url );
+}
