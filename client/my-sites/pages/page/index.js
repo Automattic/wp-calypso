@@ -410,6 +410,7 @@ class Page extends Component {
 								: translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } )
 						}
 						onClick={ this.props.recordPageTitle }
+						data-tip-target={ 'page-' + page.slug }
 					>
 						{ depthIndicator }
 						{ title }
