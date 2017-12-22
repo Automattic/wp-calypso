@@ -14,9 +14,10 @@ import emitter from 'lib/mixins/emitter';
 import userSettings from 'lib/user-settings';
 import applicationPasswords from 'lib/application-passwords-data';
 import connectedApplications from 'lib/connected-applications-data';
-import profileLinks from 'lib/user-profile-links';
 import analytics from 'lib/analytics';
 import wp from 'lib/wp';
+import { reduxDispatch } from 'lib/redux-bridge';
+import { requestUserProfileLinks } from 'state/profile-links/actions';
 
 const wpcom = wp.undocumented();
 
@@ -81,8 +82,7 @@ TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
 					userSettings.fetchSettings();
 					applicationPasswords.fetch();
 					connectedApplications.fetch();
-					profileLinks.reAuthRequired = false;
-					profileLinks.fetchProfileLinks();
+					reduxDispatch( requestUserProfileLinks() );
 				}
 
 				this.data.two_step_reauthorization_required = false;
