@@ -120,6 +120,11 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 	};
 
 	renderOrganizationField( organizationFieldProps ) {
+		// These props include all the values and callbacks we need to
+		// have this organization field behave the same as the field in the
+		// parent (domain-details-form), particularly around the
+		// formState and back end validation
+
 		const { translate } = this.props;
 		const className = 'registrant-extra-info';
 
@@ -128,11 +133,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 				<Input
 					className={ className }
 					label={ translate( 'Organization' ) }
-					{ ...// These props includes all the callbacks we need to
-					// have this organization field behave the same as
-					// the field in the parent, particularly around the
-					// formState and back end validation
-					organizationFieldProps }
+					{ ...organizationFieldProps }
 				/>
 			</FormFieldset>
 		);
