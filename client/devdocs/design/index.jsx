@@ -80,6 +80,7 @@ import SocialLogos from 'social-logos/example';
 import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
+import SplitButton from 'components/split-button/docs/example';
 import Suggestions from 'components/suggestions/docs/example';
 import TextDiff from 'components/text-diff/docs/example';
 import TileGrid from 'components/tile-grid/docs/example';
@@ -137,6 +138,7 @@ class DesignAssets extends React.Component {
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
 					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
+					<SplitButton readmeFilePath="split-button" />
 					<Cards readmeFilePath="card" />
 					<Checklist />
 					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
