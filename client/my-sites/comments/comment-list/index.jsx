@@ -20,10 +20,16 @@ import CommentListHeader from 'my-sites/comments/comment-list/comment-list-heade
 import CommentNavigation from 'my-sites/comments/comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
+import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
+import {
+	getCommentsPage,
+	getSiteCommentCounts,
+	getSiteCommentsTree,
+	isCommentsTreeInitialized,
+} from 'state/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
@@ -145,6 +151,7 @@ export class CommentList extends Component {
 
 	render() {
 		const {
+			isCommentCountsSupported,
 			isCommentsTreeSupported,
 			isLoading,
 			isPostView,
@@ -156,11 +163,27 @@ export class CommentList extends Component {
 		} = this.props;
 		const { isBulkMode, selectedComments } = this.state;
 
-		const validPage = this.isRequestedPageValid() ? page : 1;
+		let validPage, commentsCount, commentsListQuery, commentsPage;
+		if ( isCommentCountsSupported ) {
+			validPage = this.props.page;
+			commentsCount = this.props.commentsCount;
+			commentsPage = this.props.comments;
 
-		const comments = this.getComments();
-		const commentsCount = comments.length;
-		const commentsPage = this.getCommentsPage( comments, validPage );
+			commentsListQuery = {
+				listType: 'site',
+				number: COMMENTS_PER_PAGE,
+				page: validPage,
+				postId,
+				siteId,
+				status,
+				type: 'any',
+			};
+		} else {
+			validPage = this.isRequestedPageValid() ? page : 1;
+			const comments = this.getComments();
+			commentsCount = comments.length;
+			commentsPage = this.getCommentsPage( comments, validPage );
+		}
 
 		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
 		const showEmptyContent = ! commentsCount && ! showPlaceholder;
@@ -171,15 +194,20 @@ export class CommentList extends Component {
 			<div className="comment-list">
 				<QuerySiteSettings siteId={ siteId } />
 
-				{ ! isCommentsTreeSupported && (
-					<QuerySiteCommentsList
-						number={ 100 }
-						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
-						siteId={ siteId }
-						status={ status }
-					/>
-				) }
-				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
+				{ isCommentCountsSupported && <QuerySiteCommentCounts { ...{ siteId, postId } } /> }
+
+				{ isCommentCountsSupported && <QuerySiteCommentsList { ...commentsListQuery } /> }
+
+				{ ! isCommentCountsSupported &&
+					! isCommentsTreeSupported && (
+						<QuerySiteCommentsList
+							number={ 100 }
+							offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
+							{ ...{ siteId, status } }
+						/>
+					) }
+				{ ! isCommentCountsSupported &&
+					isCommentsTreeSupported && <QuerySiteCommentsTree { ...{ siteId, status } } /> }
 
 				{ isPostView && <CommentListHeader postId={ postId } /> }
 
@@ -212,6 +240,7 @@ export class CommentList extends Component {
 							isPostView={ isPostView }
 							isSelected={ this.isCommentSelected( commentId ) }
 							refreshCommentData={
+								! isCommentCountsSupported &&
 								isCommentsTreeSupported &&
 								! this.hasCommentJustMovedBackToCurrentStatus( commentId )
 							}
@@ -248,21 +277,40 @@ export class CommentList extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { postId, siteId, status } ) => {
+const mapStateToProps = ( state, { page, postId, siteId, status } ) => {
 	const isPostView = !! postId;
-	const siteCommentsTree =
-		isPostView && isEnabled( 'comments/management/threaded-view' )
-			? filter( getSiteCommentsTree( state, siteId, status ), { commentParentId: 0 } )
-			: getSiteCommentsTree( state, siteId, status );
-	const comments = isPostView
-		? map( filter( siteCommentsTree, { postId } ), 'commentId' )
-		: map( siteCommentsTree, 'commentId' );
+
+	const isCommentCountsSupported =
+		! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.6' );
+	const isCommentsTreeSupported =
+		! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' );
+
+	let comments = [];
+
+	if ( ! isCommentCountsSupported ) {
+		const siteCommentsTree =
+			isPostView && isEnabled( 'comments/management/threaded-view' )
+				? filter( getSiteCommentsTree( state, siteId, status ), { commentParentId: 0 } )
+				: getSiteCommentsTree( state, siteId, status );
+
+		comments = isPostView
+			? map( filter( siteCommentsTree, { postId } ), 'commentId' )
+			: map( siteCommentsTree, 'commentId' );
+	} else {
+		comments = getCommentsPage( state, siteId, { page, postId, status } );
+	}
+
+	const commentsCount = get(
+		getSiteCommentCounts( state, siteId, postId ),
+		'unapproved' === status ? 'pending' : status
+	);
 
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,
-		isCommentsTreeSupported:
-			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' ),
+		commentsCount,
+		isCommentCountsSupported,
+		isCommentsTreeSupported,
 		isLoading,
 		isPostView,
 		siteId,
