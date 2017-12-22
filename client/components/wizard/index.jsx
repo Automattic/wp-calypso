@@ -6,6 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { compact, get, indexOf, omit } from 'lodash';
 
 /**
@@ -16,6 +17,7 @@ import ProgressIndicator from 'components/wizard/progress-indicator';
 
 class Wizard extends Component {
 	static propTypes = {
+		animateTransitions: PropTypes.bool,
 		backText: PropTypes.string,
 		basePath: PropTypes.string,
 		baseSuffix: PropTypes.string,
@@ -27,6 +29,7 @@ class Wizard extends Component {
 	};
 
 	static defaultProps = {
+		animateTransitions: true,
 		basePath: '',
 		baseSuffix: '',
 		hideNavigation: false,
@@ -68,17 +71,34 @@ class Wizard extends Component {
 		return compact( [ basePath, nextStepName, baseSuffix ] ).join( '/' );
 	};
 
-	render() {
-		const {
-			backText,
-			components,
-			forwardText,
-			hideNavigation,
-			steps,
-			stepName,
-			...otherProps
-		} = this.props;
+	contentToRender = () => {
+		const { animateTransitions, components, stepName, ...otherProps } = this.props;
 		const component = get( components, stepName );
+
+		return animateTransitions ? (
+			<ReactCSSTransitionGroup
+				className="wizard__transitions"
+				transitionName="wizard__transition"
+				transitionEnterTimeout={ 200 }
+				transitionLeaveTimeout={ 300 }
+			>
+				{ React.cloneElement( component, {
+					getBackUrl: this.getBackUrl,
+					getForwardUrl: this.getForwardUrl,
+					...omit( otherProps, [ 'basePath', 'baseSuffix' ] ),
+				} ) }
+			</ReactCSSTransitionGroup>
+		) : (
+			React.cloneElement( component, {
+				getBackUrl: this.getBackUrl,
+				getForwardUrl: this.getForwardUrl,
+				...omit( otherProps, [ 'basePath', 'baseSuffix' ] ),
+			} )
+		);
+	};
+
+	render() {
+		const { steps, backText, forwardText, hideNavigation } = this.props;
 		const stepIndex = this.getStepIndex();
 		const totalSteps = steps.length;
 		const backUrl = this.getBackUrl() || '';
@@ -90,11 +110,7 @@ class Wizard extends Component {
 					<ProgressIndicator stepNumber={ stepIndex } totalSteps={ totalSteps } />
 				) }
 
-				{ React.cloneElement( component, {
-					getBackUrl: this.getBackUrl,
-					getForwardUrl: this.getForwardUrl,
-					...omit( otherProps, [ 'basePath', 'baseSuffix' ] ),
-				} ) }
+				{ this.contentToRender() }
 
 				{ ! hideNavigation &&
 					totalSteps > 1 && (
