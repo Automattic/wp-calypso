@@ -30,7 +30,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 	};
 
 	state = {
-		unlocked: null,
+		unlocked: false,
 		privacy: false,
 		email: '',
 		loading: true,
@@ -159,27 +159,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 			heading = translate( 'Unlock the domain.' );
 		}
 
-		let message = translate(
-			"{{notice}}We couldn't get the lock status from your current registrar.{{/notice}} If you're sure it's unlocked then you " +
-				"can continue to the next step. If your domain isn't unlocked, then the transfer won't work. {{a}}Here are instructions " +
-				'to make sure your domain is unlocked.{{/a}}',
-			{
-				components: {
-					notice: <Notice showDismiss={ false } status="is-warning" />,
-					br: <br />,
-					a: (
-						<a
-							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
-							rel="noopener noreferrer"
-							target="_blank"
-						/>
-					),
-				},
-			}
-		);
-		if ( true === unlocked ) {
-			message = translate( 'Your domain is unlocked at your current registrar.' );
-		} else if ( false === unlocked ) {
+		let message = translate( 'Your domain is unlocked at your current registrar.' );
+		if ( false === unlocked ) {
 			message = translate(
 				"Your domain is locked to prevent unauthorized transfers. You'll need to unlock " +
 					'it at your current domain provider before we can move it. {{a}}Here are instructions for unlocking it{{/a}}. ' +
@@ -196,28 +177,48 @@ class TransferDomainPrecheck extends React.PureComponent {
 					},
 				}
 			);
+		} else if ( null === unlocked ) {
+			message = translate(
+				"{{notice}}We couldn't get the lock status from your current registrar.{{/notice}} If you're sure it's unlocked then you " +
+					"can continue to the next step. If your domain isn't unlocked, then the transfer won't work. {{a}}Here are " +
+					'instructions to make sure your domain is unlocked.{{/a}}',
+				{
+					components: {
+						notice: <Notice showDismiss={ false } status="is-warning" />,
+						br: <br />,
+						a: (
+							<a
+								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
+								rel="noopener noreferrer"
+								target="_blank"
+							/>
+						),
+					},
+				}
+			);
 		}
+
 		const buttonText = translate( "I've unlocked my domain" );
 
-		let lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unavailable';
-		if ( true === unlocked ) {
-			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unlocked';
-		} else if ( false === unlocked ) {
+		let lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unlocked';
+		if ( false === unlocked ) {
 			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__locked';
+		} else if ( null === unlocked ) {
+			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unavailable';
 		}
 
-		let lockStatusIcon = 'info';
-		if ( true === unlocked ) {
-			lockStatusIcon = 'checkmark';
-		} else if ( false === unlocked ) {
+		let lockStatusIcon = 'checkmark';
+		if ( false === unlocked ) {
 			lockStatusIcon = 'cross';
+		} else if ( null === unlocked ) {
+			lockStatusIcon = 'info';
 		}
 
-		let lockStatusText = 'Unavailable';
-		if ( true === unlocked ) {
-			lockStatusText = translate( 'Unlocked' );
-		} else if ( false === lockStatusText ) {
+		let lockStatusText = 'Unlocked';
+		if ( false === unlocked ) {
 			lockStatusText = translate( 'Locked' );
+		} else if ( null === lockStatusText ) {
+			lockStatusText = translate( 'Unavailable' );
 		}
 
 		if ( loading && ! isStepFinished ) {
