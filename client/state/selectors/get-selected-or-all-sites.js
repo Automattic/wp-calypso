@@ -4,10 +4,14 @@
  * Internal dependencies
  */
 
+import createSelector from 'lib/create-selector';
 import { getSites } from 'state/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 
-export default function getSelectedOrAllSites( state ) {
-	const selectedSite = getSelectedSite( state );
-	return selectedSite ? [ selectedSite ] : getSites( state );
-}
+export default createSelector(
+	state => {
+		const selectedSite = getSelectedSite( state );
+		return selectedSite ? [ selectedSite ] : getSites( state );
+	},
+	[ getSelectedSite, getSites ]
+);
