@@ -159,33 +159,33 @@ class TransferDomainPrecheck extends React.PureComponent {
 			heading = translate( 'Unlock the domain.' );
 		}
 
-		let message = translate( 'Your domain is unlocked at your current registrar.' );
-		if ( false === unlocked ) {
+		let message = translate(
+			"{{notice}}We couldn't get the lock status of your domain from your current registrar.{{/notice}} If you're sure your " +
+				"domain is unlocked then, you can continue to the next step. If it's not unlocked, then the transfer won't work. " +
+				'{{a}}Here are instructions to make sure your domain is unlocked.{{/a}}',
+			{
+				components: {
+					notice: <Notice showDismiss={ false } status="is-warning" />,
+					br: <br />,
+					a: (
+						<a
+							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
+							rel="noopener noreferrer"
+							target="_blank"
+						/>
+					),
+				},
+			}
+		);
+		if ( true === unlocked ) {
+			message = translate( 'Your domain is unlocked at your current registrar.' );
+		} else if ( false === unlocked ) {
 			message = translate(
 				"Your domain is locked to prevent unauthorized transfers. You'll need to unlock " +
 					'it at your current domain provider before we can move it. {{a}}Here are instructions for unlocking it{{/a}}. ' +
 					'It might take a few minutes for any changes to take effect.',
 				{
 					components: {
-						a: (
-							<a
-								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
-								rel="noopener noreferrer"
-								target="_blank"
-							/>
-						),
-					},
-				}
-			);
-		} else if ( null === unlocked ) {
-			message = translate(
-				"{{notice}}We couldn't get the lock status from your current registrar.{{/notice}} If you're sure it's unlocked then you " +
-					"can continue to the next step. If your domain isn't unlocked, then the transfer won't work. {{a}}Here are " +
-					'instructions to make sure your domain is unlocked.{{/a}}',
-				{
-					components: {
-						notice: <Notice showDismiss={ false } status="is-warning" />,
-						br: <br />,
 						a: (
 							<a
 								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
@@ -214,11 +214,11 @@ class TransferDomainPrecheck extends React.PureComponent {
 			lockStatusIcon = 'info';
 		}
 
-		let lockStatusText = 'Unlocked';
-		if ( false === unlocked ) {
+		let lockStatusText = 'Status unavailable';
+		if ( true === unlocked ) {
+			lockStatusText = translate( 'Unlocked' );
+		} else if ( false === lockStatusText ) {
 			lockStatusText = translate( 'Locked' );
-		} else if ( null === lockStatusText ) {
-			lockStatusText = translate( 'Unavailable' );
 		}
 
 		if ( loading && ! isStepFinished ) {
