@@ -17,19 +17,6 @@ import support from 'lib/url/support';
 class PrimaryHeader extends Component {
 	render() {
 		const { translate } = this.props;
-		const subHeaderText = (
-			<div>
-				{ translate( "In this 30 minute session we'll help you get started with your site." ) }
-				<ExternalLink
-					className="concierge__info-link"
-					icon={ false }
-					href={ support.CONCIERGE_SUPPORT }
-					target="_blank"
-				>
-					{ translate( 'Learn more' ) }
-				</ExternalLink>
-			</div>
-		);
 
 		return (
 			<Card>
@@ -39,8 +26,18 @@ class PrimaryHeader extends Component {
 				/>
 				<FormattedHeader
 					headerText={ translate( 'WordPress.com Business Concierge Session' ) }
-					subHeaderText={ subHeaderText }
+					subHeaderText={ translate(
+						"In this 30 minute session we'll help you get started with your site."
+					) }
 				/>
+				<ExternalLink
+					className="concierge__info-link"
+					icon={ false }
+					href={ support.CONCIERGE_SUPPORT }
+					target="_blank"
+				>
+					{ translate( 'Learn more' ) }
+				</ExternalLink>
 			</Card>
 		);
 	}
