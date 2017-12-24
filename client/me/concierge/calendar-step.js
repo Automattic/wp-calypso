@@ -15,22 +15,24 @@ import CalendarCard from './calendar-card';
 import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 import { getConciergeSignupForm } from 'state/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
 import { bookConciergeAppointment } from 'state/concierge/actions';
 import {
 	CONCIERGE_STATUS_BOOKING,
 	CONCIERGE_STATUS_BOOKED,
 	WPCOM_CONCIERGE_SCHEDULE_ID,
 } from './constants';
+import { isDefaultLocale } from 'lib/i18n-utils';
 
 const NUMBER_OF_DAYS_TO_SHOW = 7;
 
-const groupAvailableTimesByDate = availableTimes => {
+const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 	const dates = {};
 
 	// Stub an object of { date: X, times: [] } for each day we care about
 	for ( let x = 0; x < NUMBER_OF_DAYS_TO_SHOW; x++ ) {
 		const startOfDay = moment()
+			.tz( timezone )
 			.startOf( 'day' )
 			.add( x, 'days' )
 			.valueOf();
@@ -40,6 +42,7 @@ const groupAvailableTimesByDate = availableTimes => {
 	// Go through all available times and bundle them into each date object
 	availableTimes.forEach( beginTimestamp => {
 		const startOfDay = moment( beginTimestamp )
+			.tz( timezone )
 			.startOf( 'day' )
 			.valueOf();
 		if ( dates.hasOwnProperty( startOfDay ) ) {
@@ -85,24 +88,24 @@ class CalendarStep extends Component {
 	}
 
 	render() {
-		const { availableTimes, translate } = this.props;
-		const availability = groupAvailableTimesByDate( availableTimes );
+		const { availableTimes, currentUserLocale, onBack, signupForm, translate } = this.props;
+		const availability = groupAvailableTimesByDate( availableTimes, signupForm.timezone );
 
 		return (
 			<div>
-				<HeaderCake onClick={ this.props.onBack }>
-					{ translate( 'Choose Concierge Session' ) }
-				</HeaderCake>
+				<HeaderCake onClick={ onBack }>{ translate( 'Choose Concierge Session' ) }</HeaderCake>
 				<CompactCard>
 					{ translate( 'Please select a day to have your Concierge session.' ) }
 				</CompactCard>
 				{ availability.map( ( { date, times } ) => (
 					<CalendarCard
 						date={ date }
-						disabled={ this.props.signupForm.status === CONCIERGE_STATUS_BOOKING }
+						disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING }
+						isDefaultLocale={ isDefaultLocale( currentUserLocale ) }
 						key={ date }
 						onSubmit={ this.onSubmit }
 						times={ times }
+						timezone={ signupForm.timezone }
 					/>
 				) ) }
 			</div>
@@ -114,6 +117,7 @@ export default connect(
 	state => ( {
 		signupForm: getConciergeSignupForm( state ),
 		currentUserId: getCurrentUserId( state ),
+		currentUserLocale: getCurrentUserLocale( state ),
 	} ),
 	{ bookConciergeAppointment }
 )( localize( CalendarStep ) );
