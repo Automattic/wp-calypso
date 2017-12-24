@@ -14,6 +14,7 @@ export default {
 	COMMENTS: `${ root }/category/comments`,
 	COMMUNITY_TRANSLATOR: `${ root }/community-translator`,
 	COMPLETING_GOOGLE_APPS_SIGNUP: `${ root }/adding-g-suite-to-your-site/#completing-sign-up`,
+	CONCIERGE_SUPPORT: `${ root }/concierge-support`,
 	CONNECT: `${ root }/connect`,
 	CONTACT: `${ root }/contact`,
 	CALYPSO_CONTACT: '/help/contact',
