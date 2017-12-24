@@ -5,8 +5,9 @@
  */
 import React from 'react';
 import Gridicon from 'gridicons';
+import { compact, map } from 'lodash';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,19 +16,20 @@ import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
+import {
+	JETPACK_ONBOARDING_STEPS as STEPS,
+	JETPACK_ONBOARDING_SUMMARY_STEPS as SUMMARY_STEPS,
+} from '../constants';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
 	renderCompleted = () => {
-		const { translate } = this.props;
 		const stepsCompleted = [
-			translate( 'Site Title & Description' ),
-			translate( 'Type of Site' ),
-			translate( 'Type of Homepage' ),
-			translate( 'Contact Us Form' ),
-			translate( 'Jetpack Connection' ),
+			SUMMARY_STEPS.SITE_TITLE_DESCRIPTION,
+			SUMMARY_STEPS.SITE_TYPE,
+			SUMMARY_STEPS.HOMEPAGE_TYPE,
+			SUMMARY_STEPS.CONTACT_FORM,
+			SUMMARY_STEPS.JETPACK_CONNECTION,
 		];
-
 		return map( stepsCompleted, ( fieldLabel, fieldIndex ) => (
 			<div key={ fieldIndex } className="steps__summary-entry completed">
 				<Gridicon icon="checkmark" size={ 18 } />
@@ -37,12 +39,11 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	};
 
 	renderTodo = () => {
-		const { translate } = this.props;
 		const stepsTodo = [
-			translate( 'Choose a Theme' ),
-			translate( 'Add a Site Address' ),
-			translate( 'Add a Store' ),
-			translate( 'Start a Blog' ),
+			SUMMARY_STEPS.THEME,
+			SUMMARY_STEPS.SITE_ADDRESS,
+			SUMMARY_STEPS.STORE,
+			SUMMARY_STEPS.BLOG,
 		];
 
 		// TODO: adapt when we have more info + it will differ for different steps
@@ -94,4 +95,9 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	}
 }
 
-export default localize( JetpackOnboardingSummaryStep );
+export default connect( () => {
+	const tasks = compact( [] );
+	return {
+		tasks,
+	};
+} )( localize( JetpackOnboardingSummaryStep ) );
