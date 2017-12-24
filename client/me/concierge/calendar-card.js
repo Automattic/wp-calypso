@@ -89,12 +89,12 @@ class CalendarCard extends Component {
 	};
 
 	render() {
-		const { disabled, isDefaultLocale, signupForm, times, translate } = this.props;
+		const { disabled, isDefaultLocale, times, translate } = this.props;
 		const description = isDefaultLocale
 			? translate( 'Sessions are 30 minutes long.' )
 			: translate( 'Sessions are 30 minutes long and in %(defaultLanguage)s.', {
-				args: { defaultLanguage },
-			} );
+					args: { defaultLanguage },
+				} );
 
 		return (
 			<FoldableCard
