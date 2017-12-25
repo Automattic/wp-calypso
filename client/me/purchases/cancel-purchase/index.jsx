@@ -35,7 +35,7 @@ import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchas
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
 import { isDataLoading } from 'me/purchases/utils';
-import { isDomainRegistration } from 'lib/products-values';
+import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import paths from '../paths';
@@ -77,18 +77,25 @@ class CancelPurchase extends React.Component {
 			return true;
 		}
 
-		const purchase = getPurchase( props ),
-			selectedSite = getSelectedSite( props );
+		const purchase = getPurchase( props );
+		const selectedSite = getSelectedSite( props );
 
-		return selectedSite && purchase && isCancelable( purchase );
+		// For domain transfers, we only allow cancel if it's also refundable
+		const isDomainTransferCancelable = isRefundable( purchase ) || ! isDomainTransfer( purchase );
+
+		return selectedSite && purchase && isCancelable( purchase ) && isDomainTransferCancelable;
 	};
 
 	redirect = props => {
-		const purchase = getPurchase( props ),
-			selectedSite = getSelectedSite( props );
+		const purchase = getPurchase( props );
+		const selectedSite = getSelectedSite( props );
 		let redirectPath = paths.purchasesRoot();
 
-		if ( selectedSite && purchase && ! isCancelable( purchase ) ) {
+		if (
+			selectedSite &&
+			purchase &&
+			( ! isCancelable( purchase ) || isDomainTransfer( purchase ) )
+		) {
 			redirectPath = paths.managePurchase( selectedSite.slug, purchase.id );
 		}
 
@@ -96,8 +103,8 @@ class CancelPurchase extends React.Component {
 	};
 
 	renderFooterText = () => {
-		const purchase = getPurchase( this.props ),
-			{ refundText, renewDate } = purchase;
+		const purchase = getPurchase( this.props );
+		const { refundText, renewDate } = purchase;
 
 		if ( isRefundable( purchase ) ) {
 			return this.props.translate( '%(refundText)s to be refunded', {
@@ -136,9 +143,9 @@ class CancelPurchase extends React.Component {
 			);
 		}
 
-		const purchase = getPurchase( this.props ),
-			purchaseName = getName( purchase ),
-			{ siteName, domain: siteDomain } = purchase;
+		const purchase = getPurchase( this.props );
+		const purchaseName = getName( purchase );
+		const { siteName, domain: siteDomain } = purchase;
 
 		let heading;
 
