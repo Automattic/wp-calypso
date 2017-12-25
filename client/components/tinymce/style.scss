@@ -193,6 +193,11 @@
 	opacity: 1 !important;
 }
 
+/* Don't show the tooltip. Used in Chrome RTL, see https://github.com/Automattic/wp-calypso/issues/19189 */
+.mce-tooltip.wp-hide-mce-tooltip {
+	display: none !important;
+}
+
 .mce-tooltip-inner {
 	box-shadow: none !important;
 	background: $gray-dark !important;
