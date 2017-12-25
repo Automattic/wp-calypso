@@ -12,7 +12,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { updateConciergeBookingStatus } from 'state/concierge/actions';
 import { errorNotice } from 'state/notices/actions';
-import { CONCIERGE_BOOK_APPOINTMENT } from 'state/action-types';
+import { CONCIERGE_APPOINTMENT_CREATE } from 'state/action-types';
 import { CONCIERGE_STATUS_BOOKED, CONCIERGE_STATUS_BOOKING } from 'me/concierge/constants';
 import fromApi from './from-api';
 
@@ -50,7 +50,7 @@ export const handleBookingError = ( { dispatch } ) => {
 };
 
 export default {
-	[ CONCIERGE_BOOK_APPOINTMENT ]: [
+	[ CONCIERGE_APPOINTMENT_CREATE ]: [
 		dispatchRequest( bookConciergeAppointment, markSlotAsBooked, handleBookingError, { fromApi } ),
 	],
 };

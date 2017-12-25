@@ -6,7 +6,7 @@
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { bookConciergeAppointment, handleBookingError, markSlotAsBooked, toApi } from '../';
 import { updateConciergeBookingStatus } from 'state/concierge/actions';
-import { CONCIERGE_BOOK_APPOINTMENT } from 'state/action-types';
+import { CONCIERGE_APPOINTMENT_CREATE } from 'state/action-types';
 
 // we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
 jest.mock( 'lib/impure-lodash', () => ( {
@@ -18,7 +18,7 @@ describe( 'wpcom-api', () => {
 		test( 'bookConciergeAppointment()', () => {
 			const dispatch = jest.fn();
 			const action = {
-				type: CONCIERGE_BOOK_APPOINTMENT,
+				type: CONCIERGE_APPOINTMENT_CREATE,
 				scheduleId: 123,
 				beginTimestamp: 1234567890,
 				customerId: 1,
