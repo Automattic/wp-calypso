@@ -1,4 +1,2 @@
 /** @format */
-export const localeSlugSchema = {
-	anyOf: [ { type: 'string' }, { enum: [ false ] } ],
-};
+export const localeSlugSchema = { type: [ 'string', 'null' ] };
