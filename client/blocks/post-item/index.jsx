@@ -35,6 +35,11 @@ import PostActionCounts from 'my-sites/post-type-list/post-action-counts';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
 import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
+import { preload } from 'sections-preload';
+
+function preloadEditor() {
+	preload( 'post-editor' );
+}
 
 class PostItem extends React.Component {
 	hideCurrentSharePanel = () => {
@@ -138,7 +143,7 @@ class PostItem extends React.Component {
 							{ isAllSitesModeSelected && <PostTypeSiteInfo globalId={ globalId } /> }
 							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
 						</div>
-						<h1 className="post-item__title" onClick={ this.clickHandler( 'title' ) }>
+						<h1 className="post-item__title" onClick={ this.clickHandler( 'title' ) } onMouseOver={ preloadEditor }>
 							{ ! externalPostLink && (
 								<a
 									href={ isPlaceholder || multiSelectEnabled ? null : postUrl }
