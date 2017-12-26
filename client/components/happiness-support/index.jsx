@@ -23,6 +23,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 export class HappinessSupport extends Component {
 	static propTypes = {
 		isJetpack: PropTypes.bool,
+		isJetpackFreePlan: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		liveChatButtonEventName: PropTypes.string,
 		showLiveChatButton: PropTypes.bool,
@@ -38,7 +39,35 @@ export class HappinessSupport extends Component {
 		}
 	};
 
+	getHeadingText() {
+		const { isJetpackFreePlan, translate } = this.props;
+		return isJetpackFreePlan
+			? translate( 'Find answers in our documentation' )
+			: translate( 'Enjoy priority support from our Happiness Engineers' );
+	}
+
+	getSupportText() {
+		const { isJetpackFreePlan, translate } = this.props;
+		const components = {
+			strong: <strong />,
+		};
+		return isJetpackFreePlan
+			? translate(
+					'{{strong}}Need help?{{/strong}} Search our support site to find out more about how to make the most of your Jetpack site.', // eslint-disable-line max-len
+					{ components }
+				)
+			: translate(
+					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site, your account, or how to do just about anything.', // eslint-disable-line max-len
+					{ components }
+				);
+	}
+
 	renderContactButton() {
+		const { isJetpackFreePlan } = this.props;
+		if ( isJetpackFreePlan ) {
+			return;
+		}
+
 		let url = support.CALYPSO_CONTACT,
 			target = '';
 
@@ -97,26 +126,15 @@ export class HappinessSupport extends Component {
 		const classes = {
 			'is-placeholder': this.props.isPlaceholder,
 		};
-		const { liveChatAvailable, showLiveChatButton, translate } = this.props;
+		const { liveChatAvailable, showLiveChatButton } = this.props;
 
 		return (
 			<div className={ classNames( 'happiness-support', classes ) }>
 				{ this.renderIllustration() }
 
-				<h3 className="happiness-support__heading">
-					{ translate( 'Enjoy priority support from our Happiness Engineers' ) }
-				</h3>
+				<h3 className="happiness-support__heading">{ this.getHeadingText() }</h3>
 
-				<p className="happiness-support__text">
-					{ translate(
-						'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site, your account, or how to do just about anything.', // eslint-disable-line max-len
-						{
-							components: {
-								strong: <strong />,
-							},
-						}
-					) }
-				</p>
+				<p className="happiness-support__text">{ this.getSupportText() }</p>
 
 				<div className="happiness-support__buttons">
 					{ showLiveChatButton && <HappychatConnection /> }

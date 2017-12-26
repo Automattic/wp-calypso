@@ -139,6 +139,7 @@ class CurrentPlanHeader extends Component {
 					<div className="current-plan__header-item-content">
 						<HappinessSupport
 							isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+							isJetpackFreePlan={ currentPlanSlug === PLAN_JETPACK_FREE }
 							isPlaceholder={ isPlaceholder }
 							showLiveChatButton={ this.isEligibleForLiveChat() }
 							liveChatButtonEventName="calypso_plans_current_plan_chat_initiated"
