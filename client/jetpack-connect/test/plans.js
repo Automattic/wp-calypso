@@ -83,7 +83,7 @@ describe( 'Plans', () => {
 			selectedSite: { ...SELECTED_SITE, plan: SITE_PLAN_PRO },
 		} );
 
-		expect( redirect.mock.calls ).toHaveLength( 1 );
+		expect( redirect ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should redirect if notJetpack', () => {
@@ -98,7 +98,7 @@ describe( 'Plans', () => {
 			selectedSite: { ...SELECTED_SITE, plan: SITE_PLAN_PRO },
 		} );
 
-		expect( redirect.mock.calls ).toHaveLength( 1 );
+		expect( redirect ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should redirect if Atomic', () => {
