@@ -9,7 +9,7 @@ import {
 	PLANS_REQUEST,
 	PLANS_REQUEST_SUCCESS,
 	PLANS_REQUEST_FAILURE,
-} from '../action-types';
+} from 'state/action-types';
 
 /**
  * Action creator function: RECEIVE

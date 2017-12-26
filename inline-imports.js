@@ -1,5 +1,4 @@
 /** @format */
-
 function transformIt( babel ) {
 	const { types: t } = babel;
 
@@ -18,20 +17,24 @@ function transformIt( babel ) {
 		},
 	};
 
+	const mergeImports = ( o, n ) => {
+		o[ n.local.name ] = n.imported.name;
+		return o;
+	};
+
 	return {
 		name: 'action-type-inliner',
 		visitor: {
-			ImportDeclaration( path, state ) {
-				if ( path.node.source.value !== 'state/action-types' ) {
+			ImportDeclaration( path ) {
+				const name = path.node.source.value;
+
+				if ( name !== 'state/action-types' ) {
 					return path.skip();
 				}
 
-				const filename = state.file.opts.filename;
-
-				const myTypes = path.node.specifiers.filter( t.isImportSpecifier ).reduce( ( o, n ) => {
-					o[ n.local.name ] = n.imported.name;
-					return o;
-				}, {} );
+				const myTypes = path.node.specifiers
+					.filter( t.isImportSpecifier )
+					.reduce( mergeImports, {} );
 
 				path.parentPath.traverse( replacer, { myTypes } );
 

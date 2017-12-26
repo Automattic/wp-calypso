@@ -24,7 +24,7 @@ import LRU from 'lru-cache';
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from './action-types';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import warn from 'lib/warn';
 
 export function isValidStateWithSchema( state, schema, debugInfo ) {
