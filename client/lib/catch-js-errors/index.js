@@ -29,7 +29,7 @@ const log = debug( 'calypso:error-logger' );
 export default class ErrorLogger {
 	constructor() {
 		this.diagnosticData = {
-			commit: COMMIT_SHA, // eslint-disable-line no-undef
+			commit: COMMIT_SHA,
 			extra: {
 				previous_paths: [],
 				throttled: 0,
