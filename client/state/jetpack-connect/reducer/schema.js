@@ -18,7 +18,6 @@ export const jetpackConnectAuthorizeSchema = {
 				clientId: { type: 'integer' },
 				clientNotResponding: { type: 'boolean' },
 				isAuthorizing: { type: 'boolean' },
-				isRedirectingToWpAdmin: { type: 'boolean' },
 				plansUrl: { type: 'string' },
 				siteReceived: { type: 'boolean' },
 				timestamp: { type: 'integer' },

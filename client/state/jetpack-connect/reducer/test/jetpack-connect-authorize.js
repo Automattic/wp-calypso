@@ -17,8 +17,6 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_QUERY_SET,
-	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
-	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	SERIALIZE,
 	SITE_REQUEST_FAILURE,
 } from 'state/action-types';
@@ -44,7 +42,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 			isAuthorizing: true,
 			authorizeSuccess: false,
 			authorizeError: false,
-			isRedirectingToWpAdmin: false,
 		} );
 	} );
 
@@ -191,22 +188,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 			authorizeSuccess: false,
 			isAuthorizing: false,
 		} );
-	} );
-
-	test( 'should set isRedirectingToWpAdmin to true when an xmlrpc error occurs', () => {
-		const state = jetpackConnectAuthorize( undefined, {
-			type: JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
-		} );
-
-		expect( state ).toEqual( { isRedirectingToWpAdmin: true } );
-	} );
-
-	test( 'should set isRedirectingToWpAdmin to true when a redirect to wp-admin is triggered', () => {
-		const state = jetpackConnectAuthorize( undefined, {
-			type: JETPACK_CONNECT_REDIRECT_WP_ADMIN,
-		} );
-
-		expect( state ).toEqual( { isRedirectingToWpAdmin: true } );
 	} );
 
 	test( 'should set clientNotResponding when a site request to current client fails', () => {

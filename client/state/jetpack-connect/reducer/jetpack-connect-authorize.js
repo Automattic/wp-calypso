@@ -21,8 +21,6 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_QUERY_SET,
-	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
-	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
 	SERIALIZE,
 	SITE_REQUEST_FAILURE,
@@ -35,7 +33,6 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 				isAuthorizing: true,
 				authorizeSuccess: false,
 				authorizeError: false,
-				isRedirectingToWpAdmin: false,
 			} );
 
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
@@ -104,12 +101,6 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 
 		case JETPACK_CONNECT_USER_ALREADY_CONNECTED:
 			return Object.assign( {}, state, { userAlreadyConnected: true } );
-
-		case JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL:
-			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
-
-		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
-			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 
 		case JETPACK_CONNECT_COMPLETE_FLOW:
 			return {};
