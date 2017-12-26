@@ -136,14 +136,16 @@ export class CartItem extends React.Component {
 
 	render() {
 		let name = this.getProductName();
-		if ( this.props.cartItem.bill_period && this.props.cartItem.bill_period !== -1 ) {
+		if ( this.props.cartItem.bill_period && parseInt( this.props.cartItem.bill_period ) !== -1 ) {
 			if ( isMonthly( this.props.cartItem ) ) {
 				name += ' - ' + this.props.translate( 'monthly subscription' );
-			} else if ( isTheme( this.props.cartItem ) ) {
-				name += ' - ' + this.props.translate( 'never expires' );
 			} else {
 				name += ' - ' + this.props.translate( 'annual subscription' );
 			}
+		}
+
+		if ( isTheme( this.props.cartItem ) ) {
+			name += ' - ' + this.props.translate( 'never expires' );
 		}
 
 		/*eslint-disable wpcalypso/jsx-classname-namespace*/
