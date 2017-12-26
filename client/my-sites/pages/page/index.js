@@ -33,7 +33,6 @@ import { isFrontPage, isPostsPage } from 'state/pages/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getPreviewURL } from 'lib/posts/utils';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -473,7 +472,7 @@ const mapState = ( state, props ) => {
 		isFrontPage: isFrontPage( state, pageSiteId, props.page.ID ),
 		isPostsPage: isPostsPage( state, pageSiteId, props.page.ID ),
 		isPreviewable,
-		previewURL: getPreviewURL( site, props.page ),
+		previewURL: utils.getPreviewURL( site, props.page ),
 		site,
 		siteSlugOrId,
 	};
