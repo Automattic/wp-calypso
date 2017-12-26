@@ -8,7 +8,7 @@ import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
-import { includes, startsWith } from 'lodash';
+import { get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -400,7 +400,7 @@ export class JetpackAuthorize extends Component {
 			return null;
 		}
 
-		if ( authorizeError.message.indexOf( 'already_connected' ) >= 0 ) {
+		if ( includes( get( authorizeError, 'message' ), 'already_connected' ) ) {
 			return <JetpackConnectNotices noticeType="alreadyConnected" />;
 		}
 		if ( this.props.hasExpiredSecretError ) {
