@@ -37,15 +37,15 @@ import userUtilities from 'lib/user/utils';
 import { authQueryPropTypes } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
+import { login } from 'lib/paths';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import { urlToSlug } from 'lib/url';
 import {
 	isCalypsoStartedConnection,
 	isSsoApproved,
 	retrieveMobileRedirect,
 } from './persistence-utils';
-import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
-import { login } from 'lib/paths';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import { urlToSlug } from 'lib/url';
 import {
 	authorize as authorizeAction,
 	retryAuth as retryAuthAction,
