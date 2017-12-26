@@ -15,8 +15,16 @@ import PlansGrid from '../plans-grid';
 import QueryPlans from 'components/data/query-plans';
 import { DEFAULT_PROPS, SELECTED_SITE, SITE_PLAN_PRO } from './lib/plans';
 import { PlansTestComponent as Plans } from '../plans';
+import * as path from 'lib/route/path';
+
+jest.mock( 'lib/route/path', () => ( {
+	externalRedirect: jest.fn(),
+} ) );
 
 describe( 'Plans', () => {
+	beforeEach( () => {
+		path.externalRedirect.mockReset();
+	} );
 	test( 'should render plans', () => {
 		const wrapper = shallow( <Plans { ...DEFAULT_PROPS } /> );
 
@@ -94,12 +102,9 @@ describe( 'Plans', () => {
 	} );
 
 	test( 'should redirect if Atomic', () => {
-		const goBackToWpAdmin = jest.fn();
-
 		shallow(
 			<Plans
 				{ ...DEFAULT_PROPS }
-				goBackToWpAdmin={ goBackToWpAdmin }
 				hasPlan={ true }
 				isAutomatedTransfer={ true }
 				selectedSite={ {
@@ -110,6 +115,6 @@ describe( 'Plans', () => {
 			/>
 		);
 
-		expect( goBackToWpAdmin.mock.calls ).toHaveLength( 1 );
+		expect( path.externalRedirect ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
