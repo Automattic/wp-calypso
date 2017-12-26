@@ -17,6 +17,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import EmptyContent from 'components/empty-content';
+import { preload } from 'sections-preload';
+
+function preloadEditor() {
+	preload( 'post-editor' );
+}
 
 function PostTypeListEmptyContent( { siteId, translate, status, typeObject, editPath } ) {
 	let title, action;
@@ -38,6 +43,7 @@ function PostTypeListEmptyContent( { siteId, translate, status, typeObject, edit
 				title={ title }
 				action={ action }
 				actionURL={ editPath }
+				actionHoverCallback={ preloadEditor }
 				illustration="/calypso/images/pages/illustration-pages.svg"
 				illustrationWidth={ 150 }
 			/>
