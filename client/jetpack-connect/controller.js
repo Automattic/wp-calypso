@@ -16,9 +16,10 @@ import analytics from 'lib/analytics';
 import CheckoutData from 'components/data/checkout';
 import config from 'config';
 import i18nUtils from 'lib/i18n-utils';
+import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
-import JetpackConnectAuthorizeForm from './authorize-form';
 import JetpackNewSite from './jetpack-new-site/index';
+import JetpackSignup from './signup';
 import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
@@ -92,10 +93,10 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 	return get( planSlugs, [ interval, type ], '' );
 };
 
-export function redirectWithoutLocaleifLoggedIn( context, next ) {
+export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 	if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
 		const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
-		debug( 'redirectWithoutLocaleifLoggedIn to %s', urlWithoutLocale );
+		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
 		return page.redirect( urlWithoutLocale );
 	}
 
@@ -164,7 +165,7 @@ export function connect( context, next ) {
 	next();
 }
 
-export function authorizeForm( context, next ) {
+export function signupForm( context, next ) {
 	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
 
 	removeSidebar( context );
@@ -200,13 +201,46 @@ export function authorizeForm( context, next ) {
 			}
 		}
 		context.primary = (
-			<JetpackConnectAuthorizeForm
+			<JetpackSignup
 				path={ context.path }
 				interval={ interval }
 				locale={ locale }
 				authQuery={ transformedQuery }
 			/>
 		);
+	} else {
+		context.primary = <NoDirectAccessError />;
+	}
+	next();
+}
+
+export function authorizeForm( context, next ) {
+	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+
+	removeSidebar( context );
+
+	const { query } = context;
+	const validQueryObject = validator( authorizeQueryDataSchema )( query );
+
+	if ( validQueryObject ) {
+		const transformedQuery = authQueryTransformer( query );
+
+		// No longer setting/persisting query
+		//
+		// FIXME
+		//
+		// However, from and clientId are required for some reducer logic :(
+		//
+		// Hopefully when actions move to data-layer, this will become clearer and
+		// we won't need to store clientId in state
+		//
+		context.store.dispatch( {
+			type: JETPACK_CONNECT_QUERY_SET,
+			from: transformedQuery.from,
+			clientId: transformedQuery.clientId,
+		} );
+
+		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
 	} else {
 		context.primary = <NoDirectAccessError />;
 	}

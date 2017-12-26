@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AuthorizeForm should render LoggedInForm when logged in 1`] = `
+exports[`JetpackSignup should render 1`] = `
 <JetpackConnectMainWrapper
   isWide={false}
 >
   <div
     className="jetpack-connect__authorize-form"
   >
-    <Connect(Localized(LoggedInForm))
+    <Connect(Localized(AuthFormHeader))
       authQuery={
         Object {
           "authApproved": false,
@@ -24,22 +24,48 @@ exports[`AuthorizeForm should render LoggedInForm when logged in 1`] = `
           "site": "http://an.example.site",
           "siteIcon": "",
           "siteUrl": "http://an.example.site",
+          "state": "1",
           "userEmail": "email@an.example.site",
         }
       }
+    />
+    <Connect(Localized(SignupForm))
+      disabled={false}
+      email="email@an.example.site"
+      footerLink={
+        <LoggedOutFormLinks>
+          <LoggedOutFormLinkItem
+            href="https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site"
+          >
+            Already have an account? Sign in
+          </LoggedOutFormLinkItem>
+          <Localized(JetpackConnectHelpButton)
+            onClick={[Function]}
+          />
+        </LoggedOutFormLinks>
+      }
+      redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
+      submitButtonText="Sign Up and Connect Jetpack"
+      submitForm={[Function]}
+      submitting={false}
+      suggestedUsername=""
     />
   </div>
 </JetpackConnectMainWrapper>
 `;
 
-exports[`AuthorizeForm should render LoggedOutForm when logged out 1`] = `
+exports[`JetpackSignup should render with locale suggestions 1`] = `
 <JetpackConnectMainWrapper
   isWide={false}
 >
   <div
     className="jetpack-connect__authorize-form"
   >
-    <Connect(Localized(LoggedOutForm))
+    <LocaleSuggestions
+      locale="es"
+      path="/jetpack/connect/authorize/es"
+    />
+    <Connect(Localized(AuthFormHeader))
       authQuery={
         Object {
           "authApproved": false,
@@ -56,10 +82,31 @@ exports[`AuthorizeForm should render LoggedOutForm when logged out 1`] = `
           "site": "http://an.example.site",
           "siteIcon": "",
           "siteUrl": "http://an.example.site",
+          "state": "1",
           "userEmail": "email@an.example.site",
         }
       }
-      path="/jetpack/connect/authorize"
+    />
+    <Connect(Localized(SignupForm))
+      disabled={false}
+      email="email@an.example.site"
+      footerLink={
+        <LoggedOutFormLinks>
+          <LoggedOutFormLinkItem
+            href="https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site"
+          >
+            Already have an account? Sign in
+          </LoggedOutFormLinkItem>
+          <Localized(JetpackConnectHelpButton)
+            onClick={[Function]}
+          />
+        </LoggedOutFormLinks>
+      }
+      redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
+      submitButtonText="Sign Up and Connect Jetpack"
+      submitForm={[Function]}
+      submitting={false}
+      suggestedUsername=""
     />
   </div>
 </JetpackConnectMainWrapper>

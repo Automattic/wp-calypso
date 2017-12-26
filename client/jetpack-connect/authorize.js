@@ -28,11 +28,13 @@ import JetpackConnectNotices from './jetpack-connect-notices';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
+import MainWrapper from './main-wrapper';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
+import { authQueryPropTypes } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { externalRedirect } from 'lib/route/path';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -68,9 +70,9 @@ const PLANS_PAGE = '/jetpack/connect/plans/';
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
 const PRESSABLE_PARTNER_ID = 49640;
 
-export class LoggedInForm extends Component {
+export class JetpackAuthorize extends Component {
 	static propTypes = {
-		authQuery: PropTypes.object.isRequired,
+		authQuery: authQueryPropTypes.isRequired,
 
 		// Connected props
 		authAttempts: PropTypes.number.isRequired,
@@ -101,6 +103,7 @@ export class LoggedInForm extends Component {
 
 	componentWillMount() {
 		const { recordTracksEvent } = this.props;
+		recordTracksEvent( 'calypso_jpc_authorize_form_view' );
 		recordTracksEvent( 'calypso_jpc_auth_view' );
 
 		if ( this.shouldAutoAuthorize() ) {
@@ -606,20 +609,24 @@ export class LoggedInForm extends Component {
 
 	render() {
 		return (
-			<div className="jetpack-connect__logged-in-form">
-				<QueryUserConnection
-					siteId={ this.props.authQuery.clientId }
-					siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
-				/>
-				<AuthFormHeader authQuery={ this.props.authQuery } />
-				<Card>
-					<Gravatar user={ this.props.user } size={ 64 } />
-					<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
-					{ this.renderNotices() }
-					{ this.renderStateAction() }
-				</Card>
-				{ this.renderFooterLinks() }
-			</div>
+			<MainWrapper>
+				<div className="jetpack-connect__authorize-form">
+					<div className="jetpack-connect__logged-in-form">
+						<QueryUserConnection
+							siteId={ this.props.authQuery.clientId }
+							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
+						/>
+						<AuthFormHeader authQuery={ this.props.authQuery } />
+						<Card>
+							<Gravatar user={ this.props.user } size={ 64 } />
+							<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
+							{ this.renderNotices() }
+							{ this.renderStateAction() }
+						</Card>
+						{ this.renderFooterLinks() }
+					</div>
+				</div>
+			</MainWrapper>
 		);
 	}
 }
@@ -656,4 +663,4 @@ export default connect(
 		recordTracksEvent: recordTracksEventAction,
 		retryAuth: retryAuthAction,
 	}
-)( localize( LoggedInForm ) );
+)( localize( JetpackAuthorize ) );

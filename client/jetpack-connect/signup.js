@@ -31,8 +31,10 @@ import HelpButton from './help-button';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
+import MainWrapper from './main-wrapper';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
+import { authQueryPropTypes } from './utils';
 import { createAccount as createAccountAction } from 'state/jetpack-connect/actions';
 import { getAuthorizationData } from 'state/jetpack-connect/selectors';
 import { login } from 'lib/paths';
@@ -40,9 +42,9 @@ import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/ac
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 
-class LoggedOutForm extends Component {
+export class JetpackSignup extends Component {
 	static propTypes = {
-		authQuery: PropTypes.object.isRequired,
+		authQuery: authQueryPropTypes.isRequired,
 		locale: PropTypes.string,
 		path: PropTypes.string,
 
@@ -56,6 +58,10 @@ class LoggedOutForm extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
+
+	componentWillMount() {
+		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
+	}
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
@@ -120,26 +126,26 @@ class LoggedOutForm extends Component {
 		const { isAuthorizing, userData } = this.props.authorizationData;
 
 		return (
-			<div>
-				{ this.renderLocaleSuggestions() }
-				<AuthFormHeader authQuery={ this.props.authQuery } />
-				<SignupForm
-					redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
-					disabled={ isAuthorizing }
-					submitting={ isAuthorizing }
-					submitForm={ this.handleSubmitSignup }
-					submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
-					footerLink={ this.renderFooterLink() }
-					email={ this.props.authQuery.userEmail }
-					suggestedUsername={ get( userData, 'username', '' ) }
-				/>
-				{ userData && this.renderLoginUser() }
-			</div>
+			<MainWrapper>
+				<div className="jetpack-connect__authorize-form">
+					{ this.renderLocaleSuggestions() }
+					<AuthFormHeader authQuery={ this.props.authQuery } />
+					<SignupForm
+						redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
+						disabled={ isAuthorizing }
+						submitting={ isAuthorizing }
+						submitForm={ this.handleSubmitSignup }
+						submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
+						footerLink={ this.renderFooterLink() }
+						email={ this.props.authQuery.userEmail }
+						suggestedUsername={ get( userData, 'username', '' ) }
+					/>
+					{ userData && this.renderLoginUser() }
+				</div>
+			</MainWrapper>
 		);
 	}
 }
-
-export { LoggedOutForm as LoggedOutFormTestComponent };
 
 export default connect(
 	state => ( {
@@ -149,4 +155,4 @@ export default connect(
 		recordTracksEvent: recordTracksEventAction,
 		createAccount: createAccountAction,
 	}
-)( localize( LoggedOutForm ) );
+)( localize( JetpackSignup ) );
