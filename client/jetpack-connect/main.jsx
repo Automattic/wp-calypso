@@ -16,7 +16,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
-import JetpackConnectHappychatButton from './happychat-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import JetpackInstallStep from './install-step';
 import LocaleSuggestions from 'components/locale-suggestions';
@@ -342,17 +341,15 @@ class JetpackConnectMain extends Component {
 		const { translate } = this.props;
 		return (
 			<LoggedOutFormLinks>
-				<JetpackConnectHappychatButton eventName="calypso_jpc_siteentry_chat_initiated">
-					<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
-						{ translate( 'Install Jetpack manually' ) }
+				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
+					{ translate( 'Install Jetpack manually' ) }
+				</LoggedOutFormLinkItem>
+				{ this.isInstall() ? null : (
+					<LoggedOutFormLinkItem href="/start">
+						{ translate( 'Start a new site on WordPress.com' ) }
 					</LoggedOutFormLinkItem>
-					{ this.isInstall() ? null : (
-						<LoggedOutFormLinkItem href="/start">
-							{ translate( 'Start a new site on WordPress.com' ) }
-						</LoggedOutFormLinkItem>
-					) }
-					<HelpButton />
-				</JetpackConnectHappychatButton>
+				) }
+				<HelpButton />
 			</LoggedOutFormLinks>
 		);
 	}
@@ -473,9 +470,7 @@ class JetpackConnectMain extends Component {
 					<div className="jetpack-connect__navigation">{ this.renderBackButton() }</div>
 				</div>
 				<LoggedOutFormLinks>
-					<JetpackConnectHappychatButton eventName="calypso_jpc_instructions_chat_initiated">
-						<HelpButton />
-					</JetpackConnectHappychatButton>
+					<HelpButton />
 				</LoggedOutFormLinks>
 			</MainWrapper>
 		);
