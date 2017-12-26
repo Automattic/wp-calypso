@@ -393,7 +393,7 @@ export const PLANS_LIST = {
 		getStoreSlug: () => PLAN_JETPACK_FREE,
 		getTagline: () =>
 			i18n.translate(
-				"Upgrade your site to access all of Jetpack's features, and give your site a boost."
+				'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
 			),
 		getDescription: () =>
 			i18n.translate(
