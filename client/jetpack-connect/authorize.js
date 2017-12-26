@@ -98,6 +98,7 @@ export class JetpackAuthorize extends Component {
 		userAlreadyConnected: PropTypes.bool.isRequired,
 	};
 
+	redirecting = false;
 	retryingAuth = false;
 
 	componentWillMount() {
@@ -162,6 +163,13 @@ export class JetpackAuthorize extends Component {
 			secret: this.props.authQuery.secret,
 			state: this.props.authQuery.state,
 		} );
+	}
+
+	externalRedirectOnce( url ) {
+		if ( ! this.redirecting ) {
+			this.redirecting = true;
+			externalRedirect( url );
+		}
 	}
 
 	redirect() {
