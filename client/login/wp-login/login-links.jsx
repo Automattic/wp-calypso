@@ -63,7 +63,7 @@ export class LoginLinks extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
 		this.props.resetMagicLoginRequestForm();
 
-		page( login( { isNative: true, twoFactorAuthType: 'link' } ) );
+		page( login( { isNative: true, locale: this.props.locale, twoFactorAuthType: 'link' } ) );
 	};
 
 	recordResetPasswordLinkClick = () => {
@@ -143,7 +143,7 @@ export class LoginLinks extends React.Component {
 
 		return (
 			<a
-				href={ login( { isNative: true, twoFactorAuthType: 'link' } ) }
+				href={ login( { isNative: true, locale: this.props.locale, twoFactorAuthType: 'link' } ) }
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
 				onClick={ this.handleMagicLoginLinkClick }
