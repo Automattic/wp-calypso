@@ -111,6 +111,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 		} );
 
 		const sectionIcon = isStepFinished ? <Gridicon icon="checkmark-circle" size={ 36 } /> : step;
+		const onButtonClick =
+			true === unlocked || null === unlocked ? this.showNextStep : this.refreshStatus;
 
 		return (
 			<Card compact>
@@ -125,15 +127,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 							<div>
 								<div className="transfer-domain-step__section-message">{ message }</div>
 								<div className="transfer-domain-step__section-action">
-									<Button
-										compact
-										onClick={
-											true === unlocked || null === unlocked
-												? this.showNextStep
-												: this.refreshStatus
-										}
-										busy={ loading }
-									>
+									<Button compact onClick={ onButtonClick } busy={ loading }>
 										{ buttonText }
 									</Button>
 									{ stepStatus }
@@ -200,24 +194,24 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 		const buttonText = translate( "I've unlocked my domain" );
 
-		let lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unlocked';
-		if ( false === unlocked ) {
+		let lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unavailable';
+		if ( true === unlocked ) {
+			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unlocked';
+		} else if ( false === unlocked ) {
 			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__locked';
-		} else if ( null === unlocked ) {
-			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unavailable';
 		}
 
-		let lockStatusIcon = 'checkmark';
-		if ( false === unlocked ) {
+		let lockStatusIcon = 'info';
+		if ( true === unlocked ) {
+			lockStatusIcon = 'checkmark';
+		} else if ( false === unlocked ) {
 			lockStatusIcon = 'cross';
-		} else if ( null === unlocked ) {
-			lockStatusIcon = 'info';
 		}
 
 		let lockStatusText = 'Status unavailable';
 		if ( true === unlocked ) {
 			lockStatusText = translate( 'Unlocked' );
-		} else if ( false === lockStatusText ) {
+		} else if ( false === unlocked ) {
 			lockStatusText = translate( 'Locked' );
 		}
 
