@@ -71,7 +71,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 			}
 
 			// Reset steps if domain became locked again
-			if ( ! result.unlocked ) {
+			if ( false === result.unlocked ) {
 				this.resetSteps();
 			}
 
@@ -111,6 +111,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 		} );
 
 		const sectionIcon = isStepFinished ? <Gridicon icon="checkmark-circle" size={ 36 } /> : step;
+		const onButtonClick =
+			true === unlocked || null === unlocked ? this.showNextStep : this.refreshStatus;
 
 		return (
 			<Card compact>
@@ -125,11 +127,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 							<div>
 								<div className="transfer-domain-step__section-message">{ message }</div>
 								<div className="transfer-domain-step__section-action">
-									<Button
-										compact
-										onClick={ unlocked ? this.showNextStep : this.refreshStatus }
-										busy={ loading }
-									>
+									<Button compact onClick={ onButtonClick } busy={ loading }>
 										{ buttonText }
 									</Button>
 									{ stepStatus }
@@ -148,35 +146,74 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const step = 1;
 		const isStepFinished = currentStep > step;
 
-		const heading = unlocked
-			? translate( 'Domain is unlocked.' )
-			: translate( 'Unlock the domain.' );
-		const message = unlocked
-			? translate( 'Your domain is unlocked at your current registrar.' )
-			: translate(
-					"Your domain is locked to prevent unauthorized transfers. You'll need to unlock " +
-						'it at your current domain provider before we can move it. {{a}}Here are instructions for unlocking it{{/a}}. ' +
-						'It might take a few minutes for any changes to take effect.',
-					{
-						components: {
-							a: (
-								<a
-									href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
-									rel="noopener noreferrer"
-									target="_blank"
-								/>
-							),
-						},
-					}
-				);
+		let heading = translate( 'Lock status unavailable.' );
+		if ( true === unlocked ) {
+			heading = translate( 'Domain is unlocked.' );
+		} else if ( false === unlocked ) {
+			heading = translate( 'Unlock the domain.' );
+		}
+
+		let message = translate(
+			"{{notice}}We couldn't get the lock status of your domain from your current registrar.{{/notice}} If you're sure your " +
+				"domain is unlocked then, you can continue to the next step. If it's not unlocked, then the transfer won't work. " +
+				'{{a}}Here are instructions to make sure your domain is unlocked.{{/a}}',
+			{
+				components: {
+					notice: <Notice showDismiss={ false } status="is-warning" />,
+					br: <br />,
+					a: (
+						<a
+							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
+							rel="noopener noreferrer"
+							target="_blank"
+						/>
+					),
+				},
+			}
+		);
+		if ( true === unlocked ) {
+			message = translate( 'Your domain is unlocked at your current registrar.' );
+		} else if ( false === unlocked ) {
+			message = translate(
+				"Your domain is locked to prevent unauthorized transfers. You'll need to unlock " +
+					'it at your current domain provider before we can move it. {{a}}Here are instructions for unlocking it{{/a}}. ' +
+					'It might take a few minutes for any changes to take effect.',
+				{
+					components: {
+						a: (
+							<a
+								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
+								rel="noopener noreferrer"
+								target="_blank"
+							/>
+						),
+					},
+				}
+			);
+		}
+
 		const buttonText = translate( "I've unlocked my domain" );
 
-		let lockStatusClasses = unlocked
-			? 'transfer-domain-step__lock-status transfer-domain-step__unlocked'
-			: 'transfer-domain-step__lock-status transfer-domain-step__locked';
+		let lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unavailable';
+		if ( true === unlocked ) {
+			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unlocked';
+		} else if ( false === unlocked ) {
+			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__locked';
+		}
 
-		let lockStatusIcon = unlocked ? 'checkmark' : 'cross';
-		let lockStatusText = unlocked ? translate( 'Unlocked' ) : translate( 'Locked' );
+		let lockStatusIcon = 'info';
+		if ( true === unlocked ) {
+			lockStatusIcon = 'checkmark';
+		} else if ( false === unlocked ) {
+			lockStatusIcon = 'cross';
+		}
+
+		let lockStatusText = 'Status unavailable';
+		if ( true === unlocked ) {
+			lockStatusText = translate( 'Unlocked' );
+		} else if ( false === unlocked ) {
+			lockStatusText = translate( 'Locked' );
+		}
 
 		if ( loading && ! isStepFinished ) {
 			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__checking';
