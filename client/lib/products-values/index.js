@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import { assign, difference, isEmpty, pick } from 'lodash';
 
 /**
@@ -41,6 +40,9 @@ const productDependencies = {
 	},
 	domain_redemption: {
 		domain: true,
+	},
+	[ domainProductSlugs.TRANSFER_IN ]: {
+		[ domainProductSlugs.TRANSFER_IN_PRIVACY ]: true,
 	},
 };
 
