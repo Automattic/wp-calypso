@@ -17,7 +17,7 @@ import page from 'page';
 import notices from 'notices';
 import { login } from 'lib/paths';
 import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
-import { getMagicLoginCurrentView } from 'state/selectors';
+import { getCurrentLocaleSlug, getMagicLoginCurrentView } from 'state/selectors';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
@@ -36,6 +36,7 @@ class MagicLogin extends React.Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 
 		// mapped to state
+		locale: PropTypes.string.isRequired,
 		showCheckYourEmail: PropTypes.bool.isRequired,
 
 		// From `localize`
@@ -47,7 +48,7 @@ class MagicLogin extends React.Component {
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_page_click_back' );
 
-		page( login( { isNative: true } ) );
+		page( login( { isNative: true, locale: this.props.locale } ) );
 	};
 
 	render() {
@@ -57,7 +58,7 @@ class MagicLogin extends React.Component {
 
 		const footer = ! showCheckYourEmail && (
 			<div className="magic-login__footer">
-				<a href={ login( { isNative: true } ) } onClick={ this.onClickEnterPasswordInstead }>
+				<a href={ login( { isNative: true, locale: this.props.locale } ) } onClick={ this.onClickEnterPasswordInstead }>
 					<Gridicon icon="arrow-left" size={ 18 } />
 					{ translate( 'Enter a password instead' ) }
 				</a>
@@ -69,7 +70,9 @@ class MagicLogin extends React.Component {
 		return (
 			<Main className={ classes }>
 				<GlobalNotices id="notices" notices={ notices.list } />
+
 				<RequestLoginEmailForm />
+
 				{ footer }
 			</Main>
 		);
@@ -77,6 +80,7 @@ class MagicLogin extends React.Component {
 }
 
 const mapState = state => ( {
+	locale: getCurrentLocaleSlug( state ),
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 } );
 

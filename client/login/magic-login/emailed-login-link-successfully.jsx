@@ -17,11 +17,13 @@ import { login } from 'lib/paths';
 import Card from 'components/card';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
+import { getCurrentLocaleSlug } from 'state/selectors';
 import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
 import Gridicon from 'gridicons';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {
+		locale: PropTypes.string.isRequired,
 		recordPageView: PropTypes.func.isRequired,
 	};
 
@@ -30,7 +32,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 
 		this.props.hideMagicLoginRequestForm();
 
-		page( login( { isNative: true } ) );
+		page( login( { isNative: true, locale: this.props.locale } ) );
 	};
 
 	render() {
@@ -68,7 +70,10 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 				</Card>
 
 				<div className="magic-login__footer">
-					<a href={ login( { isNative: true } ) } onClick={ this.onClickBackLink }>
+					<a
+						href={ login( { isNative: true, locale: this.props.locale } ) }
+						onClick={ this.onClickBackLink }
+					>
 						<Gridicon icon="arrow-left" size={ 18 } />
 						{ translate( 'Back' ) }
 					</a>
@@ -78,9 +83,13 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 	}
 }
 
+const mapState = state => ( {
+	locale: getCurrentLocaleSlug( state ),
+} );
+
 const mapDispatch = {
 	hideMagicLoginRequestForm,
 	recordPageView,
 };
 
-export default connect( null, mapDispatch )( localize( EmailedLoginLinkSuccessfully ) );
+export default connect( mapState, mapDispatch )( localize( EmailedLoginLinkSuccessfully ) );
