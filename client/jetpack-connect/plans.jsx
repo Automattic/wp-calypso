@@ -12,33 +12,33 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Placeholder from './plans-placeholder';
-import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
+import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
 import PlansSkipButton from './plans-skip-button';
-import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { addItem } from 'lib/upgrades/actions';
-import { goBackToWpAdmin, completeFlow } from 'state/jetpack-connect/actions';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
+import { addItem } from 'lib/upgrades/actions';
+import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
+import { completeFlow, goBackToWpAdmin } from 'state/jetpack-connect/actions';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
+import { mc } from 'lib/analytics';
+import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
+import { recordTracksEvent } from 'state/analytics/actions';
 import {
 	canCurrentUser,
 	hasInitializedSites,
 	isRtl,
 	isSiteAutomatedTransfer,
 } from 'state/selectors';
-import { mc } from 'lib/analytics';
-import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 
-const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLANS_PAGE = '/plans/';
+const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
@@ -46,8 +46,8 @@ class Plans extends Component {
 		queryRedirect: PropTypes.string,
 
 		// Connected props
-		isAutomatedTransfer: PropTypes.bool, // null indicates unknown
 		hasPlan: PropTypes.bool, // null indicates unknown
+		isAutomatedTransfer: PropTypes.bool, // null indicates unknown
 	};
 
 	redirecting = false;
@@ -219,25 +219,25 @@ export default connect(
 		const selectedPlan = getPlanBySlug( state, selectedPlanSlug );
 
 		return {
-			selectedSite,
-			selectedSiteSlug,
-			selectedPlan,
-			selectedPlanSlug,
-			isAutomatedTransfer: selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : null,
-			userId: user ? user.ID : null,
+			calypsoStartedConnection: isCalypsoStartedConnection( selectedSiteSlug ),
 			canPurchasePlans: selectedSite
 				? canCurrentUser( state, selectedSite.ID, 'manage_options' )
 				: true,
-			calypsoStartedConnection: isCalypsoStartedConnection( selectedSiteSlug ),
-			isRtlLayout: isRtl( state ),
 			hasPlan: selectedSite ? isCurrentPlanPaid( state, selectedSite.ID ) : null,
-			notJetpack: selectedSite ? ! isJetpackSite( state, selectedSite.ID ) : null,
+			isAutomatedTransfer: selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : null,
+			isRtlLayout: isRtl( state ),
 			isSitesInitialized: hasInitializedSites( state ),
+			notJetpack: selectedSite ? ! isJetpackSite( state, selectedSite.ID ) : null,
+			selectedPlan,
+			selectedPlanSlug,
+			selectedSite,
+			selectedSiteSlug,
+			userId: user ? user.ID : null,
 		};
 	},
 	{
-		goBackToWpAdmin,
 		completeFlow,
+		goBackToWpAdmin,
 		recordTracksEvent,
 	}
 )( localize( Plans ) );
