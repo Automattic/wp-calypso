@@ -38,6 +38,7 @@ class ThemeEnhancements extends Component {
 		handleAutosavingRadio: PropTypes.func.isRequired,
 		isSavingSettings: PropTypes.bool,
 		isRequestingSettings: PropTypes.bool,
+		jetpackSettingsUI: PropTypes.bool,
 		fields: PropTypes.object,
 	};
 
@@ -77,6 +78,40 @@ class ThemeEnhancements extends Component {
 	}
 
 	renderInfiniteScrollSettings() {
+		if ( this.props.jetpackSettingsUI ) {
+			return this.renderJetpackInfiniteScrollSettings();
+		}
+		return this.renderSimpleSiteInfiniteScrollSettings();
+	}
+
+	renderSimpleSiteInfiniteScrollSettings() {
+		const { translate } = this.props;
+		return (
+			<FormFieldset>
+				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
+
+				<div className="theme-enhancements__info-link-container site-settings__info-link-container">
+					<InfoPopover position="left">
+						<ExternalLink
+							href="https://support.wordpress.com/infinite-scroll/"
+							icon
+							target="_blank"
+						>
+							{ translate( 'Learn more about Infinite Scroll.' ) }
+						</ExternalLink>
+					</InfoPopover>
+				</div>
+
+				{ this.renderToggle(
+					'infinite_scroll',
+					false,
+					translate( 'Load posts as you scroll. Disable to show a clickable button to load posts' )
+				) }
+			</FormFieldset>
+		);
+	}
+
+	renderJetpackInfiniteScrollSettings() {
 		const { translate } = this.props;
 
 		return (
@@ -160,17 +195,14 @@ class ThemeEnhancements extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { jetpackSettingsUI, translate } = this.props;
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Theme Enhancements' ) } />
 
 				<Card className="theme-enhancements__card site-settings">
 					{ this.renderInfiniteScrollSettings() }
-
-					<hr />
-
-					{ this.renderMinilevenSettings() }
+					{ jetpackSettingsUI && <hr /> && this.renderMinilevenSettings() }
 				</Card>
 			</div>
 		);
