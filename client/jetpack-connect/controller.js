@@ -180,14 +180,13 @@ export function signupForm( context, next ) {
 		//
 		// FIXME
 		//
-		// However, from and clientId are required for some reducer logic :(
+		// However, clientId is required for some reducer logic :(
 		//
 		// Hopefully when actions move to data-layer, this will become clearer and
 		// we won't need to store clientId in state
 		//
 		context.store.dispatch( {
 			type: JETPACK_CONNECT_QUERY_SET,
-			from: transformedQuery.from,
 			clientId: transformedQuery.clientId,
 		} );
 
@@ -236,7 +235,6 @@ export function authorizeForm( context, next ) {
 		//
 		context.store.dispatch( {
 			type: JETPACK_CONNECT_QUERY_SET,
-			from: transformedQuery.from,
 			clientId: transformedQuery.clientId,
 		} );
 
