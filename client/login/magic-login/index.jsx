@@ -19,6 +19,7 @@ import { login } from 'lib/paths';
 import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
 import { getCurrentLocaleSlug, getMagicLoginCurrentView } from 'state/selectors';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
+import LocaleSuggestions from 'components/locale-suggestions';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	recordPageViewWithClientId as recordPageView,
@@ -30,6 +31,8 @@ import Gridicon from 'gridicons';
 
 class MagicLogin extends React.Component {
 	static propTypes = {
+		path: PropTypes.string.isRequired,
+
 		// mapped to dispatch
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		recordPageView: PropTypes.func.isRequired,
@@ -51,6 +54,16 @@ class MagicLogin extends React.Component {
 		page( login( { isNative: true, locale: this.props.locale } ) );
 	};
 
+	renderLocaleSuggestions() {
+		const { locale, path, showCheckYourEmail } = this.props;
+
+		if ( showCheckYourEmail ) {
+			return null;
+		}
+
+		return <LocaleSuggestions locale={ locale } path={ path } />;
+	}
+
 	render() {
 		const { showCheckYourEmail, translate } = this.props;
 
@@ -69,6 +82,8 @@ class MagicLogin extends React.Component {
 
 		return (
 			<Main className={ classes }>
+				{ this.renderLocaleSuggestions() }
+
 				<GlobalNotices id="notices" notices={ notices.list } />
 
 				<RequestLoginEmailForm />
