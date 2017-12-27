@@ -27,7 +27,9 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 
 	onClickBackLink = event => {
 		event.preventDefault();
+
 		this.props.hideMagicLoginRequestForm();
+
 		page( login( { isNative: true } ) );
 	};
 
@@ -54,7 +56,9 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 					replaceCurrentLocation={ true }
 					waitForEmailAddress={ emailAddress }
 				/>
+
 				<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
+
 				<Card className="magic-login__form">
 					<img
 						src="/calypso/images/login/check-email.svg"
@@ -62,9 +66,11 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 					/>
 					<p>{ line }</p>
 				</Card>
+
 				<div className="magic-login__footer">
-					<a href="#" onClick={ this.onClickBackLink }>
-						<Gridicon icon="arrow-left" size={ 18 } /> { translate( 'Back' ) }
+					<a href={ login( { isNative: true } ) } onClick={ this.onClickBackLink }>
+						<Gridicon icon="arrow-left" size={ 18 } />
+						{ translate( 'Back' ) }
 					</a>
 				</div>
 			</div>

@@ -44,6 +44,7 @@ class MagicLogin extends React.Component {
 
 	onClickEnterPasswordInstead = event => {
 		event.preventDefault();
+
 		this.props.recordTracksEvent( 'calypso_login_email_link_page_click_back' );
 
 		page( login( { isNative: true } ) );
@@ -56,8 +57,9 @@ class MagicLogin extends React.Component {
 
 		const footer = ! showCheckYourEmail && (
 			<div className="magic-login__footer">
-				<a href="#" onClick={ this.onClickEnterPasswordInstead }>
-					<Gridicon icon="arrow-left" size={ 18 } /> { translate( 'Enter a password instead' ) }
+				<a href={ login( { isNative: true } ) } onClick={ this.onClickEnterPasswordInstead }>
+					<Gridicon icon="arrow-left" size={ 18 } />
+					{ translate( 'Enter a password instead' ) }
 				</a>
 			</div>
 		);
