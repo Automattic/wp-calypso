@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 import page from 'page';
 
 /**
@@ -54,6 +53,26 @@ class MagicLogin extends React.Component {
 		page( login( { isNative: true, locale: this.props.locale } ) );
 	};
 
+	renderLinks() {
+		const { locale, showCheckYourEmail, translate } = this.props;
+
+		if ( showCheckYourEmail ) {
+			return null;
+		}
+
+		return (
+			<div className="magic-login__footer">
+				<a
+					href={ login( { isNative: true, locale: locale } ) }
+					onClick={ this.onClickEnterPasswordInstead }
+				>
+					<Gridicon icon="arrow-left" size={ 18 } />
+					{ translate( 'Enter a password instead' ) }
+				</a>
+			</div>
+		);
+	}
+
 	renderLocaleSuggestions() {
 		const { locale, path, showCheckYourEmail } = this.props;
 
@@ -65,30 +84,17 @@ class MagicLogin extends React.Component {
 	}
 
 	render() {
-		const { showCheckYourEmail, translate } = this.props;
-
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
 
-		const footer = ! showCheckYourEmail && (
-			<div className="magic-login__footer">
-				<a href={ login( { isNative: true, locale: this.props.locale } ) } onClick={ this.onClickEnterPasswordInstead }>
-					<Gridicon icon="arrow-left" size={ 18 } />
-					{ translate( 'Enter a password instead' ) }
-				</a>
-			</div>
-		);
-
-		const classes = classNames( 'magic-login', 'magic-login__request-link' );
-
 		return (
-			<Main className={ classes }>
+			<Main className="magic-login magic-login__request-link">
 				{ this.renderLocaleSuggestions() }
 
 				<GlobalNotices id="notices" notices={ notices.list } />
 
 				<RequestLoginEmailForm />
 
-				{ footer }
+				{ this.renderLinks() }
 			</Main>
 		);
 	}
