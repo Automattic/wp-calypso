@@ -36,7 +36,7 @@ export default ( data ) => {
 
 	//old WCS required a phone number and detected normalization status based on the existence of the phone field
 	//newer versions send the normalized flag
-	const originNormalized = Boolean( formData.origin.normalized || formData.origin.phone );
+	const originNormalized = Boolean( formData.origin_normalized || formData.origin.phone );
 	const hasOriginAddress = addressFilled( formData.origin );
 	const hasDestinationAddress = addressFilled( formData.destination );
 
