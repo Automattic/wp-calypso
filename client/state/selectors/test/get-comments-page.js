@@ -18,7 +18,7 @@ describe( 'getCommentsPage()', () => {
 			comments: {
 				queries: {
 					[ SITE_ID ]: {
-						site: { all: { 1: [ 1, 2, 3, 4, 5 ] }, trash: { 1: [] } },
+						site: { all: { 1: [ 1, 2, 3, 4, 5 ] } },
 						[ POST_ID ]: {
 							all: { 1: [ 6, 7, 8, 9, 10 ] },
 							'spam?s=foo': { 2: [ 11, 12, 13, 14, 15 ] },
@@ -29,12 +29,7 @@ describe( 'getCommentsPage()', () => {
 		},
 	};
 
-	test( 'should return undefined if the state is not initialized for the requested filter', () => {
-		const commentsPage = getCommentsPage( state, SITE_ID, { page: 10, status: 'all' } );
-		expect( commentsPage ).to.be.undefined;
-	} );
-
-	test( 'should return an empty array if the state is empty for the requested filters', () => {
+	test( 'should return an empty array if there is state is empty for the requested filters', () => {
 		const commentsPage = getCommentsPage( state, SITE_ID, { page: 1, status: 'trash' } );
 		expect( commentsPage ).to.eql( [] );
 	} );

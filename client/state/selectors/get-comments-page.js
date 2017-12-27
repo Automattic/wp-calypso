@@ -20,7 +20,7 @@ import { get } from 'lodash';
 export const getCommentsPage = ( state, siteId, { page = 1, postId, search, status = 'all' } ) => {
 	const parent = postId || 'site';
 	const filter = !! search ? `${ status }?s=${ search }` : status;
-	return get( state, [ 'ui', 'comments', 'queries', siteId, parent, filter, page ] );
+	return get( state, [ 'ui', 'comments', 'queries', siteId, parent, filter, page ], [] );
 };
 
 export default getCommentsPage;
