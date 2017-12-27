@@ -17,7 +17,9 @@ import CreditCardNumberInput from 'components/upgrades/credit-card-number-input'
 import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/domains/components/form';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { maskField, unmaskField } from 'lib/credit-card-details';
-import { isEbanx } from 'lib/credit-card-details/ebanx';
+import { isEbanxCountry } from 'lib/credit-card-details/ebanx';
+import { isEbanxEnabled } from 'lib/cart-values';
+import CartStore from 'lib/cart/store';
 
 export class CreditCardFormFields extends React.Component {
 	static propTypes = {
@@ -110,8 +112,7 @@ export class CreditCardFormFields extends React.Component {
 	};
 
 	shouldRenderEbanx() {
-		const { countryCode } = this.state;
-		return isEbanx( countryCode );
+		return isEbanxCountry( this.state.countryCode ) && isEbanxEnabled( CartStore.get() );
 	}
 
 	renderEbanxFields() {

@@ -23,7 +23,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from './step-types';
 import wp from 'lib/wp';
-import { isEbanx } from 'lib/credit-card-details/ebanx';
+import { isEbanxCountry } from 'lib/credit-card-details/ebanx';
 
 const wpcom = wp.undocumented();
 
@@ -139,7 +139,7 @@ TransactionFlow.prototype._paymentHandlers = {
 					country,
 				};
 
-				if ( isEbanx( country ) ) {
+				if ( isEbanxCountry( country ) ) {
 					const ebanxPaymentData = {
 						state,
 						city,
@@ -303,7 +303,7 @@ function createEbanxToken( requestType, cardDetails, callback ) {
 }
 
 function createCardToken( requestType, cardDetails, callback ) {
-	if ( isEbanx( cardDetails.country ) ) {
+	if ( isEbanxCountry( cardDetails.country ) ) {
 		return createEbanxToken( requestType, cardDetails, callback );
 	}
 

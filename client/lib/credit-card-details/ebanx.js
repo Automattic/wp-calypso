@@ -17,7 +17,7 @@ import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from './constants';
  * @param {string} countryCode - a two-letter country code, e.g., 'DE', 'BR'
  * @returns {bool} Whether the country code requires ebanx payment processing
  */
-export function isEbanx( countryCode = '' ) {
+export function isEbanxCountry( countryCode = '' ) {
 	return (
 		! isUndefined( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ] ) &&
 		config.isEnabled( 'upgrades/ebanx' )
