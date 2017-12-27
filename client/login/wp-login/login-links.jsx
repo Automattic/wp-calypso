@@ -88,6 +88,7 @@ export class LoginLinks extends React.Component {
 				},
 			} );
 		}
+
 		return (
 			<a
 				href={ url }
@@ -142,7 +143,7 @@ export class LoginLinks extends React.Component {
 
 		return (
 			<a
-				href="#"
+				href={ login( { isNative: true, twoFactorAuthType: 'link' } ) }
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
 				onClick={ this.handleMagicLoginLinkClick }
