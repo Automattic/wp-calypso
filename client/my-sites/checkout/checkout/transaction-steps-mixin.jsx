@@ -49,8 +49,6 @@ const TransactionStepsMixin = {
 
 	_displayNotices: function( cart, step ) {
 		if ( step.error ) {
-			// eslint-disable-next-line
-			console.log( 'step.error', step, typeof step.error, typeof step.error.message  );
 			step.name !== INPUT_VALIDATION && displayError( step.error );
 			return;
 		}

@@ -121,7 +121,7 @@ validators.required = {
 	},
 
 	error: function( description ) {
-		return i18n.translate( '%(description)s is a required field', {
+		return i18n.translate( 'Missing required %(description)s field', {
 			args: { description: description },
 		} );
 	},
