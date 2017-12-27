@@ -11,7 +11,7 @@ const debug = debugFactory( 'calypso:payment-gateway' );
 /**
  * Internal dependencies
  */
-import { loadScript, loadjQueryDependentScript } from 'lib/load-script';
+import { loadScript } from 'lib/load-script';
 
 /**
  * PaymentGatewayLoader component
@@ -32,23 +32,16 @@ function PaymentGatewayLoader() {
  * @api public
  * @param {string} gatewayUrl - the URL to fetch the script
  * @param {string} gatewayNamespace - the global namespace of the script
- * @param {boolean} loadJquery - is jQuery required
  * @returns {Promise} promise
  */
-PaymentGatewayLoader.prototype.ready = function(
-	gatewayUrl,
-	gatewayNamespace,
-	loadJquery = false
-) {
+PaymentGatewayLoader.prototype.ready = function( gatewayUrl, gatewayNamespace ) {
 	return new Promise( ( resolve, reject ) => {
 		if ( window[ gatewayNamespace ] ) {
 			resolve( window[ gatewayNamespace ] );
 			return;
 		}
 
-		const loaderFunction = loadJquery ? loadjQueryDependentScript : loadScript;
-
-		loaderFunction( gatewayUrl, function( error ) {
+		loadScript( gatewayUrl, function( error ) {
 			if ( error ) {
 				reject( error );
 				return;
