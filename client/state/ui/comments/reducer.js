@@ -2,18 +2,17 @@
 /**
  * External dependencies
  */
-import { get, isUndefined, map } from 'lodash';
+import { get, includes, isUndefined, map, without } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { COMMENTS_QUERY_UPDATE } from 'state/action-types';
+import { COMMENTS_CHANGE_STATUS, COMMENTS_DELETE, COMMENTS_QUERY_UPDATE } from 'state/action-types';
 import { combineReducers, keyedReducer } from 'state/utils';
 
 const deepUpdateComments = ( state, comments, { page = 1, postId, search, status = 'all' } ) => {
 	const parent = postId || 'site';
 	const filter = !! search ? `${ status }?s=${ search }` : status;
-	const commentIds = map( comments, 'ID' );
 
 	const parentObject = get( state, parent, {} );
 	const filterObject = get( parentObject, filter, {} );
@@ -24,20 +23,39 @@ const deepUpdateComments = ( state, comments, { page = 1, postId, search, status
 			...parentObject,
 			[ filter ]: {
 				...filterObject,
-				[ page ]: commentIds,
+				[ page ]: comments,
 			},
 		},
 	};
 };
 
 export const queries = ( state = {}, action ) => {
-	if ( isUndefined( get( action, 'query.page' ) ) ) {
-		return state;
-	}
-	const { comments, type, query } = action;
-	switch ( type ) {
+	switch ( action.type ) {
+		case COMMENTS_CHANGE_STATUS:
+		case COMMENTS_DELETE:
+			const { page, postId, search, status } = action.refreshCommentListQuery;
+			if (
+				COMMENTS_DELETE !== action.type &&
+				'all' === status &&
+				includes( [ 'approved', 'unapproved' ], action.status )
+			) {
+				return state;
+			}
+
+			const parent = postId || 'site';
+			const filter = !! search ? `${ status }?s=${ search }` : status;
+
+			const comments = get( state, [ parent, filter, page ] );
+
+			return deepUpdateComments(
+				state,
+				without( comments, action.commentId ),
+				action.refreshCommentListQuery
+			);
 		case COMMENTS_QUERY_UPDATE:
-			return deepUpdateComments( state, comments, query );
+			return isUndefined( get( action, 'query.page' ) )
+				? state
+				: deepUpdateComments( state, map( action.comments, 'ID' ), action.query );
 		default:
 			return state;
 	}
