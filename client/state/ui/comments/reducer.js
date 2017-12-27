@@ -33,6 +33,9 @@ export const queries = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
 		case COMMENTS_DELETE:
+			if ( ! action.refreshCommentListQuery ) {
+				return state;
+			}
 			const { page, postId, search, status } = action.refreshCommentListQuery;
 			if (
 				COMMENTS_DELETE !== action.type &&
