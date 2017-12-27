@@ -156,7 +156,7 @@ export class CommentList extends Component {
 			type: 'any',
 		};
 
-		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
+		const showPlaceholder = ( ! siteId || isLoading ) && ! comments.length;
 		const showEmptyContent = ! commentsCount && ! showPlaceholder;
 
 		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
