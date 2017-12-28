@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,22 +22,23 @@ import {
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
+import ErrorPanel from 'my-sites/stats/stats-error';
 
 class AnnualSiteStats extends Component {
 	static propTypes = {
 		requesting: PropTypes.bool,
 		siteId: PropTypes.number,
-		years: PropTypes.object,
+		years: PropTypes.array,
 		translate: PropTypes.func,
 		moment: PropTypes.func,
 	};
 
-	renderContent( currentYear, data ) {
+	renderContent( data ) {
 		return (
 			<div className="annual-site-stats__content">
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">year</div>
-					<div className="annual-site-stats__stat-figure is-large">{ currentYear }</div>
+					<div className="annual-site-stats__stat-figure is-large">{ data.year }</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">total posts</div>
@@ -47,12 +49,20 @@ class AnnualSiteStats extends Component {
 					<div className="annual-site-stats__stat-figure">{ data.total_comments }</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">total words</div>
-					<div className="annual-site-stats__stat-figure">{ data.total_words }</div>
-				</div>
-				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">avg comments per post</div>
 					<div className="annual-site-stats__stat-figure">{ data.avg_comments }</div>
+				</div>
+				<div className="annual-site-stats__stat">
+					<div className="annual-site-stats__stat-title">total likes</div>
+					<div className="annual-site-stats__stat-figure">{ data.total_likes }</div>
+				</div>
+				<div className="annual-site-stats__stat">
+					<div className="annual-site-stats__stat-title">avg likes per post</div>
+					<div className="annual-site-stats__stat-figure">{ data.avg_likes }</div>
+				</div>
+				<div className="annual-site-stats__stat">
+					<div className="annual-site-stats__stat-title">total words</div>
+					<div className="annual-site-stats__stat-figure">{ data.total_words }</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">avg words per post</div>
@@ -65,13 +75,7 @@ class AnnualSiteStats extends Component {
 	render() {
 		const { years, requesting, siteId, translate, moment, statType } = this.props;
 		const currentYear = moment().format( 'YYYY' );
-		const defaultYear = {
-			avg_comments: 0,
-			avg_words: 0,
-			total_comments: 0,
-			total_posts: 0,
-			total_words: 0,
-		};
+		const year = years && find( years, y => y.year === currentYear );
 		const isLoading = requesting && ! years;
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -80,7 +84,9 @@ class AnnualSiteStats extends Component {
 				<SectionHeader label={ translate( 'Annual Site Stats' ) } />
 				<Card className="stats-module">
 					<StatsModulePlaceholder isLoading={ isLoading } />
-					{ years && this.renderContent( currentYear, years[ currentYear ] || defaultYear ) }
+					{ ! year &&
+						! isLoading && <ErrorPanel message={ 'No annual stats recorded for this year.' } /> }
+					{ year && this.renderContent( year ) }
 				</Card>
 			</div>
 		);
