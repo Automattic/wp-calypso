@@ -1,0 +1,28 @@
+.annual-site-stats_content {
+	padding: 16px;
+	display: flex;
+	flex-wrap: wrap;
+
+	@include breakpoint( ">480px" ) {
+		padding: 16px 24px;
+	}
+}
+
+.annual-site-stats_stat {
+	width: 50%;
+	padding-bottom: 12px;
+}
+
+.annual-site-stats_stat-title {
+	font-size: 12px;
+	text-transform: uppercase;
+	color: $gray;
+}
+
+.annual-site-stats_stat-figure {
+	font-size: 18px;
+
+	&.is-large {
+		font-size: 24px;
+	}
+}

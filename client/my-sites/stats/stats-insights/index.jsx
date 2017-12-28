@@ -32,6 +32,7 @@ import Followers from '../stats-followers';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import AnnualSiteStats from 'my-sites/stats/annual-site-stats';
 
 const StatsInsights = props => {
 	const { followList, isJetpack, siteId, siteSlug, translate } = props;
@@ -66,6 +67,7 @@ const StatsInsights = props => {
 							<LatestPostSummary />
 							<MostPopular />
 							{ tagsList }
+							<AnnualSiteStats />
 						</div>
 						<div className="stats__module-column">
 							<Reach />
