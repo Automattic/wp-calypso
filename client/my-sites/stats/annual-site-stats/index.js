@@ -34,38 +34,41 @@ class AnnualSiteStats extends Component {
 	};
 
 	renderContent( data ) {
+		const { translate } = this.props;
 		return (
 			<div className="annual-site-stats__content">
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">year</div>
+					<div className="annual-site-stats__stat-title">{ translate( 'year' ) }</div>
 					<div className="annual-site-stats__stat-figure is-large">{ data.year }</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">total posts</div>
+					<div className="annual-site-stats__stat-title">{ translate( 'total posts' ) }</div>
 					<div className="annual-site-stats__stat-figure is-large">{ data.total_posts }</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">total comments</div>
+					<div className="annual-site-stats__stat-title">{ translate( 'total comments' ) }</div>
 					<div className="annual-site-stats__stat-figure">{ data.total_comments }</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">avg comments per post</div>
+					<div className="annual-site-stats__stat-title">
+						{ translate( 'avg comments per post' ) }
+					</div>
 					<div className="annual-site-stats__stat-figure">{ data.avg_comments }</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">total likes</div>
+					<div className="annual-site-stats__stat-title">{ translate( 'total likes' ) }</div>
 					<div className="annual-site-stats__stat-figure">{ data.total_likes }</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">avg likes per post</div>
+					<div className="annual-site-stats__stat-title">{ translate( 'avg likes per post' ) }</div>
 					<div className="annual-site-stats__stat-figure">{ data.avg_likes }</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">total words</div>
+					<div className="annual-site-stats__stat-title">{ translate( 'total words' ) }</div>
 					<div className="annual-site-stats__stat-figure">{ data.total_words }</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">avg words per post</div>
+					<div className="annual-site-stats__stat-title">{ translate( 'avg words per post' ) }</div>
 					<div className="annual-site-stats__stat-figure">{ data.avg_words }</div>
 				</div>
 			</div>
@@ -85,7 +88,9 @@ class AnnualSiteStats extends Component {
 				<Card className="stats-module">
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					{ ! year &&
-						! isLoading && <ErrorPanel message={ 'No annual stats recorded for this year.' } /> }
+						! isLoading && (
+							<ErrorPanel message={ translate( 'No annual stats recorded for this year' ) } />
+						) }
 					{ year && this.renderContent( year ) }
 				</Card>
 			</div>
