@@ -133,7 +133,10 @@ class DesignAssets extends React.Component {
 				) }
 
 				<Collection component={ component } filter={ filter }>
-					<Accordions componentUsageStats={ componentsUsageStats.accordion } readmeFilePath="accordion" />
+					<Accordions
+						componentUsageStats={ componentsUsageStats.accordion }
+						readmeFilePath="accordion"
+					/>
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
