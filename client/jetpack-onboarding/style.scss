@@ -1,4 +1,8 @@
 .jetpack-onboarding {
+	.steps__main {
+		animation: appearWithScaling .3s ease-in-out;
+	}
+
 	.steps__form {
 		max-width: 320px;
 
