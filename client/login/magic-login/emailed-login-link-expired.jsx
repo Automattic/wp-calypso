@@ -31,6 +31,7 @@ const lostPasswordURL = addQueryArgs(
 
 class EmailedLoginLinkExpired extends React.Component {
 	static propTypes = {
+		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		recordPageView: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};

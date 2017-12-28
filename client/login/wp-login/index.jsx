@@ -37,11 +37,11 @@ export class Login extends React.Component {
 		path: PropTypes.string.isRequired,
 		privateSite: PropTypes.bool,
 		recordPageView: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
-		twoFactorAuthType: PropTypes.string,
 		socialConnect: PropTypes.bool,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
+		translate: PropTypes.func.isRequired,
+		twoFactorAuthType: PropTypes.string,
 	};
 
 	componentDidMount() {

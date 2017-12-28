@@ -23,6 +23,7 @@ import Gridicon from 'gridicons';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {
+		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		locale: PropTypes.string.isRequired,
 		recordPageView: PropTypes.func.isRequired,
 	};
