@@ -29,7 +29,7 @@ class PostLikes extends React.PureComponent {
 	renderLike = like => {
 		const { showDisplayNames } = this.props;
 
-		const likeUrl = like.site_ID && ! like.site_is_private ? '/read/blogs/' + like.site_ID : null;
+		const likeUrl = like.site_ID && like.site_visible ? '/read/blogs/' + like.site_ID : null;
 		const LikeWrapper = likeUrl ? 'a' : 'span';
 
 		return (
