@@ -9,18 +9,19 @@ import isString from 'lodash/isString';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from './constants';
+import { isEbanxEnabled } from 'lib/cart-values';
+import CartStore from 'lib/cart/store';
 
 /**
  *
  * @param {String} countryCode - a two-letter country code, e.g., 'DE', 'BR'
  * @returns {Boolean} Whether the country code requires ebanx payment processing
  */
-export function isEbanxCountry( countryCode = '' ) {
+export function isEbanxEnabledForCountry( countryCode = '' ) {
 	return (
 		! isUndefined( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ] ) &&
-		config.isEnabled( 'upgrades/ebanx' )
+		isEbanxEnabled( CartStore.get() )
 	);
 }
 

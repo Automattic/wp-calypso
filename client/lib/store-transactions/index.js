@@ -23,7 +23,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from './step-types';
 import wp from 'lib/wp';
-import { isEbanxCountry } from 'lib/credit-card-details/ebanx';
+import { isEbanxEnabledForCountry } from 'lib/credit-card-details/ebanx';
 
 const wpcom = wp.undocumented();
 
@@ -129,7 +129,7 @@ TransactionFlow.prototype._paymentHandlers = {
 
 		this._createCardToken(
 			function( gatewayData ) {
-				const { name, country, 'postal-code': zip, document, city, state } = newCardDetails;
+				const { name, country, 'postal-code': zip } = newCardDetails;
 
 				let paymentData = {
 					payment_method: gatewayData.paymentMethod,
@@ -139,15 +139,15 @@ TransactionFlow.prototype._paymentHandlers = {
 					country,
 				};
 
-				if ( isEbanxCountry( country ) ) {
+				if ( isEbanxEnabledForCountry( country ) ) {
 					const ebanxPaymentData = {
-						state,
-						city,
+						state: newCardDetails.state,
+						city: newCardDetails.city,
 						address_1: newCardDetails[ 'address-1' ],
 						address_2: newCardDetails[ 'address-2' ],
 						street_number: newCardDetails[ 'street-number' ],
 						phone_number: newCardDetails[ 'phone-number' ],
-						document,
+						document: newCardDetails.document,
 					};
 
 					paymentData = { ...paymentData, ...ebanxPaymentData };
@@ -303,7 +303,7 @@ function createEbanxToken( requestType, cardDetails, callback ) {
 }
 
 function createCardToken( requestType, cardDetails, callback ) {
-	if ( isEbanxCountry( cardDetails.country ) ) {
+	if ( isEbanxEnabledForCountry( cardDetails.country ) ) {
 		return createEbanxToken( requestType, cardDetails, callback );
 	}
 

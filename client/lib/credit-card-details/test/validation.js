@@ -10,11 +10,11 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { validateCardDetails } from '../validation';
-import { isEbanxCountry, isValidCPF } from 'lib/credit-card-details/ebanx';
+import { isEbanxEnabledForCountry, isValidCPF } from 'lib/credit-card-details/ebanx';
 
 jest.mock( 'lib/credit-card-details/ebanx', () => {
 	return {
-		isEbanxCountry: jest.fn( false ),
+		isEbanxEnabledForCountry: jest.fn( false ),
 		isValidCPF: jest.fn( false ),
 	};
 } );
@@ -119,7 +119,7 @@ describe( 'validation', () => {
 
 		describe( 'validate ebanx non-credit card details', () => {
 			beforeAll( () => {
-				isEbanxCountry.mockReturnValue( true );
+				isEbanxEnabledForCountry.mockReturnValue( true );
 				isValidCPF.mockReturnValue( true );
 			} );
 
