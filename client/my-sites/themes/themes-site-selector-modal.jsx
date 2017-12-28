@@ -13,11 +13,11 @@ import { defer, mapValues, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import Theme from 'components/theme';
-import SiteSelectorModal from 'components/site-selector-modal';
+import Theme from 'client/components/theme';
+import SiteSelectorModal from 'client/components/site-selector-modal';
 import { trackClick } from './helpers';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getTheme } from 'state/themes/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getTheme } from 'client/state/themes/selectors';
 
 const OPTION_SHAPE = PropTypes.shape( {
 	label: PropTypes.string,

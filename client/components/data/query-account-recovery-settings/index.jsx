@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { accountRecoverySettingsFetch } from 'state/account-recovery/settings/actions';
-import { isFetchingAccountRecoverySettings } from 'state/account-recovery/selectors';
+import { accountRecoverySettingsFetch } from 'client/state/account-recovery/settings/actions';
+import { isFetchingAccountRecoverySettings } from 'client/state/account-recovery/selectors';
 
 class QueryAccountRecoverySettings extends Component {
 	componentDidMount() {

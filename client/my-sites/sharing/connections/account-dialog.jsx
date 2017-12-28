@@ -10,14 +10,14 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { filter, find, identity, isEqual } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Notice from 'components/notice';
+import Notice from 'client/components/notice';
 
 /**
  * Internal dependencies
  */
 import AccountDialogAccount from './account-dialog-account';
-import Dialog from 'components/dialog';
-import { warningNotice } from 'state/notices/actions';
+import Dialog from 'client/components/dialog';
+import { warningNotice } from 'client/state/notices/actions';
 
 class AccountDialog extends Component {
 	static propTypes = {

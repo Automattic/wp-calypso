@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
-import { LOCALE_SET } from 'state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
+import { LOCALE_SET } from 'client/state/action-types';
 import { localeSlugSchema } from './schema';
 
 /**

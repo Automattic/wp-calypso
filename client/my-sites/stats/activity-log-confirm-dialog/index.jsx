@@ -9,10 +9,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
-import Button from 'components/button';
-import Card from 'components/card';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
 import Gridicon from 'gridicons';
-import HappychatButton from 'components/happychat/button';
+import HappychatButton from 'client/components/happychat/button';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const ActivityLogConfirmDialog = ( {

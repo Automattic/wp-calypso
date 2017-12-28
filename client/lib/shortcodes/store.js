@@ -10,8 +10,8 @@ import { intersection, pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import Shortcode from 'lib/shortcode';
+import Dispatcher from 'client/dispatcher';
+import Shortcode from 'client/lib/shortcode';
 import { ActionTypes, LoadStatus } from './constants';
 
 class ShortcodesStore extends ReduceStore {

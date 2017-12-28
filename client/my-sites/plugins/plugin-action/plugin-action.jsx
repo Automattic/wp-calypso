@@ -10,8 +10,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import CompactToggle from 'components/forms/form-toggle/compact';
-import InfoPopover from 'components/info-popover';
+import CompactToggle from 'client/components/forms/form-toggle/compact';
+import InfoPopover from 'client/components/info-popover';
 
 class PluginAction extends React.Component {
 	handleAction = event => {

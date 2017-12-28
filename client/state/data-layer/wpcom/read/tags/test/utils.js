@@ -7,7 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
+import { fromApi } from 'client/state/data-layer/wpcom/read/tags/utils';
 
 const successfulFollowedTagsResponse = deepFreeze( {
 	tags: [

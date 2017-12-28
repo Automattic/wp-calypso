@@ -16,9 +16,9 @@ import tinymce from 'tinymce/tinymce';
  */
 import SuggestionList from './suggestion-list';
 import EditorMention from './editor-mention';
-import QueryUsersSuggestions from 'components/data/query-users-suggestions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getUserSuggestions } from 'state/users/suggestions/selectors';
+import QueryUsersSuggestions from 'client/components/data/query-users-suggestions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getUserSuggestions } from 'client/state/users/suggestions/selectors';
 
 /**
  * Module variables

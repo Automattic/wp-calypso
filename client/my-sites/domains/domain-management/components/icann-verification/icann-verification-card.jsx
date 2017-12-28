@@ -11,13 +11,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import support from 'lib/url/support';
-import upgradesActions from 'lib/upgrades/actions';
-import { errorNotice } from 'state/notices/actions';
-import { domainManagementEditContactInfo } from 'my-sites/domains/paths';
-import { getRegistrantWhois } from 'state/selectors';
-import QueryWhois from 'components/data/query-whois';
-import EmailVerificationCard from 'my-sites/domains/domain-management/components/email-verification';
+import support from 'client/lib/url/support';
+import upgradesActions from 'client/lib/upgrades/actions';
+import { errorNotice } from 'client/state/notices/actions';
+import { domainManagementEditContactInfo } from 'client/my-sites/domains/paths';
+import { getRegistrantWhois } from 'client/state/selectors';
+import QueryWhois from 'client/components/data/query-whois';
+import EmailVerificationCard from 'client/my-sites/domains/domain-management/components/email-verification';
 
 class IcannVerificationCard extends React.Component {
 	static propTypes = {

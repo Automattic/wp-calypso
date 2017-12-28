@@ -5,7 +5,7 @@
  */
 
 import helpLinks from './mock-help-links';
-import { action as ActionTypes } from 'lib/help-search/constants';
+import { action as ActionTypes } from 'client/lib/help-search/constants';
 
 export default {
 	fetchedHelpLinks: {

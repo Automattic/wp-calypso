@@ -15,30 +15,36 @@ import { difference, debounce } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import accept from 'lib/accept';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import Main from 'client/components/main';
+import accept from 'client/lib/accept';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
 import {
 	fetchPromotions,
 	updatePromotion,
 	deletePromotion,
-} from 'woocommerce/state/sites/promotions/actions';
-import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
-import { getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
-import { editPromotion, clearPromotionEdits } from 'woocommerce/state/ui/promotions/actions';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
-import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
-import { areProductsLoading, getAllProducts } from 'woocommerce/state/sites/products/selectors';
+} from 'client/extensions/woocommerce/state/sites/promotions/actions';
+import { fetchProductCategories } from 'client/extensions/woocommerce/state/sites/product-categories/actions';
+import { getProductCategories } from 'client/extensions/woocommerce/state/sites/product-categories/selectors';
+import {
+	editPromotion,
+	clearPromotionEdits,
+} from 'client/extensions/woocommerce/state/ui/promotions/actions';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import { fetchSettingsGeneral } from 'client/extensions/woocommerce/state/sites/settings/general/actions';
+import { getPaymentCurrencySettings } from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import {
+	areProductsLoading,
+	getAllProducts,
+} from 'client/extensions/woocommerce/state/sites/products/selectors';
 import {
 	getPromotionEdits,
 	getPromotionWithLocalEdits,
-} from 'woocommerce/state/selectors/promotions';
+} from 'client/extensions/woocommerce/state/selectors/promotions';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
-import { ProtectFormGuard } from 'lib/protect-form';
-import { recordTrack } from 'woocommerce/lib/analytics';
+import { ProtectFormGuard } from 'client/lib/protect-form';
+import { recordTrack } from 'client/extensions/woocommerce/lib/analytics';
 import { validateAll } from './promotion-models';
 
 class PromotionUpdate extends React.Component {

@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 import debugFactory from 'debug';
 
 /**

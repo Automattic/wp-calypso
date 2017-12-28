@@ -13,14 +13,14 @@ import url from 'url';
 /**
  * Internal dependencies
  */
-import accessibleFocus from 'lib/accessible-focus';
-import { bindState as bindWpLocaleState } from 'lib/wp/localization';
+import accessibleFocus from 'client/lib/accessible-focus';
+import { bindState as bindWpLocaleState } from 'client/lib/wp/localization';
 import config from 'config';
-import { receiveUser } from 'state/users/actions';
-import { setCurrentUserId, setCurrentUserFlags } from 'state/current-user/actions';
-import { setRoute as setRouteAction } from 'state/ui/actions';
-import touchDetect from 'lib/touch-detect';
-import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
+import { receiveUser } from 'client/state/users/actions';
+import { setCurrentUserId, setCurrentUserFlags } from 'client/state/current-user/actions';
+import { setRoute as setRouteAction } from 'client/state/ui/actions';
+import touchDetect from 'client/lib/touch-detect';
+import { setLocale, setLocaleRawData } from 'client/state/ui/language/actions';
 
 const debug = debugFactory( 'calypso' );
 

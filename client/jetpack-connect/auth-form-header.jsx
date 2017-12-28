@@ -10,11 +10,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormattedHeader from 'components/formatted-header';
+import FormattedHeader from 'client/components/formatted-header';
 import SiteCard from './site-card';
-import versionCompare from 'lib/version-compare';
-import { getAuthorizationData } from 'state/jetpack-connect/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import versionCompare from 'client/lib/version-compare';
+import { getAuthorizationData } from 'client/state/jetpack-connect/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
 
 class AuthFormHeader extends Component {
 	static propTypes = { authQuery: PropTypes.object.isRequired };

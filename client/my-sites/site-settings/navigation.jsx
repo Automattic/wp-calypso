@@ -12,10 +12,10 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import { getSelectedSite } from 'state/ui/selectors';
+import SectionNav from 'client/components/section-nav';
+import NavTabs from 'client/components/section-nav/tabs';
+import NavItem from 'client/components/section-nav/item';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 export class SiteSettingsNavigation extends Component {
 	static propTypes = {

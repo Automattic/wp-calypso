@@ -4,9 +4,9 @@
  * Internal dependencies
  */
 
-import { SIGNUP_COMPLETE_RESET, SIGNUP_DEPENDENCY_STORE_UPDATE } from 'state/action-types';
+import { SIGNUP_COMPLETE_RESET, SIGNUP_DEPENDENCY_STORE_UPDATE } from 'client/state/action-types';
 
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import { dependencyStoreSchema } from './schema';
 
 export default createReducer(

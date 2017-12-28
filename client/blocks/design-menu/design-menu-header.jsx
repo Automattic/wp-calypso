@@ -11,9 +11,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import SiteCard from 'blocks/site';
-import Card from 'components/card';
-import Button from 'components/button';
+import SiteCard from 'client/blocks/site';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
 
 const DesignMenuHeader = ( { isUnsaved, onBack, onPreview, onSave, site, translate } ) => {
 	return (

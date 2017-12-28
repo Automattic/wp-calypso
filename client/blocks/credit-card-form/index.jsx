@@ -12,17 +12,17 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import { camelCase, forOwn, kebabCase, mapKeys, values } from 'lodash';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
-import CreditCardFormFields from 'components/credit-card-form-fields';
-import { forPayments as countriesList } from 'lib/countries-list';
-import FormButton from 'components/forms/form-button';
-import formState from 'lib/form-state';
-import notices from 'notices';
-import { validateCardDetails } from 'lib/credit-card-details';
-import ValidationErrorList from 'notices/validation-error-list';
-import wpcomFactory from 'lib/wp';
-import support from 'lib/url/support';
+import Card from 'client/components/card';
+import CompactCard from 'client/components/card/compact';
+import CreditCardFormFields from 'client/components/credit-card-form-fields';
+import { forPayments as countriesList } from 'client/lib/countries-list';
+import FormButton from 'client/components/forms/form-button';
+import formState from 'client/lib/form-state';
+import notices from 'client/notices';
+import { validateCardDetails } from 'client/lib/credit-card-details';
+import ValidationErrorList from 'client/notices/validation-error-list';
+import wpcomFactory from 'client/lib/wp';
+import support from 'client/lib/url/support';
 
 const wpcom = wpcomFactory.undocumented();
 

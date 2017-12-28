@@ -14,14 +14,14 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import ExternalLink from 'components/external-link';
-import Version from 'components/version';
-import PluginRatings from 'my-sites/plugins/plugin-ratings/';
-import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
-import versionCompare from 'lib/version-compare';
-import analytics from 'lib/analytics';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import ExternalLink from 'client/components/external-link';
+import Version from 'client/components/version';
+import PluginRatings from 'client/my-sites/plugins/plugin-ratings/';
+import { getExtensionSettingsPath } from 'client/my-sites/plugins/utils';
+import versionCompare from 'client/lib/version-compare';
+import analytics from 'client/lib/analytics';
 
 class PluginInformation extends React.Component {
 	static displayName = 'PluginInformation';

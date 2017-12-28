@@ -12,12 +12,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { protectForm } from 'lib/protect-form';
-import trackForm from 'lib/track-form';
+import { protectForm } from 'client/lib/protect-form';
+import trackForm from 'client/lib/track-form';
 import QuerySettings from './data/query-settings';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
 import { deleteCache } from '../state/cache/actions';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, removeNotice, successNotice } from 'client/state/notices/actions';
 import { saveSettings } from '../state/settings/actions';
 import { isCacheDeleteSuccessful, isDeletingCache } from '../state/cache/selectors';
 import {

@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 
 const ConfirmationLink = ( { text, ...props } ) => (
 	<CompactCard { ...props }>

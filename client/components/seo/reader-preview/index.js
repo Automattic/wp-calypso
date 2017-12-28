@@ -10,8 +10,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import DisplayTypes from 'state/reader/posts/display-types';
-import ReaderPostCard from 'blocks/reader-post-card';
+import DisplayTypes from 'client/state/reader/posts/display-types';
+import ReaderPostCard from 'client/blocks/reader-post-card';
 
 export class ReaderPreview extends PureComponent {
 	render() {

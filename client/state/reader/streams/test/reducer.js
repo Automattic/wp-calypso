@@ -7,10 +7,10 @@ import deepfreeze from 'deep-freeze';
 /**
  * Internal Dependencies
  */
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { SERIALIZE, DESERIALIZE } from 'client/state/action-types';
 import { receivePage, selectItem } from '../actions';
 import { items, selected } from '../reducer';
-import { withSchemaValidation } from 'state/utils';
+import { withSchemaValidation } from 'client/state/utils';
 
 jest.mock( 'lib/warn', () => () => {} );
 

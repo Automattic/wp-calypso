@@ -9,13 +9,13 @@ import { get, identity, isEmpty, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'state/action-types';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'client/state/action-types';
 
-import { updateEligibility } from 'state/automated-transfer/actions';
-import { eligibilityHolds } from 'state/automated-transfer/constants';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { updateEligibility } from 'client/state/automated-transfer/actions';
+import { eligibilityHolds } from 'client/state/automated-transfer/constants';
+import { recordTracksEvent, withAnalytics } from 'client/state/analytics/actions';
 
 /**
  * Maps the constants used in the WordPress.com API with

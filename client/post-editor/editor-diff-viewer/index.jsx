@@ -15,10 +15,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { getPostRevision } from 'state/selectors';
-import TextDiff from 'components/text-diff';
-import scrollTo from 'lib/scroll-to';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { getPostRevision } from 'client/state/selectors';
+import TextDiff from 'client/components/text-diff';
+import scrollTo from 'client/lib/scroll-to';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 const getCenterOffset = node => get( node, 'offsetTop', 0 ) + get( node, 'offsetHeight', 0 ) / 2;
 

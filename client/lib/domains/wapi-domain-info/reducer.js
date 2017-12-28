@@ -9,9 +9,9 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
-import DomainsStore from 'lib/domains/store';
-import { getSelectedDomain } from 'lib/domains';
+import { action as UpgradesActionTypes } from 'client/lib/upgrades/constants';
+import DomainsStore from 'client/lib/domains/store';
+import { getSelectedDomain } from 'client/lib/domains';
 
 const initialDomainState = {
 	hasLoadedFromServer: false,

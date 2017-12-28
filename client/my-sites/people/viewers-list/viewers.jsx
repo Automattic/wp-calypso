@@ -8,16 +8,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PeopleListItem from 'my-sites/people/people-list-item';
-import Card from 'components/card';
-import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
-import ViewersActions from 'lib/viewers/actions';
-import ViewersStore from 'lib/viewers/store';
-import InfiniteList from 'components/infinite-list';
-import EmptyContent from 'components/empty-content';
-import analytics from 'lib/analytics';
-import accept from 'lib/accept';
-import ListEnd from 'components/list-end';
+import PeopleListItem from 'client/my-sites/people/people-list-item';
+import Card from 'client/components/card';
+import PeopleListSectionHeader from 'client/my-sites/people/people-list-section-header';
+import ViewersActions from 'client/lib/viewers/actions';
+import ViewersStore from 'client/lib/viewers/store';
+import InfiniteList from 'client/components/infinite-list';
+import EmptyContent from 'client/components/empty-content';
+import analytics from 'client/lib/analytics';
+import accept from 'client/lib/accept';
+import ListEnd from 'client/components/list-end';
 
 class Viewers extends React.PureComponent {
 	static displayName = 'Viewers';

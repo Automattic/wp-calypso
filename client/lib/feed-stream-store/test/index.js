@@ -12,7 +12,7 @@ import sinon from 'sinon';
 import PostListFactory from '../';
 import PostListStore from '../feed-stream';
 import FeedStreamCache from '../feed-stream-cache';
-import FeedPostStore from 'lib/feed-post-store';
+import FeedPostStore from 'client/lib/feed-post-store';
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/data-poller', () => require( './mocks/lib/data-poller' ) );
 jest.mock( 'lib/post-normalizer', () => require( './mocks/lib/post-normalizer' ) );

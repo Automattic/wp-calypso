@@ -9,8 +9,8 @@ import { drop, isEmpty, join, find, split, values } from 'lodash';
  * Internal dependencies
  */
 import { type as domainTypes, transferStatus } from './constants';
-import { cartItems } from 'lib/cart-values';
-import { isDomainRegistration } from 'lib/products-values';
+import { cartItems } from 'client/lib/cart-values';
+import { isDomainRegistration } from 'client/lib/products-values';
 
 function getDomainType( domainFromApi ) {
 	if ( domainFromApi.type === 'redirect' ) {

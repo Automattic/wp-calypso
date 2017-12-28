@@ -4,16 +4,16 @@
  * Internal dependencies
  */
 
-import { areSettingsGeneralLoaded } from 'woocommerce/state/sites/settings/general/selectors';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { put } from 'woocommerce/state/data-layer/request/actions';
-import request from 'woocommerce/state/sites/http-request';
-import { saveCurrencySuccess } from 'woocommerce/state/sites/settings/general/actions';
+import { areSettingsGeneralLoaded } from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { put } from 'client/extensions/woocommerce/state/data-layer/request/actions';
+import request from 'client/extensions/woocommerce/state/sites/http-request';
+import { saveCurrencySuccess } from 'client/extensions/woocommerce/state/sites/settings/general/actions';
 import {
 	WOOCOMMERCE_CURRENCY_UPDATE,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 	WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export const handleSettingsGeneralSuccess = ( { dispatch }, action, { data } ) => {
 	const { siteId } = action;

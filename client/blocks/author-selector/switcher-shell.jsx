@@ -13,13 +13,13 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
-import PopoverMenuItem from 'components/popover/menu-item';
-import UserItem from 'components/user';
-import InfiniteList from 'components/infinite-list';
-import UsersActions from 'lib/users/actions';
-import Search from 'components/search';
-import { hasTouch } from 'lib/touch-detect';
+import Popover from 'client/components/popover';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import UserItem from 'client/components/user';
+import InfiniteList from 'client/components/infinite-list';
+import UsersActions from 'client/lib/users/actions';
+import Search from 'client/components/search';
+import { hasTouch } from 'client/lib/touch-detect';
 
 /**
  * Module variables

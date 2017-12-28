@@ -9,11 +9,11 @@ import { spy, match } from 'sinon';
 /**
  * Internal dependencies
  */
-import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+import { WPCOM_HTTP_REQUEST } from 'client/state/action-types';
 import {
 	WOOCOMMERCE_COUPON_UPDATED,
 	WOOCOMMERCE_COUPON_DELETED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 import { fetchCoupons, couponsUpdated, createCoupon, updateCoupon, deleteCoupon } from '../actions';
 import {
 	requestCoupons,

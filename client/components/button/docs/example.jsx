@@ -10,10 +10,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
 import config from 'config';
-import DocsExample from 'devdocs/docs-example';
+import DocsExample from 'client/devdocs/docs-example';
 
 class Buttons extends React.PureComponent {
 	static displayName = 'Buttons';

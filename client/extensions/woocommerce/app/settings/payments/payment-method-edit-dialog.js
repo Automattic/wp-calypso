@@ -12,13 +12,13 @@ import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextarea from 'components/forms/form-textarea';
+import Dialog from 'client/components/dialog';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormPasswordInput from 'client/components/forms/form-password-input';
+import FormSelect from 'client/components/forms/form-select';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormTextarea from 'client/components/forms/form-textarea';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';
 
 class PaymentMethodEdit extends Component {

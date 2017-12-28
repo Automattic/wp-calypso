@@ -11,14 +11,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import { isJetpackModuleActive } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormSelect from 'client/components/forms/form-select';
+import FormTextInput from 'client/components/forms/form-text-input';
+import JetpackModuleToggle from 'client/my-sites/site-settings/jetpack-module-toggle';
+import { isJetpackModuleActive } from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 class CommentDisplaySettings extends Component {
 	shouldEnableSettings() {

@@ -7,11 +7,11 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
 import FieldError from '../field-error';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
 
 const TextField = ( { id, title, description, value, placeholder, updateValue, error, className } ) => {
 	const handleChangeEvent = event => updateValue( event.target.value );

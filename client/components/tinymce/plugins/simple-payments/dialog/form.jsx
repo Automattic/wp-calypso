@@ -13,14 +13,16 @@ import { flowRight as compose, omit, padEnd, trimEnd } from 'lodash';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextarea from 'components/forms/form-textarea';
-import FormCurrencyInput from 'components/forms/form-currency-input';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
-import UploadImage from 'blocks/upload-image';
-import { getCurrencyDefaults } from 'lib/format-currency';
+import ExternalLink from 'client/components/external-link';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormTextarea from 'client/components/forms/form-textarea';
+import FormCurrencyInput from 'client/components/forms/form-currency-input';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import ReduxFormFieldset, {
+	FieldsetRenderer,
+} from 'client/components/redux-forms/redux-form-fieldset';
+import UploadImage from 'client/blocks/upload-image';
+import { getCurrencyDefaults } from 'client/lib/format-currency';
 
 const REDUX_FORM_NAME = 'simplePaymentsForm';
 

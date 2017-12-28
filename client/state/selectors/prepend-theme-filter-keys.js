@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { getThemeFilterStringFromTerm } from 'state/selectors';
+import { getThemeFilterStringFromTerm } from 'client/state/selectors';
 
 /**
  * For a string of terms, recreate full search string in

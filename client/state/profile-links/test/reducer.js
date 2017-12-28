@@ -18,7 +18,7 @@ import {
 	USER_PROFILE_LINKS_DELETE_SUCCESS,
 	USER_PROFILE_LINKS_RECEIVE,
 	USER_PROFILE_LINKS_RESET_ERRORS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	const profileLinks = [

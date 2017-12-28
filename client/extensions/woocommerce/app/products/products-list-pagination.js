@@ -10,8 +10,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Pagination from 'components/pagination';
-import { DEFAULT_QUERY } from 'woocommerce/state/sites/products/utils';
+import Pagination from 'client/components/pagination';
+import { DEFAULT_QUERY } from 'client/extensions/woocommerce/state/sites/products/utils';
 
 const ProductsListPagination = ( {
 	site,

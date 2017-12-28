@@ -11,19 +11,19 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
-import ReaderFollowButton from 'reader/follow-button';
-import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
-import HeaderBack from 'reader/header-back';
-import { getSiteDescription, getSiteName, getSiteUrl } from 'reader/get-helpers';
-import SiteIcon from 'blocks/site-icon';
-import BlogStickers from 'blocks/blog-stickers';
+import Card from 'client/components/card';
+import ReaderFollowButton from 'client/reader/follow-button';
+import { isAuthorNameBlacklisted } from 'client/reader/lib/author-name-blacklist';
+import HeaderBack from 'client/reader/header-back';
+import { getSiteDescription, getSiteName, getSiteUrl } from 'client/reader/get-helpers';
+import SiteIcon from 'client/blocks/site-icon';
+import BlogStickers from 'client/blocks/blog-stickers';
 import ReaderFeedHeaderSiteBadge from './badge';
-import ReaderEmailSettings from 'blocks/reader-email-settings';
-import ReaderSiteNotificationSettings from 'blocks/reader-site-notification-settings';
+import ReaderEmailSettings from 'client/blocks/reader-email-settings';
+import ReaderSiteNotificationSettings from 'client/blocks/reader-site-notification-settings';
 import config from 'config';
-import userSettings from 'lib/user-settings';
-import { isFollowing } from 'state/selectors';
+import userSettings from 'client/lib/user-settings';
+import { isFollowing } from 'client/state/selectors';
 
 class FeedHeader extends Component {
 	static propTypes = {

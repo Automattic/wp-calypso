@@ -14,7 +14,7 @@ import {
 	WORDADS_STATUS_REQUEST,
 	WORDADS_STATUS_REQUEST_SUCCESS,
 	WORDADS_STATUS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

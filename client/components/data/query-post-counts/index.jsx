@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestPostCounts } from 'state/posts/counts/actions';
-import { isRequestingPostCounts } from 'state/posts/counts/selectors';
+import { requestPostCounts } from 'client/state/posts/counts/actions';
+import { isRequestingPostCounts } from 'client/state/posts/counts/selectors';
 
 class QueryPostCounts extends Component {
 	componentWillMount() {

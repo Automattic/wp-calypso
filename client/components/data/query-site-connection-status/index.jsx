@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSiteConnectionStatus } from 'state/selectors';
-import { requestConnectionStatus } from 'state/sites/connection/actions';
+import { isRequestingSiteConnectionStatus } from 'client/state/selectors';
+import { requestConnectionStatus } from 'client/state/sites/connection/actions';
 
 class QuerySiteConnectionStatus extends Component {
 	static propTypes = {

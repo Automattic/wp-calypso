@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FirstView from 'components/first-view';
+import FirstView from 'client/components/first-view';
 
 class StatsFirstView extends React.PureComponent {
 	static displayName = 'StatsFirstView';

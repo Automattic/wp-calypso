@@ -10,12 +10,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import { resendIcannVerification } from 'lib/upgrades/actions/domain-management';
-import Button from 'components/button';
-import notices from 'notices';
-import support from 'lib/url/support';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import { resendIcannVerification } from 'client/lib/upgrades/actions/domain-management';
+import Button from 'client/components/button';
+import notices from 'client/notices';
+import support from 'client/lib/url/support';
 
 class IcannVerification extends React.Component {
 	state = {

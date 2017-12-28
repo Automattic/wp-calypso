@@ -13,12 +13,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
-import paths from 'my-sites/domains/paths';
-import { getSelectedDomain } from 'lib/domains';
+import DomainMainPlaceholder from 'client/my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'client/my-sites/domains/domain-management/components/header';
+import Main from 'client/components/main';
+import NonOwnerCard from 'client/my-sites/domains/domain-management/components/domain/non-owner-card';
+import paths from 'client/my-sites/domains/paths';
+import { getSelectedDomain } from 'client/lib/domains';
 import IcannVerification from './icann-verification.jsx';
 import Locked from './locked.jsx';
 import Unlocked from './unlocked.jsx';

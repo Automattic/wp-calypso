@@ -14,7 +14,7 @@ import {
 	WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
 	WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 	WOOCOMMERCE_UI_ORDERS_EDIT,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should store the currently editing order', () => {

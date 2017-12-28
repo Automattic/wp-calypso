@@ -14,7 +14,7 @@ const newYear2018ClosureStartsAt = i18n.moment( 'Sun, 31 Dec 2017 00:00:00 +0000
 /**
  * Internal dependencies
  */
-import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
 
 const HelpContactClosed = ( { translate } ) => {
 	const currentDate = i18n.moment();

@@ -10,9 +10,9 @@ import striptags from 'striptags';
 /**
  * Internal dependencies
  */
-import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
-import PostMetadata from 'lib/post-metadata';
-import { parseHtml } from 'lib/formatting';
+import { formatExcerpt } from 'client/lib/post-normalizer/rule-create-better-excerpt';
+import PostMetadata from 'client/lib/post-metadata';
+import { parseHtml } from 'client/lib/formatting';
 
 const PREVIEW_IMAGE_WIDTH = 512;
 

@@ -11,10 +11,10 @@ import { omit, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import smartSetState from 'lib/react-smart-set-state';
-import LikeActions from 'lib/like-store/actions';
+import smartSetState from 'client/lib/react-smart-set-state';
+import LikeActions from 'client/lib/like-store/actions';
 import LikeButton from './button';
-import LikeStore from 'lib/like-store/like-store';
+import LikeStore from 'client/lib/like-store/like-store';
 
 class LikeButtonContainer extends PureComponent {
 	static propTypes = {

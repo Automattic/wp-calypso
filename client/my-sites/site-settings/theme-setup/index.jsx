@@ -12,16 +12,16 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import QueryActiveTheme from 'components/data/query-active-theme';
-import QueryTheme from 'components/data/query-theme';
+import HeaderCake from 'client/components/header-cake';
+import Main from 'client/components/main';
+import QueryActiveTheme from 'client/components/data/query-active-theme';
+import QueryTheme from 'client/components/data/query-theme';
 import ThemeSetupCard from './theme-setup-card';
 import ThemeSetupPlaceholder from './theme-setup-placeholder';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getActiveTheme, getTheme } from 'state/themes/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { toggleDialog } from 'state/ui/theme-setup/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { getActiveTheme, getTheme } from 'client/state/themes/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { toggleDialog } from 'client/state/ui/theme-setup/actions';
 
 class ThemeSetup extends Component {
 	componentDidUpdate( prevProps ) {

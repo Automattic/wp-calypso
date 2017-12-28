@@ -1,6 +1,6 @@
 /** @format */
 import request from 'superagent';
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 import { actions } from './constants';
 
 var timeout;

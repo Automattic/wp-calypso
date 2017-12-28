@@ -9,12 +9,12 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
 
 import {
 	getAccountRecoveryPhone,
 	getAccountRecoveryEmail,
-} from 'state/account-recovery/settings/selectors';
+} from 'client/state/account-recovery/settings/selectors';
 
 import { dispatchError } from '../utils';
 

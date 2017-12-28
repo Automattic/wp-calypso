@@ -13,60 +13,63 @@ import { get, startsWith } from 'lodash';
 /**
  * Internal Dependencies
  */
-import PostStore from 'lib/feed-post-store';
-import AutoDirection from 'components/auto-direction';
-import ReaderMain from 'components/reader-main';
-import EmbedContainer from 'components/embed-container';
-import PostExcerpt from 'components/post-excerpt';
-import { setSection } from 'state/ui/actions';
-import smartSetState from 'lib/react-smart-set-state';
-import { fetchPost } from 'lib/feed-post-store/actions';
+import PostStore from 'client/lib/feed-post-store';
+import AutoDirection from 'client/components/auto-direction';
+import ReaderMain from 'client/components/reader-main';
+import EmbedContainer from 'client/components/embed-container';
+import PostExcerpt from 'client/components/post-excerpt';
+import { setSection } from 'client/state/ui/actions';
+import smartSetState from 'client/lib/react-smart-set-state';
+import { fetchPost } from 'client/lib/feed-post-store/actions';
 import ReaderFullPostHeader from './header';
-import AuthorCompactProfile from 'blocks/author-compact-profile';
-import LikeButton from 'reader/like-button';
-import { isDiscoverPost, isDiscoverSitePick } from 'reader/discover/helper';
-import DiscoverSiteAttribution from 'reader/discover/site-attribution';
-import DailyPostButton from 'blocks/daily-post-button';
-import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
-import { shouldShowLikes } from 'reader/like-helper';
-import { shouldShowComments } from 'blocks/comments/helper';
-import CommentButton from 'blocks/comment-button';
+import AuthorCompactProfile from 'client/blocks/author-compact-profile';
+import LikeButton from 'client/reader/like-button';
+import { isDiscoverPost, isDiscoverSitePick } from 'client/reader/discover/helper';
+import DiscoverSiteAttribution from 'client/reader/discover/site-attribution';
+import DailyPostButton from 'client/blocks/daily-post-button';
+import { isDailyPostChallengeOrPrompt } from 'client/blocks/daily-post-button/helper';
+import { shouldShowLikes } from 'client/reader/like-helper';
+import { shouldShowComments } from 'client/blocks/comments/helper';
+import CommentButton from 'client/blocks/comment-button';
 import {
 	recordAction,
 	recordGaEvent,
 	recordTrackForPost,
 	recordPermalinkClick,
-} from 'reader/stats';
-import Comments from 'blocks/comments';
-import scrollTo from 'lib/scroll-to';
-import PostExcerptLink from 'reader/post-excerpt-link';
-import { getSiteName } from 'reader/get-helpers';
-import { keyForPost } from 'lib/feed-stream-store/post-key';
-import KeyboardShortcuts from 'lib/keyboard-shortcuts';
-import ReaderPostActions from 'blocks/reader-post-actions';
-import PostStoreActions from 'lib/feed-post-store/actions';
-import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
-import { getStreamUrlFromPost } from 'reader/route';
-import { likePost, unlikePost } from 'lib/like-store/actions';
-import LikeStore from 'lib/like-store/like-store';
-import FeaturedImage from 'blocks/reader-full-post/featured-image';
-import { getFeed } from 'state/reader/feeds/selectors';
-import { getSite } from 'state/reader/sites/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderFeed from 'components/data/query-reader-feed';
-import ExternalLink from 'components/external-link';
-import DocumentHead from 'components/data/document-head';
+} from 'client/reader/stats';
+import Comments from 'client/blocks/comments';
+import scrollTo from 'client/lib/scroll-to';
+import PostExcerptLink from 'client/reader/post-excerpt-link';
+import { getSiteName } from 'client/reader/get-helpers';
+import { keyForPost } from 'client/lib/feed-stream-store/post-key';
+import KeyboardShortcuts from 'client/lib/keyboard-shortcuts';
+import ReaderPostActions from 'client/blocks/reader-post-actions';
+import PostStoreActions from 'client/lib/feed-post-store/actions';
+import {
+	RelatedPostsFromSameSite,
+	RelatedPostsFromOtherSites,
+} from 'client/components/related-posts-v2';
+import { getStreamUrlFromPost } from 'client/reader/route';
+import { likePost, unlikePost } from 'client/lib/like-store/actions';
+import LikeStore from 'client/lib/like-store/like-store';
+import FeaturedImage from 'client/blocks/reader-full-post/featured-image';
+import { getFeed } from 'client/state/reader/feeds/selectors';
+import { getSite } from 'client/state/reader/sites/selectors';
+import QueryReaderSite from 'client/components/data/query-reader-site';
+import QueryReaderFeed from 'client/components/data/query-reader-feed';
+import ExternalLink from 'client/components/external-link';
+import DocumentHead from 'client/components/data/document-head';
 import ReaderFullPostUnavailable from './unavailable';
 import ReaderFullPostBack from './back';
-import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
+import { isFeaturedImageInContent } from 'client/lib/post-normalizer/utils';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
-import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
-import { getLastStore } from 'reader/controller-helper';
-import { showSelectedPost } from 'reader/utils';
-import Emojify from 'components/emojify';
+import * as FeedStreamStoreActions from 'client/lib/feed-stream-store/actions';
+import { getLastStore } from 'client/reader/controller-helper';
+import { showSelectedPost } from 'client/reader/utils';
+import Emojify from 'client/components/emojify';
 import config from 'config';
-import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
-import { READER_FULL_POST } from 'reader/follow-sources';
+import { COMMENTS_FILTER_ALL } from 'client/blocks/comments/comments-filters';
+import { READER_FULL_POST } from 'client/reader/follow-sources';
 
 export class FullPostView extends React.Component {
 	static propTypes = {

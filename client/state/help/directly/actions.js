@@ -9,7 +9,7 @@ import {
 	DIRECTLY_INITIALIZATION_START,
 	DIRECTLY_INITIALIZATION_SUCCESS,
 	DIRECTLY_INITIALIZATION_ERROR,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export function askQuestion( questionText, name, email ) {
 	return { type: DIRECTLY_ASK_QUESTION, questionText, name, email };

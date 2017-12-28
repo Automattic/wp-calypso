@@ -11,9 +11,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import analytics from 'lib/analytics';
-import Button from 'components/button';
+import Card from 'client/components/card';
+import analytics from 'client/lib/analytics';
+import Button from 'client/components/button';
 
 export default localize( props => {
 	const { date, registrationUrl, isBusinessPlanUser, translate } = props;

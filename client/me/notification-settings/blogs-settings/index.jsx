@@ -14,11 +14,11 @@ import Immutable from 'immutable';
 /**
  * Internal dependencies
  */
-import { getSites } from 'state/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
-import EmptyContentComponent from 'components/empty-content';
+import { getSites } from 'client/state/selectors';
+import { isRequestingSites } from 'client/state/sites/selectors';
+import EmptyContentComponent from 'client/components/empty-content';
 import Blog from './blog';
-import InfiniteList from 'components/infinite-list';
+import InfiniteList from 'client/components/infinite-list';
 import Placeholder from './placeholder';
 import config from 'config';
 

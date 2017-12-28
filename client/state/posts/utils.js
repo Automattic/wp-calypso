@@ -27,11 +27,11 @@ import {
  * Internal dependencies
  */
 import { DEFAULT_POST_QUERY } from './constants';
-import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
-import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
-import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
-import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
-import stripHtml from 'lib/post-normalizer/rule-strip-html';
+import pickCanonicalImage from 'client/lib/post-normalizer/rule-pick-canonical-image';
+import decodeEntities from 'client/lib/post-normalizer/rule-decode-entities';
+import detectMedia from 'client/lib/post-normalizer/rule-content-detect-media';
+import withContentDom from 'client/lib/post-normalizer/rule-with-content-dom';
+import stripHtml from 'client/lib/post-normalizer/rule-strip-html';
 
 /**
  * Constants

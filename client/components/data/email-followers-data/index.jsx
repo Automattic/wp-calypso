@@ -10,10 +10,10 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import EmailFollowersStore from 'lib/email-followers/store';
-import EmailFollowersActions from 'lib/email-followers/actions';
-import passToChildren from 'lib/react-pass-to-children';
-import pollers from 'lib/data-poller';
+import EmailFollowersStore from 'client/lib/email-followers/store';
+import EmailFollowersActions from 'client/lib/email-followers/actions';
+import passToChildren from 'client/lib/react-pass-to-children';
+import pollers from 'client/lib/data-poller';
 
 /**
  * Module variables

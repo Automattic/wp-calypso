@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
 import ServiceExample from './service-example';
 
 /**

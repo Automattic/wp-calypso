@@ -31,12 +31,12 @@ import page from 'page';
 import SignupActions from './actions';
 import SignupProgressStore from './progress-store';
 import SignupDependencyStore from './dependency-store';
-import flows from 'signup/config/flows';
-import steps from 'signup/config/steps';
-import wpcom from 'lib/wp';
-import userFactory from 'lib/user';
+import flows from 'client/signup/config/flows';
+import steps from 'client/signup/config/steps';
+import wpcom from 'client/lib/wp';
+import userFactory from 'client/lib/user';
 const user = userFactory();
-import utils from 'signup/utils';
+import utils from 'client/signup/utils';
 
 /**
  * Constants

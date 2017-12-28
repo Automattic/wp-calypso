@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { shouldSyncReaderFollows } from 'state/selectors';
-import { requestFollows } from 'state/reader/follows/actions';
+import { shouldSyncReaderFollows } from 'client/state/selectors';
+import { requestFollows } from 'client/state/reader/follows/actions';
 
 class SyncReaderFollows extends Component {
 	check() {

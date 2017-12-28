@@ -12,20 +12,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PostTypeFilter from 'my-sites/post-type-filter';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import PostTypeList from 'my-sites/post-type-list';
-import PostTypeBulkEditBar from 'my-sites/post-type-list/bulk-edit-bar';
+import PostTypeFilter from 'client/my-sites/post-type-filter';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import PostTypeList from 'client/my-sites/post-type-list';
+import PostTypeBulkEditBar from 'client/my-sites/post-type-list/bulk-edit-bar';
 import config from 'config';
-import Main from 'components/main';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { mapPostStatus as mapStatus } from 'lib/route';
-import { warningNotice } from 'state/notices/actions';
+import Main from 'client/components/main';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { mapPostStatus as mapStatus } from 'client/lib/route';
+import { warningNotice } from 'client/state/notices/actions';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
 	siteHasMinimumJetpackVersion,
-} from 'state/sites/selectors';
+} from 'client/state/sites/selectors';
 
 class PostsMain extends React.Component {
 	componentWillMount() {

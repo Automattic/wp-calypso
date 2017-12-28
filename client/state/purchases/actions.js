@@ -3,7 +3,7 @@
 import i18n from 'i18n-calypso';
 
 // Internal dependencies
-import olark from 'lib/olark';
+import olark from 'client/lib/olark';
 import {
 	PRIVACY_PROTECTION_CANCEL,
 	PRIVACY_PROTECTION_CANCEL_COMPLETED,
@@ -17,9 +17,9 @@ import {
 	PURCHASES_USER_FETCH_FAILED,
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 const wpcom = wp.undocumented();
 
 const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );

@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import TextDiff from 'components/text-diff';
+import TextDiff from 'client/components/text-diff';
 
 export default function TextDiffExample() {
 	const operations = [

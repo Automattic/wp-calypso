@@ -8,7 +8,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import * as tracksUtils from './tracks-utils';
 
 const debug = debugFactory( 'woocommerce:analytics' );

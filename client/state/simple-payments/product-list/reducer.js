@@ -5,13 +5,13 @@
  */
 
 import productListSchema from './schema';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_RECEIVE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Edits existing product if one with matching ID found.

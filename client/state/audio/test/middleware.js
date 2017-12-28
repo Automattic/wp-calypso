@@ -10,7 +10,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import middleware from '../middleware';
-import { HAPPYCHAT_IO_RECEIVE_MESSAGE } from 'state/action-types';
+import { HAPPYCHAT_IO_RECEIVE_MESSAGE } from 'client/state/action-types';
 
 describe( 'Audio Middleware', () => {
 	let next;

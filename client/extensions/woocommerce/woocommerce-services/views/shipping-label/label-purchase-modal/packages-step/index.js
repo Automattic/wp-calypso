@@ -16,14 +16,10 @@ import PackageInfo from './package-info';
 import MoveItemDialog from './move-item';
 import AddItemDialog from './add-item';
 import StepConfirmationButton from '../step-confirmation-button';
-import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
+import { hasNonEmptyLeaves } from 'client/extensions/woocommerce/woocommerce-services/lib/utils/tree';
 import StepContainer from '../step-container';
-import {
-	getShippingLabel,
-	isLoaded,
-	getFormErrors,
-} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import { toggleStep, confirmPackages } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import { getShippingLabel, isLoaded, getFormErrors } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { toggleStep, confirmPackages } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
 
 const PackagesStep = ( props ) => {
 	const {

@@ -15,10 +15,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { fetchPlugins } from 'state/plugins/installed/actions';
-import { getPlugins, isRequesting } from 'state/plugins/installed/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Main from 'components/main';
+import { fetchPlugins } from 'client/state/plugins/installed/actions';
+import { getPlugins, isRequesting } from 'client/state/plugins/installed/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import Main from 'client/components/main';
 import SettingsTaxesPlaceholder from './taxes-placeholder';
 import SettingsTaxesTaxJar from './taxes-taxjar';
 import SettingsTaxesWooCommerceServices from './taxes-wcs';

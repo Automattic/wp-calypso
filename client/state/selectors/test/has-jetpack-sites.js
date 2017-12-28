@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { hasJetpackSites } from 'state/selectors';
+import { hasJetpackSites } from 'client/state/selectors';
 
 describe( 'hasJetpackSites()', () => {
 	test( 'it should return false if sites are empty', () => {

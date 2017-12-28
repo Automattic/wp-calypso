@@ -9,7 +9,7 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { getSiteUserConnections } from 'client/state/sharing/publicize/selectors';
 
 /**
  * Returns true if a broken Publicize connections exists for the specified site

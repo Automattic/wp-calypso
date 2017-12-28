@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 
 /**
  * Module Variables

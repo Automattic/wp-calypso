@@ -6,7 +6,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
+import formattedVariationName from 'client/extensions/woocommerce/lib/formatted-variation-name';
 
 export function createPromotionFromProduct( product ) {
 	const salePrice = product.sale_price;

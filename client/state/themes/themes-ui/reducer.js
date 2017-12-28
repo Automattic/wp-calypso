@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { THEME_BACK_PATH_SET } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { THEME_BACK_PATH_SET } from 'client/state/action-types';
+import { combineReducers } from 'client/state/utils';
 
 // Destination for 'back' button on theme sheet
 function backPath( state = '/themes', action ) {

@@ -13,21 +13,21 @@ import { localize, moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SidebarBanner from 'my-sites/current-site/sidebar-banner';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import paths from 'my-sites/domains/paths';
-import { hasDomainCredit } from 'state/sites/plans/selectors';
-import { canCurrentUser, isEligibleForFreeToPaidUpsell } from 'state/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import QuerySitePlans from 'components/data/query-site-plans';
+import SidebarBanner from 'client/my-sites/current-site/sidebar-banner';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import paths from 'client/my-sites/domains/paths';
+import { hasDomainCredit } from 'client/state/sites/plans/selectors';
+import { canCurrentUser, isEligibleForFreeToPaidUpsell } from 'client/state/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import QuerySitePlans from 'client/components/data/query-site-plans';
 import {
 	isStarted as isJetpackPluginsStarted,
 	isFinished as isJetpackPluginsFinished,
-} from 'state/plugins/premium/selectors';
-import TrackComponentView from 'lib/analytics/track-component-view';
+} from 'client/state/plugins/premium/selectors';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
-import { isDomainOnlySite } from 'state/selectors';
+import { isDomainOnlySite } from 'client/state/selectors';
 
 class SiteNotice extends React.Component {
 	static propTypes = {

@@ -11,8 +11,8 @@ import {
 	STORED_CARDS_FETCH,
 	STORED_CARDS_FETCH_COMPLETED,
 	STORED_CARDS_FETCH_FAILED,
-} from 'state/action-types';
-import wp from 'lib/wp';
+} from 'client/state/action-types';
+import wp from 'client/lib/wp';
 
 export const addStoredCard = cardData => dispatch => {
 	return new Promise( ( resolve, reject ) => {

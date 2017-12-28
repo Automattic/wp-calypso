@@ -13,13 +13,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
-import { errorNotice } from 'state/notices/actions';
-import { canRedirect } from 'lib/domains';
-import DomainProductPrice from 'components/domains/domain-product-price';
-import upgradesActions from 'lib/upgrades/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { withoutHttp } from 'lib/url';
+import { cartItems } from 'client/lib/cart-values';
+import { errorNotice } from 'client/state/notices/actions';
+import { canRedirect } from 'client/lib/domains';
+import DomainProductPrice from 'client/components/domains/domain-product-price';
+import upgradesActions from 'client/lib/upgrades/actions';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import { withoutHttp } from 'client/lib/url';
 
 class SiteRedirectStep extends React.Component {
 	static propTypes = {

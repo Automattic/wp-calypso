@@ -8,8 +8,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
 
 function renderField( fieldName, fieldModel, promotion, edit, currency, showEmptyValidationErrors ) {
 	const { component, validate } = fieldModel;

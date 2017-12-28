@@ -13,19 +13,19 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import EmptyContent from 'components/empty-content';
-import ImporterStore, { getState as getImporterState } from 'lib/importer/store';
-import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
-import WordPressImporter from 'my-sites/importer/importer-wordpress';
-import MediumImporter from 'my-sites/importer/importer-medium';
-import { fetchState } from 'lib/importer/actions';
-import { appStates, WORDPRESS, MEDIUM } from 'state/imports/constants';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import Placeholder from 'my-sites/site-settings/placeholder';
+import CompactCard from 'client/components/card/compact';
+import EmptyContent from 'client/components/empty-content';
+import ImporterStore, { getState as getImporterState } from 'client/lib/importer/store';
+import Interval, { EVERY_FIVE_SECONDS } from 'client/lib/interval';
+import WordPressImporter from 'client/my-sites/importer/importer-wordpress';
+import MediumImporter from 'client/my-sites/importer/importer-medium';
+import { fetchState } from 'client/lib/importer/actions';
+import { appStates, WORDPRESS, MEDIUM } from 'client/state/imports/constants';
+import EmailVerificationGate from 'client/components/email-verification/email-verification-gate';
+import { getSelectedSite, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import Main from 'client/components/main';
+import HeaderCake from 'client/components/header-cake';
+import Placeholder from 'client/my-sites/site-settings/placeholder';
 
 class SiteSettingsImport extends Component {
 	static propTypes = {

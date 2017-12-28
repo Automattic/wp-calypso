@@ -13,9 +13,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import StatsPeriodNavigation from './stats-period-navigation';
-import Main from 'components/main';
-import StatsNavigation from 'blocks/stats-navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import Main from 'client/components/main';
+import StatsNavigation from 'client/blocks/stats-navigation';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
 import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
@@ -23,13 +23,13 @@ import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import StatsFirstView from './stats-first-view';
-import StickyPanel from 'components/sticky-panel';
-import JetpackColophon from 'components/jetpack-colophon';
+import StickyPanel from 'client/components/sticky-panel';
+import JetpackColophon from 'client/components/jetpack-colophon';
 import config from 'config';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { getSiteOption, isJetpackSite } from 'client/state/sites/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import PrivacyPolicyBanner from 'client/blocks/privacy-policy-banner';
 import ChecklistBanner from './checklist-banner';
 
 class StatsSite extends Component {

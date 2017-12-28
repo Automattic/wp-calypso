@@ -7,9 +7,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { RelatedPostCard } from 'blocks/reader-related-card-v2';
-import { recordTrackForPost, recordAction } from 'reader/stats';
-import { EMPTY_SEARCH_RECOMMENDATIONS } from 'reader/follow-sources';
+import { RelatedPostCard } from 'client/blocks/reader-related-card-v2';
+import { recordTrackForPost, recordAction } from 'client/reader/stats';
+import { EMPTY_SEARCH_RECOMMENDATIONS } from 'client/reader/follow-sources';
 
 export default function EmptySearchRecommendedPost( { post } ) {
 	function handlePostClick() {

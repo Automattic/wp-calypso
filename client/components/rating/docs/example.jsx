@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Rating from 'components/rating';
+import Rating from 'client/components/rating';
 
 export default class RatingExample extends React.PureComponent {
 	static displayName = 'Rating';

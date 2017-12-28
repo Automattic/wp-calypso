@@ -3,8 +3,8 @@
 /**
  * Internal dependencies
  */
-import { READER_SITE_BLOCK, READER_SITE_UNBLOCK } from 'state/action-types';
-import { blockSite, unblockSite } from 'state/reader/site-blocks/actions';
+import { READER_SITE_BLOCK, READER_SITE_UNBLOCK } from 'client/state/action-types';
+import { blockSite, unblockSite } from 'client/state/reader/site-blocks/actions';
 
 describe( 'actions', () => {
 	describe( '#blockSite', () => {

@@ -12,10 +12,10 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import PlanThankYouCard from 'blocks/plan-thank-you-card';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getPlanClass } from 'lib/plans/constants';
+import PlanThankYouCard from 'client/blocks/plan-thank-you-card';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { getCurrentPlan } from 'client/state/sites/plans/selectors';
+import { getPlanClass } from 'client/lib/plans/constants';
 
 class AtomicStoreThankYouCard extends Component {
 	renderAction() {

@@ -13,21 +13,21 @@ import { includes, noop, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
-import { getFixedDomainSearch, checkDomainAvailability } from 'lib/domains';
-import { domainAvailability } from 'lib/domains/constants';
-import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
-import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import DomainProductPrice from 'components/domains/domain-product-price';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { cartItems } from 'client/lib/cart-values';
+import { getFixedDomainSearch, checkDomainAvailability } from 'client/lib/domains';
+import { domainAvailability } from 'client/lib/domains/constants';
+import { getAvailabilityNotice } from 'client/lib/domains/registration/availability-messages';
+import DomainRegistrationSuggestion from 'client/components/domains/domain-registration-suggestion';
+import DomainProductPrice from 'client/components/domains/domain-product-price';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
 import {
 	recordAddDomainButtonClickInMapDomain,
 	recordFormSubmitInMapDomain,
 	recordInputFocusInMapDomain,
 	recordGoButtonClickInMapDomain,
-} from 'state/domains/actions';
-import Notice from 'components/notice';
+} from 'client/state/domains/actions';
+import Notice from 'client/components/notice';
 
 class MapDomainStep extends React.Component {
 	static propTypes = {

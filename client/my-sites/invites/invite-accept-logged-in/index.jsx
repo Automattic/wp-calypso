@@ -15,14 +15,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Gravatar from 'components/gravatar';
-import Button from 'components/button';
-import InviteFormHeader from 'my-sites/invites/invite-form-header';
-import { acceptInvite } from 'lib/invites/actions';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import analytics from 'lib/analytics';
+import Card from 'client/components/card';
+import Gravatar from 'client/components/gravatar';
+import Button from 'client/components/button';
+import InviteFormHeader from 'client/my-sites/invites/invite-form-header';
+import { acceptInvite } from 'client/lib/invites/actions';
+import LoggedOutFormLinks from 'client/components/logged-out-form/links';
+import LoggedOutFormLinkItem from 'client/components/logged-out-form/link-item';
+import analytics from 'client/lib/analytics';
 
 class InviteAcceptLoggedIn extends React.Component {
 	state = { submitting: false };

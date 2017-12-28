@@ -10,13 +10,13 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import userSettings from 'lib/user-settings';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import NotificationsComponent from 'me/notification-settings/main';
-import CommentSettingsComponent from 'me/notification-settings/comment-settings';
-import WPcomSettingsComponent from 'me/notification-settings/wpcom-settings';
-import NotificationSubscriptions from 'me/notification-settings/reader-subscriptions';
+import analytics from 'client/lib/analytics';
+import userSettings from 'client/lib/user-settings';
+import { setDocumentHeadTitle as setTitle } from 'client/state/document-head/actions';
+import NotificationsComponent from 'client/me/notification-settings/main';
+import CommentSettingsComponent from 'client/me/notification-settings/comment-settings';
+import WPcomSettingsComponent from 'client/me/notification-settings/wpcom-settings';
+import NotificationSubscriptions from 'client/me/notification-settings/reader-subscriptions';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 

@@ -13,10 +13,10 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import MasterbarLoggedOut from 'layout/masterbar/logged-out';
-import { getSection } from 'state/ui/selectors';
-import OauthClientMasterbar from 'layout/masterbar/oauth-client';
-import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
+import MasterbarLoggedOut from 'client/layout/masterbar/logged-out';
+import { getSection } from 'client/state/ui/selectors';
+import OauthClientMasterbar from 'client/layout/masterbar/oauth-client';
+import { getCurrentOAuth2Client, showOAuth2Layout } from 'client/state/ui/oauth2-clients/selectors';
 
 // Returns true if given section should display sidebar for logged out users.
 const hasSidebar = section => {

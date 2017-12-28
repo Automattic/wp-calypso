@@ -11,19 +11,19 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import EmptyContent from 'components/empty-content';
-import DocumentHead from 'components/data/document-head';
-import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
-import ModerateComment from 'components/data/moderate-comment';
-import Comment from 'my-sites/comments/comment';
-import CommentPermalink from 'my-sites/comment/comment-permalink';
-import CommentDeleteWarning from 'my-sites/comment/comment-delete-warning';
-import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { preventWidows } from 'lib/formatting';
-import { getSiteComment, canCurrentUser } from 'state/selectors';
-import getSiteId from 'state/selectors/get-site-id';
+import Main from 'client/components/main';
+import EmptyContent from 'client/components/empty-content';
+import DocumentHead from 'client/components/data/document-head';
+import QuerySiteCommentsTree from 'client/components/data/query-site-comments-tree';
+import ModerateComment from 'client/components/data/moderate-comment';
+import Comment from 'client/my-sites/comments/comment';
+import CommentPermalink from 'client/my-sites/comment/comment-permalink';
+import CommentDeleteWarning from 'client/my-sites/comment/comment-delete-warning';
+import CommentListHeader from 'client/my-sites/comments/comment-list/comment-list-header';
+import PageViewTracker from 'client/lib/analytics/page-view-tracker';
+import { preventWidows } from 'client/lib/formatting';
+import { getSiteComment, canCurrentUser } from 'client/state/selectors';
+import getSiteId from 'client/state/selectors/get-site-id';
 
 export class CommentView extends Component {
 	static propTypes = {

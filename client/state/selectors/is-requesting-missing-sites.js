@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSites } from 'state/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getSites } from 'client/state/selectors';
 
 /**
  * Returns true if we are requesting sites we don't have yet.

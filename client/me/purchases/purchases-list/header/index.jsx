@@ -11,10 +11,10 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'client/components/section-nav/item';
+import NavTabs from 'client/components/section-nav/tabs';
 import paths from '../../paths.js';
-import SectionNav from 'components/section-nav';
+import SectionNav from 'client/components/section-nav';
 
 const PurchasesHeader = ( { section } ) => {
 	let text = i18n.translate( 'Billing History' );

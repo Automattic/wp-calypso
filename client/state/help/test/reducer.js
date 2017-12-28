@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { selectedSiteId } from '../reducer';
-import { HELP_CONTACT_FORM_SITE_SELECT } from 'state/action-types';
+import { HELP_CONTACT_FORM_SITE_SELECT } from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#selectedSiteId()', () => {

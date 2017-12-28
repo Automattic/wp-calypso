@@ -10,9 +10,9 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED,
 	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
-} from 'woocommerce/state/action-types';
-import { LOADING } from 'woocommerce/state/constants';
-import { createReducer } from 'state/utils';
+} from 'client/extensions/woocommerce/state/action-types';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
+import { createReducer } from 'client/state/utils';
 
 const reducers = {};
 

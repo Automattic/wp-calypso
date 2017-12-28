@@ -4,8 +4,8 @@
  * External dependencies
  */
 
-import { combineReducers } from 'state/utils';
-import { WOOCOMMERCE_UI_ORDERS_SET_QUERY } from 'woocommerce/state/action-types';
+import { combineReducers } from 'client/state/utils';
+import { WOOCOMMERCE_UI_ORDERS_SET_QUERY } from 'client/extensions/woocommerce/state/action-types';
 
 /**
  * Tracks the current page of orders displayed for the current site.

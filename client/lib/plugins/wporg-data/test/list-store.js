@@ -9,8 +9,8 @@ import { assert } from 'chai';
  */
 import actionsData from './fixtures/actions';
 import actionsSpies from './mocks/actions';
-import Dispatcher from 'dispatcher';
-import PluginsListsStore from 'lib/plugins/wporg-data/list-store';
+import Dispatcher from 'client/dispatcher';
+import PluginsListsStore from 'client/lib/plugins/wporg-data/list-store';
 
 jest.mock( 'config', () => ( {
 	isEnabled: () => true,

@@ -11,7 +11,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import HappychatButton from 'components/happychat/button';
+import HappychatButton from 'client/components/happychat/button';
 
 export default localize( ( { translate } ) => {
 	return (

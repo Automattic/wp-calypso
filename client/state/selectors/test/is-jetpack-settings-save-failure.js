@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isJetpackSettingsSaveFailure } from 'state/selectors';
+import { isJetpackSettingsSaveFailure } from 'client/state/selectors';
 
 describe( 'isJetpackSettingsSaveFailure()', () => {
 	test( 'should return false if the site is not attached', () => {

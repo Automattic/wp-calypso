@@ -8,9 +8,9 @@ import { get, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSite } from 'state/sites/selectors';
-import { cartItems } from 'lib/cart-values';
-import { isBusiness, isJetpackPlan } from 'lib/products-values';
+import { getSite } from 'client/state/sites/selectors';
+import { cartItems } from 'client/lib/cart-values';
+import { isBusiness, isJetpackPlan } from 'client/lib/products-values';
 import config from 'config';
 
 /**

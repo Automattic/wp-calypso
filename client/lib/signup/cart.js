@@ -9,10 +9,10 @@ import { forEach } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import productsListFactory from 'lib/products-list';
+import wpcom from 'client/lib/wp';
+import productsListFactory from 'client/lib/products-list';
 const productsList = productsListFactory();
-import { cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
+import { cartItems, fillInAllCartItemAttributes } from 'client/lib/cart-values';
 
 function addProductsToCart( cart, newCartItems ) {
 	forEach( newCartItems, function( cartItem ) {

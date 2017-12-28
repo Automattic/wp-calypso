@@ -12,27 +12,27 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { cancelPrivacyProtection } from 'state/purchases/actions';
-import Card from 'components/card';
-import HeaderCake from 'components/header-cake';
+import Button from 'client/components/button';
+import { cancelPrivacyProtection } from 'client/state/purchases/actions';
+import Card from 'client/components/card';
+import HeaderCake from 'client/components/header-cake';
 import {
 	getByPurchaseId,
 	getPurchasesError,
 	hasLoadedUserPurchasesFromServer,
-} from 'state/purchases/selectors';
+} from 'client/state/purchases/selectors';
 import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
-import { isRequestingSites } from 'state/sites/selectors';
-import Main from 'components/main';
-import notices from 'notices';
-import Notice from 'components/notice';
+import { getSelectedSite as getSelectedSiteSelector } from 'client/state/ui/selectors';
+import { hasPrivacyProtection, isRefundable } from 'client/lib/purchases';
+import { isRequestingSites } from 'client/state/sites/selectors';
+import Main from 'client/components/main';
+import notices from 'client/notices';
+import Notice from 'client/components/notice';
 import paths from '../paths';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
-import { CALYPSO_CONTACT } from 'lib/url/support';
+import QueryUserPurchases from 'client/components/data/query-user-purchases';
+import titles from 'client/me/purchases/titles';
+import userFactory from 'client/lib/user';
+import { CALYPSO_CONTACT } from 'client/lib/url/support';
 
 const user = userFactory();
 

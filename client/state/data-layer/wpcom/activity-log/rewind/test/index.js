@@ -10,7 +10,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { receiveRewindStatus, receiveRewindStatusError } from '../';
-import { updateRewindStatus, rewindStatusError } from 'state/activity-log/actions';
+import { updateRewindStatus, rewindStatusError } from 'client/state/activity-log/actions';
 
 const SITE_ID = 77203074;
 

@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestCredentials } from 'state/jetpack/credentials/actions';
+import { requestCredentials } from 'client/state/jetpack/credentials/actions';
 
 class QueryJetpackCredentials extends Component {
 	componentWillMount() {

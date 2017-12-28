@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import tableRows from './table-rows';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 class TransactionsHeader extends React.Component {
 	state = {

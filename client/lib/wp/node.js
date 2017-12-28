@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import wpcomUndocumented from 'lib/wpcom-undocumented';
+import wpcomUndocumented from 'client/lib/wpcom-undocumented';
 import config from 'config';
 import { injectLocalization } from './localization';
 

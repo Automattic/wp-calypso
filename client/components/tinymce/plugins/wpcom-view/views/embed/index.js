@@ -9,12 +9,12 @@ import { defer, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import EmbedsListStore from 'lib/embeds/list-store';
-import EmbedsStore from 'lib/embeds/store';
-import actions from 'lib/embeds/actions';
+import EmbedsListStore from 'client/lib/embeds/list-store';
+import EmbedsStore from 'client/lib/embeds/store';
+import actions from 'client/lib/embeds/actions';
 import EmbedView from './view';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { SELECTED_SITE_SUBSCRIBE, SELECTED_SITE_UNSUBSCRIBE } from 'state/action-types';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { SELECTED_SITE_SUBSCRIBE, SELECTED_SITE_UNSUBSCRIBE } from 'client/state/action-types';
 
 export default class EmbedViewManager extends EventEmitter {
 	constructor() {

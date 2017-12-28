@@ -12,26 +12,26 @@ import { flowRight, partialRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
-import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
-import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
-import SiteVerification from 'my-sites/site-settings/seo-settings/site-verification';
-import AnalyticsSettings from 'my-sites/site-settings/form-analytics';
-import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
-import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
-import JetpackAds from 'my-sites/site-settings/jetpack-ads';
-import RelatedPosts from 'my-sites/site-settings/related-posts';
-import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
-import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
-import Sitemaps from 'my-sites/site-settings/sitemaps';
-import Search from 'my-sites/site-settings/search';
-import Placeholder from 'my-sites/site-settings/placeholder';
-import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import Main from 'client/components/main';
+import DocumentHead from 'client/components/data/document-head';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import SiteSettingsNavigation from 'client/my-sites/site-settings/navigation';
+import SeoSettingsMain from 'client/my-sites/site-settings/seo-settings/main';
+import SeoSettingsHelpCard from 'client/my-sites/site-settings/seo-settings/help';
+import SiteVerification from 'client/my-sites/site-settings/seo-settings/site-verification';
+import AnalyticsSettings from 'client/my-sites/site-settings/form-analytics';
+import JetpackDevModeNotice from 'client/my-sites/site-settings/jetpack-dev-mode-notice';
+import JetpackSiteStats from 'client/my-sites/site-settings/jetpack-site-stats';
+import JetpackAds from 'client/my-sites/site-settings/jetpack-ads';
+import RelatedPosts from 'client/my-sites/site-settings/related-posts';
+import AmpJetpack from 'client/my-sites/site-settings/amp/jetpack';
+import AmpWpcom from 'client/my-sites/site-settings/amp/wpcom';
+import Sitemaps from 'client/my-sites/site-settings/sitemaps';
+import Search from 'client/my-sites/site-settings/search';
+import Placeholder from 'client/my-sites/site-settings/placeholder';
+import wrapSettingsForm from 'client/my-sites/site-settings/wrap-settings-form';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'client/state/sites/selectors';
 
 const SiteSettingsTraffic = ( {
 	fields,

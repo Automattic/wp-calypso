@@ -5,7 +5,7 @@
  */
 
 import { map, pickBy } from 'lodash';
-import createSelector from 'lib/create-selector';
+import createSelector from 'client/lib/create-selector';
 
 /**
  * Returns a list of site IDs blocked by the user

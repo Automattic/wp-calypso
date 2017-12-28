@@ -11,12 +11,12 @@ import React from 'react';
  * Internal Dependencies
  */
 import { connect } from 'react-redux';
-import QueryReaderTeams from 'components/data/query-reader-teams';
-import QueryBlogStickers from 'components/data/query-blog-stickers';
-import { getReaderTeams, getBlogStickers } from 'state/selectors';
-import BlogStickersList from 'blocks/blog-stickers/list';
-import InfoPopover from 'components/info-popover';
-import { isAutomatticTeamMember } from 'reader/lib/teams';
+import QueryReaderTeams from 'client/components/data/query-reader-teams';
+import QueryBlogStickers from 'client/components/data/query-blog-stickers';
+import { getReaderTeams, getBlogStickers } from 'client/state/selectors';
+import BlogStickersList from 'client/blocks/blog-stickers/list';
+import InfoPopover from 'client/components/info-popover';
+import { isAutomatticTeamMember } from 'client/reader/lib/teams';
 
 const BlogStickers = ( { blogId, teams, stickers } ) => {
 	const isTeamMember = isAutomatticTeamMember( teams );

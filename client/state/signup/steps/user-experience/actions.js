@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { SIGNUP_STEPS_USER_EXPERIENCE_SET } from 'state/action-types';
+import { SIGNUP_STEPS_USER_EXPERIENCE_SET } from 'client/state/action-types';
 
 export function setUserExperience( userExperience ) {
 	return {

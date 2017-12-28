@@ -9,10 +9,10 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { THEME_FILTERS_REQUEST, THEME_FILTERS_ADD } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
+import { THEME_FILTERS_REQUEST, THEME_FILTERS_ADD } from 'client/state/action-types';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'client/state/notices/actions';
 
 const fetchFilters = ( { dispatch }, action ) => {
 	dispatch(

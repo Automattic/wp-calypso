@@ -16,15 +16,15 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import viewport from 'lib/viewport';
-import { getHappychatAuth } from 'state/happychat/utils';
-import hasUnreadMessages from 'state/happychat/selectors/has-unread-messages';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
-import { initConnection } from 'state/happychat/connection/actions';
-import { openChat } from 'state/happychat/ui/actions';
-import Button from 'components/button';
+import viewport from 'client/lib/viewport';
+import { getHappychatAuth } from 'client/state/happychat/utils';
+import hasUnreadMessages from 'client/state/happychat/selectors/has-unread-messages';
+import hasActiveHappychatSession from 'client/state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'client/state/happychat/selectors/is-happychat-available';
+import isHappychatConnectionUninitialized from 'client/state/happychat/selectors/is-happychat-connection-uninitialized';
+import { initConnection } from 'client/state/happychat/connection/actions';
+import { openChat } from 'client/state/happychat/ui/actions';
+import Button from 'client/components/button';
 
 export class HappychatButton extends Component {
 	static propTypes = {

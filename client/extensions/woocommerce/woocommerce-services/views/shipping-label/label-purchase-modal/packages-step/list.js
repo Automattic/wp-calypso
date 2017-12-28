@@ -13,13 +13,9 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import getPackageDescriptions from './get-package-descriptions';
-import { openPackage } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import {
-	getShippingLabel,
-	isLoaded,
-	getFormErrors,
-} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
+import { openPackage } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
+import { getShippingLabel, isLoaded, getFormErrors } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { getAllPackageDefinitions } from 'client/extensions/woocommerce/woocommerce-services/state/packages/selectors';
 
 const PackageList = ( props ) => {
 	const { orderId, siteId, selected, all, errors, packageId, translate } = props;

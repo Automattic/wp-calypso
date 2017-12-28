@@ -13,15 +13,15 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import QueryPostTypes from 'components/data/query-post-types';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { isMobile } from 'lib/viewport';
-import { recordTracksEvent } from 'state/analytics/actions';
+import Notice from 'client/components/notice';
+import { getSelectedSiteId, getSelectedSite } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPost } from 'client/state/posts/selectors';
+import { getPostType } from 'client/state/post-types/selectors';
+import QueryPostTypes from 'client/components/data/query-post-types';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
+import { isMobile } from 'client/lib/viewport';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 export class EditorNotice extends Component {
 	static propTypes = {

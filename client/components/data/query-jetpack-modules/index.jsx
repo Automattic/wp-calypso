@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isFetchingJetpackModules } from 'state/selectors';
-import { fetchModuleList } from 'state/jetpack/modules/actions';
+import { isFetchingJetpackModules } from 'client/state/selectors';
+import { fetchModuleList } from 'client/state/jetpack/modules/actions';
 
 class QueryJetpackModules extends Component {
 	static propTypes = {

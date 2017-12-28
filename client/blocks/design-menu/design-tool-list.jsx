@@ -12,9 +12,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import SidebarHeading from 'layout/sidebar/heading';
-import SidebarMenu from 'layout/sidebar/menu';
-import SidebarItem from 'layout/sidebar/item';
+import SidebarHeading from 'client/layout/sidebar/heading';
+import SidebarMenu from 'client/layout/sidebar/menu';
+import SidebarItem from 'client/layout/sidebar/item';
 
 class DesignToolList extends React.Component {
 	static propTypes = {

@@ -12,8 +12,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Search from 'components/search';
+import Card from 'client/components/card';
+import Search from 'client/components/search';
 import PostSuggestions from './post-suggestions';
 
 class SearchAutocomplete extends Component {

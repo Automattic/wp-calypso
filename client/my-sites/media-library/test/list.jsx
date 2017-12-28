@@ -16,10 +16,10 @@ import React from 'react';
  */
 import { MediaLibraryList as MediaList } from '../list';
 import fixtures from './fixtures';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import Dispatcher from 'dispatcher';
-import MediaActions from 'lib/media/actions';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import MediaLibrarySelectedData from 'client/components/data/media-library-selected-data';
+import Dispatcher from 'client/dispatcher';
+import MediaActions from 'client/lib/media/actions';
+import MediaLibrarySelectedStore from 'client/lib/media/library-selected-store';
 
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'components/infinite-list', () => require( 'components/empty-component' ) );

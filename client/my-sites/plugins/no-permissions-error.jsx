@@ -11,11 +11,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import EmptyContent from 'components/empty-content';
-import Main from 'components/main';
-import { preventWidows } from 'lib/formatting';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import DocumentHead from 'client/components/data/document-head';
+import EmptyContent from 'client/components/empty-content';
+import Main from 'client/components/main';
+import { preventWidows } from 'client/lib/formatting';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
 
 const NoPermissionsError = ( { title, translate } ) => (
 	<Main>

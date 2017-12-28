@@ -10,9 +10,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { requestCode, resetCode } from 'lib/auth-code-request-store/actions';
-import { default as Store, requestState } from 'lib/auth-code-request-store';
-import Notice from 'components/notice';
+import { requestCode, resetCode } from 'client/lib/auth-code-request-store/actions';
+import { default as Store, requestState } from 'client/lib/auth-code-request-store';
+import Notice from 'client/components/notice';
 
 class AuthCodeButton extends React.Component {
 	state = Store.get();

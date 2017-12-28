@@ -11,13 +11,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import DomainsStore from 'lib/domains/store';
-import StoreConnection from 'components/data/store-connection';
-import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
-import UsersStore from 'lib/users/store';
-import { fetchUsers } from 'lib/users/actions';
-import { fetchDomains, fetchWapiDomainInfo } from 'lib/upgrades/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import DomainsStore from 'client/lib/domains/store';
+import StoreConnection from 'client/components/data/store-connection';
+import WapiDomainInfoStore from 'client/lib/domains/wapi-domain-info/store';
+import UsersStore from 'client/lib/users/store';
+import { fetchUsers } from 'client/lib/users/actions';
+import { fetchDomains, fetchWapiDomainInfo } from 'client/lib/upgrades/actions';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 const stores = [ DomainsStore, WapiDomainInfoStore, UsersStore ];
 

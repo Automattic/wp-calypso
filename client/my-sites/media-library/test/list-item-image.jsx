@@ -15,8 +15,8 @@ import React from 'react';
  * Internal dependencies
  */
 import fixtures from './fixtures';
-import resize from 'lib/resize-image-url';
-import ListItemImage from 'my-sites/media-library/list-item-image';
+import resize from 'client/lib/resize-image-url';
+import ListItemImage from 'client/my-sites/media-library/list-item-image';
 
 const WIDTH = 450;
 

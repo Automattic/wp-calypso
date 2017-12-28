@@ -11,7 +11,7 @@ import i18n from 'i18n-calypso';
 * Internal dependencies
 */
 import config from 'config';
-import stepActions from 'lib/signup/step-actions';
+import stepActions from 'client/lib/signup/step-actions';
 
 export default {
 	survey: {

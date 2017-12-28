@@ -8,7 +8,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import SiteIcon from 'blocks/site-icon';
+import SiteIcon from 'client/blocks/site-icon';
 
 const genericFeedIcon = <SiteIcon size={ 48 } />;
 

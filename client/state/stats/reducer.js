@@ -5,7 +5,7 @@
  */
 
 import posts from './posts/reducer';
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import lists from './lists/reducer';
 
 export default combineReducers( {

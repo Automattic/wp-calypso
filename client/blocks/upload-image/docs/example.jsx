@@ -12,8 +12,8 @@ import { connect } from 'react-redux';
  */
 import UploadImage from '../';
 import { ERROR_UPLOADING_IMAGE } from '../constants';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { AspectRatios } from 'client/state/ui/editor/image-editor/constants';
+import { getCurrentUser } from 'client/state/current-user/selectors';
 
 class UploadImageExample extends Component {
 	state = {

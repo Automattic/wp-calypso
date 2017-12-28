@@ -14,7 +14,7 @@ import Immutable from 'immutable';
  */
 import { actionTypes } from './constants';
 import toggleState from './toggle-state';
-import { createReducerStore } from 'lib/store';
+import { createReducerStore } from 'client/lib/store';
 
 const initialState = {
 	isFetching: false,

@@ -15,18 +15,18 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
-import Card from 'components/card/compact';
-import FormButton from 'components/forms/form-button';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormLabel from 'components/forms/form-label';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import { cartItems } from 'lib/cart-values';
-import paths from 'my-sites/domains/paths';
-import ValidationErrorList from 'notices/validation-error-list';
-import upgradesActions from 'lib/upgrades/actions';
-import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
-import googleAppsLibrary from 'lib/domains/google-apps-users';
+import analyticsMixin from 'client/lib/mixins/analytics';
+import Card from 'client/components/card/compact';
+import FormButton from 'client/components/forms/form-button';
+import FormFooter from 'client/my-sites/domains/domain-management/components/form-footer';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInputWithAffixes from 'client/components/forms/form-text-input-with-affixes';
+import { cartItems } from 'client/lib/cart-values';
+import paths from 'client/my-sites/domains/paths';
+import ValidationErrorList from 'client/notices/validation-error-list';
+import upgradesActions from 'client/lib/upgrades/actions';
+import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'client/lib/domains';
+import googleAppsLibrary from 'client/lib/domains/google-apps-users';
 import DomainsSelect from './domains-select';
 
 /**
@@ -35,7 +35,7 @@ import DomainsSelect from './domains-select';
 const validateUsers = googleAppsLibrary.validate,
 	filterUsers = googleAppsLibrary.filter;
 
-import Notice from 'components/notice';
+import Notice from 'client/components/notice';
 
 const AddEmailAddressesCard = createReactClass( {
 	displayName: 'AddEmailAddressesCard',

@@ -10,7 +10,7 @@ import { expect } from 'chai';
  */
 import { actionListClear, actionListAnnotate } from '../actions';
 import reducer from '../reducer';
-import * as fxt from 'woocommerce/state/action-list/test/fixtures';
+import * as fxt from 'client/extensions/woocommerce/state/action-list/test/fixtures';
 
 describe( 'reducer', () => {
 	test( 'should initialize to null', () => {

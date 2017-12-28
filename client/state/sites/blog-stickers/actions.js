@@ -9,7 +9,7 @@ import {
 	SITES_BLOG_STICKER_REMOVE,
 	SITES_BLOG_STICKER_LIST,
 	SITES_BLOG_STICKER_LIST_RECEIVE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export function addBlogSticker( blogId, stickerName ) {
 	return {

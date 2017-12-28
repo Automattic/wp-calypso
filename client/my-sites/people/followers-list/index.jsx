@@ -12,22 +12,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PeopleListItem from 'my-sites/people/people-list-item';
-import Card from 'components/card';
-import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
-import FollowersActions from 'lib/followers/actions';
-import EmailFollowersActions from 'lib/email-followers/actions';
-import InfiniteList from 'components/infinite-list';
-import FollowersData from 'components/data/followers-data';
-import EmailFollowersData from 'components/data/email-followers-data';
-import NoResults from 'my-sites/no-results';
-import EmptyContent from 'components/empty-content';
-import FollowersStore from 'lib/followers/store';
-import EmailFollowersStore from 'lib/email-followers/store';
-import accept from 'lib/accept';
-import analytics from 'lib/analytics';
-import Button from 'components/button';
-import ListEnd from 'components/list-end';
+import PeopleListItem from 'client/my-sites/people/people-list-item';
+import Card from 'client/components/card';
+import PeopleListSectionHeader from 'client/my-sites/people/people-list-section-header';
+import FollowersActions from 'client/lib/followers/actions';
+import EmailFollowersActions from 'client/lib/email-followers/actions';
+import InfiniteList from 'client/components/infinite-list';
+import FollowersData from 'client/components/data/followers-data';
+import EmailFollowersData from 'client/components/data/email-followers-data';
+import NoResults from 'client/my-sites/no-results';
+import EmptyContent from 'client/components/empty-content';
+import FollowersStore from 'client/lib/followers/store';
+import EmailFollowersStore from 'client/lib/email-followers/store';
+import accept from 'client/lib/accept';
+import analytics from 'client/lib/analytics';
+import Button from 'client/components/button';
+import ListEnd from 'client/components/list-end';
 
 const maxFollowers = 1000;
 

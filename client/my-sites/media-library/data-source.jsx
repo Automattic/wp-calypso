@@ -14,9 +14,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import Button from 'client/components/button';
+import PopoverMenu from 'client/components/popover/menu';
+import PopoverMenuItem from 'client/components/popover/menu-item';
 import config from 'config';
 
 export class MediaLibraryDataSource extends Component {

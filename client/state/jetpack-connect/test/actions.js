@@ -24,7 +24,7 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	SITES_RECEIVE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 

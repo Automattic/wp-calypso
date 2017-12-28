@@ -13,11 +13,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { SetupPath, Steps } from '../../../constants';
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
-import ExternalLink from 'components/external-link';
-import SectionHeader from 'components/section-header';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import Button from 'client/components/button';
+import CompactCard from 'client/components/card/compact';
+import ExternalLink from 'client/components/external-link';
+import SectionHeader from 'client/components/section-header';
+import { getSelectedSiteSlug } from 'client/state/ui/selectors';
 
 class Intro extends Component {
 	static propTypes = {

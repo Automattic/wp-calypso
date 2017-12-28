@@ -11,9 +11,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import { isExternal } from 'lib/url';
-import FollowButton from 'blocks/follow-button/button';
+import Card from 'client/components/card';
+import { isExternal } from 'client/lib/url';
+import FollowButton from 'client/blocks/follow-button/button';
 
 const ListStreamHeader = ( {
 	isPlaceholder,

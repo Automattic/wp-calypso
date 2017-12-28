@@ -10,9 +10,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import support from 'lib/url/support';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import support from 'client/lib/url/support';
 
 const TransferProhibited = ( { translate } ) => (
 	<div>

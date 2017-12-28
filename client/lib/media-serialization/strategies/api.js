@@ -9,7 +9,7 @@ import { assign } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaUtils from 'lib/media/utils';
+import MediaUtils from 'client/lib/media/utils';
 import { MediaTypes } from '../constants';
 
 /**

@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
+import Notice from 'client/components/notice';
 
 function DomainSuggestionFlag( { content, status = 'info' } ) {
 	return (

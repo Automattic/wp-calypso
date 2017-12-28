@@ -9,9 +9,9 @@ import { isNumber, toArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import { normalizePostForApi } from './utils';
-import { getEditedPost } from 'state/posts/selectors';
+import { getEditedPost } from 'client/state/posts/selectors';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -30,7 +30,7 @@ import {
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Module constants

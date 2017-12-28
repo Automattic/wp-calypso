@@ -8,7 +8,7 @@ import { reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import {
 	USER_PROFILE_LINKS_ADD_DUPLICATE,
 	USER_PROFILE_LINKS_ADD_FAILURE,
@@ -18,7 +18,7 @@ import {
 	USER_PROFILE_LINKS_DELETE_SUCCESS,
 	USER_PROFILE_LINKS_RECEIVE,
 	USER_PROFILE_LINKS_RESET_ERRORS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const items = createReducer( null, {
 	[ USER_PROFILE_LINKS_RECEIVE ]: ( state, { profileLinks } ) => profileLinks,

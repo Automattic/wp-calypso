@@ -13,15 +13,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Accordion from 'components/accordion';
-import Button from 'components/button';
-import AccordionSection from 'components/accordion/section';
-import CountedTextarea from 'components/forms/counted-textarea';
-import PostActions from 'lib/posts/actions';
-import EditorDrawerLabel from 'post-editor/editor-drawer/label';
-import WebPreview from 'components/web-preview';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import Accordion from 'client/components/accordion';
+import Button from 'client/components/button';
+import AccordionSection from 'client/components/accordion/section';
+import CountedTextarea from 'client/components/forms/counted-textarea';
+import PostActions from 'client/lib/posts/actions';
+import EditorDrawerLabel from 'client/post-editor/editor-drawer/label';
+import WebPreview from 'client/components/web-preview';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 class EditorSeoAccordion extends Component {
 	static propTypes = {

@@ -11,15 +11,15 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import route from 'lib/route';
-import analytics from 'lib/analytics';
+import route from 'client/lib/route';
+import analytics from 'client/lib/analytics';
 import titlecase from 'to-title-case';
-import { canAccessWordads } from 'lib/ads/utils';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { userCan } from 'lib/site/utils';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import Ads from 'my-sites/ads/main';
+import { canAccessWordads } from 'client/lib/ads/utils';
+import { setDocumentHeadTitle as setTitle } from 'client/state/document-head/actions';
+import { userCan } from 'client/lib/site/utils';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import Ads from 'client/my-sites/ads/main';
 
 function _recordPageView( context, analyticsPageTitle ) {
 	var basePath = route.sectionify( context.path );

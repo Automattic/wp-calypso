@@ -11,21 +11,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from 'client/components/button';
 import config from 'config';
-import ProfileGravatar from 'me/profile-gravatar';
-import purchasesPaths from 'me/purchases/paths';
-import Sidebar from 'layout/sidebar';
-import SidebarFooter from 'layout/sidebar/footer';
-import SidebarHeading from 'layout/sidebar/heading';
-import SidebarItem from 'layout/sidebar/item';
-import SidebarMenu from 'layout/sidebar/menu';
-import userFactory from 'lib/user';
-import userUtilities from 'lib/user/utils';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { logoutUser } from 'state/login/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import ProfileGravatar from 'client/me/profile-gravatar';
+import purchasesPaths from 'client/me/purchases/paths';
+import Sidebar from 'client/layout/sidebar';
+import SidebarFooter from 'client/layout/sidebar/footer';
+import SidebarHeading from 'client/layout/sidebar/heading';
+import SidebarItem from 'client/layout/sidebar/item';
+import SidebarMenu from 'client/layout/sidebar/menu';
+import userFactory from 'client/lib/user';
+import userUtilities from 'client/lib/user/utils';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { logoutUser } from 'client/state/login/actions';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import { setNextLayoutFocus } from 'client/state/ui/layout-focus/actions';
 
 /**
  * Module variables

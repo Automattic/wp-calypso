@@ -15,20 +15,24 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { activatePlugin, installPlugin, fetchPlugins } from 'state/plugins/installed/actions';
-import analytics from 'lib/analytics';
-import Button from 'components/button';
-import { fetchPluginData } from 'state/plugins/wporg/actions';
-import { getPlugin } from 'state/plugins/wporg/selectors';
-import { getPlugins } from 'state/plugins/installed/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import ProgressBar from 'components/progress-bar';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import {
+	activatePlugin,
+	installPlugin,
+	fetchPlugins,
+} from 'client/state/plugins/installed/actions';
+import analytics from 'client/lib/analytics';
+import Button from 'client/components/button';
+import { fetchPluginData } from 'client/state/plugins/wporg/actions';
+import { getPlugin } from 'client/state/plugins/wporg/selectors';
+import { getPlugins } from 'client/state/plugins/installed/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import ProgressBar from 'client/components/progress-bar';
+import QueryJetpackPlugins from 'client/components/data/query-jetpack-plugins';
 import SetupHeader from './setup-header';
-import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
-import { hasSitePendingAutomatedTransfer } from 'state/selectors';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import { transferStates } from 'state/automated-transfer/constants';
+import { setFinishedInstallOfRequiredPlugins } from 'client/extensions/woocommerce/state/sites/setup-choices/actions';
+import { hasSitePendingAutomatedTransfer } from 'client/state/selectors';
+import { getAutomatedTransferStatus } from 'client/state/automated-transfer/selectors';
+import { transferStates } from 'client/state/automated-transfer/constants';
 
 // Time in seconds to complete various steps.
 const TIME_TO_TRANSFER_ACTIVE = 5;

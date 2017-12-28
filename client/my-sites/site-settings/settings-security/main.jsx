@@ -12,20 +12,20 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
-import FormSecurity from 'my-sites/site-settings/form-security';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { isRewindActive } from 'state/selectors';
-import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
-import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import Placeholder from 'my-sites/site-settings/placeholder';
-import Backups from 'my-sites/site-settings/jetpack-credentials';
-import QueryRewindStatus from 'components/data/query-rewind-status';
+import Main from 'client/components/main';
+import DocumentHead from 'client/components/data/document-head';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import SiteSettingsNavigation from 'client/my-sites/site-settings/navigation';
+import FormSecurity from 'client/my-sites/site-settings/form-security';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { isRewindActive } from 'client/state/selectors';
+import JetpackDevModeNotice from 'client/my-sites/site-settings/jetpack-dev-mode-notice';
+import JetpackMonitor from 'client/my-sites/site-settings/form-jetpack-monitor';
+import JetpackManageErrorPage from 'client/my-sites/jetpack-manage-error-page';
+import Placeholder from 'client/my-sites/site-settings/placeholder';
+import Backups from 'client/my-sites/site-settings/jetpack-credentials';
+import QueryRewindStatus from 'client/components/data/query-rewind-status';
 
 const SiteSettingsSecurity = ( { rewindActive, site, siteId, siteIsJetpack, translate } ) => {
 	if ( ! site ) {

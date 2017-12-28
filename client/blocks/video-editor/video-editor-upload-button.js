@@ -11,8 +11,8 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FilePicker from 'components/file-picker';
+import Button from 'client/components/button';
+import FilePicker from 'client/components/file-picker';
 
 class VideoEditorUploadButton extends Component {
 	static propTypes = {

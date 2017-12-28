@@ -13,13 +13,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getEditedPost } from 'state/posts/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import QueryPostTypes from 'components/data/query-post-types';
-import { decodeEntities } from 'lib/formatting';
-import PostStatus from 'blocks/post-status';
+import { getEditedPost } from 'client/state/posts/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getPostType } from 'client/state/post-types/selectors';
+import QueryPostTypes from 'client/components/data/query-post-types';
+import { decodeEntities } from 'client/lib/formatting';
+import PostStatus from 'client/blocks/post-status';
 
 function EditorPostType( { translate, siteId, typeSlug, type, globalId, isSettings } ) {
 	let label;

@@ -14,14 +14,14 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import FormRadio from 'components/forms/form-radio';
-import QueryPostFormats from 'components/data/query-post-formats';
-import PostActions from 'lib/posts/actions';
-import { recordStat, recordEvent } from 'lib/posts/stats';
-import AccordionSection from 'components/accordion/section';
-import EditorThemeHelp from 'post-editor/editor-theme-help';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostFormats } from 'state/post-formats/selectors';
+import FormRadio from 'client/components/forms/form-radio';
+import QueryPostFormats from 'client/components/data/query-post-formats';
+import PostActions from 'client/lib/posts/actions';
+import { recordStat, recordEvent } from 'client/lib/posts/stats';
+import AccordionSection from 'client/components/accordion/section';
+import EditorThemeHelp from 'client/post-editor/editor-theme-help';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getPostFormats } from 'client/state/post-formats/selectors';
 
 class EditorPostFormats extends React.Component {
 	static propTypes = {

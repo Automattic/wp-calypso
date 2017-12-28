@@ -13,9 +13,9 @@ import { get, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import resizeImageUrl from 'lib/resize-image-url';
-import safeImageUrl from 'lib/safe-image-url';
-import { getNormalizedPost } from 'state/posts/selectors';
+import resizeImageUrl from 'client/lib/resize-image-url';
+import safeImageUrl from 'client/lib/safe-image-url';
+import { getNormalizedPost } from 'client/state/posts/selectors';
 
 function PostTypeListPostThumbnail( { onClick, thumbnail } ) {
 	const classes = classnames( 'post-type-list__post-thumbnail-wrapper', {

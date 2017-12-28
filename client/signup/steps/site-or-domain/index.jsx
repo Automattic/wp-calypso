@@ -12,19 +12,19 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
-import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
+import { cartItems } from 'client/lib/cart-values';
+import StepWrapper from 'client/signup/step-wrapper';
+import SignupActions from 'client/lib/signup/actions';
 import SiteOrDomainChoice from './choice';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
 // TODO: `design-type-with-store`, `design-type`, and this component could be refactored to reduce redundancy
-import DomainImage from 'signup/steps/design-type-with-store/domain-image';
-import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
-import ExistingSite from 'signup/steps/design-type-with-store/existing-site';
-import NavigationLink from 'signup/navigation-link';
-import QueryProductsList from 'components/data/query-products-list';
-import { getAvailableProductsList } from 'state/products-list/selectors';
-import { getDomainProductSlug } from 'lib/domains';
+import DomainImage from 'client/signup/steps/design-type-with-store/domain-image';
+import NewSiteImage from 'client/signup/steps/design-type-with-store/new-site-image';
+import ExistingSite from 'client/signup/steps/design-type-with-store/existing-site';
+import NavigationLink from 'client/signup/navigation-link';
+import QueryProductsList from 'client/components/data/query-products-list';
+import { getAvailableProductsList } from 'client/state/products-list/selectors';
+import { getDomainProductSlug } from 'client/lib/domains';
 
 class SiteOrDomain extends Component {
 	getDomainName() {

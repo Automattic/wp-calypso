@@ -9,15 +9,15 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
 import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 	JETPACK_CREDENTIALS_UPDATE_FAILURE,
 	JETPACK_CREDENTIALS_STORE,
-} from 'state/action-types';
-import { successNotice, errorNotice } from 'state/notices/actions';
+} from 'client/state/action-types';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
 
 export const request = ( { dispatch }, action ) => {
 	const notice = successNotice( i18n.translate( 'Testing connection…' ), { duration: 4000 } );

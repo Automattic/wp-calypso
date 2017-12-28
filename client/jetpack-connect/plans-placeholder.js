@@ -9,7 +9,7 @@ import { times, random } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import Main from 'client/components/main';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const placeholderContent = (

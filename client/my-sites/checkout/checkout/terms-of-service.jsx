@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import support from 'lib/url/support';
+import analytics from 'client/lib/analytics';
+import support from 'client/lib/url/support';
 import Gridicon from 'gridicons';
 
 class TermsOfService extends React.Component {

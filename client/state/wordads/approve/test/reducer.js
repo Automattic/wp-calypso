@@ -16,7 +16,7 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

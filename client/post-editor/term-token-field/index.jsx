@@ -13,16 +13,16 @@ import _debug from 'debug';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getTerms } from 'state/terms/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import { editPost } from 'state/posts/actions';
-import TokenField from 'components/token-field';
-import { decodeEntities } from 'lib/formatting';
-import { recordStat, recordEvent } from 'lib/posts/stats';
-import QueryTerms from 'components/data/query-terms';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getTerms } from 'client/state/terms/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { getPostTypeTaxonomy } from 'client/state/post-types/taxonomies/selectors';
+import { editPost } from 'client/state/posts/actions';
+import TokenField from 'client/components/token-field';
+import { decodeEntities } from 'client/lib/formatting';
+import { recordStat, recordEvent } from 'client/lib/posts/stats';
+import QueryTerms from 'client/components/data/query-terms';
 
 const debug = _debug( 'calypso:post-editor:editor-terms' );
 const DEFAULT_NON_HIERARCHICAL_QUERY = {

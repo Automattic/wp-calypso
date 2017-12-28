@@ -9,12 +9,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { fetchSettings } from 'woocommerce/woocommerce-services/state/label-settings/actions';
-import {
-	areSettingsLoaded,
-	areSettingsFetching,
-	areSettingsErrored,
-} from 'woocommerce/woocommerce-services/state/label-settings/selectors';
+import { fetchSettings } from 'client/extensions/woocommerce/woocommerce-services/state/label-settings/actions';
+import { areSettingsLoaded, areSettingsFetching, areSettingsErrored } from 'client/extensions/woocommerce/woocommerce-services/state/label-settings/selectors';
 
 class QueryLabelSettings extends Component {
 	fetch( props ) {

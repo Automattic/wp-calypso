@@ -13,14 +13,14 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { canCurrentUser } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { canCurrentUser } from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { getPostType } from 'client/state/post-types/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import Button from 'client/components/button';
+import Dialog from 'client/components/dialog';
 
 function EditorForbidden( { translate, userCanEdit, siteSlug } ) {
 	if ( false !== userCanEdit ) {

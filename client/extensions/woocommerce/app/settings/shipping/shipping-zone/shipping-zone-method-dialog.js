@@ -13,17 +13,17 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import Dialog from 'client/components/dialog';
 import FlatRate from './shipping-methods/flat-rate';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import FormToggle from 'components/forms/form-toggle/compact';
+import FormFieldSet from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSelect from 'client/components/forms/form-select';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormToggle from 'client/components/forms/form-toggle/compact';
 import FreeShipping from './shipping-methods/free-shipping';
 import LocalPickup from './shipping-methods/local-pickup';
-import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
-import { getShippingMethodNameMap } from 'woocommerce/state/sites/shipping-methods/selectors';
+import { bindActionCreatorsWithSiteId } from 'client/extensions/woocommerce/lib/redux-utils';
+import { getShippingMethodNameMap } from 'client/extensions/woocommerce/state/sites/shipping-methods/selectors';
 import {
 	changeShippingZoneMethodTitle,
 	changeShippingZoneMethodType,
@@ -31,13 +31,13 @@ import {
 	closeShippingZoneMethod,
 	removeMethodFromShippingZone,
 	toggleOpenedShippingZoneMethodEnabled,
-} from 'woocommerce/state/ui/shipping/zones/methods/actions';
+} from 'client/extensions/woocommerce/state/ui/shipping/zones/methods/actions';
 import {
 	getMethodTypeChangeOptions,
 	getCurrentlyOpenShippingZoneMethod,
 	isCurrentlyOpenShippingZoneMethodNew,
-} from 'woocommerce/state/ui/shipping/zones/methods/selectors';
-import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
+} from 'client/extensions/woocommerce/state/ui/shipping/zones/methods/selectors';
+import { getCurrencyWithEdits } from 'client/extensions/woocommerce/state/ui/payments/currency/selectors';
 
 const ShippingZoneMethodDialog = ( {
 	siteId,

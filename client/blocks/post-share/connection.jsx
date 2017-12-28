@@ -5,12 +5,12 @@
  */
 
 import React from 'react';
-import cssSafeUrl from 'lib/css-safe-url';
+import cssSafeUrl from 'client/lib/css-safe-url';
 
 /**
  * Internal dependencies
  */
-import FormToggle from 'components/forms/form-toggle/compact';
+import FormToggle from 'client/components/forms/form-toggle/compact';
 import classNames from 'classnames';
 import SocialLogo from 'social-logos';
 

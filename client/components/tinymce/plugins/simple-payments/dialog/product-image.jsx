@@ -13,9 +13,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MediaUtils from 'lib/media/utils';
-import QueryMedia from 'components/data/query-media';
-import { getMediaItem } from 'state/selectors';
+import MediaUtils from 'client/lib/media/utils';
+import QueryMedia from 'client/components/data/query-media';
+import { getMediaItem } from 'client/state/selectors';
 
 const ProductImage = ( { siteId, imageId, image } ) => {
 	if ( ! siteId || ! imageId ) {

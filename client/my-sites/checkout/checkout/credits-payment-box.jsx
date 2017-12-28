@@ -14,11 +14,11 @@ import { some } from 'lodash';
 import PayButton from './pay-button';
 import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';
-import { abtest } from 'lib/abtest';
-import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
+import { abtest } from 'client/lib/abtest';
+import CartCoupon from 'client/my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { PLAN_BUSINESS } from 'client/lib/plans/constants';
 import CartToggle from './cart-toggle';
 
 class CreditsPaymentBox extends React.Component {

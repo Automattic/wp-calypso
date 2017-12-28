@@ -9,7 +9,7 @@ import { ReduceStore } from 'flux/utils';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 
 /**
  * Module variables

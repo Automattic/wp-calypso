@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import PeopleLog from 'lib/people/log-store';
-import PeopleActions from 'lib/people/actions';
-import Notice from 'components/notice';
-import { getSelectedSite } from 'state/ui/selectors';
+import PeopleLog from 'client/lib/people/log-store';
+import PeopleActions from 'client/lib/people/actions';
+import Notice from 'client/components/notice';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 const isSameSite = ( siteId, log ) => siteId && log.siteId && log.siteId === siteId;
 

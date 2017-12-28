@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import JetpackColophon from 'components/jetpack-colophon';
+import JetpackColophon from 'client/components/jetpack-colophon';
 
 export default function JetpackColophonExample() {
 	return (

@@ -14,30 +14,33 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
+import ActionHeader from 'client/extensions/woocommerce/components/action-header';
 import {
 	areSettingsGeneralLoaded,
 	areTaxCalculationsEnabled,
-} from 'woocommerce/state/sites/settings/general/selectors';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
 import {
 	areTaxSettingsLoaded,
 	getPricesIncludeTax,
 	getShippingIsTaxFree,
-} from 'woocommerce/state/sites/settings/tax/selectors';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
-import { fetchTaxSettings, updateTaxSettings } from 'woocommerce/state/sites/settings/tax/actions';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import Main from 'components/main';
-import { ProtectFormGuard } from 'lib/protect-form';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+} from 'client/extensions/woocommerce/state/sites/settings/tax/selectors';
+import ExtendedHeader from 'client/extensions/woocommerce/components/extended-header';
+import { fetchTaxRates } from 'client/extensions/woocommerce/state/sites/meta/taxrates/actions';
+import {
+	fetchTaxSettings,
+	updateTaxSettings,
+} from 'client/extensions/woocommerce/state/sites/settings/tax/actions';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import Main from 'client/components/main';
+import { ProtectFormGuard } from 'client/lib/protect-form';
+import QuerySettingsGeneral from 'client/extensions/woocommerce/components/query-settings-general';
 import SettingsNavigation from '../navigation';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import StoreAddress from 'woocommerce/components/store-address';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
+import StoreAddress from 'client/extensions/woocommerce/components/store-address';
 import TaxesOptions from './taxes-options';
 import TaxesRates from './taxes-rates';
 import TaxSettingsSaveButton from './save-button';
-import { updateTaxesEnabledSetting } from 'woocommerce/state/sites/settings/general/actions';
+import { updateTaxesEnabledSetting } from 'client/extensions/woocommerce/state/sites/settings/general/actions';
 
 class SettingsTaxesWooCommerceServices extends Component {
 	constructor( props ) {

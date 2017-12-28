@@ -15,7 +15,7 @@ import {
 	USER_PROFILE_LINKS_RECEIVE,
 	USER_PROFILE_LINKS_REQUEST,
 	USER_PROFILE_LINKS_RESET_ERRORS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns an action object to signal the request of the user's profile links.

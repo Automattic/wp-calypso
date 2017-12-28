@@ -17,14 +17,14 @@ import noticesMiddleware, {
 	onPostSaveSuccess,
 } from '../middleware';
 import { dispatchSuccess, dispatchError } from '../utils';
-import PostQueryManager from 'lib/query-manager/post';
+import PostQueryManager from 'client/lib/query-manager/post';
 import {
 	NOTICE_CREATE,
 	POST_DELETE_FAILURE,
 	POST_RESTORE_FAILURE,
 	POST_SAVE_SUCCESS,
-} from 'state/action-types';
-import { successNotice } from 'state/notices/actions';
+} from 'client/state/action-types';
+import { successNotice } from 'client/state/notices/actions';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'middleware', () => {

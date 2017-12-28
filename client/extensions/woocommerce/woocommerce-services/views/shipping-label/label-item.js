@@ -14,11 +14,7 @@ import RefundDialog from './label-refund-modal';
 import ReprintDialog from './label-reprint-modal';
 import DetailsDialog from './label-details-modal';
 import TrackingLink from './tracking-link';
-import {
-	openRefundDialog,
-	openReprintDialog,
-	openDetailsDialog,
-} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import { openRefundDialog, openReprintDialog, openDetailsDialog } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
 
 class LabelItem extends Component {
 	renderRefund = ( label ) => {

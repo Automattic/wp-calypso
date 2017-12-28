@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { makeLayout } from 'controller';
-import { siteSelection, sites, navigation } from 'my-sites/controller';
+import { makeLayout } from 'client/controller';
+import { siteSelection, sites, navigation } from 'client/my-sites/controller';
 import { preview } from './controller';
 
 export default function( router ) {

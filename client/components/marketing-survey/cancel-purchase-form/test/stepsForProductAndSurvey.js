@@ -9,8 +9,8 @@ import { expect } from 'chai';
  */
 import * as steps from '../steps';
 import stepsForProductAndSurvey from '../stepsForProductAndSurvey';
-import { abtest } from 'lib/abtest';
-import * as plans from 'lib/plans/constants';
+import { abtest } from 'client/lib/abtest';
+import * as plans from 'client/lib/plans/constants';
 jest.mock( 'lib/abtest', () => ( { abtest: require( 'sinon' ).stub() } ) );
 
 const DEFAULT_STEPS = [ steps.INITIAL_STEP, steps.FINAL_STEP ];

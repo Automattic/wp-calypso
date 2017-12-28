@@ -14,20 +14,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Header from 'my-sites/domains/domain-management/components/header';
+import Main from 'client/components/main';
+import Header from 'client/my-sites/domains/domain-management/components/header';
 import CustomNameserversForm from './custom-nameservers-form';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
-import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
+import IcannVerificationCard from 'client/my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
 import DnsTemplates from './dns-templates';
-import paths from 'my-sites/domains/paths';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import * as upgradesActions from 'lib/upgrades/actions';
-import { WPCOM_DEFAULTS, isWpcomDefaults } from 'lib/domains/nameservers';
-import { getSelectedDomain } from 'lib/domains';
+import paths from 'client/my-sites/domains/paths';
+import VerticalNav from 'client/components/vertical-nav';
+import VerticalNavItem from 'client/components/vertical-nav/item';
+import * as upgradesActions from 'client/lib/upgrades/actions';
+import { WPCOM_DEFAULTS, isWpcomDefaults } from 'client/lib/domains/nameservers';
+import { getSelectedDomain } from 'client/lib/domains';
 import { isEmpty } from 'lodash';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'client/state/notices/actions';
 
 class NameServers extends React.Component {
 	static propTypes = {

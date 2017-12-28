@@ -9,10 +9,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import Tile from 'components/tile-grid/tile';
-import TileGrid from 'components/tile-grid';
+import DocumentHead from 'client/components/data/document-head';
+import FormattedHeader from 'client/components/formatted-header';
+import Tile from 'client/components/tile-grid/tile';
+import TileGrid from 'client/components/tile-grid';
 
 class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 	render() {

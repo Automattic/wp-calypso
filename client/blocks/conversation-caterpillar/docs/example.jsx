@@ -7,10 +7,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { ConversationCaterpillar } from 'blocks/conversation-caterpillar';
-import { posts } from 'blocks/reader-post-card/docs/fixtures';
-import { comments, commentsTree } from 'blocks/conversation-caterpillar/docs/fixtures';
-import Card from 'components/card';
+import { ConversationCaterpillar } from 'client/blocks/conversation-caterpillar';
+import { posts } from 'client/blocks/reader-post-card/docs/fixtures';
+import { comments, commentsTree } from 'client/blocks/conversation-caterpillar/docs/fixtures';
+import Card from 'client/components/card';
 
 const ConversationCaterpillarExample = () => {
 	return (

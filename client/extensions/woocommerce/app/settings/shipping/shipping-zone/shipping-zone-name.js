@@ -12,20 +12,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormTextInput from 'components/forms/form-text-input';
-import { changeShippingZoneName } from 'woocommerce/state/ui/shipping/zones/actions';
-import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
-import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
+import Card from 'client/components/card';
+import ExtendedHeader from 'client/extensions/woocommerce/components/extended-header';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { changeShippingZoneName } from 'client/extensions/woocommerce/state/ui/shipping/zones/actions';
+import { bindActionCreatorsWithSiteId } from 'client/extensions/woocommerce/lib/redux-utils';
+import { areShippingZonesFullyLoaded } from 'client/extensions/woocommerce/components/query-shipping-zones';
 import {
 	getCurrentlyEditingShippingZone,
 	generateCurrentlyEditingZoneName,
-} from 'woocommerce/state/ui/shipping/zones/selectors';
+} from 'client/extensions/woocommerce/state/ui/shipping/zones/selectors';
 import {
 	areSettingsGeneralLoaded,
 	areSettingsGeneralLoadError,
-} from 'woocommerce/state/sites/settings/general/selectors';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
 
 const ShippingZoneName = ( {
 	loaded,

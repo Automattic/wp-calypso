@@ -10,10 +10,10 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import postUtils from 'lib/posts/utils';
+import postUtils from 'client/lib/posts/utils';
 import { isEnabled } from 'config';
-import HistoryButton from 'post-editor/editor-ground-control/history-button';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import HistoryButton from 'client/post-editor/editor-ground-control/history-button';
+import { recordEvent, recordStat } from 'client/lib/posts/stats';
 
 export const isSaveAvailableFn = ( {
 	isSaving = false,

@@ -11,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSites } from 'state/selectors';
+import { getSites } from 'client/state/selectors';
 
 const matches = ( item, term, keys ) =>
 	keys.some(

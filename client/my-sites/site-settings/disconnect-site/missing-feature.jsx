@@ -9,11 +9,11 @@ import { findKey, isEmpty, toLower, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import TokenField from 'components/token-field';
-import { addQueryArgs } from 'lib/url';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import TokenField from 'client/components/token-field';
+import { addQueryArgs } from 'client/lib/url';
 
 class MissingFeature extends PureComponent {
 	state = {

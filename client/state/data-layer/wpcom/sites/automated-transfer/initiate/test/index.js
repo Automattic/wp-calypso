@@ -15,9 +15,9 @@ import {
 	receiveError,
 	updateUploadProgress,
 } from '../';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
-import { pluginUploadError, updatePluginUploadProgress } from 'state/plugins/upload/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { fetchAutomatedTransferStatus } from 'client/state/automated-transfer/actions';
+import { pluginUploadError, updatePluginUploadProgress } from 'client/state/plugins/upload/actions';
 
 const siteId = 1916284;
 

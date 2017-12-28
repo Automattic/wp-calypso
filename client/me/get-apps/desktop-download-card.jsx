@@ -13,9 +13,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import { recordTracksEvent } from 'state/analytics/actions';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 const WINDOWS_LINK = 'https://apps.wordpress.com/d/windows?ref=getapps';
 const MAC_LINK = 'https://apps.wordpress.com/d/osx?ref=getapps';

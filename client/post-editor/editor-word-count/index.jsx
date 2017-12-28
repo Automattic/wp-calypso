@@ -11,9 +11,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PostEditStore from 'lib/posts/post-edit-store';
-import userModule from 'lib/user';
-import { countWords } from 'lib/text-utils';
+import PostEditStore from 'client/lib/posts/post-edit-store';
+import userModule from 'client/lib/user';
+import { countWords } from 'client/lib/text-utils';
 
 /**
  * Module variables

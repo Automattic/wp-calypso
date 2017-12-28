@@ -11,16 +11,16 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import { activateModule, deactivateModule } from 'client/state/jetpack/modules/actions';
 import {
 	getJetpackModule,
 	isActivatingJetpackModule,
 	isDeactivatingJetpackModule,
 	isJetpackModuleActive,
-} from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+} from 'client/state/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
 
 class JetpackModuleToggle extends Component {
 	static defaultProps = {

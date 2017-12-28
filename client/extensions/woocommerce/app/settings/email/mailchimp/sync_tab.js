@@ -9,8 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import TooltipComponent from 'components/tooltip';
+import Notice from 'client/components/notice';
+import TooltipComponent from 'client/components/tooltip';
 
 class Tooltip extends React.Component {
 

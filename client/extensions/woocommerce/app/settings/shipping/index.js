@@ -12,15 +12,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import LabelSettings from 'woocommerce/woocommerce-services/views/label-settings';
-import Packages from 'woocommerce/woocommerce-services/views/packages';
-import { ProtectFormGuard } from 'lib/protect-form';
+import Main from 'client/components/main';
+import LabelSettings from 'client/extensions/woocommerce/woocommerce-services/views/label-settings';
+import Packages from 'client/extensions/woocommerce/woocommerce-services/views/packages';
+import { ProtectFormGuard } from 'client/lib/protect-form';
 import ShippingHeader from './shipping-header';
 import ShippingOrigin from './shipping-origin';
 import ShippingZoneList from './shipping-zone-list';
-import { getSelectedSite } from 'state/ui/selectors';
-import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { isWcsEnabled } from 'client/extensions/woocommerce/state/selectors/plugins';
 
 class Shipping extends Component {
 	state = {

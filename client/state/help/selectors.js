@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { getSelectedOrPrimarySiteId } from 'state/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getSelectedOrPrimarySiteId } from 'client/state/selectors';
+import { getSite } from 'client/state/sites/selectors';
 
 export const getHelpSiteId = state => state.help.selectedSiteId;
 

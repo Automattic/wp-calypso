@@ -11,13 +11,13 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { READER_CONVERSATION_MUTE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, plainNotice } from 'state/notices/actions';
-import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { getReaderConversationFollowStatus } from 'state/selectors';
+import { READER_CONVERSATION_MUTE } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice, plainNotice } from 'client/state/notices/actions';
+import { updateConversationFollowStatus } from 'client/state/reader/conversations/actions';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
+import { getReaderConversationFollowStatus } from 'client/state/selectors';
 
 export function requestConversationMute( { dispatch, getState }, action ) {
 	const actionWithRevert = merge( {}, action, {

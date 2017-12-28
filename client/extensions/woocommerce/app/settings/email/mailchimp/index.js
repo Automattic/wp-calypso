@@ -13,17 +13,17 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getPlugins, isRequestingForSites } from 'state/plugins/installed/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPlugins, isRequestingForSites } from 'client/state/plugins/installed/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	mailChimpSettings,
 	isRequestingSettings,
-} from 'woocommerce/state/sites/settings/mailchimp/selectors';
+} from 'client/extensions/woocommerce/state/sites/settings/mailchimp/selectors';
 import MailChimpGettingStarted from './getting-started';
 import MailChimpSetup from './setup-mailchimp';
 import MailChimpDashboard from './mailchimp_dashboard';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import QueryMailChimpSettings from 'woocommerce/state/sites/settings/mailchimp/querySettings';
+import QueryJetpackPlugins from 'client/components/data/query-jetpack-plugins';
+import QueryMailChimpSettings from 'client/extensions/woocommerce/state/sites/settings/mailchimp/querySettings';
 
 class MailChimp extends React.Component {
 	constructor( props ) {

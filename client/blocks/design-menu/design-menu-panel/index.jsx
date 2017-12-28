@@ -10,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 
 class DesignMenuPanel extends React.Component {
 	static propTypes = {

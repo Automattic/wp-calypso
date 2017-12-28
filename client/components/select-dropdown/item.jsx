@@ -12,7 +12,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Count from 'components/count';
+import Count from 'client/components/count';
 
 class SelectDropdownItem extends Component {
 	static propTypes = {

@@ -9,7 +9,7 @@ import { findIndex, remove } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getBucket } from 'woocommerce/state/ui/helpers';
+import { getBucket } from 'client/extensions/woocommerce/state/ui/helpers';
 
 /**
  * @param {Object} zoneMethodEdits Pre-existing edits made to the zone methods.

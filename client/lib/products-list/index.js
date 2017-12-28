@@ -12,8 +12,8 @@ import store from 'store';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import Emitter from 'lib/mixins/emitter';
+import wpcom from 'client/lib/wp';
+import Emitter from 'client/lib/mixins/emitter';
 
 /**
  * Initialize a new list of products.

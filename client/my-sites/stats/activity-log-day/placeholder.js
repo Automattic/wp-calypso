@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'client/components/foldable-card';
 
 const component = (
 	<FoldableCard

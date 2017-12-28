@@ -12,8 +12,8 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { isExternal } from 'lib/url';
-import { preload } from 'sections-preload';
+import { isExternal } from 'client/lib/url';
+import { preload } from 'client/sections-preload';
 
 export default class extends React.Component {
 	static displayName = 'SidebarItem';

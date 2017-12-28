@@ -4,13 +4,13 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	POST_LIKES_RECEIVE,
 	POST_LIKES_REQUEST,
 	POST_LIKES_REQUEST_SUCCESS,
 	POST_LIKES_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns an action thunk which, when invoked, triggers a network request to

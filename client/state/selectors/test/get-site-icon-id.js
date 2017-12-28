@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSiteIconId } from 'state/selectors';
+import { getSiteIconId } from 'client/state/selectors';
 
 describe( 'getSiteIconId()', () => {
 	test( 'should return null if neither the site nor settings are known', () => {

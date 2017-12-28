@@ -11,8 +11,8 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/forms/form-button';
-import Spinner from 'components/spinner';
+import Button from 'client/components/forms/form-button';
+import Spinner from 'client/components/spinner';
 
 export default class extends React.Component {
 	static displayName = 'SpinnerButton';

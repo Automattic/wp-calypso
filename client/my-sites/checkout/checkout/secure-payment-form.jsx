@@ -11,22 +11,22 @@ import { get, find, defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'client/components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
 import CreditCardPaymentBox from './credit-card-payment-box';
 import PayPalPaymentBox from './paypal-payment-box';
 import SourcePaymentBox from './source-payment-box';
-import storeTransactions from 'lib/store-transactions';
-import analytics from 'lib/analytics';
+import storeTransactions from 'client/lib/store-transactions';
+import analytics from 'client/lib/analytics';
 import TransactionStepsMixin from './transaction-steps-mixin';
-import upgradesActions from 'lib/upgrades/actions';
-import { forPayments as countriesListForPayments } from 'lib/countries-list';
+import upgradesActions from 'client/lib/upgrades/actions';
+import { forPayments as countriesListForPayments } from 'client/lib/countries-list';
 import debugFactory from 'debug';
-import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart-values';
-import Notice from 'components/notice';
-import { preventWidows } from 'lib/formatting';
+import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'client/lib/cart-values';
+import Notice from 'client/components/notice';
+import { preventWidows } from 'client/lib/formatting';
 import PaymentBox from './payment-box';
 
 /**

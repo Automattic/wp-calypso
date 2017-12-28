@@ -11,13 +11,13 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import accept from 'lib/accept';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
-import PluginsActions from 'lib/plugins/actions';
-import ExternalLink from 'components/external-link';
-import utils from 'lib/site/utils';
+import analytics from 'client/lib/analytics';
+import accept from 'client/lib/accept';
+import PluginsLog from 'client/lib/plugins/log-store';
+import PluginAction from 'client/my-sites/plugins/plugin-action/plugin-action';
+import PluginsActions from 'client/lib/plugins/actions';
+import ExternalLink from 'client/components/external-link';
+import utils from 'client/lib/site/utils';
 
 class PluginRemoveButton extends React.Component {
 	static displayName = 'PluginRemoveButton';

@@ -3,8 +3,8 @@
 /**
  * Internal dependencies
  */
-import { HAPPYCHAT_IO_RECEIVE_INIT } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { HAPPYCHAT_IO_RECEIVE_INIT } from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
 import { geoLocationSchema } from './schema';
 
 /**

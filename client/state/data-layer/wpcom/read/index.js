@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
 
 import feed from './feed';
 import followingMine from './following/mine';

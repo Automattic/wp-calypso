@@ -13,14 +13,14 @@ import i18n, { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
-import HeaderCake from 'components/header-cake';
+import Main from 'client/components/main';
+import QuerySiteGuidedTransfer from 'client/components/data/query-site-guided-transfer';
+import HeaderCake from 'client/components/header-cake';
 import HostCredentialsPage from './host-credentials-page';
 import HostSelect from './host-select';
 import IssuesNotices from './issues-notices';
 import TransferUnavailableCard from './transfer-unavailable-card';
-import Placeholder from 'my-sites/site-settings/placeholder';
+import Placeholder from 'client/my-sites/site-settings/placeholder';
 
 const guidedTransferHosts = {
 	bluehost: {

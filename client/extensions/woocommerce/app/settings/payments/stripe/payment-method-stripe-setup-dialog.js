@@ -16,25 +16,25 @@ import PropTypes from 'prop-types';
 import {
 	areSettingsGeneralLoading,
 	getStoreLocation,
-} from 'woocommerce/state/sites/settings/general/selectors';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
 import {
 	clearError,
 	createAccount,
 	oauthInit,
-} from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import Dialog from 'components/dialog';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
+} from 'client/extensions/woocommerce/state/sites/settings/stripe-connect-account/actions';
+import Dialog from 'client/components/dialog';
+import { getCurrentUserEmail } from 'client/state/current-user/selectors';
 import {
 	getError,
 	getIsCreating,
 	getIsOAuthInitializing,
 	getOAuthURL,
-} from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
-import { getLink, getOrigin } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Notice from 'components/notice';
+} from 'client/extensions/woocommerce/state/sites/settings/stripe-connect-account/selectors';
+import { getLink, getOrigin } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import Notice from 'client/components/notice';
 import StripeConnectPrompt from './payment-method-stripe-connect-prompt';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import QuerySettingsGeneral from 'client/extensions/woocommerce/components/query-settings-general';
 
 class PaymentMethodStripeSetupDialog extends Component {
 	static propTypes = {

@@ -19,9 +19,9 @@ import {
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE,
-} from 'woocommerce/state/action-types';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import request from 'woocommerce/state/sites/request';
+} from 'client/extensions/woocommerce/state/action-types';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import request from 'client/extensions/woocommerce/state/sites/request';
 
 /**
  * Action Creator: Clear any error from a previous action.

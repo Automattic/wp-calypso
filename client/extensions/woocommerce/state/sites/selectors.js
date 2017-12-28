@@ -4,10 +4,10 @@
  * Internal dependencies
  */
 
-import { getCurrentUserSiteCount } from 'state/current-user/selectors';
-import { getPrimarySiteId } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getCurrentUserSiteCount } from 'client/state/current-user/selectors';
+import { getPrimarySiteId } from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSite } from 'client/state/sites/selectors';
 
 /**
  * Gets currently selected site or, if that isn't available and the user has

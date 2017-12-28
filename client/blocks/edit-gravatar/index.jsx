@@ -16,24 +16,28 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import Dialog from 'components/dialog';
-import FilePicker from 'components/file-picker';
-import { getCurrentUser } from 'state/current-user/selectors';
-import Gravatar from 'components/gravatar';
-import { isCurrentUserUploadingGravatar } from 'state/current-user/gravatar-status/selectors';
-import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
-import Spinner from 'components/spinner';
+import { AspectRatios } from 'client/state/ui/editor/image-editor/constants';
+import Dialog from 'client/components/dialog';
+import FilePicker from 'client/components/file-picker';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import Gravatar from 'client/components/gravatar';
+import { isCurrentUserUploadingGravatar } from 'client/state/current-user/gravatar-status/selectors';
+import { resetAllImageEditorState } from 'client/state/ui/editor/image-editor/actions';
+import Spinner from 'client/components/spinner';
 import {
 	receiveGravatarImageFailed,
 	uploadGravatar,
-} from 'state/current-user/gravatar-status/actions';
-import ImageEditor from 'blocks/image-editor';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
-import DropZone from 'components/drop-zone';
-import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
+} from 'client/state/current-user/gravatar-status/actions';
+import ImageEditor from 'client/blocks/image-editor';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
+import VerifyEmailDialog from 'client/components/email-verification/email-verification-dialog';
+import DropZone from 'client/components/drop-zone';
+import {
+	recordTracksEvent,
+	recordGoogleEvent,
+	composeAnalytics,
+} from 'client/state/analytics/actions';
 
 export class EditGravatar extends Component {
 	state = {

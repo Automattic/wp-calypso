@@ -12,8 +12,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import getThemes from 'lib/signup/themes';
-import ThemesList from 'components/themes-list';
+import getThemes from 'client/lib/signup/themes';
+import ThemesList from 'client/components/themes-list';
 
 class SignupThemesList extends Component {
 	static propTypes = {

@@ -10,10 +10,10 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { initiateFeedSearch, receiveFeeds, receiveError } from '../';
-import { NOTICE_CREATE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestFeedSearch, receiveFeedSearch } from 'state/reader/feed-searches/actions';
-import queryKey from 'state/reader/feed-searches/query-key';
+import { NOTICE_CREATE } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { requestFeedSearch, receiveFeedSearch } from 'client/state/reader/feed-searches/actions';
+import queryKey from 'client/state/reader/feed-searches/query-key';
 
 const feeds = freeze( [ { blog_ID: 'IM A BLOG', subscribe_URL: 'feedUrl' } ] );
 

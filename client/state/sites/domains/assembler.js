@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { getDomainType, getTransferStatus } from 'lib/domains/utils';
-import { assembleGoogleAppsSubscription } from 'lib/domains/assembler';
+import { getDomainType, getTransferStatus } from 'client/lib/domains/utils';
+import { assembleGoogleAppsSubscription } from 'client/lib/domains/assembler';
 
 export const createSiteDomainObject = domain => {
 	return {

@@ -9,8 +9,11 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import { WOOCOMMERCE_ERROR_SET, WOOCOMMERCE_ERROR_CLEAR } from 'woocommerce/state/action-types';
+import { createReducer } from 'client/state/utils';
+import {
+	WOOCOMMERCE_ERROR_SET,
+	WOOCOMMERCE_ERROR_CLEAR,
+} from 'client/extensions/woocommerce/state/action-types';
 
 const debug = debugFactory( 'woocommerce:errors:wc-api' );
 

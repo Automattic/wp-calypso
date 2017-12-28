@@ -13,16 +13,20 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormInputValidation from 'components/forms/form-input-validation';
-import Card from 'components/card';
+import FormButton from 'client/components/forms/form-button';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import Card from 'client/components/card';
 import { localize } from 'i18n-calypso';
-import { getTwoFactorAuthRequestError } from 'state/login/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { formUpdate, loginUserWithTwoFactorVerificationCode, sendSmsCode } from 'state/login/actions';
+import { getTwoFactorAuthRequestError } from 'client/state/login/selectors';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'client/state/analytics/actions';
+import {
+	formUpdate,
+	loginUserWithTwoFactorVerificationCode,
+	sendSmsCode,
+} from 'client/state/login/actions';
 import TwoFactorActions from './two-factor-actions';
 
 class VerificationCodeForm extends Component {

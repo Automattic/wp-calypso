@@ -11,9 +11,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
-import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isGuidedTransferInProgress } from 'state/sites/guided-transfer/selectors';
+import QuerySiteGuidedTransfer from 'client/components/data/query-site-guided-transfer';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isGuidedTransferInProgress } from 'client/state/sites/guided-transfer/selectors';
 import Notices from './notices';
 import ExportCard from './export-card';
 import GuidedTransferCard from './guided-transfer-card';

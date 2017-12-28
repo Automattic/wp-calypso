@@ -11,7 +11,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 
 export default localize( ( { title, description, href, onClick } ) => {
 	return (

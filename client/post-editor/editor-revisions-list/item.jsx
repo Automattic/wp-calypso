@@ -13,10 +13,10 @@ import { flow, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { selectPostRevision } from 'state/posts/revisions/actions';
-import { getUser } from 'state/users/selectors';
-import { isSingleUserSite } from 'state/sites/selectors';
-import TimeSince from 'components/time-since';
+import { selectPostRevision } from 'client/state/posts/revisions/actions';
+import { getUser } from 'client/state/users/selectors';
+import { isSingleUserSite } from 'client/state/sites/selectors';
+import TimeSince from 'client/components/time-since';
 
 class EditorRevisionsListItem extends PureComponent {
 	selectRevision = () => {

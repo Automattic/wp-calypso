@@ -9,10 +9,10 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
-import { getHappychatAuth } from 'state/happychat/utils';
-import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
-import { initConnection } from 'state/happychat/connection/actions';
-import { HappychatConnection } from 'components/happychat/connection';
+import { getHappychatAuth } from 'client/state/happychat/utils';
+import isHappychatConnectionUninitialized from 'client/state/happychat/selectors/is-happychat-connection-uninitialized';
+import { initConnection } from 'client/state/happychat/connection/actions';
+import { HappychatConnection } from 'client/components/happychat/connection';
 
 export default connect(
 	state => ( {

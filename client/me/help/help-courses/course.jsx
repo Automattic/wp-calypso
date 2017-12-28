@@ -11,13 +11,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import CourseScheduleItem from './course-schedule-item';
 import HelpTeaserButton from '../help-teaser-button';
 import CourseVideo from './course-video';
-import analytics from 'lib/analytics';
-import { getPrimarySiteId } from 'state/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import analytics from 'client/lib/analytics';
+import { getPrimarySiteId } from 'client/state/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 
 class Course extends Component {
 	componentDidMount() {

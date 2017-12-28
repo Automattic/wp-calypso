@@ -13,40 +13,40 @@ import { head, partial, partialRight, isEqual, flow, compact, includes, uniqueId
 /**
  * Internal dependencies
  */
-import SiteIcon from 'blocks/site-icon';
-import Button from 'components/button';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import AsyncLoad from 'components/async-load';
-import Dialog from 'components/dialog';
-import accept from 'lib/accept';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { saveSiteSettings, updateSiteSettings } from 'state/site-settings/actions';
-import { isSavingSiteSettings } from 'state/site-settings/selectors';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
-import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
-import { receiveMedia, deleteMedia } from 'state/media/actions';
-import { getCustomizerUrl, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import InfoPopover from 'components/info-popover';
-import MediaActions from 'lib/media/actions';
-import MediaStore from 'lib/media/store';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import { isItemBeingUploaded } from 'lib/media/utils';
+import SiteIcon from 'client/blocks/site-icon';
+import Button from 'client/components/button';
+import MediaLibrarySelectedData from 'client/components/data/media-library-selected-data';
+import AsyncLoad from 'client/components/async-load';
+import Dialog from 'client/components/dialog';
+import accept from 'client/lib/accept';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import { saveSiteSettings, updateSiteSettings } from 'client/state/site-settings/actions';
+import { isSavingSiteSettings } from 'client/state/site-settings/selectors';
+import { setEditorMediaModalView } from 'client/state/ui/editor/actions';
+import { resetAllImageEditorState } from 'client/state/ui/editor/image-editor/actions';
+import { receiveMedia, deleteMedia } from 'client/state/media/actions';
+import { getCustomizerUrl, getSiteAdminUrl, isJetpackSite } from 'client/state/sites/selectors';
+import { ModalViews } from 'client/state/ui/media-modal/constants';
+import { AspectRatios } from 'client/state/ui/editor/image-editor/constants';
+import { getSelectedSiteId, getSelectedSite } from 'client/state/ui/selectors';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import InfoPopover from 'client/components/info-popover';
+import MediaActions from 'client/lib/media/actions';
+import MediaStore from 'client/lib/media/store';
+import MediaLibrarySelectedStore from 'client/lib/media/library-selected-store';
+import { isItemBeingUploaded } from 'client/lib/media/utils';
 import {
 	getImageEditorCrop,
 	getImageEditorTransform,
-} from 'state/ui/editor/image-editor/selectors';
+} from 'client/state/ui/editor/image-editor/selectors';
 import {
 	getSiteIconId,
 	getSiteIconUrl,
 	isPrivateSite,
 	isSiteSupportingImageEditor,
-} from 'state/selectors';
-import { errorNotice } from 'state/notices/actions';
+} from 'client/state/selectors';
+import { errorNotice } from 'client/state/notices/actions';
 
 class SiteIconSetting extends Component {
 	static propTypes = {

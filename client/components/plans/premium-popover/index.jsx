@@ -15,14 +15,14 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
-import PlanPrice from 'components/plans/plan-price';
-import { getSitePlan } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPlanBySlug } from 'state/plans/selectors';
-import { PLAN_PREMIUM } from 'lib/plans/constants';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QueryPlans from 'components/data/query-plans';
+import Popover from 'client/components/popover';
+import PlanPrice from 'client/components/plans/plan-price';
+import { getSitePlan } from 'client/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getPlanBySlug } from 'client/state/plans/selectors';
+import { PLAN_PREMIUM } from 'client/lib/plans/constants';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import QueryPlans from 'client/components/data/query-plans';
 
 let exclusiveViewLock = null;
 

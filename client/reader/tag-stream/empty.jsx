@@ -9,9 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { isDiscoverEnabled } from 'reader/discover/helper';
+import EmptyContent from 'client/components/empty-content';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
+import { isDiscoverEnabled } from 'client/reader/discover/helper';
 
 class TagEmptyContent extends React.Component {
 	static propTypes = {

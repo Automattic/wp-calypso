@@ -7,13 +7,13 @@ import { assign, map, partial } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import {
 	READER_RELATED_POSTS_RECEIVE,
 	READER_RELATED_POSTS_REQUEST,
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
 	READER_RELATED_POSTS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { key } from './utils';
 
 export const items = createReducer(

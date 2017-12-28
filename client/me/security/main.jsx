@@ -12,14 +12,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AccountPassword from 'me/account-password';
-import Card from 'components/card';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import ReauthRequired from 'me/reauth-required';
-import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
+import AccountPassword from 'client/me/account-password';
+import Card from 'client/components/card';
+import DocumentHead from 'client/components/data/document-head';
+import Main from 'client/components/main';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
+import ReauthRequired from 'client/me/reauth-required';
+import SecuritySectionNav from 'client/me/security-section-nav';
+import twoStepAuthorization from 'client/lib/two-step-authorization';
 
 const debug = debugFactory( 'calypso:me:security:password' );
 

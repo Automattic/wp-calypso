@@ -13,16 +13,16 @@ import i18n from 'i18n-calypso';
  * Internal Dependencies
  */
 import config from 'config';
-import { domainManagementEdit } from 'my-sites/domains/paths';
-import { getThemeDetailsUrl } from 'state/themes/selectors';
-import { googleAppsSettingsUrl } from 'lib/google-apps';
+import { domainManagementEdit } from 'client/my-sites/domains/paths';
+import { getThemeDetailsUrl } from 'client/state/themes/selectors';
+import { googleAppsSettingsUrl } from 'client/lib/google-apps';
 import {
 	isDomainProduct,
 	isGoogleApps,
 	isPlan,
 	isSiteRedirect,
 	isTheme,
-} from 'lib/products-values';
+} from 'client/lib/products-values';
 
 const ProductLink = ( { selectedPurchase, selectedSite, productUrl } ) => {
 	let props = {},

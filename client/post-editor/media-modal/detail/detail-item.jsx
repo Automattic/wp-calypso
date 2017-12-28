@@ -22,14 +22,14 @@ import EditorMediaModalDetailPreviewImage from './detail-preview-image';
 import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
-import Button from 'components/button';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import versionCompare from 'lib/version-compare';
-import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
+import Button from 'client/components/button';
+import QueryJetpackModules from 'client/components/data/query-jetpack-modules';
+import versionCompare from 'client/lib/version-compare';
+import MediaUtils, { isItemBeingUploaded } from 'client/lib/media/utils';
 import config from 'config';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
-import { isPrivateSite, canCurrentUser } from 'state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'client/state/sites/selectors';
+import { isPrivateSite, canCurrentUser } from 'client/state/selectors';
 
 /**
  * This function return true if the image editor can be

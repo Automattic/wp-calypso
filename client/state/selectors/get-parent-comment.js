@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostCommentsTree } from 'state/comments/selectors';
+import { getPostCommentsTree } from 'client/state/comments/selectors';
 
 /**
  * Returns the parent comment of a given comment

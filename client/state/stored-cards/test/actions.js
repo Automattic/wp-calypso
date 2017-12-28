@@ -10,7 +10,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { addStoredCard, deleteStoredCard, fetchStoredCards } from '../actions';
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_DELETE,
@@ -19,7 +19,7 @@ import {
 	STORED_CARDS_FETCH,
 	STORED_CARDS_FETCH_COMPLETED,
 	STORED_CARDS_FETCH_FAILED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 

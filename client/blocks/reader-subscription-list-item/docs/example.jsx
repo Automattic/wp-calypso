@@ -10,9 +10,9 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import ConnectedReaderSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
-import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
-import Card from 'components/card';
+import ConnectedReaderSubscriptionListItem from 'client/blocks/reader-subscription-list-item/connected';
+import ReaderSubscriptionListItemPlaceholder from 'client/blocks/reader-subscription-list-item/placeholder';
+import Card from 'client/components/card';
 
 const sites = {
 	longreads: { siteId: 70135762 },

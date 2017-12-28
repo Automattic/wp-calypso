@@ -19,12 +19,12 @@ import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
 import CartMessages from './cart-messages';
 import CartButtons from './cart-buttons';
-import Count from 'components/count';
-import Popover from 'components/popover';
+import Count from 'client/components/count';
+import Popover from 'client/components/popover';
 import CartEmpty from './cart-empty';
 import CartPlanAd from './cart-plan-ad';
-import { isCredits } from 'lib/products-values';
-import TrackComponentView from 'lib/analytics/track-component-view';
+import { isCredits } from 'client/lib/products-values';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
 
 const PopoverCart = createReactClass( {
 	displayName: 'PopoverCart',

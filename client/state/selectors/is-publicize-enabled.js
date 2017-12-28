@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { isJetpackModuleActive, getSiteOption } from 'state/sites/selectors';
-import { postTypeSupports } from 'state/post-types/selectors';
+import { isJetpackModuleActive, getSiteOption } from 'client/state/sites/selectors';
+import { postTypeSupports } from 'client/state/post-types/selectors';
 
 /**
  * Returns true if Publicize is enabled for the post type and the given site.

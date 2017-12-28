@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import request from 'woocommerce/state/sites/request';
+import request from 'client/extensions/woocommerce/state/sites/request';
 
 export * as url from './url';
 

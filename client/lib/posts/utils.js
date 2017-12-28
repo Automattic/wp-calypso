@@ -12,10 +12,9 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import postNormalizer from 'lib/post-normalizer';
+import postNormalizer from 'client/lib/post-normalizer';
 
 var utils = {
-
 	getEditURL: function( post, site ) {
 		let basePath = '';
 

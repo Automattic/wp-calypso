@@ -16,14 +16,14 @@ import photon from 'photon';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import ThemeMoreButton from './more-button';
-import PulsingDot from 'components/pulsing-dot';
-import Ribbon from 'components/ribbon';
-import InfoPopover from 'components/info-popover';
-import Button from 'components/button';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+import PulsingDot from 'client/components/pulsing-dot';
+import Ribbon from 'client/components/ribbon';
+import InfoPopover from 'client/components/info-popover';
+import Button from 'client/components/button';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 /**
  * Component

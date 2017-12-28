@@ -13,8 +13,8 @@ const debug = debugFactory( 'calypso:stats:action-spam' );
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import analytics from 'lib/analytics';
+import wpcom from 'client/lib/wp';
+import analytics from 'client/lib/analytics';
 import Gridicon from 'gridicons';
 
 class StatsActionSpam extends React.Component {

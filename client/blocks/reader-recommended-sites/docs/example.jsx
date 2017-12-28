@@ -11,7 +11,7 @@ import { map } from 'lodash';
  * Internal dependencies
  */
 import ReaderRecommendedSites from '../';
-import Card from 'components/card';
+import Card from 'client/components/card';
 
 const sites = {
 	longreads: { siteId: 70135762 },

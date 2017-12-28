@@ -20,18 +20,18 @@ import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
-import Card from 'components/card';
+import Card from 'client/components/card';
 import StatsModulePlaceholder from './placeholder';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import SectionHeader from 'client/components/section-header';
+import QuerySiteStats from 'client/components/data/query-site-stats';
+import UpgradeNudge from 'client/my-sites/upgrade-nudge';
 import AllTimeNav from './all-time-nav';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
+} from 'client/state/stats/lists/selectors';
 
 class StatsModule extends Component {
 	static propTypes = {

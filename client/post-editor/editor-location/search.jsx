@@ -10,9 +10,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { geocode } from 'lib/geocoding';
-import * as stats from 'lib/posts/stats';
-import SearchCard from 'components/search-card';
+import { geocode } from 'client/lib/geocoding';
+import * as stats from 'client/lib/posts/stats';
+import SearchCard from 'client/components/search-card';
 import EditorLocationSearchResult from './search-result';
 
 export default class extends React.Component {

@@ -7,7 +7,7 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import classnames from 'classnames';
-import observe from 'lib/mixins/data-observe';
+import observe from 'client/lib/mixins/data-observe';
 import { isEmpty, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 

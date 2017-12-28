@@ -12,10 +12,10 @@ import { map, take } from 'lodash';
 /**
  * Internal dependencies
  */
-import Comment from 'my-sites/comments/comment';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { getSiteCommentParentDepth, getSiteCommentRepliesTree } from 'state/selectors';
+import Comment from 'client/my-sites/comments/comment';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import { getSiteCommentParentDepth, getSiteCommentRepliesTree } from 'client/state/selectors';
 
 export class CommentRepliesList extends Component {
 	constructor( props ) {

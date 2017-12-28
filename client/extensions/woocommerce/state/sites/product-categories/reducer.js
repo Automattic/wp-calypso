@@ -9,14 +9,14 @@ import { keyBy, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import { getSerializedProductCategoriesQuery } from './utils';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 /**
  * Returns if a product categories request for a specific query is in progress or not.

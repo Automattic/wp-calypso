@@ -10,13 +10,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Wizard from 'components/wizard';
+import Main from 'client/components/main';
+import Wizard from 'client/components/wizard';
 import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
 } from './constants';
-import { getUnconnectedSiteIdBySlug } from 'state/selectors';
+import { getUnconnectedSiteIdBySlug } from 'client/state/selectors';
 
 class JetpackOnboardingMain extends React.PureComponent {
 	static propTypes = {

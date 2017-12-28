@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestActiveTheme } from 'state/themes/actions';
-import { isRequestingActiveTheme } from 'state/themes/selectors';
+import { requestActiveTheme } from 'client/state/themes/actions';
+import { isRequestingActiveTheme } from 'client/state/themes/selectors';
 
 class QueryActiveTheme extends Component {
 	static propTypes = {

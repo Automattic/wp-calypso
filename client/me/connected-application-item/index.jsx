@@ -11,11 +11,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ConnectedApplicationIcon from 'me/connected-application-icon';
-import FoldableCard from 'components/foldable-card';
-import safeProtocolUrl from 'lib/safe-protocol-url';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import Button from 'client/components/button';
+import ConnectedApplicationIcon from 'client/me/connected-application-icon';
+import FoldableCard from 'client/components/foldable-card';
+import safeProtocolUrl from 'client/lib/safe-protocol-url';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 class ConnectedApplicationItem extends React.Component {
 	static defaultProps = {

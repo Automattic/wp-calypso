@@ -11,9 +11,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'client/components/empty-content';
 import UploadButton from './upload-button';
-import { userCan } from 'lib/site/utils';
+import { userCan } from 'client/lib/site/utils';
 
 class MediaLibraryListNoContent extends Component {
 	static propTypes = {

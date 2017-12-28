@@ -11,10 +11,10 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { getKeyringServiceByName } from 'state/sharing/services/selectors';
-import QueryKeyringServices from 'components/data/query-keyring-services';
-import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import InlineConnectionAction from 'my-sites/sharing/connections/inline-connection-action';
+import { getKeyringServiceByName } from 'client/state/sharing/services/selectors';
+import QueryKeyringServices from 'client/components/data/query-keyring-services';
+import QueryPublicizeConnections from 'client/components/data/query-publicize-connections';
+import InlineConnectionAction from 'client/my-sites/sharing/connections/inline-connection-action';
 
 class InlineConnection extends Component {
 	static propTypes = {

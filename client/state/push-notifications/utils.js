@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { isServiceWorkerSupported } from 'lib/service-worker';
+import { isServiceWorkerSupported } from 'client/lib/service-worker';
 
 export function isUnsupportedChromeVersion() {
 	if ( window && window.chrome && window.navigator.appVersion ) {

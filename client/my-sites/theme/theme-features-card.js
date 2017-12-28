@@ -12,10 +12,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import QueryThemeFilters from 'components/data/query-theme-filters';
-import SectionHeader from 'components/section-header';
-import { isValidThemeFilterTerm } from 'state/selectors';
+import Card from 'client/components/card';
+import QueryThemeFilters from 'client/components/data/query-theme-filters';
+import SectionHeader from 'client/components/section-header';
+import { isValidThemeFilterTerm } from 'client/state/selectors';
 
 const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate } ) => {
 	if ( isEmpty( features ) ) {

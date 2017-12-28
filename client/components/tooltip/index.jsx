@@ -11,8 +11,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
-import viewport from 'lib/viewport';
+import Popover from 'client/components/popover';
+import viewport from 'client/lib/viewport';
 
 /**
  * Module variables

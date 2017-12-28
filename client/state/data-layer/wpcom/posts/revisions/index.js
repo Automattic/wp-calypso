@@ -3,14 +3,14 @@
 /**
  * Internal dependencies
  */
-import { POST_REVISIONS_REQUEST } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { POST_REVISIONS_REQUEST } from 'client/state/action-types';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import {
 	receivePostRevisions,
 	receivePostRevisionsSuccess,
 	receivePostRevisionsFailure,
-} from 'state/posts/revisions/actions';
+} from 'client/state/posts/revisions/actions';
 
 /**
  * Dispatches returned error from post revisions request

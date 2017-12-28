@@ -12,12 +12,12 @@ import { has, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { mapAuthor, startImporting } from 'lib/importer/actions';
-import { appStates } from 'state/imports/constants';
+import { mapAuthor, startImporting } from 'client/lib/importer/actions';
+import { appStates } from 'client/state/imports/constants';
 import { connectDispatcher } from './dispatcher-converter';
-import ProgressBar from 'components/progress-bar';
+import ProgressBar from 'client/components/progress-bar';
 import MappingPane from './author-mapping-pane';
-import Spinner from 'components/spinner';
+import Spinner from 'client/components/spinner';
 
 const sum = ( a, b ) => a + b;
 

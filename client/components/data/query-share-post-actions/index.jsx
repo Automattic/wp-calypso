@@ -11,12 +11,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isFetchingPublicizeShareActionsScheduled from 'state/selectors/is-fetching-publicize-share-actions-scheduled';
-import isFetchingPublicizeShareActionsPublished from 'state/selectors/is-fetching-publicize-share-actions-published';
+import isFetchingPublicizeShareActionsScheduled from 'client/state/selectors/is-fetching-publicize-share-actions-scheduled';
+import isFetchingPublicizeShareActionsPublished from 'client/state/selectors/is-fetching-publicize-share-actions-published';
 import {
 	fetchPostShareActionsScheduled,
 	fetchPostShareActionsPublished,
-} from 'state/sharing/publicize/publicize-actions/actions';
+} from 'client/state/sharing/publicize/publicize-actions/actions';
 
 class QuerySharePostActions extends Component {
 	static propTypes = {

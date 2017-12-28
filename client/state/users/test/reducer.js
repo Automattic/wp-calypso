@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { items } from '../reducer';
-import { USER_RECEIVE } from 'state/action-types';
+import { USER_RECEIVE } from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

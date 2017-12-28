@@ -15,21 +15,24 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Count from 'components/count';
-import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import { getNewOrdersWithoutPayPalPending } from 'woocommerce/state/sites/orders/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
-import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
-import { getTotalReviews } from 'woocommerce/state/sites/reviews/selectors';
-import Sidebar from 'layout/sidebar';
-import SidebarButton from 'layout/sidebar/button';
-import SidebarItem from 'layout/sidebar/item';
-import SidebarMenu from 'layout/sidebar/menu';
-import SidebarSeparator from 'layout/sidebar/separator';
+import Count from 'client/components/count';
+import { fetchOrders } from 'client/extensions/woocommerce/state/sites/orders/actions';
+import { fetchProducts } from 'client/extensions/woocommerce/state/sites/products/actions';
+import { fetchReviews } from 'client/extensions/woocommerce/state/sites/reviews/actions';
+import { fetchSetupChoices } from 'client/extensions/woocommerce/state/sites/setup-choices/actions';
+import { getNewOrdersWithoutPayPalPending } from 'client/extensions/woocommerce/state/sites/orders/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import { getSetStoreAddressDuringInitialSetup } from 'client/extensions/woocommerce/state/sites/setup-choices/selectors';
+import {
+	getTotalProducts,
+	areProductsLoaded,
+} from 'client/extensions/woocommerce/state/sites/products/selectors';
+import { getTotalReviews } from 'client/extensions/woocommerce/state/sites/reviews/selectors';
+import Sidebar from 'client/layout/sidebar';
+import SidebarButton from 'client/layout/sidebar/button';
+import SidebarItem from 'client/layout/sidebar/item';
+import SidebarMenu from 'client/layout/sidebar/menu';
+import SidebarSeparator from 'client/layout/sidebar/separator';
 import StoreGroundControl from './store-ground-control';
 
 class StoreSidebar extends Component {

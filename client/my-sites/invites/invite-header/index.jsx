@@ -12,10 +12,10 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Site from 'blocks/site';
-import SitePlaceholder from 'blocks/site/placeholder';
-import Gravatar from 'components/gravatar';
+import CompactCard from 'client/components/card/compact';
+import Site from 'client/blocks/site';
+import SitePlaceholder from 'client/blocks/site/placeholder';
+import Gravatar from 'client/components/gravatar';
 
 class InviteHeader extends React.Component {
 	static displayName = 'InviteHeader';

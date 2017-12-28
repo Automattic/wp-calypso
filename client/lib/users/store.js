@@ -12,8 +12,8 @@ const debug = debugFactory( 'calypso:users:store' );
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import Dispatcher from 'client/dispatcher';
+import emitter from 'client/lib/mixins/emitter';
 
 var _fetchingUsersByNamespace = {}, // store fetching state (boolean)
 	_fetchingUpdatedUsersByNamespace = {}, // store fetching state (boolean)

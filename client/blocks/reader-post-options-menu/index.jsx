@@ -13,24 +13,24 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import { blockSite } from 'state/reader/site-blocks/actions';
-import PostUtils from 'lib/posts/utils';
-import FollowButton from 'reader/follow-button';
-import * as DiscoverHelper from 'reader/discover/helper';
-import * as stats from 'reader/stats';
-import { getFeed } from 'state/reader/feeds/selectors';
-import { getSite } from 'state/reader/sites/selectors';
-import QueryReaderFeed from 'components/data/query-reader-feed';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderTeams from 'components/data/query-reader-teams';
-import { isAutomatticTeamMember } from 'reader/lib/teams';
-import { getReaderTeams } from 'state/selectors';
+import EllipsisMenu from 'client/components/ellipsis-menu';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import { blockSite } from 'client/state/reader/site-blocks/actions';
+import PostUtils from 'client/lib/posts/utils';
+import FollowButton from 'client/reader/follow-button';
+import * as DiscoverHelper from 'client/reader/discover/helper';
+import * as stats from 'client/reader/stats';
+import { getFeed } from 'client/state/reader/feeds/selectors';
+import { getSite } from 'client/state/reader/sites/selectors';
+import QueryReaderFeed from 'client/components/data/query-reader-feed';
+import QueryReaderSite from 'client/components/data/query-reader-site';
+import QueryReaderTeams from 'client/components/data/query-reader-teams';
+import { isAutomatticTeamMember } from 'client/reader/lib/teams';
+import { getReaderTeams } from 'client/state/selectors';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
-import ConversationFollowButton from 'blocks/conversation-follow-button';
-import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
-import { READER_POST_OPTIONS_MENU } from 'reader/follow-sources';
+import ConversationFollowButton from 'client/blocks/conversation-follow-button';
+import { shouldShowConversationFollowButton } from 'client/blocks/conversation-follow-button/helper';
+import { READER_POST_OPTIONS_MENU } from 'client/reader/follow-sources';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {

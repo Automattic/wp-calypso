@@ -10,10 +10,10 @@ import { concat } from 'lodash';
  * Internal dependencies
  */
 import FormField from '../form-field';
-import FormSelect from 'components/forms/form-select';
+import FormSelect from 'client/components/forms/form-select';
 import AppliesToFilteredList from './applies-to-filtered-list';
-import ProductSearch from 'woocommerce/components/product-search';
-import warn from 'lib/warn';
+import ProductSearch from 'client/extensions/woocommerce/components/product-search';
+import warn from 'client/lib/warn';
 
 class PromotionAppliesToField extends React.Component {
 	static propTypes = {

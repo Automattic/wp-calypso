@@ -8,11 +8,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 import Gridicon from 'gridicons';
-import HappychatButton from 'components/happychat/button';
-import { recordTracksEvent } from 'state/analytics/actions';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import HappychatButton from 'client/components/happychat/button';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import isHappychatAvailable from 'client/state/happychat/selectors/is-happychat-available';
 
 class SetupFooter extends Component {
 	componentWillMount() {

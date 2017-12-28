@@ -11,7 +11,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'client/components/empty-content';
 
 const ResetPasswordSucceeded = props => {
 	const { translate } = props;

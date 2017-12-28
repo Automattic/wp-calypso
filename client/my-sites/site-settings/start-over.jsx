@@ -12,15 +12,15 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import ActionPanel from 'my-sites/site-settings/action-panel';
-import ActionPanelTitle from 'my-sites/site-settings/action-panel/title';
-import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
-import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
-import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
-import Button from 'components/button';
-import support from 'lib/url/support';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import HeaderCake from 'client/components/header-cake';
+import ActionPanel from 'client/my-sites/site-settings/action-panel';
+import ActionPanelTitle from 'client/my-sites/site-settings/action-panel/title';
+import ActionPanelBody from 'client/my-sites/site-settings/action-panel/body';
+import ActionPanelFigure from 'client/my-sites/site-settings/action-panel/figure';
+import ActionPanelFooter from 'client/my-sites/site-settings/action-panel/footer';
+import Button from 'client/components/button';
+import support from 'client/lib/url/support';
+import { getSelectedSiteSlug } from 'client/state/ui/selectors';
 
 const StartOver = ( { translate, selectedSiteSlug } ) => {
 	return (

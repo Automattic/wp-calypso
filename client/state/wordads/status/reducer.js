@@ -8,8 +8,8 @@ import {
 	WORDADS_STATUS_REQUEST,
 	WORDADS_STATUS_REQUEST_SUCCESS,
 	WORDADS_STATUS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
 import { wordadsStatusSchema } from './schema';
 
 export const items = createReducer(

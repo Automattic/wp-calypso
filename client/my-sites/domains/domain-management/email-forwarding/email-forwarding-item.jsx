@@ -14,12 +14,12 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
-import Button from 'components/button';
-import notices from 'notices';
-import { successNotice } from 'state/notices/actions';
-import support from 'lib/url/support';
-import * as upgradesActions from 'lib/upgrades/actions';
+import analyticsMixin from 'client/lib/mixins/analytics';
+import Button from 'client/components/button';
+import notices from 'client/notices';
+import { successNotice } from 'client/state/notices/actions';
+import support from 'client/lib/url/support';
+import * as upgradesActions from 'client/lib/upgrades/actions';
 
 const EmailForwardingItem = createReactClass( {
 	displayName: 'EmailForwardingItem',

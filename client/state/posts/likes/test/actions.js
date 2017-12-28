@@ -14,7 +14,7 @@ import {
 	POST_LIKES_REQUEST,
 	POST_LIKES_REQUEST_SUCCESS,
 	POST_LIKES_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 

@@ -12,12 +12,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import QueryPostTypes from 'components/data/query-post-types';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
+import DocumentHead from 'client/components/data/document-head';
+import QueryPostTypes from 'client/components/data/query-post-types';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId, isEditorNewPost } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { getPostType } from 'client/state/post-types/selectors';
 
 function EditorDocumentHead( { translate, siteId, type, typeObject, newPost } ) {
 	let title;

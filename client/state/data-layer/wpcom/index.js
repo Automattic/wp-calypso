@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
 import accountRecovery from './account-recovery';
 import activityLog from './activity-log';
 import checklist from './checklist';

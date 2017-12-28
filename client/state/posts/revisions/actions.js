@@ -11,7 +11,7 @@ import {
 	POST_REVISIONS_REQUEST_FAILURE,
 	POST_REVISIONS_REQUEST_SUCCESS,
 	POST_REVISIONS_SELECT,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Action creator function: POST_REVISIONS_REQUEST

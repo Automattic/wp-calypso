@@ -8,9 +8,9 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSitesItems } from 'state/selectors';
-import { isPlan } from 'lib/products-values';
+import createSelector from 'client/lib/create-selector';
+import { getSitesItems } from 'client/state/selectors';
+import { isPlan } from 'client/lib/products-values';
 
 /**
  * Whether the user currently has any paid plans

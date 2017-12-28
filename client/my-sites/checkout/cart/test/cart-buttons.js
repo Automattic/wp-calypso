@@ -15,7 +15,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CartButtons from '../cart-buttons';
-import { recordStub } from 'lib/mixins/analytics';
+import { recordStub } from 'client/lib/mixins/analytics';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 jest.mock( 'lib/mixins/analytics', () => {

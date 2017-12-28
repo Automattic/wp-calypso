@@ -9,13 +9,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
+import SectionNav from 'client/components/section-nav';
+import NavItem from 'client/components/section-nav/item';
+import NavTabs from 'client/components/section-nav/tabs';
 import Intervals from './intervals';
-import FollowersCount from 'blocks/followers-count';
-import { isSiteAutomatedTransfer, isSiteStore } from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import FollowersCount from 'client/blocks/followers-count';
+import { isSiteAutomatedTransfer, isSiteStore } from 'client/state/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
 
 class StatsNavigation extends Component {

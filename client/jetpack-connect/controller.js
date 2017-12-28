@@ -12,10 +12,10 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
-import CheckoutData from 'components/data/checkout';
+import analytics from 'client/lib/analytics';
+import CheckoutData from 'client/components/data/checkout';
 import config from 'config';
-import i18nUtils from 'lib/i18n-utils';
+import i18nUtils from 'client/lib/i18n-utils';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
@@ -24,17 +24,17 @@ import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
-import route from 'lib/route';
-import userFactory from 'lib/user';
+import route from 'client/lib/route';
+import userFactory from 'client/lib/user';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
-import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
+import { JETPACK_CONNECT_QUERY_SET } from 'client/state/action-types';
 import { MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
-import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { setSection } from 'state/ui/actions';
+import { receiveJetpackOnboardingCredentials } from 'client/state/jetpack-onboarding/actions';
+import { setDocumentHeadTitle as setTitle } from 'client/state/document-head/actions';
+import { setSection } from 'client/state/ui/actions';
 import { persistMobileRedirect, storePlan } from './persistence-utils';
-import { urlToSlug } from 'lib/url';
+import { urlToSlug } from 'client/lib/url';
 import {
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PERSONAL,
@@ -42,7 +42,7 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from 'client/lib/plans/constants';
 
 /**
  * Module variables

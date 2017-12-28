@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 
 export default class extends React.Component {
 	static displayName = 'NextStepsBox';

@@ -14,14 +14,14 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import Button from 'client/components/button';
+import { fetchSetupChoices } from 'client/extensions/woocommerce/state/sites/setup-choices/actions';
 import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,
-} from 'woocommerce/state/sites/setup-choices/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+} from 'client/extensions/woocommerce/state/sites/setup-choices/selectors';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 
 class TaxSettingsSaveButton extends Component {
 	static propTypes = {

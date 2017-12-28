@@ -11,11 +11,11 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import QueryPosts from 'components/data/query-posts';
-import { decodeEntities, stripHTML } from 'lib/formatting';
-import { getSiteComment } from 'state/selectors';
-import { getSitePost } from 'state/posts/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import QueryPosts from 'client/components/data/query-posts';
+import { decodeEntities, stripHTML } from 'client/lib/formatting';
+import { getSiteComment } from 'client/state/selectors';
+import { getSitePost } from 'client/state/posts/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 
 const CommentPostLink = ( {
 	isBulkMode,

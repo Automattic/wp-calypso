@@ -23,16 +23,16 @@ import { connect } from 'react-redux';
 import CalendarStep from './calendar-step';
 import ConfirmationStep from './confirmation-step';
 import InfoStep from './info-step';
-import Main from 'components/main';
+import Main from 'client/components/main';
 import Skeleton from './skeleton';
 import Upsell from './upsell';
-import QueryConciergeAvailableTimes from 'components/data/query-concierge-available-times';
-import QuerySites from 'components/data/query-sites';
-import QuerySitePlans from 'components/data/query-site-plans';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
-import { getConciergeAvailableTimes } from 'state/selectors';
+import QueryConciergeAvailableTimes from 'client/components/data/query-concierge-available-times';
+import QuerySites from 'client/components/data/query-sites';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import { PLAN_BUSINESS } from 'client/lib/plans/constants';
+import { getConciergeAvailableTimes } from 'client/state/selectors';
 import { WPCOM_CONCIERGE_SCHEDULE_ID } from './constants';
-import { getSite } from 'state/sites/selectors';
+import { getSite } from 'client/state/sites/selectors';
 
 const STEP_COMPONENTS = [ InfoStep, CalendarStep, ConfirmationStep ];
 

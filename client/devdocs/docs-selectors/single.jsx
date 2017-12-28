@@ -13,8 +13,8 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
-import HeaderCake from 'components/header-cake';
+import { addQueryArgs } from 'client/lib/url';
+import HeaderCake from 'client/components/header-cake';
 import DocsSelectorsResult from './result';
 
 export default class DocsSelectorsSingle extends Component {

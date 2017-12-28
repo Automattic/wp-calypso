@@ -15,7 +15,7 @@
 /**
  * Internal dependencies
  */
-import * as actionTypes from 'state/action-types';
+import * as actionTypes from 'client/state/action-types';
 
 export const consoleDispatcher = next => ( ...args ) => {
 	const store = next( ...args );

@@ -25,36 +25,36 @@ import {
 	startsWith,
 } from 'lodash';
 import { connect } from 'react-redux';
-import { setSurvey } from 'state/signup/steps/survey/actions';
+import { setSurvey } from 'client/state/signup/steps/survey/actions';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import SignupDependencyStore from 'lib/signup/dependency-store';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import SignupProgressStore from 'lib/signup/progress-store';
-import SignupFlowController from 'lib/signup/flow-controller';
-import LocaleSuggestions from 'components/locale-suggestions';
+import SignupDependencyStore from 'client/lib/signup/dependency-store';
+import { getSignupDependencyStore } from 'client/state/signup/dependency-store/selectors';
+import SignupProgressStore from 'client/lib/signup/progress-store';
+import SignupFlowController from 'client/lib/signup/flow-controller';
+import LocaleSuggestions from 'client/components/locale-suggestions';
 import FlowProgressIndicator from './flow-progress-indicator';
 import steps from './config/steps';
 import stepComponents from './config/step-components';
 import flows from './config/flows';
 import WpcomLoginForm from './wpcom-login-form';
-import userModule from 'lib/user';
-import analytics from 'lib/analytics';
-import SignupProcessingScreen from 'signup/processing-screen';
+import userModule from 'client/lib/user';
+import analytics from 'client/lib/analytics';
+import SignupProcessingScreen from 'client/signup/processing-screen';
 import utils from './utils';
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import * as oauthToken from 'lib/oauth-token';
-import DocumentHead from 'components/data/document-head';
+import { currentUserHasFlag, getCurrentUser } from 'client/state/current-user/selectors';
+import { DOMAINS_WITH_PLANS_ONLY } from 'client/state/current-user/constants';
+import * as oauthToken from 'client/lib/oauth-token';
+import DocumentHead from 'client/components/data/document-head';
 import { translate } from 'i18n-calypso';
-import SignupActions from 'lib/signup/actions';
-import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
-import { disableCart } from 'lib/upgrades/actions';
-import { loadTrackingTool } from 'state/analytics/actions';
-import { affiliateReferral } from 'state/refer/actions';
+import SignupActions from 'client/lib/signup/actions';
+import { recordSignupStart, recordSignupCompletion } from 'client/lib/analytics/ad-tracking';
+import { disableCart } from 'client/lib/upgrades/actions';
+import { loadTrackingTool } from 'client/state/analytics/actions';
+import { affiliateReferral } from 'client/state/refer/actions';
 
 /**
  * Constants

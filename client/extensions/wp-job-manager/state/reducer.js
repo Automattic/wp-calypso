@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import settings from './settings/reducer';
 import setup from './setup/reducer';
 

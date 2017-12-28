@@ -9,9 +9,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 import HelpResult from './item';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'client/components/section-header';
 
 export default class extends React.PureComponent {
 	static displayName = 'HelpResults';

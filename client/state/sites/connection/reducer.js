@@ -4,13 +4,13 @@
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
 	SITE_CONNECTION_STATUS_REQUEST,
 	SITE_CONNECTION_STATUS_REQUEST_FAILURE,
 	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 const createRequestingReducer = requesting => ( state, { siteId } ) => ( {
 	...state,

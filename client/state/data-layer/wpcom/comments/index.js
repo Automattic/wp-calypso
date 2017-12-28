@@ -14,15 +14,18 @@ import {
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_DELETE,
-} from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { getSitePost } from 'state/posts/selectors';
-import { requestCommentsList } from 'state/comments/actions';
-import { getPostOldestCommentDate, getPostNewestCommentDate } from 'state/comments/selectors';
-import getSiteComment from 'state/selectors/get-site-comment';
-import { decodeEntities } from 'lib/formatting';
+} from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice, successNotice } from 'client/state/notices/actions';
+import { getSitePost } from 'client/state/posts/selectors';
+import { requestCommentsList } from 'client/state/comments/actions';
+import {
+	getPostOldestCommentDate,
+	getPostNewestCommentDate,
+} from 'client/state/comments/selectors';
+import getSiteComment from 'client/state/selectors/get-site-comment';
+import { decodeEntities } from 'client/lib/formatting';
 
 export const commentsFromApi = comments =>
 	map( comments, comment => ( {

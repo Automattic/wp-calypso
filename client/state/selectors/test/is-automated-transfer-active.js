@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { isActive } from '../is-automated-transfer-active';
-import { transferStates } from 'state/automated-transfer/constants';
+import { transferStates } from 'client/state/automated-transfer/constants';
 
 describe( 'Automated Transfer', () => {
 	describe( 'isActive()', () => {

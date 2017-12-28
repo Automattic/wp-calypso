@@ -10,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import InfoPopover from 'components/info-popover';
+import InfoPopover from 'client/components/info-popover';
 
 export default function EditorDrawerLabel( { children, labelText, helpText } ) {
 	return (

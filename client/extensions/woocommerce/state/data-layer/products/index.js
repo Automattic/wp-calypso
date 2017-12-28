@@ -5,28 +5,28 @@
 import debugFactory from 'debug';
 import { isUndefined, mapValues, omitBy } from 'lodash';
 import qs from 'querystring';
-import warn from 'lib/warn';
+import warn from 'client/lib/warn';
 
 /**
  * Internal dependencies
  */
-import { dispatchWithProps } from 'woocommerce/state/helpers';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { get, post, put } from 'woocommerce/state/data-layer/request/actions';
-import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
+import { dispatchWithProps } from 'client/extensions/woocommerce/state/helpers';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { get, post, put } from 'client/extensions/woocommerce/state/data-layer/request/actions';
+import { setError } from 'client/extensions/woocommerce/state/sites/status/wc-api/actions';
 import {
 	fetchProducts,
 	fetchProductsFailure,
 	productUpdated,
 	productsUpdated,
-} from 'woocommerce/state/sites/products/actions';
-import request from 'woocommerce/state/sites/http-request';
+} from 'client/extensions/woocommerce/state/sites/products/actions';
+import request from 'client/extensions/woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_UPDATE,
 	WOOCOMMERCE_PRODUCT_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 const debug = debugFactory( 'woocommerce:products' );
 

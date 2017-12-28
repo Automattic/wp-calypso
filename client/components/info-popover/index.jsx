@@ -11,8 +11,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
-import analytics from 'lib/analytics';
+import Popover from 'client/components/popover';
+import analytics from 'client/lib/analytics';
 
 export default class InfoPopover extends Component {
 	static propTypes = {

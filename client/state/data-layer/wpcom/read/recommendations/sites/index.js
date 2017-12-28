@@ -7,11 +7,11 @@ import { map, noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { READER_RECOMMENDED_SITES_REQUEST } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { receiveRecommendedSites } from 'state/reader/recommended-sites/actions';
-import { decodeEntities } from 'lib/formatting';
+import { READER_RECOMMENDED_SITES_REQUEST } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { receiveRecommendedSites } from 'client/state/reader/recommended-sites/actions';
+import { decodeEntities } from 'client/lib/formatting';
 
 export const requestRecommendedSites = ( { dispatch }, action ) => {
 	const { seed = 1, number = 10, offset = 0 } = action.payload;

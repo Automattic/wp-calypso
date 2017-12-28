@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import JetpackLogo from 'components/jetpack-logo';
+import JetpackLogo from 'client/components/jetpack-logo';
 
 export default function JetpackLogoExample() {
 	return (

@@ -10,14 +10,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import MeSidebarNavigation from 'me/sidebar-navigation';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
 import NextStepsBox from './next-steps-box';
 import steps from './steps';
-import { getNewestSite, userHasAnyPaidPlans } from 'state/selectors';
+import { getNewestSite, userHasAnyPaidPlans } from 'client/state/selectors';
 import {
 	recordGoogleEvent as recordGoogleEventAction,
 	recordTracksEvent as recordTracksEventAction,
-} from 'state/analytics/actions';
+} from 'client/state/analytics/actions';
 
 class NextSteps extends React.Component {
 	componentWillUnmount() {

@@ -14,7 +14,7 @@ import {
 	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { lostFocusAt, currentMessage } from '../reducer';
 
 // Simulate the time Feb 27, 2017 05:25 UTC

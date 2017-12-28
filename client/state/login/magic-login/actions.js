@@ -11,7 +11,7 @@ import request from 'superagent';
  * Internal dependencies
  */
 import config from 'config';
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import { AUTHENTICATE_URL } from './constants';
 import {
 	LOGIN_REQUEST_SUCCESS,
@@ -26,7 +26,7 @@ import {
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
 	MAGIC_LOGIN_SHOW_LINK_EXPIRED,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const showMagicLoginCheckYourEmailPage = () => {
 	return {

@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from 'client/components/button';
 
 const SetupFooter = ( { disabled, label, onClick, primary } ) => {
 	return (

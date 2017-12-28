@@ -8,10 +8,10 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import isEligibleForDomainToPaidPlanUpsell from '../is-eligible-for-domain-to-paid-plan-upsell';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isMappedDomainSite from 'state/selectors/is-mapped-domain-site';
-import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
-import isVipSite from 'state/selectors/is-vip-site';
+import canCurrentUser from 'client/state/selectors/can-current-user';
+import isMappedDomainSite from 'client/state/selectors/is-mapped-domain-site';
+import isSiteOnFreePlan from 'client/state/selectors/is-site-on-free-plan';
+import isVipSite from 'client/state/selectors/is-vip-site';
 jest.mock( 'state/selectors/can-current-user', () => require( 'sinon' ).stub() );
 jest.mock( 'state/selectors/is-mapped-domain-site', () => require( 'sinon' ).stub() );
 jest.mock( 'state/selectors/is-site-on-free-plan', () => require( 'sinon' ).stub() );

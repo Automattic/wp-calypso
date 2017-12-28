@@ -21,8 +21,8 @@ import {
 import {
 	SOURCE_GOOGLE_DOCS,
 	SOURCE_UNKNOWN,
-} from 'components/tinymce/plugins/wpcom-track-paste/sources';
-import { EDITOR_PASTE_EVENT } from 'state/action-types';
+} from 'client/components/tinymce/plugins/wpcom-track-paste/sources';
+import { EDITOR_PASTE_EVENT } from 'client/state/action-types';
 
 jest.mock( 'layout/guided-tours/config', () => {
 	return require( 'state/ui/guided-tours/test/fixtures/config' );

@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
 import {
 	PRIMARY_DOMAIN_CHANGE_SUCCESS,
 	PRIMARY_DOMAIN_CHANGE_FAIL,

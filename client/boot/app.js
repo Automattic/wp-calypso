@@ -17,9 +17,9 @@ import page from 'page';
  * Internal dependencies
  */
 import { configureReduxStore, locales, setupMiddlewares, utils } from './common';
-import createReduxStoreFromPersistedInitialState from 'state/initial-state';
-import detectHistoryNavigation from 'lib/detect-history-navigation';
-import userFactory from 'lib/user';
+import createReduxStoreFromPersistedInitialState from 'client/state/initial-state';
+import detectHistoryNavigation from 'client/lib/detect-history-navigation';
+import userFactory from 'client/lib/user';
 
 const debug = debugFactory( 'calypso' );
 

@@ -15,24 +15,24 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import ListEnd from 'components/list-end';
-import QueryPosts from 'components/data/query-posts';
+import ListEnd from 'client/components/list-end';
+import QueryPosts from 'client/components/data/query-posts';
 import Page from './page';
-import { preload } from 'sections-preload';
-import infiniteScroll from 'lib/mixins/infinite-scroll';
-import EmptyContent from 'components/empty-content';
-import NoResults from 'my-sites/no-results';
+import { preload } from 'client/sections-preload';
+import infiniteScroll from 'client/lib/mixins/infinite-scroll';
+import EmptyContent from 'client/components/empty-content';
+import NoResults from 'client/my-sites/no-results';
 import Placeholder from './placeholder';
-import { mapPostStatus as mapStatus } from 'lib/route';
+import { mapPostStatus as mapStatus } from 'client/lib/route';
 import { sortPagesHierarchically } from './helpers';
 import BlogPostsPage from './blog-posts-page';
-import { hasInitializedSites } from 'state/selectors';
+import { hasInitializedSites } from 'client/state/selectors';
 import {
 	getPostsForQueryIgnoringPage,
 	isRequestingPostsForQuery,
 	isPostsLastPageForQuery,
-} from 'state/posts/selectors';
-import { getSite } from 'state/sites/selectors';
+} from 'client/state/posts/selectors';
+import { getSite } from 'client/state/sites/selectors';
 
 function preloadEditor() {
 	preload( 'post-editor' );

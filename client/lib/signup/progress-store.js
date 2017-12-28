@@ -12,10 +12,10 @@ import store from 'store';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import Dispatcher from 'client/dispatcher';
+import emitter from 'client/lib/mixins/emitter';
 import SignupDependencyStore from './dependency-store';
-import steps from 'signup/config/steps';
+import steps from 'client/signup/config/steps';
 
 /**
  * Constants

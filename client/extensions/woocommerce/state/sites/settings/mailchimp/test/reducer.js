@@ -18,8 +18,8 @@ import {
 	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST,
-} from 'woocommerce/state/action-types';
-import reducer from 'woocommerce/state/sites/reducer';
+} from 'client/extensions/woocommerce/state/action-types';
+import reducer from 'client/extensions/woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	test( 'should mark the settings request fetching', () => {

@@ -9,7 +9,7 @@ import { get, orderBy, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector from 'client/lib/create-selector';
 
 const getPostRevisions = createSelector(
 	( state, siteId, postId ) => {

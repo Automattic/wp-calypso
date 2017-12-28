@@ -9,7 +9,7 @@ import { assign, noop, pick, pickBy } from 'lodash';
 /**
  * Internal Dependencies
  */
-import FeedPostStore from 'lib/feed-post-store';
+import FeedPostStore from 'client/lib/feed-post-store';
 
 function PostFetcher( options ) {
 	assign(

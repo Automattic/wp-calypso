@@ -13,9 +13,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import QuerySiteStats from 'components/data/query-site-stats';
-import { isJetpackSite, getSiteOption } from 'state/sites/selectors';
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import QuerySiteStats from 'client/components/data/query-site-stats';
+import { isJetpackSite, getSiteOption } from 'client/state/sites/selectors';
+import { getSiteStatsNormalizedData } from 'client/state/stats/lists/selectors';
 
 const StatsSparkline = ( { isJetpack, siteUrl, className, siteId, highestViews, translate } ) => {
 	if ( ! siteId || ! siteUrl || isJetpack ) {

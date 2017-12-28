@@ -9,15 +9,10 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
-import QueryPackages from 'woocommerce/woocommerce-services/components/query-packages';
-import { fetchLabelsData, fetchLabelsStatus } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import {
-	hasRefreshedLabelStatus,
-	isError,
-	isFetching,
-	isLoaded,
-} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import QueryLabelSettings from 'client/extensions/woocommerce/woocommerce-services/components/query-label-settings';
+import QueryPackages from 'client/extensions/woocommerce/woocommerce-services/components/query-packages';
+import { fetchLabelsData, fetchLabelsStatus } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
+import { hasRefreshedLabelStatus, isError, isFetching, isLoaded } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 class QueryLabels extends Component {
 	fetch( props ) {

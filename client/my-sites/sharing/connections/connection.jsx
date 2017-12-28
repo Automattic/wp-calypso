@@ -14,11 +14,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { canCurrentUser } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import UsersStore from 'lib/users/store';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import { canCurrentUser } from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import UsersStore from 'client/lib/users/store';
 
 class SharingConnection extends Component {
 	static propTypes = {

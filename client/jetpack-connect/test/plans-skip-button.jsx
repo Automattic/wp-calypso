@@ -7,7 +7,7 @@
  * External dependencies
  */
 import React from 'react';
-import PlansSkipButton from 'jetpack-connect/plans-skip-button';
+import PlansSkipButton from 'client/jetpack-connect/plans-skip-button';
 import renderer from 'react-test-renderer';
 
 describe( 'PlansSkipButton', () => {

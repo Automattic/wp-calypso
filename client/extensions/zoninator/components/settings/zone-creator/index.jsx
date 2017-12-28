@@ -13,8 +13,8 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import HeaderCake from 'client/components/header-cake';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 import ZoneDetailsForm from '../../forms/zone-details-form';
 import { addZone } from '../../../state/zones/actions';
 import { settingsPath } from '../../../app/util';

@@ -13,9 +13,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { fetchReviewReplies } from 'woocommerce/state/sites/review-replies/actions';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getReviewReplies } from 'woocommerce/state/sites/review-replies/selectors';
+import { fetchReviewReplies } from 'client/extensions/woocommerce/state/sites/review-replies/actions';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import { getReviewReplies } from 'client/extensions/woocommerce/state/sites/review-replies/selectors';
 import ReviewReply from './review-reply';
 import ReviewReplyCreate from './review-reply-create';
 

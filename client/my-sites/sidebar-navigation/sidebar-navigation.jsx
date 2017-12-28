@@ -11,9 +11,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import SidebarNavigation from 'components/sidebar-navigation';
-import SiteIcon from 'blocks/site-icon';
-import { getSelectedSite } from 'state/ui/selectors';
+import SidebarNavigation from 'client/components/sidebar-navigation';
+import SiteIcon from 'client/blocks/site-icon';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 const MySitesSidebarNavigation = ( { site, translate } ) => {
 	let currentSiteTitle = translate( 'All Sites' ),

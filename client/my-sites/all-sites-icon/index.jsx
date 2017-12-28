@@ -11,7 +11,7 @@ import { union } from 'lodash';
 /**
  * Internal dependencies
  */
-import SiteIcon from 'blocks/site-icon';
+import SiteIcon from 'client/blocks/site-icon';
 
 const MAX_ICONS = 10;
 

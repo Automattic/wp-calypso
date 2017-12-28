@@ -14,10 +14,10 @@ import { connect } from 'react-redux';
  */
 import ExpandableSidebarMenu from '../expandable';
 import ReaderSidebarTagsList from './list';
-import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
-import { getReaderFollowedTags } from 'state/selectors';
+import QueryReaderFollowedTags from 'client/components/data/query-reader-followed-tags';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
+import { requestFollowTag, requestUnfollowTag } from 'client/state/reader/tags/items/actions';
+import { getReaderFollowedTags } from 'client/state/selectors';
 
 export class ReaderSidebarTags extends Component {
 	static propTypes = {

@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRegeneratingJetpackPostByEmail } from 'state/selectors';
+import { isRegeneratingJetpackPostByEmail } from 'client/state/selectors';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-settings';
 
 describe( 'isRegeneratingJetpackPostByEmail()', () => {

@@ -7,7 +7,7 @@ import {
 	SITE_CHECKLIST_RECEIVE,
 	SITE_CHECKLIST_REQUEST,
 	SITE_CHECKLIST_TASK_UPDATE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Action creator function: SITE_CHECKLIST_RECEIVE

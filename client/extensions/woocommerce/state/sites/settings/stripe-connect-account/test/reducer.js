@@ -21,8 +21,8 @@ import {
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_INIT_COMPLETE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_OAUTH_CONNECT_COMPLETE,
-} from 'woocommerce/state/action-types';
-import sitesReducer from 'woocommerce/state/sites/reducer';
+} from 'client/extensions/woocommerce/state/action-types';
+import sitesReducer from 'client/extensions/woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	describe( 'default stripeConnectAccount reducer behavior', () => {

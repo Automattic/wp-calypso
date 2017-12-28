@@ -15,28 +15,28 @@ import { localize } from 'i18n-calypso';
  */
 import ButtonsAppearance from './appearance';
 import ButtonsOptions from './options';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import QuerySharingButtons from 'components/data/query-sharing-buttons';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { saveSharingButtons } from 'state/sites/sharing-buttons/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryJetpackModules from 'client/components/data/query-jetpack-modules';
+import QuerySiteSettings from 'client/components/data/query-site-settings';
+import QuerySharingButtons from 'client/components/data/query-sharing-buttons';
+import { saveSiteSettings } from 'client/state/site-settings/actions';
+import { saveSharingButtons } from 'client/state/sites/sharing-buttons/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	getSiteSettings,
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
-} from 'state/site-settings/selectors';
+} from 'client/state/site-settings/selectors';
 import {
 	getSharingButtons,
 	isSavingSharingButtons,
 	isSharingButtonsSaveSuccessful,
-} from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { protectForm } from 'lib/protect-form';
+} from 'client/state/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { isJetpackModuleActive } from 'client/state/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
+import { activateModule } from 'client/state/jetpack/modules/actions';
+import { protectForm } from 'client/lib/protect-form';
 
 class SharingButtons extends Component {
 	state = {

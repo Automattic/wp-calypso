@@ -11,8 +11,8 @@ import ReactDom from 'react-dom';
  * Internal Dependencies
  */
 
-import { renderWithReduxStore } from 'lib/react-helpers';
-import { setSection } from 'state/ui/actions';
+import { renderWithReduxStore } from 'client/lib/react-helpers';
+import { setSection } from 'client/state/ui/actions';
 import ChecklistShow from '../checklist-show';
 import ChecklistThankYou from '../checklist-thank-you';
 

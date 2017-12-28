@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import emitter from 'lib/mixins/emitter';
+import emitter from 'client/lib/mixins/emitter';
 
 const countriesList = {
 	get: function() {

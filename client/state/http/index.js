@@ -9,9 +9,9 @@ import superagent from 'superagent';
 /***
  * Internal dependencies
  */
-import { extendAction } from 'state/utils';
-import { HTTP_REQUEST } from 'state/action-types';
-import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
+import { extendAction } from 'client/state/utils';
+import { HTTP_REQUEST } from 'client/state/action-types';
+import { failureMeta, successMeta } from 'client/state/data-layer/wpcom-http';
 
 const isAllHeadersValid = headers =>
 	headers.every(

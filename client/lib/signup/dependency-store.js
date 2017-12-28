@@ -9,11 +9,11 @@ import { keys, difference, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { SIGNUP_COMPLETE_RESET, SIGNUP_DEPENDENCY_STORE_UPDATE } from 'state/action-types';
+import { SIGNUP_COMPLETE_RESET, SIGNUP_DEPENDENCY_STORE_UPDATE } from 'client/state/action-types';
 
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import Dispatcher from 'dispatcher';
-import steps from 'signup/config/steps';
+import { getSignupDependencyStore } from 'client/state/signup/dependency-store/selectors';
+import Dispatcher from 'client/dispatcher';
+import steps from 'client/signup/config/steps';
 
 const SignupDependencyStore = {
 	get: function() {

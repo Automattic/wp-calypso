@@ -16,11 +16,11 @@ import {
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { deleteComment } from 'state/comments/actions';
-import { getSiteComment } from 'state/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+} from 'client/state/analytics/actions';
+import { deleteComment } from 'client/state/comments/actions';
+import { getSiteComment } from 'client/state/selectors';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
 
 const CommentDeleteWarning = ( { isLoading, destroyComment, translate } ) =>
 	! isLoading && (

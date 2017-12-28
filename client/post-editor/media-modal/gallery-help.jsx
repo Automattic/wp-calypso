@@ -14,14 +14,14 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { isMobile } from 'lib/viewport';
-import Popover from 'components/popover';
-import FormCheckbox from 'components/forms/form-checkbox';
-import Button from 'components/button';
-import { setPreference, savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
-import { getSectionName } from 'state/ui/selectors';
-import QueryPreferences from 'components/data/query-preferences';
+import { isMobile } from 'client/lib/viewport';
+import Popover from 'client/components/popover';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import Button from 'client/components/button';
+import { setPreference, savePreference } from 'client/state/preferences/actions';
+import { getPreference } from 'client/state/preferences/selectors';
+import { getSectionName } from 'client/state/ui/selectors';
+import QueryPreferences from 'client/components/data/query-preferences';
 
 class EditorMediaModalGalleryHelp extends React.PureComponent {
 	static displayName = 'EditorMediaModalGalleryHelp';

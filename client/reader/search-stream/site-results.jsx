@@ -11,14 +11,14 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { getReaderFeedsCountForQuery, getReaderFeedsForQuery } from 'state/selectors';
-import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
-import { requestFeedSearch } from 'state/reader/feed-searches/actions';
-import ReaderInfiniteStream from 'components/reader-infinite-stream';
-import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
-import { SEARCH_RESULTS_SITES } from 'reader/follow-sources';
-import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
-import withDimensions from 'lib/with-dimensions';
+import { getReaderFeedsCountForQuery, getReaderFeedsForQuery } from 'client/state/selectors';
+import QueryReaderFeedsSearch from 'client/components/data/query-reader-feeds-search';
+import { requestFeedSearch } from 'client/state/reader/feed-searches/actions';
+import ReaderInfiniteStream from 'client/components/reader-infinite-stream';
+import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'client/state/reader/feed-searches/actions';
+import { SEARCH_RESULTS_SITES } from 'client/reader/follow-sources';
+import { siteRowRenderer } from 'client/components/reader-infinite-stream/row-renderers';
+import withDimensions from 'client/lib/with-dimensions';
 
 class SiteResults extends React.Component {
 	static propTypes = {

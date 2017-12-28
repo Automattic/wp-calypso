@@ -12,10 +12,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import safeProtocolUrl from 'lib/safe-protocol-url';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { withoutHttp } from 'lib/url';
+import Button from 'client/components/button';
+import safeProtocolUrl from 'client/lib/safe-protocol-url';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import { withoutHttp } from 'client/lib/url';
 
 class ProfileLink extends React.Component {
 	static defaultProps = {

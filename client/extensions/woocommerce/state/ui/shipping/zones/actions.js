@@ -14,7 +14,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_EDIT_NAME,
 	WOOCOMMERCE_SHIPPING_ZONE_OPEN,
 	WOOCOMMERCE_SHIPPING_ZONE_REMOVE,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 /**
  * Creates a new (empty) Shipping Zone. This will open the newly created zone for editing, but the zone itself

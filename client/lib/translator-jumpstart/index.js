@@ -13,11 +13,11 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { loadjQueryDependentScript } from 'lib/load-script';
-import User from 'lib/user';
-import userSettings from 'lib/user-settings';
-import { isMobile } from 'lib/viewport';
-import analytics from 'lib/analytics';
+import { loadjQueryDependentScript } from 'client/lib/load-script';
+import User from 'client/lib/user';
+import userSettings from 'client/lib/user-settings';
+import { isMobile } from 'client/lib/viewport';
+import analytics from 'client/lib/analytics';
 
 const debug = debugModule( 'calypso:community-translator' );
 

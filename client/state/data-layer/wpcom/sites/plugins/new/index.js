@@ -10,18 +10,18 @@ import { find, includes, toLower } from 'lodash';
 /**
  * Internal dependencies
  */
-import { PLUGIN_UPLOAD } from 'state/action-types';
+import { PLUGIN_UPLOAD } from 'client/state/action-types';
 import {
 	completePluginUpload,
 	pluginUploadError,
 	updatePluginUploadProgress,
-} from 'state/plugins/upload/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSite } from 'state/sites/selectors';
-import Dispatcher from 'dispatcher';
+} from 'client/state/plugins/upload/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'client/state/notices/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { getSite } from 'client/state/sites/selectors';
+import Dispatcher from 'client/dispatcher';
 
 export const uploadPlugin = ( { dispatch }, action ) => {
 	const { siteId, file } = action;

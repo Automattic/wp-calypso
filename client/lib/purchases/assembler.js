@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import sortProducts from 'lib/products-values/sort';
+import sortProducts from 'client/lib/products-values/sort';
 
 function createPurchaseObject( purchase ) {
 	const object = {

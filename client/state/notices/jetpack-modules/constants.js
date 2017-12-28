@@ -14,7 +14,7 @@ import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS as ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_FAILURE as DEACTIVATE_FAILURE,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS as DEACTIVATE_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const MODULE_NOTICES = {
 	'infinite-scroll': {

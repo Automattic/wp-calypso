@@ -6,7 +6,7 @@
 
 import { omit } from 'lodash';
 import React from 'react';
-import { setSection } from 'state/ui/actions';
+import { setSection } from 'client/state/ui/actions';
 
 /**
  * Internal Dependencies

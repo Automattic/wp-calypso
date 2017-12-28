@@ -14,24 +14,24 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
-import SiteSelector from 'components/site-selector';
-import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { getSites } from 'state/selectors';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
-import { getSelectedDomain } from 'lib/domains';
-import { isDomainOnlySite } from 'state/selectors';
-import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import SectionHeader from 'components/section-header';
+import Card from 'client/components/card';
+import SiteSelector from 'client/components/site-selector';
+import { getCurrentUser, currentUserHasFlag } from 'client/state/current-user/selectors';
+import { DOMAINS_WITH_PLANS_ONLY } from 'client/state/current-user/constants';
+import { getSites } from 'client/state/selectors';
+import Header from 'client/my-sites/domains/domain-management/components/header';
+import Main from 'client/components/main';
+import paths from 'client/my-sites/domains/paths';
+import { getSelectedDomain } from 'client/lib/domains';
+import { isDomainOnlySite } from 'client/state/selectors';
+import NonOwnerCard from 'client/my-sites/domains/domain-management/components/domain/non-owner-card';
+import DomainMainPlaceholder from 'client/my-sites/domains/domain-management/components/domain/main-placeholder';
+import SectionHeader from 'client/components/section-header';
 import TransferConfirmationDialog from './confirmation-dialog';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import wp from 'lib/wp';
-import { PLAN_FREE } from 'lib/plans/constants';
-import { requestSites } from 'state/sites/actions';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
+import wp from 'client/lib/wp';
+import { PLAN_FREE } from 'client/lib/plans/constants';
+import { requestSites } from 'client/state/sites/actions';
 
 const wpcom = wp.undocumented();
 

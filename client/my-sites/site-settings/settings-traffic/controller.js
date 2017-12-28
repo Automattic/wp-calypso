@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import TrafficMain from 'my-sites/site-settings/settings-traffic/main';
+import TrafficMain from 'client/my-sites/site-settings/settings-traffic/main';
 
 export default {
 	traffic( context, next ) {

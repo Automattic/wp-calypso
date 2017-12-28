@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import Card from 'client/components/card';
+import CompactCard from 'client/components/card/compact';
 
 class Cards extends React.Component {
 	static displayName = 'Cards';

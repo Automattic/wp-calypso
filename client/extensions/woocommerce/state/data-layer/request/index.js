@@ -9,14 +9,14 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { dispatchWithProps } from 'woocommerce/state/helpers';
-import request from 'woocommerce/state/sites/request';
-import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
+import { dispatchWithProps } from 'client/extensions/woocommerce/state/helpers';
+import request from 'client/extensions/woocommerce/state/sites/request';
+import { setError } from 'client/extensions/woocommerce/state/sites/status/wc-api/actions';
 import {
 	WOOCOMMERCE_API_REQUEST,
 	WOOCOMMERCE_API_REQUEST_SUCCESS,
 	WOOCOMMERCE_API_REQUEST_FAILURE,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 const debug = debugFactory( 'woocommerce:request' );
 

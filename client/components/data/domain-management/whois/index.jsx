@@ -11,11 +11,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
-import DomainsStore from 'lib/domains/store';
-import StoreConnection from 'components/data/store-connection';
-import upgradesActions from 'lib/upgrades/actions';
-import WhoisStore from 'lib/domains/whois/store';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import DomainsStore from 'client/lib/domains/store';
+import StoreConnection from 'client/components/data/store-connection';
+import upgradesActions from 'client/lib/upgrades/actions';
+import WhoisStore from 'client/lib/domains/whois/store';
 
 const stores = [ DomainsStore, WhoisStore ];
 

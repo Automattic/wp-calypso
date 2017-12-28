@@ -15,12 +15,12 @@ import { flowRight } from 'lodash';
  * Internal dependencies
  */
 import Followers from '../stats-comment-followers-page';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
+import HeaderCake from 'client/components/header-cake';
+import Main from 'client/components/main';
 import StatsFirstView from '../stats-first-view';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 class StatsCommentFollows extends Component {
 	static propTypes = {

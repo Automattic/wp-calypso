@@ -15,8 +15,8 @@ import React from 'react';
  * Internal dependencies
  */
 import DocsExample, { DocsExampleToggle, DocsExampleStats } from '../index';
-import Button from 'components/button';
-import Count from 'components/count';
+import Button from 'client/components/button';
+import Count from 'client/components/count';
 
 describe( 'DocsExample', () => {
 	const props = {

@@ -8,7 +8,7 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import { mc, ga, tracks } from 'lib/analytics';
+import { mc, ga, tracks } from 'client/lib/analytics';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 

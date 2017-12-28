@@ -7,7 +7,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import path from './path/reducer';
 import query from './query/reducer';
 

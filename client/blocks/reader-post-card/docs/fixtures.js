@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import DisplayTypes from 'state/reader/posts/display-types';
+import DisplayTypes from 'client/state/reader/posts/display-types';
 
 export const posts = [
 	{

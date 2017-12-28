@@ -14,11 +14,11 @@ import {
 	READER_SITE_UPDATE,
 	DESERIALIZE,
 	SERIALIZE,
-} from 'state/action-types';
-import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'client/state/utils';
 import { readerSitesSchema } from './schema';
-import { withoutHttp } from 'lib/url';
-import { decodeEntities } from 'lib/formatting';
+import { withoutHttp } from 'client/lib/url';
+import { decodeEntities } from 'client/lib/formatting';
 
 const actionMap = {
 	[ SERIALIZE ]: handleSerialize,

@@ -13,17 +13,17 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isSitePreviewable } from 'state/sites/selectors';
-import addQueryArgs from 'lib/route/add-query-args';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { isWithinBreakpoint } from 'lib/viewport';
-import Button from 'components/button';
-import DocumentHead from 'components/data/document-head';
-import EmptyContent from 'components/empty-content';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { isSitePreviewable } from 'client/state/sites/selectors';
+import addQueryArgs from 'client/lib/route/add-query-args';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
+import { isWithinBreakpoint } from 'client/lib/viewport';
+import Button from 'client/components/button';
+import DocumentHead from 'client/components/data/document-head';
+import EmptyContent from 'client/components/empty-content';
 import Gridicon from 'gridicons';
-import Main from 'components/main';
-import WebPreviewContent from 'components/web-preview/content';
+import Main from 'client/components/main';
+import WebPreviewContent from 'client/components/web-preview/content';
 
 const debug = debugFactory( 'calypso:my-sites:preview' );
 

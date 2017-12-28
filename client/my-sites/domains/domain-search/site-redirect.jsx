@@ -13,13 +13,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
+import HeaderCake from 'client/components/header-cake';
+import Main from 'client/components/main';
 import SiteRedirectStep from './site-redirect-step';
-import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import { getProductsList } from 'state/products-list/selectors';
+import isSiteUpgradeable from 'client/state/selectors/is-site-upgradeable';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import QueryProductsList from 'client/components/data/query-products-list';
+import { getProductsList } from 'client/state/products-list/selectors';
 
 class SiteRedirect extends Component {
 	static propTypes = {

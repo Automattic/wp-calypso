@@ -10,15 +10,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import DocumentHead from 'client/components/data/document-head';
+import FormattedHeader from 'client/components/formatted-header';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextarea from 'client/components/forms/form-textarea';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { saveJetpackOnboardingSettings } from 'client/state/jetpack-onboarding/actions';
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	state = {

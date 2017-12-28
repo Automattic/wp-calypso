@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getBlogStickers } from 'state/selectors';
+import { getBlogStickers } from 'client/state/selectors';
 
 describe( 'getBlogStickers()', () => {
 	test( 'should return stickers for a known blog', () => {

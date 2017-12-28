@@ -20,28 +20,31 @@ import ReaderSidebarHelper from './helper';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarTags from './reader-sidebar-tags';
 import ReaderSidebarTeams from './reader-sidebar-teams';
-import AppPromo from 'blocks/app-promo';
-import QueryReaderLists from 'components/data/query-reader-lists';
-import QueryReaderTeams from 'components/data/query-reader-teams';
+import AppPromo from 'client/blocks/app-promo';
+import QueryReaderLists from 'client/components/data/query-reader-lists';
+import QueryReaderTeams from 'client/components/data/query-reader-teams';
 import config from 'config';
-import Sidebar from 'layout/sidebar';
-import SidebarFooter from 'layout/sidebar/footer';
-import SidebarHeading from 'layout/sidebar/heading';
-import SidebarMenu from 'layout/sidebar/menu';
-import SidebarRegion from 'layout/sidebar/region';
-import observe from 'lib/mixins/data-observe';
-import ReaderListsStore from 'lib/reader-lists/lists';
-import userSettings from 'lib/user-settings';
-import userUtils from 'lib/user/utils';
-import viewport from 'lib/viewport';
-import { isDiscoverEnabled } from 'reader/discover/helper';
-import { isAutomatticTeamMember } from 'reader/lib/teams';
-import { getTagStreamUrl } from 'reader/route';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { getSubscribedLists } from 'state/reader/lists/selectors';
-import { getReaderTeams } from 'state/selectors';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
+import Sidebar from 'client/layout/sidebar';
+import SidebarFooter from 'client/layout/sidebar/footer';
+import SidebarHeading from 'client/layout/sidebar/heading';
+import SidebarMenu from 'client/layout/sidebar/menu';
+import SidebarRegion from 'client/layout/sidebar/region';
+import observe from 'client/lib/mixins/data-observe';
+import ReaderListsStore from 'client/lib/reader-lists/lists';
+import userSettings from 'client/lib/user-settings';
+import userUtils from 'client/lib/user/utils';
+import viewport from 'client/lib/viewport';
+import { isDiscoverEnabled } from 'client/reader/discover/helper';
+import { isAutomatticTeamMember } from 'client/reader/lib/teams';
+import { getTagStreamUrl } from 'client/reader/route';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
+import { getSubscribedLists } from 'client/state/reader/lists/selectors';
+import { getReaderTeams } from 'client/state/selectors';
+import { setNextLayoutFocus } from 'client/state/ui/layout-focus/actions';
+import {
+	toggleReaderSidebarLists,
+	toggleReaderSidebarTags,
+} from 'client/state/ui/reader/sidebar/actions';
 import url from 'url';
 
 export const ReaderSidebar = createReactClass( {

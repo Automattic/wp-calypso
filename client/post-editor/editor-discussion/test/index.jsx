@@ -15,7 +15,7 @@ import ReactDom from 'react-dom';
  * Internal dependencies
  */
 import { EditorDiscussion } from '../';
-import { edit as editPost } from 'lib/posts/actions';
+import { edit as editPost } from 'client/lib/posts/actions';
 
 jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/posts/actions', () => ( {

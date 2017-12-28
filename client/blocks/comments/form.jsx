@@ -12,13 +12,13 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import FormInputValidation from 'components/forms/form-input-validation';
-import Gravatar from 'components/gravatar';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { writeComment, deleteComment, replyComment } from 'state/comments/actions';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
-import { isCommentableDiscoverPost } from 'blocks/comments/helper';
+import AutoDirection from 'client/components/auto-direction';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import Gravatar from 'client/components/gravatar';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { writeComment, deleteComment, replyComment } from 'client/state/comments/actions';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'client/reader/stats';
+import { isCommentableDiscoverPost } from 'client/blocks/comments/helper';
 
 class PostCommentForm extends React.Component {
 	constructor( props ) {

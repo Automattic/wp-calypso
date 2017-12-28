@@ -11,7 +11,7 @@ import {
 	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	NAVIGATE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns an action object to be used in signalling that a site has been set

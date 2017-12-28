@@ -11,21 +11,25 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card/compact';
+import Button from 'client/components/button';
+import Card from 'client/components/card/compact';
 import Header from './card/header';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { transferStatus } from 'lib/domains/constants';
-import support from 'lib/url/support';
-import { restartInboundTransfer } from 'lib/domains';
-import { fetchDomains } from 'lib/upgrades/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import { cancelPurchase as cancelPurchaseLink } from 'me/purchases/paths';
-import { Notice } from 'components/notice';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'client/state/analytics/actions';
+import { transferStatus } from 'client/lib/domains/constants';
+import support from 'client/lib/url/support';
+import { restartInboundTransfer } from 'client/lib/domains';
+import { fetchDomains } from 'client/lib/upgrades/actions';
+import { errorNotice, successNotice } from 'client/state/notices/actions';
+import VerticalNav from 'client/components/vertical-nav';
+import VerticalNavItem from 'client/components/vertical-nav/item';
+import { cancelPurchase as cancelPurchaseLink } from 'client/me/purchases/paths';
+import { Notice } from 'client/components/notice';
 
 class Transfer extends React.PureComponent {
 	state = {

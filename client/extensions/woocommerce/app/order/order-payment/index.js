@@ -12,12 +12,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import formatCurrency from 'lib/format-currency';
-import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
-import { isOrderFailed, isOrderWaitingPayment } from 'woocommerce/lib/order-status';
+import Button from 'client/components/button';
+import formatCurrency from 'client/lib/format-currency';
+import { getOrderRefundTotal } from 'client/extensions/woocommerce/lib/order-values/totals';
+import {
+	isOrderFailed,
+	isOrderWaitingPayment,
+} from 'client/extensions/woocommerce/lib/order-status';
 import RefundDialog from './dialog';
-import { saveOrder } from 'woocommerce/state/sites/orders/actions';
+import { saveOrder } from 'client/extensions/woocommerce/state/sites/orders/actions';
 
 class OrderPaymentCard extends Component {
 	static propTypes = {

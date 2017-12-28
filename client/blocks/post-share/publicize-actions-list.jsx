@@ -13,21 +13,21 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { getPostShareScheduledActions, getPostSharePublishedActions } from 'state/selectors';
-import QuerySharePostActions from 'components/data/query-share-post-actions/index.jsx';
+import { getPostShareScheduledActions, getPostSharePublishedActions } from 'client/state/selectors';
+import QuerySharePostActions from 'client/components/data/query-share-post-actions/index.jsx';
 import SocialLogo from 'social-logos';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import EllipsisMenu from 'client/components/ellipsis-menu';
+import PopoverMenuItem from 'client/components/popover/menu-item';
 import { SCHEDULED, PUBLISHED } from './constants';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
+import SectionNav from 'client/components/section-nav';
+import NavTabs from 'client/components/section-nav/tabs';
+import NavItem from 'client/components/section-nav/item';
 import { isEnabled } from 'config';
-import Dialog from 'components/dialog';
-import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
-import analytics from 'lib/analytics';
+import Dialog from 'client/components/dialog';
+import { deletePostShareAction } from 'client/state/sharing/publicize/publicize-actions/actions';
+import analytics from 'client/lib/analytics';
 import SharingPreviewModal from './sharing-preview-modal';
-import Notice from 'components/notice';
+import Notice from 'client/components/notice';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {

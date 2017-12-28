@@ -11,10 +11,10 @@ const debug = debugFactory( 'calypso:media' );
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
+import Dispatcher from 'client/dispatcher';
+import wpcom from 'client/lib/wp';
 import MediaUtils from './utils';
-import PostEditStore from 'lib/posts/post-edit-store';
+import PostEditStore from 'client/lib/posts/post-edit-store';
 import MediaStore from './store';
 import MediaListStore from './list-store';
 import MediaValidationStore from './validation-store';

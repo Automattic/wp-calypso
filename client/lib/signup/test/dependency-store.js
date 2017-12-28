@@ -12,7 +12,7 @@ import { createStore } from 'redux';
 /**
  * Internal dependencies
  */
-import { reducer } from 'state';
+import { reducer } from 'client/state';
 
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );

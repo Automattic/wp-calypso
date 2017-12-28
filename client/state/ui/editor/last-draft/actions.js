@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
+import { EDITOR_LAST_DRAFT_SET } from 'client/state/action-types';
 
 /**
  * Returns an action object signalling that the editor last draft should be set

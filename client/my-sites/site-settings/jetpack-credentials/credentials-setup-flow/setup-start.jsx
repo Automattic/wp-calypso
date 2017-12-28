@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 import Gridicon from 'gridicons';
 
 const SetupStart = ( { goToNextStep, translate } ) => (

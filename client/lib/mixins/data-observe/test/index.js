@@ -10,7 +10,7 @@ import { assert } from 'chai';
  * Internal dependencies
  */
 /* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
+import observe from 'client/lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 
 describe( 'observe()', () => {

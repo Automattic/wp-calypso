@@ -12,8 +12,8 @@ import { get as getStoreStub, set as setSpy } from 'store';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
-import { getUserStub } from 'lib/user';
+import { abtest } from 'client/lib/abtest';
+import { getUserStub } from 'client/lib/user';
 
 jest.mock( 'lib/abtest/active-tests', () => ( {
 	mockedTest: {

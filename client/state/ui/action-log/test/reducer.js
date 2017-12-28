@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { ROUTE_SET, COMMENTS_LIKE } from 'state/action-types';
+import { ROUTE_SET, COMMENTS_LIKE } from 'client/state/action-types';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {

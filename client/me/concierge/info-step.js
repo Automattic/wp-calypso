@@ -10,18 +10,18 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextarea from 'components/forms/form-textarea';
-import Timezone from 'components/timezone';
+import CompactCard from 'client/components/card/compact';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextarea from 'client/components/forms/form-textarea';
+import Timezone from 'client/components/timezone';
 import PrimaryHeader from './primary-header';
-import Site from 'blocks/site';
+import Site from 'client/blocks/site';
 import { localize } from 'i18n-calypso';
-import { updateConciergeSignupForm } from 'state/concierge/actions';
-import { getConciergeSignupForm } from 'state/selectors';
+import { updateConciergeSignupForm } from 'client/state/concierge/actions';
+import { getConciergeSignupForm } from 'client/state/selectors';
 
 class InfoStep extends Component {
 	static propTypes = {

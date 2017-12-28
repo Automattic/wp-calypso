@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isJetpackModuleUnavailableInDevelopmentMode } from 'state/selectors';
+import { isJetpackModuleUnavailableInDevelopmentMode } from 'client/state/selectors';
 
 describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 	test( 'should return null if the site modules are not known', () => {

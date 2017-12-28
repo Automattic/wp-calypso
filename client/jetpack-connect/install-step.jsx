@@ -10,9 +10,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import { preventWidows } from 'lib/formatting';
-import versionCompare from 'lib/version-compare';
+import Card from 'client/components/card';
+import { preventWidows } from 'client/lib/formatting';
+import versionCompare from 'client/lib/version-compare';
 import JetpackExampleInstall from './example-components/jetpack-install';
 import JetpackExampleActivate from './example-components/jetpack-activate';
 import JetpackExampleConnect from './example-components/jetpack-connect';

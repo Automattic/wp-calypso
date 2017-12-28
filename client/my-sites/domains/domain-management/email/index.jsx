@@ -12,20 +12,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Header from 'my-sites/domains/domain-management/components/header';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import Main from 'client/components/main';
+import Header from 'client/my-sites/domains/domain-management/components/header';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
 import AddGoogleAppsCard from './add-google-apps-card';
 import GoogleAppsUsersCard from './google-apps-users-card';
 import Placeholder from './placeholder';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import UpgradesNavigation from 'my-sites/domains/navigation';
-import EmptyContent from 'components/empty-content';
-import paths from 'my-sites/domains/paths';
-import { hasGoogleApps, hasGoogleAppsSupportedDomain, getSelectedDomain } from 'lib/domains';
-import { isPlanFeaturesEnabled } from 'lib/plans';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import VerticalNav from 'client/components/vertical-nav';
+import VerticalNavItem from 'client/components/vertical-nav/item';
+import UpgradesNavigation from 'client/my-sites/domains/navigation';
+import EmptyContent from 'client/components/empty-content';
+import paths from 'client/my-sites/domains/paths';
+import { hasGoogleApps, hasGoogleAppsSupportedDomain, getSelectedDomain } from 'client/lib/domains';
+import { isPlanFeaturesEnabled } from 'client/lib/plans';
+import EmailVerificationGate from 'client/components/email-verification/email-verification-gate';
 
 class Email extends React.Component {
 	static propTypes = {

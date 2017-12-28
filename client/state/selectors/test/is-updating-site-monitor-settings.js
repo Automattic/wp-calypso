@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isUpdatingSiteMonitorSettings } from 'state/selectors';
+import { isUpdatingSiteMonitorSettings } from 'client/state/selectors';
 
 describe( 'isUpdatingSiteMonitorSettings()', () => {
 	const siteId = 2916284;

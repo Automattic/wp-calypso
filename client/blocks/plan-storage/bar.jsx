@@ -13,8 +13,8 @@ import filesize from 'filesize';
 /**
  * Internal dependencies
  */
-import ProgressBar from 'components/progress-bar';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import ProgressBar from 'client/components/progress-bar';
+import { PLAN_BUSINESS } from 'client/lib/plans/constants';
 
 const ALERT_PERCENT = 80;
 const WARN_PERCENT = 60;

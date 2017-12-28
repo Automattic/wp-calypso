@@ -14,24 +14,24 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import EmptyContent from 'components/empty-content';
-import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
+import Card from 'client/components/card';
+import EmptyContent from 'client/components/empty-content';
+import { fetchReviews } from 'client/extensions/woocommerce/state/sites/reviews/actions';
 import {
 	areReviewsLoading,
 	areReviewsLoaded,
 	getReviews,
 	getTotalReviews,
-} from 'woocommerce/state/sites/reviews/selectors';
+} from 'client/extensions/woocommerce/state/sites/reviews/selectors';
 import {
 	getReviewsCurrentPage,
 	getReviewsCurrentSearch,
-} from 'woocommerce/state/ui/reviews/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Pagination from 'components/pagination';
+} from 'client/extensions/woocommerce/state/ui/reviews/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import Pagination from 'client/components/pagination';
 import ReviewCard from './review-card';
 import ReviewsFilterNav from './reviews-filter-nav';
-import { updateCurrentReviewsQuery } from 'woocommerce/state/ui/reviews/actions';
+import { updateCurrentReviewsQuery } from 'client/extensions/woocommerce/state/ui/reviews/actions';
 
 class ReviewsList extends Component {
 	static propTypes = {

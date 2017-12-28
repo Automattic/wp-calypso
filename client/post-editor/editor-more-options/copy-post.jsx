@@ -14,16 +14,16 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import AccordionSection from 'components/accordion/section';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
-import EditorDrawerLabel from 'post-editor/editor-drawer/label';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import PostSelector from 'my-sites/post-selector';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import AccordionSection from 'client/components/accordion/section';
+import Button from 'client/components/button';
+import Dialog from 'client/components/dialog';
+import EditorDrawerLabel from 'client/post-editor/editor-drawer/label';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import PostSelector from 'client/my-sites/post-selector';
 
 class EditorMoreOptionsCopyPost extends Component {
 	static propTypes = {

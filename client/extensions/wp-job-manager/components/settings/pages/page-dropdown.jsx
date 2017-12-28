@@ -11,9 +11,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import ReduxFormSelect from 'components/redux-forms/redux-form-select';
-import { getSitePosts } from 'state/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import ReduxFormSelect from 'client/components/redux-forms/redux-form-select';
+import { getSitePosts } from 'client/state/posts/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 // eslint-disable-next-line no-unused-vars
 const PageDropdown = ( { dispatch, name, pages, ...otherProps } ) => {

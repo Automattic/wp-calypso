@@ -12,13 +12,13 @@ import debugModule from 'debug';
 /**
  * Internal Dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import notices from 'notices';
-import observe from 'lib/mixins/data-observe';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import notices from 'client/notices';
+import observe from 'client/lib/mixins/data-observe';
 import { connect } from 'react-redux';
-import { removeNotice } from 'state/notices/actions';
-import { getNotices } from 'state/notices/selectors';
+import { removeNotice } from 'client/state/notices/actions';
+import { getNotices } from 'client/state/notices/selectors';
 
 const debug = debugModule( 'calypso:notices' );
 

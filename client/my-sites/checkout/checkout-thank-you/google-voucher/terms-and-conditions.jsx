@@ -10,7 +10,7 @@ import { localize, moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'client/components/external-link';
 
 /*
  * Constants

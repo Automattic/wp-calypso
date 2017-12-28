@@ -15,9 +15,9 @@ import {
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_FAILURE,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import { ERROR, LOADING } from 'woocommerce/state/constants';
-import reducer from 'woocommerce/state/sites/reducer';
+} from 'client/extensions/woocommerce/state/action-types';
+import { ERROR, LOADING } from 'client/extensions/woocommerce/state/constants';
+import reducer from 'client/extensions/woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	test( 'should mark the settings products tree as "error" when update request fails', () => {

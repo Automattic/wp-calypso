@@ -4,9 +4,9 @@
  * Internal dependencies
  */
 
-import createSelector from 'lib/create-selector';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSitesItems } from 'state/selectors';
+import createSelector from 'client/lib/create-selector';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { getSitesItems } from 'client/state/selectors';
 
 /**
  * Returns true if the user has one or more Jetpack sites, and false otherwise.

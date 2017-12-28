@@ -14,41 +14,44 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import accept from 'lib/accept';
-import { ProtectFormGuard } from 'lib/protect-form';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { getActionList } from 'woocommerce/state/action-list/selectors';
+import Main from 'client/components/main';
+import accept from 'client/lib/accept';
+import { ProtectFormGuard } from 'client/lib/protect-form';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
+import { getActionList } from 'client/extensions/woocommerce/state/action-list/selectors';
 import {
 	createProduct,
 	fetchProduct,
 	deleteProduct as deleteProductAction,
-} from 'woocommerce/state/sites/products/actions';
-import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
-import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+} from 'client/extensions/woocommerce/state/sites/products/actions';
+import { fetchProductCategories } from 'client/extensions/woocommerce/state/sites/product-categories/actions';
+import { fetchProductVariations } from 'client/extensions/woocommerce/state/sites/product-variations/actions';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 import {
 	editProduct,
 	editProductAttribute,
 	createProductActionList,
 	clearProductEdits,
-} from 'woocommerce/state/ui/products/actions';
-import { getProductEdits, getProductWithLocalEdits } from 'woocommerce/state/ui/products/selectors';
+} from 'client/extensions/woocommerce/state/ui/products/actions';
+import {
+	getProductEdits,
+	getProductWithLocalEdits,
+} from 'client/extensions/woocommerce/state/ui/products/selectors';
 import {
 	editProductVariation,
 	clearProductVariationEdits,
-} from 'woocommerce/state/ui/products/variations/actions';
+} from 'client/extensions/woocommerce/state/ui/products/variations/actions';
 import {
 	getProductVariationsWithLocalEdits,
 	getVariationEditsStateForProduct,
-} from 'woocommerce/state/ui/products/variations/selectors';
+} from 'client/extensions/woocommerce/state/ui/products/variations/selectors';
 import {
 	editProductCategory,
 	clearProductCategoryEdits,
-} from 'woocommerce/state/ui/product-categories/actions';
-import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
+} from 'client/extensions/woocommerce/state/ui/product-categories/actions';
+import { getProductCategoriesWithLocalEdits } from 'client/extensions/woocommerce/state/ui/product-categories/selectors';
 import page from 'page';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';

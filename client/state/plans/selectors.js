@@ -9,7 +9,7 @@ import { get, find } from 'lodash';
 /**
  * Internal Dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector from 'client/lib/create-selector';
 
 /**
  * Return WordPress plans getting from state object

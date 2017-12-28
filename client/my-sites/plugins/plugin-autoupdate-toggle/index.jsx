@@ -12,12 +12,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PluginsActions from 'lib/plugins/actions';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
-import ExternalLink from 'components/external-link';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import utils from 'lib/site/utils';
+import PluginsActions from 'client/lib/plugins/actions';
+import PluginsLog from 'client/lib/plugins/log-store';
+import PluginAction from 'client/my-sites/plugins/plugin-action/plugin-action';
+import ExternalLink from 'client/components/external-link';
+import { recordGoogleEvent, recordTracksEvent } from 'client/state/analytics/actions';
+import utils from 'client/lib/site/utils';
 
 export class PluginAutoUpdateToggle extends Component {
 	toggleAutoUpdates = () => {

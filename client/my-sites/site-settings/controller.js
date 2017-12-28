@@ -10,21 +10,21 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import AsyncLoad from 'components/async-load';
+import AsyncLoad from 'client/components/async-load';
 import config from 'config';
 import DeleteSite from './delete-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import DisconnectSite from './disconnect-site';
-import purchasesPaths from 'me/purchases/paths';
-import SiteSettingsMain from 'my-sites/site-settings/main';
+import purchasesPaths from 'client/me/purchases/paths';
+import SiteSettingsMain from 'client/my-sites/site-settings/main';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
 import ManageConnection from './manage-connection';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { canCurrentUser, isSiteAutomatedTransfer, isVipSite } from 'state/selectors';
-import { SITES_ONCE_CHANGED } from 'state/action-types';
-import { setSection } from 'state/ui/actions';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { canCurrentUser, isSiteAutomatedTransfer, isVipSite } from 'client/state/selectors';
+import { SITES_ONCE_CHANGED } from 'client/state/action-types';
+import { setSection } from 'client/state/ui/actions';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );

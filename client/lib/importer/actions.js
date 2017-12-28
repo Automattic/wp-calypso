@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 import { flowRight, includes, partial } from 'lodash';
 const wpcom = require( 'lib/wp' ).undocumented();
 
@@ -28,8 +28,8 @@ import {
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
-} from 'state/action-types';
-import { appStates } from 'state/imports/constants';
+} from 'client/state/action-types';
+import { appStates } from 'client/state/imports/constants';
 import { fromApi, toApi } from './common';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';

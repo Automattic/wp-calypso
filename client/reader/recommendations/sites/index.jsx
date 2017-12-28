@@ -1,7 +1,7 @@
 /** @format */
 import React from 'react';
-import Main from 'components/main';
-import Navigation from 'reader/recommendations/navigation';
+import Main from 'client/components/main';
+import Navigation from 'client/reader/recommendations/navigation';
 
 class RecommendedSites extends React.Component {
 	render() {

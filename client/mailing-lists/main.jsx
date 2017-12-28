@@ -12,10 +12,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import notices from 'notices';
+import Card from 'client/components/card';
+import notices from 'client/notices';
 import utils from './utils';
-import { preventWidows } from 'lib/formatting';
+import { preventWidows } from 'client/lib/formatting';
 
 /**
  * Constants

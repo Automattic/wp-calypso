@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { findThemeFilterTerm } from 'state/selectors';
+import { findThemeFilterTerm } from 'client/state/selectors';
 
 /**
  * Whether a filter term slug is valid

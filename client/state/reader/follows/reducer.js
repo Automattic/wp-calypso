@@ -22,8 +22,8 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	SERIALIZE,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
 import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
 

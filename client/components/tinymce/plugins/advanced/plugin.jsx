@@ -13,9 +13,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { isWithinBreakpoint } from 'lib/viewport';
-import { savePreference, fetchPreferences } from 'state/preferences/actions';
-import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
+import { isWithinBreakpoint } from 'client/lib/viewport';
+import { savePreference, fetchPreferences } from 'client/state/preferences/actions';
+import { getPreference, isFetchingPreferences } from 'client/state/preferences/selectors';
 
 function advanced( editor ) {
 	const store = editor.getParam( 'redux_store' );

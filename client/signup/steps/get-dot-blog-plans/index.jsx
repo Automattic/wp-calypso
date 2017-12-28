@@ -10,8 +10,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
-import PlansStep from 'signup/steps/plans';
+import { cartItems } from 'client/lib/cart-values';
+import PlansStep from 'client/signup/steps/plans';
 
 const GetDotBlogPlansStep = ( { queryObject, ...props } ) => (
 	<PlansStep

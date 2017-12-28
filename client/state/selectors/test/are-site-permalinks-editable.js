@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { areSitePermalinksEditable } from 'state/selectors';
+import { areSitePermalinksEditable } from 'client/state/selectors';
 
 describe( 'areSitePermalinksEditable()', () => {
 	test( 'should return false if site ID is not tracked', () => {

@@ -12,11 +12,11 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import InputChrono from 'components/input-chrono';
-import DatePicker from 'components/date-picker';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import User from 'lib/user';
-import EventsTooltip from 'components/date-picker/events-tooltip';
+import InputChrono from 'client/components/input-chrono';
+import DatePicker from 'client/components/date-picker';
+import QuerySiteSettings from 'client/components/data/query-site-settings';
+import User from 'client/lib/user';
+import EventsTooltip from 'client/components/date-picker/events-tooltip';
 
 /**
  * Local dependencies

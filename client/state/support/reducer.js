@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import {
 	SUPPORT_USER_ACTIVATE,
 	SUPPORT_USER_TOKEN_FETCH,
@@ -12,7 +12,7 @@ import {
 	SUPPORT_USER_PREFILL,
 	SUPPORT_USER_SET_USERNAME,
 	SUPPORT_USER_TOGGLE_DIALOG,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export function isSupportUser( state = false, { type } ) {
 	switch ( type ) {

@@ -14,10 +14,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import DropdownItem from 'components/select-dropdown/item';
-import DropdownSeparator from 'components/select-dropdown/separator';
-import DropdownLabel from 'components/select-dropdown/label';
-import Count from 'components/count';
+import DropdownItem from 'client/components/select-dropdown/item';
+import DropdownSeparator from 'client/components/select-dropdown/separator';
+import DropdownLabel from 'client/components/select-dropdown/label';
+import Count from 'client/components/count';
 
 /**
  * SelectDropdown

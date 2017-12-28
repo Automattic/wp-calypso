@@ -11,7 +11,7 @@ import { actions } from '../constants';
 /**
  * External dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 import { expect } from 'chai';
 import sinon from 'sinon';
 

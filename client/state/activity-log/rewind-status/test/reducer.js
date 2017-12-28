@@ -14,7 +14,7 @@ import {
 	rewindActivateSuccess,
 	rewindStatusError as rewindStatusErrorAction,
 	updateRewindStatus,
-} from 'state/activity-log/actions';
+} from 'client/state/activity-log/actions';
 
 /**
  * Constants

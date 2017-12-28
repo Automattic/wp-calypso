@@ -19,12 +19,12 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { fetchAccountDetails } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { fetchAccountDetails } from 'client/extensions/woocommerce/state/sites/settings/stripe-connect-account/actions';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 import {
 	getIsRequesting,
 	getStripeConnectAccount,
-} from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
+} from 'client/extensions/woocommerce/state/sites/settings/stripe-connect-account/selectors';
 import PaymentMethodStripeConnectedDialog from './stripe/payment-method-stripe-connected-dialog';
 import PaymentMethodStripeKeyBasedDialog from './stripe/payment-method-stripe-key-based-dialog';
 import PaymentMethodStripeCompleteOAuthDialog from './stripe/payment-method-stripe-complete-oauth-dialog';

@@ -24,7 +24,7 @@ import {
 	ANALYTICS_MULTI_TRACK,
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKS_ANONID_SET,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'middleware', () => {
 	describe( 'actions', () => {
@@ -115,7 +115,7 @@ describe( 'middleware', () => {
 			const thunk = recordTracksEventWithClientId( ...props );
 
 			let dispatchedEvent;
-			const dispatch = ( createdAction ) => dispatchedEvent = createdAction;
+			const dispatch = createdAction => ( dispatchedEvent = createdAction );
 
 			const clientId = 123;
 			const getState = () => ( {
@@ -141,7 +141,7 @@ describe( 'middleware', () => {
 			const thunk = recordPageViewWithClientId( ...props );
 
 			let dispatchedEvent;
-			const dispatch = ( createdAction ) => dispatchedEvent = createdAction;
+			const dispatch = createdAction => ( dispatchedEvent = createdAction );
 
 			const clientId = 123;
 			const getState = () => ( {

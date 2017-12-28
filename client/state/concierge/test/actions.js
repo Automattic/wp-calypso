@@ -17,7 +17,7 @@ import {
 	CONCIERGE_APPOINTMENT_CREATE,
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'state/concierge', () => {
 	describe( 'actions', () => {

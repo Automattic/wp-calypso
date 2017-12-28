@@ -17,7 +17,7 @@ import {
 	isDomainTransfer,
 	isPlan,
 	isTheme,
-} from 'lib/products-values';
+} from 'client/lib/products-values';
 
 function getIncludedDomain( purchase ) {
 	return purchase.includedDomain;

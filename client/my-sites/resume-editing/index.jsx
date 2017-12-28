@@ -14,21 +14,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
+import { resetEditorLastDraft } from 'client/state/ui/editor/last-draft/actions';
 import {
 	getEditorLastDraftPost,
 	getEditorLastDraftSiteId,
 	getEditorLastDraftPostId,
-} from 'state/ui/editor/last-draft/selectors';
-import { isRequestingSitePost } from 'state/posts/selectors';
-import { getEditorPath } from 'state/ui/editor/selectors';
-import { getSectionName } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import { decodeEntities } from 'lib/formatting';
-import analytics from 'lib/analytics';
-import QueryPosts from 'components/data/query-posts';
-import SiteIcon from 'blocks/site-icon';
-import Dispatcher from 'dispatcher';
+} from 'client/state/ui/editor/last-draft/selectors';
+import { isRequestingSitePost } from 'client/state/posts/selectors';
+import { getEditorPath } from 'client/state/ui/editor/selectors';
+import { getSectionName } from 'client/state/ui/selectors';
+import { getSite } from 'client/state/sites/selectors';
+import { decodeEntities } from 'client/lib/formatting';
+import analytics from 'client/lib/analytics';
+import QueryPosts from 'client/components/data/query-posts';
+import SiteIcon from 'client/blocks/site-icon';
+import Dispatcher from 'client/dispatcher';
 
 class ResumeEditing extends React.Component {
 	static propTypes = {

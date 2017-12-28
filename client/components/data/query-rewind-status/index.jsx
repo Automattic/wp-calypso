@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getRewindStatus as getRewindStatusAction } from 'state/activity-log/actions';
+import { getRewindStatus as getRewindStatusAction } from 'client/state/activity-log/actions';
 
 class QueryRewindStatus extends Component {
 	static propTypes = {

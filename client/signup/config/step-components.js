@@ -2,26 +2,26 @@
 /**
  * Internal dependencies
  */
-import AboutStepComponent from 'signup/steps/about';
-import CredsConfirmComponent from 'signup/steps/creds-confirm';
-import CredsCompleteComponent from 'signup/steps/creds-complete';
-import CredsPermissionComponent from 'signup/steps/creds-permission';
-import DesignTypeComponent from 'signup/steps/design-type';
-import DesignTypeWithStoreComponent from 'signup/steps/design-type-with-store';
-import DesignTypeWithAtomicStoreComponent from 'signup/steps/design-type-with-atomic-store';
-import DomainsStepComponent from 'signup/steps/domains';
-import GetDotBlogPlansStepComponent from 'signup/steps/get-dot-blog-plans';
-import PlansStepComponent from 'signup/steps/plans';
-import SiteComponent from 'signup/steps/site';
-import RebrandCitiesWelcomeComponent from 'signup/steps/rebrand-cities-welcome';
-import SiteOrDomainComponent from 'signup/steps/site-or-domain';
-import SitePicker from 'signup/steps/site-picker';
-import SiteTitleComponent from 'signup/steps/site-title';
-import SurveyStepComponent from 'signup/steps/survey';
-import ThemeSelectionComponent from 'signup/steps/theme-selection';
-import UserSignupComponent from 'signup/steps/user';
-import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
-import PlansAtomicStoreComponent from 'signup/steps/plans-atomic-store';
+import AboutStepComponent from 'client/signup/steps/about';
+import CredsConfirmComponent from 'client/signup/steps/creds-confirm';
+import CredsCompleteComponent from 'client/signup/steps/creds-complete';
+import CredsPermissionComponent from 'client/signup/steps/creds-permission';
+import DesignTypeComponent from 'client/signup/steps/design-type';
+import DesignTypeWithStoreComponent from 'client/signup/steps/design-type-with-store';
+import DesignTypeWithAtomicStoreComponent from 'client/signup/steps/design-type-with-atomic-store';
+import DomainsStepComponent from 'client/signup/steps/domains';
+import GetDotBlogPlansStepComponent from 'client/signup/steps/get-dot-blog-plans';
+import PlansStepComponent from 'client/signup/steps/plans';
+import SiteComponent from 'client/signup/steps/site';
+import RebrandCitiesWelcomeComponent from 'client/signup/steps/rebrand-cities-welcome';
+import SiteOrDomainComponent from 'client/signup/steps/site-or-domain';
+import SitePicker from 'client/signup/steps/site-picker';
+import SiteTitleComponent from 'client/signup/steps/site-title';
+import SurveyStepComponent from 'client/signup/steps/survey';
+import ThemeSelectionComponent from 'client/signup/steps/theme-selection';
+import UserSignupComponent from 'client/signup/steps/user';
+import PlansStepWithoutFreePlan from 'client/signup/steps/plans-without-free';
+import PlansAtomicStoreComponent from 'client/signup/steps/plans-atomic-store';
 
 export default {
 	about: AboutStepComponent,

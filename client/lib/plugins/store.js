@@ -9,16 +9,16 @@ import { assign, clone, isArray, sortBy, values, find } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import Dispatcher from 'client/dispatcher';
+import emitter from 'client/lib/mixins/emitter';
 /* eslint-enable no-restricted-imports */
-import PluginsActions from 'lib/plugins/actions';
-import versionCompare from 'lib/version-compare';
-import PluginUtils from 'lib/plugins/utils';
-import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
-import { getNetworkSites } from 'state/selectors';
-import { getSite } from 'state/sites/selectors';
-import { sitePluginUpdated } from 'state/sites/updates/actions';
+import PluginsActions from 'client/lib/plugins/actions';
+import versionCompare from 'client/lib/version-compare';
+import PluginUtils from 'client/lib/plugins/utils';
+import { reduxDispatch, reduxGetState } from 'client/lib/redux-bridge';
+import { getNetworkSites } from 'client/state/selectors';
+import { getSite } from 'client/state/sites/selectors';
+import { sitePluginUpdated } from 'client/state/sites/updates/actions';
 
 const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 

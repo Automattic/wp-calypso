@@ -14,8 +14,8 @@ import {
 	sendPreferences,
 	sendTyping,
 	sendNotTyping,
-} from 'state/happychat/connection/actions';
-import { blur, focus } from 'state/happychat/ui/actions';
+} from 'client/state/happychat/connection/actions';
+import { blur, focus } from 'client/state/happychat/ui/actions';
 import {
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
@@ -32,7 +32,7 @@ import {
 	HAPPYCHAT_CONNECTION_STATUS_RECONNECTING,
 	HAPPYCHAT_CONNECTION_STATUS_UNAUTHORIZED,
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
-} from 'state/happychat/constants';
+} from 'client/state/happychat/constants';
 
 describe( 'middleware', () => {
 	let actionMiddleware, connection, store;

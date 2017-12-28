@@ -9,12 +9,9 @@ import React from 'react';
 /**
 * Internal dependencies
 */
-import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
-import {
-	camelCaseToSlug,
-	getComponentName,
-} from 'devdocs/docs-example/util';
-import ReadmeViewer from 'devdocs/docs-example/readme-viewer';
+import DocsExampleWrapper from 'client/devdocs/docs-example/wrapper';
+import { camelCaseToSlug, getComponentName } from 'client/devdocs/docs-example/util';
+import ReadmeViewer from 'client/devdocs/docs-example/readme-viewer';
 
 const shouldShowInstance = ( example, filter, component ) => {
 	const name = getComponentName( example );

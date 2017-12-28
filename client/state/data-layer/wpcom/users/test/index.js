@@ -11,8 +11,8 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { DEFAULT_PER_PAGE, fetchUsers, normalizeUser, receiveSuccess } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveUser, requestUsers } from 'state/users/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { receiveUser, requestUsers } from 'client/state/users/actions';
 
 describe( '#normalizeRevision', () => {
 	test( 'should rename `id`, `name` and `slug`', () => {

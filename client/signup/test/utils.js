@@ -15,7 +15,7 @@ import sinon from 'sinon';
  */
 import utils from '../utils';
 import mockedFlows from './fixtures/flows';
-import flows from 'signup/config/flows';
+import flows from 'client/signup/config/flows';
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',

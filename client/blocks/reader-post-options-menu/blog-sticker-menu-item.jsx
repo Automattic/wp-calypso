@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
-import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import { addBlogSticker, removeBlogSticker } from 'client/state/sites/blog-stickers/actions';
 
 class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
 	static propTypes = {

@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import { recordTracksEvent } from 'state/analytics/actions';
-import EmptyContent from 'components/empty-content';
+import Main from 'client/components/main';
+import LoggedOutFormLinks from 'client/components/logged-out-form/links';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import EmptyContent from 'client/components/empty-content';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 

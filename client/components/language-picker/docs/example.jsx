@@ -11,8 +11,8 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import config from 'config';
-import LanguagePicker from 'components/language-picker';
-import Card from 'components/card';
+import LanguagePicker from 'client/components/language-picker';
+import Card from 'client/components/card';
 
 class LanguagePickerExample extends PureComponent {
 	static displayName = 'LanguagePickerExample';

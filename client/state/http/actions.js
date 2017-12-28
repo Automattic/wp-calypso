@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { HTTP_REQUEST } from 'state/action-types';
+import { HTTP_REQUEST } from 'client/state/action-types';
 
 /***
  * @typedef {Object} RequestDescription

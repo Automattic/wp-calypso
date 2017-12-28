@@ -7,11 +7,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import userFactory from 'lib/user';
+import userFactory from 'client/lib/user';
 import * as controller from './controller';
-import { login } from 'lib/paths';
-import { siteSelection } from 'my-sites/controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { login } from 'client/lib/paths';
+import { siteSelection } from 'client/my-sites/controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default function() {
 	const user = userFactory();

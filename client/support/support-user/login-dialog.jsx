@@ -10,13 +10,13 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Dialog from 'components/dialog';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormPasswordInput from 'components/forms/form-password-input';
-import Notice from 'components/notice';
+import Dialog from 'client/components/dialog';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormPasswordInput from 'client/components/forms/form-password-input';
+import Notice from 'client/components/notice';
 
 class SupportUserLoginDialog extends Component {
 	constructor( ...args ) {

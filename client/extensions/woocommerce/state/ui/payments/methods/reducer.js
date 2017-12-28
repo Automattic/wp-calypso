@@ -9,7 +9,7 @@ import { isEmpty, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import {
 	WOOCOMMERCE_PAYMENT_METHOD_CANCEL,
 	WOOCOMMERCE_PAYMENT_METHOD_CLOSE,

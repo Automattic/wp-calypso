@@ -11,11 +11,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
-import { generateUniqueRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
-import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-import { setSiteTitle } from 'state/signup/steps/site-title/actions';
+import StepWrapper from 'client/signup/step-wrapper';
+import SignupActions from 'client/lib/signup/actions';
+import { generateUniqueRebrandCitiesSiteUrl } from 'client/lib/rebrand-cities';
+import FormTextInputWithAction from 'client/components/forms/form-text-input-with-action';
+import { setSiteTitle } from 'client/state/signup/steps/site-title/actions';
 
 class RebrandCitiesWelcomeStep extends Component {
 	handleSubmit = siteTitle => {

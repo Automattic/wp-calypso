@@ -21,7 +21,7 @@ import {
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector from 'client/lib/create-selector';
 import { fetchStatusInitialState } from './reducer';
 import { getStateKey, deconstructStateKey, getErrorKey } from './utils';
 

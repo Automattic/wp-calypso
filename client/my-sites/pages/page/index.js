@@ -15,24 +15,24 @@ import { flow, get, includes, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-import updatePostStatus from 'components/update-post-status';
-import CompactCard from 'components/card/compact';
+import updatePostStatus from 'client/components/update-post-status';
+import CompactCard from 'client/components/card/compact';
 import Gridicon from 'gridicons';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import SiteIcon from 'blocks/site-icon';
+import PopoverMenu from 'client/components/popover/menu';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import SiteIcon from 'client/blocks/site-icon';
 import { editLinkForPage, statsLinkForPage } from '../helpers';
-import utils from 'lib/posts/utils';
+import utils from 'client/lib/posts/utils';
 import classNames from 'classnames';
-import MenuSeparator from 'components/popover/menu-separator';
+import MenuSeparator from 'client/components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
-import { preload } from 'sections-preload';
-import { getSite, hasStaticFrontPage, isSitePreviewable } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isFrontPage, isPostsPage } from 'state/pages/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { setPreviewUrl } from 'state/ui/preview/actions';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { preload } from 'client/sections-preload';
+import { getSite, hasStaticFrontPage, isSitePreviewable } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isFrontPage, isPostsPage } from 'client/state/pages/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import { setPreviewUrl } from 'client/state/ui/preview/actions';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 

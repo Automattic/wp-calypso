@@ -15,8 +15,8 @@ import { Provider as ReduxProvider } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MediaLibraryDataSource from 'my-sites/media-library/data-source';
-import { createReduxStore } from 'state';
+import MediaLibraryDataSource from 'client/my-sites/media-library/data-source';
+import { createReduxStore } from 'client/state';
 
 // we need to check the correct children are rendered, so this mocks the
 // PopoverMenu component with one that simply renders the children

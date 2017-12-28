@@ -14,14 +14,14 @@ import store from 'store';
 /**
  * Internal dependencies
  */
-import translator from 'lib/translator-jumpstart';
-import userFactory from 'lib/user';
-import userSettings from 'lib/user-settings';
-import emitter from 'lib/mixins/emitter';
-import preferencesStore from 'lib/preferences/store';
-import preferencesActions from 'lib/preferences/actions';
-import notices from 'notices';
-import analytics from 'lib/analytics';
+import translator from 'client/lib/translator-jumpstart';
+import userFactory from 'client/lib/user';
+import userSettings from 'client/lib/user-settings';
+import emitter from 'client/lib/mixins/emitter';
+import preferencesStore from 'client/lib/preferences/store';
+import preferencesActions from 'client/lib/preferences/actions';
+import notices from 'client/notices';
+import analytics from 'client/lib/analytics';
 
 const debug = Debug( 'calypso:community-translator-invitation' ),
 	user = userFactory(),

@@ -10,7 +10,7 @@ import { parse, format } from 'url';
 /**
  * Internal dependencies
  */
-import safeImageUrl from 'lib/safe-image-url';
+import safeImageUrl from 'client/lib/safe-image-url';
 
 /**
  * Pattern matching valid http(s) URLs

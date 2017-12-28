@@ -6,15 +6,12 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
-import { isValidPhone } from 'woocommerce/woocommerce-services/lib/utils/phone-format';
-import { areSettingsLoaded, areSettingsErrored } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
-import {
-	isLoaded as arePackagesLoaded,
-	isFetchError as arePackagesErrored,
-} from 'woocommerce/woocommerce-services/state/packages/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { hasNonEmptyLeaves } from 'client/extensions/woocommerce/woocommerce-services/lib/utils/tree';
+import { isValidPhone } from 'client/extensions/woocommerce/woocommerce-services/lib/utils/phone-format';
+import { areSettingsLoaded, areSettingsErrored } from 'client/extensions/woocommerce/woocommerce-services/state/label-settings/selectors';
+import { isLoaded as arePackagesLoaded, isFetchError as arePackagesErrored } from 'client/extensions/woocommerce/woocommerce-services/state/packages/selectors';
 
 export const getShippingLabel = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingLabel', orderId ], null );

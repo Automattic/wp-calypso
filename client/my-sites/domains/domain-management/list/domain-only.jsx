@@ -12,11 +12,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import { domainManagementEdit } from 'my-sites/domains/paths';
-import { getPrimaryDomainBySiteId } from 'state/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import EmptyContent from 'client/components/empty-content';
+import QuerySiteDomains from 'client/components/data/query-site-domains';
+import { domainManagementEdit } from 'client/my-sites/domains/paths';
+import { getPrimaryDomainBySiteId } from 'client/state/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 
 const DomainOnly = ( { primaryDomain, hasNotice, siteId, slug, translate } ) => {
 	if ( ! primaryDomain ) {

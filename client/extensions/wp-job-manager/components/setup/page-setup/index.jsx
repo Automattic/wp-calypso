@@ -16,17 +16,17 @@ import { flowRight as compose } from 'lodash';
  * Internal dependencies
  */
 import { SetupPath, Steps } from '../../../constants';
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
-import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import ReduxFormToggle from 'components/redux-forms/redux-form-toggle';
-import SectionHeader from 'components/section-header';
+import Button from 'client/components/button';
+import CompactCard from 'client/components/card/compact';
+import ExternalLink from 'client/components/external-link';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextInput from 'client/components/forms/form-text-input';
+import ReduxFormToggle from 'client/components/redux-forms/redux-form-toggle';
+import SectionHeader from 'client/components/section-header';
 import { createPages } from '../../../state/setup/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 import { isCreatingPages, shouldGoToNextStep } from '../../../state/setup/selectors';
 
 const form = 'extensions.wpJobManager.pageSetup';

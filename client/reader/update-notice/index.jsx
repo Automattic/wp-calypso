@@ -13,9 +13,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
-import { getCommentById } from 'state/comments/selectors';
+import DocumentHead from 'client/components/data/document-head';
+import { getDocumentHeadCappedUnreadCount } from 'client/state/document-head/selectors';
+import { getCommentById } from 'client/state/comments/selectors';
 
 class UpdateNotice extends React.PureComponent {
 	static propTypes = {

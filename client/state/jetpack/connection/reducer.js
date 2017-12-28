@@ -21,8 +21,8 @@ import {
 	JETPACK_USER_CONNECTION_DATA_REQUEST,
 	JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
 	JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
-} from 'state/action-types';
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, createReducer, keyedReducer } from 'client/state/utils';
 
 /**
  * `Reducer` function which handles request/response actions

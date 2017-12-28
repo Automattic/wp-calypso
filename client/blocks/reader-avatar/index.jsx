@@ -9,11 +9,11 @@ import { startsWith, endsWith, noop, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import SiteIcon from 'blocks/site-icon';
+import Gravatar from 'client/components/gravatar';
+import SiteIcon from 'client/blocks/site-icon';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
-import safeImageUrl from 'lib/safe-image-url';
+import safeImageUrl from 'client/lib/safe-image-url';
 
 const ReaderAvatar = ( {
 	author,

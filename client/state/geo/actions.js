@@ -10,7 +10,7 @@ import {
 	GEO_REQUEST,
 	GEO_REQUEST_FAILURE,
 	GEO_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Constants

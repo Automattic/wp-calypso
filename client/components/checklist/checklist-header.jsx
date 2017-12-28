@@ -12,9 +12,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ScreenReaderText from 'components/screen-reader-text';
-import ProgressBar from 'components/progress-bar';
+import Card from 'client/components/card';
+import ScreenReaderText from 'client/components/screen-reader-text';
+import ProgressBar from 'client/components/progress-bar';
 
 export class ChecklistHeader extends PureComponent {
 	static propTypes = {

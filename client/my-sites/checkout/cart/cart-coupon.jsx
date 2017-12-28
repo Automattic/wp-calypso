@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import upgradesActions from 'lib/upgrades/actions';
+import analytics from 'client/lib/analytics';
+import upgradesActions from 'client/lib/upgrades/actions';
 
 class CartCoupon extends React.Component {
 	static displayName = 'CartCoupon';

@@ -12,9 +12,9 @@ import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import StickyPanel from 'components/sticky-panel';
+import Card from 'client/components/card';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import StickyPanel from 'client/components/sticky-panel';
 
 const ActionHeader = ( { children, breadcrumbs, isLoading } ) => {
 	// TODO: Implement proper breadcrumbs component.

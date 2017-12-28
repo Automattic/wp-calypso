@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { getSiteSettings } from 'state/site-settings/selectors';
+import { getSiteSettings } from 'client/state/site-settings/selectors';
 
 /**
  * Returns true if the site is hidden

@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'client/state/utils';
 
 import {
 	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
@@ -14,7 +14,7 @@ import {
 	PLUGIN_UPLOAD_COMPLETE,
 	PLUGIN_UPLOAD_ERROR,
 	PLUGIN_UPLOAD_PROGRESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const uploadedPluginId = keyedReducer(
 	'siteId',

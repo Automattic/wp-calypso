@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ListItem from 'woocommerce/components/list/list-item';
-import ListItemField from 'woocommerce/components/list/list-item-field';
+import ListItem from 'client/extensions/woocommerce/components/list/list-item';
+import ListItemField from 'client/extensions/woocommerce/components/list/list-item-field';
 
 const PaymentMethodItemPlaceHolder = () => {
 	return (

@@ -16,7 +16,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
 	ACCOUNT_RECOVERY_RESET_SET_METHOD,
 	ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const fetchResetOptionsSuccess = items => ( {
 	type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,

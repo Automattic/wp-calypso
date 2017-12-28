@@ -12,11 +12,11 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import WebPreview from 'components/web-preview';
-import designPreview from 'my-sites/design-preview';
-import urlPreview from 'blocks/url-preview';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { getCurrentPreviewType } from 'state/ui/preview/selectors';
+import WebPreview from 'client/components/web-preview';
+import designPreview from 'client/my-sites/design-preview';
+import urlPreview from 'client/blocks/url-preview';
+import { getCurrentLayoutFocus } from 'client/state/ui/layout-focus/selectors';
+import { getCurrentPreviewType } from 'client/state/ui/preview/selectors';
 
 const DesignPreview = designPreview( WebPreview );
 const UrlPreview = urlPreview( WebPreview );

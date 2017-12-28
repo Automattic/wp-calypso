@@ -9,7 +9,7 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, isValidStateWithSchema } from 'client/state/utils';
 import * as schema from './schema';
 import taxonomies from './taxonomies/reducer';
 import {
@@ -19,7 +19,7 @@ import {
 	POST_TYPES_REQUEST,
 	POST_TYPES_REQUEST_SUCCESS,
 	POST_TYPES_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

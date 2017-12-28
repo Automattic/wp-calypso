@@ -8,13 +8,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isDirectlyReady } from 'state/selectors';
+import { isDirectlyReady } from 'client/state/selectors';
 import {
 	STATUS_ERROR,
 	STATUS_INITIALIZING,
 	STATUS_READY,
 	STATUS_UNINITIALIZED,
-} from 'state/help/directly/constants';
+} from 'client/state/help/directly/constants';
 
 describe( 'isDirectlyReady()', () => {
 	test( 'should be false when uninitialized', () => {

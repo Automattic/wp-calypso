@@ -19,8 +19,8 @@ import {
 	POST_REVISIONS_DIALOG_CLOSE,
 	POST_REVISIONS_DIALOG_OPEN,
 	SELECTED_SITE_SET,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers } from 'client/state/utils';
 
 export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, siteId, type } ) {
 	if ( type !== POST_REVISIONS_RECEIVE ) {

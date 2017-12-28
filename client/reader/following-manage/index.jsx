@@ -13,10 +13,10 @@ import qs from 'qs';
 /**
  * Internal Dependencies
  */
-import CompactCard from 'components/card/compact';
-import DocumentHead from 'components/data/document-head';
-import SearchInput from 'components/search';
-import ReaderMain from 'components/reader-main';
+import CompactCard from 'client/components/card/compact';
+import DocumentHead from 'client/components/data/document-head';
+import SearchInput from 'client/components/search';
+import ReaderMain from 'client/components/reader-main';
 import {
 	getReaderFeedsForQuery,
 	getReaderFeedsCountForQuery,
@@ -25,22 +25,22 @@ import {
 	getBlockedSites,
 	getReaderAliasedFollowFeedUrl,
 	getReaderFollowsCount,
-} from 'state/selectors';
-import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
-import QueryReaderRecommendedSites from 'components/data/query-reader-recommended-sites';
-import RecommendedSites from 'blocks/reader-recommended-sites';
+} from 'client/state/selectors';
+import QueryReaderFeedsSearch from 'client/components/data/query-reader-feeds-search';
+import QueryReaderRecommendedSites from 'client/components/data/query-reader-recommended-sites';
+import RecommendedSites from 'client/blocks/reader-recommended-sites';
 import FollowingManageSubscriptions from './subscriptions';
 import FollowingManageSearchFeedsResults from './feed-search-results';
 import FollowingManageEmptyContent from './empty';
-import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
-import FollowButton from 'reader/follow-button';
+import MobileBackToSidebar from 'client/components/mobile-back-to-sidebar';
+import FollowButton from 'client/reader/follow-button';
 import {
 	READER_FOLLOWING_MANAGE_URL_INPUT,
 	READER_FOLLOWING_MANAGE_RECOMMENDATION,
-} from 'reader/follow-sources';
-import { resemblesUrl, withoutHttp, addSchemeIfMissing, addQueryArgs } from 'lib/url';
-import { recordTrack, recordAction } from 'reader/stats';
-import { SORT_BY_RELEVANCE } from 'state/reader/feed-searches/actions';
+} from 'client/reader/follow-sources';
+import { resemblesUrl, withoutHttp, addSchemeIfMissing, addQueryArgs } from 'client/lib/url';
+import { recordTrack, recordAction } from 'client/reader/stats';
+import { SORT_BY_RELEVANCE } from 'client/state/reader/feed-searches/actions';
 
 const PAGE_SIZE = 4;
 let recommendationsSeed = random( 0, 10000 );

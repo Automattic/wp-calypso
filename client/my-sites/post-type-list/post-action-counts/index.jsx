@@ -10,15 +10,15 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import QueryPostStats from 'components/data/query-post-stats';
-import PostLikesPopover from 'blocks/post-likes/popover';
-import { getNormalizedPost } from 'state/posts/selectors';
-import { getPostStat } from 'state/stats/posts/selectors';
-import { canCurrentUser } from 'state/selectors';
-import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { hideActiveLikesPopover, toggleLikesPopover } from 'state/ui/post-type-list/actions';
-import { isLikesPopoverOpen } from 'state/ui/post-type-list/selectors';
+import QueryPostStats from 'client/components/data/query-post-stats';
+import PostLikesPopover from 'client/blocks/post-likes/popover';
+import { getNormalizedPost } from 'client/state/posts/selectors';
+import { getPostStat } from 'client/state/stats/posts/selectors';
+import { canCurrentUser } from 'client/state/selectors';
+import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'client/state/sites/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { hideActiveLikesPopover, toggleLikesPopover } from 'client/state/ui/post-type-list/actions';
+import { isLikesPopoverOpen } from 'client/state/ui/post-type-list/selectors';
 
 class PostActionCounts extends PureComponent {
 	static propTypes = {

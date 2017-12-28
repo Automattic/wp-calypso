@@ -8,10 +8,10 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import route from 'lib/route';
-import userSettings from 'lib/user-settings';
-import { trackPageLoad, setPageTitle } from 'reader/controller-helper';
-import AsyncLoad from 'components/async-load';
+import route from 'client/lib/route';
+import userSettings from 'client/lib/user-settings';
+import { trackPageLoad, setPageTitle } from 'client/reader/controller-helper';
+import AsyncLoad from 'client/components/async-load';
 
 const analyticsPageTitle = 'Reader';
 

@@ -13,9 +13,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
-import paths from 'my-sites/domains/paths';
-import Button from 'components/button';
+import analyticsMixin from 'client/lib/mixins/analytics';
+import paths from 'client/my-sites/domains/paths';
+import Button from 'client/components/button';
 
 const PrimaryDomainButton = createReactClass( {
 	displayName: 'PrimaryDomainButton',

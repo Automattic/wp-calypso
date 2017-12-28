@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import HeaderCake from 'components/header-cake';
+import Button from 'client/components/button';
+import HeaderCake from 'client/components/header-cake';
 
 /**
  * Module vars

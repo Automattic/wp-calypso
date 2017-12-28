@@ -9,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'client/components/forms/form-text-input';
 
 export default class extends React.Component {
 	static displayName = 'FormTextInputWithAffixes';

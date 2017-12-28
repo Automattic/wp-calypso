@@ -14,22 +14,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
-import { getCurrentUser } from 'state/current-user/selectors';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
-import FormSelect from 'components/forms/form-select';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import wp from 'lib/wp';
-import { getSelectedDomain } from 'lib/domains';
-import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import SectionHeader from 'components/section-header';
-import Dialog from 'components/dialog';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
+import Card from 'client/components/card';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import Header from 'client/my-sites/domains/domain-management/components/header';
+import Main from 'client/components/main';
+import paths from 'client/my-sites/domains/paths';
+import FormSelect from 'client/components/forms/form-select';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import wp from 'client/lib/wp';
+import { getSelectedDomain } from 'client/lib/domains';
+import NonOwnerCard from 'client/my-sites/domains/domain-management/components/domain/non-owner-card';
+import DomainMainPlaceholder from 'client/my-sites/domains/domain-management/components/domain/main-placeholder';
+import SectionHeader from 'client/components/section-header';
+import Dialog from 'client/components/dialog';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
+import DesignatedAgentNotice from 'client/my-sites/domains/domain-management/components/designated-agent-notice';
 
 const wpcom = wp.undocumented();
 

@@ -13,7 +13,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import viewport from 'lib/viewport';
+import viewport from 'client/lib/viewport';
 
 export default class extends React.Component {
 	static displayName = 'StickyPanel';

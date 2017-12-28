@@ -4,13 +4,13 @@
  * Internal dependencies
  */
 
-import { GRAVATAR_RECEIVE_IMAGE_FAILURE, GRAVATAR_UPLOAD_REQUEST } from 'state/action-types';
+import { GRAVATAR_RECEIVE_IMAGE_FAILURE, GRAVATAR_UPLOAD_REQUEST } from 'client/state/action-types';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
+} from 'client/state/analytics/actions';
 
 export function uploadGravatar( file, email ) {
 	return withAnalytics( recordTracksEvent( 'calypso_edit_gravatar_upload_start' ), {

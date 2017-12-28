@@ -12,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'client/components/forms/form-text-input';
 
 class FilteredList extends Component {
 	constructor( props ) {

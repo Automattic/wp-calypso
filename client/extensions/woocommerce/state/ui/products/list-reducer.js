@@ -4,17 +4,17 @@
  * External dependencies
  */
 
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { DEFAULT_QUERY } from 'woocommerce/state/sites/products/utils';
+import { DEFAULT_QUERY } from 'client/extensions/woocommerce/state/sites/products/utils';
 import {
 	WOOCOMMERCE_PRODUCTS_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCTS_REQUEST ]: productsRequest,

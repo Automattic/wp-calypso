@@ -12,13 +12,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ApiCache from './api-cache';
-import CompactCard from 'components/card/compact';
-import JetpackSyncPanel from 'my-sites/site-settings/jetpack-sync-panel';
+import CompactCard from 'client/components/card/compact';
+import JetpackSyncPanel from 'client/my-sites/site-settings/jetpack-sync-panel';
 import PublicPostTypes from './public-post-types';
-import SectionHeader from 'components/section-header';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { getSiteUrl } from 'state/selectors';
+import SectionHeader from 'client/components/section-header';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'client/state/sites/selectors';
+import { getSiteUrl } from 'client/state/selectors';
 
 const DataSynchronization = ( { siteUrl, supportsJetpackSync, translate } ) => {
 	if ( ! supportsJetpackSync ) {

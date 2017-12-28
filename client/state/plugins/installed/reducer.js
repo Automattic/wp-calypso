@@ -9,7 +9,7 @@ import { omit, findIndex } from 'lodash';
  * Internal dependencies
  */
 import status from './status/reducer';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -22,7 +22,7 @@ import {
 	PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { pluginsSchema } from './schema';
 
 /*

@@ -28,9 +28,9 @@ import {
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
-} from 'state/action-types';
-import { appStates } from 'state/imports/constants';
-import { createReducerStore } from 'lib/store';
+} from 'client/state/action-types';
+import { appStates } from 'client/state/imports/constants';
+import { createReducerStore } from 'client/lib/store';
 
 /**
  * Module variables

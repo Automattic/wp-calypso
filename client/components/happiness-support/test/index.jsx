@@ -12,9 +12,9 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { HappinessSupport } from '..';
-import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection-connected';
-import support from 'lib/url/support';
+import HappychatButton from 'client/components/happychat/button';
+import HappychatConnection from 'client/components/happychat/connection-connected';
+import support from 'client/lib/url/support';
 
 describe( 'HappinessSupport', () => {
 	let wrapper;

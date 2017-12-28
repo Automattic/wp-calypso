@@ -13,24 +13,24 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import { protectForm } from 'lib/protect-form';
-import formBase from 'me/form-base';
-import Card from 'components/card';
-import Navigation from 'me/notification-settings/navigation';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormButton from 'components/forms/form-button';
-import FormSelect from 'components/forms/form-select';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import observe from 'lib/mixins/data-observe';
-import Main from 'components/main';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
+import { protectForm } from 'client/lib/protect-form';
+import formBase from 'client/me/form-base';
+import Card from 'client/components/card';
+import Navigation from 'client/me/notification-settings/navigation';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormLegend from 'client/components/forms/form-legend';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormButton from 'client/components/forms/form-button';
+import FormSelect from 'client/components/forms/form-select';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import ReauthRequired from 'client/me/reauth-required';
+import twoStepAuthorization from 'client/lib/two-step-authorization';
+import observe from 'client/lib/mixins/data-observe';
+import Main from 'client/components/main';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 const NotificationSubscriptions = createReactClass( {
 	displayName: 'NotificationSubscriptions',

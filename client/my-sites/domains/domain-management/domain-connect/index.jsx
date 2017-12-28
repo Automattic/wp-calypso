@@ -5,7 +5,7 @@
  */
 
 import { domainConnectAuthorize, notFoundError } from './controller';
-import { makeLayout } from 'controller';
+import { makeLayout } from 'client/controller';
 
 export default router => {
 	router(

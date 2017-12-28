@@ -17,7 +17,7 @@ import {
 	KEYRING_SERVICES_REQUEST_SUCCESS,
 	DESERIALIZE,
 	SERIALIZE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const originalKeyringServices = {

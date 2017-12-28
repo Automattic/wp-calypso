@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getLink } from 'woocommerce/lib/nav-utils';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
 
 /**
  * Given the product id and site, returns url of the product edit page

@@ -4,9 +4,9 @@
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
-import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'state/happychat/constants';
-import { userState } from 'state/selectors/test/fixtures/user-state';
+import { PLAN_BUSINESS } from 'client/lib/plans/constants';
+import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'client/state/happychat/constants';
+import { userState } from 'client/state/selectors/test/fixtures/user-state';
 import getGroups from '../get-groups';
 
 describe( 'selectors', () => {

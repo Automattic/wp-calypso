@@ -26,17 +26,20 @@ import {
 	isSubscription,
 	hasPaymentMethod,
 	paymentLogoType,
-} from 'lib/purchases';
-import { isMonthly } from 'lib/plans/constants';
-import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import { getUser } from 'state/users/selectors';
+} from 'client/lib/purchases';
+import { isMonthly } from 'client/lib/plans/constants';
+import { isDomainRegistration, isDomainTransfer } from 'client/lib/products-values';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+} from 'client/state/purchases/selectors';
+import { isRequestingSites } from 'client/state/sites/selectors';
+import { getSelectedSite as getSelectedSiteSelector } from 'client/state/ui/selectors';
+import { getUser } from 'client/state/users/selectors';
 import paths from '../paths';
-import PaymentLogo from 'components/payment-logo';
-import support from 'lib/url/support';
-import UserItem from 'components/user';
+import PaymentLogo from 'client/components/payment-logo';
+import support from 'client/lib/url/support';
+import UserItem from 'client/components/user';
 import {
 	canEditPaymentDetails,
 	isDataLoading,

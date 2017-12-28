@@ -16,11 +16,11 @@ import config from 'config';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 import GoogleVoucherDetails from './google-voucher';
-import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
-import { isPremium, isGoogleApps } from 'lib/products-values';
-import paths from 'lib/paths';
-import PurchaseDetail from 'components/purchase-detail';
-import QuerySiteVouchers from 'components/data/query-site-vouchers';
+import { isWordadsInstantActivationEligible } from 'client/lib/ads/utils';
+import { isPremium, isGoogleApps } from 'client/lib/products-values';
+import paths from 'client/lib/paths';
+import PurchaseDetail from 'client/components/purchase-detail';
+import QuerySiteVouchers from 'client/components/data/query-site-vouchers';
 
 const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/';

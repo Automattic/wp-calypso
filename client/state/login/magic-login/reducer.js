@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import {
 	CHECK_YOUR_EMAIL_PAGE,
 	INTERSTITIAL_PAGE,
@@ -25,7 +25,7 @@ import {
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const currentView = createReducer( null, {
 	[ MAGIC_LOGIN_HIDE_REQUEST_FORM ]: () => null,

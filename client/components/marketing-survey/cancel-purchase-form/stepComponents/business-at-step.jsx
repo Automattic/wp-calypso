@@ -13,9 +13,9 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import FormFieldset from 'client/components/forms/form-fieldset';
 
 export class BusinessATStep extends Component {
 	static propTypes = {

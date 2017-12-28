@@ -12,7 +12,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import getKeyboardHandler from 'woocommerce/lib/get-keyboard-handler';
+import getKeyboardHandler from 'client/extensions/woocommerce/lib/get-keyboard-handler';
 
 const TableRow = ( { className, isHeader, href, children, ...props } ) => {
 	const rowClasses = classnames( 'table-row', className, {

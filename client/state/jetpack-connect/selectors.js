@@ -9,7 +9,7 @@ import { get, includes } from 'lodash';
  * Internal dependencies
  */
 import { AUTH_ATTEMPS_TTL } from './constants';
-import { getSiteByUrl } from 'state/sites/selectors';
+import { getSiteByUrl } from 'client/state/sites/selectors';
 import { isStale } from './utils';
 
 const getJetpackSiteByUrl = ( state, url ) => {

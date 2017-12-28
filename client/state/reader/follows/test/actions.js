@@ -13,7 +13,7 @@ import {
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOW_ERROR,
-} from 'state/action-types';
+} from 'client/state/action-types';
 jest.mock( 'state/reader/posts/actions', () => ( {
 	receivePosts: posts => Promise.resolve( posts ),
 } ) );

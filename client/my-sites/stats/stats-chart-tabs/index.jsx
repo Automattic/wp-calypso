@@ -13,20 +13,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ElementChart from 'components/chart';
-import Legend from 'components/chart/legend';
+import ElementChart from 'client/components/chart';
+import Legend from 'client/components/chart/legend';
 import StatTabs from '../stats-tabs';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import Card from 'components/card';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import Card from 'client/components/card';
+import QuerySiteStats from 'client/components/data/query-site-stats';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { rangeOfPeriod } from 'state/stats/lists/utils';
-import { getSiteOption } from 'state/sites/selectors';
+} from 'client/state/stats/lists/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import { rangeOfPeriod } from 'client/state/stats/lists/utils';
+import { getSiteOption } from 'client/state/sites/selectors';
 
 class StatModuleChartTabs extends Component {
 	constructor( props ) {

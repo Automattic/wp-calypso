@@ -10,8 +10,8 @@ import React from 'react';
  * Internal dependencies
  */
 import FeatureComparison from '../index';
-import PlanCompareCard from 'my-sites/plan-compare-card/index';
-import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
+import PlanCompareCard from 'client/my-sites/plan-compare-card/index';
+import PlanCompareCardItem from 'client/my-sites/plan-compare-card/item';
 
 export default class extends React.PureComponent {
 	static displayName = 'FeatureComparison';

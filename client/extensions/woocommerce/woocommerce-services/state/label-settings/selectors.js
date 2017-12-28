@@ -8,7 +8,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 export const getLabelSettingsForm = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(

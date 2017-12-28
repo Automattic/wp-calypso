@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingSiteConnectionStatus } from 'state/selectors';
+import { isRequestingSiteConnectionStatus } from 'client/state/selectors';
 
 describe( 'isRequestingSiteConnectionStatus()', () => {
 	const siteId = 2916284;

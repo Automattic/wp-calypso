@@ -8,14 +8,14 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import page from 'page';
-import analytics from 'lib/analytics';
-import { preventWidows } from 'lib/formatting';
+import analytics from 'client/lib/analytics';
+import { preventWidows } from 'client/lib/formatting';
 
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import Button from 'components/button';
+import EmptyContent from 'client/components/empty-content';
+import Button from 'client/components/button';
 
 class MediaLibraryListPlanPromo extends React.Component {
 	static displayName = 'MediaLibraryListPlanPromo';

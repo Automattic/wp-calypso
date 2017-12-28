@@ -12,7 +12,7 @@ import tinymce from 'tinymce/tinymce';
  * Internal dependencies
  */
 import EmbedDialog from './dialog';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'client/lib/react-helpers';
 
 /**
  * Manages an EmbedDialog to allow editing the URL of an embed inside the editor.
@@ -40,7 +40,11 @@ const embed = editor => {
 			},
 		};
 
-		renderWithReduxStore( React.createElement( EmbedDialog, embedDialogProps ), embedDialogContainer, store );
+		renderWithReduxStore(
+			React.createElement( EmbedDialog, embedDialogProps ),
+			embedDialogContainer,
+			store
+		);
 
 		// Focus on the editor when closing the dialog, so that the user can start typing right away
 		// instead of having to tab back to the editor.

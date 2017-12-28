@@ -13,10 +13,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Button from 'components/button';
-import { submitSignupStep } from 'lib/signup/actions';
-import signupUtils from 'signup/utils';
+import analytics from 'client/lib/analytics';
+import Button from 'client/components/button';
+import { submitSignupStep } from 'client/lib/signup/actions';
+import signupUtils from 'client/signup/utils';
 
 export class NavigationLink extends Component {
 	static propTypes = {

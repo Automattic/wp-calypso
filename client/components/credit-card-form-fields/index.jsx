@@ -12,10 +12,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CountrySelect from 'my-sites/domains/components/form/country-select';
-import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
-import Input from 'my-sites/domains/components/form/input';
-import { maskField, unmaskField } from 'lib/credit-card-details';
+import CountrySelect from 'client/my-sites/domains/components/form/country-select';
+import CreditCardNumberInput from 'client/components/upgrades/credit-card-number-input';
+import Input from 'client/my-sites/domains/components/form/input';
+import { maskField, unmaskField } from 'client/lib/credit-card-details';
 
 class CreditCardFormFields extends React.Component {
 	static propTypes = {

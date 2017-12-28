@@ -13,11 +13,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import MainComponent from 'components/main';
-import HeaderCake from 'components/header-cake';
-import EligibilityWarnings from 'blocks/eligibility-warnings';
-import { initiateThemeTransfer } from 'state/themes/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import MainComponent from 'client/components/main';
+import HeaderCake from 'client/components/header-cake';
+import EligibilityWarnings from 'client/blocks/eligibility-warnings';
+import { initiateThemeTransfer } from 'client/state/themes/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 class PluginEligibility extends Component {
 	static propTypes = {

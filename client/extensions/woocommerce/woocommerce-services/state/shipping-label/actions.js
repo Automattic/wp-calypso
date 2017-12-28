@@ -8,18 +8,18 @@ import { every, fill, find, first, flatten, includes, isEqual, map, noop, pick }
 /**
  * Internal dependencies
  */
-import * as api from 'woocommerce/woocommerce-services/api';
-import printDocument from 'woocommerce/woocommerce-services/lib/utils/print-document';
-import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
-import * as NoticeActions from 'state/notices/actions';
-import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
+import * as api from 'client/extensions/woocommerce/woocommerce-services/api';
+import printDocument from 'client/extensions/woocommerce/woocommerce-services/lib/utils/print-document';
+import getPDFSupport from 'client/extensions/woocommerce/woocommerce-services/lib/utils/pdf-support';
+import * as NoticeActions from 'client/state/notices/actions';
+import { hasNonEmptyLeaves } from 'client/extensions/woocommerce/woocommerce-services/lib/utils/tree';
 import normalizeAddress from './normalize-address';
 import getRates from './get-rates';
-import { getPrintURL } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
+import { getPrintURL } from 'client/extensions/woocommerce/woocommerce-services/lib/pdf-label-utils';
 import { getFirstErroneousStep, getShippingLabel, getFormErrors, shouldFulfillOrder, shouldEmailDetails } from './selectors';
-import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
-import { saveOrder } from 'woocommerce/state/sites/orders/actions';
-import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
+import { createNote } from 'client/extensions/woocommerce/state/sites/orders/notes/actions';
+import { saveOrder } from 'client/extensions/woocommerce/state/sites/orders/actions';
+import { getAllPackageDefinitions } from 'client/extensions/woocommerce/woocommerce-services/state/packages/selectors';
 
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,

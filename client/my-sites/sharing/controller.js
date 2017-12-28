@@ -11,21 +11,21 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import notices from 'notices';
-import { pageView } from 'lib/analytics';
-import { sectionify } from 'lib/route';
+import notices from 'client/notices';
+import { pageView } from 'client/lib/analytics';
+import { sectionify } from 'client/lib/route';
 import Sharing from './main';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { canCurrentUser } from 'state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { canCurrentUser } from 'client/state/selectors';
 import {
 	isJetpackSite,
 	isJetpackModuleActive,
 	getSiteSlug,
 	getSiteOption,
-} from 'state/sites/selectors';
-import versionCompare from 'lib/version-compare';
+} from 'client/state/sites/selectors';
+import versionCompare from 'client/lib/version-compare';
 
 const analyticsPageTitle = 'Sharing';
 

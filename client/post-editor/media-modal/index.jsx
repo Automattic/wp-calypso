@@ -27,26 +27,26 @@ import {
 /**
  * Internal dependencies
  */
-import MediaLibrary from 'my-sites/media-library';
-import analytics from 'lib/analytics';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import MediaLibrary from 'client/my-sites/media-library';
+import analytics from 'client/lib/analytics';
+import { recordEvent, recordStat } from 'client/lib/posts/stats';
 import MediaModalGallery from './gallery';
-import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
-import Dialog from 'components/dialog';
-import CloseOnEscape from 'components/close-on-escape';
-import accept from 'lib/accept';
-import { getMediaModalView } from 'state/ui/media-modal/selectors';
-import { getSite } from 'state/sites/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { resetMediaModalView } from 'state/ui/media-modal/actions';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { deleteMedia } from 'state/media/actions';
-import ImageEditor from 'blocks/image-editor';
-import VideoEditor from 'blocks/video-editor';
+import MediaActions from 'client/lib/media/actions';
+import MediaUtils from 'client/lib/media/utils';
+import Dialog from 'client/components/dialog';
+import CloseOnEscape from 'client/components/close-on-escape';
+import accept from 'client/lib/accept';
+import { getMediaModalView } from 'client/state/ui/media-modal/selectors';
+import { getSite } from 'client/state/sites/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { resetMediaModalView } from 'client/state/ui/media-modal/actions';
+import { setEditorMediaModalView } from 'client/state/ui/editor/actions';
+import { ModalViews } from 'client/state/ui/media-modal/constants';
+import { deleteMedia } from 'client/state/media/actions';
+import ImageEditor from 'client/blocks/image-editor';
+import VideoEditor from 'client/blocks/video-editor';
 import MediaModalDetail from './detail';
-import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
+import { withAnalytics, bumpStat, recordGoogleEvent } from 'client/state/analytics/actions';
 
 function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 	return (

@@ -14,8 +14,8 @@ import { throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import viewport from 'lib/viewport';
+import Button from 'client/components/button';
+import viewport from 'client/lib/viewport';
 
 /**
  * Module variables

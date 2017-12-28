@@ -12,24 +12,24 @@ import { get, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import InfoPopover from 'components/info-popover';
-import { decodeEntities } from 'lib/formatting';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextarea from 'client/components/forms/form-textarea';
+import FormTextInput from 'client/components/forms/form-text-input';
+import InfoPopover from 'client/components/info-popover';
+import { decodeEntities } from 'client/lib/formatting';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { editComment } from 'state/comments/actions';
-import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/selectors';
-import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'client/state/analytics/actions';
+import { editComment } from 'client/state/comments/actions';
+import { removeNotice, successNotice } from 'client/state/notices/actions';
+import { getSiteComment } from 'client/state/selectors';
+import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 export class CommentEdit extends Component {
 	static propTypes = {

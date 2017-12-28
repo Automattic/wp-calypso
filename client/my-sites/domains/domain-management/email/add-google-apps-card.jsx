@@ -15,14 +15,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/forms/form-button';
-import CompactCard from 'components/card/compact';
+import Button from 'client/components/forms/form-button';
+import CompactCard from 'client/components/card/compact';
 import config from 'config';
-import paths from 'my-sites/domains/paths';
-import support from 'lib/url/support';
-import analyticsMixin from 'lib/mixins/analytics';
-import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import paths from 'client/my-sites/domains/paths';
+import support from 'client/lib/url/support';
+import analyticsMixin from 'client/lib/mixins/analytics';
+import { getAnnualPrice, getMonthlyPrice } from 'client/lib/google-apps';
+import { getCurrentUserCurrencyCode } from 'client/state/current-user/selectors';
 
 const AddGoogleAppsCard = createReactClass( {
 	displayName: 'AddGoogleAppsCard',

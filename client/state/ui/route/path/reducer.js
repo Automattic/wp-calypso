@@ -7,8 +7,8 @@
 /**
  * Internal dependencies
  */
-import { createReducer, combineReducers } from 'state/utils';
-import { ROUTE_SET } from 'state/action-types';
+import { createReducer, combineReducers } from 'client/state/utils';
+import { ROUTE_SET } from 'client/state/action-types';
 
 const initial = createReducer(
 	'',

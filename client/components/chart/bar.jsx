@@ -12,7 +12,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
+import Tooltip from 'client/components/tooltip';
 
 export default class extends React.Component {
 	static displayName = 'ModuleChartBar';

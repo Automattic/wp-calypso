@@ -7,9 +7,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { navigation, siteSelection, sites } from 'client/my-sites/controller';
 import adsController from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default function() {
 	page( '/ads', siteSelection, sites, makeLayout, clientRender );

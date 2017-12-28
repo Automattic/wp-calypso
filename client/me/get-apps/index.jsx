@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import Main from 'components/main';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
+import Main from 'client/components/main';
 import GetAppsIllustration from './illustration.jsx';
 import DesktopDownloadCard from './desktop-download-card.jsx';
 import MobileDownloadCard from './mobile-download-card.jsx';

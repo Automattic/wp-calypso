@@ -24,7 +24,7 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-} from 'lib/plans/constants';
+} from 'client/lib/plans/constants';
 import FindNewTheme from './find-new-theme';
 import UploadPlugins from './upload-plugins';
 import AdvertisingRemoved from './advertising-removed';
@@ -42,10 +42,10 @@ import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackWordPressCom from './jetpack-wordpress-com';
 import { isEnabled } from 'config';
-import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
-import { hasDomainCredit } from 'state/sites/plans/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { isWordadsInstantActivationEligible } from 'client/lib/ads/utils';
+import { hasDomainCredit } from 'client/state/sites/plans/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {

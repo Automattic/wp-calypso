@@ -10,23 +10,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
-import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
+import { getPaperSizes } from 'client/extensions/woocommerce/woocommerce-services/lib/pdf-label-utils';
+import Dropdown from 'client/extensions/woocommerce/woocommerce-services/components/dropdown';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormLabel from 'client/components/forms/form-label';
 import PriceSummary from './price-summary';
-import {
-	setEmailDetailsOption,
-	setFulfillOrderOption,
-	updatePaperSize,
-} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import {
-	getShippingLabel,
-	isLoaded,
-	getFormErrors,
-	shouldFulfillOrder,
-	shouldEmailDetails,
-} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { setEmailDetailsOption, setFulfillOrderOption, updatePaperSize } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
+import { getShippingLabel, isLoaded, getFormErrors, shouldFulfillOrder, shouldEmailDetails } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const Sidebar = ( props ) => {
 	const { orderId, siteId, form, errors, paperSize, translate, fulfillOrder, emailDetails } = props;

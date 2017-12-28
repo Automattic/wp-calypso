@@ -10,11 +10,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import { closeRefundDialog, confirmRefund } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import formatCurrency from 'lib/format-currency';
+import Dialog from 'client/components/dialog';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import { closeRefundDialog, confirmRefund } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
+import { isLoaded, getShippingLabel } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
+import formatCurrency from 'client/lib/format-currency';
 
 const RefundDialog = ( props ) => {
 	const { orderId, siteId, refundDialog, createdDate, refundableAmount, currency, labelId, translate, moment } = props;

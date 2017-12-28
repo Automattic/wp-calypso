@@ -9,7 +9,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector from 'client/lib/create-selector';
 import getPastBillingTransactions from './get-past-billing-transactions';
 
 /**

@@ -12,8 +12,8 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import DomainProductPrice from 'components/domains/domain-product-price';
-import Button from 'components/button';
+import DomainProductPrice from 'client/components/domains/domain-product-price';
+import Button from 'client/components/button';
 
 class DomainSuggestion extends React.Component {
 	static propTypes = {

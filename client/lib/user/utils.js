@@ -10,7 +10,7 @@ import debugModule from 'debug';
  * Internal dependencies
  */
 import config from 'config';
-import userModule from 'lib/user';
+import userModule from 'client/lib/user';
 
 /**
  * Module Variables

@@ -13,9 +13,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import { errorNotice } from 'state/notices/actions';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import { errorNotice } from 'client/state/notices/actions';
 
 class EmailVerificationCard extends React.Component {
 	static propTypes = {

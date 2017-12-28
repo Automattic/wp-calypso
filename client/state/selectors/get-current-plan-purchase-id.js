@@ -7,7 +7,7 @@ import { get, isNaN } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getCurrentPlan } from 'client/state/sites/plans/selectors';
 
 /**
  * Returns a site's current plan purchase ID or null if the site doesn't exist or the purchase ID

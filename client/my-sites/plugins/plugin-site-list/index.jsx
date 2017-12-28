@@ -11,10 +11,10 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { isConnectedSecondaryNetworkSite, getNetworkSites } from 'state/selectors';
-import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
-import PluginsStore from 'lib/plugins/store';
-import SectionHeader from 'components/section-header';
+import { isConnectedSecondaryNetworkSite, getNetworkSites } from 'client/state/selectors';
+import PluginSite from 'client/my-sites/plugins/plugin-site/plugin-site';
+import PluginsStore from 'client/lib/plugins/store';
+import SectionHeader from 'client/components/section-header';
 
 export class PluginSiteList extends Component {
 	static propTypes = {

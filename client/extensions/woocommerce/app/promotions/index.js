@@ -14,18 +14,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { fetchPromotions } from 'woocommerce/state/sites/promotions/actions';
-import { getPromotions } from 'woocommerce/state/selectors/promotions';
-import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { setPromotionSearch } from 'woocommerce/state/ui/promotions/actions';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import EmptyContent from 'client/components/empty-content';
+import { fetchPromotions } from 'client/extensions/woocommerce/state/sites/promotions/actions';
+import { getPromotions } from 'client/extensions/woocommerce/state/selectors/promotions';
+import ActionHeader from 'client/extensions/woocommerce/components/action-header';
+import Button from 'client/components/button';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { setPromotionSearch } from 'client/extensions/woocommerce/state/ui/promotions/actions';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import Main from 'client/components/main';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
 import PromotionsList from './promotions-list';
-import SearchCard from 'components/search-card';
+import SearchCard from 'client/components/search-card';
 
 class Promotions extends Component {
 	static propTypes = {

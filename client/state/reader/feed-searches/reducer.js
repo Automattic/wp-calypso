@@ -7,8 +7,8 @@ import { uniqBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
-import { READER_FEED_SEARCH_RECEIVE } from 'state/action-types';
+import { combineReducers, createReducer, keyedReducer } from 'client/state/utils';
+import { READER_FEED_SEARCH_RECEIVE } from 'client/state/action-types';
 
 /**
  * Tracks mappings between queries --> feed results

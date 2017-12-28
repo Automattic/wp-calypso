@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingWordadsStatus } from 'state/wordads/status/selectors';
-import { requestWordadsStatus } from 'state/wordads/status/actions';
+import { isRequestingWordadsStatus } from 'client/state/wordads/status/selectors';
+import { requestWordadsStatus } from 'client/state/wordads/status/actions';
 
 class QueryWordadsStatus extends Component {
 	componentWillMount() {

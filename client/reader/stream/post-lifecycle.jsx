@@ -9,20 +9,20 @@ import { defer, omit, includes } from 'lodash';
 /**
  * Internal Dependencies
  */
-import PostStore from 'lib/feed-post-store';
-import PostStoreActions from 'lib/feed-post-store/actions';
+import PostStore from 'client/lib/feed-post-store';
+import PostStoreActions from 'client/lib/feed-post-store/actions';
 import PostPlaceholder from './post-placeholder';
 import PostUnavailable from './post-unavailable';
-import ListGap from 'reader/list-gap';
+import ListGap from 'client/reader/list-gap';
 import CrossPost from './x-post';
-import { shallowEquals } from 'reader/utils';
+import { shallowEquals } from 'client/reader/utils';
 import RecommendedPosts from './recommended-posts';
-import XPostHelper, { isXPost } from 'reader/xpost-helper';
-import PostBlocked from 'blocks/reader-post-card/blocked';
+import XPostHelper, { isXPost } from 'client/reader/xpost-helper';
+import PostBlocked from 'client/blocks/reader-post-card/blocked';
 import Post from './post';
-import { IN_STREAM_RECOMMENDATION } from 'reader/follow-sources';
-import CombinedCard from 'blocks/reader-combined-card';
-import fluxPostAdapter from 'lib/reader-post-flux-adapter';
+import { IN_STREAM_RECOMMENDATION } from 'client/reader/follow-sources';
+import CombinedCard from 'client/blocks/reader-combined-card';
+import fluxPostAdapter from 'client/lib/reader-post-flux-adapter';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';
 
 const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );

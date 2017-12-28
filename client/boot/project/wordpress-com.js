@@ -15,25 +15,25 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
-import { getSavedVariations } from 'lib/abtest'; // used by error logger
-import { initConnection as initHappychatConnection } from 'state/happychat/connection/actions';
-import { getHappychatAuth } from 'state/happychat/utils';
-import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
-import analytics from 'lib/analytics';
-import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
-import route from 'lib/route';
-import normalize from 'lib/route/normalize';
-import { isLegacyRoute } from 'lib/route/legacy-routes';
-import superProps from 'lib/analytics/super-props';
-import translatorJumpstart from 'lib/translator-jumpstart';
-import nuxWelcome from 'layout/nux-welcome';
-import emailVerification from 'components/email-verification';
-import viewport from 'lib/viewport';
-import { init as pushNotificationsInit } from 'state/push-notifications/actions';
-import { pruneStaleRecords } from 'lib/wp/sync-handler';
-import { setReduxStore as setSupportUserReduxStore } from 'lib/user/support-user-interop';
-import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSavedVariations } from 'client/lib/abtest'; // used by error logger
+import { initConnection as initHappychatConnection } from 'client/state/happychat/connection/actions';
+import { getHappychatAuth } from 'client/state/happychat/utils';
+import wasHappychatRecentlyActive from 'client/state/happychat/selectors/was-happychat-recently-active';
+import analytics from 'client/lib/analytics';
+import { setReduxStore as setReduxBridgeReduxStore } from 'client/lib/redux-bridge';
+import route from 'client/lib/route';
+import normalize from 'client/lib/route/normalize';
+import { isLegacyRoute } from 'client/lib/route/legacy-routes';
+import superProps from 'client/lib/analytics/super-props';
+import translatorJumpstart from 'client/lib/translator-jumpstart';
+import nuxWelcome from 'client/layout/nux-welcome';
+import emailVerification from 'client/components/email-verification';
+import viewport from 'client/lib/viewport';
+import { init as pushNotificationsInit } from 'client/state/push-notifications/actions';
+import { pruneStaleRecords } from 'client/lib/wp/sync-handler';
+import { setReduxStore as setSupportUserReduxStore } from 'client/lib/user/support-user-interop';
+import { getSelectedSiteId, getSectionName } from 'client/state/ui/selectors';
+import { setNextLayoutFocus, activateNextLayoutFocus } from 'client/state/ui/layout-focus/actions';
 
 const debug = debugFactory( 'calypso' );
 

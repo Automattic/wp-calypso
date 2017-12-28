@@ -10,12 +10,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
-import Button from 'components/button';
-import SignupActions from 'lib/signup/actions';
-import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import StepWrapper from 'client/signup/step-wrapper';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
+import SignupActions from 'client/lib/signup/actions';
+import { autoConfigCredentials } from 'client/state/jetpack/credentials/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 class CredsConfirmStep extends Component {
 	static propTypes = {

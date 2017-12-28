@@ -9,13 +9,13 @@ import { merge, pick } from 'lodash';
  * Internal dependencies
  */
 import itemsSchema from './schema';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import {
 	POST_LIKES_RECEIVE,
 	POST_LIKES_REQUEST,
 	POST_LIKES_REQUEST_SUCCESS,
 	POST_LIKES_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

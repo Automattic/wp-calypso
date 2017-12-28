@@ -58,7 +58,7 @@ import {
 	siteSupportsJetpackSettingsUi,
 } from '../selectors';
 import config from 'config';
-import { userState } from 'state/selectors/test/fixtures/user-state';
+import { userState } from 'client/state/selectors/test/fixtures/user-state';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'selectors', () => {

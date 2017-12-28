@@ -11,8 +11,8 @@ import {
 	PREVIEW_TOOL_SET,
 	PREVIEW_TYPE_SET,
 	PREVIEW_TYPE_RESET,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers } from 'client/state/utils';
 
 export function currentPreviewSiteId( state = null, action ) {
 	switch ( action.type ) {

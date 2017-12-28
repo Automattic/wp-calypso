@@ -12,9 +12,9 @@ import { omit, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { receiveDeletedSite, receiveSite } from 'state/sites/actions';
+import wpcom from 'client/lib/wp';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { receiveDeletedSite, receiveSite } from 'client/state/sites/actions';
 import {
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
@@ -41,14 +41,14 @@ import {
 	SITE_REQUEST,
 	SITE_REQUEST_SUCCESS,
 	SITE_REQUEST_FAILURE,
-} from 'state/action-types';
-import userFactory from 'lib/user';
+} from 'client/state/action-types';
+import userFactory from 'client/lib/user';
 import config from 'config';
-import addQueryArgs from 'lib/route/add-query-args';
-import { externalRedirect } from 'lib/route/path';
-import { urlToSlug } from 'lib/url';
-import { clearPlan, persistSession } from 'jetpack-connect/persistence-utils';
-import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
+import addQueryArgs from 'client/lib/route/add-query-args';
+import { externalRedirect } from 'client/lib/route/path';
+import { urlToSlug } from 'client/lib/url';
+import { clearPlan, persistSession } from 'client/jetpack-connect/persistence-utils';
+import { REMOTE_PATH_AUTH } from 'client/jetpack-connect/constants';
 
 /**
  *  Local variables;

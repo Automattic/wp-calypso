@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ReaderAvatar from 'blocks/reader-avatar';
+import ReaderAvatar from 'client/blocks/reader-avatar';
 
 const ReaderSubscriptionListItemPlaceholder = () => {
 	return (

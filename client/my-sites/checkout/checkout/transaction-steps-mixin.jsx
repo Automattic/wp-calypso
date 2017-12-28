@@ -13,13 +13,13 @@ const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:transaction-step
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import adTracking from 'lib/analytics/ad-tracking';
-import { getTld } from 'lib/domains';
-import { cartItems } from 'lib/cart-values';
-import { displayError, clear } from 'lib/upgrades/notices';
-import upgradesActions from 'lib/upgrades/actions';
-import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
+import analytics from 'client/lib/analytics';
+import adTracking from 'client/lib/analytics/ad-tracking';
+import { getTld } from 'client/lib/domains';
+import { cartItems } from 'client/lib/cart-values';
+import { displayError, clear } from 'client/lib/upgrades/notices';
+import upgradesActions from 'client/lib/upgrades/actions';
+import { removeNestedProperties } from 'client/lib/cart/store/cart-analytics';
 
 const TransactionStepsMixin = {
 	submitTransaction: function( event ) {

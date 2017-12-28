@@ -14,12 +14,12 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Accordion from 'components/accordion';
-import QueryPostFormats from 'components/data/query-post-formats';
+import Accordion from 'client/components/accordion';
+import QueryPostFormats from 'client/components/data/query-post-formats';
 import PostFormats from './';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { getPostFormats } from 'state/post-formats/selectors';
-import { getSiteDefaultPostFormat } from 'state/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'client/state/ui/selectors';
+import { getPostFormats } from 'client/state/post-formats/selectors';
+import { getSiteDefaultPostFormat } from 'client/state/selectors';
 
 class EditorPostFormatsAccordion extends React.Component {
 	static propTypes = {

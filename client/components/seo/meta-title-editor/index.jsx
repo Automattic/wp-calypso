@@ -11,7 +11,7 @@ import { get, identity, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import TitleFormatEditor from 'components/title-format-editor';
+import TitleFormatEditor from 'client/components/title-format-editor';
 import { localize } from 'i18n-calypso';
 
 const titleTypes = translate => [

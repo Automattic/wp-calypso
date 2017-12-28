@@ -7,12 +7,12 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { getGuidedTransferIssue } from 'state/sites/guided-transfer/selectors';
+import { getGuidedTransferIssue } from 'client/state/sites/guided-transfer/selectors';
 
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
+import Notice from 'client/components/notice';
 
 /**
  * This implements a list of notices for warnings which *don't prevent a transfer*.

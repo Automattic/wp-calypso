@@ -12,10 +12,10 @@ import { isEqual, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isRequestingPostTypes } from 'state/post-types/selectors';
-import { getSiteOption } from 'state/sites/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
-import { requestPostTypes } from 'state/post-types/actions';
+import { isRequestingPostTypes } from 'client/state/post-types/selectors';
+import { getSiteOption } from 'client/state/sites/selectors';
+import { getSiteSettings } from 'client/state/site-settings/selectors';
+import { requestPostTypes } from 'client/state/post-types/actions';
 
 class QueryPostTypes extends Component {
 	static propTypes = {

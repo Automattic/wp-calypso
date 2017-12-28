@@ -11,12 +11,12 @@ import { localize } from 'i18n-calypso';
 /***
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { getPostCommentsTree, getDateSortedPostComments } from 'state/comments/selectors';
-import { expandComments } from 'state/comments/actions';
-import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
-import { isAncestor } from 'blocks/comments/utils';
+import Gravatar from 'client/components/gravatar';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
+import { getPostCommentsTree, getDateSortedPostComments } from 'client/state/comments/selectors';
+import { expandComments } from 'client/state/comments/actions';
+import { POST_COMMENT_DISPLAY_TYPES } from 'client/state/comments/constants';
+import { isAncestor } from 'client/blocks/comments/utils';
 
 const MAX_GRAVATARS_TO_DISPLAY = 10;
 const NUMBER_TO_EXPAND = 10;

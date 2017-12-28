@@ -14,11 +14,11 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import actions from 'lib/posts/actions';
-import accept from 'lib/accept';
-import utils from 'lib/posts/utils';
-import Button from 'components/button';
-import { getSelectedSite } from 'state/ui/selectors';
+import actions from 'client/lib/posts/actions';
+import accept from 'client/lib/accept';
+import utils from 'client/lib/posts/utils';
+import Button from 'client/components/button';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 class EditorDeletePost extends React.Component {
 	static displayName = 'EditorDeletePost';

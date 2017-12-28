@@ -4,12 +4,12 @@
  * Internal dependencies
  */
 
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 import {
 	GOOGLE_APPS_USERS_FETCH,
 	GOOGLE_APPS_USERS_FETCH_COMPLETED,
 	GOOGLE_APPS_USERS_FETCH_FAILED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 const wpcom = wp.undocumented();
 

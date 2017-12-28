@@ -13,9 +13,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PremiumPopover from 'components/plans/premium-popover';
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import PremiumPopover from 'client/components/plans/premium-popover';
+import { currentUserHasFlag, getCurrentUser } from 'client/state/current-user/selectors';
+import { DOMAINS_WITH_PLANS_ONLY } from 'client/state/current-user/constants';
 
 class DomainProductPrice extends React.Component {
 	static propTypes = {

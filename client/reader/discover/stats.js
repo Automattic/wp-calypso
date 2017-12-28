@@ -2,7 +2,7 @@
 /**
 * Internal dependencies
 */
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
 
 export function recordAuthorClick( author ) {
 	recordGaEvent( 'Clicked Discover Card Attribution Author' );

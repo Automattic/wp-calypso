@@ -12,12 +12,12 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 import { isEnabled } from 'config';
-import { isBusiness, isGoogleApps } from 'lib/products-values';
-import PurchaseDetail from 'components/purchase-detail';
+import { isBusiness, isGoogleApps } from 'client/lib/products-values';
+import PurchaseDetail from 'client/components/purchase-detail';
 
 function trackOnboardingButtonClick() {
 	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );

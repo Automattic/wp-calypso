@@ -15,14 +15,14 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { getValidFeatureKeys } from 'lib/plans';
-import { isFreePlan } from 'lib/products-values';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import { hasFeature } from 'client/state/sites/plans/selectors';
+import { getValidFeatureKeys } from 'client/lib/plans';
+import { isFreePlan } from 'client/lib/products-values';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
 
 class UpgradeNudge extends React.Component {
 	static propTypes = {

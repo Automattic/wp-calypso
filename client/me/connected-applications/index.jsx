@@ -16,20 +16,20 @@ const debug = debugFactory( 'calypso:me:connected-applications' );
 /**
  * Internal dependencies
  */
-import ConnectedAppItem from 'me/connected-application-item';
-import DocumentHead from 'components/data/document-head';
-import EmptyContent from 'components/empty-content';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import notices from 'notices';
+import ConnectedAppItem from 'client/me/connected-application-item';
+import DocumentHead from 'client/components/data/document-head';
+import EmptyContent from 'client/components/empty-content';
+import Main from 'client/components/main';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
+import notices from 'client/notices';
 /* eslint-disable no-restricted-imports */
 // FIXME: Remove use of this mixin
-import observe from 'lib/mixins/data-observe';
+import observe from 'client/lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import ReauthRequired from 'me/reauth-required';
-import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import { successNotice } from 'state/notices/actions';
+import ReauthRequired from 'client/me/reauth-required';
+import SecuritySectionNav from 'client/me/security-section-nav';
+import twoStepAuthorization from 'client/lib/two-step-authorization';
+import { successNotice } from 'client/state/notices/actions';
 
 /* eslint-disable react/prefer-es6-class */
 // FIXME: Remove use of createReactClass

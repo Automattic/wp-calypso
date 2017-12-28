@@ -24,17 +24,17 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-} from 'lib/plans/constants';
-import { addQueryArgs } from 'lib/url';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { getValidFeatureKeys } from 'lib/plans';
-import Button from 'components/button';
-import Card from 'components/card';
-import DismissibleCard from 'blocks/dismissible-card';
-import PlanIcon from 'components/plans/plan-icon';
-import PlanPrice from 'my-sites/plan-price';
-import TrackComponentView from 'lib/analytics/track-component-view';
+} from 'client/lib/plans/constants';
+import { addQueryArgs } from 'client/lib/url';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { getValidFeatureKeys } from 'client/lib/plans';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import DismissibleCard from 'client/blocks/dismissible-card';
+import PlanIcon from 'client/components/plans/plan-icon';
+import PlanPrice from 'client/my-sites/plan-price';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
 
 class Banner extends Component {
 	static propTypes = {

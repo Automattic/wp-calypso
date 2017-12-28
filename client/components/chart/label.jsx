@@ -10,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import userModule from 'lib/user';
+import userModule from 'client/lib/user';
 
 /**
  * Module variables

@@ -11,26 +11,16 @@ import { isEqual, isObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import TextField from 'woocommerce/woocommerce-services/components/text-field';
+import TextField from 'client/extensions/woocommerce/woocommerce-services/components/text-field';
 import StepConfirmationButton from '../step-confirmation-button';
-import CountryDropdown from 'woocommerce/woocommerce-services/components/country-dropdown';
-import StateDropdown from 'woocommerce/woocommerce-services/components/state-dropdown';
-import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
+import CountryDropdown from 'client/extensions/woocommerce/woocommerce-services/components/country-dropdown';
+import StateDropdown from 'client/extensions/woocommerce/woocommerce-services/components/state-dropdown';
+import { hasNonEmptyLeaves } from 'client/extensions/woocommerce/woocommerce-services/lib/utils/tree';
 import AddressSuggestion from './suggestion';
-import { decodeEntities } from 'lib/formatting';
-import { getPlainPhoneNumber, formatPhoneForDisplay } from 'woocommerce/woocommerce-services/lib/utils/phone-format';
-import {
-	selectNormalizedAddress,
-	confirmAddressSuggestion,
-	editAddress,
-	updateAddressValue,
-	submitAddressForNormalization,
-} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import {
-	getShippingLabel,
-	isLoaded,
-	getFormErrors,
-} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { decodeEntities } from 'client/lib/formatting';
+import { getPlainPhoneNumber, formatPhoneForDisplay } from 'client/extensions/woocommerce/woocommerce-services/lib/utils/phone-format';
+import { selectNormalizedAddress, confirmAddressSuggestion, editAddress, updateAddressValue, submitAddressForNormalization } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
+import { getShippingLabel, isLoaded, getFormErrors } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const AddressFields = ( props ) => {
 	const {

@@ -11,9 +11,9 @@ import { expect } from 'chai';
 import {
 	WOOCOMMERCE_CURRENCIES_REQUEST,
 	WOOCOMMERCE_CURRENCIES_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import { LOADING } from 'woocommerce/state/constants';
-import reducer from 'woocommerce/state/sites/reducer';
+} from 'client/extensions/woocommerce/state/action-types';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
+import reducer from 'client/extensions/woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	test( 'should mark the currencies array as being "loading"', () => {

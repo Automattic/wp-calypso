@@ -21,14 +21,14 @@ import {
 	updateSeenOnFollow,
 } from '../';
 import { subscriptionsFromApi } from '../utils';
-import { READER_FOLLOWS_SYNC_START } from 'state/action-types';
-import { NOTICE_CREATE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { READER_FOLLOWS_SYNC_START } from 'client/state/action-types';
+import { NOTICE_CREATE } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import {
 	receiveFollows as receiveFollowsAction,
 	follow,
 	syncComplete,
-} from 'state/reader/follows/actions';
+} from 'client/state/reader/follows/actions';
 
 const successfulApiResponse = freeze( {
 	number: 2,

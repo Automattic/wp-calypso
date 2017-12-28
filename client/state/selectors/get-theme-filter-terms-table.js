@@ -9,8 +9,8 @@ import { forIn, keys, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { isAmbiguousThemeFilterTerm, getThemeFilters } from 'state/selectors';
+import createSelector from 'client/lib/create-selector';
+import { isAmbiguousThemeFilterTerm, getThemeFilters } from 'client/state/selectors';
 
 /**
  * Return a table of theme filter terms to taxonomies, with

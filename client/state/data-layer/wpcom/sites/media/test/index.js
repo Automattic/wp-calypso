@@ -10,8 +10,8 @@ import { expect } from 'chai';
  */
 import { handleMediaItemRequest, receiveMediaItem, receiveMediaItemError } from '../';
 import { requestMediaSuccess, requestMediaError, requestMedia } from '../';
-import { MEDIA_ITEM_REQUEST } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { MEDIA_ITEM_REQUEST } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import {
 	failMediaItemRequest,
 	failMediaRequest,
@@ -20,7 +20,7 @@ import {
 	requestingMediaItem,
 	successMediaItemRequest,
 	successMediaRequest,
-} from 'state/media/actions';
+} from 'client/state/media/actions';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'media request', () => {

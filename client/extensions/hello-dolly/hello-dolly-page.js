@@ -12,12 +12,12 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import Main from 'components/main';
-import Button from 'components/button';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import FAQ from 'components/faq';
-import FAQItem from 'components/faq/faq-item';
+import Main from 'client/components/main';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import FAQ from 'client/components/faq';
+import FAQItem from 'client/components/faq/faq-item';
 import getLyric from './state/selectors';
 import { nextLyric } from './state/actions';
 

@@ -8,12 +8,12 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { updateConciergeBookingStatus } from 'state/concierge/actions';
-import { errorNotice } from 'state/notices/actions';
-import { CONCIERGE_APPOINTMENT_CREATE } from 'state/action-types';
-import { CONCIERGE_STATUS_BOOKED, CONCIERGE_STATUS_BOOKING } from 'me/concierge/constants';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { updateConciergeBookingStatus } from 'client/state/concierge/actions';
+import { errorNotice } from 'client/state/notices/actions';
+import { CONCIERGE_APPOINTMENT_CREATE } from 'client/state/action-types';
+import { CONCIERGE_STATUS_BOOKED, CONCIERGE_STATUS_BOOKING } from 'client/me/concierge/constants';
 import fromApi from './from-api';
 
 export const toApi = ( { beginTimestamp, customerId, siteId, meta } ) => ( {

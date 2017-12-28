@@ -8,8 +8,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import JetpackLogo from 'components/jetpack-logo';
+import Gravatar from 'client/components/gravatar';
+import JetpackLogo from 'client/components/jetpack-logo';
 
 /**
  * Module constants

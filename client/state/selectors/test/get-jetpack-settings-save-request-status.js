@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getJetpackSettingsSaveRequestStatus } from 'state/selectors';
+import { getJetpackSettingsSaveRequestStatus } from 'client/state/selectors';
 
 describe( 'getJetpackSettingsSaveRequestStatus()', () => {
 	test( 'should return undefined if the site is not attached', () => {

@@ -48,11 +48,11 @@ import {
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
-} from 'lib/products-values';
-import sortProducts from 'lib/products-values/sort';
-import { PLAN_PERSONAL } from 'lib/plans/constants';
-import { getTld } from 'lib/domains';
-import { domainProductSlugs } from 'lib/domains/constants';
+} from 'client/lib/products-values';
+import sortProducts from 'client/lib/products-values/sort';
+import { PLAN_PERSONAL } from 'client/lib/plans/constants';
+import { getTld } from 'client/lib/domains';
+import { domainProductSlugs } from 'client/lib/domains/constants';
 
 import {
 	PLAN_FREE,
@@ -62,7 +62,7 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-} from 'lib/plans/constants';
+} from 'client/lib/plans/constants';
 
 /**
  * Adds the specified item to a shopping cart.

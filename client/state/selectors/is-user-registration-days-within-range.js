@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { getCurrentUserDate } from 'state/current-user/selectors';
+import { getCurrentUserDate } from 'client/state/current-user/selectors';
 
 /**
  * Returns true if the number of days the current user has been registered for falls within the specied range of values.

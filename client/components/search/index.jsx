@@ -15,9 +15,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Spinner from 'components/spinner';
-import { isMobile } from 'lib/viewport';
+import analytics from 'client/lib/analytics';
+import Spinner from 'client/components/spinner';
+import { isMobile } from 'client/lib/viewport';
 
 /**
  * Internal variables

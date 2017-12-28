@@ -11,8 +11,8 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import shortcodeUtils from 'lib/shortcode';
-import GalleryShortcode from 'components/gallery-shortcode';
+import shortcodeUtils from 'client/lib/shortcode';
+import GalleryShortcode from 'client/components/gallery-shortcode';
 
 class GalleryView extends Component {
 	static match( content ) {

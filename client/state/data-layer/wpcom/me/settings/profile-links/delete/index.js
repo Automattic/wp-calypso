@@ -3,13 +3,13 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { USER_PROFILE_LINKS_DELETE } from 'state/action-types';
+import { dispatchRequestEx } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { USER_PROFILE_LINKS_DELETE } from 'client/state/action-types';
 import {
 	deleteUserProfileLinkError,
 	deleteUserProfileLinkSuccess,
-} from 'state/profile-links/actions';
+} from 'client/state/profile-links/actions';
 
 /**
  * Dispatches a request to delete a profile link for the current user

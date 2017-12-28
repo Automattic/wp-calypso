@@ -17,7 +17,7 @@ import {
 	PREVIEW_IS_SHOWING,
 	ROUTE_SET,
 	SITE_SETTINGS_RECEIVE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 const relevantAnalyticsEvents = [ 'calypso_themeshowcase_theme_click' ];
 

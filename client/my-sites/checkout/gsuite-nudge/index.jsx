@@ -13,10 +13,10 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import GoogleAppsDialog from 'components/upgrades/google-apps/google-apps-dialog';
-import Main from 'components/main';
-import { getSite } from 'state/sites/selectors';
+import DocumentHead from 'client/components/data/document-head';
+import GoogleAppsDialog from 'client/components/upgrades/google-apps/google-apps-dialog';
+import Main from 'client/components/main';
+import { getSite } from 'client/state/sites/selectors';
 
 export class GsuiteNudge extends React.Component {
 	static propTypes = {

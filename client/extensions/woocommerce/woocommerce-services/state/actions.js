@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { WOOCOMMERCE_SERVICES_SHIPPING_ACTION_LIST_CREATE } from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_SERVICES_SHIPPING_ACTION_LIST_CREATE } from 'client/extensions/woocommerce/state/action-types';
 
 /**
  * Creates an action list to save WCS shipping settings (labels and packages)

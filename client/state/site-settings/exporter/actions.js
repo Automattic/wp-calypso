@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
@@ -17,7 +17,7 @@ import {
 	EXPORT_STATUS_FETCH,
 	EXPORT_POST_TYPE_SET,
 	EXPORT_POST_TYPE_FIELD_SET,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 import { prepareExportRequest } from './selectors';
 

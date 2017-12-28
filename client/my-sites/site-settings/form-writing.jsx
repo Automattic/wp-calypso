@@ -14,24 +14,24 @@ import { flowRight, get, pick } from 'lodash';
 import wrapSettingsForm from './wrap-settings-form';
 import config from 'config';
 import PressThis from './press-this';
-import SectionHeader from 'components/section-header';
-import Button from 'components/button';
-import QueryTaxonomies from 'components/data/query-taxonomies';
+import SectionHeader from 'client/components/section-header';
+import Button from 'client/components/button';
+import QueryTaxonomies from 'client/components/data/query-taxonomies';
 import TaxonomyCard from './taxonomies/taxonomy-card';
 import {
 	isJetpackSite,
 	isJetpackMinimumVersion,
 	siteSupportsJetpackSettingsUi,
-} from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestPostTypes } from 'state/post-types/actions';
+} from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { requestPostTypes } from 'client/state/post-types/actions';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
 import Masterbar from './masterbar';
 import MediaSettings from './media-settings';
 import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import QueryJetpackModules from 'client/components/data/query-jetpack-modules';
 
 class SiteSettingsFormWriting extends Component {
 	renderSectionHeader( title, showButton = true ) {

@@ -9,7 +9,7 @@ import { last } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector from 'client/lib/create-selector';
 
 /**
  * Returns a log of actions from certain types that have previously been

@@ -10,20 +10,20 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
-import ReaderAvatar from 'blocks/reader-avatar';
-import TimeSince from 'components/time-since';
-import { getSiteName } from 'reader/get-helpers';
+import ReaderAvatar from 'client/blocks/reader-avatar';
+import TimeSince from 'client/components/time-since';
+import { getSiteName } from 'client/reader/get-helpers';
 import {
 	recordAction,
 	recordGaEvent,
 	recordTrackForPost,
 	recordPermalinkClick,
-} from 'reader/stats';
-import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
-import { getStreamUrl } from 'reader/route';
-import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
-import ReaderAuthorLink from 'blocks/reader-author-link';
-import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
+} from 'client/reader/stats';
+import ReaderSiteStreamLink from 'client/blocks/reader-site-stream-link';
+import { getStreamUrl } from 'client/reader/route';
+import { isAuthorNameBlacklisted } from 'client/reader/lib/author-name-blacklist';
+import ReaderAuthorLink from 'client/blocks/reader-author-link';
+import { areEqualIgnoringWhitespaceAndCase } from 'client/lib/string';
 
 const TAGS_TO_SHOW = 3;
 

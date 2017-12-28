@@ -17,7 +17,7 @@ import {
 	READER_FEED_UPDATE,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {

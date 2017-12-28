@@ -23,12 +23,15 @@ import {
 	isCurrentSitePlan,
 	getSitePlan,
 	getSiteSlug,
-} from 'state/sites/selectors';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import { isCurrentUserCurrentPlanOwner, getPlansBySiteId } from 'state/sites/plans/selectors';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
-import { getPlanRawPrice, getPlan, getPlanSlug, getPlanBySlug } from 'state/plans/selectors';
+} from 'client/state/sites/selectors';
+import { getSignupDependencyStore } from 'client/state/signup/dependency-store/selectors';
+import {
+	isCurrentUserCurrentPlanOwner,
+	getPlansBySiteId,
+} from 'client/state/sites/plans/selectors';
+import { getCurrentUserCurrencyCode } from 'client/state/current-user/selectors';
+import { getPlanDiscountedRawPrice } from 'client/state/sites/plans/selectors';
+import { getPlanRawPrice, getPlan, getPlanSlug, getPlanBySlug } from 'client/state/plans/selectors';
 import {
 	isPopular,
 	isNew,
@@ -38,16 +41,16 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
-} from 'lib/plans/constants';
-import { getMonthlyPlanByYearly, isFreePlan } from 'lib/plans';
-import { getPlanPath, canUpgradeToPlan, applyTestFiltersToPlansList } from 'lib/plans';
-import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
-import Notice from 'components/notice';
-import SpinnerLine from 'components/spinner-line';
-import FoldableCard from 'components/foldable-card';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { retargetViewPlans } from 'lib/analytics/ad-tracking';
-import { abtest } from 'lib/abtest';
+} from 'client/lib/plans/constants';
+import { getMonthlyPlanByYearly, isFreePlan } from 'client/lib/plans';
+import { getPlanPath, canUpgradeToPlan, applyTestFiltersToPlansList } from 'client/lib/plans';
+import { planItem as getCartItemForPlan } from 'client/lib/cart-values/cart-items';
+import Notice from 'client/components/notice';
+import SpinnerLine from 'client/components/spinner-line';
+import FoldableCard from 'client/components/foldable-card';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { retargetViewPlans } from 'client/lib/analytics/ad-tracking';
+import { abtest } from 'client/lib/abtest';
 
 class PlanFeatures extends Component {
 	render() {

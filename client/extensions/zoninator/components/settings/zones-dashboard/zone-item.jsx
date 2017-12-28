@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import CompactCard from 'client/components/card/compact';
+import { getSelectedSiteSlug } from 'client/state/ui/selectors';
 import { settingsPath } from '../../../app/util';
 
 const ZoneItem = ( { siteSlug, zone } ) => {

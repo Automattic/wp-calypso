@@ -9,7 +9,7 @@ import { isString } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getAccountRecoveryResetUserData } from 'state/selectors';
+import { getAccountRecoveryResetUserData } from 'client/state/selectors';
 
 export default state => {
 	const { user, firstname, lastname, url } = getAccountRecoveryResetUserData( state );

@@ -12,14 +12,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
-import Emojify from 'components/emojify';
-import QueryComment from 'components/data/query-comment';
-import { stripHTML, decodeEntities } from 'lib/formatting';
-import { getParentComment, getSiteComment } from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import AutoDirection from 'client/components/auto-direction';
+import CommentPostLink from 'client/my-sites/comments/comment/comment-post-link';
+import Emojify from 'client/components/emojify';
+import QueryComment from 'client/components/data/query-comment';
+import { stripHTML, decodeEntities } from 'client/lib/formatting';
+import { getParentComment, getSiteComment } from 'client/state/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 
 export class CommentContent extends Component {
 	static propTypes = {

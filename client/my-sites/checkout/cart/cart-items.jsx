@@ -11,7 +11,7 @@ import React from 'react';
  * Internal dependencies
  */
 import CartItem from './cart-item';
-import { cartItems } from 'lib/cart-values';
+import { cartItems } from 'client/lib/cart-values';
 import { localize } from 'i18n-calypso';
 
 const COLLAPSED_ITEMS_COUNT = 2;

@@ -11,39 +11,39 @@ import { concat, find, get, flatMap, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import DocumentHead from 'components/data/document-head';
-import Search from 'components/search';
-import SectionNav from 'components/section-nav';
-import MainComponent from 'components/main';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import NoResults from 'my-sites/no-results';
-import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
-import PluginsListStore from 'lib/plugins/wporg-data/list-store';
-import PluginsActions from 'lib/plugins/wporg-data/actions';
-import URLSearch from 'lib/mixins/url-search';
-import infiniteScroll from 'lib/mixins/infinite-scroll';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import DocumentHead from 'client/components/data/document-head';
+import Search from 'client/components/search';
+import SectionNav from 'client/components/section-nav';
+import MainComponent from 'client/components/main';
+import NavTabs from 'client/components/section-nav/tabs';
+import NavItem from 'client/components/section-nav/item';
+import NoResults from 'client/my-sites/no-results';
+import PluginsBrowserList from 'client/my-sites/plugins/plugins-browser-list';
+import PluginsListStore from 'client/lib/plugins/wporg-data/list-store';
+import PluginsActions from 'client/lib/plugins/wporg-data/actions';
+import URLSearch from 'client/lib/mixins/url-search';
+import infiniteScroll from 'client/lib/mixins/infinite-scroll';
+import JetpackManageErrorPage from 'client/my-sites/jetpack-manage-error-page';
+import { recordTracksEvent, recordGoogleEvent } from 'client/state/analytics/actions';
 import {
 	canCurrentUser,
 	getSelectedOrAllSitesJetpackCanManage,
 	hasJetpackSites,
-} from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+} from 'client/state/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 import {
 	getSitePlan,
 	isJetpackSite,
 	isRequestingSites,
 	canJetpackSiteManage,
-} from 'state/sites/selectors';
-import NonSupportedJetpackVersionNotice from 'my-sites/plugins/not-supported-jetpack-version';
-import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
-import HeaderButton from 'components/header-button';
-import { isBusiness, isEnterprise, isPremium } from 'lib/products-values';
-import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
-import Banner from 'components/banner';
+} from 'client/state/sites/selectors';
+import NonSupportedJetpackVersionNotice from 'client/my-sites/plugins/not-supported-jetpack-version';
+import NoPermissionsError from 'client/my-sites/plugins/no-permissions-error';
+import HeaderButton from 'client/components/header-button';
+import { isBusiness, isEnterprise, isPremium } from 'client/lib/products-values';
+import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'client/lib/plans/constants';
+import Banner from 'client/components/banner';
 import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
 

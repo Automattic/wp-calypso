@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
-import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
-import TableItem from 'woocommerce/components/table/table-item';
+import { getSiteStatsNormalizedData } from 'client/state/stats/lists/selectors';
+import Table from 'client/extensions/woocommerce/components/table';
+import TableRow from 'client/extensions/woocommerce/components/table/table-row';
+import TableItem from 'client/extensions/woocommerce/components/table/table-item';
 import { formatValue } from '../utils';
 
 const StoreStatsList = ( { data, values } ) => {

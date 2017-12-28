@@ -9,7 +9,7 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import emitter from 'lib/mixins/emitter';
+import emitter from 'client/lib/mixins/emitter';
 
 /**
  * Module variables

@@ -13,8 +13,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import support from 'lib/url/support';
-import analyticsMixin from 'lib/mixins/analytics';
+import support from 'client/lib/url/support';
+import analyticsMixin from 'client/lib/mixins/analytics';
 
 const EmailForwardingDetails = createReactClass( {
 	displayName: 'EmailForwardingDetails',

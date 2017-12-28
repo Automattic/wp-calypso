@@ -19,11 +19,11 @@ import {
 	HAPPYCHAT_IO_SEND_MESSAGE_USERINFO,
 	HAPPYCHAT_IO_SEND_PREFERENCES,
 	HAPPYCHAT_IO_SEND_TYPING,
-} from 'state/action-types';
-import { sendEvent } from 'state/happychat/connection/actions';
-import buildConnection from 'lib/happychat/connection';
-import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
-import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
+} from 'client/state/action-types';
+import { sendEvent } from 'client/state/happychat/connection/actions';
+import buildConnection from 'client/lib/happychat/connection';
+import isHappychatClientConnected from 'client/state/happychat/selectors/is-happychat-client-connected';
+import isHappychatChatAssigned from 'client/state/happychat/selectors/is-happychat-chat-assigned';
 
 const eventMessage = {
 	HAPPYCHAT_BLUR: 'Stopped looking at Happychat',

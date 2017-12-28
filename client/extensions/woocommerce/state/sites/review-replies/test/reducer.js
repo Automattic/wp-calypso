@@ -15,8 +15,8 @@ import {
 	WOOCOMMERCE_REVIEW_REPLY_CREATED,
 	WOOCOMMERCE_REVIEW_REPLY_DELETED,
 	WOOCOMMERCE_REVIEW_REPLY_UPDATED,
-} from 'woocommerce/state/action-types';
-import reducer from 'woocommerce/state/sites/reducer';
+} from 'client/extensions/woocommerce/state/action-types';
+import reducer from 'client/extensions/woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	describe( 'repliesUpdate', () => {

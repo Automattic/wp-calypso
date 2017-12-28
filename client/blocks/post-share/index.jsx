@@ -17,57 +17,61 @@ import { current as currentPage } from 'page';
 /**
  * Internal dependencies
  */
-import QueryPostTypes from 'components/data/query-post-types';
-import QueryPosts from 'components/data/query-posts';
-import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import QuerySitePlans from 'components/data/query-site-plans';
-import Button from 'components/button';
-import ButtonGroup from 'components/button-group';
-import NoticeAction from 'components/notice/notice-action';
-import { getPostShareScheduledActions, getPostSharePublishedActions } from 'state/selectors';
+import QueryPostTypes from 'client/components/data/query-post-types';
+import QueryPosts from 'client/components/data/query-posts';
+import QueryPublicizeConnections from 'client/components/data/query-publicize-connections';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import Button from 'client/components/button';
+import ButtonGroup from 'client/components/button-group';
+import NoticeAction from 'client/components/notice/notice-action';
+import { getPostShareScheduledActions, getPostSharePublishedActions } from 'client/state/selectors';
 import {
 	isPublicizeEnabled,
 	isSchedulingPublicizeShareAction,
 	getScheduledPublicizeShareActionTime,
 	isSchedulingPublicizeShareActionError,
-} from 'state/selectors';
-import { getSiteSlug, getSitePlanSlug, isJetpackSite } from 'state/sites/selectors';
-import { getCurrentUserId, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+} from 'client/state/selectors';
+import { getSiteSlug, getSitePlanSlug, isJetpackSite } from 'client/state/sites/selectors';
+import { getCurrentUserId, getCurrentUserCurrencyCode } from 'client/state/current-user/selectors';
 import {
 	getSiteUserConnections,
 	hasFetchedConnections as siteHasFetchedConnections,
-} from 'state/sharing/publicize/selectors';
+} from 'client/state/sharing/publicize/selectors';
 
 import {
 	fetchConnections as requestConnections,
 	sharePost,
 	dismissShareConfirmation,
-} from 'state/sharing/publicize/actions';
-import { schedulePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
+} from 'client/state/sharing/publicize/actions';
+import { schedulePostShareAction } from 'client/state/sharing/publicize/publicize-actions/actions';
 import {
 	isRequestingSharePost,
 	sharePostFailure,
 	sharePostSuccessMessage,
-} from 'state/sharing/publicize/selectors';
-import PostMetadata from 'lib/post-metadata';
-import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
-import Notice from 'components/notice';
+} from 'client/state/sharing/publicize/selectors';
+import PostMetadata from 'client/lib/post-metadata';
+import PublicizeMessage from 'client/post-editor/editor-sharing/publicize-message';
+import Notice from 'client/components/notice';
 import {
 	hasFeature,
 	isRequestingSitePlans as siteIsRequestingPlans,
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
-} from 'state/sites/plans/selectors';
-import { FEATURE_REPUBLICIZE, PLAN_PREMIUM, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
-import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';
+} from 'client/state/sites/plans/selectors';
+import {
+	FEATURE_REPUBLICIZE,
+	PLAN_PREMIUM,
+	PLAN_JETPACK_PREMIUM,
+} from 'client/lib/plans/constants';
+import { UpgradeToPremiumNudge } from 'client/blocks/post-share/nudges';
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList, { NoConnectionsNotice } from './connections-list';
 import ActionsList from './publicize-actions-list';
-import CalendarButton from 'blocks/calendar-button';
-import EventsTooltip from 'components/date-picker/events-tooltip';
-import analytics from 'lib/analytics';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { sectionify } from 'lib/route/path';
+import CalendarButton from 'client/blocks/calendar-button';
+import EventsTooltip from 'client/components/date-picker/events-tooltip';
+import analytics from 'client/lib/analytics';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import { sectionify } from 'client/lib/route/path';
 
 class PostShare extends Component {
 	static propTypes = {

@@ -11,7 +11,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 import Gridicon from 'gridicons';
 
 class VerticalNavItem extends Component {

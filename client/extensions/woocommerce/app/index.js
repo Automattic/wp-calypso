@@ -17,12 +17,12 @@ import {
 	canCurrentUser,
 	isSiteAutomatedTransfer,
 	hasSitePendingAutomatedTransfer,
-} from 'state/selectors';
+} from 'client/state/selectors';
 import config from 'config';
-import DocumentHead from 'components/data/document-head';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import route from 'lib/route';
+import DocumentHead from 'client/components/data/document-head';
+import QueryJetpackPlugins from 'client/components/data/query-jetpack-plugins';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import route from 'client/lib/route';
 
 class App extends Component {
 	static propTypes = {

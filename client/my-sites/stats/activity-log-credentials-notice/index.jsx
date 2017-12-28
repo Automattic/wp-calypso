@@ -8,12 +8,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 import Gridicon from 'gridicons';
-import {
-	getSelectedSiteId,
-	getSelectedSite,
-} from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'client/state/ui/selectors';
 
 class ActivityLogCredentialsNotice extends Component {
 	render() {

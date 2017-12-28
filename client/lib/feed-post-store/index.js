@@ -8,17 +8,17 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
-import { runFastRules, runSlowRules } from 'state/reader/posts/normalization-rules';
+import Dispatcher from 'client/dispatcher';
+import emitter from 'client/lib/mixins/emitter';
+import { runFastRules, runSlowRules } from 'client/state/reader/posts/normalization-rules';
 import { action as FeedPostActionType } from './constants';
-import { action as FeedStreamActionType } from 'lib/feed-stream-store/constants';
-import { mc } from 'lib/analytics';
-import { pageViewForPost } from 'reader/stats';
-import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
-import { reduxDispatch } from 'lib/redux-bridge';
+import { action as FeedStreamActionType } from 'client/lib/feed-stream-store/constants';
+import { mc } from 'client/lib/analytics';
+import { pageViewForPost } from 'client/reader/stats';
+import { updateConversationFollowStatus } from 'client/state/reader/conversations/actions';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
+import { CONVERSATION_FOLLOW_STATUS } from 'client/state/reader/conversations/follow-status';
+import { reduxDispatch } from 'client/lib/redux-bridge';
 
 /**
  * Module variables

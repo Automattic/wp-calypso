@@ -13,8 +13,8 @@ import {
 	SITES_BLOG_STICKER_LIST_RECEIVE,
 	SITES_BLOG_STICKER_ADD,
 	SITES_BLOG_STICKER_REMOVE,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
 
 export const items = createReducer(
 	{},

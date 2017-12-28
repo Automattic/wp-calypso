@@ -10,8 +10,8 @@ import { noop, identity } from 'lodash';
  * Internal dependencies
  */
 import { ShippingRates } from '../list';
-import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
-import FieldError from 'woocommerce/woocommerce-services/components/field-error';
+import Dropdown from 'client/extensions/woocommerce/woocommerce-services/components/dropdown';
+import FieldError from 'client/extensions/woocommerce/woocommerce-services/components/field-error';
 
 /*
  * Useful data for testing

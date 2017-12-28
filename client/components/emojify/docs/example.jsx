@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Emojify from 'components/emojify';
+import Emojify from 'client/components/emojify';
 
 const EmojifyExample = () => {
 	const textToEmojify = 'This 🙈 will be converted 🙉🙊🙂';

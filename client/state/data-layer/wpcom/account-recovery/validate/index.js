@@ -4,14 +4,14 @@
  * Internal dependencies
  */
 
-import { ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST } from 'state/action-types';
+import { ACCOUNT_RECOVERY_RESET_VALIDATE_REQUEST } from 'client/state/action-types';
 import {
 	validateRequestSuccess,
 	validateRequestError,
 	setValidationKey,
-} from 'state/account-recovery/reset/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+} from 'client/state/account-recovery/reset/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 export const handleValidateRequest = ( { dispatch }, action ) => {
 	const { userData, method, key } = action;

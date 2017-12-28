@@ -12,9 +12,9 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import PeopleProfile from 'my-sites/people/people-profile';
-import analytics from 'lib/analytics';
+import CompactCard from 'client/components/card/compact';
+import PeopleProfile from 'client/my-sites/people/people-profile';
+import analytics from 'client/lib/analytics';
 import config from 'config';
 
 class PeopleListItem extends React.PureComponent {

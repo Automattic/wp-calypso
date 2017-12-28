@@ -8,9 +8,9 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import PostEditStore from 'lib/posts/post-edit-store';
-import utils from 'lib/posts/utils';
+import analytics from 'client/lib/analytics';
+import PostEditStore from 'client/lib/posts/post-edit-store';
+import utils from 'client/lib/posts/utils';
 
 /**
  * Module variables

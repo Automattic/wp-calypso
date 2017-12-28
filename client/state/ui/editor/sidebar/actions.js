@@ -8,9 +8,9 @@ import {
 	recordGoogleEvent,
 	withAnalytics,
 	recordTracksEvent,
-} from 'state/analytics/actions';
-import { savePreference } from 'state/preferences/actions';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+} from 'client/state/analytics/actions';
+import { savePreference } from 'client/state/preferences/actions';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
 
 export const openEditorSidebar = () => dispatch => {
 	dispatch( savePreference( 'editor-sidebar', 'open' ) );

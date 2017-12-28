@@ -10,12 +10,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
+import { cartItems } from 'client/lib/cart-values';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
 
 class PrivacyProtection extends Component {
 	hasDomainPartOfPlan = () => {

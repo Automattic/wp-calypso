@@ -9,7 +9,7 @@ import { get, find, flatten, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import { getSerializedProductsQuery } from './utils';
 
 export const getProduct = ( state, productId, siteId = getSelectedSiteId( state ) ) => {

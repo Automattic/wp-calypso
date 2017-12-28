@@ -7,7 +7,7 @@ import { filter, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector from 'client/lib/create-selector';
 
 /**
  * Returns a tree of loaded comments for a given site, filtered by status

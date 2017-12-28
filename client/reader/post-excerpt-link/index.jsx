@@ -10,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { recordPermalinkClick } from 'reader/stats';
+import { recordPermalinkClick } from 'client/reader/stats';
 
 class PostExcerptLink extends React.Component {
 	static propTypes = {

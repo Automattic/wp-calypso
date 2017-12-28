@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormButtonsBar from 'client/components/forms/form-buttons-bar';
 
 class DomainManagementFormFooter extends React.Component {
 	render() {

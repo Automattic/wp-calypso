@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { createReducerStore } from 'lib/store';
+import { createReducerStore } from 'client/lib/store';
 import { getBySite, initialState, reducer } from './reducer';
 
 const DomainsStore = createReducerStore( reducer, initialState );

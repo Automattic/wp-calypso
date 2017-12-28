@@ -13,13 +13,13 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import QueryPlans from 'components/data/query-plans';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { preventWidows } from 'lib/formatting';
-import { isJetpackSite } from 'state/sites/selectors';
-import FeatureExample from 'components/feature-example';
-import Banner from 'components/banner';
-import { PLAN_BUSINESS, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
+import QueryPlans from 'client/components/data/query-plans';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import { preventWidows } from 'client/lib/formatting';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import FeatureExample from 'client/components/feature-example';
+import Banner from 'client/components/banner';
+import { PLAN_BUSINESS, PLAN_JETPACK_BUSINESS } from 'client/lib/plans/constants';
 
 const SeoPreviewNudge = ( { translate, isJetpack = false } ) => {
 	return (

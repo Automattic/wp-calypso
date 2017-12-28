@@ -13,21 +13,21 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import analytics from 'lib/analytics';
-import { getCurrentUserId, isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import HappinessEngineers from 'me/help/help-happiness-engineers';
-import MeSidebarNavigation from 'me/sidebar-navigation';
+import Main from 'client/components/main';
+import analytics from 'client/lib/analytics';
+import { getCurrentUserId, isCurrentUserEmailVerified } from 'client/state/current-user/selectors';
+import HappinessEngineers from 'client/me/help/help-happiness-engineers';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
 import HelpSearch from './help-search';
 import HelpTeaserButton from './help-teaser-button';
-import CompactCard from 'components/card/compact';
-import Button from 'components/button';
-import SectionHeader from 'components/section-header';
+import CompactCard from 'client/components/card/compact';
+import Button from 'client/components/button';
+import SectionHeader from 'client/components/section-header';
 import HelpResult from './help-results/item';
 import HelpUnverifiedWarning from './help-unverified-warning';
-import { getUserPurchases, isFetchingUserPurchases } from 'state/purchases/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
-import QueryUserPurchases from 'components/data/query-user-purchases';
+import { getUserPurchases, isFetchingUserPurchases } from 'client/state/purchases/selectors';
+import { PLAN_BUSINESS } from 'client/lib/plans/constants';
+import QueryUserPurchases from 'client/components/data/query-user-purchases';
 
 /**
  * Module variables

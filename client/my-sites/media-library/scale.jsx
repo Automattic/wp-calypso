@@ -14,11 +14,11 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import FormRange from 'components/forms/range';
-import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
-import { setPreference, savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
+import FormRange from 'client/components/forms/range';
+import SegmentedControl from 'client/components/segmented-control';
+import SegmentedControlItem from 'client/components/segmented-control/item';
+import { setPreference, savePreference } from 'client/state/preferences/actions';
+import { getPreference } from 'client/state/preferences/selectors';
 
 /**
  * Constants

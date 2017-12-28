@@ -9,11 +9,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
+import CompactCard from 'client/components/card/compact';
+import Header from 'client/my-sites/domains/domain-management/components/header';
+import Main from 'client/components/main';
+import VerticalNav from 'client/components/vertical-nav';
+import VerticalNavItem from 'client/components/vertical-nav/item';
 
 class DomainMainPlaceholder extends React.Component {
 	render() {

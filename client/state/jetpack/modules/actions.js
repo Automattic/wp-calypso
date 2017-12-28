@@ -20,8 +20,8 @@ import {
 	JETPACK_MODULES_REQUEST,
 	JETPACK_MODULES_REQUEST_FAILURE,
 	JETPACK_MODULES_REQUEST_SUCCESS,
-} from 'state/action-types';
-import wp from 'lib/wp';
+} from 'client/state/action-types';
+import wp from 'client/lib/wp';
 
 export const activateModule = ( siteId, moduleSlug, silent = false ) => {
 	return dispatch => {

@@ -1,6 +1,10 @@
 /** @format */
 // Internal dependencies
-import { isDiscoverPost, isInternalDiscoverPost, isDiscoverSitePick } from 'reader/discover/helper';
+import {
+	isDiscoverPost,
+	isInternalDiscoverPost,
+	isDiscoverSitePick,
+} from 'client/reader/discover/helper';
 
 const exported = {
 	shouldShowLikes( post ) {

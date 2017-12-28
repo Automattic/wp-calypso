@@ -11,11 +11,11 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import Spinner from 'components/spinner';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
+import Spinner from 'client/components/spinner';
 
 class JetpackConnectSiteUrlInput extends PureComponent {
 	static propTypes = {

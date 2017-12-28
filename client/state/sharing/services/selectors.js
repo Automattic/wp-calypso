@@ -9,8 +9,8 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import { canCurrentUser } from 'state/selectors';
-import { isJetpackSite, isJetpackModuleActive } from 'state/sites/selectors';
+import { canCurrentUser } from 'client/state/selectors';
+import { isJetpackSite, isJetpackModuleActive } from 'client/state/sites/selectors';
 
 /**
  * Returns an object of service objects.

@@ -13,24 +13,24 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AddressView from 'woocommerce/components/address-view';
+import AddressView from 'client/extensions/woocommerce/components/address-view';
 import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
-import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
-import FormTextInput from 'components/forms/form-text-input';
-import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import Button from 'client/components/button';
+import Dialog from 'client/components/dialog';
+import { fetchSettingsGeneral } from 'client/extensions/woocommerce/state/sites/settings/general/actions';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormLabel from 'client/components/forms/form-label';
+import FormLegend from 'client/components/forms/form-legend';
+import FormPhoneMediaInput from 'client/components/forms/form-phone-media-input';
+import FormTextInput from 'client/components/forms/form-text-input';
+import getAddressViewFormat from 'client/extensions/woocommerce/lib/get-address-view-format';
 // @todo Update this to use our store countries list
-import { forPayments as countriesList } from 'lib/countries-list';
+import { forPayments as countriesList } from 'client/lib/countries-list';
 
 const defaultAddress = {
 	street: '',

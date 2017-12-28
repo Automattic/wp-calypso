@@ -10,10 +10,10 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import route from 'lib/route';
-import analytics from 'lib/analytics';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import route from 'client/lib/route';
+import analytics from 'client/lib/analytics';
+import { setDocumentHeadTitle as setTitle } from 'client/state/document-head/actions';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 export default {
 	media: function( context, next ) {

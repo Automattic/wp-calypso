@@ -11,17 +11,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { getPost } from 'state/reader/posts/selectors';
-import { getSite } from 'state/reader/sites/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
-import Card from 'components/card/compact';
-import Gravatar from 'components/gravatar';
-import FollowButton from 'reader/follow-button';
-import { getPostUrl, getStreamUrl } from 'reader/route';
-import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
-import ReaderFeaturedVideo from 'blocks/reader-featured-video';
-import ReaderFeaturedImage from 'blocks/reader-featured-image';
-import ReaderAuthorLink from 'blocks/reader-author-link';
+import { getPost } from 'client/state/reader/posts/selectors';
+import { getSite } from 'client/state/reader/sites/selectors';
+import QueryReaderSite from 'client/components/data/query-reader-site';
+import Card from 'client/components/card/compact';
+import Gravatar from 'client/components/gravatar';
+import FollowButton from 'client/reader/follow-button';
+import { getPostUrl, getStreamUrl } from 'client/reader/route';
+import { areEqualIgnoringWhitespaceAndCase } from 'client/lib/string';
+import ReaderFeaturedVideo from 'client/blocks/reader-featured-video';
+import ReaderFeaturedImage from 'client/blocks/reader-featured-image';
+import ReaderAuthorLink from 'client/blocks/reader-author-link';
 
 const RELATED_IMAGE_WIDTH = 385; // usual width of featured images in related post card
 

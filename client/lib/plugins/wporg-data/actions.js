@@ -9,11 +9,11 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wporg from 'lib/wporg';
-import utils from 'lib/plugins/utils';
-import CuratedPlugins from 'lib/plugins/wporg-data/curated.json';
-import { debounce } from 'lib/impure-lodash';
+import Dispatcher from 'client/dispatcher';
+import wporg from 'client/lib/wporg';
+import utils from 'client/lib/plugins/utils';
+import CuratedPlugins from 'client/lib/plugins/wporg-data/curated.json';
+import { debounce } from 'client/lib/impure-lodash';
 
 /**
  * Constants

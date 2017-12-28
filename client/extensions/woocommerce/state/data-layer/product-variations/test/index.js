@@ -15,13 +15,13 @@ import {
 	handleProductVariationUpdate,
 	handleProductVariationsRequest,
 } from '../';
-import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_API_REQUEST } from 'client/extensions/woocommerce/state/action-types';
 import {
 	createProductVariation,
 	deleteProductVariation,
 	fetchProductVariations,
 	updateProductVariation,
-} from 'woocommerce/state/sites/product-variations/actions';
+} from 'client/extensions/woocommerce/state/sites/product-variations/actions';
 
 describe( 'handlers', () => {
 	describe( '#handleProductVariationsRequest', () => {

@@ -11,11 +11,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
+import Card from 'client/components/card';
+import ExtendedHeader from 'client/extensions/woocommerce/components/extended-header';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
 
 class TaxesOptions extends Component {
 	static propTypes = {

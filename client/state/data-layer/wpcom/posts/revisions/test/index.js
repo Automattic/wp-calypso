@@ -10,13 +10,13 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { fetchPostRevisionsDiffs, receiveSuccess, receiveError } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import {
 	receivePostRevisions,
 	receivePostRevisionsSuccess,
 	receivePostRevisionsFailure,
 	requestPostRevisions,
-} from 'state/posts/revisions/actions';
+} from 'client/state/posts/revisions/actions';
 
 const successfulPostRevisionsDiffsResponse = {
 	diffs: [

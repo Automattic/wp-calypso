@@ -22,8 +22,8 @@ import {
 	SITE_PLANS_TRIAL_CANCEL,
 	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 	SITE_PLANS_TRIAL_CANCEL_FAILED,
-} from 'state/action-types';
-import wpcom from 'lib/wp';
+} from 'client/state/action-types';
+import wpcom from 'client/lib/wp';
 
 /**
  * Cancels the specified plan trial for the given site.

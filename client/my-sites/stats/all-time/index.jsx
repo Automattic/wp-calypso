@@ -14,16 +14,16 @@ import { localize, moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import SectionHeader from 'client/components/section-header';
+import QuerySiteStats from 'client/components/data/query-site-stats';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
+} from 'client/state/stats/lists/selectors';
 
 class StatsAllTime extends Component {
 	static propTypes = {

@@ -10,10 +10,10 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import userModule from 'lib/user';
-import { stripHTML } from 'lib/formatting';
+import userModule from 'client/lib/user';
+import { stripHTML } from 'client/lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
-import Emojify from 'components/emojify';
+import Emojify from 'client/components/emojify';
 
 const user = userModule();
 

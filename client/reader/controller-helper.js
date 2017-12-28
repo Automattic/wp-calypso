@@ -8,11 +8,11 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
-import { recordTrack } from 'reader/stats';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { fetchNextPage } from 'lib/feed-stream-store/actions';
-import feedStreamFactory from 'lib/feed-stream-store';
+import analytics from 'client/lib/analytics';
+import { recordTrack } from 'client/reader/stats';
+import { setDocumentHeadTitle as setTitle } from 'client/state/document-head/actions';
+import { fetchNextPage } from 'client/lib/feed-stream-store/actions';
+import feedStreamFactory from 'client/lib/feed-stream-store';
 
 let storeId;
 export function setLastStoreId( id ) {

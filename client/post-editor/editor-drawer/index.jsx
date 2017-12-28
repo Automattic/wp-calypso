@@ -12,35 +12,35 @@ import { flow, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Accordion from 'components/accordion';
-import AccordionSection from 'components/accordion/section';
-import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
-import AsyncLoad from 'components/async-load';
-import FormTextarea from 'components/forms/form-textarea';
-import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
-import PostMetadata from 'lib/post-metadata';
-import TrackInputChanges from 'components/track-input-changes';
-import actions from 'lib/posts/actions';
-import { recordStat, recordEvent } from 'lib/posts/stats';
-import { isBusiness, isEnterprise } from 'lib/products-values';
-import QueryPostTypes from 'components/data/query-post-types';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
+import Accordion from 'client/components/accordion';
+import AccordionSection from 'client/components/accordion/section';
+import CategoriesTagsAccordion from 'client/post-editor/editor-categories-tags/accordion';
+import AsyncLoad from 'client/components/async-load';
+import FormTextarea from 'client/components/forms/form-textarea';
+import EditorMoreOptionsSlug from 'client/post-editor/editor-more-options/slug';
+import PostMetadata from 'client/lib/post-metadata';
+import TrackInputChanges from 'client/components/track-input-changes';
+import actions from 'client/lib/posts/actions';
+import { recordStat, recordEvent } from 'client/lib/posts/stats';
+import { isBusiness, isEnterprise } from 'client/lib/products-values';
+import QueryPostTypes from 'client/components/data/query-post-types';
+import QuerySiteSettings from 'client/components/data/query-site-settings';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { getPostType } from 'client/state/post-types/selectors';
 import {
 	isJetpackMinimumVersion,
 	isJetpackModuleActive,
 	isJetpackSite,
-} from 'state/sites/selectors';
+} from 'client/state/sites/selectors';
 import config from 'config';
-import { areSitePermalinksEditable } from 'state/selectors';
+import { areSitePermalinksEditable } from 'client/state/selectors';
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';
-import EditorMoreOptionsCopyPost from 'post-editor/editor-more-options/copy-post';
-import EditPostStatus from 'post-editor/edit-post-status';
+import EditorMoreOptionsCopyPost from 'client/post-editor/editor-more-options/copy-post';
+import EditPostStatus from 'client/post-editor/edit-post-status';
 
 /**
  * Constants

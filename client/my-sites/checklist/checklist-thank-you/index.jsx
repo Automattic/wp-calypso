@@ -11,17 +11,17 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Checklist from 'components/checklist';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import Main from 'components/main';
-import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteChecklist } from 'state/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { onboardingTasks, urlForTask } from 'my-sites/checklist/onboardingChecklist';
-import { recordTracksEvent } from 'state/analytics/actions';
+import Checklist from 'client/components/checklist';
+import DocumentHead from 'client/components/data/document-head';
+import FormattedHeader from 'client/components/formatted-header';
+import Main from 'client/components/main';
+import QuerySiteChecklist from 'client/components/data/query-site-checklist';
+import { requestSiteChecklistTaskUpdate } from 'client/state/checklist/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteChecklist } from 'client/state/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { onboardingTasks, urlForTask } from 'client/my-sites/checklist/onboardingChecklist';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 export class ChecklistThankYou extends PureComponent {
 	static propTypes = {

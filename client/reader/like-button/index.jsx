@@ -7,10 +7,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import postStore from 'lib/feed-post-store';
-import LikeButtonContainer from 'blocks/like-button';
-import { markSeen } from 'lib/feed-post-store/actions';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
+import postStore from 'client/lib/feed-post-store';
+import LikeButtonContainer from 'client/blocks/like-button';
+import { markSeen } from 'client/lib/feed-post-store/actions';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'client/reader/stats';
 
 class ReaderLikeButton extends React.Component {
 	recordLikeToggle = liked => {

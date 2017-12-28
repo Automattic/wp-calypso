@@ -17,8 +17,8 @@ import Me from './me';
 import MailingList from './mailing-list';
 import AccountRecoveryReset from './account-recovery-reset';
 import config from 'config';
-import i18n from 'lib/i18n-utils';
-import readerContentWidth from 'reader/lib/content-width';
+import i18n from 'client/lib/i18n-utils';
+import readerContentWidth from 'client/reader/lib/content-width';
 
 /**
  * Some endpoints are restricted by OAuth client IDs and secrets

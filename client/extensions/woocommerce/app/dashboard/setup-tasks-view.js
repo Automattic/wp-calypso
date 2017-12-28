@@ -13,19 +13,19 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import {
 	getOptedOutOfShippingSetup,
 	getOptedOutofTaxesSetup,
 	getTriedCustomizerDuringInitialSetup,
-} from 'woocommerce/state/sites/setup-choices/selectors';
-import { setFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
+} from 'client/extensions/woocommerce/state/sites/setup-choices/selectors';
+import { setFinishedInitialSetup } from 'client/extensions/woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
 import SetupTasks from './setup-tasks';
-import QueryShippingZones from 'woocommerce/components/query-shipping-zones';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import { areAnyShippingMethodsEnabled } from 'woocommerce/state/ui/shipping/zones/selectors';
+import QueryShippingZones from 'client/extensions/woocommerce/components/query-shipping-zones';
+import QuerySettingsGeneral from 'client/extensions/woocommerce/components/query-settings-general';
+import { areAnyShippingMethodsEnabled } from 'client/extensions/woocommerce/state/ui/shipping/zones/selectors';
 
 class SetupTasksView extends Component {
 	static propTypes = {

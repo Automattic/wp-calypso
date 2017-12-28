@@ -18,12 +18,12 @@ import Follow from './action-follow';
 import Page from './action-page';
 import OpenLink from './action-link';
 import Spam from './action-spam';
-import Emojify from 'components/emojify';
+import Emojify from 'client/components/emojify';
 import titlecase from 'to-title-case';
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import Gridicon from 'gridicons';
 import { get } from 'lodash';
-import { recordTrack } from 'reader/stats';
+import { recordTrack } from 'client/reader/stats';
 
 class StatsListItem extends React.Component {
 	static displayName = 'StatsListItem';

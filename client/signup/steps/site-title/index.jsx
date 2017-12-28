@@ -11,11 +11,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
-import SignupSiteTitle from 'components/signup-site-title';
-import SiteTitleExample from 'components/site-title-example';
-import { setSiteTitle } from 'state/signup/steps/site-title/actions';
+import StepWrapper from 'client/signup/step-wrapper';
+import SignupActions from 'client/lib/signup/actions';
+import SignupSiteTitle from 'client/components/signup-site-title';
+import SiteTitleExample from 'client/components/site-title-example';
+import { setSiteTitle } from 'client/state/signup/steps/site-title/actions';
 
 import { translate } from 'i18n-calypso';
 

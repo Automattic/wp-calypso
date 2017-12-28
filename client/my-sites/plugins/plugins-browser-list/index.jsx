@@ -9,10 +9,10 @@ import { times } from 'lodash';
 /**
  * Internal dependencies
  */
-import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item';
-import Card from 'components/card';
+import PluginBrowserItem from 'client/my-sites/plugins/plugins-browser-item';
+import Card from 'client/components/card';
 import Gridicon from 'gridicons';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'client/components/section-header';
 
 const DEFAULT_PLACEHOLDER_NUMBER = 6;
 

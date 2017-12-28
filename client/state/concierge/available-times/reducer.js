@@ -3,11 +3,11 @@
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import {
 	CONCIERGE_AVAILABLE_TIMES_REQUEST,
 	CONCIERGE_AVAILABLE_TIMES_UPDATE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const availableTimes = createReducer( null, {
 	[ CONCIERGE_AVAILABLE_TIMES_REQUEST ]: () => null,

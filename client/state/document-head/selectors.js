@@ -9,10 +9,10 @@ import { compact } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { decodeEntities } from 'lib/formatting';
-import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
-import { getSiteTitle } from 'state/sites/selectors';
+import createSelector from 'client/lib/create-selector';
+import { decodeEntities } from 'client/lib/formatting';
+import { getSelectedSiteId, isSiteSection } from 'client/state/ui/selectors';
+import { getSiteTitle } from 'client/state/sites/selectors';
 
 const UNREAD_COUNT_CAP = 40;
 

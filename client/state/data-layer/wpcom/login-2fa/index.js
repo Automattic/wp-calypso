@@ -15,17 +15,17 @@ import {
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import {
 	getTwoFactorAuthNonce,
 	getTwoFactorPushPollInProgress,
 	getTwoFactorPushToken,
 	getTwoFactorUserId,
-} from 'state/login/selectors';
-import { http } from 'state/http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
+} from 'client/state/login/selectors';
+import { http } from 'client/state/http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
+import { addLocaleToWpcomUrl, getLocaleSlug } from 'client/lib/i18n-utils';
 
 /**
  * Module constants

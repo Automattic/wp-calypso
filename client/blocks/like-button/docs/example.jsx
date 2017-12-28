@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import LikeButton from 'blocks/like-button/button';
-import Card from 'components/card/compact';
+import LikeButton from 'client/blocks/like-button/button';
+import Card from 'client/components/card/compact';
 
 class SimpleLikeButtonContainer extends React.PureComponent {
 	state = {

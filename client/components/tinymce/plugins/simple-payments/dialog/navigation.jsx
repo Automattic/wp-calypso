@@ -12,9 +12,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
-import HeaderCake from 'components/header-cake';
-import Button from 'components/button';
+import SectionHeader from 'client/components/section-header';
+import HeaderCake from 'client/components/header-cake';
+import Button from 'client/components/button';
 
 class SimplePaymentsDialogNavigation extends Component {
 	static propTypes = {

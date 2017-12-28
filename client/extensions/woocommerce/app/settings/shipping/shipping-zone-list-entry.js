@@ -13,12 +13,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import Button from 'client/components/button';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
 import { getMethodSummary } from './shipping-zone/shipping-methods/utils';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
-import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { getShippingZoneMethods } from 'client/extensions/woocommerce/state/ui/shipping/zones/methods/selectors';
+import { getCurrencyWithEdits } from 'client/extensions/woocommerce/state/ui/payments/currency/selectors';
 
 const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, isValid, site } ) => {
 	if ( ! loaded ) {

@@ -14,29 +14,29 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
-import FoldableCard from 'components/foldable-card';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import QuerySiteRoles from 'components/data/query-site-roles';
-import { getStatsPathForTab } from 'lib/route/path';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteRoles } from 'state/site-roles/selectors';
-import { activateModule } from 'state/jetpack/modules/actions';
+import Banner from 'client/components/banner';
+import FoldableCard from 'client/components/foldable-card';
+import Card from 'client/components/card';
+import CompactCard from 'client/components/card/compact';
+import SectionHeader from 'client/components/section-header';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLegend from 'client/components/forms/form-legend';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
+import QueryJetpackConnection from 'client/components/data/query-jetpack-connection';
+import QuerySiteRoles from 'client/components/data/query-site-roles';
+import { getStatsPathForTab } from 'client/lib/route/path';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { getSiteRoles } from 'client/state/site-roles/selectors';
+import { activateModule } from 'client/state/jetpack/modules/actions';
 import {
 	isActivatingJetpackModule,
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode,
-} from 'state/selectors';
+} from 'client/state/selectors';
 
 class JetpackSiteStats extends Component {
 	static defaultProps = {

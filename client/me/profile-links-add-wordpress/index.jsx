@@ -13,11 +13,11 @@ import { find, map, pickBy } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import FormButton from 'components/forms/form-button';
+import FormButton from 'client/components/forms/form-button';
 import ProfileLinksAddWordPressSite from './site';
-import { addUserProfileLinks } from 'state/profile-links/actions';
-import { getPublicSites, getSites, isSiteInProfileLinks } from 'state/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { addUserProfileLinks } from 'client/state/profile-links/actions';
+import { getPublicSites, getSites, isSiteInProfileLinks } from 'client/state/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 class ProfileLinksAddWordPress extends Component {
 	// an empty initial state is required to keep render and handleCheckedChange

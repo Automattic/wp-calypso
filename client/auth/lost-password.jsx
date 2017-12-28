@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
+import { addLocaleToWpcomUrl, getLocaleSlug } from 'client/lib/i18n-utils';
 
 const LostPassword = ( { translate } ) => {
 	const url = addLocaleToWpcomUrl(

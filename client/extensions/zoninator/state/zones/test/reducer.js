@@ -16,7 +16,7 @@ import {
 	ZONINATOR_UPDATE_ZONES,
 } from '../../action-types';
 import reducer, { requesting, items } from '../reducer';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { DESERIALIZE, SERIALIZE } from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;

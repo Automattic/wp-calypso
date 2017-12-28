@@ -13,24 +13,24 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 import Masterbar from './masterbar';
 import Item from './item';
 import Publish from './publish';
 import Notifications from './notifications';
-import Gravatar from 'components/gravatar';
+import Gravatar from 'client/components/gravatar';
 import config from 'config';
-import { preload } from 'sections-preload';
-import ResumeEditing from 'my-sites/resume-editing';
-import { isNotificationsOpen } from 'state/selectors';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getStatsPathForTab } from 'lib/route/path';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import { domainManagementList } from 'my-sites/domains/paths';
-import { getSite } from 'state/sites/selectors';
-import { getPrimarySiteId } from 'state/selectors';
+import { preload } from 'client/sections-preload';
+import ResumeEditing from 'client/my-sites/resume-editing';
+import { isNotificationsOpen } from 'client/state/selectors';
+import { setNextLayoutFocus } from 'client/state/ui/layout-focus/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getStatsPathForTab } from 'client/lib/route/path';
+import isDomainOnlySite from 'client/state/selectors/is-domain-only-site';
+import { domainManagementList } from 'client/my-sites/domains/paths';
+import { getSite } from 'client/state/sites/selectors';
+import { getPrimarySiteId } from 'client/state/selectors';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {

@@ -12,8 +12,8 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import ImageEditor from '../';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { AspectRatios } from 'client/state/ui/editor/image-editor/constants';
 
 class ImageEditorExample extends Component {
 	constructor() {

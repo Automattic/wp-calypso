@@ -10,10 +10,10 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import Main from 'client/components/main';
 import DocsSelectorsSingle from './single';
 import DocsSelectorsSearch from './search';
-import DocumentHead from 'components/data/document-head';
+import DocumentHead from 'client/components/data/document-head';
 
 export default class DocsSelectors extends PureComponent {
 	static propTypes = {

@@ -18,8 +18,12 @@ import {
 	ButtonRow,
 	Quit,
 	Continue,
-} from 'layout/guided-tours/config-elements';
-import { isNewUser, isEnabled, isSelectedSitePreviewable } from 'state/ui/guided-tours/contexts';
+} from 'client/layout/guided-tours/config-elements';
+import {
+	isNewUser,
+	isEnabled,
+	isSelectedSitePreviewable,
+} from 'client/state/ui/guided-tours/contexts';
 
 export const TutorialSitePreviewTour = makeTour(
 	<Tour

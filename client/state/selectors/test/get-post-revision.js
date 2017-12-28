@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getPostRevision from 'state/selectors/get-post-revision';
+import getPostRevision from 'client/state/selectors/get-post-revision';
 
 describe( 'getPostRevision', () => {
 	test( 'should return `null` if there is no revision in the state for `siteId, postId`', () => {

@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getOAuth2Client } from 'state/oauth2-clients/selectors';
+import { getOAuth2Client } from 'client/state/oauth2-clients/selectors';
 
 /**
  * Returns the ID of the current OAuth2 client.

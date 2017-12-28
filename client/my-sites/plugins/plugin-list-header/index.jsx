@@ -15,14 +15,14 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
-import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
-import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
-import DropdownSeparator from 'components/select-dropdown/separator';
-import BulkSelect from 'components/bulk-select';
-import analytics from 'lib/analytics';
+import SectionHeader from 'client/components/section-header';
+import ButtonGroup from 'client/components/button-group';
+import Button from 'client/components/button';
+import SelectDropdown from 'client/components/select-dropdown';
+import DropdownItem from 'client/components/select-dropdown/item';
+import DropdownSeparator from 'client/components/select-dropdown/separator';
+import BulkSelect from 'client/components/bulk-select';
+import analytics from 'client/lib/analytics';
 
 // Constants help determine if the action bar should be a dropdown
 const MAX_ACTIONBAR_HEIGHT = 57;

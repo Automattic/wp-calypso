@@ -11,8 +11,8 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import purchasesPaths from 'me/purchases/paths';
+import Dialog from 'client/components/dialog';
+import purchasesPaths from 'client/me/purchases/paths';
 
 const DeleteSiteWarningDialog = ( { isVisible, onClose } ) => (
 	<Dialog

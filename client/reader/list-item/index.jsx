@@ -8,7 +8,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from 'components/card/compact';
+import Card from 'client/components/card/compact';
 
 class ListItem extends React.PureComponent {
 	render() {

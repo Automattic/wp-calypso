@@ -13,23 +13,23 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import List from 'woocommerce/components/list/list';
-import ListItem from 'woocommerce/components/list/list-item';
-import ListHeader from 'woocommerce/components/list/list-header';
-import ListItemField from 'woocommerce/components/list/list-item-field';
-import LocationFlag from 'woocommerce/components/location-flag';
+import Button from 'client/components/button';
+import ExtendedHeader from 'client/extensions/woocommerce/components/extended-header';
+import List from 'client/extensions/woocommerce/components/list/list';
+import ListItem from 'client/extensions/woocommerce/components/list/list-item';
+import ListHeader from 'client/extensions/woocommerce/components/list/list-header';
+import ListItemField from 'client/extensions/woocommerce/components/list/list-item-field';
+import LocationFlag from 'client/extensions/woocommerce/components/location-flag';
 import ShippingZoneLocationDialog from './shipping-zone-location-dialog';
-import { decodeEntities } from 'lib/formatting';
-import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
-import { getCurrentlyEditingShippingZoneLocationsList } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
-import { openEditLocations } from 'woocommerce/state/ui/shipping/zones/locations/actions';
-import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
+import { decodeEntities } from 'client/lib/formatting';
+import { bindActionCreatorsWithSiteId } from 'client/extensions/woocommerce/lib/redux-utils';
+import { getCurrentlyEditingShippingZoneLocationsList } from 'client/extensions/woocommerce/state/ui/shipping/zones/locations/selectors';
+import { openEditLocations } from 'client/extensions/woocommerce/state/ui/shipping/zones/locations/actions';
+import { areShippingZonesFullyLoaded } from 'client/extensions/woocommerce/components/query-shipping-zones';
 import {
 	areSettingsGeneralLoaded,
 	areSettingsGeneralLoadError,
-} from 'woocommerce/state/sites/settings/general/selectors';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
 
 const ShippingZoneLocationList = ( {
 	siteId,

@@ -8,9 +8,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import SitesLog from 'lib/sites-list/log-store';
-import SitesListActions from 'lib/sites-list/actions';
+import notices from 'client/notices';
+import SitesLog from 'client/lib/sites-list/log-store';
+import SitesListActions from 'client/lib/sites-list/actions';
 
 class SitesListNotices extends Component {
 	componentDidMount() {

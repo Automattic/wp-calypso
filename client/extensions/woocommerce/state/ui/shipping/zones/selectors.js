@@ -10,18 +10,18 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	getAPIShippingZones,
 	areShippingZonesLoaded,
-} from 'woocommerce/state/sites/shipping-zones/selectors';
+} from 'client/extensions/woocommerce/state/sites/shipping-zones/selectors';
 import { getShippingZoneMethods } from './methods/selectors';
 import {
 	getCurrentlyEditingShippingZoneLocationsList,
 	getShippingZoneLocationsList,
 } from './locations/selectors';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'client/lib/formatting';
 
 export const getShippingZonesEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'zones' ] );

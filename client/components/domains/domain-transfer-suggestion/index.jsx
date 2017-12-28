@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DomainSuggestion from 'components/domains/domain-suggestion';
+import DomainSuggestion from 'client/components/domains/domain-suggestion';
 
 class DomainTransferSuggestion extends React.Component {
 	static propTypes = {

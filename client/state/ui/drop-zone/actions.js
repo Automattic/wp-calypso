@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { DROPZONE_SHOW, DROPZONE_HIDE } from 'state/action-types';
+import { DROPZONE_SHOW, DROPZONE_HIDE } from 'client/state/action-types';
 
 /**
  * Fired when a DropZone gets shown

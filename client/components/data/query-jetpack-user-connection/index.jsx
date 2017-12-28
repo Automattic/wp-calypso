@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingJetpackUserConnection } from 'state/selectors';
-import { requestJetpackUserConnectionData } from 'state/jetpack/connection/actions';
+import { isRequestingJetpackUserConnection } from 'client/state/selectors';
+import { requestJetpackUserConnectionData } from 'client/state/jetpack/connection/actions';
 
 class QueryJetpackUserConnection extends Component {
 	static propTypes = {

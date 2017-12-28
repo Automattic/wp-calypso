@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -14,14 +14,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { sectionify } from 'lib/route/path';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import viewport from 'lib/viewport';
-import { action as upgradesActionTypes } from 'lib/upgrades/constants';
-import PopoverCart from 'my-sites/checkout/cart/popover-cart';
-import { isATEnabled } from 'lib/automated-transfer';
+import { sectionify } from 'client/lib/route/path';
+import SectionNav from 'client/components/section-nav';
+import NavTabs from 'client/components/section-nav/tabs';
+import NavItem from 'client/components/section-nav/item';
+import viewport from 'client/lib/viewport';
+import { action as upgradesActionTypes } from 'client/lib/upgrades/constants';
+import PopoverCart from 'client/my-sites/checkout/cart/popover-cart';
+import { isATEnabled } from 'client/lib/automated-transfer';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {

@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { getSelectedSiteId } from 'state/ui/selectors';
-import request from 'woocommerce/state/sites/request';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import request from 'client/extensions/woocommerce/state/sites/request';
 import { setError } from '../../status/wc-api/actions';
 import {
 	WOOCOMMERCE_TAXES_ENABLED_UPDATE,
@@ -13,7 +13,7 @@ import {
 	WOOCOMMERCE_CURRENCY_UPDATE,
 	WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export const fetchSettingsGeneral = siteId => {
 	return {

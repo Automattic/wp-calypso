@@ -5,7 +5,7 @@
  */
 
 import config from 'config';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 const MERCHANT_IDENTIFIER = 'merchant.com.wordpress';
 

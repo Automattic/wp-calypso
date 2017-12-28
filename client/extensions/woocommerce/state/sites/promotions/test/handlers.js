@@ -21,7 +21,7 @@ import {
 import {
 	WOOCOMMERCE_COUPONS_REQUEST,
 	WOOCOMMERCE_COUPONS_UPDATED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	const siteId = 123;

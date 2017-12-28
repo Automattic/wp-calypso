@@ -12,9 +12,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ExternalLink from 'components/external-link';
-import SectionHeader from 'components/section-header';
+import Card from 'client/components/card';
+import ExternalLink from 'client/components/external-link';
+import SectionHeader from 'client/components/section-header';
 
 export const WarningList = ( { translate, warnings } ) => (
 	<div>

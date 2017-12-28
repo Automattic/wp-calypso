@@ -5,7 +5,7 @@
  */
 
 import debugFactory from 'debug';
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 
 const debug = debugFactory( 'calypso:preview-save-functions' );
 

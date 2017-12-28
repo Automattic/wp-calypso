@@ -13,7 +13,7 @@ import { omit, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormTextarea from 'components/forms/form-textarea';
+import FormTextarea from 'client/components/forms/form-textarea';
 
 export class CountedTextarea extends React.Component {
 	static propTypes = {

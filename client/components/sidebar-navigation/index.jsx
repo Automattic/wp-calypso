@@ -12,8 +12,8 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
-import { getDocumentHeadTitle } from 'state/document-head/selectors';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getDocumentHeadTitle } from 'client/state/document-head/selectors';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
 
 class SidebarNavigation extends React.Component {
 	constructor( props ) {

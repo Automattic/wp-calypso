@@ -18,7 +18,7 @@ import { Provider as ReduxProvider } from 'react-redux';
  */
 import { List as DomainList } from '../';
 import { PRIMARY_DOMAIN_CHANGE_SUCCESS, PRIMARY_DOMAIN_CHANGE_FAIL } from '../constants';
-import { createReduxStore } from 'state';
+import { createReduxStore } from 'client/state';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 jest.mock( 'lib/user', () => () => {} );

@@ -12,15 +12,15 @@ import { assign, filter, omit, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import analytics from 'lib/analytics';
-import UsersActions from 'lib/users/actions';
-import userModule from 'lib/user';
-import RoleSelect from 'my-sites/people/role-select';
+import FormLabel from 'client/components/forms/form-label';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormButton from 'client/components/forms/form-button';
+import FormButtonsBar from 'client/components/forms/form-buttons-bar';
+import analytics from 'client/lib/analytics';
+import UsersActions from 'client/lib/users/actions';
+import userModule from 'client/lib/user';
+import RoleSelect from 'client/my-sites/people/role-select';
 
 /**
  * Module Variables

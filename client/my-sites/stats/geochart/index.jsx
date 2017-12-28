@@ -14,13 +14,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import { loadScript } from 'lib/load-script';
+import analytics from 'client/lib/analytics';
+import { loadScript } from 'client/lib/load-script';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import QuerySiteStats from 'client/components/data/query-site-stats';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteStatsNormalizedData } from 'client/state/stats/lists/selectors';
+import { getCurrentUserCountryCode } from 'client/state/current-user/selectors';
 
 class StatsGeochart extends Component {
 	static propTypes = {

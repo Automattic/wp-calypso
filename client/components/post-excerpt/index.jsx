@@ -5,8 +5,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
+import AutoDirection from 'client/components/auto-direction';
+import Emojify from 'client/components/emojify';
 
 class PostExcerpt extends React.Component {
 	static propTypes = {

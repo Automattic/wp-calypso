@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
+import Notice from 'client/components/notice';
 
 class JetpackConnectNotices extends Component {
 	static propTypes = {

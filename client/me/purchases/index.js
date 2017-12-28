@@ -9,12 +9,12 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import billingController from 'me/billing-history/controller';
-import meController from 'me/controller';
-import { siteSelection } from 'my-sites/controller';
+import billingController from 'client/me/billing-history/controller';
+import meController from 'client/me/controller';
+import { siteSelection } from 'client/my-sites/controller';
 import controller from './controller';
 import paths from './paths';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default function() {
 	if ( config.isEnabled( 'manage/payment-methods' ) ) {

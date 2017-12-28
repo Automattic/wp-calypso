@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import postUtils from 'lib/posts/utils';
+import postUtils from 'client/lib/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
 
 class StatusLabel extends React.PureComponent {

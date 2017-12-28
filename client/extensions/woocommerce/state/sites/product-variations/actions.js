@@ -10,7 +10,7 @@ import {
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATED,
 	WOOCOMMERCE_PRODUCT_VARIATIONS_REQUEST,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 /**
  * Action Creator: Fetch a product's variations.

@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ReaderMain from 'components/reader-main';
+import ReaderMain from 'client/components/reader-main';
 import EmptyContent from './empty';
 import {
 	fetchNextPage,
@@ -23,25 +23,25 @@ import {
 	selectPrevItem,
 	showUpdates,
 	shufflePosts,
-} from 'lib/feed-stream-store/actions';
-import LikeStore from 'lib/like-store/like-store';
-import LikeStoreActions from 'lib/like-store/actions';
-import LikeHelper from 'reader/like-helper';
-import ListEnd from 'components/list-end';
-import InfiniteList from 'components/infinite-list';
-import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
+} from 'client/lib/feed-stream-store/actions';
+import LikeStore from 'client/lib/like-store/like-store';
+import LikeStoreActions from 'client/lib/like-store/actions';
+import LikeHelper from 'client/reader/like-helper';
+import ListEnd from 'client/components/list-end';
+import InfiniteList from 'client/components/infinite-list';
+import MobileBackToSidebar from 'client/components/mobile-back-to-sidebar';
 import PostPlaceholder from './post-placeholder';
-import PostStore from 'lib/feed-post-store';
-import UpdateNotice from 'reader/update-notice';
-import KeyboardShortcuts from 'lib/keyboard-shortcuts';
-import scrollTo from 'lib/scroll-to';
-import XPostHelper from 'reader/xpost-helper';
+import PostStore from 'client/lib/feed-post-store';
+import UpdateNotice from 'client/reader/update-notice';
+import KeyboardShortcuts from 'client/lib/keyboard-shortcuts';
+import scrollTo from 'client/lib/scroll-to';
+import XPostHelper from 'client/reader/xpost-helper';
 import PostLifecycle from './post-lifecycle';
-import { showSelectedPost } from 'reader/utils';
-import getBlockedSites from 'state/selectors/get-blocked-sites';
-import { getReaderFollows } from 'state/selectors';
-import { keysAreEqual, keyToString, keyForPost } from 'lib/feed-stream-store/post-key';
-import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
+import { showSelectedPost } from 'client/reader/utils';
+import getBlockedSites from 'client/state/selectors/get-blocked-sites';
+import { getReaderFollows } from 'client/state/selectors';
+import { keysAreEqual, keyToString, keyForPost } from 'client/lib/feed-stream-store/post-key';
+import { resetCardExpansions } from 'client/state/ui/reader/card-expansions/actions';
 import { combineCards, injectRecommendations, RECS_PER_BLOCK } from './utils';
 
 const GUESSED_POST_HEIGHT = 600;

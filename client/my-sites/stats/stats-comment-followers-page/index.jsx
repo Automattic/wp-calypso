@@ -17,16 +17,16 @@ import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import ErrorPanel from '../stats-error';
-import Pagination from 'components/pagination';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import Pagination from 'client/components/pagination';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import QuerySiteStats from 'client/components/data/query-site-stats';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 	hasSiteStatsQueryFailed,
-} from 'state/stats/lists/selectors';
+} from 'client/state/stats/lists/selectors';
 
 class StatModuleFollowersPage extends Component {
 	render() {

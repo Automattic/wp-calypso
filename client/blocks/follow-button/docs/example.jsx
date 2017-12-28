@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FollowButton from 'blocks/follow-button/button';
-import Card from 'components/card/compact';
+import FollowButton from 'client/blocks/follow-button/button';
+import Card from 'client/components/card/compact';
 
 export default class FollowButtonExample extends React.PureComponent {
 	static displayName = 'FollowButtonExample';

@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { isSupportUser } from '../reducer';
-import { SUPPORT_USER_ACTIVATE } from 'state/action-types';
+import { SUPPORT_USER_ACTIVATE } from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#isSupportUser()', () => {

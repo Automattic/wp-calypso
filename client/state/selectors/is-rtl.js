@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { getLanguage } from 'lib/i18n-utils';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { getLanguage } from 'client/lib/i18n-utils';
+import getCurrentLocaleSlug from 'client/state/selectors/get-current-locale-slug';
 
 /**
  * Returns whether the current uses right-to-left directionality.

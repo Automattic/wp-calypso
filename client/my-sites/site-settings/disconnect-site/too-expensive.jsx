@@ -9,13 +9,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Placeholder from 'my-sites/site-settings/placeholder';
-import QuerySitePlans from 'components/data/query-site-plans';
-import { getCurrentPlanPurchaseId } from 'state/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { addQueryArgs } from 'lib/url';
+import CompactCard from 'client/components/card/compact';
+import Placeholder from 'client/my-sites/site-settings/placeholder';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import { getCurrentPlanPurchaseId } from 'client/state/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { addQueryArgs } from 'client/lib/url';
 
 const TooExpensive = ( { confirmHref, planPurchaseId, siteId, siteSlug, translate } ) => {
 	if ( ! siteSlug || ! planPurchaseId ) {

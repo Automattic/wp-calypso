@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import { closeDetailsDialog } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import Dialog from 'client/components/dialog';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import { closeDetailsDialog } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
+import { isLoaded, getShippingLabel } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const DetailsDialog = ( props ) => {
 	const { orderId, siteId, isVisible, labelIndex, serviceName, packageName, productNames, translate } = props;

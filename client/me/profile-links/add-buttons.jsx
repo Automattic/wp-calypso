@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 // Internal dependencies
-import Button from 'components/button';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import Button from 'client/components/button';
+import PopoverMenu from 'client/components/popover/menu';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 const AddProfileLinksButtons = createReactClass( {
 	displayName: 'AddProfileLinksButtons',

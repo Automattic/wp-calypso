@@ -4,9 +4,9 @@
  * Internal dependencies
  */
 
-import createSelector from 'lib/create-selector';
-import { getSelectedOrAllSites, canCurrentUser } from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getSelectedOrAllSites, canCurrentUser } from 'client/state/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
 
 /**
  * Return an array with the selected site or all sites Jetpack can manage

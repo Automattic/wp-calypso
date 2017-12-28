@@ -12,16 +12,16 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import FormToggle from 'components/forms/form-toggle/compact';
-import SectionHeader from 'components/section-header';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import ClipboardButtonInput from 'client/components/clipboard-button-input';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormToggle from 'client/components/forms/form-toggle/compact';
+import SectionHeader from 'client/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
 class DebugTab extends Component {

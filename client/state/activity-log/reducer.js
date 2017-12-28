@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import { activationRequesting } from './activation/reducer';
 import { logItems } from './log/reducer';
 import { restoreProgress, restoreRequest } from './restore/reducer';

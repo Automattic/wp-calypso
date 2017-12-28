@@ -25,14 +25,14 @@ import {
 /**
  * Internal dependencies
  */
-import { getContactDetailsCache } from 'state/selectors';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormRadio from 'components/forms/form-radio';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
+import { getContactDetailsCache } from 'client/state/selectors';
+import { updateContactDetailsCache } from 'client/state/domains/management/actions';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormLegend from 'client/components/forms/form-legend';
+import FormRadio from 'client/components/forms/form-radio';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormInputValidation from 'client/components/forms/form-input-validation';
 import validateContactDetails from './fr-validate-contact-details';
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
@@ -154,14 +154,11 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 				{ formIsValid
 					? this.props.children
-					: map(
-							castArray( this.props.children ),
-							( child, index ) =>
-									React.cloneElement( child, {
-										disabled: child.props.className.match( /submit-button/ ) ||
-											child.props.disabled,
-										key: index,
-									} )
+					: map( castArray( this.props.children ), ( child, index ) =>
+							React.cloneElement( child, {
+								disabled: child.props.className.match( /submit-button/ ) || child.props.disabled,
+								key: index,
+							} )
 						) }
 			</form>
 		);

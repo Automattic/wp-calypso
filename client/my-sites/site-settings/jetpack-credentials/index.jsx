@@ -9,26 +9,16 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 import CredentialsSetupFlow from './credentials-setup-flow/index';
 import CredentialsConfigured from './credentials-configured/index';
 import Gridicon from 'gridicons';
-import QueryRewindStatus from 'components/data/query-rewind-status';
-import QueryJetpackCredentials from 'components/data/query-jetpack-credentials';
-import { isRewindActive } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getJetpackCredentials,
-	isUpdatingJetpackCredentials,
-	hasMainCredentials,
-	isSitePressable,
-	getCredentialsAutoConfigStatus
-} from 'state/selectors';
-import {
-	updateCredentials,
-	autoConfigCredentials,
-	deleteCredentials,
-} from 'state/jetpack/credentials/actions';
+import QueryRewindStatus from 'client/components/data/query-rewind-status';
+import QueryJetpackCredentials from 'client/components/data/query-jetpack-credentials';
+import { isRewindActive } from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getJetpackCredentials, isUpdatingJetpackCredentials, hasMainCredentials, isSitePressable, getCredentialsAutoConfigStatus } from 'client/state/selectors';
+import { updateCredentials, autoConfigCredentials, deleteCredentials } from 'client/state/jetpack/credentials/actions';
 
 class Backups extends Component {
 	static propTypes = {

@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import AccountRecoveryRoot from 'account-recovery/account-recovery-root';
-import { ACCOUNT_RECOVERY_STEPS as STEPS } from 'account-recovery/constants';
+import AccountRecoveryRoot from 'client/account-recovery/account-recovery-root';
+import { ACCOUNT_RECOVERY_STEPS as STEPS } from 'client/account-recovery/constants';
 
 export const lostPassword = ( context, next ) => {
 	context.primary = (

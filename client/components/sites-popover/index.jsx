@@ -12,9 +12,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
-import { hasTouch } from 'lib/touch-detect';
-import SiteSelector from 'components/site-selector';
+import Popover from 'client/components/popover';
+import { hasTouch } from 'client/lib/touch-detect';
+import SiteSelector from 'client/components/site-selector';
 
 export default class extends React.Component {
 	static displayName = 'SitesPopover';

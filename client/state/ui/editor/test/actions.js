@@ -15,8 +15,8 @@ import {
 	startEditingPost,
 	stopEditingPost,
 } from '../actions';
-import { ANALYTICS_STAT_BUMP, EDITOR_START, EDITOR_STOP } from 'state/action-types';
-import { setMediaModalView } from 'state/ui/media-modal/actions';
+import { ANALYTICS_STAT_BUMP, EDITOR_START, EDITOR_STOP } from 'client/state/action-types';
+import { setMediaModalView } from 'client/state/ui/media-modal/actions';
 
 describe( 'actions', () => {
 	describe( 'startEditingPost()', () => {

@@ -11,9 +11,9 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import support from 'lib/url/support';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import support from 'client/lib/url/support';
 
 class PurchaseReconnectNotice extends Component {
 	static propTypes = {

@@ -9,22 +9,22 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import ReactDom from 'react-dom';
 import { localize } from 'i18n-calypso';
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import CartBody from 'my-sites/checkout/cart/cart-body';
+import CartBody from 'client/my-sites/checkout/cart/cart-body';
 import CartMessages from './cart-messages';
-import CartSummaryBar from 'my-sites/checkout/cart/cart-summary-bar';
+import CartSummaryBar from 'client/my-sites/checkout/cart/cart-summary-bar';
 import CartPlanAd from './cart-plan-ad';
 import CartPlanDiscountAd from './cart-plan-discount-ad';
-import Sidebar from 'layout/sidebar';
-import observe from 'lib/mixins/data-observe';
-import CartBodyLoadingPlaceholder from 'my-sites/checkout/cart/cart-body/loading-placeholder';
-import { action as upgradesActionTypes } from 'lib/upgrades/constants';
-import scrollIntoViewport from 'lib/scroll-into-viewport';
+import Sidebar from 'client/layout/sidebar';
+import observe from 'client/lib/mixins/data-observe';
+import CartBodyLoadingPlaceholder from 'client/my-sites/checkout/cart/cart-body/loading-placeholder';
+import { action as upgradesActionTypes } from 'client/lib/upgrades/constants';
+import scrollIntoViewport from 'client/lib/scroll-into-viewport';
 
 const SecondaryCart = createReactClass( {
 	displayName: 'SecondaryCart',

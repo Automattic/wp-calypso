@@ -8,13 +8,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isDirectlyFailed } from 'state/selectors';
+import { isDirectlyFailed } from 'client/state/selectors';
 import {
 	STATUS_ERROR,
 	STATUS_INITIALIZING,
 	STATUS_READY,
 	STATUS_UNINITIALIZED,
-} from 'state/help/directly/constants';
+} from 'client/state/help/directly/constants';
 
 describe( 'isDirectlyFailed()', () => {
 	test( 'should be false when uninitialized', () => {

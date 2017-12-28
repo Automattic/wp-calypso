@@ -12,13 +12,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormButton from 'components/forms/form-button';
+import Dialog from 'client/components/dialog';
+import FormButton from 'client/components/forms/form-button';
 import FormSettings from './settings';
 import Navigation from './navigation';
 import FieldList from './field-list';
-import { getCurrentUser } from 'state/current-user/selectors';
-import PostEditStore from 'lib/posts/post-edit-store';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import PostEditStore from 'client/lib/posts/post-edit-store';
 import { validateFormFields, validateSettingsToEmail } from './validations';
 
 class ContactFormDialog extends React.Component {

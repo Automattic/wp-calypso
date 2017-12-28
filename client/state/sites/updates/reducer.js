@@ -9,7 +9,7 @@ import { isEmpty, merge, stubFalse, stubTrue } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'client/state/utils';
 import {
 	SITE_RECEIVE,
 	SITES_RECEIVE,
@@ -20,7 +20,7 @@ import {
 	SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
 	SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
 	SITE_PLUGIN_UPDATED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 import { itemsSchema } from './schema';
 

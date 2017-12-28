@@ -13,18 +13,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import PurchaseDetails from 'components/purchase-detail';
-import PurchaseButton from 'components/purchase-detail/purchase-button';
-import TipInfo from 'components/purchase-detail/tip-info';
-import Dialog from 'components/dialog';
-import analytics from 'lib/analytics';
+import Button from 'client/components/button';
+import ClipboardButtonInput from 'client/components/clipboard-button-input';
+import PurchaseDetails from 'client/components/purchase-detail';
+import PurchaseButton from 'client/components/purchase-detail/purchase-button';
+import TipInfo from 'client/components/purchase-detail/tip-info';
+import Dialog from 'client/components/dialog';
+import analytics from 'client/lib/analytics';
 import TermsAndConditions from './terms-and-conditions';
-import QuerySiteVouchers from 'components/data/query-site-vouchers';
-import { assignSiteVoucher as assignVoucher } from 'state/sites/vouchers/actions';
-import { GOOGLE_CREDITS } from 'state/sites/vouchers/service-types';
-import { getVouchersBySite, getGoogleAdCredits } from 'state/sites/vouchers/selectors';
+import QuerySiteVouchers from 'client/components/data/query-site-vouchers';
+import { assignSiteVoucher as assignVoucher } from 'client/state/sites/vouchers/actions';
+import { GOOGLE_CREDITS } from 'client/state/sites/vouchers/service-types';
+import { getVouchersBySite, getGoogleAdCredits } from 'client/state/sites/vouchers/selectors';
 
 const [ INITIAL_STEP, TERMS_AND_CONDITIONS, CODE_REDEEMED ] = [
 	'INITIAL_STEP',

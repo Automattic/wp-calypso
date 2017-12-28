@@ -9,7 +9,7 @@ import { get, isEmpty, omit, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import magicLogin from './magic-login/reducer';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
@@ -47,8 +47,8 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	USER_RECEIVE,
-} from 'state/action-types';
-import { login } from 'lib/paths';
+} from 'client/state/action-types';
+import { login } from 'client/lib/paths';
 
 export const isRequesting = createReducer( false, {
 	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST ]: () => true,
@@ -84,7 +84,8 @@ export const redirectTo = combineReducers( {
 		[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => get( data, 'redirect_to', null ),
 		[ SOCIAL_CONNECT_ACCOUNT_REQUEST ]: () => null,
 		[ SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE ]: () => null,
-		[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: ( state, action ) => get( action, 'redirect_to', null ),
+		[ SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS ]: ( state, action ) =>
+			get( action, 'redirect_to', null ),
 		[ LOGOUT_REQUEST ]: () => null,
 		[ LOGOUT_REQUEST_FAILURE ]: () => null,
 		[ LOGOUT_REQUEST_SUCCESS ]: () => ( state, { data } ) => get( data, 'redirect_to', null ),

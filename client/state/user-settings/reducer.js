@@ -14,8 +14,8 @@ import {
 	USER_SETTINGS_UNSAVED_CLEAR,
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers } from 'client/state/utils';
 
 export const settings = ( state = null, { type, settingValues } ) =>
 	USER_SETTINGS_UPDATE === type ? { ...state, ...settingValues } : state;

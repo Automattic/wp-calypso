@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingOlark } from 'state/ui/olark/selectors';
-import { requestOlark } from 'state/ui/olark/actions';
+import { isRequestingOlark } from 'client/state/ui/olark/selectors';
+import { requestOlark } from 'client/state/ui/olark/actions';
 
 class QueryOlark extends Component {
 	componentWillMount() {

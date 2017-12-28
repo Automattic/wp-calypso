@@ -14,8 +14,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import route from 'lib/route';
-import analytics from 'lib/analytics';
+import route from 'client/lib/route';
+import analytics from 'client/lib/analytics';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Welcome Box', eventAction );

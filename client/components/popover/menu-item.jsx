@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'client/components/external-link';
 
 export default class PopoverMenuItem extends Component {
 	static propTypes = {

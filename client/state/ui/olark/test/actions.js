@@ -17,7 +17,7 @@ import {
 	OLARK_OPERATORS_AVAILABLE,
 	OLARK_OPERATORS_AWAY,
 	OLARK_SET_AVAILABILITY,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 

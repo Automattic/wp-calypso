@@ -8,7 +8,7 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import { getThemeFilterStringFromTerm } from 'state/selectors';
+import { getThemeFilterStringFromTerm } from 'client/state/selectors';
 import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterStringFromTerm', () => {

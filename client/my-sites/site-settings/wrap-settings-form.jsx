@@ -13,33 +13,33 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { protectForm } from 'lib/protect-form';
-import trackForm from 'lib/track-form';
+import { protectForm } from 'client/lib/protect-form';
+import trackForm from 'client/lib/track-form';
 import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
 	getSiteSettings,
-} from 'state/site-settings/selectors';
+} from 'client/state/site-settings/selectors';
 import {
 	isRequestingJetpackSettings,
 	isUpdatingJetpackSettings,
 	isJetpackSettingsSaveFailure,
 	getJetpackSettings,
-} from 'state/selectors';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { updateSettings } from 'state/jetpack/settings/actions';
-import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'client/state/selectors';
+import { recordGoogleEvent, recordTracksEvent } from 'client/state/analytics/actions';
+import { saveSiteSettings } from 'client/state/site-settings/actions';
+import { updateSettings } from 'client/state/jetpack/settings/actions';
+import { removeNotice, successNotice, errorNotice } from 'client/state/notices/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	isJetpackSite,
 	isJetpackMinimumVersion,
 	siteSupportsJetpackSettingsUi,
-} from 'state/sites/selectors';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import QueryJetpackSettings from 'components/data/query-jetpack-settings';
+} from 'client/state/sites/selectors';
+import QuerySiteSettings from 'client/components/data/query-site-settings';
+import QueryJetpackSettings from 'client/components/data/query-jetpack-settings';
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {

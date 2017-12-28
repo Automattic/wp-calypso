@@ -23,7 +23,7 @@ import {
 	MEDIA_ITEM_REQUEST_SUCCESS,
 	MEDIA_ITEM_REQUESTING,
 	MEDIA_RECEIVE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'receiveMedia()', () => {

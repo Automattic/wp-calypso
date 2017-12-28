@@ -15,33 +15,36 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import config from 'config';
-import Button from 'components/button';
-import { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from 'lib/upgrades/actions';
-import { clearPurchases } from 'state/purchases/actions';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import Button from 'client/components/button';
+import { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from 'client/lib/upgrades/actions';
+import { clearPurchases } from 'client/state/purchases/actions';
+import hasActiveHappychatSession from 'client/state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'client/state/happychat/selectors/is-happychat-available';
 import { connect } from 'react-redux';
-import Dialog from 'components/dialog';
-import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
-import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
-import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
-import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
-import nextStep from 'components/marketing-survey/cancel-purchase-form/nextStep';
-import previousStep from 'components/marketing-survey/cancel-purchase-form/previousStep';
-import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
+import Dialog from 'client/components/dialog';
+import CancelPurchaseForm from 'client/components/marketing-survey/cancel-purchase-form';
+import enrichedSurveyData from 'client/components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
+import initialSurveyState from 'client/components/marketing-survey/cancel-purchase-form/initialSurveyState';
+import isSurveyFilledIn from 'client/components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
+import stepsForProductAndSurvey from 'client/components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
+import nextStep from 'client/components/marketing-survey/cancel-purchase-form/nextStep';
+import previousStep from 'client/components/marketing-survey/cancel-purchase-form/previousStep';
+import {
+	INITIAL_STEP,
+	FINAL_STEP,
+} from 'client/components/marketing-survey/cancel-purchase-form/steps';
 import {
 	getName,
 	getSubscriptionEndDate,
 	isOneTimePurchase,
 	isRefundable,
 	isSubscription,
-} from 'lib/purchases';
-import { isDomainRegistration, isJetpackPlan } from 'lib/products-values';
-import notices from 'notices';
-import paths from 'me/purchases/paths';
-import { refreshSitePlans } from 'state/sites/plans/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'client/lib/purchases';
+import { isDomainRegistration, isJetpackPlan } from 'client/lib/products-values';
+import notices from 'client/notices';
+import paths from 'client/me/purchases/paths';
+import { refreshSitePlans } from 'client/state/sites/plans/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
 
 class CancelPurchaseButton extends Component {

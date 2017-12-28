@@ -15,21 +15,21 @@ const debug = debugFactory( 'calypso:me:security:social-login' );
  * Internal dependencies
  */
 import config from 'config';
-import CompactCard from 'components/card/compact';
-import DocumentHead from 'components/data/document-head';
-import FormButton from 'components/forms/form-button';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import ReauthRequired from 'me/reauth-required';
-import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { connectSocialUser, disconnectSocialUser } from 'state/login/actions';
-import { isRequesting, getRequestError } from 'state/login/selectors';
-import GoogleIcon from 'components/social-icons/google';
-import GoogleLoginButton from 'components/social-buttons/google';
-import userFactory from 'lib/user';
-import Notice from 'components/notice';
+import CompactCard from 'client/components/card/compact';
+import DocumentHead from 'client/components/data/document-head';
+import FormButton from 'client/components/forms/form-button';
+import Main from 'client/components/main';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
+import ReauthRequired from 'client/me/reauth-required';
+import SecuritySectionNav from 'client/me/security-section-nav';
+import twoStepAuthorization from 'client/lib/two-step-authorization';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { connectSocialUser, disconnectSocialUser } from 'client/state/login/actions';
+import { isRequesting, getRequestError } from 'client/state/login/selectors';
+import GoogleIcon from 'client/components/social-icons/google';
+import GoogleLoginButton from 'client/components/social-buttons/google';
+import userFactory from 'client/lib/user';
+import Notice from 'client/components/notice';
 
 const user = userFactory();
 

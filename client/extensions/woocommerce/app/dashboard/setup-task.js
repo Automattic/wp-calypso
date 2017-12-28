@@ -13,8 +13,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Button from 'components/button';
+import analytics from 'client/lib/analytics';
+import Button from 'client/components/button';
 
 class SetupTask extends Component {
 	static propTypes = {

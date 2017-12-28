@@ -13,9 +13,9 @@ import Immutable from 'immutable';
 /**
  * Internal dependencies
  */
-import FormSelect from 'components/forms/form-select';
+import FormSelect from 'client/components/forms/form-select';
 import { getLabelForStream } from './locales';
-import { getUserDevices } from 'state/selectors';
+import { getUserDevices } from 'client/state/selectors';
 
 class NotificationSettingsFormStreamSelector extends PureComponent {
 	static propTypes = {

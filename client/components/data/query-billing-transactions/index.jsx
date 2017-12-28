@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingBillingTransactions } from 'state/selectors';
-import { requestBillingTransactions } from 'state/billing-transactions/actions';
+import { isRequestingBillingTransactions } from 'client/state/selectors';
+import { requestBillingTransactions } from 'client/state/billing-transactions/actions';
 
 class QueryBillingTransactions extends Component {
 	static propTypes = {

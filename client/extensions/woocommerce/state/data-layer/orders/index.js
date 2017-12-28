@@ -9,7 +9,7 @@ import qs from 'querystring';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
 import {
 	failOrder,
 	failOrders,
@@ -17,13 +17,13 @@ import {
 	saveOrderSuccess,
 	updateOrder,
 	updateOrders,
-} from 'woocommerce/state/sites/orders/actions';
-import request from 'woocommerce/state/sites/http-request';
+} from 'client/extensions/woocommerce/state/sites/orders/actions';
+import request from 'client/extensions/woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_UPDATE,
 	WOOCOMMERCE_ORDERS_REQUEST,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 const debug = debugFactory( 'woocommerce:orders' );
 

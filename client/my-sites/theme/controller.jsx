@@ -14,9 +14,9 @@ import { startsWith } from 'lodash';
  */
 import ThemeSheetComponent from './main';
 import ThemeNotFoundError from './theme-not-found-error';
-import LayoutLoggedOut from 'layout/logged-out';
-import { requestTheme, setBackPath } from 'state/themes/actions';
-import { getTheme, getThemeRequestErrors } from 'state/themes/selectors';
+import LayoutLoggedOut from 'client/layout/logged-out';
+import { requestTheme, setBackPath } from 'client/state/themes/actions';
+import { getTheme, getThemeRequestErrors } from 'client/state/themes/selectors';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:themes' );

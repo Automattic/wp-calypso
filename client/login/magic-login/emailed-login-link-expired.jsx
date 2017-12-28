@@ -13,12 +13,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { login } from 'lib/paths';
-import addQueryArgs from 'lib/route/add-query-args';
-import EmptyContent from 'components/empty-content';
-import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
-import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
+import { login } from 'client/lib/paths';
+import addQueryArgs from 'client/lib/route/add-query-args';
+import EmptyContent from 'client/components/empty-content';
+import RedirectWhenLoggedIn from 'client/components/redirect-when-logged-in';
+import { hideMagicLoginRequestForm } from 'client/state/login/magic-login/actions';
+import { recordPageViewWithClientId as recordPageView } from 'client/state/analytics/actions';
 
 const nativeLoginUrl = login( { isNative: true, twoFactorAuthType: 'link' } );
 

@@ -9,8 +9,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
-import notices from 'notices';
+import wp from 'client/lib/wp';
+import notices from 'client/notices';
 
 const debug = debugFactory( 'calypso:upgrades:actions:purchases' ),
 	wpcom = wp.undocumented();

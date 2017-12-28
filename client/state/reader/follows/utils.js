@@ -2,7 +2,7 @@
 /**
  * Internal Dependencies
  */
-import untrailingslashit from 'lib/route/untrailingslashit';
+import untrailingslashit from 'client/lib/route/untrailingslashit';
 
 export function prepareComparableUrl( url ) {
 	const preparedUrl = url && untrailingslashit( url );

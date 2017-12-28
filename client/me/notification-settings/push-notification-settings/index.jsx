@@ -14,17 +14,17 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
-import Notice from 'components/notice';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
+import Dialog from 'client/components/dialog';
+import Notice from 'client/components/notice';
 import {
 	getStatus,
 	isApiReady,
 	isShowingUnblockInstructions,
 	isEnabled,
-} from 'state/push-notifications/selectors';
-import { toggleEnabled, toggleUnblockInstructions } from 'state/push-notifications/actions';
+} from 'client/state/push-notifications/selectors';
+import { toggleEnabled, toggleUnblockInstructions } from 'client/state/push-notifications/actions';
 
 class PushNotificationSettings extends React.Component {
 	static displayName = 'PushNotificationSettings';

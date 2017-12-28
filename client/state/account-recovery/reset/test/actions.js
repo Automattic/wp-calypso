@@ -13,7 +13,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_SET_METHOD,
 	ACCOUNT_RECOVERY_RESET_REQUEST,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( '#updatePasswordResetUserData', () => {
 	test( 'should return ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA action', () => {

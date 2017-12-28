@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from 'client/lib/format-currency';
 
 export const getMethodSummary = ( method, currency ) => {
 	switch ( method.methodType ) {

@@ -8,7 +8,7 @@ import React from 'react';
  * Internal Dependencies
  */
 import JetpackOnboardingMain from './main';
-import { setSection } from 'state/ui/actions';
+import { setSection } from 'client/state/ui/actions';
 
 const removeSidebar = context => {
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );

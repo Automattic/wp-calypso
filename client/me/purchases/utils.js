@@ -8,7 +8,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import config from 'config';
 import paths from './paths';
 import {
@@ -16,8 +16,8 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
-} from 'lib/purchases';
-import { isDomainTransfer } from 'lib/products-values';
+} from 'client/lib/purchases';
+import { isDomainTransfer } from 'client/lib/products-values';
 
 // TODO: Remove these property-masking functions in favor of accessing the props directly
 function getPurchase( props ) {

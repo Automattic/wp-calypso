@@ -11,10 +11,10 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'components/forms/form-input-validation';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormTextInputWithAffixes from 'client/components/forms/form-text-input-with-affixes';
+import FormInputValidation from 'client/components/forms/form-input-validation';
 
 class GoogleAppsUsersForm extends React.Component {
 	fieldClasses( fieldName ) {

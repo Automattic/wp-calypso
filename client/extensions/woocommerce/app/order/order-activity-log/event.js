@@ -10,10 +10,10 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { EVENT_TYPES } from 'woocommerce/state/sites/orders/activity-log/selectors';
-import LabelItem from 'woocommerce/woocommerce-services/views/shipping-label/label-item';
-import { decodeEntities, stripHTML } from 'lib/formatting';
-import formatCurrency from 'lib/format-currency';
+import { EVENT_TYPES } from 'client/extensions/woocommerce/state/sites/orders/activity-log/selectors';
+import LabelItem from 'client/extensions/woocommerce/woocommerce-services/views/shipping-label/label-item';
+import { decodeEntities, stripHTML } from 'client/lib/formatting';
+import formatCurrency from 'client/lib/format-currency';
 
 class OrderEvent extends Component {
 	static propTypes = {

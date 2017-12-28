@@ -10,8 +10,8 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import Emitter from 'lib/mixins/emitter';
+import Dispatcher from 'client/dispatcher';
+import Emitter from 'client/lib/mixins/emitter';
 
 /**
  * Module variables

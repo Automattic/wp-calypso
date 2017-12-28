@@ -10,8 +10,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Count from 'components/count';
+import CompactCard from 'client/components/card/compact';
+import Count from 'client/components/count';
 
 export default class SectionHeader extends PureComponent {
 	static defaultProps = {

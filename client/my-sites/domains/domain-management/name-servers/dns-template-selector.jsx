@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SegmentedControl from 'components/segmented-control';
+import SegmentedControl from 'client/components/segmented-control';
 
 class DnsTemplateSelector extends React.PureComponent {
 	handleOnSelect = option => {

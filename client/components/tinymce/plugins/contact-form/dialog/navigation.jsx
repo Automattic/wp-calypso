@@ -11,9 +11,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
-import SectionNavTabItem from 'components/section-nav/item';
+import SectionNav from 'client/components/section-nav';
+import SectionNavTabs from 'client/components/section-nav/tabs';
+import SectionNavTabItem from 'client/components/section-nav/item';
 
 class ContactFormDialogNavigation extends React.Component {
 	static displayName = 'ContactFormDialogNavigation';

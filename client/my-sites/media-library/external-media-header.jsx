@@ -14,11 +14,11 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import MediaLibraryScale from './scale';
-import Card from 'components/card';
-import Button from 'components/button';
-import MediaActions from 'lib/media/actions';
-import MediaListStore from 'lib/media/list-store';
-import StickyPanel from 'components/sticky-panel';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
+import MediaActions from 'client/lib/media/actions';
+import MediaListStore from 'client/lib/media/list-store';
+import StickyPanel from 'client/components/sticky-panel';
 
 const DEBOUNCE_TIME = 250;
 

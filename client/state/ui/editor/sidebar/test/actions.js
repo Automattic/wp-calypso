@@ -10,7 +10,7 @@ import sinon, { spy } from 'sinon';
  * Internal dependencies
  */
 import { openEditorSidebar, closeEditorSidebar } from '../actions';
-import { LAYOUT_FOCUS_SET } from 'state/action-types';
+import { LAYOUT_FOCUS_SET } from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#openEditorSidebar', () => {

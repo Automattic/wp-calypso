@@ -9,7 +9,7 @@ import { uniqBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import { items as itemSchemas } from './schema';
 import {
 	SHARING_BUTTONS_RECEIVE,
@@ -20,7 +20,7 @@ import {
 	SHARING_BUTTONS_SAVE_FAILURE,
 	SHARING_BUTTONS_SAVE_SUCCESS,
 	SHARING_BUTTONS_UPDATE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

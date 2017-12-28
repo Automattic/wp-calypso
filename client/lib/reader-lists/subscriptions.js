@@ -5,12 +5,12 @@
  * External dependencies
  */
 import { find, isEqual, reject } from 'lodash';
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 
 /**
  * Internal dependencies
  */
-import emitter from 'lib/mixins/emitter';
+import emitter from 'client/lib/mixins/emitter';
 import ListStore from './lists';
 
 var lists = null,

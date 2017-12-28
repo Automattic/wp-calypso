@@ -8,9 +8,9 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import FormattedHeader from 'components/formatted-header';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import FormattedHeader from 'client/components/formatted-header';
 import { localize } from 'i18n-calypso';
 
 class ConfirmationStep extends Component {

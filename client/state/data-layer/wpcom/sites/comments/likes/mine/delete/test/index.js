@@ -10,9 +10,9 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { unlikeComment, updateCommentLikes, handleUnlikeFailure } from '../';
-import { COMMENTS_UNLIKE, COMMENTS_LIKE, NOTICE_CREATE } from 'state/action-types';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { COMMENTS_UNLIKE, COMMENTS_LIKE, NOTICE_CREATE } from 'client/state/action-types';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 const SITE_ID = 77203074;
 const POST_ID = 287;

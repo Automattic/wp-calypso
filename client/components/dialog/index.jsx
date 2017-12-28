@@ -9,7 +9,7 @@ import { defer, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import RootChild from 'components/root-child';
+import RootChild from 'client/components/root-child';
 import DialogBase from './dialog-base';
 
 class Dialog extends Component {

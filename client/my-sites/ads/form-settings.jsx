@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import notices from 'notices';
+import notices from 'client/notices';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
@@ -14,25 +14,25 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import StateSelector from 'components/forms/us-state-selector';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import WordadsActions from 'lib/ads/actions';
-import SettingsStore from 'lib/ads/settings-store';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { dismissWordAdsSuccess } from 'state/wordads/approve/actions';
-import { protectForm } from 'lib/protect-form';
+import Card from 'client/components/card';
+import StateSelector from 'client/components/forms/us-state-selector';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import FormButton from 'client/components/forms/form-button';
+import FormButtonsBar from 'client/components/forms/form-buttons-bar';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormLegend from 'client/components/forms/form-legend';
+import FormRadio from 'client/components/forms/form-radio';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormSelect from 'client/components/forms/form-select';
+import FormTextInput from 'client/components/forms/form-text-input';
+import WordadsActions from 'client/lib/ads/actions';
+import SettingsStore from 'client/lib/ads/settings-store';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { dismissWordAdsSuccess } from 'client/state/wordads/approve/actions';
+import { protectForm } from 'client/lib/protect-form';
 
 class AdsFormSettings extends Component {
 	static propTypes = {

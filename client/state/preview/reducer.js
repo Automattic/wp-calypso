@@ -10,7 +10,7 @@ import {
 	PREVIEW_CUSTOMIZATIONS_UPDATE,
 	PREVIEW_CUSTOMIZATIONS_UNDO,
 	PREVIEW_CUSTOMIZATIONS_SAVED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { previewSchema } from './schema';
 
 const siteInitialState = {

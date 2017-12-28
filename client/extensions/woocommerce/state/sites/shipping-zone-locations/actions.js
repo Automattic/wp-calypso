@@ -4,14 +4,14 @@
  * Internal dependencies
  */
 
-import request from 'woocommerce/state/sites/request';
+import request from 'client/extensions/woocommerce/state/sites/request';
 import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_REQUEST_SUCCESS,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATE,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 import { areShippingZoneLocationsLoaded, areShippingZoneLocationsLoading } from './selectors';
 
 export const fetchShippingZoneLocations = ( siteId, zoneId ) => ( dispatch, getState ) => {

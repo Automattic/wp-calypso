@@ -8,8 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
-import ExternalLink from 'components/external-link';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import ExternalLink from 'client/components/external-link';
 
 describe( 'PopoverMenuItem', () => {
 	test( 'should be a button by default', () => {

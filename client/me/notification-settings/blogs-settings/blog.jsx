@@ -13,10 +13,10 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { getSite } from 'state/sites/selectors';
-import Card from 'components/card';
+import { getSite } from 'client/state/sites/selectors';
+import Card from 'client/components/card';
 import Header from './header';
-import SettingsForm from 'me/notification-settings/settings-form';
+import SettingsForm from 'client/me/notification-settings/settings-form';
 
 class BlogSettings extends Component {
 	static propTypes = {

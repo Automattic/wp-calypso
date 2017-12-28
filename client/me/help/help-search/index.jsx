@@ -11,13 +11,13 @@ import { getLocaleSlug, localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import HelpSearchStore from 'lib/help-search/store';
-import HelpSearchActions from 'lib/help-search/actions';
-import HelpResults from 'me/help/help-results';
-import NoResults from 'my-sites/no-results';
-import SearchCard from 'components/search-card';
-import CompactCard from 'components/card/compact';
-import analytics from 'lib/analytics';
+import HelpSearchStore from 'client/lib/help-search/store';
+import HelpSearchActions from 'client/lib/help-search/actions';
+import HelpResults from 'client/me/help/help-results';
+import NoResults from 'client/my-sites/no-results';
+import SearchCard from 'client/components/search-card';
+import CompactCard from 'client/components/card/compact';
+import analytics from 'client/lib/analytics';
 
 class HelpSearch extends React.PureComponent {
 	static displayName = 'HelpSearch';

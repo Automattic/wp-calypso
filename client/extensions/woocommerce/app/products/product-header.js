@@ -13,9 +13,9 @@ import { isObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import ActionHeader from 'client/extensions/woocommerce/components/action-header';
+import Button from 'client/components/button';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
 
 function renderViewButton( product, translate ) {
 	const url = product && product.permalink;

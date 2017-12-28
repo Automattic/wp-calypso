@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { createReducerStore } from 'lib/store';
+import { createReducerStore } from 'client/lib/store';
 import { getInitialStateForSite, reducer } from './reducer';
 
 const SiteRedirectStore = createReducerStore( reducer );

@@ -10,19 +10,19 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Stream from 'reader/stream';
+import Stream from 'client/reader/stream';
 import EmptyContent from './empty';
-import DocumentHead from 'components/data/document-head';
+import DocumentHead from 'client/components/data/document-head';
 import ListMissing from './missing';
 import ListStreamHeader from './header';
-import { followList, unfollowList } from 'state/reader/lists/actions';
+import { followList, unfollowList } from 'client/state/reader/lists/actions';
 import {
 	getListByOwnerAndSlug,
 	isSubscribedByOwnerAndSlug,
 	isMissingByOwnerAndSlug,
-} from 'state/reader/lists/selectors';
-import QueryReaderList from 'components/data/query-reader-list';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+} from 'client/state/reader/lists/selectors';
+import QueryReaderList from 'client/components/data/query-reader-list';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
 
 class ListStream extends React.Component {
 	toggleFollowing = isFollowRequested => {

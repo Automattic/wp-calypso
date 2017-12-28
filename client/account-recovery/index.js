@@ -10,7 +10,7 @@ import config from 'config';
  * Internal dependencies
  */
 import { lostPassword, forgotUsername, validateResetCode } from './controller';
-import { makeLayout, redirectLoggedIn } from 'controller';
+import { makeLayout, redirectLoggedIn } from 'client/controller';
 
 export default function( router ) {
 	if ( config.isEnabled( 'account-recovery' ) ) {

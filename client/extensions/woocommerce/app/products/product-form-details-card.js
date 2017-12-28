@@ -13,14 +13,14 @@ import { trim, debounce, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CompactTinyMCE from 'woocommerce/components/compact-tinymce';
-import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import Card from 'client/components/card';
+import CompactTinyMCE from 'client/extensions/woocommerce/components/compact-tinymce';
+import FormClickToEditInput from 'client/extensions/woocommerce/components/form-click-to-edit-input';
+import FormFieldSet from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
 import ProductFormImages from './product-form-images';
-import ProductReviewsWidget from 'woocommerce/components/product-reviews-widget';
+import ProductReviewsWidget from 'client/extensions/woocommerce/components/product-reviews-widget';
 
 export default class ProductFormDetailsCard extends Component {
 	static propTypes = {

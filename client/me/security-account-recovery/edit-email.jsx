@@ -13,10 +13,10 @@ import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
 import Buttons from './buttons';
 
 class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {

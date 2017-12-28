@@ -9,9 +9,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
+import Card from 'client/components/card';
+import DocumentHead from 'client/components/data/document-head';
+import Main from 'client/components/main';
 
 export default class Typography extends React.PureComponent {
 	static displayName = 'Typography';

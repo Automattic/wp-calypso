@@ -8,8 +8,11 @@ import moment from 'moment-timezone';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
-import { CONCIERGE_SIGNUP_FORM_UPDATE, CONCIERGE_UPDATE_BOOKING_STATUS } from 'state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
+import {
+	CONCIERGE_SIGNUP_FORM_UPDATE,
+	CONCIERGE_UPDATE_BOOKING_STATUS,
+} from 'client/state/action-types';
 
 export const message = createReducer( '', {
 	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.message,

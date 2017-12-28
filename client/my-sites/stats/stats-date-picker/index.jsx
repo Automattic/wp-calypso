@@ -14,11 +14,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
-import { getSiteStatsQueryDate } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
-import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
+import Tooltip from 'client/components/tooltip';
+import { getSiteStatsQueryDate } from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isRequestingSiteStatsForQuery } from 'client/state/stats/lists/selectors';
+import { isAutoRefreshAllowedForQuery } from 'client/state/stats/lists/utils';
 
 class StatsDatePicker extends Component {
 	static propTypes = {

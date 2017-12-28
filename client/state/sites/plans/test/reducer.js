@@ -17,7 +17,7 @@ import {
 	SITE_PLANS_TRIAL_CANCEL_FAILED,
 	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 	SITE_PLANS_REMOVE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#plans()', () => {

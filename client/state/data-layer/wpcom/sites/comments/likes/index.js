@@ -6,6 +6,6 @@
 
 import mine from './mine';
 import newLike from './new';
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
 
 export default mergeHandlers( mine, newLike );

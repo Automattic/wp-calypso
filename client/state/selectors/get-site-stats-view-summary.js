@@ -10,7 +10,7 @@ import { round } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
+import { getSiteStatsForQuery } from 'client/state/stats/lists/selectors';
 
 /**
  * Returns the date of the last site stats query

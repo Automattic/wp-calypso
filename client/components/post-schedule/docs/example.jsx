@@ -11,10 +11,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import PostSchedule from 'components/post-schedule';
-import Timezone from 'components/timezone';
-import Card from 'components/card';
-import EventsTooltip from 'components/date-picker/events-tooltip';
+import PostSchedule from 'client/components/post-schedule';
+import Timezone from 'client/components/timezone';
+import Card from 'client/components/card';
+import EventsTooltip from 'client/components/date-picker/events-tooltip';
 
 /**
  * Date Picker Demo

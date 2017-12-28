@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ReaderCombinedCardBlock from 'blocks/reader-combined-card';
-import { posts, feed, site } from 'blocks/reader-post-card/docs/fixtures';
+import ReaderCombinedCardBlock from 'client/blocks/reader-combined-card';
+import { posts, feed, site } from 'client/blocks/reader-post-card/docs/fixtures';
 
 const postKey = { blogId: site.ID };
 

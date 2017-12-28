@@ -4,10 +4,10 @@
  * Internal dependencies
  */
 
-import { GUIDED_TOUR_UPDATE } from 'state/action-types';
+import { GUIDED_TOUR_UPDATE } from 'client/state/action-types';
 
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
+import { savePreference } from 'client/state/preferences/actions';
+import { getPreference } from 'client/state/preferences/selectors';
 
 export function quitGuidedTour( { tour, stepName, finished } ) {
 	const quitAction = {

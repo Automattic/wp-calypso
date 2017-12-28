@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { isRewindActive } from 'state/selectors';
+import { isRewindActive } from 'client/state/selectors';
 
 const siteId = 77203074;
 

@@ -11,23 +11,23 @@ import { get, size, takeRight, delay } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getActiveReplyCommentId } from 'state/selectors';
+import { getActiveReplyCommentId } from 'client/state/selectors';
 import {
 	getPostCommentsTree,
 	commentsFetchingStatus,
 	getCommentById,
-} from 'state/comments/selectors';
-import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+} from 'client/state/comments/selectors';
+import { requestPostComments, requestComment, setActiveReply } from 'client/state/comments/actions';
+import { NUMBER_OF_COMMENTS_PER_FETCH } from 'client/state/comments/constants';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
 import PostComment from './post-comment';
 import PostCommentFormRoot from './form-root';
 import CommentCount from './comment-count';
-import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
-import ConversationFollowButton from 'blocks/conversation-follow-button';
-import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import SegmentedControl from 'client/components/segmented-control';
+import SegmentedControlItem from 'client/components/segmented-control/item';
+import ConversationFollowButton from 'client/blocks/conversation-follow-button';
+import { shouldShowConversationFollowButton } from 'client/blocks/conversation-follow-button/helper';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
 
 /**
  * PostCommentList, as the name would suggest, displays a list of comments for a post.

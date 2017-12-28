@@ -15,39 +15,39 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import { ProtectFormGuard } from 'lib/protect-form';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import Main from 'client/components/main';
+import { ProtectFormGuard } from 'client/lib/protect-form';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
 import {
 	clearProductEdits,
 	editProduct,
 	editProductAttribute,
 	createProductActionList,
-} from 'woocommerce/state/ui/products/actions';
+} from 'client/extensions/woocommerce/state/ui/products/actions';
 import {
 	clearProductCategoryEdits,
 	editProductCategory,
-} from 'woocommerce/state/ui/product-categories/actions';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import { getActionList } from 'woocommerce/state/action-list/selectors';
+} from 'client/extensions/woocommerce/state/ui/product-categories/actions';
+import { fetchSetupChoices } from 'client/extensions/woocommerce/state/sites/setup-choices/actions';
+import { getActionList } from 'client/extensions/woocommerce/state/action-list/selectors';
 import {
 	getCurrentlyEditingId,
 	getProductWithLocalEdits,
 	getProductEdits,
-} from 'woocommerce/state/ui/products/selectors';
-import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
-import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
-import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
+} from 'client/extensions/woocommerce/state/ui/products/selectors';
+import { getFinishedInitialSetup } from 'client/extensions/woocommerce/state/sites/setup-choices/selectors';
+import { getProductVariationsWithLocalEdits } from 'client/extensions/woocommerce/state/ui/products/variations/selectors';
+import { fetchProductCategories } from 'client/extensions/woocommerce/state/sites/product-categories/actions';
 import {
 	clearProductVariationEdits,
 	editProductVariation,
-} from 'woocommerce/state/ui/products/variations/actions';
-import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
-import { createProduct } from 'woocommerce/state/sites/products/actions';
+} from 'client/extensions/woocommerce/state/ui/products/variations/actions';
+import { getProductCategoriesWithLocalEdits } from 'client/extensions/woocommerce/state/ui/product-categories/selectors';
+import { createProduct } from 'client/extensions/woocommerce/state/sites/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
 
 class ProductCreate extends React.Component {
 	static propTypes = {

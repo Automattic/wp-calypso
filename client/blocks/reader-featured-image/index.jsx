@@ -10,8 +10,8 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import cssSafeUrl from 'lib/css-safe-url';
-import resizeImageUrl from 'lib/resize-image-url';
+import cssSafeUrl from 'client/lib/css-safe-url';
+import resizeImageUrl from 'client/lib/resize-image-url';
 
 const ReaderFeaturedImage = ( { imageUrl, imageWidth, href, children, onClick, className } ) => {
 	if ( imageUrl === undefined ) {

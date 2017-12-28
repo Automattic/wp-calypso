@@ -16,10 +16,10 @@ import { localize } from 'i18n-calypso';
 import ButtonsPreview from './preview';
 import ButtonsPreviewPlaceholder from './preview-placeholder';
 import ButtonsStyle from './style';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { isPrivateSite } from 'state/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { isPrivateSite } from 'client/state/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 class SharingButtonsAppearance extends Component {
 	static propTypes = {

@@ -13,14 +13,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextarea from 'components/forms/form-textarea';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormTextInput from 'components/forms/form-text-input';
+import Dialog from 'client/components/dialog';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextarea from 'client/components/forms/form-textarea';
+import FormPasswordInput from 'client/components/forms/form-password-input';
+import FormTextInput from 'client/components/forms/form-text-input';
 
 class PaymentMethodBACS extends Component {
 	static propTypes = {

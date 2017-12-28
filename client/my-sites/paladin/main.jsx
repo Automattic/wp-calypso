@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { setPreviewType } from 'state/ui/preview/actions';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
+import { setPreviewType } from 'client/state/ui/preview/actions';
 
 class NativeCustomizer extends React.Component {
 	static propTypes = {

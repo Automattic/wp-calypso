@@ -8,8 +8,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import * as settingsModule from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { updateUserSettings, clearUnsavedUserSettings } from 'state/user-settings/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { updateUserSettings, clearUnsavedUserSettings } from 'client/state/user-settings/actions';
 import { useSandbox } from 'test/helpers/use-sinon';
 jest.mock( 'lib/user', () => () => ( {
 	fetch() {},

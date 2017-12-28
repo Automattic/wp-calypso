@@ -17,24 +17,24 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Button from 'components/button';
+import analytics from 'client/lib/analytics';
+import Button from 'client/components/button';
 import config from 'config';
-import CurrentSite from 'my-sites/current-site';
+import CurrentSite from 'client/my-sites/current-site';
 import ManageMenu from './manage-menu';
-import Sidebar from 'layout/sidebar';
-import SidebarButton from 'layout/sidebar/button';
-import SidebarFooter from 'layout/sidebar/footer';
-import SidebarHeading from 'layout/sidebar/heading';
-import SidebarItem from 'layout/sidebar/item';
-import SidebarMenu from 'layout/sidebar/menu';
-import SidebarRegion from 'layout/sidebar/region';
-import StatsSparkline from 'blocks/stats-sparkline';
-import JetpackLogo from 'components/jetpack-logo';
-import { isPlan, isFreeTrial, isPersonal, isPremium, isBusiness } from 'lib/products-values';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
+import Sidebar from 'client/layout/sidebar';
+import SidebarButton from 'client/layout/sidebar/button';
+import SidebarFooter from 'client/layout/sidebar/footer';
+import SidebarHeading from 'client/layout/sidebar/heading';
+import SidebarItem from 'client/layout/sidebar/item';
+import SidebarMenu from 'client/layout/sidebar/menu';
+import SidebarRegion from 'client/layout/sidebar/region';
+import StatsSparkline from 'client/blocks/stats-sparkline';
+import JetpackLogo from 'client/components/jetpack-logo';
+import { isPlan, isFreeTrial, isPersonal, isPremium, isBusiness } from 'client/lib/products-values';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { setNextLayoutFocus, setLayoutFocus } from 'client/state/ui/layout-focus/actions';
 import {
 	canCurrentUser,
 	canCurrentUserManagePlugins,
@@ -43,7 +43,7 @@ import {
 	isDomainOnlySite,
 	isSiteAutomatedTransfer,
 	hasSitePendingAutomatedTransfer,
-} from 'state/selectors';
+} from 'client/state/selectors';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -51,10 +51,10 @@ import {
 	isJetpackModuleActive,
 	isJetpackSite,
 	isSitePreviewable,
-} from 'state/sites/selectors';
-import { getStatsPathForTab } from 'lib/route/path';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import { transferStates } from 'state/automated-transfer/constants';
+} from 'client/state/sites/selectors';
+import { getStatsPathForTab } from 'client/lib/route/path';
+import { getAutomatedTransferStatus } from 'client/state/automated-transfer/selectors';
+import { transferStates } from 'client/state/automated-transfer/constants';
 
 /**
  * Module variables

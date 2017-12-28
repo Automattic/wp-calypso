@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingPostLikes } from 'state/selectors';
-import { requestPostLikes } from 'state/posts/likes/actions';
+import { isRequestingPostLikes } from 'client/state/selectors';
+import { requestPostLikes } from 'client/state/posts/likes/actions';
 
 class QueryPostLikes extends Component {
 	static propTypes = {

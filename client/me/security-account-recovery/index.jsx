@@ -11,18 +11,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import QueryAccountRecoverySettings from 'components/data/query-account-recovery-settings';
-import ReauthRequired from 'me/reauth-required';
+import CompactCard from 'client/components/card/compact';
+import DocumentHead from 'client/components/data/document-head';
+import Main from 'client/components/main';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
+import QueryAccountRecoverySettings from 'client/components/data/query-account-recovery-settings';
+import ReauthRequired from 'client/me/reauth-required';
 import RecoveryEmail from './recovery-email';
 import RecoveryEmailValidationNotice from './recovery-email-validation-notice';
 import RecoveryPhone from './recovery-phone';
 import RecoveryPhoneValidationNotice from './recovery-phone-validation-notice';
-import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
+import SecuritySectionNav from 'client/me/security-section-nav';
+import twoStepAuthorization from 'client/lib/two-step-authorization';
 import {
 	updateAccountRecoveryEmail,
 	updateAccountRecoveryPhone,
@@ -31,7 +31,7 @@ import {
 	resendAccountRecoveryEmailValidation,
 	resendAccountRecoveryPhoneValidation,
 	validateAccountRecoveryPhone,
-} from 'state/account-recovery/settings/actions';
+} from 'client/state/account-recovery/settings/actions';
 
 import {
 	getAccountRecoveryEmail,
@@ -45,9 +45,9 @@ import {
 	hasSentAccountRecoveryPhoneValidation,
 	shouldPromptAccountRecoveryEmailValidationNotice,
 	shouldPromptAccountRecoveryPhoneValidationNotice,
-} from 'state/account-recovery/settings/selectors';
+} from 'client/state/account-recovery/settings/selectors';
 
-import { getCurrentUserEmail } from 'state/current-user/selectors';
+import { getCurrentUserEmail } from 'client/state/current-user/selectors';
 
 const SecurityAccountRecovery = props => (
 	<Main className="security-account-recovery">

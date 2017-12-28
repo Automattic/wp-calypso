@@ -8,7 +8,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { addLocaleQueryParam, bindState, getLocale, injectLocalization, setLocale } from '../';
-import { getCurrentUserLocale as getCurrentUserLocaleMock } from 'state/current-user/selectors';
+import { getCurrentUserLocale as getCurrentUserLocaleMock } from 'client/state/current-user/selectors';
 
 jest.mock( 'state/current-user/selectors', () => ( {
 	getCurrentUserLocale: jest.fn(),

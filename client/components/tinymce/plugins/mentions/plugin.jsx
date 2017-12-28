@@ -12,8 +12,8 @@ import React from 'react';
  * Internal dependencies
  */
 import Mentions from './mentions';
-import { getSelectedSite } from 'state/ui/selectors';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { renderWithReduxStore } from 'client/lib/react-helpers';
 
 /**
  * Module variables

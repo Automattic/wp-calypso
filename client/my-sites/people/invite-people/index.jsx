@@ -15,35 +15,35 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import RoleSelect from 'my-sites/people/role-select';
-import TokenField from 'components/token-field';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { sendInvites } from 'lib/invites/actions';
-import Card from 'components/card';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import CountedTextarea from 'components/forms/counted-textarea';
-import { createInviteValidation } from 'lib/invites/actions';
-import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-validation';
-import InvitesSentStore from 'lib/invites/stores/invites-sent';
-import analytics from 'lib/analytics';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import EmptyContent from 'components/empty-content';
-import { userCan } from 'lib/site/utils';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import FeatureExample from 'components/feature-example';
-import versionCompare from 'lib/version-compare';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { isJetpackSite } from 'state/sites/selectors';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { isActivatingJetpackModule, isJetpackModuleActive } from 'state/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import RoleSelect from 'client/my-sites/people/role-select';
+import TokenField from 'client/components/token-field';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import { sendInvites } from 'client/lib/invites/actions';
+import Card from 'client/components/card';
+import Main from 'client/components/main';
+import HeaderCake from 'client/components/header-cake';
+import CountedTextarea from 'client/components/forms/counted-textarea';
+import { createInviteValidation } from 'client/lib/invites/actions';
+import InvitesCreateValidationStore from 'client/lib/invites/stores/invites-create-validation';
+import InvitesSentStore from 'client/lib/invites/stores/invites-sent';
+import analytics from 'client/lib/analytics';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import EmptyContent from 'client/components/empty-content';
+import { userCan } from 'client/lib/site/utils';
+import EmailVerificationGate from 'client/components/email-verification/email-verification-gate';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import FeatureExample from 'client/components/feature-example';
+import versionCompare from 'client/lib/version-compare';
+import { isCurrentUserEmailVerified } from 'client/state/current-user/selectors';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { activateModule } from 'client/state/jetpack/modules/actions';
+import { isActivatingJetpackModule, isJetpackModuleActive } from 'client/state/selectors';
+import isSiteAutomatedTransfer from 'client/state/selectors/is-site-automated-transfer';
 
 /**
  * Module variables

@@ -11,9 +11,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { isExternal } from 'lib/url';
-import wpcom from 'lib/wp';
-import wporg from 'lib/wporg';
+import { isExternal } from 'client/lib/url';
+import wpcom from 'client/lib/wp';
+import wporg from 'client/lib/wporg';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -49,8 +49,8 @@ import {
 	THEMES_REQUEST_FAILURE,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
-} from 'state/action-types';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+} from 'client/state/action-types';
+import { recordTracksEvent, withAnalytics } from 'client/state/analytics/actions';
 import {
 	getTheme,
 	getActiveTheme,
@@ -68,10 +68,10 @@ import {
 	normalizeWpcomTheme,
 	normalizeWporgTheme,
 } from './utils';
-import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
-import { isSiteAutomatedTransfer, prependThemeFilterKeys } from 'state/selectors';
+import { getSiteTitle, isJetpackSite } from 'client/state/sites/selectors';
+import { isSiteAutomatedTransfer, prependThemeFilterKeys } from 'client/state/selectors';
 import i18n from 'i18n-calypso';
-import accept from 'lib/accept';
+import accept from 'client/lib/accept';
 
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 

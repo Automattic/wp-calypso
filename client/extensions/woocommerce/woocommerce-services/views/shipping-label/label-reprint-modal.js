@@ -10,12 +10,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
-import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import { closeReprintDialog, confirmReprint, updatePaperSize } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import { isLoaded, getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import Dialog from 'client/components/dialog';
+import Dropdown from 'client/extensions/woocommerce/woocommerce-services/components/dropdown';
+import { getPaperSizes } from 'client/extensions/woocommerce/woocommerce-services/lib/pdf-label-utils';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import { closeReprintDialog, confirmReprint, updatePaperSize } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
+import { isLoaded, getShippingLabel } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const ReprintDialog = ( props ) => {
 	const { orderId, siteId, reprintDialog, paperSize, storeOptions, labelId, translate } = props;

@@ -9,7 +9,7 @@ import { get, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { findThemeFilterTerm, getThemeFilterTerm } from 'state/selectors';
+import { findThemeFilterTerm, getThemeFilterTerm } from 'client/state/selectors';
 
 export default function getThemeShowcaseDescription( state, { filter, tier, vertical } = {} ) {
 	if ( vertical ) {

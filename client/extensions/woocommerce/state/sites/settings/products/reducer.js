@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { createReducer } from 'state/utils';
-import { ERROR, LOADING } from 'woocommerce/state/constants';
+import { createReducer } from 'client/state/utils';
+import { ERROR, LOADING } from 'client/extensions/woocommerce/state/constants';
 import { updateSettings } from '../helpers';
 import {
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
@@ -13,7 +13,7 @@ import {
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_FAILURE,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST ]: () => {

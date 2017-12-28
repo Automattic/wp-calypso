@@ -14,9 +14,9 @@ import { localize } from 'i18n-calypso';
  */
 import Item from './item';
 import config from 'config';
-import { login } from 'lib/paths';
-import WordPressWordmark from 'components/wordpress-wordmark';
-import WordPressLogo from 'components/wordpress-logo';
+import { login } from 'client/lib/paths';
+import WordPressWordmark from 'client/components/wordpress-wordmark';
+import WordPressLogo from 'client/components/wordpress-logo';
 
 function getLoginUrl( redirectUri ) {
 	const params = {};

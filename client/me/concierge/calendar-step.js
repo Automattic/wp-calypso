@@ -12,17 +12,17 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import CalendarCard from './calendar-card';
-import CompactCard from 'components/card/compact';
-import HeaderCake from 'components/header-cake';
-import { getConciergeSignupForm } from 'state/selectors';
-import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
-import { bookConciergeAppointment } from 'state/concierge/actions';
+import CompactCard from 'client/components/card/compact';
+import HeaderCake from 'client/components/header-cake';
+import { getConciergeSignupForm } from 'client/state/selectors';
+import { getCurrentUserId, getCurrentUserLocale } from 'client/state/current-user/selectors';
+import { bookConciergeAppointment } from 'client/state/concierge/actions';
 import {
 	CONCIERGE_STATUS_BOOKING,
 	CONCIERGE_STATUS_BOOKED,
 	WPCOM_CONCIERGE_SCHEDULE_ID,
 } from './constants';
-import { isDefaultLocale } from 'lib/i18n-utils';
+import { isDefaultLocale } from 'client/lib/i18n-utils';
 
 const NUMBER_OF_DAYS_TO_SHOW = 7;
 

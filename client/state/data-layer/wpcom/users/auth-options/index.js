@@ -8,15 +8,15 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
-} from 'state/action-types';
-import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
+} from 'client/state/action-types';
+import { noRetry } from 'client/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'client/state/analytics/actions';
 
 export const getAuthAccountType = ( { dispatch }, action ) => {
 	const { usernameOrEmail } = action;

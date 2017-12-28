@@ -12,17 +12,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import Card from 'client/components/card';
+import JetpackModuleToggle from 'client/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode,
-} from 'state/selectors';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+} from 'client/state/selectors';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
+import QueryJetpackConnection from 'client/components/data/query-jetpack-connection';
 
 const Masterbar = ( {
 	isRequestingSettings,

@@ -7,11 +7,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { navigation, siteSelection, sites } from 'client/my-sites/controller';
 import config from 'config';
 import pluginsController from './controller';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { makeLayout, render as clientRender } from 'controller';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default function() {
 	if ( config.isEnabled( 'manage/plugins/setup' ) ) {

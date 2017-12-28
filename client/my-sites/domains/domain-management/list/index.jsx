@@ -15,17 +15,17 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
+import DomainWarnings from 'client/my-sites/domains/components/domain-warnings';
 import DomainOnly from './domain-only';
 import ListItem from './item';
 import ListItemPlaceholder from './item-placeholder';
-import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
-import SectionHeader from 'components/section-header';
-import Button from 'components/button';
-import UpgradesNavigation from 'my-sites/domains/navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
+import Main from 'client/components/main';
+import paths from 'client/my-sites/domains/paths';
+import SectionHeader from 'client/components/section-header';
+import Button from 'client/components/button';
+import UpgradesNavigation from 'client/my-sites/domains/navigation';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import { setPrimaryDomain } from 'client/lib/upgrades/actions/domain-management';
 import DomainListNotice from './domain-list-notice';
 import {
 	PRIMARY_DOMAIN_CHANGE_SUCCESS,
@@ -33,15 +33,19 @@ import {
 	PRIMARY_DOMAIN_REVERT_FAIL,
 	PRIMARY_DOMAIN_REVERT_SUCCESS,
 } from './constants';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { hasDomainCredit } from 'state/sites/plans/selectors';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { isDomainOnlySite } from 'state/selectors';
-import { isPlanFeaturesEnabled } from 'lib/plans';
-import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
-import { type } from 'lib/domains/constants';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import { hasDomainCredit } from 'client/state/sites/plans/selectors';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import { isDomainOnlySite } from 'client/state/selectors';
+import { isPlanFeaturesEnabled } from 'client/lib/plans';
+import DomainToPlanNudge from 'client/blocks/domain-to-plan-nudge';
+import { type } from 'client/lib/domains/constants';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'client/state/analytics/actions';
 
 export class List extends React.Component {
 	static defaultProps = {

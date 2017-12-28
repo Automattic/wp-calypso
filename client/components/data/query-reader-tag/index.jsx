@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestTags } from 'state/reader/tags/items/actions';
+import { requestTags } from 'client/state/reader/tags/items/actions';
 
 /**
  *  QueryReaderTag takes 1 parameter (the tag ) and will fetch it

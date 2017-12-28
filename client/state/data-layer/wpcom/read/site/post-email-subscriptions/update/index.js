@@ -8,14 +8,14 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { updateNewPostEmailSubscription } from 'state/reader/follows/actions';
-import { errorNotice } from 'state/notices/actions';
-import { getReaderFollowForBlog } from 'state/selectors';
+import { READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { updateNewPostEmailSubscription } from 'client/state/reader/follows/actions';
+import { errorNotice } from 'client/state/notices/actions';
+import { getReaderFollowForBlog } from 'client/state/selectors';
 import { buildBody } from '../utils';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
 
 export function requestUpdatePostEmailSubscription( { dispatch, getState }, action ) {
 	const actionWithRevert = merge( {}, action, {

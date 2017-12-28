@@ -16,47 +16,47 @@ import createReactClass from 'create-react-class';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
-import analytics from 'lib/analytics';
-import { cartItems } from 'lib/cart-values';
-import { clearSitePlans } from 'state/sites/plans/actions';
-import { clearPurchases } from 'state/purchases/actions';
+import { abtest } from 'client/lib/abtest';
+import analytics from 'client/lib/analytics';
+import { cartItems } from 'client/lib/cart-values';
+import { clearSitePlans } from 'client/state/sites/plans/actions';
+import { clearPurchases } from 'client/state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
-import { domainMapping } from 'lib/cart-values/cart-items';
-import { fetchReceiptCompleted } from 'state/receipts/actions';
-import { getExitCheckoutUrl } from 'lib/checkout';
-import { hasDomainDetails } from 'lib/store-transactions';
-import notices from 'notices';
+import { domainMapping } from 'client/lib/cart-values/cart-items';
+import { fetchReceiptCompleted } from 'client/state/receipts/actions';
+import { getExitCheckoutUrl } from 'client/lib/checkout';
+import { hasDomainDetails } from 'client/lib/store-transactions';
+import notices from 'client/notices';
 /* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
+import observe from 'client/lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import purchasePaths from 'me/purchases/paths';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import QueryStoredCards from 'components/data/query-stored-cards';
-import QueryGeo from 'components/data/query-geo';
+import purchasePaths from 'client/me/purchases/paths';
+import QueryContactDetailsCache from 'client/components/data/query-contact-details-cache';
+import QueryStoredCards from 'client/components/data/query-stored-cards';
+import QueryGeo from 'client/components/data/query-geo';
 import SecurePaymentForm from './secure-payment-form';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
-import supportPaths from 'lib/url/support';
-import { themeItem } from 'lib/cart-values/cart-items';
+import supportPaths from 'client/lib/url/support';
+import { themeItem } from 'client/lib/cart-values/cart-items';
 import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_WPCOM_REQUEST,
-} from 'lib/store-transactions/step-types';
-import upgradesActions from 'lib/upgrades/actions';
-import { getContactDetailsCache, isEligibleForCheckoutToChecklist } from 'state/selectors';
-import { getStoredCards } from 'state/stored-cards/selectors';
-import { isValidFeatureKey, getUpgradePlanSlugFromPath } from 'lib/plans';
-import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
-import { recordViewCheckout } from 'lib/analytics/ad-tracking';
-import { recordApplePayStatus } from 'lib/apple-pay';
-import { requestSite } from 'state/sites/actions';
-import { isDomainOnlySite, getCurrentUserPaymentMethods } from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
-import { canAddGoogleApps } from 'lib/domains';
-import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
-import { fetchSitesAndUser } from 'lib/signup/step-actions';
-import { loadTrackingTool } from 'state/analytics/actions';
+} from 'client/lib/store-transactions/step-types';
+import upgradesActions from 'client/lib/upgrades/actions';
+import { getContactDetailsCache, isEligibleForCheckoutToChecklist } from 'client/state/selectors';
+import { getStoredCards } from 'client/state/stored-cards/selectors';
+import { isValidFeatureKey, getUpgradePlanSlugFromPath } from 'client/lib/plans';
+import { planItem as getCartItemForPlan } from 'client/lib/cart-values/cart-items';
+import { recordViewCheckout } from 'client/lib/analytics/ad-tracking';
+import { recordApplePayStatus } from 'client/lib/apple-pay';
+import { requestSite } from 'client/state/sites/actions';
+import { isDomainOnlySite, getCurrentUserPaymentMethods } from 'client/state/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { getCurrentUserCountryCode } from 'client/state/current-user/selectors';
+import { canAddGoogleApps } from 'client/lib/domains';
+import { getDomainNameFromReceiptOrCart } from 'client/lib/domains/utils';
+import { fetchSitesAndUser } from 'client/lib/signup/step-actions';
+import { loadTrackingTool } from 'client/state/analytics/actions';
 
 const Checkout = createReactClass( {
 	displayName: 'Checkout',

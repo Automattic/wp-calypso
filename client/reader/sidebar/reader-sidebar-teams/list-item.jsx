@@ -10,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
 
 const handleReaderSidebarTeamsListItemClicked = team => () => {
 	recordAction( 'clicked_reader_sidebar_teams_list_item' );

@@ -4,9 +4,9 @@
  * Internal dependencies
  */
 
-import { CONNECTION_LOST, CONNECTION_RESTORED } from 'state/action-types';
+import { CONNECTION_LOST, CONNECTION_RESTORED } from 'client/state/action-types';
 
-import { warningNotice, successNotice, removeNotice } from 'state/notices/actions';
+import { warningNotice, successNotice, removeNotice } from 'client/state/notices/actions';
 
 export function connectionLost( noticeText ) {
 	return dispatch => {

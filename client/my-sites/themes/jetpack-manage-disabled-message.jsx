@@ -12,12 +12,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import ThemesList from 'components/themes-list';
-import { getSiteAdminUrl } from 'state/sites/selectors';
+import analytics from 'client/lib/analytics';
+import Main from 'client/components/main';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import JetpackManageErrorPage from 'client/my-sites/jetpack-manage-error-page';
+import ThemesList from 'client/components/themes-list';
+import { getSiteAdminUrl } from 'client/state/sites/selectors';
 
 class JetpackManageDisabledMessage extends Component {
 	clickOnActivate = () => {

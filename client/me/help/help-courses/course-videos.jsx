@@ -11,7 +11,7 @@ import React from 'react';
  */
 import { localize } from 'i18n-calypso';
 import CourseVideo from './course-video';
-import Card from 'components/card';
+import Card from 'client/components/card';
 
 export default localize( props => {
 	const { videos, translate } = props;

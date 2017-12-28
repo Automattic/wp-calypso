@@ -6,12 +6,12 @@
 
 import tinymce from 'tinymce/tinymce';
 import closest from 'component-closest';
-import userModule from 'lib/user';
+import userModule from 'client/lib/user';
 
 /**
  * Internal dependencies
  */
-import { recordTinyMCEButtonClick } from 'lib/posts/stats';
+import { recordTinyMCEButtonClick } from 'client/lib/posts/stats';
 
 /**
  * Module variables

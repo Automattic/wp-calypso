@@ -9,8 +9,8 @@ import { startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import viewport from 'lib/viewport';
-import scrollTo from 'lib/scroll-to';
+import viewport from 'client/lib/viewport';
+import scrollTo from 'client/lib/scroll-to';
 
 const DIALOG_WIDTH = 410;
 const DIALOG_HEIGHT = 150;

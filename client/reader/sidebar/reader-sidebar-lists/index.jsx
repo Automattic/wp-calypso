@@ -12,8 +12,8 @@ import React, { Component } from 'react';
  */
 import ExpandableSidebarMenu from '../expandable';
 import ReaderSidebarListsList from './list';
-import ReaderListsActions from 'lib/reader-lists/actions';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import ReaderListsActions from 'client/lib/reader-lists/actions';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
 
 export class ReaderSidebarLists extends Component {
 	static propTypes = {

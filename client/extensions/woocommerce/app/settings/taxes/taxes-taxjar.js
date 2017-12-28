@@ -12,11 +12,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import Card from 'components/card';
-import ExternalLink from 'components/external-link';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import Main from 'components/main';
+import ActionHeader from 'client/extensions/woocommerce/components/action-header';
+import Card from 'client/components/card';
+import ExternalLink from 'client/components/external-link';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import Main from 'client/components/main';
 import SettingsNavigation from '../navigation';
 
 class SettingsTaxesTaxJar extends Component {

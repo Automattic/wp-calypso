@@ -12,9 +12,9 @@ import {
 	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETUP_CHOICES_REQUEST,
 	WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import { LOADING } from 'woocommerce/state/constants';
-import reducer from 'woocommerce/state/sites/reducer';
+} from 'client/extensions/woocommerce/state/action-types';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
+import reducer from 'client/extensions/woocommerce/state/sites/reducer';
 
 describe( 'reducers', () => {
 	describe( '#WOOCOMMERCE_SETUP_CHOICES_REQUEST', () => {

@@ -6,17 +6,17 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { cartItems } from 'lib/cart-values';
-import upgradesActions from 'lib/upgrades/actions';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import { cartItems } from 'client/lib/cart-values';
+import upgradesActions from 'client/lib/upgrades/actions';
 import page from 'page';
 
 const redirectToCart = siteSlug => () => {

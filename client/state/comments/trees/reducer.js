@@ -12,8 +12,8 @@ import {
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
 	COMMENTS_TREE_SITE_ADD,
-} from 'state/action-types';
-import { keyedReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { keyedReducer } from 'client/state/utils';
 
 const convertToTree = comments =>
 	map( reject( comments, ( { ID } ) => ! parseInt( ID, 10 ) ), comment => ( {

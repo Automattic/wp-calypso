@@ -13,7 +13,7 @@ import React from 'react';
  * Internal dependencies
  */
 import JetpackConnectMainWrapper from '../main-wrapper';
-import Main from 'components/main';
+import Main from 'client/components/main';
 
 describe( 'JetpackConnectMainWrapper', () => {
 	test( 'should render a <Main> instance', () => {

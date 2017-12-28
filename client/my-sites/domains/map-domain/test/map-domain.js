@@ -15,9 +15,9 @@ import React from 'react';
  * Internal dependencies
  */
 import { MapDomain } from '..';
-import MapDomainStep from 'components/domains/map-domain-step';
-import HeaderCake from 'components/header-cake';
-import paths from 'my-sites/domains/paths';
+import MapDomainStep from 'client/components/domains/map-domain-step';
+import HeaderCake from 'client/components/header-cake';
+import paths from 'client/my-sites/domains/paths';
 
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => {

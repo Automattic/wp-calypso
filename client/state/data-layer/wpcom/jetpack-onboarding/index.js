@@ -9,10 +9,10 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { JETPACK_ONBOARDING_SETTINGS_SAVE } from 'state/action-types';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'client/state/notices/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { JETPACK_ONBOARDING_SETTINGS_SAVE } from 'client/state/action-types';
 
 /**
  * Dispatches a request to save particular onboarding settings on a site

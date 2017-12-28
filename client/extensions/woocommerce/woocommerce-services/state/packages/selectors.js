@@ -8,8 +8,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 export const getPackagesForm = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(

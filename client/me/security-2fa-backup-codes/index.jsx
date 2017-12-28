@@ -10,14 +10,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import Notice from 'components/notice';
-import SectionHeader from 'components/section-header';
-import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
-import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import Notice from 'client/components/notice';
+import SectionHeader from 'client/components/section-header';
+import Security2faBackupCodesList from 'client/me/security-2fa-backup-codes-list';
+import Security2faBackupCodesPrompt from 'client/me/security-2fa-backup-codes-prompt';
+import twoStepAuthorization from 'client/lib/two-step-authorization';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 class Security2faBackupCodes extends React.Component {
 	constructor( props ) {

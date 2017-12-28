@@ -13,14 +13,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import ExtendedHeader from 'woocommerce/components/extended-header';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import ExtendedHeader from 'client/extensions/woocommerce/components/extended-header';
 import PackageDialog from './package-dialog';
 import PackagesListItem from './packages-list-item';
-import QueryPackages from 'woocommerce/woocommerce-services/components/query-packages';
+import QueryPackages from 'client/extensions/woocommerce/woocommerce-services/components/query-packages';
 import * as PackagesActions from '../../state/packages/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	getPackagesForm,
 	getAllSelectedPackages,

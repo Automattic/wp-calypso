@@ -17,7 +17,7 @@ import {
 	fetchProduct,
 	fetchProducts,
 	productsUpdated,
-} from 'woocommerce/state/sites/products/actions';
+} from 'client/extensions/woocommerce/state/sites/products/actions';
 import {
 	apiError,
 	handleProductCreate,
@@ -26,12 +26,12 @@ import {
 	productsRequest,
 	receivedProducts,
 } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import {
 	WOOCOMMERCE_API_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	describe( '#handleProductCreate', () => {

@@ -13,7 +13,7 @@ import {
 	READER_UNFOLLOW_TAG_REQUEST,
 	READER_UNFOLLOW_TAG_RECEIVE,
 	READER_FOLLOW_TAG_REQUEST,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Helper function. Turns a tag name into a tag "slug" for use with the API.

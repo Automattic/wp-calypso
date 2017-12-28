@@ -13,12 +13,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
-import DomainTransferFlag from 'my-sites/domains/domain-management/components/domain/transfer-flag';
-import Notice from 'components/notice';
-import { type as domainTypes } from 'lib/domains/constants';
-import Spinner from 'components/spinner';
+import CompactCard from 'client/components/card/compact';
+import DomainPrimaryFlag from 'client/my-sites/domains/domain-management/components/domain/primary-flag';
+import DomainTransferFlag from 'client/my-sites/domains/domain-management/components/domain/transfer-flag';
+import Notice from 'client/components/notice';
+import { type as domainTypes } from 'client/lib/domains/constants';
+import Spinner from 'client/components/spinner';
 
 class ListItem extends React.PureComponent {
 	static propTypes = {

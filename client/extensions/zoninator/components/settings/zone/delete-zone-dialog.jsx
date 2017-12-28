@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Dialog from 'components/dialog';
+import Button from 'client/components/button';
+import Dialog from 'client/components/dialog';
 
 const DeleteZoneDialog = ( { onCancel, onConfirm, translate, zoneName } ) => {
 	const buttons = [

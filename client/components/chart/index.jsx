@@ -13,7 +13,7 @@ import { some, noop, throttle } from 'lodash';
  * Internal dependencies
  */
 import BarContainer from './bar-container';
-import touchDetect from 'lib/touch-detect';
+import touchDetect from 'client/lib/touch-detect';
 
 class ModuleChartExport extends React.Component {
 	state = {

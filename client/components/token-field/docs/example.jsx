@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import TokenField from 'components/token-field';
-import Card from 'components/card';
+import TokenField from 'client/components/token-field';
+import Card from 'client/components/card';
 
 /**
  * Module variables

@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteSettings } from 'state/site-settings/selectors';
+import { getSiteSettings } from 'client/state/site-settings/selectors';
 
 /**
  * Returns a specific setting for the specified site ID

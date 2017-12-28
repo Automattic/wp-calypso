@@ -9,8 +9,8 @@ import { lowerCase, upperCase } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { getGeoCountryShort } from 'state/geo/selectors';
+import { getCurrentUserLocale } from 'client/state/current-user/selectors';
+import { getGeoCountryShort } from 'client/state/geo/selectors';
 
 /**
  * Constants

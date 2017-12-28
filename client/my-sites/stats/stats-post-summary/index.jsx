@@ -14,11 +14,11 @@ import { findIndex, findLastIndex, flatten, flowRight, get, range } from 'lodash
  * Internal dependencies
  */
 import SummaryChart from '../stats-summary';
-import SectionNav from 'components/section-nav';
-import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
-import QueryPostStats from 'components/data/query-post-stats';
-import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
+import SectionNav from 'client/components/section-nav';
+import SegmentedControl from 'client/components/segmented-control';
+import ControlItem from 'client/components/segmented-control/item';
+import QueryPostStats from 'client/components/data/query-post-stats';
+import { getPostStats, isRequestingPostStats } from 'client/state/stats/posts/selectors';
 
 class StatsPostSummary extends Component {
 	static propTypes = {

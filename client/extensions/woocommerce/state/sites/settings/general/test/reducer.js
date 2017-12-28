@@ -12,9 +12,9 @@ import {
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 	WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
-} from 'woocommerce/state/action-types';
-import { ERROR, LOADING } from 'woocommerce/state/constants';
-import reducer from 'woocommerce/state/sites/reducer';
+} from 'client/extensions/woocommerce/state/action-types';
+import { ERROR, LOADING } from 'client/extensions/woocommerce/state/constants';
+import reducer from 'client/extensions/woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	describe( 'generalRequest', () => {

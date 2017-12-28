@@ -10,9 +10,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { PLAN_FREE } from 'lib/plans/constants';
-import { getSite } from 'state/sites/selectors';
-import SignupActions from 'lib/signup/actions';
+import { PLAN_FREE } from 'client/lib/plans/constants';
+import { getSite } from 'client/state/sites/selectors';
+import SignupActions from 'client/lib/signup/actions';
 
 class SitePickerSubmit extends React.Component {
 	componentWillMount() {

@@ -12,21 +12,21 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import { PLAN_PERSONAL, FEATURE_NO_ADS } from 'lib/plans/constants';
-import { getPlan } from 'lib/plans';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import Banner from 'client/components/banner';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSite } from 'client/state/sites/selectors';
+import { PLAN_PERSONAL, FEATURE_NO_ADS } from 'client/lib/plans/constants';
+import { getPlan } from 'client/lib/plans';
+import { getCurrentUserCurrencyCode } from 'client/state/current-user/selectors';
 import {
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
 	getPlanRawDiscount,
 	getPlansBySiteId,
-} from 'state/sites/plans/selectors';
-import QuerySitePlans from 'components/data/query-site-plans';
-import formatCurrency from 'lib/format-currency';
-import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
+} from 'client/state/sites/plans/selectors';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import formatCurrency from 'client/lib/format-currency';
+import { isEligibleForDomainToPaidPlanUpsell } from 'client/state/selectors';
 
 class DomainToPlanNudge extends Component {
 	static propTypes = {

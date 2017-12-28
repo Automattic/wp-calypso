@@ -12,13 +12,13 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { localize, translate } from 'i18n-calypso';
-import Card from 'components/card';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import SectionNav from 'components/section-nav';
-import SectionHeader from 'components/section-header';
-import analytics from 'lib/analytics';
-import cartValues from 'lib/cart-values';
+import Card from 'client/components/card';
+import NavItem from 'client/components/section-nav/item';
+import NavTabs from 'client/components/section-nav/tabs';
+import SectionNav from 'client/components/section-nav';
+import SectionHeader from 'client/components/section-header';
+import analytics from 'client/lib/analytics';
+import cartValues from 'client/lib/cart-values';
 
 export class PaymentBox extends PureComponent {
 	constructor() {

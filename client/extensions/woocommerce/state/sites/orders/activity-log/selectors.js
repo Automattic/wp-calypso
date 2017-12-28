@@ -1,15 +1,10 @@
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import { areOrderNotesLoaded, areOrderNotesLoading, getOrderNotes } from '../notes/selectors';
-import {
-	isError as areShippingLabelsErrored,
-	isLoaded as areShippingLabelsLoaded,
-	isFetching as areShippingLabelsLoading,
-	getLabels,
-} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import * as plugins from 'woocommerce/state/selectors/plugins';
+import { isError as areShippingLabelsErrored, isLoaded as areShippingLabelsLoaded, isFetching as areShippingLabelsLoading, getLabels } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
+import * as plugins from 'client/extensions/woocommerce/state/selectors/plugins';
 
 /*
  * Enum with the types of events that can be displayed in the Order Activity Log

@@ -12,8 +12,8 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getContactDetailsCache, isRequestingContactDetailsCache } from 'state/selectors';
-import { requestContactDetailsCache } from 'state/domains/management/actions';
+import { getContactDetailsCache, isRequestingContactDetailsCache } from 'client/state/selectors';
+import { requestContactDetailsCache } from 'client/state/domains/management/actions';
 
 class QueryContactDetailsCache extends Component {
 	componentWillMount() {

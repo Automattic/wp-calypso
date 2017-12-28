@@ -14,20 +14,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import { getSectionName } from 'state/ui/selectors';
-import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
-import { isNotificationsOpen } from 'state/selectors';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import { getSectionName } from 'client/state/ui/selectors';
+import { getPreference, isFetchingPreferences } from 'client/state/preferences/selectors';
+import { isNotificationsOpen } from 'client/state/selectors';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { savePreference } from 'state/preferences/actions';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'client/state/analytics/actions';
+import { savePreference } from 'client/state/preferences/actions';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import { get, identity, includes, noop } from 'lodash';
 import {
 	ALLOWED_SECTIONS,
@@ -41,7 +41,7 @@ import {
 	isDismissed,
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
 } from './utils';
-import versionCompare from 'lib/version-compare';
+import versionCompare from 'client/lib/version-compare';
 
 const IOS_REGEX = /iPad|iPod|iPhone/i;
 const ANDROID_REGEX = /Android (\d+(\.\d+)?(\.\d+)?)/i;

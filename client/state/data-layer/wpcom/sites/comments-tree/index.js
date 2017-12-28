@@ -10,12 +10,12 @@ import { flatMap, flatten, isArray, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { COMMENTS_TREE_SITE_ADD, COMMENTS_TREE_SITE_REQUEST } from 'state/action-types';
-import { mergeHandlers } from 'state/action-watchers/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
-import { getRawSite } from 'state/sites/selectors';
+import { COMMENTS_TREE_SITE_ADD, COMMENTS_TREE_SITE_REQUEST } from 'client/state/action-types';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'client/state/notices/actions';
+import { getRawSite } from 'client/state/sites/selectors';
 
 export const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 	const { siteId, status = 'unapproved' } = action.query;

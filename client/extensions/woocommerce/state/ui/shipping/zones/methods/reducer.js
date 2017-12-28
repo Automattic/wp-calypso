@@ -9,7 +9,7 @@ import { find, findIndex, isEmpty, isEqual, isNil, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN,
@@ -22,8 +22,8 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED,
-} from 'woocommerce/state/action-types';
-import { getBucket } from 'woocommerce/state/ui/helpers';
+} from 'client/extensions/woocommerce/state/action-types';
+import { getBucket } from 'client/extensions/woocommerce/state/ui/helpers';
 import flatRate from './flat-rate/reducer';
 import freeShipping from './free-shipping/reducer';
 import localPickup from './local-pickup/reducer';

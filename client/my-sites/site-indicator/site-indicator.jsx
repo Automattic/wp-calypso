@@ -15,21 +15,21 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Animate from 'components/animate';
-import ProgressIndicator from 'components/progress-indicator';
-import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
-import analytics from 'lib/analytics';
-import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
-import { canCurrentUser } from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getUpdatesBySiteId } from 'state/sites/updates/selectors';
-import { updateWordPress } from 'state/sites/updates/actions';
+import Animate from 'client/components/animate';
+import ProgressIndicator from 'client/components/progress-indicator';
+import DisconnectJetpackButton from 'client/my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
+import analytics from 'client/lib/analytics';
+import QuerySiteConnectionStatus from 'client/components/data/query-site-connection-status';
+import { canCurrentUser } from 'client/state/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { getUpdatesBySiteId } from 'client/state/sites/updates/selectors';
+import { updateWordPress } from 'client/state/sites/updates/actions';
 import {
 	getSiteConnectionStatus,
 	isRequestingSiteConnectionStatus,
 	isSiteAutomatedTransfer,
 	isWordpressUpdateSuccessful,
-} from 'state/selectors';
+} from 'client/state/selectors';
 
 class SiteIndicator extends Component {
 	static propTypes = {

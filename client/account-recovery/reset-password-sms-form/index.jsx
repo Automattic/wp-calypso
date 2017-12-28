@@ -11,23 +11,23 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import FormTextInput from 'components/forms/form-text-input';
-import FormButton from 'components/forms/form-button';
-import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormButton from 'client/components/forms/form-button';
+import ErrorMessage from 'client/account-recovery/components/account-recovery-error-message';
 import {
 	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetSelectedMethod,
 	getAccountRecoveryValidationError,
 	isValidatingAccountRecoveryKey,
-} from 'state/selectors';
+} from 'client/state/selectors';
 
 import {
 	setValidationKey,
 	validateRequest,
 	clearResetMethod,
-} from 'state/account-recovery/reset/actions';
+} from 'client/state/account-recovery/reset/actions';
 
 class ResetPasswordSmsForm extends Component {
 	constructor( props ) {

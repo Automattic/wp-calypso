@@ -8,8 +8,8 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import { action as ActionTypes } from 'lib/invites/constants';
+import Dispatcher from 'client/dispatcher';
+import { action as ActionTypes } from 'client/lib/invites/constants';
 
 describe( 'List Invites Store', () => {
 	let ListInvitesStore;

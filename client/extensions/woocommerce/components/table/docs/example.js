@@ -9,12 +9,12 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
-import TableItem from 'woocommerce/components/table/table-item';
+import Button from 'client/components/button';
+import Table from 'client/extensions/woocommerce/components/table';
+import TableRow from 'client/extensions/woocommerce/components/table/table-row';
+import TableItem from 'client/extensions/woocommerce/components/table/table-item';
 import Gridicon from 'gridicons';
-import FormInputCheckbox from 'components/forms/form-checkbox';
+import FormInputCheckbox from 'client/components/forms/form-checkbox';
 
 class Example extends Component {
 	state = {

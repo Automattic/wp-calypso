@@ -13,30 +13,34 @@ import { includes, uniq } from 'lodash';
 /**
  * Internal dependencies
  */
-import PluginSiteList from 'my-sites/plugins/plugin-site-list';
-import HeaderCake from 'components/header-cake';
-import PluginMeta from 'my-sites/plugins/plugin-meta';
-import PluginsStore from 'lib/plugins/store';
-import PluginsLog from 'lib/plugins/log-store';
-import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
-import PluginsActions from 'lib/plugins/actions';
-import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
-import PluginNotices from 'lib/plugins/notices';
-import MainComponent from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import PluginSections from 'my-sites/plugins/plugin-sections';
-import PluginSectionsCustom from 'my-sites/plugins/plugin-sections/custom';
-import DocumentHead from 'components/data/document-head';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { canJetpackSiteManage, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
+import PluginSiteList from 'client/my-sites/plugins/plugin-site-list';
+import HeaderCake from 'client/components/header-cake';
+import PluginMeta from 'client/my-sites/plugins/plugin-meta';
+import PluginsStore from 'client/lib/plugins/store';
+import PluginsLog from 'client/lib/plugins/log-store';
+import WporgPluginsSelectors from 'client/state/plugins/wporg/selectors';
+import PluginsActions from 'client/lib/plugins/actions';
+import { fetchPluginData as wporgFetchPluginData } from 'client/state/plugins/wporg/actions';
+import PluginNotices from 'client/lib/plugins/notices';
+import MainComponent from 'client/components/main';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import JetpackManageErrorPage from 'client/my-sites/jetpack-manage-error-page';
+import PluginSections from 'client/my-sites/plugins/plugin-sections';
+import PluginSectionsCustom from 'client/my-sites/plugins/plugin-sections/custom';
+import DocumentHead from 'client/components/data/document-head';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import {
+	canJetpackSiteManage,
+	isJetpackSite,
+	isRequestingSites,
+} from 'client/state/sites/selectors';
 import {
 	canCurrentUser,
 	canCurrentUserManagePlugins,
 	getSelectedOrAllSitesWithPlugins,
 	isSiteAutomatedTransfer,
-} from 'state/selectors';
+} from 'client/state/selectors';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
 

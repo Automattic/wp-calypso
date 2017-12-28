@@ -14,13 +14,13 @@ import React, { Component } from 'react';
 /**
  * Internal Dependencies
  */
-import { abtest } from 'lib/abtest';
-import analytics from 'lib/analytics';
-import { applyTestFiltersToPlansList } from 'lib/plans';
-import Button from 'components/button';
-import Card from 'components/card';
-import { cartItems } from 'lib/cart-values';
-import CompactCard from 'components/card/compact';
+import { abtest } from 'client/lib/abtest';
+import analytics from 'client/lib/analytics';
+import { applyTestFiltersToPlansList } from 'client/lib/plans';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import { cartItems } from 'client/lib/cart-values';
+import CompactCard from 'client/components/card/compact';
 import config from 'config';
 import {
 	getName,
@@ -36,7 +36,7 @@ import {
 	isRenewing,
 	isSubscription,
 	purchaseType,
-} from 'lib/purchases';
+} from 'client/lib/purchases';
 import {
 	canEditPaymentDetails,
 	isDataLoading,
@@ -46,11 +46,17 @@ import {
 	goToList,
 	recordPageView,
 } from '../utils';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getCanonicalTheme } from 'state/themes/selectors';
-import { getSelectedSite as getSelectedSiteSelector, getSelectedSiteId } from 'state/ui/selectors';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+} from 'client/state/purchases/selectors';
+import { getCanonicalTheme } from 'client/state/themes/selectors';
+import {
+	getSelectedSite as getSelectedSiteSelector,
+	getSelectedSiteId,
+} from 'client/state/ui/selectors';
 import Gridicon from 'gridicons';
-import HeaderCake from 'components/header-cake';
+import HeaderCake from 'client/components/header-cake';
 import {
 	isPersonal,
 	isPremium,
@@ -61,25 +67,25 @@ import {
 	isDomainMapping,
 	isDomainTransfer,
 	isTheme,
-} from 'lib/products-values';
-import { isRequestingSites } from 'state/sites/selectors';
-import Main from 'components/main';
-import PlanIcon from 'components/plans/plan-icon';
-import PlanPrice from 'my-sites/plan-price';
-import ProductLink from 'me/purchases/product-link';
+} from 'client/lib/products-values';
+import { isRequestingSites } from 'client/state/sites/selectors';
+import Main from 'client/components/main';
+import PlanIcon from 'client/components/plans/plan-icon';
+import PlanPrice from 'client/my-sites/plan-price';
+import ProductLink from 'client/me/purchases/product-link';
 import PurchaseMeta from './purchase-meta';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseSiteHeader from '../purchases-site/header';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-import QueryUserPurchases from 'components/data/query-user-purchases';
+import QueryCanonicalTheme from 'client/components/data/query-canonical-theme';
+import QueryUserPurchases from 'client/components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
-import VerticalNavItem from 'components/vertical-nav/item';
+import VerticalNavItem from 'client/components/vertical-nav/item';
 import paths from '../paths';
-import support from 'lib/url/support';
-import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
-import * as upgradesActions from 'lib/upgrades/actions';
+import support from 'client/lib/url/support';
+import titles from 'client/me/purchases/titles';
+import userFactory from 'client/lib/user';
+import * as upgradesActions from 'client/lib/upgrades/actions';
 
 const user = userFactory();
 

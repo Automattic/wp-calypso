@@ -18,18 +18,18 @@ import PropTypes from 'prop-types';
 import {
 	clearError,
 	oauthConnect,
-} from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import Dialog from 'components/dialog';
+} from 'client/extensions/woocommerce/state/sites/settings/stripe-connect-account/actions';
+import Dialog from 'client/components/dialog';
 import {
 	getError,
 	getIsOAuthConnecting,
 	getIsRequesting,
 	getStripeConnectAccount,
-} from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Notice from 'components/notice';
-import ProgressBar from 'components/progress-bar';
+} from 'client/extensions/woocommerce/state/sites/settings/stripe-connect-account/selectors';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import Notice from 'client/components/notice';
+import ProgressBar from 'client/components/progress-bar';
 
 class PaymentMethodStripeCompleteOAuthDialog extends Component {
 	static propTypes = {

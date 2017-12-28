@@ -13,15 +13,15 @@ import { identity, isEmpty, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
-import StepWrapper from 'signup/step-wrapper';
-import SignupForm from 'components/signup-form';
-import signupUtils from 'signup/utils';
-import SignupActions from 'lib/signup/actions';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import support from 'lib/url/support';
+import { isWooOAuth2Client } from 'client/lib/oauth2-clients';
+import StepWrapper from 'client/signup/step-wrapper';
+import SignupForm from 'client/components/signup-form';
+import signupUtils from 'client/signup/utils';
+import SignupActions from 'client/lib/signup/actions';
+import { getCurrentOAuth2Client } from 'client/state/ui/oauth2-clients/selectors';
+import { getSuggestedUsername } from 'client/state/signup/optional-dependencies/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import support from 'client/lib/url/support';
 import config from 'config';
 
 function getSocialServiceFromClientId( clientId ) {

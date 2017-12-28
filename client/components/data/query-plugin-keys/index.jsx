@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchInstallInstructions } from 'state/plugins/premium/actions';
-import { hasRequested } from 'state/plugins/premium/selectors';
+import { fetchInstallInstructions } from 'client/state/plugins/premium/actions';
+import { hasRequested } from 'client/state/plugins/premium/selectors';
 
 class QueryPluginKeys extends Component {
 	componentWillMount() {

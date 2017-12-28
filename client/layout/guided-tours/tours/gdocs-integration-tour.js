@@ -17,9 +17,9 @@ import {
 	ButtonRow,
 	LinkQuit,
 	Quit,
-} from 'layout/guided-tours/config-elements';
-import { hasUserPastedFromGoogleDocs } from 'state/ui/guided-tours/contexts';
-import analytics from 'lib/analytics';
+} from 'client/layout/guided-tours/config-elements';
+import { hasUserPastedFromGoogleDocs } from 'client/state/ui/guided-tours/contexts';
+import analytics from 'client/lib/analytics';
 
 const trackUserInterest = () => {
 	analytics.tracks.recordEvent( 'calypso_editor_gdocs_tour_success' );

@@ -15,18 +15,18 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import ImageEditorCrop from './image-editor-crop';
-import MediaUtils from 'lib/media/utils';
+import MediaUtils from 'client/lib/media/utils';
 import {
 	getImageEditorTransform,
 	getImageEditorFileInfo,
 	getImageEditorCrop,
 	isImageEditorImageLoaded,
-} from 'state/ui/editor/image-editor/selectors';
+} from 'client/state/ui/editor/image-editor/selectors';
 import {
 	setImageEditorCropBounds,
 	setImageEditorImageHasLoaded,
-} from 'state/ui/editor/image-editor/actions';
-import { getImageEditorIsGreaterThanMinimumDimensions } from 'state/selectors';
+} from 'client/state/ui/editor/image-editor/actions';
+import { getImageEditorIsGreaterThanMinimumDimensions } from 'client/state/selectors';
 
 export class ImageEditorCanvas extends Component {
 	static propTypes = {

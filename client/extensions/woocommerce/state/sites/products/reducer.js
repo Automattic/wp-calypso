@@ -9,7 +9,7 @@ import { difference, forEach, get, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import { getSerializedProductsQuery } from './utils';
 import {
 	WOOCOMMERCE_PRODUCT_DELETE_SUCCESS,
@@ -17,7 +17,7 @@ import {
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 	WOOCOMMERCE_PRODUCT_UPDATED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export default createReducer(
 	{},

@@ -14,7 +14,7 @@ import { noop } from 'lodash';
  */
 import siteData from './fixtures/site';
 import mockedWpcom from './mocks/wpcom';
-import actions from 'lib/plugins/actions';
+import actions from 'client/lib/plugins/actions';
 
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/wp', () => require( './mocks/wpcom' ) );

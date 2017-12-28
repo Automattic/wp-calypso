@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { combineReducers, createReducer, keyedReducer } from 'client/state/utils';
 import {
 	ZONINATOR_REQUEST_FEED,
 	ZONINATOR_REQUEST_FEED_ERROR,

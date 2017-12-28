@@ -12,11 +12,11 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import activeTests from 'lib/abtest/active-tests';
-import analytics from 'lib/analytics';
+import activeTests from 'client/lib/abtest/active-tests';
+import analytics from 'client/lib/analytics';
 import config from 'config';
-import userFactory from 'lib/user';
-import wpcom from 'lib/wp';
+import userFactory from 'client/lib/user';
+import wpcom from 'client/lib/wp';
 
 const debug = debugFactory( 'calypso:abtests' );
 const user = userFactory();

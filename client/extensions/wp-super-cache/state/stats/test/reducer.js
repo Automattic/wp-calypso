@@ -20,7 +20,7 @@ import {
 } from '../../action-types';
 import reducer from '../reducer';
 import { generating } from '../reducer';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { DESERIALIZE, SERIALIZE } from 'client/state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {

@@ -9,7 +9,7 @@ import React from 'react';
 /**
 * Internal dependencies
 */
-import InfoPopover from 'components/info-popover';
+import InfoPopover from 'client/components/info-popover';
 
 class InfoPopoverExample extends React.PureComponent {
 	static displayName = 'InfoPopover';

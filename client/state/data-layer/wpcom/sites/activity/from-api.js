@@ -7,8 +7,8 @@ import { get, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { parseBlock } from 'lib/notifications/note-block-parser';
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
+import { parseBlock } from 'client/lib/notifications/note-block-parser';
+import { makeParser } from 'client/state/data-layer/wpcom-http/utils';
 import apiResponseSchema from './schema';
 
 /**

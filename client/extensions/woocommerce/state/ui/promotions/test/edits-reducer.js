@@ -12,8 +12,8 @@ import reducer from '../edits-reducer';
 import {
 	WOOCOMMERCE_PROMOTION_EDIT,
 	WOOCOMMERCE_PROMOTION_EDIT_CLEAR,
-} from 'woocommerce/state/action-types';
-import { coupons1 } from 'woocommerce/state/sites/promotions/test/fixtures/promotions';
+} from 'client/extensions/woocommerce/state/action-types';
+import { coupons1 } from 'client/extensions/woocommerce/state/sites/promotions/test/fixtures/promotions';
 
 describe( 'edits-reducer', () => {
 	const siteId = 123;

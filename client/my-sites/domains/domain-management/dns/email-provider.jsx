@@ -12,14 +12,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import * as upgradesActions from 'lib/upgrades/actions';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormFooter from 'client/my-sites/domains/domain-management/components/form-footer';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { errorNotice, successNotice } from 'client/state/notices/actions';
+import * as upgradesActions from 'client/lib/upgrades/actions';
 
 class EmailProvider extends Component {
 	state = {

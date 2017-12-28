@@ -10,16 +10,16 @@ import { includes, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormToggle from 'components/forms/form-toggle/compact';
-import Notice from 'components/notice';
-import SectionHeader from 'components/section-header';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import ExternalLink from 'client/components/external-link';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormToggle from 'client/components/forms/form-toggle/compact';
+import Notice from 'client/components/notice';
+import SectionHeader from 'client/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
 const Caching = ( {

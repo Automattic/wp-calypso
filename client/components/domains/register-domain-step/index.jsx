@@ -28,27 +28,31 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import Notice from 'components/notice';
-import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
-import { domainAvailability } from 'lib/domains/constants';
-import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
-import SearchCard from 'components/search-card';
-import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
-import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
-import DomainSuggestion from 'components/domains/domain-suggestion';
-import DomainSearchResults from 'components/domains/domain-search-results';
-import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
-import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
+import wpcom from 'client/lib/wp';
+import Notice from 'client/components/notice';
+import { checkDomainAvailability, getFixedDomainSearch } from 'client/lib/domains';
+import { domainAvailability } from 'client/lib/domains/constants';
+import { getAvailabilityNotice } from 'client/lib/domains/registration/availability-messages';
+import SearchCard from 'client/components/search-card';
+import DomainRegistrationSuggestion from 'client/components/domains/domain-registration-suggestion';
+import DomainMappingSuggestion from 'client/components/domains/domain-mapping-suggestion';
+import DomainTransferSuggestion from 'client/components/domains/domain-transfer-suggestion';
+import DomainSuggestion from 'client/components/domains/domain-suggestion';
+import DomainSearchResults from 'client/components/domains/domain-search-results';
+import ExampleDomainSuggestions from 'client/components/domains/example-domain-suggestions';
+import { getCurrentUser, currentUserHasFlag } from 'client/state/current-user/selectors';
+import QueryContactDetailsCache from 'client/components/data/query-contact-details-cache';
+import QueryDomainsSuggestions from 'client/components/data/query-domains-suggestions';
 import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError,
-} from 'state/domains/suggestions/selectors';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { TRANSFER_IN } from 'state/current-user/constants';
+} from 'client/state/domains/suggestions/selectors';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'client/state/analytics/actions';
+import { TRANSFER_IN } from 'client/state/current-user/constants';
 
 const domains = wpcom.domains();
 

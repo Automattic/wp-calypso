@@ -29,19 +29,19 @@ import {
  * Internal dependencies
  */
 import NoResults from './no-results';
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import Search from './search';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'client/lib/formatting';
 import {
 	getPostsForQueryIgnoringPage,
 	isRequestingPostsForQueryIgnoringPage,
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
-} from 'state/posts/selectors';
-import { getPostTypes } from 'state/post-types/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import QueryPostTypes from 'components/data/query-post-types';
-import QueryPosts from 'components/data/query-posts';
+} from 'client/state/posts/selectors';
+import { getPostTypes } from 'client/state/post-types/selectors';
+import { isJetpackSite, isJetpackMinimumVersion } from 'client/state/sites/selectors';
+import QueryPostTypes from 'client/components/data/query-post-types';
+import QueryPosts from 'client/components/data/query-posts';
 
 /**
  * Constants

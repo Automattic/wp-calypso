@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import * as api from 'woocommerce/woocommerce-services/api';
+import * as api from 'client/extensions/woocommerce/woocommerce-services/api';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS,

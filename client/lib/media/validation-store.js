@@ -9,8 +9,8 @@ import { isEmpty, mapValues, pickBy, without } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import Dispatcher from 'client/dispatcher';
+import emitter from 'client/lib/mixins/emitter';
 import MediaUtils from './utils';
 import { ValidationErrors as MediaValidationErrors } from './constants';
 

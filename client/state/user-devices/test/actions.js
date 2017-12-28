@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { requestUserDevices, userDevicesAdd } from '../actions';
-import { USER_DEVICES_REQUEST, USER_DEVICES_ADD } from 'state/action-types';
+import { USER_DEVICES_REQUEST, USER_DEVICES_ADD } from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#requestUserDevices()', () => {

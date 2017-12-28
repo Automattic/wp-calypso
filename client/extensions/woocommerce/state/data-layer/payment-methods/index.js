@@ -4,9 +4,9 @@
  * Internal dependencies
  */
 
-import { put } from 'woocommerce/state/data-layer/request/actions';
-import { savePaymentMethodSuccess } from 'woocommerce/state/sites/payment-methods/actions';
-import { WOOCOMMERCE_PAYMENT_METHOD_UPDATE } from 'woocommerce/state/action-types';
+import { put } from 'client/extensions/woocommerce/state/data-layer/request/actions';
+import { savePaymentMethodSuccess } from 'client/extensions/woocommerce/state/sites/payment-methods/actions';
+import { WOOCOMMERCE_PAYMENT_METHOD_UPDATE } from 'client/extensions/woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_PAYMENT_METHOD_UPDATE ]: [

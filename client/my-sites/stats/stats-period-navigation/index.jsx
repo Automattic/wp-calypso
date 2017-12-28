@@ -15,8 +15,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { recordGoogleEvent as recordGoogleEventAction } from 'state/analytics/actions';
-import { isRtl as isRtlSelector } from 'state/selectors';
+import { recordGoogleEvent as recordGoogleEventAction } from 'client/state/analytics/actions';
+import { isRtl as isRtlSelector } from 'client/state/selectors';
 
 class StatsPeriodNavigation extends PureComponent {
 	static propTypes = {

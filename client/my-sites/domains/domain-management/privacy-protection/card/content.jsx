@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AddButton from './add-button';
-import support from 'lib/url/support';
+import support from 'client/lib/url/support';
 
 class Content extends React.PureComponent {
 	static propTypes = {

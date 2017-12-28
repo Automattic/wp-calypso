@@ -11,8 +11,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
+import { addLocaleToWpcomUrl, getLocaleSlug } from 'client/lib/i18n-utils';
+import { isWooOAuth2Client } from 'client/lib/oauth2-clients';
 
 const OauthClientMasterbar = ( { oauth2Client } ) => (
 	<header className="masterbar masterbar__oauth-client">

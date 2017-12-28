@@ -8,10 +8,10 @@ import {
 	ACCOUNT_RECOVERY_RESET_REQUEST,
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
-} from 'state/action-types';
-import { setResetMethod } from 'state/account-recovery/reset/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+} from 'client/state/action-types';
+import { setResetMethod } from 'client/state/account-recovery/reset/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 export const requestReset = ( { dispatch }, action ) => {
 	const { userData, method } = action;

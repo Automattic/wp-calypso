@@ -11,8 +11,8 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import paths from 'lib/paths';
-import PurchaseDetail from 'components/purchase-detail';
+import paths from 'client/lib/paths';
+import PurchaseDetail from 'client/components/purchase-detail';
 
 const ChargebackDetails = ( { selectedSite } ) => {
 	return (

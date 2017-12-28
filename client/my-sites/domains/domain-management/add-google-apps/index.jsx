@@ -11,13 +11,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Header from 'my-sites/domains/domain-management/components/header';
+import Main from 'client/components/main';
+import Header from 'client/my-sites/domains/domain-management/components/header';
 import AddEmailAddressesCard from './add-email-addresses-card';
-import paths from 'my-sites/domains/paths';
-import { hasGoogleAppsSupportedDomain } from 'lib/domains';
-import SectionHeader from 'components/section-header';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import paths from 'client/my-sites/domains/paths';
+import { hasGoogleAppsSupportedDomain } from 'client/lib/domains';
+import SectionHeader from 'client/components/section-header';
+import EmailVerificationGate from 'client/components/email-verification/email-verification-gate';
 
 class AddGoogleApps extends React.Component {
 	componentDidMount() {

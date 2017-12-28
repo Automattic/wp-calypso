@@ -15,11 +15,11 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getCurrencyObject } from 'lib/format-currency';
-import CompactCard from 'components/card/compact';
-import EllipsisMenu from 'components/ellipsis-menu';
-import FormRadio from 'components/forms/form-radio';
-import PopoverMenuItem from 'components/popover/menu-item';
+import { getCurrencyObject } from 'client/lib/format-currency';
+import CompactCard from 'client/components/card/compact';
+import EllipsisMenu from 'client/components/ellipsis-menu';
+import FormRadio from 'client/components/forms/form-radio';
+import PopoverMenuItem from 'client/components/popover/menu-item';
 import ProductImage from './product-image';
 
 class ProductListItem extends Component {

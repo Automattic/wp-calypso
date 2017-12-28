@@ -12,13 +12,13 @@ import { localize, moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
+import SectionNav from 'client/components/section-nav';
+import NavTabs from 'client/components/section-nav/tabs';
+import NavItem from 'client/components/section-nav/item';
 import DatePicker from '../stats-date-picker';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 
 export const StatsModuleSummaryLinks = props => {
 	const { translate, path, siteSlug, query, period, children } = props;

@@ -5,8 +5,8 @@
  */
 
 import { action as ActionTypes } from '../constants';
-import Dispatcher from 'dispatcher';
-import storeTransactions from 'lib/store-transactions';
+import Dispatcher from 'client/dispatcher';
+import storeTransactions from 'client/lib/store-transactions';
 
 function setDomainDetails( domainDetails ) {
 	Dispatcher.handleViewAction( {

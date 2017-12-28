@@ -9,11 +9,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { NOTIFICATION_SETTINGS_REQUEST } from 'state/action-types';
-import { updateNotificationSettings } from 'state/notification-settings/actions';
-import { errorNotice } from 'state/notices/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { NOTIFICATION_SETTINGS_REQUEST } from 'client/state/action-types';
+import { updateNotificationSettings } from 'client/state/notification-settings/actions';
+import { errorNotice } from 'client/state/notices/actions';
 
 /**
  * Dispatches a request to fetch the current user notification settings

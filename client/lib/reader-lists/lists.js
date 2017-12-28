@@ -1,8 +1,8 @@
 /** @format */
 // External dependencies
-import { decodeEntities } from 'lib/formatting';
-import dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import { decodeEntities } from 'client/lib/formatting';
+import dispatcher from 'client/dispatcher';
+import emitter from 'client/lib/mixins/emitter';
 import { isEqual, last } from 'lodash';
 
 // Internal dependencies

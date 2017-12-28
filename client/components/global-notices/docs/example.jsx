@@ -11,11 +11,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ButtonGroup from 'components/button-group';
-import FormCheckbox from 'components/forms/form-checkbox';
-import notices from 'notices';
-import { createNotice } from 'state/notices/actions';
+import Button from 'client/components/button';
+import ButtonGroup from 'client/components/button-group';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import notices from 'client/notices';
+import { createNotice } from 'client/state/notices/actions';
 
 class GlobalNotices extends Component {
 	constructor() {

@@ -11,17 +11,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AddressView from 'woocommerce/components/address-view';
-import Button from 'components/button';
-import Card from 'components/card';
+import AddressView from 'client/extensions/woocommerce/components/address-view';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
 import CustomerAddressDialog from './dialog';
-import { editOrder } from 'woocommerce/state/ui/orders/actions';
-import { isCurrentlyEditingOrder, getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
-import { isOrderFinished } from 'woocommerce/lib/order-status';
-import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
-import { getOrder } from 'woocommerce/state/sites/orders/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import SectionHeader from 'components/section-header';
+import { editOrder } from 'client/extensions/woocommerce/state/ui/orders/actions';
+import {
+	isCurrentlyEditingOrder,
+	getOrderWithEdits,
+} from 'client/extensions/woocommerce/state/ui/orders/selectors';
+import { isOrderFinished } from 'client/extensions/woocommerce/lib/order-status';
+import getAddressViewFormat from 'client/extensions/woocommerce/lib/get-address-view-format';
+import { getOrder } from 'client/extensions/woocommerce/state/sites/orders/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import SectionHeader from 'client/components/section-header';
 
 class OrderCustomerInfo extends Component {
 	static propTypes = {

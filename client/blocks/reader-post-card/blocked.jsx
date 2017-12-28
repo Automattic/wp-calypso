@@ -10,10 +10,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { unblockSite } from 'state/reader/site-blocks/actions';
-import Card from 'components/card';
-import { recordTrack as recordReaderTrack } from 'reader/stats';
-import { bumpStat, recordGoogleEvent } from 'state/analytics/actions';
+import { unblockSite } from 'client/state/reader/site-blocks/actions';
+import Card from 'client/components/card';
+import { recordTrack as recordReaderTrack } from 'client/reader/stats';
+import { bumpStat, recordGoogleEvent } from 'client/state/analytics/actions';
 
 class PostBlocked extends React.Component {
 	static propTypes = {

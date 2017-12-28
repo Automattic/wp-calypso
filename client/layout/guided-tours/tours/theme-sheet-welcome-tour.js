@@ -20,10 +20,10 @@ import {
 	Step,
 	Tour,
 	makeTour,
-} from 'layout/guided-tours/config-elements';
-import { isAbTestInVariant, isEnabled, isNewUser } from 'state/ui/guided-tours/contexts';
-import { isPreviewShowing } from 'state/ui/selectors';
-import { isDesktop } from 'lib/viewport';
+} from 'client/layout/guided-tours/config-elements';
+import { isAbTestInVariant, isEnabled, isNewUser } from 'client/state/ui/guided-tours/contexts';
+import { isPreviewShowing } from 'client/state/ui/selectors';
+import { isDesktop } from 'client/lib/viewport';
 
 export const ThemeSheetWelcomeTour = makeTour(
 	<Tour

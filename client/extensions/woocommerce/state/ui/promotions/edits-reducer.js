@@ -6,11 +6,8 @@ import { uniqueId, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import {
-	WOOCOMMERCE_PROMOTION_EDIT,
-	WOOCOMMERCE_PROMOTION_EDIT_CLEAR,
-} from 'woocommerce/state/action-types';
+import { createReducer } from 'client/state/utils';
+import { WOOCOMMERCE_PROMOTION_EDIT, WOOCOMMERCE_PROMOTION_EDIT_CLEAR } from 'client/extensions/woocommerce/state/action-types';
 import { getBucket } from '../helpers';
 
 export default createReducer( null, {

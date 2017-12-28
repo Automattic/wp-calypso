@@ -13,12 +13,12 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import FollowButton from 'blocks/follow-button/button';
-import QueryReaderTagImages from 'components/data/query-reader-tag-images';
-import { getTagImages } from 'state/reader/tags/images/selectors';
-import resizeImageUrl from 'lib/resize-image-url';
-import cssSafeUrl from 'lib/css-safe-url';
-import { decodeEntities } from 'lib/formatting';
+import FollowButton from 'client/blocks/follow-button/button';
+import QueryReaderTagImages from 'client/components/data/query-reader-tag-images';
+import { getTagImages } from 'client/state/reader/tags/images/selectors';
+import resizeImageUrl from 'client/lib/resize-image-url';
+import cssSafeUrl from 'client/lib/css-safe-url';
+import { decodeEntities } from 'client/lib/formatting';
 
 const TAG_HEADER_WIDTH = 800;
 const TAG_HEADER_HEIGHT = 140;

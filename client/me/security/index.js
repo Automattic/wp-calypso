@@ -10,9 +10,9 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import meController from 'me/controller';
+import meController from 'client/me/controller';
 import controller from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default function() {
 	page( '/me/security', meController.sidebar, controller.password, makeLayout, clientRender );

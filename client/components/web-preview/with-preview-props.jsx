@@ -11,9 +11,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { setPreviewUrl, setPreviewType } from 'state/ui/preview/actions';
-import { setUrlScheme } from 'lib/url';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
+import { setPreviewUrl, setPreviewType } from 'client/state/ui/preview/actions';
+import { setUrlScheme } from 'client/lib/url';
 
 class WithPreviewProps extends Component {
 	static propTypes = {

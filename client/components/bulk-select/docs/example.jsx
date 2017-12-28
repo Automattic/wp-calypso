@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import BulkSelect from 'components/bulk-select';
+import Card from 'client/components/card';
+import BulkSelect from 'client/components/bulk-select';
 
 export default class extends React.Component {
 	static displayName = 'BulkSelects';

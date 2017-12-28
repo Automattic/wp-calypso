@@ -11,10 +11,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import SectionHeader from 'components/section-header';
+import Card from 'client/components/card';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import SectionHeader from 'client/components/section-header';
 import RelatedContentPreview from './related-content-preview';
 
 const RelatedPosts = ( {

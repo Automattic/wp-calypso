@@ -13,16 +13,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
 import SiteOverview from './stats-site-overview';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import DatePicker from './stats-date-picker';
-import StatsNavigation from 'blocks/stats-navigation';
-import Main from 'components/main';
+import StatsNavigation from 'client/blocks/stats-navigation';
+import Main from 'client/components/main';
 import StatsFirstView from './stats-first-view';
-import JetpackColophon from 'components/jetpack-colophon';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getVisibleSites } from 'state/selectors';
+import JetpackColophon from 'client/components/jetpack-colophon';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getVisibleSites } from 'client/state/selectors';
 
 class StatsOverview extends Component {
 	static propTypes = {

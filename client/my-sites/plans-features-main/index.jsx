@@ -13,7 +13,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import PlanFeatures from 'my-sites/plan-features';
+import PlanFeatures from 'client/my-sites/plan-features';
 import {
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
@@ -26,17 +26,17 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-} from 'lib/plans/constants';
-import { addQueryArgs } from 'lib/url';
-import QueryPlans from 'components/data/query-plans';
-import QuerySitePlans from 'components/data/query-site-plans';
-import FAQ from 'components/faq';
-import FAQItem from 'components/faq/faq-item';
+} from 'client/lib/plans/constants';
+import { addQueryArgs } from 'client/lib/url';
+import QueryPlans from 'client/components/data/query-plans';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import FAQ from 'client/components/faq';
+import FAQItem from 'client/components/faq/faq-item';
 import { isEnabled } from 'config';
-import purchasesPaths from 'me/purchases/paths';
-import { plansLink } from 'lib/plans';
-import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
+import purchasesPaths from 'client/me/purchases/paths';
+import { plansLink } from 'client/lib/plans';
+import SegmentedControl from 'client/components/segmented-control';
+import SegmentedControlItem from 'client/components/segmented-control/item';
 
 class PlansFeaturesMain extends Component {
 	getPlanFeatures() {

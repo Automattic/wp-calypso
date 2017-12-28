@@ -9,8 +9,8 @@ import {
 	REWIND_ACTIVATE_SUCCESS,
 	REWIND_STATUS_ERROR,
 	REWIND_STATUS_UPDATE,
-} from 'state/action-types';
-import { keyedReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { keyedReducer } from 'client/state/utils';
 
 export const rewindStatusItem = ( state = undefined, { type, status } ) => {
 	switch ( type ) {

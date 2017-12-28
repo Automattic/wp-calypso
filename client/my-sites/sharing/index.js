@@ -9,9 +9,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { jetpackModuleActive, navigation, sites, siteSelection } from 'my-sites/controller';
+import { jetpackModuleActive, navigation, sites, siteSelection } from 'client/my-sites/controller';
 import { buttons, connections, layout } from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default function() {
 	page( /^\/sharing(\/buttons)?$/, siteSelection, sites, makeLayout, clientRender );

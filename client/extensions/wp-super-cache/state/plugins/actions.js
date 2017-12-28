@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 import {
 	WP_SUPER_CACHE_RECEIVE_PLUGINS,
 	WP_SUPER_CACHE_REQUEST_PLUGINS,
@@ -19,7 +19,7 @@ import {
 	WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE,
 	WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
 } from '../action-types';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, removeNotice, successNotice } from 'client/state/notices/actions';
 
 /**
  * Returns an action object to be used in signalling that WPSC plugins have been received.

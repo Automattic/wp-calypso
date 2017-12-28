@@ -6,7 +6,7 @@
 
 import i18n from 'i18n-calypso';
 import { get } from 'lodash';
-import { withoutHttp } from 'lib/url';
+import { withoutHttp } from 'client/lib/url';
 
 export default {
 	userCan( capability, site ) {

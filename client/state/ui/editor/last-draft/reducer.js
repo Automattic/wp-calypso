@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { EDITOR_LAST_DRAFT_SET } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { EDITOR_LAST_DRAFT_SET } from 'client/state/action-types';
+import { combineReducers } from 'client/state/utils';
 
 /**
  * Returns the updated editor last draft site ID state after an action has been

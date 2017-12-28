@@ -24,21 +24,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import addQueryArgs from 'lib/route/add-query-args';
+import addQueryArgs from 'client/lib/route/add-query-args';
 import AuthFormHeader from './auth-form-header';
 import config from 'config';
 import HelpButton from './help-button';
-import LocaleSuggestions from 'components/locale-suggestions';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
+import LocaleSuggestions from 'client/components/locale-suggestions';
+import LoggedOutFormLinkItem from 'client/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'client/components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
-import SignupForm from 'components/signup-form';
-import WpcomLoginForm from 'signup/wpcom-login-form';
+import SignupForm from 'client/components/signup-form';
+import WpcomLoginForm from 'client/signup/wpcom-login-form';
 import { authQueryPropTypes } from './utils';
-import { createAccount as createAccountAction } from 'state/jetpack-connect/actions';
-import { getAuthorizationData } from 'state/jetpack-connect/selectors';
-import { login } from 'lib/paths';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import { createAccount as createAccountAction } from 'client/state/jetpack-connect/actions';
+import { getAuthorizationData } from 'client/state/jetpack-connect/selectors';
+import { login } from 'client/lib/paths';
+import { recordTracksEvent as recordTracksEventAction } from 'client/state/analytics/actions';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
 

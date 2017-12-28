@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import paths from 'lib/paths';
+import PurchaseDetail from 'client/components/purchase-detail';
+import paths from 'client/lib/paths';
 
 export default localize( ( { selectedSite, translate } ) => {
 	return (

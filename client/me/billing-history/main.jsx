@@ -11,20 +11,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import MeSidebarNavigation from 'me/sidebar-navigation';
+import Card from 'client/components/card';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
 import config from 'config';
-import CreditCards from 'me/purchases/credit-cards';
+import CreditCards from 'client/me/purchases/credit-cards';
 import PurchasesHeader from '../purchases/purchases-list/header';
 import BillingHistoryTable from './billing-history-table';
 import UpcomingChargesTable from './upcoming-charges-table';
-import SectionHeader from 'components/section-header';
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryBillingTransactions from 'components/data/query-billing-transactions';
-import purchasesPaths from 'me/purchases/paths';
-import { getPastBillingTransactions, getUpcomingBillingTransactions } from 'state/selectors';
+import SectionHeader from 'client/components/section-header';
+import Main from 'client/components/main';
+import DocumentHead from 'client/components/data/document-head';
+import PageViewTracker from 'client/lib/analytics/page-view-tracker';
+import QueryBillingTransactions from 'client/components/data/query-billing-transactions';
+import purchasesPaths from 'client/me/purchases/paths';
+import { getPastBillingTransactions, getUpcomingBillingTransactions } from 'client/state/selectors';
 
 const BillingHistory = ( { pastTransactions, upcomingTransactions, translate } ) => (
 	<Main className="billing-history">

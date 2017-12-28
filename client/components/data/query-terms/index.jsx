@@ -12,8 +12,8 @@ import shallowEqual from 'react-pure-render/shallowEqual';
 /**
  * Internal dependencies
  */
-import { requestSiteTerms } from 'state/terms/actions';
-import { isRequestingTermsForQuery } from 'state/terms/selectors';
+import { requestSiteTerms } from 'client/state/terms/actions';
+import { isRequestingTermsForQuery } from 'client/state/terms/selectors';
 
 class QueryTerms extends Component {
 	componentWillMount() {

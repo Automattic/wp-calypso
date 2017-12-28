@@ -11,17 +11,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import DocumentHead from 'components/data/document-head';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import purchasesPaths from 'me/purchases/paths';
-import QueryBillingTransactions from 'components/data/query-billing-transactions';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import DocumentHead from 'client/components/data/document-head';
+import HeaderCake from 'client/components/header-cake';
+import Main from 'client/components/main';
+import PageViewTracker from 'client/lib/analytics/page-view-tracker';
+import purchasesPaths from 'client/me/purchases/paths';
+import QueryBillingTransactions from 'client/components/data/query-billing-transactions';
 import tableRows from './table-rows';
-import { getPastBillingTransaction, getPastBillingTransactions } from 'state/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { getPastBillingTransaction, getPastBillingTransactions } from 'client/state/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {

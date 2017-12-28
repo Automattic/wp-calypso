@@ -21,7 +21,7 @@ import {
 	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Module variables

@@ -14,9 +14,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormsButton from 'components/forms/form-button';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormTextInput from 'components/forms/form-text-input';
+import FormsButton from 'client/components/forms/form-button';
+import FormPasswordInput from 'client/components/forms/form-password-input';
+import FormTextInput from 'client/components/forms/form-text-input';
 
 describe( 'LoginForm', () => {
 	let LoginForm;

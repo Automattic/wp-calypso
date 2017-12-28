@@ -14,13 +14,13 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import TermFormDialog from 'blocks/term-form-dialog';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import { getTerms } from 'state/terms/selectors';
+import Button from 'client/components/button';
+import TermFormDialog from 'client/blocks/term-form-dialog';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { getPostTypeTaxonomy } from 'client/state/post-types/taxonomies/selectors';
+import { getTerms } from 'client/state/terms/selectors';
 
 class TermSelectorAddTerm extends Component {
 	static propTypes = {

@@ -12,9 +12,9 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
+import Notice from 'client/components/notice';
+import SegmentedControl from 'client/components/segmented-control';
+import SegmentedControlItem from 'client/components/segmented-control/item';
 import EditorMediaModalGalleryEdit from './edit';
 import EditorMediaModalGalleryPreviewShortcode from './preview-shortcode';
 import EditorMediaModalGalleryPreviewIndividual from './preview-individual';

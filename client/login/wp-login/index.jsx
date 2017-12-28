@@ -14,18 +14,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
-import DocumentHead from 'components/data/document-head';
+import { addLocaleToWpcomUrl } from 'client/lib/i18n-utils';
+import DocumentHead from 'client/components/data/document-head';
 import LoginLinks from './login-links';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import Main from 'components/main';
-import LocaleSuggestions from 'components/locale-suggestions';
-import LoginBlock from 'blocks/login';
-import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
-import GlobalNotices from 'components/global-notices';
-import notices from 'notices';
+import getCurrentLocaleSlug from 'client/state/selectors/get-current-locale-slug';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import { getCurrentOAuth2Client } from 'client/state/ui/oauth2-clients/selectors';
+import Main from 'client/components/main';
+import LocaleSuggestions from 'client/components/locale-suggestions';
+import LoginBlock from 'client/blocks/login';
+import { recordPageViewWithClientId as recordPageView } from 'client/state/analytics/actions';
+import GlobalNotices from 'client/components/global-notices';
+import notices from 'client/notices';
 import PrivateSite from './private-site';
 
 export class Login extends React.Component {

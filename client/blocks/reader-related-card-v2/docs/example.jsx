@@ -9,8 +9,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
-import Card from 'components/card';
+import {
+	RelatedPostsFromSameSite,
+	RelatedPostsFromOtherSites,
+} from 'client/components/related-posts-v2';
+import Card from 'client/components/card';
 
 const LONGREADS_SITE_ID = 70135762;
 const LONGREADS_POST_ID = 65877;

@@ -12,11 +12,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import Gridicon from 'gridicons';
 import PressThisLink from './link';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 class PressThis extends Component {
 	static propTypes = {

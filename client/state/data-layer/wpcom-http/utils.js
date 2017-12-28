@@ -10,8 +10,8 @@ import { get, identity, merge, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { keyedReducer } from 'state/utils';
-import warn from 'lib/warn';
+import { keyedReducer } from 'client/state/utils';
+import warn from 'client/lib/warn';
 
 /**
  * Returns response data from an HTTP request success action if available

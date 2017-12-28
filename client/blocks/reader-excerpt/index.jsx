@@ -8,8 +8,8 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
+import AutoDirection from 'client/components/auto-direction';
+import Emojify from 'client/components/emojify';
 
 const ReaderExcerpt = ( { post, isDiscover } ) => {
 	let excerpt = post.better_excerpt || post.excerpt;

@@ -9,8 +9,8 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import { getKeyringConnectionsByName } from './keyring/selectors';
 import { getSiteUserConnectionsForService } from './publicize/selectors';
 

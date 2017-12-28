@@ -14,17 +14,17 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import SignupForm from 'components/signup-form';
-import InviteFormHeader from 'my-sites/invites/invite-form-header';
-import { login } from 'lib/paths';
-import { createAccount, acceptInvite } from 'lib/invites/actions';
-import WpcomLoginForm from 'signup/wpcom-login-form';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import analytics from 'lib/analytics';
-import { errorNotice } from 'state/notices/actions';
-import Card from 'components/card';
-import FormButton from 'components/forms/form-button';
+import SignupForm from 'client/components/signup-form';
+import InviteFormHeader from 'client/my-sites/invites/invite-form-header';
+import { login } from 'client/lib/paths';
+import { createAccount, acceptInvite } from 'client/lib/invites/actions';
+import WpcomLoginForm from 'client/signup/wpcom-login-form';
+import LoggedOutFormLinks from 'client/components/logged-out-form/links';
+import LoggedOutFormLinkItem from 'client/components/logged-out-form/link-item';
+import analytics from 'client/lib/analytics';
+import { errorNotice } from 'client/state/notices/actions';
+import Card from 'client/components/card';
+import FormButton from 'client/components/forms/form-button';
 
 /**
  * Module variables

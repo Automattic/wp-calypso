@@ -7,7 +7,7 @@
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:network-connection' );
-import Emitter from 'lib/mixins/emitter';
+import Emitter from 'client/lib/mixins/emitter';
 import request from 'superagent';
 import i18n from 'i18n-calypso';
 
@@ -15,9 +15,9 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import PollerPool from 'lib/data-poller';
+import PollerPool from 'client/lib/data-poller';
 
-import { connectionLost, connectionRestored } from 'state/application/actions';
+import { connectionLost, connectionRestored } from 'client/state/application/actions';
 
 var STATUS_CHECK_INTERVAL = 20000,
 	connected = true,

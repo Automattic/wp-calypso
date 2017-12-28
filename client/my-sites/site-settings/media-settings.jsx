@@ -12,36 +12,36 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
-import Card from 'components/card';
+import Banner from 'client/components/banner';
+import Card from 'client/components/card';
 import filesize from 'filesize';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSelect from 'components/forms/form-select';
-import FormLabel from 'components/forms/form-label';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import JetpackModuleToggle from 'client/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormSelect from 'client/components/forms/form-select';
+import FormLabel from 'client/components/forms/form-label';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
 import {
 	PLAN_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-} from 'lib/plans/constants';
-import { hasFeature } from 'state/sites/plans/selectors';
+} from 'client/lib/plans/constants';
+import { hasFeature } from 'client/state/sites/plans/selectors';
 import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode,
-} from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getMediaStorageLimit, getMediaStorageUsed } from 'state/selectors';
-import { getSitePlanSlug, getSiteSlug } from 'state/sites/selectors';
-import { updateSettings } from 'state/jetpack/settings/actions';
-import QueryMediaStorage from 'components/data/query-media-storage';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import PlanStorageBar from 'blocks/plan-storage/bar';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+} from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getMediaStorageLimit, getMediaStorageUsed } from 'client/state/selectors';
+import { getSitePlanSlug, getSiteSlug } from 'client/state/sites/selectors';
+import { updateSettings } from 'client/state/jetpack/settings/actions';
+import QueryMediaStorage from 'client/components/data/query-media-storage';
+import QueryJetpackConnection from 'client/components/data/query-jetpack-connection';
+import PlanStorageBar from 'client/blocks/plan-storage/bar';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
 
 class MediaSettings extends Component {
 	static propTypes = {

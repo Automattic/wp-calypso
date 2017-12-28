@@ -12,20 +12,20 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormLabel from 'components/forms/form-label';
-import FormButton from 'components/forms/form-button';
-import { STRONG_PASSWORD } from 'lib/url/support';
+import Card from 'client/components/card';
+import ErrorMessage from 'client/account-recovery/components/account-recovery-error-message';
+import FormPasswordInput from 'client/components/forms/form-password-input';
+import FormLabel from 'client/components/forms/form-label';
+import FormButton from 'client/components/forms/form-button';
+import { STRONG_PASSWORD } from 'client/lib/url/support';
 import {
 	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetSelectedMethod,
 	getAccountRecoveryValidationKey,
 	getAccountRecoveryResetPasswordError,
 	isRequestingResetPassword,
-} from 'state/selectors';
-import { requestResetPassword } from 'state/account-recovery/reset/actions';
+} from 'client/state/selectors';
+import { requestResetPassword } from 'client/state/account-recovery/reset/actions';
 
 class ResetPasswordConfirmForm extends Component {
 	constructor( props ) {

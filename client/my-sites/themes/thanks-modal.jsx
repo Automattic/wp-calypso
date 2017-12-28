@@ -12,8 +12,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import PulsingDot from 'components/pulsing-dot';
+import Dialog from 'client/components/dialog';
+import PulsingDot from 'client/components/pulsing-dot';
 import { trackClick } from './helpers';
 import {
 	getActiveTheme,
@@ -24,9 +24,9 @@ import {
 	isActivatingTheme,
 	hasActivatedTheme,
 	isWpcomTheme,
-} from 'state/themes/selectors';
-import { clearActivated } from 'state/themes/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'client/state/themes/selectors';
+import { clearActivated } from 'client/state/themes/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 class ThanksModal extends Component {
 	static propTypes = {

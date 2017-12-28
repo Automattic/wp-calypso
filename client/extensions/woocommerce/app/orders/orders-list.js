@@ -12,32 +12,36 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import formatCurrency from 'lib/format-currency';
+import EmptyContent from 'client/components/empty-content';
+import { fetchOrders } from 'client/extensions/woocommerce/state/sites/orders/actions';
+import formatCurrency from 'client/lib/format-currency';
 import {
 	areOrdersLoading,
 	areOrdersLoaded,
 	getOrders,
 	getTotalOrders,
-} from 'woocommerce/state/sites/orders/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
+} from 'client/extensions/woocommerce/state/sites/orders/selectors';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
 import {
 	getOrdersCurrentPage,
 	getOrdersCurrentSearch,
-} from 'woocommerce/state/ui/orders/selectors';
-import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
-import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import humanDate from 'lib/human-date';
-import { ORDER_UNPAID, ORDER_UNFULFILLED, ORDER_COMPLETED } from 'woocommerce/lib/order-status';
+} from 'client/extensions/woocommerce/state/ui/orders/selectors';
+import { getOrderRefundTotal } from 'client/extensions/woocommerce/lib/order-values/totals';
+import { getCurrencyFormatDecimal } from 'client/extensions/woocommerce/lib/currency';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import humanDate from 'client/lib/human-date';
+import {
+	ORDER_UNPAID,
+	ORDER_UNFULFILLED,
+	ORDER_COMPLETED,
+} from 'client/extensions/woocommerce/lib/order-status';
 import OrdersFilterNav from './orders-filter-nav';
-import OrderStatus from 'woocommerce/components/order-status';
-import Pagination from 'components/pagination';
-import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
-import TableItem from 'woocommerce/components/table/table-item';
-import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
+import OrderStatus from 'client/extensions/woocommerce/components/order-status';
+import Pagination from 'client/components/pagination';
+import Table from 'client/extensions/woocommerce/components/table';
+import TableRow from 'client/extensions/woocommerce/components/table/table-row';
+import TableItem from 'client/extensions/woocommerce/components/table/table-item';
+import { updateCurrentOrdersQuery } from 'client/extensions/woocommerce/state/ui/orders/actions';
 
 class Orders extends Component {
 	componentDidMount() {

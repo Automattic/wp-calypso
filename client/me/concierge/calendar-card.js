@@ -20,13 +20,13 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FoldableCard from 'components/foldable-card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { getLanguage } from 'lib/i18n-utils';
+import Button from 'client/components/button';
+import FoldableCard from 'client/components/foldable-card';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSelect from 'client/components/forms/form-select';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import { getLanguage } from 'client/lib/i18n-utils';
 const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 
 class CalendarCard extends Component {

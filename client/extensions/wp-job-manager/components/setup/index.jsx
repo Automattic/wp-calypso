@@ -14,13 +14,13 @@ import { localize } from 'i18n-calypso';
  */
 import { MinPluginVersion, SetupPath, Steps } from '../../constants';
 import Confirmation from './confirmation';
-import DocumentHead from 'components/data/document-head';
-import ExtensionRedirect from 'blocks/extension-redirect';
+import DocumentHead from 'client/components/data/document-head';
+import ExtensionRedirect from 'client/blocks/extension-redirect';
 import Intro from './intro';
-import Main from 'components/main';
+import Main from 'client/components/main';
 import PageSetup from './page-setup';
-import Wizard from 'components/wizard';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import Wizard from 'client/components/wizard';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 import { saveSetupStatus } from '../../state/setup/actions';
 
 class SetupWizard extends Component {

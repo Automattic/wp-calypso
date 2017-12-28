@@ -18,21 +18,24 @@ import {
 	getOptedOutOfShippingSetup,
 	getTriedCustomizerDuringInitialSetup,
 	getCheckedTaxSetup,
-} from 'woocommerce/state/sites/setup-choices/selectors';
-import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
-import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
+} from 'client/extensions/woocommerce/state/sites/setup-choices/selectors';
+import {
+	getTotalProducts,
+	areProductsLoaded,
+} from 'client/extensions/woocommerce/state/sites/products/selectors';
+import { fetchProducts } from 'client/extensions/woocommerce/state/sites/products/actions';
+import { fetchPaymentMethods } from 'client/extensions/woocommerce/state/sites/payment-methods/actions';
 import {
 	fetchSetupChoices,
 	setOptedOutOfShippingSetup,
 	setTriedCustomizerDuringInitialSetup,
 	setCheckedTaxSetup,
-} from 'woocommerce/state/sites/setup-choices/actions';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import { arePaymentsSetup } from 'woocommerce/state/ui/payments/methods/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
+} from 'client/extensions/woocommerce/state/sites/setup-choices/actions';
+import QuerySettingsGeneral from 'client/extensions/woocommerce/components/query-settings-general';
+import { arePaymentsSetup } from 'client/extensions/woocommerce/state/ui/payments/methods/selectors';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
 import SetupTask from './setup-task';
-import { areAnyShippingMethodsEnabled } from 'woocommerce/state/ui/shipping/zones/selectors';
+import { areAnyShippingMethodsEnabled } from 'client/extensions/woocommerce/state/ui/shipping/zones/selectors';
 
 class SetupTasks extends Component {
 	static propTypes = {

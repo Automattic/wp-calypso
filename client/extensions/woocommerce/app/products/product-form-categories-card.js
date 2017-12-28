@@ -12,13 +12,13 @@ import { find, pick, compact, escape, unescape } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import TokenField from 'components/token-field';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { generateProductCategoryId } from 'woocommerce/state/ui/product-categories/actions';
+import Card from 'client/components/card';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import FormFieldSet from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import TokenField from 'client/components/token-field';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import { generateProductCategoryId } from 'client/extensions/woocommerce/state/ui/product-categories/actions';
 
 // TODO Rename this card since it contains other controls, and may contain more in the future (like tax)
 const ProductFormCategoriesCard = ( {

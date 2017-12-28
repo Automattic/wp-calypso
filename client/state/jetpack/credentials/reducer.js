@@ -7,8 +7,8 @@ import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 	JETPACK_CREDENTIALS_UPDATE_FAILURE,
-} from 'state/action-types';
-import { combineReducers, keyedReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, keyedReducer } from 'client/state/utils';
 import { itemsSchema } from './schema';
 
 export const items = keyedReducer( 'siteId', ( state, { type, credentials } ) => {

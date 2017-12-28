@@ -5,8 +5,8 @@
  */
 import { getHappychatAuth } from '../utils';
 import config from 'config';
-import * as wpcom from 'lib/wp';
-import * as selectedSite from 'state/help/selectors';
+import * as wpcom from 'client/lib/wp';
+import * as selectedSite from 'client/state/help/selectors';
 
 describe( 'auth promise', () => {
 	const state = {

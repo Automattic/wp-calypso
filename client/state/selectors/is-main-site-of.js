@@ -8,8 +8,8 @@ import {
 	getSiteOption,
 	isJetpackSiteMainNetworkSite,
 	isJetpackSiteSecondaryNetworkSite,
-} from 'state/sites/selectors';
-import { withoutHttp } from 'lib/url';
+} from 'client/state/sites/selectors';
+import { withoutHttp } from 'client/lib/url';
 
 /**
  * Returns true if site mainSiteId is the main site of site secondarySiteId and false otherwise.

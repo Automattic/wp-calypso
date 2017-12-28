@@ -10,8 +10,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ConversationFollowButton from 'blocks/conversation-follow-button/button';
-import Card from 'components/card/compact';
+import ConversationFollowButton from 'client/blocks/conversation-follow-button/button';
+import Card from 'client/components/card/compact';
 
 export default class ConversationFollowButtonExample extends React.PureComponent {
 	static displayName = 'ConversationFollowButton';

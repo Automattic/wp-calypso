@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestMedia, requestMediaItem } from 'state/media/actions';
+import { requestMedia, requestMediaItem } from 'client/state/media/actions';
 
 /**
  * Module variables

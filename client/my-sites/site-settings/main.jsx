@@ -12,16 +12,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import QueryProductsList from 'components/data/query-products-list';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import Main from 'client/components/main';
+import DocumentHead from 'client/components/data/document-head';
+import QueryProductsList from 'client/components/data/query-products-list';
+import QuerySitePurchases from 'client/components/data/query-site-purchases';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import GeneralSettings from './section-general';
 import SiteSettingsNavigation from './navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
-import Placeholder from 'my-sites/site-settings/placeholder';
+import Placeholder from 'client/my-sites/site-settings/placeholder';
 
 const SiteSettingsComponent = ( { siteId, translate } ) => {
 	if ( ! siteId ) {

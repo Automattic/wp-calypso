@@ -13,17 +13,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
-import DocumentHead from 'components/data/document-head';
-import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import Main from 'components/main';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import SectionNav from 'components/section-nav';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { canCurrentUser, isJetpackModuleActive } from 'client/state/selectors';
+import DocumentHead from 'client/components/data/document-head';
+import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import Main from 'client/components/main';
+import NavItem from 'client/components/section-nav/item';
+import NavTabs from 'client/components/section-nav/tabs';
+import QueryJetpackModules from 'client/components/data/query-jetpack-modules';
+import SectionNav from 'client/components/section-nav';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import UpgradeNudge from 'client/my-sites/upgrade-nudge';
 
 export const Sharing = ( {
 	contentComponent,

@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 import {
 	PREFERENCES_SET,
 	PREFERENCES_RECEIVE,
@@ -14,7 +14,7 @@ import {
 	PREFERENCES_SAVE,
 	PREFERENCES_SAVE_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { USER_SETTING_KEY } from './constants';
 
 const wpcom = wp.undocumented();

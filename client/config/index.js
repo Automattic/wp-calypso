@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import createConfig from 'lib/create-config';
+import createConfig from 'client/lib/create-config';
 
 /**
  * Manages config flags for various deployment builds

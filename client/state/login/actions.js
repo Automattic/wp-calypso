@@ -44,13 +44,13 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-} from 'state/action-types';
-import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'state/login/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+} from 'client/state/action-types';
+import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'client/state/login/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
 import { getErrorFromHTTPError, getErrorFromWPCOMError, getSMSMessageFromResponse } from './utils';
-import wpcom from 'lib/wp';
-import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
+import wpcom from 'client/lib/wp';
+import { addLocaleToWpcomUrl, getLocaleSlug } from 'client/lib/i18n-utils';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'client/state/analytics/actions';
 
 /**
  * Logs a user in.

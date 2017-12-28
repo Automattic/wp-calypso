@@ -9,10 +9,10 @@ import urlModule from 'url';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Site from 'blocks/site';
-import safeImageUrl from 'lib/safe-image-url';
-import { decodeEntities } from 'lib/formatting';
+import CompactCard from 'client/components/card/compact';
+import Site from 'client/blocks/site';
+import safeImageUrl from 'client/lib/safe-image-url';
+import { decodeEntities } from 'client/lib/formatting';
 
 class SiteCard extends Component {
 	static propTypes = { authQuery: PropTypes.object.isRequired };

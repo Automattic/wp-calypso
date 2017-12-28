@@ -13,7 +13,7 @@ import {
 	removeTemporaryIds,
 	transformOrderForApi,
 } from './utils';
-import { getOrderStatusGroup } from 'woocommerce/lib/order-status';
+import { getOrderStatusGroup } from 'client/extensions/woocommerce/lib/order-status';
 import {
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
@@ -24,7 +24,7 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST,
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export const fetchOrders = ( siteId, requestedQuery = {} ) => {
 	const query = { ...DEFAULT_QUERY, ...requestedQuery };

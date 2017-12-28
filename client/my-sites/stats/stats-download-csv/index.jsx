@@ -16,12 +16,15 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import titlecase from 'to-title-case';
-import Button from 'components/button';
-import { getSiteStatsCSVData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import Button from 'client/components/button';
+import {
+	getSiteStatsCSVData,
+	isRequestingSiteStatsForQuery,
+} from 'client/state/stats/lists/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import QuerySiteStats from 'client/components/data/query-site-stats';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 
 class StatsDownloadCsv extends Component {
 	static propTypes = {

@@ -4,9 +4,9 @@
  * Internal dependencies
  */
 
-import * as plans from 'lib/plans/constants';
-import { includesProduct } from 'lib/products-values';
-import { abtest } from 'lib/abtest';
+import * as plans from 'client/lib/plans/constants';
+import { includesProduct } from 'client/lib/products-values';
+import { abtest } from 'client/lib/abtest';
 import * as steps from './steps';
 
 const BUSINESS_PLANS = [ plans.PLAN_BUSINESS ];

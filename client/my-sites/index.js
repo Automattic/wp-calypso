@@ -10,7 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { siteSelection, sites } from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default function() {
 	page( '/sites/:sitesFilter?', siteSelection, sites, makeLayout, clientRender );

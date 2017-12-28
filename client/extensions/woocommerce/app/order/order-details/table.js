@@ -12,31 +12,31 @@ import { find, findIndex, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import formatCurrency from 'lib/format-currency';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import Button from 'client/components/button';
+import formatCurrency from 'client/lib/format-currency';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { getCurrencyFormatDecimal } from 'client/extensions/woocommerce/lib/currency';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
 import {
 	getOrderDiscountTax,
 	getOrderFeeTax,
 	getOrderLineItemTax,
 	getOrderShippingTax,
 	getOrderTotalTax,
-} from 'woocommerce/lib/order-values';
+} from 'client/extensions/woocommerce/lib/order-values';
 import {
 	getOrderItemCost,
 	getOrderRefundTotal,
 	getOrderShippingTotal,
 	getOrderTotal,
-} from 'woocommerce/lib/order-values/totals';
+} from 'client/extensions/woocommerce/lib/order-values/totals';
 import OrderAddItems from './add-items';
 import OrderTotalRow from './row-total';
-import ScreenReaderText from 'components/screen-reader-text';
-import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
-import TableItem from 'woocommerce/components/table/table-item';
+import ScreenReaderText from 'client/components/screen-reader-text';
+import Table from 'client/extensions/woocommerce/components/table';
+import TableRow from 'client/extensions/woocommerce/components/table/table-row';
+import TableItem from 'client/extensions/woocommerce/components/table/table-item';
 
 class OrderDetailsTable extends Component {
 	static propTypes = {

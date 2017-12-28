@@ -11,7 +11,7 @@ import page from 'page';
  * Internal dependencies
  */
 import controller from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default function() {
 	if ( config.isEnabled( 'me/my-profile' ) ) {

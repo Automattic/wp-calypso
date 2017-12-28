@@ -10,8 +10,8 @@ import { assign, includes } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { decodeEntities } from 'lib/formatting';
-import { withoutHttp } from 'lib/url';
+import { decodeEntities } from 'client/lib/formatting';
+import { withoutHttp } from 'client/lib/url';
 
 /**
  * Module variables

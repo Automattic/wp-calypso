@@ -4,7 +4,10 @@
  */
 import { AUTH_ATTEMPS_TTL } from '../constants';
 import { isStale } from '../utils';
-import { JETPACK_CONNECT_COMPLETE_FLOW, JETPACK_CONNECT_RETRY_AUTH } from 'state/action-types';
+import {
+	JETPACK_CONNECT_COMPLETE_FLOW,
+	JETPACK_CONNECT_RETRY_AUTH,
+} from 'client/state/action-types';
 import { jetpackAuthAttemptsSchema } from './schema';
 
 export default function jetpackAuthAttempts( state = {}, action ) {

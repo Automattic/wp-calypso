@@ -13,10 +13,10 @@ import { flowRight, times } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import HeaderCake from 'components/header-cake';
-import SectionHeader from 'components/section-header';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import Button from 'client/components/button';
+import HeaderCake from 'client/components/header-cake';
+import SectionHeader from 'client/components/section-header';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 import ZoneItem from './zone-item';
 import ZonePlaceholder from './zone-placeholder';
 import { getZones, isRequestingZones } from '../../../state/zones/selectors';

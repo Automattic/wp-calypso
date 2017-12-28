@@ -8,15 +8,15 @@ import { translate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import config from 'config';
-import { READER_UNFOLLOW } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { createNotice, errorNotice } from 'state/notices/actions';
-import { follow } from 'state/reader/follows/actions';
-import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
-import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
-import { getSiteName } from 'reader/get-helpers';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { READER_UNFOLLOW } from 'client/state/action-types';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { createNotice, errorNotice } from 'client/state/notices/actions';
+import { follow } from 'client/state/reader/follows/actions';
+import { getFeedByFeedUrl } from 'client/state/reader/feeds/selectors';
+import { getSiteByFeedUrl } from 'client/state/reader/sites/selectors';
+import { getSiteName } from 'client/reader/get-helpers';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
 
 export function requestUnfollow( { dispatch, getState }, action ) {
 	const { payload: { feedUrl } } = action;

@@ -12,12 +12,12 @@ import { get, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Count from 'components/count';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import Button from 'client/components/button';
+import Count from 'client/components/count';
+import QuerySiteStats from 'client/components/data/query-site-stats';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getSiteStatsNormalizedData } from 'client/state/stats/lists/selectors';
 
 class FollowersCount extends Component {
 	render() {

@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_REQUEST,
@@ -23,7 +23,7 @@ import {
 	READER_LISTS_UNFOLLOW,
 	READER_LISTS_UNFOLLOW_SUCCESS,
 	READER_LISTS_UNFOLLOW_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns an action object to signal that list objects have been received.

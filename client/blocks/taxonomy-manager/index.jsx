@@ -12,14 +12,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import SearchCard from 'components/search-card';
-import Button from 'components/button';
+import SearchCard from 'client/components/search-card';
+import Button from 'client/components/button';
 import TermsList from './list';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import QueryTaxonomies from 'components/data/query-taxonomies';
-import TermFormDialog from 'blocks/term-form-dialog';
-import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getPostTypeTaxonomy } from 'client/state/post-types/taxonomies/selectors';
+import QueryTaxonomies from 'client/components/data/query-taxonomies';
+import TermFormDialog from 'client/blocks/term-form-dialog';
+import { recordGoogleEvent, bumpStat } from 'client/state/analytics/actions';
 
 export class TaxonomyManager extends Component {
 	static propTypes = {

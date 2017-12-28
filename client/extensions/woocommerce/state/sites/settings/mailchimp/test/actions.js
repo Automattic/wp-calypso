@@ -30,7 +30,7 @@ import {
 	WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT,
 	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#requestSettings()', () => {

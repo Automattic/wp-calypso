@@ -15,16 +15,16 @@ import i18n, { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Month from './month';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSiteOption } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import QuerySiteStats from 'client/components/data/query-site-stats';
+import { getSiteOption } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	getSiteStatsPostStreakData,
 	getSiteStatsMaxPostsByDay,
 	getSiteStatsTotalPostsForStreakQuery,
-} from 'state/stats/lists/selectors';
+} from 'client/state/stats/lists/selectors';
 
 class PostTrends extends React.Component {
 	static displayName = 'PostTrends';

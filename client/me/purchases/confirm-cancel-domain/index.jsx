@@ -12,36 +12,39 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import cancellationReasons from './cancellation-reasons';
-import { cancelAndRefundPurchase } from 'lib/upgrades/actions';
-import Card from 'components/card';
-import { clearPurchases } from 'state/purchases/actions';
+import { cancelAndRefundPurchase } from 'client/lib/upgrades/actions';
+import Card from 'client/components/card';
+import { clearPurchases } from 'client/state/purchases/actions';
 import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
 import { connect } from 'react-redux';
-import FormButton from 'components/forms/form-button';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormTextarea from 'components/forms/form-textarea';
-import HeaderCake from 'components/header-cake';
-import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getName as getDomainName } from 'lib/purchases';
+import FormButton from 'client/components/forms/form-button';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormLabel from 'client/components/forms/form-label';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import FormTextarea from 'client/components/forms/form-textarea';
+import HeaderCake from 'client/components/header-cake';
+import { isDomainOnlySite as isDomainOnly } from 'client/state/selectors';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+} from 'client/state/purchases/selectors';
+import { getName as getDomainName } from 'client/lib/purchases';
 import { getPurchase, goToCancelPurchase, isDataLoading, recordPageView } from '../utils';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import { isDomainRegistration } from 'lib/products-values';
-import { isRequestingSites } from 'state/sites/selectors';
-import Main from 'components/main';
-import notices from 'notices';
-import paths from 'me/purchases/paths';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import { receiveDeletedSite } from 'state/sites/actions';
-import { refreshSitePlans } from 'state/sites/plans/actions';
-import SelectDropdown from 'components/select-dropdown';
-import { setAllSitesSelected } from 'state/ui/actions';
-import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
+import { getSelectedSite as getSelectedSiteSelector } from 'client/state/ui/selectors';
+import { isDomainRegistration } from 'client/lib/products-values';
+import { isRequestingSites } from 'client/state/sites/selectors';
+import Main from 'client/components/main';
+import notices from 'client/notices';
+import paths from 'client/me/purchases/paths';
+import QueryUserPurchases from 'client/components/data/query-user-purchases';
+import { receiveDeletedSite } from 'client/state/sites/actions';
+import { refreshSitePlans } from 'client/state/sites/plans/actions';
+import SelectDropdown from 'client/components/select-dropdown';
+import { setAllSitesSelected } from 'client/state/ui/actions';
+import titles from 'client/me/purchases/titles';
+import userFactory from 'client/lib/user';
 
 const user = userFactory();
 

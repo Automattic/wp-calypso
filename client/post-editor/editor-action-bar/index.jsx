@@ -12,16 +12,16 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import EditorSticky from 'post-editor/editor-sticky';
-import utils from 'lib/posts/utils';
-import Tooltip from 'components/tooltip';
-import Button from 'components/button';
+import AsyncLoad from 'client/components/async-load';
+import EditorSticky from 'client/post-editor/editor-sticky';
+import utils from 'client/lib/posts/utils';
+import Tooltip from 'client/components/tooltip';
+import Button from 'client/components/button';
 import EditorActionBarViewLabel from './view-label';
-import EditorStatusLabel from 'post-editor/editor-status-label';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
+import EditorStatusLabel from 'client/post-editor/editor-status-label';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPost, getEditedPostValue } from 'client/state/posts/selectors';
 
 class EditorActionBar extends Component {
 	static propTypes = {

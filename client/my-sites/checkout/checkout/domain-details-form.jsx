@@ -28,38 +28,38 @@ import {
 /**
  * Internal dependencies
  */
-import { getContactDetailsCache } from 'state/selectors';
-import { getCountryStates } from 'state/country-states/selectors';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import { CountrySelect, Input, HiddenInput } from 'my-sites/domains/components/form';
+import { getContactDetailsCache } from 'client/state/selectors';
+import { getCountryStates } from 'client/state/country-states/selectors';
+import { updateContactDetailsCache } from 'client/state/domains/management/actions';
+import QueryContactDetailsCache from 'client/components/data/query-contact-details-cache';
+import { CountrySelect, Input, HiddenInput } from 'client/my-sites/domains/components/form';
 import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
-import { cartItems } from 'lib/cart-values';
-import { forDomainRegistrations as countriesList } from 'lib/countries-list';
-import analytics from 'lib/analytics';
-import formState from 'lib/form-state';
+import { cartItems } from 'client/lib/cart-values';
+import { forDomainRegistrations as countriesList } from 'client/lib/countries-list';
+import analytics from 'client/lib/analytics';
+import formState from 'client/lib/form-state';
 import {
 	addPrivacyToAllDomains,
 	removePrivacyFromAllDomains,
 	setDomainDetails,
 	addGoogleAppsRegistrationData,
-} from 'lib/upgrades/actions';
-import FormButton from 'components/forms/form-button';
-import { countries } from 'components/phone-input/data';
-import { toIcannFormat } from 'components/phone-input/phone-number';
-import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
+} from 'client/lib/upgrades/actions';
+import FormButton from 'client/components/forms/form-button';
+import { countries } from 'client/components/phone-input/data';
+import { toIcannFormat } from 'client/components/phone-input/phone-number';
+import FormPhoneMediaInput from 'client/components/forms/form-phone-media-input';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 import ExtraInfoForm, {
 	tldsWithAdditionalDetailsForms,
-} from 'components/domains/registrant-extra-info';
+} from 'client/components/domains/registrant-extra-info';
 import config from 'config';
-import GAppsFieldset from 'my-sites/domains/components/domain-form-fieldsets/g-apps-fieldset';
-import RegionAddressFieldsets from 'my-sites/domains/components/domain-form-fieldsets/region-address-fieldsets';
-import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message';
-import notices from 'notices';
-import support from 'lib/url/support';
+import GAppsFieldset from 'client/my-sites/domains/components/domain-form-fieldsets/g-apps-fieldset';
+import RegionAddressFieldsets from 'client/my-sites/domains/components/domain-form-fieldsets/region-address-fieldsets';
+import NoticeErrorMessage from 'client/my-sites/checkout/checkout/notice-error-message';
+import notices from 'client/notices';
+import support from 'client/lib/url/support';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented();

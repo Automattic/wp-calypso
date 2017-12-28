@@ -13,7 +13,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import ControlItem from 'components/segmented-control/item';
+import ControlItem from 'client/components/segmented-control/item';
 
 /**
  * Internal variables

@@ -20,50 +20,50 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import SectionHeader from 'components/section-header';
-import MetaTitleEditor from 'components/seo/meta-title-editor';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import notices from 'notices';
-import { protectForm } from 'lib/protect-form';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import CountedTextarea from 'components/forms/counted-textarea';
-import Banner from 'components/banner';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
+import SectionHeader from 'client/components/section-header';
+import MetaTitleEditor from 'client/components/seo/meta-title-editor';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import notices from 'client/notices';
+import { protectForm } from 'client/lib/protect-form';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import CountedTextarea from 'client/components/forms/counted-textarea';
+import Banner from 'client/components/banner';
+import PageViewTracker from 'client/lib/analytics/page-view-tracker';
 import {
 	getSeoTitleFormatsForSite,
 	isJetpackMinimumVersion,
 	isJetpackSite,
 	isRequestingSite,
-} from 'state/sites/selectors';
+} from 'client/state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
-} from 'state/site-settings/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive, isHiddenSite, isPrivateSite } from 'state/selectors';
-import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
-import { recordTracksEvent } from 'state/analytics/actions';
-import WebPreview from 'components/web-preview';
-import { requestSite } from 'state/sites/actions';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { isBusiness, isEnterprise, isJetpackBusiness } from 'lib/products-values';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { getPlugins } from 'state/plugins/installed/selectors';
+} from 'client/state/site-settings/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackModuleActive, isHiddenSite, isPrivateSite } from 'client/state/selectors';
+import { toApi as seoTitleToApi } from 'client/components/seo/meta-title-editor/mappings';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import WebPreview from 'client/components/web-preview';
+import { requestSite } from 'client/state/sites/actions';
+import { activateModule } from 'client/state/jetpack/modules/actions';
+import { isBusiness, isEnterprise, isJetpackBusiness } from 'client/lib/products-values';
+import { hasFeature } from 'client/state/sites/plans/selectors';
+import { getPlugins } from 'client/state/plugins/installed/selectors';
 import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	PLAN_BUSINESS,
 	PLAN_JETPACK_BUSINESS,
-} from 'lib/plans/constants';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
+} from 'client/lib/plans/constants';
+import QueryJetpackModules from 'client/components/data/query-jetpack-modules';
+import QueryJetpackPlugins from 'client/components/data/query-jetpack-plugins';
+import QuerySiteSettings from 'client/components/data/query-site-settings';
+import { requestSiteSettings, saveSiteSettings } from 'client/state/site-settings/actions';
 
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well

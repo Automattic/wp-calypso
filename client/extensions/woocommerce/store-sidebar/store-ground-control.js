@@ -11,9 +11,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from 'client/components/button';
 import Gridicon from 'gridicons';
-import Site from 'blocks/site';
+import Site from 'client/blocks/site';
 
 const StoreGroundControl = ( { site, translate } ) => {
 	const isPlaceholder = ! site;

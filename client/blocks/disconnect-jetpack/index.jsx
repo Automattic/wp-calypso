@@ -14,17 +14,17 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
 import {
 	recordGoogleEvent as recordGoogleEventAction,
 	recordTracksEvent as recordTracksEventAction,
-} from 'state/analytics/actions';
-import { disconnect } from 'state/jetpack/connection/actions';
-import { setAllSitesSelected } from 'state/ui/actions';
-import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
-import { getPlanClass } from 'lib/plans/constants';
-import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'state/sites/selectors';
+} from 'client/state/analytics/actions';
+import { disconnect } from 'client/state/jetpack/connection/actions';
+import { setAllSitesSelected } from 'client/state/ui/actions';
+import { successNotice, errorNotice, infoNotice, removeNotice } from 'client/state/notices/actions';
+import { getPlanClass } from 'client/lib/plans/constants';
+import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'client/state/sites/selectors';
 
 class DisconnectJetpack extends PureComponent {
 	static propTypes = {

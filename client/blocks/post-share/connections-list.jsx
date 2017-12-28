@@ -12,8 +12,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Connection from './connection';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
 
 class ConnectionsList extends PureComponent {
 	static propTypes = {

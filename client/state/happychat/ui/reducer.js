@@ -12,8 +12,8 @@ import {
 	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
-} from 'state/action-types';
-import { combineReducers, isValidStateWithSchema } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, isValidStateWithSchema } from 'client/state/utils';
 
 /**
  * Tracks the current message the user has typed into the happychat client

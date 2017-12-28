@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { isRequestingResetPassword } from 'state/selectors';
+import { isRequestingResetPassword } from 'client/state/selectors';
 
 describe( 'isRequestingResetPassword()', () => {
 	test( 'should return isRequesting field under resetPassword state tree.', () => {

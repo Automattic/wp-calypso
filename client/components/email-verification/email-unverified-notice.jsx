@@ -11,11 +11,11 @@ import React from 'react';
  * Internal dependencies
  */
 
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import Spinner from 'components/spinner';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import Spinner from 'client/components/spinner';
 import i18n from 'i18n-calypso';
-import userFactory from 'lib/user';
+import userFactory from 'client/lib/user';
 
 const userLib = userFactory();
 

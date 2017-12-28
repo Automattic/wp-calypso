@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestPrivacyPolicy } from 'state/privacy-policy/actions';
+import { requestPrivacyPolicy } from 'client/state/privacy-policy/actions';
 
 export class QueryPrivacyPolicy extends Component {
 	static propTypes = {

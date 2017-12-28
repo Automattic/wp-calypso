@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { getSiteOption } from 'state/sites/selectors';
+import { getSiteOption } from 'client/state/sites/selectors';
 
 /**
  * Determines if site's permalinks are editable

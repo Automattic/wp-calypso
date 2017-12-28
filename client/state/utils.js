@@ -24,7 +24,7 @@ import LRU from 'lru-cache';
  * Internal dependencies
  */
 import { DESERIALIZE, SERIALIZE } from './action-types';
-import warn from 'lib/warn';
+import warn from 'client/lib/warn';
 
 export function isValidStateWithSchema( state, schema, debugInfo ) {
 	const validate = validator( schema );

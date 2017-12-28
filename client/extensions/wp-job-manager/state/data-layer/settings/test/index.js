@@ -19,9 +19,13 @@ import {
 	saveSettings,
 	updateExtensionSettings,
 } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { fetchError, fetchSettings, updateSettings } from 'wp-job-manager/state/settings/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { errorNotice, removeNotice, successNotice } from 'client/state/notices/actions';
+import {
+	fetchError,
+	fetchSettings,
+	updateSettings,
+} from 'client/extensions/wp-job-manager/state/settings/actions';
 
 const apiResponse = {
 	data: {

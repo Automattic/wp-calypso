@@ -13,21 +13,21 @@ const debug = debugFactory( 'calypso:me:reauth-required' );
 /**
  * Internal Dependencies
  */
-import Dialog from 'components/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTelInput from 'components/forms/form-tel-input';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormInputValidation from 'components/forms/form-input-validation';
+import Dialog from 'client/components/dialog';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTelInput from 'client/components/forms/form-tel-input';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormButton from 'client/components/forms/form-button';
+import FormButtonsBar from 'client/components/forms/form-buttons-bar';
+import FormInputValidation from 'client/components/forms/form-input-validation';
 /* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
+import observe from 'client/lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import eventRecorder from 'me/event-recorder';
-import userUtilities from 'lib/user/utils';
-import constants from 'me/constants';
-import Notice from 'components/notice';
+import eventRecorder from 'client/me/event-recorder';
+import userUtilities from 'client/lib/user/utils';
+import constants from 'client/me/constants';
+import Notice from 'client/components/notice';
 
 const ReauthRequired = createReactClass( {
 	displayName: 'ReauthRequired',

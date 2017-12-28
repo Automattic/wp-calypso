@@ -12,11 +12,11 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { closePreview } from 'state/ui/preview/actions';
-import { getPreviewSite, getPreviewSiteId, getPreviewUrl } from 'state/ui/preview/selectors';
-import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
-import addQueryArgs from 'lib/route/add-query-args';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { closePreview } from 'client/state/ui/preview/actions';
+import { getPreviewSite, getPreviewSiteId, getPreviewUrl } from 'client/state/ui/preview/selectors';
+import { getSiteOption, getSiteSlug } from 'client/state/sites/selectors';
+import addQueryArgs from 'client/lib/route/add-query-args';
+import isDomainOnlySite from 'client/state/selectors/is-domain-only-site';
 
 const debug = debugFactory( 'calypso:design-preview' );
 

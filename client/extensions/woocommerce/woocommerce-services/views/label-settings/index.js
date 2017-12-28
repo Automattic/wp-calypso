@@ -15,13 +15,13 @@ import { isBoolean } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormToggle from 'components/forms/form-toggle';
+import Card from 'client/components/card';
+import ExtendedHeader from 'client/extensions/woocommerce/components/extended-header';
+import FormToggle from 'client/components/forms/form-toggle';
 import LabelSettings from './label-settings';
-import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
+import QueryLabelSettings from 'client/extensions/woocommerce/woocommerce-services/components/query-label-settings';
 import { setFormDataValue, restorePristineSettings } from '../../state/label-settings/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	getLabelSettingsFormData,
 	getLabelSettingsFormMeta,

@@ -5,8 +5,8 @@
 /**
  * Internal dependencies
  */
-import { isDiscoverPost } from 'reader/discover/helper';
-import { shouldShowComments } from 'blocks/comments/helper';
+import { isDiscoverPost } from 'client/reader/discover/helper';
+import { shouldShowComments } from 'client/blocks/comments/helper';
 import config from 'config';
 
 export function shouldShowConversationFollowButton( post ) {

@@ -14,7 +14,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { EditorCategoriesTagsAccordion } from 'post-editor/editor-categories-tags/accordion';
+import { EditorCategoriesTagsAccordion } from 'client/post-editor/editor-categories-tags/accordion';
 
 jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/user', () => () => {} );

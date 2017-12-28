@@ -17,24 +17,24 @@ import qs from 'qs';
  * Internal dependencies
  */
 import config from 'config';
-import FormsButton from 'components/forms/form-button';
-import FormInputValidation from 'components/forms/form-input-validation';
-import Card from 'components/card';
-import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormTextInput from 'components/forms/form-text-input';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import FormsButton from 'client/components/forms/form-button';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import Card from 'client/components/card';
+import { fetchMagicLoginRequestEmail } from 'client/state/login/magic-login/actions';
+import FormPasswordInput from 'client/components/forms/form-password-input';
+import FormTextInput from 'client/components/forms/form-text-input';
+import getInitialQueryArguments from 'client/state/selectors/get-initial-query-arguments';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import { getCurrentOAuth2Client } from 'client/state/ui/oauth2-clients/selectors';
 import {
 	formUpdate,
 	getAuthAccountType,
 	loginUser,
 	resetAuthAccountType,
-} from 'state/login/actions';
-import { login } from 'lib/paths';
-import { preventWidows } from 'lib/formatting';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
+} from 'client/state/login/actions';
+import { login } from 'client/lib/paths';
+import { preventWidows } from 'client/lib/formatting';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'client/state/analytics/actions';
 import {
 	getAuthAccountType as getAuthAccountTypeSelector,
 	getRedirectToOriginal,
@@ -43,9 +43,9 @@ import {
 	getSocialAccountLinkEmail,
 	getSocialAccountLinkService,
 	isFormDisabled as isFormDisabledSelector,
-} from 'state/login/selectors';
-import { isPasswordlessAccount, isRegularAccount } from 'state/login/utils';
-import Notice from 'components/notice';
+} from 'client/state/login/selectors';
+import { isPasswordlessAccount, isRegularAccount } from 'client/state/login/utils';
+import Notice from 'client/components/notice';
 import SocialLoginForm from './social';
 
 export class LoginForm extends Component {

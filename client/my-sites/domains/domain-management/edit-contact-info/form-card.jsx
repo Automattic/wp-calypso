@@ -13,27 +13,27 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import FormButton from 'components/forms/form-button';
-import FormCountrySelect from 'my-sites/domains/components/form/country-select';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormStateSelect from 'my-sites/domains/components/form/state-select';
-import FormInput from 'my-sites/domains/components/form/input';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import ValidationErrorList from 'notices/validation-error-list';
-import { forDomainRegistrations as countriesList } from 'lib/countries-list';
-import formState from 'lib/form-state';
-import notices from 'notices';
-import paths from 'my-sites/domains/paths';
-import upgradesActions from 'lib/upgrades/actions';
-import wp from 'lib/wp';
-import { successNotice } from 'state/notices/actions';
-import support from 'lib/url/support';
-import { registrar as registrarNames } from 'lib/domains/constants';
-import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
-import Dialog from 'components/dialog';
-import { getCurrentUser } from 'state/current-user/selectors';
+import Card from 'client/components/card';
+import FormButton from 'client/components/forms/form-button';
+import FormCountrySelect from 'client/my-sites/domains/components/form/country-select';
+import FormFooter from 'client/my-sites/domains/domain-management/components/form-footer';
+import FormStateSelect from 'client/my-sites/domains/components/form/state-select';
+import FormInput from 'client/my-sites/domains/components/form/input';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormLabel from 'client/components/forms/form-label';
+import ValidationErrorList from 'client/notices/validation-error-list';
+import { forDomainRegistrations as countriesList } from 'client/lib/countries-list';
+import formState from 'client/lib/form-state';
+import notices from 'client/notices';
+import paths from 'client/my-sites/domains/paths';
+import upgradesActions from 'client/lib/upgrades/actions';
+import wp from 'client/lib/wp';
+import { successNotice } from 'client/state/notices/actions';
+import support from 'client/lib/url/support';
+import { registrar as registrarNames } from 'client/lib/domains/constants';
+import DesignatedAgentNotice from 'client/my-sites/domains/domain-management/components/designated-agent-notice';
+import Dialog from 'client/components/dialog';
+import { getCurrentUser } from 'client/state/current-user/selectors';
 
 const wpcom = wp.undocumented();
 

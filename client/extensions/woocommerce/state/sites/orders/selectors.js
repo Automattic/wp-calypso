@@ -9,7 +9,7 @@ import { filter, get, isFinite, omit, sumBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import { getSerializedOrdersQuery } from './utils';
 
 /**

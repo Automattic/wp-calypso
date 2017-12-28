@@ -12,12 +12,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import Security2faStatus from 'me/security-2fa-status';
-import Security2faCodePrompt from 'me/security-2fa-code-prompt';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { successNotice } from 'state/notices/actions';
+import FormButton from 'client/components/forms/form-button';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import Security2faStatus from 'client/me/security-2fa-status';
+import Security2faCodePrompt from 'client/me/security-2fa-code-prompt';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import { successNotice } from 'client/state/notices/actions';
 
 class Security2faDisable extends Component {
 	static propTypes = {

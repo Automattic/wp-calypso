@@ -5,7 +5,7 @@
  */
 
 import dependencyStore from './dependency-store/reducer';
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import optionalDependencies from './optional-dependencies/reducer';
 import steps from './steps/reducer';
 

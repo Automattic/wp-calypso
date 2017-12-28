@@ -9,8 +9,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
+import { DESERIALIZE, SERIALIZE } from 'client/state/action-types';
+import { withSchemaValidation } from 'client/state/utils';
 import {
 	WP_JOB_MANAGER_FETCH_ERROR,
 	WP_JOB_MANAGER_FETCH_SETTINGS,

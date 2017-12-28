@@ -10,9 +10,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import SidebarNavigation from 'components/sidebar-navigation';
-import Gravatar from 'components/gravatar';
-import userFactory from 'lib/user';
+import SidebarNavigation from 'client/components/sidebar-navigation';
+import Gravatar from 'client/components/gravatar';
+import userFactory from 'client/lib/user';
 
 const user = userFactory();
 

@@ -8,9 +8,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
 import { localize } from 'i18n-calypso';
 
 const GettingStarted = localize( ( { translate, onClick, isPlaceholder, site, redirectToSettings } ) => {

@@ -15,10 +15,10 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Notice from 'components/notice';
-import { editComment } from 'state/comments/actions';
-import { recordAction, recordGaEvent } from 'reader/stats';
+import AutoDirection from 'client/components/auto-direction';
+import Notice from 'client/components/notice';
+import { editComment } from 'client/state/comments/actions';
+import { recordAction, recordGaEvent } from 'client/reader/stats';
 
 class PostCommentForm extends Component {
 	constructor( props ) {

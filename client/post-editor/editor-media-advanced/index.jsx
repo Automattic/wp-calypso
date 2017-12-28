@@ -13,13 +13,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import MediaMarkup from 'post-editor/media-modal/markup';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import { getSelectedSite } from 'state/ui/selectors';
+import MediaMarkup from 'client/post-editor/media-modal/markup';
+import Button from 'client/components/button';
+import Dialog from 'client/components/dialog';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 class EditorMediaAdvanced extends Component {
 	constructor() {

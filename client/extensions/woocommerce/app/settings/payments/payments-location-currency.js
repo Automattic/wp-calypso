@@ -14,18 +14,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import { decodeEntities } from 'lib/formatting';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import StoreAddress from 'woocommerce/components/store-address';
-import { changeCurrency } from 'woocommerce/state/ui/payments/currency/actions';
-import { fetchCurrencies } from 'woocommerce/state/sites/currencies/actions';
-import { getCurrencies } from 'woocommerce/state/sites/currencies/selectors';
-import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import Card from 'client/components/card';
+import { decodeEntities } from 'client/lib/formatting';
+import ExtendedHeader from 'client/extensions/woocommerce/components/extended-header';
+import FormLabel from 'client/components/forms/form-label';
+import FormSelect from 'client/components/forms/form-select';
+import StoreAddress from 'client/extensions/woocommerce/components/store-address';
+import { changeCurrency } from 'client/extensions/woocommerce/state/ui/payments/currency/actions';
+import { fetchCurrencies } from 'client/extensions/woocommerce/state/sites/currencies/actions';
+import { getCurrencies } from 'client/extensions/woocommerce/state/sites/currencies/selectors';
+import { getCurrencyWithEdits } from 'client/extensions/woocommerce/state/ui/payments/currency/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import QuerySettingsGeneral from 'client/extensions/woocommerce/components/query-settings-general';
 
 class SettingsPaymentsLocationCurrency extends Component {
 	static propTypes = {

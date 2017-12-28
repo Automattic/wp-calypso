@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
 
 export function dispatchSuccess( ...args ) {
 	return dispatch => dispatch( successNotice( ...args ) );

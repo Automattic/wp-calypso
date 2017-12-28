@@ -13,7 +13,7 @@ const debug = debugFactory( 'calypso:stats:action-page' );
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import Gridicon from 'gridicons';
 
 class StatsActionPage extends React.Component {

@@ -23,8 +23,8 @@ import {
 	JETPACK_SETTINGS_UPDATE,
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE_FAILURE,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
 import { normalizeSettings } from './utils';
 
 const createRequestsReducer = data => {

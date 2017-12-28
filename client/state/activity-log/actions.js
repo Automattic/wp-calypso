@@ -29,7 +29,7 @@ import {
 	REWIND_BACKUP_UPDATE_ERROR,
 	REWIND_BACKUP_UPDATE_PROGRESS,
 	REWIND_BACKUP_DISMISS_PROGRESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Turn the 'rewind' feature on for a site.

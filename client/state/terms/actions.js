@@ -9,18 +9,18 @@ import { filter, get, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	TERM_REMOVE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
 	TERMS_REQUEST_SUCCESS,
 	TERMS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { editPost } from 'state/posts/actions';
-import { updateSiteSettings } from 'state/site-settings/actions';
-import { getSitePostsByTerm } from 'state/posts/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
+} from 'client/state/action-types';
+import { editPost } from 'client/state/posts/actions';
+import { updateSiteSettings } from 'client/state/site-settings/actions';
+import { getSitePostsByTerm } from 'client/state/posts/selectors';
+import { getSiteSettings } from 'client/state/site-settings/selectors';
 import { getTerm, getTerms } from './selectors';
 
 /**

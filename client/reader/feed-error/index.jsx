@@ -9,10 +9,10 @@ import i18n, { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ReaderMain from 'components/reader-main';
-import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
-import EmptyContent from 'components/empty-content';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import ReaderMain from 'client/components/reader-main';
+import MobileBackToSidebar from 'client/components/mobile-back-to-sidebar';
+import EmptyContent from 'client/components/empty-content';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
 
 class FeedError extends React.Component {
 	static defaultProps = {

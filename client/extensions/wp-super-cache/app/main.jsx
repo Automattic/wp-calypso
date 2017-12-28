@@ -13,21 +13,21 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import ExtensionRedirect from 'blocks/extension-redirect';
+import ExtensionRedirect from 'client/blocks/extension-redirect';
 import AdvancedTab from '../components/advanced';
 import CdnTab from '../components/cdn';
 import ContentsTab from '../components/contents';
 import DebugTab from '../components/debug';
 import EasyTab from '../components/easy';
-import Main from 'components/main';
+import Main from 'client/components/main';
 import Navigation from '../components/navigation';
-import Notice from 'components/notice';
+import Notice from 'client/components/notice';
 import PluginsTab from '../components/plugins';
 import PreloadTab from '../components/preload';
 import QueryStatus from '../components/data/query-status';
 import { Tabs, WPSC_MIN_VERSION } from './constants';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import { getStatus } from '../state/status/selectors';
 
 class WPSuperCache extends Component {

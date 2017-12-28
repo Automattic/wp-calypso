@@ -10,8 +10,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Spinner from 'components/spinner';
-import FoldableCard from 'components/foldable-card';
+import Spinner from 'client/components/spinner';
+import FoldableCard from 'client/components/foldable-card';
 
 const StepContainer = ( { isSuccess, isWarning, isError, isProgress, title, summary, children, expanded, toggleStep, translate } ) => {
 	const getIcon = () => {

@@ -4,8 +4,12 @@
  * Internal dependencies
  */
 
-import { RECEIPT_FETCH, RECEIPT_FETCH_COMPLETED, RECEIPT_FETCH_FAILED } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import {
+	RECEIPT_FETCH,
+	RECEIPT_FETCH_COMPLETED,
+	RECEIPT_FETCH_FAILED,
+} from 'client/state/action-types';
+import { combineReducers } from 'client/state/utils';
 
 export const initialReceiptState = {
 	data: null,

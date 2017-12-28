@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+import { cartItems } from 'client/lib/cart-values';
 
 class SubscriptionText extends React.Component {
 	render() {

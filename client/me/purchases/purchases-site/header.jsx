@@ -12,11 +12,11 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import { getSite } from 'state/sites/selectors';
-import QuerySites from 'components/data/query-sites';
-import Site from 'blocks/site';
-import SitePlaceholder from 'blocks/site/placeholder';
+import CompactCard from 'client/components/card/compact';
+import { getSite } from 'client/state/sites/selectors';
+import QuerySites from 'client/components/data/query-sites';
+import Site from 'client/blocks/site';
+import SitePlaceholder from 'client/blocks/site/placeholder';
 
 class PurchaseSiteHeader extends Component {
 	static propTypes = {

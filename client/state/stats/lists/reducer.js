@@ -9,7 +9,7 @@ import { merge, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import { getSerializedStatsQuery } from './utils';
 import { itemSchema } from './schema';
 import {
@@ -17,7 +17,7 @@ import {
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
 	SITE_STATS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

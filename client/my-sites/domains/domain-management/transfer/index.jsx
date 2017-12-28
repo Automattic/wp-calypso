@@ -11,14 +11,14 @@ import React from 'react';
  * Internal Dependencies
  */
 import { get } from 'lodash';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import Header from 'my-sites/domains/domain-management/components/header';
-import { isDomainOnlySite, isSiteAutomatedTransfer } from 'state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import Header from 'client/my-sites/domains/domain-management/components/header';
+import { isDomainOnlySite, isSiteAutomatedTransfer } from 'client/state/selectors';
 import { localize } from 'i18n-calypso';
-import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
+import Main from 'client/components/main';
+import paths from 'client/my-sites/domains/paths';
+import VerticalNav from 'client/components/vertical-nav';
+import VerticalNavItem from 'client/components/vertical-nav/item';
 
 function Transfer( props ) {
 	const { isAutomatedTransfer, isDomainOnly, selectedSite, selectedDomainName, translate } = props;

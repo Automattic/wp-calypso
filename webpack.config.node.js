@@ -137,25 +137,25 @@ const webpackConfig = {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 		} ),
 		new HappyPack( { loaders: [ babelLoader ] } ),
-		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]abtest$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]sites-list$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]olark$/, 'lodash/noop' ), // Depends on DOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]user$/, 'lodash/noop' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^client[\/\\]lib[\/\\]abtest$/, 'lodash/noop' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^client[\/\\]lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^client[\/\\]lib[\/\\]sites-list$/, 'lodash/noop' ), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin( /^client[\/\\]lib[\/\\]olark$/, 'lodash/noop' ), // Depends on DOM
+		new webpack.NormalModuleReplacementPlugin( /^client[\/\\]lib[\/\\]user$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin(
-			/^lib[\/\\]post-normalizer[\/\\]rule-create-better-excerpt$/,
+			/^client[\/\\]lib[\/\\]post-normalizer[\/\\]rule-create-better-excerpt$/,
 			'lodash/noop'
 		), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin(
-			/^components[\/\\]seo[\/\\]reader-preview$/,
+			/^client[\/\\]components[\/\\]seo[\/\\]reader-preview$/,
 			'components/empty-component'
 		), // Conflicts with component-closest module
 		new webpack.NormalModuleReplacementPlugin(
-			/^components[\/\\]popover$/,
+			/^client[\/\\]components[\/\\]popover$/,
 			'components/null-component'
 		), // Depends on BOM and interactions don't work without JS
 		new webpack.NormalModuleReplacementPlugin(
-			/^my-sites[\/\\]themes[\/\\]theme-upload$/,
+			/^client[\/\\]my-sites[\/\\]themes[\/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin(
@@ -163,7 +163,7 @@ const webpackConfig = {
 			'components/empty-component'
 		), // should never be required server side
 		new webpack.NormalModuleReplacementPlugin(
-			/^components[\/\\]site-selector$/,
+			/^client[\/\\]components[\/\\]site-selector$/,
 			'components/null-component'
 		), // Depends on BOM
 	] ),

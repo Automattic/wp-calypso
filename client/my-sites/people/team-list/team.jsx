@@ -11,14 +11,14 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import PeopleListItem from 'my-sites/people/people-list-item';
-import UsersActions from 'lib/users/actions';
-import InfiniteList from 'components/infinite-list';
-import NoResults from 'my-sites/no-results';
-import analytics from 'lib/analytics';
-import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
-import ListEnd from 'components/list-end';
+import Card from 'client/components/card';
+import PeopleListItem from 'client/my-sites/people/people-list-item';
+import UsersActions from 'client/lib/users/actions';
+import InfiniteList from 'client/components/infinite-list';
+import NoResults from 'client/my-sites/no-results';
+import analytics from 'client/lib/analytics';
+import PeopleListSectionHeader from 'client/my-sites/people/people-list-section-header';
+import ListEnd from 'client/components/list-end';
 
 const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 

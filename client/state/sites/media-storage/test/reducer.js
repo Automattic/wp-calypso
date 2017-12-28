@@ -17,8 +17,8 @@ import {
 	SITE_MEDIA_STORAGE_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
+} from 'client/state/action-types';
+import { withSchemaValidation } from 'client/state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const items = withSchemaValidation( unwrappedItems.schema, unwrappedItems );

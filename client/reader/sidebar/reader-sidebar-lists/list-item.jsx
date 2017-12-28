@@ -13,7 +13,7 @@ import ReactDom from 'react-dom';
  * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
 
 export class ReaderSidebarListsListItem extends Component {
 	static propTypes = {

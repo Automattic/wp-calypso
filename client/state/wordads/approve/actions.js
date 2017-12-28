@@ -10,8 +10,8 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
-} from 'state/action-types';
-import wpcom from 'lib/wp';
+} from 'client/state/action-types';
+import wpcom from 'client/lib/wp';
 
 export const requestWordAdsApproval = siteId => dispatch => {
 	dispatch( {

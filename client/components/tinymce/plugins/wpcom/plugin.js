@@ -16,7 +16,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import formatting from 'lib/formatting';
+import formatting from 'client/lib/formatting';
 import { removeEmptySpacesInParagraphs } from './wpcom-utils';
 
 /* eslint-disable */

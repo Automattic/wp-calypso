@@ -8,7 +8,7 @@ import { get, isEmpty, omit } from 'lodash';
  * Internal dependencies
  */
 import { isStale } from '../utils';
-import { isValidStateWithSchema } from 'state/utils';
+import { isValidStateWithSchema } from 'client/state/utils';
 import { JETPACK_CONNECT_AUTHORIZE_TTL } from '../constants';
 import { jetpackConnectAuthorizeSchema } from './schema';
 import {
@@ -26,7 +26,7 @@ import {
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
 	SERIALIZE,
 	SITE_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export default function jetpackConnectAuthorize( state = {}, action ) {
 	switch ( action.type ) {

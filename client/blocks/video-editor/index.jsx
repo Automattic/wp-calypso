@@ -14,12 +14,16 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import ProgressBar from 'components/progress-bar';
-import Notice from 'components/notice';
-import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
+import ProgressBar from 'client/components/progress-bar';
+import Notice from 'client/components/notice';
+import DetailPreviewVideo from 'client/post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorControls from './video-editor-controls';
-import { updatePoster } from 'state/ui/editor/video-editor/actions';
-import { getPosterUploadProgress, getPosterUrl, shouldShowVideoEditorError } from 'state/selectors';
+import { updatePoster } from 'client/state/ui/editor/video-editor/actions';
+import {
+	getPosterUploadProgress,
+	getPosterUrl,
+	shouldShowVideoEditorError,
+} from 'client/state/selectors';
 
 class VideoEditor extends Component {
 	static propTypes = {

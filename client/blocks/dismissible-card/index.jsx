@@ -14,10 +14,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import QueryPreferences from 'components/data/query-preferences';
-import { savePreference, setPreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
+import Card from 'client/components/card';
+import QueryPreferences from 'client/components/data/query-preferences';
+import { savePreference, setPreference } from 'client/state/preferences/actions';
+import { getPreference } from 'client/state/preferences/selectors';
 
 const PREFERENCE_PREFIX = 'dismissible-card-';
 

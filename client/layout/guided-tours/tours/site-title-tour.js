@@ -21,15 +21,15 @@ import {
 	Quit,
 	Step,
 	Tour,
-} from 'layout/guided-tours/config-elements';
+} from 'client/layout/guided-tours/config-elements';
 import {
 	hasSelectedSiteDefaultSiteTitle,
 	isUserOlderThan,
 	isEnabled,
 	canUserEditSettingsOfSelectedSite,
 	isAbTestInVariant,
-} from 'state/ui/guided-tours/contexts';
-import { isDesktop } from 'lib/viewport';
+} from 'client/state/ui/guided-tours/contexts';
+import { isDesktop } from 'client/lib/viewport';
 
 const TWO_DAYS_IN_MILLISECONDS = 2 * 1000 * 3600 * 24;
 

@@ -14,7 +14,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
+import Popover from 'client/components/popover';
 
 class Month extends PureComponent {
 	static propTypes = {

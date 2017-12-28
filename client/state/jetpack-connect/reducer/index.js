@@ -6,7 +6,7 @@ import jetpackAuthAttempts from './jetpack-auth-attempts';
 import jetpackConnectAuthorize from './jetpack-connect-authorize';
 import jetpackConnectSite from './jetpack-connect-site';
 import jetpackSSO from './jetpack-sso';
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 
 export default combineReducers( {
 	jetpackConnectSite,

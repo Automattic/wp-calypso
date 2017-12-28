@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { getEmailSettings, areEmailSettingsLoaded, areEmailSettingsLoading } from '../selectors';
-import { LOADING } from 'woocommerce/state/constants';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 
 const preInitializedState = {
 	extensions: {

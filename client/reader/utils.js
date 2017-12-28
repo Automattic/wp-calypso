@@ -8,11 +8,11 @@ import { every } from 'lodash';
 /**
  * Internal Dependencies
  */
-import PostStore from 'lib/feed-post-store';
-import XPostHelper, { isXPost } from 'reader/xpost-helper';
-import { setLastStoreId } from 'reader/controller-helper';
-import { fillGap } from 'lib/feed-stream-store/actions';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import PostStore from 'client/lib/feed-post-store';
+import XPostHelper, { isXPost } from 'client/reader/xpost-helper';
+import { setLastStoreId } from 'client/reader/controller-helper';
+import { fillGap } from 'client/lib/feed-stream-store/actions';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
 
 export function isSpecialClick( event ) {
 	return event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;

@@ -28,7 +28,7 @@ import {
 	deleteTheme,
 	requestThemeFilters,
 } from '../actions';
-import ThemeQueryManager from 'lib/query-manager/theme';
+import ThemeQueryManager from 'client/lib/query-manager/theme';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -54,7 +54,7 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {

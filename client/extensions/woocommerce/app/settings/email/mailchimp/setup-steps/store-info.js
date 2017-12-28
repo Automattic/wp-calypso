@@ -8,13 +8,13 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import config from 'config';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import LanguagePicker from 'components/language-picker';
-import SettingsPaymentsLocationCurrency from 'woocommerce/app/settings/payments/payments-location-currency.js';
-import TimeZone from 'components/timezone';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
+import LanguagePicker from 'client/components/language-picker';
+import SettingsPaymentsLocationCurrency from 'client/extensions/woocommerce/app/settings/payments/payments-location-currency.js';
+import TimeZone from 'client/components/timezone';
 import { translate } from 'i18n-calypso';
 
 const fields = [

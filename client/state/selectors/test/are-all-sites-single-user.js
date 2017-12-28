@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { areAllSitesSingleUser } from 'state/selectors';
+import { areAllSitesSingleUser } from 'client/state/selectors';
 import { userState } from './fixtures/user-state';
 
 describe( 'areAllSitesSingleUser()', () => {

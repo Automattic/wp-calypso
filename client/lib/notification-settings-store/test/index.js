@@ -10,7 +10,7 @@ import sinon from 'sinon';
  */
 import NotificationSettingsStore from '../';
 import * as NotificationSettingsStoreActions from '../actions';
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 
 const undocumented = wp.undocumented;
 

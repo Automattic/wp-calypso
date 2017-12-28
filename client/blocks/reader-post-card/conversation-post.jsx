@@ -8,8 +8,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal Dependencies
  */
-import ConversationPostList from 'blocks/conversations/list';
-import CompactPostCard from 'blocks/reader-post-card/compact';
+import ConversationPostList from 'client/blocks/conversations/list';
+import CompactPostCard from 'client/blocks/reader-post-card/compact';
 
 class ConversationPost extends React.Component {
 	static propTypes = {

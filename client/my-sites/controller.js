@@ -12,25 +12,25 @@ import { noop, some, startsWith, uniq } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { SITES_ONCE_CHANGED } from 'state/action-types';
-import userFactory from 'lib/user';
-import { receiveSite, requestSites } from 'state/sites/actions';
+import { SITES_ONCE_CHANGED } from 'client/state/action-types';
+import userFactory from 'client/lib/user';
+import { receiveSite, requestSites } from 'client/state/sites/actions';
 import {
 	getSite,
 	isJetpackModuleActive,
 	isJetpackSite,
 	isRequestingSites,
-} from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { setSelectedSiteId, setSection, setAllSitesSelected } from 'state/ui/actions';
-import { savePreference } from 'state/preferences/actions';
-import { hasReceivedRemotePreferences, getPreference } from 'state/preferences/selectors';
-import NavigationComponent from 'my-sites/navigation';
-import route from 'lib/route';
-import notices from 'notices';
+} from 'client/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { setSelectedSiteId, setSection, setAllSitesSelected } from 'client/state/ui/actions';
+import { savePreference } from 'client/state/preferences/actions';
+import { hasReceivedRemotePreferences, getPreference } from 'client/state/preferences/selectors';
+import NavigationComponent from 'client/my-sites/navigation';
+import route from 'client/lib/route';
+import notices from 'client/notices';
 import config from 'config';
-import analytics from 'lib/analytics';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import analytics from 'client/lib/analytics';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
 import {
 	getPrimaryDomainBySiteId,
 	getPrimarySiteId,
@@ -38,7 +38,7 @@ import {
 	getSites,
 	getVisibleSites,
 	isDomainOnlySite,
-} from 'state/selectors';
+} from 'client/state/selectors';
 import {
 	domainManagementAddGoogleApps,
 	domainManagementContactsPrivacy,
@@ -54,11 +54,11 @@ import {
 	domainManagementTransfer,
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
-} from 'my-sites/domains/paths';
-import SitesComponent from 'my-sites/sites';
-import { isATEnabled } from 'lib/automated-transfer';
-import { warningNotice } from 'state/notices/actions';
-import { makeLayout, render as clientRender } from 'controller';
+} from 'client/my-sites/domains/paths';
+import SitesComponent from 'client/my-sites/sites';
+import { isATEnabled } from 'client/lib/automated-transfer';
+import { warningNotice } from 'client/state/notices/actions';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.

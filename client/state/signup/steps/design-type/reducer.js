@@ -4,9 +4,9 @@
  * Internal dependencies
  */
 
-import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_DESIGN_TYPE_SET } from 'state/action-types';
+import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_DESIGN_TYPE_SET } from 'client/state/action-types';
 
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import { designTypeSchema } from './schema';
 
 export default createReducer(

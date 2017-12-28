@@ -11,9 +11,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
+import PageViewTracker from 'client/lib/analytics/page-view-tracker';
+import Main from 'client/components/main';
+import DocumentHead from 'client/components/data/document-head';
 
 export default localize( ( { className, translate, basePath, children } ) => (
 	<Main className={ classnames( 'reset-password', className ) }>

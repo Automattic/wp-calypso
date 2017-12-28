@@ -11,14 +11,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
-import DiscussionForm from 'my-sites/site-settings/form-discussion';
-import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
-import Placeholder from 'my-sites/site-settings/placeholder';
-import { getSelectedSite } from 'state/ui/selectors';
+import Main from 'client/components/main';
+import DocumentHead from 'client/components/data/document-head';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import SiteSettingsNavigation from 'client/my-sites/site-settings/navigation';
+import DiscussionForm from 'client/my-sites/site-settings/form-discussion';
+import JetpackDevModeNotice from 'client/my-sites/site-settings/jetpack-dev-mode-notice';
+import Placeholder from 'client/my-sites/site-settings/placeholder';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 const SiteSettingsDiscussion = ( { site, translate } ) => {
 	if ( ! site ) {

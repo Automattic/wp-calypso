@@ -13,9 +13,9 @@ import {
 	isJetpackSite,
 	isSiteConflicting,
 	isSitePreviewable,
-} from 'state/sites/selectors';
-import { canCurrentUser, getSiteOptions } from 'state/selectors';
-import { withoutHttp } from 'lib/url';
+} from 'client/state/sites/selectors';
+import { canCurrentUser, getSiteOptions } from 'client/state/selectors';
+import { withoutHttp } from 'client/lib/url';
 
 /**
  * Returns computed properties of the site object.

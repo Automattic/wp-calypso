@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_CREATE_FAILURE,
@@ -24,7 +24,7 @@ import {
 	PUBLICIZE_SHARE_SUCCESS,
 	PUBLICIZE_SHARE_FAILURE,
 	PUBLICIZE_SHARE_DISMISS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export function dismissShareConfirmation( siteId, postId ) {
 	return {

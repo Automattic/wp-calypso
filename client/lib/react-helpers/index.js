@@ -11,7 +11,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 
 export function concatTitle( ...parts ) {
 	return parts.join( ' › ' );

@@ -15,25 +15,25 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import MediaListData from 'components/data/media-list-data';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaActions from 'lib/media/actions';
+import analytics from 'client/lib/analytics';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import MediaListData from 'client/components/data/media-list-data';
+import MediaLibrarySelectedData from 'client/components/data/media-library-selected-data';
+import MediaActions from 'client/lib/media/actions';
 import {
 	ValidationErrors as MediaValidationErrors,
 	MEDIA_IMAGE_PHOTON,
 	MEDIA_IMAGE_RESIZER,
 	MEDIA_IMAGE_THUMBNAIL,
-} from 'lib/media/constants';
-import { getSiteSlug } from 'state/sites/selectors';
+} from 'client/lib/media/constants';
+import { getSiteSlug } from 'client/state/sites/selectors';
 import MediaLibraryHeader from './header';
 import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryList from './list';
-import InlineConnection from 'my-sites/sharing/connections/inline-connection';
-import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
+import InlineConnection from 'client/my-sites/sharing/connections/inline-connection';
+import { isKeyringConnectionsFetching } from 'client/state/sharing/keyring/selectors';
 
 class MediaLibraryContent extends React.Component {
 	static propTypes = {

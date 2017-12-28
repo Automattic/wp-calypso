@@ -13,7 +13,7 @@ import { isUri } from 'valid-url';
 /**
  * Internal dependencies
  */
-import resize from 'lib/resize-image-url';
+import resize from 'client/lib/resize-image-url';
 import {
 	MimeTypes,
 	VideoPressFileTypes,
@@ -22,9 +22,9 @@ import {
 	GallerySizeableTypes,
 	GalleryDefaultAttrs,
 } from './constants';
-import Shortcode from 'lib/shortcode';
-import { uniqueId } from 'lib/impure-lodash';
-import versionCompare from 'lib/version-compare';
+import Shortcode from 'client/lib/shortcode';
+import { uniqueId } from 'client/lib/impure-lodash';
+import versionCompare from 'client/lib/version-compare';
 
 /**
  * Module variables

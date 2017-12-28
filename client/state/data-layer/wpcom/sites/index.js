@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
 import config from 'config';
 import activity from './activity';
 import automatedTransfer from './automated-transfer';

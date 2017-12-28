@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSiteSettings } from 'state/site-settings/selectors';
-import { requestSiteSettings } from 'state/site-settings/actions';
+import { isRequestingSiteSettings } from 'client/state/site-settings/selectors';
+import { requestSiteSettings } from 'client/state/site-settings/actions';
 
 class QuerySiteSettings extends Component {
 	componentWillMount() {

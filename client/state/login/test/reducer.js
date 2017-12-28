@@ -43,7 +43,7 @@ import {
 	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	ROUTE_SET,
 	USER_RECEIVE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

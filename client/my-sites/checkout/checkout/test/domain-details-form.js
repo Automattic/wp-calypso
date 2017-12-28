@@ -15,7 +15,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { DomainDetailsForm, DomainDetailsFormContainer } from '../domain-details-form';
-import { domainRegistration, domainPrivacyProtection } from 'lib/cart-values/cart-items';
+import { domainRegistration, domainPrivacyProtection } from 'client/lib/cart-values/cart-items';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 jest.mock( 'lib/analytics', () => {} );

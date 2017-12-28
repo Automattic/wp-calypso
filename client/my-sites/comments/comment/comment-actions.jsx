@@ -13,22 +13,22 @@ import { get, includes, isEqual, isUndefined, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { getMinimumComment } from 'my-sites/comments/comment/utils';
+import Button from 'client/components/button';
+import { getMinimumComment } from 'client/my-sites/comments/comment/utils';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
+} from 'client/state/analytics/actions';
 import {
 	changeCommentStatus,
 	deleteComment,
 	likeComment,
 	unlikeComment,
-} from 'state/comments/actions';
-import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/selectors';
+} from 'client/state/comments/actions';
+import { removeNotice, successNotice } from 'client/state/notices/actions';
+import { getSiteComment } from 'client/state/selectors';
 
 const commentActions = {
 	unapproved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],

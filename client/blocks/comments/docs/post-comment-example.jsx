@@ -8,9 +8,9 @@ import { repeat } from 'lodash';
 /**
  * Internal dependencies
  */
-import PostComment from 'blocks/comments/post-comment';
-import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
-import Card from 'components/card';
+import PostComment from 'client/blocks/comments/post-comment';
+import { POST_COMMENT_DISPLAY_TYPES } from 'client/state/comments/constants';
+import Card from 'client/components/card';
 
 const mockComment = {
 	author: {

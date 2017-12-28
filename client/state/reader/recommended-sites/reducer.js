@@ -7,8 +7,8 @@ import { uniqBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_RECOMMENDED_SITES_RECEIVE } from 'state/action-types';
-import { combineReducers, createReducer, keyedReducer } from 'state/utils';
+import { READER_RECOMMENDED_SITES_RECEIVE } from 'client/state/action-types';
+import { combineReducers, createReducer, keyedReducer } from 'client/state/utils';
 
 /**
  * Tracks mappings between randomization seeds and site recs.

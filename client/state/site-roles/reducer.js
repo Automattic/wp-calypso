@@ -5,13 +5,13 @@
  */
 
 import { siteRolesSchema } from './schema';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import {
 	SITE_ROLES_RECEIVE,
 	SITE_ROLES_REQUEST,
 	SITE_ROLES_REQUEST_FAILURE,
 	SITE_ROLES_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

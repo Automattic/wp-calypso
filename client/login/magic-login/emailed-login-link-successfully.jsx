@@ -13,11 +13,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { login } from 'lib/paths';
-import Card from 'components/card';
-import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
-import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
+import { login } from 'client/lib/paths';
+import Card from 'client/components/card';
+import RedirectWhenLoggedIn from 'client/components/redirect-when-logged-in';
+import { hideMagicLoginRequestForm } from 'client/state/login/magic-login/actions';
+import { recordPageViewWithClientId as recordPageView } from 'client/state/analytics/actions';
 import Gridicon from 'gridicons';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
@@ -36,10 +36,10 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 		const line = [
 			emailAddress
 				? translate( 'We just emailed a link to %(emailAddress)s.', {
-					args: {
-						emailAddress,
-					},
-				} )
+						args: {
+							emailAddress,
+						},
+					} )
 				: translate( 'We just emailed you a link.' ),
 			' ',
 			translate( 'Please check your inbox and click the link to log in.' ),

@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getBlogStickers } from 'state/selectors';
-import QueryBlogStickers from 'components/data/query-blog-stickers';
+import { getBlogStickers } from 'client/state/selectors';
+import QueryBlogStickers from 'client/components/data/query-blog-stickers';
 import ReaderPostOptionsMenuBlogStickerMenuItem from './blog-sticker-menu-item';
 
 class ReaderPostOptionsMenuBlogStickers extends React.Component {

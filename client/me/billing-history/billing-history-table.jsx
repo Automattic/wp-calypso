@@ -10,11 +10,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import purchasesPaths from 'me/purchases/paths';
+import purchasesPaths from 'client/me/purchases/paths';
 import TransactionsTable from './transactions-table';
-import { isSendingBillingReceiptEmail } from 'state/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'state/billing-transactions/actions';
+import { isSendingBillingReceiptEmail } from 'client/state/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'client/state/billing-transactions/actions';
 
 class BillingHistoryTable extends React.Component {
 	recordClickEvent = eventAction => {

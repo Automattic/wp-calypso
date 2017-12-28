@@ -10,11 +10,11 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { USER_DEVICES_REQUEST } from 'state/action-types';
-import { userDevicesAdd } from 'state/user-devices/actions';
-import { errorNotice } from 'state/notices/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { USER_DEVICES_REQUEST } from 'client/state/action-types';
+import { userDevicesAdd } from 'client/state/user-devices/actions';
+import { errorNotice } from 'client/state/notices/actions';
 
 const devicesFromApi = devices =>
 	keyBy(

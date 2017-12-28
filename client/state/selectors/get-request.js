@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
+import { getRequestKey } from 'client/state/data-layer/wpcom-http/utils';
 
 /**
  * Returns meta information about data requests going through the data layer

@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 
 export default function( path, title, category, page ) {
 	analytics.ga.recordEvent( category, 'Loaded Next Page', 'page', page );

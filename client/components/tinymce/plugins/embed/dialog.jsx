@@ -15,14 +15,14 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Dialog from 'components/dialog';
-import FormTextInput from 'components/forms/form-text-input';
-import wpcom from 'lib/wp';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import Spinner from 'components/spinner';
-import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
-import ResizableIframe from 'components/resizable-iframe';
+import Button from 'client/components/button';
+import Dialog from 'client/components/dialog';
+import FormTextInput from 'client/components/forms/form-text-input';
+import wpcom from 'client/lib/wp';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import Spinner from 'client/components/spinner';
+import generateEmbedFrameMarkup from 'client/lib/embed-frame-markup';
+import ResizableIframe from 'client/components/resizable-iframe';
 
 /*
  * Shows the URL and preview of an embed, and allows it to be edited.

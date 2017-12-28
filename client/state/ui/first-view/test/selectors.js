@@ -16,7 +16,7 @@ import {
 	secondsSpentOnCurrentView,
 	bucketedTimeSpentOnCurrentView,
 } from '../selectors';
-import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
+import { FIRST_VIEW_HIDE, ROUTE_SET } from 'client/state/action-types';
 
 describe( 'isUserEligible()', () => {
 	test( 'makes all users eligible if no start date is defined in the config', () => {

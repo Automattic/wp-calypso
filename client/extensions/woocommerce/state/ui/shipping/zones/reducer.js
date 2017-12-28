@@ -9,7 +9,7 @@ import { every, isEmpty, isEqual, omit, pick, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_ADD,
 	WOOCOMMERCE_SHIPPING_ZONE_CANCEL,
@@ -20,7 +20,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_OPEN,
 	WOOCOMMERCE_SHIPPING_ZONE_REMOVE,
 	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 import { nextBucketIndex, getBucket } from '../../helpers';
 import methodsReducer, { initialState as methodsInitialState } from './methods/reducer';
 import locationsReducer, { initialState as locationsInitialState } from './locations/reducer';

@@ -15,7 +15,7 @@ import {
 	READER_POSTS_RECEIVE,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

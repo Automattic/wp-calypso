@@ -10,7 +10,7 @@ import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
-import { isBusiness } from 'lib/products-values';
+import { isBusiness } from 'client/lib/products-values';
 
 function emailForwardingPlanLimit( plan ) {
 	return isBusiness( plan ) ? 100 : 5;

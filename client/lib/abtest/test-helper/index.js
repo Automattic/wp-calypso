@@ -11,7 +11,7 @@ import Debug from 'debug';
  * Internal dependencies
  */
 import TestList from './TestList';
-import { getAllTests } from 'lib/abtest';
+import { getAllTests } from 'client/lib/abtest';
 
 const debug = Debug( 'calypso:abtests:helper' );
 

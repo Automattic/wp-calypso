@@ -14,8 +14,8 @@ import useNock from 'test/helpers/use-nock';
 import {
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import { LOADING } from 'woocommerce/state/constants';
+} from 'client/extensions/woocommerce/state/action-types';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 
 describe( 'actions', () => {
 	describe( '#fetchEmailSettings()', () => {

@@ -13,9 +13,9 @@ import { some, times } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSite, isRequestingSite } from 'state/sites/selectors';
-import { isJetpackPlan } from 'lib/products-values';
-import QuerySites from 'components/data/query-sites';
+import { getSite, isRequestingSite } from 'client/state/sites/selectors';
+import { isJetpackPlan } from 'client/lib/products-values';
+import QuerySites from 'client/components/data/query-sites';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
 import PurchaseReconnectNotice from './reconnect-notice';

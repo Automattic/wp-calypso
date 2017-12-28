@@ -9,21 +9,21 @@ import { assign, some, map } from 'lodash';
  * Internal dependencies
  */
 import { localize, translate } from 'i18n-calypso';
-import { abtest } from 'lib/abtest';
-import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
+import { abtest } from 'client/lib/abtest';
+import CartCoupon from 'client/my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { PLAN_BUSINESS } from 'client/lib/plans/constants';
 import CartToggle from './cart-toggle';
 import TermsOfService from './terms-of-service';
-import Input from 'my-sites/domains/components/form/input';
-import cartValues from 'lib/cart-values';
+import Input from 'client/my-sites/domains/components/form/input';
+import cartValues from 'client/lib/cart-values';
 import SubscriptionText from './subscription-text';
-import analytics from 'lib/analytics';
-import wpcom from 'lib/wp';
-import notices from 'notices';
-import FormSelect from 'components/forms/form-select';
-import FormLabel from 'components/forms/form-label';
+import analytics from 'client/lib/analytics';
+import wpcom from 'client/lib/wp';
+import notices from 'client/notices';
+import FormSelect from 'client/components/forms/form-select';
+import FormLabel from 'client/components/forms/form-label';
 
 class SourcePaymentBox extends PureComponent {
 	static propTypes = {

@@ -13,9 +13,9 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card';
-import FormButton from 'components/forms/form-button';
-import SectionHeader from 'components/section-header';
+import CompactCard from 'client/components/card';
+import FormButton from 'client/components/forms/form-button';
+import SectionHeader from 'client/components/section-header';
 import PostsList from './posts-list';
 
 const form = 'extensions.zoninator.zoneContent';

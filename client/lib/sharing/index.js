@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import PopupMonitor from 'lib/popup-monitor';
+import PopupMonitor from 'client/lib/popup-monitor';
 
 const requestExternalAccess = ( url, cb ) => {
 	const popupMonitor = new PopupMonitor();

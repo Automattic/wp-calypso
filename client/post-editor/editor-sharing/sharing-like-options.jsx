@@ -12,13 +12,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import EditorFieldset from 'post-editor/editor-fieldset';
-import FormCheckbox from 'components/forms/form-checkbox';
-import PostActions from 'lib/posts/actions';
-import { recordStat, recordEvent } from 'lib/posts/stats';
-import { isEditorNewPost } from 'state/ui/editor/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/sites/selectors';
+import EditorFieldset from 'client/post-editor/editor-fieldset';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import PostActions from 'client/lib/posts/actions';
+import { recordStat, recordEvent } from 'client/lib/posts/stats';
+import { isEditorNewPost } from 'client/state/ui/editor/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackModuleActive } from 'client/state/sites/selectors';
 
 class SharingLikeOptions extends React.Component {
 	static propTypes = {

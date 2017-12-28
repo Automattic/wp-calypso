@@ -13,12 +13,12 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
-import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
-import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'reader/follow-sources';
-import InfiniteStream from 'components/reader-infinite-stream';
-import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
-import { requestFeedSearch } from 'state/reader/feed-searches/actions';
+import Button from 'client/components/button';
+import ReaderSubscriptionListItemPlaceholder from 'client/blocks/reader-subscription-list-item/placeholder';
+import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'client/reader/follow-sources';
+import InfiniteStream from 'client/components/reader-infinite-stream';
+import { siteRowRenderer } from 'client/components/reader-infinite-stream/row-renderers';
+import { requestFeedSearch } from 'client/state/reader/feed-searches/actions';
 
 class FollowingManageSearchFeedsResults extends React.Component {
 	static propTypes = {

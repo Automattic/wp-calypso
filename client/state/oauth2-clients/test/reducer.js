@@ -15,7 +15,7 @@ import {
 	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	// Uses default data but reduces the size of this data set for tests

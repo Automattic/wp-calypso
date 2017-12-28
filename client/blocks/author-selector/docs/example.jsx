@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import AuthorSelector from '../';
-import Card from 'components/card';
-import { getCurrentUser } from 'state/current-user/selectors';
+import Card from 'client/components/card';
+import { getCurrentUser } from 'client/state/current-user/selectors';
 
 function AuthorSelectorExample( { primarySiteId, displayName } ) {
 	return (

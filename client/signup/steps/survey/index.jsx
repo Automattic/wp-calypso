@@ -15,14 +15,14 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
-import analytics from 'lib/analytics';
+import StepWrapper from 'client/signup/step-wrapper';
+import SignupActions from 'client/lib/signup/actions';
+import analytics from 'client/lib/analytics';
 import verticals from './verticals';
-import Button from 'components/button';
-import signupUtils from 'signup/utils';
-import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-import { setSurvey } from 'state/signup/steps/survey/actions';
+import Button from 'client/components/button';
+import signupUtils from 'client/signup/utils';
+import FormTextInputWithAction from 'client/components/forms/form-text-input-with-action';
+import { setSurvey } from 'client/state/signup/steps/survey/actions';
 
 class SurveyStep extends React.Component {
 	static propTypes = {

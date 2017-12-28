@@ -10,19 +10,19 @@ import qs from 'querystring';
  * Internal dependencies
  */
 
-import { dispatchWithProps } from 'woocommerce/state/helpers';
-import { post } from 'woocommerce/state/data-layer/request/actions';
-import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
-import { productCategoryUpdated } from 'woocommerce/state/sites/product-categories/actions';
+import { dispatchWithProps } from 'client/extensions/woocommerce/state/helpers';
+import { post } from 'client/extensions/woocommerce/state/data-layer/request/actions';
+import { setError } from 'client/extensions/woocommerce/state/sites/status/wc-api/actions';
+import { productCategoryUpdated } from 'client/extensions/woocommerce/state/sites/product-categories/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
-} from 'woocommerce/state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { DEFAULT_QUERY } from 'woocommerce/state/sites/product-categories/utils';
-import request from 'woocommerce/state/sites/http-request';
+} from 'client/extensions/woocommerce/state/action-types';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { DEFAULT_QUERY } from 'client/extensions/woocommerce/state/sites/product-categories/utils';
+import request from 'client/extensions/woocommerce/state/sites/http-request';
 
 // @TODO Move these handlers to product-categories/handlers.js
 

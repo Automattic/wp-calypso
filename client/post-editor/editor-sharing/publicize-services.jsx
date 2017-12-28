@@ -13,9 +13,9 @@ import { groupBy, map } from 'lodash';
  * Internal dependencies
  */
 import EditorSharingPublicizeConnection from './publicize-connection';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteUserConnections } from 'client/state/sharing/publicize/selectors';
 
 export const EditorSharingPublicizeServices = ( { connections, post, newConnectionPopup } ) => (
 	<ul className="editor-sharing__publicize-services">

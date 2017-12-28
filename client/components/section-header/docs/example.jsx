@@ -9,8 +9,8 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import SectionHeader from 'components/section-header';
+import Button from 'client/components/button';
+import SectionHeader from 'client/components/section-header';
 import { translate } from 'i18n-calypso';
 
 class SectionHeaderExample extends PureComponent {

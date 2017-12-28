@@ -14,8 +14,11 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { changeReviewStatus, deleteReview } from 'woocommerce/state/sites/reviews/actions';
+import Button from 'client/components/button';
+import {
+	changeReviewStatus,
+	deleteReview,
+} from 'client/extensions/woocommerce/state/sites/reviews/actions';
 
 // currentStatus is the status/tab that is currently selected in the UI.
 // This is used to show the 'delete' action on the trash page.

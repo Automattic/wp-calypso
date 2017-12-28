@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
-import Card from 'components/card';
+import ReaderSiteStreamLink from 'client/blocks/reader-site-stream-link';
+import Card from 'client/components/card';
 
 export default class ReaderSiteStreamLinkExample extends React.Component {
 	static displayName = 'ReaderSiteStreamLinkExample';

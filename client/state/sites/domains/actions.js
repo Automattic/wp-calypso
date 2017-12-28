@@ -12,13 +12,13 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { createSiteDomainObject } from './assembler';
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 import {
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Module vars

@@ -5,9 +5,9 @@
  */
 
 import debug from 'debug';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST } from 'state/action-types';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST } from 'client/state/action-types';
 import {
 	failMediaRequest,
 	failMediaItemRequest,
@@ -16,7 +16,7 @@ import {
 	requestingMediaItem,
 	successMediaRequest,
 	successMediaItemRequest,
-} from 'state/media/actions';
+} from 'client/state/media/actions';
 
 /**
  * Module variables

@@ -15,16 +15,23 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import Banner from 'components/banner';
-import Button from 'components/button';
-import Card from 'components/card';
-import QueryEligibility from 'components/data/query-atat-eligibility';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import {
+	PLAN_BUSINESS,
+	FEATURE_UPLOAD_PLUGINS,
+	FEATURE_UPLOAD_THEMES,
+} from 'client/lib/plans/constants';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer,
+} from 'client/state/automated-transfer/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import Banner from 'client/components/banner';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import QueryEligibility from 'client/components/data/query-atat-eligibility';
 import HoldList from './hold-list';
 import WarningList from './warning-list';
 

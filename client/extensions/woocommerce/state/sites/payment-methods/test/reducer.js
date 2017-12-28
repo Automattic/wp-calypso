@@ -13,8 +13,8 @@ import {
 	WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS,
 	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
 	WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import { LOADING } from 'woocommerce/state/constants';
+} from 'client/extensions/woocommerce/state/action-types';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 
 describe( 'reducer', () => {
 	test( 'should mark the payment methods tree as "loading"', () => {

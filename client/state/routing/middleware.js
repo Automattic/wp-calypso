@@ -10,8 +10,8 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { savePath } from 'lib/restore-last-path';
-import { ROUTE_SET } from 'state/action-types';
+import { savePath } from 'client/lib/restore-last-path';
+import { ROUTE_SET } from 'client/state/action-types';
 
 const debug = debugFactory( 'calypso:restore-last-location' );
 

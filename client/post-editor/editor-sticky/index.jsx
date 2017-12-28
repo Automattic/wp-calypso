@@ -14,13 +14,13 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
-import Button from 'components/button';
-import { recordStat, recordEvent } from 'lib/posts/stats';
-import { editPost } from 'state/posts/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
+import Tooltip from 'client/components/tooltip';
+import Button from 'client/components/button';
+import { recordStat, recordEvent } from 'client/lib/posts/stats';
+import { editPost } from 'client/state/posts/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
 
 class EditorSticky extends React.Component {
 	static displayName = 'EditorSticky';

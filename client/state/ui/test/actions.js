@@ -24,7 +24,7 @@ import {
 	ROUTE_SET,
 	SECTION_SET,
 	SELECTED_SITE_SET,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setAllSitesSelected()', () => {

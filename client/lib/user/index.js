@@ -4,12 +4,12 @@
  * External dependencies
  */
 
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 
 /**
  * Internal Dependencies
  */
-import { action as InvitesActionTypes } from 'lib/invites/constants';
+import { action as InvitesActionTypes } from 'client/lib/invites/constants';
 import User from './user';
 let _user = false;
 

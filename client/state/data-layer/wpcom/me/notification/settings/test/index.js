@@ -10,8 +10,8 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { requestNotificationSettings, updateSettings, handleError } from '../';
-import { NOTIFICATION_SETTINGS_UPDATE, NOTICE_CREATE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { NOTIFICATION_SETTINGS_UPDATE, NOTICE_CREATE } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 describe( '#requestNotificationSettings()', () => {
 	test( 'should dispatch HTTP request to the user notification settings endpoint', () => {

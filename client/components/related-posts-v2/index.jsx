@@ -12,10 +12,10 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import { relatedPostsForPost } from 'state/reader/related-posts/selectors';
-import { SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
-import RelatedPost from 'blocks/reader-related-card-v2';
-import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts';
+import { relatedPostsForPost } from 'client/state/reader/related-posts/selectors';
+import { SCOPE_SAME, SCOPE_OTHER } from 'client/state/reader/related-posts/utils';
+import RelatedPost from 'client/blocks/reader-related-card-v2';
+import QueryReaderRelatedPosts from 'client/components/data/query-reader-related-posts';
 
 function RelatedPosts( {
 	siteId,

@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { USER_RECEIVE, USERS_REQUEST } from 'state/action-types';
+import { USER_RECEIVE, USERS_REQUEST } from 'client/state/action-types';
 
 /**
  * Returns an action object to be used in signalling that a user object has

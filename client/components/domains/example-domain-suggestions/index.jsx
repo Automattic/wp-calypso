@@ -12,9 +12,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getDesignType } from 'state/signup/steps/design-type/selectors';
-import { DESIGN_TYPE_STORE } from 'signup/constants';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { getDesignType } from 'client/state/signup/steps/design-type/selectors';
+import { DESIGN_TYPE_STORE } from 'client/signup/constants';
 
 class DomainSuggestionsExample extends React.Component {
 	static propTypes = {

@@ -11,9 +11,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getLink } from 'woocommerce/lib/nav-utils';
-import TableRow from 'woocommerce/components/table/table-row';
-import TableItem from 'woocommerce/components/table/table-item';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import TableRow from 'client/extensions/woocommerce/components/table/table-row';
+import TableItem from 'client/extensions/woocommerce/components/table/table-item';
 
 function getPromotionTypeText( promotionType, translate ) {
 	switch ( promotionType ) {

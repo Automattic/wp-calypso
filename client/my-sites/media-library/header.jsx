@@ -12,17 +12,17 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenu from 'client/components/popover/menu';
+import PopoverMenuItem from 'client/components/popover/menu-item';
 import MediaLibraryScale from './scale';
 import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
-import { userCan } from 'lib/site/utils';
-import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-actions';
-import Card from 'components/card';
-import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
-import StickyPanel from 'components/sticky-panel';
+import { userCan } from 'client/lib/site/utils';
+import MediaModalSecondaryActions from 'client/post-editor/media-modal/secondary-actions';
+import Card from 'client/components/card';
+import ButtonGroup from 'client/components/button-group';
+import Button from 'client/components/button';
+import StickyPanel from 'client/components/sticky-panel';
 
 class MediaLibraryHeader extends React.Component {
 	static displayName = 'MediaLibraryHeader';

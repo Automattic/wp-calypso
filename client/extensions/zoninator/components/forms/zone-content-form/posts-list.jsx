@@ -12,8 +12,8 @@ import { findIndex, map, times } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import SortableList from 'components/forms/sortable-list';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import SortableList from 'client/components/forms/sortable-list';
 import PostCard from './post-card';
 import PostPlaceholder from './post-placeholder';
 import RecentPostsDropdown from '../../recent-posts-dropdown';
@@ -79,26 +79,27 @@ class PostsList extends Component {
 					</SearchAutocomplete>
 				</FormFieldset>
 
-				{ !! posts.length && ! requesting && (
-					<FormFieldset>
-						<p className={ explanationTextClass }>
-							{ translate(
-								"You can reorder the zone's content by dragging it to a different location on the list."
-							) }
-						</p>
-						<SortableList direction="vertical" onChange={ this.changePostOrder( fields ) }>
-							{ posts.map( ( post, index ) => (
-								<PostCard
-									key={ post.id }
-									postId={ post.id }
-									postTitle={ post.title }
-									siteId={ post.siteId }
-									remove={ this.removePost( fields, index ) }
-								/>
-							) ) }
-						</SortableList>
-					</FormFieldset>
-				) }
+				{ !! posts.length &&
+					! requesting && (
+						<FormFieldset>
+							<p className={ explanationTextClass }>
+								{ translate(
+									"You can reorder the zone's content by dragging it to a different location on the list."
+								) }
+							</p>
+							<SortableList direction="vertical" onChange={ this.changePostOrder( fields ) }>
+								{ posts.map( ( post, index ) => (
+									<PostCard
+										key={ post.id }
+										postId={ post.id }
+										postTitle={ post.title }
+										siteId={ post.siteId }
+										remove={ this.removePost( fields, index ) }
+									/>
+								) ) }
+							</SortableList>
+						</FormFieldset>
+					) }
 
 				{ requesting && times( 3, index => <PostPlaceholder key={ index } /> ) }
 			</div>

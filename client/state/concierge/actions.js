@@ -9,7 +9,7 @@ import {
 	CONCIERGE_APPOINTMENT_CREATE,
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const requestConciergeAvailableTimes = scheduleId => ( {
 	type: CONCIERGE_AVAILABLE_TIMES_REQUEST,

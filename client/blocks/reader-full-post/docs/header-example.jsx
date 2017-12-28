@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ReaderFullPostHeader from 'blocks/reader-full-post/header';
-import Card from 'components/card';
+import ReaderFullPostHeader from 'client/blocks/reader-full-post/header';
+import Card from 'client/components/card';
 
 export default class ReaderFullPostHeaderExample extends React.PureComponent {
 	static displayName = 'ReaderFullPostHeaderExample';

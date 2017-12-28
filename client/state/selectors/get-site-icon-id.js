@@ -9,8 +9,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getRawSite } from 'state/sites/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
+import { getRawSite } from 'client/state/sites/selectors';
+import { getSiteSettings } from 'client/state/site-settings/selectors';
 
 /**
  * Returns a ID to the media associated with a site's current site icon, or

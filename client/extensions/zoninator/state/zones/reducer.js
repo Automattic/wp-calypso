@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import { itemsSchema } from './schema';
 import {
 	ZONINATOR_REQUEST_ERROR,

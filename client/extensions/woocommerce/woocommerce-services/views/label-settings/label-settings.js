@@ -12,13 +12,13 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
-import Button from 'components/button';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
+import { getPaperSizes } from 'client/extensions/woocommerce/woocommerce-services/lib/pdf-label-utils';
+import Button from 'client/components/button';
+import FormFieldSet from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSelect from 'client/components/forms/form-select';
 import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
-import { getOrigin } from 'woocommerce/lib/nav-utils';
+import { getOrigin } from 'client/extensions/woocommerce/lib/nav-utils';
 
 class ShippingLabels extends Component {
 	componentWillMount() {

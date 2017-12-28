@@ -14,13 +14,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import { cartItems } from 'lib/cart-values';
-import { getSiteBySlug } from 'state/sites/selectors';
-import SignupActions from 'lib/signup/actions';
-import StepWrapper from 'signup/step-wrapper';
-import PlansFeaturesMain from 'my-sites/plans-features-main';
-import QueryPlans from 'components/data/query-plans';
+import analytics from 'client/lib/analytics';
+import { cartItems } from 'client/lib/cart-values';
+import { getSiteBySlug } from 'client/state/sites/selectors';
+import SignupActions from 'client/lib/signup/actions';
+import StepWrapper from 'client/signup/step-wrapper';
+import PlansFeaturesMain from 'client/my-sites/plans-features-main';
+import QueryPlans from 'client/components/data/query-plans';
 
 class PlansStep extends Component {
 	constructor( props ) {

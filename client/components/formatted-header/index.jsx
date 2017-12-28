@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { preventWidows } from 'lib/formatting';
+import { preventWidows } from 'client/lib/formatting';
 
 function FormattedHeader( { headerText, subHeaderText } ) {
 	const classes = classNames( 'formatted-header', {

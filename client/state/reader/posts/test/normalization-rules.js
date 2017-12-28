@@ -10,8 +10,8 @@ import { forEach, repeat } from 'lodash';
  */
 import * as DISPLAY_TYPES from '../display-types';
 import { classifyPost } from '../normalization-rules';
-import addDiscoverProperties from 'lib/post-normalizer/rule-add-discover-properties';
-import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
+import addDiscoverProperties from 'client/lib/post-normalizer/rule-add-discover-properties';
+import { isFeaturedImageInContent } from 'client/lib/post-normalizer/utils';
 
 function verifyClassification( post, displayTypes ) {
 	classifyPost( post );

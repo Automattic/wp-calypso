@@ -13,8 +13,8 @@ import inherits from 'inherits';
 /**
  * Internal dependencies
  */
-import paymentGatewayLoader from 'lib/payment-gateway-loader';
-import { validateCardDetails } from 'lib/credit-card-details';
+import paymentGatewayLoader from 'client/lib/payment-gateway-loader';
+import { validateCardDetails } from 'client/lib/credit-card-details';
 import {
 	INPUT_VALIDATION,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
@@ -22,7 +22,7 @@ import {
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
 } from './step-types';
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 
 const wpcom = wp.undocumented();
 

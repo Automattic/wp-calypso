@@ -11,10 +11,10 @@ import { get, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
 import EmbedDialog from '../dialog';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
 
 class EmbedDialogExample extends PureComponent {
 	static propTypes = {

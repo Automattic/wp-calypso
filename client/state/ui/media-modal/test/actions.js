@@ -10,7 +10,7 @@ import { expect } from 'chai';
  */
 import { setMediaModalView, resetMediaModalView } from '../actions';
 import { ModalViews } from '../constants';
-import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
+import { MEDIA_MODAL_VIEW_SET } from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setMediaModalView()', () => {

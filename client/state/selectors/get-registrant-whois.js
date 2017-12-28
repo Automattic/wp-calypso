@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { findRegistrantWhois } from 'lib/domains/whois/utils';
+import { findRegistrantWhois } from 'client/lib/domains/whois/utils';
 
 /**
  * Returns registrant's domain contact details if we've successfully requested them.

@@ -7,7 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getParentComment } from 'state/selectors';
+import { getParentComment } from 'client/state/selectors';
 
 const state = {
 	comments: {

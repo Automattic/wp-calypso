@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { verifyEmail, resetVerifyEmailState } from '../actions';
-import { EMAIL_VERIFY_REQUEST, EMAIL_VERIFY_STATE_RESET } from 'state/action-types';
+import { EMAIL_VERIFY_REQUEST, EMAIL_VERIFY_STATE_RESET } from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#verifyEmail', () => {

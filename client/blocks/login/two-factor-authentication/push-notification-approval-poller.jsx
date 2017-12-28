@@ -11,8 +11,8 @@ import { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { startPollAppPushAuth, stopPollAppPushAuth } from 'state/login/actions';
-import { getTwoFactorPushPollSuccess } from 'state/login/selectors';
+import { startPollAppPushAuth, stopPollAppPushAuth } from 'client/state/login/actions';
+import { getTwoFactorPushPollSuccess } from 'client/state/login/selectors';
 
 class PushNotificationApprovalPoller extends Component {
 	static propTypes = {

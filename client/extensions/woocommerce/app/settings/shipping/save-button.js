@@ -14,18 +14,18 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import Button from 'client/components/button';
+import { fetchSetupChoices } from 'client/extensions/woocommerce/state/sites/setup-choices/actions';
 import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,
-} from 'woocommerce/state/sites/setup-choices/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { createWcsShippingSaveActionList } from 'woocommerce/woocommerce-services/state/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { getActionList } from 'woocommerce/state/action-list/selectors';
-import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
+} from 'client/extensions/woocommerce/state/sites/setup-choices/selectors';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import { createWcsShippingSaveActionList } from 'client/extensions/woocommerce/woocommerce-services/state/actions';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
+import { getActionList } from 'client/extensions/woocommerce/state/action-list/selectors';
+import { isWcsEnabled } from 'client/extensions/woocommerce/state/selectors/plugins';
 
 class ShippingSettingsSaveButton extends Component {
 	static propTypes = {

@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Spinner from 'components/spinner';
+import Spinner from 'client/components/spinner';
 
 export default class StatsModulePlaceholder extends PureComponent {
 	static propTypes = {

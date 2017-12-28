@@ -9,10 +9,10 @@ import request from 'superagent';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 import { actions } from './constants';
 import { errors as errorTypes } from './constants';
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 
 export function login( username, password, auth_code ) {
 	Dispatcher.handleViewAction( {

@@ -13,9 +13,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostTypes } from 'state/post-types/selectors';
-import utils from 'lib/posts/utils';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getPostTypes } from 'client/state/post-types/selectors';
+import utils from 'client/lib/posts/utils';
 
 class EditorConfirmationSidebarHeader extends PureComponent {
 	static propTypes = {

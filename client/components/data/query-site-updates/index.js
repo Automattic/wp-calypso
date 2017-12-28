@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSiteUpdates } from 'state/sites/updates/selectors';
-import { requestSiteUpdates as requestUpdates } from 'state/sites/updates/utils';
+import { isRequestingSiteUpdates } from 'client/state/sites/updates/selectors';
+import { requestSiteUpdates as requestUpdates } from 'client/state/sites/updates/utils';
 
 class QuerySiteUpdates extends Component {
 	static propTypes = {

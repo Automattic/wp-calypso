@@ -11,9 +11,9 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import notices from 'notices';
-import userSettings from 'lib/user-settings';
+import analytics from 'client/lib/analytics';
+import notices from 'client/notices';
+import userSettings from 'client/lib/user-settings';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 

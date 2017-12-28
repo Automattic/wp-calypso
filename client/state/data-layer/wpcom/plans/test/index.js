@@ -3,13 +3,13 @@
  * Internal dependencies
  */
 import { receivePlans, receiveError, requestPlans } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import {
 	plansReceiveAction,
 	plansRequestFailureAction,
 	plansRequestSuccessAction,
-} from 'state/plans/actions';
-import { WPCOM_RESPONSE } from 'state/plans/test/fixture';
+} from 'client/state/plans/actions';
+import { WPCOM_RESPONSE } from 'client/state/plans/test/fixture';
 
 describe( 'wpcom-api', () => {
 	describe( 'plans request', () => {

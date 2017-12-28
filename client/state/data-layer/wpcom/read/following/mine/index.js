@@ -8,18 +8,21 @@ import { forEach } from 'lodash';
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
 import followingNew from './new';
 import followingDelete from './delete';
 import {
 	READER_FOLLOW,
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_PAGE,
-} from 'state/action-types';
-import { receiveFollows as receiveFollowsAction, syncComplete } from 'state/reader/follows/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
+} from 'client/state/action-types';
+import {
+	receiveFollows as receiveFollowsAction,
+	syncComplete,
+} from 'client/state/reader/follows/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'client/state/notices/actions';
 import { isValidApiResponse, subscriptionsFromApi } from './utils';
 
 const ITEMS_PER_PAGE = 200;

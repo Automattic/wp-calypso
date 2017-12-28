@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { removeNotice, successNotice, errorNotice } from '../actions';
-import { NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
+import { NOTICE_CREATE, NOTICE_REMOVE } from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'removeNotice()', () => {

@@ -11,17 +11,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { successNotice, errorNotice } from 'state/notices/actions';
-import Main from 'components/main';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import MeSidebarNavigation from 'me/sidebar-navigation';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
+import Main from 'client/components/main';
+import ReauthRequired from 'client/me/reauth-required';
+import twoStepAuthorization from 'client/lib/two-step-authorization';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
 import Navigation from './navigation';
 import BlogsSettings from './blogs-settings';
 import PushNotificationSettings from './push-notification-settings';
-import store from 'lib/notification-settings-store';
-import QueryUserDevices from 'components/data/query-user-devices';
-import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
+import store from 'client/lib/notification-settings-store';
+import QueryUserDevices from 'client/components/data/query-user-devices';
+import {
+	fetchSettings,
+	toggle,
+	saveSettings,
+} from 'client/lib/notification-settings-store/actions';
 
 class NotificationSettings extends Component {
 	state = {

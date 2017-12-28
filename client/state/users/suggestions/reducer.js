@@ -9,8 +9,8 @@ import {
 	USER_SUGGESTIONS_REQUEST,
 	USER_SUGGESTIONS_REQUEST_FAILURE,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
 import { itemsSchema } from './schema';
 
 /**

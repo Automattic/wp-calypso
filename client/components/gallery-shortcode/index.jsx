@@ -13,10 +13,10 @@ import { assign, omit, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Shortcode from 'components/shortcode';
-import { parse as parseShortcode } from 'lib/shortcode';
-import MediaUtils from 'lib/media/utils';
-import { GalleryDefaultAttrs } from 'lib/media/constants';
+import Shortcode from 'client/components/shortcode';
+import { parse as parseShortcode } from 'client/lib/shortcode';
+import MediaUtils from 'client/lib/media/utils';
+import { GalleryDefaultAttrs } from 'client/lib/media/constants';
 
 /**
  * Module variables

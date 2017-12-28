@@ -18,7 +18,7 @@ import {
 import {
 	getProductCategory,
 	getProductCategories,
-} from 'woocommerce/state/sites/product-categories/selectors';
+} from 'client/extensions/woocommerce/state/sites/product-categories/selectors';
 
 const siteId = 123;
 

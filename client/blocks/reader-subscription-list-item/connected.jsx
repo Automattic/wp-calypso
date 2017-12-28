@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import connectSite from 'lib/reader-connect-site';
-import userSettings from 'lib/user-settings';
-import SubscriptionListItem from 'blocks/reader-subscription-list-item';
-import { isFollowing as isFollowingSelector } from 'state/selectors';
+import connectSite from 'client/lib/reader-connect-site';
+import userSettings from 'client/lib/user-settings';
+import SubscriptionListItem from 'client/blocks/reader-subscription-list-item';
+import { isFollowing as isFollowingSelector } from 'client/state/selectors';
 
 class ConnectedSubscriptionListItem extends React.Component {
 	static propTypes = {

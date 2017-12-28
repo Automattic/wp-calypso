@@ -9,14 +9,14 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import { LOADING } from 'woocommerce/state/constants';
+import { createReducer } from 'client/state/utils';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 import {
 	WOOCOMMERCE_SETTINGS_TAX_BATCH_REQUEST,
 	WOOCOMMERCE_SETTINGS_TAX_BATCH_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETTINGS_TAX_REQUEST,
 	WOOCOMMERCE_SETTINGS_TAX_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_SETTINGS_TAX_REQUEST ]: () => {

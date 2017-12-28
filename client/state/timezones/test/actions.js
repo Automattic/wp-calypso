@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { requestTimezones, timezonesReceive } from '../actions';
-import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST } from 'state/action-types';
+import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST } from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'creators functions', () => {

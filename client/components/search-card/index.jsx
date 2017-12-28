@@ -11,8 +11,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Search from 'components/search';
+import Card from 'client/components/card';
+import Search from 'client/components/search';
 
 class SearchCard extends React.Component {
 	static propTypes = {

@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
 
 class MobileBackToSidebar extends React.Component {
 	toggleSidebar = event => {

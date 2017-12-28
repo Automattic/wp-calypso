@@ -15,13 +15,13 @@ import ReactDom from 'react-dom';
 /**
  * Internal dependencies
  */
-import detectHistoryNavigation from 'lib/detect-history-navigation';
-import InfiniteListActions from 'lib/infinite-list/actions';
-import InfiniteListPositionsStore from 'lib/infinite-list/positions-store';
-import InfiniteListScrollStore from 'lib/infinite-list/scroll-store';
+import detectHistoryNavigation from 'client/lib/detect-history-navigation';
+import InfiniteListActions from 'client/lib/infinite-list/actions';
+import InfiniteListPositionsStore from 'client/lib/infinite-list/positions-store';
+import InfiniteListScrollStore from 'client/lib/infinite-list/scroll-store';
 import ScrollHelper from './scroll-helper';
-import scrollTo from 'lib/scroll-to';
-import smartSetState from 'lib/react-smart-set-state';
+import scrollTo from 'client/lib/scroll-to';
+import smartSetState from 'client/lib/react-smart-set-state';
 
 const debug = debugFactory( 'calypso:infinite-list' );
 

@@ -9,10 +9,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
-import { getTopJITM } from 'state/jitm/selectors';
-import { dismissJetpackJITM } from 'state/jitm/actions';
-import Banner from 'components/banner';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { getTopJITM } from 'client/state/jitm/selectors';
+import { dismissJetpackJITM } from 'client/state/jitm/actions';
+import Banner from 'client/components/banner';
 
 export const JITM = ( {
 	currentSite,

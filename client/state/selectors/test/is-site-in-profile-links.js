@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { isSiteInProfileLinks } from 'state/selectors';
+import { isSiteInProfileLinks } from 'client/state/selectors';
 
 describe( 'isSiteInProfileLinks()', () => {
 	const profileLinks = [

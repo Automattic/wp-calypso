@@ -11,11 +11,11 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import QueryPosts from 'components/data/query-posts';
-import QuerySites from 'components/data/query-sites';
+import QueryPosts from 'client/components/data/query-posts';
+import QuerySites from 'client/components/data/query-sites';
 import PostItem from '../';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSitePosts } from 'state/posts/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getSitePosts } from 'client/state/posts/selectors';
 
 function PostItemExample( { primarySiteId, globalId } ) {
 	return (

@@ -13,12 +13,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import CompactCard from 'client/components/card/compact';
+import SectionHeader from 'client/components/section-header';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import { getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 class AmpWpcom extends Component {
 	static propTypes = {

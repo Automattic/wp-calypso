@@ -10,18 +10,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import {
-	makeTour,
-	Continue,
-	Tour,
-	Step,
-	ButtonRow,
-	Next,
-	Quit,
-	Link,
-} from 'layout/guided-tours/config-elements';
+import { makeTour, Continue, Tour, Step, ButtonRow, Next, Quit, Link } from 'client/layout/guided-tours/config-elements';
 import { hasSelectedSitePremiumOrBusinessPlan } from '../selectors/has-selected-site-premium-or-business-plan';
-import { isDesktop } from 'lib/viewport';
+import { isDesktop } from 'client/lib/viewport';
 
 export const SimplePaymentsEndOfYearGuide = makeTour(
 	<Tour

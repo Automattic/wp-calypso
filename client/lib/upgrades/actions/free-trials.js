@@ -4,9 +4,9 @@
  * Internal dependencies
  */
 
-import { cartItems, emptyCart, fillInAllCartItemAttributes } from 'lib/cart-values';
-import productsListFactory from 'lib/products-list';
-import { fullCreditsPayment } from 'lib/store-transactions';
+import { cartItems, emptyCart, fillInAllCartItemAttributes } from 'client/lib/cart-values';
+import productsListFactory from 'client/lib/products-list';
+import { fullCreditsPayment } from 'client/lib/store-transactions';
 import { submitTransaction } from './checkout';
 
 const productsList = productsListFactory();

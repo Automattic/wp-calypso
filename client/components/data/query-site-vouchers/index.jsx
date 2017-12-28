@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSiteVouchers } from 'state/sites/vouchers/selectors';
-import { requestSiteVouchers as requestVouchers } from 'state/sites/vouchers/actions';
+import { isRequestingSiteVouchers } from 'client/state/sites/vouchers/selectors';
+import { requestSiteVouchers as requestVouchers } from 'client/state/sites/vouchers/actions';
 
 class QuerySiteVouchers extends Component {
 	constructor( props ) {

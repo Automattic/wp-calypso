@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingJetpackSettings } from 'state/selectors';
+import { isRequestingJetpackSettings } from 'client/state/selectors';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-settings';
 
 describe( 'isRequestingJetpackSettings()', () => {

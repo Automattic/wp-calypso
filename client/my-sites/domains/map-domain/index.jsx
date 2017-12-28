@@ -13,19 +13,19 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import MapDomainStep from 'components/domains/map-domain-step';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { cartItems } from 'lib/cart-values';
-import upgradesActions from 'lib/upgrades/actions';
-import wp from 'lib/wp';
-import paths from 'my-sites/domains/paths';
-import Notice from 'components/notice';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import { isSiteUpgradeable } from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import { getProductsList } from 'state/products-list/selectors';
+import HeaderCake from 'client/components/header-cake';
+import MapDomainStep from 'client/components/domains/map-domain-step';
+import { DOMAINS_WITH_PLANS_ONLY } from 'client/state/current-user/constants';
+import { cartItems } from 'client/lib/cart-values';
+import upgradesActions from 'client/lib/upgrades/actions';
+import wp from 'client/lib/wp';
+import paths from 'client/my-sites/domains/paths';
+import Notice from 'client/components/notice';
+import { currentUserHasFlag } from 'client/state/current-user/selectors';
+import { isSiteUpgradeable } from 'client/state/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import QueryProductsList from 'client/components/data/query-products-list';
+import { getProductsList } from 'client/state/products-list/selectors';
 
 const wpcom = wp.undocumented();
 

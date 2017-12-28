@@ -13,17 +13,17 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PlansFeaturesMain from 'my-sites/plans-features-main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import UpgradesNavigation from 'my-sites/domains/navigation';
-import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'state/sites/selectors';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import DocumentHead from 'client/components/data/document-head';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import Main from 'client/components/main';
+import PageViewTracker from 'client/lib/analytics/page-view-tracker';
+import PlansFeaturesMain from 'client/my-sites/plans-features-main';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import UpgradesNavigation from 'client/my-sites/domains/navigation';
+import isSiteAutomatedTransferSelector from 'client/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import QueryContactDetailsCache from 'client/components/data/query-contact-details-cache';
 
 class Plans extends React.Component {
 	static propTypes = {

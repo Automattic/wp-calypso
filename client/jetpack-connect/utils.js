@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import addQueryArgs from 'lib/route/add-query-args';
+import addQueryArgs from 'client/lib/route/add-query-args';
 import config from 'config';
 import PropTypes from 'prop-types';
 

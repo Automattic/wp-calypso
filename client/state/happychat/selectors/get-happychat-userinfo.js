@@ -7,7 +7,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import getGeoLocation from 'state/happychat/selectors/get-geolocation';
+import getGeoLocation from 'client/state/happychat/selectors/get-geolocation';
 
 export default state => ( { site, howCanWeHelp, howYouFeel } ) => {
 	const info = {

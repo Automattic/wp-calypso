@@ -14,35 +14,35 @@ import { first } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import FormTextInput from 'components/forms/form-text-input';
-import { isOrderFinished } from 'woocommerce/lib/order-status';
-import LabelPurchaseDialog from 'woocommerce/woocommerce-services/views/shipping-label/label-purchase-modal';
-import Notice from 'components/notice';
-import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
-import { saveOrder } from 'woocommerce/state/sites/orders/actions';
-import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import { createNote } from 'client/extensions/woocommerce/state/sites/orders/notes/actions';
+import Button from 'client/components/button';
+import Dialog from 'client/components/dialog';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormInputCheckbox from 'client/components/forms/form-checkbox';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { isOrderFinished } from 'client/extensions/woocommerce/lib/order-status';
+import LabelPurchaseDialog from 'client/extensions/woocommerce/woocommerce-services/views/shipping-label/label-purchase-modal';
+import Notice from 'client/components/notice';
+import QueryLabels from 'client/extensions/woocommerce/woocommerce-services/components/query-labels';
+import { saveOrder } from 'client/extensions/woocommerce/state/sites/orders/actions';
+import { openPrintingFlow } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	getLabels,
 	areLabelsFullyLoaded,
 	getCountriesData,
 	isLabelDataFetchError,
-} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+} from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
 import {
 	areLabelsEnabled,
 	getSelectedPaymentMethodId,
-} from 'woocommerce/woocommerce-services/state/label-settings/selectors';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+} from 'client/extensions/woocommerce/woocommerce-services/state/label-settings/selectors';
+import QuerySettingsGeneral from 'client/extensions/woocommerce/components/query-settings-general';
 import {
 	getStoreLocation,
 	areSettingsGeneralLoaded,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import { isWcsEnabled } from 'client/extensions/woocommerce/state/selectors/plugins';
 
 class OrderFulfillment extends Component {
 	static propTypes = {

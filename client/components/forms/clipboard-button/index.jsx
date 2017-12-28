@@ -15,7 +15,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from 'client/components/button';
 
 class ClipboardButton extends React.Component {
 	static propTypes = {

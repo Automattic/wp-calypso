@@ -12,9 +12,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Rating from 'components/rating';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import Rating from 'client/components/rating';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 
 const ProductReviewsWidget = ( { site, product, translate } ) => {
 	if ( ! product.rating_count ) {

@@ -12,12 +12,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getFeaturedImageId } from 'lib/posts/utils';
-import Accordion from 'components/accordion';
-import EditorDrawerWell from 'post-editor/editor-drawer-well';
-import FeaturedImage from 'post-editor/editor-featured-image';
-import FeaturedImageDropZone from 'post-editor/editor-featured-image/dropzone';
-import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
+import { getFeaturedImageId } from 'client/lib/posts/utils';
+import Accordion from 'client/components/accordion';
+import EditorDrawerWell from 'client/post-editor/editor-drawer-well';
+import FeaturedImage from 'client/post-editor/editor-featured-image';
+import FeaturedImageDropZone from 'client/post-editor/editor-featured-image/dropzone';
+import isDropZoneVisible from 'client/state/selectors/is-drop-zone-visible';
 
 class EditorDrawerFeaturedImage extends Component {
 	static propTypes = {

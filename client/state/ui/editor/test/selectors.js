@@ -14,7 +14,7 @@ import {
 	getEditorNewPostPath,
 	getEditorPath,
 } from '../selectors';
-import PostQueryManager from 'lib/query-manager/post';
+import PostQueryManager from 'client/lib/query-manager/post';
 
 describe( 'selectors', () => {
 	describe( '#getEditorPostId()', () => {

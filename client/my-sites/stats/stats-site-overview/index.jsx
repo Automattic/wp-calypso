@@ -11,13 +11,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSiteStatsForQuery } from 'state/stats/lists/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import SectionHeader from 'client/components/section-header';
+import QuerySiteStats from 'client/components/data/query-site-stats';
+import { getSiteStatsForQuery } from 'client/state/stats/lists/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 
 class StatsSiteOverview extends Component {
 	static propTypes = {

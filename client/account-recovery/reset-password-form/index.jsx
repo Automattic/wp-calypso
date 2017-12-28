@@ -12,20 +12,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLegend from 'client/components/forms/form-legend';
 import ResetOptionSet from './reset-option-set';
-import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
-import { setResetMethod, requestReset } from 'state/account-recovery/reset/actions';
+import ErrorMessage from 'client/account-recovery/components/account-recovery-error-message';
+import { setResetMethod, requestReset } from 'client/state/account-recovery/reset/actions';
 
 import {
 	getAccountRecoveryResetUserData,
 	getAccountRecoveryResetOptions,
 	getAccountRecoveryResetRequestError,
 	isRequestingAccountRecoveryReset,
-} from 'state/selectors';
+} from 'client/state/selectors';
 
 export class ResetPasswordFormComponent extends Component {
 	static propTypes = {

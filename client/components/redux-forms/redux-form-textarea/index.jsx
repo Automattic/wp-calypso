@@ -9,7 +9,7 @@ import { Field } from 'redux-form';
 /**
  * Internal dependencies
  */
-import FormTextarea from 'components/forms/form-textarea';
+import FormTextarea from 'client/components/forms/form-textarea';
 
 // eslint-disable-next-line no-unused-vars
 const TextareaRenderer = ( { input, meta, ...props } ) => (

@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { updateCurrentReviewsQuery } from '../actions';
-import { WOOCOMMERCE_UI_REVIEWS_SET_QUERY } from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_UI_REVIEWS_SET_QUERY } from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#updateCurrentReviewsQuery()', () => {

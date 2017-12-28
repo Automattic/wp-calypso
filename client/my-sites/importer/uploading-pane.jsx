@@ -14,11 +14,11 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { startMappingAuthors, startUpload } from 'lib/importer/actions';
-import { appStates } from 'state/imports/constants';
-import Button from 'components/forms/form-button';
-import DropZone from 'components/drop-zone';
-import ProgressBar from 'components/progress-bar';
+import { startMappingAuthors, startUpload } from 'client/lib/importer/actions';
+import { appStates } from 'client/state/imports/constants';
+import Button from 'client/components/forms/form-button';
+import DropZone from 'client/components/drop-zone';
+import ProgressBar from 'client/components/progress-bar';
 import { connectDispatcher } from './dispatcher-converter';
 
 class UploadingPane extends React.PureComponent {

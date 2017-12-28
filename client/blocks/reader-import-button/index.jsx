@@ -12,9 +12,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import FilePicker from 'components/file-picker';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import wpcom from 'client/lib/wp';
+import FilePicker from 'client/components/file-picker';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
 
 class ReaderImportButton extends React.Component {
 	static propTypes = {

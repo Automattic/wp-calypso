@@ -9,10 +9,13 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { REWIND_BACKUP } from 'state/action-types';
-import { rewindBackupUpdateError, getRewindBackupProgress } from 'state/activity-log/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { REWIND_BACKUP } from 'client/state/action-types';
+import {
+	rewindBackupUpdateError,
+	getRewindBackupProgress,
+} from 'client/state/activity-log/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 const createBackup = ( { dispatch }, action ) => {
 	dispatch(

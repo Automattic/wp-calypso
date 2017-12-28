@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getRestoreProgress } from 'state/selectors';
+import { getRestoreProgress } from 'client/state/selectors';
 
 const SITE_ID = 1234;
 

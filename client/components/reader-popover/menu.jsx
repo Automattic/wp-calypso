@@ -8,8 +8,8 @@ import { omit } from 'lodash';
 /**
  * Internal Dependencies
  */
-import ReaderPopover from 'components/reader-popover';
-import PopoverMenu from 'components/popover/menu';
+import ReaderPopover from 'client/components/reader-popover';
+import PopoverMenu from 'client/components/popover/menu';
 
 const ReaderPopoverMenu = props => {
 	const popoverProps = omit( props, 'popoverComponent' );

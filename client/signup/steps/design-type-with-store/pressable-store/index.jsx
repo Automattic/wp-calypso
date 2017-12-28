@@ -15,18 +15,18 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 
-import LoggedOutForm from 'components/logged-out-form';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormButton from 'components/forms/form-button';
-import FormLabel from 'components/forms/form-label';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import Button from 'components/button';
+import LoggedOutForm from 'client/components/logged-out-form';
+import LoggedOutFormFooter from 'client/components/logged-out-form/footer';
+import LoggedOutFormLinks from 'client/components/logged-out-form/links';
+import LoggedOutFormLinkItem from 'client/components/logged-out-form/link-item';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormButton from 'client/components/forms/form-button';
+import FormLabel from 'client/components/forms/form-label';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import Button from 'client/components/button';
 import { localize } from 'i18n-calypso';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 import HeroImage from './hero-image';
 
 class PressableStoreStep extends Component {

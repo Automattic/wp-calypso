@@ -9,8 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FormattedHeader from 'components/formatted-header';
+import Button from 'client/components/button';
+import FormattedHeader from 'client/components/formatted-header';
 
 class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 	render() {

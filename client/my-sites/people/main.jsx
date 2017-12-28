@@ -13,19 +13,19 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import Main from 'client/components/main';
 import FollowersList from './followers-list';
 import ViewersList from './viewers-list';
-import TeamList from 'my-sites/people/team-list';
-import EmptyContent from 'components/empty-content';
-import observe from 'lib/mixins/data-observe';
-import PeopleNotices from 'my-sites/people/people-notices';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import PeopleSectionNav from 'my-sites/people/people-section-nav';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { canCurrentUser, isPrivateSite } from 'state/selectors';
+import TeamList from 'client/my-sites/people/team-list';
+import EmptyContent from 'client/components/empty-content';
+import observe from 'client/lib/mixins/data-observe';
+import PeopleNotices from 'client/my-sites/people/people-notices';
+import JetpackManageErrorPage from 'client/my-sites/jetpack-manage-error-page';
+import PeopleSectionNav from 'client/my-sites/people/people-section-nav';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import { getSelectedSiteId, getSelectedSite } from 'client/state/ui/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'client/state/sites/selectors';
+import { canCurrentUser, isPrivateSite } from 'client/state/selectors';
 
 /**
  * Module variables

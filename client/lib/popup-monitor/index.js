@@ -7,7 +7,7 @@
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
+import Emitter from 'client/lib/mixins/emitter';
 
 /**
  * PopupMonitor component

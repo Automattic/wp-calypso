@@ -9,8 +9,8 @@ import { flowRight as compose } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { transferStates } from 'state/automated-transfer/constants';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+import { transferStates } from 'client/state/automated-transfer/constants';
+import { getAutomatedTransferStatus } from 'client/state/automated-transfer/selectors';
 
 /**
  * Maps automated transfer status value to indication if transfer is failed

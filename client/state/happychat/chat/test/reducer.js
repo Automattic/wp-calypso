@@ -13,7 +13,7 @@ import {
 	HAPPYCHAT_IO_RECEIVE_INIT,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 // Simulate the time Feb 27, 2017 05:25 UTC
 const NOW = 1488173100125;

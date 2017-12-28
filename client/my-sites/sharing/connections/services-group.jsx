@@ -15,9 +15,9 @@ import { times } from 'lodash';
 import {
 	getEligibleKeyringServices,
 	isKeyringServicesFetching,
-} from 'state/sharing/services/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import SectionHeader from 'components/section-header';
+} from 'client/state/sharing/services/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import SectionHeader from 'client/components/section-header';
 import Service from './service';
 import * as Components from './services';
 import ServicePlaceholder from './service-placeholder';

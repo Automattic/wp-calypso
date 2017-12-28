@@ -9,7 +9,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormLinkItem from 'client/components/logged-out-form/link-item';
 import { localize } from 'i18n-calypso';
 
 const JetpackConnectHelpButton = ( { label, translate, onClick } ) => {

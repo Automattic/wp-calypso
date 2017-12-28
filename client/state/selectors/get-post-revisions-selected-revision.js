@@ -2,9 +2,9 @@
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getPostRevision, getPostRevisionsSelectedRevisionId } from 'state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getPostRevision, getPostRevisionsSelectedRevisionId } from 'client/state/selectors';
 
 export default function getPostRevisionsSelectedRevision( state ) {
 	const siteId = getSelectedSiteId( state );

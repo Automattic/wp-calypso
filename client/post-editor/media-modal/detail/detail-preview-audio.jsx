@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import MediaUtils from 'lib/media/utils';
+import MediaUtils from 'client/lib/media/utils';
 
 export default class extends React.Component {
 	static displayName = 'EditorMediaModalDetailPreviewAudio';

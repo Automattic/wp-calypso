@@ -12,9 +12,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteThemeShowcasePath } from 'state/sites/selectors';
-import { recordStat } from 'lib/posts/stats';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteThemeShowcasePath } from 'client/state/sites/selectors';
+import { recordStat } from 'client/lib/posts/stats';
 
 class EditorThemeHelp extends PureComponent {
 	static propTypes = {

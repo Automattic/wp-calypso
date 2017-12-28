@@ -11,8 +11,8 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { ACCOUNT_RECOVERY_ERROR_CODE as ERROR_CODE } from 'account-recovery/constants';
+import EmptyContent from 'client/components/empty-content';
+import { ACCOUNT_RECOVERY_ERROR_CODE as ERROR_CODE } from 'client/account-recovery/constants';
 
 const getErrorContent = ( errorIdentifier, translate ) => {
 	switch ( errorIdentifier ) {

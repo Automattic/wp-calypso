@@ -14,14 +14,20 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Site from 'blocks/site';
-import postUtils from 'lib/posts/utils';
-import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
-import Button from 'components/button';
-import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
-import { composeAnalytics, recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import { canCurrentUser } from 'state/selectors';
+import Card from 'client/components/card';
+import Site from 'client/blocks/site';
+import postUtils from 'client/lib/posts/utils';
+import EditorPublishButton, {
+	getPublishButtonStatus,
+} from 'client/post-editor/editor-publish-button';
+import Button from 'client/components/button';
+import QuickSaveButtons from 'client/post-editor/editor-ground-control/quick-save-buttons';
+import {
+	composeAnalytics,
+	recordTracksEvent,
+	recordGoogleEvent,
+} from 'client/state/analytics/actions';
+import { canCurrentUser } from 'client/state/selectors';
 
 export class EditorGroundControl extends PureComponent {
 	static propTypes = {
@@ -188,9 +194,7 @@ export class EditorGroundControl extends PureComponent {
 					onClick={ this.onPreviewButtonClick }
 					tabIndex={ 4 }
 				>
-					<span className="editor-ground-control__button-label">
-						{ this.getPreviewLabel() }
-					</span>
+					<span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
 				</Button>
 				<div className="editor-ground-control__publish-button">
 					<EditorPublishButton
@@ -249,7 +253,7 @@ export class EditorGroundControl extends PureComponent {
 					onSelect={ this.props.recordSiteButtonClick }
 					indicator={ true }
 				/>
-				{ this.state.needsVerification &&
+				{ this.state.needsVerification && (
 					<div
 						className="editor-ground-control__email-verification-notice"
 						tabIndex={ 7 }
@@ -263,7 +267,8 @@ export class EditorGroundControl extends PureComponent {
 						<span className="editor-ground-control__email-verification-notice-more">
 							{ translate( 'Learn More' ) }
 						</span>
-					</div> }
+					</div>
+				) }
 				<QuickSaveButtons
 					isSaving={ isSaving }
 					isSaveBlocked={ isSaveBlocked }

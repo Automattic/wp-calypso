@@ -13,12 +13,12 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import ReaderAvatar from 'blocks/reader-avatar';
-import ReaderAuthorLink from 'blocks/reader-author-link';
-import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
-import ReaderFollowButton from 'reader/follow-button';
-import { getStreamUrl } from 'reader/route';
-import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
+import ReaderAvatar from 'client/blocks/reader-avatar';
+import ReaderAuthorLink from 'client/blocks/reader-author-link';
+import ReaderSiteStreamLink from 'client/blocks/reader-site-stream-link';
+import ReaderFollowButton from 'client/reader/follow-button';
+import { getStreamUrl } from 'client/reader/route';
+import { areEqualIgnoringWhitespaceAndCase } from 'client/lib/string';
 import AuthorCompactProfilePlaceholder from './placeholder';
 
 class AuthorCompactProfile extends React.Component {

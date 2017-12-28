@@ -20,9 +20,9 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
-} from 'woocommerce/state/action-types';
-import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
-import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
+import { createProductCategory } from 'client/extensions/woocommerce/state/sites/product-categories/actions';
+import { WPCOM_HTTP_REQUEST } from 'client/state/action-types';
 
 describe( 'handlers', () => {
 	describe( '#handleProductCategoriesRequest()', () => {

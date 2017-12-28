@@ -14,17 +14,17 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import { ProtectFormGuard } from 'lib/protect-form';
-import Card from 'components/card';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { ProtectFormGuard } from 'client/lib/protect-form';
+import Card from 'client/components/card';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
 import PageDropdown from './page-dropdown';
-import QueryPosts from 'components/data/query-posts';
-import SectionHeader from 'components/section-header';
-import { isRequestingPostsForQuery } from 'state/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryPosts from 'client/components/data/query-posts';
+import SectionHeader from 'client/components/section-header';
+import { isRequestingPostsForQuery } from 'client/state/posts/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 const form = 'extensions.wpJobManager.pages';
 const query = { type: 'page' };

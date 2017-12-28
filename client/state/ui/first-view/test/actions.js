@@ -9,7 +9,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { hideView } from '../actions';
-import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
+import { FIRST_VIEW_HIDE, ROUTE_SET } from 'client/state/action-types';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

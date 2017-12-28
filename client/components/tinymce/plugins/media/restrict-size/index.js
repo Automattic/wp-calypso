@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { deserialize } from 'lib/media-serialization';
-import resize from 'lib/resize-image-url';
+import { deserialize } from 'client/lib/media-serialization';
+import resize from 'client/lib/resize-image-url';
 
 /**
  * Module variables

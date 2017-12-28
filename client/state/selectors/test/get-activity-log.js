@@ -7,8 +7,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getActivityLog } from 'state/selectors';
-import ActivityQueryManager from 'lib/query-manager/activity';
+import { getActivityLog } from 'client/state/selectors';
+import ActivityQueryManager from 'client/lib/query-manager/activity';
 
 const SITE_ID = 1234;
 

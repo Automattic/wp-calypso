@@ -13,7 +13,7 @@ import {
 	activityLogRequest as activityLogRequestAction,
 	startWatching,
 	stopWatching,
-} from 'state/activity-log/actions';
+} from 'client/state/activity-log/actions';
 
 class QueryActivityLog extends PureComponent {
 	static propTypes = {

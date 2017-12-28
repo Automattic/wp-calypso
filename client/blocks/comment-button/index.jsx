@@ -14,7 +14,7 @@ import { isNull, noop, omitBy } from 'lodash';
  * Internal dependencies
  */
 import Gridicon from 'gridicons';
-import { getPostTotalCommentsCount } from 'state/comments/selectors';
+import { getPostTotalCommentsCount } from 'client/state/comments/selectors';
 
 class CommentButton extends Component {
 	static propTypes = {

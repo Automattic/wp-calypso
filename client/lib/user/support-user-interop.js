@@ -11,17 +11,17 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import config from 'config';
 import store from 'store';
-import localforage from 'lib/localforage';
+import localforage from 'client/lib/localforage';
 import {
 	supportUserTokenFetch,
 	supportUserActivate,
 	supportUserError,
 	supportUserPrefill,
-} from 'state/support/actions';
-import localStorageBypass from 'lib/support/support-user/localstorage-bypass';
+} from 'client/state/support/actions';
+import localStorageBypass from 'client/lib/support/support-user/localstorage-bypass';
 
 /**
  * Connects the Redux store and the low-level support user functions

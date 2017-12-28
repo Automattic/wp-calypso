@@ -8,16 +8,21 @@ import { isNumber, isUndefined, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchWithProps } from 'woocommerce/state/helpers';
-import { del, get, post, put } from 'woocommerce/state/data-layer/request/actions';
-import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
-import { productVariationUpdated } from 'woocommerce/state/sites/product-variations/actions';
+import { dispatchWithProps } from 'client/extensions/woocommerce/state/helpers';
+import {
+	del,
+	get,
+	post,
+	put,
+} from 'client/extensions/woocommerce/state/data-layer/request/actions';
+import { setError } from 'client/extensions/woocommerce/state/sites/status/wc-api/actions';
+import { productVariationUpdated } from 'client/extensions/woocommerce/state/sites/product-variations/actions';
 import {
 	WOOCOMMERCE_PRODUCT_VARIATION_CREATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_DELETE,
 	WOOCOMMERCE_PRODUCT_VARIATIONS_REQUEST,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_VARIATION_CREATE ]: [ handleProductVariationCreate ],

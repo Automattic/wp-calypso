@@ -11,7 +11,7 @@ import {
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const requestProducts = siteId => ( {
 	siteId,

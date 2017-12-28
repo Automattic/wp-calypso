@@ -11,10 +11,10 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import Dialog from 'client/components/dialog';
 import config from 'config';
-import KeyboardShortcuts from 'lib/keyboard-shortcuts';
-import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
+import KeyboardShortcuts from 'client/lib/keyboard-shortcuts';
+import KeyBindings from 'client/lib/keyboard-shortcuts/key-bindings';
 
 class KeyboardShortcutsMenu extends React.Component {
 	static displayName = 'KeyboardShortcutsMenu';

@@ -8,7 +8,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPost } from 'state/posts/selectors';
+import { getPost } from 'client/state/posts/selectors';
 
 /**
  * Returns whether the current user can edit the post with the given global ID.

@@ -15,14 +15,14 @@ import ReactDom from 'react-dom';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormInputValidation from 'components/forms/form-input-validation';
-import { getCountryStates } from 'state/country-states/selectors';
+import FormLabel from 'client/components/forms/form-label';
+import FormSelect from 'client/components/forms/form-select';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import { getCountryStates } from 'client/state/country-states/selectors';
 import Input from './input';
-import QueryCountryStates from 'components/data/query-country-states';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import scrollIntoViewport from 'lib/scroll-into-viewport';
+import QueryCountryStates from 'client/components/data/query-country-states';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import scrollIntoViewport from 'client/lib/scroll-into-viewport';
 
 class StateSelect extends Component {
 	static instances = 0;

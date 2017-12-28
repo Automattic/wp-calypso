@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import DocumentHead from 'components/data/document-head';
+import HeaderCake from 'client/components/header-cake';
+import DocumentHead from 'client/components/data/document-head';
 
 class DomainManagementHeader extends React.Component {
 	render() {

@@ -9,8 +9,8 @@ import { assign, filter, map, pick, sortBy, transform } from 'lodash';
 /**
  * Internal dependencies
  */
-import { decodeEntities } from 'lib/formatting';
-import { parseHtml } from 'lib/formatting';
+import { decodeEntities } from 'client/lib/formatting';
+import { parseHtml } from 'client/lib/formatting';
 import { sanitizeSectionContent } from './sanitize-section-content';
 
 /**

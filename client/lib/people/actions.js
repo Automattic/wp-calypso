@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 
 var PeopleActions = {
 	removePeopleNotices: logs => {

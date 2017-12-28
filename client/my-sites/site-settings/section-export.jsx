@@ -11,13 +11,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import ExporterContainer from 'my-sites/exporter';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import Placeholder from 'my-sites/site-settings/placeholder';
+import EmptyContent from 'client/components/empty-content';
+import ExporterContainer from 'client/my-sites/exporter';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import Main from 'client/components/main';
+import HeaderCake from 'client/components/header-cake';
+import Placeholder from 'client/my-sites/site-settings/placeholder';
 
 const SiteSettingsExport = ( { isJetpack, site, siteSlug, translate } ) => {
 	if ( ! site ) {

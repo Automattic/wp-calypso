@@ -11,7 +11,7 @@ import {
 	EDITOR_CONTACT_FORM_FIELD_REMOVE,
 	EDITOR_CONTACT_FORM_FIELD_UPDATE,
 	EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export function formClear() {
 	return {

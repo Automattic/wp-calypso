@@ -16,7 +16,7 @@ import {
 	WOOCOMMERCE_ERROR_SET,
 	WOOCOMMERCE_API_REQUEST_SUCCESS,
 	WOOCOMMERCE_API_REQUEST_FAILURE,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	const siteId = 123;

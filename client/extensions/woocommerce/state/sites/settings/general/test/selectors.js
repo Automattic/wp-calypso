@@ -13,7 +13,7 @@ import {
 	areSettingsGeneralLoading,
 	getPaymentCurrencySettings,
 } from '../selectors';
-import { LOADING } from 'woocommerce/state/constants';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 
 const preInitializedState = {
 	extensions: {

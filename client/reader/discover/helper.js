@@ -11,8 +11,8 @@ const debug = Debug( 'calypso:reader:discover' ); // eslint-disable-line
 /**
  * Internal Dependencies
  */
-import userUtils from 'lib/user/utils';
-import { getSiteUrl as readerRouteGetSiteUrl } from 'reader/route';
+import userUtils from 'client/lib/user/utils';
+import { getSiteUrl as readerRouteGetSiteUrl } from 'client/reader/route';
 
 function hasDiscoverSlug( post, searchSlug ) {
 	const metaData = get( post, 'discover_metadata.discover_fp_post_formats' );

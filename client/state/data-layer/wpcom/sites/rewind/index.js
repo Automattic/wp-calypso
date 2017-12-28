@@ -2,11 +2,11 @@
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
-import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx, makeParser } from 'state/data-layer/wpcom-http/utils';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
+import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'client/state/action-types';
+import { recordTracksEvent, withAnalytics } from 'client/state/analytics/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequestEx, makeParser } from 'client/state/data-layer/wpcom-http/utils';
 import { transformApi } from './api-transformer';
 import { rewind } from './schema';
 

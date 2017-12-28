@@ -6,9 +6,9 @@
 
 import page from 'page';
 import config from 'config';
-import meController from 'me/controller';
+import meController from 'client/me/controller';
 import helpController from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default function() {
 	if ( config.isEnabled( 'help' ) ) {

@@ -8,7 +8,7 @@ import { assert } from 'chai';
  * Internal dependencies
  */
 import WPorgActions from '../actions';
-import wporg from 'lib/wporg';
+import wporg from 'client/lib/wporg';
 jest.mock( 'lib/wporg', () => require( './mocks/lib/wporg' ) );
 jest.mock( 'lib/impure-lodash', () => ( {
 	debounce: cb => cb,

@@ -10,11 +10,11 @@ import { moment, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import AsyncLoad from 'client/components/async-load';
+import StatsPagePlaceholder from 'client/my-sites/stats/stats-page-placeholder';
+import { setDocumentHeadTitle as setTitle } from 'client/state/document-head/actions';
 import { getQueryDate } from './utils';
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import titlecase from 'to-title-case';
 
 function isValidParameters( context ) {

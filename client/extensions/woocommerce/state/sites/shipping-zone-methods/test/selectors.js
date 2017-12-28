@@ -13,7 +13,7 @@ import {
 	areShippingZoneMethodsLoaded,
 	areShippingZoneMethodsLoading,
 } from '../selectors';
-import { LOADING } from 'woocommerce/state/constants';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 
 describe( 'selectors', () => {
 	describe( 'get shipping zone method', () => {

@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DomainSuggestion from 'components/domains/domain-suggestion';
-import { shouldBundleDomainWithPlan, getDomainPriceRule } from 'lib/cart-values/cart-items';
+import DomainSuggestion from 'client/components/domains/domain-suggestion';
+import { shouldBundleDomainWithPlan, getDomainPriceRule } from 'client/lib/cart-values/cart-items';
 
 class DomainMappingSuggestion extends React.Component {
 	static propTypes = {

@@ -10,9 +10,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CartItems from 'my-sites/checkout/cart/cart-items';
-import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
-import CartTotal from 'my-sites/checkout/cart/cart-total';
+import CartItems from 'client/my-sites/checkout/cart/cart-items';
+import CartCoupon from 'client/my-sites/checkout/cart/cart-coupon';
+import CartTotal from 'client/my-sites/checkout/cart/cart-total';
 
 class CartBody extends React.PureComponent {
 	constructor( props ) {

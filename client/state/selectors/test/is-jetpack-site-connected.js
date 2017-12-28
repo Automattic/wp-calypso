@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isJetpackSiteConnected } from 'state/selectors';
+import { isJetpackSiteConnected } from 'client/state/selectors';
 import { items as ITEMS_FIXTURE } from './fixtures/jetpack-connection';
 
 describe( 'isJetpackSiteConnected()', () => {

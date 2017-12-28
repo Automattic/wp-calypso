@@ -5,7 +5,7 @@
  */
 
 import { compact, isEqual, filter, uniqueId } from 'lodash';
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 
 /**
  * Internal dependencies
@@ -20,7 +20,7 @@ import {
 	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 import { getBucket } from '../helpers';
 
 export default createReducer( null, {

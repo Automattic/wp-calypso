@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { handleGapClicked } from 'reader/utils';
+import { handleGapClicked } from 'client/reader/utils';
 
 class Gap extends React.Component {
 	static propTypes = {

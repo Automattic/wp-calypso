@@ -3,8 +3,8 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSectionName } from 'state/ui/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getSectionName } from 'client/state/ui/selectors';
 
 /**
  * Returns wether the docked happychat client UI should be displayed

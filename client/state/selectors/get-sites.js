@@ -9,9 +9,9 @@ import { partition, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSite } from 'state/sites/selectors';
-import { getPrimarySiteId, getSitesItems } from 'state/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getSite } from 'client/state/sites/selectors';
+import { getPrimarySiteId, getSitesItems } from 'client/state/selectors';
 
 const sortByNameAndUrl = list => sortBy( list, [ 'name', 'URL' ] );
 

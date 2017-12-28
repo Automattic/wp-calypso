@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { fetchSitePlansCompleted } from '../actions';
-import { SITE_PLANS_FETCH_COMPLETED } from 'state/action-types';
+import { SITE_PLANS_FETCH_COMPLETED } from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#fetchSitePlansCompleted()', () => {

@@ -10,7 +10,7 @@ import {
 	READER_STREAMS_SELECT_ITEM,
 	READER_STREAMS_FILL_GAP,
 	READER_STREAMS_DISMISS_POST,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Fetch posts into a stream

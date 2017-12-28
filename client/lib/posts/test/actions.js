@@ -15,7 +15,7 @@ import sinon from 'sinon';
  */
 import PostActions from '../actions';
 import PostEditStore from '../post-edit-store';
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );

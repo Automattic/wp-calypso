@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import touchDetect from 'lib/touch-detect';
+import touchDetect from 'client/lib/touch-detect';
 
 const debug = debugFactory( 'calypso:forms:sortable-list' );
 

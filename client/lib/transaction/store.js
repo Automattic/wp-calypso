@@ -10,13 +10,13 @@ import update from 'immutability-helper';
 /**
  * Internal dependencies
  */
-import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
-import { cartItems } from 'lib/cart-values';
-import CartStore from 'lib/cart/store';
-import Emitter from 'lib/mixins/emitter';
-import Dispatcher from 'dispatcher';
-import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
-import { hasDomainDetails } from 'lib/store-transactions';
+import { action as UpgradesActionTypes } from 'client/lib/upgrades/constants';
+import { cartItems } from 'client/lib/cart-values';
+import CartStore from 'client/lib/cart/store';
+import Emitter from 'client/lib/mixins/emitter';
+import Dispatcher from 'client/dispatcher';
+import { BEFORE_SUBMIT } from 'client/lib/store-transactions/step-types';
+import { hasDomainDetails } from 'client/lib/store-transactions';
 
 var _transaction = createInitialTransaction();
 

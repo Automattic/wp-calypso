@@ -13,9 +13,9 @@ import { get } from 'lodash';
  */
 import PlanStorage from '../index';
 import PlanStorageBar from '../bar';
-import { PLAN_BUSINESS, PLAN_PREMIUM, PLAN_PERSONAL, PLAN_FREE } from 'lib/plans/constants';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { PLAN_BUSINESS, PLAN_PREMIUM, PLAN_PERSONAL, PLAN_FREE } from 'client/lib/plans/constants';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 
 const PlanStorageExample = ( { siteId, siteSlug } ) => {
 	const mediaStorage = {

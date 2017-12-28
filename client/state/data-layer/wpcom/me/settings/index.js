@@ -10,13 +10,13 @@ import { isEmpty, keys, merge, noop } from 'lodash';
  * Internal dependencies
  */
 import profileLinks from './profile-links';
-import { decodeEntities } from 'lib/formatting';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { getUnsavedUserSettings } from 'state/selectors';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { mergeHandlers } from 'state/action-watchers/utils';
-import { updateUserSettings, clearUnsavedUserSettings } from 'state/user-settings/actions';
-import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'state/action-types';
+import { decodeEntities } from 'client/lib/formatting';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { getUnsavedUserSettings } from 'client/state/selectors';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
+import { updateUserSettings, clearUnsavedUserSettings } from 'client/state/user-settings/actions';
+import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'client/state/action-types';
 
 /*
  * Decodes entities in those specific user settings properties

@@ -11,9 +11,9 @@ const debug = debugFactory( 'calypso:wp' );
 /**
  * Internal dependencies
  */
-import wpcomUndocumented from 'lib/wpcom-undocumented';
+import wpcomUndocumented from 'client/lib/wpcom-undocumented';
 import config from 'config';
-import wpcomSupport from 'lib/wp/support';
+import wpcomSupport from 'client/lib/wp/support';
 import { injectLocalization } from './localization';
 import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
 

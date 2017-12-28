@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isCommentsTreeInitialized } from 'state/selectors';
+import { isCommentsTreeInitialized } from 'client/state/selectors';
 
 describe( 'isCommentsTreeInitialized()', () => {
 	test( 'should return false if no data is available', () => {

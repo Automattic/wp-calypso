@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import ShortcodeUtils from 'lib/shortcode';
+import ShortcodeUtils from 'client/lib/shortcode';
 import VideoView from './view';
 
 export function match( content ) {

@@ -8,11 +8,11 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { mergeHandlers } from 'state/action-watchers/utils';
-import { USER_PROFILE_LINKS_REQUEST } from 'state/action-types';
-import { receiveUserProfileLinks } from 'state/profile-links/actions';
+import { dispatchRequestEx } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
+import { USER_PROFILE_LINKS_REQUEST } from 'client/state/action-types';
+import { receiveUserProfileLinks } from 'client/state/profile-links/actions';
 import newHandler from './new';
 import deleteHandler from './delete';
 

@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CommentButton from 'blocks/comment-button';
-import Card from 'components/card';
+import CommentButton from 'client/blocks/comment-button';
+import Card from 'client/components/card';
 
 export default class CommentButtonExample extends React.Component {
 	static displayName = 'CommentButtonExample';

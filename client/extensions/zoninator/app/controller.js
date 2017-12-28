@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import { getSiteFragment, sectionify } from 'lib/route';
+import analytics from 'client/lib/analytics';
+import { getSiteFragment, sectionify } from 'client/lib/route';
 import Settings from '../components/settings';
 
 export const renderTab = component => ( context, next ) => {

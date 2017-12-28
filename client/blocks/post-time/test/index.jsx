@@ -10,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { PostTime } from 'blocks/post-time';
+import { PostTime } from 'client/blocks/post-time';
 
 describe( 'PostTime', () => {
 	test( 'should display a recent time if there is no post', () => {

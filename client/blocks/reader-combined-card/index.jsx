@@ -10,17 +10,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
-import { getStreamUrl } from 'reader/route';
-import ReaderAvatar from 'blocks/reader-avatar';
-import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
+import Card from 'client/components/card';
+import { getStreamUrl } from 'client/reader/route';
+import ReaderAvatar from 'client/blocks/reader-avatar';
+import ReaderSiteStreamLink from 'client/blocks/reader-site-stream-link';
 import ReaderCombinedCardPost from './post';
-import { keysAreEqual, keyForPost } from 'lib/feed-stream-store/post-key';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderFeed from 'components/data/query-reader-feed';
-import { recordTrack } from 'reader/stats';
-import { getSiteName } from 'reader/get-helpers';
-import FollowButton from 'reader/follow-button';
+import { keysAreEqual, keyForPost } from 'client/lib/feed-stream-store/post-key';
+import QueryReaderSite from 'client/components/data/query-reader-site';
+import QueryReaderFeed from 'client/components/data/query-reader-feed';
+import { recordTrack } from 'client/reader/stats';
+import { getSiteName } from 'client/reader/get-helpers';
+import FollowButton from 'client/reader/follow-button';
 
 class ReaderCombinedCard extends React.Component {
 	static propTypes = {

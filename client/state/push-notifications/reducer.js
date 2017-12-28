@@ -10,7 +10,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, isValidStateWithSchema } from 'client/state/utils';
 import { settingsSchema, systemSchema } from './schema';
 
 import {
@@ -24,7 +24,7 @@ import {
 	PUSH_NOTIFICATIONS_TOGGLE_ENABLED,
 	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
 	SERIALIZE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 const debug = debugFactory( 'calypso:push-notifications' );
 
 // If you change this, also change the corresponding test

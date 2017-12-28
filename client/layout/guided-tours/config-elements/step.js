@@ -13,9 +13,9 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import pathToSection from 'lib/path-to-section';
-import { ROUTE_SET } from 'state/action-types';
+import Card from 'client/components/card';
+import pathToSection from 'client/lib/path-to-section';
+import { ROUTE_SET } from 'client/state/action-types';
 import {
 	posToCss,
 	getStepPosition,

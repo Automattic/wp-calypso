@@ -16,7 +16,7 @@ import { cacheIndex } from '../cache-index';
 import { RECORDS_LIST_KEY } from '../constants';
 import { generateKey } from '../utils';
 import * as testData from './data';
-import wpcomUndocumented from 'lib/wpcom-undocumented';
+import wpcomUndocumented from 'client/lib/wpcom-undocumented';
 
 jest.mock( 'localforage', () => require( './mocks/localforage' ) );
 

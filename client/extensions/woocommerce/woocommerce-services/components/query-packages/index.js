@@ -9,12 +9,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { fetchSettings } from 'woocommerce/woocommerce-services/state/packages/actions';
-import {
-	isLoaded,
-	isFetching,
-	isFetchError,
-} from 'woocommerce/woocommerce-services/state/packages/selectors';
+import { fetchSettings } from 'client/extensions/woocommerce/woocommerce-services/state/packages/actions';
+import { isLoaded, isFetching, isFetchError } from 'client/extensions/woocommerce/woocommerce-services/state/packages/selectors';
 
 class QueryPackages extends Component {
 	fetch( props ) {

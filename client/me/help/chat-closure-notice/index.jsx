@@ -14,8 +14,8 @@ import i18n, { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormSectionHeading from 'components/forms/form-section-heading';
-import olarkStore from 'lib/olark-store';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import olarkStore from 'client/lib/olark-store';
 import { title, upcoming, closed } from './messages';
 
 const Notice = localize( ( { translate, closedFrom, closedTo, reason } ) => (

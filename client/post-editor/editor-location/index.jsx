@@ -12,11 +12,11 @@ import qs from 'querystring';
 /**
  * Internal dependencies
  */
-import PostActions from 'lib/posts/actions';
-import EditorDrawerWell from 'post-editor/editor-drawer-well';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import PostActions from 'client/lib/posts/actions';
+import EditorDrawerWell from 'client/post-editor/editor-drawer-well';
+import { recordEvent, recordStat } from 'client/lib/posts/stats';
 import EditorLocationSearch from './search';
-import Notice from 'components/notice';
+import Notice from 'client/components/notice';
 
 /**
  * Module variables

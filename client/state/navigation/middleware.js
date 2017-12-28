@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { NAVIGATE } from 'state/action-types';
+import { NAVIGATE } from 'client/state/action-types';
 
 export const navigationMiddleware = () => {
 	return ( next ) => ( action ) => {

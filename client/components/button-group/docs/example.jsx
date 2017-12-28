@@ -9,9 +9,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ButtonGroup from 'components/button-group';
-import Button from 'components/button';
-import Card from 'components/card';
+import ButtonGroup from 'client/components/button-group';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
 import Gridicon from 'gridicons';
 
 class Buttons extends React.PureComponent {

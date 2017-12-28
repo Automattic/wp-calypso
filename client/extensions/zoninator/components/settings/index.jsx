@@ -12,10 +12,10 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import ExtensionRedirect from 'blocks/extension-redirect';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import ExtensionRedirect from 'client/blocks/extension-redirect';
+import DocumentHead from 'client/components/data/document-head';
+import Main from 'client/components/main';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import QueryZones from '../data/query-zones';
 
 const Settings = ( { children, siteId, translate } ) => {

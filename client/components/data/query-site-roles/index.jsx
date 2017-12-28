@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSiteRoles } from 'state/site-roles/selectors';
-import { requestSiteRoles } from 'state/site-roles/actions';
+import { isRequestingSiteRoles } from 'client/state/site-roles/selectors';
+import { requestSiteRoles } from 'client/state/site-roles/actions';
 
 class QuerySiteRoles extends Component {
 	static propTypes = {

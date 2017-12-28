@@ -10,12 +10,12 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { SITES_BLOG_STICKER_REMOVE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { addBlogSticker } from 'state/sites/blog-stickers/actions';
-import { errorNotice, plainNotice } from 'state/notices/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { SITES_BLOG_STICKER_REMOVE } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { addBlogSticker } from 'client/state/sites/blog-stickers/actions';
+import { errorNotice, plainNotice } from 'client/state/notices/actions';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
 
 export function requestBlogStickerRemove( { dispatch }, action ) {
 	dispatch(

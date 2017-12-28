@@ -9,10 +9,10 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getTld } from 'lib/domains';
-import support from 'lib/url/support';
-import { domainAvailability } from 'lib/domains/constants';
-import paths from 'my-sites/domains/paths';
+import { getTld } from 'client/lib/domains';
+import support from 'client/lib/url/support';
+import { domainAvailability } from 'client/lib/domains/constants';
+import paths from 'client/my-sites/domains/paths';
 
 function getAvailabilityNotice( domain, error, site ) {
 	let message,

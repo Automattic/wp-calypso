@@ -11,15 +11,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import QuerySiteSettings from 'components/data/query-site-settings';
+import notices from 'client/notices';
+import QuerySitePurchases from 'client/components/data/query-site-purchases';
+import QuerySiteSettings from 'client/components/data/query-site-settings';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 	getPurchasesError,
-} from 'state/purchases/selectors';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+} from 'client/state/purchases/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'client/state/ui/selectors';
 import SeoForm from './form';
 
 export class SeoSettings extends Component {

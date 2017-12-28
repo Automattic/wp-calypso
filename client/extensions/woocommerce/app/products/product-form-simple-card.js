@@ -13,15 +13,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import FormWeightInput from 'woocommerce/components/form-weight-input';
-import PriceInput from 'woocommerce/components/price-input';
+import Card from 'client/components/card';
+import FormDimensionsInput from 'client/extensions/woocommerce/components/form-dimensions-input';
+import FormFieldSet from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSelect from 'client/components/forms/form-select';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormWeightInput from 'client/extensions/woocommerce/components/form-weight-input';
+import PriceInput from 'client/extensions/woocommerce/components/price-input';
 
 const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) => {
 	const setDimension = e => {

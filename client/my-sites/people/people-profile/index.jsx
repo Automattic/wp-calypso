@@ -8,13 +8,13 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { omit, get } from 'lodash';
-import { recordTrack } from 'reader/stats';
+import { recordTrack } from 'client/reader/stats';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
+import Gravatar from 'client/components/gravatar';
 
 class PeopleProfile extends React.PureComponent {
 	static displayName = 'PeopleProfile';

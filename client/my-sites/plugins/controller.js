@@ -11,18 +11,18 @@ import { capitalize, includes, some } from 'lodash';
 /**
  * Internal Dependencies
  */
-import route from 'lib/route';
-import notices from 'notices';
-import analytics from 'lib/analytics';
+import route from 'client/lib/route';
+import notices from 'client/notices';
+import analytics from 'client/lib/analytics';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginEligibility from './plugin-eligibility';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
-import { setSection } from 'state/ui/actions';
-import { getSelectedSite, getSection } from 'state/ui/selectors';
-import { hasJetpackSites, getSelectedOrAllSitesWithPlugins } from 'state/selectors';
+import { setSection } from 'client/state/ui/actions';
+import { getSelectedSite, getSection } from 'client/state/ui/selectors';
+import { hasJetpackSites, getSelectedOrAllSitesWithPlugins } from 'client/state/selectors';
 
 /**
  * Module variables

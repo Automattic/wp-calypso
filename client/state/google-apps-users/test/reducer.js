@@ -10,7 +10,10 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { items, loaded } from '../reducer';
-import { GOOGLE_APPS_USERS_FETCH, GOOGLE_APPS_USERS_FETCH_COMPLETED } from 'state/action-types';
+import {
+	GOOGLE_APPS_USERS_FETCH,
+	GOOGLE_APPS_USERS_FETCH_COMPLETED,
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

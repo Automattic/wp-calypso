@@ -15,15 +15,15 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Search from 'components/search';
-import SegmentedControl from 'components/segmented-control';
-import KeyedSuggestions from 'components/keyed-suggestions';
-import StickyPanel from 'components/sticky-panel';
+import Search from 'client/components/search';
+import SegmentedControl from 'client/components/segmented-control';
+import KeyedSuggestions from 'client/components/keyed-suggestions';
+import StickyPanel from 'client/components/sticky-panel';
 import config from 'config';
-import { isMobile } from 'lib/viewport';
+import { isMobile } from 'client/lib/viewport';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
-import { getThemeFilters, getThemeFilterToTermTable } from 'state/selectors';
+import { getThemeFilters, getThemeFilterToTermTable } from 'client/state/selectors';
 
 //We want those taxonomies if they are used to be presented in this order
 const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', 'style' ];

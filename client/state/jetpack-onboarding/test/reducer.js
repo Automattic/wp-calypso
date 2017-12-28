@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { credentialsReducer } from '../reducer';
-import { JETPACK_ONBOARDING_CREDENTIALS_RECEIVE } from 'state/action-types';
+import { JETPACK_ONBOARDING_CREDENTIALS_RECEIVE } from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'credentials', () => {

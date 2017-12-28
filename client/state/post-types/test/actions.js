@@ -14,7 +14,7 @@ import {
 	POST_TYPES_REQUEST,
 	POST_TYPES_REQUEST_SUCCESS,
 	POST_TYPES_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {

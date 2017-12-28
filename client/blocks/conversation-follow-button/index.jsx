@@ -14,10 +14,10 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import ConversationFollowButton from './button';
-import { isFollowingReaderConversation } from 'state/selectors';
-import { followConversation, muteConversation } from 'state/reader/conversations/actions';
-import { getTracksPropertiesForPost } from 'reader/stats';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { isFollowingReaderConversation } from 'client/state/selectors';
+import { followConversation, muteConversation } from 'client/state/reader/conversations/actions';
+import { getTracksPropertiesForPost } from 'client/reader/stats';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 class ConversationFollowButtonContainer extends Component {
 	static propTypes = {

@@ -14,20 +14,20 @@ import createReactClass from 'create-react-class';
  * Internal dependencies
  */
 import EmailForwardingLimit from './email-forwarding-limit';
-import { emailForwardingPlanLimit } from 'lib/domains/email-forwarding';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'components/forms/form-input-validation';
-import formState from 'lib/form-state';
-import analyticsMixin from 'lib/mixins/analytics';
-import notices from 'notices';
-import * as upgradesActions from 'lib/upgrades/actions';
-import { validateAllFields } from 'lib/domains/email-forwarding';
-import support from 'lib/url/support';
+import { emailForwardingPlanLimit } from 'client/lib/domains/email-forwarding';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormFooter from 'client/my-sites/domains/domain-management/components/form-footer';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormTextInputWithAffixes from 'client/components/forms/form-text-input-with-affixes';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import formState from 'client/lib/form-state';
+import analyticsMixin from 'client/lib/mixins/analytics';
+import notices from 'client/notices';
+import * as upgradesActions from 'client/lib/upgrades/actions';
+import { validateAllFields } from 'client/lib/domains/email-forwarding';
+import support from 'client/lib/url/support';
 
 const EmailForwardingAddNew = createReactClass( {
 	displayName: 'EmailForwardingAddNew',

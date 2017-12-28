@@ -15,8 +15,8 @@ import {
 	JETPACK_SETTINGS_UPDATE,
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE_FAILURE,
-} from 'state/action-types';
-import wp from 'lib/wp';
+} from 'client/state/action-types';
+import wp from 'client/lib/wp';
 import { normalizeSettings, sanitizeSettings, filterSettingsByActiveModules } from './utils';
 
 /**

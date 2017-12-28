@@ -13,9 +13,9 @@ import { resetPassword, handleError, handleSuccess } from '../';
 import {
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 describe( 'account-recovery/reset', () => {
 	describe( '#handleResetPasswordRequest', () => {

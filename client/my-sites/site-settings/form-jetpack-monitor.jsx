@@ -13,17 +13,17 @@ import { isEmpty, partial } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import Card from 'components/card';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SectionHeader from 'components/section-header';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QuerySiteMonitorSettings from 'components/data/query-site-monitor-settings';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { updateSiteMonitorSettings } from 'state/sites/monitor/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import Card from 'client/components/card';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import JetpackModuleToggle from 'client/my-sites/site-settings/jetpack-module-toggle';
+import SectionHeader from 'client/components/section-header';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
+import QueryJetpackModules from 'client/components/data/query-jetpack-modules';
+import QuerySiteMonitorSettings from 'client/components/data/query-site-monitor-settings';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { updateSiteMonitorSettings } from 'client/state/sites/monitor/actions';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 import {
 	getSiteMonitorSettings,
 	isActivatingJetpackModule,
@@ -32,7 +32,7 @@ import {
 	isJetpackModuleActive,
 	isRequestingSiteMonitorSettings,
 	isUpdatingSiteMonitorSettings,
-} from 'state/selectors';
+} from 'client/state/selectors';
 
 class SiteSettingsFormJetpackMonitor extends Component {
 	state = {};

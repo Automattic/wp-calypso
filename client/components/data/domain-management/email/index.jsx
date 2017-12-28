@@ -11,20 +11,20 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import StoreConnection from 'components/data/store-connection';
-import DomainsStore from 'lib/domains/store';
-import CartStore from 'lib/cart/store';
-import QueryProducts from 'components/data/query-products-list';
-import QuerySites from 'components/data/query-sites';
-import { fetchDomains } from 'lib/upgrades/actions';
-import userFactory from 'lib/user';
-import { fetchByDomain, fetchBySiteId } from 'state/google-apps-users/actions';
-import { getByDomain, getBySite, isLoaded } from 'state/google-apps-users/selectors';
-import { shouldFetchSitePlans } from 'lib/plans';
-import { fetchSitePlans } from 'state/sites/plans/actions';
-import { getPlansBySite } from 'state/sites/plans/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getProductsList } from 'state/products-list/selectors';
+import StoreConnection from 'client/components/data/store-connection';
+import DomainsStore from 'client/lib/domains/store';
+import CartStore from 'client/lib/cart/store';
+import QueryProducts from 'client/components/data/query-products-list';
+import QuerySites from 'client/components/data/query-sites';
+import { fetchDomains } from 'client/lib/upgrades/actions';
+import userFactory from 'client/lib/user';
+import { fetchByDomain, fetchBySiteId } from 'client/state/google-apps-users/actions';
+import { getByDomain, getBySite, isLoaded } from 'client/state/google-apps-users/selectors';
+import { shouldFetchSitePlans } from 'client/lib/plans';
+import { fetchSitePlans } from 'client/state/sites/plans/actions';
+import { getPlansBySite } from 'client/state/sites/plans/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { getProductsList } from 'client/state/products-list/selectors';
 
 const user = userFactory();
 

@@ -4,13 +4,13 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	SITE_ROLES_RECEIVE,
 	SITE_ROLES_REQUEST,
 	SITE_ROLES_REQUEST_FAILURE,
 	SITE_ROLES_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export function requestSiteRoles( siteId ) {
 	return dispatch => {

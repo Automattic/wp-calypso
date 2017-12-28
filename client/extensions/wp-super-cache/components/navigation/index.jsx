@@ -13,14 +13,14 @@ import { get, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
-import SectionNavTabItem from 'components/section-nav/item';
-import { addSiteFragment } from 'lib/route/path';
-import versionCompare from 'lib/version-compare';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getPluginOnSite } from 'state/plugins/installed/selectors';
+import HeaderCake from 'client/components/header-cake';
+import SectionNav from 'client/components/section-nav';
+import SectionNavTabs from 'client/components/section-nav/tabs';
+import SectionNavTabItem from 'client/components/section-nav/item';
+import { addSiteFragment } from 'client/lib/route/path';
+import versionCompare from 'client/lib/version-compare';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getPluginOnSite } from 'client/state/plugins/installed/selectors';
 import { Tabs } from '../../app/constants';
 
 const Navigation = ( { activeTab, pluginVersion, siteSlug, translate } ) => (

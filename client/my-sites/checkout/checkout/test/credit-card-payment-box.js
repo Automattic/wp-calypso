@@ -14,7 +14,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { CreditCardPaymentBox } from '../credit-card-payment-box';
-import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
+import { INPUT_VALIDATION } from 'client/lib/store-transactions/step-types';
 
 jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );
 jest.mock( 'lib/cart-values', () => ( {

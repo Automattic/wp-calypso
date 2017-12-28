@@ -1,5 +1,5 @@
 /** @format */
-import { sitesSchema } from 'state/sites/schema';
+import { sitesSchema } from 'client/state/sites/schema';
 
 // we're based on the normal site endpoint schema, but we want to add in a feed_ID property
 export const readerSitesSchema = {

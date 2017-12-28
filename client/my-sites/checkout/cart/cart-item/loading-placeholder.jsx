@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from 'client/components/button';
 
 const CartItemLoadingPlaceholder = () => (
 	<div className="cart-item__loading-placeholder cart-item">

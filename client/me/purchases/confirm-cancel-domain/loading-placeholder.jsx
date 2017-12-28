@@ -10,12 +10,12 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { cancelPurchase } from 'me/purchases/paths';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
-import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
-import titles from 'me/purchases/titles';
+import Button from 'client/components/button';
+import { cancelPurchase } from 'client/me/purchases/paths';
+import Card from 'client/components/card';
+import CompactCard from 'client/components/card/compact';
+import LoadingPlaceholder from 'client/me/purchases/components/loading-placeholder';
+import titles from 'client/me/purchases/titles';
 
 const ConfirmCancelDomainLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {
 	let path;

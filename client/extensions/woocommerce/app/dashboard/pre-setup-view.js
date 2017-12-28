@@ -14,21 +14,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AddressView from 'woocommerce/components/address-view';
+import AddressView from 'client/extensions/woocommerce/components/address-view';
 import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import BasicWidget from 'woocommerce/components/basic-widget';
-import { errorNotice } from 'state/notices/actions';
-import { getContactDetailsCache } from 'state/selectors';
-import { getCountryData, getCountries } from 'woocommerce/lib/countries';
-import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import BasicWidget from 'client/extensions/woocommerce/components/basic-widget';
+import { errorNotice } from 'client/state/notices/actions';
+import { getContactDetailsCache } from 'client/state/selectors';
+import { getCountryData, getCountries } from 'client/extensions/woocommerce/lib/countries';
+import { setSetStoreAddressDuringInitialSetup } from 'client/extensions/woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
-import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import { doInitialSetup } from 'client/extensions/woocommerce/state/sites/settings/actions';
+import QueryContactDetailsCache from 'client/components/data/query-contact-details-cache';
+import QuerySettingsGeneral from 'client/extensions/woocommerce/components/query-settings-general';
 
 class PreSetupView extends Component {
 	constructor( props ) {

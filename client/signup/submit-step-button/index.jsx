@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import SignupActions from 'lib/signup/actions';
+import SignupActions from 'client/lib/signup/actions';
 
 export default class SubmitStepButton extends Component {
 	handleSubmit = () => {

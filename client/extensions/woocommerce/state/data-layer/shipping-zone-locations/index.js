@@ -4,10 +4,10 @@
  * Internal dependencies
  */
 
-import { dispatchWithProps } from 'woocommerce/state/helpers';
-import { put } from 'woocommerce/state/data-layer/request/actions';
-import { shippingZoneLocationsUpdated } from 'woocommerce/state/sites/shipping-zone-locations/actions';
-import { WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATE } from 'woocommerce/state/action-types';
+import { dispatchWithProps } from 'client/extensions/woocommerce/state/helpers';
+import { put } from 'client/extensions/woocommerce/state/data-layer/request/actions';
+import { shippingZoneLocationsUpdated } from 'client/extensions/woocommerce/state/sites/shipping-zone-locations/actions';
+import { WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATE } from 'client/extensions/woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_UPDATE ]: [

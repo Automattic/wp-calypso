@@ -13,13 +13,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import MediaUtils from 'lib/media/utils';
-import MediaActions from 'lib/media/actions';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import TrackInputChanges from 'components/track-input-changes';
+import analytics from 'client/lib/analytics';
+import MediaUtils from 'client/lib/media/utils';
+import MediaActions from 'client/lib/media/actions';
+import ClipboardButtonInput from 'client/components/clipboard-button-input';
+import FormTextarea from 'client/components/forms/form-textarea';
+import FormTextInput from 'client/components/forms/form-text-input';
+import TrackInputChanges from 'client/components/track-input-changes';
 import EditorMediaModalFieldset from '../fieldset';
 
 class EditorMediaModalDetailFields extends Component {

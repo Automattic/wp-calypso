@@ -9,11 +9,11 @@ import { get, isEmpty, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import FieldError from 'woocommerce/woocommerce-services/components/field-error';
-import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
-import Notice from 'components/notice';
+import FieldError from 'client/extensions/woocommerce/woocommerce-services/components/field-error';
+import Dropdown from 'client/extensions/woocommerce/woocommerce-services/components/dropdown';
+import Notice from 'client/components/notice';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from 'client/lib/format-currency';
 
 const renderRateNotice = ( translate ) => {
 	return (

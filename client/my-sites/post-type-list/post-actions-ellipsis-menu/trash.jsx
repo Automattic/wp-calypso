@@ -11,13 +11,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import { bumpStat, recordTracksEvent } from 'client/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
-import { trashPost, deletePost } from 'state/posts/actions';
-import { canCurrentUser } from 'state/selectors';
-import { getPost } from 'state/posts/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { trashPost, deletePost } from 'client/state/posts/actions';
+import { canCurrentUser } from 'client/state/selectors';
+import { getPost } from 'client/state/posts/selectors';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
 
 class PostActionsEllipsisMenuTrash extends Component {
 	static propTypes = {

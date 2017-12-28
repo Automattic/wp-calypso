@@ -11,7 +11,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import Types from './main';
-import { mapPostStatus } from 'lib/route/path';
+import { mapPostStatus } from 'client/lib/route/path';
 
 export function redirect() {
 	page.redirect( '/posts' );

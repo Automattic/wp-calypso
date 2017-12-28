@@ -13,11 +13,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CloseOnEscape from 'components/close-on-escape';
-import SiteSelector from 'components/site-selector';
-import { hasTouch } from 'lib/touch-detect';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
+import CloseOnEscape from 'client/components/close-on-escape';
+import SiteSelector from 'client/components/site-selector';
+import { hasTouch } from 'client/lib/touch-detect';
+import { getCurrentLayoutFocus } from 'client/state/ui/layout-focus/selectors';
+import { setNextLayoutFocus, setLayoutFocus } from 'client/state/ui/layout-focus/actions';
 
 class SitePicker extends React.Component {
 	static displayName = 'SitePicker';

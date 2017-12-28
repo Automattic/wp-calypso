@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 import {
 	WP_SUPER_CACHE_RECEIVE_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
@@ -24,8 +24,8 @@ import {
 } from '../action-types';
 import { normalizeSettings, sanitizeSettings } from './utils';
 import { requestStatus } from '../status/actions';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteTitle } from 'state/sites/selectors';
+import { errorNotice, removeNotice, successNotice } from 'client/state/notices/actions';
+import { getSiteTitle } from 'client/state/sites/selectors';
 
 /**
  * Returns an action object to be used in signalling that settings have been received.

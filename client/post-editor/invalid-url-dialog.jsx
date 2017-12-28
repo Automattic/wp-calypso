@@ -13,9 +13,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormButton from 'components/forms/form-button';
-import { getSiteFragment } from 'lib/route/path';
+import Dialog from 'client/components/dialog';
+import FormButton from 'client/components/forms/form-button';
+import { getSiteFragment } from 'client/lib/route/path';
 
 class EditorTrashedDialog extends React.Component {
 	static displayName = 'EditorTrashedDialog';

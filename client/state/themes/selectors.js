@@ -6,7 +6,7 @@
 
 import { find, includes, isEqual, omit, some, get, uniq } from 'lodash';
 import i18n from 'i18n-calypso';
-import createSelector from 'lib/create-selector';
+import createSelector from 'client/lib/create-selector';
 
 /**
  * Internal dependencies
@@ -19,10 +19,10 @@ import {
 	canJetpackSiteManage,
 	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSiteMultiSite,
-} from 'state/sites/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
-import { getCustomizerUrl } from 'state/sites/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
+} from 'client/state/sites/selectors';
+import { getSitePurchases } from 'client/state/purchases/selectors';
+import { getCustomizerUrl } from 'client/state/sites/selectors';
+import { hasFeature } from 'client/state/sites/plans/selectors';
 import {
 	getDeserializedThemesQueryDetails,
 	getNormalizedThemesQuery,
@@ -32,7 +32,7 @@ import {
 	oldShowcaseUrl,
 } from './utils';
 import { DEFAULT_THEME_QUERY } from './constants';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'client/lib/plans/constants';
 
 /**
  * Returns a theme object by site ID, theme ID pair.

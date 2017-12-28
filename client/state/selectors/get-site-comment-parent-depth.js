@@ -7,8 +7,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSiteComment } from 'state/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getSiteComment } from 'client/state/selectors';
 
 export const getSiteCommentParentDepth = createSelector(
 	( state, siteId, commentId ) => {

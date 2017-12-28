@@ -4,12 +4,12 @@
  * Internal dependencies
  */
 
-import { createReducer } from 'state/utils';
-import { LOADING } from 'woocommerce/state/constants';
+import { createReducer } from 'client/state/utils';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 import {
 	WOOCOMMERCE_TAXRATES_REQUEST,
 	WOOCOMMERCE_TAXRATES_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export default createReducer(
 	{},

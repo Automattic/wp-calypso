@@ -12,15 +12,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import PostActions from 'lib/posts/actions';
-import MediaDropZone from 'my-sites/media-library/drop-zone';
-import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import MediaValidationStore from 'lib/media/validation-store';
-import markup from 'post-editor/media-modal/markup';
-import { getSelectedSite } from 'state/ui/selectors';
+import analytics from 'client/lib/analytics';
+import PostActions from 'client/lib/posts/actions';
+import MediaDropZone from 'client/my-sites/media-library/drop-zone';
+import MediaActions from 'client/lib/media/actions';
+import MediaUtils from 'client/lib/media/utils';
+import MediaLibrarySelectedStore from 'client/lib/media/library-selected-store';
+import MediaValidationStore from 'client/lib/media/validation-store';
+import markup from 'client/post-editor/media-modal/markup';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 class TinyMCEDropZone extends React.Component {
 	static propTypes = {

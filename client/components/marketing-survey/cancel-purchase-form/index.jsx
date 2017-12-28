@@ -13,16 +13,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextarea from 'components/forms/form-textarea';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import { recordTracksEvent } from 'state/analytics/actions';
-import Button from 'components/button';
-import HappychatButton from 'components/happychat/button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLegend from 'client/components/forms/form-legend';
+import FormLabel from 'client/components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormTextarea from 'client/components/forms/form-textarea';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import Button from 'client/components/button';
+import HappychatButton from 'client/components/happychat/button';
 import * as steps from './steps';
 import BusinessATStep from './stepComponents/business-at-step';
 import UpgradeATStep from './stepComponents/upgrade-at-step';

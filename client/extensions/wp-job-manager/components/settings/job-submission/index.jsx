@@ -14,17 +14,17 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import { ProtectFormGuard } from 'lib/protect-form';
-import Card from 'components/card';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import ReduxFormRadio from 'components/redux-forms/redux-form-radio';
-import ReduxFormSelect from 'components/redux-forms/redux-form-select';
-import ReduxFormTextInput from 'components/redux-forms/redux-form-text-input';
-import ReduxFormToggle from 'components/redux-forms/redux-form-toggle';
-import SectionHeader from 'components/section-header';
+import { ProtectFormGuard } from 'client/lib/protect-form';
+import Card from 'client/components/card';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import ReduxFormRadio from 'client/components/redux-forms/redux-form-radio';
+import ReduxFormSelect from 'client/components/redux-forms/redux-form-select';
+import ReduxFormTextInput from 'client/components/redux-forms/redux-form-text-input';
+import ReduxFormToggle from 'client/components/redux-forms/redux-form-toggle';
+import SectionHeader from 'client/components/section-header';
 
 const form = 'extensions.wpJobManager.submission';
 

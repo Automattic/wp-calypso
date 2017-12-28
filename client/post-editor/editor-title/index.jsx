@@ -14,17 +14,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PostUtils from 'lib/posts/utils';
-import EditorPermalink from 'post-editor/editor-permalink';
-import TrackInputChanges from 'components/track-input-changes';
-import TextareaAutosize from 'components/textarea-autosize';
-import { isMobile } from 'lib/viewport';
-import * as stats from 'lib/posts/stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { areSitePermalinksEditable } from 'state/selectors';
-import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
-import { editPost } from 'state/posts/actions';
+import PostUtils from 'client/lib/posts/utils';
+import EditorPermalink from 'client/post-editor/editor-permalink';
+import TrackInputChanges from 'client/components/track-input-changes';
+import TextareaAutosize from 'client/components/textarea-autosize';
+import { isMobile } from 'client/lib/viewport';
+import * as stats from 'client/lib/posts/stats';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { areSitePermalinksEditable } from 'client/state/selectors';
+import { isEditorNewPost, getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPost } from 'client/state/posts/selectors';
+import { editPost } from 'client/state/posts/actions';
 
 /**
  * Constants

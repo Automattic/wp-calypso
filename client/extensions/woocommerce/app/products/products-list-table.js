@@ -13,9 +13,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ProductsListRow from './products-list-row';
-import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
-import TableItem from 'woocommerce/components/table/table-item';
+import Table from 'client/extensions/woocommerce/components/table';
+import TableRow from 'client/extensions/woocommerce/components/table/table-row';
+import TableItem from 'client/extensions/woocommerce/components/table/table-item';
 
 const ProductsListTable = ( { translate, products, site, isRequesting } ) => {
 	const headings = (
