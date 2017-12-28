@@ -1,28 +1,35 @@
-.annual-site-stats_content {
-	padding: 16px;
+.annual-site-stats__content {
+	padding: 16px 16px 0;
 	display: flex;
 	flex-wrap: wrap;
 
 	@include breakpoint( ">480px" ) {
-		padding: 16px 24px;
+		padding: 16px 24px 0;
 	}
 }
 
-.annual-site-stats_stat {
-	width: 50%;
-	padding-bottom: 12px;
+.annual-site-stats__stat {
+	padding-bottom: 16px;
+
+	&:nth-child(2n+1) {
+		width: 55%;
+	}
+
+	&:nth-child(2n+0) {
+		width: 45%;
+	}
 }
 
-.annual-site-stats_stat-title {
+.annual-site-stats__stat-title {
 	font-size: 12px;
 	text-transform: uppercase;
 	color: $gray;
 }
 
-.annual-site-stats_stat-figure {
+.annual-site-stats__stat-figure {
 	font-size: 18px;
 
 	&.is-large {
-		font-size: 24px;
+		font-size: 30px;
 	}
 }

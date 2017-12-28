@@ -6,7 +6,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -21,6 +20,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
+import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 
 class AnnualSiteStats extends Component {
 	static propTypes = {
@@ -28,53 +28,63 @@ class AnnualSiteStats extends Component {
 		siteId: PropTypes.number,
 		years: PropTypes.object,
 		translate: PropTypes.func,
+		moment: PropTypes.func,
 	};
 
-	render() {
-		const { years, requesting, siteId, translate, statType } = this.props;
-		const year = years && years[ '2011' ];
-		if ( ! year ) {
-			return null; // for now
-		}
-		const classes = classNames( 'stats-module', {
-			'is-loading': requesting && ! years,
-			'is-empty': ! years,
-		} );
+	renderContent( currentYear, data ) {
+		return (
+			<div className="annual-site-stats__content">
+				<div className="annual-site-stats__stat">
+					<div className="annual-site-stats__stat-title">year</div>
+					<div className="annual-site-stats__stat-figure is-large">{ currentYear }</div>
+				</div>
+				<div className="annual-site-stats__stat">
+					<div className="annual-site-stats__stat-title">total posts</div>
+					<div className="annual-site-stats__stat-figure is-large">{ data.total_posts }</div>
+				</div>
+				<div className="annual-site-stats__stat">
+					<div className="annual-site-stats__stat-title">total comments</div>
+					<div className="annual-site-stats__stat-figure">{ data.total_comments }</div>
+				</div>
+				<div className="annual-site-stats__stat">
+					<div className="annual-site-stats__stat-title">total words</div>
+					<div className="annual-site-stats__stat-figure">{ data.total_words }</div>
+				</div>
+				<div className="annual-site-stats__stat">
+					<div className="annual-site-stats__stat-title">avg comments per post</div>
+					<div className="annual-site-stats__stat-figure">{ data.avg_comments }</div>
+				</div>
+				<div className="annual-site-stats__stat">
+					<div className="annual-site-stats__stat-title">avg words per post</div>
+					<div className="annual-site-stats__stat-figure">{ data.avg_words }</div>
+				</div>
+			</div>
+		);
+	}
 
+	render() {
+		const { years, requesting, siteId, translate, moment, statType } = this.props;
+		const currentYear = moment().format( 'YYYY' );
+		const defaultYear = {
+			avg_comments: 0,
+			avg_words: 0,
+			total_comments: 0,
+			total_posts: 0,
+			total_words: 0,
+		};
+		const isLoading = requesting && ! years;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ siteId && <QuerySiteStats siteId={ siteId } statType={ statType } /> }
 				<SectionHeader label={ translate( 'Annual Site Stats' ) } />
-				<Card className={ classes }>
-					<div className="annual-site-stats__content">
-						<div className="annual-site-stats__stat">
-							<div className="annual-site-stats__stat-title">year</div>
-							<div className="annual-site-stats__stat-figure is-large">2011</div>
-						</div>
-						<div className="annual-site-stats__stat">
-							<div className="annual-site-stats__stat-title">total posts</div>
-							<div className="annual-site-stats__stat-figure is-large">{ year.total_posts }</div>
-						</div>
-						<div className="annual-site-stats__stat">
-							<div className="annual-site-stats__stat-title">total comments</div>
-							<div className="annual-site-stats__stat-figure">{ year.total_comments }</div>
-						</div>
-						<div className="annual-site-stats__stat">
-							<div className="annual-site-stats__stat-title">total words</div>
-							<div className="annual-site-stats__stat-figure">{ year.total_words }</div>
-						</div>
-						<div className="annual-site-stats__stat">
-							<div className="annual-site-stats__stat-title">avg comments per post</div>
-							<div className="annual-site-stats__stat-figure">{ year.avg_comments }</div>
-						</div>
-						<div className="annual-site-stats__stat">
-							<div className="annual-site-stats__stat-title">avg words per post</div>
-							<div className="annual-site-stats__stat-figure">{ year.avg_words }</div>
-						</div>
-					</div>
+				<Card className="stats-module">
+					<StatsModulePlaceholder isLoading={ isLoading } />
+					{ years && this.renderContent( currentYear, years[ currentYear ] || defaultYear ) }
 				</Card>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
