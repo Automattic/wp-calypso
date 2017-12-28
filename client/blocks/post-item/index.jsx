@@ -143,7 +143,11 @@ class PostItem extends React.Component {
 							{ isAllSitesModeSelected && <PostTypeSiteInfo globalId={ globalId } /> }
 							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
 						</div>
-						<h1 className="post-item__title" onClick={ this.clickHandler( 'title' ) } onMouseOver={ preloadEditor }>
+						<h1
+							className="post-item__title"
+							onClick={ this.clickHandler( 'title' ) }
+							onMouseOver={ preloadEditor }
+						>
 							{ ! externalPostLink && (
 								<a
 									href={ isPlaceholder || multiSelectEnabled ? null : postUrl }

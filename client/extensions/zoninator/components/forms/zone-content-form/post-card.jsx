@@ -39,7 +39,7 @@ class PostCard extends Component {
 		event.preventDefault();
 	};
 
-	viewPost = ( event ) => {
+	viewPost = event => {
 		const { dispatch, isPreviewable, previewUrl } = this.props;
 
 		event.preventDefault();
@@ -51,16 +51,10 @@ class PostCard extends Component {
 		dispatch( setPreviewType( 'site-preview' ) );
 		dispatch( setPreviewUrl( setUrlScheme( previewUrl, 'https' ) ) );
 		dispatch( setLayoutFocus( 'preview' ) );
-	}
+	};
 
 	render() {
-		const {
-			editorPath,
-			postTitle,
-			previewUrl,
-			remove,
-			translate,
-		} = this.props;
+		const { editorPath, postTitle, previewUrl, remove, translate } = this.props;
 
 		const postCardClass = 'zoninator__zone-list-item';
 
@@ -72,7 +66,8 @@ class PostCard extends Component {
 					onClick={ this.viewPost }
 					href={ previewUrl }
 					draggable="false"
-					target="_blank">
+					target="_blank"
+				>
 					{ translate( 'View' ) }
 				</Button>
 				<Button compact onMouseDown={ this.handleMouseDown } href={ editorPath } draggable="false">

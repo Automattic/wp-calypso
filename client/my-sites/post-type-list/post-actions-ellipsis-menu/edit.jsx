@@ -29,7 +29,12 @@ function PostActionsEllipsisMenuEdit( { translate, canEdit, status, editUrl, bum
 	}
 
 	return (
-		<PopoverMenuItem href={ editUrl } onClick={ bumpStat } icon="pencil" onMouseOver={ preloadEditor }>
+		<PopoverMenuItem
+			href={ editUrl }
+			onClick={ bumpStat }
+			icon="pencil"
+			onMouseOver={ preloadEditor }
+		>
 			{ translate( 'Edit', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);
