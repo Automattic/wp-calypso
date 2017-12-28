@@ -9,12 +9,9 @@
 /**
  * Internal dependencies
  */
-import { isEbanx, isValidCPF } from '../ebanx';
+import { isEbanxCountry, isValidCPF } from '../ebanx';
 import { isEnabled } from 'config';
 
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => 'ebanx',
-} ) );
 jest.mock( 'config', () => {
 	const config = () => 'development';
 
@@ -24,7 +21,7 @@ jest.mock( 'config', () => {
 } );
 
 describe( 'Ebanx payment processing methods', () => {
-	describe( 'isEbanx', () => {
+	describe( 'isEbanxCountry', () => {
 		beforeAll( () => {
 			isEnabled.mockReturnValue( true );
 		} );
@@ -33,10 +30,10 @@ describe( 'Ebanx payment processing methods', () => {
 		} );
 
 		test( 'should return false for non-ebanx country', () => {
-			expect( isEbanx( 'AU' ) ).toEqual( false );
+			expect( isEbanxCountry( 'AU' ) ).toEqual( false );
 		} );
 		test( 'should return true for ebanx country', () => {
-			expect( isEbanx( 'BR' ) ).toEqual( true );
+			expect( isEbanxCountry( 'BR' ) ).toEqual( true );
 		} );
 	} );
 

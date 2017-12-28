@@ -16,7 +16,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEbanx, isValidCPF } from 'lib/credit-card-details/ebanx';
+import { isEbanxCountry, isValidCPF } from 'lib/credit-card-details/ebanx';
 import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from './constants';
 
 function ebanxFieldRules( country ) {
@@ -249,7 +249,7 @@ function getErrors( field, value, cardDetails ) {
  * otherwise `null`
  */
 function getAdditionalFieldRules( { country } ) {
-	if ( isEbanx( country ) ) {
+	if ( isEbanxCountry( country ) ) {
 		return ebanxFieldRules( country );
 	}
 	return null;
