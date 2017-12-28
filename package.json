@@ -199,7 +199,7 @@
     "clean:public": "npm run -s rm -- public .css .css.map .js .js.map && npm run -s rm -- public/sections .css .css.map && npm run -s rm -- public/sections-rtl .css .css.map",
     "codemod": "node bin/codemods/run",
     "distclean": "npm run -s clean && npm run -s rm -- node_modules",
-    "docker": "docker run -it --name wp-calypso --rm -p 80:3000 -e NODE_ENV=wpcalypso -e CALYPSO_ENV=wpcalypso wp-calypso",
+    "docker": "docker run -it --name wp-calypso --rm -p 80:3000 wp-calypso",
     "env": "cross-env-shell NODE_PATH=$NODE_PATH:server:client:.",
     "eslint-branch": "node bin/eslint-branch.js",
     "install-if-deps-outdated": "node bin/install-if-deps-outdated.js",
