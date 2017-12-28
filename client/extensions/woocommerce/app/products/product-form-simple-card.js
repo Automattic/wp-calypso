@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { isNull } from 'lodash';
+import { isNull, isUndefined } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -97,7 +97,7 @@ const ProductFormSimpleCard = ( { siteId, product, editProduct, translate } ) =>
 	} );
 
 	const { stock_quantity } = product;
-	const quantity = ! isNull( stock_quantity ) ? stock_quantity : '';
+	const quantity = isNull( stock_quantity ) || isUndefined( stock_quantity ) ? '' : stock_quantity;
 
 	const renderStock = () => (
 		<Card className={ stockClasses }>
