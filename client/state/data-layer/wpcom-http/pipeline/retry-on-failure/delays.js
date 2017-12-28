@@ -2,13 +2,13 @@
  * PRNG-based functions providing enhanced versions of simple delay
  * formulas in order to spread out an array of failing operations
  * over more uniform time distributions.
- * 
+ *
  * Jitter is introduced so that if, for example, twenty requests all
  * fail at the same time, that they won't all retry at the same time.
  * This should mitigate load on the server after failed requests and
  * lead towards more retry attempts succeeding faster than with the
  * naïve delay formulas.
- * 
+ *
  *
  * @format
  * @module state/data-layer/wpcom-http/pipeline/retry-on-failure/delays

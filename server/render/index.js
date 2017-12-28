@@ -43,13 +43,13 @@ function bumpStat( group, name ) {
 }
 
 /**
-* Render and cache supplied React element to a markup string.
-* Cache is keyed by stringified element by default.
-*
-* @param {object} element - React element to be rendered to html
-* @param {string} key - (optional) custom key
-* @return {string} The rendered Layout
-*/
+ * Render and cache supplied React element to a markup string.
+ * Cache is keyed by stringified element by default.
+ *
+ * @param {object} element - React element to be rendered to html
+ * @param {string} key - (optional) custom key
+ * @return {string} The rendered Layout
+ */
 export function render( element, key = JSON.stringify( element ) ) {
 	try {
 		const startTime = Date.now();

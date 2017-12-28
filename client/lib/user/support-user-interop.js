@@ -103,10 +103,10 @@ export const rebootNormally = () => {
 };
 
 /**
-  * Reboot Calypso as the support user
-  * @param  {string} user  The support user's username
-  * @param  {string} token The support token
-  */
+ * Reboot Calypso as the support user
+ * @param  {string} user  The support user's username
+ * @param  {string} token The support token
+ */
 export const rebootWithToken = ( user, token ) => {
 	if ( ! isEnabled() ) {
 		return;

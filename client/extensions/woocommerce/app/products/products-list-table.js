@@ -23,15 +23,13 @@ const ProductsListTable = ( { translate, products, site, isRequesting } ) => {
 			isHeader
 			className={ classNames( { 'products__list-placeholder': ! products.length } ) }
 		>
-			{ [
-				translate( 'Product' ),
-				translate( 'Inventory' ),
-				translate( 'Category' ),
-			].map( ( item, i ) => (
-				<TableItem isHeader key={ i } isTitle={ 0 === i }>
-					{ item }
-				</TableItem>
-			) ) }
+			{ [ translate( 'Product' ), translate( 'Inventory' ), translate( 'Category' ) ].map(
+				( item, i ) => (
+					<TableItem isHeader key={ i } isTitle={ 0 === i }>
+						{ item }
+					</TableItem>
+				)
+			) }
 		</TableRow>
 	);
 

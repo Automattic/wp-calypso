@@ -35,8 +35,8 @@ function FollowListSite( args ) {
 Emitter( FollowListSite.prototype );
 
 /**
-*	if is_following is false, calls the follow endpoint
-*/
+ *	if is_following is false, calls the follow endpoint
+ */
 
 FollowListSite.prototype.follow = function() {
 	if ( ! this.is_following ) {
@@ -53,8 +53,8 @@ FollowListSite.prototype.follow = function() {
 };
 
 /**
-*	if is_following is true, calls the delete action on follow
-*/
+ *	if is_following is true, calls the delete action on follow
+ */
 
 FollowListSite.prototype.unfollow = function() {
 	if ( this.is_following ) {
