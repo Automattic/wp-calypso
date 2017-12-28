@@ -36,6 +36,10 @@ class EmailedLoginLinkExpired extends React.Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	componentDidMount() {
+		this.props.recordPageView( '/log-in/link/use', 'Login > Link > Expired' );
+	}
+
 	onClickTryAgainLink = event => {
 		event.preventDefault();
 
@@ -47,8 +51,6 @@ class EmailedLoginLinkExpired extends React.Component {
 	render() {
 		const { translate } = this.props;
 
-		this.props.recordPageView( '/log-in/link/use', 'Login > Link > Expired' );
-
 		return (
 			<div>
 				<RedirectWhenLoggedIn
@@ -56,6 +58,7 @@ class EmailedLoginLinkExpired extends React.Component {
 					redirectTo="/"
 					replaceCurrentLocation={ true }
 				/>
+
 				<EmptyContent
 					action={ translate( 'Try again' ) }
 					actionCallback={ this.onClickTryAgainLink }

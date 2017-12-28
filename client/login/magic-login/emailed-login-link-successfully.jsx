@@ -28,6 +28,10 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 		recordPageView: PropTypes.func.isRequired,
 	};
 
+	componentDidMount() {
+		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
+	}
+
 	onClickBackLink = event => {
 		event.preventDefault();
 
@@ -49,8 +53,6 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 			' ',
 			translate( 'Please check your inbox and click the link to log in.' ),
 		];
-
-		this.props.recordPageView( '/log-in/link', 'Login > Link > Emailed' );
 
 		return (
 			<div>

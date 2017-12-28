@@ -45,6 +45,10 @@ class MagicLogin extends React.Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	componentDidMount() {
+		this.props.recordPageView( '/log-in/link', 'Login > Link' );
+	}
+
 	onClickEnterPasswordInstead = event => {
 		event.preventDefault();
 
@@ -84,8 +88,6 @@ class MagicLogin extends React.Component {
 	}
 
 	render() {
-		this.props.recordPageView( '/log-in/link', 'Login > Link' );
-
 		return (
 			<Main className="magic-login magic-login__request-link">
 				{ this.renderLocaleSuggestions() }
