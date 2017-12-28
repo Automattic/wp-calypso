@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -29,7 +29,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 		const subHeaderText = translate( 'Would you like to get started with a Contact Us page?' );
 
 		return (
-			<Fragment>
+			<div className="steps__main">
 				<DocumentHead title={ translate( 'Contact Form ‹ Jetpack Onboarding' ) } />
 				<PageViewTracker
 					path={ '/jetpack/onboarding/' + STEPS.CONTACT_FORM + '/:site' }
@@ -48,7 +48,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 						onClick={ this.clickAddContactForm }
 					/>
 				</TileGrid>
-			</Fragment>
+			</div>
 		);
 	}
 }

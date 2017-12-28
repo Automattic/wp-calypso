@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,7 +24,7 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 		);
 
 		return (
-			<Fragment>
+			<div className="steps__main">
 				<DocumentHead title={ translate( 'WooCommerce ‹ Jetpack Onboarding' ) } />
 				<PageViewTracker
 					path={ '/jetpack/onboarding/' + STEPS.WOOCOMMERCE + '/:site' }
@@ -37,7 +37,7 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 					<Button primary>{ translate( 'Yes, I am' ) }</Button>
 					<Button>{ translate( 'Not right now' ) }</Button>
 				</div>
-			</Fragment>
+			</div>
 		);
 	}
 }
