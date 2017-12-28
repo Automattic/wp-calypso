@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isPublicizeEnabled } from 'state/selectors';
+import { isPublicizeEnabled } from 'client/state/selectors';
 
 describe( 'isPublicizeEnabled()', () => {
 	const siteId = 2916284;

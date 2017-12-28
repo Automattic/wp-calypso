@@ -8,9 +8,9 @@ import {
 	OAUTH2_CLIENT_DATA_REQUEST,
 	OAUTH2_CLIENT_DATA_REQUEST_FAILURE,
 	OAUTH2_CLIENT_DATA_REQUEST_SUCCESS,
-} from 'state/action-types';
-import wpcom from 'lib/wp';
-import { cachingActionCreatorFactory } from 'state/utils';
+} from 'client/state/action-types';
+import wpcom from 'client/lib/wp';
+import { cachingActionCreatorFactory } from 'client/state/utils';
 
 const convertWpcomError = wpcomError => ( {
 	message: wpcomError.message,

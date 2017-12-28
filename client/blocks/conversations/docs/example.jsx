@@ -8,9 +8,9 @@ import { noop, map, compact } from 'lodash';
 /**
  * Internal dependencies
  */
-import { ConversationCommentList } from 'blocks/conversations/list';
-import { posts } from 'blocks/reader-post-card/docs/fixtures';
-import { commentsTree } from 'blocks/conversations/docs/fixtures';
+import { ConversationCommentList } from 'client/blocks/conversations/list';
+import { posts } from 'client/blocks/reader-post-card/docs/fixtures';
+import { commentsTree } from 'client/blocks/conversations/docs/fixtures';
 
 const ConversationCommentListExample = () => {
 	const post = posts[ 0 ];

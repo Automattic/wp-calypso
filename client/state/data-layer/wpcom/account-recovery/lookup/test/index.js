@@ -14,7 +14,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_UPDATE_USER_DATA,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 const validResponse = {
 	primary_email: 'a****@example.com',

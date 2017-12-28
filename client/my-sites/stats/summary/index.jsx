@@ -13,18 +13,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
+import HeaderCake from 'client/components/header-cake';
 import StatsModule from '../stats-module';
 import statsStringsFactory from '../stats-strings';
 import Countries from '../stats-countries';
 import StatsVideoSummary from '../stats-video-summary';
 import VideoPlayDetails from '../stats-video-details';
-import Main from 'components/main';
+import Main from 'client/components/main';
 import StatsFirstView from '../stats-first-view';
-import QueryMedia from 'components/data/query-media';
-import JetpackColophon from 'components/jetpack-colophon';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getMediaItem } from 'state/selectors';
+import QueryMedia from 'client/components/data/query-media';
+import JetpackColophon from 'client/components/jetpack-colophon';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getMediaItem } from 'client/state/selectors';
 
 const StatsStrings = statsStringsFactory();
 

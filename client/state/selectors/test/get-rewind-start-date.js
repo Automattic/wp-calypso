@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getRewindStartDate } from 'state/selectors';
+import { getRewindStartDate } from 'client/state/selectors';
 
 const siteId = 77203074;
 

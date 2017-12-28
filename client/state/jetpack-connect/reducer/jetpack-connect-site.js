@@ -8,7 +8,7 @@ import {
 	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export default function jetpackConnectSite( state = {}, action ) {
 	const defaultState = {

@@ -11,14 +11,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityLogBanner from './index';
-import Button from 'components/button';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSiteUrl } from 'state/selectors';
+import Button from 'client/components/button';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { getSiteUrl } from 'client/state/selectors';
 import {
 	dismissRewindRestoreProgress,
 	dismissRewindBackupProgress,
-} from 'state/activity-log/actions';
+} from 'client/state/activity-log/actions';
 
 /**
  * Normalize timestamp values

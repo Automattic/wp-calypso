@@ -10,10 +10,10 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import FollowersStore from 'lib/followers/store';
-import FollowersActions from 'lib/followers/actions';
-import passToChildren from 'lib/react-pass-to-children';
-import pollers from 'lib/data-poller';
+import FollowersStore from 'client/lib/followers/store';
+import FollowersActions from 'client/lib/followers/actions';
+import passToChildren from 'client/lib/react-pass-to-children';
+import pollers from 'client/lib/data-poller';
 
 /**
  * Module variables

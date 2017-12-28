@@ -9,8 +9,8 @@ import { get, isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { LOADING } from 'woocommerce/state/constants';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 
 /**
  * @param {Object} state Whole Redux state tree

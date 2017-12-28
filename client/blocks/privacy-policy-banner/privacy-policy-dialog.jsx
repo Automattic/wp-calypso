@@ -7,8 +7,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import Button from 'components/button';
+import Dialog from 'client/components/dialog';
+import Button from 'client/components/button';
 
 class PrivacyPolicyDialog extends Component {
 	render() {

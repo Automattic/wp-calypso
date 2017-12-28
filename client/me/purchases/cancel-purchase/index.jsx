@@ -13,36 +13,39 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import CancelPurchaseButton from './button';
-import CancelPurchaseLoadingPlaceholder from 'me/purchases/cancel-purchase/loading-placeholder';
+import CancelPurchaseLoadingPlaceholder from 'client/me/purchases/cancel-purchase/loading-placeholder';
 import CancelPurchaseRefundInformation from './refund-information';
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 import {
 	getName,
 	isCancelable,
 	isOneTimePurchase,
 	isRefundable,
 	isSubscription,
-} from 'lib/purchases';
+} from 'client/lib/purchases';
 import {
 	getPurchase,
 	getSelectedSite,
 	goToManagePurchase,
 	recordPageView,
-} from 'me/purchases/utils';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import HeaderCake from 'components/header-cake';
-import { isDataLoading } from 'me/purchases/utils';
-import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
-import { isRequestingSites } from 'state/sites/selectors';
-import Main from 'components/main';
+} from 'client/me/purchases/utils';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+} from 'client/state/purchases/selectors';
+import { getSelectedSite as getSelectedSiteSelector } from 'client/state/ui/selectors';
+import HeaderCake from 'client/components/header-cake';
+import { isDataLoading } from 'client/me/purchases/utils';
+import { isDomainRegistration, isDomainTransfer } from 'client/lib/products-values';
+import { isRequestingSites } from 'client/state/sites/selectors';
+import Main from 'client/components/main';
 import paths from '../paths';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import ProductLink from 'me/purchases/product-link';
-import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
+import QueryUserPurchases from 'client/components/data/query-user-purchases';
+import ProductLink from 'client/me/purchases/product-link';
+import titles from 'client/me/purchases/titles';
+import userFactory from 'client/lib/user';
 
 const user = userFactory();
 

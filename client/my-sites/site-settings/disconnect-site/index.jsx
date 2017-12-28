@@ -15,13 +15,13 @@ import MissingFeature from './missing-feature';
 import TooDifficult from './too-difficult';
 import TooExpensive from './too-expensive';
 import Troubleshoot from './troubleshoot';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import NavigationLink from 'components/wizard/navigation-link';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import Main from 'components/main';
-import Placeholder from 'my-sites/site-settings/placeholder';
-import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
+import DocumentHead from 'client/components/data/document-head';
+import FormattedHeader from 'client/components/formatted-header';
+import NavigationLink from 'client/components/wizard/navigation-link';
+import { getSelectedSiteSlug } from 'client/state/ui/selectors';
+import Main from 'client/components/main';
+import Placeholder from 'client/my-sites/site-settings/placeholder';
+import redirectNonJetpack from 'client/my-sites/site-settings/redirect-non-jetpack';
 
 export const reasonComponents = {
 	'missing-feature': MissingFeature,

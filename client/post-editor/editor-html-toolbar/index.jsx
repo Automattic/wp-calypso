@@ -16,31 +16,31 @@ import { Env } from 'tinymce/tinymce';
 /**
  * Internal dependencies
  */
-import { serialize as serializeContactForm } from 'components/tinymce/plugins/contact-form/shortcode-utils';
-import { serialize as serializeSimplePayment } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
-import MediaActions from 'lib/media/actions';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import MediaUtils from 'lib/media/utils';
-import MediaValidationStore from 'lib/media/validation-store';
-import PostActions from 'lib/posts/actions';
-import { isWithinBreakpoint } from 'lib/viewport';
-import markup from 'post-editor/media-modal/markup';
-import { getSelectedSite } from 'state/ui/selectors';
+import { serialize as serializeContactForm } from 'client/components/tinymce/plugins/contact-form/shortcode-utils';
+import { serialize as serializeSimplePayment } from 'client/components/tinymce/plugins/simple-payments/shortcode-utils';
+import MediaActions from 'client/lib/media/actions';
+import MediaLibrarySelectedStore from 'client/lib/media/library-selected-store';
+import MediaUtils from 'client/lib/media/utils';
+import MediaValidationStore from 'client/lib/media/validation-store';
+import PostActions from 'client/lib/posts/actions';
+import { isWithinBreakpoint } from 'client/lib/viewport';
+import markup from 'client/post-editor/media-modal/markup';
+import { getSelectedSite } from 'client/state/ui/selectors';
 import {
 	fieldAdd,
 	fieldRemove,
 	fieldUpdate,
 	settingsUpdate,
-} from 'state/ui/editor/contact-form/actions';
+} from 'client/state/ui/editor/contact-form/actions';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
-import Button from 'components/button';
-import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
-import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
-import EditorMediaModal from 'post-editor/editor-media-modal';
-import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
+import Button from 'client/components/button';
+import ContactFormDialog from 'client/components/tinymce/plugins/contact-form/dialog';
+import isDropZoneVisible from 'client/state/selectors/is-drop-zone-visible';
+import EditorMediaModal from 'client/post-editor/editor-media-modal';
+import MediaLibraryDropZone from 'client/my-sites/media-library/drop-zone';
 import config from 'config';
-import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
+import SimplePaymentsDialog from 'client/components/tinymce/plugins/simple-payments/dialog';
 
 /**
  * Module constant

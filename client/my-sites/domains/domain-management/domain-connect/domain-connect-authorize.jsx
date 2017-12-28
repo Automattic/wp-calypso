@@ -11,14 +11,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Main from 'components/main';
-import Notice from 'components/notice';
+import CompactCard from 'client/components/card/compact';
+import Main from 'client/components/main';
+import Notice from 'client/components/notice';
 import DomainConnectAuthorizeDescription from './domain-connect-authorize-description';
 import DomainConnectAuthorizeRecords from './domain-connect-authorize-records';
 import DomainConnectAuthorizeFooter from './domain-connect-authorize-footer';
 import { actionType, noticeType } from './constants';
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 
 const wpcom = wp.undocumented();
 

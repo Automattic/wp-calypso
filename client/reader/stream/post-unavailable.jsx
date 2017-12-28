@@ -9,7 +9,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 
 class PostUnavailable extends React.PureComponent {
 	componentWillMount() {

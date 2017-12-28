@@ -5,7 +5,7 @@
  */
 
 import keyring from './keyring/reducer';
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import publicize from './publicize/reducer';
 import services from './services/reducer';
 

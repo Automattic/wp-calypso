@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Pagination from 'components/pagination';
+import Pagination from 'client/components/pagination';
 
 const PromotionsListPagination = ( {
 	site,

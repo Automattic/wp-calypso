@@ -12,12 +12,12 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_WRITE_ERROR,
-} from 'state/action-types';
-import { requestCommentsList } from 'state/comments/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { getSitePost } from 'state/posts/selectors';
-import { errorNotice } from 'state/notices/actions';
+} from 'client/state/action-types';
+import { requestCommentsList } from 'client/state/comments/actions';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { getSitePost } from 'client/state/posts/selectors';
+import { errorNotice } from 'client/state/notices/actions';
 
 /**
  * Creates a placeholder comment for a given text and postId

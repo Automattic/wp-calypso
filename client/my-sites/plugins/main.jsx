@@ -13,35 +13,35 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import Main from 'client/components/main';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
 import PluginItem from './plugin-item/plugin-item';
-import DocumentHead from 'components/data/document-head';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Search from 'components/search';
-import URLSearch from 'lib/mixins/url-search';
-import EmptyContent from 'components/empty-content';
-import PluginsStore from 'lib/plugins/store';
-import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
-import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
+import DocumentHead from 'client/components/data/document-head';
+import SectionNav from 'client/components/section-nav';
+import NavTabs from 'client/components/section-nav/tabs';
+import NavItem from 'client/components/section-nav/item';
+import Search from 'client/components/search';
+import URLSearch from 'client/lib/mixins/url-search';
+import EmptyContent from 'client/components/empty-content';
+import PluginsStore from 'client/lib/plugins/store';
+import { fetchPluginData as wporgFetchPluginData } from 'client/state/plugins/wporg/actions';
+import WporgPluginsSelectors from 'client/state/plugins/wporg/selectors';
 import PluginsList from './plugins-list';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import JetpackManageErrorPage from 'client/my-sites/jetpack-manage-error-page';
 import PluginsBrowser from './plugins-browser';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
-import { canCurrentUser, canCurrentUserManagePlugins } from 'state/selectors';
+import { canCurrentUser, canCurrentUserManagePlugins } from 'client/state/selectors';
 import {
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
 	isJetpackSite,
 	isRequestingSites,
-} from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSelectedOrAllSitesWithPlugins } from 'state/selectors';
-import HeaderButton from 'components/header-button';
+} from 'client/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { getSelectedOrAllSitesWithPlugins } from 'client/state/selectors';
+import HeaderButton from 'client/components/header-button';
 import { isEnabled } from 'config';
 
 const PluginsMain = createReactClass( {

@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
+import wasHappychatRecentlyActive from 'client/state/happychat/selectors/was-happychat-recently-active';
 
 const TIME_SECOND = 1000;
 const TIME_MINUTE = TIME_SECOND * 60;

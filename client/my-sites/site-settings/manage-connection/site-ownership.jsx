@@ -11,22 +11,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Gravatar from 'components/gravatar';
-import SectionHeader from 'components/section-header';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import Card from 'client/components/card';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLegend from 'client/components/forms/form-legend';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import Gravatar from 'client/components/gravatar';
+import SectionHeader from 'client/components/section-header';
+import QueryJetpackConnection from 'client/components/data/query-jetpack-connection';
+import QueryJetpackUserConnection from 'client/components/data/query-jetpack-user-connection';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
 import {
 	isJetpackSiteConnected,
 	isJetpackSiteInDevelopmentMode,
 	isJetpackUserMaster,
-} from 'state/selectors';
+} from 'client/state/selectors';
 
 class SiteOwnership extends Component {
 	renderPlaceholder() {

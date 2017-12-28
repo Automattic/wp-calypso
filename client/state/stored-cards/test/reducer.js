@@ -21,7 +21,7 @@ import {
 	STORED_CARDS_DELETE_FAILED,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'items', () => {

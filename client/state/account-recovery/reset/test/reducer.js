@@ -26,7 +26,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( '#account-recovery/reset reducer', () => {
 	const fetchedOptions = deepFreeze( [

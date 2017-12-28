@@ -16,23 +16,23 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 /* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
+import observe from 'client/lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import AppPasswordItem from 'me/application-password-item';
-import notices from 'notices';
-import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import AppPasswordItem from 'client/me/application-password-item';
+import notices from 'client/notices';
+import SectionHeader from 'client/components/section-header';
+import Button from 'client/components/button';
 import Gridicon from 'gridicons';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import eventRecorder from 'me/event-recorder';
-import Card from 'components/card';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormLabel from 'client/components/forms/form-label';
+import FormButton from 'client/components/forms/form-button';
+import FormButtonsBar from 'client/components/forms/form-buttons-bar';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import eventRecorder from 'client/me/event-recorder';
+import Card from 'client/components/card';
 import classNames from 'classnames';
-import { errorNotice } from 'state/notices/actions';
+import { errorNotice } from 'client/state/notices/actions';
 
 const ApplicationPasswords = createReactClass( {
 	displayName: 'ApplicationPasswords',

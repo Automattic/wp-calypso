@@ -13,10 +13,10 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import EmbedHelper from 'reader/embed-helper';
-import ReaderFeaturedImage from 'blocks/reader-featured-image';
-import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
-import QueryReaderThumbnail from 'components/data/query-reader-thumbnails';
+import EmbedHelper from 'client/reader/embed-helper';
+import ReaderFeaturedImage from 'client/blocks/reader-featured-image';
+import { getThumbnailForIframe } from 'client/state/reader/thumbnails/selectors';
+import QueryReaderThumbnail from 'client/components/data/query-reader-thumbnails';
 
 class ReaderFeaturedVideo extends React.Component {
 	static propTypes = {

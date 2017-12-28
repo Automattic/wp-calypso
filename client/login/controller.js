@@ -17,9 +17,9 @@ import config from 'config';
 import WPLogin from './wp-login';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
-import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+import { fetchOAuth2ClientData } from 'client/state/oauth2-clients/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'client/state/analytics/actions';
+import { getCurrentUser, getCurrentUserLocale } from 'client/state/current-user/selectors';
 
 const enhanceContextWithLogin = context => {
 	const { path, params: { flow, twoFactorAuthType, socialService } } = context;

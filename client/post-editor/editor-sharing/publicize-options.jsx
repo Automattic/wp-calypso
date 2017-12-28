@@ -15,21 +15,21 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import QueryPostTypes from 'components/data/query-post-types';
+import QueryPostTypes from 'client/components/data/query-post-types';
 import PublicizeMessage from './publicize-message';
 import PublicizeServices from './publicize-services';
-import * as paths from 'lib/paths';
-import PostMetadata from 'lib/post-metadata';
-import PopupMonitor from 'lib/popup-monitor';
-import Button from 'components/button';
-import { recordStat, recordEvent } from 'lib/posts/stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
-import { canCurrentUser, isPublicizeEnabled } from 'state/selectors';
+import * as paths from 'client/lib/paths';
+import PostMetadata from 'client/lib/post-metadata';
+import PopupMonitor from 'client/lib/popup-monitor';
+import Button from 'client/components/button';
+import { recordStat, recordEvent } from 'client/lib/posts/stats';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import { getSiteUserConnections } from 'client/state/sharing/publicize/selectors';
+import { fetchConnections as requestConnections } from 'client/state/sharing/publicize/actions';
+import { canCurrentUser, isPublicizeEnabled } from 'client/state/selectors';
 
 class EditorSharingPublicizeOptions extends React.Component {
 	static propTypes = {

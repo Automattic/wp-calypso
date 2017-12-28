@@ -12,13 +12,13 @@ import { omit, trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormDimensionsInput from 'client/extensions/woocommerce/components/form-dimensions-input';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSelect from 'client/components/forms/form-select';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormTextInputWithAffixes from 'client/components/forms/form-text-input-with-affixes';
 import FieldError from '../../components/field-error';
 import inputFilters from './input-filters';
 

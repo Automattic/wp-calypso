@@ -11,7 +11,7 @@ import { values } from 'lodash';
  */
 import { JETPACK_ONBOARDING_STEPS } from './constants';
 import { onboarding } from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default function() {
 	if ( isEnabled( 'jetpack/onboarding' ) ) {

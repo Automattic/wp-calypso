@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getRawSite } from 'state/sites/selectors';
+import { getRawSite } from 'client/state/sites/selectors';
 
 /**
  * Returns a site's URL or null if the site doesn't exist or the URL is unknown

@@ -10,10 +10,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
-import DropdownLabel from 'components/select-dropdown/label';
-import DropdownSeparator from 'components/select-dropdown/separator';
+import SelectDropdown from 'client/components/select-dropdown';
+import DropdownItem from 'client/components/select-dropdown/item';
+import DropdownLabel from 'client/components/select-dropdown/label';
+import DropdownSeparator from 'client/components/select-dropdown/separator';
 
 class SelectDropdownExample extends React.PureComponent {
 	static displayName = 'SelectDropdownExample';

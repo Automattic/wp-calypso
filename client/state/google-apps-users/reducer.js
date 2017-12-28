@@ -9,12 +9,12 @@ import { uniqBy } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import {
 	GOOGLE_APPS_USERS_FETCH,
 	GOOGLE_APPS_USERS_FETCH_COMPLETED,
 	GOOGLE_APPS_USERS_FETCH_FAILED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export function items( state = [], action ) {
 	switch ( action.type ) {

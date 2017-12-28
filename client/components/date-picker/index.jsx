@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DayItem from 'components/date-picker/day';
+import DayItem from 'client/components/date-picker/day';
 
 /* Internal dependencies
  */

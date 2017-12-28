@@ -10,10 +10,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import MediaUtils from 'lib/media/utils';
+import MediaUtils from 'client/lib/media/utils';
 import MediaLibraryListItemFileDetails from './list-item-file-details';
 
-import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
+import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'client/lib/media/constants';
 
 export default class extends React.Component {
 	static displayName = 'MediaLibraryListItemImage';

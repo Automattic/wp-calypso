@@ -32,7 +32,7 @@ import {
 	IMAGE_EDITOR_STATE_RESET,
 	IMAGE_EDITOR_STATE_RESET_ALL,
 	IMAGE_EDITOR_IMAGE_HAS_LOADED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

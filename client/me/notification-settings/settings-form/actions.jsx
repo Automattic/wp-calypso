@@ -11,7 +11,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
+import FormButton from 'client/components/forms/form-button';
 
 class NotificationSettingsFormActions extends React.PureComponent {
 	static displayName = 'NotificationSettingsFormActions';

@@ -7,10 +7,10 @@ import deepfreeze from 'deep-freeze';
 /**
  * Internal Dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import { requestPage, handlePage, handleError, fromApi } from '../';
-import { requestPage as requestPageAction, receivePage } from 'state/reader/streams/actions';
-import { errorNotice } from 'state/notices/actions';
+import { requestPage as requestPageAction, receivePage } from 'client/state/reader/streams/actions';
+import { errorNotice } from 'client/state/notices/actions';
 
 describe( 'streams', () => {
 	const action = deepfreeze( requestPageAction( { streamId: 'following', page: 2 } ) );

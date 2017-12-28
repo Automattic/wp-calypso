@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { getSiteComputedAttributes } from '../utils';
-import { userState } from 'state/selectors/test/fixtures/user-state';
+import { userState } from 'client/state/selectors/test/fixtures/user-state';
 describe( 'utils', () => {
 	describe( 'getSiteComputedAttributes()', () => {
 		test( 'should return null if site is not found', () => {

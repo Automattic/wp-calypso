@@ -10,7 +10,7 @@ import { fromJS } from 'immutable';
 /**
  * Internal dependencies
  */
-import { appStates } from 'state/imports/constants';
+import { appStates } from 'client/state/imports/constants';
 
 // Left( UI ) - Right( API )
 const importerStateMap = [

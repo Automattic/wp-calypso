@@ -15,18 +15,18 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Button from 'components/button';
-import Card from 'components/card';
-import Emojify from 'components/emojify';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import AutoDirection from 'client/components/auto-direction';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import Emojify from 'client/components/emojify';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 import Gravatar from './gravatar';
-import humanDate from 'lib/human-date';
-import Rating from 'components/rating';
+import humanDate from 'client/lib/human-date';
+import Rating from 'client/components/rating';
 import ReviewActionsBar from './review-actions-bar';
 import ReviewReplies from './review-replies';
-import { stripHTML, decodeEntities } from 'lib/formatting';
+import { stripHTML, decodeEntities } from 'client/lib/formatting';
 
 class ReviewCard extends Component {
 	static propTypes = {

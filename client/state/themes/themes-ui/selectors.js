@@ -9,7 +9,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'client/state/ui/selectors';
 
 // Returns destination for theme sheet 'back' button
 export function getBackPath( state ) {

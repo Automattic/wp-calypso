@@ -19,7 +19,7 @@ import {
 	isSectionIsomorphic,
 	hasSidebar,
 } from '../selectors';
-import { userState } from 'state/selectors/test/fixtures/user-state';
+import { userState } from 'client/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	describe( '#getSelectedSite()', () => {

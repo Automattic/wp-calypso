@@ -19,8 +19,8 @@ import {
 	POST_DELETE,
 	POST_SAVE,
 	POSTS_RECEIVE,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
 import { countsSchema } from './schema';
 
 /**

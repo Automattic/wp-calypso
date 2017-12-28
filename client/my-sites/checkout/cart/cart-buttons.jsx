@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AnalyticsMixin from 'lib/mixins/analytics';
+import AnalyticsMixin from 'client/lib/mixins/analytics';
 
 export const CartButtons = createReactClass( {
 	displayName: 'CartButtons',

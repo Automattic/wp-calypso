@@ -8,8 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getMedia } from 'state/selectors';
-import MediaQueryManager from 'lib/query-manager/media';
+import { getMedia } from 'client/state/selectors';
+import MediaQueryManager from 'client/lib/query-manager/media';
 
 describe( 'getMedia()', () => {
 	const query = {

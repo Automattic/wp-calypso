@@ -12,17 +12,17 @@ import { find, pick } from 'lodash';
 /**
  * Internal Dependencies
  */
-import route from 'lib/route';
-import analytics from 'lib/analytics';
+import route from 'client/lib/route';
+import analytics from 'client/lib/analytics';
 import titlecase from 'to-title-case';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { savePreference } from 'state/preferences/actions';
-import { getSite, isJetpackSite, getSiteOption } from 'state/sites/selectors';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import AsyncLoad from 'components/async-load';
-import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
+import { setDocumentHeadTitle as setTitle } from 'client/state/document-head/actions';
+import { savePreference } from 'client/state/preferences/actions';
+import { getSite, isJetpackSite, getSiteOption } from 'client/state/sites/selectors';
+import { getCurrentLayoutFocus } from 'client/state/ui/layout-focus/selectors';
+import { setNextLayoutFocus } from 'client/state/ui/layout-focus/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import AsyncLoad from 'client/components/async-load';
+import StatsPagePlaceholder from 'client/my-sites/stats/stats-page-placeholder';
 const analyticsPageTitle = 'Stats';
 
 function rangeOfPeriod( period, date ) {

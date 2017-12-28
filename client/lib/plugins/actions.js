@@ -10,10 +10,10 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Dispatcher from 'dispatcher';
-import utils from 'lib/site/utils';
-import wpcom from 'lib/wp';
+import analytics from 'client/lib/analytics';
+import Dispatcher from 'client/dispatcher';
+import utils from 'client/lib/site/utils';
+import wpcom from 'client/lib/wp';
 
 /**
  * Module vars

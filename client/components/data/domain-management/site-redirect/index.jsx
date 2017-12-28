@@ -11,9 +11,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import StoreConnection from 'components/data/store-connection';
-import SiteRedirectStore from 'lib/domains/site-redirect/store';
-import { getSelectedSite } from 'state/ui/selectors';
+import StoreConnection from 'client/components/data/store-connection';
+import SiteRedirectStore from 'client/lib/domains/site-redirect/store';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 const stores = [ SiteRedirectStore ];
 

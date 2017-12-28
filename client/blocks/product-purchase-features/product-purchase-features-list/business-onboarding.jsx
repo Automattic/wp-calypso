@@ -11,7 +11,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
+import PurchaseDetail from 'client/components/purchase-detail';
 
 export default localize( ( { translate, link, onClick = noop } ) => {
 	return (

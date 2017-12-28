@@ -11,9 +11,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import AuthorSelector from 'blocks/author-selector';
-import UserItem from 'components/user';
-import user from 'lib/user';
+import AuthorSelector from 'client/blocks/author-selector';
+import UserItem from 'client/components/user';
+import user from 'client/lib/user';
 
 export default class extends React.PureComponent {
 	static displayName = 'ImporterAuthorMapping';

@@ -14,14 +14,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { getCountries } from 'woocommerce/lib/countries';
-import FormCountrySelectFromApi from 'woocommerce/components/form-location-select/countries';
-import FormStateSelectFromApi from 'woocommerce/components/form-location-select/states';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
+import Button from 'client/components/button';
+import { getCountries } from 'client/extensions/woocommerce/lib/countries';
+import FormCountrySelectFromApi from 'client/extensions/woocommerce/components/form-location-select/countries';
+import FormStateSelectFromApi from 'client/extensions/woocommerce/components/form-location-select/states';
+import FormFieldSet from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSelect from 'client/components/forms/form-select';
+import FormTextInput from 'client/components/forms/form-text-input';
 
 class AddressView extends Component {
 	static propTypes = {

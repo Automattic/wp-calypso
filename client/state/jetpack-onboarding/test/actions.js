@@ -7,7 +7,7 @@ import { receiveJetpackOnboardingCredentials, saveJetpackOnboardingSettings } fr
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'receiveJetpackOnboardingCredentials()', () => {

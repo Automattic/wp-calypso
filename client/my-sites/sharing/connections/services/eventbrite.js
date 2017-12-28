@@ -10,9 +10,9 @@ import { last, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
-import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
+import { SharingService, connectFor } from 'client/my-sites/sharing/connections/service';
+import { deleteKeyringConnection } from 'client/state/sharing/keyring/actions';
+import { saveSiteSettings } from 'client/state/site-settings/actions';
 
 export class Eventbrite extends SharingService {
 	static propTypes = {

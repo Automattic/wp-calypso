@@ -10,8 +10,8 @@ import store from 'store';
  */
 import * as PreferencesActions from '../actions';
 import { USER_SETTING_KEY, LOCALSTORAGE_KEY } from '../constants';
-import Dispatcher from 'dispatcher';
-import { getSettings, postSettings } from 'lib/wp';
+import Dispatcher from 'client/dispatcher';
+import { getSettings, postSettings } from 'client/lib/wp';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 jest.mock( 'lib/user/utils', () => ( {

@@ -30,8 +30,8 @@ import { getLocaleSlug, translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import AtDCore from './core';
-import PreferencesActions from 'lib/preferences/actions';
-import PreferencesStore from 'lib/preferences/store';
+import PreferencesActions from 'client/lib/preferences/actions';
+import PreferencesStore from 'client/lib/preferences/store';
 
 /**
  * Module variables

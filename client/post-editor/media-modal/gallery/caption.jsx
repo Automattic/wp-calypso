@@ -11,8 +11,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import MediaActions from 'lib/media/actions';
-import FormTextInput from 'components/forms/form-text-input';
+import MediaActions from 'client/lib/media/actions';
+import FormTextInput from 'client/components/forms/form-text-input';
 
 class EditorMediaModalGalleryCaption extends React.Component {
 	static displayName = 'EditorMediaModalGalleryCaption';

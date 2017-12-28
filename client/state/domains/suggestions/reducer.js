@@ -9,8 +9,8 @@ import {
 	DOMAINS_SUGGESTIONS_REQUEST,
 	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers } from 'client/state/utils';
 import { itemsSchema } from './schema';
 import { getSerializedDomainsSuggestionsQuery } from './utils';
 

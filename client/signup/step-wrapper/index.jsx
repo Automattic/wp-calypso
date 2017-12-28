@@ -12,8 +12,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormattedHeader from 'components/formatted-header';
-import NavigationLink from 'signup/navigation-link';
+import FormattedHeader from 'client/components/formatted-header';
+import NavigationLink from 'client/signup/navigation-link';
 
 class StepWrapper extends Component {
 	static propTypes = {

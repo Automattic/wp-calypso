@@ -10,9 +10,9 @@ import { values, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSite } from 'state/reader/sites/selectors';
-import { getFeed } from 'state/reader/feeds/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getSite } from 'client/state/reader/sites/selectors';
+import { getFeed } from 'client/state/reader/feeds/selectors';
 
 /*
  * Get all sites/feeds the user follows.

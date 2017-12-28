@@ -18,7 +18,7 @@ import {
 	tryAndCustomize as tryAndCustomizeAction,
 	confirmDelete,
 	showThemePreview as themePreview,
-} from 'state/themes/actions';
+} from 'client/state/themes/actions';
 import {
 	getThemeSignupUrl,
 	getThemePurchaseUrl,
@@ -31,10 +31,10 @@ import {
 	isThemePremium,
 	isPremiumThemeAvailable,
 	isThemeAvailableOnJetpackSite,
-} from 'state/themes/selectors';
-import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
-import { canCurrentUser } from 'state/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+} from 'client/state/themes/selectors';
+import { isJetpackSite, isJetpackSiteMultiSite } from 'client/state/sites/selectors';
+import { canCurrentUser } from 'client/state/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
 
 const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {

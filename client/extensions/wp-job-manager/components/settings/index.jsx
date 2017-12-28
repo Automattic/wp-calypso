@@ -14,14 +14,14 @@ import { flowRight } from 'lodash';
  * Internal dependencies
  */
 import { MinPluginVersion } from '../../constants';
-import DocumentHead from 'components/data/document-head';
-import ExtensionRedirect from 'blocks/extension-redirect';
-import Main from 'components/main';
+import DocumentHead from 'client/components/data/document-head';
+import ExtensionRedirect from 'client/blocks/extension-redirect';
+import Main from 'client/components/main';
 import Navigation from '../navigation';
 import QuerySettings from '../data/query-settings';
 import SetupRedirect from '../setup/setup-redirect';
 import { saveSettings } from '../../state/settings/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import { getSettings, isFetchingSettings } from '../../state/settings/selectors';
 
 class Settings extends Component {

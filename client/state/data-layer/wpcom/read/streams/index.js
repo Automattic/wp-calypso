@@ -8,12 +8,12 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
-import warn from 'lib/warn';
-import { READER_STREAMS_PAGE_REQUEST } from 'state/action-types';
-import { receivePage } from 'state/reader/streams/actions';
-import { errorNotice } from 'state/notices/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequestEx } from 'client/state/data-layer/wpcom-http/utils';
+import warn from 'client/lib/warn';
+import { READER_STREAMS_PAGE_REQUEST } from 'client/state/action-types';
+import { receivePage } from 'client/state/reader/streams/actions';
+import { errorNotice } from 'client/state/notices/actions';
 
 /**
  * Pull the suffix off of a stream ID

@@ -20,29 +20,29 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import SectionHeader from 'components/section-header';
+import QueryCanonicalTheme from 'client/components/data/query-canonical-theme';
+import Main from 'client/components/main';
+import HeaderCake from 'client/components/header-cake';
+import SectionHeader from 'client/components/section-header';
 import ThemeDownloadCard from './theme-download-card';
 import ThemesRelatedCard from './themes-related-card';
-import ThemePreview from 'my-sites/themes/theme-preview';
-import Button from 'components/button';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Card from 'components/card';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { isUserPaid } from 'state/purchases/selectors';
-import ThanksModal from 'my-sites/themes/thanks-modal';
-import QueryActiveTheme from 'components/data/query-active-theme';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
-import { connectOptions } from 'my-sites/themes/theme-options';
+import ThemePreview from 'client/my-sites/themes/theme-preview';
+import Button from 'client/components/button';
+import SectionNav from 'client/components/section-nav';
+import NavTabs from 'client/components/section-nav/tabs';
+import NavItem from 'client/components/section-nav/item';
+import Card from 'client/components/card';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteSlug, isJetpackSite } from 'client/state/sites/selectors';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import { isUserPaid } from 'client/state/purchases/selectors';
+import ThanksModal from 'client/my-sites/themes/thanks-modal';
+import QueryActiveTheme from 'client/components/data/query-active-theme';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import QueryUserPurchases from 'client/components/data/query-user-purchases';
+import QuerySitePurchases from 'client/components/data/query-site-purchases';
+import ThemesSiteSelectorModal from 'client/my-sites/themes/themes-site-selector-modal';
+import { connectOptions } from 'client/my-sites/themes/theme-options';
 import {
 	isThemeActive,
 	isThemePremium,
@@ -52,14 +52,14 @@ import {
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
-} from 'state/themes/selectors';
-import { getBackPath } from 'state/themes/themes-ui/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
-import { decodeEntities } from 'lib/formatting';
-import { getCanonicalTheme } from 'state/themes/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { setThemePreviewOptions } from 'state/themes/actions';
+} from 'client/state/themes/selectors';
+import { getBackPath } from 'client/state/themes/themes-ui/selectors';
+import PageViewTracker from 'client/lib/analytics/page-view-tracker';
+import DocumentHead from 'client/components/data/document-head';
+import { decodeEntities } from 'client/lib/formatting';
+import { getCanonicalTheme } from 'client/state/themes/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { setThemePreviewOptions } from 'client/state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeFeaturesCard from './theme-features-card';
 

@@ -9,8 +9,8 @@ import store from 'store';
 /**
  * Internal dependencies
  */
-import makeEmitter from 'lib/mixins/emitter';
-import wp from 'lib/wp';
+import makeEmitter from 'client/lib/mixins/emitter';
+import wp from 'client/lib/wp';
 
 /**
  * Module variables

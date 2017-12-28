@@ -22,7 +22,7 @@ import {
 	SITE_PLUGIN_UPDATED,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {

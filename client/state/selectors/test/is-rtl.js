@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRtl } from 'state/selectors';
+import { isRtl } from 'client/state/selectors';
 
 describe( 'isRtl()', () => {
 	test( 'should return null if the value is not known', () => {

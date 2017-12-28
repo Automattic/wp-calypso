@@ -12,17 +12,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 import {
 	getTotalProducts,
 	areProductsLoaded,
 	getProducts,
-} from 'woocommerce/state/sites/products/selectors';
+} from 'client/extensions/woocommerce/state/sites/products/selectors';
 import {
 	getProductsCurrentPage,
 	getProductsCurrentSearch,
 	getProductsRequestedPage,
-} from 'woocommerce/state/ui/products/selectors';
+} from 'client/extensions/woocommerce/state/ui/products/selectors';
 
 import ProductsListPagination from './products-list-pagination';
 import ProductsListTable from './products-list-table';

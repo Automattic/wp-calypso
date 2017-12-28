@@ -15,15 +15,15 @@ import { localize } from 'i18n-calypso';
 import DnsAddNew from './dns-add-new';
 import DnsDetails from './dns-details';
 import DnsList from './dns-list';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
-import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'lib/domains';
-import Card from 'components/card/compact';
-import SectionHeader from 'components/section-header';
+import DomainMainPlaceholder from 'client/my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'client/my-sites/domains/domain-management/components/header';
+import Main from 'client/components/main';
+import paths from 'client/my-sites/domains/paths';
+import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'client/lib/domains';
+import Card from 'client/components/card/compact';
+import SectionHeader from 'client/components/section-header';
 import DnsTemplates from '../name-servers/dns-templates';
-import VerticalNav from 'components/vertical-nav';
+import VerticalNav from 'client/components/vertical-nav';
 
 class Dns extends React.Component {
 	static propTypes = {

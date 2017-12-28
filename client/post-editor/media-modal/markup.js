@@ -12,9 +12,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Shortcode from 'lib/shortcode';
-import MediaUtils from 'lib/media/utils';
-import MediaSerialization from 'lib/media-serialization';
+import Shortcode from 'client/lib/shortcode';
+import MediaUtils from 'client/lib/media/utils';
+import MediaSerialization from 'client/lib/media-serialization';
 
 /**
  * Module variables

@@ -10,9 +10,9 @@ import { stubTrue } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineTours, makeTour, Tour, Step } from 'layout/guided-tours/config-elements';
+import { combineTours, makeTour, Tour, Step } from 'client/layout/guided-tours/config-elements';
 
-import { isNewUser, inSection } from 'state/ui/guided-tours/contexts';
+import { isNewUser, inSection } from 'client/state/ui/guided-tours/contexts';
 
 export const MainTour = makeTour(
 	<Tour name="main" version="test" path="/" when={ isNewUser }>

@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import queryKey from 'state/reader/feed-searches/query-key';
+import queryKey from 'client/state/reader/feed-searches/query-key';
 
 /**
  * Returns the number of feed results for a given query. from 0 to 200.

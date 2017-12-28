@@ -9,10 +9,10 @@ import { get, find } from 'lodash';
 /**
  * Internal Dependencies
  */
-import createSelector from 'lib/create-selector';
-import purchasesAssembler from 'lib/purchases/assembler';
-import { isSubscription } from 'lib/purchases';
-import { isDomainRegistration, isDomainMapping } from 'lib/products-values';
+import createSelector from 'client/lib/create-selector';
+import purchasesAssembler from 'client/lib/purchases/assembler';
+import { isSubscription } from 'client/lib/purchases';
+import { isDomainRegistration, isDomainMapping } from 'client/lib/products-values';
 
 /**
  * Return the list of purchases from state object

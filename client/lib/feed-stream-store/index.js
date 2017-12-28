@@ -7,12 +7,12 @@ import { filter, find, forEach, isEqual, map, random, startsWith } from 'lodash'
  * Internal dependencies
  */
 import config from 'config';
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 import FeedStream from './feed-stream';
 import PagedStream from './paged-stream';
 import FeedStreamCache from './feed-stream-cache';
-import analytics from 'lib/analytics';
-import wpcom from 'lib/wp';
+import analytics from 'client/lib/analytics';
+import wpcom from 'client/lib/wp';
 import { keyToString, keysAreEqual } from './post-key';
 
 const wpcomUndoc = wpcom.undocumented();

@@ -8,11 +8,11 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import EditorDrawer from 'post-editor/editor-drawer';
+import EditorDrawer from 'client/post-editor/editor-drawer';
 import EditorSidebarHeader from './header';
-import SidebarFooter from 'layout/sidebar/footer';
-import EditorActionBar from 'post-editor/editor-action-bar';
-import EditorDeletePost from 'post-editor/editor-delete-post';
+import SidebarFooter from 'client/layout/sidebar/footer';
+import EditorActionBar from 'client/post-editor/editor-action-bar';
+import EditorDeletePost from 'client/post-editor/editor-delete-post';
 
 export class EditorSidebar extends Component {
 	static propTypes = {

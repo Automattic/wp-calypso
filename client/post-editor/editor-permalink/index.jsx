@@ -14,13 +14,13 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Slug from 'post-editor/editor-slug';
-import Popover from 'components/popover';
-import Tooltip from 'components/tooltip';
-import ClipboardButton from 'components/forms/clipboard-button';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostSlug } from 'state/posts/selectors';
+import Slug from 'client/post-editor/editor-slug';
+import Popover from 'client/components/popover';
+import Tooltip from 'client/components/tooltip';
+import ClipboardButton from 'client/components/forms/clipboard-button';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostSlug } from 'client/state/posts/selectors';
 
 class EditorPermalink extends Component {
 	static propTypes = {

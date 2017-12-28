@@ -9,8 +9,8 @@ import { get, orderBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { enrichPublicizeActionsWithConnections } from 'state/selectors/utils/';
-import createSelector from 'lib/create-selector';
+import { enrichPublicizeActionsWithConnections } from 'client/state/selectors/utils/';
+import createSelector from 'client/lib/create-selector';
 
 const getPublishedActions = ( state, siteId, postId ) =>
 	orderBy(

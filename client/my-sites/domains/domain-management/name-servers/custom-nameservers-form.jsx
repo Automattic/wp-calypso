@@ -14,13 +14,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
+import FormButton from 'client/components/forms/form-button';
+import FormFooter from 'client/my-sites/domains/domain-management/components/form-footer';
 import CustomNameserversRow from './custom-nameservers-row';
-import { change, remove } from 'lib/domains/nameservers';
-import Notice from 'components/notice';
-import support from 'lib/url/support';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { change, remove } from 'client/lib/domains/nameservers';
+import Notice from 'client/components/notice';
+import support from 'client/lib/url/support';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'client/state/analytics/actions';
 
 const MIN_NAMESERVER_LENGTH = 2;
 const MAX_NAMESERVER_LENGTH = 4;

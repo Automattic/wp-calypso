@@ -14,11 +14,11 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import CartAd from './cart-ad';
-import { cartItems } from 'lib/cart-values';
-import { fetchSitePlans } from 'state/sites/plans/actions';
-import { getPlansBySite } from 'state/sites/plans/selectors';
-import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
-import { shouldFetchSitePlans } from 'lib/plans';
+import { cartItems } from 'client/lib/cart-values';
+import { fetchSitePlans } from 'client/state/sites/plans/actions';
+import { getPlansBySite } from 'client/state/sites/plans/selectors';
+import { isPersonal, isPremium, isBusiness } from 'client/lib/products-values';
+import { shouldFetchSitePlans } from 'client/lib/plans';
 
 class CartPlanDiscountAd extends Component {
 	static propTypes = {

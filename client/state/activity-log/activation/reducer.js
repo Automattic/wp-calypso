@@ -13,8 +13,8 @@ import {
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
-} from 'state/action-types';
-import { createReducer, keyedReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { createReducer, keyedReducer } from 'client/state/utils';
 
 export const activationRequesting = keyedReducer(
 	'siteId',

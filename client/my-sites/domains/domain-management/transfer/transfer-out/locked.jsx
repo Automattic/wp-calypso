@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import { getSelectedDomain } from 'lib/domains';
-import Button from 'components/button';
-import { requestTransferCode } from 'lib/upgrades/actions';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import { getSelectedDomain } from 'client/lib/domains';
+import Button from 'client/components/button';
+import { requestTransferCode } from 'client/lib/upgrades/actions';
 import { displayRequestTransferCodeResponseNotice } from './shared';
-import support from 'lib/url/support';
+import support from 'client/lib/url/support';
 
 class Locked extends React.Component {
 	state = {

@@ -10,7 +10,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'client/components/forms/form-text-input';
 import { localize } from 'i18n-calypso';
 
 const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) => {

@@ -18,7 +18,7 @@ import {
 	isRequestingTermsForQuery,
 	isRequestingTermsForQueryIgnoringPage,
 } from '../selectors';
-import TermQueryManager from 'lib/query-manager/term';
+import TermQueryManager from 'client/lib/query-manager/term';
 
 describe( 'selectors', () => {
 	beforeEach( () => {

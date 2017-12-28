@@ -11,14 +11,14 @@ import { includes, size, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
+import Dialog from 'client/components/dialog';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormLabel from 'client/components/forms/form-label';
 import getPackageDescriptions from './get-package-descriptions';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import { closeAddItem, setAddedItem, addItems } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import { closeAddItem, setAddedItem, addItems } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
+import { getShippingLabel } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { getAllPackageDefinitions } from 'client/extensions/woocommerce/woocommerce-services/state/packages/selectors';
 
 const AddItemDialog = ( props ) => {
 	const {

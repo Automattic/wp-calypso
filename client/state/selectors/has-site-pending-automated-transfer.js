@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { isSiteAutomatedTransfer, getSiteOptions } from 'state/selectors';
+import { isSiteAutomatedTransfer, getSiteOptions } from 'client/state/selectors';
 
 /**
  * Indicates whether there might be an Automated Transfer process running on the backend for

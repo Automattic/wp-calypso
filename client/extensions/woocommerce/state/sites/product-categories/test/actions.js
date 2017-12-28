@@ -10,7 +10,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { fetchProductCategories } from '../actions';
-import { WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST } from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST } from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#fetchProductCategories()', () => {

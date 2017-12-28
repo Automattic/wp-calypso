@@ -12,9 +12,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import formatCurrency from 'lib/format-currency';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import Button from 'client/components/button';
+import formatCurrency from 'client/lib/format-currency';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
 
 const ProcessOrdersWidget = ( { className, site, orders, currency, ordersRevenue, translate } ) => {
 	const classes = classNames( 'card', 'process-orders-widget__container', className );

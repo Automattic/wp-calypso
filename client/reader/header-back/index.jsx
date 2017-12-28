@@ -1,6 +1,6 @@
 /** @format */
 import React from 'react';
-import HeaderCake from 'components/header-cake';
+import HeaderCake from 'client/components/header-cake';
 
 function goBack() {
 	if ( typeof window !== 'undefined' ) {

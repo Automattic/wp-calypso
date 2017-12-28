@@ -10,8 +10,8 @@ import React from 'react';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import PurchaseDetail from 'components/purchase-detail';
-import supportUrls from 'lib/url/support';
+import PurchaseDetail from 'client/components/purchase-detail';
+import supportUrls from 'client/lib/url/support';
 
 const DomainMappingDetails = ( { domain, registrarSupportUrl, translate } ) => {
 	const registrarSupportLink = registrarSupportUrl ? (

@@ -12,10 +12,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { isFrontPage, isPostsPage } from 'state/pages/selectors';
-import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
-import { canCurrentUser } from 'state/selectors';
-import { getEditorPath } from 'state/ui/editor/selectors';
+import { isFrontPage, isPostsPage } from 'client/state/pages/selectors';
+import PostRelativeTimeStatus from 'client/my-sites/post-relative-time-status';
+import { canCurrentUser } from 'client/state/selectors';
+import { getEditorPath } from 'client/state/ui/editor/selectors';
 
 const getContentLink = ( state, siteId, page ) => {
 	let contentLinkURL = page.URL;

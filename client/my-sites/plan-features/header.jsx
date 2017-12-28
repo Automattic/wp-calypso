@@ -14,12 +14,12 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  **/
 import { localize } from 'i18n-calypso';
-import formatCurrency from 'lib/format-currency';
-import InfoPopover from 'components/info-popover';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import PlanPrice from 'my-sites/plan-price';
-import Ribbon from 'components/ribbon';
-import PlanIcon from 'components/plans/plan-icon';
+import formatCurrency from 'client/lib/format-currency';
+import InfoPopover from 'client/components/info-popover';
+import isSiteAutomatedTransfer from 'client/state/selectors/is-site-automated-transfer';
+import PlanPrice from 'client/my-sites/plan-price';
+import Ribbon from 'client/components/ribbon';
+import PlanIcon from 'client/components/plans/plan-icon';
 import {
 	PLAN_FREE,
 	PLAN_PREMIUM,
@@ -33,11 +33,11 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
 	getPlanClass,
-} from 'lib/plans/constants';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isMobile } from 'lib/viewport';
-import { planLevelsMatch } from 'lib/plans/index';
+} from 'client/lib/plans/constants';
+import { getCurrentPlan } from 'client/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isMobile } from 'client/lib/viewport';
+import { planLevelsMatch } from 'client/lib/plans/index';
 
 class PlanFeaturesHeader extends Component {
 	render() {

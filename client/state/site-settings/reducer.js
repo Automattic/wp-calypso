@@ -9,7 +9,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import exporter from './exporter/reducers';
 import { items as itemSchemas } from './schema';
 import {
@@ -22,7 +22,7 @@ import {
 	SITE_SETTINGS_SAVE_FAILURE,
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

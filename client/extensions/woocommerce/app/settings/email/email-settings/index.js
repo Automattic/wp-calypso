@@ -10,19 +10,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchEmailSettings } from 'woocommerce/state/sites/settings/email/actions';
-import {
-	getEmailSettings,
-	areEmailSettingsLoading,
-	areEmailSettingsLoaded,
-} from 'woocommerce/state/sites/settings/email/selectors';
+import { fetchEmailSettings } from 'client/extensions/woocommerce/state/sites/settings/email/actions';
+import { getEmailSettings, areEmailSettingsLoading, areEmailSettingsLoaded } from 'client/extensions/woocommerce/state/sites/settings/email/selectors';
 import CustomerNotification from './components/customer-notification';
-import ExtendedHeader from 'woocommerce/components/extended-header';
+import ExtendedHeader from 'client/extensions/woocommerce/components/extended-header';
 import InternalNotification from './components/internal-notification';
 import NotificationsOrigin from './components/notifications-origin';
-import List from 'woocommerce/components/list/list';
-import ListHeader from 'woocommerce/components/list/list-header';
-import ListItemField from 'woocommerce/components/list/list-item-field';
+import List from 'client/extensions/woocommerce/components/list/list';
+import ListHeader from 'client/extensions/woocommerce/components/list/list-header';
+import ListItemField from 'client/extensions/woocommerce/components/list/list-item-field';
 
 const originNotifications = [
 	{

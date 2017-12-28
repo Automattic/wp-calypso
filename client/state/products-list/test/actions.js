@@ -13,7 +13,7 @@ import {
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
 	PRODUCTS_LIST_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {

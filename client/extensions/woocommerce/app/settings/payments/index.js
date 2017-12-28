@@ -15,23 +15,23 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
-import { createPaymentSettingsActionList } from 'woocommerce/state/ui/payments/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import { getActionList } from 'woocommerce/state/action-list/selectors';
-import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import ActionHeader from 'client/extensions/woocommerce/components/action-header';
+import Button from 'client/components/button';
+import { createPaymentSettingsActionList } from 'client/extensions/woocommerce/state/ui/payments/actions';
+import { errorNotice, successNotice } from 'client/state/notices/actions';
+import ExtendedHeader from 'client/extensions/woocommerce/components/extended-header';
+import { fetchSetupChoices } from 'client/extensions/woocommerce/state/sites/setup-choices/actions';
+import { getActionList } from 'client/extensions/woocommerce/state/action-list/selectors';
+import { getFinishedInitialSetup } from 'client/extensions/woocommerce/state/sites/setup-choices/selectors';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 import {
 	hasOAuthParamsInLocation,
 	hasOAuthCompleteInLocation,
 } from './stripe/payment-method-stripe-utils';
-import { openPaymentMethodForEdit } from 'woocommerce/state/ui/payments/methods/actions';
-import { ProtectFormGuard } from 'lib/protect-form';
-import Main from 'components/main';
+import { openPaymentMethodForEdit } from 'client/extensions/woocommerce/state/ui/payments/methods/actions';
+import { ProtectFormGuard } from 'client/lib/protect-form';
+import Main from 'client/components/main';
 import PaymentMethodList from './payment-method-list';
 import SettingsPaymentsLocationCurrency from './payments-location-currency';
 import SettingsNavigation from '../navigation';

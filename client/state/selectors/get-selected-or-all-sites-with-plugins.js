@@ -4,10 +4,10 @@
  * Internal dependencies
  */
 
-import createSelector from 'lib/create-selector';
-import { getSelectedOrAllSites, canCurrentUser } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getSelectedOrAllSites, canCurrentUser } from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
 
 /**
  * Return an array with the selected site or all sites able to have plugins

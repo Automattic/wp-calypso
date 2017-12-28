@@ -14,12 +14,12 @@ import { isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getActionList } from 'woocommerce/state/action-list/selectors';
+import ActionHeader from 'client/extensions/woocommerce/components/action-header';
+import Button from 'client/components/button';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getCurrentlyEditingShippingZone } from 'client/extensions/woocommerce/state/ui/shipping/zones/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { getActionList } from 'client/extensions/woocommerce/state/action-list/selectors';
 
 const ShippingZoneHeader = ( {
 	zone,

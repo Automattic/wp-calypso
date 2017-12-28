@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { cartItems, isPaidForFullyInCredits } from 'lib/cart-values';
+import { cartItems, isPaidForFullyInCredits } from 'client/lib/cart-values';
 import SubscriptionText from './subscription-text';
 import {
 	BEFORE_SUBMIT,
@@ -20,7 +20,7 @@ import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
-} from 'lib/store-transactions/step-types';
+} from 'client/lib/store-transactions/step-types';
 
 class PayButton extends React.Component {
 	buttonState = () => {

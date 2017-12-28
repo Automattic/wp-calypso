@@ -4,12 +4,12 @@
  * External dependencies
  */
 
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
+import Emitter from 'client/lib/mixins/emitter';
 import LocaleSuggestionActions from './actions';
 
 var localeSuggestions = null;

@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Interval, { EVERY_SECOND } from 'lib/interval';
-import { getRewindRestoreProgress } from 'state/activity-log/actions';
+import Interval, { EVERY_SECOND } from 'client/lib/interval';
+import { getRewindRestoreProgress } from 'client/state/activity-log/actions';
 
 class QueryRewindRestoreStatus extends Component {
 	static propTypes = {

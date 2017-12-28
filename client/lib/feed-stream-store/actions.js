@@ -9,13 +9,13 @@ import { forEach, get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 import { action as ActionType } from './constants';
-import FeedPostStoreActions from 'lib/feed-post-store/actions';
+import FeedPostStoreActions from 'client/lib/feed-post-store/actions';
 import feedPostListCache from './feed-stream-cache';
-import wpcom from 'lib/wp';
-import { reduxDispatch } from 'lib/redux-bridge';
-import { COMMENTS_RECEIVE } from 'state/action-types';
+import wpcom from 'client/lib/wp';
+import { reduxDispatch } from 'client/lib/redux-bridge';
+import { COMMENTS_RECEIVE } from 'client/state/action-types';
 
 function getNextPageParams( store ) {
 	const params = {

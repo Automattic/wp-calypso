@@ -14,10 +14,10 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import config from 'config';
-import productsValues from 'lib/products-values';
-import userModule from 'lib/user';
-import { loadScript } from 'lib/load-script';
-import { shouldSkipAds } from 'lib/analytics/utils';
+import productsValues from 'client/lib/products-values';
+import userModule from 'client/lib/user';
+import { loadScript } from 'client/lib/load-script';
+import { shouldSkipAds } from 'client/lib/analytics/utils';
 
 /**
  * Module variables

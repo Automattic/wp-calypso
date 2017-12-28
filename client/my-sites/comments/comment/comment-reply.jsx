@@ -12,19 +12,19 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Button from 'components/button';
-import { decodeEntities } from 'lib/formatting';
+import AutoDirection from 'client/components/auto-direction';
+import Button from 'client/components/button';
+import { decodeEntities } from 'client/lib/formatting';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { changeCommentStatus, replyComment } from 'state/comments/actions';
-import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'client/state/analytics/actions';
+import { changeCommentStatus, replyComment } from 'client/state/comments/actions';
+import { removeNotice, successNotice } from 'client/state/notices/actions';
+import { getSiteComment } from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 const TEXTAREA_HEIGHT_COLLAPSED = 47; // 1 line
 const TEXTAREA_HEIGHT_FOCUSED = 68; // 2 lines

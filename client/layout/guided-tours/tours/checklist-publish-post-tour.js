@@ -12,7 +12,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { getSectionName } from 'state/ui/selectors';
+import { getSectionName } from 'client/state/ui/selectors';
 import {
 	ButtonRow,
 	Continue,
@@ -21,7 +21,7 @@ import {
 	SiteLink,
 	Step,
 	Tour,
-} from 'layout/guided-tours/config-elements';
+} from 'client/layout/guided-tours/config-elements';
 
 function isPostEditorSection( state ) {
 	return getSectionName( state ) === 'post-editor';

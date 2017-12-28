@@ -11,8 +11,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { isExternal } from 'lib/url';
-import { preload } from 'sections-preload';
+import { isExternal } from 'client/lib/url';
+import { preload } from 'client/sections-preload';
 
 class SidebarButton extends React.Component {
 	static propTypes = {

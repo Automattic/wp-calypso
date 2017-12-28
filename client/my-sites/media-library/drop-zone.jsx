@@ -11,10 +11,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import DropZone from 'components/drop-zone';
-import MediaActions from 'lib/media/actions';
-import { userCan } from 'lib/site/utils';
+import analytics from 'client/lib/analytics';
+import DropZone from 'client/components/drop-zone';
+import MediaActions from 'client/lib/media/actions';
+import { userCan } from 'client/lib/site/utils';
 
 export default class extends React.Component {
 	static displayName = 'MediaLibraryDropZone';

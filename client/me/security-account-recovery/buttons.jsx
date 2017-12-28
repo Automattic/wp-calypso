@@ -11,8 +11,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'client/components/forms/form-buttons-bar';
+import FormButton from 'client/components/forms/form-button';
 import Gridicon from 'gridicons';
 
 class SecurityAccountRecoveryManageContactButtons extends React.Component {

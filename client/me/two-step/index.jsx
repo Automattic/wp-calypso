@@ -12,17 +12,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AppPasswords from 'me/application-passwords';
-import Card from 'components/card';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import ReauthRequired from 'me/reauth-required';
-import Security2faBackupCodes from 'me/security-2fa-backup-codes';
-import Security2faDisable from 'me/security-2fa-disable';
-import Security2faSetup from 'me/security-2fa-setup';
-import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
+import AppPasswords from 'client/me/application-passwords';
+import Card from 'client/components/card';
+import DocumentHead from 'client/components/data/document-head';
+import Main from 'client/components/main';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
+import ReauthRequired from 'client/me/reauth-required';
+import Security2faBackupCodes from 'client/me/security-2fa-backup-codes';
+import Security2faDisable from 'client/me/security-2fa-disable';
+import Security2faSetup from 'client/me/security-2fa-setup';
+import SecuritySectionNav from 'client/me/security-section-nav';
+import twoStepAuthorization from 'client/lib/two-step-authorization';
 
 const debug = debugFactory( 'calypso:me:two-step' );
 

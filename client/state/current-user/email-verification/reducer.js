@@ -4,13 +4,13 @@
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import {
 	EMAIL_VERIFY_REQUEST,
 	EMAIL_VERIFY_REQUEST_SUCCESS,
 	EMAIL_VERIFY_REQUEST_FAILURE,
 	EMAIL_VERIFY_STATE_RESET,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const status = createReducer( null, {
 	[ EMAIL_VERIFY_REQUEST ]: () => 'requesting',

@@ -9,7 +9,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector from 'client/lib/create-selector';
 import getJetpackModulesRequiringConnection from './get-jetpack-modules-requiring-connection';
 
 /**

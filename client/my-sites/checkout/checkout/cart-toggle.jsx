@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { showCartOnMobile } from 'lib/upgrades/actions';
+import { showCartOnMobile } from 'client/lib/upgrades/actions';
 
 class CartToggle extends Component {
 	constructor( props ) {

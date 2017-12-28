@@ -9,12 +9,12 @@ import { filter, find, indexOf, isEmpty, merge, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import i18nUtils from 'lib/i18n-utils';
-import steps from 'signup/config/steps';
-import flows from 'signup/config/flows';
-import { defaultFlowName } from 'signup/config/flows';
-import formState from 'lib/form-state';
-import userFactory from 'lib/user';
+import i18nUtils from 'client/lib/i18n-utils';
+import steps from 'client/signup/config/steps';
+import flows from 'client/signup/config/flows';
+import { defaultFlowName } from 'client/signup/config/flows';
+import formState from 'client/lib/form-state';
+import userFactory from 'client/lib/user';
 const user = userFactory();
 
 function getFlowName( parameters ) {

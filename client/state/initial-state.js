@@ -10,12 +10,12 @@ import { pick, throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReduxStore, reducer } from 'state';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import localforage from 'lib/localforage';
-import { isSupportUserSession } from 'lib/user/support-user-interop';
+import { createReduxStore, reducer } from 'client/state';
+import { SERIALIZE, DESERIALIZE } from 'client/state/action-types';
+import localforage from 'client/lib/localforage';
+import { isSupportUserSession } from 'client/lib/user/support-user-interop';
 import config from 'config';
-import User from 'lib/user';
+import User from 'client/lib/user';
 
 /**
  * Module variables

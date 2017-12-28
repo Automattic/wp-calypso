@@ -7,7 +7,7 @@ import url from 'url';
 /**
  * Internal dependencies
  */
-import { X_POST } from 'lib/feed-post-store/display-types';
+import { X_POST } from 'client/lib/feed-post-store/display-types';
 
 const exported = {
 	/**

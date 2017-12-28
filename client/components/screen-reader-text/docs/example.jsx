@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ScreenReaderText from 'components/screen-reader-text';
+import ScreenReaderText from 'client/components/screen-reader-text';
 
 export default function ScreenReaderTextExample() {
 	const srText = "I'm visible for screen readers";

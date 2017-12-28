@@ -12,8 +12,8 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
-import { SharingService, connectFor } from 'my-sites/sharing/connections/service';
+import { deleteStoredKeyringConnection } from 'client/state/sharing/keyring/actions';
+import { SharingService, connectFor } from 'client/my-sites/sharing/connections/service';
 
 export class GooglePhotos extends SharingService {
 	static propTypes = {

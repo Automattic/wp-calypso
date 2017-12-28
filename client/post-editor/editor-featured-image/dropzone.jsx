@@ -12,18 +12,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DropZone from 'components/drop-zone';
-import MediaActions from 'lib/media/actions';
-import MediaStore from 'lib/media/store';
-import MediaUtils from 'lib/media/utils';
-import PostActions from 'lib/posts/actions';
+import DropZone from 'client/components/drop-zone';
+import MediaActions from 'client/lib/media/actions';
+import MediaStore from 'client/lib/media/store';
+import MediaUtils from 'client/lib/media/utils';
+import PostActions from 'client/lib/posts/actions';
 import FeaturedImageDropZoneIcon from './dropzone-icon';
 
-import { receiveMedia, deleteMedia } from 'state/media/actions';
-import { editPost } from 'state/posts/actions';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { receiveMedia, deleteMedia } from 'client/state/media/actions';
+import { editPost } from 'client/state/posts/actions';
+import { getSelectedSiteId, getSelectedSite } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 class FeaturedImageDropZone extends Component {
 	onFilesDrop = files => {

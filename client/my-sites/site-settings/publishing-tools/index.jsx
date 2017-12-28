@@ -13,26 +13,26 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import config from 'config';
-import SectionHeader from 'components/section-header';
-import Card from 'components/card';
-import Button from 'components/button';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormLegend from 'components/forms/form-legend';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
+import SectionHeader from 'client/components/section-header';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
+import JetpackModuleToggle from 'client/my-sites/site-settings/jetpack-module-toggle';
+import FormLegend from 'client/components/forms/form-legend';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { regeneratePostByEmail } from 'client/state/jetpack/settings/actions';
 import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode,
 	isRegeneratingJetpackPostByEmail,
-} from 'state/selectors';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import ClipboardButtonInput from 'components/clipboard-button-input';
+} from 'client/state/selectors';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
+import ClipboardButtonInput from 'client/components/clipboard-button-input';
 import PressThis from '../press-this';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+import QueryJetpackConnection from 'client/components/data/query-jetpack-connection';
 
 class PublishingTools extends Component {
 	componentDidUpdate() {

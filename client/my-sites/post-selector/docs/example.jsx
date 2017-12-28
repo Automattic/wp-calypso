@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import PostSelector from '../';
-import FormLabel from 'components/forms/form-label';
-import { getPrimarySiteId } from 'state/selectors';
+import FormLabel from 'client/components/forms/form-label';
+import { getPrimarySiteId } from 'client/state/selectors';
 
 class PostSelectorExample extends Component {
 	state = {

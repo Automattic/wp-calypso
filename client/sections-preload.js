@@ -16,7 +16,7 @@
 /**
  * External Dependencies
  */
-import emitter from 'lib/mixins/emitter';
+import emitter from 'client/lib/mixins/emitter';
 
 /**
  * The event hub for the section preloader

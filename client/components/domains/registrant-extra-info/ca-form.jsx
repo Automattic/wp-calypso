@@ -13,14 +13,14 @@ import { camelCase, difference, isEmpty, keys, map, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getContactDetailsExtraCache } from 'state/selectors';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormInputValidation from 'components/forms/form-input-validation';
+import { getContactDetailsExtraCache } from 'client/state/selectors';
+import { getCurrentUserLocale } from 'client/state/current-user/selectors';
+import { updateContactDetailsCache } from 'client/state/domains/management/actions';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSelect from 'client/components/forms/form-select';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormInputValidation from 'client/components/forms/form-input-validation';
 
 const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 const defaultValues = {

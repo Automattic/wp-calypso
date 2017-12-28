@@ -12,14 +12,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 import MasterbarItem from './item';
-import SitesPopover from 'components/sites-popover';
-import paths from 'lib/paths';
-import viewport from 'lib/viewport';
-import { preload } from 'sections-preload';
-import { getSelectedSite } from 'state/ui/selectors';
-import AsyncLoad from 'components/async-load';
+import SitesPopover from 'client/components/sites-popover';
+import paths from 'client/lib/paths';
+import viewport from 'client/lib/viewport';
+import { preload } from 'client/sections-preload';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import AsyncLoad from 'client/components/async-load';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {

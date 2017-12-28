@@ -22,22 +22,22 @@ import {
 	ERROR_IMAGE_EDITOR_DONE,
 	ERROR_UPLOADING_IMAGE,
 } from './constants';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import { getMediaItem } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import Dialog from 'components/dialog';
-import FilePicker from 'components/file-picker';
-import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
-import Spinner from 'components/spinner';
-import ImageEditor from 'blocks/image-editor';
-import DropZone from 'components/drop-zone';
-import MediaActions from 'lib/media/actions';
-import MediaStore from 'lib/media/store';
-import MediaUtils from 'lib/media/utils';
-import MediaValidationStore from 'lib/media/validation-store';
-import { ValidationErrors } from 'lib/media/constants';
-import Button from 'components/button';
+import { AspectRatios } from 'client/state/ui/editor/image-editor/constants';
+import { getMediaItem } from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSite } from 'client/state/sites/selectors';
+import Dialog from 'client/components/dialog';
+import FilePicker from 'client/components/file-picker';
+import { resetAllImageEditorState } from 'client/state/ui/editor/image-editor/actions';
+import Spinner from 'client/components/spinner';
+import ImageEditor from 'client/blocks/image-editor';
+import DropZone from 'client/components/drop-zone';
+import MediaActions from 'client/lib/media/actions';
+import MediaStore from 'client/lib/media/store';
+import MediaUtils from 'client/lib/media/utils';
+import MediaValidationStore from 'client/lib/media/validation-store';
+import { ValidationErrors } from 'client/lib/media/constants';
+import Button from 'client/components/button';
 
 class UploadImage extends Component {
 	state = {

@@ -13,22 +13,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Button from 'components/button';
+import analytics from 'client/lib/analytics';
+import Button from 'client/components/button';
 import {
 	cancelEditingPaymentMethod,
 	changePaymentMethodEnabled,
 	changePaymentMethodField,
 	closeEditingPaymentMethod,
 	openPaymentMethodForEdit,
-} from 'woocommerce/state/ui/payments/methods/actions';
-import { getCurrentlyEditingPaymentMethod } from 'woocommerce/state/ui/payments/methods/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
+} from 'client/extensions/woocommerce/state/ui/payments/methods/actions';
+import { getCurrentlyEditingPaymentMethod } from 'client/extensions/woocommerce/state/ui/payments/methods/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
 import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils';
-import ListItem from 'woocommerce/components/list/list-item';
-import ListItemField from 'woocommerce/components/list/list-item-field';
+import ListItem from 'client/extensions/woocommerce/components/list/list-item';
+import ListItemField from 'client/extensions/woocommerce/components/list/list-item-field';
 import PaymentMethodBACS from './payment-method-bacs';
 import PaymentMethodEditDialog from './payment-method-edit-dialog';
 import PaymentMethodEditFormToggle from './payment-method-edit-form-toggle';

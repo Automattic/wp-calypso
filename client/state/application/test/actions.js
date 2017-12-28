@@ -15,7 +15,7 @@ import {
 	CONNECTION_RESTORED,
 	NOTICE_REMOVE,
 	NOTICE_CREATE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'state/application actions', () => {
 	describe( '#connectionLost()', () => {

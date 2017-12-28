@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import EmailForwardingStore from 'lib/domains/email-forwarding/store';
-import StoreConnection from 'components/data/store-connection';
-import * as upgradesActions from 'lib/upgrades/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import EmailForwardingStore from 'client/lib/domains/email-forwarding/store';
+import StoreConnection from 'client/components/data/store-connection';
+import * as upgradesActions from 'client/lib/upgrades/actions';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 function getStateFromStores( props ) {
 	return {

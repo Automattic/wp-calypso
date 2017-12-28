@@ -11,8 +11,8 @@ import { stub } from 'sinon';
  * Internal dependencies
  */
 import { NavigationLink } from '../';
-import EMPTY_COMPONENT from 'components/empty-component';
-import signupUtils from 'signup/utils';
+import EMPTY_COMPONENT from 'client/components/empty-component';
+import signupUtils from 'client/signup/utils';
 
 jest.mock( 'lib/analytics', () => ( {
 	tracks: {

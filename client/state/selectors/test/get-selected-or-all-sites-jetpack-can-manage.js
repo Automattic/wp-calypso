@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSelectedOrAllSitesJetpackCanManage } from 'state/selectors';
+import { getSelectedOrAllSitesJetpackCanManage } from 'client/state/selectors';
 import { userState } from './fixtures/user-state';
 
 describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {

@@ -12,9 +12,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import ActionHeader from 'client/extensions/woocommerce/components/action-header';
+import Main from 'client/components/main';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
 import ReviewsList from './reviews-list';
 
 class Reviews extends Component {

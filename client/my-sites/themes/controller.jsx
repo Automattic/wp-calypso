@@ -11,16 +11,16 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import SingleSiteComponent from 'my-sites/themes/single-site';
-import MultiSiteComponent from 'my-sites/themes/multi-site';
+import SingleSiteComponent from 'client/my-sites/themes/single-site';
+import MultiSiteComponent from 'client/my-sites/themes/multi-site';
 import LoggedOutComponent from './logged-out';
-import Upload from 'my-sites/themes/theme-upload';
-import trackScrollPage from 'lib/track-scroll-page';
-import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
-import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/actions';
-import { getThemesForQuery } from 'state/themes/selectors';
+import Upload from 'client/my-sites/themes/theme-upload';
+import trackScrollPage from 'client/lib/track-scroll-page';
+import { DEFAULT_THEME_QUERY } from 'client/state/themes/constants';
+import { requestThemes, requestThemeFilters, setBackPath } from 'client/state/themes/actions';
+import { getThemesForQuery } from 'client/state/themes/selectors';
 import { getAnalyticsData } from './helpers';
-import { getThemeFilters } from 'state/selectors';
+import { getThemeFilters } from 'client/state/selectors';
 
 const debug = debugFactory( 'calypso:themes' );
 

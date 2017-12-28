@@ -12,19 +12,19 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import EmptyContent from 'components/empty-content';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import Button from 'client/components/button';
+import EmptyContent from 'client/components/empty-content';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 import {
 	getTotalProducts,
 	areProductsLoaded,
 	getProducts,
-} from 'woocommerce/state/sites/products/selectors';
+} from 'client/extensions/woocommerce/state/sites/products/selectors';
 import {
 	getProductsCurrentPage,
 	getProductsRequestedPage,
-} from 'woocommerce/state/ui/products/selectors';
+} from 'client/extensions/woocommerce/state/ui/products/selectors';
 import ProductsListPagination from './products-list-pagination';
 import ProductsListTable from './products-list-table';
 

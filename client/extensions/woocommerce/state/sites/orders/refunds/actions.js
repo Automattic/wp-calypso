@@ -5,16 +5,16 @@
  */
 
 import { fetchOrder } from '../actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import { isOrderRefunding } from './selectors';
-import request from 'woocommerce/state/sites/request';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import request from 'client/extensions/woocommerce/state/sites/request';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
 import { translate } from 'i18n-calypso';
 import {
 	WOOCOMMERCE_ORDER_REFUND_CREATE,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export const sendRefund = ( siteId, orderId, refund ) => ( dispatch, getState ) => {
 	const state = getState();

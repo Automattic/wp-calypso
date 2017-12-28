@@ -7,13 +7,13 @@ import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
 	READER_FEED_UPDATE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export function requestFeed( feedId ) {
 	return function( dispatch ) {

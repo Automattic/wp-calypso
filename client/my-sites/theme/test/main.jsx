@@ -11,8 +11,8 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import ThemeSheetComponent from '../main';
-import { createReduxStore } from 'state';
-import { receiveTheme, themeRequestFailure } from 'state/themes/actions';
+import { createReduxStore } from 'client/state';
+import { receiveTheme, themeRequestFailure } from 'client/state/themes/actions';
 
 jest.mock( 'components/data/query-user-purchases', () => require( 'components/empty-component' ) );
 jest.mock( 'components/data/query-site-purchases', () => require( 'components/empty-component' ) );

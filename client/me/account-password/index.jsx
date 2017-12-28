@@ -17,19 +17,19 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { ProtectFormGuard } from 'lib/protect-form';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormInputValidation from 'components/forms/form-input-validation';
+import { ProtectFormGuard } from 'client/lib/protect-form';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormPasswordInput from 'client/components/forms/form-password-input';
+import FormButton from 'client/components/forms/form-button';
+import FormButtonsBar from 'client/components/forms/form-buttons-bar';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormInputValidation from 'client/components/forms/form-input-validation';
 /* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
+import observe from 'client/lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import eventRecorder from 'me/event-recorder';
-import { errorNotice } from 'state/notices/actions';
+import eventRecorder from 'client/me/event-recorder';
+import { errorNotice } from 'client/state/notices/actions';
 
 const AccountPassword = createReactClass( {
 	displayName: 'AccountPassword',

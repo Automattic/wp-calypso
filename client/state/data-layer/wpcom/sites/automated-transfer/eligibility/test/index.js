@@ -13,7 +13,7 @@ import {
 	requestAutomatedTransferEligibility,
 	updateAutomatedTransferEligibility,
 	throwRequestError,
-} from 'state/data-layer/wpcom/sites/automated-transfer/eligibility';
+} from 'client/state/data-layer/wpcom/sites/automated-transfer/eligibility';
 
 describe( 'requestAutomatedTransferEligibility', () => {
 	test( 'should dispatch an http request', () => {

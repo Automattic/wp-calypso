@@ -10,8 +10,8 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 
-import { successNotice } from 'state/notices/actions';
-import userFactory from 'lib/user';
+import { successNotice } from 'client/state/notices/actions';
+import userFactory from 'client/lib/user';
 
 /**
  * Constants

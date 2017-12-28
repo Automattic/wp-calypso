@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'client/state/utils';
 import { itemsSchema } from './schema';
 import {
 	WP_JOB_MANAGER_FETCH_ERROR,

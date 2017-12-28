@@ -7,8 +7,11 @@ import { forEach, isEmpty, isFinite, omit, omitBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getCurrencyFormatDecimal, getCurrencyFormatString } from 'woocommerce/lib/currency';
-import { getOrderStatusGroup } from 'woocommerce/lib/order-status';
+import {
+	getCurrencyFormatDecimal,
+	getCurrencyFormatString,
+} from 'client/extensions/woocommerce/lib/currency';
+import { getOrderStatusGroup } from 'client/extensions/woocommerce/lib/order-status';
 
 export const DEFAULT_QUERY = {
 	page: 1,

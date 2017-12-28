@@ -14,12 +14,12 @@ import { flowRight } from 'lodash';
  * Internal dependencies
  */
 import SummaryChart from '../stats-summary';
-import QuerySiteStats from 'components/data/query-site-stats';
+import QuerySiteStats from 'client/components/data/query-site-stats';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
-} from 'state/stats/lists/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'client/state/stats/lists/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 class StatsVideoSummary extends Component {
 	static propTypes = {

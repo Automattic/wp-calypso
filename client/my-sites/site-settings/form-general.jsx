@@ -14,29 +14,29 @@ import { flowRight } from 'lodash';
  * Internal dependencies
  */
 import wrapSettingsForm from './wrap-settings-form';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
-import Button from 'components/button';
-import LanguagePicker from 'components/language-picker';
-import SectionHeader from 'components/section-header';
+import Card from 'client/components/card';
+import CompactCard from 'client/components/card/compact';
+import Button from 'client/components/button';
+import LanguagePicker from 'client/components/language-picker';
+import SectionHeader from 'client/components/section-header';
 import config from 'config';
-import notices from 'notices';
-import FormInput from 'components/forms/form-text-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Timezone from 'components/timezone';
+import notices from 'client/notices';
+import FormInput from 'client/components/forms/form-text-input';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLegend from 'client/components/forms/form-legend';
+import FormLabel from 'client/components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import Timezone from 'client/components/timezone';
 import SiteIconSetting from './site-icon-setting';
-import Banner from 'components/banner';
-import { isBusiness } from 'lib/products-values';
-import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { preventWidows } from 'lib/formatting';
+import Banner from 'client/components/banner';
+import { isBusiness } from 'client/lib/products-values';
+import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'client/lib/plans/constants';
+import QuerySiteSettings from 'client/components/data/query-site-settings';
+import { isJetpackMinimumVersion, isJetpackSite } from 'client/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { preventWidows } from 'client/lib/formatting';
 
 class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {

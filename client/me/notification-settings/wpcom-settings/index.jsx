@@ -12,21 +12,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import MeSidebarNavigation from 'me/sidebar-navigation';
+import Main from 'client/components/main';
+import ReauthRequired from 'client/me/reauth-required';
+import twoStepAuthorization from 'client/lib/two-step-authorization';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
 import Navigation from '../navigation';
-import Card from 'components/card';
-import FormSectionHeading from 'components/forms/form-section-heading';
+import Card from 'client/components/card';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
 import ActionButtons from '../settings-form/actions';
-import store from 'lib/notification-settings-store';
+import store from 'client/lib/notification-settings-store';
 import {
 	fetchSettings,
 	toggleWPcomEmailSetting,
 	saveSettings,
-} from 'lib/notification-settings-store/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
+} from 'client/lib/notification-settings-store/actions';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
 import EmailCategory from './email-category';
 
 /**

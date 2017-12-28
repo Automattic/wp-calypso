@@ -11,8 +11,8 @@ const keymaster = typeof window === 'undefined' ? undefined : require( 'keymaste
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
-import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
+import Emitter from 'client/lib/mixins/emitter';
+import KeyBindings from 'client/lib/keyboard-shortcuts/key-bindings';
 
 /**
  * Module variables

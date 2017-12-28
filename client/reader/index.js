@@ -22,7 +22,7 @@ import {
 	updateLastRoute,
 } from './controller';
 import config from 'config';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 function forceTeamA8C( context, next ) {
 	context.params.team = 'a8c';

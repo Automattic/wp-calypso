@@ -12,8 +12,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { isRequestingList } from 'state/reader/lists/selectors';
-import { requestList } from 'state/reader/lists/actions';
+import { isRequestingList } from 'client/state/reader/lists/selectors';
+import { requestList } from 'client/state/reader/lists/actions';
 
 class QueryReaderList extends Component {
 	componentWillMount() {

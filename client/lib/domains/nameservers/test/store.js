@@ -9,8 +9,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import NameserversStore from './../store';
-import Dispatcher from 'dispatcher';
-import { action as ActionTypes } from 'lib/upgrades/constants';
+import Dispatcher from 'client/dispatcher';
+import { action as ActionTypes } from 'client/lib/upgrades/constants';
 
 describe( 'store', () => {
 	const DOMAIN_NAME = 'dummy.com',

@@ -13,11 +13,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import NavItem from 'components/section-nav/item';
-import NavSegmented from 'components/section-nav/segmented';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import Gravatar from 'client/components/gravatar';
+import NavItem from 'client/components/section-nav/item';
+import NavSegmented from 'client/components/section-nav/segmented';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 
 const AuthorSegmented = ( { author, siteSlug, statusSlug, translate, user } ) => {
 	const scopes = {

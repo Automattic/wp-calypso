@@ -13,7 +13,7 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import { loadScript, removeScriptCallback } from 'lib/load-script';
+import { loadScript, removeScriptCallback } from 'client/lib/load-script';
 
 /**
  * Module variables

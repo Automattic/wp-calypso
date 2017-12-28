@@ -28,8 +28,8 @@ import {
 	WOOCOMMERCE_SETUP_CHOICES_REQUEST,
 	WOOCOMMERCE_SETUP_CHOICES_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETUP_STORE_PAGES_REQUEST,
-} from 'woocommerce/state/action-types';
-import { LOADING } from 'woocommerce/state/constants';
+} from 'client/extensions/woocommerce/state/action-types';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 
 describe( 'actions', () => {
 	describe( '#fetchSetupChoices()', () => {

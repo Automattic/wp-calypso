@@ -13,16 +13,19 @@ import { times } from 'lodash';
 /**
  * Internal dependencies
  */
-import ProfileLink from 'me/profile-link';
-import QueryProfileLinks from 'components/data/query-profile-links';
-import AddProfileLinksButtons from 'me/profile-links/add-buttons';
-import SectionHeader from 'components/section-header';
-import Card from 'components/card';
-import Notice from 'components/notice';
-import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
-import ProfileLinksAddOther from 'me/profile-links-add-other';
-import { deleteUserProfileLink, resetUserProfileLinkErrors } from 'state/profile-links/actions';
-import { getProfileLinks, getProfileLinksErrorType } from 'state/selectors';
+import ProfileLink from 'client/me/profile-link';
+import QueryProfileLinks from 'client/components/data/query-profile-links';
+import AddProfileLinksButtons from 'client/me/profile-links/add-buttons';
+import SectionHeader from 'client/components/section-header';
+import Card from 'client/components/card';
+import Notice from 'client/components/notice';
+import ProfileLinksAddWordPress from 'client/me/profile-links-add-wordpress';
+import ProfileLinksAddOther from 'client/me/profile-links-add-other';
+import {
+	deleteUserProfileLink,
+	resetUserProfileLinkErrors,
+} from 'client/state/profile-links/actions';
+import { getProfileLinks, getProfileLinksErrorType } from 'client/state/selectors';
 
 const ProfileLinks = createReactClass( {
 	displayName: 'ProfileLinks',

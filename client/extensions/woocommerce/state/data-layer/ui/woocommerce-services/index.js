@@ -9,22 +9,22 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { WOOCOMMERCE_SERVICES_SHIPPING_ACTION_LIST_CREATE } from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_SERVICES_SHIPPING_ACTION_LIST_CREATE } from 'client/extensions/woocommerce/state/action-types';
 import {
 	actionListStepNext,
 	actionListStepSuccess,
 	actionListStepFailure,
 	actionListClear,
-} from 'woocommerce/state/action-list/actions';
+} from 'client/extensions/woocommerce/state/action-list/actions';
 import {
 	areLabelsEnabled,
 	getLabelSettingsFormMeta,
 	getSelectedPaymentMethodId,
-} from 'woocommerce/woocommerce-services/state/label-settings/selectors';
-import { getPackagesForm } from 'woocommerce/woocommerce-services/state/packages/selectors';
-import { submit as submitLabels } from 'woocommerce/woocommerce-services/state/label-settings/actions';
-import { submit as submitPackages } from 'woocommerce/woocommerce-services/state/packages/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'client/extensions/woocommerce/woocommerce-services/state/label-settings/selectors';
+import { getPackagesForm } from 'client/extensions/woocommerce/woocommerce-services/state/packages/selectors';
+import { submit as submitLabels } from 'client/extensions/woocommerce/woocommerce-services/state/label-settings/actions';
+import { submit as submitPackages } from 'client/extensions/woocommerce/woocommerce-services/state/packages/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 const getSaveLabelSettingsActionListSteps = ( state, siteId ) => {
 	const labelFormMeta = getLabelSettingsFormMeta( state, siteId );

@@ -10,15 +10,19 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getOrdersCurrentSearch } from 'woocommerce/state/ui/orders/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import { ORDER_UNPAID, ORDER_UNFULFILLED, ORDER_COMPLETED } from 'woocommerce/lib/order-status';
-import Search from 'components/search';
-import SectionNav from 'components/section-nav';
-import { updateCurrentOrdersQuery } from 'woocommerce/state/ui/orders/actions';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getOrdersCurrentSearch } from 'client/extensions/woocommerce/state/ui/orders/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import NavItem from 'client/components/section-nav/item';
+import NavTabs from 'client/components/section-nav/tabs';
+import {
+	ORDER_UNPAID,
+	ORDER_UNFULFILLED,
+	ORDER_COMPLETED,
+} from 'client/extensions/woocommerce/lib/order-status';
+import Search from 'client/components/search';
+import SectionNav from 'client/components/section-nav';
+import { updateCurrentOrdersQuery } from 'client/extensions/woocommerce/state/ui/orders/actions';
 
 class OrdersFilterNav extends Component {
 	doSearch = search => {

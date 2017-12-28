@@ -9,8 +9,8 @@ import {
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
 import actionLog from './action-log/reducer';
 import comments from './comments/reducer';
 import dropZone from './drop-zone/reducer';

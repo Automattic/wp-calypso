@@ -11,12 +11,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import CurrentTheme from 'my-sites/themes/current-theme';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import EmptyContent from 'components/empty-content';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getSiteAdminUrl } from 'state/sites/selectors';
+import Main from 'client/components/main';
+import CurrentTheme from 'client/my-sites/themes/current-theme';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import EmptyContent from 'client/components/empty-content';
+import PageViewTracker from 'client/lib/analytics/page-view-tracker';
+import { getSiteAdminUrl } from 'client/state/sites/selectors';
 
 const JetpackReferrerMessage = ( {
 	siteId,

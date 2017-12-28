@@ -12,15 +12,12 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import {
-	isRequestingPostsForQuery,
-	isRequestingSitePost,
-} from 'state/posts/selectors';
+import { isRequestingPostsForQuery, isRequestingSitePost } from 'client/state/posts/selectors';
 import {
 	requestSitePosts,
 	requestSitePost,
 	requestAllSitesPosts,
-} from 'state/posts/actions';
+} from 'client/state/posts/actions';
 
 /**
  * Module variables

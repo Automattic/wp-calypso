@@ -11,8 +11,8 @@ import {
 	OLARK_OPERATORS_AVAILABLE,
 	OLARK_OPERATORS_AWAY,
 	OLARK_SET_AVAILABILITY,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers } from 'client/state/utils';
 import {
 	STATUS_READY,
 	STATUS_TIMEOUT,

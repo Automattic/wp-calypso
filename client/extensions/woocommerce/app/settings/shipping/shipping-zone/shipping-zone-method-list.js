@@ -12,32 +12,32 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormToggle from 'components/forms/form-toggle/compact';
-import List from 'woocommerce/components/list/list';
-import ListItem from 'woocommerce/components/list/list-item';
-import ListHeader from 'woocommerce/components/list/list-header';
-import ListItemField from 'woocommerce/components/list/list-item-field';
+import Button from 'client/components/button';
+import ExtendedHeader from 'client/extensions/woocommerce/components/extended-header';
+import FormToggle from 'client/components/forms/form-toggle/compact';
+import List from 'client/extensions/woocommerce/components/list/list';
+import ListItem from 'client/extensions/woocommerce/components/list/list-item';
+import ListHeader from 'client/extensions/woocommerce/components/list/list-header';
+import ListItemField from 'client/extensions/woocommerce/components/list/list-item-field';
 import ShippingZoneMethodDialog from './shipping-zone-method-dialog';
-import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
+import { bindActionCreatorsWithSiteId } from 'client/extensions/woocommerce/lib/redux-utils';
 import { getMethodSummary } from './shipping-methods/utils';
-import { getShippingMethodNameMap } from 'woocommerce/state/sites/shipping-methods/selectors';
+import { getShippingMethodNameMap } from 'client/extensions/woocommerce/state/sites/shipping-methods/selectors';
 import {
 	openShippingZoneMethod,
 	addMethodToShippingZone,
 	toggleShippingZoneMethodEnabled,
-} from 'woocommerce/state/ui/shipping/zones/methods/actions';
+} from 'client/extensions/woocommerce/state/ui/shipping/zones/methods/actions';
 import {
 	getCurrentlyEditingShippingZoneMethods,
 	getNewMethodTypeOptions,
-} from 'woocommerce/state/ui/shipping/zones/methods/selectors';
-import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
-import { areShippingZonesFullyLoaded } from 'woocommerce/components/query-shipping-zones';
+} from 'client/extensions/woocommerce/state/ui/shipping/zones/methods/selectors';
+import { getCurrencyWithEdits } from 'client/extensions/woocommerce/state/ui/payments/currency/selectors';
+import { areShippingZonesFullyLoaded } from 'client/extensions/woocommerce/components/query-shipping-zones';
 import {
 	areSettingsGeneralLoaded,
 	areSettingsGeneralLoadError,
-} from 'woocommerce/state/sites/settings/general/selectors';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
 
 const ShippingZoneMethodList = ( {
 	siteId,

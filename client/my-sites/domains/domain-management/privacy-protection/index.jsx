@@ -13,17 +13,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import CardContent from './card/content';
 import PrivacyProtectionCardHeader from './privacy-protection-card/header';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'my-sites/domains/domain-management/components/header';
-import { getProductDisplayCost } from 'state/products-list/selectors';
-import { getSelectedDomain } from 'lib/domains';
-import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
-import QueryProductsList from 'components/data/query-products-list';
-import { type as domainTypes } from 'lib/domains/constants';
+import DomainMainPlaceholder from 'client/my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'client/my-sites/domains/domain-management/components/header';
+import { getProductDisplayCost } from 'client/state/products-list/selectors';
+import { getSelectedDomain } from 'client/lib/domains';
+import Main from 'client/components/main';
+import paths from 'client/my-sites/domains/paths';
+import QueryProductsList from 'client/components/data/query-products-list';
+import { type as domainTypes } from 'client/lib/domains/constants';
 
 class PrivacyProtection extends Component {
 	static propTypes = {

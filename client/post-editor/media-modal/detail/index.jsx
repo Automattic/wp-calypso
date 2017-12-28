@@ -14,11 +14,11 @@ import { noop, partial } from 'lodash';
  * Internal dependencies
  */
 import DetailItem from './detail-item';
-import MediaUtils from 'lib/media/utils';
-import HeaderCake from 'components/header-cake';
+import MediaUtils from 'client/lib/media/utils';
+import HeaderCake from 'client/components/header-cake';
 import preloadImage from '../preload-image';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { ModalViews } from 'client/state/ui/media-modal/constants';
+import { setEditorMediaModalView } from 'client/state/ui/editor/actions';
 
 class EditorMediaModalDetailBase extends React.Component {
 	static propTypes = {

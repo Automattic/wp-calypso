@@ -14,7 +14,7 @@ import {
 	getSiteTitle,
 	isJetpackSite,
 	isJetpackSiteSecondaryNetworkSite,
-} from 'state/sites/selectors';
+} from 'client/state/sites/selectors';
 
 const _filters = {
 	none: function() {

@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import QueryRewindStatus from 'components/data/query-rewind-status';
-import { isRewindActive } from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import PurchaseDetail from 'client/components/purchase-detail';
+import QueryRewindStatus from 'client/components/data/query-rewind-status';
+import { isRewindActive } from 'client/state/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
 
 const JetpackBackupSecurity = ( { rewindActive, site, siteId, translate } ) => {
 	const buttonProps = rewindActive

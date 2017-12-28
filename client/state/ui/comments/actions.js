@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { COMMENTS_QUERY_UPDATE } from 'state/action-types';
+import { COMMENTS_QUERY_UPDATE } from 'client/state/action-types';
 
 /**
  * Creates an action that updates the comments pagination for the given site and filters.

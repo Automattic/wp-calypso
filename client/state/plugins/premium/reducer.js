@@ -19,8 +19,8 @@ import {
 	PLUGIN_SETUP_ERROR,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
-import { combineReducers, isValidStateWithSchema } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, isValidStateWithSchema } from 'client/state/utils';
 import { pluginInstructionSchema } from './schema';
 
 /*

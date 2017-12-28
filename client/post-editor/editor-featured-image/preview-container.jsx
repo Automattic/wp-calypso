@@ -11,9 +11,9 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaActions from 'lib/media/actions';
-import MediaStore from 'lib/media/store';
-import PostActions from 'lib/posts/actions';
+import MediaActions from 'client/lib/media/actions';
+import MediaStore from 'client/lib/media/store';
+import PostActions from 'client/lib/posts/actions';
 import EditorFeaturedImagePreview from './preview';
 
 export default class extends React.Component {

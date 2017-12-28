@@ -2,12 +2,12 @@
 /**
  * External dependencies
  */
-import { createReducer, combineReducers } from 'state/utils';
+import { createReducer, combineReducers } from 'client/state/utils';
 import {
 	COUNTRIES_DOMAINS_UPDATED,
 	COUNTRIES_PAYMENTS_UPDATED,
 	COUNTRIES_SMS_UPDATED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 const domains = createReducer( [], {
 	[ COUNTRIES_DOMAINS_UPDATED ]: ( countries, action ) => action.countries,

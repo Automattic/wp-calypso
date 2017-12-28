@@ -9,10 +9,10 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Site from 'blocks/site';
-import Card from 'components/card';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSite } from 'state/sites/selectors';
+import Site from 'client/blocks/site';
+import Card from 'client/components/card';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getSite } from 'client/state/sites/selectors';
 
 const SiteExample = ( { site } ) => (
 	<Card style={ { padding: 0 } }>

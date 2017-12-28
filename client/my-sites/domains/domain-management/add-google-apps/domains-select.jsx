@@ -11,7 +11,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getGoogleAppsSupportedDomains } from 'lib/domains';
+import { getGoogleAppsSupportedDomains } from 'client/lib/domains';
 
 class DomainsSelect extends React.Component {
 	static propTypes = {

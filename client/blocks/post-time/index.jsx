@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getNormalizedPost } from 'state/posts/selectors';
+import { getNormalizedPost } from 'client/state/posts/selectors';
 
 function getDisplayedTimeFromPost( moment, post ) {
 	if ( ! post ) {

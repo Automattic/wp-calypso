@@ -12,8 +12,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import ShortcodesStore from 'lib/shortcodes/store';
-import * as ShortcodesActions from 'lib/shortcodes/actions';
+import ShortcodesStore from 'client/lib/shortcodes/store';
+import * as ShortcodesActions from 'client/lib/shortcodes/actions';
 
 /**
  * Local dependencies

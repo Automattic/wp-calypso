@@ -13,12 +13,12 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
-import PostMetadata from 'lib/post-metadata';
-import PostActions from 'lib/posts/actions';
-import * as PostStats from 'lib/posts/stats';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import PostMetadata from 'client/lib/post-metadata';
+import PostActions from 'client/lib/posts/actions';
+import * as PostStats from 'client/lib/posts/stats';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
 
 export class EditorSharingPublicizeConnection extends React.Component {
 	static propTypes = {

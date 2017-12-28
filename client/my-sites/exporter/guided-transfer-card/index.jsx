@@ -12,18 +12,18 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
-import Button from 'components/forms/form-button';
+import CompactCard from 'client/components/card/compact';
+import QuerySiteGuidedTransfer from 'client/components/data/query-site-guided-transfer';
+import Button from 'client/components/forms/form-button';
 import {
 	isGuidedTransferAvailableForAllSites,
 	isRequestingGuidedTransferStatus,
-} from 'state/sites/guided-transfer/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getProductDisplayCost } from 'state/products-list/selectors';
-import InfoPopover from 'components/info-popover';
-import SUPPORT_URLS from 'lib/url/support';
+} from 'client/state/sites/guided-transfer/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getProductDisplayCost } from 'client/state/products-list/selectors';
+import InfoPopover from 'client/components/info-popover';
+import SUPPORT_URLS from 'client/lib/url/support';
 
 const Feature = ( { children } ) => (
 	<li className="guided-transfer-card__feature-list-item">

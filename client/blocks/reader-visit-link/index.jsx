@@ -9,7 +9,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'client/components/external-link';
 
 class ReaderVisitLink extends React.Component {
 	static propTypes = {

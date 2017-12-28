@@ -8,11 +8,11 @@ import page from 'page';
  * Internal dependencies
  */
 import config from 'config';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
-import controller from 'my-sites/site-settings/controller';
-import settingsController from 'my-sites/site-settings/settings-controller';
+import { navigation, siteSelection, sites } from 'client/my-sites/controller';
+import controller from 'client/my-sites/site-settings/controller';
+import settingsController from 'client/my-sites/site-settings/settings-controller';
 import { reasonComponents as reasons } from './disconnect-site';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default function() {
 	page( '/settings', siteSelection, controller.redirectToGeneral );

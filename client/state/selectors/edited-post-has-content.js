@@ -9,7 +9,7 @@ import { some, trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getEditedPost } from 'state/posts/selectors';
+import { getEditedPost } from 'client/state/posts/selectors';
 
 const REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/;
 const CONTENT_LENGTH_ASSUME_SET = 50;

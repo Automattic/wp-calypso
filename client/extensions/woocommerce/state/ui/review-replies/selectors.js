@@ -9,8 +9,8 @@ import { get, isObject, merge } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getReviewReply } from 'woocommerce/state/sites/review-replies/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getReviewReply } from 'client/extensions/woocommerce/state/sites/review-replies/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 /**
  * @param {Object} state Whole Redux state tree

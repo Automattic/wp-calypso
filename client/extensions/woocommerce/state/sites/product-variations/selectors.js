@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 export function getVariationsForProduct( state, productId, siteId = getSelectedSiteId( state ) ) {
 	const variationsByProduct = get( state, [

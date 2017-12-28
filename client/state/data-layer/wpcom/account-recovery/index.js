@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
 import lookup from './lookup';
 import requestReset from './request-reset';
 import reset from './reset';

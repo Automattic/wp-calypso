@@ -20,7 +20,7 @@ import {
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns an action object used in signalling that media item(s) for the site

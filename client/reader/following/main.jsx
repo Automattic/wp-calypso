@@ -10,12 +10,12 @@ import { initial, flatMap, trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import Stream from 'reader/stream';
-import CompactCard from 'components/card/compact';
-import SearchInput from 'components/search';
-import { recordTrack } from 'reader/stats';
-import Suggestion from 'reader/search-stream/suggestion';
-import SuggestionProvider from 'reader/search-stream/suggestion-provider';
+import Stream from 'client/reader/stream';
+import CompactCard from 'client/components/card/compact';
+import SearchInput from 'client/components/search';
+import { recordTrack } from 'client/reader/stats';
+import Suggestion from 'client/reader/search-stream/suggestion';
+import SuggestionProvider from 'client/reader/search-stream/suggestion-provider';
 import FollowingIntro from './intro';
 import config from 'config';
 

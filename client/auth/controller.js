@@ -13,14 +13,14 @@ import page from 'page';
  */
 import OAuthLogin from './login';
 import ConnectComponent from './connect';
-import * as OAuthToken from 'lib/oauth-token';
-import wpcom from 'lib/wp';
+import * as OAuthToken from 'client/lib/oauth-token';
+import wpcom from 'client/lib/wp';
 import config from 'config';
 import store from 'store';
 import WPOAuth from 'wpcom-oauth';
-import userFactory from 'lib/user';
-import Main from 'components/main';
-import PulsingDot from 'components/pulsing-dot';
+import userFactory from 'client/lib/user';
+import Main from 'client/components/main';
+import PulsingDot from 'client/components/pulsing-dot';
 
 export default {
 	oauthLogin: function( context, next ) {

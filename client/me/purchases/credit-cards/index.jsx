@@ -12,18 +12,18 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
 import config from 'config';
 import CreditCardDelete from './credit-card-delete';
 import {
 	getStoredCards,
 	hasLoadedStoredCardsFromServer,
 	isFetchingStoredCards,
-} from 'state/stored-cards/selectors';
-import QueryStoredCards from 'components/data/query-stored-cards';
-import { addCreditCard } from 'me/purchases/paths';
-import SectionHeader from 'components/section-header';
+} from 'client/state/stored-cards/selectors';
+import QueryStoredCards from 'client/components/data/query-stored-cards';
+import { addCreditCard } from 'client/me/purchases/paths';
+import SectionHeader from 'client/components/section-header';
 
 class CreditCards extends Component {
 	renderCards() {

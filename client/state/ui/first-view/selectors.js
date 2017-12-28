@@ -10,15 +10,15 @@ import { memoize, some, startsWith, takeRightWhile, find, findLast } from 'lodas
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector from 'client/lib/create-selector';
 import { FIRST_VIEW_CONFIG } from './constants';
-import { getActionLog } from 'state/ui/action-log/selectors';
-import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
-import { isSectionLoading, getSection } from 'state/ui/selectors';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
-import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
-import { getCurrentUserDate } from 'state/current-user/selectors';
-import findOngoingTour from 'state/ui/guided-tours/selectors/find-ongoing-tour';
+import { getActionLog } from 'client/state/ui/action-log/selectors';
+import { getPreference, preferencesLastFetchedTimestamp } from 'client/state/preferences/selectors';
+import { isSectionLoading, getSection } from 'client/state/ui/selectors';
+import getInitialQueryArguments from 'client/state/selectors/get-initial-query-arguments';
+import { FIRST_VIEW_HIDE, ROUTE_SET } from 'client/state/action-types';
+import { getCurrentUserDate } from 'client/state/current-user/selectors';
+import findOngoingTour from 'client/state/ui/guided-tours/selectors/find-ongoing-tour';
 
 const getConfigForPath = memoize(
 	path =>

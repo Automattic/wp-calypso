@@ -12,10 +12,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import PulsingDot from 'components/pulsing-dot';
-import { getSelectedSite } from 'state/ui/selectors';
-import { toggleDialog, runThemeSetup } from 'state/ui/theme-setup/actions';
+import Dialog from 'client/components/dialog';
+import PulsingDot from 'client/components/pulsing-dot';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { toggleDialog, runThemeSetup } from 'client/state/ui/theme-setup/actions';
 
 class ThemeSetupDialog extends React.Component {
 	renderButtons( { runThemeSetup, site, isActive, result, translate } ) {

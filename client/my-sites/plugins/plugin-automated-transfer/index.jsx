@@ -13,15 +13,15 @@ import wrapWithClickOutside from 'react-click-outside';
 /**
  * Internal dependencies
  */
-import { transferStates } from 'state/automated-transfer/constants';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import { isAutomatedTransferActive, isAutomatedTransferFailed } from 'state/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import WpAdminAutoLogin from 'components/wpadmin-auto-login';
-import { requestSite } from 'state/sites/actions';
+import { transferStates } from 'client/state/automated-transfer/constants';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSite } from 'client/state/sites/selectors';
+import { getAutomatedTransferStatus } from 'client/state/automated-transfer/selectors';
+import { isAutomatedTransferActive, isAutomatedTransferFailed } from 'client/state/selectors';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import WpAdminAutoLogin from 'client/components/wpadmin-auto-login';
+import { requestSite } from 'client/state/sites/actions';
 
 class PluginAutomatedTransfer extends Component {
 	static propTypes = {

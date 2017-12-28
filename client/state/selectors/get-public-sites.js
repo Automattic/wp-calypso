@@ -3,9 +3,9 @@
 /**
  * Internal dependencies
  */
-import { getSitesItems } from 'state/selectors';
-import { getSite } from 'state/sites/selectors';
-import createSelector from 'lib/create-selector';
+import { getSitesItems } from 'client/state/selectors';
+import { getSite } from 'client/state/sites/selectors';
+import createSelector from 'client/lib/create-selector';
 
 /**
  * Get all public sites

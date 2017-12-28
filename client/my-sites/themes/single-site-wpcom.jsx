@@ -11,18 +11,18 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
-import CurrentTheme from 'my-sites/themes/current-theme';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import ThanksModal from 'my-sites/themes/thanks-modal';
+import { abtest } from 'client/lib/abtest';
+import CurrentTheme from 'client/my-sites/themes/current-theme';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import ThanksModal from 'client/my-sites/themes/thanks-modal';
 import { connectOptions } from './theme-options';
-import Banner from 'components/banner';
-import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM } from 'lib/plans/constants';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QuerySitePurchases from 'components/data/query-site-purchases';
+import Banner from 'client/components/banner';
+import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM } from 'client/lib/plans/constants';
+import { getCurrentPlan } from 'client/state/sites/plans/selectors';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import QuerySitePurchases from 'client/components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 
 const ConnectedSingleSiteWpcom = connectOptions( props => {
 	const { siteId, siteSlug, currentPlanSlug, translate } = props;

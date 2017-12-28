@@ -13,10 +13,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Theme from 'components/theme';
-import EmptyContent from 'components/empty-content';
-import InfiniteScroll from 'lib/mixins/infinite-scroll';
-import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
+import Theme from 'client/components/theme';
+import EmptyContent from 'client/components/empty-content';
+import InfiniteScroll from 'client/lib/mixins/infinite-scroll';
+import { DEFAULT_THEME_QUERY } from 'client/state/themes/constants';
 
 /**
  * Component

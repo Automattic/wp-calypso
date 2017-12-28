@@ -10,16 +10,16 @@ import { invoke } from 'lodash';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
-import Card from 'components/card';
+import StepWrapper from 'client/signup/step-wrapper';
+import SignupActions from 'client/lib/signup/actions';
+import Card from 'client/components/card';
 import { localize } from 'i18n-calypso';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 import PressableStoreStep from './pressable-store';
 import { BlogImage, PageImage, GridImage, StoreImage } from '../design-type-with-store/type-images';
-import { setDesignType } from 'state/signup/steps/design-type/actions';
+import { setDesignType } from 'client/state/signup/steps/design-type/actions';
 
-import { getThemeForDesignType } from 'signup/utils';
+import { getThemeForDesignType } from 'client/signup/utils';
 
 class DesignTypeWithStoreStep extends Component {
 	constructor( props ) {

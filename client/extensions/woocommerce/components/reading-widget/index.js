@@ -13,15 +13,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Button from 'components/button';
+import analytics from 'client/lib/analytics';
+import Button from 'client/components/button';
 import config from 'config';
-import ExternalLink from 'components/external-link';
-import FormTextInput from 'components/forms/form-text-input';
-import { getPostsForQueryIgnoringPage } from 'state/posts/selectors';
-import humanDate from 'lib/human-date';
-import MultiCheckbox from 'components/forms/multi-checkbox';
-import QueryPosts from 'components/data/query-posts';
+import ExternalLink from 'client/components/external-link';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { getPostsForQueryIgnoringPage } from 'client/state/posts/selectors';
+import humanDate from 'client/lib/human-date';
+import MultiCheckbox from 'client/components/forms/multi-checkbox';
+import QueryPosts from 'client/components/data/query-posts';
 
 class ReadingWidget extends Component {
 	state = {

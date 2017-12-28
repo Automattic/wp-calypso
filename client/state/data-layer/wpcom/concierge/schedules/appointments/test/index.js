@@ -3,10 +3,10 @@
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import { bookConciergeAppointment, handleBookingError, markSlotAsBooked, toApi } from '../';
-import { updateConciergeBookingStatus } from 'state/concierge/actions';
-import { CONCIERGE_APPOINTMENT_CREATE } from 'state/action-types';
+import { updateConciergeBookingStatus } from 'client/state/concierge/actions';
+import { CONCIERGE_APPOINTMENT_CREATE } from 'client/state/action-types';
 
 // we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
 jest.mock( 'lib/impure-lodash', () => ( {

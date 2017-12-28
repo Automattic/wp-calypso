@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isFetchingPreferences } from 'state/preferences/selectors';
-import { fetchPreferences } from 'state/preferences/actions';
+import { isFetchingPreferences } from 'client/state/preferences/selectors';
+import { fetchPreferences } from 'client/state/preferences/actions';
 
 class QueryPreferences extends Component {
 	componentWillMount() {

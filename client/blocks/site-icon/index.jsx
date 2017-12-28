@@ -14,12 +14,12 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Image from 'components/image';
-import Spinner from 'components/spinner';
-import QuerySites from 'components/data/query-sites';
-import { getSite } from 'state/sites/selectors';
-import { getSiteIconUrl, getSiteIconId, isTransientMedia } from 'state/selectors';
-import resizeImageUrl from 'lib/resize-image-url';
+import Image from 'client/components/image';
+import Spinner from 'client/components/spinner';
+import QuerySites from 'client/components/data/query-sites';
+import { getSite } from 'client/state/sites/selectors';
+import { getSiteIconUrl, getSiteIconId, isTransientMedia } from 'client/state/selectors';
+import resizeImageUrl from 'client/lib/resize-image-url';
 
 function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon } ) {
 	const iconSrc = resizeImageUrl( iconUrl, imgSize );

@@ -8,7 +8,7 @@ import url from 'url';
 /**
  * Internal Dependencies
  */
-import safeImageURL from 'lib/safe-image-url';
+import safeImageURL from 'client/lib/safe-image-url';
 
 const IMAGE_SCALE_FACTOR =
 	typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ? 2 : 1;

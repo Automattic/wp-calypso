@@ -19,7 +19,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import LinkDialog from './dialog';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'client/lib/react-helpers';
 
 function wpLink( editor ) {
 	let node, toolbar, firstLoadComplete;

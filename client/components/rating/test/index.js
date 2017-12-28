@@ -10,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Rating from 'components/rating';
+import Rating from 'client/components/rating';
 
 describe( '<Rating />', () => {
 	describe( 'check props size', () => {

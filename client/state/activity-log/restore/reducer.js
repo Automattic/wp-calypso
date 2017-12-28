@@ -9,8 +9,8 @@ import {
 	REWIND_RESTORE_DISMISS_PROGRESS,
 	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_PROGRESS,
-} from 'state/action-types';
-import { createReducer, keyedReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { createReducer, keyedReducer } from 'client/state/utils';
 
 const stubNull = () => null;
 

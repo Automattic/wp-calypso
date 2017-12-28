@@ -12,22 +12,22 @@ import { compact, find, get, identity, overSome } from 'lodash';
 /**
  * Internal dependencies
  */
-import SeoPreviewUpgradeNudge from 'components/seo/preview-upgrade-nudge';
-import ReaderPreview from 'components/seo/reader-preview';
-import FacebookPreview from 'components/seo/facebook-preview';
-import TwitterPreview from 'components/seo/twitter-preview';
-import SearchPreview from 'components/seo/search-preview';
-import VerticalMenu from 'components/vertical-menu';
-import PostMetadata from 'lib/post-metadata';
-import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
-import { isBusiness, isEnterprise } from 'lib/products-values';
-import { parseHtml } from 'lib/formatting';
-import { SocialItem } from 'components/vertical-menu/items';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getSitePost } from 'state/posts/selectors';
-import { getSeoTitle } from 'state/sites/selectors';
-import { getSectionName, getSelectedSite } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import SeoPreviewUpgradeNudge from 'client/components/seo/preview-upgrade-nudge';
+import ReaderPreview from 'client/components/seo/reader-preview';
+import FacebookPreview from 'client/components/seo/facebook-preview';
+import TwitterPreview from 'client/components/seo/twitter-preview';
+import SearchPreview from 'client/components/seo/search-preview';
+import VerticalMenu from 'client/components/vertical-menu';
+import PostMetadata from 'client/lib/post-metadata';
+import { formatExcerpt } from 'client/lib/post-normalizer/rule-create-better-excerpt';
+import { isBusiness, isEnterprise } from 'client/lib/products-values';
+import { parseHtml } from 'client/lib/formatting';
+import { SocialItem } from 'client/components/vertical-menu/items';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getSitePost } from 'client/state/posts/selectors';
+import { getSeoTitle } from 'client/state/sites/selectors';
+import { getSectionName, getSelectedSite } from 'client/state/ui/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 const PREVIEW_IMAGE_WIDTH = 512;
 const hasBusinessPlan = overSome( isBusiness, isEnterprise );

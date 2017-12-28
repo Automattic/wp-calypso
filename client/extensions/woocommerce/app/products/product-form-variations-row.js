@@ -14,15 +14,15 @@ import { head } from 'lodash';
 /**
  * Internal dependencies
  */
-import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
-import Button from 'components/button';
-import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
-import FormTextInput from 'components/forms/form-text-input';
-import FormWeightInput from 'woocommerce/components/form-weight-input';
-import ImagePreloader from 'components/image-preloader';
-import PriceInput from 'woocommerce/components/price-input';
-import ProductImageUploader from 'woocommerce/components/product-image-uploader';
-import Spinner from 'components/spinner';
+import formattedVariationName from 'client/extensions/woocommerce/lib/formatted-variation-name';
+import Button from 'client/components/button';
+import FormDimensionsInput from 'client/extensions/woocommerce/components/form-dimensions-input';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormWeightInput from 'client/extensions/woocommerce/components/form-weight-input';
+import ImagePreloader from 'client/components/image-preloader';
+import PriceInput from 'client/extensions/woocommerce/components/price-input';
+import ProductImageUploader from 'client/extensions/woocommerce/components/product-image-uploader';
+import Spinner from 'client/components/spinner';
 
 class ProductFormVariationsRow extends Component {
 	static propTypes = {

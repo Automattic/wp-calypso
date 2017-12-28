@@ -5,7 +5,7 @@
  */
 
 import debugFactory from 'debug';
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 
 /**
  * Internal dependencies
@@ -20,7 +20,7 @@ import {
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 import { isApiReady, getDeviceId, getStatus, isBlocked, isEnabled } from './selectors';
 import {
@@ -31,8 +31,8 @@ import {
 	getChromeVersion,
 	getOperaVersion,
 } from './utils';
-import { registerServerWorker } from 'lib/service-worker';
-import { recordTracksEvent, bumpStat } from 'state/analytics/actions';
+import { registerServerWorker } from 'client/lib/service-worker';
+import { recordTracksEvent, bumpStat } from 'client/state/analytics/actions';
 
 const debug = debugFactory( 'calypso:push-notifications' );
 const serviceWorkerOptions = {

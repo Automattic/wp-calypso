@@ -9,8 +9,8 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Pagination from 'components/pagination';
+import Card from 'client/components/card';
+import Pagination from 'client/components/pagination';
 
 class PaginationExample extends Component {
 	state = {

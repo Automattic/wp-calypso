@@ -16,9 +16,9 @@ import {
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKING_ON,
 	ANALYTICS_TRACKS_ANONID_SET,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
-import { getCurrentOAuth2ClientId } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2ClientId } from 'client/state/ui/oauth2-clients/selectors';
 
 const mergedMetaData = ( a, b ) => [
 	...get( a, 'meta.analytics', [] ),
@@ -28,9 +28,9 @@ const mergedMetaData = ( a, b ) => [
 const joinAnalytics = ( analytics, action ) =>
 	isFunction( action )
 		? dispatch => {
-			dispatch( analytics );
-			dispatch( action );
-		}
+				dispatch( analytics );
+				dispatch( action );
+			}
 		: merge( {}, action, { meta: { analytics: mergedMetaData( analytics, action ) } } );
 
 export const composeAnalytics = ( ...analytics ) => ( {

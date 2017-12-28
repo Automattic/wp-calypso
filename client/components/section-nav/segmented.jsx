@@ -11,8 +11,8 @@ import classNames from 'classnames';
 /**
  * Internal Dependencies
  */
-import ControlItem from 'components/segmented-control/item';
-import SegmentedControl from 'components/segmented-control';
+import ControlItem from 'client/components/segmented-control/item';
+import SegmentedControl from 'client/components/segmented-control';
 
 /**
  * Internal variables

@@ -13,18 +13,18 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
-import ErrorScreen from 'account-recovery/error-screen';
+import ErrorScreen from 'client/account-recovery/error-screen';
 import {
 	updatePasswordResetUserData,
 	setResetMethod,
 	validateRequest,
 	validateRequestError,
-} from 'state/account-recovery/reset/actions';
+} from 'client/state/account-recovery/reset/actions';
 
 import {
 	getAccountRecoveryValidationError,
 	getAccountRecoveryValidationKey,
-} from 'state/selectors';
+} from 'client/state/selectors';
 
 class ResetPasswordEmailValidation extends Component {
 	getQueryString = () => {

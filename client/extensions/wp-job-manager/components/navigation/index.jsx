@@ -13,15 +13,15 @@ import { find, flowRight, get, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
-import SectionNavTabItem from 'components/section-nav/item';
-import { addSiteFragment } from 'lib/route/path';
-import sectionsModule from 'sections';
+import HeaderCake from 'client/components/header-cake';
+import SectionNav from 'client/components/section-nav';
+import SectionNavTabs from 'client/components/section-nav/tabs';
+import SectionNavTabItem from 'client/components/section-nav/item';
+import { addSiteFragment } from 'client/lib/route/path';
+import sectionsModule from 'client/sections';
 import { Tabs } from '../../constants';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 class Navigation extends Component {
 	static propTypes = {

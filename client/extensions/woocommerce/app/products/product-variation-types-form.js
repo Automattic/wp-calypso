@@ -13,11 +13,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import TokenField from 'components/token-field';
+import Button from 'client/components/button';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
+import TokenField from 'client/components/token-field';
 
 class ProductVariationTypesForm extends Component {
 	state = {

@@ -15,12 +15,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Notice from 'components/notice';
-import analytics from 'lib/analytics';
-import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
+import Button from 'client/components/button';
+import Notice from 'client/components/notice';
+import analytics from 'client/lib/analytics';
+import { showOAuth2Layout } from 'client/state/ui/oauth2-clients/selectors';
 import config from 'config';
-import { abtest } from 'lib/abtest';
+import { abtest } from 'client/lib/abtest';
 
 export class SignupProcessingScreen extends Component {
 	static propTypes = {

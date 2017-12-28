@@ -13,9 +13,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { activateRewind as activateRewindAction } from 'state/activity-log/actions';
-import { isRewindActivating } from 'state/selectors';
+import Button from 'client/components/button';
+import { activateRewind as activateRewindAction } from 'client/state/activity-log/actions';
+import { isRewindActivating } from 'client/state/selectors';
 
 class ActivityLogRewindToggle extends Component {
 	static propTypes = {

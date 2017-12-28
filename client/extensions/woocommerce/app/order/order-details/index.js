@@ -12,19 +12,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import { editOrder } from 'woocommerce/state/ui/orders/actions';
-import { isCurrentlyEditingOrder, getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
-import { isOrderEditable } from 'woocommerce/lib/order-status';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getOrder } from 'woocommerce/state/sites/orders/selectors';
+import Card from 'client/components/card';
+import { editOrder } from 'client/extensions/woocommerce/state/ui/orders/actions';
+import {
+	isCurrentlyEditingOrder,
+	getOrderWithEdits,
+} from 'client/extensions/woocommerce/state/ui/orders/selectors';
+import { isOrderEditable } from 'client/extensions/woocommerce/lib/order-status';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import { getOrder } from 'client/extensions/woocommerce/state/sites/orders/selectors';
 import OrderCreated from '../order-created';
 import OrderDetailsTable from './table';
 import OrderFulfillment from '../order-fulfillment';
 import OrderPaymentCard from '../order-payment';
-import OrderStatus from 'woocommerce/components/order-status';
-import OrderStatusSelect from 'woocommerce/components/order-status/select';
-import SectionHeader from 'components/section-header';
+import OrderStatus from 'client/extensions/woocommerce/components/order-status';
+import OrderStatusSelect from 'client/extensions/woocommerce/components/order-status/select';
+import SectionHeader from 'client/components/section-header';
 
 class OrderDetails extends Component {
 	static propTypes = {

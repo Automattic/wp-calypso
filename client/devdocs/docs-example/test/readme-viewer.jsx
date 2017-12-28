@@ -9,7 +9,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import ReadmeViewer from 'devdocs/docs-example/readme-viewer';
+import ReadmeViewer from 'client/devdocs/docs-example/readme-viewer';
 
 describe( 'ReadmeViewer', () => {
 	it( 'should render README.md when given readmeFilePath', () => {

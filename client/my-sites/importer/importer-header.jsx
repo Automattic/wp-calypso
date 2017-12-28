@@ -13,9 +13,9 @@ import SocialLogo from 'social-logos';
 /**
  * Internal dependencies
  */
-import Button from 'components/forms/form-button';
-import { appStates } from 'state/imports/constants';
-import { cancelImport, resetImport, startImport } from 'lib/importer/actions';
+import Button from 'client/components/forms/form-button';
+import { appStates } from 'client/state/imports/constants';
+import { cancelImport, resetImport, startImport } from 'client/lib/importer/actions';
 import { connectDispatcher } from './dispatcher-converter';
 
 /**

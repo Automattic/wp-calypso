@@ -10,14 +10,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Main from 'components/main';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import SectionNav from 'components/section-nav';
-import Search from 'components/search';
+import ActionHeader from 'client/extensions/woocommerce/components/action-header';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import Main from 'client/components/main';
+import NavTabs from 'client/components/section-nav/tabs';
+import NavItem from 'client/components/section-nav/item';
+import SectionNav from 'client/components/section-nav';
+import Search from 'client/components/search';
 
 class ProductCategories extends Component {
 

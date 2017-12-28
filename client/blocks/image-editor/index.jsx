@@ -16,26 +16,26 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import CloseOnEscape from 'components/close-on-escape';
-import Notice from 'components/notice';
+import CloseOnEscape from 'client/components/close-on-escape';
+import Notice from 'client/components/notice';
 import ImageEditorCanvas from './image-editor-canvas';
 import ImageEditorToolbar from './image-editor-toolbar';
 import ImageEditorButtons from './image-editor-buttons';
-import MediaUtils from 'lib/media/utils';
+import MediaUtils from 'client/lib/media/utils';
 import {
 	resetImageEditorState,
 	resetAllImageEditorState,
 	setImageEditorFileInfo,
 	setImageEditorDefaultAspectRatio,
-} from 'state/ui/editor/image-editor/actions';
+} from 'client/state/ui/editor/image-editor/actions';
 import {
 	getImageEditorFileInfo,
 	isImageEditorImageLoaded,
-} from 'state/ui/editor/image-editor/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import QuerySites from 'components/data/query-sites';
-import { AspectRatios, AspectRatiosValues } from 'state/ui/editor/image-editor/constants';
+} from 'client/state/ui/editor/image-editor/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSite } from 'client/state/sites/selectors';
+import QuerySites from 'client/components/data/query-sites';
+import { AspectRatios, AspectRatiosValues } from 'client/state/ui/editor/image-editor/constants';
 import { getDefaultAspectRatio } from './utils';
 
 class ImageEditor extends React.Component {

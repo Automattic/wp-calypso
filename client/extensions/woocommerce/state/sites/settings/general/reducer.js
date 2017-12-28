@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { createReducer } from 'state/utils';
-import { ERROR, LOADING } from 'woocommerce/state/constants';
+import { createReducer } from 'client/state/utils';
+import { ERROR, LOADING } from 'client/extensions/woocommerce/state/constants';
 import { isNull } from 'lodash';
 import { updateSettings } from '../helpers';
 import {
@@ -14,7 +14,7 @@ import {
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 	WOOCOMMERCE_SETTINGS_GENERAL_RECEIVE,
 	WOOCOMMERCE_TAXES_ENABLED_UPDATE_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 // TODO: Handle error
 

@@ -12,8 +12,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSitePlans } from 'state/sites/plans/selectors';
-import { fetchSitePlans } from 'state/sites/plans/actions';
+import { isRequestingSitePlans } from 'client/state/sites/plans/selectors';
+import { fetchSitePlans } from 'client/state/sites/plans/actions';
 
 class QuerySitePlans extends Component {
 	constructor( props ) {

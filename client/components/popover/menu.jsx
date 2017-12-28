@@ -10,7 +10,7 @@ import { over } from 'lodash';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
+import Popover from 'client/components/popover';
 
 class PopoverMenu extends React.Component {
 	static propTypes = {

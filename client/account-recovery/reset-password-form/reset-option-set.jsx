@@ -10,8 +10,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
+import FormLabel from 'client/components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
 
 const ResetOptionSet = props => {
 	const {

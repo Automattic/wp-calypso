@@ -12,8 +12,8 @@ import { keys, omit, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
-import FormButton from 'components/forms/form-button';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormButton from 'client/components/forms/form-button';
 
 export default class FormTextInputWithAction extends Component {
 	static propTypes = {

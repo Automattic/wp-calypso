@@ -9,10 +9,10 @@ import { map, sampleSize } from 'lodash';
 /**
  * Internal Dependencies
  */
-import i18nUtils from 'lib/i18n-utils';
-import { suggestions } from 'reader/search-stream/suggestions';
-import { getReaderFollowedTags } from 'state/selectors';
-import analytics from 'lib/analytics';
+import i18nUtils from 'client/lib/i18n-utils';
+import { suggestions } from 'client/reader/search-stream/suggestions';
+import { getReaderFollowedTags } from 'client/state/selectors';
+import analytics from 'client/lib/analytics';
 
 /**
  * Build suggestions from subscribed tags

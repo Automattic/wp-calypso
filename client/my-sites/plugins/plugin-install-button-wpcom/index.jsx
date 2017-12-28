@@ -13,13 +13,13 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getEligibility } from 'state/automated-transfer/selectors';
-import { initiateThemeTransfer } from 'state/themes/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { transferStates } from 'state/automated-transfer/constants';
+import Button from 'client/components/button';
+import { getAutomatedTransferStatus } from 'client/state/automated-transfer/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { getEligibility } from 'client/state/automated-transfer/selectors';
+import { initiateThemeTransfer } from 'client/state/themes/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { transferStates } from 'client/state/automated-transfer/constants';
 
 export const WpcomPluginInstallButton = props => {
 	const {

@@ -15,16 +15,16 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTelInput from 'components/forms/form-tel-input';
-import Security2faProgress from 'me/security-2fa-progress';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import analytics from 'lib/analytics';
-import constants from 'me/constants';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import Notice from 'components/notice';
+import FormButton from 'client/components/forms/form-button';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTelInput from 'client/components/forms/form-tel-input';
+import Security2faProgress from 'client/me/security-2fa-progress';
+import twoStepAuthorization from 'client/lib/two-step-authorization';
+import analytics from 'client/lib/analytics';
+import constants from 'client/me/constants';
+import FormButtonsBar from 'client/components/forms/form-buttons-bar';
+import Notice from 'client/components/notice';
 
 class Security2faEnable extends React.Component {
 	static displayName = 'Security2faEnable';

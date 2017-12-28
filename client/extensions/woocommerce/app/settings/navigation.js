@@ -12,11 +12,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import SectionNav from 'components/section-nav';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import NavItem from 'client/components/section-nav/item';
+import NavTabs from 'client/components/section-nav/tabs';
+import SectionNav from 'client/components/section-nav';
 
 export const SettingsNavigation = ( { site, activeSection, translate } ) => {
 	const items = [

@@ -6,13 +6,13 @@
 import { assign, filter, get, isEqual, pickBy, without, omit } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:posts:post-edit-store' );
-import emitter from 'lib/mixins/emitter';
+import emitter from 'client/lib/mixins/emitter';
 
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import { decodeEntities } from 'lib/formatting';
+import Dispatcher from 'client/dispatcher';
+import { decodeEntities } from 'client/lib/formatting';
 import utils from './utils';
 
 /**

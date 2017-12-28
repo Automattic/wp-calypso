@@ -10,14 +10,14 @@ const debug = debugFactory( 'calypso:two-step-authorization' );
 /**
  * Internal Dependencies
  */
-import emitter from 'lib/mixins/emitter';
-import userSettings from 'lib/user-settings';
-import applicationPasswords from 'lib/application-passwords-data';
-import connectedApplications from 'lib/connected-applications-data';
-import analytics from 'lib/analytics';
-import wp from 'lib/wp';
-import { reduxDispatch } from 'lib/redux-bridge';
-import { requestUserProfileLinks } from 'state/profile-links/actions';
+import emitter from 'client/lib/mixins/emitter';
+import userSettings from 'client/lib/user-settings';
+import applicationPasswords from 'client/lib/application-passwords-data';
+import connectedApplications from 'client/lib/connected-applications-data';
+import analytics from 'client/lib/analytics';
+import wp from 'client/lib/wp';
+import { reduxDispatch } from 'client/lib/redux-bridge';
+import { requestUserProfileLinks } from 'client/state/profile-links/actions';
 
 const wpcom = wp.undocumented();
 

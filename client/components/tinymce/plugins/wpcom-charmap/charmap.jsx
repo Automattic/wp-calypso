@@ -20,8 +20,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormButton from 'components/forms/form-button';
+import Dialog from 'client/components/dialog';
+import FormButton from 'client/components/forms/form-button';
 
 class CharMap extends React.Component {
 	static displayName = 'CharMap';

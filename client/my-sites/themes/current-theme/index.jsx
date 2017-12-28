@@ -14,13 +14,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import CurrentThemeButton from './button';
 import { connectOptions } from '../theme-options';
 import { trackClick } from '../helpers';
-import { getActiveTheme, getCanonicalTheme } from 'state/themes/selectors';
-import QueryActiveTheme from 'components/data/query-active-theme';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
+import { getActiveTheme, getCanonicalTheme } from 'client/state/themes/selectors';
+import QueryActiveTheme from 'client/components/data/query-active-theme';
+import QueryCanonicalTheme from 'client/components/data/query-canonical-theme';
 
 /*
  * Show current active theme for a site, with

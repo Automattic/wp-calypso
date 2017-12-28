@@ -7,12 +7,12 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import { untrailingslashit } from 'lib/route';
+import { untrailingslashit } from 'client/lib/route';
 
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
+import PurchaseDetail from 'client/components/purchase-detail';
 
 export default localize( ( { selectedSite, translate } ) => {
 	let adminURL = get( selectedSite, 'options.admin_url', '' );

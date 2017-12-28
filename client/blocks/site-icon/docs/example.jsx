@@ -12,7 +12,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import SiteIcon from '../';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
 
 /**
  * Site ID of en.blog.wordpress.com, to be used as fallback for SiteIcon if

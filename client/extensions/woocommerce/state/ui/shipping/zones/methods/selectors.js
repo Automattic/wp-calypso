@@ -9,16 +9,16 @@ import { find, isEmpty, isNumber, isNil, map, pullAll } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	getAPIShippingZones,
 	areShippingZonesLoaded,
-} from 'woocommerce/state/sites/shipping-zones/selectors';
-import { getShippingZoneMethod } from 'woocommerce/state/sites/shipping-zone-methods/selectors';
+} from 'client/extensions/woocommerce/state/sites/shipping-zones/selectors';
+import { getShippingZoneMethod } from 'client/extensions/woocommerce/state/sites/shipping-zone-methods/selectors';
 import { getShippingZonesEdits, getCurrentlyEditingShippingZone } from '../selectors';
-import { getBucket } from 'woocommerce/state/ui/helpers';
-import { builtInShippingMethods } from 'woocommerce/state/ui/shipping/zones/methods/reducer';
+import { getBucket } from 'client/extensions/woocommerce/state/ui/helpers';
+import { builtInShippingMethods } from 'client/extensions/woocommerce/state/ui/shipping/zones/methods/reducer';
 import { mergeMethodEdits } from './helpers';
 
 const getShippingZone = createSelector(

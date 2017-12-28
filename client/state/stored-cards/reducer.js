@@ -12,8 +12,8 @@ import {
 	STORED_CARDS_DELETE,
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
 import { storedCardsSchema } from './schema';
 
 /**

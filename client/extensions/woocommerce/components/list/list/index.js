@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import Card from 'components/card';
+import Card from 'client/components/card';
 
 const List = ( { children } ) => {
 	return (

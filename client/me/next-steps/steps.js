@@ -11,7 +11,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import paths from 'lib/paths';
+import paths from 'client/lib/paths';
 import config from 'config';
 
 function buildCustomizeButtonURL( site ) {

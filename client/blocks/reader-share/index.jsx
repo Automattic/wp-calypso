@@ -17,13 +17,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ReaderPopoverMenu from 'components/reader-popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import ReaderPopoverMenu from 'client/components/reader-popover/menu';
+import PopoverMenuItem from 'client/components/popover/menu-item';
 import Gridicon from 'gridicons';
-import * as stats from 'reader/stats';
-import { preload } from 'sections-preload';
-import SiteSelector from 'components/site-selector';
-import { getPrimarySiteId } from 'state/selectors';
+import * as stats from 'client/reader/stats';
+import { preload } from 'client/sections-preload';
+import SiteSelector from 'client/components/site-selector';
+import { getPrimarySiteId } from 'client/state/selectors';
 
 function preloadEditor() {
 	preload( 'post-editor' );

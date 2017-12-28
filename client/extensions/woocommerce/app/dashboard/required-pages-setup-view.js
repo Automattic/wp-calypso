@@ -13,10 +13,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import ProgressBar from 'components/progress-bar';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import ProgressBar from 'client/components/progress-bar';
 import SetupHeader from './setup-header';
-import { setUpStorePages } from 'woocommerce/state/sites/setup-choices/actions';
+import { setUpStorePages } from 'client/extensions/woocommerce/state/sites/setup-choices/actions';
 
 class RequiredPagesSetupView extends Component {
 	static propTypes = {

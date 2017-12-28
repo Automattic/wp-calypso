@@ -10,8 +10,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { items, queries } from '../reducer';
-import { FOLLOWERS_RECEIVE, FOLLOWER_REMOVE_SUCCESS } from 'state/action-types';
-import { getSerializedQuery } from 'state/followers/utils';
+import { FOLLOWERS_RECEIVE, FOLLOWER_REMOVE_SUCCESS } from 'client/state/action-types';
+import { getSerializedQuery } from 'client/state/followers/utils';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

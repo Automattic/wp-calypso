@@ -9,16 +9,16 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { ANALYTICS_EVENT_RECORD, EDITOR_PASTE_EVENT } from 'state/action-types';
-import { SOURCE_GOOGLE_DOCS } from 'components/tinymce/plugins/wpcom-track-paste/sources';
+import { ANALYTICS_EVENT_RECORD, EDITOR_PASTE_EVENT } from 'client/state/action-types';
+import { SOURCE_GOOGLE_DOCS } from 'client/components/tinymce/plugins/wpcom-track-paste/sources';
 import config from 'config';
-import { abtest } from 'lib/abtest';
-import { getAll as getAllMedia } from 'lib/media/store';
-import { getSectionName, getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getLastAction } from 'state/ui/action-log/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { canCurrentUser } from 'state/selectors';
-import { hasDefaultSiteTitle, isCurrentPlanPaid } from 'state/sites/selectors';
+import { abtest } from 'client/lib/abtest';
+import { getAll as getAllMedia } from 'client/lib/media/store';
+import { getSectionName, getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { getLastAction } from 'client/state/ui/action-log/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { canCurrentUser } from 'client/state/selectors';
+import { hasDefaultSiteTitle, isCurrentPlanPaid } from 'client/state/sites/selectors';
 
 export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 

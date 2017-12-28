@@ -5,7 +5,7 @@
  */
 
 import debugFactory from 'debug';
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ import {
 	PREVIEW_CUSTOMIZATIONS_UPDATE,
 	PREVIEW_CUSTOMIZATIONS_UNDO,
 	PREVIEW_CUSTOMIZATIONS_SAVED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import * as customizationSaveFunctions from './save-functions';
 
 const debug = debugFactory( 'calypso:preview-actions' );

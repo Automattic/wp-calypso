@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import availableTimes from './available-times/reducer';
 import signupForm from './signup-form/reducer';
 

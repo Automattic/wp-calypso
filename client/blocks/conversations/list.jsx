@@ -10,9 +10,9 @@ import { map, zipObject, fill, size, filter, get, compact, partition, min, noop 
 /***
  * Internal dependencies
  */
-import { getActiveReplyCommentId } from 'state/selectors';
-import PostComment from 'blocks/comments/post-comment';
-import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
+import { getActiveReplyCommentId } from 'client/state/selectors';
+import PostComment from 'client/blocks/comments/post-comment';
+import { POST_COMMENT_DISPLAY_TYPES } from 'client/state/comments/constants';
 import {
 	commentsFetchingStatus,
 	getDateSortedPostComments,
@@ -20,13 +20,13 @@ import {
 	getHiddenCommentsForPost,
 	getPostCommentsTree,
 	getCommentErrors,
-} from 'state/comments/selectors';
-import ConversationCaterpillar from 'blocks/conversation-caterpillar';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import PostCommentFormRoot from 'blocks/comments/form-root';
-import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
-import { getErrorKey } from 'state/comments/utils';
-import { getCurrentUserId } from 'state/current-user/selectors';
+} from 'client/state/comments/selectors';
+import ConversationCaterpillar from 'client/blocks/conversation-caterpillar';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
+import PostCommentFormRoot from 'client/blocks/comments/form-root';
+import { requestPostComments, requestComment, setActiveReply } from 'client/state/comments/actions';
+import { getErrorKey } from 'client/state/comments/utils';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
 
 /**
  * ConversationsCommentList is the component that represents all of the comments for a conversations-stream

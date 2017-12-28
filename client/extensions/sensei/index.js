@@ -10,11 +10,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection } from 'my-sites/controller';
-import Main from 'components/main';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import { makeLayout, render as clientRender } from 'controller';
+import { navigation, siteSelection } from 'client/my-sites/controller';
+import Main from 'client/components/main';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 const render = ( context, next ) => {
 	context.primary = (

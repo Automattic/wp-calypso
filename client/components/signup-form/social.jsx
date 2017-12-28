@@ -6,15 +6,15 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import GoogleLoginButton from 'components/social-buttons/google';
+import GoogleLoginButton from 'client/components/social-buttons/google';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import config from 'config';
-import { preventWidows } from 'lib/formatting';
+import { preventWidows } from 'client/lib/formatting';
 
 class SocialSignupForm extends Component {
 	static propTypes = {

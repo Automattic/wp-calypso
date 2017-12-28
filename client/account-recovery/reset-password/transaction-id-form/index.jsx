@@ -11,11 +11,11 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import support from 'lib/url/support';
-import Card from 'components/card';
-import Button from 'components/button';
-import FormLabel from 'components/forms/form-label';
-import FormInput from 'components/forms/form-text-input';
+import support from 'client/lib/url/support';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
+import FormLabel from 'client/components/forms/form-label';
+import FormInput from 'client/components/forms/form-text-input';
 
 export class TransactionIdFormComponent extends Component {
 	static defaultProps = {

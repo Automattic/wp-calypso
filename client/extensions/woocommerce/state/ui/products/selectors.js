@@ -9,8 +9,8 @@ import { get, find, isEqual, isObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getProduct } from 'woocommerce/state/sites/products/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getProduct } from 'client/extensions/woocommerce/state/sites/products/selectors';
 
 export function getAllProductEdits( state, siteId ) {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'products', siteId, 'edits' ], {} );

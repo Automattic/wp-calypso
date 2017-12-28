@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
+import SegmentedControl from 'client/components/segmented-control';
+import ControlItem from 'client/components/segmented-control/item';
 
 /**
  * Segmented Control Demo

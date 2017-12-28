@@ -14,13 +14,13 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleContent from '../stats-module/content-text';
-import QueryPostStats from 'components/data/query-post-stats';
-import QueryPosts from 'components/data/query-posts';
-import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
-import { getSitePost } from 'state/posts/selectors';
+import QueryPostStats from 'client/components/data/query-post-stats';
+import QueryPosts from 'client/components/data/query-posts';
+import { getPostStats, isRequestingPostStats } from 'client/state/stats/posts/selectors';
+import { getSitePost } from 'client/state/posts/selectors';
 import toggleInfo from '../toggle-info';
 
 const StatsPostDetailWeeks = props => {

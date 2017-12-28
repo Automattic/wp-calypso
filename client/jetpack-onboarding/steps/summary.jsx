@@ -11,9 +11,9 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
+import Button from 'client/components/button';
+import DocumentHead from 'client/components/data/document-head';
+import FormattedHeader from 'client/components/formatted-header';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
 	renderCompleted = () => {

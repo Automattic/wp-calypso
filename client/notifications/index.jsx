@@ -18,18 +18,18 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import page from 'page';
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import 'config';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import config from 'config';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 import NotificationsPanel, { refreshNotes } from 'notifications-panel';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import getCurrentLocaleSlug from 'client/state/selectors/get-current-locale-slug';
 
 /**
  * Returns whether or not the browser session

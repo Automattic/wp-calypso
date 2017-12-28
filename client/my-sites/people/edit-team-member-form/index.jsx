@@ -12,22 +12,22 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
-import PeopleProfile from 'my-sites/people/people-profile';
-import UsersStore from 'lib/users/store';
-import UsersActions from 'lib/users/actions';
-import userModule from 'lib/user';
-import { protectForm } from 'lib/protect-form';
-import DeleteUser from 'my-sites/people/delete-user';
-import PeopleNotices from 'my-sites/people/people-notices';
-import PeopleLog from 'lib/people/log-store';
-import analytics from 'lib/analytics';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PeopleLogStore from 'lib/people/log-store';
-import { isJetpackSiteMultiSite, isJetpackSite } from 'state/sites/selectors';
+import Main from 'client/components/main';
+import HeaderCake from 'client/components/header-cake';
+import Card from 'client/components/card';
+import PeopleProfile from 'client/my-sites/people/people-profile';
+import UsersStore from 'client/lib/users/store';
+import UsersActions from 'client/lib/users/actions';
+import userModule from 'client/lib/user';
+import { protectForm } from 'client/lib/protect-form';
+import DeleteUser from 'client/my-sites/people/delete-user';
+import PeopleNotices from 'client/my-sites/people/people-notices';
+import PeopleLog from 'client/lib/people/log-store';
+import analytics from 'client/lib/analytics';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import PageViewTracker from 'client/lib/analytics/page-view-tracker';
+import PeopleLogStore from 'client/lib/people/log-store';
+import { isJetpackSiteMultiSite, isJetpackSite } from 'client/state/sites/selectors';
 import EditUserForm from './edit-user-form';
 
 /**

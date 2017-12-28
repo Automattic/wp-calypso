@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
 import PayButton from './pay-button';
 import CreditCardSelector from './credit-card-selector';
 import TermsOfService from './terms-of-service';
-import cartValues from 'lib/cart-values';
+import cartValues from 'client/lib/cart-values';
 import {
 	BEFORE_SUBMIT,
 	INPUT_VALIDATION,
@@ -23,13 +23,13 @@ import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
-} from 'lib/store-transactions/step-types';
-import { abtest } from 'lib/abtest';
-import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
+} from 'client/lib/store-transactions/step-types';
+import { abtest } from 'client/lib/abtest';
+import CartCoupon from 'client/my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
-import ProgressBar from 'components/progress-bar';
+import { PLAN_BUSINESS } from 'client/lib/plans/constants';
+import ProgressBar from 'client/components/progress-bar';
 import CartToggle from './cart-toggle';
 
 export class CreditCardPaymentBox extends React.Component {

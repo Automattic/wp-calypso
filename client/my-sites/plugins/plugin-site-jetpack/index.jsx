@@ -11,15 +11,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
-import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
-import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
-import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
-import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
-import Site from 'blocks/site';
+import FoldableCard from 'client/components/foldable-card';
+import PluginsLog from 'client/lib/plugins/log-store';
+import PluginActivateToggle from 'client/my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'client/my-sites/plugins/plugin-autoupdate-toggle';
+import PluginUpdateIndicator from 'client/my-sites/plugins/plugin-site-update-indicator';
+import PluginInstallButton from 'client/my-sites/plugins/plugin-install-button';
+import PluginRemoveButton from 'client/my-sites/plugins/plugin-remove-button';
+import PluginSiteDisabledManage from 'client/my-sites/plugins/plugin-site-disabled-manage';
+import Site from 'client/blocks/site';
 
 class PluginSiteJetpack extends React.Component {
 	static propTypes = {

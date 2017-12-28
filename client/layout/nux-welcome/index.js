@@ -9,7 +9,7 @@ import store from 'store';
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
+import Emitter from 'client/lib/mixins/emitter';
 
 /**
  * This module stores the current and previous

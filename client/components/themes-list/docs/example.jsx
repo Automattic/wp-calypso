@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ThemesList from 'components/themes-list';
+import ThemesList from 'client/components/themes-list';
 
 const demoThemes = [
 	{

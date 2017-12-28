@@ -16,16 +16,16 @@ import page from 'page';
  * Internal dependencies
  */
 import localStorageHelper from 'store';
-import Button from 'components/button';
-import Card from 'components/card';
-import Gauge from 'components/gauge';
-import ProgressBar from 'components/progress-bar';
-import ShareButton from 'components/share-button';
-import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { getSiteChecklist } from 'state/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { onboardingTasks, urlForTask } from 'my-sites/checklist/onboardingChecklist';
-import { recordTracksEvent } from 'state/analytics/actions';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import Gauge from 'client/components/gauge';
+import ProgressBar from 'client/components/progress-bar';
+import ShareButton from 'client/components/share-button';
+import QuerySiteChecklist from 'client/components/data/query-site-checklist';
+import { getSiteChecklist } from 'client/state/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { onboardingTasks, urlForTask } from 'client/my-sites/checklist/onboardingChecklist';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 const storageKey = 'onboarding-checklist-banner-closed';
 

@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { StateSelect, Input } from 'my-sites/domains/components/form';
+import { StateSelect, Input } from 'client/my-sites/domains/components/form';
 
 const UsAddressFieldset = props => {
 	const { getFieldProps, translate, countryCode } = props;

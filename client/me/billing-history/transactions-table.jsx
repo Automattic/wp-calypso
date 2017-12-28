@@ -8,7 +8,7 @@ import { defer, isEmpty, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
-import { capitalPDangit } from 'lib/formatting';
+import { capitalPDangit } from 'client/lib/formatting';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ import { capitalPDangit } from 'lib/formatting';
 import TransactionsHeader from './transactions-header';
 import tableRows from './table-rows';
 
-import SearchCard from 'components/search-card';
+import SearchCard from 'client/components/search-card';
 
 class TransactionsTable extends React.Component {
 	static displayName = 'TransactionsTable';

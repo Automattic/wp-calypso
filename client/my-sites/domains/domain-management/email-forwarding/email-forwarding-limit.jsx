@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { emailForwardingPlanLimit } from 'lib/domains/email-forwarding';
+import { emailForwardingPlanLimit } from 'client/lib/domains/email-forwarding';
 
 class EmailForwardingLimit extends React.Component {
 	render() {

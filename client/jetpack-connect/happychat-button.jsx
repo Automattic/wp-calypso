@@ -14,13 +14,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 
-import analytics from 'lib/analytics';
-import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection-connected';
+import analytics from 'client/lib/analytics';
+import HappychatButton from 'client/components/happychat/button';
+import HappychatConnection from 'client/components/happychat/connection-connected';
 import { isEnabled } from 'config';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import hasActiveHappychatSession from 'client/state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'client/state/happychat/selectors/is-happychat-available';
 
 const getHappyChatButtonClickHandler = ( eventName = 'calypso_jpc_chat_initiated' ) => () =>
 	analytics.tracks.recordEvent( eventName );

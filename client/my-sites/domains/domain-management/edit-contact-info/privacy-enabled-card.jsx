@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import support from 'lib/url/support';
+import Card from 'client/components/card';
+import support from 'client/lib/url/support';
 
 class EditContactInfoPrivacyEnabledCard extends React.Component {
 	render() {

@@ -9,7 +9,7 @@ import { find, matches } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -22,7 +22,7 @@ import {
 	PURCHASES_USER_FETCH_FAILED,
 	PRIVACY_PROTECTION_CANCEL_COMPLETED,
 	PRIVACY_PROTECTION_CANCEL_FAILED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Constants

@@ -11,13 +11,16 @@ import { get, flow } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostRevisionsSelectedRevision, isPostRevisionsDialogVisible } from 'state/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { closePostRevisionsDialog, selectPostRevision } from 'state/posts/revisions/actions';
-import EditorRevisions from 'post-editor/editor-revisions';
-import Dialog from 'components/dialog';
+import {
+	getPostRevisionsSelectedRevision,
+	isPostRevisionsDialogVisible,
+} from 'client/state/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { closePostRevisionsDialog, selectPostRevision } from 'client/state/posts/revisions/actions';
+import EditorRevisions from 'client/post-editor/editor-revisions';
+import Dialog from 'client/components/dialog';
 
 class PostRevisionsDialog extends PureComponent {
 	static propTypes = {

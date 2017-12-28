@@ -12,7 +12,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from 'client/components/button';
 
 class NavigationLink extends Component {
 	static propTypes = {

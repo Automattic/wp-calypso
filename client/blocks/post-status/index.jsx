@@ -14,7 +14,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { getNormalizedPost } from 'state/posts/selectors';
+import { getNormalizedPost } from 'client/state/posts/selectors';
 
 export function PostStatus( { translate, post, showAll, showIcon = true } ) {
 	if ( ! post ) {

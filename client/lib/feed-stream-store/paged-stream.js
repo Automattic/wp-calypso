@@ -12,10 +12,10 @@ const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 /**
  * Internal Dependencies
  */
-import Emitter from 'lib/mixins/emitter';
-import FeedPostStore from 'lib/feed-post-store';
+import Emitter from 'client/lib/mixins/emitter';
+import FeedPostStore from 'client/lib/feed-post-store';
 import { action as ActionTypes } from './constants';
-import { setLastStoreId } from 'reader/controller-helper';
+import { setLastStoreId } from 'client/reader/controller-helper';
 import * as FeedStreamActions from './actions';
 
 export default class PagedStream {

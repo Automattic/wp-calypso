@@ -1,12 +1,9 @@
 /**
  * Internal dependencies
  */
-import request from 'woocommerce/state/sites/request';
+import request from 'client/extensions/woocommerce/state/sites/request';
 import { setError } from '../../status/wc-api/actions';
-import {
-	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
-	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_EMAIL_SETTINGS_REQUEST, WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS } from 'client/extensions/woocommerce/state/action-types';
 import { areEmailSettingsLoaded, areEmailSettingsLoading } from './selectors';
 
 export const fetchEmailSettings = siteId => ( dispatch, getState ) => {

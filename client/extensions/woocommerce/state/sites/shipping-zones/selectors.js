@@ -9,8 +9,8 @@ import { every, get, isArray, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { LOADING } from 'woocommerce/state/constants';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 import {
 	areShippingZoneMethodsLoaded,
 	areShippingZoneMethodsLoading,

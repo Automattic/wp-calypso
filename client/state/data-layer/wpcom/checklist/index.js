@@ -7,10 +7,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { SITE_CHECKLIST_REQUEST, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveSiteChecklist } from 'state/checklist/actions';
+import { SITE_CHECKLIST_REQUEST, SITE_CHECKLIST_TASK_UPDATE } from 'client/state/action-types';
+import { dispatchRequestEx } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { receiveSiteChecklist } from 'client/state/checklist/actions';
 
 export const fetchChecklist = action =>
 	http(

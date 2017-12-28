@@ -13,7 +13,7 @@ import {
 	LAYOUT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_ACTIVATE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setLayoutFocus', () => {

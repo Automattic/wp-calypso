@@ -12,9 +12,9 @@ import { noop, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteGmtOffset, getSiteTimezoneValue } from 'state/selectors';
-import Popover from 'components/popover';
-import PostSchedule from 'components/post-schedule';
+import { getSiteGmtOffset, getSiteTimezoneValue } from 'client/state/selectors';
+import Popover from 'client/components/popover';
+import PostSchedule from 'client/components/post-schedule';
 
 class CalendarPopover extends Component {
 	static propTypes = {

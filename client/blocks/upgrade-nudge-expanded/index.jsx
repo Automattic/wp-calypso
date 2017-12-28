@@ -15,21 +15,21 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import QueryPlans from 'components/data/query-plans';
-import PlanCompareCard from 'my-sites/plan-compare-card';
-import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import formatCurrency from 'lib/format-currency';
-import { preventWidows } from 'lib/formatting';
-import { getFeatureTitle, getPlan } from 'lib/plans';
-import { getPlanBySlug } from 'state/plans/selectors';
-import { PLAN_PERSONAL } from 'lib/plans/constants';
-import { getSitePlan } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import PlanIcon from 'components/plans/plan-icon';
+import Card from 'client/components/card';
+import QueryPlans from 'client/components/data/query-plans';
+import PlanCompareCard from 'client/my-sites/plan-compare-card';
+import PlanCompareCardItem from 'client/my-sites/plan-compare-card/item';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import formatCurrency from 'client/lib/format-currency';
+import { preventWidows } from 'client/lib/formatting';
+import { getFeatureTitle, getPlan } from 'client/lib/plans';
+import { getPlanBySlug } from 'client/state/plans/selectors';
+import { PLAN_PERSONAL } from 'client/lib/plans/constants';
+import { getSitePlan } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import PlanIcon from 'client/components/plans/plan-icon';
 
 class UpgradeNudgeExpanded extends Component {
 	constructor( props ) {

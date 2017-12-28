@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { combineReducers, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'client/state/utils';
 
 /**
  * Internal dependencies

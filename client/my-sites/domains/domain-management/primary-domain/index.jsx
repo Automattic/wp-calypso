@@ -13,19 +13,23 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Main from 'components/main';
-import Card from 'components/card/compact';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Notice from 'components/notice';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import paths from 'my-sites/domains/paths';
-import * as upgradesActions from 'lib/upgrades/actions';
-import { getSelectedDomain } from 'lib/domains';
-import SectionHeader from 'components/section-header';
-import support from 'lib/url/support';
-import { getDomainsBySite } from 'state/sites/domains/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import Main from 'client/components/main';
+import Card from 'client/components/card/compact';
+import Header from 'client/my-sites/domains/domain-management/components/header';
+import Notice from 'client/components/notice';
+import QuerySiteDomains from 'client/components/data/query-site-domains';
+import paths from 'client/my-sites/domains/paths';
+import * as upgradesActions from 'client/lib/upgrades/actions';
+import { getSelectedDomain } from 'client/lib/domains';
+import SectionHeader from 'client/components/section-header';
+import support from 'client/lib/url/support';
+import { getDomainsBySite } from 'client/state/sites/domains/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'client/state/analytics/actions';
 
 class PrimaryDomain extends React.Component {
 	static propTypes = {

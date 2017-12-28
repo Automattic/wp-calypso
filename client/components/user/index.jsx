@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
+import Gravatar from 'client/components/gravatar';
 
 export default class UserItem extends Component {
 	static displayName = 'UserItem';

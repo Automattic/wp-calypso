@@ -13,56 +13,56 @@ import i18n, { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import Main from 'components/main';
-import Card from 'components/card';
-import Notice from 'components/notice';
-import OlarkChatbox from 'components/olark-chatbox';
-import olarkStore from 'lib/olark-store';
-import olarkActions from 'lib/olark-store/actions';
-import olarkEvents from 'lib/olark-events';
-import HelpContactForm from 'me/help/help-contact-form';
-import HelpContactClosed from 'me/help/help-contact-closed';
-import HelpContactConfirmation from 'me/help/help-contact-confirmation';
-import HeaderCake from 'components/header-cake';
-import wpcomLib from 'lib/wp';
-import notices from 'notices';
-import analytics from 'lib/analytics';
-import { isOlarkTimedOut } from 'state/ui/olark/selectors';
-import getHappychatUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import Main from 'client/components/main';
+import Card from 'client/components/card';
+import Notice from 'client/components/notice';
+import OlarkChatbox from 'client/components/olark-chatbox';
+import olarkStore from 'client/lib/olark-store';
+import olarkActions from 'client/lib/olark-store/actions';
+import olarkEvents from 'client/lib/olark-events';
+import HelpContactForm from 'client/me/help/help-contact-form';
+import HelpContactClosed from 'client/me/help/help-contact-closed';
+import HelpContactConfirmation from 'client/me/help/help-contact-confirmation';
+import HeaderCake from 'client/components/header-cake';
+import wpcomLib from 'client/lib/wp';
+import notices from 'client/notices';
+import analytics from 'client/lib/analytics';
+import { isOlarkTimedOut } from 'client/state/ui/olark/selectors';
+import getHappychatUserInfo from 'client/state/happychat/selectors/get-happychat-userinfo';
+import isHappychatAvailable from 'client/state/happychat/selectors/is-happychat-available';
 import {
 	isTicketSupportEligible,
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
-} from 'state/help/ticket/selectors';
-import HappychatConnection from 'components/happychat/connection-connected';
-import QueryOlark from 'components/data/query-olark';
-import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
+} from 'client/state/help/ticket/selectors';
+import HappychatConnection from 'client/components/happychat/connection-connected';
+import QueryOlark from 'client/components/data/query-olark';
+import QueryTicketSupportConfiguration from 'client/components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import {
 	sendMessage as sendHappychatMessage,
 	sendUserInfo,
-} from 'state/happychat/connection/actions';
-import { openChat as openHappychat } from 'state/happychat/ui/actions';
+} from 'client/state/happychat/connection/actions';
+import { openChat as openHappychat } from 'client/state/happychat/ui/actions';
 import {
 	getCurrentUser,
 	getCurrentUserLocale,
 	getCurrentUserSiteCount,
 	isCurrentUserEmailVerified,
-} from 'state/current-user/selectors';
+} from 'client/state/current-user/selectors';
 import {
 	askQuestion as askDirectlyQuestion,
 	initialize as initializeDirectly,
-} from 'state/help/directly/actions';
-import { getSitePlan, isCurrentPlanPaid, isRequestingSites } from 'state/sites/selectors';
+} from 'client/state/help/directly/actions';
+import { getSitePlan, isCurrentPlanPaid, isRequestingSites } from 'client/state/sites/selectors';
 import {
 	hasUserAskedADirectlyQuestion,
 	isDirectlyFailed,
 	isDirectlyReady,
 	isDirectlyUninitialized,
-} from 'state/selectors';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import { getHelpSelectedSiteId } from 'state/help/selectors';
+} from 'client/state/selectors';
+import QueryUserPurchases from 'client/components/data/query-user-purchases';
+import { getHelpSelectedSiteId } from 'client/state/help/selectors';
 
 /**
  * Module variables

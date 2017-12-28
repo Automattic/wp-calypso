@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getUser } from 'state/users/selectors';
+import { getUser } from 'client/state/users/selectors';
 
 /**
  * Returns the current user ID

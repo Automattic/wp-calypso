@@ -12,7 +12,7 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { isValidFeatureKey } from 'lib/plans';
+import { isValidFeatureKey } from 'client/lib/plans';
 
 export default {
 	plans( context, next ) {

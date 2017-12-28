@@ -10,14 +10,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { navigation, sites, siteSelection } from 'my-sites/controller';
+import { navigation, sites, siteSelection } from 'client/my-sites/controller';
 import { renderSetupWizard, renderTab } from './app/controller';
 import { Tabs } from './constants';
 import JobListings from './components/settings/job-listings';
 import JobSubmission from './components/settings/job-submission';
 import Pages from './components/settings/pages';
 import installActionHandlers from './state/data-layer';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 function initExtension() {
 	installActionHandlers();

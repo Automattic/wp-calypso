@@ -9,10 +9,10 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import OrderEvents from './events';
 import CreateOrderNote from './new-note';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'client/components/section-header';
 
 class OrderActivityLog extends Component {
 	static propTypes = {

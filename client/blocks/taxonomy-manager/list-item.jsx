@@ -16,19 +16,19 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Count from 'components/count';
-import Dialog from 'components/dialog';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
-import Tooltip from 'components/tooltip';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
-import { getSite } from 'state/sites/selectors';
-import { decodeEntities } from 'lib/formatting';
-import { deleteTerm } from 'state/terms/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
+import Count from 'client/components/count';
+import Dialog from 'client/components/dialog';
+import EllipsisMenu from 'client/components/ellipsis-menu';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import PopoverMenuSeparator from 'client/components/popover/menu-separator';
+import Tooltip from 'client/components/tooltip';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteSettings } from 'client/state/site-settings/selectors';
+import { getSite } from 'client/state/sites/selectors';
+import { decodeEntities } from 'client/lib/formatting';
+import { deleteTerm } from 'client/state/terms/actions';
+import { saveSiteSettings } from 'client/state/site-settings/actions';
+import { recordGoogleEvent, bumpStat } from 'client/state/analytics/actions';
 
 class TaxonomyManagerListItem extends Component {
 	static propTypes = {

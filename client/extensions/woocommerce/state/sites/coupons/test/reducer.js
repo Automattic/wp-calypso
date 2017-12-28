@@ -13,7 +13,7 @@ import {
 	WOOCOMMERCE_COUPON_DELETED,
 	WOOCOMMERCE_COUPON_UPDATED,
 	WOOCOMMERCE_COUPONS_UPDATED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	const siteId = 123;

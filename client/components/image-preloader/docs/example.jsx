@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ImagePreloader from 'components/image-preloader';
+import ImagePreloader from 'client/components/image-preloader';
 
 const ImagePreloaderExample = () => (
 	<ImagePreloader

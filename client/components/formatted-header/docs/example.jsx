@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import FormattedHeader from 'components/formatted-header';
+import FormattedHeader from 'client/components/formatted-header';
 
 export default class FormattedHeaderExample extends PureComponent {
 	static displayName = 'FormattedHeaderExample';

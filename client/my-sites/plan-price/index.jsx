@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal Dependencies
  **/
-import { getCurrencyObject } from 'lib/format-currency';
+import { getCurrencyObject } from 'client/lib/format-currency';
 
 export default class PlanPrice extends Component {
 	render() {

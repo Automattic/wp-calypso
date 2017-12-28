@@ -5,7 +5,7 @@
  */
 
 import config from 'config';
-import { makeLayout } from 'controller';
+import { makeLayout } from 'client/controller';
 import {
 	fetchThemeData,
 	fetchThemeFilters,

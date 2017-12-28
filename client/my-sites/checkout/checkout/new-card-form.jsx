@@ -12,8 +12,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import CreditCardFormFields from 'components/credit-card-form-fields';
-import upgradesActions from 'lib/upgrades/actions';
+import CreditCardFormFields from 'client/components/credit-card-form-fields';
+import upgradesActions from 'client/lib/upgrades/actions';
 
 class NewCardForm extends Component {
 	static displayName = 'NewCardForm';

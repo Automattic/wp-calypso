@@ -12,8 +12,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import Button from 'client/components/button';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'client/state/analytics/actions';
 
 class CustomNameserversRow extends React.PureComponent {
 	static propTypes = {

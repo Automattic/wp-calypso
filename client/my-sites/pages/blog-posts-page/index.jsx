@@ -15,8 +15,12 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import { getSiteFrontPageType, getSitePostsPage, getSiteFrontPage } from 'state/sites/selectors';
+import Card from 'client/components/card';
+import {
+	getSiteFrontPageType,
+	getSitePostsPage,
+	getSiteFrontPage,
+} from 'client/state/sites/selectors';
 
 class BlogPostsPage extends React.Component {
 	static propTypes = {

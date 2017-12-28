@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { getProfileLinksErrorType } from 'state/selectors';
+import { getProfileLinksErrorType } from 'client/state/selectors';
 
 describe( 'getProfileLinksErrorType()', () => {
 	const profileLinks = [

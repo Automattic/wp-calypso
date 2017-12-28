@@ -9,8 +9,8 @@ import { get, isObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { LOADING } from 'woocommerce/state/constants';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 
 export const getTaxRates = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'meta', 'taxrates' ] );

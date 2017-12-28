@@ -21,14 +21,14 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'state/action-types';
-import { getSectionName } from 'state/ui/selectors';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
-import { getActionLog } from 'state/ui/action-log/selectors';
-import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
-import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
-import GuidedToursConfig from 'layout/guided-tours/config';
-import createSelector from 'lib/create-selector';
+import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'client/state/action-types';
+import { getSectionName } from 'client/state/ui/selectors';
+import getInitialQueryArguments from 'client/state/selectors/get-initial-query-arguments';
+import { getActionLog } from 'client/state/ui/action-log/selectors';
+import { getPreference, preferencesLastFetchedTimestamp } from 'client/state/preferences/selectors';
+import { shouldViewBeVisible } from 'client/state/ui/first-view/selectors';
+import GuidedToursConfig from 'client/layout/guided-tours/config';
+import createSelector from 'client/lib/create-selector';
 import findOngoingTour from './find-ongoing-tour';
 
 const BLACKLISTED_SECTIONS = [

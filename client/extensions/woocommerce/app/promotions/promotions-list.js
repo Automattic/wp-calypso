@@ -13,18 +13,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import EmptyContent from 'client/components/empty-content';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 import {
 	getPromotions,
 	getPromotionsPage,
 	getPromotionsCurrentPage,
 	getPromotionsPerPage,
 	getPromotionsSearch,
-} from 'woocommerce/state/selectors/promotions';
+} from 'client/extensions/woocommerce/state/selectors/promotions';
 import PromotionsListTable from './promotions-list-table';
 import PromotionsListPagination from './promotions-list-pagination';
-import { setPromotionsPage } from 'woocommerce/state/ui/promotions/actions';
+import { setPromotionsPage } from 'client/extensions/woocommerce/state/ui/promotions/actions';
 
 function promotionContainsString( promotion, textString ) {
 	const matchString = textString.trim().toLocaleLowerCase();

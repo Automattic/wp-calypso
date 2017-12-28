@@ -15,7 +15,7 @@ import {
 	DOCUMENT_HEAD_TITLE_SET,
 	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 	ROUTE_SET,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 import { DEFAULT_META_STATE, link, meta, title, unreadCount } from '../reducer';
 

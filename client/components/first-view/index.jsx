@@ -13,12 +13,12 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import RootChild from 'components/root-child';
-import { getSectionName } from 'state/ui/selectors';
-import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
-import { hideView } from 'state/ui/first-view/actions';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
+import RootChild from 'client/components/root-child';
+import { getSectionName } from 'client/state/ui/selectors';
+import { shouldViewBeVisible } from 'client/state/ui/first-view/selectors';
+import { hideView } from 'client/state/ui/first-view/actions';
 import { isEnabled } from 'config';
 
 // component to avoid having a wrapper element for the transition

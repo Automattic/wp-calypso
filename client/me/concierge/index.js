@@ -11,7 +11,7 @@ import page from 'page';
  */
 import config from 'config';
 import controller from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default () => {
 	if ( config.isEnabled( 'concierge-chats' ) ) {

@@ -15,7 +15,7 @@ import {
 	PUBLICIZE_SHARE_ACTION_SCHEDULE,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'updateDataForPost()', () => {

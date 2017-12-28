@@ -9,8 +9,8 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Search from 'components/search';
-import SearchCard from 'components/search-card';
+import Search from 'client/components/search';
+import SearchCard from 'client/components/search-card';
 
 /**
  * Globals

@@ -12,7 +12,7 @@ import { get } from 'lodash';
 /***
  * Internal dependencies
  */
-import TimeSince from 'components/time-since';
+import TimeSince from 'client/components/time-since';
 
 function unescape( str ) {
 	return str.replace( /&#(\d+);/g, ( match, entity ) => String.fromCharCode( entity ) );

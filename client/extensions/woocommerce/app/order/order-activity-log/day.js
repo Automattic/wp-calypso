@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'client/components/foldable-card';
 
 class OrderEventsByDay extends Component {
 	static propTypes = {

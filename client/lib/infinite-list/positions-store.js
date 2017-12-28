@@ -7,12 +7,12 @@
 import { isEqual } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:infinite-list:positions-store' );
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 
 /**
  * Internal Dependencies
  */
-import emitter from 'lib/mixins/emitter';
+import emitter from 'client/lib/mixins/emitter';
 
 /**
  * Module Variables

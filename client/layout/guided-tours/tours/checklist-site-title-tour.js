@@ -20,7 +20,7 @@ import {
 	SiteLink,
 	Step,
 	Tour,
-} from 'layout/guided-tours/config-elements';
+} from 'client/layout/guided-tours/config-elements';
 
 export const ChecklistSiteTitleTour = makeTour(
 	<Tour name="checklistSiteTitle" version="20171205" path="/non-existent-route" when={ noop }>

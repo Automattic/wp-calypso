@@ -13,7 +13,7 @@ import { constant, times } from 'lodash';
  * Internal dependencies
  */
 import { findEligibleTour, getGuidedTourState, hasTourJustBeenVisible } from '../selectors';
-import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
+import { shouldViewBeVisible } from 'client/state/ui/first-view/selectors';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
 jest.mock( 'layout/guided-tours/config', () => {

@@ -12,28 +12,28 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Main from 'components/main';
+import Main from 'client/components/main';
 import {
 	getCurrentPlan,
 	isCurrentPlanExpiring,
 	isRequestingSitePlans,
-} from 'state/sites/plans/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import DocumentHead from 'components/data/document-head';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import PlansNavigation from 'my-sites/domains/navigation';
-import ProductPurchaseFeatures from 'blocks/product-purchase-features';
-import ProductPurchaseFeaturesList from 'blocks/product-purchase-features/product-purchase-features-list';
+} from 'client/state/sites/plans/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import DocumentHead from 'client/components/data/document-head';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import PlansNavigation from 'client/my-sites/domains/navigation';
+import ProductPurchaseFeatures from 'client/blocks/product-purchase-features';
+import ProductPurchaseFeaturesList from 'client/blocks/product-purchase-features/product-purchase-features-list';
 import CurrentPlanHeader from './header';
-import QuerySites from 'components/data/query-sites';
-import QuerySitePlans from 'components/data/query-site-plans';
-import { getPlan } from 'lib/plans';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import QuerySites from 'client/components/data/query-sites';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import { getPlan } from 'client/lib/plans';
+import QuerySiteDomains from 'client/components/data/query-site-domains';
+import { getDecoratedSiteDomains } from 'client/state/sites/domains/selectors';
+import DomainWarnings from 'client/my-sites/domains/components/domain-warnings';
+import isSiteAutomatedTransfer from 'client/state/selectors/is-site-automated-transfer';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
 
 class CurrentPlan extends Component {
 	static propTypes = {

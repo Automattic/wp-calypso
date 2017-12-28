@@ -21,7 +21,7 @@ import {
 	receiveToken,
 	receiveUnauthorized,
 	requestTranscript,
-} from 'state/happychat/connection/actions';
+} from 'client/state/happychat/connection/actions';
 
 const debug = require( 'debug' )( 'calypso:happychat:connection' );
 

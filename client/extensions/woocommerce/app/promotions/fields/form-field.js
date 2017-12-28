@@ -8,11 +8,11 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
 
 const FormField = ( {
 	fieldName,

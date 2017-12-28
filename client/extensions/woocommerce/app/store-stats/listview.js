@@ -13,18 +13,22 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DatePicker from 'my-sites/stats/stats-date-picker';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import DatePicker from 'client/my-sites/stats/stats-date-picker';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 import { getUnitPeriod } from './utils';
-import HeaderCake from 'components/header-cake';
-import JetpackColophon from 'components/jetpack-colophon';
+import HeaderCake from 'client/components/header-cake';
+import JetpackColophon from 'client/components/jetpack-colophon';
 import List from './store-stats-list';
-import Main from 'components/main';
+import Main from 'client/components/main';
 import Module from './store-stats-module';
-import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
-import Intervals from 'blocks/stats-navigation/intervals';
-import { topProducts, topCategories, topCoupons } from 'woocommerce/app/store-stats/constants';
-import QuerySiteStats from 'components/data/query-site-stats';
+import StatsPeriodNavigation from 'client/my-sites/stats/stats-period-navigation';
+import Intervals from 'client/blocks/stats-navigation/intervals';
+import {
+	topProducts,
+	topCategories,
+	topCoupons,
+} from 'client/extensions/woocommerce/app/store-stats/constants';
+import QuerySiteStats from 'client/components/data/query-site-stats';
 
 const listType = {
 	products: topProducts,

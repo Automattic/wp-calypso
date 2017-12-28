@@ -11,7 +11,7 @@ import {
 	SUPPORT_USER_SET_USERNAME,
 	SUPPORT_USER_TOKEN_FETCH,
 	SUPPORT_USER_TOGGLE_DIALOG,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Dispatched when a support user token is being fetched

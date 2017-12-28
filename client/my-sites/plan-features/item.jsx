@@ -10,8 +10,8 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import InfoPopover from 'components/info-popover';
-import viewport from 'lib/viewport';
+import InfoPopover from 'client/components/info-popover';
+import viewport from 'client/lib/viewport';
 
 export default function PlanFeaturesItem( { children, description, hideInfoPopover } ) {
 	return (

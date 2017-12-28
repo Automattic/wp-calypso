@@ -13,11 +13,11 @@ import { noop, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormButton from 'components/forms/form-button';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
+import Dialog from 'client/components/dialog';
+import FormButton from 'client/components/forms/form-button';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
 
 class EditorRestorePostDialog extends Component {
 	static propTypes = {

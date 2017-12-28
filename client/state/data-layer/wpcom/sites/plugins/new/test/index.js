@@ -10,12 +10,12 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { updateUploadProgress, uploadComplete, uploadPlugin, receiveError } from '../';
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 import {
 	completePluginUpload,
 	pluginUploadError,
 	updatePluginUploadProgress,
-} from 'state/plugins/upload/actions';
+} from 'client/state/plugins/upload/actions';
 
 const siteId = 77203074;
 const pluginId = 'hello-dolly';

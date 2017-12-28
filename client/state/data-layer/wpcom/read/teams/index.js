@@ -2,9 +2,9 @@
 /**
  * Internal dependencies
  */
-import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'client/state/action-types';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 export const handleTeamsRequest = ( { dispatch }, action ) => {
 	dispatch(

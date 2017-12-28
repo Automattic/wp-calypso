@@ -10,9 +10,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import Wizard from 'components/wizard/docs/example';
+import HeaderCake from 'client/components/header-cake';
+import Main from 'client/components/main';
+import Wizard from 'client/components/wizard/docs/example';
 
 class WizardComponent extends Component {
 	backToComponents = () => page( '/devdocs/design/' );

@@ -12,14 +12,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import PageParent from 'post-editor/editor-page-parent';
-import PageTemplates from 'post-editor/editor-page-templates';
-import PageOrder from 'post-editor/editor-page-order';
-import Accordion from 'components/accordion';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getPostType } from 'client/state/post-types/selectors';
+import PageParent from 'client/post-editor/editor-page-parent';
+import PageTemplates from 'client/post-editor/editor-page-templates';
+import PageOrder from 'client/post-editor/editor-page-order';
+import Accordion from 'client/components/accordion';
 
 function EditorDrawerPageOptions( { translate, postType, hierarchical } ) {
 	let title;

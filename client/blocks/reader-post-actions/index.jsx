@@ -9,18 +9,18 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import CommentButton from 'blocks/comment-button';
-import LikeButton from 'reader/like-button';
-import ShareButton from 'blocks/reader-share';
-import PostEditButton from 'blocks/post-edit-button';
-import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
-import { shouldShowComments } from 'blocks/comments/helper';
-import { shouldShowLikes } from 'reader/like-helper';
-import { shouldShowShare } from 'blocks/reader-share/helper';
-import { userCan } from 'lib/posts/utils';
-import * as stats from 'reader/stats';
+import CommentButton from 'client/blocks/comment-button';
+import LikeButton from 'client/reader/like-button';
+import ShareButton from 'client/blocks/reader-share';
+import PostEditButton from 'client/blocks/post-edit-button';
+import ReaderPostOptionsMenu from 'client/blocks/reader-post-options-menu';
+import { shouldShowComments } from 'client/blocks/comments/helper';
+import { shouldShowLikes } from 'client/reader/like-helper';
+import { shouldShowShare } from 'client/blocks/reader-share/helper';
+import { userCan } from 'client/lib/posts/utils';
+import * as stats from 'client/reader/stats';
 import { localize } from 'i18n-calypso';
-import ReaderVisitLink from 'blocks/reader-visit-link';
+import ReaderVisitLink from 'client/blocks/reader-visit-link';
 
 const ReaderPostActions = props => {
 	const {

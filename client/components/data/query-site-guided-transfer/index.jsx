@@ -12,8 +12,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { isRequestingGuidedTransferStatus } from 'state/sites/guided-transfer/selectors';
-import { requestGuidedTransferStatus } from 'state/sites/guided-transfer/actions';
+import { isRequestingGuidedTransferStatus } from 'client/state/sites/guided-transfer/selectors';
+import { requestGuidedTransferStatus } from 'client/state/sites/guided-transfer/actions';
 
 class QuerySiteGuidedTransfer extends Component {
 	constructor( props ) {

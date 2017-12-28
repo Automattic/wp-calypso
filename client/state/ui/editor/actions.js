@@ -9,12 +9,12 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import { EDITOR_PASTE_EVENT, EDITOR_START, EDITOR_STOP } from 'state/action-types';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { setMediaModalView } from 'state/ui/media-modal/actions';
-import { withAnalytics, bumpStat, recordTracksEvent } from 'state/analytics/actions';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
+import { EDITOR_PASTE_EVENT, EDITOR_START, EDITOR_STOP } from 'client/state/action-types';
+import { ModalViews } from 'client/state/ui/media-modal/constants';
+import { setMediaModalView } from 'client/state/ui/media-modal/actions';
+import { withAnalytics, bumpStat, recordTracksEvent } from 'client/state/analytics/actions';
+import { savePreference } from 'client/state/preferences/actions';
+import { getPreference } from 'client/state/preferences/selectors';
 
 /**
  * Constants

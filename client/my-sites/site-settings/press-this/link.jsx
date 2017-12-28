@@ -11,7 +11,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import paths from 'lib/paths';
+import paths from 'client/lib/paths';
 
 /**
  * Retrieves selection, title, and URL from current page and pops

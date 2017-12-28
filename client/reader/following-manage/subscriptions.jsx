@@ -14,21 +14,26 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import ReaderImportButton from 'blocks/reader-import-button';
-import ReaderExportButton from 'blocks/reader-export-button';
-import InfiniteStream from 'components/reader-infinite-stream';
-import { siteRowRenderer } from 'components/reader-infinite-stream/row-renderers';
-import SyncReaderFollows from 'components/data/sync-reader-follows';
+import ReaderImportButton from 'client/blocks/reader-import-button';
+import ReaderExportButton from 'client/blocks/reader-export-button';
+import InfiniteStream from 'client/components/reader-infinite-stream';
+import { siteRowRenderer } from 'client/components/reader-infinite-stream/row-renderers';
+import SyncReaderFollows from 'client/components/data/sync-reader-follows';
 import FollowingManageSearchFollowed from './search-followed';
 import FollowingManageSortControls from './sort-controls';
-import { getReaderFollows, getReaderFollowsCount } from 'state/selectors';
-import UrlSearch from 'lib/url-search';
-import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from 'reader/get-helpers';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import { formatUrlForDisplay, getFeedTitle } from 'reader/lib/feed-display-helper';
-import { addQueryArgs } from 'lib/url';
-import { READER_SUBSCRIPTIONS } from 'reader/follow-sources';
+import { getReaderFollows, getReaderFollowsCount } from 'client/state/selectors';
+import UrlSearch from 'client/lib/url-search';
+import {
+	getSiteName,
+	getSiteUrl,
+	getSiteDescription,
+	getSiteAuthorName,
+} from 'client/reader/get-helpers';
+import EllipsisMenu from 'client/components/ellipsis-menu';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import { formatUrlForDisplay, getFeedTitle } from 'client/reader/lib/feed-display-helper';
+import { addQueryArgs } from 'client/lib/url';
+import { READER_SUBSCRIPTIONS } from 'client/reader/follow-sources';
 
 class FollowingManageSubscriptions extends Component {
 	static propTypes = {

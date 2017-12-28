@@ -12,8 +12,8 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Popover from 'components/popover';
+import Button from 'client/components/button';
+import Popover from 'client/components/popover';
 
 class ContactFormDialogFieldRemoveButton extends React.PureComponent {
 	static displayName = 'ContactFormDialogFieldRemoveButton';

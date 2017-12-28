@@ -19,7 +19,7 @@ import {
 	WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
 } from '../../action-types';
 import { items, requesting, toggling } from '../reducer';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { SERIALIZE, DESERIALIZE } from 'client/state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {

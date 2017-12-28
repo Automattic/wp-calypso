@@ -2,9 +2,9 @@
 /**
  * Internal dependencies
  */
-import ActivityQueryManager from 'lib/query-manager/activity';
-import { ACTIVITY_LOG_UPDATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { isValidStateWithSchema, keyedReducer } from 'state/utils';
+import ActivityQueryManager from 'client/lib/query-manager/activity';
+import { ACTIVITY_LOG_UPDATE, DESERIALIZE, SERIALIZE } from 'client/state/action-types';
+import { isValidStateWithSchema, keyedReducer } from 'client/state/utils';
 import { logItemsSchema } from './schema';
 
 export const logItem = ( state = undefined, { type, data, found, query } ) => {

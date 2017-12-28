@@ -14,22 +14,25 @@ import { compact, find, includes, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import { areAllSitesSingleUser } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'state/sites/selectors';
-import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';
-import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
-import { toggleMultiSelect } from 'state/ui/post-type-list/actions';
-import { mapPostStatus } from 'lib/route/path';
+import { areAllSitesSingleUser } from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'client/state/sites/selectors';
+import {
+	getNormalizedMyPostCounts,
+	getNormalizedPostCounts,
+} from 'client/state/posts/counts/selectors';
+import { isMultiSelectEnabled } from 'client/state/ui/post-type-list/selectors';
+import { toggleMultiSelect } from 'client/state/ui/post-type-list/actions';
+import { mapPostStatus } from 'client/lib/route/path';
 import { isEnabled } from 'config';
-import UrlSearch from 'lib/mixins/url-search';
-import QueryPostCounts from 'components/data/query-post-counts';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Search from 'components/search';
+import UrlSearch from 'client/lib/mixins/url-search';
+import QueryPostCounts from 'client/components/data/query-post-counts';
+import SectionNav from 'client/components/section-nav';
+import NavTabs from 'client/components/section-nav/tabs';
+import NavItem from 'client/components/section-nav/item';
+import Search from 'client/components/search';
 import AuthorSegmented from './author-segmented';
-import Button from 'components/button';
+import Button from 'client/components/button';
 import Gridicon from 'gridicons';
 
 const PostTypeFilter = createReactClass( {

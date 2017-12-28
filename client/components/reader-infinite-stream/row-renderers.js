@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import ConnectedSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
+import ConnectedSubscriptionListItem from 'client/blocks/reader-subscription-list-item/connected';
 
 export const siteRowRenderer = ( {
 	items,

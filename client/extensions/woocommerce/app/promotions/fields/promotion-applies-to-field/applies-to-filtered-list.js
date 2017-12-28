@@ -4,19 +4,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import warn from 'lib/warn';
+import warn from 'client/lib/warn';
 
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
-import { areProductsLoading, getAllProducts } from 'woocommerce/state/sites/products/selectors';
-import { getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Search from 'components/search';
+import formatCurrency from 'client/lib/format-currency';
+import FormLabel from 'client/components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import { areProductsLoading, getAllProducts } from 'client/extensions/woocommerce/state/sites/products/selectors';
+import { getProductCategories } from 'client/extensions/woocommerce/state/sites/product-categories/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import Search from 'client/components/search';
 
 function categoryContainsString( category, textString ) {
 	const matchString = textString.trim().toLocaleLowerCase();

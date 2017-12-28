@@ -11,9 +11,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import supportUrls from 'lib/url/support';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import supportUrls from 'client/lib/url/support';
 
 const GuidedTransferInProgress = ( { translate } ) => (
 	<Card className="guided-transfer-card__in-progress">

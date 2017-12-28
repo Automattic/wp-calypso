@@ -13,7 +13,7 @@ const htmlToReactParser = new Parser();
 /**
  * Internal Dependencies
  */
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'client/components/foldable-card';
 
 class ReadmeViewer extends Component {
 	static propTypes = {

@@ -14,11 +14,11 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import StatUpdateIndicator from 'components/stat-update-indicator';
-import QueryPostStats from 'components/data/query-post-stats';
-import QuerySites from 'components/data/query-sites';
-import { getPostStat } from 'state/stats/posts/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import StatUpdateIndicator from 'client/components/stat-update-indicator';
+import QueryPostStats from 'client/components/data/query-post-stats';
+import QuerySites from 'client/components/data/query-sites';
+import { getPostStat } from 'client/state/stats/posts/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 
 function PostTotalViews( { clickHandler, numberFormat, post, slug, translate, viewCount } ) {
 	const { ID: postId, site_ID: siteId } = post;

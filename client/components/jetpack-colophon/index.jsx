@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import JetpackLogo from 'components/jetpack-logo';
+import JetpackLogo from 'client/components/jetpack-logo';
 
 const JetpackColophon = ( { className, translate } ) => {
 	return (

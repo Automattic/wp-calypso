@@ -11,12 +11,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormSelect from 'components/forms/form-select';
+import FormSelect from 'client/components/forms/form-select';
 import {
 	getPostTypeFieldOptions,
 	getPostTypeFieldValue,
-} from 'state/site-settings/exporter/selectors';
-import { setPostTypeFieldValue } from 'state/site-settings/exporter/actions';
+} from 'client/state/site-settings/exporter/selectors';
+import { setPostTypeFieldValue } from 'client/state/site-settings/exporter/actions';
 import { localize } from 'i18n-calypso';
 
 class Select extends Component {

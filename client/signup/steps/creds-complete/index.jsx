@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import Card from 'components/card';
+import StepWrapper from 'client/signup/step-wrapper';
+import Card from 'client/components/card';
 
 class CredsCompleteStep extends Component {
 	static propTypes = {

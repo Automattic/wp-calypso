@@ -13,16 +13,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { decodeEntities } from 'lib/formatting';
-import QueryTaxonomies from 'components/data/query-taxonomies';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';
-import { isJetpackMinimumVersion } from 'state/sites/selectors';
-import Accordion from 'components/accordion';
-import TermTokenField from 'post-editor/term-token-field';
-import TermSelector from 'post-editor/editor-term-selector';
+import { decodeEntities } from 'client/lib/formatting';
+import QueryTaxonomies from 'client/components/data/query-taxonomies';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { getPostTypeTaxonomies } from 'client/state/post-types/taxonomies/selectors';
+import { isJetpackMinimumVersion } from 'client/state/sites/selectors';
+import Accordion from 'client/components/accordion';
+import TermTokenField from 'client/post-editor/term-token-field';
+import TermSelector from 'client/post-editor/editor-term-selector';
 
 function isSkippedTaxonomy( postType, taxonomy ) {
 	if ( includes( [ 'post_format', 'mentions', 'xposts' ], taxonomy ) ) {

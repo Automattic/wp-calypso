@@ -12,12 +12,12 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import { bumpStat, recordTracksEvent } from 'client/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
-import { getPost } from 'state/posts/selectors';
-import { savePost } from 'state/posts/actions';
-import { canCurrentUser } from 'state/selectors';
+import { getPost } from 'client/state/posts/selectors';
+import { savePost } from 'client/state/posts/actions';
+import { canCurrentUser } from 'client/state/selectors';
 
 class PostActionsEllipsisMenuPublish extends Component {
 	static propTypes = {

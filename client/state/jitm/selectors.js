@@ -4,7 +4,7 @@
 import { get } from 'lodash';
 
 /** Internal dependencies */
-import { getSectionName, getSelectedSiteId } from 'state/ui/selectors';
+import { getSectionName, getSelectedSiteId } from 'client/state/ui/selectors';
 
 /**
  * Get the list of available jitms for the current site/section

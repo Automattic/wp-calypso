@@ -11,7 +11,7 @@ import React from 'react';
  */
 import ExpandableSidebarAddForm from './expandable-add-form';
 import ExpandableSidebarHeading from './expandable-heading';
-import SidebarMenu from 'layout/sidebar/menu';
+import SidebarMenu from 'client/layout/sidebar/menu';
 
 export const ExpandableSidebarMenu = props => {
 	const {

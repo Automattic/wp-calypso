@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 
 const ProductListItemPlaceholder = ( { translate } ) => (
 	<CompactCard className="editor-simple-payments-modal__list-item is-placeholder">

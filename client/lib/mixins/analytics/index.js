@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import analytics from 'lib/analytics';
-import { type as domainTypes } from 'lib/domains/constants';
+import analytics from 'client/lib/analytics';
+import { type as domainTypes } from 'client/lib/domains/constants';
 import { snakeCase } from 'lodash';
 
 const getDomainTypeText = function( domain ) {

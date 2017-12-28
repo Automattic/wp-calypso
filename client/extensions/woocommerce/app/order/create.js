@@ -12,23 +12,23 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
-import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
-import { saveOrder } from 'woocommerce/state/sites/orders/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import ActionHeader from 'client/extensions/woocommerce/components/action-header';
+import Button from 'client/components/button';
+import { clearOrderEdits, editOrder } from 'client/extensions/woocommerce/state/ui/orders/actions';
+import { saveOrder } from 'client/extensions/woocommerce/state/sites/orders/actions';
+import { errorNotice, successNotice } from 'client/state/notices/actions';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
 import {
 	getCurrentlyEditingOrderId,
 	getOrderEdits,
 	getOrderWithEdits,
-} from 'woocommerce/state/ui/orders/selectors';
-import { isOrderUpdating } from 'woocommerce/state/sites/orders/selectors';
-import Main from 'components/main';
+} from 'client/extensions/woocommerce/state/ui/orders/selectors';
+import { isOrderUpdating } from 'client/extensions/woocommerce/state/sites/orders/selectors';
+import Main from 'client/components/main';
 import OrderCustomerCreate from './order-customer/create';
 import OrderDetails from './order-details';
-import { ProtectFormGuard } from 'lib/protect-form';
+import { ProtectFormGuard } from 'client/lib/protect-form';
 
 class Order extends Component {
 	componentDidMount() {

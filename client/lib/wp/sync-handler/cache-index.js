@@ -11,7 +11,7 @@ import { difference, filter, matchesProperty, negate } from 'lodash';
 /**
  * Internal dependencies
  */
-import localforage from 'lib/localforage';
+import localforage from 'client/lib/localforage';
 import { generatePageSeriesKey } from './utils';
 import { RECORDS_LIST_KEY, SYNC_RECORD_NAMESPACE, LIFETIME } from './constants';
 

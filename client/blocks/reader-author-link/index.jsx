@@ -10,9 +10,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
-import * as stats from 'reader/stats';
-import Emojify from 'components/emojify';
+import { isAuthorNameBlacklisted } from 'client/reader/lib/author-name-blacklist';
+import * as stats from 'client/reader/stats';
+import Emojify from 'client/components/emojify';
 
 const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick } ) => {
 	const recordAuthorClick = ( {} ) => {

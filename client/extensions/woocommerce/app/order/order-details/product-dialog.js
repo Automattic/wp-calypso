@@ -12,15 +12,15 @@ import { find, uniqBy, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Dialog from 'components/dialog';
-import { editOrder } from 'woocommerce/state/ui/orders/actions';
-import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
-import { getAllProductsWithVariations } from 'woocommerce/state/sites/products/selectors';
-import { getOrderItemCost } from 'woocommerce/lib/order-values/totals';
-import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import ProductSearch from 'woocommerce/components/product-search';
+import Button from 'client/components/button';
+import Dialog from 'client/components/dialog';
+import { editOrder } from 'client/extensions/woocommerce/state/ui/orders/actions';
+import formattedVariationName from 'client/extensions/woocommerce/lib/formatted-variation-name';
+import { getAllProductsWithVariations } from 'client/extensions/woocommerce/state/sites/products/selectors';
+import { getOrderItemCost } from 'client/extensions/woocommerce/lib/order-values/totals';
+import { getOrderWithEdits } from 'client/extensions/woocommerce/state/ui/orders/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import ProductSearch from 'client/extensions/woocommerce/components/product-search';
 
 function getExistingLineItem( item, order ) {
 	const lineItems = order.line_items || [];

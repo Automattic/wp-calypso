@@ -21,7 +21,7 @@ import {
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../../action-types';
 import reducer from '../reducer';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { SERIALIZE, DESERIALIZE } from 'client/state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {

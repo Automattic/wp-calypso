@@ -4,9 +4,9 @@
  * Internal dependencies
  */
 
-import { createReducer } from 'state/utils';
-import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/action-types';
-import { keyToString } from 'lib/feed-stream-store/post-key';
+import { createReducer } from 'client/state/utils';
+import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'client/state/action-types';
+import { keyToString } from 'client/lib/feed-stream-store/post-key';
 
 export default createReducer(
 	{},

@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { CURRENT_USER_ID_SET, CURRENT_USER_FLAGS_RECEIVE } from 'state/action-types';
+import { CURRENT_USER_ID_SET, CURRENT_USER_FLAGS_RECEIVE } from 'client/state/action-types';
 
 /**
  * Returns an action object to be used in signalling that the current user ID

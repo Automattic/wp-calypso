@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingPostFormats } from 'state/post-formats/selectors';
-import { requestPostFormats } from 'state/post-formats/actions';
+import { isRequestingPostFormats } from 'client/state/post-formats/selectors';
+import { requestPostFormats } from 'client/state/post-formats/actions';
 
 class QueryPostFormats extends Component {
 	static propTypes = {

@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import ManageContact from './manage-contact';
 import EditPhone from './edit-phone';
-import accept from 'lib/accept';
+import accept from 'client/lib/accept';
 
 class RecoveryPhone extends Component {
 	render() {

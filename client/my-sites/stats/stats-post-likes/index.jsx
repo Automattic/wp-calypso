@@ -14,14 +14,14 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Count from 'components/count';
+import Card from 'client/components/card';
+import Count from 'client/components/count';
 import StatsModuleContent from '../stats-module/content-text';
-import QueryPostLikes from 'components/data/query-post-likes';
+import QueryPostLikes from 'client/components/data/query-post-likes';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import toggleInfo from '../toggle-info';
-import { isRequestingPostLikes, countPostLikes } from 'state/selectors';
-import PostLikes from 'blocks/post-likes';
+import { isRequestingPostLikes, countPostLikes } from 'client/state/selectors';
+import PostLikes from 'client/blocks/post-likes';
 
 export const StatsPostLikes = props => {
 	const { countLikes, isRequesting, opened, postId, postType, siteId, toggle, translate } = props;

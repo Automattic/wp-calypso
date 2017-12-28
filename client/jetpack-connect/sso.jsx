@@ -12,33 +12,33 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import addQueryArgs from 'lib/route/add-query-args';
-import analytics from 'lib/analytics';
-import Button from 'components/button';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import addQueryArgs from 'client/lib/route/add-query-args';
+import analytics from 'client/lib/analytics';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import CompactCard from 'client/components/card/compact';
 import config from 'config';
-import Dialog from 'components/dialog';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import EmptyContent from 'components/empty-content';
-import FormattedHeader from 'components/formatted-header';
-import Gravatar from 'components/gravatar';
+import Dialog from 'client/components/dialog';
+import EmailVerificationGate from 'client/components/email-verification/email-verification-gate';
+import EmptyContent from 'client/components/empty-content';
+import FormattedHeader from 'client/components/formatted-header';
+import Gravatar from 'client/components/gravatar';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import Main from 'components/main';
+import LoggedOutFormFooter from 'client/components/logged-out-form/footer';
+import LoggedOutFormLinkItem from 'client/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'client/components/logged-out-form/links';
+import Main from 'client/components/main';
 import MainWrapper from './main-wrapper';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import Site from 'blocks/site';
-import SitePlaceholder from 'blocks/site/placeholder';
-import { decodeEntities } from 'lib/formatting';
-import { getSSO } from 'state/jetpack-connect/selectors';
-import { login } from 'lib/paths';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import Site from 'client/blocks/site';
+import SitePlaceholder from 'client/blocks/site/placeholder';
+import { decodeEntities } from 'client/lib/formatting';
+import { getSSO } from 'client/state/jetpack-connect/selectors';
+import { login } from 'client/lib/paths';
 import { persistSsoApproved } from './persistence-utils';
-import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
+import { validateSSONonce, authorizeSSO } from 'client/state/jetpack-connect/actions';
 
 /*
  * Module variables

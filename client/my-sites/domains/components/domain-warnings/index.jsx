@@ -15,16 +15,16 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
 import PendingGappsTosNotice from './pending-gapps-tos-notice';
-import purchasesPaths from 'me/purchases/paths';
-import { type as domainTypes, transferStatus } from 'lib/domains/constants';
-import { isSubdomain, hasPendingGoogleAppsUsers } from 'lib/domains';
-import support from 'lib/url/support';
-import paths from 'my-sites/domains/paths';
-import TrackComponentView from 'lib/analytics/track-component-view';
+import purchasesPaths from 'client/me/purchases/paths';
+import { type as domainTypes, transferStatus } from 'client/lib/domains/constants';
+import { isSubdomain, hasPendingGoogleAppsUsers } from 'client/lib/domains';
+import support from 'client/lib/url/support';
+import paths from 'client/my-sites/domains/paths';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
 
 const debug = _debug( 'calypso:domain-warnings' );
 

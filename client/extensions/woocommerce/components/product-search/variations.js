@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormSelect from 'components/forms/form-select';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormLegend from 'client/components/forms/form-legend';
+import FormSelect from 'client/components/forms/form-select';
 
 // Use a constant for the default attribute state.
 const DEFAULT_ATTR = 'any';

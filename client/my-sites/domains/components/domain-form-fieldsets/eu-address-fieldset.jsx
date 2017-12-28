@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Input } from 'my-sites/domains/components/form';
+import { Input } from 'client/my-sites/domains/components/form';
 
 const EuAddressFieldset = props => {
 	const { getFieldProps, translate } = props;

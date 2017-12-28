@@ -15,24 +15,24 @@ import { localize } from 'i18n-calypso';
 import {
 	arePaymentMethodsLoaded,
 	getPaymentMethod,
-} from 'woocommerce/state/sites/payment-methods/selectors';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
-import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
-import formatCurrency from 'lib/format-currency';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
+} from 'client/extensions/woocommerce/state/sites/payment-methods/selectors';
+import Button from 'client/components/button';
+import Dialog from 'client/components/dialog';
+import { fetchPaymentMethods } from 'client/extensions/woocommerce/state/sites/payment-methods/actions';
+import formatCurrency from 'client/lib/format-currency';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextarea from 'client/components/forms/form-textarea';
+import { getCurrencyFormatDecimal } from 'client/extensions/woocommerce/lib/currency';
 import {
 	getOrderFeeTax,
 	getOrderLineItemTax,
 	getOrderShippingTax,
-} from 'woocommerce/lib/order-values';
-import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Notice from 'components/notice';
+} from 'client/extensions/woocommerce/lib/order-values';
+import { getOrderRefundTotal } from 'client/extensions/woocommerce/lib/order-values/totals';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import Notice from 'client/components/notice';
 import OrderRefundTable from './table';
-import { sendRefund } from 'woocommerce/state/sites/orders/refunds/actions';
+import { sendRefund } from 'client/extensions/woocommerce/state/sites/orders/refunds/actions';
 
 class RefundDialog extends Component {
 	static propTypes = {

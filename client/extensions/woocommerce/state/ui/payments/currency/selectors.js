@@ -9,11 +9,11 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	getPaymentCurrencySettings,
 	areSettingsGeneralLoaded,
-} from 'woocommerce/state/sites/settings/general/selectors';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
 
 const getCurrencyEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'payments', siteId, 'currency' ] );

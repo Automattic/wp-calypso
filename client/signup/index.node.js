@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { getLanguage } from 'lib/i18n-utils';
+import { getLanguage } from 'client/lib/i18n-utils';
 
 export default function( router ) {
 	router( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpLocale );

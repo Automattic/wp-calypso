@@ -11,22 +11,22 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
 import { DEFAULT_QUERY } from './utils';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice, successNotice } from 'client/state/notices/actions';
+import { fetchReviews } from 'client/extensions/woocommerce/state/sites/reviews/actions';
 import {
 	getReviewsCurrentPage,
 	getReviewsCurrentSearch,
-} from 'woocommerce/state/ui/reviews/selectors';
-import request from 'woocommerce/state/sites/http-request';
+} from 'client/extensions/woocommerce/state/ui/reviews/selectors';
+import request from 'client/extensions/woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_REVIEWS_RECEIVE,
 	WOOCOMMERCE_REVIEWS_REQUEST,
 	WOOCOMMERCE_REVIEW_DELETE,
 	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_REVIEWS_REQUEST ]: [

@@ -12,7 +12,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Accordion from 'components/accordion';
+import Accordion from 'client/components/accordion';
 import Gridicon from 'gridicons';
 
 export default class extends React.PureComponent {
@@ -67,9 +67,9 @@ export default class extends React.PureComponent {
 					<Accordion
 						title="Section Four"
 						subtitle={
-							this.state.showSubtitles ? (
-								'With a Very Long Subtitle to Demonstrate the Fade Effect'
-							) : null
+							this.state.showSubtitles
+								? 'With a Very Long Subtitle to Demonstrate the Fade Effect'
+								: null
 						}
 					>
 						Drumstick ham tongue flank doner pork chop picanha. Cow short ribs tail kevin capicola

@@ -7,13 +7,13 @@ import { map, truncate } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_FEED_SEARCH_REQUEST } from 'state/action-types';
-import { receiveFeedSearch } from 'state/reader/feed-searches/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
+import { READER_FEED_SEARCH_REQUEST } from 'client/state/action-types';
+import { receiveFeedSearch } from 'client/state/reader/feed-searches/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'client/state/notices/actions';
 import { translate } from 'i18n-calypso';
-import queryKey from 'state/reader/feed-searches/query-key';
+import queryKey from 'client/state/reader/feed-searches/query-key';
 
 export function initiateFeedSearch( store, action ) {
 	if ( ! ( action.payload && action.payload.query ) ) {

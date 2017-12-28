@@ -13,12 +13,12 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import touchDetect from 'lib/touch-detect';
-import { isMobile } from 'lib/viewport';
+import touchDetect from 'client/lib/touch-detect';
+import { isMobile } from 'client/lib/viewport';
 import { localize } from 'i18n-calypso';
-import RootChild from 'components/root-child';
-import { setPreviewShowing } from 'state/ui/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import RootChild from 'client/components/root-child';
+import { setPreviewShowing } from 'client/state/ui/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 import WebPreviewContent from './content';
 
 export class WebPreview extends PureComponent {

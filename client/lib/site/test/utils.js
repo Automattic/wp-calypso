@@ -8,7 +8,7 @@ import chai from 'chai';
 /**
  * Internal dependencies
  */
-import SiteUtils from 'lib/site/utils';
+import SiteUtils from 'client/lib/site/utils';
 
 const assert = chai.assert;
 

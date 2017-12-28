@@ -13,21 +13,21 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import AddressView from 'woocommerce/components/address-view';
-import Button from 'components/button';
-import Card from 'components/card';
-import Dialog from 'components/dialog';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { getCountryData } from 'woocommerce/lib/countries';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import AddressView from 'client/extensions/woocommerce/components/address-view';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import Dialog from 'client/components/dialog';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
+import { getCountryData } from 'client/extensions/woocommerce/lib/countries';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 import {
 	getStoreLocation,
 	areSettingsGeneralLoading,
 	areSettingsGeneralLoadError,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import { setAddress } from 'woocommerce/state/sites/settings/actions';
-import FormLabel from 'components/forms/form-label';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import { setAddress } from 'client/extensions/woocommerce/state/sites/settings/actions';
+import FormLabel from 'client/components/forms/form-label';
+import QuerySettingsGeneral from 'client/extensions/woocommerce/components/query-settings-general';
 
 class StoreAddress extends Component {
 	static defaultProps = {

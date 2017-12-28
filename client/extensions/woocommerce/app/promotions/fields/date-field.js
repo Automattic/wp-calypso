@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DatePicker from 'components/date-picker';
+import DatePicker from 'client/components/date-picker';
 import FormField from './form-field';
 
 const DateField = ( props ) => {

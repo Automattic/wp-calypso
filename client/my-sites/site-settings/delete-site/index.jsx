@@ -15,23 +15,26 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import ActionPanel from 'my-sites/site-settings/action-panel';
-import ActionPanelTitle from 'my-sites/site-settings/action-panel/title';
-import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
-import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
-import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
-import Button from 'components/button';
-import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
-import Dialog from 'components/dialog';
-import { getSitePurchases, hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSite, getSiteDomain } from 'state/sites/selectors';
-import Notice from 'components/notice';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { deleteSite } from 'state/sites/actions';
-import { setSelectedSiteId } from 'state/ui/actions';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import HeaderCake from 'client/components/header-cake';
+import ActionPanel from 'client/my-sites/site-settings/action-panel';
+import ActionPanelTitle from 'client/my-sites/site-settings/action-panel/title';
+import ActionPanelBody from 'client/my-sites/site-settings/action-panel/body';
+import ActionPanelFigure from 'client/my-sites/site-settings/action-panel/figure';
+import ActionPanelFooter from 'client/my-sites/site-settings/action-panel/footer';
+import Button from 'client/components/button';
+import DeleteSiteWarningDialog from 'client/my-sites/site-settings/delete-site-warning-dialog';
+import Dialog from 'client/components/dialog';
+import {
+	getSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+} from 'client/state/purchases/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { getSite, getSiteDomain } from 'client/state/sites/selectors';
+import Notice from 'client/components/notice';
+import QuerySitePurchases from 'client/components/data/query-site-purchases';
+import { deleteSite } from 'client/state/sites/actions';
+import { setSelectedSiteId } from 'client/state/ui/actions';
+import { isSiteAutomatedTransfer } from 'client/state/selectors';
 
 class DeleteSite extends Component {
 	static propTypes = {

@@ -11,11 +11,11 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import StoredCard from './stored-card';
 import NewCardForm from './new-card-form';
-import storeTransactions from 'lib/store-transactions';
-import upgradesActions from 'lib/upgrades/actions';
+import storeTransactions from 'client/lib/store-transactions';
+import upgradesActions from 'client/lib/upgrades/actions';
 
 class CreditCardSelector extends React.Component {
 	constructor( props ) {

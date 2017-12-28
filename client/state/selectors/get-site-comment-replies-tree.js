@@ -7,8 +7,8 @@ import { filter, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSiteCommentsTree } from 'state/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getSiteCommentsTree } from 'client/state/selectors';
 
 export const getSiteCommentRepliesTree = createSelector(
 	( state, siteId, status, commentParentId ) =>

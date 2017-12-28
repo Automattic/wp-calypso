@@ -17,7 +17,7 @@ import {
 	POST_TYPE_LIST_SHARE_PANEL_HIDE,
 	POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
 	ROUTE_SET,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 const initialState = {
 	activeSharePanels: [],

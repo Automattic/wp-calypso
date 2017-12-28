@@ -12,13 +12,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
-import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import { bumpStat as bumpAnalyticsStat } from 'client/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
-import { canCurrentUser } from 'state/selectors';
-import { getPost } from 'state/posts/selectors';
-import { restorePost } from 'state/posts/actions';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { canCurrentUser } from 'client/state/selectors';
+import { getPost } from 'client/state/posts/selectors';
+import { restorePost } from 'client/state/posts/actions';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
 
 class PostActionsEllipsisMenuRestore extends Component {
 	static propTypes = {

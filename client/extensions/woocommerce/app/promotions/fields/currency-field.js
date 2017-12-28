@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import PriceInput from 'woocommerce/components/price-input';
+import PriceInput from 'client/extensions/woocommerce/components/price-input';
 import FormField from './form-field';
 
 const CurrencyField = ( props ) => {

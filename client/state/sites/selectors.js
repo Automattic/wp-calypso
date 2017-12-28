@@ -25,17 +25,17 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
+import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'client/lib/url';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
-import versionCompare from 'lib/version-compare';
-import { getCustomizerFocus } from 'my-sites/customize/panels';
+import createSelector from 'client/lib/create-selector';
+import { fromApi as seoTitleFromApi } from 'client/components/seo/meta-title-editor/mappings';
+import versionCompare from 'client/lib/version-compare';
+import { getCustomizerFocus } from 'client/my-sites/customize/panels';
 import { getSiteComputedAttributes } from './utils';
-import { isSiteUpgradeable, getSiteOptions, getSitesItems } from 'state/selectors';
+import { isSiteUpgradeable, getSiteOptions, getSitesItems } from 'client/state/selectors';
 
 /**
  * Returns a raw site object by its ID.

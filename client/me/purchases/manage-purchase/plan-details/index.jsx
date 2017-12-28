@@ -11,19 +11,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import QueryPluginKeys from 'components/data/query-plugin-keys';
-import SectionHeader from 'components/section-header';
+import Card from 'client/components/card';
+import ClipboardButtonInput from 'client/components/clipboard-button-input';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import QueryPluginKeys from 'client/components/data/query-plugin-keys';
+import SectionHeader from 'client/components/section-header';
 import PlanBillingPeriod from './billing-period';
-import { isRequestingSites } from 'state/sites/selectors';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getPurchase, isDataLoading } from 'me/purchases/utils';
-import { getName, isExpired } from 'lib/purchases';
-import { isJetpackPlan, isFreeJetpackPlan } from 'lib/products-values';
-import { getPluginsForSite } from 'state/plugins/premium/selectors';
+import { isRequestingSites } from 'client/state/sites/selectors';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+} from 'client/state/purchases/selectors';
+import { getPurchase, isDataLoading } from 'client/me/purchases/utils';
+import { getName, isExpired } from 'client/lib/purchases';
+import { isJetpackPlan, isFreeJetpackPlan } from 'client/lib/products-values';
+import { getPluginsForSite } from 'client/state/plugins/premium/selectors';
 
 class PurchasePlanDetails extends Component {
 	renderPlaceholder() {

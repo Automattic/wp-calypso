@@ -15,7 +15,7 @@ import React from 'react';
  * Internal dependencies
  */
 import fixtures from './fixtures';
-import ListItemVideo from 'my-sites/media-library/list-item-video';
+import ListItemVideo from 'client/my-sites/media-library/list-item-video';
 
 const WIDTH = 450;
 

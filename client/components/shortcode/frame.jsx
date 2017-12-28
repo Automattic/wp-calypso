@@ -12,8 +12,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
-import ResizableIframe from 'components/resizable-iframe';
+import generateEmbedFrameMarkup from 'client/lib/embed-frame-markup';
+import ResizableIframe from 'client/components/resizable-iframe';
 
 export default class extends React.Component {
 	static displayName = 'ShortcodeFrame';

@@ -18,7 +18,7 @@ import { debounce, noop, get, pickBy } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { recordTracksRailcarRender } from 'reader/stats';
+import { recordTracksRailcarRender } from 'client/reader/stats';
 
 class ReaderInfiniteStream extends Component {
 	static propTypes = {

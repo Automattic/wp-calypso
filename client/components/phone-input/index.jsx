@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormCountrySelect from 'components/forms/form-country-select';
+import FormCountrySelect from 'client/components/forms/form-country-select';
 import {
 	formatNumber,
 	findCountryFromNumber,

@@ -9,12 +9,12 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import { FIRST_VIEW_HIDE } from 'state/action-types';
+import { FIRST_VIEW_HIDE } from 'client/state/action-types';
 
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
+import { bumpStat, recordTracksEvent } from 'client/state/analytics/actions';
 
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
+import { savePreference } from 'client/state/preferences/actions';
+import { getPreference } from 'client/state/preferences/selectors';
 import { bucketedTimeSpentOnCurrentView, getConfigForCurrentView } from './selectors';
 
 export function hideView( { enabled } ) {

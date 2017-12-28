@@ -14,7 +14,7 @@ import React from 'react';
  * Internal dependencies
  */
 import MediaLibrary from '..';
-import { requestKeyringConnections as requestStub } from 'state/sharing/keyring/actions';
+import { requestKeyringConnections as requestStub } from 'client/state/sharing/keyring/actions';
 
 jest.mock( 'components/data/query-preferences', () => require( 'components/empty-component' ) );
 jest.mock( 'components/data/media-validation-data', () => require( 'components/empty-component' ) );

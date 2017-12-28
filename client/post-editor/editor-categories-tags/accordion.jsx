@@ -14,19 +14,19 @@ import { get, toArray, unescape as unescapeString } from 'lodash';
 /**
  * Internal dependencies
  */
-import Accordion from 'components/accordion';
-import AccordionSection from 'components/accordion/section';
-import EditorDrawerLabel from 'post-editor/editor-drawer/label';
-import TermSelector from 'post-editor/editor-term-selector';
-import TermTokenField from 'post-editor/term-token-field';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { addSiteFragment } from 'lib/route';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getSiteOption, isJetpackMinimumVersion, getSiteSlug } from 'state/sites/selectors';
-import { getTerm } from 'state/terms/selectors';
+import Accordion from 'client/components/accordion';
+import AccordionSection from 'client/components/accordion/section';
+import EditorDrawerLabel from 'client/post-editor/editor-drawer/label';
+import TermSelector from 'client/post-editor/editor-term-selector';
+import TermTokenField from 'client/post-editor/term-token-field';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import { addSiteFragment } from 'client/lib/route';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { getSiteOption, isJetpackMinimumVersion, getSiteSlug } from 'client/state/sites/selectors';
+import { getTerm } from 'client/state/terms/selectors';
 
 export class EditorCategoriesTagsAccordion extends Component {
 	static propTypes = {

@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingJetpackJumpstartStatus } from 'state/selectors';
-import { requestJumpstartStatus } from 'state/jetpack/jumpstart/actions';
+import { isRequestingJetpackJumpstartStatus } from 'client/state/selectors';
+import { requestJumpstartStatus } from 'client/state/jetpack/jumpstart/actions';
 
 class QueryJetpackJumpstart extends Component {
 	static propTypes = {

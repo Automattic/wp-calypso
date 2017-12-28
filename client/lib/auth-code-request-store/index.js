@@ -1,5 +1,5 @@
 /** @format */
-import { createReducerStore } from 'lib/store';
+import { createReducerStore } from 'client/lib/store';
 import { actions as ActionTypes } from './constants';
 import keyMirror from 'key-mirror';
 

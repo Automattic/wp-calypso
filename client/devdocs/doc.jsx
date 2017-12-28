@@ -11,9 +11,9 @@ import React from 'react';
  * Internal dependencies
  */
 import DocService from './service';
-import DocumentHead from 'components/data/document-head';
-import CompactCard from 'components/card/compact';
-import highlight from 'lib/highlight';
+import DocumentHead from 'client/components/data/document-head';
+import CompactCard from 'client/components/card/compact';
+import highlight from 'client/lib/highlight';
 
 export default class extends React.Component {
 	static displayName = 'SingleDocument';

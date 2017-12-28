@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
+import Emitter from 'client/lib/mixins/emitter';
 
 function KeyBindings() {
 	i18n.on( 'change', this.emitLanguageChange.bind( this ) );

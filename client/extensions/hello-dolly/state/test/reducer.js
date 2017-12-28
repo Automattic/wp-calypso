@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { ROUTE_SET, SECTION_SET, SITE_SETTINGS_SAVE } from 'state/action-types.js';
+import { ROUTE_SET, SECTION_SET, SITE_SETTINGS_SAVE } from 'client/state/action-types.js';
 
 describe( 'reducer', () => {
 	test( 'should initialize to the first index', () => {

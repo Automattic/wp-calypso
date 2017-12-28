@@ -12,7 +12,7 @@ import React from 'react';
  */
 import Bar from './bar';
 import XAxis from './x-axis';
-import userModule from 'lib/user';
+import userModule from 'client/lib/user';
 
 /**
  * Module variables

@@ -15,12 +15,12 @@ import {
 	actionListStepNext,
 	actionListStepSuccess,
 	actionListStepFailure,
-} from 'woocommerce/state/action-list/actions';
-import * as fxt from 'woocommerce/state/action-list/test/fixtures';
+} from 'client/extensions/woocommerce/state/action-list/actions';
+import * as fxt from 'client/extensions/woocommerce/state/action-list/test/fixtures';
 import {
 	WOOCOMMERCE_ACTION_LIST_ANNOTATE,
 	WOOCOMMERCE_ACTION_LIST_STEP_NEXT,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'handlers', () => {
 	let store;

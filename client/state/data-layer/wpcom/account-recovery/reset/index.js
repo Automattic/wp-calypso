@@ -8,10 +8,10 @@ import {
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 export const resetPassword = ( { dispatch }, action ) => {
 	const {

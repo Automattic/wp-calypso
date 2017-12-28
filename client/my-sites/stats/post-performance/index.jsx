@@ -14,19 +14,19 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import Emojify from 'components/emojify';
-import SectionHeader from 'components/section-header';
-import QueryPosts from 'components/data/query-posts';
-import QueryPostStats from 'components/data/query-post-stats';
-import { isRequestingPostsForQuery, getPostsForQuery } from 'state/posts/selectors';
-import { getPostStat } from 'state/stats/posts/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import Emojify from 'client/components/emojify';
+import SectionHeader from 'client/components/section-header';
+import QueryPosts from 'client/components/data/query-posts';
+import QueryPostStats from 'client/components/data/query-post-stats';
+import { isRequestingPostsForQuery, getPostsForQuery } from 'client/state/posts/selectors';
+import { getPostStat } from 'client/state/stats/posts/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 
 class StatsPostPerformance extends Component {
 	static propTypes = {

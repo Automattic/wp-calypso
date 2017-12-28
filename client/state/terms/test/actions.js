@@ -17,8 +17,8 @@ import {
 	updateTerm,
 	deleteTerm,
 } from '../actions';
-import PostQueryManager from 'lib/query-manager/post';
-import TermQueryManager from 'lib/query-manager/term';
+import PostQueryManager from 'client/lib/query-manager/post';
+import TermQueryManager from 'client/lib/query-manager/term';
 import {
 	POST_EDIT,
 	SITE_SETTINGS_UPDATE,
@@ -27,7 +27,7 @@ import {
 	TERMS_REQUEST,
 	TERMS_REQUEST_SUCCESS,
 	TERMS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 /**

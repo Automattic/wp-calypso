@@ -14,22 +14,22 @@ import { isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaModal from 'post-editor/media-modal';
-import MediaActions from 'lib/media/actions';
-import PostActions from 'lib/posts/actions';
-import PostUtils from 'lib/posts/utils';
-import * as stats from 'lib/posts/stats';
+import MediaLibrarySelectedData from 'client/components/data/media-library-selected-data';
+import MediaModal from 'client/post-editor/media-modal';
+import MediaActions from 'client/lib/media/actions';
+import PostActions from 'client/lib/posts/actions';
+import PostUtils from 'client/lib/posts/utils';
+import * as stats from 'client/lib/posts/stats';
 import EditorFeaturedImagePreviewContainer from './preview-container';
-import FeaturedImageDropZone from 'post-editor/editor-featured-image/dropzone';
-import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
-import Button from 'components/button';
-import RemoveButton from 'components/remove-button';
-import { getMediaItem } from 'state/selectors';
-import { getFeaturedImageId } from 'lib/posts/utils';
-import QueryMedia from 'components/data/query-media';
+import FeaturedImageDropZone from 'client/post-editor/editor-featured-image/dropzone';
+import isDropZoneVisible from 'client/state/selectors/is-drop-zone-visible';
+import Button from 'client/components/button';
+import RemoveButton from 'client/components/remove-button';
+import { getMediaItem } from 'client/state/selectors';
+import { getFeaturedImageId } from 'client/lib/posts/utils';
+import QueryMedia from 'client/components/data/query-media';
 import { localize } from 'i18n-calypso';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 class EditorFeaturedImage extends Component {
 	static propTypes = {

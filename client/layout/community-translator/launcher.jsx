@@ -12,10 +12,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import translator from 'lib/translator-jumpstart';
+import translator from 'client/lib/translator-jumpstart';
 import localStorageHelper from 'store';
-import Dialog from 'components/dialog';
-import analytics from 'lib/analytics';
+import Dialog from 'client/components/dialog';
+import analytics from 'client/lib/analytics';
 
 class TranslatorLauncher extends React.PureComponent {
 	static displayName = 'TranslatorLauncher';

@@ -15,9 +15,9 @@ import React from 'react';
  * Internal dependencies
  */
 import { EditorMediaModal } from '../';
-import accept from 'lib/accept';
-import mediaActions from 'lib/media/actions';
-import { ModalViews } from 'state/ui/media-modal/constants';
+import accept from 'client/lib/accept';
+import mediaActions from 'client/lib/media/actions';
+import { ModalViews } from 'client/state/ui/media-modal/constants';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 jest.mock( 'component-closest', () => {} );

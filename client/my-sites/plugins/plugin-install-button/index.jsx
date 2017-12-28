@@ -14,14 +14,14 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import PluginsActions from 'lib/plugins/actions';
-import Button from 'components/button';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import utils from 'lib/site/utils';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
-import { getSiteConnectionStatus } from 'state/selectors';
+import PluginsActions from 'client/lib/plugins/actions';
+import Button from 'client/components/button';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
+import utils from 'client/lib/site/utils';
+import { recordGoogleEvent, recordTracksEvent } from 'client/state/analytics/actions';
+import QuerySiteConnectionStatus from 'client/components/data/query-site-connection-status';
+import { getSiteConnectionStatus } from 'client/state/selectors';
 
 export class PluginInstallButton extends Component {
 	installAction = () => {

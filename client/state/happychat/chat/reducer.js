@@ -19,12 +19,12 @@ import {
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import {
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_MAX_STORED_MESSAGES,
-} from 'state/happychat/constants';
-import { combineReducers } from 'state/utils';
+} from 'client/state/happychat/constants';
+import { combineReducers } from 'client/state/utils';
 import { timelineSchema } from './schema';
 
 export const lastActivityTimestamp = ( state = null, action ) => {

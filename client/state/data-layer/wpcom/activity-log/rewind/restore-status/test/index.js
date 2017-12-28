@@ -10,7 +10,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { fromApi, updateProgress } from '../';
-import { updateRewindRestoreProgress } from 'state/activity-log/actions';
+import { updateRewindRestoreProgress } from 'client/state/activity-log/actions';
 
 const siteId = 77203074;
 const timestamp = 1496768464;

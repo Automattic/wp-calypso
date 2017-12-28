@@ -12,15 +12,15 @@ import { trim, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Dialog from 'components/dialog';
-import { editOrder } from 'woocommerce/state/ui/orders/actions';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
-import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import PriceInput from 'woocommerce/components/price-input';
+import Button from 'client/components/button';
+import Dialog from 'client/components/dialog';
+import { editOrder } from 'client/extensions/woocommerce/state/ui/orders/actions';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { getCurrencyFormatDecimal } from 'client/extensions/woocommerce/lib/currency';
+import { getOrderWithEdits } from 'client/extensions/woocommerce/state/ui/orders/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import PriceInput from 'client/extensions/woocommerce/components/price-input';
 
 class OrderFeeDialog extends Component {
 	static propTypes = {

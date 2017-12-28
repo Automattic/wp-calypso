@@ -4,13 +4,13 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	POST_TYPES_RECEIVE,
 	POST_TYPES_REQUEST,
 	POST_TYPES_REQUEST_SUCCESS,
 	POST_TYPES_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns an action object to be used in signalling that post types for a site

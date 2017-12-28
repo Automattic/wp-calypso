@@ -11,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import ThankYouCard from 'components/thank-you-card';
+import ThankYouCard from 'client/components/thank-you-card';
 
 class RebrandCitiesThankYou extends Component {
 	renderLogo() {

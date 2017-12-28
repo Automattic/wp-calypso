@@ -6,7 +6,7 @@
 
 import React from 'react';
 import page from 'page';
-import route from 'lib/route';
+import route from 'client/lib/route';
 import i18n from 'i18n-calypso';
 
 /**
@@ -14,14 +14,14 @@ import i18n from 'i18n-calypso';
  */
 import PeopleList from './main';
 import EditTeamMember from './edit-team-member-form';
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import titlecase from 'to-title-case';
-import PeopleLogStore from 'lib/people/log-store';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import PeopleLogStore from 'client/lib/people/log-store';
+import { setDocumentHeadTitle as setTitle } from 'client/state/document-head/actions';
 import InvitePeople from './invite-people';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getCurrentLayoutFocus } from 'client/state/ui/layout-focus/selectors';
+import { setNextLayoutFocus } from 'client/state/ui/layout-focus/actions';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 export default {
 	redirectToTeam,

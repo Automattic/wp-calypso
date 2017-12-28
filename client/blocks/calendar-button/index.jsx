@@ -12,8 +12,8 @@ import { noop, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import AsyncLoad from 'components/async-load';
+import Button from 'client/components/button';
+import AsyncLoad from 'client/components/async-load';
 
 class CalendarButton extends Component {
 	static propTypes = {

@@ -8,7 +8,7 @@ import {
 	WOOCOMMERCE_PROMOTION_EDIT_CLEAR,
 	WOOCOMMERCE_PROMOTIONS_PAGE_SET,
 	WOOCOMMERCE_PROMOTIONS_SEARCH,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export function editPromotion( siteId, promotion, data ) {
 	return {

@@ -12,27 +12,27 @@ import { moment, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import StatsNavigation from 'blocks/stats-navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import Main from 'client/components/main';
+import StatsNavigation from 'client/blocks/stats-navigation';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 import Chart from './store-stats-chart';
-import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
-import DatePicker from 'my-sites/stats/stats-date-picker';
+import StatsPeriodNavigation from 'client/my-sites/stats/stats-period-navigation';
+import DatePicker from 'client/my-sites/stats/stats-date-picker';
 import Module from './store-stats-module';
 import List from './store-stats-list';
 import WidgetList from './store-stats-widget-list';
-import SectionHeader from 'components/section-header';
-import JetpackColophon from 'components/jetpack-colophon';
+import SectionHeader from 'client/components/section-header';
+import JetpackColophon from 'client/components/jetpack-colophon';
 import {
 	sparkWidgets,
 	topProducts,
 	topCategories,
 	topCoupons,
 	UNITS,
-} from 'woocommerce/app/store-stats/constants';
+} from 'client/extensions/woocommerce/app/store-stats/constants';
 import { getUnitPeriod, getEndPeriod } from './utils';
-import QuerySiteStats from 'components/data/query-site-stats';
+import QuerySiteStats from 'client/components/data/query-site-stats';
 
 class StoreStats extends Component {
 	static propTypes = {

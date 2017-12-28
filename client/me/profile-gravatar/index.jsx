@@ -11,9 +11,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Animate from 'components/animate';
-import Gravatar from 'components/gravatar';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import Animate from 'client/components/animate';
+import Gravatar from 'client/components/gravatar';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 class ProfileGravatar extends Component {
 	recordGravatarMisclick = () => {

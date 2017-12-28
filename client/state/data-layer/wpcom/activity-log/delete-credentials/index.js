@@ -8,9 +8,9 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { JETPACK_CREDENTIALS_DELETE, JETPACK_CREDENTIALS_STORE } from 'state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { JETPACK_CREDENTIALS_DELETE, JETPACK_CREDENTIALS_STORE } from 'client/state/action-types';
 
 export const request = ( { dispatch }, action ) => {
 	dispatch(

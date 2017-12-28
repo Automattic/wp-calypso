@@ -9,26 +9,18 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Card from 'components/card';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormTextInput from 'components/forms/form-text-input';
-import Notice from 'components/notice';
-import QueryMailChimpSyncStatus from 'woocommerce/state/sites/settings/mailchimp/querySyncStatus';
-import {
-	syncStatus,
-	mailChimpSettings,
-	isRequestingSettings,
-	isRequestingSyncStatus,
-	isSavingSettings,
-	isSubmittingNewsletterSetting,
-	newsletterSettingsSubmitError,
-	} from 'woocommerce/state/sites/settings/mailchimp/selectors';
-import { submitMailChimpNewsletterSettings, requestResync } from 'woocommerce/state/sites/settings/mailchimp/actions.js';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import Card from 'client/components/card';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormLegend from 'client/components/forms/form-legend';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import FormTextInput from 'client/components/forms/form-text-input';
+import Notice from 'client/components/notice';
+import QueryMailChimpSyncStatus from 'client/extensions/woocommerce/state/sites/settings/mailchimp/querySyncStatus';
+import { syncStatus, mailChimpSettings, isRequestingSettings, isRequestingSyncStatus, isSavingSettings, isSubmittingNewsletterSetting, newsletterSettingsSubmitError } from 'client/extensions/woocommerce/state/sites/settings/mailchimp/selectors';
+import { submitMailChimpNewsletterSettings, requestResync } from 'client/extensions/woocommerce/state/sites/settings/mailchimp/actions.js';
+import { errorNotice, successNotice } from 'client/state/notices/actions';
 import SyncTab from './sync_tab.js';
 
 const Settings = localize( ( { translate, settings, oldCheckbox, onChange } ) => {

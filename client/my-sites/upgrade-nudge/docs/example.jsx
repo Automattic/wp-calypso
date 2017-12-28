@@ -10,7 +10,7 @@ import { stubTrue } from 'lodash';
 /**
  * Internal dependencies
  */
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import UpgradeNudge from 'client/my-sites/upgrade-nudge';
 
 const UpgradeNudgeExample = () => {
 	return (

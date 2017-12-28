@@ -14,22 +14,26 @@ import { get, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import RootChild from 'components/root-child';
+import RootChild from 'client/components/root-child';
 import { localize } from 'i18n-calypso';
-import { clearCustomizations, fetchPreviewMarkup, saveCustomizations } from 'state/preview/actions';
-import { isPreviewUnsaved, getPreviewCustomizations } from 'state/preview/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getActiveDesignTool } from 'state/ui/preview/selectors';
-import { setActiveDesignTool, closePreview } from 'state/ui/preview/actions';
-import accept from 'lib/accept';
+import {
+	clearCustomizations,
+	fetchPreviewMarkup,
+	saveCustomizations,
+} from 'client/state/preview/actions';
+import { isPreviewUnsaved, getPreviewCustomizations } from 'client/state/preview/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { getActiveDesignTool } from 'client/state/ui/preview/selectors';
+import { setActiveDesignTool, closePreview } from 'client/state/ui/preview/actions';
+import accept from 'client/lib/accept';
 import designTool from './design-tool-data';
 import DesignToolList from './design-tool-list';
-import SiteTitleControl from 'components/site-title';
+import SiteTitleControl from 'client/components/site-title';
 import DesignMenuPanel from './design-menu-panel';
 import DesignMenuHeader from './design-menu-header';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSiteFragment } from 'lib/route/path';
+import { getCurrentLayoutFocus } from 'client/state/ui/layout-focus/selectors';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
+import { getSiteFragment } from 'client/lib/route/path';
 
 const WrappedSiteTitleControl = designTool( SiteTitleControl );
 

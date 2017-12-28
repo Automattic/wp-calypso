@@ -12,7 +12,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormRange from 'components/forms/form-range';
+import FormRange from 'client/components/forms/form-range';
 
 export default class extends React.Component {
 	static displayName = 'Range';

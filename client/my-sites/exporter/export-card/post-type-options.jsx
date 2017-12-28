@@ -12,15 +12,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormRadio from 'components/forms/form-radio';
-import Label from 'components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
+import Label from 'client/components/forms/form-label';
 import Select from './select';
-import Tooltip from 'components/tooltip';
-import { setPostType } from 'state/site-settings/exporter/actions';
+import Tooltip from 'client/components/tooltip';
+import { setPostType } from 'client/state/site-settings/exporter/actions';
 import {
 	getSelectedPostType,
 	isDateRangeValid as isExportDateRangeValid,
-} from 'state/site-settings/exporter/selectors';
+} from 'client/state/site-settings/exporter/selectors';
 
 const mapStateToProps = ( state, ownProps ) => {
 	const siteId = state.ui.selectedSiteId;

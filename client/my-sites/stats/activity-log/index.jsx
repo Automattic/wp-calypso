@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import scrollTo from 'lib/scroll-to';
+import scrollTo from 'client/lib/scroll-to';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { first, get, groupBy, includes, isEmpty, isNull, last, range, sortBy } from 'lodash';
@@ -18,27 +18,27 @@ import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import ActivityLogCredentialsNotice from '../activity-log-credentials-notice';
 import ActivityLogDay from '../activity-log-day';
 import ActivityLogDayPlaceholder from '../activity-log-day/placeholder';
-import DatePicker from 'my-sites/stats/stats-date-picker';
-import EmptyContent from 'components/empty-content';
+import DatePicker from 'client/my-sites/stats/stats-date-picker';
+import EmptyContent from 'client/components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
-import JetpackColophon from 'components/jetpack-colophon';
-import Main from 'components/main';
+import JetpackColophon from 'client/components/jetpack-colophon';
+import Main from 'client/components/main';
 import ProgressBanner from '../activity-log-banner/progress-banner';
-import QueryActivityLog from 'components/data/query-activity-log';
-import QueryJetpackCredentials from 'components/data/query-jetpack-credentials';
-import QueryRewindState from 'components/data/query-rewind-state';
-import QueryRewindStatus from 'components/data/query-rewind-status';
-import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
-import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import QueryActivityLog from 'client/components/data/query-activity-log';
+import QueryJetpackCredentials from 'client/components/data/query-jetpack-credentials';
+import QueryRewindState from 'client/components/data/query-rewind-state';
+import QueryRewindStatus from 'client/components/data/query-rewind-status';
+import QuerySiteSettings from 'client/components/data/query-site-settings'; // For site time offset
+import QueryRewindBackupStatus from 'client/components/data/query-rewind-backup-status';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
 import StatsFirstView from '../stats-first-view';
-import StatsNavigation from 'blocks/stats-navigation';
-import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
+import StatsNavigation from 'client/blocks/stats-navigation';
+import StatsPeriodNavigation from 'client/my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteSlug, getSiteTitle } from 'client/state/sites/selectors';
+import { recordTracksEvent, withAnalytics } from 'client/state/analytics/actions';
 import {
 	activityLogRequest,
 	rewindRequestDismiss,
@@ -47,7 +47,7 @@ import {
 	rewindRequestBackup,
 	rewindBackupDismiss,
 	rewindBackup,
-} from 'state/activity-log/actions';
+} from 'client/state/activity-log/actions';
 import {
 	canCurrentUser,
 	getActivityLog,
@@ -63,7 +63,7 @@ import {
 	getRequestedBackup,
 	getBackupProgress,
 	getRewindState,
-} from 'state/selectors';
+} from 'client/state/selectors';
 
 const flushEmptyDays = days => [
 	days.length === 1 ? 'empty-day' : 'empty-range',

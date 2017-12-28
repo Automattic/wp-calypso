@@ -13,15 +13,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DomainSuggestion from 'components/domains/domain-suggestion';
+import DomainSuggestion from 'client/components/domains/domain-suggestion';
 import Gridicon from 'gridicons';
-import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
+import DomainSuggestionFlag from 'client/components/domains/domain-suggestion-flag';
 import {
 	shouldBundleDomainWithPlan,
 	getDomainPriceRule,
 	hasDomainInCart,
-} from 'lib/cart-values/cart-items';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'client/lib/cart-values/cart-items';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 const newTLDs = [
 	'.art',

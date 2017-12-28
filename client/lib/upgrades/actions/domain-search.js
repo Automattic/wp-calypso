@@ -5,8 +5,8 @@
  */
 
 import page from 'page';
-import userFactory from 'lib/user';
-import { canAddGoogleApps } from 'lib/domains';
+import userFactory from 'client/lib/user';
+import { canAddGoogleApps } from 'client/lib/domains';
 
 const user = userFactory();
 

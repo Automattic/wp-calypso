@@ -14,14 +14,14 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getSite, getSiteSlug } from 'state/sites/selectors';
-import { getDomainsSuggestions } from 'state/domains/suggestions/selectors';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
-import { FEATURE_CUSTOM_DOMAIN } from 'lib/plans/constants';
-import { isFreePlan } from 'lib/products-values';
+import { getSite, getSiteSlug } from 'client/state/sites/selectors';
+import { getDomainsSuggestions } from 'client/state/domains/suggestions/selectors';
+import { currentUserHasFlag } from 'client/state/current-user/selectors';
+import QueryDomainsSuggestions from 'client/components/data/query-domains-suggestions';
+import { DOMAINS_WITH_PLANS_ONLY } from 'client/state/current-user/constants';
+import UpgradeNudge from 'client/my-sites/upgrade-nudge';
+import { FEATURE_CUSTOM_DOMAIN } from 'client/lib/plans/constants';
+import { isFreePlan } from 'client/lib/products-values';
 
 function getQueryObject( site, siteSlug ) {
 	if ( ! site || ! siteSlug ) {

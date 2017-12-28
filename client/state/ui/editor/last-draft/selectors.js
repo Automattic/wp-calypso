@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { getEditedPost } from 'state/posts/selectors';
+import { getEditedPost } from 'client/state/posts/selectors';
 
 /**
  * Returns the edited post object for the last draft post, or null if there is

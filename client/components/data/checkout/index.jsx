@@ -9,9 +9,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import StoreConnection from 'components/data/store-connection';
-import CartStore from 'lib/cart/store';
-import TransactionStore from 'lib/transaction/store';
+import StoreConnection from 'client/components/data/store-connection';
+import CartStore from 'client/lib/cart/store';
+import TransactionStore from 'client/lib/transaction/store';
 
 var stores = [ TransactionStore, CartStore ];
 

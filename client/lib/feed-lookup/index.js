@@ -10,8 +10,8 @@ import LruCache from 'lru';
 /**
  * Internal Dependencies
  */
-import { isRequestInflight } from 'lib/inflight';
-import wpcom from 'lib/wp';
+import { isRequestInflight } from 'client/lib/inflight';
+import wpcom from 'client/lib/wp';
 
 const cache = new LruCache( 10 );
 

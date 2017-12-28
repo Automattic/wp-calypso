@@ -13,18 +13,21 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Draggable from 'components/draggable';
+import Draggable from 'client/components/draggable';
 import {
 	getImageEditorCropBounds,
 	getImageEditorAspectRatio,
 	getImageEditorTransform,
 	getImageEditorCrop,
 	imageEditorHasChanges,
-} from 'state/ui/editor/image-editor/selectors';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import { imageEditorCrop, imageEditorComputedCrop } from 'state/ui/editor/image-editor/actions';
-import { defaultCrop } from 'state/ui/editor/image-editor/reducer';
-import { getImageEditorOriginalAspectRatio } from 'state/selectors';
+} from 'client/state/ui/editor/image-editor/selectors';
+import { AspectRatios } from 'client/state/ui/editor/image-editor/constants';
+import {
+	imageEditorCrop,
+	imageEditorComputedCrop,
+} from 'client/state/ui/editor/image-editor/actions';
+import { defaultCrop } from 'client/state/ui/editor/image-editor/reducer';
+import { getImageEditorOriginalAspectRatio } from 'client/state/selectors';
 
 class ImageEditorCrop extends Component {
 	static propTypes = {

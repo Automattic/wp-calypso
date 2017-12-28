@@ -13,11 +13,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import Button from 'components/button';
-import Spinner from 'components/spinner';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import { verifyEmail, resetVerifyEmailState } from 'state/current-user/email-verification/actions';
+import Dialog from 'client/components/dialog';
+import Button from 'client/components/button';
+import Spinner from 'client/components/spinner';
+import { getCurrentUserEmail } from 'client/state/current-user/selectors';
+import {
+	verifyEmail,
+	resetVerifyEmailState,
+} from 'client/state/current-user/email-verification/actions';
 
 class VerifyEmailDialog extends Component {
 	getResendButtonLabel() {

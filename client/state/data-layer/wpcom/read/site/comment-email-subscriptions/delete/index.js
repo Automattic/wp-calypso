@@ -7,12 +7,12 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { subscribeToNewCommentEmail } from 'state/reader/follows/actions';
-import { errorNotice } from 'state/notices/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { subscribeToNewCommentEmail } from 'client/state/reader/follows/actions';
+import { errorNotice } from 'client/state/notices/actions';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
 
 export function requestCommentEmailUnsubscription( { dispatch }, action ) {
 	dispatch(

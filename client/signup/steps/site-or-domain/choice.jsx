@@ -9,8 +9,8 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
 
 export default class SiteOrDomainChoice extends Component {
 	handleClickChoice = event => {

@@ -7,12 +7,12 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_FOLLOW_TAG_REQUEST } from 'state/action-types';
-import { receiveTags as receiveTagsAction } from 'state/reader/tags/items/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
-import { fromApi as transformTagFromApi } from 'state/data-layer/wpcom/read/tags/utils';
-import { errorNotice } from 'state/notices/actions';
+import { READER_FOLLOW_TAG_REQUEST } from 'client/state/action-types';
+import { receiveTags as receiveTagsAction } from 'client/state/reader/tags/items/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequestEx } from 'client/state/data-layer/wpcom-http/utils';
+import { fromApi as transformTagFromApi } from 'client/state/data-layer/wpcom/read/tags/utils';
+import { errorNotice } from 'client/state/notices/actions';
 import { translate } from 'i18n-calypso';
 
 export function requestFollowTag( action ) {

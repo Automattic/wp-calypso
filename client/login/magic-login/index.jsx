@@ -14,18 +14,18 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import { login } from 'lib/paths';
-import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
-import { getMagicLoginCurrentView } from 'state/selectors';
-import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
+import notices from 'client/notices';
+import { login } from 'client/lib/paths';
+import { CHECK_YOUR_EMAIL_PAGE } from 'client/state/login/magic-login/constants';
+import { getMagicLoginCurrentView } from 'client/state/selectors';
+import { hideMagicLoginRequestForm } from 'client/state/login/magic-login/actions';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	recordPageViewWithClientId as recordPageView,
-} from 'state/analytics/actions';
-import Main from 'components/main';
+} from 'client/state/analytics/actions';
+import Main from 'client/components/main';
 import RequestLoginEmailForm from './request-login-email-form';
-import GlobalNotices from 'components/global-notices';
+import GlobalNotices from 'client/components/global-notices';
 import Gridicon from 'gridicons';
 
 class MagicLogin extends React.Component {

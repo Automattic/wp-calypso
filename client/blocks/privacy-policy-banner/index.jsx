@@ -12,14 +12,14 @@ import { get, identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
-import { savePreference } from 'state/preferences/actions';
-import Banner from 'components/banner';
+import { getPreference, isFetchingPreferences } from 'client/state/preferences/selectors';
+import { savePreference } from 'client/state/preferences/actions';
+import Banner from 'client/components/banner';
 import config from 'config';
 import PrivacyPolicyDialog from './privacy-policy-dialog';
-import QueryPrivacyPolicy from 'components/data/query-privacy-policy';
+import QueryPrivacyPolicy from 'client/components/data/query-privacy-policy';
 
-import { getPrivacyPolicyByEntity, getCurrentUserRegisterDate } from 'state/selectors';
+import { getPrivacyPolicyByEntity, getCurrentUserRegisterDate } from 'client/state/selectors';
 
 import { AUTOMATTIC_ENTITY, PRIVACY_POLICY_PREFERENCE } from './constants';
 

@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 import {
 	getName,
 	isExpired,
@@ -22,19 +22,19 @@ import {
 	isRenewing,
 	purchaseType,
 	showCreditCardExpiringWarning,
-} from 'lib/purchases';
+} from 'client/lib/purchases';
 import {
 	isDomainProduct,
 	isDomainTransfer,
 	isGoogleApps,
 	isPlan,
 	isTheme,
-} from 'lib/products-values';
-import Notice from 'components/notice';
-import PlanIcon from 'components/plans/plan-icon';
+} from 'client/lib/products-values';
+import Notice from 'client/components/notice';
+import PlanIcon from 'client/components/plans/plan-icon';
 import Gridicon from 'gridicons';
 import paths from '../paths';
-import TrackComponentView from 'lib/analytics/track-component-view';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
 
 const eventProperties = warning => ( { warning, position: 'purchase-list' } );
 

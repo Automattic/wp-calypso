@@ -14,10 +14,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Site from 'blocks/site';
-import SitePlaceholder from 'blocks/site/placeholder';
-import SiteSelector from 'components/site-selector';
-import { getPrimarySiteId } from 'state/selectors';
+import Site from 'client/blocks/site';
+import SitePlaceholder from 'client/blocks/site/placeholder';
+import SiteSelector from 'client/components/site-selector';
+import { getPrimarySiteId } from 'client/state/selectors';
 
 export class SitesDropdown extends PureComponent {
 	static propTypes = {

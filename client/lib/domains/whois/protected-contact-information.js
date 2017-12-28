@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { registrar as registrarNames } from 'lib/domains/constants';
+import { registrar as registrarNames } from 'client/lib/domains/constants';
 
 function getOpenHrsProtectedContactInformation( domain ) {
 	return {

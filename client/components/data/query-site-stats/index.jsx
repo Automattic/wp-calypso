@@ -12,9 +12,9 @@ import shallowEqual from 'react-pure-render/shallowEqual';
 /**
  * Internal dependencies
  */
-import { requestSiteStats } from 'state/stats/lists/actions';
-import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
-import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
+import { requestSiteStats } from 'client/state/stats/lists/actions';
+import { isRequestingSiteStatsForQuery } from 'client/state/stats/lists/selectors';
+import { isAutoRefreshAllowedForQuery } from 'client/state/stats/lists/utils';
 
 class QuerySiteStats extends Component {
 	componentDidMount() {

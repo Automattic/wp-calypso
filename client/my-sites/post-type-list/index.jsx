@@ -14,21 +14,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import afterLayoutFlush from 'lib/after-layout-flush';
-import QueryPosts from 'components/data/query-posts';
-import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import afterLayoutFlush from 'client/lib/after-layout-flush';
+import QueryPosts from 'client/components/data/query-posts';
+import { DEFAULT_POST_QUERY } from 'client/lib/query-manager/post/constants';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	isRequestingPostsForQueryIgnoringPage,
 	getPostsForQueryIgnoringPage,
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
-} from 'state/posts/selectors';
-import ListEnd from 'components/list-end';
-import PostItem from 'blocks/post-item';
+} from 'client/state/posts/selectors';
+import ListEnd from 'client/components/list-end';
+import PostItem from 'client/blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
+import UpgradeNudge from 'client/my-sites/upgrade-nudge';
 
 /**
  * Constants

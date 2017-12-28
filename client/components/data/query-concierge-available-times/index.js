@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestConciergeAvailableTimes } from 'state/concierge/actions';
+import { requestConciergeAvailableTimes } from 'client/state/concierge/actions';
 
 class QueryConciergeAvailableTimes extends Component {
 	componentWillMount() {

@@ -10,10 +10,13 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { REWIND_RESTORE } from 'state/action-types';
-import { rewindRestoreUpdateError, getRewindRestoreProgress } from 'state/activity-log/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { REWIND_RESTORE } from 'client/state/action-types';
+import {
+	rewindRestoreUpdateError,
+	getRewindRestoreProgress,
+} from 'client/state/activity-log/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 const debug = debugFactory( 'calypso:data-layer:activity-log:rewind:to' );
 

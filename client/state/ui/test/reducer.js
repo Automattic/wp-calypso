@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer, { isNotificationsOpen, selectedSiteId, siteSelectionInitialized } from '../reducer';
-import { SELECTED_SITE_SET, NOTIFICATIONS_PANEL_TOGGLE } from 'state/action-types';
+import { SELECTED_SITE_SET, NOTIFICATIONS_PANEL_TOGGLE } from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

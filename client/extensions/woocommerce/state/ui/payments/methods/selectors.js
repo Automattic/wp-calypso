@@ -9,11 +9,11 @@ import { get, filter, find, findIndex, remove } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	getPaymentMethods,
 	arePaymentMethodsLoaded,
-} from 'woocommerce/state/sites/payment-methods/selectors';
+} from 'client/extensions/woocommerce/state/sites/payment-methods/selectors';
 
 const getPaymentMethodsEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'payments', siteId, 'methods' ] );

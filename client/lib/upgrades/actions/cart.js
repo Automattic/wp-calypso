@@ -10,12 +10,12 @@ import { assign } from 'lodash';
  * Internal dependencies
  */
 import { action as ActionTypes } from '../constants';
-import Dispatcher from 'dispatcher';
-import { cartItems } from 'lib/cart-values';
+import Dispatcher from 'client/dispatcher';
+import { cartItems } from 'client/lib/cart-values';
 
 // We need to load the CartStore to make sure the store is registered with the
 // dispatcher even though it's not used directly here
-import 'lib/cart/store';
+import 'client/lib/cart/store';
 
 function disableCart() {
 	Dispatcher.handleViewAction( { type: ActionTypes.CART_DISABLE } );

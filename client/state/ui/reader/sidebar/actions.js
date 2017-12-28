@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { READER_SIDEBAR_LISTS_TOGGLE, READER_SIDEBAR_TAGS_TOGGLE } from 'state/action-types';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { READER_SIDEBAR_LISTS_TOGGLE, READER_SIDEBAR_TAGS_TOGGLE } from 'client/state/action-types';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
 
 export function toggleReaderSidebarLists() {
 	recordAction( 'sidebar_toggle_lists_menu' );

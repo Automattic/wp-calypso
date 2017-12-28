@@ -11,8 +11,8 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import ReaderMain from 'components/reader-main';
-import DocumentHead from 'components/data/document-head';
+import ReaderMain from 'client/components/reader-main';
+import DocumentHead from 'client/components/data/document-head';
 import ReaderFullPostBack from './back';
 
 const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {

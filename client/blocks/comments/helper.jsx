@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import * as DiscoverHelper from 'reader/discover/helper';
+import * as DiscoverHelper from 'client/reader/discover/helper';
 
 export function shouldShowComments( post ) {
 	if ( isCommentableDiscoverPost( post ) ) {

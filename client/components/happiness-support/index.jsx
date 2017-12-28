@@ -13,12 +13,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import support from 'lib/url/support';
-import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection-connected';
-import { recordTracksEvent } from 'state/analytics/actions';
+import Button from 'client/components/button';
+import isHappychatAvailable from 'client/state/happychat/selectors/is-happychat-available';
+import support from 'client/lib/url/support';
+import HappychatButton from 'client/components/happychat/button';
+import HappychatConnection from 'client/components/happychat/connection-connected';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 export class HappinessSupport extends Component {
 	static propTypes = {

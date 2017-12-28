@@ -9,8 +9,8 @@ import { defer } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { trackPageLoad } from 'reader/controller-helper';
-import AsyncLoad from 'components/async-load';
+import { trackPageLoad } from 'client/reader/controller-helper';
+import AsyncLoad from 'client/components/async-load';
 
 const analyticsPageTitle = 'Reader';
 

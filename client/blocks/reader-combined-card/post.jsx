@@ -13,18 +13,18 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
-import ReaderExcerpt from 'blocks/reader-excerpt';
-import ReaderVisitLink from 'blocks/reader-visit-link';
-import ReaderAuthorLink from 'blocks/reader-author-link';
-import { recordPermalinkClick } from 'reader/stats';
-import TimeSince from 'components/time-since';
-import ReaderFeaturedImage from 'blocks/reader-featured-image';
-import ReaderFeaturedVideo from 'blocks/reader-featured-video';
-import * as stats from 'reader/stats';
-import ReaderCombinedCardPostPlaceholder from 'blocks/reader-combined-card/placeholders/post';
-import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
+import AutoDirection from 'client/components/auto-direction';
+import Emojify from 'client/components/emojify';
+import ReaderExcerpt from 'client/blocks/reader-excerpt';
+import ReaderVisitLink from 'client/blocks/reader-visit-link';
+import ReaderAuthorLink from 'client/blocks/reader-author-link';
+import { recordPermalinkClick } from 'client/reader/stats';
+import TimeSince from 'client/components/time-since';
+import ReaderFeaturedImage from 'client/blocks/reader-featured-image';
+import ReaderFeaturedVideo from 'client/blocks/reader-featured-video';
+import * as stats from 'client/reader/stats';
+import ReaderCombinedCardPostPlaceholder from 'client/blocks/reader-combined-card/placeholders/post';
+import { isAuthorNameBlacklisted } from 'client/reader/lib/author-name-blacklist';
 
 class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {

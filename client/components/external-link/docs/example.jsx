@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import Card from 'components/card';
+import ExternalLink from 'client/components/external-link';
+import Card from 'client/components/card';
 
 export default class extends React.Component {
 	static displayName = 'ExternalLink';

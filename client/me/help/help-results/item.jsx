@@ -6,12 +6,12 @@
 
 import React from 'react';
 import Gridicon from 'gridicons';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'client/lib/formatting';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 
 export default class extends React.PureComponent {
 	static displayName = 'HelpResult';

@@ -5,7 +5,7 @@
  */
 import debugFactory from 'debug';
 import { filter, find, has, get, includes, isEqual, omit, some } from 'lodash';
-import createSelector from 'lib/create-selector';
+import createSelector from 'client/lib/create-selector';
 import moment from 'moment-timezone';
 
 /**
@@ -20,10 +20,10 @@ import {
 	normalizePostForEditing,
 	normalizePostForDisplay,
 } from './utils';
-import { decodeURIIfValid } from 'lib/url';
-import { getSite } from 'state/sites/selectors';
+import { decodeURIIfValid } from 'client/lib/url';
+import { getSite } from 'client/state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
-import addQueryArgs from 'lib/route/add-query-args';
+import addQueryArgs from 'client/lib/route/add-query-args';
 
 /**
  * Module constants

@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { listBlogStickers } from 'state/sites/blog-stickers/actions';
+import { listBlogStickers } from 'client/state/sites/blog-stickers/actions';
 
 class QueryBlogStickers extends Component {
 	static propTypes = {

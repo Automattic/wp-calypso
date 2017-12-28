@@ -13,8 +13,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
+import ActionHeader from 'client/extensions/woocommerce/components/action-header';
+import { fetchSetupChoices } from 'client/extensions/woocommerce/state/sites/setup-choices/actions';
 import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,
@@ -22,21 +22,21 @@ import {
 	getFinishedInstallOfRequiredPlugins,
 	getFinishedPageSetup,
 	isStoreSetupComplete,
-} from 'woocommerce/state/sites/setup-choices/selectors';
+} from 'client/extensions/woocommerce/state/sites/setup-choices/selectors';
 import {
 	areOrdersLoading,
 	getNewOrdersWithoutPayPalPending,
-} from 'woocommerce/state/sites/orders/selectors';
-import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import { requestSettings } from 'woocommerce/state/sites/settings/mailchimp/actions';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+} from 'client/extensions/woocommerce/state/sites/orders/selectors';
+import { fetchOrders } from 'client/extensions/woocommerce/state/sites/orders/actions';
+import { fetchProducts } from 'client/extensions/woocommerce/state/sites/products/actions';
+import { requestSettings } from 'client/extensions/woocommerce/state/sites/settings/mailchimp/actions';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 import {
 	getTotalProducts,
 	areProductsLoading,
 	areProductsLoaded,
-} from 'woocommerce/state/sites/products/selectors';
-import Main from 'components/main';
+} from 'client/extensions/woocommerce/state/sites/products/selectors';
+import Main from 'client/components/main';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
 import Placeholder from './placeholder';
@@ -44,7 +44,7 @@ import PreSetupView from './pre-setup-view';
 import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup-tasks-view';
-import MailChimp from 'woocommerce/app/settings/email/mailchimp/index.js';
+import MailChimp from 'client/extensions/woocommerce/app/settings/email/mailchimp/index.js';
 
 class Dashboard extends Component {
 	static propTypes = {

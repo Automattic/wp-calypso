@@ -3,7 +3,7 @@
  * Internal dependencies
  */
 import jetpackAuthAttempts from '../jetpack-auth-attempts';
-import { JETPACK_CONNECT_RETRY_AUTH } from 'state/action-types';
+import { JETPACK_CONNECT_RETRY_AUTH } from 'client/state/action-types';
 
 describe( '#jetpackAuthAttempts()', () => {
 	test( 'should default to an empty object', () => {

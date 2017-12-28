@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import HeaderCakeBack from './back';
 
 export default class HeaderCake extends Component {

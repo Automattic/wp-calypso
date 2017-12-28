@@ -14,7 +14,7 @@ import {
 	LAYOUT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_ACTIVATE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'starts with current focus set to "content"', () => {

@@ -13,23 +13,23 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SidebarItem from 'layout/sidebar/item';
-import SidebarButton from 'layout/sidebar/button';
+import SidebarItem from 'client/layout/sidebar/item';
+import SidebarButton from 'client/layout/sidebar/button';
 import config from 'config';
-import { getEditorPath } from 'state/ui/editor/selectors';
-import { getPostTypes } from 'state/post-types/selectors';
-import QueryPostTypes from 'components/data/query-post-types';
-import analytics from 'lib/analytics';
-import { decodeEntities } from 'lib/formatting';
-import MediaLibraryUploadButton from 'my-sites/media-library/upload-button';
+import { getEditorPath } from 'client/state/ui/editor/selectors';
+import { getPostTypes } from 'client/state/post-types/selectors';
+import QueryPostTypes from 'client/components/data/query-post-types';
+import analytics from 'client/lib/analytics';
+import { decodeEntities } from 'client/lib/formatting';
+import MediaLibraryUploadButton from 'client/my-sites/media-library/upload-button';
 import {
 	getSite,
 	getSiteAdminUrl,
 	getSiteSlug,
 	isJetpackSite,
 	isSingleUserSite,
-} from 'state/sites/selectors';
-import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
+} from 'client/state/sites/selectors';
+import { areAllSitesSingleUser, canCurrentUser } from 'client/state/selectors';
 
 class ManageMenu extends PureComponent {
 	static propTypes = {

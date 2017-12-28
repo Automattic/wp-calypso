@@ -11,14 +11,14 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import FormSelect from 'components/forms/form-select';
-import { isOrderNoteSaving } from 'woocommerce/state/sites/orders/notes/selectors';
-import ScreenReaderText from 'components/screen-reader-text';
+import Button from 'client/components/button';
+import { createNote } from 'client/extensions/woocommerce/state/sites/orders/notes/actions';
+import FormFieldSet from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextarea from 'client/components/forms/form-textarea';
+import FormSelect from 'client/components/forms/form-select';
+import { isOrderNoteSaving } from 'client/extensions/woocommerce/state/sites/orders/notes/selectors';
+import ScreenReaderText from 'client/components/screen-reader-text';
 
 class CreateOrderNote extends Component {
 	static propTypes = {

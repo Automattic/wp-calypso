@@ -12,7 +12,7 @@ import { compact, get, indexOf, omit } from 'lodash';
  * Internal dependencies
  */
 import NavigationLink from './navigation-link';
-import ProgressIndicator from 'components/wizard/progress-indicator';
+import ProgressIndicator from 'client/components/wizard/progress-indicator';
 
 class Wizard extends Component {
 	static propTypes = {

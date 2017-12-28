@@ -12,9 +12,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import ActionHeader from 'client/extensions/woocommerce/components/action-header';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 import SettingsNavigation from '../navigation';
 import ShippingSettingsSaveButton from './save-button';
 

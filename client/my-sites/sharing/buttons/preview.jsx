@@ -17,8 +17,8 @@ import ButtonsLabelEditor from './label-editor';
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewAction from './preview-action';
 import ButtonsTray from './tray';
-import { decodeEntities } from 'lib/formatting';
-import analytics from 'lib/analytics';
+import { decodeEntities } from 'client/lib/formatting';
+import analytics from 'client/lib/analytics';
 
 class SharingButtonsPreview extends React.Component {
 	static displayName = 'SharingButtonsPreview';

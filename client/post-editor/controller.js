@@ -15,21 +15,21 @@ import { map, pick, reduce, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import actions from 'lib/posts/actions';
-import route from 'lib/route';
-import User from 'lib/user';
-import userUtils from 'lib/user/utils';
-import analytics from 'lib/analytics';
-import { decodeEntities } from 'lib/formatting';
+import actions from 'client/lib/posts/actions';
+import route from 'client/lib/route';
+import User from 'client/lib/user';
+import userUtils from 'client/lib/user/utils';
+import analytics from 'client/lib/analytics';
+import { decodeEntities } from 'client/lib/formatting';
 import PostEditor from './post-editor';
-import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
-import { editPost } from 'state/posts/actions';
-import wpcom from 'lib/wp';
-import Dispatcher from 'dispatcher';
-import { getFeaturedImageId } from 'lib/posts/utils';
+import { startEditingPost, stopEditingPost } from 'client/state/ui/editor/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSite } from 'client/state/sites/selectors';
+import { getEditorPostId, getEditorPath } from 'client/state/ui/editor/selectors';
+import { editPost } from 'client/state/posts/actions';
+import wpcom from 'client/lib/wp';
+import Dispatcher from 'client/dispatcher';
+import { getFeaturedImageId } from 'client/lib/posts/utils';
 
 const user = User();
 

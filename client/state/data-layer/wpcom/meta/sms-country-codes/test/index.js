@@ -9,8 +9,8 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { fetchCountriesSms, updateCountriesSms, showCountriesSmsLoadingError } from '../';
-import { COUNTRIES_SMS_UPDATED, NOTICE_CREATE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { COUNTRIES_SMS_UPDATED, NOTICE_CREATE } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'meta sms-country-codes', () => {

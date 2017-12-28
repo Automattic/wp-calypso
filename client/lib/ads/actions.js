@@ -9,8 +9,8 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
+import Dispatcher from 'client/dispatcher';
+import wpcom from 'client/lib/wp';
 
 /**
  * Module variables

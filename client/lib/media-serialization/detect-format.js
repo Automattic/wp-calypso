@@ -10,7 +10,7 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import { Formats, MediaTypes } from './constants';
-import MediaUtils from 'lib/media/utils';
+import MediaUtils from 'client/lib/media/utils';
 
 /**
  * Module variables

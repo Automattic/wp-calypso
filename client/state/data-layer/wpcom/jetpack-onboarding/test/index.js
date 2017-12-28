@@ -3,9 +3,9 @@
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import { saveJetpackOnboardingSettings, announceSaveFailure } from '../';
-import { JETPACK_ONBOARDING_SETTINGS_SAVE } from 'state/action-types';
+import { JETPACK_ONBOARDING_SETTINGS_SAVE } from 'client/state/action-types';
 
 describe( 'saveJetpackOnboardingSettings()', () => {
 	const dispatch = jest.fn();

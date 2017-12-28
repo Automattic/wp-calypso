@@ -10,7 +10,7 @@ import {
 	PLUGIN_UPLOAD_COMPLETE,
 	PLUGIN_UPLOAD_ERROR,
 	PLUGIN_UPLOAD_PROGRESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Upload a plugin to a site.

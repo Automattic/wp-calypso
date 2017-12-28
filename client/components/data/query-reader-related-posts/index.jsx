@@ -13,9 +13,9 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { shouldFetchRelated } from 'state/reader/related-posts/selectors';
-import { requestRelatedPosts } from 'state/reader/related-posts/actions';
-import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
+import { shouldFetchRelated } from 'client/state/reader/related-posts/selectors';
+import { requestRelatedPosts } from 'client/state/reader/related-posts/actions';
+import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from 'client/state/reader/related-posts/utils';
 
 class QueryReaderRelatedPosts extends Component {
 	componentWillMount() {

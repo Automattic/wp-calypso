@@ -12,13 +12,13 @@ import { get, endsWith } from 'lodash';
  * Internal dependencies
  */
 import { translate } from 'i18n-calypso';
-import FollowButton from 'reader/follow-button';
+import FollowButton from 'client/reader/follow-button';
 import { getLinkProps } from './helper';
 import { recordFollowToggle, recordSiteClick } from './stats';
-import { getSiteUrl, getSourceFollowUrl, getSourceData } from 'reader/discover/helper';
-import SiteIcon from 'blocks/site-icon';
-import { getSite } from 'state/reader/sites/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
+import { getSiteUrl, getSourceFollowUrl, getSourceData } from 'client/reader/discover/helper';
+import SiteIcon from 'client/blocks/site-icon';
+import { getSite } from 'client/state/reader/sites/selectors';
+import QueryReaderSite from 'client/components/data/query-reader-site';
 
 class DiscoverSiteAttribution extends React.Component {
 	static propTypes = {

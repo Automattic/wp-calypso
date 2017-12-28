@@ -9,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import Main from 'client/components/main';
 import { retrieveMobileRedirect } from './persistence-utils';
 
 const JetpackConnectMainWrapper = ( { isWide, className, children } ) => {

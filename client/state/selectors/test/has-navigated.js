@@ -8,8 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { hasNavigated } from 'state/selectors';
-import { ROUTE_SET } from 'state/action-types';
+import { hasNavigated } from 'client/state/selectors';
+import { ROUTE_SET } from 'client/state/action-types';
 
 describe( 'hasNavigated()', () => {
 	test( 'should return false if only one ROUTE_SET has occurred', () => {

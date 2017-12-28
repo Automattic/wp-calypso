@@ -15,14 +15,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import shortcodeUtils from 'lib/shortcode';
-import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
-import { getSimplePayments } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import formatCurrency from 'lib/format-currency';
-import QuerySimplePayments from 'components/data/query-simple-payments';
-import QueryMedia from 'components/data/query-media';
-import { getMediaItem } from 'state/selectors';
+import shortcodeUtils from 'client/lib/shortcode';
+import { deserialize } from 'client/components/tinymce/plugins/simple-payments/shortcode-utils';
+import { getSimplePayments } from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import formatCurrency from 'client/lib/format-currency';
+import QuerySimplePayments from 'client/components/data/query-simple-payments';
+import QueryMedia from 'client/components/data/query-media';
+import { getMediaItem } from 'client/state/selectors';
 
 class SimplePaymentsView extends Component {
 	render() {

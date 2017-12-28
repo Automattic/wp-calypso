@@ -20,7 +20,7 @@ import {
 	POST_REVISIONS_REQUEST_SUCCESS,
 	POST_REVISIONS_SELECT,
 	SELECTED_SITE_SET,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 const TEST_SITE_ID = 138211384;
 const TEST_POST_ID = 165;

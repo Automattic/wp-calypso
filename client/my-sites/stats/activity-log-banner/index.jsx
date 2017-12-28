@@ -12,7 +12,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import Gridicon from 'gridicons';
 
 class ActivityLogBanner extends Component {

@@ -12,9 +12,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
 
 // Mapping eligibility holds to messages that will be shown to the user
 // TODO: update supportUrls and maybe create similar mapping for warnings

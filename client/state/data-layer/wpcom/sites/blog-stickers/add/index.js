@@ -10,12 +10,12 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { SITES_BLOG_STICKER_ADD } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { removeBlogSticker } from 'state/sites/blog-stickers/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { SITES_BLOG_STICKER_ADD } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { removeBlogSticker } from 'client/state/sites/blog-stickers/actions';
+import { errorNotice, successNotice } from 'client/state/notices/actions';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
 
 export function requestBlogStickerAdd( { dispatch }, action ) {
 	dispatch(

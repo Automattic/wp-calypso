@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
+import KeyBindings from 'client/lib/keyboard-shortcuts/key-bindings';
 
 describe( 'KeyBindings', () => {
 	test( 'should have get function', () => {

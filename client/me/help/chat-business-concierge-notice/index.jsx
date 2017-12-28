@@ -13,9 +13,9 @@ import i18n, { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import HelpTeaserButton from '../help-teaser-button';
-import { isBusinessPlanUser } from 'state/selectors';
+import { isBusinessPlanUser } from 'client/state/selectors';
 
 class ChatBusinessConciergeNotice extends Component {
 	static propTypes = {

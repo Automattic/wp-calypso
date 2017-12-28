@@ -17,58 +17,61 @@ import { v4 as uuid } from 'uuid';
 /**
  * Internal dependencies
  */
-import actions from 'lib/posts/actions';
-import route from 'lib/route';
-import PostEditStore from 'lib/posts/post-edit-store';
-import EditorActionBar from 'post-editor/editor-action-bar';
-import FeaturedImage from 'post-editor/editor-featured-image';
-import EditorTitle from 'post-editor/editor-title';
-import EditorPageSlug from 'post-editor/editor-page-slug';
-import TinyMCE from 'components/tinymce';
-import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
-import InvalidURLDialog from 'post-editor/invalid-url-dialog';
-import RestorePostDialog from 'post-editor/restore-post-dialog';
-import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
-import utils from 'lib/posts/utils';
+import actions from 'client/lib/posts/actions';
+import route from 'client/lib/route';
+import PostEditStore from 'client/lib/posts/post-edit-store';
+import EditorActionBar from 'client/post-editor/editor-action-bar';
+import FeaturedImage from 'client/post-editor/editor-featured-image';
+import EditorTitle from 'client/post-editor/editor-title';
+import EditorPageSlug from 'client/post-editor/editor-page-slug';
+import TinyMCE from 'client/components/tinymce';
+import SegmentedControl from 'client/components/segmented-control';
+import SegmentedControlItem from 'client/components/segmented-control/item';
+import InvalidURLDialog from 'client/post-editor/invalid-url-dialog';
+import RestorePostDialog from 'client/post-editor/restore-post-dialog';
+import VerifyEmailDialog from 'client/components/email-verification/email-verification-dialog';
+import utils from 'client/lib/posts/utils';
 import EditorPreview from './editor-preview';
-import { recordStat, recordEvent } from 'lib/posts/stats';
-import analytics from 'lib/analytics';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
-import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
-import { closeEditorSidebar, openEditorSidebar } from 'state/ui/editor/sidebar/actions';
+import { recordStat, recordEvent } from 'client/lib/posts/stats';
+import analytics from 'client/lib/analytics';
+import { getSelectedSiteId, getSelectedSite } from 'client/state/ui/selectors';
+import { saveConfirmationSidebarPreference } from 'client/state/ui/editor/actions';
+import {
+	setEditorLastDraft,
+	resetEditorLastDraft,
+} from 'client/state/ui/editor/last-draft/actions';
+import { closeEditorSidebar, openEditorSidebar } from 'client/state/ui/editor/sidebar/actions';
 import {
 	getEditorPostId,
 	getEditorPath,
 	isConfirmationSidebarEnabled,
-} from 'state/ui/editor/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
-import { getEditedPostValue, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { hasBrokenSiteUserConnection, editedPostHasContent } from 'state/selectors';
-import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';
-import EditorDocumentHead from 'post-editor/editor-document-head';
-import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
-import EditorForbidden from 'post-editor/editor-forbidden';
-import EditorNotice from 'post-editor/editor-notice';
-import EditorWordCount from 'post-editor/editor-word-count';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
-import QueryPreferences from 'components/data/query-preferences';
-import { setLayoutFocus, setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { protectForm } from 'lib/protect-form';
-import EditorSidebar from 'post-editor/editor-sidebar';
-import Site from 'blocks/site';
-import StatusLabel from 'post-editor/editor-status-label';
-import EditorGroundControl from 'post-editor/editor-ground-control';
-import { isWithinBreakpoint } from 'lib/viewport';
-import { isSitePreviewable } from 'state/sites/selectors';
-import { removep } from 'lib/formatting';
-import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
-import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
+} from 'client/state/ui/editor/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { editPost, receivePost, savePostSuccess } from 'client/state/posts/actions';
+import { getEditedPostValue, getPostEdits, isEditedPostDirty } from 'client/state/posts/selectors';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import { hasBrokenSiteUserConnection, editedPostHasContent } from 'client/state/selectors';
+import EditorConfirmationSidebar from 'client/post-editor/editor-confirmation-sidebar';
+import EditorDocumentHead from 'client/post-editor/editor-document-head';
+import EditorPostTypeUnsupported from 'client/post-editor/editor-post-type-unsupported';
+import EditorForbidden from 'client/post-editor/editor-forbidden';
+import EditorNotice from 'client/post-editor/editor-notice';
+import EditorWordCount from 'client/post-editor/editor-word-count';
+import { savePreference } from 'client/state/preferences/actions';
+import { getPreference } from 'client/state/preferences/selectors';
+import QueryPreferences from 'client/components/data/query-preferences';
+import { setLayoutFocus, setNextLayoutFocus } from 'client/state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'client/state/ui/layout-focus/selectors';
+import { protectForm } from 'client/lib/protect-form';
+import EditorSidebar from 'client/post-editor/editor-sidebar';
+import Site from 'client/blocks/site';
+import StatusLabel from 'client/post-editor/editor-status-label';
+import EditorGroundControl from 'client/post-editor/editor-ground-control';
+import { isWithinBreakpoint } from 'client/lib/viewport';
+import { isSitePreviewable } from 'client/state/sites/selectors';
+import { removep } from 'client/lib/formatting';
+import QuickSaveButtons from 'client/post-editor/editor-ground-control/quick-save-buttons';
+import EditorRevisionsDialog from 'client/post-editor/editor-revisions/dialog';
 
 export const PostEditor = createReactClass( {
 	displayName: 'PostEditor',

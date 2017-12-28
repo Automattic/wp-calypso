@@ -12,7 +12,7 @@ import { productsRequest, productsRequestSuccess } from '../list-reducer';
 import {
 	WOOCOMMERCE_PRODUCTS_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'productsRequest', () => {

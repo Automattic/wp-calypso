@@ -9,7 +9,7 @@ import { get, omit, isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import { getSerializedReviewsQuery } from './utils';
 
 /**

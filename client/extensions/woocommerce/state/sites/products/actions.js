@@ -8,8 +8,8 @@ import { isArray } from 'lodash';
  * Internal dependencies
  */
 import { DEFAULT_QUERY, getNormalizedProductsQuery } from './utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import request from 'woocommerce/state/sites/request';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import request from 'client/extensions/woocommerce/state/sites/request';
 import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_PRODUCTS_REQUEST,
@@ -21,7 +21,7 @@ import {
 	WOOCOMMERCE_PRODUCT_REQUEST,
 	WOOCOMMERCE_PRODUCT_UPDATE,
 	WOOCOMMERCE_PRODUCT_UPDATED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 /**
  * Action Creator: Create a new product

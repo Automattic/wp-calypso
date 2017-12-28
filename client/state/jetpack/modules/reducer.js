@@ -22,8 +22,8 @@ import {
 	JETPACK_MODULES_REQUEST_SUCCESS,
 	JETPACK_SETTINGS_RECEIVE,
 	JETPACK_SETTINGS_UPDATE_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
 
 const createItemsReducer = active => {
 	return ( state, { siteId, moduleSlug } ) => {

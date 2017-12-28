@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isFetchingStoredCards } from 'state/stored-cards/selectors';
-import { fetchStoredCards } from 'state/stored-cards/actions';
+import { isFetchingStoredCards } from 'client/state/stored-cards/selectors';
+import { fetchStoredCards } from 'client/state/stored-cards/actions';
 
 class QueryStoredCards extends Component {
 	componentWillMount() {

@@ -19,9 +19,9 @@ import {
 	Next,
 	Quit,
 	Continue,
-} from 'layout/guided-tours/config-elements';
-import { isNotNewUser } from 'state/ui/guided-tours/contexts';
-import { isDesktop } from 'lib/viewport';
+} from 'client/layout/guided-tours/config-elements';
+import { isNotNewUser } from 'client/state/ui/guided-tours/contexts';
+import { isDesktop } from 'client/lib/viewport';
 
 export const ActivityLogTour = makeTour(
 	<Tour

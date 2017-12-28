@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import EmptyContentComponent from 'components/empty-content';
+import Main from 'client/components/main';
+import EmptyContentComponent from 'client/components/empty-content';
 
 function DomainConnectNotFoundError( { translate } ) {
 	const emptyContentTitle = translate( "Uh oh. That method isn't supported.", {

@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSite } from 'state/sites/selectors';
-import { isUserConnected } from 'state/jetpack-connect/actions';
+import { isRequestingSite } from 'client/state/sites/selectors';
+import { isUserConnected } from 'client/state/jetpack-connect/actions';
 
 class QueryUserConnection extends Component {
 	componentWillMount() {

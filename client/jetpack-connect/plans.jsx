@@ -14,28 +14,28 @@ import { localize } from 'i18n-calypso';
  */
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
+import LoggedOutFormLinks from 'client/components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
 import PlansSkipButton from './plans-skip-button';
-import QueryPlans from 'components/data/query-plans';
-import QuerySitePlans from 'components/data/query-site-plans';
-import { addItem } from 'lib/upgrades/actions';
+import QueryPlans from 'client/components/data/query-plans';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import { addItem } from 'client/lib/upgrades/actions';
 import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
-import { completeFlow, goBackToWpAdmin } from 'state/jetpack-connect/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getPlanBySlug } from 'state/plans/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
-import { mc } from 'lib/analytics';
-import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { completeFlow, goBackToWpAdmin } from 'client/state/jetpack-connect/actions';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getPlanBySlug } from 'client/state/plans/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { isCurrentPlanPaid, isJetpackSite } from 'client/state/sites/selectors';
+import { mc } from 'client/lib/analytics';
+import { PLAN_JETPACK_FREE } from 'client/lib/plans/constants';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 import {
 	canCurrentUser,
 	hasInitializedSites,
 	isRtl,
 	isSiteAutomatedTransfer,
-} from 'state/selectors';
+} from 'client/state/selectors';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_REDIRECTION_PAGE = '/posts/';

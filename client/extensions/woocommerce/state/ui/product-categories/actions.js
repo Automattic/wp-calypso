@@ -12,7 +12,7 @@ import { uniqueId } from 'lodash';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 /**
  * Generates a new product category placeholder ID

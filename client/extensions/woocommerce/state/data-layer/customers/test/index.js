@@ -7,9 +7,9 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { searchCustomers } from 'woocommerce/state/sites/customers/actions';
+import { searchCustomers } from 'client/extensions/woocommerce/state/sites/customers/actions';
 import { fetch } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 describe( 'handlers', () => {
 	describe( '#fetch', () => {

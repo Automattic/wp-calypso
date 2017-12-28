@@ -12,11 +12,11 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import ServiceAction from './service-action';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
-import { getKeyringConnections } from 'state/sharing/keyring/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import requestExternalAccess from 'lib/sharing';
-import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
+import { requestKeyringConnections } from 'client/state/sharing/keyring/actions';
+import { getKeyringConnections } from 'client/state/sharing/keyring/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import requestExternalAccess from 'client/lib/sharing';
+import { isKeyringConnectionsFetching } from 'client/state/sharing/keyring/selectors';
 
 export const getNamedConnectedService = ( state, name ) =>
 	getKeyringConnections( state ).filter( item => item.service === name );

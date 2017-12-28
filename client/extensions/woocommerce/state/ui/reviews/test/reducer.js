@@ -10,7 +10,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { WOOCOMMERCE_UI_REVIEWS_SET_QUERY } from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_UI_REVIEWS_SET_QUERY } from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should store the current query for more than one site', () => {

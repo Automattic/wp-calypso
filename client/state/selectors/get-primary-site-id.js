@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
 
 /**
  * Returns the current user's primary site's ID.

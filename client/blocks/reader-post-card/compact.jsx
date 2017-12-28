@@ -8,10 +8,10 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
-import ReaderExcerpt from 'blocks/reader-excerpt';
-import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
+import AutoDirection from 'client/components/auto-direction';
+import Emojify from 'client/components/emojify';
+import ReaderExcerpt from 'client/blocks/reader-excerpt';
+import ReaderPostOptionsMenu from 'client/blocks/reader-post-options-menu';
 import FeaturedAsset from './featured-asset';
 
 const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {

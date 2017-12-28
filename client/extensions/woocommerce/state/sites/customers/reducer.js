@@ -9,12 +9,12 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import {
 	WOOCOMMERCE_CUSTOMERS_REQUEST,
 	WOOCOMMERCE_CUSTOMERS_REQUEST_FAILURE,
 	WOOCOMMERCE_CUSTOMERS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 /**
  * Returns the updated customer search state after an action has been

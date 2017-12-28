@@ -14,14 +14,14 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Main from 'components/main';
-import observe from 'lib/mixins/data-observe';
-import SiteSelector from 'components/site-selector';
-import { addSiteFragment } from 'lib/route';
-import { getSites } from 'state/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import Card from 'client/components/card';
+import Main from 'client/components/main';
+import observe from 'client/lib/mixins/data-observe';
+import SiteSelector from 'client/components/site-selector';
+import { addSiteFragment } from 'client/lib/route';
+import { getSites } from 'client/state/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 export const Sites = createReactClass( {
 	displayName: 'Sites',

@@ -19,7 +19,7 @@ import {
 	WOOCOMMERCE_REVIEW_REPLY_CREATE_REQUEST,
 	WOOCOMMERCE_REVIEW_REPLY_DELETE_REQUEST,
 	WOOCOMMERCE_REVIEW_REPLY_UPDATE_REQUEST,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#fetchReviewReplies()', () => {

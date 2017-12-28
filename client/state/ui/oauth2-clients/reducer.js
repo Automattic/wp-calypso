@@ -9,8 +9,8 @@ import { startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
-import { ROUTE_SET } from 'state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
+import { ROUTE_SET } from 'client/state/action-types';
 
 export const currentClientId = createReducer( null, {
 	[ ROUTE_SET ]: ( state, { path, query } ) => {

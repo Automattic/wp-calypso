@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { SchemaError } from 'state/data-layer/wpcom-http/utils';
+import { SchemaError } from 'client/state/data-layer/wpcom-http/utils';
 import fromApi from '../from-api';
 
 describe( 'fromApi()', () => {

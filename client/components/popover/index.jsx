@@ -16,7 +16,7 @@ import { uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import RootChild from 'components/root-child';
+import RootChild from 'client/components/root-child';
 import {
 	bindWindowListeners,
 	unbindWindowListeners,
@@ -25,7 +25,7 @@ import {
 	isElement as isDOMElement,
 	offset,
 } from './util';
-import { isRtl as isRtlSelector } from 'state/selectors';
+import { isRtl as isRtlSelector } from 'client/state/selectors';
 
 /**
  * Module variables

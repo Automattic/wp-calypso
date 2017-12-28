@@ -14,9 +14,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import ScreenReaderText from 'components/screen-reader-text';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import ScreenReaderText from 'client/components/screen-reader-text';
 
 export class ChecklistTask extends PureComponent {
 	static propTypes = {

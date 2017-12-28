@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPost } from 'state/posts/selectors';
+import { getPost } from 'client/state/posts/selectors';
 
 function PostTypePostAuthor( { name } ) {
 	if ( ! name ) {

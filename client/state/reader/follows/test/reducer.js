@@ -26,7 +26,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 	READER_FOLLOW_ERROR,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#itemsCount()', () => {

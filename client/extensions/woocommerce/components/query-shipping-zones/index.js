@@ -12,12 +12,12 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { fetchShippingMethods } from 'woocommerce/state/sites/shipping-methods/actions';
-import { fetchShippingZones } from 'woocommerce/state/sites/shipping-zones/actions';
-import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
-import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
-import { areShippingMethodsLoaded } from 'woocommerce/state/sites/shipping-methods/selectors';
-import { areLocationsLoaded } from 'woocommerce/state/sites/locations/selectors';
+import { fetchShippingMethods } from 'client/extensions/woocommerce/state/sites/shipping-methods/actions';
+import { fetchShippingZones } from 'client/extensions/woocommerce/state/sites/shipping-zones/actions';
+import { fetchLocations } from 'client/extensions/woocommerce/state/sites/locations/actions';
+import { areShippingZonesLoaded } from 'client/extensions/woocommerce/state/sites/shipping-zones/selectors';
+import { areShippingMethodsLoaded } from 'client/extensions/woocommerce/state/sites/shipping-methods/selectors';
+import { areLocationsLoaded } from 'client/extensions/woocommerce/state/sites/locations/selectors';
 
 class QueryShippingZones extends Component {
 	fetch( siteId ) {

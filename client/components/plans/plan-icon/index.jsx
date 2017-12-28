@@ -24,7 +24,7 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
 	getPlanClass,
-} from 'lib/plans/constants';
+} from 'client/lib/plans/constants';
 
 export default class PlanIcon extends Component {
 	getIcon( planName ) {

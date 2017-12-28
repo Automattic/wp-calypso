@@ -10,9 +10,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityLogBanner from './index';
-import ProgressBar from 'components/progress-bar';
-import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
-import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
+import ProgressBar from 'client/components/progress-bar';
+import QueryRewindRestoreStatus from 'client/components/data/query-rewind-restore-status';
+import QueryRewindBackupStatus from 'client/components/data/query-rewind-backup-status';
 
 /**
  * Normalize timestamp values

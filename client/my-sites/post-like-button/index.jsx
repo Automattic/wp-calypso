@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import LikeButton from 'blocks/like-button';
-import { getSiteSlug } from 'state/sites/selectors';
+import LikeButton from 'client/blocks/like-button';
+import { getSiteSlug } from 'client/state/sites/selectors';
 
 const PostLikeButton = props => (
 	<LikeButton

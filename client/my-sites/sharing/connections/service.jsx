@@ -22,28 +22,28 @@ import {
 	failCreateConnection,
 	fetchConnection,
 	updateSiteConnection,
-} from 'state/sharing/publicize/actions';
-import { successNotice, errorNotice, warningNotice } from 'state/notices/actions';
+} from 'client/state/sharing/publicize/actions';
+import { successNotice, errorNotice, warningNotice } from 'client/state/notices/actions';
 import Connection from './connection';
-import FoldableCard from 'components/foldable-card';
-import { getAvailableExternalAccounts } from 'state/sharing/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
+import FoldableCard from 'client/components/foldable-card';
+import { getAvailableExternalAccounts } from 'client/state/sharing/selectors';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import { getKeyringConnectionsByName } from 'client/state/sharing/keyring/selectors';
 import {
 	getBrokenSiteUserConnectionsForService,
 	getRemovableConnections,
 	getSiteUserConnectionsForService,
 	isFetchingConnections,
-} from 'state/sharing/publicize/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+} from 'client/state/sharing/publicize/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
+import { requestKeyringConnections } from 'client/state/sharing/keyring/actions';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
 import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
-import requestExternalAccess from 'lib/sharing';
+import requestExternalAccess from 'client/lib/sharing';
 
 export class SharingService extends Component {
 	static propTypes = {

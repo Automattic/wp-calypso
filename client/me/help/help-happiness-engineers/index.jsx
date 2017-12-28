@@ -12,13 +12,13 @@ import { shuffle } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormSectionHeading from 'components/forms/form-section-heading';
-import Gravatar from 'components/gravatar';
-import QueryHappinessEngineers from 'components/data/query-happiness-engineers';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import Gravatar from 'client/components/gravatar';
+import QueryHappinessEngineers from 'client/components/data/query-happiness-engineers';
 import {
 	getHappinessEngineers,
 	hasReceivedHappinessEngineers,
-} from 'state/happiness-engineers/selectors';
+} from 'client/state/happiness-engineers/selectors';
 
 function HelpHappinessEngineers( { translate, happinessEngineers, hasReceived } ) {
 	return (

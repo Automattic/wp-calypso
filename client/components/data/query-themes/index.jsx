@@ -12,8 +12,8 @@ import { isEmpty, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { requestThemes } from 'state/themes/actions';
-import { getThemesForQuery, isRequestingThemesForQuery } from 'state/themes/selectors';
+import { requestThemes } from 'client/state/themes/actions';
+import { getThemesForQuery, isRequestingThemesForQuery } from 'client/state/themes/selectors';
 
 class QueryThemes extends Component {
 	static propTypes = {

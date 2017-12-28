@@ -9,7 +9,7 @@ import { find, pull } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CANCEL,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_CLOSE,
@@ -21,7 +21,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_WHOLE_COUNTRY,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_STATE,
 	WOOCOMMERCE_SHIPPING_ZONE_LOCATIONS_FILTER_BY_POSTCODE,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 import { mergeLocationEdits } from './helpers';
 
 export const JOURNAL_ACTIONS = {

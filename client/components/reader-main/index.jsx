@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import Main from 'components/main';
-import SyncReaderFollows from 'components/data/sync-reader-follows';
+import Main from 'client/components/main';
+import SyncReaderFollows from 'client/components/data/sync-reader-follows';
 
 /*
  * We ref-count number of ReaderMains on screen in order to avoid a race condition

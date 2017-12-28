@@ -9,7 +9,7 @@ import { stub } from 'sinon';
  * Internal dependencies
  */
 import isUserRegistrationDaysWithinRange from '../is-user-registration-days-within-range';
-import { getCurrentUserDate } from 'state/current-user/selectors';
+import { getCurrentUserDate } from 'client/state/current-user/selectors';
 jest.mock( 'state/current-user/selectors', () => ( {
 	getCurrentUserDate: require( 'sinon' ).stub(),
 } ) );

@@ -11,12 +11,12 @@ import { get, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaStore from 'lib/media/store';
-import MediaUtils from 'lib/media/utils';
-import Spinner from 'components/spinner';
-import SpinnerLine from 'components/spinner-line';
-import ImagePreloader from 'components/image-preloader';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import MediaStore from 'client/lib/media/store';
+import MediaUtils from 'client/lib/media/utils';
+import Spinner from 'client/components/spinner';
+import SpinnerLine from 'client/components/spinner-line';
+import ImagePreloader from 'client/components/image-preloader';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 class EditorFeaturedImagePreview extends Component {
 	static propTypes = {

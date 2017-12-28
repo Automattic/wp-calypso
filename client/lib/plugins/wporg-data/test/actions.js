@@ -8,8 +8,8 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import WPorgActions from 'lib/plugins/wporg-data/actions';
-import mockedWporg from 'lib/wporg';
+import WPorgActions from 'client/lib/plugins/wporg-data/actions';
+import mockedWporg from 'client/lib/wporg';
 jest.mock( 'lib/wporg', () => require( './mocks/wporg' ) );
 jest.mock( 'lib/impure-lodash', () => ( {
 	debounce: cb => cb,

@@ -14,12 +14,12 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPlanClass, isMonthly } from 'lib/plans/constants';
-import { planLevelsMatch } from 'lib/plans/index';
-import { recordTracksEvent } from 'state/analytics/actions';
+import Button from 'client/components/button';
+import { getCurrentPlan } from 'client/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getPlanClass, isMonthly } from 'client/lib/plans/constants';
+import { planLevelsMatch } from 'client/lib/plans/index';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 const PlanFeaturesActions = ( {
 	available = true,

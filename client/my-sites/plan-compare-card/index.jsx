@@ -15,9 +15,9 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 
-import Button from 'components/button';
-import Card from 'components/card';
-import Ribbon from 'components/ribbon';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import Ribbon from 'client/components/ribbon';
 
 class PlanCompareCard extends React.Component {
 	static displayName = 'PlanCompareCard';

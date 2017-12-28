@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 
 const SitesListActions = {
 	removeSitesNotices( logs ) {

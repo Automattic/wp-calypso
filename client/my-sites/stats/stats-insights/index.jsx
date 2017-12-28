@@ -13,25 +13,25 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import StatsNavigation from 'blocks/stats-navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import AllTime from 'my-sites/stats/all-time/';
+import StatsNavigation from 'client/blocks/stats-navigation';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import AllTime from 'client/my-sites/stats/all-time/';
 import Comments from '../stats-comments';
 import Reach from '../stats-reach';
 import PostingActivity from '../post-trends';
 import StatsModule from '../stats-module';
 import statsStrings from '../stats-strings';
-import MostPopular from 'my-sites/stats/most-popular';
+import MostPopular from 'client/my-sites/stats/most-popular';
 import LatestPostSummary from '../post-performance';
-import DomainTip from 'my-sites/domain-tip';
-import Main from 'components/main';
+import DomainTip from 'client/my-sites/domain-tip';
+import Main from 'client/components/main';
 import StatsFirstView from '../stats-first-view';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'client/components/section-header';
 import StatsViews from '../stats-views';
 import Followers from '../stats-followers';
-import JetpackColophon from 'components/jetpack-colophon';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import JetpackColophon from 'client/components/jetpack-colophon';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
 
 const StatsInsights = props => {
 	const { followList, isJetpack, siteId, siteSlug, translate } = props;

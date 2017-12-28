@@ -12,28 +12,28 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Emojify from 'components/emojify';
-import ExternalLink from 'components/external-link';
-import Popover from 'components/popover';
-import { decodeEntities } from 'lib/formatting';
-import { urlToDomainAndPath } from 'lib/url';
+import Button from 'client/components/button';
+import Emojify from 'client/components/emojify';
+import ExternalLink from 'client/components/external-link';
+import Popover from 'client/components/popover';
+import { decodeEntities } from 'client/lib/formatting';
+import { urlToDomainAndPath } from 'client/lib/url';
 import {
 	canCurrentUser,
 	getSiteComment,
 	getSiteSetting,
 	isEmailBlacklisted,
-} from 'state/selectors';
+} from 'client/state/selectors';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import { successNotice } from 'state/notices/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+} from 'client/state/analytics/actions';
+import { getCurrentUserEmail } from 'client/state/current-user/selectors';
+import { successNotice } from 'client/state/notices/actions';
+import { saveSiteSettings } from 'client/state/site-settings/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 
 export class CommentAuthorMoreInfo extends Component {
 	static propTypes = {

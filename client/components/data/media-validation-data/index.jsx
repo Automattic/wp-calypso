@@ -10,8 +10,8 @@ import React from 'react';
 /**
  * Interanl dependencies
  */
-import MediaValidationStore from 'lib/media/validation-store';
-import passToChildren from 'lib/react-pass-to-children';
+import MediaValidationStore from 'client/lib/media/validation-store';
+import passToChildren from 'client/lib/react-pass-to-children';
 
 function getStateData( siteId ) {
 	return {

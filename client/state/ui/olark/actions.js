@@ -11,7 +11,7 @@ import {
 	OLARK_OPERATORS_AVAILABLE,
 	OLARK_OPERATORS_AWAY,
 	OLARK_SET_AVAILABILITY,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns an action object to be used in signalling that olark did not load

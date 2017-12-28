@@ -4,10 +4,10 @@
  * Internal dependencies
  */
 
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { DIRECTLY_ASK_QUESTION, DIRECTLY_INITIALIZATION_START } from 'state/action-types';
-import { initializationCompleted, initializationFailed } from 'state/help/directly/actions';
-import * as directly from 'lib/directly';
+import { recordTracksEvent, withAnalytics } from 'client/state/analytics/actions';
+import { DIRECTLY_ASK_QUESTION, DIRECTLY_INITIALIZATION_START } from 'client/state/action-types';
+import { initializationCompleted, initializationFailed } from 'client/state/help/directly/actions';
+import * as directly from 'client/lib/directly';
 
 export function askQuestion( { dispatch }, action ) {
 	return directly

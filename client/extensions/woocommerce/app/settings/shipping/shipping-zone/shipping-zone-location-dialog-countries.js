@@ -14,19 +14,19 @@ import { startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import BulkSelect from 'woocommerce/components/bulk-select';
-import FilteredList from 'woocommerce/components/filtered-list';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import LocationFlag from 'woocommerce/components/location-flag';
-import { decodeEntities } from 'lib/formatting';
-import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
+import BulkSelect from 'client/extensions/woocommerce/components/bulk-select';
+import FilteredList from 'client/extensions/woocommerce/components/filtered-list';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormFieldSet from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import LocationFlag from 'client/extensions/woocommerce/components/location-flag';
+import { decodeEntities } from 'client/lib/formatting';
+import { bindActionCreatorsWithSiteId } from 'client/extensions/woocommerce/lib/redux-utils';
 import {
 	toggleContinentSelected,
 	toggleCountrySelected,
-} from 'woocommerce/state/ui/shipping/zones/locations/actions';
-import { getCurrentlyEditingShippingZoneCountries } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
+} from 'client/extensions/woocommerce/state/ui/shipping/zones/locations/actions';
+import { getCurrentlyEditingShippingZoneCountries } from 'client/extensions/woocommerce/state/ui/shipping/zones/locations/selectors';
 
 const ShippingZoneLocationDialogCountries = ( { continentCountries, translate, actions } ) => {
 	const renderCountryLocation = ( location, index ) => {

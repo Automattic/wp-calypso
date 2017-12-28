@@ -8,8 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { shouldSyncReaderFollows } from 'state/selectors';
-import { MS_BETWEEN_SYNCS } from 'state/selectors/should-sync-reader-follows';
+import { shouldSyncReaderFollows } from 'client/state/selectors';
+import { MS_BETWEEN_SYNCS } from 'client/state/selectors/should-sync-reader-follows';
 
 describe( 'shouldSyncReaderFollows', () => {
 	test( 'should return true when last time is null', () => {

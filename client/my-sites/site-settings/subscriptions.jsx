@@ -12,19 +12,19 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import CompactCard from 'client/components/card/compact';
+import JetpackModuleToggle from 'client/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode,
-} from 'state/selectors';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+} from 'client/state/selectors';
+import QueryJetpackConnection from 'client/components/data/query-jetpack-connection';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
 
 const Subscriptions = ( {
 	fields,

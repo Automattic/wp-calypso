@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isSiteBlocked } from 'state/selectors';
+import { isSiteBlocked } from 'client/state/selectors';
 
 describe( 'isSiteBlocked()', () => {
 	test( 'should return true if the specified site is blocked', () => {

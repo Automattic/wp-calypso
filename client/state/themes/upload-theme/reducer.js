@@ -9,7 +9,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import {
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
@@ -21,7 +21,7 @@ import {
 	THEME_TRANSFER_INITIATE_REQUEST,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const uploadedThemeId = createReducer(
 	{},

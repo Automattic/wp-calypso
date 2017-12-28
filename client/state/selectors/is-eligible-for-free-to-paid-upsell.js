@@ -10,7 +10,7 @@ import {
 	isSiteOnFreePlan,
 	isUserRegistrationDaysWithinRange,
 	isVipSite,
-} from 'state/selectors';
+} from 'client/state/selectors';
 
 /**
  * Returns true if the current user is eligible to participate in the free to paid plan upsell for the site

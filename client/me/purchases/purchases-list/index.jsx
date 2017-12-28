@@ -12,21 +12,21 @@ import React, { Component } from 'react';
 /**
  * Internal Dependencies
  */
-import CompactCard from 'components/card';
-import EmptyContent from 'components/empty-content';
+import CompactCard from 'client/components/card';
+import EmptyContent from 'client/components/empty-content';
 import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
-} from 'state/purchases/selectors';
-import { getSites } from 'state/selectors';
-import { getPurchasesBySite } from 'lib/purchases';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
+} from 'client/state/purchases/selectors';
+import { getSites } from 'client/state/selectors';
+import { getPurchasesBySite } from 'client/lib/purchases';
+import Main from 'client/components/main';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
 import PurchasesHeader from './header';
 import PurchasesSite from '../purchases-site';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import userFactory from 'lib/user';
+import QueryUserPurchases from 'client/components/data/query-user-purchases';
+import userFactory from 'client/lib/user';
 const user = userFactory();
 
 class PurchasesList extends Component {

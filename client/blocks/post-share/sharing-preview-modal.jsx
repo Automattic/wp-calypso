@@ -8,8 +8,8 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import SharingPreviewPane from 'blocks/sharing-preview-pane';
+import Dialog from 'client/components/dialog';
+import SharingPreviewPane from 'client/blocks/sharing-preview-pane';
 
 const SharingPreviewModal = ( props ) => {
 	const {

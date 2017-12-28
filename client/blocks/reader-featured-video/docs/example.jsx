@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ReaderFeaturedVideoBlock from 'blocks/reader-featured-video';
+import Card from 'client/components/card';
+import ReaderFeaturedVideoBlock from 'client/blocks/reader-featured-video';
 
 const exampleVideo = {
 	autoplayIframe:

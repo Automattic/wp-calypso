@@ -11,13 +11,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import { addQueryArgs } from 'lib/url';
-import { getCustomizerUrl, getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRequesting, getPluginOnSite } from 'state/plugins/installed/selectors';
+import CompactCard from 'client/components/card/compact';
+import SectionHeader from 'client/components/section-header';
+import QueryJetpackPlugins from 'client/components/data/query-jetpack-plugins';
+import { addQueryArgs } from 'client/lib/url';
+import { getCustomizerUrl, getSiteSlug } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isRequesting, getPluginOnSite } from 'client/state/plugins/installed/selectors';
 
 const AmpJetpack = ( {
 	ampPluginInstalled,

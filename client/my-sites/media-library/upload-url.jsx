@@ -14,9 +14,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import FormTextInput from 'components/forms/form-text-input';
-import MediaActions from 'lib/media/actions';
+import analytics from 'client/lib/analytics';
+import FormTextInput from 'client/components/forms/form-text-input';
+import MediaActions from 'client/lib/media/actions';
 
 class MediaLibraryUploadUrl extends Component {
 	static propTypes = {

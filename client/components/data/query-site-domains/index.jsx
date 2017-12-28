@@ -12,8 +12,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSiteDomains } from 'state/sites/domains/selectors';
-import { fetchSiteDomains } from 'state/sites/domains/actions';
+import { isRequestingSiteDomains } from 'client/state/sites/domains/selectors';
+import { fetchSiteDomains } from 'client/state/sites/domains/actions';
 
 class QuerySiteDomains extends Component {
 	constructor( props ) {

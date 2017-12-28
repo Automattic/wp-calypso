@@ -7,16 +7,16 @@ import { assign, flow, flowRight, partialRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
-import emitter from 'lib/mixins/emitter';
+import { action as UpgradesActionTypes } from 'client/lib/upgrades/constants';
+import emitter from 'client/lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
-import PollerPool from 'lib/data-poller';
+import PollerPool from 'client/lib/data-poller';
 import { recordEvents } from './cart-analytics';
-import productsListFactory from 'lib/products-list';
+import productsListFactory from 'client/lib/products-list';
 const productsList = productsListFactory();
-import Dispatcher from 'dispatcher';
-import { applyCoupon, cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
-import wp from 'lib/wp';
+import Dispatcher from 'client/dispatcher';
+import { applyCoupon, cartItems, fillInAllCartItemAttributes } from 'client/lib/cart-values';
+import wp from 'client/lib/wp';
 
 const wpcom = wp.undocumented();
 

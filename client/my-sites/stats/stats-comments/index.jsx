@@ -14,22 +14,22 @@ import { get, flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import CommentTab from './comment-tab';
 import StatsErrorPanel from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleContent from '../stats-module/content-text';
 import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import SectionHeader from 'client/components/section-header';
+import QuerySiteStats from 'client/components/data/query-site-stats';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 import {
 	getSiteStatsNormalizedData,
 	hasSiteStatsQueryFailed,
 	isRequestingSiteStatsForQuery,
-} from 'state/stats/lists/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+} from 'client/state/stats/lists/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 class StatsComments extends Component {
 	static propTypes = {

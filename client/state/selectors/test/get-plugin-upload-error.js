@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getPluginUploadError } from 'state/selectors';
+import { getPluginUploadError } from 'client/state/selectors';
 
 const siteId = 77203074;
 const error = {

@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
+import { addLocaleToWpcomUrl, getLocaleSlug } from 'client/lib/i18n-utils';
 
 export function getSMSMessageFromResponse( response ) {
 	const phoneNumber = get( response, 'body.data.phone_number' );

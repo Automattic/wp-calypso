@@ -9,8 +9,8 @@ import { mapValues, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import ThemeQueryManager from 'lib/query-manager/theme';
-import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
+import ThemeQueryManager from 'client/lib/query-manager/theme';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'client/state/utils';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -34,7 +34,7 @@ import {
 	THEMES_REQUEST_FAILURE,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
 import {
 	queriesSchema,

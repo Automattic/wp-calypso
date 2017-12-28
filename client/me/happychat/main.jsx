@@ -12,23 +12,23 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { isExternal } from 'lib/url';
+import { isExternal } from 'client/lib/url';
 // actions
-import { sendMessage, sendNotTyping, sendTyping } from 'state/happychat/connection/actions';
-import { blur, focus, setCurrentMessage } from 'state/happychat/ui/actions';
+import { sendMessage, sendNotTyping, sendTyping } from 'client/state/happychat/connection/actions';
+import { blur, focus, setCurrentMessage } from 'client/state/happychat/ui/actions';
 // selectors
-import canUserSendMessages from 'state/happychat/selectors/can-user-send-messages';
-import { getCurrentUser } from 'state/current-user/selectors';
-import getCurrentMessage from 'state/happychat/selectors/get-happychat-current-message';
-import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
-import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
-import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeline';
-import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-server-reachable';
+import canUserSendMessages from 'client/state/happychat/selectors/can-user-send-messages';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import getCurrentMessage from 'client/state/happychat/selectors/get-happychat-current-message';
+import getHappychatChatStatus from 'client/state/happychat/selectors/get-happychat-chat-status';
+import getHappychatConnectionStatus from 'client/state/happychat/selectors/get-happychat-connection-status';
+import getHappychatTimeline from 'client/state/happychat/selectors/get-happychat-timeline';
+import isHappychatServerReachable from 'client/state/happychat/selectors/is-happychat-server-reachable';
 // UI components
-import HappychatConnection from 'components/happychat/connection-connected';
-import { Composer } from 'components/happychat/composer';
-import { Notices } from 'components/happychat/notices';
-import { Timeline } from 'components/happychat/timeline';
+import HappychatConnection from 'client/components/happychat/connection-connected';
+import { Composer } from 'client/components/happychat/composer';
+import { Notices } from 'client/components/happychat/notices';
+import { Timeline } from 'client/components/happychat/timeline';
 
 /**
  * React component for rendering a happychat client as a full page

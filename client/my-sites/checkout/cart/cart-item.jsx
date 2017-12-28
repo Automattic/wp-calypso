@@ -11,8 +11,8 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import { canRemoveFromCart, cartItems } from 'lib/cart-values';
+import analytics from 'client/lib/analytics';
+import { canRemoveFromCart, cartItems } from 'client/lib/cart-values';
 import {
 	isCredits,
 	isGoogleApps,
@@ -20,10 +20,10 @@ import {
 	isMonthly,
 	isPlan,
 	isBundled,
-} from 'lib/products-values';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import * as upgradesActions from 'lib/upgrades/actions';
+} from 'client/lib/products-values';
+import { currentUserHasFlag } from 'client/state/current-user/selectors';
+import { DOMAINS_WITH_PLANS_ONLY } from 'client/state/current-user/constants';
+import * as upgradesActions from 'client/lib/upgrades/actions';
 import { localize } from 'i18n-calypso';
 
 const getIncludedDomain = cartItems.getIncludedDomain;

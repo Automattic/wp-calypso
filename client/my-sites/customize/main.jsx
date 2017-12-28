@@ -16,17 +16,17 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
+import notices from 'client/notices';
 import page from 'page';
-import CustomizerLoadingPanel from 'my-sites/customize/loading-panel';
-import EmptyContent from 'components/empty-content';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Actions from 'my-sites/customize/actions';
-import { themeActivated } from 'state/themes/actions';
+import CustomizerLoadingPanel from 'client/my-sites/customize/loading-panel';
+import EmptyContent from 'client/components/empty-content';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import Actions from 'client/my-sites/customize/actions';
+import { themeActivated } from 'client/state/themes/actions';
 import { getCustomizerFocus } from './panels';
-import { getMenusUrl } from 'state/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
+import { getMenusUrl } from 'client/state/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { getCustomizerUrl, isJetpackSite } from 'client/state/sites/selectors';
 
 const debug = debugFactory( 'calypso:my-sites:customize' );
 

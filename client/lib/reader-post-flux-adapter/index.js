@@ -12,10 +12,10 @@ import { connect } from 'react-redux';
 /*
  * Internal Dependencies
  */
-import FeedPostStore from 'lib/feed-post-store';
-import { fetchPost } from 'lib/feed-post-store/actions';
-import { getSite } from 'state/reader/sites/selectors';
-import { getFeed } from 'state/reader/feeds/selectors';
+import FeedPostStore from 'client/lib/feed-post-store';
+import { fetchPost } from 'client/lib/feed-post-store/actions';
+import { getSite } from 'client/state/reader/sites/selectors';
+import { getFeed } from 'client/state/reader/feeds/selectors';
 
 /**
  * A HoC function that translates a postKey or postKeys into a post or posts for its child.

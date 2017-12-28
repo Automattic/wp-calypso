@@ -9,7 +9,7 @@ import { Field } from 'redux-form';
 /**
  * Internal dependencies
  */
-import FormRadio from 'components/forms/form-radio';
+import FormRadio from 'client/components/forms/form-radio';
 
 // eslint-disable-next-line no-unused-vars
 const RadioRenderer = ( { input, meta, type, ...props } ) => (

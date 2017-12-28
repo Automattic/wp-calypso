@@ -9,10 +9,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Sidebar from 'layout/sidebar';
-import SidebarHeading from 'layout/sidebar/heading';
-import SidebarMenu from 'layout/sidebar/menu';
-import SidebarItem from 'layout/sidebar/item';
+import Sidebar from 'client/layout/sidebar';
+import SidebarHeading from 'client/layout/sidebar/heading';
+import SidebarMenu from 'client/layout/sidebar/menu';
+import SidebarItem from 'client/layout/sidebar/item';
 
 export default class DevdocsSidebar extends React.PureComponent {
 	static displayName = 'DevdocsSidebar';

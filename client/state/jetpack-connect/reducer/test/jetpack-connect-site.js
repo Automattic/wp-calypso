@@ -8,7 +8,7 @@ import {
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( '#jetpackConnectSite()', () => {
 	test( 'should default to an empty object', () => {

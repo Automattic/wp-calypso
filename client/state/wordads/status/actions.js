@@ -4,12 +4,12 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	WORDADS_STATUS_REQUEST,
 	WORDADS_STATUS_REQUEST_SUCCESS,
 	WORDADS_STATUS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { pick } from 'lodash';
 
 export function requestWordadsStatus( siteId ) {

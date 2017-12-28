@@ -14,24 +14,24 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
-import Button from 'components/button';
-import { decodeEntities, removep } from 'lib/formatting';
+import accept from 'client/lib/accept';
+import Button from 'client/components/button';
+import { decodeEntities, removep } from 'client/lib/formatting';
 import {
 	deleteReviewReply,
 	updateReviewReply,
-} from 'woocommerce/state/sites/review-replies/actions';
+} from 'client/extensions/woocommerce/state/sites/review-replies/actions';
 import {
 	editReviewReply,
 	clearReviewReplyEdits,
-} from 'woocommerce/state/ui/review-replies/actions';
+} from 'client/extensions/woocommerce/state/ui/review-replies/actions';
 import {
 	getCurrentlyEditingReviewReplyId,
 	getReviewReplyEdits,
-} from 'woocommerce/state/ui/review-replies/selectors';
-import { getReviewReply } from 'woocommerce/state/sites/review-replies/selectors';
+} from 'client/extensions/woocommerce/state/ui/review-replies/selectors';
+import { getReviewReply } from 'client/extensions/woocommerce/state/sites/review-replies/selectors';
 import Gravatar from './gravatar';
-import humanDate from 'lib/human-date';
+import humanDate from 'client/lib/human-date';
 
 class ReviewReply extends Component {
 	static propTypes = {

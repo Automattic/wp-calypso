@@ -12,7 +12,7 @@ import { moment } from 'i18n-calypso';
  * Internal dependencies
  */
 import { UNITS } from './constants';
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from 'client/lib/format-currency';
 
 /**
  * @typedef {Object} Delta

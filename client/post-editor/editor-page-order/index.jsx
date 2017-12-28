@@ -12,13 +12,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AccordionSection from 'components/accordion/section';
-import TextInput from 'components/forms/form-text-input';
-import { recordEvent, recordStat } from 'lib/posts/stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { editPost } from 'state/posts/actions';
+import AccordionSection from 'client/components/accordion/section';
+import TextInput from 'client/components/forms/form-text-input';
+import { recordEvent, recordStat } from 'client/lib/posts/stats';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { editPost } from 'client/state/posts/actions';
 
 class EditorPageOrder extends Component {
 	static propTypes = {

@@ -18,7 +18,7 @@ import {
 	saveOrderSuccess,
 	updateOrder,
 	updateOrders,
-} from 'woocommerce/state/sites/orders/actions';
+} from 'client/extensions/woocommerce/state/sites/orders/actions';
 import {
 	apiError,
 	receivedOrder,
@@ -29,7 +29,7 @@ import {
 	onOrderSaveSuccess,
 	sendOrder,
 } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import {
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
@@ -37,8 +37,8 @@ import {
 	WOOCOMMERCE_ORDER_UPDATE_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import { NOTICE_CREATE } from 'state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
+import { NOTICE_CREATE } from 'client/state/action-types';
 
 describe( 'handlers', () => {
 	describe( '#requestOrders', () => {

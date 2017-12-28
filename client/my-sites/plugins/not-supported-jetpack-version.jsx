@@ -13,14 +13,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { warningNotice } from 'state/notices/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { warningNotice } from 'client/state/notices/actions';
 import {
 	isJetpackSite,
 	getSiteAdminUrl,
 	getSiteDomain,
 	siteHasMinimumJetpackVersion,
-} from 'state/sites/selectors';
+} from 'client/state/sites/selectors';
 
 class NonSupportedJetpackVersionNotice extends Component {
 	static propTypes = {

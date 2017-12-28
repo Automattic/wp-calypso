@@ -12,7 +12,7 @@ import Page from 'page';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
+import Notice from 'client/components/notice';
 
 class SiteSettingsImporterError extends React.PureComponent {
 	static displayName = 'SiteSettingsImporterError';

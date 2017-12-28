@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Shortcode from 'lib/shortcode';
+import Shortcode from 'client/lib/shortcode';
 
 /**
  * Serializes shortcode data (object with id property) to a Simple Payments shortcode.

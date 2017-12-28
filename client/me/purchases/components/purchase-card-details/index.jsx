@@ -11,10 +11,10 @@ import { curry } from 'lodash';
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
-import { createCardToken } from 'lib/store-transactions';
-import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/utils';
-import paths from 'me/purchases/paths';
+import analytics from 'client/lib/analytics';
+import { createCardToken } from 'client/lib/store-transactions';
+import { getPurchase, goToManagePurchase, isDataLoading } from 'client/me/purchases/utils';
+import paths from 'client/me/purchases/paths';
 
 class PurchaseCardDetails extends Component {
 	constructor( props ) {

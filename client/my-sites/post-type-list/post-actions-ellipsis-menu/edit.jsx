@@ -11,13 +11,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
-import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import { bumpStat as bumpAnalyticsStat } from 'client/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
-import { getPost } from 'state/posts/selectors';
-import { canCurrentUserEditPost } from 'state/selectors';
-import { getEditorPath } from 'state/ui/editor/selectors';
-import { preload } from 'sections-preload';
+import { getPost } from 'client/state/posts/selectors';
+import { canCurrentUserEditPost } from 'client/state/selectors';
+import { getEditorPath } from 'client/state/ui/editor/selectors';
+import { preload } from 'client/sections-preload';
 
 function preloadEditor() {
 	preload( 'post-editor' );
@@ -29,7 +29,12 @@ function PostActionsEllipsisMenuEdit( { translate, canEdit, status, editUrl, bum
 	}
 
 	return (
-		<PopoverMenuItem href={ editUrl } onClick={ bumpStat } icon="pencil" onMouseOver={ preloadEditor }>
+		<PopoverMenuItem
+			href={ editUrl }
+			onClick={ bumpStat }
+			icon="pencil"
+			onMouseOver={ preloadEditor }
+		>
 			{ translate( 'Edit', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);

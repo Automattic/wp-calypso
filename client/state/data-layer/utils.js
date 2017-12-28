@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { extendAction } from 'state/utils';
+import { extendAction } from 'client/state/utils';
 
 const doBypassDataLayer = {
 	meta: {

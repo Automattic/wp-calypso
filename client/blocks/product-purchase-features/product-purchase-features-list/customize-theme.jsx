@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
+import PurchaseDetail from 'client/components/purchase-detail';
 import { isEnabled } from 'config';
 
 function isCustomizeEnabled() {

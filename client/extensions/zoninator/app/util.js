@@ -9,7 +9,7 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import sectionsModule from 'sections';
+import sectionsModule from 'client/sections';
 
 const getSettingsPath = () => {
 	const sections = sectionsModule.get();

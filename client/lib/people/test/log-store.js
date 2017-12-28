@@ -13,7 +13,7 @@ import { assert } from 'chai';
  */
 import actions from './fixtures/actions';
 import site from './fixtures/site';
-import userActions from 'lib/users/test/fixtures/actions';
+import userActions from 'client/lib/users/test/fixtures/actions';
 
 describe( 'Viewers Store', () => {
 	let Dispatcher, PeopleLogStore;

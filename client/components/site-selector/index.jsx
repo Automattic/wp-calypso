@@ -16,22 +16,22 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { getPreference } from 'state/preferences/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getPreference } from 'client/state/preferences/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { getSite } from 'client/state/sites/selectors';
 import {
 	areAllSitesSingleUser,
 	getSites,
 	getVisibleSites,
 	isRequestingMissingSites,
-} from 'state/selectors';
-import AllSites from 'my-sites/all-sites';
-import Site from 'blocks/site';
-import SitePlaceholder from 'blocks/site/placeholder';
-import Search from 'components/search';
+} from 'client/state/selectors';
+import AllSites from 'client/my-sites/all-sites';
+import Site from 'client/blocks/site';
+import SitePlaceholder from 'client/blocks/site/placeholder';
+import Search from 'client/components/search';
 import SiteSelectorAddSite from './add-site';
-import searchSites from 'components/search-sites';
+import searchSites from 'client/components/search-sites';
 
 const ALL_SITES = 'ALL_SITES';
 

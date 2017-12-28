@@ -11,12 +11,12 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import CountedTextarea from 'components/forms/counted-textarea';
-import FormTextarea from 'components/forms/form-textarea';
-import InfoPopover from 'components/info-popover';
-import TrackInputChanges from 'components/track-input-changes';
-import PostActions from 'lib/posts/actions';
-import * as stats from 'lib/posts/stats';
+import CountedTextarea from 'client/components/forms/counted-textarea';
+import FormTextarea from 'client/components/forms/form-textarea';
+import InfoPopover from 'client/components/info-popover';
+import TrackInputChanges from 'client/components/track-input-changes';
+import PostActions from 'client/lib/posts/actions';
+import * as stats from 'client/lib/posts/stats';
 
 class PublicizeMessage extends Component {
 	static propTypes = {

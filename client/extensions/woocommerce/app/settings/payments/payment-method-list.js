@@ -13,13 +13,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { arePaymentMethodsLoaded } from 'woocommerce/state/sites/payment-methods/selectors';
-import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
-import { getPaymentMethodsGroup } from 'woocommerce/state/ui/payments/methods/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import List from 'woocommerce/components/list/list';
-import ListHeader from 'woocommerce/components/list/list-header';
-import ListItemField from 'woocommerce/components/list/list-item-field';
+import { arePaymentMethodsLoaded } from 'client/extensions/woocommerce/state/sites/payment-methods/selectors';
+import { fetchPaymentMethods } from 'client/extensions/woocommerce/state/sites/payment-methods/actions';
+import { getPaymentMethodsGroup } from 'client/extensions/woocommerce/state/ui/payments/methods/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import List from 'client/extensions/woocommerce/components/list/list';
+import ListHeader from 'client/extensions/woocommerce/components/list/list-header';
+import ListItemField from 'client/extensions/woocommerce/components/list/list-item-field';
 import PaymentMethodItem from './payment-method-item';
 import PaymentMethodItemPlaceholder from './payment-method-item-placeholder';
 

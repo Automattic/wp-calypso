@@ -13,9 +13,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import { isOutsideCalypso } from 'lib/url';
+import PopoverMenu from 'client/components/popover/menu';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import { isOutsideCalypso } from 'client/lib/url';
 
 /**
  * Component

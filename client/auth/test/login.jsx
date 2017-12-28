@@ -14,9 +14,9 @@ import { identity, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { login as loginStub } from 'lib/oauth-store/actions';
+import { login as loginStub } from 'client/lib/oauth-store/actions';
 import { Login } from '../login.jsx';
-import FormButton from 'components/forms/form-button';
+import FormButton from 'client/components/forms/form-button';
 
 jest.mock( 'lib/oauth-store/actions', () => ( {
 	login: require( 'sinon' ).stub(),

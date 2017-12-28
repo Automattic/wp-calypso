@@ -11,9 +11,9 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import PhoneInput from 'components/phone-input';
-import FormLabel from 'components/forms/form-label';
-import FormInputValidation from 'components/forms/form-input-validation';
+import PhoneInput from 'client/components/phone-input';
+import FormLabel from 'client/components/forms/form-label';
+import FormInputValidation from 'client/components/forms/form-input-validation';
 
 export default class extends React.Component {
 	static displayName = 'FormPhoneMediaInput';

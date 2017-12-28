@@ -11,7 +11,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import { ACCOUNT_RECOVERY_ERROR_CODE as ERROR_CODE } from 'account-recovery/constants';
+import { ACCOUNT_RECOVERY_ERROR_CODE as ERROR_CODE } from 'client/account-recovery/constants';
 
 class AccountRecoveryErrorMessage extends Component {
 	getErrorMessage = () => {

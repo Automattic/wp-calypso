@@ -12,10 +12,10 @@ import { find, map } from 'lodash';
 /**
  * Internal depencencies
  */
-import QueryPosts from 'components/data/query-posts';
-import Suggestions from 'components/suggestions';
-import { getPostsForQuery } from 'state/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryPosts from 'client/components/data/query-posts';
+import Suggestions from 'client/components/suggestions';
+import { getPostsForQuery } from 'client/state/posts/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 class PostSuggestions extends PureComponent {
 	static propTypes = {

@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import supportUrls from 'lib/url/support';
-import PurchaseDetail from 'components/purchase-detail';
+import supportUrls from 'client/lib/url/support';
+import PurchaseDetail from 'client/components/purchase-detail';
 
 const GuidedTransferDetails = ( { translate } ) => (
 	<PurchaseDetail

@@ -11,12 +11,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import { hasFeature } from 'client/state/sites/plans/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { FEATURE_ADVANCED_SEO } from 'client/lib/plans/constants';
 
 const SeoSettingsHelpCard = ( { hasAdvancedSEOFeature, siteIsJetpack, translate } ) => {
 	const seoHelpLink = siteIsJetpack

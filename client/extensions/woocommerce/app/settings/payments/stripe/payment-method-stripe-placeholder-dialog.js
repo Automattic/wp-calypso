@@ -11,7 +11,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import Dialog from 'client/components/dialog';
 
 const PaymentMethodStripePlaceholderDialog = ( { translate } ) => {
 	const buttons = [

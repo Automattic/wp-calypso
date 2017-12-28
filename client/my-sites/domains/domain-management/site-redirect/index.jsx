@@ -14,21 +14,25 @@ import { trim, trimEnd } from 'lodash';
 /**
  * Internal dependencies
  */
-import Header from 'my-sites/domains/domain-management/components/header';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormLabel from 'components/forms/form-label';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import Main from 'components/main';
-import Notice from 'components/notice';
-import notices from 'notices';
-import paths from 'my-sites/domains/paths';
-import * as upgradesActions from 'lib/upgrades/actions';
-import Card from 'components/card/compact';
-import SectionHeader from 'components/section-header';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { withoutHttp } from 'lib/url';
+import Header from 'client/my-sites/domains/domain-management/components/header';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormFooter from 'client/my-sites/domains/domain-management/components/form-footer';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInputWithAffixes from 'client/components/forms/form-text-input-with-affixes';
+import Main from 'client/components/main';
+import Notice from 'client/components/notice';
+import notices from 'client/notices';
+import paths from 'client/my-sites/domains/paths';
+import * as upgradesActions from 'client/lib/upgrades/actions';
+import Card from 'client/components/card/compact';
+import SectionHeader from 'client/components/section-header';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'client/state/analytics/actions';
+import { withoutHttp } from 'client/lib/url';
 
 class SiteRedirect extends React.Component {
 	static propTypes = {

@@ -12,17 +12,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { isJetpackSite } from 'state/sites/selectors';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import Card from 'client/components/card';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormTextInput from 'client/components/forms/form-text-input';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackModuleActive, isActivatingJetpackModule } from 'client/state/selectors';
+import { activateModule } from 'client/state/jetpack/modules/actions';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
 
 class CustomContentTypes extends Component {
 	componentDidUpdate() {

@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchUserSettings } from 'state/user-settings/actions';
+import { fetchUserSettings } from 'client/state/user-settings/actions';
 
 class QueryUserSettings extends Component {
 	componentWillMount() {

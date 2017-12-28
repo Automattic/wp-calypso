@@ -12,18 +12,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import MediaLibrary from 'my-sites/media-library';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Dialog from 'components/dialog';
-import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
-import ImageEditor from 'blocks/image-editor';
-import VideoEditor from 'blocks/video-editor';
-import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import accept from 'lib/accept';
-import searchUrl from 'lib/search-url';
+import MediaLibrary from 'client/my-sites/media-library';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import Dialog from 'client/components/dialog';
+import { EditorMediaModalDetail } from 'client/post-editor/media-modal/detail';
+import ImageEditor from 'client/blocks/image-editor';
+import VideoEditor from 'client/blocks/video-editor';
+import MediaActions from 'client/lib/media/actions';
+import MediaUtils from 'client/lib/media/utils';
+import MediaLibrarySelectedData from 'client/components/data/media-library-selected-data';
+import MediaLibrarySelectedStore from 'client/lib/media/library-selected-store';
+import accept from 'client/lib/accept';
+import searchUrl from 'client/lib/search-url';
 
 class Media extends Component {
 	static propTypes = {

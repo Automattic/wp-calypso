@@ -12,11 +12,11 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import config from 'config';
-import Button from 'components/button';
-import Main from 'components/main';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import WordPressLogo from 'components/wordpress-logo';
+import Button from 'client/components/button';
+import Main from 'client/components/main';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import WordPressLogo from 'client/components/wordpress-logo';
 
 class Connect extends React.Component {
 	getCreateAccountUrl = () => {

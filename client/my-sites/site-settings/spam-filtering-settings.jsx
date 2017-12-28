@@ -13,20 +13,23 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
-import FoldableCard from 'components/foldable-card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
+import Banner from 'client/components/banner';
+import FoldableCard from 'client/components/foldable-card';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormInputValidation from 'client/components/forms/form-input-validation';
 import Gridicon from 'gridicons';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getJetpackSettingsSaveError, getJetpackSettingsSaveRequestStatus } from 'state/selectors';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { FEATURE_SPAM_AKISMET_PLUS, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import {
+	getJetpackSettingsSaveError,
+	getJetpackSettingsSaveRequestStatus,
+} from 'client/state/selectors';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import { hasFeature } from 'client/state/sites/plans/selectors';
+import { FEATURE_SPAM_AKISMET_PLUS, PLAN_JETPACK_PERSONAL } from 'client/lib/plans/constants';
 
 const SpamFilteringSettings = ( {
 	currentAkismetKey,

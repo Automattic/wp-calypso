@@ -22,18 +22,18 @@ import {
 	announceDeleteFailure,
 } from '../handlers.js';
 import reviews from './fixtures/reviews';
-import { NOTICE_CREATE } from 'state/action-types';
-import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+import { NOTICE_CREATE } from 'client/state/action-types';
+import { WPCOM_HTTP_REQUEST } from 'client/state/action-types';
 import {
 	WOOCOMMERCE_REVIEWS_RECEIVE,
 	WOOCOMMERCE_REVIEWS_REQUEST,
 	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 import {
 	changeReviewStatus,
 	deleteReview,
 	fetchReviews,
-} from 'woocommerce/state/sites/reviews/actions';
+} from 'client/extensions/woocommerce/state/sites/reviews/actions';
 
 describe( 'handlers', () => {
 	describe( '#handleReviewsRequest', () => {

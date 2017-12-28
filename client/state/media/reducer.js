@@ -17,9 +17,9 @@ import {
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_REQUESTING,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
-import MediaQueryManager from 'lib/query-manager/media';
+} from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
+import MediaQueryManager from 'client/lib/query-manager/media';
 
 export const queries = ( () => {
 	function applyToManager( state, siteId, method, createDefault, ...args ) {

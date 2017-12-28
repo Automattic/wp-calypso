@@ -11,7 +11,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'client/components/external-link';
 
 class GoogleAppsUserItem extends React.Component {
 	static propTypes = {

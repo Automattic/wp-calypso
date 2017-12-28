@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import { READER_SITE_BLOCK, READER_SITE_UNBLOCK } from 'state/action-types';
+import { READER_SITE_BLOCK, READER_SITE_UNBLOCK } from 'client/state/action-types';
 
 export function blockSite( siteId ) {
 	return {

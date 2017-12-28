@@ -11,10 +11,10 @@ import { get, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import ExternalLink from 'components/external-link';
-import { getSiteComment } from 'state/selectors';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import ExternalLink from 'client/components/external-link';
+import { getSiteComment } from 'client/state/selectors';
 
 const CommentPermalink = ( { isLoading, permaLink, translate } ) =>
 	! isLoading && (

@@ -18,7 +18,7 @@ import {
 	getProductsRequestedPage,
 	getProductsRequestedSearch,
 } from '../selectors';
-import products from 'woocommerce/state/sites/products/test/fixtures/products';
+import products from 'client/extensions/woocommerce/state/sites/products/test/fixtures/products';
 
 const siteId = 123;
 

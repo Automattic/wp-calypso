@@ -13,9 +13,9 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import HeaderCake from 'components/header-cake';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import Button from 'client/components/button';
+import HeaderCake from 'client/components/header-cake';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 import DeleteZoneDialog from './delete-zone-dialog';
 import QueryFeed from '../../data/query-feed';
 import ZoneContentForm from '../../forms/zone-content-form';

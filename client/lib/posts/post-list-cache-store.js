@@ -10,8 +10,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import { cacheIndex } from 'lib/wp/sync-handler/cache-index';
+import Dispatcher from 'client/dispatcher';
+import { cacheIndex } from 'client/lib/wp/sync-handler/cache-index';
 
 let cache = {};
 const _canonicalCache = {};

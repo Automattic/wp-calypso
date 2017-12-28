@@ -12,13 +12,13 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
-import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import { bumpStat as bumpAnalyticsStat } from 'client/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
-import { getPost, getPostPreviewUrl } from 'state/posts/selectors';
-import { isSitePreviewable } from 'state/sites/selectors';
-import { setAllSitesPreviewSiteId, setPreviewUrl } from 'state/ui/preview/actions';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getPost, getPostPreviewUrl } from 'client/state/posts/selectors';
+import { isSitePreviewable } from 'client/state/sites/selectors';
+import { setAllSitesPreviewSiteId, setPreviewUrl } from 'client/state/ui/preview/actions';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
 
 class PostActionsEllipsisMenuView extends Component {
 	static propTypes = {

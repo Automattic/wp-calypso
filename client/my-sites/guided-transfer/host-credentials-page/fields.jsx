@@ -14,13 +14,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import SpinnerButton from 'components/spinner-button';
+import CompactCard from 'client/components/card/compact';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormPasswordInput from 'client/components/forms/form-password-input';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import SpinnerButton from 'client/components/spinner-button';
 
 export const Username = localize( props => (
 	<FormFieldset className="host-credentials-page__account-username-fieldset">

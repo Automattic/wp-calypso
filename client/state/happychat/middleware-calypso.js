@@ -26,13 +26,13 @@ import {
 	PUBLICIZE_CONNECTION_DELETE,
 	PURCHASE_REMOVE_COMPLETED,
 	SITE_SETTINGS_SAVE_SUCCESS,
-} from 'state/action-types';
-import { sendEvent, sendLog, sendPreferences } from 'state/happychat/connection/actions';
-import getGroups from 'state/happychat/selectors/get-groups';
-import getSkills from 'state/happychat/selectors/get-skills';
-import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
-import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
-import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+} from 'client/state/action-types';
+import { sendEvent, sendLog, sendPreferences } from 'client/state/happychat/connection/actions';
+import getGroups from 'client/state/happychat/selectors/get-groups';
+import getSkills from 'client/state/happychat/selectors/get-skills';
+import isHappychatChatAssigned from 'client/state/happychat/selectors/is-happychat-chat-assigned';
+import isHappychatClientConnected from 'client/state/happychat/selectors/is-happychat-client-connected';
+import { getCurrentUser, getCurrentUserLocale } from 'client/state/current-user/selectors';
 
 const getRouteSetMessage = ( state, action ) => {
 	const currentUser = getCurrentUser( state );

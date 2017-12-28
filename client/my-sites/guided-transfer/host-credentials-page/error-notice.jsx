@@ -11,11 +11,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import supportUrl from 'lib/url/support';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getGuidedTransferError } from 'state/sites/guided-transfer/selectors';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import supportUrl from 'client/lib/url/support';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getGuidedTransferError } from 'client/state/sites/guided-transfer/selectors';
 
 const getErrorText = ( { translate, errorCode } ) => {
 	switch ( errorCode ) {

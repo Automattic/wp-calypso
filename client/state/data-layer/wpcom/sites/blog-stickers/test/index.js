@@ -10,8 +10,8 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { requestBlogStickerList, receiveBlogStickerListError } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { listBlogStickers } from 'state/sites/blog-stickers/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { listBlogStickers } from 'client/state/sites/blog-stickers/actions';
 
 describe( 'blog-sticker-list', () => {
 	describe( 'requestBlogStickerList', () => {

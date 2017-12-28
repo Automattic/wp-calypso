@@ -12,17 +12,17 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import PostTypeFilter from 'my-sites/post-type-filter';
-import PostTypeList from 'my-sites/post-type-list';
+import Main from 'client/components/main';
+import DocumentHead from 'client/components/data/document-head';
+import PageViewTracker from 'client/lib/analytics/page-view-tracker';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import PostTypeFilter from 'client/my-sites/post-type-filter';
+import PostTypeList from 'client/my-sites/post-type-list';
 import PostTypeUnsupported from './post-type-unsupported';
 import PostTypeForbidden from './post-type-forbidden';
-import { canCurrentUser } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
+import { canCurrentUser } from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getPostType, isPostTypeSupported } from 'client/state/post-types/selectors';
 
 function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 	return (

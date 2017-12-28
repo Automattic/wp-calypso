@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
+import PluginIcon from 'client/my-sites/plugins/plugin-icon/plugin-icon';
 
 export default class extends React.Component {
 	static displayName = 'ConnectedApplicationIcon';

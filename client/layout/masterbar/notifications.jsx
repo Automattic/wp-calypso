@@ -15,11 +15,11 @@ import { partial } from 'lodash';
  * Internal dependencies
  */
 import MasterbarItem from './item';
-import Notifications from 'notifications';
+import Notifications from 'client/notifications';
 import store from 'store';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { toggleNotificationsPanel } from 'state/ui/actions';
-import { isNotificationsOpen } from 'state/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { toggleNotificationsPanel } from 'client/state/ui/actions';
+import { isNotificationsOpen } from 'client/state/selectors';
 
 class MasterbarItemNotifications extends Component {
 	static propTypes = {

@@ -9,8 +9,8 @@ import { filter, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getThemeFilters, getThemeFilterTerm } from 'state/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getThemeFilters, getThemeFilterTerm } from 'client/state/selectors';
 
 /**
  * Returns a theme filter term object that corresponds to a given filter term slug

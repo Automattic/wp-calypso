@@ -12,13 +12,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import userFactory from 'lib/user';
-import AuthorSelector from 'blocks/author-selector';
-import PostActions from 'lib/posts/actions';
-import touchDetect from 'lib/touch-detect';
-import * as stats from 'lib/posts/stats';
-import { getSelectedSite } from 'state/ui/selectors';
+import Gravatar from 'client/components/gravatar';
+import userFactory from 'client/lib/user';
+import AuthorSelector from 'client/blocks/author-selector';
+import PostActions from 'client/lib/posts/actions';
+import touchDetect from 'client/lib/touch-detect';
+import * as stats from 'client/lib/posts/stats';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 /**
  * Module dependencies

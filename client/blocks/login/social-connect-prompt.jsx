@@ -14,15 +14,15 @@ import SocialLogo from 'social-logos';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
 import {
 	getSocialAccountLinkAuthInfo,
 	getSocialAccountLinkService,
 	getRedirectToSanitized,
-} from 'state/login/selectors';
-import { connectSocialUser } from 'state/login/actions';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
+} from 'client/state/login/selectors';
+import { connectSocialUser } from 'client/state/login/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'client/state/analytics/actions';
 
 class SocialConnectPrompt extends Component {
 	static propTypes = {

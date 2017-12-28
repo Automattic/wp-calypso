@@ -11,7 +11,7 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import { makeLayoutMiddleware } from './shared.js';
-import LayoutLoggedOut from 'layout/logged-out';
+import LayoutLoggedOut from 'client/layout/logged-out';
 
 /**
  * Re-export

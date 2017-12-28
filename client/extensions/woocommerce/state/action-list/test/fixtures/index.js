@@ -7,7 +7,7 @@
 import {
 	actionListStepSuccess,
 	actionListStepFailure,
-} from 'woocommerce/state/action-list/actions';
+} from 'client/extensions/woocommerce/state/action-list/actions';
 
 export const time = {
 	stepAStart: Date.now() - 3000,

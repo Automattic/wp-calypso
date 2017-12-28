@@ -11,7 +11,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
-import EditorSlug from 'post-editor/editor-slug';
+import EditorSlug from 'client/post-editor/editor-slug';
 
 export default class PostEditorPageSlug extends PureComponent {
 	static propTypes = {

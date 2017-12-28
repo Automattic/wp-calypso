@@ -15,9 +15,9 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 import { isQueryLoading, isQueryError, items, queries, total, totalPages } from '../reducer';
-import reducer from 'woocommerce/state/sites/reducer';
+import reducer from 'client/extensions/woocommerce/state/sites/reducer';
 
 const cats = [
 	{

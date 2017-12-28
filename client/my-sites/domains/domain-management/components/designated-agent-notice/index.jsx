@@ -11,7 +11,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
-import support from 'lib/url/support';
+import support from 'client/lib/url/support';
 
 const DesignatedAgentNotice = props => (
 	<div className="designated-agent-notice__container">

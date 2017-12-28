@@ -11,11 +11,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import i18n from 'i18n-calypso';
-import SectionHeader from 'components/section-header';
-import { getThemeDetailsUrl } from 'state/themes/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import SectionHeader from 'client/components/section-header';
+import { getThemeDetailsUrl } from 'client/state/themes/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 const THEME_THUMBNAIL_WIDTH = 660;
 

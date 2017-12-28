@@ -16,22 +16,22 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { fetchPreviewMarkup, undoCustomization } from 'state/preview/actions';
-import accept from 'lib/accept';
-import { updatePreviewWithChanges } from 'lib/design-preview';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getPreviewUrl } from 'state/ui/preview/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { fetchPreviewMarkup, undoCustomization } from 'client/state/preview/actions';
+import accept from 'client/lib/accept';
+import { updatePreviewWithChanges } from 'client/lib/design-preview';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { getPreviewUrl } from 'client/state/ui/preview/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 import {
 	getPreviewMarkup,
 	getPreviewCustomizations,
 	isPreviewUnsaved,
-} from 'state/preview/selectors';
-import { closePreview } from 'state/ui/preview/actions';
-import DesignMenu from 'blocks/design-menu';
-import { getSiteFragment } from 'lib/route/path';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+} from 'client/state/preview/selectors';
+import { closePreview } from 'client/state/ui/preview/actions';
+import DesignMenu from 'client/blocks/design-menu';
+import { getSiteFragment } from 'client/lib/route/path';
+import { getCurrentLayoutFocus } from 'client/state/ui/layout-focus/selectors';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
 
 const debug = debugFactory( 'calypso:design-preview' );
 

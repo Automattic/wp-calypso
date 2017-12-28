@@ -9,8 +9,8 @@ import { get, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { parseTransactionDate } from 'state/billing-transactions/util';
+import createSelector from 'client/lib/create-selector';
+import { parseTransactionDate } from 'client/state/billing-transactions/util';
 
 /**
  * Returns all billing transactions.

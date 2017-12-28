@@ -9,8 +9,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
+import CompactCard from 'client/components/card/compact';
+import SectionHeader from 'client/components/section-header';
 import GoogleAppsUserItem from './google-apps-user-item';
 
 const Placeholder = () => (

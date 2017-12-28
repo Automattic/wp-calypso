@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import HeaderButton from 'components/header-button';
+import HeaderButton from 'client/components/header-button';
 
 const HeaderButtonExample = () => {
 	const onClick = () => alert( 'clicked me!' );

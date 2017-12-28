@@ -11,9 +11,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import Button from 'client/components/button';
 
 class HostSelect extends React.Component {
 	static displayName = 'HostSelect';

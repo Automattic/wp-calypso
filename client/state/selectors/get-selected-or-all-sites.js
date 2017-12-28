@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { getSites } from 'state/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSites } from 'client/state/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 export default function getSelectedOrAllSites( state ) {
 	const selectedSite = getSelectedSite( state );

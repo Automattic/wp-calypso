@@ -11,15 +11,15 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import EmptyContent from './empty';
-import DocumentHead from 'components/data/document-head';
-import Stream from 'reader/stream';
-import FeedError from 'reader/feed-error';
-import RefreshFeedHeader from 'blocks/reader-feed-header';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderFeed from 'components/data/query-reader-feed';
-import { getSite } from 'state/reader/sites/selectors';
-import { getFeed } from 'state/reader/feeds/selectors';
-import { getSiteName } from 'reader/get-helpers';
+import DocumentHead from 'client/components/data/document-head';
+import Stream from 'client/reader/stream';
+import FeedError from 'client/reader/feed-error';
+import RefreshFeedHeader from 'client/blocks/reader-feed-header';
+import QueryReaderSite from 'client/components/data/query-reader-site';
+import QueryReaderFeed from 'client/components/data/query-reader-feed';
+import { getSite } from 'client/state/reader/sites/selectors';
+import { getFeed } from 'client/state/reader/feeds/selectors';
+import { getSiteName } from 'client/reader/get-helpers';
 
 // If the blog_ID of a reader feed is 0, that means no site exists for it.
 const getReaderSiteId = feed => ( feed && feed.blog_ID === 0 ? null : feed && feed.blog_ID );

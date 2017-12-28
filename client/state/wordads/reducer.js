@@ -5,7 +5,7 @@
  */
 
 import approve from './approve/reducer';
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import status from './status/reducer';
 
 export default combineReducers( {

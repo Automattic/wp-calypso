@@ -9,9 +9,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import request from 'woocommerce/state/sites/request';
+import request from 'client/extensions/woocommerce/state/sites/request';
 import { mailChimpSettings } from './selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,
@@ -38,7 +38,7 @@ import {
 	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS,
 	WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 /**
  * Following list is a set of helper functions that return

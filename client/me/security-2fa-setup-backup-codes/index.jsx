@@ -11,12 +11,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
-import Security2faProgress from 'me/security-2fa-progress';
-import support from 'lib/url/support';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import Notice from 'client/components/notice';
+import Security2faBackupCodesList from 'client/me/security-2fa-backup-codes-list';
+import Security2faProgress from 'client/me/security-2fa-progress';
+import support from 'client/lib/url/support';
+import twoStepAuthorization from 'client/lib/two-step-authorization';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 class Security2faSetupBackupCodes extends React.Component {
 	state = {

@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestTheme } from 'state/themes/actions';
-import { isRequestingTheme } from 'state/themes/selectors';
+import { requestTheme } from 'client/state/themes/actions';
+import { isRequestingTheme } from 'client/state/themes/selectors';
 
 class QueryTheme extends Component {
 	static propTypes = {

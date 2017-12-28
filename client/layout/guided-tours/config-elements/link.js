@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'client/components/external-link';
 
 class Link extends Component {
 	constructor( props ) {

@@ -13,20 +13,20 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 /* eslint-enable no-restricted-imports */
-import userFactory from 'lib/user';
+import userFactory from 'client/lib/user';
 const user = userFactory();
-import { getSavedVariations } from 'lib/abtest';
-import SignupCart from 'lib/signup/cart';
-import analytics from 'lib/analytics';
-import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
-import { cartItems } from 'lib/cart-values';
-import { getDesignType } from 'state/signup/steps/design-type/selectors';
-import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
-import { getSiteId } from 'state/selectors';
-import { requestSites } from 'state/sites/actions';
+import { getSavedVariations } from 'client/lib/abtest';
+import SignupCart from 'client/lib/signup/cart';
+import analytics from 'client/lib/analytics';
+import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'client/state/action-types';
+import { cartItems } from 'client/lib/cart-values';
+import { getDesignType } from 'client/state/signup/steps/design-type/selectors';
+import { getSiteTitle } from 'client/state/signup/steps/site-title/selectors';
+import { getSurveyVertical, getSurveySiteType } from 'client/state/signup/steps/survey/selectors';
+import { getSiteId } from 'client/state/selectors';
+import { requestSites } from 'client/state/sites/actions';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 

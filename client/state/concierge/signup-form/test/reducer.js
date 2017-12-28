@@ -9,7 +9,10 @@ import moment from 'moment-timezone';
  * Internal dependencies
  */
 import signupForm, { timezone, message, status } from '../reducer';
-import { CONCIERGE_SIGNUP_FORM_UPDATE, CONCIERGE_UPDATE_BOOKING_STATUS } from 'state/action-types';
+import {
+	CONCIERGE_SIGNUP_FORM_UPDATE,
+	CONCIERGE_UPDATE_BOOKING_STATUS,
+} from 'client/state/action-types';
 
 describe( 'concierge/signupForm/reducer', () => {
 	const mockSignupForm = {

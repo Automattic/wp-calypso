@@ -16,18 +16,18 @@ import { find, get, includes, isEmpty, isEqual, negate, range, reduce, sortBy } 
 /**
  * Internal dependencies
  */
-import acceptDialog from 'lib/accept';
-import { warningNotice } from 'state/notices/actions';
-import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
-import PluginsActions from 'lib/plugins/actions';
-import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginNotices from 'lib/plugins/notices';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import acceptDialog from 'client/lib/accept';
+import { warningNotice } from 'client/state/notices/actions';
+import PluginItem from 'client/my-sites/plugins/plugin-item/plugin-item';
+import PluginsActions from 'client/lib/plugins/actions';
+import PluginsListHeader from 'client/my-sites/plugins/plugin-list-header';
+import PluginsLog from 'client/lib/plugins/log-store';
+import PluginNotices from 'client/lib/plugins/notices';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import { getSelectedSite, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { isSiteAutomatedTransfer } from 'client/state/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 function checkPropsChange( nextProps, propArr ) {
 	let i, prop;

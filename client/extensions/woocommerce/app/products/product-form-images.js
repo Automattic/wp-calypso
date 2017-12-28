@@ -14,11 +14,11 @@ import { isNumber, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import ImagePreloader from 'components/image-preloader';
-import ProductImageUploader from 'woocommerce/components/product-image-uploader';
-import Spinner from 'components/spinner';
+import Button from 'client/components/button';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import ImagePreloader from 'client/components/image-preloader';
+import ProductImageUploader from 'client/extensions/woocommerce/components/product-image-uploader';
+import Spinner from 'client/components/spinner';
 
 class ProductFormImages extends Component {
 	static propTypes = {

@@ -10,7 +10,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import config from 'config';
-import NetworkConnectionApp from 'lib/network-connection';
+import NetworkConnectionApp from 'client/lib/network-connection';
 
 describe( 'index', () => {
 	let configStub;

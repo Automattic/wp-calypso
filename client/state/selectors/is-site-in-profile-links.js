@@ -8,8 +8,8 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getProfileLinks } from 'state/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getProfileLinks } from 'client/state/selectors';
 
 /**
  * Whether the site with the domain in question is currently in the user's profile links.

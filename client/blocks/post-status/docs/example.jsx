@@ -11,11 +11,11 @@ import { map, mapValues, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import QueryPosts from 'components/data/query-posts';
-import Card from 'components/card';
+import QueryPosts from 'client/components/data/query-posts';
+import Card from 'client/components/card';
 import PostStatus from '../';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getPostsForQuery } from 'state/posts/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getPostsForQuery } from 'client/state/posts/selectors';
 
 function PostStatusExample( { queries, primarySiteId, primarySiteUrl, globalIdByQueryLabel } ) {
 	return (

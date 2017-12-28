@@ -9,9 +9,9 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import * as actions from '../actions';
-import { tracks } from 'lib/analytics';
-import { READER_POSTS_RECEIVE } from 'state/action-types';
-import wp from 'lib/wp';
+import { tracks } from 'client/lib/analytics';
+import { READER_POSTS_RECEIVE } from 'client/state/action-types';
+import wp from 'client/lib/wp';
 
 const undocumented = wp.undocumented;
 

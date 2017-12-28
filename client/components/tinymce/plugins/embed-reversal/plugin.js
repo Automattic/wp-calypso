@@ -10,9 +10,9 @@ import { includes, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-import PostEditStore from 'lib/posts/post-edit-store';
-import wpcom from 'lib/wp';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import PostEditStore from 'client/lib/posts/post-edit-store';
+import wpcom from 'client/lib/wp';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 function embedReversal( editor ) {
 	const store = editor.getParam( 'redux_store' );

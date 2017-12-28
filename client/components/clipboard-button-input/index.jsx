@@ -14,10 +14,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { withoutHttp } from 'lib/url';
-import ClipboardButton from 'components/forms/clipboard-button';
-import FormTextInput from 'components/forms/form-text-input';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { withoutHttp } from 'client/lib/url';
+import ClipboardButton from 'client/components/forms/clipboard-button';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 class ClipboardButtonInputExport extends React.Component {
 	constructor( props ) {

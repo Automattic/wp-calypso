@@ -14,11 +14,14 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
-import { isSupportUserSession, boot as supportUserBoot } from 'lib/user/support-user-interop';
-import wpcom from 'lib/wp';
-import Emitter from 'lib/mixins/emitter';
+import {
+	isSupportUserSession,
+	boot as supportUserBoot,
+} from 'client/lib/user/support-user-interop';
+import wpcom from 'client/lib/wp';
+import Emitter from 'client/lib/mixins/emitter';
 import userUtils from './shared-utils';
-import localforage from 'lib/localforage';
+import localforage from 'client/lib/localforage';
 
 /**
  * User component

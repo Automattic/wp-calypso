@@ -12,18 +12,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
+import Dialog from 'client/components/dialog';
 import ShippingZoneLocationDialogCountries from './shipping-zone-location-dialog-countries';
 import ShippingZoneLocationDialogSettings from './shipping-zone-location-dialog-settings';
-import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
+import { bindActionCreatorsWithSiteId } from 'client/extensions/woocommerce/lib/redux-utils';
 import {
 	closeEditLocations,
 	cancelEditLocations,
-} from 'woocommerce/state/ui/shipping/zones/locations/actions';
+} from 'client/extensions/woocommerce/state/ui/shipping/zones/locations/actions';
 import {
 	isEditLocationsModalOpen,
 	areCurrentlyEditingShippingZoneLocationsValid,
-} from 'woocommerce/state/ui/shipping/zones/locations/selectors';
+} from 'client/extensions/woocommerce/state/ui/shipping/zones/locations/selectors';
 
 const ShippingZoneLocationDialog = ( {
 	siteId,

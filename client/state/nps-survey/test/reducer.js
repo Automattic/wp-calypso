@@ -25,7 +25,7 @@ import {
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUESTING,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

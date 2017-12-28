@@ -14,8 +14,8 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import PopoverMenu from 'components/popover/menu';
+import Button from 'client/components/button';
+import PopoverMenu from 'client/components/popover/menu';
 
 class SplitButton extends Component {
 	static propTypes = {

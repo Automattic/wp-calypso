@@ -16,7 +16,7 @@ import {
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'exports expected reducer keys', () => {

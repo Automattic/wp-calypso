@@ -14,11 +14,11 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Card from 'components/card';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
+import analytics from 'client/lib/analytics';
+import Card from 'client/components/card';
+import SectionNav from 'client/components/section-nav';
+import NavTabs from 'client/components/section-nav/tabs';
+import NavItem from 'client/components/section-nav/item';
 
 class PluginSections extends React.Component {
 	static displayName = 'PluginSections';

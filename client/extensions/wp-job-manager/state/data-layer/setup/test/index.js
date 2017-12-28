@@ -31,8 +31,8 @@ import {
 	nextStep,
 	updateSetupStatus as updateStatus,
 } from '../../../setup/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice, removeNotice } from 'state/notices/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { errorNotice, removeNotice } from 'client/state/notices/actions';
 
 const createPagesNotice = 'wpjm-create-pages';
 const siteId = 101010;

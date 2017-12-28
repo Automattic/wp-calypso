@@ -9,8 +9,8 @@
 /**
  * Internal dependencies
  */
-import { getSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSite } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 export function getCurrentPreviewType( state ) {
 	return state.ui.preview.currentPreviewType;

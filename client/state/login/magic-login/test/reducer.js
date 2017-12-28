@@ -39,7 +39,7 @@ import {
 	MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
 	SERIALIZE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

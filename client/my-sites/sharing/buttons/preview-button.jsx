@@ -14,7 +14,7 @@ import SocialLogo from 'social-logos';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 
 export default createReactClass( {
 	displayName: 'SharingButtonsPreviewButton',

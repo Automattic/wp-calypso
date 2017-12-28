@@ -7,8 +7,8 @@ import {
 	READER_TAG_IMAGES_REQUEST,
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
 	READER_TAG_IMAGES_REQUEST_FAILURE,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers } from 'client/state/utils';
 
 /**
  * Tracks all known image objects, indexed by tag name.

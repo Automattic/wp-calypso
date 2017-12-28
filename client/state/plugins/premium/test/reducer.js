@@ -27,7 +27,7 @@ import {
 	PLUGIN_SETUP_CONFIGURE,
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ERROR,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'premium reducer', () => {
 	describe( 'isRequesting', () => {

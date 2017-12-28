@@ -8,15 +8,15 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { READER_TAGS_REQUEST } from 'state/action-types';
-import { receiveTags } from 'state/reader/tags/items/actions';
-import requestFollowHandler from 'state/data-layer/wpcom/read/tags/mine/new';
-import requestUnfollowHandler from 'state/data-layer/wpcom/read/tags/mine/delete';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx, getHeaders } from 'state/data-layer/wpcom-http/utils';
-import { mergeHandlers } from 'state/action-watchers/utils';
-import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
-import { errorNotice } from 'state/notices/actions';
+import { READER_TAGS_REQUEST } from 'client/state/action-types';
+import { receiveTags } from 'client/state/reader/tags/items/actions';
+import requestFollowHandler from 'client/state/data-layer/wpcom/read/tags/mine/new';
+import requestUnfollowHandler from 'client/state/data-layer/wpcom/read/tags/mine/delete';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequestEx, getHeaders } from 'client/state/data-layer/wpcom-http/utils';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
+import { fromApi } from 'client/state/data-layer/wpcom/read/tags/utils';
+import { errorNotice } from 'client/state/notices/actions';
 
 export function requestTags( action ) {
 	const path =

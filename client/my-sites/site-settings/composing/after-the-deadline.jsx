@@ -12,22 +12,22 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FoldableCard from 'components/foldable-card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import TokenField from 'components/token-field';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import JetpackModuleToggle from 'client/my-sites/site-settings/jetpack-module-toggle';
+import FoldableCard from 'client/components/foldable-card';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLegend from 'client/components/forms/form-legend';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import TokenField from 'client/components/token-field';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode,
-} from 'state/selectors';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+} from 'client/state/selectors';
+import QueryJetpackConnection from 'client/components/data/query-jetpack-connection';
 
 class AfterTheDeadline extends Component {
 	static defaultProps = {

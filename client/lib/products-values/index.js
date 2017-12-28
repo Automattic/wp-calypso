@@ -26,8 +26,8 @@ import {
 	PLAN_WPCOM_ENTERPRISE,
 	PLAN_CHARGEBACK,
 	PLAN_MONTHLY_PERIOD,
-} from 'lib/plans/constants';
-import { domainProductSlugs } from 'lib/domains/constants';
+} from 'client/lib/plans/constants';
+import { domainProductSlugs } from 'client/lib/domains/constants';
 
 import schema from './schema.json';
 

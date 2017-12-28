@@ -10,12 +10,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Main from 'components/main';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import SectionHeader from 'components/section-header';
-import SectionNav from 'components/section-nav';
+import Card from 'client/components/card';
+import Main from 'client/components/main';
+import NavItem from 'client/components/section-nav/item';
+import NavTabs from 'client/components/section-nav/tabs';
+import SectionHeader from 'client/components/section-header';
+import SectionNav from 'client/components/section-nav';
 
 const Placeholder = ( { translate } ) => {
 	const header = <div className="site-settings__placeholder-item">General Settings</div>;

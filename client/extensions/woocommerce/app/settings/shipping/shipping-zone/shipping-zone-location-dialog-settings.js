@@ -15,14 +15,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FilteredList from 'woocommerce/components/filtered-list';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormTextInput from 'components/forms/form-text-input';
-import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
-import { decodeEntities } from 'lib/formatting';
+import FilteredList from 'client/extensions/woocommerce/components/filtered-list';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormFieldSet from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { bindActionCreatorsWithSiteId } from 'client/extensions/woocommerce/lib/redux-utils';
+import { decodeEntities } from 'client/lib/formatting';
 import {
 	getShippingZoneLocationsWithEdits,
 	canLocationsBeFiltered,
@@ -32,14 +32,14 @@ import {
 	areLocationsUnfiltered,
 	getCurrentlyEditingShippingZoneStates,
 	getCurrentSelectedCountryZoneOwner,
-} from 'woocommerce/state/ui/shipping/zones/locations/selectors';
+} from 'client/extensions/woocommerce/state/ui/shipping/zones/locations/selectors';
 import {
 	filterByWholeCountry,
 	filterByState,
 	filterByPostcode,
 	toggleStateSelected,
 	editPostcode,
-} from 'woocommerce/state/ui/shipping/zones/locations/actions';
+} from 'client/extensions/woocommerce/state/ui/shipping/zones/locations/actions';
 
 const ShippingZoneLocationDialogSettings = ( {
 	canFilter,

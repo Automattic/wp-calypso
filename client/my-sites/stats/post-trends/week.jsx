@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Day from './day';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { getCurrentUserLocale } from 'client/state/current-user/selectors';
 
 class PostTrendsWeek extends Component {
 	static propTypes = {

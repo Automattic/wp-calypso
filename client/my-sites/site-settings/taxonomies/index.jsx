@@ -13,11 +13,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import TaxonomyManager from 'blocks/taxonomy-manager';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import DocumentHead from 'components/data/document-head';
+import HeaderCake from 'client/components/header-cake';
+import TaxonomyManager from 'client/blocks/taxonomy-manager';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { getPostTypeTaxonomy } from 'client/state/post-types/taxonomies/selectors';
+import DocumentHead from 'client/components/data/document-head';
 
 const Taxonomies = ( { translate, labels, postType, site, taxonomy } ) => {
 	const goBack = () => {

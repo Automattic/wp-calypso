@@ -9,8 +9,8 @@ import { find, get, isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { LOADING, ERROR } from 'woocommerce/state/constants';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { LOADING, ERROR } from 'client/extensions/woocommerce/state/constants';
 
 const getRawGeneralSettings = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'settings', 'general' ] );

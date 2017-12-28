@@ -12,7 +12,7 @@ import Immutable from 'immutable';
  * Internal dependencies
  */
 import { NOTIFICATIONS_EXCEPTIONS } from './constants';
-import FormCheckbox from 'components/forms/form-checkbox';
+import FormCheckbox from 'client/components/forms/form-checkbox';
 
 export default class extends React.PureComponent {
 	static displayName = 'NotificationSettingsFormStreamOptions';

@@ -10,9 +10,9 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getCurrencyFormatString } from 'woocommerce/lib/currency';
-import { getOrder } from 'woocommerce/state/sites/orders/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrencyFormatString } from 'client/extensions/woocommerce/lib/currency';
+import { getOrder } from 'client/extensions/woocommerce/state/sites/orders/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 /**
  * @param {Object} state Whole Redux state tree

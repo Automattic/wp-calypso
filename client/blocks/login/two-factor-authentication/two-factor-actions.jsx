@@ -12,12 +12,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import { localize } from 'i18n-calypso';
-import { isTwoFactorAuthTypeSupported } from 'state/login/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { sendSmsCode } from 'state/login/actions';
-import { login } from 'lib/paths';
+import { isTwoFactorAuthTypeSupported } from 'client/state/login/selectors';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'client/state/analytics/actions';
+import { sendSmsCode } from 'client/state/login/actions';
+import { login } from 'client/lib/paths';
 
 class TwoFactorActions extends Component {
 	static propTypes = {

@@ -9,16 +9,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
+import Card from 'client/components/card';
+import QueryLabelSettings from 'client/extensions/woocommerce/woocommerce-services/components/query-label-settings';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
 import {
 	areSettingsLoaded,
 	areLabelsEnabled,
 	getSelectedPaymentMethodId,
-} from 'woocommerce/woocommerce-services/state/label-settings/selectors';
-import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
+} from 'client/extensions/woocommerce/woocommerce-services/state/label-settings/selectors';
+import { isWcsEnabled } from 'client/extensions/woocommerce/state/selectors/plugins';
 
 const LabelsSetupNotice = ( {
 	site,

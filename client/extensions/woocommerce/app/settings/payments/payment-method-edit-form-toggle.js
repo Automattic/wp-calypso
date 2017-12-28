@@ -11,7 +11,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactFormToggle from 'components/forms/form-toggle/compact';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
 
 const PaymentMethodEditFormToggle = props => {
 	const { checked, name, onChange } = props;

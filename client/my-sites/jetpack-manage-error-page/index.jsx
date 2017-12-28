@@ -11,10 +11,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import EmptyContent from 'components/empty-content';
-import FeatureExample from 'components/feature-example';
-import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors';
+import analytics from 'client/lib/analytics';
+import EmptyContent from 'client/components/empty-content';
+import FeatureExample from 'client/components/feature-example';
+import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'client/state/sites/selectors';
 
 class JetpackManageErrorPage extends PureComponent {
 	static actionCallbacks = {

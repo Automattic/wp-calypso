@@ -14,9 +14,9 @@ import {
 	receiveBlogStickerRemove,
 	receiveBlogStickerRemoveError,
 } from '../';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { addBlogSticker, removeBlogSticker } from 'state/sites/blog-stickers/actions';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { addBlogSticker, removeBlogSticker } from 'client/state/sites/blog-stickers/actions';
 
 describe( 'blog-sticker-remove', () => {
 	describe( 'requestBlogStickerRemove', () => {

@@ -13,15 +13,15 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
-import DocumentHead from 'components/data/document-head';
-import route from 'lib/route';
-import Main from 'components/main';
-import upgradesActions from 'lib/upgrades/actions';
-import productsFactory from 'lib/products-list';
-import { canCurrentUser } from 'state/selectors';
-import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import analytics from 'client/lib/analytics';
+import DocumentHead from 'client/components/data/document-head';
+import route from 'client/lib/route';
+import Main from 'client/components/main';
+import upgradesActions from 'client/lib/upgrades/actions';
+import productsFactory from 'client/lib/products-list';
+import { canCurrentUser } from 'client/state/selectors';
+import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
 
 /**
  * Module variables

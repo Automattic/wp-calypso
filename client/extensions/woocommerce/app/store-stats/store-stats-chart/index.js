@@ -15,22 +15,22 @@ import { moment, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Delta from 'woocommerce/components/delta';
-import ElementChart from 'components/chart';
-import formatCurrency from 'lib/format-currency';
-import { getPeriodFormat } from 'state/stats/lists/utils';
+import Card from 'client/components/card';
+import Delta from 'client/extensions/woocommerce/components/delta';
+import ElementChart from 'client/components/chart';
+import formatCurrency from 'client/lib/format-currency';
+import { getPeriodFormat } from 'client/state/stats/lists/utils';
 import { getDelta } from '../utils';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
-} from 'state/stats/lists/selectors';
-import Legend from 'components/chart/legend';
-import Tabs from 'my-sites/stats/stats-tabs';
-import Tab from 'my-sites/stats/stats-tabs/tab';
-import { UNITS } from 'woocommerce/app/store-stats/constants';
-import analytics from 'lib/analytics';
-import { chartTabs as tabs } from 'woocommerce/app/store-stats/constants';
+} from 'client/state/stats/lists/selectors';
+import Legend from 'client/components/chart/legend';
+import Tabs from 'client/my-sites/stats/stats-tabs';
+import Tab from 'client/my-sites/stats/stats-tabs/tab';
+import { UNITS } from 'client/extensions/woocommerce/app/store-stats/constants';
+import analytics from 'client/lib/analytics';
+import { chartTabs as tabs } from 'client/extensions/woocommerce/app/store-stats/constants';
 
 class StoreStatsChart extends Component {
 	static propTypes = {

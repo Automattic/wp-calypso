@@ -9,7 +9,11 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { items } from '../reducer';
-import { RECEIPT_FETCH, RECEIPT_FETCH_COMPLETED, RECEIPT_FETCH_FAILED } from 'state/action-types';
+import {
+	RECEIPT_FETCH,
+	RECEIPT_FETCH_COMPLETED,
+	RECEIPT_FETCH_FAILED,
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

@@ -11,9 +11,16 @@ import { overEvery as and } from 'lodash';
 /**
  * Internal dependencies
  */
-import { makeTour, Tour, Step, ButtonRow, Link, Quit } from 'layout/guided-tours/config-elements';
-import { isNotNewUser } from 'state/ui/guided-tours/contexts';
-import { isDesktop } from 'lib/viewport';
+import {
+	makeTour,
+	Tour,
+	Step,
+	ButtonRow,
+	Link,
+	Quit,
+} from 'client/layout/guided-tours/config-elements';
+import { isNotNewUser } from 'client/state/ui/guided-tours/contexts';
+import { isDesktop } from 'client/lib/viewport';
 
 export const SimplePaymentsTour = makeTour(
 	<Tour

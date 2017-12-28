@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import QueryPreferences from 'components/data/query-preferences';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
-import { recordTrack } from 'reader/stats';
+import QueryPreferences from 'client/components/data/query-preferences';
+import { savePreference } from 'client/state/preferences/actions';
+import { getPreference } from 'client/state/preferences/selectors';
+import { recordTrack } from 'client/reader/stats';
 
 const getPreferenceName = isInternal =>
 	isInternal ? 'has_used_reader_conversations_a8c' : 'has_used_reader_conversations';

@@ -9,7 +9,7 @@ import { includes, sampleSize } from 'lodash';
 /**
  * Internal dependencies
  */
-import { themes } from 'lib/signup/themes-data';
+import { themes } from 'client/lib/signup/themes-data';
 
 function getUnusedThemes( themeSet, themePool, quantity ) {
 	const themeSetSlugs = themeSet.map( theme => theme.slug );

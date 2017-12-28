@@ -11,12 +11,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { areProductsLoading, getAllProducts } from 'woocommerce/state/sites/products/selectors';
-import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import NoResults from 'my-sites/no-results';
-import Search from 'components/search';
+import {
+	areProductsLoading,
+	getAllProducts,
+} from 'client/extensions/woocommerce/state/sites/products/selectors';
+import { fetchProducts } from 'client/extensions/woocommerce/state/sites/products/actions';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import NoResults from 'client/my-sites/no-results';
+import Search from 'client/components/search';
 import ProductSearchRow from './row';
 import {
 	addProductId,

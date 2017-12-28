@@ -14,12 +14,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ElementChart from 'components/chart';
+import ElementChart from 'client/components/chart';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import Card from 'components/card';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import Card from 'client/components/card';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 class StatsSummaryChart extends Component {
 	static propTypes = {

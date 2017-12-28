@@ -11,21 +11,21 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
+import DeleteSiteWarningDialog from 'client/my-sites/site-settings/delete-site-warning-dialog';
 import config from 'config';
-import { tracks } from 'lib/analytics';
+import { tracks } from 'client/lib/analytics';
 import { localize } from 'i18n-calypso';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'client/components/section-header';
 import SiteToolsLink from './link';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
-import { isSiteAutomatedTransfer, isVipSite } from 'state/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { isJetpackSite, getSiteAdminUrl } from 'client/state/sites/selectors';
+import { isSiteAutomatedTransfer, isVipSite } from 'client/state/selectors';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 	getPurchasesError,
-} from 'state/purchases/selectors';
-import notices from 'notices';
+} from 'client/state/purchases/selectors';
+import notices from 'client/notices';
 
 const trackDeleteSiteOption = option => {
 	tracks.recordEvent( 'calypso_settings_delete_site_options', {

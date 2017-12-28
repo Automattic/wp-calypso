@@ -5,7 +5,7 @@
  */
 
 import cache from './cache/reducer';
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import plugins from './plugins/reducer';
 import status from './status/reducer';
 import settings from './settings/reducer';

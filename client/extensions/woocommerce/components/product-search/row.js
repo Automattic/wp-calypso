@@ -13,17 +13,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Count from 'components/count';
-import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
-import formatCurrency from 'lib/format-currency';
-import formattedVariationName from 'woocommerce/lib/formatted-variation-name';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
-import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
+import Button from 'client/components/button';
+import Count from 'client/components/count';
+import { fetchProductVariations } from 'client/extensions/woocommerce/state/sites/product-variations/actions';
+import formatCurrency from 'client/lib/format-currency';
+import formattedVariationName from 'client/extensions/woocommerce/lib/formatted-variation-name';
+import FormLabel from 'client/components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import { getPaymentCurrencySettings } from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import { getVariationsForProduct } from 'client/extensions/woocommerce/state/sites/product-variations/selectors';
 import { areVariationsSelected, isProductSelected, isVariableProduct } from './utils';
 import ProductVariations from './variations';
 

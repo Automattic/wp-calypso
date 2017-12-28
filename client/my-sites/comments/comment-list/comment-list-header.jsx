@@ -10,17 +10,17 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import QueryPosts from 'components/data/query-posts';
-import StickyPanel from 'components/sticky-panel';
-import { convertDateToUserLocation } from 'components/post-schedule/utils';
-import { decodeEntities, stripHTML } from 'lib/formatting';
-import { gmtOffset, timezone } from 'lib/site/utils';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { getSiteComments, hasNavigated } from 'state/selectors';
-import { getSitePost } from 'state/posts/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import HeaderCake from 'client/components/header-cake';
+import QueryPosts from 'client/components/data/query-posts';
+import StickyPanel from 'client/components/sticky-panel';
+import { convertDateToUserLocation } from 'client/components/post-schedule/utils';
+import { decodeEntities, stripHTML } from 'client/lib/formatting';
+import { gmtOffset, timezone } from 'client/lib/site/utils';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'client/state/analytics/actions';
+import { getSiteComments, hasNavigated } from 'client/state/selectors';
+import { getSitePost } from 'client/state/posts/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 
 function goBack() {
 	window.history.back();

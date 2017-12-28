@@ -15,25 +15,25 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import LabelsSetupNotice from 'woocommerce/woocommerce-services/components/labels-setup-notice';
-import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
+import Button from 'client/components/button';
+import LabelsSetupNotice from 'client/extensions/woocommerce/woocommerce-services/components/labels-setup-notice';
+import { fetchOrders } from 'client/extensions/woocommerce/state/sites/orders/actions';
+import { fetchReviews } from 'client/extensions/woocommerce/state/sites/reviews/actions';
 import {
 	areOrdersLoading,
 	areOrdersLoaded,
 	getNewOrdersWithoutPayPalPending,
 	getNewOrdersWithoutPayPalPendingRevenue,
-} from 'woocommerce/state/sites/orders/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
-import { getTotalReviews } from 'woocommerce/state/sites/reviews/selectors';
-import ProcessOrdersWidget from 'woocommerce/components/process-orders-widget';
-import ShareWidget from 'woocommerce/components/share-widget';
-import Card from 'components/card';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+} from 'client/extensions/woocommerce/state/sites/orders/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getPaymentCurrencySettings } from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import { getTotalReviews } from 'client/extensions/woocommerce/state/sites/reviews/selectors';
+import ProcessOrdersWidget from 'client/extensions/woocommerce/components/process-orders-widget';
+import ShareWidget from 'client/extensions/woocommerce/components/share-widget';
+import Card from 'client/components/card';
+import QuerySettingsGeneral from 'client/extensions/woocommerce/components/query-settings-general';
 
 class ManageOrdersView extends Component {
 	static propTypes = {

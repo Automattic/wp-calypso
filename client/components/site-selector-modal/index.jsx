@@ -14,10 +14,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import Button from 'components/button';
-import SitesDropdown from 'components/sites-dropdown';
-import { getPrimarySiteId, getVisibleSites } from 'state/selectors';
+import Dialog from 'client/components/dialog';
+import Button from 'client/components/button';
+import SitesDropdown from 'client/components/sites-dropdown';
+import { getPrimarySiteId, getVisibleSites } from 'client/state/selectors';
 
 class SiteSelectorModal extends Component {
 	static propTypes = {

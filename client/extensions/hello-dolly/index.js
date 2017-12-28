@@ -11,8 +11,8 @@ import React from 'react';
  * Internal dependencies
  */
 import HelloDollyPage from './hello-dolly-page';
-import { navigation, siteSelection } from 'my-sites/controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { navigation, siteSelection } from 'client/my-sites/controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 const render = ( context, next ) => {
 	context.primary = <HelloDollyPage />;

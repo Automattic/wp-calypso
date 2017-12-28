@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Version from 'components/version';
+import Version from 'client/components/version';
 
 export default class VersionExample extends PureComponent {
 	static displayName = 'VersionExample';

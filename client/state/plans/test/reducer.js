@@ -22,7 +22,7 @@ import plansReducer, {
 } from '../reducer';
 
 import { WPCOM_RESPONSE } from './fixture';
-import { withSchemaValidation } from 'state/utils';
+import { withSchemaValidation } from 'client/state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const itemsReducer = withSchemaValidation( items.schema, items );

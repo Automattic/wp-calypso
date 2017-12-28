@@ -10,20 +10,20 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import Card from 'client/components/card';
+import CompactCard from 'client/components/card/compact';
 import Gridicon from 'gridicons';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import AuthorSelector from 'blocks/author-selector';
-import UsersActions from 'lib/users/actions';
-import accept from 'lib/accept';
-import analytics from 'lib/analytics';
-import Gravatar from 'components/gravatar';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
+import FormButton from 'client/components/forms/form-button';
+import FormButtonsBar from 'client/components/forms/form-buttons-bar';
+import AuthorSelector from 'client/blocks/author-selector';
+import UsersActions from 'client/lib/users/actions';
+import accept from 'client/lib/accept';
+import analytics from 'client/lib/analytics';
+import Gravatar from 'client/components/gravatar';
 import { localize } from 'i18n-calypso';
 
 class DeleteUser extends React.PureComponent {

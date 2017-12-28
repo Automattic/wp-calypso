@@ -9,9 +9,9 @@ import { difference, each, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import { cartItems } from 'lib/cart-values';
-import { recordAddToCart } from 'lib/analytics/ad-tracking';
+import analytics from 'client/lib/analytics';
+import { cartItems } from 'client/lib/cart-values';
+import { recordAddToCart } from 'client/lib/analytics/ad-tracking';
 
 export function recordEvents( previousCart, nextCart ) {
 	const previousItems = cartItems.getAll( previousCart ),

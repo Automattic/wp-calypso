@@ -8,7 +8,7 @@ import { find } from 'lodash';
  */
 import config from 'config';
 import { getSelectedSiteWithFallback } from '../sites/selectors';
-import { getPlugins, isRequestingForSites } from 'state/plugins/installed/selectors';
+import { getPlugins, isRequestingForSites } from 'client/state/plugins/installed/selectors';
 
 export const isWcsEnabled = ( state, siteId = getSelectedSiteWithFallback( state ) ) => {
 	if ( ! config.isEnabled( 'woocommerce/extension-wcservices' ) ) {

@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import getHappychatLastActivityTimestamp from 'state/happychat/selectors/get-happychat-lastactivitytimestamp';
+import getHappychatLastActivityTimestamp from 'client/state/happychat/selectors/get-happychat-lastactivitytimestamp';
 
 // How much time needs to pass before we consider the session inactive:
 const HAPPYCHAT_INACTIVE_TIMEOUT_MS = 1000 * 60 * 10;

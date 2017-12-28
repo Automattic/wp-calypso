@@ -6,7 +6,7 @@
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const receiveJetpackOnboardingCredentials = ( siteId, credentials ) => ( {
 	type: JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,

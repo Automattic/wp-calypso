@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Gauge from 'components/gauge';
+import Gauge from 'client/components/gauge';
 
 export default class extends React.PureComponent {
 	static displayName = 'Gauge';

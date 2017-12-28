@@ -14,7 +14,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import DomainSuggestion from 'components/domains/domain-suggestion';
+import DomainSuggestion from 'client/components/domains/domain-suggestion';
 
 describe( 'Domain Suggestion', () => {
 	describe( 'has attributes', () => {

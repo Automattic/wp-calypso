@@ -15,20 +15,23 @@ import {
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_ADD,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_EDIT,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_DELETE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import {
 	receiveProductsList,
 	receiveUpdateProduct,
 	receiveDeleteProduct,
-} from 'state/simple-payments/product-list/actions';
-import { metaKeyToSchemaKeyMap, metadataSchema } from 'state/simple-payments/product-list/schema';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx, TransformerError } from 'state/data-layer/wpcom-http/utils';
-import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
-import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
-import formatCurrency from 'lib/format-currency';
-import { getFeaturedImageId } from 'lib/posts/utils';
-import { decodeEntities } from 'lib/formatting';
+} from 'client/state/simple-payments/product-list/actions';
+import {
+	metaKeyToSchemaKeyMap,
+	metadataSchema,
+} from 'client/state/simple-payments/product-list/schema';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequestEx, TransformerError } from 'client/state/data-layer/wpcom-http/utils';
+import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'client/lib/simple-payments/constants';
+import { isValidSimplePaymentsProduct } from 'client/lib/simple-payments/utils';
+import formatCurrency from 'client/lib/format-currency';
+import { getFeaturedImageId } from 'client/lib/posts/utils';
+import { decodeEntities } from 'client/lib/formatting';
 
 /**
  * Convert custom post metadata array to product attributes

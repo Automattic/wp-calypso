@@ -11,12 +11,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 import ContactDisplay from './contact-display';
-import Notice from 'components/notice';
-import paths from 'my-sites/domains/paths';
-import SectionHeader from 'components/section-header';
-import support from 'lib/url/support';
+import Notice from 'client/components/notice';
+import paths from 'client/my-sites/domains/paths';
+import SectionHeader from 'client/components/section-header';
+import support from 'client/lib/url/support';
 
 class ContactsPrivacyCard extends React.PureComponent {
 	static propTypes = {

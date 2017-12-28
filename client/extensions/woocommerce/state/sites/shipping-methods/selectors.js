@@ -9,9 +9,9 @@ import { find, get, isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { LOADING } from 'woocommerce/state/constants';
+import createSelector from 'client/lib/create-selector';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 
 /**
  * @param {Object} state Whole Redux state tree

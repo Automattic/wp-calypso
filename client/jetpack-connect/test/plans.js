@@ -12,7 +12,7 @@ import React from 'react';
  * Internal dependencies
  */
 import PlansGrid from '../plans-grid';
-import QueryPlans from 'components/data/query-plans';
+import QueryPlans from 'client/components/data/query-plans';
 import { DEFAULT_PROPS, SELECTED_SITE, SITE_PLAN_PRO } from './lib/plans';
 import { PlansTestComponent as Plans } from '../plans';
 

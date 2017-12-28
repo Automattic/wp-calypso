@@ -12,11 +12,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Security2faEnable from 'me/security-2fa-enable';
-import Security2faSetupBackupCodes from 'me/security-2fa-setup-backup-codes';
-import Security2faSMSSettings from 'me/security-2fa-sms-settings';
-import Security2faInitialSetup from 'me/security-2fa-initial-setup';
-import { successNotice } from 'state/notices/actions';
+import Security2faEnable from 'client/me/security-2fa-enable';
+import Security2faSetupBackupCodes from 'client/me/security-2fa-setup-backup-codes';
+import Security2faSMSSettings from 'client/me/security-2fa-sms-settings';
+import Security2faInitialSetup from 'client/me/security-2fa-initial-setup';
+import { successNotice } from 'client/state/notices/actions';
 
 class Security2faSetup extends Component {
 	static propTypes = {

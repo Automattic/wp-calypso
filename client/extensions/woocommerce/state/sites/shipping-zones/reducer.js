@@ -10,8 +10,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import { LOADING } from 'woocommerce/state/constants';
+import { createReducer } from 'client/state/utils';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_DELETED,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_DELETED,
@@ -21,7 +21,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
 	WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
 	WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 // TODO: Handle error
 

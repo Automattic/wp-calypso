@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import DiscussionMain from 'my-sites/site-settings/settings-discussion/main';
+import DiscussionMain from 'client/my-sites/site-settings/settings-discussion/main';
 
 export default {
 	discussion( context, next ) {

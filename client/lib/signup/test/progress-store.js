@@ -13,7 +13,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );

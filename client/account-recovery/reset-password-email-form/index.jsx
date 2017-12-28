@@ -11,9 +11,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import { clearResetMethod } from 'state/account-recovery/reset/actions';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import { clearResetMethod } from 'client/state/account-recovery/reset/actions';
 
 const ResetPasswordEmailSent = props => {
 	const { email, translate } = props;

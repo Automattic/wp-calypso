@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import InputChrono from 'components/input-chrono';
-import Card from 'components/card';
+import InputChrono from 'client/components/input-chrono';
+import Card from 'client/components/card';
 
 /**
  * Date Picker Demo

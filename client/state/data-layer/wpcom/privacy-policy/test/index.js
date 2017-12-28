@@ -9,8 +9,8 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { addPrivacyPolicy, fetchPrivacyPolicy } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { privacyPolicyReceive } from 'state/privacy-policy/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { privacyPolicyReceive } from 'client/state/privacy-policy/actions';
 
 describe( 'privacy-policy request', () => {
 	describe( 'successful requests', () => {

@@ -97,8 +97,8 @@ import {
 // Parser also requires draft-js. Lets load it after the polyfills are created too.
 import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
 import Token from './token';
-import { buildSeoTitle } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { buildSeoTitle } from 'client/state/sites/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
 import { localize } from 'i18n-calypso';
 
 const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;

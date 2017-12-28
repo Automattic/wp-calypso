@@ -13,8 +13,8 @@ import {
 	updateCountriesTransactions,
 	showCountriesTransactionsLoadingError,
 } from '../';
-import { COUNTRIES_PAYMENTS_UPDATED, NOTICE_CREATE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { COUNTRIES_PAYMENTS_UPDATED, NOTICE_CREATE } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'me transactions supported-countries', () => {

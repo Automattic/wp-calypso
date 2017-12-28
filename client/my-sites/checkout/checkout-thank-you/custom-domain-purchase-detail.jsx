@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import { hasCustomDomain } from 'lib/site/utils';
+import PurchaseDetail from 'client/components/purchase-detail';
+import { hasCustomDomain } from 'client/lib/site/utils';
 
 const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate } ) => {
 	if ( hasDomainCredit && selectedSite.plan.user_is_owner ) {

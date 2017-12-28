@@ -9,7 +9,7 @@ import { stubTrue, stubFalse } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import {
 	ACCOUNT_RECOVERY_RESET_OPTIONS_ERROR,
 	ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,
@@ -26,7 +26,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST,
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_PASSWORD_REQUEST_ERROR,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 const options = combineReducers( {
 	isRequesting: createReducer( false, {

@@ -9,7 +9,7 @@ import { cloneDeep, get, identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
+import decodeEntities from 'client/lib/post-normalizer/rule-decode-entities';
 
 /**
  * Wraps a given value in a fake Maybe monad, passes it to a given function

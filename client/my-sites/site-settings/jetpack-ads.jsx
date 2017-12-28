@@ -12,20 +12,20 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import InfoPopover from 'components/info-popover';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SectionHeader from 'components/section-header';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
-import { FEATURE_WORDADS_INSTANT, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
+import Banner from 'client/components/banner';
+import Card from 'client/components/card';
+import CompactCard from 'client/components/card/compact';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import ExternalLink from 'client/components/external-link';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import InfoPopover from 'client/components/info-popover';
+import JetpackModuleToggle from 'client/my-sites/site-settings/jetpack-module-toggle';
+import SectionHeader from 'client/components/section-header';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { hasFeature } from 'client/state/sites/plans/selectors';
+import { isJetpackModuleActive } from 'client/state/selectors';
+import { FEATURE_WORDADS_INSTANT, PLAN_JETPACK_PREMIUM } from 'client/lib/plans/constants';
 
 class JetpackAds extends Component {
 	static defaultProps = {

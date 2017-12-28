@@ -10,9 +10,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { hasJetpackSites } from 'state/selectors';
+import Button from 'client/components/button';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { hasJetpackSites } from 'client/state/selectors';
 
 class SiteSelectorAddSite extends Component {
 	getAddNewSiteUrl() {

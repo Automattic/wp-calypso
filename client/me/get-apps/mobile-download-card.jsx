@@ -13,8 +13,8 @@ import { identity, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import { recordTracksEvent } from 'state/analytics/actions';
+import Card from 'client/components/card';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 const MobileDownloadCard = ( { translate, trackIosClick, trackAndroidClick } ) => {
 	return (

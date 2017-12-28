@@ -8,7 +8,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import getUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
+import getUserInfo from 'client/state/happychat/selectors/get-happychat-userinfo';
 
 describe( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO action', () => {
 	const state = {

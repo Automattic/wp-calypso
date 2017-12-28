@@ -19,17 +19,17 @@ import {
 	receiveCommentError,
 	receiveCommentSuccess,
 } from '../';
-import { COMMENTS_EDIT, NOTICE_REMOVE } from 'state/action-types';
+import { COMMENTS_EDIT, NOTICE_REMOVE } from 'client/state/action-types';
 import {
 	requestComment as requestCommentAction,
 	editComment as editCommentAction,
 	receiveComments as receiveCommentsAction,
 	receiveCommentsError as receiveCommentsErrorAction,
-} from 'state/comments/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice, removeNotice } from 'state/notices/actions';
-import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+} from 'client/state/comments/actions';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { errorNotice, removeNotice } from 'client/state/notices/actions';
+import { noRetry } from 'client/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 const query = {
 	siteId: 1337,

@@ -13,9 +13,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SiteIcon from 'blocks/site-icon';
-import SiteIndicator from 'my-sites/site-indicator';
-import { getSite } from 'state/sites/selectors';
+import SiteIcon from 'client/blocks/site-icon';
+import SiteIndicator from 'client/my-sites/site-indicator';
+import { getSite } from 'client/state/sites/selectors';
 
 class Site extends React.Component {
 	static defaultProps = {

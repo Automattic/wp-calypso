@@ -11,12 +11,12 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import ExternalLink from 'components/external-link';
-import { recordPermalinkClick } from 'reader/stats';
-import TimeSince from 'components/time-since';
+import AutoDirection from 'client/components/auto-direction';
+import ExternalLink from 'client/components/external-link';
+import { recordPermalinkClick } from 'client/reader/stats';
+import TimeSince from 'client/components/time-since';
 import ReaderFullPostHeaderTags from './header-tags';
-import { isDiscoverPost } from 'reader/discover/helper';
+import { isDiscoverPost } from 'client/reader/discover/helper';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
 const ReaderFullPostHeader = ( { post, referralPost } ) => {

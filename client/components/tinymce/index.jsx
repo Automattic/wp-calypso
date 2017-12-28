@@ -47,7 +47,7 @@ import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 import insertMenuPlugin from './plugins/insert-menu/plugin';
 import embedPlugin from './plugins/embed/plugin';
 import embedReversalPlugin from './plugins/embed-reversal/plugin';
-import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
+import EditorHtmlToolbar from 'client/post-editor/editor-html-toolbar';
 import mentionsPlugin from './plugins/mentions/plugin';
 import markdownPlugin from './plugins/markdown/plugin';
 import wpEmojiPlugin from './plugins/wpemoji/plugin';
@@ -83,13 +83,13 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 /**
  * Internal Dependencies
  */
-import userFactory from 'lib/user';
+import userFactory from 'client/lib/user';
 
 const user = userFactory();
 import i18n from './i18n';
-import viewport from 'lib/viewport';
+import viewport from 'client/lib/viewport';
 import config from 'config';
-import { decodeEntities, wpautop, removep } from 'lib/formatting';
+import { decodeEntities, wpautop, removep } from 'client/lib/formatting';
 
 /**
  * Internal Variables

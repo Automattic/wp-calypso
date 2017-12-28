@@ -9,7 +9,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import buildUrl from 'lib/build-url';
+import buildUrl from 'client/lib/build-url';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:search-url' );

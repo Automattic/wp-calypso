@@ -10,7 +10,7 @@ import { spy, stub } from 'sinon';
  * Internal dependencies
  */
 import { createReducerStore } from './../index';
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 
 describe( 'index', () => {
 	const reducer = state => {

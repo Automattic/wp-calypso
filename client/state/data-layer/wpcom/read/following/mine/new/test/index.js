@@ -9,10 +9,10 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { requestFollow, receiveFollow, followError } from '../';
-import { NOTICE_CREATE } from 'state/action-types';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { follow, unfollow } from 'state/reader/follows/actions';
+import { NOTICE_CREATE } from 'client/state/action-types';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { follow, unfollow } from 'client/state/reader/follows/actions';
 
 describe( 'requestFollow', () => {
 	test( 'should dispatch a http request', () => {

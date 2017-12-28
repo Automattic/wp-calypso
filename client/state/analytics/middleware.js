@@ -9,19 +9,19 @@ import { has, invoke, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import {
 	trackCustomAdWordsRemarketingEvent,
 	trackCustomFacebookConversionEvent,
-} from 'lib/analytics/ad-tracking';
+} from 'client/lib/analytics/ad-tracking';
 import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKING_ON,
 	ANALYTICS_TRACKS_ANONID_SET,
-} from 'state/action-types';
-import isTracking from 'state/selectors/is-tracking';
+} from 'client/state/action-types';
+import isTracking from 'client/state/selectors/is-tracking';
 
 const eventServices = {
 	ga: ( { category, action, label, value } ) =>

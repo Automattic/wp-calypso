@@ -12,12 +12,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { decodeEntities } from 'lib/formatting';
-import { getEditedPost } from 'state/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import QueryPostTypes from 'components/data/query-post-types';
+import { decodeEntities } from 'client/lib/formatting';
+import { getEditedPost } from 'client/state/posts/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getPostType } from 'client/state/post-types/selectors';
+import QueryPostTypes from 'client/components/data/query-post-types';
 
 function EditorActionBarViewLabel( { translate, siteId, typeSlug, type } ) {
 	let label;

@@ -13,7 +13,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { SetupPath } from '../../../constants';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 import { isFetchingSetupStatus, shouldShowSetupWizard } from '../../../state/setup/selectors';
 import QuerySetupStatus from '../../data/query-setup-status';
 

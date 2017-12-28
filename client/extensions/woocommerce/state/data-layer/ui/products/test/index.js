@@ -15,7 +15,7 @@ import {
 	handleProductCategoryEdit,
 	makeProductActionList,
 } from '../';
-import { actionListStepFailure } from 'woocommerce/state/action-list/actions';
+import { actionListStepFailure } from 'client/extensions/woocommerce/state/action-list/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_UPDATE,
@@ -23,13 +23,13 @@ import {
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_DELETE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
-} from 'woocommerce/state/action-types';
-import { editProductCategory } from 'woocommerce/state/ui/product-categories/actions';
+} from 'client/extensions/woocommerce/state/action-types';
+import { editProductCategory } from 'client/extensions/woocommerce/state/ui/product-categories/actions';
 import {
 	editProduct,
 	editProductAttribute,
 	editProductRemoveCategory,
-} from 'woocommerce/state/ui/products/actions';
+} from 'client/extensions/woocommerce/state/ui/products/actions';
 
 describe( 'handlers', () => {
 	describe( '#actionAppendProductVariations', () => {

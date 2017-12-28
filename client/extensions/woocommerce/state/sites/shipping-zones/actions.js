@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import request from 'woocommerce/state/sites/request';
+import request from 'client/extensions/woocommerce/state/sites/request';
 import { setError } from '../status/wc-api/actions';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_CREATE,
@@ -14,7 +14,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
 	WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
 	WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 import { areShippingZonesLoaded, areShippingZonesLoading } from './selectors';
 import { fetchShippingZoneMethods } from '../shipping-zone-methods/actions';
 import { fetchShippingZoneLocations } from '../shipping-zone-locations/actions';

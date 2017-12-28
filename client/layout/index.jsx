@@ -13,26 +13,26 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import MasterbarLoggedIn from 'layout/masterbar/logged-in';
-import MasterbarLoggedOut from 'layout/masterbar/logged-out';
+import AsyncLoad from 'client/components/async-load';
+import MasterbarLoggedIn from 'client/layout/masterbar/logged-in';
+import MasterbarLoggedOut from 'client/layout/masterbar/logged-out';
 /* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
+import observe from 'client/lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import GlobalNotices from 'components/global-notices';
-import notices from 'notices';
-import translator from 'lib/translator-jumpstart';
+import GlobalNotices from 'client/components/global-notices';
+import notices from 'client/notices';
+import translator from 'client/lib/translator-jumpstart';
 import TranslatorInvitation from './community-translator/invitation';
 import TranslatorLauncher from './community-translator/launcher';
-import Welcome from 'my-sites/welcome/welcome';
-import WelcomeMessage from 'layout/nux-welcome/welcome-message';
-import GuidedTours from 'layout/guided-tours';
-import analytics from 'lib/analytics';
+import Welcome from 'client/my-sites/welcome/welcome';
+import WelcomeMessage from 'client/layout/nux-welcome/welcome-message';
+import GuidedTours from 'client/layout/guided-tours';
+import analytics from 'client/lib/analytics';
 import config from 'config';
-import PulsingDot from 'components/pulsing-dot';
-import SitesListNotices from 'lib/sites-list/notices';
-import OfflineStatus from 'layout/offline-status';
-import QueryPreferences from 'components/data/query-preferences';
+import PulsingDot from 'client/components/pulsing-dot';
+import SitesListNotices from 'client/lib/sites-list/notices';
+import OfflineStatus from 'client/layout/offline-status';
+import QueryPreferences from 'client/components/data/query-preferences';
 
 /**
  * Internal dependencies
@@ -40,17 +40,17 @@ import QueryPreferences from 'components/data/query-preferences';
 let KeyboardShortcutsMenu, SupportUser;
 
 import PropTypes from 'prop-types';
-import QuerySites from 'components/data/query-sites';
-import { isOffline } from 'state/application/selectors';
-import { hasSidebar } from 'state/ui/selectors';
-import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
-import SitePreview from 'blocks/site-preview';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import DocumentHead from 'components/data/document-head';
-import NpsSurveyNotice from 'layout/nps-survey-notice';
-import AppBanner from 'blocks/app-banner';
-import { getPreference } from 'state/preferences/selectors';
-import JITM from 'blocks/jitm';
+import QuerySites from 'client/components/data/query-sites';
+import { isOffline } from 'client/state/application/selectors';
+import { hasSidebar } from 'client/state/ui/selectors';
+import isHappychatOpen from 'client/state/happychat/selectors/is-happychat-open';
+import SitePreview from 'client/blocks/site-preview';
+import { getCurrentLayoutFocus } from 'client/state/ui/layout-focus/selectors';
+import DocumentHead from 'client/components/data/document-head';
+import NpsSurveyNotice from 'client/layout/nps-survey-notice';
+import AppBanner from 'client/blocks/app-banner';
+import { getPreference } from 'client/state/preferences/selectors';
+import JITM from 'client/blocks/jitm';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );

@@ -10,7 +10,7 @@ import { stub, spy } from 'sinon';
  * Internal dependencies
  */
 import { testSchema } from './mocks/schema';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { DESERIALIZE, SERIALIZE } from 'client/state/action-types';
 import {
 	cachingActionCreatorFactory,
 	createReducer,
@@ -20,7 +20,7 @@ import {
 	combineReducers,
 	isValidStateWithSchema,
 	withoutPersistence,
-} from 'state/utils';
+} from 'client/state/utils';
 jest.mock( 'lib/warn', () => () => {} );
 
 describe( 'utils', () => {

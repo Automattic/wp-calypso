@@ -18,7 +18,7 @@ import {
 	hasAnsweredNpsSurveyWithNoScore,
 	getNpsSurveyName,
 	getNpsSurveyScore,
-} from 'state/nps-survey/selectors';
+} from 'client/state/nps-survey/selectors';
 
 class NpsSurveyExample extends PureComponent {
 	static displayName = 'NpsSurvey';

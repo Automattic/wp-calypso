@@ -11,8 +11,8 @@ import { has, isString, omit, startsWith } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import addQueryArgs from 'lib/route/add-query-args';
-import { isLegacyRoute } from 'lib/route/legacy-routes';
+import addQueryArgs from 'client/lib/route/add-query-args';
+import { isLegacyRoute } from 'client/lib/route/legacy-routes';
 
 /**
  * Check if a URL is located outside of Calypso.

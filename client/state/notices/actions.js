@@ -4,12 +4,12 @@
  * External dependencies
  */
 
-import { uniqueId } from 'lib/impure-lodash';
+import { uniqueId } from 'client/lib/impure-lodash';
 
 /**
  * Internal dependencies
  */
-import { NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
+import { NOTICE_CREATE, NOTICE_REMOVE } from 'client/state/action-types';
 
 export function removeNotice( noticeId ) {
 	return {

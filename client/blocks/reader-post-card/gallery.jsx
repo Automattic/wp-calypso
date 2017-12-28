@@ -9,14 +9,14 @@ import { map, take, filter } from 'lodash';
 /**
  * Internal Dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
-import { imageIsBigEnoughForGallery } from 'state/reader/posts/normalization-rules';
-import resizeImageUrl from 'lib/resize-image-url';
-import cssSafeUrl from 'lib/css-safe-url';
-import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
-import ReaderExcerpt from 'blocks/reader-excerpt';
-import { READER_CONTENT_WIDTH } from 'state/reader/posts/normalization-rules';
+import AutoDirection from 'client/components/auto-direction';
+import Emojify from 'client/components/emojify';
+import { imageIsBigEnoughForGallery } from 'client/state/reader/posts/normalization-rules';
+import resizeImageUrl from 'client/lib/resize-image-url';
+import cssSafeUrl from 'client/lib/css-safe-url';
+import { isFeaturedImageInContent } from 'client/lib/post-normalizer/utils';
+import ReaderExcerpt from 'client/blocks/reader-excerpt';
+import { READER_CONTENT_WIDTH } from 'client/state/reader/posts/normalization-rules';
 
 function getGalleryWorthyImages( post ) {
 	const numberOfImagesToDisplay = 4;

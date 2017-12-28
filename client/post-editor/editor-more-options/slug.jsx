@@ -12,12 +12,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import EditorDrawerLabel from 'post-editor/editor-drawer/label';
-import AccordionSection from 'components/accordion/section';
-import Slug from 'post-editor/editor-slug';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
+import EditorDrawerLabel from 'client/post-editor/editor-drawer/label';
+import AccordionSection from 'client/components/accordion/section';
+import Slug from 'client/post-editor/editor-slug';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
 
 class EditorMoreOptionsSlug extends PureComponent {
 	static propTypes = {

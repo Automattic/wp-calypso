@@ -8,30 +8,30 @@ import { forEach, get, groupBy, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_LIST_REQUEST,
 	COMMENT_REQUEST,
 	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_EDIT,
-} from 'state/action-types';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest, dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+} from 'client/state/action-types';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest, dispatchRequestEx } from 'client/state/data-layer/wpcom-http/utils';
 import replies from './replies';
 import likes from './likes';
-import { errorNotice, removeNotice } from 'state/notices/actions';
-import { getRawSite } from 'state/sites/selectors';
-import { getSiteComment } from 'state/selectors';
+import { errorNotice, removeNotice } from 'client/state/notices/actions';
+import { getRawSite } from 'client/state/sites/selectors';
+import { getSiteComment } from 'client/state/selectors';
 import {
 	receiveComments,
 	receiveCommentsError as receiveCommentErrorAction,
 	requestComment as requestCommentAction,
 	requestCommentsList,
-} from 'state/comments/actions';
-import { updateCommentsQuery } from 'state/ui/comments/actions';
-import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+} from 'client/state/comments/actions';
+import { updateCommentsQuery } from 'client/state/ui/comments/actions';
+import { noRetry } from 'client/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, status } = action;

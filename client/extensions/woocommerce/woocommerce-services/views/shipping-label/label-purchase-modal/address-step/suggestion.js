@@ -10,9 +10,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import Notice from 'components/notice';
+import FormLabel from 'client/components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
+import Notice from 'client/components/notice';
 import StepConfirmationButton from '../step-confirmation-button';
 
 const RadioButton = ( props ) => {

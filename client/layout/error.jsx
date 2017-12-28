@@ -14,8 +14,8 @@ import qs from 'querystring';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import EmptyContent from 'components/empty-content';
+import analytics from 'client/lib/analytics';
+import EmptyContent from 'client/components/empty-content';
 
 /**
  * Module variables

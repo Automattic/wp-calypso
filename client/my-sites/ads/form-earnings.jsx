@@ -5,17 +5,17 @@
  */
 
 import React, { Component } from 'react';
-import notices from 'notices';
+import notices from 'client/notices';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import Gridicon from 'gridicons';
-import WordadsActions from 'lib/ads/actions';
-import EarningsStore from 'lib/ads/earnings-store';
+import WordadsActions from 'client/lib/ads/actions';
+import EarningsStore from 'client/lib/ads/earnings-store';
 
 class AdsFormEarnings extends Component {
 	state = this.getSettingsFromStore();

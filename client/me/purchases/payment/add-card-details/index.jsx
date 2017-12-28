@@ -11,19 +11,22 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import { clearPurchases } from 'state/purchases/actions';
-import CreditCardForm from 'blocks/credit-card-form';
-import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import HeaderCake from 'components/header-cake';
-import { isDataLoading, recordPageView } from 'me/purchases/utils';
-import { isRequestingSites } from 'state/sites/selectors';
-import Main from 'components/main';
-import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
+import { clearPurchases } from 'client/state/purchases/actions';
+import CreditCardForm from 'client/blocks/credit-card-form';
+import CreditCardFormLoadingPlaceholder from 'client/blocks/credit-card-form/loading-placeholder';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+} from 'client/state/purchases/selectors';
+import { getSelectedSite as getSelectedSiteSelector } from 'client/state/ui/selectors';
+import HeaderCake from 'client/components/header-cake';
+import { isDataLoading, recordPageView } from 'client/me/purchases/utils';
+import { isRequestingSites } from 'client/state/sites/selectors';
+import Main from 'client/components/main';
+import PurchaseCardDetails from 'client/me/purchases/components/purchase-card-details';
+import QueryUserPurchases from 'client/components/data/query-user-purchases';
+import titles from 'client/me/purchases/titles';
+import userFactory from 'client/lib/user';
 
 const user = userFactory();
 

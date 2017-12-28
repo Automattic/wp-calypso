@@ -19,8 +19,8 @@ import {
 	HAPPYCHAT_CHAT_STATUS_MISSED,
 	HAPPYCHAT_CHAT_STATUS_NEW,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
-} from 'state/happychat/constants';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
+} from 'client/state/happychat/constants';
+import hasActiveHappychatSession from 'client/state/happychat/selectors/has-active-happychat-session';
 
 describe( '#hasActiveHappychatSession', () => {
 	const inactiveChatStatuses = [

@@ -13,16 +13,16 @@ import { omit } from 'lodash';
  * Internal dependencies
  */
 import FieldHeader from './field-header';
-import FoldableCard from 'components/foldable-card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormTextValidation from 'components/forms/form-input-validation';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
-import TokenField from 'components/token-field';
+import FoldableCard from 'client/components/foldable-card';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormTextValidation from 'client/components/forms/form-input-validation';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import SelectDropdown from 'client/components/select-dropdown';
+import DropdownItem from 'client/components/select-dropdown/item';
+import TokenField from 'client/components/token-field';
 import FieldRemoveButton from './field-remove-button';
 import FieldEditButton from './field-edit-button';
 import getLabel from './locales';

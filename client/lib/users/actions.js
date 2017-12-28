@@ -11,9 +11,9 @@ const debug = debugFactory( 'calypso:users:actions' );
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
-import UsersStore from 'lib/users/store';
+import Dispatcher from 'client/dispatcher';
+import wpcom from 'client/lib/wp';
+import UsersStore from 'client/lib/users/store';
 
 const UsersActions = {
 	fetchUsers: fetchOptions => {

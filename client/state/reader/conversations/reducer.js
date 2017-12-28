@@ -12,9 +12,9 @@ import {
 	READER_CONVERSATION_MUTE,
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
 	READER_POSTS_RECEIVE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from './follow-status';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import { itemsSchema } from './schema';
 import { key } from './utils';
 

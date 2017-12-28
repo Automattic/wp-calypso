@@ -10,8 +10,8 @@ import { camelCase, kebabCase, upperFirst } from 'lodash';
 /**
  * Internal dependencies
  */
-import SyncInitialize from 'lib/form-state/examples/sync-initialize';
-import AsyncInitialize from 'lib/form-state/examples/async-initialize';
+import SyncInitialize from 'client/lib/form-state/examples/sync-initialize';
+import AsyncInitialize from 'client/lib/form-state/examples/async-initialize';
 
 const COMPONENTS = {
 	SyncInitialize,

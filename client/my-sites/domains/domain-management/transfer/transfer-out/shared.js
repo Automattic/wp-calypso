@@ -10,8 +10,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import support from 'lib/url/support';
+import notices from 'client/notices';
+import support from 'client/lib/url/support';
 
 export const displayResponseError = responseError => {
 	const errorMessages = {

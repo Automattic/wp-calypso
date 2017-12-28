@@ -12,10 +12,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import QueryMediaStorage from 'components/data/query-media-storage';
-import { getMediaStorage } from 'state/sites/media-storage/selectors';
-import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import QueryMediaStorage from 'client/components/data/query-media-storage';
+import { getMediaStorage } from 'client/state/sites/media-storage/selectors';
+import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'client/state/sites/selectors';
+import { PLAN_BUSINESS } from 'client/lib/plans/constants';
 import PlanStorageBar from './bar';
 
 class PlanStorage extends Component {

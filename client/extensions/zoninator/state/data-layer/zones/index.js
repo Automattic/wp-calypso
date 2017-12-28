@@ -11,10 +11,10 @@ import { reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { navigate } from 'state/ui/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice, removeNotice, successNotice } from 'client/state/notices/actions';
+import { navigate } from 'client/state/ui/actions';
 import { requestZones, requestError, updateZone, updateZones } from '../../zones/actions';
 import { fromApi } from './utils';
 import {
@@ -22,7 +22,7 @@ import {
 	ZONINATOR_DELETE_ZONE,
 	ZONINATOR_REQUEST_ZONES,
 	ZONINATOR_SAVE_ZONE,
-} from 'zoninator/state/action-types';
+} from 'client/extensions/zoninator/state/action-types';
 
 const settingsPath = '/extensions/zoninator';
 

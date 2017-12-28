@@ -7,11 +7,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import ListItem from 'woocommerce/components/list/list-item';
-import ListItemField from 'woocommerce/components/list/list-item-field';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import ListItem from 'client/extensions/woocommerce/components/list/list-item';
+import ListItemField from 'client/extensions/woocommerce/components/list/list-item-field';
 
 const CustomerNotification = ( { item, checked, onToggle, isPlaceholder } ) => (
 	<ListItem className="components__notification-component-item">

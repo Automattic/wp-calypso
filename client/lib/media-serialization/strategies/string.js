@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import Shortcode from 'lib/shortcode';
+import Shortcode from 'client/lib/shortcode';
 import { deserialize as _recurse } from '../';
 import createElementFromString from '../create-element-from-string';
 

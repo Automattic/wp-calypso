@@ -11,7 +11,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 
 class SharingButtonsStyle extends React.Component {
 	static displayName = 'SharingButtonsStyle';

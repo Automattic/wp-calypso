@@ -14,14 +14,14 @@ import { localize, moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
-import Count from 'components/count';
-import Notice from 'components/notice';
-import PluginNotices from 'lib/plugins/notices';
-import { errorNotice } from 'state/notices/actions';
+import CompactCard from 'client/components/card/compact';
+import PluginIcon from 'client/my-sites/plugins/plugin-icon/plugin-icon';
+import PluginActivateToggle from 'client/my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'client/my-sites/plugins/plugin-autoupdate-toggle';
+import Count from 'client/components/count';
+import Notice from 'client/components/notice';
+import PluginNotices from 'client/lib/plugins/notices';
+import { errorNotice } from 'client/state/notices/actions';
 
 function checkPropsChange( nextProps, propArr ) {
 	let i;

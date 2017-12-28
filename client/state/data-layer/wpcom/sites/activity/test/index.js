@@ -9,10 +9,10 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { handleActivityLogRequest, receiveActivityLogError, receiveActivityLog } from '..';
-import { ACTIVITY_LOG_UPDATE } from 'state/action-types';
-import { activityLogRequest } from 'state/activity-log/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
+import { ACTIVITY_LOG_UPDATE } from 'client/state/action-types';
+import { activityLogRequest } from 'client/state/activity-log/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'client/state/notices/actions';
 
 const SITE_ID = 77203074;
 

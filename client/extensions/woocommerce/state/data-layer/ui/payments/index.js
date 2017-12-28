@@ -10,26 +10,26 @@ import { isEmpty, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { WOOCOMMERCE_PAYMENT_ACTION_LIST_CREATE } from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_PAYMENT_ACTION_LIST_CREATE } from 'client/extensions/woocommerce/state/action-types';
 import {
 	actionListStepNext,
 	actionListStepSuccess,
 	actionListStepFailure,
 	actionListClear,
-} from 'woocommerce/state/action-list/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'client/extensions/woocommerce/state/action-list/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	areSettingsGeneralLoaded,
 	getPaymentCurrencySettings,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
-import { saveCurrency } from 'woocommerce/state/sites/settings/general/actions';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import { getCurrencyWithEdits } from 'client/extensions/woocommerce/state/ui/payments/currency/selectors';
+import { saveCurrency } from 'client/extensions/woocommerce/state/sites/settings/general/actions';
 import {
 	getPaymentMethods,
 	arePaymentMethodsLoaded,
-} from 'woocommerce/state/sites/payment-methods/selectors';
-import { savePaymentMethod } from 'woocommerce/state/sites/payment-methods/actions';
-import { getPaymentMethodsWithEdits } from 'woocommerce/state/ui/payments/methods/selectors';
+} from 'client/extensions/woocommerce/state/sites/payment-methods/selectors';
+import { savePaymentMethod } from 'client/extensions/woocommerce/state/sites/payment-methods/actions';
+import { getPaymentMethodsWithEdits } from 'client/extensions/woocommerce/state/ui/payments/methods/selectors';
 
 /**
  * Creates a list of actions required to save the currency settings.

@@ -9,13 +9,13 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import DocumentHead from 'client/components/data/document-head';
+import FormattedHeader from 'client/components/formatted-header';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
 
 class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	state = {

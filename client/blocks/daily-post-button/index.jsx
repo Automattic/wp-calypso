@@ -15,15 +15,15 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import { translate } from 'i18n-calypso';
-import { preload } from 'sections-preload';
-import SitesPopover from 'components/sites-popover';
-import Button from 'components/button';
-import { markSeen as markPostSeen } from 'lib/feed-post-store/actions';
-import { recordGaEvent, recordAction, recordTrackForPost } from 'reader/stats';
+import { preload } from 'client/sections-preload';
+import SitesPopover from 'client/components/sites-popover';
+import Button from 'client/components/button';
+import { markSeen as markPostSeen } from 'client/lib/feed-post-store/actions';
+import { recordGaEvent, recordAction, recordTrackForPost } from 'client/reader/stats';
 import { getDailyPostType } from './helper';
-import { getPrimarySiteId } from 'state/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getPrimarySiteId } from 'client/state/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
 
 function getPingbackAttributes( post ) {
 	const typeTitles = {

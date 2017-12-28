@@ -8,7 +8,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { isDiscoverBlog, isDiscoverFeed } from 'reader/discover/helper';
+import { isDiscoverBlog, isDiscoverFeed } from 'client/reader/discover/helper';
 
 export function isDiscoverPostKey( postKey ) {
 	return isDiscoverBlog( postKey.blogId ) || isDiscoverFeed( postKey.feedId );

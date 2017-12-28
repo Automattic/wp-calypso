@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { READER_VIEW_STREAM } from 'state/action-types';
+import { READER_VIEW_STREAM } from 'client/state/action-types';
 
 /**
  * this is a relatively generic action type for something very specific (marking up the watermark)

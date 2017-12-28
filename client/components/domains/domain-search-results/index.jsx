@@ -8,27 +8,27 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import isSiteOnPaidPlan from 'client/state/selectors/is-site-on-paid-plan';
 import classNames from 'classnames';
 import { endsWith, includes, times } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
-import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
-import DomainSuggestion from 'components/domains/domain-suggestion';
-import { isNextDomainFree } from 'lib/cart-values/cart-items';
-import Notice from 'components/notice';
-import Card from 'components/card';
-import { getTld } from 'lib/domains';
-import { domainAvailability } from 'lib/domains/constants';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import { TRANSFER_IN } from 'state/current-user/constants';
-import { getDesignType } from 'state/signup/steps/design-type/selectors';
-import { DESIGN_TYPE_STORE } from 'signup/constants';
+import DomainRegistrationSuggestion from 'client/components/domains/domain-registration-suggestion';
+import DomainTransferSuggestion from 'client/components/domains/domain-transfer-suggestion';
+import DomainMappingSuggestion from 'client/components/domains/domain-mapping-suggestion';
+import DomainSuggestion from 'client/components/domains/domain-suggestion';
+import { isNextDomainFree } from 'client/lib/cart-values/cart-items';
+import Notice from 'client/components/notice';
+import Card from 'client/components/card';
+import { getTld } from 'client/lib/domains';
+import { domainAvailability } from 'client/lib/domains/constants';
+import { currentUserHasFlag } from 'client/state/current-user/selectors';
+import { TRANSFER_IN } from 'client/state/current-user/constants';
+import { getDesignType } from 'client/state/signup/steps/design-type/selectors';
+import { DESIGN_TYPE_STORE } from 'client/signup/constants';
 
 class DomainSearchResults extends React.Component {
 	static propTypes = {

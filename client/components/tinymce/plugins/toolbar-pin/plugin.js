@@ -10,7 +10,7 @@ import { throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isWithinBreakpoint } from 'lib/viewport';
+import { isWithinBreakpoint } from 'client/lib/viewport';
 
 /**
  * TinyMCE plugin for toggling an `is-pinned` class on the editor container

@@ -9,7 +9,7 @@ import { isFinite, keyBy, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import { getSerializedOrdersQuery } from './utils';
 import notes from './notes/reducer';
 import {
@@ -22,7 +22,7 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST,
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 import refunds from './refunds/reducer';
 
 /**

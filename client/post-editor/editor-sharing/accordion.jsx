@@ -14,22 +14,22 @@ import { includes, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import Accordion from 'components/accordion';
-import FormTextInput from 'components/forms/form-text-input';
-import PostMetadata from 'lib/post-metadata';
+import Accordion from 'client/components/accordion';
+import FormTextInput from 'client/components/forms/form-text-input';
+import PostMetadata from 'client/lib/post-metadata';
 import Sharing from './';
-import AccordionSection from 'components/accordion/section';
-import postUtils from 'lib/posts/utils';
-import { isMobile } from 'lib/viewport';
-import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { isJetpackModuleActive } from 'state/sites/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'state/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import AccordionSection from 'client/components/accordion/section';
+import postUtils from 'client/lib/posts/utils';
+import { isMobile } from 'client/lib/viewport';
+import QueryPublicizeConnections from 'client/components/data/query-publicize-connections';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { isJetpackModuleActive } from 'client/state/sites/selectors';
+import { getSiteUserConnections } from 'client/state/sharing/publicize/selectors';
+import { hasBrokenSiteUserConnection, isPublicizeEnabled } from 'client/state/selectors';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 class EditorSharingAccordion extends React.Component {
 	static propTypes = {

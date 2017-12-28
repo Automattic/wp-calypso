@@ -9,8 +9,8 @@ import { stringify } from 'qs';
 /**
  * Internal Dependencies
  */
-import { recordTrack, recordTracksRailcarInteract } from 'reader/stats';
-import analytics from 'lib/analytics';
+import { recordTrack, recordTracksRailcarInteract } from 'client/reader/stats';
+import analytics from 'client/lib/analytics';
 
 export class Suggestion extends Component {
 	static propTypes = {

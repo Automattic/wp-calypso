@@ -15,7 +15,7 @@ import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
-} from 'lib/plans/constants';
+} from 'client/lib/plans/constants';
 
 /**
  * Test helper to build a product object

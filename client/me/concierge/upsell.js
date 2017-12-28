@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import CompactCard from 'components/card/compact';
+import Button from 'client/components/button';
+import CompactCard from 'client/components/card/compact';
 import PrimaryHeader from './primary-header';
-import Site from 'blocks/site';
+import Site from 'client/blocks/site';
 
 class Upsell extends Component {
 	static propTypes = {

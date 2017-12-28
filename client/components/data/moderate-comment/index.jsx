@@ -17,10 +17,10 @@ import {
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { changeCommentStatus } from 'state/comments/actions';
-import { getSiteComment } from 'state/selectors';
-import { removeNotice, successNotice } from 'state/notices/actions';
+} from 'client/state/analytics/actions';
+import { changeCommentStatus } from 'client/state/comments/actions';
+import { getSiteComment } from 'client/state/selectors';
+import { removeNotice, successNotice } from 'client/state/notices/actions';
 
 class ModerateComment extends Component {
 	static propTypes = {

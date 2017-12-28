@@ -9,7 +9,7 @@ import { pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import Shortcode from 'lib/shortcode';
+import Shortcode from 'client/lib/shortcode';
 
 export function serialize( { to, subject, fields = [] } = {} ) {
 	const content = fields

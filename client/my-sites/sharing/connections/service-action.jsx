@@ -13,8 +13,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { getRemovableConnections } from 'state/sharing/publicize/selectors';
+import Button from 'client/components/button';
+import { getRemovableConnections } from 'client/state/sharing/publicize/selectors';
 
 const SharingServiceAction = ( {
 	isConnecting,

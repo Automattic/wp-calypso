@@ -6,7 +6,7 @@ import { each, find, findIndex, get, includes, mapValues, omit, round, sortBy, s
 /**
  * Internal dependencies
  */
-import { keyedReducer } from 'state/utils';
+import { keyedReducer } from 'client/state/utils';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_IS_FETCHING,
@@ -59,11 +59,9 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_EMAIL_DETAILS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER,
 } from '../action-types';
-import {
-	WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
-} from 'woocommerce/state/action-types';
-import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
-import initializeLabelsState from 'woocommerce/woocommerce-services/lib/initialize-labels-state';
+import { WOOCOMMERCE_ORDER_UPDATE_SUCCESS } from 'client/extensions/woocommerce/state/action-types';
+import getBoxDimensions from 'client/extensions/woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
+import initializeLabelsState from 'client/extensions/woocommerce/woocommerce-services/lib/initialize-labels-state';
 
 const generateUniqueBoxId = ( keyBase, boxIds ) => {
 	for ( let i = 0; i <= boxIds.length; i++ ) {

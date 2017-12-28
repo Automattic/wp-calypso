@@ -8,9 +8,9 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 import PrimaryHeader from './primary-header';
-import SitePlaceholder from 'blocks/site/placeholder';
+import SitePlaceholder from 'client/blocks/site/placeholder';
 
 class Skeleton extends Component {
 	render() {

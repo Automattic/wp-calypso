@@ -9,10 +9,10 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import SitePickerSubmit from './site-picker-submit';
-import SiteSelector from 'components/site-selector';
-import StepWrapper from 'signup/step-wrapper';
+import SiteSelector from 'client/components/site-selector';
+import StepWrapper from 'client/signup/step-wrapper';
 
 class SitePicker extends Component {
 	componentWillMount() {

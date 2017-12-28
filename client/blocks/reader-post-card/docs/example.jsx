@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ReaderPostCardBlock from 'blocks/reader-post-card';
+import ReaderPostCardBlock from 'client/blocks/reader-post-card';
 import { posts, site } from './fixtures';
 
 const ReaderPostCard = () => (

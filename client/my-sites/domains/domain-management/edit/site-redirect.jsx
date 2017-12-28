@@ -11,14 +11,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
-import Card from 'components/card/compact';
+import analyticsMixin from 'client/lib/mixins/analytics';
+import Card from 'client/components/card/compact';
 import Header from './card/header';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import paths from 'my-sites/domains/paths';
+import VerticalNav from 'client/components/vertical-nav';
+import VerticalNavItem from 'client/components/vertical-nav/item';
+import paths from 'client/my-sites/domains/paths';
 
 const SiteRedirect = createReactClass( {
 	displayName: 'SiteRedirect',

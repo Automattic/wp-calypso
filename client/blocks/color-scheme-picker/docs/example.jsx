@@ -7,8 +7,8 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ColorSchemePicker from 'blocks/color-scheme-picker';
+import Card from 'client/components/card';
+import ColorSchemePicker from 'client/blocks/color-scheme-picker';
 
 class ColorSchemePickerExample extends PureComponent {
 	static displayName = 'ColorSchemePicker';

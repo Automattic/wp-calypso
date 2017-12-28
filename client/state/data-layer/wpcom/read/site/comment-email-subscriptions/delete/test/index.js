@@ -13,12 +13,12 @@ import {
 	receiveCommentEmailUnsubscription,
 	receiveCommentEmailUnsubscriptionError,
 } from '../';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import {
 	subscribeToNewCommentEmail,
 	unsubscribeToNewCommentEmail,
-} from 'state/reader/follows/actions';
+} from 'client/state/reader/follows/actions';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestCommentEmailUnsubscription', () => {

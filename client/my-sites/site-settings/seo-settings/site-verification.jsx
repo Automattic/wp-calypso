@@ -5,7 +5,7 @@
  */
 
 import React, { Component } from 'react';
-import notices from 'notices';
+import notices from 'client/notices';
 import { connect } from 'react-redux';
 import { get, includes, isString, omit, partial, pickBy } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -13,29 +13,29 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import ExternalLink from 'components/external-link';
-import FormInput from 'components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormFieldset from 'components/forms/form-fieldset';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import SectionHeader from 'components/section-header';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import ExternalLink from 'client/components/external-link';
+import FormInput from 'client/components/forms/form-text-input-with-affixes';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import QueryJetpackModules from 'client/components/data/query-jetpack-modules';
+import QuerySiteSettings from 'client/components/data/query-site-settings';
+import SectionHeader from 'client/components/section-header';
+import { activateModule } from 'client/state/jetpack/modules/actions';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackModuleActive } from 'client/state/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'client/state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
-} from 'state/site-settings/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { requestSite } from 'state/sites/actions';
-import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
-import { protectForm } from 'lib/protect-form';
+} from 'client/state/site-settings/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { requestSite } from 'client/state/sites/actions';
+import { requestSiteSettings, saveSiteSettings } from 'client/state/site-settings/actions';
+import { protectForm } from 'client/lib/protect-form';
 
 class SiteVerification extends Component {
 	static serviceIds = {

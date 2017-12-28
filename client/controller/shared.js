@@ -11,12 +11,12 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { switchCSS } from 'lib/i18n-utils/switch-locale';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { setSection as setSectionAction } from 'state/ui/actions';
-import { getSection } from 'state/ui/selectors';
-import { setLocale } from 'state/ui/language/actions';
-import isRTL from 'state/selectors/is-rtl';
+import { switchCSS } from 'client/lib/i18n-utils/switch-locale';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { setSection as setSectionAction } from 'client/state/ui/actions';
+import { getSection } from 'client/state/ui/selectors';
+import { setLocale } from 'client/state/ui/language/actions';
+import isRTL from 'client/state/selectors/is-rtl';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {

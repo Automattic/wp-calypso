@@ -9,9 +9,9 @@ import { compact, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { WPCOM_HTTP_REQUEST } from 'state/action-types';
-import { extendAction } from 'state/utils';
+import wpcom from 'client/lib/wp';
+import { WPCOM_HTTP_REQUEST } from 'client/state/action-types';
+import { extendAction } from 'client/state/utils';
 import {
 	processInbound as inboundProcessor,
 	processOutbound as outboundProcessor,

@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import { WOOCOMMERCE_CURRENCY_CHANGE } from '../../../action-types';
 
 export const initialState = '';

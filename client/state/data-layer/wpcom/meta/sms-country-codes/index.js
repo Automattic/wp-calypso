@@ -7,10 +7,10 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { COUNTRIES_SMS_FETCH, COUNTRIES_SMS_UPDATED } from 'state/action-types';
-import { errorNotice } from 'state/notices/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { COUNTRIES_SMS_FETCH, COUNTRIES_SMS_UPDATED } from 'client/state/action-types';
+import { errorNotice } from 'client/state/notices/actions';
 
 /**
  * Dispatches a request to fetch all available WordPress.com countries

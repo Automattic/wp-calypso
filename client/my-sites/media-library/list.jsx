@@ -14,17 +14,17 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
+import MediaActions from 'client/lib/media/actions';
+import MediaUtils from 'client/lib/media/utils';
 import ListItem from './list-item';
 import ListNoResults from './list-no-results';
 import ListNoContent from './list-no-content';
-import userFactory from 'lib/user';
+import userFactory from 'client/lib/user';
 const user = userFactory();
 
-import SortedGrid from 'components/sorted-grid';
+import SortedGrid from 'client/components/sorted-grid';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
-import { getPreference } from 'state/preferences/selectors';
+import { getPreference } from 'client/state/preferences/selectors';
 
 const GOOGLE_MAX_RESULTS = 1000;
 

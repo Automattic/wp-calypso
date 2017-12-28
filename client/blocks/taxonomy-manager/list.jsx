@@ -15,17 +15,17 @@ import WindowScroller from 'react-virtualized/WindowScroller';
 /**
  * Internal dependencies
  */
-import VirtualList from 'components/virtual-list';
+import VirtualList from 'client/components/virtual-list';
 import ListItem from './list-item';
-import CompactCard from 'components/card/compact';
-import QueryTerms from 'components/data/query-terms';
-import QuerySiteSettings from 'components/data/query-site-settings';
+import CompactCard from 'client/components/card/compact';
+import QueryTerms from 'client/components/data/query-terms';
+import QuerySiteSettings from 'client/components/data/query-site-settings';
 import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
-} from 'state/terms/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'client/state/terms/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 /**
  * Constants

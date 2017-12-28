@@ -15,7 +15,7 @@ import {
 	getReviewReplyWithEdits,
 	isCurrentlyEditingReviewReply,
 } from '../selectors';
-import reviewReplies from 'woocommerce/state/sites/review-replies/test/fixtures/review-replies';
+import reviewReplies from 'client/extensions/woocommerce/state/sites/review-replies/test/fixtures/review-replies';
 
 const preInitializedState = {
 	extensions: {

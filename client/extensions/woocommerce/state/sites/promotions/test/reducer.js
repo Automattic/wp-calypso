@@ -24,7 +24,7 @@ import {
 	WOOCOMMERCE_COUPON_UPDATED,
 	WOOCOMMERCE_COUPONS_UPDATED,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	const siteId = 123;

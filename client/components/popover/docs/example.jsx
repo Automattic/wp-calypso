@@ -9,9 +9,9 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import Popover from 'client/components/popover';
+import PopoverMenu from 'client/components/popover/menu';
+import PopoverMenuItem from 'client/components/popover/menu-item';
 
 class PopoverExample extends PureComponent {
 	constructor( props ) {

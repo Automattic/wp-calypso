@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+import { WPCOM_HTTP_REQUEST } from 'client/state/action-types';
 
 /**
  * @typedef {Object} RequestDescription

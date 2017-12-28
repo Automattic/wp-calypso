@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { getRawSite } from 'state/sites/selectors';
+import { getRawSite } from 'client/state/sites/selectors';
 
 /**
  * Returns the site options

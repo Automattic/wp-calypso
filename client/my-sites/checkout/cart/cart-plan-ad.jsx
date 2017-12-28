@@ -15,12 +15,12 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import CartAd from './cart-ad';
-import { cartItems } from 'lib/cart-values';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isDomainOnlySite } from 'state/selectors';
-import { isPlan } from 'lib/products-values';
-import * as upgradesActions from 'lib/upgrades/actions';
-import { PLAN_PREMIUM } from 'lib/plans/constants';
+import { cartItems } from 'client/lib/cart-values';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isDomainOnlySite } from 'client/state/selectors';
+import { isPlan } from 'client/lib/products-values';
+import * as upgradesActions from 'client/lib/upgrades/actions';
+import { PLAN_PREMIUM } from 'client/lib/plans/constants';
 
 class CartPlanAd extends Component {
 	addToCartAndRedirect = event => {

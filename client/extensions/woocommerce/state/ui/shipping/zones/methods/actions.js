@@ -14,7 +14,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 /**
  * Adds a new shipping method to the shipping zone currently being edited.

@@ -10,10 +10,10 @@ import store from 'store';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 import PreferencesConstants from './constants';
-import userUtils from 'lib/user/utils';
-import wp from 'lib/wp';
+import userUtils from 'client/lib/user/utils';
+import wp from 'client/lib/wp';
 
 /**
  * Module variables

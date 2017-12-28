@@ -8,9 +8,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import ViewersStore from 'lib/viewers/store';
-import ViewersActions from 'lib/viewers/actions';
-import passToChildren from 'lib/react-pass-to-children';
+import ViewersStore from 'client/lib/viewers/store';
+import ViewersActions from 'client/lib/viewers/actions';
+import passToChildren from 'client/lib/react-pass-to-children';
 
 export default class ViewersData extends Component {
 	static propTypes = {

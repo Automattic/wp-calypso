@@ -7,8 +7,8 @@ import { get, isUndefined, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { COMMENTS_QUERY_UPDATE } from 'state/action-types';
-import { combineReducers, keyedReducer } from 'state/utils';
+import { COMMENTS_QUERY_UPDATE } from 'client/state/action-types';
+import { combineReducers, keyedReducer } from 'client/state/utils';
 
 const deepUpdateComments = ( state, comments, { page = 1, postId, search, status = 'all' } ) => {
 	const parent = postId || 'site';

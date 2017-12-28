@@ -1,5 +1,5 @@
 /** @format */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 import React from 'react';
 import { find, identity, isFunction } from 'lodash';
 

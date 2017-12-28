@@ -9,11 +9,11 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 import page from 'page';
-import { addItem } from 'lib/upgrades/actions/cart';
+import { addItem } from 'client/lib/upgrades/actions/cart';
 import { trackClick } from '../themes/helpers';
-import { themeItem } from 'lib/cart-values/cart-items';
+import { themeItem } from 'client/lib/cart-values/cart-items';
 
 var CustomizeActions = {
 	purchase: function( id, site ) {

@@ -16,12 +16,15 @@ import {
 	createCoupon,
 	updateCoupon,
 	deleteCoupon,
-} from 'woocommerce/state/sites/coupons/actions';
-import { fetchProducts, updateProduct } from 'woocommerce/state/sites/products/actions';
+} from 'client/extensions/woocommerce/state/sites/coupons/actions';
+import {
+	fetchProducts,
+	updateProduct,
+} from 'client/extensions/woocommerce/state/sites/products/actions';
 import {
 	fetchProductVariations,
 	updateProductVariation,
-} from 'woocommerce/state/sites/product-variations/actions';
+} from 'client/extensions/woocommerce/state/sites/product-variations/actions';
 import {
 	WOOCOMMERCE_COUPONS_UPDATED,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
@@ -29,7 +32,7 @@ import {
 	WOOCOMMERCE_PROMOTION_DELETE,
 	WOOCOMMERCE_PROMOTION_UPDATE,
 	WOOCOMMERCE_PROMOTIONS_REQUEST,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 const debug = debugFactory( 'woocommerce:promotions' );
 

@@ -14,16 +14,16 @@ import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } fr
  * Internal dependencies
  */
 import config from 'config';
-import emitter from 'lib/mixins/emitter';
-import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
-import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
-import { loadScript } from 'lib/load-script';
+import emitter from 'client/lib/mixins/emitter';
+import { ANALYTICS_SUPER_PROPS_UPDATE } from 'client/state/action-types';
+import { doNotTrack, isPiiUrl } from 'client/lib/analytics/utils';
+import { loadScript } from 'client/lib/load-script';
 import {
 	retarget,
 	recordAliasInFloodlight,
 	recordPageViewInFloodlight,
-} from 'lib/analytics/ad-tracking';
-import { statsdTimingUrl } from 'lib/analytics/statsd';
+} from 'client/lib/analytics/ad-tracking';
+import { statsdTimingUrl } from 'client/lib/analytics/statsd';
 
 /**
  * Module variables

@@ -13,18 +13,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import QueryPageTemplates from 'components/data/query-page-templates';
-import AccordionSection from 'components/accordion/section';
-import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
-import EditorDrawerLabel from 'post-editor/editor-drawer/label';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPageTemplates } from 'state/page-templates/selectors';
-import { getSiteOption } from 'state/sites/selectors';
-import { editPost } from 'state/posts/actions';
-import EditorThemeHelp from 'post-editor/editor-theme-help';
+import QueryPageTemplates from 'client/components/data/query-page-templates';
+import AccordionSection from 'client/components/accordion/section';
+import SelectDropdown from 'client/components/select-dropdown';
+import DropdownItem from 'client/components/select-dropdown/item';
+import EditorDrawerLabel from 'client/post-editor/editor-drawer/label';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { getPageTemplates } from 'client/state/page-templates/selectors';
+import { getSiteOption } from 'client/state/sites/selectors';
+import { editPost } from 'client/state/posts/actions';
+import EditorThemeHelp from 'client/post-editor/editor-theme-help';
 
 class EditorPageTemplates extends Component {
 	static propTypes = {

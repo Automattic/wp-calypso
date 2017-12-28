@@ -12,16 +12,16 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSelect from 'components/forms/form-select';
-import PriceInput from 'woocommerce/components/price-input';
-import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
+import FormFieldSet from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
+import FormSelect from 'client/components/forms/form-select';
+import PriceInput from 'client/extensions/woocommerce/components/price-input';
+import { bindActionCreatorsWithSiteId } from 'client/extensions/woocommerce/lib/redux-utils';
 import {
 	setFreeShippingCondition,
 	setFreeShippingMinCost,
-} from 'woocommerce/state/ui/shipping/zones/methods/free-shipping/actions';
+} from 'client/extensions/woocommerce/state/ui/shipping/zones/methods/free-shipping/actions';
 
 const FreeShippingMethod = ( { id, requires, min_amount, currency, translate, actions } ) => {
 	const onConditionChange = event => actions.setFreeShippingCondition( id, event.target.value );

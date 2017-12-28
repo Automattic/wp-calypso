@@ -9,8 +9,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { canCurrentUser } from 'state/selectors';
+import createSelector from 'client/lib/create-selector';
+import { canCurrentUser } from 'client/state/selectors';
 
 /**
  * Returns true if user can manage plugins for at least one site and returns false otherwise

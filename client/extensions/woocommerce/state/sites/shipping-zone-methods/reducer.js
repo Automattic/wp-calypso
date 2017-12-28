@@ -12,8 +12,8 @@ import { mapValues } from 'lodash';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED,
 	WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
-import { createReducer } from 'state/utils';
+} from 'client/extensions/woocommerce/state/action-types';
+import { createReducer } from 'client/state/utils';
 
 const reducers = {};
 

@@ -15,21 +15,21 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal Dependencies
  */
-import InviteHeader from 'my-sites/invites/invite-header';
-import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
-import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
-import { login } from 'lib/paths';
-import _user from 'lib/user';
-import { fetchInvite } from 'lib/invites/actions';
-import InvitesStore from 'lib/invites/stores/invites-accept-validation';
-import EmptyContent from 'components/empty-content';
-import { successNotice, infoNotice } from 'state/notices/actions';
-import analytics from 'lib/analytics';
-import { getRedirectAfterAccept } from 'my-sites/invites/utils';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import userUtils from 'lib/user/utils';
-import LocaleSuggestions from 'components/locale-suggestions';
+import InviteHeader from 'client/my-sites/invites/invite-header';
+import LoggedIn from 'client/my-sites/invites/invite-accept-logged-in';
+import LoggedOut from 'client/my-sites/invites/invite-accept-logged-out';
+import { login } from 'client/lib/paths';
+import _user from 'client/lib/user';
+import { fetchInvite } from 'client/lib/invites/actions';
+import InvitesStore from 'client/lib/invites/stores/invites-accept-validation';
+import EmptyContent from 'client/components/empty-content';
+import { successNotice, infoNotice } from 'client/state/notices/actions';
+import analytics from 'client/lib/analytics';
+import { getRedirectAfterAccept } from 'client/my-sites/invites/utils';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import userUtils from 'client/lib/user/utils';
+import LocaleSuggestions from 'client/components/locale-suggestions';
 
 /**
  * Module variables

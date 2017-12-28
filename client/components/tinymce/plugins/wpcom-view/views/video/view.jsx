@@ -13,9 +13,9 @@ import { merge } from 'lodash';
  * Internal dependencies
  */
 import resizableView from '../../resizable-view';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { stringify, parse } from 'lib/shortcode';
-import Shortcode from 'components/shortcode';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { stringify, parse } from 'client/lib/shortcode';
+import Shortcode from 'client/components/shortcode';
 
 function VideoView( { siteId, content, width } ) {
 	if ( ! siteId || ! width ) {

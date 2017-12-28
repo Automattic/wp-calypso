@@ -12,13 +12,13 @@ import { cloneDeep, findIndex, map, toArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import TermTreeSelector from 'blocks/term-tree-selector';
+import TermTreeSelector from 'client/blocks/term-tree-selector';
 import AddTerm from './add-term';
-import { canCurrentUser } from 'state/selectors';
-import { editPost, addTermForPost } from 'state/posts/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
+import { canCurrentUser } from 'client/state/selectors';
+import { editPost, addTermForPost } from 'client/state/posts/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
 
 class EditorTermSelector extends Component {
 	static propTypes = {

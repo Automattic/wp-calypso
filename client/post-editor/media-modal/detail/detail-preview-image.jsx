@@ -12,9 +12,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import ImagePreloader from 'components/image-preloader';
-import Spinner from 'components/spinner';
-import { url, isItemBeingUploaded } from 'lib/media/utils';
+import ImagePreloader from 'client/components/image-preloader';
+import Spinner from 'client/components/spinner';
+import { url, isItemBeingUploaded } from 'client/lib/media/utils';
 
 export default class EditorMediaModalDetailPreviewImage extends Component {
 	static propTypes = {

@@ -16,19 +16,19 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormTextInput from 'components/forms/form-text-input';
-import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
-import touchDetect from 'lib/touch-detect';
-import postActions from 'lib/posts/actions';
-import { recordEvent, recordStat } from 'lib/posts/stats';
-import { tracks } from 'lib/analytics';
-import accept from 'lib/accept';
-import { editPost } from 'state/posts/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormTextInput from 'client/components/forms/form-text-input';
+import SelectDropdown from 'client/components/select-dropdown';
+import DropdownItem from 'client/components/select-dropdown/item';
+import touchDetect from 'client/lib/touch-detect';
+import postActions from 'client/lib/posts/actions';
+import { recordEvent, recordStat } from 'client/lib/posts/stats';
+import { tracks } from 'client/lib/analytics';
+import accept from 'client/lib/accept';
+import { editPost } from 'client/state/posts/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
 
 class EditorVisibility extends React.Component {
 	static defaultProps = {

@@ -9,9 +9,9 @@ import page from 'page';
  */
 import config from 'config';
 import controller from './controller';
-import settingsController from 'my-sites/site-settings/settings-controller';
-import { navigation, siteSelection } from 'my-sites/controller';
-import { makeLayout, render as clientRender } from 'controller';
+import settingsController from 'client/my-sites/site-settings/settings-controller';
+import { navigation, siteSelection } from 'client/my-sites/controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default function() {
 	page(

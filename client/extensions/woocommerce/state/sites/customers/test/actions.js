@@ -14,7 +14,7 @@ import {
 	WOOCOMMERCE_CUSTOMERS_REQUEST,
 	WOOCOMMERCE_CUSTOMERS_REQUEST_FAILURE,
 	WOOCOMMERCE_CUSTOMERS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#searchCustomers()', () => {

@@ -10,16 +10,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormRadio from 'components/forms/form-radio';
-import FormLabel from 'components/forms/form-label';
+import Dialog from 'client/components/dialog';
+import FormRadio from 'client/components/forms/form-radio';
+import FormLabel from 'client/components/forms/form-label';
 import getPackageDescriptions from './get-package-descriptions';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import getProductLink from 'woocommerce/woocommerce-services/lib/utils/get-product-link';
-import { getSite } from 'state/sites/selectors';
-import { closeItemMove, setTargetPackage, moveItem } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import getProductLink from 'client/extensions/woocommerce/woocommerce-services/lib/utils/get-product-link';
+import { getSite } from 'client/state/sites/selectors';
+import { closeItemMove, setTargetPackage, moveItem } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
+import { getShippingLabel } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { getAllPackageDefinitions } from 'client/extensions/woocommerce/woocommerce-services/state/packages/selectors';
 
 const MoveItemDialog = ( props ) => {
 	const {

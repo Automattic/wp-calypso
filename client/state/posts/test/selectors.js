@@ -33,8 +33,8 @@ import {
 	getPostPreviewUrl,
 	getSitePostsByTerm,
 } from '../selectors';
-import PostQueryManager from 'lib/query-manager/post';
-import { userState } from 'state/selectors/test/fixtures/user-state';
+import PostQueryManager from 'client/lib/query-manager/post';
+import { userState } from 'client/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	beforeEach( () => {

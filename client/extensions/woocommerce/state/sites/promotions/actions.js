@@ -1,12 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	WOOCOMMERCE_PROMOTION_CREATE,
-	WOOCOMMERCE_PROMOTION_DELETE,
-	WOOCOMMERCE_PROMOTION_UPDATE,
-	WOOCOMMERCE_PROMOTIONS_REQUEST,
-} from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_PROMOTION_CREATE, WOOCOMMERCE_PROMOTION_DELETE, WOOCOMMERCE_PROMOTION_UPDATE, WOOCOMMERCE_PROMOTIONS_REQUEST } from 'client/extensions/woocommerce/state/action-types';
 
 export function fetchPromotions( siteId, perPage = undefined ) {
 	return {

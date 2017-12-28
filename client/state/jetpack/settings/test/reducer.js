@@ -31,7 +31,7 @@ import {
 	JETPACK_SETTINGS_UPDATE_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {

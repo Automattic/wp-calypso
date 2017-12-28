@@ -4,10 +4,10 @@
  * Internal dependencies
  */
 
-import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/action-types';
-import PostStoreActions from 'lib/feed-post-store/actions';
-import DISPLAY_TYPES from 'state/reader/posts/display-types';
-import * as stats from 'reader/stats';
+import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'client/state/action-types';
+import PostStoreActions from 'client/lib/feed-post-store/actions';
+import DISPLAY_TYPES from 'client/state/reader/posts/display-types';
+import * as stats from 'client/reader/stats';
 
 export const expandCard = ( { postKey, post, site } ) => {
 	if ( post.display_type & DISPLAY_TYPES.PHOTO_ONLY ) {

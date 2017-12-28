@@ -12,8 +12,8 @@ import {
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import wp from 'lib/wp';
+} from 'client/state/action-types';
+import wp from 'client/lib/wp';
 
 export const requestBillingTransactions = () => {
 	return dispatch => {

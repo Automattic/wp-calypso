@@ -10,11 +10,11 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import NavTabs from 'components/section-nav/tabs';
-import NavSegmented from 'components/section-nav/segmented';
-import NavItem from 'components/section-nav/item';
-import Search from 'components/search';
-import SectionNav from 'components/section-nav';
+import NavTabs from 'client/components/section-nav/tabs';
+import NavSegmented from 'client/components/section-nav/segmented';
+import NavItem from 'client/components/section-nav/item';
+import Search from 'client/components/search';
+import SectionNav from 'client/components/section-nav';
 
 /**
  * Main

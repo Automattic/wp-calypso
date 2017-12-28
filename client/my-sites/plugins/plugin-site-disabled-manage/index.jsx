@@ -12,10 +12,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import Button from 'components/button';
-import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
-import { getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors';
+import analytics from 'client/lib/analytics';
+import Button from 'client/components/button';
+import DisconnectJetpackButton from 'client/my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
+import { getJetpackSiteRemoteManagementUrl } from 'client/state/sites/selectors';
 
 const PluginSiteDisabledManage = ( {
 	isNetwork,

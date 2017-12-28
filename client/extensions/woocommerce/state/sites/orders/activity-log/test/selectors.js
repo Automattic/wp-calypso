@@ -12,7 +12,7 @@ import {
 	isActivityLogLoading,
 	getActivityLogEvents,
 } from '../selectors';
-import * as plugins from 'woocommerce/state/selectors/plugins';
+import * as plugins from 'client/extensions/woocommerce/state/selectors/plugins';
 
 const getState = ( notesState, labelsState ) => ( {
 	extensions: {

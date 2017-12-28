@@ -11,39 +11,39 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
-import formState from 'lib/form-state';
-import { setSiteTitle } from 'state/signup/steps/site-title/actions';
-import { setDesignType } from 'state/signup/steps/design-type/actions';
-import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-import { setSiteGoals } from 'state/signup/steps/site-goals/actions';
-import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
-import { setUserExperience } from 'state/signup/steps/user-experience/actions';
-import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getThemeForSiteGoals, getSiteTypeForSiteGoals } from 'signup/utils';
-import { setSurvey } from 'state/signup/steps/survey/actions';
-import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
-import { hints } from 'lib/signup/hint-data';
-import userFactory from 'lib/user';
+import StepWrapper from 'client/signup/step-wrapper';
+import SignupActions from 'client/lib/signup/actions';
+import formState from 'client/lib/form-state';
+import { setSiteTitle } from 'client/state/signup/steps/site-title/actions';
+import { setDesignType } from 'client/state/signup/steps/design-type/actions';
+import { getSiteTitle } from 'client/state/signup/steps/site-title/selectors';
+import { setSiteGoals } from 'client/state/signup/steps/site-goals/actions';
+import { getSiteGoals } from 'client/state/signup/steps/site-goals/selectors';
+import { setUserExperience } from 'client/state/signup/steps/user-experience/actions';
+import { getUserExperience } from 'client/state/signup/steps/user-experience/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { getThemeForSiteGoals, getSiteTypeForSiteGoals } from 'client/signup/utils';
+import { setSurvey } from 'client/state/signup/steps/survey/actions';
+import { getSurveyVertical } from 'client/state/signup/steps/survey/selectors';
+import { hints } from 'client/lib/signup/hint-data';
+import userFactory from 'client/lib/user';
 const user = userFactory();
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
-import { getGeoCountryShort } from 'state/geo/selectors';
-import { DESIGN_TYPE_STORE } from 'signup/constants';
+import { getCurrentUserCountryCode } from 'client/state/current-user/selectors';
+import { getGeoCountryShort } from 'client/state/geo/selectors';
+import { DESIGN_TYPE_STORE } from 'client/signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
-import { abtest } from 'lib/abtest';
+import { abtest } from 'client/lib/abtest';
 
 //Form components
-import Card from 'components/card';
-import Button from 'components/button';
-import FormTextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
-import Suggestions from 'components/suggestions';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormLabel from 'client/components/forms/form-label';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormInputCheckbox from 'client/components/forms/form-checkbox';
+import SegmentedControl from 'client/components/segmented-control';
+import ControlItem from 'client/components/segmented-control/item';
+import Suggestions from 'client/components/suggestions';
 
 class AboutStep extends Component {
 	constructor( props ) {

@@ -11,13 +11,13 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
-import { action as ActionTypes } from 'lib/invites/constants';
-import analytics from 'lib/analytics';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { acceptedNotice } from 'my-sites/invites/utils';
-import { requestSites, receiveSites } from 'state/sites/actions';
+import Dispatcher from 'client/dispatcher';
+import wpcom from 'client/lib/wp';
+import { action as ActionTypes } from 'client/lib/invites/constants';
+import analytics from 'client/lib/analytics';
+import { errorNotice, successNotice } from 'client/state/notices/actions';
+import { acceptedNotice } from 'client/my-sites/invites/utils';
+import { requestSites, receiveSites } from 'client/state/sites/actions';
 
 /**
  * Module variables

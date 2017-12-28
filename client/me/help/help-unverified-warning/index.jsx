@@ -6,14 +6,14 @@
 
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import userFactory from 'lib/user';
+import userFactory from 'client/lib/user';
 
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import notices from 'notices';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import notices from 'client/notices';
 
 const user = userFactory();
 

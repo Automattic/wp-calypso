@@ -8,7 +8,7 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import olarkStore from 'lib/olark-store';
+import olarkStore from 'client/lib/olark-store';
 
 describe( 'index', () => {
 	test( 'Olark store data should be an object', () => {

@@ -12,11 +12,11 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import PostSchedule from 'components/post-schedule';
-import QueryPosts from 'components/data/query-posts';
-import postUtils from 'lib/posts/utils';
-import siteUtils from 'lib/site/utils';
-import { getPostsForQueryIgnoringPage } from 'state/posts/selectors';
+import PostSchedule from 'client/components/post-schedule';
+import QueryPosts from 'client/components/data/query-posts';
+import postUtils from 'client/lib/posts/utils';
+import siteUtils from 'client/lib/site/utils';
+import { getPostsForQueryIgnoringPage } from 'client/state/posts/selectors';
 
 const PostScheduleWithOtherPostsIndicated = connect( ( state, { site, query } ) => ( {
 	posts: getPostsForQueryIgnoringPage( state, get( site, 'ID' ), query ) || [],

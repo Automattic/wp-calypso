@@ -24,7 +24,7 @@ import {
 	JETPACK_JUMPSTART_STATUS_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {

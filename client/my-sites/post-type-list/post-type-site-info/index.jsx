@@ -12,9 +12,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPost } from 'state/posts/selectors';
-import { getSite, getSiteTitle } from 'state/sites/selectors';
-import SiteIcon from 'blocks/site-icon';
+import { getPost } from 'client/state/posts/selectors';
+import { getSite, getSiteTitle } from 'client/state/sites/selectors';
+import SiteIcon from 'client/blocks/site-icon';
 
 function PostTypeSiteInfo( { site, siteTitle } ) {
 	if ( ! site ) {

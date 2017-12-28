@@ -12,8 +12,8 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
-import { requestThumbnail } from 'state/reader/thumbnails/actions';
+import { getThumbnailForIframe } from 'client/state/reader/thumbnails/selectors';
+import { requestThumbnail } from 'client/state/reader/thumbnails/actions';
 
 class QueryReaderThumbnails extends Component {
 	componentWillMount() {

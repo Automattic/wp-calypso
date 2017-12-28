@@ -9,11 +9,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { COMMENTS_LIKE, COMMENTS_UNLIKE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
+import { COMMENTS_LIKE, COMMENTS_UNLIKE } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'client/state/notices/actions';
 
 export const likeComment = ( { dispatch }, action ) => {
 	dispatch(

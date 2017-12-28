@@ -12,12 +12,12 @@ import { isUndefined } from 'lodash';
  * Internal dependencies
  */
 import ActivityLogBanner from './index';
-import Button from 'components/button';
-import HappychatButton from 'components/happychat/button';
+import Button from 'client/components/button';
+import HappychatButton from 'client/components/happychat/button';
 import Gridicon from 'gridicons';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'client/state/activity-log/actions';
 
 class ErrorBanner extends PureComponent {
 	static propTypes = {

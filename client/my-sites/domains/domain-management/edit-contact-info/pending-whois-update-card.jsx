@@ -10,9 +10,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Notice from 'components/notice';
-import support from 'lib/url/support';
+import Card from 'client/components/card';
+import Notice from 'client/components/notice';
+import support from 'client/lib/url/support';
 
 function PendingWhoisUpdateCard( { translate } ) {
 	return (

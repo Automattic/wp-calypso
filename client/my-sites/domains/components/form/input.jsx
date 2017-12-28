@@ -12,11 +12,11 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import analytics from 'lib/analytics';
-import scrollIntoViewport from 'lib/scroll-into-viewport';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import analytics from 'client/lib/analytics';
+import scrollIntoViewport from 'client/lib/scroll-into-viewport';
 
 export default class extends React.Component {
 	static displayName = 'Input';

@@ -13,13 +13,13 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId, getEditorNewPostPath } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostTypes, getPostType } from 'state/post-types/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import Button from 'components/button';
-import Dialog from 'components/dialog';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId, getEditorNewPostPath } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { getPostTypes, getPostType } from 'client/state/post-types/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import Button from 'client/components/button';
+import Dialog from 'client/components/dialog';
 
 /**
  * Constants

@@ -14,13 +14,13 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import InviteAccept from 'my-sites/invites/invite-accept';
-import { setSection } from 'state/ui/actions';
-import { getRedirectAfterAccept } from 'my-sites/invites/utils';
-import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
-import _user from 'lib/user';
-import i18nUtils from 'lib/i18n-utils';
+import { setDocumentHeadTitle as setTitle } from 'client/state/document-head/actions';
+import InviteAccept from 'client/my-sites/invites/invite-accept';
+import { setSection } from 'client/state/ui/actions';
+import { getRedirectAfterAccept } from 'client/my-sites/invites/utils';
+import { acceptInvite as acceptInviteAction } from 'client/lib/invites/actions';
+import _user from 'client/lib/user';
+import i18nUtils from 'client/lib/i18n-utils';
 
 /**
  * Module variables

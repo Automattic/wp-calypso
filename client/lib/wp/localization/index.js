@@ -9,7 +9,7 @@ import qs from 'querystring';
 /**
  * Internal dependencies
  */
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { getCurrentUserLocale } from 'client/state/current-user/selectors';
 
 /**
  * Module variables

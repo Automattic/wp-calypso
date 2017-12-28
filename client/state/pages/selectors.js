@@ -7,7 +7,7 @@
 /**
  * Internal dependencies
  */
-import { getSiteFrontPage, getSitePostsPage } from 'state/sites/selectors';
+import { getSiteFrontPage, getSitePostsPage } from 'client/state/sites/selectors';
 
 export function isFrontPage( state, siteId, pageId ) {
 	return pageId === getSiteFrontPage( state, siteId );

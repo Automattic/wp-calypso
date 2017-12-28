@@ -13,10 +13,10 @@ import { invoke } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import HappinessSupport from 'components/happiness-support';
-import PlanIcon from 'components/plans/plan-icon';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import HappinessSupport from 'client/components/happiness-support';
+import PlanIcon from 'client/components/plans/plan-icon';
 import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
@@ -28,8 +28,8 @@ import {
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
-} from 'lib/plans/constants';
-import purchasesPaths from 'me/purchases/paths';
+} from 'client/lib/plans/constants';
+import purchasesPaths from 'client/me/purchases/paths';
 
 class CurrentPlanHeader extends Component {
 	static propTypes = {

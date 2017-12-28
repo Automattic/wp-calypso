@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestPostRevisions } from 'state/posts/revisions/actions';
-import { getEditedPostValue } from 'state/posts/selectors';
+import { requestPostRevisions } from 'client/state/posts/revisions/actions';
+import { getEditedPostValue } from 'client/state/posts/selectors';
 
 class QueryPostRevisions extends Component {
 	componentWillMount() {

@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getStateKey } from 'state/comments/utils';
+import { getStateKey } from 'client/state/comments/utils';
 
 /**
  * Returns the active reply comment for a given site and post.

@@ -10,7 +10,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { key } from 'state/reader/conversations/utils';
+import { key } from 'client/state/reader/conversations/utils';
 
 /*
  * Get the conversation following status for a given post

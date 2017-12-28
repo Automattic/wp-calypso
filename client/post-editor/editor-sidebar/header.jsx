@@ -12,9 +12,9 @@ import { flow } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import EditorPostType from 'post-editor/editor-post-type';
-import { closeEditorSidebar } from 'state/ui/editor/sidebar/actions';
+import Button from 'client/components/button';
+import EditorPostType from 'client/post-editor/editor-post-type';
+import { closeEditorSidebar } from 'client/state/ui/editor/sidebar/actions';
 
 const EditorSidebarHeader = ( { closeSidebar, translate } ) => (
 	<div className="editor-sidebar__header">

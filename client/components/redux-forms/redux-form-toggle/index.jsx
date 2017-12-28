@@ -11,7 +11,7 @@ import { Field } from 'redux-form';
 /**
  * Internal dependencies
  */
-import FormToggle from 'components/forms/form-toggle/compact';
+import FormToggle from 'client/components/forms/form-toggle/compact';
 
 // eslint-disable-next-line no-unused-vars
 const ToggleRenderer = ( { input, meta, text, type, ...otherProps } ) => (

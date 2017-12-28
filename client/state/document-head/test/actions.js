@@ -19,7 +19,7 @@ import {
 	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
 	DOCUMENT_HEAD_UNREAD_COUNT_SET,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#setDocumentHeadTitle()', () => {

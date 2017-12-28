@@ -17,7 +17,7 @@ import {
 	SITE_PLANS_TRIAL_CANCEL,
 	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 	SITE_PLANS_TRIAL_CANCEL_FAILED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const initialSiteState = {
 	data: null,

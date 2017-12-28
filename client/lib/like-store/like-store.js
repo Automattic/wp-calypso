@@ -7,9 +7,9 @@ import { assign, clone, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import Emitter from 'lib/mixins/emitter';
-import { action as FeedPostStoreActionType } from 'lib/feed-post-store/constants';
+import Dispatcher from 'client/dispatcher';
+import Emitter from 'client/lib/mixins/emitter';
+import { action as FeedPostStoreActionType } from 'client/lib/feed-post-store/constants';
 import LikeActions from './actions';
 import { key } from './utils';
 

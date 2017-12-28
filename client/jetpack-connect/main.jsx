@@ -12,30 +12,34 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import FormattedHeader from 'components/formatted-header';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import FormattedHeader from 'client/components/formatted-header';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import JetpackInstallStep from './install-step';
-import LocaleSuggestions from 'components/locale-suggestions';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
+import LocaleSuggestions from 'client/components/locale-suggestions';
+import LoggedOutFormLinkItem from 'client/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'client/components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
 import page from 'page';
 import SiteUrlInput from './site-url-input';
-import untrailingslashit from 'lib/route/untrailingslashit';
-import versionCompare from 'lib/version-compare';
+import untrailingslashit from 'client/lib/route/untrailingslashit';
+import versionCompare from 'client/lib/version-compare';
 import { addCalypsoEnvQueryArg } from './utils';
-import { checkUrl, confirmJetpackInstallStatus, dismissUrl } from 'state/jetpack-connect/actions';
-import { externalRedirect } from 'lib/route/path';
-import { FLOW_TYPES } from 'state/jetpack-connect/constants';
-import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import {
+	checkUrl,
+	confirmJetpackInstallStatus,
+	dismissUrl,
+} from 'client/state/jetpack-connect/actions';
+import { externalRedirect } from 'client/lib/route/path';
+import { FLOW_TYPES } from 'client/state/jetpack-connect/constants';
+import { getConnectingSite, getJetpackSiteByUrl } from 'client/state/jetpack-connect/selectors';
+import { isRequestingSites } from 'client/state/sites/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 import { retrievePlan } from './persistence-utils';
-import { urlToSlug } from 'lib/url';
+import { urlToSlug } from 'client/lib/url';
 import {
 	JPC_PATH_PLANS,
 	MINIMUM_JETPACK_VERSION,

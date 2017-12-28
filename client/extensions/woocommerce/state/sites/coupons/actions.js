@@ -11,7 +11,7 @@ import {
 	WOOCOMMERCE_COUPON_UPDATED,
 	WOOCOMMERCE_COUPONS_REQUEST,
 	WOOCOMMERCE_COUPONS_UPDATED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export function fetchCoupons( siteId, params ) {
 	// Default per_page to 10.

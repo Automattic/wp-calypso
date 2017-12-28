@@ -13,11 +13,11 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import ControlItem from 'components/segmented-control/item';
-import InfoPopover from 'components/info-popover';
-import { getSiteSetting } from 'state/selectors';
-import SegmentedControl from 'components/segmented-control';
-import viewport from 'lib/viewport';
+import ControlItem from 'client/components/segmented-control/item';
+import InfoPopover from 'client/components/info-popover';
+import { getSiteSetting } from 'client/state/selectors';
+import SegmentedControl from 'client/components/segmented-control';
+import viewport from 'client/lib/viewport';
 
 /**
  * Local dependencies

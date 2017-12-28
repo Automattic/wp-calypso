@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Count from 'components/count';
+import Count from 'client/components/count';
 
 const count = () => (
 	<div>

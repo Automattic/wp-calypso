@@ -13,10 +13,10 @@ import { noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
+import Card from 'client/components/card';
+import CompactCard from 'client/components/card/compact';
 import Gridicon from 'gridicons';
-import ScreenReaderText from 'components/screen-reader-text';
+import ScreenReaderText from 'client/components/screen-reader-text';
 
 class FoldableCard extends Component {
 	static propTypes = {

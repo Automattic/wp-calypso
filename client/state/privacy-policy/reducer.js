@@ -7,8 +7,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
-import { PRIVACY_POLICY_ADD } from 'state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
+import { PRIVACY_POLICY_ADD } from 'client/state/action-types';
 
 import { privacyPolicySchema } from './schema';
 

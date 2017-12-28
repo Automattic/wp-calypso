@@ -13,29 +13,32 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import AdsEarnings from 'my-sites/ads/form-earnings';
-import AdsSettings from 'my-sites/ads/form-settings';
-import { canAccessWordads, isWordadsInstantActivationEligible } from 'lib/ads/utils';
-import FeatureExample from 'components/feature-example';
-import FormButton from 'components/forms/form-button';
-import Card from 'components/card';
-import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
+import SectionNav from 'client/components/section-nav';
+import NavTabs from 'client/components/section-nav/tabs';
+import NavItem from 'client/components/section-nav/item';
+import Main from 'client/components/main';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import AdsEarnings from 'client/my-sites/ads/form-earnings';
+import AdsSettings from 'client/my-sites/ads/form-settings';
+import { canAccessWordads, isWordadsInstantActivationEligible } from 'client/lib/ads/utils';
+import FeatureExample from 'client/components/feature-example';
+import FormButton from 'client/components/forms/form-button';
+import Card from 'client/components/card';
+import { requestWordAdsApproval, dismissWordAdsError } from 'client/state/wordads/approve/actions';
 import {
 	isRequestingWordAdsApprovalForSite,
 	getWordAdsErrorForSite,
 	getWordAdsSuccessForSite,
-} from 'state/wordads/approve/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import QueryWordadsStatus from 'components/data/query-wordads-status';
-import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
-import { wordadsUnsafeValues } from 'state/wordads/status/schema';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+} from 'client/state/wordads/approve/selectors';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import QueryWordadsStatus from 'client/components/data/query-wordads-status';
+import {
+	isSiteWordadsUnsafe,
+	isRequestingWordadsStatus,
+} from 'client/state/wordads/status/selectors';
+import { wordadsUnsafeValues } from 'client/state/wordads/status/schema';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 
 class AdsMain extends Component {
 	static propTypes = {

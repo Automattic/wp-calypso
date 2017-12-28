@@ -9,7 +9,10 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { receiveComponentsUsageStats, requestComponentsUsageStats } from '../actions';
-import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from 'state/action-types';
+import {
+	COMPONENTS_USAGE_STATS_REQUEST,
+	COMPONENTS_USAGE_STATS_RECEIVE,
+} from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'receiveComponentsUsageStats()', () => {

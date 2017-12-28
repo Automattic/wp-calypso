@@ -8,10 +8,10 @@ import { mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import { COMMENT_COUNTS_REQUEST, COMMENT_COUNTS_UPDATE } from 'state/action-types';
-import { mergeHandlers } from 'state/action-watchers/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { COMMENT_COUNTS_REQUEST, COMMENT_COUNTS_UPDATE } from 'client/state/action-types';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequestEx } from 'client/state/data-layer/wpcom-http/utils';
 
 export const fetchCommentCounts = action => {
 	const { siteId, postId } = action;

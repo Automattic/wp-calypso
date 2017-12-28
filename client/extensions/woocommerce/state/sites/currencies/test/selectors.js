@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { areCurrenciesLoaded, areCurrenciesLoading, getCurrencies } from '../selectors';
-import { LOADING } from 'woocommerce/state/constants';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 
 const currencies = [
 	{ code: 'AED', name: 'United Arab Emirates dirham', symbol: '&#x62f;.&#x625;' },

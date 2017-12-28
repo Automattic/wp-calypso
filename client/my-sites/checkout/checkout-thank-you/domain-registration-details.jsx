@@ -13,9 +13,9 @@ import i18n from 'i18n-calypso';
  */
 import { getDomainManagementUrl } from './utils';
 import GoogleAppsDetails from './google-apps-details';
-import { isGoogleApps } from 'lib/products-values';
-import PurchaseDetail from 'components/purchase-detail';
-import supportUrls from 'lib/url/support';
+import { isGoogleApps } from 'client/lib/products-values';
+import PurchaseDetail from 'client/components/purchase-detail';
+import supportUrls from 'client/lib/url/support';
 
 const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 	const googleAppsWasPurchased = purchases.some( isGoogleApps ),

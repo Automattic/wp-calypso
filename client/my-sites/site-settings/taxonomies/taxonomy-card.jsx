@@ -14,15 +14,15 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import { countFoundTermsForQuery, getTerm } from 'state/terms/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
-import { decodeEntities } from 'lib/formatting';
-import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
-import CompactCard from 'components/card/compact';
-import QueryTerms from 'components/data/query-terms';
-import QuerySiteSettings from 'components/data/query-site-settings';
+import { getSelectedSiteId, getSelectedSite } from 'client/state/ui/selectors';
+import { getPostTypeTaxonomy } from 'client/state/post-types/taxonomies/selectors';
+import { countFoundTermsForQuery, getTerm } from 'client/state/terms/selectors';
+import { getSiteSettings } from 'client/state/site-settings/selectors';
+import { decodeEntities } from 'client/lib/formatting';
+import { recordGoogleEvent, bumpStat } from 'client/state/analytics/actions';
+import CompactCard from 'client/components/card/compact';
+import QueryTerms from 'client/components/data/query-terms';
+import QuerySiteSettings from 'client/components/data/query-site-settings';
 
 const TaxonomyCard = ( {
 	count,

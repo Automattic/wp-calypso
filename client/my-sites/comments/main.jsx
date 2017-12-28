@@ -11,20 +11,20 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import getSiteId from 'state/selectors/get-site-id';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
+import EmptyContent from 'client/components/empty-content';
+import getSiteId from 'client/state/selectors/get-site-id';
+import { isJetpackSite, isJetpackMinimumVersion } from 'client/state/sites/selectors';
+import Main from 'client/components/main';
+import PageViewTracker from 'client/lib/analytics/page-view-tracker';
+import DocumentHead from 'client/components/data/document-head';
 import CommentList from './comment-list';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { canCurrentUser } from 'state/selectors';
-import { preventWidows } from 'lib/formatting';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import { updatePlugin } from 'state/plugins/installed/actions';
-import { getPlugins } from 'state/plugins/installed/selectors';
-import { infoNotice } from 'state/notices/actions';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import { canCurrentUser } from 'client/state/selectors';
+import { preventWidows } from 'client/lib/formatting';
+import QueryJetpackPlugins from 'client/components/data/query-jetpack-plugins';
+import { updatePlugin } from 'client/state/plugins/installed/actions';
+import { getPlugins } from 'client/state/plugins/installed/selectors';
+import { infoNotice } from 'client/state/notices/actions';
 
 export class CommentsManagement extends Component {
 	static propTypes = {

@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestTeams } from 'state/reader/teams/actions';
+import { requestTeams } from 'client/state/reader/teams/actions';
 
 class QueryReaderTeams extends Component {
 	componentWillMount() {

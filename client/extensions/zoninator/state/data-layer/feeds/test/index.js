@@ -20,9 +20,9 @@ import {
 	updateZoneFeed,
 } from '../';
 import { fromApi, toApi } from '../util';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { updateFeed } from 'zoninator/state/feeds/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { errorNotice, removeNotice, successNotice } from 'client/state/notices/actions';
+import { updateFeed } from 'client/extensions/zoninator/state/feeds/actions';
 
 const dummyAction = {
 	type: 'DUMMY_ACTION',

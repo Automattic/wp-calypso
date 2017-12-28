@@ -11,11 +11,11 @@ import {
 	PREVIEW_TYPE_SET,
 	PREVIEW_URL_CLEAR,
 	PREVIEW_URL_SET,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
-import { clearCustomizations } from 'state/preview/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { clearCustomizations } from 'client/state/preview/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
 
 export function setPreviewUrl( url ) {
 	return {

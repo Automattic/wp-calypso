@@ -15,7 +15,7 @@ import {
 	HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
 	HAPPYCHAT_CONNECTION_STATUS_RECONNECTING,
-} from 'state/happychat/constants';
+} from 'client/state/happychat/constants';
 import isHappychatConnectionUninitialized from '../is-happychat-connection-uninitialized';
 
 describe( '#isHappychatConnectionUninitialized', () => {

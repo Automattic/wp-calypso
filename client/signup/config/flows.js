@@ -12,8 +12,8 @@ import i18n from 'i18n-calypso';
  */
 import config from 'config';
 import stepConfig from './steps';
-import userFactory from 'lib/user';
-import { abtest } from 'lib/abtest';
+import userFactory from 'client/lib/user';
+import { abtest } from 'client/lib/abtest';
 const user = userFactory();
 
 function getCheckoutUrl( dependencies ) {

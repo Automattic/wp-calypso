@@ -12,8 +12,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import analytics from 'lib/analytics';
+import FormButton from 'client/components/forms/form-button';
+import analytics from 'client/lib/analytics';
 
 const views = keyMirror( {
 	VIEWING: null,

@@ -11,11 +11,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SiteToolsLink from 'my-sites/site-settings/site-tools/link';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import SiteToolsLink from 'client/my-sites/site-settings/site-tools/link';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isSiteAutomatedTransfer } from 'client/state/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 class DisconnectSiteLink extends PureComponent {
 	handleClick = () => {

@@ -8,13 +8,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import page from 'page';
-import FeedPostStore from 'lib/feed-post-store';
-import FeedPostStoreActions from 'lib/feed-post-store/actions';
-import { getSourceData as getDiscoverSourceData } from 'reader/discover/helper';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
-import cssSafeUrl from 'lib/css-safe-url';
+import FeedPostStore from 'client/lib/feed-post-store';
+import FeedPostStoreActions from 'client/lib/feed-post-store/actions';
+import { getSourceData as getDiscoverSourceData } from 'client/reader/discover/helper';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'client/reader/stats';
+import cssSafeUrl from 'client/lib/css-safe-url';
 
 class FeedFeatured extends React.PureComponent {
 	static displayName = 'FeedFeatured';

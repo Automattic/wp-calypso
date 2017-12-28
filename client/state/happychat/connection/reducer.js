@@ -8,15 +8,15 @@ import {
 	HAPPYCHAT_IO_RECEIVE_DISCONNECT,
 	HAPPYCHAT_IO_RECEIVE_INIT,
 	HAPPYCHAT_IO_RECEIVE_RECONNECTING,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import {
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
 	HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
 	HAPPYCHAT_CONNECTION_STATUS_RECONNECTING,
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
-} from 'state/happychat/constants';
-import { combineReducers } from 'state/utils';
+} from 'client/state/happychat/constants';
+import { combineReducers } from 'client/state/utils';
 
 const error = ( state = null, action ) => {
 	switch ( action.type ) {

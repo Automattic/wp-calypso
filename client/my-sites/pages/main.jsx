@@ -13,17 +13,17 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
 import config from 'config';
-import notices from 'notices';
-import urlSearch from 'lib/url-search';
-import Main from 'components/main';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
+import notices from 'client/notices';
+import urlSearch from 'client/lib/url-search';
+import Main from 'client/components/main';
+import NavItem from 'client/components/section-nav/item';
+import NavTabs from 'client/components/section-nav/tabs';
 import PageList from './page-list';
-import Search from 'components/search';
-import SectionNav from 'components/section-nav';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import Search from 'client/components/search';
+import SectionNav from 'client/components/section-nav';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
 
 const debug = debugFactory( 'calypso:my-sites:pages:pages' );
 const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];

@@ -15,18 +15,18 @@ import { localize } from 'i18n-calypso';
  */
 import ARecord from './a-record';
 import CnameRecord from './cname-record';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormFooter from 'client/my-sites/domains/domain-management/components/form-footer';
+import FormLabel from 'client/components/forms/form-label';
+import FormSelect from 'client/components/forms/form-select';
 import MxRecord from './mx-record';
 import TxtRecord from './txt-record';
 import SrvRecord from './srv-record';
-import formState from 'lib/form-state';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import * as upgradesActions from 'lib/upgrades/actions';
-import { validateAllFields, getNormalizedData } from 'lib/domains/dns';
+import formState from 'client/lib/form-state';
+import { errorNotice, successNotice } from 'client/state/notices/actions';
+import * as upgradesActions from 'client/lib/upgrades/actions';
+import { validateAllFields, getNormalizedData } from 'client/lib/domains/dns';
 
 class DnsAddNew extends React.Component {
 	static propTypes = {

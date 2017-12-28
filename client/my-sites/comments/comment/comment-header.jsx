@@ -9,11 +9,11 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import CommentAuthor from 'my-sites/comments/comment/comment-author';
-import CommentAuthorMoreInfo from 'my-sites/comments/comment/comment-author-more-info';
-import FormCheckbox from 'components/forms/form-checkbox';
-import { getSiteComment } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import CommentAuthor from 'client/my-sites/comments/comment/comment-author';
+import CommentAuthorMoreInfo from 'client/my-sites/comments/comment/comment-author-more-info';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import { getSiteComment } from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 export class CommentHeader extends PureComponent {
 	render() {

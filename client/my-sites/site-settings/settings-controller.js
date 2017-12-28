@@ -9,12 +9,12 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
-import route from 'lib/route';
-import { sectionify } from 'lib/route/path';
+import analytics from 'client/lib/analytics';
+import route from 'client/lib/route';
+import { sectionify } from 'client/lib/route/path';
 import titlecase from 'to-title-case';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { canCurrentUser } from 'state/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { canCurrentUser } from 'client/state/selectors';
 
 export default {
 	siteSettings( context, next ) {

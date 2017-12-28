@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SiteUsersFetcher from 'components/site-users-fetcher';
+import SiteUsersFetcher from 'client/components/site-users-fetcher';
 import Team from './team';
 
 class TeamList extends React.Component {

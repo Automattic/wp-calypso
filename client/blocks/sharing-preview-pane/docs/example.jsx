@@ -11,14 +11,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import SharingPreviewPane from 'blocks/sharing-preview-pane';
-import { getCurrentUser } from 'state/current-user/selectors';
-import QueryPosts from 'components/data/query-posts';
-import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import { getSitePosts } from 'state/posts/selectors';
-import { getSite } from 'state/sites/selectors';
-import Card from 'components/card';
-import QuerySites from 'components/data/query-sites';
+import SharingPreviewPane from 'client/blocks/sharing-preview-pane';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import QueryPosts from 'client/components/data/query-posts';
+import QueryPublicizeConnections from 'client/components/data/query-publicize-connections';
+import { getSitePosts } from 'client/state/posts/selectors';
+import { getSite } from 'client/state/sites/selectors';
+import Card from 'client/components/card';
+import QuerySites from 'client/components/data/query-sites';
 
 const SharingPreviewPaneExample = ( { postId, site, siteId } ) => (
 	<div>

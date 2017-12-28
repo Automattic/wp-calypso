@@ -13,8 +13,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import MediaActions from 'lib/media/actions';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import MediaActions from 'client/lib/media/actions';
+import MediaLibrarySelectedStore from 'client/lib/media/library-selected-store';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 

@@ -12,11 +12,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import EditorFieldset from 'post-editor/editor-fieldset';
-import FormCheckbox from 'components/forms/form-checkbox';
-import PostActions from 'lib/posts/actions';
-import InfoPopover from 'components/info-popover';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import EditorFieldset from 'client/post-editor/editor-fieldset';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import PostActions from 'client/lib/posts/actions';
+import InfoPopover from 'client/components/info-popover';
+import { recordEvent, recordStat } from 'client/lib/posts/stats';
 
 function booleanToStatus( bool ) {
 	return bool ? 'open' : 'closed';

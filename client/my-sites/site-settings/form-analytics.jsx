@@ -12,22 +12,22 @@ import { find, flowRight, partialRight, pick, overSome } from 'lodash';
  * Internal dependencies
  */
 import wrapSettingsForm from './wrap-settings-form';
-import Card from 'components/card';
-import Button from 'components/button';
-import SectionHeader from 'components/section-header';
-import ExternalLink from 'components/external-link';
-import Banner from 'components/banner';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getPlugins } from 'state/plugins/installed/selectors';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextValidation from 'components/forms/form-input-validation';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
+import SectionHeader from 'client/components/section-header';
+import ExternalLink from 'client/components/external-link';
+import Banner from 'client/components/banner';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import { getPlugins } from 'client/state/plugins/installed/selectors';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormTextValidation from 'client/components/forms/form-input-validation';
 import FormAnalyticsStores from './form-analytics-stores';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { isBusiness, isEnterprise, isJetpackBusiness } from 'lib/products-values';
-import { activateModule } from 'state/jetpack/modules/actions';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import { isBusiness, isEnterprise, isJetpackBusiness } from 'client/lib/products-values';
+import { activateModule } from 'client/state/jetpack/modules/actions';
 import {
 	getSiteOption,
 	isJetpackMinimumVersion,
@@ -35,15 +35,15 @@ import {
 	siteSupportsGoogleAnalyticsIPAnonymization,
 	siteSupportsGoogleAnalyticsBasicEcommerceTracking,
 	siteSupportsGoogleAnalyticsEnhancedEcommerceTracking,
-} from 'state/sites/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+} from 'client/state/sites/selectors';
+import { isJetpackModuleActive } from 'client/state/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 import {
 	FEATURE_GOOGLE_ANALYTICS,
 	PLAN_BUSINESS,
 	PLAN_JETPACK_BUSINESS,
-} from 'lib/plans/constants';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
+} from 'client/lib/plans/constants';
+import QueryJetpackModules from 'client/components/data/query-jetpack-modules';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
 const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );

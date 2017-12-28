@@ -12,10 +12,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { getGuidedTransferIssue } from 'state/sites/guided-transfer/selectors';
-import Card from 'components/card';
-import Notice from 'components/notice';
-import { CALYPSO_CONTACT } from 'lib/url/support';
+import { getGuidedTransferIssue } from 'client/state/sites/guided-transfer/selectors';
+import Card from 'client/components/card';
+import Notice from 'client/components/notice';
+import { CALYPSO_CONTACT } from 'client/lib/url/support';
 
 const Issue = props => (
 	<li className="guided-transfer__issue">

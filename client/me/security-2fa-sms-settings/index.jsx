@@ -12,16 +12,16 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormPhoneInput from 'components/forms/form-phone-input';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import Notice from 'components/notice';
-import formBase from 'me/form-base';
-import Security2faProgress from 'me/security-2fa-progress';
-import analytics from 'lib/analytics';
-import observe from 'lib/mixins/data-observe';
-import { protectForm } from 'lib/protect-form';
-import { forSms as countriesList } from 'lib/countries-list';
+import FormPhoneInput from 'client/components/forms/form-phone-input';
+import FormButton from 'client/components/forms/form-button';
+import FormButtonsBar from 'client/components/forms/form-buttons-bar';
+import Notice from 'client/components/notice';
+import formBase from 'client/me/form-base';
+import Security2faProgress from 'client/me/security-2fa-progress';
+import analytics from 'client/lib/analytics';
+import observe from 'client/lib/mixins/data-observe';
+import { protectForm } from 'client/lib/protect-form';
+import { forSms as countriesList } from 'client/lib/countries-list';
 
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 

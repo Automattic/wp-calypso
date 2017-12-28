@@ -23,17 +23,17 @@ import {
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import NoResults from './no-results';
 import Search from './search';
-import { decodeEntities } from 'lib/formatting';
-import QueryTerms from 'components/data/query-terms';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { decodeEntities } from 'client/lib/formatting';
+import QueryTerms from 'client/components/data/query-terms';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
-} from 'state/terms/selectors';
+} from 'client/state/terms/selectors';
 
 /**
  * Constants

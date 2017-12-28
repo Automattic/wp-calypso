@@ -11,10 +11,10 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import LoggedOutShowcase from '../logged-out';
-import { createReduxStore } from 'state';
-import { THEMES_REQUEST_FAILURE } from 'state/action-types';
-import { receiveThemes } from 'state/themes/actions';
-import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
+import { createReduxStore } from 'client/state';
+import { THEMES_REQUEST_FAILURE } from 'client/state/action-types';
+import { receiveThemes } from 'client/state/themes/actions';
+import { DEFAULT_THEME_QUERY } from 'client/state/themes/constants';
 
 jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );

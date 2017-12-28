@@ -12,10 +12,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+import { cartItems } from 'client/lib/cart-values';
 import GoogleAppsDialog from './google-apps-dialog';
-import HeaderCake from 'components/header-cake';
-import { getSelectedSite } from 'state/ui/selectors';
+import HeaderCake from 'client/components/header-cake';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 class GoogleApps extends Component {
 	static propTypes = {

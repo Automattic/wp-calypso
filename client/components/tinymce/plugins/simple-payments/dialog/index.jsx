@@ -13,36 +13,39 @@ import { find, isNumber, pick, noop, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import { getSimplePayments } from 'state/selectors';
-import QuerySimplePayments from 'components/data/query-simple-payments';
-import QuerySitePlans from 'components/data/query-site-plans';
-import Dialog from 'components/dialog';
-import Button from 'components/button';
-import Notice from 'components/notice';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { isJetpackSite, isJetpackMinimumVersion } from 'client/state/sites/selectors';
+import { getSimplePayments } from 'client/state/selectors';
+import QuerySimplePayments from 'client/components/data/query-simple-payments';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import Dialog from 'client/components/dialog';
+import Button from 'client/components/button';
+import Notice from 'client/components/notice';
 import Navigation from './navigation';
 import ProductForm, { getProductFormValues, isProductFormValid, isProductFormDirty } from './form';
 import ProductList from './list';
-import { getCurrentUserCurrencyCode, getCurrentUserEmail } from 'state/current-user/selectors';
-import wpcom from 'lib/wp';
-import accept from 'lib/accept';
+import {
+	getCurrentUserCurrencyCode,
+	getCurrentUserEmail,
+} from 'client/state/current-user/selectors';
+import wpcom from 'client/lib/wp';
+import accept from 'client/lib/accept';
 import {
 	customPostToProduct,
 	productToCustomPost,
-} from 'state/data-layer/wpcom/sites/simple-payments/index.js';
+} from 'client/state/data-layer/wpcom/sites/simple-payments/index.js';
 import {
 	receiveUpdateProduct,
 	receiveDeleteProduct,
-} from 'state/simple-payments/product-list/actions';
-import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
-import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
-import EmptyContent from 'components/empty-content';
-import Banner from 'components/banner';
+} from 'client/state/simple-payments/product-list/actions';
+import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'client/lib/plans/constants';
+import { hasFeature, getSitePlanSlug } from 'client/state/sites/plans/selectors';
+import UpgradeNudge from 'client/my-sites/upgrade-nudge';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import EmptyContent from 'client/components/empty-content';
+import Banner from 'client/components/banner';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;

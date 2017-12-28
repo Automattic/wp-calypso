@@ -12,7 +12,7 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import ShortcodesStore from 'lib/shortcodes/store';
+import ShortcodesStore from 'client/lib/shortcodes/store';
 
 class ShortcodeData extends Component {
 	static getStores() {

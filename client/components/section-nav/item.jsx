@@ -11,8 +11,8 @@ import classNames from 'classnames';
 /**
  * Internal Dependencies
  */
-import Count from 'components/count';
-import { preload } from 'sections-preload';
+import Count from 'client/components/count';
+import { preload } from 'client/sections-preload';
 
 /**
  * Main

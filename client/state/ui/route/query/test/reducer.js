@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { ROUTE_SET } from 'state/action-types';
+import { ROUTE_SET } from 'client/state/action-types';
 import path from '../reducer';
 
 describe( 'reducer', () => {

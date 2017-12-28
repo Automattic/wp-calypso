@@ -16,8 +16,8 @@ import {
 	getTwoFactorAuthRequestError,
 	getCreateSocialAccountError,
 	getRequestSocialAccountError,
-} from 'state/login/selectors';
-import Notice from 'components/notice';
+} from 'client/state/login/selectors';
+import Notice from 'client/components/notice';
 
 class ErrorNotice extends Component {
 	static propTypes = {

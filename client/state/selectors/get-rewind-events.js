@@ -7,7 +7,7 @@ import { get, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getRewinds } from 'state/activity-log/log/is-discarded';
+import { getRewinds } from 'client/state/activity-log/log/is-discarded';
 
 /**
  * Returns all events which represent rewind operations

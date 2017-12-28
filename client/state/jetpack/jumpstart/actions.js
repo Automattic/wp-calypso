@@ -15,8 +15,8 @@ import {
 	JETPACK_JUMPSTART_STATUS_REQUEST,
 	JETPACK_JUMPSTART_STATUS_REQUEST_SUCCESS,
 	JETPACK_JUMPSTART_STATUS_REQUEST_FAILURE,
-} from 'state/action-types';
-import wp from 'lib/wp';
+} from 'client/state/action-types';
+import wp from 'client/lib/wp';
 
 export const activateJumpstart = siteId => {
 	return dispatch => {

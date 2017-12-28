@@ -13,8 +13,8 @@ import {
 	SITE_WORDPRESS_UPDATE_REQUEST_SUCCESS,
 	SITE_WORDPRESS_UPDATE_REQUEST_FAILURE,
 	SITE_PLUGIN_UPDATED,
-} from 'state/action-types';
-import wpcom from 'lib/wp';
+} from 'client/state/action-types';
+import wpcom from 'client/lib/wp';
 
 export const siteUpdatesReceiveAction = ( siteId, updates ) => ( {
 	type: SITE_UPDATES_RECEIVE,

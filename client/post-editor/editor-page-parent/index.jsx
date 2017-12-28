@@ -13,15 +13,15 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import PostSelector from 'my-sites/post-selector';
-import FormLabel from 'components/forms/form-label';
-import FormToggle from 'components/forms/form-toggle/compact';
-import AccordionSection from 'components/accordion/section';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { editPost } from 'state/posts/actions';
-import { getPostType } from 'state/post-types/selectors';
+import PostSelector from 'client/my-sites/post-selector';
+import FormLabel from 'client/components/forms/form-label';
+import FormToggle from 'client/components/forms/form-toggle/compact';
+import AccordionSection from 'client/components/accordion/section';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostValue } from 'client/state/posts/selectors';
+import { editPost } from 'client/state/posts/actions';
+import { getPostType } from 'client/state/post-types/selectors';
 
 class EditorPageParent extends Component {
 	static propTypes = {

@@ -4,6 +4,6 @@
  * Internal dependencies
  */
 
-import localStoragePolyfill from 'lib/local-storage';
+import localStoragePolyfill from 'client/lib/local-storage';
 
 localStoragePolyfill();

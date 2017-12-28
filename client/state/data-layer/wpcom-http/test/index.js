@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { failureMeta, queueRequest, successMeta } from '../';
-import { extendAction } from 'state/utils';
+import { extendAction } from 'client/state/utils';
 import useNock, { nock } from 'test/helpers/use-nock';
 
 const processInbound = action => action;

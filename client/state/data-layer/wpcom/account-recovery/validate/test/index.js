@@ -18,8 +18,8 @@ import {
 	validateRequestSuccess,
 	validateRequestError,
 	setValidationKey,
-} from 'state/account-recovery/reset/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+} from 'client/state/account-recovery/reset/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 describe( 'handleValidateRequest()', () => {
 	describe( 'success', () => {

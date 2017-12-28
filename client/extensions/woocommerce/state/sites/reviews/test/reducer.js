@@ -17,8 +17,8 @@ import {
 	WOOCOMMERCE_REVIEWS_REQUEST,
 	WOOCOMMERCE_REVIEWS_RECEIVE,
 	WOOCOMMERCE_REVIEW_STATUS_CHANGE,
-} from 'woocommerce/state/action-types';
-import reducer from 'woocommerce/state/sites/reducer';
+} from 'client/extensions/woocommerce/state/action-types';
+import reducer from 'client/extensions/woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
 	describe( 'isQueryLoading', () => {

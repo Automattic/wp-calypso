@@ -12,12 +12,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormCurrencyInput from 'components/forms/form-currency-input';
-import FormTextInput from 'components/forms/form-text-input';
-import { getCurrencyObject } from 'lib/format-currency';
-import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import FormCurrencyInput from 'client/components/forms/form-currency-input';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { getCurrencyObject } from 'client/lib/format-currency';
+import { getPaymentCurrencySettings } from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import QuerySettingsGeneral from 'client/extensions/woocommerce/components/query-settings-general';
 
 class PriceInput extends Component {
 	static propTypes = {

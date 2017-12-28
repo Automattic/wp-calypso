@@ -10,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Ribbon from '../index';
-import Card from 'components/card';
+import Card from 'client/components/card';
 
 export default class extends React.PureComponent {
 	static displayName = 'Ribbon';

@@ -12,15 +12,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import StoreConnection from 'components/data/store-connection';
-import DomainsStore from 'lib/domains/store';
-import CartStore from 'lib/cart/store';
-import observe from 'lib/mixins/data-observe';
-import * as upgradesActions from 'lib/upgrades/actions';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import { getPlansBySite } from 'state/sites/plans/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import StoreConnection from 'client/components/data/store-connection';
+import DomainsStore from 'client/lib/domains/store';
+import CartStore from 'client/lib/cart/store';
+import observe from 'client/lib/mixins/data-observe';
+import * as upgradesActions from 'client/lib/upgrades/actions';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import QueryContactDetailsCache from 'client/components/data/query-contact-details-cache';
+import { getPlansBySite } from 'client/state/sites/plans/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 const stores = [ DomainsStore, CartStore ];
 

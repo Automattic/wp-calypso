@@ -11,17 +11,17 @@ import { find, identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import SignupActions from 'lib/signup/actions';
+import analytics from 'client/lib/analytics';
+import SignupActions from 'client/lib/signup/actions';
 import SignupThemesList from './signup-themes-list';
-import StepWrapper from 'signup/step-wrapper';
-import Button from 'components/button';
-import { themes } from 'lib/signup/themes-data';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
-import { getDesignType } from 'state/signup/steps/design-type/selectors';
+import StepWrapper from 'client/signup/step-wrapper';
+import Button from 'client/components/button';
+import { themes } from 'client/lib/signup/themes-data';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getSurveyVertical } from 'client/state/signup/steps/survey/selectors';
+import { getDesignType } from 'client/state/signup/steps/design-type/selectors';
 import { isEnabled } from 'config';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { getSignupDependencyStore } from 'client/state/signup/dependency-store/selectors';
 
 class ThemeSelectionStep extends Component {
 	static propTypes = {

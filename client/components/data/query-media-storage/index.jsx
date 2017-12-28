@@ -12,10 +12,10 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { isRequestingMediaStorage } from 'state/sites/media-storage/selectors';
-import { requestMediaStorage } from 'state/sites/media-storage/actions';
+import { isRequestingMediaStorage } from 'client/state/sites/media-storage/selectors';
+import { requestMediaStorage } from 'client/state/sites/media-storage/actions';
 // until we port media over to redux:
-import MediaStore from 'lib/media/store';
+import MediaStore from 'client/lib/media/store';
 
 class QueryMediaStorage extends Component {
 	constructor( props ) {

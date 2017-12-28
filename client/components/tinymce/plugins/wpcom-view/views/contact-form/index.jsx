@@ -6,12 +6,12 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { deserialize } from 'components/tinymce/plugins/contact-form/shortcode-utils';
+import { deserialize } from 'client/components/tinymce/plugins/contact-form/shortcode-utils';
 
 /**
  * Internal dependencies
  */
-import shortcodeUtils from 'lib/shortcode';
+import shortcodeUtils from 'client/lib/shortcode';
 import renderField from './preview-fields';
 
 const ContactForm = localize( ( { content, translate } ) => {

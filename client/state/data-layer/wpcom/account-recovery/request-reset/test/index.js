@@ -10,12 +10,12 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { requestReset, handleError, handleSuccess } from '../';
-import { setResetMethod } from 'state/account-recovery/reset/actions';
+import { setResetMethod } from 'client/state/account-recovery/reset/actions';
 import {
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
 	ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
-} from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+} from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 describe( 'account-recovery/request-reset', () => {
 	describe( '#requestReset', () => {

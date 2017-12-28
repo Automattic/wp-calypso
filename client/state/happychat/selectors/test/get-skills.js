@@ -13,8 +13,8 @@ import {
 	HAPPYCHAT_GROUP_JPOP,
 	HAPPYCHAT_SKILL_PRODUCT,
 	HAPPYCHAT_SKILL_LANGUAGE,
-} from 'state/happychat/constants';
-import getSkills from 'state/happychat/selectors/get-skills';
+} from 'client/state/happychat/constants';
+import getSkills from 'client/state/happychat/selectors/get-skills';
 
 describe( '#getSkills()', () => {
 	const uiState = {

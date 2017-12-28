@@ -12,20 +12,20 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import cartValues from 'lib/cart-values';
-import CountrySelect from 'my-sites/domains/components/form/country-select';
-import Input from 'my-sites/domains/components/form/input';
-import notices from 'notices';
+import analytics from 'client/lib/analytics';
+import cartValues from 'client/lib/cart-values';
+import CountrySelect from 'client/my-sites/domains/components/form/country-select';
+import Input from 'client/my-sites/domains/components/form/input';
+import notices from 'client/notices';
 import SubscriptionText from './subscription-text';
 import TermsOfService from './terms-of-service';
-import { abtest } from 'lib/abtest';
-import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
+import { abtest } from 'client/lib/abtest';
+import CartCoupon from 'client/my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import config from 'config';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { PLAN_BUSINESS } from 'client/lib/plans/constants';
 import CartToggle from './cart-toggle';
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 
 const wpcom = wp.undocumented();
 

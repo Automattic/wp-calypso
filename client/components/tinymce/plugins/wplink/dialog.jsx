@@ -15,20 +15,20 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import * as MediaSerialization from 'lib/media-serialization';
-import MediaStore from 'lib/media/store';
-import MediaUtils from 'lib/media/utils';
-import Dialog from 'components/dialog';
-import FormTextInput from 'components/forms/form-text-input';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import PostSelector from 'my-sites/post-selector';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSitePosts } from 'state/posts/selectors';
-import { decodeEntities } from 'lib/formatting';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import * as MediaSerialization from 'client/lib/media-serialization';
+import MediaStore from 'client/lib/media/store';
+import MediaUtils from 'client/lib/media/utils';
+import Dialog from 'client/components/dialog';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import PostSelector from 'client/my-sites/post-selector';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { getSitePosts } from 'client/state/posts/selectors';
+import { decodeEntities } from 'client/lib/formatting';
+import { recordEvent, recordStat } from 'client/lib/posts/stats';
 
 /**
  * Module variables

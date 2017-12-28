@@ -19,8 +19,8 @@ import {
 	setTracksAnonymousUserId,
 } from '../actions';
 import { dispatcher as dispatch } from '../middleware.js';
-import { spy as mockAnalytics } from 'lib/analytics';
-import { spy as mockAdTracking } from 'lib/analytics/ad-tracking';
+import { spy as mockAnalytics } from 'client/lib/analytics';
+import { spy as mockAdTracking } from 'client/lib/analytics/ad-tracking';
 
 jest.mock( 'lib/analytics', () => {
 	const analyticsSpy = require( 'sinon' ).spy();

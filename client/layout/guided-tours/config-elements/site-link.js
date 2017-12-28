@@ -12,9 +12,9 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import contextTypes from '../context-types';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import Button from 'components/button';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import Button from 'client/components/button';
 
 class SiteLink extends Component {
 	static propTypes = {

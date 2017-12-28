@@ -5,7 +5,7 @@
  */
 
 import debugFactory from 'debug';
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import { random } from 'lodash';
 
 /**
@@ -20,7 +20,7 @@ import {
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUESTING,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { NPS_SURVEY_RAND_MAX } from './constants';
 
 const debug = debugFactory( 'calypso:nps-survey' );

@@ -13,16 +13,21 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import Button from 'components/button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { isMonthly } from 'lib/plans/constants';
-import { getYearlyPlanByMonthly } from 'lib/plans';
-import { planItem } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/upgrades/actions';
-import { isExpired, isExpiring, isRenewing, showCreditCardExpiringWarning } from 'lib/purchases';
-import { recordTracksEvent } from 'state/analytics/actions';
+import Button from 'client/components/button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import { isMonthly } from 'client/lib/plans/constants';
+import { getYearlyPlanByMonthly } from 'client/lib/plans';
+import { planItem } from 'client/lib/cart-values/cart-items';
+import { addItem } from 'client/lib/upgrades/actions';
+import {
+	isExpired,
+	isExpiring,
+	isRenewing,
+	showCreditCardExpiringWarning,
+} from 'client/lib/purchases';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 class PlanBillingPeriod extends Component {
 	static propTypes = {

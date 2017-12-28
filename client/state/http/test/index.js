@@ -10,8 +10,8 @@ import sinon from 'sinon';
  */
 import { httpHandler } from '../';
 import superagentMock from './mocks/superagent';
-import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
-import { extendAction } from 'state/utils';
+import { failureMeta, successMeta } from 'client/state/data-layer/wpcom-http';
+import { extendAction } from 'client/state/utils';
 jest.mock( 'superagent', () => require( './mocks/superagent' ).handler );
 
 const succeeder = { type: 'SUCCESS' };

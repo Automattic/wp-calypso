@@ -11,9 +11,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import purchasesPaths from 'me/purchases/paths';
-import { type as domainTypes } from 'lib/domains/constants';
+import Button from 'client/components/button';
+import purchasesPaths from 'client/me/purchases/paths';
+import { type as domainTypes } from 'client/lib/domains/constants';
 
 class SubscriptionSettings extends React.Component {
 	static propTypes = {

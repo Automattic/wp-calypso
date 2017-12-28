@@ -13,11 +13,11 @@ import { find, includes, map, noop, partial, startsWith, isEmpty } from 'lodash'
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
-import SectionNavTabItem from 'components/section-nav/item';
-import Search from 'components/search';
+import Dialog from 'client/components/dialog';
+import SectionNav from 'client/components/section-nav';
+import SectionNavTabs from 'client/components/section-nav/tabs';
+import SectionNavTabItem from 'client/components/section-nav/item';
+import Search from 'client/components/search';
 
 export class LanguagePickerModal extends PureComponent {
 	static propTypes = {

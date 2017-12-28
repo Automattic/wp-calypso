@@ -9,8 +9,13 @@ import page from 'page';
  */
 import config from 'config';
 import { conversations, conversationsA8c } from './controller';
-import { initAbTests, preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
-import { makeLayout, render as clientRender } from 'controller';
+import {
+	initAbTests,
+	preloadReaderBundle,
+	sidebar,
+	updateLastRoute,
+} from 'client/reader/controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 export default function() {
 	if ( config.isEnabled( 'reader/conversations' ) ) {

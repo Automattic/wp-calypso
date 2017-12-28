@@ -9,7 +9,7 @@ import { forEach } from 'lodash';
 /**
  * Internal Dependencies
  */
-import formatting from 'lib/formatting';
+import formatting from 'client/lib/formatting';
 
 export default function preventWidows( post ) {
 	forEach( [ 'excerpt' ], function( prop ) {

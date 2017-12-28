@@ -8,8 +8,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { cancellationEffectDetail, cancellationEffectHeadline } from '../cancellation-effect';
-import productsValues from 'lib/products-values';
-import purchases from 'lib/purchases';
+import productsValues from 'client/lib/products-values';
+import purchases from 'client/lib/purchases';
 
 jest.mock( 'lib/products-values', () => ( {} ) );
 jest.mock( 'lib/purchases', () => ( {} ) );

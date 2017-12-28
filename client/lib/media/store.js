@@ -9,9 +9,9 @@ import { values } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isItemBeingUploaded } from 'lib/media/utils';
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import { isItemBeingUploaded } from 'client/lib/media/utils';
+import Dispatcher from 'client/dispatcher';
+import emitter from 'client/lib/mixins/emitter';
 import MediaValidationStore from './validation-store';
 
 /**

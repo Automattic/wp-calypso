@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import MediaQueryManager from 'lib/query-manager/media';
+import MediaQueryManager from 'client/lib/query-manager/media';
 
 /**
  * Returns true if media is being requested for a specified site ID and query.

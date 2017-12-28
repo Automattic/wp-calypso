@@ -15,27 +15,27 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { themeActivated } from 'state/themes/actions';
-import analytics from 'lib/analytics';
-import { loadTrackingTool } from 'state/analytics/actions';
-import WordPressLogo from 'components/wordpress-logo';
-import Card from 'components/card';
+import { themeActivated } from 'client/state/themes/actions';
+import analytics from 'client/lib/analytics';
+import { loadTrackingTool } from 'client/state/analytics/actions';
+import WordPressLogo from 'client/components/wordpress-logo';
+import Card from 'client/components/card';
 import ChargebackDetails from './chargeback-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouHeader from './header';
-import { domainManagementList } from 'my-sites/domains/paths';
+import { domainManagementList } from 'client/my-sites/domains/paths';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
-import { fetchReceipt } from 'state/receipts/actions';
-import { fetchSitePlans, refreshSitePlans } from 'state/sites/plans/actions';
-import { getPlansBySite } from 'state/sites/plans/selectors';
-import { getReceiptById } from 'state/receipts/selectors';
-import { getCurrentUser, getCurrentUserDate } from 'state/current-user/selectors';
+import { fetchReceipt } from 'client/state/receipts/actions';
+import { fetchSitePlans, refreshSitePlans } from 'client/state/sites/plans/actions';
+import { getPlansBySite } from 'client/state/sites/plans/selectors';
+import { getReceiptById } from 'client/state/receipts/selectors';
+import { getCurrentUser, getCurrentUserDate } from 'client/state/current-user/selectors';
 import GoogleAppsDetails from './google-apps-details';
 import GuidedTransferDetails from './guided-transfer-details';
-import HappinessSupport from 'components/happiness-support';
-import HeaderCake from 'components/header-cake';
-import PlanThankYouCard from 'blocks/plan-thank-you-card';
+import HappinessSupport from 'client/components/happiness-support';
+import HeaderCake from 'client/components/header-cake';
+import PlanThankYouCard from 'client/blocks/plan-thank-you-card';
 import JetpackThankYouCard from './jetpack-thank-you-card';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
 import {
@@ -55,30 +55,30 @@ import {
 	isBusiness,
 	isSiteRedirect,
 	isTheme,
-} from 'lib/products-values';
+} from 'client/lib/products-values';
 import JetpackPlanDetails from './jetpack-plan-details';
-import Main from 'components/main';
+import Main from 'client/components/main';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import BusinessPlanDetails from './business-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
-import PurchaseDetail from 'components/purchase-detail';
-import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
+import PurchaseDetail from 'client/components/purchase-detail';
+import { getFeatureByKey, shouldFetchSitePlans } from 'client/lib/plans';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
-import Notice from 'components/notice';
-import ThankYouCard from 'components/thank-you-card';
-import domainsPaths from 'my-sites/domains/paths';
+import Notice from 'client/components/notice';
+import ThankYouCard from 'client/components/thank-you-card';
+import domainsPaths from 'client/my-sites/domains/paths';
 import config from 'config';
-import { getSitePlanSlug } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
+import { getSitePlanSlug } from 'client/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isRebrandCitiesSiteUrl } from 'client/lib/rebrand-cities';
 import {
 	PLAN_BUSINESS,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
-import { hasSitePendingAutomatedTransfer, isSiteAutomatedTransfer } from 'state/selectors';
+} from 'client/lib/plans/constants';
+import { hasSitePendingAutomatedTransfer, isSiteAutomatedTransfer } from 'client/state/selectors';
 
 function getPurchases( props ) {
 	return [

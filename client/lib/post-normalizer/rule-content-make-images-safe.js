@@ -10,7 +10,7 @@ import { forEach, startsWith, some, includes, filter } from 'lodash';
 /**
  * Internal Dependencies
  */
-import safeImageURL from 'lib/safe-image-url';
+import safeImageURL from 'client/lib/safe-image-url';
 import { maxWidthPhotonishURL } from './utils';
 
 const TRANSPARENT_GIF =

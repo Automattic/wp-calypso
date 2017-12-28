@@ -10,7 +10,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { setUserSetting } from '../actions';
-import { USER_SETTINGS_UNSAVED_SET, USER_SETTINGS_UNSAVED_REMOVE } from 'state/action-types';
+import { USER_SETTINGS_UNSAVED_SET, USER_SETTINGS_UNSAVED_REMOVE } from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'updateUserSetting()', () => {

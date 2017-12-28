@@ -14,10 +14,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
-import { VideoPressFileTypes } from 'lib/media/constants';
+import analytics from 'client/lib/analytics';
+import MediaActions from 'client/lib/media/actions';
+import MediaUtils from 'client/lib/media/utils';
+import { VideoPressFileTypes } from 'client/lib/media/constants';
 
 export default class extends React.Component {
 	static displayName = 'MediaLibraryUploadButton';

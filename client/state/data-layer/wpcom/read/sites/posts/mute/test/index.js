@@ -9,13 +9,13 @@ import { merge } from 'lodash';
  * Internal dependencies
  */
 import { requestConversationMute, receiveConversationMute } from '../';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import {
 	muteConversation,
 	updateConversationFollowStatus,
-} from 'state/reader/conversations/actions';
-import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
+} from 'client/state/reader/conversations/actions';
+import { CONVERSATION_FOLLOW_STATUS } from 'client/state/reader/conversations/follow-status';
 
 describe( 'conversation-mute', () => {
 	describe( 'requestConversationMute', () => {

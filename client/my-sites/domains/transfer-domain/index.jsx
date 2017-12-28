@@ -11,16 +11,16 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import TransferDomainStep from 'components/domains/transfer-domain-step';
-import { DOMAINS_WITH_PLANS_ONLY, TRANSFER_IN } from 'state/current-user/constants';
-import { cartItems } from 'lib/cart-values';
-import upgradesActions from 'lib/upgrades/actions';
-import Notice from 'components/notice';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import { isSiteUpgradeable } from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import { getProductsList } from 'state/products-list/selectors';
+import TransferDomainStep from 'client/components/domains/transfer-domain-step';
+import { DOMAINS_WITH_PLANS_ONLY, TRANSFER_IN } from 'client/state/current-user/constants';
+import { cartItems } from 'client/lib/cart-values';
+import upgradesActions from 'client/lib/upgrades/actions';
+import Notice from 'client/components/notice';
+import { currentUserHasFlag } from 'client/state/current-user/selectors';
+import { isSiteUpgradeable } from 'client/state/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import QueryProductsList from 'client/components/data/query-products-list';
+import { getProductsList } from 'client/state/products-list/selectors';
 
 export class TransferDomain extends Component {
 	static propTypes = {

@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 import {
 	WP_SUPER_CACHE_DELETE_CACHE,
 	WP_SUPER_CACHE_DELETE_CACHE_FAILURE,
@@ -21,8 +21,8 @@ import {
 	WP_SUPER_CACHE_TEST_CACHE_FAILURE,
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../action-types';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteTitle } from 'state/sites/selectors';
+import { errorNotice, removeNotice, successNotice } from 'client/state/notices/actions';
+import { getSiteTitle } from 'client/state/sites/selectors';
 
 /*
  * Tests the cache for a site.

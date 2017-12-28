@@ -14,15 +14,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Notice from 'components/notice';
-import ProgressBar from 'components/progress-bar';
-import { getSelectedSite } from 'state/ui/selectors';
-import syncSelectors from 'state/jetpack-sync/selectors';
-import { getSyncStatus, scheduleJetpackFullysync } from 'state/jetpack-sync/actions';
-import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
-import NoticeAction from 'components/notice/notice-action';
-import analytics from 'lib/analytics';
+import CompactCard from 'client/components/card/compact';
+import Notice from 'client/components/notice';
+import ProgressBar from 'client/components/progress-bar';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import syncSelectors from 'client/state/jetpack-sync/selectors';
+import { getSyncStatus, scheduleJetpackFullysync } from 'client/state/jetpack-sync/actions';
+import Interval, { EVERY_TEN_SECONDS } from 'client/lib/interval';
+import NoticeAction from 'client/components/notice/notice-action';
+import analytics from 'client/lib/analytics';
 
 /*
  * Module variables

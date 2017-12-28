@@ -8,7 +8,7 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export function fetchProductCategories( siteId, query = {} ) {
 	const normalizedQuery = getNormalizedProductCategoriesQuery( query );

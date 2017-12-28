@@ -13,10 +13,10 @@ import { isFunction } from 'lodash';
  * Internal dependencies
  */
 import DocService from './service';
-import DocumentHead from 'components/data/document-head';
-import Card from 'components/card';
-import Main from 'components/main';
-import SearchCard from 'components/search-card';
+import DocumentHead from 'client/components/data/document-head';
+import Card from 'client/components/card';
+import Main from 'client/components/main';
+import SearchCard from 'client/components/search-card';
 
 /**
  * Constants

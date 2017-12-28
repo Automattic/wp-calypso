@@ -12,9 +12,9 @@ import { partial } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from 'client/components/button';
 import DismissibleCard from '../';
-import { savePreference } from 'state/preferences/actions';
+import { savePreference } from 'client/state/preferences/actions';
 
 function DismissibleCardExample( { clearPreference } ) {
 	return (

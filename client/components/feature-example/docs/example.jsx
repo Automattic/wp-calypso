@@ -10,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import FeatureExample from '../index';
-import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
+import PluginItem from 'client/my-sites/plugins/plugin-item/plugin-item';
 
 export default class extends React.Component {
 	static displayName = 'FeatureExample';

@@ -12,8 +12,8 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
-import viewport from 'lib/viewport';
+import FormTextInput from 'client/components/forms/form-text-input';
+import viewport from 'client/lib/viewport';
 
 export default class extends React.Component {
 	static displayName = 'FormPasswordInput';

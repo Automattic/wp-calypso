@@ -10,11 +10,11 @@ import { getLocaleSlug } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addLocaleToPath } from 'lib/i18n-utils';
+import { addLocaleToPath } from 'client/lib/i18n-utils';
 import LocaleSuggestionsListItem from './list-item';
-import LocaleSuggestionStore from 'lib/locale-suggestions';
-import Notice from 'components/notice';
-import switchLocale from 'lib/i18n-utils/switch-locale';
+import LocaleSuggestionStore from 'client/lib/locale-suggestions';
+import Notice from 'client/components/notice';
+import switchLocale from 'client/lib/i18n-utils/switch-locale';
 
 class LocaleSuggestions extends Component {
 	static propTypes = {

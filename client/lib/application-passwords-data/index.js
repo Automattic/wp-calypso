@@ -11,9 +11,9 @@ const debug = debugFactory( 'calypso:application-passwords-data' );
 /**
  * Internal dependencies
  */
-import makeEmitter from 'lib/mixins/emitter';
+import makeEmitter from 'client/lib/mixins/emitter';
 import store from 'store';
-import wp from 'lib/wp';
+import wp from 'client/lib/wp';
 
 const wpcom = wp.undocumented();
 

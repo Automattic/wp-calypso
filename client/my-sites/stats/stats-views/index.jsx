@@ -13,12 +13,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteStatsViewSummary } from 'state/selectors';
-import Card from 'components/card';
+import QuerySiteStats from 'client/components/data/query-site-stats';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { getSiteStatsViewSummary } from 'client/state/selectors';
+import Card from 'client/components/card';
 import Months from './months';
-import SegmentedControl from 'components/segmented-control';
+import SegmentedControl from 'client/components/segmented-control';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 
 class StatsViews extends Component {

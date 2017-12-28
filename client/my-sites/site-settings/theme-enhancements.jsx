@@ -12,18 +12,18 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
-import Card from 'components/card';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import SectionHeader from 'client/components/section-header';
+import Card from 'client/components/card';
+import JetpackModuleToggle from 'client/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLegend from 'client/components/forms/form-legend';
+import FormLabel from 'client/components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackModuleActive } from 'client/state/selectors';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
 
 class ThemeEnhancements extends Component {
 	static defaultProps = {

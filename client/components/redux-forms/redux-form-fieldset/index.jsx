@@ -9,10 +9,10 @@ import { Field } from 'redux-form';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
 
 /*
  * Render a `FormFieldset` parametrized by the input field component type.

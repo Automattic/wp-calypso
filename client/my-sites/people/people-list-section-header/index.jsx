@@ -15,12 +15,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
-import Button from 'components/button';
-import ButtonGroup from 'components/button-group';
-import Tooltip from 'components/tooltip';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import SectionHeader from 'client/components/section-header';
+import Button from 'client/components/button';
+import ButtonGroup from 'client/components/button-group';
+import Tooltip from 'client/components/tooltip';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import isSiteAutomatedTransfer from 'client/state/selectors/is-site-automated-transfer';
 
 class PeopleListSectionHeader extends Component {
 	static propTypes = {

@@ -13,9 +13,9 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import ResizableIframe from 'components/resizable-iframe';
-import EmbedsStore from 'lib/embeds/store';
-import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
+import ResizableIframe from 'client/components/resizable-iframe';
+import EmbedsStore from 'client/lib/embeds/store';
+import generateEmbedFrameMarkup from 'client/lib/embed-frame-markup';
 
 class EmbedView extends Component {
 	static getStores() {

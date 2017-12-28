@@ -11,14 +11,14 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import FormToggle from 'components/forms/form-toggle/compact';
-import ClipboardButton from 'components/forms/clipboard-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import FormToggle from 'client/components/forms/form-toggle/compact';
+import ClipboardButton from 'client/components/forms/clipboard-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
 import WrapSettingsForm from '../wrap-settings-form';
-import Notice from 'components/notice';
+import Notice from 'client/components/notice';
 
 const LockDown = ( {
 	fields: { cache_lock_down },

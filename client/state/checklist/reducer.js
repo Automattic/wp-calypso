@@ -9,8 +9,8 @@ import { assign } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
-import { SITE_CHECKLIST_RECEIVE, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
+import { SITE_CHECKLIST_RECEIVE, SITE_CHECKLIST_TASK_UPDATE } from 'client/state/action-types';
 import { items as itemSchemas } from './schema';
 
 export const items = createReducer(

@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'client/components/section-header';
 
 class ExtendedHeader extends Component {
 	render() {

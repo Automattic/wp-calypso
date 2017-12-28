@@ -10,13 +10,13 @@ import { get, map, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import QuerySitePlans from 'components/data/query-site-plans';
-import SectionHeader from 'components/section-header';
-import { getSitePlanSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPlanClass } from 'lib/plans/constants';
-import { addQueryArgs } from 'lib/url';
+import CompactCard from 'client/components/card/compact';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import SectionHeader from 'client/components/section-header';
+import { getSitePlanSlug } from 'client/state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getPlanClass } from 'client/lib/plans/constants';
+import { addQueryArgs } from 'client/lib/url';
 
 function getFeatures( planClass, translate ) {
 	const features = {

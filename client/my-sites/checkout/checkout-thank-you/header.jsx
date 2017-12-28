@@ -21,10 +21,10 @@ import {
 	isGuidedTransfer,
 	isPlan,
 	isSiteRedirect,
-} from 'lib/products-values';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'client/lib/products-values';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 import { localize } from 'i18n-calypso';
-import { preventWidows } from 'lib/formatting';
+import { preventWidows } from 'client/lib/formatting';
 
 class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {

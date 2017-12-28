@@ -12,16 +12,16 @@ import { identity, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import FormButton from 'components/forms/form-button';
-import FormLabel from 'components/forms/form-label';
-import FormInput from 'components/forms/form-text-input';
-import { fetchResetOptionsByNameAndUrl } from 'state/account-recovery/reset/actions';
+import Card from 'client/components/card';
+import FormButton from 'client/components/forms/form-button';
+import FormLabel from 'client/components/forms/form-label';
+import FormInput from 'client/components/forms/form-text-input';
+import { fetchResetOptionsByNameAndUrl } from 'client/state/account-recovery/reset/actions';
 
 import {
 	isRequestingAccountRecoveryResetOptions,
 	getAccountRecoveryResetOptionsError,
-} from 'state/selectors';
+} from 'client/state/selectors';
 
 export class ForgotUsernameFormComponent extends Component {
 	constructor( props ) {

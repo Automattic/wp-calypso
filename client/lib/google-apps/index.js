@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import formatCurrency from 'lib/format-currency';
+import formatCurrency from 'client/lib/format-currency';
 
 /**
  * Constants

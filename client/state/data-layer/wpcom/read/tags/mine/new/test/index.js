@@ -9,13 +9,13 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import { requestFollowTag, receiveFollowTag, receiveError } from '../';
-import { NOTICE_CREATE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
+import { NOTICE_CREATE } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { fromApi } from 'client/state/data-layer/wpcom/read/tags/utils';
 import {
 	requestFollowTag as requestFollowAction,
 	receiveTags as receiveTagsAction,
-} from 'state/reader/tags/items/actions';
+} from 'client/state/reader/tags/items/actions';
 
 export const successfulFollowResponse = freeze( {
 	subscribed: true,

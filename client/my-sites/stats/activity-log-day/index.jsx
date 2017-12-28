@@ -15,10 +15,10 @@ import { compact, flatMap, get, isEmpty, zip } from 'lodash';
  * Internal dependencies
  */
 import ActivityLogItem from '../activity-log-item';
-import FoldableCard from 'components/foldable-card';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getActivityLog, getRewindEvents } from 'state/selectors';
-import { ms, rewriteStream } from 'state/activity-log/log/is-discarded';
+import FoldableCard from 'client/components/foldable-card';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { getActivityLog, getRewindEvents } from 'client/state/selectors';
+import { ms, rewriteStream } from 'client/state/activity-log/log/is-discarded';
 
 /**
  * Module constants

@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { isAccountRecoveryUserDataReady } from 'state/selectors';
+import { isAccountRecoveryUserDataReady } from 'client/state/selectors';
 
 describe( 'isAccountRecoveryUserDataReady()', () => {
 	test( 'should return true if user field is set', () => {

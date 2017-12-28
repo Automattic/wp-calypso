@@ -9,6 +9,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Plans from 'signup/steps/plans';
+import Plans from 'client/signup/steps/plans';
 
 export default props => <Plans { ...props } hideFreePlan={ true } />;

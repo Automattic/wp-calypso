@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SecurityMain from 'my-sites/site-settings/settings-security/main';
+import SecurityMain from 'client/my-sites/site-settings/settings-security/main';
 
 export default {
 	security( context, next ) {

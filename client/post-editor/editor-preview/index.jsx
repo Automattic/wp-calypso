@@ -13,9 +13,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { omitUrlParams } from 'lib/url';
-import WebPreview from 'components/web-preview';
-import WebPreviewContent from 'components/web-preview/content';
+import { omitUrlParams } from 'client/lib/url';
+import WebPreview from 'client/components/web-preview';
+import WebPreviewContent from 'client/components/web-preview/content';
 import { isEnabled } from 'config';
 
 class EditorPreview extends React.Component {

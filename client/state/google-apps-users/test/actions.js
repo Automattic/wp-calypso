@@ -13,7 +13,7 @@ import {
 	GOOGLE_APPS_USERS_FETCH,
 	GOOGLE_APPS_USERS_FETCH_COMPLETED,
 	GOOGLE_APPS_USERS_FETCH_FAILED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {

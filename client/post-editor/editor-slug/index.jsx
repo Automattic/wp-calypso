@@ -14,13 +14,13 @@ import classNames from 'classnames';
 /**
  * Internal Dependencies
  */
-import TrackInputChanges from 'components/track-input-changes';
-import FormTextInput from 'components/forms/form-text-input';
-import { recordStat, recordEvent } from 'lib/posts/stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPostSlug } from 'state/posts/selectors';
-import { editPost } from 'state/posts/actions';
+import TrackInputChanges from 'client/components/track-input-changes';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { recordStat, recordEvent } from 'client/lib/posts/stats';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPostSlug } from 'client/state/posts/selectors';
+import { editPost } from 'client/state/posts/actions';
 
 class PostEditorSlug extends Component {
 	static propTypes = {

@@ -15,12 +15,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import Main from 'client/components/main';
 import QueryShippingZones, {
 	areShippingZonesFullyLoaded,
-} from 'woocommerce/components/query-shipping-zones';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import { areSettingsGeneralLoaded } from 'woocommerce/state/sites/settings/general/selectors';
+} from 'client/extensions/woocommerce/components/query-shipping-zones';
+import QuerySettingsGeneral from 'client/extensions/woocommerce/components/query-settings-general';
+import { areSettingsGeneralLoaded } from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
 import ShippingZoneHeader from './shipping-zone-header';
 import ShippingZoneLocationList from './shipping-zone-location-list';
 import ShippingZoneMethodList from './shipping-zone-method-list';
@@ -30,13 +30,13 @@ import {
 	openShippingZoneForEdit,
 	createShippingZoneSaveActionList,
 	createShippingZoneDeleteActionList,
-} from 'woocommerce/state/ui/shipping/zones/actions';
-import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { ProtectFormGuard } from 'lib/protect-form';
-import { getSaveZoneActionListSteps } from 'woocommerce/state/data-layer/ui/shipping-zones';
+} from 'client/extensions/woocommerce/state/ui/shipping/zones/actions';
+import { getCurrentlyEditingShippingZone } from 'client/extensions/woocommerce/state/ui/shipping/zones/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { ProtectFormGuard } from 'client/lib/protect-form';
+import { getSaveZoneActionListSteps } from 'client/extensions/woocommerce/state/data-layer/ui/shipping-zones';
 
 class Shipping extends Component {
 	constructor() {

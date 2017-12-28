@@ -11,7 +11,7 @@ import noop from 'lodash';
  * Internal dependencies
  */
 import { fetchJITM, handleSiteSelection, handleRouteChange } from '..';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 describe( 'jitms', () => {
 	describe( 'fetchJITM', () => {

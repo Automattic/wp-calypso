@@ -13,10 +13,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import * as MediaSerialization from 'lib/media-serialization';
+import * as MediaSerialization from 'client/lib/media-serialization';
 import config from 'config';
-import EditorMediaAdvanced from 'post-editor/editor-media-advanced';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import EditorMediaAdvanced from 'client/post-editor/editor-media-advanced';
+import { renderWithReduxStore } from 'client/lib/react-helpers';
 
 export default function( editor ) {
 	const store = editor.getParam( 'redux_store' );

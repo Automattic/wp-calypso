@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSerializedStatsQuery } from 'state/stats/lists/utils';
+import { getSerializedStatsQuery } from 'client/state/stats/lists/utils';
 
 /**
  * Returns the date of the last site stats query

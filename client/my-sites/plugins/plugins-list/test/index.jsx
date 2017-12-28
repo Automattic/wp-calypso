@@ -19,7 +19,7 @@ import { Provider as ReduxProvider } from 'react-redux';
  */
 import { PluginsList } from '../';
 import { sites } from './fixtures';
-import { createReduxStore } from 'state';
+import { createReduxStore } from 'client/state';
 
 jest.mock( 'lib/analytics', () => ( {
 	ga: {

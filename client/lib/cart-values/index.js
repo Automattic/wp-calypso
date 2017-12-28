@@ -13,7 +13,7 @@ import config from 'config';
  * Internal dependencies
  */
 import cartItems from './cart-items';
-import productsValues from 'lib/products-values';
+import productsValues from 'client/lib/products-values';
 
 /**
  * Create a new empty cart.

@@ -12,9 +12,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
+import { cartItems } from 'client/lib/cart-values';
 import config from 'config';
-import upgradesActions from 'lib/upgrades/actions';
+import upgradesActions from 'client/lib/upgrades/actions';
 
 class AddButton extends React.PureComponent {
 	static propTypes = {

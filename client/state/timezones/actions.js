@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST } from 'state/action-types';
+import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST } from 'client/state/action-types';
 
 export const requestTimezones = () => ( {
 	type: TIMEZONES_REQUEST,

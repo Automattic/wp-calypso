@@ -13,16 +13,16 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { addStoredCard } from 'state/stored-cards/actions';
-import analytics from 'lib/analytics';
-import { concatTitle } from 'lib/react-helpers';
-import { createCardToken } from 'lib/store-transactions';
-import CreditCardForm from 'blocks/credit-card-form';
-import DocumentHead from 'components/data/document-head';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import titles from 'me/purchases/titles';
-import purchasesPaths from 'me/purchases/paths';
+import { addStoredCard } from 'client/state/stored-cards/actions';
+import analytics from 'client/lib/analytics';
+import { concatTitle } from 'client/lib/react-helpers';
+import { createCardToken } from 'client/lib/store-transactions';
+import CreditCardForm from 'client/blocks/credit-card-form';
+import DocumentHead from 'client/components/data/document-head';
+import HeaderCake from 'client/components/header-cake';
+import Main from 'client/components/main';
+import titles from 'client/me/purchases/titles';
+import purchasesPaths from 'client/me/purchases/paths';
 
 class AddCreditCard extends Component {
 	static propTypes = {

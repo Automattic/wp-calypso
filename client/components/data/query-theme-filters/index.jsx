@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestThemeFilters } from 'state/themes/actions';
+import { requestThemeFilters } from 'client/state/themes/actions';
 
 export class QueryThemeFilters extends Component {
 	static propTypes = {

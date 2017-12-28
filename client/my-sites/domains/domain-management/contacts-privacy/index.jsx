@@ -13,14 +13,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ContactsPrivacyCard from './card';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import paths from 'my-sites/domains/paths';
-import { getSelectedDomain } from 'lib/domains';
-import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
+import DomainMainPlaceholder from 'client/my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'client/my-sites/domains/domain-management/components/header';
+import Main from 'client/components/main';
+import VerticalNav from 'client/components/vertical-nav';
+import VerticalNavItem from 'client/components/vertical-nav/item';
+import paths from 'client/my-sites/domains/paths';
+import { getSelectedDomain } from 'client/lib/domains';
+import { findRegistrantWhois, findPrivacyServiceWhois } from 'client/lib/domains/whois/utils';
 
 class ContactsPrivacy extends React.PureComponent {
 	static propTypes = {

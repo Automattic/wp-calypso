@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
+import { MEDIA_MODAL_VIEW_SET } from 'client/state/action-types';
 
 /**
  * Returns an action object used in signalling that the media modal current

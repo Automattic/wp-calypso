@@ -16,10 +16,10 @@ import {
 	FOLLOWER_REMOVE_ERROR,
 	FOLLOWER_REMOVE_REQUEST,
 	FOLLOWER_REMOVE_SUCCESS,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
-import { getSerializedQuery, normalizeFollower } from 'state/followers/utils';
-import { FOLLOWERS_PER_PAGE } from 'state/followers/constants';
+} from 'client/state/action-types';
+import { combineReducers } from 'client/state/utils';
+import { getSerializedQuery, normalizeFollower } from 'client/state/followers/utils';
+import { FOLLOWERS_PER_PAGE } from 'client/state/followers/constants';
 
 export function items( state = {}, action ) {
 	switch ( action.type ) {

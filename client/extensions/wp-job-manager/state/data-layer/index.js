@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { addHandlers } from 'state/data-layer/extensions-middleware';
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { addHandlers } from 'client/state/data-layer/extensions-middleware';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
 import settings from './settings';
 import setup from './setup';
 import debugFactory from 'debug';

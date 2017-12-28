@@ -12,7 +12,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import PlanThankYouCard from '../';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
 
 function PlanThankYouCardExample( { primarySiteId } ) {
 	return <PlanThankYouCard siteId={ primarySiteId } />;

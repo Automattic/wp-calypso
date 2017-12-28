@@ -11,8 +11,8 @@ import { get, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isJetpackMonthlyPlan } from 'lib/products-values';
-import WpcomPlanPrice from 'my-sites/plans/wpcom-plan-price';
+import { isJetpackMonthlyPlan } from 'client/lib/products-values';
+import WpcomPlanPrice from 'client/my-sites/plans/wpcom-plan-price';
 
 class PlanPrice extends React.Component {
 	getFormattedPrice = plan => {

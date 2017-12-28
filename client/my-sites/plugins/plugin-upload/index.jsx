@@ -13,38 +13,38 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
-import ProgressBar from 'components/progress-bar';
-import UploadDropZone from 'blocks/upload-drop-zone';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import EligibilityWarnings from 'blocks/eligibility-warnings';
-import EmptyContent from 'components/empty-content';
-import QueryEligibility from 'components/data/query-atat-eligibility';
-import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
-import { initiateAutomatedTransferWithPluginZip } from 'state/automated-transfer/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import Main from 'client/components/main';
+import HeaderCake from 'client/components/header-cake';
+import Card from 'client/components/card';
+import ProgressBar from 'client/components/progress-bar';
+import UploadDropZone from 'client/blocks/upload-drop-zone';
+import JetpackManageErrorPage from 'client/my-sites/jetpack-manage-error-page';
+import EligibilityWarnings from 'client/blocks/eligibility-warnings';
+import EmptyContent from 'client/components/empty-content';
+import QueryEligibility from 'client/components/data/query-atat-eligibility';
+import { uploadPlugin, clearPluginUpload } from 'client/state/plugins/upload/actions';
+import { initiateAutomatedTransferWithPluginZip } from 'client/state/automated-transfer/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 import {
 	getPluginUploadError,
 	getPluginUploadProgress,
 	getUploadedPluginId,
 	isPluginUploadComplete,
 	isPluginUploadInProgress,
-} from 'state/selectors';
+} from 'client/state/selectors';
 import {
 	getSiteAdminUrl,
 	isJetpackMinimumVersion,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
-} from 'state/sites/selectors';
+} from 'client/state/sites/selectors';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 	getAutomatedTransferStatus,
-} from 'state/automated-transfer/selectors';
-import { successNotice } from 'state/notices/actions';
-import { transferStates } from 'state/automated-transfer/constants';
+} from 'client/state/automated-transfer/selectors';
+import { successNotice } from 'client/state/notices/actions';
+import { transferStates } from 'client/state/automated-transfer/constants';
 
 class PluginUpload extends React.Component {
 	state = {

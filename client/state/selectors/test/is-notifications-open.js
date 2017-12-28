@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isNotificationsOpen } from 'state/selectors';
+import { isNotificationsOpen } from 'client/state/selectors';
 
 describe( 'isNotificationsOpen()', () => {
 	test( 'returns true if notifications are open', () => {

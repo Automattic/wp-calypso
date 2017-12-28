@@ -12,8 +12,8 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { appStates } from 'state/imports/constants';
-import Card from 'components/card';
+import { appStates } from 'client/state/imports/constants';
+import Card from 'client/components/card';
 import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';
 import ImportingPane from './importing-pane';

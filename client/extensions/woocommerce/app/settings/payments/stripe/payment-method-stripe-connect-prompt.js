@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ControlItem from 'components/segmented-control/item';
-import SegmentedControl from 'components/segmented-control';
+import ControlItem from 'client/components/segmented-control/item';
+import SegmentedControl from 'client/components/segmented-control';
 
 class StripeConnectPrompt extends Component {
 	static propTypes = {

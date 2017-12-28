@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import QuerySitePlans from 'components/data/query-site-plans';
-import FormTextInput from 'components/forms/form-text-input';
-import SectionHeader from 'components/section-header';
-import { addQueryArgs } from 'lib/url';
-import { isSiteOnPaidPlan } from 'state/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import CompactCard from 'client/components/card/compact';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import FormTextInput from 'client/components/forms/form-text-input';
+import SectionHeader from 'client/components/section-header';
+import { addQueryArgs } from 'client/lib/url';
+import { isSiteOnPaidPlan } from 'client/state/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 
 class DisconnectSurvey extends PureComponent {
 	state = {

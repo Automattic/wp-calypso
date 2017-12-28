@@ -12,15 +12,15 @@ import { flowRight, get, isEmpty, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from 'client/components/button';
 import CacheStats from './cache-stats';
 import QueryStats from '../data/query-stats';
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import { generateStats } from '../../state/stats/actions';
-import { getSiteTitle, isJetpackSiteMultiSite } from 'state/sites/selectors';
+import { getSiteTitle, isJetpackSiteMultiSite } from 'client/state/sites/selectors';
 import { getStats, isGeneratingStats } from '../../state/stats/selectors';
 
 class ContentsTab extends Component {

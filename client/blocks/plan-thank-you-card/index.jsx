@@ -13,15 +13,15 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { getRawSite } from 'state/sites/selectors';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import QuerySites from 'components/data/query-sites';
-import QuerySitePlans from 'components/data/query-site-plans';
-import { getPlan } from 'lib/plans';
-import formatCurrency from 'lib/format-currency';
-import ThankYouCard from 'components/thank-you-card';
-import PlanIcon from 'components/plans/plan-icon';
-import { getPlanClass } from 'lib/plans/constants';
+import { getRawSite } from 'client/state/sites/selectors';
+import { getCurrentPlan } from 'client/state/sites/plans/selectors';
+import QuerySites from 'client/components/data/query-sites';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import { getPlan } from 'client/lib/plans';
+import formatCurrency from 'client/lib/format-currency';
+import ThankYouCard from 'client/components/thank-you-card';
+import PlanIcon from 'client/components/plans/plan-icon';
+import { getPlanClass } from 'client/lib/plans/constants';
 
 class PlanThankYouCard extends Component {
 	getPlanClass() {

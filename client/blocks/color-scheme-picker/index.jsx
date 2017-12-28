@@ -10,11 +10,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import QueryPreferences from 'components/data/query-preferences';
-import { savePreference, setPreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
+import QueryPreferences from 'client/components/data/query-preferences';
+import { savePreference, setPreference } from 'client/state/preferences/actions';
+import { getPreference } from 'client/state/preferences/selectors';
 import getColorSchemesData from './constants';
-import FormRadiosBar from 'components/forms/form-radios-bar';
+import FormRadiosBar from 'client/components/forms/form-radios-bar';
 
 class ColorSchemePicker extends PureComponent {
 	static propTypes = {

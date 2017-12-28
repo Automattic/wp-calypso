@@ -10,8 +10,8 @@ import React from 'react';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { getTld } from 'lib/domains';
-import EmptyContent from 'components/empty-content';
+import { getTld } from 'client/lib/domains';
+import EmptyContent from 'client/components/empty-content';
 
 const MaintenanceCard = ( { selectedDomainName, translate } ) => {
 	const tld = getTld( selectedDomainName );

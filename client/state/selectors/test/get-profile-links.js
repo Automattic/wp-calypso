@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getProfileLinks } from 'state/selectors';
+import { getProfileLinks } from 'client/state/selectors';
 
 describe( 'getProfileLinks()', () => {
 	const profileLinks = [

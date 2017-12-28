@@ -14,18 +14,22 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { cartItems } from 'lib/cart-values';
-import CompactCard from 'components/card/compact';
+import { cartItems } from 'client/lib/cart-values';
+import CompactCard from 'client/components/card/compact';
 import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
-import { abtest } from 'lib/abtest';
+import { abtest } from 'client/lib/abtest';
 import {
 	validate as validateGappsUsers,
 	filter as filterUsers,
-} from 'lib/domains/google-apps-users';
-import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
-import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+} from 'client/lib/domains/google-apps-users';
+import { getAnnualPrice, getMonthlyPrice } from 'client/lib/google-apps';
+import {
+	recordTracksEvent,
+	recordGoogleEvent,
+	composeAnalytics,
+} from 'client/state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'client/state/current-user/selectors';
 
 class GoogleAppsDialog extends React.Component {
 	static propTypes = {

@@ -11,11 +11,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import QuerySiteDomains from 'components/data/query-site-domains';
+import DomainWarnings from 'client/my-sites/domains/components/domain-warnings';
+import { getDecoratedSiteDomains } from 'client/state/sites/domains/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import QuerySiteDomains from 'client/components/data/query-site-domains';
 
 const ruleWhiteList = [
 	'unverifiedDomainsCanManage',

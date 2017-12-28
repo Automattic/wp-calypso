@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingUserSuggestions as isRequesting } from 'state/users/suggestions/selectors';
-import { requestUserSuggestions } from 'state/users/suggestions/actions';
+import { isRequestingUserSuggestions as isRequesting } from 'client/state/users/suggestions/selectors';
+import { requestUserSuggestions } from 'client/state/users/suggestions/actions';
 
 class QueryUsersSuggestions extends Component {
 	static propTypes = {

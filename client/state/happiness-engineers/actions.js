@@ -4,13 +4,13 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	HAPPINESS_ENGINEERS_FETCH,
 	HAPPINESS_ENGINEERS_RECEIVE,
 	HAPPINESS_ENGINEERS_FETCH_FAILURE,
 	HAPPINESS_ENGINEERS_FETCH_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns an action object used in signalling that a list of HEs

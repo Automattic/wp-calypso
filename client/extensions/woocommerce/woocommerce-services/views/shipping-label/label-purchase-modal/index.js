@@ -10,23 +10,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Dialog from 'components/dialog';
-import getPDFSupport from 'woocommerce/woocommerce-services/lib/utils/pdf-support';
+import Button from 'client/components/button';
+import Dialog from 'client/components/dialog';
+import getPDFSupport from 'client/extensions/woocommerce/woocommerce-services/lib/utils/pdf-support';
 import AddressStep from './address-step';
 import PackagesStep from './packages-step';
 import RatesStep from './rates-step';
 import Sidebar from './sidebar';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import formatCurrency from 'lib/format-currency';
-import { confirmPrintLabel, purchaseLabel, exitPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import {
-	getShippingLabel,
-	isLoaded,
-	getTotalPriceBreakdown,
-	getFormErrors,
-	canPurchase,
-} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import formatCurrency from 'client/lib/format-currency';
+import { confirmPrintLabel, purchaseLabel, exitPrintingFlow } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
+import { getShippingLabel, isLoaded, getTotalPriceBreakdown, getFormErrors, canPurchase } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const PurchaseDialog = ( props ) => {
 	const { loaded, translate } = props;

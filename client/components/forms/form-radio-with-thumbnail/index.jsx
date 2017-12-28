@@ -9,8 +9,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormRadio from 'components/forms/form-radio';
-import FormLabel from 'components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
+import FormLabel from 'client/components/forms/form-label';
 
 const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
 	const { cssClass, cssColor, imageUrl } = thumbnail;

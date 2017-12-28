@@ -13,16 +13,16 @@ import { find, groupBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Notice from 'components/notice';
-import Button from 'components/button';
-import PendingGappsTosNotice from 'my-sites/domains/components/domain-warnings/pending-gapps-tos-notice';
-import paths from 'my-sites/domains/paths';
-import analyticsMixin from 'lib/mixins/analytics';
-import SectionHeader from 'components/section-header';
+import CompactCard from 'client/components/card/compact';
+import Notice from 'client/components/notice';
+import Button from 'client/components/button';
+import PendingGappsTosNotice from 'client/my-sites/domains/components/domain-warnings/pending-gapps-tos-notice';
+import paths from 'client/my-sites/domains/paths';
+import analyticsMixin from 'client/lib/mixins/analytics';
+import SectionHeader from 'client/components/section-header';
 import GoogleAppsUserItem from './google-apps-user-item';
-import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
-import support from 'lib/url/support';
+import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'client/lib/domains';
+import support from 'client/lib/url/support';
 
 const GoogleAppsUsers = createReactClass( {
 	displayName: 'GoogleAppsUsers',

@@ -11,32 +11,35 @@ import { find, isObject, isFunction, isEqual, compact } from 'lodash';
  * Internal dependencies
  */
 // TODO: Remove this when product edits have siteIds.
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
-import { getAllProductEdits } from 'woocommerce/state/ui/products/selectors';
-import { getProduct } from 'woocommerce/state/sites/products/selectors';
-import { getAllVariationEdits } from 'woocommerce/state/ui/products/variations/selectors';
-import { getAllProductCategoryEdits } from 'woocommerce/state/ui/product-categories/selectors';
-import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
-import { createProduct, updateProduct } from 'woocommerce/state/sites/products/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { editProductRemoveCategory } from 'client/extensions/woocommerce/state/ui/products/actions';
+import { getAllProductEdits } from 'client/extensions/woocommerce/state/ui/products/selectors';
+import { getProduct } from 'client/extensions/woocommerce/state/sites/products/selectors';
+import { getAllVariationEdits } from 'client/extensions/woocommerce/state/ui/products/variations/selectors';
+import { getAllProductCategoryEdits } from 'client/extensions/woocommerce/state/ui/product-categories/selectors';
+import { getVariationsForProduct } from 'client/extensions/woocommerce/state/sites/product-variations/selectors';
+import {
+	createProduct,
+	updateProduct,
+} from 'client/extensions/woocommerce/state/sites/products/actions';
 import {
 	createProductVariation,
 	updateProductVariation,
 	deleteProductVariation,
-} from 'woocommerce/state/sites/product-variations/actions';
-import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
+} from 'client/extensions/woocommerce/state/sites/product-variations/actions';
+import { createProductCategory } from 'client/extensions/woocommerce/state/sites/product-categories/actions';
 import {
 	actionListStepNext,
 	actionListStepSuccess,
 	actionListStepFailure,
 	actionListClear,
-} from 'woocommerce/state/action-list/actions';
+} from 'client/extensions/woocommerce/state/action-list/actions';
 import {
 	WOOCOMMERCE_PRODUCT_EDIT,
 	WOOCOMMERCE_PRODUCT_ATTRIBUTE_EDIT,
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 	WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: [ actionAppendProductVariations ],

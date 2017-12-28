@@ -11,23 +11,23 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
-import FormTextInput from 'components/forms/form-text-input';
-import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
+import formatCurrency from 'client/lib/format-currency';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { getCurrencyFormatDecimal } from 'client/extensions/woocommerce/lib/currency';
 import {
 	getOrderDiscountTax,
 	getOrderFeeTax,
 	getOrderLineItemTax,
 	getOrderShippingTax,
 	getOrderTotalTax,
-} from 'woocommerce/lib/order-values';
-import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
+} from 'client/extensions/woocommerce/lib/order-values';
+import { getOrderRefundTotal } from 'client/extensions/woocommerce/lib/order-values/totals';
 import OrderTotalRow from '../order-details/row-total';
-import PriceInput from 'woocommerce/components/price-input';
-import ScreenReaderText from 'components/screen-reader-text';
-import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
-import TableItem from 'woocommerce/components/table/table-item';
+import PriceInput from 'client/extensions/woocommerce/components/price-input';
+import ScreenReaderText from 'client/components/screen-reader-text';
+import Table from 'client/extensions/woocommerce/components/table';
+import TableRow from 'client/extensions/woocommerce/components/table/table-row';
+import TableItem from 'client/extensions/woocommerce/components/table/table-item';
 
 class OrderRefundTable extends Component {
 	static propTypes = {

@@ -10,9 +10,9 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
-import cssSafeUrl from 'lib/css-safe-url';
+import AutoDirection from 'client/components/auto-direction';
+import Emojify from 'client/components/emojify';
+import cssSafeUrl from 'client/lib/css-safe-url';
 
 class PostPhoto extends React.Component {
 	state = {

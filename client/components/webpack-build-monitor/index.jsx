@@ -11,7 +11,7 @@ import { find, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import Spinner from 'components/spinner';
+import Spinner from 'client/components/spinner';
 
 const MESSAGE_STATUS_MAP = {
 	'[HMR] connected': { isConnected: true },

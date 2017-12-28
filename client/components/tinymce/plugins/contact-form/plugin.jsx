@@ -22,9 +22,9 @@ import {
 	fieldRemove,
 	fieldUpdate,
 	settingsUpdate,
-} from 'state/ui/editor/contact-form/actions';
+} from 'client/state/ui/editor/contact-form/actions';
 import { serialize, deserialize } from './shortcode-utils';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'client/lib/react-helpers';
 
 const wpcomContactForm = editor => {
 	let node;

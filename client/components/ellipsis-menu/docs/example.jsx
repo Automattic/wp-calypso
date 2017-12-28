@@ -10,8 +10,8 @@ import React from 'react';
  * Internal dependencies
  */
 import EllipsisMenu from '../';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import PopoverMenuSeparator from 'client/components/popover/menu-separator';
 
 export default function EllipsisMenuExample() {
 	return (

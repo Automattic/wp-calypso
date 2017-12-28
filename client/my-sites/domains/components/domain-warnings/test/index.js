@@ -18,8 +18,8 @@ import ReactDom from 'react-dom';
  * Internal dependencies
  */
 import { DomainWarnings } from '../';
-import { type as domainTypes } from 'lib/domains/constants';
-import support from 'lib/url/support';
+import { type as domainTypes } from 'client/lib/domains/constants';
+import support from 'client/lib/url/support';
 
 jest.mock( 'lib/analytics', () => ( {} ) );
 

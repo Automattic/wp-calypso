@@ -8,14 +8,14 @@ import { noop, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { isJetpackSite } from 'state/sites/selectors';
-import { SECTION_SET, SELECTED_SITE_SET, JITM_DISMISS } from 'state/action-types';
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { SECTION_SET, SELECTED_SITE_SET, JITM_DISMISS } from 'client/state/action-types';
+import { makeParser } from 'client/state/data-layer/wpcom-http/utils';
 import schema from './schema.json';
-import { clearJITM, insertJITM } from 'state/jitm/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { clearJITM, insertJITM } from 'client/state/jitm/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 /**
  * Poor man's process manager

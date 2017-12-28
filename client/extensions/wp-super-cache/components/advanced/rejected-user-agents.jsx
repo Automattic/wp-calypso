@@ -10,12 +10,12 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextarea from 'components/forms/form-textarea';
-import SectionHeader from 'components/section-header';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextarea from 'client/components/forms/form-textarea';
+import SectionHeader from 'client/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
 const RejectedUserAgents = ( {

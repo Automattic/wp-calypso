@@ -14,20 +14,20 @@ import { get, find, map } from 'lodash';
  * Internal dependencies
  */
 import { getPostImage, getExcerptForPost } from './utils';
-import FacebookSharePreview from 'components/share/facebook-share-preview';
-import GooglePlusSharePreview from 'components/share/google-plus-share-preview';
-import LinkedinSharePreview from 'components/share/linkedin-share-preview';
-import TwitterSharePreview from 'components/share/twitter-share-preview';
-import TumblrSharePreview from 'components/share/tumblr-share-preview';
-import VerticalMenu from 'components/vertical-menu';
-import { SocialItem } from 'components/vertical-menu/items';
-import { getSitePost } from 'state/posts/selectors';
-import { getSeoTitle, getSiteSlug } from 'state/sites/selectors';
-import { getSite } from 'state/sites/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+import FacebookSharePreview from 'client/components/share/facebook-share-preview';
+import GooglePlusSharePreview from 'client/components/share/google-plus-share-preview';
+import LinkedinSharePreview from 'client/components/share/linkedin-share-preview';
+import TwitterSharePreview from 'client/components/share/twitter-share-preview';
+import TumblrSharePreview from 'client/components/share/tumblr-share-preview';
+import VerticalMenu from 'client/components/vertical-menu';
+import { SocialItem } from 'client/components/vertical-menu/items';
+import { getSitePost } from 'client/state/posts/selectors';
+import { getSeoTitle, getSiteSlug } from 'client/state/sites/selectors';
+import { getSite } from 'client/state/sites/selectors';
+import { getSiteUserConnections } from 'client/state/sharing/publicize/selectors';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
 
 const serviceNames = {
 	facebook: 'Facebook',

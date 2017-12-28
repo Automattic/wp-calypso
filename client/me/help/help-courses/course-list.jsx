@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Course from './course';
-import Card from 'components/card';
+import Card from 'client/components/card';
 
 class CourseList extends Component {
 	render() {

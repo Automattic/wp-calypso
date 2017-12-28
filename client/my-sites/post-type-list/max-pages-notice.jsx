@@ -12,8 +12,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 class PostTypeListMaxPagesNotice extends Component {
 	static propTypes = {

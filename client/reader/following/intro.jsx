@@ -11,11 +11,11 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import QueryPreferences from 'components/data/query-preferences';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
-import { recordTrack } from 'reader/stats';
-import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'state/ui/guided-tours/contexts';
+import QueryPreferences from 'client/components/data/query-preferences';
+import { savePreference } from 'client/state/preferences/actions';
+import { getPreference } from 'client/state/preferences/selectors';
+import { recordTrack } from 'client/reader/stats';
+import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'client/state/ui/guided-tours/contexts';
 
 class FollowingIntro extends React.Component {
 	componentDidMount() {

@@ -5,7 +5,7 @@
  */
 
 import { reducer as connection } from './connection/reducer';
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import { reducer as credentials } from './credentials/reducer';
 import { reducer as jumpstart } from './jumpstart/reducer';
 import { reducer as modules } from './modules/reducer';

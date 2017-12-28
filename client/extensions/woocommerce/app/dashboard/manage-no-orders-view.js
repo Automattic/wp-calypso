@@ -12,11 +12,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import BasicWidget from 'woocommerce/components/basic-widget';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import ShareWidget from 'woocommerce/components/share-widget';
-import WidgetGroup from 'woocommerce/components/widget-group';
+import analytics from 'client/lib/analytics';
+import BasicWidget from 'client/extensions/woocommerce/components/basic-widget';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import ShareWidget from 'client/extensions/woocommerce/components/share-widget';
+import WidgetGroup from 'client/extensions/woocommerce/components/widget-group';
 
 class ManageNoOrdersView extends Component {
 	static propTypes = {

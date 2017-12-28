@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { CONNECTION_LOST, CONNECTION_RESTORED } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { CONNECTION_LOST, CONNECTION_RESTORED } from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
 
 export const connectionState = createReducer( 'CHECKING', {
 	[ CONNECTION_LOST ]: () => 'OFFLINE',

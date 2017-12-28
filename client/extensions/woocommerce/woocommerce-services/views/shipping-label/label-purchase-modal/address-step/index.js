@@ -12,14 +12,10 @@ import { isEqual } from 'lodash';
  * Internal dependencies
  */
 import AddressFields from './fields';
-import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
+import { hasNonEmptyLeaves } from 'client/extensions/woocommerce/woocommerce-services/lib/utils/tree';
 import StepContainer from '../step-container';
-import { toggleStep } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import {
-	getShippingLabel,
-	isLoaded,
-	getFormErrors,
-} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { toggleStep } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
+import { getShippingLabel, isLoaded, getFormErrors } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const renderSummary = ( {
 		values,

@@ -20,8 +20,8 @@ import {
 	JETPACK_JUMPSTART_STATUS_REQUEST,
 	JETPACK_JUMPSTART_STATUS_REQUEST_SUCCESS,
 	JETPACK_JUMPSTART_STATUS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
 
 const createRequestReducer = data => {
 	return ( state, { siteId } ) => {

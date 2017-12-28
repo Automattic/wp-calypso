@@ -13,17 +13,20 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { areLocationsLoaded, getStates } from 'woocommerce/state/sites/locations/selectors';
+import {
+	areLocationsLoaded,
+	getStates,
+} from 'client/extensions/woocommerce/state/sites/locations/selectors';
 import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import { decodeEntities } from 'lib/formatting';
-import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
-import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import { decodeEntities } from 'client/lib/formatting';
+import { fetchLocations } from 'client/extensions/woocommerce/state/sites/locations/actions';
+import { fetchSettingsGeneral } from 'client/extensions/woocommerce/state/sites/settings/general/actions';
+import FormLabel from 'client/components/forms/form-label';
+import FormSelect from 'client/components/forms/form-select';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 
 class FormStateSelectFromApi extends Component {
 	static propTypes = {

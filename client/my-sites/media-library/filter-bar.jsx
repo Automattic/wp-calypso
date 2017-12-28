@@ -12,11 +12,11 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
-import Search from 'components/search';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import PlanStorage from 'blocks/plan-storage';
+import SectionNav from 'client/components/section-nav';
+import SectionNavTabs from 'client/components/section-nav/tabs';
+import Search from 'client/components/search';
+import TrackComponentView from 'client/lib/analytics/track-component-view';
+import PlanStorage from 'client/blocks/plan-storage';
 import FilterItem from './filter-item';
 import DataSource from './data-source';
 

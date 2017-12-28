@@ -10,13 +10,16 @@ import { initialize, startSubmit, stopSubmit } from 'redux-form';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice, removeNotice, successNotice } from 'client/state/notices/actions';
 import { fromApi, toApi } from './util';
 import { updateFeed } from '../../feeds/actions';
 import { getZone } from '../../zones/selectors';
-import { ZONINATOR_REQUEST_FEED, ZONINATOR_SAVE_FEED } from 'zoninator/state/action-types';
+import {
+	ZONINATOR_REQUEST_FEED,
+	ZONINATOR_SAVE_FEED,
+} from 'client/extensions/zoninator/state/action-types';
 
 const requestFeedNotice = 'zoninator-request-feed';
 const saveFeedNotice = 'zoninator-save-feed';

@@ -9,7 +9,7 @@ import { get, isArray, merge, omit, stubFalse, stubTrue } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer, combineReducers, keyedReducer } from 'state/utils';
+import { createReducer, combineReducers, keyedReducer } from 'client/state/utils';
 import { domainWhoisSchema } from './schema';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
@@ -25,7 +25,7 @@ import {
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

@@ -5,9 +5,9 @@
  */
 
 import config from 'config';
-import userFactory from 'lib/user';
-import { makeLayout } from 'controller';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import userFactory from 'client/lib/user';
+import { makeLayout } from 'client/controller';
+import { navigation, siteSelection, sites } from 'client/my-sites/controller';
 import { loggedIn, loggedOut, upload, fetchThemeFilters } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
 

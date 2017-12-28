@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestEligibility } from 'state/automated-transfer/actions';
+import { requestEligibility } from 'client/state/automated-transfer/actions';
 
 export class QueryAutomatedTransferEligibility extends Component {
 	static propTypes = {

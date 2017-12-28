@@ -15,7 +15,7 @@ import {
 	getLocaleFromPath,
 	isDefaultLocale,
 	removeLocaleFromPath,
-} from 'lib/i18n-utils';
+} from 'client/lib/i18n-utils';
 
 describe( 'utils', () => {
 	describe( '#isDefaultLocale', () => {

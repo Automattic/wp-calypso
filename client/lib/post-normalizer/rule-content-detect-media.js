@@ -11,7 +11,7 @@ import getEmbedMetadata from 'get-video-id';
  * Internal Dependencies
  */
 import { iframeIsWhitelisted, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
-import { READER_CONTENT_WIDTH } from 'state/reader/posts/normalization-rules';
+import { READER_CONTENT_WIDTH } from 'client/state/reader/posts/normalization-rules';
 
 /** Checks whether or not an image is a tracking pixel
 * @param {Node} image - DOM node for an img

@@ -7,8 +7,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'client/state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
 import { itemsSchema } from './schema';
 
 export const items = createReducer(

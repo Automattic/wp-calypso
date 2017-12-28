@@ -11,9 +11,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import { errorNotice } from 'state/notices/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import Button from 'client/components/button';
+import { errorNotice } from 'client/state/notices/actions';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 class ApplicationPasswordsItem extends React.Component {
 	state = {

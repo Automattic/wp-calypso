@@ -11,13 +11,13 @@ import { reducer as form } from 'redux-form';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 import actionLogger from './action-log';
 import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
 import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
-import extensionsModule from 'extensions';
+import extensionsModule from 'client/extensions';
 import application from './application/reducer';
 import accountRecovery from './account-recovery/reducer';
 import automatedTransfer from './automated-transfer/reducer';

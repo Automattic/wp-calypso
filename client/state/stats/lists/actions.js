@@ -4,13 +4,13 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
 	SITE_STATS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * External dependencies

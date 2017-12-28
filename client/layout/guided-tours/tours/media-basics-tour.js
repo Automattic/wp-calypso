@@ -20,9 +20,9 @@ import {
 	Next,
 	Quit,
 	Continue,
-} from 'layout/guided-tours/config-elements';
-import { doesSelectedSiteHaveMediaFiles, isNewUser } from 'state/ui/guided-tours/contexts';
-import { isDesktop } from 'lib/viewport';
+} from 'client/layout/guided-tours/config-elements';
+import { doesSelectedSiteHaveMediaFiles, isNewUser } from 'client/state/ui/guided-tours/contexts';
+import { isDesktop } from 'client/lib/viewport';
 
 export const MediaBasicsTour = makeTour(
 	<Tour

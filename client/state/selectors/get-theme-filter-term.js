@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getThemeFilterTerms } from 'state/selectors';
+import { getThemeFilterTerms } from 'client/state/selectors';
 
 /**
  * Returns theme filter term object.

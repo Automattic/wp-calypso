@@ -13,13 +13,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/dialog';
-import QuerySitePlans from 'components/data/query-site-plans';
+import Button from 'client/components/button';
+import DisconnectJetpackDialog from 'client/blocks/disconnect-jetpack/dialog';
+import QuerySitePlans from 'client/components/data/query-site-plans';
 import {
 	recordGoogleEvent as recordGoogleEventAction,
 	recordTracksEvent as recordTracksEventAction,
-} from 'state/analytics/actions';
+} from 'client/state/analytics/actions';
 
 class DisconnectJetpackButton extends Component {
 	state = { dialogVisible: false };

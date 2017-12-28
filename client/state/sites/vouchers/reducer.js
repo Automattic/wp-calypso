@@ -13,8 +13,8 @@ import {
 	SITE_VOUCHERS_REQUEST,
 	SITE_VOUCHERS_REQUEST_SUCCESS,
 	SITE_VOUCHERS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers } from 'client/state/utils';
 import { itemsSchema } from './schema';
 
 /**

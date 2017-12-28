@@ -12,17 +12,17 @@ import { identity, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import support from 'lib/url/support';
-import Card from 'components/card';
-import FormButton from 'components/button';
-import FormLabel from 'components/forms/form-label';
-import FormInput from 'components/forms/form-text-input';
-import { fetchResetOptionsByLogin } from 'state/account-recovery/reset/actions';
+import support from 'client/lib/url/support';
+import Card from 'client/components/card';
+import FormButton from 'client/components/button';
+import FormLabel from 'client/components/forms/form-label';
+import FormInput from 'client/components/forms/form-text-input';
+import { fetchResetOptionsByLogin } from 'client/state/account-recovery/reset/actions';
 
 import {
 	isRequestingAccountRecoveryResetOptions,
 	getAccountRecoveryResetOptionsError,
-} from 'state/selectors';
+} from 'client/state/selectors';
 
 export class LostPasswordFormComponent extends Component {
 	constructor( props ) {

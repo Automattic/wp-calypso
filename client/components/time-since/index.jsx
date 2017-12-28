@@ -8,9 +8,9 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import smartSetState from 'lib/react-smart-set-state';
-import ticker from 'lib/ticker';
-import humanDate from 'lib/human-date';
+import smartSetState from 'client/lib/react-smart-set-state';
+import ticker from 'client/lib/ticker';
+import humanDate from 'client/lib/human-date';
 
 export default class TimeSince extends PureComponent {
 	smartSetState = smartSetState;

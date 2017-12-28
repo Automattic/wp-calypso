@@ -9,7 +9,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSiteComments from 'state/selectors/get-site-comments';
+import getSiteComments from 'client/state/selectors/get-site-comments';
 
 /**
  * Returns a comment for the specified site and comment ID.

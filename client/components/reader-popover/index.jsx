@@ -9,7 +9,7 @@ import { omit } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Popover from 'components/popover';
+import Popover from 'client/components/popover';
 
 const ReaderPopover = props => {
 	const classes = classnames( 'reader-popover', props.className );

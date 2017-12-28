@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestProduct, requestProducts } from 'state/simple-payments/product-list/actions';
+import { requestProduct, requestProducts } from 'client/state/simple-payments/product-list/actions';
 
 class QuerySimplePayments extends Component {
 	static propTypes = {

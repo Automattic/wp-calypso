@@ -4,13 +4,13 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	KEYRING_SERVICES_RECEIVE,
 	KEYRING_SERVICES_REQUEST,
 	KEYRING_SERVICES_REQUEST_FAILURE,
 	KEYRING_SERVICES_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Triggers a network request for Keyring services.

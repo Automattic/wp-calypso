@@ -11,9 +11,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
+import Popover from 'client/components/popover';
 import PostLikes from './index';
-import { getPostLikes } from 'state/selectors';
+import { getPostLikes } from 'client/state/selectors';
 
 function PostLikesPopover( props ) {
 	const { className, siteId, postId, showDisplayNames, context, onClose, likes } = props;

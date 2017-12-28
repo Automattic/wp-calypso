@@ -15,11 +15,11 @@ import 'tinymce/plugins/lists/plugin.js';
 /**
  * Internal dependencies
  */
-import i18n from 'components/tinymce/i18n';
-import userFactory from 'lib/user';
-import { wpautop } from 'lib/formatting';
+import i18n from 'client/components/tinymce/i18n';
+import userFactory from 'client/lib/user';
+import { wpautop } from 'client/lib/formatting';
 // TinyMCE plugins & dependencies
-import wplinkPlugin from 'components/tinymce/plugins/wplink/plugin';
+import wplinkPlugin from 'client/components/tinymce/plugins/wplink/plugin';
 
 class CompactTinyMCE extends Component {
 	static contextTypes = {

@@ -13,10 +13,10 @@ import { debounce } from 'lodash';
 /**
  * Internal Dependencies
  */
-import DropdownItem from 'components/select-dropdown/item';
-import SelectDropdown from 'components/select-dropdown';
-import viewport from 'lib/viewport';
-import afterLayoutFlush from 'lib/after-layout-flush';
+import DropdownItem from 'client/components/select-dropdown/item';
+import SelectDropdown from 'client/components/select-dropdown';
+import viewport from 'client/lib/viewport';
+import afterLayoutFlush from 'client/lib/after-layout-flush';
 
 /**
  * Internal Variables

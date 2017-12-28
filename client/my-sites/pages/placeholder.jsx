@@ -9,8 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import SiteIcon from 'blocks/site-icon';
+import CompactCard from 'client/components/card/compact';
+import SiteIcon from 'client/blocks/site-icon';
 
 class PagePlaceholder extends React.Component {
 	static displayName = 'PagePlaceholder';

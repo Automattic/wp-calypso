@@ -9,7 +9,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { writePostComment } from '../';
-import * as Utils from 'state/data-layer/wpcom/sites/utils';
+import * as Utils from 'client/state/data-layer/wpcom/sites/utils';
 
 describe( '#writePostComment()', () => {
 	const action = {

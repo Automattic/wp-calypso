@@ -16,16 +16,16 @@ import Bluehost from './bluehost';
 import ErrorNotice from './error-notice';
 import SiteGround from './siteground';
 import Pressable from './pressable';
-import SectionHeader from 'components/section-header';
-import { cartItems } from 'lib/cart-values';
-import upgradesActions from 'lib/upgrades/actions';
+import SectionHeader from 'client/components/section-header';
+import { cartItems } from 'client/lib/cart-values';
+import upgradesActions from 'client/lib/upgrades/actions';
 import page from 'page';
-import { saveHostDetails } from 'state/sites/guided-transfer/actions';
+import { saveHostDetails } from 'client/state/sites/guided-transfer/actions';
 import {
 	isGuidedTransferSavingHostDetails,
 	isGuidedTransferAwaitingPurchase,
-} from 'state/sites/guided-transfer/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+} from 'client/state/sites/guided-transfer/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 
 class HostCredentialsPage extends Component {
 	static propTypes = {

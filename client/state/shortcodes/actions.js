@@ -4,13 +4,13 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,
 	SHORTCODE_REQUEST_FAILURE,
 	SHORTCODE_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export function fetchShortcode( siteId, shortcode ) {
 	return dispatch => {

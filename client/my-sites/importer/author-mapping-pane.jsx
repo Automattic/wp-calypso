@@ -11,10 +11,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/forms/form-button';
+import Button from 'client/components/forms/form-button';
 import AuthorMapping from './author-mapping-item';
-import SiteUsersFetcher from 'components/site-users-fetcher';
-import UsersStore from 'lib/users/store';
+import SiteUsersFetcher from 'client/components/site-users-fetcher';
+import UsersStore from 'client/lib/users/store';
 
 class ImporterMappingPane extends React.PureComponent {
 	static displayName = 'ImporterMappingPane';

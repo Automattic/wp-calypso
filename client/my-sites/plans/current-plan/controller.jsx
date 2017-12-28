@@ -11,8 +11,8 @@ import page from 'page';
  * Internal Dependencies
  */
 import CurrentPlan from './';
-import { isFreePlan } from 'lib/products-values';
-import { getSelectedSite } from 'state/ui/selectors';
+import { isFreePlan } from 'client/lib/products-values';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 export default {
 	currentPlan( context, next ) {

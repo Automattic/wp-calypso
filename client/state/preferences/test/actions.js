@@ -20,7 +20,7 @@ import {
 	PREFERENCES_SAVE,
 	PREFERENCES_SAVE_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 

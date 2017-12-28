@@ -12,18 +12,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import { cartItems } from 'lib/cart-values';
-import { getSiteBySlug } from 'state/sites/selectors';
-import SignupActions from 'lib/signup/actions';
-import StepWrapper from 'signup/step-wrapper';
-import QueryPlans from 'components/data/query-plans';
-import QuerySitePlans from 'components/data/query-site-plans';
-import { getDesignType } from 'state/signup/steps/design-type/selectors';
-import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
+import analytics from 'client/lib/analytics';
+import { cartItems } from 'client/lib/cart-values';
+import { getSiteBySlug } from 'client/state/sites/selectors';
+import SignupActions from 'client/lib/signup/actions';
+import StepWrapper from 'client/signup/step-wrapper';
+import QueryPlans from 'client/components/data/query-plans';
+import QuerySitePlans from 'client/components/data/query-site-plans';
+import { getDesignType } from 'client/state/signup/steps/design-type/selectors';
+import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from 'client/lib/plans/constants';
 import { isEnabled } from 'config';
-import PlanFeatures from 'my-sites/plan-features';
-import { DESIGN_TYPE_STORE } from 'signup/constants';
+import PlanFeatures from 'client/my-sites/plan-features';
+import { DESIGN_TYPE_STORE } from 'client/signup/constants';
 
 class PlansAtomicStoreStep extends Component {
 	static propTypes = {

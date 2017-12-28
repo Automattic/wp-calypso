@@ -11,21 +11,21 @@ import { flowRight, get, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import FormToggle from 'components/forms/form-toggle/compact';
-import Notice from 'components/notice';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormLegend from 'client/components/forms/form-legend';
+import FormSelect from 'client/components/forms/form-select';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormToggle from 'client/components/forms/form-toggle/compact';
+import Notice from 'client/components/notice';
 import QueryStatus from '../data/query-status';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'client/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 import { cancelPreloadCache, preloadCache } from '../../state/cache/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import { isPreloadingCache } from '../../state/cache/selectors';
 import { getStatus } from '../../state/status/selectors';
 

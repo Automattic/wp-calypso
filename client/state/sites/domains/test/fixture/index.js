@@ -9,8 +9,8 @@ import {
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { createSiteDomainObject } from 'state/sites/domains/assembler';
+} from 'client/state/action-types';
+import { createSiteDomainObject } from 'client/state/sites/domains/assembler';
 
 // first testing-site ID
 export const SITE_ID_FIRST = 2916284;

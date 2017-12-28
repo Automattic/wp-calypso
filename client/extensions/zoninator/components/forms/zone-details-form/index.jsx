@@ -13,12 +13,12 @@ import { flowRight, mapValues, trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card';
-import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextarea from 'components/forms/form-textarea';
-import ReduxFormFieldset from 'components/redux-forms/redux-form-fieldset';
-import SectionHeader from 'components/section-header';
+import CompactCard from 'client/components/card';
+import FormButton from 'client/components/forms/form-button';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormTextarea from 'client/components/forms/form-textarea';
+import ReduxFormFieldset from 'client/components/redux-forms/redux-form-fieldset';
+import SectionHeader from 'client/components/section-header';
 
 const form = 'extensions.zoninator.zoneDetails';
 

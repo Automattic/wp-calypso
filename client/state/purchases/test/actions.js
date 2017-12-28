@@ -25,7 +25,7 @@ import {
 	PURCHASES_USER_FETCH_COMPLETED,
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import useNock from 'test/helpers/use-nock';
 
 jest.mock( 'lib/olark', () => ( {

@@ -12,7 +12,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import buildUrl from 'lib/build-url';
+import buildUrl from 'client/lib/build-url';
 
 export default {
 	getInitialState: function() {

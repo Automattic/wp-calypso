@@ -7,24 +7,28 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import GoogleLoginButton from 'components/social-buttons/google';
+import GoogleLoginButton from 'client/components/social-buttons/google';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
+import {
+	loginSocialUser,
+	createSocialUser,
+	createSocialUserFailed,
+} from 'client/state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
 	getCreatedSocialAccountBearerToken,
 	getRedirectToOriginal,
 	isSocialAccountCreating,
-} from 'state/login/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import WpcomLoginForm from 'signup/wpcom-login-form';
-import { InfoNotice } from 'blocks/global-notice';
-import { login } from 'lib/paths';
+} from 'client/state/login/selectors';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'client/state/analytics/actions';
+import WpcomLoginForm from 'client/signup/wpcom-login-form';
+import { InfoNotice } from 'client/blocks/global-notice';
+import { login } from 'client/lib/paths';
 
 class SocialLoginForm extends Component {
 	static propTypes = {

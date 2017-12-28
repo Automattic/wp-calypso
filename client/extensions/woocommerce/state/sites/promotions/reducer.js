@@ -12,7 +12,7 @@ import { fill, find, findIndex } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import {
 	WOOCOMMERCE_COUPON_DELETED,
 	WOOCOMMERCE_COUPON_UPDATED,
@@ -20,7 +20,7 @@ import {
 	WOOCOMMERCE_PRODUCT_UPDATED,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATED,
 	WOOCOMMERCE_PRODUCTS_REQUEST_SUCCESS,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 import { createPromotionFromProduct, createPromotionFromCoupon } from './helpers';
 
 const initialState = {

@@ -15,16 +15,16 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Button from 'components/button';
+import Main from 'client/components/main';
+import Button from 'client/components/button';
 import ThemesSelection from './themes-selection';
-import SubMasterbarNav from 'components/sub-masterbar-nav';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import SubMasterbarNav from 'client/components/sub-masterbar-nav';
+import PageViewTracker from 'client/lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
-import DocumentHead from 'components/data/document-head';
-import buildUrl from 'lib/build-url';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import DocumentHead from 'client/components/data/document-head';
+import buildUrl from 'client/lib/build-url';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
 import {
@@ -33,10 +33,10 @@ import {
 	getThemeShowcaseDescription,
 	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
-} from 'state/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'client/state/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 import ThemesSearchCard from './themes-magic-search-card';
-import QueryThemeFilters from 'components/data/query-theme-filters';
+import QueryThemeFilters from 'client/components/data/query-theme-filters';
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },

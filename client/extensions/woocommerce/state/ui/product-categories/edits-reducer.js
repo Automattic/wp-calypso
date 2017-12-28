@@ -9,13 +9,13 @@ import { compact, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT_CLEAR,
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 import { getBucket } from '../helpers';
 
 export default createReducer( null, {

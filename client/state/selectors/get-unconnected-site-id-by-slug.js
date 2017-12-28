@@ -7,7 +7,7 @@ import { findKey } from 'lodash';
 /**
  * Internal dependencies
  */
-import { urlToSlug } from 'lib/url';
+import { urlToSlug } from 'client/lib/url';
 
 export default function getUnconnectedSiteIdBySlug( state, siteSlug ) {
 	const siteId = findKey(

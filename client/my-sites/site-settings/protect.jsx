@@ -13,22 +13,22 @@ import { includes, some, trim, trimEnd } from 'lodash';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import Button from 'components/button';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextarea from 'components/forms/form-textarea';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import FoldableCard from 'client/components/foldable-card';
+import Button from 'client/components/button';
+import JetpackModuleToggle from 'client/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextarea from 'client/components/forms/form-textarea';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode,
-} from 'state/selectors';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
+} from 'client/state/selectors';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
+import QueryJetpackConnection from 'client/components/data/query-jetpack-connection';
 
 class Protect extends Component {
 	static propTypes = {

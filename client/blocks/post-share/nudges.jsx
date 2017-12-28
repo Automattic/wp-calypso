@@ -9,9 +9,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
-import { PLAN_PREMIUM, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
-import formatCurrency from 'lib/format-currency';
+import Banner from 'client/components/banner';
+import { PLAN_PREMIUM, PLAN_JETPACK_PREMIUM } from 'client/lib/plans/constants';
+import formatCurrency from 'client/lib/format-currency';
 
 export const UpgradeToPremiumNudge = props => {
 	const { premiumPrice, jetpackPremiumPrice, translate, userCurrency, isJetpack } = props;

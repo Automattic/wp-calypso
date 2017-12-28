@@ -8,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import EmptyContent from 'client/components/empty-content';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
 
 class FollowingEmptyContent extends React.Component {
 	shouldComponentUpdate() {

@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
+import CompactCard from 'client/components/card/compact';
 import CredentialsForm from '../credentials-form/index';
 
 const SetupForm = ( { formIsSubmitting, reset, siteId, updateCredentials } ) => (

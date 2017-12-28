@@ -4,14 +4,14 @@
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer } from 'client/state/utils';
 import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
 	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 	ROUTE_SET,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { titleSchema, unreadCountSchema, linkSchema, metaSchema } from './schema';
 
 /**

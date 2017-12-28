@@ -12,12 +12,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
+import CompactCard from 'client/components/card/compact';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
 import config from 'config';
-import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import wrapSettingsForm from 'client/my-sites/site-settings/wrap-settings-form';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'client/state/sites/selectors';
 
 const ApiCache = ( {
 	fields,

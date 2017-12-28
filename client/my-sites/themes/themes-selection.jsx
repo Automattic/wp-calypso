@@ -13,13 +13,13 @@ import { compact, includes, isEqual, property, snakeCase } from 'lodash';
  * Internal dependencies
  */
 import { trackClick } from './helpers';
-import QueryThemes from 'components/data/query-themes';
-import ThemesList from 'components/themes-list';
+import QueryThemes from 'client/components/data/query-themes';
+import ThemesList from 'client/components/themes-list';
 import ThemesSelectionHeader from './themes-selection-header';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { recordGoogleEvent, recordTracksEvent } from 'client/state/analytics/actions';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 import {
 	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
@@ -28,10 +28,10 @@ import {
 	isThemesLastPageForQuery,
 	isThemeActive,
 	isInstallingTheme,
-} from 'state/themes/selectors';
-import { setThemePreviewOptions } from 'state/themes/actions';
+} from 'client/state/themes/selectors';
+import { setThemePreviewOptions } from 'client/state/themes/actions';
 import config from 'config';
-import { prependThemeFilterKeys } from 'state/selectors';
+import { prependThemeFilterKeys } from 'client/state/selectors';
 
 class ThemesSelection extends Component {
 	static propTypes = {

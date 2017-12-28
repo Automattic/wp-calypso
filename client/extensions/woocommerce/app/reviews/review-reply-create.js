@@ -14,10 +14,10 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { createReviewReply } from 'woocommerce/state/sites/review-replies/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
-import Gravatar from 'components/gravatar';
-import { successNotice } from 'state/notices/actions';
+import { createReviewReply } from 'client/extensions/woocommerce/state/sites/review-replies/actions';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import Gravatar from 'client/components/gravatar';
+import { successNotice } from 'client/state/notices/actions';
 
 // Matches comments reply box heights
 const TEXTAREA_HEIGHT_COLLAPSED = 47; // 1 line

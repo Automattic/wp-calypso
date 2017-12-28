@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingGeo } from 'state/geo/selectors';
-import { requestGeo } from 'state/geo/actions';
+import { isRequestingGeo } from 'client/state/geo/selectors';
+import { requestGeo } from 'client/state/geo/actions';
 
 class QueryGeo extends Component {
 	componentWillMount() {

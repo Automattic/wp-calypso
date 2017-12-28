@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { isJetpackModuleActive } from 'state/sites/selectors';
-import { isPrivateSite } from 'state/selectors';
+import { isJetpackModuleActive } from 'client/state/sites/selectors';
+import { isPrivateSite } from 'client/state/selectors';
 
 /**
  * Returns false only if the site is known to not support editing images, or

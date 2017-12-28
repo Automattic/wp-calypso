@@ -13,7 +13,11 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import GoogleAppsUsersForm from './users-form';
-import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
+import {
+	recordTracksEvent,
+	recordGoogleEvent,
+	composeAnalytics,
+} from 'client/state/analytics/actions';
 
 class GoogleAppsUsers extends React.Component {
 	componentWillMount() {

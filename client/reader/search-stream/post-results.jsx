@@ -10,12 +10,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Stream from 'reader/stream';
+import Stream from 'client/reader/stream';
 import EmptyContent from './empty';
-import HeaderBack from 'reader/header-back';
-import { RelatedPostCard } from 'blocks/reader-related-card-v2';
-import { SEARCH_RESULTS } from 'reader/follow-sources';
-import PostPlaceholder from 'reader/stream/post-placeholder';
+import HeaderBack from 'client/reader/header-back';
+import { RelatedPostCard } from 'client/blocks/reader-related-card-v2';
+import { SEARCH_RESULTS } from 'client/reader/follow-sources';
+import PostPlaceholder from 'client/reader/stream/post-placeholder';
 
 class PostResults extends Component {
 	static propTypes = {

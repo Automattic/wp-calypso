@@ -15,8 +15,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import safeImageURL from 'lib/safe-image-url';
-import { getUserTempGravatar } from 'state/current-user/gravatar-status/selectors';
+import safeImageURL from 'client/lib/safe-image-url';
+import { getUserTempGravatar } from 'client/state/current-user/gravatar-status/selectors';
 
 export class Gravatar extends Component {
 	constructor() {

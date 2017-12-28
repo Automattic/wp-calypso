@@ -8,17 +8,17 @@ import { delay } from 'lodash';
 /**
  * Internal dependencies
  */
-import { AUTOMATED_TRANSFER_STATUS_REQUEST } from 'state/action-types';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { requestSite } from 'state/sites/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { AUTOMATED_TRANSFER_STATUS_REQUEST } from 'client/state/action-types';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { requestSite } from 'client/state/sites/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import {
 	fetchAutomatedTransferStatus,
 	setAutomatedTransferStatus,
 	automatedTransferStatusFetchingFailure,
-} from 'state/automated-transfer/actions';
-import { transferStates } from 'state/automated-transfer/constants';
+} from 'client/state/automated-transfer/actions';
+import { transferStates } from 'client/state/automated-transfer/constants';
 
 export const requestStatus = ( { dispatch }, action ) => {
 	const { siteId } = action;

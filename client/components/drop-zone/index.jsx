@@ -16,8 +16,8 @@ import { identity, includes, noop, without } from 'lodash';
 /**
  * Internal dependencies
  */
-import RootChild from 'components/root-child';
-import { hideDropZone, showDropZone } from 'state/ui/drop-zone/actions';
+import RootChild from 'client/components/root-child';
+import { hideDropZone, showDropZone } from 'client/state/ui/drop-zone/actions';
 
 export class DropZone extends React.Component {
 	static propTypes = {

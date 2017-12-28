@@ -12,14 +12,14 @@ import { flowRight, map, mapValues, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import ExternalLink from 'components/external-link';
-import SectionHeader from 'components/section-header';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormToggle from 'components/forms/form-toggle/compact';
+import Card from 'client/components/card';
+import ExternalLink from 'client/components/external-link';
+import SectionHeader from 'client/components/section-header';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormToggle from 'client/components/forms/form-toggle/compact';
 import WrapSettingsForm from '../wrap-settings-form';
 import QueryPlugins from '../data/query-plugins';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 import { togglePlugin } from '../../state/plugins/actions';
 import { isRequestingPlugins, isTogglingPlugin, getPlugins } from '../../state/plugins/selectors';
 

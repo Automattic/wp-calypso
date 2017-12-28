@@ -11,19 +11,19 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import emitter from 'lib/mixins/emitter';
-import userModule from 'lib/user';
-import notices from 'notices';
-import olarkEvents from 'lib/olark-events';
-import olarkStore from 'lib/olark-store';
-import olarkActions from 'lib/olark-store/actions';
+import wpcom from 'client/lib/wp';
+import emitter from 'client/lib/mixins/emitter';
+import userModule from 'client/lib/user';
+import notices from 'client/notices';
+import olarkEvents from 'client/lib/olark-events';
+import olarkStore from 'client/lib/olark-store';
+import olarkActions from 'client/lib/olark-store/actions';
 import {
 	olarkReady,
 	operatorsAway,
 	operatorsAvailable,
 	setChatAvailability,
-} from 'state/ui/olark/actions';
+} from 'client/state/ui/olark/actions';
 
 /**
  * Module variables
@@ -37,7 +37,7 @@ const wpcomUndocumented = wpcom.undocumented();
  * This is necessary here to capture events that occur in the Olark
  * module before the React tree gets drawn.
  */
-import 'lib/olark-store';
+import 'client/lib/olark-store';
 
 const olark = {
 	apiId: 1,

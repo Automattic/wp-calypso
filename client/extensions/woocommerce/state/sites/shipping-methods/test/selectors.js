@@ -14,7 +14,7 @@ import {
 	areShippingMethodsLoading,
 	getShippingMethodNameMap,
 } from '../selectors';
-import { LOADING } from 'woocommerce/state/constants';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 
 describe( 'selectors', () => {
 	describe( 'shipping methods loading state', () => {

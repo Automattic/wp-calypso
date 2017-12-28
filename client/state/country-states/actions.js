@@ -4,13 +4,13 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import {
 	COUNTRY_STATES_RECEIVE,
 	COUNTRY_STATES_REQUEST,
 	COUNTRY_STATES_REQUEST_FAILURE,
 	COUNTRY_STATES_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export function receiveCountryStates( countryStates, countryCode ) {
 	countryCode = countryCode.toLowerCase();

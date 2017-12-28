@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from 'client/components/button';
 import Gridicon from 'gridicons';
 
 const PlansSkipButton = ( { onClick, isRtl, translate } ) => (

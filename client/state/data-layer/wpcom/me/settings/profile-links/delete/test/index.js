@@ -8,8 +8,8 @@ import {
 	deleteUserProfileLink as deleteUserProfileLinkAction,
 	deleteUserProfileLinkError,
 	deleteUserProfileLinkSuccess,
-} from 'state/profile-links/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+} from 'client/state/profile-links/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 
 const linkSlug = 'https-wordpress-com';
 const error = {

@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { receiveUser } from '../actions';
-import { USER_RECEIVE } from 'state/action-types';
+import { USER_RECEIVE } from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#receiveUser()', () => {

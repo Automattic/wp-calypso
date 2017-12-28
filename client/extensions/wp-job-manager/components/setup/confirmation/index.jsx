@@ -13,12 +13,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import ConfirmationLink from './confirmation-link';
-import ExternalLink from 'components/external-link';
-import FormattedHeader from 'components/formatted-header';
-import SectionHeader from 'components/section-header';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import ExternalLink from 'client/components/external-link';
+import FormattedHeader from 'client/components/formatted-header';
+import SectionHeader from 'client/components/section-header';
+import { getSelectedSiteSlug } from 'client/state/ui/selectors';
 
 const Confirmation = ( { slug, translate } ) => (
 	<div>

@@ -15,13 +15,13 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import Card from 'components/card';
-import ReaderAvatar from 'blocks/reader-avatar';
-import { getSite } from 'state/reader/sites/selectors';
-import { getFeed } from 'state/reader/feeds/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderFeed from 'components/data/query-reader-feed';
-import Emojify from 'components/emojify';
+import Card from 'client/components/card';
+import ReaderAvatar from 'client/blocks/reader-avatar';
+import { getSite } from 'client/state/reader/sites/selectors';
+import { getFeed } from 'client/state/reader/feeds/selectors';
+import QueryReaderSite from 'client/components/data/query-reader-site';
+import QueryReaderFeed from 'client/components/data/query-reader-feed';
+import Emojify from 'client/components/emojify';
 
 class CrossPost extends PureComponent {
 	static propTypes = {

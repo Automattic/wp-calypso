@@ -12,9 +12,9 @@ import { isPlainObject, isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import { getRemovedPosts } from 'lib/posts/post-list-store';
-import postListStoreFactory from 'lib/posts/post-list-store-factory';
+import Dispatcher from 'client/dispatcher';
+import { getRemovedPosts } from 'client/lib/posts/post-list-store';
+import postListStoreFactory from 'client/lib/posts/post-list-store-factory';
 
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 

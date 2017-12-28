@@ -16,25 +16,25 @@ import { trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import ActionHeader from 'woocommerce/components/action-header';
-import Button from 'components/button';
-import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import ActionHeader from 'client/extensions/woocommerce/components/action-header';
+import Button from 'client/components/button';
+import { fetchProducts } from 'client/extensions/woocommerce/state/sites/products/actions';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 import {
 	getTotalProducts,
 	areProductsLoaded,
 	areProductsLoading,
-} from 'woocommerce/state/sites/products/selectors';
-import Main from 'components/main';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
+} from 'client/extensions/woocommerce/state/sites/products/selectors';
+import Main from 'client/components/main';
+import NavTabs from 'client/components/section-nav/tabs';
+import NavItem from 'client/components/section-nav/item';
 import ProductsList from './products-list';
 import ProductsListSearchResults from './products-list-search-results';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import SearchCard from 'components/search-card';
-import SectionNav from 'components/section-nav';
-import Search from 'components/search';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import SearchCard from 'client/components/search-card';
+import SectionNav from 'client/components/section-nav';
+import Search from 'client/components/search';
 
 class Products extends Component {
 	static propTypes = {

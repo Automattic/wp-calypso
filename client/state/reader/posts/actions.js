@@ -7,12 +7,12 @@ import { filter, forEach, has, isUndefined, map, omit, partition, reject } from 
 /**
  * Internal dependencies
  */
-import { READER_POSTS_RECEIVE } from 'state/action-types';
-import analytics from 'lib/analytics';
+import { READER_POSTS_RECEIVE } from 'client/state/action-types';
+import analytics from 'client/lib/analytics';
 import { runFastRules, runSlowRules } from './normalization-rules';
-import Dispatcher from 'dispatcher';
-import { action } from 'lib/feed-post-store/constants';
-import wpcom from 'lib/wp';
+import Dispatcher from 'client/dispatcher';
+import { action } from 'client/lib/feed-post-store/constants';
+import wpcom from 'client/lib/wp';
 
 function trackRailcarRender( post ) {
 	analytics.tracks.recordEvent( 'calypso_traintracks_render', post.railcar );

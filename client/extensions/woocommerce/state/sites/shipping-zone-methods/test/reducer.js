@@ -10,8 +10,8 @@ import { expect } from 'chai';
  */
 import reducer from '../../reducer';
 import { fetchShippingZoneMethodsSuccess } from '../actions';
-import { WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST } from 'woocommerce/state/action-types';
-import { LOADING } from 'woocommerce/state/constants';
+import { WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST } from 'client/extensions/woocommerce/state/action-types';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
 
 describe( 'fetch shipping zone methods', () => {
 	test( 'should mark the shipping zone methods list as "loading"', () => {

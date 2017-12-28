@@ -4,20 +4,20 @@
  * External dependencies
  */
 import { trim } from 'lodash';
-import warn from 'lib/warn';
+import warn from 'client/lib/warn';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import request from 'woocommerce/state/sites/http-request';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import request from 'client/extensions/woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_COUPON_CREATE,
 	WOOCOMMERCE_COUPON_DELETE,
 	WOOCOMMERCE_COUPON_UPDATE,
 	WOOCOMMERCE_COUPONS_REQUEST,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 import { couponDeleted, couponUpdated, couponsUpdated } from './actions';
 
 const debug = debugFactory( 'woocommerce:coupons' );

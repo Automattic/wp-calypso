@@ -29,8 +29,8 @@ import {
 	PLAN_BUSINESS,
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	FEATURE_BUSINESS_ONBOARDING,
-} from 'lib/plans/constants';
-import { userState } from 'state/selectors/test/fixtures/user-state';
+} from 'client/lib/plans/constants';
+import { userState } from 'client/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	describe( '#getPlansBySite()', () => {

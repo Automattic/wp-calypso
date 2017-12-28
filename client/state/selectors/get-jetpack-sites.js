@@ -4,9 +4,9 @@
  * Internal dependencies
  */
 
-import createSelector from 'lib/create-selector';
-import { getSites } from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getSites } from 'client/state/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
 
 /**
  * Get all Jetpack sites

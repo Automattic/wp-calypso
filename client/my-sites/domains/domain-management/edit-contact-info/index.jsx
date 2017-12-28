@@ -13,18 +13,18 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
+import DomainMainPlaceholder from 'client/my-sites/domains/domain-management/components/domain/main-placeholder';
 import EditContactInfoFormCard from './form-card';
 import EditContactInfoPrivacyEnabledCard from './privacy-enabled-card';
 import PendingWhoisUpdateCard from './pending-whois-update-card';
-import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
-import { getSelectedDomain } from 'lib/domains';
-import { findRegistrantWhois } from 'lib/domains/whois/utils';
-import SectionHeader from 'components/section-header';
-import { registrar as registrarNames } from 'lib/domains/constants';
+import NonOwnerCard from 'client/my-sites/domains/domain-management/components/domain/non-owner-card';
+import Header from 'client/my-sites/domains/domain-management/components/header';
+import Main from 'client/components/main';
+import paths from 'client/my-sites/domains/paths';
+import { getSelectedDomain } from 'client/lib/domains';
+import { findRegistrantWhois } from 'client/lib/domains/whois/utils';
+import SectionHeader from 'client/components/section-header';
+import { registrar as registrarNames } from 'client/lib/domains/constants';
 
 class EditContactInfo extends React.Component {
 	static propTypes = {

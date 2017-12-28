@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'client/components/section-header';
 
 class CartSummaryBar extends React.Component {
 	render() {

@@ -10,12 +10,12 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { READER_SITE_UNBLOCK } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, plainNotice } from 'state/notices/actions';
-import { blockSite } from 'state/reader/site-blocks/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { READER_SITE_UNBLOCK } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequestEx } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice, plainNotice } from 'client/state/notices/actions';
+import { blockSite } from 'client/state/reader/site-blocks/actions';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
 
 export function requestSiteUnblock( action ) {
 	return http(

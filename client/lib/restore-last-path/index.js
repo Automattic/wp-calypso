@@ -11,7 +11,7 @@ import store from 'store';
 /**
  * Internal dependencies
  */
-import { isOutsideCalypso } from 'lib/url';
+import { isOutsideCalypso } from 'client/lib/url';
 
 const debug = debugFactory( 'calypso:restore-last-path' );
 

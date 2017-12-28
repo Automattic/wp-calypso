@@ -8,8 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getMediaUrl } from 'state/selectors';
-import MediaQueryManager from 'lib/query-manager/media';
+import { getMediaUrl } from 'client/state/selectors';
+import MediaQueryManager from 'client/lib/query-manager/media';
 
 describe( 'getMediaUrl()', () => {
 	const url = 'https://example.files.wordpress.com/2014/06/flower.gif';

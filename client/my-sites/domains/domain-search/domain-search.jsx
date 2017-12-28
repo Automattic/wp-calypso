@@ -14,21 +14,24 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import RegisterDomainStep from 'components/domains/register-domain-step';
-import UpgradesNavigation from 'my-sites/domains/navigation';
-import Main from 'components/main';
-import upgradesActions from 'lib/upgrades/actions';
-import cartItems from 'lib/cart-values/cart-items';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import { isSiteUpgradeable } from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import { getProductsList } from 'state/products-list/selectors';
-import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import EmptyContent from 'client/components/empty-content';
+import { DOMAINS_WITH_PLANS_ONLY } from 'client/state/current-user/constants';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
+import RegisterDomainStep from 'client/components/domains/register-domain-step';
+import UpgradesNavigation from 'client/my-sites/domains/navigation';
+import Main from 'client/components/main';
+import upgradesActions from 'client/lib/upgrades/actions';
+import cartItems from 'client/lib/cart-values/cart-items';
+import { currentUserHasFlag } from 'client/state/current-user/selectors';
+import { isSiteUpgradeable } from 'client/state/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import QueryProductsList from 'client/components/data/query-products-list';
+import { getProductsList } from 'client/state/products-list/selectors';
+import {
+	recordAddDomainButtonClick,
+	recordRemoveDomainButtonClick,
+} from 'client/state/domains/actions';
+import EmailVerificationGate from 'client/components/email-verification/email-verification-gate';
 
 class DomainSearch extends Component {
 	static propTypes = {

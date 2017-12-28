@@ -10,7 +10,10 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { receiveRestoreSuccess, receiveRestoreError } from '../';
-import { getRewindRestoreProgress, rewindRestoreUpdateError } from 'state/activity-log/actions';
+import {
+	getRewindRestoreProgress,
+	rewindRestoreUpdateError,
+} from 'client/state/activity-log/actions';
 
 const siteId = 77203074;
 const timestamp = 1496768464;

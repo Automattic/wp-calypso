@@ -12,19 +12,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import Popover from 'components/popover';
-import Count from 'components/count';
-import { getMyPostCounts } from 'state/posts/counts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostsForQueryIgnoringPage, isRequestingPostsForQuery } from 'state/posts/selectors';
-import paths from 'lib/paths';
-import Draft from 'my-sites/draft';
-import QueryPosts from 'components/data/query-posts';
-import QueryPostCounts from 'components/data/query-post-counts';
-import Button from 'components/button';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import Popover from 'client/components/popover';
+import Count from 'client/components/count';
+import { getMyPostCounts } from 'client/state/posts/counts/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import {
+	getPostsForQueryIgnoringPage,
+	isRequestingPostsForQuery,
+} from 'client/state/posts/selectors';
+import paths from 'client/lib/paths';
+import Draft from 'client/my-sites/draft';
+import QueryPosts from 'client/components/data/query-posts';
+import QueryPostCounts from 'client/components/data/query-post-counts';
+import Button from 'client/components/button';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
 
 class MasterbarDrafts extends Component {
 	static propTypes = {

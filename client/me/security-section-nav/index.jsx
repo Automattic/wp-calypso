@@ -13,9 +13,9 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import SectionNav from 'components/section-nav';
+import NavItem from 'client/components/section-nav/item';
+import NavTabs from 'client/components/section-nav/tabs';
+import SectionNav from 'client/components/section-nav';
 
 export default class extends React.Component {
 	static displayName = 'SecuritySectionNav';

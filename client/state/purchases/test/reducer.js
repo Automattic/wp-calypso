@@ -16,7 +16,7 @@ import {
 	PURCHASES_USER_FETCH_COMPLETED,
 	PRIVACY_PROTECTION_CANCEL_COMPLETED,
 	PRIVACY_PROTECTION_CANCEL_FAILED,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	const userId = '1337',

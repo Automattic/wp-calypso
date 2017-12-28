@@ -4,9 +4,9 @@
  * Internal dependencies
  */
 
-import { canCurrentUser } from 'state/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getRawSite } from 'state/sites/selectors';
+import { canCurrentUser } from 'client/state/selectors';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import { getRawSite } from 'client/state/sites/selectors';
 
 /**
  * Returns true if the site can be upgraded by the user, false if the

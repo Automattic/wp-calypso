@@ -12,18 +12,18 @@ import { find, get } from 'lodash';
  */
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import ReaderPopover from 'components/reader-popover';
-import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
-import FormToggle from 'components/forms/form-toggle';
-import { getReaderFollows } from 'state/selectors';
+import ReaderPopover from 'client/components/reader-popover';
+import SegmentedControl from 'client/components/segmented-control';
+import ControlItem from 'client/components/segmented-control/item';
+import FormToggle from 'client/components/forms/form-toggle';
+import { getReaderFollows } from 'client/state/selectors';
 import {
 	subscribeToNewPostEmail,
 	updateNewPostEmailSubscription,
 	unsubscribeToNewPostEmail,
 	subscribeToNewCommentEmail,
 	unsubscribeToNewCommentEmail,
-} from 'state/reader/follows/actions';
+} from 'client/state/reader/follows/actions';
 
 class ReaderEmailSettings extends Component {
 	static displayName = 'ReaderEmailSettings';

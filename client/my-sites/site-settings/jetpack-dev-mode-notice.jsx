@@ -11,12 +11,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSiteInDevelopmentMode } from 'state/selectors';
-import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import QueryJetpackConnection from 'client/components/data/query-jetpack-connection';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackSiteInDevelopmentMode } from 'client/state/selectors';
+import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'client/state/sites/selectors';
 
 const JetpackDevModeNotice = ( {
 	isJetpackSiteInDevMode,

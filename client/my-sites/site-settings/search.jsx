@@ -13,27 +13,27 @@ import { overSome } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import JetpackModuleToggle from 'client/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import InfoPopover from 'client/components/info-popover';
+import ExternalLink from 'client/components/external-link';
+import QueryJetpackConnection from 'client/components/data/query-jetpack-connection';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
 import {
 	getJetpackModule,
 	isActivatingJetpackModule,
 	isJetpackModuleActive,
-} from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+} from 'client/state/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
 import {
 	// isBusiness,
 	// isEnterprise,
 	isVipPlan,
 	isJetpackBusiness,
-} from 'lib/products-values';
+} from 'client/lib/products-values';
 
 const hasBusinessPlan = overSome( isJetpackBusiness ); // isBusiness, isEnterprise, // uncomment for Atomic
 

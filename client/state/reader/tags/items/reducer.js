@@ -7,8 +7,8 @@ import { keyBy, merge, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_TAGS_RECEIVE, READER_UNFOLLOW_TAG_RECEIVE } from 'state/action-types';
-import { createReducer } from 'state/utils';
+import { READER_TAGS_RECEIVE, READER_UNFOLLOW_TAG_RECEIVE } from 'client/state/action-types';
+import { createReducer } from 'client/state/utils';
 
 /*
  * since the api always returns the whole list of followed tags unpaginated, both read/tags*,

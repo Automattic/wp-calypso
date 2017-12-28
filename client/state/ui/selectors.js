@@ -9,7 +9,7 @@ import { includes, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSite, getSiteSlug } from 'state/sites/selectors';
+import { getSite, getSiteSlug } from 'client/state/sites/selectors';
 
 /**
  * Returns the site object for the currently selected site.

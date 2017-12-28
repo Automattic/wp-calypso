@@ -12,7 +12,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { getEditURL } from 'lib/posts/utils';
+import { getEditURL } from 'client/lib/posts/utils';
 
 const PostEditButton = ( { post, site, iconSize, onClick, translate } ) => {
 	const editUrl = getEditURL( post, site );

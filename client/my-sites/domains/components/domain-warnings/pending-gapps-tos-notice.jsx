@@ -12,12 +12,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import support from 'lib/url/support';
-import { domainManagementEmail } from 'my-sites/domains/paths';
+import Notice from 'client/components/notice';
+import NoticeAction from 'client/components/notice/notice-action';
+import support from 'client/lib/url/support';
+import { domainManagementEmail } from 'client/my-sites/domains/paths';
 import PendingGappsTosNoticeMultipleDomainListItem from './pending-gapps-tos-notice-multiple-domain-list-item';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'client/state/analytics/actions';
 
 const learnMoreLink = (
 	<a href={ support.COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />

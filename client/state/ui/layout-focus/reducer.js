@@ -8,7 +8,7 @@ import {
 	LAYOUT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_ACTIVATE,
 	LAYOUT_NEXT_FOCUS_SET,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 const initialState = { current: 'content', next: null };
 

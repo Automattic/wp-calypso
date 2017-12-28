@@ -6,7 +6,7 @@
 /**
  * Internal Dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
 import subscribe from './new';
 import unsubscribe from './delete';
 

@@ -12,13 +12,13 @@ import { isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
-import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
-import ErrorPanel from 'my-sites/stats/stats-error';
+} from 'client/state/stats/lists/selectors';
+import StatsModulePlaceholder from 'client/my-sites/stats/stats-module/placeholder';
+import ErrorPanel from 'client/my-sites/stats/stats-error';
 
 class StoreStatsModule extends Component {
 	static propTypes = {

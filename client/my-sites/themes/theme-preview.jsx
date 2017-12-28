@@ -12,9 +12,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import PulsingDot from 'components/pulsing-dot';
-import QueryTheme from 'components/data/query-theme';
+import Button from 'client/components/button';
+import PulsingDot from 'client/components/pulsing-dot';
+import QueryTheme from 'client/components/data/query-theme';
 import { connectOptions } from './theme-options';
 import {
 	getThemeDemoUrl,
@@ -23,11 +23,11 @@ import {
 	isThemeActive,
 	isInstallingTheme,
 	isActivatingTheme,
-} from 'state/themes/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { hideThemePreview } from 'state/themes/actions';
-import WebPreview from 'components/web-preview';
+} from 'client/state/themes/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { hideThemePreview } from 'client/state/themes/actions';
+import WebPreview from 'client/components/web-preview';
 
 class ThemePreview extends React.Component {
 	static displayName = 'ThemePreview';

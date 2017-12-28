@@ -10,8 +10,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Count from 'components/count';
+import Button from 'client/components/button';
+import Count from 'client/components/count';
 
 const DocsExampleToggle = ( { onClick, text } ) => <Button onClick={ onClick }>{ text }</Button>;
 

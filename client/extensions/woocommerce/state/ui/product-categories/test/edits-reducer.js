@@ -13,7 +13,7 @@ import reducer from '../edits-reducer';
 import {
 	createProductCategory,
 	productCategoryUpdated,
-} from 'woocommerce/state/sites/product-categories/actions';
+} from 'client/extensions/woocommerce/state/sites/product-categories/actions';
 
 const siteId = 123;
 

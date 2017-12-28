@@ -9,7 +9,7 @@ import { assign, find, matches } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { action as ActionTypes } from 'lib/upgrades/constants';
+import { action as ActionTypes } from 'client/lib/upgrades/constants';
 
 /**
  * Constants

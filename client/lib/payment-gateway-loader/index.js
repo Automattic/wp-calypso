@@ -11,7 +11,7 @@ const debug = debugFactory( 'calypso:payment-gateway' );
 /**
  * Internal dependencies
  */
-import { loadScript, loadjQueryDependentScript } from 'lib/load-script';
+import { loadScript, loadjQueryDependentScript } from 'client/lib/load-script';
 
 /**
  * PaymentGatewayLoader component

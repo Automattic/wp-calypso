@@ -13,18 +13,18 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
-import wpcom from 'lib/wp';
-import analytics from 'lib/analytics';
-import formState from 'lib/form-state';
-import { login } from 'lib/paths';
-import SignupActions from 'lib/signup/actions';
-import ValidationFieldset from 'signup/validation-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
-import StepWrapper from 'signup/step-wrapper';
-import LoggedOutForm from 'components/logged-out-form';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import wpcom from 'client/lib/wp';
+import analytics from 'client/lib/analytics';
+import formState from 'client/lib/form-state';
+import { login } from 'client/lib/paths';
+import SignupActions from 'client/lib/signup/actions';
+import ValidationFieldset from 'client/signup/validation-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormButton from 'client/components/forms/form-button';
+import FormTextInput from 'client/components/forms/form-text-input';
+import StepWrapper from 'client/signup/step-wrapper';
+import LoggedOutForm from 'client/components/logged-out-form';
+import LoggedOutFormFooter from 'client/components/logged-out-form/footer';
 
 const debug = debugFactory( 'calypso:steps:site' );
 

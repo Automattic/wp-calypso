@@ -12,9 +12,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { ButtonRow, makeTour, Step, Tour, Quit } from 'layout/guided-tours/config-elements';
-import { hasUserRegisteredBefore } from 'state/ui/guided-tours/contexts';
-import { isDesktop } from 'lib/viewport';
+import { ButtonRow, makeTour, Step, Tour, Quit } from 'client/layout/guided-tours/config-elements';
+import { hasUserRegisteredBefore } from 'client/state/ui/guided-tours/contexts';
+import { isDesktop } from 'client/lib/viewport';
 
 class RepositioningStep extends Step {
 	componentDidMount() {

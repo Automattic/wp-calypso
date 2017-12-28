@@ -19,24 +19,27 @@ import {
 	areSettingsGeneralLoaded,
 	areTaxCalculationsEnabled,
 	getStoreLocation,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import { areTaxRatesLoaded, getTaxRates } from 'woocommerce/state/sites/meta/taxrates/selectors';
-import Card from 'components/card';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import {
+	areTaxRatesLoaded,
+	getTaxRates,
+} from 'client/extensions/woocommerce/state/sites/meta/taxrates/selectors';
+import Card from 'client/components/card';
 import {
 	DESTINATION_BASED_SALES_TAX,
 	NO_SALES_TAX,
 	ORIGIN_BASED_SALES_TAX,
-} from 'woocommerce/lib/countries/constants';
-import { getCountryData, getStateData } from 'woocommerce/lib/countries';
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import ExternalLink from 'components/external-link';
-import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
-import FormToggle from 'components/forms/form-toggle';
-import Notice from 'components/notice';
-import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
-import TableItem from 'woocommerce/components/table/table-item';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+} from 'client/extensions/woocommerce/lib/countries/constants';
+import { getCountryData, getStateData } from 'client/extensions/woocommerce/lib/countries';
+import ExtendedHeader from 'client/extensions/woocommerce/components/extended-header';
+import ExternalLink from 'client/components/external-link';
+import { fetchTaxRates } from 'client/extensions/woocommerce/state/sites/meta/taxrates/actions';
+import FormToggle from 'client/components/forms/form-toggle';
+import Notice from 'client/components/notice';
+import Table from 'client/extensions/woocommerce/components/table';
+import TableRow from 'client/extensions/woocommerce/components/table/table-row';
+import TableItem from 'client/extensions/woocommerce/components/table/table-item';
+import QuerySettingsGeneral from 'client/extensions/woocommerce/components/query-settings-general';
 
 class TaxesRates extends Component {
 	static propTypes = {

@@ -11,7 +11,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
 
 export default class extends React.PureComponent {
 	static displayName = 'HelpContactConfirmation';

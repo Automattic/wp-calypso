@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { combineReducers, createReducer } from 'state/utils';
-import { TIMEZONES_RECEIVE } from 'state/action-types';
+import { combineReducers, createReducer } from 'client/state/utils';
+import { TIMEZONES_RECEIVE } from 'client/state/action-types';
 
 import { rawOffsetsSchema, labelsSchema, continentsSchema } from './schema';
 

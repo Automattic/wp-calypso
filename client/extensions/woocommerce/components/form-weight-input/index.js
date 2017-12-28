@@ -14,10 +14,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getWeightUnitSetting } from 'woocommerce/state/sites/settings/products/selectors';
-import { fetchSettingsProducts } from 'woocommerce/state/sites/settings/products/actions';
+import FormTextInputWithAffixes from 'client/components/forms/form-text-input-with-affixes';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import { getWeightUnitSetting } from 'client/extensions/woocommerce/state/sites/settings/products/selectors';
+import { fetchSettingsProducts } from 'client/extensions/woocommerce/state/sites/settings/products/actions';
 
 class FormWeightInput extends Component {
 	static propTypes = {

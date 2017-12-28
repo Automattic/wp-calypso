@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 
 /**
  * Internal dependencies
@@ -35,7 +35,7 @@ import {
 	PLUGIN_REMOVE_REQUEST,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import {
 	ACTIVATE_PLUGIN,
 	DEACTIVATE_PLUGIN,

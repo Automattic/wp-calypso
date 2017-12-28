@@ -2,8 +2,8 @@
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import Dispatcher from 'client/dispatcher';
+import emitter from 'client/lib/mixins/emitter';
 
 /**
  * Create a traditional Flux store from a Redux-style (`(state, action)`)

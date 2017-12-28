@@ -13,8 +13,8 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import FollowButton from './button';
-import { isFollowing } from 'state/selectors';
-import { follow, unfollow } from 'state/reader/follows/actions';
+import { isFollowing } from 'client/state/selectors';
+import { follow, unfollow } from 'client/state/reader/follows/actions';
 
 class FollowButtonContainer extends Component {
 	static propTypes = {

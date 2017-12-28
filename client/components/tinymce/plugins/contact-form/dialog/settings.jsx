@@ -11,13 +11,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
-import Card from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextValidation from 'components/forms/form-input-validation';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import SectionHeader from 'client/components/section-header';
+import Card from 'client/components/card';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormTextValidation from 'client/components/forms/form-input-validation';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
 import { validateSettingsToEmail } from './validations';
 
 class ContactFormDialogFormSettings extends React.Component {

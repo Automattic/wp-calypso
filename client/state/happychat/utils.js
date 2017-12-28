@@ -3,12 +3,12 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import config from 'config';
-import getGroups from 'state/happychat/selectors/get-groups';
-import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
-import { getHelpSelectedSite } from 'state/help/selectors';
-import getSkills from 'state/happychat/selectors/get-skills';
+import getGroups from 'client/state/happychat/selectors/get-groups';
+import { getCurrentUser, getCurrentUserLocale } from 'client/state/current-user/selectors';
+import { getHelpSelectedSite } from 'client/state/help/selectors';
+import getSkills from 'client/state/happychat/selectors/get-skills';
 
 // Promise based interface for wpcom.request
 const request = ( ...args ) =>

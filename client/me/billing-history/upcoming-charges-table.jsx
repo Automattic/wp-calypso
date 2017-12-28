@@ -12,9 +12,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import purchasesPaths from 'me/purchases/paths';
+import purchasesPaths from 'client/me/purchases/paths';
 import TransactionsTable from './transactions-table';
-import { getSiteSlugsForUpcomingTransactions } from 'state/selectors';
+import { getSiteSlugsForUpcomingTransactions } from 'client/state/selectors';
 
 class UpcomingChargesTable extends Component {
 	static propTypes = {

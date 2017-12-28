@@ -13,14 +13,14 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import QueryPreferences from 'components/data/query-preferences';
-import { isFetchingPreferences } from 'state/preferences/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
-import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
+import CompactFormToggle from 'client/components/forms/form-toggle/compact';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import QueryPreferences from 'client/components/data/query-preferences';
+import { isFetchingPreferences } from 'client/state/preferences/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isConfirmationSidebarEnabled } from 'client/state/ui/editor/selectors';
+import { saveConfirmationSidebarPreference } from 'client/state/ui/editor/actions';
 
 class PublishConfirmation extends Component {
 	constructor( props ) {

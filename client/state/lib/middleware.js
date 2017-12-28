@@ -22,19 +22,19 @@ import {
 	SITES_ONCE_CHANGED,
 	SELECTED_SITE_SUBSCRIBE,
 	SELECTED_SITE_UNSUBSCRIBE,
-} from 'state/action-types';
-import analytics from 'lib/analytics';
-import cartStore from 'lib/cart/store';
-import userFactory from 'lib/user';
+} from 'client/state/action-types';
+import analytics from 'client/lib/analytics';
+import cartStore from 'client/lib/cart/store';
+import userFactory from 'client/lib/user';
 import {
 	isNotificationsOpen,
 	hasSitePendingAutomatedTransfer,
 	isFetchingAutomatedTransferStatus,
-} from 'state/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import keyboardShortcuts from 'lib/keyboard-shortcuts';
-import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
+} from 'client/state/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import keyboardShortcuts from 'client/lib/keyboard-shortcuts';
+import { fetchAutomatedTransferStatus } from 'client/state/automated-transfer/actions';
 
 const debug = debugFactory( 'calypso:state:middleware' );
 const user = userFactory();

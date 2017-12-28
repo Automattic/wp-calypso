@@ -13,9 +13,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import PostTypeOptions from './post-type-options';
-import SpinnerButton from 'components/spinner-button';
-import { isDateRangeValid as isExportDateRangeValid } from 'state/site-settings/exporter/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import SpinnerButton from 'client/components/spinner-button';
+import { isDateRangeValid as isExportDateRangeValid } from 'client/state/site-settings/exporter/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 /**
  * Displays additional options for customising an export

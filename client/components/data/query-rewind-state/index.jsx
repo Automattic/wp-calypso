@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestRewindState } from 'state/rewind/actions';
+import { requestRewindState } from 'client/state/rewind/actions';
 
 export class QueryRewindState extends Component {
 	componentDidMount() {

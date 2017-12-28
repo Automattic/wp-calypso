@@ -9,13 +9,13 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import fromApi from './from-api';
-import { ACTIVITY_LOG_REQUEST, ACTIVITY_LOG_WATCH } from 'state/action-types';
-import { activityLogRequest, activityLogUpdate } from 'state/activity-log/actions';
-import { dispatchRequestEx, getData, getError } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSiteGmtOffset } from 'state/selectors';
+import { ACTIVITY_LOG_REQUEST, ACTIVITY_LOG_WATCH } from 'client/state/action-types';
+import { activityLogRequest, activityLogUpdate } from 'client/state/activity-log/actions';
+import { dispatchRequestEx, getData, getError } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'client/state/notices/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import { getSiteGmtOffset } from 'client/state/selectors';
 
 const POLL_INTERVAL = 10000;
 const pollingSites = new Map();

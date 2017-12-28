@@ -16,10 +16,10 @@ import { intersection } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from 'client/components/button';
 import PostScheduler from './post-scheduler';
-import utils from 'lib/posts/utils';
-import { getSelectedSite } from 'state/ui/selectors';
+import utils from 'client/lib/posts/utils';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 export class EditorPublishDate extends React.Component {
 	static propTypes = {

@@ -11,9 +11,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
-import CompactCard from 'components/card/compact';
-import PaymentLogo from 'components/payment-logo';
+import FormCheckbox from 'client/components/forms/form-checkbox';
+import CompactCard from 'client/components/card/compact';
+import PaymentLogo from 'client/components/payment-logo';
 
 export const getPaymentMethodTitle = ( translate, paymentType, digits ) => {
 	const supportedTypes = {

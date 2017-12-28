@@ -10,14 +10,14 @@ import { isArray } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { SITES_BLOG_STICKER_LIST } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
-import addBlogStickerHandler from 'state/data-layer/wpcom/sites/blog-stickers/add';
-import removeBlogStickerHandler from 'state/data-layer/wpcom/sites/blog-stickers/remove';
-import { mergeHandlers } from 'state/action-watchers/utils';
-import { receiveBlogStickers } from 'state/sites/blog-stickers/actions';
+import { SITES_BLOG_STICKER_LIST } from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'client/state/notices/actions';
+import addBlogStickerHandler from 'client/state/data-layer/wpcom/sites/blog-stickers/add';
+import removeBlogStickerHandler from 'client/state/data-layer/wpcom/sites/blog-stickers/remove';
+import { mergeHandlers } from 'client/state/action-watchers/utils';
+import { receiveBlogStickers } from 'client/state/sites/blog-stickers/actions';
 
 export function requestBlogStickerList( { dispatch }, action ) {
 	dispatch(

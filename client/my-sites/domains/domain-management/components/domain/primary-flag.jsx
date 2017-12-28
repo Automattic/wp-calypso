@@ -11,10 +11,10 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isDomainOnlySite } from 'state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isDomainOnlySite } from 'client/state/selectors';
 import { localize } from 'i18n-calypso';
-import Notice from 'components/notice';
+import Notice from 'client/components/notice';
 
 class DomainPrimaryFlag extends Component {
 	render() {

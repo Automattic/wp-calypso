@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'client/components/empty-content';
 
 const EmptyContentExample = () => {
 	const primaryAction = (

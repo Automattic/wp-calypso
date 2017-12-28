@@ -19,7 +19,7 @@ import {
 	PREFERENCES_SAVE_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

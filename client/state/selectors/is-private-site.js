@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { getRawSite } from 'state/sites/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
+import { getRawSite } from 'client/state/sites/selectors';
+import { getSiteSettings } from 'client/state/site-settings/selectors';
 
 /**
  * Returns true if the site is private

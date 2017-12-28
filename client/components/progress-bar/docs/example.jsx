@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ProgressBar from 'components/progress-bar';
+import ProgressBar from 'client/components/progress-bar';
 
 export default class extends React.PureComponent {
 	static displayName = 'ProgressBar';

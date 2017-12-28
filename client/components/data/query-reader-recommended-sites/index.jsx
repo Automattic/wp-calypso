@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestRecommendedSites } from 'state/reader/recommended-sites/actions';
+import { requestRecommendedSites } from 'client/state/reader/recommended-sites/actions';
 
 class QueryReaderRecommendedSites extends Component {
 	static propTypes = {

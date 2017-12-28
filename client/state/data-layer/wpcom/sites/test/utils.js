@@ -19,8 +19,8 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_INCREMENT,
 	NOTICE_CREATE,
-} from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+} from 'client/state/action-types';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
 describe( 'utility functions', () => {

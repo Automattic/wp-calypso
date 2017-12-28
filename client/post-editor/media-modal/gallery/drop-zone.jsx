@@ -11,10 +11,10 @@ import { isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
+import MediaLibraryDropZone from 'client/my-sites/media-library/drop-zone';
+import MediaLibrarySelectedStore from 'client/lib/media/library-selected-store';
+import MediaActions from 'client/lib/media/actions';
+import MediaUtils from 'client/lib/media/utils';
 
 export default class extends React.Component {
 	static displayName = 'EditorMediaModalGalleryDropZone';

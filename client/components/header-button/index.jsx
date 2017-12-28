@@ -9,7 +9,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from 'client/components/button';
 
 const HeaderButton = ( { icon, label, ...rest } ) => (
 	<Button className="header-button" { ...rest }>

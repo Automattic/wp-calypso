@@ -4,14 +4,14 @@
  * External dependencies
  */
 
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import titlecase from 'to-title-case';
 import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { sectionify } from 'lib/route/path';
+import { sectionify } from 'client/lib/route/path';
 
 export function trackClick( componentName, eventName, verb = 'click' ) {
 	const stat = `${ componentName } ${ eventName } ${ verb }`;

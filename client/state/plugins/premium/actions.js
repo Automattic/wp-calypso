@@ -4,14 +4,14 @@
  * External dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import { get, keys } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import versionCompare from 'lib/version-compare';
+import Dispatcher from 'client/dispatcher';
+import versionCompare from 'client/lib/version-compare';
 import {
 	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 	PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
@@ -20,7 +20,7 @@ import {
 	PLUGIN_SETUP_CONFIGURE,
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ERROR,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  *  Local variables;

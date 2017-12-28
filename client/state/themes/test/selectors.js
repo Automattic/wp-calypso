@@ -43,8 +43,8 @@ import {
 	isThemeAvailableOnJetpackSite,
 	getWpcomParentThemeId,
 } from '../selectors';
-import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
-import ThemeQueryManager from 'lib/query-manager/theme';
+import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'client/lib/plans/constants';
+import ThemeQueryManager from 'client/lib/query-manager/theme';
 
 const twentyfifteen = {
 	id: 'twentyfifteen',

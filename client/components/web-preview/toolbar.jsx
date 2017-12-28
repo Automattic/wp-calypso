@@ -14,11 +14,11 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Button from 'components/button';
-import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import { recordTracksEvent } from 'state/analytics/actions';
+import Button from 'client/components/button';
+import SelectDropdown from 'client/components/select-dropdown';
+import DropdownItem from 'client/components/select-dropdown/item';
+import ClipboardButtonInput from 'client/components/clipboard-button-input';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 
@@ -142,7 +142,11 @@ class PreviewToolbar extends Component {
 				) }
 				<div className="web-preview__toolbar-actions">
 					{ showEdit && (
-						<Button className="web-preview__edit" href={ editUrl } onClick={ this.handleEditorWebPreviewEdit }>
+						<Button
+							className="web-preview__edit"
+							href={ editUrl }
+							onClick={ this.handleEditorWebPreviewEdit }
+						>
 							{ translate( 'Edit' ) }
 						</Button>
 					) }

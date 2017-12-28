@@ -8,8 +8,8 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Tile from 'components/tile-grid/tile';
-import TileGrid from 'components/tile-grid';
+import Tile from 'client/components/tile-grid/tile';
+import TileGrid from 'client/components/tile-grid';
 
 /**
  * Main

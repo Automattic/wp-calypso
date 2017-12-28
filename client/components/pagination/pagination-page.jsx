@@ -13,7 +13,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
+import Button from 'client/components/button';
 
 class PaginationPage extends Component {
 	static propTypes = {

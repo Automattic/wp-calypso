@@ -11,19 +11,19 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import APIKeysView from 'woocommerce/components/api-keys-view';
-import AuthCaptureToggle from 'woocommerce/components/auth-capture-toggle';
-import Dialog from 'components/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
+import APIKeysView from 'client/extensions/woocommerce/components/api-keys-view';
+import AuthCaptureToggle from 'client/extensions/woocommerce/components/auth-capture-toggle';
+import Dialog from 'client/components/dialog';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextInput from 'client/components/forms/form-text-input';
 import {
 	getStripeSampleStatementDescriptor,
 	hasStripeKeyPairForMode,
 } from './payment-method-stripe-utils';
 import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
-import TestLiveToggle from 'woocommerce/components/test-live-toggle';
+import TestLiveToggle from 'client/extensions/woocommerce/components/test-live-toggle';
 
 class PaymentMethodStripeKeyBasedDialog extends Component {
 	static propTypes = {

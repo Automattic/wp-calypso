@@ -11,8 +11,8 @@ import { EventEmitter } from 'events/';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import treeConvert from 'lib/tree-convert';
+import Dispatcher from 'client/dispatcher';
+import treeConvert from 'client/lib/tree-convert';
 import PostsStore from './posts-store';
 import PostListCacheStore, {
 	getCacheKey,

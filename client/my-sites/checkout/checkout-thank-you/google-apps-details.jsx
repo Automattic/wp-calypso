@@ -10,9 +10,9 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import supportUrls from 'lib/url/support';
-import PurchaseDetail from 'components/purchase-detail';
-import userFactory from 'lib/user';
+import supportUrls from 'client/lib/url/support';
+import PurchaseDetail from 'client/components/purchase-detail';
+import userFactory from 'client/lib/user';
 
 const user = userFactory();
 

@@ -12,13 +12,13 @@ import { some, partial, map, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaModal from 'post-editor/media-modal';
-import PostActions from 'lib/posts/actions';
-import { generateGalleryShortcode } from 'lib/media/utils';
-import markup from 'post-editor/media-modal/markup';
-import { bumpStat } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import MediaLibrarySelectedData from 'client/components/data/media-library-selected-data';
+import MediaModal from 'client/post-editor/media-modal';
+import PostActions from 'client/lib/posts/actions';
+import { generateGalleryShortcode } from 'client/lib/media/utils';
+import markup from 'client/post-editor/media-modal/markup';
+import { bumpStat } from 'client/state/analytics/actions';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 class EditorMediaModal extends Component {
 	static propTypes = {

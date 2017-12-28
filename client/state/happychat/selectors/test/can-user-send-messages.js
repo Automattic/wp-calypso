@@ -20,7 +20,7 @@ import {
 	HAPPYCHAT_CHAT_STATUS_PENDING,
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
-} from 'state/happychat/constants';
+} from 'client/state/happychat/constants';
 import canUserSendMessages from '../can-user-send-messages';
 
 describe( 'selectors', () => {

@@ -14,15 +14,15 @@ import { moment, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Delta from 'woocommerce/components/delta';
+import Delta from 'client/extensions/woocommerce/components/delta';
 import { formatValue, getDelta } from '../utils';
-import { getPeriodFormat } from 'state/stats/lists/utils';
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
-import Sparkline from 'woocommerce/components/sparkline';
-import Table from 'woocommerce/components/table';
-import TableItem from 'woocommerce/components/table/table-item';
-import TableRow from 'woocommerce/components/table/table-row';
-import { UNITS } from 'woocommerce/app/store-stats/constants';
+import { getPeriodFormat } from 'client/state/stats/lists/utils';
+import { getSiteStatsNormalizedData } from 'client/state/stats/lists/selectors';
+import Sparkline from 'client/extensions/woocommerce/components/sparkline';
+import Table from 'client/extensions/woocommerce/components/table';
+import TableItem from 'client/extensions/woocommerce/components/table/table-item';
+import TableRow from 'client/extensions/woocommerce/components/table/table-row';
+import { UNITS } from 'client/extensions/woocommerce/app/store-stats/constants';
 
 class StoreStatsWidgetList extends Component {
 	static propTypes = {

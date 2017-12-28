@@ -15,14 +15,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { errorNotice as errorNoticeAction } from 'state/notices/actions';
-import DropZone from 'components/drop-zone';
-import FilePicker from 'components/file-picker';
-import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
-import MediaStore from 'lib/media/store';
-import MediaValidationStore from 'lib/media/validation-store';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
+import { errorNotice as errorNoticeAction } from 'client/state/notices/actions';
+import DropZone from 'client/components/drop-zone';
+import FilePicker from 'client/components/file-picker';
+import MediaActions from 'client/lib/media/actions';
+import MediaUtils from 'client/lib/media/utils';
+import MediaStore from 'client/lib/media/store';
+import MediaValidationStore from 'client/lib/media/validation-store';
 
 class ProductImageUploader extends Component {
 	static propTypes = {

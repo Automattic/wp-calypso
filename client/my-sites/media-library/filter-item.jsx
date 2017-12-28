@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import SectionNavTabItem from 'components/section-nav/item';
+import SectionNavTabItem from 'client/components/section-nav/item';
 
 class FilterItem extends Component {
 	activate = () => {

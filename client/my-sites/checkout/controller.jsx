@@ -12,15 +12,15 @@ import page, { Route } from 'page';
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
-import route from 'lib/route';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { setSection } from 'state/ui/actions';
-import productsFactory from 'lib/products-list';
-import upgradesActions from 'lib/upgrades/actions';
-import { getSiteBySlug } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import GsuiteNudge from 'my-sites/checkout/gsuite-nudge';
+import analytics from 'client/lib/analytics';
+import route from 'client/lib/route';
+import { setDocumentHeadTitle as setTitle } from 'client/state/document-head/actions';
+import { setSection } from 'client/state/ui/actions';
+import productsFactory from 'client/lib/products-list';
+import upgradesActions from 'client/lib/upgrades/actions';
+import { getSiteBySlug } from 'client/state/sites/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import GsuiteNudge from 'client/my-sites/checkout/gsuite-nudge';
 
 /**
  * Module variables

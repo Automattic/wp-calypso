@@ -15,8 +15,8 @@ import {
 	getCurrentlyOpenShippingZoneMethod,
 	isCurrentlyOpenShippingZoneMethodNew,
 } from '../selectors';
-import { LOADING } from 'woocommerce/state/constants';
-import { createState } from 'woocommerce/state/test/helpers';
+import { LOADING } from 'client/extensions/woocommerce/state/constants';
+import { createState } from 'client/extensions/woocommerce/state/test/helpers';
 
 const emptyZoneLocations = { country: [], continent: [], state: [], postcode: [] };
 

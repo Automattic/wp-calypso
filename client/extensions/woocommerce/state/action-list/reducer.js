@@ -9,11 +9,11 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import {
 	WOOCOMMERCE_ACTION_LIST_ANNOTATE,
 	WOOCOMMERCE_ACTION_LIST_CLEAR,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_ACTION_LIST_CLEAR ]: handleActionListClear,

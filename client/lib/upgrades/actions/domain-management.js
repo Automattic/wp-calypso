@@ -11,21 +11,21 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import { action as ActionTypes } from '../constants';
-import { isInitialized as isDomainInitialized } from 'lib/domains';
-import Dispatcher from 'dispatcher';
-import DnsStore from 'lib/domains/dns/store';
-import domainsAssembler from 'lib/domains/assembler';
-import DomainsStore from 'lib/domains/store';
-import EmailForwardingStore from 'lib/domains/email-forwarding/store';
-import NameserversStore from 'lib/domains/nameservers/store';
-import { requestSite } from 'state/sites/actions';
-import wapiDomainInfoAssembler from 'lib/domains/wapi-domain-info/assembler';
-import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
-import whoisAssembler from 'lib/domains/whois/assembler';
-import WhoisStore from 'lib/domains/whois/store';
-import wp from 'lib/wp';
+import { isInitialized as isDomainInitialized } from 'client/lib/domains';
+import Dispatcher from 'client/dispatcher';
+import DnsStore from 'client/lib/domains/dns/store';
+import domainsAssembler from 'client/lib/domains/assembler';
+import DomainsStore from 'client/lib/domains/store';
+import EmailForwardingStore from 'client/lib/domains/email-forwarding/store';
+import NameserversStore from 'client/lib/domains/nameservers/store';
+import { requestSite } from 'client/state/sites/actions';
+import wapiDomainInfoAssembler from 'client/lib/domains/wapi-domain-info/assembler';
+import WapiDomainInfoStore from 'client/lib/domains/wapi-domain-info/store';
+import whoisAssembler from 'client/lib/domains/whois/assembler';
+import WhoisStore from 'client/lib/domains/whois/store';
+import wp from 'client/lib/wp';
 import debugFactory from 'debug';
-import { isBeingProcessed } from 'lib/domains/dns';
+import { isBeingProcessed } from 'client/lib/domains/dns';
 
 const debug = debugFactory( 'actions:domain-management' );
 

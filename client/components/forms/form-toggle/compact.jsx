@@ -10,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Toggle from 'components/forms/form-toggle';
+import Toggle from 'client/components/forms/form-toggle';
 
 const CompactFormToggle = ( { className, children, ...otherProps } ) => (
 	<Toggle { ...otherProps } className={ classNames( className, 'is-compact' ) }>

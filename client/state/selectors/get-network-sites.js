@@ -9,9 +9,9 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { isMainSiteOf, getSitesItems } from 'state/selectors';
-import { getSite, isJetpackSiteMainNetworkSite } from 'state/sites/selectors';
+import createSelector from 'client/lib/create-selector';
+import { isMainSiteOf, getSitesItems } from 'client/state/selectors';
+import { getSite, isJetpackSiteMainNetworkSite } from 'client/state/sites/selectors';
 
 /**
  * Returns the member sites (main or secondary) of given network site

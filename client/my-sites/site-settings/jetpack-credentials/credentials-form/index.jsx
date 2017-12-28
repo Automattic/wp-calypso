@@ -10,14 +10,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import FormTextArea from 'components/forms/form-textarea';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormPasswordInput from 'components/forms/form-password-input';
+import Button from 'client/components/button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormSelect from 'client/components/forms/form-select';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextArea from 'client/components/forms/form-textarea';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormPasswordInput from 'client/components/forms/form-password-input';
 import Gridicon from 'gridicons';
 
 export class CredentialsForm extends Component {

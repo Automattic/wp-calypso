@@ -22,7 +22,7 @@ import reducer, {
 	themeInstalls,
 	completedActivationRequests,
 } from '../reducer';
-import ThemeQueryManager from 'lib/query-manager/theme';
+import ThemeQueryManager from 'client/lib/query-manager/theme';
 import {
 	THEME_REQUEST,
 	THEME_REQUEST_SUCCESS,
@@ -42,7 +42,7 @@ import {
 	THEME_INSTALL_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const twentysixteen = {

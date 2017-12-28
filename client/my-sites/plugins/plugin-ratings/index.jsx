@@ -13,9 +13,9 @@ import createReactClass from 'create-react-class';
 /**
  * Internal dependencies
  */
-import ProgressBar from 'components/progress-bar';
-import Rating from 'components/rating';
-import analytics from 'lib/analytics';
+import ProgressBar from 'client/components/progress-bar';
+import Rating from 'client/components/rating';
+import analytics from 'client/lib/analytics';
 
 const PluginRatings = createReactClass( {
 	displayName: 'PluginRatings',

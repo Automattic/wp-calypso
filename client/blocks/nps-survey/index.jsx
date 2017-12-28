@@ -14,13 +14,13 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
 import RecommendationSelect from './recommendation-select';
-import { submitNpsSurvey, submitNpsSurveyWithNoScore } from 'state/nps-survey/actions';
-import { successNotice } from 'state/notices/actions';
-import { hasAnsweredNpsSurvey } from 'state/nps-survey/selectors';
-import analytics from 'lib/analytics';
+import { submitNpsSurvey, submitNpsSurveyWithNoScore } from 'client/state/nps-survey/actions';
+import { successNotice } from 'client/state/notices/actions';
+import { hasAnsweredNpsSurvey } from 'client/state/nps-survey/selectors';
+import analytics from 'client/lib/analytics';
 
 class NpsSurvey extends Component {
 	static propTypes = {

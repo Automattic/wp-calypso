@@ -13,21 +13,21 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import wrapSettingsForm from './wrap-settings-form';
-import SectionHeader from 'components/section-header';
-import Button from 'components/button';
+import SectionHeader from 'client/components/section-header';
+import Button from 'client/components/button';
 import Protect from './protect';
 import Sso from './sso';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
+import QueryJetpackModules from 'client/components/data/query-jetpack-modules';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { siteSupportsJetpackSettingsUi } from 'client/state/sites/selectors';
 import {
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode,
-} from 'state/selectors';
+} from 'client/state/selectors';
 import SpamFilteringSettings from './spam-filtering-settings';
-import QueryJetpackSettings from 'components/data/query-jetpack-settings';
-import { isATEnabled } from 'lib/automated-transfer';
+import QueryJetpackSettings from 'client/components/data/query-jetpack-settings';
+import { isATEnabled } from 'client/lib/automated-transfer';
 
 class SiteSettingsFormSecurity extends Component {
 	renderSectionHeader( title, showButton = true, disableButton = false ) {

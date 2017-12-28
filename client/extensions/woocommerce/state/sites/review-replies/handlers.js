@@ -9,14 +9,14 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { changeReviewStatus } from 'woocommerce/state/sites/reviews/actions';
-import { clearReviewReplyEdits } from 'woocommerce/state/ui/review-replies/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { fetchReviewReplies } from 'woocommerce/state/sites/review-replies/actions';
-import { getReview } from 'woocommerce/state/sites/reviews/selectors';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import request from 'woocommerce/state/sites/http-request';
+import { changeReviewStatus } from 'client/extensions/woocommerce/state/sites/reviews/actions';
+import { clearReviewReplyEdits } from 'client/extensions/woocommerce/state/ui/review-replies/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice, successNotice } from 'client/state/notices/actions';
+import { fetchReviewReplies } from 'client/extensions/woocommerce/state/sites/review-replies/actions';
+import { getReview } from 'client/extensions/woocommerce/state/sites/reviews/selectors';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import request from 'client/extensions/woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
 	WOOCOMMERCE_REVIEW_REPLIES_REQUEST,
@@ -25,7 +25,7 @@ import {
 	WOOCOMMERCE_REVIEW_REPLY_DELETED,
 	WOOCOMMERCE_REVIEW_REPLY_UPDATE_REQUEST,
 	WOOCOMMERCE_REVIEW_REPLY_UPDATED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 export default {
 	[ WOOCOMMERCE_REVIEW_REPLIES_REQUEST ]: [

@@ -14,20 +14,20 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Content from './content';
-import MediaActions from 'lib/media/actions';
+import MediaActions from 'client/lib/media/actions';
 import MediaLibraryDropZone from './drop-zone';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import MediaUtils from 'lib/media/utils';
+import MediaLibrarySelectedStore from 'client/lib/media/library-selected-store';
+import MediaUtils from 'client/lib/media/utils';
 import filterToMimePrefix from './filter-to-mime-prefix';
 import FilterBar from './filter-bar';
-import MediaValidationData from 'components/data/media-validation-data';
-import QueryPreferences from 'components/data/query-preferences';
-import searchUrl from 'lib/search-url';
+import MediaValidationData from 'client/components/data/media-validation-data';
+import QueryPreferences from 'client/components/data/query-preferences';
+import searchUrl from 'client/lib/search-url';
 import {
 	isKeyringConnectionsFetching,
 	getKeyringConnections,
-} from 'state/sharing/keyring/selectors';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+} from 'client/state/sharing/keyring/selectors';
+import { requestKeyringConnections } from 'client/state/sharing/keyring/actions';
 
 // External media sources that do not need a user to connect them
 // should be listed here.

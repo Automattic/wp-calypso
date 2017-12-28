@@ -14,8 +14,8 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	FEATURE_ADVANCED_SEO,
-} from 'lib/plans/constants';
-import Banner from 'components/banner';
+} from 'client/lib/plans/constants';
+import Banner from 'client/components/banner';
 
 const BannerExample = () => (
 	<div>

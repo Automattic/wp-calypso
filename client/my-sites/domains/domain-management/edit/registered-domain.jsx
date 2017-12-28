@@ -11,17 +11,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analyticsMixin from 'lib/mixins/analytics';
-import Card from 'components/card/compact';
-import Notice from 'components/notice';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
+import analyticsMixin from 'client/lib/mixins/analytics';
+import Card from 'client/components/card/compact';
+import Notice from 'client/components/notice';
+import DomainWarnings from 'client/my-sites/domains/components/domain-warnings';
 import Header from './card/header';
-import paths from 'my-sites/domains/paths';
+import paths from 'client/my-sites/domains/paths';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
+import VerticalNav from 'client/components/vertical-nav';
+import VerticalNavItem from 'client/components/vertical-nav/item';
+import IcannVerificationCard from 'client/my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
 
 const RegisteredDomain = createReactClass( {
 	displayName: 'RegisteredDomain',

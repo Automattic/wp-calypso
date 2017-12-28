@@ -12,12 +12,12 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import LoggedOutForm from 'components/logged-out-form';
-import formState from 'lib/form-state';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
-import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+import LoggedOutForm from 'client/components/logged-out-form';
+import formState from 'client/lib/form-state';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormButton from 'client/components/forms/form-button';
+import FormTextInput from 'client/components/forms/form-text-input';
+import { getSiteTitle } from 'client/state/signup/steps/site-title/selectors';
 import { translate } from 'i18n-calypso';
 
 class SignupSiteTitle extends React.Component {

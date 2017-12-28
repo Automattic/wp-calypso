@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSiteDefaultPostFormat } from 'state/selectors';
+import { getSiteDefaultPostFormat } from 'client/state/selectors';
 
 describe( 'getSiteDefaultPostFormat()', () => {
 	const siteId = 2916284;

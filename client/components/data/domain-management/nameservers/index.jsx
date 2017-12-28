@@ -11,12 +11,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import NameserversStore from 'lib/domains/nameservers/store';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import StoreConnection from 'components/data/store-connection';
-import { fetchNameservers } from 'lib/upgrades/actions';
-import { getDomainsBySite } from 'state/sites/domains/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import NameserversStore from 'client/lib/domains/nameservers/store';
+import QuerySiteDomains from 'client/components/data/query-site-domains';
+import StoreConnection from 'client/components/data/store-connection';
+import { fetchNameservers } from 'client/lib/upgrades/actions';
+import { getDomainsBySite } from 'client/state/sites/domains/selectors';
+import { getSelectedSite } from 'client/state/ui/selectors';
 
 const stores = [ NameserversStore ];
 

@@ -11,7 +11,7 @@ import {
 	AUTOMATED_TRANSFER_STATUS_REQUEST,
 	AUTOMATED_TRANSFER_STATUS_SET,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 /**
  * Initiate a transfer to an Atomic site.

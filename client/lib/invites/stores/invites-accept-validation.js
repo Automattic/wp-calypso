@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { createReducerStore } from 'lib/store';
-import { reducer, initialState } from 'lib/invites/reducers/invites-accept-validation';
+import { createReducerStore } from 'client/lib/store';
+import { reducer, initialState } from 'client/lib/invites/reducers/invites-accept-validation';
 
 const InvitesAcceptValidationStore = createReducerStore( reducer, initialState );
 

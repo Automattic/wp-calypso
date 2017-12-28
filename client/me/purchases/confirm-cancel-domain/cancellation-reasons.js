@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import support from 'lib/url/support';
+import support from 'client/lib/url/support';
 
 export default [
 	{

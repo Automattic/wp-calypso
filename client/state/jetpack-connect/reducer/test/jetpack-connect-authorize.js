@@ -21,7 +21,7 @@ import {
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	SERIALIZE,
 	SITE_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 import { useSandbox } from 'test/helpers/use-sinon';
 

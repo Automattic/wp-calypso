@@ -14,9 +14,9 @@ import { localize } from 'i18n-calypso';
  */
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecord from './dns-record';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'lib/upgrades/actions';
-import { isDeletingLastMXRecord } from 'lib/domains/dns';
+import { errorNotice, removeNotice, successNotice } from 'client/state/notices/actions';
+import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'client/lib/upgrades/actions';
+import { isDeletingLastMXRecord } from 'client/lib/domains/dns';
 
 class DnsList extends React.Component {
 	static propTypes = {

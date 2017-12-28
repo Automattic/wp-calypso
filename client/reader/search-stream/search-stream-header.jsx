@@ -10,9 +10,9 @@ import { noop, values } from 'lodash';
 /**
  * Internal Dependencies
  */
-import NavTabs from 'components/section-nav/tabs';
-import SectionNav from 'components/section-nav';
-import NavItem from 'components/section-nav/item';
+import NavTabs from 'client/components/section-nav/tabs';
+import SectionNav from 'client/components/section-nav';
+import NavItem from 'client/components/section-nav/item';
 
 export const SEARCH_TYPES = { POSTS: 'posts', SITES: 'sites' };
 

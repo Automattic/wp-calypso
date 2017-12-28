@@ -12,7 +12,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 
 export default class LoggedOutForm extends React.Component {
 	static propTypes = {

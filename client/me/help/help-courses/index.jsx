@@ -12,19 +12,19 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CourseList, { CourseListPlaceholder } from './course-list';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getHelpCourses } from 'state/help/courses/selectors';
+import HeaderCake from 'client/components/header-cake';
+import Main from 'client/components/main';
+import QueryUserPurchases from 'client/components/data/query-user-purchases';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
+import { getHelpCourses } from 'client/state/help/courses/selectors';
 import { helpCourses } from './constants';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
-import { receiveHelpCourses } from 'state/help/courses/actions';
+import { PLAN_BUSINESS } from 'client/lib/plans/constants';
+import { receiveHelpCourses } from 'client/state/help/courses/actions';
 import {
 	getUserPurchases,
 	isFetchingUserPurchases,
 	hasLoadedUserPurchasesFromServer,
-} from 'state/purchases/selectors';
+} from 'client/state/purchases/selectors';
 
 class Courses extends Component {
 	componentWillMount() {

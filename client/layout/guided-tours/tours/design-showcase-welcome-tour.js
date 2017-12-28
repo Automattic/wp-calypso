@@ -20,7 +20,7 @@ import {
 	Next,
 	Quit,
 	Continue,
-} from 'layout/guided-tours/config-elements';
+} from 'client/layout/guided-tours/config-elements';
 import {
 	hasAnalyticsEventFired,
 	isAbTestInVariant,
@@ -28,8 +28,8 @@ import {
 	isNewUser,
 	isEnabled,
 	selectedSiteIsCustomizable,
-} from 'state/ui/guided-tours/contexts';
-import { isDesktop } from 'lib/viewport';
+} from 'client/state/ui/guided-tours/contexts';
+import { isDesktop } from 'client/lib/viewport';
 
 const anyThemeMoreButtonClicked = hasAnalyticsEventFired( 'calypso_themeshowcase_theme_click' );
 

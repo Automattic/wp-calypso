@@ -12,7 +12,7 @@ import reducer from '../list-reducer';
 import {
 	WOOCOMMERCE_PROMOTIONS_PAGE_SET,
 	WOOCOMMERCE_PROMOTIONS_SEARCH,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should initialize to default values', () => {

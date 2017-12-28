@@ -10,8 +10,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Count from 'components/count';
-import SidebarHeading from 'layout/sidebar/heading';
+import Count from 'client/components/count';
+import SidebarHeading from 'client/layout/sidebar/heading';
 
 const ExpandableSidebarHeading = ( { title, count, onClick } ) => (
 	<SidebarHeading onClick={ onClick }>

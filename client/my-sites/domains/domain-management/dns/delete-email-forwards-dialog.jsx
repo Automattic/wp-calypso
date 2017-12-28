@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import { domainManagementEmailForwarding } from 'my-sites/domains/paths';
+import Dialog from 'client/components/dialog';
+import { domainManagementEmailForwarding } from 'client/my-sites/domains/paths';
 
 class DeleteEmailForwardsDialog extends React.Component {
 	static propTypes = {

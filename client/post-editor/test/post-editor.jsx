@@ -15,7 +15,7 @@ import { renderIntoDocument } from 'react-dom/test-utils';
  * Internal dependencies
  */
 import { PostEditor } from '../post-editor';
-import PostEditStore from 'lib/posts/post-edit-store';
+import PostEditStore from 'client/lib/posts/post-edit-store';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 jest.mock( 'components/tinymce', () => require( 'components/empty-component' ) );

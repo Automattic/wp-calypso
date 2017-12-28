@@ -12,12 +12,12 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { changeCommentStatus } from 'state/comments/actions';
+import { changeCommentStatus } from 'client/state/comments/actions';
 import CommentLikeButtonContainer from './comment-likes';
 import CommentApproveAction from './comment-approve-action';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
+import EllipsisMenu from 'client/components/ellipsis-menu';
+import PopoverMenuItem from 'client/components/popover/menu-item';
+import PopoverMenuSeparator from 'client/components/popover/menu-separator';
 
 const CommentActions = ( {
 	post,

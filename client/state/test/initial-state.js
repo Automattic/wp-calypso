@@ -13,8 +13,8 @@ import { createStore } from 'redux';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import localforage from 'lib/localforage';
-import { isSupportUserSession } from 'lib/user/support-user-interop';
+import localforage from 'client/lib/localforage';
+import { isSupportUserSession } from 'client/lib/user/support-user-interop';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 

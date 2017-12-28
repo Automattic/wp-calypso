@@ -1,11 +1,8 @@
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
-import {
-	WOOCOMMERCE_PROMOTIONS_PAGE_SET,
-	WOOCOMMERCE_PROMOTIONS_SEARCH,
-} from 'woocommerce/state/action-types';
+import { createReducer } from 'client/state/utils';
+import { WOOCOMMERCE_PROMOTIONS_PAGE_SET, WOOCOMMERCE_PROMOTIONS_SEARCH } from 'client/extensions/woocommerce/state/action-types';
 
 const initialState = {
 	currentPage: 1,

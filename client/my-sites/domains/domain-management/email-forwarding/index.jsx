@@ -12,15 +12,15 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import MainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'my-sites/domains/domain-management/components/header';
+import Main from 'client/components/main';
+import MainPlaceholder from 'client/my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'client/my-sites/domains/domain-management/components/header';
 import EmailForwardingList from './email-forwarding-list';
 import EmailForwardingAddNew from './email-forwarding-add-new';
 import EmailForwardingDetails from './email-forwarding-details';
-import paths from 'my-sites/domains/paths';
-import Card from 'components/card/compact';
-import SectionHeader from 'components/section-header';
+import paths from 'client/my-sites/domains/paths';
+import Card from 'client/components/card/compact';
+import SectionHeader from 'client/components/section-header';
 
 class EmailForwarding extends React.Component {
 	static propTypes = {

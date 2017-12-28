@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { merge, omit, uniqueId } from 'lodash';
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 
 /**
  * Internal dependencies
@@ -12,7 +12,7 @@ import {
 	WOOCOMMERCE_ORDER_UPDATE_SUCCESS,
 	WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 	WOOCOMMERCE_UI_ORDERS_EDIT,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 /**
  * Returns the updated state after an action has been dispatched.

@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MediaLibraryListItem from 'my-sites/media-library/list-item';
+import MediaLibraryListItem from 'client/my-sites/media-library/list-item';
 import EditorMediaModalGalleryCaption from './caption';
 import EditorMediaModalGalleryRemoveButton from './remove-button';
-import { canCurrentUser } from 'state/selectors';
+import { canCurrentUser } from 'client/state/selectors';
 
 class EditorMediaModalGalleryEditItem extends Component {
 	static propTypes = {

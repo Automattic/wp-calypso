@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import SidebarNavigation from 'client/my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';

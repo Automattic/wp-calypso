@@ -14,7 +14,7 @@ import {
 	isValidThemeFilterTerm,
 	getThemeFilterStringFromTerm,
 	getThemeFilterTermFromString,
-} from 'state/selectors';
+} from 'client/state/selectors';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {

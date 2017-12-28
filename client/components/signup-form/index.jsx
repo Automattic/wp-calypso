@@ -16,27 +16,27 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import config from 'config';
-import analytics from 'lib/analytics';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import FormButton from 'components/forms/form-button';
-import notices from 'notices';
-import Notice from 'components/notice';
-import LoggedOutForm from 'components/logged-out-form';
-import { login } from 'lib/paths';
-import formState from 'lib/form-state';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import { mergeFormWithValue } from 'signup/utils';
+import analytics from 'client/lib/analytics';
+import FormInputValidation from 'client/components/forms/form-input-validation';
+import FormLabel from 'client/components/forms/form-label';
+import FormPasswordInput from 'client/components/forms/form-password-input';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormButton from 'client/components/forms/form-button';
+import notices from 'client/notices';
+import Notice from 'client/components/notice';
+import LoggedOutForm from 'client/components/logged-out-form';
+import { login } from 'client/lib/paths';
+import formState from 'client/lib/form-state';
+import LoggedOutFormLinks from 'client/components/logged-out-form/links';
+import LoggedOutFormLinkItem from 'client/components/logged-out-form/link-item';
+import LoggedOutFormFooter from 'client/components/logged-out-form/footer';
+import { mergeFormWithValue } from 'client/signup/utils';
 import SocialSignupForm from './social';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { createSocialUserFailed } from 'state/login/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'client/state/analytics/actions';
+import { createSocialUserFailed } from 'client/state/login/actions';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );

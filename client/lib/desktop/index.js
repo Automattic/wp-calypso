@@ -12,15 +12,15 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import paths from 'lib/paths';
-import userFactory from 'lib/user';
+import paths from 'client/lib/paths';
+import userFactory from 'client/lib/user';
 const user = userFactory();
 import { ipcRenderer as ipc } from 'electron'; // From Electron
 import store from 'store';
-import * as oAuthToken from 'lib/oauth-token';
-import userUtilities from 'lib/user/utils';
-import location from 'lib/route/page-notifier';
-import { getStatsPathForTab } from 'lib/route/path';
+import * as oAuthToken from 'client/lib/oauth-token';
+import userUtilities from 'client/lib/user/utils';
+import location from 'client/lib/route/page-notifier';
+import { getStatsPathForTab } from 'client/lib/route/path';
 
 /**
  * Module variables

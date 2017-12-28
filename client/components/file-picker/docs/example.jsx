@@ -9,9 +9,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Button from 'components/button';
-import FilePicker from 'components/file-picker';
+import Card from 'client/components/card';
+import Button from 'client/components/button';
+import FilePicker from 'client/components/file-picker';
 
 export default class FilePickers extends React.Component {
 	constructor( props ) {

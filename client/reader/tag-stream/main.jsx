@@ -11,16 +11,16 @@ import { find } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Stream from 'reader/stream';
-import DocumentHead from 'components/data/document-head';
+import Stream from 'client/reader/stream';
+import DocumentHead from 'client/components/data/document-head';
 import EmptyContent from './empty';
 import TagStreamHeader from './header';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import HeaderBack from 'reader/header-back';
-import { getReaderFollowedTags, getReaderTags } from 'state/selectors';
-import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
-import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
-import QueryReaderTag from 'components/data/query-reader-tag';
+import { recordAction, recordGaEvent, recordTrack } from 'client/reader/stats';
+import HeaderBack from 'client/reader/header-back';
+import { getReaderFollowedTags, getReaderTags } from 'client/state/selectors';
+import { requestFollowTag, requestUnfollowTag } from 'client/state/reader/tags/items/actions';
+import QueryReaderFollowedTags from 'client/components/data/query-reader-followed-tags';
+import QueryReaderTag from 'client/components/data/query-reader-tag';
 
 class TagStream extends React.Component {
 	static propTypes = {

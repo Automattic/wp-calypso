@@ -13,12 +13,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
+import { fetchSettingsGeneral } from 'client/extensions/woocommerce/state/sites/settings/general/actions';
 import {
 	areSettingsGeneralLoaded,
 	areSettingsGeneralLoadError,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import { errorNotice, removeNotice } from 'state/notices/actions';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import { errorNotice, removeNotice } from 'client/state/notices/actions';
 
 class QuerySettingsGeneral extends Component {
 	fetch( siteId ) {

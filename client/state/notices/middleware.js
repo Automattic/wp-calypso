@@ -10,9 +10,9 @@ import { truncate, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { getSitePost } from 'state/posts/selectors';
-import { getSiteDomain } from 'state/sites/selectors';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
+import { getSitePost } from 'client/state/posts/selectors';
+import { getSiteDomain } from 'client/state/sites/selectors';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
@@ -54,8 +54,8 @@ import {
 	THEME_DELETE_FAILURE,
 	THEME_DELETE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
-} from 'state/action-types';
-import purchasesPaths from 'me/purchases/paths';
+} from 'client/state/action-types';
+import purchasesPaths from 'client/me/purchases/paths';
 import { dispatchSuccess, dispatchError } from './utils';
 
 import {

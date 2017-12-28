@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { isAccountRecoveryResetPasswordSucceeded } from 'state/selectors';
+import { isAccountRecoveryResetPasswordSucceeded } from 'client/state/selectors';
 
 describe( 'isAccountRecoveryResetPasswordSucceeded()', () => {
 	test( 'should return succeeded field under resetPassword state tree.', () => {

@@ -15,19 +15,19 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import Button from 'components/button';
-import FormToggle from 'components/forms/form-toggle/compact';
-import EditorRevisionsLegacyLink from 'post-editor/editor-revisions/legacy-link';
-import postUtils from 'lib/posts/utils';
-import InfoPopover from 'components/info-popover';
-import { recordStat, recordEvent } from 'lib/posts/stats';
-import { editPost } from 'state/posts/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
-import EditorPublishDate from 'post-editor/editor-publish-date';
-import EditorVisibility from 'post-editor/editor-visibility';
-import { canCurrentUser } from 'state/selectors';
+import Button from 'client/components/button';
+import FormToggle from 'client/components/forms/form-toggle/compact';
+import EditorRevisionsLegacyLink from 'client/post-editor/editor-revisions/legacy-link';
+import postUtils from 'client/lib/posts/utils';
+import InfoPopover from 'client/components/info-popover';
+import { recordStat, recordEvent } from 'client/lib/posts/stats';
+import { editPost } from 'client/state/posts/actions';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
+import { getEditedPost } from 'client/state/posts/selectors';
+import EditorPublishDate from 'client/post-editor/editor-publish-date';
+import EditorVisibility from 'client/post-editor/editor-visibility';
+import { canCurrentUser } from 'client/state/selectors';
 
 export class EditPostStatus extends Component {
 	static propTypes = {

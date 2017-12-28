@@ -12,9 +12,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
+import { isSiteAutomatedTransfer } from 'client/state/selectors';
 
 const redirectNonJetpack = redirectRoute => WrappedComponent => {
 	class RedirectNonJetpack extends Component {

@@ -9,9 +9,9 @@ import { compact, map, uniq } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getUpcomingBillingTransactions } from 'state/selectors';
+import createSelector from 'client/lib/create-selector';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getUpcomingBillingTransactions } from 'client/state/selectors';
 
 /**
  * Returns the slugs of all sites that are included in upcoming transactions, indexed by the site IDs.

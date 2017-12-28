@@ -11,8 +11,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
+import HeaderCake from 'client/components/header-cake';
+import Main from 'client/components/main';
 
 class LoadingPlaceholder extends React.Component {
 	static propTypes = {

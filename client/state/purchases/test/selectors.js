@@ -16,7 +16,7 @@ import {
 	getSitePurchases,
 	isUserPaid,
 } from '../selectors';
-import purchasesAssembler from 'lib/purchases/assembler';
+import purchasesAssembler from 'client/lib/purchases/assembler';
 
 describe( 'selectors', () => {
 	describe( 'getPurchases', () => {

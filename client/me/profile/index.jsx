@@ -13,23 +13,23 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import EditGravatar from 'blocks/edit-gravatar';
-import formBase from 'me/form-base';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import observe from 'lib/mixins/data-observe';
-import ProfileLinks from 'me/profile-links';
-import ReauthRequired from 'me/reauth-required';
-import SectionHeader from 'components/section-header';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import { protectForm } from 'lib/protect-form';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import Card from 'client/components/card';
+import EditGravatar from 'client/blocks/edit-gravatar';
+import formBase from 'client/me/form-base';
+import FormButton from 'client/components/forms/form-button';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormTextarea from 'client/components/forms/form-textarea';
+import FormTextInput from 'client/components/forms/form-text-input';
+import Main from 'client/components/main';
+import MeSidebarNavigation from 'client/me/sidebar-navigation';
+import observe from 'client/lib/mixins/data-observe';
+import ProfileLinks from 'client/me/profile-links';
+import ReauthRequired from 'client/me/reauth-required';
+import SectionHeader from 'client/components/section-header';
+import twoStepAuthorization from 'client/lib/two-step-authorization';
+import { protectForm } from 'client/lib/protect-form';
+import { recordGoogleEvent } from 'client/state/analytics/actions';
 
 const debug = debugFactory( 'calypso:me:profile' );
 

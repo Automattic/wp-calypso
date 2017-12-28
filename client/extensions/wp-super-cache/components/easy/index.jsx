@@ -13,18 +13,18 @@ import { flowRight, get, isEmpty, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isHttps } from 'lib/url';
-import Button from 'components/button';
-import Card from 'components/card';
-import Notice from 'components/notice';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormToggle from 'components/forms/form-toggle/compact';
+import { isHttps } from 'client/lib/url';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import Notice from 'client/components/notice';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormToggle from 'client/components/forms/form-toggle/compact';
 import QueryStatus from '../data/query-status';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'client/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 import { testCache } from '../../state/cache/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteTitle } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteTitle } from 'client/state/sites/selectors';
 import { getCacheTestResults, isTestingCache } from '../../state/cache/selectors';
 import { getStatus } from '../../state/status/selectors';
 

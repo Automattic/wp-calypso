@@ -12,11 +12,11 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
-import FormTextInput from 'components/forms/form-text-input';
-import FormWeightInput from 'woocommerce/components/form-weight-input';
-import PriceInput from 'woocommerce/components/price-input';
+import Dialog from 'client/components/dialog';
+import FormDimensionsInput from 'client/extensions/woocommerce/components/form-dimensions-input';
+import FormTextInput from 'client/components/forms/form-text-input';
+import FormWeightInput from 'client/extensions/woocommerce/components/form-weight-input';
+import PriceInput from 'client/extensions/woocommerce/components/price-input';
 import ProductFormVariationsModal from './product-form-variations-modal';
 import ProductFormVariationsRow from './product-form-variations-row';
 

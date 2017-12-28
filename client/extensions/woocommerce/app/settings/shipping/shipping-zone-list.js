@@ -12,25 +12,25 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import ExtendedHeader from 'woocommerce/components/extended-header';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import ExtendedHeader from 'client/extensions/woocommerce/components/extended-header';
 import ShippingZoneEntry from './shipping-zone-list-entry';
 import QueryShippingZones, {
 	areShippingZonesFullyLoaded,
-} from 'woocommerce/components/query-shipping-zones';
-import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+} from 'client/extensions/woocommerce/components/query-shipping-zones';
+import QuerySettingsGeneral from 'client/extensions/woocommerce/components/query-settings-general';
 import {
 	areSettingsGeneralLoaded,
 	areSettingsGeneralLoadError,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import Notice from 'components/notice';
-import { getLink } from 'woocommerce/lib/nav-utils';
-import { getShippingZones } from 'woocommerce/state/ui/shipping/zones/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { areShippingZonesLocationsValid } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
-import { getActionList } from 'woocommerce/state/action-list/selectors';
-import { createAddDefultShippingZoneActionList } from 'woocommerce/state/ui/shipping/zones/actions';
+} from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import Notice from 'client/components/notice';
+import { getLink } from 'client/extensions/woocommerce/lib/nav-utils';
+import { getShippingZones } from 'client/extensions/woocommerce/state/ui/shipping/zones/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'client/state/ui/selectors';
+import { areShippingZonesLocationsValid } from 'client/extensions/woocommerce/state/sites/shipping-zone-locations/selectors';
+import { getActionList } from 'client/extensions/woocommerce/state/action-list/selectors';
+import { createAddDefultShippingZoneActionList } from 'client/extensions/woocommerce/state/ui/shipping/zones/actions';
 
 class ShippingZoneList extends Component {
 	componentWillMount() {

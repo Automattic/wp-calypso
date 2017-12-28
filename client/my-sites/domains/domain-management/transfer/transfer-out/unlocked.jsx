@@ -11,14 +11,14 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import SectionHeader from 'components/section-header';
-import { getSelectedDomain } from 'lib/domains';
-import Button from 'components/button';
-import { requestTransferCode, cancelTransferRequest } from 'lib/upgrades/actions';
-import notices from 'notices';
+import Card from 'client/components/card';
+import SectionHeader from 'client/components/section-header';
+import { getSelectedDomain } from 'client/lib/domains';
+import Button from 'client/components/button';
+import { requestTransferCode, cancelTransferRequest } from 'client/lib/upgrades/actions';
+import notices from 'client/notices';
 import { displayRequestTransferCodeResponseNotice } from './shared';
-import support from 'lib/url/support';
+import support from 'client/lib/url/support';
 
 class Unlocked extends React.Component {
 	state = {

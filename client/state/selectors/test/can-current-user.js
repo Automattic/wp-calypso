@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { canCurrentUser } from 'state/selectors';
+import { canCurrentUser } from 'client/state/selectors';
 
 describe( 'canCurrentUser()', () => {
 	test( 'should return null if the site is not known', () => {

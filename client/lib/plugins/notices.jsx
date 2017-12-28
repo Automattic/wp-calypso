@@ -10,11 +10,11 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginsActions from 'lib/plugins/actions';
-import PluginsUtil from 'lib/plugins/utils';
-import versionCompare from 'lib/version-compare';
+import notices from 'client/notices';
+import PluginsLog from 'client/lib/plugins/log-store';
+import PluginsActions from 'client/lib/plugins/actions';
+import PluginsUtil from 'client/lib/plugins/utils';
+import versionCompare from 'client/lib/version-compare';
 
 function getCombination( translateArg ) {
 	return (

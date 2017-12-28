@@ -1,7 +1,7 @@
 /** @format */
 import React from 'react';
 import Test from './Test';
-import Card from 'components/card';
+import Card from 'client/components/card';
 
 export default class extends React.Component {
 	static displayName = 'TestList';

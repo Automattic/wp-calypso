@@ -8,16 +8,16 @@ import { translate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import config from 'config';
-import { READER_FOLLOW } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { follow, unfollow, recordFollowError } from 'state/reader/follows/actions';
-import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine/utils';
-import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
-import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
-import { getSiteName } from 'reader/get-helpers';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { READER_FOLLOW } from 'client/state/action-types';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { successNotice, errorNotice } from 'client/state/notices/actions';
+import { follow, unfollow, recordFollowError } from 'client/state/reader/follows/actions';
+import { subscriptionFromApi } from 'client/state/data-layer/wpcom/read/following/mine/utils';
+import { getFeedByFeedUrl } from 'client/state/reader/feeds/selectors';
+import { getSiteByFeedUrl } from 'client/state/reader/sites/selectors';
+import { getSiteName } from 'client/reader/get-helpers';
+import { bypassDataLayer } from 'client/state/data-layer/utils';
 
 export function requestFollow( { dispatch, getState }, action ) {
 	const { payload: { feedUrl } } = action;

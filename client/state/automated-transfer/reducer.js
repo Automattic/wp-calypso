@@ -15,7 +15,7 @@ import {
 	keyedReducer,
 	withSchemaValidation,
 	withoutPersistence,
-} from 'state/utils';
+} from 'client/state/utils';
 import { transferStates } from './constants';
 import { automatedTransfer as schema } from './schema';
 import {
@@ -26,7 +26,7 @@ import {
 	THEME_TRANSFER_INITIATE_REQUEST as INITIATE,
 	THEME_TRANSFER_INITIATE_FAILURE as INITIATE_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 
 export const status = ( state = null, action ) =>
 	get(

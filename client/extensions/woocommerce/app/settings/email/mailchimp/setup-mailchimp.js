@@ -10,31 +10,21 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import { getSiteTitle } from 'state/sites/selectors';
-import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
-import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import { getSiteTimezoneValue } from 'state/selectors';
-import {
-	isSubmittingApiKey,
-	isApiKeyCorrect,
-	isSubmittingNewsletterSetting,
-	isSubmittingStoreInfo,
-	} from 'woocommerce/state/sites/settings/mailchimp/selectors';
+import Dialog from 'client/components/dialog';
+import { getSiteTitle } from 'client/state/sites/selectors';
+import { getStoreLocation } from 'client/extensions/woocommerce/state/sites/settings/general/selectors';
+import { getCurrencyWithEdits } from 'client/extensions/woocommerce/state/ui/payments/currency/selectors';
+import { getCurrentUserEmail } from 'client/state/current-user/selectors';
+import { getSiteTimezoneValue } from 'client/state/selectors';
+import { isSubmittingApiKey, isApiKeyCorrect, isSubmittingNewsletterSetting, isSubmittingStoreInfo } from 'client/extensions/woocommerce/state/sites/settings/mailchimp/selectors';
 import KeyInputStep from './setup-steps/key-input.js';
 import LogIntoMailchimp from './setup-steps/log-into-mailchimp.js';
 import NewsletterSettings from './setup-steps/newsletter-settings.js';
-import ProgressBar from 'components/progress-bar';
-import ProgressIndicator from 'components/wizard/progress-indicator';
-import RequiredPluginsInstallView from 'woocommerce/app/dashboard/required-plugins-install-view';
+import ProgressBar from 'client/components/progress-bar';
+import ProgressIndicator from 'client/components/wizard/progress-indicator';
+import RequiredPluginsInstallView from 'client/extensions/woocommerce/app/dashboard/required-plugins-install-view';
 import StoreInfoStep from './setup-steps/store-info.js';
-import {
-	submitMailChimpApiKey,
-	submitMailChimpStoreInfo,
-	submitMailChimpCampaignDefaults,
-	submitMailChimpNewsletterSettings,
-} from 'woocommerce/state/sites/settings/mailchimp/actions.js';
+import { submitMailChimpApiKey, submitMailChimpStoreInfo, submitMailChimpCampaignDefaults, submitMailChimpNewsletterSettings } from 'client/extensions/woocommerce/state/sites/settings/mailchimp/actions.js';
 
 const LOG_INTO_MAILCHIMP_STEP = 'log_into';
 const KEY_INPUT_STEP = 'key_input';

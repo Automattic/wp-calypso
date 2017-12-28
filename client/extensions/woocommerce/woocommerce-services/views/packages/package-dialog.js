@@ -16,12 +16,12 @@ import Gridicon from 'gridicons';
  */
 import EditPackage from './edit-package';
 import checkInputs from './modal-errors';
-import Dialog from 'components/dialog';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormButton from 'components/forms/form-button';
+import Dialog from 'client/components/dialog';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import FormButton from 'client/components/forms/form-button';
 import inputFilters from './input-filters';
 import PredefinedPackages from './predefined-packages';
-import SegmentedControl from 'components/segmented-control';
+import SegmentedControl from 'client/components/segmented-control';
 import { getPredefinedPackagesChangesSummary } from '../../state/packages/selectors';
 
 const AddPackageDialog = props => {

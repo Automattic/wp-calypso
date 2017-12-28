@@ -10,7 +10,7 @@ import { find, get, includes } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import sectionsModule from 'sections';
+import sectionsModule from 'client/sections';
 
 export function getExtensionSettingsPath( plugin ) {
 	const pluginSlug = get( plugin, 'slug', '' );

@@ -9,9 +9,9 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getStreamUrl } from 'reader/route';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
-import Emojify from 'components/emojify';
+import { getStreamUrl } from 'client/reader/route';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'client/reader/stats';
+import Emojify from 'client/components/emojify';
 
 class ReaderSiteStreamLink extends React.Component {
 	static propTypes = {

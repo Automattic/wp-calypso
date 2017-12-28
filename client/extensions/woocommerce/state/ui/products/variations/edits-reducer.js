@@ -9,7 +9,7 @@ import { compact, find, isEqual, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer } from 'client/state/utils';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_EDIT,
@@ -20,11 +20,11 @@ import {
 	WOOCOMMERCE_PRODUCT_VARIATION_EDIT_CLEAR,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATE,
 	WOOCOMMERCE_PRODUCT_VARIATION_UPDATED,
-} from 'woocommerce/state/action-types';
+} from 'client/extensions/woocommerce/state/action-types';
 
 import { editProductAttribute } from '../edits-reducer';
-import { getBucket } from 'woocommerce/state/ui/helpers';
-import generateVariations from 'woocommerce/lib/generate-variations';
+import { getBucket } from 'client/extensions/woocommerce/state/ui/helpers';
+import generateVariations from 'client/extensions/woocommerce/lib/generate-variations';
 
 export default createReducer( null, {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: editProductAction,

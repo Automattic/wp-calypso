@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { requestPrivacyPolicy, privacyPolicyReceive } from '../actions';
-import { PRIVACY_POLICY_ADD, PRIVACY_POLICY_REQUEST } from 'state/action-types';
+import { PRIVACY_POLICY_ADD, PRIVACY_POLICY_REQUEST } from 'client/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'creators functions', () => {

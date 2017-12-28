@@ -13,10 +13,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import versionCompare from 'lib/version-compare';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getPluginOnSite, isRequesting } from 'state/plugins/installed/selectors';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import versionCompare from 'client/lib/version-compare';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getPluginOnSite, isRequesting } from 'client/state/plugins/installed/selectors';
+import QueryJetpackPlugins from 'client/components/data/query-jetpack-plugins';
 
 class ExtensionRedirect extends Component {
 	static propTypes = {

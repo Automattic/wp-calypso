@@ -13,8 +13,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { errorNotice } from 'state/notices/actions';
+import wpcom from 'client/lib/wp';
+import { errorNotice } from 'client/state/notices/actions';
 
 class ReaderExportButton extends React.Component {
 	static propTypes = {

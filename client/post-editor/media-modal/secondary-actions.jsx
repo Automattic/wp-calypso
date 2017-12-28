@@ -15,14 +15,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { canUserDeleteItem } from 'lib/media/utils';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getMediaModalView } from 'state/ui/media-modal/selectors';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
-import Button from 'components/button';
+import { canUserDeleteItem } from 'client/lib/media/utils';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
+import { getMediaModalView } from 'client/state/ui/media-modal/selectors';
+import { setEditorMediaModalView } from 'client/state/ui/editor/actions';
+import { ModalViews } from 'client/state/ui/media-modal/constants';
+import { withAnalytics, bumpStat, recordGoogleEvent } from 'client/state/analytics/actions';
+import Button from 'client/components/button';
 
 class MediaModalSecondaryActions extends Component {
 	static propTypes = {

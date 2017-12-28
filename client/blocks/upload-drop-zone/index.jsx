@@ -14,12 +14,12 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FilePicker from 'components/file-picker';
-import DropZone from 'components/drop-zone';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import notices from 'notices';
+import FilePicker from 'client/components/file-picker';
+import DropZone from 'client/components/drop-zone';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import notices from 'client/notices';
 import debugFactory from 'debug';
-import { MAX_UPLOAD_ZIP_SIZE } from 'lib/automated-transfer/constants';
+import { MAX_UPLOAD_ZIP_SIZE } from 'client/lib/automated-transfer/constants';
 
 const debug = debugFactory( 'calypso:upload-drop-zone' );
 

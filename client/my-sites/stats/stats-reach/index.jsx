@@ -12,17 +12,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import Card from 'client/components/card';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import SectionHeader from 'client/components/section-header';
+import QuerySiteStats from 'client/components/data/query-site-stats';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getSiteSlug } from 'client/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
+} from 'client/state/stats/lists/selectors';
 
 export const StatsReach = props => {
 	const { translate, siteId, followData, publicizeData, isLoadingPublicize, siteSlug } = props;

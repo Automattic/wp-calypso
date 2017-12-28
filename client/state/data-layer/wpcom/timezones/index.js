@@ -9,10 +9,10 @@ import { fromPairs, map, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { TIMEZONES_REQUEST } from 'state/action-types';
-import { timezonesReceive } from 'state/timezones/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'client/state/data-layer/wpcom-http/utils';
+import { TIMEZONES_REQUEST } from 'client/state/action-types';
+import { timezonesReceive } from 'client/state/timezones/actions';
 
 /**
  * Converts an value/label pairs from API into object whose

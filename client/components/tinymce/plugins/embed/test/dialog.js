@@ -12,8 +12,8 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import Dialog from 'components/dialog';
-import FormTextInput from 'components/forms/form-text-input';
+import Dialog from 'client/components/dialog';
+import FormTextInput from 'client/components/forms/form-text-input';
 
 const testSiteId = 5089392;
 

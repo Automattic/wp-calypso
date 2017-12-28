@@ -13,20 +13,20 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
-import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
+import { addQueryArgs } from 'client/lib/url';
+import { addLocaleToWpcomUrl } from 'client/lib/i18n-utils';
 import { isEnabled } from 'config';
-import safeProtocolUrl from 'lib/safe-protocol-url';
-import ExternalLink from 'components/external-link';
+import safeProtocolUrl from 'client/lib/safe-protocol-url';
+import ExternalLink from 'client/components/external-link';
 import Gridicon from 'gridicons';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { getCurrentUserId } from 'client/state/current-user/selectors';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	recordPageViewWithClientId as recordPageView,
-} from 'state/analytics/actions';
-import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import { login } from 'lib/paths';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+} from 'client/state/analytics/actions';
+import { resetMagicLoginRequestForm } from 'client/state/login/magic-login/actions';
+import { login } from 'client/lib/paths';
+import { getCurrentOAuth2Client } from 'client/state/ui/oauth2-clients/selectors';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {

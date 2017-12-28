@@ -21,8 +21,8 @@ import {
 	READER_LISTS_REQUEST_SUCCESS,
 	READER_LISTS_REQUEST_FAILURE,
 	READER_LISTS_UNFOLLOW_SUCCESS,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'client/state/action-types';
+import { combineReducers } from 'client/state/utils';
 import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } from './schema';
 
 /**

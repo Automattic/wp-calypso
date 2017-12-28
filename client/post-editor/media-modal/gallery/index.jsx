@@ -13,15 +13,15 @@ import { noop, assign, omitBy, some, isEqual, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import MediaStore from 'lib/media/store';
+import HeaderCake from 'client/components/header-cake';
+import MediaStore from 'client/lib/media/store';
 import EditorMediaModalGalleryDropZone from './drop-zone';
 import EditorMediaModalGalleryFields from './fields';
 import EditorMediaModalGalleryPreview from './preview';
-import { GalleryDefaultAttrs } from 'lib/media/constants';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
-import { isModuleActive } from 'lib/site/utils';
+import { GalleryDefaultAttrs } from 'client/lib/media/constants';
+import { ModalViews } from 'client/state/ui/media-modal/constants';
+import { setEditorMediaModalView } from 'client/state/ui/editor/actions';
+import { isModuleActive } from 'client/lib/site/utils';
 
 class EditorMediaModalGallery extends React.Component {
 	static propTypes = {

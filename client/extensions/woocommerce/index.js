@@ -12,11 +12,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import App from './app';
 import Dashboard from './app/dashboard';
-import EmptyContent from 'components/empty-content';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import EmptyContent from 'client/components/empty-content';
+import { navigation, siteSelection, sites } from 'client/my-sites/controller';
 import installActionHandlers from './state/data-layer';
 import Order from './app/order';
 import OrderCreate from './app/order/create';
@@ -36,7 +36,7 @@ import Shipping from './app/settings/shipping';
 import ShippingZone from './app/settings/shipping/shipping-zone';
 import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'client/controller';
 
 function initExtension() {
 	installActionHandlers();

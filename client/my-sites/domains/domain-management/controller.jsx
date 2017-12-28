@@ -11,21 +11,21 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
-import DnsData from 'components/data/domain-management/dns';
+import analytics from 'client/lib/analytics';
+import DnsData from 'client/components/data/domain-management/dns';
 import DomainManagement from './domain-management';
-import DomainManagementData from 'components/data/domain-management';
-import EmailData from 'components/data/domain-management/email';
-import EmailForwardingData from 'components/data/domain-management/email-forwarding';
-import NameserversData from 'components/data/domain-management/nameservers';
-import paths from 'my-sites/domains/paths';
-import ProductsList from 'lib/products-list';
-import SiteRedirectData from 'components/data/domain-management/site-redirect';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import TransferData from 'components/data/domain-management/transfer';
-import WhoisData from 'components/data/domain-management/whois';
-import { decodeURIComponentIfValid } from 'lib/url';
+import DomainManagementData from 'client/components/data/domain-management';
+import EmailData from 'client/components/data/domain-management/email';
+import EmailForwardingData from 'client/components/data/domain-management/email-forwarding';
+import NameserversData from 'client/components/data/domain-management/nameservers';
+import paths from 'client/my-sites/domains/paths';
+import ProductsList from 'client/lib/products-list';
+import SiteRedirectData from 'client/components/data/domain-management/site-redirect';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'client/state/ui/selectors';
+import isSiteAutomatedTransfer from 'client/state/selectors/is-site-automated-transfer';
+import TransferData from 'client/components/data/domain-management/transfer';
+import WhoisData from 'client/components/data/domain-management/whois';
+import { decodeURIComponentIfValid } from 'client/lib/url';
 
 const productsList = new ProductsList();
 

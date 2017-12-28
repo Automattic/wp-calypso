@@ -14,26 +14,26 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import Emojify from 'components/emojify';
+import Emojify from 'client/components/emojify';
 import PostSummary from '../stats-post-summary';
 import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
 import StatsPlaceholder from '../stats-module/placeholder';
-import HeaderCake from 'components/header-cake';
-import { decodeEntities } from 'lib/formatting';
-import Main from 'components/main';
+import HeaderCake from 'client/components/header-cake';
+import { decodeEntities } from 'client/lib/formatting';
+import Main from 'client/components/main';
 import StatsFirstView from '../stats-first-view';
 import PostLikes from '../stats-post-likes';
-import QueryPosts from 'components/data/query-posts';
-import QueryPostStats from 'components/data/query-post-stats';
-import EmptyContent from 'components/empty-content';
-import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import Button from 'components/button';
-import WebPreview from 'components/web-preview';
-import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
-import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'state/posts/selectors';
-import { hasNavigated } from 'state/selectors';
+import QueryPosts from 'client/components/data/query-posts';
+import QueryPostStats from 'client/components/data/query-post-stats';
+import EmptyContent from 'client/components/empty-content';
+import { getPostStat, isRequestingPostStats } from 'client/state/stats/posts/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import Button from 'client/components/button';
+import WebPreview from 'client/components/web-preview';
+import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'client/state/sites/selectors';
+import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'client/state/posts/selectors';
+import { hasNavigated } from 'client/state/selectors';
 
 class StatsPostDetail extends Component {
 	static propTypes = {

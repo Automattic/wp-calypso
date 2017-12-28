@@ -13,18 +13,18 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import AuthCaptureToggle from 'woocommerce/components/auth-capture-toggle';
-import { deauthorizeAccount } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
-import Dialog from 'components/dialog';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
+import AuthCaptureToggle from 'client/extensions/woocommerce/components/auth-capture-toggle';
+import { deauthorizeAccount } from 'client/extensions/woocommerce/state/sites/settings/stripe-connect-account/actions';
+import Dialog from 'client/components/dialog';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
+import FormTextInput from 'client/components/forms/form-text-input';
 import {
 	getIsDeauthorizing,
 	getStripeConnectAccount,
-} from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
-import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+} from 'client/extensions/woocommerce/state/sites/settings/stripe-connect-account/selectors';
+import { getSelectedSiteWithFallback } from 'client/extensions/woocommerce/state/sites/selectors';
 import { getStripeSampleStatementDescriptor } from './payment-method-stripe-utils';
 import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
 import StripeConnectAccount from './payment-method-stripe-connect-account';

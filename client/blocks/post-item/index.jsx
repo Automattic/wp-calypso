@@ -13,29 +13,29 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getEditorPath } from 'state/ui/editor/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getNormalizedPost } from 'state/posts/selectors';
-import { isSingleUserSite } from 'state/sites/selectors';
-import { areAllSitesSingleUser, canCurrentUserEditPost } from 'state/selectors';
+import { getEditorPath } from 'client/state/ui/editor/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { getNormalizedPost } from 'client/state/posts/selectors';
+import { isSingleUserSite } from 'client/state/sites/selectors';
+import { areAllSitesSingleUser, canCurrentUserEditPost } from 'client/state/selectors';
 import {
 	isSharePanelOpen,
 	isMultiSelectEnabled,
 	isPostSelected,
-} from 'state/ui/post-type-list/selectors';
-import { hideSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
-import { bumpStat } from 'state/analytics/actions';
-import ExternalLink from 'components/external-link';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import PostTime from 'blocks/post-time';
-import PostStatus from 'blocks/post-status';
-import PostShare from 'blocks/post-share';
-import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
-import PostActionCounts from 'my-sites/post-type-list/post-action-counts';
-import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
-import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
-import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
-import { preload } from 'sections-preload';
+} from 'client/state/ui/post-type-list/selectors';
+import { hideSharePanel, togglePostSelection } from 'client/state/ui/post-type-list/actions';
+import { bumpStat } from 'client/state/analytics/actions';
+import ExternalLink from 'client/components/external-link';
+import FormInputCheckbox from 'client/components/forms/form-checkbox';
+import PostTime from 'client/blocks/post-time';
+import PostStatus from 'client/blocks/post-status';
+import PostShare from 'client/blocks/post-share';
+import PostTypeListPostThumbnail from 'client/my-sites/post-type-list/post-thumbnail';
+import PostActionCounts from 'client/my-sites/post-type-list/post-action-counts';
+import PostActionsEllipsisMenu from 'client/my-sites/post-type-list/post-actions-ellipsis-menu';
+import PostTypeSiteInfo from 'client/my-sites/post-type-list/post-type-site-info';
+import PostTypePostAuthor from 'client/my-sites/post-type-list/post-type-post-author';
+import { preload } from 'client/sections-preload';
 
 function preloadEditor() {
 	preload( 'post-editor' );
@@ -143,7 +143,11 @@ class PostItem extends React.Component {
 							{ isAllSitesModeSelected && <PostTypeSiteInfo globalId={ globalId } /> }
 							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
 						</div>
-						<h1 className="post-item__title" onClick={ this.clickHandler( 'title' ) } onMouseOver={ preloadEditor }>
+						<h1
+							className="post-item__title"
+							onClick={ this.clickHandler( 'title' ) }
+							onMouseOver={ preloadEditor }
+						>
 							{ ! externalPostLink && (
 								<a
 									href={ isPlaceholder || multiSelectEnabled ? null : postUrl }

@@ -10,8 +10,8 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { decodeEntities } from 'lib/formatting';
-import { isSiteDescriptionBlacklisted } from 'reader/lib/site-description-blacklist';
+import { decodeEntities } from 'client/lib/formatting';
+import { isSiteDescriptionBlacklisted } from 'client/reader/lib/site-description-blacklist';
 
 /**
  * Given a feed, site, or post: return the site url. return false if one could not be found.

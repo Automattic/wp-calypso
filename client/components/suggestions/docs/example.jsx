@@ -10,8 +10,8 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import SearchCard from 'components/search-card';
-import Suggestions from 'components/suggestions';
+import SearchCard from 'client/components/search-card';
+import Suggestions from 'client/components/suggestions';
 
 class SuggestionsExample extends Component {
 	static displayName = 'Suggestions';

@@ -13,7 +13,7 @@ import {
 	PUSH_NOTIFICATIONS_API_NOT_READY,
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
-} from 'state/action-types';
+} from 'client/state/action-types';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 

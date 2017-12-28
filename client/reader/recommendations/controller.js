@@ -7,16 +7,16 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import trackScrollPage from 'lib/track-scroll-page';
+import trackScrollPage from 'client/lib/track-scroll-page';
 import {
 	ensureStoreLoading,
 	trackPageLoad,
 	trackUpdatesLoaded,
 	userHasHistory,
-} from 'reader/controller-helper';
-import RecommendedPostsStream from 'reader/recommendations/posts';
-import route from 'lib/route';
-import feedStreamFactory from 'lib/feed-stream-store';
+} from 'client/reader/controller-helper';
+import RecommendedPostsStream from 'client/reader/recommendations/posts';
+import route from 'client/lib/route';
+import feedStreamFactory from 'client/lib/feed-stream-store';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 

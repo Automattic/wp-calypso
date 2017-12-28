@@ -14,8 +14,8 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import SiteInfo from 'blocks/site';
+import analytics from 'client/lib/analytics';
+import SiteInfo from 'client/blocks/site';
 
 class BlogSettingsHeader extends PureComponent {
 	static propTypes = {

@@ -8,10 +8,10 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Stream from 'reader/stream';
-import DocumentHead from 'components/data/document-head';
+import Stream from 'client/reader/stream';
+import DocumentHead from 'client/components/data/document-head';
 import ConversationsIntro from './intro';
-import ConversationsEmptyContent from 'blocks/conversations/empty';
+import ConversationsEmptyContent from 'client/blocks/conversations/empty';
 
 export default function( props ) {
 	const isInternal = get( props, 'store.id' ) === 'conversations-a8c';

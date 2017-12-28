@@ -10,12 +10,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import ExternalLink from 'client/components/external-link';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormInput from 'client/components/forms/form-text-input';
+import FormLabel from 'client/components/forms/form-label';
+import FormRadio from 'client/components/forms/form-radio';
+import FormSettingExplanation from 'client/components/forms/form-setting-explanation';
 import { defaultTimeFormats } from './default-formats';
 import { phpToMomentDatetimeFormat } from './utils';
 

@@ -12,8 +12,8 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE,
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
-} from 'state/action-types';
-import wp from 'lib/wp';
+} from 'client/state/action-types';
+import wp from 'client/lib/wp';
 
 /**
  * Request the Jetpack monitor settings for a certain site.

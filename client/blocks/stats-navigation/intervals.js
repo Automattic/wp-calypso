@@ -10,8 +10,8 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import { intervals } from './constants';
-import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
+import SegmentedControl from 'client/components/segmented-control';
+import ControlItem from 'client/components/segmented-control/item';
 
 const Intervals = props => {
 	const { selected, pathTemplate, className, standalone } = props;

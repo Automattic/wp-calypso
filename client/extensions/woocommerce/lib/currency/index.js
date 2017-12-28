@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { getCurrencyDefaults } from 'lib/format-currency';
+import { getCurrencyDefaults } from 'client/lib/format-currency';
 
 /**
  * Get the rounded decimal value of a number at the precision used for a given currency.

@@ -11,19 +11,19 @@ import { flow, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'client/state/ui/editor/selectors';
 import {
 	getPostRevisions,
 	getPostRevisionsComparisons,
 	getPostRevisionsAuthorsId,
 	getPostRevisionsSelectedRevisionId,
-} from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import EditorDiffViewer from 'post-editor/editor-diff-viewer';
-import EditorRevisionsList from 'post-editor/editor-revisions-list';
-import QueryPostRevisions from 'components/data/query-post-revisions';
-import QueryUsers from 'components/data/query-users';
+} from 'client/state/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import EditorDiffViewer from 'client/post-editor/editor-diff-viewer';
+import EditorRevisionsList from 'client/post-editor/editor-revisions-list';
+import QueryPostRevisions from 'client/components/data/query-post-revisions';
+import QueryUsers from 'client/components/data/query-users';
 
 class EditorRevisions extends Component {
 	componentDidMount() {

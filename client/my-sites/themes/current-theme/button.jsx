@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 
-import { isOutsideCalypso } from 'lib/url';
+import { isOutsideCalypso } from 'client/lib/url';
 
 export default class extends React.Component {
 	static displayName = 'CurrentThemeButton';

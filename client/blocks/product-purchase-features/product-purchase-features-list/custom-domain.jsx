@@ -10,7 +10,7 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import CustomDomainPurchaseDetail from 'my-sites/checkout/checkout-thank-you/custom-domain-purchase-detail';
+import CustomDomainPurchaseDetail from 'client/my-sites/checkout/checkout-thank-you/custom-domain-purchase-detail';
 
 export default props => {
 	return (

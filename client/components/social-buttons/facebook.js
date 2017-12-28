@@ -8,15 +8,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { loadScript } from 'lib/load-script';
+import { loadScript } from 'client/lib/load-script';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FacebookIcon from 'components/social-icons/facebook';
-import { isFormDisabled } from 'state/login/selectors';
+import FacebookIcon from 'client/components/social-icons/facebook';
+import { isFormDisabled } from 'client/state/login/selectors';
 
 class FacebookLoginButton extends Component {
 	// See: https://developers.facebook.com/docs/javascript/reference/FB.init/v2.8

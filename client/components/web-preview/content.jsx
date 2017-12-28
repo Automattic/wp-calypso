@@ -12,18 +12,18 @@ import debugModule from 'debug';
 import { noop, isFunction } from 'lodash';
 import page from 'page';
 import { v4 as uuid } from 'uuid';
-import addQueryArgs from 'lib/route/add-query-args';
+import addQueryArgs from 'client/lib/route/add-query-args';
 
 /**
  * Internal dependencies
  */
 import Toolbar from './toolbar';
-import touchDetect from 'lib/touch-detect';
-import { isWithinBreakpoint } from 'lib/viewport';
+import touchDetect from 'client/lib/touch-detect';
+import { isWithinBreakpoint } from 'client/lib/viewport';
 import { localize } from 'i18n-calypso';
-import SpinnerLine from 'components/spinner-line';
-import SeoPreviewPane from 'components/seo-preview-pane';
-import { recordTracksEvent } from 'state/analytics/actions';
+import SpinnerLine from 'client/components/spinner-line';
+import SeoPreviewPane from 'client/components/seo-preview-pane';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
 

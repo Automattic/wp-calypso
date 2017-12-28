@@ -12,26 +12,18 @@ import { isEmpty, map, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FieldError from 'woocommerce/woocommerce-services/components/field-error';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormSelect from 'components/forms/form-select';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import Button from 'client/components/button';
+import FieldError from 'client/extensions/woocommerce/woocommerce-services/components/field-error';
+import FormFieldset from 'client/components/forms/form-fieldset';
+import FormLabel from 'client/components/forms/form-label';
+import FormLegend from 'client/components/forms/form-legend';
+import FormSelect from 'client/components/forms/form-select';
+import FormTextInputWithAffixes from 'client/components/forms/form-text-input-with-affixes';
 import ItemInfo from './item-info';
-import getBoxDimensions from 'woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
-import {
-	updatePackageWeight,
-	setPackageType,
-	openAddItem,
-} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import {
-	getShippingLabel,
-	isLoaded,
-	getFormErrors,
-} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import { getPackageGroupsForLabelPurchase } from 'woocommerce/woocommerce-services/state/packages/selectors';
+import getBoxDimensions from 'client/extensions/woocommerce/woocommerce-services/lib/utils/get-box-dimensions';
+import { updatePackageWeight, setPackageType, openAddItem } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/actions';
+import { getShippingLabel, isLoaded, getFormErrors } from 'client/extensions/woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { getPackageGroupsForLabelPurchase } from 'client/extensions/woocommerce/woocommerce-services/state/packages/selectors';
 
 const renderPackageDimensions = ( dimensions, dimensionUnit ) => {
 	return [

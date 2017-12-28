@@ -14,7 +14,7 @@ import { keys, last, sortBy } from 'lodash';
 import {
 	isActivityLogLoaded,
 	getActivityLogEvents,
-} from 'woocommerce/state/sites/orders/activity-log/selectors';
+} from 'client/extensions/woocommerce/state/sites/orders/activity-log/selectors';
 import OrderEvent from './event';
 import OrderEventsByDay from './day';
 

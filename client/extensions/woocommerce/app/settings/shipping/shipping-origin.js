@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ExtendedHeader from 'woocommerce/components/extended-header';
-import StoreAddress from 'woocommerce/components/store-address';
+import ExtendedHeader from 'client/extensions/woocommerce/components/extended-header';
+import StoreAddress from 'client/extensions/woocommerce/components/store-address';
 
 const ShippingOrigin = ( { translate } ) => {
 	return (

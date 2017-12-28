@@ -13,11 +13,11 @@ import { flowRight, get, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FoldableCard from 'components/foldable-card';
+import Button from 'client/components/button';
+import FoldableCard from 'client/components/foldable-card';
 import { deleteFile } from '../../state/stats/actions';
 import { isDeletingFile } from '../../state/stats/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
 
 function getAge( lower, upper ) {
 	if ( lower && upper ) {

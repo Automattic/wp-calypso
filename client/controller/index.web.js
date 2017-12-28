@@ -12,13 +12,13 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import Layout from 'layout';
-import LayoutLoggedOut from 'layout/logged-out';
-import nuxWelcome from 'layout/nux-welcome';
-import translatorInvitation from 'layout/community-translator/invitation-utils';
+import Layout from 'client/layout';
+import LayoutLoggedOut from 'client/layout/logged-out';
+import nuxWelcome from 'client/layout/nux-welcome';
+import translatorInvitation from 'client/layout/community-translator/invitation-utils';
 import { makeLayoutMiddleware } from './shared.js';
-import { getCurrentUser } from 'state/current-user/selectors';
-import userFactory from 'lib/user';
+import { getCurrentUser } from 'client/state/current-user/selectors';
+import userFactory from 'client/lib/user';
 
 /**
  * Re-export

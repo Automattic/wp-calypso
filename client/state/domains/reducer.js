@@ -6,7 +6,7 @@
 
 import management from './management/reducer';
 import suggestions from './suggestions/reducer';
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'client/state/utils';
 
 export default combineReducers( {
 	management,

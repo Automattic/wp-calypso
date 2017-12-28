@@ -15,9 +15,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import Popover from 'components/popover';
-import Tooltip from 'components/tooltip';
+import Card from 'client/components/card';
+import Popover from 'client/components/popover';
+import Tooltip from 'client/components/tooltip';
 
 class DashboardWidget extends Component {
 	constructor( props ) {

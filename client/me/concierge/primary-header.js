@@ -8,11 +8,11 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import FormattedHeader from 'components/formatted-header';
-import ExternalLink from 'components/external-link';
+import Card from 'client/components/card';
+import FormattedHeader from 'client/components/formatted-header';
+import ExternalLink from 'client/components/external-link';
 import { localize } from 'i18n-calypso';
-import support from 'lib/url/support';
+import support from 'client/lib/url/support';
 
 class PrimaryHeader extends Component {
 	render() {

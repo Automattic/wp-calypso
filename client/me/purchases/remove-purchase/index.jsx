@@ -15,34 +15,42 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 import config from 'config';
-import CompactCard from 'components/card/compact';
-import Dialog from 'components/dialog';
-import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
-import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
-import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
-import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
-import nextStep from 'components/marketing-survey/cancel-purchase-form/nextStep';
-import previousStep from 'components/marketing-survey/cancel-purchase-form/previousStep';
-import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
-import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
+import CompactCard from 'client/components/card/compact';
+import Dialog from 'client/components/dialog';
+import CancelPurchaseForm from 'client/components/marketing-survey/cancel-purchase-form';
+import enrichedSurveyData from 'client/components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
+import initialSurveyState from 'client/components/marketing-survey/cancel-purchase-form/initialSurveyState';
+import isSurveyFilledIn from 'client/components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
+import stepsForProductAndSurvey from 'client/components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
+import nextStep from 'client/components/marketing-survey/cancel-purchase-form/nextStep';
+import previousStep from 'client/components/marketing-survey/cancel-purchase-form/previousStep';
+import {
+	INITIAL_STEP,
+	FINAL_STEP,
+} from 'client/components/marketing-survey/cancel-purchase-form/steps';
+import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'client/lib/purchases';
 import { getPurchase, isDataLoading } from '../utils';
-import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan } from 'lib/products-values';
-import notices from 'notices';
+import {
+	isDomainRegistration,
+	isPlan,
+	isGoogleApps,
+	isJetpackPlan,
+} from 'client/lib/products-values';
+import notices from 'client/notices';
 import purchasePaths from '../paths';
-import { getPurchasesError } from 'state/purchases/selectors';
-import { removePurchase } from 'state/purchases/actions';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import userFactory from 'lib/user';
-import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
-import { receiveDeletedSite } from 'state/sites/actions';
-import { setAllSitesSelected } from 'state/ui/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import HappychatButton from 'components/happychat/button';
+import { getPurchasesError } from 'client/state/purchases/selectors';
+import { removePurchase } from 'client/state/purchases/actions';
+import hasActiveHappychatSession from 'client/state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'client/state/happychat/selectors/is-happychat-available';
+import FormSectionHeading from 'client/components/forms/form-section-heading';
+import userFactory from 'client/lib/user';
+import { isDomainOnlySite as isDomainOnly } from 'client/state/selectors';
+import { receiveDeletedSite } from 'client/state/sites/actions';
+import { setAllSitesSelected } from 'client/state/ui/actions';
+import { recordTracksEvent } from 'client/state/analytics/actions';
+import HappychatButton from 'client/components/happychat/button';
 
 const user = userFactory();
 

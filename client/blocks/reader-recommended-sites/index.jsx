@@ -12,10 +12,14 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { recordAction, recordTrackWithRailcar, recordTracksRailcarRender } from 'reader/stats';
-import Button from 'components/button';
-import { blockSite } from 'state/reader/site-blocks/actions';
-import ConnectedSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
+import {
+	recordAction,
+	recordTrackWithRailcar,
+	recordTracksRailcarRender,
+} from 'client/reader/stats';
+import Button from 'client/components/button';
+import { blockSite } from 'client/state/reader/site-blocks/actions';
+import ConnectedSubscriptionListItem from 'client/blocks/reader-subscription-list-item/connected';
 
 export class RecommendedSites extends React.PureComponent {
 	static propTypes = {

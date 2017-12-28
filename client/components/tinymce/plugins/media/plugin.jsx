@@ -10,31 +10,31 @@ import React from 'react';
 import tinymce from 'tinymce/tinymce';
 import { assign, debounce, find, findLast, pick, values } from 'lodash';
 import i18n from 'i18n-calypso';
-import Shortcode from 'lib/shortcode';
+import Shortcode from 'client/lib/shortcode';
 import closest from 'component-closest';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import PostActions from 'lib/posts/actions';
-import PostEditStore from 'lib/posts/post-edit-store';
-import * as MediaConstants from 'lib/media/constants';
-import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
-import { deserialize } from 'lib/media-serialization';
-import MediaMarkup from 'post-editor/media-modal/markup';
-import MediaStore from 'lib/media/store';
-import EditorMediaModal from 'post-editor/editor-media-modal';
-import notices from 'notices';
+import PostActions from 'client/lib/posts/actions';
+import PostEditStore from 'client/lib/posts/post-edit-store';
+import * as MediaConstants from 'client/lib/media/constants';
+import MediaActions from 'client/lib/media/actions';
+import MediaUtils from 'client/lib/media/utils';
+import { deserialize } from 'client/lib/media-serialization';
+import MediaMarkup from 'client/post-editor/media-modal/markup';
+import MediaStore from 'client/lib/media/store';
+import EditorMediaModal from 'client/post-editor/editor-media-modal';
+import notices from 'client/notices';
 import TinyMCEDropZone from './drop-zone';
 import restrictSize from './restrict-size';
 import advanced from './advanced';
 import config from 'config';
-import { getSelectedSite } from 'state/ui/selectors';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { setEditorMediaModalView } from 'client/state/ui/editor/actions';
+import { ModalViews } from 'client/state/ui/media-modal/constants';
+import { renderWithReduxStore } from 'client/lib/react-helpers';
 
 /**
  * Module variables

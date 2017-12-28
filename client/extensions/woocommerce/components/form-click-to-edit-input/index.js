@@ -13,8 +13,8 @@ import { noop, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FormTextInput from 'components/forms/form-text-input';
+import Button from 'client/components/button';
+import FormTextInput from 'client/components/forms/form-text-input';
 
 class FormClickToEditInput extends Component {
 	static propTypes = {

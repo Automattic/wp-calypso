@@ -12,28 +12,28 @@ import { includes, find, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
-import UploadDropZone from 'blocks/upload-drop-zone';
-import EmptyContent from 'components/empty-content';
-import ProgressBar from 'components/progress-bar';
-import Button from 'components/button';
-import ThanksModal from 'my-sites/themes/thanks-modal';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
+import Main from 'client/components/main';
+import HeaderCake from 'client/components/header-cake';
+import Card from 'client/components/card';
+import UploadDropZone from 'client/blocks/upload-drop-zone';
+import EmptyContent from 'client/components/empty-content';
+import ProgressBar from 'client/components/progress-bar';
+import Button from 'client/components/button';
+import ThanksModal from 'client/my-sites/themes/thanks-modal';
+import QueryCanonicalTheme from 'client/components/data/query-canonical-theme';
 // Necessary for ThanksModal
-import QueryActiveTheme from 'components/data/query-active-theme';
+import QueryActiveTheme from 'client/components/data/query-active-theme';
 import { localize } from 'i18n-calypso';
-import notices from 'notices';
+import notices from 'client/notices';
 import debugFactory from 'debug';
-import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'client/state/themes/actions';
+import { getSelectedSiteId, getSelectedSite } from 'client/state/ui/selectors';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 	hasJetpackSiteJetpackThemesExtendedFeatures,
-} from 'state/sites/selectors';
+} from 'client/state/sites/selectors';
 import {
 	isUploadInProgress,
 	isUploadComplete,
@@ -43,18 +43,21 @@ import {
 	getUploadProgressTotal,
 	getUploadProgressLoaded,
 	isInstallInProgress,
-} from 'state/themes/upload-theme/selectors';
-import { getCanonicalTheme } from 'state/themes/selectors';
-import { connectOptions } from 'my-sites/themes/theme-options';
-import EligibilityWarnings from 'blocks/eligibility-warnings';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import { getBackPath } from 'state/themes/themes-ui/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
-import QueryEligibility from 'components/data/query-atat-eligibility';
-import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import WpAdminAutoLogin from 'components/wpadmin-auto-login';
+} from 'client/state/themes/upload-theme/selectors';
+import { getCanonicalTheme } from 'client/state/themes/selectors';
+import { connectOptions } from 'client/my-sites/themes/theme-options';
+import EligibilityWarnings from 'client/blocks/eligibility-warnings';
+import JetpackManageErrorPage from 'client/my-sites/jetpack-manage-error-page';
+import { getBackPath } from 'client/state/themes/themes-ui/selectors';
+import { hasFeature } from 'client/state/sites/plans/selectors';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'client/lib/plans/constants';
+import QueryEligibility from 'client/components/data/query-atat-eligibility';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer,
+} from 'client/state/automated-transfer/selectors';
+import isSiteAutomatedTransfer from 'client/state/selectors/is-site-automated-transfer';
+import WpAdminAutoLogin from 'client/components/wpadmin-auto-login';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 

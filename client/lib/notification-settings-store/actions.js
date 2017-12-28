@@ -4,9 +4,9 @@
  * Internal dependencies
  */
 
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'client/dispatcher';
 import { actionTypes } from './constants';
-import wpcom from 'lib/wp';
+import wpcom from 'client/lib/wp';
 
 function buildSavePayload( source, settings ) {
 	switch ( source ) {

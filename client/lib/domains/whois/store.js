@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { createReducerStore } from 'lib/store';
+import { createReducerStore } from 'client/lib/store';
 import { initialDomainState, reducer } from './reducer';
 
 const WhoisStore = createReducerStore( reducer );

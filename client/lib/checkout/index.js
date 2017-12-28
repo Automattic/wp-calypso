@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { cartItems } from 'lib/cart-values';
-import { managePurchase } from 'me/purchases/paths';
+import { cartItems } from 'client/lib/cart-values';
+import { managePurchase } from 'client/me/purchases/paths';
 
 export function getExitCheckoutUrl( cart, siteSlug ) {
 	let url = '/plans/';

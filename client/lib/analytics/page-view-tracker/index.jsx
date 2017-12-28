@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { recordPageView } from 'state/analytics/actions';
+import { recordPageView } from 'client/state/analytics/actions';
 
 /**
  * Module variables

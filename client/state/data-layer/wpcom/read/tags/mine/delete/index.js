@@ -6,11 +6,11 @@
 /**
  * Internal dependencies
  */
-import { READER_UNFOLLOW_TAG_REQUEST } from 'state/action-types';
-import { receiveUnfollowTag as receiveUnfollowTagAction } from 'state/reader/tags/items/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
+import { READER_UNFOLLOW_TAG_REQUEST } from 'client/state/action-types';
+import { receiveUnfollowTag as receiveUnfollowTagAction } from 'client/state/reader/tags/items/actions';
+import { http } from 'client/state/data-layer/wpcom-http/actions';
+import { dispatchRequestEx } from 'client/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'client/state/notices/actions';
 import { translate } from 'i18n-calypso';
 
 export function requestUnfollow( action ) {

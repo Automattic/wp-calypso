@@ -12,10 +12,10 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { getName, isRefundable, isSubscription, isOneTimePurchase } from 'lib/purchases';
-import { isDomainRegistration, isDomainMapping } from 'lib/products-values';
-import { getIncludedDomainPurchase } from 'state/purchases/selectors';
-import support from 'lib/url/support';
+import { getName, isRefundable, isSubscription, isOneTimePurchase } from 'client/lib/purchases';
+import { isDomainRegistration, isDomainMapping } from 'client/lib/products-values';
+import { getIncludedDomainPurchase } from 'client/state/purchases/selectors';
+import support from 'client/lib/url/support';
 
 const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } ) => {
 	const { refundPeriodInDays } = purchase;

@@ -11,10 +11,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import userFactory from 'lib/user';
-import utils from 'lib/site/utils';
-import { recordTracksEvent } from 'state/analytics/actions';
+import PurchaseDetail from 'client/components/purchase-detail';
+import userFactory from 'client/lib/user';
+import utils from 'client/lib/site/utils';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 import config from 'config';
 const user = userFactory();
 

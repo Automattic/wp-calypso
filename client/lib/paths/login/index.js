@@ -4,8 +4,8 @@
  * Internal dependencies
  */
 
-import { addQueryArgs } from 'lib/url';
-import { addLocaleToPath, addLocaleToWpcomUrl } from 'lib/i18n-utils';
+import { addQueryArgs } from 'client/lib/url';
+import { addLocaleToPath, addLocaleToWpcomUrl } from 'client/lib/i18n-utils';
 import config, { isEnabled } from 'config';
 
 export function login(

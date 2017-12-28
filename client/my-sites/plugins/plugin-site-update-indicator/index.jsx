@@ -11,9 +11,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import analytics from 'client/lib/analytics';
 import Gridicon from 'gridicons';
-import PluginsActions from 'lib/plugins/actions';
+import PluginsActions from 'client/lib/plugins/actions';
 
 class PluginSiteUpdateIndicator extends React.Component {
 	static displayName = 'PluginSiteUpdateIndicator';

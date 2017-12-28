@@ -11,7 +11,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { EditorNotice } from '../';
-import Notice from 'components/notice';
+import Notice from 'client/components/notice';
 
 describe( 'EditorNotice', () => {
 	test( 'should not render a notice if no message is specified', () => {

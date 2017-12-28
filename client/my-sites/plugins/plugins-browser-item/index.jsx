@@ -11,13 +11,13 @@ import { flowRight as compose, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import PluginsStore from 'lib/plugins/store';
-import Button from 'components/button';
-import Rating from 'components/rating';
-import analytics from 'lib/analytics';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import PluginIcon from 'client/my-sites/plugins/plugin-icon/plugin-icon';
+import PluginsStore from 'client/lib/plugins/store';
+import Button from 'client/components/button';
+import Rating from 'client/components/rating';
+import analytics from 'client/lib/analytics';
+import { getSelectedSiteId } from 'client/state/ui/selectors';
+import { isJetpackSite } from 'client/state/sites/selectors';
 
 const PREINSTALLED_PLUGINS = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];
 

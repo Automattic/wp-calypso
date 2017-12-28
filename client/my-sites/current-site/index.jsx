@@ -12,22 +12,22 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import AllSites from 'my-sites/all-sites';
-import AsyncLoad from 'components/async-load';
-import analytics from 'lib/analytics';
-import Button from 'components/button';
-import Card from 'components/card';
-import Site from 'blocks/site';
+import AllSites from 'client/my-sites/all-sites';
+import AsyncLoad from 'client/components/async-load';
+import analytics from 'client/lib/analytics';
+import Button from 'client/components/button';
+import Card from 'client/components/card';
+import Site from 'client/blocks/site';
 import Gridicon from 'gridicons';
 import SiteNotice from './notice';
-import CartStore from 'lib/cart/store';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSelectedOrAllSites, getVisibleSites } from 'state/selectors';
-import { infoNotice, removeNotice } from 'state/notices/actions';
-import { getNoticeLastTimeShown } from 'state/notices/selectors';
-import { getSectionName } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import CartStore from 'client/lib/cart/store';
+import { setLayoutFocus } from 'client/state/ui/layout-focus/actions';
+import { getSelectedSite } from 'client/state/ui/selectors';
+import { getSelectedOrAllSites, getVisibleSites } from 'client/state/selectors';
+import { infoNotice, removeNotice } from 'client/state/notices/actions';
+import { getNoticeLastTimeShown } from 'client/state/notices/selectors';
+import { getSectionName } from 'client/state/ui/selectors';
+import { recordTracksEvent } from 'client/state/analytics/actions';
 
 class CurrentSite extends Component {
 	static propTypes = {
