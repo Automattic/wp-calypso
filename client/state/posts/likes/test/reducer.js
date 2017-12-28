@@ -323,6 +323,7 @@ describe( 'reducer', () => {
 					login: 'chicken',
 					name: 'A Former Egg',
 					site_ID: 2,
+					site_is_private: false,
 					some_other_property: 'aaaaa',
 				},
 			];
@@ -348,6 +349,7 @@ describe( 'reducer', () => {
 								login: 'chicken',
 								name: 'A Former Egg',
 								site_ID: 2,
+								site_is_private: false,
 							},
 						],
 						found: 2,
