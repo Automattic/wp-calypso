@@ -19,6 +19,7 @@ const _ = require( 'lodash' );
  */
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( 'config' );
+const bundleEnv = config( 'env' );
 
 /**
  * This lists modules that must use commonJS `require()`s
@@ -133,6 +134,7 @@ const webpackConfig = {
 		} ),
 		new webpack.DefinePlugin( {
 			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
+			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 		} ),
 		new HappyPack( { loaders: [ babelLoader ] } ),
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]abtest$/, 'lodash/noop' ), // Depends on BOM

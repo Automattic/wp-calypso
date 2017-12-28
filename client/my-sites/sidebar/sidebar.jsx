@@ -392,7 +392,7 @@ export class MySitesSidebar extends Component {
 
 		const countryCode = currentUser.user_ip_country_code;
 		const isCountryAllowed =
-			includes( allowedCountryCodes, countryCode ) || 'development' === config( 'env' );
+			includes( allowedCountryCodes, countryCode ) || 'development' === process.env.NODE_ENV;
 
 		return (
 			isCountryAllowed && (

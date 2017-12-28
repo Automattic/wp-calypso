@@ -1,11 +1,8 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { assign, clone, isEqual } from 'lodash';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -172,7 +169,7 @@ LikeStore = {
 	},
 };
 
-if ( config( 'env' ) === 'development' ) {
+if ( process.env.NODE_ENV === 'test' ) {
 	assign( LikeStore, {
 		// These bedlumps are for testing.
 		// Ideally, we'd pull these out with envify for prod

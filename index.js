@@ -45,7 +45,7 @@ server.listen( { port, host }, function() {
 } );
 
 // Enable hot reloader in development
-if ( config( 'env' ) === 'development' ) {
+if ( process.env.NODE_ENV === 'development' ) {
 	console.info( chalk.cyan( '\nGetting bundles ready, hold on...' ) );
 
 	hotReloader = require( 'bundler/hot-reloader' );
