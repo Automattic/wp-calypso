@@ -28,6 +28,17 @@ import LRU from 'lru-cache';
 import { DESERIALIZE, SERIALIZE } from './action-types';
 import warn from 'lib/warn';
 
+let schemaValidator = () => true;
+
+if ( process.env.NODE_ENV !== 'production' ) {
+	// we pull draft4 already from ajv via webpack
+	// However, we should pull it in explicitly as part of the dev build
+	// (from the url http://json-schema.org/draft-04/schema# or we publish it
+	// to npm, whichever is simpler)
+	const jsonSchemaDraft4 = require( 'ajv/lib/refs/json-schema-draft-04.json' );
+	schemaValidator = validator( jsonSchemaDraft4, { greedy: true, verbose: true } );
+}
+
 export function isValidStateWithSchema( state, schema, debugInfo ) {
 	const validate = validator( schema, {
 		greedy: process.env.NODE_ENV !== 'production',
@@ -338,6 +349,9 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  * returns initial state if no schema is provided on SERIALIZE and DESERIALIZE.
  */
 export const withSchemaValidation = ( schema, reducer ) => {
+	schemaValidator( schema ) ||
+		warn( 'validation schema is invalid, schema:', schema, 'errors:', schemaValidator.errors );
+
 	const wrappedReducer = ( state, action ) => {
 		if ( SERIALIZE === action.type ) {
 			return schema ? reducer( state, action ) : reducer( undefined, { type: '@@calypso/INIT' } );
