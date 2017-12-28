@@ -120,7 +120,7 @@ export function getEndPeriod( date, unit ) {
  * @param {string} format - string of 'text', 'number' or 'currency'
  * @param {string} [code] - optional currency code
  * @return {string|number} - formatted number or string value
-*/
+ */
 export function formatValue( value, format, code ) {
 	switch ( format ) {
 		case 'currency':
@@ -140,7 +140,7 @@ export function formatValue( value, format, code ) {
  * @param {string} selectedDate - string of date in 'YYYY-MM-DD'
  * @param {string} stat - string of stat to be referenced
  * @return {array} - array of delta objects matching selectedDate
-*/
+ */
 export function getDelta( deltas, selectedDate, stat ) {
 	const selectedDeltas = find( deltas, item => item.period === selectedDate );
 	return selectedDeltas[ stat ];

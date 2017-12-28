@@ -392,18 +392,17 @@ describe( 'actions', () => {
 			};
 			const getState = () => state;
 
-			return updateTerm( siteId, taxonomyName, 10, 'rib', { name: 'ribs' } )(
-				spy,
-				getState
-			).then( () => {
-				expect( spy ).to.not.have.been.calledWith( {
-					type: SITE_SETTINGS_UPDATE,
-					siteId: siteId,
-					settings: {
-						default_category: 123,
-					},
-				} );
-			} );
+			return updateTerm( siteId, taxonomyName, 10, 'rib', { name: 'ribs' } )( spy, getState ).then(
+				() => {
+					expect( spy ).to.not.have.been.calledWith( {
+						type: SITE_SETTINGS_UPDATE,
+						siteId: siteId,
+						settings: {
+							default_category: 123,
+						},
+					} );
+				}
+			);
 		} );
 	} );
 

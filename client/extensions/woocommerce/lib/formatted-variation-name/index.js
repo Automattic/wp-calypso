@@ -1,6 +1,6 @@
 /**
  * Returns a formatted variation name for display based on attributes.
- * 
+ *
  *
  * @format
  * @param {String} fallbackName Fallback name to use if no attributes are passed.

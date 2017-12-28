@@ -627,9 +627,9 @@ export class EditorHtmlToolbar extends Component {
 							{ map( buttons, ( { disabled, label, onClick }, tag ) => (
 								<Button
 									borderless
-									className={ `editor-html-toolbar__button-${ tag } ${ this.isTagOpen( tag )
-										? 'is-tag-open'
-										: '' }` }
+									className={ `editor-html-toolbar__button-${ tag } ${
+										this.isTagOpen( tag ) ? 'is-tag-open' : ''
+									}` }
 									compact
 									disabled={ disabled }
 									key={ tag }

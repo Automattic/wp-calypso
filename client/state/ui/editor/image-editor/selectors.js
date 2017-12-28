@@ -1,6 +1,6 @@
 /**
  * Returns an object representing the image editor transform
- * 
+ *
  *
  * @format
  * @param {Object}  state Global state tree

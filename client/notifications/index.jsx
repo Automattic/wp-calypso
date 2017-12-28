@@ -1,12 +1,12 @@
 /**
  * Loads the notifications client into Calypso and
  * connects the messaging and interactive elements
- * 
+ *
  *  - messages through iframe
  *  - keyboard hotkeys
  *  - window/pane scrolling
  *  - service worker
- * 
+ *
  *
  * @format
  * @module notifications

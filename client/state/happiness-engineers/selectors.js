@@ -1,6 +1,6 @@
 /**
  * Returns happiness engineers
- * 
+ *
  *
  * @format
  * @param {{}} state currents state
