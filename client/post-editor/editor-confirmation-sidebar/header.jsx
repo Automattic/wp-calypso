@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -15,7 +13,7 @@ import { get } from 'lodash';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypes } from 'state/post-types/selectors';
-import utils from 'lib/posts/utils';
+import { isFutureDated } from 'lib/posts/utils';
 
 class EditorConfirmationSidebarHeader extends PureComponent {
 	static propTypes = {
@@ -155,7 +153,7 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 	}
 
 	render() {
-		const isScheduled = utils.isFutureDated( this.props.post );
+		const isScheduled = isFutureDated( this.props.post );
 
 		if ( isScheduled ) {
 			return this.renderScheduleHeader();

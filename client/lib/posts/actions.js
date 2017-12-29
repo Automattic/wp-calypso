@@ -16,7 +16,7 @@ import PostsStore from './posts-store';
 import PostEditStore from './post-edit-store';
 import postListStoreFactory from './post-list-store-factory';
 import PreferencesStore from 'lib/preferences/store';
-import utils from './utils';
+import * as utils from './utils';
 import versionCompare from 'lib/version-compare';
 import Dispatcher from 'dispatcher';
 import { recordSaveEvent } from './stats';

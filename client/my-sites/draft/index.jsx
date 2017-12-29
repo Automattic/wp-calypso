@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
@@ -26,7 +24,7 @@ import actions from 'lib/posts/actions';
 import photon from 'photon';
 import { hasTouch } from 'lib/touch-detect';
 import updatePostStatus from 'components/update-post-status';
-import utils from 'lib/posts/utils';
+import { getEditURL, getPreviewURL, userCan } from 'lib/posts/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import TimeSince from 'components/time-since';
@@ -80,7 +78,7 @@ class Draft extends Component {
 			return this.setState( { isTrashing: false } );
 		}.bind( this );
 
-		if ( utils.userCan( 'delete_post', this.props.post ) ) {
+		if ( userCan( 'delete_post', this.props.post ) ) {
 			actions.trash( this.props.site, this.props.post, updateStatus );
 		}
 	};
@@ -106,18 +104,18 @@ class Draft extends Component {
 			return this.setState( { isRestoring: false } );
 		}.bind( this );
 
-		if ( utils.userCan( 'delete_post', this.props.post ) ) {
+		if ( userCan( 'delete_post', this.props.post ) ) {
 			actions.restore( this.props.site, this.props.post, updateStatus );
 		}
 	};
 
 	previewPost = () => {
-		window.open( utils.getPreviewURL( this.props.site, this.props.post ) );
+		window.open( getPreviewURL( this.props.site, this.props.post ) );
 	};
 
 	publishPost = () => {
 		this.setState( { showPopoverMenu: false } );
-		if ( utils.userCan( 'publish_post', this.props.post ) ) {
+		if ( userCan( 'publish_post', this.props.post ) ) {
 			this.props.updatePostStatus( 'publish' );
 		}
 	};
@@ -139,8 +137,8 @@ class Draft extends Component {
 
 		const site = this.props.site;
 
-		if ( utils.userCan( 'edit_post', post ) ) {
-			editPostURL = utils.getEditURL( post, site );
+		if ( userCan( 'edit_post', post ) ) {
+			editPostURL = getEditURL( post, site );
 		}
 
 		if ( this.props.postImages && this.props.postImages.canonical_image ) {
@@ -244,7 +242,7 @@ class Draft extends Component {
 	}
 
 	renderTrashAction() {
-		if ( ! utils.userCan( 'delete_post', this.props.post ) ) {
+		if ( ! userCan( 'delete_post', this.props.post ) ) {
 			return null;
 		}
 
