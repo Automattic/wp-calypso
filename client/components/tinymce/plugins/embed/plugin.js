@@ -40,11 +40,7 @@ const embed = editor => {
 			},
 		};
 
-		renderWithReduxStore(
-			React.createElement( EmbedDialog, embedDialogProps ),
-			embedDialogContainer,
-			store
-		);
+		renderWithReduxStore( React.createElement( EmbedDialog, embedDialogProps ), embedDialogContainer, store );
 
 		// Focus on the editor when closing the dialog, so that the user can start typing right away
 		// instead of having to tab back to the editor.

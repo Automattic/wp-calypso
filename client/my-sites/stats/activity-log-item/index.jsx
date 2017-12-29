@@ -81,9 +81,7 @@ class ActivityLogItem extends Component {
 								<FormattedBlock key={ key } content={ part } />
 							) ) }
 						</div>
-						{ activityTitle && (
-							<div className="activity-log-item__description-summary">{ activityTitle }</div>
-						) }
+						{ activityTitle && <div className="activity-log-item__description-summary">{ activityTitle }</div> }
 					</div>
 				) }
 			</div>

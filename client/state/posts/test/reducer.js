@@ -1435,9 +1435,9 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal(
-				'__RESTORE_PENDING'
-			);
+			expect(
+				state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status
+			).to.equal( '__RESTORE_PENDING' );
 			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 0 );
 		} );
 
@@ -1471,7 +1471,9 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal( 'trash' );
+			expect(
+				state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status
+			).to.equal( 'trash' );
 			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 1 );
 		} );
 
@@ -1538,9 +1540,9 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal(
-				'__DELETE_PENDING'
-			);
+			expect(
+				state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status
+			).to.equal( '__DELETE_PENDING' );
 			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 0 );
 		} );
 
@@ -1575,7 +1577,9 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal( 'trash' );
+			expect(
+				state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status
+			).to.equal( 'trash' );
 			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 1 );
 		} );
 
@@ -1676,27 +1680,22 @@ describe( 'reducer', () => {
 
 			const state = allSitesQueries( original, { type: DESERIALIZE } );
 
-			expect( state ).to.eql(
-				new PostQueryManager(
-					{
-						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': {
-								ID: 841,
-								global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-								site_ID: 2916284,
-								title: 'Hello World',
-							},
-						},
-						queries: {
-							'[["search","Hello"]]': {
-								found: 1,
-								itemKeys: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
-							},
-						},
+			expect( state ).to.eql( new PostQueryManager( {
+				items: {
+					'3d097cb7c5473c169bba0eb8e3c6cb64': {
+						ID: 841,
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						site_ID: 2916284,
+						title: 'Hello World',
 					},
-					{ itemKey: 'global_ID' }
-				)
-			);
+				},
+				queries: {
+					'[["search","Hello"]]': {
+						found: 1,
+						itemKeys: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
+					},
+				},
+			}, { itemKey: 'global_ID' } ) );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
