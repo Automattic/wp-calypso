@@ -142,11 +142,7 @@ class PreviewToolbar extends Component {
 				) }
 				<div className="web-preview__toolbar-actions">
 					{ showEdit && (
-						<Button
-							className="web-preview__edit"
-							href={ editUrl }
-							onClick={ this.handleEditorWebPreviewEdit }
-						>
+						<Button className="web-preview__edit" href={ editUrl } onClick={ this.handleEditorWebPreviewEdit }>
 							{ translate( 'Edit' ) }
 						</Button>
 					) }
