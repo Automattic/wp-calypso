@@ -403,7 +403,7 @@ function isAdTrackingAllowed() {
  *
  * @returns {void}
  */
-function retarget() {
+function only_retarget() {
 	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
@@ -487,7 +487,7 @@ function retarget() {
  * @param {Object} properties - The custom event attributes.
  * @returns {void}
  */
-function trackCustomFacebookConversionEvent( name, properties ) {
+export function trackCustomFacebookConversionEvent( name, properties ) {
 	window.fbw && window.fbq( 'trackCustom', name, properties );
 }
 
@@ -497,7 +497,7 @@ function trackCustomFacebookConversionEvent( name, properties ) {
  * @param {Object} properties - The custom event attributes.
  * @returns {void}
  */
-function trackCustomAdWordsRemarketingEvent( properties ) {
+export function trackCustomAdWordsRemarketingEvent( properties ) {
 	window.google_trackConversion &&
 		window.google_trackConversion( {
 			google_conversion_id: ADWORDS_CONVERSION_ID,
@@ -509,7 +509,7 @@ function trackCustomAdWordsRemarketingEvent( properties ) {
 /**
  * A generic function that we can export and call to track plans page views with our ad partners
  */
-function retargetViewPlans() {
+export function retargetViewPlans() {
 	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
@@ -525,7 +525,7 @@ function retargetViewPlans() {
  * @param {Object} cartItem - The item added to the cart
  * @returns {void}
  */
-function recordAddToCart( cartItem ) {
+export function recordAddToCart( cartItem ) {
 	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
@@ -555,7 +555,7 @@ function recordAddToCart( cartItem ) {
  *
  * @param {Object} cart - cart as `CartValue` object
  */
-function recordViewCheckout( cart ) {
+export function recordViewCheckout( cart ) {
 	if ( isCriteoEnabled ) {
 		recordViewCheckoutInCriteo( cart );
 	}
@@ -568,7 +568,7 @@ function recordViewCheckout( cart ) {
  * @param {Number} orderId - the order id
  * @returns {void}
  */
-function recordOrder( cart, orderId ) {
+export function recordOrder( cart, orderId ) {
 	if ( ! isAdTrackingAllowed() ) {
 		return;
 	}
@@ -838,7 +838,7 @@ function recordOrderInFloodlight( cart, orderId ) {
  *
  * @returns {void}
  */
-function recordAliasInFloodlight() {
+export function recordAliasInFloodlight() {
 	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
 		return;
 	}
@@ -899,7 +899,7 @@ function recordSignupCompletionInFloodlight() {
  * @param {String} urlPath - The URL path
  * @returns {void}
  */
-function recordPageViewInFloodlight( urlPath ) {
+export function recordPageViewInFloodlight( urlPath ) {
 	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
 		return;
 	}
@@ -1236,7 +1236,7 @@ function isSupportedCurrency( currency ) {
  *
  * @returns {void}
  */
-function recordSignupStart() {
+export function recordSignupStart() {
 	recordSignupStartInFloodlight();
 }
 
@@ -1245,29 +1245,14 @@ function recordSignupStart() {
  *
  * @returns {void}
  */
-function recordSignupCompletion() {
+export function recordSignupCompletion() {
 	recordSignupCompletionInFloodlight();
 }
 
-export default {
-	retarget: function( context, next ) {
-		const nextFunction = typeof next === 'function' ? next : noop;
+export function retarget( context, next ) {
+	const nextFunction = typeof next === 'function' ? next : noop;
 
-		retarget();
+	only_retarget();
 
-		nextFunction();
-	},
-
-	retargetViewPlans,
-
-	recordAliasInFloodlight,
-	recordPageViewInFloodlight,
-
-	recordAddToCart,
-	recordViewCheckout,
-	recordOrder,
-	recordSignupStart,
-	recordSignupCompletion,
-	trackCustomFacebookConversionEvent,
-	trackCustomAdWordsRemarketingEvent,
-};
+	nextFunction();
+}
