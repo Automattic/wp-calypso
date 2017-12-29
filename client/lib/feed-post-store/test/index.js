@@ -12,13 +12,13 @@ jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/post-normalizer', () => require( './mocks/lib/post-normalizer' ) );
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
-var Dispatcher, FeedStreamActionType, FeedPostActionType, FeedPostStore;
+import { action as FeedPostActionType } from 'lib/feed-post-store/constants';
+let Dispatcher, FeedStreamActionType, FeedPostStore;
 
 describe( 'feed-post-store', () => {
 	beforeAll( () => {
 		Dispatcher = require( 'dispatcher' );
 		FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action;
-		FeedPostActionType = require( 'lib/feed-post-store/constants' ).action;
 
 		FeedPostStore = require( '../' );
 	} );
