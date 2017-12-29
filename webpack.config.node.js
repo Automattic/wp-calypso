@@ -22,6 +22,11 @@ const config = require( 'config' );
 const bundleEnv = config( 'env' );
 
 /**
+ * Internal variables
+ */
+const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
+
+/**
  * This lists modules that must use commonJS `require()`s
  * All modules listed here need to be ES5.
  *
@@ -134,6 +139,7 @@ const webpackConfig = {
 		} ),
 		new webpack.DefinePlugin( {
 			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
+			COMMIT_SHA: JSON.stringify( commitSha ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 		} ),
 		new HappyPack( { loaders: [ babelLoader ] } ),
