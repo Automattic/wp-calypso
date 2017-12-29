@@ -24,7 +24,7 @@ import {
 	isMultiSelectEnabled,
 	isPostSelected,
 } from 'state/ui/post-type-list/selectors';
-import { hideSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
+import { hideActiveSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
 import { bumpStat } from 'state/analytics/actions';
 import ExternalLink from 'components/external-link';
 import FormInputCheckbox from 'components/forms/form-checkbox';
@@ -43,10 +43,6 @@ function preloadEditor() {
 }
 
 class PostItem extends React.Component {
-	hideCurrentSharePanel = () => {
-		this.props.hideSharePanel( this.props.globalId );
-	};
-
 	clickHandler = clickTarget => () => {
 		this.props.bumpStat( 'calypso_post_item_click', clickTarget );
 	};
@@ -122,7 +118,7 @@ class PostItem extends React.Component {
 				post={ post }
 				siteId={ post.site_ID }
 				showClose={ true }
-				onClose={ this.hideCurrentSharePanel }
+				onClose={ this.props.hideActiveSharePanel }
 			/>
 		);
 	}
@@ -216,7 +212,7 @@ PostItem.propTypes = {
 	singleUserQuery: PropTypes.bool,
 	className: PropTypes.string,
 	compact: PropTypes.bool,
-	hideSharePanel: PropTypes.func,
+	hideActiveSharePanel: PropTypes.func,
 	hasExpandedContent: PropTypes.bool,
 };
 
@@ -249,7 +245,7 @@ export default connect(
 	},
 	{
 		bumpStat,
-		hideSharePanel,
+		hideActiveSharePanel,
 		togglePostSelection,
 	}
 )( localize( PostItem ) );
