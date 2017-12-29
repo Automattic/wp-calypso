@@ -19,8 +19,8 @@ import CommentListHeader from 'my-sites/comments/comment-list/comment-list-heade
 import CommentNavigation from 'my-sites/comments/comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
+import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
-import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { getCommentsPage, getSiteCommentCounts } from 'state/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
@@ -137,7 +137,8 @@ export class CommentList extends Component {
 
 	render() {
 		const {
-			isCommentsTreeSupported,
+			comments,
+			commentsCount,
 			isLoading,
 			isPostView,
 			page,
@@ -146,15 +147,22 @@ export class CommentList extends Component {
 			siteFragment,
 			status,
 		} = this.props;
-		const { isBulkMode, selectedComments } = this.state;
+		const { isBulkMode, selectedComments, sortOrder } = this.state;
 
 		const validPage = this.isRequestedPageValid() ? page : 1;
 
-		const comments = this.getComments();
-		const commentsCount = comments.length;
-		const commentsPage = this.getCommentsPage( comments, validPage );
+		const commentsListQuery = {
+			listType: 'site',
+			number: COMMENTS_PER_PAGE,
+			order: sortOrder.toUpperCase(),
+			page: validPage,
+			postId,
+			siteId,
+			status,
+			type: 'any',
+		};
 
-		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
+		const showPlaceholder = ( ! siteId || isLoading ) && ! comments.length;
 		const showEmptyContent = ! commentsCount && ! showPlaceholder;
 
 		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
@@ -162,21 +170,14 @@ export class CommentList extends Component {
 		return (
 			<div className="comment-list">
 				<QuerySiteSettings siteId={ siteId } />
-
-				{ ! isCommentsTreeSupported && (
-					<QuerySiteCommentsList
-						number={ 100 }
-						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
-						siteId={ siteId }
-						status={ status }
-					/>
-				) }
-				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
+				<QuerySiteCommentCounts { ...{ siteId, postId } } />
+				<QuerySiteCommentsList { ...commentsListQuery } />
 
 				{ isPostView && <CommentListHeader postId={ postId } /> }
 
 				<CommentNavigation
-					commentsPage={ commentsPage }
+					commentsListQuery={ commentsListQuery }
+					commentsPage={ comments }
 					isBulkMode={ isBulkMode }
 					isSelectedAll={ this.isSelectedAll() }
 					postId={ postId }
@@ -196,9 +197,10 @@ export class CommentList extends Component {
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-list__transition"
 				>
-					{ map( commentsPage, commentId => (
+					{ map( comments, commentId => (
 						<Comment
 							commentId={ commentId }
+							commentsListQuery={ commentsListQuery }
 							key={ `comment-${ siteId }-${ commentId }` }
 							isBulkMode={ isBulkMode }
 							isPostView={ isPostView }
