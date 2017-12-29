@@ -1,16 +1,13 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import { flatten, filter, find, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import createReactClass from 'create-react-class';
 
 /**
@@ -42,7 +39,7 @@ import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
-import upgradesActions from 'lib/upgrades/actions';
+import { addItem, applyCoupon, resetTransaction, setDomainDetails } from 'lib/upgrades/actions';
 import { getContactDetailsCache, isEligibleForCheckoutToChecklist } from 'state/selectors';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import { isValidFeatureKey, getUpgradePlanSlugFromPath } from 'lib/plans';
@@ -75,7 +72,7 @@ const Checkout = createReactClass( {
 	},
 
 	componentWillMount: function() {
-		upgradesActions.resetTransaction();
+		resetTransaction();
 		this.props.recordApplePayStatus();
 	},
 
@@ -134,7 +131,7 @@ const Checkout = createReactClass( {
 		const domainReceiptId = get( cartItems.getGoogleApps( cart ), '0.extra.receipt_for_domain', 0 );
 
 		if ( domainReceiptId ) {
-			upgradesActions.setDomainDetails( contactDetails );
+			setDomainDetails( contactDetails );
 		}
 	},
 
@@ -163,7 +160,7 @@ const Checkout = createReactClass( {
 			this.addNewItemToCart();
 		}
 		if ( this.props.couponCode ) {
-			upgradesActions.applyCoupon( this.props.couponCode );
+			applyCoupon( this.props.couponCode );
 		}
 	},
 
@@ -187,7 +184,7 @@ const Checkout = createReactClass( {
 			}
 		);
 
-		upgradesActions.addItem( cartItem );
+		addItem( cartItem );
 	},
 
 	addNewItemToCart() {
@@ -210,7 +207,7 @@ const Checkout = createReactClass( {
 		}
 
 		if ( cartItem ) {
-			upgradesActions.addItem( cartItem );
+			addItem( cartItem );
 		}
 	},
 

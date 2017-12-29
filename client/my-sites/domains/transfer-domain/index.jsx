@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +13,7 @@ import { connect } from 'react-redux';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import { DOMAINS_WITH_PLANS_ONLY, TRANSFER_IN } from 'state/current-user/constants';
 import { cartItems } from 'lib/cart-values';
-import upgradesActions from 'lib/upgrades/actions';
+import { addItem, addItems } from 'lib/upgrades/actions';
 import Notice from 'components/notice';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { isSiteUpgradeable } from 'state/selectors';
@@ -53,7 +52,7 @@ export class TransferDomain extends Component {
 	handleRegisterDomain = suggestion => {
 		const { selectedSiteSlug } = this.props;
 
-		upgradesActions.addItem(
+		addItem(
 			cartItems.domainRegistration( {
 				productSlug: suggestion.product_slug,
 				domain: suggestion.domain_name,
@@ -85,7 +84,7 @@ export class TransferDomain extends Component {
 			);
 		}
 
-		upgradesActions.addItems( transferItems );
+		addItems( transferItems );
 
 		page( '/checkout/' + selectedSiteSlug );
 	};

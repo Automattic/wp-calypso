@@ -1,21 +1,64 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
+// @TODO update when no longer compiling to CommonJS
+// export * from './cart';
+// export * from './checkout';
+// etc…
+export {
+	addDomainToCart,
+	addGoogleAppsRegistrationData,
+	addItem,
+	addItems,
+	addPrivacyToAllDomains,
+	applyCoupon,
+	closeCartPopup,
+	disableCart,
+	openCartPopup,
+	removeDomainFromCart,
+	removeItem,
+	removePrivacyFromAllDomains,
+	showCartOnMobile,
+} from './cart';
 
-import * as cart from './cart';
-import * as checkout from './checkout';
-import * as freeTrials from './free-trials';
-import * as domainManagement from './domain-management';
-import * as domainSearch from './domain-search';
-import * as purchases from './purchases';
+export {
+	resetTransaction,
+	setDomainDetails,
+	setNewCreditCardDetails,
+	setPayment,
+	submitTransaction,
+} from './checkout';
 
-export default {
-	...cart,
-	...checkout,
-	...freeTrials,
-	...domainManagement,
-	...domainSearch,
-	...purchases,
-};
+export {
+	acceptTransfer,
+	addDns,
+	addEmailForwarding,
+	applyDnsTemplate,
+	cancelTransferRequest,
+	closeSiteRedirectNotice,
+	declineTransfer,
+	deleteDns,
+	deleteEmailForwarding,
+	enablePrivacyProtection,
+	fetchDns,
+	fetchDomains,
+	fetchEmailForwarding,
+	fetchNameservers,
+	fetchSiteRedirect,
+	fetchWapiDomainInfo,
+	fetchWhois,
+	requestTransferCode,
+	resendIcannVerification,
+	resendVerificationEmailForwarding,
+	setPrimaryDomain,
+	updateNameservers,
+	updateSiteRedirect,
+	updateWhois,
+} from './domain-management';
+
+export { goToDomainCheckout } from './domain-search';
+
+export { startFreeTrial } from './free-trials';
+
+export { cancelAndRefundPurchase, cancelPurchase, submitSurvey } from './purchases';

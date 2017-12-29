@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 
 /**
@@ -15,7 +13,7 @@ import notices from 'notices';
 const debug = debugFactory( 'calypso:upgrades:actions:purchases' ),
 	wpcom = wp.undocumented();
 
-function cancelPurchase( purchaseId, onComplete ) {
+export function cancelPurchase( purchaseId, onComplete ) {
 	wpcom.cancelPurchase( purchaseId, ( error, data ) => {
 		debug( error, data );
 
@@ -25,11 +23,11 @@ function cancelPurchase( purchaseId, onComplete ) {
 	} );
 }
 
-function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
+export function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
 	wpcom.cancelAndRefundPurchase( purchaseId, data, onComplete );
 }
 
-function submitSurvey( surveyName, siteID, surveyData ) {
+export function submitSurvey( surveyName, siteID, surveyData ) {
 	const survey = wp.marketing().survey( surveyName, siteID );
 	survey.addResponses( surveyData );
 
@@ -44,5 +42,3 @@ function submitSurvey( surveyName, siteID, surveyData ) {
 		} )
 		.catch( err => debug( err ) ); // shouldn't get here
 }
-
-export { cancelAndRefundPurchase, cancelPurchase, submitSurvey };

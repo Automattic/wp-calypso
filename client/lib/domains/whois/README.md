@@ -26,8 +26,8 @@ WhoisStore.getByDomainName( 'example.wordpress.com' )
 To interact with the store, use the actions made available in [`domain-management.js`](../../upgrades/actions/domain-management.js):
 
 ```js
-import * as upgradesActions from 'lib/upgrades/actions';
+import { fetchWhois, updateWhois } from 'lib/upgrades/actions';
 
-upgradesActions.fetchWhois( 'example.wordpress.com' );
-upgradesActions.updateWhois( 'example.wordpress.com', contactInformationData, true, onCompleteCallback );
+fetchWhois( 'example.wordpress.com' );
+updateWhois( 'example.wordpress.com', contactInformationData, true, onCompleteCallback );
 ```

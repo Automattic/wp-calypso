@@ -30,12 +30,17 @@ DomainsStore.getBySite( 'example.wordpress.com' )
 To interact with the store, use the actions made available in [`domain-management.js`](../../upgrades/actions/domain-management.js):
 
 ```js
-import * as upgradesActions from 'lib/upgrades/actions';
+import {
+	enablePrivacyProtection,
+	fetchDomains,
+	requestTransferCode,
+	setPrimaryDomain,
+} from 'lib/upgrades/actions';
 
-upgradesActions.fetchDomains( 'example.wordpress.com' );
-upgradesActions.setPrimaryDomain( 'example.wordpress.com', 'example.com' );
-upgradesActions.enablePrivacyProtection( { 'example.wordpress.com', 'example.com' } );
-upgradesActions.requestTransferCode( { 'example.wordpress.com', 'example.com', true, true } );
+fetchDomains( 'example.wordpress.com' );
+setPrimaryDomain( 'example.wordpress.com', 'example.com' );
+enablePrivacyProtection( { 'example.wordpress.com', 'example.com' } );
+requestTransferCode( { 'example.wordpress.com', 'example.com', true, true } );
 ```
 
 ## Unit Tests

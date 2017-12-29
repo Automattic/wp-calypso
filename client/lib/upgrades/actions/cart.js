@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { assign } from 'lodash';
 
 /**
@@ -17,47 +15,47 @@ import { cartItems } from 'lib/cart-values';
 // dispatcher even though it's not used directly here
 import 'lib/cart/store';
 
-function disableCart() {
+export function disableCart() {
 	Dispatcher.handleViewAction( { type: ActionTypes.CART_DISABLE } );
 }
 
-function openCartPopup( options ) {
+export function openCartPopup( options ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_POPUP_OPEN,
 		options: options || {},
 	} );
 }
 
-function closeCartPopup() {
+export function closeCartPopup() {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_POPUP_CLOSE,
 	} );
 }
 
-function showCartOnMobile( show ) {
+export function showCartOnMobile( show ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_ON_MOBILE_SHOW,
 		show,
 	} );
 }
 
-function addPrivacyToAllDomains() {
+export function addPrivacyToAllDomains() {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_PRIVACY_PROTECTION_ADD,
 	} );
 }
 
-function removePrivacyFromAllDomains() {
+export function removePrivacyFromAllDomains() {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_PRIVACY_PROTECTION_REMOVE,
 	} );
 }
 
-function addItem( item ) {
+export function addItem( item ) {
 	addItems( [ item ] );
 }
 
-function addItems( items ) {
+export function addItems( items ) {
 	const extendedItems = items.map( item => {
 		const extra = assign( {}, item.extra, {
 			context: 'calypstore',
@@ -71,7 +69,7 @@ function addItems( items ) {
 	} );
 }
 
-function removeItem( item, domainsWithPlansOnly ) {
+export function removeItem( item, domainsWithPlansOnly ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_ITEM_REMOVE,
 		cartItem: item,
@@ -79,7 +77,7 @@ function removeItem( item, domainsWithPlansOnly ) {
 	} );
 }
 
-function addDomainToCart( domainSuggestion ) {
+export function addDomainToCart( domainSuggestion ) {
 	addItem(
 		cartItems.domainRegistration( {
 			domain: domainSuggestion.domain_name,
@@ -88,14 +86,14 @@ function addDomainToCart( domainSuggestion ) {
 	);
 }
 
-function addGoogleAppsRegistrationData( registrationData ) {
+export function addGoogleAppsRegistrationData( registrationData ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.GOOGLE_APPS_REGISTRATION_DATA_ADD,
 		registrationData: registrationData,
 	} );
 }
 
-function removeDomainFromCart( domainSuggestion ) {
+export function removeDomainFromCart( domainSuggestion ) {
 	removeItem(
 		cartItems.domainRegistration( {
 			domain: domainSuggestion.domain_name,
@@ -104,25 +102,9 @@ function removeDomainFromCart( domainSuggestion ) {
 	);
 }
 
-function applyCoupon( coupon ) {
+export function applyCoupon( coupon ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_COUPON_APPLY,
 		coupon,
 	} );
 }
-
-export {
-	addDomainToCart,
-	addGoogleAppsRegistrationData,
-	addItem,
-	addItems,
-	addPrivacyToAllDomains,
-	applyCoupon,
-	closeCartPopup,
-	disableCart,
-	openCartPopup,
-	removeDomainFromCart,
-	removeItem,
-	removePrivacyFromAllDomains,
-	showCartOnMobile,
-};

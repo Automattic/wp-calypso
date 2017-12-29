@@ -17,7 +17,7 @@ import HeaderCake from 'components/header-cake';
 import MapDomainStep from 'components/domains/map-domain-step';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { cartItems } from 'lib/cart-values';
-import upgradesActions from 'lib/upgrades/actions';
+import { addItem } from 'lib/upgrades/actions';
 import wp from 'lib/wp';
 import paths from 'my-sites/domains/paths';
 import Notice from 'components/notice';
@@ -66,7 +66,7 @@ export class MapDomain extends Component {
 	handleRegisterDomain = suggestion => {
 		const { selectedSiteSlug } = this.props;
 
-		upgradesActions.addItem(
+		addItem(
 			cartItems.domainRegistration( {
 				productSlug: suggestion.product_slug,
 				domain: suggestion.domain_name,
@@ -94,7 +94,7 @@ export class MapDomain extends Component {
 			return;
 		}
 
-		upgradesActions.addItem( cartItems.domainMapping( { domain } ) );
+		addItem( cartItems.domainMapping( { domain } ) );
 
 		page( '/checkout/' + selectedSiteSlug );
 	};

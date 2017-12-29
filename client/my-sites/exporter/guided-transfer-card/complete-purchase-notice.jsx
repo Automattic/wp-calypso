@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -16,11 +14,11 @@ import { localize } from 'i18n-calypso';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { cartItems } from 'lib/cart-values';
-import upgradesActions from 'lib/upgrades/actions';
+import { addItem } from 'lib/upgrades/actions';
 import page from 'page';
 
 const redirectToCart = siteSlug => () => {
-	upgradesActions.addItem( cartItems.guidedTransferItem() );
+	addItem( cartItems.guidedTransferItem() );
 	page( `/checkout/${ siteSlug }` );
 };
 

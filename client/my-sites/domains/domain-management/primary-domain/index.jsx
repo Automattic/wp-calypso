@@ -19,7 +19,7 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import Notice from 'components/notice';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import paths from 'my-sites/domains/paths';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { setPrimaryDomain } from 'lib/upgrades/actions';
 import { getSelectedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';
 import support from 'lib/url/support';
@@ -208,7 +208,7 @@ export default connect(
 		};
 	},
 	{
-		setPrimaryDomain: upgradesActions.setPrimaryDomain,
+		setPrimaryDomain,
 		cancelClick,
 		updatePrimaryDomainClick,
 	}

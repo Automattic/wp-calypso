@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -24,7 +22,11 @@ import Main from 'components/main';
 import Notice from 'components/notice';
 import notices from 'notices';
 import paths from 'my-sites/domains/paths';
-import * as upgradesActions from 'lib/upgrades/actions';
+import {
+	closeSiteRedirectNotice,
+	fetchSiteRedirect,
+	updateSiteRedirect,
+} from 'lib/upgrades/actions';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -42,7 +44,7 @@ class SiteRedirect extends React.Component {
 	};
 
 	componentWillMount() {
-		upgradesActions.fetchSiteRedirect( this.props.selectedSite.domain );
+		fetchSiteRedirect( this.props.selectedSite.domain );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -58,7 +60,7 @@ class SiteRedirect extends React.Component {
 	}
 
 	closeRedirectNotice = () => {
-		upgradesActions.closeSiteRedirectNotice( this.props.selectedSite.domain );
+		closeSiteRedirectNotice( this.props.selectedSite.domain );
 	};
 
 	handleChange = event => {
@@ -70,26 +72,22 @@ class SiteRedirect extends React.Component {
 	handleClick = event => {
 		event.preventDefault();
 
-		upgradesActions.updateSiteRedirect(
-			this.props.selectedSite.domain,
-			this.state.redirectUrl,
-			success => {
-				this.props.updateSiteRedirectClick(
-					this.props.selectedDomainName,
-					this.state.redirectUrl,
-					success
-				);
+		updateSiteRedirect( this.props.selectedSite.domain, this.state.redirectUrl, success => {
+			this.props.updateSiteRedirectClick(
+				this.props.selectedDomainName,
+				this.state.redirectUrl,
+				success
+			);
 
-				if ( success ) {
-					page(
-						paths.domainManagementRedirectSettings(
-							this.props.selectedSite.slug,
-							trim( trimEnd( this.state.redirectUrl, '/' ) )
-						)
-					);
-				}
+			if ( success ) {
+				page(
+					paths.domainManagementRedirectSettings(
+						this.props.selectedSite.slug,
+						trim( trimEnd( this.state.redirectUrl, '/' ) )
+					)
+				);
 			}
-		);
+		} );
 	};
 
 	handleFocus = () => {
