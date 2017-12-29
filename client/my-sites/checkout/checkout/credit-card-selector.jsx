@@ -14,7 +14,7 @@ import { find } from 'lodash';
 import analytics from 'lib/analytics';
 import StoredCard from './stored-card';
 import NewCardForm from './new-card-form';
-import storeTransactions from 'lib/store-transactions';
+import { newCardPayment, storedCardPayment } from 'lib/store-transactions';
 import upgradesActions from 'lib/upgrades/actions';
 
 class CreditCardSelector extends React.Component {
@@ -83,9 +83,9 @@ class CreditCardSelector extends React.Component {
 
 		if ( 'new-card' === section ) {
 			analytics.ga.recordEvent( 'Upgrades', 'Clicked Use a New Credit/Debit Card Link' );
-			newPayment = storeTransactions.newCardPayment( this.props.transaction.newCardFormFields );
+			newPayment = newCardPayment( this.props.transaction.newCardFormFields );
 		} else {
-			newPayment = storeTransactions.storedCardPayment( this.getStoredCardDetails( section ) );
+			newPayment = storedCardPayment( this.getStoredCardDetails( section ) );
 		}
 
 		upgradesActions.setPayment( newPayment );
