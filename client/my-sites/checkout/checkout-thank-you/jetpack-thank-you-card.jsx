@@ -24,7 +24,7 @@ import Gridicon from 'gridicons';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 import analytics from 'lib/analytics';
 import support from 'lib/url/support';
-import utils from 'lib/site/utils';
+import { getSiteFileModDisableReason } from 'lib/site/utils';
 import HappyChatButton from 'components/happychat/button';
 
 // Redux actions & selectors
@@ -347,7 +347,7 @@ class JetpackThankYouCard extends Component {
 			return null;
 		}
 
-		const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
+		const reasons = getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
 		let reason;
 		if ( reasons && reasons.length > 0 ) {
 			reason = translate( "We can't modify files on your site." );
