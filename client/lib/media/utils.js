@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import url from 'url';
 import path from 'path';
 import photon from 'photon';
@@ -22,7 +20,7 @@ import {
 	GallerySizeableTypes,
 	GalleryDefaultAttrs,
 } from './constants';
-import Shortcode from 'lib/shortcode';
+import { stringify } from 'lib/shortcode';
 import { uniqueId } from 'lib/impure-lodash';
 import versionCompare from 'lib/version-compare';
 
@@ -454,7 +452,7 @@ const MediaUtils = {
 			delete attrs.orderBy;
 		}
 
-		return Shortcode.stringify( {
+		return stringify( {
 			tag: 'gallery',
 			type: 'single',
 			attrs: attrs,
