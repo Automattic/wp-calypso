@@ -34,19 +34,19 @@
 	}
 
 	&.is-error {
-		box-shadow: inset 3px 0 0 $alert-red;
+		border-left: 3px solid $alert-red;
 	}
 
 	&.is-info {
-		box-shadow: inset 3px 0 0 $blue-wordpress;
+		border-left: 3px solid $blue-wordpress;
 	}
 
 	&.is-success {
-		box-shadow: inset 3px 0 0 $alert-green;
+		border-left: 3px solid $alert-green;
 	}
 
 	&.is-warning {
-		box-shadow: inset 3px 0 0 $alert-yellow;
+		border-left: 3px solid $alert-yellow;
 	}
 }
 
