@@ -12,7 +12,7 @@ import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
 import SiftScience from 'lib/siftscience';
 import config from 'config';
-import paths from './paths';
+import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
