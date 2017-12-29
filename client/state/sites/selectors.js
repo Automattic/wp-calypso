@@ -1,7 +1,9 @@
 /** @format */
+
 /**
  * External dependencies
  */
+
 import {
 	compact,
 	every,
@@ -23,7 +25,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import { addQueryArgs, isHttps, withoutHttp, urlToSlug } from 'lib/url';
+import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
 
 /**
  * Internal dependencies
