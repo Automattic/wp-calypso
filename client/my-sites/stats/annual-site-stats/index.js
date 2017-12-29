@@ -16,10 +16,7 @@ import { find } from 'lodash';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
+import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 import ErrorPanel from 'my-sites/stats/stats-error';
 
@@ -81,20 +78,22 @@ class AnnualSiteStats extends Component {
 	}
 
 	render() {
-		const { years, requesting, translate, moment } = this.props;
+		const { years, translate, moment } = this.props;
 		const currentYear = moment().format( 'YYYY' );
 		const year = years && find( years, y => y.year === currentYear );
-		const isLoading = requesting && ! years;
+		const isLoading = ! years;
+		const isError = ! isLoading && years.errors;
+		const noData = ! isLoading && ! isError && ! year;
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Annual Site Stats' ) } />
 				<Card className="stats-module">
 					<StatsModulePlaceholder isLoading={ isLoading } />
-					{ ! year &&
-						! isLoading && (
-							<ErrorPanel message={ translate( 'No annual stats recorded for this year' ) } />
-						) }
+					{ isError && <ErrorPanel message={ translate( 'Oops, something went wrong' ) } /> }
+					{ noData && (
+						<ErrorPanel message={ translate( 'No annual stats recorded for this year' ) } />
+					) }
 					{ year && this.renderContent( year ) }
 				</Card>
 			</div>
@@ -109,7 +108,6 @@ export default connect( state => {
 	const insights = getSiteStatsNormalizedData( state, siteId, statType, {} );
 
 	return {
-		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, {} ),
 		years: insights.years,
 	};
 } )( localize( AnnualSiteStats ) );
