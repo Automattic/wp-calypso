@@ -25,7 +25,7 @@ import ValidationErrorList from 'notices/validation-error-list';
 import { forDomainRegistrations as countriesList } from 'lib/countries-list';
 import formState from 'lib/form-state';
 import notices from 'notices';
-import paths from 'my-sites/domains/paths';
+import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
 import upgradesActions from 'lib/upgrades/actions';
 import wp from 'lib/wp';
 import { successNotice } from 'state/notices/actions';
@@ -476,7 +476,7 @@ class EditContactInfoFormCard extends React.Component {
 
 	goToContactsPrivacy = () => {
 		page(
-			paths.domainManagementContactsPrivacy(
+			domainManagementContactsPrivacy(
 				this.props.selectedSite.slug,
 				this.props.selectedDomain.name
 			)

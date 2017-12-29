@@ -18,7 +18,7 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import MaintenanceCard from 'my-sites/domains/domain-management/components/domain/maintenance-card';
 import MappedDomain from './mapped-domain';
-import paths from 'my-sites/domains/paths';
+import { domainManagementList } from 'my-sites/domains/paths';
 import RegisteredDomain from './registered-domain';
 import {
 	registrar as registrarNames,
@@ -108,7 +108,7 @@ class Edit extends React.Component {
 	};
 
 	goToDomainManagement = () => {
-		page( paths.domainManagementList( this.props.selectedSite.slug ) );
+		page( domainManagementList( this.props.selectedSite.slug ) );
 	};
 }
 

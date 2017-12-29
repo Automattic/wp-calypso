@@ -28,7 +28,11 @@ import {
 	MAP_EXISTING_DOMAIN_UPDATE_DNS,
 	MAP_SUBDOMAIN,
 } from 'lib/url/support';
-import paths from 'my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementList,
+	domainManagementTransferIn,
+} from 'my-sites/domains/paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
 const debug = _debug( 'calypso:domain-warnings' );
@@ -208,7 +212,7 @@ export class DomainWarnings extends React.PureComponent {
 		if ( this.props.isCompact ) {
 			noticeProps.text = translate( 'DNS configuration required' );
 			children = (
-				<NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>
+				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
 					{ translate( 'Fix' ) }
 				</NoticeAction>
 			);
@@ -574,7 +578,7 @@ export class DomainWarnings extends React.PureComponent {
 					key="unverified-domains-can-manage"
 					text={ this.props.isCompact ? compactMessage : fullMessage }
 				>
-					<NoticeAction href={ paths.domainManagementEdit( this.props.selectedSite.slug, domain ) }>
+					<NoticeAction href={ domainManagementEdit( this.props.selectedSite.slug, domain ) }>
 						{ action }
 					</NoticeAction>
 				</Notice>
@@ -583,7 +587,7 @@ export class DomainWarnings extends React.PureComponent {
 
 		let fullContent, compactContent, compactNoticeText;
 
-		const editLink = name => paths.domainManagementEdit( this.props.selectedSite.slug, name );
+		const editLink = name => domainManagementEdit( this.props.selectedSite.slug, name );
 		if ( severity === 'is-error' ) {
 			fullContent = (
 				<span>
@@ -601,7 +605,7 @@ export class DomainWarnings extends React.PureComponent {
 			);
 			compactNoticeText = translate( 'Issues with your domains.' );
 			compactContent = (
-				<NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>
+				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
 					{ action }
 				</NoticeAction>
 			);
@@ -620,7 +624,7 @@ export class DomainWarnings extends React.PureComponent {
 			);
 			compactNoticeText = translate( 'Verification required for domains.' );
 			compactContent = (
-				<NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>
+				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
 					{ action }
 				</NoticeAction>
 			);
@@ -651,7 +655,7 @@ export class DomainWarnings extends React.PureComponent {
 
 		const { translate } = this.props;
 		const compactContent = (
-			<NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>
+			<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
 				{ translate( 'More' ) }
 			</NoticeAction>
 		);
@@ -779,7 +783,7 @@ export class DomainWarnings extends React.PureComponent {
 		let compactMessage = null;
 		let message;
 
-		const domainManagementLink = paths.domainManagementTransferIn(
+		const domainManagementLink = domainManagementTransferIn(
 			this.props.selectedSite.slug,
 			domainInTransfer.name
 		);

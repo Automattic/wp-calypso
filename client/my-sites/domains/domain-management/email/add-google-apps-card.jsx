@@ -16,7 +16,7 @@ import { get } from 'lodash';
 import Button from 'components/forms/form-button';
 import CompactCard from 'components/card/compact';
 import config from 'config';
-import paths from 'my-sites/domains/paths';
+import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
 import { ADDING_GOOGLE_APPS_TO_YOUR_SITE } from 'lib/url/support';
 import analyticsMixin from 'lib/mixins/analytics';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
@@ -214,10 +214,7 @@ const AddGoogleAppsCard = createReactClass( {
 
 	goToAddGoogleApps() {
 		page(
-			paths.domainManagementAddGoogleApps(
-				this.props.selectedSite.slug,
-				this.props.selectedDomainName
-			)
+			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedDomainName )
 		);
 	},
 } );

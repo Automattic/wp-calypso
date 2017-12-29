@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import { find, findIndex, identity, noop, times } from 'lodash';
 import Gridicon from 'gridicons';
@@ -20,7 +18,11 @@ import DomainOnly from './domain-only';
 import ListItem from './item';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementList,
+	domainManagementTransferIn,
+} from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import UpgradesNavigation from 'my-sites/domains/navigation';
@@ -316,7 +318,7 @@ export class List extends React.Component {
 		return new Promise( ( resolve, reject ) => {
 			this.props.setPrimaryDomain( this.props.selectedSite.ID, domainName, ( error, data ) => {
 				if ( ! error && data && data.success ) {
-					page.redirect( paths.domainManagementList( this.props.selectedSite.slug ) );
+					page.redirect( domainManagementList( this.props.selectedSite.slug ) );
 					resolve();
 				} else {
 					reject( error );
@@ -403,9 +405,9 @@ export class List extends React.Component {
 
 	goToEditDomainRoot = domain => {
 		if ( domain.type !== type.TRANSFER ) {
-			page( paths.domainManagementEdit( this.props.selectedSite.slug, domain.name ) );
+			page( domainManagementEdit( this.props.selectedSite.slug, domain.name ) );
 		} else {
-			page( paths.domainManagementTransferIn( this.props.selectedSite.slug, domain.name ) );
+			page( domainManagementTransferIn( this.props.selectedSite.slug, domain.name ) );
 		}
 	};
 }

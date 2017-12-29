@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -11,6 +9,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 import { trim, trimEnd } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -23,7 +22,7 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import Main from 'components/main';
 import Notice from 'components/notice';
 import notices from 'notices';
-import paths from 'my-sites/domains/paths';
+import { domainManagementEdit, domainManagementRedirectSettings } from 'my-sites/domains/paths';
 import * as upgradesActions from 'lib/upgrades/actions';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
@@ -82,7 +81,7 @@ class SiteRedirect extends React.Component {
 
 				if ( success ) {
 					page(
-						paths.domainManagementRedirectSettings(
+						domainManagementRedirectSettings(
 							this.props.selectedSite.slug,
 							trim( trimEnd( this.state.redirectUrl, '/' ) )
 						)
@@ -166,7 +165,7 @@ class SiteRedirect extends React.Component {
 		const { selectedDomainName, selectedSite } = this.props;
 
 		this.props.cancelClick( selectedDomainName );
-		page( paths.domainManagementEdit( selectedSite.slug, selectedDomainName ) );
+		page( domainManagementEdit( selectedSite.slug, selectedDomainName ) );
 	};
 }
 
