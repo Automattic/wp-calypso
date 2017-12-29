@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -18,7 +16,7 @@ import GoogleAppsDetails from './google-apps-details';
 import GoogleVoucherDetails from './google-voucher';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { isPremium, isGoogleApps } from 'lib/products-values';
-import paths from 'lib/paths';
+import { newPost } from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 
@@ -84,7 +82,7 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchas
 						'No ads or limits. The Premium plan also adds 10GB of file storage.'
 				) }
 				buttonText={ i18n.translate( 'Start a new post' ) }
-				href={ paths.newPost( selectedSite ) }
+				href={ newPost( selectedSite ) }
 			/>
 			{ isWordadsInstantActivationEligible( selectedSite ) && (
 				<PurchaseDetail
