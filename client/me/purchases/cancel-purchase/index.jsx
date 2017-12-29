@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -29,16 +27,16 @@ import {
 	getPurchase,
 	getSelectedSite,
 	goToManagePurchase,
+	isDataLoading,
 	recordPageView,
 } from 'me/purchases/utils';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
-import { isDataLoading } from 'me/purchases/utils';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
-import paths from '../paths';
+import { managePurchase, purchasesRoot } from '../paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ProductLink from 'me/purchases/product-link';
 import titles from 'me/purchases/titles';
@@ -89,14 +87,14 @@ class CancelPurchase extends React.Component {
 	redirect = props => {
 		const purchase = getPurchase( props );
 		const selectedSite = getSelectedSite( props );
-		let redirectPath = paths.purchasesRoot();
+		let redirectPath = purchasesRoot;
 
 		if (
 			selectedSite &&
 			purchase &&
 			( ! isCancelable( purchase ) || isDomainTransfer( purchase ) )
 		) {
-			redirectPath = paths.managePurchase( selectedSite.slug, purchase.id );
+			redirectPath = managePurchase( selectedSite.slug, purchase.id );
 		}
 
 		page.redirect( redirectPath );

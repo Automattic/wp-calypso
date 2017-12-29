@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import React from 'react';
 
@@ -15,7 +13,7 @@ import config from 'config';
 import DeleteSite from './delete-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import DisconnectSite from './disconnect-site';
-import purchasesPaths from 'me/purchases/paths';
+import { billingHistory } from 'me/purchases/paths';
 import SiteSettingsMain from 'my-sites/site-settings/main';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
@@ -152,8 +150,8 @@ const controller = {
 				notifications: '/me/notifications',
 				disbursements: '/me/public-profile',
 				earnings: '/me/public-profile',
-				'billing-history': purchasesPaths.billingHistory(),
-				'billing-history-v2': purchasesPaths.billingHistory(),
+				'billing-history': billingHistory,
+				'billing-history-v2': billingHistory,
 				'connected-apps': '/me/security/connected-applications',
 			};
 		if ( ! context ) {

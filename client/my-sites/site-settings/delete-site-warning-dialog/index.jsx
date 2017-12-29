@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import i18n from 'i18n-calypso';
@@ -12,14 +10,14 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import purchasesPaths from 'me/purchases/paths';
+import { purchasesRoot } from 'me/purchases/paths';
 
 const DeleteSiteWarningDialog = ( { isVisible, onClose } ) => (
 	<Dialog
 		isVisible={ isVisible }
 		buttons={ [
 			{ action: 'dismiss', label: i18n.translate( 'Dismiss' ) },
-			<a className="button is-primary" href={ purchasesPaths.purchasesRoot() }>
+			<a className="button is-primary" href={ purchasesRoot }>
 				{ i18n.translate( 'Manage Purchases', { context: 'button label' } ) }
 			</a>,
 		] }

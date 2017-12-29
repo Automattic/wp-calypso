@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { translate } from 'i18n-calypso';
 import { truncate, includes } from 'lodash';
 
@@ -55,7 +53,7 @@ import {
 	THEME_DELETE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
 } from 'state/action-types';
-import purchasesPaths from 'me/purchases/paths';
+import { purchasesRoot } from 'me/purchases/paths';
 import { dispatchSuccess, dispatchError } from './utils';
 
 import {
@@ -258,7 +256,7 @@ const onSiteDeleteFailure = ( dispatch, { error } ) => {
 					id: 'site-delete',
 					showDismiss: false,
 					button: translate( 'Manage Purchases' ),
-					href: purchasesPaths.purchasesRoot(),
+					href: purchasesRoot,
 				}
 			)
 		);
