@@ -19,7 +19,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import PendingGappsTosNotice from './pending-gapps-tos-notice';
-import purchasesPaths from 'me/purchases/paths';
+import { purchasesRoot } from 'me/purchases/paths';
 import { type as domainTypes, transferStatus } from 'lib/domains/constants';
 import { isSubdomain, hasPendingGoogleAppsUsers } from 'lib/domains';
 import support from 'lib/url/support';
@@ -79,7 +79,7 @@ export class DomainWarnings extends React.PureComponent {
 		const link =
 			count === 1
 				? `/checkout/domain_map:${ domain }/renew/${ subscriptionId }/${ selectedSite.slug }`
-				: purchasesPaths.purchasesRoot();
+				: purchasesRoot;
 
 		return (
 			<NoticeAction href={ link } onClick={ onClick }>

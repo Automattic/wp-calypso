@@ -33,7 +33,7 @@ import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchas
 import { isRequestingSites } from 'state/sites/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { getUser } from 'state/users/selectors';
-import paths from '../paths';
+import { managePurchase } from '../paths';
 import PaymentLogo from 'components/payment-logo';
 import support from 'lib/url/support';
 import UserItem from 'components/user';
@@ -151,7 +151,7 @@ class PurchaseMeta extends Component {
 		const { translate, moment } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			const attachedPlanUrl = paths.managePurchase(
+			const attachedPlanUrl = managePurchase(
 				this.props.selectedSite.slug,
 				purchase.attachedToPurchaseId
 			);

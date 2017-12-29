@@ -10,7 +10,13 @@ import page from 'page';
  */
 import analytics from 'lib/analytics';
 import config from 'config';
-import paths from './paths';
+import {
+	addCardDetails,
+	editCardDetails,
+	cancelPurchase,
+	managePurchase,
+	purchasesRoot,
+} from './paths';
 import {
 	isExpired,
 	isIncludedWithPlan,
@@ -32,18 +38,18 @@ function goToCancelPurchase( props ) {
 	const { id } = getPurchase( props ),
 		{ slug } = getSelectedSite( props );
 
-	page( paths.cancelPurchase( slug, id ) );
+	page( cancelPurchase( slug, id ) );
 }
 
 function goToList() {
-	page( paths.purchasesRoot() );
+	page( purchasesRoot );
 }
 
 function goToManagePurchase( props ) {
 	const { id } = getPurchase( props ),
 		{ slug } = getSelectedSite( props );
 
-	page( paths.managePurchase( slug, id ) );
+	page( managePurchase( slug, id ) );
 }
 
 function isDataLoading( props ) {
@@ -92,9 +98,9 @@ function getEditCardDetailsPath( site, purchase ) {
 	if ( isPaidWithCreditCard( purchase ) ) {
 		const { payment: { creditCard } } = purchase;
 
-		return paths.editCardDetails( site.slug, purchase.id, creditCard.id );
+		return editCardDetails( site.slug, purchase.id, creditCard.id );
 	}
-	return paths.addCardDetails( site.slug, purchase.id );
+	return addCardDetails( site.slug, purchase.id );
 }
 
 export {

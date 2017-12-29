@@ -13,13 +13,13 @@ import billingController from 'me/billing-history/controller';
 import meController from 'me/controller';
 import { siteSelection } from 'my-sites/controller';
 import controller from './controller';
-import paths from './paths';
+import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	if ( config.isEnabled( 'manage/payment-methods' ) ) {
 		page(
-			paths.addCreditCard(),
+			paths.addCreditCard,
 			meController.sidebar,
 			controller.addCreditCard,
 			makeLayout,
@@ -27,11 +27,11 @@ export default function() {
 		);
 
 		// redirect legacy urls
-		page( '/payment-methods/add-credit-card', () => page.redirect( paths.addCreditCard() ) );
+		page( '/payment-methods/add-credit-card', () => page.redirect( paths.addCreditCard ) );
 	}
 
 	page(
-		paths.billingHistory(),
+		paths.billingHistory,
 		meController.sidebar,
 		billingController.billingHistory,
 		makeLayout,
@@ -47,7 +47,7 @@ export default function() {
 	);
 
 	page(
-		paths.purchasesRoot(),
+		paths.purchasesRoot,
 		meController.sidebar,
 		controller.noSitesMessage,
 		controller.list,
@@ -141,7 +141,7 @@ export default function() {
 		( { params: { siteName, purchaseId, cardId } } ) =>
 			page.redirect( paths.editCardDetails( siteName, purchaseId, cardId ) )
 	);
-	page( '/me/billing', () => page.redirect( paths.billingHistory() ) );
+	page( '/me/billing', () => page.redirect( paths.billingHistory ) );
 	page( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
 		page.redirect( paths.billingHistoryReceipt( receiptId ) )
 	);

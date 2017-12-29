@@ -30,7 +30,7 @@ import notices from 'notices';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import purchasePaths from 'me/purchases/paths';
+import { managePurchase } from 'me/purchases/paths';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryGeo from 'components/data/query-geo';
@@ -271,10 +271,7 @@ const Checkout = createReactClass( {
 		if ( cartItems.hasRenewalItem( cart ) ) {
 			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
 
-			return purchasePaths.managePurchase(
-				renewalItem.extra.purchaseDomain,
-				renewalItem.extra.purchaseId
-			);
+			return managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
 		}
 
 		if ( cartItems.hasFreeTrial( cart ) ) {
