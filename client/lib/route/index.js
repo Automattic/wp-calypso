@@ -6,7 +6,18 @@ import page from 'page';
 import urlModule from 'url';
 import { pickBy } from 'lodash';
 
-export * from './path';
+// @TODO: change once we stop compiling to CommonJS
+// export * from './path';
+export {
+	addSiteFragment,
+	externalRedirect,
+	getSiteFragment,
+	getStatsDefaultSitePage,
+	getStatsPathForTab,
+	mapPostStatus,
+	sectionify,
+	sectionifyWithRoutes,
+} from './path';
 
 const appendQueryString = ( basepath, querystring ) =>
 	basepath + ( querystring ? '?' + querystring : '' );
