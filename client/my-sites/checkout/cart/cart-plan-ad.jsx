@@ -19,13 +19,13 @@ import { cartItems } from 'lib/cart-values';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isDomainOnlySite } from 'state/selectors';
 import { isPlan } from 'lib/products-values';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { addItem } from 'lib/upgrades/actions';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
 
 class CartPlanAd extends Component {
 	addToCartAndRedirect = event => {
 		event.preventDefault();
-		upgradesActions.addItem( cartItems.premiumPlan( PLAN_PREMIUM, { isFreeTrial: false } ) );
+		addItem( cartItems.premiumPlan( PLAN_PREMIUM, { isFreeTrial: false } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
 

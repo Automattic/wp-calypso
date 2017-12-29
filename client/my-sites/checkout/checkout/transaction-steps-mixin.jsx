@@ -16,14 +16,14 @@ import { recordOrder } from 'lib/analytics/ad-tracking';
 import { getTld } from 'lib/domains';
 import { cartItems } from 'lib/cart-values';
 import { displayError, clear } from 'lib/upgrades/notices';
-import upgradesActions from 'lib/upgrades/actions';
+import { submitTransaction } from 'lib/upgrades/actions';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 
 const TransactionStepsMixin = {
 	submitTransaction: function( event ) {
 		event.preventDefault();
 
-		upgradesActions.submitTransaction( pick( this.props, [ 'cart', 'transaction' ] ) );
+		submitTransaction( pick( this.props, [ 'cart', 'transaction' ] ) );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {

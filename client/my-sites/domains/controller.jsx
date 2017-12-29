@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import qs from 'qs';
 import { translate } from 'i18n-calypso';
@@ -17,7 +15,7 @@ import analytics from 'lib/analytics';
 import DocumentHead from 'components/data/document-head';
 import { sectionify } from 'lib/route';
 import Main from 'components/main';
-import upgradesActions from 'lib/upgrades/actions';
+import { addItem } from 'lib/upgrades/actions';
 import productsFactory from 'lib/products-list';
 import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -128,7 +126,7 @@ const googleAppsWithRegistration = ( context, next ) => {
 	const siteSlug = getSelectedSiteSlug( state ) || '';
 
 	const handleAddGoogleApps = googleAppsCartItem => {
-		upgradesActions.addItem( googleAppsCartItem );
+		addItem( googleAppsCartItem );
 		page( '/checkout/' + siteSlug );
 	};
 

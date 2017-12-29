@@ -15,7 +15,7 @@ import { sectionifyWithRoutes } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import productsFactory from 'lib/products-list';
-import upgradesActions from 'lib/upgrades/actions';
+import { addItem } from 'lib/upgrades/actions';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GsuiteNudge from 'my-sites/checkout/gsuite-nudge';
@@ -147,7 +147,7 @@ export default {
 				receipt_for_domain: receiptId,
 			};
 
-			upgradesActions.addItem( googleAppsCartItem );
+			addItem( googleAppsCartItem );
 			page( `/checkout/${ siteSlug }` );
 		};
 

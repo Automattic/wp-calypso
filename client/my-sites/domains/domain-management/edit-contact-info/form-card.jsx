@@ -26,7 +26,7 @@ import { forDomainRegistrations as countriesList } from 'lib/countries-list';
 import formState from 'lib/form-state';
 import notices from 'notices';
 import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
-import upgradesActions from 'lib/upgrades/actions';
+import { updateWhois } from 'lib/upgrades/actions';
 import wp from 'lib/wp';
 import { successNotice } from 'state/notices/actions';
 import { UPDATE_CONTACT_INFORMATION } from 'lib/url/support';
@@ -500,7 +500,7 @@ class EditContactInfoFormCard extends React.Component {
 				this.setState( { formSubmitting: false } );
 				return;
 			}
-			upgradesActions.updateWhois(
+			updateWhois(
 				this.props.selectedDomain.name,
 				formState.getAllFieldValues( this.state.form ),
 				this.state.transferLock,

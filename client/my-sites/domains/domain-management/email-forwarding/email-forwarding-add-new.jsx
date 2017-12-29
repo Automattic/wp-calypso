@@ -22,7 +22,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import formState from 'lib/form-state';
 import analyticsMixin from 'lib/mixins/analytics';
 import notices from 'notices';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { addEmailForwarding } from 'lib/upgrades/actions';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const EmailForwardingAddNew = createReactClass( {
@@ -82,52 +82,47 @@ const EmailForwardingAddNew = createReactClass( {
 
 			const { mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
-			upgradesActions.addEmailForwarding(
-				this.props.selectedDomainName,
-				mailbox,
-				destination,
-				error => {
-					this.recordEvent(
-						'addNewEmailForwardClick',
-						this.props.selectedDomainName,
-						mailbox,
-						destination,
-						! Boolean( error )
-					);
+			addEmailForwarding( this.props.selectedDomainName, mailbox, destination, error => {
+				this.recordEvent(
+					'addNewEmailForwardClick',
+					this.props.selectedDomainName,
+					mailbox,
+					destination,
+					! Boolean( error )
+				);
 
-					if ( error ) {
-						notices.error(
-							error.message ||
-								this.props.translate(
-									'Failed to add email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
-									{
-										components: {
-											contactSupportLink: <a href={ CALYPSO_CONTACT } />,
-										},
-									}
-								)
-						);
-					} else {
-						this.formStateController.resetFields( this.getInitialState().fields );
-
-						notices.success(
+				if ( error ) {
+					notices.error(
+						error.message ||
 							this.props.translate(
-								'%(email)s has been successfully added! You must confirm your email before it starts working. Please check your inbox for %(destination)s.',
+								'Failed to add email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 								{
-									args: {
-										email: mailbox + '@' + this.props.selectedDomainName,
-										destination: destination,
+									components: {
+										contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 									},
 								}
-							),
+							)
+					);
+				} else {
+					this.formStateController.resetFields( this.getInitialState().fields );
+
+					notices.success(
+						this.props.translate(
+							'%(email)s has been successfully added! You must confirm your email before it starts working. Please check your inbox for %(destination)s.',
 							{
-								duration: 5000,
+								args: {
+									email: mailbox + '@' + this.props.selectedDomainName,
+									destination: destination,
+								},
 							}
-						);
-					}
-					this.setState( { formSubmitting: false, showForm: ! error } );
+						),
+						{
+							duration: 5000,
+						}
+					);
 				}
-			);
+				this.setState( { formSubmitting: false, showForm: ! error } );
+			} );
 		} );
 	},
 

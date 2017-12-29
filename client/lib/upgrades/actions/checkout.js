@@ -1,28 +1,26 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
 import { action as ActionTypes } from '../constants';
 import Dispatcher from 'dispatcher';
 import storeTransactions from 'lib/store-transactions';
 
-function setDomainDetails( domainDetails ) {
+export function setDomainDetails( domainDetails ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.TRANSACTION_DOMAIN_DETAILS_SET,
 		domainDetails,
 	} );
 }
 
-function setPayment( payment ) {
+export function setPayment( payment ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.TRANSACTION_PAYMENT_SET,
 		payment,
 	} );
 }
 
-function setNewCreditCardDetails( options ) {
+export function setNewCreditCardDetails( options ) {
 	const { rawDetails, maskedDetails } = options;
 
 	Dispatcher.handleViewAction( {
@@ -32,7 +30,7 @@ function setNewCreditCardDetails( options ) {
 	} );
 }
 
-function submitTransaction( { cart, transaction }, onComplete ) {
+export function submitTransaction( { cart, transaction }, onComplete ) {
 	const steps = storeTransactions.submit( {
 		cart: cart,
 		payment: transaction.payment,
@@ -51,16 +49,8 @@ function submitTransaction( { cart, transaction }, onComplete ) {
 	} );
 }
 
-function resetTransaction() {
+export function resetTransaction() {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.TRANSACTION_RESET,
 	} );
 }
-
-export {
-	resetTransaction,
-	setDomainDetails,
-	setNewCreditCardDetails,
-	setPayment,
-	submitTransaction,
-};

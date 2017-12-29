@@ -77,7 +77,7 @@ import paths from '../paths';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { addItems } from 'lib/upgrades/actions';
 
 const user = userFactory();
 
@@ -156,7 +156,7 @@ class ManagePurchase extends Component {
 			renewItems.push( redemptionItem );
 		}
 
-		upgradesActions.addItems( renewItems );
+		addItems( renewItems );
 
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
