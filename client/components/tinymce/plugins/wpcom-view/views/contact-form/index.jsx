@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { deserialize } from 'components/tinymce/plugins/contact-form/shortcode-utils';
@@ -11,7 +9,7 @@ import { deserialize } from 'components/tinymce/plugins/contact-form/shortcode-u
 /**
  * Internal dependencies
  */
-import shortcodeUtils from 'lib/shortcode';
+import { next } from 'lib/shortcode';
 import renderField from './preview-fields';
 
 const ContactForm = localize( ( { content, translate } ) => {
@@ -26,7 +24,7 @@ const ContactForm = localize( ( { content, translate } ) => {
 } );
 
 export function match( content ) {
-	const m = shortcodeUtils.next( 'contact-form', content );
+	const m = next( 'contact-form', content );
 
 	if ( m ) {
 		return {
