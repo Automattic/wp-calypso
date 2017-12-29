@@ -24,7 +24,8 @@ export const recordApplePayStatus = () => dispatch => {
 		return;
 	}
 
-	window.ApplePaySession.canMakePaymentsWithActiveCard( MERCHANT_IDENTIFIER )
+	window.ApplePaySession
+		.canMakePaymentsWithActiveCard( MERCHANT_IDENTIFIER )
 		.then( canMakePaymentsWithActiveCard =>
 			dispatch( recordApplePayStatusEvent( canMakePaymentsWithActiveCard ) )
 		)

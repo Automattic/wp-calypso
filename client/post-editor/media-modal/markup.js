@@ -130,7 +130,7 @@ Markup = {
 		 *
 		 * @param  {Object} site    A site object
 		 * @param  {Object} media   An image media object
-		 * @param  {Object} options Appearance options
+	 	 * @param  {Object} options Appearance options
 		 * @return {string}         An image markup string
 		 */
 		image: function( site, media, options ) {

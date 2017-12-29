@@ -97,36 +97,34 @@ class Site extends React.Component {
 	};
 
 	validate = ( fields, onComplete ) => {
-		wpcom.undocumented().sitesNew(
-			{
-				blog_name: fields.site,
-				blog_title: fields.site,
-				validate: true,
-			},
-			function( error, response ) {
-				let messages = {},
-					errorObject = {};
+		wpcom.undocumented().sitesNew( {
+			blog_name: fields.site,
+			blog_title: fields.site,
+			validate: true,
+		},
+		function( error, response ) {
+			let messages = {},
+				errorObject = {};
 
-				debug( error, response );
+			debug( error, response );
 
-				if ( error && error.message ) {
-					if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
-						siteUrlsSearched.push( fields.site );
+			if ( error && error.message ) {
+				if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
+					siteUrlsSearched.push( fields.site );
 
-						analytics.tracks.recordEvent( 'calypso_signup_site_url_validation_failed', {
-							error: error.error,
-							site_url: fields.site,
-						} );
-					}
-
-					timesValidationFailed++;
-
-					errorObject[ error.error ] = error.message;
-					messages = { site: errorObject };
+					analytics.tracks.recordEvent( 'calypso_signup_site_url_validation_failed', {
+						error: error.error,
+						site_url: fields.site,
+					} );
 				}
-				onComplete( null, messages );
+
+				timesValidationFailed++;
+
+				errorObject[ error.error ] = error.message;
+				messages = { site: errorObject };
 			}
-		);
+			onComplete( null, messages );
+		} );
 	};
 
 	setFormState = state => {

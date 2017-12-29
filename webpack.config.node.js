@@ -26,7 +26,7 @@ const bundleEnv = config( 'env' );
  * All modules listed here need to be ES5.
  *
  * @returns { object } list of externals
- */
+*/
 function getExternals() {
 	const externals = {};
 
