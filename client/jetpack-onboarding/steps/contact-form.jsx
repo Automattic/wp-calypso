@@ -12,8 +12,10 @@ import { localize } from 'i18n-calypso';
  */
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
+import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class JetpackOnboardingContactFormStep extends React.PureComponent {
@@ -29,6 +31,10 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 		return (
 			<Fragment>
 				<DocumentHead title={ translate( 'Contact Form ‹ Jetpack Onboarding' ) } />
+				<PageViewTracker
+					path={ '/jetpack/onboarding/' + STEPS.CONTACT_FORM + '/:site' }
+					title="Contact Form ‹ Jetpack Onboarding"
+				/>
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 

@@ -11,8 +11,10 @@ import { localize } from 'i18n-calypso';
  */
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
+import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 	render() {
@@ -23,6 +25,10 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 		return (
 			<Fragment>
 				<DocumentHead title={ translate( 'Site Type ‹ Jetpack Onboarding' ) } />
+				<PageViewTracker
+					path={ '/jetpack/onboarding/' + STEPS.SITE_TYPE + '/:site' }
+					title="Site Type ‹ Jetpack Onboarding"
+				/>
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
