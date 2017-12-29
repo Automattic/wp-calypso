@@ -17,7 +17,7 @@ import ControlItem from 'components/segmented-control/item';
 import InfoPopover from 'components/info-popover';
 import { getSiteSetting } from 'state/selectors';
 import SegmentedControl from 'components/segmented-control';
-import viewport from 'lib/viewport';
+import { isMobile } from 'lib/viewport';
 
 /**
  * Local dependencies
@@ -153,7 +153,7 @@ class PostScheduleClock extends Component {
 			return;
 		}
 
-		const popoverPosition = viewport.isMobile() ? 'top' : 'right';
+		const popoverPosition = isMobile() ? 'top' : 'right';
 		const timezoneText = timezone
 			? `${ timezone.replace( /\_/gi, ' ' ) } ${ tzDateOffset }`
 			: `UTC${ convertHoursToHHMM( gmtOffset ) }`;
