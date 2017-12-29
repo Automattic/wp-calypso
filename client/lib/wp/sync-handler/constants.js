@@ -1,6 +1,5 @@
 /** @format */
-export default {
-	RECORDS_LIST_KEY: 'records-list',
-	SYNC_RECORD_NAMESPACE: 'sync-record-',
-	LIFETIME: '2 days',
-};
+
+export const RECORDS_LIST_KEY = 'records-list';
+export const SYNC_RECORD_NAMESPACE = 'sync-record-';
+export const LIFETIME = '2 days';
