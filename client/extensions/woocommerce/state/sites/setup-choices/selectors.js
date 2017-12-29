@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get, isObject } from 'lodash';
+import { get, isEmpty, isObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +22,8 @@ const getSetupChoices = ( state, siteId ) => {
  * @return {boolean} Whether the setup choices list has been successfully loaded from the server
  */
 export const areSetupChoicesLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isObject( getSetupChoices( state, siteId ) );
+	const setupChoices = getSetupChoices( state, siteId );
+	return isObject( setupChoices ) && ! isEmpty( setupChoices );
 };
 
 /**

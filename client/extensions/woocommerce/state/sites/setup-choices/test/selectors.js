@@ -74,6 +74,17 @@ const loadedState = {
 		},
 	},
 };
+const loadedStateEmptySettings = {
+	extensions: {
+		woocommerce: {
+			sites: {
+				123: {
+					setupChoices: {},
+				},
+			},
+		},
+	},
+};
 
 const loadingStateWithUi = { ...loadingState, ui: { selectedSiteId: 123 } };
 const loadedStateWithUi = { ...loadedState, ui: { selectedSiteId: 123 } };
@@ -90,6 +101,10 @@ describe( 'selectors', () => {
 
 		test( 'should be true when setup choices are loaded.', () => {
 			expect( areSetupChoicesLoaded( loadedState, 123 ) ).to.be.true;
+		} );
+
+		test( 'should be false when setup choices object is empty.', () => {
+			expect( areSetupChoicesLoaded( loadedStateEmptySettings, 123 ) ).to.be.false;
 		} );
 
 		test( 'should be false when setup choices are loaded only for a different site.', () => {
