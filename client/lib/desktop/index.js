@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:desktop' );
@@ -20,7 +18,7 @@ import store from 'store';
 import * as oAuthToken from 'lib/oauth-token';
 import userUtilities from 'lib/user/utils';
 import location from 'lib/route/page-notifier';
-import { getStatsPathForTab } from 'lib/route/path';
+import { getStatsPathForTab } from 'lib/route';
 
 /**
  * Module variables

@@ -14,7 +14,7 @@ import HelpButton from 'jetpack-connect/help-button';
 import JetpackConnectHappychatButton from 'jetpack-connect/happychat-button';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
-import addQueryArgs from 'lib/route/add-query-args';
+import { addQueryArgs } from 'lib/route';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { getSiteUrl, isSiteOnFreePlan } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';

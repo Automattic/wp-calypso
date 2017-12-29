@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import addQueryArgs from 'lib/route/add-query-args';
+import { addQueryArgs, externalRedirect } from 'lib/route';
 import AuthFormHeader from './auth-form-header';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -36,7 +36,6 @@ import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
 import { authQueryPropTypes } from './utils';
 import { decodeEntities } from 'lib/formatting';
-import { externalRedirect } from 'lib/route/path';
 import { getCurrentUser } from 'state/current-user/selectors';
 import {
 	isCalypsoStartedConnection,

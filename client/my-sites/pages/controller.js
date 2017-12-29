@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import route from 'lib/route';
+import { getSiteFragment, sectionify } from 'lib/route';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import trackScrollPage from 'lib/track-scroll-page';
@@ -19,10 +19,10 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 const controller = {
 	pages: function( context, next ) {
 		var Pages = require( 'my-sites/pages/main' ),
-			siteID = route.getSiteFragment( context.path ),
+			siteID = getSiteFragment( context.path ),
 			status = context.params.status,
 			search = context.query.s,
-			basePath = route.sectionify( context.path ),
+			basePath = sectionify( context.path ),
 			analyticsPageTitle = 'Pages',
 			baseAnalyticsPath;
 
