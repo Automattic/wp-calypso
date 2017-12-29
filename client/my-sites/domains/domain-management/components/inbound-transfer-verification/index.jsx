@@ -1,6 +1,6 @@
+/** @format **/
 /**
  * External dependencies
- *
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -12,7 +12,7 @@ import { isEmpty } from 'lodash';
  */
 import EmailVerificationCard from 'my-sites/domains/domain-management/components/email-verification';
 import { checkInboundTransferStatus, resendInboundTransferEmail } from 'lib/domains';
-import support from 'lib/url/support';
+import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from 'lib/url/support';
 
 class InboundTransferEmailVerificationCard extends React.Component {
 	static propTypes = {
@@ -61,15 +61,11 @@ class InboundTransferEmailVerificationCard extends React.Component {
 		return (
 			<EmailVerificationCard
 				contactEmail={ contactEmail }
-				headerText={
-					translate(
-						'Important: Confirm the transfer to proceed.'
-					)
-				}
+				headerText={ translate( 'Important: Confirm the transfer to proceed.' ) }
 				verificationExplanation={ translate(
 					'We sent an email to confirm the transfer of {{strong}}%(domain)s{{/strong}}. ' +
-					'Open the email, click the link, and enter your domain authorization code to start the process. ' +
-					'Please confirm in 5 days or the transfer will be canceled. ' +
+						'Open the email, click the link, and enter your domain authorization code to start the process. ' +
+						'Please confirm in 5 days or the transfer will be canceled. ' +
 						'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 					{
 						args: {
@@ -78,7 +74,7 @@ class InboundTransferEmailVerificationCard extends React.Component {
 						components: {
 							learnMoreLink: (
 								<a
-									href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+									href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 									rel="noopener noreferrer"
 									target="_blank"
 								/>

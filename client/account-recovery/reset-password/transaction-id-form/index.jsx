@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { identity } from 'lodash';
@@ -11,7 +9,7 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import support from 'lib/url/support';
+import { ACCOUNT_RECOVERY } from 'lib/url/support';
 import Card from 'components/card';
 import Button from 'components/button';
 import FormLabel from 'components/forms/form-label';
@@ -52,7 +50,7 @@ export class TransactionIdFormComponent extends Component {
 						{
 							components: {
 								strong: <strong />,
-								helpLink: <a href={ support.ACCOUNT_RECOVERY } />,
+								helpLink: <a href={ ACCOUNT_RECOVERY } />,
 							},
 						}
 					) }
@@ -66,7 +64,7 @@ export class TransactionIdFormComponent extends Component {
 								'{{helpLink}}Need help to find your transaction id?{{/helpLink}}',
 							{
 								components: {
-									helpLink: <a href={ support.ACCOUNT_RECOVERY } />,
+									helpLink: <a href={ ACCOUNT_RECOVERY } />,
 								},
 							}
 						) }

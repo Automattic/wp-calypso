@@ -15,7 +15,7 @@ import SectionHeader from 'components/section-header';
 import { resendIcannVerification } from 'lib/upgrades/actions/domain-management';
 import Button from 'components/button';
 import notices from 'notices';
-import support from 'lib/url/support';
+import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
 class IcannVerification extends React.Component {
 	state = {
@@ -61,7 +61,7 @@ class IcannVerification extends React.Component {
 								components: {
 									learnMoreLink: (
 										<a
-											href={ support.TRANSFER_DOMAIN_REGISTRATION }
+											href={ TRANSFER_DOMAIN_REGISTRATION }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>

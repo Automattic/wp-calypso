@@ -1,16 +1,14 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import supportUrls from 'lib/url/support';
+import { GOOGLE_APPS_LEARNING_CENTER } from 'lib/url/support';
 import PurchaseDetail from 'components/purchase-detail';
 import userFactory from 'lib/user';
 
@@ -31,7 +29,7 @@ const GoogleAppsDetails = () => {
 						link: (
 							<a
 								className="checkout-thank-you__gsuite-support-link"
-								href={ supportUrls.GOOGLE_APPS_LEARNING_CENTER }
+								href={ GOOGLE_APPS_LEARNING_CENTER }
 								rel="noopener noreferrer"
 								target="_blank"
 							/>
