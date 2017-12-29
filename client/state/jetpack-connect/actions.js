@@ -44,8 +44,7 @@ import {
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import config from 'config';
-import addQueryArgs from 'lib/route/add-query-args';
-import { externalRedirect } from 'lib/route/path';
+import { addQueryArgs, externalRedirect } from 'lib/route';
 import { urlToSlug } from 'lib/url';
 import { clearPlan, persistSession } from 'jetpack-connect/persistence-utils';
 import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';

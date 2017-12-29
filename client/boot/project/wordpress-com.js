@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { startsWith } from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
@@ -21,8 +19,7 @@ import { getHappychatAuth } from 'state/happychat/utils';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
 import analytics from 'lib/analytics';
 import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
-import route from 'lib/route';
-import normalize from 'lib/route/normalize';
+import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import superProps from 'lib/analytics/super-props';
 import translatorJumpstart from 'lib/translator-jumpstart';
@@ -113,7 +110,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 			);
 			page( '*', function( context, next ) {
 				errorLogger.saveNewPath(
-					context.canonicalPath.replace( route.getSiteFragment( context.canonicalPath ), ':siteId' )
+					context.canonicalPath.replace( getSiteFragment( context.canonicalPath ), ':siteId' )
 				);
 				next();
 			} );

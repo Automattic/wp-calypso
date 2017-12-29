@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -15,7 +13,7 @@ import debugFactory from 'debug';
 import { closePreview } from 'state/ui/preview/actions';
 import { getPreviewSite, getPreviewSiteId, getPreviewUrl } from 'state/ui/preview/selectors';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
-import addQueryArgs from 'lib/route/add-query-args';
+import { addQueryArgs } from 'lib/route';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 
 const debug = debugFactory( 'calypso:design-preview' );

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -17,7 +15,7 @@ import HeaderCake from 'components/header-cake';
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
-import { addSiteFragment } from 'lib/route/path';
+import { addSiteFragment } from 'lib/route';
 import versionCompare from 'lib/version-compare';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getPluginOnSite } from 'state/plugins/installed/selectors';

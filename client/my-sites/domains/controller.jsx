@@ -15,7 +15,7 @@ import { get } from 'lodash';
  */
 import analytics from 'lib/analytics';
 import DocumentHead from 'components/data/document-head';
-import route from 'lib/route';
+import { sectionify } from 'lib/route';
 import Main from 'components/main';
 import upgradesActions from 'lib/upgrades/actions';
 import productsFactory from 'lib/products-list';
@@ -47,7 +47,7 @@ const domainsAddRedirectHeader = ( context, next ) => {
 const domainSearch = ( context, next ) => {
 	const CartData = require( 'components/data/cart' );
 	const DomainSearch = require( './domain-search' );
-	const basePath = route.sectionify( context.path );
+	const basePath = sectionify( context.path );
 
 	analytics.pageView.record( basePath, 'Domain Search > Domain Registration' );
 
@@ -70,7 +70,7 @@ const domainSearch = ( context, next ) => {
 const siteRedirect = ( context, next ) => {
 	const CartData = require( 'components/data/cart' );
 	const SiteRedirect = require( './domain-search/site-redirect' );
-	const basePath = route.sectionify( context.path );
+	const basePath = sectionify( context.path );
 
 	analytics.pageView.record( basePath, 'Domain Search > Site Redirect' );
 
@@ -88,7 +88,7 @@ const siteRedirect = ( context, next ) => {
 const mapDomain = ( context, next ) => {
 	const CartData = require( 'components/data/cart' );
 	const MapDomain = require( 'my-sites/domains/map-domain' ).default;
-	const basePath = route.sectionify( context.path );
+	const basePath = sectionify( context.path );
 
 	analytics.pageView.record( basePath, 'Domain Search > Domain Mapping' );
 	context.primary = (
@@ -106,7 +106,7 @@ const mapDomain = ( context, next ) => {
 const transferDomain = ( context, next ) => {
 	const CartData = require( 'components/data/cart' );
 	const TransferDomain = require( 'my-sites/domains/transfer-domain' ).default;
-	const basePath = route.sectionify( context.path );
+	const basePath = sectionify( context.path );
 
 	analytics.pageView.record( basePath, 'Domain Search > Domain Transfer' );
 	context.primary = (

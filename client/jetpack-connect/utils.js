@@ -1,9 +1,8 @@
 /** @format */
-
 /**
  * External dependencies
  */
-import addQueryArgs from 'lib/route/add-query-args';
+import { addQueryArgs } from 'lib/route';
 import config from 'config';
 import PropTypes from 'prop-types';
 

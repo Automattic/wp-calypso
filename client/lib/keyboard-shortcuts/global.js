@@ -1,16 +1,14 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import route from 'lib/route';
+import { getStatsDefaultSitePage } from 'lib/route';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 let singleton;
@@ -61,7 +59,7 @@ GlobalShortcuts.prototype.goToStats = function() {
 	if ( site && site.capabilities && ! site.capabilities.view_stats ) {
 		return null;
 	} else if ( site && site.slug ) {
-		page( route.getStatsDefaultSitePage( site.slug ) );
+		page( getStatsDefaultSitePage( site.slug ) );
 	} else {
 		page( '/stats' );
 	}

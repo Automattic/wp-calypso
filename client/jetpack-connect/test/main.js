@@ -2,12 +2,11 @@
  * @format
  * @jest-environment jsdom
  */
-
 /**
  * External dependencies
  */
 import page from 'page';
-import { externalRedirect } from 'lib/route/path';
+import { externalRedirect } from 'lib/route';
 import { noop } from 'lodash';
 
 /**
@@ -29,7 +28,7 @@ jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
 
-jest.mock( 'lib/route/path', () => ( {
+jest.mock( 'lib/route', () => ( {
 	externalRedirect: jest.fn(),
 } ) );
 

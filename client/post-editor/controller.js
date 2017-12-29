@@ -16,7 +16,7 @@ import { map, pick, reduce, startsWith } from 'lodash';
  * Internal dependencies
  */
 import actions from 'lib/posts/actions';
-import route from 'lib/route';
+import { addSiteFragment } from 'lib/route';
 import User from 'lib/user';
 import userUtils from 'lib/user/utils';
 import analytics from 'lib/analytics';
@@ -308,7 +308,7 @@ export default {
 			return next();
 		}
 
-		const redirectPath = route.addSiteFragment( context.pathname, currentUser.primarySiteSlug );
+		const redirectPath = addSiteFragment( context.pathname, currentUser.primarySiteSlug );
 		const queryString = qs.stringify( context.query );
 		const redirectWithParams = [ redirectPath, queryString ].join( '?' );
 
