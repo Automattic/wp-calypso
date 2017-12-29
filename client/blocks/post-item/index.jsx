@@ -81,8 +81,8 @@ class PostItem extends React.Component {
 		const viewportBottom = document.documentElement.clientHeight + window.scrollY;
 		const distanceFromBottom = viewportBottom - element.offsetTop;
 
-		if ( distanceFromBottom < 200 ) {
-			const desiredOffset = window.scrollY + ( 200 - distanceFromBottom );
+		if ( distanceFromBottom < 250 ) {
+			const desiredOffset = window.scrollY + ( 250 - distanceFromBottom );
 
 			window.scrollTo( 0, desiredOffset );
 		}
