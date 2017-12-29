@@ -1,13 +1,16 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
 import config from 'config';
 
-module.exports = require( './utils.js' );
+export {
+	addLocaleToPath,
+	addLocaleToWpcomUrl,
+	getLanguage,
+	getLocaleFromPath,
+	isDefaultLocale,
+	removeLocaleFromPath,
+} from './utils';
 
-module.exports.getLocaleSlug = function() {
-	return config( 'i18n_default_locale_slug' );
-};
+export const getLocaleSlug = () => config( 'i18n_default_locale_slug' );
