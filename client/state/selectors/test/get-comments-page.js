@@ -19,12 +19,12 @@ describe( 'getCommentsPage()', () => {
 				queries: {
 					[ SITE_ID ]: {
 						site: {
-							all: { 1: [ 1, 2, 3, 4, 5 ] },
-							trash: { 1: [] },
+							'all?order=DESC': { 1: [ 1, 2, 3, 4, 5 ] },
+							'trash?order=DESC': { 1: [] },
 						},
 						[ POST_ID ]: {
-							all: { 1: [ 6, 7, 8, 9, 10 ] },
-							'spam?s=foo': { 2: [ 11, 12, 13, 14, 15 ] },
+							'all?order=DESC': { 1: [ 6, 7, 8, 9, 10 ] },
+							'spam?order=ASC&s=foo': { 2: [ 11, 12, 13, 14, 15 ] },
 						},
 					},
 				},
@@ -58,6 +58,7 @@ describe( 'getCommentsPage()', () => {
 
 	test( 'should return a comments page based on several filters', () => {
 		const commentsPage = getCommentsPage( state, SITE_ID, {
+			order: 'ASC',
 			page: 2,
 			postId: POST_ID,
 			search: 'foo',
