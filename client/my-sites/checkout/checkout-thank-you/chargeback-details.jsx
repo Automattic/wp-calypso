@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import i18n from 'i18n-calypso';
@@ -11,7 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import paths from 'lib/paths';
+import { newPost } from 'lib/paths';
 import PurchaseDetail from 'components/purchase-detail';
 
 const ChargebackDetails = ( { selectedSite } ) => {
@@ -23,7 +21,7 @@ const ChargebackDetails = ( { selectedSite } ) => {
 				'You can now use the full features of your site, without limits.'
 			) }
 			buttonText={ i18n.translate( 'Write a Post' ) }
-			href={ paths.newPost( selectedSite ) }
+			href={ newPost( selectedSite ) }
 		/>
 	);
 };

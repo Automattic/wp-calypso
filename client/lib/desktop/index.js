@@ -10,7 +10,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import paths from 'lib/paths';
+import { newPost } from 'lib/paths';
 import userFactory from 'lib/user';
 const user = userFactory();
 import { ipcRenderer as ipc } from 'electron'; // From Electron
@@ -155,7 +155,7 @@ var Desktop = {
 		debug( 'New post' );
 
 		this.clearNotificationBar();
-		page( paths.newPost( this.selectedSite ) );
+		page( newPost( this.selectedSite ) );
 	},
 
 	// now that our browser session has a valid wordpress.com cookie, let's force

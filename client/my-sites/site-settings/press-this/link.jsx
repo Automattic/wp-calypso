@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { omit } from 'lodash';
@@ -11,7 +9,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import paths from 'lib/paths';
+import { newPost } from 'lib/paths';
 
 /**
  * Retrieves selection, title, and URL from current page and pops
@@ -80,7 +78,7 @@ class PressThisLink extends React.Component {
 		if ( window.location.port ) {
 			postDomain += `:${ window.location.port }`;
 		}
-		const postURL = postDomain + paths.newPost( this.props.site );
+		const postURL = postDomain + newPost( this.props.site );
 		return `javascript:( ${ functionText } )( '${ postURL }' )`;
 	}
 
