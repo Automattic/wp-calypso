@@ -17,6 +17,7 @@ describe( 'actions', () => {
 			const postId = 1234;
 			const comments = [ { ID: 1 }, { ID: 2 }, { ID: 3 }, { ID: 4 }, { ID: 5 } ];
 			const query = {
+				order: 'DESC',
 				page: 1,
 				postId: postId,
 				search: 'foo',
