@@ -42,6 +42,7 @@
 		"code-splitting": true,
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
+		"comments/management/counts": true,
 		"comments/management/threaded-view": false,
 		"css-hot-reload": true,
 		"desktop-promo": true,

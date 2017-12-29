@@ -18,6 +18,7 @@
 		"ad-tracking": false,
 		"automated-transfer": true,
 		"apple-pay": true,
+		"comments/management/counts": true,
 		"comments/management/threaded-view": false,
 		"catch-js-errors": true,
 		"code-splitting": true,

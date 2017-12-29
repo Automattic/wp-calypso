@@ -8,25 +8,27 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, isEqual, isUndefined, map } from 'lodash';
+import { filter, find, get, isEqual, map, orderBy, slice } from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Comment from 'my-sites/comments/comment';
 import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
 import CommentNavigation from 'my-sites/comments/comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
-import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
+import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { getCommentsPage, getSiteCommentCounts } from 'state/selectors';
+import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
 
-export class CommentList extends Component {
+export class CommentListTree extends Component {
 	static propTypes = {
 		changePage: PropTypes.func,
 		comments: PropTypes.array,
@@ -39,6 +41,7 @@ export class CommentList extends Component {
 
 	state = {
 		isBulkMode: false,
+		lastUndo: null,
 		selectedComments: [],
 		sortOrder: NEWEST_FIRST,
 	};
@@ -53,6 +56,7 @@ export class CommentList extends Component {
 		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
 			this.setState( {
 				isBulkMode: false,
+				lastUndo: null,
 				selectedComments: [],
 			} );
 		}
@@ -69,6 +73,13 @@ export class CommentList extends Component {
 		this.setState( { selectedComments: [] } );
 
 		changePage( page );
+	};
+
+	getComments = () => orderBy( this.props.comments, null, this.state.sortOrder );
+
+	getCommentsPage = ( comments, page ) => {
+		const startingIndex = ( page - 1 ) * COMMENTS_PER_PAGE;
+		return slice( comments, startingIndex, startingIndex + COMMENTS_PER_PAGE );
 	};
 
 	getEmptyMessage = () => {
@@ -89,16 +100,19 @@ export class CommentList extends Component {
 		);
 	};
 
-	getTotalPages = () => Math.ceil( this.props.commentsCount / COMMENTS_PER_PAGE );
+	getTotalPages = () => Math.ceil( this.props.comments.length / COMMENTS_PER_PAGE );
+
+	hasCommentJustMovedBackToCurrentStatus = commentId => this.state.lastUndo === commentId;
 
 	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
 
 	isRequestedPageValid = () => this.getTotalPages() >= this.props.page;
 
 	isSelectedAll = () => {
-		const { comments } = this.props;
+		const { page } = this.props;
 		const { selectedComments } = this.state;
-		return selectedComments.length && selectedComments.length === comments.length;
+		const visibleComments = this.getCommentsPage( this.getComments(), page );
+		return selectedComments.length && selectedComments.length === visibleComments.length;
 	};
 
 	setSortOrder = order => () => {
@@ -131,8 +145,7 @@ export class CommentList extends Component {
 
 	render() {
 		const {
-			comments,
-			commentsCount,
+			isCommentsTreeSupported,
 			isLoading,
 			isPostView,
 			page,
@@ -141,36 +154,37 @@ export class CommentList extends Component {
 			siteFragment,
 			status,
 		} = this.props;
-		const { isBulkMode, selectedComments, sortOrder } = this.state;
+		const { isBulkMode, selectedComments } = this.state;
 
 		const validPage = this.isRequestedPageValid() ? page : 1;
 
-		const commentsListQuery = {
-			listType: 'site',
-			number: COMMENTS_PER_PAGE,
-			order: sortOrder.toUpperCase(),
-			page: validPage,
-			postId,
-			siteId,
-			status,
-			type: 'any',
-		};
+		const comments = this.getComments();
+		const commentsCount = comments.length;
+		const commentsPage = this.getCommentsPage( comments, validPage );
 
-		const showPlaceholder = ( ! siteId || isLoading ) && ! comments.length;
+		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
 		const showEmptyContent = ! commentsCount && ! showPlaceholder;
 
 		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
 
 		return (
-			<div className="comment-list">
+			<div className="comment-list__tree comment_list">
 				<QuerySiteSettings siteId={ siteId } />
-				<QuerySiteCommentCounts { ...{ siteId, postId } } />
-				<QuerySiteCommentsList { ...commentsListQuery } />
+
+				{ ! isCommentsTreeSupported && (
+					<QuerySiteCommentsList
+						number={ 100 }
+						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
+						siteId={ siteId }
+						status={ status }
+					/>
+				) }
+				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
+
 				{ isPostView && <CommentListHeader postId={ postId } /> }
 
 				<CommentNavigation
-					commentsListQuery={ commentsListQuery }
-					commentsPage={ comments }
+					commentsPage={ commentsPage }
 					isBulkMode={ isBulkMode }
 					isSelectedAll={ this.isSelectedAll() }
 					postId={ postId }
@@ -190,14 +204,17 @@ export class CommentList extends Component {
 					transitionLeaveTimeout={ 150 }
 					transitionName="comment-list__transition"
 				>
-					{ map( comments, commentId => (
+					{ map( commentsPage, commentId => (
 						<Comment
 							commentId={ commentId }
-							commentsListQuery={ commentsListQuery }
 							key={ `comment-${ siteId }-${ commentId }` }
 							isBulkMode={ isBulkMode }
 							isPostView={ isPostView }
 							isSelected={ this.isCommentSelected( commentId ) }
+							refreshCommentData={
+								isCommentsTreeSupported &&
+								! this.hasCommentJustMovedBackToCurrentStatus( commentId )
+							}
 							toggleSelected={ this.toggleCommentSelected }
 							updateLastUndo={ this.updateLastUndo }
 						/>
@@ -231,20 +248,24 @@ export class CommentList extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { page, postId, siteId, status } ) => {
-	const comments = getCommentsPage( state, siteId, { page, postId, status } );
-	const commentsCount = get(
-		getSiteCommentCounts( state, siteId, postId ),
-		'unapproved' === status ? 'pending' : status
-	);
-	const isLoading = isUndefined( comments );
+const mapStateToProps = ( state, { postId, siteId, status } ) => {
 	const isPostView = !! postId;
+	const siteCommentsTree =
+		isPostView && isEnabled( 'comments/management/threaded-view' )
+			? filter( getSiteCommentsTree( state, siteId, status ), { commentParentId: 0 } )
+			: getSiteCommentsTree( state, siteId, status );
+	const comments = isPostView
+		? map( filter( siteCommentsTree, { postId } ), 'commentId' )
+		: map( siteCommentsTree, 'commentId' );
 
+	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
-		comments: comments || [],
-		commentsCount,
+		comments,
+		isCommentsTreeSupported:
+			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' ),
 		isLoading,
 		isPostView,
+		siteId,
 	};
 };
 
@@ -258,4 +279,4 @@ const mapDispatchToProps = dispatch => ( {
 		),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentList ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentListTree ) );
