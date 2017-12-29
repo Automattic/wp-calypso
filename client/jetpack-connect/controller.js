@@ -15,7 +15,7 @@ import { translate } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import CheckoutData from 'components/data/checkout';
 import config from 'config';
-import i18nUtils from 'lib/i18n-utils';
+import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
@@ -94,8 +94,8 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 };
 
 export function redirectWithoutLocaleIfLoggedIn( context, next ) {
-	if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
-		const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
+	if ( userModule.get() && getLocaleFromPath( context.path ) ) {
+		const urlWithoutLocale = removeLocaleFromPath( context.path );
 		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
 		return page.redirect( urlWithoutLocale );
 	}
