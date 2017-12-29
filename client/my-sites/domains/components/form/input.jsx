@@ -20,7 +20,7 @@ import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 export default class extends React.Component {
 	static displayName = 'Input';
-	static defaultProps = { autoFocus: false, autoComplete: 'on' };
+	static defaultProps = { autoFocus: false, autoComplete: 'on', labelProps: {} };
 
 	componentDidMount() {
 		this.setupInputModeHandlers();
@@ -85,7 +85,9 @@ export default class extends React.Component {
 
 		return (
 			<div className={ classes }>
-				<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
+				<FormLabel htmlFor={ this.props.name } { ...this.props.labelProps }>
+					{ this.props.label }
+				</FormLabel>
 				<FormTextInput
 					placeholder={ this.props.placeholder ? this.props.placeholder : this.props.label }
 					id={ this.props.name }
