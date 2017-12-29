@@ -18,7 +18,7 @@ import Card from 'components/card/compact';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Notice from 'components/notice';
 import QuerySiteDomains from 'components/data/query-site-domains';
-import paths from 'my-sites/domains/paths';
+import { domainManagementEdit } from 'my-sites/domains/paths';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { getSelectedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';
@@ -40,10 +40,7 @@ class PrimaryDomain extends React.Component {
 	};
 
 	getEditPath() {
-		return paths.domainManagementEdit(
-			this.props.selectedSite.slug,
-			this.props.selectedDomainName
-		);
+		return domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName );
 	}
 
 	goToEditDomainRoot = () => {

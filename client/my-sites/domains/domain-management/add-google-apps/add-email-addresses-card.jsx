@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -22,7 +20,7 @@ import FormFooter from 'my-sites/domains/domain-management/components/form-foote
 import FormLabel from 'components/forms/form-label';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import { cartItems } from 'lib/cart-values';
-import paths from 'my-sites/domains/paths';
+import { domainManagementEmail } from 'my-sites/domains/paths';
 import ValidationErrorList from 'notices/validation-error-list';
 import upgradesActions from 'lib/upgrades/actions';
 import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
@@ -181,7 +179,7 @@ const AddEmailAddressesCard = createReactClass( {
 
 	handleFieldChange( fieldName, index, event ) {
 		const newValue = event.target.value;
-		let command = { fieldsets: {} };
+		const command = { fieldsets: {} };
 
 		command.fieldsets[ index ] = {};
 		command.fieldsets[ index ][ fieldName ] = { value: { $set: newValue.trim() } };
@@ -273,9 +271,7 @@ const AddEmailAddressesCard = createReactClass( {
 	},
 
 	addProductsAndGoToCheckout() {
-		let googleAppsCartItems;
-
-		googleAppsCartItems = getGoogleAppsCartItems( {
+		const googleAppsCartItems = getGoogleAppsCartItems( {
 			domains: this.props.domains,
 			fieldsets: filterUsers( {
 				users: this.state.fieldsets,
@@ -292,9 +288,7 @@ const AddEmailAddressesCard = createReactClass( {
 
 		this.recordEvent( 'cancelClick', this.props.selectedDomainName );
 
-		page(
-			paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName )
-		);
+		page( domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	},
 } );
 

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -18,7 +16,7 @@ import Card from 'components/card';
 import { getCurrentUser } from 'state/current-user/selectors';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
+import { domainManagementEdit, domainManagementTransfer } from 'my-sites/domains/paths';
 import FormSelect from 'components/forms/form-select';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -105,10 +103,7 @@ class TransferOtherUser extends React.Component {
 					this.props.successNotice( successMessage, { duration: 4000, isPersistent: true } );
 					closeDialog();
 					page(
-						paths.domainManagementEdit(
-							this.props.selectedSite.slug,
-							this.props.selectedDomainName
-						)
+						domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName )
 					);
 				},
 				err => {
@@ -152,7 +147,7 @@ class TransferOtherUser extends React.Component {
 			<Main className="transfer-to-other-user">
 				<Header
 					selectedDomainName={ selectedDomainName }
-					backHref={ paths.domainManagementTransfer( slug, selectedDomainName ) }
+					backHref={ domainManagementTransfer( slug, selectedDomainName ) }
 				>
 					{ this.props.translate( 'Transfer Domain To Another User' ) }
 				</Header>

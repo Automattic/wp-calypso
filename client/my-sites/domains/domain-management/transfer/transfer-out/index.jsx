@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -17,7 +15,7 @@ import DomainMainPlaceholder from 'my-sites/domains/domain-management/components
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
-import paths from 'my-sites/domains/paths';
+import { domainManagementTransfer } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
 import IcannVerification from './icann-verification.jsx';
 import Locked from './locked.jsx';
@@ -68,9 +66,7 @@ class Transfer extends React.Component {
 	}
 
 	goToEdit = () => {
-		page(
-			paths.domainManagementTransfer( this.props.selectedSite.slug, this.props.selectedDomainName )
-		);
+		page( domainManagementTransfer( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
 
 	isDataLoading() {
