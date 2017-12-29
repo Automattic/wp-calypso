@@ -39,7 +39,6 @@ export class CommentList extends Component {
 
 	state = {
 		isBulkMode: false,
-		lastUndo: null,
 		selectedComments: [],
 		sortOrder: NEWEST_FIRST,
 	};
@@ -54,7 +53,6 @@ export class CommentList extends Component {
 		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
 			this.setState( {
 				isBulkMode: false,
-				lastUndo: null,
 				selectedComments: [],
 			} );
 		}
@@ -100,8 +98,6 @@ export class CommentList extends Component {
 
 	getTotalPages = () => Math.ceil( this.props.comments.length / COMMENTS_PER_PAGE );
 
-	hasCommentJustMovedBackToCurrentStatus = commentId => this.state.lastUndo === commentId;
-
 	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
 
 	isRequestedPageValid = () => this.getTotalPages() >= this.props.page;
@@ -138,8 +134,6 @@ export class CommentList extends Component {
 	};
 
 	toggleSelectAll = selectedComments => this.setState( { selectedComments } );
-
-	updateLastUndo = commentId => this.setState( { lastUndo: commentId } );
 
 	render() {
 		const {
@@ -209,12 +203,7 @@ export class CommentList extends Component {
 							isBulkMode={ isBulkMode }
 							isPostView={ isPostView }
 							isSelected={ this.isCommentSelected( commentId ) }
-							refreshCommentData={
-								isCommentsTreeSupported &&
-								! this.hasCommentJustMovedBackToCurrentStatus( commentId )
-							}
 							toggleSelected={ this.toggleCommentSelected }
-							updateLastUndo={ this.updateLastUndo }
 						/>
 					) ) }
 
