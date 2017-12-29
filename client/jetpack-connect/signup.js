@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * Handle log in and sign up as part of the Jetpack Connect flow
  *
@@ -24,7 +23,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import addQueryArgs from 'lib/route/add-query-args';
+import { addQueryArgs } from 'lib/route';
 import AuthFormHeader from './auth-form-header';
 import config from 'config';
 import HelpButton from './help-button';

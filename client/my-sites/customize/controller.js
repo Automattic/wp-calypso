@@ -1,16 +1,14 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import i18n from 'i18n-calypso';
 import React from 'react';
 
 /**
  * Internal Dependencies
  */
-import { sectionify } from 'lib/route/path';
+import { sectionify } from 'lib/route';
 import analytics from 'lib/analytics';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 

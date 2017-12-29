@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import route from 'lib/route';
+import { sectionify } from 'lib/route';
 import analytics from 'lib/analytics';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -20,7 +20,7 @@ export default {
 		var MediaComponent = require( 'my-sites/media/main' ),
 			filter = context.params.filter,
 			search = context.query.s,
-			baseAnalyticsPath = route.sectionify( context.path );
+			baseAnalyticsPath = sectionify( context.path );
 
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );

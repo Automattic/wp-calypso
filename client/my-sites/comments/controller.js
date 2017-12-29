@@ -9,7 +9,7 @@ import { each, isNaN, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import route, { addQueryArgs } from 'lib/route';
+import { addQueryArgs, getSiteFragment } from 'lib/route';
 import CommentsManagement from './main';
 import CommentView from 'my-sites/comment/main';
 import { removeNotice } from 'state/notices/actions';
@@ -50,7 +50,7 @@ const changePage = path => pageNumber => {
 
 export const siteComments = ( context, next ) => {
 	const { params, path, query } = context;
-	const siteFragment = route.getSiteFragment( path );
+	const siteFragment = getSiteFragment( path );
 
 	if ( ! siteFragment ) {
 		return page.redirect( '/comments/all' );
@@ -73,7 +73,7 @@ export const siteComments = ( context, next ) => {
 
 export const postComments = ( context, next ) => {
 	const { params, path, query } = context;
-	const siteFragment = route.getSiteFragment( path );
+	const siteFragment = getSiteFragment( path );
 
 	if ( ! siteFragment ) {
 		return page.redirect( '/comments/all' );
@@ -102,7 +102,7 @@ export const postComments = ( context, next ) => {
 
 export const comment = ( context, next ) => {
 	const { params, path, query } = context;
-	const siteFragment = route.getSiteFragment( path );
+	const siteFragment = getSiteFragment( path );
 	const commentId = sanitizeInt( params.comment );
 
 	if ( ! commentId ) {
@@ -120,7 +120,7 @@ export const comment = ( context, next ) => {
 };
 
 export const redirect = ( { path } ) => {
-	const siteFragment = route.getSiteFragment( path );
+	const siteFragment = getSiteFragment( path );
 	if ( siteFragment ) {
 		return page.redirect( `/comments/all/${ siteFragment }` );
 	}

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { format as formatUrl, parse as parseUrl } from 'url';
 import { has, isString, omit, startsWith } from 'lodash';
 
@@ -11,7 +9,7 @@ import { has, isString, omit, startsWith } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import addQueryArgs from 'lib/route/add-query-args';
+import { addQueryArgs } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 
 /**

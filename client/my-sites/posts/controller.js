@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import route from 'lib/route';
+import { getSiteFragment, sectionify } from 'lib/route';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import trackScrollPage from 'lib/track-scroll-page';
@@ -29,13 +29,13 @@ export default {
 		const siteId = getSelectedSiteId( state );
 
 		var Posts = require( 'my-sites/posts/main' ),
-			siteID = route.getSiteFragment( context.path ),
+			siteID = getSiteFragment( context.path ),
 			author = context.params.author === 'my' ? getCurrentUserId( state ) : null,
 			statusSlug = author ? context.params.status : context.params.author,
 			search = context.query.s,
 			category = context.query.category,
 			tag = context.query.tag,
-			basePath = route.sectionify( context.path ),
+			basePath = sectionify( context.path ),
 			analyticsPageTitle = 'Blog Posts',
 			baseAnalyticsPath;
 
