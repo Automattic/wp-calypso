@@ -22,7 +22,7 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import { cartItems } from 'lib/cart-values';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import ValidationErrorList from 'notices/validation-error-list';
-import upgradesActions from 'lib/upgrades/actions';
+import { addItem } from 'lib/upgrades/actions';
 import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
 import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
 import DomainsSelect from './domains-select';
@@ -275,7 +275,7 @@ const AddEmailAddressesCard = createReactClass( {
 				fields: this.getFields(),
 			} ),
 		} );
-		googleAppsCartItems.forEach( upgradesActions.addItem );
+		googleAppsCartItems.forEach( addItem );
 
 		page( '/checkout/' + this.props.selectedSite.slug );
 	},

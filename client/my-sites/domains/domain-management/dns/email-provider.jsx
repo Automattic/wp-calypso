@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { isEmpty, trim } from 'lodash';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -19,7 +17,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import { errorNotice, successNotice } from 'state/notices/actions';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { applyDnsTemplate } from 'lib/upgrades/actions';
 
 class EmailProvider extends Component {
 	state = {
@@ -47,7 +45,7 @@ class EmailProvider extends Component {
 			variables = template.modifyVariables( variables );
 		}
 
-		upgradesActions.applyDnsTemplate(
+		applyDnsTemplate(
 			domain,
 			template.dnsTemplateProvider,
 			template.dnsTemplateService,

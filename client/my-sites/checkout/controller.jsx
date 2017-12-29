@@ -15,6 +15,7 @@ import { sectionifyWithRoutes } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import productsFactory from 'lib/products-list';
+import { addItem } from 'lib/upgrades/actions';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GsuiteNudge from 'my-sites/checkout/gsuite-nudge';
@@ -142,6 +143,16 @@ export default {
 		if ( ! selectedSite ) {
 			return null;
 		}
+
+		const handleAddGoogleApps = ( googleAppsCartItem, siteSlug ) => {
+			googleAppsCartItem.extra = {
+				...googleAppsCartItem.extra,
+				receipt_for_domain: receiptId,
+			};
+
+			addItem( googleAppsCartItem );
+			page( `/checkout/${ siteSlug }` );
+		};
 
 		analytics.pageView.record( routePath, 'G Suite Upsell', routeParams );
 

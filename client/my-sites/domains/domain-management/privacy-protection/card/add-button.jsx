@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -14,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import { cartItems } from 'lib/cart-values';
 import config from 'config';
-import upgradesActions from 'lib/upgrades/actions';
+import { addItem } from 'lib/upgrades/actions';
 
 class AddButton extends React.PureComponent {
 	static propTypes = {
@@ -35,9 +33,7 @@ class AddButton extends React.PureComponent {
 	}
 
 	addPrivacyProtection = () => {
-		upgradesActions.addItem(
-			cartItems.domainPrivacyProtection( { domain: this.props.selectedDomainName } )
-		);
+		addItem( cartItems.domainPrivacyProtection( { domain: this.props.selectedDomainName } ) );
 
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};

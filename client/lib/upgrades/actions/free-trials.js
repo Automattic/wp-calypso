@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
 import { cartItems, emptyCart, fillInAllCartItemAttributes } from 'lib/cart-values';
 import productsListFactory from 'lib/products-list';
 import { fullCreditsPayment } from 'lib/store-transactions';

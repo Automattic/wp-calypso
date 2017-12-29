@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
@@ -23,7 +21,7 @@ import {
 } from 'lib/products-values';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { removeItem } from 'lib/upgrades/actions';
 import { localize } from 'i18n-calypso';
 
 const getIncludedDomain = cartItems.getIncludedDomain;
@@ -37,7 +35,7 @@ export class CartItem extends React.Component {
 			'Product ID',
 			this.props.cartItem.product_id
 		);
-		upgradesActions.removeItem( this.props.cartItem, this.props.domainsWithPlansOnly );
+		removeItem( this.props.cartItem, this.props.domainsWithPlansOnly );
 	};
 
 	price() {
