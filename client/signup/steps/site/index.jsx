@@ -104,7 +104,8 @@ class Site extends React.Component {
 				validate: true,
 			},
 			function( error, response ) {
-				let messages = {};
+				let messages = {},
+					errorObject = {};
 
 				debug( error, response );
 
@@ -120,11 +121,8 @@ class Site extends React.Component {
 
 					timesValidationFailed++;
 
-					messages = {
-						site: {
-							[ error.error ]: error.message,
-						},
-					};
+					errorObject[ error.error ] = error.message;
+					messages = { site: errorObject };
 				}
 				onComplete( null, messages );
 			}
