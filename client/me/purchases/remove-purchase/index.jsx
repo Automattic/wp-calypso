@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -31,7 +29,7 @@ import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/
 import { getPurchase, isDataLoading } from '../utils';
 import { isDomainRegistration, isPlan, isGoogleApps, isJetpackPlan } from 'lib/products-values';
 import notices from 'notices';
-import purchasePaths from '../paths';
+import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
 import { removePurchase } from 'state/purchases/actions';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
@@ -223,7 +221,7 @@ class RemovePurchase extends Component {
 					);
 				}
 
-				page( purchasePaths.purchasesRoot() );
+				page( purchasesRoot );
 			}
 		} );
 	};

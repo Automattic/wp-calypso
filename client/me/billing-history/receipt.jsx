@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -17,7 +16,7 @@ import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import purchasesPaths from 'me/purchases/paths';
+import { billingHistory } from 'me/purchases/paths';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import tableRows from './table-rows';
 import { getPastBillingTransaction, getPastBillingTransactions } from 'state/selectors';
@@ -49,7 +48,7 @@ class BillingReceipt extends React.Component {
 		const { totalTransactions, transaction } = this.props;
 
 		if ( ! transaction && totalTransactions !== null ) {
-			page.redirect( purchasesPaths.billingHistory() );
+			page.redirect( billingHistory );
 		}
 	}
 
@@ -96,11 +95,7 @@ class BillingReceipt extends React.Component {
 	renderTitle() {
 		const { translate } = this.props;
 
-		return (
-			<HeaderCake backHref={ purchasesPaths.billingHistory() }>
-				{ translate( 'Billing History' ) }
-			</HeaderCake>
-		);
+		return <HeaderCake backHref={ billingHistory }>{ translate( 'Billing History' ) }</HeaderCake>;
 	}
 
 	renderPlaceholder() {

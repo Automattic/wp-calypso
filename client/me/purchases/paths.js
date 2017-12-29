@@ -1,53 +1,35 @@
 /** @format */
-function purchasesRoot() {
-	return '/me/purchases';
+
+export const purchasesRoot = '/me/purchases';
+
+export const addCreditCard = purchasesRoot + '/add-credit-card';
+
+export const billingHistory = purchasesRoot + '/billing';
+
+export function billingHistoryReceipt( receiptId = ':receiptId' ) {
+	return billingHistory + `/${ receiptId }`;
 }
 
-function addCreditCard() {
-	return purchasesRoot() + '/add-credit-card';
+export function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
+	return purchasesRoot + `/${ siteName }/${ purchaseId }`;
 }
 
-function billingHistory() {
-	return purchasesRoot() + '/billing';
-}
-
-function billingHistoryReceipt( receiptId = ':receiptId' ) {
-	return billingHistory() + `/${ receiptId }`;
-}
-
-function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
-	return purchasesRoot() + `/${ siteName }/${ purchaseId }`;
-}
-
-function cancelPurchase( siteName, purchaseId ) {
+export function cancelPurchase( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/cancel';
 }
 
-function confirmCancelDomain( siteName, purchaseId ) {
+export function confirmCancelDomain( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/confirm-cancel-domain';
 }
 
-function cancelPrivacyProtection( siteName, purchaseId ) {
+export function cancelPrivacyProtection( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/cancel-privacy-protection';
 }
 
-function addCardDetails( siteName, purchaseId ) {
+export function addCardDetails( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/payment/add';
 }
 
-function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
+export function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
 	return managePurchase( siteName, purchaseId ) + `/payment/edit/${ cardId }`;
 }
-
-export default {
-	addCardDetails,
-	addCreditCard,
-	billingHistory,
-	billingHistoryReceipt,
-	cancelPrivacyProtection,
-	cancelPurchase,
-	confirmCancelDomain,
-	editCardDetails,
-	managePurchase,
-	purchasesRoot,
-};

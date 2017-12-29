@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -29,7 +27,7 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
 } from 'lib/plans/constants';
-import purchasesPaths from 'me/purchases/paths';
+import { managePurchase } from 'me/purchases/paths';
 
 class CurrentPlanHeader extends Component {
 	static propTypes = {
@@ -85,10 +83,7 @@ class CurrentPlanHeader extends Component {
 								} ) }
 					</span>
 					{ currentPlan.userIsOwner && (
-						<Button
-							compact
-							href={ purchasesPaths.managePurchase( selectedSite.slug, currentPlan.id ) }
-						>
+						<Button compact href={ managePurchase( selectedSite.slug, currentPlan.id ) }>
 							{ hasAutoRenew ? translate( 'Manage Payment' ) : translate( 'Renew Now' ) }
 						</Button>
 					) }

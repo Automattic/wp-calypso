@@ -76,7 +76,7 @@ import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
 import VerticalNavItem from 'components/vertical-nav/item';
-import paths from '../paths';
+import { cancelPurchase, cancelPrivacyProtection, purchasesRoot } from '../paths';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
@@ -95,7 +95,7 @@ class ManagePurchase extends Component {
 
 	componentWillMount() {
 		if ( ! this.isDataValid() ) {
-			page.redirect( paths.purchasesRoot() );
+			page.redirect( purchasesRoot );
 			return;
 		}
 
@@ -104,7 +104,7 @@ class ManagePurchase extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
-			page.redirect( paths.purchasesRoot() );
+			page.redirect( purchasesRoot );
 			return;
 		}
 
@@ -231,7 +231,7 @@ class ManagePurchase extends Component {
 		}
 
 		let text,
-			link = paths.cancelPurchase( this.props.selectedSite.slug, id );
+			link = cancelPurchase( this.props.selectedSite.slug, id );
 
 		if ( isRefundable( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
@@ -281,7 +281,7 @@ class ManagePurchase extends Component {
 		}
 
 		return (
-			<CompactCard href={ paths.cancelPrivacyProtection( this.props.selectedSite.slug, id ) }>
+			<CompactCard href={ cancelPrivacyProtection( this.props.selectedSite.slug, id ) }>
 				{ translate( 'Cancel Privacy Protection' ) }
 			</CompactCard>
 		);
