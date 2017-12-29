@@ -8,13 +8,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, get, isEqual, map, orderBy, slice } from 'lodash';
+import { find, get, isEqual, isUndefined, map, orderBy, slice } from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import Comment from 'my-sites/comments/comment';
 import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
 import CommentNavigation from 'my-sites/comments/comment-navigation';
@@ -23,9 +22,8 @@ import Pagination from 'components/pagination';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
+import { getCommentsPage, getSiteCommentCounts } from 'state/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
 
 export class CommentList extends Component {
@@ -248,24 +246,20 @@ export class CommentList extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { postId, siteId, status } ) => {
+const mapStateToProps = ( state, { page, postId, siteId, status } ) => {
+	const comments = getCommentsPage( state, siteId, { page, postId, status } ) || [];
+	const commentsCount = get(
+		getSiteCommentCounts( state, siteId, postId ),
+		'unapproved' === status ? 'pending' : status
+	);
+	const isLoading = isUndefined( comments );
 	const isPostView = !! postId;
-	const siteCommentsTree =
-		isPostView && isEnabled( 'comments/management/threaded-view' )
-			? filter( getSiteCommentsTree( state, siteId, status ), { commentParentId: 0 } )
-			: getSiteCommentsTree( state, siteId, status );
-	const comments = isPostView
-		? map( filter( siteCommentsTree, { postId } ), 'commentId' )
-		: map( siteCommentsTree, 'commentId' );
 
-	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,
-		isCommentsTreeSupported:
-			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' ),
+		commentsCount,
 		isLoading,
 		isPostView,
-		siteId,
 	};
 };
 
