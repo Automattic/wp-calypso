@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import store from 'store';
 import { assign, clone, defer, fromPairs } from 'lodash';
 import debugFactory from 'debug';
@@ -16,15 +14,13 @@ import PostsStore from './posts-store';
 import PostEditStore from './post-edit-store';
 import postListStoreFactory from './post-list-store-factory';
 import PreferencesStore from 'lib/preferences/store';
-import utils from './utils';
+import { isBackDated, isFutureDated, isPublished } from './utils';
 import versionCompare from 'lib/version-compare';
 import Dispatcher from 'dispatcher';
 import { recordSaveEvent } from './stats';
 import { normalizeTermsForApi } from 'state/posts/utils';
 
 const debug = debugFactory( 'calypso:posts' );
-
-var PostActions;
 
 /**
  * Helper for performing a metadata operation on the currently edited post.
@@ -40,8 +36,7 @@ var PostActions;
  *                                              or `delete`)
  */
 function handleMetadataOperation( key, value, operation ) {
-	var post = PostEditStore.get(),
-		metadata;
+	const post = PostEditStore.get();
 
 	if ( 'string' === typeof key || Array.isArray( key ) ) {
 		// Normalize a string or array of string keys to an object of key value
@@ -51,14 +46,14 @@ function handleMetadataOperation( key, value, operation ) {
 	}
 
 	// Overwrite duplicates based on key
-	metadata = ( post.metadata || [] ).filter( meta => ! key.hasOwnProperty( meta.key ) );
+	const metadata = ( post.metadata || [] ).filter( meta => ! key.hasOwnProperty( meta.key ) );
 
 	Object.keys( key ).forEach( function( objectKey ) {
 		// `update` is a sufficient operation for new metadata, as it will add
 		// the metadata if it does not already exist. Similarly, we're not
 		// concerned with deleting a key which was added during previous edits,
 		// since this will effectively noop.
-		var meta = {
+		const meta = {
 			key: objectKey,
 			operation: operation,
 		};
@@ -94,7 +89,7 @@ function normalizeApiAttributes( attributes ) {
 	return attributes;
 }
 
-PostActions = {
+const PostActions = {
 	/**
 	 * Start keeping track of edits to a new post
 	 *
@@ -102,10 +97,9 @@ PostActions = {
 	 * @param {Object} options Edit options
 	 */
 	startEditingNew: function( site, options ) {
-		var args;
 		options = options || {};
 
-		args = {
+		const args = {
 			type: 'DRAFT_NEW_POST',
 			postType: options.type || 'post',
 			title: options.title,
@@ -123,8 +117,7 @@ PostActions = {
 	 * @param {Number} postId Post ID to load
 	 */
 	startEditingExisting: function( site, postId ) {
-		var currentPost = PostEditStore.get(),
-			postHandle;
+		const currentPost = PostEditStore.get();
 
 		if ( ! site || ! site.ID ) {
 			return;
@@ -140,7 +133,7 @@ PostActions = {
 			postId: postId,
 		} );
 
-		postHandle = wpcom.site( site.ID ).post( postId );
+		const postHandle = wpcom.site( site.ID ).post( postId );
 
 		postHandle.get( { context: 'edit', meta: 'autosave' }, function( error, data ) {
 			Dispatcher.handleServerAction( {
@@ -162,9 +155,9 @@ PostActions = {
 	},
 
 	autosave: function( site, callback ) {
-		var post = PostEditStore.get(),
-			savedPost = PostEditStore.getSavedPost(),
-			siteHandle = wpcom.undocumented().site( post.site_ID );
+		const post = PostEditStore.get();
+		const savedPost = PostEditStore.getSavedPost();
+		const siteHandle = wpcom.undocumented().site( post.site_ID );
 
 		callback = callback || function() {};
 
@@ -175,7 +168,7 @@ PostActions = {
 		store.set( 'wpcom-autosave:' + post.site_ID + ':' + post.ID, post );
 
 		// TODO: incorporate post locking
-		if ( utils.isPublished( savedPost ) || utils.isPublished( post ) ) {
+		if ( isPublished( savedPost ) || isPublished( post ) ) {
 			if (
 				! post.ID ||
 				! site ||
@@ -301,14 +294,14 @@ PostActions = {
 	 * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
 	 */
 	saveEdited: function( site, attributes, context, callback, options ) {
-		var post, postHandle, query, changedAttributes, rawContent, mode, isNew;
+		let changedAttributes;
 
 		Dispatcher.handleViewAction( {
 			type: 'EDIT_POST',
 			post: attributes,
 		} );
 
-		post = PostEditStore.get();
+		const post = PostEditStore.get();
 
 		// Don't send a request to the API if the post has no content (title,
 		// content, or excerpt). A post without content is invalid.
@@ -333,9 +326,9 @@ PostActions = {
 		}
 
 		changedAttributes = normalizeApiAttributes( changedAttributes );
-		rawContent = PostEditStore.getRawContent();
-		mode = PreferencesStore.get( 'editor-mode' );
-		isNew = ! post.ID;
+		const rawContent = PostEditStore.getRawContent();
+		const mode = PreferencesStore.get( 'editor-mode' );
+		const isNew = ! post.ID;
 
 		// There is a separate action dispatched here because we need to queue changes
 		// that occur while the subsequent AJAX request is in-flight
@@ -343,8 +336,8 @@ PostActions = {
 			type: 'EDIT_POST_SAVE',
 		} );
 
-		postHandle = wpcom.site( post.site_ID ).post( post.ID );
-		query = {
+		const postHandle = wpcom.site( post.site_ID ).post( post.ID );
+		const query = {
 			context: 'edit',
 			apiVersion: '1.2',
 		};
@@ -357,10 +350,8 @@ PostActions = {
 		}
 
 		if (
-			( changedAttributes &&
-				changedAttributes.status === 'future' &&
-				utils.isFutureDated( post ) ) ||
-			( changedAttributes && changedAttributes.status === 'publish' && utils.isBackDated( post ) )
+			( changedAttributes && changedAttributes.status === 'future' && isFutureDated( post ) ) ||
+			( changedAttributes && changedAttributes.status === 'publish' && isBackDated( post ) )
 		) {
 			// HACK: This is necessary because for some reason v1.1 and v1.2 of the update post endpoints
 			// don't accept a status of 'future' under any conditions.
@@ -375,9 +366,8 @@ PostActions = {
 		}
 
 		postHandle[ isNew ? 'add' : 'update' ]( query, changedAttributes, function( error, data ) {
-			var original, currentMode;
-
-			currentMode = PreferencesStore.get( 'editor-mode' );
+			let original;
+			const currentMode = PreferencesStore.get( 'editor-mode' );
 
 			if ( ! error ) {
 				original = PostsStore.get( data.global_ID );
@@ -410,7 +400,7 @@ PostActions = {
 
 	 */
 	update: function( site, post, attributes, callback ) {
-		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
+		const postHandle = wpcom.site( post.site_ID ).post( post.ID );
 
 		postHandle.update( attributes, PostActions.receiveUpdate.bind( null, site, callback ) );
 	},
@@ -424,7 +414,7 @@ PostActions = {
 	 * @param {function} callback that receives ( err, post ) arguments
 	 */
 	trash: function( site, post, callback ) {
-		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
+		const postHandle = wpcom.site( post.site_ID ).post( post.ID );
 
 		postHandle.delete( PostActions.receiveUpdate.bind( null, site, callback ) );
 	},
@@ -437,7 +427,7 @@ PostActions = {
 	 * @param {Object} site Site object
 	 */
 	restore: function( site, post, callback ) {
-		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
+		const postHandle = wpcom.site( post.site_ID ).post( post.ID );
 
 		postHandle.restore( PostActions.receiveUpdate.bind( null, site, callback ) );
 	},
@@ -533,7 +523,7 @@ PostActions = {
 	},
 
 	receiveUpdate: function( site, callback, error, data ) {
-		var original;
+		let original;
 
 		if ( ! error ) {
 			original = PostsStore.get( data.global_ID );

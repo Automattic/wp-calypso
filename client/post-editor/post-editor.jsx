@@ -30,7 +30,14 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import InvalidURLDialog from 'post-editor/invalid-url-dialog';
 import RestorePostDialog from 'post-editor/restore-post-dialog';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
-import utils from 'lib/posts/utils';
+import {
+	getEditURL,
+	getPagePath,
+	isFutureDated,
+	isPage,
+	isPrivate,
+	isPublished,
+} from 'lib/posts/utils';
 import EditorPreview from './editor-preview';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import analytics from 'lib/analytics';
@@ -277,12 +284,12 @@ export const PostEditor = createReactClass( {
 		const isInvalidURL = this.state.loadingError;
 		const siteURL = site ? site.URL + '/' : null;
 
-		let isPage;
+		let isAPage;
 		let isTrashed;
 		let hasAutosave;
 
 		if ( this.state.post ) {
-			isPage = utils.isPage( this.state.post );
+			isAPage = isPage( this.state.post );
 			isTrashed = this.state.post.status === 'trash';
 			hasAutosave = get( this.state.post.meta, [ 'data', 'autosave' ] );
 		}
@@ -338,7 +345,7 @@ export const PostEditor = createReactClass( {
 								onPrivatePublish={ this.onPublish }
 								savedPost={ this.state.savedPost }
 								site={ site }
-								isPostPrivate={ utils.isPrivate( this.state.post ) }
+								isPostPrivate={ isPrivate( this.state.post ) }
 								postAuthor={ this.state.post ? this.state.post.author : null }
 							/>
 							<div className="post-editor__site">
@@ -373,11 +380,11 @@ export const PostEditor = createReactClass( {
 								/>
 								<div className="post-editor__header">
 									<EditorTitle onChange={ this.onEditorTitleChange } tabIndex={ 1 } />
-									{ this.state.post && isPage && site ? (
+									{ this.state.post && isAPage && site ? (
 										<EditorPageSlug
 											path={
 												this.state.post.URL && this.state.post.URL !== siteURL
-													? utils.getPagePath( this.state.post )
+													? getPagePath( this.state.post )
 													: siteURL
 											}
 										/>
@@ -427,7 +434,7 @@ export const PostEditor = createReactClass( {
 						site={ site }
 						setPostDate={ this.setPostDate }
 						onSave={ this.onSave }
-						isPostPrivate={ utils.isPrivate( this.state.post ) }
+						isPostPrivate={ isPrivate( this.state.post ) }
 						confirmationSidebarStatus={ this.state.confirmationSidebar }
 					/>
 					{ this.props.isSitePreviewable ? (
@@ -499,11 +506,8 @@ export const PostEditor = createReactClass( {
 	},
 
 	onEditedPostChange: function() {
-		var didLoad = this.state.isLoading && ! PostEditStore.isLoading(),
-			loadingError = PostEditStore.getLoadingError(),
-			postEditState,
-			post,
-			site;
+		const didLoad = this.state.isLoading && ! PostEditStore.isLoading();
+		const loadingError = PostEditStore.getLoadingError();
 
 		if ( loadingError ) {
 			this.setState( { loadingError } );
@@ -522,12 +526,12 @@ export const PostEditor = createReactClass( {
 				() => this.editor && this.editor.setEditorContent( this.state.post.content )
 			);
 		} else {
-			postEditState = this.getPostEditState();
-			post = postEditState.post;
-			site = this.props.selectedSite;
-			if ( didLoad && site && ( this.props.type === 'page' ) !== utils.isPage( post ) ) {
+			const postEditState = this.getPostEditState();
+			const post = postEditState.post;
+			const site = this.props.selectedSite;
+			if ( didLoad && site && ( this.props.type === 'page' ) !== isPage( post ) ) {
 				// incorrect post type in URL
-				page.redirect( utils.getEditURL( post, site ) );
+				page.redirect( getEditURL( post, site ) );
 			}
 			this.setState( postEditState, function() {
 				if ( this.editor && ( didLoad || this.state.isLoadingRevision ) ) {
@@ -595,7 +599,7 @@ export const PostEditor = createReactClass( {
 	},
 
 	autosave: function() {
-		var callback;
+		let callback;
 
 		if ( this.state.isSaving === true || this.isSaveBlocked() ) {
 			return;
@@ -614,7 +618,7 @@ export const PostEditor = createReactClass( {
 			return;
 		}
 
-		if ( utils.isPublished( this.state.savedPost ) || utils.isPublished( this.state.post ) ) {
+		if ( isPublished( this.state.savedPost ) || isPublished( this.state.post ) ) {
 			callback = function() {};
 		} else {
 			this.setState( { isSaving: true } );
@@ -674,7 +678,7 @@ export const PostEditor = createReactClass( {
 	},
 
 	onTrashingPost: function( error ) {
-		var isPage = utils.isPage( this.state.post );
+		const isAPage = isPage( this.state.post );
 
 		if ( error ) {
 			this.setState( {
@@ -684,8 +688,8 @@ export const PostEditor = createReactClass( {
 				},
 			} );
 		} else {
-			recordStat( isPage ? 'page_trashed' : 'post_trashed' );
-			recordEvent( isPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
+			recordStat( isAPage ? 'page_trashed' : 'post_trashed' );
+			recordEvent( isAPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
 			this.props.markSaved();
 		}
 	},
@@ -701,8 +705,8 @@ export const PostEditor = createReactClass( {
 		}
 
 		if (
-			! utils.isPublished( this.state.savedPost ) &&
-			( ( ! status && utils.isPublished( this.state.post ) ) || utils.isPublished( edits ) )
+			! isPublished( this.state.savedPost ) &&
+			( ( ! status && isPublished( this.state.post ) ) || isPublished( edits ) )
 		) {
 			return;
 		}
@@ -754,8 +758,7 @@ export const PostEditor = createReactClass( {
 	},
 
 	onPreview: function( action, event ) {
-		var status = 'draft',
-			previewPost;
+		let status = 'draft';
 
 		if ( this.state.previewAction !== action ) {
 			this.setState( {
@@ -775,7 +778,7 @@ export const PostEditor = createReactClass( {
 			status = this.state.savedPost.status;
 		}
 
-		previewPost = function() {
+		const previewPost = function() {
 			if ( this._previewWindow ) {
 				this._previewWindow.location = this.getPreviewUrl();
 				this._previewWindow.focus();
@@ -847,7 +850,7 @@ export const PostEditor = createReactClass( {
 	onSaveDraftSuccess: function() {
 		const { post } = this.state;
 
-		if ( utils.isPublished( post ) ) {
+		if ( isPublished( post ) ) {
 			this.onSaveSuccess( 'updated' );
 		} else {
 			this.onSaveSuccess();
@@ -870,9 +873,9 @@ export const PostEditor = createReactClass( {
 		}
 
 		// determine if this is a private publish
-		if ( utils.isPrivate( this.state.post ) ) {
+		if ( isPrivate( this.state.post ) ) {
 			edits.status = 'private';
-		} else if ( utils.isFutureDated( this.state.post ) ) {
+		} else if ( isFutureDated( this.state.post ) ) {
 			edits.status = 'future';
 		}
 
@@ -914,9 +917,9 @@ export const PostEditor = createReactClass( {
 		const { savedPost } = this.state;
 
 		let message;
-		if ( utils.isPrivate( savedPost ) ) {
+		if ( isPrivate( savedPost ) ) {
 			message = 'publishedPrivately';
-		} else if ( utils.isFutureDated( savedPost ) ) {
+		} else if ( isFutureDated( savedPost ) ) {
 			message = 'scheduled';
 		} else {
 			message = 'published';
@@ -980,7 +983,7 @@ export const PostEditor = createReactClass( {
 		);
 		const diff = !! currentDate.diff( modifiedDate ) && !! dateChange;
 
-		if ( savedPost.type === 'post' && utils.isPublished( savedPost ) && diff ) {
+		if ( savedPost.type === 'post' && isPublished( savedPost ) && diff ) {
 			this.warnPublishDateChange();
 		} else {
 			this.warnPublishDateChange( { clearWarning: true } );
@@ -1046,7 +1049,7 @@ export const PostEditor = createReactClass( {
 	},
 
 	getEditorMode: function() {
-		var editorMode = 'tinymce';
+		let editorMode = 'tinymce';
 		if ( this.props.editorModePreference ) {
 			editorMode = this.props.editorModePreference;
 

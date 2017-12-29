@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
  */
 import Card from 'components/card';
 import Site from 'blocks/site';
-import postUtils from 'lib/posts/utils';
+import { isPage, isPublished } from 'lib/posts/utils';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
@@ -146,7 +146,7 @@ export class EditorGroundControl extends PureComponent {
 	shouldShowStatusLabel() {
 		const { isSaving, post } = this.props;
 
-		return isSaving || ( post && post.ID && ! postUtils.isPublished( post ) );
+		return isSaving || ( post && post.ID && ! isPublished( post ) );
 	}
 
 	isPreviewEnabled() {
@@ -188,9 +188,7 @@ export class EditorGroundControl extends PureComponent {
 					onClick={ this.onPreviewButtonClick }
 					tabIndex={ 4 }
 				>
-					<span className="editor-ground-control__button-label">
-						{ this.getPreviewLabel() }
-					</span>
+					<span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
 				</Button>
 				<div className="editor-ground-control__publish-button">
 					<EditorPublishButton
@@ -207,7 +205,7 @@ export class EditorGroundControl extends PureComponent {
 						needsVerification={ this.state.needsVerification }
 						busy={
 							this.props.isPublishing ||
-							( postUtils.isPublished( this.props.savedPost ) && this.props.isSaving )
+							( isPublished( this.props.savedPost ) && this.props.isSaving )
 						}
 					/>
 				</div>
@@ -249,7 +247,7 @@ export class EditorGroundControl extends PureComponent {
 					onSelect={ this.props.recordSiteButtonClick }
 					indicator={ true }
 				/>
-				{ this.state.needsVerification &&
+				{ this.state.needsVerification && (
 					<div
 						className="editor-ground-control__email-verification-notice"
 						tabIndex={ 7 }
@@ -263,7 +261,8 @@ export class EditorGroundControl extends PureComponent {
 						<span className="editor-ground-control__email-verification-notice-more">
 							{ translate( 'Learn More' ) }
 						</span>
-					</div> }
+					</div>
+				) }
 				<QuickSaveButtons
 					isSaving={ isSaving }
 					isSaveBlocked={ isSaveBlocked }
@@ -294,13 +293,13 @@ const mapDispatchToProps = dispatch => ( {
 		dispatch(
 			composeAnalytics(
 				recordTracksEvent(
-					`calypso_editor_${ postUtils.isPage( page ) ? 'page' : 'post' }_preview_button_click`
+					`calypso_editor_${ isPage( page ) ? 'page' : 'post' }_preview_button_click`
 				),
 				recordGoogleEvent(
 					'Editor',
-					`Clicked Preview ${ postUtils.isPage( page ) ? 'Page' : 'Post' } Button`,
-					`Editor Preview ${ postUtils.isPage( page ) ? 'Page' : 'Post' } Button Clicked`,
-					`editor${ postUtils.isPage( page ) ? 'Page' : 'Post' }ButtonClicked`
+					`Clicked Preview ${ isPage( page ) ? 'Page' : 'Post' } Button`,
+					`Editor Preview ${ isPage( page ) ? 'Page' : 'Post' } Button Clicked`,
+					`editor${ isPage( page ) ? 'Page' : 'Post' }ButtonClicked`
 				)
 			)
 		),

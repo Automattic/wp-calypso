@@ -16,7 +16,7 @@ import { localize } from 'i18n-calypso';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { blockSite } from 'state/reader/site-blocks/actions';
-import PostUtils from 'lib/posts/utils';
+import { getEditURL, userCan } from 'lib/posts/utils';
 import FollowButton from 'reader/follow-button';
 import * as DiscoverHelper from 'reader/discover/helper';
 import * as stats from 'reader/stats';
@@ -90,7 +90,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		let editUrl = '//wordpress.com/post/' + post.site_ID + '/' + post.ID + '/';
 
 		if ( site && site.slug ) {
-			editUrl = PostUtils.getEditURL( post, site );
+			editUrl = getEditURL( post, site );
 		}
 
 		stats.recordAction( 'edit_post' );
@@ -124,7 +124,7 @@ class ReaderPostOptionsMenu extends React.Component {
 	render() {
 		const { post, site, feed, teams, translate, position } = this.props;
 		const { ID: postId, site_ID: siteId } = post;
-		const isEditPossible = PostUtils.userCan( 'edit_post', post );
+		const isEditPossible = userCan( 'edit_post', post );
 		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 		const followUrl = this.getFollowUrl();
 		const isTeamMember = isAutomatticTeamMember( teams );

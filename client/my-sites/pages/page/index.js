@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
@@ -22,7 +20,7 @@ import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SiteIcon from 'blocks/site-icon';
 import { editLinkForPage, statsLinkForPage } from '../helpers';
-import utils from 'lib/posts/utils';
+import { getPreviewURL, userCan } from 'lib/posts/utils';
 import classNames from 'classnames';
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
@@ -131,7 +129,7 @@ class Page extends Component {
 
 		// This is technically if you can edit the current page, not the parent.
 		// Capabilities are not exposed on the parent page.
-		const parentHref = utils.userCan( 'edit_post', this.props.page )
+		const parentHref = userCan( 'edit_post', this.props.page )
 			? editLinkForPage( page.parent, site )
 			: page.parent.URL;
 		const parentLink = <a href={ parentHref }>{ parentTitle }</a>;
@@ -162,7 +160,7 @@ class Page extends Component {
 	getPublishItem() {
 		if (
 			this.props.page.status === 'publish' ||
-			! utils.userCan( 'publish_post', this.props.page ) ||
+			! userCan( 'publish_post', this.props.page ) ||
 			this.props.page.status === 'trash'
 		) {
 			return null;
@@ -181,7 +179,7 @@ class Page extends Component {
 			return null;
 		}
 
-		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
+		if ( ! userCan( 'edit_post', this.props.page ) ) {
 			return null;
 		}
 
@@ -198,7 +196,7 @@ class Page extends Component {
 			return null;
 		}
 
-		if ( ! utils.userCan( 'delete_post', this.props.page ) ) {
+		if ( ! userCan( 'delete_post', this.props.page ) ) {
 			return null;
 		}
 
@@ -225,7 +223,7 @@ class Page extends Component {
 		const { page: post, siteSlugOrId } = this.props;
 		if (
 			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
-			! utils.userCan( 'edit_post', post )
+			! userCan( 'edit_post', post )
 		) {
 			return null;
 		}
@@ -241,7 +239,7 @@ class Page extends Component {
 	}
 
 	getRestoreItem() {
-		if ( this.props.page.status !== 'trash' || ! utils.userCan( 'delete_post', this.props.page ) ) {
+		if ( this.props.page.status !== 'trash' || ! userCan( 'delete_post', this.props.page ) ) {
 			return null;
 		}
 
@@ -326,7 +324,7 @@ class Page extends Component {
 	render() {
 		const { page, site = {}, translate } = this.props;
 		const title = page.title || translate( '(no title)' );
-		const canEdit = utils.userCan( 'edit_post', page );
+		const canEdit = userCan( 'edit_post', page );
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
 
 		const viewItem = this.getViewItem();
@@ -472,7 +470,7 @@ const mapState = ( state, props ) => {
 		isFrontPage: isFrontPage( state, pageSiteId, props.page.ID ),
 		isPostsPage: isPostsPage( state, pageSiteId, props.page.ID ),
 		isPreviewable,
-		previewURL: utils.getPreviewURL( site, props.page ),
+		previewURL: getPreviewURL( site, props.page ),
 		site,
 		siteSlugOrId,
 	};
