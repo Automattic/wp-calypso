@@ -10,7 +10,7 @@ import { noop } from 'lodash';
  */
 import analytics from 'lib/analytics';
 import PostEditStore from 'lib/posts/post-edit-store';
-import utils from 'lib/posts/utils';
+import { getVisibility, isPublished } from 'lib/posts/utils';
 
 /**
  * Module variables
@@ -56,7 +56,7 @@ export function recordSaveEvent( site, context ) {
 	let usageAction = false;
 	let eventContext = null;
 
-	if ( ! post.ID && ! utils.isPublished( post ) ) {
+	if ( ! post.ID && ! isPublished( post ) ) {
 		tracksEventName += 'savedraft';
 	} else if ( 'draft' === nextStatus ) {
 		tracksEventName += 'savedraft';
@@ -104,7 +104,7 @@ export function recordSaveEvent( site, context ) {
 	analytics.tracks.recordEvent( tracksEventName, {
 		post_id: post.ID,
 		post_type: post.type,
-		visibility: utils.getVisibility( post ),
+		visibility: getVisibility( post ),
 		current_status: currentStatus,
 		next_status: nextStatus,
 		context: eventContext,

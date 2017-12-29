@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { recordEvent } from 'lib/posts/stats';
-import postUtils from 'lib/posts/utils';
+import { isBackDatedPublished, isFutureDated, isPage, isPublished } from 'lib/posts/utils';
 import Button from 'components/button';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -22,15 +20,15 @@ import { canCurrentUser } from 'state/selectors';
 
 export const getPublishButtonStatus = ( post, savedPost, canUserPublishPosts ) => {
 	if (
-		( postUtils.isPublished( savedPost ) &&
-			! postUtils.isBackDatedPublished( savedPost ) &&
-			! postUtils.isFutureDated( post ) ) ||
-		( savedPost && savedPost.status === 'future' && postUtils.isFutureDated( post ) )
+		( isPublished( savedPost ) &&
+			! isBackDatedPublished( savedPost ) &&
+			! isFutureDated( post ) ) ||
+		( savedPost && savedPost.status === 'future' && isFutureDated( post ) )
 	) {
 		return 'update';
 	}
 
-	if ( postUtils.isFutureDated( post ) ) {
+	if ( isFutureDated( post ) ) {
 		return 'schedule';
 	}
 
@@ -87,7 +85,7 @@ export class EditorPublishButton extends Component {
 			this.props.savedPost,
 			this.props.canUserPublishPosts
 		);
-		const eventString = postUtils.isPage( this.props.post )
+		const eventString = isPage( this.props.post )
 			? pageEvents[ buttonState ]
 			: postEvents[ buttonState ];
 		recordEvent( eventString );
@@ -132,10 +130,7 @@ export class EditorPublishButton extends Component {
 	onClick() {
 		this.trackClick();
 
-		if (
-			postUtils.isPublished( this.props.savedPost ) &&
-			! postUtils.isBackDatedPublished( this.props.savedPost )
-		) {
+		if ( isPublished( this.props.savedPost ) && ! isBackDatedPublished( this.props.savedPost ) ) {
 			return this.props.onSave();
 		}
 

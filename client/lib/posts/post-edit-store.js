@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -13,27 +12,122 @@ import emitter from 'lib/mixins/emitter';
  */
 import Dispatcher from 'dispatcher';
 import { decodeEntities } from 'lib/formatting';
-import utils from './utils';
+import { getPreviewURL } from './utils';
 
 /**
  * Module variables
  */
-var REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/,
-	CONTENT_LENGTH_ASSUME_SET = 50;
+const REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/;
+const CONTENT_LENGTH_ASSUME_SET = 50;
 
-var _initialRawContent = null,
-	_isAutosaving = false,
-	_isLoading = false,
-	_saveBlockers = [],
-	_isNew = false,
-	_loadingError = null,
-	_post = null,
-	_previewUrl = null,
-	_queue = [],
-	_queueChanges = false,
-	_rawContent = null,
-	_savedPost = null,
-	PostEditStore;
+let _initialRawContent = null;
+let _isAutosaving = false;
+let _isLoading = false;
+let _saveBlockers = [];
+let _isNew = false;
+let _loadingError = null;
+let _post = null;
+let _previewUrl = null;
+let _queue = [];
+let _queueChanges = false;
+let _rawContent = null;
+let _savedPost = null;
+
+const PostEditStore = {
+	get: function() {
+		return _post;
+	},
+
+	getSavedPost: function() {
+		return _savedPost;
+	},
+
+	getRawContent: function() {
+		return _rawContent;
+	},
+
+	getChangedAttributes: function() {
+		if ( this.isNew() ) {
+			return _post;
+		}
+
+		if ( ! this.isDirty() ) {
+			// nothing has changed
+			return Object.freeze( {} );
+		}
+
+		const changedAttributes = pickBy( _post, function( value, key ) {
+			return value !== _savedPost[ key ] && 'metadata' !== key;
+		} );
+
+		// exclude metadata which doesn't have any operation set (means it's unchanged)
+		if ( _post.metadata ) {
+			const metadata = filter( _post.metadata, 'operation' );
+
+			if ( metadata.length ) {
+				assign( changedAttributes, { metadata } );
+			}
+		}
+
+		// when toggling editor modes, it is possible for the post to be dirty
+		// even though the content hasn't changed to avoid a confusing UX
+		// let's just pass the content through and save it anyway
+		if ( ! changedAttributes.content && _rawContent !== _initialRawContent ) {
+			changedAttributes.content = _post.content;
+		}
+
+		return Object.freeze( changedAttributes );
+	},
+
+	getLoadingError: function() {
+		return _loadingError;
+	},
+
+	isDirty: function() {
+		return _post !== _savedPost || _rawContent !== _initialRawContent;
+	},
+
+	isNew: function() {
+		return _isNew;
+	},
+
+	isLoading: function() {
+		return _isLoading;
+	},
+
+	isAutosaving: function() {
+		return _isAutosaving;
+	},
+
+	isSaveBlocked: function( key ) {
+		if ( ! key ) {
+			return !! _saveBlockers.length;
+		}
+
+		return -1 !== _saveBlockers.indexOf( key );
+	},
+
+	getPreviewUrl: function() {
+		return _previewUrl;
+	},
+
+	hasContent: function() {
+		if ( ! _post ) {
+			return false;
+		}
+
+		if ( ( _post.title && _post.title.trim() ) || _post.excerpt ) {
+			return true;
+		}
+
+		if ( _rawContent ) {
+			// Raw content contains the most up-to-date post content
+			return ! isContentEmpty( _rawContent );
+		}
+
+		return ! isContentEmpty( _post.content );
+	},
+};
 
 function resetState() {
 	debug( 'Reset state' );
@@ -76,7 +170,7 @@ function startEditing( site, post ) {
 	if ( post.title ) {
 		post.title = decodeEntities( post.title );
 	}
-	_previewUrl = utils.getPreviewURL( site, post );
+	_previewUrl = getPreviewURL( site, post );
 	_savedPost = Object.freeze( post );
 	_post = _savedPost;
 	_isLoading = false;
@@ -87,7 +181,7 @@ function updatePost( site, post ) {
 	if ( post.title ) {
 		post.title = decodeEntities( post.title );
 	}
-	_previewUrl = utils.getPreviewURL( site, post );
+	_previewUrl = getPreviewURL( site, post );
 	_savedPost = Object.freeze( post );
 	_post = _savedPost;
 	_isNew = false;
@@ -100,10 +194,9 @@ function updatePost( site, post ) {
 }
 
 function initializeNewPost( site, options ) {
-	var args;
 	options = options || {};
 
-	args = {
+	const args = {
 		site_ID: get( site, 'ID' ),
 		status: 'draft',
 		type: options.postType || 'post',
@@ -122,7 +215,7 @@ function setLoadingError( error ) {
 }
 
 function set( attributes ) {
-	var updatedPost;
+	let updatedPost;
 
 	if ( ! _post ) {
 		// ignore since post isn't currently being edited
@@ -166,16 +259,14 @@ function normalize( post ) {
 }
 
 function setRawContent( content ) {
-	var isDirty, hasContent;
-
 	if ( null === _initialRawContent ) {
 		debug( 'Set initial raw content to: %s', content );
 		_initialRawContent = content;
 	}
 
 	if ( content !== _rawContent ) {
-		isDirty = PostEditStore.isDirty();
-		hasContent = PostEditStore.hasContent();
+		const isDirty = PostEditStore.isDirty();
+		const hasContent = PostEditStore.hasContent();
 
 		debug( 'Set raw content to: %s', content );
 		_rawContent = content;
@@ -194,13 +285,10 @@ function isContentEmpty( content ) {
 	);
 }
 
-function dispatcherCallback( payload ) {
-	var action = payload.action,
-		changed;
-
+function dispatcherCallback( { action } ) {
 	switch ( action.type ) {
 		case 'EDIT_POST':
-			changed = set( action.post );
+			const changed = set( action.post );
 			if ( changed ) {
 				PostEditStore.emit( 'change' );
 			}
@@ -293,7 +381,7 @@ function dispatcherCallback( payload ) {
 		case 'RECEIVE_POST_AUTOSAVE':
 			_isAutosaving = false;
 			if ( ! action.error ) {
-				_previewUrl = utils.getPreviewURL(
+				_previewUrl = getPreviewURL(
 					action.site,
 					assign( { preview_URL: action.autosave.preview_URL }, _savedPost )
 				);
@@ -310,104 +398,6 @@ function dispatcherCallback( payload ) {
 			break;
 	}
 }
-
-PostEditStore = {
-	get: function() {
-		return _post;
-	},
-
-	getSavedPost: function() {
-		return _savedPost;
-	},
-
-	getRawContent: function() {
-		return _rawContent;
-	},
-
-	getChangedAttributes: function() {
-		var changedAttributes, metadata;
-
-		if ( this.isNew() ) {
-			return _post;
-		}
-
-		if ( ! this.isDirty() ) {
-			// nothing has changed
-			return Object.freeze( {} );
-		}
-
-		changedAttributes = pickBy( _post, function( value, key ) {
-			return value !== _savedPost[ key ] && 'metadata' !== key;
-		} );
-
-		// exclude metadata which doesn't have any operation set (means it's unchanged)
-		if ( _post.metadata ) {
-			metadata = filter( _post.metadata, 'operation' );
-
-			if ( metadata.length ) {
-				assign( changedAttributes, { metadata: metadata } );
-			}
-		}
-
-		// when toggling editor modes, it is possible for the post to be dirty
-		// even though the content hasn't changed to avoid a confusing UX
-		// let's just pass the content through and save it anyway
-		if ( ! changedAttributes.content && _rawContent !== _initialRawContent ) {
-			changedAttributes.content = _post.content;
-		}
-
-		return Object.freeze( changedAttributes );
-	},
-
-	getLoadingError: function() {
-		return _loadingError;
-	},
-
-	isDirty: function() {
-		return _post !== _savedPost || _rawContent !== _initialRawContent;
-	},
-
-	isNew: function() {
-		return _isNew;
-	},
-
-	isLoading: function() {
-		return _isLoading;
-	},
-
-	isAutosaving: function() {
-		return _isAutosaving;
-	},
-
-	isSaveBlocked: function( key ) {
-		if ( ! key ) {
-			return !! _saveBlockers.length;
-		}
-
-		return -1 !== _saveBlockers.indexOf( key );
-	},
-
-	getPreviewUrl: function() {
-		return _previewUrl;
-	},
-
-	hasContent: function() {
-		if ( ! _post ) {
-			return false;
-		}
-
-		if ( ( _post.title && _post.title.trim() ) || _post.excerpt ) {
-			return true;
-		}
-
-		if ( _rawContent ) {
-			// Raw content contains the most up-to-date post content
-			return ! isContentEmpty( _rawContent );
-		}
-
-		return ! isContentEmpty( _post.content );
-	},
-};
 
 emitter( PostEditStore );
 

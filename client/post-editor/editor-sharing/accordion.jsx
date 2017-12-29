@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -19,7 +17,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import PostMetadata from 'lib/post-metadata';
 import Sharing from './';
 import AccordionSection from 'components/accordion/section';
-import postUtils from 'lib/posts/utils';
+import { isPublished } from 'lib/posts/utils';
 import { isMobile } from 'lib/viewport';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -70,7 +68,7 @@ class EditorSharingAccordion extends React.Component {
 			'is-standalone': this.hideSharing(),
 		} );
 
-		if ( ! postUtils.isPublished( this.props.post ) ) {
+		if ( ! isPublished( this.props.post ) ) {
 			return null;
 		}
 
@@ -104,7 +102,7 @@ class EditorSharingAccordion extends React.Component {
 
 		// if sharing is hidden, and post is not published (no short URL yet),
 		// then do not render this accordion
-		if ( hideSharing && ! postUtils.isPublished( this.props.post ) ) {
+		if ( hideSharing && ! isPublished( this.props.post ) ) {
 			return null;
 		}
 

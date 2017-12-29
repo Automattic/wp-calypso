@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import postUtils from 'lib/posts/utils';
+import { isPage, isPublished } from 'lib/posts/utils';
 import { isEnabled } from 'config';
 import HistoryButton from 'post-editor/editor-ground-control/history-button';
 import { recordEvent, recordStat } from 'lib/posts/stats';
@@ -21,13 +21,7 @@ export const isSaveAvailableFn = ( {
 	isDirty = false,
 	hasContent = false,
 	post = null,
-} ) =>
-	! isSaving &&
-	! isSaveBlocked &&
-	isDirty &&
-	hasContent &&
-	!! post &&
-	! postUtils.isPublished( post );
+} ) => ! isSaving && ! isSaveBlocked && isDirty && hasContent && !! post && ! isPublished( post );
 
 const QuickSaveButtons = ( {
 	isSaving,
@@ -42,9 +36,7 @@ const QuickSaveButtons = ( {
 } ) => {
 	const onSaveButtonClick = () => {
 		onSave();
-		const eventLabel = postUtils.isPage( post )
-			? 'Clicked Save Page Button'
-			: 'Clicked Save Post Button';
+		const eventLabel = isPage( post ) ? 'Clicked Save Page Button' : 'Clicked Save Post Button';
 		recordEvent( eventLabel );
 		recordStat( 'save_draft_clicked' );
 	};
@@ -57,7 +49,7 @@ const QuickSaveButtons = ( {
 		post,
 	} );
 
-	const showingStatusLabel = isSaving || ( post && post.ID && ! postUtils.isPublished( post ) );
+	const showingStatusLabel = isSaving || ( post && post.ID && ! isPublished( post ) );
 	const showingSaveStatus = isSaveAvailable || showingStatusLabel;
 	const hasRevisions =
 		showRevisions && isEnabled( 'post-editor/revisions' ) && get( post, 'revisions.length' );
