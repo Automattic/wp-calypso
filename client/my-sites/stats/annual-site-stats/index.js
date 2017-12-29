@@ -28,6 +28,7 @@ class AnnualSiteStats extends Component {
 		requesting: PropTypes.bool,
 		years: PropTypes.array,
 		translate: PropTypes.func,
+		numberFormat: PropTypes.func,
 		moment: PropTypes.func,
 	};
 
