@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -13,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 import userFactory from 'lib/user';
-import utils from 'lib/site/utils';
+import { getSiteFileModDisableReason } from 'lib/site/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 const user = userFactory();
@@ -84,7 +82,7 @@ class EnhancedDetails extends Component {
 }
 
 const getTracksDataForAutoconfigHalt = selectedSite => {
-	const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
+	const reasons = getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
 
 	if ( reasons && reasons.length > 0 ) {
 		return {

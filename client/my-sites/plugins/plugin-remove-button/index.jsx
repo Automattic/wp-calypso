@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -17,7 +15,7 @@ import PluginsLog from 'lib/plugins/log-store';
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 import PluginsActions from 'lib/plugins/actions';
 import ExternalLink from 'components/external-link';
-import utils from 'lib/site/utils';
+import { getSiteFileModDisableReason, isMainNetworkSite } from 'lib/site/utils';
 
 class PluginRemoveButton extends React.Component {
 	static displayName = 'PluginRemoveButton';
@@ -99,7 +97,7 @@ class PluginRemoveButton extends React.Component {
 			);
 		}
 
-		if ( ! utils.isMainNetworkSite( this.props.site ) ) {
+		if ( ! isMainNetworkSite( this.props.site ) ) {
 			return this.props.translate(
 				'%(pluginName)s cannot be removed because %(site)s is not the main site of the multi-site installation.',
 				{
@@ -112,7 +110,7 @@ class PluginRemoveButton extends React.Component {
 		}
 
 		if ( ! this.props.site.canUpdateFiles && this.props.site.options.file_mod_disabled ) {
-			const reasons = utils.getSiteFileModDisableReason( this.props.site, 'modifyFiles' );
+			const reasons = getSiteFileModDisableReason( this.props.site, 'modifyFiles' );
 			const html = [];
 
 			if ( reasons.length > 1 ) {
