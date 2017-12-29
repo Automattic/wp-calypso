@@ -68,13 +68,13 @@ describe( 'isLikesPopoverOpen', () => {
 } );
 
 describe( 'isSharePanelOpen', () => {
-	test( 'should return true if the Share panel is open', () => {
+	test( 'should return true if the Share panel for the given post is open', () => {
 		const postGlobalId = 4;
 		const isOpen = isSharePanelOpen(
 			{
 				ui: {
 					postTypeList: {
-						activeSharePanels: [ postGlobalId ],
+						postIdWithActiveSharePanel: postGlobalId,
 					},
 				},
 			},
@@ -84,13 +84,30 @@ describe( 'isSharePanelOpen', () => {
 		expect( isOpen ).to.be.true;
 	} );
 
-	test( 'should return false if the Share panel is not open', () => {
+	test( 'should return false if no Share panel is open', () => {
 		const postGlobalId = 4;
 		const isOpen = isSharePanelOpen(
 			{
 				ui: {
 					postTypeList: {
-						activeSharePanels: [],
+						postIdWithActiveLikesPopover: null,
+					},
+				},
+			},
+			postGlobalId
+		);
+
+		expect( isOpen ).to.be.false;
+	} );
+
+	test( 'should return false if the Share panel for a different post is open', () => {
+		const postGlobalId = 4;
+		const otherPostGlobalId = 5;
+		const isOpen = isSharePanelOpen(
+			{
+				ui: {
+					postTypeList: {
+						postIdWithActiveSharePanel: otherPostGlobalId,
 					},
 				},
 			},
