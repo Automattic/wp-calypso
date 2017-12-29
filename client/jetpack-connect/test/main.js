@@ -14,7 +14,7 @@ import { noop } from 'lodash';
  */
 import config from 'config';
 import { JetpackConnectMain } from '../main';
-import { REMOTE_PATH_ACTIVATE, REMOTE_PATH_INSTALL } from '../constants';
+import { REMOTE_PATH_ACTIVATE, REMOTE_PATH_AUTH, REMOTE_PATH_INSTALL } from '../constants';
 
 const REQUIRED_PROPS = {
 	checkUrl: noop,
@@ -129,7 +129,10 @@ describe( 'JetpackConnectMain', () => {
 			component.goToRemoteAuth( 'example.com' );
 
 			expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
-			expect( externalRedirect.mock.calls[ 0 ] ).toMatchSnapshot();
+			expect( addQueryArgs ).toHaveBeenCalledWith(
+				{ calypso_env: config( 'env_id' ) },
+				'example.com' + REMOTE_PATH_AUTH
+			);
 		} );
 
 		test( 'should dispatch analytics', () => {

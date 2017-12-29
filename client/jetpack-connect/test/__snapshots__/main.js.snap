@@ -39,9 +39,3 @@ Array [
   },
 ]
 `;
-
-exports[`JetpackConnectMain goToRemoteAuth should fire redirect 1`] = `
-Array [
-  undefined,
-]
-`;
