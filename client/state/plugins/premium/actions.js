@@ -291,52 +291,50 @@ function configure( site, plugin, dispatch ) {
 		} );
 }
 
-export default {
-	fetchInstallInstructions: function( siteId ) {
-		return dispatch => {
-			if ( _fetching[ siteId ] ) {
-				return;
-			}
-			_fetching[ siteId ] = true;
+export function fetchInstallInstructions( siteId ) {
+	return dispatch => {
+		if ( _fetching[ siteId ] ) {
+			return;
+		}
+		_fetching[ siteId ] = true;
 
-			setTimeout( () => {
-				dispatch( {
-					type: PLUGIN_SETUP_INSTRUCTIONS_FETCH,
-					siteId,
-				} );
-			}, 1 );
+		setTimeout( () => {
+			dispatch( {
+				type: PLUGIN_SETUP_INSTRUCTIONS_FETCH,
+				siteId,
+			} );
+		}, 1 );
 
-			wpcom.undocumented().fetchJetpackKeys( siteId, ( error, data ) => {
-				if ( error ) {
-					dispatch( {
-						type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
-						siteId,
-						data: [],
-					} );
-					return;
-				}
-
-				data = normalizePluginInstructions( data );
-
+		wpcom.undocumented().fetchJetpackKeys( siteId, ( error, data ) => {
+			if ( error ) {
 				dispatch( {
 					type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
 					siteId,
-					data,
+					data: [],
 				} );
-			} );
-		};
-	},
+				return;
+			}
 
-	installPlugin: function( plugin, site ) {
-		return dispatch => {
-			// Starting Install
+			data = normalizePluginInstructions( data );
+
 			dispatch( {
-				type: PLUGIN_SETUP_INSTALL,
-				siteId: site.ID,
-				slug: plugin.slug,
+				type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
+				siteId,
+				data,
 			} );
+		} );
+	};
+}
 
-			install( site, plugin, dispatch );
-		};
-	},
-};
+export function installPlugin( plugin, site ) {
+	return dispatch => {
+		// Starting Install
+		dispatch( {
+			type: PLUGIN_SETUP_INSTALL,
+			siteId: site.ID,
+			slug: plugin.slug,
+		} );
+
+		install( site, plugin, dispatch );
+	};
+}
