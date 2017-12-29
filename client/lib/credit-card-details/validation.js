@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import creditcards from 'creditcards';
 import { capitalize, compact, inRange, isArray, isEmpty } from 'lodash';
 import i18n from 'i18n-calypso';
@@ -115,7 +113,7 @@ validators.validExpirationDate = {
 	error: validationError,
 };
 
-function validateCardDetails( cardDetails ) {
+export function validateCardDetails( cardDetails ) {
 	const rules = creditCardFieldRules(),
 		errors = Object.keys( rules ).reduce( function( allErrors, fieldName ) {
 			const field = rules[ fieldName ],
@@ -138,7 +136,7 @@ function validateCardDetails( cardDetails ) {
  * @returns {string} the type of the credit card
  * @see {@link http://en.wikipedia.org/wiki/Bank_card_number} for more information
  */
-function getCreditCardType( number ) {
+export function getCreditCardType( number ) {
 	if ( number ) {
 		number = number.replace( / /g, '' );
 
@@ -184,8 +182,3 @@ function getValidator( rule ) {
 
 	return validators[ rule ];
 }
-
-export default {
-	getCreditCardType: getCreditCardType,
-	validateCardDetails: validateCardDetails,
-};
