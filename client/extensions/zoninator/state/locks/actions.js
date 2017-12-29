@@ -3,37 +3,53 @@
 /**
  * Internal dependencies
  */
-
-import { ZONINATOR_REQUEST_LOCK, ZONINATOR_UPDATE_LOCK } from '../action-types';
+import {
+	ZONINATOR_REQUEST_LOCK,
+	ZONINATOR_REQUEST_LOCK_ERROR,
+	ZONINATOR_UPDATE_LOCK,
+} from '../action-types';
 
 /**
- * Returns an action object to indicate that a zone lock should be updated.
+ * Returns an action object to indicate that a zone lock should be updated
  *
- * @param  {Number}  siteId         Site ID
- * @param  {Number}  zoneId         Zone ID
- * @param  {Boolean} currentSession True is the lock belongs to the current session
- * @param  {Date}    created        The date & time of when the lock was created
+ * @param  {Number} siteId          Site ID
+ * @param  {Number} zoneId          Zone ID
+ * @param  {Date}   expires         Expiration date
+ * @param  {Number} maxLockPeriod   Maximum number of seconds to extend the lock to
  * @return {Action}                 Action object
  */
-export const updateLock = ( siteId, zoneId, currentSession, created = new Date() ) => ( {
+export const updateLock = ( siteId, zoneId, expires, maxLockPeriod ) => ( {
 	type: ZONINATOR_UPDATE_LOCK,
 	siteId,
 	zoneId,
-	currentSession,
-	created,
+	expires,
+	maxLockPeriod,
 } );
 
 /**
  * Returns an action object to indicate that a zone lock should be requested
  *
- * @param  {Number}  siteId  Site ID
- * @param  {Number}  zoneId  Zone ID
- * @param  {Boolean} refresh Set to true to just refresh the lock on the server
- * @return {Action}          Action
+ * @param  {Number} siteId  Site ID
+ * @param  {Number} zoneId  Zone ID
+ * @return {Action}         Action
  */
-export const requestLock = ( siteId, zoneId, refresh ) => ( {
+export const requestLock = ( siteId, zoneId ) => ( {
 	type: ZONINATOR_REQUEST_LOCK,
 	siteId,
 	zoneId,
-	refresh,
+} );
+
+/**
+ * Returns an action object to indicate that a zone failed to lock
+ *
+ * @param  {Number}  siteId  Site ID
+ * @param  {Number}  zoneId  Zone ID
+ * @param  {Boolean} blocked Set to true if the zone is blocked by another user
+ * @return {Action}          Action object
+ */
+export const requestLockError = ( siteId, zoneId, blocked ) => ( {
+	type: ZONINATOR_REQUEST_LOCK_ERROR,
+	siteId,
+	zoneId,
+	blocked,
 } );
