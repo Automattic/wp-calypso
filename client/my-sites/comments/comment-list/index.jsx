@@ -173,7 +173,7 @@ export class CommentList extends Component {
 					postId={ postId }
 					selectedComments={ selectedComments }
 					setSortOrder={ this.setSortOrder }
-					sortOrder={ this.state.sortOrder }
+					sortOrder={ sortOrder }
 					siteId={ siteId }
 					siteFragment={ siteFragment }
 					status={ status }
