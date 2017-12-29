@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { defer } from 'lodash';
 
@@ -12,7 +10,7 @@ import { defer } from 'lodash';
  */
 import analytics from 'lib/analytics';
 import Dispatcher from 'dispatcher';
-import utils from 'lib/site/utils';
+import { userCan } from 'lib/site/utils';
 import wpcom from 'lib/wp';
 
 /**
@@ -23,13 +21,11 @@ let _actionsQueueBySite = {};
 
 const queueSitePluginAction = ( action, siteId, pluginId, callback ) => {
 	const next = ( nextCallback, error, data ) => {
-		let nextAction;
-
 		if ( nextCallback ) {
 			nextCallback( error, data );
 		}
 
-		nextAction = _actionsQueueBySite[ siteId ].shift();
+		const nextAction = _actionsQueueBySite[ siteId ].shift();
 
 		if ( nextAction ) {
 			nextAction.action( next.bind( this, nextAction.callback ) );
@@ -139,7 +135,7 @@ const PluginsActions = {
 	},
 
 	fetchSitePlugins: site => {
-		if ( ! utils.userCan( 'manage_options', site ) || ! site.jetpack ) {
+		if ( ! userCan( 'manage_options', site ) || ! site.jetpack ) {
 			defer( () => {
 				Dispatcher.handleViewAction( {
 					type: 'NOT_ALLOWED_TO_RECEIVE_PLUGINS',
@@ -207,7 +203,7 @@ const PluginsActions = {
 			return getRejectedPromise( "Error: Can't update files on the site" );
 		}
 
-		if ( ! utils.userCan( 'manage_options', site ) ) {
+		if ( ! userCan( 'manage_options', site ) ) {
 			return getRejectedPromise( "Error: User can't manage the site" );
 		}
 
@@ -309,7 +305,7 @@ const PluginsActions = {
 	},
 
 	removePlugin: ( site, plugin ) => {
-		if ( ! site.canUpdateFiles || ! utils.userCan( 'manage_options', site ) ) {
+		if ( ! site.canUpdateFiles || ! userCan( 'manage_options', site ) ) {
 			return;
 		}
 
@@ -457,7 +453,7 @@ const PluginsActions = {
 	},
 
 	togglePluginActivation: ( site, plugin ) => {
-		if ( ! utils.userCan( 'manage_options', site ) ) {
+		if ( ! userCan( 'manage_options', site ) ) {
 			return;
 		}
 
@@ -470,7 +466,7 @@ const PluginsActions = {
 	},
 
 	enableAutoUpdatesPlugin: ( site, plugin ) => {
-		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
+		if ( ! userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
 			return;
 		}
 		Dispatcher.handleViewAction( {
@@ -499,7 +495,7 @@ const PluginsActions = {
 	},
 
 	disableAutoUpdatesPlugin: ( site, plugin ) => {
-		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
+		if ( ! userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
 			return;
 		}
 
@@ -526,7 +522,7 @@ const PluginsActions = {
 	},
 
 	togglePluginAutoUpdate: ( site, plugin ) => {
-		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
+		if ( ! userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
 			return;
 		}
 
