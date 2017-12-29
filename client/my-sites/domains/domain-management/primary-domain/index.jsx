@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
@@ -22,7 +20,7 @@ import paths from 'my-sites/domains/paths';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { getSelectedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';
-import support from 'lib/url/support';
+import { SETTING_PRIMARY_DOMAIN } from 'lib/url/support';
 import { getDomainsBySite } from 'state/sites/domains/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -99,7 +97,7 @@ class PrimaryDomain extends React.Component {
 
 	render() {
 		const { selectedDomainName, selectedSite, translate } = this.props;
-		const primaryDomainSupportUrl = support.SETTING_PRIMARY_DOMAIN;
+		const primaryDomainSupportUrl = SETTING_PRIMARY_DOMAIN;
 
 		return (
 			<Main className="domain-management-primary-domain">

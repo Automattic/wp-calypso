@@ -18,7 +18,7 @@ import config from 'config';
 import HelpComponent from './main';
 import CoursesComponent from './help-courses';
 import ContactComponent from './help-contact';
-import support from 'lib/url/support';
+import { CONTACT, SUPPORT_ROOT } from 'lib/url/support';
 import userUtils from 'lib/user/utils';
 
 export default {
@@ -30,10 +30,10 @@ export default {
 		let url;
 		switch ( context.path ) {
 			case '/help':
-				url = support.SUPPORT_ROOT;
+				url = SUPPORT_ROOT;
 				break;
 			case '/help/contact':
-				url = support.CONTACT;
+				url = CONTACT;
 				break;
 			default:
 				url = login( { redirectTo: window.location.href } );

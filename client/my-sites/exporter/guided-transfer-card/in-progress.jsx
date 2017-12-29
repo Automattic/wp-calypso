@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -13,7 +11,7 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import supportUrls from 'lib/url/support';
+import { GUIDED_TRANSFER } from 'lib/url/support';
 
 const GuidedTransferInProgress = ( { translate } ) => (
 	<Card className="guided-transfer-card__in-progress">
@@ -29,9 +27,7 @@ const GuidedTransferInProgress = ( { translate } ) => (
 					'will work with you to set up a day to perform the transfer.'
 			) }
 		</p>
-		<Button href={ supportUrls.GUIDED_TRANSFER }>
-			{ translate( 'Learn more about Guided Transfers' ) }
-		</Button>
+		<Button href={ GUIDED_TRANSFER }>{ translate( 'Learn more about Guided Transfers' ) }</Button>
 	</Card>
 );
 

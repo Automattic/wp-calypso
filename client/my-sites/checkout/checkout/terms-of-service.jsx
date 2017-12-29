@@ -1,18 +1,15 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
-
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import support from 'lib/url/support';
+import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
 import Gridicon from 'gridicons';
 
 class TermsOfService extends React.Component {
@@ -23,7 +20,7 @@ class TermsOfService extends React.Component {
 	};
 
 	renderTerms = () => {
-		var message = this.props.translate(
+		let message = this.props.translate(
 			'By checking out, you agree to our {{link}}fascinating terms and conditions{{/link}}.',
 			{
 				components: {
@@ -40,10 +37,10 @@ class TermsOfService extends React.Component {
 					components: {
 						tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
 						autoRenewalSupportPage: (
-							<a href={ support.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
+							<a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
 						),
 						managePurchasesSupportPage: (
-							<a href={ support.MANAGE_PURCHASES } target="_blank" rel="noopener noreferrer" />
+							<a href={ MANAGE_PURCHASES } target="_blank" rel="noopener noreferrer" />
 						),
 					},
 				}

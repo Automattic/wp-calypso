@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -12,7 +11,7 @@ import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
 import ExternalLink from 'components/external-link';
 import { localize } from 'i18n-calypso';
-import support from 'lib/url/support';
+import { CONCIERGE_SUPPORT } from 'lib/url/support';
 
 class PrimaryHeader extends Component {
 	render() {
@@ -33,7 +32,7 @@ class PrimaryHeader extends Component {
 				<ExternalLink
 					className="concierge__info-link"
 					icon={ false }
-					href={ support.CONCIERGE_SUPPORT }
+					href={ CONCIERGE_SUPPORT }
 					target="_blank"
 				>
 					{ translate( 'Learn more' ) }

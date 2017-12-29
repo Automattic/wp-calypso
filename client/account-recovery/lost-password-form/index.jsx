@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -12,13 +10,12 @@ import { identity, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import support from 'lib/url/support';
+import { ACCOUNT_RECOVERY } from 'lib/url/support';
 import Card from 'components/card';
 import FormButton from 'components/button';
 import FormLabel from 'components/forms/form-label';
 import FormInput from 'components/forms/form-text-input';
 import { fetchResetOptionsByLogin } from 'state/account-recovery/reset/actions';
-
 import {
 	isRequestingAccountRecoveryResetOptions,
 	getAccountRecoveryResetOptionsError,
@@ -73,7 +70,7 @@ export class LostPasswordFormComponent extends Component {
 					<p>
 						{ translate(
 							'Want more help? We have a full {{link}}guide to resetting your password{{/link}}.',
-							{ components: { link: <a href={ support.ACCOUNT_RECOVERY } /> } }
+							{ components: { link: <a href={ ACCOUNT_RECOVERY } /> } }
 						) }
 					</p>
 				</Card>
