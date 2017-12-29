@@ -15,7 +15,6 @@ import { find } from 'lodash';
  */
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
@@ -27,14 +26,13 @@ import ErrorPanel from 'my-sites/stats/stats-error';
 class AnnualSiteStats extends Component {
 	static propTypes = {
 		requesting: PropTypes.bool,
-		siteId: PropTypes.number,
 		years: PropTypes.array,
 		translate: PropTypes.func,
 		moment: PropTypes.func,
 	};
 
 	renderContent( data ) {
-		const { translate } = this.props;
+		const { translate, numberFormat } = this.props;
 		return (
 			<div className="annual-site-stats__content">
 				<div className="annual-site-stats__stat">
@@ -43,47 +41,52 @@ class AnnualSiteStats extends Component {
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">{ translate( 'total posts' ) }</div>
-					<div className="annual-site-stats__stat-figure is-large">{ data.total_posts }</div>
+					<div className="annual-site-stats__stat-figure is-large">
+						{ numberFormat( data.total_posts ) }
+					</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">{ translate( 'total comments' ) }</div>
-					<div className="annual-site-stats__stat-figure">{ data.total_comments }</div>
+					<div className="annual-site-stats__stat-figure">
+						{ numberFormat( data.total_comments ) }
+					</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">
 						{ translate( 'avg comments per post' ) }
 					</div>
-					<div className="annual-site-stats__stat-figure">{ data.avg_comments }</div>
+					<div className="annual-site-stats__stat-figure">
+						{ numberFormat( data.avg_comments ) }
+					</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">{ translate( 'total likes' ) }</div>
-					<div className="annual-site-stats__stat-figure">{ data.total_likes }</div>
+					<div className="annual-site-stats__stat-figure">{ numberFormat( data.total_likes ) }</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">{ translate( 'avg likes per post' ) }</div>
-					<div className="annual-site-stats__stat-figure">{ data.avg_likes }</div>
+					<div className="annual-site-stats__stat-figure">{ numberFormat( data.avg_likes ) }</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">{ translate( 'total words' ) }</div>
-					<div className="annual-site-stats__stat-figure">{ data.total_words }</div>
+					<div className="annual-site-stats__stat-figure">{ numberFormat( data.total_words ) }</div>
 				</div>
 				<div className="annual-site-stats__stat">
 					<div className="annual-site-stats__stat-title">{ translate( 'avg words per post' ) }</div>
-					<div className="annual-site-stats__stat-figure">{ data.avg_words }</div>
+					<div className="annual-site-stats__stat-figure">{ numberFormat( data.avg_words ) }</div>
 				</div>
 			</div>
 		);
 	}
 
 	render() {
-		const { years, requesting, siteId, translate, moment, statType } = this.props;
+		const { years, requesting, translate, moment } = this.props;
 		const currentYear = moment().format( 'YYYY' );
 		const year = years && find( years, y => y.year === currentYear );
 		const isLoading = requesting && ! years;
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				{ siteId && <QuerySiteStats siteId={ siteId } statType={ statType } /> }
 				<SectionHeader label={ translate( 'Annual Site Stats' ) } />
 				<Card className="stats-module">
 					<StatsModulePlaceholder isLoading={ isLoading } />
@@ -106,8 +109,6 @@ export default connect( state => {
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, {} ),
-		siteId,
-		statType,
 		years: insights.years,
 	};
 } )( localize( AnnualSiteStats ) );
