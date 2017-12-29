@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -32,7 +30,12 @@ import analytics from 'lib/analytics';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
+import {
+	getMimePrefix,
+	getMimeType,
+	isItemBeingUploaded,
+	isTransientPreviewable,
+} from 'lib/media/utils';
 import Dialog from 'components/dialog';
 import CloseOnEscape from 'components/close-on-escape';
 import accept from 'lib/accept';
@@ -54,11 +57,11 @@ function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 		some(
 			mediaItems,
 			item =>
-				MediaUtils.isItemBeingUploaded( item ) &&
+				isItemBeingUploaded( item ) &&
 				// Transients can't be handled by the editor if they are being
 				// uploaded via an external URL
-				( MediaUtils.getMimePrefix( item ) !== 'image' ||
-					! MediaUtils.isTransientPreviewable( item ) ||
+				( getMimePrefix( item ) !== 'image' ||
+					! isTransientPreviewable( item ) ||
 					modalView === ModalViews.GALLERY )
 		)
 	);
@@ -206,7 +209,7 @@ export class EditorMediaModal extends Component {
 			);
 			if (
 				itemsWithTransientId.length === 1 &&
-				MediaUtils.getMimePrefix( itemsWithTransientId[ 0 ] ) === 'image'
+				getMimePrefix( itemsWithTransientId[ 0 ] ) === 'image'
 			) {
 				this.copyExternal( itemsWithTransientId, this.state.source );
 				this.props.onClose( {
@@ -318,7 +321,7 @@ export class EditorMediaModal extends Component {
 
 		const { fileName, site, ID, resetAllImageEditorState, width, height } = imageEditorProps;
 
-		const mimeType = MediaUtils.getMimeType( fileName );
+		const mimeType = getMimeType( fileName );
 
 		const item = Object.assign(
 			{
@@ -477,7 +480,7 @@ export class EditorMediaModal extends Component {
 			let label = this.props.translate( 'Insert' );
 			if (
 				selectedItems.length > 1 ||
-				( selectedItems.length === 1 && MediaUtils.getMimePrefix( selectedItems[ 0 ] ) !== 'image' )
+				( selectedItems.length === 1 && getMimePrefix( selectedItems[ 0 ] ) !== 'image' )
 			) {
 				label = this.props.translate( 'Copy to media library' );
 			}
@@ -495,7 +498,7 @@ export class EditorMediaModal extends Component {
 		} else if (
 			ModalViews.GALLERY !== this.props.view &&
 			selectedItems.length > 1 &&
-			! some( selectedItems, item => MediaUtils.getMimePrefix( item ) !== 'image' )
+			! some( selectedItems, item => getMimePrefix( item ) !== 'image' )
 		) {
 			buttons.push( {
 				action: 'confirm',

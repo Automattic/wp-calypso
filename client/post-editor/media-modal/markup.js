@@ -11,7 +11,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { parse, stringify } from 'lib/shortcode';
-import MediaUtils from 'lib/media/utils';
+import { getMimePrefix, getThumbnailSizeDimensions, isVideoPressItem, url } from 'lib/media/utils';
 import MediaSerialization from 'lib/media-serialization';
 
 /**
@@ -32,7 +32,7 @@ const Markup = {
 			return '';
 		}
 
-		const mimePrefix = MediaUtils.getMimePrefix( media );
+		const mimePrefix = getMimePrefix( media );
 
 		// Attempt to find a matching function in the mimeTypes object using
 		// the MIME type prefix
@@ -142,7 +142,7 @@ const Markup = {
 				width = media.width;
 				height = media.height;
 			} else {
-				const dimensions = MediaUtils.getThumbnailSizeDimensions( options.size, site );
+				const dimensions = getThumbnailSizeDimensions( options.size, site );
 				const ratio = Math.min(
 					dimensions.width / media.width || Infinity,
 					dimensions.height / media.height || Infinity
@@ -160,7 +160,7 @@ const Markup = {
 			}
 
 			const img = React.createElement( 'img', {
-				src: MediaUtils.url( media, urlOptions ),
+				src: url( media, urlOptions ),
 				alt: media.alt || media.title,
 				width: isFinite( width ) ? width : null,
 				height: isFinite( height ) ? height : null,
@@ -215,7 +215,7 @@ const Markup = {
 		 * @return {string}       A video markup string
 		 */
 		video: function( site, media ) {
-			if ( MediaUtils.isVideoPressItem( media ) ) {
+			if ( isVideoPressItem( media ) ) {
 				return stringify( {
 					tag: 'wpvideo',
 					attrs: [ media.videopress_guid ],

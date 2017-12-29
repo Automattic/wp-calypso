@@ -1,16 +1,14 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import MediaUtils from 'lib/media/utils';
+import { url } from 'lib/media/utils';
 import MediaLibraryListItemFileDetails from './list-item-file-details';
 
 import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
@@ -33,7 +31,7 @@ export default class extends React.Component {
 	state = {};
 
 	getImageDimensions = () => {
-		var width, height;
+		let width, height;
 
 		if ( this.props.media.width ) {
 			width = this.props.media.width;
@@ -54,7 +52,7 @@ export default class extends React.Component {
 	};
 
 	getImageStyle = () => {
-		var dimensions = this.getImageDimensions();
+		const dimensions = this.getImageDimensions();
 
 		return {
 			maxHeight: dimensions.height > dimensions.width ? 'none' : '100%',
@@ -77,13 +75,13 @@ export default class extends React.Component {
 	};
 
 	render() {
-		var url = MediaUtils.url( this.props.media, {
+		const imgUrl = url( this.props.media, {
 			photon: this.props.thumbnailType === MEDIA_IMAGE_PHOTON,
 			maxWidth: this.props.maxImageWidth,
 			size: this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL ? 'medium' : false,
 		} );
 
-		if ( ! url ) {
+		if ( ! imgUrl ) {
 			return (
 				<MediaLibraryListItemFileDetails
 					scale={ this.props.scale }
@@ -95,7 +93,7 @@ export default class extends React.Component {
 
 		return (
 			<img
-				src={ url }
+				src={ imgUrl }
 				onLoad={ this.setUnknownImageDimensions }
 				alt={ this.props.media.alt || this.props.media.title }
 				style={ this.getImageStyle() }

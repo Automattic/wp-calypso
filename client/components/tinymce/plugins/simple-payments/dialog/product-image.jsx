@@ -1,9 +1,5 @@
-/**
- * /* eslint-disable wpcalypso/jsx-classname-namespace
- *
- * @format
- */
-
+/** @format **/
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -13,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MediaUtils from 'lib/media/utils';
+import { url } from 'lib/media/utils';
 import QueryMedia from 'components/data/query-media';
 import { getMediaItem } from 'state/selectors';
 
@@ -30,11 +26,12 @@ const ProductImage = ( { siteId, imageId, image } ) => {
 		);
 	}
 
-	const url = MediaUtils.url( image, { size: 'medium' } );
-
 	return (
 		<figure className="editor-simple-payments-modal__figure">
-			<img className="editor-simple-payments-modal__image" src={ url } />
+			<img
+				className="editor-simple-payments-modal__image"
+				src={ url( image, { size: 'medium' } ) }
+			/>
 		</figure>
 	);
 };

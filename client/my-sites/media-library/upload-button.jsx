@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -16,7 +14,7 @@ import page from 'page';
  */
 import analytics from 'lib/analytics';
 import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
+import { getAllowedFileTypesForSite, isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils';
 import { VideoPressFileTypes } from 'lib/media/constants';
 
 export default class extends React.Component {
@@ -61,10 +59,10 @@ export default class extends React.Component {
 	 * @return {string} Supported file extensions, as comma-separated string
 	 */
 	getInputAccept = () => {
-		if ( ! MediaUtils.isSiteAllowedFileTypesToBeTrusted( this.props.site ) ) {
+		if ( ! isSiteAllowedFileTypesToBeTrusted( this.props.site ) ) {
 			return null;
 		}
-		const allowedFileTypesForSite = MediaUtils.getAllowedFileTypesForSite( this.props.site );
+		const allowedFileTypesForSite = getAllowedFileTypesForSite( this.props.site );
 
 		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) )
 			.map( type => `.${ type }` )
@@ -72,7 +70,7 @@ export default class extends React.Component {
 	};
 
 	render() {
-		var classes = classNames( 'media-library__upload-button', 'button', this.props.className );
+		const classes = classNames( 'media-library__upload-button', 'button', this.props.className );
 
 		return (
 			<form ref="form" className={ classes }>

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { assign, isEqual, noop, omit } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -18,7 +16,7 @@ import ListItemImage from './list-item-image';
 import ListItemVideo from './list-item-video';
 import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
-import MediaUtils from 'lib/media/utils';
+import { getMimePrefix } from 'lib/media/utils';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
 import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
@@ -61,13 +59,13 @@ export default class extends React.Component {
 	};
 
 	renderItem = () => {
-		var component;
+		let component;
 
 		if ( ! this.props.media ) {
 			return;
 		}
 
-		switch ( MediaUtils.getMimePrefix( this.props.media ) ) {
+		switch ( getMimePrefix( this.props.media ) ) {
 			case 'image':
 				component = ListItemImage;
 				break;
@@ -98,18 +96,18 @@ export default class extends React.Component {
 	};
 
 	render() {
-		var classes, props, style, title;
+		let title;
 
-		classes = classNames( 'media-library__list-item', {
+		const classes = classNames( 'media-library__list-item', {
 			'is-placeholder': ! this.props.media,
 			'is-selected': -1 !== this.props.selectedIndex,
 			'is-transient': this.props.media && this.props.media.transient,
 			'is-small': this.props.scale <= 0.125,
 		} );
 
-		props = omit( this.props, Object.keys( this.constructor.propTypes ) );
+		const props = omit( this.props, Object.keys( this.constructor.propTypes ) );
 
-		style = assign(
+		const style = assign(
 			{
 				width: this.props.scale * 100 + '%',
 			},

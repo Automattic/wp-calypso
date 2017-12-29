@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -75,6 +76,26 @@ class PostItem extends React.Component {
 		return this.inAllSitesModeWithMultipleUsers() || this.inSingleSiteModeWithMultipleUsers();
 	}
 
+	maybeScrollIntoView() {
+		const element = ReactDom.findDOMNode( this );
+		const viewportBottom = document.documentElement.clientHeight + window.scrollY;
+		const distanceFromBottom = viewportBottom - element.offsetTop;
+
+		if ( distanceFromBottom < 250 ) {
+			const desiredOffset = window.scrollY + ( 250 - distanceFromBottom );
+
+			window.scrollTo( 0, desiredOffset );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { hasExpandedContent } = this.props;
+
+		if ( ! prevProps.hasExpandedContent && hasExpandedContent ) {
+			this.maybeScrollIntoView();
+		}
+	}
+
 	renderSelectionCheckbox() {
 		const { multiSelectEnabled, isCurrentPostSelected } = this.props;
 		return (
@@ -90,9 +111,9 @@ class PostItem extends React.Component {
 	}
 
 	renderExpandedContent() {
-		const { post, isCurrentSharePanelOpen } = this.props;
+		const { post, hasExpandedContent } = this.props;
 
-		if ( ! post || ! isCurrentSharePanelOpen ) {
+		if ( ! post || ! hasExpandedContent ) {
 			return null;
 		}
 
@@ -116,6 +137,7 @@ class PostItem extends React.Component {
 			isAllSitesModeSelected,
 			translate,
 			multiSelectEnabled,
+			hasExpandedContent,
 		} = this.props;
 
 		const title = post ? post.title : null;
@@ -128,10 +150,8 @@ class PostItem extends React.Component {
 
 		const isAuthorVisible = this.hasMultipleUsers() && post && post.author;
 
-		const expandedContent = this.renderExpandedContent();
-
 		const rootClasses = classnames( 'post-item', {
-			'is-expanded': !! expandedContent,
+			'is-expanded': !! hasExpandedContent,
 		} );
 
 		return (
@@ -143,7 +163,11 @@ class PostItem extends React.Component {
 							{ isAllSitesModeSelected && <PostTypeSiteInfo globalId={ globalId } /> }
 							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
 						</div>
-						<h1 className="post-item__title" onClick={ this.clickHandler( 'title' ) } onMouseOver={ preloadEditor }>
+						<h1
+							className="post-item__title"
+							onClick={ this.clickHandler( 'title' ) }
+							onMouseOver={ preloadEditor }
+						>
 							{ ! externalPostLink && (
 								<a
 									href={ isPlaceholder || multiSelectEnabled ? null : postUrl }
@@ -178,7 +202,7 @@ class PostItem extends React.Component {
 					/>
 					{ ! multiSelectEnabled && <PostActionsEllipsisMenu globalId={ globalId } /> }
 				</div>
-				{ expandedContent }
+				{ hasExpandedContent && this.renderExpandedContent() }
 			</div>
 		);
 	}
@@ -196,8 +220,8 @@ PostItem.propTypes = {
 	singleUserQuery: PropTypes.bool,
 	className: PropTypes.string,
 	compact: PropTypes.bool,
-	isCurrentSharePanelOpen: PropTypes.bool,
 	hideSharePanel: PropTypes.func,
+	hasExpandedContent: PropTypes.bool,
 };
 
 export default connect(
@@ -213,6 +237,8 @@ export default connect(
 		const externalPostLink = false === canCurrentUserEditPost( state, globalId );
 		const postUrl = externalPostLink ? post.URL : getEditorPath( state, siteId, post.ID );
 
+		const hasExpandedContent = isSharePanelOpen( state, globalId ) || false;
+
 		return {
 			post,
 			externalPostLink,
@@ -220,7 +246,7 @@ export default connect(
 			isAllSitesModeSelected: getSelectedSiteId( state ) === null,
 			allSitesSingleUser: areAllSitesSingleUser( state ),
 			singleUserSite: isSingleUserSite( state, siteId ),
-			isCurrentSharePanelOpen: isSharePanelOpen( state, globalId ),
+			hasExpandedContent,
 			isCurrentPostSelected: isPostSelected( state, globalId ),
 			multiSelectEnabled: isMultiSelectEnabled( state ),
 		};
