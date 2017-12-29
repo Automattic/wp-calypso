@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import page from 'page';
 import FeedPostStore from 'lib/feed-post-store';
-import FeedPostStoreActions from 'lib/feed-post-store/actions';
+import { fetchPost } from 'lib/feed-post-store/actions';
 import { getSourceData as getDiscoverSourceData } from 'reader/discover/helper';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import cssSafeUrl from 'lib/css-safe-url';
@@ -24,7 +24,7 @@ class FeedFeatured extends React.PureComponent {
 			const post = FeedPostStore.get( postKey );
 
 			if ( this.shouldFetch( post ) ) {
-				FeedPostStoreActions.fetchPost( postKey );
+				fetchPost( postKey );
 				return { post };
 			}
 
@@ -101,7 +101,7 @@ class FeedFeatured extends React.PureComponent {
 				case 'error':
 					break;
 				default:
-					let style = {
+					const style = {
 						backgroundImage:
 							post.canonical_image && post.canonical_image.uri
 								? 'url(' + cssSafeUrl( post.canonical_image.uri ) + ')'
