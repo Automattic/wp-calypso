@@ -18,7 +18,7 @@ import FreeCartPaymentBox from './free-cart-payment-box';
 import CreditCardPaymentBox from './credit-card-payment-box';
 import PayPalPaymentBox from './paypal-payment-box';
 import SourcePaymentBox from './source-payment-box';
-import storeTransactions from 'lib/store-transactions';
+import { fullCreditsPayment, newCardPayment, storedCardPayment } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import TransactionStepsMixin from './transaction-steps-mixin';
 import upgradesActions from 'lib/upgrades/actions';
@@ -116,14 +116,14 @@ const SecurePaymentForm = createReactClass( {
 				// FIXME: The endpoint doesn't currently support transactions with no
 				//   payment info, so for now we rely on the credits payment method for
 				//   free carts.
-				newPayment = storeTransactions.fullCreditsPayment();
+				newPayment = fullCreditsPayment;
 				break;
 
 			case 'credit-card':
 				if ( this.getInitialCard() ) {
-					newPayment = storeTransactions.storedCardPayment( this.getInitialCard() );
+					newPayment = storedCardPayment( this.getInitialCard() );
 				} else {
-					newPayment = storeTransactions.newCardPayment();
+					newPayment = newCardPayment();
 				}
 				break;
 

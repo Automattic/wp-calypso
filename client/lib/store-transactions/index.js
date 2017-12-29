@@ -36,7 +36,7 @@ const wpcom = wp.undocumented();
  * @param {object} domainDetails - Optional domain registration details if the shopping cart contains a domain registration product
  *   transaction.
  */
-function submit( params ) {
+export function submit( params ) {
 	return new TransactionFlow( params );
 }
 
@@ -65,15 +65,13 @@ inherits( TransactionFlow, Readable );
  * while the first one finises.
  */
 TransactionFlow.prototype._read = function() {
-	var paymentMethod, paymentHandler;
-
 	if ( this._hasStarted ) {
 		return false;
 	}
 	this._hasStarted = true;
 
-	paymentMethod = this._initialData.payment.paymentMethod;
-	paymentHandler = this._paymentHandlers[ paymentMethod ];
+	const paymentMethod = this._initialData.payment.paymentMethod;
+	const paymentHandler = this._paymentHandlers[ paymentMethod ];
 	if ( ! paymentHandler ) {
 		throw new Error( 'Invalid payment method: ' + paymentMethod );
 	}
@@ -82,7 +80,7 @@ TransactionFlow.prototype._read = function() {
 };
 
 TransactionFlow.prototype._pushStep = function( options ) {
-	var defaults = {
+	const defaults = {
 		first: false,
 		last: false,
 		timestamp: Date.now(),
@@ -169,12 +167,12 @@ TransactionFlow.prototype._createCardToken = function( callback ) {
 };
 
 TransactionFlow.prototype._submitWithPayment = function( payment ) {
-	var onComplete = this.push.bind( this, null ), // End the stream when the transaction has finished
-		transaction = {
-			cart: omit( this._initialData.cart, [ 'messages' ] ), // messages contain reference to DOMNode
-			domain_details: this._initialData.domainDetails,
-			payment: payment,
-		};
+	const onComplete = this.push.bind( this, null ); // End the stream when the transaction has finished
+	const transaction = {
+		cart: omit( this._initialData.cart, [ 'messages' ] ), // messages contain reference to DOMNode
+		domain_details: this._initialData.domainDetails,
+		payment: payment,
+	};
 
 	this._pushStep( { name: SUBMITTING_WPCOM_REQUEST } );
 
@@ -200,7 +198,7 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 	);
 };
 
-function createPaygateToken( requestType, cardDetails, callback ) {
+export function createCardToken( requestType, cardDetails, callback ) {
 	debug( 'creating token with Paygate' );
 	wpcom.paygateConfiguration(
 		{
@@ -245,10 +243,6 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 	}
 }
 
-function createCardToken( requestType, cardDetails, callback ) {
-	return createPaygateToken( requestType, cardDetails, callback );
-}
-
 function getPaygateParameters( cardDetails ) {
 	return {
 		name: cardDetails.name,
@@ -261,33 +255,22 @@ function getPaygateParameters( cardDetails ) {
 	};
 }
 
-function hasDomainDetails( transaction ) {
+export function hasDomainDetails( transaction ) {
 	return ! isEmpty( transaction.domainDetails );
 }
 
-function newCardPayment( newCardDetails ) {
+export function newCardPayment( newCardDetails ) {
 	return {
 		paymentMethod: 'WPCOM_Billing_MoneyPress_Paygate',
 		newCardDetails: newCardDetails || {},
 	};
 }
 
-function storedCardPayment( storedCard ) {
+export function storedCardPayment( storedCard ) {
 	return {
 		paymentMethod: 'WPCOM_Billing_MoneyPress_Stored',
 		storedCard: storedCard,
 	};
 }
 
-function fullCreditsPayment() {
-	return { paymentMethod: 'WPCOM_Billing_WPCOM' };
-}
-
-export default {
-	createCardToken,
-	fullCreditsPayment,
-	hasDomainDetails,
-	newCardPayment,
-	storedCardPayment,
-	submit,
-};
+export const fullCreditsPayment = { paymentMethod: 'WPCOM_Billing_WPCOM' };
