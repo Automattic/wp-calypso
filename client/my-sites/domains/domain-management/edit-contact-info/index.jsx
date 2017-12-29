@@ -20,7 +20,7 @@ import PendingWhoisUpdateCard from './pending-whois-update-card';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
+import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
 import { findRegistrantWhois } from 'lib/domains/whois/utils';
 import SectionHeader from 'components/section-header';
@@ -86,10 +86,7 @@ class EditContactInfo extends React.Component {
 
 	goToContactsPrivacy = () => {
 		page(
-			paths.domainManagementContactsPrivacy(
-				this.props.selectedSite.slug,
-				this.props.selectedDomainName
-			)
+			domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName )
 		);
 	};
 }

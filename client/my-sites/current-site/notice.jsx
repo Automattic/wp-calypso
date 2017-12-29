@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import url from 'url';
@@ -16,12 +14,13 @@ import { localize } from 'i18n-calypso';
 import SidebarBanner from 'my-sites/current-site/sidebar-banner';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import paths from 'my-sites/domains/paths';
+import { domainManagementList } from 'my-sites/domains/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { canCurrentUser, isDomainOnlySite, isEligibleForFreeToPaidUpsell } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import {
+	isDomainOnlySite,
 	isStarted as isJetpackPluginsStarted,
 	isFinished as isJetpackPluginsFinished,
 } from 'state/plugins/premium/selectors';
@@ -55,7 +54,7 @@ class SiteNotice extends React.Component {
 					components: { a: <a href={ site.URL } /> },
 				} ) }
 			>
-				<NoticeAction href={ paths.domainManagementList( site.domain ) }>
+				<NoticeAction href={ domainManagementList( site.domain ) }>
 					{ translate( 'Edit' ) }
 				</NoticeAction>
 			</Notice>

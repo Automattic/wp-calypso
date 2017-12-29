@@ -12,7 +12,11 @@ import { translate } from 'i18n-calypso';
 import { getTld } from 'lib/domains';
 import support from 'lib/url/support';
 import { domainAvailability } from 'lib/domains/constants';
-import paths from 'my-sites/domains/paths';
+import {
+	domainManagementTransferToOtherSite,
+	domainManagementTransferIn,
+	domainTransferIn,
+} from 'my-sites/domains/paths';
 
 function getAvailabilityNotice( domain, error, site ) {
 	let message,
@@ -51,7 +55,7 @@ function getAvailabilityNotice( domain, error, site ) {
 						a: (
 							<a
 								rel="noopener noreferrer"
-								href={ paths.domainManagementTransferToOtherSite( site, domain ) }
+								href={ domainManagementTransferToOtherSite( site, domain ) }
 							/>
 						),
 					},
@@ -67,7 +71,7 @@ function getAvailabilityNotice( domain, error, site ) {
 					args: { domain },
 					components: {
 						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ paths.domainTransferIn( site, domain ) } />,
+						a: <a rel="noopener noreferrer" href={ domainTransferIn( site, domain ) } />,
 					},
 				}
 			);
@@ -100,12 +104,7 @@ function getAvailabilityNotice( domain, error, site ) {
 					args: { domain },
 					components: {
 						strong: <strong />,
-						a: (
-							<a
-								rel="noopener noreferrer"
-								href={ paths.domainManagementTransferIn( site, domain ) }
-							/>
-						),
+						a: <a rel="noopener noreferrer" href={ domainManagementTransferIn( site, domain ) } />,
 					},
 				}
 			);
