@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, isEqual, isUndefined, map, orderBy, slice } from 'lodash';
+import { find, get, isEqual, isUndefined, map } from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
@@ -71,13 +71,6 @@ export class CommentList extends Component {
 		changePage( page );
 	};
 
-	getComments = () => orderBy( this.props.comments, null, this.state.sortOrder );
-
-	getCommentsPage = ( comments, page ) => {
-		const startingIndex = ( page - 1 ) * COMMENTS_PER_PAGE;
-		return slice( comments, startingIndex, startingIndex + COMMENTS_PER_PAGE );
-	};
-
 	getEmptyMessage = () => {
 		const { status, translate } = this.props;
 
@@ -96,18 +89,15 @@ export class CommentList extends Component {
 		);
 	};
 
-	getTotalPages = () => Math.ceil( this.props.comments.length / COMMENTS_PER_PAGE );
+	getTotalPages = () => Math.ceil( this.props.commentsCount / COMMENTS_PER_PAGE );
 
 	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
 
 	isRequestedPageValid = () => this.getTotalPages() >= this.props.page;
 
-	isSelectedAll = () => {
-		const { page } = this.props;
-		const { selectedComments } = this.state;
-		const visibleComments = this.getCommentsPage( this.getComments(), page );
-		return selectedComments.length && selectedComments.length === visibleComments.length;
-	};
+	isSelectedAll = () =>
+		this.state.selectedComments.length &&
+		this.state.selectedComments.length === this.props.comments.length;
 
 	setSortOrder = order => () => {
 		this.setState( {
