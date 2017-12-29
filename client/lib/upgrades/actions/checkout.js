@@ -4,7 +4,7 @@
  */
 import { action as ActionTypes } from '../constants';
 import Dispatcher from 'dispatcher';
-import storeTransactions from 'lib/store-transactions';
+import { submit } from 'lib/store-transactions';
 
 export function setDomainDetails( domainDetails ) {
 	Dispatcher.handleViewAction( {
@@ -31,7 +31,7 @@ export function setNewCreditCardDetails( options ) {
 }
 
 export function submitTransaction( { cart, transaction }, onComplete ) {
-	const steps = storeTransactions.submit( {
+	const steps = submit( {
 		cart: cart,
 		payment: transaction.payment,
 		domainDetails: transaction.domainDetails,
