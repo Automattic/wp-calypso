@@ -19,10 +19,9 @@ function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( path => page( path, ...handlers ) );
 }
 
-function getCommonHandlers( {
-	noSitePath = paths.domainManagementRoot(),
-	warnIfJetpack = true,
-} = {} ) {
+function getCommonHandlers(
+	{ noSitePath = paths.domainManagementRoot(), warnIfJetpack = true } = {}
+) {
 	const handlers = [ siteSelection, navigation ];
 
 	if ( noSitePath ) {
