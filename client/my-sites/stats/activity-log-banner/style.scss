@@ -53,23 +53,23 @@
 	flex-shrink: 0;
 	flex-basis: 200px;
 }
-	.activity-log-banner__title {
-		margin-bottom: 8px;
-		font-weight: 600;
-	}
-	.activity-log-banner__body {
-	}
-
-	.activity-log-banner__action {
-		width: 50px;
-	}
-// /.activity-log-banner__content
+.activity-log-banner__title {
+	margin-bottom: 8px;
+	font-weight: 600;
+}
+.activity-log-banner__action {
+	width: 50px;
+}
 
 .activity-log-banner__dismiss {
 	color: $gray;
 	cursor: pointer;
 	margin-top: -8px;
 	margin-right: -8px;
+}
+
+.activity-log-banner__success-gotit {
+	margin-left: 16px;
 }
 
 .activity-log-banner__progress-bar--queued.is-pulsing .progress-bar__progress {
