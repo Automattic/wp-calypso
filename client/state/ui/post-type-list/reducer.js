@@ -20,7 +20,7 @@ import {
 } from 'state/action-types';
 
 const initialState = {
-	activeSharePanels: [],
+	postIdWithActiveSharePanel: null,
 	postIdWithActiveLikesPopover: null,
 	isMultiSelectEnabled: false,
 	selectedPosts: [],
@@ -75,19 +75,19 @@ export const postTypeList = ( state = initialState, action ) => {
 		case POST_TYPE_LIST_SHARE_PANEL_HIDE:
 			return {
 				...state,
-				activeSharePanels: without( state.activeSharePanels, action.postGlobalId ),
+				postIdWithActiveSharePanel: null,
 			};
 
 		case POST_TYPE_LIST_SHARE_PANEL_TOGGLE:
-			if ( state.activeSharePanels.indexOf( action.postGlobalId ) > -1 ) {
+			if ( state.postIdWithActiveSharePanel === action.postGlobalId ) {
 				return {
 					...state,
-					activeSharePanels: without( state.activeSharePanels, action.postGlobalId ),
+					postIdWithActiveSharePanel: null,
 				};
 			}
 			return {
 				...state,
-				activeSharePanels: [ action.postGlobalId ],
+				postIdWithActiveSharePanel: action.postGlobalId,
 			};
 	}
 
