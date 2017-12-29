@@ -18,6 +18,7 @@ jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/post-normalizer', () => require( './mocks/lib/post-normalizer' ) );
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
+import { action as FeedPostActionType } from 'lib/feed-post-store/constants';
 let Dispatcher, FeedPostStore;
 
 describe( 'feed-post-store', () => {
