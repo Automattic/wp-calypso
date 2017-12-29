@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { ReduceStore } from 'flux/utils';
 import { intersection, pickBy } from 'lodash';
 
@@ -11,7 +9,7 @@ import { intersection, pickBy } from 'lodash';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import Shortcode from 'lib/shortcode';
+import { parse } from 'lib/shortcode';
 import { ActionTypes, LoadStatus } from './constants';
 
 class ShortcodesStore extends ReduceStore {
@@ -83,7 +81,7 @@ class ShortcodesStore extends ReduceStore {
 
 				state = Object.assign( {}, state, {
 					[ action.siteId ]: pickBy( state[ action.siteId ], ( status, shortcode ) => {
-						const parsed = Shortcode.parse( shortcode );
+						const parsed = parse( shortcode );
 						if ( parsed.tag !== 'gallery' || ! parsed.attrs.named || ! parsed.attrs.named.ids ) {
 							return true;
 						}
