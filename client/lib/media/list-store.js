@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { assign, isEqual, map, omit } from 'lodash';
 
 /**
@@ -11,7 +9,7 @@ import { assign, isEqual, map, omit } from 'lodash';
  */
 import Dispatcher from 'dispatcher';
 import MediaStore from './store';
-import MediaUtils from './utils';
+import { sortItemsByDate as sortMediaItemsByDate } from './utils';
 import emitter from 'lib/mixins/emitter';
 
 /**
@@ -26,13 +24,11 @@ const MediaListStore = {
 	SAME_QUERY_IGNORE_PARAMS = Object.freeze( [ 'number', 'page_handle' ] );
 
 function sortItemsByDate( siteId ) {
-	var sortedItems;
-
 	if ( ! ( siteId in MediaListStore._media ) ) {
 		return;
 	}
 
-	sortedItems = MediaUtils.sortItemsByDate( MediaListStore.getAll( siteId ) );
+	const sortedItems = sortMediaItemsByDate( MediaListStore.getAll( siteId ) );
 	MediaListStore._media[ siteId ] = map( sortedItems, 'ID' );
 }
 
@@ -43,14 +39,12 @@ function ensureMediaForSiteId( siteId ) {
 }
 
 function receiveSingle( siteId, item, itemId ) {
-	var existingIndex;
-
 	ensureMediaForSiteId( siteId );
 
 	if ( itemId ) {
 		// When updating an existing item, account for the case where the ID
 		// has changed by replacing its existing ID in the array
-		existingIndex = MediaListStore._media[ siteId ].indexOf( itemId );
+		const existingIndex = MediaListStore._media[ siteId ].indexOf( itemId );
 		if ( -1 !== existingIndex ) {
 			MediaListStore._media[ siteId ].splice( existingIndex, 1, item.ID );
 		}
@@ -63,13 +57,11 @@ function receiveSingle( siteId, item, itemId ) {
 }
 
 function removeSingle( siteId, item ) {
-	var index;
-
 	if ( ! ( siteId in MediaListStore._media ) ) {
 		return;
 	}
 
-	index = MediaListStore._media[ siteId ].indexOf( item.ID );
+	const index = MediaListStore._media[ siteId ].indexOf( item.ID );
 	if ( -1 !== index ) {
 		MediaListStore._media[ siteId ].splice( index, 1 );
 	}
@@ -132,19 +124,17 @@ function sourceHasDate( source ) {
 }
 
 MediaListStore.isItemMatchingQuery = function( siteId, item ) {
-	var query, matches;
-
 	if ( ! ( siteId in MediaListStore._activeQueries ) ) {
 		return true;
 	}
 
-	query = omit( MediaListStore._activeQueries[ siteId ].query, SAME_QUERY_IGNORE_PARAMS );
+	const query = omit( MediaListStore._activeQueries[ siteId ].query, SAME_QUERY_IGNORE_PARAMS );
 
 	if ( ! Object.keys( query ).length ) {
 		return true;
 	}
 
-	matches = true;
+	let matches = true;
 
 	if ( query.search && ! query.source ) {
 		// WP_Query tests a post's title and content when performing a search.
@@ -190,7 +180,7 @@ MediaListStore.getAllIds = function( siteId ) {
 };
 
 MediaListStore.getAll = function( siteId ) {
-	var allIds = MediaListStore.getAllIds( siteId );
+	const allIds = MediaListStore.getAllIds( siteId );
 
 	if ( allIds ) {
 		return allIds.map( MediaStore.get.bind( null, siteId ) );

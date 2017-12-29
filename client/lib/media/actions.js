@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { assign } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:media' );
@@ -13,7 +11,7 @@ const debug = debugFactory( 'calypso:media' );
  */
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
-import MediaUtils from './utils';
+import { createTransientMedia } from './utils';
 import PostEditStore from 'lib/posts/post-edit-store';
 import MediaStore from './store';
 import MediaListStore from './list-store';
@@ -40,7 +38,7 @@ MediaActions.setQuery = function( siteId, query ) {
 };
 
 MediaActions.fetch = function( siteId, itemId ) {
-	var fetchKey = [ siteId, itemId ].join();
+	const fetchKey = [ siteId, itemId ].join();
 	if ( MediaActions._fetching[ fetchKey ] ) {
 		return;
 	}
@@ -153,7 +151,7 @@ function uploadFiles( uploader, files, site ) {
 
 		// Generate a fake transient item that can be used immediately, even
 		// before the media has persisted to the server
-		const transientMedia = { date, ...MediaUtils.createTransientMedia( file ) };
+		const transientMedia = { date, ...createTransientMedia( file ) };
 		if ( file.ID ) {
 			transientMedia.ID = file.ID;
 		}
@@ -212,7 +210,7 @@ MediaActions.add = function( site, files ) {
 };
 
 MediaActions.edit = function( siteId, item ) {
-	var newItem = assign( {}, MediaStore.get( siteId, item.ID ), item );
+	const newItem = assign( {}, MediaStore.get( siteId, item.ID ), item );
 
 	Dispatcher.handleViewAction( {
 		type: 'RECEIVE_MEDIA_ITEM',
@@ -243,13 +241,13 @@ MediaActions.update = function( siteId, item, editMediaFile = false ) {
 		// even before the media has persisted to the server
 		updateAction.data = {
 			...newItem,
-			...MediaUtils.createTransientMedia( item.media ),
+			...createTransientMedia( item.media ),
 			ID: mediaId,
 		};
 	} else if ( editMediaFile && item.media_url ) {
 		updateAction.data = {
 			...newItem,
-			...MediaUtils.createTransientMedia( item.media_url ),
+			...createTransientMedia( item.media_url ),
 			ID: mediaId,
 		};
 	}

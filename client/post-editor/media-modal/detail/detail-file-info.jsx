@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -12,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import MediaUtils from 'lib/media/utils';
+import { playtime } from 'lib/media/utils';
 
 class EditorMediaModalDetailFileInfo extends React.Component {
 	static displayName = 'EditorMediaModalDetailFileInfo';
@@ -50,7 +48,7 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 				break;
 
 			case 'length':
-				value = MediaUtils.playtime( this.props.item[ attribute ] );
+				value = playtime( this.props.item[ attribute ] );
 				break;
 
 			default:
@@ -87,7 +85,7 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 	};
 
 	render() {
-		let classes = classNames( 'editor-media-modal-detail__file-info', {
+		const classes = classNames( 'editor-media-modal-detail__file-info', {
 			'is-loading': ! this.props.item,
 		} );
 

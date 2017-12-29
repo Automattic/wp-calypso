@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
@@ -19,7 +17,7 @@ import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
 import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
+import { getMimeType } from 'lib/media/utils';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import accept from 'lib/accept';
@@ -115,7 +113,7 @@ class Media extends Component {
 
 		const { fileName, site, ID, resetAllImageEditorState } = imageEditorProps;
 
-		const mimeType = MediaUtils.getMimeType( fileName );
+		const mimeType = getMimeType( fileName );
 
 		const item = {
 			ID: ID,

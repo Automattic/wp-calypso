@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { assign } from 'lodash';
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
@@ -13,15 +11,13 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Shortcode from 'lib/shortcode';
-import MediaUtils from 'lib/media/utils';
+import { getMimePrefix, getThumbnailSizeDimensions, isVideoPressItem, url } from 'lib/media/utils';
 import MediaSerialization from 'lib/media-serialization';
 
 /**
  * Module variables
  */
-var Markup;
-
-Markup = {
+const Markup = {
 	/**
 	 * Given a media object and a site, returns a markup string representing that object
 	 * as HTML.
@@ -32,13 +28,11 @@ Markup = {
 	 * @return {string}         A markup string
 	 */
 	get: function( site, media, options ) {
-		var mimePrefix;
-
 		if ( ! media || media.hasOwnProperty( 'status' ) ) {
 			return '';
 		}
 
-		mimePrefix = MediaUtils.getMimePrefix( media );
+		const mimePrefix = getMimePrefix( media );
 
 		// Attempt to find a matching function in the mimeTypes object using
 		// the MIME type prefix
@@ -57,7 +51,7 @@ Markup = {
 	 * @return {string}       A link markup string
 	 */
 	link: function( media ) {
-		var element = React.createElement(
+		const element = React.createElement(
 			'a',
 			{
 				href: media.URL,
@@ -84,18 +78,18 @@ Markup = {
 	 *                                 a captioned item.
 	 */
 	caption: function( site, media ) {
-		var parsed, match, img, caption, width;
+		let caption, img, width;
 
 		if ( 'string' !== typeof media ) {
 			media = Markup.get( site, media );
 		}
 
-		parsed = Shortcode.parse( media );
+		const parsed = Shortcode.parse( media );
 		if ( ! parsed || ! parsed.content ) {
 			return null;
 		}
 
-		match = parsed.content.match( /((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i );
+		const match = parsed.content.match( /((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i );
 		if ( match ) {
 			img = match[ 1 ].trim();
 			caption = match[ 2 ].trim();
@@ -148,7 +142,7 @@ Markup = {
 				width = media.width;
 				height = media.height;
 			} else {
-				const dimensions = MediaUtils.getThumbnailSizeDimensions( options.size, site );
+				const dimensions = getThumbnailSizeDimensions( options.size, site );
 				const ratio = Math.min(
 					dimensions.width / media.width || Infinity,
 					dimensions.height / media.height || Infinity
@@ -166,7 +160,7 @@ Markup = {
 			}
 
 			const img = React.createElement( 'img', {
-				src: MediaUtils.url( media, urlOptions ),
+				src: url( media, urlOptions ),
 				alt: media.alt || media.title,
 				width: isFinite( width ) ? width : null,
 				height: isFinite( height ) ? height : null,
@@ -221,7 +215,7 @@ Markup = {
 		 * @return {string}       A video markup string
 		 */
 		video: function( site, media ) {
-			if ( MediaUtils.isVideoPressItem( media ) ) {
+			if ( isVideoPressItem( media ) ) {
 				return Shortcode.stringify( {
 					tag: 'wpvideo',
 					attrs: [ media.videopress_guid ],

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { isEmpty, mapValues, pickBy, without } from 'lodash';
 
 /**
@@ -11,7 +9,11 @@ import { isEmpty, mapValues, pickBy, without } from 'lodash';
  */
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
-import MediaUtils from './utils';
+import {
+	isExceedingSiteMaxUploadSize,
+	isSupportedFileTypeForSite,
+	isSupportedFileTypeInPremium,
+} from './utils';
 import { ValidationErrors as MediaValidationErrors } from './constants';
 
 /**
@@ -60,15 +62,15 @@ MediaValidationStore.validateItem = function( site, item ) {
 		return;
 	}
 
-	if ( ! MediaUtils.isSupportedFileTypeForSite( item, site ) ) {
-		if ( MediaUtils.isSupportedFileTypeInPremium( item, site ) ) {
+	if ( ! isSupportedFileTypeForSite( item, site ) ) {
+		if ( isSupportedFileTypeInPremium( item, site ) ) {
 			itemErrors.push( MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN );
 		} else {
 			itemErrors.push( MediaValidationErrors.FILE_TYPE_UNSUPPORTED );
 		}
 	}
 
-	if ( true === MediaUtils.isExceedingSiteMaxUploadSize( item, site ) ) {
+	if ( true === isExceedingSiteMaxUploadSize( item, site ) ) {
 		itemErrors.push( MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE );
 	}
 
@@ -151,10 +153,8 @@ MediaValidationStore.hasErrors = function( siteId, itemId ) {
 	return Object.keys( MediaValidationStore.getAllErrors( siteId ) ).length;
 };
 
-MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
-		items,
-		errors;
+MediaValidationStore.dispatchToken = Dispatcher.register( function( { action } ) {
+	let errors;
 
 	switch ( action.type ) {
 		case 'CREATE_MEDIA_ITEM':
@@ -162,13 +162,11 @@ MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
 				break;
 			}
 
-			items = Array.isArray( action.data.media ) ? action.data.media : [ action.data ];
+			const items = Array.isArray( action.data.media ) ? action.data.media : [ action.data ];
 			errors = items.reduce( function( memo, item ) {
-				var itemErrors;
-
 				MediaValidationStore.validateItem( action.site, item );
 
-				itemErrors = MediaValidationStore.getErrors( action.siteId, item.ID );
+				const itemErrors = MediaValidationStore.getErrors( action.siteId, item.ID );
 				if ( itemErrors.length ) {
 					memo[ item.ID ] = itemErrors;
 				}
