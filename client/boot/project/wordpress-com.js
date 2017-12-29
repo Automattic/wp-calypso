@@ -28,7 +28,7 @@ import superProps from 'lib/analytics/super-props';
 import translatorJumpstart from 'lib/translator-jumpstart';
 import nuxWelcome from 'layout/nux-welcome';
 import emailVerification from 'components/email-verification';
-import viewport from 'lib/viewport';
+import { isDesktop } from 'lib/viewport';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { pruneStaleRecords } from 'lib/wp/sync-handler';
 import { setReduxStore as setSupportUserReduxStore } from 'lib/user/support-user-interop';
@@ -163,7 +163,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 			context.pathname.indexOf( '/me/next' ) === -1
 		) {
 			// show welcome message, persistent for full sized screens
-			nuxWelcome.setWelcome( viewport.isDesktop() );
+			nuxWelcome.setWelcome( isDesktop() );
 		} else {
 			nuxWelcome.clearTempWelcome();
 		}

@@ -13,7 +13,7 @@ import { omit } from 'lodash';
  * Internal dependencies
  */
 import FormTextInput from 'components/forms/form-text-input';
-import viewport from 'lib/viewport';
+import { isMobile } from 'lib/viewport';
 
 export default class extends React.Component {
 	static displayName = 'FormPasswordInput';
@@ -23,9 +23,7 @@ export default class extends React.Component {
 	};
 
 	componentDidMount() {
-		var isMobile = viewport.isMobile();
-
-		if ( isMobile ) {
+		if ( isMobile() ) {
 			this.state = { hidePassword: false };
 			return;
 		} else {
