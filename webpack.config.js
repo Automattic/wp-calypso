@@ -18,7 +18,6 @@ const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 const AssetsPlugin = require( 'assets-webpack-plugin' );
 const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 const prism = require( 'prismjs' );
-const childProcess = require( 'child_process' );
 
 /**
  * Internal dependencies
@@ -35,10 +34,6 @@ const isDevelopment = bundleEnv === 'development';
 const shouldMinify = process.env.hasOwnProperty( 'MINIFY_JS' )
 	? process.env.MINIFY_JS === 'true'
 	: ! isDevelopment;
-const gitCommitSha = childProcess
-	.execSync( 'git rev-parse HEAD' )
-	.toString()
-	.trim();
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -170,7 +165,6 @@ const webpackConfig = {
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
-			COMMIT_SHA: JSON.stringify( gitCommitSha ),
 		} ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [

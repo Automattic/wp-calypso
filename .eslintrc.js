@@ -13,8 +13,7 @@ module.exports = {
 	},
 	globals: {
 		asyncRequire: true,
-		PROJECT_NAME: true,
-		COMMIT_SHA: true,
+		PROJECT_NAME: true
 	},
 	plugins: [
 		'jest'
