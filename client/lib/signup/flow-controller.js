@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import {
 	assign,
 	compact,
@@ -36,7 +34,7 @@ import steps from 'signup/config/steps';
 import wpcom from 'lib/wp';
 import userFactory from 'lib/user';
 const user = userFactory();
-import utils from 'signup/utils';
+import { getStepUrl } from 'signup/utils';
 
 /**
  * Constants
@@ -130,7 +128,7 @@ assign( SignupFlowController.prototype, {
 				if ( ! isEmpty( dependenciesNotProvided ) ) {
 					if ( this._flowName !== flows.defaultFlowName ) {
 						// redirect to the default signup flow, hopefully it will be valid
-						page( utils.getStepUrl() );
+						page( getStepUrl() );
 					}
 
 					throw new Error(
@@ -153,12 +151,11 @@ assign( SignupFlowController.prototype, {
 		return every(
 			pick( steps, this._flow.steps ),
 			function( step ) {
-				var dependenciesNotProvided;
 				if ( ! step.providesDependencies ) {
 					return true;
 				}
 
-				dependenciesNotProvided = difference(
+				const dependenciesNotProvided = difference(
 					step.providesDependencies,
 					keys( SignupDependencyStore.get() )
 				);
