@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,7 +14,7 @@ import { identity, isEmpty, omit } from 'lodash';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'components/signup-form';
-import signupUtils from 'signup/utils';
+import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
 import SignupActions from 'lib/signup/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
@@ -110,7 +108,7 @@ export class UserStep extends Component {
 					}
 				);
 			}
-		} else if ( 1 === signupUtils.getFlowSteps( flowName ).length ) {
+		} else if ( 1 === getFlowSteps( flowName ).length ) {
 			// Displays specific sub header if users only want to create an account, without a site
 			subHeaderText = translate( 'Welcome to the wonderful WordPress.com community' );
 		}
@@ -215,9 +213,9 @@ export class UserStep extends Component {
 		}
 
 		const stepAfterRedirect =
-			signupUtils.getNextStepName( this.props.flowName, this.props.stepName ) ||
-			signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName );
-		return this.originUrl() + signupUtils.getStepUrl( this.props.flowName, stepAfterRedirect );
+			getNextStepName( this.props.flowName, this.props.stepName ) ||
+			getPreviousStepName( this.props.flowName, this.props.stepName );
+		return this.originUrl() + getStepUrl( this.props.flowName, stepAfterRedirect );
 	}
 
 	originUrl() {

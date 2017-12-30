@@ -1,9 +1,7 @@
+/** @format **/
 /**
  * Exernal dependencies
- *
- * @format
  */
-
 import { filter, find, indexOf, isEmpty, merge, pick } from 'lodash';
 
 /**
@@ -11,13 +9,12 @@ import { filter, find, indexOf, isEmpty, merge, pick } from 'lodash';
  */
 import i18nUtils from 'lib/i18n-utils';
 import steps from 'signup/config/steps';
-import flows from 'signup/config/flows';
-import { defaultFlowName } from 'signup/config/flows';
+import flows, { defaultFlowName } from 'signup/config/flows';
 import formState from 'lib/form-state';
 import userFactory from 'lib/user';
 const user = userFactory();
 
-function getFlowName( parameters ) {
+export function getFlowName( parameters ) {
 	const flow =
 		parameters.flowName && isFlowName( parameters.flowName )
 			? parameters.flowName
@@ -39,7 +36,7 @@ function isFlowName( pathFragment ) {
 	return ! isEmpty( flows.getFlow( pathFragment ) );
 }
 
-function getStepName( parameters ) {
+export function getStepName( parameters ) {
 	return find( pick( parameters, [ 'flowName', 'stepName' ] ), isStepName );
 }
 
@@ -47,7 +44,7 @@ function isStepName( pathFragment ) {
 	return ! isEmpty( steps[ pathFragment ] );
 }
 
-function getStepSectionName( parameters ) {
+export function getStepSectionName( parameters ) {
 	return find( pick( parameters, [ 'stepName', 'stepSectionName' ] ), isStepSectionName );
 }
 
@@ -55,7 +52,7 @@ function isStepSectionName( pathFragment ) {
 	return ! isStepName( pathFragment ) && ! isLocale( pathFragment );
 }
 
-function getLocale( parameters ) {
+export function getLocale( parameters ) {
 	return find(
 		pick( parameters, [ 'flowName', 'stepName', 'stepSectionName', 'lang' ] ),
 		isLocale
@@ -66,7 +63,7 @@ function isLocale( pathFragment ) {
 	return ! isEmpty( i18nUtils.getLanguage( pathFragment ) );
 }
 
-function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
+export function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 	const flow = flowName ? `/${ flowName }` : '',
 		step = stepName ? `/${ stepName }` : '',
 		section = stepSectionName ? `/${ stepSectionName }` : '',
@@ -83,7 +80,7 @@ function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 	return '/start' + flow + step + section + locale;
 }
 
-function getValidPath( parameters ) {
+export function getValidPath( parameters ) {
 	const locale = getLocale( parameters ),
 		flowName = getFlowName( parameters ),
 		currentFlowSteps = flows.getFlow( flowName ).steps,
@@ -97,27 +94,27 @@ function getValidPath( parameters ) {
 	return getStepUrl( flowName, stepName, stepSectionName, locale );
 }
 
-function getPreviousStepName( flowName, currentStepName ) {
+export function getPreviousStepName( flowName, currentStepName ) {
 	const flow = flows.getFlow( flowName );
 	return flow.steps[ indexOf( flow.steps, currentStepName ) - 1 ];
 }
 
-function getNextStepName( flowName, currentStepName ) {
+export function getNextStepName( flowName, currentStepName ) {
 	const flow = flows.getFlow( flowName );
 	return flow.steps[ indexOf( flow.steps, currentStepName ) + 1 ];
 }
 
-function getFlowSteps( flowName ) {
+export function getFlowSteps( flowName ) {
 	const flow = flows.getFlow( flowName );
 	return flow.steps;
 }
 
-function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
+export function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
 	const siteStepProgress = find( signupProgress, step => step.stepName === stepName );
 	return siteStepProgress ? siteStepProgress[ fieldName ] : null;
 }
 
-function mergeFormWithValue( { form, fieldName, fieldValue } ) {
+export function mergeFormWithValue( { form, fieldName, fieldValue } ) {
 	if ( ! formState.getFieldValue( form, fieldName ) ) {
 		return merge( form, {
 			[ fieldName ]: { value: fieldValue },
@@ -126,11 +123,11 @@ function mergeFormWithValue( { form, fieldName, fieldValue } ) {
 	return form;
 }
 
-function getDestination( destination, dependencies, flowName ) {
+export function getDestination( destination, dependencies, flowName ) {
 	return flows.filterDestination( destination, dependencies, flowName );
 }
 
-function getThemeForDesignType( designType ) {
+export function getThemeForDesignType( designType ) {
 	switch ( designType ) {
 		case 'blog':
 			return 'pub/independent-publisher-2';
@@ -145,7 +142,7 @@ function getThemeForDesignType( designType ) {
 	}
 }
 
-function getThemeForSiteGoals( siteGoals ) {
+export function getThemeForSiteGoals( siteGoals ) {
 	const siteGoalsValue = siteGoals.split( ',' );
 
 	if ( siteGoalsValue.indexOf( 'sell' ) !== -1 ) {
@@ -167,7 +164,7 @@ function getThemeForSiteGoals( siteGoals ) {
 	return 'pub/independent-publisher-2';
 }
 
-function getSiteTypeForSiteGoals( siteGoals ) {
+export function getSiteTypeForSiteGoals( siteGoals ) {
 	const siteGoalsValue = siteGoals.split( ',' );
 
 	//Identify stores for the store signup flow
@@ -190,7 +187,7 @@ function getSiteTypeForSiteGoals( siteGoals ) {
 	return 'blog';
 }
 
-function canResumeFlow( flowName, progress ) {
+export function canResumeFlow( flowName, progress ) {
 	const flow = flows.getFlow( flowName );
 	const flowStepsInProgressStore = filter(
 		progress,
@@ -199,22 +196,3 @@ function canResumeFlow( flowName, progress ) {
 
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }
-
-export default {
-	canResumeFlow: canResumeFlow,
-	getFlowName: getFlowName,
-	getFlowSteps: getFlowSteps,
-	getStepName: getStepName,
-	getLocale: getLocale,
-	getStepSectionName: getStepSectionName,
-	getStepUrl: getStepUrl,
-	getValidPath: getValidPath,
-	getPreviousStepName: getPreviousStepName,
-	getNextStepName: getNextStepName,
-	getValueFromProgressStore: getValueFromProgressStore,
-	getDestination: getDestination,
-	mergeFormWithValue: mergeFormWithValue,
-	getThemeForDesignType: getThemeForDesignType,
-	getThemeForSiteGoals: getThemeForSiteGoals,
-	getSiteTypeForSiteGoals: getSiteTypeForSiteGoals,
-};
