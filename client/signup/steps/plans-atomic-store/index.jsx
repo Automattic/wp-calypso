@@ -21,9 +21,11 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
-import { isEnabled } from 'config';
+import config from 'config';
 import PlanFeatures from 'my-sites/plan-features';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
+
+const { isEnabled } = config;
 
 class PlansAtomicStoreStep extends Component {
 	static propTypes = {

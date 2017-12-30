@@ -21,7 +21,7 @@ import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/
 import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
 import { toggleMultiSelect } from 'state/ui/post-type-list/actions';
 import { mapPostStatus } from 'lib/route/path';
-import { isEnabled } from 'config';
+import config from 'config';
 import UrlSearch from 'lib/mixins/url-search';
 import QueryPostCounts from 'components/data/query-post-counts';
 import SectionNav from 'components/section-nav';
@@ -31,6 +31,8 @@ import Search from 'components/search';
 import AuthorSegmented from './author-segmented';
 import Button from 'components/button';
 import Gridicon from 'gridicons';
+
+const { isEnabled } = config;
 
 const PostTypeFilter = createReactClass( {
 	displayName: 'PostTypeFilter',

@@ -42,7 +42,9 @@ import {
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSelectedOrAllSitesWithPlugins } from 'state/selectors';
 import HeaderButton from 'components/header-button';
-import { isEnabled } from 'config';
+import config from 'config';
+
+const { isEnabled } = config;
 
 const PluginsMain = createReactClass( {
 	displayName: 'PluginsMain',

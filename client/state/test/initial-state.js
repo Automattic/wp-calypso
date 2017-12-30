@@ -12,11 +12,13 @@ import { createStore } from 'redux';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import config from 'config';
 import localforage from 'lib/localforage';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
 import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
+
+const { isEnabled } = config;
 
 jest.mock( 'config', () => {
 	const config = () => 'development';

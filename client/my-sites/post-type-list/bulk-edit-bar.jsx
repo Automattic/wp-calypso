@@ -1,5 +1,7 @@
 /**
  * External dependencies
+ *
+ * @format
  */
 
 import React from 'react';
@@ -12,13 +14,12 @@ import Count from 'components/count';
 import Button from 'components/button';
 import Card from 'components/card';
 import { localize } from 'i18n-calypso';
-import { isEnabled } from 'config';
-import {
-	isMultiSelectEnabled,
-	getSelectedPostsCount,
-} from 'state/ui/post-type-list/selectors';
+import config from 'config';
+import { isMultiSelectEnabled, getSelectedPostsCount } from 'state/ui/post-type-list/selectors';
 import { toggleMultiSelect } from 'state/ui/post-type-list/actions';
 import Gridicon from 'gridicons';
+
+const { isEnabled } = config;
 
 class PostTypeBulkEditBar extends React.Component {
 	onEdit() {
@@ -48,18 +49,10 @@ class PostTypeBulkEditBar extends React.Component {
 		return (
 			<Card className="post-type-list__bulk-edit-bar">
 				<Count count={ selectedPostsCount } />
-				<Button
-					primary
-					onClick={ this.onEdit }
-					disabled={ selectedPostsCount === 0 }
-				>
+				<Button primary onClick={ this.onEdit } disabled={ selectedPostsCount === 0 }>
 					{ translate( 'Edit' ) }
 				</Button>
-				<Button
-					scary
-					onClick={ this.onDelete }
-					disabled={ selectedPostsCount === 0 }
-				>
+				<Button scary onClick={ this.onDelete } disabled={ selectedPostsCount === 0 }>
 					{ translate( 'Delete' ) }
 				</Button>
 				<Button
@@ -75,10 +68,11 @@ class PostTypeBulkEditBar extends React.Component {
 }
 
 export default connect(
-	( state ) => {
+	state => {
 		return {
 			multiSelectEnabled: isMultiSelectEnabled( state ),
 			selectedPostsCount: getSelectedPostsCount( state ),
 		};
-	}, { toggleMultiSelect }
+	},
+	{ toggleMultiSelect }
 )( localize( PostTypeBulkEditBar ) );

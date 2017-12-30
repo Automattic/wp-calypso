@@ -22,12 +22,14 @@ import { SCHEDULED, PUBLISHED } from './constants';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import { isEnabled } from 'config';
+import config from 'config';
 import Dialog from 'components/dialog';
 import { deletePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
 import analytics from 'lib/analytics';
 import SharingPreviewModal from './sharing-preview-modal';
 import Notice from 'components/notice';
+
+const { isEnabled } = config;
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {

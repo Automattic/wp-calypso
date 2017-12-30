@@ -10,9 +10,11 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, map, concat } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { isEnabled } from 'config';
+import config from 'config';
 import Gridicon from 'gridicons';
 import { current as currentPage } from 'page';
+
+const { isEnabled } = config;
 
 /**
  * Internal dependencies

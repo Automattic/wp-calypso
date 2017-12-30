@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import config from 'config';
 import {
 	COMMENT_COUNTS_REQUEST,
 	COMMENT_REQUEST,
@@ -22,6 +22,8 @@ import {
 	READER_EXPAND_COMMENTS,
 } from '../action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
+
+const { isEnabled } = config;
 
 /**
  * Creates an action that requests a single comment for a given site.

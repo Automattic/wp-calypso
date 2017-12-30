@@ -14,7 +14,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import config from 'config';
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
 import EditorRevisionsLegacyLink from 'post-editor/editor-revisions/legacy-link';
@@ -28,6 +28,8 @@ import { getEditedPost } from 'state/posts/selectors';
 import EditorPublishDate from 'post-editor/editor-publish-date';
 import EditorVisibility from 'post-editor/editor-visibility';
 import { canCurrentUser } from 'state/selectors';
+
+const { isEnabled } = config;
 
 export class EditPostStatus extends Component {
 	static propTypes = {

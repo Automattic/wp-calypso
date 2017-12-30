@@ -4,10 +4,12 @@
  * Internal dependencies
  */
 import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'state/happychat/constants';
-import { isEnabled } from 'config';
+import config from 'config';
 import { isJetpackSite, getSite } from 'state/sites/selectors';
 import { isATEnabled } from 'lib/automated-transfer';
 import { getSectionName } from 'state/ui/selectors';
+
+const { isEnabled } = config;
 
 /**
  * Grab the group or groups for happychat based on siteId

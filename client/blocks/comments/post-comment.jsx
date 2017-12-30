@@ -13,7 +13,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import config from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
 import TimeSince from 'components/time-since';
 import Gravatar from 'components/gravatar';
@@ -32,6 +32,8 @@ import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 import withDimensions from 'lib/with-dimensions';
 import { expandComments } from 'state/comments/actions';
+
+const { isEnabled } = config;
 
 /**
  * A PostComment is the visual representation for a comment within a tree of comments.

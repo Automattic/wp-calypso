@@ -3,11 +3,13 @@
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'state/happychat/constants';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 import getGroups from '../get-groups';
+
+const { isEnabled } = config;
 
 describe( 'selectors', () => {
 	describe( '#getGroups()', () => {

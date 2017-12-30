@@ -14,7 +14,7 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import config from 'config';
 import Comment from 'my-sites/comments/comment';
 import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
 import CommentNavigation from 'my-sites/comments/comment-navigation';
@@ -27,6 +27,8 @@ import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors'
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
+
+const { isEnabled } = config;
 
 export class CommentList extends Component {
 	static propTypes = {

@@ -20,8 +20,10 @@ import { themes } from 'lib/signup/themes-data';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
-import { isEnabled } from 'config';
+import config from 'config';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+
+const { isEnabled } = config;
 
 class ThemeSelectionStep extends Component {
 	static propTypes = {

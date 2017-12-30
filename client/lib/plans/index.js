@@ -10,7 +10,7 @@ import { find, get, includes, invoke } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import config from 'config';
 import { isFreeJetpackPlan, isJetpackPlan, isMonthly } from 'lib/products-values';
 import {
 	FEATURES_LIST,
@@ -25,6 +25,8 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_PERSONAL,
 } from 'lib/plans/constants';
+
+const { isEnabled } = config;
 
 /**
  * Module vars
