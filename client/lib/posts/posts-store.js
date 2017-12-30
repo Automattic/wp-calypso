@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { isEqual } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:posts' );
@@ -11,14 +9,19 @@ const debug = debugFactory( 'calypso:posts' );
 /**
  * Internal dependencies
  */
-import utils from './utils';
+import { normalizeSync } from './utils';
 import Dispatcher from 'dispatcher';
 
-var _posts = {},
-	PostsStore;
+const _posts = {};
+
+const PostsStore = {
+	get: function( globalID ) {
+		return _posts[ globalID ];
+	},
+};
 
 function setPost( post ) {
-	var cachedPost = PostsStore.get( post.global_ID );
+	const cachedPost = PostsStore.get( post.global_ID );
 
 	if ( cachedPost && isEqual( post, cachedPost ) ) {
 		return;
@@ -41,7 +44,7 @@ function normalizePost( responseSource, attributes ) {
 		return;
 	}
 
-	utils.normalizeSync( attributes, function( error, post ) {
+	normalizeSync( attributes, function( error, post ) {
 		setPost( post );
 	} );
 }
@@ -51,15 +54,7 @@ function setAll( posts, responseSource ) {
 	posts.forEach( boundNormalizePost );
 }
 
-PostsStore = {
-	get: function( globalID ) {
-		return _posts[ globalID ];
-	},
-};
-
-PostsStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
-
+PostsStore.dispatchToken = Dispatcher.register( function( { action } ) {
 	switch ( action.type ) {
 		case 'RECEIVE_POSTS_PAGE':
 		case 'RECEIVE_UPDATED_POSTS':

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import {
 	assign,
 	compact,
@@ -31,12 +29,12 @@ import page from 'page';
 import SignupActions from './actions';
 import SignupProgressStore from './progress-store';
 import SignupDependencyStore from './dependency-store';
-import flows from 'signup/config/flows';
+import { defaultFlowName, getFlow } from 'signup/config/flows';
 import steps from 'signup/config/steps';
 import wpcom from 'lib/wp';
 import userFactory from 'lib/user';
 const user = userFactory();
-import utils from 'signup/utils';
+import { getStepUrl } from 'signup/utils';
 
 /**
  * Constants
@@ -49,7 +47,7 @@ function SignupFlowController( options ) {
 	}
 
 	this._flowName = options.flowName;
-	this._flow = flows.getFlow( options.flowName );
+	this._flow = getFlow( options.flowName );
 	this._onComplete = options.onComplete;
 	this._processingSteps = {};
 
@@ -128,9 +126,9 @@ assign( SignupFlowController.prototype, {
 					this._getFlowProvidesDependencies()
 				);
 				if ( ! isEmpty( dependenciesNotProvided ) ) {
-					if ( this._flowName !== flows.defaultFlowName ) {
+					if ( this._flowName !== defaultFlowName ) {
 						// redirect to the default signup flow, hopefully it will be valid
-						page( utils.getStepUrl() );
+						page( getStepUrl() );
 					}
 
 					throw new Error(
@@ -153,12 +151,11 @@ assign( SignupFlowController.prototype, {
 		return every(
 			pick( steps, this._flow.steps ),
 			function( step ) {
-				var dependenciesNotProvided;
 				if ( ! step.providesDependencies ) {
 					return true;
 				}
 
-				dependenciesNotProvided = difference(
+				const dependenciesNotProvided = difference(
 					step.providesDependencies,
 					keys( SignupDependencyStore.get() )
 				);
@@ -309,7 +306,7 @@ assign( SignupFlowController.prototype, {
 
 	changeFlowName( flowName ) {
 		this._flowName = flowName;
-		this._flow = flows.getFlow( flowName );
+		this._flow = getFlow( flowName );
 		store.set( STORAGE_KEY, flowName );
 	},
 } );

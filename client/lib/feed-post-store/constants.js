@@ -1,16 +1,8 @@
 /** @format */
 
-/**
- * External dependencies
- */
-
-import keyMirror from 'key-mirror';
-
-export default {
-	action: keyMirror( {
-		FETCH_FEED_POST: null,
-		RECEIVE_FEED_POST: null,
-		MARK_FEED_POST_SEEN: null,
-		RECEIVE_NORMALIZED_FEED_POST: null,
-	} ),
+export const action = {
+	FETCH_FEED_POST: 'FETCH_FEED_POST',
+	RECEIVE_FEED_POST: 'RECEIVE_FEED_POST',
+	MARK_FEED_POST_SEEN: 'MARK_FEED_POST_SEEN',
+	RECEIVE_NORMALIZED_FEED_POST: 'RECEIVE_NORMALIZED_FEED_POST',
 };

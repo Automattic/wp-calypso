@@ -17,7 +17,8 @@ In this new module we export a single object instead of separate named exports.
 When importing this works the same way…
 
 ```js
-import { uniqueId } from 'lib/impure-lodash';
+import impureLodash from 'lib/impure-lodash';
+const { uniqueId } = impureLodash;
 ```
 
 However, the big difference from importing from `lodash` directly is that since this export is itself an object with member methods, that object is changeable.

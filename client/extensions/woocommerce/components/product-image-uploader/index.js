@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -20,7 +18,7 @@ import { errorNotice as errorNoticeAction } from 'state/notices/actions';
 import DropZone from 'components/drop-zone';
 import FilePicker from 'components/file-picker';
 import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
+import { filterItemsByMimePrefix, isItemBeingUploaded } from 'lib/media/utils';
 import MediaStore from 'lib/media/store';
 import MediaValidationStore from 'lib/media/validation-store';
 
@@ -129,9 +127,7 @@ class ProductImageUploader extends Component {
 		const { onSelect, onUpload, onFinish } = this.props;
 
 		// DropZone supplies an array, FilePicker supplies a FileList
-		let images = Array.isArray( files )
-			? MediaUtils.filterItemsByMimePrefix( files, 'image' )
-			: [ ...files ];
+		let images = Array.isArray( files ) ? filterItemsByMimePrefix( files, 'image' ) : [ ...files ];
 		if ( ! images ) {
 			return false;
 		}
@@ -155,7 +151,7 @@ class ProductImageUploader extends Component {
 		const handleUpload = () => {
 			const transientId = head( transientIds );
 			const media = MediaStore.get( site.ID, transientId );
-			const isUploadInProgress = media && MediaUtils.isItemBeingUploaded( media );
+			const isUploadInProgress = media && isItemBeingUploaded( media );
 
 			// File has finished uploading or failed.
 			if ( ! isUploadInProgress ) {

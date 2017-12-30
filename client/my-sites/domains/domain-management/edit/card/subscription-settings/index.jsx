@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import purchasesPaths from 'me/purchases/paths';
+import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import { type as domainTypes } from 'lib/domains/constants';
 
 class SubscriptionSettings extends React.Component {
@@ -29,10 +27,10 @@ class SubscriptionSettings extends React.Component {
 			case domainTypes.REGISTERED:
 			case domainTypes.SITE_REDIRECT:
 			case domainTypes.TRANSFER:
-				return purchasesPaths.managePurchase( this.props.siteSlug, this.props.subscriptionId );
+				return managePurchase( this.props.siteSlug, this.props.subscriptionId );
 
 			default:
-				return purchasesPaths.purchasesRoot();
+				return purchasesRoot;
 		}
 	}
 

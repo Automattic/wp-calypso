@@ -390,23 +390,28 @@ function filterDesignTypeInFlow( flowName, flow ) {
  * @param  {string} flowName Current flow name.
  * @return {string}          New flow name.
  */
-function filterFlowName( flowName ) {
+export function filterFlowName( flowName ) {
 	// do nothing. No flows to filter at the moment.
 	return flowName;
 }
 
-function filterDestination( destination ) {
+export function filterDestination( destination ) {
 	return destination;
 }
 
-const Flows = {
-	filterFlowName,
-	filterDestination,
+export const defaultFlowName = 'main';
 
-	defaultFlowName: 'main',
-	resumingFlow: false,
+let resumingFlow = false;
 
-	/**
+export function isResumingFlow() {
+	return resumingFlow;
+}
+
+export function resumeFlow() {
+	resumingFlow = true;
+}
+
+/**
 	 * Get certain flow from the flows configuration.
 	 *
 	 * The returned flow is modified according to several filters.
@@ -419,31 +424,31 @@ const Flows = {
 	 * @param {String} currentStepName The current step. See description above
 	 * @returns {Object} A flow object
 	 */
-	getFlow( flowName, currentStepName = '' ) {
-		let flow = Flows.getFlows()[ flowName ];
+export function getFlow( flowName, currentStepName = '' ) {
+	let flow = getFlows()[ flowName ];
 
-		// if the flow couldn't be found, return early
-		if ( ! flow ) {
-			return flow;
-		}
+	// if the flow couldn't be found, return early
+	if ( ! flow ) {
+		return flow;
+	}
 
-		if ( user.get() ) {
-			flow = removeUserStepFromFlow( flow );
-		}
+	if ( user.get() ) {
+		flow = removeUserStepFromFlow( flow );
+	}
 
-		// Maybe modify the design type step to a variant with store
-		flow = filterDesignTypeInFlow( flowName, flow );
+	// Maybe modify the design type step to a variant with store
+	flow = filterDesignTypeInFlow( flowName, flow );
 
-		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
+	preloadABTestVariationsForStep( flowName, currentStepName );
 
-		return Flows.getABTestFilteredFlow( flowName, flow );
-	},
+	return getABTestFilteredFlow( flowName, flow );
+}
 
-	getFlows() {
-		return flows;
-	},
+export function getFlows() {
+	return flows;
+}
 
-	/**
+/**
 	 * Preload AB Test variations after a certain step has been completed.
 	 *
 	 * This gives the option to set the AB variation as late as possible in the
@@ -454,19 +459,19 @@ const Flows = {
 	 * @param {String} flowName The current flow
 	 * @param {String} stepName The step that is being completed right now
 	 */
-	preloadABTestVariationsForStep() {
-		/**
+export function preloadABTestVariationsForStep() {
+	/**
 		 * In cases where the flow is being resumed, the flow must not be changed from what the user
 		 * has seen before.
 		 *
 		 * E.g. A user is resuming signup from before the test was added. There is no need
 		 * to add a step somewhere back in the line.
 		 */
-		if ( Flows.resumingFlow ) {
-			return;
-		}
+	if ( resumingFlow ) {
+		return;
+	}
 
-		/**
+	/**
 		 * If there is need to test the first step in a flow,
 		 * the best way to do it is to check for:
 		 *
@@ -474,9 +479,9 @@ const Flows = {
 		 *
 		 * This will be fired at the beginning of the signup flow.
 		 */
-	},
+}
 
-	/**
+/**
 	 * Return a flow that is modified according to the ABTest rules.
 	 *
 	 * Useful when testing new steps in the signup flows.
@@ -488,15 +493,15 @@ const Flows = {
 	 *
 	 * @return {Object} A filtered flow object
 	 */
-	getABTestFilteredFlow( flowName, flow ) {
-		// Only do this on the main flow
-		// if ( 'main' === flowName ) {
-		// }
+export function getABTestFilteredFlow( flowName, flow ) {
+	// Only do this on the main flow
+	// if ( 'main' === flowName ) {
+	// }
 
-		return flow;
-	},
+	return flow;
+}
 
-	/**
+/**
 	 * Insert a step into the flow.
 	 *
 	 * @param {String} stepName The step to insert into the flow
@@ -506,37 +511,34 @@ const Flows = {
 	 *
 	 * @returns {Object} A flow object with inserted step
 	 */
-	insertStepIntoFlow( stepName, flow, afterStep = '' ) {
-		if ( -1 === flow.steps.indexOf( stepName ) ) {
-			const steps = flow.steps.slice();
-			const afterStepIndex = steps.indexOf( afterStep );
+export function insertStepIntoFlow( stepName, flow, afterStep = '' ) {
+	if ( -1 === flow.steps.indexOf( stepName ) ) {
+		const steps = flow.steps.slice();
+		const afterStepIndex = steps.indexOf( afterStep );
 
-			/**
+		/**
 			 * Only insert the step if
 			 * `afterStep` is empty ( insert at start )
 			 * or if `afterStep` is found in the flow. ( insert after `afterStep` )
 			 */
-			if ( afterStepIndex > -1 || '' === afterStep ) {
-				steps.splice( afterStepIndex + 1, 0, stepName );
+		if ( afterStepIndex > -1 || '' === afterStep ) {
+			steps.splice( afterStepIndex + 1, 0, stepName );
 
-				return {
-					...flow,
-					steps,
-				};
-			}
+			return {
+				...flow,
+				steps,
+			};
 		}
+	}
 
-		return flow;
-	},
+	return flow;
+}
 
-	removeStepFromFlow( stepName, flow ) {
-		return {
-			...flow,
-			steps: flow.steps.filter( step => {
-				return step !== stepName;
-			} ),
-		};
-	},
-};
-
-export default Flows;
+export function removeStepFromFlow( stepName, flow ) {
+	return {
+		...flow,
+		steps: flow.steps.filter( step => {
+			return step !== stepName;
+		} ),
+	};
+}

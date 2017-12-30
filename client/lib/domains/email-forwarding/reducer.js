@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { findIndex, sortBy } from 'lodash';
 import update from 'immutability-helper';
 

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import url from 'url';
 import debugModule from 'debug';
@@ -39,12 +37,12 @@ import LocaleSuggestions from 'components/locale-suggestions';
 import FlowProgressIndicator from './flow-progress-indicator';
 import steps from './config/steps';
 import stepComponents from './config/step-components';
-import flows from './config/flows';
+import { getFlow, resumeFlow } from './config/flows';
 import WpcomLoginForm from './wpcom-login-form';
 import userModule from 'lib/user';
 import analytics from 'lib/analytics';
 import SignupProcessingScreen from 'signup/processing-screen';
-import utils from './utils';
+import { getDestination, canResumeFlow, getStepUrl } from './utils';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
@@ -113,7 +111,7 @@ class Signup extends React.Component {
 		}
 
 		const queryObject = this.props.initialContext.query;
-		const flowSteps = flows.getFlow( this.props.flowName ).steps;
+		const flowSteps = getFlow( this.props.flowName ).steps;
 
 		// `vertical` query parameter
 		const vertical = queryObject.vertical;
@@ -144,7 +142,7 @@ class Signup extends React.Component {
 
 		this.submitQueryDependencies();
 
-		const flow = flows.getFlow( this.props.flowName );
+		const flow = getFlow( this.props.flowName );
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
 		let providedDependencies;
@@ -161,7 +159,7 @@ class Signup extends React.Component {
 				const timeSinceLoading = this.state.loadingScreenStartTime
 					? Date.now() - this.state.loadingScreenStartTime
 					: undefined;
-				const filteredDestination = utils.getDestination(
+				const filteredDestination = getDestination(
 					destination,
 					dependencies,
 					this.props.flowName
@@ -179,7 +177,7 @@ class Signup extends React.Component {
 
 		this.loadProgressFromStore();
 
-		if ( utils.canResumeFlow( this.props.flowName, SignupProgressStore.get() ) ) {
+		if ( canResumeFlow( this.props.flowName, SignupProgressStore.get() ) ) {
 			// we loaded progress from local storage, attempt to resume progress
 			return this.resumeProgress();
 		}
@@ -188,9 +186,9 @@ class Signup extends React.Component {
 			// no progress was resumed and we're on a non-zero step
 			// redirect to the beginning of the flow
 			return page.redirect(
-				utils.getStepUrl(
+				getStepUrl(
 					this.props.flowName,
-					flows.getFlow( this.props.flowName ).steps[ 0 ],
+					getFlow( this.props.flowName ).steps[ 0 ],
 					this.props.locale
 				)
 			);
@@ -328,7 +326,7 @@ class Signup extends React.Component {
 	};
 
 	firstUnsubmittedStepName = () => {
-		const currentSteps = flows.getFlow( this.props.flowName ).steps,
+		const currentSteps = getFlow( this.props.flowName ).steps,
 			signupProgress = filter(
 				SignupProgressStore.get(),
 				step => -1 !== currentSteps.indexOf( step.stepName )
@@ -342,7 +340,7 @@ class Signup extends React.Component {
 
 	resumeProgress = () => {
 		// Update the Flows object to know that the signup flow is being resumed.
-		flows.resumingFlow = true;
+		resumeFlow();
 
 		const firstUnsubmittedStep = this.firstUnsubmittedStepName(),
 			stepSectionName = firstUnsubmittedStep.stepSectionName;
@@ -351,12 +349,7 @@ class Signup extends React.Component {
 		this.setState( { firstUnsubmittedStep } );
 
 		return page.redirect(
-			utils.getStepUrl(
-				this.props.flowName,
-				firstUnsubmittedStep,
-				stepSectionName,
-				this.props.locale
-			)
+			getStepUrl( this.props.flowName, firstUnsubmittedStep, stepSectionName, this.props.locale )
 		);
 	};
 
@@ -384,7 +377,7 @@ class Signup extends React.Component {
 		// redirect the user to the next step
 		scrollPromise.then( () => {
 			if ( ! this.isEveryStepSubmitted() ) {
-				page( utils.getStepUrl( flowName, stepName, stepSectionName, this.props.locale ) );
+				page( getStepUrl( flowName, stepName, stepSectionName, this.props.locale ) );
 			} else if ( this.isEveryStepSubmitted() ) {
 				this.goToFirstInvalidStep();
 			}
@@ -394,7 +387,7 @@ class Signup extends React.Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `store-nux`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const flowSteps = flows.getFlow( nextFlowName, this.props.stepName ).steps,
+		const flowSteps = getFlow( nextFlowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
 			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
@@ -417,12 +410,12 @@ class Signup extends React.Component {
 				return;
 			}
 
-			page( utils.getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
+			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
 		}
 	};
 
 	isEveryStepSubmitted = () => {
-		const flowSteps = flows.getFlow( this.props.flowName ).steps;
+		const flowSteps = getFlow( this.props.flowName ).steps;
 		const signupProgress = filter(
 			SignupProgressStore.get(),
 			step => -1 !== flowSteps.indexOf( step.stepName ) && 'in-progress' !== step.status
@@ -432,7 +425,7 @@ class Signup extends React.Component {
 	};
 
 	positionInFlow = () => {
-		return indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
+		return indexOf( getFlow( this.props.flowName ).steps, this.props.stepName );
 	};
 
 	localeSuggestions = () => {
@@ -463,7 +456,7 @@ class Signup extends React.Component {
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
 			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
-			flow = flows.getFlow( this.props.flowName ),
+			flow = getFlow( this.props.flowName ),
 			hideFreePlan = !! (
 				this.state.plans ||
 				( this.props.signupDependencies &&
@@ -516,7 +509,7 @@ class Signup extends React.Component {
 			return null;
 		}
 
-		const flow = flows.getFlow( this.props.flowName );
+		const flow = getFlow( this.props.flowName );
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (

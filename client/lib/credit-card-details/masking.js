@@ -1,12 +1,10 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { identity } from 'lodash';
 
-var fieldMasks = {};
+const fieldMasks = {};
 
 fieldMasks[ 'expiration-date' ] = {
 	mask: function( previousValue, nextValue ) {
@@ -30,9 +28,9 @@ fieldMasks[ 'expiration-date' ] = {
 
 		if ( nextValue.length <= 2 ) {
 			return nextValue;
-		} else {
-			return nextValue.substring( 0, 2 ) + '/' + nextValue.substring( 2, 4 );
 		}
+
+		return nextValue.substring( 0, 2 ) + '/' + nextValue.substring( 2, 4 );
 	},
 
 	unmask: identity,
@@ -40,7 +38,7 @@ fieldMasks[ 'expiration-date' ] = {
 
 fieldMasks.number = {
 	mask: function( previousValue, nextValue ) {
-		var digits = nextValue.replace( /[^0-9]/g, '' ),
+		const digits = nextValue.replace( /[^0-9]/g, '' ),
 			string =
 				digits.slice( 0, 4 ) +
 				' ' +
@@ -66,8 +64,8 @@ fieldMasks.cvv = {
 	unmask: identity,
 };
 
-function maskField( fieldName, previousValue, nextValue ) {
-	var fieldMask = fieldMasks[ fieldName ];
+export function maskField( fieldName, previousValue, nextValue ) {
+	const fieldMask = fieldMasks[ fieldName ];
 	if ( ! fieldMask ) {
 		return nextValue;
 	}
@@ -75,16 +73,11 @@ function maskField( fieldName, previousValue, nextValue ) {
 	return fieldMask.mask( previousValue, nextValue );
 }
 
-function unmaskField( fieldName, previousValue, nextValue ) {
-	var fieldMask = fieldMasks[ fieldName ];
+export function unmaskField( fieldName, previousValue, nextValue ) {
+	const fieldMask = fieldMasks[ fieldName ];
 	if ( ! fieldMask ) {
 		return nextValue;
 	}
 
 	return fieldMask.unmask( fieldMask.mask( previousValue, nextValue ) );
 }
-
-export default {
-	maskField: maskField,
-	unmaskField: unmaskField,
-};

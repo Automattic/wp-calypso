@@ -4,8 +4,10 @@
  * Internal dependencies
  */
 import config from 'config';
-import { lang, login, magicLogin, magicLoginUse, redirectDefaultLocale } from './controller';
+import controller from './controller';
 import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
+
+const { lang, login, magicLogin, magicLoginUse, redirectDefaultLocale } = controller;
 
 export default router => {
 	if ( config.isEnabled( 'login/magic-login' ) ) {

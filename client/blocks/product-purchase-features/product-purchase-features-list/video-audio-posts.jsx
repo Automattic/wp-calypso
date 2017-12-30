@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -11,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
-import paths from 'lib/paths';
+import { newPost } from 'lib/paths';
 
 export default localize( ( { selectedSite, translate } ) => {
 	return (
@@ -24,7 +22,7 @@ export default localize( ( { selectedSite, translate } ) => {
 						'No ads or limits. The Premium plan also adds 10GB of file storage.'
 				) }
 				buttonText={ translate( 'Start a new post' ) }
-				href={ paths.newPost( selectedSite ) }
+				href={ newPost( selectedSite ) }
 			/>
 		</div>
 	);

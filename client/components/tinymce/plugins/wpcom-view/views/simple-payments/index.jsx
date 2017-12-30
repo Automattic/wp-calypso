@@ -1,9 +1,5 @@
-/**
- * /* eslint-disable wpcalypso/jsx-classname-namespace
- *
- * @format
- */
-
+/** @format **/
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -15,14 +11,13 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import shortcodeUtils from 'lib/shortcode';
+import { next } from 'lib/shortcode';
 import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
-import { getSimplePayments } from 'state/selectors';
+import { getMediaItem, getSimplePayments } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import formatCurrency from 'lib/format-currency';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QueryMedia from 'components/data/query-media';
-import { getMediaItem } from 'state/selectors';
 
 class SimplePaymentsView extends Component {
 	render() {
@@ -105,7 +100,7 @@ SimplePaymentsView = connect( ( state, props ) => {
 } )( localize( SimplePaymentsView ) );
 
 SimplePaymentsView.match = content => {
-	const match = shortcodeUtils.next( 'simple-payment', content );
+	const match = next( 'simple-payment', content );
 
 	if ( match ) {
 		return {

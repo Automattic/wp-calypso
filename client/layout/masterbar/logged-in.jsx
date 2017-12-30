@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -22,15 +20,13 @@ import Gravatar from 'components/gravatar';
 import config from 'config';
 import { preload } from 'sections-preload';
 import ResumeEditing from 'my-sites/resume-editing';
-import { isNotificationsOpen } from 'state/selectors';
+import { getPrimarySiteId, isNotificationsOpen } from 'state/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getStatsPathForTab } from 'lib/route/path';
+import { getSite, getSiteSlug } from 'state/sites/selectors';
+import { getStatsPathForTab } from 'lib/route';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { domainManagementList } from 'my-sites/domains/paths';
-import { getSite } from 'state/sites/selectors';
-import { getPrimarySiteId } from 'state/selectors';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {

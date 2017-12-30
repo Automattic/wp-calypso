@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
@@ -16,7 +14,7 @@ import StoreConnection from 'components/data/store-connection';
 import DomainsStore from 'lib/domains/store';
 import CartStore from 'lib/cart/store';
 import observe from 'lib/mixins/data-observe';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { fetchDomains } from 'lib/upgrades/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import { getPlansBySite } from 'state/sites/plans/selectors';
@@ -53,7 +51,7 @@ const DomainManagementData = createReactClass( {
 		const { selectedSite } = this.props;
 
 		if ( selectedSite ) {
-			upgradesActions.fetchDomains( selectedSite.ID );
+			fetchDomains( selectedSite.ID );
 		}
 	},
 
@@ -62,7 +60,7 @@ const DomainManagementData = createReactClass( {
 		const { selectedSite: nextSite } = nextProps;
 
 		if ( nextSite !== prevSite ) {
-			upgradesActions.fetchDomains( nextSite.ID );
+			fetchDomains( nextSite.ID );
 		}
 	},
 

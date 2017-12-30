@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
@@ -26,7 +24,7 @@ import { setSelectedSiteId, setSection, setAllSitesSelected } from 'state/ui/act
 import { savePreference } from 'state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'state/preferences/selectors';
 import NavigationComponent from 'my-sites/navigation';
-import route from 'lib/route';
+import { getSiteFragment, sectionify } from 'lib/route';
 import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';
@@ -81,11 +79,11 @@ const sitesPageTitleForAnalytics = 'Sites';
  * @returns { object } React element containing the site selector and sidebar
  */
 function createNavigation( context ) {
-	const siteFragment = route.getSiteFragment( context.pathname );
+	const siteFragment = getSiteFragment( context.pathname );
 	let basePath = context.pathname;
 
 	if ( siteFragment ) {
-		basePath = route.sectionify( context.pathname );
+		basePath = sectionify( context.pathname );
 	}
 
 	return (
@@ -243,8 +241,8 @@ function onSelectedSiteAvailable( context ) {
  * @returns {object} A site-picker React element
  */
 function createSitesComponent( context ) {
-	const basePath = route.sectionify( context.path );
-	const path = context.prevPath ? route.sectionify( context.prevPath ) : '/stats';
+	const basePath = sectionify( context.path );
+	const path = context.prevPath ? sectionify( context.prevPath ) : '/stats';
 
 	// This path sets the URL to be visited once a site is selected
 	const sourcePath = basePath === '/sites' ? path : basePath;
@@ -297,11 +295,11 @@ export function noSite( context, next ) {
  */
 export function siteSelection( context, next ) {
 	const { getState, dispatch } = getStore( context );
-	const siteFragment = context.params.site || route.getSiteFragment( context.path );
-	const basePath = route.sectionify( context.path, siteFragment );
+	const siteFragment = context.params.site || getSiteFragment( context.path );
+	const basePath = sectionify( context.path, siteFragment );
 	const currentUser = user.get();
 	const hasOneSite = currentUser.visible_site_count === 1;
-	const allSitesPath = route.sectionify( context.path, siteFragment );
+	const allSitesPath = sectionify( context.path, siteFragment );
 	const primaryId = getPrimarySiteId( getState() );
 	const primary = getSite( getState(), primaryId ) || '';
 
@@ -444,7 +442,7 @@ export function jetPackWarning( context, next ) {
 	const { getState } = getStore( context );
 	const Main = require( 'components/main' );
 	const JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
-	const basePath = route.sectionify( context.path );
+	const basePath = sectionify( context.path );
 	const selectedSite = getSelectedSite( getState() );
 
 	if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {

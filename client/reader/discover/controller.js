@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import config from 'config';
-import route from 'lib/route';
+import { sectionify } from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
 import {
@@ -24,7 +24,7 @@ const ANALYTICS_PAGE_TITLE = 'Reader';
 const exported = {
 	discover( context, next ) {
 		const blogId = config( 'discover_blog_id' );
-		const basePath = route.sectionify( context.path );
+		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Site > ' + blogId;
 		const feedStore = feedStreamFactory( 'site:' + blogId );
 		const featuredStore = feedStreamFactory( `featured:${ blogId }` );

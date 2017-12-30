@@ -13,7 +13,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import touchDetect from 'lib/touch-detect';
+import { hasTouch } from 'lib/touch-detect';
 import { isMobile } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import RootChild from 'components/root-child';
@@ -38,7 +38,7 @@ export class WebPreview extends PureComponent {
 
 	componentWillMount() {
 		// Cache touch and mobile detection for the entire lifecycle of the component
-		this._hasTouch = touchDetect.hasTouch();
+		this._hasTouch = hasTouch();
 		this._isMobile = isMobile();
 	}
 

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -12,13 +10,13 @@ import debugModule from 'debug';
 import { noop, isFunction } from 'lodash';
 import page from 'page';
 import { v4 as uuid } from 'uuid';
-import addQueryArgs from 'lib/route/add-query-args';
+import { addQueryArgs } from 'lib/route';
 
 /**
  * Internal dependencies
  */
 import Toolbar from './toolbar';
-import touchDetect from 'lib/touch-detect';
+import { hasTouch } from 'lib/touch-detect';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import SpinnerLine from 'components/spinner-line';
@@ -44,7 +42,7 @@ export class WebPreviewContent extends PureComponent {
 
 	componentWillMount() {
 		// Cache touch and mobile detection for the entire lifecycle of the component
-		this._hasTouch = touchDetect.hasTouch();
+		this._hasTouch = hasTouch();
 	}
 
 	componentDidMount() {

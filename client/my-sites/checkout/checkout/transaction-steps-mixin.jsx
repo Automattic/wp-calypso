@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react'; // eslint-disable-line no-unused-vars
 import debugFactory from 'debug';
 import { defer, isEqual, pick } from 'lodash';
@@ -14,18 +12,18 @@ const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:transaction-step
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import adTracking from 'lib/analytics/ad-tracking';
+import { recordOrder } from 'lib/analytics/ad-tracking';
 import { getTld } from 'lib/domains';
 import { cartItems } from 'lib/cart-values';
 import { displayError, clear } from 'lib/upgrades/notices';
-import upgradesActions from 'lib/upgrades/actions';
+import { submitTransaction } from 'lib/upgrades/actions';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 
 const TransactionStepsMixin = {
 	submitTransaction: function( event ) {
 		event.preventDefault();
 
-		upgradesActions.submitTransaction( pick( this.props, [ 'cart', 'transaction' ] ) );
+		submitTransaction( pick( this.props, [ 'cart', 'transaction' ] ) );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -92,7 +90,7 @@ const TransactionStepsMixin = {
 					// Makes sure free trials are not recorded as purchases in ad trackers since they are products with
 					// zero-value cost and would thus lead to a wrong computation of conversions
 					if ( ! cartItems.hasFreeTrial( cartValue ) ) {
-						adTracking.recordOrder( cartValue, step.data.receipt_id );
+						recordOrder( cartValue, step.data.receipt_id );
 					}
 
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {

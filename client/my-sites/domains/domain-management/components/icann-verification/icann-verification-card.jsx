@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -11,8 +10,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import support from 'lib/url/support';
-import upgradesActions from 'lib/upgrades/actions';
+import { EMAIL_VALIDATION_AND_VERIFICATION } from 'lib/url/support';
+import { resendIcannVerification } from 'lib/upgrades/actions';
 import { errorNotice } from 'state/notices/actions';
 import { domainManagementEditContactInfo } from 'my-sites/domains/paths';
 import { getRegistrantWhois } from 'state/selectors';
@@ -45,7 +44,7 @@ class IcannVerificationCard extends React.Component {
 				components: {
 					learnMoreLink: (
 						<a
-							href={ support.EMAIL_VALIDATION_AND_VERIFICATION }
+							href={ EMAIL_VALIDATION_AND_VERIFICATION }
 							target="_blank"
 							rel="noopener noreferrer"
 						/>
@@ -70,7 +69,7 @@ class IcannVerificationCard extends React.Component {
 				contactEmail={ contactDetails.email }
 				headerText={ translate( 'Important: Verify Your Email Address' ) }
 				verificationExplanation={ verificationExplanation }
-				resendVerification={ upgradesActions.resendIcannVerification }
+				resendVerification={ resendIcannVerification }
 				selectedDomainName={ selectedDomainName }
 				selectedSiteSlug={ selectedSiteSlug }
 			/>

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -18,7 +16,7 @@ import SiteGround from './siteground';
 import Pressable from './pressable';
 import SectionHeader from 'components/section-header';
 import { cartItems } from 'lib/cart-values';
-import upgradesActions from 'lib/upgrades/actions';
+import { addItem } from 'lib/upgrades/actions';
 import page from 'page';
 import { saveHostDetails } from 'state/sites/guided-transfer/actions';
 import {
@@ -48,7 +46,7 @@ class HostCredentialsPage extends Component {
 	};
 
 	redirectToCart = () => {
-		upgradesActions.addItem( cartItems.guidedTransferItem() );
+		addItem( cartItems.guidedTransferItem() );
 		page.redirect( `/checkout/${ this.props.siteSlug }` );
 	};
 

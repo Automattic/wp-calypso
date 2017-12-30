@@ -14,7 +14,7 @@ import sinon from 'sinon';
  */
 import mockedFlows from './fixtures/flows';
 import abtest from 'lib/abtest';
-import flows from 'signup/config/flows';
+import * as flows from 'signup/config/flows';
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => {},

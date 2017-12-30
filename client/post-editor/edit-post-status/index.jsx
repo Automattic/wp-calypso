@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -18,7 +16,7 @@ import { isEnabled } from 'config';
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
 import EditorRevisionsLegacyLink from 'post-editor/editor-revisions/legacy-link';
-import postUtils from 'lib/posts/utils';
+import { getVisibility, isPending, isPublished } from 'lib/posts/utils';
 import InfoPopover from 'components/info-popover';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { editPost } from 'state/posts/actions';
@@ -85,14 +83,14 @@ export class EditPostStatus extends Component {
 	};
 
 	render() {
-		let isSticky, isPublished, isPending, isScheduled, isPasswordProtected;
+		let isSticky, isPostPublished, isPostPending, isScheduled, isPasswordProtected;
 		const { translate, isPostPrivate, canUserPublishPosts } = this.props;
 
 		if ( this.props.post ) {
-			isPasswordProtected = postUtils.getVisibility( this.props.post ) === 'password';
+			isPasswordProtected = getVisibility( this.props.post ) === 'password';
 			isSticky = this.props.post.sticky;
-			isPending = postUtils.isPending( this.props.post );
-			isPublished = postUtils.isPublished( this.props.savedPost );
+			isPostPending = isPending( this.props.post );
+			isPostPublished = isPublished( this.props.savedPost );
 			isScheduled = this.props.savedPost && this.props.savedPost.status === 'future';
 		}
 
@@ -124,7 +122,7 @@ export class EditPostStatus extends Component {
 							/>
 						</label>
 					) }
-				{ ! isPublished &&
+				{ ! isPostPublished &&
 					! isScheduled &&
 					canUserPublishPosts && (
 						<label className="edit-post-status__pending-review">
@@ -135,13 +133,13 @@ export class EditPostStatus extends Component {
 								</InfoPopover>
 							</span>
 							<FormToggle
-								checked={ isPending }
+								checked={ isPostPending }
 								onChange={ this.togglePendingStatus }
 								aria-label={ translate( 'Request review for post' ) }
 							/>
 						</label>
 					) }
-				{ ( isPublished || isScheduled || ( isPending && ! canUserPublishPosts ) ) && (
+				{ ( isPostPublished || isScheduled || ( isPostPending && ! canUserPublishPosts ) ) && (
 					<Button
 						className="edit-post-status__revert-to-draft"
 						onClick={ this.revertToDraft }

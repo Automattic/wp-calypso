@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import { Component } from 'react';
 import { curry } from 'lodash';
@@ -14,7 +12,7 @@ import { curry } from 'lodash';
 import analytics from 'lib/analytics';
 import { createCardToken } from 'lib/store-transactions';
 import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/utils';
-import paths from 'me/purchases/paths';
+import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 
 class PurchaseCardDetails extends Component {
 	constructor( props ) {
@@ -31,7 +29,7 @@ class PurchaseCardDetails extends Component {
 		}
 
 		if ( ! this.isDataValid( props ) ) {
-			page( paths.purchasesRoot() );
+			page( purchasesRoot );
 		}
 	}
 
@@ -63,7 +61,7 @@ class PurchaseCardDetails extends Component {
 
 		this.props.clearPurchases();
 
-		page( paths.managePurchase( this.props.selectedSite.slug, id ) );
+		page( managePurchase( this.props.selectedSite.slug, id ) );
 	}
 }
 

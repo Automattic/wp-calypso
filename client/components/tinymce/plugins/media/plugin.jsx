@@ -1,16 +1,14 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import ReactDom from 'react-dom';
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import tinymce from 'tinymce/tinymce';
 import { assign, debounce, find, findLast, pick, values } from 'lodash';
 import i18n from 'i18n-calypso';
-import Shortcode from 'lib/shortcode';
+import { parse, stringify } from 'lib/shortcode';
 import closest from 'component-closest';
 import Gridicon from 'gridicons';
 
@@ -21,7 +19,7 @@ import PostActions from 'lib/posts/actions';
 import PostEditStore from 'lib/posts/post-edit-store';
 import * as MediaConstants from 'lib/media/constants';
 import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
+import { getThumbnailSizeDimensions } from 'lib/media/utils';
 import { deserialize } from 'lib/media-serialization';
 import MediaMarkup from 'post-editor/media-modal/markup';
 import MediaStore from 'lib/media/store';
@@ -560,7 +558,7 @@ function mediaButton( editor ) {
 				attrs.align = 'align' + parsed.appearance.align;
 			}
 
-			const shortcode = Shortcode.stringify( {
+			const shortcode = stringify( {
 				tag: 'caption',
 				attrs: attrs,
 				content: [ node.outerHTML, content ].join( ' ' ),
@@ -609,7 +607,7 @@ function mediaButton( editor ) {
 		// If we are increasing the size, we select the default size that has the closest greater ratio
 		// While decreasing we take the closest lower ratio
 		const sizeRatios = SIZE_ORDER.map( size =>
-			computeRatio( MediaUtils.getThumbnailSizeDimensions( size, selectedSite ), media )
+			computeRatio( getThumbnailSizeDimensions( size, selectedSite ), media )
 		);
 		const sizeIndex = SIZE_ORDER.indexOf( parsed.appearance.size );
 		const displayedRatio =
@@ -667,7 +665,7 @@ function mediaButton( editor ) {
 			// Disable decrease button when it's ratio is smaller than the thumbnail's ratio
 			// Or when the current selected size is the thumbnail size
 			const thumbRatio = computeRatio(
-				MediaUtils.getThumbnailSizeDimensions( SIZE_ORDER[ 0 ], selectedSite ),
+				getThumbnailSizeDimensions( SIZE_ORDER[ 0 ], selectedSite ),
 				media
 			);
 			const isDisabled = currentRatio <= thumbRatio || SIZE_ORDER[ 0 ] === parsed.appearance.size;
@@ -709,7 +707,7 @@ function mediaButton( editor ) {
 			return;
 		}
 
-		let gallery = Shortcode.parse( content );
+		let gallery = parse( content );
 		if ( gallery.tag !== 'gallery' ) {
 			return;
 		}

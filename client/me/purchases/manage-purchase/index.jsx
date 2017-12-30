@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -75,11 +73,11 @@ import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
 import VerticalNavItem from 'components/vertical-nav/item';
-import paths from '../paths';
-import support from 'lib/url/support';
+import { cancelPurchase, cancelPrivacyProtection, purchasesRoot } from '../paths';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { addItems } from 'lib/upgrades/actions';
 
 const user = userFactory();
 
@@ -94,7 +92,7 @@ class ManagePurchase extends Component {
 
 	componentWillMount() {
 		if ( ! this.isDataValid() ) {
-			page.redirect( paths.purchasesRoot() );
+			page.redirect( purchasesRoot );
 			return;
 		}
 
@@ -103,7 +101,7 @@ class ManagePurchase extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
-			page.redirect( paths.purchasesRoot() );
+			page.redirect( purchasesRoot );
 			return;
 		}
 
@@ -158,7 +156,7 @@ class ManagePurchase extends Component {
 			renewItems.push( redemptionItem );
 		}
 
-		upgradesActions.addItems( renewItems );
+		addItems( renewItems );
 
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
@@ -227,13 +225,13 @@ class ManagePurchase extends Component {
 		}
 
 		let text,
-			link = paths.cancelPurchase( this.props.selectedSite.slug, id );
+			link = cancelPurchase( this.props.selectedSite.slug, id );
 
 		if ( isRefundable( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				if ( isRenewal( purchase ) ) {
 					text = translate( 'Contact Support to Cancel Domain and Refund' );
-					link = support.CALYPSO_CONTACT;
+					link = CALYPSO_CONTACT;
 				} else {
 					text = translate( 'Cancel Domain and Refund' );
 				}
@@ -277,7 +275,7 @@ class ManagePurchase extends Component {
 		}
 
 		return (
-			<CompactCard href={ paths.cancelPrivacyProtection( this.props.selectedSite.slug, id ) }>
+			<CompactCard href={ cancelPrivacyProtection( this.props.selectedSite.slug, id ) }>
 				{ translate( 'Cancel Privacy Protection' ) }
 			</CompactCard>
 		);

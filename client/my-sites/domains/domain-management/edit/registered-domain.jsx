@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
@@ -16,7 +14,13 @@ import Card from 'components/card/compact';
 import Notice from 'components/notice';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import Header from './card/header';
-import paths from 'my-sites/domains/paths';
+import {
+	domainManagementContactsPrivacy,
+	domainManagementEmail,
+	domainManagementNameServers,
+	domainManagementTransfer,
+	domainManagementTransferOut,
+} from 'my-sites/domains/paths';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
@@ -77,8 +81,8 @@ const RegisteredDomain = createReactClass( {
 			} = this.props.domain,
 			{ slug } = this.props.selectedSite,
 			{ translate } = this.props,
-			privacyPath = paths.domainManagementContactsPrivacy( slug, name ),
-			transferPath = paths.domainManagementTransferOut( slug, name );
+			privacyPath = domainManagementContactsPrivacy( slug, name ),
+			transferPath = domainManagementTransferOut( slug, name );
 		let label;
 
 		if ( ! privacyAvailable ) {
@@ -167,16 +171,13 @@ const RegisteredDomain = createReactClass( {
 	},
 
 	emailNavItem() {
-		const path = paths.domainManagementEmail(
-			this.props.selectedSite.slug,
-			this.props.domain.name
-		);
+		const path = domainManagementEmail( this.props.selectedSite.slug, this.props.domain.name );
 
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
 	},
 
 	nameServersNavItem() {
-		const path = paths.domainManagementNameServers(
+		const path = domainManagementNameServers(
 			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
@@ -191,7 +192,7 @@ const RegisteredDomain = createReactClass( {
 	contactsPrivacyNavItem() {
 		const { privacyAvailable } = this.props.domain;
 		const { translate } = this.props;
-		const path = paths.domainManagementContactsPrivacy(
+		const path = domainManagementContactsPrivacy(
 			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
@@ -204,10 +205,7 @@ const RegisteredDomain = createReactClass( {
 	},
 
 	transferNavItem() {
-		const path = paths.domainManagementTransfer(
-			this.props.selectedSite.slug,
-			this.props.domain.name
-		);
+		const path = domainManagementTransfer( this.props.selectedSite.slug, this.props.domain.name );
 
 		return (
 			<VerticalNavItem path={ path }>{ this.props.translate( 'Transfer Domain' ) }</VerticalNavItem>

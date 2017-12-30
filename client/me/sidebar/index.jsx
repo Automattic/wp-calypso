@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -14,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import config from 'config';
 import ProfileGravatar from 'me/profile-gravatar';
-import purchasesPaths from 'me/purchases/paths';
+import { addCreditCard, billingHistory, purchasesRoot } from 'me/purchases/paths';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
@@ -92,9 +91,9 @@ class MeSidebar extends React.Component {
 			'/me/notifications/updates': 'notifications',
 			'/me/notifications/subscriptions': 'notifications',
 			'/help/contact': 'help',
-			[ purchasesPaths.purchasesRoot() ]: 'purchases',
-			[ purchasesPaths.billingHistory() ]: 'purchases',
-			[ purchasesPaths.addCreditCard() ]: 'purchases',
+			[ purchasesRoot ]: 'purchases',
+			[ billingHistory ]: 'purchases',
+			[ addCreditCard ]: 'purchases',
 			'/me/chat': 'happychat',
 		};
 		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
@@ -151,7 +150,7 @@ class MeSidebar extends React.Component {
 
 						<SidebarItem
 							selected={ selected === 'purchases' }
-							link={ purchasesPaths.purchasesRoot() }
+							link={ purchasesRoot }
 							label={ translate( 'Manage Purchases' ) }
 							icon="credit-card"
 							onNavigate={ this.onNavigate }

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import { curry } from 'lodash';
 import page from 'page';
@@ -22,7 +20,7 @@ import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import titles from 'me/purchases/titles';
-import purchasesPaths from 'me/purchases/paths';
+import { billingHistory } from 'me/purchases/paths';
 
 class AddCreditCard extends Component {
 	static propTypes = {
@@ -35,7 +33,7 @@ class AddCreditCard extends Component {
 	}
 
 	goToBillingHistory() {
-		page( purchasesPaths.billingHistory() );
+		page( billingHistory );
 	}
 
 	recordFormSubmitEvent() {

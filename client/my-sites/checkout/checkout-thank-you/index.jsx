@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, get } from 'lodash';
@@ -23,12 +21,11 @@ import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouHeader from './header';
-import { domainManagementList } from 'my-sites/domains/paths';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
 import { fetchSitePlans, refreshSitePlans } from 'state/sites/plans/actions';
-import { getPlansBySite } from 'state/sites/plans/selectors';
+import { getPlansBySite, getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
 import { getCurrentUser, getCurrentUserDate } from 'state/current-user/selectors';
 import GoogleAppsDetails from './google-apps-details';
@@ -68,9 +65,8 @@ import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
 import ThankYouCard from 'components/thank-you-card';
-import domainsPaths from 'my-sites/domains/paths';
+import { domainManagementEmail, domainManagementList } from 'my-sites/domains/paths';
 import config from 'config';
-import { getSitePlanSlug } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
 import {
@@ -240,13 +236,11 @@ class CheckoutThankYou extends React.Component {
 				purchases.some( isDomainRedemption ) ||
 				purchases.some( isSiteRedirect )
 			) {
-				return page( domainsPaths.domainManagementList( this.props.selectedSite.slug ) );
+				return page( domainManagementList( this.props.selectedSite.slug ) );
 			} else if ( purchases.some( isGoogleApps ) ) {
 				const purchase = find( purchases, isGoogleApps );
 
-				return page(
-					domainsPaths.domainManagementEmail( this.props.selectedSite.slug, purchase.meta )
-				);
+				return page( domainManagementEmail( this.props.selectedSite.slug, purchase.meta ) );
 			}
 		}
 

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -19,7 +17,7 @@ import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
 import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
 import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
 import Button from 'components/button';
-import support from 'lib/url/support';
+import { EMPTY_SITE } from 'lib/url/support';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 const StartOver = ( { translate, selectedSiteSlug } ) => {
@@ -54,8 +52,8 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 				</ActionPanelBody>
 				<ActionPanelFooter>
 					<Button
-						className="settings-action-panel__support-button is-external"
-						href={ support.EMPTY_SITE }
+						className="settings-action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace,max-len
+						href={ EMPTY_SITE }
 					>
 						{ translate( 'Follow the Steps' ) }
 						<Gridicon icon="external" size={ 48 } />

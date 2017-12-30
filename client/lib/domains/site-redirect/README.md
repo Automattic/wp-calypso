@@ -17,9 +17,13 @@ SiteRedirectStore.getBySite( 'example.wordpress.com' )
 To interact with the store, use the actions made available in [`domain-management.js`](../../upgrades/actions/domain-management.js):
 
 ```js
-import * as upgradesActions from 'lib/upgrades/actions';
+import {
+	closeSiteRedirectNotice,
+	fetchSiteRedirect,
+	updateSiteRedirect,
+} from 'lib/upgrades/actions';
 
-upgradesActions.closeSiteRedirectNotice( 'example.wordpress.com' );
-upgradesActions.fetchSiteRedirect( 'example.wordpress.com' );
-upgradesActions.updateSiteRedirect( 'example.wordpress.com', 'example.com' );
+closeSiteRedirectNotice( 'example.wordpress.com' );
+fetchSiteRedirect( 'example.wordpress.com' );
+updateSiteRedirect( 'example.wordpress.com', 'example.com' );
 ```

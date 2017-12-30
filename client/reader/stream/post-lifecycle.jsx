@@ -10,7 +10,7 @@ import { defer, omit, includes } from 'lodash';
  * Internal Dependencies
  */
 import PostStore from 'lib/feed-post-store';
-import PostStoreActions from 'lib/feed-post-store/actions';
+import { fetchPost } from 'lib/feed-post-store/actions';
 import PostPlaceholder from './post-placeholder';
 import PostUnavailable from './post-unavailable';
 import ListGap from 'reader/list-gap';
@@ -50,7 +50,7 @@ export default class PostLifecycle extends React.Component {
 
 		const post = PostStore.get( props.postKey );
 		if ( ! post || post._state === 'minimal' ) {
-			defer( () => PostStoreActions.fetchPost( props.postKey ) );
+			defer( () => fetchPost( props.postKey ) );
 		}
 		return post;
 	}

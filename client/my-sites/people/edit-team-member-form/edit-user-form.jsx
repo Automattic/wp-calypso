@@ -18,7 +18,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import analytics from 'lib/analytics';
-import UsersActions from 'lib/users/actions';
+import { updateUser } from 'lib/users/actions';
 import userModule from 'lib/user';
 import RoleSelect from 'my-sites/people/role-select';
 
@@ -103,7 +103,7 @@ const EditUserForm = createReactClass( {
 		// Since we store 'roles' in state as a string, but user objects expect
 		// roles to be an array, if we've updated the user's role, we need to
 		// place the role in an array before updating the user.
-		UsersActions.updateUser(
+		updateUser(
 			this.props.siteId,
 			this.state.ID,
 			changedSettings.roles

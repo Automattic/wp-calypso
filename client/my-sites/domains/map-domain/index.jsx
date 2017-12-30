@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -17,9 +15,9 @@ import HeaderCake from 'components/header-cake';
 import MapDomainStep from 'components/domains/map-domain-step';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { cartItems } from 'lib/cart-values';
-import upgradesActions from 'lib/upgrades/actions';
+import { addItem } from 'lib/upgrades/actions';
 import wp from 'lib/wp';
-import paths from 'my-sites/domains/paths';
+import { domainManagementList } from 'my-sites/domains/paths';
 import Notice from 'components/notice';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { isSiteUpgradeable } from 'state/selectors';
@@ -56,7 +54,7 @@ export class MapDomain extends Component {
 		}
 
 		if ( selectedSite.is_vip ) {
-			page( paths.domainManagementList( selectedSiteSlug ) );
+			page( domainManagementList( selectedSiteSlug ) );
 			return;
 		}
 
@@ -66,7 +64,7 @@ export class MapDomain extends Component {
 	handleRegisterDomain = suggestion => {
 		const { selectedSiteSlug } = this.props;
 
-		upgradesActions.addItem(
+		addItem(
 			cartItems.domainRegistration( {
 				productSlug: suggestion.product_slug,
 				domain: suggestion.domain_name,
@@ -88,13 +86,13 @@ export class MapDomain extends Component {
 			wpcom
 				.addVipDomainMapping( selectedSite.ID, domain )
 				.then(
-					() => page( paths.domainManagementList( selectedSiteSlug ) ),
+					() => page( domainManagementList( selectedSiteSlug ) ),
 					error => this.setState( { errorMessage: error.message } )
 				);
 			return;
 		}
 
-		upgradesActions.addItem( cartItems.domainMapping( { domain } ) );
+		addItem( cartItems.domainMapping( { domain } ) );
 
 		page( '/checkout/' + selectedSiteSlug );
 	};

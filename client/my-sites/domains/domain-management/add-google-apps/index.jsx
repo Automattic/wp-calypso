@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import page from 'page';
 import { localize } from 'i18n-calypso';
@@ -14,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import Header from 'my-sites/domains/domain-management/components/header';
 import AddEmailAddressesCard from './add-email-addresses-card';
-import paths from 'my-sites/domains/paths';
+import { domainManagementEmail } from 'my-sites/domains/paths';
 import { hasGoogleAppsSupportedDomain } from 'lib/domains';
 import SectionHeader from 'components/section-header';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
@@ -34,7 +32,7 @@ class AddGoogleApps extends React.Component {
 			! hasGoogleAppsSupportedDomain( this.props.domains.list );
 
 		if ( needsRedirect ) {
-			const path = paths.domainManagementEmail(
+			const path = domainManagementEmail(
 				this.props.selectedSite.slug,
 				this.props.selectedDomainName
 			);
@@ -68,7 +66,7 @@ class AddGoogleApps extends React.Component {
 	}
 
 	goToEmail = () => {
-		const path = paths.domainManagementEmail(
+		const path = domainManagementEmail(
 			this.props.selectedSite.slug,
 			this.props.selectedDomainName
 		);

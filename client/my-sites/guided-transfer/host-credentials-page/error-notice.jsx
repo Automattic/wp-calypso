@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -13,7 +11,7 @@ import { connect } from 'react-redux';
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import supportUrl from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getGuidedTransferError } from 'state/sites/guided-transfer/selectors';
 
@@ -47,7 +45,7 @@ const ErrorNotice = localize( ( { translate, errorCode } ) => {
 			status="is-error"
 			text={ getErrorText( { translate, errorCode } ) }
 		>
-			<NoticeAction href={ supportUrl.CALYPSO_CONTACT }>{ translate( 'Get Help' ) }</NoticeAction>
+			<NoticeAction href={ CALYPSO_CONTACT }>{ translate( 'Get Help' ) }</NoticeAction>
 		</Notice>
 	);
 } );

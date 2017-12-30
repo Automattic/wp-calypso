@@ -15,7 +15,7 @@ import { translate } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import CheckoutData from 'components/data/checkout';
 import config from 'config';
-import i18nUtils from 'lib/i18n-utils';
+import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
@@ -24,7 +24,7 @@ import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
-import route from 'lib/route';
+import { sectionify } from 'lib/route';
 import userFactory from 'lib/user';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
@@ -94,8 +94,8 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 };
 
 export function redirectWithoutLocaleIfLoggedIn( context, next ) {
-	if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
-		const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
+	if ( userModule.get() && getLocaleFromPath( context.path ) ) {
+		const urlWithoutLocale = removeLocaleFromPath( context.path );
 		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
 		return page.redirect( urlWithoutLocale );
 	}
@@ -269,7 +269,7 @@ export function sso( context, next ) {
 
 export function plansLanding( context, next ) {
 	const analyticsPageTitle = 'Plans';
-	const basePath = route.sectionify( context.path );
+	const basePath = sectionify( context.path );
 	const analyticsBasePath = basePath + '/:site';
 
 	removeSidebar( context );
@@ -293,7 +293,7 @@ export function plansLanding( context, next ) {
 
 export function plansSelection( context, next ) {
 	const analyticsPageTitle = 'Plans';
-	const basePath = route.sectionify( context.path );
+	const basePath = sectionify( context.path );
 	const analyticsBasePath = basePath + '/:site';
 
 	removeSidebar( context );

@@ -17,7 +17,7 @@ import Me from './me';
 import MailingList from './mailing-list';
 import AccountRecoveryReset from './account-recovery-reset';
 import config from 'config';
-import i18n from 'lib/i18n-utils';
+import { getLanguage, getLocaleSlug } from 'lib/i18n-utils';
 import readerContentWidth from 'reader/lib/content-width';
 
 /**
@@ -1638,7 +1638,7 @@ Undocumented.prototype.usersNew = function( query, fn ) {
 	restrictByOauthKeys( query );
 
 	// Set the language for the user
-	query.locale = i18n.getLocaleSlug();
+	query.locale = getLocaleSlug();
 	args = {
 		path: '/users/new',
 		body: query,
@@ -1655,7 +1655,7 @@ Undocumented.prototype.usersNew = function( query, fn ) {
  * @return {Promise} A promise for the request
  */
 Undocumented.prototype.usersSocialNew = function( query, fn ) {
-	query.locale = i18n.getLocaleSlug();
+	query.locale = getLocaleSlug();
 
 	// This API call is restricted to these OAuth keys
 	restrictByOauthKeys( query );
@@ -1799,7 +1799,7 @@ Undocumented.prototype.usersEmailVerification = function( query, fn ) {
 Undocumented.prototype.validateNewUser = function( data, fn ) {
 	debug( '/signups/validation/user' );
 
-	data.locale = i18n.getLocaleSlug();
+	data.locale = getLocaleSlug();
 
 	return this.wpcom.req.post( '/signups/validation/user/', null, data, fn );
 };
@@ -1813,8 +1813,8 @@ Undocumented.prototype.validateNewUser = function( data, fn ) {
 Undocumented.prototype.requestMagicLoginEmail = function( data, fn ) {
 	restrictByOauthKeys( data );
 
-	data.locale = i18n.getLocaleSlug();
-	data.lang_id = i18n.getLanguage( data.locale ).value;
+	data.locale = getLocaleSlug();
+	data.lang_id = getLanguage( data.locale ).value;
 
 	return this.wpcom.req.post(
 		'/auth/send-login-email',
@@ -1833,7 +1833,7 @@ Undocumented.prototype.requestMagicLoginEmail = function( data, fn ) {
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.sitesNew = function( query, fn ) {
-	var localeSlug = i18n.getLocaleSlug();
+	var localeSlug = getLocaleSlug();
 
 	debug( '/sites/new' );
 
@@ -1841,7 +1841,7 @@ Undocumented.prototype.sitesNew = function( query, fn ) {
 	restrictByOauthKeys( query );
 
 	// Set the language for the user
-	query.lang_id = i18n.getLanguage( localeSlug ).value;
+	query.lang_id = getLanguage( localeSlug ).value;
 	query.locale = localeSlug;
 
 	return this.wpcom.req.post(

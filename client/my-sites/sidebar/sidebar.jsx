@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -52,7 +50,7 @@ import {
 	isJetpackSite,
 	isSitePreviewable,
 } from 'state/sites/selectors';
-import { getStatsPathForTab } from 'lib/route/path';
+import { getStatsPathForTab } from 'lib/route';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 

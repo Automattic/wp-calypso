@@ -1,15 +1,12 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { moment } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -39,7 +36,7 @@ import {
 } from 'lib/purchases';
 import { isDomainRegistration, isJetpackPlan } from 'lib/products-values';
 import notices from 'notices';
-import paths from 'me/purchases/paths';
+import { confirmCancelDomain, purchasesRoot } from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
@@ -188,7 +185,7 @@ class CancelPurchaseButton extends Component {
 		const { id } = this.props.purchase,
 			{ slug } = this.props.selectedSite;
 
-		page( paths.confirmCancelDomain( slug, id ) );
+		page( confirmCancelDomain( slug, id ) );
 	};
 
 	cancelPurchase = () => {
@@ -219,7 +216,7 @@ class CancelPurchaseButton extends Component {
 					{ persistent: true }
 				);
 
-				page( paths.purchasesRoot() );
+				page( purchasesRoot );
 			} else {
 				notices.error(
 					translate(
@@ -266,7 +263,7 @@ class CancelPurchaseButton extends Component {
 
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 
-		page.redirect( paths.purchasesRoot() );
+		page.redirect( purchasesRoot );
 	};
 
 	submitCancelAndRefundPurchase = () => {

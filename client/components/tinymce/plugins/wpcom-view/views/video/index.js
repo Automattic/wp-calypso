@@ -1,14 +1,12 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
-import ShortcodeUtils from 'lib/shortcode';
+import { next } from 'lib/shortcode';
 import VideoView from './view';
 
 export function match( content ) {
-	const nextMatch = ShortcodeUtils.next( 'wpvideo', content );
+	const nextMatch = next( 'wpvideo', content );
 
 	if ( nextMatch ) {
 		return {

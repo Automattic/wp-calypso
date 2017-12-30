@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -33,7 +31,7 @@ import {
 import Notice from 'components/notice';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'gridicons';
-import paths from '../paths';
+import { managePurchase } from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
 const eventProperties = warning => ( { warning, position: 'purchase-list' } );
@@ -202,7 +200,7 @@ class PurchaseItem extends Component {
 			};
 
 			if ( ! isDisconnectedSite ) {
-				props.href = paths.managePurchase( this.props.slug, this.props.purchase.id );
+				props.href = managePurchase( this.props.slug, this.props.purchase.id );
 			}
 		}
 

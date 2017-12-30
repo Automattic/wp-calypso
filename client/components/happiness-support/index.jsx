@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -15,7 +13,12 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import support from 'lib/url/support';
+import {
+	CALYPSO_CONTACT,
+	JETPACK_CONTACT_SUPPORT,
+	JETPACK_SUPPORT,
+	SUPPORT_ROOT,
+} from 'lib/url/support';
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection-connected';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -39,11 +42,11 @@ export class HappinessSupport extends Component {
 	};
 
 	renderContactButton() {
-		let url = support.CALYPSO_CONTACT,
+		let url = CALYPSO_CONTACT,
 			target = '';
 
 		if ( this.props.isJetpack ) {
-			url = support.JETPACK_CONTACT_SUPPORT;
+			url = JETPACK_CONTACT_SUPPORT;
 			target = '_blank';
 		}
 
@@ -75,10 +78,10 @@ export class HappinessSupport extends Component {
 	}
 
 	renderSupportButton() {
-		let url = support.SUPPORT_ROOT;
+		let url = SUPPORT_ROOT;
 
 		if ( this.props.isJetpack ) {
-			url = support.JETPACK_SUPPORT;
+			url = JETPACK_SUPPORT;
 		}
 
 		return (
