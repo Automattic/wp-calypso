@@ -6,8 +6,10 @@
 
 import config from 'config';
 import webRouter from './index.web';
-import { lang } from './controller';
+import controller from './controller';
 import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
+
+const { lang } = controller;
 
 export default router => {
 	if ( config.isEnabled( 'login/magic-login' ) ) {

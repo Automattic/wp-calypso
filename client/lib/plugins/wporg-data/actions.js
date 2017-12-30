@@ -13,7 +13,9 @@ import Dispatcher from 'dispatcher';
 import wporg from 'lib/wporg';
 import utils from 'lib/plugins/utils';
 import CuratedPlugins from 'lib/plugins/wporg-data/curated.json';
-import { debounce } from 'lib/impure-lodash';
+import impureLodash from 'lib/impure-lodash';
+
+const { debounce } = impureLodash;
 
 /**
  * Constants

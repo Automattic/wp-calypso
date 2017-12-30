@@ -21,8 +21,10 @@ import {
 	GalleryDefaultAttrs,
 } from './constants';
 import { stringify } from 'lib/shortcode';
-import { uniqueId } from 'lib/impure-lodash';
+import impureLodash from 'lib/impure-lodash';
 import versionCompare from 'lib/version-compare';
+
+const { uniqueId } = impureLodash;
 
 /**
  * Module variables
