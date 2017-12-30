@@ -5,7 +5,7 @@
  *
  * @return {boolean} true when feature is supported
  */
-export function supportsCssCustomPropertie() {
+export function supportsCssCustomProperties() {
 	return (
 		typeof window !== 'undefined' &&
 		window.CSS &&
