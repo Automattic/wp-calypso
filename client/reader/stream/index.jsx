@@ -25,7 +25,7 @@ import {
 	shufflePosts,
 } from 'lib/feed-stream-store/actions';
 import LikeStore from 'lib/like-store/like-store';
-import LikeStoreActions from 'lib/like-store/actions';
+import { likePost, unlikePost } from 'lib/like-store/actions';
 import LikeHelper from 'reader/like-helper';
 import ListEnd from 'components/list-end';
 import InfiniteList from 'components/infinite-list';
@@ -283,7 +283,9 @@ class ReaderStream extends React.Component {
 			// unknown... ignore for now
 			return;
 		}
-		LikeStoreActions[ liked ? 'unlikePost' : 'likePost' ]( siteId, postId );
+
+		const toggler = liked ? unlikePost : likePost;
+		toggler( siteId, postId );
 	}
 
 	isPostFullScreen() {
