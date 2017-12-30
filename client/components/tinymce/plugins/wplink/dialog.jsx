@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import * as MediaSerialization from 'lib/media-serialization';
+import { deserialize } from 'lib/media-serialization';
 import MediaStore from 'lib/media/store';
 import { url as mediaUrl } from 'lib/media/utils';
 import Dialog from 'components/dialog';
@@ -160,7 +160,7 @@ class LinkDialog extends React.Component {
 		let knownImage;
 
 		if ( selectedNode && 'IMG' === selectedNode.nodeName ) {
-			parsedImage = MediaSerialization.deserialize( selectedNode );
+			parsedImage = deserialize( selectedNode );
 			if ( this.props.site && parsedImage.media.ID ) {
 				knownImage =
 					MediaStore.get( this.props.site.ID, parsedImage.media.ID ) || parsedImage.media;
