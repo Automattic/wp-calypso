@@ -13,7 +13,7 @@ import debugFactory from 'debug';
  */
 import Card from 'components/card';
 import PeopleListItem from 'my-sites/people/people-list-item';
-import UsersActions from 'lib/users/actions';
+import { fetchUsers } from 'lib/users/actions';
 import InfiniteList from 'components/infinite-list';
 import NoResults from 'my-sites/no-results';
 import analytics from 'lib/analytics';
@@ -127,7 +127,7 @@ class Team extends React.Component {
 		const fetchOptions = Object.assign( {}, this.props.fetchOptions, { offset: offset } );
 		analytics.ga.recordEvent( 'People', 'Fetched more users with infinite list', 'offset', offset );
 		debug( 'fetching next batch of users' );
-		UsersActions.fetchUsers( fetchOptions );
+		fetchUsers( fetchOptions );
 	};
 
 	_getPersonRef = user => {
