@@ -1,31 +1,25 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { compact, flatten, includes, isEmpty, mapValues, property, some, values } from 'lodash';
 import i18n from 'i18n-calypso';
 import emailValidator from 'email-validator';
 
-function filter( { users, fields } ) {
+export function filter( { users, fields } ) {
 	return users.filter( function( user, index ) {
-		var isFirst = index === 0,
-			hasInput = some( Object.keys( fields ), function( name ) {
-				return user[ name ].value;
-			} );
+		const isFirst = index === 0;
+		const hasInput = some( Object.keys( fields ), name => user[ name ].value );
 
 		return isFirst || hasInput;
 	} );
 }
 
-function validate( { users, fields } ) {
-	var errors;
-
+export function validate( { users, fields } ) {
 	users = filter( { users, fields } );
 	users = users.map( function( user ) {
 		return mapValues( user, function( field, key ) {
-			var error = null;
+			let error = null;
 
 			if ( isEmpty( field.value ) ) {
 				error = i18n.translate( 'This field is required.' );
@@ -43,16 +37,12 @@ function validate( { users, fields } ) {
 				}
 			}
 
-			return Object.assign( {}, field, { error: error } );
+			return Object.assign( {}, field, { error } );
 		} );
 	} );
 
-	errors = compact(
-		flatten(
-			users.map( function( user ) {
-				return values( user ).map( property( 'error' ) );
-			} )
-		)
+	const errors = compact(
+		flatten( users.map( user => values( user ).map( property( 'error' ) ) ) )
 	);
 
 	return {
@@ -60,8 +50,3 @@ function validate( { users, fields } ) {
 		users,
 	};
 }
-
-export default {
-	validate,
-	filter,
-};
