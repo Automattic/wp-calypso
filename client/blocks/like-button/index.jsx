@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { omit, noop } from 'lodash';
@@ -12,7 +10,7 @@ import { omit, noop } from 'lodash';
  * Internal dependencies
  */
 import smartSetState from 'lib/react-smart-set-state';
-import LikeActions from 'lib/like-store/actions';
+import { likePost, unlikePost } from 'lib/like-store/actions';
 import LikeButton from './button';
 import LikeStore from 'lib/like-store/like-store';
 
@@ -62,7 +60,9 @@ class LikeButtonContainer extends PureComponent {
 	}
 
 	handleLikeToggle( liked ) {
-		LikeActions[ liked ? 'likePost' : 'unlikePost' ]( this.props.siteId, this.props.postId );
+		const toggler = liked ? likePost : unlikePost;
+		toggler( this.props.siteId, this.props.postId );
+
 		this.props.onLikeToggle( liked );
 	}
 
