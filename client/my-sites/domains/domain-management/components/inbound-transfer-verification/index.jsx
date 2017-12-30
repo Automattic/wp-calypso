@@ -11,7 +11,7 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import EmailVerificationCard from 'my-sites/domains/domain-management/components/email-verification';
-import { checkInboundTransferStatus, resendInboundTransferEmail } from 'lib/domains';
+import { getInboundTransferAdminEmail, resendInboundTransferEmail } from 'lib/domains';
 import support from 'lib/url/support';
 import Card from 'components/card';
 
@@ -40,7 +40,7 @@ class InboundTransferEmailVerificationCard extends React.Component {
 	refreshContactEmail = () => {
 		this.setState( { loading: true } );
 
-		checkInboundTransferStatus( this.props.selectedDomainName, ( error, result ) => {
+		getInboundTransferAdminEmail( this.props.selectedDomainName, ( error, result ) => {
 			if ( ! isEmpty( error ) ) {
 				return;
 			}
@@ -61,7 +61,7 @@ class InboundTransferEmailVerificationCard extends React.Component {
 			return null;
 		}
 
-		if ( manualWhois || ! contactEmail ) {
+		if ( manualWhois ) {
 			return (
 				<Card highlight="warning">
 					<div>
@@ -74,6 +74,24 @@ class InboundTransferEmailVerificationCard extends React.Component {
 							'The contact address for this domain wasn\'t immediately available. ' +
 							'We will keep checking and send the email to initiate the transfer once we have the ' +
 							'correct address. This could take up to 24 hours. We appreciate your patience.'
+						) }
+					</div>
+				</Card>
+			);
+		}
+
+		if ( ! contactEmail ) {
+			return (
+				<Card highlight="info">
+					<div>
+						<h1 className="inbound-transfer-verification__heading">
+							{ translate(
+								'The authorization email is queued for sending.'
+							) }
+						</h1>
+						{ translate(
+							'The email will be sent in the next few minutes. ' +
+							'Please check back here to make sure which mailbox it is headed for.'
 						) }
 					</div>
 				</Card>

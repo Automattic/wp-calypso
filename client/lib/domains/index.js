@@ -99,6 +99,22 @@ function resendInboundTransferEmail( domainName, onComplete ) {
 	} );
 }
 
+function getInboundTransferAdminEmail( domainName, onComplete ) {
+	if ( ! domainName ) {
+		onComplete( null );
+		return;
+	}
+
+	wpcom.undocumented().getInboundTransferAdminEmail( domainName, function( serverError, result ) {
+		if ( serverError ) {
+			onComplete( serverError.error );
+			return;
+		}
+
+		onComplete( null, result );
+	} );
+}
+
 function canRedirect( siteId, domainName, onComplete ) {
 	if ( ! domainName ) {
 		onComplete( new ValidationError( 'empty_query' ) );
@@ -252,6 +268,7 @@ export {
 	getDomainProductSlug,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,
+	getInboundTransferAdminEmail,
 	getPrimaryDomain,
 	getSelectedDomain,
 	getRegisteredDomains,
