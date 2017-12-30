@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { get, find, defer } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -28,6 +29,7 @@ import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart
 import Notice from 'components/notice';
 import { preventWidows } from 'lib/formatting';
 import PaymentBox from './payment-box';
+import { isPresalesChatAvailable } from 'state/ui/olark/selectors';
 
 /**
  * Module variables
@@ -154,6 +156,7 @@ const SecurePaymentForm = createReactClass( {
 				cart={ this.props.cart }
 				onSubmit={ this.handlePaymentBoxSubmit }
 				transactionStep={ this.props.transaction.step }
+				presaleChatAvailable={ this.props.presaleChatAvailable }
 			/>
 		);
 	},
@@ -198,6 +201,7 @@ const SecurePaymentForm = createReactClass( {
 					selectedSite={ this.props.selectedSite }
 					onSubmit={ this.handlePaymentBoxSubmit }
 					transactionStep={ this.props.transaction.step }
+					presaleChatAvailable={ this.props.presaleChatAvailable }
 				/>
 			</PaymentBox>
 		);
@@ -218,6 +222,7 @@ const SecurePaymentForm = createReactClass( {
 					countriesList={ countriesListForPayments }
 					selectedSite={ this.props.selectedSite }
 					redirectTo={ this.props.redirectTo }
+					presaleChatAvailable={ this.props.presaleChatAvailable }
 				/>
 			</PaymentBox>
 		);
@@ -238,6 +243,7 @@ const SecurePaymentForm = createReactClass( {
 					selectedSite={ this.props.selectedSite }
 					paymentType={ paymentType }
 					redirectTo={ this.props.redirectTo }
+					presaleChatAvailable={ this.props.presaleChatAvailable }
 				/>
 			</PaymentBox>
 		);
@@ -351,4 +357,8 @@ const SecurePaymentForm = createReactClass( {
 	},
 } );
 
-export default localize( SecurePaymentForm );
+export default connect( state => {
+	return {
+		presaleChatAvailable: isPresalesChatAvailable( state ),
+	};
+}, null )( localize( SecurePaymentForm ) );
