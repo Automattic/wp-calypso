@@ -6,7 +6,7 @@
 
 import moment from 'moment';
 
-const createSitePlanObject = plan => {
+export const createSitePlanObject = plan => {
 	if ( ! plan ) {
 		return {};
 	}
@@ -42,8 +42,4 @@ const createSitePlanObject = plan => {
 			: null,
 		userIsOwner: Boolean( plan.user_is_owner ),
 	};
-};
-
-export default {
-	createSitePlanObject,
 };
