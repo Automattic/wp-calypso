@@ -18,7 +18,7 @@ import addQueryArgs from 'lib/route/add-query-args';
  * Internal dependencies
  */
 import Toolbar from './toolbar';
-import touchDetect from 'lib/touch-detect';
+import { hasTouch } from 'lib/touch-detect';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import SpinnerLine from 'components/spinner-line';
@@ -44,7 +44,7 @@ export class WebPreviewContent extends PureComponent {
 
 	componentWillMount() {
 		// Cache touch and mobile detection for the entire lifecycle of the component
-		this._hasTouch = touchDetect.hasTouch();
+		this._hasTouch = hasTouch();
 	}
 
 	componentDidMount() {

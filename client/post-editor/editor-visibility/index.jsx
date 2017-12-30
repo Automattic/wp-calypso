@@ -21,7 +21,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextInput from 'components/forms/form-text-input';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
-import touchDetect from 'lib/touch-detect';
+import { hasTouch } from 'lib/touch-detect';
 import postActions from 'lib/posts/actions';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import { tracks } from 'lib/analytics';
@@ -308,7 +308,7 @@ class EditorVisibility extends React.Component {
 	render() {
 		const visibility = this.getVisibility();
 		const classes = classNames( 'editor-visibility', {
-			'is-touch': touchDetect.hasTouch(),
+			'is-touch': hasTouch(),
 		} );
 
 		return <div className={ classes }>{ this.renderPrivacyDropdown( visibility ) }</div>;
