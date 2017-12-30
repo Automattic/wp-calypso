@@ -31,6 +31,7 @@ import { getScrollableSidebar } from 'layout/guided-tours/positioning';
 import scrollTo from 'lib/scroll-to';
 
 const scrollSidebarToTop = () => scrollTo( { y: 0, container: getScrollableSidebar() } );
+const ViewSiteButtonLabel = translate( 'View Site' );
 
 // note that this tour checks for a non-existent feature flag.
 // this is kept as an example, while making sure it never gets triggered
@@ -96,9 +97,9 @@ export const MainTour = makeTour(
 		>
 			<p>{ translate( 'Want to take a look at your site?' ) }</p>
 			<Continue click step="view-site" target="sitePreview">
-				{ translate( 'Click {{strong}}View Site{{/strong}} to continue.', {
+				{ translate( 'Click {{ViewSiteButton/}} to continue.', {
 					components: {
-						strong: <strong />,
+						ViewSiteButton: <strong>{ ViewSiteButtonLabel }</strong>,
 					},
 				} ) }
 			</Continue>
