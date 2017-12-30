@@ -17,7 +17,7 @@ import classNames from 'classnames';
 import ButtonsPreviewButton from 'my-sites/sharing/buttons/preview-button';
 import ResizableIframe from 'components/resizable-iframe';
 import previewWidget from './preview-widget';
-import touchDetect from 'lib/touch-detect';
+import { hasTouch } from 'lib/touch-detect';
 
 class SharingButtonsPreviewButtons extends React.Component {
 	static displayName = 'SharingButtonsPreviewButtons';
@@ -123,10 +123,7 @@ class SharingButtonsPreviewButtons extends React.Component {
 	showMorePreview = event => {
 		var moreButton, offset;
 
-		if (
-			event &&
-			( event.currentTarget.contains( event.relatedTarget ) || touchDetect.hasTouch() )
-		) {
+		if ( event && ( event.currentTarget.contains( event.relatedTarget ) || hasTouch() ) ) {
 			// Only allow the preview to be shown if cursor has moved from outside
 			// the element to inside. This restriction should only apply to non-
 			// touch devices

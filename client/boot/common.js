@@ -19,7 +19,7 @@ import config from 'config';
 import { receiveUser } from 'state/users/actions';
 import { setCurrentUserId, setCurrentUserFlags } from 'state/current-user/actions';
 import { setRoute as setRouteAction } from 'state/ui/actions';
-import touchDetect from 'lib/touch-detect';
+import { hasTouch } from 'lib/touch-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 
 const debug = debugFactory( 'calypso' );
@@ -161,7 +161,7 @@ export const utils = () => {
 
 	// Infer touch screen by checking if device supports touch events
 	// See touch-detect/README.md
-	if ( touchDetect.hasTouch() ) {
+	if ( hasTouch() ) {
 		document.documentElement.classList.add( 'touch' );
 	} else {
 		document.documentElement.classList.add( 'notouch' );
