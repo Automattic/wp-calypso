@@ -68,6 +68,7 @@ class IcannVerificationCard extends React.Component {
 			<EmailVerificationCard
 				changeEmailHref={ changeEmailHref }
 				contactEmail={ contactDetails.email }
+				errorMessage={ translate( 'Unable to resend ICANN verification email.' ) }
 				headerText={ translate( 'Important: Verify Your Email Address' ) }
 				verificationExplanation={ verificationExplanation }
 				resendVerification={ upgradesActions.resendIcannVerification }
