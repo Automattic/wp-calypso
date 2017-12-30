@@ -17,7 +17,7 @@ import Popover from 'components/popover';
 import PopoverMenuItem from 'components/popover/menu-item';
 import UserItem from 'components/user';
 import InfiniteList from 'components/infinite-list';
-import UsersActions from 'lib/users/actions';
+import { fetchUsers } from 'lib/users/actions';
 import Search from 'components/search';
 import { hasTouch } from 'lib/touch-detect';
 
@@ -222,7 +222,7 @@ const SwitcherShell = createReactClass( {
 			offset: this.props.users.length,
 		} );
 		debug( 'fetching next batch of authors' );
-		UsersActions.fetchUsers( fetchOptions );
+		fetchUsers( fetchOptions );
 	},
 
 	_getAuthorItemGUID: function( author ) {

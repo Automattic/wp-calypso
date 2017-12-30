@@ -14,13 +14,13 @@ const debug = debugFactory( 'calypso:site-users-fetcher' );
  * Internal dependencies
  */
 import UsersStore from 'lib/users/store';
-import UsersActions from 'lib/users/actions';
+import { fetchUpdated, fetchUsers } from 'lib/users/actions';
 import pollers from 'lib/data-poller';
 
 /**
  * Module variables
  */
-var defaultOptions = {
+const defaultOptions = {
 	number: 100,
 	offset: 0,
 };
@@ -37,11 +37,9 @@ export default class extends React.Component {
 		debug( 'Mounting SiteUsersFetcher' );
 		UsersStore.on( 'change', this._updateSiteUsers );
 		this._fetchIfEmpty();
-		this._poller = pollers.add(
-			UsersStore,
-			UsersActions.fetchUpdated.bind( UsersActions, this.props.fetchOptions, true ),
-			{ leading: false }
-		);
+		this._poller = pollers.add( UsersStore, () => fetchUpdated( this.props.fetchOptions ), {
+			leading: false,
+		} );
 	}
 
 	componentWillUnmount() {
@@ -57,11 +55,9 @@ export default class extends React.Component {
 			this._updateSiteUsers( nextProps.fetchOptions );
 			this._fetchIfEmpty( nextProps.fetchOptions );
 			pollers.remove( this._poller );
-			this._poller = pollers.add(
-				UsersStore,
-				UsersActions.fetchUpdated.bind( UsersActions, nextProps.fetchOptions, true ),
-				{ leading: false }
-			);
+			this._poller = pollers.add( UsersStore, () => fetchUpdated( nextProps.fetchOptions ), {
+				leading: false,
+			} );
 		}
 	}
 
@@ -122,7 +118,7 @@ export default class extends React.Component {
 			if ( paginationData.fetchingUsers ) {
 				return;
 			}
-			UsersActions.fetchUsers( fetchOptions );
+			fetchUsers( fetchOptions );
 		}, 0 );
 	};
 
