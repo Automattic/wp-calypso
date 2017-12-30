@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -18,7 +16,7 @@ import MapDomainStep from 'components/domains/map-domain-step';
 import productsListFactory from 'lib/products-list';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import SignupActions from 'lib/signup/actions';
-import signupUtils from 'signup/utils';
+import { getStepUrl } from 'signup/utils';
 import StepWrapper from 'signup/step-wrapper';
 import { cartItems } from 'lib/cart-values';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
@@ -58,16 +56,11 @@ class DomainsStep extends React.Component {
 	state = { products: productsList.get() };
 
 	showDomainSearch = () => {
-		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, this.props.locale ) );
+		page( getStepUrl( this.props.flowName, this.props.stepName, this.props.locale ) );
 	};
 
 	getMapDomainUrl = () => {
-		return signupUtils.getStepUrl(
-			this.props.flowName,
-			this.props.stepName,
-			'mapping',
-			this.props.locale
-		);
+		return getStepUrl( this.props.flowName, this.props.stepName, 'mapping', this.props.locale );
 	};
 
 	componentDidMount() {
@@ -251,12 +244,7 @@ class DomainsStep extends React.Component {
 		let content;
 		const { translate } = this.props;
 		const backUrl = this.props.stepSectionName
-			? signupUtils.getStepUrl(
-					this.props.flowName,
-					this.props.stepName,
-					undefined,
-					getLocaleSlug()
-				)
+			? getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() )
 			: undefined;
 
 		if ( 'mapping' === this.props.stepSectionName ) {

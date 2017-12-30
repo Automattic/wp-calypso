@@ -12,7 +12,7 @@ import { stub } from 'sinon';
  */
 import { NavigationLink } from '../';
 import EMPTY_COMPONENT from 'components/empty-component';
-import signupUtils from 'signup/utils';
+import { getStepUrl } from 'signup/utils';
 
 jest.mock( 'lib/analytics', () => ( {
 	tracks: {
@@ -50,7 +50,7 @@ describe( 'NavigationLink', () => {
 	} );
 
 	afterEach( () => {
-		signupUtils.getStepUrl.reset();
+		getStepUrl.reset();
 	} );
 
 	test( 'should render Button element', () => {
@@ -87,24 +87,19 @@ describe( 'NavigationLink', () => {
 	} );
 
 	test( 'should set a proper url as href prop when the direction is "back".', () => {
-		expect( signupUtils.getStepUrl ).not.to.be.called;
+		expect( getStepUrl ).not.to.be.called;
 
 		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
 
-		// It should call signupUtils.getStepUrl()
-		expect( signupUtils.getStepUrl ).to.has.been.called;
-		expect( signupUtils.getStepUrl ).to.has.been.calledWith(
-			'test:flow',
-			'test:step1',
-			'test:section1',
-			'en'
-		);
+		// It should call getStepUrl()
+		expect( getStepUrl ).to.has.been.called;
+		expect( getStepUrl ).to.has.been.calledWith( 'test:flow', 'test:step1', 'test:section1', 'en' );
 
 		// when it is the first step
-		signupUtils.getStepUrl = stub();
+		getStepUrl = stub();
 		wrapper.setProps( { stepName: 'test:step1' } ); // set the first step
-		expect( signupUtils.getStepUrl ).to.has.been.called;
-		expect( signupUtils.getStepUrl ).to.has.been.calledWith( 'test:flow', null, '', 'en' );
+		expect( getStepUrl ).to.has.been.called;
+		expect( getStepUrl ).to.has.been.calledWith( 'test:flow', null, '', 'en' );
 
 		// The href should be backUrl when exist.
 		wrapper.setProps( { backUrl: 'test:back-url' } );

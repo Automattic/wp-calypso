@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -20,7 +18,7 @@ import SignupActions from 'lib/signup/actions';
 import analytics from 'lib/analytics';
 import verticals from './verticals';
 import Button from 'components/button';
-import signupUtils from 'signup/utils';
+import { getStepUrl } from 'signup/utils';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 
@@ -112,12 +110,7 @@ class SurveyStep extends React.Component {
 		);
 
 		const backUrl = this.props.stepSectionName
-			? signupUtils.getStepUrl(
-					this.props.flowName,
-					this.props.stepName,
-					undefined,
-					this.props.locale
-				)
+			? getStepUrl( this.props.flowName, this.props.stepName, undefined, this.props.locale )
 			: undefined;
 
 		return (
@@ -145,9 +138,7 @@ class SurveyStep extends React.Component {
 	};
 
 	handleOther = () => {
-		page(
-			signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'other', this.props.locale )
-		);
+		page( getStepUrl( this.props.flowName, this.props.stepName, 'other', this.props.locale ) );
 	};
 
 	handleVerticalOther = otherTextValue => {

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import url from 'url';
 import debugModule from 'debug';
@@ -44,7 +42,7 @@ import WpcomLoginForm from './wpcom-login-form';
 import userModule from 'lib/user';
 import analytics from 'lib/analytics';
 import SignupProcessingScreen from 'signup/processing-screen';
-import utils from './utils';
+import { getDestination, canResumeFlow, getStepUrl } from './utils';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
@@ -161,7 +159,7 @@ class Signup extends React.Component {
 				const timeSinceLoading = this.state.loadingScreenStartTime
 					? Date.now() - this.state.loadingScreenStartTime
 					: undefined;
-				const filteredDestination = utils.getDestination(
+				const filteredDestination = getDestination(
 					destination,
 					dependencies,
 					this.props.flowName
@@ -179,7 +177,7 @@ class Signup extends React.Component {
 
 		this.loadProgressFromStore();
 
-		if ( utils.canResumeFlow( this.props.flowName, SignupProgressStore.get() ) ) {
+		if ( canResumeFlow( this.props.flowName, SignupProgressStore.get() ) ) {
 			// we loaded progress from local storage, attempt to resume progress
 			return this.resumeProgress();
 		}
@@ -188,7 +186,7 @@ class Signup extends React.Component {
 			// no progress was resumed and we're on a non-zero step
 			// redirect to the beginning of the flow
 			return page.redirect(
-				utils.getStepUrl(
+				getStepUrl(
 					this.props.flowName,
 					flows.getFlow( this.props.flowName ).steps[ 0 ],
 					this.props.locale
@@ -351,12 +349,7 @@ class Signup extends React.Component {
 		this.setState( { firstUnsubmittedStep } );
 
 		return page.redirect(
-			utils.getStepUrl(
-				this.props.flowName,
-				firstUnsubmittedStep,
-				stepSectionName,
-				this.props.locale
-			)
+			getStepUrl( this.props.flowName, firstUnsubmittedStep, stepSectionName, this.props.locale )
 		);
 	};
 
@@ -384,7 +377,7 @@ class Signup extends React.Component {
 		// redirect the user to the next step
 		scrollPromise.then( () => {
 			if ( ! this.isEveryStepSubmitted() ) {
-				page( utils.getStepUrl( flowName, stepName, stepSectionName, this.props.locale ) );
+				page( getStepUrl( flowName, stepName, stepSectionName, this.props.locale ) );
 			} else if ( this.isEveryStepSubmitted() ) {
 				this.goToFirstInvalidStep();
 			}
@@ -417,7 +410,7 @@ class Signup extends React.Component {
 				return;
 			}
 
-			page( utils.getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
+			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
 		}
 	};
 
