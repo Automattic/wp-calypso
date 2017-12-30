@@ -17,12 +17,11 @@ import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
 import PeopleProfile from 'my-sites/people/people-profile';
 import UsersStore from 'lib/users/store';
-import UsersActions from 'lib/users/actions';
+import { fetchUser } from 'lib/users/actions';
 import userModule from 'lib/user';
 import { protectForm } from 'lib/protect-form';
 import DeleteUser from 'my-sites/people/delete-user';
 import PeopleNotices from 'my-sites/people/people-notices';
-import PeopleLog from 'lib/people/log-store';
 import analytics from 'lib/analytics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -46,15 +45,15 @@ export class EditTeamMemberForm extends Component {
 
 	componentDidMount() {
 		UsersStore.on( 'change', this.refreshUser );
-		PeopleLog.on( 'change', this.checkRemoveUser );
-		PeopleLog.on( 'change', this.redirectIfError );
+		PeopleLogStore.on( 'change', this.checkRemoveUser );
+		PeopleLogStore.on( 'change', this.redirectIfError );
 		this.requestUser();
 	}
 
 	componentWillUnmount() {
 		UsersStore.removeListener( 'change', this.refreshUser );
-		PeopleLog.removeListener( 'change', this.checkRemoveUser );
-		PeopleLog.removeListener( 'change', this.redirectIfError );
+		PeopleLogStore.removeListener( 'change', this.checkRemoveUser );
+		PeopleLogStore.removeListener( 'change', this.redirectIfError );
 	}
 
 	componentDidUpdate( lastProps ) {
@@ -71,7 +70,7 @@ export class EditTeamMemberForm extends Component {
 
 	requestUser = () => {
 		if ( this.props.siteId ) {
-			UsersActions.fetchUser( { siteId: this.props.siteId }, this.props.userLogin );
+			fetchUser( { siteId: this.props.siteId }, this.props.userLogin );
 		}
 	};
 
@@ -102,7 +101,7 @@ export class EditTeamMemberForm extends Component {
 			return;
 		}
 
-		const removeUserSuccessful = PeopleLog.getCompleted( log => {
+		const removeUserSuccessful = PeopleLogStore.getCompleted( log => {
 			return (
 				'RECEIVE_DELETE_SITE_USER_SUCCESS' === log.action &&
 				this.props.siteId === log.siteId &&
@@ -116,7 +115,7 @@ export class EditTeamMemberForm extends Component {
 			page.redirect( redirect );
 		}
 
-		const removeUserInProgress = PeopleLog.getInProgress(
+		const removeUserInProgress = PeopleLogStore.getInProgress(
 			function( log ) {
 				return (
 					'DELETE_SITE_USER' === log.action &&
