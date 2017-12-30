@@ -129,8 +129,7 @@ class RemovePurchase extends Component {
 			survey,
 			selectedPurchase,
 			isChatAvailable || isChatActive,
-			cancellationChatAvailable,
-			null
+			cancellationChatAvailable
 		);
 		const newStep = stepFunction( surveyStep, steps );
 		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
