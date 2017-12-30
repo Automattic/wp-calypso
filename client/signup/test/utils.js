@@ -21,7 +21,7 @@ import {
 	mergeFormWithValue,
 } from '../utils';
 import mockedFlows from './fixtures/flows';
-import flows from 'signup/config/flows';
+import * as flows from 'signup/config/flows';
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
