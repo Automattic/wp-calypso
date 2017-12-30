@@ -11,8 +11,7 @@ import { filter, find, indexOf, isEmpty, merge, pick } from 'lodash';
  */
 import i18nUtils from 'lib/i18n-utils';
 import steps from 'signup/config/steps';
-import flows from 'signup/config/flows';
-import { defaultFlowName } from 'signup/config/flows';
+import { defaultFlowName, filterDestination, filterFlowName, getFlow } from 'signup/config/flows';
 import formState from 'lib/form-state';
 import userFactory from 'lib/user';
 const user = userFactory();
@@ -22,7 +21,7 @@ function getFlowName( parameters ) {
 		parameters.flowName && isFlowName( parameters.flowName )
 			? parameters.flowName
 			: defaultFlowName;
-	return maybeFilterFlowName( flow, flows.filterFlowName );
+	return maybeFilterFlowName( flow, filterFlowName );
 }
 
 function maybeFilterFlowName( flowName, filterCallback ) {
@@ -36,7 +35,7 @@ function maybeFilterFlowName( flowName, filterCallback ) {
 }
 
 function isFlowName( pathFragment ) {
-	return ! isEmpty( flows.getFlow( pathFragment ) );
+	return ! isEmpty( getFlow( pathFragment ) );
 }
 
 function getStepName( parameters ) {
@@ -86,7 +85,7 @@ function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 function getValidPath( parameters ) {
 	const locale = getLocale( parameters ),
 		flowName = getFlowName( parameters ),
-		currentFlowSteps = flows.getFlow( flowName ).steps,
+		currentFlowSteps = getFlow( flowName ).steps,
 		stepName = getStepName( parameters ) || currentFlowSteps[ 0 ],
 		stepSectionName = getStepSectionName( parameters );
 
@@ -98,17 +97,17 @@ function getValidPath( parameters ) {
 }
 
 function getPreviousStepName( flowName, currentStepName ) {
-	const flow = flows.getFlow( flowName );
+	const flow = getFlow( flowName );
 	return flow.steps[ indexOf( flow.steps, currentStepName ) - 1 ];
 }
 
 function getNextStepName( flowName, currentStepName ) {
-	const flow = flows.getFlow( flowName );
+	const flow = getFlow( flowName );
 	return flow.steps[ indexOf( flow.steps, currentStepName ) + 1 ];
 }
 
 function getFlowSteps( flowName ) {
-	const flow = flows.getFlow( flowName );
+	const flow = getFlow( flowName );
 	return flow.steps;
 }
 
@@ -127,7 +126,7 @@ function mergeFormWithValue( { form, fieldName, fieldValue } ) {
 }
 
 function getDestination( destination, dependencies, flowName ) {
-	return flows.filterDestination( destination, dependencies, flowName );
+	return filterDestination( destination, dependencies, flowName );
 }
 
 function getThemeForDesignType( designType ) {
@@ -191,7 +190,7 @@ function getSiteTypeForSiteGoals( siteGoals ) {
 }
 
 function canResumeFlow( flowName, progress ) {
-	const flow = flows.getFlow( flowName );
+	const flow = getFlow( flowName );
 	const flowStepsInProgressStore = filter(
 		progress,
 		step => -1 !== flow.steps.indexOf( step.stepName )
