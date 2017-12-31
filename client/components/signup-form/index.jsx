@@ -16,6 +16,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import wpcom from 'lib/wp';
 import config from 'config';
 import analytics from 'lib/analytics';
@@ -369,6 +370,7 @@ class SignupForm extends Component {
 
 		let link = login( {
 			isNative: config.isEnabled( 'login/native-login-links' ),
+			locale: this.props.locale,
 			redirectTo: this.props.redirectToAfterLoginUrl,
 		} );
 
@@ -558,23 +560,14 @@ class SignupForm extends Component {
 		);
 	}
 
-	localizeUrlWithSubdomain( url ) {
-		const urlArray = url.split( '//' );
-		let returnUrl = urlArray[ 0 ] + '//';
-		if ( this.props.locale ) {
-			returnUrl += this.props.locale + '.';
-		}
-		return returnUrl + urlArray[ 1 ];
-	}
-
 	footerLink() {
 		if ( this.props.positionInFlow !== 0 ) {
 			return;
 		}
 
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
-			? login( { isNative: true, redirectTo: this.props.redirectToAfterLoginUrl } )
-			: this.localizeUrlWithSubdomain( config( 'login_url' ) );
+			? login( { isNative: true, locale: this.props.locale, redirectTo: this.props.redirectToAfterLoginUrl } )
+			: addLocaleToWpcomUrl( config( 'login_url' ), this.props.locale );
 
 		return (
 			<LoggedOutFormLinks>

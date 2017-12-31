@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 import page from 'page';
 
 /**
@@ -17,8 +16,9 @@ import page from 'page';
 import notices from 'notices';
 import { login } from 'lib/paths';
 import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
-import { getMagicLoginCurrentView } from 'state/selectors';
+import { getCurrentLocaleSlug, getMagicLoginCurrentView } from 'state/selectors';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
+import LocaleSuggestions from 'components/locale-suggestions';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	recordPageViewWithClientId as recordPageView,
@@ -30,51 +30,80 @@ import Gridicon from 'gridicons';
 
 class MagicLogin extends React.Component {
 	static propTypes = {
+		path: PropTypes.string.isRequired,
+
 		// mapped to dispatch
 		hideMagicLoginRequestForm: PropTypes.func.isRequired,
 		recordPageView: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 
 		// mapped to state
+		locale: PropTypes.string.isRequired,
 		showCheckYourEmail: PropTypes.bool.isRequired,
 
 		// From `localize`
 		translate: PropTypes.func.isRequired,
 	};
 
+	componentDidMount() {
+		this.props.recordPageView( '/log-in/link', 'Login > Link' );
+	}
+
 	onClickEnterPasswordInstead = event => {
 		event.preventDefault();
+
 		this.props.recordTracksEvent( 'calypso_login_email_link_page_click_back' );
 
-		page( login( { isNative: true } ) );
+		page( login( { isNative: true, locale: this.props.locale } ) );
 	};
 
-	render() {
-		const { showCheckYourEmail, translate } = this.props;
+	renderLinks() {
+		const { locale, showCheckYourEmail, translate } = this.props;
 
-		this.props.recordPageView( '/log-in/link', 'Login > Link' );
+		if ( showCheckYourEmail ) {
+			return null;
+		}
 
-		const footer = ! showCheckYourEmail && (
+		return (
 			<div className="magic-login__footer">
-				<a href="#" onClick={ this.onClickEnterPasswordInstead }>
-					<Gridicon icon="arrow-left" size={ 18 } /> { translate( 'Enter a password instead' ) }
+				<a
+					href={ login( { isNative: true, locale: locale } ) }
+					onClick={ this.onClickEnterPasswordInstead }
+				>
+					<Gridicon icon="arrow-left" size={ 18 } />
+					{ translate( 'Enter a password instead' ) }
 				</a>
 			</div>
 		);
+	}
 
-		const classes = classNames( 'magic-login', 'magic-login__request-link' );
+	renderLocaleSuggestions() {
+		const { locale, path, showCheckYourEmail } = this.props;
 
+		if ( showCheckYourEmail ) {
+			return null;
+		}
+
+		return <LocaleSuggestions locale={ locale } path={ path } />;
+	}
+
+	render() {
 		return (
-			<Main className={ classes }>
+			<Main className="magic-login magic-login__request-link">
+				{ this.renderLocaleSuggestions() }
+
 				<GlobalNotices id="notices" notices={ notices.list } />
+
 				<RequestLoginEmailForm />
-				{ footer }
+
+				{ this.renderLinks() }
 			</Main>
 		);
 	}
 }
 
 const mapState = state => ( {
+	locale: getCurrentLocaleSlug( state ),
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 } );
 

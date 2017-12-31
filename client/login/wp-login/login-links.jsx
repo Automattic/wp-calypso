@@ -22,7 +22,6 @@ import Gridicon from 'gridicons';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
-	recordPageViewWithClientId as recordPageView,
 } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { login } from 'lib/paths';
@@ -32,13 +31,12 @@ export class LoginLinks extends React.Component {
 	static propTypes = {
 		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
+		oauth2Client: PropTypes.object,
 		privateSite: PropTypes.bool,
-		recordPageView: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
-		oauth2Client: PropTypes.object,
 	};
 
 	recordBackToWpcomLinkClick = () => {
@@ -63,7 +61,7 @@ export class LoginLinks extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
 		this.props.resetMagicLoginRequestForm();
 
-		page( login( { isNative: true, twoFactorAuthType: 'link' } ) );
+		page( login( { isNative: true, locale: this.props.locale, twoFactorAuthType: 'link' } ) );
 	};
 
 	recordResetPasswordLinkClick = () => {
@@ -88,6 +86,7 @@ export class LoginLinks extends React.Component {
 				},
 			} );
 		}
+
 		return (
 			<a
 				href={ url }
@@ -142,7 +141,7 @@ export class LoginLinks extends React.Component {
 
 		return (
 			<a
-				href="#"
+				href={ login( { isNative: true, locale: this.props.locale, twoFactorAuthType: 'link' } ) }
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
 				onClick={ this.handleMagicLoginLinkClick }
@@ -188,7 +187,6 @@ const mapState = state => ( {
 } );
 
 const mapDispatch = {
-	recordPageView,
 	recordTracksEvent,
 	resetMagicLoginRequestForm,
 };
