@@ -26,6 +26,7 @@ import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { receiveUser } from 'state/users/actions';
+import { setCurrentUserId, setCurrentUserFlags } from 'state/current-user/actions';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -318,6 +319,8 @@ function setUpLoggedInRoute( req, res, next ) {
 
 			// Setting user in the state is safe as long as we don't cache it
 			req.context.store.dispatch( receiveUser( data ) );
+			req.context.store.dispatch( setCurrentUserId( data.ID ) );
+			req.context.store.dispatch( setCurrentUserFlags( data.meta.data.flags.active_flags ) );
 
 			if ( data.localeSlug ) {
 				req.context.lang = data.localeSlug;
