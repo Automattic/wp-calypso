@@ -50,7 +50,7 @@ class PostPhoto extends React.Component {
 		const zoomIcon = isExpanded ? 'zoom-out' : 'zoom-in';
 
 		return (
-			<div className="reader-post-card__post">
+			<div className="reader-post-card__post" ref={ this.handleWidthDivLoaded }>
 				<div className="reader-post-card__photo-expand-controls">
 					<Gridicon
 						icon={ zoomIcon }

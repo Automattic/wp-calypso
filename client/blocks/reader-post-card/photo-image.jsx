@@ -67,9 +67,12 @@ class PostPhotoImage extends React.Component {
 
 		return (
 			<div style={ divStyle }>
-				<a className={ classes } href={ post.URL } style={ featuredImageStyle } onClick={ onClick }>
-					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } } />
-				</a>
+				<a
+					className={ classes }
+					href={ post.URL }
+					style={ featuredImageStyle }
+					onClick={ onClick }
+				/>
 				<AutoDirection>
 					<h1 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL } onClick={ onClick }>

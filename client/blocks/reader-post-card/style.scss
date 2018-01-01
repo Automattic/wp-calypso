@@ -120,6 +120,21 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 			.reader-post-actions .reader-post-actions__visit {
 				margin-left: -3px;
 			}
+
+			.reader-post-card__photo-expand-controls {
+				background: linear-gradient( to bottom, rgba( 0, 0, 0, .18 ) 0%, rgba( 0, 0, 0, .06 ) 50%,rgba( 0, 0, 0, 0 ) 100% );
+				height: 220px;
+				position: absolute;
+				width: 100%;
+				z-index: 1;
+			}
+
+			.reader-post-card__photo-expand-controls .gridicon {
+				fill: white;
+				position: absolute;
+					right: 8px;
+					top: 8px;
+			}
 		}
 	}
 
