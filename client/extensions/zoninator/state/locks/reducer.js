@@ -31,6 +31,15 @@ const isBlocked = createReducer(
 
 export const blocked = keyedReducer( 'siteId', keyedReducer( 'zoneId', isBlocked ) );
 
+const lockInit = createReducer(
+	{},
+	{
+		[ ZONINATOR_UPDATE_LOCK ]: ( state, { reset } ) => ( reset ? new Date().getTime() : state ),
+	}
+);
+
+export const created = keyedReducer( 'siteId', keyedReducer( 'zoneId', lockInit ) );
+
 const lock = createReducer(
 	{},
 	{
@@ -52,6 +61,7 @@ export const maxLockPeriod = keyedReducer( 'siteId', lockSettings );
 export default combineReducers( {
 	requesting,
 	blocked,
+	created,
 	items,
 	maxLockPeriod,
 } );

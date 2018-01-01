@@ -13,13 +13,14 @@ import {
 	ZONINATOR_REQUEST_LOCK_ERROR,
 	ZONINATOR_UPDATE_LOCK,
 } from '../../action-types';
-import reducer, { blocked, items, requesting, maxLockPeriod } from '../reducer';
+import reducer, { blocked, created, items, requesting, maxLockPeriod } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'requesting',
 			'blocked',
+			'created',
 			'items',
 			'maxLockPeriod',
 		] );
@@ -124,6 +125,43 @@ describe( 'reducer', () => {
 					[ 456 ]: false,
 				},
 			} );
+		} );
+	} );
+
+	describe( 'created()', () => {
+		test( 'should default to an empty object', () => {
+			const state = created( undefined, {} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		test( 'should leave the state unchanged if reset is set to false', () => {
+			const before = {
+				[ 123 ]: {
+					[ 456 ]: 123456789,
+				},
+			};
+			const state = created( before, {
+				type: ZONINATOR_UPDATE_LOCK,
+				siteId: 123,
+				zoneId: 456,
+				reset: false,
+			} );
+
+			expect( state ).to.deep.equal( before );
+		} );
+
+		test( 'should set the state to the current time if reset is set to true', () => {
+			const before = new Date().getTime();
+			const state = created( undefined, {
+				type: ZONINATOR_UPDATE_LOCK,
+				siteId: 123,
+				zoneId: 456,
+				reset: true,
+			} );
+			const after = new Date().getTime();
+
+			expect( state[ 123 ][ 456 ] ).to.be.within( before, after );
 		} );
 	} );
 

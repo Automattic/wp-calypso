@@ -20,11 +20,12 @@ const zoneId = 5678;
 const expires = new Date();
 const maxLockPeriod = 600;
 const blocked = true;
+const reset = true;
 
 describe( 'actions', () => {
 	describe( 'updateLock()', () => {
 		test( 'should return an action object', () => {
-			const action = updateLock( siteId, zoneId, expires, maxLockPeriod );
+			const action = updateLock( siteId, zoneId, expires, maxLockPeriod, reset );
 
 			expect( action ).to.deep.equal( {
 				type: ZONINATOR_UPDATE_LOCK,
@@ -32,17 +33,19 @@ describe( 'actions', () => {
 				zoneId,
 				expires,
 				maxLockPeriod,
+				reset,
 			} );
 		} );
 	} );
 
 	describe( 'requestLock()', () => {
-		const action = requestLock( siteId, zoneId );
+		const action = requestLock( siteId, zoneId, reset );
 
 		expect( action ).to.deep.equal( {
 			type: ZONINATOR_REQUEST_LOCK,
 			siteId,
 			zoneId,
+			reset,
 		} );
 	} );
 

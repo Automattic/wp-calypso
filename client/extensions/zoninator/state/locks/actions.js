@@ -12,31 +12,35 @@ import {
 /**
  * Returns an action object to indicate that a zone lock should be updated
  *
- * @param  {Number} siteId          Site ID
- * @param  {Number} zoneId          Zone ID
- * @param  {Date}   expires         Expiration date
- * @param  {Number} maxLockPeriod   Maximum number of seconds to extend the lock to
- * @return {Action}                 Action object
+ * @param  {Number}  siteId          Site ID
+ * @param  {Number}  zoneId          Zone ID
+ * @param  {Date}    expires         Expiration date
+ * @param  {Number}  maxLockPeriod   Maximum number of seconds to extend the lock to
+ * @param  {Boolean} reset           Set to true to reset a lock
+ * @return {Action}                  Action object
  */
-export const updateLock = ( siteId, zoneId, expires, maxLockPeriod ) => ( {
+export const updateLock = ( siteId, zoneId, expires, maxLockPeriod, reset ) => ( {
 	type: ZONINATOR_UPDATE_LOCK,
 	siteId,
 	zoneId,
 	expires,
 	maxLockPeriod,
+	reset,
 } );
 
 /**
  * Returns an action object to indicate that a zone lock should be requested
  *
- * @param  {Number} siteId  Site ID
- * @param  {Number} zoneId  Zone ID
- * @return {Action}         Action
+ * @param  {Number}  siteId  Site ID
+ * @param  {Number}  zoneId  Zone ID
+ * @param  {Boolean} reset   Set to true to reset a lock
+ * @return {Action}          Action
  */
-export const requestLock = ( siteId, zoneId ) => ( {
+export const requestLock = ( siteId, zoneId, reset ) => ( {
 	type: ZONINATOR_REQUEST_LOCK,
 	siteId,
 	zoneId,
+	reset,
 } );
 
 /**
