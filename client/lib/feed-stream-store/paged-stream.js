@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { assign, filter, findIndex, findLastIndex, forEach, last, map, defer } from 'lodash';
 import debugFactory from 'debug';
 
@@ -86,7 +84,7 @@ export default class PagedStream {
 			case ActionTypes.SELECT_FIRST_ITEM:
 				this.selectFirstItem();
 				break;
-			case ActionTypes.DISMISS_FEED_STREAM_POST:
+			case ActionTypes.DISMISS_POST:
 				this.dismissPost( action.postKey );
 				break;
 		}

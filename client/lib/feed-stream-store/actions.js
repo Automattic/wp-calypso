@@ -197,7 +197,7 @@ export function receiveGap( id, gap, error, data ) {
 
 export function dismissPost( id, post ) {
 	Dispatcher.handleViewAction( {
-		type: ActionType.DISMISS_FEED_STREAM_POST,
+		type: ActionType.DISMISS_POST,
 		postKey: {
 			blogId: post.site_ID,
 			postId: post.ID,
