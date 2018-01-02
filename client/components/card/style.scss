@@ -33,6 +33,10 @@
 		cursor: pointer;
 	}
 
+	&.is-highlight {
+		padding-left: 21px;
+	}
+
 	&.is-error {
 		border-left: 3px solid $alert-red;
 	}
