@@ -7,7 +7,7 @@ import assert from 'assert';
 /**
  * Internal dependencies
  */
-import { getCreditCardType } from '../index';
+import { getCreditCardType } from '../';
 
 function getRandomInt( min, max ) {
 	return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
