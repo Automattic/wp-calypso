@@ -19,7 +19,7 @@ const Intervals = props => {
 		'is-standalone': standalone,
 	} );
 	return (
-		<SegmentedControl primary className={ classes }>
+		<SegmentedControl compact primary className={ classes }>
 			{ intervals.map( i => {
 				const path = pathTemplate.replace( /{{ interval }}/g, i.value );
 				return (
