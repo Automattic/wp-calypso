@@ -6,9 +6,9 @@ Utility functions for working with WordPress shortcodes. These functions largely
 ## Usage
 
 ```js
-import Shortcode from 'lib/shortcode';
+import { parse, stringify } from 'lib/shortcode';
 
-const value = Shortcode.stringify( {
+const value = stringify( {
 	tag: 'foo',
 	attrs: {
 		bar: 'baz'
@@ -17,7 +17,7 @@ const value = Shortcode.stringify( {
 
 // -> [foo bar="baz"][/foo]
 
-const parsed = Shortcode.parse( value );
+const parsed = parse( value );
 // -> { tag: 'foo', type: 'closed', attrs: { named: { bar: 'baz' }, numeric: [] } }
 ```
 

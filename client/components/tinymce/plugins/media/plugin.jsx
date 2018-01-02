@@ -1,16 +1,14 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import ReactDom from 'react-dom';
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import tinymce from 'tinymce/tinymce';
 import { assign, debounce, find, findLast, pick, values } from 'lodash';
 import i18n from 'i18n-calypso';
-import Shortcode from 'lib/shortcode';
+import { parse, stringify } from 'lib/shortcode';
 import closest from 'component-closest';
 import Gridicon from 'gridicons';
 
@@ -560,7 +558,7 @@ function mediaButton( editor ) {
 				attrs.align = 'align' + parsed.appearance.align;
 			}
 
-			const shortcode = Shortcode.stringify( {
+			const shortcode = stringify( {
 				tag: 'caption',
 				attrs: attrs,
 				content: [ node.outerHTML, content ].join( ' ' ),
@@ -709,7 +707,7 @@ function mediaButton( editor ) {
 			return;
 		}
 
-		let gallery = Shortcode.parse( content );
+		let gallery = parse( content );
 		if ( gallery.tag !== 'gallery' ) {
 			return;
 		}
