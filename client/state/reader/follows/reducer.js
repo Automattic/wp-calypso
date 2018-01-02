@@ -168,7 +168,7 @@ export const items = createReducer(
 			const currentFollow = state[ urlKey ];
 			const newFollow = {
 				delivery_methods: get( incomingSite, 'subscription.delivery_methods' ),
-				is_following: true,
+				is_following: incomingSite.is_following,
 				URL: incomingSite.URL,
 				feed_URL: incomingSite.feed_URL,
 				blog_ID: incomingSite.ID,
