@@ -482,4 +482,8 @@ form.sidebar__button input {
 	.gridicon {
 		padding-top: 10px;
 	}
+
+	:hover + & .gridicon {
+		fill: $blue-medium;
+	}
 }
