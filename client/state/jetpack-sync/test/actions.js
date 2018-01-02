@@ -16,19 +16,16 @@ import {
 	JETPACK_SYNC_STATUS_SUCCESS,
 	JETPACK_SYNC_STATUS_ERROR,
 } from 'state/action-types';
+import { getSyncStatus, scheduleJetpackFullysync } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
-	let actions, sandbox, spy;
+	let sandbox, spy;
 
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
-	} );
-
-	beforeEach( () => {
-		actions = require( '../actions' );
 	} );
 
 	describe( '#getSyncStatus()', () => {
@@ -72,8 +69,6 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch request action when thunk triggered', () => {
-				const { getSyncStatus } = actions;
-
 				getSyncStatus( siteId )( spy );
 				expect( spy ).to.have.been.calledWith( {
 					siteId: siteId,
@@ -82,8 +77,6 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch success action when request completes', () => {
-				const { getSyncStatus } = actions;
-
 				return getSyncStatus( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						siteId: siteId,
@@ -112,8 +105,6 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch receive action when request completes', () => {
-				const { getSyncStatus } = actions;
-
 				return getSyncStatus( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						error: {
@@ -145,8 +136,6 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch request action when thunk triggered', () => {
-				const { scheduleJetpackFullysync } = actions;
-
 				scheduleJetpackFullysync( siteId )( spy );
 				expect( spy ).to.have.been.calledWith( {
 					siteId: siteId,
@@ -155,8 +144,6 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch success action when request completes', () => {
-				const { scheduleJetpackFullysync } = actions;
-
 				return scheduleJetpackFullysync( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						siteId: siteId,
@@ -185,8 +172,6 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch receive action when request completes', () => {
-				const { scheduleJetpackFullysync } = actions;
-
 				return scheduleJetpackFullysync( siteId )( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						error: {
