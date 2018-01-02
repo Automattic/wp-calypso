@@ -40,7 +40,7 @@ import Main from 'components/main';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
 import Placeholder from './placeholder';
-import PreSetupView from './pre-setup-view';
+import StoreLocationSetupView from './store-location-setup-view';
 import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup-tasks-view';
@@ -149,8 +149,13 @@ class Dashboard extends Component {
 			return <RequiredPagesSetupView site={ selectedSite } />;
 		}
 
-		if ( ! setStoreAddressDuringInitialSetup && ! hasProducts ) {
-			return <PreSetupView siteId={ selectedSite.ID } />;
+		if ( ! setStoreAddressDuringInitialSetup ) {
+			return (
+				<StoreLocationSetupView
+					siteId={ selectedSite.ID }
+					pushDefaultsForCountry={ ! hasProducts }
+				/>
+			);
 		}
 
 		if ( ! finishedInitialSetup ) {
