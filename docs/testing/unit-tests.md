@@ -67,7 +67,7 @@ Keep your tests in a `test` folder in your working directory. The test file shou
 ```
 
 ### Describing tests
-User 'describe' block to group test cases. Each test case should ideally describe one behaviour only.
+Use 'describe' block to group test cases. Each test case should ideally describe one behaviour only.
 
 In test cases, try to describe in plain words the expected behaviour For UI components, this might entail describing expected behaviour from a user perspective rather than explaining code internals.
 
@@ -156,3 +156,5 @@ describe( 'requestSomeData', () => {
 ### Mocking dependencies
 
 ### Mocking global objects
+
+### Debugging tests (?)
