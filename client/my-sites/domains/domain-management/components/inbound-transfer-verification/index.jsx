@@ -86,12 +86,11 @@ class InboundTransferEmailVerificationCard extends React.Component {
 					<div>
 						<h1 className="inbound-transfer-verification__heading">
 							{ translate(
-								'The authorization email is queued for sending.'
+								'The authorization email will be sent shortly.'
 							) }
 						</h1>
 						{ translate(
-							'The email will be sent in the next few minutes. ' +
-							'Please check back here to make sure which mailbox it is headed for.'
+							'Check again in a few minutes to see which mailbox you can find the email in.'
 						) }
 					</div>
 				</Card>
