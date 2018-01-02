@@ -36,6 +36,7 @@ class Card extends Component {
 				'is-card-link': !! href,
 				'is-clickable': !! onClick,
 				'is-compact': compact,
+				'is-highlight': highlightClass,
 			},
 			highlightClass
 		);
