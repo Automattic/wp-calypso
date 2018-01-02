@@ -21,6 +21,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormInputValidation from 'components/forms/form-input-validation';
+import { Input } from 'my-sites/domains/components/form';
 
 const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 const defaultValues = {
@@ -79,11 +80,8 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 			</option>
 		) );
 
-		this.state = {
-			legalTypes,
-			legalTypeOptions,
-			uncheckedCiraAgreementFlag: false,
-		};
+		this.legalTypes = legalTypes;
+		this.legalTypeOptions = legalTypeOptions;
 	}
 
 	componentWillMount() {
@@ -114,7 +112,6 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 
 		if ( target.type === 'checkbox' ) {
 			value = target.checked;
-			this.registerClick();
 		}
 
 		this.props.updateContactDetailsCache( {
@@ -122,28 +119,69 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		} );
 	};
 
-	handleInvalidSubmit = event => {
-		event.preventDefault();
-		this.registerClick();
-	};
+	renderOrganizationField( organizationFieldProps ) {
+		// These props include all the values and callbacks we need to
+		// have this organization field behave the same as the field in the
+		// parent (domain-details-form), particularly around the
+		// formState and back end validation
 
-	registerClick = () => {
-		this.setState( { hasBeenClicked: true } );
-	};
+		const { translate } = this.props;
+		const className = 'registrant-extra-info';
+
+		return (
+			<FormFieldset>
+				<Input
+					className={ className }
+					label={ translate( 'Organization' ) }
+					{ ...organizationFieldProps }
+				/>
+			</FormFieldset>
+		);
+	}
+
+	/*
+	 * We've already got most of the validation we need from the server, we
+	 * just need to add a check for the empty field.
+	 * We're doing that one rule here because we're handling the organization
+	 * through flux and the legal type through redux, and with this check that
+	 * straddles the boundary, the cleanest approach is to handle it here in the
+	 * component.
+	 */
+	validateOrganizationIsNotEmpty( organizationFieldProps ) {
+		const { translate } = this.props;
+		const requiredFieldError = {
+			isError: true,
+			errorMessage: translate( 'An organization name is required for Canadian corporations' ),
+		};
+
+		return organizationFieldProps.value
+			? organizationFieldProps
+			: Object.assign( {}, organizationFieldProps, requiredFieldError );
+	}
 
 	render() {
-		const { translate } = this.props;
-		const { legalTypeOptions, hasBeenClicked } = this.state;
+		const { getFieldProps, translate } = this.props;
 		const { legalType, ciraAgreementAccepted } = {
 			...defaultValues,
 			...this.props.contactDetailsExtra,
 		};
 
-		const validatingSubmitButton = ciraAgreementAccepted
-			? this.props.children
-			: React.cloneElement( this.props.children, { onClick: this.handleInvalidSubmit } );
+		const rawFieldProps = getFieldProps( 'organization', true );
 
-		const showValidationError = hasBeenClicked && ! ciraAgreementAccepted;
+		// We have to validate the organization name for the CCO legal
+		// type to avoid OpenSRS rejecting them and causing errors during
+		// payments
+		const organizationFieldProps = this.validateOrganizationIsNotEmpty( rawFieldProps );
+
+		const doesntNeedOrganizationField = legalType !== 'CCO';
+		const organizationFieldIsValid =
+			doesntNeedOrganizationField || ! organizationFieldProps.isError;
+
+		const formIsValid = ciraAgreementAccepted && organizationFieldIsValid;
+
+		const validatingSubmitButton = formIsValid
+			? this.props.children
+			: React.cloneElement( this.props.children, { disabled: true } );
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -162,7 +200,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 						className="registrant-extra-info__form-legal-type"
 						onChange={ this.handleChangeEvent }
 					>
-						{ legalTypeOptions }
+						{ this.legalTypeOptions }
 					</FormSelect>
 				</FormFieldset>
 				<FormFieldset>
@@ -180,12 +218,12 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 								},
 							} ) }
 						</span>
-						{ showValidationError ? (
+						{ ciraAgreementAccepted || (
 							<FormInputValidation text={ translate( 'Required' ) } isError={ true } />
-						) : null }
+						) }
 					</FormLabel>
 				</FormFieldset>
-
+				{ doesntNeedOrganizationField || this.renderOrganizationField( organizationFieldProps ) }
 				{ validatingSubmitButton }
 			</form>
 		);
