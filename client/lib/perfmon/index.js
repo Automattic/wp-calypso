@@ -1,16 +1,17 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { debounce, each, remove, includes, get } from 'lodash';
+import page from 'page';
+
+/**
  * Internal dependencies
  */
 
 import analytics from 'lib/analytics';
-
-/**
- * External dependencies
- */
-import { debounce, each, remove } from 'lodash';
-import page from 'page';
+import { isEnabled } from 'config';
 
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:perfmon' );
@@ -34,6 +35,8 @@ const OBSERVE_ROOT = document.getElementById( 'wpcom' );
 let activePlaceholders = [];
 let placeholdersVisibleStart = null;
 let initialized = false;
+
+const enabledRoutes = [];
 
 // add listeners for various DOM events - scrolling, mutation and navigation
 // and use these to trigger checks for visible placeholders (and, in the case of mutations,
@@ -82,6 +85,13 @@ function observeDomChanges( MutationObserver ) {
 // and trigger a timing event when all the placeholders are gone or the user
 // has navigated
 function checkForVisiblePlaceholders( trigger ) {
+	const urlPathParts = window.location.pathname.split( '/' );
+	const currentRoute = get( urlPathParts, '1', false );
+
+	if ( ! includes( enabledRoutes, currentRoute ) ) {
+		return;
+	}
+
 	// determine how many placeholders are active in the viewport
 	const visibleCount = activePlaceholders.reduce( function( count, node ) {
 		return count + ( isElementVisibleInViewport( node ) ? 1 : 0 );
@@ -178,7 +188,26 @@ function recordPlaceholderNode( node ) {
 	}
 }
 
+export const enablePerfmonForRoute = ( context, next ) => {
+	if ( ! initialized ) {
+		return;
+	}
+
+	const urlPathParts = context.path.split( '/' );
+	const currentRoute = get( urlPathParts, '1', null );
+
+	if ( currentRoute && ! includes( enabledRoutes, currentRoute ) ) {
+		enabledRoutes.push( currentRoute );
+	}
+
+	next();
+};
+
 export default function() {
+	if ( typeof window === 'undefined' || ! isEnabled( 'perfmon' ) ) {
+		return;
+	}
+
 	if ( ! initialized ) {
 		var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 

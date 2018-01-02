@@ -82,7 +82,7 @@
 		"nps-survey/notice": true,
 		"olark": true,
 		"onboarding-checklist": false,
-		"perfmon": true,
+		"perfmon": false,
 		"persist-redux": true,
 		"plans/personal-plan": true,
 		"plans/jetpack-config-v2": true,
