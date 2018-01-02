@@ -5,6 +5,7 @@ export const fields = [
 	'title',
 	'URL',
 	'icon',
+	'is_following',
 	'is_jetpack',
 	'description',
 	'is_private',

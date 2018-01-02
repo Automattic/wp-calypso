@@ -161,14 +161,14 @@ export const items = createReducer(
 		},
 		[ READER_SITE_REQUEST_SUCCESS ]: ( state, action ) => {
 			const incomingSite = action.payload;
-			if ( ! incomingSite || ! incomingSite.feed_URL ) {
+			if ( ! incomingSite || ! incomingSite.feed_URL || ! incomingSite.is_following ) {
 				return state;
 			}
 			const urlKey = prepareComparableUrl( incomingSite.feed_URL );
 			const currentFollow = state[ urlKey ];
 			const newFollow = {
 				delivery_methods: get( incomingSite, 'subscription.delivery_methods' ),
-				is_following: incomingSite.is_following,
+				is_following: true,
 				URL: incomingSite.URL,
 				feed_URL: incomingSite.feed_URL,
 				blog_ID: incomingSite.ID,
