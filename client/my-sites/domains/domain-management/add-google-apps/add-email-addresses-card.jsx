@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { find, groupBy, isEmpty, map, mapValues } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -26,15 +24,12 @@ import paths from 'my-sites/domains/paths';
 import ValidationErrorList from 'notices/validation-error-list';
 import upgradesActions from 'lib/upgrades/actions';
 import { hasGoogleApps, getGoogleAppsSupportedDomains } from 'lib/domains';
-import googleAppsLibrary from 'lib/domains/google-apps-users';
+import { filter as filterUsers, validate as validateUsers } from 'lib/domains/google-apps-users';
 import DomainsSelect from './domains-select';
 
 /**
  * Internal dependencies
  */
-const validateUsers = googleAppsLibrary.validate,
-	filterUsers = googleAppsLibrary.filter;
-
 import Notice from 'components/notice';
 
 const AddEmailAddressesCard = createReactClass( {
@@ -181,7 +176,7 @@ const AddEmailAddressesCard = createReactClass( {
 
 	handleFieldChange( fieldName, index, event ) {
 		const newValue = event.target.value;
-		let command = { fieldsets: {} };
+		const command = { fieldsets: {} };
 
 		command.fieldsets[ index ] = {};
 		command.fieldsets[ index ][ fieldName ] = { value: { $set: newValue.trim() } };
@@ -273,9 +268,7 @@ const AddEmailAddressesCard = createReactClass( {
 	},
 
 	addProductsAndGoToCheckout() {
-		let googleAppsCartItems;
-
-		googleAppsCartItems = getGoogleAppsCartItems( {
+		const googleAppsCartItems = getGoogleAppsCartItems( {
 			domains: this.props.domains,
 			fieldsets: filterUsers( {
 				users: this.state.fieldsets,
