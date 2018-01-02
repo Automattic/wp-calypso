@@ -32,7 +32,7 @@ function setLocaleInDOM( localeSlug, isRTL ) {
 	switchCSS( 'main-css', cssUrl );
 }
 
-const switchLocaleRequestStack = [];
+let lastRequestedLocale = null;
 export default function switchLocale( localeSlug ) {
 	const language = getLanguage( localeSlug );
 
@@ -46,7 +46,7 @@ export default function switchLocale( localeSlug ) {
 		return;
 	}
 
-	switchLocaleRequestStack.push( localeSlug );
+	lastRequestedLocale = localeSlug;
 
 	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
@@ -64,7 +64,7 @@ export default function switchLocale( localeSlug ) {
 
 			// Handle race condition when we're requested to switch to a different
 			// locale while we're in the middle of request, we should abondon result
-			if ( localeSlug !== switchLocaleRequestStack[ switchLocaleRequestStack.length - 1 ] ) {
+			if ( localeSlug !== lastRequestedLocale ) {
 				return;
 			}
 
