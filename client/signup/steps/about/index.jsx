@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes, invoke, noop } from 'lodash';
+import { includes, invoke, noop, findKey, partial, isEqual } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -170,7 +170,7 @@ class AboutStep extends Component {
 	};
 
 	getSuggestions() {
-		return hints
+		return Object.values( hints )
 			.filter( hint => this.state.query && hint.match( new RegExp( this.state.query, 'i' ) ) )
 			.map( hint => ( { label: hint } ) );
 	}
@@ -270,13 +270,16 @@ class AboutStep extends Component {
 		} );
 
 		//Site Topic
+		const sanitizedSiteTopicInput =
+			findKey( hints, partial( isEqual, siteTopicInput ) ) || siteTopicInput;
+
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
 			field: 'Site topic',
-			value: siteTopicInput || 'N/A',
+			value: sanitizedSiteTopicInput || 'N/A',
 		} );
 
 		this.props.setSurvey( {
-			vertical: siteTopicInput,
+			vertical: sanitizedSiteTopicInput,
 			otherText: '',
 			siteType: designType,
 		} );
