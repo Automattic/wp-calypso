@@ -16,7 +16,7 @@ import Gravatar from 'components/gravatar';
 import userFactory from 'lib/user';
 import AuthorSelector from 'blocks/author-selector';
 import PostActions from 'lib/posts/actions';
-import touchDetect from 'lib/touch-detect';
+import { hasTouch } from 'lib/touch-detect';
 import * as stats from 'lib/posts/stats';
 import { getSelectedSite } from 'state/ui/selectors';
 
@@ -44,7 +44,7 @@ export class EditorAuthor extends Component {
 		const author = post && postAuthor ? postAuthor : user.get();
 		const name = author.display_name || author.name;
 		const Wrapper = this.userCanAssignAuthor() ? AuthorSelector : 'div';
-		const popoverPosition = touchDetect.hasTouch() ? 'bottom right' : 'bottom left';
+		const popoverPosition = hasTouch() ? 'bottom right' : 'bottom left';
 		const wrapperProps = this.userCanAssignAuthor()
 			? {
 					siteId: site.ID,

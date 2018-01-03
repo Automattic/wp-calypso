@@ -24,7 +24,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import actions from 'lib/posts/actions';
 import photon from 'photon';
-import touchDetect from 'lib/touch-detect';
+import { hasTouch } from 'lib/touch-detect';
 import updatePostStatus from 'components/update-post-status';
 import utils from 'lib/posts/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -161,7 +161,7 @@ class Draft extends Component {
 		const classes = classnames( 'draft', `is-${ post.format }`, {
 			'has-image': !! image,
 			'is-placeholder': this.props.isPlaceholder,
-			'is-touch': touchDetect.hasTouch(),
+			'is-touch': hasTouch(),
 			'is-selected': this.props.selected,
 		} );
 
