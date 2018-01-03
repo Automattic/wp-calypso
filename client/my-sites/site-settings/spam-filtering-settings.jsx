@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
+import { includes, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,11 +42,14 @@ const SpamFilteringSettings = ( {
 	const { akismet: akismetActive, wordpress_api_key } = fields;
 	const isStoredKey = wordpress_api_key === currentAkismetKey;
 	const isDirty = includes( dirtyFields, 'wordpress_api_key' );
+	const isCurrentKeyEmpty = isEmpty( currentAkismetKey );
+	const isKeyFieldEmpty = isEmpty( wordpress_api_key );
+	const isEmptyKey = isCurrentKeyEmpty || isKeyFieldEmpty;
 	const inTransition = isRequestingSettings || isSavingSettings;
 	const isValidKey =
 		( wordpress_api_key && isStoredKey ) ||
 		( wordpress_api_key && isDirty && isStoredKey && ! hasAkismetKeyError );
-	const isInvalidKey = isDirty && hasAkismetKeyError && ! isStoredKey;
+	const isInvalidKey = ( isDirty && hasAkismetKeyError && ! isStoredKey ) || isEmptyKey;
 	let validationText,
 		className,
 		header = null;
@@ -73,8 +76,9 @@ const SpamFilteringSettings = ( {
 			</div>
 		);
 	}
+
 	if ( ! inTransition && isInvalidKey ) {
-		validationText = translate( "There's a problem with your Antispam API key." );
+		validationText = translate( 'Please enter a valid Antispam API key.' );
 		className = 'is-error';
 		header = (
 			<div>
@@ -83,6 +87,7 @@ const SpamFilteringSettings = ( {
 			</div>
 		);
 	}
+
 	return (
 		<FoldableCard
 			header={ header }
