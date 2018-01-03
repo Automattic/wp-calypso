@@ -153,7 +153,7 @@ export class CommentList extends Component {
 		};
 
 		const showPlaceholder = ( ! siteId || isLoading ) && ! comments.length;
-		const showEmptyContent = ! commentsCount && ! showPlaceholder;
+		const showEmptyContent = ! isLoading && ! commentsCount && ! showPlaceholder;
 
 		const [ emptyMessageTitle, emptyMessageLine ] = this.getEmptyMessage();
 
@@ -212,7 +212,8 @@ export class CommentList extends Component {
 					) }
 				</ReactCSSTransitionGroup>
 
-				{ ! showPlaceholder &&
+				{ ! isLoading &&
+					! showPlaceholder &&
 					! showEmptyContent && (
 						<Pagination
 							key="comment-list-pagination"
@@ -228,7 +229,7 @@ export class CommentList extends Component {
 }
 
 const mapStateToProps = ( state, { page, postId, siteId, status } ) => {
-	const comments = getCommentsPage( state, siteId, { page, postId, status } ) || [];
+	const comments = getCommentsPage( state, siteId, { page, postId, status } );
 	const commentsCount = get(
 		getSiteCommentCounts( state, siteId, postId ),
 		'unapproved' === status ? 'pending' : status
@@ -237,7 +238,7 @@ const mapStateToProps = ( state, { page, postId, siteId, status } ) => {
 	const isPostView = !! postId;
 
 	return {
-		comments,
+		comments: comments || [],
 		commentsCount,
 		isLoading,
 		isPostView,
