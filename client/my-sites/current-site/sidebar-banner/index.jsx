@@ -42,19 +42,21 @@ export class SidebarBanner extends Component {
 		const classes = classnames( 'sidebar-banner', className );
 
 		return (
-			<a className={ classes } onClick={ this.onClick } href={ href }>
+			<div className={ classes }>
 				<TrackComponentView
 					eventName="calypso_upgrade_nudge_impression"
 					eventProperties={ { cta_name: ctaName } }
 				/>
-				<span className="sidebar-banner__icon-wrapper">
-					<Gridicon className="sidebar-banner__icon" icon={ icon } size={ 18 } />
-				</span>
-				<span className="sidebar-banner__content">
-					<span className="sidebar-banner__text">{ text }</span>
-				</span>
-				<span className="sidebar-banner__cta">{ ctaText }</span>
-			</a>
+				<a onClick={ this.onClick } href={ href }>
+					<span className="sidebar-banner__icon-wrapper">
+						<Gridicon className="sidebar-banner__icon" icon={ icon } size={ 18 } />
+					</span>
+					<span className="sidebar-banner__content">
+						<span className="sidebar-banner__text">{ text }</span>
+					</span>
+					<span className="sidebar-banner__cta">{ ctaText }</span>
+				</a>
+			</div>
 		);
 	}
 }
