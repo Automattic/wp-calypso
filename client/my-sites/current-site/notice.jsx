@@ -91,7 +91,7 @@ class SiteNotice extends React.Component {
 	}
 
 	freeToPaidPlanNotice() {
-		if ( ! this.props.isEligibleForFreeToPaidUpsell || '/plans' === this.props.allSitesPath ) {
+		if ( ! this.props.isEligibleForFreeToPaidUpsell ) {
 			return null;
 		}
 
