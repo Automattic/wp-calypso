@@ -27,6 +27,7 @@ import { updatePlugin } from 'state/plugins/installed/actions';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import { infoNotice } from 'state/notices/actions';
 import { isEnabled } from 'config';
+import { NEWEST_FIRST } from './constants';
 
 export class CommentsManagement extends Component {
 	static propTypes = {
@@ -44,6 +45,12 @@ export class CommentsManagement extends Component {
 		page: 1,
 		status: 'all',
 	};
+
+	state = {
+		order: NEWEST_FIRST,
+	};
+
+	setOrder = order => this.setState( { order } );
 
 	updateJetpackHandler = () => {
 		const { siteId, translate, jetpackPlugin } = this.props;
@@ -66,6 +73,7 @@ export class CommentsManagement extends Component {
 			status,
 			translate,
 		} = this.props;
+		const { order } = this.state;
 
 		return (
 			<Main className="comments" wideLayout>
@@ -99,9 +107,10 @@ export class CommentsManagement extends Component {
 				{ showCommentList && (
 					<CommentList
 						changePage={ changePage }
-						order={ 'desc' }
+						order={ order }
 						page={ page }
 						postId={ postId }
+						setOrder={ this.setOrder }
 						siteId={ siteId }
 						siteFragment={ siteFragment }
 						status={ status }
@@ -110,9 +119,10 @@ export class CommentsManagement extends Component {
 				{ showCommentTree && (
 					<CommentTree
 						changePage={ changePage }
-						order={ 'desc' }
+						order={ order }
 						page={ page }
 						postId={ postId }
+						setOrder={ this.setOrder }
 						siteId={ siteId }
 						siteFragment={ siteFragment }
 						status={ status }

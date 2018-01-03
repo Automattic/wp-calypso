@@ -55,7 +55,7 @@ export class CommentNavigation extends Component {
 		isSelectedAll: false,
 		selectedComments: [],
 		status: 'unapproved',
-		sortOrder: NEWEST_FIRST,
+		order: NEWEST_FIRST,
 	};
 
 	shouldComponentUpdate = nextProps => ! isEqual( this.props, nextProps );
@@ -192,8 +192,8 @@ export class CommentNavigation extends Component {
 			isSelectedAll,
 			query,
 			selectedComments,
-			setSortOrder,
-			sortOrder,
+			setOrder,
+			order,
 			status: queryStatus,
 			toggleBulkMode,
 			translate,
@@ -292,16 +292,16 @@ export class CommentNavigation extends Component {
 						hasComments && (
 							<SegmentedControl compact className="comment-navigation__sort-buttons">
 								<ControlItem
-									onClick={ setSortOrder( NEWEST_FIRST ) }
-									selected={ sortOrder === NEWEST_FIRST }
+									onClick={ setOrder( NEWEST_FIRST ) }
+									selected={ order === NEWEST_FIRST }
 								>
 									{ translate( 'Newest', {
 										comment: 'Chronological order for sorting the comments list.',
 									} ) }
 								</ControlItem>
 								<ControlItem
-									onClick={ setSortOrder( OLDEST_FIRST ) }
-									selected={ sortOrder === OLDEST_FIRST }
+									onClick={ setOrder( OLDEST_FIRST ) }
+									selected={ order === OLDEST_FIRST }
 								>
 									{ translate( 'Oldest', {
 										comment: 'Chronological order for sorting the comments list.',

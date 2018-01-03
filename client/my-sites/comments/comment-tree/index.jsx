@@ -26,14 +26,16 @@ import QuerySiteSettings from 'components/data/query-site-settings';
 import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
+import { COMMENTS_PER_PAGE } from '../constants';
 
 export class CommentTree extends Component {
 	static propTypes = {
 		changePage: PropTypes.func,
 		comments: PropTypes.array,
+		order: PropTypes.string,
 		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
+		setOrder: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
@@ -43,7 +45,6 @@ export class CommentTree extends Component {
 		isBulkMode: false,
 		lastUndo: null,
 		selectedComments: [],
-		sortOrder: NEWEST_FIRST,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -75,7 +76,7 @@ export class CommentTree extends Component {
 		changePage( page );
 	};
 
-	getComments = () => orderBy( this.props.comments, null, this.state.sortOrder );
+	getComments = () => orderBy( this.props.comments, null, this.props.order );
 
 	getCommentsPage = ( comments, page ) => {
 		const startingIndex = ( page - 1 ) * COMMENTS_PER_PAGE;
@@ -115,11 +116,9 @@ export class CommentTree extends Component {
 		return selectedComments.length && selectedComments.length === visibleComments.length;
 	};
 
-	setSortOrder = order => () => {
-		this.setState( {
-			sortOrder: order,
-			page: 1,
-		} );
+	setOrder = order => () => {
+		this.props.setOrder( order );
+		this.setState( { page: 1 } );
 	};
 
 	toggleBulkMode = () => {
@@ -148,6 +147,7 @@ export class CommentTree extends Component {
 			isCommentsTreeSupported,
 			isLoading,
 			isPostView,
+			order,
 			page,
 			postId,
 			siteId,
@@ -187,10 +187,10 @@ export class CommentTree extends Component {
 					commentsPage={ commentsPage }
 					isBulkMode={ isBulkMode }
 					isSelectedAll={ this.isSelectedAll() }
+					order={ order }
 					postId={ postId }
 					selectedComments={ selectedComments }
-					setSortOrder={ this.setSortOrder }
-					sortOrder={ this.state.sortOrder }
+					setOrder={ this.setOrder }
 					siteId={ siteId }
 					siteFragment={ siteFragment }
 					status={ status }

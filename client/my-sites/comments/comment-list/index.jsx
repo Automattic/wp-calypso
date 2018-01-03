@@ -24,14 +24,16 @@ import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { getCommentsPage, getSiteCommentCounts } from 'state/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
+import { COMMENTS_PER_PAGE } from '../constants';
 
 export class CommentList extends Component {
 	static propTypes = {
 		changePage: PropTypes.func,
 		comments: PropTypes.array,
+		order: PropTypes.string,
 		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
+		setOrder: PropTypes.func,
 		siteId: PropTypes.number,
 		status: PropTypes.string,
 		translate: PropTypes.func,
@@ -40,7 +42,6 @@ export class CommentList extends Component {
 	state = {
 		isBulkMode: false,
 		selectedComments: [],
-		sortOrder: NEWEST_FIRST,
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -99,11 +100,9 @@ export class CommentList extends Component {
 		this.state.selectedComments.length &&
 		this.state.selectedComments.length === this.props.comments.length;
 
-	setSortOrder = order => () => {
-		this.setState( {
-			sortOrder: order,
-			page: 1,
-		} );
+	setOrder = order => () => {
+		this.props.setOrder( order );
+		this.setState( { page: 1 } );
 	};
 
 	toggleBulkMode = () => {
@@ -131,20 +130,21 @@ export class CommentList extends Component {
 			commentsCount,
 			isLoading,
 			isPostView,
+			order,
 			page,
 			postId,
 			siteId,
 			siteFragment,
 			status,
 		} = this.props;
-		const { isBulkMode, selectedComments, sortOrder } = this.state;
+		const { isBulkMode, selectedComments } = this.state;
 
 		const validPage = this.isRequestedPageValid() ? page : 1;
 
 		const commentsListQuery = {
 			listType: 'site',
 			number: COMMENTS_PER_PAGE,
-			order: sortOrder.toUpperCase(),
+			order: order.toUpperCase(),
 			page: validPage,
 			postId,
 			siteId,
@@ -170,10 +170,10 @@ export class CommentList extends Component {
 					commentsPage={ comments }
 					isBulkMode={ isBulkMode }
 					isSelectedAll={ this.isSelectedAll() }
+					order={ order }
 					postId={ postId }
 					selectedComments={ selectedComments }
-					setSortOrder={ this.setSortOrder }
-					sortOrder={ sortOrder }
+					setOrder={ this.setOrder }
 					siteId={ siteId }
 					siteFragment={ siteFragment }
 					status={ status }
@@ -228,8 +228,8 @@ export class CommentList extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { page, postId, siteId, status } ) => {
-	const comments = getCommentsPage( state, siteId, { page, postId, status } );
+const mapStateToProps = ( state, { order, page, postId, siteId, status } ) => {
+	const comments = getCommentsPage( state, siteId, { order, page, postId, status } );
 	const commentsCount = get(
 		getSiteCommentCounts( state, siteId, postId ),
 		'unapproved' === status ? 'pending' : status
