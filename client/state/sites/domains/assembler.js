@@ -10,6 +10,7 @@ import { assembleGoogleAppsSubscription } from 'lib/domains/assembler';
 export const createSiteDomainObject = domain => {
 	return {
 		autoRenewalDate: String( domain.auto_renewal_date ),
+		adminEmail: domain.admin_email,
 		autoRenewing: Boolean( domain.auto_renewing ),
 		blogId: Number( domain.blog_id ),
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
@@ -30,6 +31,7 @@ export const createSiteDomainObject = domain => {
 		isPrivate: Boolean( domain.private_domain ),
 		isWPCOMDomain: Boolean( domain.wpcom_domain ),
 		manualTransferRequired: Boolean( domain.manual_transfer_required ),
+		manualWhois: Boolean( domain.manual_whois ),
 		newRegistration: Boolean( domain.new_registration ),
 		name: String( domain.domain ),
 		owner: String( domain.owner ),

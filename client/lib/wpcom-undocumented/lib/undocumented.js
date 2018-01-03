@@ -568,23 +568,6 @@ Undocumented.prototype.getInboundTransferStatus = function( domain, fn ) {
 };
 
 /**
- * Get the inbound transfer admin email to which the verification was sent
- *
- * @param {string} domain - The domain name to check.
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- * @api public
- */
-Undocumented.prototype.getInboundTransferAdminEmail = function( domain, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-admin-email`,
-		},
-		fn
-	);
-};
-
-/**
  * Restarts a failed inbound domain transfer
  *
  * @param {int|string} siteId The site ID

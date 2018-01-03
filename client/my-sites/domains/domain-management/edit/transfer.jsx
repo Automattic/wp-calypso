@@ -84,7 +84,7 @@ class Transfer extends React.PureComponent {
 
 		return (
 			<InboundTransferEmailVerificationCard
-				selectedDomainName={ domain.name }
+				domain={ domain }
 				selectedSiteSlug={ this.props.selectedSite.slug }
 			/>
 		);

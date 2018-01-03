@@ -5,61 +5,25 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import EmailVerificationCard from 'my-sites/domains/domain-management/components/email-verification';
-import { getInboundTransferAdminEmail, resendInboundTransferEmail } from 'lib/domains';
+import { resendInboundTransferEmail } from 'lib/domains';
 import support from 'lib/url/support';
 import Card from 'components/card';
 
-class InboundTransferEmailVerificationCard extends React.Component {
+class InboundTransferEmailVerificationCard extends React.PureComponent {
 	static propTypes = {
-		selectedDomainName: PropTypes.string.isRequired,
+		domain: PropTypes.object.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
 	};
 
-	state = {
-		email: '',
-		loading: true,
-		manualWhois: false,
-	};
-
-	componentWillMount() {
-		this.refreshContactEmail();
-	}
-
-	componentWillUpdate( nextProps ) {
-		if ( nextProps.selectedDomainName !== this.props.selectedDomainName ) {
-			this.refreshContactEmail();
-		}
-	}
-
-	refreshContactEmail = () => {
-		this.setState( { loading: true } );
-
-		getInboundTransferAdminEmail( this.props.selectedDomainName, ( error, result ) => {
-			if ( ! isEmpty( error ) ) {
-				return;
-			}
-
-			this.setState( {
-				contactEmail: result.admin_email,
-				manualWhois: result.manual_whois,
-				loading: false,
-			} );
-		} );
-	};
-
 	render() {
-		const { selectedDomainName, selectedSiteSlug, translate } = this.props;
-		const { loading, manualWhois, contactEmail } = this.state;
+		const { domain, selectedSiteSlug, translate } = this.props;
 
-		if ( loading ) {
-			return null;
-		}
+		const { manualWhois, adminEmail } = domain;
 
 		if ( manualWhois ) {
 			return (
@@ -80,7 +44,7 @@ class InboundTransferEmailVerificationCard extends React.Component {
 			);
 		}
 
-		if ( ! contactEmail ) {
+		if ( ! adminEmail ) {
 			return (
 				<Card highlight="info">
 					<div>
@@ -99,7 +63,7 @@ class InboundTransferEmailVerificationCard extends React.Component {
 
 		return (
 			<EmailVerificationCard
-				contactEmail={ contactEmail }
+				contactEmail={ adminEmail }
 				headerText={
 					translate(
 						'Important: Confirm the transfer to proceed.'
@@ -112,7 +76,7 @@ class InboundTransferEmailVerificationCard extends React.Component {
 						'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 					{
 						args: {
-							domain: selectedDomainName,
+							domain: domain.name,
 						},
 						components: {
 							learnMoreLink: (
@@ -127,7 +91,7 @@ class InboundTransferEmailVerificationCard extends React.Component {
 					}
 				) }
 				resendVerification={ resendInboundTransferEmail }
-				selectedDomainName={ selectedDomainName }
+				selectedDomainName={ domain.name }
 				selectedSiteSlug={ selectedSiteSlug }
 			/>
 		);
