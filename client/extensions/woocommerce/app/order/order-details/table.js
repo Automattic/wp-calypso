@@ -288,8 +288,9 @@ class OrderDetailsTable extends Component {
 			return null;
 		}
 
+		let couponMarkup;
 		if ( isEditing ) {
-			const couponMarkup = coupons.map( item => {
+			couponMarkup = coupons.map( item => {
 				if ( ! item.code ) {
 					return null;
 				}
@@ -316,7 +317,7 @@ class OrderDetailsTable extends Component {
 			);
 		}
 
-		const couponMarkup = coupons.map( ( item, i ) => {
+		couponMarkup = coupons.map( ( item, i ) => {
 			if ( ! item.code ) {
 				return null;
 			}
