@@ -332,7 +332,7 @@ export class JetpackConnectMain extends Component {
 			return {
 				headerTitle: translate( 'Get Jetpack Personal' ),
 				headerSubtitle: translate(
-					'Security essentials for every WordPress site ' +
+					'Security essentials for your WordPress site ' +
 						'including automated backups and priority support.'
 				),
 			};
