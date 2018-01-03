@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -51,7 +51,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 		);
 
 		return (
-			<Fragment>
+			<div className="steps__main">
 				<DocumentHead title={ translate( 'Site Title ‹ Jetpack Onboarding' ) } />
 				<PageViewTracker
 					path={ '/jetpack/onboarding/' + STEPS.SITE_TITLE + '/:site' }
@@ -86,7 +86,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 						</Button>
 					</form>
 				</Card>
-			</Fragment>
+			</div>
 		);
 	}
 }
