@@ -71,9 +71,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 		page( paths.domainMapping( this.props.selectedSite.slug, this.props.domain ) );
 	};
 
-	transferIsRestricted = () => 'not_restricted' !== this.state.transferRestrictionStatus;
-
-	showTransferRestrictedMessage = () => ! this.state.loading && this.transferIsRestricted();
+	transferIsRestricted = () =>
+		! this.state.loading && 'not_restricted' !== this.state.transferRestrictionStatus;
 
 	refreshStatus = ( proceedToNextStep = true ) => {
 		this.setState( { loading: true } );
@@ -407,45 +406,44 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const { translate } = this.props;
 		const { unlocked, currentStep } = this.state;
 
+		if ( this.transferIsRestricted() ) {
+			return this.getTransferRestrictionMessage();
+		}
+
 		return (
 			<div className="transfer-domain-step__precheck">
-				{ this.showTransferRestrictedMessage() && this.getTransferRestrictionMessage() }
-				{ ! this.showTransferRestrictedMessage() && (
-					<div>
-						{ this.getHeader() }
-						{ this.getStatusMessage() }
-						{ this.getPrivacyMessage() }
-						{ this.getEppMessage() }
-						<Card className="transfer-domain-step__continue">
-							<div className="transfer-domain-step__continue-text">
-								<p>
-									{ translate(
-										'Note: These changes can take some time to take effect. ' +
-											'Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
-										{
-											components: {
-												a: (
-													<a
-														href={ support.CALYPSO_CONTACT }
-														rel="noopener noreferrer"
-														target="_blank"
-													/>
-												),
-											},
-										}
-									) }
-								</p>
-							</div>
-							<Button
-								disabled={ false === unlocked || currentStep < 4 }
-								onClick={ this.onClick }
-								primary={ true }
-							>
-								{ translate( 'Continue' ) }
-							</Button>
-						</Card>
+				{ this.getHeader() }
+				{ this.getStatusMessage() }
+				{ this.getPrivacyMessage() }
+				{ this.getEppMessage() }
+				<Card className="transfer-domain-step__continue">
+					<div className="transfer-domain-step__continue-text">
+						<p>
+							{ translate(
+								'Note: These changes can take some time to take effect. ' +
+									'Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
+								{
+									components: {
+										a: (
+											<a
+												href={ support.CALYPSO_CONTACT }
+												rel="noopener noreferrer"
+												target="_blank"
+											/>
+										),
+									},
+								}
+							) }
+						</p>
 					</div>
-				) }
+					<Button
+						disabled={ false === unlocked || currentStep < 4 }
+						onClick={ this.onClick }
+						primary={ true }
+					>
+						{ translate( 'Continue' ) }
+					</Button>
+				</Card>
 			</div>
 		);
 	}
