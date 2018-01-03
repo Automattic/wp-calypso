@@ -30,6 +30,7 @@ export class Comment extends Component {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 		commentId: PropTypes.number,
+		commentsListQuery: PropTypes.object,
 		isEditMode: PropTypes.bool,
 		isBulkMode: PropTypes.bool,
 		isPostView: PropTypes.bool,
@@ -101,6 +102,7 @@ export class Comment extends Component {
 			postId,
 			commentId,
 			commentIsPending,
+			commentsListQuery,
 			isBulkMode,
 			isLoading,
 			isPostView,
@@ -138,13 +140,15 @@ export class Comment extends Component {
 
 						{ ! isBulkMode && (
 							<CommentActions
-								{ ...{ siteId, postId, commentId, redirect, updateLastUndo } }
+								{ ...{ siteId, postId, commentId, commentsListQuery, redirect, updateLastUndo } }
 								toggleEditMode={ this.toggleEditMode }
 								toggleReply={ this.toggleReply }
 							/>
 						) }
 
-						{ ! isBulkMode && <CommentReply { ...{ commentId, isReplyVisible } } /> }
+						{ ! isBulkMode && (
+							<CommentReply { ...{ commentId, commentsListQuery, isReplyVisible } } />
+						) }
 					</div>
 				) }
 
