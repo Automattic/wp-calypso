@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { COMMENTS_QUERY_UPDATE } from 'state/action-types';
+import { COMMENTS_CHANGE_STATUS, COMMENTS_DELETE, COMMENTS_QUERY_UPDATE } from 'state/action-types';
 import { queries } from 'state/ui/comments/reducer';
 
 const siteId = 12345678;
@@ -96,6 +96,47 @@ describe( 'reducer', () => {
 					'spam?s=foo': { 2: [ 11, 12, 13, 14, 15 ] },
 				},
 			} );
+		} );
+
+		test( 'should remove a comment from a page when the comment is deleted', () => {
+			const state = deepFreeze( {
+				site: { all: { 1: [ 1, 2, 3, 4, 5 ] } },
+			} );
+			const query = queries( state, {
+				type: COMMENTS_DELETE,
+				siteId,
+				commentId: 5,
+				refreshCommentListQuery: { page: 1, status: 'all' },
+			} );
+			expect( query ).to.eql( { site: { all: { 1: [ 1, 2, 3, 4 ] } } } );
+		} );
+
+		test( 'should remove a comment from a page when the comment status is changed', () => {
+			const state = deepFreeze( {
+				site: { spam: { 1: [ 1, 2, 3, 4, 5 ] } },
+			} );
+			const query = queries( state, {
+				type: COMMENTS_CHANGE_STATUS,
+				siteId,
+				commentId: 5,
+				status: 'approved',
+				refreshCommentListQuery: { page: 1, status: 'spam' },
+			} );
+			expect( query ).to.eql( { site: { spam: { 1: [ 1, 2, 3, 4 ] } } } );
+		} );
+
+		test( "should not remove a comment from a page when the comment status is changed but it doesn't change filter list", () => {
+			const state = deepFreeze( {
+				site: { all: { 1: [ 1, 2, 3, 4, 5 ] } },
+			} );
+			const query = queries( state, {
+				type: COMMENTS_CHANGE_STATUS,
+				siteId,
+				commentId: 5,
+				status: 'approved',
+				refreshCommentListQuery: { page: 1, status: 'all' },
+			} );
+			expect( query ).to.eql( { site: { all: { 1: [ 1, 2, 3, 4, 5 ] } } } );
 		} );
 	} );
 } );
