@@ -1,4 +1,8 @@
 .jetpack-onboarding {
+	.steps__main {
+		animation: appearWithScaling .3s ease-in-out;
+	}
+
 	.steps__form {
 		max-width: 320px;
 
@@ -14,14 +18,14 @@
 	}
 
 	.steps__summary-columns {
-	display: flex;
-	justify-content: center;
-	font-size: 14px;
-	margin-top: 30px;
+		display: flex;
+		justify-content: center;
+		font-size: 14px;
+		margin-top: 30px;
 
-	@include breakpoint( '<480px' ) {
-		display: block;
-		text-align: center;
+		@include breakpoint( '<480px' ) {
+			display: block;
+			text-align: center;
 		}
 	}
 
@@ -63,5 +67,16 @@
 		.button {
 			margin: 0 8px 20px;
 		}
+	}
+}
+
+.jetpack-onboarding__disclaimer {
+	text-align: center;
+	font-size: 12px;
+
+	.gridicon {
+		position: relative;
+		top: 4px;
+		margin-right: 12px;
 	}
 }

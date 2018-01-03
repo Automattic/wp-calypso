@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -23,7 +23,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 		const subHeaderText = translate( 'What kind of site do you need? Choose an option below:' );
 
 		return (
-			<Fragment>
+			<div className="steps__main">
 				<DocumentHead title={ translate( 'Site Type ‹ Jetpack Onboarding' ) } />
 				<PageViewTracker
 					path={ '/jetpack/onboarding/' + STEPS.SITE_TYPE + '/:site' }
@@ -48,7 +48,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 						image={ '/calypso/images/illustrations/type-business.svg' }
 					/>
 				</TileGrid>
-			</Fragment>
+			</div>
 		);
 	}
 }

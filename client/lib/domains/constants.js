@@ -1,34 +1,28 @@
 /** @format */
 
-/**
- * External dependencies
- */
+export const type = {
+	MAPPED: 'MAPPED',
+	REGISTERED: 'REGISTERED',
+	SITE_REDIRECT: 'SITE_REDIRECT',
+	WPCOM: 'WPCOM',
+	TRANSFER: 'TRANSFER',
+};
 
-import keyMirror from 'key-mirror';
+export const transferStatus = {
+	PENDING_OWNER: 'PENDING_OWNER',
+	PENDING_REGISTRY: 'PENDING_REGISTRY',
+	CANCELLED: 'CANCELLED',
+	COMPLETED: 'COMPLETED',
+};
 
-const type = keyMirror( {
-	MAPPED: null,
-	REGISTERED: null,
-	SITE_REDIRECT: null,
-	WPCOM: null,
-	TRANSFER: null,
-} );
-
-const transferStatus = keyMirror( {
-	PENDING_OWNER: null,
-	PENDING_REGISTRY: null,
-	CANCELLED: null,
-	COMPLETED: null,
-} );
-
-const registrar = {
+export const registrar = {
 	OPENHRS: 'OpenHRS',
 	OPENSRS: 'OpenSRS',
 	WWD: 'WWD',
 	MAINTENANCE: 'Registrar TLD Maintenance',
 };
 
-const domainAvailability = {
+export const domainAvailability = {
 	AVAILABLE: 'available',
 	BLACKLISTED: 'blacklisted_domain',
 	EMPTY_QUERY: 'empty_query',
@@ -60,7 +54,7 @@ const domainAvailability = {
 	UNKOWN_ACTIVE: 'unknown_active_domain_with_wpcom',
 };
 
-const dnsTemplates = {
+export const dnsTemplates = {
 	G_SUITE: {
 		PROVIDER: 'g-suite',
 		SERVICE: 'G-Suite',
@@ -75,16 +69,7 @@ const dnsTemplates = {
 	},
 };
 
-const domainProductSlugs = {
+export const domainProductSlugs = {
 	TRANSFER_IN: 'domain_transfer',
 	TRANSFER_IN_PRIVACY: 'domain_transfer_privacy',
-};
-
-export default {
-	dnsTemplates,
-	domainAvailability,
-	domainProductSlugs,
-	registrar,
-	transferStatus,
-	type,
 };

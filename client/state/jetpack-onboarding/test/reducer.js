@@ -8,10 +8,20 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { credentialsReducer } from '../reducer';
-import { JETPACK_ONBOARDING_CREDENTIALS_RECEIVE } from 'state/action-types';
+import reducer, { credentialsReducer, settingsReducer } from '../reducer';
+import {
+	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
+	JETPACK_ONBOARDING_SETTINGS_SAVE,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
+	test( 'should export expected reducer keys', () => {
+		const state = reducer( undefined, {} );
+
+		expect( state ).toHaveProperty( 'credentials' );
+		expect( state ).toHaveProperty( 'settings' );
+	} );
+
 	describe( 'credentials', () => {
 		const siteCredentials = {
 			token: 'abcd1234',
@@ -74,6 +84,93 @@ describe( 'reducer', () => {
 			expect( state ).toEqual( {
 				...initialState,
 				[ siteId ]: newCredentials,
+			} );
+		} );
+	} );
+
+	describe( 'settings', () => {
+		const settings = {
+			siteTitle: 'My awesome site',
+			siteDescription: 'Not just another amazing WordPress site',
+		};
+
+		test( 'should default to an empty object', () => {
+			const state = settingsReducer( undefined, {} );
+			expect( state ).toEqual( {} );
+		} );
+
+		test( 'should index settings by siteId', () => {
+			const siteId = 12345678;
+			const initialState = deepFreeze( {} );
+			const state = settingsReducer( initialState, {
+				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				siteId,
+				settings,
+			} );
+
+			expect( state ).toEqual( {
+				[ siteId ]: settings,
+			} );
+		} );
+
+		test( 'should store settings for new sites', () => {
+			const siteId = 87654321;
+			const initialState = deepFreeze( {
+				[ 12345678 ]: settings,
+			} );
+			const state = settingsReducer( initialState, {
+				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				siteId,
+				settings,
+			} );
+
+			expect( state ).toEqual( {
+				...initialState,
+				[ siteId ]: settings,
+			} );
+		} );
+
+		test( 'should add new settings for existing sites', () => {
+			const siteId = 12345678;
+			const newSettings = {
+				...settings,
+				siteType: 'business',
+			};
+			const initialState = deepFreeze( {
+				[ siteId ]: settings,
+				[ 87654321 ]: settings,
+			} );
+			const state = settingsReducer( initialState, {
+				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				siteId,
+				settings: newSettings,
+			} );
+
+			expect( state ).toEqual( {
+				...initialState,
+				[ siteId ]: newSettings,
+			} );
+		} );
+
+		test( 'should keep non-updated settings for sites', () => {
+			const siteId = 12345678;
+			const newSettings = {
+				...settings,
+				siteDescription: 'A new description',
+			};
+			const initialState = deepFreeze( {
+				[ siteId ]: settings,
+				[ 87654321 ]: settings,
+			} );
+			const state = settingsReducer( initialState, {
+				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				siteId,
+				settings: newSettings,
+			} );
+
+			expect( state ).toEqual( {
+				...initialState,
+				[ siteId ]: newSettings,
 			} );
 		} );
 	} );

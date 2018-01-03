@@ -402,7 +402,9 @@ export class MySitesSidebar extends Component {
 					onNavigate={ this.trackStoreClick }
 					icon="cart"
 				>
-					<Gridicon className="sidebar__chevron-right" icon="chevron-right" />
+					<div className="sidebar__chevron-right">
+						<Gridicon icon="chevron-right" />
+					</div>
 				</SidebarItem>
 			)
 		);

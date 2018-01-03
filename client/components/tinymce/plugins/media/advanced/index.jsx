@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import ReactDom from 'react-dom';
 import ReactDomServer from 'react-dom/server';
@@ -13,7 +11,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import * as MediaSerialization from 'lib/media-serialization';
+import { deserialize } from 'lib/media-serialization';
 import config from 'config';
 import EditorMediaAdvanced from 'post-editor/editor-media-advanced';
 import { renderWithReduxStore } from 'lib/react-helpers';
@@ -81,7 +79,7 @@ export default function( editor ) {
 
 		onClick() {
 			const node = editor.selection.getStart();
-			const item = MediaSerialization.deserialize( node );
+			const item = deserialize( node );
 			showModal( item );
 		},
 	} );

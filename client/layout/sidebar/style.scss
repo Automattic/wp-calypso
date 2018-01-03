@@ -475,5 +475,15 @@ form.sidebar__button input {
 	}
 }
 .sidebar__chevron-right {
-	padding-top: 10px;
+	position: absolute;
+	right: 0;
+	pointer-events: none;
+
+	.gridicon {
+		padding-top: 10px;
+	}
+
+	:hover + & .gridicon {
+		fill: $blue-medium;
+	}
 }

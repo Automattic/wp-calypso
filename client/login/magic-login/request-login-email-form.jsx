@@ -38,11 +38,11 @@ class RequestLoginEmailForm extends React.Component {
 	static propTypes = {
 		// mapped to state
 		currentUser: PropTypes.object,
+		emailRequested: PropTypes.bool,
 		isFetching: PropTypes.bool,
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.string,
 		showCheckYourEmail: PropTypes.bool,
-		emailRequested: PropTypes.bool,
 
 		// mapped to dispatch
 		fetchMagicLoginRequestEmail: PropTypes.func.isRequired,

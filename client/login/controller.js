@@ -83,7 +83,9 @@ export default {
 	},
 
 	magicLogin( context, next ) {
-		context.primary = <MagicLogin />;
+		const { path } = context;
+
+		context.primary = <MagicLogin path={ path } />;
 
 		next();
 	},

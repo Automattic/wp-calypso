@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { assign } from 'lodash';
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
@@ -12,16 +10,14 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Shortcode from 'lib/shortcode';
+import { parse, stringify } from 'lib/shortcode';
 import MediaUtils from 'lib/media/utils';
-import MediaSerialization from 'lib/media-serialization';
+import { deserialize } from 'lib/media-serialization';
 
 /**
  * Module variables
  */
-var Markup;
-
-Markup = {
+const Markup = {
 	/**
 	 * Given a media object and a site, returns a markup string representing that object
 	 * as HTML.
@@ -32,13 +28,11 @@ Markup = {
 	 * @return {string}         A markup string
 	 */
 	get: function( site, media, options ) {
-		var mimePrefix;
-
 		if ( ! media || media.hasOwnProperty( 'status' ) ) {
 			return '';
 		}
 
-		mimePrefix = MediaUtils.getMimePrefix( media );
+		const mimePrefix = MediaUtils.getMimePrefix( media );
 
 		// Attempt to find a matching function in the mimeTypes object using
 		// the MIME type prefix
@@ -57,7 +51,7 @@ Markup = {
 	 * @return {string}       A link markup string
 	 */
 	link: function( media ) {
-		var element = React.createElement(
+		const element = React.createElement(
 			'a',
 			{
 				href: media.URL,
@@ -84,18 +78,18 @@ Markup = {
 	 *                                 a captioned item.
 	 */
 	caption: function( site, media ) {
-		var parsed, match, img, caption, width;
+		let img, caption, width;
 
 		if ( 'string' !== typeof media ) {
 			media = Markup.get( site, media );
 		}
 
-		parsed = Shortcode.parse( media );
+		const parsed = parse( media );
 		if ( ! parsed || ! parsed.content ) {
 			return null;
 		}
 
-		match = parsed.content.match( /((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i );
+		const match = parsed.content.match( /((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i );
 		if ( match ) {
 			img = match[ 1 ].trim();
 			caption = match[ 2 ].trim();
@@ -103,7 +97,7 @@ Markup = {
 
 		width = parsed.attrs.named.width;
 		if ( ! width ) {
-			width = MediaSerialization.deserialize( img ).width;
+			width = deserialize( img ).width;
 		}
 
 		/*eslint-disable react/no-danger*/
@@ -182,7 +176,7 @@ Markup = {
 
 			let markup = ReactDomServer.renderToStaticMarkup( img );
 			if ( media.caption && width ) {
-				markup = Shortcode.stringify( {
+				markup = stringify( {
 					tag: 'caption',
 					attrs: {
 						id: 'attachment_' + media.ID,
@@ -204,7 +198,7 @@ Markup = {
 		 * @return {string}       An audio markup string
 		 */
 		audio: function( site, media ) {
-			return Shortcode.stringify( {
+			return stringify( {
 				tag: 'audio',
 				attrs: {
 					src: media.URL,
@@ -222,14 +216,14 @@ Markup = {
 		 */
 		video: function( site, media ) {
 			if ( MediaUtils.isVideoPressItem( media ) ) {
-				return Shortcode.stringify( {
+				return stringify( {
 					tag: 'wpvideo',
 					attrs: [ media.videopress_guid ],
 					type: 'single',
 				} );
 			}
 
-			return Shortcode.stringify( {
+			return stringify( {
 				tag: 'video',
 				attrs: {
 					src: media.URL,

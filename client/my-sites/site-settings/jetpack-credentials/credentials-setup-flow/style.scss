@@ -46,33 +46,23 @@
 	margin-right: 15px;
 }
 
-.credentials-setup-flow__footer-popover-link {
-	cursor: pointer;
-}
-
-.credentials-setup-flow__footer-popover-icon {
-	position: relative;
-	top: 3px;
-	left: -6px;
-}
-
-.credentials-setup-flow__happychat-button.is-borderless {
-	padding: 0;
-	margin-left: 2rem;
-	margin-top: -4px;
+.credentials-setup-flow__footer .button.is-borderless {
+	margin-right: 24px;
 	color: $blue-wordpress;
+	padding: 0 0 5px;
+
+	&:hover {
+		color: $link-highlight;
+	}
+
+	span {
+		margin-left: 6px;
+	}
 }
 
-.credentials-setup-flow__happychat-button.is-borderless:hover {
-	color: $link-highlight;
-}
-
-.credentials-setup-flow__happychat-button-text {
-	margin-left: 6px;
-}
-
-.credentials-setup-flow__help-button-text {
-	position: relative;
-	top: -6px;
-	left: 6px;
+.credentials-setup-flow__popover .popover__inner {
+	color: darken( $gray, 20% );
+	font-size: 13px;
+	max-width: 220px;
+	padding: 16px;
 }

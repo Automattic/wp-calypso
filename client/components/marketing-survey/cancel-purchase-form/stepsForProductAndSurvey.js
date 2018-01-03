@@ -44,10 +44,8 @@ export default function stepsForProductAndSurvey( survey, product, canChat ) {
 		}
 	}
 
-	if ( survey && survey.questionOneRadio === 'couldNotActivate' ) {
-		if ( canChat && includesProduct( JETPACK_PAID_PLANS, product ) ) {
-			return [ steps.INITIAL_STEP, steps.HAPPYCHAT_STEP, steps.FINAL_STEP ];
-		}
+	if ( canChat && includesProduct( JETPACK_PAID_PLANS, product ) ) {
+		return [ steps.INITIAL_STEP, steps.HAPPYCHAT_STEP, steps.FINAL_STEP ];
 	}
 
 	return [ steps.INITIAL_STEP, steps.FINAL_STEP ];

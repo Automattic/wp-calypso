@@ -30,6 +30,7 @@ import userFactory from 'lib/user';
 const user = userFactory();
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { getGeoCountryShort } from 'state/geo/selectors';
+import QueryGeo from 'components/data/query-geo';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
@@ -506,6 +507,7 @@ class AboutStep extends Component {
 
 		return (
 			<div className="about__wrapper">
+				<QueryGeo />
 				<div className={ pressableWrapperClassName }>
 					<PressableStoreStep
 						{ ...this.props }

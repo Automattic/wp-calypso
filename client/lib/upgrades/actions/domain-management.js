@@ -1,9 +1,7 @@
+/** @format **/
 /**
  * Externel dependencies
- *
- * @format
  */
-
 import { noop } from 'lodash';
 import i18n from 'i18n-calypso';
 
@@ -14,7 +12,7 @@ import { action as ActionTypes } from '../constants';
 import { isInitialized as isDomainInitialized } from 'lib/domains';
 import Dispatcher from 'dispatcher';
 import DnsStore from 'lib/domains/dns/store';
-import domainsAssembler from 'lib/domains/assembler';
+import { createDomainObjects } from 'lib/domains/assembler';
 import DomainsStore from 'lib/domains/store';
 import EmailForwardingStore from 'lib/domains/email-forwarding/store';
 import NameserversStore from 'lib/domains/nameservers/store';
@@ -155,7 +153,7 @@ function fetchDomains( siteId ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.DOMAINS_FETCH_COMPLETED,
 				siteId,
-				domains: domainsAssembler.createDomainObjects( data.domains ),
+				domains: createDomainObjects( data.domains ),
 			} );
 		} )
 		.catch( error => {

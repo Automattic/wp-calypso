@@ -64,6 +64,7 @@ class InboundTransferEmailVerificationCard extends React.PureComponent {
 		return (
 			<EmailVerificationCard
 				contactEmail={ adminEmail }
+				errorMessage={ translate( 'Unable to resend domain transfer email.' ) }
 				headerText={
 					translate(
 						'Important: Confirm the transfer to proceed.'

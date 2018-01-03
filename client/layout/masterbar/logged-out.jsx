@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Masterbar from './masterbar';
-import { localize } from 'i18n-calypso';
+import { getLocaleSlug, localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,7 +19,8 @@ import WordPressWordmark from 'components/wordpress-wordmark';
 import WordPressLogo from 'components/wordpress-logo';
 
 function getLoginUrl( redirectUri ) {
-	const params = {};
+	const params = { locale: getLocaleSlug() };
+
 	if ( redirectUri ) {
 		params.redirectTo = redirectUri;
 	} else if ( typeof window !== 'undefined' ) {

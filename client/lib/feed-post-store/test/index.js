@@ -8,17 +8,21 @@
  */
 import { expect } from 'chai';
 
+/**
+ * Internal dependencies
+ */
+import { action as FeedStreamActionType } from 'lib/feed-stream-store/constants';
+import { action as FeedPostActionType } from '../constants';
+
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/post-normalizer', () => require( './mocks/lib/post-normalizer' ) );
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
-var Dispatcher, FeedStreamActionType, FeedPostActionType, FeedPostStore;
+let Dispatcher, FeedPostStore;
 
 describe( 'feed-post-store', () => {
 	beforeAll( () => {
 		Dispatcher = require( 'dispatcher' );
-		FeedStreamActionType = require( 'lib/feed-stream-store/constants' ).action;
-		FeedPostActionType = require( 'lib/feed-post-store/constants' ).action;
 
 		FeedPostStore = require( '../' );
 	} );

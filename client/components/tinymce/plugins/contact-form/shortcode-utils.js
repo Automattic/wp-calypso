@@ -1,15 +1,13 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { pickBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Shortcode from 'lib/shortcode';
+import { next, parse, stringify } from 'lib/shortcode';
 
 export function serialize( { to, subject, fields = [] } = {} ) {
 	const content = fields
@@ -18,7 +16,7 @@ export function serialize( { to, subject, fields = [] } = {} ) {
 				return;
 			}
 
-			let fieldShortcode = {
+			const fieldShortcode = {
 				tag: 'contact-field',
 				type: 'self-closing',
 				attrs: pickBy( { label, type, options } ),
@@ -28,11 +26,11 @@ export function serialize( { to, subject, fields = [] } = {} ) {
 				fieldShortcode.attrs.required = 1;
 			}
 
-			return Shortcode.stringify( fieldShortcode );
+			return stringify( fieldShortcode );
 		} )
 		.join( '' );
 
-	return Shortcode.stringify( {
+	return stringify( {
 		tag: 'contact-form',
 		type: 'closed',
 		content,
@@ -45,17 +43,17 @@ export function deserialize( shortcode ) {
 		return null;
 	}
 
-	const parsed = Shortcode.parse( shortcode );
+	const parsed = parse( shortcode );
 
 	if ( parsed ) {
 		return ( ( { attrs: { named: { to, subject } = {} } = {}, content } ) => {
-			let fields = [];
+			const fields = [];
 			let parsedField;
 
-			while ( content && ( parsedField = Shortcode.next( 'contact-field', content ) ) ) {
+			while ( content && ( parsedField = next( 'contact-field', content ) ) ) {
 				if ( 'attrs' in parsedField.shortcode ) {
 					const { label, type, options, required } = parsedField.shortcode.attrs.named;
-					let field = pickBy( { label, type, options, required } );
+					const field = pickBy( { label, type, options, required } );
 					if ( 'required' in field ) {
 						field.required = true;
 					}

@@ -54,7 +54,7 @@ class ThemeSetupDialog extends React.Component {
 				<h1>{ translate( 'Theme Setup' ) }</h1>
 				<p>
 					{ translate(
-						'Settings will be changed on {{strong}}%(site)s{{/strong}}, and these changes will be live immmediately. Do you want to proceed?',
+						'Settings will be changed on {{strong}}%(site)s{{/strong}}, and these changes will be live immediately. Do you want to proceed?',
 						{
 							components: {
 								strong: <strong />,
