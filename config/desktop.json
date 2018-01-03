@@ -28,7 +28,7 @@
 		"domains/cctlds/fr": true,
 		"external-media": true,
 		"external-media/google-photos": true,
-		"external-media/free-photo-library": false,
+		"external-media/free-photo-library": true,
 		"fluid-width": true,
 		"help": true,
 		"help/courses": true,
