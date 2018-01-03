@@ -9,10 +9,12 @@ import { get, includes, isUndefined, map, without } from 'lodash';
  */
 import { COMMENTS_CHANGE_STATUS, COMMENTS_DELETE, COMMENTS_QUERY_UPDATE } from 'state/action-types';
 import { combineReducers, keyedReducer } from 'state/utils';
+import { getFiltersKey } from 'state/ui/comments/utils';
 
-const deepUpdateComments = ( state, comments, { page = 1, postId, search, status = 'all' } ) => {
+const deepUpdateComments = ( state, comments, query ) => {
+	const { page = 1, postId } = query;
 	const parent = postId || 'site';
-	const filter = !! search ? `${ status }?s=${ search }` : status;
+	const filter = getFiltersKey( query );
 
 	const parentObject = get( state, parent, {} );
 	const filterObject = get( parentObject, filter, {} );
@@ -36,7 +38,7 @@ export const queries = ( state = {}, action ) => {
 			if ( ! action.refreshCommentListQuery ) {
 				return state;
 			}
-			const { page, postId, search, status } = action.refreshCommentListQuery;
+			const { page, postId, status } = action.refreshCommentListQuery;
 			if (
 				COMMENTS_CHANGE_STATUS === action.type &&
 				'all' === status &&
@@ -47,7 +49,7 @@ export const queries = ( state = {}, action ) => {
 			}
 
 			const parent = postId || 'site';
-			const filter = !! search ? `${ status }?s=${ search }` : status;
+			const filter = getFiltersKey( action.refreshCommentListQuery );
 
 			const comments = get( state, [ parent, filter, page ] );
 
