@@ -87,7 +87,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 			}
 
 			// Reset steps if domain became locked again
-			if ( ! result.unlocked ) {
+			if ( false === result.unlocked ) {
 				this.resetSteps();
 			}
 
@@ -121,22 +121,16 @@ class TransferDomainPrecheck extends React.PureComponent {
 		this.setState( { currentStep: this.state.currentStep + 1 } );
 	};
 
-	getSection( heading, message, buttonText, step, stepStatus, stepSkipped ) {
+	getSection( heading, message, buttonText, step, stepStatus ) {
 		const { currentStep, loading, unlocked } = this.state;
 		const isAtCurrentStep = step === currentStep;
 		const isStepFinished = currentStep > step;
 		const sectionClasses = classNames( 'transfer-domain-step__section', {
 			'is-expanded': isAtCurrentStep,
-			'is-complete': isStepFinished && ! stepSkipped,
-			'is-skipped': isStepFinished && stepSkipped,
+			'is-complete': isStepFinished,
 		} );
 
-		let sectionIcon = step;
-		if ( isStepFinished && ! stepSkipped ) {
-			sectionIcon = <Gridicon icon="checkmark-circle" size={ 36 } />;
-		} else if ( isStepFinished && stepSkipped ) {
-			sectionIcon = <Gridicon icon="info" size={ 36 } />;
-		}
+		const sectionIcon = isStepFinished ? <Gridicon icon="checkmark-circle" size={ 36 } /> : step;
 
 		return (
 			<Card compact>
@@ -284,9 +278,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 			</div>
 		);
 
-		const skipped = ! loading && isStepFinished && null === unlocked;
-
-		return this.getSection( heading, message, buttonText, step, lockStatus, skipped );
+		return this.getSection( heading, message, buttonText, step, lockStatus );
 	}
 
 	getPrivacyMessage() {
@@ -366,7 +358,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 			</a>
 		);
 
-		return this.getSection( heading, message, buttonText, step, stepStatus, false );
+		return this.getSection( heading, message, buttonText, step, stepStatus );
 	}
 
 	getEppMessage() {
@@ -392,7 +384,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		);
 		const buttonText = translate( 'I have my authorization code' );
 
-		return this.getSection( heading, message, buttonText, 3, false );
+		return this.getSection( heading, message, buttonText, 3 );
 	}
 
 	getHeader() {
