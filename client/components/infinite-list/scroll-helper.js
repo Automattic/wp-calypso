@@ -458,7 +458,7 @@ class ScrollHelper {
 
 		// scroll check may be triggered while dispatching an action,
 		// we cannot create new action while dispatching old one
-		this.queuedFetchNextPage = setTimeout( () => {
+		this.queuedFetchNextPage = requestAnimationFrame( () => {
 			this.queuedFetchNextPage = null;
 			// checking these values again because we shifted the fetch to the next stack
 			if ( this.props.fetchingNextPage || this.props.lastPage ) {
@@ -467,7 +467,7 @@ class ScrollHelper {
 			this.props.fetchNextPage( {
 				triggeredByScroll: triggeredByScroll,
 			} );
-		}, 0 );
+		} );
 	}
 }
 
