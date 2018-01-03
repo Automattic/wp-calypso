@@ -25,7 +25,7 @@ export const settingsReducer = keyedReducer(
 		{},
 		{
 			[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: ( state, { settings } ) => ( {
-				...state.settings,
+				...state,
 				...settings,
 			} ),
 		}
