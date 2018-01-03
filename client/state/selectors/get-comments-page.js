@@ -16,6 +16,7 @@ import { getFiltersKey } from 'state/ui/comments/utils';
  * @param {Object} state Redux state.
  * @param {Number} siteId Site identifier.
  * @param {Object} query Filter parameters.
+ * @param {String} [query.order] Query order ('ASC' or 'DESC').
  * @param {Number} [query.page] Requested page.
  * @param {Number} [query.postId] Post identifier.
  * @param {String} [query.search] Search query.
