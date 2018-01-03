@@ -3,9 +3,7 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
@@ -24,51 +22,47 @@ import ProfileLinksAddOther from 'me/profile-links-add-other';
 import { deleteUserProfileLink, resetUserProfileLinkErrors } from 'state/profile-links/actions';
 import { getProfileLinks, getProfileLinksErrorType } from 'state/selectors';
 
-const ProfileLinks = createReactClass( {
-	displayName: 'ProfileLinks',
+class ProfileLinks extends React.Component {
+	state = {
+		showingForm: false,
+		showPopoverMenu: false,
+	};
 
-	getInitialState() {
-		return {
-			showingForm: false,
-			showPopoverMenu: false,
-		};
-	},
-
-	showAddWordPress() {
+	showAddWordPress = () => {
 		this.setState( {
 			showingForm: 'wordpress',
 			showPopoverMenu: false,
 		} );
-	},
+	};
 
-	showAddOther() {
+	showAddOther = () => {
 		this.setState( {
 			showingForm: 'other',
 			showPopoverMenu: false,
 		} );
-	},
+	};
 
-	showPopoverMenu() {
+	showPopoverMenu = () => {
 		this.setState( {
 			showPopoverMenu: ! this.state.showPopoverMenu,
 		} );
-	},
+	};
 
-	closePopoverMenu() {
+	closePopoverMenu = () => {
 		this.setState( {
 			showPopoverMenu: false,
 		} );
-	},
+	};
 
-	hideForms() {
+	hideForms = () => {
 		this.setState( {
 			showingForm: false,
 		} );
-	},
+	};
 
-	onRemoveLink( profileLink ) {
+	onRemoveLink = profileLink => {
 		return () => this.props.deleteUserProfileLink( profileLink.link_slug );
-	},
+	};
 
 	getErrorMessage() {
 		const { errorType, translate } = this.props;
@@ -81,7 +75,7 @@ const ProfileLinks = createReactClass( {
 			return translate( 'That link is already in your profile links. No changes were made.' );
 		}
 		return translate( 'An unexpected error occurred. Please try again later.' );
-	},
+	}
 
 	possiblyRenderError() {
 		const errorMessage = this.getErrorMessage();
@@ -98,7 +92,7 @@ const ProfileLinks = createReactClass( {
 				{ errorMessage }
 			</Notice>
 		);
-	},
+	}
 
 	renderProfileLinksList() {
 		return (
@@ -114,7 +108,7 @@ const ProfileLinks = createReactClass( {
 				) ) }
 			</ul>
 		);
-	},
+	}
 
 	renderNoProfileLinks() {
 		return (
@@ -124,7 +118,7 @@ const ProfileLinks = createReactClass( {
 				) }
 			</p>
 		);
-	},
+	}
 
 	renderPlaceholders() {
 		return (
@@ -140,7 +134,7 @@ const ProfileLinks = createReactClass( {
 				) ) }
 			</ul>
 		);
-	},
+	}
 
 	renderProfileLinks() {
 		const initialized = this.props.profileLinks !== null;
@@ -161,7 +155,7 @@ const ProfileLinks = createReactClass( {
 				{ links }
 			</div>
 		);
-	},
+	}
 
 	renderForm() {
 		if ( 'wordpress' === this.state.showingForm ) {
@@ -169,7 +163,7 @@ const ProfileLinks = createReactClass( {
 		}
 
 		return <ProfileLinksAddOther onSuccess={ this.hideForms } onCancel={ this.hideForms } />;
-	},
+	}
 
 	render() {
 		return (
@@ -188,8 +182,8 @@ const ProfileLinks = createReactClass( {
 				<Card>{ !! this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	state => ( {
