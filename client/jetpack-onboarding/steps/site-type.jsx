@@ -19,14 +19,10 @@ import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingSiteTypeStep extends React.PureComponent {
-	handleSiteTypeSelection = siteType => {
-		const { siteId } = this.props;
-
-		return () => {
-			this.props.saveJetpackOnboardingSettings( siteId, {
-				siteType,
-			} );
-		};
+	handleSiteTypeSelection = siteType => () => {
+		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
+			siteType,
+		} );
 	};
 
 	render() {
