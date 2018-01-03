@@ -19,7 +19,8 @@ export default localize( ( { selectedSite, translate } ) => {
 				icon="search"
 				title={ translate( 'Search (Beta)' ) }
 				description={ translate(
-					'Replace the default WordPress search with better results that will help your users find what they are looking for.'
+					'Replace the default WordPress search with better results ' +
+						'that will help your users find what they are looking for.'
 				) }
 				buttonText={ translate( 'Configure Search' ) }
 				href={ '/settings/traffic/' + selectedSite.slug }
