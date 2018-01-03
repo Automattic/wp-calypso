@@ -23,7 +23,7 @@ import FormattedHeader from 'components/formatted-header';
 import { checkInboundTransferStatus } from 'lib/domains';
 import support from 'lib/url/support';
 import paths from 'my-sites/domains/paths';
-import TransferRestrictionMessage from './transfer-restriction-message';
+import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
 
 class TransferDomainPrecheck extends React.PureComponent {
 	static propTypes = {
@@ -71,8 +71,9 @@ class TransferDomainPrecheck extends React.PureComponent {
 		page( paths.domainMapping( this.props.selectedSite.slug, this.props.domain ) );
 	};
 
-	transferIsRestricted = () =>
-		! this.state.loading && 'not_restricted' !== this.state.transferRestrictionStatus;
+	transferIsRestricted = () => 'not_restricted' !== this.state.transferRestrictionStatus;
+
+	showTransferRestrictedMessage = () => ! this.state.loading && this.transferIsRestricted();
 
 	refreshStatus = ( proceedToNextStep = true ) => {
 		this.setState( { loading: true } );
@@ -214,7 +215,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 			}
 		);
 
-    if ( true === unlocked ) {
+		if ( true === unlocked ) {
 			message = translate( 'Your domain is unlocked at your current registrar.' );
 		} else if ( false === unlocked ) {
 			message = translate(
@@ -408,8 +409,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 		return (
 			<div className="transfer-domain-step__precheck">
-				{ this.transferIsRestricted() && this.getTransferRestrictionMessage() }
-				{ ! this.transferIsRestricted() && (
+				{ this.showTransferRestrictedMessage() && this.getTransferRestrictionMessage() }
+				{ ! this.showTransferRestrictedMessage() && (
 					<div>
 						{ this.getHeader() }
 						{ this.getStatusMessage() }
