@@ -14,12 +14,10 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityActor from './activity-actor';
 import ActivityIcon from './activity-icon';
-import EllipsisMenu from 'components/ellipsis-menu';
+import SplitButton from 'components/split-button';
 import FoldableCard from 'components/foldable-card';
 import FormattedBlock from 'components/notes-formatted-block';
 import PopoverMenuItem from 'components/popover/menu-item';
-
-const stopPropagation = event => event.stopPropagation();
 
 class ActivityLogItem extends Component {
 	static propTypes = {
@@ -81,7 +79,9 @@ class ActivityLogItem extends Component {
 								<FormattedBlock key={ key } content={ part } />
 							) ) }
 						</div>
-						{ activityTitle && <div className="activity-log-item__description-summary">{ activityTitle }</div> }
+						{ activityTitle && (
+							<div className="activity-log-item__description-summary">{ activityTitle }</div>
+						) }
 					</div>
 				) }
 			</div>
@@ -103,14 +103,15 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__action">
-				<EllipsisMenu onClick={ stopPropagation } position="bottom right">
-					<PopoverMenuItem
-						disabled={ disableRestore }
-						icon="history"
-						onClick={ this.handleClickRestore }
-					>
-						{ translate( 'Rewind to this point' ) }
-					</PopoverMenuItem>
+				<SplitButton
+					icon="history"
+					label={ translate( 'Rewind' ) }
+					onClick={ this.handleClickRestore }
+					disableMain={ disableRestore }
+					disabled={ disableRestore && disableBackup }
+					compact
+					primary={ ! disableRestore }
+				>
 					<PopoverMenuItem
 						disabled={ disableBackup }
 						icon="cloud-download"
@@ -118,7 +119,7 @@ class ActivityLogItem extends Component {
 					>
 						{ translate( 'Download backup' ) }
 					</PopoverMenuItem>
-				</EllipsisMenu>
+				</SplitButton>
 			</div>
 		);
 	}

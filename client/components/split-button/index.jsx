@@ -63,13 +63,10 @@ class SplitButton extends Component {
 		this.setPopoverContext = this.setPopoverContext.bind( this );
 	}
 
-	handleClick = event => {
-		const { onClick } = this.props;
-		const { isMenuVisible } = this.state;
+	handleMainClick = event => this.props.onClick( event );
 
-		onClick( event );
-
-		if ( isMenuVisible ) {
+	handleMenuClick = () => {
+		if ( this.state.isMenuVisible ) {
 			this.hideMenu();
 		} else {
 			this.showMenu();
@@ -120,6 +117,7 @@ class SplitButton extends Component {
 					compact={ compact }
 					primary={ primary }
 					scary={ scary }
+					onClick={ this.handleMainClick }
 					disabled={ disabled || disableMain }
 					className="split-button__main"
 				>
@@ -131,7 +129,7 @@ class SplitButton extends Component {
 					primary={ primary }
 					scary={ scary }
 					ref={ this.setPopoverContext }
-					onClick={ this.handleClick }
+					onClick={ this.handleMenuClick }
 					title={ toggleTitle || translate( 'Toggle menu' ) }
 					disabled={ disabled || disableMenu }
 					className="split-button__toggle"
