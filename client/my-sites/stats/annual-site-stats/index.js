@@ -100,8 +100,8 @@ class AnnualSiteStats extends Component {
 					{ noData && (
 						<ErrorPanel message={ translate( 'No annual stats recorded for this year' ) } />
 					) }
-					{ previousYearData && this.renderContent( previousYearData ) }
 					{ currentYearData && this.renderContent( currentYearData ) }
+					{ previousYearData && this.renderContent( previousYearData ) }
 				</Card>
 			</div>
 		);
