@@ -525,7 +525,9 @@ class ActivityLog extends Component {
 		const disableRestore =
 			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
 			'active' !== rewindState.state;
-		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
+		const disableBackup =
+			0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity ) ||
+			'active' !== rewindState.state;
 
 		const restoreConfirmDialog = requestedRestore && (
 			<ActivityLogConfirmDialog
