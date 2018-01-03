@@ -38,10 +38,11 @@ export const queries = ( state = {}, action ) => {
 			}
 			const { page, postId, search, status } = action.refreshCommentListQuery;
 			if (
-				COMMENTS_DELETE !== action.type &&
+				COMMENTS_CHANGE_STATUS === action.type &&
 				'all' === status &&
 				includes( [ 'approved', 'unapproved' ], action.status )
 			) {
+				// No-op when status changes from `approved` or `unapproved` in the All tab
 				return state;
 			}
 
