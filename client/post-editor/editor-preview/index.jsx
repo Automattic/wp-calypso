@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import { omitUrlParams } from 'lib/url';
 import { isEnabled } from 'config';
-import AsyncLoad from 'components/async-load';
+import WebPreview from 'components/web-preview';
 
 class EditorPreview extends React.Component {
 	static propTypes = {
@@ -129,8 +129,7 @@ class EditorPreview extends React.Component {
 		return (
 			<div className={ className }>
 				{ isFullScreen ? (
-					<AsyncLoad
-						require="components/web-preview"
+					<WebPreview
 						isContentOnly
 						showPreview={ this.props.showPreview }
 						showEdit={ true }
@@ -148,8 +147,7 @@ class EditorPreview extends React.Component {
 						) }
 					/>
 				) : (
-					<AsyncLoad
-						require="components/web-preview"
+					<WebPreview
 						showPreview={ this.props.showPreview }
 						defaultViewportDevice={ this.props.defaultViewportDevice }
 						onClose={ this.props.onClose }

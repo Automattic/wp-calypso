@@ -33,7 +33,7 @@ import Button from 'components/button';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'state/posts/selectors';
 import { hasNavigated } from 'state/selectors';
-import AsyncLoad from 'components/async-load';
+import WebPreview from 'components/web-preview';
 
 class StatsPostDetail extends Component {
 	static propTypes = {
@@ -179,8 +179,7 @@ class StatsPostDetail extends Component {
 						</div>
 					) }
 
-				<AsyncLoad
-					require="components/web-preview"
+				<WebPreview
 					showPreview={ this.state.showPreview }
 					defaultViewportDevice="tablet"
 					previewUrl={ `${ previewUrl }?demo=true&iframe=true&theme_preview=true` }
@@ -188,7 +187,7 @@ class StatsPostDetail extends Component {
 					onClose={ this.closePreview }
 				>
 					<Button href={ `/post/${ siteSlug }/${ postId }` }>{ translate( 'Edit' ) }</Button>
-				</AsyncLoad>
+				</WebPreview>
 			</Main>
 		);
 	}

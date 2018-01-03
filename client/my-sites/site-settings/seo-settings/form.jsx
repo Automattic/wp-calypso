@@ -63,7 +63,7 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
-import AsyncLoad from 'components/async-load';
+import WebPreview from 'components/web-preview';
 
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
@@ -491,8 +491,7 @@ export class SeoForm extends React.Component {
 							</div>
 						) }
 				</form>
-				<AsyncLoad
-					require="components/web-preview"
+				<WebPreview
 					showPreview={ showPreview }
 					onClose={ this.hidePreview }
 					previewUrl={ siteUrl }

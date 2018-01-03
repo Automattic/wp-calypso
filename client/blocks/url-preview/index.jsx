@@ -17,7 +17,7 @@ import { getPreviewSite, getPreviewSiteId, getPreviewUrl } from 'state/ui/previe
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import AsyncLoad from 'components/async-load';
+import WebPreview from 'components/web-preview';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -87,8 +87,7 @@ class UrlPreview extends Component {
 		}
 
 		return (
-			<AsyncLoad
-				require="components/web-preview"
+			<WebPreview
 				className={ this.props.className }
 				previewUrl={ this.getPreviewUrl() }
 				externalUrl={ this.getBasePreviewUrl() }
