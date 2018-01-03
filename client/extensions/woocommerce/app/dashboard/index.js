@@ -113,7 +113,7 @@ class Dashboard extends Component {
 			return translate( 'Setting Up Store Pages' );
 		}
 
-		if ( ! setStoreAddressDuringInitialSetup && ! hasProducts ) {
+		if ( ! setStoreAddressDuringInitialSetup ) {
 			return translate( 'Store Location' );
 		}
 
