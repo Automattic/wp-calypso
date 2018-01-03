@@ -4,6 +4,10 @@ a.sidebar-banner {
 	color: $white;
 	font-size: 12px;
 
+	:visited {
+		color: $white;
+	}
+
 	@include breakpoint( "<660px" ) {
 		padding: 0 24px;
 	}
