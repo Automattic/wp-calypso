@@ -12,7 +12,6 @@ import { union, includes, trim, debounce } from 'lodash';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import { DEFAULT_PRODUCT_CATEGORIES_PER_PAGE } from 'woocommerce/state/sites/product-categories/utils';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -36,22 +35,17 @@ class ProductCategories extends Component {
 	}
 
 	componentWillMount() {
-		const { site } = this.props;
-		this.props.fetchProductCategories( site.ID, {
-			page: 1,
-			per_page: DEFAULT_PRODUCT_CATEGORIES_PER_PAGE,
-		} );
+		const { siteId } = this.props;
+		if ( siteId ) {
+			this.props.fetchProductCategories( siteId, { page: 1 } );
+		}
 	}
 
 	componentWillReceiveProps( newProps ) {
-		const { site } = this.props;
-		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
-		const oldSiteId = ( site && site.ID ) || null;
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchProductCategories( newSiteId, {
-				page: 1,
-				per_page: DEFAULT_PRODUCT_CATEGORIES_PER_PAGE,
-			} );
+		const { siteId } = this.props;
+		const newSiteId = ( newProps.siteId ) || null;
+		if ( siteId !== newSiteId ) {
+			this.props.fetchProductCategories( newSiteId, { page: 1 } );
 		}
 	}
 
@@ -59,34 +53,18 @@ class ProductCategories extends Component {
 		const { site } = this.props;
 		const { searchQuery } = this.state;
 
-		if ( searchQuery && searchQuery.length ) {
-			pages.forEach( page => {
-				if ( ! includes( this.state.requestedSearchPages, page ) ) {
-					this.props.fetchProductCategories( site.ID, {
-						per_page: DEFAULT_PRODUCT_CATEGORIES_PER_PAGE,
-						search: searchQuery,
-						page,
-					} );
-				}
-			} );
+		const requestedPages = searchQuery && searchQuery.length && this.state.requestedSearchPages || this.state.requestedPages;
+		const stateName = searchQuery && searchQuery.length && 'requestedSearchPages' || 'requestedPages';
 
-			this.setState( {
-				requestedSearchPages: union( this.state.requestedSearchPages, pages ),
-			} );
-		} else {
-			pages.forEach( page => {
-				if ( ! includes( this.state.requestedPages, page ) ) {
-					this.props.fetchProductCategories( site.ID, {
-						per_page: DEFAULT_PRODUCT_CATEGORIES_PER_PAGE,
-						page,
-					} );
-				}
-			} );
+		pages.forEach( page => {
+			if ( ! includes( requestedPages, page ) ) {
+				this.props.fetchProductCategories( site.ID, { search: searchQuery, page } );
+			}
+		} );
 
-			this.setState( {
-				requestedPages: union( this.state.requestedPages, pages ),
-			} );
-		}
+		this.setState( {
+			[ stateName ]: union( requestedPages, pages ),
+		} );
 	};
 
 	onSearch = query => {
@@ -98,10 +76,7 @@ class ProductCategories extends Component {
 		}
 
 		this.setState( { searchQuery: query, requestedSearchPages: [ 1 ] } );
-		this.props.fetchProductCategories( site.ID, {
-			search: query,
-			per_page: DEFAULT_PRODUCT_CATEGORIES_PER_PAGE,
-		} );
+		this.props.fetchProductCategories( site.ID, { search: query } );
 	};
 
 	render() {
@@ -119,7 +94,7 @@ class ProductCategories extends Component {
 					<span>{ categoriesLabel }</span>,
 				] }>
 				</ActionHeader>
-				<SectionNav>
+				<SectionNav selectedText={ categoriesLabel }>
 					<NavTabs label={ translate( 'Products' ) } selectedText={ categoriesLabel }>
 						<NavItem path={ getLink( '/store/products/:site/', site ) }>{ productsLabel }</NavItem>
 						<NavItem path={ getLink( '/store/products/categories/:site/', site ) } selected>
@@ -146,8 +121,10 @@ class ProductCategories extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
+	const siteId = site ? site.ID : null;
 	return {
 		site,
+		siteId,
 	};
 }
 

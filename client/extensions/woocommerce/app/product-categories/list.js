@@ -22,7 +22,7 @@ import {
 } from 'woocommerce/state/sites/product-categories/selectors';
 import Count from 'components/count';
 import CompactCard from 'components/card/compact';
-import { DEFAULT_PRODUCT_CATEGORIES_PER_PAGE } from 'woocommerce/state/sites/product-categories/utils';
+import { DEFAULT_QUERY } from 'woocommerce/state/sites/product-categories/utils';
 import EmptyContent from 'components/empty-content';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -100,7 +100,13 @@ class ProductCategories extends Component {
 			<div key={ 'product-category-' + itemId } className="product-categories__list-item">
 				<CompactCard key={ itemId } className="product-categories__list-item-card" onClick={ goToLink }>
 					<div className="product-categories__list-item-wrapper">
-						<div className={ imageClasses }>{ item.image && <img src={ item.image.src } /> }</div>
+						<div className="product-categories__list-thumb">
+							<div className={ imageClasses }>
+								<figure>
+									{ item.image && <img src={ item.image.src } /> }
+								</figure>
+							</div>
+						</div>
 						<span className="product-categories__list-item-info">
 							<a href={ link }>{ item.name }</a>
 							<Count count={ item.count } />
@@ -138,7 +144,7 @@ class ProductCategories extends Component {
 						getRowHeight={ this.getRowHeight }
 						renderRow={ this.renderRow }
 						onRequestPages={ this.props.requestPages }
-						perPage={ DEFAULT_PRODUCT_CATEGORIES_PER_PAGE }
+						perPage={ DEFAULT_QUERY.per_page }
 						loadOffset={ 10 }
 						searching={ searchQuery && searchQuery.length }
 						defaultRowHeight={ ITEM_HEIGHT }
@@ -168,11 +174,13 @@ class ProductCategories extends Component {
 		const classes = classNames( 'product-categories__list', className );
 
 		return (
-			<div className={ classes }>
-				{
-					this.props.isInitialRequestLoaded && this.renderCategoryList() ||
-					<div className="product-categories__list-placeholder" />
-				}
+			<div className="product-categories__list-container">
+				<div className={ classes }>
+					{
+						this.props.isInitialRequestLoaded && this.renderCategoryList() ||
+						<div className="product-categories__list-placeholder" />
+					}
+				</div>
 			</div>
 		);
 	}
@@ -181,7 +189,7 @@ class ProductCategories extends Component {
 
 function mapStateToProps( state, ownProps ) {
 	const { searchQuery } = ownProps;
-	let query = { per_page: DEFAULT_PRODUCT_CATEGORIES_PER_PAGE };
+	let query = {};
 	if ( searchQuery && searchQuery.length ) {
 		query = { search: searchQuery, ...query };
 	}

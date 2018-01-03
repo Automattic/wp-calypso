@@ -6,12 +6,10 @@
 
 import { omitBy } from 'lodash';
 
-export const DEFAULT_PRODUCT_CATEGORIES_PER_PAGE = 100;
-
 // Defaults from https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-product-categories
 export const DEFAULT_QUERY = {
 	page: 1,
-	per_page: 10,
+	per_page: 100,
 	search: '',
 };
 
