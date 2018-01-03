@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -23,6 +23,7 @@ import FormattedHeader from 'components/formatted-header';
 import { checkInboundTransferStatus } from 'lib/domains';
 import support from 'lib/url/support';
 import paths from 'my-sites/domains/paths';
+import TransferRestrictionMessage from './transfer-restriction-message';
 
 class TransferDomainPrecheck extends React.PureComponent {
 	static propTypes = {
@@ -35,12 +36,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 	state = {
 		creationDate: '',
 		currentStep: 1,
-		daysTransferLocked: 60,
 		email: '',
-		expiryDate: '',
-		expiryDateNew: '',
-		expiryDateOk: true,
-		inInitialRegistrationPeriod: false,
 		loading: true,
 		losingRegistrar: '',
 		losingRegistrarIanaId: '',
@@ -125,16 +121,22 @@ class TransferDomainPrecheck extends React.PureComponent {
 		this.setState( { currentStep: this.state.currentStep + 1 } );
 	};
 
-	getSection( heading, message, buttonText, step, stepStatus ) {
+	getSection( heading, message, buttonText, step, stepStatus, stepSkipped ) {
 		const { currentStep, loading, unlocked } = this.state;
 		const isAtCurrentStep = step === currentStep;
 		const isStepFinished = currentStep > step;
 		const sectionClasses = classNames( 'transfer-domain-step__section', {
 			'is-expanded': isAtCurrentStep,
-			'is-complete': isStepFinished,
+			'is-complete': isStepFinished && ! stepSkipped,
+			'is-skipped': isStepFinished && stepSkipped,
 		} );
 
-		const sectionIcon = isStepFinished ? <Gridicon icon="checkmark-circle" size={ 36 } /> : step;
+		let sectionIcon = step;
+		if ( isStepFinished && ! stepSkipped ) {
+			sectionIcon = <Gridicon icon="checkmark-circle" size={ 36 } />;
+		} else if ( isStepFinished && stepSkipped ) {
+			sectionIcon = <Gridicon icon="info" size={ 36 } />;
+		}
 
 		return (
 			<Card compact>
@@ -151,7 +153,11 @@ class TransferDomainPrecheck extends React.PureComponent {
 								<div className="transfer-domain-step__section-action">
 									<Button
 										compact
-										onClick={ unlocked ? this.showNextStep : this.refreshStatus }
+										onClick={
+											( true === unlocked ) | ( null === unlocked )
+												? this.showNextStep
+												: this.refreshStatus
+										}
 										busy={ loading }
 									>
 										{ buttonText }
@@ -167,7 +173,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 	}
 
 	getTransferRestrictionMessage() {
-		const { translate, domain } = this.props;
+		const { domain } = this.props;
 		const {
 			creationDate,
 			loading,
@@ -176,93 +182,15 @@ class TransferDomainPrecheck extends React.PureComponent {
 			transferRestrictionStatus,
 		} = this.state;
 
-		const dateFormat = translate( 'MMM D, YYYY', {
-			comment:
-				'Short month, day and year, like "Dec 5, 2017". This is a moment.js formatted string, ' +
-				'see http://momentjs.com/docs/#/displaying/format/',
-		} );
-
-		let heading = translate(
-			'{{strong}}%(domain)s{{/strong}} can be transferred in %(transferDelayInDays)s days.',
-			{
-				args: {
-					domain: domain,
-					transferDelayInDays: moment( transferEligibleDate ).diff( moment(), 'days' ),
-				},
-				components: {
-					strong: <strong />,
-				},
-			}
-		);
-
-		let message = translate(
-			"You don't have to wait though. Connect your domain to your site now, without transferring it. " +
-				'{{a}}Learn how{{/a}}.',
-			{
-				components: {
-					a: <a href={ support.MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
-				},
-			}
-		);
-
-		let reason = null;
-
-		if ( 'max_term' === transferRestrictionStatus ) {
-			reason = translate(
-				'Transferring this domain would extend the registration period beyond the maximum allowed term ' +
-					'of %(termMaximumInYears)d years. It can be transferred starting %(transferEligibleDate)s.',
-				{
-					args: {
-						termMaximumInYears: termMaximumInYears,
-						transferEligibleDate: moment( transferEligibleDate ).format( dateFormat ),
-					},
-				}
-			);
-		} else if ( 'initial_registration_period' === transferRestrictionStatus ) {
-			reason = translate(
-				'Newly-registered domains are not eligible for transfer. {{strong}}%(domain)s{{/strong}} was registered ' +
-					'%(daysAgoRegistered)s days ago, and can be transferred starting %(transferEligibleDate)s.',
-				{
-					args: {
-						domain: domain,
-						daysAgoRegistered: moment().diff( moment( creationDate ), 'days' ),
-						transferEligibleDate: moment( transferEligibleDate ).format( dateFormat ),
-					},
-					components: {
-						strong: <strong />,
-					},
-				}
-			);
-		}
-
-		if ( loading ) {
-			heading = 'Domain transfer restriction check.';
-			message = null;
-		}
-
 		return (
-			<Card>
-				<div className="transfer-domain-step__section is-expanded">
-					<div className="transfer-domain-step__section-text">
-						<div className="transfer-domain-step__section-heading">
-							<FormattedHeader headerText={ heading } />
-						</div>
-						<div>
-							<div className="transfer-domain-step__section-message">
-								{ message }
-								<br />
-								<br />
-								{ reason }
-							</div>
-							<div className="transfer-domain-step__section-action">
-								<Button compact onClick={ this.goToMapDomainStep } busy={ loading }>
-									{ translate( 'Connect domain without transferring' ) }
-								</Button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</Card>
+			<TransferRestrictionMessage
+				creationDate={ creationDate }
+				domain={ domain }
+				loading={ loading }
+				termMaximumInYears={ termMaximumInYears }
+				transferEligibleDate={ transferEligibleDate }
+				transferRestrictionStatus={ transferRestrictionStatus }
+			/>
 		);
 	}
 
@@ -272,35 +200,76 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const step = 1;
 		const isStepFinished = currentStep > step;
 
-		const heading = unlocked
-			? translate( 'Domain is unlocked.' )
-			: translate( 'Unlock the domain.' );
-		const message = unlocked
-			? translate( 'Your domain is unlocked at your current registrar.' )
-			: translate(
-					"Your domain is locked to prevent unauthorized transfers. You'll need to unlock " +
-						'it at your current domain provider before we can move it. {{a}}Here are instructions for unlocking it{{/a}}. ' +
-						'It might take a few minutes for any changes to take effect.',
-					{
-						components: {
-							a: (
-								<a
-									href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
-									rel="noopener noreferrer"
-									target="_blank"
-								/>
-							),
-						},
-					}
-				);
+		let heading = "Can't get the domain's lock status.";
+		if ( true === unlocked ) {
+			heading = translate( 'Domain is unlocked.' );
+		} else if ( false === unlocked ) {
+			heading = translate( 'Unlock the domain.' );
+		}
+
+		let message = translate(
+			"{{notice}}We couldn't get the lock status for this domain.{{/notice}}" +
+				"If you're sure that the domain is unlocked, then you can continue to the next step. If the domain is locked, " +
+				"then you won't be able to complete the transfer. {{a}}Here is some more information about how to unlock your " +
+				'domain{{/a}}.',
+			{
+				components: {
+					notice: <Notice showDismiss={ false } status="is-warning" />,
+					strong: <strong />,
+					br: <br />,
+					a: (
+						<a
+							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
+							rel="noopener noreferrer"
+							target="_blank"
+						/>
+					),
+				},
+			}
+		);
+
+		if ( true === unlocked ) {
+			message = translate( 'Your domain is unlocked at your current registrar.' );
+		} else if ( false === unlocked ) {
+			message = translate(
+				"Your domain is locked to prevent unauthorized transfers. You'll need to unlock " +
+					'it at your current domain provider before we can move it. {{a}}Here are instructions for unlocking it{{/a}}. ' +
+					'It might take a few minutes for any changes to take effect.',
+				{
+					components: {
+						a: (
+							<a
+								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
+								rel="noopener noreferrer"
+								target="_blank"
+							/>
+						),
+					},
+				}
+			);
+		}
 		const buttonText = translate( "I've unlocked my domain" );
 
-		let lockStatusClasses = unlocked
-			? 'transfer-domain-step__lock-status transfer-domain-step__unlocked'
-			: 'transfer-domain-step__lock-status transfer-domain-step__locked';
+		let lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unknown';
+		if ( true === unlocked ) {
+			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unlocked';
+		} else if ( false === unlocked ) {
+			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__locked';
+		}
 
-		let lockStatusIcon = unlocked ? 'checkmark' : 'cross';
-		let lockStatusText = unlocked ? translate( 'Unlocked' ) : translate( 'Locked' );
+		let lockStatusIcon = 'info';
+		if ( true === unlocked ) {
+			lockStatusIcon = 'checkmark';
+		} else if ( false === unlocked ) {
+			lockStatusIcon = 'cross';
+		}
+
+		let lockStatusText = translate( 'Status unavailable' );
+		if ( true === unlocked ) {
+			lockStatusText = translate( 'Unlocked' );
+		} else if ( false === unlocked ) {
+			lockStatusText = translate( 'Locked' );
+		}
 
 		if ( loading && ! isStepFinished ) {
 			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__checking';
@@ -315,7 +284,9 @@ class TransferDomainPrecheck extends React.PureComponent {
 			</div>
 		);
 
-		return this.getSection( heading, message, buttonText, step, lockStatus );
+		const skipped = ! loading && isStepFinished && null === unlocked;
+
+		return this.getSection( heading, message, buttonText, step, lockStatus, skipped );
 	}
 
 	getPrivacyMessage() {
@@ -395,7 +366,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 			</a>
 		);
 
-		return this.getSection( heading, message, buttonText, step, stepStatus );
+		return this.getSection( heading, message, buttonText, step, stepStatus, false );
 	}
 
 	getEppMessage() {
@@ -421,7 +392,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		);
 		const buttonText = translate( 'I have my authorization code' );
 
-		return this.getSection( heading, message, buttonText, 3 );
+		return this.getSection( heading, message, buttonText, 3, false );
 	}
 
 	getHeader() {
@@ -480,7 +451,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 								</p>
 							</div>
 							<Button
-								disabled={ ! unlocked || currentStep < 5 }
+								disabled={ false === unlocked || currentStep < 4 }
 								onClick={ this.onClick }
 								primary={ true }
 							>

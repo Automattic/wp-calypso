@@ -159,6 +159,19 @@
 			}
 		}
 	}
+
+	&.is-skipped {
+		.transfer-domain-step__section-heading-number {
+			background: none;
+			border: none;
+			color: $alert-yellow;
+
+			.gridicon {
+				margin-left: -4px;
+				margin-top: -4px;
+			}
+		}
+	}
 }
 
 .transfer-domain-step__section-action {
@@ -187,6 +200,10 @@
 
 	&.transfer-domain-step__locked {
 		color: $alert-red;
+	}
+
+	&.transfer-domain-step__unknown {
+		color: $alert-yellow;
 	}
 
 	&.transfer-domain-step__refresh {

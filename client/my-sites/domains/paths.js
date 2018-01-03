@@ -109,7 +109,7 @@ function domainManagementTransferToOtherSite( siteName, domainName ) {
 	return domainManagementTransfer( siteName, domainName, 'other-site' );
 }
 
-function domainMapping( siteName, domain ) {
+function domainMapping( siteName, domain = '' ) {
 	let path = `/domains/add/mapping/${ siteName }`;
 	if ( domain ) {
 		path += `?initialQuery=${ domain }`;
