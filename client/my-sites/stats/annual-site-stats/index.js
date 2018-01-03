@@ -96,7 +96,7 @@ class AnnualSiteStats extends Component {
 				<SectionHeader label={ translate( 'Annual Site Stats', { args: [ currentYear ] } ) } />
 				<Card className="stats-module">
 					<StatsModulePlaceholder isLoading={ isLoading } />
-					{ isError && <ErrorPanel message={ translate( 'Oops, something went wrong' ) } /> }
+					{ isError && <ErrorPanel message={ translate( 'Oops! Something went wrong.' ) } /> }
 					{ noData && (
 						<ErrorPanel message={ translate( 'No annual stats recorded for this year' ) } />
 					) }
