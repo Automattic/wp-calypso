@@ -1,5 +1,21 @@
 .price-input {
+	.form-text-input-with-affixes{
+		.form-text-input {
+			padding-right: 0;
+			border-right: none;
+		}
+	}
+
 	.form-text-input-with-affixes__suffix {
 		background: transparent;
+
+		.button {
+			margin: -8px -14px;
+			padding: 8px 14px;
+		}
+
+		.gridicon {
+			margin: 0;
+		}
 	}
 }

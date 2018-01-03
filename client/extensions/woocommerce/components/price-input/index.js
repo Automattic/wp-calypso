@@ -7,6 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 
@@ -47,7 +48,7 @@ class PriceInput extends Component {
 	resetToInitial = () => {
 		const { initialValue, name = '' } = this.props;
 		this.setState( { value: initialValue }, () => {
-			// All uses of onChange expect and event object of this shape
+			// All uses of onChange expect an event object of this shape
 			this.props.onChange( {
 				target: {
 					name,
@@ -73,8 +74,13 @@ class PriceInput extends Component {
 		let resetButton;
 		if ( initialValue ) {
 			resetButton = (
-				<Button onClick={ this.resetToInitial } compact borderless>
-					{ translate( 'Reset' ) }
+				<Button
+					onClick={ this.resetToInitial }
+					compact
+					borderless
+					aria-label={ translate( 'Reset to %(value)s', { args: { value: initialValue } } ) }
+				>
+					<Gridicon icon="refresh" />
 				</Button>
 			);
 		}
