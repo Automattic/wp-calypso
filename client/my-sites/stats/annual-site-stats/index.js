@@ -33,7 +33,7 @@ class AnnualSiteStats extends Component {
 		const { translate, numberFormat } = this.props;
 		return (
 			<div className="annual-site-stats__content">
-				<div className="annual-site-stats__stat">
+				<div className="annual-site-stats__stat is-year">
 					<div className="annual-site-stats__stat-title">{ translate( 'year' ) }</div>
 					<div className="annual-site-stats__stat-figure is-large">{ data.year }</div>
 				</div>
