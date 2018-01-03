@@ -21,6 +21,7 @@ class EmailVerificationCard extends React.Component {
 	static propTypes = {
 		changeEmailHref: PropTypes.string,
 		contactEmail: PropTypes.string.isRequired,
+		errorMessage: PropTypes.string.isRequired,
 		headerText: PropTypes.string,
 		verificationExplanation: PropTypes.array.isRequired,
 		resendVerification: PropTypes.func.isRequired,
@@ -46,7 +47,7 @@ class EmailVerificationCard extends React.Component {
 	};
 
 	handleSubmit = event => {
-		const { resendVerification, selectedDomainName } = this.props;
+		const { errorMessage, resendVerification, selectedDomainName } = this.props;
 
 		event.preventDefault();
 
@@ -54,7 +55,7 @@ class EmailVerificationCard extends React.Component {
 
 		resendVerification( selectedDomainName, error => {
 			if ( error ) {
-				this.props.errorNotice( error.message );
+				this.props.errorNotice( errorMessage );
 			} else {
 				this.timer = setTimeout( this.revertToWaitingState, 5000 );
 				this.setState( { emailSent: true } );

@@ -1,10 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
-import config from 'config';
 import debugFactory from 'debug';
 
 /**
@@ -57,7 +54,7 @@ export class SyncHandler {
 	 */
 	constructor( handler ) {
 		// expose `syncHandler` global var (dev mode)
-		if ( 'development' === config( 'env' ) && typeof window !== 'undefined' ) {
+		if ( 'development' === process.env.NODE_ENV && typeof window !== 'undefined' ) {
 			window.syncHandler = this;
 		}
 
@@ -318,6 +315,6 @@ export const clearAll = () => {
 };
 
 // expose `cacheIndex` global var (dev mode)
-if ( 'development' === config( 'env' ) && typeof window !== 'undefined' ) {
+if ( 'development' === process.env.NODE_ENV && typeof window !== 'undefined' ) {
 	window.cacheIndex = cacheIndex;
 }

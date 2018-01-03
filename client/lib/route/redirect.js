@@ -1,14 +1,11 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
 import page from 'page';
-import config from 'config';
 
 export default function redirect( path ) {
-	if ( config( 'env' ) === 'development' ) {
+	if ( process.env.NODE_ENV === 'development' ) {
 		throw 'route.redirect() is deprecated, use page.redirect()';
 	}
 

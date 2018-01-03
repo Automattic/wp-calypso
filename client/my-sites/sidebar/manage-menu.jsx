@@ -199,6 +199,7 @@ class ManageMenu extends PureComponent {
 				icon={ icon }
 				preloadSectionName={ preload }
 				postType={ menuItem.name }
+				tipTarget={ `side-menu-${ menuItem.name }` }
 			>
 				{ menuItem.name === 'media' && (
 					<MediaLibraryUploadButton

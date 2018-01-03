@@ -1,9 +1,7 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -13,7 +11,6 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import formState from 'lib/form-state';
@@ -33,6 +30,7 @@ import userFactory from 'lib/user';
 const user = userFactory();
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { getGeoCountryShort } from 'state/geo/selectors';
+import QueryGeo from 'components/data/query-geo';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
@@ -311,7 +309,7 @@ class AboutStep extends Component {
 
 		//Store
 		const isCountryAllowed =
-			includes( [ 'US', 'CA' ], this.props.countryCode ) || config( 'env' ) === 'development';
+			includes( [ 'US', 'CA' ], this.props.countryCode ) || process.env.NODE_ENV === 'development';
 		const nextFlowName =
 			designType === DESIGN_TYPE_STORE && isCountryAllowed
 				? 'segmented-store-nux'
@@ -509,6 +507,7 @@ class AboutStep extends Component {
 
 		return (
 			<div className="about__wrapper">
+				<QueryGeo />
 				<div className={ pressableWrapperClassName }>
 					<PressableStoreStep
 						{ ...this.props }

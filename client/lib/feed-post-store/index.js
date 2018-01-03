@@ -1,10 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
-import config from 'config';
 import { get, assign, forEach, isEqual, defer } from 'lodash';
 import debugModule from 'debug';
 
@@ -49,7 +46,7 @@ const FeedPostStore = {
 	},
 };
 
-if ( config( 'env' ) === 'development' ) {
+if ( process.env.NODE_ENV === 'test' ) {
 	assign( FeedPostStore, {
 		// These bedlumps are for testing.
 		// Ideally, we'd pull these out with envify for prod

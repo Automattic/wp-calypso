@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -11,12 +9,12 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import shortcodeUtils from 'lib/shortcode';
+import { next } from 'lib/shortcode';
 import GalleryShortcode from 'components/gallery-shortcode';
 
 class GalleryView extends Component {
 	static match( content ) {
-		const nextMatch = shortcodeUtils.next( 'gallery', content );
+		const nextMatch = next( 'gallery', content );
 
 		if ( nextMatch ) {
 			return {

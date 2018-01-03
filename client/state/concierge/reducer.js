@@ -5,7 +5,7 @@
  */
 import { combineReducers } from 'state/utils';
 import availableTimes from './available-times/reducer';
-import signupForm from './signupForm/reducer';
+import signupForm from './signup-form/reducer';
 
 export default combineReducers( {
 	availableTimes,

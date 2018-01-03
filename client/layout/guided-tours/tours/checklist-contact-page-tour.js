@@ -13,7 +13,6 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import {
-	ButtonRow,
 	Continue,
 	makeTour,
 	Next,
@@ -26,11 +25,31 @@ export const ChecklistContactPageTour = makeTour(
 	<Tour name="checklistContactPage" version="20171205" path="/non-existent-route" when={ noop }>
 		<Step
 			name="init"
-			placement="right"
+			placement="beside"
+			arrow="left-top"
+			target="side-menu-page"
 			style={ {
-				animationDelay: '0.7s',
+				animationDelay: '0s',
 			} }
 		>
+			<p>
+				{ translate( 'Click on {{b}}Site Pages{{/b}} to see all the pages on your site.', {
+					components: { b: <strong /> },
+				} ) }
+			</p>
+			<Continue target="side-menu-page" step="choose-page" click hidden />
+		</Step>
+
+		<Step name="choose-page" target="page-contact" arrow="top-left" placement="below">
+			<p>
+				{ translate( 'Click {{b}}Contact{{/b}} to edit this page.', {
+					components: { b: <strong /> },
+				} ) }
+			</p>
+			<Continue target="page-contact" step="contact-page" click hidden />
+		</Step>
+
+		<Step name="contact-page" placement="right">
 			<p>
 				{ translate(
 					'Your contact page makes it easy for people to reach out and get in touch. ' +
@@ -38,10 +57,7 @@ export const ChecklistContactPageTour = makeTour(
 						'know how and when they can contact you.'
 				) }
 			</p>
-			<ButtonRow>
-				<Next step="featured-images">{ translate( 'All done, continue' ) }</Next>
-				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
-			</ButtonRow>
+			<Next step="featured-images">{ translate( 'All done, continue' ) }</Next>
 		</Step>
 
 		<Step

@@ -17,6 +17,11 @@ import { bumpStatGenerator } from './utils';
 import { getPost } from 'state/posts/selectors';
 import { canCurrentUserEditPost } from 'state/selectors';
 import { getEditorPath } from 'state/ui/editor/selectors';
+import { preload } from 'sections-preload';
+
+function preloadEditor() {
+	preload( 'post-editor' );
+}
 
 function PostActionsEllipsisMenuEdit( { translate, canEdit, status, editUrl, bumpStat } ) {
 	if ( 'trash' === status || ! canEdit ) {
@@ -24,7 +29,7 @@ function PostActionsEllipsisMenuEdit( { translate, canEdit, status, editUrl, bum
 	}
 
 	return (
-		<PopoverMenuItem href={ editUrl } onClick={ bumpStat } icon="pencil">
+		<PopoverMenuItem href={ editUrl } onClick={ bumpStat } icon="pencil" onMouseOver={ preloadEditor }>
 			{ translate( 'Edit', { context: 'verb' } ) }
 		</PopoverMenuItem>
 	);

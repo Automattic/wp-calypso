@@ -8,7 +8,6 @@ import {
 	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
-	JETPACK_CONNECT_REDIRECT,
 } from 'state/action-types';
 
 export default function jetpackConnectSite( state = {}, action ) {
@@ -42,11 +41,6 @@ export default function jetpackConnectSite( state = {}, action ) {
 		case JETPACK_CONNECT_DISMISS_URL_STATUS:
 			if ( action.url === state.url ) {
 				return Object.assign( {}, state, { installConfirmedByUser: null, isDismissed: true } );
-			}
-			return state;
-		case JETPACK_CONNECT_REDIRECT:
-			if ( action.url === state.url ) {
-				return Object.assign( {}, state, { isRedirecting: true } );
 			}
 			return state;
 		case JETPACK_CONNECT_CONFIRM_JETPACK_STATUS:

@@ -13,6 +13,11 @@
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes aliasing in Safari
 }
 
+/* Fix for https://github.com/bvaughn/react-virtualized/issues/454 */
+.following-manage__subscriptions-list .ReactVirtualized__List {
+	direction: ltr !important;
+}
+
 .following-manage__subscriptions-list .reader-subscription-list-item__options {
 	display: flex;
 	flex-direction: column;

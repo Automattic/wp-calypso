@@ -392,7 +392,7 @@ export class MySitesSidebar extends Component {
 
 		const countryCode = currentUser.user_ip_country_code;
 		const isCountryAllowed =
-			includes( allowedCountryCodes, countryCode ) || 'development' === config( 'env' );
+			includes( allowedCountryCodes, countryCode ) || 'development' === process.env.NODE_ENV;
 
 		return (
 			isCountryAllowed && (
@@ -402,7 +402,9 @@ export class MySitesSidebar extends Component {
 					onNavigate={ this.trackStoreClick }
 					icon="cart"
 				>
-					<Gridicon className="sidebar__chevron-right" icon="chevron-right" />
+					<div className="sidebar__chevron-right">
+						<Gridicon icon="chevron-right" />
+					</div>
 				</SidebarItem>
 			)
 		);

@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -15,7 +13,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import touchDetect from 'lib/touch-detect';
+import { hasTouch } from 'lib/touch-detect';
 
 const debug = debugFactory( 'calypso:forms:sortable-list' );
 
@@ -197,7 +195,7 @@ class SortableList extends React.Component {
 
 	onMouseMove = event => {
 		var activeOrder, newIndex;
-		if ( null === this.state.activeIndex || ! this.props.allowDrag || touchDetect.hasTouch() ) {
+		if ( null === this.state.activeIndex || ! this.props.allowDrag || hasTouch() ) {
 			return;
 		}
 
@@ -265,7 +263,7 @@ class SortableList extends React.Component {
 			this.props.children,
 			function( child, index ) {
 				var isActive = this.state.activeIndex === index,
-					isDraggable = this.props.allowDrag && ! touchDetect.hasTouch(),
+					isDraggable = this.props.allowDrag && ! hasTouch(),
 					events = isDraggable ? [ 'onMouseDown', 'onMouseUp' ] : [ 'onClick' ],
 					style = { order: this.getAdjustedElementIndex( index ) },
 					classes = classNames( {
@@ -318,7 +316,7 @@ class SortableList extends React.Component {
 	};
 
 	getNavigationElement = () => {
-		if ( this.props.allowDrag && ! touchDetect.hasTouch() ) {
+		if ( this.props.allowDrag && ! hasTouch() ) {
 			return;
 		}
 

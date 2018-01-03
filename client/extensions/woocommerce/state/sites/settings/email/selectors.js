@@ -4,7 +4,7 @@
  * @format
  */
 
-import { get, isArray } from 'lodash';
+import { get, isObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ export const getEmailSettings = ( state, siteId = getSelectedSiteId( state ) ) =
  * @return {boolean} Whether the email settings have been successfully loaded from the server
  */
 export const areEmailSettingsLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isArray( getEmailSettings( state, siteId ) );
+	return isObject( getEmailSettings( state, siteId ) );
 };
 
 /**

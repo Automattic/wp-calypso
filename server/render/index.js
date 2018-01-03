@@ -37,7 +37,7 @@ const markupCache = new Lru( {
 function bumpStat( group, name ) {
 	const statUrl = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
 
-	if ( config( 'env' ) === 'production' ) {
+	if ( process.env.NODE_ENV === 'production' ) {
 		superagent.get( statUrl ).end();
 	}
 }
@@ -72,7 +72,7 @@ export function render( element, key = JSON.stringify( element ) ) {
 
 		return renderedLayout;
 	} catch ( ex ) {
-		if ( config( 'env' ) === 'development' ) {
+		if ( process.env.NODE_ENV === 'development' ) {
 			throw ex;
 		}
 	}
@@ -145,7 +145,7 @@ export function serverRender( req, res ) {
 
 export function serverRenderError( err, req, res, next ) {
 	if ( err ) {
-		if ( config( 'env' ) !== 'production' ) {
+		if ( process.env.NODE_ENV !== 'production' ) {
 			console.error( err );
 		}
 		req.error = err;

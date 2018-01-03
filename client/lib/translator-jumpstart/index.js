@@ -180,7 +180,7 @@ const communityTranslatorJumpstart = {
 		}
 
 		this.setInjectionURL( 'community-translator.min.js' );
-		if ( config( 'env' ) === 'production' ) {
+		if ( process.env.NODE_ENV === 'production' ) {
 			translationDataFromPage.glotPress.project = 'wpcom';
 		} else {
 			translationDataFromPage.glotPress.project = 'test';

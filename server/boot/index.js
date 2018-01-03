@@ -30,7 +30,7 @@ function setup() {
 	app.use( cookieParser() );
 	app.use( userAgent.express() );
 
-	if ( 'development' === config( 'env' ) ) {
+	if ( 'development' === process.env.NODE_ENV ) {
 		// use legacy CSS rebuild system if css-hot-reload is disabled
 		if ( ! config.isEnabled( 'css-hot-reload' ) ) {
 			// only do `build` upon every request in "development"
@@ -93,7 +93,7 @@ function setup() {
 	} );
 
 	// serve files when not in production so that the source maps work correctly
-	if ( 'development' === config( 'env' ) ) {
+	if ( 'development' === process.env.NODE_ENV ) {
 		app.use( '/assets', express.static( path.resolve( __dirname, '..', '..', 'assets' ) ) );
 		app.use( '/client', express.static( path.resolve( __dirname, '..', '..', 'client' ) ) );
 	}

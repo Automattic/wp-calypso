@@ -3,9 +3,8 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 
@@ -13,116 +12,74 @@ import { times } from 'lodash';
  * Internal dependencies
  */
 import ProfileLink from 'me/profile-link';
-import observe from 'lib/mixins/data-observe';
+import QueryProfileLinks from 'components/data/query-profile-links';
 import AddProfileLinksButtons from 'me/profile-links/add-buttons';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Notice from 'components/notice';
 import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
 import ProfileLinksAddOther from 'me/profile-links-add-other';
+import { deleteUserProfileLink, resetUserProfileLinkErrors } from 'state/profile-links/actions';
+import { getProfileLinks, getProfileLinksErrorType } from 'state/selectors';
 
-const ProfileLinks = createReactClass( {
-	displayName: 'ProfileLinks',
+class ProfileLinks extends React.Component {
+	state = {
+		showingForm: false,
+		showPopoverMenu: false,
+	};
 
-	mixins: [ observe( 'userProfileLinks' ) ],
-
-	componentDidMount() {
-		this.props.userProfileLinks.getProfileLinks();
-		if ( typeof document.hidden !== 'undefined' ) {
-			document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
-		}
-	},
-
-	componentWillUnmount() {
-		if ( typeof document.hidden !== 'undefined' ) {
-			document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
-		}
-	},
-
-	handleVisibilityChange() {
-		// if we're visible now, fetch the links again in case they
-		// changed (added/removed) something while the component this tab
-		// is on was hidden
-		if ( ! document.hidden ) {
-			this.props.userProfileLinks.fetchProfileLinks();
-		}
-	},
-
-	getDefaultProps() {
-		return {
-			userProfileLinks: {
-				initialized: false,
-			},
-		};
-	},
-
-	getInitialState() {
-		return {
-			showingForm: false,
-			lastError: false,
-			showPopoverMenu: false,
-		};
-	},
-
-	showAddWordPress() {
+	showAddWordPress = () => {
 		this.setState( {
 			showingForm: 'wordpress',
 			showPopoverMenu: false,
 		} );
-	},
+	};
 
-	showAddOther() {
+	showAddOther = () => {
 		this.setState( {
 			showingForm: 'other',
 			showPopoverMenu: false,
 		} );
-	},
+	};
 
-	showPopoverMenu() {
+	showPopoverMenu = () => {
 		this.setState( {
 			showPopoverMenu: ! this.state.showPopoverMenu,
 		} );
-	},
+	};
 
-	closePopoverMenu() {
+	closePopoverMenu = () => {
 		this.setState( {
 			showPopoverMenu: false,
 		} );
-	},
+	};
 
-	hideForms() {
+	hideForms = () => {
 		this.setState( {
 			showingForm: false,
 		} );
-	},
+	};
 
-	onRemoveLinkResponse( error ) {
-		if ( error ) {
-			this.setState( {
-				lastError: error,
-			} );
-		} else {
-			this.setState( {
-				lastError: false,
-			} );
+	onRemoveLink = profileLink => {
+		return () => this.props.deleteUserProfileLink( profileLink.link_slug );
+	};
+
+	getErrorMessage() {
+		const { errorType, translate } = this.props;
+
+		if ( ! errorType ) {
+			return null;
 		}
-	},
 
-	clearLastError() {
-		this.setState( {
-			lastError: false,
-		} );
-	},
-
-	onRemoveLink( profileLink ) {
-		this.props.userProfileLinks.deleteProfileLinkBySlug(
-			profileLink.link_slug,
-			this.onRemoveLinkResponse
-		);
-	},
+		if ( errorType === 'duplicate' ) {
+			return translate( 'That link is already in your profile links. No changes were made.' );
+		}
+		return translate( 'An unexpected error occurred. Please try again later.' );
+	}
 
 	possiblyRenderError() {
-		if ( ! this.state.lastError ) {
+		const errorMessage = this.getErrorMessage();
+		if ( ! errorMessage ) {
 			return null;
 		}
 
@@ -130,32 +87,28 @@ const ProfileLinks = createReactClass( {
 			<Notice
 				className="profile-links__error"
 				status="is-error"
-				onDismissClick={ this.clearLastError }
+				onDismissClick={ this.props.resetUserProfileLinkErrors }
 			>
-				{ this.props.translate(
-					'An error occurred while attempting to remove the link. Please try again later.'
-				) }
+				{ errorMessage }
 			</Notice>
 		);
-	},
+	}
 
 	renderProfileLinksList() {
 		return (
 			<ul className="profile-links__list">
-				{ this.props.userProfileLinks
-					.getProfileLinks()
-					.map( profileLink => (
-						<ProfileLink
-							key={ profileLink.link_slug }
-							title={ profileLink.title }
-							url={ profileLink.value }
-							slug={ profileLink.link_slug }
-							onRemoveLink={ this.onRemoveLink.bind( this, profileLink ) }
-						/>
-					) ) }
+				{ this.props.profileLinks.map( profileLink => (
+					<ProfileLink
+						key={ profileLink.link_slug }
+						title={ profileLink.title }
+						url={ profileLink.value }
+						slug={ profileLink.link_slug }
+						onRemoveLink={ this.onRemoveLink( profileLink ) }
+					/>
+				) ) }
 			</ul>
 		);
-	},
+	}
 
 	renderNoProfileLinks() {
 		return (
@@ -165,7 +118,7 @@ const ProfileLinks = createReactClass( {
 				) }
 			</p>
 		);
-	},
+	}
 
 	renderPlaceholders() {
 		return (
@@ -181,11 +134,11 @@ const ProfileLinks = createReactClass( {
 				) ) }
 			</ul>
 		);
-	},
+	}
 
 	renderProfileLinks() {
-		const initialized = this.props.userProfileLinks.initialized,
-			countLinks = this.props.userProfileLinks.getProfileLinks().length;
+		const initialized = this.props.profileLinks !== null;
+		const countLinks = initialized ? this.props.profileLinks.length : 0;
 		let links;
 
 		if ( ! initialized ) {
@@ -202,34 +155,22 @@ const ProfileLinks = createReactClass( {
 				{ links }
 			</div>
 		);
-	},
+	}
 
 	renderForm() {
 		if ( 'wordpress' === this.state.showingForm ) {
-			return (
-				<ProfileLinksAddWordPress
-					userProfileLinks={ this.props.userProfileLinks }
-					onSuccess={ this.hideForms }
-					onCancel={ this.hideForms }
-				/>
-			);
+			return <ProfileLinksAddWordPress onSuccess={ this.hideForms } onCancel={ this.hideForms } />;
 		}
 
-		return (
-			<ProfileLinksAddOther
-				userProfileLinks={ this.props.userProfileLinks }
-				onSuccess={ this.hideForms }
-				onCancel={ this.hideForms }
-			/>
-		);
-	},
+		return <ProfileLinksAddOther onSuccess={ this.hideForms } onCancel={ this.hideForms } />;
+	}
 
 	render() {
 		return (
 			<div>
+				<QueryProfileLinks />
 				<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
 					<AddProfileLinksButtons
-						userProfileLinks={ this.props.userProfileLinks }
 						showingForm={ !! this.state.showingForm }
 						onShowAddOther={ this.showAddOther }
 						showPopoverMenu={ this.state.showPopoverMenu }
@@ -241,7 +182,16 @@ const ProfileLinks = createReactClass( {
 				<Card>{ !! this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
 			</div>
 		);
-	},
-} );
+	}
+}
 
-export default localize( ProfileLinks );
+export default connect(
+	state => ( {
+		profileLinks: getProfileLinks( state ),
+		errorType: getProfileLinksErrorType( state ),
+	} ),
+	{
+		deleteUserProfileLink,
+		resetUserProfileLinkErrors,
+	}
+)( localize( ProfileLinks ) );

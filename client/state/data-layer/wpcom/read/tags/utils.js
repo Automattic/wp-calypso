@@ -19,7 +19,7 @@ import { decodeEntities } from 'lib/formatting';
  */
 export function fromApi( apiResponse ) {
 	if ( ! apiResponse || ( ! apiResponse.tag && ! apiResponse.tags ) ) {
-		return [];
+		throw new Error( `invalid tags response: ${ JSON.stringify( apiResponse ) }` );
 	}
 
 	const tags = compact(

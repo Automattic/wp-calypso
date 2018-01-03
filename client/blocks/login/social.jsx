@@ -14,11 +14,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
 	getCreatedSocialAccountBearerToken,
+	getRedirectToOriginal,
 	isSocialAccountCreating,
 } from 'state/login/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -150,7 +150,7 @@ class SocialLoginForm extends Component {
 
 export default connect(
 	state => ( {
-		redirectTo: getInitialQueryArguments( state ).redirect_to,
+		redirectTo: getRedirectToOriginal( state ),
 		isSocialAccountCreating: isSocialAccountCreating( state ),
 		bearerToken: getCreatedSocialAccountBearerToken( state ),
 		username: getCreatedSocialAccountUsername( state ),

@@ -76,10 +76,35 @@ class SuccessBanner extends PureComponent {
 			? {
 					title: translate( 'Your backup is now available for download' ),
 					icon: 'cloud-download',
+					track: (
+						<TrackComponentView eventName="calypso_activitylog_backup_successbanner_impression" />
+					),
+					taskFinished: translate( 'We successfully created a backup of your site to %s!', {
+						args: date,
+					} ),
+					actionButton: (
+						<Button href={ backupUrl } onClick={ this.trackDownload } primary>
+							{ translate( 'Download' ) }
+						</Button>
+					),
 				}
 			: {
 					title: translate( 'Your site has been successfully restored' ),
 					icon: 'history',
+					track: (
+						<TrackComponentView
+							eventName="calypso_activitylog_restore_successbanner_impression"
+							eventProperties={ { restore_to: timestamp } }
+						/>
+					),
+					taskFinished: translate( 'We successfully restored your site back to %s!', {
+						args: date,
+					} ),
+					actionButton: (
+						<Button href={ siteUrl } primary>
+							{ translate( 'View site' ) }
+						</Button>
+					),
 				};
 		return (
 			<ActivityLogBanner
@@ -89,35 +114,13 @@ class SuccessBanner extends PureComponent {
 				title={ params.title }
 				icon={ params.icon }
 			>
-				{ backupUrl ? (
-					<TrackComponentView eventName="calypso_activitylog_backup_successbanner_impression" />
-				) : (
-					<TrackComponentView
-						eventName="calypso_activitylog_restore_successbanner_impression"
-						eventProperties={ {
-							restore_to: timestamp,
-						} }
-					/>
-				) }
-				{
-					<p>
-						{ backupUrl
-							? translate( 'We successfully created a backup of your site to %s!', { args: date } )
-							: translate( 'We successfully restored your site back to %s!', { args: date } ) }
-					</p>
-				}
-				{ backupUrl ? (
-					<Button href={ backupUrl } onClick={ this.trackDownload } primary>
-						{ translate( 'Download' ) }
-					</Button>
-				) : (
-					<Button href={ siteUrl } primary>
-						{ translate( 'View site' ) }
-					</Button>
-				) }
-				{ '  ' }
+				{ params.track }
+				<p>{ params.taskFinished }</p>
+				{ params.actionButton }
 				{ ! backupUrl && (
-					<Button onClick={ this.handleDismiss }>{ translate( 'Thanks, got it!' ) }</Button>
+					<Button className="activity-log-banner__success-gotit" onClick={ this.handleDismiss }>
+						{ translate( 'Thanks, got it!' ) }
+					</Button>
 				) }
 			</ActivityLogBanner>
 		);

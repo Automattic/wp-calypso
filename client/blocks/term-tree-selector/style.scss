@@ -103,3 +103,8 @@ input[type=checkbox].term-tree-selector__input {
 		display: block;
 	}
 }
+
+/* Fix for https://github.com/bvaughn/react-virtualized/issues/454 */
+.term-tree-selector__results {
+	direction: ltr !important;
+}

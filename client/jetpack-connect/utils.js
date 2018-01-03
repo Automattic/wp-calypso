@@ -3,6 +3,8 @@
 /**
  * External dependencies
  */
+import addQueryArgs from 'lib/route/add-query-args';
+import config from 'config';
 import PropTypes from 'prop-types';
 
 export function authQueryTransformer( queryObject ) {
@@ -28,8 +30,6 @@ export function authQueryTransformer( queryObject ) {
 		redirectAfterAuth: queryObject.redirect_after_auth || null,
 		siteIcon: queryObject.site_icon || null,
 		siteUrl: queryObject.site_url || null,
-		tracksUi: queryObject._ui || null,
-		tracksUt: queryObject._ut || null,
 		userEmail: queryObject.user_email || null,
 	};
 }
@@ -52,7 +52,9 @@ export const authQueryPropTypes = PropTypes.shape( {
 	siteIcon: PropTypes.string,
 	siteUrl: PropTypes.string,
 	state: PropTypes.string.isRequired,
-	tracksUi: PropTypes.string,
-	tracksUt: PropTypes.string,
 	userEmail: PropTypes.string,
 } );
+
+export function addCalypsoEnvQueryArg( url ) {
+	return addQueryArgs( { calypso_env: config( 'env_id' ) }, url );
+}

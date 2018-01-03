@@ -13,6 +13,7 @@ import { EditorBasicsTour } from 'layout/guided-tours/tours/editor-basics-tour';
 import { MediaBasicsTour } from 'layout/guided-tours/tours/media-basics-tour';
 import { ChecklistAboutPageTour } from 'layout/guided-tours/tours/checklist-about-page-tour';
 import { ChecklistContactPageTour } from 'layout/guided-tours/tours/checklist-contact-page-tour';
+import { ChecklistPublishPostTour } from 'layout/guided-tours/tours/checklist-publish-post-tour';
 import { ChecklistSiteIconTour } from 'layout/guided-tours/tours/checklist-site-icon-tour';
 import { ChecklistSiteTaglineTour } from 'layout/guided-tours/tours/checklist-site-tagline-tour';
 import { ChecklistSiteTitleTour } from 'layout/guided-tours/tours/checklist-site-title-tour';
@@ -21,6 +22,7 @@ import { ChecklistUserAvatarTour } from 'layout/guided-tours/tours/checklist-use
 export default combineTours( {
 	checklistAboutPage: ChecklistAboutPageTour,
 	checklistContactPage: ChecklistContactPageTour,
+	checklistPublishPost: ChecklistPublishPostTour,
 	checklistSiteIcon: ChecklistSiteIconTour,
 	checklistSiteTagline: ChecklistSiteTaglineTour,
 	checklistSiteTitle: ChecklistSiteTitleTour,

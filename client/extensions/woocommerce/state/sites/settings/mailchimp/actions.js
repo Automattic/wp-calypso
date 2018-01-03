@@ -1,7 +1,16 @@
 /**
+ * External dependencies
+ *
+ * @format
+ */
+
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
-import request from '../../request';
+import request from 'woocommerce/state/sites/request';
+import { mailChimpSettings } from './selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE,
@@ -36,149 +45,149 @@ import {
  * redux action objects. Used to make actions functions more concise.
  */
 
-const mailchimpSettingsRequest = ( siteId ) => ( {
+const mailchimpSettingsRequest = siteId => ( {
 	type: WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST,
-	siteId
+	siteId,
 } );
 
 const mailchimpSettingsRequestSuccess = ( siteId, settings ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_SUCCESS,
 	siteId,
-	settings
+	settings,
 } );
 
 const mailchimpSettingsRequestFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_SETTINGS_REQUEST_FAILURE,
 	siteId,
-	error
+	error,
 } );
 
-const mailchimpApiKeySubmit = ( siteId ) => ( {
+const mailchimpApiKeySubmit = siteId => ( {
 	type: WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT,
-	siteId
+	siteId,
 } );
 
 const mailchimpApiKeySubmitSuccess = ( siteId, settings ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,
 	siteId,
-	settings
+	settings,
 } );
 
 const mailchimpApiKeySubmitFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE,
 	siteId,
-	error
+	error,
 } );
 
-const mailchimpStoreInfoSubmit = ( siteId ) => ( {
+const mailchimpStoreInfoSubmit = siteId => ( {
 	type: WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT,
-	siteId
+	siteId,
 } );
 
 const mailchimpStoreInfoSubmitSuccess = ( siteId, settings ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_SUCCESS,
 	siteId,
-	settings
+	settings,
 } );
 
 const mailchimpStoreInfoSubmitFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_STORE_INFO_SUBMIT_FAILURE,
 	siteId,
-	error
+	error,
 } );
 
-const mailchimpCampaignDefaultsSubmit = ( siteId ) => ( {
+const mailchimpCampaignDefaultsSubmit = siteId => ( {
 	type: WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT,
-	siteId
+	siteId,
 } );
 
 const mailchimpCampaignDefaultsSubmitSuccess = ( siteId, settings ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_SUCCESS,
 	siteId,
-	settings
+	settings,
 } );
 
 const mailchimpCampaignDefaultsSubmitFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_CAMPAIGN_DEFAULTS_SUBMIT_FAILURE,
 	siteId,
-	error
+	error,
 } );
 
-const mailchimpListsRequest = ( siteId ) => ( {
+const mailchimpListsRequest = siteId => ( {
 	type: WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST,
-	siteId
+	siteId,
 } );
 
 const mailchimpListsRequestSuccess = ( siteId, lists ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_SUCCESS,
 	siteId,
-	lists
+	lists,
 } );
 
 const mailchimpListsRequestFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_LISTS_REQUEST_FAILURE,
 	siteId,
-	error
+	error,
 } );
 
-const mailchimpSyncStatusRequest = ( siteId ) => ( {
+const mailchimpSyncStatusRequest = siteId => ( {
 	type: WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST,
-	siteId
+	siteId,
 } );
 
 const mailchimpSyncStatusRequestSuccess = ( siteId, syncStatus ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_SUCCESS,
 	siteId,
-	syncStatus
+	syncStatus,
 } );
 
 const mailchimpSyncStatusRequestFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_SYNC_STATUS_REQUEST_FAILURE,
 	siteId,
-	error
+	error,
 } );
 
-const mailchimpResyncRequest = ( siteId ) => ( {
+const mailchimpResyncRequest = siteId => ( {
 	type: WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST,
-	siteId
+	siteId,
 } );
 
 const mailchimpResyncRequestSuccess = ( siteId, syncStatus ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_SUCCESS,
 	siteId,
-	syncStatus
+	syncStatus,
 } );
 
 const mailchimpResyncRequestFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_RESYNC_REQUEST_FAILURE,
 	siteId,
-	error
+	error,
 } );
 
-const mailchimpNewsletterSettingsSubmit = ( siteId ) => ( {
+const mailchimpNewsletterSettingsSubmit = siteId => ( {
 	type: WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT,
-	siteId
+	siteId,
 } );
 
 const mailchimpNewsletterSettingsSubmitSuccess = ( siteId, settings ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_SUCCESS,
 	siteId,
-	settings
+	settings,
 } );
 
 const mailchimpNewsletterSettingsSubmitFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_MAILCHIMP_NEWSLETTER_SETTINGS_SUBMIT_FAILURE,
 	siteId,
-	error
+	error,
 } );
 
 /**
- * Triggers a network request to fetch current MailChimp plugin settngs.
+ * Triggers a network request to fetch current MailChimp plugin settings.
  *
  * @param  {Number|String} siteId        Jetpack site ID
  * @return {Function}                    Action thunk
  */
-export const requestSettings = ( siteId ) => ( dispatch, getState ) => {
+export const requestSettings = siteId => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
@@ -186,7 +195,8 @@ export const requestSettings = ( siteId ) => ( dispatch, getState ) => {
 
 	dispatch( mailchimpSettingsRequest( siteId ) );
 
-	return request( siteId ).get( 'mailchimp' )
+	return request( siteId )
+		.get( 'mailchimp' )
 		.then( settings => {
 			dispatch( mailchimpSettingsRequestSuccess( siteId, settings ) );
 		} )
@@ -202,14 +212,15 @@ export const requestSettings = ( siteId ) => ( dispatch, getState ) => {
  * @param  {String}        apiKey        MailChimp api key
  * @return {Function}                    Action thunk
  */
-export const submitMailChimpApiKey = ( siteId, apiKey ) => ( dispatch ) => {
+export const submitMailChimpApiKey = ( siteId, apiKey ) => dispatch => {
 	if ( null == siteId || null == apiKey ) {
 		return;
 	}
 
 	dispatch( mailchimpApiKeySubmit( siteId ) );
 
-	return request( siteId ).put( 'mailchimp/api_key', { mailchimp_api_key: apiKey } )
+	return request( siteId )
+		.put( 'mailchimp/api_key', { mailchimp_api_key: apiKey } )
 		.then( settings => {
 			dispatch( mailchimpApiKeySubmitSuccess( siteId, settings ) );
 		} )
@@ -225,14 +236,15 @@ export const submitMailChimpApiKey = ( siteId, apiKey ) => ( dispatch ) => {
  * @param  {Object}        storeInfo     MailChimp store info settings object
  * @return {Function}                    Action thunk
  */
-export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => ( dispatch ) => {
+export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => dispatch => {
 	if ( null == siteId || null == storeInfo ) {
 		return;
 	}
 
 	dispatch( mailchimpStoreInfoSubmit( siteId ) );
 
-	return request( siteId ).put( 'mailchimp/store_info', storeInfo )
+	return request( siteId )
+		.put( 'mailchimp/store_info', storeInfo )
 		.then( settings => {
 			dispatch( mailchimpStoreInfoSubmitSuccess( siteId, settings ) );
 		} )
@@ -242,21 +254,22 @@ export const submitMailChimpStoreInfo = ( siteId, storeInfo ) => ( dispatch ) =>
 };
 
 /**
- * Triggers a network request to set MailChimp campaign defualts
+ * Triggers a network request to set MailChimp campaign defaults
  * info in MailChimp plugin settings.
  *
  * @param  {Number|String} siteId           Jetpack site ID
  * @param  {Object}        campaignDefaults MailChimp campaign defaults settings object
  * @return {Function}                       Action thunk
  */
-export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => ( dispatch ) => {
+export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => dispatch => {
 	if ( null == siteId || null == campaignDefaults ) {
 		return;
 	}
 
 	dispatch( mailchimpCampaignDefaultsSubmit( siteId ) );
 
-	return request( siteId ).put( 'mailchimp/campaign_defaults', campaignDefaults )
+	return request( siteId )
+		.put( 'mailchimp/campaign_defaults', campaignDefaults )
 		.then( settings => {
 			dispatch( mailchimpCampaignDefaultsSubmitSuccess( siteId, settings ) );
 		} )
@@ -267,12 +280,12 @@ export const submitMailChimpCampaignDefaults = ( siteId, campaignDefaults ) => (
 
 /**
  * Triggers a network request to fetch current mailing list available created for account
- * asociated with api key storred in plugin config..
+ * associated with api key stored in plugin config..
  *
  * @param  {Number|String} siteId        Jetpack site ID
  * @return {Function}                    Action thunk
  */
-export const requestLists = ( siteId ) => ( dispatch, getState ) => {
+export const requestLists = siteId => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
@@ -280,7 +293,8 @@ export const requestLists = ( siteId ) => ( dispatch, getState ) => {
 
 	dispatch( mailchimpListsRequest( siteId ) );
 
-	return request( siteId ).get( 'mailchimp/newsletter_setting' )
+	return request( siteId )
+		.get( 'mailchimp/newsletter_setting' )
 		.then( lists => {
 			dispatch( mailchimpListsRequestSuccess( siteId, lists ) );
 		} )
@@ -290,19 +304,20 @@ export const requestLists = ( siteId ) => ( dispatch, getState ) => {
 };
 
 /**
- * Triggers a network request to fetch current MailChimp plugin to maichimp server sync status
+ * Triggers a network request to fetch current MailChimp plugin to MailChimp server sync status
  *
  * @param  {Number|String} siteId        Jetpack site ID
  * @return {Function}                    Action thunk
  */
-export const requestSyncStatus = ( siteId ) => ( dispatch, getState ) => {
+export const requestSyncStatus = siteId => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
 	dispatch( mailchimpSyncStatusRequest( siteId ) );
 
-	return request( siteId ).get( 'mailchimp/sync' )
+	return request( siteId )
+		.get( 'mailchimp/sync' )
 		.then( sync_status => {
 			dispatch( mailchimpSyncStatusRequestSuccess( siteId, sync_status ) );
 		} )
@@ -317,14 +332,15 @@ export const requestSyncStatus = ( siteId ) => ( dispatch, getState ) => {
  * @param  {Number|String} siteId        Jetpack site ID
  * @return {Function}                    Action thunk
  */
-export const requestResync = ( siteId ) => ( dispatch, getState ) => {
+export const requestResync = siteId => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
 	}
 	dispatch( mailchimpResyncRequest( siteId ) );
 
-	return request( siteId ).put( 'mailchimp/sync' )
+	return request( siteId )
+		.put( 'mailchimp/sync' )
 		.then( sync_status => {
 			dispatch( mailchimpResyncRequestSuccess( siteId, sync_status ) );
 		} )
@@ -341,14 +357,15 @@ export const requestResync = ( siteId ) => ( dispatch, getState ) => {
  * @param  {Object}        newsLetter  MailChimp newsletter settings object
  * @return {Function}                  Action thunk
  */
-export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => ( dispatch ) => {
+export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => dispatch => {
 	if ( null == siteId || null == newsLetter ) {
 		return;
 	}
 
 	dispatch( mailchimpNewsletterSettingsSubmit( siteId ) );
 
-	return request( siteId ).put( 'mailchimp/newsletter_setting', newsLetter )
+	return request( siteId )
+		.put( 'mailchimp/newsletter_setting', newsLetter )
 		.then( settings => {
 			dispatch( mailchimpNewsletterSettingsSubmitSuccess( siteId, settings ) );
 		} )
@@ -360,14 +377,20 @@ export const submitMailChimpNewsletterSettings = ( siteId, newsLetter ) => ( dis
 /**
  * Triggers a internal action that represents request to save settings
  * Components interested in this action will subscribe to store with
- * isSaveSettingsReqested
+ * isSaveSettingsRequested
  *
  * @param  {Number|String} siteId      Jetpack site ID
- * @param  {Object}        newsLetter  MailChimp newsletter settings object
  * @return {Function}                  Action thunk
  */
-export const mailChimpSaveSettings = ( siteId ) => ( dispatch ) => {
+export const mailChimpSaveSettings = siteId => ( dispatch, getState ) => {
 	if ( null == siteId ) {
+		return;
+	}
+
+	const settings = mailChimpSettings( getState(), siteId );
+
+	const validSettings = 'sync' === get( settings, 'active_tab', false );
+	if ( ! validSettings ) {
 		return;
 	}
 

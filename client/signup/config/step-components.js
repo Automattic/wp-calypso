@@ -1,10 +1,7 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
-import config from 'config';
 import AboutStepComponent from 'signup/steps/about';
 import CredsConfirmComponent from 'signup/steps/creds-confirm';
 import CredsCompleteComponent from 'signup/steps/creds-complete';
@@ -50,7 +47,7 @@ export default {
 	'site-title': SiteTitleComponent,
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,
-	test: config( 'env' ) === 'development' ? require( 'signup/steps/test-step' ) : undefined,
+	test: process.env.NODE_ENV === 'development' ? require( 'signup/steps/test-step' ) : undefined,
 	themes: ThemeSelectionComponent,
 	'website-themes': ThemeSelectionComponent,
 	'blog-themes': ThemeSelectionComponent,

@@ -131,6 +131,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 		} );
 
 		const sectionIcon = isStepFinished ? <Gridicon icon="checkmark-circle" size={ 36 } /> : step;
+		const onButtonClick =
+			true === unlocked || null === unlocked ? this.showNextStep : this.refreshStatus;
 
 		return (
 			<Card compact>
@@ -145,15 +147,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 							<div>
 								<div className="transfer-domain-step__section-message">{ message }</div>
 								<div className="transfer-domain-step__section-action">
-									<Button
-										compact
-										onClick={
-											( true === unlocked ) | ( null === unlocked )
-												? this.showNextStep
-												: this.refreshStatus
-										}
-										busy={ loading }
-									>
+									<Button compact onClick={ onButtonClick } busy={ loading }>
 										{ buttonText }
 									</Button>
 									{ stepStatus }
@@ -194,7 +188,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const step = 1;
 		const isStepFinished = currentStep > step;
 
-		let heading = "Can't get the domain's lock status.";
+		let heading = translate( "Can't get the domain's lock status." );
 		if ( true === unlocked ) {
 			heading = translate( 'Domain is unlocked.' );
 		} else if ( false === unlocked ) {
@@ -202,14 +196,12 @@ class TransferDomainPrecheck extends React.PureComponent {
 		}
 
 		let message = translate(
-			"{{notice}}We couldn't get the lock status for this domain.{{/notice}}" +
-				"If you're sure that the domain is unlocked, then you can continue to the next step. If the domain is locked, " +
-				"then you won't be able to complete the transfer. {{a}}Here is some more information about how to unlock your " +
-				'domain{{/a}}.',
+			"{{notice}}We couldn't get the lock status of your domain from your current registrar.{{/notice}} If you're sure your " +
+				"domain is unlocked then, you can continue to the next step. If it's not unlocked, then the transfer won't work. " +
+				'{{a}}Here are instructions to make sure your domain is unlocked.{{/a}}',
 			{
 				components: {
 					notice: <Notice showDismiss={ false } status="is-warning" />,
-					strong: <strong />,
 					br: <br />,
 					a: (
 						<a
@@ -222,7 +214,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 			}
 		);
 
-		if ( true === unlocked ) {
+    if ( true === unlocked ) {
 			message = translate( 'Your domain is unlocked at your current registrar.' );
 		} else if ( false === unlocked ) {
 			message = translate(
@@ -242,9 +234,10 @@ class TransferDomainPrecheck extends React.PureComponent {
 				}
 			);
 		}
+
 		const buttonText = translate( "I've unlocked my domain" );
 
-		let lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unknown';
+		let lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unavailable';
 		if ( true === unlocked ) {
 			lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unlocked';
 		} else if ( false === unlocked ) {

@@ -6,7 +6,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import moment from 'moment-timezone';
 
 /**
  * Internal dependencies
@@ -21,8 +20,8 @@ import Timezone from 'components/timezone';
 import PrimaryHeader from './primary-header';
 import Site from 'blocks/site';
 import { localize } from 'i18n-calypso';
-import { updateConciergeSignupForm } from 'state/concierge/signupForm/actions';
-import { getConciergeSignupForm, getSiteTimezoneValue } from 'state/selectors';
+import { updateConciergeSignupForm } from 'state/concierge/actions';
+import { getConciergeSignupForm } from 'state/selectors';
 
 class InfoStep extends Component {
 	static propTypes = {
@@ -51,25 +50,7 @@ class InfoStep extends Component {
 	};
 
 	render() {
-		let message;
-		let timezone;
-		const { signupForm, timezoneValue, translate } = this.props;
-
-		if ( ! signupForm ) {
-			message = '';
-
-			if ( timezoneValue && timezoneValue.length ) {
-				// use site timezone
-				timezone = timezoneValue;
-			} else {
-				// guess customer timezone
-				timezone = moment.tz.guess();
-			}
-		} else {
-			// use saved values
-			message = signupForm.message || '';
-			timezone = signupForm.timezone || moment.tz.guess();
-		}
+		const { signupForm: { message, timezone }, translate } = this.props;
 
 		return (
 			<div>
@@ -114,9 +95,8 @@ class InfoStep extends Component {
 }
 
 export default connect(
-	( state, props ) => ( {
+	state => ( {
 		signupForm: getConciergeSignupForm( state ),
-		timezoneValue: getSiteTimezoneValue( state, props.site.ID ),
 	} ),
 	{
 		updateConciergeSignupForm,

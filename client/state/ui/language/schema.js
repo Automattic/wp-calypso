@@ -1,4 +1,2 @@
 /** @format */
-export const localeSlugSchema = {
-	type: 'string',
-};
+export const localeSlugSchema = { type: [ 'string', 'null' ] };

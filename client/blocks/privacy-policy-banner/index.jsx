@@ -147,12 +147,12 @@ class PrivacyPolicyBanner extends Component {
 
 const mapStateToProps = state => {
 	const privacyPolicy = getPrivacyPolicyByEntity( state, AUTOMATTIC_ENTITY );
-	const privacyPolicyUserStatus = getPreference( state, PRIVACY_POLICY_PREFERENCE ) || {};
+	const privacyPolicyUserStatus = getPreference( state, PRIVACY_POLICY_PREFERENCE );
 	const privacyPolicyId = privacyPolicy.id;
 
 	return {
 		fetchingPreferences: isFetchingPreferences( state ),
-		isPolicyAlreadyAccepted: privacyPolicyUserStatus[ privacyPolicyId ] || false,
+		isPolicyAlreadyAccepted: get( privacyPolicyUserStatus, privacyPolicyId, false ),
 		privacyPolicyUserStatus,
 		privacyPolicy,
 		privacyPolicyId,
@@ -162,10 +162,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
 	acceptPrivacyPolicy: ( privacyPolicyId, privacyPolicyUserStatus ) =>
-		savePreference( PRIVACY_POLICY_PREFERENCE, {
-			...privacyPolicyUserStatus,
-			[ privacyPolicyId ]: true,
-		} ),
+		savePreference(
+			PRIVACY_POLICY_PREFERENCE,
+			Object.assign( {}, privacyPolicyUserStatus, { [ privacyPolicyId ]: true } )
+		),
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( PrivacyPolicyBanner ) );

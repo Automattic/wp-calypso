@@ -6,7 +6,7 @@
 
 import { areOrderNotesLoaded, areOrderNotesLoading } from './selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import request from '../../request';
+import request from 'woocommerce/state/sites/request';
 import {
 	WOOCOMMERCE_ORDER_NOTE_CREATE,
 	WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,

@@ -27,13 +27,17 @@ import {
 	showMagicLoginLinkExpiredPage,
 } from 'state/login/magic-login/actions';
 import {
-	getInitialQueryArguments,
 	getMagicLoginCurrentView,
 	getMagicLoginRequestAuthError,
 	getMagicLoginRequestedAuthSuccessfully,
 	isFetchingMagicLoginAuth,
 } from 'state/selectors';
-import { getRedirectTo, getTwoFactorNotificationSent, isTwoFactorEnabled } from 'state/login/selectors';
+import {
+	getRedirectToOriginal,
+	getRedirectToSanitized,
+	getTwoFactorNotificationSent,
+	isTwoFactorEnabled,
+} from 'state/login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
@@ -52,8 +56,8 @@ class HandleEmailedLinkForm extends React.Component {
 		isAuthenticated: PropTypes.bool,
 		isExpired: PropTypes.bool,
 		isFetching: PropTypes.bool,
-		redirectToFromQuery: PropTypes.string,
-		redirectToFromServer: PropTypes.string,
+		redirectToOriginal: PropTypes.string,
+		redirectToSanitized: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
 
@@ -82,13 +86,13 @@ class HandleEmailedLinkForm extends React.Component {
 			hasSubmitted: true,
 		} );
 
-		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectToFromQuery );
+		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectToOriginal );
 	};
 
 	// Lifted from `blocks/login`
 	// @TODO move to `state/login/actions` & use both places
 	handleValidToken = () => {
-		const { redirectToFromServer, twoFactorEnabled, twoFactorNotificationSent } = this.props;
+		const { redirectToSanitized, twoFactorEnabled, twoFactorNotificationSent } = this.props;
 
 		if ( ! twoFactorEnabled ) {
 			this.rebootAfterLogin();
@@ -101,7 +105,7 @@ class HandleEmailedLinkForm extends React.Component {
 						'none',
 						'authenticator'
 					),
-					redirectTo: redirectToFromServer,
+					redirectTo: redirectToSanitized,
 				} )
 			);
 		}
@@ -110,7 +114,7 @@ class HandleEmailedLinkForm extends React.Component {
 	// Lifted from `blocks/login`
 	// @TODO move to `state/login/actions` & use both places
 	rebootAfterLogin = () => {
-		const { redirectToFromServer, twoFactorEnabled } = this.props;
+		const { redirectToSanitized, twoFactorEnabled } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_login_success', {
 			two_factor_enabled: twoFactorEnabled,
@@ -118,7 +122,7 @@ class HandleEmailedLinkForm extends React.Component {
 		} );
 
 		// Redirects to / if no redirect url is available
-		const url = redirectToFromServer ? redirectToFromServer : window.location.origin;
+		const url = redirectToSanitized ? redirectToSanitized : window.location.origin;
 
 		// user data is persisted in localstorage at `lib/user/user` line 157
 		// therefore we need to reset it before we redirect, otherwise we'll get
@@ -200,8 +204,8 @@ class HandleEmailedLinkForm extends React.Component {
 
 const mapState = state => {
 	return {
-		redirectToFromQuery: getInitialQueryArguments( state ).redirect_to,
-		redirectToFromServer: getRedirectTo( state ),
+		redirectToOriginal: getRedirectToOriginal( state ),
+		redirectToSanitized: getRedirectToSanitized( state ),
 		authError: getMagicLoginRequestAuthError( state ),
 		currentUser: getCurrentUser( state ),
 		isAuthenticated: getMagicLoginRequestedAuthSuccessfully( state ),

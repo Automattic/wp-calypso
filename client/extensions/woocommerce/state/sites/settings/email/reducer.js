@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { setWith } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
@@ -14,6 +19,10 @@ export default createReducer( null, {
 	},
 
 	[ WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return data;
+		const options = {};
+		data.forEach( function( option ) {
+			setWith( options, [ option.group_id, option.id ], option.value, Object );
+		} );
+		return options;
 	},
 } );

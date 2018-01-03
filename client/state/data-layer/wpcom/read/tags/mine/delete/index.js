@@ -9,20 +9,18 @@
 import { READER_UNFOLLOW_TAG_REQUEST } from 'state/action-types';
 import { receiveUnfollowTag as receiveUnfollowTagAction } from 'state/reader/tags/items/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 
-export function requestUnfollow( store, action ) {
-	store.dispatch(
-		http( {
-			path: `/read/tags/${ action.payload.slug }/mine/delete`,
-			method: 'POST',
-			apiVersion: '1.1',
-			onSuccess: action,
-			onFailure: action,
-		} )
-	);
+export function requestUnfollow( action ) {
+	return http( {
+		path: `/read/tags/${ action.payload.slug }/mine/delete`,
+		method: 'POST',
+		apiVersion: '1.1',
+		onSuccess: action,
+		onFailure: action,
+	} );
 }
 
 /**
@@ -31,34 +29,40 @@ export function requestUnfollow( store, action ) {
  * @param  {RemovedTag} apiResponse api response from the unfollow
  * @return {Number} the ID of the tag that was removed
  */
-export const fromApi = apiResponse => apiResponse.removed_tag;
-
-export function receiveUnfollowTag( store, action, apiResponse ) {
+export const fromApi = apiResponse => {
 	if ( apiResponse.subscribed ) {
-		receiveError( store, action );
-		return;
+		throw new Error(
+			`failed to unsubscribe to tag with response: ${ JSON.stringify( apiResponse ) }`
+		);
 	}
 
-	store.dispatch(
-		receiveUnfollowTagAction( {
-			payload: fromApi( apiResponse ),
-		} )
-	);
+	return apiResponse.removed_tag;
+};
+
+export function receiveUnfollowTag( action, removedTagId ) {
+	return receiveUnfollowTagAction( {
+		payload: removedTagId,
+	} );
 }
 
-export function receiveError( store, action, error ) {
+export function receiveError( action, error ) {
 	const errorText = translate( 'Could not unfollow tag: %(tag)s', {
 		args: { tag: action.payload.slug },
 	} );
 
-	store.dispatch( errorNotice( errorText ) );
 	if ( process.env.NODE_ENV === 'development' ) {
 		console.error( errorText, error ); // eslint-disable-line no-console
 	}
+	return errorNotice( errorText );
 }
 
 export default {
 	[ READER_UNFOLLOW_TAG_REQUEST ]: [
-		dispatchRequest( requestUnfollow, receiveUnfollowTag, receiveError ),
+		dispatchRequestEx( {
+			fetch: requestUnfollow,
+			onSuccess: receiveUnfollowTag,
+			onError: receiveError,
+			fromApi,
+		} ),
 	],
 };

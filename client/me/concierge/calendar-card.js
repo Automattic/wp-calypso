@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import { localize, moment } from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -25,13 +26,24 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { getLanguage } from 'lib/i18n-utils';
+const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 
 class CalendarCard extends Component {
 	static propTypes = {
 		date: PropTypes.number.isRequired,
+		disabled: PropTypes.bool.isRequired,
+		isDefaultLocale: PropTypes.bool.isRequired,
 		onSubmit: PropTypes.func.isRequired,
 		times: PropTypes.arrayOf( PropTypes.number ).isRequired,
+		timezone: PropTypes.string.isRequired,
 	};
+
+	state = {
+		selectedTime: this.props.times[ 0 ],
+	};
+
+	withTimezone = dateTime => moment( dateTime ).tz( this.props.timezone );
 
 	/**
 	 * Returns a string representing the day of the week, with certain dates using natural
@@ -42,7 +54,7 @@ class CalendarCard extends Component {
 	 */
 	getDayOfWeekString = date => {
 		const { translate } = this.props;
-		const today = moment().startOf( 'day' );
+		const today = this.withTimezone().startOf( 'day' );
 		const dayOffset = today.diff( date.startOf( 'day' ), 'days' );
 
 		switch ( dayOffset ) {
@@ -56,7 +68,7 @@ class CalendarCard extends Component {
 
 	renderHeader = () => {
 		// The "Header" is that part of the foldable card that you click on to expand it.
-		const date = moment( this.props.date );
+		const date = this.withTimezone( this.props.date );
 
 		return (
 			<div className="concierge__calendar-card-header">
@@ -68,8 +80,21 @@ class CalendarCard extends Component {
 		);
 	};
 
+	onChange = ( { target } ) => {
+		this.setState( { selectedTime: target.value } );
+	};
+
+	submitForm = () => {
+		this.props.onSubmit( this.state.selectedTime );
+	};
+
 	render() {
-		const { times, translate } = this.props;
+		const { disabled, isDefaultLocale, times, translate } = this.props;
+		const description = isDefaultLocale
+			? translate( 'Sessions are 30 minutes long.' )
+			: translate( 'Sessions are 30 minutes long and in %(defaultLanguage)s.', {
+					args: { defaultLanguage },
+				} );
 
 		return (
 			<FoldableCard
@@ -84,20 +109,23 @@ class CalendarCard extends Component {
 					<FormLabel htmlFor="concierge-start-time">
 						{ translate( 'Choose a starting time' ) }
 					</FormLabel>
-					<FormSelect id="concierge-start-time">
+					<FormSelect
+						id="concierge-start-time"
+						disabled={ disabled }
+						onChange={ this.onChange }
+						value={ this.state.selectedTime }
+					>
 						{ times.map( time => (
 							<option value={ time } key={ time }>
-								{ moment( time ).format( 'h:mma z' ) }
+								{ this.withTimezone( time ).format( 'h:mma z' ) }
 							</option>
 						) ) }
 					</FormSelect>
-					<FormSettingExplanation>
-						{ translate( 'Sessions are 30 minutes long.' ) }
-					</FormSettingExplanation>
+					<FormSettingExplanation>{ description }</FormSettingExplanation>
 				</FormFieldset>
 
 				<FormFieldset>
-					<Button primary onClick={ this.props.onSubmit }>
+					<Button disabled={ disabled } primary onClick={ this.submitForm }>
 						{ translate( 'Book this session' ) }
 					</Button>
 				</FormFieldset>

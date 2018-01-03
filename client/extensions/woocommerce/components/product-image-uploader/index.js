@@ -206,8 +206,10 @@ class ProductImageUploader extends Component {
 			<div className="product-image-uploader__wrapper">
 				<div className="product-image-uploader__picker">
 					<FilePicker multiple={ multiple } accept="image/*" onPick={ this.onPick }>
-						<Gridicon icon="add-image" size={ 36 } />
-						<p>{ translate( 'Add images' ) }</p>
+						<div>
+							<Gridicon icon="add-image" size={ 36 } />
+							<p>{ translate( 'Add images' ) }</p>
+						</div>
 					</FilePicker>
 				</div>
 				<DropZone onFilesDrop={ this.onPick } />

@@ -315,6 +315,48 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should include all expected like properties and no others', () => {
+			const likes = [
+				{
+					ID: 1,
+					avatar_URL: 'https://gravatar.com/whatever',
+					URL: 'https://example.com/',
+					login: 'chicken',
+					name: 'A Former Egg',
+					some_other_property: 'aaaaa',
+				},
+			];
+			const state = items(
+				{},
+				{
+					type: POST_LIKES_RECEIVE,
+					siteId: 12345678,
+					postId: 50,
+					likes,
+					found: 2,
+					iLike: false,
+				}
+			);
+
+			expect( state ).to.eql( {
+				12345678: {
+					50: {
+						likes: [
+							{
+								ID: 1,
+								avatar_URL: 'https://gravatar.com/whatever',
+								URL: 'https://example.com/',
+								login: 'chicken',
+								name: 'A Former Egg',
+							},
+						],
+						found: 2,
+						iLike: false,
+					},
+				},
+			} );
+		} );
+
 		test( 'should persist state', () => {
 			const likes = [ { ID: 1, login: 'chicken' } ];
 			const state = items(

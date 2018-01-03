@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -70,22 +69,22 @@ describe( 'wpcom-api: read/tags utils', () => {
 	describe( '#fromApi', () => {
 		test( 'should properly normalize many tags', () => {
 			const transformedResponse = fromApi( successfulFollowedTagsResponse );
-			expect( transformedResponse ).to.eql( normalizedFollowedTagsResponse );
+			expect( transformedResponse ).toEqual( normalizedFollowedTagsResponse );
 		} );
 
 		test( 'should properly normalize a single tag', () => {
 			const transformedResponse = fromApi( successfulSingleTagResponse );
-			expect( transformedResponse ).to.eql( normalizedSuccessfulSingleTagResponse );
+			expect( transformedResponse ).toEqual( normalizedSuccessfulSingleTagResponse );
 		} );
 
-		test( 'should not blow up when given wrong keys', () => {
-			const transformedResponse = fromApi( { noCorrectKeys: 'evil test' } );
-			expect( transformedResponse ).to.eql( [] );
+		test( 'should blow up when given wrong keys', () => {
+			const badResponse = { noCorrectKeys: 'evil test' };
+			expect( () => fromApi( badResponse ) ).toThrow();
 		} );
 
-		test( 'should not blow up when given bad values', () => {
-			const transformedResponse = fromApi( { tag: 'evil test' } );
-			expect( transformedResponse ).to.eql( [] );
+		test( 'should blow up when given bad values', () => {
+			const badResponse = fromApi( { tag: 'evil test' } );
+			expect( () => fromApi( badResponse ) ).toThrow();
 		} );
 	} );
 } );

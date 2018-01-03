@@ -56,3 +56,13 @@ export const isSsoApproved = siteId => {
 	const cookies = cookie.parse( document.cookie );
 	return siteId === parseInt( cookies.jetpack_sso_approved, 10 );
 };
+
+export const persistMobileRedirect = url => {
+	const options = { path: '/' };
+	document.cookie = cookie.serialize( 'jetpack_connect_mobile_redirect', url, options );
+};
+
+export const retrieveMobileRedirect = () => {
+	const cookies = cookie.parse( document.cookie );
+	return cookies.jetpack_connect_mobile_redirect;
+};

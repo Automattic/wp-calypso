@@ -9,6 +9,12 @@
 	.formatted-header {
 		margin-bottom: 16px;
 	}
+
+	&.is-mobile-app-flow {
+		.logged-out-form__links {
+			display: none;
+		}
+	}
 }
 
 .jetpack-connect__main.is-wide {
@@ -533,6 +539,20 @@
 	}
 	.jetpack-connect-plans-placeholder__plans-content {
 		min-height: 400px;
+	}
+
+	.plan-features--signup .plan-price.is-original:before {
+		border-top: 0;
+	}
+
+	.plan-features__actions-buttons {
+		margin-top: 16px;
+	}
+
+	.plan-features__item {
+		.placeholder-text {
+			margin: 0 auto;
+		}
 	}
 }
 

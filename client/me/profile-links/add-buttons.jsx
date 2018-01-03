@@ -5,53 +5,47 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import Button from 'components/button';
-import observe from 'lib/mixins/data-observe';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-const AddProfileLinksButtons = createReactClass( {
-	displayName: 'AddProfileLinksButtons',
-
-	mixins: [ observe( 'userProfileLinks' ) ],
-
-	propTypes: {
+class AddProfileLinksButtons extends React.Component {
+	static propTypes = {
 		showingForm: PropTypes.bool,
 		showPopoverMenu: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			showingForm: false,
-		};
-	},
+	static defaultProps = {
+		showingForm: false,
+	};
 
-	getInitialState() {
-		return {
-			popoverPosition: 'top',
-		};
-	},
+	state = {
+		popoverPosition: 'top',
+	};
 
-	recordClickEvent( action ) {
+	recordClickEvent = action => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	},
+	};
 
-	handleAddWordPressSiteButtonClick() {
+	handleAddWordPressSiteButtonClick = () => {
 		this.recordClickEvent( 'Add a WordPress Site Button' );
 		this.props.onShowAddWordPress();
-	},
+	};
 
-	handleOtherSiteButtonClick() {
+	handleOtherSiteButtonClick = () => {
 		this.recordClickEvent( 'Add Other Site Button' );
 		this.props.onShowAddOther();
-	},
+	};
+
+	setPopoverContext = button => ( this.popoverMenuButton = button );
 
 	render() {
 		return (
@@ -60,7 +54,7 @@ const AddProfileLinksButtons = createReactClass( {
 					isVisible={ this.props.showPopoverMenu }
 					onClose={ this.props.onClosePopoverMenu }
 					position={ this.state.popoverPosition }
-					context={ this.refs && this.refs.popoverMenuButton }
+					context={ this.popoverMenuButton }
 				>
 					<PopoverMenuItem onClick={ this.handleAddWordPressSiteButtonClick }>
 						{ this.props.translate( 'Add WordPress Site' ) }
@@ -72,7 +66,7 @@ const AddProfileLinksButtons = createReactClass( {
 
 				<Button
 					compact
-					ref="popoverMenuButton"
+					ref={ this.setPopoverContext }
 					className="popover-icon"
 					onClick={ this.props.onShowPopoverMenu }
 				>
@@ -81,8 +75,8 @@ const AddProfileLinksButtons = createReactClass( {
 				</Button>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( null, {
 	recordGoogleEvent,

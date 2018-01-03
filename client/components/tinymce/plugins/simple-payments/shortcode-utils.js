@@ -1,22 +1,20 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Shortcode from 'lib/shortcode';
+import { parse, stringify } from 'lib/shortcode';
 
 /**
  * Serializes shortcode data (object with id property) to a Simple Payments shortcode.
  * @returns {string} Serialized shortcode, e.g., `[simple-payment id="1"]`
  */
 export function serialize( { id } ) {
-	return Shortcode.stringify( {
+	return stringify( {
 		tag: 'simple-payment',
 		type: 'single',
 		attrs: { id },
@@ -34,7 +32,7 @@ export function deserialize( shortcode ) {
 		return null;
 	}
 
-	const parsed = Shortcode.parse( shortcode );
+	const parsed = parse( shortcode );
 
 	const shortcodeData = {};
 

@@ -18,7 +18,7 @@ import switchLocale from 'lib/i18n-utils/switch-locale';
 
 class LocaleSuggestions extends Component {
 	static propTypes = {
-		locale: PropTypes.string.isRequired,
+		locale: PropTypes.string,
 		path: PropTypes.string.isRequired,
 	};
 

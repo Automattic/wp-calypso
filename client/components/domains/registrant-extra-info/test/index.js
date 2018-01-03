@@ -13,6 +13,9 @@ import RegistrantExtraInfoCaForm from '../ca-form';
 import RegistrantExtraInfoFrForm from '../fr-form';
 import RegistrantExtraInfoForm from '../index';
 
+jest.mock( 'store', () => ( { get: () => {}, set: () => {} } ) );
+jest.mock( 'lib/analytics', () => {} );
+
 describe( 'Switcher Form', () => {
 	test( 'should render correct form for fr', () => {
 		const wrapper = shallow( <RegistrantExtraInfoForm tld="fr" /> );
