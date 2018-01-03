@@ -1850,7 +1850,7 @@ Undocumented.prototype.requestMagicLoginEmail = function( data, fn ) {
  * @param {Function} fn - Function to invoke when request is complete
  */
 Undocumented.prototype.sitesNew = function( query, fn ) {
-	var localeSlug = getLocaleSlug();
+	const localeSlug = getLocaleSlug();
 
 	debug( '/sites/new' );
 
