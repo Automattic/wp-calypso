@@ -12,7 +12,7 @@ import classNames from 'classnames';
  */
 import { parse, stringify } from 'lib/shortcode';
 import MediaUtils from 'lib/media/utils';
-import MediaSerialization from 'lib/media-serialization';
+import { deserialize } from 'lib/media-serialization';
 
 /**
  * Module variables
@@ -97,7 +97,7 @@ const Markup = {
 
 		width = parsed.attrs.named.width;
 		if ( ! width ) {
-			width = MediaSerialization.deserialize( img ).width;
+			width = deserialize( img ).width;
 		}
 
 		/*eslint-disable react/no-danger*/
