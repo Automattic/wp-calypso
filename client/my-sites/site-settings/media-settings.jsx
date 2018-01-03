@@ -24,6 +24,7 @@ import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import {
 	PLAN_JETPACK_PREMIUM,
+	FEATURE_VIDEO_CDN_LIMITED,
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
@@ -146,10 +147,15 @@ class MediaSettings extends Component {
 		return (
 			! isVideoPressAvailable && (
 				<Banner
+					description={ translate(
+						'Get high-speed, high-resolution video hosting without ads or watermarks.'
+					) }
 					event={ 'jetpack_video_settings' }
-					feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM }
+					feature={ FEATURE_VIDEO_CDN_LIMITED }
 					plan={ PLAN_JETPACK_PREMIUM }
-					title={ translate( 'Host fast, high-quality, ad-free video.' ) }
+					title={ translate(
+						'Host video right on your site! Upgrade to Jetpack Premium to get started'
+					) }
 				/>
 			)
 		);
