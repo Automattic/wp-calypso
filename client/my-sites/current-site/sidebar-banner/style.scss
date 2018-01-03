@@ -1,4 +1,4 @@
-.sidebar-banner {
+a.sidebar-banner {
 	display: flex;
 	background-color: $alert-green;
 	color: $white;
@@ -18,14 +18,9 @@
 		padding: 6px 5px 5px;
 	}
 
-	a {
+	.sidebar-banner__cta {
 		transition: all 200ms ease-out;
 		padding: 6px 8px 2px 5px;
-		color: $white;
 		text-transform: uppercase;
-	}
-
-	a:hover {
-		text-decoration: underline;
 	}
 }

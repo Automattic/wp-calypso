@@ -95,22 +95,16 @@ class SiteNotice extends React.Component {
 			return null;
 		}
 
-		const eventName = 'calypso_upgrade_nudge_impression';
-		const eventProperties = { cta_name: 'free-to-paid-sidebar' };
 		const { translate } = this.props;
 
 		return (
-			<SidebarBanner icon="info-outline" text={ translate( 'Free domain with a plan' ) }>
-				<a
-					onClick={ this.props.clickFreeToPaidPlanNotice }
-					href={ `/plans/my-plan/${ this.props.site.slug }` }
-				>
-					<span>
-						{ translate( 'Upgrade' ) }
-						<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
-					</span>
-				</a>
-			</SidebarBanner>
+			<SidebarBanner
+				ctaName="free-to-paid-sidebar"
+				ctaText={ translate( 'Upgrade' ) }
+				href={ `/plans/my-plan/${ this.props.site.slug }` }
+				icon="info-outline"
+				text={ translate( 'Free domain with a plan' ) }
+			/>
 		);
 	}
 
