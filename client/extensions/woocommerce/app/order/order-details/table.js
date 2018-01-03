@@ -310,7 +310,7 @@ class OrderDetailsTable extends Component {
 						<div className="order-details__coupon-list-tokens">{ couponMarkup }</div>
 					</TableItem>
 					<TableItem className="order-details__totals-value">
-						({ formatCurrency( order.discount_total, order.currency ) })
+						{ formatCurrency( order.discount_total, order.currency ) }
 					</TableItem>
 				</TableRow>
 			);
@@ -348,11 +348,11 @@ class OrderDetailsTable extends Component {
 				</TableItem>
 				{ showTax && (
 					<TableItem className="order-details__totals-tax">
-						({ formatCurrency( getOrderDiscountTax( order ), order.currency ) })
+						{ formatCurrency( getOrderDiscountTax( order ), order.currency ) }
 					</TableItem>
 				) }
 				<TableItem className="order-details__totals-value">
-					({ formatCurrency( order.discount_total, order.currency ) })
+					{ formatCurrency( order.discount_total, order.currency ) }
 				</TableItem>
 			</TableRow>
 		);
