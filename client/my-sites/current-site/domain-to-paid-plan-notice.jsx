@@ -39,7 +39,7 @@ export class DomainToPaidPlanNotice extends Component {
 			? `/start/site-selected/?siteSlug=${ encodeURIComponent(
 					site.slug
 				) }&siteId=${ encodeURIComponent( site.ID ) }`
-			: `/plans/my-plan/${ site.slug }`;
+			: `/plans/${ site.slug }`;
 
 		const text = isJetpack
 			? translate( 'Upgrade for full site backups.' )

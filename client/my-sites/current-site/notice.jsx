@@ -95,13 +95,13 @@ class SiteNotice extends React.Component {
 			return null;
 		}
 
-		const { translate } = this.props;
+		const { site, translate } = this.props;
 
 		return (
 			<SidebarBanner
 				ctaName="free-to-paid-sidebar"
 				ctaText={ translate( 'Upgrade' ) }
-				href={ `/plans/my-plan/${ this.props.site.slug }` }
+				href={ `/plans/${ site.slug }` }
 				icon="info-outline"
 				text={ translate( 'Free domain with a plan' ) }
 			/>
