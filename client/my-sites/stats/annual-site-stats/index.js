@@ -79,22 +79,29 @@ class AnnualSiteStats extends Component {
 
 	render() {
 		const { years, translate, moment } = this.props;
-		const currentYear = moment().format( 'YYYY' );
-		const year = years && find( years, y => y.year === currentYear );
+		const now = moment();
+		const currentYear = now.format( 'YYYY' );
+		let previousYear = null;
+		if ( now.month() === 0 ) {
+			previousYear = now.subtract( 1, 'months' ).format( 'YYYY' );
+		}
+		const currentYearData = years && find( years, y => y.year === currentYear );
+		const previousYearData = previousYear && years && find( years, y => y.year === previousYear );
 		const isLoading = ! years;
 		const isError = ! isLoading && years.errors;
-		const noData = ! isLoading && ! isError && ! year;
+		const noData = ! isLoading && ! isError && ! ( currentYearData || previousYearData );
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Annual Site Stats' ) } />
+				<SectionHeader label={ translate( 'Annual Site Stats', { args: [ currentYear ] } ) } />
 				<Card className="stats-module">
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					{ isError && <ErrorPanel message={ translate( 'Oops, something went wrong' ) } /> }
 					{ noData && (
 						<ErrorPanel message={ translate( 'No annual stats recorded for this year' ) } />
 					) }
-					{ year && this.renderContent( year ) }
+					{ previousYearData && this.renderContent( previousYearData ) }
+					{ currentYearData && this.renderContent( currentYearData ) }
 				</Card>
 			</div>
 		);
