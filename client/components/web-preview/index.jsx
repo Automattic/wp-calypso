@@ -37,12 +37,20 @@ export class WebPreview extends PureComponent {
 	}
 
 	componentWillMount() {
+		if ( this.props.isContentOnly ) {
+			return;
+		}
+
 		// Cache touch and mobile detection for the entire lifecycle of the component
 		this._hasTouch = hasTouch();
 		this._isMobile = isMobile();
 	}
 
 	componentDidMount() {
+		if ( this.props.isContentOnly ) {
+			return;
+		}
+
 		if ( this.props.showPreview ) {
 			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
 		}
@@ -50,6 +58,10 @@ export class WebPreview extends PureComponent {
 	}
 
 	componentDidUpdate( prevProps ) {
+		if ( this.props.isContentOnly ) {
+			return;
+		}
+
 		const { showPreview } = this.props;
 
 		// add/remove listener if showPreview has changed
@@ -67,6 +79,10 @@ export class WebPreview extends PureComponent {
 	}
 
 	componentWillUnmount() {
+		if ( this.props.isContentOnly ) {
+			return;
+		}
+
 		this.props.setPreviewShowing( false );
 		window.removeEventListener( 'keydown', this.keyDown );
 		document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
