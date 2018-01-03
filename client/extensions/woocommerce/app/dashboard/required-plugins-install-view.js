@@ -24,6 +24,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SetupHeader from './setup-header';
+import SetupNotices from './setup-notices';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
 import { hasSitePendingAutomatedTransfer } from 'state/selectors';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
@@ -384,24 +385,27 @@ class RequiredPluginsInstallView extends Component {
 	renderConfirmScreen = () => {
 		const { translate } = this.props;
 		return (
-			<div className="card dashboard__setup-wrapper dashboard__setup-confirm">
-				<SetupHeader
-					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
-					imageWidth={ 160 }
-					title={ translate( 'Have something to sell?' ) }
-					subtitle={ translate(
-						"If you're in the {{strong}}United States{{/strong}} " +
-							'or {{strong}}Canada{{/strong}}, you can sell your products right on ' +
-							'your site and ship them to customers in a snap!',
-						{
-							components: { strong: <strong /> },
-						}
-					) }
-				>
-					<Button onClick={ this.startSetup } primary>
-						{ translate( 'Set up my store!' ) }
-					</Button>
-				</SetupHeader>
+			<div className="dashboard__setup-wrapper">
+				<SetupNotices />
+				<div className="card dashboard__setup-confirm">
+					<SetupHeader
+						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
+						imageWidth={ 160 }
+						title={ translate( 'Have something to sell?' ) }
+						subtitle={ translate(
+							"If you're in the {{strong}}United States{{/strong}} " +
+								'or {{strong}}Canada{{/strong}}, you can sell your products right on ' +
+								'your site and ship them to customers in a snap!',
+							{
+								components: { strong: <strong /> },
+							}
+						) }
+					>
+						<Button onClick={ this.startSetup } primary>
+							{ translate( 'Set up my store!' ) }
+						</Button>
+					</SetupHeader>
+				</div>
 			</div>
 		);
 	};
@@ -425,16 +429,19 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		return (
-			<div className="card dashboard__setup-wrapper">
-				{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
-				<SetupHeader
-					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
-					imageWidth={ 160 }
-					title={ translate( 'Building your store' ) }
-					subtitle={ translate( "Give us a minute and we'll move right along." ) }
-				>
-					<ProgressBar value={ progress } total={ totalSeconds } isPulsing />
-				</SetupHeader>
+			<div className="dashboard__setup-wrapper">
+				<SetupNotices />
+				<div className="card dashboard__plugins-install-view">
+					{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
+					<SetupHeader
+						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
+						imageWidth={ 160 }
+						title={ translate( 'Building your store' ) }
+						subtitle={ translate( "Give us a minute and we'll move right along." ) }
+					>
+						<ProgressBar value={ progress } total={ totalSeconds } isPulsing />
+					</SetupHeader>
+				</div>
 			</div>
 		);
 	};
