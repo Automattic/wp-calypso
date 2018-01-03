@@ -66,15 +66,16 @@ class CredentialsSetupFlow extends Component {
 						goToNextStep={ this.goToNextStep }
 					/>
 				) }
-				{ 'form' === this.state.currentStep && (
+				{ 'form' === this.state.currentStep && [
 					<SetupForm
+						key="credentials-flow-setup-form"
 						formIsSubmitting={ formIsSubmitting }
 						reset={ this.reset }
 						siteId={ siteId }
 						updateCredentials={ updateCredentials }
-					/>
-				) }
-				<SetupFooter />
+					/>,
+					<SetupFooter key="credentials-flow-setup-form-footer" />,
+				] }
 			</div>
 		);
 	}
