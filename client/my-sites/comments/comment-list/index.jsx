@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, find, get, isEqual, map, orderBy, slice } from 'lodash';
+import { filter, find, get, isEqual, isNull, map, orderBy, slice } from 'lodash';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
@@ -20,18 +20,22 @@ import CommentListHeader from 'my-sites/comments/comment-list/comment-list-heade
 import CommentNavigation from 'my-sites/comments/comment-navigation';
 import EmptyContent from 'components/empty-content';
 import Pagination from 'components/pagination';
+import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
 import QuerySiteCommentsList from 'components/data/query-site-comments-list';
-import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
 import QuerySiteSettings from 'components/data/query-site-settings';
-import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/selectors';
+import {
+	getSiteCommentCounts,
+	getSiteCommentsTree,
+	isCommentsTreeInitialized,
+} from 'state/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { COMMENTS_PER_PAGE, NEWEST_FIRST } from '../constants';
 
 export class CommentList extends Component {
 	static propTypes = {
 		changePage: PropTypes.func,
 		comments: PropTypes.array,
+		commentsCount: PropTypes.number,
 		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
 		siteId: PropTypes.number,
@@ -100,9 +104,7 @@ export class CommentList extends Component {
 		);
 	};
 
-	getTotalPages = () => Math.ceil( this.props.comments.length / COMMENTS_PER_PAGE );
-
-	hasCommentJustMovedBackToCurrentStatus = commentId => this.state.lastUndo === commentId;
+	getTotalPages = () => Math.ceil( this.props.commentsCount / COMMENTS_PER_PAGE );
 
 	isCommentSelected = commentId => !! find( this.state.selectedComments, { commentId } );
 
@@ -145,7 +147,7 @@ export class CommentList extends Component {
 
 	render() {
 		const {
-			isCommentsTreeSupported,
+			commentsCount,
 			isLoading,
 			isPostView,
 			page,
@@ -159,7 +161,6 @@ export class CommentList extends Component {
 		const validPage = this.isRequestedPageValid() ? page : 1;
 
 		const comments = this.getComments();
-		const commentsCount = comments.length;
 		const commentsPage = this.getCommentsPage( comments, validPage );
 
 		const showPlaceholder = ( ! siteId || isLoading ) && ! commentsCount;
@@ -170,16 +171,15 @@ export class CommentList extends Component {
 		return (
 			<div className="comment-list">
 				<QuerySiteSettings siteId={ siteId } />
-
-				{ ! isCommentsTreeSupported && (
+				<QuerySiteCommentCounts siteId={ siteId } postId={ postId } />
+				{ ! isNull( commentsCount ) && (
 					<QuerySiteCommentsList
-						number={ 100 }
+						number={ COMMENTS_PER_PAGE }
 						offset={ ( validPage - 1 ) * COMMENTS_PER_PAGE }
 						siteId={ siteId }
 						status={ status }
 					/>
 				) }
-				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
 
 				{ isPostView && <CommentListHeader postId={ postId } /> }
 
@@ -211,10 +211,6 @@ export class CommentList extends Component {
 							isBulkMode={ isBulkMode }
 							isPostView={ isPostView }
 							isSelected={ this.isCommentSelected( commentId ) }
-							refreshCommentData={
-								isCommentsTreeSupported &&
-								! this.hasCommentJustMovedBackToCurrentStatus( commentId )
-							}
 							toggleSelected={ this.toggleCommentSelected }
 							updateLastUndo={ this.updateLastUndo }
 						/>
@@ -257,12 +253,14 @@ const mapStateToProps = ( state, { postId, siteId, status } ) => {
 	const comments = isPostView
 		? map( filter( siteCommentsTree, { postId } ), 'commentId' )
 		: map( siteCommentsTree, 'commentId' );
+	const commentCounts = getSiteCommentCounts( state, siteId, postId );
+	const validatedStatus = 'unapproved' === status ? 'pending' : status;
+	const commentsCount = commentCounts ? commentCounts[ validatedStatus ] : null;
 
 	const isLoading = ! isCommentsTreeInitialized( state, siteId, status );
 	return {
 		comments,
-		isCommentsTreeSupported:
-			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.5' ),
+		commentsCount,
 		isLoading,
 		isPostView,
 		siteId,
