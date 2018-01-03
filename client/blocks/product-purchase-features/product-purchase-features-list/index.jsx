@@ -174,7 +174,7 @@ class ProductPurchaseFeaturesList extends Component {
 				onClick={ this.props.recordBusinessOnboardingClick }
 				link="https://calendly.com/jetpack/concierge"
 			/>,
-			<JetpackSearch selectedSite={ selectedSite } key="jetpackBackupSecurity" />,
+			<JetpackSearch selectedSite={ selectedSite } key="jetpackSearch" />,
 			<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />,
 			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
 			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
