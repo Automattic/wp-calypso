@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
@@ -28,6 +27,7 @@ import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/gen
 import { getOrderShippingTotal } from 'woocommerce/lib/order-values/totals';
 import { getOrderShippingMethod } from 'woocommerce/lib/order-values';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
+import Notice from 'components/notice';
 
 const ratesSummary = ( selectedRates, availableRates, total, packagesSaved, translate ) => {
 	if ( ! packagesSaved ) {
@@ -108,8 +108,7 @@ const showCheckoutShippingInfo = ( props ) => {
 
 		return (
 			<div className="rates-step__shipping-info">
-				<Gridicon icon="shipping" />
-				<span>{ shippingInfo }</span>
+				<Notice showDismiss={ false }>{ shippingInfo }</Notice>
 			</div>
 		);
 	}
