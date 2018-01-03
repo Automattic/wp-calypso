@@ -47,6 +47,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		privacy: false,
 		termMaximumInYears: 10,
 		transferEligibleDate: '',
+		transferRestrictionStatus: '',
 		unlocked: false,
 	};
 
@@ -74,8 +75,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 		page( paths.domainMapping( this.props.selectedSite.slug, this.props.domain ) );
 	};
 
-	registrationPeriodIsOk = () =>
-		this.state.loading || ( ! this.state.inInitialRegistrationPeriod && this.state.expiryDateOk );
+	transferIsRestricted = () =>
+		! this.state.loading && 'not_restricted' !== this.state.transferRestrictionStatus;
 
 	refreshStatus = ( proceedToNextStep = true ) => {
 		this.setState( { loading: true } );
@@ -97,14 +98,13 @@ class TransferDomainPrecheck extends React.PureComponent {
 			this.setState( {
 				creationDate: result.creation_date,
 				email: result.admin_email,
-				expiryDateOk: result.new_expiry_date_ok,
-				inInitialRegistrationPeriod: result.in_initial_registration_period,
 				loading: false,
 				losingRegistrar: result.registrar,
 				losingRegistrarIanaId: result.registrar_iana_id,
 				privacy: result.privacy,
 				termMaximumInYears: result.term_maximum_in_years,
 				transferEligibleDate: result.transfer_eligible_date,
+				transferRestrictionStatus: result.transfer_restriction_status,
 				unlocked: result.unlocked,
 			} );
 		} );
@@ -166,15 +166,14 @@ class TransferDomainPrecheck extends React.PureComponent {
 		);
 	}
 
-	getRegistrationPeriodMessage() {
+	getTransferRestrictionMessage() {
 		const { translate, domain } = this.props;
 		const {
 			creationDate,
-			expiryDateOk,
-			inInitialRegistrationPeriod,
 			loading,
 			termMaximumInYears,
 			transferEligibleDate,
+			transferRestrictionStatus,
 		} = this.state;
 
 		const dateFormat = translate( 'MMM D, YYYY', {
@@ -208,7 +207,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 		let reason = null;
 
-		if ( false === expiryDateOk ) {
+		if ( 'max_term' === transferRestrictionStatus ) {
 			reason = translate(
 				'Transferring this domain would extend the registration period beyond the maximum allowed term ' +
 					'of %(termMaximumInYears)d years. It can be transferred starting %(transferEligibleDate)s.',
@@ -219,7 +218,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 					},
 				}
 			);
-		} else if ( true === inInitialRegistrationPeriod ) {
+		} else if ( 'initial_registration_period' === transferRestrictionStatus ) {
 			reason = translate(
 				'Newly-registered domains are not eligible for transfer. {{strong}}%(domain)s{{/strong}} was registered ' +
 					'%(daysAgoRegistered)s days ago, and can be transferred starting %(transferEligibleDate)s.',
@@ -237,7 +236,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		}
 
 		if ( loading ) {
-			heading = 'Domain registration period check.';
+			heading = 'Domain transfer restriction check.';
 			message = null;
 		}
 
@@ -453,8 +452,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 		return (
 			<div className="transfer-domain-step__precheck">
-				{ ! this.registrationPeriodIsOk() && this.getRegistrationPeriodMessage() }
-				{ this.registrationPeriodIsOk() && (
+				{ this.transferIsRestricted() && this.getTransferRestrictionMessage() }
+				{ ! this.transferIsRestricted() && (
 					<div>
 						{ this.getHeader() }
 						{ this.getStatusMessage() }
