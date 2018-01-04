@@ -103,12 +103,12 @@ const SiteSettingsTraffic = ( {
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
 			/>
+			{ site && <SiteVerification /> }
 			<Search
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
 			/>
-			{ site && <SiteVerification /> }
 		</Main>
 	);
 };

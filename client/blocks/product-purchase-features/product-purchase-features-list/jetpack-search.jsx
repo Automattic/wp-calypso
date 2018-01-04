@@ -20,9 +20,9 @@ export default localize( ( { selectedSite, translate } ) => {
 				title={ translate( 'Search (Beta)' ) }
 				description={ translate(
 					'Replace the default WordPress search with better results ' +
-						'that will help your users find what they are looking for.'
+						'and filtering that will help your users find what they are looking for.'
 				) }
-				buttonText={ translate( 'Configure Search' ) }
+				buttonText={ translate( 'Enable Search in Traffic Settings' ) }
 				href={ '/settings/traffic/' + selectedSite.slug }
 			/>
 		</div>

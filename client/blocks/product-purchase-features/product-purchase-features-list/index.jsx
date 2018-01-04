@@ -89,7 +89,7 @@ class ProductPurchaseFeaturesList extends Component {
 			isWordadsInstantActivationEligible( selectedSite ) ? (
 				<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />
 			) : null,
-			<JetpackSearch selectedSite={ selectedSite } key="jetpackBackupSecurity" />,
+			<JetpackSearch selectedSite={ selectedSite } key="jetpackSearch" />,
 			<GoogleVouchers selectedSite={ selectedSite } key="googleVouchersFeature" />,
 			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
 			<AdvertisingRemoved isBusinessPlan key="advertisingRemovedFeature" />,
