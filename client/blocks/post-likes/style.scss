@@ -23,7 +23,7 @@ $post-likes-per-popover-row: 12;
 		.post-likes__item {
 			display: block;
 			position: relative;
-			padding: 4px 16px 4px 8px;
+			padding: 4px 8px;
 			border-bottom: 1px solid $gray-light;
 
 			&:last-child {
@@ -42,14 +42,6 @@ $post-likes-per-popover-row: 12;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-		}
-
-		.post-likes__external-link-icon {
-			vertical-align: middle;
-			position: relative;
-			top: -1px;
-			color: lighten( $gray, 10% );
-			padding-left: 4px;
 		}
 
 		.post-likes__count:not( .is-loading ) {
