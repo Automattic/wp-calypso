@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { COMMENTS_QUERY_UPDATE } from 'state/action-types';
+import { COMMENTS_PROGRESS_UPDATE, COMMENTS_QUERY_UPDATE } from 'state/action-types';
 
 /**
  * Creates an action that updates the comments pagination for the given site and filters.
@@ -22,4 +22,10 @@ export const updateCommentsQuery = ( siteId, comments, query ) => ( {
 	siteId,
 	comments,
 	query,
+} );
+
+export const updateCommentsProgress = ( siteId, progressId ) => ( {
+	type: COMMENTS_PROGRESS_UPDATE,
+	siteId,
+	progressId,
 } );

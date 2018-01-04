@@ -30,7 +30,7 @@ import {
 	requestComment as requestCommentAction,
 	requestCommentsList,
 } from 'state/comments/actions';
-import { updateCommentsQuery } from 'state/ui/comments/actions';
+import { updateCommentsProgress, updateCommentsQuery } from 'state/ui/comments/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
@@ -58,13 +58,14 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	);
 };
 
-export const handleChangeCommentStatusSuccess = (
-	{ dispatch },
-	{ commentId, refreshCommentListQuery }
-) => {
+export const handleChangeCommentStatusSuccess = ( { dispatch }, action ) => {
+	const { commentId, refreshCommentListQuery, siteId } = action;
 	dispatch( removeNotice( `comment-notice-error-${ commentId }` ) );
 	if ( !! refreshCommentListQuery ) {
 		dispatch( requestCommentsList( refreshCommentListQuery ) );
+		if ( !! refreshCommentListQuery.progressId ) {
+			dispatch( updateCommentsProgress( siteId, refreshCommentListQuery.progressId ) );
+		}
 	}
 };
 

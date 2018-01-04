@@ -23,6 +23,7 @@ import { requestCommentsList } from 'state/comments/actions';
 import { getPostOldestCommentDate, getPostNewestCommentDate } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
 import { decodeEntities } from 'lib/formatting';
+import { updateCommentsProgress } from 'state/ui/comments/actions';
 
 export const commentsFromApi = comments =>
 	map( comments, comment => ( {
@@ -214,7 +215,10 @@ export const deleteComment = ( { dispatch, getState }, action ) => {
 	);
 };
 
-export const handleDeleteSuccess = ( { dispatch }, { options, refreshCommentListQuery } ) => {
+export const handleDeleteSuccess = (
+	{ dispatch },
+	{ options, refreshCommentListQuery, siteId }
+) => {
 	const showSuccessNotice = get( options, 'showSuccessNotice', false );
 	if ( showSuccessNotice ) {
 		dispatch(
@@ -228,6 +232,9 @@ export const handleDeleteSuccess = ( { dispatch }, { options, refreshCommentList
 
 	if ( !! refreshCommentListQuery ) {
 		dispatch( requestCommentsList( refreshCommentListQuery ) );
+		if ( !! refreshCommentListQuery.progressId ) {
+			dispatch( updateCommentsProgress( siteId, refreshCommentListQuery.progressId ) );
+		}
 	}
 };
 

@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
 import { get, includes, isEqual, isUndefined, noop } from 'lodash';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -61,7 +62,10 @@ export class CommentActions extends Component {
 			isUndefined( window ) ||
 			window.confirm( this.props.translate( 'Delete this comment permanently?' ) )
 		) {
-			this.props.deletePermanently();
+			this.props.deletePermanently( {
+				progressId: uuid(),
+				progressTotal: 1,
+			} );
 		}
 	};
 
@@ -79,6 +83,8 @@ export class CommentActions extends Component {
 		changeStatus( status, {
 			alsoUnlike,
 			previousStatus: commentStatus,
+			progressId: uuid(),
+			progressTotal: 1,
 		} );
 
 		if ( alsoUnlike ) {
@@ -127,6 +133,8 @@ export class CommentActions extends Component {
 			alsoUnlike,
 			isUndo: true,
 			previousStatus: status,
+			progressId: uuid(),
+			progressTotal: 1,
 		} );
 
 		if ( wasLiked ) {
@@ -281,29 +289,43 @@ const mapStateToProps = ( state, { siteId, commentId } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, commentsListQuery } ) => ( {
-	changeStatus: ( status, analytics = { alsoUnlike: false, isUndo: false } ) =>
+	changeStatus: ( status, options = { alsoUnlike: false, isUndo: false } ) =>
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
 					recordTracksEvent( 'calypso_comment_management_change_status', {
-						also_unlike: analytics.alsoUnlike,
-						is_undo: analytics.isUndo,
-						previous_status: analytics.previousStatus,
+						also_unlike: options.alsoUnlike,
+						is_undo: options.isUndo,
+						previous_status: options.previousStatus,
 						status,
 					} ),
 					bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
 				),
-				changeCommentStatus( siteId, postId, commentId, status, commentsListQuery )
+				changeCommentStatus( siteId, postId, commentId, status, {
+					...commentsListQuery,
+					progressId: options.progressId,
+					progressTotal: options.progressTotal,
+				} )
 			)
 		),
-	deletePermanently: () =>
+	deletePermanently: options =>
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
 					recordTracksEvent( 'calypso_comment_management_delete' ),
 					bumpStat( 'calypso_comment_management', 'comment_deleted' )
 				),
-				deleteComment( siteId, postId, commentId, { showSuccessNotice: true }, commentsListQuery )
+				deleteComment(
+					siteId,
+					postId,
+					commentId,
+					{ showSuccessNotice: true },
+					{
+						...commentsListQuery,
+						progressId: options.progressId,
+						progressTotal: options.progressTotal,
+					}
+				)
 			)
 		),
 	like: ( analytics = { alsoApprove: false } ) =>
