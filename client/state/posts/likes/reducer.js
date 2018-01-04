@@ -66,9 +66,7 @@ export const items = createReducer(
 				[ siteId ]: {
 					...state[ siteId ],
 					[ postId ]: {
-						likes: likes.map( like =>
-							pick( like, 'ID', 'avatar_URL', 'login', 'name', 'site_ID', 'site_visible' )
-						),
+						likes: likes.map( like => pick( like, 'ID', 'avatar_URL', 'URL', 'login', 'name' ) ),
 						iLike,
 						found,
 					},

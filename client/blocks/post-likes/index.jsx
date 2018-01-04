@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
+import Gridicon from 'gridicons';
 import QueryPostLikes from 'components/data/query-post-likes';
 import { isRequestingPostLikes, getPostLikes, countPostLikes } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -22,6 +23,10 @@ class PostLikes extends React.PureComponent {
 		showDisplayNames: false,
 	};
 
+	getLikeUrl = like => {
+		return like.URL ? like.URL : `https://gravatar.com/${ like.login }`;
+	};
+
 	trackLikeClick = () => {
 		this.props.recordGoogleEvent( 'Post Likes', 'Clicked on Gravatar' );
 	};
@@ -29,19 +34,23 @@ class PostLikes extends React.PureComponent {
 	renderLike = like => {
 		const { showDisplayNames } = this.props;
 
-		const likeUrl = like.site_ID && like.site_visible ? '/read/blogs/' + like.site_ID : null;
-		const LikeWrapper = likeUrl ? 'a' : 'span';
-
 		return (
-			<LikeWrapper
+			<a
 				key={ like.ID }
-				href={ likeUrl }
+				href={ this.getLikeUrl( like ) }
+				rel="noopener noreferrer"
+				target="_blank"
 				className="post-likes__item"
-				onClick={ likeUrl ? this.trackLikeClick : null }
+				onClick={ this.trackLikeClick }
 			>
 				<Gravatar user={ like } alt={ like.login } title={ like.login } size={ 24 } />
-				{ showDisplayNames && <span className="post-likes__display-name">{ like.name }</span> }
-			</LikeWrapper>
+				{ showDisplayNames && (
+					<span className="post-likes__display-name">
+						{ like.name }
+						<Gridicon className="post-likes__external-link-icon" icon="external" size={ 12 } />
+					</span>
+				) }
+			</a>
 		);
 	};
 

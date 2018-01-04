@@ -320,10 +320,9 @@ describe( 'reducer', () => {
 				{
 					ID: 1,
 					avatar_URL: 'https://gravatar.com/whatever',
+					URL: 'https://example.com/',
 					login: 'chicken',
 					name: 'A Former Egg',
-					site_ID: 2,
-					site_visible: true,
 					some_other_property: 'aaaaa',
 				},
 			];
@@ -346,10 +345,9 @@ describe( 'reducer', () => {
 							{
 								ID: 1,
 								avatar_URL: 'https://gravatar.com/whatever',
+								URL: 'https://example.com/',
 								login: 'chicken',
 								name: 'A Former Egg',
-								site_ID: 2,
-								site_visible: true,
 							},
 						],
 						found: 2,
