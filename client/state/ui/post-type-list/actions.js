@@ -26,10 +26,9 @@ export function toggleLikesPopover( postGlobalId ) {
 	};
 }
 
-export function hideSharePanel( postGlobalId ) {
+export function hideActiveSharePanel() {
 	return {
 		type: POST_TYPE_LIST_SHARE_PANEL_HIDE,
-		postGlobalId,
 	};
 }
 

@@ -22,7 +22,7 @@ import {
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'activeSharePanels',
+			'postIdWithActiveSharePanel',
 			'postIdWithActiveLikesPopover',
 			'isMultiSelectEnabled',
 			'selectedPosts',
@@ -33,14 +33,14 @@ describe( 'reducer', () => {
 		test( 'should remove postGlobalId from the state when hiding Share panel', () => {
 			const postGlobalId = 4;
 			const state = postTypeList(
-				{ activeSharePanels: [ postGlobalId ] },
+				{ postIdWithActiveSharePanel: postGlobalId },
 				{
 					type: POST_TYPE_LIST_SHARE_PANEL_HIDE,
 					postGlobalId: postGlobalId,
 				}
 			);
 
-			expect( state.activeSharePanels ).to.be.empty;
+			expect( state.postIdWithActiveSharePanel ).to.be.null;
 		} );
 
 		test( 'should not fail when hiding an already hidden Share panel', () => {
@@ -49,47 +49,47 @@ describe( 'reducer', () => {
 				postGlobalId: 4,
 			} );
 
-			expect( state.activeSharePanels ).to.be.empty;
+			expect( state.postIdWithActiveSharePanel ).to.be.null;
 		} );
 
 		test( 'should hide an already-visible Share panel when toggling', () => {
 			const postGlobalId = 4;
 			const state = postTypeList(
-				{ activeSharePanels: [ postGlobalId ] },
+				{ postIdWithActiveSharePanel: postGlobalId },
 				{
 					type: POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
 					postGlobalId: postGlobalId,
 				}
 			);
 
-			expect( state.activeSharePanels ).to.be.empty;
+			expect( state.postIdWithActiveSharePanel ).to.be.null;
 		} );
 
 		test( 'should show a hidden Share panel when toggling', () => {
 			const postGlobalId = 4;
 			const state = postTypeList(
-				{ activeSharePanels: [] },
+				{ postIdWithActiveLikesPopover: null },
 				{
 					type: POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
 					postGlobalId: postGlobalId,
 				}
 			);
 
-			expect( state.activeSharePanels ).to.eql( [ postGlobalId ] );
+			expect( state.postIdWithActiveSharePanel ).to.eql( postGlobalId );
 		} );
 
 		test( 'should only allow one active Share panel at a time', () => {
 			const existingPostGlobalId = 5;
 			const postGlobalId = 4;
 			const state = postTypeList(
-				{ activeSharePanels: [ existingPostGlobalId ] },
+				{ postIdWithActiveSharePanel: existingPostGlobalId },
 				{
 					type: POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
 					postGlobalId: postGlobalId,
 				}
 			);
 
-			expect( state.activeSharePanels ).to.eql( [ postGlobalId ] );
+			expect( state.postIdWithActiveSharePanel ).to.eql( postGlobalId );
 		} );
 
 		test( 'should remove postGlobalId from the state when hiding likes popover', () => {
