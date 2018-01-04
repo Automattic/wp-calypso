@@ -70,7 +70,7 @@ class Search extends Component {
 
 		return (
 			<FormSettingExplanation>
-				{ translate( 'Also add the Jetpack Search widget to your sidebar to add search filters.' ) }
+				{ translate( 'Add the Jetpack Search widget to your sidebar to add search filters.' ) }
 			</FormSettingExplanation>
 		);
 	}
