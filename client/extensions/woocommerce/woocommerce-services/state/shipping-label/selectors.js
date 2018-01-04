@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
-import { isValidPhone } from 'woocommerce/woocommerce-services/lib/utils/phone-format';
+import phoneValidation from 'lib/phone-validation';
 import { areSettingsLoaded, areSettingsErrored } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import {
 	isLoaded as arePackagesLoaded,
@@ -122,7 +122,7 @@ const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized,
 		};
 	}
 	const { phone, postcode, state, country } = ( isNormalized && selectNormalized ) ? normalized : values;
-	const requiredFields = [ 'name', 'phone', 'address', 'city', 'postcode', 'country' ];
+	const requiredFields = [ 'name', 'address', 'city', 'postcode', 'country' ];
 	const errors = {};
 	requiredFields.forEach( ( field ) => {
 		if ( ! values[ field ] ) {
@@ -131,8 +131,9 @@ const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized,
 	} );
 
 	if ( countriesData[ country ] ) {
-		if ( ! isValidPhone( phone, country ) ) {
-			errors.phone = translate( 'Invalid phone number for %(country)s', { args: { country: countriesData[ country ].name } } );
+		const phoneValidationResult = phone && phoneValidation( phone );
+		if ( phoneValidationResult.error ) {
+			errors.phone = phoneValidationResult.message;
 		}
 
 		switch ( country ) {

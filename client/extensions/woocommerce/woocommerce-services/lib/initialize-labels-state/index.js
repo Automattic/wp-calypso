@@ -4,6 +4,15 @@
 import { isEmpty, mapValues } from 'lodash';
 
 /**
+ * Checks the address object for the required fields
+ * @param {Object} address the address object
+ * @returns {Boolean} true if all required fields are not empty
+ */
+const addressFilled = ( address ) => Boolean(
+	address && address.name && address.address && address.city && address.postcode && address.country
+);
+
+/**
  * Parses the data passed from the backed into a Redux state to be used in the label purchase flow
  * @param {Object} data data to initialize the labels state from
  * @returns {Object} labels Redux state
@@ -25,9 +34,11 @@ export default ( data ) => {
 		canChangeCountries,
 	} = data;
 
-	// The phone field is never prefilled, so if it's present it means the address is fully valid
-	const hasOriginAddress = Boolean( formData.origin.phone );
-	const hasDestinationAddress = Boolean( formData.destination.phone );
+	//old WCS required a phone number and detected normalization status based on the existence of the phone field
+	//newer versions send the normalized flag
+	const originNormalized = Boolean( formData.origin_normalized || formData.origin.phone );
+	const hasOriginAddress = addressFilled( formData.origin );
+	const hasDestinationAddress = addressFilled( formData.destination );
 
 	return {
 		loaded: true,
@@ -43,8 +54,8 @@ export default ( data ) => {
 			orderId: formData.order_id,
 			origin: {
 				values: formData.origin,
-				isNormalized: hasOriginAddress,
-				normalized: hasOriginAddress ? formData.origin : null,
+				isNormalized: originNormalized,
+				normalized: originNormalized ? formData.origin : null,
 				// If no origin address is stored, mark all fields as "ignore validation"
 				// so the UI doesn't immediately show errors
 				ignoreValidation: hasOriginAddress ? null : mapValues( formData.origin, () => true ),
