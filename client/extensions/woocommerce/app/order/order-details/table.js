@@ -16,7 +16,7 @@ import Button from 'components/button';
 import formatCurrency from 'lib/format-currency';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
-import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
+import { getCurrencyFormatDecimal, getCurrencyFormatString } from 'woocommerce/lib/currency';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
 	getOrderDiscountTax,
@@ -144,6 +144,25 @@ class OrderDetailsTable extends Component {
 				newItem = { id, name: null, total: 0 };
 			}
 			this.props.onChange( { [ type ]: { [ index ]: newItem } } );
+		}
+	};
+
+	removeCoupon = item => () => {
+		const { coupon_lines, currency, discount_tax, discount_total } = this.props.order;
+		const index = findIndex( coupon_lines, { id: item.id } );
+		const getCurrencyDecimal = value => getCurrencyFormatDecimal( value, currency );
+		if ( index >= 0 ) {
+			const newItem = { id: item.id, code: null, discount: 0 };
+			const newDiscountTotal =
+				getCurrencyDecimal( discount_total ) - getCurrencyDecimal( item.discount );
+			const newDiscountTax =
+				getCurrencyDecimal( discount_tax ) - getCurrencyDecimal( item.discount_tax );
+			const orderChanges = {
+				coupon_lines: { [ index ]: newItem },
+				discount_total: getCurrencyFormatString( newDiscountTotal, currency ),
+				discount_tax: getCurrencyFormatString( newDiscountTax, currency ),
+			};
+			this.props.onChange( orderChanges );
 		}
 	};
 
