@@ -34,9 +34,16 @@ function loadCSS( sectionName ) { //eslint-disable-line no-unused-vars
 }
 
 function preload( sectionName ) {
+	var loadedModules = [];
 	switch ( sectionName ) { //eslint-disable-line no-empty
 		/*___LOADERS___*/
 	}
+
+	if ( loadedModules.length === 1 ) {
+		return loadedModules[ 0 ];
+	}
+
+	return Promise.all( loadedModules );
 }
 preloadHub.on( 'preload', preload );
 
@@ -58,10 +65,11 @@ function createPageDefinition( path, sectionDefinition ) {
 		}
 		context.store.dispatch( { type: 'SECTION_SET', isLoading: true } );
 		preload( sectionDefinition.name ).then( function( requiredModule ) {
+			var loadedModules = Array.isArray( requiredModule ) ? requiredModule : [ requiredModule ];
 			context.store.dispatch( { type: 'SECTION_SET', isLoading: false } );
 			controller.setSection( sectionDefinition )( context );
 			if ( ! _loadedSections[ sectionDefinition.module ] ) {
-				requiredModule( controller.clientRouter );
+				loadedModules.forEach( mod => mod( controller.clientRouter ) );
 				_loadedSections[ sectionDefinition.module ] = true;
 			}
 			context.store.dispatch( activateNextLayoutFocus() );

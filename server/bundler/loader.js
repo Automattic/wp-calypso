@@ -1,6 +1,8 @@
 /** @format */
 const config = require( 'config' ),
 	fs = require( 'fs' ),
+	groupBy = require( 'lodash/groupBy' ),
+	toPairs = require( 'lodash/toPairs' ),
 	path = require( 'path' ),
 	utils = require( './utils' );
 
@@ -15,7 +17,12 @@ function getSectionsModule( sections ) {
 	return fs
 		.readFileSync( path.join( __dirname, templateFile ), 'utf8' )
 		.replace( '/*___SECTIONS_DEFINITION___*/', JSON.stringify( sections ) + ' || ' )
-		.replace( '/*___LOADERS___*/', sections.map( loaderFactory ).join( '\n' ) );
+		.replace(
+			'/*___LOADERS___*/',
+			toPairs( groupBy( sections, 'name' ) )
+				.map( loaderFactory )
+				.join( '\n' )
+		);
 }
 
 function getSectionRequire( section ) {
@@ -24,18 +31,29 @@ function getSectionRequire( section ) {
 	`;
 }
 
-function getSectionPreLoaderTemplate( section ) {
-	const sectionNameString = JSON.stringify( section.name );
+function getSectionPreLoaderTemplate( sectionsByName ) {
+	const [ sectionName, sections ] = sectionsByName;
+	const sectionNameString = JSON.stringify( sectionName );
 	let cssLoader = '';
 
-	if ( section.css ) {
+	if ( sections.some( section => section.css ) ) {
 		cssLoader = `loadCSS( ${ sectionNameString } );`;
 	}
+
+	const getModuleLoader = ( importSectionName, importModuleName ) =>
+		`import( /* webpackChunkName: '${ importSectionName }' */ '${ importModuleName }' )`;
+
+	const loader =
+		sections.length === 1
+			? `return ${ getModuleLoader( sectionName, sections[ 0 ].module ) };`
+			: `return Promise.all( [ ${ sections
+					.map( sec => getModuleLoader( sectionName, sec.module ) )
+					.join( ',' ) } ] );`;
 
 	return `
 		case ${ sectionNameString }:
 			${ cssLoader }
-			return import( /* webpackChunkName: ${ sectionNameString } */ '${ section.module }' );
+			${ loader }
 	`;
 }
 
