@@ -36,6 +36,7 @@ import Shipping from './app/settings/shipping';
 import ShippingZone from './app/settings/shipping/shipping-zone';
 import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
+import { tracksStore } from './lib/analytics';
 import { makeLayout, render as clientRender } from 'controller';
 
 function initExtension() {
@@ -198,6 +199,8 @@ function addStorePage( storePage, storeNavigation ) {
 			}
 
 			analytics.pageView.record( analyticsPath, analyticsPageTitle );
+
+			tracksStore.setReduxStore( context.store );
 
 			context.primary = React.createElement( App, appProps, component );
 			next();

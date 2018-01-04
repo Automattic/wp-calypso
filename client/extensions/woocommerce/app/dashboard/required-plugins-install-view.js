@@ -16,7 +16,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { activatePlugin, installPlugin, fetchPlugins } from 'state/plugins/installed/actions';
-import analytics from 'lib/analytics';
 import Button from 'components/button';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
@@ -29,6 +28,7 @@ import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/set
 import { hasSitePendingAutomatedTransfer } from 'state/selectors';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
+import { recordTrack } from 'woocommerce/lib/analytics';
 
 // Time in seconds to complete various steps.
 const TIME_TO_TRANSFER_ACTIVE = 5;
@@ -370,7 +370,7 @@ class RequiredPluginsInstallView extends Component {
 	startSetup = () => {
 		const { hasPendingAT } = this.props;
 
-		analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
+		recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 			action: 'initial-setup',
 		} );
 

@@ -12,11 +12,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import BasicWidget from 'woocommerce/components/basic-widget';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import ShareWidget from 'woocommerce/components/share-widget';
 import WidgetGroup from 'woocommerce/components/widget-group';
+import { recordTrack } from 'woocommerce/lib/analytics';
 
 class ManageNoOrdersView extends Component {
 	static propTypes = {
@@ -43,7 +43,7 @@ class ManageNoOrdersView extends Component {
 	renderStatsWidget = () => {
 		const { site, translate } = this.props;
 		const trackClick = () => {
-			analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
+			recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 				action: 'view-stats',
 			} );
 			page.redirect( getLink( '/store/stats/orders/day/:site', site ) );
@@ -68,7 +68,7 @@ class ManageNoOrdersView extends Component {
 	renderViewAndTestWidget = () => {
 		const { site, translate } = this.props;
 		const trackClick = () => {
-			analytics.tracks.recordEvent( 'calypso_woocommerce_dashboard_action_click', {
+			recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 				action: 'view-and-test',
 			} );
 		};

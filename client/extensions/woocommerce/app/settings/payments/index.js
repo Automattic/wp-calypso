@@ -20,7 +20,6 @@ import Button from 'components/button';
 import { createPaymentSettingsActionList } from 'woocommerce/state/ui/payments/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -53,26 +52,11 @@ class SettingsPayments extends Component {
 	componentDidMount = () => {
 		const { site } = this.props;
 
-		if ( site && site.ID ) {
-			this.props.fetchSetupChoices( site.ID );
-		}
-
 		// If we are in the middle of the Stripe Connect OAuth flow
 		// go ahead and option the Stripe dialog right away so
 		// we can complete the flow
 		if ( hasOAuthParamsInLocation() || hasOAuthCompleteInLocation() ) {
 			this.props.openPaymentMethodForEdit( site.ID, 'stripe' );
-		}
-	};
-
-	componentWillReceiveProps = newProps => {
-		const { site } = this.props;
-
-		const newSiteId = newProps.site ? newProps.site.ID : null;
-		const oldSiteId = site ? site.ID : null;
-
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchSetupChoices( newSiteId );
 		}
 	};
 
@@ -178,7 +162,6 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			createPaymentSettingsActionList,
-			fetchSetupChoices,
 			openPaymentMethodForEdit,
 		},
 		dispatch

@@ -36,7 +36,16 @@ describe( 'recordTrack', () => {
 			c: '3',
 		};
 
-		recordTrack( tracksSpy, noop )( 'calypso_woocommerce_tracks_utils_test', eventProps );
+		const tracksStore = {
+			isTestSite: function() {
+				return false;
+			},
+		};
+
+		recordTrack( tracksSpy, noop, tracksStore )(
+			'calypso_woocommerce_tracks_utils_test',
+			eventProps
+		);
 
 		expect( tracksSpy.recordEvent ).to.have.been.calledWith(
 			'calypso_woocommerce_tracks_utils_test',
@@ -49,7 +58,13 @@ describe( 'recordTrack', () => {
 
 		const eventProps = { a: 1 };
 
-		recordTrack( { recordEvent: noop }, debugSpy )(
+		const tracksStore = {
+			isTestSite: function() {
+				return false;
+			},
+		};
+
+		recordTrack( { recordEvent: noop }, debugSpy, tracksStore )(
 			'calypso_woocommerce_tracks_utils_test',
 			eventProps
 		);
@@ -71,6 +86,28 @@ describe( 'recordTrack', () => {
 		expect( tracksSpy.recordEvent ).to.not.have.been.called;
 		expect( debugSpy ).to.have.been.calledWith(
 			"invalid store track name: 'calypso_somethingelse_invalid_name', must start with 'calypso_woocommerce_'"
+		);
+	} );
+
+	it( 'should ignore and debug log tracks for test sites', () => {
+		const tracksSpy = {
+			recordEvent: spy(),
+		};
+		const debugSpy = spy();
+
+		const tracksStore = {
+			isTestSite: function() {
+				return true;
+			},
+		};
+
+		recordTrack( tracksSpy, debugSpy, tracksStore )( 'calypso_woocommerce_tracks_utils_test', {
+			a: 1,
+		} );
+
+		expect( tracksSpy.recordEvent ).to.not.have.been.called;
+		expect( debugSpy ).to.have.been.calledWith(
+			'track request discarded. this site is flagged with `dotcom-store-test-site`'
 		);
 	} );
 } );

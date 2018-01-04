@@ -6,7 +6,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -15,7 +14,6 @@ import page from 'page';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,
@@ -26,25 +24,6 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 class TaxSettingsSaveButton extends Component {
 	static propTypes = {
 		onSave: PropTypes.func.isRequired,
-	};
-
-	componentDidMount = () => {
-		const { site } = this.props;
-
-		if ( site && site.ID ) {
-			this.props.fetchSetupChoices( site.ID );
-		}
-	};
-
-	componentWillReceiveProps = newProps => {
-		const { site } = this.props;
-
-		const newSiteId = newProps.site ? newProps.site.ID : null;
-		const oldSiteId = site ? site.ID : null;
-
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchSetupChoices( newSiteId );
-		}
 	};
 
 	onSave = e => {
@@ -88,13 +67,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
-	return bindActionCreators(
-		{
-			fetchSetupChoices,
-		},
-		dispatch
-	);
-}
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( TaxSettingsSaveButton ) );
+export default connect( mapStateToProps )( localize( TaxSettingsSaveButton ) );

@@ -11,7 +11,6 @@ import { find, flatten, isEmpty, isNil, map, omit, some, xor } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getShippingZonesEdits } from 'woocommerce/state/ui/shipping/zones/selectors';
 import {
 	createShippingZone,
 	updateShippingZone,
@@ -38,22 +37,23 @@ import {
 	getShippingZoneLocationsWithEdits,
 	areCurrentlyEditingShippingZoneLocationsValid,
 } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
-import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
+import {
+	getShippingZonesEdits,
+	getCurrentlyEditingShippingZone,
+	generateZoneName,
+	generateCurrentlyEditingZoneName,
+} from 'woocommerce/state/ui/shipping/zones/selectors';
 import { getCurrentlyEditingShippingZoneMethods } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/selectors';
 import { getShippingZoneMethod } from 'woocommerce/state/sites/shipping-zone-methods/selectors';
 import { getZoneLocationsPriority } from 'woocommerce/state/sites/shipping-zone-locations/helpers';
 import { getAPIShippingZones } from 'woocommerce/state/sites/shipping-zones/selectors';
-import analytics from 'lib/analytics';
 import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { getCountryName } from 'woocommerce/state/sites/locations/selectors';
 import { isDefaultShippingZoneCreated } from 'woocommerce/state/sites/setup-choices/selectors';
 import { setCreatedDefaultShippingZone } from 'woocommerce/state/sites/setup-choices/actions';
-import {
-	generateZoneName,
-	generateCurrentlyEditingZoneName,
-} from 'woocommerce/state/ui/shipping/zones/selectors';
+import { recordTrack } from 'woocommerce/lib/analytics';
 
 const createShippingZoneSuccess = actionList => (
 	dispatch,
@@ -199,7 +199,7 @@ const getZoneMethodDeleteSteps = ( siteId, zoneId, method, state ) => {
 		{
 			description: translate( 'Deleting Shipping Method' ),
 			onStep: ( dispatch, actionList ) => {
-				analytics.tracks.recordEvent( 'calypso_woocommerce_shipping_method_deleted', {
+				recordTrack( 'calypso_woocommerce_shipping_method_deleted', {
 					shipping_method: methodType,
 				} );
 				dispatch(
@@ -238,7 +238,7 @@ const getZoneMethodUpdateSteps = ( siteId, zoneId, method, state ) => {
 						false !== methodProps.enabled
 							? 'calypso_woocommerce_shipping_method_enabled'
 							: 'calypso_woocommerce_shipping_method_disabled';
-					analytics.tracks.recordEvent( event, { shipping_method: methodType } );
+					recordTrack( event, { shipping_method: methodType } );
 				}
 
 				dispatch(
@@ -279,7 +279,7 @@ const getZoneMethodCreateSteps = ( siteId, zoneId, method, defaultOrder, state )
 		{
 			description: translate( 'Creating Shipping Method' ),
 			onStep: ( dispatch, actionList ) => {
-				analytics.tracks.recordEvent( 'calypso_woocommerce_shipping_method_created', {
+				recordTrack( 'calypso_woocommerce_shipping_method_created', {
 					shipping_method: methodType,
 				} );
 				dispatch(
@@ -307,7 +307,7 @@ const getZoneMethodCreateSteps = ( siteId, zoneId, method, defaultOrder, state )
 		steps.push.apply( steps, {
 			description: translate( 'Updating Shipping Method' ), // Better not tell the user we're just tracking at this point
 			onStep: ( dispatch, actionList ) => {
-				analytics.tracks.recordEvent( 'calypso_woocommerce_shipping_method_enabled', {
+				recordTrack( 'calypso_woocommerce_shipping_method_enabled', {
 					shipping_method: methodType,
 				} );
 				dispatch( actionListStepSuccess( actionList ) );

@@ -5,10 +5,11 @@
  */
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import page from 'page';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -20,8 +21,9 @@ import {
 } from 'state/selectors';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import route from 'lib/route';
 
 class App extends Component {
@@ -35,9 +37,26 @@ class App extends Component {
 		children: PropTypes.element.isRequired,
 	};
 
+	componentDidMount = () => {
+		const { siteId } = this.props;
+
+		if ( siteId ) {
+			this.props.fetchSetupChoices( siteId );
+		}
+	};
+
 	componentWillReceiveProps( newProps ) {
 		if ( this.props.children !== newProps.children ) {
 			window.scrollTo( 0, 0 );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { siteId } = this.props;
+		const oldSiteId = prevProps.siteId ? prevProps.siteId : null;
+
+		if ( siteId && oldSiteId !== siteId ) {
+			this.props.fetchSetupChoices( siteId );
 		}
 	}
 
@@ -112,4 +131,13 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps )( localize( App ) );
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			fetchSetupChoices,
+		},
+		dispatch
+	);
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( App ) );

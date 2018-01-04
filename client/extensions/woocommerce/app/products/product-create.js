@@ -29,7 +29,6 @@ import {
 	clearProductCategoryEdits,
 	editProductCategory,
 } from 'woocommerce/state/ui/product-categories/actions';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import {
 	getCurrentlyEditingId,
@@ -74,7 +73,6 @@ class ProductCreate extends React.Component {
 				this.props.editProduct( site.ID, null, {} );
 			}
 			this.props.fetchProductCategories( site.ID );
-			this.props.fetchSetupChoices( site.ID );
 		}
 	}
 
@@ -85,7 +83,6 @@ class ProductCreate extends React.Component {
 		if ( oldSiteId !== newSiteId ) {
 			this.props.editProduct( newSiteId, null, {} );
 			this.props.fetchProductCategories( newSiteId );
-			this.props.fetchSetupChoices( newSiteId );
 		}
 	}
 
@@ -233,7 +230,6 @@ function mapDispatchToProps( dispatch ) {
 			editProductAttribute,
 			editProductVariation,
 			fetchProductCategories,
-			fetchSetupChoices,
 			clearProductEdits,
 			clearProductCategoryEdits,
 			clearProductVariationEdits,
