@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { find, findIndex, get, noop } from 'lodash';
+import { find, findIndex, get, identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,6 +37,7 @@ import ScreenReaderText from 'components/screen-reader-text';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+import Token from 'components/token-field/token';
 
 class OrderDetailsTable extends Component {
 	static propTypes = {
@@ -260,15 +261,44 @@ class OrderDetailsTable extends Component {
 	};
 
 	renderCoupons = () => {
-		const { order, site, translate } = this.props;
+		const { isEditing, order, site, translate } = this.props;
 		const showTax = this.shouldShowTax();
 		const coupons = order.coupon_lines || [];
 		const hasCoupons = parseFloat( order.discount_total ) > 0 || order.coupon_lines.length > 0;
-		if ( ! hasCoupons ) {
+		if ( ! isEditing && ! hasCoupons ) {
 			return null;
 		}
 
-		const couponMarkup = coupons.map( ( item, i ) => {
+		let couponMarkup;
+		if ( isEditing ) {
+			couponMarkup = coupons.map( item => {
+				if ( ! item.code ) {
+					return null;
+				}
+				return (
+					<Token
+						key={ item.id }
+						value={ item.code }
+						displayTransform={ identity }
+						onClickRemove={ this.removeCoupon( item ) }
+					/>
+				);
+			} );
+
+			return (
+				<TableRow className="order-details__coupon-list">
+					<TableItem className="order-details__coupon-list-label" colSpan={ showTax ? 2 : 1 }>
+						<h3 className="order-details__coupon-list-title">{ translate( 'Coupons' ) }</h3>
+						<div className="order-details__coupon-list-tokens">{ couponMarkup }</div>
+					</TableItem>
+					<TableItem className="order-details__totals-value">
+						{ formatCurrency( parseFloat( order.discount_total ) * -1, order.currency ) }
+					</TableItem>
+				</TableRow>
+			);
+		}
+
+		couponMarkup = coupons.map( ( item, i ) => {
 			if ( ! item.code ) {
 				return null;
 			}
