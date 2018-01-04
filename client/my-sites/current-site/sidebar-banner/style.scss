@@ -1,8 +1,8 @@
 .sidebar-banner {
 	font-size: 12px;
-	transition: all 150ms ease-out;
 
 	:hover {
+		transition: all 150ms ease-out;
 		background-color: lighten( $alert-green, 5% );
 	}
 
@@ -30,7 +30,6 @@
 		}
 
 		.sidebar-banner__cta {
-			transition: all 200ms ease-out;
 			padding: 6px 8px 2px 5px;
 			text-transform: uppercase;
 		}
