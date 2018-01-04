@@ -47,6 +47,18 @@ const reduxStoreReady = new Promise( resolve => {
 } );
 export const setReduxStore = _setReduxStore;
 
+let user, token;
+
+window.addEventListener( 'beforeunload', () => {
+	if ( ! isEnabled() ) {
+		return;
+	}
+
+	if ( user && token ) {
+		store.set( STORAGE_KEY, { user, token } );
+	}
+} );
+
 // Get the value of the `?support_user=` query param for prefilling
 const getPrefillUsername = () => {
 	const queryString = get( window, 'location.search', null );
@@ -99,6 +111,7 @@ export const rebootNormally = () => {
 	debug( 'Rebooting Calypso normally' );
 
 	store.remove( STORAGE_KEY );
+	user = token = null;
 	window.location.search = '';
 };
 
@@ -132,19 +145,18 @@ export const boot = () => {
 		return;
 	}
 
-	localforage.bypass();
-
-	const { user, token } = store.get( STORAGE_KEY );
+	( { user, token } = store.get( STORAGE_KEY ) );
 	debug( 'Booting Calypso with support user', user );
+	store.remove( STORAGE_KEY );
+
+	localforage.bypass();
 
 	// The following keys will not be bypassed as
 	// they are safe to share across user sessions.
 	const allowedKeys = [ STORAGE_KEY, 'debug' ];
 	localStorageBypass( allowedKeys );
 
-	const errorHandler = error => onTokenError( error );
-
-	wpcom.setSupportUserToken( user, token, errorHandler );
+	wpcom.setSupportUserToken( user, token, onTokenError );
 
 	// boot() is called before the redux store is ready, so we need to
 	// wait for it to become available
