@@ -15,7 +15,6 @@ jest.mock( 'lib/abtest', () => ( { abtest: require( 'sinon' ).stub() } ) );
 
 const DEFAULT_STEPS = [ steps.INITIAL_STEP, steps.FINAL_STEP ];
 const DEFAULT_STEPS_WITH_HAPPYCHAT = [ steps.INITIAL_STEP, steps.HAPPYCHAT_STEP, steps.FINAL_STEP ];
-const DEFAULT_STEPS_WITH_CONCIERGE = [ steps.INITIAL_STEP, steps.CONCIERGE_STEP, steps.FINAL_STEP ];
 const DEFAULT_STEPS_WITH_UPGRADE_AT_STEP = [
 	steps.INITIAL_STEP,
 	steps.UPGRADE_AT_STEP,
@@ -32,43 +31,76 @@ describe( 'stepsForProductAndSurvey', () => {
 		expect( stepsForProductAndSurvey() ).to.deep.equal( DEFAULT_STEPS );
 	} );
 
-	describe( 'question one answer is "too hard"', () => {
+	describe( 'question one answer is not "could not install" and precancellation chat turned "On"', () => {
 		const survey = { questionOneRadio: 'tooHard' };
+		const precancellationChatToggle = true;
 
 		test( 'should include happychat step if product is personal plan and happychat is available', () => {
 			const product = { product_slug: plans.PLAN_PERSONAL };
-			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal(
-				DEFAULT_STEPS_WITH_HAPPYCHAT
-			);
+			expect(
+				stepsForProductAndSurvey( survey, product, true, precancellationChatToggle )
+			).to.deep.equal( DEFAULT_STEPS_WITH_HAPPYCHAT );
 		} );
 
 		test( 'should not include happychat step if product is personal plan but happychat is not available', () => {
 			const product = { product_slug: plans.PLAN_PERSONAL };
-			expect( stepsForProductAndSurvey( survey, product, false ) ).to.deep.equal( DEFAULT_STEPS );
+			expect(
+				stepsForProductAndSurvey( survey, product, false, precancellationChatToggle )
+			).to.deep.equal( DEFAULT_STEPS );
 		} );
 
 		test( 'should include happychat step if product is premium plan and happychat is available', () => {
 			const product = { product_slug: plans.PLAN_PREMIUM };
-			expect( stepsForProductAndSurvey( survey, product, true ) ).to.deep.equal(
-				DEFAULT_STEPS_WITH_HAPPYCHAT
-			);
+			expect(
+				stepsForProductAndSurvey( survey, product, true, precancellationChatToggle )
+			).to.deep.equal( DEFAULT_STEPS_WITH_HAPPYCHAT );
 		} );
 
 		test( 'should not include happychat step if product is premium plan but happychat is not available', () => {
 			const product = { product_slug: plans.PLAN_PREMIUM };
-			expect( stepsForProductAndSurvey( survey, product, false ) ).to.deep.equal( DEFAULT_STEPS );
+			expect(
+				stepsForProductAndSurvey( survey, product, false, precancellationChatToggle )
+			).to.deep.equal( DEFAULT_STEPS );
 		} );
 
-		test( 'should include concierge step if product is business plan', () => {
+		test( 'should include happychat step if product is business plan and happychat is available', () => {
 			const product = { product_slug: plans.PLAN_BUSINESS };
-			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal(
-				DEFAULT_STEPS_WITH_CONCIERGE
-			);
+			expect(
+				stepsForProductAndSurvey( survey, product, true, precancellationChatToggle )
+			).to.deep.equal( DEFAULT_STEPS_WITH_HAPPYCHAT );
 		} );
 
-		test( 'should not include concierge step if product is jetpack business plan', () => {
-			const product = { product_slug: plans.PLAN_JETPACK_BUSINESS };
-			expect( stepsForProductAndSurvey( survey, product ) ).to.deep.equal( DEFAULT_STEPS );
+		test( 'should include happychat step if product is business plan but happychat is not available', () => {
+			const product = { product_slug: plans.PLAN_BUSINESS };
+			expect(
+				stepsForProductAndSurvey( survey, product, false, precancellationChatToggle )
+			).to.deep.equal( DEFAULT_STEPS );
+		} );
+	} );
+
+	describe( 'question one answer is not "could not install" and precancellation chat turned "Off"', () => {
+		const survey = { questionOneRadio: 'tooHard' };
+		const precancellationChatToggle = false;
+
+		test( 'should not include happychat step if product is personal plan and happychat is available', () => {
+			const product = { product_slug: plans.PLAN_PERSONAL };
+			expect(
+				stepsForProductAndSurvey( survey, product, true, precancellationChatToggle )
+			).to.deep.equal( DEFAULT_STEPS );
+		} );
+
+		test( 'should not include happychat step if product is premium plan and happychat is available', () => {
+			const product = { product_slug: plans.PLAN_PREMIUM };
+			expect(
+				stepsForProductAndSurvey( survey, product, true, precancellationChatToggle )
+			).to.deep.equal( DEFAULT_STEPS );
+		} );
+
+		test( 'should not include happychat step if product is business plan and happychat is available', () => {
+			const product = { product_slug: plans.PLAN_BUSINESS };
+			expect(
+				stepsForProductAndSurvey( survey, product, true, precancellationChatToggle )
+			).to.deep.equal( DEFAULT_STEPS );
 		} );
 	} );
 
