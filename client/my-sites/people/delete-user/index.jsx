@@ -20,7 +20,7 @@ import FormRadio from 'components/forms/form-radio';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import AuthorSelector from 'blocks/author-selector';
-import UsersActions from 'lib/users/actions';
+import { deleteUser } from 'lib/users/actions';
 import accept from 'lib/accept';
 import analytics from 'lib/analytics';
 import Gravatar from 'components/gravatar';
@@ -118,7 +118,7 @@ class DeleteUser extends React.PureComponent {
 						'People',
 						'Clicked Confirm Remove User on Edit User Network Site'
 					);
-					UsersActions.deleteUser( this.props.siteId, this.props.user.ID );
+					deleteUser( this.props.siteId, this.props.user.ID );
 				} else {
 					analytics.ga.recordEvent(
 						'People',
@@ -142,7 +142,7 @@ class DeleteUser extends React.PureComponent {
 			reassignUserId = this.state.reassignUser.ID;
 		}
 
-		UsersActions.deleteUser( this.props.siteId, this.props.user.ID, reassignUserId );
+		deleteUser( this.props.siteId, this.props.user.ID, reassignUserId );
 		analytics.ga.recordEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
 	};
 
