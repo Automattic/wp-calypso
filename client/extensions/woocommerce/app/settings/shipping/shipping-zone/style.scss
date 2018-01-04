@@ -206,17 +206,8 @@
 }
 
 &.shipping-zone__method-dialog {
-	max-height: 80%;
-	display: flex;
-	flex-direction: column;
-
-	.dialog__content {
-		height: 100%;
-		overflow-y: scroll;
-	}
-
-	.dialog__action-buttons {
-		overflow: visible;
+	@include breakpoint( ">660px" ) {
+		width: 660px;
 	}
 }
 
@@ -296,13 +287,8 @@
 }
 
 &.shipping-zone__location-dialog {
-	max-height: 85%;
-	display: flex;
-	flex-direction: column;
-
-	.dialog__content {
-		height: 100%;
-		overflow-y: scroll;
+	@include breakpoint( ">660px" ) {
+		width: 660px;
 	}
 
 	.dialog__action-buttons {

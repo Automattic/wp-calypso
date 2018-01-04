@@ -44,22 +44,19 @@
 	.button {
 		white-space: nowrap;
 		padding: 5px 14px 7px;
-		
+		margin-left: 12px;
+
 		&.is-borderless {
 			padding: 0;
 			margin-top: -6px;
 		}
-		
-		&.is-borderless .gridicon{
+
+		&.is-borderless .gridicon {
 			margin-right: 2px;
 		}
 
-		&:not( :first-child ) {
+		&.is-borderless + .button {
 			margin-left: 24px;
-
-			@include breakpoint( "<660px" ) {
-				margin-left: 18px;
-			}
 		}
 	}
 }

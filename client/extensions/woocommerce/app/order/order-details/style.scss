@@ -51,7 +51,7 @@
 
 .order-details__actions {
 	margin: 0 -24px;
-	padding: 8px 78px 8px 24px;
+	padding: 16px 76px 16px 24px;
 	border-bottom: 1px solid lighten($gray, 30%);
 	text-align: right;
 
@@ -71,6 +71,11 @@
 	box-shadow: none;
 	border: none;
 	text-align: right;
+	padding-right: 55px;
+
+	& + .form-setting-explanation {
+		padding-right: 55px;
+	}
 
 	.table-row {
 		&:hover {
@@ -120,11 +125,6 @@
 	}
 
 	&.is-editing {
-		.order-details__totals-value {
-			// Indent enough to account for delete button
-			padding-right: 78px !important;
-		}
-
 		.order-details__totals-tax {
 			color: $gray-text-min;
 			font-style: italic;

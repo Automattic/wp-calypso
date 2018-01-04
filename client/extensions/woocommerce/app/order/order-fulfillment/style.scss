@@ -16,6 +16,10 @@
 .order-fulfillment__print-container {
 	display: flex;
 	align-items: center;
+	margin-top: 16px;
+	@include breakpoint( ">960px" ) {
+		margin-top: 0;
+	}
 }
 
 .order-fulfillment__tracking,
