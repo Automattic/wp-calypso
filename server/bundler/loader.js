@@ -1,20 +1,21 @@
 /** @format */
 const config = require( 'config' ),
 	fs = require( 'fs' ),
+	path = require( 'path' ),
 	utils = require( './utils' );
 
 function getSectionsModule( sections ) {
-	if ( config.isEnabled( 'code-splitting' ) ) {
-		return fs
-			.readFileSync( __dirname + '/loader-template-code-split.js', 'utf8' )
-			.replace( '/*___SECTIONS_DEFINITION___*/', JSON.stringify( sections ) + ' || ' )
-			.replace( '/*___LOADERS___*/', sections.map( getSectionPreLoaderTemplate ).join( '\n' ) );
-	}
+	const templateFile = config.isEnabled( 'code-splitting' )
+		? 'loader-template-code-split.js'
+		: 'loader-template.js';
+	const loaderFactory = config.isEnabled( 'code-splitting' )
+		? getSectionPreLoaderTemplate
+		: getSectionRequire;
 
 	return fs
-		.readFileSync( __dirname + '/loader-template.js', 'utf8' )
+		.readFileSync( path.join( __dirname, templateFile ), 'utf8' )
 		.replace( '/*___SECTIONS_DEFINITION___*/', JSON.stringify( sections ) + ' || ' )
-		.replace( '/*___LOADERS___*/', sections.map( getSectionRequire ).join( '\n' ) );
+		.replace( '/*___LOADERS___*/', sections.map( loaderFactory ).join( '\n' ) );
 }
 
 function getSectionRequire( section ) {
