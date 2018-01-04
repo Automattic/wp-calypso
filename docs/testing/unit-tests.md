@@ -256,6 +256,29 @@ Or event just stub out libraries whose effects we might not care about:
 
 `jest.mock( 'lib/analytics', () => ( {} ) );`
 
-### Mocking global objects
+#### Global objects
+
+When stubbing properties or methods in the global scope, make sure to cache the original value and reinstate it after the tests have completed. This way we avoid breaking other test suites that may rely on them.
+
+```javascript
+	describe( 'suggested languages', () => {
+		const browserLanguages = [ 'en-GB', 'en', 'en-US', 'en-AU', 'it' ];
+		let _navigator;
+
+		beforeEach( () => {
+			_navigator = global.navigator;
+			Object.defineProperty( global.navigator, 'languages', {
+				get: () => browserLanguages,
+				configurable: true,
+			} );
+		} );
+
+		afterEach( () => {
+			global.navigator = _navigator;
+		} );
+	    
+	    // some test cases ...
+	} );	
+```
 
 ### Debugging tests (?)
