@@ -233,7 +233,7 @@ export const handleDeleteSuccess = (
 	if ( !! query ) {
 		dispatch( requestCommentsList( query ) );
 		if ( !! query.progressId ) {
-			dispatch( updateCommentsProgress( siteId, query.progressId ) );
+			dispatch( updateCommentsProgress( siteId, query.progressId, { failed: true } ) );
 		}
 	}
 };

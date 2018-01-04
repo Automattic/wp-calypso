@@ -75,7 +75,7 @@ const announceStatusChangeFailure = ( { dispatch }, action ) => {
 	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
 
 	if ( !! query && !! query.progressId ) {
-		dispatch( updateCommentsProgress( siteId, query.progressId ) );
+		dispatch( updateCommentsProgress( siteId, query.progressId, { failed: true } ) );
 	}
 
 	dispatch(

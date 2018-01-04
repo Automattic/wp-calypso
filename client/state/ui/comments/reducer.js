@@ -86,8 +86,9 @@ export const progresses = ( state = {}, action ) => {
 			return {
 				...clearCompletedProgresses( state ),
 				[ progressId ]: {
-					status: status || 'delete',
 					count: 0,
+					failed: false,
+					status: status || 'delete',
 					total: progressTotal || 1,
 				},
 			};
@@ -101,6 +102,7 @@ export const progresses = ( state = {}, action ) => {
 				[ action.progressId ]: {
 					...progress,
 					count: progress.count + 1,
+					failed: progress.failed ? true : action.failed,
 				},
 			};
 		default:
