@@ -18,6 +18,7 @@ import {
 	isCurrentPlanExpiring,
 	isRequestingSitePlans,
 } from 'state/sites/plans/selectors';
+import { isFreeJetpackPlan } from 'lib/products-values';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import DocumentHead from 'components/data/document-head';
@@ -98,7 +99,6 @@ class CurrentPlan extends Component {
 
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
-
 		return (
 			<Main className="current-plan" wideLayout>
 				<SidebarNavigation />
@@ -135,6 +135,7 @@ class CurrentPlan extends Component {
 						currentPlan={ currentPlan }
 						isExpiring={ isExpiring }
 						isAutomatedTransfer={ isAutomatedTransfer }
+						includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
 					/>
 					<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
 				</ProductPurchaseFeatures>
