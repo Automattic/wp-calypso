@@ -9,7 +9,7 @@ import { omitBy } from 'lodash';
 // Defaults from https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-product-categories
 export const DEFAULT_QUERY = {
 	page: 1,
-	per_page: 10,
+	per_page: 100,
 	search: '',
 };
 
