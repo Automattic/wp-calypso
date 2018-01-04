@@ -84,7 +84,6 @@ class EditorSeoAccordion extends Component {
 								{ translate( 'Preview' ) }
 							</Button>
 							<WebPreview
-								require="components/web-preview"
 								showPreview={ showPreview }
 								onClose={ this.hidePreview }
 								showDeviceSwitcher={ false }
