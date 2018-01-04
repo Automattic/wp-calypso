@@ -36,6 +36,7 @@ export class BarContainer extends React.PureComponent {
 	};
 
 	render() {
+		console.count( 'BarContainer#render' );
 		const { barClick: clickHandler, chartWidth: width, data, isTouch, yAxisMax: max } = this.props;
 		const count = data.length;
 		const barWidth = width / count;

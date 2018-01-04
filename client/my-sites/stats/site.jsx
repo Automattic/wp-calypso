@@ -66,6 +66,7 @@ class StatsSite extends Component {
 	};
 
 	render() {
+		console.count( 'my-sites/stats#render' );
 		const { date, isJetpack, hasPodcasts, siteId, slug, translate } = this.props;
 		const charts = [
 			{
@@ -221,8 +222,10 @@ class StatsSite extends Component {
 
 export default connect(
 	state => {
+		console.count( 'my-sites/stats#connect' );
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
+
 		return {
 			isJetpack,
 			hasPodcasts: getSiteOption( state, siteId, 'podcasting_archive' ),

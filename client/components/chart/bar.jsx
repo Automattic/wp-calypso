@@ -1,11 +1,9 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
+import * as React from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -14,9 +12,7 @@ import Gridicon from 'gridicons';
  */
 import Tooltip from 'components/tooltip';
 
-export default class extends React.Component {
-	static displayName = 'ModuleChartBar';
-
+export class Bar extends React.PureComponent {
 	static propTypes = {
 		isTouch: PropTypes.bool,
 		tooltipPosition: PropTypes.string,
@@ -46,12 +42,8 @@ export default class extends React.Component {
 				'is-spacer': true,
 				'is-ghost': 100 === remain && ! active,
 			},
-			remainStyle = {
-				height: remainFloor + '%',
-			},
-			valueStyle = {
-				top: remainFloor + '%',
-			};
+			remainStyle = { height: remainFloor + '%' },
+			valueStyle = { top: remainFloor + '%' };
 		let nestedBar, nestedPercentage, nestedStyle;
 
 		sections.push(
@@ -169,3 +161,5 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default Bar;
