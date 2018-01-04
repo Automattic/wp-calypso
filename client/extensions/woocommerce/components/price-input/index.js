@@ -74,16 +74,20 @@ class PriceInput extends Component {
 		const currencyObject = getCurrencyObject( value, displayCurrency );
 		let resetButton;
 		if ( initialValue ) {
-			resetButton = (
-				<Button
-					onClick={ this.resetToInitial }
-					compact
-					borderless
-					aria-label={ translate( 'Reset to %(value)s', { args: { value: initialValue } } ) }
-				>
-					<Gridicon icon="refresh" />
-				</Button>
-			);
+			if ( initialValue === this.state.value ) {
+				resetButton = <span />;
+			} else {
+				resetButton = (
+					<Button
+						onClick={ this.resetToInitial }
+						compact
+						borderless
+						aria-label={ translate( 'Reset to %(value)s', { args: { value: initialValue } } ) }
+					>
+						<Gridicon icon="refresh" />
+					</Button>
+				);
+			}
 		}
 
 		const classes = classNames( 'price-input', { 'has-reset': !! initialValue } );
