@@ -136,7 +136,6 @@ export const boot = () => {
 
 	const { user, token } = store.get( STORAGE_KEY );
 	debug( 'Booting Calypso with support user', user );
-	store.remove( STORAGE_KEY );
 
 	// The following keys will not be bypassed as
 	// they are safe to share across user sessions.
