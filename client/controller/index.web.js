@@ -12,13 +12,13 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
 import nuxWelcome from 'layout/nux-welcome';
 import translatorInvitation from 'layout/community-translator/invitation-utils';
 import { makeLayoutMiddleware } from './shared.js';
 import { getCurrentUser } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
+import AsyncLoad from 'components/async-load';
 
 /**
  * Re-export
@@ -30,7 +30,8 @@ const user = userFactory();
 export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => (
 	<ReduxProvider store={ store }>
 		{ getCurrentUser( store.getState() ) ? (
-			<Layout
+			<AsyncLoad
+				require="layout"
 				primary={ primary }
 				secondary={ secondary }
 				user={ user }
