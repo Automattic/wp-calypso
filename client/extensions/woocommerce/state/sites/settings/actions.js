@@ -3,7 +3,11 @@
 /**
  * Internal dependencies
  */
-
+import {
+	getCurrencyCodeForCountry,
+	getDimensionUnitForCountry,
+	getWeightUnitForCountry,
+} from 'woocommerce/lib/countries';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from 'woocommerce/state/sites/request';
 import { setError } from '../status/wc-api/actions';
@@ -28,6 +32,7 @@ export const doInitialSetup = (
 	stateOrProvince,
 	postcode,
 	country,
+	pushDefaultsForCountry,
 	successAction,
 	failureAction
 ) => ( dispatch, getState ) => {
@@ -45,10 +50,9 @@ export const doInitialSetup = (
 	// If a state is given (e.g. CT), combine it with the country (e.g. US)
 	// to create the appropriate value for woocommerce_default_country (e.g. US:CT)
 	const countryState = stateOrProvince ? country + ':' + stateOrProvince : country;
-	const currency = 'CA' === country ? 'CAD' : 'USD';
 
 	// TODO Support other currency positions, post-v1 etc. See https://github.com/Automattic/wp-calypso/issues/15498
-	const update = [
+	let update = [
 		{
 			group_id: 'general',
 			id: 'woocommerce_store_address',
@@ -74,47 +78,56 @@ export const doInitialSetup = (
 			id: 'woocommerce_store_postcode',
 			value: postcode,
 		},
-		{
-			group_id: 'general',
-			id: 'woocommerce_currency',
-			value: currency,
-		},
-		{
-			group_id: 'general',
-			id: 'woocommerce_currency_pos',
-			value: 'left',
-		},
-		{
-			group_id: 'general',
-			id: 'woocommerce_price_decimal_sep',
-			value: '.',
-		},
-		{
-			group_id: 'general',
-			id: 'woocommerce_price_num_decimals',
-			value: '2',
-		},
-		{
-			group_id: 'general',
-			id: 'woocommerce_price_thousand_sep',
-			value: ',',
-		},
-		{
-			group_id: 'products',
-			id: 'woocommerce_dimension_unit',
-			value: 'in',
-		},
-		{
-			group_id: 'products',
-			id: 'woocommerce_weight_unit',
-			value: 'lbs',
-		},
-		{
-			group_id: 'general',
-			id: 'woocommerce_calc_taxes',
-			value: 'yes',
-		},
 	];
+
+	if ( pushDefaultsForCountry ) {
+		const currency = getCurrencyCodeForCountry( country );
+		const dimensionUnit = getDimensionUnitForCountry( country );
+		const weightUnit = getWeightUnitForCountry( country );
+
+		update = update.concat( [
+			{
+				group_id: 'general',
+				id: 'woocommerce_currency',
+				value: currency,
+			},
+			{
+				group_id: 'general',
+				id: 'woocommerce_currency_pos',
+				value: 'left',
+			},
+			{
+				group_id: 'general',
+				id: 'woocommerce_price_decimal_sep',
+				value: '.',
+			},
+			{
+				group_id: 'general',
+				id: 'woocommerce_price_num_decimals',
+				value: '2',
+			},
+			{
+				group_id: 'general',
+				id: 'woocommerce_price_thousand_sep',
+				value: ',',
+			},
+			{
+				group_id: 'products',
+				id: 'woocommerce_dimension_unit',
+				value: dimensionUnit,
+			},
+			{
+				group_id: 'products',
+				id: 'woocommerce_weight_unit',
+				value: weightUnit,
+			},
+			{
+				group_id: 'general',
+				id: 'woocommerce_calc_taxes',
+				value: 'yes',
+			},
+		] );
+	}
 
 	return request( siteId )
 		.post( 'settings/batch', { update } )

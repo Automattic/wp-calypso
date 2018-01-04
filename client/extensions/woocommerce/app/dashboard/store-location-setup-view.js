@@ -30,7 +30,7 @@ import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
-class PreSetupView extends Component {
+class StoreLocationSetupView extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
@@ -50,6 +50,7 @@ class PreSetupView extends Component {
 			postalCode: PropTypes.string,
 			countryCode: PropTypes.string,
 		} ),
+		pushDefaultsForCountry: PropTypes.bool.isRequired,
 		settingsGeneralLoaded: PropTypes.bool,
 		storeLocation: PropTypes.shape( {
 			street: PropTypes.string,
@@ -167,6 +168,7 @@ class PreSetupView extends Component {
 			state,
 			this.state.address.postcode,
 			country,
+			this.props.pushDefaultsForCountry,
 			onSuccess,
 			onFailure
 		);
@@ -251,4 +253,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PreSetupView ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( StoreLocationSetupView ) );
