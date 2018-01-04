@@ -245,6 +245,7 @@ class SiteIconSetting extends Component {
 			buttonProps = {
 				type: 'button',
 				onClick: this.showModal,
+				'data-tip-target': 'settings-site-icon-change',
 				onMouseEnter: this.preloadModal,
 			};
 		} else {
