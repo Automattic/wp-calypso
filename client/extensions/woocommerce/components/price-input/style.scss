@@ -8,10 +8,22 @@
 
 	.form-text-input-with-affixes__suffix {
 		background: transparent;
+		position: relative;
+		min-width: 12px;
 
 		.button {
-			margin: -8px -14px;
-			padding: 8px 14px;
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			padding: 0;
+			width: 100%;
+
+			.gridicon {
+				top: 0;
+				margin: 0 auto;
+			}
 		}
 
 		.gridicon {
