@@ -14,8 +14,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { omitUrlParams } from 'lib/url';
-import { isEnabled } from 'config';
 import WebPreview from 'components/web-preview';
+import WebPreviewContent from 'components/web-preview/content';
+import { isEnabled } from 'config';
 
 class EditorPreview extends React.Component {
 	static propTypes = {
@@ -129,8 +130,7 @@ class EditorPreview extends React.Component {
 		return (
 			<div className={ className }>
 				{ isFullScreen ? (
-					<WebPreview
-						isContentOnly
+					<WebPreviewContent
 						showPreview={ this.props.showPreview }
 						showEdit={ true }
 						showExternal={ true }
