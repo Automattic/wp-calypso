@@ -54,7 +54,7 @@ describe.only( 'just run this suite', function() {
 ## Writing tests
 We use [Jest](https://facebook.github.io/jest) for testing our client-side application, and [Enzyme](https://github.com/airbnb/enzyme) for testing React components.
 
-Though you'll still see Chai assertions and Sinon spies/mocks throughout the code base, for all new tests we use the Jest API for [assertions](http://facebook.github.io/jest/docs/en/expect.html#content), [mocks](http://facebook.github.io/jest/docs/en/mock-functions.html#content) and [mock function/spies](http://facebook.github.io/jest/docs/en/mock-function-api.html#content).
+Though you'll still see Chai assertions and Sinon spies/mocks throughout the code base, for all new tests we use the Jest API for [globals](https://facebook.github.io/jest/docs/en/mock-function-api.html#content) (`describe`, `test`, `beforeEach` and so on) [assertions](http://facebook.github.io/jest/docs/en/expect.html#content), [mocks](http://facebook.github.io/jest/docs/en/mock-functions.html#content) and [mock function/spies](https://facebook.github.io/jest/docs/en/mock-function-api.html#content).
 
 
 ## Folder structure
@@ -96,7 +96,7 @@ See[Snapshot testing](snapshot-testing.md)
 
 ### Examples
 
-#### Mocking HTTP requests
+#### Mocking HTTP requests with Nock
 
 [Nock](https://github.com/node-nock/nock) allows us to override HTTP requests, and unit test code in isolation. For example, you might have an action  that returns a GET request in a thunk:
 
@@ -154,6 +154,107 @@ describe( 'requestSomeData', () => {
 ```
 
 ### Mocking dependencies
+
+#### Dependency injection
+
+Passing dependencies to a function as arguments can often make your code simpler to test. A a basic example, we have a utility function that checks whether a value exists in a list.
+
+One way to do it would be to reference a dependency in a higher scope:
+
+```javascript
+import VALID_VALUES_LIST from './constants'
+
+function isValueValid( value ) {
+	return VALID_VALUES_LIST.includes( value );
+}
+
+```
+
+Our happy path test would therefore have to import and use a value from `VALID_VALUES_LIST` in order to pass:
+
+`expect( isValueValid( VALID_VALUES_LIST[ 0 ] ) ).toBe( true );`
+
+
+The above assertion is testing two behaviours: 1) that the function can detect an item in a list, and 2) that it can detect an item in `VALID_VALUES_LIST`.
+
+But what if we don't care what's stored in `VALID_VALUES_LIST`, or if the list is fetched via an HTTP request, and we only want to test whether `isValueValid` can detect an item in a list?
+
+Let's refactor the original function so that it accepts the target list as an argument:
+
+```javascript
+function isValueValid( value, validValuesList = [] ) {
+	return validValuesList.includes( value );
+}
+```
+
+Now we can pass mock lists, and, as a bonus, test a few more scenarios:
+
+`expect( isValueValid( 'hulk', [ 'batman', 'superman' ] ) ).toBe( false );`
+
+`expect( isValueValid( 'hulk', null ) ).toBe( false );`
+
+`expect( isValueValid( 'hulk', [] ) ).toBe( false );`
+
+`expect( isValueValid( 'hulk', [ 'iron man', 'hulk' ] ) ).toBe( true );`
+
+
+#### Imported dependencies
+
+Often our code will use methods and properties from imported external and internal libraries in multiple places, which makes passing around arguments messy and impracticable. For these cases `jest.mock` offers a neat way to stub these dependencies. 
+
+For instance, in Calypso, we use the ['config'](https://github.com/Automattic/wp-calypso/tree/master/client/config) module to control a great deal of functionality via feature flags. 
+
+```javascript
+// bilbo.js
+if ( config.isEnabled( 'the-ring' ) ) {
+    isBilboVisible = false;
+} else {
+	isBilboVisible = true;
+}
+```
+
+To test the behaviour under each condition, we stub the config object and use a jest mocking function to control the return value of `isEnabled`.
+
+```javascript
+// test/bilbo.js
+import { isEnabled } from 'config';
+
+jest.mock( 'config', () => {
+	const config = () => 'development';
+    
+	// default value is true
+	config.isEnabled = jest.fn( true );
+
+	return config;
+} );
+
+
+test( 'bilbo should be invisible when the `the-ring` config feature flag is disabled', () => {
+	isEnabled.mockReturnValue( false );
+	expect( isBilboVisible ).toBe( false );
+} );
+
+```
+
+We can use this approach to test all of Calypso's common, established libraries:
+
+[WP](https://github.com/Automattic/wp-calypso/tree/master/client/lib/wp) 
+
+```javascript
+// 
+jest.mock( 'lib/wp', () => ( {
+	me: () => ( {
+		get: () => {},
+	} ),
+	undocumented: () => {},
+} ) );
+```
+
+Or event just stub out libraries whose effects we might not care about:
+
+`jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );`
+
+`jest.mock( 'lib/analytics', () => ( {} ) );`
 
 ### Mocking global objects
 
