@@ -15,7 +15,7 @@ import { partial } from 'lodash';
  * Internal dependencies
  */
 import MasterbarItem from './item';
-import Notifications from 'notifications';
+import AsyncLoad from 'components/async-load';
 import store from 'store';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { toggleNotificationsPanel } from 'state/ui/actions';
@@ -139,7 +139,8 @@ class MasterbarItemNotifications extends Component {
 						}
 					/>
 				</MasterbarItem>
-				<Notifications
+				<AsyncLoad
+					require="notifications"
 					isShowing={ this.props.isNotificationsOpen }
 					checkToggle={ this.checkToggleNotes }
 					setIndicator={ this.setNotesIndicator }
