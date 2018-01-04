@@ -16,14 +16,8 @@ import { endsWith, noop } from 'lodash';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isEligibleForDomainToPaidPlanUpsell } from 'state/selectors';
 import SidebarBanner from 'my-sites/current-site/sidebar-banner';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
 import { isDomainOnlySite } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-
-const impressionEventName = 'calypso_upgrade_nudge_impression';
-const clickEventName = 'calypso_upgrade_nudge_cta_click';
-const eventProperties = { cta_name: 'domain-to-paid-sidebar' };
 
 export class DomainToPaidPlanNotice extends Component {
 	static propTypes = {
@@ -34,44 +28,31 @@ export class DomainToPaidPlanNotice extends Component {
 		translate: noop,
 	};
 
-	onClick = () => {
-		this.props.recordTracksEvent( clickEventName, eventProperties );
-	};
-
-	getBannerText = () => {
-		const { translate } = this.props;
-
-		if ( this.props.isJetpack ) {
-			return translate( 'Upgrade for full site backups.' );
-		}
-		return translate( 'Upgrade your site and save.' );
-	};
-
 	render() {
-		const { eligible, isConflicting, isDomainOnly, site, translate } = this.props;
+		const { eligible, isConflicting, isDomainOnly, isJetpack, site, translate } = this.props;
 
 		if ( ! site || ! eligible || isConflicting ) {
 			return null;
 		}
 
-		const actionLink = isDomainOnly
+		const href = isDomainOnly
 			? `/start/site-selected/?siteSlug=${ encodeURIComponent(
 					site.slug
 				) }&siteId=${ encodeURIComponent( site.ID ) }`
-			: `/plans/my-plan/${ site.slug }`;
+			: `/plans/${ site.slug }`;
+
+		const text = isJetpack
+			? translate( 'Upgrade for full site backups.' )
+			: translate( 'Upgrade your site and save.' );
 
 		return (
-			<SidebarBanner icon="info-outline" text={ this.getBannerText() }>
-				<a onClick={ this.onClick } href={ actionLink }>
-					<span>
-						{ translate( 'Go' ) }
-						<TrackComponentView
-							eventName={ impressionEventName }
-							eventProperties={ eventProperties }
-						/>
-					</span>
-				</a>
-			</SidebarBanner>
+			<SidebarBanner
+				ctaName="domain-to-paid-sidebar"
+				ctaText={ translate( 'Go' ) }
+				href={ href }
+				icon="info-outline"
+				text={ text }
+			/>
 		);
 	}
 }
@@ -89,6 +70,6 @@ const mapStateToProps = state => {
 		isJetpack,
 	};
 };
-const mapDispatchToProps = { recordTracksEvent };
+const mapDispatchToProps = null;
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( DomainToPaidPlanNotice ) );
