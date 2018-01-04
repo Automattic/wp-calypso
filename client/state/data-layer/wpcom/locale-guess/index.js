@@ -14,11 +14,11 @@ import { I18N_LOCALE_SUGGESTIONS_REQUEST } from 'state/action-types';
 import { receiveLocaleSuggestions } from 'state/i18n/locale-suggestions/actions';
 
 /**
- * @module state/data-layer/wpcom/i18n/locale-suggestions
+ * @module state/data-layer/wpcom/locale-guess
  */
 
 /**
- * Dispatches a request to fetch locale suggestions
+ * Dispatches a request to /locale-guess to fetch locale suggestions
  *
  * @param {Object} action Redux action
  * @returns {Object} original action
@@ -39,11 +39,11 @@ export const fetchLocaleSuggestions = action =>
  * @param {Array} data raw data from /locale-guess
  * @returns {Object} Redux action
  */
-export const localeSuggestionsReceive = ( action, data ) => receiveLocaleSuggestions( data );
+export const addLocaleSuggestions = ( action, data ) => receiveLocaleSuggestions( data );
 
 export const dispatchPlansRequest = dispatchRequestEx( {
 	fetch: fetchLocaleSuggestions,
-	onSuccess: localeSuggestionsReceive,
+	onSuccess: addLocaleSuggestions,
 	onError: noop,
 } );
 

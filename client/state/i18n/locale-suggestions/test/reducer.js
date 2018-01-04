@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import reducer, { items } from '../reducer';
-import { I18N_LOCALE_SUGGESTIONS_SUCCESS } from 'state/action-types';
+import { I18N_LOCALE_SUGGESTIONS_ADD } from 'state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
@@ -19,7 +19,7 @@ describe( 'reducer', () => {
 
 		test( 'should update with items', () => {
 			const state = items( undefined, {
-				type: I18N_LOCALE_SUGGESTIONS_SUCCESS,
+				type: I18N_LOCALE_SUGGESTIONS_ADD,
 				items: [ { bilbo: 'baggins' } ],
 			} );
 

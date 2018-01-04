@@ -4,10 +4,7 @@
  * Internal dependencies
  */
 import { receiveLocaleSuggestions, requestLocaleSuggestions } from '../actions';
-import {
-	I18N_LOCALE_SUGGESTIONS_REQUEST,
-	I18N_LOCALE_SUGGESTIONS_SUCCESS,
-} from 'state/action-types';
+import { I18N_LOCALE_SUGGESTIONS_REQUEST, I18N_LOCALE_SUGGESTIONS_ADD } from 'state/action-types';
 
 describe( 'locale suggestions actions', () => {
 	test( '#requestLocaleSuggestions()', () => {
@@ -18,7 +15,7 @@ describe( 'locale suggestions actions', () => {
 
 	test( '#receiveLocaleSuggestions()', () => {
 		expect( receiveLocaleSuggestions( [ 1, 2, 3 ] ) ).toEqual( {
-			type: I18N_LOCALE_SUGGESTIONS_SUCCESS,
+			type: I18N_LOCALE_SUGGESTIONS_ADD,
 			items: [ 1, 2, 3 ],
 		} );
 	} );

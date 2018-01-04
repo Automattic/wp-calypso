@@ -12,8 +12,8 @@ import comments from './comments';
 import concierge from './concierge';
 import domains from './domains';
 import gravatarUpload from './gravatar-upload';
-import i18n from './i18n';
 import jetpackOnboarding from './jetpack-onboarding';
+import localeGuess from './locale-guess';
 import login2fa from './login-2fa';
 import me from './me';
 import meta from './meta';
@@ -36,8 +36,8 @@ export const handlers = mergeHandlers(
 	concierge,
 	domains,
 	gravatarUpload,
-	i18n,
 	jetpackOnboarding,
+	localeGuess,
 	login2fa,
 	me,
 	meta,
