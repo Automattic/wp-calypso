@@ -77,13 +77,6 @@ class ThemeEnhancements extends Component {
 		);
 	}
 
-	renderInfiniteScrollSettings() {
-		if ( this.props.jetpackSettingsUI ) {
-			return this.renderJetpackInfiniteScrollSettings();
-		}
-		return this.renderSimpleSiteInfiniteScrollSettings();
-	}
-
 	renderSimpleSiteInfiniteScrollSettings() {
 		const { translate } = this.props;
 		return (
@@ -201,8 +194,15 @@ class ThemeEnhancements extends Component {
 				<SectionHeader label={ translate( 'Theme Enhancements' ) } />
 
 				<Card className="theme-enhancements__card site-settings">
-					{ this.renderInfiniteScrollSettings() }
-					{ jetpackSettingsUI && <hr /> && this.renderMinilevenSettings() }
+					{ jetpackSettingsUI ? (
+						<div>
+							{ this.renderJetpackInfiniteScrollSettings() }
+							<hr />
+							{ this.renderMinilevenSettings() }
+						</div>
+					) : (
+						this.renderSimpleSiteInfiniteScrollSettings()
+					) }
 				</Card>
 			</div>
 		);
