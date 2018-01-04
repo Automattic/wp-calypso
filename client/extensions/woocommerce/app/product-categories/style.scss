@@ -1,3 +1,4 @@
+
 .product-categories__list-placeholder {
 	@include placeholder();
 	background: $white;
@@ -89,4 +90,20 @@
 
 .product-categories__list-nested {
 	margin-left: 2em;
+}
+
+.product-categories__form {
+	@include breakpoint( ">660px" ) {
+		margin-top: 58px;
+	}
+
+	&.is-placeholder div {
+		@include placeholder();
+		background: $white;
+		margin-bottom: 8px;
+
+		&:first-child {
+			height: 575px;
+		}
+	}
 }

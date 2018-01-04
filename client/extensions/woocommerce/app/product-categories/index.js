@@ -12,6 +12,7 @@ import { union, includes, trim, debounce } from 'lodash';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
+import Button from 'components/button';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -93,6 +94,9 @@ class ProductCategories extends Component {
 					<a href={ getLink( '/store/products/:site/', site ) }>{ productsLabel }</a>,
 					<span>{ categoriesLabel }</span>,
 				] }>
+				<Button primary href={ getLink( '/store/products/category/:site/', site ) }>
+					{ translate( 'Add category' ) }
+				</Button>
 				</ActionHeader>
 				<SectionNav selectedText={ categoriesLabel }>
 					<NavTabs label={ translate( 'Products' ) } selectedText={ categoriesLabel }>

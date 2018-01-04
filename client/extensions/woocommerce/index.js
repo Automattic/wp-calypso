@@ -22,6 +22,8 @@ import Order from './app/order';
 import OrderCreate from './app/order/create';
 import Orders from './app/orders';
 import ProductCategories from './app/product-categories';
+import ProductCategoryCreate from './app/product-categories/create';
+import ProductCategoryUpdate from './app/product-categories/update';
 import Products from './app/products';
 import ProductCreate from './app/products/product-create';
 import ProductUpdate from './app/products/product-update';
@@ -73,6 +75,18 @@ const getStorePages = () => {
 			configKey: 'woocommerce/extension-product-categories',
 			documentTitle: translate( 'Product Categories' ),
 			path: '/store/products/categories/:site',
+		},
+		{
+			container: ProductCategoryUpdate,
+			configKey: 'woocommerce/extension-product-categories',
+			documentTitle: translate( 'Edit Product Category' ),
+			path: '/store/products/category/:site/:category',
+		},
+		{
+			container: ProductCategoryCreate,
+			configKey: 'woocommerce/extension-product-categories',
+			documentTitle: translate( 'New Product Category' ),
+			path: '/store/products/category/:site',
 		},
 		{
 			container: Orders,
