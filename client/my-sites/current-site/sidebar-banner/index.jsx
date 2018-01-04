@@ -47,7 +47,7 @@ export class SidebarBanner extends Component {
 					eventName="calypso_upgrade_nudge_impression"
 					eventProperties={ { cta_name: ctaName } }
 				/>
-				<a onClick={ this.onClick } href={ href }>
+				<a className="sidebar-banner__link" onClick={ this.onClick } href={ href }>
 					<span className="sidebar-banner__icon-wrapper">
 						<Gridicon className="sidebar-banner__icon" icon={ icon } size={ 18 } />
 					</span>

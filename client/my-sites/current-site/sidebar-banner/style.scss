@@ -1,19 +1,10 @@
 .sidebar-banner {
 	font-size: 12px;
 
-	:hover {
-		transition: all 150ms ease-out;
-		background-color: lighten( $alert-green, 5% );
-	}
-
-	a {
+	.sidebar-banner__link {
 		background-color: $alert-green;
 		color: $white;
 		display: flex;
-
-		:visited {
-			color: $white;
-		}
 
 		@include breakpoint( "<660px" ) {
 			padding: 0 24px;
