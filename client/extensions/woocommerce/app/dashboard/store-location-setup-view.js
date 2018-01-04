@@ -31,13 +31,17 @@ import SetupNotices from './setup-notices';
 import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import userFactory from 'lib/user';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
+
+const user = userFactory();
 
 class StoreLocationSetupView extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
 			address: {},
+			isFetchingUser: false,
 			isSaving: false,
 			showEmailVerificationDialog: false,
 			userBeganEditing: false,
@@ -193,7 +197,8 @@ class StoreLocationSetupView extends Component {
 		const everyRequiredFieldHasAValue = every( requiredAddressFields, field => {
 			return ! isEmpty( trim( field ) );
 		} );
-		const submitDisabled = this.state.isSaving || ! everyRequiredFieldHasAValue;
+		const submitDisabled =
+			this.state.isSaving || this.state.isFetchingUser || ! everyRequiredFieldHasAValue;
 
 		if ( ! showForm ) {
 			return (
@@ -223,6 +228,10 @@ class StoreLocationSetupView extends Component {
 
 	closeVerifyEmailDialog = () => {
 		this.setState( { showEmailVerificationDialog: false } );
+		// Re-fetch the user to see if they actually took care of things
+		user.fetch();
+		this.setState( { isFetchingUser: true } );
+		user.once( 'change', () => this.setState( { isFetchingUser: false } ) );
 	};
 
 	render = () => {
