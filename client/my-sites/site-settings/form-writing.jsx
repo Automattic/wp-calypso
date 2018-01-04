@@ -142,29 +142,27 @@ class SiteSettingsFormWriting extends Component {
 					fields={ fields }
 				/>
 
-				<div>
-					{ jetpackSettingsUI && <QueryJetpackModules siteId={ siteId } /> }
+				{ jetpackSettingsUI && <QueryJetpackModules siteId={ siteId } /> }
 
-					<ThemeEnhancements
-						onSubmitForm={ handleSubmitForm }
-						handleAutosavingToggle={ handleAutosavingToggle }
-						handleAutosavingRadio={ handleAutosavingRadio }
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-						jetpackSettingsUI={ jetpackSettingsUI }
-						fields={ fields }
-					/>
+				<ThemeEnhancements
+					onSubmitForm={ handleSubmitForm }
+					handleAutosavingToggle={ handleAutosavingToggle }
+					handleAutosavingRadio={ handleAutosavingRadio }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					jetpackSettingsUI={ jetpackSettingsUI }
+					fields={ fields }
+				/>
 
-					{ jetpackSettingsUI &&
-						config.isEnabled( 'press-this' ) && (
-							<PublishingTools
-								onSubmitForm={ handleSubmitForm }
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-								fields={ fields }
-							/>
-						) }
-				</div>
+				{ jetpackSettingsUI &&
+					config.isEnabled( 'press-this' ) && (
+						<PublishingTools
+							onSubmitForm={ handleSubmitForm }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+						/>
+					) }
 
 				{ config.isEnabled( 'press-this' ) &&
 					! this.isMobile() &&
