@@ -24,9 +24,9 @@ export const updateCommentsQuery = ( siteId, comments, query ) => ( {
 	query,
 } );
 
-export const updateCommentsProgress = ( siteId, progressId, { failed = false } ) => ( {
+export const updateCommentsProgress = ( siteId, progressId, options = { failed: false } ) => ( {
 	type: COMMENTS_PROGRESS_UPDATE,
 	siteId,
 	progressId,
-	failed,
+	options,
 } );

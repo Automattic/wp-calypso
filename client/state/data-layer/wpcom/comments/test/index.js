@@ -14,6 +14,7 @@ import {
 	announceFailure,
 	commentsFromApi,
 	handleDeleteSuccess,
+	announceDeleteFailure,
 } from '../';
 import { COMMENTS_RECEIVE, COMMENTS_COUNT_RECEIVE, NOTICE_CREATE } from 'state/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
@@ -242,6 +243,49 @@ describe( 'wpcom-api', () => {
 						status: 'all',
 						type: 'any',
 					},
+				} );
+			} );
+
+			test( 'should increase the action progress', () => {
+				const dispatch = spy();
+				handleDeleteSuccess(
+					{ dispatch },
+					{
+						siteId: 12345678,
+						commentId: 1234,
+						refreshCommentListQuery: {
+							progressId: 'foo',
+						},
+					}
+				);
+				expect( dispatch ).to.have.been.calledTwice;
+				expect( dispatch.lastCall ).to.have.been.calledWithExactly( {
+					type: 'COMMENTS_PROGRESS_UPDATE',
+					siteId: 12345678,
+					progressId: 'foo',
+					options: { failed: false },
+				} );
+			} );
+		} );
+
+		describe( '#announceDeleteFailure()', () => {
+			test( 'should fail the action progress', () => {
+				const dispatch = spy();
+				announceDeleteFailure(
+					{ dispatch },
+					{
+						siteId: 12345678,
+						commentId: 1234,
+						refreshCommentListQuery: {
+							progressId: 'foo',
+						},
+					}
+				);
+				expect( dispatch.firstCall ).to.have.been.calledWithExactly( {
+					type: 'COMMENTS_PROGRESS_UPDATE',
+					siteId: 12345678,
+					progressId: 'foo',
+					options: { failed: true },
 				} );
 			} );
 		} );

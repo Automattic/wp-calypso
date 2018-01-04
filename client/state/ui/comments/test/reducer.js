@@ -8,8 +8,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { COMMENTS_CHANGE_STATUS, COMMENTS_DELETE, COMMENTS_QUERY_UPDATE } from 'state/action-types';
-import { queries } from 'state/ui/comments/reducer';
+import {
+	COMMENTS_CHANGE_STATUS,
+	COMMENTS_DELETE,
+	COMMENTS_PROGRESS_UPDATE,
+	COMMENTS_QUERY_UPDATE,
+} from 'state/action-types';
+import { progresses, queries } from 'state/ui/comments/reducer';
 
 const siteId = 12345678;
 const postId = 1234;
@@ -18,6 +23,65 @@ const comments2 = [ { ID: 6 }, { ID: 7 }, { ID: 8 }, { ID: 9 }, { ID: 10 } ];
 const comments3 = [ { ID: 11 }, { ID: 12 }, { ID: 13 }, { ID: 14 }, { ID: 15 } ];
 
 describe( 'reducer', () => {
+	describe( '#progresses()', () => {
+		test( 'should create a progress object for a given site', () => {
+			const progress = progresses( undefined, {
+				type: COMMENTS_CHANGE_STATUS,
+				siteId,
+				commentId: 5,
+				status: 'approved',
+				refreshCommentListQuery: { progressId: 1, progressTotal: 1 },
+			} );
+			expect( progress ).to.eql( {
+				1: {
+					count: 0,
+					failed: false,
+					status: 'approved',
+					total: 1,
+				},
+			} );
+		} );
+
+		test( 'should increase a progress', () => {
+			const state = deepFreeze( {
+				1: { count: 1, failed: false, total: 10 },
+			} );
+			const progress = progresses( state, {
+				type: COMMENTS_PROGRESS_UPDATE,
+				siteId,
+				progressId: 1,
+			} );
+			expect( progress ).to.eql( { 1: { count: 2, failed: false, total: 10 } } );
+		} );
+
+		test( 'should report a failure', () => {
+			const state = deepFreeze( {
+				1: { count: 1, failed: false, total: 10 },
+			} );
+			const progress = progresses( state, {
+				type: COMMENTS_PROGRESS_UPDATE,
+				siteId,
+				progressId: 1,
+				options: { failed: true },
+			} );
+			expect( progress ).to.eql( { 1: { count: 2, failed: true, total: 10 } } );
+		} );
+
+		test( 'should clear all the completed progresses', () => {
+			const state = deepFreeze( {
+				1: { count: 1, failed: false, total: 1 },
+				2: { count: 2, failed: false, total: 2 },
+				3: { count: 1, failed: false, total: 3 },
+			} );
+			const progress = progresses( state, {
+				type: COMMENTS_PROGRESS_UPDATE,
+				siteId,
+				progressId: 3,
+			} );
+			expect( progress ).to.eql( { 3: { count: 2, failed: false, total: 3 } } );
+		} );
+	} );
+
 	describe( '#queries()', () => {
 		test( 'should create a comments page for the site view with no filters', () => {
 			const query = queries( undefined, {

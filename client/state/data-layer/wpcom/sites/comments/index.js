@@ -69,7 +69,7 @@ export const handleChangeCommentStatusSuccess = ( { dispatch }, action ) => {
 	}
 };
 
-const announceStatusChangeFailure = ( { dispatch }, action ) => {
+export const announceStatusChangeFailure = ( { dispatch }, action ) => {
 	const { commentId, previousStatus, refreshCommentListQuery: query, siteId, status } = action;
 
 	dispatch( removeNotice( `comment-notice-${ commentId }` ) );

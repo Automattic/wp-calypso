@@ -102,7 +102,7 @@ export const progresses = ( state = {}, action ) => {
 				[ action.progressId ]: {
 					...progress,
 					count: progress.count + 1,
-					failed: progress.failed ? true : action.failed,
+					failed: progress.failed ? true : !! get( action, 'options.failed' ),
 				},
 			};
 		default:
