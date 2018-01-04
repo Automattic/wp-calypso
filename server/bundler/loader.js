@@ -4,8 +4,6 @@ const config = require( 'config' ),
 	utils = require( './utils' );
 
 function getSectionsModule( sections ) {
-	let sectionLoaders = '';
-
 	if ( config.isEnabled( 'code-splitting' ) ) {
 		return fs
 			.readFileSync( __dirname + '/loader-template-code-split.js', 'utf8' )
@@ -13,63 +11,16 @@ function getSectionsModule( sections ) {
 			.replace( '/*___LOADERS___*/', sections.map( getSectionPreLoaderTemplate ).join( '\n' ) );
 	}
 
-	const dependencies = [
-		"var config = require( 'config' ),",
-		"\tpage = require( 'page' ),",
-		"\tcontroller = require( 'controller' );\n",
-	].join( '\n' );
-
-	sectionLoaders = getRequires( sections );
-
-	return [
-		dependencies,
-		'module.exports = {',
-		'	get: function() {',
-		'		return ' + JSON.stringify( sections ) + ';',
-		'	},',
-		'	load: function() {',
-		'		' + sectionLoaders,
-		'	}',
-		'};',
-	].join( '\n' );
+	return fs
+		.readFileSync( __dirname + '/loader-template.js', 'utf8' )
+		.replace( '/*___SECTIONS_DEFINITION___*/', JSON.stringify( sections ) + ' || ' )
+		.replace( '/*___LOADERS___*/', sections.map( getSectionRequire ).join( '\n' ) );
 }
 
-function getRequires( sections ) {
-	let content = '';
-
-	sections.forEach( function( section ) {
-		content += requireTemplate( section );
-	} );
-
-	return content;
-}
-
-function getPathRegex( pathString ) {
-	if ( pathString === '/' ) {
-		return JSON.stringify( pathString );
-	}
-	const regex = utils.pathToRegExp( pathString );
-	return '/' + regex.toString().slice( 1, -1 ) + '/';
-}
-
-function requireTemplate( section ) {
-	const result = section.paths.reduce( function( acc, path ) {
-		const pathRegex = getPathRegex( path );
-
-		return acc.concat( [
-			'page( ' + pathRegex + ', function( context, next ) {',
-			'	var envId = ' + JSON.stringify( section.envId ) + ';',
-			'	if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {',
-			'		return next();',
-			'	}',
-			'	controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
-			'	require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
-			'	next();',
-			'} );\n',
-		] );
-	}, [] );
-
-	return result.join( '\n' );
+function getSectionRequire( section ) {
+	return `
+		case ${ JSON.stringify( section.name ) }: return require( ${ JSON.stringify( section.module ) } );
+	`;
 }
 
 function getSectionPreLoaderTemplate( section ) {
@@ -84,7 +35,7 @@ function getSectionPreLoaderTemplate( section ) {
 		case ${ sectionNameString }:
 			${ cssLoader }
 			return import( /* webpackChunkName: ${ sectionNameString } */ '${ section.module }' );
-`;
+	`;
 }
 
 function sectionsWithCSSUrls( sections ) {
