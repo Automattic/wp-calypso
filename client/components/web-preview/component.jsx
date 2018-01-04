@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -18,10 +18,68 @@ import { isMobile } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import RootChild from 'components/root-child';
 import { setPreviewShowing } from 'state/ui/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
 import WebPreviewContent from './content';
 
-export class WebPreview extends PureComponent {
+export class WebPreviewModal extends Component {
+	static propTypes = {
+		// Display the preview
+		showPreview: PropTypes.bool,
+		// Show external link button
+		showExternal: PropTypes.bool,
+		// Show external link with clipboard input
+		showUrl: PropTypes.bool,
+		// Show close button
+		showClose: PropTypes.bool,
+		// Show SEO button
+		showSEO: PropTypes.bool,
+		// Show device viewport switcher
+		showDeviceSwitcher: PropTypes.bool,
+		// Show edit button
+		showEdit: PropTypes.bool,
+		// The URL for the edit button
+		editUrl: PropTypes.string,
+		// The URL that should be displayed in the iframe
+		previewUrl: PropTypes.string,
+		// The URL for the external link button
+		externalUrl: PropTypes.string,
+		// The markup to display in the iframe
+		previewMarkup: PropTypes.string,
+		// The viewport device to show initially
+		defaultViewportDevice: PropTypes.string,
+		// Elements to render on the right side of the toolbar
+		children: PropTypes.node,
+		// The function to call when the iframe is loaded. Will be passed the iframe document object.
+		// Only called if using previewMarkup.
+		onLoad: PropTypes.func,
+		// Called when the preview is closed, either via the 'X' button or the escape key
+		onClose: PropTypes.func,
+		// Called when the edit button is clicked
+		onEdit: PropTypes.func,
+		// Optional loading message to display during loading
+		loadingMessage: PropTypes.string,
+		// The iframe's title element, used for accessibility purposes
+		iframeTitle: PropTypes.string,
+		// Makes room for a sidebar if desired
+		hasSidebar: PropTypes.bool,
+		// The site/post description passed to the SeoPreviewPane
+		frontPageMetaDescription: PropTypes.string,
+	};
+
+	static defaultProps = {
+		showExternal: true,
+		showClose: true,
+		showSEO: true,
+		showDeviceSwitcher: true,
+		showEdit: false,
+		editUrl: null,
+		previewUrl: null,
+		previewMarkup: null,
+		onLoad: noop,
+		onClose: noop,
+		onEdit: noop,
+		hasSidebar: false,
+	};
+
 	constructor( props ) {
 		super( props );
 
@@ -37,20 +95,12 @@ export class WebPreview extends PureComponent {
 	}
 
 	componentWillMount() {
-		if ( this.props.isContentOnly ) {
-			return;
-		}
-
 		// Cache touch and mobile detection for the entire lifecycle of the component
 		this._hasTouch = hasTouch();
 		this._isMobile = isMobile();
 	}
 
 	componentDidMount() {
-		if ( this.props.isContentOnly ) {
-			return;
-		}
-
 		if ( this.props.showPreview ) {
 			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
 		}
@@ -58,10 +108,6 @@ export class WebPreview extends PureComponent {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.isContentOnly ) {
-			return;
-		}
-
 		const { showPreview } = this.props;
 
 		// add/remove listener if showPreview has changed
@@ -79,10 +125,6 @@ export class WebPreview extends PureComponent {
 	}
 
 	componentWillUnmount() {
-		if ( this.props.isContentOnly ) {
-			return;
-		}
-
 		this.props.setPreviewShowing( false );
 		window.removeEventListener( 'keydown', this.keyDown );
 		document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
@@ -99,11 +141,7 @@ export class WebPreview extends PureComponent {
 		this.setState( { device } );
 	}
 
-	renderContentOnly() {
-		return <WebPreviewContent { ...this.props } />;
-	}
-
-	renderPreviewWithContent() {
+	render() {
 		const className = classNames( this.props.className, 'web-preview', {
 			'is-touch': this._hasTouch,
 			'is-with-sidebar': this.props.hasSidebar,
@@ -130,76 +168,14 @@ export class WebPreview extends PureComponent {
 			</RootChild>
 		);
 	}
-
-	render() {
-		const { isContentOnly } = this.props;
-
-		if ( isContentOnly ) {
-			return this.renderContentOnly();
-		}
-
-		return this.renderPreviewWithContent();
-	}
 }
 
-WebPreview.propTypes = {
-	// Display the preview
-	showPreview: PropTypes.bool,
-	// Show external link button
-	showExternal: PropTypes.bool,
-	// Show external link with clipboard input
-	showUrl: PropTypes.bool,
-	// Show close button
-	showClose: PropTypes.bool,
-	// Show SEO button
-	showSEO: PropTypes.bool,
-	// Show device viewport switcher
-	showDeviceSwitcher: PropTypes.bool,
-	// Show edit button
-	showEdit: PropTypes.bool,
-	// The URL for the edit button
-	editUrl: PropTypes.string,
-	// The URL that should be displayed in the iframe
-	previewUrl: PropTypes.string,
-	// The URL for the external link button
-	externalUrl: PropTypes.string,
-	// The markup to display in the iframe
-	previewMarkup: PropTypes.string,
-	// The viewport device to show initially
-	defaultViewportDevice: PropTypes.string,
-	// Elements to render on the right side of the toolbar
-	children: PropTypes.node,
-	// The function to call when the iframe is loaded. Will be passed the iframe document object.
-	// Only called if using previewMarkup.
-	onLoad: PropTypes.func,
-	// Called when the preview is closed, either via the 'X' button or the escape key
-	onClose: PropTypes.func,
-	// Called when the edit button is clicked
-	onEdit: PropTypes.func,
-	// Optional loading message to display during loading
-	loadingMessage: PropTypes.string,
-	// The iframe's title element, used for accessibility purposes
-	iframeTitle: PropTypes.string,
-	// Makes room for a sidebar if desired
-	hasSidebar: PropTypes.bool,
-	// The site/post description passed to the SeoPreviewPane
-	frontPageMetaDescription: PropTypes.string,
-};
+const ConnectedWebPreviewModal = connect( null, { setPreviewShowing } )(
+	localize( WebPreviewModal )
+);
 
-WebPreview.defaultProps = {
-	showExternal: true,
-	showClose: true,
-	showSEO: true,
-	showDeviceSwitcher: true,
-	showEdit: false,
-	editUrl: null,
-	previewUrl: null,
-	previewMarkup: null,
-	onLoad: noop,
-	onClose: noop,
-	onEdit: noop,
-	hasSidebar: false,
-	isContentOnly: false,
-};
+export default ( { isContentOnly, ...restProps } ) => {
+	const WebPreviewComponent = isContentOnly ? WebPreviewContent : ConnectedWebPreviewModal;
 
-export default connect( null, { recordTracksEvent, setPreviewShowing } )( localize( WebPreview ) );
+	return <WebPreviewComponent { ...restProps } />;
+};
