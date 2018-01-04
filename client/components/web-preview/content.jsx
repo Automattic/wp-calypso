@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -27,7 +27,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
 
-export class WebPreviewContent extends PureComponent {
+export class WebPreviewContent extends Component {
 	previewId = uuid();
 	_hasTouch = false;
 

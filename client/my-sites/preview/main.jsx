@@ -23,7 +23,7 @@ import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import Gridicon from 'gridicons';
 import Main from 'components/main';
-import WebPreviewContent from 'components/web-preview/content';
+import WebPreview from 'components/web-preview';
 
 const debug = debugFactory( 'calypso:my-sites:preview' );
 
@@ -138,7 +138,8 @@ class PreviewMain extends React.Component {
 		return (
 			<Main className="preview">
 				<DocumentHead title={ translate( 'Your Site' ) } />
-				<WebPreviewContent
+				<WebPreview
+					isContentOnly
 					onLocationUpdate={ this.updateSiteLocation }
 					showUrl={ !! this.state.externalUrl }
 					showClose={ this.state.showingClose }
