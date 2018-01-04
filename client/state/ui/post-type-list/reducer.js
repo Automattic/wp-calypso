@@ -51,6 +51,7 @@ export const postTypeList = ( state = initialState, action ) => {
 			return {
 				...state,
 				isMultiSelectEnabled: false,
+				postIdWithActiveLikesPopover: null,
 				selectedPosts: [],
 			};
 

@@ -208,13 +208,13 @@ describe( 'reducer', () => {
 			expect( state.isMultiSelectEnabled ).to.be.false;
 		} );
 
-		test( 'should reset isMultiSelectEnabled and selectedPosts when navigating', () => {
+		test( 'should reset isMultiSelectEnabled, postIdWithActiveLikesPopover, and selectedPosts when navigating', () => {
 			const postGlobalId = '0123456789abcdef';
 			const state = postTypeList(
 				{
 					isMultiSelectEnabled: true,
+					postIdWithActiveLikesPopover: postGlobalId,
 					selectedPosts: [ postGlobalId ],
-					activeSharePanels: [],
 				},
 				{
 					type: ROUTE_SET,
@@ -225,8 +225,8 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				isMultiSelectEnabled: false,
+				postIdWithActiveLikesPopover: null,
 				selectedPosts: [],
-				activeSharePanels: [],
 			} );
 		} );
 	} );
