@@ -98,7 +98,7 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'posts-pages',
+		name: 'posts',
 		paths: [ '/posts' ],
 		module: 'my-sites/posts',
 		secondary: true,
