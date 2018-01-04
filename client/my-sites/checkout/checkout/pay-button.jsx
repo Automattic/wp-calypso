@@ -23,7 +23,7 @@ import {
 
 class PayButton extends React.Component {
 	buttonState = () => {
-		var state;
+		let state;
 
 		switch ( this.props.transactionStep.name ) {
 			case BEFORE_SUBMIT:
@@ -70,7 +70,7 @@ class PayButton extends React.Component {
 	};
 
 	beforeSubmitText = () => {
-		var cart = this.props.cart;
+		const cart = this.props.cart;
 
 		if ( this.props.beforeSubmitText ) {
 			return this.props.beforeSubmitText;
@@ -131,7 +131,7 @@ class PayButton extends React.Component {
 	};
 
 	completing = () => {
-		var text;
+		let text;
 		if ( cartItems.hasFreeTrial( this.props.cart ) ) {
 			text = this.props.translate( 'Starting your free trial…', {
 				context: 'Loading state on /checkout',
@@ -148,7 +148,7 @@ class PayButton extends React.Component {
 	};
 
 	render() {
-		var buttonState = this.buttonState();
+		const buttonState = this.buttonState();
 
 		return (
 			<span className="pay-button">
