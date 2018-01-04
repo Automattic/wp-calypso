@@ -104,21 +104,6 @@
 	.order-details__totals-value.table-item {
 		padding-right: 24px;
 		width: 10em;
-
-		.price-input {
-			.form-text-input-with-affixes {
-				.form-text-input {
-					padding-right: 14px;
-					border-right-width: 0;
-					z-index: 9;
-
-					&:focus {
-						border-right-color: $blue-wordpress;
-						border-right-width: 1px;
-					}
-				}
-			}
-		}
 	}
 
 	&.has-taxes {

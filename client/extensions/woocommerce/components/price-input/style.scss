@@ -1,4 +1,16 @@
 .price-input {
+
+	&.has-reset .form-text-input {
+		padding-right: 14px;
+		border-right-width: 0;
+		z-index: 9;
+
+		&:focus {
+			border-right-color: $blue-wordpress;
+			border-right-width: 1px;
+		}
+	}
+
 	.form-text-input-with-affixes__suffix {
 		background: transparent;
 		position: relative;
