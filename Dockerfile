@@ -52,8 +52,9 @@ RUN        touch node_modules
 #
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
+ARG        commit_sha=(unknown)
 RUN        true \
-           && CALYPSO_ENV=production npm run build \
+           && CALYPSO_ENV=production COMMIT_SHA=$commit_sha npm run build \
            && chown -R nobody /calypso \
            && true
 
