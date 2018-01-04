@@ -1,18 +1,15 @@
 Post Likes
 ==========
 
-`<PostLikes />` is a connected React component for rendering a list of users
-who liked a given post.  If the user has a primary site set on WP.com, the
-user's avatar (and display name, if shown) will link to that site in the
-Calypso Reader.
+`<PostLikes />` is a connected React component for rendering the post likes.
 
 ## Usage
 
-Render the component passing a `siteId` and a `postId`.
+Render the component passing a siteId and a postId.
 
 ```jsx
 function MyAwesomeComponent() {
-	return <PostLikes siteId={ 10 } postId={ 1143 } />;
+	return <PostLikes siteId="10" postId="1143" />;
 }
 ```
 
