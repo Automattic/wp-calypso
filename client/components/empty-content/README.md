@@ -34,21 +34,21 @@ render() {
 
 ## Properties
 
-* <strong>title</strong> — The title to be displayed.
-* <strong>line</strong> — (optional) A secondary line, usually leads to the call to action.
-* <strong>illustration</strong> — (optional) The url string of an image path. Displays drake illustration by default.
-* <strong>illustrationWidth</strong> — (optional) Will display the image at native width unless a specific width is provided.
-* <strong>action</strong> — (optional) Label or React element used for the primary action button.
-* <strong>actionURL</strong> — (optional) `href` value for the primary action button.
-* <strong>actionCallback</strong> — (optional) `onClick` value for the primary action button.
-* <strong>actionTarget</strong> - (optional) If ommitted, no target attribute is specified.
+* **title** — The title to be displayed.
+* **line** — (optional) A secondary line, usually leads to the call to action.
+* **illustration** — (optional) The url string of an image path. Displays drake illustration by default.
+* **illustrationWidth** — (optional) Will display the image at native width unless a specific width is provided.
+* **action** — (optional) Label or React element used for the primary action button.
+* **actionURL** — (optional) `href` value for the primary action button.
+* **actionCallback** — (optional) `onClick` value for the primary action button.
+* **actionTarget** - (optional) If ommitted, no target attribute is specified.
 
 The component also supports a secondary action. This should be used sparingly.
 
-* <strong>secondaryAction</strong> — (optional) Label or React element used for the secondary action button.
-* <strong>secondaryActionURL</strong> — (optional) `href` value for the secondary action button.
-* <strong>secondaryActionCallback</strong> — (optional) `onClick` value for the secondary action button.
-* <strong>secondaryActionTarget</strong> - (optional) If ommitted, no target attribute is specified.
+* **secondaryAction** — (optional) Label or React element used for the secondary action button.
+* **secondaryActionURL** — (optional) `href` value for the secondary action button.
+* **secondaryActionCallback** — (optional) `onClick` value for the secondary action button.
+* **secondaryActionTarget** - (optional) If ommitted, no target attribute is specified.
 
 ### Example: Sites
 
