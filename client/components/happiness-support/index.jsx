@@ -62,12 +62,30 @@ export class HappinessSupport extends Component {
 				);
 	}
 
-	renderContactButton() {
-		const { isJetpackFreePlan } = this.props;
+	getSupportButtons() {
+		const { isJetpackFreePlan, liveChatAvailable, showLiveChatButton } = this.props;
+
 		if ( isJetpackFreePlan ) {
-			return;
+			return (
+				<div className="happiness-support__buttons">
+					{ this.renderSupportButton() }
+					{ this.renderContactButton() }
+				</div>
+			);
 		}
 
+		return (
+			<div className="happiness-support__buttons">
+				{ showLiveChatButton && <HappychatConnection /> }
+				{ showLiveChatButton && liveChatAvailable
+					? this.renderLiveChatButton()
+					: this.renderContactButton() }
+				{ this.renderSupportButton() }
+			</div>
+		);
+	}
+
+	renderContactButton() {
 		let url = support.CALYPSO_CONTACT,
 			target = '';
 
@@ -126,7 +144,6 @@ export class HappinessSupport extends Component {
 		const classes = {
 			'is-placeholder': this.props.isPlaceholder,
 		};
-		const { liveChatAvailable, showLiveChatButton } = this.props;
 
 		return (
 			<div className={ classNames( 'happiness-support', classes ) }>
@@ -136,13 +153,7 @@ export class HappinessSupport extends Component {
 
 				<p className="happiness-support__text">{ this.getSupportText() }</p>
 
-				<div className="happiness-support__buttons">
-					{ showLiveChatButton && <HappychatConnection /> }
-					{ showLiveChatButton && liveChatAvailable
-						? this.renderLiveChatButton()
-						: this.renderContactButton() }
-					{ this.renderSupportButton() }
-				</div>
+				{ this.getSupportButtons() }
 			</div>
 		);
 	}
