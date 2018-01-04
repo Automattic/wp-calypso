@@ -59,20 +59,24 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 };
 
 export const handleChangeCommentStatusSuccess = ( { dispatch }, action ) => {
-	const { commentId, refreshCommentListQuery, siteId } = action;
+	const { commentId, refreshCommentListQuery: query, siteId } = action;
 	dispatch( removeNotice( `comment-notice-error-${ commentId }` ) );
-	if ( !! refreshCommentListQuery ) {
-		dispatch( requestCommentsList( refreshCommentListQuery ) );
-		if ( !! refreshCommentListQuery.progressId ) {
-			dispatch( updateCommentsProgress( siteId, refreshCommentListQuery.progressId ) );
+	if ( !! query ) {
+		dispatch( requestCommentsList( query ) );
+		if ( !! query.progressId ) {
+			dispatch( updateCommentsProgress( siteId, query.progressId ) );
 		}
 	}
 };
 
 const announceStatusChangeFailure = ( { dispatch }, action ) => {
-	const { commentId, status, previousStatus } = action;
+	const { commentId, previousStatus, refreshCommentListQuery: query, siteId, status } = action;
 
 	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
+
+	if ( !! query && !! query.progressId ) {
+		dispatch( updateCommentsProgress( siteId, query.progressId ) );
+	}
 
 	dispatch(
 		bypassDataLayer( {

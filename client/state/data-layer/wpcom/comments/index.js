@@ -217,7 +217,7 @@ export const deleteComment = ( { dispatch, getState }, action ) => {
 
 export const handleDeleteSuccess = (
 	{ dispatch },
-	{ options, refreshCommentListQuery, siteId }
+	{ options, refreshCommentListQuery: query, siteId }
 ) => {
 	const showSuccessNotice = get( options, 'showSuccessNotice', false );
 	if ( showSuccessNotice ) {
@@ -230,16 +230,20 @@ export const handleDeleteSuccess = (
 		);
 	}
 
-	if ( !! refreshCommentListQuery ) {
-		dispatch( requestCommentsList( refreshCommentListQuery ) );
-		if ( !! refreshCommentListQuery.progressId ) {
-			dispatch( updateCommentsProgress( siteId, refreshCommentListQuery.progressId ) );
+	if ( !! query ) {
+		dispatch( requestCommentsList( query ) );
+		if ( !! query.progressId ) {
+			dispatch( updateCommentsProgress( siteId, query.progressId ) );
 		}
 	}
 };
 
 export const announceDeleteFailure = ( { dispatch }, action ) => {
-	const { siteId, postId, comment } = action;
+	const { siteId, postId, comment, refreshCommentListQuery: query } = action;
+
+	if ( !! query && !! query.progressId ) {
+		dispatch( updateCommentsProgress( siteId, query.progressId ) );
+	}
 
 	dispatch(
 		errorNotice( translate( 'Could not delete the comment.' ), {
