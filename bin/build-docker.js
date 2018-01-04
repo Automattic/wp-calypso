@@ -10,24 +10,17 @@
  * docker build --build-arg commit_sha=`git rev-parse HEAD` -t wp-calypso .
  */
 
-const { promisify } = require( 'util' );
-const { spawn, exec } = require( 'child_process' );
+const { spawnSync, execSync } = require( 'child_process' );
 
-function readSha() {
-	return promisify( exec )( 'git rev-parse HEAD' ).then( ( { stdout } ) => {
-		return stdout.trim();
-	} );
-}
+const sha = String( execSync( 'git rev-parse HEAD' ) ).trim();
 
-readSha().then( ( sha ) => {
-	const args = [
-		'build',
-		'--build-arg', 'commit_sha=' + sha,
-		'-t', 'wp-calypso',
-		'.'
-	];
+const args = [
+	'build',
+	'--build-arg', 'commit_sha=' + sha,
+	'-t', 'wp-calypso',
+	'.'
+];
 
-	console.log( 'docker ' + args.join( ' ' ) );
-	spawn( 'docker', args, { stdio: 'inherit' } );
-} );
+console.log( 'docker ' + args.join( ' ' ) );
+spawnSync( 'docker', args, { stdio: 'inherit' } );
 
