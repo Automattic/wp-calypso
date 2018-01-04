@@ -66,7 +66,6 @@ class SiteSettingsFormWriting extends Component {
 			handleToggle,
 			handleAutosavingToggle,
 			handleAutosavingRadio,
-			isJetpackSite: _isJetpackSite,
 			isRequestingSettings,
 			isSavingSettings,
 			jetpackMasterbarSupported,
@@ -74,11 +73,12 @@ class SiteSettingsFormWriting extends Component {
 			onChangeField,
 			setFieldValue,
 			siteId,
+			siteIsJetpack,
 			translate,
 			updateFields,
 		} = this.props;
 
-		const jetpackSettingsUI = _isJetpackSite && jetpackSettingsUISupported;
+		const jetpackSettingsUI = siteIsJetpack && jetpackSettingsUISupported;
 
 		return (
 			<form
@@ -86,7 +86,7 @@ class SiteSettingsFormWriting extends Component {
 				onSubmit={ handleSubmitForm }
 				className="site-settings__general-settings"
 			>
-				{ _isJetpackSite &&
+				{ siteIsJetpack &&
 					jetpackMasterbarSupported && (
 						<div>
 							{ this.renderSectionHeader( translate( 'WordPress.com toolbar' ), false ) }
@@ -168,7 +168,7 @@ class SiteSettingsFormWriting extends Component {
 
 				{ config.isEnabled( 'press-this' ) &&
 					! this.isMobile() &&
-					! ( _isJetpackSite || jetpackSettingsUISupported ) && (
+					! ( siteIsJetpack || jetpackSettingsUISupported ) && (
 						<div>
 							{ this.renderSectionHeader(
 								translate( 'Press This', {
@@ -192,7 +192,7 @@ const connectComponent = connect(
 		return {
 			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
 			jetpackMasterbarSupported: isJetpackMinimumVersion( state, siteId, '4.8' ),
-			isJetpackSite: isJetpackSite( state, siteId ),
+			siteIsJetpack: isJetpackSite( state, siteId ),
 			siteId,
 		};
 	},
