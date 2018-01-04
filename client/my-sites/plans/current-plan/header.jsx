@@ -135,7 +135,10 @@ class CurrentPlanHeader extends Component {
 						</div>
 						{ this.renderPurchaseInfo() }
 						{ includePlansLink && (
-							<Button href={ '/plans/' + selectedSite.slug }>
+							<Button
+								className="current-plan__compare-plans"
+								href={ '/plans/' + selectedSite.slug }
+							>
 								{ translate( 'Compare Plans' ) }
 							</Button>
 						) }
