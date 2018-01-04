@@ -3,16 +3,15 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { cartItems, isPaidForFullyInCredits } from 'lib/cart-values';
-import SubscriptionText from './subscription-text';
+import Button from 'components/button';
+import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
 import {
 	BEFORE_SUBMIT,
 	INPUT_VALIDATION,
@@ -153,13 +152,14 @@ class PayButton extends React.Component {
 
 		return (
 			<span className="pay-button">
-				<button
+				<Button
 					type="submit"
 					className="button is-primary button-pay pay-button__button"
+					busy={ buttonState.disabled }
 					disabled={ buttonState.disabled }
 				>
 					{ buttonState.text }
-				</button>
+				</Button>
 				<SubscriptionText cart={ this.props.cart } />
 			</span>
 		);
