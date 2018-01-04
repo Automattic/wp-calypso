@@ -1,19 +1,10 @@
 /*eslint-disable no-var */
 var config = require( 'config' ),
 	page = require( 'page' ),
+	sectionsUtils = require( 'lib/sections-utils' ),
 	controller = require( 'controller' );
 
 var sections = /*___SECTIONS_DEFINITION___*/[];
-
-function pathToRegExp( path ) {
-	// Prevents root level double dash urls from being validated.
-	if ( path === '/' ) {
-		return path;
-	}
-
-	//TODO: Escape path
-	return new RegExp( '^' + path + '(/.*)?$' );
-}
 
 function load( sectionName ) {
 	switch ( sectionName ) { //eslint-disable-line no-empty
@@ -22,7 +13,7 @@ function load( sectionName ) {
 }
 
 function createPageDefinition( path, sectionDefinition ) {
-	var pathRegex = pathToRegExp( path );
+	var pathRegex = sectionsUtils.pathToRegExp( path );
 
 	page( pathRegex, function( context, next ) {
 		var envId = sectionDefinition.envId;
@@ -36,12 +27,6 @@ function createPageDefinition( path, sectionDefinition ) {
 }
 
 module.exports = {
-	get: function() {
-		return sections;
-	},
-	load: function() {
-		sections.forEach( sectionDefinition => {
-			sectionDefinition.paths.forEach( path => createPageDefinition( path, sectionDefinition ) );
-		} );
-	},
+	get: sectionsUtils.getSectionsFactory( sections ),
+	load: sectionsUtils.loadSectionsFactory( sections, createPageDefinition ),
 };
