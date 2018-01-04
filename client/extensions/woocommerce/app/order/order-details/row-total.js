@@ -43,7 +43,7 @@ class OrderTotalRow extends Component {
 		if ( ! name ) {
 			name = snakeCase( label );
 		}
-		const total = isNaN( parseFloat( value ) ) ? 0 : value;
+		const total = '' !== value && isNaN( parseFloat( value ) ) ? 0 : value;
 
 		const classes = classnames( className, 'order-details__total order-details__total-edit' );
 		return (

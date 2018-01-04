@@ -95,6 +95,9 @@ class OrderRefundTable extends Component {
 	};
 
 	validateValue = value => {
+		if ( '' === value ) {
+			return value;
+		}
 		value = value.replace( /[^0-9,.-]/g, '' );
 		if ( ! isNaN( parseFloat( value ) ) && parseFloat( value ) >= 0 ) {
 			return value;
