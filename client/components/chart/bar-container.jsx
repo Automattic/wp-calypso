@@ -1,11 +1,9 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
+import * as React from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 /**
  * Internal dependencies
@@ -19,9 +17,16 @@ import userModule from 'lib/user';
  */
 const user = userModule();
 
-export default class extends React.Component {
-	static displayName = 'ModuleChartBarContainer';
+const getTooltipPosition = ( width, barWidth, index, isRTL ) => {
+	const offset = barWidth * ( index + 1 );
 
+	// eslint-disable-next-line no-nested-ternary
+	return offset + 230 > width && offset + barWidth - 230 > 0
+		? isRTL ? 'bottom right' : 'bottom left'
+		: isRTL ? 'bottom left' : 'bottom right';
+};
+
+export class BarContainer extends React.PureComponent {
 	static propTypes = {
 		isTouch: PropTypes.bool,
 		data: PropTypes.array,
@@ -30,43 +35,35 @@ export default class extends React.Component {
 		barClick: PropTypes.func,
 	};
 
-	buildBars = max => {
-		const numberBars = this.props.data.length,
-			width = this.props.chartWidth,
-			barWidth = width / numberBars;
-		let tooltipPosition = user.isRTL() ? 'bottom left' : 'bottom right';
-
-		const bars = this.props.data.map( function( item, index ) {
-			const barOffset = barWidth * ( index + 1 );
-
-			if ( barOffset + 230 > width && barOffset + barWidth - 230 > 0 ) {
-				tooltipPosition = user.isRTL() ? 'bottom right' : 'bottom left';
-			}
-
-			return (
-				<Bar
-					index={ index }
-					key={ index }
-					isTouch={ this.props.isTouch }
-					tooltipPosition={ tooltipPosition }
-					className={ item.className }
-					clickHandler={ this.props.barClick }
-					data={ item }
-					max={ max }
-					count={ numberBars }
-				/>
-			);
-		}, this );
-
-		return bars;
-	};
-
 	render() {
+		const { barClick: clickHandler, chartWidth: width, data, isTouch, yAxisMax: max } = this.props;
+		const count = data.length;
+		const barWidth = width / count;
+		const isRTL = user.isRTL();
+
 		return (
 			<div>
-				<div className="chart__bars">{ this.buildBars( this.props.yAxisMax ) }</div>
-				<XAxis data={ this.props.data } labelWidth={ 42 } />
+				<div className="chart__bars">
+					{ data.map( ( item, index ) => (
+						<Bar
+							{ ...{
+								key: index,
+								className: item.className,
+								clickHandler,
+								count,
+								data: item,
+								index,
+								isTouch,
+								max,
+								tooltipPosition: getTooltipPosition( width, barWidth, index, isRTL ),
+							} }
+						/>
+					) ) }
+				</div>
+				<XAxis data={ data } labelWidth={ 42 } />
 			</div>
 		);
 	}
 }
+
+export default BarContainer;
