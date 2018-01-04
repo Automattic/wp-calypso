@@ -15,7 +15,7 @@ var sections = /*___SECTIONS_DEFINITION___*/[];
 
 var _loadedSections = {};
 
-function loadCSS( sectionName ) { //eslint-disable-line no-unused-vars
+function maybeLoadCSS( sectionName ) { //eslint-disable-line no-unused-vars
 	var section = find( sections, function finder( currentSection ) {
 		return currentSection.name === sectionName;
 	} );
@@ -24,56 +24,54 @@ function loadCSS( sectionName ) { //eslint-disable-line no-unused-vars
 		return;
 	}
 
-	var url = section.css.urls.ltr;
-
-	if ( typeof document !== 'undefined' && document.documentElement.dir === 'rtl' ) {
-		url = section.css.urls.rtl;
-	}
+	var url = ( typeof document !== 'undefined' && document.documentElement.dir === 'rtl' )
+		? section.css.urls.rtl
+		: section.css.urls.ltr;
 
 	switchCSS( 'section-css-' + section.css.id, url );
 }
 
 function preload( sectionName ) {
-	var loadedModules = [];
+	maybeLoadCSS( sectionName );
 	switch ( sectionName ) { //eslint-disable-line no-empty
 		/*___LOADERS___*/
 	}
-
-	if ( loadedModules.length === 1 ) {
-		return loadedModules[ 0 ];
-	}
-
-	return Promise.all( loadedModules );
 }
 preloadHub.on( 'preload', preload );
+
+function activateSection( sectionDefinition, context, next ) {
+	var dispatch = context.store.dispatch;
+
+	controller.setSection( sectionDefinition )( context );
+	dispatch( { type: 'SECTION_SET', isLoading: false } );
+	dispatch( activateNextLayoutFocus() );
+	next();
+}
 
 function createPageDefinition( path, sectionDefinition ) {
 	var pathRegex = sectionsUtils.pathToRegExp( path );
 
 	page( pathRegex, function( context, next ) {
-		var envId = sectionDefinition.envId;
+		var envId = sectionDefinition.envId,
+			dispatch = context.store.dispatch;
+
 		if ( envId && envId.indexOf( config( 'env_id' ) ) === -1 ) {
 			return next();
 		}
 		if ( _loadedSections[ sectionDefinition.module ] ) {
-			controller.setSection( sectionDefinition )( context );
-			context.store.dispatch( activateNextLayoutFocus() );
-			return next();
+			return activateSection( sectionDefinition, context, next );
 		}
 		if ( config.isEnabled( 'restore-last-location' ) && restoreLastSession( context.path ) ) {
 			return;
 		}
-		context.store.dispatch( { type: 'SECTION_SET', isLoading: true } );
+		dispatch( { type: 'SECTION_SET', isLoading: true } );
 		preload( sectionDefinition.name ).then( function( requiredModule ) {
 			var loadedModules = Array.isArray( requiredModule ) ? requiredModule : [ requiredModule ];
-			context.store.dispatch( { type: 'SECTION_SET', isLoading: false } );
-			controller.setSection( sectionDefinition )( context );
 			if ( ! _loadedSections[ sectionDefinition.module ] ) {
 				loadedModules.forEach( mod => mod( controller.clientRouter ) );
 				_loadedSections[ sectionDefinition.module ] = true;
 			}
-			context.store.dispatch( activateNextLayoutFocus() );
-			next();
+			return activateSection( sectionDefinition, context, next );
 		},
 		function onError( error ) {
 			if ( ! LoadingError.isRetry() ) {
@@ -81,7 +79,7 @@ function createPageDefinition( path, sectionDefinition ) {
 				LoadingError.retry( sectionDefinition.name );
 			} else {
 				console.error( error );
-				context.store.dispatch( { type: 'SECTION_SET', isLoading: false } );
+				dispatch( { type: 'SECTION_SET', isLoading: false } );
 				LoadingError.show( sectionDefinition.name );
 			}
 		} );

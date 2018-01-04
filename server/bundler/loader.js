@@ -34,26 +34,20 @@ function getSectionRequire( section ) {
 function getSectionPreLoaderTemplate( sectionsByName ) {
 	const [ sectionName, sections ] = sectionsByName;
 	const sectionNameString = JSON.stringify( sectionName );
-	let cssLoader = '';
-
-	if ( sections.some( section => section.css ) ) {
-		cssLoader = `loadCSS( ${ sectionNameString } );`;
-	}
 
 	const getModuleLoader = ( importSectionName, importModuleName ) =>
 		`import( /* webpackChunkName: '${ importSectionName }' */ '${ importModuleName }' )`;
 
 	const loader =
 		sections.length === 1
-			? `return ${ getModuleLoader( sectionName, sections[ 0 ].module ) };`
-			: `return Promise.all( [ ${ sections
+			? `${ getModuleLoader( sectionName, sections[ 0 ].module ) }`
+			: `Promise.all( [ ${ sections
 					.map( sec => getModuleLoader( sectionName, sec.module ) )
-					.join( ',' ) } ] );`;
+					.join( ',' ) } ] )`;
 
 	return `
 		case ${ sectionNameString }:
-			${ cssLoader }
-			${ loader }
+			return ${ loader };
 	`;
 }
 
