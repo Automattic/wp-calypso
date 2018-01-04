@@ -1,7 +1,7 @@
 /*eslint-disable no-var */
 var config = require( 'config' ),
 	page = require( 'page' ),
-	React = require( 'react' ),
+	React = require( 'react' ), //eslint-disable-line no-unused-vars
 	find = require( 'lodash/find' ),
 	activateNextLayoutFocus = require( 'state/ui/layout-focus/actions' ).activateNextLayoutFocus,
 	LoadingError = require( 'layout/error' ),
@@ -10,13 +10,13 @@ var config = require( 'config' ),
 	preloadHub = require( 'sections-preload' ).hub,
 	switchCSS = require( 'lib/i18n-utils/switch-locale' ).switchCSS;
 
-var sections = ___SECTIONS_DEFINITION___;
+var sections = /*___SECTIONS_DEFINITION___*/[];
 
 var _loadedSections = {};
 
-function loadCSS( sectionName ) {
-	var section = find( sections, function ( section ) {
-		return section.name === sectionName;
+function loadCSS( sectionName ) { //eslint-disable-line no-unused-vars
+	var section = find( sections, function finder( currentSection ) {
+		return currentSection.name === sectionName;
 	} );
 
 	if ( ! ( section && section.css ) ) {
@@ -30,11 +30,11 @@ function loadCSS( sectionName ) {
 	}
 
 	switchCSS( 'section-css-' + section.css.id, url );
-};
+}
 
 function preload( sectionName ) {
-	switch ( sectionName ) {
-		___LOADERS___
+	switch ( sectionName ) { //eslint-disable-line no-empty
+		/*___LOADERS___*/
 	}
 }
 preloadHub.on( 'preload', preload );
@@ -54,7 +54,7 @@ function createPageDefinition( path, sectionDefinition ) {
 
 	page( pathRegex, function( context, next ) {
 		var envId = sectionDefinition.envId;
-		if ( envId && envId.indexOf( config( "env_id" ) ) === -1 ) {
+		if ( envId && envId.indexOf( config( 'env_id' ) ) === -1 ) {
 			return next();
 		}
 		if ( _loadedSections[ sectionDefinition.module ] ) {
@@ -62,12 +62,12 @@ function createPageDefinition( path, sectionDefinition ) {
 			context.store.dispatch( activateNextLayoutFocus() );
 			return next();
 		}
-		if ( config.isEnabled( "restore-last-location" ) && restoreLastSession( context.path ) ) {
+		if ( config.isEnabled( 'restore-last-location' ) && restoreLastSession( context.path ) ) {
 			return;
 		}
-		context.store.dispatch( { type: "SECTION_SET", isLoading: true } );
+		context.store.dispatch( { type: 'SECTION_SET', isLoading: true } );
 		preload( sectionDefinition.name ).then( function( requiredModule ) {
-			context.store.dispatch( { type: "SECTION_SET", isLoading: false } );
+			context.store.dispatch( { type: 'SECTION_SET', isLoading: false } );
 			controller.setSection( sectionDefinition )( context );
 			if ( ! _loadedSections[ sectionDefinition.module ] ) {
 				requiredModule( controller.clientRouter );
@@ -82,7 +82,7 @@ function createPageDefinition( path, sectionDefinition ) {
 				LoadingError.retry( sectionDefinition.name );
 			} else {
 				console.error( error );
-				context.store.dispatch( { type: "SECTION_SET", isLoading: false } );
+				context.store.dispatch( { type: 'SECTION_SET', isLoading: false } );
 				LoadingError.show( sectionDefinition.name );
 			}
 		} );
@@ -97,5 +97,5 @@ module.exports = {
 		sections.forEach( sectionDefinition => {
 			sectionDefinition.paths.forEach( path => createPageDefinition( path, sectionDefinition ) );
 		} );
-	}
+	},
 };

@@ -9,8 +9,8 @@ function getSectionsModule( sections ) {
 	if ( config.isEnabled( 'code-splitting' ) ) {
 		return fs
 			.readFileSync( __dirname + '/loader-template-code-split.js', 'utf8' )
-			.replace( '___SECTIONS_DEFINITION___', JSON.stringify( sections ) )
-			.replace( '___LOADERS___', sections.map( getSectionPreLoaderTemplate ).join( '\n' ) );
+			.replace( '/*___SECTIONS_DEFINITION___*/', JSON.stringify( sections ) + ' || ' )
+			.replace( '/*___LOADERS___*/', sections.map( getSectionPreLoaderTemplate ).join( '\n' ) );
 	}
 
 	const dependencies = [
