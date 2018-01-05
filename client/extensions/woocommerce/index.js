@@ -214,11 +214,10 @@ function addStorePage( storePage, storeNavigation ) {
 
 			analytics.pageView.record( analyticsPath, analyticsPageTitle );
 
-			tracksStore.setReduxStore( context.store );
-
 			context.primary = React.createElement( App, appProps, component );
 			next();
 		},
+		addTracksContext,
 		makeLayout,
 		clientRender
 	);
@@ -243,6 +242,12 @@ function notFoundError( context, next ) {
 	next();
 }
 
+function addTracksContext( context, next ) {
+	tracksStore.setReduxStore( context.store );
+
+	next();
+}
+
 export default function() {
 	// Add pages that use the store navigation
 	getStorePages().forEach( function( storePage ) {
@@ -254,11 +259,19 @@ export default function() {
 	} );
 
 	// Add pages that use my-sites navigation instead
-	page( '/store/stats/:type/:unit', siteSelection, sites, makeLayout, clientRender );
+	page(
+		'/store/stats/:type/:unit',
+		siteSelection,
+		sites,
+		addTracksContext,
+		makeLayout,
+		clientRender
+	);
 	page(
 		'/store/stats/:type/:unit/:site',
 		siteSelection,
 		navigation,
+		addTracksContext,
 		StatsController,
 		makeLayout,
 		clientRender
