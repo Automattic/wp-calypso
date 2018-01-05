@@ -70,17 +70,30 @@ const DUMMY_VIDEO_MEDIA = [
 ];
 
 describe( 'EditorMediaModal', () => {
-	let spy, deleteMedia, onClose;
+	let spy, deleteMedia, setLibrarySelectedItems, onClose;
 
 	useSandbox( sandbox => {
 		spy = sandbox.spy();
-		sandbox.stub( mediaActions, 'setLibrarySelectedItems' );
+		setLibrarySelectedItems = sandbox.stub( mediaActions, 'setLibrarySelectedItems' );
 		deleteMedia = sandbox.stub( mediaActions, 'delete' );
 		onClose = sandbox.stub();
 	} );
 
 	afterEach( () => {
 		accept.reset();
+	} );
+
+	test( 'When `single` selection screen chosen should initialise with no items selected', () => {
+		const tree = shallow(
+			<EditorMediaModal
+				single={ true }
+				site={ DUMMY_SITE }
+				view={ null }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
+			/>
+		).instance();
+		tree.componentWillMount();
+		expect( setLibrarySelectedItems ).to.have.been.calledWith( DUMMY_SITE.ID, [] );
 	} );
 
 	test( 'should prompt to delete a single item from the list view', done => {
