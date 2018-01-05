@@ -163,7 +163,7 @@ class PostItem extends React.Component {
 								</a>
 							) }
 							{ isAuthorVisible && (
-								<a href={ enabledPostLink } className="post-item__site-info-link">
+								<a href={ enabledPostLink } className="post-item__post-author-link">
 									<PostTypePostAuthor globalId={ globalId } />
 								</a>
 							) }

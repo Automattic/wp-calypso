@@ -57,6 +57,11 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 	}
 }
 
+.post-item__site-info-link,
+.post-item__post-author-link {
+	display: block;
+}
+
 .post-item__detail {
 	position: relative;
 	width: calc( 100% - 50px );
@@ -72,8 +77,8 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 
 .post-item__title {
 	@extend %content-font;
-	padding-bottom: 2px;
-	padding-right: 8px;
+	margin: 0;
+	padding: 0;
 	font-weight: 700;
 	font-size: 18px;
 	line-height: 1.2;
@@ -83,6 +88,8 @@ a.post-item__title-link,
 a.post-item__title-link:visited {
 	color: $gray-dark;
 	display: block;
+	padding-bottom: 2px;
+	padding-right: 8px;
 
 	&:hover {
 		color: darken( $gray, 20% );
