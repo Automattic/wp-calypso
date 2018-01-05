@@ -138,7 +138,7 @@ export const ChecklistPublishPostTour = makeTour(
 						'Let’s move on and see what’s next on our checklist.'
 				) }
 			</p>
-			<SiteLink isButton="true" href={ '/checklist/:site' }>
+			<SiteLink isButton href={ '/checklist/:site' }>
 				{ translate( 'Return to the checklist' ) }
 			</SiteLink>
 		</Step>

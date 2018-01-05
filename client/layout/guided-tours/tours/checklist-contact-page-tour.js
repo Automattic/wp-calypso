@@ -123,7 +123,7 @@ export const ChecklistContactPageTour = makeTour(
 						'to our checklist and see what’s next.'
 				) }
 			</p>
-			<SiteLink isButton="true" href={ '/checklist/:site' }>
+			<SiteLink isButton href={ '/checklist/:site' }>
 				{ translate( 'Return to the checklist' ) }
 			</SiteLink>
 		</Step>
