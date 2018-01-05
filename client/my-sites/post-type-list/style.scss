@@ -29,6 +29,12 @@
 	}
 }
 
+.post-item__time-status-link,
+.post-item__time-status-link:active,
+.post-item__time-status-link:visited {
+	color: $gray-text-min;
+}
+
 .post-type-list__post-thumbnail-wrapper {
 	display: none;
 	position: relative;
