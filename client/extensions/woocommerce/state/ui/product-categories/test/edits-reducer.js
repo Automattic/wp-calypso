@@ -104,6 +104,29 @@ describe( 'edits-reducer', () => {
 		expect( edits.creates[ 0 ].slug ).to.eql( 'new-category' );
 	} );
 
+	test( 'should modify "creates" on second edit', () => {
+		const edits1 = reducer(
+			undefined,
+			editProductCategory( siteId, null, {
+				name: 'After first edit',
+			} )
+		);
+
+		expect( edits1.creates[ 0 ].name ).to.eql( 'After first edit' );
+		expect( edits1.creates[ 0 ].description ).to.not.exist;
+
+		const edits2 = reducer(
+			edits1,
+			editProductCategory( siteId, edits1.creates[ 0 ], {
+				name: 'After second edit',
+				description: 'Description',
+			} )
+		);
+
+		expect( edits2.creates[ 0 ].name ).to.eql( 'After second edit' );
+		expect( edits2.creates[ 0 ].description ).to.eql( 'Description' );
+	} );
+
 	test( 'should create more than one category', () => {
 		const id1 = { placeholder: 'productCategory_1' };
 		const edits1 = reducer(

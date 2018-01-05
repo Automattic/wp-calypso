@@ -77,7 +77,7 @@ function editProductCategory( array, category, data ) {
 	// Look for this object in the appropriate create or edit array first.
 	const newArray = compact(
 		prevArray.map( c => {
-			if ( category.id === c.id ) {
+			if ( isEqual( category.id, c.id ) ) {
 				found = true;
 
 				// If data is null, remove this edit, otherwise update the edit data.
