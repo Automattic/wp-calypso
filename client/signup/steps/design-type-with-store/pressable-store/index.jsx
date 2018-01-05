@@ -40,6 +40,14 @@ class PressableStoreStep extends Component {
 		};
 	}
 
+	static propTypes = {
+		isVisible: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		isVisible: false,
+	};
+
 	componentDidMount() {
 		this.props.setRef( this );
 	}
@@ -81,6 +89,16 @@ class PressableStoreStep extends Component {
 		this.input = input;
 	};
 
+	getTabIndex() {
+		const { isVisible } = this.props;
+
+		if ( isVisible ) {
+			return 1;
+		}
+
+		return -1;
+	}
+
 	renderStoreForm() {
 		const { translate } = this.props;
 
@@ -116,8 +134,9 @@ class PressableStoreStep extends Component {
 								type="email"
 								placeholder="Email Address"
 								name="email"
+								tabIndex={ this.getTabIndex() }
 							/>
-							<FormButton className="pressable-store__form-submit">
+							<FormButton className="pressable-store__form-submit" tabIndex={ this.getTabIndex() }>
 								{ translate( 'Get started on Pressable' ) }
 								<Gridicon icon="external" size={ 12 } />
 							</FormButton>
@@ -132,6 +151,7 @@ class PressableStoreStep extends Component {
 						className="pressable-store__privacy-policy"
 						target="__blank"
 						href="https://pressable.com/legal/privacy-policy/"
+						tabIndex={ this.getTabIndex() }
 					>
 						{ translate( 'Pressable Privacy Policy', {
 							comment: '“Pressable” is the name of a WordPress.org hosting provider',
@@ -150,7 +170,12 @@ class PressableStoreStep extends Component {
 			<div className="pressable-store">
 				{ this.renderStoreForm() }
 				<div className="pressable-store__back-button-wrapper">
-					<Button compact={ true } borderless={ true } onClick={ this.props.onBackClick }>
+					<Button
+						compact={ true }
+						borderless={ true }
+						onClick={ this.props.onBackClick }
+						tabIndex={ this.getTabIndex() }
+					>
 						<Gridicon icon="arrow-left" size={ 18 } />
 						{ translate( 'Back', { context: 'Return to previous step' } ) }
 					</Button>

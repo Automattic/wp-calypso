@@ -37,7 +37,7 @@ export default class extends React.PureComponent {
 		const tileClassName = classNames( 'tile-grid__item', className );
 
 		return (
-			<Card className={ tileClassName } href={ href } onClick={ onClick }>
+			<Card className={ tileClassName } href={ href } onClick={ onClick } tabIndex="-1">
 				{ image && (
 					<div className="tile-grid__image">
 						<img src={ image } />

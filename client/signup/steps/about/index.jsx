@@ -513,6 +513,7 @@ class AboutStep extends Component {
 						{ ...this.props }
 						onBackClick={ this.handleStoreBackClick }
 						setRef={ this.setPressableStore }
+						isVisible={ this.state.showStore }
 					/>
 				</div>
 

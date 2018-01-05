@@ -172,6 +172,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 						{ ...this.props }
 						onBackClick={ this.handleStoreBackClick }
 						setRef={ this.setPressableStore }
+						isVisible={ this.state.showStore }
 					/>
 				</div>
 				<div className={ designTypeListClassName }>
