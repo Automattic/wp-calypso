@@ -127,7 +127,6 @@ class StoreLocationSetupView extends Component {
 
 	onNext = event => {
 		const { adminURL, currentUserEmailVerified, siteId, translate } = this.props;
-		const { adminURL, siteId, translate } = this.props;
 		event.preventDefault();
 
 		if ( ! currentUserEmailVerified ) {
