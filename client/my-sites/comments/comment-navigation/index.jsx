@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
+import { each, get, includes, isEqual, isUndefined, map, filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -41,6 +41,7 @@ import {
 import { removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteComment } from 'state/selectors';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
+import { COMMENTS_CHANGE_STATUS, COMMENTS_DELETE } from 'state/action-types';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -59,6 +60,15 @@ export class CommentNavigation extends Component {
 	};
 
 	shouldComponentUpdate = nextProps => ! isEqual( this.props, nextProps );
+
+	componentDidUpdate = prevProps => {
+		const { commentsListQuery, hasPendingBulkAction, refreshPage } = this.props;
+		if ( ! hasPendingBulkAction && prevProps.hasPendingBulkAction ) {
+			if ( commentsListQuery ) {
+				refreshPage( commentsListQuery );
+			}
+		}
+	};
 
 	bulkDeletePermanently = () => {
 		const { translate } = this.props;
@@ -108,11 +118,9 @@ export class CommentNavigation extends Component {
 	setBulkStatus = newStatus => () => {
 		const {
 			changeStatus,
-			commentsListQuery,
 			deletePermanently,
 			postId: isPostView,
 			recordBulkAction,
-			refreshPage,
 			selectedComments,
 			status: queryStatus,
 			toggleBulkMode,
@@ -130,10 +138,6 @@ export class CommentNavigation extends Component {
 				unlike( postId, commentId );
 			}
 		} );
-
-		if ( commentsListQuery ) {
-			refreshPage( commentsListQuery );
-		}
 
 		recordBulkAction(
 			newStatus,
@@ -324,6 +328,14 @@ export class CommentNavigation extends Component {
 	}
 }
 
+const filterBulkActions = function( value, key ) {
+	return key.indexOf( COMMENTS_CHANGE_STATUS ) !== -1 || key.indexOf( COMMENTS_DELETE ) !== -1;
+};
+
+const hasPendingActions = function( accumulator, requestState ) {
+	return accumulator || requestState.status === 'pending';
+};
+
 const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 	const visibleComments = map( commentsPage, commentId => {
@@ -338,9 +350,15 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 		}
 	} );
 
+	const dataRequests = get( state, 'dataRequests' );
+	const hasPendingBulkAction = filter( dataRequests, filterBulkActions ).reduce(
+		hasPendingActions,
+		false
+	);
 	return {
 		visibleComments,
 		hasComments: visibleComments.length > 0,
+		hasPendingBulkAction,
 		isCommentsTreeSupported:
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 	};
