@@ -16,8 +16,11 @@ import { get, noop } from 'lodash';
 import resizeImageUrl from 'lib/resize-image-url';
 import safeImageUrl from 'lib/safe-image-url';
 import { getNormalizedPost } from 'state/posts/selectors';
+import { getEditorPath } from 'state/ui/editor/selectors';
+import { canCurrentUserEditPost } from 'state/selectors';
+import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
 
-function PostTypeListPostThumbnail( { onClick, thumbnail, postUrl } ) {
+function PostTypeListPostThumbnail( { onClick, thumbnail, postLink } ) {
 	const classes = classnames( 'post-type-list__post-thumbnail-wrapper', {
 		'has-image': !! thumbnail,
 	} );
@@ -25,7 +28,7 @@ function PostTypeListPostThumbnail( { onClick, thumbnail, postUrl } ) {
 	return (
 		<div className={ classes }>
 			{ thumbnail && (
-				<a href={ postUrl } className="post-type-list__post-thumbnail-link">
+				<a href={ postLink } className="post-type-list__post-thumbnail-link">
 					<img
 						src={ resizeImageUrl( safeImageUrl( thumbnail ), { h: 80 } ) }
 						className="post-type-list__post-thumbnail"
@@ -50,8 +53,16 @@ PostTypeListPostThumbnail.defaultProps = {
 
 export default connect( ( state, ownProps ) => {
 	const post = getNormalizedPost( state, ownProps.globalId );
-	const postUrl = get( post, 'URL' );
 	const thumbnail = get( post, 'canonical_image.uri' );
 
-	return { thumbnail, postUrl };
+	const siteId = get( post, 'site_ID' );
+	const postId = get( post, 'ID' );
+	const postUrl = canCurrentUserEditPost( state, ownProps.globalId )
+		? getEditorPath( state, siteId, postId )
+		: get( post, 'URL' );
+
+	// Null if the item is a placeholder or bulk edit mode is active.
+	const postLink = ! ownProps.globalId || isMultiSelectEnabled( state ) ? null : postUrl;
+
+	return { thumbnail, postLink };
 } )( PostTypeListPostThumbnail );
