@@ -48,7 +48,6 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive, isHiddenSite, isPrivateSite } from 'state/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
-import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
 import { activateModule } from 'state/jetpack/modules/actions';
 import { isBusiness, isEnterprise, isJetpackBusiness } from 'lib/products-values';
@@ -64,6 +63,7 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
+import WebPreview from 'components/web-preview';
 
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
