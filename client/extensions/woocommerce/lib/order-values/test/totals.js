@@ -10,6 +10,7 @@ import { expect } from 'chai';
  */
 import {
 	getOrderDiscountTotal,
+	getOrderFeeCost,
 	getOrderFeeTotal,
 	getOrderItemCost,
 	getOrderRefundTotal,
@@ -40,21 +41,46 @@ describe( 'getOrderDiscountTotal', () => {
 	} );
 } );
 
+describe( 'getOrderFeeCost', () => {
+	test( 'should be a function', () => {
+		expect( getOrderFeeCost ).to.be.a( 'function' );
+	} );
+
+	test( 'should get the correct fee value', () => {
+		expect( getOrderFeeCost( orderWithTax, 48 ) ).to.eql( 1.53 );
+	} );
+
+	test( 'should get the correct tax amount with multiple fees', () => {
+		expect( getOrderFeeCost( orderWithCoupons, 41 ) ).to.eql( 10 );
+	} );
+
+	test( "should return 0 if this fee doesn't exist", () => {
+		// orderWithRefunds has no fees
+		expect( getOrderFeeCost( orderWithoutTax, 3 ) ).to.eql( 0 );
+	} );
+
+	test( 'should return 0 if there are no fees', () => {
+		// orderWithRefunds has no fees
+		expect( getOrderFeeCost( orderWithRefunds, 2 ) ).to.eql( 0 );
+	} );
+} );
+
 describe( 'getOrderFeeTotal', () => {
 	test( 'should be a function', () => {
 		expect( getOrderFeeTotal ).to.be.a( 'function' );
 	} );
 
-	test( 'should get the correct tax amount', () => {
+	test( 'should get the correct fee total', () => {
 		expect( getOrderFeeTotal( orderWithTax ) ).to.eql( 1.53 );
 	} );
 
-	test( 'should get the correct tax amount with multiple fees', () => {
+	test( 'should get the correct fee total with multiple fees', () => {
 		expect( getOrderFeeTotal( orderWithCoupons ) ).to.eql( 15 );
 	} );
 
-	test( 'should return 0 if there is no tax', () => {
-		expect( getOrderFeeTotal( orderWithoutTax ) ).to.eql( 20 );
+	test( 'should return 0 if there are no fees', () => {
+		// orderWithRefunds has no fees
+		expect( getOrderFeeTotal( orderWithRefunds ) ).to.eql( 0 );
 	} );
 } );
 

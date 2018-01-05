@@ -84,8 +84,8 @@ const CurrencyShape = PropTypes.shape( {
 } );
 
 FormCurrencyInput.propTypes = {
-	currencySymbolPrefix: PropTypes.string,
-	currencySymbolSuffix: PropTypes.string,
+	currencySymbolPrefix: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
+	currencySymbolSuffix: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	onCurrencyChange: PropTypes.func,
 	currencyList: PropTypes.arrayOf( CurrencyShape ),
 };

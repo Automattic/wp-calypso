@@ -297,6 +297,7 @@ class OrderDetailsTable extends Component {
 		}
 
 		const showTax = this.shouldShowTax();
+		const initialShippingValue = getCurrencyFormatDecimal( order.shipping_total, order.currency );
 		const refundValue = getOrderRefundTotal( order );
 		const totalTaxValue = getOrderTotalTax( order );
 		const totalValue = isEditing ? getOrderTotal( order ) + totalTaxValue : order.total;
@@ -333,6 +334,7 @@ class OrderDetailsTable extends Component {
 					<OrderTotalRow
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
+						initialValue={ initialShippingValue }
 						value={ getOrderShippingTotal( order ) }
 						taxValue={ getOrderShippingTax( order ) }
 						showTax={ showTax }

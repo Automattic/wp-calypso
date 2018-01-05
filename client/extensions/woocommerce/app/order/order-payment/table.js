@@ -21,7 +21,7 @@ import {
 	getOrderShippingTax,
 	getOrderTotalTax,
 } from 'woocommerce/lib/order-values';
-import { getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
+import { getOrderFeeCost, getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
 import OrderTotalRow from '../order-details/row-total';
 import PriceInput from 'woocommerce/components/price-input';
 import ScreenReaderText from 'components/screen-reader-text';
@@ -95,6 +95,9 @@ class OrderRefundTable extends Component {
 	};
 
 	validateValue = value => {
+		if ( '' === value ) {
+			return value;
+		}
 		value = value.replace( /[^0-9,.-]/g, '' );
 		if ( ! isNaN( parseFloat( value ) ) && parseFloat( value ) >= 0 ) {
 			return value;
@@ -190,6 +193,7 @@ class OrderRefundTable extends Component {
 		const { order, translate } = this.props;
 		const value = this.state.fees[ i ];
 		const inputId = `fee_line-${ item.id }`;
+		const initialValue = getOrderFeeCost( order, item.id ) + getOrderFeeTax( order, item.id );
 		return (
 			<TableRow key={ i } className="order-payment__items order-details__items">
 				<TableItem
@@ -211,6 +215,7 @@ class OrderRefundTable extends Component {
 					<PriceInput
 						id={ inputId }
 						currency={ order.currency }
+						initialValue={ getCurrencyFormatDecimal( initialValue, order.currency ) }
 						value={ value }
 						onChange={ this.onChange( 'fee', i ) }
 						onBlur={ this.formatInput( `fees[${ i }]` ) }
@@ -264,6 +269,10 @@ class OrderRefundTable extends Component {
 			'has-refund': !! refundValue,
 			'is-refund-modal': true,
 		} );
+		const initialShippingValue = getCurrencyFormatDecimal(
+			parseFloat( order.shipping_total ) + getOrderShippingTax( order ),
+			order.currency
+		);
 
 		return (
 			<div>
@@ -287,6 +296,7 @@ class OrderRefundTable extends Component {
 						isEditable
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
+						initialValue={ initialShippingValue }
 						value={ this.state.shippingTotal }
 						name="shipping_total"
 						onChange={ this.onChange( 'shipping_total' ) }
