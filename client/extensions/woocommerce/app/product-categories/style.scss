@@ -107,3 +107,14 @@
 		}
 	}
 }
+
+.product-categories__form-tinymce-placeholder {
+	@include placeholder();
+	background: lighten( $gray, 35% );
+	height: 225px;
+	border: 1px solid lighten( $gray, 20% );
+}
+
+.product-categories__form .compact-tinymce  .mce-container.mce-tinymce {
+	max-width: initial;
+}
