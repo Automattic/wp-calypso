@@ -6,7 +6,7 @@
 
 import { find, filter, some, every } from 'lodash';
 
-const isRequesting = function( state, siteId ) {
+export const isRequesting = function( state, siteId ) {
 	// if the `isRequesting` attribute doesn't exist yet,
 	// we assume we are still launching the fetch action, so it's true
 	if ( typeof state.plugins.premium.isRequesting[ siteId ] === 'undefined' ) {
@@ -15,14 +15,14 @@ const isRequesting = function( state, siteId ) {
 	return state.plugins.premium.isRequesting[ siteId ];
 };
 
-const hasRequested = function( state, siteId ) {
+export const hasRequested = function( state, siteId ) {
 	if ( typeof state.plugins.premium.hasRequested[ siteId ] === 'undefined' ) {
 		return false;
 	}
 	return state.plugins.premium.hasRequested[ siteId ];
 };
 
-const getPluginsForSite = function( state, siteId, whitelist = false ) {
+export const getPluginsForSite = function( state, siteId, whitelist = false ) {
 	const pluginList = state.plugins.premium.plugins[ siteId ];
 	if ( typeof pluginList === 'undefined' ) {
 		return [];
@@ -41,14 +41,14 @@ const getPluginsForSite = function( state, siteId, whitelist = false ) {
 	} );
 };
 
-const isStarted = function( state, siteId, whitelist = false ) {
+export const isStarted = function( state, siteId, whitelist = false ) {
 	const pluginList = getPluginsForSite( state, siteId, whitelist );
 	return ! every( pluginList, item => {
 		return 'wait' === item.status;
 	} );
 };
 
-const isFinished = function( state, siteId, whitelist = false ) {
+export const isFinished = function( state, siteId, whitelist = false ) {
 	const pluginList = getPluginsForSite( state, siteId, whitelist );
 	if ( pluginList.length === 0 ) {
 		return true;
@@ -59,7 +59,7 @@ const isFinished = function( state, siteId, whitelist = false ) {
 	} );
 };
 
-const isInstalling = function( state, siteId, whitelist = false ) {
+export const isInstalling = function( state, siteId, whitelist = false ) {
 	const pluginList = getPluginsForSite( state, siteId, whitelist );
 	if ( pluginList.length === 0 ) {
 		return false;
@@ -71,7 +71,7 @@ const isInstalling = function( state, siteId, whitelist = false ) {
 	} );
 };
 
-const getActivePlugin = function( state, siteId, whitelist = false ) {
+export const getActivePlugin = function( state, siteId, whitelist = false ) {
 	const pluginList = getPluginsForSite( state, siteId, whitelist );
 	const plugin = find( pluginList, item => {
 		return -1 === [ 'done', 'wait' ].indexOf( item.status ) && item.error === null;
@@ -82,7 +82,7 @@ const getActivePlugin = function( state, siteId, whitelist = false ) {
 	return plugin;
 };
 
-const getNextPlugin = function( state, siteId, whitelist = false ) {
+export const getNextPlugin = function( state, siteId, whitelist = false ) {
 	const pluginList = getPluginsForSite( state, siteId, whitelist );
 	const plugin = find( pluginList, item => {
 		return 'wait' === item.status && item.error === null;
@@ -91,15 +91,4 @@ const getNextPlugin = function( state, siteId, whitelist = false ) {
 		return false;
 	}
 	return plugin;
-};
-
-export default {
-	isRequesting,
-	hasRequested,
-	isStarted,
-	isFinished,
-	isInstalling,
-	getPluginsForSite,
-	getActivePlugin,
-	getNextPlugin,
 };
