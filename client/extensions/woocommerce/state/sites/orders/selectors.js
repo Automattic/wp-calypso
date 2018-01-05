@@ -58,6 +58,27 @@ export const areOrdersLoading = ( state, query = {}, siteId = getSelectedSiteId(
  * @param {Object} state Whole Redux state tree
  * @param {Number} orderId Order ID to check
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether this order has a pending invoice request sent to the remote site
+ */
+export const isOrderInvoiceSending = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const isSending = get( state, [
+		'extensions',
+		'woocommerce',
+		'sites',
+		siteId,
+		'orders',
+		'invoice',
+		'isSending',
+		orderId,
+	] );
+	// Strict check because it could also be undefined.
+	return true === isSending;
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} orderId Order ID to check
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the orders list has been successfully loaded from the server
  */
 export const isOrderLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
