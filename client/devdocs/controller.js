@@ -87,7 +87,7 @@ const devdocs = {
 
 	// UI components
 	design: function( context, next ) {
-		context.primary = <AsyncLoad component={ context.params.component } count={ 65 } require="./design" />;
+		context.primary = <AsyncLoad component={ context.params.component } require="./design" />;
 		next();
 	},
 
@@ -98,29 +98,27 @@ const devdocs = {
 
 	// App Blocks
 	blocks: function( context, next ) {
-		context.primary = <AsyncLoad
-			component={ context.params.component }
-			count={ 60 }
-			require="./design/blocks"
-		/>;
+		context.primary = (
+			<AsyncLoad component={ context.params.component } require="./design/blocks" />
+		);
 		next();
 	},
 
 	selectors: function( context, next ) {
-		context.primary = <AsyncLoad
-			require="./docs-selectors"
-			search={ context.query.search }
-			selector={ context.params.selector }
-		/>;
+		context.primary = (
+			<AsyncLoad
+				require="./docs-selectors"
+				search={ context.query.search }
+				selector={ context.params.selector }
+			/>
+		);
 		next();
 	},
 
 	typography: function( context, next ) {
-		context.primary = <AsyncLoad
-			component={ context.params.component }
-			count={ 3 }
-			require="./design/typography"
-		/>;
+		context.primary = (
+			<AsyncLoad component={ context.params.component } require="./design/typography" />
+		);
 		next();
 	},
 

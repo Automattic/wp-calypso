@@ -15,7 +15,7 @@ import Placeholder from './placeholder';
 
 export default class DevdocsAsyncLoad extends React.PureComponent {
 	static defaultProps = {
-		placeholderCount: 25,
+		placeholderCount: 5,
 	};
 	static displayName = 'DevdocsAsyncLoad';
 	static propTypes = {
