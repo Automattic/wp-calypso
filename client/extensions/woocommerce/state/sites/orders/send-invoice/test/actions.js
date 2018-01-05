@@ -18,11 +18,15 @@ import {
 describe( 'actions', () => {
 	describe( '#sendOrderInvoice()', () => {
 		test( 'should return an action', () => {
-			const action = sendOrderInvoice( 123, 38 );
+			const onSuccess = { type: WOOCOMMERCE_ORDER_INVOICE_SEND_SUCCESS };
+			const onFailure = { type: WOOCOMMERCE_ORDER_INVOICE_SEND_FAILURE };
+			const action = sendOrderInvoice( 123, 38, onSuccess, onFailure );
 			expect( action ).to.eql( {
 				type: WOOCOMMERCE_ORDER_INVOICE_SEND,
 				siteId: 123,
 				orderId: 38,
+				onSuccess,
+				onFailure,
 			} );
 		} );
 	} );
@@ -41,25 +45,14 @@ describe( 'actions', () => {
 				note,
 			} );
 		} );
-
-		test( 'should return a failure action if the response is an error object', () => {
-			const note = { code: 'rest_no_route' };
-			const action = orderInvoiceSuccess( 123, 38, note );
-			expect( action ).to.eql( {
-				type: WOOCOMMERCE_ORDER_INVOICE_SEND_FAILURE,
-				siteId: 123,
-				orderId: 38,
-				error: { code: 'rest_no_route' },
-			} );
-		} );
 	} );
 
 	describe( '#orderInvoiceFailure', () => {
 		test( 'should return a failure action with the error when a the request fails', () => {
-			const error = {
+			const error = new Error( 'Unable to send invoice', {
 				code: 'woocommerce_api_cannot_create_order_note',
 				message: 'Cannot create order note, please try again.',
-			};
+			} );
 			const action = orderInvoiceFailure( 234, 21, error );
 			expect( action ).to.eql( {
 				type: WOOCOMMERCE_ORDER_INVOICE_SEND_FAILURE,

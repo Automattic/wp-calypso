@@ -27,10 +27,6 @@ export const orderInvoiceFailure = ( siteId, orderId, error = {} ) => {
 };
 
 export const orderInvoiceSuccess = ( siteId, orderId, note ) => {
-	// This passed through the API layer successfully, but failed at the remote site.
-	if ( 'undefined' === typeof note.id ) {
-		return orderInvoiceFailure( siteId, orderId, note );
-	}
 	return {
 		type: WOOCOMMERCE_ORDER_INVOICE_SEND_SUCCESS,
 		siteId,

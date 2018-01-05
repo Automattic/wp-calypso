@@ -15,6 +15,14 @@ export const fetch = action => {
 	return request( siteId, action ).post( `orders/${ orderId }/send_invoice`, {} );
 };
 
+export function fromApi( response ) {
+	// Check if the request failed at the remote site.
+	if ( ! response.data ) {
+		throw new Error( 'Unable to send invoice', response );
+	}
+	return response;
+}
+
 export const onError = ( { siteId, orderId }, error ) =>
 	orderInvoiceFailure( siteId, orderId, error );
 
@@ -22,5 +30,7 @@ export const onSuccess = ( { siteId, orderId }, { data } ) =>
 	orderInvoiceSuccess( siteId, orderId, data );
 
 export default {
-	[ WOOCOMMERCE_ORDER_INVOICE_SEND ]: [ dispatchRequestEx( { fetch, onSuccess, onError } ) ],
+	[ WOOCOMMERCE_ORDER_INVOICE_SEND ]: [
+		dispatchRequestEx( { fetch, onSuccess, onError, fromApi } ),
+	],
 };
