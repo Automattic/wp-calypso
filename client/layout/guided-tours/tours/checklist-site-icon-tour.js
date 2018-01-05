@@ -35,10 +35,7 @@ export const ChecklistSiteIconTour = makeTour(
 		>
 			<p>
 				{ translate(
-					'Press {{b}}Change{{/b}} to upload an image or icon that helps people identify your site in the browser.',
-					{
-						components: { b: <strong /> },
-					}
+					'Press this image to upload a file that can help people identify your site in the browser.'
 				) }
 			</p>
 			<ButtonRow>

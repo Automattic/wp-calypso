@@ -293,7 +293,6 @@ class SiteIconSetting extends Component {
 				<Button
 					{ ...buttonProps }
 					className="site-icon-setting__button"
-					data-tip-target="settings-site-icon-change"
 					disabled={ isSaving }
 					compact
 				>
