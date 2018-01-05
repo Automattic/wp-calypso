@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -132,6 +133,8 @@ class Dashboard extends Component {
 			setupChoicesLoading,
 		} = this.props;
 
+		const adminURL = get( selectedSite, 'options.admin_url', '' );
+
 		if ( setupChoicesLoading ) {
 			// Many of the clauses below depend on setup choices being in the state tree
 			// Show a placeholder while they load
@@ -149,6 +152,7 @@ class Dashboard extends Component {
 		if ( ! setStoreAddressDuringInitialSetup ) {
 			return (
 				<StoreLocationSetupView
+					adminURL={ adminURL }
 					siteId={ selectedSite.ID }
 					pushDefaultsForCountry={ ! hasProducts }
 				/>

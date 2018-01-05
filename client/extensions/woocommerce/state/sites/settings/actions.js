@@ -51,7 +51,6 @@ export const doInitialSetup = (
 	// to create the appropriate value for woocommerce_default_country (e.g. US:CT)
 	const countryState = stateOrProvince ? country + ':' + stateOrProvince : country;
 
-	// TODO Support other currency positions, post-v1 etc. See https://github.com/Automattic/wp-calypso/issues/15498
 	let update = [
 		{
 			group_id: 'general',
@@ -80,53 +79,69 @@ export const doInitialSetup = (
 		},
 	];
 
-	if ( pushDefaultsForCountry ) {
-		const currency = getCurrencyCodeForCountry( country );
-		const dimensionUnit = getDimensionUnitForCountry( country );
-		const weightUnit = getWeightUnitForCountry( country );
+	// TODO Only enable taxes when applicable
+	update = update.concat( [
+		{
+			group_id: 'general',
+			id: 'woocommerce_calc_taxes',
+			value: 'yes',
+		},
+	] );
 
-		update = update.concat( [
-			{
-				group_id: 'general',
-				id: 'woocommerce_currency',
-				value: currency,
-			},
-			{
-				group_id: 'general',
-				id: 'woocommerce_currency_pos',
-				value: 'left',
-			},
-			{
-				group_id: 'general',
-				id: 'woocommerce_price_decimal_sep',
-				value: '.',
-			},
-			{
-				group_id: 'general',
-				id: 'woocommerce_price_num_decimals',
-				value: '2',
-			},
-			{
-				group_id: 'general',
-				id: 'woocommerce_price_thousand_sep',
-				value: ',',
-			},
-			{
-				group_id: 'products',
-				id: 'woocommerce_dimension_unit',
-				value: dimensionUnit,
-			},
-			{
-				group_id: 'products',
-				id: 'woocommerce_weight_unit',
-				value: weightUnit,
-			},
-			{
-				group_id: 'general',
-				id: 'woocommerce_calc_taxes',
-				value: 'yes',
-			},
-		] );
+	if ( pushDefaultsForCountry ) {
+		// TODO Support other currency positions, post-v1 etc. See https://github.com/Automattic/wp-calypso/issues/15498
+		const currency = getCurrencyCodeForCountry( country );
+		if ( currency ) {
+			update = update.concat( [
+				{
+					group_id: 'general',
+					id: 'woocommerce_currency',
+					value: currency,
+				},
+				{
+					group_id: 'general',
+					id: 'woocommerce_currency_pos',
+					value: 'left',
+				},
+				{
+					group_id: 'general',
+					id: 'woocommerce_price_decimal_sep',
+					value: '.',
+				},
+				{
+					group_id: 'general',
+					id: 'woocommerce_price_num_decimals',
+					value: '2',
+				},
+				{
+					group_id: 'general',
+					id: 'woocommerce_price_thousand_sep',
+					value: ',',
+				},
+			] );
+		}
+
+		const dimensionUnit = getDimensionUnitForCountry( country );
+		if ( dimensionUnit ) {
+			update = update.concat( [
+				{
+					group_id: 'products',
+					id: 'woocommerce_dimension_unit',
+					value: dimensionUnit,
+				},
+			] );
+		}
+
+		const weightUnit = getWeightUnitForCountry( country );
+		if ( weightUnit ) {
+			update = update.concat( [
+				{
+					group_id: 'products',
+					id: 'woocommerce_weight_unit',
+					value: weightUnit,
+				},
+			] );
+		}
 	}
 
 	return request( siteId )

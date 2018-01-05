@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { every, find, includes, isEmpty, keys, pick, trim } from 'lodash';
+import { every, includes, isEmpty, keys, pick, trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -22,8 +22,8 @@ import {
 import BasicWidget from 'woocommerce/components/basic-widget';
 import { errorNotice } from 'state/notices/actions';
 import { getContactDetailsCache } from 'state/selectors';
-import { getCountryData, getCountries } from 'woocommerce/lib/countries';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
@@ -58,6 +58,7 @@ class StoreLocationSetupView extends Component {
 			postalCode: PropTypes.string,
 			countryCode: PropTypes.string,
 		} ),
+		adminURL: PropTypes.string.isRequired,
 		pushDefaultsForCountry: PropTypes.bool.isRequired,
 		settingsGeneralLoaded: PropTypes.bool,
 		storeLocation: PropTypes.shape( {
@@ -121,17 +122,12 @@ class StoreLocationSetupView extends Component {
 		const address = this.state.address;
 		address[ addressKey ] = newValue;
 
-		// Did they change the country? Force an appropriate state default
-		if ( 'country' === addressKey ) {
-			const countryData = getCountryData( newValue );
-			address.state = countryData ? countryData.defaultState : '';
-		}
-
 		this.setState( { address, userBeganEditing: true } );
 	};
 
 	onNext = event => {
-		const { currentUserEmailVerified, siteId, translate } = this.props;
+		const { adminURL, currentUserEmailVerified, siteId, translate } = this.props;
+		const { adminURL, siteId, translate } = this.props;
 		event.preventDefault();
 
 		if ( ! currentUserEmailVerified ) {
@@ -148,6 +144,15 @@ class StoreLocationSetupView extends Component {
 			// No need to set isSaving to false here - we're navigating away from here
 			// and setting isSaving to false will just light the button up again right
 			// before the next step's dialog displays
+
+			// If we don't support a calypso experience yet for this country, let
+			// them complete setup with the wp-admin WooCommerce wizard
+			if ( ! isStoreManagementSupportedInCalypsoForCountry( this.state.address.country ) ) {
+				const storeSetupURL =
+					adminURL + 'admin.php?page=wc-setup&step=store_setup&activate_error=false&from=calypso';
+				window.location = storeSetupURL;
+			}
+
 			return setSetStoreAddressDuringInitialSetup( siteId, true );
 		};
 
@@ -158,30 +163,14 @@ class StoreLocationSetupView extends Component {
 			);
 		};
 
-		// Provides fallbacks if the country & state options were never changed/toggled,
-		// or if an unsupported country was set in state (like WC's default GB country)
-		let country = null;
-		let state = null;
-		if (
-			! this.state.address.country ||
-			! find( getCountries(), { code: this.state.address.country } )
-		) {
-			country = 'US';
-			const countryData = getCountryData( country );
-			state = this.state.address.state ? this.state.address.state : countryData.defaultState;
-		} else {
-			country = this.state.address.country;
-			state = this.state.address.state;
-		}
-
 		this.props.doInitialSetup(
 			siteId,
 			this.state.address.street,
 			this.state.address.street2,
 			this.state.address.city,
-			state,
+			this.state.address.state,
 			this.state.address.postcode,
-			country,
+			this.state.address.country,
 			this.props.pushDefaultsForCountry,
 			onSuccess,
 			onFailure
@@ -215,6 +204,7 @@ class StoreLocationSetupView extends Component {
 					className="dashboard__pre-setup-address"
 					isEditable
 					onChange={ this.onChange }
+					showAllLocations
 				/>
 				<SetupFooter
 					disabled={ submitDisabled }
