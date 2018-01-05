@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -22,13 +21,12 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import FormattedHeader from 'components/formatted-header';
 import { checkInboundTransferStatus } from 'lib/domains';
 import support from 'lib/url/support';
-import paths from 'my-sites/domains/paths';
 import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
 
 class TransferDomainPrecheck extends React.PureComponent {
 	static propTypes = {
 		domain: PropTypes.string,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSiteSlug: PropTypes.string,
 		setValid: PropTypes.func,
 		supportsPrivacy: PropTypes.bool,
 	};
@@ -64,11 +62,6 @@ class TransferDomainPrecheck extends React.PureComponent {
 		this.props.recordContinueButtonClick( domain, losingRegistrar, losingRegistrarIanaId );
 
 		this.props.setValid( domain, supportsPrivacy );
-	};
-
-	goToMapDomainStep = event => {
-		event.preventDefault();
-		page( paths.domainMapping( this.props.selectedSite.slug, this.props.domain ) );
 	};
 
 	transferIsRestricted = () =>
@@ -161,7 +154,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 	}
 
 	getTransferRestrictionMessage() {
-		const { domain } = this.props;
+		const { domain, selectedSiteSlug } = this.props;
 		const {
 			creationDate,
 			loading,
@@ -171,14 +164,16 @@ class TransferDomainPrecheck extends React.PureComponent {
 		} = this.state;
 
 		return (
-			<TransferRestrictionMessage
-				creationDate={ creationDate }
-				domain={ domain }
-				loading={ loading }
-				termMaximumInYears={ termMaximumInYears }
-				transferEligibleDate={ transferEligibleDate }
-				transferRestrictionStatus={ transferRestrictionStatus }
-			/>
+			! loading && (
+				<TransferRestrictionMessage
+					creationDate={ creationDate }
+					domain={ domain }
+					selectedSiteSlug={ selectedSiteSlug }
+					termMaximumInYears={ termMaximumInYears }
+					transferEligibleDate={ transferEligibleDate }
+					transferRestrictionStatus={ transferRestrictionStatus }
+				/>
+			)
 		);
 	}
 

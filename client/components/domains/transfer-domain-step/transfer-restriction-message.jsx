@@ -21,7 +21,7 @@ class TransferRestrictionMessage extends React.PureComponent {
 	static propTypes = {
 		creationDate: PropTypes.string,
 		domain: PropTypes.string,
-		loading: PropTypes.bool,
+		selectedSiteSlug: PropTypes.string,
 		termMaximumInYears: PropTypes.number,
 		transferEligibleDate: PropTypes.string,
 		transferRestrictionStatus: PropTypes.string,
@@ -29,14 +29,13 @@ class TransferRestrictionMessage extends React.PureComponent {
 
 	goToMapDomainStep = event => {
 		event.preventDefault();
-		page( paths.domainMapping( this.props.selectedSite.slug, this.props.domain ) );
+		page( paths.domainMapping( this.props.selectedSiteSlug, this.props.domain ) );
 	};
 
 	render() {
 		const {
 			creationDate,
 			domain,
-			loading,
 			termMaximumInYears,
 			transferEligibleDate,
 			transferRestrictionStatus,
@@ -49,7 +48,7 @@ class TransferRestrictionMessage extends React.PureComponent {
 			'{{strong}}%(domain)s{{/strong}} can be transferred in %(transferDelayInDays)s days.',
 			{
 				args: {
-					domain: domain,
+					domain,
 					transferDelayInDays: transferEligibleMoment.diff( moment(), 'days' ),
 				},
 				components: {
@@ -98,11 +97,6 @@ class TransferRestrictionMessage extends React.PureComponent {
 			);
 		}
 
-		if ( loading ) {
-			heading = 'Domain transfer restriction check.';
-			message = null;
-		}
-
 		return (
 			<Card>
 				<div className="transfer-domain-step__section is-expanded">
@@ -118,7 +112,7 @@ class TransferRestrictionMessage extends React.PureComponent {
 								{ reason }
 							</div>
 							<div className="transfer-domain-step__section-action">
-								<Button compact onClick={ this.goToMapDomainStep } busy={ loading }>
+								<Button compact onClick={ this.goToMapDomainStep }>
 									{ translate( 'Connect domain without transferring' ) }
 								</Button>
 							</div>
