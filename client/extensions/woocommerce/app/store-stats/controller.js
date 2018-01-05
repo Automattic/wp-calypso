@@ -16,7 +16,7 @@ import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getQueryDate } from './utils';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
-import { recordTrack } from 'woocommerce/lib/analytics';
+import { recordTrack, tracksStore } from 'woocommerce/lib/analytics';
 
 function isValidParameters( context ) {
 	const validParameters = {
@@ -29,6 +29,8 @@ function isValidParameters( context ) {
 }
 
 export default function StatsController( context, next ) {
+	tracksStore.setReduxStore( context.store );
+
 	if ( ! context.params.site || context.params.site === 'null' ) {
 		page.redirect( '/stats/day/' );
 	}
