@@ -245,13 +245,7 @@ const PluginsStore = {
 			if ( ! site.visible ) {
 				return false;
 			}
-			//TODO: compatibility with old site object (for now, remove when not needed)
-			if (
-				site.jetpack &&
-				( typeof site.isSecondaryNetworkSite === 'function'
-					? site.isSecondaryNetworkSite()
-					: site.isSecondaryNetworkSite )
-			) {
+			if ( site.jetpack && site.isSecondaryNetworkSite ) {
 				return false;
 			}
 
